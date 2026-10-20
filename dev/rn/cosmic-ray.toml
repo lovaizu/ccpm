@@ -3,7 +3,8 @@
 [cosmic-ray]
 module-path = ["rn/scripts", "rn/hooks"]
 timeout = 60.0
-excluded-modules = []
+# What rn takes from common/ through a link is mutated there, with common's tests.
+excluded-modules = ["rn/hooks/shell.py", "rn/hooks/hook.py"]
 # The type checker runs first: a change to a type annotation changes no behavior a test could see,
 # and the type checker is what checks annotations.
 test-command = "sh -c 'pyrefly check --search-path dev/common --search-path dev/rn/tests --search-path rn/scripts --search-path rn/hooks rn/scripts rn/hooks dev/rn/tests && python -m unittest discover -f -s dev/rn/tests'"

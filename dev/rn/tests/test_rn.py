@@ -24,6 +24,7 @@ SCRIPTS = os.path.normpath(
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, os.path.join(SCRIPTS, "..", "..", "dev", "common"))
 
+import helpers
 import testing
 
 import rn
@@ -95,7 +96,7 @@ def ccs_argv(needed: dict[str, str]) -> list[str]:
     return ["ccs", WORK, WORK_PATH] + [part for option in needed.items() for part in option]
 
 
-class RepoTest(testing.GitTest):
+class RepoTest(helpers.MainAndWork):
     """A git repository whose default branch is `main` and whose checked-out branch is `work`, with
     git reading no setting of the machine it runs on; and a plugin folder with rn's checklists."""
 
@@ -105,17 +106,6 @@ class RepoTest(testing.GitTest):
         self.plugin = os.path.join(self.base, "plugin")
         self.checklist = os.path.join(self.plugin, "checklists", "product", f"{KIND}.md")
         self.write(self.checklist, "# Code\n")
-
-    def main_and_work(self) -> None:
-        """The repository each test copies: `main` with a README, as origin has it, and `work`
-        checked out from it."""
-        self.git("init", "-q")
-        self.git("checkout", "-q", "-b", "main")
-        self.write("README.md", "# app\n")
-        self.commit()
-        self.git("update-ref", "refs/remotes/origin/main", "HEAD")
-        self.git("symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
-        self.git("checkout", "-q", "-b", "work")
 
     def rn(self, *argv: str) -> tuple[int, str]:
         """The exit code and what rn printed for the arguments."""

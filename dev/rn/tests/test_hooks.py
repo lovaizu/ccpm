@@ -12,11 +12,8 @@ import json
 import os
 import re
 import runpy
-import shlex
-import shutil
 import subprocess
 import sys
-import tempfile
 import unittest
 from unittest import mock
 
@@ -29,7 +26,9 @@ sys.path[:0] = [HOOKS, os.path.join(PLUGIN, "scripts")]
 # What every plugin's tests stand on.
 sys.path.insert(0, os.path.join(PLUGIN, "..", "dev", "common"))
 
-import pretooluse
+import events
+import helpers
+import hook
 import testing
 from checks import default_branch
 
@@ -53,66 +52,23 @@ TO_MAIN = (
     "rn: `git push` sends to main, the default branch; push the session's branch to its own name"
     " instead, as `git push origin {}`: " + WHY + "\n"
 )
-# What the entry says when it is handed no event as Claude Code hands it.
-UNREAD = (
-    "rn: the PreToolUse hook was handed no event as Claude Code hands it, a JSON object with cwd,"
-    " tool_name and tool_input, so this tool call goes on unchecked; update Claude Code with"
-    " `claude update`, and where it goes on, report it at https://github.com/lovaizu/ccpm/issues\n"
-)
 # The command rn's /rn:up skill runs to keep the session's folder.
 KEEP = f"git add {FOLDER}\ngit commit -F - <<'EOF'\nKeep the plan\nEOF\ngit push"
 
 
-class HookTest(unittest.TestCase):
+class HookTest(helpers.MainAndWork):
     """A git repository whose remote's default branch is `main`, with the session's folder committed
     on the branch `work`, checked out; git reads no setting of the machine it runs on."""
 
     def setUp(self) -> None:
-        self.base = os.path.realpath(tempfile.mkdtemp())
-        self.addCleanup(shutil.rmtree, self.base)
-        self.repo = os.path.join(self.base, "repo")
-        os.makedirs(self.repo)
-        env = {
-            "GIT_CONFIG_NOSYSTEM": "1",
-            "GIT_CONFIG_GLOBAL": os.devnull,
-            "HOME": self.base,
-            "GIT_CEILING_DIRECTORIES": self.base,
-            "GIT_AUTHOR_NAME": "t",
-            "GIT_AUTHOR_EMAIL": "t@example.com",
-            "GIT_COMMITTER_NAME": "t",
-            "GIT_COMMITTER_EMAIL": "t@example.com",
-        }
-        patcher = mock.patch.dict(os.environ, env)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-        self.addCleanup(os.chdir, os.getcwd())
-        os.chdir(self.repo)
-        self.git("init", "-q")
-        self.git("checkout", "-q", "-b", "main")
-        self.write("README.md", "# app\n")
-        self.commit()
-        self.git("update-ref", "refs/remotes/origin/main", "HEAD")
-        self.git("symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
-        self.git("checkout", "-q", "-b", "work")
+        super().setUp()
+        self.repo = self.copied("session", self.kept_on_work)
+
+    def kept_on_work(self) -> None:
+        """Makes where the test stands the repository, the session's folder committed on `work`."""
+        self.main_and_work()
         self.write(f"{FOLDER}/state.json", '{"stage": "asking"}')
         self.commit()
-
-    def git(self, *args: str) -> None:
-        """Runs git with the arguments in the repository; fails the test where git fails."""
-        subprocess.run(["git"] + list(args), check=True, capture_output=True)
-
-    def commit(self) -> None:
-        """Commits every change in the repository on the checked-out branch."""
-        self.git("add", "-A")
-        self.git("commit", "-q", "-m", "c")
-
-    def write(self, path: str, text: str) -> None:
-        """Writes the text at the path, making its folder where it is not there."""
-        folder = os.path.dirname(path)
-        if folder:
-            os.makedirs(folder, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
 
     def on_main(self) -> None:
         """The default branch checked out, with the session's folder made on it, as `rn.py start`
@@ -139,7 +95,7 @@ class HookTest(unittest.TestCase):
     def handed(self, stream: str) -> tuple[int, str]:
         """The exit code and what the entry wrote on stderr, handed the text on stdin."""
         err = io.StringIO()
-        code = pretooluse.main(io.StringIO(stream), err)
+        code = hook.run("rn", events.PRETOOLUSE, io.StringIO(stream), err)
         return code, err.getvalue()
 
     def hook(self, command: str, cwd: str | None = None, tool: str = "Bash") -> tuple[int, str]:
@@ -371,6 +327,14 @@ class PushToDefaultTest(HookTest):
         # Then: the hook stops the call.
         self.assertEqual(self.hook("git push")[0], 2)
 
+    def test_a_commit_on_a_branch_pushed_to_the_default_branch_goes_on(self):
+        # Given: the session's branch checked out, git pushing it to its upstream, the default
+        # branch.
+        self.upstream_on_main()
+        # When: the conductor commits, with a message holding no option.
+        # Then: the hook lets the call go on, as a commit sends nothing.
+        self.assertEqual(self.hook("git commit -m main"), (0, ""))
+
     def test_a_push_naming_the_remote_alone_goes_where_git_pushes_the_branch(self):
         # Given: the session's branch checked out, git pushing it to its upstream, the default
         # branch.
@@ -418,165 +382,6 @@ class PushToDefaultTest(HookTest):
         )
 
 
-class ReadingTest(unittest.TestCase):
-    """The statements the guard reads in a command, as the shell reads them."""
-
-    def read(self, command: str) -> list[list[str]]:
-        """The words of each statement of the command."""
-        return default_branch.statements(command)
-
-    def test_each_separator_ends_a_statement(self):
-        for separator in (";", ";;", "&", "&&", "|", "||", "|&", "(", ")", "\n"):
-            with self.subTest(separator=separator):
-                # Given: a command of two statements with the separator between them.
-                # When: it is read.
-                # Then: it gives each statement's words.
-                self.assertEqual(
-                    self.read(f"git add a{separator}git push"),
-                    [["git", "add", "a"], ["git", "push"]],
-                )
-
-    def test_quoted_operators_are_words(self):
-        # Given: a commit whose message is operator signs, quoted.
-        # When: it is read.
-        # Then: the signs are a word of the statement.
-        self.assertEqual(
-            self.read("git commit -m '&&' \"<<\""), [["git", "commit", "-m", "&&", "<<"]]
-        )
-
-    def test_a_quoted_heredoc_sign_begins_no_heredoc(self):
-        # Given: a quoted `<<` with a word after it, and a push on the next line.
-        # When: it is read.
-        # Then: the next line is a statement, not a heredoc's text.
-        self.assertEqual(self.read('echo "<<" x\ngit push'), [["echo", "<<", "x"], ["git", "push"]])
-
-    def test_a_heredocs_text_is_left_out(self):
-        # Given: the keep of rn's /rn:up skill, a commit taking its message from a heredoc.
-        # When: it is read.
-        # Then: the heredoc's text and end word are left out.
-        want = [["git", "add", FOLDER], ["git", "commit", "-F", "-"], ["git", "push"]]
-        self.assertEqual(self.read(KEEP), want)
-
-    def test_a_heredoc_ends_only_at_its_end_word_alone_on_a_line(self):
-        # Given: a heredoc whose text holds its end word inside a line, and indented.
-        # When: it is read.
-        # Then: its text runs to the line of its end word alone.
-        command = "cat <<EOF\nEOF x\n EOF\nEOF\ngit push"
-        self.assertEqual(self.read(command), [["cat"], ["git", "push"]])
-
-    def test_a_heredoc_with_a_dash_ends_at_its_end_word_after_tabs(self):
-        # Given: a heredoc begun with `<<-`, whose end word comes after tabs.
-        # When: it is read.
-        # Then: its text ends at that line.
-        self.assertEqual(
-            self.read("cat <<-EOF\n\tgit commit\n\t\tEOF\ngit push"), [["cat"], ["git", "push"]]
-        )
-
-    def test_a_heredoc_without_a_dash_does_not_end_after_tabs(self):
-        # Given: a heredoc begun with `<<`, whose end word comes after a tab, then alone.
-        # When: it is read.
-        # Then: its text runs to the end word alone.
-        self.assertEqual(self.read("cat <<EOF\n\tEOF\ngit commit\nEOF"), [["cat"]])
-
-    def test_two_heredocs_on_a_line_are_left_out_in_turn(self):
-        # Given: two heredocs begun on one line.
-        # When: it is read.
-        # Then: the text of both is left out.
-        command = "cat <<A <<B\ngit push\nA\ngit commit\nB\ngit add x"
-        self.assertEqual(self.read(command), [["cat"], ["git", "add", "x"]])
-
-    def test_a_heredoc_never_ended_runs_to_the_end(self):
-        # Given: a heredoc whose end word never comes.
-        # When: it is read.
-        # Then: the rest of the command is its text.
-        self.assertEqual(self.read("cat <<EOF\ngit push"), [["cat"]])
-
-    def test_a_comment_is_left_out(self):
-        # Given: a statement with a comment after it, and a word holding `#`.
-        # When: it is read.
-        # Then: the comment is left out, and the word kept.
-        self.assertEqual(self.read("git a#b # git push\ngit c"), [["git", "a#b"], ["git", "c"]])
-
-    def test_a_hash_after_quotes_is_part_of_the_word(self):
-        # Given: a word whose `#` comes right after a quoted part.
-        # When: it is read.
-        # Then: the `#` and what follows it are part of the word.
-        self.assertEqual(self.read("echo ''#x y"), [["echo", "#x", "y"]])
-
-    def test_a_backslash_before_a_lines_end_joins_the_lines(self):
-        # Given: a push split over two lines by a backslash.
-        # When: it is read.
-        # Then: it is one statement.
-        self.assertEqual(self.read("git \\\npush"), [["git", "push"]])
-
-    def test_a_backslash_keeps_the_character_after_it(self):
-        # Given: words holding a blank and a separator, each after a backslash.
-        # When: it is read.
-        # Then: each is part of the word.
-        self.assertEqual(self.read("echo a\\ b c\\;d e\\"), [["echo", "a b", "c;d", "e"]])
-
-    def test_double_quotes_take_a_backslash_off_what_it_escapes_alone(self):
-        # Given: a word in double quotes holding backslashes before characters they escape there,
-        # before a line's end, and before one they do not.
-        # When: it is read.
-        # Then: each escape gives its character, the line's end is joined, and the other
-        # backslash is kept.
-        self.assertEqual(
-            self.read('echo "a\\"b\\\\c\\$d\\`e\\\nf\\g"'), [["echo", 'a"b\\c$d`ef\\g']]
-        )
-
-    def test_a_quote_not_closed_runs_to_the_end(self):
-        for quote in ("'", '"'):
-            with self.subTest(quote=quote):
-                # Given: a word whose quote is never closed.
-                # When: it is read.
-                # Then: the rest of the command is that word.
-                self.assertEqual(self.read(f"echo {quote}a; b"), [["echo", "a; b"]])
-
-    def test_an_empty_quoted_word_is_a_word(self):
-        # Given: a commit whose message is empty quotes.
-        # When: it is read.
-        # Then: the empty word is part of the statement.
-        self.assertEqual(self.read("git commit -m ''"), [["git", "commit", "-m", ""]])
-
-    def test_a_redirect_and_its_target_are_left_out(self):
-        for redirect in ("<", ">", ">>", ">|", "<>", "&>", "&>>", "<<<", ">&", "<&"):
-            with self.subTest(redirect=redirect):
-                # Given: a push with a redirect.
-                # When: it is read.
-                # Then: the redirect and its target are no words of the push.
-                self.assertEqual(
-                    self.read(f"git push {redirect} x origin"), [["git", "push", "origin"]]
-                )
-
-    def test_a_file_descriptor_before_a_redirect_is_no_word(self):
-        # Given: a push whose errors are redirected to its output.
-        # When: it is read.
-        # Then: the descriptor is no word of the push.
-        self.assertEqual(self.read("git push 2>&1"), [["git", "push"]])
-
-    def test_digits_not_right_before_a_redirect_are_words(self):
-        commands = ("git push '2'>x", 'git push "2">x', "git push \\2>x", "git push 2 >x")
-        for command in commands + ("git push a2>x",):
-            with self.subTest(command=command):
-                # Given: digits quoted, escaped, apart from the redirect, or after a letter.
-                # When: it is read.
-                # Then: they are a word.
-                self.assertEqual(len(self.read(command)[0]), 3)
-
-    def test_a_redirect_at_a_statements_end_takes_no_word_of_the_next(self):
-        # Given: a redirect with no target before a separator.
-        # When: it is read.
-        # Then: the next statement keeps its first word.
-        self.assertEqual(self.read("echo >; git push"), [["echo"], ["git", "push"]])
-
-    def test_a_blank_command_has_no_statement(self):
-        # Given: a command of blanks and separators alone.
-        # When: it is read.
-        # Then: it has no statement.
-        self.assertEqual(self.read(" \t;\n"), [])
-
-
 class DestinationTest(unittest.TestCase):
     """Where a refspec of `git push` sends to."""
 
@@ -595,31 +400,6 @@ class DestinationTest(unittest.TestCase):
 
 class EntryTest(HookTest):
     """The PreToolUse entry, as Claude Code runs it."""
-
-    def test_a_stream_that_is_not_json_goes_on_saying_so(self):
-        # Given: a stream that is not JSON.
-        # When: the entry is handed it.
-        # Then: it lets the call go on, saying it was handed no event and what to do.
-        self.assertEqual(self.handed("{"), (1, UNREAD))
-
-    def test_an_event_not_in_claude_codes_shape_goes_on_unchecked(self):
-        event = json.loads(self.event("git commit -m m"))
-        wrong = {
-            "a list": [event],
-            "no cwd": {k: v for k, v in event.items() if k != "cwd"},
-            "a cwd of no folder": dict(event, cwd=os.path.join(self.base, "none")),
-            "a cwd that is no text": dict(event, cwd=1),
-            "a tool_name that is no text": dict(event, tool_name=None),
-            "a tool_input that is no object": dict(event, tool_input="git commit"),
-        }
-        for what, value in wrong.items():
-            with self.subTest(what=what):
-                # Given: the default branch checked out, with a session's folder, and an event
-                # holding a commit, but in another shape.
-                self.on_main()
-                # When: the entry is handed it.
-                # Then: it lets the call go on, saying it was handed no event.
-                self.assertEqual(self.handed(json.dumps(value)), (1, UNREAD))
 
     def test_an_event_in_claude_codes_shape_goes_on_where_no_check_stops_it(self):
         # Given: the session's branch checked out.
@@ -696,12 +476,6 @@ if importlib.util.find_spec("hypothesis") is not None:
     from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
 
     testing.load_hypothesis_profile()
-    # Any character a command may hold. Left out, as the user decided, since a hook never receives
-    # them: the null character, which no shell command can hold, and the lone surrogates, which
-    # the UTF-8 JSON Claude Code hands the hook cannot hold (code.md B-16).
-    CHARACTER = st.characters(blacklist_categories=("Cs",), blacklist_characters="\0")
-    # Any word, and words of the signs the shell reads as operators, comments and quotes alone.
-    WORD = st.one_of(st.text(CHARACTER), st.text(alphabet=";&|()<>\n#`'\"\\ \t"))
     # Any character a branch name may hold: git refuses a name holding a control character, a
     # blank or one of ~^:?*[\.
     NAME = st.text(
@@ -710,27 +484,6 @@ if importlib.util.find_spec("hypothesis") is not None:
     )
 
     class PropertyTest(unittest.TestCase):
-        @hypothesis.given(st.lists(WORD))
-        def test_any_quoted_words_are_read_as_they_are(self, words):
-            # Given: a commit whose message is any words, each quoted as a shell quotes it.
-            command = "git commit -m " + " ".join(shlex.quote(w) for w in words)
-            # When: it is read.
-            # Then: it is one statement holding each word as it is.
-            self.assertEqual(default_branch.statements(command), [["git", "commit", "-m", *words]])
-
-        @hypothesis.given(st.lists(st.text(CHARACTER.filter(lambda c: c != "\n"))))
-        def test_any_heredoc_text_is_left_out(self, lines):
-            # Given: the keep of rn's /rn:up skill, its message any lines. Left out, as the user
-            # decided, since a hook never receives it: a line that is the heredoc's end word, which
-            # ends the heredoc there, so it is never part of its text (code.md B-16).
-            hypothesis.assume("EOF" not in lines)
-            text = "\n".join(lines)
-            command = f"git commit -F - <<'EOF'\n{text}\nEOF\ngit push"
-            # When: it is read.
-            # Then: the commit and the push are its statements, the message none.
-            want = [["git", "commit", "-F", "-"], ["git", "push"]]
-            self.assertEqual(default_branch.statements(command), want)
-
         @hypothesis.given(NAME, NAME, NAME)
         def test_any_refspec_sends_to_what_follows_its_colon(self, remote, source, target):
             # Given: a push of any branch to any other, to any remote. Left out, as the user

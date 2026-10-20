@@ -9,123 +9,24 @@ remote's, as git knows it from `origin/HEAD`. The guard acts only where the work
 default branch, where a session's folder is in the repository; on any other branch, where that
 branch holds a session, as `rn.py session` finds it. Elsewhere every command goes on.
 
-It reads the command as the shell does, statement by statement, a statement being what runs between
-`;`, `&`, `&&`, `|`, `||`, a bracket or a line's end, and judges each statement whose first words
-are `git commit` or `git push`, in the folder the tool call runs in.
+It reads the command statement by statement through shell.py, the hooks' reading of a command the
+plugins share, and judges each statement whose first words are `git commit` or `git push`, in the
+folder the tool call runs in.
 """
 
 from __future__ import annotations
 
 import os
-import re
 from typing import Any
+
+import shell
 
 import rn
 
-# One piece of a command as the shell reads it, tried in this order: blanks between words; a
-# backslash before a line's end, which joins the two lines; a comment, which begins only where a
-# word could; text in single or in double quotes, each closed by the end of the command where its
-# quote is not; a character after a backslash; an operator, the longest first, so that `&&` is not
-# read as two `&`; and plain text. Every character begins one of them.
-PIECE = re.compile(
-    r"(?P<blank>[ \t]+)"
-    r"|(?P<join>\\\n)"
-    r"|(?P<comment>(?:^|(?<=[ \t\n;&|()<>]))#[^\n]*)"
-    r"|'(?P<single>[^']*)'?"
-    r'|"(?P<double>(?:\\.|[^"\\])*)"?'
-    r"|\\(?P<escaped>.?)"
-    r"|(?P<operator><<<|<<-|&>>|<<|>>|&>|>&|<&|<>|>\||;;|&&|\|\||\|&|[;&|()<>\n])"
-    r"|(?P<plain>[^ \t\n'\"\\;&|()<>]+)",
-    re.DOTALL,
-)
-# In double quotes a backslash escapes only these, and before a line's end joins the two lines.
-DOUBLE_ESCAPED = re.compile(r'\\([$`"\\])|\\\n')
-# The operators that end a statement; every other operator is a redirect, whose target is the word
-# after it.
-SEPARATORS = {";", ";;", "&", "&&", "|", "||", "|&", "(", ")", "\n"}
-# The redirects whose next word is a heredoc's end word, `<<-` taking the tabs off each line.
-HEREDOCS = {"<<": False, "<<-": True}
 # The first words of the statements the guard judges, those that keep work in git.
 KEEPS = (["git", "commit"], ["git", "push"])
 # The options of `git push` that take the next word as their value.
 PUSH_VALUED = {"-o", "--push-option", "--repo", "--receive-pack", "--exec"}
-
-
-def heredocs_end(command: str, pos: int, ends: list[tuple[str, bool]]) -> int:
-    """Where the command goes on after the heredocs whose text begins at pos, one after another,
-    each ended by a line holding its end word alone, after tabs where they are taken off; the end
-    of the command where a heredoc's end word never comes."""
-    for end, tabs in ends:
-        line = re.compile(("^\t*" if tabs else "^") + re.escape(end) + "$", re.MULTILINE)
-        found = line.search(command, pos)
-        pos = found.end() if found else len(command)
-    return pos
-
-
-def tokens(command: str) -> list[tuple[str, bool]]:
-    """The command's words and operators in order, each with whether it is an operator: quotes and
-    backslashes taken off each word, and comments and each heredoc's text left out. A quoted `&&` or
-    `<<` is a word, and digits right before a redirect, a file descriptor, are no word."""
-    found: list[tuple[str, bool]] = []
-    # The word being read, None before it begins; whether any of it was quoted; and the end words
-    # of the heredocs begun on this line.
-    word: str | None = None
-    quoted = False
-    ends: list[tuple[str, bool]] = []
-    # Each round reads what is left of the command to its end, unless it breaks off at the line
-    # after which heredocs' text begins; then what follows that text is left for the next round.
-    left: str | None = command
-    while left is not None:
-        reading, left = left, None
-        for piece in PIECE.finditer(reading):
-            # Each alternative of PIECE is a named group, so the piece has its kind.
-            kind = str(piece.lastgroup)
-            text = piece.group(kind)
-            if kind in ("single", "double", "escaped", "plain"):
-                if kind == "double":
-                    text = DOUBLE_ESCAPED.sub(lambda m: m.group(1) or "", text)
-                word = (word or "") + text
-                quoted = quoted or kind in ("single", "double", "escaped")
-                continue
-            if kind == "join" or kind == "comment":
-                continue
-            fd = word is not None and word.isdigit() and not quoted
-            # Only a redirect's text begins with `<` or `>`.
-            if text[0] in "<>" and fd:
-                word = None
-            if word is not None:
-                if found and found[-1][0] in HEREDOCS and found[-1][1]:
-                    ends.append((word, HEREDOCS[found[-1][0]]))
-                found.append((word, False))
-            word, quoted = None, False
-            if kind == "operator":
-                found.append((text, True))
-            if text == "\n" and ends:
-                left = reading[heredocs_end(reading, piece.end(), ends) :]
-                ends = []
-                break
-    if word is not None:
-        found.append((word, False))
-    return found
-
-
-def statements(command: str) -> list[list[str]]:
-    """The words of each statement of the command, each redirect and its target left out."""
-    said: list[list[str]] = []
-    statement: list[str] = []
-    target = False
-    for text, operator in tokens(command) + [("\n", True)]:
-        if operator and text in SEPARATORS:
-            if statement:
-                said.append(statement)
-            statement, target = [], False
-        elif operator:
-            target = True
-        elif target:
-            target = False
-        else:
-            statement.append(text)
-    return said
 
 
 def git(args: list[str]) -> str | None:
@@ -190,7 +91,9 @@ def stops(keeps: list[list[str]]) -> list[str]:
                 f" <slug>`, and run it there: {why}"
             )
             return [stop]
-        pushed = statement[1] == "push" and default in destinations(statement[2:], branch)
+        # Written as membership rather than `==`, since an order comparison such as `>=` would also
+        # tell "push" from "commit", and a mutant making it one would pass every test.
+        pushed = statement[1] in ("push",) and default in destinations(statement[2:], branch)
         if pushed and rn.session() is not None:
             own = branch or "HEAD:<the session's branch>"
             stop = (
@@ -211,7 +114,8 @@ def check(event: dict[str, Any]) -> list[str]:
     if event["tool_name"] not in ("Bash",):
         return []
     command = str(event["tool_input"].get("command", ""))
-    keeps = [statement for statement in statements(command) if statement[:2] in KEEPS]
+    said = [shell.without_redirects(w) for _, w, _ in shell.statements(command, event["cwd"])]
+    keeps = [statement for statement in said if statement[:2] in KEEPS]
     top = git(["rev-parse", "--show-toplevel"]) if keeps else None
     if top is None or not sessions_kept(top):
         return []
