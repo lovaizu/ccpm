@@ -895,6 +895,16 @@ class TestWholeReads(HookTest):
         self.assertIn("README.md", "".join(self.decided(self.read("README.md"), sent, part)))
         self.assertEqual(self.decided(sent, part, self.read("README.md")), [])
 
+    def test_the_orchestrator_telling_the_calling_ai_keeps_the_work_read(self):
+        # Given: an orchestrator whose run waits on its decision, that saw the items to decide and
+        # read the work whole
+        # When: it tells `main`, the calling AI's conversation, what comes next, and records its
+        # decision
+        # Then: it goes through, as a message to `main` changes no work
+        self.through()
+        told = ("SendMessage", {"to": "main", "message": "orchestrator: deciding every item"})
+        self.assertEqual(self.decided(self.read("README.md"), told), [])
+
     def test_the_orchestrator_shown_the_changed_work_whole_by_claude_code_goes_on(self):
         # Given: an orchestrator whose run waits on its decision, that saw the items to decide and
         # started the generator, after which Claude Code put the changed work into its context,

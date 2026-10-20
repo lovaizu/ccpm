@@ -206,7 +206,10 @@ def starts(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> 
 
 
 def sends(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:
-    """A role sent a message may be the generator, which changes the work."""
+    """A role sent a message may be the generator, which changes the work; `main`, the calling AI's
+    conversation, changes none."""
+    if given.get("to") == "main":
+        return
     read.difference_update(at(cwd, w) for w in work)
 
 

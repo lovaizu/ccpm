@@ -17,6 +17,13 @@ agent did, and rest each lesson on the words of a record, since a lesson without
 rests on is a guess. The orchestrator decides which lessons to take, as it decided every step of
 the run.
 
+The calling AI waits without seeing the run, so you tell it, with SendMessage to `main`,
+loaded with ToolSearch (`select:SendMessage`) the first time: once you have read what you are
+given and before you do the rest, what you will do, how far and how; and as each step after
+ends, what is done and what comes next. Each is one line beginning with `learner:`; no one
+answers it, so go on at once: a run going a slow or wrong way then shows before its time is
+spent.
+
 ## Steps
 
 1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run

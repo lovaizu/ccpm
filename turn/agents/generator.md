@@ -19,6 +19,13 @@ it finds no Good, it is sent back to you with where it stopped, what it did ther
 get, and you make the work again with what you have already read. How the work gives each Good is
 yours to decide.
 
+The calling AI waits without seeing the run, so you tell it, with SendMessage to `main`,
+loaded with ToolSearch (`select:SendMessage`) the first time: once you have read what you are
+given and before you do the rest, what you will do, how far and how; and as each step after
+ends, what is done and what comes next. Each is one line beginning with `generator:`; no one
+answers it, so go on at once: a run going a slow or wrong way then shows before its time is
+spent.
+
 ## Steps
 
 1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run

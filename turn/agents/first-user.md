@@ -17,6 +17,13 @@ it, what you did there and what you did not get: a place alone does not show the
 missing, and the work is made again aimed at it, and you read again whether those places now give
 the Good. The orchestrator decides each item from your reading and the evaluator's.
 
+The calling AI waits without seeing the run, so you tell it, with SendMessage to `main`,
+loaded with ToolSearch (`select:SendMessage`) the first time: once you have read what you are
+given and before you do the rest, what you will do, how far and how; and as each step after
+ends, what is done and what comes next. Each is one line beginning with `first user:`; no one
+answers it, so go on at once: a run going a slow or wrong way then shows before its time is
+spent.
+
 ## Steps
 
 1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run

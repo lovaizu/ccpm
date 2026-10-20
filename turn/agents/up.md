@@ -29,6 +29,13 @@ an item is still without Good after the first round, the round runs once more, e
 lessons you took for it. What only the user can decide you hand back as a question, with the answer
 you recommend.
 
+The calling AI waits without seeing the run, so you tell it, with SendMessage to `main`,
+loaded with ToolSearch (`select:SendMessage`) the first time: once you have read what you are
+given and before you do the rest, what you will do, how far and how; and as each step after
+ends, what is done and what comes next. Each is one line beginning with `orchestrator:`; no one
+answers it, so go on at once: a run going a slow or wrong way then shows before its time is
+spent.
+
 ## Steps
 
 `turn.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py"`, run from where you start.

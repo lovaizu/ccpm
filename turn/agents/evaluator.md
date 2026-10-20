@@ -13,6 +13,13 @@ judged without it is made again for nothing. You are started anew, so you read t
 receiver first meets it. The orchestrator sets your Goods beside the first user's, and decides
 every item.
 
+The calling AI waits without seeing the run, so you tell it, with SendMessage to `main`,
+loaded with ToolSearch (`select:SendMessage`) the first time: once you have read what you are
+given and before you do the rest, what you will do, how far and how; and as each step after
+ends, what is done and what comes next. Each is one line beginning with `evaluator:`; no one
+answers it, so go on at once: a run going a slow or wrong way then shows before its time is
+spent.
+
 ## Steps
 
 1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run

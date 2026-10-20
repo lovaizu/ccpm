@@ -224,6 +224,7 @@ class TestMessageHooks(RoundTest):
         out, _ = self.stopped()
         for to, message in (
             ("a9", out["message"]),
+            ("z9", out["message"]),
             (out["to"][:-1], out["message"]),
             (out["to"], "fix B-1"),
             (out["to"], "{}"),
@@ -270,6 +271,20 @@ class TestMessageHooks(RoundTest):
                 code, err = self.hook(pretooluse, self.send(ID, out["message"], role))
                 self.assertEqual(code, 2)
                 self.assertIn("reply with your form alone", err)
+
+    def test_a_message_to_the_calling_ai_passes(self):
+        # Given: a generator to be sent an item back, and one whose reply is kept with no message
+        # due
+        # When: the orchestrator or a role tells `main`, the calling AI's conversation, what it
+        # will do or what is done
+        # Then: it goes through
+        for due in (True, False):
+            if due:
+                self.stopped()
+            for role in ("turn:up", "turn:generator", "turn:first-user", "turn:learner"):
+                with self.subTest(due=due, role=role):
+                    event = self.send("main", "generator: will write README.md", role)
+                    self.assertEqual(self.hook(pretooluse, event), (0, ""))
 
     def test_a_message_from_another_agent_or_of_no_run_passes(self):
         # Given: a message sent by an agent that is not turn's orchestrator, and one by an

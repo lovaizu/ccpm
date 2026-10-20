@@ -12,6 +12,7 @@
 - Each AI of a run reads only what your CCS gives it and writes nothing but the work, its shell commands included — the work rests on what you decided, and the rest of your repository stays as you left it.
 - A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
+- Each AI of a run tells your step, before it starts, what it will do, how far and how, and as each step ends, what is done and what comes next — a run going a slow or wrong way shows while it can still be stopped, not after its time is spent.
 
 ### Changed
 
