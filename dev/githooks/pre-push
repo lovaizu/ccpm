@@ -1,14 +1,20 @@
 #!/bin/sh
-# Before a push, the checks CI runs, on the commits pushed: `sh dev/check.sh`, and the mutation
-# testing of each plugin the push changes, so a check left unrun is found before the push, not by
-# CI after it. Turned on in a clone by `git config core.hooksPath dev/githooks`, with the tools of
-# dev/requirements.txt and dev/requirements-test-quality.txt first on PATH.
+# Before a push, the checks of what the push changes, on the commits pushed: `sh dev/check.sh` and
+# the mutation testing of the lines changed, for each plugin the push changes, or every plugin where
+# it changes what they all stand on, such as common/ or dev/check.sh; CI checks everything. Turned
+# on in a clone by `git config core.hooksPath dev/githooks`, with the tools of dev/requirements.txt
+# and dev/requirements-test-quality.txt first on PATH.
 set -e
 
 if ! command -v cosmic-ray >/dev/null 2>&1; then
   echo "pre-push: the check tools are not on PATH; make the virtual environment dev/README.md names and put its bin first" >&2
   exit 1
 fi
+all=""
+for tests in dev/*/tests; do
+  plugin="${tests#dev/}"
+  all="$all ${plugin%/tests}"
+done
 zero=0000000000000000000000000000000000000000
 while read -r _ local _ remote; do
   [ "$local" = "$zero" ] && continue
@@ -22,19 +28,23 @@ while read -r _ local _ remote; do
   changed=$(git diff --name-only "$base" "$local" | grep -vE '^(\.rn/|\.writ/|\.claude/rules/|README\.md$|LICENSE$)' || true)
   [ -n "$changed" ] || continue
   plugins=""
-  for config in dev/*/cosmic-ray.toml; do
-    plugin=${config#dev/}
-    plugin=${plugin%/cosmic-ray.toml}
+  for plugin in $all; do
     if printf '%s\n' "$changed" | grep -qE "^(dev/)?$plugin/"; then
       plugins="$plugins $plugin"
     fi
   done
-  # The commits pushed, not what the working tree holds beside them.
+  # A file of no plugin but common, what the plugins share, is one they all stand on.
+  if printf '%s\n' "$changed" | grep -qvE "^(dev/)?($(echo $all | tr ' ' '|'))/" \
+    || printf '%s\n' "$changed" | grep -qE '^(dev/)?common/'; then
+    plugins=$all
+  fi
+  # The commits pushed, not what the working tree holds beside them, in a worktree, as the mutation
+  # testing reads the lines changed from git.
   copy=$(mktemp -d)
-  trap 'rm -rf "$copy"' EXIT
-  git archive "$local" | tar -x -C "$copy"
+  trap 'git worktree remove --force "$copy" 2>/dev/null; rm -rf "$copy"' EXIT
+  git worktree add -q --detach "$copy" "$local"
   # git gives a hook the repository it runs for, such as GIT_DIR, which the git repositories the
   # tests make would take as theirs.
-  (cd "$copy" && unset $(git rev-parse --local-env-vars) && sh dev/check.sh && { [ -z "$plugins" ] || sh dev/mutate.sh $plugins; })
-  rm -rf "$copy"
+  (cd "$copy" && unset $(git rev-parse --local-env-vars) && sh dev/check.sh $plugins && sh dev/mutate.sh --since "$base" $plugins)
+  git worktree remove --force "$copy"
 done

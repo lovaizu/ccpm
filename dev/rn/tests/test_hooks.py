@@ -5,7 +5,6 @@ its own, made in a temporary folder, standing for the user's repository."""
 
 from __future__ import annotations
 
-import atexit
 import contextlib
 import importlib.util
 import io
@@ -27,8 +26,11 @@ PLUGIN = os.path.normpath(
 HOOKS = os.path.join(PLUGIN, "hooks")
 # hooks.json puts rn's scripts on PYTHONPATH, and Python puts the entry's own folder first.
 sys.path[:0] = [HOOKS, os.path.join(PLUGIN, "scripts")]
+# What every plugin's tests stand on.
+sys.path.insert(0, os.path.join(PLUGIN, "..", "dev", "common"))
 
 import pretooluse
+import testing
 from checks import default_branch
 
 # The session's folder, made on the day rn's tests take as today, and another of an older session.
@@ -691,18 +693,9 @@ class HooksJsonTest(HookTest):
 # installed, as on 3.9, the property tests are not defined, and the examples alone run.
 if importlib.util.find_spec("hypothesis") is not None:
     import hypothesis  # pyrefly: ignore[missing-import]
-    import hypothesis.configuration  # pyrefly: ignore[missing-import]
     from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
 
-    # New inputs on every run; a failure prints how to reproduce it, and the input is then kept as
-    # an example. No folder of past inputs is kept, and what Hypothesis caches goes to a temporary
-    # folder removed at the end, so the run leaves nothing behind; the same settings as rn's script
-    # tests, which run in the same process.
-    HOME = tempfile.mkdtemp()
-    atexit.register(shutil.rmtree, HOME)
-    hypothesis.configuration.set_hypothesis_home_dir(HOME)
-    hypothesis.settings.register_profile("rn", database=None, print_blob=True, deadline=None)
-    hypothesis.settings.load_profile("rn")
+    testing.load_hypothesis_profile()
     # Any character a command may hold. Left out, as the user decided, since a hook never receives
     # them: the null character, which no shell command can hold, and the lone surrogates, which
     # the UTF-8 JSON Claude Code hands the hook cannot hold (code.md B-16).

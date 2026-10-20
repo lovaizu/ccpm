@@ -8,56 +8,93 @@ permissions:
   checks: read
 
 jobs:
-  tests:
-    # Users run 3.9; Cosmic Ray and Hypothesis need a newer Python only to test, not to run.
-    strategy:
-      matrix:
-        python: ["3.9", "3.x"]
+  # A push that changes only the session records, the decisions, the rules for the assistant and the
+  # root's README or licence changes nothing the checks check, so where the commit before it passed,
+  # the checks are skipped and `tests` still passes, as main takes a pull request only when `tests`
+  # has passed. A first push of a branch, one whose earlier commit is gone, or one after a commit not
+  # passed, is checked whole, so a failure is never passed on. Each plugin with a
+  # dev/<plugin>/cosmic-ray.toml is mutation-tested in a job of its own, all at once.
+  changed:
     runs-on: ubuntu-latest
+    outputs:
+      check: ${{ steps.changed.outputs.check }}
+      plugins: ${{ steps.changed.outputs.plugins }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
-      # A push that changes only the session records, the decisions, the rules for the assistant and
-      # the root's README or licence changes nothing the checks check, so where the commit before it
-      # passed both jobs, the checks are skipped and the job still passes, as main takes a pull
-      # request only when this job has passed. A first push of a branch, one whose earlier commit is
-      # gone, or one after a commit not passed, is checked whole, so a failure is never passed on.
       - id: changed
         env:
           BEFORE: ${{ github.event.before }}
           GH_TOKEN: ${{ github.token }}
         run: |
           passed=$(gh api "repos/$GITHUB_REPOSITORY/commits/$BEFORE/check-runs" \
-            --jq '[.check_runs[] | select(.name | startswith("tests (")) | select(.conclusion == "success")] | length' \
+            --jq '[.check_runs[] | select(.name == "tests") | select(.conclusion == "success")] | length' \
             2>/dev/null || echo 0)
-          if [ "$passed" = 2 ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null \
+          if [ "$passed" -gt 0 ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null \
             && ! git diff --name-only "$BEFORE" HEAD \
               | grep -qvE '^(\.rn/|\.writ/|\.claude/rules/|README\.md$|LICENSE$)'; then
             echo "check=false" >> "$GITHUB_OUTPUT"
           else
             echo "check=true" >> "$GITHUB_OUTPUT"
           fi
-      - if: steps.changed.outputs.check == 'true'
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+          plugins=$(ls dev/*/cosmic-ray.toml | cut -d/ -f2 | jq -Rnc '[inputs]')
+          echo "plugins=$plugins" >> "$GITHUB_OUTPUT"
+
+  # Users run 3.9; Cosmic Ray and Hypothesis need a newer Python only to test, not to run.
+  check:
+    needs: changed
+    if: needs.changed.outputs.check == 'true'
+    strategy:
+      matrix:
+        python: ["3.9", "3.x"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: ${{ matrix.python }}
-      - if: steps.changed.outputs.check == 'true'
-        run: pip install --require-hashes -r dev/requirements.txt
-      - if: steps.changed.outputs.check == 'true' && matrix.python == '3.x'
+      - run: pip install --require-hashes -r dev/requirements.txt
+      - if: matrix.python == '3.x'
         run: pip install --require-hashes -r dev/requirements-test-quality.txt
-      - if: steps.changed.outputs.check == 'true'
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
       # Claude Code is installed from its lock, scripts off but its own, which only links its binary.
-      - if: steps.changed.outputs.check == 'true'
-        working-directory: dev
+      - working-directory: dev
         run: |
           npm ci --ignore-scripts
           node node_modules/@anthropic-ai/claude-code/install.cjs
           echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
-      - if: steps.changed.outputs.check == 'true'
-        run: sh dev/check.sh
-      - if: steps.changed.outputs.check == 'true' && matrix.python == '3.x'
-        run: sh dev/mutate.sh
+      - run: sh dev/check.sh
+
+  mutation:
+    needs: changed
+    if: needs.changed.outputs.check == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        plugin: ${{ fromJSON(needs.changed.outputs.plugins) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.x"
+      - run: pip install --require-hashes -r dev/requirements.txt -r dev/requirements-test-quality.txt
+      - run: sh dev/mutate.sh ${{ matrix.plugin }}
+
+  # What main requires: every job passed, or the checks skipped as above.
+  tests:
+    needs: [changed, check, mutation]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          CHANGED: ${{ needs.changed.result }}
+          CHECK: ${{ needs.changed.outputs.check }}
+          CHECKED: ${{ needs.check.result }}
+          MUTATED: ${{ needs.mutation.result }}
+        run: |
+          [ "$CHANGED" = success ] || exit 1
+          [ "$CHECK" = false ] || { [ "$CHECKED" = success ] && [ "$MUTATED" = success ]; }

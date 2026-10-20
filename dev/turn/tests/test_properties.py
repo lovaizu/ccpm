@@ -8,19 +8,16 @@ import unittest
 
 # Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
 try:
-    from hypothesis import given, settings  # pyrefly: ignore[missing-import]
+    from hypothesis import given  # pyrefly: ignore[missing-import]
     from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import RepoTest, forms, records, run, shell
+from helpers import RepoTest, forms, records, run, shell, testing
 
 call = run.call
 
-# Hypothesis fixes its inputs where the CI variable is set; here they are new on every run, CI
-# included, and a failure prints the input that made it.
-settings.register_profile("ci", derandomize=False, deadline=None, database=None, print_blob=True)
-settings.load_profile("ci" if os.environ.get("CI") else "default")
+testing.load_hypothesis_profile()
 
 FORMS = (
     forms.CHECK,

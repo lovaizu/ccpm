@@ -10,8 +10,8 @@ Every check CI runs on a push, the linter, the formatter, the type checker, and 
 
 Every tool the checks install is held to the hashes of the files it was locked with, so a version replaced on PyPI or npm after it was locked does not install: each `dev/requirements*.txt` is made from its `.in` by the `pip-compile` command at its top, `requirements.txt` on Python 3.9 and `requirements-test-quality.txt` on the newest, and Claude Code comes from `dev/package-lock.json`.
 
-On the newest Python, CI also installs `dev/requirements-test-quality.txt`, which runs the property tests in `sh dev/check.sh`, and runs `sh dev/mutate.sh`, the mutation testing of each plugin with a `dev/<plugin>/cosmic-ray.toml`. `sh dev/mutate.sh <plugin>` tests that plugin alone, and CI tests them all.
+On the newest Python, CI also installs `dev/requirements-test-quality.txt`, which runs the property tests in `sh dev/check.sh`, many inputs each in CI and few elsewhere, and runs `sh dev/mutate.sh`, the mutation testing of each plugin with a `dev/<plugin>/cosmic-ray.toml`, each plugin in a job of its own. `sh dev/check.sh <plugin>` and `sh dev/mutate.sh <plugin>` check that plugin alone, and `sh dev/mutate.sh --since <commit> <plugin>` only the mutants on the lines changed since that commit.
 
-Before each push, `dev/githooks/pre-push` runs `sh dev/check.sh` and the mutation testing of each plugin the push changes, on the commits pushed, and stops the push on a failure. It is turned on once in a clone by `git config core.hooksPath dev/githooks`, and needs the virtual environment's bin first on PATH.
+Before each push, `dev/githooks/pre-push` runs both on the commits pushed, for each plugin the push changes, or every plugin where it changes what they all stand on, such as `common/`, the mutation testing on the lines changed alone, and stops the push on a failure. It is turned on once in a clone by `git config core.hooksPath dev/githooks`, and needs the virtual environment's bin first on PATH.
 
 The rules for building, testing, trying and releasing a plugin are in [.claude/rules/plugin.md](../.claude/rules/plugin.md).

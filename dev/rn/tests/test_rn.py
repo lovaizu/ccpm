@@ -6,7 +6,6 @@ checklists."""
 
 from __future__ import annotations
 
-import atexit
 import contextlib
 import datetime
 import importlib.util
@@ -14,9 +13,7 @@ import io
 import json
 import os
 import runpy
-import shutil
 import sys
-import tempfile
 import unittest
 from typing import Any
 from unittest import mock
@@ -1003,18 +1000,9 @@ class CommandTest(RepoTest):
 # installed, as on 3.9, the property tests are not defined, and the examples alone run.
 if importlib.util.find_spec("hypothesis") is not None:
     import hypothesis  # pyrefly: ignore[missing-import]
-    import hypothesis.configuration  # pyrefly: ignore[missing-import]
     from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
 
-    # New inputs on every run; a failure prints how to reproduce it, and the input is then kept as
-    # an example. No folder of past inputs is kept, and what Hypothesis caches goes to a temporary
-    # folder removed at the end, so the run leaves nothing behind. No input is left out: there is
-    # no deadline only because each example runs git, whose time varies from machine to machine.
-    HOME = tempfile.mkdtemp()
-    atexit.register(shutil.rmtree, HOME)
-    hypothesis.configuration.set_hypothesis_home_dir(HOME)
-    hypothesis.settings.register_profile("rn", database=None, print_blob=True, deadline=None)
-    hypothesis.settings.load_profile("rn")
+    testing.load_hypothesis_profile()
     ALLOWED = "abcdefghijklmnopqrstuvwxyz0123456789-"
     # Any value a front matter line can hold: every character but the line breaks `splitlines`
     # splits at, which end the line, and the lone surrogates, which a UTF-8 file cannot hold. No

@@ -9,7 +9,7 @@ import unittest
 
 # Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
 try:
-    from hypothesis import given, settings  # pyrefly: ignore[missing-import]
+    from hypothesis import given  # pyrefly: ignore[missing-import]
     from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
@@ -21,11 +21,11 @@ sys.path.insert(0, os.path.normpath(HOOKS))
 
 import shell
 
-# A failure prints the input that made it.
-settings.register_profile(
-    "common", derandomize=False, deadline=None, database=None, print_blob=True
-)
-settings.load_profile("common")
+sys.path.insert(0, os.path.join(os.path.normpath(HOOKS), "..", "..", "dev", "common"))
+
+import testing
+
+testing.load_hypothesis_profile()
 
 WORDS = st.lists(st.text(min_size=1), min_size=1, max_size=5)
 NAMES = st.text(string.ascii_letters + string.digits + "._/", min_size=1, max_size=12).filter(

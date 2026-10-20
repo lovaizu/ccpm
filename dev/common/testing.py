@@ -93,3 +93,21 @@ class GitTest(FolderTest):
         shutil.copytree(MADE[name], place, symlinks=True)
         os.chdir(place)
         return place
+
+
+def load_hypothesis_profile() -> None:
+    """Loads Hypothesis's settings, once a property test has imported it: new inputs on every run,
+    CI included, a failure printing how to reproduce it, nothing kept after the run, and no
+    deadline, as an example's time varies from machine to machine; few inputs while a change is
+    made and many in CI, the dev and ci profiles of Hypothesis's settings guide, or the profile
+    HYPOTHESIS_PROFILE names, such as dev for mutation testing, which runs the tests once for each
+    mutant."""
+    import hypothesis  # pyrefly: ignore[missing-import]
+    import hypothesis.configuration  # pyrefly: ignore[missing-import]
+
+    hypothesis.configuration.set_hypothesis_home_dir(tempfile.mkdtemp(dir=KEPT))
+    kept = {"derandomize": False, "database": None, "print_blob": True, "deadline": None}
+    hypothesis.settings.register_profile("dev", max_examples=10, **kept)
+    hypothesis.settings.register_profile("ci", max_examples=1000, **kept)
+    default = "ci" if os.environ.get("CI") else "dev"
+    hypothesis.settings.load_profile(os.environ.get("HYPOTHESIS_PROFILE", default))

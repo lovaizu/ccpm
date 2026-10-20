@@ -157,8 +157,8 @@ Scope: whole
 When the behavior a test checks is broken in the code, does the maintainer learn of it from that
 test failing?
 
-Look at: mutation testing on every run of the checks, which makes each small change to the code a
-fault could, such as a comparison, an operator or a value replaced, and runs the tests on each; a
+Look at: mutation testing, of the lines changed on every change and of the whole code in CI, which
+makes each small change to the code a fault could, such as a comparison, an operator or a value replaced, and runs the tests on each; a
 mutant no test fails on, a survivor, fails.
 
 Why: a test that does not fail when its behavior breaks looks the same as one that works, and lets
@@ -241,8 +241,8 @@ Scope: whole
 For each behavior over inputs of a kind, such as any text, path or list, can the maintainer learn
 from a test that it holds for the inputs no example names?
 
-Look at: property-based testing of each such behavior, on every run of the checks, which makes many
-inputs of the kind and checks a property every one must have, such as a parse giving back what was
+Look at: property-based testing of each such behavior, on every run of the checks, few inputs on every
+change and many in CI, which makes inputs of the kind and checks a property every one must have, such as a parse giving back what was
 written; with new inputs on every run, CI included, so that inputs not yet tried are met, and each
 input that fails reproduced from what the failure prints, not run again, and kept as an example.
 
