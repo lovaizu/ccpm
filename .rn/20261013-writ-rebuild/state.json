@@ -89,6 +89,18 @@
     },
     {
       "fact": "428ea38 took the execute bit off dev/githooks/pre-push, as sed -i rewrote it, so git skipped the hook on the pushes of 428ea38 and 7e49e47, saying so only as a hint; the bit is back; after editing a file with sed -i, check its mode with git diff"
+    },
+    {
+      "fact": "T4 run stopped by me in its round 2 (2026-10-20): its main asked whether to change how the guard stops, as no move gets round the check (decisions/rn/hooks.decisions.md) cannot be met by listing shell commands: signoff.py 416 lines, each round found new bypasses ({ }, if, nice, awk -i inplace, rsync, python3 -X); its options: A allow only the exact `python3 <rn.py> state …` form to touch the session folder (recommended by it), B keep going, C weaken the decision to the moves a conductor would make; its work kept in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t4 (signoff.py, events.py, hooks.json, test_hooks.py changed), record /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t4.jsonl"
+    },
+    {
+      "fact": "T3 run in its round 2 (background, may outlive the session): round 1 left B-7, prompt B-10, B-26, usability B-3 without Good for `env -C<folder>` with no space; round 2 reads wrapper options as getopt does (-C<folder>, -iC, --chdir=, --ch, -S), check.sh 100%; shell.py grew to ~370 lines; its questions: 1 add bypasses beyond the CCS ways, 2 B-25 for a guard of fixed scope, 3 prompt.md text items answered yes by decisions/rn/hooks.decisions.md:25-27 (settle myself: the decision answers it); work in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3, record /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3.jsonl, result /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3/.tasks/result.json"
+    },
+    {
+      "fact": "turn lessons seen: a CCS giving a whole checklist where decisions answer some items yes made T3 spend rounds 3 and 4 on nothing; the first user named the deciding decision yet held the item short, and gave Good while writing a bypass remained"
+    },
+    {
+      "fact": "CodeQL (GitHub default setup, not in .github/workflows) fails on every push since c4a2223 (12:15): Analyze (javascript-typescript) finds no JS/TS (only dev/package.json, tests.yml) and stops; it passed at c907be8 (11:30) though no JS/TS changed between; why it passed before is not yet found; gh api code-scanning/default-setup is 403 to this token, so the setting needs the user or admin"
     }
   ],
   "semantic_gist": [
@@ -109,20 +121,26 @@
     },
     {
       "gist": "a CCS names each file a work is, never a folder, and every file the change touches, as turn lets a role write only what the CCS names"
+    },
+    {
+      "gist": "a CCS gives only the checklist items its work answers, the rest settled by the decisions it names"
     }
   ],
   "focal_entities": [
     {
-      "task": "T3 turn run: ccs/t3.json, $TURN_RUNS/t3"
+      "task": "ask the user, one at a time: 1 shared/ or common/ for the shared code (recommended shared; rename after T3 is merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md); 2 how the guards stop (T3 and T4 both): T4 main options A/B/C above, judge them first against best practice (a guard against an AI's mistakes, not an adversary)"
     },
     {
-      "task": "T4 turn run: ccs/t4.json, $TURN_RUNS/t4"
+      "task": "CodeQL: find why javascript-typescript passed at c907be8; likely fix the default setup's languages to actions and python, which the user does in repository settings"
     },
     {
-      "task": "merge T3 and T4 results, read each against its purpose, then T5"
+      "task": "when T3 ends: read its result, check each Good at its lines, try env -C<folder> and env -S myself, settle question 3 by the decision, merge its work"
     },
     {
-      "task": "the T3 and T4 runs used the old mutate.sh: run mutate.sh rn common turn whole on their merged result"
+      "task": "T4: after the stop decision, write ccs/t4.json again naming only the prompt.md items the decision has the hooks answer, and run it on T3's shell.py"
+    },
+    {
+      "task": "after both: run mutate.sh rn common turn whole, as the runs used the old mutate.sh"
     }
   ],
   "relational_map": [
@@ -157,7 +175,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "watch the T3 and T4 runs"
+      "next": "ask question 1 (shared or common), then question 2; read T3's result"
     }
   ],
   "uncertainty_signal": [
