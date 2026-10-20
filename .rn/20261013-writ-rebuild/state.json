@@ -125,6 +125,9 @@
     },
     {
       "fact": "the user decided (2026-10-20): no model named in rn's skills, turn's agents or the trial stand-ins, each running on the user's model (plugin agents cannot set permissionMode either, per the sub-agents docs); trials on Opus 5.5, Claude Code's default on every plan (model-config docs); rn's README recommends a Docker Sandbox with bypassPermissions; design.md B-12 asks for the users' model; the released rn 0.9.0 and turn 0.1.0 named no model, so no changelog line"
+    },
+    {
+      "fact": "before /clear (2026-10-20 ~23:55): T3 run 4 (allowlist, turn with the change-from-existing generator, still auto and model opus, as started before those changes) and T4 run 3 (allowlist, its own test file) run in the background as claude -p, which outlives the conversation; records /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3.jsonl and t4.jsonl, clones /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3 and t4, results there at .tasks/result.json; Claude Code sessions 0feac21f-5b52-441c-a063-dc31536a18f3 (T3) and d7df36a6-d847-4077-a3fb-8dca91bb3c36 (T4) under ~/.claude/projects/-tmp-claude-1000--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild-b596bf79-a55d-4fa9-9eb6-15b30b5af888-scratchpad-t3 and -t4; T3 run 2 baseline per role (python3 /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/roletime.py <session folder>): generator 35.1m, first user 18.6m, evaluator 5.3m, learner 8.1m, round 2 generator 16.0m, whole 85.7m+"
     }
   ],
   "semantic_gist": [
@@ -155,19 +158,19 @@
   ],
   "focal_entities": [
     {
+      "task": "see whether T3 and T4 still run (ps aux | grep \"claude -p\"); watch each with Monitor on its JSONL; when each ends: read its result, check each Good at its lines, try the stopped forms myself, fix a few lines by hand where that is all, merge into writ-rebuild (the clone holds the changes uncommitted), check.sh and mutate.sh --since"
+    },
+    {
+      "task": "report each role's working minutes of T3 run 4 beside T3 run 2, as the user asked, with roletime.py"
+    },
+    {
       "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
     },
     {
       "task": "CodeQL: find why javascript-typescript passed at c907be8; likely fix the default setup's languages to actions and python, which the user does in repository settings"
     },
     {
-      "task": "T4: after the stop decision, write ccs/t4.json again naming only the prompt.md items the decision has the hooks answer, and run it on T3's shell.py"
-    },
-    {
       "task": "after both: run mutate.sh rn common turn whole, as the runs used the old mutate.sh"
-    },
-    {
-      "task": "when T3 and T4 end: read each result, check each Good at its lines, try the stopped forms myself, merge both; compare each role's working minutes with T3 run 2 (scratchpad roletime.py)"
     }
   ],
   "relational_map": [
@@ -205,7 +208,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "watch T3 and T4"
+      "next": "take up T3 and T4 results"
     }
   ],
   "uncertainty_signal": [
