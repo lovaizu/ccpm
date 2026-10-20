@@ -1,0 +1,40 @@
+#!/bin/sh
+# Before a push, the checks CI runs, on the commits pushed: `sh dev/check.sh`, and the mutation
+# testing of each plugin the push changes, so a check left unrun is found before the push, not by
+# CI after it. Turned on in a clone by `git config core.hooksPath dev/githooks`, with the tools of
+# dev/requirements.txt and dev/requirements-test-quality.txt first on PATH.
+set -e
+
+if ! command -v cosmic-ray >/dev/null 2>&1; then
+  echo "pre-push: the check tools are not on PATH; make the virtual environment dev/README.md names and put its bin first" >&2
+  exit 1
+fi
+zero=0000000000000000000000000000000000000000
+while read -r _ local _ remote; do
+  [ "$local" = "$zero" ] && continue
+  if [ "$remote" = "$zero" ]; then
+    base=$(git merge-base "$local" origin/main)
+  else
+    base=$remote
+  fi
+  # What no check reads, as CI skips it: the session records, the decisions, the rules for the
+  # assistant, and the root's README and licence.
+  changed=$(git diff --name-only "$base" "$local" | grep -vE '^(\.rn/|\.writ/|\.claude/rules/|README\.md$|LICENSE$)' || true)
+  [ -n "$changed" ] || continue
+  plugins=""
+  for config in dev/*/cosmic-ray.toml; do
+    plugin=${config#dev/}
+    plugin=${plugin%/cosmic-ray.toml}
+    if printf '%s\n' "$changed" | grep -qE "^(dev/)?$plugin/"; then
+      plugins="$plugins $plugin"
+    fi
+  done
+  # The commits pushed, not what the working tree holds beside them.
+  copy=$(mktemp -d)
+  trap 'rm -rf "$copy"' EXIT
+  git archive "$local" | tar -x -C "$copy"
+  # git gives a hook the repository it runs for, such as GIT_DIR, which the git repositories the
+  # tests make would take as theirs.
+  (cd "$copy" && unset $(git rev-parse --local-env-vars) && sh dev/check.sh && { [ -z "$plugins" ] || sh dev/mutate.sh $plugins; })
+  rm -rf "$copy"
+done
