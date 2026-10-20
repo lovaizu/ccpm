@@ -10,11 +10,10 @@ SHAPE = (
     '{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "receiver": "<kind>",'
     ' "use": "<kind>", "has": "<kind>"}, "result": "<path>"}'
 )
-REQUIRED = ("work", "checklist", "receiver")
 # The kinds whose entries are paths, kept without a trailing slash or a `./`, so a file inside a
 # folder named `docs/` is found within `docs`.
 PATHS = ("work", "checklist", "has")
-KINDS = REQUIRED + ("use", "has")
+KINDS = ("work", "checklist", "receiver", "use", "has")
 # An item of a checklist is a heading of the form `### B-1: <title>`, outside a fence, with the
 # line under it saying where in the work it is answered.
 ITEM = re.compile(r"^### ([A-Z]+-\d+): ")
@@ -33,7 +32,7 @@ def parse(text: str) -> dict[str, Any]:
     except ValueError:
         call = None
     if not isinstance(call, dict):
-        raise Stop(f"turn: the call is not JSON; give it as {SHAPE}, the last two kinds optional")
+        raise Stop(f"turn: the call is not JSON; give it as {SHAPE}")
     return call
 
 
@@ -56,9 +55,9 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
     for name in sorted(set(kind) - set(KINDS)):
         raise Stop(
             f'turn: the call names the kind of "{name}", which turn does not take; it takes'
-            ' "work", "checklist" and "receiver", and may take "use" and "has"'
+            ' "work", "checklist", "receiver", "use" and "has"'
         )
-    for name in REQUIRED:
+    for name in KINDS:
         if name not in kind:
             raise Stop(f'turn: the call names no kind for "{name}"; give it as {SHAPE}')
     for name, value in kind.items():
@@ -67,10 +66,10 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
     ccs = read_ccs(call["ccs"])
     run: dict[str, Any] = {"call": call}
     for name in KINDS:
-        values = entries(ccs, kind[name]) if name in kind else []
+        values = entries(ccs, kind[name])
         if name in PATHS:
             values = [os.path.normpath(v) for v in values]
-        if name in REQUIRED and not values:
+        if not values:
             raise Stop(
                 f'turn: {call["ccs"]} has no entry of the kind "{kind[name]}", which the call'
                 f' names for "{name}"; add one to the CCS, or name the kind it uses'

@@ -108,8 +108,7 @@ class TestMade(ReadTest):
         # Then: the first user is to be started with the work, what the receiver has, who the
         # receiver is and what for, and the checklists, and not the CCS or the claim, with no
         # reading of the orchestrator between
-        call = dict(CALL, kind=dict(CALL["kind"], use="purpose", has="page"))
-        self.started(call)
+        self.started()
         out = self.made(GOOD, WAITS)
         self.assertEqual(out["agent"], "turn:first-user")
         self.assertEqual(

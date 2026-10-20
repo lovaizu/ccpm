@@ -74,7 +74,13 @@ CCS = {
 }
 CALL = {
     "ccs": ".tasks/readme.json",
-    "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience"},
+    "kind": {
+        "work": "deliverable",
+        "checklist": "checklist",
+        "receiver": "audience",
+        "use": "purpose",
+        "has": "page",
+    },
     "result": ".tasks/readme-result.json",
 }
 GOOD = {

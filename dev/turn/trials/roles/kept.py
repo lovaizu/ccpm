@@ -29,6 +29,7 @@ CALL = {
         "work": "deliverable",
         "checklist": "checklist",
         "receiver": "audience",
+        "use": "purpose",
         "has": "code",
     },
 }

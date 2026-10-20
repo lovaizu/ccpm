@@ -30,7 +30,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
 CALL = {
     "ccs": ".tasks/ccs.json",
     "result": ".tasks/result.json",
-    "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience"},
+    "kind": {
+        "work": "deliverable",
+        "checklist": "checklist",
+        "receiver": "audience",
+        "use": "purpose",
+        "has": "has",
+    },
 }
 STEP = f"""Start the `turn:up` agent in the background with
 {json.dumps(CALL)}

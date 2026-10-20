@@ -22,7 +22,7 @@ USAGE = (
 def call_with(**change):
     call = copy.deepcopy(CALL)
     for key, value in change.items():
-        if key in call["kind"] or key in ("use", "has"):
+        if key in call["kind"]:
             if value is None:
                 del call["kind"][key]
             else:
@@ -106,7 +106,7 @@ class TestUsage(RepoTest):
         # When: the run is started, the generator's input asked for and the check given
         # Then: each is printed with the names as they are written
         os.rename("checklists/readme.md", "checklists/読む.md")
-        ccs = dict(CCS, retrieved_artifacts=[{"checklist": "checklists/読む.md"}])
+        ccs = dict(CCS, retrieved_artifacts=[{"checklist": "checklists/読む.md"}, {"page": "docs"}])
         ccs["focal_entities"] = [{"deliverable": "はじめに.md"}, CCS["focal_entities"][1]]
         self.write_json(CALL["ccs"], ccs)
         result = ".tasks/結果.json"
@@ -221,16 +221,15 @@ class TestStart(RepoTest):
         # When: the run is started
         # Then: the run keeps the work, what the receiver has and the checklists as what the first
         # user and the evaluator may read, and not the CCS or the decisions
-        self.turn("start", json.dumps(call_with(has="page")))
+        self.turn("start", json.dumps(CALL))
         running = self.read_json(CALL["result"])["running"]
         self.assertEqual(running["shown"], ["README.md", "docs/start.md", "checklists/readme.md"])
 
-    def test_the_optional_kinds_are_taken_when_named(self):
-        # Given: a call that also names the kinds of the use and of what the receiver has
+    def test_the_use_and_what_the_receiver_has_are_taken(self):
+        # Given: a call naming the kinds of the use and of what the receiver has
         # When: the run is started
         # Then: the run keeps each kind's entries
-        call = call_with(use="purpose", has="page")
-        self.started(call)
+        self.started(CALL)
         running = self.read_json(CALL["result"])["running"]
         self.assertEqual(running["use"], ["to try it on their own files"])
         self.assertEqual(running["has"], ["docs/start.md"])
@@ -240,8 +239,10 @@ class TestStart(RepoTest):
         # for a maintainer
         # When: the run is started
         # Then: the run keeps the folder as what the readers may read
-        self.write_json(CALL["ccs"], dict(CCS, goal_orientation=[{"page": "docs"}]))
-        self.started(call_with(has="page"))
+        self.write_json(
+            CALL["ccs"], dict(CCS, goal_orientation=CCS["goal_orientation"] + [{"page": "docs"}])
+        )
+        self.started(CALL)
         running = self.read_json(CALL["result"])["running"]
         self.assertEqual(running["has"], ["docs", "docs/start.md"])
         self.assertIn("docs", running["shown"])
@@ -251,8 +252,10 @@ class TestStart(RepoTest):
         # When: the run is started
         # Then: the run keeps the folder without the slash, so the files inside it are found within
         # it, as what the readers and the roles may read
-        self.write_json(CALL["ccs"], dict(CCS, goal_orientation=[{"page": "docs/"}]))
-        self.started(call_with(has="page"))
+        self.write_json(
+            CALL["ccs"], dict(CCS, goal_orientation=CCS["goal_orientation"] + [{"page": "docs/"}])
+        )
+        self.started(CALL)
         running = self.read_json(CALL["result"])["running"]
         self.assertEqual(running["has"], ["docs", "docs/start.md"])
         self.assertIn("docs", running["given"])
@@ -298,19 +301,22 @@ class TestStartStops(RepoTest):
         call["kind"]["reader"] = "audience"
         self.stops(call, '"reader"', '"receiver"')
 
-    def test_a_call_without_a_required_kind_stops(self):
-        # Given: a call that leaves out the kind of the work, the checklist or the receiver
+    def test_a_call_without_a_kind_stops(self):
+        # Given: a call that leaves out the kind of the work, the checklist, the receiver, what the
+        # receiver uses the work for or what they have with it
         # When: the run is started
         # Then: it stops, naming the kind to give
-        for kind in ("work", "checklist", "receiver"):
+        for kind in ("work", "checklist", "receiver", "use", "has"):
             with self.subTest(kind=kind):
-                self.stops(call_with(**{kind: None}), f'"{kind}"')
+                self.stops(call_with(**{kind: None}), f'no kind for "{kind}"')
 
-    def test_a_required_kind_without_an_entry_stops(self):
-        # Given: a call naming a kind the CCS has no entry of
+    def test_a_kind_without_an_entry_stops(self):
+        # Given: a call naming, for each of its kinds, one the CCS has no entry of
         # When: the run is started
         # Then: it stops, naming the kind and the CCS
-        self.stops(call_with(receiver="reader"), '"reader"', CALL["ccs"])
+        for kind in ("work", "checklist", "receiver", "use", "has"):
+            with self.subTest(kind=kind):
+                self.stops(call_with(**{kind: "reader"}), '"reader"', CALL["ccs"], f'"{kind}"')
 
     def test_a_ccs_that_is_missing_or_not_a_ccs_stops(self):
         # Given: a CCS that is not there, not JSON, or not parts of entries of one kind each, the
@@ -373,7 +379,7 @@ class TestStartStops(RepoTest):
         # When: the run is started
         # Then: it stops, naming the file
         os.remove("docs/start.md")
-        self.stops(call_with(has="page"), "docs/start.md")
+        self.stops(CALL, "docs/start.md")
 
     def test_kinds_that_are_not_an_object_stop(self):
         # Given: a call whose kinds are a list, not an object of names

@@ -564,7 +564,7 @@ class TestReads(HookTest):
         # Given: a first user of a run whose receiver has a page with the work
         # When: it reads the work, the page or the checklist
         # Then: it goes through
-        self.given_prompt(ID, self.first_user(kind=dict(CALL["kind"], has="page")))
+        self.given_prompt(ID, self.first_user())
         for path in ("README.md", "docs/start.md", "checklists/readme.md"):
             with self.subTest(path=path):
                 self.passes(pretooluse, self.tool("turn:first-user", "Read", file_path=path))
@@ -577,7 +577,7 @@ class TestReads(HookTest):
         for path in (CALL["ccs"], "notes/readme.decisions.md"):
             with self.subTest(path=path):
                 event = self.tool("turn:first-user", "Read", file_path=path)
-                self.stops(pretooluse, event, "README.md, checklists/readme.md")
+                self.stops(pretooluse, event, "README.md, docs/start.md, checklists/readme.md")
 
     def test_a_learner_reads_the_records_of_its_run_alone(self):
         # Given: a learner of a run whose first round left an item without Good
@@ -1007,7 +1007,7 @@ class TestWholeReads(HookTest):
         # When: it ends with its reply
         # Then: it is kept going, naming the page
         os.remove(CALL["result"])
-        prompt = self.first_user(kind=dict(CALL["kind"], has="page"))
+        prompt = self.first_user()
         part = ("Read", {"file_path": "docs/start.md", "limit": 1})
         code, err = self.replied(
             "turn:first-user", prompt, {"items": FIRST_READ}, *READ_SHOWN, part
@@ -1021,7 +1021,7 @@ class TestWholeReads(HookTest):
         # after the page
         # When: it ends with its reply
         # Then: it ends, as only what the receiver has is to be read whole once opened
-        prompt = self.first_user(kind=dict(CALL["kind"], has="page"))
+        prompt = self.first_user()
         parts = [("Read", {"file_path": p, "limit": 1}) for p in ("aa.md", "zz.md")]
         reply = {"items": FIRST_READ}
         self.assertEqual(
@@ -1033,7 +1033,7 @@ class TestWholeReads(HookTest):
         # and the checklist whole and did not open the page
         # When: it ends with its reply
         # Then: it ends, as the receiver opens only what they need of what they have
-        prompt = self.first_user(kind=dict(CALL["kind"], has="page"))
+        prompt = self.first_user()
         self.assertEqual(self.replied("turn:first-user", prompt, {"items": FIRST_READ}), (0, ""))
 
     def test_a_reader_of_no_run_going_ends_without_reading(self):
