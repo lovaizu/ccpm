@@ -177,6 +177,9 @@
     },
     {
       "task": "after T4: for each of its 12 first survivors, find which code.md test design step should have given the test that kills it, and bring a change to code.md to the user"
+    },
+    {
+      "task": "CI mutation (turn) took 10m51s at 2e1b4d1 (run 39442675420), against 141s locally; find the cause and fix it"
     }
   ],
   "relational_map": [
