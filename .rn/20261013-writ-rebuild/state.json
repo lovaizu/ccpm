@@ -188,7 +188,7 @@
       "watch": "watch each turn run while it goes, with Monitor on the runner's JSONL, not only its end, as the user asked"
     },
     {
-      "runner": "run-turn.sh sets CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS so claude -p waits for turn:up"
+      "runner": "run-turn.sh sets CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS so claude -p waits for turn:up, and runs with bypassPermissions, as the user works in a Docker sandbox for it (2026-10-20); T3 run 4 and T4 run 3 started on auto"
     },
     {
       "measure": "read how long each check and run takes, and fix a slow one at its cause before going on, as the user asked"

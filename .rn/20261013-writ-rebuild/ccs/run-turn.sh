@@ -10,7 +10,7 @@ cp "$ccs" "$place/.tasks/ccs.json"
 cd "$place"
 export PATH="$S/venv/bin:$PATH"
 export CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=7200000
-claude -p --plugin-dir "$place/turn" --permission-mode auto --output-format stream-json --verbose \
+claude -p --plugin-dir "$place/turn" --permission-mode bypassPermissions --output-format stream-json --verbose \
 'Start the `turn:up` agent in the background with
 {"ccs": ".tasks/ccs.json", "result": ".tasks/result.json", "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience", "use": "purpose", "has": "has"}}
 When it returns, check each Good against its lines, and end with the result: each item not Good and each question, with turn'"'"'s recommendation. Do not commit or push.' > "$S/$name.jsonl"
