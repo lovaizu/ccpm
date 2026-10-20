@@ -1,31 +1,74 @@
 {
   "episodic_trace": [
-    {"fact": "turn's agents now tell `main` what they will do, how far and how before work, and what is done and next after each step (f402856); tried on rn's hooks: the generator's plan named `dev/mutate.sh rn` and the first guard only before it began, as the user wanted"},
-    {"fact": "three runs of T2 went wrong from my CCS: no check tools installed, `dev/mutate.sh` not named, and no `has`, so the first user could not run coverage or mutation; all could be seen by reading the CCS before running, as the user said"},
-    {"fact": "the user decided: turn's call requires `use` and `has`, and turn's orchestrator first checks the CCS holds everything the run needs (389027a); T7 agreed and committed (38c9550)"}
+    {
+      "fact": "turn's agents now tell `main` what they will do, how far and how before work, and what is done and next after each step (f402856); tried on rn's hooks: the generator's plan named `dev/mutate.sh rn` and the first guard only before it began, as the user wanted"
+    },
+    {
+      "fact": "three runs of T2 went wrong from my CCS: no check tools installed, `dev/mutate.sh` not named, and no `has`, so the first user could not run coverage or mutation; all could be seen by reading the CCS before running, as the user said"
+    },
+    {
+      "fact": "the user decided: turn's call requires `use` and `has`, and turn's orchestrator first checks the CCS holds everything the run needs (389027a); T7 agreed and committed (38c9550)"
+    },
+    {
+      "fact": "turn now requires use and has and checks the CCS first, committed with dev/check.sh at 100% and dev/mutate.sh turn at 0 survivors; rn.py's CCS names neither, so rn's calls to turn stop at start until rn.py and /rn:up are changed"
+    }
   ],
   "semantic_gist": [
-    {"gist": "before each turn run, read the CCS as its receiver: what they have, what they run, whether the environment has it; decide what the sources settle without asking"}
+    {
+      "gist": "before each turn run, read the CCS as its receiver: what they have, what they run, whether the environment has it; decide what the sources settle without asking"
+    }
   ],
   "focal_entities": [
-    {"task": "turn requiring use and has: code, tests, up.md step 2 and CHANGELOG were being made by a worker, uncommitted: turn/scripts/call.py, turn/agents/up.md, turn/CHANGELOG.md, dev/turn/tests/{helpers,test_hooks,test_next,test_start}.py, dev/turn/trials/flow/{flow.py,task/ccs.json}; read them against 389027a, finish, pass dev/check.sh and dev/mutate.sh turn, commit"},
-    {"task": "T2 again through turn, the CCS with has \".\", use, dev/mutate.sh and dev/check.sh named, checked by reading before the run"},
-    {"task": "rn.py ccs and /rn:up's steps given use and has, and /rn:up passing turn's messages on to the user, made through turn"},
-    {"question": "the flow trial (dev/rn/trials/flow/): its code out of unit, mutation and property tests too, the trial run being its check (recommended), or tested like rn's scripts; asked, not answered"}
+    {
+      "task": "T2 again through turn, the CCS with has \".\", use, dev/mutate.sh and dev/check.sh named, checked by reading before the run"
+    },
+    {
+      "task": "rn.py ccs and /rn:up's steps given use and has, and /rn:up passing turn's messages on to the user, made through turn"
+    },
+    {
+      "question": "the flow trial (dev/rn/trials/flow/): its code out of unit, mutation and property tests too, the trial run being its check (recommended), or tested like rn's scripts; asked, not answered"
+    }
   ],
-  "relational_map": [{"T2": "AC1"}],
-  "goal_orientation": [{"plan": ".rn/20261013-writ-rebuild/steering.md"}],
+  "relational_map": [
+    {
+      "T2": "AC1"
+    }
+  ],
+  "goal_orientation": [
+    {
+      "plan": ".rn/20261013-writ-rebuild/steering.md"
+    }
+  ],
   "constraints": [
-    {"rules": ".claude/rules/plugin.md"},
-    {"environment": "the check tools are not installed on this machine; make a venv from dev/requirements.txt and dev/requirements-test-quality.txt with /opt/homebrew/bin/python3.12 and put its bin first on PATH for dev/check.sh, dev/mutate.sh and each turn run"}
+    {
+      "rules": ".claude/rules/plugin.md"
+    },
+    {
+      "environment": "the check tools are not installed on this machine; make a venv from dev/requirements.txt and dev/requirements-test-quality.txt with /opt/homebrew/bin/python3.12 and put its bin first on PATH for dev/check.sh, dev/mutate.sh and each turn run"
+    }
   ],
   "predictive_cue": [
-    {"next": "finish turn's use/has change and commit; then T2 through turn with a CCS read first; report to the user only when something ends, goes wrong or needs their answer"}
+    {
+      "next": "rn.py ccs and /rn:up given use and has through turn, then T2 through turn with a CCS read first; report to the user only when something ends, goes wrong or needs their answer"
+    }
   ],
-  "uncertainty_signal": [{"open": "AC1"}, {"open": "AC2"}],
+  "uncertainty_signal": [
+    {
+      "open": "AC1"
+    },
+    {
+      "open": "AC2"
+    }
+  ],
   "retrieved_artifacts": [
-    {"decisions": ".writ/decisions/rn/hooks.decisions.md"},
-    {"report": ".rn/20261013-writ-rebuild/decisions/report.decisions.md"},
-    {"runner": "a script that clones writ-rebuild, copies a CCS into .tasks/ and runs `claude -p` with --plugin-dir <clone>/turn and --permission-mode auto, the tools venv first on PATH; it was in this session's scratchpad and goes with it"}
+    {
+      "decisions": ".writ/decisions/rn/hooks.decisions.md"
+    },
+    {
+      "report": ".rn/20261013-writ-rebuild/decisions/report.decisions.md"
+    },
+    {
+      "runner": "a script that clones writ-rebuild, copies a CCS into .tasks/ and runs `claude -p` with --plugin-dir <clone>/turn and --permission-mode auto, the tools venv first on PATH; it was in this session's scratchpad and goes with it"
+    }
   ]
 }
