@@ -161,6 +161,12 @@
     },
     {
       "fact": "hooks agreed with the user (2026-10-21), as the official docs hold (hooks-guide.md:9, hooks.md:434, permissions.md:252): a step and its hook are made as one pair; a step told clearly still drifts, so its hook notices the drift and says the right way, the step itself; not aiming at perfection (the forms usually written, a hard boundary left to GitHub, the sandbox, permissions); guard only what the steps want kept; start from the core. Patterns from turn (read whole, check every item, read only what is given, write only the work, leave hard-to-undo moves to their owner, pass what a script printed as it is, end only when done) to be made reusable. turn fits but two: no_commit has no step (the user chose A: generator step 4 says leave the work uncommitted, the caller keeps it in git), and shell.py reads past the usual forms"
+    },
+    {
+      "fact": "the user chose A (2026-10-21): the hooks read only the forms the steps tell and the AI writes (git …, git -C, git -c, cd <dir> &&, joined by && ; |), env, command, sh -c and heredoc reading taken out of shell.py, hooks.json narrowed with if Bash(git *); in T3 and T4 records git came only in those forms, env and sh -c only inside test strings; T3s widening dropped"
+    },
+    {
+      "fact": "the user decided (2026-10-21): the shared hook code becomes a plugin of its own in ccpm, not shared/: a folder with no stated purpose takes anything and grows wild, while a plugin has its README, design and version under plugin.md; it ships no hooks.json, rn and turn take its files by links within the marketplace (host-marketplace.md, Share files within a marketplace with symlinks) and pair them with their steps in their own hooks.json; its readers are those making ccpm plugins; the earlier rename to shared/ is dropped"
     }
   ],
   "semantic_gist": [
@@ -192,9 +198,6 @@
   "focal_entities": [
     {
       "task": "FIRST: the hooks discussion (predictive_cue); T3 stopped (likely dropped), T4 work in the t4 clone not merged; the queued questions (patterns, git checkout --/restore, T3 Q1-Q3) wait on its outcome"
-    },
-    {
-      "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
     },
     {
       "task": "after both: run mutate.sh rn common turn whole, as the runs used the old mutate.sh"
@@ -244,7 +247,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "ask the user how far shell.py and the hooks reading commands are cut to the usual forms; then where the pair principle and the patterns are written (prompt.md step 4, B-25, B-26, plugin.md), then turn and rn reviewed by them"
+      "next": "name the hook plugin with the user; then where the pair principle and the patterns are written (prompt.md step 4, B-25, B-26, plugin.md 5b), the plugins README and design, then turn and rn reviewed by them"
     }
   ],
   "uncertainty_signal": [
