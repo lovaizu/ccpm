@@ -82,9 +82,9 @@ lane gives a plugin's run what steps and hooks written on their own do not.
   A hook that only refuses leaves the AI to find another way to what it was doing, such as an AI
   refused a commit splitting the word `git` to get past the check. Told the step's own sentence, the
   AI goes back to the step.
-- The course is the same on every run: the flow refuses a move that breaks your plugin's rules, such
-  as going on before an approval, or having a piece of work made again more times than the flow
-  definition allows.
+- Each move the orchestrator tells the flow is held to the same course on every run: the flow
+  refuses one that breaks your plugin's rules, such as going on before an approval, or having a
+  piece of work made again more times than the flow definition allows.
 
   Tools that keep the plan as a file of tasks, such as Spec Kit or OpenSpec, leave the steps within
   each task to an AI reading a prompt, which keeps them on most runs and not on every one.

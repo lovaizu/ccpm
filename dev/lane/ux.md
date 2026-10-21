@@ -86,6 +86,6 @@ use, on the same plugins, with no target value.
 
 - The builder answers and approves instead of writing code that holds the course or checks;
   holding the course, noticing a drift and telling the sentence are lane's, and already tested.
-- Every run goes the same course, and no agent can pass a run through an approval the caller never
-  gave.
+- Each move the orchestrator tells the flow is held to the same course on every run, and the flow
+  passes no approval the caller never chose.
 - Hooks stay few, laid only where a step alone is not sure to hold.

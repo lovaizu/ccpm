@@ -62,6 +62,11 @@ about lane/README.md and dev/lane/ux.md, both agreed.
   goal and the acceptance criteria, once approved, change only with the caller's approval again.
 - The flow refuses a move that breaks a rule, keeps a limit on making a work again, and records
   each approval from the caller's own action.
+- A run's state is `state.json` in the folder of that piece of work in the user's repository, its
+  name and form the same for every plugin, given by lane; the orchestrator names the folder on its
+  first call to the flow: rn `.rn/<case>/`, turn the CCS's folder; not `${CLAUDE_PLUGIN_DATA}`,
+  which stays on one machine, as a run is to go on from another conversation or machine (the user,
+  2026-10-21).
 - The flow judges only the moves the orchestrator tells it; no hook calls it for the orchestrator
   (the user, 2026-10-21). A hook in the main conversation cannot tell the run's moves from other
   work there, and AI-DLC's hooks that do (core/hooks/aidlc-continue-workflow.ts,
