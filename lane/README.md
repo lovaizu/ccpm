@@ -136,8 +136,7 @@ claude plugin install lane@ccpm
 ```
 
 Then ask Claude to lay lanes on your plugin, as in the example. Claude starts `lane:up` from your
-conversation, or from a subagent it started, since `lane:up` starts subagents of its own in the
-layers below it and Claude Code lets subagents start subagents down to three layers.
+conversation, or from a subagent it started.
 
 lane's code in your plugin's `hooks/lane/` is a copy with its version, which `lane:up` brings to its
 own version the next time it is run there. In a plugin of ccpm itself, the code is a link to lane's.

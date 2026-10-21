@@ -272,6 +272,15 @@
     },
     {
       "fact": "the user agreed lane/README.md and dev/lane/ux.md as of 95bf4fa (2026-10-21)"
+    },
+    {
+      "fact": "read for the lane design (2026-10-21): AskUserQuestion is in the main conversation alone, its `answers` never set by Claude, PostToolUse's tool_response for it undocumented; Bash calls get no plugin variables, skill and agent Markdown get ${CLAUDE_PLUGIN_ROOT}; official plugins and spec-kit keep a run's state in the user's project; AI-DLC refuses the AI's own writes to its state"
+    },
+    {
+      "fact": "the user chose A (2026-10-21): lane:up starts no subagents, and lane/README.md's Installation no longer says it does"
+    },
+    {
+      "fact": "dev/lane/design.md remade by a subagent and fixed by hand against design.md and usability.md: flows/<orchestrator>.json, flow.py run with ${CLAUDE_PLUGIN_ROOT}, the recorder writing the OK into the state the question names and refusing writes to a state; awaiting the user's agreement"
     }
   ],
   "semantic_gist": [
@@ -323,7 +332,7 @@
       "task": "agreed order: lane (README, UX, then design) remade to the agreed dev/architecture.md, then prompt.md and plugin.md pointing to lane, common/ moved into lane, then turn, then rn"
     },
     {
-      "task": "lane now: called by an AI (as turn), its orchestrator a subagent asking the calling AI; the reader likely goes, the orchestrator reading and proposing itself; lane also holds the flow (keys in decisions/dev/lane/design.decisions.md, The flow); lane/README.md, dev/lane/ux.md and dev/lane/design.md (d41494a) still describe /lane:up typed by the builder with a front and a reader"
+      "task": "lane design awaits the user's agreement"
     }
   ],
   "relational_map": [
@@ -361,7 +370,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on resuming, the lane design (dev/lane/design.md): research how AI-DLC, BMAD and the official plugins place flow definitions, state and scripts; a subagent writes the design with usability.md and design.md open; I check it against them, fix by hand, show the user once"
+      "next": "on resuming, show dev/lane/design.md translated and take the user's agreement; then list lane's units (plugin.md step 4)"
     }
   ],
   "uncertainty_signal": [
