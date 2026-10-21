@@ -182,6 +182,9 @@
     },
     {
       "fact": "the user agreed to lane/README.md (2026-10-21)"
+    },
+    {
+      "fact": "the user decided (2026-10-21): lane is a library whose one key result is no defect when used as it is; it holds ready checks for the drifts steps commonly meet, and a builder writes the step and one hooks.json entry (lane/run <check> --agent <agent_type> --say <the step's way>), no code; a step no check fits gets a check added to lane; plugin agents ignore frontmatter hooks (sub-agents.md), so hooks.json is the one place; a folder link ../lane is copied at install (host-marketplace.md); README and dev/lane/ux.md agreed"
     }
   ],
   "semantic_gist": [
@@ -262,7 +265,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "lane design (plugin.md step 2): dev/lane/ux.md, dev/lane/design.md and dev/lane/README.md with usability.md and design.md open; dev/README.md lists lane"
+      "next": "lane design (plugin.md step 2): dev/lane/design.md and dev/lane/README.md with usability.md and design.md open; which checks lane starts with (from turn's and rn's steps), how run reads --agent and --say, python3 missing stopped by lane/run in sh; dev/README.md lists lane"
     }
   ],
   "uncertainty_signal": [
