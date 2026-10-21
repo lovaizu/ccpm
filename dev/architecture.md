@@ -59,10 +59,10 @@ Each job is done by an agent made for it, given only what the job needs.
 
 An agent starts in a fresh context with its own prompt and tools
 ([subagents](https://code.claude.com/docs/en/sub-agents)), so nothing from other work leads it
-astray, and it does the job the same way each time. A job's steps are kept by the guard, and a hook
-is told which subagent it runs in, but not which skill runs in the main conversation, where a
-skill's hooks last the whole session once it has started
-([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)).
+astray. A hook is told which subagent it runs in, so the guard can keep each agent to its own steps;
+it is not told which skill runs in the main conversation, where a skill's hooks last the whole
+session once it has started ([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)),
+so a job done there could not be kept to its steps.
 
 ### The flow decides the order
 
