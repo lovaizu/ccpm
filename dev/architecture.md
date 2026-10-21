@@ -36,9 +36,10 @@ left. It finds facts itself, and shows the user, one at a time, each it found th
 on, to confirm.
 
 A request in rough words leaves points open, and one settled before the work is not met as rework
-after it ([grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md),
+after it; a fact found and not shown is still assumed in the user's place, and the work starts only
+once the user confirms the understanding is shared
+([grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md),
 [Let Claude interview you](https://code.claude.com/docs/en/best-practices#let-claude-interview-you)).
-A plan or a design built on a fact the user reads otherwise is redone as well.
 
 ### The front only talks
 
