@@ -6,7 +6,7 @@ work with one another, and ends in something made, such as a document or code.
 ## Who does what
 
 ```mermaid
-flowchart LR
+flowchart TB
   user["user &lt;person&gt;"]
   main["main &lt;skill&gt;"]
   orch["orchestrator &lt;agent&gt;"]
