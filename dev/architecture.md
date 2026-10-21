@@ -11,7 +11,7 @@ flowchart TB
   front["front<br/>#lt;main conversation#gt;"]
   orch["orchestrator<br/>#lt;subagent#gt;"]
   flow["flow<br/>#lt;script#gt;"]
-  record["record<br/>#lt;file#gt;"]
+  state["state<br/>#lt;json#gt;"]
   role["role<br/>#lt;subagent#gt;"]
   guard["guard<br/>#lt;hook#gt;"]
   user -->|calls, answers, approves| front
@@ -19,7 +19,7 @@ flowchart TB
   front -->|starts with what was settled, answers| orch
   orch -->|returns the work, asks| front
   orch -->|asks for the next step| flow
-  flow -->|keeps the run in| record
+  flow -->|keeps the run in| state
   orch -->|starts with the prompt the flow gave, sends more work| role
   role -->|replies| orch
   front ~~~ guard
@@ -30,7 +30,7 @@ flowchart TB
 - The user calls the plugin, answers what only they can decide, and approves.
 - The front talks with the user.
 - The orchestrator starts each role in the order the flow gives.
-- The flow decides the next step and keeps the run in the record.
+- The flow decides the next step and keeps the run in the state.
 - Each role does one job.
 - The guard keeps each agent to its steps.
 
@@ -71,16 +71,16 @@ astray, and it does the job the same way each time.
 
 ### The flow decides the order
 
-The flow decides the next step and keeps the run in the record; the orchestrator does what it
+The flow decides the next step and keeps the run in the state; the orchestrator does what it
 prints.
 
 Code decides the same way each time, where an AI deciding the order drifts; Anthropic's
 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) calls
 this a workflow, "orchestrated through predefined code paths".
 
-### Going on from the record
+### Going on from the state
 
-The record is kept in files under git, so a run stopped anywhere goes on from there in a new
+The state is kept in a file under git, so a run stopped anywhere goes on from there in a new
 conversation.
 
 A conversation ends, is cleared or is compacted; what lives only in it is lost.
@@ -113,7 +113,7 @@ and a question for the user, go by message
 ([SendMessage](https://code.claude.com/docs/en/sub-agents#resume-subagents)). Roles do not message
 one another.
 
-What passes between roles goes through the orchestrator and the flow, so the record holds all of it.
+What passes between roles goes through the orchestrator and the flow, so the state holds all of it.
 
 ### The guard keeps each agent to its steps
 
