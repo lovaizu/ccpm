@@ -272,10 +272,10 @@
   ],
   "focal_entities": [
     {
-      "task": "rewrite rn and turn to dev/architecture.md, README first, each agreed with the user"
+      "task": "in the agreed order: lane design agreed, prompt.md and plugin.md pointing to lane, common/ moved into lane cut to the usual forms, then turn, then rn"
     },
     {
-      "task": "after: run mutate.sh rn common turn whole; CI turn mutation slowness"
+      "task": "turn README and UX runs (b5gg7wtyd) kept as they come back, finished after lane"
     }
   ],
   "relational_map": [
@@ -313,7 +313,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "write a CCS and decisions for turn README and UX, run turn on them, finish by hand; then lane design the same, then its two open points one at a time"
+      "next": "run turn on dev/lane/design.md, finish it, then its two open points to the user one at a time"
     }
   ],
   "uncertainty_signal": [
