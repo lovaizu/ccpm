@@ -206,6 +206,9 @@
     },
     {
       "fact": "plugin.md and rn/checklists read against dev/architecture.md (2026-10-21): plugin.md step 2 now has the design written on it and 5b no longer repeats its JSON and jq; prompt.md B-10 names merging, not pushing, as hard to undo; architecture.md drops \"Checked as the user runs it\", which design.md B-12 and B-13 already ask; prompt.md B-25/B-26 and design.md left, as they hold with it; session/plan.md conductor left for the rn rewrite"
+    },
+    {
+      "fact": "lane/README.md and dev/lane/ux.md rewritten to dev/architecture.md (2026-10-21): lanes on agents alone, the example a project agent changelog-writer, hooks in the agent file or, for a plugin agent, the plugin hooks.json acting only in that agent (hooks docs: agent_type in every tool event; frontmatter hooks of a subagent run only while it runs; tool-event matchers filter by tool, so the script reads agent_type); awaiting the user agreement"
     }
   ],
   "semantic_gist": [
@@ -251,9 +254,6 @@
   ],
   "focal_entities": [
     {
-      "task": "then rewrite lane README and UX (lanes on agents only, hooks in hooks.json); then rn and turn to the architecture"
-    },
-    {
       "task": "after: run mutate.sh rn common turn whole; trace T3/T4 first survivors to code.md; CI turn mutation slowness"
     }
   ],
@@ -292,7 +292,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "rewrite lane/README.md and dev/lane/ux.md to dev/architecture.md: lanes on agents only, hooks in the plugin hooks.json"
+      "next": "on the user agreement of lane README and UX, rewrite rn and turn to dev/architecture.md"
     }
   ],
   "uncertainty_signal": [
