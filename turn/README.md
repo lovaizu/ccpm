@@ -38,23 +38,24 @@ Start the `turn:up` agent in the background with
 {"ccs": ".tasks/readme.json", "result": ".tasks/readme-result.json",
  "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
           "use": "purpose", "has": "has"}}
-When it returns, check each Good against its lines, and put each question to the user.
+Put each question it sends to the user and send it the answer. When it returns, check each Good
+against its lines.
 ```
 
-While the step waits, turn first checks that the CCS holds everything the run needs: that what it
-and its files say can give every item its Good, and that the reader has what the developer has, so
-it can do what they do with the README. No one had chosen under which license people may use the project, so turn writes nothing yet
-and comes back with that one question:
+turn first checks that the CCS holds everything the run needs: that what it and its files say can
+give every item its Good, and that the reader has what the developer has, so it can do what they do
+with the README. No one had chosen under which license people may use the project, so turn writes
+nothing yet and sends the step's AI that one question:
 
 ```json
 {"questions": [{"question": "Under which license may people use the project?",
                 "recommended": "MIT", "items": [{"item": "B-5", ...}]}]}
 ```
 
-The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and calls turn again.
-Each of turn's agents tells the step's AI, before it starts its work, what it will do, how far and
-how, and as each step ends, what is done and what comes next, and the step's AI passes each on to
-you:
+The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and sends it to turn,
+which goes on from there. turn tells the step's AI, before each of its agents starts its work, what
+it will do, how far and how, and as each step ends, what is done and what comes next, and the
+step's AI passes each on to you:
 
 ```
 generator: will write README.md for the seven items, as MIT licensed, and run its install and
@@ -73,7 +74,7 @@ rests on:
 ```json
 {"items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
             "lines": ["README.md:3-4"]}, ...],
- "questions": [], "not_good": [], "lessons": [...]}
+ "not_good": [], "lessons": [...]}
 ```
 
 The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends. The
@@ -92,6 +93,10 @@ turn gives your plugin's AI what it does not get by making the work and checking
 - Each Good comes with the lines it rests on, so it is checked by reading them, not taken on trust.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
+- A run stopped anywhere, by you or by a conversation that ended, goes on from its last step when
+  the step calls turn again with the same result.
+
+  turn keeps where the run stands in a file beside the result, not in a conversation.
 
 ## Requirements
 
@@ -110,7 +115,9 @@ In Claude Code, add the marketplace once, then install turn:
 /plugin install turn@ccpm
 ```
 
-Then have your plugin's step call `turn:up`, as in the example.
+Then have your plugin's step call `turn:up`, as in the example, from the main conversation or from
+an agent the main conversation starts. turn's agents take the two layers of agents below the one
+that calls it, and Claude Code starts agents down to three layers below the main conversation.
 
 ## Documentation
 

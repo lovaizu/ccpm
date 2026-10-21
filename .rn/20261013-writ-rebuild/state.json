@@ -221,6 +221,9 @@
     },
     {
       "fact": "rn and turn read against dev/architecture.md: rn runs its conductor as skills in main with no orchestrator, flow or state split, one hook unscoped by agent, three promised hooks missing, decisions in Markdown; turn has no front, ends a run to ask, its orchestrator judges, no resume, roles message main, hooks write the state, agent scoping in Python"
+    },
+    {
+      "fact": "turn README and UX drafted to dev/architecture.md (2026-10-21): questions sent by message to the calling AI, turn going on with the answer; a stopped run going on from its last step on a call with the same result; turn called from main or an agent main starts, as turn takes the two layers below; progress told by turn, not by each role; lane design drafted in parallel by a fork"
     }
   ],
   "semantic_gist": [
@@ -307,7 +310,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "draft turn README to the architecture (no ending a run to ask; questions by message to its caller; resume from the state), as rn rests on it"
+      "next": "user agreement on turn README and UX; then turn design; lane design from the fork"
     }
   ],
   "uncertainty_signal": [
