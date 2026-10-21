@@ -8,11 +8,11 @@ work with one another, and ends in something made, such as a document or code.
 ```mermaid
 flowchart TB
   user["user<br/>#lt;person#gt;"]
-  front["front<br/>#lt;main agent#gt;"]
-  orch["orchestrator<br/>#lt;sub-agent#gt;"]
+  front["front<br/>#lt;main conversation#gt;"]
+  orch["orchestrator<br/>#lt;subagent#gt;"]
   flow["flow<br/>#lt;script#gt;"]
   record["record<br/>#lt;file#gt;"]
-  role["role<br/>#lt;sub-agent#gt;"]
+  role["role<br/>#lt;subagent#gt;"]
   guard["guard<br/>#lt;hook#gt;"]
   user -->|calls, answers, approves| front
   front -->|asks, shows the work| user
@@ -49,9 +49,9 @@ and Claude Code's [Let Claude interview you](https://code.claude.com/docs/en/bes
 
 The front asks, shows and passes on, and does no work of its own.
 
-A sub-agent cannot ask the user
+A subagent cannot ask the user
 ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)), and hooks in the main
-agent cannot tell which skill it runs, lasting the whole session once a skill has started
+conversation cannot tell which skill it runs, lasting the whole session once a skill has started
 ([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)).
 
 ### The user approves what is theirs
@@ -95,9 +95,9 @@ An agent then changes only the part it needs, with a tool it already knows.
 
 ```mermaid
 sequenceDiagram
-  participant M as front<br/>#lt;main agent#gt;
-  participant O as orchestrator<br/>#lt;sub-agent#gt;
-  participant R as role<br/>#lt;sub-agent#gt;
+  participant M as front<br/>#lt;main conversation#gt;
+  participant O as orchestrator<br/>#lt;subagent#gt;
+  participant R as role<br/>#lt;subagent#gt;
   M->>O: starts it with what was settled
   O->>R: starts it with the prompt the flow gave
   R-->>O: replies
