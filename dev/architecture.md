@@ -43,11 +43,8 @@ after it ([grilling](https://github.com/mattpocock/skills/blob/main/skills/produ
 The front asks, shows and passes on, and does no work of its own.
 
 Only the main conversation can ask the user; a subagent cannot
-([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). A job's steps are kept by
-the guard, and a hook is told which subagent it runs in, but not which skill runs in the main
-conversation, where a skill's hooks last the whole session once it has started
-([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)). So the main
-conversation only talks, and every job is done in a subagent.
+([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). Every job is done by an
+agent made for it, so talking is all that is left to the main conversation.
 
 ### The user approves what is theirs
 
@@ -62,7 +59,10 @@ Each job is done by an agent made for it, given only what the job needs.
 
 An agent starts in a fresh context with its own prompt and tools
 ([subagents](https://code.claude.com/docs/en/sub-agents)), so nothing from other work leads it
-astray, and it does the job the same way each time.
+astray, and it does the job the same way each time. A job's steps are kept by the guard, and a hook
+is told which subagent it runs in, but not which skill runs in the main conversation, where a
+skill's hooks last the whole session once it has started
+([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)).
 
 ### The flow decides the order
 
