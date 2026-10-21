@@ -196,7 +196,7 @@
       "fact": "checked (2026-10-22, Claude Code 2.1.305): a skill frontmatter hook runs for the rest of the session and its event carries no skill name; the transcript records a typed skill as <command-name> and a called one as Skill {skill}; UserPromptExpansion and PreToolUse Skill fire at a skill start; ${CLAUDE_PLUGIN_ROOT} expands in a plugin skill hook, ${CLAUDE_SKILL_DIR} does not; Anthropic calls skill-scoped hooks a feature request (claude-code #82801, #89669 open); prior art scopes by state files (ralph-loop, cc-sessions)"
     },
     {
-      "fact": "the user decided (2026-10-22): main only talks with the user and every job is done by an agent made for it, so each agent has its own steps and hooks scoped by agent_type in the plugin hooks.json, with no state and no transcript reading; conductor and orchestrator unified as orchestrator <agent>; agents talk by SendMessage, roles never with one another; lane README and UX to be rewritten to this, after the principles"
+      "fact": "the user decided (2026-10-22): main only talks with the user and every job is done by an agent made for it, so each agent has its own steps and hooks scoped by agent_type in the plugin hooks.json, with no state and no transcript reading to tell which skill runs (that scope alone; a subagent hook reading its own record to check its steps order is another matter); conductor and orchestrator unified as orchestrator <agent>; agents talk by SendMessage, roles never with one another; lane README and UX to be rewritten to this, after the principles"
     },
     {
       "fact": "dev/architecture.md drafted and pushed (da710f7), linked from dev/README.md: one flowchart of who does what, then 11 design intents with sources (grilling, Claude Code docs, Building effective agents); both figures rendered with the mermaid-cli docker image; awaiting the user feedback after /clear"
@@ -296,7 +296,7 @@
       "environment": "on this Linux sandbox: uv venv -p /usr/bin/python3 in the scratchpad, uv pip install -r dev/requirements.txt -r dev/requirements-test-quality.txt, its bin first on PATH; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here"
     },
     {
-      "watch": "watch each turn run while it goes, with Monitor on the runner's JSONL, not only its end, as the user asked"
+      "watch": "watch a turn run without telling the user of each step: report only its end, a stop or a question (the user, 2026-10-21: the step-by-step notices were noise)"
     },
     {
       "runner": "run-turn.sh sets CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS so claude -p waits for turn:up, and runs with bypassPermissions, as the user works in a Docker sandbox for it (2026-10-20); T3 run 4 and T4 run 3 started on auto"
