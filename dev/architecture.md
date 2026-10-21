@@ -38,8 +38,8 @@ flowchart TB
 
 ### Hearing until nothing is left to decide
 
-The front asks the user, with its recommendation, each point only they can decide, until nothing is left;
-facts it finds itself.
+The front asks the user, with its recommendation, each point only they can decide, until nothing is
+left; facts it finds itself.
 
 A request in rough words leaves points open, and one settled before the work is not met as rework
 after it. Inspired by [grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md)
@@ -49,8 +49,9 @@ and Claude Code's [Let Claude interview you](https://code.claude.com/docs/en/bes
 
 The front asks, shows and passes on, and does no work of its own.
 
-An agent cannot ask the user ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)),
-and hooks in the main agent cannot tell which skill it runs, lasting the whole session once a skill has started
+A sub-agent cannot ask the user
+([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)), and hooks in the main
+agent cannot tell which skill it runs, lasting the whole session once a skill has started
 ([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)).
 
 ### The user approves what is theirs
