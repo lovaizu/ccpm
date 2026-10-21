@@ -35,8 +35,10 @@ about lane/README.md and dev/lane/ux.md, both agreed.
   and the code reads the sentence from the step when it stops a call, so the two cannot differ.
 - The code shared by rn and turn now, `common/hooks/hook.py` (the entry every hook runs) and
   `common/hooks/shell.py` (how a hook reads a command), moves into lane's code, cut to the usual
-  forms; `common/` and `dev/common/` go, `dev/common/testing.py` going to where the tests that use it
-  are; rn and turn then take lane's code by the same link as any ccpm plugin.
+  forms; `common/` and `dev/common/` go, `dev/common/testing.py` going to `dev/lane/testing.py`,
+  from which rn's and turn's tests import it, as their code takes lane's and `dev/check.sh` fails
+  on a copy (the user, 2026-10-21); rn and turn then take lane's code by the same link as any ccpm
+  plugin.
 - Without python3 3.9 or later, each hook stops the call it checks with exit 2 and asks for Python
   to be installed, rather than letting it through.
 

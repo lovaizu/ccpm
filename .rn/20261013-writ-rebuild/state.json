@@ -227,6 +227,9 @@
     },
     {
       "fact": "lane design decisions written (bcd33fd): a lane sentence kept once in its step, a subagent own record read for step order (the 10-22 no-transcript decision was about telling skills apart only; asking the user it was my misreading), common/ moved into lane"
+    },
+    {
+      "fact": "the user decided (2026-10-21): dev/common/testing.py goes to dev/lane/testing.py, rn's and turn's tests importing it from there; written in decisions/dev/lane/design.decisions.md"
     }
   ],
   "semantic_gist": [
