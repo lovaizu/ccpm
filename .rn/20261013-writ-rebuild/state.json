@@ -224,6 +224,9 @@
     },
     {
       "fact": "turn README and UX drafted to dev/architecture.md (2026-10-21): questions sent by message to the calling AI, turn going on with the answer; a stopped run going on from its last step on a call with the same result; turn called from main or an agent main starts, as turn takes the two layers below; progress told by turn, not by each role; lane design drafted in parallel by a fork"
+    },
+    {
+      "fact": "lane design decisions written (bcd33fd): a lane sentence kept once in its step, a subagent own record read for step order (the 10-22 no-transcript decision was about telling skills apart only; asking the user it was my misreading), common/ moved into lane"
     }
   ],
   "semantic_gist": [
@@ -272,10 +275,10 @@
   ],
   "focal_entities": [
     {
-      "task": "in the agreed order: lane design agreed, prompt.md and plugin.md pointing to lane, common/ moved into lane cut to the usual forms, then turn, then rn"
+      "task": "agreed order: lane design agreed, prompt.md and plugin.md pointing to lane, common/ moved into lane cut to the usual forms, then turn, then rn"
     },
     {
-      "task": "turn README and UX runs (b5gg7wtyd) kept as they come back, finished after lane"
+      "task": "three turn runs started 2026-10-21 in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/e758703f-5664-4764-8582-ee66c664ef5b/scratchpad: turn-readme and turn-ux (turn/README.md, dev/turn/ux.md) and lane-design (dev/lane/design.md), each a clone with its work changed in place and .tasks/result.json, and a JSONL beside it; read each result and diff, finish by hand with the hand fixes shown apart, copy into this worktree, commit; if a run did not end (no result items), run it again with ccs/run-turn.sh and TURN_RUNS set to a scratch folder with venv linked"
     }
   ],
   "relational_map": [
@@ -313,7 +316,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "run turn on dev/lane/design.md, finish it, then its two open points to the user one at a time"
+      "next": "finish lane-design from its run and bring it to the user for agreement; turn README and UX wait until lane is done"
     }
   ],
   "uncertainty_signal": [
