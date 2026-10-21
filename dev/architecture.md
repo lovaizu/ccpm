@@ -69,14 +69,15 @@ so a job done there could not be kept to its steps.
 The flow decides the next step and keeps the run in the state; the orchestrator does what it
 prints.
 
-Code decides the same way each time, where an AI deciding the order drifts; Anthropic's
+Code decides the same way each time. Anthropic's
 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) calls
-this a workflow, "orchestrated through predefined code paths".
+this a workflow, "orchestrated through predefined code paths", and finds that workflows "offer
+predictability and consistency for well-defined tasks".
 
 ### Going on from the state
 
-The state is kept in a file under git, so a run stopped anywhere goes on from there in a new
-conversation.
+The state is kept in a file under git, so a run stopped anywhere goes on from its last step in a
+new conversation.
 
 A conversation ends, is cleared or is compacted; what lives only in it is lost.
 
@@ -84,7 +85,8 @@ A conversation ends, is cleared or is compacted; what lives only in it is lost.
 
 What agents hand on as data is JSON, read and changed in the part needed with `jq`.
 
-An agent then changes only the part it needs, with a tool it already knows.
+An agent then changes only the part it needs, with a tool it already knows, and leaves the rest as
+it was.
 
 ### Messages
 
@@ -116,9 +118,8 @@ Each step that is not sure to hold has a hook that notices a drift and tells the
 again. The hooks are in the plugin's `hooks/hooks.json`, each acting only in the agents it names.
 
 A hook runs every time, where an instruction is advice
-([best practices](https://code.claude.com/docs/en/best-practices)); Claude Code tells a hook which
-agent it runs in, and reads no hooks from a plugin agent's own file
-([subagents](https://code.claude.com/docs/en/sub-agents)).
+([best practices](https://code.claude.com/docs/en/best-practices)); Claude Code reads no hooks from
+a plugin agent's own file ([subagents](https://code.claude.com/docs/en/sub-agents)).
 
 ### Checked as the user runs it
 
