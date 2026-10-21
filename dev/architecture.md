@@ -9,14 +9,10 @@ work with one another, and ends in something made, such as a document or code.
 flowchart TB
   caller["caller<br/>#lt;person or AI#gt;"]
   orch["orchestrator<br/>#lt;main conversation or subagent#gt;"]
-  flow["flow<br/>#lt;script#gt;"]
-  state["state<br/>#lt;json#gt;"]
   role["role<br/>#lt;subagent#gt;"]
   guard["guard<br/>#lt;hook#gt;"]
   caller <-->|calls, answers, approves / asks, shows the work| orch
-  orch -->|tells each move, asks what is open| flow
-  flow -->|keeps the run in| state
-  orch <-->|starts with the prompt the flow gave, sends more work / replies| role
+  orch <-->|starts with its prompt, sends more work / replies| role
   guard -.->|keep to its steps| role
 ```
 
@@ -63,6 +59,10 @@ commit or a push is not, as it can be undone.
 
 An AI that decides these in the caller's place has them stand behind what they never saw.
 
+An approval counts only from the caller's own action, such as a skill the AI cannot call
+(`disable-model-invocation: true`), never from an agent saying it was given; cc-sdd's agent sets
+its own approval flag, which then stops nothing.
+
 ### One agent for each job
 
 Each job is done by a role made for it, given only what the job needs.
@@ -71,13 +71,12 @@ A role starts in a fresh context with its own prompt and tools
 ([subagents](https://code.claude.com/docs/en/sub-agents)), so nothing from other work leads it
 astray.
 
-### The flow keeps the run
+### Where the course is kept
 
-The flow runs the course every run of the plugin takes, its phases, and within each the steps of
-each piece of work, and holds the rules every run keeps, such as an approval before going on or
-making a work again three times at most: told a move that breaks one, it refuses it. What this run
-does, its plan and the tasks in it, is data the flow keeps and walks, which the orchestrator changes
-as facts come in, with the reason for each change kept beside it.
+A plugin whose run is a fixed loop, such as turn's make–read–check rounds, may keep its course in a
+script of its own, which gives the orchestrator each next step, so the orchestrator cannot go on
+without it. A plugin whose course changes with what the run finds, such as rn, keeps it in its
+skill's steps, and its plan as a document.
 
 The spec-driven tools read on 2026-10-21 (Spec Kit, BMAD-METHOD, OpenSpec, superpowers, cc-sdd)
 all keep a fixed course outside and the plan as a file of tasks it walks, and none runs the steps
@@ -85,14 +84,12 @@ within a task from code; OpenSpec calls its own "prompt-level behavior contracts
 checks". A course and its rules held in code are held the same way each time, where an AI deciding
 may not.
 
-An approval counts only as the flow records it from the caller's own answer, never from an agent
-saying it was given; cc-sdd's agent sets its own approval flag, which then stops nothing.
+A course fixed in code that the run's findings keep changing has no move for what it did not
+foresee.
 
-The flow is kept once, in lane, which gives the keys and what each does; each plugin gives the
-values, its phases, the steps of each type of work and its rules, in its own file.
-
-The state is kept in a file, so a run stopped anywhere goes on from its last move in a new
-conversation; a conversation ends, is cleared or is compacted, and what lives only in it is lost.
+A run's state is kept in a file in its work folder, each plugin's own, so a run stopped anywhere
+goes on from its last move in a new conversation; a conversation ends, is cleared or is compacted,
+and what lives only in it is lost.
 
 ### JSON between agents
 
@@ -109,7 +106,7 @@ sequenceDiagram
   participant O as orchestrator<br/>#lt;main conversation or subagent#gt;
   participant R as role<br/>#lt;subagent#gt;
   C->>O: calls
-  O->>R: starts it with the prompt the flow gave
+  O->>R: starts it with its prompt
   R-->>O: replies
   O->>R: sends more work by message
   R-->>O: replies
@@ -122,7 +119,7 @@ A role is started with its prompt and replies at its end; more work for a role a
 by message ([SendMessage](https://code.claude.com/docs/en/sub-agents#resume-subagents)), and so does
 a question from an orchestrator that is a subagent. Roles do not message one another.
 
-What passes between roles goes through the orchestrator and the flow, so the state holds all of it.
+What passes between roles goes through the orchestrator.
 
 ### A plugin that uses another
 
@@ -144,5 +141,5 @@ a plugin agent's own file ([subagents](https://code.claude.com/docs/en/sub-agent
 which subagent it runs in, and not which skill runs in the main conversation, where a skill's hooks
 last the whole session once it has started
 ([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)); so an orchestrator in
-the main conversation is held by the flow's rules, and what is hard to undo by GitHub's branch
-protection or Claude Code's permission rules.
+the main conversation is held by its steps, or the script that keeps its course, and what is hard
+to undo by GitHub's branch protection or Claude Code's permission rules.

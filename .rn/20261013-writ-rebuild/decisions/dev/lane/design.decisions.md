@@ -2,8 +2,7 @@
 
 - lane is lanes alone, a step with its hook: no flow, no recorder, no run state; turn keeps its own
   flow, rn uses none and holds its steering's form by a hook of its own; a flow is built only if
-  rn's trials show the need (the user, 2026-10-22). Lines below on the flow, the recorder and a
-  run's state are outdated by this and go when the design is remade.
+  rn's trials show the need (the user, 2026-10-22).
 
 The design is read by whoever builds or changes lane; it is built on dev/architecture.md and brings
 about lane/README.md and dev/lane/ux.md, both agreed.
@@ -12,11 +11,9 @@ about lane/README.md and dev/lane/ux.md, both agreed.
 
 ### B-1: The stories
 - As the README and the UX give them: the builder asks Claude, which starts `lane:up`; `lane:up`
-  asks one point at a time through the calling AI, proposes, and on OK has the flow definition, the
-  steps and the hooks written; run again where an older copy is, it brings it up; the flow refuses a
-  move that breaks a rule and goes past a gate only on the caller's OK; a drift is stopped with the
-  sentence; a run goes on in a new conversation; without Python 3.9 or later the flow and the hooks
-  stop.
+  asks one point at a time through the calling AI, proposes, and on OK has the steps and the hooks
+  written; run again where an older copy is, it brings it up; a drift is stopped with the
+  sentence; without Python 3.9 or later the hooks stop the calls they watch.
 
 ### B-2, B-3: The components and how they work
 - `lane:up` is the orchestrator, a subagent the calling AI starts, messaging the agent the caller
@@ -55,39 +52,6 @@ about lane/README.md and dev/lane/ux.md, both agreed.
   plugin.
 - Without python3 3.9 or later, each hook stops the call it checks with exit 2 and asks for Python
   to be installed, rather than letting it through.
-
-### B-2, B-3: The flow
-- lane keeps the flow every ccpm plugin runs on (dev/architecture.md, The flow keeps the run); a
-  plugin gives its own in one JSON file. lane defines the keys and what each does, never their
-  values (the user, 2026-10-21):
-  - `phases`, each with `name`; `each`, a `jq` path to the plan's items walked one by one; `type`,
-    the type of work run on each item; `gate`, the caller's own action that alone lets the run go
-    on, such as `rn:ty`; `done_when`, a `jq` condition on the state.
-  - `types`, each a named list of steps, such as rn's `make`: turn, then record, then a gate.
-  - For rn, as an example: hearing done when no point is left; plan, gated; design, each document
-    made, gated; tasks, each task made, done when the pull request's checks pass; deliverable,
-    gated.
-- The plan is data in the state, written by the orchestrator; each change keeps its reason; the
-  goal and the acceptance criteria, once approved, change only with the caller's approval again.
-- The flow refuses a move that breaks a rule, keeps a limit on making a work again, and records
-  each approval from the caller's own action.
-- A run's state is `state.json` in the folder of that piece of work in the user's repository, its
-  name and form the same for every plugin, given by lane; the orchestrator names the folder on its
-  first call to the flow: rn `.rn/<case>/`, turn the CCS's folder, lane:up `.lane/<plugin>/`; not
-  `${CLAUDE_PLUGIN_DATA}`, which stays on one machine, as a run is to go on from another
-  conversation or machine (the user, 2026-10-21).
-- A plugin's flow definition is `<plugin>/flows/<orchestrator>.json`, one per orchestrator; the
-  orchestrator's steps run `flow.py` with `${CLAUDE_PLUGIN_ROOT}` written in, as a Bash call gets
-  no plugin variables (plugins-reference, Where each variable resolves).
-- The recorder, lane's hooks on AskUserQuestion in the main conversation, refuses a question whose
-  `answers` is filled, records the chosen label into the state of the work folder the question
-  names, and refuses a tool call that writes a run's state; the shape of PostToolUse's
-  `tool_response` is undocumented, so it is taken from a real interactive run.
-- The flow judges only the moves the orchestrator tells it; no hook calls it for the orchestrator
-  (the user, 2026-10-21). A hook in the main conversation cannot tell the run's moves from other
-  work there, and AI-DLC's hooks that do (core/hooks/aidlc-continue-workflow.ts,
-  aidlc-plan-approval-guard.ts) take every move as the run's while one is open; turn's twelve
-  recorded runs told turn.py before each of their 90 role moves.
 
 ### B-8 to B-15: Verification
 - The checklist template's `Flow:` and `Content:` stay as they are beside the component flow: they

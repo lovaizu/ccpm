@@ -287,6 +287,9 @@
     },
     {
       "fact": "the user decided (2026-10-22): lane is lanes alone, a step with its hook; turn keeps its own flow; rn uses no flow, its steering format fixed by rn and a hook telling a drift; a flow is built only if rn's trials show the need"
+    },
+    {
+      "fact": "dev/architecture.md, lane/README.md, dev/lane/ux.md and dev/lane/design.md remade to lanes alone by a subagent and fixed by hand (the proposal printed and written by the layer from one file in lane's data folder); the first three await the user's agreement"
     }
   ],
   "semantic_gist": [
@@ -379,7 +382,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "a subagent remakes the four documents with the checklists open; I check against them, fix by hand, show architecture, README and UX translated for agreement"
+      "next": "on resuming, take the user's agreement on dev/architecture.md, lane/README.md and dev/lane/ux.md, shown translated; then lane's units (plugin.md step 4)"
     }
   ],
   "uncertainty_signal": [
