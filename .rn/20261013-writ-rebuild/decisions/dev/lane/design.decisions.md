@@ -1,5 +1,10 @@
 # What lane's design says
 
+- lane is lanes alone, a step with its hook: no flow, no recorder, no run state; turn keeps its own
+  flow, rn uses none and holds its steering's form by a hook of its own; a flow is built only if
+  rn's trials show the need (the user, 2026-10-22). Lines below on the flow, the recorder and a
+  run's state are outdated by this and go when the design is remade.
+
 The design is read by whoever builds or changes lane; it is built on dev/architecture.md and brings
 about lane/README.md and dev/lane/ux.md, both agreed.
 

@@ -281,6 +281,12 @@
     },
     {
       "fact": "dev/lane/design.md remade by a subagent and fixed by hand against design.md and usability.md: flows/<orchestrator>.json, flow.py run with ${CLAUDE_PLUGIN_ROOT}, the recorder writing the OK into the state the question names and refusing writes to a state; awaiting the user's agreement"
+    },
+    {
+      "fact": "simulated rn on lane's flow over 2026-10-20..22: a design-level work found in the tasks phase has no way back, re-approval at each of the 44 direction changes, the flow cannot stop a plan left unwritten (lane never in steering's tasks) as it judges only moves told, the plan split between state.json and steering.md; turn's flow held as its output is on the AI's path"
+    },
+    {
+      "fact": "the user decided (2026-10-22): lane is lanes alone, a step with its hook; turn keeps its own flow; rn uses no flow, its steering format fixed by rn and a hook telling a drift; a flow is built only if rn's trials show the need"
     }
   ],
   "semantic_gist": [
@@ -325,14 +331,17 @@
     },
     {
       "gist": "from here on, no turn: a subagent makes the work with the checklists open, I check it against the same checklists, fix it by hand, and that ends it (the user, 2026-10-21)"
+    },
+    {
+      "gist": "keep it simple: build what a trial shows is needed, not what may be (the user, 2026-10-22: 欲張りすぎました)"
     }
   ],
   "focal_entities": [
     {
-      "task": "agreed order: lane (README, UX, then design) remade to the agreed dev/architecture.md, then prompt.md and plugin.md pointing to lane, common/ moved into lane, then turn, then rn"
+      "task": "agreed order: lane (README, UX, then design) remade to dev/architecture.md, then prompt.md and plugin.md pointing to lane, common/ moved into lane, then turn, then rn"
     },
     {
-      "task": "lane design awaits the user's agreement"
+      "task": "remake dev/architecture.md (a flow only where a plugin has a fixed loop, as turn), lane/README.md and dev/lane/ux.md (lanes alone), dev/lane/design.md; the first three await the user's agreement"
     }
   ],
   "relational_map": [
@@ -370,7 +379,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on resuming, show dev/lane/design.md translated and take the user's agreement; then list lane's units (plugin.md step 4)"
+      "next": "a subagent remakes the four documents with the checklists open; I check against them, fix by hand, show architecture, README and UX translated for agreement"
     }
   ],
   "uncertainty_signal": [
