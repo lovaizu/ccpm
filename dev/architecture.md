@@ -27,13 +27,6 @@ flowchart TB
   guard -.->|keep to its steps| role
 ```
 
-- The user calls the plugin, answers what only they can decide, and approves.
-- The front talks with the user.
-- The orchestrator starts each role in the order the flow gives.
-- The flow decides the next step and keeps the run in the state.
-- Each role does one job.
-- The guard keeps each agent to its steps.
-
 ## Why it is so
 
 ### Hearing until nothing is left to decide
