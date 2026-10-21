@@ -76,7 +76,7 @@ predictability and consistency for well-defined tasks".
 
 ### Going on from the state
 
-The state is kept in a file under git, so a run stopped anywhere goes on from its last step in a
+The state is kept in a file, so a run stopped anywhere goes on from its last step in a
 new conversation.
 
 A conversation ends, is cleared or is compacted; what lives only in it is lost.
