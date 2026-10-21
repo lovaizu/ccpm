@@ -62,6 +62,11 @@ about lane/README.md and dev/lane/ux.md, both agreed.
   goal and the acceptance criteria, once approved, change only with the caller's approval again.
 - The flow refuses a move that breaks a rule, keeps a limit on making a work again, and records
   each approval from the caller's own action.
+- The flow judges only the moves the orchestrator tells it; no hook calls it for the orchestrator
+  (the user, 2026-10-21). A hook in the main conversation cannot tell the run's moves from other
+  work there, and AI-DLC's hooks that do (core/hooks/aidlc-continue-workflow.ts,
+  aidlc-plan-approval-guard.ts) take every move as the run's while one is open; turn's twelve
+  recorded runs told turn.py before each of their 90 role moves.
 
 ### B-8 to B-15: Verification
 - The checklist template's `Flow:` and `Content:` stay as they are beside the component flow: they

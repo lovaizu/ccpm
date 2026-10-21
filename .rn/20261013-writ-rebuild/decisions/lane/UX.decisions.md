@@ -36,6 +36,11 @@ a line here changes it.
 6. In a run, the flow refuses a move that breaks the plugin's rules, and a hook stops a call that
    drifts from a lane; the AI reads the sentence, prefixed by the plugin's name, and goes on as its
    steps say.
+6a. At an approval, the orchestrator asks with Claude Code's AskUserQuestion; lane's hook
+   refuses a call whose answers an AI filled in, records the option the caller chose, and the flow
+   goes on only on that record (the user, 2026-10-21: D, after reading how cc-sdd, AI-DLC, Kiro,
+   Spec Kit, BMAD, OpenSpec and superpowers keep an approval; only AI-DLC holds it in code, by a
+   UserPromptSubmit hook, which also fires on a background subagent's report).
 7. A run stopped anywhere goes on from its last move in a new conversation.
 8. On a machine without Python 3.9 or later, the flow stops the run at its first move and the hooks
    stop the calls they watch, each asking for Python to be installed (R31).

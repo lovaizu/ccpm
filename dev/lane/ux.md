@@ -54,8 +54,8 @@ use, on the same plugins, with no target value.
   proposal rests on; Claude puts each to the builder and sends the answer back.
 - `lane:up` proposes the flow definition, its phases, the steps of each type of work and the
   approvals, the orchestrator's steps that tell the flow each move, and the lanes, each under the
-  action it keeps, such as run, with the step as it would read and its hooks; the builder says OK
-  or what to change.
+  action it keeps, such as run, with the step as it would read and its hooks; the builder chooses OK
+  from Claude's question, or says what to change.
 - On the OK, `lane:up` writes the flow definition, the orchestrator's steps, the steps the lanes
   hold and the hooks, and puts lane's code in the plugin, once for all its subagents: a link to it
   in a plugin of the ccpm marketplace, a copy with its version anywhere else.
@@ -65,8 +65,11 @@ use, on the same plugins, with no target value.
 
   The flow tells the orchestrator the rule's sentence, prefixed by the plugin's name, and the
   orchestrator goes on as its steps say.
-- At an approval, the orchestrator puts the work to the caller, and the flow goes on only once it
-  records the approval from the caller's own answer, never from an agent saying it was given.
+- At an approval, the orchestrator asks the caller with Claude Code's question, AskUserQuestion,
+  and the flow goes on only once lane's hook records the OK the caller chose; a question asked in
+  plain words, or an answer an AI filled in, leaves no record, and the flow refuses to go on.
+  AskUserQuestion is Claude Code's own; lane holds the hook that records the answer and the flow
+  that waits for it.
 - In a subagent a lane is laid in, a hook stops a call that drifts from the lane before Claude Code
   runs it, and the subagent reads the lane's sentence, prefixed by the plugin's name, and goes on as
   its steps say.

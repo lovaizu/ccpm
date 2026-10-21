@@ -41,7 +41,7 @@ read:
 ```
 Flow of /notes:changelog, in one phase:
   changelog: changelog-writer writes CHANGELOG.md;
-             you read it and say OK;
+             you read it and choose OK when the orchestrator asks;
              the orchestrator commits it, only after your OK.
 
 Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
@@ -52,9 +52,10 @@ Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
    or `git push`.
 ```
 
-You say OK. `lane:up` writes the flow definition into `notes`, the steps that tell the flow each
-move into `/notes:changelog`, the step into `agents/changelog-writer.md` and the hooks into
-`hooks/hooks.json`, and puts lane's code, which runs the flow and the hooks, in `hooks/lane/`.
+You choose OK when Claude asks. `lane:up` writes the flow definition into `notes`, the steps that
+tell the flow each move into `/notes:changelog`, the step into `agents/changelog-writer.md` and the
+hooks into `hooks/hooks.json`, and puts lane's code, which runs the flow and the hooks, in
+`hooks/lane/`.
 
 Then you run `/notes:changelog`. When `changelog-writer` runs `git commit -m notes`, Claude Code
 does not run it, and the subagent reads:
@@ -87,10 +88,11 @@ lane gives a plugin's run what steps and hooks written on their own do not.
 
   Tools that keep the plan as a file of tasks, such as Spec Kit or OpenSpec, leave the steps within
   each task to an AI reading a prompt, which keeps them on most runs and not on every one.
-- An approval counts only as the flow records it from the caller's own answer, never from an AI
-  saying it was given.
+- An approval counts only as the OK the caller chose from Claude Code's question, which lane's
+  hook records and no AI can fill in.
 
-  An AI that can mark its own approval passes every check that rests on it.
+  An AI that can mark its own approval passes every check that rests on it; in tools whose AI
+  writes the approval mark, such as cc-sdd, the mark stops nothing.
 - The plan of a run, the tasks it walks, is data the flow keeps, which the orchestrator changes as
   facts come in, each change with its reason.
 

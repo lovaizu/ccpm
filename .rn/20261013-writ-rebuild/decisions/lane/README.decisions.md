@@ -41,8 +41,8 @@ what the agreed lane/README.md (6069bd1) says of lanes holds unless a line here 
   writes is held by branch protection, the sandbox or permission rules (as in 6069bd1).
 - The course is held in code, the same on every run: the flow refuses a move that breaks the
   plugin's rules, such as going on before an approval or making a work again past its limit.
-- An approval counts only as the flow records it from the caller's own answer, never from an agent
-  saying it was given.
+- An approval counts only as the OK the caller chose from Claude Code's AskUserQuestion, recorded
+  by lane's hook, which refuses a call whose answers an AI filled in (UX.decisions.md, 6a).
 - The plan is data the flow walks, which the orchestrator changes as facts come in, each change with
   its reason.
 - A run stopped anywhere goes on from its last move in a new conversation, as the flow keeps it in a
