@@ -1,0 +1,32 @@
+{
+  "focal_entities": [
+    {
+      "deliverable": "lane/README.md"
+    },
+    {
+      "audience": "anyone who builds a Claude Code plugin whose work an AI does in several steps, deciding whether to use lane, then installing it and having their Claude lay lanes on their plugin, as the example shows"
+    },
+    {
+      "has": "."
+    }
+  ],
+  "goal_orientation": [
+    {
+      "purpose": "the agreed README is rewritten in place to the decisions, which now follow dev/architecture.md: lane holds the flow and the lanes as one idea said by what it does, lane:up is called by an AI and makes the flow definition too; it keeps all else it says now. deciding whether to use lane, then installing it and having their Claude lay lanes on their plugin"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/product/readme.md"
+    },
+    {
+      "checklist": "rn/checklists/usability.md"
+    },
+    {
+      "reference": "dev/architecture.md"
+    },
+    {
+      "decisions": ".rn/20261013-writ-rebuild/decisions/lane/README.decisions.md"
+    }
+  ]
+}
