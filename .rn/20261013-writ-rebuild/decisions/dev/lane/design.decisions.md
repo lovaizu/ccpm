@@ -48,6 +48,9 @@ about lane/README.md and dev/lane/ux.md, both agreed.
   to be installed, rather than letting it through.
 
 ### B-8 to B-15: Verification
+- The checklist template's `Flow:` and `Content:` stay as they are beside the component flow: they
+  name what is checked, and a word met in two places is not renamed for that alone (the user,
+  2026-10-21).
 - Each unit's flow with unittest and Hypothesis in `dev/lane/tests/`, 100% lines and branches by
   `dev/check.sh` and no surviving mutant by `dev/mutate.sh`; the agents' flow on stand-ins, their
   content on real plugins (the README's `notes`, turn's agents), on the model users run, judged from
