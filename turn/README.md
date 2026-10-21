@@ -1,8 +1,11 @@
 # turn
 
-turn is a Claude Code plugin for anyone who has AI make documents, code and the like in the steps of
-their own plugin. What a step has turn make comes back meeting the step's checklists, read first by
-an AI that did not make it, in the place of its reader.
+turn has AI work only toward passing your checklist: every agent looks only for each item's Good and
+works only to give it, and what is to be doubted, such as whether a reply has its form or an input
+was read whole, is checked by turn's scripts, not by an agent. It is a Claude Code plugin for anyone
+who has AI make documents, code and the like in the steps of their own plugin. What a step has turn
+make comes back meeting the step's checklists, read first by an AI that did not make it, in the
+place of its reader.
 
 ## Example
 

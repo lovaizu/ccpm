@@ -13,20 +13,22 @@ and from the design and what is in the repository once the product is built.
 
 Before the design, from the UX:
 
-1. From the UX's users and goals, and its benefits, say in one or two sentences whom the product is
+1. From the UX's benefits, say in one sentence the idea the product rests on: what it does that
+   gives its benefits, where other ways of doing the same work do not.
+2. From the UX's users and goals, and its benefits, say in one or two sentences whom the product is
    for and what they gain.
-2. Choose one of the UX's scenes and show it as an example, from start to result, with what the
+3. Choose one of the UX's scenes and show it as an example, from start to result, with what the
    user does and what they get back.
-3. From the UX's benefits, take what doing the work by hand or with another tool does not give, as
+4. From the UX's benefits, take what doing the work by hand or with another tool does not give, as
    why to choose this one.
 
 Once built, from the design and the repository:
 
-4. Write what the reader needs to repeat the example themselves: what must be in place beforehand,
+5. Write what the reader needs to repeat the example themselves: what must be in place beforehand,
    and installing.
-5. Link the documents the reader goes on to: for users, fuller use and what changed in each
+6. Link the documents the reader goes on to: for users, fuller use and what changed in each
    version; for those who build it, the entrance to the design and development.
-6. Write the terms on which the product may be used, the license.
+7. Write the terms on which the product may be used, the license.
 
 Each item of `usability.md` applies to a README with deciding and getting to the first result as
 its subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation.
@@ -44,8 +46,8 @@ Does the README follow this template, headings included?
 ```markdown
 # <Product name>
 
-<What the reader gains, with the kind of thing that gives it, and whom it is for, in one or two
-sentences, under no heading>
+<The idea the product rests on, in one sentence; then what the reader gains, with the kind of
+thing that gives it, and whom it is for, in one or two sentences; under no heading>
 
 ## Example
 
@@ -76,13 +78,25 @@ sentences, under no heading>
 
 Why: a reader looks for requirements, installation or the license under the headings READMEs
 commonly give them, and finds each where they look only when every README puts it there; the
-opening sits right under the name, where the reader looks first; the example comes before
+opening sits right under the name, where the reader looks first, and begins with the idea, as it is
+what sets the product apart; the example comes before
 installation, so the reader sees using it before deciding to install it; and why to choose it
 follows the example, so the reader weighs it against the use they have just seen; and the way on for
 those who build it stands apart from Documentation, so a user does not read through links they do
 not use.
 
 ## Benefit
+
+### B-9: The idea it rests on
+
+Scope: its part
+
+From the opening's first sentence, can the reader tell the idea the product rests on, what it does
+that gives what it gives, where other ways of doing the same work do not?
+
+Why: the idea is what sets the product apart; a reader shown only what it does takes it for any
+tool that does the same, and reads the example and why to choose it without the thread that joins
+them.
 
 ### B-2: Who it is for
 

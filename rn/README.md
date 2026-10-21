@@ -1,9 +1,12 @@
 # rn
 
-rn is a Claude Code plugin that takes a whole piece of work, asked for in your own rough words, to
-a pull request that does what you want it for, while you only answer what it asks. It is for anyone
-who has Claude Code do work in their own git repository on GitHub and would rather hand over a
-piece of work, even one that takes days, than prepare it and watch it being done.
+rn turns every move of a piece of work toward your purpose: each task is traced back to the purpose,
+and only a compact record of where the work stands is carried from move to move, so a long piece of
+work neither swells nor drifts on its way. It is a Claude Code plugin that takes a whole piece of
+work, asked for in your own rough words, to a pull request that does what you want it for, while you
+only answer what it asks. It is for anyone who has Claude Code do work in their own git repository
+on GitHub and would rather hand over a piece of work, even one that takes days, than prepare it and
+watch it being done.
 
 ## Example
 
