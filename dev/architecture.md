@@ -35,8 +35,8 @@ The front asks the user, with its recommendation, each point only they can decid
 left; facts it finds itself.
 
 A request in rough words leaves points open, and one settled before the work is not met as rework
-after it. Inspired by [grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md)
-and Claude Code's [Let Claude interview you](https://code.claude.com/docs/en/best-practices#let-claude-interview-you).
+after it ([grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md),
+[Let Claude interview you](https://code.claude.com/docs/en/best-practices#let-claude-interview-you)).
 
 ### The front only talks
 
