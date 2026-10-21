@@ -212,6 +212,15 @@
     },
     {
       "fact": "the user decided (2026-10-21): lane lays lanes on a plugin subagent alone, its hooks in the plugin hooks/hooks.json acting only in that subagent by agent_type, lane code in the plugin hooks/lane/; project and user subagents left out, as their frontmatter hooks need folder trust (none in -p) and add a second place; README and UX rewritten to it (subagents docs: hooks ignored for plugin subagents)"
+    },
+    {
+      "fact": "the user agreed lane/README.md and dev/lane/ux.md as of 6069bd1 (2026-10-21)"
+    },
+    {
+      "fact": "the user decided (2026-10-21): turn stays a plugin of its own, rn orchestrator starting turn orchestrator as a role, its questions passed on by message (subagents nest three layers below main); the hearing finds facts itself and still shows each it found that the work rests on, one at a time, to confirm; both written into dev/architecture.md"
+    },
+    {
+      "fact": "rn and turn read against dev/architecture.md: rn runs its conductor as skills in main with no orchestrator, flow or state split, one hook unscoped by agent, three promised hooks missing, decisions in Markdown; turn has no front, ends a run to ask, its orchestrator judges, no resume, roles message main, hooks write the state, agent scoping in Python"
     }
   ],
   "semantic_gist": [
@@ -257,7 +266,10 @@
   ],
   "focal_entities": [
     {
-      "task": "after: run mutate.sh rn common turn whole; trace T3/T4 first survivors to code.md; CI turn mutation slowness"
+      "task": "rewrite rn and turn to dev/architecture.md, README first, each agreed with the user"
+    },
+    {
+      "task": "after: run mutate.sh rn common turn whole; CI turn mutation slowness"
     }
   ],
   "relational_map": [
@@ -295,7 +307,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on the user agreement of lane README and UX, rewrite rn and turn to dev/architecture.md"
+      "next": "draft turn README to the architecture (no ending a run to ask; questions by message to its caller; resume from the state), as rn rests on it"
     }
   ],
   "uncertainty_signal": [

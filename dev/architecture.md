@@ -32,11 +32,13 @@ flowchart TB
 ### Hearing until nothing is left to decide
 
 The front asks the user, with its recommendation, each point only they can decide, until nothing is
-left; facts it finds itself.
+left. It finds facts itself, and shows the user, one at a time, each it found that the work rests
+on, to confirm.
 
 A request in rough words leaves points open, and one settled before the work is not met as rework
 after it ([grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md),
 [Let Claude interview you](https://code.claude.com/docs/en/best-practices#let-claude-interview-you)).
+A plan or a design built on a fact the user reads otherwise is redone as well.
 
 ### The front only talks
 
@@ -111,6 +113,16 @@ and a question for the user, go by message
 one another.
 
 What passes between roles goes through the orchestrator and the flow, so the state holds all of it.
+
+### A plugin that uses another
+
+A plugin that has another plugin do a job starts that plugin's orchestrator as one of its roles, and
+passes on to the front by message what that orchestrator asks.
+
+A subagent can start subagents down to three layers below the main conversation
+([subagents](https://code.claude.com/docs/en/sub-agents#let-subagents-spawn-their-own-subagents)),
+so the front, the orchestrator, the other plugin's orchestrator and its roles fit, and those roles
+start no more.
 
 ### The guard keeps each agent to its steps
 
