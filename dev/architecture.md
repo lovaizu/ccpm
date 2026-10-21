@@ -73,13 +73,26 @@ astray.
 
 ### The flow keeps the run
 
-The flow keeps the run in the state, and holds the rules every run keeps, such as making a work
-again three times at most or going on only after an approval: told a move that breaks one, it
-refuses it. It is kept once, in lane, and each plugin gives only its own rules.
+The flow runs the course every run of the plugin takes, its phases, and within each the steps of
+each piece of work, and holds the rules every run keeps, such as an approval before going on or
+making a work again three times at most: told a move that breaks one, it refuses it. What this run
+does, its plan and the tasks in it, is data the flow keeps and walks, which the orchestrator changes
+as facts come in, with the reason for each change kept beside it.
+
+The spec-driven tools read on 2026-10-21 (Spec Kit, BMAD-METHOD, OpenSpec, superpowers, cc-sdd)
+all keep a fixed course outside and the plan as a file of tasks it walks, and none runs the steps
+within a task from code; OpenSpec calls its own "prompt-level behavior contracts, not enforceable
+checks". A course and its rules held in code are held the same way each time, where an AI deciding
+may not.
+
+An approval counts only as the flow records it from the caller's own answer, never from an agent
+saying it was given; cc-sdd's agent sets its own approval flag, which then stops nothing.
+
+The flow is kept once, in lane, which gives the keys and what each does; each plugin gives the
+values, its phases, the steps of each type of work and its rules, in its own file.
 
 The state is kept in a file, so a run stopped anywhere goes on from its last move in a new
 conversation; a conversation ends, is cleared or is compacted, and what lives only in it is lost.
-Code holds a rule the same way each time, where the orchestrator, deciding, may not.
 
 ### JSON between agents
 

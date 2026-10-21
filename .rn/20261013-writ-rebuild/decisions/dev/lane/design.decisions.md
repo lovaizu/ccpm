@@ -47,6 +47,22 @@ about lane/README.md and dev/lane/ux.md, both agreed.
 - Without python3 3.9 or later, each hook stops the call it checks with exit 2 and asks for Python
   to be installed, rather than letting it through.
 
+### B-2, B-3: The flow
+- lane keeps the flow every ccpm plugin runs on (dev/architecture.md, The flow keeps the run); a
+  plugin gives its own in one JSON file. lane defines the keys and what each does, never their
+  values (the user, 2026-10-21):
+  - `phases`, each with `name`; `each`, a `jq` path to the plan's items walked one by one; `type`,
+    the type of work run on each item; `gate`, the caller's own action that alone lets the run go
+    on, such as `rn:ty`; `done_when`, a `jq` condition on the state.
+  - `types`, each a named list of steps, such as rn's `make`: turn, then record, then a gate.
+  - For rn, as an example: hearing done when no point is left; plan, gated; design, each document
+    made, gated; tasks, each task made, done when the pull request's checks pass; deliverable,
+    gated.
+- The plan is data in the state, written by the orchestrator; each change keeps its reason; the
+  goal and the acceptance criteria, once approved, change only with the caller's approval again.
+- The flow refuses a move that breaks a rule, keeps a limit on making a work again, and records
+  each approval from the caller's own action.
+
 ### B-8 to B-15: Verification
 - The checklist template's `Flow:` and `Content:` stay as they are beside the component flow: they
   name what is checked, and a word met in two places is not renamed for that alone (the user,

@@ -245,6 +245,9 @@
     },
     {
       "fact": "the user decided (2026-10-21): no front; the orchestrator holds the whole and decides (asks, replans, remakes), talking with the caller itself; rn runs it in the main conversation, turn and lane are called by an AI, so theirs is a subagent; the flow keeps the state and refuses moves breaking fixed rules, kept once in lane; dev/architecture.md rewritten to it, awaiting agreement"
+    },
+    {
+      "fact": "the user decided (2026-10-21): the flow runs the phases and the steps of each piece of work, the plan being data it walks and the orchestrator changes with reasons; lane gives the keys (phases, each, type, gate, done_when, types), each plugin the values; approvals recorded from the caller's own action; written in dev/architecture.md and decisions/dev/lane/design.decisions.md after reading Spec Kit, Kiro, BMAD, OpenSpec, superpowers, cc-sdd, feature-dev"
     }
   ],
   "semantic_gist": [
