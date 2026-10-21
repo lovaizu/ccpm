@@ -176,6 +176,12 @@
     },
     {
       "fact": "the user decided (2026-10-21): each README opens with the idea the product rests on (readme.md B-9, e3491b4): lane, a step and its hook made as one pair, the step telling the way and the hook noticing a drift and telling it again; turn, every agent looks only for Good and works only to give it, what is doubted checked by scripts; rn, every move toward the purpose, traced to it, a compact record carried so the work neither swells nor drifts. turn idea vs up.md:21 (the orchestrator holds a doubt inside a Good) to bring to the user at turn review"
+    },
+    {
+      "fact": "the user chose A (2026-10-21): without python3 a hook stops the tool calls it checks with exit 2 and asks for Python 3.9 or later to be installed, not letting them through, as Claude Code needs no Python (setup.md, Additional dependencies: ripgrep alone) and a hook that cannot start lets the call go ahead (hooks.md); lane's way for every plugin, turn's hooks.json `|| exit 0` to change with it; onFailure block not taken"
+    },
+    {
+      "fact": "the user agreed to lane/README.md (2026-10-21)"
     }
   ],
   "semantic_gist": [
@@ -256,7 +262,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "show the user the Japanese translation of lane/README.md (written, uncommitted, its opening now the idea first) and ask whether they agree to it; on agreement commit it and go to lane design (plugin.md step 2), with dev/lane/ux.md as readme.md says the README comes from the UX"
+      "next": "lane design (plugin.md step 2): dev/lane/ux.md, dev/lane/design.md and dev/lane/README.md with usability.md and design.md open; dev/README.md lists lane"
     }
   ],
   "uncertainty_signal": [
