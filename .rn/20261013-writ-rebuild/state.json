@@ -167,6 +167,9 @@
     },
     {
       "fact": "the user decided (2026-10-21): the shared hook code becomes a plugin of its own in ccpm, not shared/: a folder with no stated purpose takes anything and grows wild, while a plugin has its README, design and version under plugin.md; it ships no hooks.json, rn and turn take its files by links within the marketplace (host-marketplace.md, Share files within a marketplace with symlinks) and pair them with their steps in their own hooks.json; its readers are those making ccpm plugins; the earlier rename to shared/ is dropped"
+    },
+    {
+      "fact": "the user named the hook plugin lane (2026-10-21): the steps are the lane the AI runs in at full speed, a drift out of it noticed and the right way told, not a force or a stop; cue was dropped, as it means a start signal, not a prompter"
     }
   ],
   "semantic_gist": [
@@ -247,7 +250,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "name the hook plugin with the user; then where the pair principle and the patterns are written (prompt.md step 4, B-25, B-26, plugin.md 5b), the plugins README and design, then turn and rn reviewed by them"
+      "next": "agree the order with the user: lane README (plugin.md step 1), lane design, prompt.md and plugin.md pointing to lane, common/ moved into lane cut to the usual forms, then turn (no_commit step, if) and rn hooks from its steps"
     }
   ],
   "uncertainty_signal": [
