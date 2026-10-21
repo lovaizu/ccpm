@@ -7,13 +7,13 @@ work with one another, and ends in something made, such as a document or code.
 
 ```mermaid
 flowchart TB
-  user["user #lt;person#gt;"]
-  front["front #lt;main agent#gt;"]
-  orch["orchestrator #lt;sub-agent#gt;"]
-  flow["flow #lt;script#gt;"]
-  record["record #lt;file#gt;"]
-  role["role #lt;sub-agent#gt;"]
-  guard["guard #lt;hook#gt;"]
+  user["user<br/>#lt;person#gt;"]
+  front["front<br/>#lt;main agent#gt;"]
+  orch["orchestrator<br/>#lt;sub-agent#gt;"]
+  flow["flow<br/>#lt;script#gt;"]
+  record["record<br/>#lt;file#gt;"]
+  role["role<br/>#lt;sub-agent#gt;"]
+  guard["guard<br/>#lt;hook#gt;"]
   user -->|calls, answers, approves| front
   front -->|asks, shows the work| user
   front -->|starts with what was settled, answers| orch
@@ -95,9 +95,9 @@ An agent then changes only the part it needs, with a tool it already knows.
 
 ```mermaid
 sequenceDiagram
-  participant M as front #lt;main agent#gt;
-  participant O as orchestrator #lt;sub-agent#gt;
-  participant R as role #lt;sub-agent#gt;
+  participant M as front<br/>#lt;main agent#gt;
+  participant O as orchestrator<br/>#lt;sub-agent#gt;
+  participant R as role<br/>#lt;sub-agent#gt;
   M->>O: starts it with what was settled
   O->>R: starts it with the prompt the flow gave
   R-->>O: replies
