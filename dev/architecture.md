@@ -13,12 +13,10 @@ flowchart TB
   state["state<br/>#lt;json#gt;"]
   role["role<br/>#lt;subagent#gt;"]
   guard["guard<br/>#lt;hook#gt;"]
-  caller -->|calls, answers, approves| orch
-  orch -->|asks, shows the work| caller
+  caller <-->|calls, answers, approves / asks, shows the work| orch
   orch -->|tells each move, asks what is open| flow
   flow -->|keeps the run in| state
-  orch -->|starts with the prompt the flow gave, sends more work| role
-  role -->|replies| orch
+  orch <-->|starts with the prompt the flow gave, sends more work / replies| role
   guard -.->|keep to its steps| role
 ```
 
