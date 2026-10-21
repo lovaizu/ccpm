@@ -6,6 +6,7 @@ Every plugin is built on [how a plugin works](./architecture.md).
 
 - [turn](./turn/)
 - [rn](./rn/)
+- [lane](./lane/)
 - [common](./common/): the tests of `common/`, the code the plugins share, and `testing.py`, what their tests share
 
 Every check CI runs on a push, the linter, the formatter, the check for code copied between files, the type checker, and each plugin's tests with the lines and branches they run counted, and Claude Code's check of every manifest, is run by `sh dev/check.sh` from the top of the repository, in a virtual environment made with `pip install --require-hashes -r dev/requirements.txt`. A `coverage` installed outside one does not count the scripts the tests start as separate processes.
