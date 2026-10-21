@@ -269,6 +269,9 @@
     },
     {
       "fact": "lane/README.md and dev/lane/ux.md remade and finished at 95bf4fa, awaiting the user's agreement"
+    },
+    {
+      "fact": "the user agreed lane/README.md and dev/lane/ux.md as of 95bf4fa (2026-10-21)"
     }
   ],
   "semantic_gist": [
@@ -312,7 +315,7 @@
       "gist": "read the whole of what I wrote before showing it: each reason must reach its conclusion and claim no more than its source (the user, 2026-10-21)"
     },
     {
-      "gist": "README and design too are made through turn: turn makes the most, I finish what needs the detail I know, the hand fixes shown apart, then the user agrees (the user, 2026-10-21)"
+      "gist": "from here on, no turn: a subagent makes the work with the checklists open, I check it against the same checklists, fix it by hand, and that ends it (the user, 2026-10-21)"
     }
   ],
   "focal_entities": [
@@ -321,9 +324,6 @@
     },
     {
       "task": "lane now: called by an AI (as turn), its orchestrator a subagent asking the calling AI; the reader likely goes, the orchestrator reading and proposing itself; lane also holds the flow (keys in decisions/dev/lane/design.decisions.md, The flow); lane/README.md, dev/lane/ux.md and dev/lane/design.md (d41494a) still describe /lane:up typed by the builder with a front and a reader"
-    },
-    {
-      "task": "lane README and UX at 95bf4fa await agreement; run results in this session's scratchpad results/ and lane-readme.jsonl, lane-ux.jsonl"
     }
   ],
   "relational_map": [
@@ -361,7 +361,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on resuming, show the user a Japanese translation of dev/lane/ux.md and lane/README.md (as of 95bf4fa) for agreement; then the design: research how AI-DLC, BMAD and the official plugins place definitions, state and scripts, draw the whole, show it once"
+      "next": "on resuming, the lane design (dev/lane/design.md): research how AI-DLC, BMAD and the official plugins place flow definitions, state and scripts; a subagent writes the design with usability.md and design.md open; I check it against them, fix by hand, show the user once"
     }
   ],
   "uncertainty_signal": [
