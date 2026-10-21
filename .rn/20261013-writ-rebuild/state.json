@@ -191,6 +191,15 @@
     },
     {
       "fact": "the user agreed lane/README.md and dev/lane/ux.md (2026-10-21): lane lays a lane (a step's sentence with a hook that tells it again) only where a step alone is not sure to hold; `/lane:up`, typed with no argument, asks one point at a time (first which skill or agent, offering those just changed), proposes the lanes under actions begin, read, write, run, test, hand on, wait, end, with the step as it would read and the hooks, and on OK writes both; lane's code goes once where the steps are (<plugin>/hooks/lane/, .claude/hooks/lane/, ~/.claude/hooks/lane/), a link in a ccpm plugin and a copy with VERSION elsewhere, migrated by the next /lane:up; hooks in the step's own file, or the plugin's hooks.json for a plugin agent; README example a generic /notes:write skill, as documents must read without knowing other ccpm plugins (usability.md B-12 Look for added)"
+    },
+    {
+      "fact": "checked (2026-10-22, Claude Code 2.1.305): a skill frontmatter hook runs for the rest of the session and its event carries no skill name; the transcript records a typed skill as <command-name> and a called one as Skill {skill}; UserPromptExpansion and PreToolUse Skill fire at a skill start; ${CLAUDE_PLUGIN_ROOT} expands in a plugin skill hook, ${CLAUDE_SKILL_DIR} does not; Anthropic calls skill-scoped hooks a feature request (claude-code #82801, #89669 open); prior art scopes by state files (ralph-loop, cc-sessions)"
+    },
+    {
+      "fact": "the user decided (2026-10-22): main only talks with the user and every job is done by an agent made for it, so each agent has its own steps and hooks scoped by agent_type in the plugin hooks.json, with no state and no transcript reading; conductor and orchestrator unified as orchestrator <agent>; agents talk by SendMessage, roles never with one another; lane README and UX to be rewritten to this, after the principles"
+    },
+    {
+      "fact": "dev/architecture.md drafted and pushed (da710f7), linked from dev/README.md: one flowchart of who does what, then 11 design intents with sources (grilling, Claude Code docs, Building effective agents); both figures rendered with the mermaid-cli docker image; awaiting the user feedback after /clear"
     }
   ],
   "semantic_gist": [
@@ -223,23 +232,26 @@
     },
     {
       "gist": "propose from how it can be done, the ideal first, not from why it cannot; the entry is shaped by the user's steps, the code gathered by software best practice (the user, 2026-10-21)"
+    },
+    {
+      "gist": "the user (2026-10-22): before proposing, investigate what the platform can do, the requirements, best practice and how to do it if nothing exists, and say what was checked; answer short, plain, one thing at a time"
+    },
+    {
+      "gist": "concept and principles written with the least explanation, figures first, as every word becomes a constraint (the user, 2026-10-22)"
     }
   ],
   "focal_entities": [
     {
-      "task": "FIRST: the hooks discussion (predictive_cue); T3 stopped (likely dropped), T4 work in the t4 clone not merged; the queued questions (patterns, git checkout --/restore, T3 Q1-Q3) wait on its outcome"
+      "task": "FIRST: take the user feedback on dev/architecture.md (https://github.com/lovaizu/ccpm/blob/writ-rebuild/dev/architecture.md) and settle it"
     },
     {
-      "task": "after both: run mutate.sh rn common turn whole, as the runs used the old mutate.sh"
+      "task": "then, in the agreed order: align .claude/rules/plugin.md and the checklists to dev/architecture.md, pointing to it; rewrite lane README and UX (lanes on agents only, hooks in hooks.json); then rn and turn to the architecture"
     },
     {
-      "task": "after T3 and T4: for each first survivor (T4 12, T3 round 2 4), find which code.md test design step should have given the test that kills it, and bring a change to code.md to the user"
+      "task": "open, not yet asked: whether dev/architecture.md says that a one-step job needs no plugin (the user said simple things need no plugin; left out pending their word)"
     },
     {
-      "task": "CI mutation (turn) took 10m51s at 2e1b4d1 (run 39442675420), against 141s locally; find the cause and fix it"
-    },
-    {
-      "task": "open, asked: whether patterns (globs, parent folders) reaching the session folder are stopped; recommended A, not stopped, glob matching removed, decisions Not stopped extended; then T4 Q B-15 (git checkout --/restore), then T3 Q1 (no_commit edit refused by auto), Q2 (PR title naming git push stopped)"
+      "task": "after: run mutate.sh rn common turn whole; trace T3/T4 first survivors to code.md; CI turn mutation slowness"
     }
   ],
   "relational_map": [
@@ -277,7 +289,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "lane design (plugin.md step 2): dev/lane/design.md and dev/lane/README.md with usability.md and design.md open; dev/README.md lists lane. Agreed in design talk: repo layout lane/skills/up/SKILL.md and lane/hooks/lane/*.py (the real code), turn/hooks/lane and rn/hooks/lane linking ../../lane/hooks/lane, common/hooks moved there; plugin.md 5b's `common/` by link rewritten to lane/hooks/lane; 12 lanes by action: begin start_with, read read_only read_whole, write write_only in_form, run hands_off, test test_after, hand on as_printed follow_next, wait wait_for, end end_when every_item (the user OKed the 12; my review noted overlaps every_item in in_form and start_with/wait_for/end_when as one kind, test_after's ground unchecked; the user said the entry stays by step and the code is gathered); code in four parts: reading every tool call as read/write/run/hand on/end (Read, Bash cat/sed, git, redirects, Agent, SendMessage, end), the step's context (who, IN, OUT named and plural, the script's next move, the record), rules of a few kinds (in a set, in a form, not until a condition, matches the record), telling (deny with '<name>: <sentence>', exit 2 asking for Python when python3 is missing). Solve first: how a hook knows the current step and its IN and OUT in a skill's conversation (agents get IN/OUT as JSON at start); check whether ${CLAUDE_PLUGIN_ROOT} expands in a plugin skill's frontmatter hooks, else use hooks.json"
+      "next": "read the user feedback on dev/architecture.md and apply it; the network is open (sbx policy allow network **), mermaid renders with docker run ghcr.io/mermaid-js/mermaid-cli/mermaid-cli:11.4.2 on a folder of .mmd files"
     }
   ],
   "uncertainty_signal": [
@@ -289,6 +301,9 @@
     },
     {
       "open": "shell.git misses git after a redirect, as `>/dev/null git commit`, so turn's no_commit lets it through; T3's ground (git led by env, command, sh -c)"
+    },
+    {
+      "open": "whether the hearing asks one point per message (the user rule) or a round of points (grilling); the draft says each point, with recommendation"
     }
   ],
   "retrieved_artifacts": [
