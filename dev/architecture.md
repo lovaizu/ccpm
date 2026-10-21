@@ -51,8 +51,8 @@ conversation only talks, and every job is done in a subagent.
 
 ### The user approves what is theirs
 
-What the user decides, and what is hard to undo, such as a commit, a push or a merge, goes back
-through the front to the user to approve.
+What the user decides, and what is hard to undo, such as a merge, goes back through the front to
+the user to approve; a commit or a push is not, as it can be undone.
 
 An AI that decides these in the user's place has the user stand behind what they never saw.
 
