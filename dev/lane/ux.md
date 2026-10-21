@@ -6,8 +6,8 @@ that it does what its README and lanes say, with no defect.
 
 ## Users and goals
 
-- G1: The builder, whoever writes the steps of an agent, wants the steps that are not sure to hold
-  kept by hooks, without writing a check.
+- G1: The builder, whoever writes the steps of a subagent a plugin or a skill starts, wants the
+  steps that are not sure to hold kept by hooks, without writing a check.
 
 ## Key results
 
@@ -21,8 +21,8 @@ that it does what its README and lanes say, with no defect.
 
 ## Scenes
 
-- The builder writes an agent's steps, and types `/lane:up`.
-- lane asks, one point at a time, what it needs: which steps to lay lanes on, offering the agents
+- The builder writes a subagent's steps, and types `/lane:up`.
+- lane asks, one point at a time, what it needs: which steps to lay lanes on, offering the subagents
   just written, then what the files do not settle, such as which files a step alone writes; the
   builder answers each.
 - lane proposes the lanes to lay where a step alone is not sure to hold, each under the action it
@@ -32,7 +32,7 @@ that it does what its README and lanes say, with no defect.
   all of them: a link in a plugin of the ccpm marketplace, a copy with its version anywhere else.
 - Run again where an older copy is, `/lane:up` brings the copy and the hooks to its own version.
 - In a run, the AI makes a call that drifts from a lane; Claude Code does not run it, and the AI
-  reads the lane's sentence, prefixed by the name of the plugin, or of the agent.
+  reads the lane's sentence, prefixed by the name of the plugin, or of the subagent.
 - On a machine without Python 3.9 or later, the hooks stop the calls they watch and ask for Python
   to be installed.
 
