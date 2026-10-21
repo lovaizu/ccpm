@@ -120,10 +120,3 @@ again. The hooks are in the plugin's `hooks/hooks.json`, each acting only in the
 A hook runs every time, where an instruction is advice
 ([best practices](https://code.claude.com/docs/en/best-practices)); Claude Code reads no hooks from
 a plugin agent's own file ([subagents](https://code.claude.com/docs/en/sub-agents)).
-
-### Checked as the user runs it
-
-A plugin is checked by running it in Claude Code on the model its users run, and judged from the
-records of every conversation and agent it started.
-
-The outcome shows that something went wrong; only the records show where.

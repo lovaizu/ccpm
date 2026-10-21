@@ -30,7 +30,8 @@ before anything else is made.**
 
 ### 2. Write the design
 
-**Write `dev/<plugin>/design.md` with `usability.md` and `design.md` open, and have the user agree to it.**
+**Write `dev/<plugin>/design.md` on [how a plugin works](../../dev/architecture.md), with `usability.md`
+and `design.md` open, and have the user agree to it.**
 Beside it, put `dev/<plugin>/README.md`, which links the design and says how to run the tests and
 trials once they exist; `dev/README.md` lists each plugin's folder and links these rules, and the
 root `README.md` leads users to each plugin's README and builders to `dev/`. Put no README deeper.
@@ -67,24 +68,22 @@ a. **Write its tests in `dev/<plugin>/tests/` with `unittest` and `code.md` open
 
 b. **Write the code with `code.md` open until the tests pass.** What runs on users' machines is
    Python 3, 3.9 or later, with the standard library only, and the README says so; a script that
-   only calls an existing tool may be sh. What the plugin's agents read and write as data is JSON;
-   where they need only a part, they read and change it with `jq`. CI counts the lines and branches
-   on every push and fails on any not run; it breaks the code with Cosmic Ray and fails on any
-   break no test catches, and runs property tests with Hypothesis, on new inputs each time. Each check
-   runs on Python 3.9 and the newest, Cosmic Ray and Hypothesis on the newest alone. Before each
-   push, `dev/githooks/pre-push` runs the checks on what the push changes: the tests of each plugin
-   it changes, the property tests on few inputs, and the mutants on the lines it changes; and stops
-   the push on a failure. CI runs them whole: every plugin's tests, the property tests on many
-   inputs, and every mutant, each plugin's in a job of its own, all at once. CI's `tests` job runs
-   on every push and skips the checks on a push that changes only what no check reads, such as the
-   session records and the decisions, where the commit before it passed.
-   - Rationale: python3 is wherever git is while Node.js may not be; an agent changes only the part
-     it needs with a tool it already knows; a skipped check goes unnoticed; users run 3.9, and the
-     two tools need newer versions only to test, not to run; a check left to be run by hand is
-     forgotten and found only by CI after the push, and checking what a change touches takes
-     seconds to a minute where checking the whole takes long, which CI does on every push anyway;
-     `main` takes a pull request only when `tests` has passed, so it always runs, and passes on
-     only what was checked.
+   only calls an existing tool may be sh. CI counts the lines and branches on every push and fails
+   on any not run; it breaks the code with Cosmic Ray and fails on any break no test catches, and
+   runs property tests with Hypothesis, on new inputs each time. Each check runs on Python 3.9 and
+   the newest, Cosmic Ray and Hypothesis on the newest alone. Before each push,
+   `dev/githooks/pre-push` runs the checks on what the push changes: the tests of each plugin it
+   changes, the property tests on few inputs, and the mutants on the lines it changes; and stops the
+   push on a failure. CI runs them whole: every plugin's tests, the property tests on many inputs,
+   and every mutant, each plugin's in a job of its own, all at once. CI's `tests` job runs on every
+   push and skips the checks on a push that changes only what no check reads, such as the session
+   records and the decisions, where the commit before it passed.
+   - Rationale: python3 is wherever git is while Node.js may not be; a skipped check goes unnoticed;
+     users run 3.9, and the two tools need newer versions only to test, not to run; a check left to
+     be run by hand is forgotten and found only by CI after the push, and checking what a change
+     touches takes seconds to a minute where checking the whole takes long, which CI does on every
+     push anyway; `main` takes a pull request only when `tests` has passed, so it always runs, and
+     passes on only what was checked.
 
    **Look first for what the plugins already share and use it.** Code more than one plugin needs,
    such as how a hook reads a command, is kept once in `common/`, with its tests in

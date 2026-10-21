@@ -109,7 +109,7 @@ Scope: whole
 
 Can the user stop an action that is hard to undo before the AI takes it?
 
-Look at: the prompt has the AI ask the user before such an action, such as deleting, pushing or
+Look at: the prompt has the AI ask the user before such an action, such as deleting, merging or
 sending.
 
 Why: an action hard to undo cannot be taken back once the user sees it.

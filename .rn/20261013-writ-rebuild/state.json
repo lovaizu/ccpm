@@ -203,6 +203,9 @@
     },
     {
       "fact": "the user agreed dev/architecture.md (2026-10-21, addf2d9): scope opens it (several steps, several roles, something made); one top-to-bottom figure of user, front <main conversation>, orchestrator and role <subagent>, flow <script>, state <json>, guard <hook>, names by role with what each is in Claude Code; each reason tied to its conclusion and claiming only what its source shows; commit and push need no approval, a merge does; the state kept in a file, git left out"
+    },
+    {
+      "fact": "plugin.md and rn/checklists read against dev/architecture.md (2026-10-21): plugin.md step 2 now has the design written on it and 5b no longer repeats its JSON and jq; prompt.md B-10 names merging, not pushing, as hard to undo; architecture.md drops \"Checked as the user runs it\", which design.md B-12 and B-13 already ask; prompt.md B-25/B-26 and design.md left, as they hold with it; session/plan.md conductor left for the rn rewrite"
     }
   ],
   "semantic_gist": [
@@ -248,9 +251,6 @@
   ],
   "focal_entities": [
     {
-      "task": "align .claude/rules/plugin.md and the checklists to dev/architecture.md, pointing to it"
-    },
-    {
       "task": "then rewrite lane README and UX (lanes on agents only, hooks in hooks.json); then rn and turn to the architecture"
     },
     {
@@ -292,7 +292,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "read .claude/rules/plugin.md and rn/checklists/ against dev/architecture.md; list each place that contradicts or repeats it"
+      "next": "rewrite lane/README.md and dev/lane/ux.md to dev/architecture.md: lanes on agents only, hooks in the plugin hooks.json"
     }
   ],
   "uncertainty_signal": [
