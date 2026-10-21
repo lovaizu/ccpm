@@ -257,6 +257,18 @@
     },
     {
       "fact": "lane-readme and lane-ux runs done (22 and 18 Good, none without); R31, R32 settled from the sources, the UX fixed by hand; open: where the flow definition goes and how the caller's OK reaches the flow; UserPromptSubmit also fires on a background subagent's report and another session's message, with no field telling the origin (code.claude.com/docs/en/hooks, UserPromptSubmit)"
+    },
+    {
+      "fact": "the user decided (2026-10-21): an approval counts only as the OK the caller chose from Claude Code's AskUserQuestion, recorded by lane's hook, which refuses a call whose answers an AI filled in"
+    },
+    {
+      "fact": "the user decided (2026-10-21): the flow judges only the moves the orchestrator tells it, no hook calling it, as a main-conversation hook cannot tell the run's moves from other work; turn's 12 recorded runs called turn.py before all 90 role moves"
+    },
+    {
+      "fact": "the user decided (2026-10-21): a run's state is state.json in the work's folder in the user's repository (rn .rn/<case>/, turn the CCS's folder), the folder given on the first call to the flow; where flow definitions go and how the script finds them is left to the design, after reading how AI-DLC, BMAD and the official plugins lay them out (the user: no rules made up on the spot)"
+    },
+    {
+      "fact": "lane/README.md and dev/lane/ux.md remade and finished at 95bf4fa, awaiting the user's agreement"
     }
   ],
   "semantic_gist": [
@@ -311,7 +323,7 @@
       "task": "lane now: called by an AI (as turn), its orchestrator a subagent asking the calling AI; the reader likely goes, the orchestrator reading and proposing itself; lane also holds the flow (keys in decisions/dev/lane/design.decisions.md, The flow); lane/README.md, dev/lane/ux.md and dev/lane/design.md (d41494a) still describe /lane:up typed by the builder with a front and a reader"
     },
     {
-      "task": "lane README and UX drafted (results in this session's scratchpad results/), awaiting the user's choice on how an approval reaches the flow, then the flow file's place, then agreement"
+      "task": "lane README and UX at 95bf4fa await agreement; run results in this session's scratchpad results/ and lane-readme.jsonl, lane-ux.jsonl"
     }
   ],
   "relational_map": [
@@ -349,7 +361,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "ask the user how an approval reaches the flow; then where the flow definition goes; finish README and UX, bring to the user for agreement; then the design"
+      "next": "on resuming, show the user a Japanese translation of dev/lane/ux.md and lane/README.md (as of 95bf4fa) for agreement; then the design: research how AI-DLC, BMAD and the official plugins place definitions, state and scripts, draw the whole, show it once"
     }
   ],
   "uncertainty_signal": [
