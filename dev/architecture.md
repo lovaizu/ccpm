@@ -1,7 +1,7 @@
 # How a plugin works
 
-A ccpm plugin is called in rough words, asks the user what only they can decide, and has the work
-done by agents that each do one job, so the same request gives the same work each time.
+This is how a ccpm plugin is built when its work takes several steps, done by several roles that
+work with one another, and ends in something made, such as a document or code.
 
 ## Who does what
 
