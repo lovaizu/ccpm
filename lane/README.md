@@ -1,72 +1,107 @@
 # lane
 
-An AI told a step clearly still drifts from it on some runs, so lane lays a lane where a step alone
-is not sure to hold: a sentence of the step together with a hook that notices a drift from it and
-tells the AI the sentence again. lane is a Claude Code plugin for you if you write the steps of a
-plugin's subagent, the agent its skills start for a job: once you have written them, `/lane:up`
-asks you what it needs, proposes the lanes to lay, and on your OK writes both the steps and the
-hooks.
+lane lets an AI run the course your plugin sets to the end, at full speed with no one watching
+each move, by holding the course in code. The flow holds the whole work: its phases, the parts every
+run goes through in turn; the order of each piece of work within them; and the approvals of the
+caller, the person or AI that calls your plugin. A lane holds a step that alone is not sure to hold,
+a step being one line of what a subagent, an AI your plugin starts for one job, is told to do. The
+lane is a sentence of the step together with a hook that notices a drift from it and tells the AI
+the sentence again.
+
+lane is a Claude Code plugin for you if you build a plugin whose work an AI does in several steps.
+You answer and approve. lane writes your plugin's flow definition, the file that gives its phases,
+its order and its rules, and lays the lanes on its subagents. lane's code then holds both on every
+run.
 
 ## Example
 
-In your plugin `notes`, the skill `/notes:changelog` starts a subagent, `changelog-writer`, that
-writes a project's changelog. One of its steps says:
+In your plugin `notes`, the skill `/notes:changelog` makes the conversation it is typed in the
+orchestrator, the AI that holds the run and decides each move. The orchestrator starts a subagent,
+`changelog-writer`, that writes a project's changelog. One of its steps says:
 
 ```markdown
 3. Write the new entries into `CHANGELOG.md`.
 ```
 
-Having written the steps, you type `/lane:up`. lane asks, one point at a time, what it needs: first
-which steps to lay lanes on, offering the subagents just written, then what the files do not settle
-about them:
+You ask Claude in your conversation to lay lanes on `notes`. Claude starts lane's subagent
+`lane:up`, which reads the plugin's skills and subagents. It sends Claude, one at a time, each point
+the files do not settle and each fact it found that its proposal rests on. Claude puts each to you
+and sends your answer back:
 
 ```
-Which steps shall I lay lanes on? agents/changelog-writer.md was just changed.
+Step 3 of changelog-writer writes `CHANGELOG.md`. Is it the only file it writes, and who commits it?
 ```
 
-```
-Step 3 writes `CHANGELOG.md`. Is it the only file the subagent writes, and who commits it?
-```
-
-You answer that it is the only one, and that you commit it yourself after reading it. Once every
-point is settled, lane proposes the lanes to lay where a step alone is not sure to hold, each under
-the action it keeps: begin, read, write, run, test, hand on, wait or end; with the step as it would
-read and the hooks that keep it:
+You answer that it is the only one, and that the orchestrator commits it once you have read it and
+said OK. Once every point is settled, `lane:up` proposes the flow, with your approval before the
+commit. It proposes the lanes on the steps that alone are not sure to hold, each under the action it
+keeps: begin, read, write, run, test, hand on, wait or end; with its hook, and the step as it would
+read:
 
 ```
-Lanes on step 3:
-  write: Write only `CHANGELOG.md`.
-  run:   Do not run `git commit` or `git push`.
+Flow of /notes:changelog, in one phase:
+  changelog: changelog-writer writes CHANGELOG.md;
+             you read it and say OK;
+             the orchestrator commits it, only after your OK.
+
+Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
+  write: Write only `CHANGELOG.md`.                 hook write_only
+  run:   Do not run `git commit` or `git push`.     hook hands_off
 
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`. Do not run `git commit`
    or `git push`.
-
-hooks/hooks.json: write_only and hands_off (git commit, git push), in changelog-writer alone
 ```
 
-You say OK, and lane writes the step into `agents/changelog-writer.md` and its hooks into
-`hooks/hooks.json`, with lane's code in `hooks/lane/`. Then, when `changelog-writer` runs
-`git commit -m notes`, Claude Code does not run it, and the subagent reads:
+You say OK. `lane:up` writes the flow definition into `notes`, the steps that tell the flow each
+move into `/notes:changelog`, the step into `agents/changelog-writer.md` and the hooks into
+`hooks/hooks.json`, and puts lane's code, which runs the flow and the hooks, in `hooks/lane/`.
+
+Then you run `/notes:changelog`. When `changelog-writer` runs `git commit -m notes`, Claude Code
+does not run it, and the subagent reads:
 
 ```
 notes: Do not run `git commit` or `git push`.
 ```
 
-It ends with the changelog written and uncommitted, as its step says.
+The orchestrator tells the flow each move before it makes it. When it tells the flow it will commit
+before you have said OK, the flow refuses the move, and the orchestrator reads:
+
+```
+notes: Commit `CHANGELOG.md` only after the caller's OK on it.
+```
+
+The run goes on as its steps say, and ends with the changelog committed once you have said OK.
 
 ## Why lane
 
-lane gives a step's hooks what a hook written on its own does not.
+lane gives a plugin's run what steps and hooks written on their own do not.
 
-- Each hook tells the step's own sentence, not only a refusal.
+- A refusal leads the AI back to its step, not only away from what it tried.
 
   A hook that only refuses leaves the AI to find another way to what it was doing, such as an AI
-  refused a commit splitting the word `git` to get past the check. Told the step's way, the AI goes
-  back to the step.
-- You answer and approve, and write no check.
+  refused a commit splitting the word `git` to get past the check. Told the step's own sentence, the
+  AI goes back to the step.
+- The course is the same on every run: the flow refuses a move that breaks your plugin's rules, such
+  as going on before an approval, or having a piece of work made again more times than the flow
+  definition allows.
 
-  Each lane's check is written and tested once, in lane, so the steps take no misreadings of a
-  command of their own.
+  Tools that keep the plan as a file of tasks, such as Spec Kit or OpenSpec, leave the steps within
+  each task to an AI reading a prompt, which keeps them on most runs and not on every one.
+- An approval counts only as the flow records it from the caller's own answer, never from an AI
+  saying it was given.
+
+  An AI that can mark its own approval passes every check that rests on it.
+- The plan of a run, the tasks it walks, is data the flow keeps, which the orchestrator changes as
+  facts come in, each change with its reason.
+
+  The course and its rules stay fixed while the plan follows what the run finds.
+- A run stopped anywhere goes on from its last move in a new conversation, as the flow keeps it in
+  a file.
+
+  A conversation ends, is cleared or is compacted, and what lives only in it is lost.
+- Each check and the flow are written and tested once, in lane.
+
+  Your plugin takes no misreadings of a command, or slips of a course, of its own.
 - Lanes are laid only where a step alone is not sure to hold, and a check reads the forms the steps
   tell and the AI writes, not every way the shell has.
 
@@ -75,34 +110,40 @@ lane gives a step's hooks what a hook written on its own does not.
   docs say a check on the command text is not a security boundary.
 - Each lane acts only in its subagent.
 
-  A hook written into a skill goes on running for the rest of the session once the skill has
-  started, and is not told which skill runs, so it acts on work outside the skill too. A hook is
-  told which subagent it runs in, so lane lays lanes on subagents alone, and a step to keep goes
-  into a subagent the skill starts.
+  Claude Code reads no hooks from a plugin subagent's own file, so lane writes them into the
+  plugin's `hooks/hooks.json`, each naming its subagent. A hook written into a skill instead goes on
+  running for the rest of the session once the skill has started, and is not told which skill runs,
+  so it acts on work outside the skill too. So lane lays lanes on subagents alone, a step to keep
+  goes into a subagent the skill starts, and the orchestrator is held by the flow.
 
 ## Requirements
 
-- Python 3.9 or later, run as `python3`, on the machines the steps run on.
+- Claude Code, where your plugin runs and lane is installed.
+- Python 3.9 or later, run as `python3`, on the machines the plugin runs on.
 
-  Without it, the hooks stop the tool calls they watch and ask for Python to be installed.
+  Without it, the flow stops the run at its first move and the hooks stop the tool calls they
+  watch, each asking for Python to be installed.
 
 ## Installation
 
+lane comes from ccpm, a marketplace of Claude Code plugins on GitHub. Add it, then install lane:
+
 ```console
+claude plugin marketplace add lovaizu/ccpm
 claude plugin install lane@ccpm
 ```
 
-Then, once a subagent's steps are written, type `/lane:up`, as in the example.
+Then ask Claude to lay lanes on your plugin, as in the example. Claude starts `lane:up` from your
+conversation, or from a subagent it started, since `lane:up` starts subagents of its own in the
+layers below it and Claude Code lets subagents start subagents down to three layers.
 
-lane puts its code in the plugin's `hooks/lane/`, once for all its subagents, and writes the hooks
-into the plugin's `hooks/hooks.json`, each acting only in its subagent, as Claude Code reads no
-hooks from a plugin subagent's own file. In a plugin of the ccpm marketplace the code is a link to
-lane's; anywhere else it is a copy with its version, which `/lane:up` brings to its own version the
-next time it is run there.
+lane's code in your plugin's `hooks/lane/` is a copy with its version, which `lane:up` brings to its
+own version the next time it is run there. In a plugin of ccpm itself, the code is a link to lane's.
 
 ## Documentation
 
 - [The lanes](lanes.md) give each lane lane can lay, under its action, and what its hook notices.
+- [The flow](flow.md) gives each key of a flow definition and what it does.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development

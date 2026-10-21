@@ -251,6 +251,12 @@
     },
     {
       "fact": "the user agreed dev/architecture.md as of 62f0861 (2026-10-21): no front, the orchestrator holds the whole and decides; flow in lane runs phases and each work's steps, plan as data"
+    },
+    {
+      "fact": "the user chose (2026-10-21): lane's README rests on one idea for the flow and the lanes, said by what it does (lane lets an AI run the course a plugin sets, to the end, at full speed); lane:up makes the flow definition too"
+    },
+    {
+      "fact": "lane-readme and lane-ux runs done (22 and 18 Good, none without); R31, R32 settled from the sources, the UX fixed by hand; open: where the flow definition goes and how the caller's OK reaches the flow; UserPromptSubmit also fires on a background subagent's report and another session's message, with no field telling the origin (code.claude.com/docs/en/hooks, UserPromptSubmit)"
     }
   ],
   "semantic_gist": [
@@ -305,7 +311,7 @@
       "task": "lane now: called by an AI (as turn), its orchestrator a subagent asking the calling AI; the reader likely goes, the orchestrator reading and proposing itself; lane also holds the flow (keys in decisions/dev/lane/design.decisions.md, The flow); lane/README.md, dev/lane/ux.md and dev/lane/design.md (d41494a) still describe /lane:up typed by the builder with a front and a reader"
     },
     {
-      "task": "turn-readme and turn-ux runs ended 2026-10-21, results kept in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/e758703f-5664-4764-8582-ee66c664ef5b/scratchpad/{turn-readme,turn-ux} (not copied in): readme 21 of 23 Good, questions B-6 (page on calling turn: write after design) and B-5 (answer form: plain words); ux question on KR1.2 excluding the user's answer time (recommended exclude); both written before the architecture change (no front, flow in lane), so read again against it; turn/agents/up.md:10 and turn/CHANGELOG.md:32 still say the run ends to ask"
+      "task": "lane README and UX drafted (results in this session's scratchpad results/), awaiting the user's choice on how an approval reaches the flow, then the flow file's place, then agreement"
     }
   ],
   "relational_map": [
@@ -343,7 +349,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "write decisions for lane README and UX to the agreed architecture (called by an AI, orchestrator subagent, flow held by lane), remake them through turn with ccs/run-turn.sh, finish, bring to the user; then the design"
+      "next": "ask the user how an approval reaches the flow; then where the flow definition goes; finish README and UX, bring to the user for agreement; then the design"
     }
   ],
   "uncertainty_signal": [

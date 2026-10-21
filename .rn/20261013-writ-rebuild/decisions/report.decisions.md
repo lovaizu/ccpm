@@ -92,3 +92,12 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
 - R30 (keeping turn's trials once): what the four trials copied is kept in
   `dev/turn/trials/shared.py`; `roles.py` now prints, of each record, the messages and Stop hook
   lines `kept.py` printed as well, as one reading serves both.
+- R31 (turn's question on lane's UX): without Python 3.9 or later the flow stops the run at its
+  first move and asks for Python, as the hooks do, since the user chose that a check that cannot
+  run stops rather than lets through (2026-10-21).
+- R32 (turn's question on lane's UX): `lane:up` also writes the orchestrator's steps that tell the
+  flow each move, and shows them in its proposal, as the user chose that the builder answers and
+  approves and writes no flow (2026-10-21).
+- lane's UX fixed by hand where turn's draft went against the decisions: a lane on a subagent's
+  step alone, not a skill's; a type's steps not all subagents; the action `run`, not "a commit";
+  the hooks laid where a step alone is not sure to hold; the builder's call said by what it does.

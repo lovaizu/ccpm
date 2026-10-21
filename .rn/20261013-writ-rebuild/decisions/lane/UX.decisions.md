@@ -37,8 +37,8 @@ a line here changes it.
    drifts from a lane; the AI reads the sentence, prefixed by the plugin's name, and goes on as its
    steps say.
 7. A run stopped anywhere goes on from its last move in a new conversation.
-8. On a machine without Python 3.9 or later, the hooks stop the calls they watch and ask for Python
-   to be installed.
+8. On a machine without Python 3.9 or later, the flow stops the run at its first move and the hooks
+   stop the calls they watch, each asking for Python to be installed (R31).
 
 ### B-6: The benefits
 - The builder answers and approves instead of writing a flow or checks; holding the course,
