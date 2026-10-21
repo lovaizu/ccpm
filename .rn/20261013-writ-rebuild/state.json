@@ -230,6 +230,9 @@
     },
     {
       "fact": "the user decided (2026-10-21): dev/common/testing.py goes to dev/lane/testing.py, rn's and turn's tests importing it from there; written in decisions/dev/lane/design.decisions.md"
+    },
+    {
+      "fact": "the user decided (2026-10-21): rn has no step finishing a work after turn; questions go by message during turn's run, Goods are read by turn's first user, fixes by hand become decisions before the run or at a sign-off; written in decisions/dev/rn/design.decisions.md"
     }
   ],
   "semantic_gist": [
