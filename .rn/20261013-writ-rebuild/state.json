@@ -200,6 +200,9 @@
     },
     {
       "fact": "dev/architecture.md drafted and pushed (da710f7), linked from dev/README.md: one flowchart of who does what, then 11 design intents with sources (grilling, Claude Code docs, Building effective agents); both figures rendered with the mermaid-cli docker image; awaiting the user feedback after /clear"
+    },
+    {
+      "fact": "the user agreed dev/architecture.md (2026-10-21, addf2d9): scope opens it (several steps, several roles, something made); one top-to-bottom figure of user, front <main conversation>, orchestrator and role <subagent>, flow <script>, state <json>, guard <hook>, names by role with what each is in Claude Code; each reason tied to its conclusion and claiming only what its source shows; commit and push need no approval, a merge does; the state kept in a file, git left out"
     }
   ],
   "semantic_gist": [
@@ -238,17 +241,17 @@
     },
     {
       "gist": "concept and principles written with the least explanation, figures first, as every word becomes a constraint (the user, 2026-10-22)"
+    },
+    {
+      "gist": "read the whole of what I wrote before showing it: each reason must reach its conclusion and claim no more than its source (the user, 2026-10-21)"
     }
   ],
   "focal_entities": [
     {
-      "task": "FIRST: take the user feedback on dev/architecture.md (https://github.com/lovaizu/ccpm/blob/writ-rebuild/dev/architecture.md) and settle it"
+      "task": "align .claude/rules/plugin.md and the checklists to dev/architecture.md, pointing to it"
     },
     {
-      "task": "then, in the agreed order: align .claude/rules/plugin.md and the checklists to dev/architecture.md, pointing to it; rewrite lane README and UX (lanes on agents only, hooks in hooks.json); then rn and turn to the architecture"
-    },
-    {
-      "task": "open, not yet asked: whether dev/architecture.md says that a one-step job needs no plugin (the user said simple things need no plugin; left out pending their word)"
+      "task": "then rewrite lane README and UX (lanes on agents only, hooks in hooks.json); then rn and turn to the architecture"
     },
     {
       "task": "after: run mutate.sh rn common turn whole; trace T3/T4 first survivors to code.md; CI turn mutation slowness"
@@ -289,7 +292,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "read the user feedback on dev/architecture.md and apply it; the network is open (sbx policy allow network **), mermaid renders with docker run ghcr.io/mermaid-js/mermaid-cli/mermaid-cli:11.4.2 on a folder of .mmd files"
+      "next": "read .claude/rules/plugin.md and rn/checklists/ against dev/architecture.md; list each place that contradicts or repeats it"
     }
   ],
   "uncertainty_signal": [
