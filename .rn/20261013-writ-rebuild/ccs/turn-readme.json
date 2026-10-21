@@ -1,0 +1,32 @@
+{
+  "focal_entities": [
+    {
+      "deliverable": "turn/README.md"
+    },
+    {
+      "audience": "a developer of a Claude Code plugin whose steps have AI make documents or code, deciding whether to use turn and then calling it from a step"
+    },
+    {
+      "has": "."
+    }
+  ],
+  "goal_orientation": [
+    {
+      "purpose": "the work is rewritten in place to the decisions, which now follow dev/architecture.md: questions sent to the calling AI by message, the run going on with the answer; a stopped run going on from its last step; turn called from where two layers of agents remain; it keeps all else it says now. deciding whether to use turn, then installing it and calling it from a step of their plugin, as the example shows"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/product/readme.md"
+    },
+    {
+      "checklist": "rn/checklists/usability.md"
+    },
+    {
+      "decisions": ".rn/20261013-writ-rebuild/decisions/turn/README.decisions.md"
+    },
+    {
+      "reference": "dev/architecture.md"
+    }
+  ]
+}

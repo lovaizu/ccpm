@@ -3,7 +3,7 @@
 ## ux
 
 ### B-1: The users and their goals
-- The AI that runs a plugin's step and calls turn from it, such as rn's conductor: the work the step
+- The AI that runs a plugin's step and calls turn from it, such as rn's orchestrator: the work the step
   has made comes back meeting its checklists on every run.
 
 ### B-12: Every term known
@@ -18,12 +18,17 @@
 2. It calls turn with the CCS's path, the kinds it uses in the CCS for where the work goes, the
    checklists, the receiver, what the receiver reads it for and what they open with it, and where
    turn writes its result.
-3. It gets back the work where it goes, and the result: each item's Good with its lines, the
-   questions only the user can decide, and each item still without Good, with what the receiver
-   gets once it is Good.
-4. It checks each Good against its lines and fixes each item without Good itself; it puts each
-   question to the user, writes the answer into the work, or into the CCS and calls turn again when
-   the answer changes much, and ends.
+3. While turn runs, it is told by turn what each agent will do before it starts and what is done
+   as each step ends, and passes each on to the user, who may stop the run there.
+4. Where the CCS lacks what the run needs, or the work meets a point only the user can decide, turn
+   sends it the question by message before the work resting on it is made; it puts the question to
+   the user and sends the answer, and turn goes on from there (dev/architecture.md, Messages; A
+   plugin that uses another).
+5. It gets back the work where it goes, and the result: each item's Good with its lines, and each
+   item still without Good, with what the receiver gets once it is Good.
+6. It checks each Good against its lines, fixes each item without Good itself, and ends.
+7. A run stopped anywhere goes on from its last step when it calls turn again with the same result
+   (dev/architecture.md, Going on from the state).
 
 ### B-2: Results measured, B-4: why each, B-7: the order of priority
 - The items of the checklists the calling AI fixes in the work after it comes back; fewer is better.

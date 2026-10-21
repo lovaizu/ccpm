@@ -1,0 +1,32 @@
+{
+  "focal_entities": [
+    {
+      "deliverable": "dev/turn/ux.md"
+    },
+    {
+      "audience": "whoever builds or changes turn, a person or an AI, who has not followed the discussion"
+    },
+    {
+      "has": "."
+    }
+  ],
+  "goal_orientation": [
+    {
+      "purpose": "the work is rewritten in place to the decisions, which now follow dev/architecture.md: questions sent to the calling AI by message, the run going on with the answer; a stopped run going on from its last step; turn called from where two layers of agents remain; it keeps all else it says now. building and changing every part of turn so that the calling AI gets what the UX says, and judging each change by its key results"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/product/ux.md"
+    },
+    {
+      "checklist": "rn/checklists/usability.md"
+    },
+    {
+      "decisions": ".rn/20261013-writ-rebuild/decisions/turn/UX.decisions.md"
+    },
+    {
+      "reference": "dev/architecture.md"
+    }
+  ]
+}

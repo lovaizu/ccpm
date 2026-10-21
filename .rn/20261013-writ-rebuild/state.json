@@ -265,6 +265,9 @@
     },
     {
       "gist": "read the whole of what I wrote before showing it: each reason must reach its conclusion and claim no more than its source (the user, 2026-10-21)"
+    },
+    {
+      "gist": "README and design too are made through turn: turn makes the most, I finish what needs the detail I know, the hand fixes shown apart, then the user agrees (the user, 2026-10-21)"
     }
   ],
   "focal_entities": [
@@ -310,7 +313,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "user agreement on turn README and UX; then turn design; lane design from the fork"
+      "next": "write a CCS and decisions for turn README and UX, run turn on them, finish by hand; then lane design the same, then its two open points one at a time"
     }
   ],
   "uncertainty_signal": [
