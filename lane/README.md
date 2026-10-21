@@ -1,90 +1,106 @@
 # lane
 
-An AI told a step clearly still drifts from it on some runs, so lane has each step made together
-with its hook: the step tells the AI the way, and the hook notices a drift from it and tells the AI
-the way again. lane is for whoever builds a Claude Code plugin in the ccpm marketplace whose AI
-works through steps: it holds a ready check for each drift such steps commonly meet, so they pair a
-step with its hook by writing the step and one line of hook settings, no code of their own.
+An AI told a step clearly still drifts from it on some runs, so lane lays a lane where a step alone
+is not sure to hold: a sentence of the step together with a hook that notices a drift from it and
+tells the AI the sentence again. lane is a Claude Code plugin for you if you write the steps of a skill or
+an agent: once you have written them, `/lane:up` asks you what it needs, proposes the lanes to lay,
+and on your OK writes both the steps and the hooks.
 
 ## Example
 
-turn's generator makes a work that the AI calling turn checks and then keeps in git. Its step says
-so:
+You have made a skill, `/notes:write`, that writes a project's changelog. One of its steps says:
 
 ```markdown
-4. Make the work at the paths in `work` ... Leave it uncommitted: the calling AI checks it and keeps
-   it in git.
+3. Write the new entries into `CHANGELOG.md`.
 ```
 
-An AI told a step clearly still drifts from it on some runs, such as committing what it just made.
-So beside the step, turn's `hooks/hooks.json` has lane's check `no_commit` watch the generator, and
-says what to tell it:
-
-```json
-{"type": "command", "if": "Bash(git *)",
- "command": "\"${CLAUDE_PLUGIN_ROOT}/lane/run\" no_commit --agent turn:generator --say 'leave the work uncommitted; the caller checks it and keeps it in git'"}
-```
-
-When the generator runs `cd "$repo" && git commit -m work`, Claude Code does not run it, and the
-generator reads:
+Having written the steps, you type `/lane:up`. lane asks, one point at a time, what it needs: first
+which steps to lay lanes on, offering the skills and agents just written, then what the files do
+not settle about them:
 
 ```
-turn: leave the work uncommitted; the caller checks it and keeps it in git
+Which steps shall I lay lanes on? skills/write/SKILL.md was just changed.
 ```
 
-It goes on to its next step with the work uncommitted, as its step says.
+```
+Step 3 writes `CHANGELOG.md`. Is it the only file the skill writes, and who commits it?
+```
+
+You answer that it is the only one, and that you commit it yourself after reading it. Once every
+point is settled, lane proposes the lanes to lay where a step alone is not sure to hold, each under
+the action it keeps: begin, read, write, run, test, hand on, wait or end; with the step as it would
+read and the hooks that keep it:
+
+```
+Lanes on step 3:
+  write: Write only the OUT, `CHANGELOG.md`.
+  run:   Do not commit the OUT.
+
+3. Write the new entries into `CHANGELOG.md`, and no other file. Do not commit it.
+
+skills/write/SKILL.md: write_only and hands_off (git commit, git push)
+```
+
+You say OK, and lane writes both into `skills/write/SKILL.md`, the step and its hooks, with lane's
+code in `hooks/lane/`. Then, when the AI running `/notes:write` runs `git commit -m notes`, Claude
+Code does not run it, and the AI reads:
+
+```
+notes: Do not commit the OUT.
+```
+
+It ends with the changelog written and uncommitted, as its step says.
 
 ## Why lane
 
-lane gives a plugin's hooks what a hook written on its own does not.
+lane gives a step's hooks what a hook written on its own does not.
 
-- Each hook tells the step's way, not only a refusal.
+- Each hook tells the step's own sentence, not only a refusal.
 
-  A hook that only refuses leaves the AI to find another way to what it was doing; turn's generator,
-  refused a commit, split the word `git` to get past the check. Told the step's way, the AI goes
+  A hook that only refuses leaves the AI to find another way to what it was doing, such as an AI
+  refused a commit splitting the word `git` to get past the check. Told the step's way, the AI goes
   back to the step.
-- Each check is written and tested once, in lane, and every plugin uses it as it is.
+- You answer and approve, and write no check.
 
-  A check written again in each plugin brings its own misreadings of the command with it.
-- A check reads the forms the steps tell and the AI writes, not every way the shell has.
+  Each lane's check is written and tested once, in lane, so the steps take no misreadings of a
+  command of their own.
+- Lanes are laid only where a step alone is not sure to hold, and a check reads the forms the steps
+  tell and the AI writes, not every way the shell has.
 
-  The check stays small and is finished. What must hold whatever the AI writes is held where it
-  holds, such as GitHub's branch protection, Claude Code's sandbox or its permission rules, as
-  Claude Code's own docs say a check on the command text is not a security boundary.
+  The hooks stay few and small. What must hold whatever the AI writes is held where it holds, such
+  as GitHub's branch protection, Claude Code's sandbox or its permission rules, as Claude Code's own
+  docs say a check on the command text is not a security boundary.
 
 ## Requirements
 
-- A plugin in the ccpm marketplace.
+- Python 3.9 or later, run as `python3`, on the machines the steps run on.
 
-  A plugin takes lane by a symbolic link, which Claude Code copies into the plugin at install only
-  from within the same marketplace.
-- Python 3.9 or later, run as `python3`, on the machines the plugin runs on.
-
-  Without it, lane's checks stop the tool calls they watch and ask for Python to be installed.
+  Without it, the hooks stop the tool calls they watch and ask for Python to be installed.
 
 ## Installation
 
-lane is not installed on its own, as it has no hooks of its own. From your plugin's folder, link
-lane:
-
 ```console
-ln -s ../lane lane
+claude plugin install lane@ccpm
 ```
 
-Then, for each step, add to your plugin's `hooks/hooks.json` the check that fits it, the agent it
-watches and what it says, as in the example.
+Then, once a skill's or an agent's steps are written, type `/lane:up`, as in the example.
+
+lane puts its code where the steps are, once for all of them: `<plugin>/hooks/lane/` for a plugin,
+`.claude/hooks/lane/` for a project and `~/.claude/hooks/lane/` for you alone. It writes a step's
+hooks into the step's own file, or, for an agent of a plugin, which Claude Code reads no hooks
+from, into the plugin's `hooks/hooks.json`. In a plugin of the ccpm marketplace the code is a link
+to lane's; anywhere else it is a copy with its version, which `/lane:up` brings to its own version
+the next time it is run there.
 
 ## Documentation
 
-- [The checks](checks.md) give each of lane's checks: the drift it notices, the steps it fits and
-  how to set it.
+- [The lanes](lanes.md) give each lane lane can lay, under its action, and what its hook notices.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development
 
 [lane's development folder](../dev/lane/README.md) leads to its UX, its design and how it is
-checked. A step that no check fits is met by adding a check to lane there, not by writing one in the
-plugin.
+checked.
 
 ## License
 

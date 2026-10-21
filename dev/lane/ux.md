@@ -1,36 +1,43 @@
 # lane UX
 
-lane is a library of ready checks that a builder links into their plugin and sets beside each step,
-so the plugin's AI, drifting from the step, is told its way. Build and change every part of lane so
-that it does what its README and checks say, with no defect.
+lane lays a lane where a step alone is not sure to hold: a sentence of the step with a hook that
+notices a drift from it and tells the AI the sentence again. Build and change every part of lane so
+that it does what its README and lanes say, with no defect.
 
 ## Users and goals
 
-- G1: The builder, whoever builds a plugin in the ccpm marketplace whose AI works through steps,
-  wants to pair each step with its hook by setting one of lane's checks as it is.
+- G1: The builder, whoever writes the steps of a skill or an agent, wants the steps that are not
+  sure to hold kept by hooks, without writing a check.
 
 ## Key results
 
-- KR1.1: The defects the builder meets setting lane's checks as they are: a check that does not
-  notice the drift it is for in the forms the steps tell, stops a call the step allows, or must be
-  changed or worked around to serve a step it is said to fit; fewer is better, and none once the goal
-  is reached.
+- KR1.1: The defects the builder meets using lane as it is: a hook that does not notice a drift from
+  its sentence in the forms the steps tell, tells the AI of a call the sentence allows, or a step,
+  setting or copy lane writes that must be changed or worked around; fewer is better, and none once
+  the goal is reached.
 
   Each defect is work the builder does in lane's place, and one they miss is a hook that does not
-  keep the plugin's AI to its step.
+  keep the AI to its step.
 
 ## Scenes
 
-- The builder writes a step, and links lane into their plugin.
-- They choose, from lane's checks, the one that fits the step, and add it to their plugin's
-  `hooks/hooks.json` with the agent it watches and what it says.
-- In a run, the watched agent makes a call that drifts from the step; Claude Code does not run it,
-  and the agent reads what the check says, prefixed by the plugin's name.
-- On a machine without Python 3.9 or later, the check stops the calls it watches and asks for Python
+- The builder writes a skill's or an agent's steps, and types `/lane:up`.
+- lane asks, one point at a time, what it needs: which steps to lay lanes on, offering the skills
+  and agents just written, then what the files do not settle, such as which files a step alone
+  writes; the builder answers each.
+- lane proposes the lanes to lay where a step alone is not sure to hold, each under the action it
+  keeps, with the step as it would read and the hooks that keep it; the builder says OK or what to
+  change.
+- On the OK, lane writes the steps and the hooks, and puts its code where the steps are, once for
+  all of them: a link in a plugin of the ccpm marketplace, a copy with its version anywhere else.
+- Run again where an older copy is, `/lane:up` brings the copy and the hooks to its own version.
+- In a run, the AI makes a call that drifts from a lane; Claude Code does not run it, and the AI
+  reads the lane's sentence, prefixed by the name of the plugin, or of the skill or agent.
+- On a machine without Python 3.9 or later, the hooks stop the calls they watch and ask for Python
   to be installed.
-- Where no check fits a step, the builder adds one to lane, and every plugin can set it.
 
 ## Benefits
 
-- The builder writes the step and one line of hook settings; noticing the drift, stopping the call
-  and telling the step's way are lane's, and already tested.
+- The builder answers and approves instead of writing checks; noticing a drift and telling the
+  sentence are lane's, and already tested.
+- Hooks are laid only where a step alone is not sure to hold, so they stay few.

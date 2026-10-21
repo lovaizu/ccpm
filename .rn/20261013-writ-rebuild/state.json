@@ -185,6 +185,12 @@
     },
     {
       "fact": "the user decided (2026-10-21): lane is a library whose one key result is no defect when used as it is; it holds ready checks for the drifts steps commonly meet, and a builder writes the step and one hooks.json entry (lane/run <check> --agent <agent_type> --say <the step's way>), no code; a step no check fits gets a check added to lane; plugin agents ignore frontmatter hooks (sub-agents.md), so hooks.json is the one place; a folder link ../lane is copied at install (host-marketplace.md); README and dev/lane/ux.md agreed"
+    },
+    {
+      "fact": "the user decided (2026-10-21): lane is a plugin whose agent lane:up reads a plugin's steps, proposes for each the sentences worth keeping, asks one at a time only what the files do not settle (an AI caller answers and passes on what it cannot, by SendMessage), writes the hooks and the link to lane's code into the plugin, and hands back the sentences for the builder to place; the entry is by step: sentences listed under actions begin, read, write, run, test, hand on, wait, end (12: start_with, read_only, read_whole, write_only, in_form, hands_off, test_after, as_printed, follow_next, wait_for, end_when, every_item); the code gathers them in four parts: reading every tool call as read/write/run/hand on/end, the step's context (who, IN, OUT, the script's next move, the record), rules of a few kinds, and telling; README and UX rewritten, awaiting agreement"
+    },
+    {
+      "fact": "the user agreed lane/README.md and dev/lane/ux.md (2026-10-21): lane lays a lane (a step's sentence with a hook that tells it again) only where a step alone is not sure to hold; `/lane:up`, typed with no argument, asks one point at a time (first which skill or agent, offering those just changed), proposes the lanes under actions begin, read, write, run, test, hand on, wait, end, with the step as it would read and the hooks, and on OK writes both; lane's code goes once where the steps are (<plugin>/hooks/lane/, .claude/hooks/lane/, ~/.claude/hooks/lane/), a link in a ccpm plugin and a copy with VERSION elsewhere, migrated by the next /lane:up; hooks in the step's own file, or the plugin's hooks.json for a plugin agent; README example a generic /notes:write skill, as documents must read without knowing other ccpm plugins (usability.md B-12 Look for added)"
     }
   ],
   "semantic_gist": [
@@ -211,6 +217,12 @@
     },
     {
       "gist": "after a turn run, a fix of a few lines that changes no decision is made by hand by the caller, then the affected checks run and the fix shown apart as made by hand; a run again only where the decisions change much, as dev/rn/design.md:107-108 has the conductor do (the user, 2026-10-20)"
+    },
+    {
+      "gist": "a document reads without knowing other products beside it, such as other ccpm plugins (the user, 2026-10-21; usability.md B-12)"
+    },
+    {
+      "gist": "propose from how it can be done, the ideal first, not from why it cannot; the entry is shaped by the user's steps, the code gathered by software best practice (the user, 2026-10-21)"
     }
   ],
   "focal_entities": [
@@ -265,7 +277,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "lane design (plugin.md step 2): dev/lane/design.md and dev/lane/README.md with usability.md and design.md open; which checks lane starts with (from turn's and rn's steps), how run reads --agent and --say, python3 missing stopped by lane/run in sh; dev/README.md lists lane"
+      "next": "lane design (plugin.md step 2): dev/lane/design.md and dev/lane/README.md with usability.md and design.md open; dev/README.md lists lane. Agreed in design talk: repo layout lane/skills/up/SKILL.md and lane/hooks/lane/*.py (the real code), turn/hooks/lane and rn/hooks/lane linking ../../lane/hooks/lane, common/hooks moved there; plugin.md 5b's `common/` by link rewritten to lane/hooks/lane; 12 lanes by action: begin start_with, read read_only read_whole, write write_only in_form, run hands_off, test test_after, hand on as_printed follow_next, wait wait_for, end end_when every_item (the user OKed the 12; my review noted overlaps every_item in in_form and start_with/wait_for/end_when as one kind, test_after's ground unchecked; the user said the entry stays by step and the code is gathered); code in four parts: reading every tool call as read/write/run/hand on/end (Read, Bash cat/sed, git, redirects, Agent, SendMessage, end), the step's context (who, IN, OUT named and plural, the script's next move, the record), rules of a few kinds (in a set, in a form, not until a condition, matches the record), telling (deny with '<name>: <sentence>', exit 2 asking for Python when python3 is missing). Solve first: how a hook knows the current step and its IN and OUT in a skill's conversation (agents get IN/OUT as JSON at start); check whether ${CLAUDE_PLUGIN_ROOT} expands in a plugin skill's frontmatter hooks, else use hooks.json"
     }
   ],
   "uncertainty_signal": [

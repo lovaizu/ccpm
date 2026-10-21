@@ -71,7 +71,8 @@ place where it is first used, a sentence, an example or a figure, shows what it 
 A term is any word the document uses for a thing of its subject, whether set in code or not.
 
 Look for: a plain word used in a sense of its own, such as a word for a part of the subject or for
-someone who acts in it, that no sentence explains.
+someone who acts in it, that no sentence explains; a name or an example taken from another product
+beside it, such as another plugin of the same marketplace, which the reader may not know.
 
 Why: a term never explained is read with a guess at its meaning, and the reader's picture differs
 from the writer's where the guess is wrong.
