@@ -22,6 +22,7 @@ flowchart LR
   script -->|keeps the run in| record
   orch -->|starts with the prompt the script gave, sends more work| role
   role -->|replies| orch
+  main ~~~ hooks
   hooks -.->|keep to its steps| orch
   hooks -.->|keep to its steps| role
 ```
