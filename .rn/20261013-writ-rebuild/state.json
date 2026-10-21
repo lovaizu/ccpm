@@ -233,6 +233,9 @@
     },
     {
       "fact": "the user decided (2026-10-21): rn has no step finishing a work after turn; questions go by message during turn's run, Goods are read by turn's first user, fixes by hand become decisions before the run or at a sign-off; written in decisions/dev/rn/design.decisions.md"
+    },
+    {
+      "fact": "lane-design run done (24 items Good, 3 questions) and taken in with hand fixes: a lane's sentence made from its lanes.md wording and what it takes, written into the step and found there by the guard; lane/README.md example made to match its own promise; testing.py to dev/lane/testing.py; the 12 lanes settled by the agreed table; 'flow' against the checklist's 'Flow:' left to the user"
     }
   ],
   "semantic_gist": [
@@ -322,7 +325,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "finish lane-design from its run and bring it to the user for agreement; turn README and UX wait until lane is done"
+      "next": "ask the user about the checklist label 'Flow:' clashing with the component 'flow', then bring dev/lane/design.md for agreement; lanes.md made from the agreed table after; turn-readme and turn-ux results wait in the scratchpad"
     }
   ],
   "uncertainty_signal": [

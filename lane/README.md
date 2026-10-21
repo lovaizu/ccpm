@@ -35,10 +35,11 @@ read and the hooks that keep it:
 
 ```
 Lanes on step 3:
-  write: Write only the OUT, `CHANGELOG.md`.
-  run:   Do not commit the OUT.
+  write: Write only `CHANGELOG.md`.
+  run:   Do not run `git commit` or `git push`.
 
-3. Write the new entries into `CHANGELOG.md`, and no other file. Do not commit it.
+3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`. Do not run `git commit`
+   or `git push`.
 
 hooks/hooks.json: write_only and hands_off (git commit, git push), in changelog-writer alone
 ```
@@ -48,7 +49,7 @@ You say OK, and lane writes the step into `agents/changelog-writer.md` and its h
 `git commit -m notes`, Claude Code does not run it, and the subagent reads:
 
 ```
-notes: Do not commit the OUT.
+notes: Do not run `git commit` or `git push`.
 ```
 
 It ends with the changelog written and uncommitted, as its step says.
