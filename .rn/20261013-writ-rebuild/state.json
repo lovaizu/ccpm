@@ -209,6 +209,9 @@
     },
     {
       "fact": "lane/README.md and dev/lane/ux.md rewritten to dev/architecture.md (2026-10-21): lanes on agents alone, the example a project agent changelog-writer, hooks in the agent file or, for a plugin agent, the plugin hooks.json acting only in that agent (hooks docs: agent_type in every tool event; frontmatter hooks of a subagent run only while it runs; tool-event matchers filter by tool, so the script reads agent_type); awaiting the user agreement"
+    },
+    {
+      "fact": "the user decided (2026-10-21): lane lays lanes on a plugin subagent alone, its hooks in the plugin hooks/hooks.json acting only in that subagent by agent_type, lane code in the plugin hooks/lane/; project and user subagents left out, as their frontmatter hooks need folder trust (none in -p) and add a second place; README and UX rewritten to it (subagents docs: hooks ignored for plugin subagents)"
     }
   ],
   "semantic_gist": [

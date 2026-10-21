@@ -3,14 +3,14 @@
 An AI told a step clearly still drifts from it on some runs, so lane lays a lane where a step alone
 is not sure to hold: a sentence of the step together with a hook that notices a drift from it and
 tells the AI the sentence again. lane is a Claude Code plugin for you if you write the steps of a
-subagent, the agent a plugin or a skill starts for a job: once you have written them, `/lane:up`
+plugin's subagent, the agent its skills start for a job: once you have written them, `/lane:up`
 asks you what it needs, proposes the lanes to lay, and on your OK writes both the steps and the
 hooks.
 
 ## Example
 
-Your skill `/changelog` starts a subagent, `changelog-writer`, that writes a project's changelog.
-One of its steps says:
+In your plugin `notes`, the skill `/notes:changelog` starts a subagent, `changelog-writer`, that
+writes a project's changelog. One of its steps says:
 
 ```markdown
 3. Write the new entries into `CHANGELOG.md`.
@@ -21,7 +21,7 @@ which steps to lay lanes on, offering the subagents just written, then what the 
 about them:
 
 ```
-Which steps shall I lay lanes on? .claude/agents/changelog-writer.md was just changed.
+Which steps shall I lay lanes on? agents/changelog-writer.md was just changed.
 ```
 
 ```
@@ -40,15 +40,15 @@ Lanes on step 3:
 
 3. Write the new entries into `CHANGELOG.md`, and no other file. Do not commit it.
 
-.claude/agents/changelog-writer.md: write_only and hands_off (git commit, git push)
+hooks/hooks.json: write_only and hands_off (git commit, git push), in changelog-writer alone
 ```
 
-You say OK, and lane writes both into `.claude/agents/changelog-writer.md`, the step and its hooks,
-with lane's code in `.claude/hooks/lane/`. Then, when `changelog-writer` runs `git commit -m notes`,
-Claude Code does not run it, and the subagent reads:
+You say OK, and lane writes the step into `agents/changelog-writer.md` and its hooks into
+`hooks/hooks.json`, with lane's code in `hooks/lane/`. Then, when `changelog-writer` runs
+`git commit -m notes`, Claude Code does not run it, and the subagent reads:
 
 ```
-changelog-writer: Do not commit the OUT.
+notes: Do not commit the OUT.
 ```
 
 It ends with the changelog written and uncommitted, as its step says.
@@ -75,8 +75,9 @@ lane gives a step's hooks what a hook written on its own does not.
 - Each lane acts only in its subagent.
 
   A hook written into a skill goes on running for the rest of the session once the skill has
-  started, and is not told which skill runs, so it acts on work outside the skill too. lane lays
-  lanes on subagents alone, and a step to keep goes into a subagent the skill starts.
+  started, and is not told which skill runs, so it acts on work outside the skill too. A hook is
+  told which subagent it runs in, so lane lays lanes on subagents alone, and a step to keep goes
+  into a subagent the skill starts.
 
 ## Requirements
 
@@ -92,12 +93,11 @@ claude plugin install lane@ccpm
 
 Then, once a subagent's steps are written, type `/lane:up`, as in the example.
 
-lane puts its code where the steps are, once for all of them: `<plugin>/hooks/lane/` for a plugin,
-`.claude/hooks/lane/` for a project and `~/.claude/hooks/lane/` for you alone. It writes a step's
-hooks into the subagent's own file, or, for a subagent of a plugin, which Claude Code reads no hooks
-from, into the plugin's `hooks/hooks.json`, acting only in that subagent. In a plugin of the ccpm
-marketplace the code is a link to lane's; anywhere else it is a copy with its version, which
-`/lane:up` brings to its own version the next time it is run there.
+lane puts its code in the plugin's `hooks/lane/`, once for all its subagents, and writes the hooks
+into the plugin's `hooks/hooks.json`, each acting only in its subagent, as Claude Code reads no
+hooks from a plugin subagent's own file. In a plugin of the ccpm marketplace the code is a link to
+lane's; anywhere else it is a copy with its version, which `/lane:up` brings to its own version the
+next time it is run there.
 
 ## Documentation
 
