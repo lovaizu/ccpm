@@ -239,6 +239,9 @@
     },
     {
       "fact": "the user decided (2026-10-21): the checklist's 'Flow:' stays beside the component flow; no renaming for a word met twice, as it never ends"
+    },
+    {
+      "fact": "the user decided (2026-10-21): the flow (next step, state, resume, questions passed to the front) is kept once in lane, each plugin writing only its flow definition; Claude Code's Workflow does not fit (no mid-run input, no resume in a new session, main conversation only; code.claude.com/docs/en/workflows)"
     }
   ],
   "semantic_gist": [
@@ -328,7 +331,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "propose how the flow (next step, state, resume) is shared rather than written in each plugin, the user asking it not be thought out each time; then dev/lane/design.md for agreement"
+      "next": "settle how far lane's part grows (flow engine and definition, or the orchestrator and front too), then decisions for lane README, UX and design, remade through turn, README first"
     }
   ],
   "uncertainty_signal": [
