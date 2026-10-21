@@ -2,6 +2,8 @@
 
 Each plugin's design, tests and trials live here. Installing a plugin copies only its own folder, so nothing here reaches its users' machines.
 
+Every plugin is built on [how a plugin works](./architecture.md).
+
 - [turn](./turn/)
 - [rn](./rn/)
 - [common](./common/): the tests of `common/`, the code the plugins share, and `testing.py`, what their tests share
