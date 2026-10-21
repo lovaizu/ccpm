@@ -242,6 +242,9 @@
     },
     {
       "fact": "the user decided (2026-10-21): the flow (next step, state, resume, questions passed to the front) is kept once in lane, each plugin writing only its flow definition; Claude Code's Workflow does not fit (no mid-run input, no resume in a new session, main conversation only; code.claude.com/docs/en/workflows)"
+    },
+    {
+      "fact": "the user decided (2026-10-21): no front; the orchestrator holds the whole and decides (asks, replans, remakes), talking with the caller itself; rn runs it in the main conversation, turn and lane are called by an AI, so theirs is a subagent; the flow keeps the state and refuses moves breaking fixed rules, kept once in lane; dev/architecture.md rewritten to it, awaiting agreement"
     }
   ],
   "semantic_gist": [
@@ -331,7 +334,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "settle how far lane's part grows (flow engine and definition, or the orchestrator and front too), then decisions for lane README, UX and design, remade through turn, README first"
+      "next": "user agreement on dev/architecture.md; then lane README and UX (called by an AI, flow part added), remade through turn, then lane design"
     }
   ],
   "uncertainty_signal": [
