@@ -102,6 +102,9 @@ lane/                          the plugin, installed by Claude Code
 │       ├── hook.py            what the event scripts run on: the event read, each check run
 │       ├── call.py            a tool call read as one action
 │       ├── shell.py           what a shell command reads and writes
+│       ├── forms.py           the forms in_form holds an output to
+│       ├── schema.py          a JSON Schema, and a value held to it
+│       ├── template.py        a Markdown template, and a file held to it
 │       ├── step.py            a subagent's step, read from its file
 │       ├── record.py          what the subagent did before, from its record
 │       └── lanes/<lane>.py    one check per lane
@@ -162,6 +165,36 @@ lane/                          the plugin, installed by Claude Code
   `cd notes && git commit`, but not against `g=git; $g commit`. What must hold whatever the AI
   writes is held by GitHub's branch protection, Claude Code's sandbox or its permission rules, as a
   check on a command's text is no security boundary; so the guard stays small.
+- in_form's `<form>` is a file of the plugin, named from its folder: a `.json` file is a JSON
+  Schema, which the output is held to as JSON, or line by line where its name ends in `.jsonl`; a
+  `.md` file is a Markdown template, whose frontmatter keys and headings the output must have. lane
+  reads these general forms itself; a form of a project's own is left to the project's script,
+  through test_after.
+
+  They are the forms a plugin's outputs most often take, and lane's code reads them with the
+  standard library alone, as it runs on the builder's users' machines.
+- A schema is read in the keywords Anthropic's structured outputs accept, in draft-07's wording:
+  the basic types, properties, required, additionalProperties false, items, enum, const, anyOf,
+  allOf, a $ref within the schema, and minItems 0 or 1, with title, description, default and
+  $schema, which check nothing. The layer refuses a schema using any other keyword, or a $ref
+  coming back to itself, so the guard never meets a keyword it would let pass unread.
+
+  A keyword passed unread lets through what the builder meant to stop, unseen; and the structured
+  outputs' set is one the builder may already write to.
+- A template's headings are its ATX headings outside code fences, and must be among the output's
+  in order and at their level, others free between them; its frontmatter keys must be in the
+  output's, each value as written; text in `<...>` is free in either. Frontmatter is read as
+  `key: value` lines alone, and a block scalar, a nested mapping or a value over several lines is
+  refused rather than guessed.
+- The guard holds a write of the output to its form before it is made: a Write by its content, an
+  Edit by the file's text with the edit made. A command writing the output is stopped, as its text
+  cannot be read before it runs, so the subagent writes it by Write or Edit. On the line after the
+  sentence the subagent is told the one point the text is out by: its place, what was expected and
+  what was found, the point highest in the text first, as check-jsonschema gives jsonschema's best
+  match.
+
+  One point at a time is what the subagent puts right; the sentence first, as every lane gives it,
+  keeps it on its step.
 - A subagent's record is the JSONL file Claude Code writes at
   `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`, from the tool event's
   `transcript_path` and `agent_id`, as Claude Code 2.1.306 writes it; neither the place nor the
