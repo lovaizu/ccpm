@@ -196,8 +196,8 @@ lane/                          the plugin, installed by Claude Code
   the output, as it takes a path it cannot find.
 - A schema is read in the keywords Anthropic's structured outputs accept, in draft-07's wording:
   the basic types, properties, required, additionalProperties false, items, enum, const, anyOf,
-  allOf of schemas with no $ref, a $ref within the schema, and minItems 0 or 1, with title, description, default and
-  $schema, which check nothing. The layer refuses a schema using any other keyword, or a $ref
+  allOf of schemas with no $ref, a $ref within the schema, and minItems 0 or 1, with title,
+  description, default and $schema, which check nothing. The layer refuses a schema using any other keyword, or a $ref
   coming back to itself, so the guard never meets a keyword it would let pass unread.
 
   A keyword passed unread lets through what the builder meant to stop, unseen; and the structured
