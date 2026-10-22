@@ -16,12 +16,13 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 
 - AC1: On the same real requests, the user sends back fewer changes at the deliverable sign-off
   than with rn 0.8.0.
-  Check: each request run on `lovaizu/playground` with both versions, the changes counted from
-  every JSONL.
+  Check: each request run on `lovaizu/playground` with both versions, the user stood in for by an
+  AI holding what the user truly wants and accepts, written beforehand and not shown to rn; the
+  changes counted from every JSONL.
 - AC2: On the same requests, the user spends less time from asking to their purpose achieved than
   with rn 0.8.0, with AC1 no worse.
-  Check: from the same runs, the minutes the user spends answering, checking proposals, sending
-  back and fixing by hand.
+  Check: from the same runs, what the stand-in does: the questions it answers, the proposals it
+  reads, what it sends back and fixes by hand, as an AI's minutes are not a person's.
 
 ## Documents
 
@@ -76,7 +77,11 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
   criterion. Serves AC1.
 - [ ] T13: Each lesson the user confirms goes where it makes later work better, and the pull request
   is ready to merge. Serves AC1, AC2.
-- [ ] T14: AC1 and AC2 hold on the same real requests against rn 0.8.0. Serves AC1, AC2.
+- [ ] T14: AC1 and AC2 hold on the same real requests against rn 0.8.0: a script that tidies a
+  Downloads folder (truly wanted: moves only, a dry run first, a folder for each kind, macOS and
+  Linux) and making issues easy to open (truly wanted: a bug and a request form, required fields,
+  no blank issue), each run once on each version, more where the two do not differ plainly; then
+  the user tries this rn once. Serves AC1, AC2.
 - [ ] T15: Users who update get rn 0.10.0 and turn 0.2.0, on the user's instruction. Serves AC1,
   AC2.
 

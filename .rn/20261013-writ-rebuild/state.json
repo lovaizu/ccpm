@@ -368,6 +368,9 @@
     },
     {
       "fact": "T22 step 1 (2026-10-22): turn's flow remade to the design: state in <result>.run.json, each move told to main then printed as {tool,input}, roles reply to <result>.<role>.json read by the flow, agent IDs handed by the orchestrator, a call again goes on from the state, the learner shown each record as text in <result>.records/; turn's own hooks removed; check.sh turn 100%, mutate.sh turn 0 of 1205 in 65s. Next: agents' steps rewritten to it, then lanes laid with lay.py"
+    },
+    {
+      "fact": "the user agreed to try (2026-10-22): AC1 and AC2 measured with an AI standing in for the user, holding what is truly wanted, AC2 by what the stand-in does instead of minutes; T14's two requests set (Downloads tidy script, issue forms); rn's flow tried unit by unit with mocked roles; the user merges and gives the release; work resumes after the weekly limit lifts, Friday 7:00"
     }
   ],
   "semantic_gist": [
