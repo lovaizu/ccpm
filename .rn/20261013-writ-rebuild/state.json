@@ -377,6 +377,9 @@
     },
     {
       "fact": "T22's code done by a subagent (89bece5, e2b0bc1): check.sh 100% in 6.6s, mutate turn 0 of 1205 in 65s, validate --strict passes; core.hooksPath was absolute to the main checkout without dev/githooks, so no pre-push check ran since; set relative (R44); design brought to R42-R43"
+    },
+    {
+      "fact": "turn's agents read against prompt.md by hand: up.md steps 1, 3 and 7 say each lane sentence once, with the step's reason; learner's typo fixed; long lines left (R45); generator's given holds the work, so read_only lets it read what it writes"
     }
   ],
   "semantic_gist": [
@@ -487,7 +490,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "check CI for e2b0bc1 and after; read turn/agents/*.md against prompt.md and usability.md and fix by hand; lane's lay.py to wrap a step's line past 100 characters; then T23: run each agent on Claude Code (5c), rewrite dev/turn/trials/ for the new flow, try turn whole; after the weekly limit lifts (Friday 7:00)"
+      "next": "T23: run each of turn's five agents on Claude Code (plugin.md 5c) with --plugin-dir turn, starting with turn:up on a small CCS with mocked roles; rewrite dev/turn/trials/ for the new flow; then the acceptance trials; check CI for e2b0bc1 onward first"
     }
   ],
   "uncertainty_signal": [

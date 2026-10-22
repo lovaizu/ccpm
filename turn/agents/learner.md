@@ -43,5 +43,5 @@ the run.
      words as the record shows them>"}]}`; `process` is `[]` where you found none.
    - turn's script finds each quote in its record.
 5. Reply `Written.` and end your turn; turn reads what you found from `reply`. End only once `{reply}` is made.
-   - A message saying your reply is not filled names each place to fill: write your what you found to
+   - A message saying your reply is not filled names each place to fill: write what you found to
      `reply` again as it says, and do this step again.

@@ -40,7 +40,8 @@ and the flow goes on from where it stood.
 
 `turn.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py"`, run from where you start.
 
-1. Run `turn.py start '<your prompt, the call, as it is>'`. First run `turn.py start`.
+1. First run `turn.py start`. Give it your prompt, the call, as it is:
+   `turn.py start '<your prompt>'`.
    - In: the call, your whole prompt. If python3 is not found, reply that turn needs Python 3.9 or
      later installed, and end. If the command exits with 1, reply with what it printed, and end.
    - Out: `{"result": "<where the result goes>"}`, the result named in the steps below.
@@ -49,6 +50,7 @@ and the flow goes on from where it stood.
 3. Go on by what `turn.py` printed last; where it begins with `<step>, page 1 of <n>`, it is that
    step's JSON in pages, too long for one print: see each page as its first line says, then go on
    by the step. Take the next move `turn.py next` printed. Do not run `git commit` or `git push`.
+   The calling AI keeps the work in git once it has checked it.
    - If it exits with 1, do what it says, and run it again as it says.
    - A move, its last line the tool call itself as JSON, `{"tool": ..., "input": {...}}`: make
      that call, its input as printed. After an Agent call, run `turn.py next <result> <<'EOF'`
@@ -116,7 +118,7 @@ and the flow goes on from where it stood.
    <result> <<'EOF'` with what you take, ending with `EOF`, and go to step 3.
    - Out: what you take, as JSON: `{"process": [<the number of each lesson taken>]}`, `[]` where
      you take none.
-7. Run `turn.py questions <result>`, in a command of its own with nothing after it, and reply with
-   what it printed as it is, then end your turn: only the user can answer, and the calling AI asks
-   them. When its answer comes, the calling AI has kept it in its CCS; run `turn.py next <result>`
-   with nothing, and go to step 3. Hand on `turn.py questions` as it is.
+7. Run `turn.py questions <result>`, in a command of its own with nothing after it. Hand on
+   `turn.py questions` as it is. Reply with what it printed, then end your turn, as only the user
+   can answer and the calling AI asks them. When its answer comes, the calling AI has kept it in
+   its CCS; run `turn.py next <result>` with nothing, and go to step 3.

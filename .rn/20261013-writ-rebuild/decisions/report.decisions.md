@@ -136,3 +136,6 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   item answered and writes the result inside its own run, where lane does not see the write.
 - R44 (the githooks): `core.hooksPath` set to `dev/githooks`, relative, as the absolute path named
   the main checkout, which has no `dev/githooks` on main yet, so no pre-push check ran.
+- R45 (lane's layer and long lines): a lane's sentence stays added at the end of its step's last
+  line, unwrapped, as a wrapped sentence could not be taken out again when lanes are laid anew,
+  and an AI reads a long line as well as a short one.
