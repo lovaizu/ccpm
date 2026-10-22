@@ -392,6 +392,12 @@
   },
   {
    "fact": "the user decided (2026-10-23): the trying-once rule left code.md and prompt.md (6536c7f), as it is about how a task is carried out; the end product is rn/checklists/checklist.md telling where each item goes, purpose and UX first, the map of what rn makes and judges an intermediate in the decisions (T24, 09eb272); T24 runs alongside T23 and ends before rn is remade"
+  },
+  {
+   "fact": "follow_next's hold of a turn.py next sent in the same reply as its move is right, not an exception: up.md:56-58 says to run next after the move, so a next sent before the move's result tells the flow a move is done that has not come back; the stop is lane catching drift, and dev/turn/design.md:313 holds as written; no document changes (2026-10-23, the user asked what it should be)"
+  },
+  {
+   "fact": "background trial runs survive /clear (acc2, accs1, accs3 kept writing JSONL after 23:15Z); base1 checked from its JSONL: one question answered, turn ran on, check once, 9.7 min, 20 of 23 met as returned; base2 and base3 started 23:4xZ"
   }
  ],
  "semantic_gist": [
@@ -502,9 +508,6 @@
  ],
  "predictive_cue": [
   {
-   "first": "the user ran /clear at 2026-10-22T23:15Z to see whether background runs survive it: trial.py PIDs 21740-21745, baseline.py rerun with nohup at 23:2xZ, base1 alone, finished before /clear (session 183d85e1-9845-45e3-ac5c-d9f0f59c0660, 9.7 minutes call to return, $3.71): 裏どり it from base1.out and its JSONL, then run two more (the first three ended early: baseline.py answered while turn worked in the background and gave up; fixed to answer only a question). On resuming, first run `pgrep -af 'trials/(trial|baseline).py'` and look at the *.out files: alive or finished with output = they survive /clear; gone with empty or cut output = /clear stops them, rerun the nine. Tell the user which, and keep the answer as a memory; at the /clear, trial.py PIDs 21741, 21742 and 21745 (accs1, acc2, accs3) were still running, the other three finished"
-  },
-  {
    "next": "T24: draft the map in .rn/20261013-writ-rebuild/decisions/checklists.decisions.md (each work rn makes or judges: receiver, when made, when judged, its checklist; steering's goal, criteria, documents and tasks apart) from dev/rn/design.md, dev/rn/ux.md and rn/checklists/*, and ask the user's review with the file URL and the core decisions alone; then revise checklist.md's order with the path for placing an item (purpose and UX of whom it serves, the work met, product or how a task was carried out, every work or one kind, already asked) and an item for one place each"
   },
   {
@@ -529,9 +532,6 @@
   },
   {
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
-  },
-  {
-   "open": "the user's answer on the same-reply hold of follow_next (A/B/C)"
   }
  ],
  "retrieved_artifacts": [
