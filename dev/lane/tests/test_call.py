@@ -1,5 +1,5 @@
-"""A tool call read as one action: a Bash call as the commands it runs, in the forms the steps tell
-and the AI writes."""
+"""A tool call read as one action: a Bash call as the commands it runs and the files they write, in
+the forms the steps tell and the AI writes, and a call of a tool that writes a file as a write of it."""
 
 import unittest
 
@@ -60,9 +60,45 @@ class TestBash(unittest.TestCase):
         self.assertEqual(call.read(event), call.Call("run", []))
 
 
+class TestWrite(unittest.TestCase):
+    def test_a_tool_that_writes_a_file_is_a_write_of_its_path(self):
+        for tool, field in (
+            ("Write", "file_path"),
+            ("Edit", "file_path"),
+            ("NotebookEdit", "notebook_path"),
+        ):
+            with self.subTest(tool=tool):
+                # Given: a call of a tool that writes the file its input names
+                event = {"cwd": HERE, "tool_name": tool, "tool_input": {field: "/r/CHANGELOG.md"}}
+                # When: it is read
+                # Then: it is a write of that file, running nothing
+                self.assertEqual(call.read(event), call.Call("write", [], ("/r/CHANGELOG.md",)))
+
+    def test_a_path_relative_to_the_folder_is_written_there(self):
+        # Given: a Write naming its file from the folder the call is made in
+        event = {"cwd": HERE, "tool_name": "Write", "tool_input": {"file_path": "a/../b.md"}}
+        # When: it is read
+        # Then: the file written is the one the path names from that folder
+        self.assertEqual(call.read(event).written, ("/r/b.md",))
+
+    def test_a_write_naming_no_file_writes_none(self):
+        # Given: a Write whose input names no file
+        event = {"cwd": HERE, "tool_name": "Write", "tool_input": {}}
+        # When: it is read
+        # Then: it is a write of no file
+        self.assertEqual(call.read(event), call.Call("write", [], ()))
+
+    def test_a_bash_call_writes_what_its_commands_write(self):
+        # Given: a Bash call whose commands write by a redirect and by cp
+        # When: it is read
+        # Then: it writes each target, as the shell reads them
+        found = runs("echo x > out.txt && cp a.md b.md")
+        self.assertEqual(found.written, ("/r/out.txt", "/r/b.md"))
+
+
 class TestOtherTools(unittest.TestCase):
     def test_a_call_of_a_tool_no_lane_watches_is_no_action(self):
-        for tool in ("Agent", "Write"):
+        for tool in ("Agent", "TodoWrite"):
             with self.subTest(tool=tool):
                 # Given: a call of a tool no lane of this version reads, its name sorting before
                 # Bash or after
