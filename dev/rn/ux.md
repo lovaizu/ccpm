@@ -52,44 +52,60 @@ each acceptance criterion. A task is one part of building the finished work; aft
 sign-off, rn divides the piece of work into tasks. A lesson is what the session learned that would
 make later pieces of work better.
 
-```text
-user <person>                       rn <plugin>                     first reader <AI>
-  |-- /rn:up <what they want> -------->|                                   |
-  |<-- one point to decide ------------|                                   |
-  |-- answer ------------------------->|   (one message per point)         |
-  |                                    |-- plan -------------------------->|
-  |                                    |<-- what it found lacking ---------|
-  |                                    |   (made again until none)         |
-  |<-- a point to decide, if any ------|                                   |
-  |-- answer ------------------------->|                                   |
-  |<-- plan, at the plan sign-off -----|                                   |
-  |-- /rn:ty ------------------------->|                                   |
-  |   or /rn:gm <feedback> ----------->|                                   |
-  |<-- feedback kept; rn stops --------|                                   |
-  |-- /rn:up ------------------------->|                                   |
-  |<-- the point behind it to decide --|                                   |
-  |-- answer ------------------------->|                                   |
-  |       (made again, read by the first reader, and shown at the          |
-  |        same sign-off with what changed; so at every sign-off)          |
-  |                                    |                                   |
-  |       (the same for the documents the purpose needs,                   |
-  |        up to the design sign-off)                                      |
-  |                                    |-- carries out the tasks           |
-  |<-- a point to decide, if any ------|                                   |
-  |-- answer ------------------------->|                                   |
-  |                                    |-- finished work ----------------->|
-  |                                    |<-- what it found lacking ---------|
-  |                                    |   (made again until none)         |
-  |<-- a point to decide, if any ------|                                   |
-  |-- answer ------------------------->|                                   |
-  |<-- finished work, at the deliverable sign-off                          |
-  |-- /rn:ty (/rn:gm as above) ------->|                                   |
-  |<-- one lesson to decide -----------|   (one message per lesson)        |
-  |-- answer ------------------------->|                                   |
-  |<-- pull request marked ready ------|                                   |
-  |-- merge                            |                                   |
-
-  wherever the user stops: /rn:up in a fresh conversation goes on from there
+```mermaid
+sequenceDiagram
+  participant U as user<br/>#lt;person#gt;
+  participant R as rn<br/>#lt;plugin#gt;
+  participant F as first reader<br/>#lt;AI#gt;
+  U->>R: /rn:up #lt;what they want#gt;
+  loop one message per point
+    R->>U: one point to decide
+    U->>R: answer
+  end
+  loop until it finds nothing lacking
+    R->>F: plan
+    F-->>R: what it found lacking
+  end
+  opt a point to decide
+    R->>U: the point
+    U->>R: answer
+  end
+  R->>U: plan, at the plan sign-off
+  alt approved
+    U->>R: /rn:ty
+  else a change asked
+    U->>R: /rn:gm #lt;feedback#gt;
+    R-->>U: feedback kept, rn stops
+    U->>R: /rn:up
+    R->>U: the point behind it to decide
+    U->>R: answer
+    Note over U,F: made again, read by the first reader, and shown at the same<br/>sign-off with what changed, so at every sign-off
+  end
+  Note over U,F: the same for the documents the purpose needs, up to the design sign-off
+  loop each task
+    R->>R: carries out the task, then remakes the plan from the facts it brought
+    opt a point to decide
+      R->>U: the point
+      U->>R: answer
+    end
+  end
+  loop until it finds nothing lacking
+    R->>F: finished work
+    F-->>R: what it found lacking
+  end
+  opt a point to decide
+    R->>U: the point
+    U->>R: answer
+  end
+  R->>U: finished work, at the deliverable sign-off
+  U->>R: /rn:ty (/rn:gm as above)
+  loop one message per lesson
+    R->>U: one lesson to decide
+    U->>R: answer
+  end
+  R-->>U: pull request marked ready
+  Note over U: merges
+  Note over U,F: wherever the user stops, /rn:up in a fresh conversation goes on from there
 ```
 
 - Asking: rn confirms each point to decide with the user, even the points it could look up, with
