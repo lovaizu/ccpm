@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import shell
+import step
 from call import Call
 
 ACTION = "begin"
@@ -11,6 +13,8 @@ WORDING = "First run `<script>`."
 TOOLS = (".*",)
 # What runs a script named after it, as the steps tell; a script may also be run by its path.
 INTERPRETERS = (["python3"], ["sh"])
+# How a step names a script of its plugin, by the plugin's folder Claude Code puts in.
+PLUGIN = step.ROOT + "/"
 
 
 def drifts(call: Call, takes: list[str], root: str) -> bool:
@@ -25,12 +29,24 @@ def drifts(call: Call, takes: list[str], root: str) -> bool:
 def runs(call: Call, takes: list[str]) -> bool:
     """Whether the call runs a script taken: a command whose program, after python3 or sh, is the
     script by its path, or a path ending in it, such as the plugin's folder put in for
-    `${CLAUDE_PLUGIN_ROOT}`, with the words after it beginning with those taken after the script."""
+    `${CLAUDE_PLUGIN_ROOT}`, with the words after it beginning with those taken after the script.
+    A take is read as the step writes the command, by the shell's words as a call's are, after
+    python3 or sh, its script named from the plugin's folder where it begins with
+    `${CLAUDE_PLUGIN_ROOT}/`; a take naming no script is run by no call."""
     found = []
     for words in call.what if call.action in ("run",) else []:
-        program = words[1:] if words[:1] in INTERPRETERS else words
-        path = program[0] if program else ""
-        for script, *after in (t.split() for t in takes):
+        ran = program(words)
+        path = ran[0] if ran else ""
+        for taken in (program(shell.words(t)) for t in takes):
+            if not taken:
+                continue
+            script, *after = taken
+            script = script.removeprefix(PLUGIN)
             named = path == script or path.endswith("/" + script)
-            found.append(named and program[1:][: len(after)] == after)
+            found.append(named and ran[1:][: len(after)] == after)
     return any(found)
+
+
+def program(words: list[str]) -> list[str]:
+    """A command's words from its program on, python3 or sh before it left out."""
+    return words[1:] if words[:1] in INTERPRETERS else words

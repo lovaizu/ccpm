@@ -44,6 +44,9 @@ PRINTED = """Lanes on step 3 of changelog-writer, each hook acting in changelog-
 
 3. Write the new entries into `CHANGELOG.md`. Do not run `git commit` or `git push`.
 """
+# hands_off on step 3 taking `git push` alone, and its sentence.
+PUSH = [{"lane": "hands_off", "takes": ["git push"]}]
+PUSHED = "Do not run `git push`."
 # A stand-in for Claude Code's command, which keeps what it was asked and exits as the test sets.
 CLAUDE = """#!/bin/sh
 echo "$@" > "$(dirname "$0")/asked"
@@ -175,6 +178,109 @@ class TestWriteStep(LayTest):
         self.lay("write", self.proposal_file)
         # Then: the step says the sentence once
         self.assertEqual(self.read(self.agent_file), laid)
+
+    def test_a_sentence_said_on_a_line_before_the_steps_last_is_not_written_again(self):
+        # Given: step 3 saying the sentence on its first line, going on over a second
+        said = helpers.STEPS.replace(
+            "`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {helpers.SENTENCE}\n   Newest first.\n"
+        )
+        self.write(self.agent_file, said)
+        # When: the proposal is written
+        self.lay("write", self.proposal_file)
+        # Then: the step is as it was
+        self.assertEqual(self.read(self.agent_file), said)
+
+
+class TestLayAgain(LayTest):
+    """Laying again: the sentence of each lane the subagent's hook held before and the proposal no
+    longer lays on its step taken out of the step, the rest of it as it was."""
+
+    def lay_again(self, proposal):
+        """Writes the proposal of lane's README, then proposes the one given."""
+        self.lay("write", self.proposal_file)
+        self.propose(proposal)
+
+    def test_a_lane_laid_again_taking_other_things_has_its_old_sentence_taken_out(self):
+        # Given: hands_off laid on step 3 taking `git commit` and `git push`, proposed again taking
+        # `git push` alone
+        self.lay_again(self.proposal(PUSH))
+        # When: it is printed and written
+        printed = self.lay("print", self.proposal_file)[1]
+        self.lay("write", self.proposal_file)
+        # Then: the step says the new sentence alone, as printed, the rest as it was
+        laid = helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {PUSHED}\n")
+        self.assertEqual(self.read(self.agent_file), laid)
+        self.assertTrue(
+            printed.endswith(f"\n\n3. Write the new entries into `CHANGELOG.md`. {PUSHED}\n"),
+            printed,
+        )
+
+    def test_a_lane_on_a_step_the_proposal_no_longer_has_is_taken_out_of_it(self):
+        # Given: hands_off laid on steps 1 and 3, proposed again on step 3 alone
+        proposal = self.proposal()
+        proposal["subagents"][0]["steps"].insert(0, {"step": 1, "lanes": LANES})
+        self.propose(proposal)
+        self.lay_again(self.proposal())
+        # When: it is printed and written
+        printed = self.lay("print", self.proposal_file)[1]
+        self.lay("write", self.proposal_file)
+        # Then: step 1 reads as before any lane was laid, shown so after step 3, and step 3 keeps
+        # its sentence
+        self.assertEqual(self.read(self.agent_file), helpers.LAID)
+        self.assertTrue(
+            printed.endswith(
+                PRINTED
+                + "\nNo lanes on step 1 of changelog-writer now, their sentences taken out:\n"
+                "\n1. Read the commits since the last release.\n"
+            ),
+            printed,
+        )
+
+    def test_a_lane_held_on_a_step_the_steps_no_longer_have_is_passed_over(self):
+        # Given: the subagent's hook holding a lane on step 9, which its Steps do not have
+        held = json.loads(json.dumps(ENTRY).replace("'3:hands_off", "'9:hands_off"))
+        self.write_json(
+            os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": {"PreToolUse": [held]}}
+        )
+        # When: the proposal is printed and written
+        printed = self.lay("print", self.proposal_file)
+        self.lay("write", self.proposal_file)
+        # Then: step 3 alone is printed and written, the rest of the file as it was
+        self.assertEqual(printed, (0, PRINTED))
+        self.assertEqual(self.read(self.agent_file), helpers.LAID)
+
+    def test_a_sentence_no_hook_of_the_subagent_held_stays(self):
+        # Given: step 3 saying the sentence, held by the hook of another subagent alone, and
+        # hands_off proposed on step 3 taking `git push` alone
+        self.write(self.agent_file, helpers.LAID)
+        other = json.loads(json.dumps(ENTRY).replace("changelog-writer", "other"))
+        hooks = {"hooks": {"PreToolUse": [other]}}
+        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+        self.propose(self.proposal(PUSH))
+        # When: it is written
+        self.lay("write", self.proposal_file)
+        # Then: the step keeps the sentence and gets the new one after it
+        self.assertEqual(
+            self.read(self.agent_file),
+            helpers.LAID.replace(f"{helpers.SENTENCE}\n", f"{helpers.SENTENCE} {PUSHED}\n"),
+        )
+
+    def test_a_sentence_kept_by_the_proposal_stays_in_its_place(self):
+        # Given: two lanes laid on step 3, proposed again with the first taking other things and
+        # the second as it was
+        two = [*LANES, {"lane": "hands_off", "takes": ["npm publish"]}]
+        self.propose(self.proposal(two))
+        self.lay_again(self.proposal([*PUSH, two[1]]))
+        # When: it is written
+        self.lay("write", self.proposal_file)
+        # Then: the second's sentence stays where it was, the new one after it
+        self.assertEqual(
+            self.read(self.agent_file),
+            helpers.STEPS.replace(
+                "`CHANGELOG.md`.\n",
+                f"`CHANGELOG.md`. Do not run `npm publish`. {PUSHED}\n",
+            ),
+        )
 
 
 class TestWriteHooks(LayTest):

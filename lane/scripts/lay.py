@@ -9,11 +9,12 @@ The proposal is a JSON file lane:up keeps in lane's data folder, `${CLAUDE_PLUGI
                     "steps": [{"step": <number>,
                                "lanes": [{"lane": "<lane>", "takes": ["<thing>", ...]}]}]}]}
 
-Writing puts each lane's sentence at the end of its step in the subagent's file, one entry for each
-subagent and each event its lanes are held on in the plugin's hooks/hooks.json, every other entry
-left as it was, and lane's code in its hooks/lane/: a relative link to lane's in a plugin of the
-ccpm marketplace, a copy with lane's version in VERSION anywhere else; then has Claude Code check
-the plugin, and removes the proposal.
+Writing takes out of each step of the subagent's file the sentence of each lane its hook held before
+that the proposal no longer lays there, and puts each lane's sentence at the end of its step, the
+rest of the step as it was; then one entry for each subagent and each event its lanes are held on in
+the plugin's hooks/hooks.json, every other entry left as it was, and lane's code in its hooks/lane/:
+a relative link to lane's in a plugin of the ccpm marketplace, a copy with lane's version in VERSION
+anywhere else; then has Claude Code check the plugin, and removes the proposal.
 
 Bringing a plugin up, run first on each run of lane:up, puts lane's code in place of an older copy
 of it, one whose VERSION is lower than lane's version or missing, and writes each hook lane:up wrote
@@ -193,31 +194,66 @@ def sentences(step_given: dict[str, Any]) -> list[str]:
 
 
 def read_as_laid(lines: list[str], step_given: dict[str, Any]) -> list[str]:
-    """The step's lines as they would read with each sentence it does not yet say put at its
-    end."""
+    """The step's lines as they would read with each sentence gone from it taken out, as the layer
+    put it in, after a blank, and each sentence of its lanes it does not yet say put at its end."""
     start, end = step_given["span"]
-    text = step.says([line.rstrip("\n") for line in lines], (start, end))
+    kept = []
+    for line in lines[start:end]:
+        for said in step_given["gone"]:
+            line = line.replace(" " + said, "")
+        kept.append(line)
+    text = step.says([line.rstrip("\n") for line in kept], (0, len(kept)))
     added = [s for s in sentences(step_given) if s not in text]
-    last = lines[end - 1].rstrip("\n")
-    return [*lines[start : end - 1], " ".join([last, *added]) + "\n"]
+    last = kept[-1].rstrip("\n")
+    return [*kept[:-1], " ".join([last, *added]) + "\n"]
+
+
+def steps_laid(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> list[dict[str, Any]]:
+    """Each step the layer writes in the subagent, with its lanes, where it is and the sentences
+    gone from it: the sentence of each lane the subagent's hook held before on the step, as lane:up
+    wrote it, that the proposal no longer lays there. They are the proposal's steps, then each other
+    step any sentence is gone from, with no lanes, in order, where the Steps still have it."""
+    before = laid_before(hooks)[0].get(f"{plugin}:{agent['name']}", [])
+    now = {s["step"]: sentences(s) for s in agent["steps"]}
+    gone: dict[int, list[str]] = {}
+    for s in before:
+        kept = now.get(s["step"], [])
+        gone.setdefault(s["step"], []).extend(t for t in sentences(s) if t not in kept)
+    lines = [line.rstrip("\n") for line in agent["lines"]]
+    spans = {n: step.span(lines, n) for n in sorted(gone) if n not in now}
+    rest: list[dict[str, Any]] = [
+        {"step": n, "lanes": [], "span": at} for n, at in spans.items() if at is not None
+    ]
+    return [{**s, "gone": gone.get(s["step"], [])} for s in [*agent["steps"], *rest]]
 
 
 def printed(path: str) -> str:
     """The proposal as the builder reads it: for each subagent step, its lanes, each under its
-    action with its hook, and the step as it would read."""
+    action with its hook, and the step as it would read; a step whose lanes are all taken out is
+    shown so."""
+    given = proposal(path)
+    hooks = hooks_read(given["plugin"])
     blocks = []
-    for agent in proposal(path)["subagents"]:
-        for s in agent["steps"]:
-            name, said = agent["name"], sentences(s)
-            out = [f"Lanes on step {s['step']} of {name}, each hook acting in {name} alone:\n"]
-            actions = [lanes.LANES[lane["lane"]].ACTION + ":" for lane in s["lanes"]]
-            wide, long = max(map(len, actions)), max(map(len, said))
-            for action, sentence, lane in zip(actions, said, s["lanes"]):
-                hook = f"hook {lane['lane']}{held(lane)}"
-                out.append(f"  {action:<{wide}} {sentence:<{long}}  {hook}\n")
-            out.append("\n" + "".join(read_as_laid(agent["lines"], s)))
+    for agent in given["subagents"]:
+        for s in steps_laid(hooks, given["name"], agent):
+            out = [*listed(agent["name"], s), "\n", *read_as_laid(agent["lines"], s)]
             blocks.append("".join(out))
     return "\n".join(blocks)
+
+
+def listed(name: str, step_given: dict[str, Any]) -> list[str]:
+    """The lines heading the step in the print: the step, and each of its lanes under its action
+    with its hook, lined up; for a step with no lanes, that their sentences are taken out."""
+    number, said = step_given["step"], sentences(step_given)
+    if not said:
+        return [f"No lanes on step {number} of {name} now, their sentences taken out:\n"]
+    out = [f"Lanes on step {number} of {name}, each hook acting in {name} alone:\n"]
+    actions = [lanes.LANES[lane["lane"]].ACTION + ":" for lane in step_given["lanes"]]
+    wide, long = max(map(len, actions)), max(map(len, said))
+    for action, sentence, lane in zip(actions, said, step_given["lanes"]):
+        hook = f"hook {lane['lane']}{held(lane)}"
+        out.append(f"  {action:<{wide}} {sentence:<{long}}  {hook}\n")
+    return out
 
 
 def held(lane: dict[str, Any]) -> str:
@@ -384,7 +420,7 @@ def written(path: str) -> str:
     said = []
     for agent in given["subagents"]:
         lines = agent["lines"]
-        for s in agent["steps"]:
+        for s in steps_laid(hooks, plugin, agent):
             start, end = s["span"]
             lines[start:end] = read_as_laid(lines, s)
             where = os.path.relpath(agent["file"], root)

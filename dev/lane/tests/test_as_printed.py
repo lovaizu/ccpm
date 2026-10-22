@@ -120,6 +120,14 @@ class TestLetThrough(AsPrintedTest):
                 # Then: it is no drift
                 self.assertFalse(self.drifts([printed()], message))
 
+    def test_the_print_of_a_command_taken_as_the_step_writes_it_is_held(self):
+        # Given: the command taken as lane:up's step writes it, run with lane's folder put in
+        takes = ['python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" print']
+        # When: the subagent hands on something else, or the print as it is
+        # Then: the first drifts and the second does not
+        self.assertTrue(self.drifts([printed()], "Done.", takes=takes))
+        self.assertFalse(self.drifts([printed()], OUTPUT, takes=takes))
+
     def test_the_print_under_a_heading_that_holds_it_too_is_held(self):
         # Given: a print of `0`, as Hypothesis found it, under a heading `00` holding it too
         # When: whether the hand-on holds the print is read

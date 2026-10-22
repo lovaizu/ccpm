@@ -40,6 +40,13 @@ class TestDrift(WaitForTest):
                 # Then: it is a drift
                 self.assertTrue(self.drifts(calls))
 
+    def test_a_command_held_back_as_the_step_writes_it_is_held(self):
+        # Given: the command held back as lane:up's step writes it, with no approval since asking
+        takes = ["OK", 'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" write']
+        # When: the subagent runs it with lane's folder put in
+        # Then: it is a drift
+        self.assertTrue(self.drifts([ASK], takes=takes))
+
     def test_the_approval_in_the_prompt_drifts_once_the_subagent_has_asked(self):
         # Given: a subagent started with the approval in its prompt, which has asked since
         takes = ["steps", "lay.py write"]

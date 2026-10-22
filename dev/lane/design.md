@@ -92,6 +92,12 @@ flowchart TB
 
   So the sentence the subagent is told and the one its step says cannot differ, and no sentence is
   written twice.
+- Laying again, the layer takes out of each step the sentence of each lane the subagent's hook held
+  there before and the new proposal no longer lays, the rest of the step as it was; its print shows
+  each step so.
+
+  A sentence left behind would hold the subagent to what no hook keeps, beside the one that
+  replaced it.
 - A lane may hold more than its sentence shows, such as the commands wait_for holds back until
   the approval; the layer's print shows them beside the hook.
 
@@ -190,6 +196,11 @@ lane/                          the plugin, installed by Claude Code
   `cd notes && git commit`, but not against `g=git; $g commit`. What must hold whatever the AI
   writes is held by GitHub's branch protection, Claude Code's sandbox or its permission rules, as a
   check on a command's text is no security boundary; so the guard stays small.
+
+  A script or command a lane takes is read as the step writes it, such as
+  `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given`, by the same reading as a call's words:
+  python3 or sh before it left out, and its path in the plugin matched by the end of the call's.
+  lane:up takes it from the step word for word.
 - in_form's `<form>` is a file of the plugin, named in the step as
   `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`: a JSON Schema, in the keywords Anthropic's
   structured outputs accept, for JSON or JSONL, or a Markdown template, for its frontmatter keys and
