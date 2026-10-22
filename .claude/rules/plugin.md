@@ -40,6 +40,15 @@ root `README.md` leads users to each plugin's README and builders to `dev/`. Put
   GitHub shows a folder's README when it is opened, so a visitor finds the way by opening folders,
   and a README further down repeats its parent's and drifts from it.
 
+**Design the plugin to take in what is general and leave to the user's project only what is its
+own; where the user meets a general need the plugin lacks, it asks them to help improve it and
+whether it may open an issue to its makers, and opens one only on their yes.** The issue holds the
+need and its points alone, never the user's source or anything of their project.
+
+- Rationale: the plugins are open source, so a need met once improves the plugin for every user;
+  what is general needs nothing of a project, so a project's detail in the issue shows the need was
+  not drawn general, and the user's work stays theirs unless they choose to share.
+
 ### 3. Have the README and the design read once
 
 **Have a first user who does not know the discussion read the README and the design once, as their
