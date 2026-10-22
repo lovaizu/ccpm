@@ -86,10 +86,8 @@ flowchart TB
 
   So the sentence the subagent is told and the one its step says cannot differ, and no sentence is
   written twice.
-- The things a lane takes fill the places its wording shows, in order, the last place taking the
-  rest, listed with `or`; in_form's form takes one alone. A lane may hold more than its sentence
-  shows: wait_for's sentence shows the approval, and the commands it holds back are its hook's
-  alone, which the layer's print shows after the hook as `holding back <commands>`.
+- A lane may hold more than its sentence shows, such as the commands wait_for holds back until
+  the approval; the layer's print shows them beside the hook.
 
   The builder approves every thing a hook holds, and the subagent is told only what its step
   says.
@@ -184,79 +182,44 @@ lane/                          the plugin, installed by Claude Code
   writes is held by GitHub's branch protection, Claude Code's sandbox or its permission rules, as a
   check on a command's text is no security boundary; so the guard stays small.
 - in_form's `<form>` is a file of the plugin, named in the step as
-  `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`: a `.json` file is a JSON Schema, which the output
-  is held to as JSON, or line by line where its name ends in `.jsonl`; a `.md` file is a Markdown
-  template, whose frontmatter keys and headings the output must have. lane reads these general
-  forms itself; a form of a project's own is left to the project's script, through test_after.
+  `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`: a JSON Schema, in the keywords Anthropic's
+  structured outputs accept, for JSON or JSONL, or a Markdown template, for its frontmatter keys and
+  headings. The layer refuses a schema with any other keyword. A form of a project's own is left to
+  the project's script, through test_after.
 
-  They are the forms a plugin's outputs most often take, and lane's code reads them with the
-  standard library alone, as it runs on the builder's users' machines. Claude Code puts the
-  plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in a plugin subagent's file, so the subagent reads
-  the form by that path wherever the plugin is installed, and does not take it for where to write
-  the output, as it takes a path it cannot find.
-- A schema is read in the keywords Anthropic's structured outputs accept, in draft-07's wording:
-  the basic types, properties, required, additionalProperties false, items, enum, const, anyOf,
-  allOf of schemas with no $ref, a $ref within the schema, and minItems 0 or 1, with title,
-  description, default and $schema, which check nothing. The layer refuses a schema using any other keyword, or a $ref
-  coming back to itself, so the guard never meets a keyword it would let pass unread.
+  They are the forms a plugin's outputs most often take, read with the standard library alone, and
+  a keyword read past would let through, unseen, what the builder meant to stop. Claude Code puts
+  the plugin's folder in for `${CLAUDE_PLUGIN_ROOT}`, so the subagent finds the form wherever the
+  plugin is installed and does not take it for where to write.
+- The guard holds a write of the output to its form before it is made, by Write's content or by
+  Edit's result, and stops a command writing the output, as its text cannot be read before it runs.
+  After the sentence it tells the first point the text is out by.
 
-  A keyword passed unread lets through what the builder meant to stop, unseen; and the structured
-  outputs' set is one the builder may already write to.
-- A template's headings are its ATX headings outside code fences, and must be among the output's
-  in order and at their level, others free between them; its frontmatter keys must be in the
-  output's, each value as written; text in `<...>` is free in either. Frontmatter is read as
-  `key: value` lines alone, and a block scalar, a nested mapping or a value over several lines is
-  refused rather than guessed.
-- The guard holds a write of the output to its form before it is made: a Write by its content, an
-  Edit by the file's text with the edit made. A command writing the output is stopped, as its text
-  cannot be read before it runs, so the subagent writes it by Write or Edit. The guard matches the
-  step's text as its file holds it, and tells the sentence with the plugin's folder put in for
-  `${CLAUDE_PLUGIN_ROOT}`, as the subagent reads its step. On the line after the sentence the
-  subagent is told the one point the text is out by: its place, what was expected and
-  what was found, the point highest in the text first, as check-jsonschema gives jsonschema's best
-  match.
+  One point at a time is what the subagent puts right; the sentence first keeps it on its step.
+- The end lanes count only what this run did: test_after a run of the test after the last change to
+  the output, ending with the test's own exit; end_when an output this run wrote that is there;
+  every_item each item of the input that begins with an ID, answered by that ID in the last reply or
+  in a file written this run.
 
-  One point at a time is what the subagent puts right; the sentence first, as every lane gives it,
-  keeps it on its step.
-- test_after counts a test passed by a Bash call that gave back no error and runs the test with
-  each command after it joined by `&&`, made after the last change to the output.
-
-  `; echo exit=$?` or a pipe to `tail` after a failing test ends the call with 0 whatever the
-  test gave.
-- end_when counts an output made where a call of this run wrote it and it is there.
-
-  A file left from an earlier run would let the subagent end with nothing made.
-- every_item counts each top-level item of a Markdown list in the input keyed by the ID it begins
-  with, such as `B-1`, and holds it answered where its key stands as a word of its own in the last
-  reply or in a file written this run, the input left out.
-
-  An item with no ID is not counted, as no text tells an answer to it from any other.
-- A hand-on is an Agent call's prompt or a SendMessage's message. as_printed holds every other
-  hand-on once the command it takes has printed, until the command's last successful output is
-  handed on word for word, one heading line beside it allowed, as `lane:up` heads its print.
-- follow_next holds every other call once the script it takes has printed a move, one JSON line
-  `{"tool": ..., "input": {...}}`, until a call of that tool is made with each field printed
-  equal; the fields not printed are free.
+  A failure hidden by a command after the test, a file left from an earlier run, or an item with no
+  ID to tell its answer by would let the subagent end with its work undone.
+- as_printed and follow_next hold every other hand-on or call once their command has printed, until
+  the print is handed on word for word, or the move it prints, one tool call as a JSON line, is
+  made; wait_for holds its commands until a message with the approval reaches the subagent after it
+  asked.
 
   The move printed as the tool call itself is a form general to any plugin.
-- wait_for holds the commands it holds back until a message holding the approval as a word of its
-  own has reached the subagent since its last SendMessage, or since it began where it has not
-  asked.
 - A subagent's record is the JSONL file Claude Code writes at
   `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`, from the tool event's
   `transcript_path` and `agent_id`, as Claude Code 2.1.306 writes it; neither the place nor the
-  shape is documented, so the guard's tests hold both. The record shows a call that failed by its
-  result's `is_error: true`, a message from the main conversation as a user entry whose
-  `origin.kind` is `coordinator`, and one from another subagent as `origin.kind: peer` with the
-  message as its `body`. The calls of one reply are written there once their hooks have run, so a
-  lane on the order of steps reads the replies before.
+  shape is documented, so the guard's tests hold both. The calls of one reply are written there
+  once their hooks have run, so a lane on the order of steps reads the replies before.
 
-  So a call sent in the same reply as the move a lane waits on, such as follow_next's next move,
-  is held once, and passes when sent again.
-- At SubagentStop the guard reads the event's `last_assistant_message`, null after the subagent
-  hands its reply back with SubagentHandback. `stop_hook_active` stays true once a stop hook has
-  kept the subagent going, so the guard tells a reply in words since by the record's user entry
-  that begins `Stop hook feedback:` with no tool use after it.
+  So a call sent in the same reply as the move a lane waits on is held once, and passes when sent
+  again.
+- At SubagentStop the guard reads the last reply from the event, and from the record whether the
+  subagent has answered in words alone since it was told, as the event shows only that a stop hook
+  has kept it going once.
 - Each hook command first runs the Python check, which, where `python3` is missing or older than
   3.9, writes this message and exits 2 on a tool call and 1 at a subagent's end.
 
