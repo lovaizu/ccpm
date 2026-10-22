@@ -7,6 +7,7 @@ import io
 import json
 import os
 import runpy
+import shutil
 import sys
 from unittest import mock
 
@@ -619,9 +620,182 @@ class TestInForm(LayTest):
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
 
 
+class TestUp(LayTest):
+    """`lay.py up <plugin>`: an older copy of lane's code brought up, with the hooks lane:up wrote
+    in the current form and the same lanes."""
+
+    # The hook's command for hands_off as an older version of lane wrote it, with no Python check.
+    OLDER = (
+        'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
+        " '3:hands_off:git commit,git push'"
+    )
+
+    def setUp(self) -> None:
+        super().setUp()
+        # Step 3 as lane:up wrote it, and lane's code as a copy of the version 0.1.0, with lane at
+        # 0.10.0, so a comparison of the versions as text would take the copy for the newer.
+        self.write(self.agent_file, helpers.LAID)
+        self.code = os.path.join(self.plugin, "hooks", "lane")
+        self.write(os.path.join(self.code, "VERSION"), "0.1.0\n")
+        self.write(os.path.join(self.code, "old.py"), "")
+        current = mock.patch.object(lay, "lane_version", return_value="0.10.0")
+        current.start()
+        self.addCleanup(current.stop)
+
+    def hooks_of(self, *entries, event="PreToolUse"):
+        """Writes hooks.json holding the entries of the event, each a command or an entry."""
+        given = [
+            {"matcher": "Bash", "hooks": [{"type": "command", "command": e}]}
+            if isinstance(e, str)
+            else e
+            for e in entries
+        ]
+        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": {event: given}})
+
+    def up(self):
+        return self.lay("up", self.plugin)
+
+    def test_an_older_copy_and_its_hooks_are_brought_up_with_the_same_lanes(self):
+        # Given: the copy of 0.1.0, its hook in the older form between two entries of the builder's
+        # own
+        own = {"matcher": "Write", "hooks": [{"type": "command", "command": "own.sh"}]}
+        self.hooks_of(own, self.OLDER, own)
+        # When: it is brought up
+        code, said = self.up()
+        # Then: the hook is in the current form in its place, the builder's entries and the step
+        # as they were, the copy lane's code with lane's version, and what was done is said
+        self.assertEqual(code, 0)
+        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [own, ENTRY, own]}})
+        self.assertEqual(self.read(self.agent_file), helpers.LAID)
+        self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.10.0\n")
+        self.assertFalse(os.path.exists(os.path.join(self.code, "old.py")))
+        self.assertEqual(
+            said,
+            "Brought lane's code in hooks/lane/ up from 0.1.0 to 0.10.0.\n"
+            "Wrote the hook of changelog-writer into hooks/hooks.json with the lanes it held.\n",
+        )
+
+    def test_hooks_of_both_events_are_brought_up_each_lane_once(self):
+        # Given: the hooks of as_printed, held on both events, and test_after, as written now, then
+        # left with an older copy
+        laid = [{"lane": "as_printed", "takes": ["lay.py print"]}, TESTED]
+        self.propose(self.proposal(laid))
+        self.lay("write", self.proposal_file)
+        written = self.hooks()
+        self.write(os.path.join(self.code, "VERSION"), "0.1.0\n")
+        # When: it is brought up
+        self.up()
+        # Then: the hooks are as written from the same lanes, each lane in each entry once
+        self.assertEqual(self.hooks(), written)
+
+    def test_a_copy_with_no_readable_version_is_brought_up(self):
+        for version, was in ((None, "a copy with no VERSION"), ("one\n", "one")):
+            with self.subTest(version=version):
+                # Given: a copy with no VERSION, or one holding no version
+                path = os.path.join(self.code, "VERSION")
+                if version is None:
+                    os.remove(path)
+                else:
+                    self.write(path, version)
+                self.hooks_of(self.OLDER)
+                # When: it is brought up
+                code, said = self.up()
+                # Then: the copy is lane's version, and what it was is said
+                self.assertEqual(code, 0)
+                self.assertTrue(
+                    said.startswith(f"Brought lane's code in hooks/lane/ up from {was}")
+                )
+                self.assertEqual(self.read(path), "0.10.0\n")
+
+    def test_code_not_an_older_copy_is_left_as_it_is(self):
+        for what in ("the same version", "a newer version", "a link", "no code", "lane's own"):
+            with self.subTest(what=what):
+                # Given: a copy of lane's version or a newer, a link, no code, or lane itself
+                self.hooks_of(self.OLDER)
+                own = mock.patch.object(lay, "CODE", self.code if what == "lane's own" else "x")
+                if os.path.islink(self.code):
+                    os.remove(self.code)
+                shutil.rmtree(self.code, ignore_errors=True)
+                version = {"the same version": "0.10.0\n", "a newer version": "0.11.0\n"}
+                if what == "a link":
+                    os.symlink(helpers.CODE, self.code)
+                elif what != "no code":
+                    self.write(os.path.join(self.code, "VERSION"), version.get(what, "0.1.0\n"))
+                # When: it is brought up
+                with own:
+                    code, said = self.up()
+                # Then: nothing is brought up, and it says so
+                self.assertEqual(code, 0)
+                self.assertEqual(said, "hooks/lane/ holds no older copy of lane's code.\n")
+                self.assertEqual(
+                    self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"], self.OLDER
+                )
+
+    def test_a_lane_this_version_does_not_lay_is_left_out_and_said(self):
+        # Given: a hook laying hands_off beside a lane lane has not and in_form taking too few, and
+        # another subagent's hook laying only a lane lane has not
+        gone, short = "'2:gone:x'", "'3:in_form:entry.json'"
+        self.hooks_of(
+            f"{self.OLDER} {gone} {short}",
+            'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:other 1:gone:y',
+        )
+        # When: it is brought up
+        code, said = self.up()
+        # Then: the hooks lay the lanes this version lays, the other subagent's hook taken out, and
+        # each lane left out is said, for lane:up to put to the builder
+        self.assertEqual(code, 0)
+        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY]}})
+        for agent, word in (
+            ("changelog-writer", "2:gone:x"),
+            ("changelog-writer", "3:in_form:entry.json"),
+            ("other", "1:gone:y"),
+        ):
+            with self.subTest(word=word):
+                self.assertIn(
+                    f"Left out `{word}` from the hook of {agent}, as lane 0.10.0 lays no such lane;"
+                    " ask the builder whether to lay it again or leave it out.\n",
+                    said,
+                )
+
+    def test_a_lane_left_out_of_the_hooks_of_both_events_is_said_once(self):
+        # Given: a lane lane has not, in the hook of each event
+        hooks = {}
+        for event in ("PreToolUse", "SubagentStop"):
+            script = f'"${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/{event.lower()}.py"'
+            command = f"python3 {script} notes:changelog-writer 2:gone:x"
+            hooks[event] = [{"hooks": [{"type": "command", "command": command}]}]
+        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": hooks})
+        # When: it is brought up
+        said = self.up()[1]
+        # Then: it is said once
+        self.assertEqual(said.count("Left out `2:gone:x`"), 1)
+
+    def test_a_command_giving_no_subagent_lane_can_read_is_left_as_it_is(self):
+        # Given: commands running lane's script with no words, a subagent with no plugin, or words
+        # the shell cannot read, beside the hook of changelog-writer
+        script = 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py"'
+        others = [script, f"{script} changelog-writer", f"{script} notes:changelog-writer 'x"]
+        self.hooks_of(*others, self.OLDER)
+        # When: it is brought up
+        self.up()
+        # Then: those are left as they were, and the hook of changelog-writer is brought up
+        commands = [e["hooks"][0]["command"] for e in self.hooks()["hooks"]["PreToolUse"]]
+        self.assertEqual(commands, [*others, COMMAND])
+
+    def test_hooks_not_in_claude_codes_shape_stop(self):
+        # Given: hooks.json holding no JSON
+        self.write(os.path.join(self.plugin, "hooks", "hooks.json"), "{")
+        # When: it is brought up
+        code, said = self.up()
+        # Then: it exits 1 naming the file, the copy left as it was
+        self.assertEqual(code, 1)
+        self.assertIn("hooks/hooks.json", said)
+        self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.1.0\n")
+
+
 class TestMain(LayTest):
     def test_any_other_arguments_print_how_to_run_it(self):
-        for argv in ([], ["print"], ["lay", self.proposal_file], ["print", "a", "b"]):
+        for argv in ([], ["print"], ["up"], ["lay", self.proposal_file], ["print", "a", "b"]):
             with self.subTest(argv=argv):
                 # Given: arguments lay.py does not take
                 # When: it is run with them

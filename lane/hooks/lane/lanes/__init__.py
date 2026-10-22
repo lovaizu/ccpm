@@ -148,14 +148,23 @@ def laid(root: str, words: list[str], held: str = "PreToolUse") -> tuple[str, li
         raise ValueError("gives no subagent as <plugin>:<name>")
     found = []
     for w in words[1:]:
-        m = LANE.fullmatch(w)
-        takes = m["takes"].split(",") if m else []
-        if not m or m["lane"] not in LANES or not all(takes) or not fits(m["lane"], takes):
+        given = read(w)
+        if given is None:
             raise ValueError(f"gives `{w}`, no lane as <step>:<lane>:<what it takes>")
-        if held not in held_on(m["lane"]):
+        if held not in held_on(given[1]):
             raise ValueError(f"gives `{w}`, no lane held on {held}")
-        found.append(Laid(root, words[0], int(m["step"]), m["lane"], takes))
+        found.append(Laid(root, words[0], *given))
     return words[0], found
+
+
+def read(w: str) -> tuple[int, str, list[str]] | None:
+    """The step, the lane and what it takes, of a lane as a hook's command gives it; None where it
+    is no lane of these as `word` writes it."""
+    m = LANE.fullmatch(w)
+    takes = m["takes"].split(",") if m else []
+    if not m or m["lane"] not in LANES or not all(takes) or not fits(m["lane"], takes):
+        return None
+    return int(m["step"]), m["lane"], takes
 
 
 def main(held: str, words: list[str]) -> int:

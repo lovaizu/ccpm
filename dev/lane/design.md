@@ -42,7 +42,11 @@ flowchart TB
 - On a plugin whose copy of lane's code is older than lane's, the layer first brings the copy and
   each hook to the current form, keeping what they say, and the run then goes on as any other.
 
-  Bringing a copy up asks the builder nothing, since everything it keeps was approved before.
+  Bringing a copy up asks the builder nothing of what it keeps, as all of it was approved before. A
+  lane the current version no longer lays, or lays taking other things, is left out of its hook
+  and put to the builder as a point, to lay again or leave out: kept in the hook, the guard could
+  not read the command and would let every call it watches through, and left out unsaid, a lane the
+  builder approved would be gone with no one told.
 - `lane:up` reads the plugin's skills, agents and hooks, and gives the calling AI, one reply at a
   time, each point the files leave open, a question with its recommendation, and each fact it found
   with where it found it; the calling AI puts each to the builder and sends the answer back. The
@@ -269,7 +273,8 @@ the records of every conversation and agent the check started. Each unittest bel
   - Flow: unittest runs a hook's command with a `PATH` holding no `python3`, one holding a `python3`
     older than 3.9, and the one in use.
 - The layer: what it writes is the approved proposal, with every other entry of `hooks/hooks.json`
-  as it was, and an older copy is brought up with what it keeps unchanged.
+  as it was, and an older copy is brought up with what it keeps unchanged, each lane it cannot
+  keep said.
   - Flow: unittest on a plugin made for each test: a new plugin, one with hooks of its own, one
     with an older copy, one in the ccpm marketplace.
 - `lane:up`: the run goes in the order of the logical view.

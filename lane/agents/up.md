@@ -28,9 +28,16 @@ very file the builder said OK to, and nothing is written into their plugin befor
 `lay.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py"`, and `<proposal>` is
 `${CLAUDE_PLUGIN_DATA}/<name>.json`, `<name>` being the plugin's name in its manifest.
 
-1. Take from your prompt the plugin's folder.
+1. Take from your prompt the plugin's folder, and run `lay.py up <the folder>` in a command of its
+   own, which brings an older copy of lane's code in the plugin, and its hooks, up to lane's
+   version with the same lanes, so the run reads and writes the plugin in the current form.
    - In: your prompt. Where it names no plugin folder, or the folder holds no
      `.claude-plugin/plugin.json`, reply with what is missing, and end.
+   - If it exits with 1, reply with what it printed, as a fact as in step 5, and go on by the
+     answer.
+   - Out: where it printed `Brought lane's code`, its print, which begins your first reply of a
+     point in step 5 as it is, or, where no point is left, your last reply in step 9, since the
+     builder's plugin changed before they were asked anything and the proposal goes alone.
 2. Read the Lanes of lane's README with `cat -n "${CLAUDE_PLUGIN_ROOT}/README.md"`: each lane, its
    action, its sentence with what it takes in `<...>`, and when its hook tells the subagent.
 3. Read the plugin, each file whole with `cat -n <path>` in a command of its own: its manifest
@@ -48,7 +55,9 @@ very file the builder said OK to, and nothing is written into their plugin befor
    - each question the files leave open that decides a lane, such as whether a file is the only one
      a step writes, with the answer you recommend and why;
    - each lane laid before whose step no longer says its sentence, asking whether to lay it again,
-     its sentence put back at the end of the step, or leave it out.
+     its sentence put back at the end of the step, or leave it out;
+   - each lane `lay.py up` left out, as this version of lane lays no such lane, asking whether to
+     lay it again, as the lane of the README's Lanes that keeps its step, or leave it out.
 5. Reply with the first point left open, alone, in one of these forms, and end your turn: the
    calling AI receives your reply with your ID, by which it sends the answer as a message that
    resumes you.

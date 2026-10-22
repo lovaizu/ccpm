@@ -14,6 +14,12 @@ subagent and each event its lanes are held on in the plugin's hooks/hooks.json, 
 left as it was, and lane's code in its hooks/lane/: a relative link to lane's in a plugin of the
 ccpm marketplace, a copy with lane's version in VERSION anywhere else; then has Claude Code check
 the plugin, and removes the proposal.
+
+Bringing a plugin up, run first on each run of lane:up, puts lane's code in place of an older copy
+of it, one whose VERSION is lower than lane's version or missing, and writes each hook lane:up wrote
+before in the current form, with the lanes it read from it, every other entry and each step left as
+it was; a lane this version no longer lays is left out and said, for the builder to lay again or
+leave out.
 """
 
 from __future__ import annotations
@@ -36,7 +42,7 @@ import lanes
 import step
 from lanes import in_form
 
-USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>"
+USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>\n       lay.py up <plugin>"
 # Each hook's command first checks that lane's code can run, and where it cannot, on an event of
 # its subagent, read from the event's text by the shell alone, as Claude Code writes it, with or without a blank after
 # the colon, says what to install and exits with its event's code; it lets any other event through,
@@ -65,9 +71,9 @@ class Stop(Exception):
 
 
 def main(argv: list[str]) -> int:
-    """Prints the proposal at the path, or writes it into the plugin, and gives 0; prints what was
-    wrong and gives 1."""
-    actions = {"print": printed, "write": written}
+    """Prints the proposal at the path, or writes it into the plugin, or brings up the plugin at the
+    path, and gives 0; prints what was wrong and gives 1."""
+    actions = {"print": printed, "write": written, "up": brought_up}
     if len(argv) != 2 or argv[0] not in actions:
         print(USAGE)
         return 1
@@ -281,6 +287,18 @@ def entry_shaped(entry: Any) -> bool:
     return isinstance(each, list) and all(isinstance(h, dict) for h in each)
 
 
+def words(command: Any, event: str) -> list[str]:
+    """The words a hook's command gives the event's script in lane's code, the first the subagent
+    as `<plugin>:<subagent>`, each after it a lane laid; none for a command that runs no script of
+    lane's, names no subagent so, or gives words the shell cannot read."""
+    found = re.search(rf'/hooks/lane/{event.lower()}\.py"?(.*)', str(command))
+    try:
+        given = shlex.split(found[1]) if found else []
+    except ValueError:
+        return []
+    return given if given and lanes.AGENT.fullmatch(given[0]) else []
+
+
 def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> None:
     """Puts the subagent's entry of each event its lanes are held on into the hooks: where lane:up
     wrote one for it before, in the place of the first, after every other entry otherwise; and
@@ -288,8 +306,11 @@ def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> Non
     events = hooks.setdefault("hooks", {})
     for event in EVENTS:
         entries = events.get(event, [])
-        mark = f"{run(event)} {plugin}:{agent['name']} "
-        ours = [any(mark in str(h.get("command")) for h in e.get("hooks", [])) for e in entries]
+        mark = [f"{plugin}:{agent['name']}"]
+        ours = [
+            any(words(h.get("command"), event)[:1] == mark for h in e.get("hooks", []))
+            for e in entries
+        ]
         place = ours.index(True) if True in ours else len(entries)
         others = [e for e, our in zip(entries, ours) if not our]
         new = entry(plugin, agent, event)
@@ -312,13 +333,24 @@ def marketplace(folder: str) -> str | None:
     return given.get("name") if isinstance(given, dict) else None
 
 
+def lanes_own(place: str) -> bool:
+    """Whether the folder is lane's code itself, as hooks/lane/ is on lane."""
+    # Told by membership rather than `==`, as an order comparison such as `<=` would hold for other
+    # paths too, and a mutant making it one would pass every test.
+    return os.path.realpath(place) in (os.path.realpath(CODE),)
+
+
+def lane_version() -> str:
+    """lane's version, as its plugin.json gives it."""
+    with open(os.path.join(LANE, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
+        return json.load(f)["version"]
+
+
 def code_put(root: str) -> None:
     """Puts lane's code in the plugin's hooks/lane/, in place of what was there; on lane itself,
     whose hooks/lane/ is that code, leaves it as it is."""
     place = os.path.join(root, "hooks", "lane")
-    # Told by membership rather than `==`, as an order comparison such as `<=` would hold for other
-    # paths too, and a mutant making it one would pass every test.
-    if os.path.realpath(place) in (os.path.realpath(CODE),):
+    if lanes_own(place):
         return
     if os.path.islink(place):
         os.remove(place)
@@ -331,10 +363,16 @@ def code_put(root: str) -> None:
         os.symlink(os.path.join("..", "..", "lane", "hooks", "lane"), place)
         return
     shutil.copytree(CODE, place, ignore=shutil.ignore_patterns("__pycache__"))
-    with open(os.path.join(LANE, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
-        version = json.load(f)["version"]
     with open(os.path.join(place, "VERSION"), "w", encoding="utf-8") as f:
-        f.write(version + "\n")
+        f.write(lane_version() + "\n")
+
+
+def hooks_written(root: str, hooks: dict[str, Any]) -> None:
+    """Writes the hooks into the plugin's hooks/hooks.json, indented by two, as Claude Code reads
+    them."""
+    os.makedirs(os.path.join(root, "hooks"), exist_ok=True)
+    with open(os.path.join(root, "hooks", "hooks.json"), "w", encoding="utf-8") as f:
+        f.write(json.dumps(hooks, indent=2, ensure_ascii=False) + "\n")
 
 
 def written(path: str) -> str:
@@ -355,9 +393,7 @@ def written(path: str) -> str:
             f.write("".join(lines))
         hooks_with(hooks, plugin, agent)
         said.append(f"Wrote the hook of {agent['name']} into hooks/hooks.json.\n")
-    os.makedirs(os.path.join(root, "hooks"), exist_ok=True)
-    with open(os.path.join(root, "hooks", "hooks.json"), "w", encoding="utf-8") as f:
-        f.write(json.dumps(hooks, indent=2, ensure_ascii=False) + "\n")
+    hooks_written(root, hooks)
     code_put(root)
     said.append("Put lane's code in hooks/lane/.\n")
     try:
@@ -373,6 +409,75 @@ def written(path: str) -> str:
         )
     os.remove(path)
     return "".join(said) + "claude plugin validate passed.\n"
+
+
+def semver(text: str) -> tuple[int, ...]:
+    """The version the text gives as major, minor and patch, to be compared as numbers; none,
+    which is lower than every version, where it gives none."""
+    found = re.fullmatch(r"([0-9]+)\.([0-9]+)\.([0-9]+)", text.strip())
+    return tuple(map(int, found.groups())) if found else ()
+
+
+def older(root: str) -> str | None:
+    """The version of the plugin's copy of lane's code, as its VERSION gives it, where the copy is
+    older than lane: its version lower, or not given; None where hooks/lane/ is no copy, being a
+    link, lane's own or not there, or is a copy of lane's version or a newer."""
+    place = os.path.join(root, "hooks", "lane")
+    if os.path.islink(place) or not os.path.isdir(place) or lanes_own(place):
+        return None
+    try:
+        with open(os.path.join(place, "VERSION"), encoding="utf-8") as f:
+            given = f.read().strip()
+    except OSError:
+        return "a copy with no VERSION"
+    return given if semver(given) < semver(lane_version()) else None
+
+
+def laid_before(hooks: dict[str, Any]) -> tuple[dict[str, list[dict[str, Any]]], list[str]]:
+    """Each subagent the hooks lay lanes in, as `<plugin>:<subagent>`, with its lanes as steps of a
+    proposal, each lane once, though held on both events; and each lane laid that lane does not lay
+    now, as said for lane:up to put to the builder."""
+    agents: dict[str, list[dict[str, Any]]] = {}
+    left = []
+    for event in EVENTS:
+        for e in hooks.get("hooks", {}).get(event, []):
+            for h in e.get("hooks", []):
+                given = words(h.get("command"), event)
+                steps = agents.setdefault(given[0], []) if given else []
+                for w in given[1:]:
+                    lane = lanes.read(w)
+                    if lane is None:
+                        name = given[0].split(":")[1]
+                        left.append(
+                            f"Left out `{w}` from the hook of {name}, as lane {lane_version()} lays"
+                            " no such lane; ask the builder whether to lay it again or leave it"
+                            " out.\n"
+                        )
+                        continue
+                    number, kind, takes = lane
+                    s = {"step": number, "lanes": [{"lane": kind, "takes": takes}]}
+                    if s not in steps:
+                        steps.append(s)
+    return agents, list(dict.fromkeys(left))
+
+
+def brought_up(root: str) -> str:
+    """Brings up the plugin's copy of lane's code where it is older than lane, with each hook
+    lane:up wrote in it in the current form, laying the same lanes, every other entry and each step
+    as it was; gives what was done, and each lane left out, as lane does not lay it now."""
+    was = older(root)
+    if was is None:
+        return "hooks/lane/ holds no older copy of lane's code.\n"
+    hooks = hooks_read(root)
+    agents, left = laid_before(hooks)
+    said = [f"Brought lane's code in hooks/lane/ up from {was} to {lane_version()}.\n"]
+    for agent, steps in agents.items():
+        plugin, name = agent.split(":")
+        hooks_with(hooks, plugin, {"name": name, "steps": steps})
+        said.append(f"Wrote the hook of {name} into hooks/hooks.json with the lanes it held.\n")
+    hooks_written(root, hooks)
+    code_put(root)
+    return "".join([*said, *left])
 
 
 # Run as the command, and not when the tests import it under the name lay. It is written as
