@@ -323,6 +323,9 @@
     },
     {
       "fact": "in writ-rebuild and pushed: lane:up's prompt (tried once, all four pass conditions), write_only, read_only, read_whole and start_with on one Call read from the event and record.py; the design's record place fixed to transcript_path and agent_id; worktrees removed"
+    },
+    {
+      "fact": "the user decided (2026-10-22): in_form takes JSON/JSONL (JSON Schema, structured outputs' subset), Markdown templates' headings and Markdown frontmatter keys, being built; plugin.md step 2 holds that a plugin takes in what is general and a general need it lacks goes to its makers as an issue on the user's yes (to apply to lane's design); test_after tells at the subagent's end when the last change to the output has no passing run of the test after it, T18's SubagentStop brought forward"
     }
   ],
   "semantic_gist": [
@@ -427,7 +430,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "the user's answer on in_form (A template, B JSON keys, C drop; A recommended), then one at a time: test_after (one item per slot in order, checked at the subagent's end), as_printed (<input> is the script, what is handed on equals its last print), follow_next (not a lane of its own, turn's handing on by as_printed), wait_for (takes the approval and the call held back, checked on a real record first); then T18 and T16's trial as its user"
+      "next": "ask as_printed, then follow_next, then wait_for, one at a time; when in_form's agent ends, check, show the user its design lines; build test_after with SubagentStop; then lane's issue flow into README and design for the user's OK"
     }
   ],
   "uncertainty_signal": [
