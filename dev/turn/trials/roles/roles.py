@@ -1,11 +1,10 @@
-"""Tries each of turn's four roles on its own: the real role, scripts and hooks, started by a stand-in
-for the orchestrator with the prompt turn.py prints, on the flow trial's task of two items, one
+"""Tries each of turn's four roles on its own: the real role and its lanes, started by a stand-in for
+the orchestrator with the prompt the flow gives it, on the flow trial's task of two items, one
 answered at its part and one in each part. Between the roles the run is set as a trial means: the
 orchestrator's check finds each item's Good in the decisions, the generator's work is replaced by a
-set README that names no license, the round has sent back as often as it may, so the
-evaluator follows the first user whatever it finds, and the learner is given B-1 without Good and
-the records of the three roles before it. Prints, for each role, its record, from which the trial
-is judged, the minutes, each tool it used, each hook stop, and the reply kept.
+set README that names no license, the evaluator is given the first user's Goods, and the learner is
+given B-1 without Good and the records of the three roles before it. Prints, for each role, its
+session, the minutes and cost, each tool it used, each stop, and whether its reply is in its form.
 
     python3 dev/turn/trials/roles/roles.py <new folder>
 
@@ -24,7 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 import shared
 
-CALL = shared.call("code")
+CALL = shared.call("has")
 UNMET = {
     "checklist": "checklist.md",
     "item": "B-1",
@@ -39,10 +38,11 @@ sys.path.insert(0, os.path.join(plugin, "scripts"))
 os.chdir(place)
 
 # The copy of turn's scripts, on the path only once it is made.
+import forms
 import run
 
 
-def turn(*args: str, given: str = "") -> dict:
+def turn(*args: str, given: str = "") -> str:
     done = subprocess.run(
         ["python3", os.path.join(plugin, "scripts", "turn.py"), *args],
         input=given,
@@ -50,42 +50,54 @@ def turn(*args: str, given: str = "") -> dict:
         text=True,
         check=True,
     )
-    return json.loads(done.stdout)
+    return done.stdout
 
 
-def role(step: dict) -> str:
-    """Starts the role turn.py printed, as the orchestrator would, and gives its record."""
-    ask = f"""Start the `{step["agent"]}` agent with the JSON on the line below as its whole prompt,
-exactly as it is, and wait for its reply. Then reply with its reply as it is.
-{step["prompt"]}"""
+def role(agent: str, prompt: dict) -> str:
+    """Starts the role with the prompt, as the orchestrator would, and gives its agent ID."""
+    ask = f"""Start the `{agent}` agent with the JSON on the line below as its whole prompt, exactly
+as it is, and wait for its reply. Then reply with its reply as it is.
+{json.dumps(prompt, ensure_ascii=False)}"""
     start = time.time()
-    session = shared.claude(ask, [plugin])["session_id"]
-    record = shared.agents(session)
-    print(f"=== {step['agent']}  minutes: {round((time.time() - start) / 60, 1)}")
-    print("session:", session)
-    for path in record:
+    end = shared.claude(ask, [plugin], cwd=place)
+    session = end["session_id"]
+    print(f"=== {agent}  minutes: {round((time.time() - start) / 60, 1)}")
+    print("session:", session, "cost:", end.get("total_cost_usd"))
+    found = shared.agents(session)
+    for path in found:
         shared.show(path)
-    kept = run.running(CALL["result"])
-    print("reply kept:", json.dumps(kept["next"].get("reply") if kept else None))
-    return record[0] if record else ""
+    reply = prompt["reply"]
+    if os.path.exists(reply):
+        with open(reply, encoding="utf-8") as f:
+            text = f.read()
+        kept = run.running(CALL["result"])
+        said = forms.check(
+            text,
+            kept["items"],
+            kept["work"],
+            run.FORMS[agent],
+            records=tuple(kept.get("learnt", [])),
+            each=run.each(kept),
+        )
+        print("reply:", text.strip())
+        print("form:", "filled" if not said else said)
+    else:
+        print("reply: none written")
+    return os.path.basename(found[0])[len("agent-") : -len(".jsonl")] if found else ""
 
 
 turn("start", json.dumps(CALL))
-records = [role(turn("next", CALL["result"], given=json.dumps(shared.CHECK)))]
+turn("next", CALL["result"], given=json.dumps(shared.CHECK))
+kept = run.running(CALL["result"])
+ids = [role(run.GENERATOR, kept["next"]["prompt"])]
 with open("README.md", "w", encoding="utf-8") as f:
     f.write(shared.UNLICENSED)
-records.append(role(turn("next", CALL["result"])))
+ids.append(role(run.FIRST_USER, run.reader_given(kept, run.FIRST_USER)))
+ids.append(role(run.EVALUATOR, dict(run.reader_given(kept, run.EVALUATOR), reading=[])))
+kept["records"] = [i for i in ids if i]
+run.settle(kept, [UNMET], [])
 kept = run.running(CALL["result"])
-if kept is None:
-    sys.exit("the run ended before the evaluator")
-kept["sent"] = run.SENDS
-run.write(CALL["result"], {"running": kept})
-records.append(role(turn("next", CALL["result"])))
-kept = run.running(CALL["result"])
-if kept is None:
-    sys.exit("the run ended before the learner")
-kept.update(settled={"items": [UNMET], "questions": []}, records=records)
-role(run.ask(kept, run.LEARNER, {"findings": [UNMET], "records": records, "lessons": []}))
+role(run.LEARNER, kept["next"]["prompt"])
 os.chdir(shared.ROOT)
 shutil.rmtree(place)
 shutil.rmtree(plugin)

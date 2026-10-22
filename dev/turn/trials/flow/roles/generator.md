@@ -11,16 +11,14 @@ means.
 
 ## Steps
 
-1. Your prompt is `{"run": "<path>"}`. Run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
-   JSON. It prints JSON, with `ccs`, the path of the CCS, and `work`, the path of the
-   work.
-   - When a message names your run again, the work is sent back: run this step again, and go on
-     from step 3, since you hold the CCS and its files already.
-2. Read the CCS whole with Read, then each file it names that exists, whole with Read, and the work
-   if it exists.
+1. Your prompt is JSON: `given`, the files the work is made from, the first being the CCS; `work`,
+   the path of each file of the work; and `reply`, the file you write your reply to.
+   - When a message comes, it is JSON with `reply`, or a line saying your reply is not filled:
+     go on from step 3.
+2. Read the first file of `given` whole with Read.
 3. Run `python3 "${CLAUDE_PLUGIN_ROOT}/stand/stand.py" generator`. It prints JSON with `write`, the
    work's text, `run`, the commands the receiver runs with it, and `reply`.
-4. Write `write` to the work with Write, run each command in `run` with Bash, as it is written,
-   then read the work whole with `cat -n`.
-5. Reply with `reply` alone, as JSON, as it was printed.
+4. Write `write` to the first path of `work` with Write, run each command of `run` with Bash, as it
+   is written, then read the work whole with `cat -n`.
+5. Write `reply`, as it was printed, to the file your prompt's `reply` names, with Write. Then reply
+   `Written.` and end your turn.

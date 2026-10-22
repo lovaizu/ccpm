@@ -1,5 +1,6 @@
-"""Gives a stand-in role of a flow trial its next set reply, counting each role's calls in a file
-beside this one, so every run of the trial takes the same way."""
+"""Gives a stand-in role of a flow trial its next set reply, from the way of the run set beside this
+file, counting each role's calls in a file beside this one, so every run of the trial takes the same
+way."""
 
 import json
 import os

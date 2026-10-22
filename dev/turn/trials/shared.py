@@ -53,7 +53,9 @@ def task(place: str, given: dict, decisions: "str | None" = None) -> None:
             f.write(decisions)
     os.makedirs(os.path.join(place, ".tasks"))
     shutil.move(os.path.join(place, "ccs.json"), os.path.join(place, given["ccs"]))
-    for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "task"]):
+    # A machine with no git identity of its own still commits the task.
+    who = ["-c", "user.name=trial", "-c", "user.email=trial@example.invalid"]
+    for args in (["init", "-q"], ["add", "-A"], [*who, "commit", "-q", "-m", "task"]):
         subprocess.run(["git", "-C", place, *args], check=True)
 
 
