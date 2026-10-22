@@ -65,8 +65,9 @@ flowchart TB
   For lane the caller is the calling AI, and its answer is the caller's own action that an approval
   counts from (dev/architecture.md, The caller approves what is theirs).
 - In a subagent with lanes, the guard reads each tool call as one action, begin, read, write, run,
-  test, hand on, wait or end, reads it against that subagent's lanes alone, and on a drift stops
-  the call and tells the subagent `<plugin>: <sentence>`.
+  test, hand on, wait or end, a command that writes a file being a write of it too, reads it
+  against that subagent's lanes alone, and on a drift stops the call and tells the subagent
+  `<plugin>: <sentence>`.
 
   A lane on the order of steps, such as reading an input whole before writing, is held from what
   the subagent has done since it started.
