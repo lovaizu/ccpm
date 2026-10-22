@@ -1,12 +1,11 @@
 # rn
 
-rn turns every move of a piece of work toward your purpose: each task is traced back to the purpose,
-and only a compact record of where the work stands is carried from move to move, so a long piece of
-work neither swells nor drifts on its way. It is a Claude Code plugin that takes a whole piece of
-work, asked for in your own rough words, to a pull request that does what you want it for, while you
-only answer what it asks. It is for anyone who has Claude Code do work in their own git repository
-on GitHub and would rather hand over a piece of work, even one that takes days, than prepare it and
-watch it being done.
+rn keeps a piece of work aimed at your purpose and its execution straight. Every task traces back
+to the purpose, and the plan is remade from the facts each move brings; only a short record of where
+the work stands is carried from move to move, so a long piece of work neither swells nor drifts. It
+is a Claude Code plugin that takes work asked for in rough words to a pull request while you only
+answer what it asks, for anyone who would rather hand over work in their GitHub repository, even
+work of days, than prepare and watch it.
 
 ## Example
 
