@@ -79,8 +79,8 @@ class Laid:
         self.number, self.lane, self.takes = number, lane, takes
 
     def check(self, event: dict[str, Any]) -> list[str]:
-        """The lane's sentence where the call drifts from it; where the step no longer says it,
-        that lane:up must be run again; nothing otherwise."""
+        """The lane's sentence where the call drifts from it, as the subagent reads its step; where
+        the step no longer says it, that lane:up must be run again; nothing otherwise."""
         said = sentence(self.lane, self.takes)
         if not step.holds(self.root, self.name, self.number, said):
             gone = f"step {self.number} of {self.name} no longer says: {said}"
@@ -89,7 +89,8 @@ class Laid:
         drift = LANES[self.lane].drifts(call.read(event), self.takes, self.root)
         if not drift:
             return []
-        return [f"{said}\n{drift}" if isinstance(drift, str) else said]
+        told = step.expanded(said, self.root)
+        return [f"{told}\n{drift}" if isinstance(drift, str) else told]
 
 
 def laid(root: str, words: list[str]) -> tuple[str, list[Laid]]:

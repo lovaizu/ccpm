@@ -16,6 +16,8 @@ NAME = re.compile(r"""^name:[ \t]*["']?(?P<name>.*?)["']?[ \t]*$""", re.MULTILIN
 GOES_ON = re.compile(r"^[ \t]+(?![-*+] |\d+\. )\S")
 # A line break, with the blanks around it, as a step's text reads it.
 BREAK = re.compile(r"[ \t]*\n[ \t]*")
+# What Claude Code puts the plugin's folder in for, where a subagent's file names it.
+ROOT = "${CLAUDE_PLUGIN_ROOT}"
 
 
 def agent_file(root: str, name: str) -> str | None:
@@ -59,3 +61,9 @@ def holds(root: str, name: str, number: int, sentence: str) -> bool:
         lines = f.read().splitlines()
     where = span(lines, number)
     return where is not None and sentence in says(lines, where)
+
+
+def expanded(said: str, root: str) -> str:
+    """The text as the subagent reads it: the plugin's folder put in where it names ROOT, as Claude
+    Code gives a plugin subagent its file."""
+    return said.replace(ROOT, root)

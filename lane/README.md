@@ -93,7 +93,7 @@ tells it when the subagent does what the last column says.
 | read | read_only | Read only `<input>`. | reads anything else |
 | read | read_whole | Read `<input>` to its end. | leaves a part of it unread |
 | write | write_only | Write only `<output>`. | writes anything else |
-| write | in_form | Write `<output>` in `<form>`. | writes it out of that form |
+| write | in_form | Write `<output>` in the form of `<form>`. | writes it out of that form |
 | run | hands_off | Do not run `<commands>`. | runs one of them |
 | test | test_after | After changing `<output>`, pass `<test>`. | goes on with a change not yet passed |
 | hand on | as_printed | Hand on `<input>` as it is. | hands on something else |

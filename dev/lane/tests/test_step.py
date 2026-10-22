@@ -2,6 +2,7 @@
 Code gives the subagent, and the step's text, a line break read as a space."""
 
 import os
+import unittest
 
 import helpers
 from helpers import step
@@ -136,3 +137,12 @@ class TestSays(helpers.PluginTest):
         # Then: neither does
         self.assertFalse(step.holds(self.plugin, "changelog-writer", 9, helpers.SENTENCE))
         self.assertFalse(step.holds(self.plugin, "gone", 3, helpers.SENTENCE))
+
+
+class TestExpanded(unittest.TestCase):
+    def test_the_plugins_folder_is_put_in_where_the_text_names_it(self):
+        # Given: a sentence naming a file of the plugin by ${CLAUDE_PLUGIN_ROOT}, twice
+        said = "Read `${CLAUDE_PLUGIN_ROOT}/a.md` and `${CLAUDE_PLUGIN_ROOT}/b.md`."
+        # When: it is given as Claude Code gives the subagent its step
+        # Then: the plugin's folder stands in each place, as the subagent reads it
+        self.assertEqual(step.expanded(said, "/p"), "Read `/p/a.md` and `/p/b.md`.")

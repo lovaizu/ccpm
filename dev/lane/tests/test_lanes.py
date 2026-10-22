@@ -56,8 +56,8 @@ class TestSentence(unittest.TestCase):
         # When: its sentence is made
         # Then: each stands in its own place, in the order taken
         self.assertEqual(
-            lanes.sentence("in_form", ["out.json", "forms/out.json"]),
-            "Write `out.json` in `forms/out.json`.",
+            lanes.sentence("in_form", ["out.json", "${CLAUDE_PLUGIN_ROOT}/forms/out.json"]),
+            "Write `out.json` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/out.json`.",
         )
 
 

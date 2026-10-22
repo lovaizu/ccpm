@@ -38,6 +38,7 @@ class TestRead(unittest.TestCase):
             ENTRY,
             {"type": ["string", "null"]},
             {"definitions": {"a": {"type": "integer"}}, "$ref": "#/definitions/a"},
+            {"anyOf": [{"$ref": "#/$defs/a"}], "allOf": [{"items": {}}], "$defs": {"a": {}}},
             {"items": {"type": "number"}, "minItems": 0},
             {"type": "boolean"},
             {"$ref": "#/$defs/a/items", "$defs": {"a": {"items": {}}}},
@@ -64,6 +65,10 @@ class TestRead(unittest.TestCase):
             ({"anyOf": []}, "$.anyOf: expected a list of schemas"),
             ({"allOf": {}}, "$.allOf: expected a list of schemas"),
             ({"anyOf": [{}, 2]}, "$.anyOf[1]: expected a schema object"),
+            (
+                {"allOf": [{}, {"$ref": "#/$defs/a"}], "$defs": {"a": {}}},
+                "$.allOf[1]: expected a schema without $ref, as structured outputs take none in allOf",
+            ),
             ({"items": [{}]}, "$.items: expected a schema object"),
             ({"required": "a"}, "$.required: expected a list of keys"),
             ({"required": [1]}, "$.required: expected a list of keys"),

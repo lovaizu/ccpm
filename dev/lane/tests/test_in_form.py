@@ -18,8 +18,8 @@ FORM = {
     "required": ["version"],
     "additionalProperties": False,
 }
-TAKES = ["entry.json", "forms/entry.json"]
-SENTENCE = "Write `entry.json` in `forms/entry.json`."
+TAKES = ["entry.json", "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"]
+SENTENCE = "Write `entry.json` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`."
 
 
 class InFormTest(helpers.PluginTest):
@@ -125,10 +125,10 @@ class TestForm(InFormTest):
         # Given: the form, a file of the plugin
         # When: it is read for the lane
         # Then: it is the schema
-        self.assertEqual(in_form.form(self.plugin, "forms/entry.json"), FORM)
+        self.assertEqual(in_form.form(self.plugin, TAKES[1]), FORM)
 
     def test_a_form_out_of_the_plugin_is_refused(self):
-        for named in ("../form.json", os.path.join(self.base, "form.json")):
+        for named in ("${CLAUDE_PLUGIN_ROOT}/../form.json",):
             with self.subTest(named=named):
                 # Given: a form beside the plugin, out of it
                 self.write_json(os.path.join(self.base, "form.json"), FORM)
@@ -138,13 +138,27 @@ class TestForm(InFormTest):
                     in_form.form(self.plugin, named)
                 self.assertIn("out of the plugin", str(refused.exception))
 
+    def test_a_form_not_named_from_the_plugins_folder_is_refused(self):
+        for named in ("forms/entry.json", os.path.join(self.plugin, "forms", "entry.json")):
+            with self.subTest(named=named):
+                # Given: the form named from the folder the subagent works in, or by a whole path
+                # When: it is read for the lane
+                # Then: it is refused, as the subagent reads it where Claude Code puts the
+                # plugin's folder in for ${CLAUDE_PLUGIN_ROOT}, wherever the plugin is installed
+                with self.assertRaises(ValueError) as refused:
+                    in_form.form(self.plugin, named)
+                self.assertIn(
+                    "named as ${CLAUDE_PLUGIN_ROOT}/<path in the plugin>", str(refused.exception)
+                )
+
     def test_a_form_gone_since_the_lane_was_laid_stops_the_write_saying_so(self):
         # Given: in_form whose form is no longer there
         os.remove(os.path.join(self.plugin, "forms", "entry.json"))
         # When: the output is written
         told = self.wrote('{"version": "1.0"}')
         # Then: it drifts, saying the form cannot be read and to stop for the plugin to be fixed
-        self.assertTrue(told.startswith("the form `forms/entry.json` cannot be read: "), told)
+        named = os.path.join(self.plugin, "forms", "entry.json")
+        self.assertTrue(told.startswith(f"the form `{named}` cannot be read: "), told)
         self.assertIn("Stop here and reply that the form must be fixed", told)
 
 
@@ -162,14 +176,22 @@ class TestLaid(GuardTest):
         event = self.called("Write", {"file_path": "entry.json", "content": content})
         return self.guard(json.dumps(event), (helpers.AGENT, "3:in_form:" + ",".join(TAKES)))
 
+    def test_a_step_still_saying_the_sentence_as_written_holds(self):
+        # Given: in_form on step 3, the step saying ${CLAUDE_PLUGIN_ROOT} as lane:up writes it
+        # When: changelog-writer writes entry.json in its form
+        # Then: the step is read as holding the sentence, not as changed
+        self.assertNotIn("no longer says", self.written('{"version": "1.0"}')[1])
+
     def test_a_write_out_of_the_form_is_stopped_with_the_sentence_and_the_point(self):
         # Given: in_form on step 3 of changelog-writer
         # When: changelog-writer writes entry.json out of its form
-        # Then: the call is stopped, and the subagent told the sentence headed by the plugin, and
-        # the point on the next line
+        # Then: the call is stopped, and the subagent told the sentence headed by the plugin, the
+        # plugin's folder put in for ${CLAUDE_PLUGIN_ROOT} as in the step it reads, and the point
+        # on the next line
+        told = SENTENCE.replace("${CLAUDE_PLUGIN_ROOT}", self.plugin)
         self.assertEqual(
             self.written('{"version": 1}'),
-            (2, f"notes: {SENTENCE}\n$.version: expected a string, found 1\n"),
+            (2, f"notes: {told}\n$.version: expected a string, found 1\n"),
         )
 
     def test_a_write_in_the_form_is_let_through(self):

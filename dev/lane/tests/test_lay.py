@@ -437,28 +437,43 @@ class TestInForm(LayTest):
 
     def test_a_form_lane_reads_is_laid(self):
         for form, text in (
-            ("forms/entry.json", '{"type": "object"}'),
-            ("forms/entry.md", "## A\n"),
+            ("${CLAUDE_PLUGIN_ROOT}/forms/entry.json", '{"type": "object"}'),
+            ("${CLAUDE_PLUGIN_ROOT}/forms/entry.md", "## A\n"),
         ):
             with self.subTest(form=form):
                 # Given: a proposal of in_form whose form is a schema or a template of the plugin
-                self.write(os.path.join(self.plugin, form), text)
+                self.write(os.path.join(self.plugin, form.split("/", 1)[1]), text)
                 self.propose(self.in_form(form))
                 # When: it is written
                 code, _ = self.lay("write", self.proposal_file)
                 # Then: it is laid, its sentence put into the step
                 self.assertEqual(code, 0)
-                self.assertIn(f"Write `entry.json` in `{form}`.", self.read(self.agent_file))
+                self.assertIn(
+                    f"Write `entry.json` in the form of `{form}`.", self.read(self.agent_file)
+                )
+
+    def test_the_hook_gives_the_form_as_the_step_names_it_unexpanded_by_the_shell(self):
+        # Given: a proposal of in_form whose form is named from the plugin's folder
+        form = "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"
+        self.write(os.path.join(self.plugin, "forms", "entry.json"), "{}")
+        self.propose(self.in_form(form))
+        # When: it is written
+        self.lay("write", self.proposal_file)
+        # Then: the hook's command gives the lane in single quotes, so the guard reads the form as
+        # the step names it
+        command = self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        self.assertTrue(command.endswith(f" '3:in_form:entry.json,{form}'"), command)
 
     def test_a_form_lane_cannot_read_stops_naming_it_before_anything_is_written(self):
         self.write(os.path.join(self.base, "outside.json"), "{}")
         self.write(os.path.join(self.plugin, "forms", "bad.json"), '{"format": "date"}')
         self.write(os.path.join(self.plugin, "forms", "entry.yaml"), "a: b\n")
         for form, named in (
-            ("forms/none.json", "cannot be read"),
-            ("forms/bad.json", "`format` is no keyword"),
-            ("forms/entry.yaml", "neither a .json schema nor a .md template"),
-            ("../outside.json", "out of the plugin"),
+            ("${CLAUDE_PLUGIN_ROOT}/forms/none.json", "cannot be read"),
+            ("${CLAUDE_PLUGIN_ROOT}/forms/bad.json", "`format` is no keyword"),
+            ("${CLAUDE_PLUGIN_ROOT}/forms/entry.yaml", "neither a .json schema nor a .md template"),
+            ("${CLAUDE_PLUGIN_ROOT}/../outside.json", "out of the plugin"),
+            ("forms/bad.json", "named as ${CLAUDE_PLUGIN_ROOT}/<path in the plugin>"),
         ):
             with self.subTest(form=form):
                 # Given: a proposal of in_form whose form is not there, not of the keywords lane

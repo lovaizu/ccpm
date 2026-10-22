@@ -1,6 +1,6 @@
 """A JSON Schema, of the keywords Anthropic's structured outputs accept, in draft-07's wording: the
-basic types, properties, required, additionalProperties false, items, enum, const, anyOf, allOf, a
-$ref within the schema to it or its $defs or definitions, and minItems 0 or 1; with title,
+basic types, properties, required, additionalProperties false, items, enum, const, anyOf, allOf of
+schemas with no $ref, a $ref within the schema to it or its $defs or definitions, and minItems 0 or 1; with title,
 description, default and $schema, which say what a value is and check nothing. A schema is read
 whole before any value is held to it, and one using any other keyword, or a keyword in another
 shape, is refused, so no value is let through by a keyword left unread; a $ref coming back to
@@ -137,6 +137,16 @@ def list_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
         raise Unread(f"{at}: expected a list of schemas")
     for index, each in enumerate(value):
         node(each, root, f"{at}[{index}]", refs)
+
+
+def all_of_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
+    list_read(value, root, at, refs)
+    for index, each in enumerate(value):
+        if "$ref" in each:
+            raise Unread(
+                f"{at}[{index}]: expected a schema without $ref, as structured outputs take none"
+                " in allOf"
+            )
 
 
 def required_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
@@ -303,7 +313,7 @@ KEYWORDS: dict[str, tuple[Callable[..., None], Callable[..., Out | None]]] = {
     "minItems": (min_items_read, min_items_out),
     "properties": (schemas_read, properties_out),
     "items": (node, items_out),
-    "allOf": (list_read, all_of_out),
+    "allOf": (all_of_read, all_of_out),
     "anyOf": (list_read, any_of_out),
     "$defs": (schemas_read, lambda *_: None),
     "definitions": (schemas_read, lambda *_: None),
