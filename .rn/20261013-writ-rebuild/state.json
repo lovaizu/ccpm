@@ -499,6 +499,9 @@
  ],
  "predictive_cue": [
   {
+   "first": "the user ran /clear at 2026-10-22T23:15Z to see whether background runs survive it: trial.py PIDs 21740-21745, baseline.py PIDs 24925-24927. On resuming, first run `pgrep -af 'trials/(trial|baseline).py'` and look at the *.out files: alive or finished with output = they survive /clear; gone with empty or cut output = /clear stops them, rerun the nine. Tell the user which, and keep the answer as a memory"
+  },
+  {
    "next": "T23: read the 9 acceptance outputs in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0c28e8a6-d4bd-4901-a7a4-2dbb63e3874d/scratchpad (acc*, accs*, base*; if gone, find the sessions in ~/.claude/projects/*scratchpad-acc*/ and *-base*), judge each story of dev/turn/design.md Acceptance from every JSONL, count KR1.1 (items the stand-in judged met on return) and KR1.2 (call to return) against 0.1.0, keep them in dev/turn/trials/readme/results.json; get the user's A/B/C answer; then validate --strict, then rn"
   }
  ],
