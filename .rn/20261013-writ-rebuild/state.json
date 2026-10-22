@@ -317,6 +317,9 @@
     },
     {
       "fact": "the user OK'd the Lanes table (2026-10-22); lane's units listed as T16 to T20 in steering, common/ moving into lane with the first since a copy fails check.sh"
+    },
+    {
+      "fact": "T16's code checked and fixed by hand, committed a311761: guard with hands_off, layer, Python check, common/ moved into lane; agent_type of a plugin subagent is <plugin>:<frontmatter name>, seen on Claude Code 2.1.306; plugin.md's shared-code rule and the design's Physical view (step.py) brought to it. Four agents started at a311761, each in its own worktree: read lanes, write lanes, run/flow lanes, lane:up's prompt"
     }
   ],
   "semantic_gist": [
@@ -421,7 +424,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "when T16's code agent ends: check and fix by hand, commit; then four at once, each in its own worktree with mutate.sh --since on its own part: T17 split by action (read: read_only, read_whole with record.py; write: write_only, in_form; run and flow: start_with, test_after, as_printed, follow_next, wait_for) and lane:up's prompt on the layer's proposal shape (the user agreed 2026-10-22)"
+      "next": "as each of the four ends: check against its checklists, merge its branch into writ-rebuild, settle clashes in call.py and lanes/__init__.py and between the record readings, run check.sh and mutate.sh lane; then T16's trial as its user, and T17's open points (in_form's form, the flow lanes' readings) to the user one at a time"
     }
   ],
   "uncertainty_signal": [
