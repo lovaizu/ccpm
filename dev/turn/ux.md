@@ -33,32 +33,43 @@ since a work it must fix costs the user the fixing as well as the wait.
 
 ## Scenes
 
-- In its step, the calling AI asks the user what the checklists' items need, and writes a CCS that
-  holds what is decided, where the work goes, the checklists, the receiver, what they use the work
-  for and what they have with it.
+The figure shows who acts in turn, from a step that needs a work to the step's end. The user is the
+person using the plugin the calling AI runs a step of.
 
-  A CCS is the JSON file in which the calling AI keeps its task, in the shape
+```mermaid
+sequenceDiagram
+  participant U as user<br/>#lt;person#gt;
+  participant C as calling AI<br/>#lt;AI#gt;
+  participant T as turn<br/>#lt;plugin#gt;
+  C->>U: asks what the checklists' items need
+  U->>C: answers
+  C->>C: writes a CCS
+  C->>T: calls it with the CCS's path, its kinds, and where to write the result
+  loop each agent's step
+    T-->>C: what it will do, how far and how, then what is done and what comes next
+    C-->>U: passes each on, and the user may stop the run there
+  end
+  opt the CCS lacks what the run needs, or a point only the user can decide
+    T->>C: the question, before the work that rests on it is made
+    C->>U: puts it to the user
+    U->>C: answer
+    C->>T: the answer, and turn goes on from there
+  end
+  T-->>C: the work where it goes, and the result
+  C->>C: checks each Good against its lines, fixes each item without Good, ends its step
+```
+
+- A CCS is the JSON file in which the calling AI keeps its task, in the shape
   [ACC](https://arxiv.org/abs/2601.11653) gives it: parts, each a list of entries, each entry a kind
-  and its value, every name the calling AI's own.
-- The calling AI calls turn with the CCS's path, the kinds it uses in it for where the work goes, the
-  checklists, the receiver, what the receiver uses the work for and what they have with it, and
-  where turn writes its result.
-- While turn runs, the calling AI is told by turn, before each of its agents starts its work, what
-  it will do, how far and how, and as each step ends, what is done and what comes next; it passes
-  each on to the user, who may stop the run there.
-
-  A run going a slow or wrong way shows before its time is spent, not after the work comes back.
-- Where the CCS lacks what the run needs, or the work meets a point only the user can decide, turn
-  sends the calling AI the question, before the work that rests on it is made; the calling AI puts
-  it to the user and sends turn the answer, and turn goes on from there.
-- The calling AI gets back the work where it goes, and the result: each item's Good with its lines,
-  each item still without Good, with what the receiver gets once it is Good and where it was not
-  found, and the lessons turn took on how its run went, to hand on to turn's makers.
-
-  An item's Good is the judgment that the receiver gets from the work what the item asks, with the
-  lines that give it.
-- The calling AI checks each Good against its lines, fixes each item without Good itself, and ends
-  its step.
+  and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
+  checklists, the receiver, what they use the work for and what they have with it; the call names
+  the kinds the calling AI uses in it for each of these.
+- What turn tells as each step starts and ends shows a run going a slow or wrong way before its time
+  is spent, not after the work comes back.
+- The result holds each item's Good with its lines, each item still without Good, with what the
+  receiver gets once it is Good and where it was not found, and the lessons turn took on how its run
+  went, to hand on to turn's makers. An item's Good is the judgment that the receiver gets from the
+  work what the item asks, with the lines that give it.
 - A run stopped anywhere, by the user or by a conversation that ended, goes on from its last step
   when the calling AI calls turn again with the same result.
 

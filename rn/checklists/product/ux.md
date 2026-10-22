@@ -1,6 +1,6 @@
 ---
 name: ux
-version: 0.1.0
+version: 0.2.0
 ---
 
 # UX
@@ -21,7 +21,8 @@ the UX is making that experience clear, in this order:
 2. Decide, for each goal, its key results, each drawn from the goal: what is counted, how each case
    is judged to count, and how the value stands once the user has reached the goal; then put them in
    order of priority.
-3. Draw, as scenes, what the user does and gets back until they achieve the goal.
+3. Draw, as scenes, what the user does and gets back until they achieve the goal: a sequence
+   diagram of who acts in turn, with what it cannot show beside it.
 4. Decide what the user gains when they achieve the goal with this product: the benefits, which are
    why the user chooses it.
 
@@ -55,7 +56,14 @@ Does the UX follow this template, headings and IDs included?
 
 ## Scenes
 
-- <A scene: what the user does, and what they get back>
+<What the figure shows, and the words it uses>
+
+```mermaid
+sequenceDiagram
+  <Who acts, in the order they act, from asking to the goal>
+```
+
+- <What the figure cannot show, such as a rule that holds throughout, and why>
 
 ## Benefits
 
@@ -112,10 +120,12 @@ worse off.
 
 Scope: its part
 
-Can the reader tell, as scenes, what the user does and gets back until they achieve the goal?
+Can the reader tell, from a sequence diagram of who acts in turn, what the user does and gets back
+until they achieve the goal, with what the figure cannot show written beside it?
 
 Why: the builder builds what the scenes show the user doing and getting; a step no scene shows is
-built by guess, or not at all.
+built by guess, or not at all. A sequence diagram shows at a glance who acts, in what order, and
+what repeats or branches, which a list of scenes leaves the reader to put together.
 
 ### B-6: The benefits
 
