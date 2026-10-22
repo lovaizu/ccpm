@@ -165,17 +165,20 @@ lane/                          the plugin, installed by Claude Code
   `cd notes && git commit`, but not against `g=git; $g commit`. What must hold whatever the AI
   writes is held by GitHub's branch protection, Claude Code's sandbox or its permission rules, as a
   check on a command's text is no security boundary; so the guard stays small.
-- in_form's `<form>` is a file of the plugin, named from its folder: a `.json` file is a JSON
-  Schema, which the output is held to as JSON, or line by line where its name ends in `.jsonl`; a
-  `.md` file is a Markdown template, whose frontmatter keys and headings the output must have. lane
-  reads these general forms itself; a form of a project's own is left to the project's script,
-  through test_after.
+- in_form's `<form>` is a file of the plugin, named in the step as
+  `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`: a `.json` file is a JSON Schema, which the output
+  is held to as JSON, or line by line where its name ends in `.jsonl`; a `.md` file is a Markdown
+  template, whose frontmatter keys and headings the output must have. lane reads these general
+  forms itself; a form of a project's own is left to the project's script, through test_after.
 
   They are the forms a plugin's outputs most often take, and lane's code reads them with the
-  standard library alone, as it runs on the builder's users' machines.
+  standard library alone, as it runs on the builder's users' machines. Claude Code puts the
+  plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in a plugin subagent's file, so the subagent reads
+  the form by that path wherever the plugin is installed, and does not take it for where to write
+  the output, as it takes a path it cannot find.
 - A schema is read in the keywords Anthropic's structured outputs accept, in draft-07's wording:
   the basic types, properties, required, additionalProperties false, items, enum, const, anyOf,
-  allOf, a $ref within the schema, and minItems 0 or 1, with title, description, default and
+  allOf of schemas with no $ref, a $ref within the schema, and minItems 0 or 1, with title, description, default and
   $schema, which check nothing. The layer refuses a schema using any other keyword, or a $ref
   coming back to itself, so the guard never meets a keyword it would let pass unread.
 
@@ -188,8 +191,10 @@ lane/                          the plugin, installed by Claude Code
   refused rather than guessed.
 - The guard holds a write of the output to its form before it is made: a Write by its content, an
   Edit by the file's text with the edit made. A command writing the output is stopped, as its text
-  cannot be read before it runs, so the subagent writes it by Write or Edit. On the line after the
-  sentence the subagent is told the one point the text is out by: its place, what was expected and
+  cannot be read before it runs, so the subagent writes it by Write or Edit. The guard matches the
+  step's text as its file holds it, and tells the sentence with the plugin's folder put in for
+  `${CLAUDE_PLUGIN_ROOT}`, as the subagent reads its step. On the line after the sentence the
+  subagent is told the one point the text is out by: its place, what was expected and
   what was found, the point highest in the text first, as check-jsonschema gives jsonschema's best
   match.
 
