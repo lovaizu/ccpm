@@ -38,9 +38,6 @@ v4.0.1, chapter 4:
    coverage, the property tests and the mutation testing alike, on what the change touches before
    it is handed over, the property tests on few inputs, and on the whole in CI, the property tests
    on many, so the time each change waits on grows with the change, not with the code.
-7. Before it is run many times or built on, run it once on the smallest real case, and confirm
-   from what it did, its output, its logs or the records of what it ran, that it does what it is
-   for.
 
 Each item of `usability.md` applies to code, read by whoever maintains it, with its behavior as its
 subject and each file a part, the tests among them; its F-1 is answered by this F-1, its B-7 by each
@@ -336,17 +333,3 @@ Look at: each README and guide that names a command, an option or a step the cha
 
 Why: a document that names a step the code no longer takes is followed and fails, and is believed
 over the code.
-
-### B-25: Tried once, its purpose seen in what it did
-
-Scope: whole
-
-Before the code is run many times or built on, can whoever maintains it tell, from one run on the
-smallest real case, read in its output, its logs or the records of what it ran, that it does what it
-is for?
-
-Look for: a run taken as confirmed because it started, exited with 0 or gave something back; these
-show only that it ran.
-
-Why: code that runs is not yet code that does its job; run many times at once on a fault, every run
-is spent, and the faults show tangled together, while one small run shows each where it lies.
