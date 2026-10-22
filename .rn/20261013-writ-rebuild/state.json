@@ -308,6 +308,9 @@
     },
     {
       "fact": "I ran plugin.md step 3 (a first user reading lane's README and design) against the user's 2026-10-21 process; the user restated (2026-10-22): building lane, turn and rn follows that process alone; the reading's fixes discarded. Gap seen and to settle at lane's first unit: lane/lanes.md, the 12 lanes' table agreed 2026-10-21 (session 7cc9e59c, 02:16), is not in the repository"
+    },
+    {
+      "fact": "lane/lanes.md written from the agreed table (59193eb); the user found its 8 one- or two-row tables hard to read and asked why a separate file; the user chose (2026-10-22): the 12 lanes go into one table with an action column, in a 'Lanes' section of lane/README.md, lanes.md removed, the design's mentions of lanes.md pointed to that section, the wording's source still each lane's code with a test holding the README's table to it; the repository keeps no docs/ folder (turn and rn hold README and CHANGELOG alone)"
     }
   ],
   "semantic_gist": [
@@ -412,7 +415,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "list lane's units into steering's tasks and build the first, lanes.md written from the agreed table"
+      "next": "on resuming: do the user's choice on lanes.md (one table in lane/README.md's 'Lanes' section, lanes.md removed, dev/lane/design.md pointed to it), show it with the branch URL; then list lane's units into steering's tasks and build the first, each work made by a subagent with the checklists open, checked and fixed by hand"
     }
   ],
   "uncertainty_signal": [
