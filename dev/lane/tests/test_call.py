@@ -22,9 +22,9 @@ class TestBash(unittest.TestCase):
         # Given: a Bash call of one command
         # When: it is read
         # Then: it is a run of that command, its words as the shell takes them
-        self.assertEqual(
-            runs("git commit -m 'a b'"), call.Call("run", [["git", "commit", "-m", "a b"]])
-        )
+        given = {"command": "git commit -m 'a b'"}
+        words = [["git", "commit", "-m", "a b"]]
+        self.assertEqual(runs(given["command"]), call.Call("run", words, tool="Bash", given=given))
 
     def test_each_statement_is_a_command_run(self):
         # Given: a Bash call of statements joined by separators
@@ -60,7 +60,7 @@ class TestBash(unittest.TestCase):
         event = {"cwd": HERE, "tool_name": "Bash", "tool_input": {}}
         # When: it is read
         # Then: it is a run of no command
-        self.assertEqual(call.read(event), call.Call("run", []))
+        self.assertEqual(call.read(event), call.Call("run", [], tool="Bash", given={}))
 
 
 class TestWrite(unittest.TestCase):
@@ -75,7 +75,9 @@ class TestWrite(unittest.TestCase):
                 event = {"cwd": HERE, "tool_name": tool, "tool_input": {field: "/r/CHANGELOG.md"}}
                 # When: it is read
                 # Then: it is a write of that file, running nothing
-                self.assertEqual(call.read(event), call.Call("write", [], ("/r/CHANGELOG.md",)))
+                written = call.Call("write", [], ("/r/CHANGELOG.md",))
+                made = written._replace(tool=tool, given=event["tool_input"])
+                self.assertEqual(call.read(event), made)
 
     def test_a_path_relative_to_the_folder_is_written_there(self):
         # Given: a Write naming its file from the folder the call is made in
@@ -89,7 +91,7 @@ class TestWrite(unittest.TestCase):
         event = {"cwd": HERE, "tool_name": "Write", "tool_input": {}}
         # When: it is read
         # Then: it is a write of no file
-        self.assertEqual(call.read(event), call.Call("write", [], ()))
+        self.assertEqual(call.read(event), call.Call("write", [], (), tool="Write", given={}))
 
     def test_a_bash_call_writes_what_its_commands_write(self):
         # Given: a Bash call whose commands write by a redirect and by cp
@@ -101,14 +103,15 @@ class TestWrite(unittest.TestCase):
 
 class TestOtherTools(unittest.TestCase):
     def test_a_call_of_a_tool_no_lane_watches_is_no_action(self):
-        for tool in ("Agent", "TodoWrite"):
+        for tool in ("AskUserQuestion", "TodoWrite"):
             with self.subTest(tool=tool):
                 # Given: a call of a tool no lane of this version reads, its name sorting before
                 # Bash or after
                 event = {"cwd": HERE, "tool_name": tool, "tool_input": {"command": "git commit"}}
                 # When: it is read
                 # Then: it is no action, and runs nothing
-                self.assertEqual(call.read(event), call.Call("", []))
+                made = call.Call("", [], tool=tool, given=event["tool_input"])
+                self.assertEqual(call.read(event), made)
 
 
 class TestReads(unittest.TestCase):
@@ -162,7 +165,8 @@ class TestReadCall(unittest.TestCase):
                 event = {"cwd": HERE, "tool_name": tool, "tool_input": given}
                 # When: it is read
                 # Then: it is a read of what it reads, its lines not told, running nothing
-                self.assertEqual(call.read(event), call.Call("read", [], (), ((read, None),)))
+                made = call.Call("read", [], (), ((read, None),), tool=tool, given=given)
+                self.assertEqual(call.read(event), made)
 
     def test_a_bash_call_is_a_run_reading_what_its_commands_read(self):
         # Given: a Bash call printing lines of a file
@@ -196,13 +200,19 @@ class TestReadCall(unittest.TestCase):
 class TestMade(helpers.PluginTest):
     def test_a_call_is_read_with_the_calls_its_subagent_made_before_it(self):
         # Given: a subagent's record of two Bash calls
-        self.record([helpers.bash("ls"), helpers.bash("cd notes && git status")])
+        status = "cd notes && git status"
+        self.record([helpers.bash("ls"), helpers.bash(status)])
         # When: its next call is read
         made = call.read(self.event("git commit"))
         # Then: it is the call, read as itself, with each call before it read as the guard reads
         # a call, in order
         self.assertEqual(made.what, [["git", "commit"]])
-        before = [call.Call("run", [["ls"]]), call.Call("run", [["git", "status"]])]
+        before = [
+            call.Call("run", [["ls"]], tool="Bash", given={"command": "ls"}, ends=("\n",)),
+            call.Call(
+                "run", [["git", "status"]], tool="Bash", given={"command": status}, ends=("\n",)
+            ),
+        ]
         self.assertEqual(made.before, before)
 
     def test_a_call_before_is_read_with_what_it_gave_back(self):
@@ -211,13 +221,18 @@ class TestMade(helpers.PluginTest):
         # When: its next call is read
         made = call.read(self.event("ls"))
         # Then: the call before reads those lines
-        self.assertEqual(made.before, [call.Call("read", [], (), ((f"{self.base}/a", (1, 2)),))])
+        read = call.Call("read", [], (), ((f"{self.base}/a", (1, 2)),))
+        given = {"file_path": "a"}
+        made_before = read._replace(tool="Read", given=given, result="1\tx\n2\ty\n")
+        self.assertEqual(made.before, [made_before])
 
     def test_a_call_whose_record_is_not_found_has_nothing_known_before_it(self):
         # Given: no record of the subagent where Claude Code keeps it
         # When: its call is read
-        # Then: what came before is not known, told apart from nothing before
-        self.assertIsNone(call.read(self.event("ls")).before)
+        made = call.read(self.event("ls"))
+        # Then: what came before and what reached the subagent are not known, told apart from
+        # nothing before and nothing heard
+        self.assertEqual((made.before, made.heard), (None, None))
 
     def test_a_call_read_alone_knows_nothing_before_it(self):
         # Given: a subagent's record of a call
@@ -225,6 +240,56 @@ class TestMade(helpers.PluginTest):
         # When: its next call is read alone
         # Then: what came before is not read
         self.assertIsNone(call.alone("Bash", {"command": "pwd"}, self.base).before)
+
+    def test_a_call_before_is_read_with_whether_it_failed(self):
+        # Given: a subagent's record of a command that failed
+        self.record([helpers.failing("false")])
+        # When: its next call is read
+        # Then: the call before failed
+        self.assertEqual([c.failed for c in call.read(self.event("ls")).before or []], [True])
+
+    def test_a_call_is_read_with_the_messages_that_reached_its_subagent(self):
+        # Given: a subagent's record of its asking, and a message from main since
+        ask = ("SendMessage", {"to": "main", "message": "May I?"}, "")
+        self.record([ask, helpers.from_main("OK")])
+        # When: its next call is read
+        # Then: it holds the message, the call before it none
+        made = call.read(self.event("ls"))
+        heard = [made.heard, *(c.heard for c in made.before or [])]
+        self.assertEqual(heard, [["OK"], None])
+
+
+class TestHandOn(unittest.TestCase):
+    def test_a_call_of_the_agent_tool_or_sendmessage_hands_on_its_text(self):
+        for tool, given in (
+            ("Agent", {"subagent_type": "x:y", "prompt": "Do it."}),
+            ("SendMessage", {"to": "main", "message": "Do it.", "summary": "s"}),
+        ):
+            with self.subTest(tool=tool):
+                # Given: a call of a tool that hands text on to another agent
+                event = {"cwd": HERE, "tool_name": tool, "tool_input": given}
+                # When: it is read
+                made = call.read(event)
+                # Then: it is a hand-on of its text, running nothing
+                self.assertEqual(
+                    (made.action, made.what, call.handed(made)), ("hand on", [], "Do it.")
+                )
+
+    def test_a_hand_on_of_no_text_hands_on_nothing(self):
+        for given in ({"to": "main"}, {"to": "main", "message": {"type": "shutdown"}}):
+            with self.subTest(given=given):
+                # Given: a SendMessage of no message, or of one that is no text
+                event = {"cwd": HERE, "tool_name": "SendMessage", "tool_input": given}
+                # When: what it hands on is read
+                # Then: it is nothing
+                self.assertEqual(call.handed(call.read(event)), "")
+
+    def test_a_call_that_is_no_hand_on_hands_on_nothing(self):
+        # Given: a Bash call whose input holds a field named as a hand-on's
+        event = {"cwd": HERE, "tool_name": "Bash", "tool_input": {"command": "ls", "prompt": "x"}}
+        # When: what it hands on is read
+        # Then: it is nothing
+        self.assertEqual(call.handed(call.read(event)), "")
 
 
 class TestText(testing.FolderTest):
@@ -285,6 +350,91 @@ class TestText(testing.FolderTest):
                 # When: it is read
                 # Then: its text is not known
                 self.assertIsNone(self.text(tool, given))
+
+
+class TestEnded(helpers.PluginTest):
+    def test_each_call_made_is_read_in_order_with_whether_it_failed(self):
+        # Given: a record of a Write of a file, then a Bash call giving back an error
+        self.record([helpers.writing("a.md"), helpers.failing("false")])
+        # When: how the subagent is about to end is read
+        made = call.ended(self.stopped("done")).made
+        # Then: each call is read as its action, the second failed, its command ended by the line
+        a = f"{self.base}/a.md"
+        found = [(m.action, m.what, m.written, m.failed, m.ends) for m in made or []]
+        self.assertEqual(
+            found, [("write", [], (a,), False, ()), ("run", [["false"]], (), True, ("\n",))]
+        )
+
+    def test_what_ends_each_command_of_a_run_is_read(self):
+        # Given: a record of a Bash call of three commands, joined by && and a pipe
+        self.record([helpers.bash("cd x && make test | tail -3")])
+        # When: how the subagent is about to end is read
+        made = call.ended(self.stopped()).made
+        # Then: the run holds what ends each command but the cd, a line's end after the last
+        assert made is not None, "the record written was not found"
+        self.assertEqual(
+            (made[0].what, made[0].ends), ([["make", "test"], ["tail", "-3"]], ("|", "\n"))
+        )
+
+    def test_the_last_reply_is_the_events(self):
+        # Given: a SubagentStop event of the reply `done`
+        self.record([])
+        # When: how the subagent is about to end is read
+        # Then: its last reply is the event's
+        self.assertEqual(call.ended(self.stopped("done")).reply, "done")
+
+    def test_no_last_reply_is_read_as_none_said(self):
+        # Given: a SubagentStop event whose last reply is null, as after a SubagentHandback
+        self.record([])
+        # When: how the subagent is about to end is read
+        # Then: its last reply says nothing
+        self.assertEqual(call.ended({**self.stopped(), "last_assistant_message": None}).reply, "")
+
+    def test_no_record_found_is_not_known(self):
+        for active in (False, True):
+            with self.subTest(active=active):
+                # Given: a SubagentStop event whose record is not there, kept going by a stop hook
+                # or not
+                # When: how the subagent is about to end is read
+                end = call.ended(self.stopped(active=active))
+                # Then: what it made is not known, nor is it read as having answered
+                self.assertEqual((end.made, end.answered), (None, False))
+
+    def test_answered_only_where_kept_going_by_a_stop_hook_and_no_call_since(self):
+        rules = {
+            # (kept going by a stop hook, told with no call since): answered
+            (True, True): True,
+            (True, False): False,
+            (False, True): False,
+            (False, False): False,
+        }
+        for (active, still), answered in rules.items():
+            with self.subTest(active=active, still=still):
+                # Given: an event kept going by a stop hook or not, of a record whose last telling
+                # has no call after it or one
+                self.record([helpers.bash("ls"), "told"] + ([] if still else [helpers.bash("ls")]))
+                # When: how the subagent is about to end is read
+                # Then: it answered with words only where both hold
+                self.assertEqual(call.ended(self.stopped(active=active)).answered, answered)
+
+
+class TestChanged(unittest.TestCase):
+    def test_a_call_changed_a_file_it_wrote_unless_a_writing_tool_failed(self):
+        rules = [
+            # (the call, the file): changed
+            (("Write", {"file_path": "/r/a"}, False), "/r/a", True),
+            (("Write", {"file_path": "/r/a"}, True), "/r/a", False),
+            (("Write", {"file_path": "/r/a"}, False), "/r/b", False),
+            (("Bash", {"command": "echo > a"}, True), "/r/a", True),
+            (("Bash", {"command": "echo > a"}, False), "/r/b", False),
+        ]
+        for (tool, given, failed), file, changed in rules:
+            with self.subTest(tool=tool, failed=failed, file=file):
+                # Given: a call of a tool that writes, or of Bash, failed or not
+                made = call.alone(tool, given, HERE)._replace(failed=failed)
+                # When: whether it changed the file is read
+                # Then: it did where it wrote it, unless the tool that writes gave back an error
+                self.assertEqual(call.changed(made, file), changed)
 
 
 if __name__ == "__main__":

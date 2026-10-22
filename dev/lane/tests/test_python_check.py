@@ -1,5 +1,6 @@
 """The Python check each hook's command begins with: where python3 is missing or older than 3.9, the
-call is stopped with what to install; with the one in use, the guard runs."""
+call is stopped with what to install, and at the subagent's end the user is told it and the
+subagent let end; with the one in use, the guard runs."""
 
 import os
 import subprocess
@@ -29,13 +30,13 @@ class TestPythonCheck(helpers.PluginTest):
         laid = [lanes.word(3, "hands_off", ["git commit", "git push"])]
         self.command = lay.command("notes", helpers.AGENT, laid)
 
-    def run_hook(self, *folders):
-        """The hook's command run by sh with PATH holding the folders, handed a commit's event in
-        the subagent; what it exits with and what it writes on stderr."""
+    def run_hook(self, *folders, command=None):
+        """The hook's command, or the one given, run by sh with PATH holding the folders, handed a
+        commit's event in the subagent; what it exits with and what it writes on stderr."""
         env = dict(os.environ, PATH=os.pathsep.join(folders), CLAUDE_PLUGIN_ROOT=self.plugin)
         env.pop("PYTHONPATH", None)
         done = subprocess.run(
-            ["/bin/sh", "-c", self.command],
+            ["/bin/sh", "-c", command or self.command],
             input=self.stream("git commit -m notes"),
             capture_output=True,
             text=True,
@@ -63,6 +64,16 @@ class TestPythonCheck(helpers.PluginTest):
         # When: the hook's command is run
         # Then: it exits 2, telling the subagent to install Python
         self.assertEqual(self.run_hook(older), (2, INSTALL))
+
+    def test_without_python3_at_the_subagents_end_the_user_is_told_and_it_ends(self):
+        # Given: the hook's command for a lane held as the subagent ends, and a PATH holding no
+        # python3
+        laid = [lanes.word(3, "test_after", ["CHANGELOG.md", "python3 check.py"])]
+        command = lay.command("notes", helpers.AGENT, laid, "SubagentStop")
+        # When: it is run
+        # Then: it exits 1, telling the user to install Python and letting the subagent end
+        none = os.path.join(self.base, "none")
+        self.assertEqual(self.run_hook(none, command=command), (1, INSTALL))
 
     def test_with_the_python3_in_use_the_guard_runs(self):
         # Given: a PATH whose python3 is the one in use

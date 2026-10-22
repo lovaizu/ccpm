@@ -3,7 +3,9 @@ takes, the one the step says and the subagent is told."""
 
 import os
 import re
+import types
 import unittest
+from unittest import mock
 
 import helpers
 from helpers import lanes
@@ -60,6 +62,21 @@ class TestSentence(unittest.TestCase):
             "Write `out.json` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/out.json`.",
         )
 
+    def test_a_lane_holding_more_than_it_shows_shows_the_first_alone(self):
+        # Given: wait_for taking the approval and the commands it holds back
+        # When: its sentence is made
+        # Then: the approval alone stands where the wording shows `<approval>`
+        self.assertEqual(
+            lanes.sentence("wait_for", ["OK", "lay.py write", "git push"]),
+            "Do not go on until `OK`.",
+        )
+
+    def test_how_many_things_a_lane_shows(self):
+        # Given: wait_for, which shows the approval alone, and hands_off, which shows all
+        # When: how many it shows is read
+        # Then: it is one for wait_for, all for hands_off
+        self.assertEqual((lanes.shown("wait_for"), lanes.shown("hands_off")), (1, None))
+
 
 class TestTakes(unittest.TestCase):
     def test_a_lane_showing_one_thing_takes_one_or_more(self):
@@ -77,6 +94,78 @@ class TestTakes(unittest.TestCase):
                 # When: it is given so many things
                 # Then: it takes two alone, one for each
                 self.assertEqual(lanes.fits("in_form", takes), fits)
+
+    def test_a_lane_showing_two_things_takes_one_for_each_the_last_taking_the_rest(self):
+        for takes, fits in ((["a"], False), (["a", "b"], True), (["a", "b", "c"], True)):
+            with self.subTest(takes=takes):
+                # Given: test_after, whose wording shows an output and a test, and names no most
+                # When: it is given so many things
+                # Then: it takes one for each place or more
+                self.assertEqual(lanes.fits("test_after", takes), fits)
+
+    def test_a_lane_holding_more_than_it_shows_takes_one_or_more_after_those(self):
+        for takes, fits in ((["OK"], False), (["OK", "a"], True), (["OK", "a", "b"], True)):
+            with self.subTest(takes=takes):
+                # Given: wait_for, whose sentence shows the approval alone
+                # When: it is given so many things
+                # Then: it takes the approval and one or more commands its hook holds back
+                self.assertEqual(lanes.fits("wait_for", takes), fits)
+
+    def test_a_lane_showing_two_of_one_place_takes_one_or_more_after_them(self):
+        # Given: a lane of one place whose sentence shows the first two things it takes
+        two = types.SimpleNamespace(WORDING="Put `<a>`.", SHOWN=2)
+        for takes, fits in ((["a", "b"], False), (["a", "b", "c"], True)):
+            with self.subTest(takes=takes), mock.patch.dict(lanes.LANES, {"two": two}):
+                # When: it is given so many things
+                # Then: it takes the two it shows and one or more after them
+                self.assertEqual(lanes.fits("two", takes), fits)
+
+
+class TestSlots(unittest.TestCase):
+    def test_each_place_takes_one_thing_in_order(self):
+        # Given: test_after, whose wording shows two places, taking an output and a test
+        # When: its sentence is made
+        # Then: the output stands in the first place and the test in the second
+        self.assertEqual(
+            lanes.sentence("test_after", ["app.py", "make test"]),
+            "After changing `app.py`, pass `make test`.",
+        )
+
+    def test_the_last_place_takes_the_rest_as_a_list(self):
+        # Given: test_after taking an output and three tests
+        # When: its sentence is made
+        # Then: the tests are listed in the last place, `or` before the last
+        self.assertEqual(
+            lanes.sentence("test_after", ["app.py", "a", "b", "c"]),
+            "After changing `app.py`, pass `a`, `b` or `c`.",
+        )
+
+    def test_every_place_but_the_last_takes_one_thing(self):
+        # Given: a lane whose wording shows three places, taking four things
+        three = types.SimpleNamespace(WORDING="Put `<a>` into `<b>` by `<c>`.")
+        with mock.patch.dict(lanes.LANES, {"three": three}):
+            # When: its sentence is made
+            said = lanes.sentence("three", ["w", "x", "y", "z"])
+        # Then: the first two places take one thing each, and the last the rest
+        self.assertEqual(said, "Put `w` into `x` by `y` or `z`.")
+
+    def test_a_lane_counts_the_places_its_wording_shows(self):
+        # Given: a lane of one place and one of two
+        # When: its places are counted
+        # Then: each has as many as its wording shows
+        self.assertEqual((lanes.slots("hands_off"), lanes.slots("test_after")), (1, 2))
+
+
+class TestHeldOn(unittest.TestCase):
+    def test_a_lane_is_held_on_the_event_its_module_names_or_on_a_tool_call(self):
+        # Given: the lanes lane lays
+        # When: the event each is held on is read
+        # Then: those on how the subagent ends are held on SubagentStop, every other on PreToolUse
+        ending = {"test_after", "end_when", "every_item"}
+        for name in lanes.LANES:
+            with self.subTest(lane=name):
+                held = "SubagentStop" if name in ending else "PreToolUse"
+                self.assertEqual(lanes.held_on(name), held)
 
 
 class TestWords(unittest.TestCase):

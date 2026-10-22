@@ -16,7 +16,8 @@ again. The goal and the key result are in
 - As the builder, I want my subagent, when a call drifts from a lane, to be stopped and told the
   lane's sentence headed by my plugin's name, and every call the sentence allows let through.
 - As the builder, I want the hooks, on a machine without Python 3.9 or later, to stop the calls
-  they watch, each asking for Python to be installed.
+  they watch, each asking for Python to be installed, and at a subagent's end to tell me so and
+  let it end.
 
 ## Architecture
 
@@ -71,6 +72,13 @@ flowchart TB
 
   A lane on the order of steps, such as reading an input whole before writing, is held from what
   the subagent has done since it started.
+- A lane on how the subagent ends, test_after, end_when or every_item, is held as it is about to
+  end, from what it has done since it started and its last reply; on a drift the guard keeps it
+  going with `<plugin>: <sentence>`. Told once, a subagent that answers in words alone, with no
+  call since, is let end.
+
+  It is told, not trapped: a subagent that cannot keep the lane would otherwise be kept going for
+  good, and its reply would never reach the one who started it.
 - A hook holds, for each of its lanes, the step, the lane and what the lane takes; the lane's
   sentence is made from them, by the lane's wording in [Lanes](../../lane/README.md#lanes) with
   what it takes put in. The layer writes that sentence into the step, and the guard makes the
@@ -78,15 +86,23 @@ flowchart TB
 
   So the sentence the subagent is told and the one its step says cannot differ, and no sentence is
   written twice.
+- The things a lane takes fill the places its wording shows, in order, the last place taking the
+  rest, listed with `or`; in_form's form takes one alone. A lane may hold more than its sentence
+  shows: wait_for's sentence shows the approval, and the commands it holds back are its hook's
+  alone, which the layer's print shows after the hook as `holding back <commands>`.
+
+  The builder approves every thing a hook holds, and the subagent is told only what its step
+  says.
 - Where the step a hook holds no longer has the lane's sentence, word for word with a line break
   read as a space, the guard stops the call and says to have `lane:up` run again.
 
   The builder has changed the step since the lane was laid, and a lane kept on a sentence that is
   gone holds the subagent to what its step no longer says.
 - Where lane's code cannot run on the machine, each hook stops every call it watches, saying what
-  to install.
+  to install; a hook at a subagent's end says it to the user and lets the subagent end.
 
-  Letting the call through would leave it unkept with no one told.
+  Letting the call through would leave it unkept with no one told; a subagent cannot install
+  Python, and kept going it would only be asked again.
 
 ### Physical view
 
@@ -144,8 +160,10 @@ lane/                          the plugin, installed by Claude Code
   in_form, hands_off, test_after, as_printed, follow_next, wait_for, end_when and every_item; a
   test holds that table to the wordings in `lanes/`.
 - A lane's hook is one entry of the plugin's `hooks/hooks.json` for one subagent and event; its
-  matcher is the tools that subagent's lanes watch, and its command gives the guard the subagent and,
-  for each lane, its step, the lane and what the lane takes.
+  matcher is the tools that subagent's lanes watch, or at SubagentStop the subagent, and its command
+  gives the guard the subagent and, for each lane, its step, the lane and what the lane takes. At
+  SubagentStop the guard keeps the subagent going by exiting 2 with the sentence, which Claude
+  Code gives it as its next instruction.
 
   ```json
   {"matcher": "Bash|Write|Edit",
@@ -200,13 +218,47 @@ lane/                          the plugin, installed by Claude Code
 
   One point at a time is what the subagent puts right; the sentence first, as every lane gives it,
   keeps it on its step.
+- test_after counts a test passed by a Bash call that gave back no error and runs the test with
+  each command after it joined by `&&`, made after the last change to the output.
+
+  `; echo exit=$?` or a pipe to `tail` after a failing test ends the call with 0 whatever the
+  test gave.
+- end_when counts an output made where a call of this run wrote it and it is there.
+
+  A file left from an earlier run would let the subagent end with nothing made.
+- every_item counts each top-level item of a Markdown list in the input keyed by the ID it begins
+  with, such as `B-1`, and holds it answered where its key stands as a word of its own in the last
+  reply or in a file written this run, the input left out.
+
+  An item with no ID is not counted, as no text tells an answer to it from any other.
+- A hand-on is an Agent call's prompt or a SendMessage's message. as_printed holds every other
+  hand-on once the command it takes has printed, until the command's last successful output is
+  handed on word for word, one heading line beside it allowed, as `lane:up` heads its print.
+- follow_next holds every other call once the script it takes has printed a move, one JSON line
+  `{"tool": ..., "input": {...}}`, until a call of that tool is made with each field printed
+  equal; the fields not printed are free.
+
+  The move printed as the tool call itself is a form general to any plugin.
+- wait_for holds the commands it holds back until a message holding the approval as a word of its
+  own has reached the subagent since its last SendMessage, or since it began where it has not
+  asked.
 - A subagent's record is the JSONL file Claude Code writes at
   `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`, from the tool event's
   `transcript_path` and `agent_id`, as Claude Code 2.1.306 writes it; neither the place nor the
-  shape is documented, so the guard's tests hold both. The calls of one reply are written there
-  once their hooks have run, so a lane on the order of steps reads the replies before.
-- Each hook command first runs the Python check, which exits 2 with this message where `python3` is
-  missing or older than 3.9.
+  shape is documented, so the guard's tests hold both. The record shows a call that failed by its
+  result's `is_error: true`, a message from the main conversation as a user entry whose
+  `origin.kind` is `coordinator`, and one from another subagent as `origin.kind: peer` with the
+  message as its `body`. The calls of one reply are written there once their hooks have run, so a
+  lane on the order of steps reads the replies before.
+
+  So a call sent in the same reply as the move a lane waits on, such as follow_next's next move,
+  is held once, and passes when sent again.
+- At SubagentStop the guard reads the event's `last_assistant_message`, null after the subagent
+  hands its reply back with SubagentHandback. `stop_hook_active` stays true once a stop hook has
+  kept the subagent going, so the guard tells a reply in words since by the record's user entry
+  that begins `Stop hook feedback:` with no tool use after it.
+- Each hook command first runs the Python check, which, where `python3` is missing or older than
+  3.9, writes this message and exits 2 on a tool call and 1 at a subagent's end.
 
   ```sh
   python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null || { echo "notes: install Python 3.9 or later, run as python3, for its hooks to run" >&2; exit 2; }
@@ -233,8 +285,8 @@ the records of every conversation and agent the check started. Each unittest bel
   sentence read from its step, and lets through every call its sentence allows.
   - Flow: unittest fed the events, records and subagent files each lane receives, with Hypothesis on
     how a call is read.
-- The Python check: it stops the hook with exit 2 and its message where `python3` is missing or
-  older than 3.9, and lets it run otherwise.
+- The Python check: it stops the hook with its message where `python3` is missing or older than
+  3.9, exiting 2 on a tool call and 1 at a subagent's end, and lets it run otherwise.
   - Flow: unittest runs a hook's command with a `PATH` holding no `python3`, one holding a `python3`
     older than 3.9, and the one in use.
 - The layer: what it writes is the approved proposal, with every other entry of `hooks/hooks.json`

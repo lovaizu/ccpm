@@ -13,8 +13,13 @@ from typing import IO, Any
 # written to stderr; on any other exit but 0 it goes on, showing stderr to the user.
 STOPPED = 2
 UNREAD = 1
-# The fields each event of these hooks holds beside hook_event_name and cwd, and the type of each.
-FIELDS = {"PreToolUse": {"tool_name": str, "tool_input": dict}}
+# The fields each event of these hooks holds beside hook_event_name and cwd, and the types of each:
+# at SubagentStop the agent's last reply, which Claude Code gives as null after the agent hands its
+# reply back with SubagentHandback.
+FIELDS = {
+    "PreToolUse": {"tool_name": (str,), "tool_input": (dict,)},
+    "SubagentStop": {"last_assistant_message": (str, type(None))},
+}
 
 
 def event_read(stream: IO[str]) -> dict[str, Any] | None:
@@ -43,11 +48,12 @@ def run(
     tells tools apart, not agents."""
     event = event_read(stream)
     if event is None:
+        each = ", ".join(f"for {e} {' and '.join(f)}" for e, f in FIELDS.items())
         err.write(
             f"{plugin}: the hook was handed no event as Claude Code hands it, a JSON object with"
-            " hook_event_name and cwd, and for PreToolUse tool_name and tool_input, so it lets this"
-            " through unchecked; update Claude Code with `claude update`, and where it goes on,"
-            " report it at https://github.com/lovaizu/ccpm/issues\n"
+            f" hook_event_name and cwd, and {each}, so it lets this through unchecked; update"
+            " Claude Code with `claude update`, and where it goes on, report it at"
+            " https://github.com/lovaizu/ccpm/issues\n"
         )
         return UNREAD
     if agent is not None and event.get("agent_type") != agent:

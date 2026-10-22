@@ -18,6 +18,8 @@ from call import Call
 ACTION = "write"
 WORDING = "Write `<output>` in the form of `<form>`."
 TOOLS = ("Write", "Edit", "Bash")
+# One output is held to one form, so the form's place, the last, takes one thing alone.
+MOST = 2
 
 
 def form(root: str, named: str) -> forms.Form:

@@ -23,6 +23,18 @@ COMMAND = (
     " notes:changelog-writer '3:hands_off:git commit,git push'"
 )
 ENTRY = {"matcher": "Bash", "hooks": [{"type": "command", "timeout": 10, "command": COMMAND}]}
+# test_after on step 3, held as the subagent is about to end, and its entry of SubagentStop, which
+# matches the subagent, exits 1 where Python is missing, and runs that event's entry.
+TESTED = {"lane": "test_after", "takes": ["CHANGELOG.md", "python3 check.py"]}
+END_COMMAND = (
+    COMMAND.replace("pretooluse.py", "subagentstop.py")
+    .replace("exit 2;", "exit 1;")
+    .replace("'3:hands_off:git commit,git push'", "'3:test_after:CHANGELOG.md,python3 check.py'")
+)
+END_ENTRY = {
+    "matcher": "notes:changelog-writer",
+    "hooks": [{"type": "command", "timeout": 10, "command": END_COMMAND}],
+}
 # What `print` shows the builder for it.
 PRINTED = """Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
   run: Do not run `git commit` or `git push`.  hook hands_off
@@ -110,6 +122,18 @@ class TestPrint(LayTest):
             self.lay("print", self.proposal_file)[1],
         )
 
+    def test_what_a_hook_holds_beyond_its_sentence_is_printed_beside_it(self):
+        # Given: wait_for on step 3, taking the approval and two commands it holds back
+        wait = [{"lane": "wait_for", "takes": ["OK", "lay.py write", "git push"]}]
+        self.propose(self.proposal(wait))
+        # When: it is printed
+        # Then: the sentence shows the approval alone, and the commands held back follow its hook
+        self.assertIn(
+            "  wait: Do not go on until `OK`.  hook wait_for, holding back `lay.py write`,"
+            " `git push`\n",
+            self.lay("print", self.proposal_file)[1],
+        )
+
 
 class TestWriteStep(LayTest):
     def test_the_sentence_is_put_at_the_end_of_the_step(self):
@@ -157,6 +181,22 @@ class TestWriteHooks(LayTest):
         self.lay("write", self.proposal_file)
         # Then: hooks.json holds the subagent's entry alone
         self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY]}})
+
+    def test_hand_on_and_wait_lanes_watch_their_tools_and_keep_all_they_take(self):
+        # Given: as_printed and wait_for on step 3, wait_for holding back a command
+        laid = [
+            {"lane": "as_printed", "takes": ["lay.py print"]},
+            {"lane": "wait_for", "takes": ["OK", "lay.py write"]},
+        ]
+        self.propose(self.proposal(laid))
+        # When: the proposal is written
+        self.lay("write", self.proposal_file)
+        # Then: the hook watches the tools that hand on and Bash, and gives each lane with all it
+        # takes, the command held back among them
+        entry = self.hooks()["hooks"]["PreToolUse"][0]
+        self.assertEqual(entry["matcher"], "Agent|SendMessage|Bash")
+        words = "notes:changelog-writer '3:as_printed:lay.py print' '3:wait_for:OK,lay.py write'"
+        self.assertTrue(entry["hooks"][0]["command"].endswith(words))
 
     def test_every_other_entry_stays_as_it_was(self):
         # Given: hooks.json with a description, an entry of the builder's own, and one of another
@@ -220,6 +260,51 @@ class TestWriteHooks(LayTest):
                 self.assertIn("hooks/hooks.json", said)
                 self.assertIn("fix it", said)
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
+
+
+class TestWriteEndHooks(LayTest):
+    """Lanes held as the subagent is about to end, written into an entry of SubagentStop."""
+
+    def test_a_lane_held_at_the_end_gets_a_subagentstop_entry_alone(self):
+        # Given: test_after alone on step 3
+        self.propose(self.proposal([TESTED]))
+        # When: the proposal is written
+        self.lay("write", self.proposal_file)
+        # Then: hooks.json holds a SubagentStop entry matching the subagent, running its entry
+        # with the lane, and no PreToolUse entry
+        self.assertEqual(self.hooks(), {"hooks": {"SubagentStop": [END_ENTRY]}})
+
+    def test_lanes_of_both_events_get_an_entry_each(self):
+        # Given: hands_off and test_after on step 3
+        self.propose(self.proposal([*LANES, TESTED]))
+        # When: the proposal is written
+        self.lay("write", self.proposal_file)
+        # Then: each event's entry gives its lanes alone
+        self.assertEqual(
+            self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [END_ENTRY]}}
+        )
+
+    def test_an_entry_of_an_event_no_lane_is_held_on_now_is_taken_out(self):
+        # Given: hooks.json holding the subagent's entries of both events from before, beside an
+        # entry of the builder's own
+        own = {"hooks": [{"type": "command", "command": "own.sh"}]}
+        hooks = {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own, END_ENTRY]}}
+        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+        # When: a proposal of hands_off alone is written
+        self.lay("write", self.proposal_file)
+        # Then: the SubagentStop entry lane:up wrote is gone, the builder's kept
+        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own]}})
+
+    def test_subagentstop_entries_not_in_claude_codes_shape_stop(self):
+        for text in ('{"hooks": {"SubagentStop": {}}}', '{"hooks": {"SubagentStop": [1]}}'):
+            with self.subTest(text=text):
+                # Given: hooks.json whose SubagentStop entries are no list, or no objects
+                self.write(os.path.join(self.plugin, "hooks", "hooks.json"), text)
+                # When: the proposal is written
+                code, said = self.lay("write", self.proposal_file)
+                # Then: it exits 1 naming the file
+                self.assertEqual(code, 1)
+                self.assertIn("hooks/hooks.json", said)
 
 
 class TestWriteCode(LayTest):
@@ -384,6 +469,10 @@ class TestProposal(LayTest):
             "no lanes": (self.proposal([]), "lanes"),
             "a lane lane has not": (self.proposal([{"lane": "x", "takes": ["a"]}]), "x"),
             "a lane taking nothing": (self.proposal([{"lane": "hands_off", "takes": []}]), "takes"),
+            "takes that are no list": (
+                self.proposal([{"lane": "hands_off", "takes": "git push"}]),
+                "no takes",
+            ),
             "a thing taken with a comma": (
                 self.proposal([{"lane": "hands_off", "takes": ["a,b"]}]),
                 "takes",
@@ -395,6 +484,14 @@ class TestProposal(LayTest):
             "a thing taken that is empty": (
                 self.proposal([{"lane": "hands_off", "takes": [""]}]),
                 "takes",
+            ),
+            "a lane taking nothing for its last place": (
+                self.proposal([{"lane": "test_after", "takes": ["CHANGELOG.md"]}]),
+                "test_after on step 3 of changelog-writer takes of another count",
+            ),
+            "nothing held beyond what the sentence shows": (
+                self.proposal([{"lane": "wait_for", "takes": ["OK"]}]),
+                "wait_for on step 3 of changelog-writer takes of another count",
             ),
         }
         for what, (proposal, named) in wrong.items():
