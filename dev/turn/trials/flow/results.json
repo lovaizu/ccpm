@@ -97,5 +97,41 @@
   "way": "as the run before, the decisions giving B-2 its Good from both readers at the second round and B-1 none: every step in the design's order, no orchestrator reading between the generator's first making and the evaluator's reply; returned with B-2 Good, B-1 not Good and the one lesson",
   "hooks": "the stand-ins' replies sent by message stopped and kept; the stand-in learner's piped reads of records stopped.",
   "read": "Every JSONL read; the orchestrator read the work only at each decision."
+ },
+ {
+  "commit": "07153f5's trials on 4fdb140's turn",
+  "way": "plain",
+  "session": "c0ac200b-cd3d-4f3b-a693-297eebdf0a2d",
+  "minutes_to_return": 2.4,
+  "cost_usd": 1.1,
+  "read": "Every JSONL read. Each move in the design's order, a line told to main before each, no reading by the orchestrator between the generator's first making and the evaluator's reply; returned with both items Good, as the set replies make it.",
+  "hooks": "follow_next held once the orchestrator's turn.py next sent in the same reply as the SendMessage move it took, which passed when sent again, as dev/lane/design.md:253 says."
+ },
+ {
+  "commit": "07153f5's trials on 4fdb140's turn",
+  "way": "sent",
+  "session": "b0cc7fde-ed64-4d4b-b8d3-97d579edea64",
+  "minutes_to_return": 13.4,
+  "cost_usd": 2.55,
+  "read": "Every JSONL read. B-1 sent back to the generator by message three times, the fourth stop going on to the evaluator; the learner's lesson taken once; the second round's first user Good at lines that do not give it, so B-1 left without Good; returned with B-2 Good, B-1 not Good and the one lesson.",
+  "hooks": "none stopped a call."
+ },
+ {
+  "commit": "07153f5's trials on 4fdb140's turn",
+  "way": "asked",
+  "session": "641fce01-5370-4539-9bee-7f1e909c895d",
+  "minutes_to_return": 2.9,
+  "cost_usd": 1.18,
+  "read": "Every JSONL read. The check found no license in the decisions, the run returned the question to the stand-in before any work was made, which kept MIT in the decisions and sent it by SendMessage; the check made again on it, and the run went on as plain.",
+  "hooks": "none stopped a call."
+ },
+ {
+  "commit": "07153f5's trials on 4fdb140's turn",
+  "way": "stopped",
+  "session": "389a3da0-5d2d-4d84-b8e1-9671c7fac47d",
+  "minutes_to_return": 2.5,
+  "cost_usd": 1.17,
+  "read": "Every JSONL read. The stand-in stopped the orchestrator at the line saying the first user will read, and called again: the new orchestrator went on from the first user's start, the generator not started again, and returned as plain.",
+  "hooks": "none stopped a call."
  }
 ]

@@ -205,5 +205,59 @@
    "whole": 4.8
   },
   "read": "Every JSONL read. The generator, sent back by message, ran turn.py given and read the work alone, not the CCS or its files again, found the README replaced and added the license. The first user ran demo.sh, stopped at B-1 with places README.md:1-4 and 5-7, and, sent the work made again, read it whole again, ran demo.sh and gave B-1 its Good at lines 9-13. Seen again: the first user put a caution inside B-1's Good."
+ },
+ {
+  "commit": "07153f5, by roles.py",
+  "sessions": {
+   "generator": "fcc2d486-c619-4ddf-a52c-21f4f96bbf37",
+   "first-user": "84a20c47-9967-45c7-8834-f7777331ab0d",
+   "evaluator": "7d4ec0ff-db80-4adc-aa33-2b8e6721f20b",
+   "learner": "a0c4fd55-9eba-4d5d-b356-7f37e8714333"
+  },
+  "minutes": {
+   "generator": 0.9,
+   "first-user": 1.0,
+   "evaluator": 0.5,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Each reply filled its form. Every role was stopped reading the form its step names, as read_only let through only its inputs.",
+  "cause": "lane's read_only stopped the form lane's in_form names, which lane's design means the subagent to read; fixed in 6da0587."
+ },
+ {
+  "commit": "8c78852, by roles.py",
+  "sessions": {
+   "generator": "1643b3b6-6183-4ecf-b8bc-5ec5c8ace305",
+   "first-user": "a87f5f39-354a-43a4-9018-ed43d96efe7b",
+   "evaluator": "82ae3ddb-3bc7-43b4-9b5e-99f2e025e358",
+   "learner": "bbe3bcc2-d17b-4fa0-935f-ba2daf5cf518"
+  },
+  "minutes": {
+   "generator": 0.9,
+   "first-user": 0.7,
+   "evaluator": 0.6,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Each role read only what it was given and its form, whole, and each reply filled its form; the generator ran demo.sh, the first user and the evaluator ran what the receiver runs, both finding no Good in the set README with no license."
+ },
+ {
+  "commit": "07153f5, by kept.py",
+  "sessions": {
+   "stand-in": "34dc4a30-68f3-41b5-a483-d4fe8366bbd6"
+  },
+  "minutes": {
+   "whole": 3.3
+  },
+  "read": "Every JSONL read. The first user, sent the work made again, was not given its new parts, gave the old, and was sent back twice for its form.",
+  "cause": "the flow's message with the work made again held no parts, and the form's message pointed to turn.py parts, which a role cannot run; fixed in 8c78852."
+ },
+ {
+  "commit": "8c78852, by kept.py",
+  "sessions": {
+   "stand-in": "1eabce35-c7fc-41c8-9b88-fa3bf8b55dc8"
+  },
+  "minutes": {
+   "whole": 3.3
+  },
+  "read": "Every JSONL read. The first user stopped at B-1 in the set README; the generator, sent back by message, read the work alone, not the CCS or its files again, and added the license; the first user, sent the work made again with its new parts, read it whole again, ran demo.sh and gave both items their Good, no form sent back."
  }
 ]

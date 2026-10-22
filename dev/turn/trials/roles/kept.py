@@ -27,6 +27,21 @@ import shared
 
 CALL = shared.call("has")
 
+if sys.argv[1:2] == ["swap"]:
+    # Run by the stand-in from the repository once the generator's work is taken: the set README
+    # takes its place, and the first user, due next, is given the parts of the set README.
+    unlicensed, scripts = sys.argv[2:4]
+    sys.path.insert(0, scripts)
+    import forms
+    import run
+
+    shutil.copyfile(unlicensed, "README.md")
+    kept = run.going(CALL["result"])
+    for prompt in (kept["next"]["prompt"], kept["prompts"][run.FIRST_USER]):
+        prompt["parts"] = forms.parts(kept["work"])
+    run.save(kept)
+    sys.exit()
+
 place = os.path.abspath(sys.argv[1])
 shared.task(place, CALL)
 plugin = shared.turn(place)
@@ -35,6 +50,9 @@ unlicensed = place.rstrip("/") + "-unlicensed.md"
 with open(unlicensed, "w", encoding="utf-8") as f:
     f.write(shared.UNLICENSED)
 script = f'python3 "{os.path.join(plugin, "scripts", "turn.py")}"'
+swap = (
+    f'python3 "{os.path.abspath(__file__)}" swap "{unlicensed}" "{os.path.join(plugin, "scripts")}"'
+)
 result = CALL["result"]
 for args, given in (
     (["start", json.dumps(CALL)], ""),
@@ -55,12 +73,11 @@ SendMessage with ToolSearch (`select:SendMessage`) first.
    - A SendMessage whose `to` is `main`: send nothing, and do step 1 again.
    - An Agent call: make it, its input as printed, not in the background, and wait for its reply.
      Then run `{script} next {result} <<'EOF'` with `{{"agent_id": "<the agent ID it gave back>"}}`,
-     ending with `EOF`, and go to step 2.
+     ending with `EOF`. After the first Agent call alone, run `{swap}` next. Go to step 2.
    - Any other SendMessage: send it, its input as printed, then run `{script} next {result}` with
      nothing, again while it prints `{{"waiting": ...}}`, and go to step 2.
-2. After the first Agent call alone, run `cp {unlicensed} README.md`. Where what turn.py printed last
-   begins `turn: turn:first-user found` for the second time, reply with that line, and end.
-   Otherwise do step 1 again."""
+2. Where what turn.py printed last begins `turn: turn:first-user found` for the second time, reply
+   with that line, and end. Otherwise do step 1 again."""
 
 start = time.time()
 end = shared.claude(STEPS, [plugin], cwd=place)
