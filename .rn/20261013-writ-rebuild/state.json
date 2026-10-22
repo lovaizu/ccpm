@@ -362,6 +362,9 @@
     },
     {
       "fact": "T21 done: dev/turn/design.md rewritten on dev/architecture.md and lane by a subagent, checked and fixed by hand (progress from an agent caller goes to main; jq dropped from README and design); its open points settled as R37-R41; lane's read_whole needs no re-read after change, as the first user re-reads only where it stopped"
+    },
+    {
+      "fact": "the user decided (2026-10-22): turn's KR1.1 is the items of the step's checklists the calling AI judges the work to meet, from its own check against turn's lines; turn's goal and KRs settled"
     }
   ],
   "semantic_gist": [
@@ -493,9 +496,6 @@
     },
     {
       "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
-    },
-    {
-      "open": "turn's goal and key results (dev/turn/ux.md) put to the user, answer pending"
     }
   ],
   "retrieved_artifacts": [

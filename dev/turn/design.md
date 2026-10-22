@@ -341,11 +341,9 @@ and keep their own folders do not touch each other.
 - Gone on: a run stopped during the first user's reading and called again with the same result goes
   on from that move and returns.
   - Read from the records: no move before it is made again.
-- KR1.1: the points where the work falls short of the purpose the calling AI gave it, each judged as
-  the UX's KR1.1 says.
-  - Each point the stand-in fixes in its record, and each the work still misses, counted apart by
-    whether it was told and fixed at once or would go on unseen, and compared with the version in
-    use on the same task, kept with the trial in `dev/turn/trials/`.
+- KR1.1: the items the stand-in judges the work to meet, as the UX's KR1.1 says.
+  - Read from the stand-in's record, each item judged against the lines turn gave, and compared
+    with the version in use on the same task, kept with the trial in `dev/turn/trials/`.
 - KR1.2: the time from the call to the work coming back.
   - Taken from the records' timestamps for a README-sized work, and compared with the version in use
     on the same task.
