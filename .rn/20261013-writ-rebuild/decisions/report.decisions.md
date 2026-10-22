@@ -129,3 +129,10 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   next`; a wrong one fails the SendMessage where it shows.
 - R41 (turn's requirements): jq left out of the README and the design, as no script or hook of
   turn runs it.
+- R42 (turn's later questions, T22): a question the generator or the decision finds goes into the
+  result for a call again to take in, and only those found at the check are sent mid-run, as one
+  way back for every question is simpler and a trial has not shown the mid-run send needed.
+- R43 (turn's lanes, T22): no every_item and no end_when on the result, as the flow checks every
+  item answered and writes the result inside its own run, where lane does not see the write.
+- R44 (the githooks): `core.hooksPath` set to `dev/githooks`, relative, as the absolute path named
+  the main checkout, which has no `dev/githooks` on main yet, so no pre-push check ran.

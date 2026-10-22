@@ -374,6 +374,9 @@
     },
     {
       "fact": "T22 step 2 (2026-10-22): turn's five agents rewritten to the flow (each role takes its prompt JSON, writes its reply file, ends Written.; up makes each move printed, asks by turn.py questions), forms in turn/forms/, lanes laid by lane's lay.py write into turn/hooks/hooks.json with hooks/lane linked to lane's code; test_lanes holds each lane's sentence in its step; check.sh skips files inside a linked folder. Next: mutate.sh turn, then T23 trials (dev/turn/trials still on the old flow)"
+    },
+    {
+      "fact": "T22's code done by a subagent (89bece5, e2b0bc1): check.sh 100% in 6.6s, mutate turn 0 of 1205 in 65s, validate --strict passes; core.hooksPath was absolute to the main checkout without dev/githooks, so no pre-push check ran since; set relative (R44); design brought to R42-R43"
     }
   ],
   "semantic_gist": [
@@ -484,7 +487,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "T22: turn's code on the design: turn.py start/next printing {tool,input} moves and a state file beside the result (result path + .run.json), reply files read by the flow, resume from the state, progress lines; agents' steps rewritten with lane sentences and {given}/{work}/{reply}/{checklists}/{result} run values; lanes laid by lane:up; turn's hooks/checks, agents.py, events.py removed; a subagent makes it with code.md, prompt.md and usability.md open, I check and fix; check.sh 100%, mutate.sh turn 0"
+      "next": "check CI for e2b0bc1 and after; read turn/agents/*.md against prompt.md and usability.md and fix by hand; lane's lay.py to wrap a step's line past 100 characters; then T23: run each agent on Claude Code (5c), rewrite dev/turn/trials/ for the new flow, try turn whole; after the weekly limit lifts (Friday 7:00)"
     }
   ],
   "uncertainty_signal": [

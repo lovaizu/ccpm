@@ -86,7 +86,7 @@ The guard acts in every role as it does in the generator; the figure draws it on
 - A question goes to the calling AI as the orchestrator's reply, with the answer it recommends, and
   the calling AI sends the answer back to the orchestrator, which hands it to the flow and goes on.
   A question found before the work is made waits for nothing to be made; one the generator or the
-  decision finds is sent once the round has its decision, with the items it settles.
+  decision finds goes into the result, with the items it settles, for a call again to take in.
 
   A subagent cannot ask the person (dev/architecture.md, Where the orchestrator runs); the calling
   AI fills what it can from its sources and asks the user the rest. The calling AI keeps the answer
@@ -202,10 +202,10 @@ The guard acts in every role as it does in the generator; the figure draws it on
   A reply would be copied into a file by the calling AI, where a slip goes unseen.
 - Each step of a role, the orchestrator's included, that alone is not sure to hold has a lane, and
   the guard notices a drift from it and tells the role the step again: a role reads what it is given
-  alone, and whole; writes only its work and its reply, its reply in its form; answers every item;
-  commits and pushes nothing; and ends only once its reply is there. The orchestrator begins with
-  the flow, makes only the move the flow gave, hands on the flow's lines as they are, and ends only
-  once the result is there.
+  alone, and whole; writes only its work and its reply, its reply in its form; commits and pushes
+  nothing; and ends only once its reply is there. The orchestrator begins with the flow, makes only
+  the move the flow gave, and hands on the flow's lines as they are. That every item is answered,
+  and that the result is there, the flow checks itself.
 
   A role that reads only what it is given is not bent by what it was not meant to see, and an item
   judged on a part read is judged on a guess for the rest. The calling AI keeps the work in git on
@@ -271,10 +271,14 @@ turn/                      the plugin, installed by Claude Code
   the conversation while the agent that started it was still running.
 - The lanes, laid with `lane:up` from each agent's steps, run values taken from what the agent
   starts from: on each role, read_only and read_whole on `{given}`, write_only on `{work}` and
-  `{reply}`, in_form on `{reply}` and its schema, every_item on `{checklists}`, hands_off on
-  `git commit` and `git push`, and end_when on `{reply}`; on the orchestrator, start_with on
-  `turn.py start`, follow_next on `turn.py next`, as_printed on the questions and lines it hands
-  on, hands_off as on the roles, and end_when on `{result}`, taken from what `turn.py start` prints.
+  `{reply}`, in_form on `{reply}` and its form, and end_when on `{reply}`, and hands_off on
+  `git commit` and `git push` on each role that runs commands; on the orchestrator, start_with on
+  `turn.py start`, follow_next on `turn.py next`, as_printed on the questions it hands on, and
+  hands_off as on the roles.
+
+  The flow reads the result and every reply itself, so a lane on every item answered or on the
+  result made would check what the flow holds already, and lane sees a write only in the call that
+  makes it, where the flow writes the result inside its own run.
 
   Each lane acts in its own agent alone, by `agent_type`, and reads that agent's own record and
   what it started from, so runs at once are told apart without turn tracing them; turn keeps no
