@@ -26,8 +26,6 @@ import shared
 
 VERSION = "turn--v0.1.0"
 ANSWER = "Take the answer you recommend."
-# A run that ends its turns without being done, asking nothing more, is not answered for good.
-ANSWERS = 8
 CHECK = """turn is done. Check each item turn says the work meets against its lines in the work.
 Then fix in the work whatever falls short of an item of the checklists, and end with a list of
 every item of the checklists, saying of each whether the work met it when it came back, and of each
@@ -109,14 +107,19 @@ def say(text: str) -> None:
 
 start = time.time()
 say("/turn:up in: .tasks/in.json\nout: .tasks/out.json")
-done, checked, event, answers = None, False, {}, 0
+done, checked, event, asked = None, False, {}, False
 assert claude.stdout
 for line in claude.stdout:
     event = json.loads(line)
+    shown = []
     if event.get("type") == "assistant":
-        for part in event["message"]["content"]:
-            if part["type"] == "text":
-                print(part["text"], flush=True)
+        shown = [p["text"] for p in event["message"]["content"] if p["type"] == "text"]
+    elif event.get("type") == "system" and event.get("subtype") == "informational":
+        shown = [event.get("content", "")]
+    for text in shown:
+        print(text, flush=True)
+        # 0.1.0 marks a question with ❓, and the calling AI may put it in words of its own.
+        asked = asked or any(mark in text for mark in ("❓", "?", "？"))
     if event.get("type") != "result":
         continue
     if checked:
@@ -125,11 +128,10 @@ for line in claude.stdout:
         done = done or time.time()
         checked = True
         say(CHECK)
-    elif answers < ANSWERS:
-        answers += 1
+    elif asked:
+        asked = False
         say(ANSWER)
-    else:
-        break
+    # Otherwise turn works on in the background, and its agent's end brings the next turn.
 assert claude.stdin
 claude.stdin.close()
 claude.wait()
