@@ -116,8 +116,22 @@ feedback, one rn did not ask:
 The same goes for the documents the purpose needs, such as a README or a design for what you are
 building, which rn writes into your repository on the pull request; here it is a design for the
 move. rn asks their points one at a time, such as how the types are made strict file by file, has
-the first reader use them, and stops at the design sign-off, where you answer `/rn:ty` again. Then
-rn divides the work into tasks, such as moving the cart, each checked against the acceptance
+the first reader use them, and stops at the design sign-off:
+
+```console
+● Design sign-off
+  The design is on the draft pull request: https://github.com/you/app/pull/42
+  - Each file moves with strict type checks on, so a moved file lets no wrong type through.
+  - Values from the account pages are checked where they enter the cart and the checkout,
+    so the JavaScript left there cannot pass a wrong type in.
+  - Each of the three bugs is kept as code that must fail the build, so AC1 is checked on
+    every build.
+  /rn:ty to approve, /rn:gm <feedback> to ask for a change.
+
+> /rn:ty
+```
+
+Then rn divides the work into tasks, such as moving the cart, each checked against the acceptance
 criteria it serves, and carries them out in the conversation without you watching. Before each
 step, rn tells you in a line what it will do, how far and how, and after it, what is done and what
 comes next, so you can stop a step going a way you do not want. If a point to

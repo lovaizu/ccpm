@@ -105,6 +105,14 @@ user <person>                       rn <plugin>                     first reader
 - The plan: rn gives the goal and each acceptance criterion an ID and puts the plan on a draft pull
   request of its own branch.
 
+- Sign-offs: at each sign-off rn shows the link to each work and its core decisions, each with its
+  intent, in a few short lines, and nothing else: no summary of the text, no diff. The user glances
+  at the work for its size and diagrams and judges the decisions and intents; the text is the first
+  reader's and rn's to check.
+
+  Where the core decisions do not fit in a few short lines, rn takes it as a sign the work is not
+  yet simple, and makes it again before it stops.
+
 - Feedback: on `/rn:gm`, rn keeps the feedback and stops, so the conversation can be cleared.
 
   The point behind the feedback is one rn decided wrong or did not ask.
@@ -136,7 +144,8 @@ What the user gains with rn, each with why it holds; these are why the user choo
 - The user's purpose is achieved by answering alone: each point is confirmed and each task traced
   to the acceptance criteria, so making a finished work again becomes rare.
 - At each sign-off the user decides from the proposal alone: what they are shown has been read and
-  used in their place by the first reader, so they need not read it all again.
+  used in their place by the first reader, so they need not read it all again; they judge only
+  the core decisions and their intent.
 - A piece of work that takes days goes on from wherever the user stopped.
 - What was decided, and why, stays, in the README and the design in the user's repository and in
   rn's commit messages, so the next piece of work, or a teammate, starts from it.
