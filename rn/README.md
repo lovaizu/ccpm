@@ -150,26 +150,28 @@ uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
 ```
 
 rn makes each document and the finished work with its checklist for that kind, which says what that
-kind, such as a README or code, must give its reader. What the session learned, rn offers you as
-lessons, one per message, each with what happened, what it recommends adding to your own
-checklists, and, where the slip was a fault of rn's own, whether to send it to rn's makers as an
-issue; you decide each:
+kind, such as a README or code, must give its reader. What this piece of work taught, rn offers
+you as learnings, one per message, each with what happened and where it would make later work
+better: your own checklists, for your repository alone, or rn itself, as an issue to rn's makers,
+for everyone's work; you decide each:
 
 ```console
-● Lessons to decide
+● Learnings to decide
   ▶ 1. Values typed any
 
   1. Values typed any
   A file of src/checkout was first moved with its values typed any, which would let a wrong
-  type through; the AI that used it caught it. The slip was not rn's own, so there is no issue
-  for rn's makers.
-  a. Add "No value is typed any" to .rn/checklists/code.md (recommended). Every later piece
-     of code is made to it. Can be taken out of the file at any time.
-  b. Add nothing. Later work may repeat the slip.
-  Add it? Answer with a letter or in your own words.
+  type through; the AI that used it caught it. rn's checklist for code does not ask for it, so
+  anyone moving code to typed code could meet the same slip.
+  a. Add "No value is typed any" to .rn/checklists/code.md, and send rn's makers an issue
+     (recommended). Your later code is made to it, and rn can ask it of everyone's.
+  b. Add it to .rn/checklists/code.md alone. Your later code is made to it.
+  c. Add nothing. Later work may repeat the slip.
+  Where does it go? Answer with a letter or in your own words.
 
 > a
 
+● Issue sent: https://github.com/lovaizu/ccpm/issues/120
 ● The pull request is ready to merge: https://github.com/you/app/pull/42
 ```
 
@@ -210,7 +212,8 @@ that:
 
 - Every later piece of work gets better.
 
-  Each lesson you take goes into your checklists, which rn makes all later work with.
+  Each learning you take goes into your checklists, which rn makes all later work with, and one
+  that would help everyone goes to rn's makers as an issue, so rn gets better for you too.
 
 ## Requirements
 

@@ -47,7 +47,7 @@ the version in use, on the same requests.
 
 The user and rn take part. `/rn:ty` approves a proposal and `/rn:gm <feedback>` asks for a change. A
 task is one part of building the finished work; after the design sign-off, rn divides the piece of
-work into tasks. A lesson is what the session learned that would make later pieces of work better.
+work into tasks. A learning is what the piece of work taught that would make later work better.
 
 ### From asking to the merge
 
@@ -64,7 +64,7 @@ sequenceDiagram
   Note over R: carries out the tasks
   R->>U: the finished work, at the deliverable sign-off
   U->>R: /rn:ty
-  R->>U: the lessons to decide, one per message
+  R->>U: the learnings to decide, one per message
   R-->>U: the pull request marked ready
   Note over U: merges
 ```
@@ -154,20 +154,23 @@ sequenceDiagram
   R->>U: goes on from where it stopped
 ```
 
-### Lessons
+### Learnings
 
 ```mermaid
 sequenceDiagram
   participant U as user<br/>#lt;person#gt;
   participant R as rn<br/>#lt;plugin#gt;
-  loop one message per lesson
-    R->>U: one lesson: what happened, and the addition to the checklists it recommends
-    U->>R: answer
+  loop one message per learning
+    R->>U: what happened, and where it would make later work better
+    U->>R: the user's checklists, an issue to rn's makers, both, or neither
   end
-  R-->>U: the pull request marked ready, with the additions taken
+  R-->>U: each issue sent, and the pull request marked ready with the additions taken
 ```
 
-- A lesson whose slip was a fault of rn's own also asks whether it goes to rn as an issue.
+- A learning for the user's repository alone goes into the user's checklists; one that would help
+  everyone's work, such as a question rn's own checklist does not ask or a slip of rn's own steps,
+  goes to rn's makers as an issue, since rn is open source and gets better for all its users from
+  it. rn recommends where each goes, and the user decides.
 
 ## Benefits
 
@@ -185,5 +188,6 @@ What the user gains with rn, each with why it holds; these are why the user choo
   stopped: only a short record of where it stands is carried from move to move.
 - What was decided, and why, stays, in the README and the design in the user's repository and in
   rn's commit messages, so the next piece of work, or a teammate, starts from it.
-- What a session learned is confirmed with the user one lesson at a time, and what they add to their
-  checklists makes every later piece of work better.
+- What a piece of work taught is confirmed with the user one learning at a time: what they add to
+  their checklists makes their later work better, and what they send rn's makers makes rn better
+  for them and everyone.
