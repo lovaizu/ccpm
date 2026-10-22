@@ -56,8 +56,8 @@ up and the answer it recommends:
 From your answers rn writes the plan. It holds the goal, which is your purpose as rn wrote it down,
 and the acceptance criteria, each one thing the finished work must do for that purpose; the goal
 and every criterion get an ID that later messages refer to. Before showing it to you, another AI
-that did not write it, the first reader, reads and uses it in your place, and rn makes it again
-until the first reader finds nothing lacking. Then rn stops at the plan sign-off, the first of three
+that did not write it reads and uses it in your place, and rn makes it again until that AI finds
+nothing lacking. Then rn stops at the plan sign-off, the first of three
 stops where it shows you a proposal and waits for your answer:
 
 ```console
@@ -115,7 +115,7 @@ feedback, one rn did not ask:
 The same goes for the documents the purpose needs, such as a README or a design for what you are
 building, which rn writes into your repository on the pull request; here it is a design for the
 move. rn asks their points one at a time, such as how the types are made strict file by file, has
-the first reader use them, and stops at the design sign-off:
+an AI that did not write them use them, and stops at the design sign-off:
 
 ```console
 ● Design sign-off
@@ -131,12 +131,12 @@ the first reader use them, and stops at the design sign-off:
 ```
 
 Then rn divides the work into tasks, such as moving the cart, each checked against the acceptance
-criteria it serves, and carries them out in the conversation without you watching. Before each
-step, rn tells you in a line what it will do, how far and how, and after it, what is done and what
-comes next, so you can stop a step going a way you do not want. If a point to
-decide comes up, rn asks it there and waits for your answer; if you close Claude Code meanwhile,
-`/rn:up` in a fresh conversation goes on from where it stopped. When the work is finished, the
-first reader uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
+criteria it serves, and carries them out in the conversation without you watching. Before each step,
+rn tells you in a line what it will do, how far and how, and after it, what is done and what comes
+next, so you can stop a step going a way you do not want. If a point to decide comes up, rn asks it
+there and waits for your answer; if you close Claude Code meanwhile, `/rn:up` in a fresh
+conversation goes on from where it stopped. When the work is finished, an AI that did not make it
+uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
 
 ```console
 ● Deliverable sign-off
@@ -161,7 +161,7 @@ issue; you decide each:
 
   1. Values typed any
   A file of src/checkout was first moved with its values typed any, which would let a wrong
-  type through; the first reader caught it. The slip was not rn's own, so there is no issue
+  type through; the AI that used it caught it. The slip was not rn's own, so there is no issue
   for rn's makers.
   a. Add "No value is typed any" to .rn/checklists/code.md (recommended). Every later piece
      of code is made to it. Can be taken out of the file at any time.
@@ -194,7 +194,8 @@ that:
 
 - At each sign-off you decide from the proposal alone.
 
-  The first reader has read and used it in your place, so you need not read all of it again.
+  An AI that did not make it has read and used it in your place, so you need not read all of it
+  again.
 
 - Work that takes days neither swells nor drifts, and goes on from wherever you stopped.
 
@@ -227,8 +228,9 @@ that:
 
 - Python 3.9 or later, run as `python3`, and jq, the command-line JSON tool.
 
-  The scripts of rn run on them, and so do those of turn, a plugin installed with rn that rn uses
-  to make the plan, each document and the finished work, and to have the first reader use each.
+  The scripts of rn run on them, and so do those of turn, a plugin installed with rn that rn uses to
+  make the plan, each document and the finished work, and to have an AI that did not make each use
+  it.
 
 - Recommended: Claude Code run in a [Docker Sandbox](https://docs.docker.com/ai/sandboxes/), with
   the permission mode `bypassPermissions`.

@@ -46,28 +46,19 @@ the version in use, on the same requests.
 ## Scenes
 
 The figure shows who acts in turn from asking to the merge. `/rn:ty` approves a proposal and
-`/rn:gm <feedback>` asks for a change. The first reader is an AI that did not make a proposal;
-before every sign-off it reads and uses the proposal in the user's place, the finished work for
-each acceptance criterion. A task is one part of building the finished work; after the design
-sign-off, rn divides the piece of work into tasks. A lesson is what the session learned that would
-make later pieces of work better.
+`/rn:gm <feedback>` asks for a change. Before every sign-off, an AI that did not make the proposal
+reads and uses it in the user's place, the finished work for each acceptance criterion, and rn makes
+it again until that AI finds nothing lacking; the user sees only the proposal. A task is one part of
+building the finished work; after the design sign-off, rn divides the piece of work into tasks. A
+lesson is what the session learned that would make later pieces of work better.
 
 ```mermaid
 sequenceDiagram
   participant U as user<br/>#lt;person#gt;
   participant R as rn<br/>#lt;plugin#gt;
-  participant F as first reader<br/>#lt;AI#gt;
   U->>R: /rn:up #lt;what they want#gt;
   loop one message per point
     R->>U: one point to decide
-    U->>R: answer
-  end
-  loop until it finds nothing lacking
-    R->>F: plan
-    F-->>R: what it found lacking
-  end
-  opt a point to decide
-    R->>U: the point
     U->>R: answer
   end
   R->>U: plan, at the plan sign-off
@@ -79,23 +70,17 @@ sequenceDiagram
     U->>R: /rn:up
     R->>U: the point behind it to decide
     U->>R: answer
-    Note over U,F: made again, read by the first reader, and shown at the same<br/>sign-off with what changed, so at every sign-off
+    R->>U: the plan made again, at the same sign-off, with what changed
+    Note over U,R: so at every sign-off
   end
-  Note over U,F: the same for the documents the purpose needs, up to the design sign-off
-  loop each task
-    R->>R: carries out the task, then remakes the plan from the facts it brought
+  Note over U,R: the same for the documents the purpose needs, up to the design sign-off
+  loop each step of the tasks
+    R-->>U: what it will do, how far and how
+    R-->>U: what is done and what comes next
     opt a point to decide
       R->>U: the point
       U->>R: answer
     end
-  end
-  loop until it finds nothing lacking
-    R->>F: finished work
-    F-->>R: what it found lacking
-  end
-  opt a point to decide
-    R->>U: the point
-    U->>R: answer
   end
   R->>U: finished work, at the deliverable sign-off
   U->>R: /rn:ty (/rn:gm as above)
@@ -105,7 +90,7 @@ sequenceDiagram
   end
   R-->>U: pull request marked ready
   Note over U: merges
-  Note over U,F: wherever the user stops, /rn:up in a fresh conversation goes on from there
+  Note over U,R: wherever the user stops, /rn:up in a fresh conversation goes on from there
 ```
 
 - Asking: rn confirms each point to decide with the user, even the points it could look up, with
@@ -146,11 +131,7 @@ sequenceDiagram
 - The tasks: each names the acceptance criteria it serves and is checked against them; the user
   does not watch.
 
-  After each move rn remakes the plan from the facts the move brought, and a change to the goal or
-  an acceptance criterion comes to the user as a point to decide.
-
-- Resuming: from move to move rn carries only a short record of where the work stands, and
-  `/rn:up` in a fresh conversation goes on from it.
+  A change to the goal or an acceptance criterion comes to the user as a point to decide.
 
 - Lessons: each comes with what happened and the addition to the user's checklists it recommends,
   and with whether a fault of rn's own goes to rn as an issue.
@@ -167,8 +148,8 @@ What the user gains with rn, each with why it holds; these are why the user choo
   the acceptance criteria, and the plan remade from the facts each move brings, so the work does
   not drift from the purpose and making a finished work again becomes rare.
 - At each sign-off the user decides from the proposal alone: what they are shown has been read and
-  used in their place by the first reader, so they need not read it all again; they judge only
-  the core decisions and their intent.
+  used in their place by an AI that did not make it, so they need not read it all again; they judge
+  only the core decisions and their intent.
 - A piece of work that takes days neither swells nor drifts, and goes on from wherever the user
   stopped: only a short record of where it stands is carried from move to move.
 - What was decided, and why, stays, in the README and the design in the user's repository and in
