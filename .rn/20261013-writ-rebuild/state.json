@@ -296,6 +296,12 @@
     },
     {
       "fact": "the user agreed dev/architecture.md, lane/README.md and dev/lane/ux.md as of 1a542e4 (2026-10-22): lanes alone, the AI made to notice its drift and told the right way, never 'kept' or 'held' to its steps"
+    },
+    {
+      "fact": "the user agreed rn/README.md and dev/rn/ux.md as of 90ebb34 (2026-10-22): the opening rests on rn's two ideas (every task traced to the purpose with the plan remade from each move's facts; only a short record carried, so a long work neither swells nor drifts), drawn from the UX's benefits; the scenes show the user and rn alone, the first reader said only as an AI that did not make the proposal; learnings go to the user's checklists or to rn's makers as an issue, rn recommending"
+    },
+    {
+      "fact": "the user chose (2026-10-22): a UX's scenes are the whole way in one short Mermaid sequence diagram and each scene the user should see in one of its own, with no part the user does not deal with; ux checklist 0.2.0 F-1 and B-5; lane's and turn's UX redrawn so, content unchanged (e875fc7)"
     }
   ],
   "semantic_gist": [
@@ -349,6 +355,9 @@
     },
     {
       "gist": "lane's idea: the AI is made to notice its drift and is told the right way; not enforcing or keeping it to its steps (the user, 2026-10-21 and 2026-10-22)"
+    },
+    {
+      "gist": "review asks link the branch, not a commit, so a page left open shows the update on reload; the agreed commit is kept here (the user, 2026-10-22)"
     }
   ],
   "focal_entities": [
@@ -356,10 +365,10 @@
       "task": "agreed order: lane (README, UX, then design) remade to dev/architecture.md, then prompt.md and plugin.md pointing to lane, common/ moved into lane, then turn, then rn"
     },
     {
-      "task": "rn/README.md and dev/rn/ux.md at 205bc17 (a sign-off shows each work's link and its core decisions with intent) await the user's agreement"
+      "task": "dev/lane/design.md remade to lanes alone (1a542e4), checked by hand; next lane's units (plugin.md step 4)"
     },
     {
-      "task": "dev/lane/design.md remade to lanes alone (1a542e4), checked by hand; next lane's units (plugin.md step 4)"
+      "task": "rn design to follow the agreed README and UX: 'first reader' becomes turn's first user by pointer, 'lesson'/'session' become learnings of the piece of work, learnings going to the user's checklists or an issue to rn's makers (dev/rn/design.md, also rn/scripts/rn.py and rn/skills/up/SKILL.md)"
     }
   ],
   "relational_map": [
@@ -397,7 +406,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on resuming, ask the user's agreement on rn's README and UX (205bc17) in the review form (URLs and core decisions with intent only); then list lane's units by plugin.md step 4 and go on"
+      "next": "list lane's units by plugin.md step 4, from dev/lane/ux.md's key result and dev/lane/design.md, and go on"
     }
   ],
   "uncertainty_signal": [
