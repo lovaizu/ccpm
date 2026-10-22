@@ -22,6 +22,9 @@ A prompt is worked out in this order, each step the ground of the next:
    done, and tells it the step's sentence again, so it goes back to the step. A hook backs the step
    and its reason and does not stand in for them, since what shows in no tool call, such as what
    the AI weighs, rests on them alone.
+5. Before it is run many times or built on, run it once on the smallest real task, and confirm
+   from the records of every conversation and agent it started that the AI did what its role and
+   steps say.
 
 Each item of `usability.md` also applies to a prompt.
 
@@ -343,3 +346,17 @@ such as what the AI weighs, stays with the step and its reason.
 
 Why: an AI given a clear step and its reason still leaves it out on some runs, and the result looks
 right; a hook sees it on every run, while the step can still be done.
+
+### B-28: Tried once, its purpose seen in the records
+
+Scope: whole
+
+Before the prompt is run many times or built on, can its maker tell, from one run on the smallest
+real task, read in the records of every conversation and agent it started, that the AI did what its
+role and steps say?
+
+Look for: a run taken as confirmed because the prompt was called or the AI replied; these show only
+that it ran.
+
+Why: an AI that replies has not yet done its steps; run many times at once on a slip, every run is
+spent, and the slips show tangled together, while one small run shows each where it lies.
