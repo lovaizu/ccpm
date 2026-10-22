@@ -1,40 +1,69 @@
 """A tool call read as one action of a subagent's steps, the one a lane watches: begin, read, write,
-run, test, hand on, wait or end. A Bash call is a run, of each command it runs, writing what they
-write; a call of a tool that writes a file is a write of it; a call of a tool no lane of this version
-reads is no action."""
+run, test, hand on, wait or end. A Bash call is a run, of each command it runs, reading what they
+print of what they read and writing what they write; a call of the Read or Grep tool is a read of
+what it reads; a call of a tool that writes a file is a write of it; a call of a tool no lane of this
+version reads is no action. A call is read with each call its subagent made before it, for a lane on
+the order of steps."""
 
 from __future__ import annotations
 
 import os
+import re
 from typing import Any, NamedTuple
 
+import record
 import shell
 
 # The tools that write a file, each with the field of its input that names it.
 WRITERS = {"Write": "file_path", "Edit": "file_path", "NotebookEdit": "notebook_path"}
+# The tools that read a file or folder, each with the field of its input that names it, and what it
+# reads where the field names none: the Grep tool searches the folder it runs in.
+READ_TOOLS = {"Read": ("file_path", None), "Grep": ("path", ".")}
+# A line of what the Read tool gives back: the line's number in the file, a tab, and its text.
+NUMBERED = re.compile(r"^([0-9]+)\t", re.MULTILINE)
 
 
 class Call(NamedTuple):
     """The action a call is, "" for none a lane watches, and what it acts on: for a run, each
-    command, as its words; and each file it writes, as its whole path."""
+    command, as its words; each file it writes, as its whole path; each file or folder it reads, as
+    its whole path with the lines it reads of it, None where they are not known; and each call its
+    subagent made before it, read the same way, None where its record is not found."""
 
     action: str
     what: list[list[str]]
     written: tuple[str, ...] = ()
+    reads: tuple[tuple[str, shell.Lines | None], ...] = ()
+    before: list[Call] | None = None
 
 
 def read(event: dict[str, Any]) -> Call:
-    """The call of the PreToolUse event, read as its action."""
-    if event["tool_name"] in WRITERS:
-        named = str(event["tool_input"].get(WRITERS[event["tool_name"]], ""))
+    """The call of the PreToolUse event, read as its action, with each call its subagent made before
+    it, from its record."""
+    done = record.done(event)
+    before = None if done is None else [alone(d.tool, d.given, d.cwd, d.result) for d in done]
+    call = alone(event["tool_name"], event["tool_input"], event["cwd"])
+    return call._replace(before=before)
+
+
+def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:
+    """The call of the tool with the input, made in the folder, read as its action without the calls
+    before it; the lines it reads, where its input does not tell them, are those numbered in what
+    it gave back, as the Read tool numbers them."""
+    told = tuple(
+        (p, shown(result) if lines is None else lines) for p, lines in reads(tool, given, cwd)
+    )
+    if tool in WRITERS:
+        named = str(given.get(WRITERS[tool], ""))
         # A path is named from the folder the call is made in, as the tool takes it.
-        file = os.path.realpath(os.path.join(event["cwd"], named))
+        file = os.path.realpath(os.path.join(cwd, named))
         return Call("write", [], (file,) if named else ())
-    if event["tool_name"] != "Bash":
+    if tool in READ_TOOLS:
+        return Call("read", [], (), told)
+    if tool != "Bash":
         return Call("", [])
-    command = str(event["tool_input"].get("command", ""))
-    written = tuple(shell.written(command, event["cwd"]))
-    return Call("run", list(runs(command, event["cwd"])), written)
+    command = str(given.get("command", ""))
+    written = tuple(shell.written(command, cwd))
+    return Call("run", list(runs(command, cwd)), written, told)
 
 
 def runs(command: str, cwd: str) -> list[list[str]]:
@@ -48,3 +77,24 @@ def runs(command: str, cwd: str) -> list[list[str]]:
             words = ["git", *shell.git_statement(here, words)[1]]
         found.append(words)
     return found
+
+
+def reads(tool: str, given: dict[str, Any], cwd: str) -> list[tuple[str, shell.Lines | None]]:
+    """Each file or folder a call of the tool with the input reads from the folder, with the lines
+    it reads of it, None where the input does not tell them: by Bash, what its commands print of
+    what they read; by the Read tool, its file; by the Grep tool, the path it searches, the folder
+    it runs in where it names none."""
+    if tool in ("Bash",):
+        return shell.reads(str(given.get("command", "")), cwd)
+    if tool not in READ_TOOLS:
+        return []
+    field, unnamed = READ_TOOLS[tool]
+    named = given.get(field) or unnamed
+    found = shell.path(cwd, named) if isinstance(named, str) else None
+    return [(found, None)] if found else []
+
+
+def shown(result: str) -> shell.Lines | None:
+    """The lines from the first to the last numbered in what a call gave back; None where none is."""
+    numbers = [int(n) for n in NUMBERED.findall(result)]
+    return (min(numbers), max(numbers)) if numbers else None

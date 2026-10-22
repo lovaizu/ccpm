@@ -6,11 +6,11 @@ from __future__ import annotations
 import os
 
 import shell
-from call import Call
+from call import WRITERS, Call
 
 ACTION = "write"
 WORDING = "Write only `<output>`."
-TOOLS = ("Write", "Edit", "NotebookEdit", "Bash")
+TOOLS = (*WRITERS, "Bash")
 
 
 def drifts(call: Call, takes: list[str]) -> bool:

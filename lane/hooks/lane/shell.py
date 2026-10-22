@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import re
 from collections.abc import Iterator
+from typing import Optional
 
 # Where one statement ends and the next begins.
 SEPARATORS = {";", ";;", "|", "|&", "||", "&", "&&", "(", ")", "`", "\n"}
@@ -46,6 +47,17 @@ WRITE_EACH = {"rm", "rmdir", "touch", "mkdir", "tee", "truncate"}
 WRITE_LAST = {"cp", "mv", "ln", "install"}
 # git's options that take the next word.
 GIT_VALUED = {"-C", "-c"}
+# The lines a command reads of a file, from the first to the last, 1 the file's first line: the last
+# None for the file's end, and a first of 0 or below counted back from the end, -1 its last line and
+# 0 the end after it.
+Lines = tuple[int, Optional[int]]
+WHOLE: Lines = (1, None)
+# A count of lines head or tail takes, as `-n 5`, `-n5` or `-5`; for tail, `+5` from the fifth on.
+COUNT = re.compile(r"-?n?(?P<on>\+)?(?P<count>[0-9]+)")
+# What head and tail take where no option is given: ten lines.
+UNCOUNTED = [("-n", "10")]
+# sed's script printing the lines from one number to another, as `10,20p`, `5,$p` or `3p`.
+SED_LINES = re.compile(r"(?P<first>[0-9]+)(?:,(?P<last>[0-9]+|\$))?p")
 
 
 class Operator(str):
@@ -223,3 +235,97 @@ def printed(command: str, cwd: str) -> list[str]:
         if said[0] == "cat" and end != "|" and not any(sign(w, REDIRECTS) for w in said):
             found += [path(here, w) for w in said[1:] if not w.startswith("-")]
     return [p for p in found if p]
+
+
+def reads(command: str, cwd: str) -> list[tuple[str, Lines | None]]:
+    """Each file the command prints what it reads of, by cat, head, tail, sed or grep, with the
+    lines it reads of each, None where the command does not tell them, such as those grep finds; a
+    file the words do not settle left out."""
+    found = []
+    for here, said, _ in statements(command, cwd):
+        plain = without_redirects(said)
+        if plain and plain[0] in READERS:
+            lines, files = READERS[plain[0]](plain[1:])
+            found += [(p, lines) for p in (path(here, f) for f in files) if p]
+    return found
+
+
+def split(args: list[str], valued: set[str]) -> tuple[list[tuple[str, str]], list[str]]:
+    """A command's options, each with the word it takes, "" for none, and its operands: an option
+    is a word begun with `-`, `-` alone among them as it names no file but the input, and every
+    word after `--` is an operand."""
+    options: list[tuple[str, str]] = []
+    operands: list[str] = []
+    rest = iter(args)
+    for word in rest:
+        if word in ("--",):
+            operands += rest
+        elif word.startswith("-"):
+            options.append((word, next(rest, "") if word in valued else ""))
+        else:
+            operands.append(word)
+    return options, operands
+
+
+def counted(options: list[tuple[str, str]]) -> re.Match[str] | None:
+    """The count of lines the last of head's or tail's options gives; None where it gives none,
+    such as a count of bytes."""
+    option, value = options[-1]
+    return COUNT.fullmatch(value if option in ("-n",) else option)
+
+
+def cat_lines(args: list[str]) -> tuple[Lines, list[str]]:
+    """The lines cat prints of the files its arguments name, and the files: each whole."""
+    return WHOLE, split(args, set())[1]
+
+
+def head_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
+    """The lines head prints, the first, ten where no count is given, and the files."""
+    options, operands = split(args, {"-n", "-c"})
+    found = counted(options or UNCOUNTED)
+    return ((1, int(found["count"])) if found else None), operands
+
+
+def tail_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
+    """The lines tail prints, the last, ten where no count is given, or with `+` those from a line
+    on, and the files."""
+    options, operands = split(args, {"-n", "-c"})
+    found = counted(options or UNCOUNTED)
+    if not found:
+        return None, operands
+    count = int(found["count"])
+    return ((count, None) if found["on"] else (-count, None)), operands
+
+
+def sed_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
+    """The lines sed prints, every line but with -n, then those its script prints by number, and
+    the files; its script is what -e gives, one line each, or else its first operand."""
+    options, operands = split(args, {"-e", "-f"})
+    scripts = [value for option, value in options if option in ("-e",)]
+    if not scripts:
+        scripts, operands = operands[:1], operands[1:]
+    if ("-n", "") not in options:
+        return WHOLE, operands
+    found = SED_LINES.fullmatch("\n".join(scripts))
+    if not found:
+        return None, operands
+    last = found["last"] or found["first"]
+    return (int(found["first"]), None if last in ("$",) else int(last)), operands
+
+
+def grep_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
+    """The lines grep prints, those its pattern finds, which it does not tell, and the files; its
+    pattern is given by -e or -f, or is its first operand."""
+    options, operands = split(args, {"-e", "-f", "-m", "-A", "-B", "-C"})
+    given = any(option in ("-e", "-f") for option, _ in options)
+    return None, operands if given else operands[1:]
+
+
+# The commands that print what they read of the files they name, each with how it reads them.
+READERS = {
+    "cat": cat_lines,
+    "head": head_lines,
+    "tail": tail_lines,
+    "sed": sed_lines,
+    "grep": grep_lines,
+}

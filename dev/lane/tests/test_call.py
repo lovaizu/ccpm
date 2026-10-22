@@ -1,8 +1,11 @@
-"""A tool call read as one action: a Bash call as the commands it runs and the files they write, in
-the forms the steps tell and the AI writes, and a call of a tool that writes a file as a write of it."""
+"""A tool call read as one action: a Bash call as the commands it runs and the files they read and
+write, in the forms the steps tell and the AI writes, a call of the Read or Grep tool as a read of
+what it reads, and a call of a tool that writes a file as a write of it; each with the calls its
+subagent made before it."""
 
 import unittest
 
+import helpers
 from helpers import call
 
 # The folder each command runs in.
@@ -106,6 +109,122 @@ class TestOtherTools(unittest.TestCase):
                 # When: it is read
                 # Then: it is no action, and runs nothing
                 self.assertEqual(call.read(event), call.Call("", []))
+
+
+class TestReads(unittest.TestCase):
+    def test_the_read_tool_reads_its_file_the_lines_told_by_its_result(self):
+        # Given: a Read call of a file, by its path from the folder and by its whole path
+        # When: what it reads is read
+        # Then: it reads the file, its lines not told by its input
+        for named in ("a", "/r/a"):
+            with self.subTest(named=named):
+                self.assertEqual(call.reads("Read", {"file_path": named}, HERE), [("/r/a", None)])
+
+    def test_the_grep_tool_reads_its_path_or_the_folder_it_runs_in(self):
+        # Given: a Grep call naming a folder, and one naming none
+        # When: what each reads is read
+        # Then: it reads the folder named, or the one it runs in, its lines not told by its input
+        for given, read in (({"pattern": "x", "path": "d"}, "/r/d"), ({"pattern": "x"}, "/r")):
+            with self.subTest(given=given):
+                self.assertEqual(call.reads("Grep", given, HERE), [(read, None)])
+
+    def test_a_bash_call_reads_what_its_commands_read(self):
+        # Given: a Bash call printing lines of a file
+        # When: what it reads is read
+        # Then: it reads those lines of the file
+        given = {"command": "head -n 5 a"}
+        self.assertEqual(call.reads("Bash", given, HERE), [("/r/a", (1, 5))])
+
+    def test_a_call_naming_no_file_it_reads_reads_nothing(self):
+        # Given: a Read call naming no path, or one the words do not settle; a Bash call with no
+        # command; and calls of tools that read no file, sorting before and after the readers
+        # When: what each reads is read
+        # Then: it reads nothing
+        for tool, given in (
+            ("Read", {}),
+            ("Read", {"file_path": "$HOME/a"}),
+            ("Bash", {}),
+            ("Agent", {"file_path": "a"}),
+            ("Write", {"file_path": "a"}),
+        ):
+            with self.subTest(tool=tool, given=given):
+                self.assertEqual(call.reads(tool, given, HERE), [])
+
+
+class TestReadCall(unittest.TestCase):
+    def test_a_call_of_a_tool_that_reads_is_a_read_of_what_it_reads(self):
+        for tool, given, read in (
+            ("Read", {"file_path": "a"}, "/r/a"),
+            ("Grep", {"pattern": "x", "path": "d"}, "/r/d"),
+        ):
+            with self.subTest(tool=tool):
+                # Given: a call of the Read or the Grep tool
+                event = {"cwd": HERE, "tool_name": tool, "tool_input": given}
+                # When: it is read
+                # Then: it is a read of what it reads, its lines not told, running nothing
+                self.assertEqual(call.read(event), call.Call("read", [], (), ((read, None),)))
+
+    def test_a_bash_call_is_a_run_reading_what_its_commands_read(self):
+        # Given: a Bash call printing lines of a file
+        # When: it is read
+        # Then: it is a run reading those lines of the file
+        self.assertEqual(runs("head -n 5 a").reads, (("/r/a", (1, 5)),))
+
+    def test_lines_not_told_are_those_numbered_in_what_the_call_gave_back(self):
+        # Given: a Read call that gave back lines 3 and 4, each after its number and a tab, as the
+        # Read tool gives them
+        # When: it is read with what it gave back
+        # Then: it reads the lines from the first numbered to the last
+        found = call.alone("Read", {"file_path": "a"}, HERE, "3\tx\n4\ty\n")
+        self.assertEqual(found.reads, (("/r/a", (3, 4)),))
+
+    def test_lines_not_told_and_none_numbered_are_not_known(self):
+        # Given: a Read call that gave back no numbered line, such as a stop for a file too large
+        # When: it is read with what it gave back
+        # Then: the lines it read are not known
+        found = call.alone("Read", {"file_path": "a"}, HERE, "File content exceeds 256KB.")
+        self.assertEqual(found.reads, (("/r/a", None),))
+
+    def test_lines_the_input_tells_are_kept_whatever_came_back(self):
+        # Given: a Bash call printing the first 5 lines, which gave back other numbered lines
+        # When: it is read with what it gave back
+        # Then: it reads the lines its input tells
+        found = call.alone("Bash", {"command": "head -n 5 a"}, HERE, "7\tx\n")
+        self.assertEqual(found.reads, (("/r/a", (1, 5)),))
+
+
+class TestMade(helpers.PluginTest):
+    def test_a_call_is_read_with_the_calls_its_subagent_made_before_it(self):
+        # Given: a subagent's record of two Bash calls
+        self.record([helpers.bash("ls"), helpers.bash("cd notes && git status")])
+        # When: its next call is read
+        made = call.read(self.event("git commit"))
+        # Then: it is the call, read as itself, with each call before it read as the guard reads
+        # a call, in order
+        self.assertEqual(made.what, [["git", "commit"]])
+        before = [call.Call("run", [["ls"]]), call.Call("run", [["git", "status"]])]
+        self.assertEqual(made.before, before)
+
+    def test_a_call_before_is_read_with_what_it_gave_back(self):
+        # Given: a subagent's record of a Read call that gave back the first two lines
+        self.record([("Read", {"file_path": "a"}, "1\tx\n2\ty\n")])
+        # When: its next call is read
+        made = call.read(self.event("ls"))
+        # Then: the call before reads those lines
+        self.assertEqual(made.before, [call.Call("read", [], (), ((f"{self.base}/a", (1, 2)),))])
+
+    def test_a_call_whose_record_is_not_found_has_nothing_known_before_it(self):
+        # Given: no record of the subagent where Claude Code keeps it
+        # When: its call is read
+        # Then: what came before is not known, told apart from nothing before
+        self.assertIsNone(call.read(self.event("ls")).before)
+
+    def test_a_call_read_alone_knows_nothing_before_it(self):
+        # Given: a subagent's record of a call
+        self.record([helpers.bash("ls")])
+        # When: its next call is read alone
+        # Then: what came before is not read
+        self.assertIsNone(call.alone("Bash", {"command": "pwd"}, self.base).before)
 
 
 if __name__ == "__main__":

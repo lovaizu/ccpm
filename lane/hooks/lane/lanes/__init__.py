@@ -13,9 +13,15 @@ from typing import Any
 import call
 import step
 
-from lanes import hands_off, write_only
+from lanes import hands_off, read_only, read_whole, start_with, write_only
 
-LANES = {"hands_off": hands_off, "write_only": write_only}
+LANES = {
+    "start_with": start_with,
+    "read_only": read_only,
+    "read_whole": read_whole,
+    "write_only": write_only,
+    "hands_off": hands_off,
+}
 # Where a wording shows what the lane takes, in quotes.
 TAKEN = re.compile(r"`<[a-z]+>`")
 # A plugin's or a subagent's name, as a hook's command carries it unquoted.

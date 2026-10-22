@@ -14,7 +14,7 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import call, shell, testing
+from helpers import call, shell, start_with, testing
 
 testing.load_hypothesis_profile()
 
@@ -79,6 +79,26 @@ class TestPaths(unittest.TestCase):
         self.assertEqual(found, [os.path.realpath(os.path.join("/r", n)) for n in names])
 
 
+class TestReads(unittest.TestCase):
+    @given(st.text(max_size=200))
+    def test_any_command_is_read_into_files_whole_with_their_lines(self, command):
+        # Given: any command
+        # When: what it reads is read
+        # Then: it is read without breaking, each file's path whole, its lines two ends or none told
+        for file, lines in shell.reads(command, "/r"):
+            self.assertTrue(os.path.isabs(file) and (lines is None or len(lines) == 2))
+
+    @given(st.integers(1, 10**6), st.integers(0, 10**6), NAMES)
+    def test_sed_printing_any_span_reads_those_lines(self, first, more, name):
+        # Given: sed -n printing the lines of any span, from any line on, of a file of any name
+        # When: what it reads is read
+        # Then: it reads those lines of the file
+        found = shell.reads(f"sed -n '{first},{first + more}p' {name}", "/r")
+        self.assertEqual(
+            found, [(os.path.realpath(os.path.join("/r", name)), (first, first + more))]
+        )
+
+
 class TestRuns(unittest.TestCase):
     @given(st.lists(WORDS, min_size=1, max_size=4), st.data())
     def test_commands_of_any_quoted_words_joined_by_any_separator_are_each_run(self, runs, data):
@@ -88,10 +108,8 @@ class TestRuns(unittest.TestCase):
         command = " ".join(f"{said(words)} {data.draw(SEPARATORS)}" for words in runs)
         # When: the call is read
         # Then: it runs each command with its words as they were written
-        self.assertEqual(
-            call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}),
-            call.Call("run", runs),
-        )
+        found = call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}})
+        self.assertEqual((found.action, found.what), ("run", runs))
 
     @given(WORDS, st.text(min_size=1))
     def test_git_run_in_any_folder_runs_its_command(self, words, folder):
@@ -105,3 +123,16 @@ class TestRuns(unittest.TestCase):
             call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}).what,
             [["git", *words]],
         )
+
+
+class TestStartWith(unittest.TestCase):
+    @given(st.text(min_size=1), st.sampled_from(["python3 ", "sh ", ""]), WORDS)
+    def test_the_script_run_first_from_any_folder_is_no_drift(self, folder, interpreter, words):
+        # Given: a subagent that has made no call, and the script taken run from any folder,
+        # quoted as a shell quotes it, by python3, by sh or by its path, with any words after it
+        script = shlex.quote(os.path.join(folder, "scripts", "turn.py"))
+        command = f"{interpreter}{script} {said(words)}"
+        made = call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}})
+        # When: start_with reads it as the subagent's first call
+        # Then: it is no drift
+        self.assertFalse(start_with.drifts(made._replace(before=[]), ["scripts/turn.py"]))

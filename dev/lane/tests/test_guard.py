@@ -14,6 +14,8 @@ from helpers import hook, lanes
 
 # The lane the README lays on step 3, as the hook's command gives it.
 WORDS = ["3:hands_off:git commit,git push"]
+# The sentence of start_with laid on step 1, taking the script it runs.
+BEGIN = "First run `scripts/log.py`."
 # What the subagent is told where step 3 no longer says the lane's sentence.
 GONE = (
     "notes: step 3 of changelog-writer no longer says: Do not run `git commit` or `git push`."
@@ -69,6 +71,38 @@ class TestStop(GuardTest):
         # When: changelog-writer makes a call the hook watches, even one the lane allows
         # Then: the call is stopped, saying to have lane:up run again
         self.assertEqual(self.guard(self.stream("git status")), (2, GONE))
+
+
+class TestStartWith(GuardTest):
+    def setUp(self) -> None:
+        super().setUp()
+        # Step 1 with start_with laid on it, taking the script it runs.
+        laid = helpers.LAID.replace("since the last release.", "since the last release. " + BEGIN)
+        self.write(self.agent_file, laid)
+
+    def started(self, command):
+        return self.guard(self.stream(command), (helpers.AGENT, "1:start_with:scripts/log.py"))
+
+    def test_a_first_call_running_anything_but_the_script_is_stopped_with_its_sentence(self):
+        # Given: start_with on step 1 of changelog-writer, its record holding no call yet
+        self.record([])
+        # When: changelog-writer's first call runs something else
+        # Then: the call is stopped, and the subagent told the sentence headed by the plugin
+        self.assertEqual(self.started("ls"), (2, f"notes: {BEGIN}\n"))
+
+    def test_the_script_run_first_goes_on(self):
+        # Given: start_with on step 1 of changelog-writer, its record holding no call yet
+        self.record([])
+        # When: its first call runs the script
+        # Then: the call goes on, nothing said
+        self.assertEqual(self.started(f"python3 {self.plugin}/scripts/log.py"), (0, ""))
+
+    def test_a_call_after_the_script_ran_goes_on(self):
+        # Given: start_with on step 1 of changelog-writer, its record holding the script run
+        self.record([helpers.bash(f"python3 {self.plugin}/scripts/log.py")])
+        # When: it makes any other call
+        # Then: the call goes on, nothing said
+        self.assertEqual(self.started("ls"), (0, ""))
 
 
 class TestOtherAgents(GuardTest):
