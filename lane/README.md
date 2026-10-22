@@ -1,13 +1,14 @@
 # lane
 
-lane lets an AI keep to the steps your plugin gives it, at full speed with no one watching each
-move, by laying lanes on them. A lane holds a step that alone is not sure to hold, a step being one
-line of what a subagent, an AI your plugin starts for one job, is told to do. The lane is a sentence
-of the step together with a hook that notices a drift from it and tells the AI the sentence again.
+lane lets an AI notice when it drifts from the steps your plugin gives it, and tells it the right
+way, so it finds its way back at full speed with no one watching each move. A lane is laid on a
+step the AI may drift from, a step being one line of what a subagent, an AI your plugin starts for
+one job, is told to do. The lane is a sentence of the step together with a hook that notices a
+drift from it and tells the AI the sentence again.
 
 lane is a Claude Code plugin for you if you build a plugin whose work an AI does in several steps.
-You answer and approve. lane lays the lanes on your plugin's subagents, and lane's code then holds
-them on every run.
+You answer and approve. lane lays the lanes on your plugin's subagents, and on every run lane's code
+notices each drift and tells the AI the step again.
 
 ## Example
 

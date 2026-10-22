@@ -1,16 +1,17 @@
 # lane UX
 
-lane keeps a plugin's subagents to the steps its builder set, with lanes. Build and change every
-part of lane so that the builder gets what this UX says, and judge each change by its key result.
+lane lets a plugin's subagents notice when they drift from the steps their builder set, and tells
+them the right way, with lanes. Build and change every part of lane so that the builder gets what
+this UX says, and judge each change by its key result.
 
-A lane holds one step of a subagent, one line of its Steps. It is a sentence of that step with a
-hook that notices when the AI drifts from it and tells the AI the sentence again.
+A lane is laid on one step of a subagent, one line of its Steps. It is a sentence of that step with
+a hook that notices when the AI drifts from it and tells the AI the sentence again.
 
 ## Users and goals
 
 - G1: The builder, whoever builds a Claude Code plugin whose work an AI does in several steps, wants
-  its subagents' steps that alone are not sure to hold kept by hooks on every run, without writing
-  the checks.
+  a hook to notice, on every run, when a subagent drifts from one of its steps, and to tell it the
+  right way, without writing the checks.
 
   An AI calls lane for the builder, the builder's Claude or a step of another plugin, by starting
   `lane:up`, lane's agent. A subagent cannot ask a person, so that AI puts
@@ -41,11 +42,11 @@ use, on the same plugins, with no target value.
 - `lane:up` reads the plugin's skills and agents, and sends Claude, one at a time, each point the
   files do not settle, such as which files a step alone writes, and each fact it found that the
   proposal rests on; Claude puts each to the builder and sends the answer back.
-- `lane:up` proposes the lanes, each under the action it keeps, such as run, with the step as it
+- `lane:up` proposes the lanes, each under the action it watches, such as run, with the step as it
   would read and its hooks; the builder chooses OK from Claude's question, or says what to change.
-- On the OK, `lane:up` writes the steps the lanes hold and the hooks, and puts lane's code in the
-  plugin, once for all its subagents: a link to it in a plugin of the ccpm marketplace, a copy with
-  its version anywhere else.
+- On the OK, `lane:up` writes the steps the lanes are laid on and the hooks, and puts lane's code in
+  the plugin, once for all its subagents: a link to it in a plugin of the ccpm marketplace, a copy
+  with its version anywhere else.
 - Run again where an older copy is, `lane:up` brings the copy and the hooks to its own version.
 - In a subagent a lane is laid in, a hook stops a call that drifts from the lane before Claude Code
   runs it, and the subagent reads the lane's sentence, prefixed by the plugin's name, and goes on as

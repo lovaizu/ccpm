@@ -3,7 +3,8 @@
 lane is built on [how a plugin works](../architecture.md), and is itself a plugin of that form:
 `lane:up`, the orchestrator an AI starts, hears the builder through that AI, proposes, and has the
 layer, a script, write what the builder approved. What lane writes into the builder's plugin is
-lane's code, the guard, which keeps each subagent to its lanes. The goal and the key result are in
+lane's code, the guard, which notices a subagent's drift from its lanes and tells it the step
+again. The goal and the key result are in
 [lane's UX](ux.md).
 
 ## User stories
@@ -60,12 +61,12 @@ flowchart TB
   proposal from the same file word for word into the plugin, with lane's code, and check that the
   plugin loads.
 
-  What the builder approved is printed and written by a script from one file, so no AI copies it. For lane the caller is the
-  calling AI, and its answer is the caller's own action that an approval counts from
-  (dev/architecture.md, The caller approves what is theirs).
+  What the builder approved is printed and written by a script from one file, so no AI copies it.
+  For lane the caller is the calling AI, and its answer is the caller's own action that an approval
+  counts from (dev/architecture.md, The caller approves what is theirs).
 - In a subagent with lanes, the guard reads each tool call as one action, begin, read, write, run,
-  test, hand on, wait or end, holds it to that subagent's lanes alone, and stops a drift with
-  `<plugin>: <sentence>`.
+  test, hand on, wait or end, reads it against that subagent's lanes alone, and on a drift stops
+  the call and tells the subagent `<plugin>: <sentence>`.
 
   A lane on the order of steps, such as reading an input whole before writing, is held from what
   the subagent has done since it started.

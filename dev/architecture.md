@@ -13,7 +13,7 @@ flowchart TB
   guard["guard<br/>#lt;hook#gt;"]
   caller <-->|calls, answers, approves / asks, shows the work| orch
   orch <-->|starts with its prompt, sends more work / replies| role
-  guard -.->|keep to its steps| role
+  guard -.->|notices a drift, tells the step again| role
 ```
 
 ## Why it is so
@@ -129,7 +129,7 @@ and answers what it asks, or asks its own caller in turn.
 A subagent can start subagents down to three layers below the main conversation
 ([subagents](https://code.claude.com/docs/en/sub-agents#let-subagents-spawn-their-own-subagents)).
 
-### The guard keeps each role to its steps
+### The guard tells each role its steps again
 
 Each step of a role that is not sure to hold has a hook that notices a drift and tells the role
 the step again. The hooks are in the plugin's `hooks/hooks.json`, each acting only in the roles it
