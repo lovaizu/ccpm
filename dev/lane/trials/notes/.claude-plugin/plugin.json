@@ -1,0 +1,6 @@
+{
+  "name": "notes",
+  "description": "Keeps a project's changelog: writes the entries for its changes and commits them once you have read them.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}

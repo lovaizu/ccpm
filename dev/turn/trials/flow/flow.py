@@ -42,7 +42,7 @@ os.makedirs(os.path.join(plugin, "stand"))
 for name in ("stand.py", "replies.json"):
     shutil.copyfile(os.path.join(HERE, name), os.path.join(plugin, "stand", name))
 start = time.time()
-end = shared.claude(STEP, plugin, cwd=place, wait=60)
+end = shared.claude(STEP, [plugin], cwd=place, wait=60)
 session = end["session_id"]
 print(end.get("result"))
 print("session:", session, "cost:", end.get("total_cost_usd"))

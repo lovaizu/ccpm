@@ -98,8 +98,9 @@ flowchart TB
 
   The builder has changed the step since the lane was laid, and a lane kept on a sentence that is
   gone holds the subagent to what its step no longer says.
-- Where lane's code cannot run on the machine, each hook stops every call it watches, saying what
-  to install; a hook at a subagent's end says it to the user and lets the subagent end.
+- Where lane's code cannot run on the machine, each hook stops every call it watches in its
+  subagent, saying what to install; a hook at a subagent's end says it to the user and lets the
+  subagent end.
 
   Letting the call through would leave it unkept with no one told; a subagent cannot install
   Python, and kept going it would only be asked again.
@@ -229,11 +230,12 @@ lane/                          the plugin, installed by Claude Code
   subagent has answered in words alone since it was told, as the event shows only that a stop hook
   has kept it going once.
 - Each hook command first runs the Python check, which, where `python3` is missing or older than
-  3.9, writes this message and exits 2 on a tool call and 1 at a subagent's end.
+  3.9, writes `notes: install Python 3.9 or later, run as python3, for its hooks to run` and exits
+  2 on a tool call and 1 at a subagent's end, on an event of its subagent alone, found in the
+  event's text by the shell.
 
-  ```sh
-  python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null || { echo "notes: install Python 3.9 or later, run as python3, for its hooks to run" >&2; exit 2; }
-  ```
+  A tool event's matcher tells tools apart, not agents, and with no Python the guard cannot read the
+  event; the shell's own words read it, as the machine may have nothing else.
 - `lane:up` is held by lanes of its own, laid by the layer: as_printed on handing on the layer's
   print, and wait_for on writing it before the OK; on lane itself the layer leaves lane's code as
   it is.
@@ -262,7 +264,8 @@ the records of every conversation and agent the check started. Each unittest bel
   - Flow: unittest fed the events, records and subagent files each lane receives, with Hypothesis on
     how a call is read.
 - The Python check: it stops the hook with its message where `python3` is missing or older than
-  3.9, exiting 2 on a tool call and 1 at a subagent's end, and lets it run otherwise.
+  3.9, exiting 2 on a tool call and 1 at a subagent's end, lets an event of another agent through,
+  and lets the hook run otherwise.
   - Flow: unittest runs a hook's command with a `PATH` holding no `python3`, one holding a `python3`
     older than 3.9, and the one in use.
 - The layer: what it writes is the approved proposal, with every other entry of `hooks/hooks.json`

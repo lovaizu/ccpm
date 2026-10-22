@@ -1,14 +1,18 @@
 """What turn's trials share: the call, the flow trial's task made a repository, with its check and a
-README that falls short, the copy of turn a run uses, Claude Code started on it as its user starts
-it, and what a record shows of a role's work."""
+README that falls short, and the copy of turn a run uses; with Claude Code started on it as its
+user starts it, and what a record shows of a role's work, which every plugin's trials share."""
 
-import glob
-import json
 import os
 import shutil
 import subprocess
+import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+# Starting Claude Code and reading its records are what every plugin's trials share, kept in lane's.
+sys.path.insert(0, os.path.join(ROOT, "dev", "lane"))
+
+from trying import agents, claude, show  # noqa: F401
+
 # The orchestrator's check of the flow trial's task: each item's Good found in the decisions.
 CHECK = {
     "items": [
@@ -59,62 +63,3 @@ def turn(place: str) -> str:
     plugin = place.rstrip("/") + "-turn"
     shutil.copytree(os.path.join(ROOT, "turn"), plugin)
     return plugin
-
-
-def claude(prompt: str, plugin: str, cwd: "str | None" = None, wait: int = 0) -> dict:
-    """Runs Claude Code on prompt with the copy of turn in place of the installed one, as its user
-    runs it, and gives what it printed last; wait is the minutes it waits for an agent started in
-    the background, which it stops waiting for after 10 by default."""
-    env = dict(os.environ)
-    if wait:
-        env["CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"] = str(wait * 60 * 1000)
-    done = subprocess.run(
-        [
-            "claude",
-            "-p",
-            prompt,
-            "--output-format",
-            "json",
-            "--model",
-            "opus",
-            "--plugin-dir",
-            plugin,
-            "--settings",
-            '{"enabledPlugins": {"turn@ccpm": false}}',
-            "--permission-mode",
-            "bypassPermissions",
-        ],
-        check=True,
-        cwd=cwd,
-        env=env,
-        capture_output=True,
-        text=True,
-    )
-    return json.loads(done.stdout)
-
-
-def agents(session: str) -> list:
-    """The records of each agent the session started."""
-    return glob.glob(os.path.expanduser(f"~/.claude/projects/*/{session}/subagents/*.jsonl"))
-
-
-def show(path: str) -> None:
-    """Prints a record's path and, of what it holds, each message sent, each tool used and each
-    hook stop."""
-    print("record:", path)
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            entry = json.loads(line)
-            # Claude Code's copy of each request says again what the agent did.
-            if entry.get("type") == "api-request-blob":
-                continue
-            if isinstance(entry.get("origin"), dict):
-                print("  message:", entry["origin"].get("body"))
-            content = entry.get("message", {}).get("content")
-            if isinstance(content, str) and content.startswith("Stop hook feedback"):
-                print("  stop:", content)
-            for part in content if isinstance(content, list) else []:
-                if part.get("type") == "tool_use":
-                    print("  use:", part["name"], json.dumps(part["input"], ensure_ascii=False))
-                elif part.get("type") == "tool_result" and part.get("is_error"):
-                    print("  stop:", part.get("content"))

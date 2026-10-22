@@ -59,7 +59,7 @@ def role(step: dict) -> str:
 exactly as it is, and wait for its reply. Then reply with its reply as it is.
 {step["prompt"]}"""
     start = time.time()
-    session = shared.claude(ask, plugin)["session_id"]
+    session = shared.claude(ask, [plugin])["session_id"]
     record = shared.agents(session)
     print(f"=== {step['agent']}  minutes: {round((time.time() - start) / 60, 1)}")
     print("session:", session)

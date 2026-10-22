@@ -65,6 +65,25 @@ class TestPythonCheck(helpers.PluginTest):
         # Then: it exits 2, telling the subagent to install Python
         self.assertEqual(self.run_hook(older), (2, INSTALL))
 
+    def test_without_python3_a_call_of_another_agent_is_let_through(self):
+        # Given: a PATH holding no python3, and a commit of the main conversation, or of another
+        # subagent
+        none = os.path.join(self.base, "none")
+        for agent_type in (None, "notes:other"):
+            with self.subTest(agent_type=agent_type):
+                env = dict(os.environ, PATH=none, CLAUDE_PLUGIN_ROOT=self.plugin)
+                # When: the hook's command is run on it
+                done = subprocess.run(
+                    ["/bin/sh", "-c", self.command],
+                    input=self.stream("git commit -m notes", agent_type),
+                    capture_output=True,
+                    text=True,
+                    env=env,
+                    check=False,
+                )
+                # Then: it lets the call through, as the lane acts in its subagent alone
+                self.assertEqual((done.returncode, done.stderr), (0, ""))
+
     def test_without_python3_at_the_subagents_end_the_user_is_told_and_it_ends(self):
         # Given: the hook's command for a lane held as the subagent ends, and a PATH holding no
         # python3

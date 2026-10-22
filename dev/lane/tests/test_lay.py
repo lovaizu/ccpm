@@ -18,8 +18,10 @@ LANES = [{"lane": "hands_off", "takes": ["git commit", "git push"]}]
 # The hook's command lane:up writes for it.
 COMMAND = (
     'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
-    ' || { echo "notes: install Python 3.9 or later, run as python3, for its hooks to run" >&2;'
-    ' exit 2; }; exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py"'
+    ' || { e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done; case "$e" in'
+    """ *'"agent_type":"notes:changelog-writer"'*|*'"agent_type": "notes:changelog-writer"'*)"""
+    ' echo "notes: install Python 3.9 or later, run as python3, for its hooks to run" >&2;'
+    ' exit 2;; esac; exit 0; }; exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py"'
     " notes:changelog-writer '3:hands_off:git commit,git push'"
 )
 ENTRY = {"matcher": "Bash", "hooks": [{"type": "command", "timeout": 10, "command": COMMAND}]}

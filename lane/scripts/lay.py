@@ -37,12 +37,16 @@ import step
 from lanes import in_form
 
 USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>"
-# Each hook's command first checks that lane's code can run, and where it cannot, says what to
-# install and exits with its event's code.
+# Each hook's command first checks that lane's code can run, and where it cannot, on an event of
+# its subagent, read from the event's text by the shell alone, as Claude Code writes it, with or without a blank after
+# the colon, says what to install and exits with its event's code; it lets any other event through,
+# as its lanes act in their subagent alone.
 CHECK = (
     'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
-    ' || {{ echo "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run" >&2;'
-    " exit {code}; }}"
+    ' || {{ e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done;'
+    """ case "$e" in *'"agent_type":"{agent}"'*|*'"agent_type": "{agent}"'*)"""
+    ' echo "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run" >&2;'
+    " exit {code};; esac; exit 0; }}"
 )
 # The events lanes are held on, each with its own script in lane's code, named after it, and what
 # its hook exits with where lane's code cannot run: on a tool call 2, which stops the call; at the
@@ -227,7 +231,7 @@ def command(plugin: str, agent: str, laid: list[str], event: str = "PreToolUse")
     """The hook's command running lane's code on the lanes laid in the subagent, held on the
     event."""
     words = " ".join(shlex.quote(w) for w in [agent, *laid])
-    return f"{CHECK.format(plugin=plugin, code=EVENTS[event])}; {run(event)} {words}"
+    return f"{CHECK.format(plugin=plugin, agent=agent, code=EVENTS[event])}; {run(event)} {words}"
 
 
 def entry(plugin: str, agent: dict[str, Any], event: str = "PreToolUse") -> dict[str, Any] | None:

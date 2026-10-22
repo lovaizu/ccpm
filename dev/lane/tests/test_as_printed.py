@@ -58,7 +58,6 @@ class TestDrift(AsPrintedTest):
         for what, message in {
             "a word changed": OUTPUT.replace("push", "commit"),
             "two lines beside it": f"{HEADING}\n{OUTPUT}\nSay OK.",
-            "a code fence around it": f"```\n{OUTPUT}```",
             "nothing": "",
         }.items():
             with self.subTest(what=what):
@@ -112,6 +111,8 @@ class TestLetThrough(AsPrintedTest):
             "under a heading": f"{HEADING}\n{OUTPUT}",
             "under a heading and a blank line": f"{HEADING}\n\n{OUTPUT}",
             "above a line": f"{OUTPUT}\nSend OK or what to change.",
+            "in a code fence": f"```\n{OUTPUT}```",
+            "in a code fence under a heading": f"{HEADING}\n\n```text\n{OUTPUT}```\n",
         }.items():
             with self.subTest(what=what):
                 # Given: the command run, having printed
@@ -124,6 +125,14 @@ class TestLetThrough(AsPrintedTest):
         # When: whether the hand-on holds the print is read
         # Then: it does, the print read after the heading
         self.assertTrue(as_printed.holds("00\n0", "0"))
+
+    def test_a_print_holding_a_code_fence_is_held_with_its_fence(self):
+        # Given: a print holding a code fence of its own
+        fenced = "```\ngit push\n```"
+        # When: whether a hand-on holds it is read, with its fence and without
+        # Then: the hand-on with the fence holds it, the one without does not
+        self.assertTrue(as_printed.holds(fenced, fenced))
+        self.assertFalse(as_printed.holds("git push", fenced))
 
     def test_the_print_handed_on_by_the_agent_tool_is_no_drift(self):
         # Given: the command run, having printed

@@ -68,7 +68,7 @@ first time, and send the `message` turn.py printed last to its `to`, both as pri
 6. Reply with what turn.py printed last, as it is."""
 
 start = time.time()
-end = shared.claude(STEPS, plugin, cwd=place)
+end = shared.claude(STEPS, [plugin], cwd=place)
 session = end["session_id"]
 print("session:", session, "minutes:", round((time.time() - start) / 60, 1))
 print("last:", end.get("result"))

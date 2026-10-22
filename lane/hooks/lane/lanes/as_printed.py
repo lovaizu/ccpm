@@ -17,6 +17,8 @@ TOOLS = tuple(HANDS)
 EVENTS = ("PreToolUse", "SubagentStop")
 # What the Bash tool gives back for a command that printed nothing.
 SILENT = "(Bash completed with no output)"
+# What begins a line opening or closing a Markdown code fence.
+FENCE = "```"
 
 
 def drifts(given: Call | End, takes: list[str], root: str) -> bool:
@@ -48,7 +50,10 @@ def due_output(before: list[Call], command: str) -> str:
 
 def holds(text: str, output: str) -> bool:
     """Whether the text is the output word for word, alone or with one line of its own before it,
-    such as a heading, or after it, blank lines and blanks around them left out."""
+    such as a heading, or after it, blank lines and blanks around them left out, and a Markdown
+    code fence around it too, as a reply sets a print apart, where the output holds none."""
+    if FENCE not in output:
+        text = "\n".join(line for line in text.split("\n") if not line.startswith(FENCE))
     text = text.strip()
     after_first = text.partition("\n")[2]
     before_last = text.rpartition("\n")[0]

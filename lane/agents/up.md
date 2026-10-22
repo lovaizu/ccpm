@@ -71,7 +71,8 @@ very file the builder said OK to, and nothing is written into their plugin befor
      with no comma in it; wait_for takes the approval first, then each command it holds back. Each
      lane laid before goes in too, unless the builder left it out, since the layer writes each
      subagent's hook whole from the proposal.
-7. Run `lay.py print <proposal>`. Hand on `lay.py print` as it is.
+7. Run `lay.py print <proposal>`, in a command of its own with nothing after it, so what it prints
+   is all the command gives back. Hand on `lay.py print` as it is.
    - If it exits with 1 saying the proposal is wrong, fix `<proposal>` as it says and run it again;
      where it names something in the plugin to fix, reply with that as a fact, as in step 5, and go
      on by the answer.
