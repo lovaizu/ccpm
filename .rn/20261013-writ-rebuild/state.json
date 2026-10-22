@@ -359,6 +359,9 @@
     },
     {
       "fact": "turn's design (2cc7044, 10-20) predates dev/architecture.md and turn's new README and UX: roles message main, the orchestrator only starts agents, no resume, hooks of its own; T21-T23 added to steering for turn's remake (2026-10-22)"
+    },
+    {
+      "fact": "T21 done: dev/turn/design.md rewritten on dev/architecture.md and lane by a subagent, checked and fixed by hand (progress from an agent caller goes to main; jq dropped from README and design); its open points settled as R37-R41; lane's read_whole needs no re-read after change, as the first user re-reads only where it stopped"
     }
   ],
   "semantic_gist": [
@@ -469,7 +472,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "T21: a subagent rewrites dev/turn/design.md on dev/architecture.md, turn/README.md, dev/turn/ux.md and lane (README, dev/lane/design.md), with rn/checklists/product/design.md and usability.md open; I check it against the same checklists and fix by hand; then T22 code (T21's maker started 2026-10-22; if cut off, read git diff dev/turn/design.md and finish or restart it)"
+      "next": "T22: turn's code on the design: turn.py start/next printing {tool,input} moves and a state file beside the result (result path + .run.json), reply files read by the flow, resume from the state, progress lines; agents' steps rewritten with lane sentences and {given}/{work}/{reply}/{checklists}/{result} run values; lanes laid by lane:up; turn's hooks/checks, agents.py, events.py removed; a subagent makes it with code.md, prompt.md and usability.md open, I check and fix; check.sh 100%, mutate.sh turn 0"
     }
   ],
   "uncertainty_signal": [

@@ -101,9 +101,9 @@ turn gives your plugin's AI what it does not get by making the work and checking
 ## Requirements
 
 - Claude Code, in which turn runs.
-- Python 3.9 or later, run as `python3`, jq, the command-line JSON tool, and git.
+- Python 3.9 or later, run as `python3`, and git.
 
-  turn's scripts and hooks run on Python and jq, and a run cut off leaves its writing as changes git
+  turn's scripts and hooks run on Python, and a run cut off leaves its writing as changes git
   shows.
 
 ## Installation

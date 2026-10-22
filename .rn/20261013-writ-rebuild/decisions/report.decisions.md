@@ -117,3 +117,15 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
 - R36 (lane without Python at a subagent's end): the SubagentStop hook exits 1, the user told and
   the subagent let end, since a subagent cannot install Python and keeping it going only repeats
   the ask; the README's promise is on the tool calls the hooks watch, which still stop (R31).
+- R37 (turn's design on lane, T21): the call is copied into `turn.py start` by the orchestrator and
+  start_with checks only which script runs, as `turn.py start` already stops a call naming a
+  missing file; a lane holding the arguments waits until a run shows the copy changed.
+- R38 (turn's progress called from an agent): the lines go to `main` by SendMessage, as the agent
+  that called turn cannot be messaged by a name, and the main conversation alone talks with the
+  user (dev/architecture.md).
+- R39 (turn's generator running its work): held by its step alone, as test_after needs a command
+  the CCS's kinds do not name; a kind for it waits until a run shows the step left out.
+- R40 (turn's agent IDs): the orchestrator copies each ID the Agent call returns into `turn.py
+  next`; a wrong one fails the SendMessage where it shows.
+- R41 (turn's requirements): jq left out of the README and the design, as no script or hook of
+  turn runs it.

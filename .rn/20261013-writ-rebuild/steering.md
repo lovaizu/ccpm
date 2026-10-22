@@ -101,7 +101,7 @@ lane's units, built before turn and rn are remade on it; the hooks of T2 to T6 c
 
 turn remade on `dev/architecture.md` and lane, before rn is remade on it.
 
-- [ ] T21: A reader of turn's design can tell how its README and UX are kept on
+- [x] T21: A reader of turn's design can tell how its README and UX are kept on
   `dev/architecture.md`: an orchestrator agent holding the run by a flow script and a state file,
   roles answering it alone, questions sent to the calling AI and the run going on with the answer, a
   stopped run going on from its last step, and each role's steps held by lanes. Serves AC1.
