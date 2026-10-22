@@ -92,6 +92,16 @@ flowchart TB
 
   So the sentence the subagent is told and the one its step says cannot differ, and no sentence is
   written twice.
+- A thing a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
+  `{<name>}`, such as `{work}`: the value under that name in the JSON the subagent starts from, its
+  prompt where it is a JSON object, and each JSON object a script laid by start_with prints, the
+  later over the earlier. A list stands for each of its texts. The guard puts the run's value in
+  before the lane's check, and tells the sentence as the step says it, with the value on the next
+  line; until the subagent has been given the value, the lane lets every call through.
+
+  A subagent's inputs and outputs are most often known only once its run starts, as turn's
+  generator writes the files the run's `work` names; the JSON a subagent starts from is the one
+  place a plugin hands them over, so a lane reads them there, the same way in every plugin.
 - Laying again, the layer takes out of each step the sentence of each lane the subagent's hook held
   there before and the new proposal no longer lays, the rest of the step as it was; its print shows
   each step so.
@@ -114,6 +124,24 @@ flowchart TB
 
   Letting the call through would leave it unkept with no one told; a subagent cannot install
   Python, and kept going it would only be asked again.
+
+- The 12 lanes are drawn from the steps of turn and rn, the plugins lane was made for, each read
+  as a plugin's step in general; what they lay there is the measure each lane's takes are made to:
+
+  | Lane | In turn and rn |
+  |---|---|
+  | start_with | rn's `rn.py session` first; turn's roles' `turn.py given` |
+  | read_only | turn's first user reads `{work}`, `{has}` and `{checklists}` alone |
+  | read_whole | turn's and rn's inputs read whole |
+  | write_only | turn's generator writes `{work}` alone |
+  | in_form | turn's replies, rn's `steering.md` |
+  | hands_off | no commit or push in turn's roles |
+  | test_after | turn's generator passes the work's checks after changing it |
+  | as_printed | `rn.py`'s print, turn's prompts handed on as printed |
+  | follow_next | turn's roles started in the order `turn.py` prints |
+  | wait_for | rn's sign-off on the user's `/rn:ty` |
+  | end_when | turn's result, rn's Out made before ending |
+  | every_item | turn's evaluator answers every item of `{checklists}` |
 
 ### Physical view
 

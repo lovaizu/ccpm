@@ -87,6 +87,11 @@ Each lane lane can lay, under the action it watches. The sentence is what the st
 the subagent is told on a drift, with what the lane takes put in where it shows `<...>`; the hook
 tells it when the subagent does what the last column says.
 
+What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
+`{<name>}`: the value under that name in the JSON the subagent starts from, its prompt or what the
+script it first runs prints. Write only `{work}`. holds a subagent to the files its run's `work`
+names, whichever they are.
+
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
 | begin | start_with | First run `<script>`. | begins with anything else |
