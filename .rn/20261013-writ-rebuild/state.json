@@ -329,6 +329,9 @@
     },
     {
       "fact": "end lanes (dca0b24, worktree-agent-a7de576d344f751dd) and hand-on/wait lanes (d8dfbdc, worktree-agent-abcbaa375f35d5b70) built on efd2eff, each with design lines in its report; in_form being reworded to 'in the form of' with ${CLAUDE_PLUGIN_ROOT} paths after three trials read it as a place"
+    },
+    {
+      "fact": "all 12 lanes in writ-rebuild and pushed (3d9c26f): check.sh 100%, mutate.sh lane 2192 mutants 0 survivors, lane on 3.9; README's in_form wording and the design's lines for the lanes shown to the user for OK"
     }
   ],
   "semantic_gist": [
@@ -433,7 +436,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "when in_form's agent ends: check, merge both branches onto it (sentence() slots, Call fields, record.heard beside done to fold), apply R36 (SubagentStop exit 1 without Python), write the design lines the three reports gave, run check.sh and mutate.sh lane, push, show the user the README and design changes apart; then the lane issue flow per plugin.md step 2, lane:up's own lanes, T16's trial"
+      "next": "on the user's OK of the README and design changes: as_printed on the last reply at SubagentStop (R33); lane:up's step on wait_for's takes and lane:up's own lanes with hooks.json; lane's issue flow into README and design (plugin.md step 2) for the user's OK; SendMessage between subagents by ID; then T16's trial as its user"
     }
   ],
   "uncertainty_signal": [
