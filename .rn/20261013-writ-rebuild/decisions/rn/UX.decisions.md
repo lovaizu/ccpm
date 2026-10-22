@@ -70,3 +70,12 @@ scenes, though they share words, do not.
   in the commit messages rn writes, so the next work, or a teammate, starts from it.
 - What a session learned is confirmed with the user one point at a time, and what they add to their
   checklists makes every later work better.
+
+## What a sign-off shows (the user, 2026-10-22)
+
+- At each sign-off rn shows the link to each work and its core decisions, each with its intent,
+  in a few short lines, and nothing else: no summary of the text, no diff. The user glances at the
+  work for its size and figures, and judges the decisions and intents; the text is the first
+  reader's and rn's to check.
+- Where the core decisions do not fit in a few short lines, rn takes it as a sign the work is not
+  yet simple, and makes it again before it stops.
