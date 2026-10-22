@@ -99,8 +99,8 @@ flowchart TB
   before the lane's check, and tells the sentence as the step says it, with the value on the next
   line; until the subagent has been given the value, the lane lets every call through.
 
-  A subagent's inputs and outputs are most often known only once its run starts, as turn's
-  generator writes the files the run's `work` names; the JSON a subagent starts from is the one
+  A subagent's inputs and outputs are most often known only once its run starts, as a writer
+  writes the files its run names; the JSON a subagent starts from is the one
   place a plugin hands them over, so a lane reads them there, the same way in every plugin.
 - Laying again, the layer takes out of each step the sentence of each lane the subagent's hook held
   there before and the new proposal no longer lays, the rest of the step as it was; its print shows
@@ -125,28 +125,6 @@ flowchart TB
   Letting the call through would leave it unkept with no one told; a subagent cannot install
   Python, and kept going it would only be asked again.
 
-- The 12 lanes are drawn from the steps of turn and rn, the plugins lane was made for, each read
-  as a plugin's step in general; what they lay there is the measure each lane's takes are made to:
-
-  | Lane | Where it was drawn from |
-  |---|---|
-  | start_with | turn's roles run `turn.py given` first |
-  | read_only | turn's first user reads `{work}`, `{has}` and `{checklists}` alone |
-  | read_whole | turn's roles read their inputs whole |
-  | write_only | turn's generator writes `{work}` alone |
-  | in_form | turn's replies; rn's `steering.md` |
-  | hands_off | no commit or push in turn's roles |
-  | test_after | turn's generator passes the work's checks after changing it |
-  | as_printed | turn's prompts handed on as `turn.py` printed them; lane:up's proposal |
-  | follow_next | turn's roles started in the order `turn.py` prints |
-  | wait_for | lane:up writes the proposal only on the builder's OK |
-  | end_when | turn's result made before ending |
-  | every_item | turn's evaluator answers every item of `{checklists}` |
-
-  rn runs its steps in the main conversation, where a hook cannot tell which step runs; its
-  `steering.md` is told by its place, `.rn/*/steering.md`, so its form is held there, and its
-  sign-off by `/rn:ty`, which the AI cannot call.
-
 ### Physical view
 
 ```
@@ -166,6 +144,7 @@ lane/                          the plugin, installed by Claude Code
 │       ├── template.py        a Markdown template, and a file held to it
 │       ├── step.py            a subagent's step, read from its file
 │       ├── record.py          what the subagent did before, from its record
+│       ├── started.py         what the subagent started from, for a thing given for each run
 │       └── lanes/<lane>.py    one check per lane
 └── README.md                  its Lanes: each lane, its action and what its hook notices
 ```
@@ -230,7 +209,7 @@ lane/                          the plugin, installed by Claude Code
   check on a command's text is no security boundary; so the guard stays small.
 
   A script or command a lane takes is read as the step writes it, such as
-  `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given`, by the same reading as a call's words:
+  `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/prepare.py" given`, by the same reading as a call's words:
   python3 or sh before it left out, and its path in the plugin matched by the end of the call's.
   lane:up takes it from the step word for word.
 - in_form's `<form>` is a file of the plugin, named in the step as
@@ -290,12 +269,6 @@ lane/                          the plugin, installed by Claude Code
   These two keep what the builder approves the print, and nothing written before it; what
   `lane:up` reads and writes is in the plugin it is given, which differs on each run, so no lane
   names it.
-- rn and turn take lane's code by the same link, and their hooks run on its `hook.py` and
-  `shell.py`; `common/` and `dev/common/` go.
-
-  Code more than one ccpm plugin needs is kept once, in the plugin whose job it is, and what their
-  tests share, such as a repository made once and copied for each test, in `dev/lane/testing.py`,
-  which rn's and turn's tests import, as their code takes lane's and `dev/check.sh` fails on a copy.
 
 ## Verification
 
@@ -324,8 +297,9 @@ the records of every conversation and agent the check started. Each unittest bel
   - Flow: on a plugin with one orchestrator skill and one subagent of three steps, with the calling
     AI stood in for by answers set beforehand; passes when the records show one point per reply,
     each fact found shown to confirm, and the layer run only on the proposal sent back with the OK.
-  - Content: on the README's `notes` and on turn; passes when each proposed lane is one of
-    the README's Lanes, and each step's drift that shows in a tool call has its lane.
+  - Content: on the README's `notes` and on a trial plugin whose steps call for every lane;
+    passes when each proposed lane is one of the README's Lanes, and each step's drift that shows
+    in a tool call has its lane.
 
 ### Acceptance
 
@@ -346,7 +320,11 @@ whatever it made there are removed after.
 - Python missing: on `notes` with no `python3` on the `PATH`, `changelog-writer`'s first watched
   call is stopped with the request to install Python 3.9 or later.
   - Read from the records.
-- KR1.1: the defects of the UX's KR1.1 met on `notes` and on turn.
+- Every lane: on the trial plugin, each lane lets through every call of a subagent keeping its
+  step, and stops a drift from it with its sentence, the run's value on the next line where it
+  takes one, and the subagent goes back to the step.
+  - Read from the records, the drift brought about by the run's prompt.
+- KR1.1: the defects of the UX's KR1.1 met on `notes` and on the trial plugin.
   - Counted from the records of each trial and the files, apart for each kind of defect and each
     lane, so a lane that gives the builder nothing shows; each version is compared with the one
     before it on the same plugins.

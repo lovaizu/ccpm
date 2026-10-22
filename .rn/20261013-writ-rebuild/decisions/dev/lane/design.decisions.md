@@ -62,3 +62,25 @@ about lane/README.md and dev/lane/ux.md, both agreed.
   `dev/check.sh` and no surviving mutant by `dev/mutate.sh`; the agents' flow on stand-ins, their
   content on real plugins (the README's `notes`, turn's agents), on the model users run, judged from
   every JSONL; trials in `lovaizu/playground`, one at a time, removed after.
+
+## Where the 12 lanes were drawn from (agreed 2026-10-21)
+
+| Lane | Where it was drawn from |
+|---|---|
+| start_with | turn's roles run `turn.py given` first |
+| read_only | turn's first user reads `{work}`, `{has}` and `{checklists}` alone |
+| read_whole | turn's roles read their inputs whole |
+| write_only | turn's generator writes `{work}` alone |
+| in_form | turn's replies; rn's `steering.md` |
+| hands_off | no commit or push in turn's roles |
+| test_after | turn's generator passes the work's checks after changing it |
+| as_printed | turn's prompts handed on as `turn.py` printed them; lane:up's proposal |
+| follow_next | turn's roles started in the order `turn.py` prints |
+| wait_for | lane:up writes the proposal only on the builder's OK |
+| end_when | turn's result made before ending |
+| every_item | turn's evaluator answers every item of `{checklists}` |
+
+rn runs its steps in the main conversation, where a hook cannot tell which step runs; its
+`steering.md` is told by its place, `.rn/*/steering.md`, so its form is held there, and its
+sign-off by `/rn:ty`, which the AI cannot call.
+
