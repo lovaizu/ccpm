@@ -37,13 +37,14 @@ about lane/README.md and dev/lane/ux.md, both agreed.
 - A check reads the forms the steps tell and the AI writes, not every way the shell has; what must
   hold whatever the AI writes is held by branch protection, the sandbox or permission rules
   (lane/README.md, Why lane).
-- Each lane's sentence is made from the lane's wording in `lanes.md` with what the lane takes put
-  in; the layer writes it into the step, the hook names the step, the lane and what it takes, and
-  the guard makes the same sentence when it stops a call and finds it in the step, so the two
-  cannot differ and no sentence is written twice (lane/README.md, Why lane: "Each hook tells the
-  step's own sentence").
+- Each lane's sentence is made from the lane's wording in the README's Lanes with what the lane
+  takes put in; the layer writes it into the step, the hook names the step, the lane and what it
+  takes, and the guard makes the same sentence when it stops a call and finds it in the step, so
+  the two cannot differ and no sentence is written twice (lane/README.md, Why lane: "Each hook
+  tells the step's own sentence").
 - The 12 lanes, each with its wording, what it takes and when it stops a call, are the table the
-  user agreed (2026-10-21), which `lanes.md` gives.
+  user agreed (2026-10-21), which the README's Lanes gives as one table with an action column
+  (the user, 2026-10-22).
 - The code shared by rn and turn now, `common/hooks/hook.py` (the entry every hook runs) and
   `common/hooks/shell.py` (how a hook reads a command), moves into lane's code, cut to the usual
   forms; `common/` and `dev/common/` go, `dev/common/testing.py` going to `dev/lane/testing.py`,

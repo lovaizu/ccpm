@@ -81,6 +81,27 @@ lane gives a plugin's run what steps and hooks written on their own do not.
   so it acts on work outside the skill too. So lane lays lanes on subagents alone, and a step to
   keep goes into a subagent the skill starts.
 
+## Lanes
+
+Each lane lane can lay, under the action it watches. The sentence is what the step says and what
+the subagent is told on a drift, with what the lane takes put in where it shows `<...>`; the hook
+tells it when the subagent does what the last column says.
+
+| Action | Lane | Sentence | Told when the subagent |
+|---|---|---|---|
+| begin | start_with | First run `<script>`. | begins with anything else |
+| read | read_only | Read only `<input>`. | reads anything else |
+| read | read_whole | Read `<input>` to its end. | leaves a part of it unread |
+| write | write_only | Write only `<output>`. | writes anything else |
+| write | in_form | Write `<output>` in `<form>`. | writes it out of that form |
+| run | hands_off | Do not run `<commands>`. | runs one of them |
+| test | test_after | After changing `<output>`, pass `<test>`. | goes on with a change not yet passed |
+| hand on | as_printed | Hand on `<input>` as it is. | hands on something else |
+| hand on | follow_next | Take the next move `<script>` printed. | takes another move |
+| wait | wait_for | Do not go on until `<approval>`. | goes on without it |
+| end | end_when | End only once `<output>` is made. | ends before |
+| end | every_item | Answer every item of `<input>`. | leaves an item unanswered |
+
 ## Requirements
 
 - Claude Code, where your plugin runs and lane is installed.
@@ -105,7 +126,6 @@ own version the next time it is run there. In a plugin of ccpm itself, the code 
 
 ## Documentation
 
-- [The lanes](lanes.md) give each lane lane can lay, under its action, and what its hook notices.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development

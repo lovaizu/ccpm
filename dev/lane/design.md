@@ -71,8 +71,9 @@ flowchart TB
   A lane on the order of steps, such as reading an input whole before writing, is held from what
   the subagent has done since it started.
 - A hook holds, for each of its lanes, the step, the lane and what the lane takes; the lane's
-  sentence is made from them, by the lane's wording in `lanes.md` with what it takes put in. The
-  layer writes that sentence into the step, and the guard makes the same one when it stops a call.
+  sentence is made from them, by the lane's wording in [Lanes](../../lane/README.md#lanes) with
+  what it takes put in. The layer writes that sentence into the step, and the guard makes the
+  same one when it stops a call.
 
   So the sentence the subagent is told and the one its step says cannot differ, and no sentence is
   written twice.
@@ -102,7 +103,7 @@ lane/                          the plugin, installed by Claude Code
 │       ├── shell.py           what a shell command reads and writes
 │       ├── record.py          what the subagent did before, from its record
 │       └── lanes/<lane>.py    one check per lane
-└── lanes.md                   each lane, under its action, and what its hook notices
+└── README.md                  its Lanes: each lane, its action and what its hook notices
 ```
 
 - lane runs on Claude Code, python3 3.9 or later, git and jq; the layer checks the plugin with
@@ -133,10 +134,10 @@ lane/                          the plugin, installed by Claude Code
 
   lane's version is written once, in its `plugin.json`; a file of its own beside it would be a
   second copy that drifts.
-- The guard holds each call to the 12 lanes of `lanes.md`, one file each in `lanes/` holding the
-  lane's check and its wording: start_with, read_only, read_whole, write_only, in_form, hands_off,
-  test_after, as_printed, follow_next, wait_for, end_when and every_item; a test holds `lanes.md` to
-  the wordings in `lanes/`.
+- The guard holds each call to the 12 lanes of the README's Lanes, one file each in `lanes/`
+  holding the lane's check and its wording: start_with, read_only, read_whole, write_only,
+  in_form, hands_off, test_after, as_printed, follow_next, wait_for, end_when and every_item; a
+  test holds that table to the wordings in `lanes/`.
 - A lane's hook is one entry of the plugin's `hooks/hooks.json` for one subagent and event; its
   matcher is the tools that subagent's lanes watch, and its command gives the guard the subagent and,
   for each lane, its step, the lane and what the lane takes.
@@ -202,7 +203,7 @@ the records of every conversation and agent the check started. Each unittest bel
     AI stood in for by answers set beforehand; passes when the records show one point per message,
     each fact found shown to confirm, and the layer run only on the proposal sent back with the OK.
   - Content: on the README's `notes` and on turn; passes when each proposed lane is one of
-    `lanes.md`, and each step's drift that shows in a tool call has its lane.
+    the README's Lanes, and each step's drift that shows in a tool call has its lane.
 
 ### Acceptance
 
