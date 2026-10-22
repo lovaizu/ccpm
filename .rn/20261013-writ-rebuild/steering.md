@@ -82,7 +82,7 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 
 lane's units, built before turn and rn are remade on it; the hooks of T2 to T6 come from lane.
 
-- [ ] T16: The builder asks Claude to lay lanes on a plugin outside ccpm, answers one point at a
+- [x] T16: The builder asks Claude to lay lanes on a plugin outside ccpm, answers one point at a
   time and gives the OK, and its subagent, running a command its step says not to run, is stopped
   and told `<plugin>: <sentence>`, every other call let through; on a machine without Python 3.9 or
   later the hook asks for it. lane:up, the layer, the guard with hands_off alone, the copy with its

@@ -341,6 +341,9 @@
     },
     {
       "fact": "the user (2026-10-22): judge README, UX, design and how-to from purpose and ideal, build lane, turn and rn through, report the decisions after; turn's KR1.1 now counts where the work falls short of the purpose the calling AI gave it (578eaa3), goal and KRs put to the user"
+    },
+    {
+      "fact": "T16 tried on notes (dev/lane/trials/trial.py): lay passed; the drift was not provoked in 7 runs, as changelog-writer kept its step, and the laid hook stopped a commit fed to it as an event; the Python check stopped main's calls and as_printed stopped lane:up twice, both fixed (7776e00) and the lay and no-Python runs passed again with no wrong stop"
     }
   ],
   "semantic_gist": [
@@ -448,7 +451,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "T16's trial running by a subagent (dev/lane/trials/, notes, runs A lay, B drift, C no Python); on its result: fix lane at the cause, then T17-T20, then prompt.md and plugin.md pointing to lane, turn remade on lane, rn's hooks from lane; keep a list of decisions for the user"
+      "next": "T19 (older copy brought up by the layer, asking nothing) by a subagent; then T20, lane tried whole on notes and on turn with KR1.1 counted; then prompt.md and plugin.md pointing to lane, turn remade on lane, rn's hooks from lane; keep a list of decisions for the user"
     }
   ],
   "uncertainty_signal": [
