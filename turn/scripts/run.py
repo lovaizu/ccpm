@@ -1,10 +1,13 @@
-"""A run kept where its result goes: while it runs, what the hooks and the next step read; once it
-returns, the result in the form the caller reads."""
+"""The flow of a run: where the run stands, kept in its state beside the result, and the next move
+the orchestrator makes, printed as the tool call itself; once the run returns, the result in the
+form the calling AI reads."""
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
+import shutil
 import time
 from typing import IO, Any
 
@@ -25,34 +28,52 @@ SENDS = 3
 SHOWN = ("check", "decide", "take")
 # A messaged role's reply is waited for a second at a time, within the shell's two minutes.
 WAIT = 100
+# Where SendMessage reaches the main conversation, which alone talks with the user.
+MAIN = "main"
+# What each role is told of its run, as the line the calling AI is told.
+DOES = {
+    GENERATOR: "make the work to give every item its Good, and run what it gives as the receiver"
+    " would",
+    FIRST_USER: "use the work in the receiver's place and give each item's Good",
+    EVALUATOR: "look through the work anew for every item's Good",
+    LEARNER: "learn from every agent's record how the round went",
+}
+# What each role is told when it is sent more work, as it is kept started.
+AGAIN = {
+    GENERATOR: "make the work again for each item the first user found no Good for",
+    FIRST_USER: "read the work made again where it found no Good",
+}
+FORMS = {
+    GENERATOR: forms.CLAIM,
+    FIRST_USER: forms.FIRST_READING,
+    EVALUATOR: forms.GOOD,
+    LEARNER: forms.LEARNT,
+}
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your check, decision or take as JSON>]\n"
+    "       turn.py next <result> [< <your check, decision, take or the agent ID as JSON>]\n"
     "       turn.py next <result> <page>\n"
-    "       turn.py given <result>\n"
-    "       turn.py parts <result>\n"
-    "       turn.py record <result> <record number> <page>"
+    "       turn.py questions <result>\n"
+    "       turn.py parts <result>"
 )
 
 
 def main(argv: list[str], stdin: IO[str]) -> int:
-    """What turn.py runs: the call checked and the run started, each step's outcome taken, giving
-    the agent to start next, the items to decide, or the result written; what each role is given,
-    the parts of the work, and each record for the learner. Prints what comes next as JSON and gives 0, or prints what
-    was wrong and gives 1."""
+    """What turn.py runs: the call checked and the run started or gone on with, each step's outcome
+    taken, giving the next move, what the orchestrator judges, or the result written; the questions
+    the run asks, and the parts of the work. Prints what comes next and gives 0, or prints what was
+    wrong and gives 1."""
     try:
         if argv[:1] == ["start"] and len(argv) == 2:
             print(json.dumps(start(argv[1]), ensure_ascii=False))
         elif argv[:1] == ["next"] and len(argv) == 2:
-            print(paged(argv[1], next_step(argv[1], stdin.read()), "1"))
+            print(shown(argv[1], next_step(argv[1], stdin.read()), "1"))
         elif argv[:1] == ["next"] and len(argv) == 3:
-            print(paged(argv[1], view(argv[1]), argv[2]))
-        elif argv[:1] == ["given"] and len(argv) == 2:
-            print(json.dumps(given(argv[1]), ensure_ascii=False))
+            print(shown(argv[1], view(argv[1]), argv[2]))
+        elif argv[:1] == ["questions"] and len(argv) == 2:
+            print(json.dumps(questions(argv[1]), ensure_ascii=False))
         elif argv[:1] == ["parts"] and len(argv) == 2:
             print(json.dumps(parts(argv[1]), ensure_ascii=False))
-        elif argv[:1] == ["record"] and len(argv) == 4:
-            print(record(argv[1], argv[2], argv[3]))
         else:
             print(USAGE)
             return 1
@@ -62,23 +83,58 @@ def main(argv: list[str], stdin: IO[str]) -> int:
     return 0
 
 
+def state_path(result: str) -> str:
+    """Where the run is kept: beside its result, so a call again finds it by the result it names."""
+    return result + ".run.json"
+
+
+def reply_path(result: str, agent: str) -> str:
+    """Where the role writes its reply, read by the flow alone."""
+    return f"{result}.{agent.partition(':')[2]}.json"
+
+
+def records_folder(result: str) -> str:
+    """Where the records the learner reads are shown as text."""
+    return result + ".records"
+
+
 def start(text: str) -> dict[str, Any]:
-    """Starts the run the call asks for, and gives the items the orchestrator checks can get their
-    Good before any work is made."""
-    run = call.check(call.parse(text))
-    # The run waits on the orchestrator's check of these items.
-    run["check"] = run["items"]
-    write(run["call"]["result"], {"running": run})
-    return {"check": run["check"]}
+    """Starts the run the call asks for, or goes on with the run its result names from the move it
+    was last at; gives where the result goes, for the run's lanes."""
+    asked = call.parse(text)
+    result = asked.get("result")
+    kept = running(result) if isinstance(result, str) else None
+    if kept is None or not isinstance(result, str):
+        run = call.check(asked)
+        # The run waits on the orchestrator's check of these items.
+        run["check"] = run["items"]
+        save(run)
+        return {"result": run["call"]["result"]}
+    if kept["call"] != asked:
+        raise call.Stop(
+            f"turn: a run of another call is kept at {state_path(result)}; call turn with that"
+            " call to go on with it, or with another result"
+        )
+    call.check(asked)
+    save(resumed(kept))
+    return {"result": result}
 
 
-def generator_given(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
-    return {
-        "ccs": run["call"]["ccs"],
-        "work": run["work"],
-        "sent_back": sent_back,
-        "lessons": lessons(run, "generator"),
-    }
+def resumed(run: dict[str, Any]) -> dict[str, Any]:
+    """The run gone on with by an orchestrator started anew: the agents of the run before are gone
+    with it, so the role due is started anew with what it was given and what was sent to it since,
+    and is told again."""
+    step = run.get("next")
+    if step:
+        prompt = dict(run.get("prompts", {}).get(step["agent"], step["prompt"]))
+        since = run.get("since", {}).get(step["agent"], [])
+        if "to" in step:
+            # A message moved is among those sent since; one due is not yet.
+            prompt["since"] = since + ([] if step.get("moved") else [step["message"]])
+        run["next"] = {"agent": step["agent"], "prompt": prompt}
+    for gone in ("started", "since", "prompts"):
+        run.pop(gone, None)
+    return run
 
 
 def lessons(run: dict[str, Any], role: str) -> list[str]:
@@ -91,34 +147,80 @@ def each(run: dict[str, Any]) -> list[tuple[str, str]]:
     return [key(i) for i in run["each"]]
 
 
-def reader_given(run: dict[str, Any], role: str) -> dict[str, Any]:
-    """What the first user and the evaluator are given: what the receiver has, the checklists, the
-    parts of the work, and the lessons taken for the role."""
+def generator_given(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
+    """What the generator is given: the files it makes the work from, the work, the checklists,
+    each item sent back, the lessons taken for it, and where it replies."""
     return {
+        "given": run["given"],
         "work": run["work"],
-        "has": run["has"],
-        "receiver": run["receiver"],
-        "use": run["use"],
         "checklists": run["checklist"],
-        "parts": forms.parts(run["work"]),
-        "lessons": lessons(run, role),
+        "sent_back": sent_back,
+        "lessons": lessons(run, "generator"),
+        "reply": reply_path(run["call"]["result"], GENERATOR),
     }
 
 
-def ask(run: dict[str, Any], agent: str, given: dict[str, Any]) -> dict[str, str]:
-    """Keeps the run with the agent to start next, or to send a message to once it is started,
-    and what it is given, and gives the agent and its prompt, or the message and the agent it goes
-    to. Either names the run alone, and the agent takes what it is given from the script, so no AI
-    copies it."""
-    prompt = json.dumps({"run": run["call"]["result"]}, ensure_ascii=False)
+def reader_given(run: dict[str, Any], agent: str) -> dict[str, Any]:
+    """What the first user and the evaluator are given: what the receiver has with the work, the
+    checklists, the receiver and their use, the parts of the work, the lessons taken for the role,
+    and where it replies."""
+    return {
+        "given": run["shown"],
+        "work": run["work"],
+        "checklists": run["checklist"],
+        "receiver": run["receiver"],
+        "use": run["use"],
+        "parts": forms.parts(run["work"]),
+        "lessons": lessons(run, agent.partition(":")[2]),
+        "reply": reply_path(run["call"]["result"], agent),
+    }
+
+
+def ask(run: dict[str, Any], agent: str, prompt: dict[str, Any], sent: Any = None) -> dict:
+    """Keeps the run with the role due, to be told, then started with the prompt, or, once it is
+    started, sent what is sent; and gives the line the calling AI is told."""
     to = run.get("started", {}).get(agent)
-    if to:
-        asked = {"agent": agent, "message": prompt, "to": to}
+    if to and sent is not None:
+        run["next"] = {"agent": agent, "prompt": prompt, "message": sent, "to": to}
     else:
-        asked = {"agent": agent, "prompt": prompt}
-    run["next"] = dict(asked, given=given)
-    write(run["call"]["result"], {"running": run})
-    return asked
+        run["next"] = {"agent": agent, "prompt": prompt}
+        run.setdefault("prompts", {})[agent] = prompt
+        run.setdefault("since", {})[agent] = []
+    return told(run)
+
+
+def told(run: dict[str, Any]) -> dict[str, Any]:
+    """The move telling the calling AI what was done and what the next move will do, how far and
+    how; the flow makes the line from the move, so it says what the run does."""
+    step = run["next"]
+    agent = step["agent"]
+    does = AGAIN[agent] if "to" in step else DOES[agent]
+    work = ", ".join(run["work"])
+    done = run.pop("done", "")
+    line = f"turn: {done + ' ' if done else ''}Next, {agent} will {does}, of {work}"
+    line += f", for {len(run['items'])} items, round {2 if run.get('remade') else 1}."
+    step["told"] = True
+    save(run)
+    return {"line": line, "move": {"tool": "SendMessage", "input": {"to": MAIN, "message": line}}}
+
+
+def moved(run: dict[str, Any]) -> dict[str, Any]:
+    """The move starting the role due, or sending it what is sent; its reply is written anew."""
+    step = run["next"]
+    reply = step["prompt"]["reply"]
+    if os.path.exists(reply):
+        os.remove(reply)
+    step["moved"] = True
+    save(run)
+    if "to" in step:
+        message = json.dumps(step["message"], ensure_ascii=False)
+        run.setdefault("since", {}).setdefault(step["agent"], []).append(step["message"])
+        save(run)
+        return {"move": {"tool": "SendMessage", "input": {"to": step["to"], "message": message}}}
+    prompt = json.dumps(step["prompt"], ensure_ascii=False)
+    agent = step["agent"]
+    started = {"subagent_type": agent, "description": f"turn {agent}", "prompt": prompt}
+    return {"move": {"tool": "Agent", "input": started}}
 
 
 def sending(run: dict[str, Any]) -> bool:
@@ -127,56 +229,58 @@ def sending(run: dict[str, Any]) -> bool:
     return run["sent"] <= SENDS
 
 
-def awaited(result: str, run: dict[str, Any]) -> dict[str, Any]:
-    """The run once the messaged role's reply is kept, or as it is after the wait. A run read as
-    the hook writes it is read again at the next pause."""
+def awaited(path: str) -> bool:
+    """Whether the reply is written, waited for where it comes later, as a role sent a message
+    replies after the send."""
     for _ in range(WAIT):
-        if "reply" in run["next"]:
-            return run
+        if os.path.exists(path):
+            return True
         time.sleep(1)
-        run = running(result) or run
-    return run
+    return os.path.exists(path)
 
 
-def given(result: str) -> dict[str, Any]:
-    """What the agent started last in the run is given."""
-    run = running(result)
-    if run is None:
-        raise call.Stop(f"turn: no run is going with its result at {result}")
-    if "check" in run:
-        raise call.Stop("turn: no role is started before the orchestrator's check is given")
-    return run["next"]["given"]
+def questions(result: str) -> dict[str, Any]:
+    """The questions the run asks the calling AI, as the result holds them."""
+    try:
+        with open(result, encoding="utf-8") as f:
+            kept = json.load(f)
+    except (OSError, ValueError):
+        kept = None
+    if not isinstance(kept, dict) or "questions" not in kept:
+        raise call.Stop(f"turn: {result} holds no questions; run `turn.py next {result}`")
+    return {"questions": kept["questions"]}
 
 
 def parts(result: str) -> dict[str, list[str]]:
     """The parts of the run's work as it stands, each as its lines."""
-    run = running(result)
-    if run is None:
-        raise call.Stop(f"turn: no run is going with its result at {result}")
-    return {"parts": forms.parts(run["work"])}
+    return {"parts": forms.parts(going(result)["work"])}
 
 
 def view(result: str) -> dict[str, Any]:
     """What the orchestrator is to judge now, the check, the items to decide or what to take."""
-    run = running(result)
+    run = going(result)
     for step in SHOWN:
-        if run is not None and step in run:
+        if step in run:
             return {step: run[step]}
     raise call.Stop(
         f"turn: nothing waits on your judgment to show in pages; run `turn.py next {result}`"
     )
 
 
-def pages(out: dict[str, Any]) -> list[str]:
-    """What turn.py prints for the orchestrator, in pages."""
-    return records.split(json.dumps(out, ensure_ascii=False))
+def shown(result: str, out: dict[str, Any], page: str) -> str:
+    """What turn.py prints: a move as the line it tells and the tool call itself, last, as one JSON
+    line; anything else as JSON, in pages."""
+    if "move" in out:
+        move = json.dumps(out["move"], ensure_ascii=False)
+        return f"{out['line']}\n{move}" if "line" in out else move
+    return paged(result, out, page)
 
 
 def paged(result: str, out: dict[str, Any], page: str) -> str:
     """A page of what turn.py prints, headed by its number among all where there is more than one,
     so the orchestrator sees whole what it judges however long it is, as the shell cuts a long
     print short."""
-    split = pages(out)
+    split = records.split(json.dumps(out, ensure_ascii=False))
     if not page.isdigit() or not 1 <= int(page) <= len(split):
         raise call.Stop(f"turn: page {page} is not one of 1 to {len(split)}")
     shown = split[int(page) - 1]
@@ -190,76 +294,105 @@ def paged(result: str, out: dict[str, Any], page: str) -> str:
     return head + "\n" + shown
 
 
-def record(result: str, number: str, page: str) -> str:
-    """A page of a role's record of the run, headed by its number and page among all, so the
-    learner is shown every record whole however long it is."""
-    run = running(result)
-    if run is None:
-        raise call.Stop(f"turn: no run is going with its result at {result}")
-    shown = learnt_from(run)
-    if not number.isdigit() or not 1 <= int(number) <= len(shown):
-        raise call.Stop(f"turn: record {number} is not one of 1 to {len(shown)}")
-    path = shown[int(number) - 1]
-    split = records.pages(path)
-    if not page.isdigit() or not 1 <= int(page) <= len(split):
-        raise call.Stop(f"turn: page {page} is not one of 1 to {len(split)} of record {number}")
-    head = f"record {number} of {len(shown)}, page {page} of {len(split)}: {path}"
-    return head + "\n" + split[int(page) - 1]
-
-
-def learnt_from(run: dict[str, Any]) -> list[str]:
-    """The records the learner started last in the run is shown, none before one is started."""
-    return run.get("next", {}).get("given", {}).get("records", [])
-
-
-def next_step(result: str, text: str) -> dict[str, Any]:
-    """Takes what the run waits on, the orchestrator's check, decision or take, or a role's kept
-    reply, and gives what the orchestrator does next."""
+def going(result: str) -> dict[str, Any]:
+    """The run going with its result at the path; stops where none is."""
     run = running(result)
     if run is None:
         raise call.Stop(
             f"turn: no run is going with its result at {result}; start one with"
             " `turn.py start '<call JSON>'`"
         )
+    return run
+
+
+def next_step(result: str, text: str) -> dict[str, Any]:
+    """Takes what the run waits on, the orchestrator's check, decision or take, or a role's reply,
+    and gives what the orchestrator does next."""
+    run = going(result)
     # Asked with nothing, what the orchestrator is to judge is shown again, so it can always see it
     # whole.
     if "check" in run:
         return checked(run, text) if text.strip() else {"check": run["check"]}
+    if "asked" in run:
+        # The calling AI keeps the answer in its CCS, so the check is made again on it.
+        anew = call.check(run["call"])
+        anew["check"] = anew["items"]
+        save(anew)
+        return {"check": anew["check"]}
     if "decide" in run:
         return decide(run, text) if text.strip() else {"decide": run["decide"]}
     if "take" in run:
         return taking(run, text) if text.strip() else {"take": run["take"]}
-    agent = run["next"]["agent"]
-    # Between the check and the decision the orchestrator only starts and messages the roles, as
-    # its reading would find the Good the work meant, not the one the receiver gets.
-    if text.strip():
+    step = run["next"]
+    if not step.get("told"):
+        return told(run)
+    if not step.get("moved"):
+        return moved(run)
+    return replied(run, step, text)
+
+
+def replied(run: dict[str, Any], step: dict[str, Any], text: str) -> dict[str, Any]:
+    """Takes the role's reply once it is written: one out of its form is sent back to the role with
+    what is wrong; one filled goes on to what the run does after it."""
+    agent = step["agent"]
+    if "to" not in step and "id" not in step:
+        step["id"] = agent_id(agent, text)
+        save(run)
+    elif text.strip():
         raise call.Stop(
-            f"turn: the run waits on {agent}'s reply, not on yours; run `turn.py next <the call's"
-            " result>` with nothing"
+            f"turn: the run waits on {agent}'s reply, not on yours; run `turn.py next"
+            f" {run['call']['result']}` with nothing"
         )
-    if "reply" not in run["next"]:
-        if "to" not in run["next"]:
-            raise call.Stop(
-                f"turn: {agent} has not replied; start {agent} with the prompt turn.py printed"
-                " last, and wait for its reply"
-            )
-        # A role sent a message replies later, kept by the hook, so the script waits for it.
-        run = awaited(result, run)
-        if "reply" not in run["next"]:
-            return {"waiting": agent}
+    to = step.get("to") or step["id"]
+    path = step["prompt"]["reply"]
+    if not awaited(path):
+        return {"waiting": agent}
+    with open(path, encoding="utf-8") as f:
+        reply = f.read()
+    said = forms.check(
+        reply,
+        run["items"],
+        run["work"],
+        FORMS[agent],
+        records=tuple(run.get("learnt", [])),
+        each=each(run),
+    )
+    if said:
+        os.remove(path)
+        fix = f"Write your reply to {path} again in your form, filled:\n" + "\n".join(said)
+        return {"move": {"tool": "SendMessage", "input": {"to": to, "message": fix}}}
     # Each role's record is kept for the learner, which looks for what makes the Good in what the
     # roles did.
-    record = run["next"]["record"]
-    if record not in run.setdefault("records", []):
-        run["records"].append(record)
-    return REPLIED[agent](run, run["next"]["reply"])
+    if to not in run.setdefault("records", []):
+        run["records"].append(to)
+    if agent in KEPT:
+        run.setdefault("started", {})[agent] = to
+    del run["next"]
+    return REPLIED[agent](run, json.loads(forms.unfenced(reply)))
+
+
+def agent_id(agent: str, text: str) -> str:
+    """The agent ID the Agent call starting the role gave back, as the orchestrator hands it on."""
+    try:
+        given = json.loads(forms.unfenced(text))
+    except ValueError:
+        given = None
+    found = given.get("agent_id") if isinstance(given, dict) else None
+    if not isinstance(found, str) or not found.strip():
+        raise call.Stop(
+            f'turn: give the agent ID the Agent call starting {agent} gave back, as {{"agent_id":'
+            ' "<ID>"}'
+        )
+    return found
 
 
 def made(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     """Keeps the generator's claim, for the questions it asks, and has the first user use the work
     made, with no reading between."""
     run["claim"] = reply
-    return ask(run, FIRST_USER, reader_given(run, "first-user"))
+    run["done"] = f"{GENERATOR} made {', '.join(run['work'])}."
+    remade = {"remade": run["work"], "reply": reply_path(run["call"]["result"], FIRST_USER)}
+    return ask(run, FIRST_USER, reader_given(run, FIRST_USER), remade)
 
 
 def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
@@ -269,19 +402,17 @@ def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     run["read"] = [i for i in reply["items"] if good(i)]
     asked = [named(f) for f in run["claim"]["items"] if "question" in f]
     stops = [i for i in reply["items"] if "places" in i and named(i) not in asked]
+    run["done"] = f"{FIRST_USER} found the Good of {len(run['read'])} of {len(run['items'])} items."
     if stops and sending(run):
-        return ask(run, GENERATOR, generator_given(run, stops))
-    return evaluate(run)
-
-
-def evaluate(run: dict[str, Any]) -> dict[str, Any]:
-    return ask(run, EVALUATOR, dict(reader_given(run, "evaluator"), reading=run["read"]))
+        back = {"sent_back": stops, "reply": reply_path(run["call"]["result"], GENERATOR)}
+        return ask(run, GENERATOR, generator_given(run, stops), back)
+    return ask(run, EVALUATOR, dict(reader_given(run, EVALUATOR), reading=run["read"]))
 
 
 def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Records the orchestrator's check: with an item the CCS cannot give its Good, the run returns
-    the questions alone, as no work made without the answer can give it; otherwise the generator
-    makes the work."""
+    """Records the orchestrator's check: with an item the CCS cannot give its Good, the run asks
+    the calling AI its questions, as no work made without the answer can give it; otherwise the
+    generator makes the work."""
     said = forms.check(text, run["items"], run["work"], forms.CHECK)
     if said:
         raise call.Stop("turn: the check is not filled:\n" + "\n".join(said))
@@ -290,7 +421,9 @@ def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
     asked = waited(found["items"], found["questions"])
     if asked:
         write(run["call"]["result"], {"questions": asked})
-        return {"returned": run["call"]["result"]}
+        run["asked"] = asked
+        save(run)
+        return {"asked": run["call"]["result"]}
     return ask(run, GENERATOR, generator_given(run, []))
 
 
@@ -311,7 +444,7 @@ def compare(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
         for i in run["items"]
     ]
     run["decide"] = {"items": every, "questions": run["claim"]["questions"]}
-    write(run["call"]["result"], {"running": run})
+    save(run)
     return {"decide": run["decide"]}
 
 
@@ -342,11 +475,31 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     return settle(run, items, asked + decision["questions"])
 
 
-def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) -> dict[str, str]:
-    """After every round, the learner learns from every record of the run how the run went."""
+def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) -> dict[str, Any]:
+    """After every round, the learner learns from every record of the run how the run went, each
+    record shown as text it reads whole."""
     run["settled"] = {"items": items, "questions": questions}
-    shown = run["records"] + [run["orchestrator"]] if "orchestrator" in run else run["records"]
-    learner = {"findings": items, "records": shown, "lessons": lessons(run, "learner")}
+    result = run["call"]["result"]
+    found = [records.find(i) for i in run["records"]]
+    kept = [p for p in found if p]
+    orchestrator = records.orchestrator(kept, result)
+    run["learnt"] = kept + ([orchestrator] if orchestrator else [])
+    folder = records_folder(result)
+    shutil.rmtree(folder, ignore_errors=True)
+    os.makedirs(folder)
+    texts = []
+    for n, path in enumerate(run["learnt"], 1):
+        texts.append(os.path.join(folder, f"{n}.txt"))
+        with open(texts[-1], "w", encoding="utf-8") as f:
+            f.write(records.wrapped(records.shown(path)))
+    learner = {
+        "given": texts,
+        "findings": items,
+        "lessons": lessons(run, "learner"),
+        "reply": reply_path(result, LEARNER),
+    }
+    good_items = len([i for i in items if good(i)])
+    run["done"] = f"turn:up decided {good_items} of {len(items)} items Good."
     return ask(run, LEARNER, learner)
 
 
@@ -362,7 +515,7 @@ def offer(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     if not take["process"]:
         return took(run, [])
     run["take"] = take
-    write(run["call"]["result"], {"running": run})
+    save(run)
     return {"take": take}
 
 
@@ -376,11 +529,11 @@ def taking(run: dict[str, Any], text: str) -> dict[str, Any]:
     return took(run, [take["process"][n - 1] for n in chosen["process"]])
 
 
-def took(run: dict[str, Any], process: list) -> dict[str, str]:
+def took(run: dict[str, Any], process: list) -> dict[str, Any]:
     """With the lessons taken, the work is made again, or the run returns. The result holds each
     item's Good, each question an item still waits on with the items it settles, each item without
     Good with what the receiver gets once it has it and where it is not found, and every lesson on
-    the run taken."""
+    the run taken; what the run kept beside it is removed."""
     again = remade(run)
     run.setdefault("lessons", []).extend(process)
     settled = run.pop("settled")
@@ -402,6 +555,12 @@ def took(run: dict[str, Any], process: list) -> dict[str, str]:
             "lessons": run["lessons"],
         },
     )
+    os.remove(state_path(result))
+    for agent in FORMS:
+        # A role a round did not reach, such as one called again before, wrote no reply.
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(reply_path(result, agent))
+    shutil.rmtree(records_folder(result))
     return {"returned": result}
 
 
@@ -434,13 +593,18 @@ def judged(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def running(result: str) -> dict[str, Any] | None:
-    """The run going with its result at the path, or None when none is."""
+    """The run kept for the result at the path, or None when none is."""
     try:
-        with open(result, encoding="utf-8") as f:
+        with open(state_path(result), encoding="utf-8") as f:
             kept = json.load(f)
     except (OSError, ValueError):
         return None
-    return kept.get("running") if isinstance(kept, dict) else None
+    return kept if isinstance(kept, dict) else None
+
+
+def save(run: dict[str, Any]) -> None:
+    """Keeps where the run stands, beside its result."""
+    write(state_path(run["call"]["result"]), run)
 
 
 def write(path: str, data: dict[str, Any]) -> None:
@@ -448,7 +612,7 @@ def write(path: str, data: dict[str, Any]) -> None:
     if folder:
         os.makedirs(folder, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
-        # One key or value to a line, so the calling AI and the user can read the result.
+        # One key or value to a line, so the calling AI and the user can read it.
         json.dump(data, f, ensure_ascii=False, indent=1)
         f.write("\n")
 

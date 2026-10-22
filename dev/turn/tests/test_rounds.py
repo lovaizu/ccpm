@@ -1,30 +1,23 @@
 import json
+import os
 from unittest import mock
 
 from helpers import (
     CALL,
-    CHECKED,
-    EVALUATED,
+    CAN,
     FIRST_READ,
     FOUND,
     GOOD,
-    ID,
-    READ_GIVEN,
-    READ_SHOWN,
-    SENT_BACK,
+    IDS,
+    RESULT,
     STOPPED,
     WAITS,
     RepoTest,
-    pretooluse,
     run,
-    subagentstop,
 )
 
-RESULT = CALL["result"]
 # The generator's claim of every item's Good.
 CLAIM = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": []}
-# A reading of the orchestrator's own, which the run does not take between the roles.
-EVERY = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": []}
 
 
 class RoundTest(RepoTest):
@@ -33,301 +26,211 @@ class RoundTest(RepoTest):
 
     def setUp(self):
         super().setUp()
-        self.prompt = self.started()
-        self.claim()
-
-    def claim(self):
-        """The generator replies with its claim, as turn's hook keeps it."""
-        self.assertEqual(self.replied("turn:generator", self.prompt, CLAIM, *READ_GIVEN), (0, ""))
-
-    def answer(self, agent_type, reply):
-        """The role sent a message replies again, as turn's hook sees it on the same record."""
-        path = f"{self.repo}/session/subagents/agent-{agent_type.partition(':')[2]}.jsonl"
-        event = self.event(
-            "SubagentStop",
-            agent_type,
-            agent_transcript_path=path,
-            last_assistant_message=json.dumps(reply),
-            stop_hook_active=False,
-        )
-        return self.hook(subagentstop, event)
-
-    def waited(self, *replies):
-        """What the script prints asked with nothing, while each pause of its wait lets the next
-        of the replies, an (agent, reply) pair, arrive."""
-        pending = list(replies)
-
-        def pause(seconds):
-            if pending:
-                self.assertEqual(self.answer(*pending.pop(0)), (0, ""))
-
-        with mock.patch.object(run.time, "sleep", pause):
-            return self.next()
-
-    def first_user_read(self):
-        """After the generator's claim, the first user is started."""
-        out = self.next()
-        self.assertEqual(out["agent"], "turn:first-user")
-        self.assertIn("prompt", out)
-        return out["prompt"]
+        self.started()
+        self.first = self.due(self.replied(CLAIM))
 
     def stopped(self):
-        """The first user stops at an item, and the script prints the message sending it back to
-        the generator; with the first user's prompt."""
-        prompt = self.first_user_read()
-        self.assertEqual(self.replied("turn:first-user", prompt, {"items": FIRST_READ}), (0, ""))
-        return self.next(), prompt
+        """The first user stops at an item, and the script tells and sends it back to the
+        generator by message; the message move."""
+        return self.due(self.replied({"items": FIRST_READ}))
+
+    def answered(self, reply):
+        """What the script prints asked with nothing, while the first pause of its wait has the
+        role sent a message write its reply."""
+        path = self.prompt()["reply"]
+
+        def pause(seconds):
+            self.write(path, json.dumps(reply))
+
+        with mock.patch.object(run, "WAIT", 3), mock.patch.object(run.time, "sleep", pause):
+            return self.next()
 
 
 class TestGeneratorKept(RoundTest):
     def test_a_generator_that_replied_is_sent_the_first_users_stop_by_message(self):
-        # Given: a generator that replied once, and a first user that stopped at an item
+        # Given: a generator that replied, and a first user stopping at an item
         # When: the orchestrator goes on
-        # Then: the script names the generator, the message and its agent to send it to, and the
-        # generator is given the stop as the first user gave it
-        out, _ = self.stopped()
-        self.assertEqual(out, {"agent": "turn:generator", "message": self.prompt, "to": ID})
-        self.assertEqual(self.given()["sent_back"], [STOPPED])
+        # Then: the generator is sent, by its agent ID, the item as the first user gave it and
+        # where it replies, and its old reply is removed
+        move = self.stopped()
+        self.assertEqual(move["tool"], "SendMessage")
+        self.assertEqual(move["input"]["to"], IDS["turn:generator"])
+        message = json.loads(move["input"]["message"])
+        self.assertEqual(message, {"sent_back": [STOPPED], "reply": RESULT + ".generator.json"})
+        self.assertFalse(os.path.exists(RESULT + ".generator.json"))
+
+    def test_a_message_keeps_letters_beyond_ascii_as_they_are(self):
+        # Given: a first user that says in Japanese what it did where it stopped
+        # When: the generator is sent the stop
+        # Then: the words stand in the message as they are
+        stop = dict(STOPPED, did="冒頭を読んだ")
+        move = self.due(self.replied({"items": [FOUND, stop]}))
+        self.assertIn("冒頭を読んだ", move["input"]["message"])
+
+    def test_a_reply_is_waited_for_a_second_at_a_time_within_the_shell_s_two_minutes(self):
+        # Given: a generator sent the first user's stop, which never replies
+        # When: the orchestrator goes on, with the wait as turn has it
+        # Then: the script waits a second at a time, a hundred times, then says it is waiting
+        self.stopped()
+        self.waiting.stop()
+        with mock.patch.object(run.time, "sleep") as sleep:
+            self.assertEqual(self.next(), {"waiting": "turn:generator"})
+        self.assertEqual(sleep.call_args_list, [mock.call(1)] * 100)
+        self.waiting.start()
 
     def test_the_messaged_generators_reply_is_waited_for_and_the_first_user_sent_it(self):
-        # Given: a generator sent an item back by message
-        # When: the orchestrator runs the script with nothing, and the reply arrives as it waits
-        # Then: the first user is sent the work made again by message, with no reading between
-        _, prompt = self.stopped()
-        out = self.waited(("turn:generator", CLAIM))
-        self.assertEqual(out, {"agent": "turn:first-user", "message": prompt, "to": ID})
+        # Given: a generator sent the first user's stop
+        # When: the orchestrator goes on, and the reply comes during the wait
+        # Then: the first user, kept started, is sent the work made again by message
+        self.stopped()
+        move = self.due(self.answered(CLAIM))
+        self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
+        expected = {"remade": ["README.md"], "reply": RESULT + ".first-user.json"}
+        self.assertEqual(json.loads(move["input"]["message"]), expected)
 
     def test_a_reply_not_come_within_the_wait_leaves_the_run_waiting(self):
-        # Given: a generator sent an item back by message
-        # When: no reply comes while the script waits
-        # Then: it waits a hundred pauses of one second, and says the run waits on the generator
+        # Given: a generator sent the first user's stop
+        # When: the orchestrator goes on and no reply comes within the wait
+        # Then: the script says it is still waiting on the generator, and goes on once it comes
         self.stopped()
-        pauses = []
-        with mock.patch.object(run.time, "sleep", pauses.append):
+        with mock.patch.object(run, "WAIT", 2), mock.patch.object(run.time, "sleep") as sleep:
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
-        self.assertEqual(pauses, [1] * 100)
-
-    def test_a_run_read_while_the_hook_writes_it_is_read_again(self):
-        # Given: a generator sent an item back by message
-        # When: the script finds the run half written at one pause, and the reply at the next
-        # Then: it goes on from the reply
-        _, prompt = self.stopped()
-        with open(RESULT, encoding="utf-8") as f:
-            whole = f.read()
-        steps = [whole[:10], whole]
-
-        def pause(seconds):
-            if steps:
-                self.write(RESULT, steps.pop(0))
-            else:
-                self.answer("turn:generator", CLAIM)
-
-        with mock.patch.object(run.time, "sleep", pause):
-            out = self.next()
-        self.assertEqual(out, {"agent": "turn:first-user", "message": prompt, "to": ID})
+        self.assertEqual(sleep.call_count, 2)
+        self.assertEqual(self.due(self.answered(CLAIM))["tool"], "SendMessage")
 
     def test_a_reading_before_the_messaged_generator_replied_stops(self):
-        # Given: a generator sent an item back by message, not replied yet
+        # Given: a generator sent a message, not replied yet
         # When: the orchestrator gives a reading of its own
-        # Then: it stops, saying the run waits on the generator's reply
+        # Then: it stops, saying the run waits on the generator
         self.stopped()
-        self.assertIn("waits on turn:generator's reply", self.refused(EVERY))
+        self.assertIn("waits on turn:generator's reply", self.refused(CLAIM))
 
 
 class TestFirstUserKept(RoundTest):
     def test_a_first_user_finding_every_good_has_the_evaluator_started(self):
-        # Given: a first user started after the generator's claim
-        # When: it finds every item's Good
-        # Then: the evaluator is started with its reading
-        prompt = self.first_user_read()
-        reading = [FOUND, dict(FOUND, item="B-1")]
-        self.assertEqual(self.replied("turn:first-user", prompt, {"items": reading}), (0, ""))
-        self.assertEqual(self.next()["agent"], "turn:evaluator")
-        self.assertEqual(self.given()["reading"], reading)
-
-    def test_an_item_the_first_user_stopped_at_goes_to_the_generator_and_back_to_it(self):
-        # Given: a first user that finds no Good for one item
-        # When: the generator replies with the work made again, and the first user then finds
-        # every Good
-        # Then: the evaluator is started
-        self.stopped()
-        self.waited(("turn:generator", CLAIM))
-        reading = [FOUND, dict(FOUND, item="B-1")]
-        self.assertEqual(
-            self.waited(("turn:first-user", {"items": reading}))["agent"], "turn:evaluator"
-        )
+        # Given: a first user finding every item's Good
+        # When: the orchestrator goes on
+        # Then: the evaluator is started anew
+        move = self.due(self.replied({"items": [FOUND, dict(FOUND, item="B-1")]}))
+        self.assertEqual(move["tool"], "Agent")
+        self.assertEqual(move["input"]["subagent_type"], "turn:evaluator")
 
     def test_the_first_user_sends_back_three_times_a_round_at_most(self):
-        # Given: a first user that stops at an item every time it reads
-        # When: the run goes on each time
-        # Then: the generator is sent it three times, and the fourth goes on to the evaluator
-        out, _ = self.stopped()
-        self.assertEqual(out["agent"], "turn:generator")
-        for agent in ("turn:generator", "turn:generator", "turn:evaluator"):
-            self.waited(("turn:generator", CLAIM))
-            self.assertEqual(
-                self.waited(("turn:first-user", {"items": FIRST_READ}))["agent"], agent
-            )
+        # Given: a first user that stops at an item each time it reads
+        # When: the round goes on
+        # Then: the generator is sent it three times, and the fourth stop starts the evaluator
+        for _ in range(3):
+            self.assertEqual(self.stopped()["input"]["to"], IDS["turn:generator"])
+            self.due(self.answered(CLAIM))
+        out = self.due(self.replied({"items": FIRST_READ}))
+        self.assertEqual(out["input"]["subagent_type"], "turn:evaluator")
 
     def test_a_stop_at_an_item_waiting_on_a_question_is_not_sent_back(self):
-        # Given: a claim with one item waiting on a question
-        # When: the first user stops at that item
-        # Then: the evaluator is started
+        # Given: a claim with an item waiting on a question, and a first user stopping there
+        # When: the orchestrator goes on
+        # Then: the evaluator is started, as only the user's answer can give it
+        RepoTest.setUp(self)
         self.started()
-        out = self.made(GOOD, WAITS)
-        self.replied("turn:first-user", out["prompt"], {"items": FIRST_READ})
-        self.assertEqual(self.next()["agent"], "turn:evaluator")
-
-    def test_the_second_round_starts_the_generator_and_the_first_user_anew(self):
-        # Given: a first round whose generator and first user replied, leaving an item without Good
-        # When: the run goes on to the second round
-        # Then: the generator is started with a prompt, not sent a message, and the round's
-        # send-backs are counted anew
-        self.stopped()
-        self.waited(("turn:generator", CLAIM))
-        reading = [FOUND, dict(FOUND, item="B-1")]
-        out = self.waited(("turn:first-user", {"items": reading}))
-        self.replied("turn:evaluator", out["prompt"], {"items": [EVALUATED]})
-        self.next()
-        out = self.next({"items": [GOOD, SENT_BACK], "questions": []})
-        self.replied("turn:learner", out["prompt"], {"process": [], "checked": CHECKED})
-        out = self.next()
-        self.assertEqual(out["agent"], "turn:generator")
-        self.assertIn("prompt", out)
-        kept = self.read_json(RESULT)["running"]
-        self.assertFalse({"started", "sent"} & set(kept))
+        self.due(self.made(GOOD, WAITS))
+        out = self.due(self.replied({"items": [FOUND, STOPPED]}))
+        self.assertEqual(out["input"]["subagent_type"], "turn:evaluator")
 
 
-class TestMessageHooks(RoundTest):
-    def send(self, to, message, agent_type="turn:up"):
-        event = self.event(
-            "PreToolUse",
-            agent_type,
-            tool_name="SendMessage",
-            tool_input={"to": to, "message": message, "summary": "go on"},
+class TestTold(RepoTest):
+    def test_each_move_is_told_first_by_a_line_the_flow_makes(self):
+        # Given: a run checked to give every item its Good
+        # When: the orchestrator goes on, and once more
+        # Then: the line telling the calling AI what comes next, how far and how is sent to
+        # `main` first, then the move itself; the line the flow prints is the message
+        self.turn("start", json.dumps(CALL))
+        out = self.next({"items": CAN, "questions": []})
+        line = (
+            "turn: Next, turn:generator will make the work to give every item its Good, and run"
+            " what it gives as the receiver would, of README.md, for 2 items, round 1."
         )
-        self.given_record(ID, json.dumps(CALL))
-        return event
-
-    def test_a_message_sent_as_the_script_printed_passes(self):
-        # Given: a generator to be sent the first user's stop
-        # When: the orchestrator sends it the message to the agent the script printed
-        # Then: it goes through
-        out, _ = self.stopped()
-        self.assertEqual(self.hook(pretooluse, self.send(out["to"], out["message"])), (0, ""))
-
-    def test_a_message_to_another_agent_or_of_other_words_stops(self):
-        # Given: a generator to be sent an item back
-        # When: the orchestrator sends the message elsewhere, to an agent named by part of its
-        # name, or other words
-        # Then: it is stopped, saying to send what the script printed
-        out, _ = self.stopped()
-        for to, message in (
-            ("a9", out["message"]),
-            ("z9", out["message"]),
-            (out["to"][:-1], out["message"]),
-            (out["to"], "fix B-1"),
-            (out["to"], "{}"),
-        ):
-            with self.subTest(to=to, message=message):
-                code, err = self.hook(pretooluse, self.send(to, message))
-                self.assertEqual(code, 2)
-                self.assertIn("send only what turn.py printed last", err)
-
-    def test_a_message_when_none_is_due_stops(self):
-        # Given: a generator started, whose reply is kept, and no message printed; and a first
-        # user to be started next
-        # When: the orchestrator sends the generator a message
-        # Then: it is stopped
-        code, err = self.hook(pretooluse, self.send(ID, self.prompt))
-        self.assertEqual(code, 2)
-        self.assertIn("send only what turn.py printed last", err)
-        self.first_user_read()
-        code, err = self.hook(pretooluse, self.send(ID, self.prompt))
-        self.assertEqual(code, 2)
-        self.assertIn("send only what turn.py printed last", err)
-
-    def test_the_orchestrator_loading_sendmessage_passes(self):
-        # Given: a generator to be sent an item back
-        # When: the orchestrator loads SendMessage with ToolSearch
-        # Then: it goes through
-        self.stopped()
-        event = self.event(
-            "PreToolUse",
-            "turn:up",
-            tool_name="ToolSearch",
-            tool_input={"query": "select:SendMessage", "max_results": 1},
+        self.assertEqual(out["line"], line)
+        self.assertEqual(
+            out["move"], {"tool": "SendMessage", "input": {"to": "main", "message": line}}
         )
-        self.given_record(ID, json.dumps(CALL))
-        self.assertEqual(self.hook(pretooluse, event), (0, ""))
-
-    def test_a_message_from_a_role_stops(self):
-        # Given: a generator sent an item back by message
-        # When: it sends its reply to the orchestrator by message
-        # Then: it is stopped, saying to reply with its form
-        out, _ = self.stopped()
-        for role in ("turn:generator", "turn:first-user", "turn:evaluator", "turn:learner"):
-            with self.subTest(role=role):
-                code, err = self.hook(pretooluse, self.send(ID, out["message"], role))
-                self.assertEqual(code, 2)
-                self.assertIn("reply with your form alone", err)
-
-    def test_a_message_to_the_calling_ai_passes(self):
-        # Given: a generator to be sent an item back, and one whose reply is kept with no message
-        # due
-        # When: the orchestrator or a role tells `main`, the calling AI's conversation, what it
-        # will do or what is done
-        # Then: it goes through
-        for due in (True, False):
-            if due:
-                self.stopped()
-            for role in ("turn:up", "turn:generator", "turn:first-user", "turn:learner"):
-                with self.subTest(due=due, role=role):
-                    event = self.send("main", "generator: will write README.md", role)
-                    self.assertEqual(self.hook(pretooluse, event), (0, ""))
-
-    def test_a_message_from_another_agent_or_of_no_run_passes(self):
-        # Given: a message sent by an agent that is not turn's orchestrator, and one by an
-        # orchestrator whose run is not going
-        # When: it is about to be sent
-        # Then: it goes through
-        self.assertEqual(self.hook(pretooluse, self.send("a9", "hi", "Explore")), (0, ""))
-        event = self.send("a9", "hi")
-        self.write_json(RESULT, {"returned": True})
-        self.assertEqual(self.hook(pretooluse, event), (0, ""))
-
-    def test_starting_a_role_where_a_message_is_due_stops(self):
-        # Given: a generator to be sent an item back
-        # When: the orchestrator starts a generator anew in its place
-        # Then: it is stopped, saying to send the message, as the generator is started already
-        out, _ = self.stopped()
-        event = self.event(
-            "PreToolUse",
-            "turn:up",
-            tool_name="Agent",
-            tool_input={"subagent_type": "turn:generator", "prompt": out["message"]},
+        move = self.next()["move"]
+        self.assertEqual(move["tool"], "Agent")
+        self.assertEqual(move["input"]["description"], "turn turn:generator")
+        out = self.replied(CLAIM)
+        self.assertTrue(
+            str(out["line"]).startswith("turn: turn:generator made README.md. Next,"), out
         )
-        code, err = self.hook(pretooluse, event)
-        self.assertEqual(code, 2)
-        self.assertIn("send turn:generator what turn.py printed last with SendMessage", err)
 
-    def test_a_reply_of_a_role_not_waited_on_is_not_kept(self):
-        # Given: a run whose first user is to be started next
-        # When: the generator replies again, or an evaluator replies out of its form
-        # Then: each ends, and neither reply is kept as the first user's
-        prompt = self.first_user_read()
-        self.assertEqual(self.answer("turn:generator", CLAIM), (0, ""))
-        self.assertEqual(self.replied("turn:evaluator", prompt, {}), (0, ""))
-        self.assertNotIn("reply", self.read_json(RESULT)["running"]["next"])
+    def test_a_move_is_printed_with_letters_beyond_ascii_as_they_are(self):
+        # Given: a work named in letters beyond ASCII
+        # When: its move is printed
+        # Then: the letters stand as they are
+        ccs = self.read_json(CALL["ccs"])
+        ccs["focal_entities"][0] = {"deliverable": "読む.md"}
+        self.write_json(CALL["ccs"], ccs)
+        self.write("読む.md", "# x\n")
+        self.turn("start", json.dumps(CALL))
+        self.turn("next", RESULT, stdin=json.dumps({"items": CAN, "questions": []}))
+        self.assertIn("読む.md", self.turn("next", RESULT)[1])
 
-    def test_only_the_generator_and_the_first_user_are_kept_started(self):
-        # Given: a run whose generator, first user and evaluator replied
-        # When: the evaluator's reply is kept
-        # Then: the run keeps the generator's and the first user's agents alone
-        prompt = self.first_user_read()
-        reading = [FOUND, dict(FOUND, item="B-1")]
-        self.replied("turn:first-user", prompt, {"items": reading}, *READ_SHOWN)
-        out = self.next()
-        self.replied("turn:evaluator", out["prompt"], {"items": [EVALUATED]})
-        started = self.read_json(RESULT)["running"]["started"]
-        self.assertEqual(started, {"turn:generator": ID, "turn:first-user": ID})
+
+class TestResumed(RepoTest):
+    def test_a_call_again_on_a_run_kept_goes_on_from_its_move(self):
+        # Given: a run whose first user is due, and a run waiting on the check
+        # When: the same call is made again
+        # Then: it goes on from that move, told again, and the check is shown again
+        self.started()
+        self.due(self.replied(CLAIM))
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual((code, json.loads(out)), (0, {"result": RESULT}))
+        move = self.due(self.next())
+        self.assertEqual(move["input"]["subagent_type"], "turn:first-user")
+        self.turn("start", json.dumps(dict(CALL, result="other.json")))
+        self.turn("start", json.dumps(dict(CALL, result="other.json")))
+        code, out = self.turn("next", "other.json")
+        self.assertEqual(json.loads(out)["check"][0]["item"], "F-1")
+
+    def test_a_kept_role_due_a_message_is_started_anew_with_what_was_sent_to_it_since(self):
+        # Given: a run whose generator, kept started, was sent two items back in turn, and is due
+        # the next
+        # When: the same call is made again
+        # Then: the generator is started anew with what it was given first and every message
+        # since, the one due among them, and no role is kept started any more
+        self.started()
+        self.due(self.replied(CLAIM))
+        sent = self.due(self.replied({"items": FIRST_READ}))
+        first = json.loads(sent["input"]["message"])
+        self.turn("start", json.dumps(CALL))
+        self.assertNotIn("started", self.state())
+        move = self.due(self.next())
+        self.assertEqual(move["tool"], "Agent")
+        prompt = json.loads(move["input"]["prompt"])
+        self.assertEqual(prompt["since"], [first])
+        self.assertEqual(prompt["sent_back"], [])
+        # The same, called again before the message due was moved.
+        super().setUp()
+        self.started()
+        self.due(self.replied(CLAIM))
+        self.replied({"items": FIRST_READ})
+        self.turn("start", json.dumps(CALL))
+        prompt = json.loads(self.due(self.next())["input"]["prompt"])
+        self.assertEqual(prompt["since"], [first])
+
+    def test_a_call_again_with_another_call_on_the_same_result_stops(self):
+        # Given: a run kept for a result
+        # When: another call names the same result
+        # Then: it stops, saying a run of another call is kept there
+        self.started()
+        other = dict(CALL, kind=dict(CALL["kind"], has="decisions"))
+        code, out = self.turn("start", json.dumps(other))
+        self.assertEqual(code, 1)
+        self.assertIn("a run of another call is kept at", out)
+
+    def test_a_call_again_on_a_ccs_gone_wrong_stops(self):
+        # Given: a run kept, whose CCS was taken away
+        # When: the same call is made again
+        # Then: it stops, as turn cannot take it
+        self.started()
+        os.remove(CALL["ccs"])
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual(code, 1)
+        self.assertIn("is not there", out)

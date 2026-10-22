@@ -15,11 +15,10 @@ from helpers import CALL, CCS, CHECKLIST, EACH, SCRIPTS, RepoTest
 # pylint: disable=duplicate-code
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your check, decision or take as JSON>]\n"
+    "       turn.py next <result> [< <your check, decision, take or the agent ID as JSON>]\n"
     "       turn.py next <result> <page>\n"
-    "       turn.py given <result>\n"
-    "       turn.py parts <result>\n"
-    "       turn.py record <result> <record number> <page>"
+    "       turn.py questions <result>\n"
+    "       turn.py parts <result>"
 )
 # pylint: enable=duplicate-code
 
@@ -52,18 +51,17 @@ class TestUsage(RepoTest):
             ["go"],
             ["aaa", "r"],
             ["zzz", "r"],
+            ["aaa", "r", "1"],
             ["aaa", "r", "1", "1"],
             ["zzz", "r", "1", "1"],
             ["start"],
             ["start", "{}", "x"],
             ["next"],
             ["next", "r", "1", "x"],
-            ["given"],
-            ["given", "r", "x"],
+            ["questions"],
+            ["questions", "r", "x"],
             ["parts"],
             ["parts", "r", "x"],
-            ["record", "r", "1"],
-            ["record", "r", "1", "1", "x"],
         ]:
             with self.subTest(argv=argv):
                 self.assertEqual(self.turn(*argv), (1, USAGE + "\n"))
@@ -96,7 +94,7 @@ class TestUsage(RepoTest):
         # When: the orchestrator runs the script by its path with a command and its argument
         # Then: the command is run on that argument, and stops on the run not going
         out = io.StringIO()
-        argv = ["turn.py", "given", "none.json"]
+        argv = ["turn.py", "parts", "none.json"]
         with (
             mock.patch.object(sys, "argv", argv),
             contextlib.redirect_stdout(out),
@@ -118,15 +116,15 @@ class TestUsage(RepoTest):
         call = dict(CALL, result=result)
         code, out = self.turn("start", json.dumps(call))
         self.assertEqual(code, 0, out)
-        self.assertIn("checklists/読む.md", out)
-        with open(result, encoding="utf-8") as kept:
+        self.assertIn("結果.json", out)
+        with open(result + ".run.json", encoding="utf-8") as kept:
             self.assertIn("checklists/読む.md", kept.read())
+        code, out = self.turn("next", result)
+        self.assertEqual(code, 0, out)
+        self.assertIn("checklists/読む.md", out)
         items = [dict(i, can="the template") for i in json.loads(out)["check"]]
         check = json.dumps({"items": items, "questions": []})
         code, out = self.turn("next", result, stdin=check)
-        self.assertEqual(code, 0, out)
-        self.assertIn("結果.json", out)
-        code, out = self.turn("given", result)
         self.assertEqual(code, 0, out)
         self.assertIn("はじめに.md", out)
         self.write("はじめに.md", "# 始め\n")
@@ -140,11 +138,12 @@ class TestStart(RepoTest):
         # Given: a call naming the CCS, the kinds of the work, the checklist and the receiver, and
         # where the result goes
         # When: the run is started
-        # Then: the orchestrator is to check every item can get its Good, before any agent starts
+        # Then: it prints where the result goes, and the orchestrator is to check every item can
+        # get its Good, before any agent starts
         code, out = self.turn("start", json.dumps(CALL))
-        self.assertEqual(code, 0, out)
+        self.assertEqual((code, json.loads(out)), (0, {"result": CALL["result"]}))
         self.assertEqual(
-            json.loads(out),
+            self.next(),
             {
                 "check": [
                     {"checklist": "checklists/readme.md", "item": "F-1"},
@@ -156,26 +155,17 @@ class TestStart(RepoTest):
     def test_a_run_checked_to_give_every_item_its_good_starts_the_generator(self):
         # Given: a run started
         # When: the orchestrator's check finds what gives every item its Good
-        # Then: the generator is to be started with where the run is kept alone, and is given
-        # the CCS and the work, with nothing sent back yet
-        prompt = self.started()
-        self.assertEqual(json.loads(prompt), {"run": CALL["result"]})
-        self.assertEqual(
-            self.given(),
-            {
-                "ccs": CALL["ccs"],
-                "work": ["README.md"],
-                "sent_back": [],
-                "lessons": [],
-            },
-        )
+        # Then: the generator is to be started with its prompt as the flow keeps it
+        move = self.started()
+        self.assertEqual(move["input"]["subagent_type"], "turn:generator")
+        self.assertEqual(json.loads(move["input"]["prompt"]), self.prompt())
 
     def test_the_run_keeps_every_item_of_every_checklist(self):
         # Given: a checklist with an item under Format and one under Benefit
         # When: the run is started
         # Then: the run keeps both items, each by its checklist and its ID
         self.started()
-        running = self.read_json(CALL["result"])["running"]
+        running = self.state()
         self.assertEqual(
             running["items"],
             [
@@ -191,7 +181,7 @@ class TestStart(RepoTest):
         # Then: the run keeps the item asked of each part, by its checklist and ID, and only it
         self.write("checklists/readme.md", CHECKLIST + EACH)
         self.turn("start", json.dumps(CALL))
-        running = self.read_json(CALL["result"])["running"]
+        running = self.state()
         self.assertEqual(running["each"], [{"checklist": "checklists/readme.md", "item": "B-2"}])
 
     def test_an_item_in_a_template_is_not_an_item(self):
@@ -201,7 +191,7 @@ class TestStart(RepoTest):
         fenced = "\n```markdown\n### B-7: <Item name>\n\n<Question>\n```\n"
         self.write("checklists/readme.md", CHECKLIST.replace("## Benefit", fenced + "\n## Benefit"))
         self.turn("start", json.dumps(CALL))
-        running = self.read_json(CALL["result"])["running"]
+        running = self.state()
         self.assertEqual([i["item"] for i in running["items"]], ["F-1", "B-1"])
 
     def test_the_run_keeps_what_the_roles_may_read(self):
@@ -209,7 +199,7 @@ class TestStart(RepoTest):
         # When: the run is started
         # Then: the run keeps the CCS, each file its entries name and the work as what may be read
         self.started()
-        running = self.read_json(CALL["result"])["running"]
+        running = self.state()
         self.assertEqual(
             running["given"],
             [
@@ -227,7 +217,7 @@ class TestStart(RepoTest):
         # Then: the run keeps the work, what the receiver has and the checklists as what the first
         # user and the evaluator may read, and not the CCS or the decisions
         self.turn("start", json.dumps(CALL))
-        running = self.read_json(CALL["result"])["running"]
+        running = self.state()
         self.assertEqual(running["shown"], ["README.md", "docs/start.md", "checklists/readme.md"])
 
     def test_the_use_and_what_the_receiver_has_are_taken(self):
@@ -235,7 +225,7 @@ class TestStart(RepoTest):
         # When: the run is started
         # Then: the run keeps each kind's entries
         self.started(CALL)
-        running = self.read_json(CALL["result"])["running"]
+        running = self.state()
         self.assertEqual(running["use"], ["to try it on their own files"])
         self.assertEqual(running["has"], ["docs/start.md"])
 
@@ -248,7 +238,7 @@ class TestStart(RepoTest):
             CALL["ccs"], dict(CCS, goal_orientation=CCS["goal_orientation"] + [{"page": "docs"}])
         )
         self.started(CALL)
-        running = self.read_json(CALL["result"])["running"]
+        running = self.state()
         self.assertEqual(running["has"], ["docs", "docs/start.md"])
         self.assertIn("docs", running["shown"])
 
@@ -261,7 +251,7 @@ class TestStart(RepoTest):
             CALL["ccs"], dict(CCS, goal_orientation=CCS["goal_orientation"] + [{"page": "docs/"}])
         )
         self.started(CALL)
-        running = self.read_json(CALL["result"])["running"]
+        running = self.state()
         self.assertEqual(running["has"], ["docs", "docs/start.md"])
         self.assertIn("docs", running["given"])
         self.assertNotIn("docs/", running["given"])
@@ -271,7 +261,7 @@ class TestStart(RepoTest):
         # When: the run is started
         # Then: the folder is made and the run kept there
         self.started(call_with(result="out/new/result.json"))
-        self.assertIn("running", self.read_json("out/new/result.json"))
+        self.assertTrue(os.path.exists("out/new/result.json.run.json"))
 
 
 class TestStartStops(RepoTest):

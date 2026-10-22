@@ -1,12 +1,12 @@
-# Mutation testing of turn, run from the top of the repository on a copy that may be changed.
+# Mutation testing of turn's scripts, run from the top of the repository on a copy that may be
+# changed. turn's hooks are lane's code, taken through a link and mutated there, with lane's tests.
 [cosmic-ray]
-module-path = "turn"
+module-path = "turn/scripts"
 timeout = 30.0
-# What turn takes from lane through a link is mutated there, with lane's tests.
-excluded-modules = ["turn/hooks/shell.py", "turn/hooks/hook.py"]
+excluded-modules = []
 # The type checker runs first: a change to a type annotation changes no behavior a test could see,
 # and the type checker is what checks annotations.
-test-command = "sh -c 'pyrefly check --search-path dev/lane --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/hooks --search-path turn/hooks/checks --search-path turn/scripts turn dev/turn && python -m unittest discover -f -s dev/turn/tests'"
+test-command = "sh -c 'pyrefly check --search-path dev/lane --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn dev/turn && python -m unittest discover -f -s dev/turn/tests'"
 
 [cosmic-ray.distributor]
 name = "local"

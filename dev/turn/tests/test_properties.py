@@ -2,8 +2,6 @@
 makes, new on every run, CI included."""
 
 import json
-import os
-import string
 import unittest
 
 # Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
@@ -13,7 +11,7 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import RepoTest, forms, records, run, shell, testing
+from helpers import RepoTest, forms, records, run, testing
 
 call = run.call
 
@@ -39,9 +37,6 @@ VALUES = st.recursive(
     LEAVES,
     lambda inner: st.lists(inner, max_size=4) | st.dictionaries(KEYS, inner, max_size=5),
     max_leaves=20,
-)
-NAMES = st.text(string.ascii_letters + string.digits + "._/", min_size=1, max_size=12).filter(
-    lambda s: not s.startswith("-")
 )
 
 
@@ -102,34 +97,13 @@ class TestCall(unittest.TestCase):
 
 
 class TestRecords(RepoTest):
-    @given(st.lists(st.text(max_size=3000), max_size=30))
-    def test_a_record_s_pages_together_show_it_whole(self, texts):
-        # Given: a record of any number of entries of any text
-        # When: it is split into pages
-        # Then: the pages joined are the record as shown, and none is longer than a page
-        path = os.path.join(self.repo, "record.jsonl")
-        with open(path, "w", encoding="utf-8") as f:
-            entries = ({"type": "user", "message": {"content": text}} for text in texts)
-            f.writelines(json.dumps(e) + "\n" for e in entries)
-        pages = records.pages(path)
-        self.assertEqual("".join(pages), records.shown(path))
-        self.assertTrue(all(len(p) <= records.PAGE for p in pages))
-
-
-class TestCommands(unittest.TestCase):
-    @given(st.text(max_size=200))
-    def test_any_command_is_read_into_words(self, command):
-        # Given: any command
-        # When: the hooks read its words, and the paths it names, writes and prints whole
-        # Then: they read it without breaking, each path whole
-        self.assertIsInstance(shell.words(command), list)
-        for paths in (shell.named, shell.written, shell.printed):
-            self.assertTrue(all(os.path.isabs(p) for p in paths(command, "/r")))
-
-    @given(st.lists(NAMES, min_size=1, max_size=5))
-    def test_cat_reads_each_file_it_names(self, names):
-        # Given: files of any plain names
-        # When: a command prints them with cat
-        # Then: each is taken as read whole
-        found = shell.printed("cat " + " ".join(names), "/r")
-        self.assertEqual(found, [os.path.realpath(os.path.join("/r", n)) for n in names])
+    @given(st.text(max_size=5000))
+    def test_a_record_wrapped_keeps_every_word_on_lines_a_read_shows(self, text):
+        # Given: a record shown as any text
+        # When: it is wrapped for the learner to read
+        # Then: its words are the same, in order, and a line is longer than a read shows only
+        # where it is one word
+        wrapped = records.wrapped(text)
+        self.assertEqual(forms.spaced(wrapped), forms.spaced(text))
+        for line in wrapped.splitlines():
+            self.assertTrue(len(line) <= records.WIDTH or len(line.split()) <= 1, line)

@@ -4,40 +4,19 @@ import json
 import os
 import re
 import sys
+from unittest import mock
 
 TURN = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "turn")
 )
 SCRIPTS = os.path.join(TURN, "scripts")
-# How the orchestrator runs turn's script, as its prompt gives it.
-SCRIPT = f'python3 "{os.path.join(TURN, "scripts", "turn.py")}"'
-HOOKS = os.path.join(TURN, "hooks")
 sys.path.insert(0, SCRIPTS)
-sys.path.insert(0, HOOKS)
 sys.path.insert(0, os.path.join(TURN, "..", "dev", "lane"))
 
-import agents  # noqa: F401  (the hooks' reading of an event, for its own tests)
-import events
 import forms  # noqa: F401  (the forms, for their own tests)
-import hook
-import records
+import records  # noqa: F401  (the records, for their own tests)
 import run
-import shell  # noqa: F401  (the hooks' reading of a command, for its own tests)
 import testing
-from checks import (  # noqa: F401  (each check, for its own tests)
-    call_given,
-    no_commit,
-    read_in_given,
-    read_whole,
-    role_given,
-    role_reply,
-    run_returned,
-    start_as_called,
-)
-
-# The checks each entry of the hooks runs, which a test hands an event as that entry would.
-pretooluse = events.PRETOOLUSE
-subagentstop = events.SUBAGENTSTOP
 
 CHECKLIST = """---
 name: readme
@@ -104,18 +83,6 @@ EVALUATED = {
     "good": "the reader meets the name and what it does first",
     "lines": ["README.md:1-3"],
 }
-ID = "a1b2c3"
-# What a first user and an evaluator read whole before they reply: the work and the checklist.
-READ_SHOWN = (
-    ("Read", {"file_path": "README.md"}),
-    ("Read", {"file_path": "checklists/readme.md"}),
-)
-# What a generator and an orchestrator read whole: the CCS and every file it names.
-READ_GIVEN = READ_SHOWN + (
-    ("Read", {"file_path": ".tasks/readme.json"}),
-    ("Read", {"file_path": "notes/readme.decisions.md"}),
-    ("Read", {"file_path": "docs/start.md"}),
-)
 # The orchestrator's check before the work is made: what in the CCS and its files gives each item's
 # Good.
 CAN = [
@@ -175,9 +142,20 @@ EACH_GOOD = {
 }
 
 
+# The agent ID the Agent call gives back for each role, as the orchestrator hands it on.
+IDS = {
+    "turn:generator": "agen",
+    "turn:first-user": "afirst",
+    "turn:evaluator": "aeval",
+    "turn:learner": "alearn",
+}
+RESULT = CALL["result"]
+
+
 class RepoTest(testing.FolderTest):
     """Each test runs turn from a temporary folder standing for the user's repository, holding a
-    task's CCS, its checklist, its decisions and a work already written."""
+    task's CCS, its checklist, its decisions and a work already written; Claude Code's records are
+    kept in a folder of its own inside it."""
 
     def setUp(self):
         super().setUp()
@@ -187,8 +165,16 @@ class RepoTest(testing.FolderTest):
         self.write("notes/readme.decisions.md", "# Decisions\n")
         self.write("docs/start.md", "# Start\n")
         self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
-
-        self.transcript = os.path.join(self.repo, "session.jsonl")
+        self.result = RESULT
+        self.claude = os.path.join(self.repo, ".claude-home")
+        self.session = os.path.join(self.claude, "projects", "repo", "s1", "subagents")
+        patched = mock.patch.dict(os.environ, {"CLAUDE_CONFIG_DIR": self.claude})
+        patched.start()
+        self.addCleanup(patched.stop)
+        # A role's reply is written by the time the flow reads it, unless a test says otherwise.
+        self.waiting = mock.patch.object(run, "WAIT", 0)
+        self.waiting.start()
+        self.addCleanup(self.waiting.stop)
 
     def turn(self, *argv, stdin=""):
         out = io.StringIO()
@@ -196,152 +182,124 @@ class RepoTest(testing.FolderTest):
             code = run.main(list(argv), io.StringIO(stdin))
         return code, out.getvalue()
 
-    def started(self, call=None):
-        """The run started on a call and checked to give every item its Good, and the prompt the
-        generator is to be started with."""
-        call = call or CALL
-        code, out = self.turn("start", json.dumps(call))
-        self.assertEqual(code, 0, out)
-        check = json.dumps({"items": CAN, "questions": []})
-        code, out = self.turn("next", call["result"], stdin=check)
-        self.assertEqual(code, 0, out)
-        return json.loads(out)["prompt"]
+    def state(self):
+        return self.read_json(run.state_path(self.result))
 
-    def given(self):
-        """What the role to start next is given, as the script prints it to the role."""
-        code, out = self.turn("given", CALL["result"])
-        self.assertEqual(code, 0, out)
+    def printed(self, out):
+        """What the script printed: a move as the line it tells, where it has one, and the tool
+        call itself; anything else as its JSON."""
+        lines = out.rstrip("\n").split("\n")
+        try:
+            move = json.loads(lines[-1])
+        except ValueError:
+            move = None
+        if isinstance(move, dict) and set(move) == {"tool", "input"}:
+            return {"line": lines[0], "move": move} if lines[1:] else {"move": move}
         return json.loads(out)
 
     def next(self, given=None):
-        """What the script prints next for the run, handed the orchestrator's reading or decision."""
-        code, out = self.turn("next", CALL["result"], stdin=json.dumps(given) if given else "")
+        """What the script prints next for the run, handed the orchestrator's check, decision,
+        take or agent ID."""
+        stdin = json.dumps(given) if given is not None else ""
+        code, out = self.turn("next", self.result, stdin=stdin)
         self.assertEqual(code, 0, out)
         head, _, page = out.partition("\n")
         count = re.match(r"\w+, page 1 of (\d+): ", head)
         if count is None:
-            return json.loads(out)
+            return self.printed(out)
         # A print too long for one read comes in pages, each without its head and the line end
         # print adds.
         for n in range(2, int(count.group(1)) + 1):
-            page = page[:-1] + self.turn("next", CALL["result"], str(n))[1].partition("\n")[2]
+            page = page[:-1] + self.turn("next", self.result, str(n))[1].partition("\n")[2]
         return json.loads(page)
 
     def refused(self, given=None):
         """What the script prints when it refuses to go on with the run."""
-        code, out = self.turn("next", CALL["result"], stdin=json.dumps(given) if given else "")
+        stdin = given if isinstance(given, str) else json.dumps(given) if given else ""
+        code, out = self.turn("next", self.result, stdin=stdin)
         self.assertEqual(code, 1, out)
         return out
 
-    def through(self, *evaluated, claim=(GOOD, WAITS), found=(FOUND,), opened=()):
-        """The run taken through the generator's claim, the first user's reading, after the round
-        has sent it back as often as it may, and the evaluator's Goods; and what the script prints
-        then."""
-        out = self.made(*claim)
-        kept = self.read_json(CALL["result"])
-        kept["running"]["sent"] = run.SENDS
-        self.write_json(CALL["result"], kept)
-        reply = {"items": self.reading(*found)}
-        self.assertEqual(self.replied("turn:first-user", out["prompt"], reply, *opened), (0, ""))
-        out = self.next()
-        self.assertEqual(out["agent"], "turn:evaluator")
-        reply = {"items": list(evaluated)}
-        self.assertEqual(self.replied("turn:evaluator", out["prompt"], reply), (0, ""))
-        return self.next()
+    def due(self, out):
+        """The role's move after the line telling the calling AI, which the orchestrator sends to
+        `main` first: the Agent call starting the role, or the message sent to it."""
+        self.assertEqual(out["move"]["tool"], "SendMessage", out)
+        self.assertEqual(out["move"]["input"]["to"], "main")
+        return self.next()["move"]
+
+    def prompt(self):
+        """What the role due is given, as its prompt holds it."""
+        return self.state()["next"]["prompt"]
+
+    def started(self, call=None):
+        """The run started on a call and checked to give every item its Good; and the move starting
+        the generator."""
+        call = call or CALL
+        self.result = str(call["result"])
+        code, out = self.turn("start", json.dumps(call))
+        self.assertEqual(code, 0, out)
+        return self.due(self.next({"items": CAN, "questions": []}))
+
+    def replied(self, reply):
+        """The role due writes its reply, and the orchestrator goes on with the agent ID the Agent
+        call gave back where it started the role; what the script prints then."""
+        step = self.state()["next"]
+        self.write(step["prompt"]["reply"], reply if isinstance(reply, str) else json.dumps(reply))
+        given = None if "to" in step or "id" in step else {"agent_id": IDS[step["agent"]]}
+        return self.next(given)
 
     def made(self, *claim):
-        """The generator started as the script printed replies with its claim, by default every
-        item Good, after reading what it was given whole; and what the script prints then."""
+        """The generator due replies with its claim, by default every item Good; and what the
+        script prints then."""
         claim = claim or (GOOD, dict(GOOD, item="B-1"))
-        prompt = self.read_json(CALL["result"])["running"]["next"]["prompt"]
         asks = [QUESTION] if any("question" in i for i in claim) else []
-        reply = {"items": list(claim), "questions": asks}
-        self.assertEqual(self.replied("turn:generator", prompt, reply, *READ_GIVEN), (0, ""))
-        return self.next()
+        return self.replied({"items": list(claim), "questions": asks})
 
     def reading(self, *found):
-        """A first user's reading giving the Goods found, and every other item it is given the
-        places it looked for its Good, what it did there and what it did not get."""
-        kept = self.read_json(CALL["result"])["running"]
+        """A first user's reading giving the Goods found, and every other item the places it looked
+        for its Good, what it did there and what it did not get."""
         given = {(i["checklist"], i["item"]) for i in found}
         return list(found) + [
             dict(i, places=["README.md:1-1"], did=DID, lacking=LACKING)
-            for i in kept["items"]
+            for i in self.state()["items"]
             if (i["checklist"], i["item"]) not in given
         ]
 
-    def given_record(self, agent_id, prompt, *tool_uses):
-        """Writes what Claude Code keeps of an agent's conversation: its prompt as the first record,
-        then each tool it used, kept twice under one ID as Claude Code keeps it, with what the tool
-        gave back where the use names it third."""
-        path = os.path.join(self.repo, "session", "subagents", f"agent-{agent_id}.jsonl")
-        entries = [{"type": "user", "message": {"role": "user", "content": prompt}}]
-        for n, (name, tool_input, *back) in enumerate(tool_uses):
-            used = {"type": "tool_use", "id": f"toolu_{n}", "name": name, "input": tool_input}
-            content = [{"type": "text", "text": "I open it."}, used]
-            entry = {"type": "assistant", "message": {"role": "assistant", "content": content}}
-            entries += [entry, entry]
-            if back:
-                result = {"type": "tool_result", "tool_use_id": f"toolu_{n}", "content": back[0]}
-                entries.append({"type": "user", "message": {"role": "user", "content": [result]}})
-        self.write(path, "".join(json.dumps(r) + "\n" for r in entries))
-        return path
-
-    def event(self, name, agent_type=None, **fields):
-        event = {
-            "session_id": "s",
-            "transcript_path": self.transcript,
-            "cwd": self.repo,
-            "hook_event_name": name,
-            **fields,
-        }
-        if agent_type:
-            event.update(agent_id=ID, agent_type=agent_type)
-        return event
-
-    def hook(self, checks, event):
-        err = io.StringIO()
-        with contextlib.redirect_stderr(err):
-            code = hook.run("turn", checks, io.StringIO(json.dumps(event)), sys.stderr)
-        return code, err.getvalue()
-
-    def replied(self, agent_type, prompt, reply, *tool_uses):
-        """A role started with the prompt ends with the reply, after using the tools, as turn's
-        SubagentStop hook sees it; given no tools, a reader has read the work and the checklist
-        whole."""
-        if not tool_uses and agent_type == "turn:learner":
-            tool_uses = self.pages_shown(prompt)
-        elif not tool_uses:
-            tool_uses = READ_SHOWN
-        path = self.given_record(agent_type.partition(":")[2], prompt, *tool_uses)
-        event = self.event(
-            "SubagentStop",
-            agent_type,
-            agent_transcript_path=path,
-            last_assistant_message=reply if isinstance(reply, str) else json.dumps(reply),
-            stop_hook_active=False,
-        )
-        return self.hook(subagentstop, event)
+    def through(self, *evaluated, claim=(GOOD, WAITS), found=(FOUND,)):
+        """The run taken through the generator's claim, the first user's reading, after the round
+        has sent it back as often as it may, and the evaluator's Goods; and what the script prints
+        then."""
+        self.due(self.made(*claim))
+        kept = self.state()
+        kept["sent"] = run.SENDS
+        self.write_json(run.state_path(self.result), kept)
+        out = self.replied({"items": self.reading(*found)})
+        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:evaluator")
+        return self.replied({"items": list(evaluated)})
 
     def learnt(self, out, reply=None, taken=None):
-        """The learner started as the script printed, replying with what it found, by default no
-        lesson on the run; then what the orchestrator takes, by default every lesson offered; and
-        what the script prints after."""
-        self.assertEqual(out["agent"], "turn:learner")
-        reply = reply or {"process": [], "checked": CHECKED}
-        self.assertEqual(self.replied("turn:learner", out["prompt"], reply), (0, ""))
-        out = self.next()
+        """The learner told and started as the script printed, replying with what it found, by
+        default no lesson on the run; then what the orchestrator takes, by default every lesson
+        offered; and what the script prints after."""
+        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
+        out = self.replied(reply or {"process": [], "checked": CHECKED})
         if "take" in out:
             every = list(range(1, len(out["take"]["process"]) + 1))
             out = self.next(taken or {"process": every})
         return out
 
-    def pages_shown(self, prompt):
-        """A learner's commands showing every page of every record of its run."""
-        kept = run.running(json.loads(prompt)["run"])
-        paths = run.learnt_from(kept) if kept else []
-        return tuple(
-            ("Bash", {"command": f"{SCRIPT} record {json.loads(prompt)['run']} {n} {p}"})
-            for n, path in enumerate(paths, 1)
-            for p in range(1, len(records.pages(path)) + 1)
+    def given_record(self, agent_id, prompt, agent_type="", folder=None):
+        """Writes what Claude Code keeps of an agent's conversation: its prompt as the first
+        record, then what it said, kept twice as Claude Code keeps it, and its meta file."""
+        folder = folder or self.session
+        path = os.path.join(folder, f"agent-{agent_id}.jsonl")
+        said = {
+            "type": "assistant",
+            "message": {"content": [{"type": "text", "text": "I open it."}]},
+        }
+        entries = [{"type": "user", "message": {"role": "user", "content": prompt}}, said, said]
+        self.write(path, "".join(json.dumps(r) + "\n" for r in entries))
+        self.write_json(
+            os.path.join(folder, f"agent-{agent_id}.meta.json"), {"agentType": agent_type}
         )
+        return path

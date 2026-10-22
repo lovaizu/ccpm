@@ -1,4 +1,5 @@
 import json
+import os
 
 from helpers import (
     CALL,
@@ -10,18 +11,17 @@ from helpers import (
     EVALUATED,
     FOUND,
     GOOD,
+    IDS,
     LESSON,
-    PARTS,
     QUESTION,
-    READ_SHOWN,
+    RESULT,
     SECTIONED,
     SENT_BACK,
     STOPPED,
     WAITS,
     RepoTest,
+    run,
 )
-
-RESULT = CALL["result"]
 
 
 def judged(item):
@@ -49,22 +49,14 @@ class TestCheck(RepoTest):
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
 
-    def test_what_a_role_is_given_before_the_check_stops(self):
-        # Given: a run started, whose check is not given yet
-        # When: a role asks what it is given
-        # Then: it is stopped, as no role is started before the check
-        code, out = self.turn("given", RESULT)
-        self.assertEqual(code, 1)
-        self.assertIn("no role is started", out)
-
     def test_a_check_in_a_json_fence_is_recorded(self):
         # Given: a check given as JSON inside a ```json fence
         # When: it is recorded
-        # Then: it is taken as the check itself, and the generator is to be started
+        # Then: it is taken as the check itself, and the generator is to be told and started
         check = json.dumps({"items": CAN, "questions": []})
         code, out = self.turn("next", RESULT, stdin=f"```json\n{check}\n```\n")
         self.assertEqual(code, 0, out)
-        self.assertEqual(json.loads(out)["agent"], "turn:generator")
+        self.assertEqual(self.state()["next"]["agent"], "turn:generator")
 
     def test_the_items_to_check_are_printed_again_when_asked_with_no_check(self):
         # Given: a run started
@@ -72,14 +64,49 @@ class TestCheck(RepoTest):
         # Then: it prints the items to check again
         self.assertEqual(self.next(), {"check": [ITEM_F1, ITEM_B1]})
 
-    def test_a_check_with_an_item_waiting_on_a_question_returns_the_questions_alone(self):
+    def test_a_check_with_an_item_waiting_on_a_question_asks_it_before_any_work(self):
         # Given: a check finding what gives one item its Good and nothing in the CCS for the other
-        # When: the check is recorded
-        # Then: the run returns with no work made, the result holding the question alone with the
-        # item it settles
+        # When: the check is recorded, and the questions are asked for
+        # Then: the run asks, with no work made, the result holding the question alone with the
+        # item it settles, printed as it holds it
         out = self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
-        self.assertEqual(out, {"returned": RESULT})
-        self.assertEqual(self.read_json(RESULT), {"questions": [dict(QUESTION, items=[ITEM_B1])]})
+        self.assertEqual(out, {"asked": RESULT})
+        asked = {"questions": [dict(QUESTION, items=[ITEM_B1])]}
+        self.assertEqual(self.read_json(RESULT), asked)
+        code, out = self.turn("questions", RESULT)
+        self.assertEqual((code, json.loads(out)), (0, asked))
+
+    def test_questions_are_printed_with_letters_beyond_ascii_as_they_are(self):
+        # Given: a question asked in Japanese
+        # When: the questions are asked for
+        # Then: its words are printed as they are
+        asked = dict(QUESTION, question="どのライセンスで公開しますか")
+        self.next({"items": [CAN[0], WAITS], "questions": [asked]})
+        self.assertIn("どのライセンスで公開しますか", self.turn("questions", RESULT)[1])
+
+    def test_once_answered_the_check_is_made_again_on_the_ccs(self):
+        # Given: a run that asked a question, and a CCS the calling AI added the answer to
+        # When: the orchestrator goes on
+        # Then: the items are checked again, on the CCS as it is now
+        self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
+        ccs = self.read_json(CALL["ccs"])
+        ccs["retrieved_artifacts"].append({"license": "MIT"})
+        self.write_json(CALL["ccs"], ccs)
+        self.assertEqual(self.next(), {"check": [ITEM_F1, ITEM_B1]})
+        self.assertNotIn("asked", self.state())
+        self.assertEqual(self.due(self.next({"items": CAN, "questions": []}))["tool"], "Agent")
+
+    def test_the_questions_of_a_result_holding_none_stop(self):
+        # Given: no result, and a result that holds no questions
+        # When: the questions are asked for
+        # Then: it stops, saying to go on with the run
+        for text in (None, "{}", "[]", "x"):
+            with self.subTest(text=text):
+                if text is not None:
+                    self.write(RESULT, text)
+                code, out = self.turn("questions", RESULT)
+                self.assertEqual(code, 1)
+                self.assertIn("holds no questions", out)
 
     def test_a_check_out_of_its_form_stops(self):
         # Given: a check leaving an item out, giving one empty words, or one a Good
@@ -91,124 +118,122 @@ class TestCheck(RepoTest):
             ([CAN[0], dict(ITEM_B1, good="x", lines=["README.md:1-1"])], "must hold"),
         ):
             with self.subTest(said=said):
-                code, out = self.turn(
-                    "next", RESULT, stdin=json.dumps({"items": items, "questions": []})
-                )
-                self.assertEqual(code, 1)
+                out = self.refused({"items": items, "questions": []})
                 self.assertIn("the check is not filled", out)
                 self.assertIn(said, out)
         self.assertEqual(self.next(), {"check": [ITEM_F1, ITEM_B1]})
 
 
 class TestMade(ReadTest):
+    def test_the_generator_is_given_what_it_makes_the_work_from_and_where_it_replies(self):
+        # Given: a run checked to give every item its Good
+        # When: the generator is to be started
+        # Then: its prompt names the work, the checklists, nothing sent back yet, no lessons, and
+        # its reply file beside the result, beside the files it makes the work from, which the
+        # start's tests hold
+        prompt = self.prompt()
+        del prompt["given"]
+        self.assertEqual(
+            prompt,
+            {
+                "work": ["README.md"],
+                "checklists": ["checklists/readme.md"],
+                "sent_back": [],
+                "lessons": [],
+                "reply": RESULT + ".generator.json",
+            },
+        )
+
     def test_the_generators_claim_starts_the_first_user_with_what_the_receiver_has(self):
         # Given: a call naming what the receiver reads the work for and what they have with it,
         # and a generator that replied with one item's Good and the other waiting on a question
         # When: the orchestrator goes on
         # Then: the first user is to be started with the work, what the receiver has, who the
-        # receiver is and what for, and the checklists, and not the CCS or the claim, with no
-        # reading of the orchestrator between
-        self.started()
-        out = self.made(GOOD, WAITS)
-        self.assertEqual(out["agent"], "turn:first-user")
+        # receiver is and what for, and the checklists, and not the CCS or the claim
+        move = self.due(self.made(GOOD, WAITS))
+        self.assertEqual(move["input"]["subagent_type"], "turn:first-user")
         self.assertEqual(
-            self.given(),
+            json.loads(move["input"]["prompt"]),
             {
+                "given": ["README.md", "docs/start.md", "checklists/readme.md"],
                 "work": ["README.md"],
-                "has": ["docs/start.md"],
+                "checklists": ["checklists/readme.md"],
                 "receiver": ["a developer new to it"],
                 "use": ["to try it on their own files"],
-                "checklists": ["checklists/readme.md"],
                 "parts": ["README.md:1-3"],
                 "lessons": [],
+                "reply": RESULT + ".first-user.json",
             },
         )
 
     def test_a_reading_of_the_orchestrator_between_the_roles_stops(self):
-        # Given: a run waiting on the generator's reply, and one waiting on the first user's
-        # When: the orchestrator gives a reading of its own
+        # Given: a run waiting on the generator's reply, kept started
+        # When: the orchestrator gives a reading of its own once the agent ID is given
         # Then: it stops, saying the run waits on the role's reply, and the run goes on
         reading = json.dumps({"items": [GOOD, WAITS], "questions": [QUESTION]})
-        code, out = self.turn("next", RESULT, stdin=reading)
-        self.assertEqual(code, 1, out)
-        self.assertIn("waits on turn:generator's reply, not on yours", out)
-        self.made(GOOD, WAITS)
-        code, out = self.turn("next", RESULT, stdin=reading)
-        self.assertEqual(code, 1, out)
-        self.assertIn("waits on turn:first-user's reply", out)
-        self.assertIn("running", self.read_json(RESULT))
+        self.next({"agent_id": IDS["turn:generator"]})
+        self.assertIn("waits on turn:generator's reply, not on yours", self.refused(reading))
+        self.assertTrue(os.path.exists(run.state_path(RESULT)))
 
-    def test_going_on_before_the_generator_replies_stops(self):
-        # Given: a run whose generator is to be started
-        # When: the orchestrator goes on before it has replied
-        # Then: it stops, saying to start the generator with the prompt printed and wait
-        self.assertIn("start turn:generator", self.refused())
+    def test_going_on_without_the_agent_id_of_a_role_started_stops(self):
+        # Given: a run whose generator was started
+        # When: the orchestrator goes on with no agent ID, or one of no words
+        # Then: it stops, asking for the agent ID the Agent call gave back
+        for given in ("", "x", '{"agent_id": " "}', "[]"):
+            with self.subTest(given=given):
+                self.assertIn("give the agent ID the Agent call", self.refused(given))
+
+    def test_a_claim_leaving_an_item_out_or_without_its_questions_is_sent_back(self):
+        # Given: a generator whose claim leaves an item out, or holds no list of questions
+        # When: the orchestrator goes on
+        # Then: the generator is sent what is wrong, to write its reply again
+        for claim, said in (
+            ({"items": [GOOD], "questions": []}, "B-1 is left out"),
+            ({"items": [GOOD, dict(GOOD, item="B-1")]}, '"questions": [...]'),
+        ):
+            with self.subTest(said=said):
+                out = self.replied(claim)
+                self.assertEqual(out["move"]["input"]["to"], IDS["turn:generator"])
+                self.assertIn(said, out["move"]["input"]["message"])
 
     def test_the_parts_of_the_work_are_printed_when_asked(self):
-        # Given: a run whose work is a README of a title, an opening and one section
-        # When: the parts are asked for, and asked for a result no run was started for
-        # Then: the parts are printed, each as its lines; and the second stops, naming the path
-        self.write("README.md", SECTIONED)
-        self.assertEqual(self.turn("parts", RESULT), (0, json.dumps({"parts": PARTS}) + "\n"))
-        code, out = self.turn("parts", "elsewhere.json")
-        self.assertEqual(code, 1)
-        self.assertIn("elsewhere.json", out)
-
-    def test_a_decision_given_after_the_run_returned_stops(self):
-        # Given: a run that has returned
-        # When: another decision is given
-        # Then: it stops, saying the run has returned and how to start one
-        self.through(EVALUATED)
-        self.learnt(self.next(AGREED))
-        code, out = self.turn("next", RESULT, stdin=json.dumps(AGREED))
-        self.assertEqual(code, 1)
-        self.assertIn("no run is going", out)
-        self.assertIn("turn.py start", out)
+        # Given: a run going
+        # When: the parts of its work are asked for
+        # Then: each part is printed as its lines
+        code, out = self.turn("parts", RESULT)
+        self.assertEqual((code, json.loads(out)), (0, {"parts": ["README.md:1-3"]}))
 
     def test_going_on_for_a_result_never_started_stops(self):
-        # Given: a result path no run was started for
-        # When: the orchestrator goes on there
-        # Then: it stops, naming the path
-        code, out = self.turn("next", "elsewhere.json", stdin="{}")
-        self.assertEqual(code, 1)
-        self.assertIn("elsewhere.json", out)
-
-    def test_what_a_role_is_given_for_a_result_never_started_stops(self):
-        # Given: a result path no run was started for
-        # When: a role asks what it is given there
-        # Then: it stops, naming the path
-        code, out = self.turn("given", "elsewhere.json")
-        self.assertEqual(code, 1)
-        self.assertIn("elsewhere.json", out)
+        # Given: no run going at a path
+        # When: the orchestrator goes on, asks for the parts or a page there
+        # Then: it is stopped, saying how to start one
+        for argv in (("next", "none.json"), ("parts", "none.json"), ("next", "none.json", "1")):
+            with self.subTest(argv=argv):
+                code, out = self.turn(*argv)
+                self.assertEqual(code, 1)
+                self.assertIn("no run is going with its result at none.json", out)
 
 
 class TestReaders(ReadTest):
     def test_the_evaluator_is_started_with_the_first_users_reading(self):
         # Given: a run whose first user has replied with the Good it found for one item
         # When: the orchestrator goes on
-        # Then: the evaluator is to be started with what the first user was, and its reading
-        out = self.made(GOOD, WAITS)
-        first = self.given()
-        self.replied("turn:first-user", out["prompt"], {"items": self.reading(FOUND)})
-        out = self.next()
-        self.assertEqual(out["agent"], "turn:evaluator")
-        self.assertEqual(self.given(), dict(first, reading=[FOUND]))
-
-    def test_going_on_before_the_first_user_replies_stops(self):
-        # Given: a run whose first user is to be started
-        # When: the orchestrator goes on before it has replied
-        # Then: it stops, saying to start the first user with the prompt printed and wait
-        self.made(GOOD, WAITS)
-        self.assertIn("start turn:first-user", self.refused())
+        # Then: the evaluator is to be started with what the first user was, its own reply file,
+        # and the reading
+        self.due(self.made(GOOD, WAITS))
+        first = self.prompt()
+        move = self.due(self.replied({"items": self.reading(FOUND)}))
+        self.assertEqual(move["input"]["subagent_type"], "turn:evaluator")
+        expected = dict(first, reading=[FOUND], reply=RESULT + ".evaluator.json")
+        self.assertEqual(json.loads(move["input"]["prompt"]), expected)
 
     def test_an_evaluator_agreeing_with_the_first_user_still_has_every_item_decided(self):
         # Given: a claim with one item's Good and the other waiting, and an evaluator giving a
         # Good to the first item alone
         # When: the orchestrator goes on, and then decides as claimed
-        # Then: both items come to decide, as readers that agree may still carry a doubt inside a
-        # Good; after the learner, the result holds where the work is, the Good with its lines,
-        # and the question with its recommended answer and the item it settles, and the run has
-        # returned
+        # Then: both items come to decide; after the learner, the result holds where the work is,
+        # the Good with its lines, and the question with the item it settles; the run has
+        # returned, and what it kept beside the result is removed
         decide = self.through(EVALUATED)["decide"]["items"]
         self.assertEqual([i["item"] for i in decide], ["F-1", "B-1"])
         self.assertEqual(self.learnt(self.next(AGREED)), {"returned": RESULT})
@@ -222,49 +247,27 @@ class TestReaders(ReadTest):
                 "lessons": [],
             },
         )
+        self.assertEqual(sorted(os.listdir(".tasks")), ["readme-result.json", "readme.json"])
 
     def test_the_result_is_written_one_key_or_value_to_a_line(self):
         # Given: a run that returns
         # When: its result is written
-        # Then: each key and each value of a list stands on a line of its own, indented one space
-        # a level, so the calling AI and the user can read it
+        # Then: each key and each value of a list stands on a line of its own
         self.through(EVALUATED)
         self.learnt(self.next(AGREED))
         with open(RESULT, encoding="utf-8") as f:
             lines = f.read().splitlines()
         self.assertEqual(lines[:4], ["{", ' "work": [', '  "README.md"', " ],"])
 
-    def test_a_result_at_the_top_of_the_repository_is_written(self):
-        # Given: a run whose result goes at the top of the repository, in no folder
-        # When: it returns
-        # Then: the result is written there
-        prompt = self.started(dict(CALL, result="result.json"))
-        claim = {"items": [GOOD, WAITS], "questions": [QUESTION]}
-        self.replied("turn:generator", prompt, claim)
-        _, out = self.turn("next", "result.json")
-        self.replied("turn:first-user", json.loads(out)["prompt"], {"items": [FOUND, WAITS_READ]})
-        _, out = self.turn("next", "result.json")
-        self.replied("turn:evaluator", json.loads(out)["prompt"], {"items": [EVALUATED]})
-        self.turn("next", "result.json")
-        _, out = self.turn("next", "result.json", stdin=json.dumps(AGREED))
-        learnt = {"process": [], "checked": CHECKED}
-        self.replied("turn:learner", json.loads(out)["prompt"], learnt)
-        code, out = self.turn("next", "result.json")
-        self.assertEqual(code, 0, out)
-        self.assertEqual(self.read_json("result.json")["items"], [GOOD])
-
     def test_every_item_goes_to_the_orchestrator_to_decide(self):
         # Given: a claim with one item's Good and the other waiting on a question, an evaluator
-        # giving no Good to the first and a Good to the second, and a first user that read the
-        # work
+        # giving no Good to the first and a Good to the second
         # When: the orchestrator goes on
         # Then: both items come back to decide, each with the evaluator's Good and the first
-        # user's, the second with the question the generator found it waits on, with the
-        # questions, and the run goes on
+        # user's, the second with the question the generator found it waits on
         good_b1 = dict(EVALUATED, item="B-1")
-        out = self.through(good_b1, opened=READ_SHOWN)
         self.assertEqual(
-            out,
+            self.through(good_b1),
             {
                 "decide": {
                     "items": [
@@ -275,7 +278,6 @@ class TestReaders(ReadTest):
                 }
             },
         )
-        self.assertIn("running", self.read_json(RESULT))
 
 
 class TestEachPart(RepoTest):
@@ -288,42 +290,26 @@ class TestEachPart(RepoTest):
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
         can = CAN + [dict(CAN[0], item="B-2")]
-        self.next({"items": can, "questions": []})
+        self.due(self.next({"items": can, "questions": []}))
 
     def test_an_item_asked_of_each_part_is_sent_back_with_the_parts_without_good(self):
         # Given: a first user giving an item asked of each part no Good where one part does not
         # give it
         # When: the orchestrator goes on
-        # Then: the generator is sent the item again, with the part where it stopped, what it did
-        # there and what it did not get
-        out = self.made(GOOD, WAITS, EACH_GOOD)
+        # Then: the generator is sent the item again, with the part where it stopped
+        self.due(self.made(GOOD, WAITS, EACH_GOOD))
         back = dict(STOPPED, item="B-2", places=["README.md:5-7"])
-        reply = {"items": [FOUND, WAITS_READ, back]}
-        self.assertEqual(self.replied("turn:first-user", out["prompt"], reply), (0, ""))
-        self.assertEqual(self.next()["agent"], "turn:generator")
-        self.assertEqual(self.given()["sent_back"], [back])
+        move = self.due(self.replied({"items": [FOUND, WAITS_READ, back]}))
+        self.assertEqual(move["input"]["to"], IDS["turn:generator"])
+        self.assertEqual(json.loads(move["input"]["message"])["sent_back"], [back])
 
     def test_an_item_given_a_good_for_every_part_is_good_in_the_result(self):
-        # Given: findings, a first user and an evaluator each giving an item asked of each part a
-        # Good for every part
+        # Given: a first user and an evaluator each giving an item asked of each part a Good for
+        # every part
         # When: the run returns
         # Then: the result holds the item with its Good for every part
         claim = (GOOD, WAITS, EACH_GOOD)
         self.through(EVALUATED, EACH_GOOD, claim=claim, found=(FOUND, EACH_GOOD))
-        decision = {"items": list(claim), "questions": []}
-        self.assertEqual(self.learnt(self.next(decision)), {"returned": RESULT})
-        self.assertEqual(self.read_json(RESULT)["items"], [GOOD, EACH_GOOD])
-
-    def test_an_item_a_reader_gave_no_good_for_every_part_goes_to_decide(self):
-        # Given: a first user giving an item asked of each part a Good for every part, and an
-        # evaluator that leaves it out
-        # When: the orchestrator goes on
-        # Then: the item comes back to decide with the first user's Good for every part
-        claim = (GOOD, WAITS, EACH_GOOD)
-        out = self.through(EVALUATED, claim=claim, found=(FOUND, EACH_GOOD))
-        decided = [i for i in out["decide"]["items"] if i["item"] == "B-2"]
-        self.assertEqual(decided[0]["first_user"], judged(EACH_GOOD))
-        self.assertIsNone(decided[0]["evaluator"])
         decision = {"items": list(claim), "questions": []}
         self.assertEqual(self.learnt(self.next(decision)), {"returned": RESULT})
         self.assertEqual(self.read_json(RESULT)["items"], [GOOD, EACH_GOOD])
@@ -336,7 +322,19 @@ class TestEachPart(RepoTest):
         self.through(EVALUATED, claim=claim, found=(FOUND,))
         out = self.refused({"items": list(claim), "questions": []})
         self.assertIn("checklists/readme.md B-2 has no Good a reader found", out)
-        self.assertIn("and where it is not found", out)
+
+    def test_a_reply_giving_an_each_part_item_without_every_part_is_sent_back_to_its_role(self):
+        # Given: a generator replying with an item asked of each part given one part alone
+        # When: the orchestrator goes on
+        # Then: the generator is sent what is wrong, to write its reply again, and the reply file
+        # is removed until it does
+        one = dict(EACH_GOOD, parts=EACH_GOOD["parts"][:1])
+        out = self.made(GOOD, WAITS, one)
+        self.assertEqual(out["move"]["tool"], "SendMessage")
+        self.assertEqual(out["move"]["input"]["to"], IDS["turn:generator"])
+        self.assertIn("in your form, filled:", out["move"]["input"]["message"])
+        self.assertFalse(os.path.exists(RESULT + ".generator.json"))
+        self.assertEqual(self.due(self.made(GOOD, WAITS, EACH_GOOD))["tool"], "Agent")
 
 
 class TestDecision(ReadTest):
@@ -347,52 +345,41 @@ class TestDecision(ReadTest):
     def test_a_decision_with_every_item_good_or_waiting_writes_the_result(self):
         # Given: both items to decide
         # When: the orchestrator gives the first Good and has the second wait on a new question
-        # Then: the result holds the Good and the new question alone, as no item waits on the
-        # claim's question any more
+        # Then: the result holds the Good and the new question alone
         new = {"question": "Which name?", "recommended": "csvtidy"}
         out = self.next({"items": [GOOD, dict(WAITS, question=2)], "questions": [new]})
         self.assertEqual(self.learnt(out), {"returned": RESULT})
-        self.assertEqual(
-            self.read_json(RESULT),
-            {
-                "work": ["README.md"],
-                "items": [GOOD],
-                "questions": [dict(new, items=[ITEM_B1])],
-                "not_good": [],
-                "lessons": [],
-            },
-        )
+        self.assertEqual(self.read_json(RESULT)["questions"], [dict(new, items=[ITEM_B1])])
 
     def test_a_decision_may_ask_a_new_question_or_keep_one(self):
         # Given: both items to decide, with one question asked in the claim
-        # When: the orchestrator has the first wait on a new question, numbered after the claim's,
-        # and the second still wait on the claim's question
+        # When: the orchestrator has the first wait on a new question and the second on the
+        # claim's
         # Then: the result holds both questions, numbered from 1, each with the item it settles
         new = {"question": "Which name?", "recommended": "csvtidy"}
         decision = {"items": [dict(WAITS, item="F-1", question=2), WAITS], "questions": [new]}
         self.assertEqual(self.learnt(self.next(decision)), {"returned": RESULT})
         self.assertEqual(
             self.read_json(RESULT)["questions"],
-            [dict(QUESTION, items=[ITEM_B1]), dict(new, items=[dict(ITEM_B1, item="F-1")])],
+            [dict(QUESTION, items=[ITEM_B1]), dict(new, items=[ITEM_F1])],
         )
 
     def test_the_items_to_decide_are_printed_again_when_asked_with_no_decision(self):
         # Given: a run waiting on the orchestrator's decision
         # When: the orchestrator runs the script with no input
         # Then: it is shown the items to decide again, and the run still waits on its decision
-        first = self.read_json(RESULT)["running"]["decide"]
+        first = self.state()["decide"]
         self.assertEqual(self.next(), {"decide": first})
-        self.assertIn("decide", self.read_json(RESULT)["running"])
+        self.assertIn("decide", self.state())
 
     def test_items_to_decide_too_long_for_one_read_are_shown_page_by_page(self):
         # Given: a run waiting on a decision whose items run past two pages
         # When: the orchestrator runs the script with no input, then asks for each page after
         # Then: each page is headed by its number among all and how to see the others, the pages
-        # together are the items to decide, a page past the last stops, and the run still waits
-        # on its decision
+        # together are the items to decide, and a page past the last stops
         super().setUp()
         self.through(dict(EVALUATED, item="B-1", good="x" * 45000))
-        decide = self.read_json(RESULT)["running"]["decide"]
+        decide = self.state()["decide"]
         pages = []
         for asked in ((), ("2",), ("3",)):
             code, out = self.turn("next", RESULT, *asked)
@@ -402,9 +389,18 @@ class TestDecision(ReadTest):
             self.assertIn(f"turn.py next {RESULT} <page>", head)
             pages.append(page[:-1])
         self.assertEqual(json.loads("".join(pages)), {"decide": decide})
-        for page in ("0", "4"):
+        self.assertEqual([len(p) for p in pages[:2]], [20000, 20000])
+        for page in ("0", "4", "a"):
             self.assertIn(f"page {page} is not one of 1 to 3", self.turn("next", RESULT, page)[1])
-        self.assertIn("decide", self.read_json(RESULT)["running"])
+
+    def test_items_to_decide_of_two_pages_are_shown_page_by_page(self):
+        # Given: a run waiting on a decision whose items run to two pages
+        # When: the orchestrator runs the script with no input
+        # Then: the first page is headed by its number of two
+        super().setUp()
+        self.through(dict(EVALUATED, item="B-1", good="x" * 25000))
+        out = self.turn("next", RESULT)[1]
+        self.assertTrue(out.startswith("decide, page 1 of 2: "), out[:80])
 
     def test_items_to_decide_short_enough_for_one_read_are_printed_as_they_are(self):
         # Given: a run waiting on a decision whose items fit in one page
@@ -416,32 +412,29 @@ class TestDecision(ReadTest):
     def test_a_page_asked_while_the_run_waits_on_a_role_stops(self):
         # Given: a run waiting on the generator's reply
         # When: the orchestrator asks for a page
-        # Then: it stops, saying to go on with no page, and the run still waits on the generator
+        # Then: it stops, saying to go on with no page
         super().setUp()
-        self.started()
         code, out = self.turn("next", RESULT, "2")
         self.assertEqual(code, 1, out)
         self.assertIn(f"run `turn.py next {RESULT}`", out)
-        self.assertEqual(self.read_json(RESULT)["running"]["next"]["agent"], "turn:generator")
 
     def test_a_good_no_reader_found_stops(self):
-        # Given: an item the generator claimed Good while neither the first user nor the evaluator
-        # found its Good
+        # Given: an item the generator claimed Good while neither reader found its Good
         # When: the decision gives it its Good
         # Then: it stops, asking for what the receiver gets once it has it, and the run goes on
         super().setUp()
         self.through(dict(EVALUATED, item="B-1"), found=())
         decision = {"items": [GOOD, WAITS], "questions": []}
         self.assertIn("checklists/readme.md F-1 has no Good", self.refused(decision))
-        self.assertIn("running", self.read_json(RESULT))
         unmet = dict(SENT_BACK, item="F-1")
-        self.assertIn("learner", self.next({"items": [unmet, WAITS], "questions": []})["agent"])
+        self.next({"items": [unmet, WAITS], "questions": []})
+        self.assertEqual(self.state()["next"]["agent"], "turn:learner")
 
     def test_a_good_a_reader_found_passes_beside_an_item_none_found(self):
         # Given: two items to decide, one whose Good the evaluator found and one no reader found,
         # either way round
         # When: the decision gives the first its Good and has the other wait on the question
-        # Then: the run returns, as the Good given is one a reader found
+        # Then: the run returns
         for claim, evaluated in (
             ((GOOD, WAITS), dict(EVALUATED, item="B-1")),
             ((dict(WAITS, item="F-1"), dict(GOOD, item="B-1")), EVALUATED),
@@ -467,60 +460,54 @@ class TestDecision(ReadTest):
         ):
             with self.subTest(decision=decision):
                 self.assertIn(said, self.refused(decision))
-                self.assertIn("running", self.read_json(RESULT))
+                self.assertIn("decide", self.state())
 
 
 class TestLearner(ReadTest):
     def setUp(self):
         super().setUp()
+        for agent, agent_id in IDS.items():
+            self.given_record(agent_id, "{}", agent)
+        self.orchestrator = self.given_record("aup", json.dumps(CALL), "turn:up")
         self.through(dict(EVALUATED, item="B-1"))
         self.learner = self.next({"items": [GOOD, SENT_BACK], "questions": []})
 
     def offered(self, *lessons):
         """The learner replied with the lessons, and what is offered to take."""
-        reply = {"process": list(lessons), "checked": CHECKED}
-        self.assertEqual(self.replied("turn:learner", self.learner["prompt"], reply), (0, ""))
-        return self.next()
+        self.due(self.learner)
+        return self.replied({"process": list(lessons), "checked": CHECKED})
 
-    def test_a_round_leaving_an_item_without_good_starts_the_learner(self):
+    def test_a_round_starts_the_learner_on_every_record_of_the_run_shown_as_text(self):
         # Given: a first round whose decision leaves an item without Good
         # When: the decision is recorded
-        # Then: the learner is to be started with every item's finding, the record of every
-        # role that replied in the run, and no lesson yet
-        self.assertEqual(self.learner["agent"], "turn:learner")
-        records = [
-            f"{self.repo}/session/subagents/agent-{a}.jsonl"
-            for a in ("generator", "first-user", "evaluator")
-        ]
+        # Then: the learner is to be started with every item's finding, the record of every role
+        # that replied and the orchestrator's, each shown as text beside the result, and no lesson
+        move = self.due(self.learner)
+        self.assertEqual(move["input"]["subagent_type"], "turn:learner")
+        texts = [f"{RESULT}.records/{n}.txt" for n in (1, 2, 3, 4)]
         self.assertEqual(
-            self.given(),
-            {"findings": [GOOD, SENT_BACK], "records": records, "lessons": []},
+            json.loads(move["input"]["prompt"]),
+            {
+                "given": texts,
+                "findings": [GOOD, SENT_BACK],
+                "lessons": [],
+                "reply": RESULT + ".learner.json",
+            },
         )
+        self.assertIn("[user] {}", self.read(texts[0]))
+        self.assertIn('"result": ".tasks/readme-result.json"', self.read(texts[3]))
 
-    def test_a_round_with_every_item_good_starts_the_learner_too(self):
-        # Given: a first round whose evaluator agrees with the first user
-        # When: the orchestrator goes on
-        # Then: the learner is to be started, as a run may get its Goods by chance or with waste
+    def test_a_record_not_kept_is_left_out(self):
+        # Given: a run whose records are not where Claude Code keeps them
+        # When: the learner is started
+        # Then: it is given none
         super().setUp()
-        self.started()
         self.through(EVALUATED)
-        self.assertEqual(self.next(AGREED)["agent"], "turn:learner")
-
-    def test_the_orchestrators_own_record_is_shown_to_the_learner(self):
-        # Given: a run whose orchestrator's record is kept
-        # When: the learner is started after a round
-        # Then: it is given the orchestrator's record after every role's
-        super().setUp()
-        self.started()
-        kept = self.read_json(RESULT)
-        kept["running"]["orchestrator"] = "orchestrator.jsonl"
-        self.write_json(RESULT, kept)
-        self.through(EVALUATED)
-        self.next(AGREED)
-        self.assertEqual(self.given()["records"][-1], "orchestrator.jsonl")
+        self.due(self.next(AGREED))
+        self.assertEqual(self.prompt()["given"], [])
 
     def test_what_the_learner_found_is_offered_to_the_orchestrator_to_take(self):
-        # Given: a learner that replied with a lesson on the run
+        # Given: a learner that replied with a lesson resting on its record's words
         # When: the orchestrator goes on, and again with nothing given
         # Then: the lesson is offered to take, with what the learner checked, each time
         offer = {"take": {"process": [LESSON], "checked": CHECKED}}
@@ -530,18 +517,16 @@ class TestLearner(ReadTest):
     def test_what_is_taken_goes_to_the_generator_and_to_each_role_of_the_second_round(self):
         # Given: an offer of a lesson for the generator and one for the first user
         # When: the orchestrator takes both lessons
-        # Then: the generator makes the work again with the item without Good and its lesson, and
-        # the first user of the second round is given its own
+        # Then: the generator is started anew with the item without Good and its lesson, and the
+        # first user of the second round is started anew with its own
         self.offered(LESSON, dict(LESSON, role="first-user", lesson="read the opening first"))
         out = self.next({"process": [1, 2]})
-        self.assertEqual(out["agent"], "turn:generator")
-        given = self.given()
+        self.assertIn("round 2", out["line"])
+        self.assertEqual(self.due(out)["tool"], "Agent")
+        given = self.prompt()
         self.assertEqual((given["sent_back"], given["lessons"]), ([SENT_BACK], [LESSON["lesson"]]))
-        self.assertNotIn("learnt", given)
-        out = self.made(GOOD, WAITS)
-        self.assertEqual(out["agent"], "turn:first-user")
-        self.assertIn("prompt", out)
-        self.assertEqual(self.given()["lessons"], ["read the opening first"])
+        self.assertEqual(self.due(self.made(GOOD, WAITS))["tool"], "Agent")
+        self.assertEqual(self.prompt()["lessons"], ["read the opening first"])
 
     def test_each_lesson_taken_is_the_one_its_number_names(self):
         # Given: an offer of three lessons, each for another role
@@ -550,7 +535,7 @@ class TestLearner(ReadTest):
         roles = ("first-user", "evaluator", "generator")
         self.offered(*(dict(LESSON, role=r, lesson=f"lesson for {r}") for r in roles))
         self.next({"process": [3]})
-        self.assertEqual(self.given()["lessons"], ["lesson for generator"])
+        self.assertEqual(self.prompt()["lessons"], ["lesson for generator"])
 
     def test_what_is_taken_out_of_its_form_stops(self):
         # Given: an offer of what the learner found
@@ -558,44 +543,44 @@ class TestLearner(ReadTest):
         # Then: it stops, naming it, and the offer still waits
         self.offered(LESSON)
         out = self.refused({"process": [2]})
-        self.assertIn("what you take is not filled", out)
         self.assertIn("lesson 2 is not one of 1 to 1", out)
-        self.assertIn("take", self.read_json(RESULT)["running"])
+        self.assertIn("take", self.state())
 
-    def test_with_nothing_to_take_the_run_goes_on_without_asking(self):
+    def test_a_lesson_quoting_words_no_record_holds_is_sent_back_to_the_learner(self):
+        # Given: a learner whose lesson quotes words its record does not hold
+        # When: the orchestrator goes on
+        # Then: the learner is sent what is wrong
+        out = self.offered(dict(LESSON, grounds=[{"record": 1, "quote": "never said"}]))
+        self.assertEqual(out["move"]["input"]["to"], IDS["turn:learner"])
+        self.assertIn("is not in record 1 as written", out["move"]["input"]["message"])
+
+    def test_with_nothing_to_take_after_a_round_with_every_item_good_the_run_returns(self):
         # Given: a round with every item Good, and a learner that found no lesson on the run
         # When: the orchestrator goes on
         # Then: the run returns, as nothing is offered
         super().setUp()
-        self.started()
         self.through(EVALUATED)
-        out = self.next(AGREED)
-        reply = {"process": [], "checked": CHECKED}
-        self.replied("turn:learner", out["prompt"], reply)
-        self.assertEqual(self.next(), {"returned": RESULT})
+        self.assertEqual(self.learnt(self.next(AGREED)), {"returned": RESULT})
 
     def test_with_no_lesson_after_a_round_leaving_an_item_without_good_the_work_is_made_again(
         self,
     ):
         # Given: a first round leaving an item without Good, and a learner that found no lesson
         # When: the orchestrator goes on
-        # Then: the generator makes the work again with the item, as nothing is offered to take
-        reply = {"process": [], "checked": CHECKED}
-        self.replied("turn:learner", self.learner["prompt"], reply)
-        self.assertEqual(self.next()["agent"], "turn:generator")
-        self.assertEqual(self.given()["sent_back"], [SENT_BACK])
+        # Then: the generator makes the work again with the item
+        self.assertEqual(self.due(self.offered())["tool"], "Agent")
+        self.assertEqual(self.prompt()["sent_back"], [SENT_BACK])
 
     def test_an_item_still_without_good_after_the_second_round_is_returned(self):
         # Given: a work made again with what the learner found, and a lesson taken
         # When: its second round leaves an item without Good, and the learner after it gives
         # another lesson, which is taken
-        # Then: the run returns with that item, what the receiver gets once it has its Good and
-        # where it is not found, and both lessons
+        # Then: the run returns with that item and both lessons
         self.offered(LESSON)
-        self.next({"process": [1]})
+        self.due(self.next({"process": [1]}))
         self.through(dict(EVALUATED, item="B-1"))
         self.learner = self.next({"items": [GOOD, SENT_BACK], "questions": []})
-        self.assertEqual(self.given()["lessons"], [])
+        self.assertEqual(self.prompt()["lessons"], [])
         second = dict(LESSON, role="learner", lesson="it read each record once")
         self.offered(second)
         self.assertEqual(self.next({"process": [1]}), {"returned": RESULT})
@@ -609,138 +594,7 @@ class TestLearner(ReadTest):
                 "lessons": [LESSON, second],
             },
         )
-
-
-class TestRecord(ReadTest):
-    def setUp(self):
-        super().setUp()
-        self.through(dict(EVALUATED, item="B-1"))
-        self.next({"items": [GOOD, SENT_BACK], "questions": []})
-
-    def test_a_record_is_shown_with_what_the_role_was_given_did_and_replied(self):
-        # Given: a learner's run, whose generator's record holds its prompt and a Read
-        # When: the learner asks for the first record's first page
-        # Then: it is shown with its number and page among all, the prompt and the tool used
-        code, out = self.turn("record", RESULT, "1", "1")
-        self.assertEqual(code, 0, out)
-        first = out.splitlines()[0]
-        self.assertEqual(first, f"record 1 of 3, page 1 of 1: {self.given()['records'][0]}")
-        self.assertIn('[user] {"run": ".tasks/readme-result.json"}', out)
-        self.assertIn('[tool_use Read] {"file_path": "README.md"}', out)
-
-    def test_a_record_too_long_for_one_read_is_shown_page_by_page(self):
-        # Given: a record holding a tool result longer than two pages, a text and a file Claude
-        # Code showed whole
-        # When: the learner asks for each page
-        # Then: the pages together show the whole record, each of 20000 characters but the last
-        path = self.given()["records"][0]
-        parts = [
-            {"type": "text", "text": "I read it."},
-            {"type": "tool_result", "content": [{"type": "text", "text": "x" * 45000}]},
-            {"type": "tool_result", "content": "done"},
-        ]
-        shown = {"type": "edited_text_file", "filename": "README.md", "snippet": "1\t# csvtidy"}
-        with open(path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({"type": "user", "message": {"content": parts}}) + "\n")
-            f.write(json.dumps({"type": "attachment", "attachment": shown}) + "\n")
-        pages = []
-        for page in (1, 2, 3):
-            code, out = self.turn("record", RESULT, "1", str(page))
-            self.assertEqual(code, 0, out)
-            self.assertIn(f"page {page} of 3", out.splitlines()[0])
-            # The page, without its head and the line end print adds.
-            pages.append(out.split("\n", 1)[1][:-1])
-        self.assertEqual([len(p) for p in pages[:2]], [20000, 20000])
-        whole = "".join(pages)
-        for words in ("I read it.", "x" * 45000, "[tool_result] done", "[shown README.md]"):
-            self.assertIn(words, whole)
-
-    def test_a_record_shows_the_role_alone_not_the_requests_claude_code_copies(self):
-        # Given: a record holding, among the role's own entries, the copy of a request Claude
-        # Code keeps beside them
-        # When: the learner asks for its page
-        # Then: the copy is not shown, and the entries after it are
-        path = self.given()["records"][0]
-        copy = {"role": "user", "content": [{"type": "text", "text": "copied request"}]}
-        after = {"content": [{"type": "text", "text": "read after the copy"}]}
-        with open(path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({"type": "api-request-blob", "message": copy}) + "\n")
-            f.write(json.dumps({"type": "assistant", "message": after}) + "\n")
-        code, out = self.turn("record", RESULT, "1", "1")
-        self.assertEqual(code, 0, out)
-        self.assertNotIn("copied request", out)
-        self.assertIn("read after the copy", out)
-
-    def test_a_record_shows_each_part_by_its_type_and_no_other_attachment(self):
-        # Given: a record holding a part of a type of its own, a tool used with words beyond
-        # ASCII, and attachments that are not a file shown whole
-        # When: the learner asks for its page
-        # Then: the part is shown by its type, the words as they are, and the attachments not
-        path = self.given()["records"][0]
-        parts = [
-            {"type": "web_search_tool_result", "text": "found"},
-            {"type": "tool_use", "name": "Read", "input": {"file_path": "読む.md"}},
-        ]
-        with open(path, "a", encoding="utf-8") as f:
-            f.write(json.dumps({"type": "assistant", "message": {"content": parts}}) + "\n")
-            for kind in ("date", "queued_command"):
-                attachment = {"type": kind, "filename": kind, "snippet": "x"}
-                f.write(json.dumps({"type": "attachment", "attachment": attachment}) + "\n")
-        code, out = self.turn("record", RESULT, "1", "1")
-        self.assertEqual(code, 0, out)
-        self.assertIn("[web_search_tool_result] found", out)
-        self.assertIn('[tool_use Read] {"file_path": "読む.md"}', out)
-        self.assertNotIn("[shown", out)
-
-    def test_each_record_is_shown_by_its_number(self):
-        # Given: a learner's run of four records
-        # When: each is asked for
-        # Then: each is shown, headed by its number and path
-        kept = self.read_json(RESULT)
-        records = kept["running"]["next"]["given"]["records"]
-        records.append(self.given_record("third", "{}"))
-        self.write_json(RESULT, kept)
-        for n, path in enumerate(records, 1):
-            with self.subTest(n=n):
-                code, out = self.turn("record", RESULT, str(n), "1")
-                self.assertEqual(code, 0, out)
-                self.assertEqual(out.splitlines()[0], f"record {n} of 4, page 1 of 1: {path}")
-
-    def test_a_record_or_page_out_of_range_stops(self):
-        # Given: a learner's run of three records, each of one page
-        # When: a record or page outside them, or one not a number, is asked for
-        # Then: it is stopped, naming what there is
-        for number, page, said in (
-            ("4", "1", "record 4 is not one of 1 to 3"),
-            ("0", "1", "record 0 is not one of 1 to 3"),
-            ("1", "0", "page 0 is not one of 1 to 1"),
-            ("1", "2", "page 2 is not one of 1 to 1"),
-            ("a", "1", "record a is not one of 1 to 3"),
-        ):
-            with self.subTest(number=number, page=page):
-                code, out = self.turn("record", RESULT, number, page)
-                self.assertEqual(code, 1)
-                self.assertIn(said, out)
-
-    def test_a_record_before_the_learner_is_started_stops(self):
-        # Given: a run waiting on the orchestrator's check, where no learner is started
-        # When: a record is asked for
-        # Then: it is stopped, as there is none to show
-        self.started(dict(CALL, result="other.json"))
-        code, out = self.turn("record", "other.json", "1", "1")
-        self.assertEqual(code, 1)
-        self.assertIn("record 1 is not one of 1 to 0", out)
-        self.turn("start", json.dumps(dict(CALL, result="checking.json")))
-        code, out = self.turn("record", "checking.json", "1", "1")
-        self.assertIn("record 1 is not one of 1 to 0", out)
-
-    def test_a_record_of_no_run_going_stops(self):
-        # Given: no run going at the path
-        # When: a record is asked for
-        # Then: it is stopped
-        code, out = self.turn("record", "none.json", "1", "1")
-        self.assertEqual(code, 1)
-        self.assertIn("no run is going", out)
+        self.assertFalse(os.path.exists(RESULT + ".records"))
 
 
 class TestDecisionForm(ReadTest):
@@ -755,7 +609,7 @@ class TestDecisionForm(ReadTest):
         self.assertEqual(code, 1, out)
         for words in said:
             self.assertIn(words, out)
-        self.assertIn("decide", self.read_json(RESULT)["running"])
+        self.assertIn("decide", self.state())
 
     def test_a_decision_that_is_not_json_stops(self):
         # Given: a decision that is not a JSON object of items and questions
@@ -771,7 +625,7 @@ class TestDecisionForm(ReadTest):
         # Then: it is taken as the decision itself, and the learner is to be started
         code, out = self.turn("next", RESULT, stdin=f"```json\n{json.dumps(AGREED)}\n```\n")
         self.assertEqual(code, 0, out)
-        self.assertEqual(json.loads(out)["agent"], "turn:learner")
+        self.assertEqual(self.state()["next"]["agent"], "turn:learner")
 
     def test_an_item_left_out_or_given_twice_stops(self):
         # Given: a decision missing an item, or giving one twice, or naming one no checklist holds
@@ -854,3 +708,103 @@ class TestDecisionForm(ReadTest):
         # When: it is recorded
         # Then: it stops, naming the question
         self.stops({"items": [GOOD, SENT_BACK], "questions": [QUESTION]}, "question 2")
+
+
+class TestRecordsShown(ReadTest):
+    """Each record is shown to the learner as what the role was given, said, used and was shown."""
+
+    def setUp(self):
+        super().setUp()
+        self.path = self.given_record(IDS["turn:generator"], '{"given": []}', "turn:generator")
+
+    def shown(self):
+        """The generator's record as the learner is shown it after the round."""
+        self.through(EVALUATED)
+        self.due(self.next(AGREED))
+        return self.read(self.prompt()["given"][0])
+
+    def test_a_record_shows_each_part_by_its_type_and_the_files_shown_whole(self):
+        # Given: a record holding a tool used with words beyond ASCII, a tool result as a list
+        # and as text, a part of a type of its own, a file Claude Code showed whole, an attachment
+        # of another kind, and the copy of a request Claude Code keeps beside them
+        # When: the learner is started
+        # Then: each part is shown by its type, the file shown whole by its name, and neither the
+        # other attachment nor the copy
+        parts = [
+            {"type": "tool_use", "name": "Read", "input": {"file_path": "読む.md"}},
+            {"type": "tool_result", "content": [{"type": "text", "text": "x" * 2500}]},
+            {"type": "tool_result", "content": "done"},
+            {"type": "web_search_tool_result", "text": "found"},
+        ]
+        entries = [
+            {"type": "assistant", "message": {"content": parts}},
+            {
+                "type": "attachment",
+                "attachment": {
+                    "type": "edited_text_file",
+                    "filename": "R.md",
+                    "snippet": "1\t# csvtidy",
+                },
+            },
+            {"type": "attachment", "attachment": {"type": "date", "filename": "d"}},
+            {"type": "api-request-blob", "message": {"content": "copied request"}},
+        ]
+        with open(self.path, "a", encoding="utf-8") as f:
+            f.writelines(json.dumps(e) + "\n" for e in entries)
+        shown = self.shown()
+        self.assertIn('[user] {"given": []}', shown)
+        self.assertIn('[tool_use Read] {"file_path": "読む.md"}', shown)
+        # A word longer than a read shows stands on a line of its own.
+        self.assertIn("[tool_result]\n" + "x" * 2500 + "\n", shown)
+        self.assertIn("[tool_result] done", shown)
+        self.assertIn("[web_search_tool_result] found", shown)
+        self.assertIn("[shown R.md] 1\t# csvtidy", shown)
+        self.assertNotIn("copied request", shown)
+        self.assertEqual(shown.count("[shown"), 1)
+
+    def test_a_line_longer_than_a_read_shows_is_cut_at_its_blanks(self):
+        # Given: a record holding a line of many words, longer than a read shows
+        # When: the learner is started
+        # Then: the line is cut at its blanks, every word kept
+        said = {"content": [{"type": "text", "text": " ".join(["word"] * 400)}]}
+        with open(self.path, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "assistant", "message": said}) + "\n")
+        shown = self.shown()
+        self.assertTrue(all(len(line) <= 1000 for line in shown.splitlines()))
+        self.assertEqual(shown.count("word"), 400)
+
+    def test_a_line_as_long_as_a_read_shows_is_kept_as_it_is(self):
+        # Given: a line of a thousand characters, the last a blank, and one a character longer
+        # When: they are wrapped for the learner
+        # Then: the first is kept as it is, and the second cut at its blank
+        self.assertEqual(run.records.wrapped("a" * 999 + " "), "a" * 999 + " \n")
+        self.assertEqual(run.records.wrapped("a" * 999 + " b"), "a" * 999 + "\nb\n")
+
+    def test_the_orchestrator_s_record_is_the_latest_naming_the_result(self):
+        # Given: beside the roles' records, agents of another type, a meta file not JSON or not an
+        # object, an orchestrator whose prompt is no call or names another result, and two
+        # orchestrators naming the result
+        # When: the learner is started
+        # Then: it is shown the latest orchestrator naming the result, after the roles'
+        self.write(os.path.join(self.session, "agent-abad.meta.json"), "x")
+        self.write(os.path.join(self.session, "agent-alist.meta.json"), "[]")
+        self.write(os.path.join(self.session, "agent-alist.jsonl"), "")
+        self.write(os.path.join(self.session, "agent-agone.meta.json"), '{"agentType": "turn:up"}')
+        decoys = [
+            self.given_record("aother", json.dumps(CALL), "turn:generator"),
+            self.given_record("azz", json.dumps(CALL), "turn:zz"),
+            self.given_record("anotjson", "not a call", "turn:up"),
+            self.given_record("aelse", json.dumps(dict(CALL, result="else.json")), "turn:up"),
+        ]
+        older = self.given_record("aold", json.dumps(CALL), "turn:up")
+        newer = self.given_record("anew", json.dumps(CALL), "turn:up")
+        os.utime(older, (1, 1))
+        # Each record the orchestrator's is not is the latest of all.
+        for decoy in decoys:
+            os.utime(decoy, (4e9, 4e9))
+        shown = self.shown()
+        self.assertIn("I open it.", shown)
+        texts = self.prompt()["given"]
+        self.assertEqual(len(texts), 2)
+        self.assertIn(json.dumps(CALL)[:20], self.read(texts[1]))
+        self.assertEqual(run.records.orchestrator([self.path], RESULT), newer)

@@ -1,9 +1,11 @@
-"""What Claude Code keeps of an agent's conversation, read as the learner is shown it, page by
-page."""
+"""What Claude Code keeps of an agent's conversation, read as the learner is shown it."""
 
 from __future__ import annotations
 
+import glob
 import json
+import os
+import textwrap
 from typing import Any
 
 # A page of a record is short enough for one read to show it whole.
@@ -16,11 +18,6 @@ def entries(path: str) -> list[dict[str, Any]]:
     with open(path, encoding="utf-8") as f:
         kept = [json.loads(line) for line in f]
     return [e for e in kept if e.get("type") in ("user", "assistant", "attachment")]
-
-
-def pages(path: str) -> list[str]:
-    """A record's pages: what the role was given, said, used and was shown, in order."""
-    return split(shown(path))
 
 
 def split(text: str) -> list[str]:
@@ -57,3 +54,65 @@ def result(part: dict[str, Any]) -> str:
     if isinstance(content, list):
         return "\n".join(str(c.get("text", "")) for c in content)
     return str(content)
+
+
+# A line of a record as the learner is shown it, short enough for one read to show it whole.
+WIDTH = 1000
+
+
+def wrapped(text: str) -> str:
+    """The text with each line longer than a read shows cut at its blanks, so the learner reads
+    every word; a quote across a cut is found, as the cut is a blank."""
+    return "".join(
+        textwrap.fill(line, WIDTH, break_long_words=False) + "\n"
+        if len(line) > WIDTH
+        else line + "\n"
+        for line in text.splitlines()
+    )
+
+
+def kept() -> str:
+    """Where Claude Code keeps each conversation's records."""
+    return os.path.join(
+        os.environ.get("CLAUDE_CONFIG_DIR") or os.path.expanduser("~/.claude"), "projects"
+    )
+
+
+def find(agent_id: str) -> str | None:
+    """The record of the agent of the ID, kept beside its conversation's as
+    `<conversation>/subagents/agent-<ID>.jsonl`; None where none is."""
+    found = glob.iglob(os.path.join(kept(), "*", "*", "subagents", f"agent-{agent_id}.jsonl"))
+    return next(found, None)
+
+
+def orchestrator(roles: list[str], result: str) -> str | None:
+    """The record of the orchestrator of the run: beside its roles' records, a `turn:up` agent's
+    whose prompt, the call, names the result; the latest where several do; None where none is."""
+    found = []
+    for folder in sorted({os.path.dirname(r) for r in roles}):
+        for meta in glob.glob(os.path.join(folder, "agent-*.meta.json")):
+            path = meta[: -len(".meta.json")] + ".jsonl"
+            if kind(meta) == "turn:up" and os.path.exists(path) and names(path, result):
+                found.append(path)
+    return max(found, key=os.path.getmtime) if found else None
+
+
+def kind(meta: str) -> str:
+    """The agent type a record's meta file names."""
+    try:
+        with open(meta, encoding="utf-8") as f:
+            given = json.load(f)
+    except (OSError, ValueError):
+        return ""
+    return str(given.get("agentType", "")) if isinstance(given, dict) else ""
+
+
+def names(path: str, result: str) -> bool:
+    """Whether the record's first prompt is a call naming the result."""
+    found = entries(path)
+    content = found[0].get("message", {}).get("content") if found else None
+    try:
+        given = json.loads(content) if isinstance(content, str) else None
+    except ValueError:
+        return False
+    return isinstance(given, dict) and given.get("result") == result

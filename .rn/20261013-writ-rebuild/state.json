@@ -365,6 +365,9 @@
     },
     {
       "fact": "the user decided (2026-10-22): turn's KR1.1 is the items of the step's checklists the calling AI judges the work to meet, from its own check against turn's lines; turn's goal and KRs settled"
+    },
+    {
+      "fact": "T22 step 1 (2026-10-22): turn's flow remade to the design: state in <result>.run.json, each move told to main then printed as {tool,input}, roles reply to <result>.<role>.json read by the flow, agent IDs handed by the orchestrator, a call again goes on from the state, the learner shown each record as text in <result>.records/; turn's own hooks removed; check.sh turn 100%, mutate.sh turn 0 of 1205 in 65s. Next: agents' steps rewritten to it, then lanes laid with lay.py"
     }
   ],
   "semantic_gist": [
