@@ -21,8 +21,9 @@ the UX is making that experience clear, in this order:
 2. Decide, for each goal, its key results, each drawn from the goal: what is counted, how each case
    is judged to count, and how the value stands once the user has reached the goal; then put them in
    order of priority.
-3. Draw, as scenes, what the user does and gets back until they achieve the goal: a sequence
-   diagram of who acts in turn, with what it cannot show beside it.
+3. Draw, as scenes, what the user does and gets back until they achieve the goal: the whole way in
+   one short sequence diagram, then each scene the user should see in one of its own, with what a
+   figure cannot show beside it.
 4. Decide what the user gains when they achieve the goal with this product: the benefits, which are
    why the user chooses it.
 
@@ -56,11 +57,20 @@ Does the UX follow this template, headings and IDs included?
 
 ## Scenes
 
-<What the figure shows, and the words it uses>
+<Who takes part, and the words the figures use>
+
+### <The whole way>
 
 ```mermaid
 sequenceDiagram
   <Who acts, in the order they act, from asking to the goal>
+```
+
+### <A scene the user should see>
+
+```mermaid
+sequenceDiagram
+  <Who acts in this scene, in the order they act>
 ```
 
 - <What the figure cannot show, such as a rule that holds throughout, and why>
@@ -120,13 +130,14 @@ worse off.
 
 Scope: its part
 
-Can the reader tell, from a sequence diagram of who acts in turn, what the user does and gets back
-until they achieve the goal, with what the figure cannot show written beside it, and with no part of
-the product shown that the user does not deal with?
+Can the reader tell, from one sequence diagram of the whole way and one for each scene the user
+should see, what the user does and gets back until they achieve the goal, with what a figure cannot
+show written beside it, and with no part of the product shown that the user does not deal with?
 
 Why: the builder builds what the scenes show the user doing and getting; a step no scene shows is
 built by guess, or not at all. A sequence diagram shows at a glance who acts, in what order, and
-what repeats or branches, which a list of scenes leaves the reader to put together. What the
+what repeats or branches, which a list of scenes leaves the reader to put together; a figure for
+each scene says one thing, and the whole way keeps the scenes from leaving a gap between them. What the
 product does inside, out of the user's sight, is the design's; shown in the scenes, it is decided
 twice and drifts.
 

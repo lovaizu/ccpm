@@ -33,8 +33,10 @@ since a work it must fix costs the user the fixing as well as the wait.
 
 ## Scenes
 
-The figure shows who acts in turn, from a step that needs a work to the step's end. The user is the
-person using the plugin the calling AI runs a step of.
+The user, the calling AI and turn take part. The user is the person using the plugin the calling AI
+runs a step of.
+
+### From a step that needs a work to the step's end
 
 ```mermaid
 sequenceDiagram
@@ -43,20 +45,10 @@ sequenceDiagram
   participant T as turn<br/>#lt;plugin#gt;
   C->>U: asks what the checklists' items need
   U->>C: answers
-  C->>C: writes a CCS
+  Note over C: writes a CCS
   C->>T: calls it with the CCS's path, its kinds, and where to write the result
-  loop each agent's step
-    T-->>C: what it will do, how far and how, then what is done and what comes next
-    C-->>U: passes each on, and the user may stop the run there
-  end
-  opt the CCS lacks what the run needs, or a point only the user can decide
-    T->>C: the question, before the work that rests on it is made
-    C->>U: puts it to the user
-    U->>C: answer
-    C->>T: the answer, and turn goes on from there
-  end
   T-->>C: the work where it goes, and the result
-  C->>C: checks each Good against its lines, fixes each item without Good, ends its step
+  Note over C: checks each Good against its lines, fixes each item without Good, ends its step
 ```
 
 - A CCS is the JSON file in which the calling AI keeps its task, in the shape
@@ -64,14 +56,56 @@ sequenceDiagram
   and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
   checklists, the receiver, what they use the work for and what they have with it; the call names
   the kinds the calling AI uses in it for each of these.
-- What turn tells as each step starts and ends shows a run going a slow or wrong way before its time
-  is spent, not after the work comes back.
 - The result holds each item's Good with its lines, each item still without Good, with what the
   receiver gets once it is Good and where it was not found, and the lessons turn took on how its run
   went, to hand on to turn's makers. An item's Good is the judgment that the receiver gets from the
   work what the item asks, with the lines that give it.
-- A run stopped anywhere, by the user or by a conversation that ended, goes on from its last step
-  when the calling AI calls turn again with the same result.
+
+### While turn runs
+
+```mermaid
+sequenceDiagram
+  participant U as user<br/>#lt;person#gt;
+  participant C as calling AI<br/>#lt;AI#gt;
+  participant T as turn<br/>#lt;plugin#gt;
+  loop each agent's step
+    T-->>C: what it will do, how far and how, then what is done and what comes next
+    C-->>U: passes each on
+  end
+  opt a run going a slow or wrong way
+    U->>C: stops it
+  end
+```
+
+- A run going a slow or wrong way shows before its time is spent, not after the work comes back.
+
+### A point only the user can decide
+
+```mermaid
+sequenceDiagram
+  participant U as user<br/>#lt;person#gt;
+  participant C as calling AI<br/>#lt;AI#gt;
+  participant T as turn<br/>#lt;plugin#gt;
+  T->>C: the question, before the work that rests on it is made
+  C->>U: puts it to the user
+  U->>C: answer
+  C->>T: the answer
+  Note over T: goes on from there
+```
+
+- turn asks where the CCS lacks what the run needs, or the work meets a point only the user can
+  decide.
+
+### Stopped, and gone on
+
+```mermaid
+sequenceDiagram
+  participant C as calling AI<br/>#lt;AI#gt;
+  participant T as turn<br/>#lt;plugin#gt;
+  Note over C,T: the run stopped anywhere, by the user or by a conversation that ended
+  C->>T: calls it again with the same result
+  Note over T: goes on from its last step
+```
 
 ## Benefits
 

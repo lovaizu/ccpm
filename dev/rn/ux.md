@@ -45,12 +45,51 @@ the version in use, on the same requests.
 
 ## Scenes
 
-The figure shows who acts in turn from asking to the merge. `/rn:ty` approves a proposal and
-`/rn:gm <feedback>` asks for a change. Before every sign-off, an AI that did not make the proposal
-reads and uses it in the user's place, the finished work for each acceptance criterion, and rn makes
-it again until that AI finds nothing lacking; the user sees only the proposal. A task is one part of
-building the finished work; after the design sign-off, rn divides the piece of work into tasks. A
-lesson is what the session learned that would make later pieces of work better.
+The user and rn take part. `/rn:ty` approves a proposal and `/rn:gm <feedback>` asks for a change. A
+task is one part of building the finished work; after the design sign-off, rn divides the piece of
+work into tasks. A lesson is what the session learned that would make later pieces of work better.
+
+### From asking to the merge
+
+```mermaid
+sequenceDiagram
+  participant U as user<br/>#lt;person#gt;
+  participant R as rn<br/>#lt;plugin#gt;
+  U->>R: /rn:up #lt;what they want#gt;
+  R->>U: the points to decide, one per message
+  R->>U: the plan, at the plan sign-off
+  U->>R: /rn:ty
+  R->>U: the documents the purpose needs, at the design sign-off
+  U->>R: /rn:ty
+  Note over R: carries out the tasks
+  R->>U: the finished work, at the deliverable sign-off
+  U->>R: /rn:ty
+  R->>U: the lessons to decide, one per message
+  R-->>U: the pull request marked ready
+  Note over U: merges
+```
+
+- The plan: rn gives the goal and each acceptance criterion an ID and puts the plan on a draft pull
+  request of its own branch.
+- Sign-offs: before each, an AI that did not make the proposal reads and uses it in the user's
+  place, the finished work for each acceptance criterion, and rn makes it again until that AI finds
+  nothing lacking. At the sign-off rn shows the link to each work and its core decisions, each with
+  its intent, in a few short lines, and nothing else: no summary of the text, no diff. The user
+  glances at the work for its size and diagrams and judges the decisions and intents; the text is
+  for that AI and rn to check.
+
+  Where the core decisions do not fit in a few short lines, rn takes it as a sign the work is not
+  yet simple, and makes it again before it stops.
+- Records: rn writes in its commit messages what the documents do not keep: the options weighed
+  with their reasons, and each feedback with its answer.
+- Checklists: each document and the finished work is made with rn's checklist for its kind, which
+  says what that kind, such as a README, must give its reader, and with the user's addition to it.
+
+  The addition sits at `.rn/checklists/<kind>.md` in the user's repository and holds only what it
+  adds; a kind rn has no checklist for gets one made there. rn's own checklists are not changed in
+  place, since they sit outside git on the user's machine and an update of rn replaces them.
+
+### Asked each point, and a change sent back
 
 ```mermaid
 sequenceDiagram
@@ -58,22 +97,36 @@ sequenceDiagram
   participant R as rn<br/>#lt;plugin#gt;
   U->>R: /rn:up #lt;what they want#gt;
   loop one message per point
-    R->>U: one point to decide
-    U->>R: answer
+    R->>U: one point to decide, with what rn looked up and the answer it recommends
+    U->>R: a letter, or the user's own words
   end
-  R->>U: plan, at the plan sign-off
-  alt approved
-    U->>R: /rn:ty
-  else a change asked
-    U->>R: /rn:gm #lt;feedback#gt;
-    R-->>U: feedback kept, rn stops
-    U->>R: /rn:up
-    R->>U: the point behind it to decide
-    U->>R: answer
-    R->>U: the plan made again, at the same sign-off, with what changed
-    Note over U,R: so at every sign-off
-  end
-  Note over U,R: the same for the documents the purpose needs, up to the design sign-off
+  R->>U: the plan, at the plan sign-off
+  U->>R: /rn:gm #lt;feedback#gt;
+  R-->>U: feedback kept, rn stops
+  U->>R: /rn:up
+  R->>U: the point behind the feedback
+  U->>R: answer
+  R->>U: the plan made again, at the same sign-off, with what changed
+  U->>R: /rn:ty
+```
+
+- rn confirms each point to decide with the user, even the points it could look up, since a point
+  decided unasked is made again when it is wrong.
+
+  Each message shows the points to decide, the settled ones with their outcome and the current one
+  marked. For the current one it gives the conclusion, its grounds, and the options, the recommended
+  one first, each with its trade-off and whether it can be undone, then one question on that point
+  alone, answered by the option's letter or in the user's own words. Answers to the user's own
+  questions, and slips rn corrected that leave nothing to decide, come first, apart from the points.
+- On `/rn:gm`, rn keeps the feedback and stops, so the conversation can be cleared. The point behind
+  the feedback is one rn decided wrong or did not ask. The same goes at every sign-off.
+
+### While the tasks are carried out
+
+```mermaid
+sequenceDiagram
+  participant U as user<br/>#lt;person#gt;
+  participant R as rn<br/>#lt;plugin#gt;
   loop each step of the tasks
     R-->>U: what it will do, how far and how
     R-->>U: what is done and what comes next
@@ -82,61 +135,39 @@ sequenceDiagram
       U->>R: answer
     end
   end
-  R->>U: finished work, at the deliverable sign-off
-  U->>R: /rn:ty (/rn:gm as above)
-  loop one message per lesson
-    R->>U: one lesson to decide
-    U->>R: answer
+  opt a step going a way the user does not want
+    U->>R: stops it, and says the way
   end
-  R-->>U: pull request marked ready
-  Note over U: merges
-  Note over U,R: wherever the user stops, /rn:up in a fresh conversation goes on from there
 ```
 
-- Asking: rn confirms each point to decide with the user, even the points it could look up, with
-  what it looked up and the answer it recommends, since a point decided unasked is made again when
-  it is wrong.
+- Each task names the acceptance criteria it serves and is checked against them; the user need not
+  watch. A change to the goal or an acceptance criterion comes to the user as a point to decide.
 
-  Each message shows the points to decide, the settled ones with their outcome and the current one
-  marked. For the current one it gives the conclusion, its grounds, and the options, the recommended
-  one first, each with its trade-off and whether it can be undone, then one question on that point
-  alone, answered by the option's letter or in the user's own words. Answers to the user's own
-  questions, and slips rn corrected that leave nothing to decide, come first, apart from the points.
+### Stopped, and gone on
 
-- The plan: rn gives the goal and each acceptance criterion an ID and puts the plan on a draft pull
-  request of its own branch.
+```mermaid
+sequenceDiagram
+  participant U as user<br/>#lt;person#gt;
+  participant R as rn<br/>#lt;plugin#gt;
+  Note over U,R: the user stops anywhere, or closes Claude Code
+  U->>R: /rn:up, in a fresh conversation
+  R->>U: goes on from where it stopped
+```
 
-- Sign-offs: at each sign-off rn shows the link to each work and its core decisions, each with its
-  intent, in a few short lines, and nothing else: no summary of the text, no diff. The user glances
-  at the work for its size and diagrams and judges the decisions and intents; the text is the first
-  reader's and rn's to check.
+### Lessons
 
-  Where the core decisions do not fit in a few short lines, rn takes it as a sign the work is not
-  yet simple, and makes it again before it stops.
+```mermaid
+sequenceDiagram
+  participant U as user<br/>#lt;person#gt;
+  participant R as rn<br/>#lt;plugin#gt;
+  loop one message per lesson
+    R->>U: one lesson: what happened, and the addition to the checklists it recommends
+    U->>R: answer
+  end
+  R-->>U: the pull request marked ready, with the additions taken
+```
 
-- Feedback: on `/rn:gm`, rn keeps the feedback and stops, so the conversation can be cleared.
-
-  The point behind the feedback is one rn decided wrong or did not ask.
-
-- Records: rn writes in its commit messages what the documents do not keep: the options weighed
-  with their reasons, and each feedback with its answer.
-
-- Checklists: each document and the finished work is made with rn's checklist for its kind, which
-  says what that kind, such as a README, must give its reader, and with the user's addition to it.
-
-  The addition sits at `.rn/checklists/<kind>.md` in the user's repository and holds only what it
-  adds; a kind rn has no checklist for gets one made there. rn's own checklists are not changed in
-  place, since they sit outside git on the user's machine and an update of rn replaces them.
-
-- The tasks: each names the acceptance criteria it serves and is checked against them; the user
-  does not watch.
-
-  A change to the goal or an acceptance criterion comes to the user as a point to decide.
-
-- Lessons: each comes with what happened and the addition to the user's checklists it recommends,
-  and with whether a fault of rn's own goes to rn as an issue.
-
-  The additions the user takes go into the same pull request.
+- A lesson whose slip was a fault of rn's own also asks whether it goes to rn as an issue.
 
 ## Benefits
 
