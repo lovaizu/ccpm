@@ -356,6 +356,9 @@
     },
     {
       "fact": "prompt.md's step 4, B-25 and B-26 now have a hook tell the step's sentence again, as lane's idea; plugin.md 5d lays lanes with lane:up, a check no lane holds added to lane (2026-10-22)"
+    },
+    {
+      "fact": "turn's design (2cc7044, 10-20) predates dev/architecture.md and turn's new README and UX: roles message main, the orchestrator only starts agents, no resume, hooks of its own; T21-T23 added to steering for turn's remake (2026-10-22)"
     }
   ],
   "semantic_gist": [
@@ -466,7 +469,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "turn remade on lane: read turn/hooks (checks, agents.py, events) against lane's 12 lanes, map each to a lane with {<name>} run values, turn.py printing moves as {tool,input}, lay with lane:up, drop turn's own hooks; then rn; record state.json after each step, as the weekly limit is near"
+      "next": "T21: a subagent rewrites dev/turn/design.md on dev/architecture.md, turn/README.md, dev/turn/ux.md and lane (README, dev/lane/design.md), with rn/checklists/product/design.md and usability.md open; I check it against the same checklists and fix by hand; then T22 code"
     }
   ],
   "uncertainty_signal": [

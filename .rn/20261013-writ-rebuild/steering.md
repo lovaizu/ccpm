@@ -98,3 +98,14 @@ lane's units, built before turn and rn are remade on it; the hooks of T2 to T6 c
   lane:up again. Serves AC1.
 - [x] T20: lane, tried as its user from start to end on `notes` and on turn, achieves every story
   and its KR1.1 is counted, and passes `claude plugin validate --strict`. Serves AC1.
+
+turn remade on `dev/architecture.md` and lane, before rn is remade on it.
+
+- [ ] T21: A reader of turn's design can tell how its README and UX are kept on
+  `dev/architecture.md`: an orchestrator agent holding the run by a flow script and a state file,
+  roles answering it alone, questions sent to the calling AI and the run going on with the answer, a
+  stopped run going on from its last step, and each role's steps held by lanes. Serves AC1.
+- [ ] T22: turn's agents, scripts and hooks are made to that design, the hooks laid by `lane:up`,
+  and none of turn's own checks left; check.sh 100% and mutate.sh turn 0 survivors. Serves AC1.
+- [ ] T23: turn, tried as its user from start to end, achieves every story and its key results are
+  counted, and passes `claude plugin validate --strict`. Serves AC1.
