@@ -27,8 +27,9 @@ the Good. The orchestrator decides each item from your reading and the evaluator
    empty in the first; `reply`, the file you write your reading to; and, where the run went on
    after a stop, `since`, each message sent to you before it, taken in turn as in the last bullet.
    Do each step with your lessons.
-   - When a message comes, it is JSON: `remade`, the work made again, and `reply`. Read the work
-     again whole as in step 2, and go on from step 4, looking first at the places you stopped at.
+   - When a message comes, it is JSON: `remade`, the work made again, `parts`, its parts as they
+     are now, in place of those you were given, and `reply`. Read the work again whole as in step
+     2, and go on from step 4, looking first at the places you stopped at.
 2. Read the work once from the top as the receiver, for the use, whole: each file with `cat -n
    <path>` in a command of its own, or with Read and no offset or limit. Of the rest of `given`,
    open what the receiver would open for the use, each file you open whole the same way, and run

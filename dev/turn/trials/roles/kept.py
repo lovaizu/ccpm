@@ -1,5 +1,6 @@
-"""Tries the generator and the first user kept started within a round: the real roles, scripts and
-hooks, on the flow trial's task, started and sent messages by a stand-in for the orchestrator. The
+"""Tries the generator and the first user kept started within a round: the real roles and their
+lanes, on the flow trial's task, started and sent messages by a stand-in for the orchestrator making
+the moves turn's flow prints. The
 generator's work is replaced by a set README with no license, so the first user, given demo.sh as
 what the receiver has, stops at B-1; the generator, sent where the first user stopped, what it did
 there and what it did not get, makes the work again, which the first user reads again, with no
@@ -24,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 import shared
 
-CALL = shared.call("code")
+CALL = shared.call("has")
 
 place = os.path.abspath(sys.argv[1])
 shared.task(place, CALL)
@@ -35,42 +36,37 @@ with open(unlicensed, "w", encoding="utf-8") as f:
     f.write(shared.UNLICENSED)
 script = f'python3 "{os.path.join(plugin, "scripts", "turn.py")}"'
 result = CALL["result"]
+for args, given in (
+    (["start", json.dumps(CALL)], ""),
+    (["next", result], json.dumps(shared.CHECK)),
+):
+    subprocess.run(
+        ["python3", os.path.join(plugin, "scripts", "turn.py"), *args],
+        input=given,
+        cwd=place,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+STEPS = f"""Take these steps, each command in a Bash call of its own, exactly as written. Load
+SendMessage with ToolSearch (`select:SendMessage`) first.
 
-
-subprocess.run(
-    ["python3", os.path.join(plugin, "scripts", "turn.py"), "start", json.dumps(CALL)],
-    cwd=place,
-    check=True,
-    capture_output=True,
-)
-done = subprocess.run(
-    ["python3", os.path.join(plugin, "scripts", "turn.py"), "next", result],
-    input=json.dumps(shared.CHECK),
-    cwd=place,
-    check=True,
-    capture_output=True,
-    text=True,
-)
-prompt = json.loads(done.stdout)["prompt"]
-STEPS = f"""Take these steps in order, each command in a Bash call of its own, exactly as written.
-Wherever a step says to send a message, load SendMessage with ToolSearch (`select:SendMessage`) the
-first time, and send the `message` turn.py printed last to its `to`, both as printed; then run
-`{script} next {result}` with nothing, and again while it prints `{{"waiting": ...}}`.
-
-1. Start the `turn:generator` agent, not in the background, with the JSON on the line below as its
-   whole prompt, exactly as it is, and wait for its reply.
-   {prompt}
-2. Run `cp {unlicensed} README.md`. Then run `{script} next {result}`.
-3. Start the `turn:first-user` agent, not in the background, with the `prompt` turn.py printed last
-   as its whole prompt, exactly as it is, and wait for its reply.
-4. Run `{script} next {result}`, and send a message, as above.
-5. Send a message, as above.
-6. Reply with what turn.py printed last, as it is."""
+1. Run `{script} next {result}`. Its last line is a move, `{{"tool": ..., "input": {{...}}}}`.
+   - A SendMessage whose `to` is `main`: send nothing, and do step 1 again.
+   - An Agent call: make it, its input as printed, not in the background, and wait for its reply.
+     Then run `{script} next {result} <<'EOF'` with `{{"agent_id": "<the agent ID it gave back>"}}`,
+     ending with `EOF`, and go to step 2.
+   - Any other SendMessage: send it, its input as printed, then run `{script} next {result}` with
+     nothing, again while it prints `{{"waiting": ...}}`, and go to step 2.
+2. After the first Agent call alone, run `cp {unlicensed} README.md`. Where what turn.py printed last
+   begins `turn: turn:first-user found` for the second time, reply with that line, and end.
+   Otherwise do step 1 again."""
 
 start = time.time()
 end = shared.claude(STEPS, [plugin], cwd=place)
 session = end["session_id"]
 print("session:", session, "minutes:", round((time.time() - start) / 60, 1))
+print("cost:", end.get("total_cost_usd"))
 print("last:", end.get("result"))
 main = glob.glob(os.path.expanduser(f"~/.claude/projects/*/{session}.jsonl"))
 for path in main + sorted(shared.agents(session)):

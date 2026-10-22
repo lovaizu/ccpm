@@ -70,7 +70,7 @@ as it is, and wait for its reply. Then reply with its reply as it is.
     if os.path.exists(reply):
         with open(reply, encoding="utf-8") as f:
             text = f.read()
-        kept = run.running(CALL["result"])
+        kept = run.going(CALL["result"])
         said = forms.check(
             text,
             kept["items"],
@@ -88,7 +88,7 @@ as it is, and wait for its reply. Then reply with its reply as it is.
 
 turn("start", json.dumps(CALL))
 turn("next", CALL["result"], given=json.dumps(shared.CHECK))
-kept = run.running(CALL["result"])
+kept = run.going(CALL["result"])
 ids = [role(run.GENERATOR, kept["next"]["prompt"])]
 with open("README.md", "w", encoding="utf-8") as f:
     f.write(shared.UNLICENSED)
@@ -96,7 +96,7 @@ ids.append(role(run.FIRST_USER, run.reader_given(kept, run.FIRST_USER)))
 ids.append(role(run.EVALUATOR, dict(run.reader_given(kept, run.EVALUATOR), reading=[])))
 kept["records"] = [i for i in ids if i]
 run.settle(kept, [UNMET], [])
-kept = run.running(CALL["result"])
+kept = run.going(CALL["result"])
 role(run.LEARNER, kept["next"]["prompt"])
 os.chdir(shared.ROOT)
 shutil.rmtree(place)

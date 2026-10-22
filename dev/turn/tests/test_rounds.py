@@ -81,11 +81,17 @@ class TestGeneratorKept(RoundTest):
     def test_the_messaged_generators_reply_is_waited_for_and_the_first_user_sent_it(self):
         # Given: a generator sent the first user's stop
         # When: the orchestrator goes on, and the reply comes during the wait
-        # Then: the first user, kept started, is sent the work made again by message
+        # Then: the first user, kept started, is sent the work made again by message, with its
+        # parts as the remake left them, as a remake may add a section
         self.stopped()
+        self.write("README.md", "# x\n\nx does y.\n\n## Use\n\nRun x.\n")
         move = self.due(self.answered(CLAIM))
         self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
-        expected = {"remade": ["README.md"], "reply": RESULT + ".first-user.json"}
+        expected = {
+            "remade": ["README.md"],
+            "parts": ["README.md:1-4", "README.md:5-7"],
+            "reply": RESULT + ".first-user.json",
+        }
         self.assertEqual(json.loads(move["input"]["message"]), expected)
 
     def test_a_reply_not_come_within_the_wait_leaves_the_run_waiting(self):

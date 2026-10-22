@@ -304,8 +304,8 @@ def parts_problems(name: str, given: Any, work: list[str]) -> list[str]:
             said.append(f'{name}: part {k} must hold "part", "good" and "lines", the Good in words')
         elif part["part"] not in whole:
             said.append(
-                f"{name}: {part['part']} is not a part of the work; give each as `turn.py parts`"
-                " prints it"
+                f"{name}: {part['part']} is not a part of the work; give each as one of"
+                f" {', '.join(f'`{p}`' for p in whole)}"
             )
         elif part["part"] in seen:
             said.append(f"{name}: {part['part']} is given twice; give each part once")

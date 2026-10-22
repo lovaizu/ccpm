@@ -391,7 +391,12 @@ def made(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     made, with no reading between."""
     run["claim"] = reply
     run["done"] = f"{GENERATOR} made {', '.join(run['work'])}."
-    remade = {"remade": run["work"], "reply": reply_path(run["call"]["result"], FIRST_USER)}
+    # The parts are given anew, as a remake may add or take away a section.
+    remade = {
+        "remade": run["work"],
+        "parts": forms.parts(run["work"]),
+        "reply": reply_path(run["call"]["result"], FIRST_USER),
+    }
     return ask(run, FIRST_USER, reader_given(run, FIRST_USER), remade)
 
 

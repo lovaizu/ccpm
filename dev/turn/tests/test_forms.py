@@ -225,7 +225,10 @@ class TestParts(FormTest):
             ([first], "README.md:5-7 has no Good; give a Good for every part"),
             (
                 [first, dict(second, part="README.md:5-6")],
-                "README.md:5-6 is not a part of the work",
+                (
+                    "README.md:5-6 is not a part of the work; give each as one of"
+                    " `README.md:1-4`, `README.md:5-7`"
+                ),
             ),
             ([first, first, second], "README.md:1-4 is given twice"),
             (
