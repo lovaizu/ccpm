@@ -120,6 +120,5 @@ scripts find a kind's checklists and each lesson goes into one.
 
 - [ ] T24: Whoever makes or updates a checklist with rn, or places a lesson in one, finds from
   `rn/checklists/checklist.md` alone which checklist each item goes into, from the purpose and UX
-  of whom it serves, each item in one place; a map of what rn makes and judges, with its receiver,
-  when it is made and judged, and its checklist, kept in the decisions to agree on first; then
-  every checklist of rn read against it. Serves AC1.
+  of whom it serves, each item in one place; then every checklist of rn read against it. Serves
+  AC1.

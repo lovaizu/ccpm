@@ -398,6 +398,9 @@
   },
   {
    "fact": "background trial runs survive /clear (acc2, accs1, accs3 kept writing JSONL after 23:15Z); base1 checked from its JSONL: one question answered, turn ran on, check once, 9.7 min, 20 of 23 met as returned; base2 and base3 started 23:4xZ"
+  },
+  {
+   "fact": "the user (2026-10-23): T24's map was made for its own sake, repeating each checklist's opening; dropped, the path in checklist.md written first and the present state checked against it; think back from the end product. What the map found, kept for rn's remake: product/readme.md steps 5-7 have no time in rn's flow (dev/rn/design.md:133-135 makes the README only before the design); no source of rn's flow names a prompt as a work; lessons and issues to rn's makers have no checklist"
   }
  ],
  "semantic_gist": [
@@ -508,7 +511,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T24: draft the map in .rn/20261013-writ-rebuild/decisions/checklists.decisions.md (each work rn makes or judges: receiver, when made, when judged, its checklist; steering's goal, criteria, documents and tasks apart) from dev/rn/design.md, dev/rn/ux.md and rn/checklists/*, and ask the user's review with the file URL and the core decisions alone; then revise checklist.md's order with the path for placing an item (purpose and UX of whom it serves, the work met, product or how a task was carried out, every work or one kind, already asked) and an item for one place each"
+   "next": "T24: write checklist.md's path for placing an item first (purpose and UX of whom it serves, the work met, product or how a task is carried out, every work or one kind, already asked), then read each checklist of rn against it"
   },
   {
    "next": "T23: read the 9 acceptance outputs in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0c28e8a6-d4bd-4901-a7a4-2dbb63e3874d/scratchpad (acc*, accs*, base*; if gone, find the sessions in ~/.claude/projects/*scratchpad-acc*/ and *-base*), judge each story of dev/turn/design.md Acceptance from every JSONL, count KR1.1 (items the stand-in judged met on return) and KR1.2 (call to return) against 0.1.0, keep them in dev/turn/trials/readme/results.json; get the user's A/B/C answer; then validate --strict, then rn"
@@ -532,6 +535,9 @@
   },
   {
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
+  },
+  {
+   "open": "rn: a point put to the user rests on a summary, not its source lines, and sends the work the wrong way (my follow_next A/B/C, 2026-10-23); where rn holds it, asked the user"
   }
  ],
  "retrieved_artifacts": [
