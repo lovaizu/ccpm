@@ -188,16 +188,18 @@ that:
 
 - Your purpose is achieved by answering alone, so the finished work is rarely made again.
 
-  Each point is confirmed with you before it is built on, and each task is traced to the acceptance
-  criteria, so the finished work does not drift from the purpose you agreed.
+  Each point is confirmed with you before it is built on, each task is traced to the acceptance
+  criteria, and the plan is remade from the facts each move brings, so the finished work does not
+  drift from the purpose you agreed.
 
 - At each sign-off you decide from the proposal alone.
 
   The first reader has read and used it in your place, so you need not read all of it again.
 
-- Work that takes days goes on from wherever you stopped.
+- Work that takes days neither swells nor drifts, and goes on from wherever you stopped.
 
-  A fresh conversation with Claude Code alone starts from nothing; with rn, `/rn:up` goes on.
+  A long conversation with Claude Code alone swells, and a fresh one starts from nothing; rn carries
+  only a short record of where the work stands, and `/rn:up` goes on from it.
 
 - What was decided, and why, stays with your repository.
 

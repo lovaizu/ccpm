@@ -130,6 +130,12 @@ user <person>                       rn <plugin>                     first reader
 - The tasks: each names the acceptance criteria it serves and is checked against them; the user
   does not watch.
 
+  After each move rn remakes the plan from the facts the move brought, and a change to the goal or
+  an acceptance criterion comes to the user as a point to decide.
+
+- Resuming: from move to move rn carries only a short record of where the work stands, and
+  `/rn:up` in a fresh conversation goes on from it.
+
 - Lessons: each comes with what happened and the addition to the user's checklists it recommends,
   and with whether a fault of rn's own goes to rn as an issue.
 
@@ -141,12 +147,14 @@ What the user gains with rn, each with why it holds; these are why the user choo
 
 - The user asks without preparing: rough words are enough, and rn finds the points to decide and
   comes to confirm them.
-- The user's purpose is achieved by answering alone: each point is confirmed and each task traced
-  to the acceptance criteria, so making a finished work again becomes rare.
+- The user's purpose is achieved by answering alone: each point is confirmed, each task traced to
+  the acceptance criteria, and the plan remade from the facts each move brings, so the work does
+  not drift from the purpose and making a finished work again becomes rare.
 - At each sign-off the user decides from the proposal alone: what they are shown has been read and
   used in their place by the first reader, so they need not read it all again; they judge only
   the core decisions and their intent.
-- A piece of work that takes days goes on from wherever the user stopped.
+- A piece of work that takes days neither swells nor drifts, and goes on from wherever the user
+  stopped: only a short record of where it stands is carried from move to move.
 - What was decided, and why, stays, in the README and the design in the user's repository and in
   rn's commit messages, so the next piece of work, or a teammate, starts from it.
 - What a session learned is confirmed with the user one lesson at a time, and what they add to their
