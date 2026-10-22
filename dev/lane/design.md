@@ -95,7 +95,6 @@ lane/                          the plugin, installed by Claude Code
 ├── hooks/
 │   ├── hooks.json             the lanes on lane:up
 │   └── lane/                  lane's code, put in each plugin <Python 3>
-│       ├── VERSION
 │       ├── pretooluse.py      the event script for lanes on a tool call
 │       ├── subagentstop.py    the event script for lanes on how the subagent ends
 │       ├── hook.py            what the event scripts run on: the event read, each check run
@@ -128,8 +127,12 @@ lane/                          the plugin, installed by Claude Code
       └── lane/                    lane's code
   ```
 - lane's code goes into `<plugin>/hooks/lane/`: in a plugin of the ccpm marketplace a relative link
-  to lane's, which installing copies into the plugin; anywhere else a copy with its `VERSION`,
-  brought up by the next run of `lane:up`.
+  to lane's, which installing copies into the plugin; anywhere else a copy, brought up by the next
+  run of `lane:up`. Into a copy alone the layer writes `VERSION`, one line holding the version it
+  reads from lane's `plugin.json`, by which the next run tells an older copy.
+
+  lane's version is written once, in its `plugin.json`; a file of its own beside it would be a
+  second copy that drifts.
 - The guard holds each call to the 12 lanes of `lanes.md`, one file each in `lanes/` holding the
   lane's check and its wording: start_with, read_only, read_whole, write_only, in_form, hands_off,
   test_after, as_printed, follow_next, wait_for, end_when and every_item; a test holds `lanes.md` to
