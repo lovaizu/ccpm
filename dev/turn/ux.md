@@ -18,9 +18,9 @@ it gets that on every run.
 They stand from the highest priority: time is never saved by leaving the calling AI more to fix,
 since a work it must fix costs the user the fixing as well as the wait.
 
-- KR1.1: The points where the work, when it comes back, falls short of what the calling AI's step
-  needs it for, each judged by whether the calling AI can tell it and fix it at once or it would go
-  on unseen to whoever reads the work; fewer is better, and none once the goal is reached.
+- KR1.1: The points where the work, when it comes back, falls short of the purpose the calling AI
+  gave it, each judged by whether the calling AI can tell it and fix it at once or it would go on
+  unseen to whoever reads the work; fewer is better, and none once the goal is reached.
 
   What the calling AI tells and fixes at once costs the user a moment, while what goes on unseen
   reaches whoever reads the work; the calling AI judges each from its own check, not from turn's
