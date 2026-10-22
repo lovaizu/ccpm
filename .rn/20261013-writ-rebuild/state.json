@@ -389,6 +389,9 @@
   },
   {
    "fact": "acceptance trials started 2026-10-23: trial.py on the readme task, 3 plain and 3 stopped at once, outputs /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0c28e8a6-d4bd-4901-a7a4-2dbb63e3874d/scratchpad/acc1-3.out and accs1-3.out; baseline.py (turn 0.1.0 from its tag, the version in use, same task) 3 at once, /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0c28e8a6-d4bd-4901-a7a4-2dbb63e3874d/scratchpad/base1-3.out; trial.py, baseline.py and shared.playground committed with this state"
+  },
+  {
+   "fact": "the user decided (2026-10-23): the trying-once rule left code.md and prompt.md (6536c7f), as it is about how a task is carried out; the end product is rn/checklists/checklist.md telling where each item goes, purpose and UX first, the map of what rn makes and judges an intermediate in the decisions (T24, 09eb272); T24 runs alongside T23 and ends before rn is remade"
   }
  ],
  "semantic_gist": [
@@ -500,6 +503,9 @@
  "predictive_cue": [
   {
    "first": "the user ran /clear at 2026-10-22T23:15Z to see whether background runs survive it: trial.py PIDs 21740-21745, baseline.py rerun with nohup at 23:2xZ, PID 35608 alone (base1), the other two stopped so the one is 裏どり'd from its output and JSONL before two more are run, as code.md B-25 now asks (the first three ended early: baseline.py answered while turn worked in the background and gave up; fixed to answer only a question). On resuming, first run `pgrep -af 'trials/(trial|baseline).py'` and look at the *.out files: alive or finished with output = they survive /clear; gone with empty or cut output = /clear stops them, rerun the nine. Tell the user which, and keep the answer as a memory"
+  },
+  {
+   "next": "T24: draft the map in .rn/20261013-writ-rebuild/decisions/checklists.decisions.md (each work rn makes or judges: receiver, when made, when judged, its checklist; steering's goal, criteria, documents and tasks apart) from dev/rn/design.md, dev/rn/ux.md and rn/checklists/*, and ask the user's review with the file URL and the core decisions alone; then revise checklist.md's order with the path for placing an item (purpose and UX of whom it serves, the work met, product or how a task was carried out, every work or one kind, already asked) and an item for one place each"
   },
   {
    "next": "T23: read the 9 acceptance outputs in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0c28e8a6-d4bd-4901-a7a4-2dbb63e3874d/scratchpad (acc*, accs*, base*; if gone, find the sessions in ~/.claude/projects/*scratchpad-acc*/ and *-base*), judge each story of dev/turn/design.md Acceptance from every JSONL, count KR1.1 (items the stand-in judged met on return) and KR1.2 (call to return) against 0.1.0, keep them in dev/turn/trials/readme/results.json; get the user's A/B/C answer; then validate --strict, then rn"
