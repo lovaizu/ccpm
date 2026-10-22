@@ -234,8 +234,13 @@ lane/                          the plugin, installed by Claude Code
   ```sh
   python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null || { echo "notes: install Python 3.9 or later, run as python3, for its hooks to run" >&2; exit 2; }
   ```
-- `lane:up` is held by lanes of its own: it reads only the plugin's skills, agents, hooks and
-  manifest, and writes nothing but through the layer.
+- `lane:up` is held by lanes of its own, laid by the layer: as_printed on handing on the layer's
+  print, and wait_for on writing it before the OK; on lane itself the layer leaves lane's code as
+  it is.
+
+  These two keep what the builder approves the print, and nothing written before it; what
+  `lane:up` reads and writes is in the plugin it is given, which differs on each run, so no lane
+  names it.
 - rn and turn take lane's code by the same link, and their hooks run on its `hook.py` and
   `shell.py`; `common/` and `dev/common/` go.
 

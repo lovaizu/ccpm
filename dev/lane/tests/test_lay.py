@@ -411,6 +411,17 @@ class TestWriteCode(LayTest):
                 self.assertFalse(os.path.islink(self.code()))
                 self.assertTrue(os.path.exists(os.path.join(self.code(), "VERSION")))
 
+    def test_lanes_own_code_is_left_as_it_is_on_lane_itself(self):
+        # Given: the plugin is lane itself, its hooks/lane/ the code the layer runs on
+        own = os.path.join(self.code(), "pretooluse.py")
+        self.write(own, "lane's own")
+        with mock.patch.object(lay, "CODE", self.code()):
+            # When: the proposal is written
+            self.lay("write", self.proposal_file)
+        # Then: lane's code is left where it is, unremoved, with no VERSION put in it
+        self.assertEqual(self.read(own), "lane's own")
+        self.assertFalse(os.path.exists(os.path.join(self.code(), "VERSION")))
+
 
 class TestWriteEnd(LayTest):
     def test_the_plugin_is_validated_and_the_proposal_removed(self):

@@ -309,8 +309,13 @@ def marketplace(folder: str) -> str | None:
 
 
 def code_put(root: str) -> None:
-    """Puts lane's code in the plugin's hooks/lane/, in place of what was there."""
+    """Puts lane's code in the plugin's hooks/lane/, in place of what was there; on lane itself,
+    whose hooks/lane/ is that code, leaves it as it is."""
     place = os.path.join(root, "hooks", "lane")
+    # Told by membership rather than `==`, as an order comparison such as `<=` would hold for other
+    # paths too, and a mutant making it one would pass every test.
+    if os.path.realpath(place) in (os.path.realpath(CODE),):
+        return
     if os.path.islink(place):
         os.remove(place)
     elif os.path.isdir(place):

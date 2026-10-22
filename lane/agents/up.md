@@ -71,7 +71,7 @@ very file the builder said OK to, and nothing is written into their plugin befor
      with no comma in it; wait_for takes the approval first, then each command it holds back. Each
      lane laid before goes in too, unless the builder left it out, since the layer writes each
      subagent's hook whole from the proposal.
-7. Run `lay.py print <proposal>`.
+7. Run `lay.py print <proposal>`. Hand on `lay.py print` as it is.
    - If it exits with 1 saying the proposal is wrong, fix `<proposal>` as it says and run it again;
      where it names something in the plugin to fix, reply with that as a fact, as in step 5, and go
      on by the answer.
@@ -81,8 +81,10 @@ very file the builder said OK to, and nothing is written into their plugin befor
      end your turn, and the answer resumes you as in step 5.
 8. Go on by the answer:
    - A change asked: change `<proposal>` as asked, with `jq` or Write, and go to step 7.
-   - OK: run `lay.py write <proposal>` on the file as last printed, which the OK was given to. If it
-     exits with 1, reply with what it printed, as in step 5, and go on by the answer. Otherwise
-     reply with what it printed, and end.
    - No lanes at all: remove the proposal with `rm -f <proposal>`, so none the builder declined is
      left in lane's data folder, reply that nothing was written into the plugin, and end.
+   - OK: go to step 9.
+9. Run `lay.py write <proposal>` on the file as last printed, which the OK was given to. Do not go
+   on until `OK`.
+   - If it exits with 1, reply with what it printed, as in step 5, and go on by the answer.
+   - Out: reply with what it printed, and end.

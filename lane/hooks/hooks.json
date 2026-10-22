@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Agent|SendMessage|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { echo \"lane: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 2; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" lane:up '7:as_printed:lay.py print' '9:wait_for:OK,lay.py write'"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "lane:up",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { echo \"lane: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 1; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" lane:up '7:as_printed:lay.py print'"
+          }
+        ]
+      }
+    ]
+  }
+}

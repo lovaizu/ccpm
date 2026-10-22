@@ -8,7 +8,7 @@ import helpers
 from helpers import call, wait_for
 from test_guard import GuardTest
 
-# The approval and the command held back, as lane:up's step 8 takes them, and a run of the command
+# The approval and the command held back, as lane:up's step 9 takes them, and a run of the command
 # as the AI writes it.
 TAKES = ["OK", "lay.py write"]
 WRITE = "python3 /home/u/.claude/plugins/lane/scripts/lay.py write /home/u/data/notes.json"
