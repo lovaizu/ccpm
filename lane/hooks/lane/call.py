@@ -2,8 +2,9 @@
 run, test, hand on, wait or end. A Bash call is a run, of each command it runs, reading what they
 print of what they read and writing what they write; a call of the Read or Grep tool is a read of
 what it reads; a call of a tool that writes a file is a write of it; a call of a tool no lane of this
-version reads is no action. A call is read with each call its subagent made before it, for a lane on
-the order of steps."""
+version reads is no action. A call that writes a file by the Write or Edit tool is read with the text
+the file holds once it is written, for a lane on what is written. A call is read with each call its
+subagent made before it, for a lane on the order of steps."""
 
 from __future__ import annotations
 
@@ -26,23 +27,47 @@ NUMBERED = re.compile(r"^([0-9]+)\t", re.MULTILINE)
 class Call(NamedTuple):
     """The action a call is, "" for none a lane watches, and what it acts on: for a run, each
     command, as its words; each file it writes, as its whole path; each file or folder it reads, as
-    its whole path with the lines it reads of it, None where they are not known; and each call its
-    subagent made before it, read the same way, None where its record is not found."""
+    its whole path with the lines it reads of it, None where they are not known; each call its
+    subagent made before it, read the same way, None where its record is not found; and the text
+    the file it writes holds once written, None where the call does not tell it."""
 
     action: str
     what: list[list[str]]
     written: tuple[str, ...] = ()
     reads: tuple[tuple[str, shell.Lines | None], ...] = ()
     before: list[Call] | None = None
+    text: str | None = None
 
 
 def read(event: dict[str, Any]) -> Call:
     """The call of the PreToolUse event, read as its action, with each call its subagent made before
-    it, from its record."""
+    it, from its record, and the text it writes."""
     done = record.done(event)
     before = None if done is None else [alone(d.tool, d.given, d.cwd, d.result) for d in done]
-    call = alone(event["tool_name"], event["tool_input"], event["cwd"])
-    return call._replace(before=before)
+    tool, given, cwd = event["tool_name"], event["tool_input"], event["cwd"]
+    return alone(tool, given, cwd)._replace(before=before, text=text(tool, given, cwd))
+
+
+def text(tool: str, given: dict[str, Any], cwd: str) -> str | None:
+    """The text the file a call of the tool with the input, made in the folder, holds once written:
+    a Write's content; the file's text, none where it is not there, with an Edit's old_string
+    replaced by its new_string, every one where replace_all is true; None where the input does not
+    give it, or an Edit's old_string is not in the file, as the tool then writes nothing."""
+    if tool in ("Write",):
+        content = given.get("content")
+        return content if isinstance(content, str) else None
+    old, new = given.get("old_string"), given.get("new_string")
+    if tool not in ("Edit",) or not isinstance(old, str) or not isinstance(new, str):
+        return None
+    try:
+        named = os.path.join(cwd, str(given.get("file_path", "")))
+        with open(named, encoding="utf-8", errors="replace") as f:
+            before = f.read()
+    except OSError:
+        before = ""
+    if old not in before:
+        return None
+    return before.replace(old, new) if given.get("replace_all") else before.replace(old, new, 1)
 
 
 def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:

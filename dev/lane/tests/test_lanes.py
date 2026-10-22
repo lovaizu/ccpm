@@ -51,6 +51,33 @@ class TestSentence(unittest.TestCase):
             lanes.sentence("hands_off", ["a", "b", "c"]), "Do not run `a`, `b` or `c`."
         )
 
+    def test_a_wording_showing_two_things_puts_in_each_taken_in_turn(self):
+        # Given: in_form taking an output and its form
+        # When: its sentence is made
+        # Then: each stands in its own place, in the order taken
+        self.assertEqual(
+            lanes.sentence("in_form", ["out.json", "forms/out.json"]),
+            "Write `out.json` in `forms/out.json`.",
+        )
+
+
+class TestTakes(unittest.TestCase):
+    def test_a_lane_showing_one_thing_takes_one_or_more(self):
+        for takes, fits in (([], False), (["a"], True), (["a", "b"], True)):
+            with self.subTest(takes=takes):
+                # Given: hands_off, whose wording shows one thing
+                # When: it is given so many things
+                # Then: it takes one or more
+                self.assertEqual(lanes.fits("hands_off", takes), fits)
+
+    def test_a_lane_showing_two_things_takes_two_alone(self):
+        for takes, fits in ((["a"], False), (["a", "b"], True), (["a", "b", "c"], False)):
+            with self.subTest(takes=takes):
+                # Given: in_form, whose wording shows an output and a form
+                # When: it is given so many things
+                # Then: it takes two alone, one for each
+                self.assertEqual(lanes.fits("in_form", takes), fits)
+
 
 class TestWords(unittest.TestCase):
     def test_a_lane_is_written_as_its_step_its_name_and_what_it_takes(self):

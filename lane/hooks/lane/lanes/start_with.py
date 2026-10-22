@@ -13,7 +13,7 @@ TOOLS = (".*",)
 INTERPRETERS = (["python3"], ["sh"])
 
 
-def drifts(call: Call, takes: list[str]) -> bool:
+def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call is made before the subagent has run a script taken, and runs none itself;
     never where what it did before is not known, as a stop then would hold even once the script
     has run."""

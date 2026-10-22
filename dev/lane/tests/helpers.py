@@ -18,16 +18,21 @@ sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "dev", "lane")]
 
 # lane's modules, taken by each test from here, so they are found whichever test runs first.
 import call  # noqa: F401
+import forms  # noqa: F401
 import hook  # noqa: F401
 import lanes  # noqa: F401
 import lay  # noqa: F401
 import record  # noqa: F401
+import schema  # noqa: F401
 import shell  # noqa: F401
 import step  # noqa: F401
+import template  # noqa: F401
 import testing
-from lanes import hands_off, read_only, read_whole, start_with  # noqa: F401
+from lanes import hands_off, in_form, read_only, read_whole, start_with  # noqa: F401
 
 AGENT = "notes:changelog-writer"
+# The plugin's folder given to a lane that reads no file of the plugin.
+NO_PLUGIN = ""
 SENTENCE = "Do not run `git commit` or `git push`."
 # The subagent's file before any lane is laid, its file named apart from its name, as Claude Code
 # takes the name from the frontmatter.

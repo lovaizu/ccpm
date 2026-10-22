@@ -1,0 +1,193 @@
+"""in_form: a write of the output the lane takes is held to the form it takes, a file of the plugin,
+before it is made: a Write by its content, an Edit by the file's text with the edit made, and a
+command writing it stopped, as its text cannot be read; a write out of the form is told the
+sentence, with the point it is out by on the next line."""
+
+import json
+import os
+import unittest
+
+import helpers
+from helpers import call, in_form, lay
+from test_guard import GuardTest
+
+# The form of the output, a file of the plugin: a changelog entry as JSON.
+FORM = {
+    "type": "object",
+    "properties": {"version": {"type": "string"}},
+    "required": ["version"],
+    "additionalProperties": False,
+}
+TAKES = ["entry.json", "forms/entry.json"]
+SENTENCE = "Write `entry.json` in `forms/entry.json`."
+
+
+class InFormTest(helpers.PluginTest):
+    """A test whose calls are made in `base`, the plugin `notes` holding the form."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), FORM)
+
+    def drifts(self, tool, given, takes=TAKES):
+        """What the call of the tool with the input drifts from in_form by."""
+        event = {"cwd": self.base, "tool_name": tool, "tool_input": given}
+        return in_form.drifts(call.read(event), takes, self.plugin)
+
+    def wrote(self, content, path="entry.json"):
+        """What a Write of the content to the path drifts by."""
+        return self.drifts("Write", {"file_path": path, "content": content})
+
+
+class TestWrite(InFormTest):
+    def test_a_write_of_the_output_in_its_form_is_no_drift(self):
+        # Given: in_form taking entry.json and its form
+        # When: a Write gives it JSON of the form
+        # Then: it is no drift
+        self.assertFalse(self.wrote('{"version": "1.0"}'))
+
+    def test_a_write_of_the_output_out_of_its_form_gives_the_point(self):
+        for content, told in (
+            ('{"version": 1}', "$.version: expected a string, found 1"),
+            ("{}", '$: expected the key "version", found an object without it'),
+            ("version: 1", 'line 1, column 1: expected JSON (Expecting value), found "version: 1"'),
+        ):
+            with self.subTest(content=content):
+                # Given: in_form taking entry.json and its form
+                # When: a Write gives it text out of the form
+                # Then: it drifts by the point it is out by
+                self.assertEqual(self.wrote(content), told)
+
+    def test_a_write_of_another_file_is_no_drift(self):
+        # Given: in_form taking entry.json
+        # When: a Write gives another file text out of the form
+        # Then: it is no drift, as the lane holds its output alone
+        self.assertFalse(self.wrote("x", "notes.json"))
+
+    def test_the_output_is_named_from_the_folder_the_call_is_made_in(self):
+        # Given: in_form taking entry.json
+        # When: a Write names it by its whole path, with text out of the form
+        # Then: it drifts
+        self.assertTrue(self.wrote("{}", os.path.join(self.base, "entry.json")))
+
+
+class TestEdit(InFormTest):
+    def test_an_edit_leaving_the_output_in_its_form_is_no_drift(self):
+        # Given: the output in its form
+        self.write("entry.json", '{"version": "1.0"}')
+        # When: an Edit changes its version to another text
+        given = {"file_path": "entry.json", "old_string": "1.0", "new_string": "1.1"}
+        # Then: it is no drift
+        self.assertFalse(self.drifts("Edit", given))
+
+    def test_an_edit_taking_the_output_out_of_its_form_gives_the_point(self):
+        # Given: the output in its form
+        self.write("entry.json", '{"version": "1.0"}')
+        # When: an Edit makes its version a number
+        given = {"file_path": "entry.json", "old_string": '"1.0"', "new_string": "1"}
+        # Then: it drifts by the point the file would be out by
+        self.assertEqual(self.drifts("Edit", given), "$.version: expected a string, found 1")
+
+    def test_an_edit_the_tool_would_refuse_is_no_drift(self):
+        # Given: the output, without the text an Edit would replace
+        self.write("entry.json", "{}")
+        # When: the Edit is made
+        given = {"file_path": "entry.json", "old_string": "x", "new_string": "y"}
+        # Then: it is no drift, as the tool writes nothing
+        self.assertFalse(self.drifts("Edit", given))
+
+
+class TestCommand(InFormTest):
+    def test_a_command_writing_the_output_drifts_saying_to_write_it_by_a_tool(self):
+        for command in ('echo \'{"version": "1.0"}\' > entry.json', "rm entry.json"):
+            with self.subTest(command=command):
+                # Given: in_form taking entry.json
+                # When: a command writes it, even in its form
+                # Then: it drifts, as a command's text cannot be read, saying to write it by Write
+                # or Edit
+                self.assertEqual(
+                    self.drifts("Bash", {"command": command}),
+                    "`entry.json`: expected a write by Write or Edit, whose text is held to the"
+                    " form, found a command writing it",
+                )
+
+    def test_a_command_writing_another_file_or_none_is_no_drift(self):
+        for command in ("echo x > notes.json", "cat entry.json"):
+            with self.subTest(command=command):
+                # Given: in_form taking entry.json
+                # When: a command writes another file, or only reads the output
+                # Then: it is no drift
+                self.assertFalse(self.drifts("Bash", {"command": command}))
+
+
+class TestForm(InFormTest):
+    def test_a_form_of_the_plugin_is_read(self):
+        # Given: the form, a file of the plugin
+        # When: it is read for the lane
+        # Then: it is the schema
+        self.assertEqual(in_form.form(self.plugin, "forms/entry.json"), FORM)
+
+    def test_a_form_out_of_the_plugin_is_refused(self):
+        for named in ("../form.json", os.path.join(self.base, "form.json")):
+            with self.subTest(named=named):
+                # Given: a form beside the plugin, out of it
+                self.write_json(os.path.join(self.base, "form.json"), FORM)
+                # When: it is read for the lane
+                # Then: it is refused, as installing copies the plugin's folder alone
+                with self.assertRaises(ValueError) as refused:
+                    in_form.form(self.plugin, named)
+                self.assertIn("out of the plugin", str(refused.exception))
+
+    def test_a_form_gone_since_the_lane_was_laid_stops_the_write_saying_so(self):
+        # Given: in_form whose form is no longer there
+        os.remove(os.path.join(self.plugin, "forms", "entry.json"))
+        # When: the output is written
+        told = self.wrote('{"version": "1.0"}')
+        # Then: it drifts, saying the form cannot be read and to stop for the plugin to be fixed
+        self.assertTrue(told.startswith("the form `forms/entry.json` cannot be read: "), told)
+        self.assertIn("Stop here and reply that the form must be fixed", told)
+
+
+class TestLaid(GuardTest):
+    """in_form laid on step 3 of changelog-writer, run by the guard as Claude Code runs it."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        laid = helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {SENTENCE}\n")
+        self.write(self.agent_file, laid)
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), FORM)
+
+    def written(self, content):
+        """The guard on changelog-writer writing entry.json with the content."""
+        event = self.called("Write", {"file_path": "entry.json", "content": content})
+        return self.guard(json.dumps(event), (helpers.AGENT, "3:in_form:" + ",".join(TAKES)))
+
+    def test_a_write_out_of_the_form_is_stopped_with_the_sentence_and_the_point(self):
+        # Given: in_form on step 3 of changelog-writer
+        # When: changelog-writer writes entry.json out of its form
+        # Then: the call is stopped, and the subagent told the sentence headed by the plugin, and
+        # the point on the next line
+        self.assertEqual(
+            self.written('{"version": 1}'),
+            (2, f"notes: {SENTENCE}\n$.version: expected a string, found 1\n"),
+        )
+
+    def test_a_write_in_the_form_is_let_through(self):
+        # Given: in_form on step 3 of changelog-writer
+        # When: changelog-writer writes entry.json in its form
+        # Then: the call goes on, nothing said
+        self.assertEqual(self.written('{"version": "1.0"}'), (0, ""))
+
+
+class TestHook(unittest.TestCase):
+    def test_the_hook_watches_the_tools_that_write_text_and_bash(self):
+        # Given: in_form laid on a step
+        lanes = [{"lane": "in_form", "takes": TAKES}]
+        # When: the layer makes the subagent's hook
+        entry = lay.entry("notes", {"name": "writer", "steps": [{"step": 3, "lanes": lanes}]})
+        # Then: its matcher names Write, Edit and Bash
+        self.assertEqual(entry["matcher"], "Write|Edit|Bash")
+
+
+if __name__ == "__main__":
+    unittest.main()

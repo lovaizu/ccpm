@@ -33,6 +33,7 @@ sys.path.insert(0, CODE)
 
 import lanes
 import step
+from lanes import in_form
 
 USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>"
 # Each hook's command first stops the call where lane's code cannot run, saying what to install.
@@ -140,13 +141,14 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
         if not isinstance(laid, list) or not laid:
             raise wrong(f"gives step {number} of {name} no lanes")
         for lane in laid:
-            lane_check(lane, f"step {number} of {name}")
+            lane_check(lane, f"step {number} of {name}", root)
         s["span"] = where
     return {"name": name, "file": file, "lines": lines, "steps": steps}
 
 
-def lane_check(lane: Any, on: str) -> None:
-    """Stops where the lane is not one lane lays, taking a text with no comma for each thing."""
+def lane_check(lane: Any, on: str, root: str) -> None:
+    """Stops where the lane is not one lane lays, taking a text with no comma for each thing it
+    shows; or, for in_form, where its form is no form lane reads in the plugin at root."""
     known = lane.get("lane") if isinstance(lane, dict) else None
     if known not in lanes.LANES:
         raise wrong(f"gives {known}, which is no lane, on {on}")
@@ -155,6 +157,16 @@ def lane_check(lane: Any, on: str) -> None:
         raise wrong(f"gives {known} on {on} no takes")
     if not all(isinstance(t, str) and t and "," not in t for t in takes):
         raise wrong(f"gives {known} on {on} takes that are not each a text with no comma")
+    if not lanes.fits(known, takes):
+        raise wrong(f"gives {known} on {on} takes of another count than its wording shows")
+    if known in ("in_form",):
+        try:
+            in_form.form(root, takes[1])
+        except ValueError as why:
+            raise Stop(
+                f"lay.py: the form {takes[1]} of in_form on {on} {why}; fix the form or the"
+                " proposal and run again."
+            ) from None
 
 
 def sentences(step_given: dict[str, Any]) -> list[str]:

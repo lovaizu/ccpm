@@ -6,7 +6,7 @@ subagent made before it."""
 import unittest
 
 import helpers
-from helpers import call
+from helpers import call, testing
 
 # The folder each command runs in.
 HERE = "/r"
@@ -225,6 +225,66 @@ class TestMade(helpers.PluginTest):
         # When: its next call is read alone
         # Then: what came before is not read
         self.assertIsNone(call.alone("Bash", {"command": "pwd"}, self.base).before)
+
+
+class TestText(testing.FolderTest):
+    """The text the file a call writes holds once it is written, for a call made in `base`."""
+
+    def text(self, tool, given):
+        return call.read({"cwd": self.base, "tool_name": tool, "tool_input": given}).text
+
+    def test_a_write_holds_its_content(self):
+        # Given: a Write of a file with its content
+        # When: it is read
+        # Then: the text written is the content
+        self.assertEqual(self.text("Write", {"file_path": "a.md", "content": "x\n"}), "x\n")
+
+    def test_an_edit_holds_the_files_text_with_the_edit_made_once(self):
+        # Given: a file holding the old text twice
+        self.write("a.md", "old old\n")
+        # When: an Edit replaces it, not every one
+        # Then: the text written is the file's with the first replaced
+        given = {"file_path": "a.md", "old_string": "old", "new_string": "new"}
+        self.assertEqual(self.text("Edit", given), "new old\n")
+
+    def test_an_edit_replacing_all_holds_every_one_replaced(self):
+        # Given: a file holding the old text twice
+        self.write("a.md", "old old\n")
+        # When: an Edit replaces every one
+        given = {"file_path": "a.md", "old_string": "old", "new_string": "new", "replace_all": True}
+        # Then: the text written has both replaced
+        self.assertEqual(self.text("Edit", given), "new new\n")
+
+    def test_an_edit_of_text_not_in_the_file_writes_none(self):
+        # Given: a file without the old text, and no file at all
+        self.write("a.md", "x\n")
+        for path in ("a.md", "none.md"):
+            with self.subTest(path=path):
+                # When: an Edit would replace it
+                given = {"file_path": path, "old_string": "old", "new_string": "new"}
+                # Then: no text is written, as the tool writes nothing
+                self.assertIsNone(self.text("Edit", given))
+
+    def test_an_edit_of_a_file_not_there_from_nothing_holds_the_new_text(self):
+        # Given: no file at the path
+        # When: an Edit replaces nothing with text
+        given = {"file_path": "new.md", "old_string": "", "new_string": "x"}
+        # Then: the text written is the new text
+        self.assertEqual(self.text("Edit", given), "x")
+
+    def test_a_call_whose_text_is_not_given_writes_none_known(self):
+        for tool, given in (
+            ("Write", {"file_path": "a.md"}),
+            ("Edit", {"file_path": "a.md", "old_string": "x"}),
+            ("Edit", {"file_path": "a.md", "new_string": "x"}),
+            ("Bash", {"command": "echo x > a.md"}),
+            ("Read", {"file_path": "a.md"}),
+        ):
+            with self.subTest(tool=tool, given=given):
+                # Given: a call whose input gives no text, or that writes by a command
+                # When: it is read
+                # Then: its text is not known
+                self.assertIsNone(self.text(tool, given))
 
 
 if __name__ == "__main__":

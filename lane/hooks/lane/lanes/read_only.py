@@ -14,7 +14,7 @@ WORDING = "Read only `<input>`."
 TOOLS = (*READ_TOOLS, "Bash")
 
 
-def drifts(call: Call, takes: list[str]) -> bool:
+def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call reads a file or folder that is none of the inputs taken and in none of
     them, each input named from the folder the call is made in, where the guard stands."""
     inputs = [i for i in (shell.path(os.getcwd(), t) for t in takes) if i]

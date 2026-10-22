@@ -388,6 +388,10 @@ class TestProposal(LayTest):
                 self.proposal([{"lane": "hands_off", "takes": ["a,b"]}]),
                 "takes",
             ),
+            "a lane taking fewer things than its wording shows": (
+                self.proposal([{"lane": "in_form", "takes": ["out.json"]}]),
+                "takes",
+            ),
             "a thing taken that is empty": (
                 self.proposal([{"lane": "hands_off", "takes": [""]}]),
                 "takes",
@@ -423,6 +427,53 @@ class TestProposal(LayTest):
                 # Then: it exits 1 naming the manifest
                 self.assertEqual(code, 1)
                 self.assertIn("plugin.json", said)
+
+
+class TestInForm(LayTest):
+    """A proposal of in_form, taking an output and its form, a file of the plugin."""
+
+    def in_form(self, form):
+        return self.proposal([{"lane": "in_form", "takes": ["entry.json", form]}])
+
+    def test_a_form_lane_reads_is_laid(self):
+        for form, text in (
+            ("forms/entry.json", '{"type": "object"}'),
+            ("forms/entry.md", "## A\n"),
+        ):
+            with self.subTest(form=form):
+                # Given: a proposal of in_form whose form is a schema or a template of the plugin
+                self.write(os.path.join(self.plugin, form), text)
+                self.propose(self.in_form(form))
+                # When: it is written
+                code, _ = self.lay("write", self.proposal_file)
+                # Then: it is laid, its sentence put into the step
+                self.assertEqual(code, 0)
+                self.assertIn(f"Write `entry.json` in `{form}`.", self.read(self.agent_file))
+
+    def test_a_form_lane_cannot_read_stops_naming_it_before_anything_is_written(self):
+        self.write(os.path.join(self.base, "outside.json"), "{}")
+        self.write(os.path.join(self.plugin, "forms", "bad.json"), '{"format": "date"}')
+        self.write(os.path.join(self.plugin, "forms", "entry.yaml"), "a: b\n")
+        for form, named in (
+            ("forms/none.json", "cannot be read"),
+            ("forms/bad.json", "`format` is no keyword"),
+            ("forms/entry.yaml", "neither a .json schema nor a .md template"),
+            ("../outside.json", "out of the plugin"),
+        ):
+            with self.subTest(form=form):
+                # Given: a proposal of in_form whose form is not there, not of the keywords lane
+                # reads, of no kind lane reads, or out of the plugin
+                self.propose(self.in_form(form))
+                for action in ("print", "write"):
+                    # When: it is printed or written
+                    code, said = self.lay(action, self.proposal_file)
+                    # Then: it exits 1 naming the form and why, and saying to fix it, nothing
+                    # written
+                    self.assertEqual(code, 1)
+                    self.assertIn(f"the form {form} of in_form on step 3 of changelog-writer", said)
+                    self.assertIn(named, said)
+                    self.assertIn("fix the form or the proposal", said)
+                self.assertEqual(self.read(self.agent_file), helpers.STEPS)
 
 
 class TestMain(LayTest):

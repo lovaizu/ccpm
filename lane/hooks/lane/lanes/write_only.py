@@ -13,7 +13,7 @@ WORDING = "Write only `<output>`."
 TOOLS = (*WRITERS, "Bash")
 
 
-def drifts(call: Call, takes: list[str]) -> bool:
+def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call writes a file that is none of the outputs taken, each named from the folder
     the call is made in, where the guard stands; a command's write out of that folder is left out,
     as a command throws its output away in /dev/null or keeps it in a folder of its own to run what

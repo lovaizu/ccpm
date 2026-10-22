@@ -126,6 +126,7 @@ class TestCommandLine(GuardTest):
             "a lane taking nothing": ([helpers.AGENT, "3:hands_off:"], "3:hands_off:"),
             "a lane taking an empty thing": ([helpers.AGENT, "3:hands_off:a,"], "3:hands_off:a,"),
             "a lane of two parts": ([helpers.AGENT, "3:hands_off"], "3:hands_off"),
+            "a lane taking too few": ([helpers.AGENT, "3:in_form:a.json"], "3:in_form:a.json"),
         }
         for what, (words, named) in wrong.items():
             with self.subTest(what=what):

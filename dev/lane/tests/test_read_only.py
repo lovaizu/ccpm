@@ -4,7 +4,7 @@ Grep tools and by the shell's commands that print what they read; every other ca
 import os
 import unittest
 
-from helpers import call, read_only, testing
+from helpers import NO_PLUGIN, call, read_only, testing
 
 TAKES = ["in.md"]
 
@@ -15,7 +15,7 @@ class ReadOnlyTest(testing.FolderTest):
     def drifts(self, tool, given, takes=TAKES):
         """Whether the call of the tool with the input drifts from read_only taking the inputs."""
         event = {"cwd": self.base, "tool_name": tool, "tool_input": given}
-        return read_only.drifts(call.read(event), takes)
+        return read_only.drifts(call.read(event), takes, NO_PLUGIN)
 
     def at(self, name):
         """The whole path of the name in `base`."""

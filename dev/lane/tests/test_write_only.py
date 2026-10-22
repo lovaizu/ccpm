@@ -6,7 +6,7 @@ import os
 import unittest
 
 import helpers
-from helpers import call, lay, testing
+from helpers import NO_PLUGIN, call, lay, testing
 from lanes import write_only
 from test_guard import GuardTest
 
@@ -20,7 +20,7 @@ class WriteOnlyTest(testing.FolderTest):
     def drifts(self, tool, given, takes=TAKES):
         """Whether the call of the tool with the input drifts from write_only taking the outputs."""
         event = {"cwd": self.base, "tool_name": tool, "tool_input": given}
-        return write_only.drifts(call.read(event), takes)
+        return write_only.drifts(call.read(event), takes, NO_PLUGIN)
 
     def bash(self, command, takes=TAKES):
         """Whether a Bash call of the command drifts from write_only taking the outputs."""

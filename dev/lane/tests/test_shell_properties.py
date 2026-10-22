@@ -14,7 +14,7 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import call, shell, start_with, testing
+from helpers import NO_PLUGIN, call, shell, start_with, testing
 
 testing.load_hypothesis_profile()
 
@@ -135,4 +135,6 @@ class TestStartWith(unittest.TestCase):
         made = call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}})
         # When: start_with reads it as the subagent's first call
         # Then: it is no drift
-        self.assertFalse(start_with.drifts(made._replace(before=[]), ["scripts/turn.py"]))
+        self.assertFalse(
+            start_with.drifts(made._replace(before=[]), ["scripts/turn.py"], NO_PLUGIN)
+        )

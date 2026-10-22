@@ -10,7 +10,7 @@ WORDING = "Do not run `<commands>`."
 TOOLS = ("Bash",)
 
 
-def drifts(call: Call, takes: list[str]) -> bool:
+def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call runs one of the commands taken: a command of the call whose words begin
     with the command's words, so `git commit` holds `git commit -m m` and not `git commit-tree`."""
     commands = [c.split() for c in takes]

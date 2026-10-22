@@ -16,7 +16,7 @@ WORDING = "Read `<input>` to its end."
 TOOLS = ("Bash", *WRITERS)
 
 
-def drifts(call: Call, takes: list[str]) -> bool:
+def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call writes while an input taken, begun, has a line left unread, each input named
     from the folder the call is made in, where the guard stands."""
     if not writes(call):

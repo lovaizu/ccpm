@@ -3,7 +3,7 @@ a drift, in the forms the steps tell and the AI writes; once it has run it, no c
 
 import unittest
 
-from helpers import call, start_with
+from helpers import NO_PLUGIN, call, start_with
 
 # The script the lane takes, as a step names it, and its path as the AI writes it once Claude Code
 # has put the plugin's folder in for `${CLAUDE_PLUGIN_ROOT}`.
@@ -19,7 +19,7 @@ def read(command, tool="Bash"):
 def drifts(command, before=(), takes=TAKES, tool="Bash"):
     """Whether the call drifts, made after the Bash calls of the commands before it."""
     made = read(command, tool)._replace(before=[read(b) for b in before])
-    return start_with.drifts(made, takes)
+    return start_with.drifts(made, takes, NO_PLUGIN)
 
 
 class TestFirstCall(unittest.TestCase):
@@ -106,7 +106,7 @@ class TestLaterCalls(unittest.TestCase):
         made = read("ls")
         # When: start_with reads it
         # Then: it is no drift, as a stop then would hold even after the script is run
-        self.assertFalse(start_with.drifts(made, TAKES))
+        self.assertFalse(start_with.drifts(made, TAKES, NO_PLUGIN))
 
 
 if __name__ == "__main__":
