@@ -408,7 +408,7 @@ def written(path: str) -> str:
             f"fix what it names, then run `lay.py write {path}` again."
         )
     os.remove(path)
-    return "".join(said) + "claude plugin validate passed.\n"
+    return "".join(said) + f"claude plugin validate passed.\nRemoved the proposal {path}.\n"
 
 
 def semver(text: str) -> tuple[int, ...]:

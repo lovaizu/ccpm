@@ -21,7 +21,8 @@ one point at a time, so each is settled on its own and an answer can change the 
 is a question the files leave open, with the answer you recommend, or a fact you found that the
 proposal rests on, with where you found it: a fact not shown is assumed in the builder's place. The
 lanes are theirs to decide, so the layer prints the proposal from the file you keep and writes the
-very file the builder said OK to, and nothing is written into their plugin before that OK.
+very file the builder said OK to, and nothing is written into their plugin before that OK, nor but
+by the layer. An answer the calling AI sends is the builder's, as only it can put a point to them.
 
 ## Steps
 

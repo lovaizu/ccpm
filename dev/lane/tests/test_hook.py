@@ -55,9 +55,9 @@ class TestRun(testing.FolderTest):
         # Given: two checks, each saying something
         # When: the entry runs them on an event
         # Then: it gives 2, on which Claude Code stops the use, with what both say, one to a line,
-        # headed by the plugin's name, each check run from the folder the event comes from
+        # each headed by the plugin's name, each check run from the folder the event comes from
         first, second = Says("a"), Says("b")
-        self.assertEqual(self.ran(first, Says(), second), (2, "p: a\nb\n"))
+        self.assertEqual(self.ran(first, Says(), second), (2, "p: a\np: b\n"))
         self.assertEqual((first.ran_in, second.ran_in), (self.base, self.base))
 
     def test_checks_saying_nothing_let_the_use_go_on(self):

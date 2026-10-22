@@ -443,7 +443,8 @@ class TestWriteEnd(LayTest):
             "Wrote step 3 of changelog-writer into agents/writer.md.\n"
             "Wrote the hook of changelog-writer into hooks/hooks.json.\n"
             "Put lane's code in hooks/lane/.\n"
-            "claude plugin validate passed.\n",
+            "claude plugin validate passed.\n"
+            f"Removed the proposal {self.proposal_file}.\n",
         )
 
     def test_a_plugin_claude_code_finds_malformed_keeps_the_proposal(self):

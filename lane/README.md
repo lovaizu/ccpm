@@ -102,6 +102,10 @@ tells it when the subagent does what the last column says.
 | end | end_when | End only once `<output>` is made. | ends before |
 | end | every_item | Answer every item of `<input>`. | leaves an item unanswered |
 
+follow_next reads the next move your script prints as the tool call itself, one JSON line
+`{"tool": ..., "input": {...}}` last in its output; a script printing its move in a form of its own
+gets no follow_next.
+
 ## Requirements
 
 - Claude Code, where your plugin runs and lane is installed.

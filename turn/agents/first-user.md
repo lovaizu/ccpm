@@ -26,14 +26,14 @@ spent.
 ## Steps
 
 1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run
-   - `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
-     JSON. - In: what it prints, JSON: `work`, the path of each file of the work; `has`, each file
-     or folder the receiver has with the work; `receiver`, who the receiver is; `use`, what they
-     read the work for; `checklists`, the path of each checklist you answer; `parts`, each part of
-     the work as its lines, a document's sections under its top headings with the title and opening
-     as one; `lessons`, what
-     the orchestrator took for you from how the first round went, empty in the first. Do each step
-     with your lessons.
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
+   JSON.
+   - In: what it prints, JSON: `work`, the path of each file of the work; `has`, each file or
+     folder the receiver has with the work; `receiver`, who the receiver is; `use`, what they read
+     the work for; `checklists`, the path of each checklist you answer; `parts`, each part of the
+     work as its lines, a document's sections under its top headings with the title and opening as
+     one; `lessons`, what the orchestrator took for you from how the first round went, empty in the
+     first. Do each step with your lessons.
    - When a message names your run again, the work has been made again: run this step again, read
      the work again whole as in step 2, and go on from step 4, looking first at the places you
      stopped at.

@@ -61,6 +61,6 @@ def run(
     os.chdir(event["cwd"])
     said = [s for c in checks for s in c.check(event)]
     if said:
-        err.write(f"{plugin}: " + "\n".join(said) + "\n")
+        err.write("".join(f"{plugin}: {s}\n" for s in said))
         return STOPPED
     return 0
