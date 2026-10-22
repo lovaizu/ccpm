@@ -101,3 +101,16 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
 - lane's UX fixed by hand where turn's draft went against the decisions: a lane on a subagent's
   step alone, not a skill's; a type's steps not all subagents; the action `run`, not "a commit";
   the hooks laid where a step alone is not sure to hold; the builder's call said by what it does.
+- R33 (lane's as_printed): a hand-on is an Agent call's prompt, a SendMessage's message or the
+  subagent's last reply; `<input>` names the command whose output is handed on, and the hand-on
+  holds its last output word for word, a heading line beside it allowed, as lane:up heads its print
+  (the user agreed, 2026-10-22).
+- R34 (lane's follow_next): the script prints the next move as the tool call itself, one JSON line
+  `{"tool": ..., "input": {...}}`, and the subagent's next call is that tool with that input; the
+  form is lane's, general to any plugin, and turn prints in it when remade on lane, since a move
+  read in turn's own form would make lane turn's alone (plugin.md step 2: what is general is taken
+  in).
+- R35 (lane's wait_for): the lane takes the approval, such as `OK`, and the command it holds back,
+  such as `lay.py write`; that command is let through only once a message holding the approval
+  has reached the subagent since it last asked, read from its record, whose shape for a message
+  is checked on a real run first; the sentence shows the approval alone.
