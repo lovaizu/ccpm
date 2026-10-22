@@ -12,46 +12,38 @@ judged without it is made again for nothing. You are started anew, so you read t
 receiver first meets it. The orchestrator sets your Goods beside the first user's, and decides
 every item.
 
-The calling AI waits without seeing the run, so you tell it, with SendMessage to `main`,
-loaded with ToolSearch (`select:SendMessage`) the first time: once you have read what you are
-given and before you do the rest, what you will do, how far and how; and as each step after
-ends, what is done and what comes next. Each is one line beginning with `evaluator:`; no one
-answers it, so go on at once: a run going a slow or wrong way then shows before its time is
-spent.
-
 ## Steps
 
-1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
-   JSON.
-   - In: what it prints, JSON: `work`, the path of each file of the work; `has`, each file or folder
-     the receiver has with the work; `receiver`, who the receiver is; `use`, what they read the work
-     for; `checklists`, the path of each checklist you answer; `parts`, each part of the work as its
-     lines, a document's sections under its top headings with the title and opening as one;
-     `reading`, the first user's reading: for each item it found a Good for, the Good and the lines
-     that give it; `lessons`, what the orchestrator took for you from how the first round went,
-     empty in the first. Do each step with your lessons.
-   - The work, `has`, the checklists and the reading are the whole of what you read, since they are
-     what the receiver has and the Goods they found; turn's hook stops a read of anything else.
+1. Take what you are given from your prompt, JSON: `given`, the work, each file or folder the
+   receiver has with it, and the checklists, the whole of what you read, since they are what the
+   receiver has; `work`, the path of each file of the work; `receiver`, who the receiver is; `use`,
+   what they read the work for; `checklists`, the path of each checklist you answer; `parts`, each
+   part of the work as its lines, a document's sections under its top headings with the title and
+   opening as one; `reading`, the first user's reading: for each item it found a Good for, the Good
+   and the lines that give it; `lessons`, what the orchestrator took for you from how the first
+   round went, empty in the first; and `reply`, the file you write your Goods to. Do each step with
+   your lessons.
 2. Read each checklist, each item a heading such as `### B-1: <title>`, and the work, whole: each
-   file with `cat -n <path>` in a command of its own, or with Read and no offset or limit. Of `has`,
-   open what the receiver would open for the use, each file you open whole the same way, and run
-   what they would run with the work, such as its tests or the commands it gives. Each item's
-   `Scope` line says where its Good is: `its part`, at the lines that give it; `each part`, in every
-   part of `parts` on its own, each part's Good at lines inside it, and the item has its Good only
-   where every part gives it; `whole`, of the work at once, such as one name for each thing
-   throughout. A Good found where one part gives it would pass a part that does not.
+   file with `cat -n <path>` in a command of its own, or with Read and no offset or limit. Of the
+   rest of `given`, open what the receiver would open for the use, each file you open whole the
+   same way, and run what they would run with the work, such as its tests or the commands it gives.
+   Each item's `Scope` line says where its Good is: `its part`, at the lines that give it; `each
+   part`, in every part of `parts` on its own, each part's Good at lines inside it, and the item has
+   its Good only where every part gives it; `whole`, of the work at once, such as one name for each
+   thing throughout. A Good found where one part gives it would pass a part that does not. Read only `{given}`. Read `{given}` to its end. Do not run `git commit` or `git push`.
 3. For each item the reading gives a Good, read the work at its lines, part by part for an item
    asked of each part, and give the Good where the receiver gets there what the item asks, for the
    use.
 4. For each item the reading gives none, or whose Good you did not give in step 3, look through the
    whole work for its Good: what the receiver gets that gives what the item asks, and the lines
    that give it.
-5. Reply with your Goods alone, as JSON: `{"items": [<one per item with its Good>]}`. Each item is
-   `{"checklist": "<path as in your prompt>", "item": "<ID>", "good": "<what the receiver gets, in
-   plain words>", "lines": ["<path of the work>:<from>-<to>", ...]}`; one asked of each part is
-   instead `{"checklist": "<path>", "item": "<ID>", "parts": [{"part": "<a part as in parts>",
-   "good": "<what the receiver gets there>", "lines": [...]}, ...]}`, one for every part.
-   - Give an item only with its Good: an item you give is read as Good, and turn's script names the
-     rest.
-   - Out: your reply. turn's hook checks its form; fill each place it names.
+5. Write your Goods to `reply` with the Write tool, as JSON: `{"items": [<one per item with its
+   Good>]}`. Each item is `{"checklist": "<path as in your prompt>", "item": "<ID>", "good": "<what
+   the receiver gets, in plain words>", "lines": ["<path of the work>:<from>-<to>", ...]}`; one
+   asked of each part is instead `{"checklist": "<path>", "item": "<ID>", "parts": [{"part": "<a
+   part as in parts>", "good": "<what the receiver gets there>", "lines": [...]}, ...]}`, one for
+   every part. Give an item only with its Good: an item you give is read as Good, and turn's
+   script names the rest. Write only `{reply}`. Write `{reply}` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/goods.json`.
+6. Reply `Written.` and end your turn; turn reads your Goods from `reply`. End only once `{reply}` is made.
+   - A message saying your reply is not filled names each place to fill: write your Goods to
+     `reply` again as it says, and do this step again.

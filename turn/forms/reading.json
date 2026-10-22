@@ -1,0 +1,32 @@
+{
+  "title": "The first user's reading: each item's Good with its lines, or where it stopped, what it did there and what it did not get.",
+  "type": "object",
+  "required": [
+    "items"
+  ],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "required": [
+        "checklist",
+        "item"
+      ],
+      "properties": {
+        "checklist": {
+          "type": "string"
+        },
+        "item": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

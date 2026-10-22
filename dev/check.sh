@@ -29,10 +29,12 @@ fi
 # their modules by putting their own folders on sys.path; plugins share module names, such as stop,
 # so each is type-checked on its own with its folders as search paths, and dev/lane/, where
 # testing.py, what every plugin's tests share, is kept. What the plugins' hooks share is lane's,
-# reached through a link in each plugin's own folder.
+# reached through a link in each plugin's own folder; a folder of lane's code linked whole, as
+# turn's hooks/lane/, is checked in lane alone, as git lists the link and not the files in it.
 for plugin in $plugins; do
   paths=$({ find "$plugin" "dev/$plugin" -name '*.py' -exec dirname {} \; && echo dev/lane; } | sort -u)
-  pyrefly check $(printf -- '--search-path %s ' $paths) "$plugin" "dev/$plugin"
+  files=$(git ls-files --cached --others --exclude-standard "$plugin" "dev/$plugin" | grep '\.py$')
+  pyrefly check $(printf -- '--search-path %s ' $paths) $files
 done
 
 for plugin in $plugins; do

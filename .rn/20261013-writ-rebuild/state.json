@@ -371,6 +371,9 @@
     },
     {
       "fact": "the user agreed to try (2026-10-22): AC1 and AC2 measured with an AI standing in for the user, holding what is truly wanted, AC2 by what the stand-in does instead of minutes; T14's two requests set (Downloads tidy script, issue forms); rn's flow tried unit by unit with mocked roles; the user merges and gives the release; work resumes after the weekly limit lifts, Friday 7:00"
+    },
+    {
+      "fact": "T22 step 2 (2026-10-22): turn's five agents rewritten to the flow (each role takes its prompt JSON, writes its reply file, ends Written.; up makes each move printed, asks by turn.py questions), forms in turn/forms/, lanes laid by lane's lay.py write into turn/hooks/hooks.json with hooks/lane linked to lane's code; test_lanes holds each lane's sentence in its step; check.sh skips files inside a linked folder. Next: mutate.sh turn, then T23 trials (dev/turn/trials still on the old flow)"
     }
   ],
   "semantic_gist": [

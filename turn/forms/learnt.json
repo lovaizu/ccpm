@@ -1,0 +1,56 @@
+{
+  "title": "What the learner found of how the run went: each lesson for a role, resting on words of the records, and what it checked.",
+  "type": "object",
+  "required": [
+    "process",
+    "checked"
+  ],
+  "properties": {
+    "process": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "role",
+          "lesson",
+          "grounds"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "orchestrator",
+              "generator",
+              "first-user",
+              "evaluator",
+              "learner"
+            ]
+          },
+          "lesson": {
+            "type": "string"
+          },
+          "grounds": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "record",
+                "quote"
+              ],
+              "properties": {
+                "record": {
+                  "type": "integer"
+                },
+                "quote": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "checked": {
+      "type": "string"
+    }
+  }
+}
