@@ -148,6 +148,14 @@ class TestEnd(GuardTest):
         # Then: it is told end_when's sentence alone, as no change waits on the check
         self.assertEqual(self.ended([]), (2, f"notes: {self.ENDED}\n"))
 
+    def test_a_command_writing_the_output_that_a_hook_stopped_is_no_change(self):
+        # Given: a command writing the changelog, stopped by a hook, so it never ran
+        stopped = helpers.Failed("PreToolUse:Bash hook error: [python3 x.py]: notes: Write it.")
+        calls = [("Bash", {"command": "echo x > CHANGELOG.md"}, stopped)]
+        # When: changelog-writer is about to end
+        # Then: it is not told test_after's sentence, as no change waits on the check
+        self.assertEqual(self.ended(calls), (2, f"notes: {self.ENDED}\n"))
+
     def test_told_and_answering_in_words_alone_ends(self):
         # Given: a change not passed, told before, and answered with words alone since
         # When: changelog-writer, kept going by the stop hook, is about to end again
@@ -214,6 +222,111 @@ class TestEnd(GuardTest):
                 self.assertEqual(code, 1)
                 self.assertIn(word, said)
                 self.assertIn("run lane:up again", said)
+
+
+class TestRunValues(GuardTest):
+    """Lanes taking a value given for each run, `{work}`, from the JSON the subagent starts from."""
+
+    WRITE = "Write only `{work}`."
+    # The run's JSON, as the subagent's prompt or a script's print gives it, naming the work and a
+    # file the lane does not take.
+    RUN = '{"work": ["a.md", "b.md"], "has": "h.md"}'
+    TOLD = "notes: Write only `{work}`.\n`{work}` is `a.md`, `b.md`.\n"
+
+    def setUp(self) -> None:
+        super().setUp()
+        laid = helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {self.WRITE}\n")
+        self.write(self.agent_file, laid)
+
+    def wrote(self, path, words=(helpers.AGENT, "3:write_only:{work}")):
+        """The guard on a Write of the path."""
+        event = self.called("Write", {"file_path": path, "content": "x"})
+        return self.guard(json.dumps(event), words)
+
+    def test_a_write_of_a_file_the_runs_value_does_not_name_is_told_with_the_value(self):
+        # Given: write_only taking `{work}`, the prompt naming the work
+        self.record([], self.RUN)
+        # When: changelog-writer writes another file
+        # Then: it is stopped, told the sentence as its step says it, the value on the next line
+        self.assertEqual(self.wrote("c.md"), (2, self.TOLD))
+
+    def test_a_write_of_a_file_the_runs_value_names_goes_on(self):
+        # Given: write_only taking `{work}`, the prompt naming the work
+        self.record([], self.RUN)
+        # When: changelog-writer writes a file of the work
+        # Then: it goes on, nothing said
+        self.assertEqual(self.wrote("b.md"), (0, ""))
+
+    def test_until_the_value_is_given_every_call_goes_on(self):
+        for prompt in (helpers.PROMPT, '{"has": "a.md"}', '{"work": 1}'):
+            with self.subTest(prompt=prompt):
+                # Given: a prompt of words, of JSON naming no work, or naming it by no text
+                self.record([], prompt)
+                # When: changelog-writer writes any file
+                # Then: it goes on, nothing said
+                self.assertEqual(self.wrote("c.md"), (0, ""))
+
+    def test_with_no_record_found_every_call_goes_on(self):
+        # Given: no record of what changelog-writer was given
+        # When: it writes any file
+        # Then: it goes on, nothing said
+        self.assertEqual(self.wrote("c.md"), (0, ""))
+
+    def test_a_script_start_with_takes_gives_the_value_over_the_prompt(self):
+        # Given: start_with laid on step 1, taking `scripts/given.py`, which printed the work
+        # after the prompt named another
+        laid = self.read(self.agent_file).replace(
+            "release.", "release. " + BEGIN.replace("log", "given")
+        )
+        self.write(self.agent_file, laid)
+        command = (
+            'exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
+            " 1:start_with:scripts/given.py 3:write_only:{work}"
+        )
+        hooks = {"hooks": {"PreToolUse": [{"hooks": [{"command": command}]}]}}
+        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+        run = ("Bash", {"command": f"python3 {self.plugin}/scripts/given.py"}, '{"work": "c.md"}')
+        self.record([run], self.RUN)
+        # When: changelog-writer writes the file the script named, then one the prompt named
+        words = (helpers.AGENT, "1:start_with:scripts/given.py", "3:write_only:{work}")
+        # Then: the first goes on, and the second is told with the script's value
+        self.assertEqual(self.wrote("c.md", words), (0, ""))
+        told = "notes: Write only `{work}`.\n`{work}` is `c.md`.\n"
+        self.assertEqual(self.wrote("a.md", words), (2, told))
+
+    def test_an_output_of_a_list_is_held_to_its_form_one_by_one_the_point_told_last(self):
+        # Given: in_form taking `{work}` and a form, the prompt naming two JSON outputs
+        form = "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), {"type": "object"})
+        sentence = f"Write `{{work}}` in the form of `{form}`."
+        self.write(
+            self.agent_file,
+            helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {sentence}\n"),
+        )
+        self.record([], '{"work": ["a.json", "b.json"]}')
+        # When: changelog-writer writes the second output out of the form
+        event = self.called("Write", {"file_path": "b.json", "content": "[]"})
+        said = self.guard(json.dumps(event), (helpers.AGENT, f"3:in_form:{{work}},{form}"))
+        # Then: it is told the sentence, the value, then the point it is out by
+        expanded = sentence.replace("${CLAUDE_PLUGIN_ROOT}", self.plugin)
+        value = "`{work}` is `a.json`, `b.json`."
+        self.assertEqual(
+            said, (2, f"notes: {expanded}\n{value}\n$: expected an object, found []\n")
+        )
+
+    def test_a_lane_held_at_the_end_takes_the_value_too(self):
+        # Given: end_when taking `{work}` on step 4, the prompt naming the work, none made
+        ended = "End only once `{work}` is made."
+        self.write(
+            self.agent_file,
+            helpers.STEPS.replace("what you wrote.\n", f"what you wrote. {ended}\n"),
+        )
+        self.record([], self.RUN)
+        # When: changelog-writer is about to end
+        stream = json.dumps(self.stopped("Done."))
+        said = self.guard(stream, (helpers.AGENT, "4:end_when:{work}"), "subagentstop.py")
+        # Then: it is kept going, told the sentence and the value
+        self.assertEqual(said, (2, f"notes: {ended}\n`{{work}}` is `a.md`, `b.md`.\n"))
 
 
 class TestOtherAgents(GuardTest):

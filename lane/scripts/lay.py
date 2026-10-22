@@ -323,18 +323,6 @@ def entry_shaped(entry: Any) -> bool:
     return isinstance(each, list) and all(isinstance(h, dict) for h in each)
 
 
-def words(command: Any, event: str) -> list[str]:
-    """The words a hook's command gives the event's script in lane's code, the first the subagent
-    as `<plugin>:<subagent>`, each after it a lane laid; none for a command that runs no script of
-    lane's, names no subagent so, or gives words the shell cannot read."""
-    found = re.search(rf'/hooks/lane/{event.lower()}\.py"?(.*)', str(command))
-    try:
-        given = shlex.split(found[1]) if found else []
-    except ValueError:
-        return []
-    return given if given and lanes.AGENT.fullmatch(given[0]) else []
-
-
 def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> None:
     """Puts the subagent's entry of each event its lanes are held on into the hooks: where lane:up
     wrote one for it before, in the place of the first, after every other entry otherwise; and
@@ -344,7 +332,7 @@ def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> Non
         entries = events.get(event, [])
         mark = [f"{plugin}:{agent['name']}"]
         ours = [
-            any(words(h.get("command"), event)[:1] == mark for h in e.get("hooks", []))
+            any(lanes.hook_words(h.get("command"), event)[:1] == mark for h in e.get("hooks", []))
             for e in entries
         ]
         place = ours.index(True) if True in ours else len(entries)
@@ -478,7 +466,7 @@ def laid_before(hooks: dict[str, Any]) -> tuple[dict[str, list[dict[str, Any]]],
     for event in EVENTS:
         for e in hooks.get("hooks", {}).get(event, []):
             for h in e.get("hooks", []):
-                given = words(h.get("command"), event)
+                given = lanes.hook_words(h.get("command"), event)
                 steps = agents.setdefault(given[0], []) if given else []
                 for w in given[1:]:
                     lane = lanes.read(w)

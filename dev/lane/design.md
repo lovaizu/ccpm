@@ -248,7 +248,7 @@ lane/                          the plugin, installed by Claude Code
   shape is documented, so the guard's tests hold both. The calls of one reply are written there
   once their hooks have run, so a lane on the order of steps reads the replies before. A reply
   that ended the turn is the entry whose `stop_reason` is `end_turn`; one a stop hook kept going
-  reached no one and is left out.
+  reached no one and is left out, as is a call a hook stopped, which never ran.
 
   So a call sent in the same reply as the move a lane waits on is held once, and passes when sent
   again.

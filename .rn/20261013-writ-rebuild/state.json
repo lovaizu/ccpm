@@ -350,6 +350,9 @@
     },
     {
       "fact": "lane takes a run's value, written {<name>}, from the JSON the subagent starts from (design and README 6e795ca), as the agreed 12-lane table had each lane's IN/OUT per run; the table itself kept in decisions/dev/lane/design.decisions.md; lane's design reads without turn or rn (227e735); rn's steering.md is told by its place in the main conversation and its sign-off by /rn:ty (agreed 2026-10-21 23:32)"
+    },
+    {
+      "fact": "run values {<name>} built (started.py) and every one of the 12 lanes tried on the mock plugin memo (dev/lane/trials/memo): no wrong stop on runs keeping the steps, each induced drift stopped with `memo: <sentence>` and its value line, the subagent back on its step; a stopped Bash call no longer counted as a change; check.sh 100%, mutate 0. Seen outside lane: Claude Code refuses a subagent's Write of summary.md (report-like names); an OK from the caller counts only where the Role says the caller decides"
     }
   ],
   "semantic_gist": [
@@ -460,7 +463,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on resuming: a subagent was building, uncommitted in the working tree, {<name>} run values in lane (tests first) and a mock plugin in dev/lane/trials/ using all 12 lanes with a kept run and an induced drift per lane; read git status and the diff, check against code.md and the design, run dev/check.sh and dev/mutate.sh, finish what is missing, run the mock trial yourself, fix at the cause, commit and push; then prompt.md and plugin.md pointing to lane, turn remade on lane, rn's steering.md form by its place; report decisions to the user at the end"
+      "next": "prompt.md and plugin.md pointing to lane; then turn remade on lane (its hooks as lanes with {<name>} run values, turn.py printing moves as {tool,input}); then rn's steering.md form held by its place in the main conversation; report the decisions to the user at the end"
     }
   ],
   "uncertainty_signal": [

@@ -78,7 +78,10 @@ by the layer. An answer the calling AI sends is the builder's, as only it can pu
 
    - Out: for each step whose drift shows in a tool call, as the points settled it, a lane of the
      README's Lanes for each such sentence, each thing it takes as the step or the answer names it,
-     with no comma in it; wait_for takes the approval first, then each command it holds back. Each
+     with no comma in it; where the step names it as an input or output the run gives, under a key
+     of the JSON the subagent starts from, as `work` in its prompt or its first script's print,
+     take it as `{<key>}`, since its value differs on each run. wait_for takes the approval first,
+     then each command it holds back. Each
      lane laid before goes in too, unless the builder left it out, since the layer writes each
      subagent's hook whole from the proposal.
 7. Run `lay.py print <proposal>`, in a command of its own with nothing after it, so what it prints

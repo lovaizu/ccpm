@@ -182,6 +182,15 @@ class TestDone(RecordTest):
         # Then: the first failed, the others did not
         self.assertEqual([d.failed for d in self.done()], [True, False, False])
 
+    def test_a_call_a_hook_stopped_is_left_out_as_it_did_nothing(self):
+        # Given: a record of a Bash call a PreToolUse hook stopped, then one failing of itself
+        stopped = helpers.Failed("PreToolUse:Bash hook error: [python3 x.py]: notes: Do not run.")
+        calls = [("Bash", {"command": "cat > a.md"}, stopped), helpers.failing("false")]
+        self.write(self.file, helpers.recorded("/w", calls))
+        # When: what the subagent did is read
+        # Then: the call that failed of itself alone is there, as the stopped one never ran
+        self.assertEqual([d.given for d in self.done()], [{"command": "false"}])
+
     def test_a_result_marked_an_error_by_no_true_value_is_not_failed(self):
         # Given: results marked an error by values other than true, as Claude Code never marks one
         uses, results = [], []
@@ -194,6 +203,23 @@ class TestDone(RecordTest):
         # When: what the subagent did is read
         # Then: neither failed
         self.assertEqual([d.failed for d in self.done()], [False, False])
+
+
+class TestPrompt(RecordTest):
+    def test_the_prompt_is_the_text_of_the_first_user_entry(self):
+        # Given: a record begun by the prompt, then a call and a message from the main conversation
+        calls = [helpers.bash("ls"), helpers.from_main("Go on.")]
+        self.write(self.file, helpers.recorded("/w", calls, '{"work": "a.md"}'))
+        # When: its prompt is read
+        # Then: it is the first entry's text
+        self.assertEqual(record.prompt(self.entries()), '{"work": "a.md"}')
+
+    def test_a_record_with_no_user_text_has_an_empty_prompt(self):
+        # Given: a record of a call alone, no user entry of text
+        self.write(self.file, helpers.recorded("/w", [helpers.bash("ls")]).split("\n", 1)[1])
+        # When: its prompt is read
+        # Then: it is empty
+        self.assertEqual(record.prompt(self.entries()), "")
 
 
 class TestHeard(RecordTest):

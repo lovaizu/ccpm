@@ -12,17 +12,22 @@ the events it is held on, how many of the things it takes its sentence shows, an
 it takes.
 
 A hook's command gives the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's
-agent_type, and each lane as `<step>:<lane>:<what it takes>`, the things taken joined by commas."""
+agent_type, and each lane as `<step>:<lane>:<what it takes>`, the things taken joined by commas. A
+thing taken written `{<name>}` is given for each run, and put in before the lane's check, as
+started.py reads it."""
 
 from __future__ import annotations
 
+import json
 import os
 import re
+import shlex
 import sys
 from typing import Any
 
 import call
 import hook
+import started
 import step
 
 from lanes import (
@@ -94,6 +99,14 @@ def sentence(lane: str, takes: list[str]) -> str:
     return TAKEN.sub(listed, LANES[lane].WORDING)
 
 
+def alone(lane: str) -> int:
+    """How many of the first things the lane takes stand each alone in a place of its sentence:
+    those before its last place, which takes the rest; of a lane that holds more than it shows,
+    such as wait_for, the things it shows."""
+    showing = shown(lane)
+    return slots(lane) - 1 if showing is None else showing
+
+
 def fits(lane: str, takes: list[str]) -> bool:
     """Whether the lane takes so many things: one or more for each place its wording shows, the last
     taking the rest; of a lane that holds more than it shows, one or more after those it shows; and
@@ -132,13 +145,69 @@ class Laid:
             gone = f"step {self.number} of {self.name} no longer says: {said}"
             again = f"lane:up must be run again on {self.plugin}, so its lanes match its steps"
             return [f"{gone} Stop here and reply that {again}."]
+        # A lane taking a thing given for each run lets every call through until the subagent
+        # has been given it.
+        named = started.names(self.takes)
+        run = self.run_values(event) if named else {}
+        if not set(named) <= set(run):
+            return []
         # Each lane's check takes what its event gives: the call, or how the subagent ends.
         lane: Any = LANES[self.lane]
-        drift = lane.drifts(call.read(event) if end is None else end, self.takes, self.root)
+        acted = call.read(event) if end is None else end
+        each = started.resolved(self.takes, run, alone(self.lane))
+        drift = next(filter(None, (lane.drifts(acted, t, self.root) for t in each)), "")
         if not drift:
             return []
-        told = step.expanded(said, self.root)
-        return [f"{told}\n{drift}" if isinstance(drift, str) else told]
+        told = [step.expanded(said, self.root), *(started.told(n, run[n]) for n in named)]
+        return ["\n".join([*told, *([drift] if isinstance(drift, str) else [])])]
+
+    def run_values(self, event: dict[str, Any]) -> dict[str, list[str]]:
+        """The run's value of each name the JSON the subagent started from gives: its prompt and
+        what each script start_with takes in it printed; none where its record is not found."""
+        scripts = begun(self.root, f"{self.plugin}:{self.name}")
+        found = started.texts(event, lambda c: start_with.runs(c, scripts))
+        return {} if found is None else started.values(found)
+
+
+def begun(root: str, agent: str) -> list[str]:
+    """Each script start_with takes in the subagent, as `<plugin>:<name>`, read from the hooks the
+    plugin at root lays; none where its hooks.json is not there or holds no JSON. Read there, as a
+    lane held at the subagent's end is given in a hook of its own, apart from start_with's."""
+    try:
+        with open(os.path.join(root, "hooks", "hooks.json"), encoding="utf-8") as f:
+            hooks = json.load(f)
+    except (OSError, ValueError):
+        return []
+    found = []
+    for command in texts(hooks):
+        try:
+            named, laid_in = laid(root, hook_words(command, "PreToolUse"))
+        except ValueError:
+            continue
+        if named == agent:
+            found += [t for lane in laid_in if lane.lane in ("start_with",) for t in lane.takes]
+    return found
+
+
+def texts(value: Any) -> list[str]:
+    """Each text a JSON value holds, at any depth, such as each command of a hooks.json."""
+    if isinstance(value, dict):
+        value = list(value.values())
+    if isinstance(value, list):
+        return [t for v in value for t in texts(v)]
+    return [value] if isinstance(value, str) else []
+
+
+def hook_words(command: Any, event: str) -> list[str]:
+    """The words a hook's command gives the event's script in lane's code, the first the subagent
+    as `<plugin>:<subagent>`, each after it a lane laid; none for a command that runs no script of
+    lane's, names no subagent so, or gives words the shell cannot read."""
+    found = re.search(rf'/hooks/lane/{event.lower()}\.py"?(.*)', str(command))
+    try:
+        words = shlex.split(found[1]) if found else []
+    except ValueError:
+        return []
+    return words if words and AGENT.fullmatch(words[0]) else []
 
 
 def laid(root: str, words: list[str], held: str = "PreToolUse") -> tuple[str, list[Laid]]:

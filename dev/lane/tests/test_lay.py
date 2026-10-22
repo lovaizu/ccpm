@@ -665,6 +665,31 @@ class TestProposal(LayTest):
                 self.assertIn("plugin.json", said)
 
 
+class TestRunValue(LayTest):
+    """A proposal of write_only taking `{work}`, a value given for each run."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.propose(self.proposal([{"lane": "write_only", "takes": ["{work}"]}]))
+
+    def test_a_take_given_for_each_run_is_printed_as_written(self):
+        # Given: the proposal
+        # When: it is printed
+        # Then: the sentence shows `{work}` as written, in the lane's line and in the step
+        said = self.lay("print", self.proposal_file)[1]
+        self.assertIn("  write: Write only `{work}`.  hook write_only\n", said)
+        self.assertIn("`CHANGELOG.md`. Write only `{work}`.\n", said)
+
+    def test_a_take_given_for_each_run_is_written_as_written(self):
+        # Given: the proposal
+        # When: it is written
+        self.lay("write", self.proposal_file)
+        # Then: the step says `{work}`, and the hook's command gives it as written
+        self.assertIn("`CHANGELOG.md`. Write only `{work}`.\n", self.read(self.agent_file))
+        command = self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        self.assertTrue(command.endswith(" '3:write_only:{work}'"), command)
+
+
 class TestInForm(LayTest):
     """A proposal of in_form, taking an output and its form, a file of the plugin."""
 
@@ -710,10 +735,11 @@ class TestInForm(LayTest):
             ("${CLAUDE_PLUGIN_ROOT}/forms/entry.yaml", "neither a .json schema nor a .md template"),
             ("${CLAUDE_PLUGIN_ROOT}/../outside.json", "out of the plugin"),
             ("forms/bad.json", "named as ${CLAUDE_PLUGIN_ROOT}/<path in the plugin>"),
+            ("{form}", "named as ${CLAUDE_PLUGIN_ROOT}/<path in the plugin>"),
         ):
             with self.subTest(form=form):
                 # Given: a proposal of in_form whose form is not there, not of the keywords lane
-                # reads, of no kind lane reads, or out of the plugin
+                # reads, of no kind lane reads, out of the plugin, or given for each run
                 self.propose(self.in_form(form))
                 for action in ("print", "write"):
                     # When: it is printed or written

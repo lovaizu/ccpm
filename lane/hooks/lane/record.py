@@ -25,6 +25,9 @@ FROM_MAIN = re.compile(
     r"\n\nAddress this before completing your current task\.\Z",
     re.DOTALL,
 )
+# What a call's result begins with where a PreToolUse hook stopped it, as Claude Code 2.1.306
+# writes it, the call never run.
+HOOK_STOPPED = re.compile(r"\APreToolUse:\S+ hook error: ")
 # A reply that ended the subagent's turn, read among the tools it used as one of no tool, the reply
 # its input's `text`, as it hands its text on to whoever started or resumed the subagent, as a call
 # of the Agent tool or SendMessage hands on theirs.
@@ -34,8 +37,8 @@ REPLY, SAID = "", "text"
 class Done(NamedTuple):
     """A tool the subagent used, or a reply that ended its turn: the tool, its input as the AI gave
     it, the folder it ran in, the text it gave back, "" where none has come back, or none of text,
-    and whether it gave back an error, as a command that exits other than 0 does, or a call a hook
-    stopped."""
+    and whether it gave back an error, as a command that exits other than 0 does, or a call Claude
+    Code refused."""
 
     tool: str
     given: dict[str, Any]
@@ -96,6 +99,12 @@ def text(entry: dict[str, Any]) -> str | None:
     return given if isinstance(given, str) and entry.get("type") in ("user",) else None
 
 
+def prompt(found: list[dict[str, Any]]) -> str:
+    """The prompt the subagent was started with, the text of the first user entry of text among
+    the entries of its record; "" where none is."""
+    return next((t for t in map(text, found) if t is not None), "")
+
+
 def of(entry: dict[str, Any], kind: str, block: str) -> list[dict[str, Any]]:
     """Each block of the type given in an entry of the kind given, such as an assistant entry's
     tool uses; none in an entry of another kind."""
@@ -138,8 +147,9 @@ def replies(found: list[dict[str, Any]]) -> list[int]:
 def done(found: list[dict[str, Any]], cwd: str) -> list[Done]:
     """Each tool the subagent used, in order, from the entries of its record: an assistant entry's
     tool use, with what a user entry's tool result of the same id gave back, made in the folder its
-    entry names, or the one given where it names none; and each reply that ended its turn, as a use
-    of no tool, REPLY, its texts, a line each, as its input's SAID."""
+    entry names, or the one given where it names none, a call a hook stopped left out, as it did
+    nothing; and each reply that ended its turn, as a use of no tool, REPLY, its texts, a line
+    each, as its input's SAID."""
     used: dict[Any, tuple[Any, Any, Any]] = {}
     results: dict[Any, tuple[str, bool]] = {}
     ended = replies(found)
@@ -154,11 +164,12 @@ def done(found: list[dict[str, Any]], cwd: str) -> list[Done]:
             given = b.get("content")
             said = given if isinstance(given, str) else ""
             results[b.get("tool_use_id")] = (said, b.get("is_error") is True)
-    return [
+    each = [
         Done(tool, given, where, *results.get(key, ("", False)))
         for key, (tool, given, where) in used.items()
         if isinstance(tool, str) and isinstance(given, dict)
     ]
+    return [d for d in each if not (d.failed and HOOK_STOPPED.match(d.result))]
 
 
 def answered(found: list[dict[str, Any]]) -> bool:

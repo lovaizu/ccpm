@@ -25,6 +25,7 @@ import lay  # noqa: F401
 import record
 import schema  # noqa: F401
 import shell  # noqa: F401
+import started  # noqa: F401
 import step  # noqa: F401
 import template  # noqa: F401
 import testing
@@ -105,11 +106,12 @@ class PluginTest(testing.FolderTest):
             event.update(agent_id="a1", agent_type=agent_type)
         return event
 
-    def record(self, calls: list) -> None:
+    def record(self, calls: list, prompt: str = PROMPT) -> None:
         """Writes the record of the subagent a1 where Claude Code keeps it for the events above, of
-        the calls, each a tool, its input and what it gave back, as `recorded` takes them."""
+        the calls, each a tool, its input and what it gave back, as `recorded` takes them, begun
+        with the prompt."""
         place = os.path.join(self.base, "session", "subagents", "agent-a1.jsonl")
-        self.write(place, recorded(self.base, calls))
+        self.write(place, recorded(self.base, calls, prompt))
 
     def stopped(self, reply: str = "", active: bool = False, agent_type: str = AGENT) -> dict:
         """A SubagentStop event in Claude Code's shape for the subagent a1 of the type about to end
@@ -185,16 +187,16 @@ def replied(text: str) -> dict[str, Any]:
     return {"type": "assistant", "message": message}
 
 
-def recorded(cwd: str, calls: list) -> str:
+def recorded(cwd: str, calls: list, prompt: str = PROMPT) -> str:
     """A subagent's record as Claude Code 2.1.306 writes it, cut to what lane reads and what lies
     beside it, for each call a tool, its input and what it gave back, None for a call not yet
-    back, a Failed for an error: the prompt first, an attachment, and each call as an assistant's
-    tool use and a user's tool result, each with the request as sent after it, here given text
-    apart from them; for each text among the calls, the subagent's reply, and the text told it by a
+    back, a Failed for an error: the prompt first, PROMPT where none is given, an attachment, and
+    each call as an assistant's tool use and a user's tool result, each with the request as sent
+    after it, here given text apart from them; for each text among the calls, the subagent's reply, and the text told it by a
     stop hook that kept it going; and an entry among the calls, such as a message `from_main`
     makes, written as it is, in its place."""
     lines: list[dict[str, Any]] = [
-        {"type": "user", "cwd": cwd, "message": {"role": "user", "content": PROMPT}},
+        {"type": "user", "cwd": cwd, "message": {"role": "user", "content": prompt}},
         {"type": "attachment", "cwd": cwd, "attachment": {"type": "date", "date": "2026-10-22"}},
     ]
     for number, item in enumerate(calls):
