@@ -335,6 +335,12 @@
     },
     {
       "fact": "the user could not judge the README and design changes against the ideal; I judged: design grew ~100 lines of code-level detail (record shapes, test_after's && rule, every_item's IDs) that belong in the tests, and whether lane is the ideal shows only by the builder's use (KR1.1); the user agreed (2026-10-22) to: trim the design to mechanism and why, run T16's trial, bring the result with lanes to drop or fix"
+    },
+    {
+      "fact": "lane's design trimmed to mechanism and why (ec8ff28); lane:up gives each point and the print as its reply and is resumed by its ID (a72a22d), as the Agent tool gives no name and a subagent does not know its ID, tried on Claude Code 2.1.306; as_printed holds the last reply (R33); lane:up's own lanes, as_printed and wait_for, laid by the layer on lane itself (ff83ee8)"
+    },
+    {
+      "fact": "the user (2026-10-22): judge README, UX, design and how-to from purpose and ideal, build lane, turn and rn through, report the decisions after; turn's KR1.1 now counts where the work falls short of the purpose the calling AI gave it (578eaa3), goal and KRs put to the user"
     }
   ],
   "semantic_gist": [
@@ -391,6 +397,9 @@
     },
     {
       "gist": "review asks link the branch, not a commit, so a page left open shows the update on reload; the agreed commit is kept here (the user, 2026-10-22)"
+    },
+    {
+      "gist": "when only one way meets the purpose, do it and report; ask only for the goal and key results, merge and release (the user, 2026-10-22)"
     }
   ],
   "focal_entities": [
@@ -439,7 +448,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on resuming: 1) trim dev/lane/design.md's lane lines added since 4ed91bc to mechanism and why, the shapes and counting rules left to the tests; 2) before the trial: lane:up's step on wait_for's takes (approval then commands), as_printed on the last reply (R33), SendMessage between subagents by ID, lane:up's own lanes and hooks.json; 3) T16's trial as its user on the README's notes and on turn by the design's Verification, counting KR1.1's defects per lane; 4) report the result with lanes to drop or fix, judged by me; lane's issue flow (plugin.md step 2) to propose after"
+      "next": "T16's trial running by a subagent (dev/lane/trials/, notes, runs A lay, B drift, C no Python); on its result: fix lane at the cause, then T17-T20, then prompt.md and plugin.md pointing to lane, turn remade on lane, rn's hooks from lane; keep a list of decisions for the user"
     }
   ],
   "uncertainty_signal": [
@@ -459,7 +468,10 @@
       "open": "turn/hooks/agents.py:55 finds a subagent's record apart from lane's record.py; to fold when turn is remade on lane"
     },
     {
-      "open": "SendMessage from one subagent to another by name fails ('No agent named caller is reachable'), by ID it reaches; lane:up's design has a calling subagent named by its name, to settle before T16's trial"
+      "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
+    },
+    {
+      "open": "turn's goal and key results (dev/turn/ux.md) put to the user, answer pending"
     }
   ],
   "retrieved_artifacts": [
