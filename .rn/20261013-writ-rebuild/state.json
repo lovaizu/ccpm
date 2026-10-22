@@ -490,7 +490,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "T23 first part, not yet done (its maker was started at ef38360 and stopped by a /clear before any change): rewrite dev/turn/trials/ for the new flow, run turn:up with mocked roles (every item Good, a send-back, a question asked and gone on, a stop and call again), then each role alone, judged from every agent's JSONL; fix only causes found in the records; then the acceptance trials; then rn. Check CI for e2b0bc1 onward first. Resume after the weekly limit lifts, Friday 7:00"
+      "next": "T23 first part, not yet done (its maker was started at ef38360 and went on after the /clear and was stopped at exit, leaving uncommitted edits to dev/turn/trials/ (flow.py, stand.py, shared.py, roles/*.md, replies/): read git diff and keep what holds): rewrite dev/turn/trials/ for the new flow, run turn:up with mocked roles (every item Good, a send-back, a question asked and gone on, a stop and call again), then each role alone, judged from every agent's JSONL; fix only causes found in the records; then the acceptance trials; then rn. Check CI for e2b0bc1 onward first. Resume after the weekly limit lifts, Friday 7:00"
     }
   ],
   "uncertainty_signal": [
