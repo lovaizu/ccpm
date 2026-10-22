@@ -421,7 +421,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "build T16 by its parts in plugin.md step 5's order a to e"
+      "next": "when T16's code agent ends: check and fix by hand, commit; then four at once, each in its own worktree with mutate.sh --since on its own part: T17 split by action (read: read_only, read_whole with record.py; write: write_only, in_form; run and flow: start_with, test_after, as_printed, follow_next, wait_for) and lane:up's prompt on the layer's proposal shape (the user agreed 2026-10-22)"
     }
   ],
   "uncertainty_signal": [
