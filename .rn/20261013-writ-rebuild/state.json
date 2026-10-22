@@ -469,7 +469,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "T21: a subagent rewrites dev/turn/design.md on dev/architecture.md, turn/README.md, dev/turn/ux.md and lane (README, dev/lane/design.md), with rn/checklists/product/design.md and usability.md open; I check it against the same checklists and fix by hand; then T22 code"
+      "next": "T21: a subagent rewrites dev/turn/design.md on dev/architecture.md, turn/README.md, dev/turn/ux.md and lane (README, dev/lane/design.md), with rn/checklists/product/design.md and usability.md open; I check it against the same checklists and fix by hand; then T22 code (T21's maker started 2026-10-22; if cut off, read git diff dev/turn/design.md and finish or restart it)"
     }
   ],
   "uncertainty_signal": [
