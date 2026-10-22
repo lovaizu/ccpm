@@ -155,6 +155,8 @@ def lane_check(lane: Any, on: str) -> None:
         raise wrong(f"gives {known} on {on} no takes")
     if not all(isinstance(t, str) and t and "," not in t for t in takes):
         raise wrong(f"gives {known} on {on} takes that are not each a text with no comma")
+    if lanes.shown(known) is not None and not held(lane):
+        raise wrong(f"gives {known} on {on} nothing after what its sentence shows, for its hook")
 
 
 def sentences(step_given: dict[str, Any]) -> list[str]:
@@ -183,10 +185,19 @@ def printed(path: str) -> str:
             actions = [lanes.LANES[lane["lane"]].ACTION + ":" for lane in s["lanes"]]
             wide, long = max(map(len, actions)), max(map(len, said))
             for action, sentence, lane in zip(actions, said, s["lanes"]):
-                out.append(f"  {action:<{wide}} {sentence:<{long}}  hook {lane['lane']}\n")
+                hook = f"hook {lane['lane']}{held(lane)}"
+                out.append(f"  {action:<{wide}} {sentence:<{long}}  {hook}\n")
             out.append("\n" + "".join(read_as_laid(agent["lines"], s)))
             blocks.append("".join(out))
     return "\n".join(blocks)
+
+
+def held(lane: dict[str, Any]) -> str:
+    """What the lane's hook holds beyond what its sentence shows, as the builder reads it after the
+    hook, such as the commands wait_for holds back; "" for a lane whose sentence shows all."""
+    shown = lanes.shown(lane["lane"])
+    rest = [f"`{t}`" for t in lane["takes"][shown:]] if shown is not None else []
+    return f", holding back {', '.join(rest)}" if rest else ""
 
 
 def command(plugin: str, agent: str, laid: list[str]) -> str:

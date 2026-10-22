@@ -115,6 +115,82 @@ class TestDone(RecordTest):
                 # Then: it is not known, told apart from a record of no calls
                 self.assertIsNone(record.done(event))
 
+    def test_a_call_failed_is_told_by_its_result_marked_an_error(self):
+        # Given: a record of a command that exited 1, one that exited 0, and a result marked an
+        # error by no true value, as Claude Code marks them
+        calls = [
+            ("Bash", {"command": "false"}, "Exit code 1\nbroken", True),
+            ("Bash", {"command": "true"}, "", False),
+            ("Bash", {"command": "x"}, "", "true"),
+            ("Bash", {"command": "y"}, "", 1),
+        ]
+        self.write(self.file, helpers.recorded("/w", calls))
+        # When: what the subagent did is read
+        # Then: the first alone failed
+        self.assertEqual([d.failed for d in self.done()], [True, False, False, False])
+
+
+class TestHeard(RecordTest):
+    # The subagent asking its caller, by SendMessage.
+    ASK = ("SendMessage", {"to": "main", "message": "May I?"}, '{"success":true}')
+
+    def heard(self, calls):
+        """The messages that reached the subagent since it last asked, from its record of the
+        calls and messages."""
+        self.write(self.file, helpers.recorded("/w", calls))
+        return record.heard(self.event("ls"))
+
+    def test_a_subagent_that_has_not_asked_heard_its_prompt(self):
+        # Given: a record of a call, the subagent not having asked
+        # When: what reached it is read
+        # Then: its prompt did
+        self.assertEqual(self.heard([helpers.bash("ls")]), [helpers.PROMPT])
+
+    def test_a_subagent_that_asked_heard_nothing_before_it(self):
+        # Given: a record of the subagent asking, after a message from main
+        # When: what reached it is read
+        # Then: nothing did since it asked
+        self.assertEqual(self.heard([helpers.from_main("OK"), self.ASK]), [])
+
+    def test_each_message_sent_since_it_asked_is_heard_alone_in_order(self):
+        # Given: a record of the subagent asking, then a message from main and one from another
+        # subagent, each in the words Claude Code puts around it
+        calls = [self.ASK, helpers.from_main("Change step 3."), helpers.from_subagent("OK")]
+        # When: what reached it is read
+        # Then: each message did, without the words around it, in order
+        self.assertEqual(self.heard(calls), ["Change step 3.", "OK"])
+
+    def test_a_message_from_main_not_in_its_words_is_heard_whole(self):
+        # Given: a message from main that Claude Code put in other words
+        entry = {**helpers.from_main(""), "message": {"role": "user", "content": "OK, go on."}}
+        # When: what reached the subagent is read
+        # Then: the message is heard whole
+        self.assertEqual(self.heard([self.ASK, entry]), ["OK, go on."])
+
+    def test_entries_that_bring_no_message_are_not_heard(self):
+        # Given: entries of text that are no message sent to the subagent: of another origin, of
+        # no origin but meta, of an origin that is no object, from a subagent with no body; and
+        # entries not in the record's shape
+        meta = {"type": "user", "isMeta": True, "message": {"content": "Caveat"}}
+        notified = {**meta, "origin": {"kind": "task-notification"}}
+        no_body = {**meta, "origin": {"kind": "peer"}}
+        odd_origin = {**meta, "origin": "coordinator"}
+        reply = {"type": "assistant", "message": {"content": "OK"}}
+        no_text = {"type": "user", "message": {"content": [{"type": "text", "text": "OK"}]}}
+        lines = [json.dumps(e) for e in (meta, notified, no_body, odd_origin, reply, no_text)]
+        self.write(self.file, "\n".join(["not json", "[]", *lines]))
+        # When: what reached the subagent is read
+        # Then: nothing did
+        self.assertEqual(record.heard(self.event("ls")), [])
+
+    def test_no_record_found_is_not_known(self):
+        for event in (self.event("ls"), self.event("ls", agent_type=None)):
+            with self.subTest(event=event):
+                # Given: an event whose record is not there, or that names none
+                # When: what reached the subagent is read
+                # Then: it is not known, told apart from nothing heard
+                self.assertIsNone(record.heard(event))
+
 
 if __name__ == "__main__":
     unittest.main()

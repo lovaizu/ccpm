@@ -110,6 +110,18 @@ class TestPrint(LayTest):
             self.lay("print", self.proposal_file)[1],
         )
 
+    def test_what_a_hook_holds_beyond_its_sentence_is_printed_beside_it(self):
+        # Given: wait_for on step 3, taking the approval and two commands it holds back
+        wait = [{"lane": "wait_for", "takes": ["OK", "lay.py write", "git push"]}]
+        self.propose(self.proposal(wait))
+        # When: it is printed
+        # Then: the sentence shows the approval alone, and the commands held back follow its hook
+        self.assertIn(
+            "  wait: Do not go on until `OK`.  hook wait_for, holding back `lay.py write`,"
+            " `git push`\n",
+            self.lay("print", self.proposal_file)[1],
+        )
+
 
 class TestWriteStep(LayTest):
     def test_the_sentence_is_put_at_the_end_of_the_step(self):
@@ -157,6 +169,22 @@ class TestWriteHooks(LayTest):
         self.lay("write", self.proposal_file)
         # Then: hooks.json holds the subagent's entry alone
         self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY]}})
+
+    def test_hand_on_and_wait_lanes_watch_their_tools_and_keep_all_they_take(self):
+        # Given: as_printed and wait_for on step 3, wait_for holding back a command
+        laid = [
+            {"lane": "as_printed", "takes": ["lay.py print"]},
+            {"lane": "wait_for", "takes": ["OK", "lay.py write"]},
+        ]
+        self.propose(self.proposal(laid))
+        # When: the proposal is written
+        self.lay("write", self.proposal_file)
+        # Then: the hook watches the tools that hand on and Bash, and gives each lane with all it
+        # takes, the command held back among them
+        entry = self.hooks()["hooks"]["PreToolUse"][0]
+        self.assertEqual(entry["matcher"], "Agent|SendMessage|Bash")
+        words = "notes:changelog-writer '3:as_printed:lay.py print' '3:wait_for:OK,lay.py write'"
+        self.assertTrue(entry["hooks"][0]["command"].endswith(words))
 
     def test_every_other_entry_stays_as_it_was(self):
         # Given: hooks.json with a description, an entry of the builder's own, and one of another
@@ -391,6 +419,10 @@ class TestProposal(LayTest):
             "a thing taken that is empty": (
                 self.proposal([{"lane": "hands_off", "takes": [""]}]),
                 "takes",
+            ),
+            "nothing held beyond what the sentence shows": (
+                self.proposal([{"lane": "wait_for", "takes": ["OK"]}]),
+                "nothing after what its sentence shows",
             ),
         }
         for what, (proposal, named) in wrong.items():

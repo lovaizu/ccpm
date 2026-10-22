@@ -22,9 +22,9 @@ class TestBash(unittest.TestCase):
         # Given: a Bash call of one command
         # When: it is read
         # Then: it is a run of that command, its words as the shell takes them
-        self.assertEqual(
-            runs("git commit -m 'a b'"), call.Call("run", [["git", "commit", "-m", "a b"]])
-        )
+        given = {"command": "git commit -m 'a b'"}
+        words = [["git", "commit", "-m", "a b"]]
+        self.assertEqual(runs(given["command"]), call.Call("run", words, tool="Bash", given=given))
 
     def test_each_statement_is_a_command_run(self):
         # Given: a Bash call of statements joined by separators
@@ -60,7 +60,7 @@ class TestBash(unittest.TestCase):
         event = {"cwd": HERE, "tool_name": "Bash", "tool_input": {}}
         # When: it is read
         # Then: it is a run of no command
-        self.assertEqual(call.read(event), call.Call("run", []))
+        self.assertEqual(call.read(event), call.Call("run", [], tool="Bash", given={}))
 
 
 class TestWrite(unittest.TestCase):
@@ -75,7 +75,9 @@ class TestWrite(unittest.TestCase):
                 event = {"cwd": HERE, "tool_name": tool, "tool_input": {field: "/r/CHANGELOG.md"}}
                 # When: it is read
                 # Then: it is a write of that file, running nothing
-                self.assertEqual(call.read(event), call.Call("write", [], ("/r/CHANGELOG.md",)))
+                written = call.Call("write", [], ("/r/CHANGELOG.md",))
+                made = written._replace(tool=tool, given=event["tool_input"])
+                self.assertEqual(call.read(event), made)
 
     def test_a_path_relative_to_the_folder_is_written_there(self):
         # Given: a Write naming its file from the folder the call is made in
@@ -89,7 +91,7 @@ class TestWrite(unittest.TestCase):
         event = {"cwd": HERE, "tool_name": "Write", "tool_input": {}}
         # When: it is read
         # Then: it is a write of no file
-        self.assertEqual(call.read(event), call.Call("write", [], ()))
+        self.assertEqual(call.read(event), call.Call("write", [], (), tool="Write", given={}))
 
     def test_a_bash_call_writes_what_its_commands_write(self):
         # Given: a Bash call whose commands write by a redirect and by cp
@@ -101,14 +103,15 @@ class TestWrite(unittest.TestCase):
 
 class TestOtherTools(unittest.TestCase):
     def test_a_call_of_a_tool_no_lane_watches_is_no_action(self):
-        for tool in ("Agent", "TodoWrite"):
+        for tool in ("AskUserQuestion", "TodoWrite"):
             with self.subTest(tool=tool):
                 # Given: a call of a tool no lane of this version reads, its name sorting before
                 # Bash or after
                 event = {"cwd": HERE, "tool_name": tool, "tool_input": {"command": "git commit"}}
                 # When: it is read
                 # Then: it is no action, and runs nothing
-                self.assertEqual(call.read(event), call.Call("", []))
+                made = call.Call("", [], tool=tool, given=event["tool_input"])
+                self.assertEqual(call.read(event), made)
 
 
 class TestReads(unittest.TestCase):
@@ -162,7 +165,8 @@ class TestReadCall(unittest.TestCase):
                 event = {"cwd": HERE, "tool_name": tool, "tool_input": given}
                 # When: it is read
                 # Then: it is a read of what it reads, its lines not told, running nothing
-                self.assertEqual(call.read(event), call.Call("read", [], (), ((read, None),)))
+                made = call.Call("read", [], (), ((read, None),), tool=tool, given=given)
+                self.assertEqual(call.read(event), made)
 
     def test_a_bash_call_is_a_run_reading_what_its_commands_read(self):
         # Given: a Bash call printing lines of a file
@@ -196,13 +200,17 @@ class TestReadCall(unittest.TestCase):
 class TestMade(helpers.PluginTest):
     def test_a_call_is_read_with_the_calls_its_subagent_made_before_it(self):
         # Given: a subagent's record of two Bash calls
-        self.record([helpers.bash("ls"), helpers.bash("cd notes && git status")])
+        status = "cd notes && git status"
+        self.record([helpers.bash("ls"), helpers.bash(status)])
         # When: its next call is read
         made = call.read(self.event("git commit"))
         # Then: it is the call, read as itself, with each call before it read as the guard reads
         # a call, in order
         self.assertEqual(made.what, [["git", "commit"]])
-        before = [call.Call("run", [["ls"]]), call.Call("run", [["git", "status"]])]
+        before = [
+            call.Call("run", [["ls"]], tool="Bash", given={"command": "ls"}),
+            call.Call("run", [["git", "status"]], tool="Bash", given={"command": status}),
+        ]
         self.assertEqual(made.before, before)
 
     def test_a_call_before_is_read_with_what_it_gave_back(self):
@@ -211,7 +219,10 @@ class TestMade(helpers.PluginTest):
         # When: its next call is read
         made = call.read(self.event("ls"))
         # Then: the call before reads those lines
-        self.assertEqual(made.before, [call.Call("read", [], (), ((f"{self.base}/a", (1, 2)),))])
+        read = call.Call("read", [], (), ((f"{self.base}/a", (1, 2)),))
+        given = {"file_path": "a"}
+        made_before = read._replace(tool="Read", given=given, result="1\tx\n2\ty\n")
+        self.assertEqual(made.before, [made_before])
 
     def test_a_call_whose_record_is_not_found_has_nothing_known_before_it(self):
         # Given: no record of the subagent where Claude Code keeps it
@@ -225,6 +236,56 @@ class TestMade(helpers.PluginTest):
         # When: its next call is read alone
         # Then: what came before is not read
         self.assertIsNone(call.alone("Bash", {"command": "pwd"}, self.base).before)
+
+    def test_a_call_before_is_read_with_whether_it_failed(self):
+        # Given: a subagent's record of a command that failed
+        self.record([("Bash", {"command": "false"}, "Exit code 1", True)])
+        # When: its next call is read
+        # Then: the call before failed
+        self.assertEqual([c.failed for c in call.read(self.event("ls")).before or []], [True])
+
+    def test_a_call_is_read_with_the_messages_that_reached_its_subagent(self):
+        # Given: a subagent's record of its asking, and a message from main since
+        ask = ("SendMessage", {"to": "main", "message": "May I?"}, "")
+        self.record([ask, helpers.from_main("OK")])
+        # When: its next call is read
+        # Then: it holds the message, the call before it none
+        made = call.read(self.event("ls"))
+        heard = [made.heard, *(c.heard for c in made.before or [])]
+        self.assertEqual(heard, [["OK"], None])
+
+
+class TestHandOn(unittest.TestCase):
+    def test_a_call_of_the_agent_tool_or_sendmessage_hands_on_its_text(self):
+        for tool, given in (
+            ("Agent", {"subagent_type": "x:y", "prompt": "Do it."}),
+            ("SendMessage", {"to": "main", "message": "Do it.", "summary": "s"}),
+        ):
+            with self.subTest(tool=tool):
+                # Given: a call of a tool that hands text on to another agent
+                event = {"cwd": HERE, "tool_name": tool, "tool_input": given}
+                # When: it is read
+                made = call.read(event)
+                # Then: it is a hand-on of its text, running nothing
+                self.assertEqual(
+                    (made.action, made.what, call.handed(made)), ("hand on", [], "Do it.")
+                )
+
+    def test_a_hand_on_of_no_text_hands_on_nothing(self):
+        for given in ({"to": "main"}, {"to": "main", "message": {"type": "shutdown"}}):
+            with self.subTest(given=given):
+                # Given: a SendMessage of no message, or of one that is no text
+                event = {"cwd": HERE, "tool_name": "SendMessage", "tool_input": given}
+                # When: what it hands on is read
+                # Then: it is nothing
+                self.assertEqual(call.handed(call.read(event)), "")
+
+    def test_a_call_that_is_no_hand_on_hands_on_nothing(self):
+        # Given: a Bash call whose input holds a field named as a hand-on's
+        event = {"cwd": HERE, "tool_name": "Bash", "tool_input": {"command": "ls", "prompt": "x"}}
+        # When: what it hands on is read
+        # Then: it is nothing
+        self.assertEqual(call.handed(call.read(event)), "")
 
 
 if __name__ == "__main__":

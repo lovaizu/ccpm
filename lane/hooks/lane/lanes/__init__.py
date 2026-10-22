@@ -13,7 +13,16 @@ from typing import Any
 import call
 import step
 
-from lanes import hands_off, read_only, read_whole, start_with, write_only
+from lanes import (
+    as_printed,
+    follow_next,
+    hands_off,
+    read_only,
+    read_whole,
+    start_with,
+    wait_for,
+    write_only,
+)
 
 LANES = {
     "start_with": start_with,
@@ -21,6 +30,9 @@ LANES = {
     "read_whole": read_whole,
     "write_only": write_only,
     "hands_off": hands_off,
+    "as_printed": as_printed,
+    "follow_next": follow_next,
+    "wait_for": wait_for,
 }
 # Where a wording shows what the lane takes, in quotes.
 TAKEN = re.compile(r"`<[a-z]+>`")
@@ -32,11 +44,17 @@ LANE = re.compile(r"(?P<step>[0-9]+):(?P<lane>[a-z_]+):(?P<takes>.*)")
 
 def sentence(lane: str, takes: list[str]) -> str:
     """The lane's sentence: its wording with what it takes put in, each thing in quotes of its own,
-    listed with commas and `or` before the last."""
-    quoted = [f"`{t}`" for t in takes]
+    listed with commas and `or` before the last; of a lane that holds more than it shows, such as
+    wait_for, the things it shows alone."""
+    quoted = [f"`{t}`" for t in takes[: shown(lane)]]
     listed = " or ".join(filter(None, [", ".join(quoted[:-1]), quoted[-1]]))
     # Given as a function, the text put in is taken as it is, a backslash in it among the rest.
     return TAKEN.sub(lambda _: listed, LANES[lane].WORDING)
+
+
+def shown(lane: str) -> int | None:
+    """How many of the things the lane takes its sentence shows, None for all."""
+    return getattr(LANES[lane], "SHOWN", None)
 
 
 def word(number: int, lane: str, takes: list[str]) -> str:

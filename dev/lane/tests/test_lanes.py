@@ -51,6 +51,21 @@ class TestSentence(unittest.TestCase):
             lanes.sentence("hands_off", ["a", "b", "c"]), "Do not run `a`, `b` or `c`."
         )
 
+    def test_a_lane_holding_more_than_it_shows_shows_the_first_alone(self):
+        # Given: wait_for taking the approval and the commands it holds back
+        # When: its sentence is made
+        # Then: the approval alone stands where the wording shows `<approval>`
+        self.assertEqual(
+            lanes.sentence("wait_for", ["OK", "lay.py write", "git push"]),
+            "Do not go on until `OK`.",
+        )
+
+    def test_how_many_things_a_lane_shows(self):
+        # Given: wait_for, which shows the approval alone, and hands_off, which shows all
+        # When: how many it shows is read
+        # Then: it is one for wait_for, all for hands_off
+        self.assertEqual((lanes.shown("wait_for"), lanes.shown("hands_off")), (1, None))
+
 
 class TestWords(unittest.TestCase):
     def test_a_lane_is_written_as_its_step_its_name_and_what_it_takes(self):

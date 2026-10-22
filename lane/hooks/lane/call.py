@@ -1,14 +1,18 @@
 """A tool call read as one action of a subagent's steps, the one a lane watches: begin, read, write,
 run, test, hand on, wait or end. A Bash call is a run, of each command it runs, reading what they
 print of what they read and writing what they write; a call of the Read or Grep tool is a read of
-what it reads; a call of a tool that writes a file is a write of it; a call of a tool no lane of this
-version reads is no action. A call is read with each call its subagent made before it, for a lane on
-the order of steps."""
+what it reads; a call of a tool that writes a file is a write of it; a call of the Agent tool or of
+SendMessage is a hand-on of its text to another agent; a call of a tool no lane of this version reads
+is no action. A call is read with the tool and the input the AI gave it, and with each call its
+subagent made before it, with what each gave back, and each message that reached the subagent since
+it last asked, for a lane on the order of steps."""
 
 from __future__ import annotations
 
 import os
 import re
+from collections.abc import Mapping
+from types import MappingProxyType
 from typing import Any, NamedTuple
 
 import record
@@ -19,6 +23,9 @@ WRITERS = {"Write": "file_path", "Edit": "file_path", "NotebookEdit": "notebook_
 # The tools that read a file or folder, each with the field of its input that names it, and what it
 # reads where the field names none: the Grep tool searches the folder it runs in.
 READ_TOOLS = {"Read": ("file_path", None), "Grep": ("path", ".")}
+# The tools that hand text on to another agent, each with the field of its input that holds the text:
+# the Agent tool its prompt to the agent it starts, SendMessage its message to the agent it names.
+HANDS = {"Agent": "prompt", "SendMessage": "message"}
 # A line of what the Read tool gives back: the line's number in the file, a tab, and its text.
 NUMBERED = re.compile(r"^([0-9]+)\t", re.MULTILINE)
 
@@ -27,22 +34,37 @@ class Call(NamedTuple):
     """The action a call is, "" for none a lane watches, and what it acts on: for a run, each
     command, as its words; each file it writes, as its whole path; each file or folder it reads, as
     its whole path with the lines it reads of it, None where they are not known; and each call its
-    subagent made before it, read the same way, None where its record is not found."""
+    subagent made before it, read the same way, None where its record is not found. Read with its
+    subagent's record, it holds too the tool and the input the AI gave it; of a call before, what it
+    gave back and whether it failed; of the call itself, each message that reached the subagent
+    since it last asked, None where the record is not found."""
 
     action: str
     what: list[list[str]]
     written: tuple[str, ...] = ()
     reads: tuple[tuple[str, shell.Lines | None], ...] = ()
     before: list[Call] | None = None
+    tool: str = ""
+    given: Mapping[str, Any] = MappingProxyType({})
+    result: str = ""
+    failed: bool = False
+    heard: list[str] | None = None
 
 
 def read(event: dict[str, Any]) -> Call:
     """The call of the PreToolUse event, read as its action, with each call its subagent made before
     it, from its record."""
     done = record.done(event)
-    before = None if done is None else [alone(d.tool, d.given, d.cwd, d.result) for d in done]
-    call = alone(event["tool_name"], event["tool_input"], event["cwd"])
-    return call._replace(before=before)
+    before = None if done is None else [made(d) for d in done]
+    tool, given = event["tool_name"], event["tool_input"]
+    call = alone(tool, given, event["cwd"])._replace(tool=tool, given=given)
+    return call._replace(before=before, heard=record.heard(event))
+
+
+def made(done: record.Done) -> Call:
+    """A call the subagent made before, read from its record, with what it gave back."""
+    call = alone(done.tool, done.given, done.cwd, done.result)
+    return call._replace(tool=done.tool, given=done.given, result=done.result, failed=done.failed)
 
 
 def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:
@@ -59,6 +81,8 @@ def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:
         return Call("write", [], (file,) if named else ())
     if tool in READ_TOOLS:
         return Call("read", [], (), told)
+    if tool in HANDS:
+        return Call("hand on", [])
     if tool != "Bash":
         return Call("", [])
     command = str(given.get("command", ""))
@@ -98,3 +122,9 @@ def shown(result: str) -> shell.Lines | None:
     """The lines from the first to the last numbered in what a call gave back; None where none is."""
     numbers = [int(n) for n in NUMBERED.findall(result)]
     return (min(numbers), max(numbers)) if numbers else None
+
+
+def handed(call: Call) -> str:
+    """The text a hand-on hands on, as the AI gave it; "" for a call that hands nothing on."""
+    text = call.given.get(HANDS[call.tool], "") if call.action in ("hand on",) else ""
+    return text if isinstance(text, str) else ""
