@@ -13,7 +13,7 @@ from call import End, changed
 
 ACTION = "end"
 WORDING = "End only once `<output>` is made."
-EVENT = "SubagentStop"
+EVENTS = ("SubagentStop",)
 
 
 def drifts(end: End, takes: list[str], root: str) -> bool:

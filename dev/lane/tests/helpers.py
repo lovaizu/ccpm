@@ -174,6 +174,17 @@ def from_subagent(text: str) -> dict[str, Any]:
     }
 
 
+def replied(text: str) -> dict[str, Any]:
+    """The entry of the subagent's reply that ends its turn, as Claude Code 2.1.306 writes it into
+    its record: an assistant entry of text whose message stopped at the turn's end."""
+    message = {
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "content": [{"type": "text", "text": text}],
+    }
+    return {"type": "assistant", "message": message}
+
+
 def recorded(cwd: str, calls: list) -> str:
     """A subagent's record as Claude Code 2.1.306 writes it, cut to what lane reads and what lies
     beside it, for each call a tool, its input and what it gave back, None for a call not yet
@@ -240,13 +251,12 @@ def writing(path: str, result: str = "") -> tuple[str, dict[str, Any], str]:
 
 def told(cwd: str, said: str) -> list[dict[str, Any]]:
     """The subagent's reply and what a stop hook told it, as Claude Code 2.1.306 writes them."""
-    reply = {"type": "text", "text": "Done."}
     content = (
         f'Stop hook feedback:\n[python3 "/p/hooks/lane/subagentstop.py"]: {said}\n\n'
         "This hook comes from the notes@inline plugin."
     )
     return [
-        {"type": "assistant", "cwd": cwd, "message": {"role": "assistant", "content": [reply]}},
+        {**replied("Done."), "cwd": cwd},
         {
             "type": "user",
             "isMeta": True,

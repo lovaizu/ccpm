@@ -275,6 +275,18 @@ class TestHandOn(unittest.TestCase):
                     (made.action, made.what, call.handed(made)), ("hand on", [], "Do it.")
                 )
 
+    def test_a_reply_that_ended_its_turn_hands_on_its_text(self):
+        # Given: the subagent's reply ending its turn, as its record is read
+        done = helpers.record.Done(
+            helpers.record.REPLY, {helpers.record.SAID: "Is that so?"}, HERE, ""
+        )
+        # When: it is read as an action
+        made = call.made(done)
+        # Then: it is a hand-on of its text, running nothing
+        self.assertEqual(
+            (made.action, made.what, call.handed(made)), ("hand on", [], "Is that so?")
+        )
+
     def test_a_hand_on_of_no_text_hands_on_nothing(self):
         for given in ({"to": "main"}, {"to": "main", "message": {"type": "shutdown"}}):
             with self.subTest(given=given):

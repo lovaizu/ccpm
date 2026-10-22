@@ -2,13 +2,13 @@
 it, the tools it watches and its check; and the lanes a hook's command lays, each a sentence of a
 subagent's step with the check that notices a drift from it.
 
-A lane is held on a tool call, the PreToolUse event, or, where its module names it, on the
-subagent about to end, the SubagentStop event; each event's script runs the lanes held on it. A
-lane's check, `drifts(call, takes, root)`, is given the call, or how the subagent ends, what the
-lane takes and the plugin's folder, where a lane finds a file of the plugin it takes, such as
-in_form's form; it gives whether the call drifts, or, where it says more than the sentence, the
+A lane is held on a tool call, the PreToolUse event, or, where its module names the events, on the
+subagent about to end, the SubagentStop event, or on both; each event's script runs the lanes held
+on it. A lane's check, `drifts(call, takes, root)`, is given the call, or how the subagent ends,
+what the lane takes and the plugin's folder, where a lane finds a file of the plugin it takes, such
+as in_form's form; it gives whether the call drifts, or, where it says more than the sentence, the
 point it drifts by, "" for none. A lane's module may name, beside its action, wording and check,
-the event it is held on, how many of the things it takes its sentence shows, and the most things
+the events it is held on, how many of the things it takes its sentence shows, and the most things
 it takes.
 
 A hook's command gives the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's
@@ -62,9 +62,10 @@ AGENT = re.compile(rf"{NAME}:{NAME}")
 LANE = re.compile(r"(?P<step>[0-9]+):(?P<lane>[a-z_]+):(?P<takes>.*)")
 
 
-def held_on(lane: str) -> str:
-    """The event the lane is held on: the one its module names, PreToolUse where it names none."""
-    return getattr(LANES[lane], "EVENT", "PreToolUse")
+def held_on(lane: str) -> tuple[str, ...]:
+    """The events the lane is held on: those its module names, PreToolUse alone where it names
+    none."""
+    return getattr(LANES[lane], "EVENTS", ("PreToolUse",))
 
 
 def slots(lane: str) -> int:
@@ -123,7 +124,7 @@ class Laid:
         says it, that lane:up must be run again; nothing otherwise."""
         # A lane held as the subagent ends lets it end where what it did is not known, or where,
         # told before, it has answered with words alone, so it is told and never held for good.
-        end = call.ended(event) if held_on(self.lane) in ("SubagentStop",) else None
+        end = call.ended(event) if event["hook_event_name"] in ("SubagentStop",) else None
         if end is not None and (end.made is None or end.answered):
             return []
         said = sentence(self.lane, self.takes)
@@ -151,7 +152,7 @@ def laid(root: str, words: list[str], held: str = "PreToolUse") -> tuple[str, li
         takes = m["takes"].split(",") if m else []
         if not m or m["lane"] not in LANES or not all(takes) or not fits(m["lane"], takes):
             raise ValueError(f"gives `{w}`, no lane as <step>:<lane>:<what it takes>")
-        if held_on(m["lane"]) not in (held,):
+        if held not in held_on(m["lane"]):
             raise ValueError(f"gives `{w}`, no lane held on {held}")
         found.append(Laid(root, words[0], int(m["step"]), m["lane"], takes))
     return words[0], found

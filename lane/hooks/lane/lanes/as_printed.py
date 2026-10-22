@@ -1,29 +1,36 @@
 """as_printed: the subagent hands on what a command its step names printed, word for word, such as
-lane:up sending the builder the proposal `lay.py print` printed. A hand-on is an Agent call's prompt
-or a SendMessage's message; the subagent's last reply is read on how it ends, not here. It is held
-from the calls the subagent made before: once the command has run and printed, each hand-on is a
-drift until one holds what it printed, a heading line beside it allowed."""
+lane:up giving the builder the proposal `lay.py print` printed. A hand-on is an Agent call's
+prompt, a SendMessage's message or the subagent's last reply, so the lane is held both on a tool
+call and as the subagent is about to end. It is held from the calls the subagent made before and
+the replies that ended its turn: once the command has run and printed, each hand-on is a drift
+until one holds what it printed, a heading line beside it allowed."""
 
 from __future__ import annotations
 
-from call import HANDS, Call, handed
+from call import HANDS, Call, End, handed
 
 from lanes.start_with import runs
 
 ACTION = "hand on"
 WORDING = "Hand on `<input>` as it is."
 TOOLS = tuple(HANDS)
+EVENTS = ("PreToolUse", "SubagentStop")
 # What the Bash tool gives back for a command that printed nothing.
 SILENT = "(Bash completed with no output)"
 
 
-def drifts(call: Call, takes: list[str], root: str) -> bool:
-    """Whether the call hands on while what a command taken last printed is due, and holds none of
-    it: a command whose last run printed and did not fail, with no hand-on since holding it."""
-    if call.action not in (ACTION,):
+def drifts(given: Call | End, takes: list[str], root: str) -> bool:
+    """Whether the call hands on, or the subagent ends with its last reply, while what a command
+    taken last printed is due, and holds none of it: a command whose last run printed and did not
+    fail, with no hand-on since holding it."""
+    if isinstance(given, End):
+        before, text = given.made or [], given.reply
+    elif given.action in (ACTION,):
+        before, text = given.before or [], handed(given)
+    else:
         return False
-    due = [o for o in (due_output(call.before or [], t) for t in takes) if o]
-    return bool(due) and not any(holds(handed(call), o) for o in due)
+    due = [o for o in (due_output(before, t) for t in takes) if o]
+    return bool(due) and not any(holds(text, o) for o in due)
 
 
 def due_output(before: list[Call], command: str) -> str:

@@ -129,6 +129,50 @@ class TestDone(RecordTest):
         # Then: the call in the record's shape alone is read
         self.assertEqual(self.done(), [record.Done("Bash", {}, "/w", "ok")])
 
+    def test_a_reply_that_ended_its_turn_is_read_in_order_as_a_hand_on_of_its_text(self):
+        # Given: a record of a Bash call, the subagent's reply ending its turn, and a Read
+        calls = [helpers.bash("ls"), helpers.replied("Is that so?"), ("Read", {}, "")]
+        self.write(self.file, helpers.recorded("/w", calls))
+        # When: what the subagent did is read
+        # Then: the reply stands between the calls, as a call of no tool holding its text
+        self.assertEqual(
+            self.done(),
+            [
+                record.Done("Bash", {"command": "ls"}, "/w", ""),
+                record.Done(record.REPLY, {record.SAID: "Is that so?"}, self.base, ""),
+                record.Done("Read", {}, "/w", ""),
+            ],
+        )
+
+    def test_a_reply_of_several_texts_is_read_as_their_lines(self):
+        # Given: a reply ending its turn whose message holds two texts, a text block of no text and
+        # a block of another type
+        entry = helpers.replied("a")
+        others = [{"type": "image", "text": "x"}, {"type": "text"}, {"type": "text", "text": "b"}]
+        entry["message"]["content"] += others
+        self.write(self.file, helpers.recorded("/w", [entry]))
+        # When: what the subagent did is read
+        # Then: the reply holds the texts, a line each
+        self.assertEqual(self.done()[0].given, {record.SAID: "a\nb"})
+
+    def test_text_that_did_not_end_the_turn_is_no_reply(self):
+        for stop in ("tool_use", None, "max_tokens"):
+            with self.subTest(stop=stop):
+                # Given: the subagent's text whose message stopped otherwise, or not yet
+                entry = helpers.replied("Let me look.")
+                entry["message"]["stop_reason"] = stop
+                self.write(self.file, helpers.recorded("/w", [entry]))
+                # When: what the subagent did is read
+                # Then: it did nothing
+                self.assertEqual(self.done(), [])
+
+    def test_a_reply_a_stop_hook_kept_going_reached_no_one(self):
+        # Given: a record of a reply, then a stop hook telling the subagent something
+        self.record(["told"])
+        # When: what the subagent did is read
+        # Then: it did nothing, the reply never having left it
+        self.assertEqual(self.done(), [])
+
     def test_a_result_given_back_as_an_error_is_read_as_failed(self):
         # Given: a record of a Bash call given back as an error, one given back with none, and one
         # not yet back
@@ -181,6 +225,30 @@ class TestHeard(RecordTest):
         # When: what reached it is read
         # Then: each message did, without the words around it, in order
         self.assertEqual(self.heard(calls), ["Change step 3.", "OK"])
+
+    def test_a_subagent_that_replied_ending_its_turn_heard_what_resumed_it(self):
+        for resumed in (helpers.from_main("OK"), helpers.from_subagent("OK")):
+            with self.subTest(resumed=resumed):
+                # Given: a record of a message, the subagent's reply ending its turn, and a message
+                # from main or another subagent that resumed it
+                calls = [helpers.from_main("Go."), helpers.replied("May I?"), resumed]
+                # When: what reached it is read
+                # Then: the message since its reply did, as the reply asked
+                self.assertEqual(self.heard(calls), ["OK"])
+
+    def test_a_reply_a_stop_hook_kept_going_is_no_ask(self):
+        # Given: a record of the subagent asking, a message since, then its reply kept going by a
+        # stop hook
+        # When: what reached it is read
+        # Then: the message did still, as the reply never reached whoever it would ask
+        self.assertEqual(self.heard([self.ASK, helpers.from_main("OK"), "told"]), ["OK"])
+
+    def test_a_stop_hooks_telling_with_no_reply_before_it_undoes_no_ask(self):
+        # Given: a record of the subagent asking, then a stop hook's telling with no reply before
+        told = helpers.told("/w", "x")[1]
+        # When: what reached it is read
+        # Then: nothing did, the ask standing
+        self.assertEqual(self.heard([helpers.from_main("OK"), self.ASK, told]), [])
 
     def test_a_message_from_main_not_in_its_words_is_heard_whole(self):
         # Given: a message from main that Claude Code put in other words

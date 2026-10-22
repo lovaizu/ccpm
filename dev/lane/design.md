@@ -31,36 +31,38 @@ flowchart TB
   plugin["builder's plugin"]
   guard["guard"]
   sub["builder's subagent"]
-  caller -->|starts with the plugin, answers, sends back the proposal with the builder's OK| up
-  up -->|asks one point at a time, sends the proposal, returns what was written| caller
+  caller -->|starts with the plugin, resumes with each answer and the builder's OK| up
+  up -->|replies one point at a time, the proposal, what was written| caller
   up -->|has the approved proposal written by| layer
   layer -->|writes the steps, the hooks and lane's code into| plugin
   guard -.->|stops a drift, tells the sentence| sub
 ```
 
-- The calling AI starts `lane:up` with the plugin and the name to message it by.
+- The calling AI starts `lane:up` with the plugin.
 - On a plugin whose copy of lane's code is older than lane's, the layer first brings the copy and
   each hook to the current form, keeping what they say, and the run then goes on as any other.
 
   Bringing a copy up asks the builder nothing, since everything it keeps was approved before.
-- `lane:up` reads the plugin's skills, agents and hooks, and sends the calling AI, one at a time,
-  each point the files leave open, a question with its recommendation, and each fact it found with
-  where it found it; the calling AI puts each to the builder and sends the answer back. The hearing
-  is done when no point is left open.
+- `lane:up` reads the plugin's skills, agents and hooks, and gives the calling AI, one reply at a
+  time, each point the files leave open, a question with its recommendation, and each fact it found
+  with where it found it; the calling AI puts each to the builder and sends the answer back. The
+  hearing is done when no point is left open.
 
   A fact found is shown as a point too, since the proposal rests on it, and a fact the builder reads
   otherwise is assumed in their place (dev/architecture.md, Hearing until nothing is left to
   decide).
 - With every point settled, `lane:up` keeps its proposal in a file, has the layer print it, and
-  sends the calling AI that print: for each subagent step, the lanes it would lay, each under its
-  action, with the step as it would read and its hooks. The calling AI asks the builder for the OK;
-  a change the builder asks goes back to `lane:up`, which changes the file and sends it again.
+  gives the calling AI that print as its reply: for each subagent step, the lanes it would lay, each
+  under its action, with the step as it would read and its hooks. The calling AI asks the builder
+  for the OK; a change the builder asks goes back to `lane:up`, which changes the file and gives the
+  print again.
 
   A lane is proposed only for a sentence of a step whose drift shows in a tool call; what shows in
   no call, such as what the subagent weighs, has no lane, since no hook can see it.
 - Only once the calling AI sends back the builder's OK does `lane:up` have the layer write the
   proposal from the same file word for word into the plugin, with lane's code, and check that the
-  plugin loads.
+  plugin loads; where the builder wants no lanes at all, `lane:up` removes the proposal and writes
+  nothing.
 
   What the builder approved is printed and written by a script from one file, so no AI copies it.
   For lane the caller is the calling AI, and its answer is the caller's own action that an approval
@@ -72,10 +74,10 @@ flowchart TB
 
   A lane on the order of steps, such as reading an input whole before writing, is held from what
   the subagent has done since it started.
-- A lane on how the subagent ends, test_after, end_when or every_item, is held as it is about to
-  end, from what it has done since it started and its last reply; on a drift the guard keeps it
-  going with `<plugin>: <sentence>`. Told once, a subagent that answers in words alone, with no
-  call since, is let end.
+- A lane on how the subagent ends, test_after, end_when, every_item, or as_printed on its last
+  reply, is held as it is about to end, from what it has done since it started and its last reply;
+  on a drift the guard keeps it going with `<plugin>: <sentence>`. Told once, a subagent that
+  answers in words alone, with no call since, is let end.
 
   It is told, not trapped: a subagent that cannot keep the lane would otherwise be kept going for
   good, and its reply would never reach the one who started it.
@@ -127,12 +129,14 @@ lane/                          the plugin, installed by Claude Code
 
 - lane runs on Claude Code, python3 3.9 or later, git and jq; the layer checks the plugin with
   `claude plugin validate`.
-- The calling AI starts `lane:up` as a subagent, naming in its prompt the agent `lane:up` messages:
-  `main` from the main conversation, its own name from a subagent. `lane:up` sends each point with
-  SendMessage and ends its turn, and the answer, sent back the same way, resumes it.
+- The calling AI starts `lane:up` as a subagent with the plugin's folder in its prompt. `lane:up`
+  gives each point as its reply and ends its turn; the reply reaches the calling AI with
+  `lane:up`'s agent ID, and the calling AI sends the answer to that ID with SendMessage, which
+  resumes it.
 
-  SendMessage reaches an agent by its name or ID, and a subagent may message the agent that started
-  it (sub-agents, Resume subagents).
+  The Agent tool gives a subagent no name to be messaged by, and a subagent does not know its own
+  ID, so it is reached by the ID its reply comes with, from the main conversation and from a
+  subagent alike, as tried on Claude Code 2.1.306.
 - The proposal is a JSON file in lane's data folder, `${CLAUDE_PLUGIN_DATA}/<plugin>.json`, which
   `lane:up`'s steps name, as Claude Code puts the folder in where an agent's Markdown names it; the
   layer removes it once written. Claude Code keeps that folder for the plugin's own files across
@@ -206,14 +210,18 @@ lane/                          the plugin, installed by Claude Code
 - as_printed and follow_next hold every other hand-on or call once their command has printed, until
   the print is handed on word for word, or the move it prints, one tool call as a JSON line, is
   made; wait_for holds its commands until a message with the approval reaches the subagent after it
-  asked.
+  last asked, by SendMessage or by a reply that ended its turn. A hand-on is an Agent call's
+  prompt, a SendMessage's message or the subagent's reply.
 
-  The move printed as the tool call itself is a form general to any plugin.
+  `lane:up` gives the builder its proposal as its reply. The move printed as the tool call itself
+  is a form general to any plugin.
 - A subagent's record is the JSONL file Claude Code writes at
   `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`, from the tool event's
   `transcript_path` and `agent_id`, as Claude Code 2.1.306 writes it; neither the place nor the
   shape is documented, so the guard's tests hold both. The calls of one reply are written there
-  once their hooks have run, so a lane on the order of steps reads the replies before.
+  once their hooks have run, so a lane on the order of steps reads the replies before. A reply
+  that ended the turn is the entry whose `stop_reason` is `end_turn`; one a stop hook kept going
+  reached no one and is left out.
 
   So a call sent in the same reply as the move a lane waits on is held once, and passes when sent
   again.
@@ -258,7 +266,7 @@ the records of every conversation and agent the check started. Each unittest bel
     with an older copy, one in the ccpm marketplace.
 - `lane:up`: the run goes in the order of the logical view.
   - Flow: on a plugin with one orchestrator skill and one subagent of three steps, with the calling
-    AI stood in for by answers set beforehand; passes when the records show one point per message,
+    AI stood in for by answers set beforehand; passes when the records show one point per reply,
     each fact found shown to confirm, and the layer run only on the proposal sent back with the OK.
   - Content: on the README's `notes` and on turn; passes when each proposed lane is one of
     the README's Lanes, and each step's drift that shows in a tool call has its lane.

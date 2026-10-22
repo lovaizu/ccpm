@@ -235,12 +235,13 @@ def entry(plugin: str, agent: dict[str, Any], event: str = "PreToolUse") -> dict
     it: its matcher the tools its lanes watch, or for SubagentStop the subagent, as its matcher
     tells agents apart, and its command giving each lane laid."""
     every = [(s["step"], g) for s in agent["steps"] for g in s["lanes"]]
-    on_it = [(n, g) for n, g in every if lanes.held_on(g["lane"]) in (event,)]
+    on_it = [(n, g) for n, g in every if event in lanes.held_on(g["lane"])]
     if not on_it:
         return None
     name = f"{plugin}:{agent['name']}"
     laid = [lanes.word(n, g["lane"], g["takes"]) for n, g in on_it]
-    tools = [t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", (name,))]
+    each = [t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ())]
+    tools = [name] if event in ("SubagentStop",) else each
     run_it = command(plugin, name, laid, event)
     return {
         "matcher": "|".join(dict.fromkeys(tools)),

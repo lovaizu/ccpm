@@ -2,8 +2,8 @@
 as lane:up writing the proposal into the builder's plugin only on the builder's OK. The lane takes
 the approval, such as `OK`, then each command it holds back, such as `lay.py write`; its sentence
 shows the approval alone. It is held from the subagent's record: a held command is a drift unless a
-message holding the approval has reached the subagent since it last asked, by SendMessage, or since
-it began where it has not asked."""
+message holding the approval has reached the subagent since it last asked, by SendMessage or by a
+reply that ended its turn, or since it began where it has not asked."""
 
 from __future__ import annotations
 

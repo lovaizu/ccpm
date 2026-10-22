@@ -1,6 +1,6 @@
 """wait_for: a run of a command the lane holds back is a drift unless a message holding the approval
-has reached the subagent since it last asked, by SendMessage, read from its record; every other call
-is not."""
+has reached the subagent since it last asked, by SendMessage or by a reply that ended its turn, read
+from its record; every other call is not."""
 
 import unittest
 
@@ -14,6 +14,8 @@ TAKES = ["OK", "lay.py write"]
 WRITE = "python3 /home/u/.claude/plugins/lane/scripts/lay.py write /home/u/data/notes.json"
 # The subagent asking its caller, by SendMessage.
 ASK = ("SendMessage", {"to": "main", "message": "lane:up proposes: ..."}, '{"success":true}')
+# The subagent asking by a reply that ends its turn, as lane:up asks.
+REPLY = helpers.replied("lane:up proposes these lanes; send OK or what to change.")
 
 
 class WaitForTest(helpers.PluginTest):
@@ -29,6 +31,7 @@ class TestDrift(WaitForTest):
             "no message since asking": [ASK],
             "a message without it": [ASK, helpers.from_main("Change step 3 to read only.")],
             "the approval before asking again": [ASK, helpers.from_main("OK"), ASK],
+            "the approval before a reply asking": [ASK, helpers.from_main("OK"), REPLY],
             "the approval inside a word": [ASK, helpers.from_main("BOOKED")],
         }.items():
             with self.subTest(what=what):
@@ -64,6 +67,7 @@ class TestLetThrough(WaitForTest):
         for what, calls in {
             "from the main conversation": [ASK, helpers.from_main("OK, go on.")],
             "from another subagent": [ASK, helpers.from_subagent("OK")],
+            "resuming it after a reply that asked": [REPLY, helpers.from_main("OK")],
             "in another case": [ASK, helpers.from_main("ok")],
             "before other messages": [ASK, helpers.from_main("OK"), helpers.from_main("Thanks.")],
         }.items():

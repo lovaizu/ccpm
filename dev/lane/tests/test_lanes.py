@@ -157,15 +157,20 @@ class TestSlots(unittest.TestCase):
 
 
 class TestHeldOn(unittest.TestCase):
-    def test_a_lane_is_held_on_the_event_its_module_names_or_on_a_tool_call(self):
+    def test_a_lane_is_held_on_the_events_its_module_names_or_on_a_tool_call(self):
         # Given: the lanes lane lays
-        # When: the event each is held on is read
-        # Then: those on how the subagent ends are held on SubagentStop, every other on PreToolUse
-        ending = {"test_after", "end_when", "every_item"}
+        # When: the events each is held on are read
+        # Then: those on how the subagent ends are held on SubagentStop, as_printed, whose hand-on
+        # may be the last reply, on both, every other on PreToolUse alone
+        held = {
+            "test_after": ("SubagentStop",),
+            "end_when": ("SubagentStop",),
+            "every_item": ("SubagentStop",),
+            "as_printed": ("PreToolUse", "SubagentStop"),
+        }
         for name in lanes.LANES:
             with self.subTest(lane=name):
-                held = "SubagentStop" if name in ending else "PreToolUse"
-                self.assertEqual(lanes.held_on(name), held)
+                self.assertEqual(lanes.held_on(name), held.get(name, ("PreToolUse",)))
 
 
 class TestWords(unittest.TestCase):

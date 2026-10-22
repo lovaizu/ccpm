@@ -15,7 +15,7 @@ from call import End, changed
 
 ACTION = "end"
 WORDING = "Answer every item of `<input>`."
-EVENT = "SubagentStop"
+EVENTS = ("SubagentStop",)
 # A top-level list item, its marker at the line's start, and the ID it begins with: capitals, a
 # hyphen or not, a number, and numbers after a point, set in Markdown's bold, code or brackets or
 # not, and followed by a colon, a point, a bracket, a blank or the line's end.

@@ -2,12 +2,14 @@
 run, test, hand on, wait or end. A Bash call is a run, of each command it runs, reading what they
 print of what they read and writing what they write; a call of the Read or Grep tool is a read of
 what it reads; a call of a tool that writes a file is a write of it; a call of the Agent tool or of
-SendMessage is a hand-on of its text to another agent; a call of a tool no lane of this version reads
-is no action. A call that writes a file by the Write or Edit tool is read with the text the file
-holds once it is written, for a lane on what is written. A call is read with the tool and the input
-the AI gave it, with each call its subagent made before it, with what each gave back, and with each
-message that reached the subagent since it last asked, for a lane on the order of steps; and the
-calls a subagent made, with its last reply, as it is about to end, for a lane held at its end."""
+SendMessage is a hand-on of its text to another agent, as a reply that ended the subagent's turn
+is, read from its record; a call of a tool no lane of this version reads is no action. A call that
+writes a file by the Write or Edit tool is read with the text the file holds once it is written,
+for a lane on what is written. A call is read with the tool and the input the AI gave it, with each
+call its subagent made before it, with what each gave back, and with each message that reached the
+subagent since it last asked, by SendMessage or by a reply that ended its turn, for a lane on the
+order of steps; and the calls a subagent made, with its last reply, as it is about to end, for a
+lane held at its end."""
 
 from __future__ import annotations
 
@@ -28,6 +30,9 @@ READ_TOOLS = {"Read": ("file_path", None), "Grep": ("path", ".")}
 # The tools that hand text on to another agent, each with the field of its input that holds the text:
 # the Agent tool its prompt to the agent it starts, SendMessage its message to the agent it names.
 HANDS = {"Agent": "prompt", "SendMessage": "message"}
+# What hands text on, each with the field of its input that holds it: those tools, and a reply that
+# ended the subagent's turn, as its record is read.
+HANDED = {**HANDS, record.REPLY: record.SAID}
 # A line of what the Read tool gives back: the line's number in the file, a tab, and its text.
 NUMBERED = re.compile(r"^([0-9]+)\t", re.MULTILINE)
 
@@ -143,7 +148,7 @@ def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:
         return Call("write", [], (file,) if named else ())
     if tool in READ_TOOLS:
         return Call("read", [], (), told)
-    if tool in HANDS:
+    if tool in HANDED:
         return Call("hand on", [])
     if tool != "Bash":
         return Call("", [])
@@ -188,5 +193,5 @@ def shown(result: str) -> shell.Lines | None:
 
 def handed(call: Call) -> str:
     """The text a hand-on hands on, as the AI gave it; "" for a call that hands nothing on."""
-    text = call.given.get(HANDS[call.tool], "") if call.action in ("hand on",) else ""
+    text = call.given.get(HANDED[call.tool], "") if call.action in ("hand on",) else ""
     return text if isinstance(text, str) else ""

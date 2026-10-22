@@ -16,7 +16,7 @@ from call import Call, End, changed
 
 ACTION = "test"
 WORDING = "After changing `<output>`, pass `<test>`."
-EVENT = "SubagentStop"
+EVENTS = ("SubagentStop",)
 
 
 def drifts(end: End, takes: list[str], root: str) -> bool:

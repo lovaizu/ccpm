@@ -284,6 +284,24 @@ class TestWriteEndHooks(LayTest):
             self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [END_ENTRY]}}
         )
 
+    def test_a_lane_held_on_both_events_goes_into_each_entry(self):
+        # Given: as_printed on step 3, held on a tool call and as the subagent is about to end
+        self.propose(self.proposal([{"lane": "as_printed", "takes": ["lay.py print"]}]))
+        # When: the proposal is written
+        self.lay("write", self.proposal_file)
+        # Then: each event's entry gives the lane, PreToolUse's matching the tools that hand on,
+        # SubagentStop's the subagent
+        events = self.hooks()["hooks"]
+        word = "notes:changelog-writer '3:as_printed:lay.py print'"
+        for event, matcher in (
+            ("PreToolUse", "Agent|SendMessage"),
+            ("SubagentStop", "notes:changelog-writer"),
+        ):
+            with self.subTest(event=event):
+                entry = events[event][0]
+                self.assertEqual(entry["matcher"], matcher)
+                self.assertTrue(entry["hooks"][0]["command"].endswith(word))
+
     def test_an_entry_of_an_event_no_lane_is_held_on_now_is_taken_out(self):
         # Given: hooks.json holding the subagent's entries of both events from before, beside an
         # entry of the builder's own

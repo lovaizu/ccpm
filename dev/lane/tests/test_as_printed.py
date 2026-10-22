@@ -1,8 +1,10 @@
-"""as_printed: once a command the lane takes has run and printed, a hand-on, an Agent call's prompt or
-a SendMessage's message, is a drift until one holds what it printed word for word, a heading line
-beside it allowed; held from the subagent's record. Every other call is not."""
+"""as_printed: once a command the lane takes has run and printed, a hand-on, an Agent call's prompt,
+a SendMessage's message or the subagent's last reply, is a drift until one holds what it printed
+word for word, a heading line beside it allowed; held from the subagent's record, on a tool call and
+as the subagent is about to end. Every other call is not."""
 
 import json
+import os
 import unittest
 
 import helpers
@@ -35,6 +37,12 @@ class AsPrintedTest(helpers.PluginTest):
         field = call.HANDS.get(tool, "command")
         given = {"to": "main", "message": message} if tool == "SendMessage" else {field: message}
         return as_printed.drifts(call.read(self.called(tool, given)), takes, helpers.NO_PLUGIN)
+
+    def ends(self, calls, reply):
+        """Whether the subagent drifts, about to end with the reply after the calls in its
+        record."""
+        self.record(calls)
+        return as_printed.drifts(call.ended(self.stopped(reply)), TAKES, helpers.NO_PLUGIN)
 
 
 class TestDrift(AsPrintedTest):
@@ -79,6 +87,13 @@ class TestDrift(AsPrintedTest):
         # When: the subagent hands on something else
         # Then: it is a drift, as the hand-on before was of the run before
         self.assertTrue(self.drifts(calls, "lane:up asks: is that all?"))
+
+    def test_a_reply_ending_the_turn_that_holds_no_print_leaves_it_due(self):
+        # Given: the command run, having printed, then a reply ending the turn of something else
+        calls = [printed(), helpers.replied("lane:up asks: is that all?")]
+        # When: the subagent, resumed, hands on something else
+        # Then: it is a drift, as the print is due still
+        self.assertTrue(self.drifts(calls, "lane:up found: x"))
 
     def test_a_message_of_no_text_drifts(self):
         # Given: the command run, having printed
@@ -154,6 +169,13 @@ class TestLetThrough(AsPrintedTest):
         # Then: it is no drift
         self.assertFalse(self.drifts([printed(), send(OUTPUT), failed], "lane:up found: x"))
 
+    def test_any_hand_on_once_the_print_was_a_reply_ending_the_turn_is_no_drift(self):
+        # Given: the command run and its print given as the reply that ended the turn
+        calls = [printed(), helpers.replied(f"{HEADING}\n{OUTPUT}")]
+        # When: the subagent, resumed, hands on something else
+        # Then: it is no drift
+        self.assertFalse(self.drifts(calls, "lane:up asks: is CHANGELOG.md the only file?"))
+
     def test_the_print_of_any_command_taken_may_be_handed_on(self):
         # Given: a lane taking two commands, the second run, having printed
         takes = ["lay.py write", "lay.py print"]
@@ -173,6 +195,43 @@ class TestLetThrough(AsPrintedTest):
         # When: it hands on
         # Then: it is no drift, as what it printed before is not known
         self.assertFalse(as_printed.drifts(call.read(event), TAKES, helpers.NO_PLUGIN))
+
+
+class TestEnd(AsPrintedTest):
+    """as_printed as the subagent is about to end, its last reply a hand-on."""
+
+    def test_ending_with_a_reply_that_holds_no_due_print_drifts(self):
+        # Given: the command run, having printed
+        # When: the subagent is about to end with a reply of something else
+        # Then: it is a drift
+        self.assertTrue(self.ends([printed()], "The lanes are proposed."))
+
+    def test_ending_with_the_print_as_the_reply_is_no_drift(self):
+        for what, reply in {"alone": OUTPUT, "under a heading": f"{HEADING}\n{OUTPUT}"}.items():
+            with self.subTest(what=what):
+                # Given: the command run, having printed
+                # When: the subagent is about to end with the print as its reply
+                # Then: it is no drift
+                self.assertFalse(self.ends([printed()], reply))
+
+    def test_ending_once_the_print_was_handed_on_is_no_drift(self):
+        for what, handed in {
+            "by SendMessage": send(OUTPUT),
+            "as a reply that ended the turn": helpers.replied(f"{HEADING}\n{OUTPUT}"),
+        }.items():
+            with self.subTest(what=what):
+                # Given: the command run and its print handed on
+                # When: the subagent, resumed, is about to end with another reply
+                # Then: it is no drift
+                self.assertFalse(
+                    self.ends([printed(), handed], "Wrote step 3 of changelog-writer.")
+                )
+
+    def test_ending_with_nothing_printed_to_hand_on_is_no_drift(self):
+        # Given: the command never run
+        # When: the subagent is about to end with any reply
+        # Then: it is no drift
+        self.assertFalse(self.ends([helpers.bash("ls")], "Nothing was written."))
 
 
 class TestGuard(GuardTest):
@@ -201,6 +260,39 @@ class TestGuard(GuardTest):
         # When: it sends the print under a heading
         # Then: the call goes on, nothing said
         self.assertEqual(self.sent(f"{HEADING}\n{OUTPUT}"), (0, ""))
+
+    def ended(self, reply, active=False):
+        """What the guard does as the subagent is about to end with the reply after the print."""
+        stream = json.dumps(self.stopped(reply, active))
+        words = (helpers.AGENT, "4:as_printed:lay.py print")
+        return self.guard(stream, words, "subagentstop.py")
+
+    def test_ending_with_a_reply_of_something_else_is_kept_going_with_the_sentence(self):
+        # Given: changelog-writer's record of the command run, having printed
+        # When: it is about to end with a reply of something else
+        # Then: it is kept going, and told the sentence headed by the plugin
+        expected = (2, "notes: Hand on `lay.py print` as it is.\n")
+        self.assertEqual(self.ended("The lanes are proposed."), expected)
+
+    def test_ending_with_the_print_under_a_heading_ends(self):
+        # Given: changelog-writer's record of the command run, having printed
+        # When: it is about to end with the print under a heading as its reply
+        # Then: it ends, nothing said
+        self.assertEqual(self.ended(f"{HEADING}\n{OUTPUT}"), (0, ""))
+
+    def test_told_and_answering_in_words_alone_ends(self):
+        # Given: the print due, told before, and answered with words alone since
+        self.record([printed(), "told"])
+        # When: changelog-writer, kept going by the stop hook, is about to end again
+        # Then: it ends, nothing said, as it is told and never held for good
+        self.assertEqual(self.ended("The lanes are proposed.", active=True), (0, ""))
+
+    def test_with_no_record_found_it_ends(self):
+        # Given: no record of what changelog-writer did
+        os.remove(os.path.join(self.base, "session", "subagents", "agent-a1.jsonl"))
+        # When: it is about to end
+        # Then: it ends, nothing said, as what it printed is not known
+        self.assertEqual(self.ended("The lanes are proposed."), (0, ""))
 
 
 if __name__ == "__main__":

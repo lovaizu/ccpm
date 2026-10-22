@@ -1,11 +1,12 @@
 """What the subagent did before, from its record: the JSONL file Claude Code writes of it beside the
 session's record, each line an entry, among them each tool the subagent used, as the AI gave it,
-what the tool gave back, and each message that reached the subagent, its prompt first. A tool event
-carries no path to it, but the session's record and the subagent's ID, by which Claude Code keeps
-it. Claude Code does not document the record, so it is read as Claude Code 2.1.306 writes it, which
-the tests hold, and a line not in that shape is left out. The calls of one reply of the AI are
-written there once their hooks have run, a call a hook stopped among them, so the record holds
-every call of the replies before, and none of the reply being handed."""
+what the tool gave back, each reply that ended its turn, and each message that reached the
+subagent, its prompt first. A tool event carries no path to it, but the session's record and the
+subagent's ID, by which Claude Code keeps it. Claude Code does not document the record, so it is
+read as Claude Code 2.1.306 writes it, which the tests hold, and a line not in that shape is left
+out. The calls of one reply of the AI are written there once their hooks have run, a call a hook
+stopped among them, so the record holds every call of the replies before, and none of the reply
+being handed."""
 
 from __future__ import annotations
 
@@ -24,12 +25,17 @@ FROM_MAIN = re.compile(
     r"\n\nAddress this before completing your current task\.\Z",
     re.DOTALL,
 )
+# A reply that ended the subagent's turn, read among the tools it used as one of no tool, the reply
+# its input's `text`, as it hands its text on to whoever started or resumed the subagent, as a call
+# of the Agent tool or SendMessage hands on theirs.
+REPLY, SAID = "", "text"
 
 
 class Done(NamedTuple):
-    """A tool the subagent used: the tool, its input as the AI gave it, the folder it ran in, the
-    text it gave back, "" where none has come back, or none of text, and whether it gave back an
-    error, as a command that exits other than 0 does, or a call a hook stopped."""
+    """A tool the subagent used, or a reply that ended its turn: the tool, its input as the AI gave
+    it, the folder it ran in, the text it gave back, "" where none has come back, or none of text,
+    and whether it gave back an error, as a command that exits other than 0 does, or a call a hook
+    stopped."""
 
     tool: str
     given: dict[str, Any]
@@ -102,13 +108,46 @@ def uses(entry: dict[str, Any]) -> list[dict[str, Any]]:
     return of(entry, "assistant", "tool_use")
 
 
+def told(entry: dict[str, Any]) -> bool:
+    """Whether the entry is a stop hook keeping the subagent going, telling it what the hook
+    wrote."""
+    return (text(entry) or "").startswith(TOLD)
+
+
+def ends_turn(entry: dict[str, Any]) -> bool:
+    """Whether the entry is the subagent's reply ending its turn: an assistant entry whose message
+    stopped at the turn's end, as Claude Code 2.1.306 writes the last entry of a reply."""
+    message = entry.get("message")
+    stop = message.get("stop_reason") if isinstance(message, dict) else None
+    return entry.get("type") in ("assistant",) and stop in ("end_turn",)
+
+
+def replies(found: list[dict[str, Any]]) -> list[int]:
+    """Where each reply that ended the subagent's turn and reached whoever started or resumed it
+    stands among the entries of its record; a reply a stop hook kept going, telling it something
+    next, never left the subagent."""
+    at: list[int] = []
+    for number, entry in enumerate(found):
+        if ends_turn(entry):
+            at.append(number)
+        elif told(entry) and at:
+            at.pop()
+    return at
+
+
 def done(found: list[dict[str, Any]], cwd: str) -> list[Done]:
     """Each tool the subagent used, in order, from the entries of its record: an assistant entry's
     tool use, with what a user entry's tool result of the same id gave back, made in the folder its
-    entry names, or the one given where it names none."""
+    entry names, or the one given where it names none; and each reply that ended its turn, as a use
+    of no tool, REPLY, its texts, a line each, as its input's SAID."""
     used: dict[Any, tuple[Any, Any, Any]] = {}
     results: dict[Any, tuple[str, bool]] = {}
-    for entry in found:
+    ended = replies(found)
+    for number, entry in enumerate(found):
+        if number in ended:
+            texts = [b.get("text") for b in of(entry, "assistant", "text")]
+            said = "\n".join(t for t in texts if isinstance(t, str))
+            used[number] = (REPLY, {SAID: said}, entry.get("cwd") or cwd)
         for b in uses(entry):
             used[b.get("id")] = (b.get("name"), b.get("input"), entry.get("cwd") or cwd)
         for b in of(entry, "user", "tool_result"):
@@ -127,7 +166,7 @@ def answered(found: list[dict[str, Any]]) -> bool:
     has used no tool since, answering with words alone."""
     still = False
     for entry in found:
-        if (text(entry) or "").startswith(TOLD):
+        if told(entry):
             still = True
         elif uses(entry):
             still = False
@@ -135,13 +174,14 @@ def answered(found: list[dict[str, Any]]) -> bool:
 
 
 def heard(found: list[dict[str, Any]]) -> list[str]:
-    """Each message that reached the subagent since it last asked, by SendMessage, in order, from
-    the entries of its record: its prompt where it has not asked yet, and each message the main
-    conversation or another subagent sent it, as a user entry of text whose origin names the
-    sender."""
+    """Each message that reached the subagent since it last asked, by SendMessage or by a reply
+    that ended its turn, in order, from the entries of its record: its prompt where it has not
+    asked yet, and each message the main conversation or another subagent sent it, as a user entry
+    of text whose origin names the sender, as one that resumes it is too."""
     messages: list[str] = []
-    for entry in found:
-        if any(b.get("name") in ("SendMessage",) for b in uses(entry)):
+    asked = replies(found)
+    for number, entry in enumerate(found):
+        if number in asked or any(b.get("name") in ("SendMessage",) for b in uses(entry)):
             messages = []
         messages.extend(message(entry))
     return messages
