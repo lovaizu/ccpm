@@ -326,6 +326,9 @@
     },
     {
       "fact": "the user decided (2026-10-22): in_form takes JSON/JSONL (JSON Schema, structured outputs' subset), Markdown templates' headings and Markdown frontmatter keys, being built; plugin.md step 2 holds that a plugin takes in what is general and a general need it lacks goes to its makers as an issue on the user's yes (to apply to lane's design); test_after tells at the subagent's end when the last change to the output has no passing run of the test after it, T18's SubagentStop brought forward"
+    },
+    {
+      "fact": "end lanes (dca0b24, worktree-agent-a7de576d344f751dd) and hand-on/wait lanes (d8dfbdc, worktree-agent-abcbaa375f35d5b70) built on efd2eff, each with design lines in its report; in_form being reworded to 'in the form of' with ${CLAUDE_PLUGIN_ROOT} paths after three trials read it as a place"
     }
   ],
   "semantic_gist": [
@@ -430,7 +433,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "ask as_printed, then follow_next, then wait_for, one at a time; when in_form's agent ends, check, show the user its design lines; build test_after with SubagentStop; then lane's issue flow into README and design for the user's OK"
+      "next": "when in_form's agent ends: check, merge both branches onto it (sentence() slots, Call fields, record.heard beside done to fold), apply R36 (SubagentStop exit 1 without Python), write the design lines the three reports gave, run check.sh and mutate.sh lane, push, show the user the README and design changes apart; then the lane issue flow per plugin.md step 2, lane:up's own lanes, T16's trial"
     }
   ],
   "uncertainty_signal": [
@@ -448,6 +451,9 @@
     },
     {
       "open": "turn/hooks/agents.py:55 finds a subagent's record apart from lane's record.py; to fold when turn is remade on lane"
+    },
+    {
+      "open": "SendMessage from one subagent to another by name fails ('No agent named caller is reachable'), by ID it reaches; lane:up's design has a calling subagent named by its name, to settle before T16's trial"
     }
   ],
   "retrieved_artifacts": [

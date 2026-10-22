@@ -114,3 +114,6 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   such as `lay.py write`; that command is let through only once a message holding the approval
   has reached the subagent since it last asked, read from its record, whose shape for a message
   is checked on a real run first; the sentence shows the approval alone.
+- R36 (lane without Python at a subagent's end): the SubagentStop hook exits 1, the user told and
+  the subagent let end, since a subagent cannot install Python and keeping it going only repeats
+  the ask; the README's promise is on the tool calls the hooks watch, which still stop (R31).
