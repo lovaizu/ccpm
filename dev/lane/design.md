@@ -162,8 +162,11 @@ lane/                          the plugin, installed by Claude Code
   `cd notes && git commit`, but not against `g=git; $g commit`. What must hold whatever the AI
   writes is held by GitHub's branch protection, Claude Code's sandbox or its permission rules, as a
   check on a command's text is no security boundary; so the guard stays small.
-- A subagent's record is the JSONL file Claude Code writes at the event's `agent_transcript_path`,
-  which is not a documented shape, so the guard's tests hold its shape.
+- A subagent's record is the JSONL file Claude Code writes at
+  `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`, from the tool event's
+  `transcript_path` and `agent_id`, as Claude Code 2.1.306 writes it; neither the place nor the
+  shape is documented, so the guard's tests hold both. The calls of one reply are written there
+  once their hooks have run, so a lane on the order of steps reads the replies before.
 - Each hook command first runs the Python check, which exits 2 with this message where `python3` is
   missing or older than 3.9.
 
