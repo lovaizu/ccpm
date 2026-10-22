@@ -1,29 +1,20 @@
-"""Property-based tests of the hooks' reading of a command: each behavior over a kind of command,
-checked on many commands Hypothesis makes, new on every run, CI included."""
+"""Property-based tests of the hooks' reading of a command, and of a tool call read as one action:
+each behavior over a kind of command, checked on many commands Hypothesis makes, new on every run,
+CI included."""
 
 import os
 import shlex
 import string
-import sys
 import unittest
 
 # Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
 try:
-    from hypothesis import given  # pyrefly: ignore[missing-import]
+    from hypothesis import assume, given  # pyrefly: ignore[missing-import]
     from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-HOOKS = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "common", "hooks"
-)
-sys.path.insert(0, os.path.normpath(HOOKS))
-
-import shell
-
-sys.path.insert(0, os.path.join(os.path.normpath(HOOKS), "..", "..", "dev", "common"))
-
-import testing
+from helpers import call, shell, testing
 
 testing.load_hypothesis_profile()
 
@@ -86,3 +77,31 @@ class TestPaths(unittest.TestCase):
         # Then: each is taken as read whole
         found = shell.printed("cat " + " ".join(names), "/r")
         self.assertEqual(found, [os.path.realpath(os.path.join("/r", n)) for n in names])
+
+
+class TestRuns(unittest.TestCase):
+    @given(st.lists(WORDS, min_size=1, max_size=4), st.data())
+    def test_commands_of_any_quoted_words_joined_by_any_separator_are_each_run(self, runs, data):
+        # Given: commands of any words, each quoted as a shell quotes it, the first word no cd
+        # and no git, which are read apart, joined by any separator
+        assume(all(words[0] not in ("cd", "git") for words in runs))
+        command = " ".join(f"{said(words)} {data.draw(SEPARATORS)}" for words in runs)
+        # When: the call is read
+        # Then: it runs each command with its words as they were written
+        self.assertEqual(
+            call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}),
+            call.Call("run", runs),
+        )
+
+    @given(WORDS, st.text(min_size=1))
+    def test_git_run_in_any_folder_runs_its_command(self, words, folder):
+        # Given: git run with -C in any folder, its command and arguments any words, the command
+        # beginning with no `-`, which git takes as its own option
+        assume(not words[0].startswith("-"))
+        # When: the call is read
+        # Then: it runs git's command with its arguments
+        command = f"git -C {shlex.quote(folder)} {said(words)}"
+        self.assertEqual(
+            call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}).what,
+            [["git", *words]],
+        )

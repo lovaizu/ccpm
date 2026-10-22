@@ -24,7 +24,7 @@ HOOKS = os.path.join(PLUGIN, "hooks")
 # hooks.json puts rn's scripts on PYTHONPATH, and Python puts the entry's own folder first.
 sys.path[:0] = [HOOKS, os.path.join(PLUGIN, "scripts")]
 # What every plugin's tests stand on.
-sys.path.insert(0, os.path.join(PLUGIN, "..", "dev", "common"))
+sys.path.insert(0, os.path.join(PLUGIN, "..", "dev", "lane"))
 
 import events
 import helpers

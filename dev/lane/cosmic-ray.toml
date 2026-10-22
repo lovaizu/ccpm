@@ -1,0 +1,13 @@
+# Mutation testing of lane's code and its layer, among them the hook code rn and turn take through a
+# link, run from the top of the repository on a copy that may be changed.
+[cosmic-ray]
+module-path = ["lane/hooks/lane", "lane/scripts"]
+timeout = 30.0
+excluded-modules = []
+# The type checker and the linter run first: a change to a type annotation, or a comparison of a
+# string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
+# type checker is what checks annotations, the linter what checks `is` against a literal.
+test-command = "sh -c 'ruff check --select F632 lane && pyrefly check --search-path dev/lane --search-path dev/lane/tests --search-path lane/hooks/lane --search-path lane/scripts lane dev/lane && python -m unittest discover -f -s dev/lane/tests'"
+
+[cosmic-ray.distributor]
+name = "local"

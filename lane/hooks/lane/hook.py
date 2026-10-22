@@ -1,5 +1,6 @@
 """What each entry of a plugin's hooks runs: every check of its event on the event Claude Code hands
-it, a use stopped or an agent kept going with what they say."""
+it, a use stopped or an agent kept going with what they say; for a hook acting in one subagent
+alone, such as a lane's, on that subagent's events alone."""
 
 from __future__ import annotations
 
@@ -31,11 +32,15 @@ def event_read(stream: IO[str]) -> dict[str, Any] | None:
     return event if shaped and isinstance(folder, str) and os.path.isdir(folder) else None
 
 
-def run(plugin: str, checks: Sequence[Any], stream: IO[str], err: IO[str]) -> int:
+def run(
+    plugin: str, checks: Sequence[Any], stream: IO[str], err: IO[str], agent: str | None = None
+) -> int:
     """Runs each check on the event in the stream, from the folder the event comes from; gives
     STOPPED with what they say on err, headed by the plugin's name, where any says something, 0
     where none does, and UNREAD where the stream holds no event as Claude Code hands it, which lets
-    it through unchecked."""
+    it through unchecked. Given the agent, such as `notes:changelog-writer`, it runs them only on
+    an event whose agent_type is that agent, and gives 0 on any other, as a tool event's matcher
+    tells tools apart, not agents."""
     event = event_read(stream)
     if event is None:
         err.write(
@@ -45,6 +50,8 @@ def run(plugin: str, checks: Sequence[Any], stream: IO[str], err: IO[str]) -> in
             " report it at https://github.com/lovaizu/ccpm/issues\n"
         )
         return UNREAD
+    if agent is not None and event.get("agent_type") != agent:
+        return 0
     os.chdir(event["cwd"])
     said = [s for c in checks for s in c.check(event)]
     if said:

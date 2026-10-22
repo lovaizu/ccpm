@@ -2,15 +2,9 @@
 as the shell takes it."""
 
 import os
-import sys
 import unittest
 
-HOOKS = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "common", "hooks"
-)
-sys.path.insert(0, os.path.normpath(HOOKS))
-
-import shell
+from helpers import shell
 
 # The folder each command runs in.
 HERE = "/r"

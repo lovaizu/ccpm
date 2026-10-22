@@ -149,13 +149,19 @@ def git(command: str, cwd: str) -> Iterator[tuple[str | None, list[str]]]:
     `-C` moved it, or None where the words do not settle it, such as `cd "$d"` into a folder of its
     own; and its words after git's options, the git command first."""
     for here, said, _ in statements(command, cwd):
-        rest = said[1:] if said[0] == "git" else None
-        while rest and rest[0].startswith("-"):
-            if rest[0] == "-C" and rest[1:]:
-                here = path(here, rest[1])
-            rest = rest[2:] if rest[0] in GIT_VALUED else rest[1:]
-        if rest is not None:
-            yield here, rest
+        if said[0] == "git":
+            yield git_statement(here, said)
+
+
+def git_statement(here: str | None, said: list[str]) -> tuple[str | None, list[str]]:
+    """The folder a git statement run from here acts in, each `-C` moving it, and its words after
+    git's options, the git command first."""
+    rest = said[1:]
+    while rest and rest[0].startswith("-"):
+        if rest[0] == "-C" and rest[1:]:
+            here = path(here, rest[1])
+        rest = rest[2:] if rest[0] in GIT_VALUED else rest[1:]
+    return here, rest
 
 
 def inside(folder: str | None, top: str) -> bool:

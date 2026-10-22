@@ -22,7 +22,7 @@ SCRIPTS = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn", "scripts")
 )
 sys.path.insert(0, SCRIPTS)
-sys.path.insert(0, os.path.join(SCRIPTS, "..", "..", "dev", "common"))
+sys.path.insert(0, os.path.join(SCRIPTS, "..", "..", "dev", "lane"))
 
 import helpers
 import testing

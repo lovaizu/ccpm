@@ -1,7 +1,7 @@
 #!/bin/sh
 # Before a push, the checks of what the push changes, on the commits pushed: `sh dev/check.sh` and
 # the mutation testing of the lines changed, for each plugin the push changes, or every plugin where
-# it changes what they all stand on, such as common/ or dev/check.sh; CI checks everything. Turned
+# it changes what they all stand on, such as lane's hook code or dev/check.sh; CI checks everything. Turned
 # on in a clone by `git config core.hooksPath dev/githooks`, with the tools of dev/requirements.txt
 # and dev/requirements-test-quality.txt first on PATH.
 set -e
@@ -33,9 +33,10 @@ while read -r _ local _ remote; do
       plugins="$plugins $plugin"
     fi
   done
-  # A file of no plugin but common, what the plugins share, is one they all stand on.
+  # A file of no plugin, and what the plugins share from lane, the code their hooks take through a
+  # link and what their tests stand on, are what they all stand on.
   if printf '%s\n' "$changed" | grep -qvE "^(dev/)?($(echo $all | tr ' ' '|'))/" \
-    || printf '%s\n' "$changed" | grep -qE '^(dev/)?common/'; then
+    || printf '%s\n' "$changed" | grep -qE '^(lane/hooks/lane/(hook|shell)\.py|dev/lane/testing\.py)$'; then
     plugins=$all
   fi
   # The commits pushed, not what the working tree holds beside them, in a worktree, as the mutation

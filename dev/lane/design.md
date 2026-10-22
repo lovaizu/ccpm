@@ -101,6 +101,7 @@ lane/                          the plugin, installed by Claude Code
 │       ├── hook.py            what the event scripts run on: the event read, each check run
 │       ├── call.py            a tool call read as one action
 │       ├── shell.py           what a shell command reads and writes
+│       ├── step.py            a subagent's step, read from its file
 │       ├── record.py          what the subagent did before, from its record
 │       └── lanes/<lane>.py    one check per lane
 └── README.md                  its Lanes: each lane, its action and what its hook notices

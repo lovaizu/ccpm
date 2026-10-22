@@ -1,0 +1,6 @@
+{
+  "name": "lane",
+  "description": "lane lets an AI notice when it drifts from the steps your plugin gives it, and tells it the right way, so it finds its way back at full speed with no one watching each move.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}

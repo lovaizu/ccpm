@@ -14,7 +14,7 @@ SCRIPT = f'python3 "{os.path.join(TURN, "scripts", "turn.py")}"'
 HOOKS = os.path.join(TURN, "hooks")
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, HOOKS)
-sys.path.insert(0, os.path.join(TURN, "..", "dev", "common"))
+sys.path.insert(0, os.path.join(TURN, "..", "dev", "lane"))
 
 import agents  # noqa: F401  (the hooks' reading of an event, for its own tests)
 import events

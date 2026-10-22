@@ -1,0 +1,82 @@
+"""What lane's tests stand on beside what every plugin's tests do: lane's folders on sys.path, and a
+builder's plugin `notes` made in a test's folder, its subagent `changelog-writer` with the steps of
+lane's README."""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+
+LANE = os.path.normpath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "lane")
+)
+CODE = os.path.join(LANE, "hooks", "lane")
+SCRIPTS = os.path.join(LANE, "scripts")
+sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "dev", "lane")]
+
+# lane's modules, taken by each test from here, so they are found whichever test runs first.
+import call  # noqa: F401
+import hook  # noqa: F401
+import lanes  # noqa: F401
+import lay  # noqa: F401
+import shell  # noqa: F401
+import step  # noqa: F401
+import testing
+from lanes import hands_off  # noqa: F401
+
+AGENT = "notes:changelog-writer"
+SENTENCE = "Do not run `git commit` or `git push`."
+# The subagent's file before any lane is laid, its file named apart from its name, as Claude Code
+# takes the name from the frontmatter.
+STEPS = """---
+name: changelog-writer
+description: Writes the changelog of a project.
+tools: Bash, Read, Write
+---
+
+## Role
+
+You write the changelog.
+
+## Steps
+
+1. Read the commits since the last release.
+2. Sort them into Added, Changed and Fixed.
+3. Write the new entries into `CHANGELOG.md`.
+   - Out: the entries, each one line.
+4. Reply with what you wrote.
+"""
+# The subagent's file with hands_off laid on step 3, as lane:up writes it.
+LAID = STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {SENTENCE}\n")
+
+
+class PluginTest(testing.FolderTest):
+    """A test with the builder's plugin `notes` in `base/notes`, its subagent in
+    `agents/writer.md`."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.plugin = os.path.join(self.base, "notes")
+        self.write_json(
+            os.path.join(self.plugin, ".claude-plugin", "plugin.json"), {"name": "notes"}
+        )
+        self.agent_file = os.path.join(self.plugin, "agents", "writer.md")
+        self.write(self.agent_file, STEPS)
+
+    def event(self, command: str, agent_type: str | None = AGENT, tool: str = "Bash") -> dict:
+        """A PreToolUse event in Claude Code's shape for a call of the tool with the command, in
+        the subagent of the type, or in the main conversation where it is None."""
+        event = {
+            "hook_event_name": "PreToolUse",
+            "cwd": self.base,
+            "tool_name": tool,
+            "tool_input": {"command": command},
+        }
+        if agent_type:
+            event.update(agent_id="a1", agent_type=agent_type)
+        return event
+
+    def stream(self, command: str, agent_type: str | None = AGENT) -> str:
+        """The event as Claude Code hands it on stdin."""
+        return json.dumps(self.event(command, agent_type))

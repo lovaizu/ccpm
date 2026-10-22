@@ -5,17 +5,9 @@ through unchecked, saying so."""
 import io
 import json
 import os
-import sys
 import unittest
 
-HOOKS = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "common", "hooks"
-)
-sys.path.insert(0, os.path.normpath(HOOKS))
-sys.path.insert(0, os.path.join(os.path.normpath(HOOKS), "..", "..", "dev", "common"))
-
-import hook
-import testing
+from helpers import hook, testing
 
 # What the entry says when it is handed no event as Claude Code hands it.
 UNREAD = (

@@ -86,9 +86,10 @@ b. **Write the code with `code.md` open until the tests pass.** What runs on use
      passes on only what was checked.
 
    **Look first for what the plugins already share and use it.** Code more than one plugin needs,
-   such as how a hook reads a command, is kept once in `common/`, with its tests in
-   `dev/common/tests/`, and each plugin takes it through a relative symbolic link; what the tests
-   share, such as a repository made once and copied for each test, is kept in `dev/common/`.
+   such as how a hook reads a command, is kept once in the plugin whose job it is, with its tests
+   in that plugin's `dev/<plugin>/tests/`, and each other plugin takes it through a relative
+   symbolic link; what the tests share, such as a repository made once and copied for each test,
+   is kept beside that code's tests, as lane's `dev/lane/testing.py`.
    `dev/check.sh` fails on lines copied between any two files, but a test's expected value written
    out again. A plugin's whole test run takes seconds, and the time each check takes is read on
    every run.
