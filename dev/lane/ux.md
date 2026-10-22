@@ -10,8 +10,8 @@ a hook that notices when the AI drifts from it and tells the AI the sentence aga
 ## Users and goals
 
 - G1: The builder, whoever builds a Claude Code plugin whose work an AI does in several steps, wants
-  a hook to notice, on every run, when a subagent drifts from one of its steps, and to tell it the
-  right way, without writing the checks.
+  each subagent, on every run, to notice when it drifts from one of its steps and be told the right
+  way, without writing the checks.
 
   An AI calls lane for the builder, the builder's Claude or a step of another plugin, by starting
   `lane:up`, lane's agent. A subagent cannot ask a person, so that AI puts

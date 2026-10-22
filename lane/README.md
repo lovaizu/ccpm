@@ -8,7 +8,7 @@ drift from it and tells the AI the sentence again.
 
 lane is a Claude Code plugin for you if you build a plugin whose work an AI does in several steps.
 You answer and approve. lane lays the lanes on your plugin's subagents, and on every run lane's code
-notices each drift and tells the AI the step again.
+lets the AI notice each drift and tells it the step again.
 
 ## Example
 
