@@ -70,7 +70,7 @@ said OK to, and nothing is written into their plugin before that OK.
 
    - Out: for each step whose drift shows in a tool call, as the points settled it, a lane of the
      README's Lanes for each such sentence, each thing it takes as the step or the answer names it,
-     with no comma in it. Each lane laid before goes in too, unless the builder left it out, since
+     with no comma in it; wait_for takes the approval first, then each command it holds back. Each lane laid before goes in too, unless the builder left it out, since
      the layer writes each subagent's hook whole from the proposal.
 7. Run `lay.py print <proposal>`.
    - If it exits with 1 saying the proposal is wrong, fix `<proposal>` as it says and run it again;
