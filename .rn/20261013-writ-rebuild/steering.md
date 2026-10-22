@@ -88,13 +88,13 @@ lane's units, built before turn and rn are remade on it; the hooks of T2 to T6 c
   later the hook asks for it. lane:up, the layer, the guard with hands_off alone, the copy with its
   `VERSION`, and the Python check; `common/` and `dev/common/` move into lane, rn and turn
   linking to lane's code, as a copy of them in lane would fail `dev/check.sh`. Serves AC1.
-- [ ] T17: Every lane on a tool call holds as the README's Lanes says, start_with, read_only,
+- [x] T17: Every lane on a tool call holds as the README's Lanes says, start_with, read_only,
   read_whole, write_only, in_form, test_after, as_printed, follow_next and wait_for, those on the
   order of steps from the subagent's record; lane:up is held by lanes of its own. Serves AC1.
-- [ ] T18: A subagent that ends before its output is made, or with an item of its input
+- [x] T18: A subagent that ends before its output is made, or with an item of its input
   unanswered, is told end_when's or every_item's sentence and goes on. Serves AC1.
-- [ ] T19: Run where an older copy of lane's code is, lane:up brings the copy and the hooks up with
+- [x] T19: Run where an older copy of lane's code is, lane:up brings the copy and the hooks up with
   the same lanes; a lane whose step no longer has its sentence stops the call and says to run
   lane:up again. Serves AC1.
-- [ ] T20: lane, tried as its user from start to end on `notes` and on turn, achieves every story
+- [x] T20: lane, tried as its user from start to end on `notes` and on turn, achieves every story
   and its KR1.1 is counted, and passes `claude plugin validate --strict`. Serves AC1.
