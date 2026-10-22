@@ -113,9 +113,12 @@ c. **Write each prompt, a skill or an agent, with `usability.md` and `prompt.md`
    - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds
      the prompts' slips, not whether the plugin keeps its promises.
 
-d. **Write the hooks the prompts' steps call for, with `prompt.md` and `code.md` open.** Put each
-   check in its own named file, with one entry file per hook event, as the official `hookify` does.
-   - Rationale: each check is read, fixed and tested on its own.
+d. **Lay the lanes the prompts' steps call for with lane's `lane:up`, with `prompt.md` open.** A
+   check no lane holds is added to lane as a lane of its own, with `code.md` open, in its own named
+   file, with one entry file per hook event, as the official `hookify` does.
+   - Rationale: each check is written and tested once, in lane, and each plugin takes lane's code
+     through a link; a check kept in a plugin of its own reads the AI's calls apart from lane's and
+     drifts from it; each check is read, fixed and tested on its own.
 
 e. **Try the unit as its user, by the design's Verification**, with the code that runs it kept in
    `dev/<plugin>/trials/`, out of the line count. A trial that needs a real GitHub repository runs

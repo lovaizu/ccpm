@@ -17,10 +17,11 @@ A prompt is worked out in this order, each step the ground of the next:
    when it knows both. What only the user can decide is set apart here, outside the role.
 3. From the role, decide the steps that bring the same result each time it is run, with the form
    of what each step takes in and hands on.
-4. From the steps, decide what hooks check on every run, where the AI's tool calls show it: they
-   limit the AI to what its steps allow, and hold it at a step until what the step must do is done.
-   A hook backs the step and its reason and does not stand in for them, since what shows in no
-   tool call, such as what the AI weighs, rests on them alone.
+4. From the steps, decide what hooks check on every run, where the AI's tool calls show it: each
+   notices where the AI drifts from a step, beyond what it allows or on before what it must do is
+   done, and tells it the step's sentence again, so it goes back to the step. A hook backs the step
+   and its reason and does not stand in for them, since what shows in no tool call, such as what
+   the AI weighs, rests on them alone.
 
 Each item of `usability.md` also applies to a prompt.
 
@@ -320,11 +321,12 @@ Scope: whole
 Is the AI stopped when it does what no step allows and its tool calls show it?
 
 Look at: each bound the steps set, such as the inputs of B-21, the places a step writes and an
-action hard to undo, held by a hook that stops a tool call outside it and says why; one left to the
-AI's word alone fails.
+action hard to undo, held by a hook that stops a tool call outside it and tells the step's sentence
+again; one left to the AI's word alone fails.
 
 Why: what an AI does outside its steps on some run, such as reading a file it was not given, shapes
-the work unseen; a hook stops it on every run.
+the work unseen; a hook stops it on every run, and told the step, the AI goes back to it rather than
+finding another way to what it tried.
 
 ### B-25: Each step seen done by a hook
 
@@ -335,7 +337,7 @@ and that shows in its tool calls?
 
 Look at: each step of B-3 that shows in the AI's tool calls, such as every input of the step read
 whole since it last changed, a step begun only once those before it are done, a command run or a
-place written, checked by a hook that names the step and why it is there; one left to the AI's word
+place written, checked by a hook that tells the step's sentence again; one left to the AI's word
 alone fails. What shows in no tool call,
 such as what the AI weighs, stays with the step and its reason.
 

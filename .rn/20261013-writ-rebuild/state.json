@@ -353,6 +353,9 @@
     },
     {
       "fact": "run values {<name>} built (started.py) and every one of the 12 lanes tried on the mock plugin memo (dev/lane/trials/memo): no wrong stop on runs keeping the steps, each induced drift stopped with `memo: <sentence>` and its value line, the subagent back on its step; a stopped Bash call no longer counted as a change; check.sh 100%, mutate 0. Seen outside lane: Claude Code refuses a subagent's Write of summary.md (report-like names); an OK from the caller counts only where the Role says the caller decides"
+    },
+    {
+      "fact": "prompt.md's step 4, B-25 and B-26 now have a hook tell the step's sentence again, as lane's idea; plugin.md 5d lays lanes with lane:up, a check no lane holds added to lane (2026-10-22)"
     }
   ],
   "semantic_gist": [
@@ -463,7 +466,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "prompt.md and plugin.md pointing to lane; then turn remade on lane (its hooks as lanes with {<name>} run values, turn.py printing moves as {tool,input}); then rn's steering.md form held by its place in the main conversation; report the decisions to the user at the end"
+      "next": "turn remade on lane: read turn/hooks (checks, agents.py, events) against lane's 12 lanes, map each to a lane with {<name>} run values, turn.py printing moves as {tool,input}, lay with lane:up, drop turn's own hooks; then rn; record state.json after each step, as the weekly limit is near"
     }
   ],
   "uncertainty_signal": [
@@ -487,9 +490,6 @@
     },
     {
       "open": "turn's goal and key results (dev/turn/ux.md) put to the user, answer pending"
-    },
-    {
-      "open": "a lane takes fixed values, so steps whose inputs and outputs change each run (turn's CCS paths, the work's files) get no read_only, read_whole or write_only; turn's own hooks hold them today; to settle when turn is remade on lane, as a general need lane takes in (plugin.md step 2)"
     }
   ],
   "retrieved_artifacts": [
