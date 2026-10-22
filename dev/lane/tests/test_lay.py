@@ -23,6 +23,16 @@ COMMAND = (
     " notes:changelog-writer '3:hands_off:git commit,git push'"
 )
 ENTRY = {"matcher": "Bash", "hooks": [{"type": "command", "timeout": 10, "command": COMMAND}]}
+# test_after on step 3, held as the subagent is about to end, and its entry of SubagentStop, which
+# matches the subagent and runs that event's entry.
+TESTED = {"lane": "test_after", "takes": ["CHANGELOG.md", "python3 check.py"]}
+END_COMMAND = COMMAND.replace("pretooluse.py", "subagentstop.py").replace(
+    "'3:hands_off:git commit,git push'", "'3:test_after:CHANGELOG.md,python3 check.py'"
+)
+END_ENTRY = {
+    "matcher": "notes:changelog-writer",
+    "hooks": [{"type": "command", "timeout": 10, "command": END_COMMAND}],
+}
 # What `print` shows the builder for it.
 PRINTED = """Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
   run: Do not run `git commit` or `git push`.  hook hands_off
@@ -220,6 +230,60 @@ class TestWriteHooks(LayTest):
                 self.assertIn("hooks/hooks.json", said)
                 self.assertIn("fix it", said)
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
+
+
+class TestWriteEndHooks(LayTest):
+    """Lanes held as the subagent is about to end, written into an entry of SubagentStop."""
+
+    def test_a_lane_held_at_the_end_gets_a_subagentstop_entry_alone(self):
+        # Given: test_after alone on step 3
+        self.propose(self.proposal([TESTED]))
+        # When: the proposal is written
+        self.lay("write", self.proposal_file)
+        # Then: hooks.json holds a SubagentStop entry matching the subagent, running its entry
+        # with the lane, and no PreToolUse entry
+        self.assertEqual(self.hooks(), {"hooks": {"SubagentStop": [END_ENTRY]}})
+
+    def test_lanes_of_both_events_get_an_entry_each(self):
+        # Given: hands_off and test_after on step 3
+        self.propose(self.proposal([*LANES, TESTED]))
+        # When: the proposal is written
+        self.lay("write", self.proposal_file)
+        # Then: each event's entry gives its lanes alone
+        self.assertEqual(
+            self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [END_ENTRY]}}
+        )
+
+    def test_an_entry_of_an_event_no_lane_is_held_on_now_is_taken_out(self):
+        # Given: hooks.json holding the subagent's entries of both events from before, beside an
+        # entry of the builder's own
+        own = {"hooks": [{"type": "command", "command": "own.sh"}]}
+        hooks = {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own, END_ENTRY]}}
+        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+        # When: a proposal of hands_off alone is written
+        self.lay("write", self.proposal_file)
+        # Then: the SubagentStop entry lane:up wrote is gone, the builder's kept
+        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own]}})
+
+    def test_subagentstop_entries_not_in_claude_codes_shape_stop(self):
+        for text in ('{"hooks": {"SubagentStop": {}}}', '{"hooks": {"SubagentStop": [1]}}'):
+            with self.subTest(text=text):
+                # Given: hooks.json whose SubagentStop entries are no list, or no objects
+                self.write(os.path.join(self.plugin, "hooks", "hooks.json"), text)
+                # When: the proposal is written
+                code, said = self.lay("write", self.proposal_file)
+                # Then: it exits 1 naming the file
+                self.assertEqual(code, 1)
+                self.assertIn("hooks/hooks.json", said)
+
+    def test_a_lane_taking_fewer_things_than_its_places_stops(self):
+        # Given: test_after taking an output alone, no test
+        self.propose(self.proposal([{"lane": "test_after", "takes": ["CHANGELOG.md"]}]))
+        # When: the proposal is printed
+        code, said = self.lay("print", self.proposal_file)
+        # Then: it exits 1 naming the lane and how many it takes
+        self.assertEqual(code, 1)
+        self.assertIn("test_after on step 3 of changelog-writer fewer takes than the 2", said)
 
 
 class TestWriteCode(LayTest):

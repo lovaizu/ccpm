@@ -10,9 +10,10 @@ The proposal is a JSON file lane:up keeps in lane's data folder, `${CLAUDE_PLUGI
                                "lanes": [{"lane": "<lane>", "takes": ["<thing>", ...]}]}]}]}
 
 Writing puts each lane's sentence at the end of its step in the subagent's file, one entry for each
-subagent in the plugin's hooks/hooks.json, every other entry left as it was, and lane's code in its
-hooks/lane/: a relative link to lane's in a plugin of the ccpm marketplace, a copy with lane's
-version in VERSION anywhere else; then has Claude Code check the plugin, and removes the proposal.
+subagent and each event its lanes are held on in the plugin's hooks/hooks.json, every other entry
+left as it was, and lane's code in its hooks/lane/: a relative link to lane's in a plugin of the
+ccpm marketplace, a copy with lane's version in VERSION anywhere else; then has Claude Code check
+the plugin, and removes the proposal.
 """
 
 from __future__ import annotations
@@ -41,7 +42,8 @@ CHECK = (
     ' || {{ echo "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run" >&2;'
     " exit 2; }}"
 )
-RUN = 'exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py"'
+# The events lanes are held on, each with its own script in lane's code, named after it.
+EVENTS = ("PreToolUse", "SubagentStop")
 # The marketplace whose plugins take lane's code through a link to lane beside them, as installing
 # copies what a link within the marketplace points to.
 MARKETPLACE = "ccpm"
@@ -155,6 +157,8 @@ def lane_check(lane: Any, on: str) -> None:
         raise wrong(f"gives {known} on {on} no takes")
     if not all(isinstance(t, str) and t and "," not in t for t in takes):
         raise wrong(f"gives {known} on {on} takes that are not each a text with no comma")
+    if len(takes) < lanes.slots(known):
+        raise wrong(f"gives {known} on {on} fewer takes than the {lanes.slots(known)} it puts in")
 
 
 def sentences(step_given: dict[str, Any]) -> list[str]:
@@ -189,23 +193,33 @@ def printed(path: str) -> str:
     return "\n".join(blocks)
 
 
-def command(plugin: str, agent: str, laid: list[str]) -> str:
-    """The hook's command running lane's code on the lanes laid in the subagent."""
+def run(event: str) -> str:
+    """What a hook's command runs for the event: its script in lane's code."""
+    return f'exec python3 "${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/{event.lower()}.py"'
+
+
+def command(plugin: str, agent: str, laid: list[str], event: str = "PreToolUse") -> str:
+    """The hook's command running lane's code on the lanes laid in the subagent, held on the
+    event."""
     words = " ".join(shlex.quote(w) for w in [agent, *laid])
-    return f"{CHECK.format(plugin=plugin)}; {RUN} {words}"
+    return f"{CHECK.format(plugin=plugin)}; {run(event)} {words}"
 
 
-def entry(plugin: str, agent: dict[str, Any]) -> dict[str, Any]:
-    """The subagent's entry of hooks.json: its matcher the tools its lanes watch, and its command
-    giving each lane laid."""
-    laid = [
-        lanes.word(s["step"], g["lane"], g["takes"]) for s in agent["steps"] for g in s["lanes"]
-    ]
-    tools = [t for s in agent["steps"] for g in s["lanes"] for t in lanes.LANES[g["lane"]].TOOLS]
-    run = command(plugin, f"{plugin}:{agent['name']}", laid)
+def entry(plugin: str, agent: dict[str, Any], event: str = "PreToolUse") -> dict[str, Any] | None:
+    """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
+    it: its matcher the tools its lanes watch, or for SubagentStop the subagent, as its matcher
+    tells agents apart, and its command giving each lane laid."""
+    every = [(s["step"], g) for s in agent["steps"] for g in s["lanes"]]
+    held = [(n, g) for n, g in every if lanes.held_on(g["lane"]) in (event,)]
+    if not held:
+        return None
+    name = f"{plugin}:{agent['name']}"
+    laid = [lanes.word(n, g["lane"], g["takes"]) for n, g in held]
+    tools = [t for _, g in held for t in getattr(lanes.LANES[g["lane"]], "TOOLS", (name,))]
+    run_it = command(plugin, name, laid, event)
     return {
         "matcher": "|".join(dict.fromkeys(tools)),
-        "hooks": [{"type": "command", "timeout": 10, "command": run}],
+        "hooks": [{"type": "command", "timeout": 10, "command": run_it}],
     }
 
 
@@ -222,9 +236,12 @@ def hooks_read(root: str) -> dict[str, Any]:
     except ValueError:
         raise unshaped from None
     events = hooks.get("hooks", {}) if isinstance(hooks, dict) else None
-    entries = events.get("PreToolUse", []) if isinstance(events, dict) else None
-    if not isinstance(entries, list) or not all(map(entry_shaped, entries)):
+    if not isinstance(events, dict):
         raise unshaped
+    for event in EVENTS:
+        entries = events.get(event, [])
+        if not isinstance(entries, list) or not all(map(entry_shaped, entries)):
+            raise unshaped
     return hooks
 
 
@@ -235,14 +252,21 @@ def entry_shaped(entry: Any) -> bool:
 
 
 def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> None:
-    """Puts the subagent's entry into the hooks: where lane:up wrote one for it before, in the
-    place of the first, after every other entry otherwise."""
-    entries = hooks.setdefault("hooks", {}).setdefault("PreToolUse", [])
-    mark = f"{RUN} {plugin}:{agent['name']} "
-    ours = [any(mark in str(h.get("command")) for h in e.get("hooks", [])) for e in entries]
-    place = ours.index(True) if True in ours else len(entries)
-    others = [e for e, our in zip(entries, ours) if not our]
-    entries[:] = [*others[:place], entry(plugin, agent), *others[place:]]
+    """Puts the subagent's entry of each event its lanes are held on into the hooks: where lane:up
+    wrote one for it before, in the place of the first, after every other entry otherwise; and
+    takes out those lane:up wrote for it before on an event none of its lanes is held on now."""
+    events = hooks.setdefault("hooks", {})
+    for event in EVENTS:
+        entries = events.get(event, [])
+        mark = f"{run(event)} {plugin}:{agent['name']} "
+        ours = [any(mark in str(h.get("command")) for h in e.get("hooks", [])) for e in entries]
+        place = ours.index(True) if True in ours else len(entries)
+        others = [e for e, our in zip(entries, ours) if not our]
+        new = entry(plugin, agent, event)
+        kept = [*others[:place], *([new] if new else []), *others[place:]]
+        # An event the hooks hold no entry of is left out, not written as an empty list.
+        if kept or entries:
+            events[event] = kept
 
 
 def marketplace(folder: str) -> str | None:

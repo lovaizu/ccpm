@@ -3,7 +3,8 @@ run, test, hand on, wait or end. A Bash call is a run, of each command it runs, 
 print of what they read and writing what they write; a call of the Read or Grep tool is a read of
 what it reads; a call of a tool that writes a file is a write of it; a call of a tool no lane of this
 version reads is no action. A call is read with each call its subagent made before it, for a lane on
-the order of steps."""
+the order of steps; and the calls a subagent made, with its last reply, as it is about to end, for
+a lane held at its end."""
 
 from __future__ import annotations
 
@@ -26,14 +27,28 @@ NUMBERED = re.compile(r"^([0-9]+)\t", re.MULTILINE)
 class Call(NamedTuple):
     """The action a call is, "" for none a lane watches, and what it acts on: for a run, each
     command, as its words; each file it writes, as its whole path; each file or folder it reads, as
-    its whole path with the lines it reads of it, None where they are not known; and each call its
-    subagent made before it, read the same way, None where its record is not found."""
+    its whole path with the lines it reads of it, None where they are not known; each call its
+    subagent made before it, read the same way, None where its record is not found; and, for a call
+    read from the record, whether it gave back an error and, for a run, what ends each command, the
+    operator after it, such as `&&` or `|`, or a line's end after the last."""
 
     action: str
     what: list[list[str]]
     written: tuple[str, ...] = ()
     reads: tuple[tuple[str, shell.Lines | None], ...] = ()
     before: list[Call] | None = None
+    failed: bool = False
+    ends: tuple[str, ...] = ()
+
+
+class End(NamedTuple):
+    """How the subagent is about to end, from the SubagentStop event: each call it made, in order,
+    read as its action, None where its record is not found; its last reply; and whether a stop
+    hook told it something and it answered with words alone, making no call since."""
+
+    made: list[Call] | None
+    reply: str
+    answered: bool
 
 
 def read(event: dict[str, Any]) -> Call:
@@ -43,6 +58,29 @@ def read(event: dict[str, Any]) -> Call:
     before = None if done is None else [alone(d.tool, d.given, d.cwd, d.result) for d in done]
     call = alone(event["tool_name"], event["tool_input"], event["cwd"])
     return call._replace(before=before)
+
+
+def ended(event: dict[str, Any]) -> End:
+    """How the subagent of the SubagentStop event is about to end, from its record and the event."""
+    done = record.done(event)
+    made = None if done is None else [recorded(d) for d in done]
+    told = bool(event.get("stop_hook_active")) and record.answered(event)
+    return End(made, event["last_assistant_message"], told)
+
+
+def recorded(done: record.Done) -> Call:
+    """A call the subagent made, read from its record as its action, with whether it failed and,
+    for a run, what ends each command."""
+    command = str(done.given.get("command", ""))
+    ends = tuple(end for _, _, end in shell.statements(command, done.cwd))
+    made = alone(done.tool, done.given, done.cwd, done.result)
+    return made._replace(failed=done.failed, ends=ends)
+
+
+def changed(made: Call, file: str) -> bool:
+    """Whether the call changed the file: wrote it, but by a tool that writes a file and gave back
+    an error, which writes nothing; a command that failed may have written it before it failed."""
+    return file in made.written and not (made.failed and made.action in ("write",))
 
 
 def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:

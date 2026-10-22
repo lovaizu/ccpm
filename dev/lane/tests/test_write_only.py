@@ -160,6 +160,7 @@ class TestHook(unittest.TestCase):
         # When: the layer makes the subagent's hook
         entry = lay.entry("notes", {"name": "writer", "steps": [{"step": 3, "lanes": lanes}]})
         # Then: its matcher names each tool the two watch, once
+        assert entry is not None, "no entry was made"
         self.assertEqual(entry["matcher"], "Bash|Write|Edit|NotebookEdit")
 
 

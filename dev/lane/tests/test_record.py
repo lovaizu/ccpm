@@ -107,6 +107,15 @@ class TestDone(RecordTest):
         # Then: the call in the record's shape alone is read
         self.assertEqual(self.done(), [record.Done("Bash", {}, "/w", "ok")])
 
+    def test_a_result_given_back_as_an_error_is_read_as_failed(self):
+        # Given: a record of a Bash call given back as an error, one given back with none, and one
+        # not yet back
+        calls = [helpers.failing("false"), helpers.bash("true"), ("Bash", {}, None)]
+        self.write(self.file, helpers.recorded("/w", calls))
+        # When: what the subagent did is read
+        # Then: the first failed, the others did not
+        self.assertEqual([d.failed for d in self.done()], [True, False, False])
+
     def test_no_record_found_is_not_known(self):
         for event in (self.event("ls"), self.event("ls", agent_type=None)):
             with self.subTest(event=event):
@@ -114,6 +123,63 @@ class TestDone(RecordTest):
                 # When: what the subagent did is read
                 # Then: it is not known, told apart from a record of no calls
                 self.assertIsNone(record.done(event))
+
+
+class TestAnswered(RecordTest):
+    def answered(self, calls):
+        """Whether the subagent of a record of the calls and tellings has answered with words."""
+        self.record(calls)
+        return record.answered(self.event("ls"))
+
+    def test_told_and_no_call_since_is_answered(self):
+        for calls in (["told"], [helpers.bash("ls"), "told"], ["told", helpers.bash("ls"), "told"]):
+            with self.subTest(calls=calls):
+                # Given: a record whose last telling by a stop hook has no tool use after it
+                # When: whether the subagent answered with words is read
+                # Then: it did
+                self.assertTrue(self.answered(calls))
+
+    def test_a_reply_in_words_after_the_telling_keeps_it_answered(self):
+        # Given: a record told by a stop hook, then the subagent's reply in words
+        self.record(["told"])
+        reply = {"type": "text", "text": "Done."}
+        with open(self.file, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "assistant", "message": {"content": [reply]}}) + "\n")
+        # When: whether the subagent answered with words is read
+        # Then: it did
+        self.assertTrue(record.answered(self.event("ls")))
+
+    def test_a_call_since_the_last_telling_is_no_answer_in_words(self):
+        for calls in ([], [helpers.bash("ls")], ["told", helpers.bash("ls")]):
+            with self.subTest(calls=calls):
+                # Given: a record told nothing, or with a tool use after its last telling
+                # When: whether the subagent answered with words is read
+                # Then: it did not
+                self.assertFalse(self.answered(calls))
+
+    def test_only_a_users_text_of_a_stop_hooks_telling_is_one(self):
+        said = {"role": "user", "content": "Stop hook feedback:\nx"}
+        for line in (
+            "not json",
+            "[]",
+            json.dumps({"type": "user", "message": {"content": "Do your steps."}}),
+            json.dumps({"type": "assistant", "message": said}),
+            json.dumps({"type": "user", "message": {"content": [said]}}),
+            json.dumps({"type": "user", "message": "Stop hook feedback:"}),
+        ):
+            with self.subTest(line=line):
+                # Given: a record of a line that is no stop hook's telling: no JSON, no object, a
+                # user's other text, the text from the assistant, in a list or not in a message
+                self.write(self.file, line + "\n")
+                # When: whether the subagent answered with words is read
+                # Then: it did not, as it was never told
+                self.assertFalse(record.answered(self.event("ls")))
+
+    def test_no_record_found_is_no_answer(self):
+        # Given: an event whose record is not there
+        # When: whether the subagent answered with words is read
+        # Then: it did not
+        self.assertFalse(record.answered(self.event("ls")))
 
 
 if __name__ == "__main__":

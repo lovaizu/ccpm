@@ -3,7 +3,9 @@ takes, the one the step says and the subagent is told."""
 
 import os
 import re
+import types
 import unittest
+from unittest import mock
 
 import helpers
 from helpers import lanes
@@ -50,6 +52,53 @@ class TestSentence(unittest.TestCase):
         self.assertEqual(
             lanes.sentence("hands_off", ["a", "b", "c"]), "Do not run `a`, `b` or `c`."
         )
+
+
+class TestSlots(unittest.TestCase):
+    def test_each_place_takes_one_thing_in_order(self):
+        # Given: test_after, whose wording shows two places, taking an output and a test
+        # When: its sentence is made
+        # Then: the output stands in the first place and the test in the second
+        self.assertEqual(
+            lanes.sentence("test_after", ["app.py", "make test"]),
+            "After changing `app.py`, pass `make test`.",
+        )
+
+    def test_the_last_place_takes_the_rest_as_a_list(self):
+        # Given: test_after taking an output and three tests
+        # When: its sentence is made
+        # Then: the tests are listed in the last place, `or` before the last
+        self.assertEqual(
+            lanes.sentence("test_after", ["app.py", "a", "b", "c"]),
+            "After changing `app.py`, pass `a`, `b` or `c`.",
+        )
+
+    def test_every_place_but_the_last_takes_one_thing(self):
+        # Given: a lane whose wording shows three places, taking four things
+        three = types.SimpleNamespace(WORDING="Put `<a>` into `<b>` by `<c>`.")
+        with mock.patch.dict(lanes.LANES, {"three": three}):
+            # When: its sentence is made
+            said = lanes.sentence("three", ["w", "x", "y", "z"])
+        # Then: the first two places take one thing each, and the last the rest
+        self.assertEqual(said, "Put `w` into `x` by `y` or `z`.")
+
+    def test_a_lane_counts_the_places_its_wording_shows(self):
+        # Given: a lane of one place and one of two
+        # When: its places are counted
+        # Then: each has as many as its wording shows
+        self.assertEqual((lanes.slots("hands_off"), lanes.slots("test_after")), (1, 2))
+
+
+class TestHeldOn(unittest.TestCase):
+    def test_a_lane_is_held_on_the_event_its_module_names_or_on_a_tool_call(self):
+        # Given: the lanes lane lays
+        # When: the event each is held on is read
+        # Then: those on how the subagent ends are held on SubagentStop, every other on PreToolUse
+        ending = {"test_after", "end_when", "every_item"}
+        for name in lanes.LANES:
+            with self.subTest(lane=name):
+                held = "SubagentStop" if name in ending else "PreToolUse"
+                self.assertEqual(lanes.held_on(name), held)
 
 
 class TestWords(unittest.TestCase):

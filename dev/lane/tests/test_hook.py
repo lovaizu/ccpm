@@ -12,7 +12,8 @@ from helpers import hook, testing
 # What the entry says when it is handed no event as Claude Code hands it.
 UNREAD = (
     "p: the hook was handed no event as Claude Code hands it, a JSON object with hook_event_name"
-    " and cwd, and for PreToolUse tool_name and tool_input, so it lets this through unchecked;"
+    " and cwd, and for PreToolUse tool_name and tool_input, for SubagentStop"
+    " last_assistant_message, so it lets this through unchecked;"
     " update Claude Code with `claude update`, and where it goes on, report it at"
     " https://github.com/lovaizu/ccpm/issues\n"
 )
@@ -67,8 +68,8 @@ class TestRun(testing.FolderTest):
         self.assertEqual(self.ran(), (0, ""))
 
     def test_an_event_of_another_hook_needs_no_tool(self):
-        # Given: a SubagentStop event, which names no tool
-        event = {"hook_event_name": "SubagentStop", "cwd": self.base}
+        # Given: a SubagentStop event, which names no tool and holds the subagent's last reply
+        event = {"hook_event_name": "SubagentStop", "cwd": self.base, "last_assistant_message": ""}
         # When: the entry runs a check on it
         # Then: the check runs and says what it says
         self.assertEqual(self.handed(json.dumps(event), Says("a")), (2, "p: a\n"))
@@ -84,6 +85,7 @@ class TestRun(testing.FolderTest):
 
     def test_an_event_not_in_claude_codes_shape_goes_on_unchecked(self):
         event = self.event()
+        stop = {"hook_event_name": "SubagentStop", "cwd": self.base}
         wrong = {
             "a list": [event],
             "no hook_event_name": {k: v for k, v in event.items() if k != "hook_event_name"},
@@ -95,6 +97,8 @@ class TestRun(testing.FolderTest):
             "a tool_name that is no text": dict(event, tool_name=None),
             "no tool_input": {k: v for k, v in event.items() if k != "tool_input"},
             "a tool_input that is no object": dict(event, tool_input="git commit"),
+            "a SubagentStop of no last reply": stop,
+            "a SubagentStop whose last reply is no text": dict(stop, last_assistant_message=None),
         }
         for what, value in wrong.items():
             with self.subTest(what=what):

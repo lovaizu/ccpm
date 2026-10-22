@@ -227,5 +227,77 @@ class TestMade(helpers.PluginTest):
         self.assertIsNone(call.alone("Bash", {"command": "pwd"}, self.base).before)
 
 
+class TestEnded(helpers.PluginTest):
+    def test_each_call_made_is_read_in_order_with_whether_it_failed(self):
+        # Given: a record of a Write of a file, then a Bash call giving back an error
+        self.record([helpers.writing("a.md"), helpers.failing("false")])
+        # When: how the subagent is about to end is read
+        made = call.ended(self.stopped("done")).made
+        # Then: each call is read as its action, the second failed, its command ended by the line
+        a = f"{self.base}/a.md"
+        run = call.Call("run", [["false"]], failed=True, ends=("\n",))
+        self.assertEqual(made, [call.Call("write", [], (a,)), run])
+
+    def test_what_ends_each_command_of_a_run_is_read(self):
+        # Given: a record of a Bash call of three commands, joined by && and a pipe
+        self.record([helpers.bash("cd x && make test | tail -3")])
+        # When: how the subagent is about to end is read
+        made = call.ended(self.stopped()).made
+        # Then: the run holds what ends each command but the cd, a line's end after the last
+        assert made is not None, "the record written was not found"
+        self.assertEqual(
+            (made[0].what, made[0].ends), ([["make", "test"], ["tail", "-3"]], ("|", "\n"))
+        )
+
+    def test_the_last_reply_is_the_events(self):
+        # Given: a SubagentStop event of the reply `done`
+        self.record([])
+        # When: how the subagent is about to end is read
+        # Then: its last reply is the event's
+        self.assertEqual(call.ended(self.stopped("done")).reply, "done")
+
+    def test_no_record_found_is_not_known(self):
+        # Given: a SubagentStop event whose record is not there
+        # When: how the subagent is about to end is read
+        # Then: what it made is not known
+        self.assertIsNone(call.ended(self.stopped()).made)
+
+    def test_answered_only_where_kept_going_by_a_stop_hook_and_no_call_since(self):
+        rules = {
+            # (kept going by a stop hook, told with no call since): answered
+            (True, True): True,
+            (True, False): False,
+            (False, True): False,
+            (False, False): False,
+        }
+        for (active, still), answered in rules.items():
+            with self.subTest(active=active, still=still):
+                # Given: an event kept going by a stop hook or not, of a record whose last telling
+                # has no call after it or one
+                self.record([helpers.bash("ls"), "told"] + ([] if still else [helpers.bash("ls")]))
+                # When: how the subagent is about to end is read
+                # Then: it answered with words only where both hold
+                self.assertEqual(call.ended(self.stopped(active=active)).answered, answered)
+
+
+class TestChanged(unittest.TestCase):
+    def test_a_call_changed_a_file_it_wrote_unless_a_writing_tool_failed(self):
+        rules = [
+            # (the call, the file): changed
+            (("Write", {"file_path": "/r/a"}, False), "/r/a", True),
+            (("Write", {"file_path": "/r/a"}, True), "/r/a", False),
+            (("Write", {"file_path": "/r/a"}, False), "/r/b", False),
+            (("Bash", {"command": "echo > a"}, True), "/r/a", True),
+            (("Bash", {"command": "echo > a"}, False), "/r/b", False),
+        ]
+        for (tool, given, failed), file, changed in rules:
+            with self.subTest(tool=tool, failed=failed, file=file):
+                # Given: a call of a tool that writes, or of Bash, failed or not
+                made = call.alone(tool, given, HERE)._replace(failed=failed)
+                # When: whether it changed the file is read
+                # Then: it did where it wrote it, unless the tool that writes gave back an error
+                self.assertEqual(call.changed(made, file), changed)
+
+
 if __name__ == "__main__":
     unittest.main()

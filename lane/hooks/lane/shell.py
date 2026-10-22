@@ -192,6 +192,11 @@ def path(here: str | None, word: str) -> str | None:
     return os.path.realpath(os.path.join(here or "", word))
 
 
+def paths(here: str, words: list[str]) -> list[str]:
+    """The path each word names from the folder, those the words do not settle left out."""
+    return [p for p in (path(here, w) for w in words) if p]
+
+
 def named(command: str, cwd: str) -> list[str]:
     """Each path the command names, but where cd goes, a redirect's target and where the run is
     kept, which turn's script is asked of."""

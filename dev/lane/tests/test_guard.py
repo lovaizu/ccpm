@@ -4,6 +4,7 @@ stops the call and says to have lane:up run again."""
 
 import contextlib
 import io
+import json
 import os
 import runpy
 import sys
@@ -16,6 +17,8 @@ from helpers import hook, lanes
 WORDS = ["3:hands_off:git commit,git push"]
 # The sentence of start_with laid on step 1, taking the script it runs.
 BEGIN = "First run `scripts/log.py`."
+# The changelog written by the Write tool, as the record holds it.
+CHANGE = helpers.writing("CHANGELOG.md")
 # What the subagent is told where step 3 no longer says the lane's sentence.
 GONE = (
     "notes: step 3 of changelog-writer no longer says: Do not run `git commit` or `git push`."
@@ -29,11 +32,11 @@ class GuardTest(helpers.PluginTest):
         # Step 3 as lane:up writes it.
         self.write(self.agent_file, helpers.LAID)
 
-    def guard(self, stream, words=(helpers.AGENT, *WORDS)):
-        """The PreToolUse entry run as Claude Code runs it, on the stream, for the plugin, in this
-        process so that the coverage of the test run counts it; what it exits with and what it
-        writes on stderr."""
-        script = os.path.join(helpers.CODE, "pretooluse.py")
+    def guard(self, stream, words=(helpers.AGENT, *WORDS), entry="pretooluse.py"):
+        """The event's entry, PreToolUse's where none is named, run as Claude Code runs it, on the
+        stream, for the plugin, in this process so that the coverage of the test run counts it;
+        what it exits with and what it writes on stderr."""
+        script = os.path.join(helpers.CODE, entry)
         argv = mock.patch.object(sys, "argv", [script, *words])
         stdin = mock.patch.object(sys, "stdin", io.StringIO(stream))
         root = mock.patch.dict(os.environ, {"CLAUDE_PLUGIN_ROOT": self.plugin})
@@ -103,6 +106,114 @@ class TestStartWith(GuardTest):
         # When: it makes any other call
         # Then: the call goes on, nothing said
         self.assertEqual(self.started("ls"), (0, ""))
+
+
+class TestEnd(GuardTest):
+    """The lanes held as the subagent is about to end: test_after on step 3, end_when on step 4."""
+
+    TESTED = "After changing `CHANGELOG.md`, pass `python3 check.py`."
+    ENDED = "End only once `CHANGELOG.md` is made."
+    LAID = ("3:test_after:CHANGELOG.md,python3 check.py", "4:end_when:CHANGELOG.md")
+
+    def setUp(self) -> None:
+        super().setUp()
+        laid = helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {self.TESTED}\n")
+        laid = laid.replace("what you wrote.\n", f"what you wrote. {self.ENDED}\n")
+        self.write(self.agent_file, laid)
+        # The changelog there, as a write of it in the record leaves it.
+        self.write(os.path.join(self.base, "CHANGELOG.md"), "- Added: lanes\n")
+
+    def ended(self, calls, active=False, agent_type=helpers.AGENT):
+        """The SubagentStop entry run on the lanes, the subagent about to end after the calls."""
+        if calls is not None:
+            self.record(calls)
+        stream = json.dumps(self.stopped("Done.", active, agent_type))
+        return self.guard(stream, (helpers.AGENT, *self.LAID), "subagentstop.py")
+
+    def test_ending_with_a_change_not_passed_keeps_it_going_with_the_sentence(self):
+        # Given: the changelog written and the check never run
+        # When: changelog-writer is about to end
+        # Then: it is kept going and told test_after's sentence headed by the plugin
+        self.assertEqual(self.ended([CHANGE]), (2, f"notes: {self.TESTED}\n"))
+
+    def test_ending_with_the_change_passed_and_the_output_made_ends(self):
+        # Given: the changelog written, then the check run with no error
+        # When: changelog-writer is about to end
+        # Then: it ends, nothing said
+        self.assertEqual(self.ended([CHANGE, helpers.bash("python3 check.py")]), (0, ""))
+
+    def test_each_lane_not_kept_is_told(self):
+        # Given: nothing written, the changelog there from before
+        # When: changelog-writer is about to end
+        # Then: it is told end_when's sentence alone, as no change waits on the check
+        self.assertEqual(self.ended([]), (2, f"notes: {self.ENDED}\n"))
+
+    def test_told_and_answering_in_words_alone_ends(self):
+        # Given: a change not passed, told before, and answered with words alone since
+        # When: changelog-writer, kept going by the stop hook, is about to end again
+        # Then: it ends, nothing said, as it is told and never held for good
+        self.assertEqual(self.ended([CHANGE, "told"], active=True), (0, ""))
+
+    def test_told_and_working_since_is_told_again(self):
+        # Given: a change not passed, told before, and the check run since, failing
+        calls = [CHANGE, "told", helpers.failing("python3 check.py")]
+        # When: changelog-writer, kept going by the stop hook, is about to end again
+        # Then: it is told again
+        self.assertEqual(self.ended(calls, active=True), (2, f"notes: {self.TESTED}\n"))
+
+    def test_with_no_record_found_it_ends(self):
+        # Given: no record of what changelog-writer did
+        # When: it is about to end
+        # Then: it ends, nothing said, as what it did is not known
+        self.assertEqual(self.ended(None), (0, ""))
+
+    def test_another_agent_ends(self):
+        # Given: a change not passed
+        # When: another agent is about to end
+        # Then: it ends, nothing said
+        self.assertEqual(self.ended([CHANGE], agent_type="notes:other"), (0, ""))
+
+    def test_a_step_no_longer_saying_the_sentence_is_told_once(self):
+        # Given: step 3 changed by the builder since the lane was laid
+        self.write(self.agent_file, helpers.STEPS)
+        # When: changelog-writer is about to end, then again after answering in words alone
+        # Then: it is told to reply that lane:up must be run again, then ends
+        code, said = self.ended([CHANGE])
+        self.assertEqual(code, 2)
+        self.assertIn("lane:up must be run again on notes", said)
+        self.assertEqual(self.ended([CHANGE, "told"], active=True), (0, ""))
+
+    def test_every_item_is_told_on_an_item_unanswered(self):
+        # Given: every_item on step 1, taking a review of the item B-1, and a reply not naming it
+        sentence = "Answer every item of `review.md`."
+        laid = helpers.STEPS.replace(
+            "since the last release.", f"since the last release. {sentence}"
+        )
+        self.write(self.agent_file, laid)
+        self.write(os.path.join(self.base, "review.md"), "- B-1: fix it\n")
+        self.record([])
+        # When: changelog-writer is about to end
+        stream = json.dumps(self.stopped("Done."))
+        words = (helpers.AGENT, "1:every_item:review.md")
+        # Then: it is kept going and told the sentence
+        self.assertEqual(self.guard(stream, words, "subagentstop.py"), (2, f"notes: {sentence}\n"))
+
+    def test_lanes_given_to_the_entry_of_another_event_let_it_through_saying_so(self):
+        wrong = {
+            "a lane held on a tool call": ("subagentstop.py", "3:hands_off:git push"),
+            "a lane held at the end": ("pretooluse.py", "3:test_after:CHANGELOG.md,make"),
+            "fewer things than places": ("subagentstop.py", "3:test_after:CHANGELOG.md"),
+        }
+        for what, (entry, word) in wrong.items():
+            with self.subTest(what=what):
+                # Given: a hook's command giving its event's entry a lane not held on that event,
+                # or taking fewer things than its wording has places
+                # When: the entry is run by it
+                code, said = self.guard(self.stream("ls"), (helpers.AGENT, word), entry)
+                # Then: it exits 1, naming the lane and to have lane:up write the hooks again
+                self.assertEqual(code, 1)
+                self.assertIn(word, said)
+                self.assertIn("run lane:up again", said)
 
 
 class TestOtherAgents(GuardTest):

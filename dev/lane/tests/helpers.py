@@ -17,15 +17,23 @@ SCRIPTS = os.path.join(LANE, "scripts")
 sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "dev", "lane")]
 
 # lane's modules, taken by each test from here, so they are found whichever test runs first.
-import call  # noqa: F401
+import call
 import hook  # noqa: F401
 import lanes  # noqa: F401
 import lay  # noqa: F401
-import record  # noqa: F401
+import record
 import shell  # noqa: F401
 import step  # noqa: F401
 import testing
-from lanes import hands_off, read_only, read_whole, start_with  # noqa: F401
+from lanes import (  # noqa: F401
+    end_when,
+    every_item,
+    hands_off,
+    read_only,
+    read_whole,
+    start_with,
+    test_after,
+)
 
 AGENT = "notes:changelog-writer"
 SENTENCE = "Do not run `git commit` or `git push`."
@@ -92,6 +100,23 @@ class PluginTest(testing.FolderTest):
         place = os.path.join(self.base, "session", "subagents", "agent-a1.jsonl")
         self.write(place, recorded(self.base, calls))
 
+    def stopped(self, reply: str = "", active: bool = False, agent_type: str = AGENT) -> dict:
+        """A SubagentStop event in Claude Code's shape for the subagent a1 of the type about to end
+        with the reply, in the session whose record is `session.jsonl`, kept going by a stop hook
+        before where it is active."""
+        return {
+            "hook_event_name": "SubagentStop",
+            "cwd": self.base,
+            "transcript_path": os.path.join(self.base, "session.jsonl"),
+            "agent_id": "a1",
+            "agent_type": agent_type,
+            "agent_transcript_path": os.path.join(
+                self.base, "session", "subagents", "agent-a1.jsonl"
+            ),
+            "stop_hook_active": active,
+            "last_assistant_message": reply,
+        }
+
     def stream(self, command: str, agent_type: str | None = AGENT) -> str:
         """The event as Claude Code hands it on stdin."""
         return json.dumps(self.event(command, agent_type))
@@ -102,16 +127,26 @@ def bash(command: str) -> tuple[str, dict[str, Any], str]:
     return ("Bash", {"command": command}, "")
 
 
+class Failed(str):
+    """What a call gave back as an error, as `recorded` takes it."""
+
+
 def recorded(cwd: str, calls: list) -> str:
     """A subagent's record as Claude Code 2.1.306 writes it, cut to what lane reads and what lies
     beside it, for each call a tool, its input and what it gave back, None for a call not yet
-    back: the prompt first, an attachment, and each call as an assistant's tool use and a user's
-    tool result, each with the request as sent after it, here given text apart from them."""
+    back, a Failed for an error: the prompt first, an attachment, and each call as an assistant's
+    tool use and a user's tool result, each with the request as sent after it, here given text
+    apart from them; and for each text among the calls, the subagent's reply, and the text told it
+    by a stop hook that kept it going."""
     lines: list[dict[str, Any]] = [
         {"type": "user", "cwd": cwd, "message": {"role": "user", "content": "Do your steps."}},
         {"type": "attachment", "cwd": cwd, "attachment": {"type": "date", "date": "2026-10-22"}},
     ]
-    for number, (tool, given, result) in enumerate(calls):
+    for number, item in enumerate(calls):
+        if isinstance(item, str):
+            lines += told(cwd, item)
+            continue
+        tool, given, result = item
         use = {"type": "tool_use", "id": f"toolu_{number}", "name": tool, "input": given}
         lines.append(
             {"type": "assistant", "cwd": cwd, "message": {"role": "assistant", "content": [use]}}
@@ -121,7 +156,12 @@ def recorded(cwd: str, calls: list) -> str:
             {"type": "api-request-blob", "message": {"role": "assistant", "content": [sent]}}
         )
         if result is not None:
-            back = {"tool_use_id": f"toolu_{number}", "type": "tool_result", "content": result}
+            back = {
+                "tool_use_id": f"toolu_{number}",
+                "type": "tool_result",
+                "content": result,
+                "is_error": isinstance(result, Failed),
+            }
             lines.append(
                 {"type": "user", "cwd": cwd, "message": {"role": "user", "content": [back]}}
             )
@@ -130,3 +170,40 @@ def recorded(cwd: str, calls: list) -> str:
                 {"type": "api-request-blob", "message": {"role": "user", "content": [sent]}}
             )
     return "".join(json.dumps(line) + "\n" for line in lines)
+
+
+def made(cwd: str, calls: list) -> list[call.Call]:
+    """The calls, as `recorded` takes them, read as the guard reads them from the record of a
+    subagent that made them in the folder."""
+    return [
+        call.recorded(record.Done(tool, given, cwd, result or "", isinstance(result, Failed)))
+        for tool, given, result in calls
+    ]
+
+
+def failing(command: str) -> tuple[str, dict[str, Any], str]:
+    """A Bash call of the command that gives back an error, as `recorded` takes it."""
+    return ("Bash", {"command": command}, Failed("Exit code 1"))
+
+
+def writing(path: str, result: str = "") -> tuple[str, dict[str, Any], str]:
+    """A Write call of the path, giving back the result, as `recorded` takes it."""
+    return ("Write", {"file_path": path, "content": "x"}, result)
+
+
+def told(cwd: str, said: str) -> list[dict[str, Any]]:
+    """The subagent's reply and what a stop hook told it, as Claude Code 2.1.306 writes them."""
+    reply = {"type": "text", "text": "Done."}
+    content = (
+        f'Stop hook feedback:\n[python3 "/p/hooks/lane/subagentstop.py"]: {said}\n\n'
+        "This hook comes from the notes@inline plugin."
+    )
+    return [
+        {"type": "assistant", "cwd": cwd, "message": {"role": "assistant", "content": [reply]}},
+        {
+            "type": "user",
+            "isMeta": True,
+            "cwd": cwd,
+            "message": {"role": "user", "content": content},
+        },
+    ]
