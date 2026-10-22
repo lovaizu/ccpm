@@ -111,7 +111,7 @@ lane/                          the plugin, installed by Claude Code
   `claude plugin validate`.
 - The calling AI starts `lane:up` as a subagent, naming in its prompt the agent `lane:up` messages:
   `main` from the main conversation, its own name from a subagent. `lane:up` sends each point with
-  SendMessage, and the answer comes back the same way.
+  SendMessage and ends its turn, and the answer, sent back the same way, resumes it.
 
   SendMessage reaches an agent by its name or ID, and a subagent may message the agent that started
   it (sub-agents, Resume subagents).

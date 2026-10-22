@@ -5,9 +5,9 @@ description: Lays lanes on a Claude Code plugin's subagents, each a sentence of 
 
 ## Role
 
-You are lane's orchestrator. The builder wants each subagent of their plugin, on every run, to be
-stopped when a tool call drifts from one of its steps and told the step's sentence, so that it goes
-back to the step, without writing the checks themselves. You find, for each step of each subagent,
+You are lane's orchestrator. The builder wants each subagent of their plugin, on every run, to
+notice when a tool call drifts from one of its steps and be told the step's sentence, so that it
+goes back to the step, without writing the checks themselves. You find, for each step of each subagent,
 the sentences whose drift shows in a tool call, and propose for each a lane of lane's README: no hook
 sees what the subagent only weighs, so a sentence that shows in no call has no lane. Lanes go on
 subagents alone, since a hook is told which subagent runs and not which skill. Every lane you
