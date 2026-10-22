@@ -347,6 +347,9 @@
     },
     {
       "fact": "T17-T20 done (e417ec6): lane tried whole on notes (lay, drift, no Python, older copy brought up, changed step) and on turn; findings fixed at their cause (b258d0f, e417ec6) and the turn run passed again with no wrong stop, stall or wrong claim. Not met in a real run: a hands_off stop (the subagent never tried to commit in 10 runs; the laid hook stops one fed as an event), and the end lanes, in_form, test_after and follow_next, which neither notes nor turn has a step for; all held by unit tests"
+    },
+    {
+      "fact": "lane takes a run's value, written {<name>}, from the JSON the subagent starts from (design and README 6e795ca), as the agreed 12-lane table had each lane's IN/OUT per run; the table itself kept in decisions/dev/lane/design.decisions.md; lane's design reads without turn or rn (227e735); rn's steering.md is told by its place in the main conversation and its sign-off by /rn:ty (agreed 2026-10-21 23:32)"
     }
   ],
   "semantic_gist": [
@@ -406,6 +409,9 @@
     },
     {
       "gist": "when only one way meets the purpose, do it and report; ask only for the goal and key results, merge and release (the user, 2026-10-22)"
+    },
+    {
+      "gist": "lane is specified and tried on its own, a mock plugin of its own exercising every lane; turn and rn are only the reference for reusable IN/OUT; lane's documents name neither (the user, 2026-10-22)"
     }
   ],
   "focal_entities": [
@@ -454,7 +460,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "prompt.md and plugin.md pointing to lane; then turn remade on lane (README, UX, design to dev/architecture.md, its hooks as lanes, settling per-run values first); then rn's hooks from lane; keep a list of decisions for the user"
+      "next": "on resuming: a subagent was building, uncommitted in the working tree, {<name>} run values in lane (tests first) and a mock plugin in dev/lane/trials/ using all 12 lanes with a kept run and an induced drift per lane; read git status and the diff, check against code.md and the design, run dev/check.sh and dev/mutate.sh, finish what is missing, run the mock trial yourself, fix at the cause, commit and push; then prompt.md and plugin.md pointing to lane, turn remade on lane, rn's steering.md form by its place; report decisions to the user at the end"
     }
   ],
   "uncertainty_signal": [
