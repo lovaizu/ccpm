@@ -293,6 +293,9 @@
     },
     {
       "fact": "the user decided (2026-10-22): a review shows the works' URLs and the core decisions with their intent alone, a long core a sign to rethink; kept in memory and in rn's UX decisions, to go into rn's README and UX"
+    },
+    {
+      "fact": "the user agreed dev/architecture.md, lane/README.md and dev/lane/ux.md as of 1a542e4 (2026-10-22): lanes alone, the AI made to notice its drift and told the right way, never 'kept' or 'held' to its steps"
     }
   ],
   "semantic_gist": [
@@ -343,6 +346,9 @@
     },
     {
       "gist": "ask a review with the works' URLs and the core decisions, each with its intent, briefly; nothing else; a core that will not fit short is a smell (the user, 2026-10-22)"
+    },
+    {
+      "gist": "lane's idea: the AI is made to notice its drift and is told the right way; not enforcing or keeping it to its steps (the user, 2026-10-21 and 2026-10-22)"
     }
   ],
   "focal_entities": [
@@ -350,7 +356,10 @@
       "task": "agreed order: lane (README, UX, then design) remade to dev/architecture.md, then prompt.md and plugin.md pointing to lane, common/ moved into lane, then turn, then rn"
     },
     {
-      "task": "remake dev/architecture.md (a flow only where a plugin has a fixed loop, as turn), lane/README.md and dev/lane/ux.md (lanes alone), dev/lane/design.md; the first three await the user's agreement"
+      "task": "rn/README.md and dev/rn/ux.md at 205bc17 (a sign-off shows each work's link and its core decisions with intent) await the user's agreement"
+    },
+    {
+      "task": "dev/lane/design.md remade to lanes alone (1a542e4), checked by hand; next lane's units (plugin.md step 4)"
     }
   ],
   "relational_map": [
@@ -388,7 +397,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on resuming, take the user's agreement on dev/architecture.md, lane/README.md and dev/lane/ux.md, shown translated; then lane's units (plugin.md step 4)"
+      "next": "on resuming, ask the user's agreement on rn's README and UX (205bc17) in the review form (URLs and core decisions with intent only); then list lane's units by plugin.md step 4 and go on"
     }
   ],
   "uncertainty_signal": [
