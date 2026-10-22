@@ -332,6 +332,9 @@
     },
     {
       "fact": "all 12 lanes in writ-rebuild and pushed (3d9c26f): check.sh 100%, mutate.sh lane 2192 mutants 0 survivors, lane on 3.9; README's in_form wording and the design's lines for the lanes shown to the user for OK"
+    },
+    {
+      "fact": "the user could not judge the README and design changes against the ideal; I judged: design grew ~100 lines of code-level detail (record shapes, test_after's && rule, every_item's IDs) that belong in the tests, and whether lane is the ideal shows only by the builder's use (KR1.1); the user agreed (2026-10-22) to: trim the design to mechanism and why, run T16's trial, bring the result with lanes to drop or fix"
     }
   ],
   "semantic_gist": [
@@ -436,7 +439,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "on the user's OK of the README and design changes: as_printed on the last reply at SubagentStop (R33); lane:up's step on wait_for's takes and lane:up's own lanes with hooks.json; lane's issue flow into README and design (plugin.md step 2) for the user's OK; SendMessage between subagents by ID; then T16's trial as its user"
+      "next": "on resuming: 1) trim dev/lane/design.md's lane lines added since 4ed91bc to mechanism and why, the shapes and counting rules left to the tests; 2) before the trial: lane:up's step on wait_for's takes (approval then commands), as_printed on the last reply (R33), SendMessage between subagents by ID, lane:up's own lanes and hooks.json; 3) T16's trial as its user on the README's notes and on turn by the design's Verification, counting KR1.1's defects per lane; 4) report the result with lanes to drop or fix, judged by me; lane's issue flow (plugin.md step 2) to propose after"
     }
   ],
   "uncertainty_signal": [
