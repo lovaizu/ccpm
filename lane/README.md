@@ -107,6 +107,10 @@ names, whichever they are.
 | end | end_when | End only once `<output>` is made. | ends before |
 | end | every_item | Answer every item of `<input>`. | leaves an item unanswered |
 
+read_only lets the subagent read, beside its inputs, the form each of its in_form lanes names: its
+step tells it to write in that form, and the form, a file of your plugin, holds nothing of the
+project's work.
+
 follow_next reads the next move your script prints as the tool call itself, one JSON line
 `{"tool": ..., "input": {...}}` last in its output; a script printing its move in a form of its own
 gets no follow_next.

@@ -221,7 +221,10 @@ lane/                          the plugin, installed by Claude Code
   They are the forms a plugin's outputs most often take, read with the standard library alone, and
   a keyword read past would let through, unseen, what the builder meant to stop. Claude Code puts
   the plugin's folder in for `${CLAUDE_PLUGIN_ROOT}`, so the subagent finds the form wherever the
-  plugin is installed and does not take it for where to write.
+  plugin is installed and does not take it for where to write. read_only lets the same subagent
+  read the form, for the reason [Lanes](../../lane/README.md#lanes) gives; the guard finds the
+  subagent's in_form lanes in `hooks/hooks.json`, as it finds the scripts its start_with runs, since
+  a lane's check is given only what that lane takes.
 - The guard holds a write of the output to its form before it is made, by Write's content or by
   Edit's result, and stops a command writing the output, as its text cannot be read before it runs.
   After the sentence it tells the first point the text is out by.

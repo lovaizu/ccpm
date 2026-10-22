@@ -191,40 +191,45 @@ class TestAlone(unittest.TestCase):
             self.assertEqual(lanes.alone("three"), 2)
 
 
-class TestBegun(helpers.PluginTest):
+class TestTaken(helpers.PluginTest):
     # A hook's command laying start_with on step 1 and hands_off on step 3 of the subagent.
     COMMAND = (
         'exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
         " '1:start_with:python3 scripts/given.py' 3:hands_off:git"
     )
 
-    def begun(self, hooks):
-        """The scripts start_with takes in changelog-writer, read from the hooks written."""
+    def taken(self, hooks, lane="start_with"):
+        """What each lane of the kind takes in changelog-writer, read from the hooks written."""
         if hooks is not None:
             self.write(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
-        return lanes.begun(self.plugin, helpers.AGENT)
+        return lanes.taken(self.plugin, helpers.AGENT, lane)
 
     def entry(self, command):
         return {"matcher": ".*", "hooks": [{"type": "command", "command": command}]}
 
-    def test_the_scripts_start_with_takes_in_the_subagent_are_read_from_its_hooks(self):
+    def test_what_each_lane_of_the_kind_takes_in_the_subagent_is_read_from_its_hooks(self):
         # Given: the subagent's hook laying start_with and hands_off, beside the hooks of
         # subagents whose names sort before its and after it, and one lane does not read
         others = [self.COMMAND.replace("changelog-writer", n) for n in ("a", "z")]
         wrong = self.COMMAND.replace("3:hands_off:git", "3:no_lane:git")
         entries = [self.entry(c) for c in (*others, wrong, self.COMMAND)]
-        hooks = {"hooks": {"PreToolUse": entries}}
-        # When: the scripts start_with takes in it are read
-        # Then: they are those of its start_with in the hook lane reads, once
-        self.assertEqual(self.begun(json.dumps(hooks)), ["python3 scripts/given.py"])
+        hooks = json.dumps({"hooks": {"PreToolUse": entries}})
+        for lane, takes in (
+            ("start_with", [["python3 scripts/given.py"]]),
+            ("hands_off", [["git"]]),
+        ):
+            with self.subTest(lane=lane):
+                # When: what its lanes of the kind take is read
+                # Then: it is what its lane of the kind takes in the hook lane reads, once
+                self.assertEqual(self.taken(hooks, lane), takes)
 
     def test_hooks_not_there_or_not_json_give_none(self):
         for hooks in (None, "{", "[]"):
             with self.subTest(hooks=hooks):
                 # Given: no hooks.json, one not JSON, or one holding no hook
-                # When: the scripts start_with takes are read
-                # Then: there are none
-                self.assertEqual(self.begun(hooks), [])
+                # When: what start_with takes is read
+                # Then: there is nothing
+                self.assertEqual(self.taken(hooks), [])
 
 
 class TestHookWords(unittest.TestCase):

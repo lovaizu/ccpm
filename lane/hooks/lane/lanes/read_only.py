@@ -1,6 +1,7 @@
 """read_only: the subagent reads only the inputs its step names, such as the file it is to answer,
 and no file beside them, by the Read and Grep tools and by the commands that print what they
-read; an input may be a folder, whose files it may read."""
+read; an input may be a folder, whose files it may read. Laid, the lane takes beside them the form
+each in_form lane of the same subagent names, as Laid puts it in."""
 
 from __future__ import annotations
 

@@ -128,7 +128,8 @@ class Laid:
     """A lane laid on a step of a subagent of the plugin at root."""
 
     def __init__(self, root: str, agent: str, number: int, lane: str, takes: list[str]) -> None:
-        self.root, self.plugin, self.name = root, *agent.split(":")
+        self.root, self.agent = root, agent
+        self.plugin, self.name = agent.split(":")
         self.number, self.lane, self.takes = number, lane, takes
 
     def check(self, event: dict[str, Any]) -> list[str]:
@@ -155,6 +156,8 @@ class Laid:
         lane: Any = LANES[self.lane]
         acted = call.read(event) if end is None else end
         each = started.resolved(self.takes, run, alone(self.lane))
+        if self.lane in ("read_only",):
+            each = [[*inputs, *self.forms()] for inputs in each]
         drift = next(filter(None, (lane.drifts(acted, t, self.root) for t in each)), "")
         if not drift:
             return []
@@ -164,15 +167,23 @@ class Laid:
     def run_values(self, event: dict[str, Any]) -> dict[str, list[str]]:
         """The run's value of each name the JSON the subagent started from gives: its prompt and
         what each script start_with takes in it printed; none where its record is not found."""
-        scripts = begun(self.root, f"{self.plugin}:{self.name}")
+        scripts = [s for t in taken(self.root, self.agent, "start_with") for s in t]
         found = started.texts(event, lambda c: start_with.runs(c, scripts))
         return {} if found is None else started.values(found)
 
+    def forms(self) -> list[str]:
+        """The form each in_form lane of the subagent names, by the plugin's folder, which read_only
+        lets it read beside its inputs: its step tells it to write in the form, and the form, a
+        file of the plugin, holds nothing of the project's work the lane keeps it to."""
+        laid_in = taken(self.root, self.agent, "in_form")
+        return [step.expanded(named, self.root) for _, named in laid_in]
 
-def begun(root: str, agent: str) -> list[str]:
-    """Each script start_with takes in the subagent, as `<plugin>:<name>`, read from the hooks the
-    plugin at root lays; none where its hooks.json is not there or holds no JSON. Read there, as a
-    lane held at the subagent's end is given in a hook of its own, apart from start_with's."""
+
+def taken(root: str, agent: str, lane: str) -> list[list[str]]:
+    """What each lane of the kind laid in the subagent, as `<plugin>:<name>`, takes, read from the
+    hooks the plugin at root lays; none where its hooks.json is not there or holds no JSON. Read
+    there, as a lane may be given in a hook apart from the one asking, such as one held at the
+    subagent's end apart from start_with's."""
     try:
         with open(os.path.join(root, "hooks", "hooks.json"), encoding="utf-8") as f:
             hooks = json.load(f)
@@ -185,7 +196,7 @@ def begun(root: str, agent: str) -> list[str]:
         except ValueError:
             continue
         if named == agent:
-            found += [t for lane in laid_in if lane.lane in ("start_with",) for t in lane.takes]
+            found += [each.takes for each in laid_in if each.lane in (lane,)]
     return found
 
 
