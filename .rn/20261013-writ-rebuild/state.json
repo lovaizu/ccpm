@@ -320,6 +320,9 @@
     },
     {
       "fact": "T16's code checked and fixed by hand, committed a311761: guard with hands_off, layer, Python check, common/ moved into lane; agent_type of a plugin subagent is <plugin>:<frontmatter name>, seen on Claude Code 2.1.306; plugin.md's shared-code rule and the design's Physical view (step.py) brought to it. Four agents started at a311761, each in its own worktree: read lanes, write lanes, run/flow lanes, lane:up's prompt"
+    },
+    {
+      "fact": "in writ-rebuild and pushed: lane:up's prompt (tried once, all four pass conditions), write_only, read_only, read_whole and start_with on one Call read from the event and record.py; the design's record place fixed to transcript_path and agent_id; worktrees removed"
     }
   ],
   "semantic_gist": [
@@ -424,7 +427,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "as each of the four ends: check against its checklists, merge its branch into writ-rebuild, settle clashes in call.py and lanes/__init__.py and between the record readings, run check.sh and mutate.sh lane; then T16's trial as its user, and T17's open points (in_form's form, the flow lanes' readings) to the user one at a time"
+      "next": "the user's answer on in_form (A template, B JSON keys, C drop; A recommended), then one at a time: test_after (one item per slot in order, checked at the subagent's end), as_printed (<input> is the script, what is handed on equals its last print), follow_next (not a lane of its own, turn's handing on by as_printed), wait_for (takes the approval and the call held back, checked on a real record first); then T18 and T16's trial as its user"
     }
   ],
   "uncertainty_signal": [
@@ -439,6 +442,9 @@
     },
     {
       "open": "whether the hearing asks one point per message (the user rule) or a round of points (grilling); the draft says each point, with recommendation"
+    },
+    {
+      "open": "turn/hooks/agents.py:55 finds a subagent's record apart from lane's record.py; to fold when turn is remade on lane"
     }
   ],
   "retrieved_artifacts": [
