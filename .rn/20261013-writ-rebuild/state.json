@@ -529,10 +529,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "go on without asking unless a point is the user's. Next: T23: design the time cuts (round 2 and send-backs, the last learner 5-7 min, role prompts copied ~30 s a start) and the one-task-two-runs change in turn, trace on paper against the nine runs in dev/turn/trials/readme/results.json, then one small run, then six; at rn's remake, /rn:ty's issue takes ccpm's issue form"
-  },
-  {
-   "next": "T23 fixes, then the six acceptance runs again: (1) told() at turn/scripts/run.py:192 gives a line only before a role move, the design (dev/turn/design.md:340) a line before each move and after each outcome; (2) a calling AI's cd moves the session's working folder and stalls turn (acc3); (3) trial.py stops before the first user starts, not during its reading, and sends answers to a returned question to the ended run, not a call again; (4) time: round 2 and send-backs, the last learner 5-7 min, the role prompt copied out about 30 s a start; Goods that do not hold ('every value stays as it was' while headers are rewritten) looked at with the time"
+   "first": "go on without asking unless a point is the user's. Next: T23: the four fixes before the time are in 9278715; design the time cuts from the per-move analysis of the nine runs in dev/turn/trials/readme/results.json, show the whole design to the user once (turn's design is agreed with the user), trace on paper, then one small run, then the six (3 plain, 3 stopped), 0.1.0's three reused. The one-task-two-runs of rn needs no change in turn on a trace of generator.md: rn's CCS for the first run names the design and the tests as the work, failing until the part is made; traced again at rn's remake. At rn's remake, /rn:ty's issue takes ccpm's issue form"
   }
  ],
  "uncertainty_signal": [
