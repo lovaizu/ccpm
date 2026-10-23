@@ -110,23 +110,22 @@ flowchart LR
 - A checklist serves the purpose of whoever uses a work of its kind: it says who they are and what
   they achieve with the work, the idea its items rest on, and the items, each with why. How a work
   is made is the plan's: each task is broken into the design of what it makes, the design of how
-  that is checked, such as code's test cases and test data, and the making, checked as it grows,
-  code test first.
+  that is checked, such as code's test cases and test data, the design traced on paper against
+  them and the record, and the making, checked as it grows, code test first.
 
   A checklist is answered on the work, which holds no steps; the idea and each why let a maker
   meet the items their own way, and steps there would be followed without the purpose. A task
-  whose checks are designed before its making shows its slips while they are small.
+  whose checks are designed and traced before its making shows its slips while they are small,
+  and nothing is run to find what reading would show.
 - After each move, the conductor replans from the facts the move brought alone, such as the user's
   answer, the work with what its first reader found and the output of what it ran, and replaces the
   state before the next move; a checklist or an environment a task lacks, such as a tool to
   install, becomes a task of its own before the task that needs it. Each change, a lesson's place
-  among them, is decided from this design, and traced on paper against the design and the record
-  before anything is run for it.
+  among them, is decided from this design.
 
   A plan kept from what was expected drifts from the purpose while every move looks done, and a
   work made without the checklist or environment it needs is made to a guess and made again. A
-  change decided case by case drifts from the others, and a run made to find what reading would
-  show spends the user's time. A change to the goal or an acceptance criterion is a point
+  change decided case by case drifts from the others. A change to the goal or an acceptance criterion is a point
   confirmed with the user.
 - The plan is the first work, and the conductor opens the pull request with it.
 
