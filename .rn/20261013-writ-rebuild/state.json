@@ -428,6 +428,9 @@
   },
   {
    "fact": "2026-10-23: the user chose to return turn's, lane's and rn's designs, UXs and READMEs (and report.decisions R42) to 49e4e75, the agreed text with the principles linked at the top: I had changed agreed documents unshown, applied the principles without each plugin's user and purpose (a person's /lane:ok on lane, which only AIs use), and let subagents write decisions I made on the spot. Kept: the eight principles, the checklist items, usability's 'what the reader uses it for'"
+  },
+  {
+   "fact": "2026-10-23: turn's design, UX and README held to the user's call (ef: the user): the evaluator out; the first user finds every item's Good (it passes on only when every item is Good, a question or at the send-back bound); the orchestrator checks each Good holds, reading the work whole and each Good at its lines and running what it says; a Good taken only where the first user gave it and the orchestrator said yes; items two rounds leave become questions; the generator asks before making; the learner of principle 8 once a run is done; lines checked by the flow. The false Goods came from up.md step 5 telling the orchestrator to defer to the readers and not to run. Not yet: turn's three documents read whole against ux.md, readme.md, design.md and usability.md; turn's code (up.md step 5, evaluator.md removed, run.py, forms, tests); lane (its user is an AI building a plugin, the user said: no /lane:ok, no builder reader) and rn, both at the agreed text"
   }
  ],
  "semantic_gist": [
@@ -538,7 +541,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "per plugin, one at a time: confirm its user and purpose with the user first; then list where the design breaks the principles; show the fixes once and write them only once agreed. lane first is not decided; ask the user which. Known from the readings, kept for that: turn's evaluator sees the first user's reading (design:165); no part checks a Good is true; lane's user is an AI (the user, 2026-10-23); the reading results are in this session's conversation only"
+   "first": "on resume, in order: (1) read turn's dev/turn/ux.md, turn/README.md and dev/turn/design.md whole against rn/checklists/product/ux.md, readme.md, design.md and usability.md, every item, fix only what fails without changing what the user set, and say plainly what was read; (2) give the user Japanese translations of the three (show-japanese), as the user asked; (3) then lane's design from its user, an AI building a plugin, and rn's; (4) turn's code to its design; (5) T23's runs, KR1.1 judged for both versions by one judge. Use the right role names (first user, evaluator, orchestrator), never 'readers' loosely"
   }
  ],
  "uncertainty_signal": [
