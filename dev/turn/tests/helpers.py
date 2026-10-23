@@ -220,12 +220,21 @@ class RepoTest(testing.FolderTest):
         self.assertEqual(code, 1, out)
         return out
 
-    def due(self, out):
-        """The role's move after the line telling the calling AI, which the orchestrator sends to
-        `main` first: the Agent call starting the role, or the message sent to it."""
+    def heard(self, out):
+        """What the script prints after the line telling the calling AI, which the orchestrator
+        sends to `main` first."""
         self.assertEqual(out["move"]["tool"], "SendMessage", out)
         self.assertEqual(out["move"]["input"]["to"], "main")
-        return self.next()["move"]
+        return self.next()
+
+    def due(self, out):
+        """The role's move after the line telling the calling AI: the Agent call starting the role,
+        or the message sent to it."""
+        return self.heard(out)["move"]
+
+    def here(self, path):
+        """The path as a whole path in the folder the call was made from, as a role is given it."""
+        return os.path.join(self.repo, path)
 
     def prompt(self):
         """What the role due is given, as its prompt holds it."""
@@ -280,12 +289,12 @@ class RepoTest(testing.FolderTest):
     def learnt(self, out, reply=None, taken=None):
         """The learner told and started as the script printed, replying with what it found, by
         default no lesson on the run; then what the orchestrator takes, by default every lesson
-        offered; and what the script prints after."""
+        offered; and what the script prints after the line telling it."""
         self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
-        out = self.replied(reply or {"process": [], "checked": CHECKED})
+        out = self.heard(self.replied(reply or {"process": [], "checked": CHECKED}))
         if "take" in out:
             every = list(range(1, len(out["take"]["process"]) + 1))
-            out = self.next(taken or {"process": every})
+            out = self.heard(self.next(taken or {"process": every}))
         return out
 
     def given_record(self, agent_id, prompt, agent_type="", folder=None):

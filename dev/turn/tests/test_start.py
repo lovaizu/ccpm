@@ -121,6 +121,9 @@ class TestUsage(RepoTest):
             self.assertIn("checklists/読む.md", kept.read())
         code, out = self.turn("next", result)
         self.assertEqual(code, 0, out)
+        self.assertIn("はじめに.md", out)
+        code, out = self.turn("next", result)
+        self.assertEqual(code, 0, out)
         self.assertIn("checklists/読む.md", out)
         items = [dict(i, can="the template") for i in json.loads(out)["check"]]
         check = json.dumps({"items": items, "questions": []})
@@ -141,9 +144,9 @@ class TestStart(RepoTest):
         # Then: it prints where the result goes, and the orchestrator is to check every item can
         # get its Good, before any agent starts
         code, out = self.turn("start", json.dumps(CALL))
-        self.assertEqual((code, json.loads(out)), (0, {"result": CALL["result"]}))
+        self.assertEqual((code, json.loads(out)), (0, {"result": self.here(CALL["result"])}))
         self.assertEqual(
-            self.next(),
+            self.heard(self.next()),
             {
                 "check": [
                     {"checklist": "checklists/readme.md", "item": "F-1"},

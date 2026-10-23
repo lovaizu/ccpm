@@ -13,7 +13,7 @@
 - A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
 - A work already at its paths is changed from what is there, not written again from nothing — what already serves its reader stays as it is.
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
-- turn tells the main conversation, before each move of the run, what was done and what the move will do, how far and how — a run going a slow or wrong way shows while it can still be stopped, not after its time is spent.
+- turn tells the main conversation, before each move of the run, its own check, decisions and return among them, what was done and what the move will do, how far and how — a run going a slow or wrong way shows while it can still be stopped, not after its time is spent.
 - A run stopped anywhere, by you or by a conversation that ended, goes on from its last move when your step calls turn again with the same call — no work already done is done again.
 
 ### Changed
@@ -26,6 +26,7 @@
 ### Fixed
 
 - Each AI of a run writes its reply to a file turn reads, and a reply out of its form is sent back to it with what to fill — no reply passes unchecked, however Claude Code ends an agent.
+- A `cd` in your conversation while a run goes no longer stalls it: each path of the call keeps meaning the folder the call was made from, and each AI of the run is given its files as whole paths — the run reads and writes where you called it, wherever your conversation moves.
 - A folder your CCS names with a trailing slash, such as `docs/`, is taken as the folder — the AIs of a run can read the files inside it instead of being stopped at each.
 
 ### Removed

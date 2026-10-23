@@ -19,6 +19,7 @@ GENERATOR = "turn:generator"
 FIRST_USER = "turn:first-user"
 EVALUATOR = "turn:evaluator"
 LEARNER = "turn:learner"
+UP = "turn:up"
 # The roles kept started until the first user's reading of their round ends, each sent what comes
 # next by message, so each works on with what it has already read.
 KEPT = (GENERATOR, FIRST_USER)
@@ -37,6 +38,15 @@ DOES = {
     FIRST_USER: "use the work in the receiver's place and give each item's Good",
     EVALUATOR: "look through the work anew for every item's Good",
     LEARNER: "learn from every agent's record how the round went",
+}
+# What the orchestrator is told it will judge, as the line the calling AI is told, by what waits on
+# its judgment.
+JUDGES = {
+    "check": "check that the CCS gives every item its Good",
+    "ask": "ask what only the user can decide",
+    "decide": "decide every item from both readers' Goods",
+    "take": "take the learner's lessons that hold",
+    "returned": "return the result",
 }
 # What each role is told when it is sent more work, as it is kept started.
 AGAIN = {
@@ -89,13 +99,20 @@ def state_path(result: str) -> str:
 
 
 def reply_path(result: str, agent: str) -> str:
-    """Where the role writes its reply, read by the flow alone."""
-    return f"{result}.{agent.partition(':')[2]}.json"
+    """Where the role writes its reply, read by the flow alone, as a whole path."""
+    return os.path.abspath(f"{result}.{agent.partition(':')[2]}.json")
 
 
 def records_folder(result: str) -> str:
-    """Where the records the learner reads are shown as text."""
-    return result + ".records"
+    """Where the records the learner reads are shown as text, as a whole path."""
+    return os.path.abspath(result + ".records")
+
+
+def whole(paths: list[str]) -> list[str]:
+    """The paths as whole paths in the folder the call was made from, where the flow runs: a role's
+    commands and hooks run from the session's working folder, which the calling AI may move with
+    `cd`."""
+    return [os.path.abspath(p) for p in paths]
 
 
 def start(text: str) -> dict[str, Any]:
@@ -106,10 +123,12 @@ def start(text: str) -> dict[str, Any]:
     kept = running(result) if isinstance(result, str) else None
     if kept is None or not isinstance(result, str):
         run = call.check(asked)
+        # The paths of the call mean the folder it is made from, kept for every step after.
+        run["root"] = os.getcwd()
         # The run waits on the orchestrator's check of these items.
         run["check"] = run["items"]
         save(run)
-        return {"result": run["call"]["result"]}
+        return {"result": os.path.abspath(run["call"]["result"])}
     if kept["call"] != asked:
         raise call.Stop(
             f"turn: a run of another call is kept at {state_path(result)}; call turn with that"
@@ -117,7 +136,7 @@ def start(text: str) -> dict[str, Any]:
         )
     call.check(asked)
     save(resumed(kept))
-    return {"result": result}
+    return {"result": os.path.abspath(result)}
 
 
 def resumed(run: dict[str, Any]) -> dict[str, Any]:
@@ -132,7 +151,8 @@ def resumed(run: dict[str, Any]) -> dict[str, Any]:
             # A message moved is among those sent since; one due is not yet.
             prompt["since"] = since + ([] if step.get("moved") else [step["message"]])
         run["next"] = {"agent": step["agent"], "prompt": prompt}
-    for gone in ("started", "since", "prompts"):
+    # A judgment due is told again, as the role due is.
+    for gone in ("started", "since", "prompts", "told"):
         run.pop(gone, None)
     return run
 
@@ -151,9 +171,9 @@ def generator_given(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
     """What the generator is given: the files it makes the work from, the work, the checklists,
     each item sent back, the lessons taken for it, and where it replies."""
     return {
-        "given": run["given"],
-        "work": run["work"],
-        "checklists": run["checklist"],
+        "given": whole(run["given"]),
+        "work": whole(run["work"]),
+        "checklists": whole(run["checklist"]),
         "sent_back": sent_back,
         "lessons": lessons(run, "generator"),
         "reply": reply_path(run["call"]["result"], GENERATOR),
@@ -165,9 +185,9 @@ def reader_given(run: dict[str, Any], agent: str) -> dict[str, Any]:
     checklists, the receiver and their use, the parts of the work, the lessons taken for the role,
     and where it replies."""
     return {
-        "given": run["shown"],
-        "work": run["work"],
-        "checklists": run["checklist"],
+        "given": whole(run["shown"]),
+        "work": whole(run["work"]),
+        "checklists": whole(run["checklist"]),
         "receiver": run["receiver"],
         "use": run["use"],
         "parts": forms.parts(run["work"]),
@@ -190,16 +210,29 @@ def ask(run: dict[str, Any], agent: str, prompt: dict[str, Any], sent: Any = Non
 
 
 def told(run: dict[str, Any]) -> dict[str, Any]:
-    """The move telling the calling AI what was done and what the next move will do, how far and
-    how; the flow makes the line from the move, so it says what the run does."""
+    """The move telling the calling AI what was done and what the role due will do."""
     step = run["next"]
     agent = step["agent"]
-    does = AGAIN[agent] if "to" in step else DOES[agent]
+    step["told"] = True
+    # No judgment waits once a role is due.
+    run.pop("told", None)
+    return telling(run, agent, AGAIN[agent] if "to" in step else DOES[agent])
+
+
+def judge(run: dict[str, Any], judged: str) -> dict[str, Any]:
+    """The move telling the calling AI what was done and what the orchestrator will judge now; what
+    waits on its judgment is shown after."""
+    run["told"] = True
+    return telling(run, UP, JUDGES[judged])
+
+
+def telling(run: dict[str, Any], agent: str, does: str) -> dict[str, Any]:
+    """The move telling the calling AI what was done and what the next move will do, how far and
+    how; the flow makes the line from the move, so it says what the run does."""
     work = ", ".join(run["work"])
     done = run.pop("done", "")
     line = f"turn: {done + ' ' if done else ''}Next, {agent} will {does}, of {work}"
     line += f", for {len(run['items'])} items, round {2 if run.get('remade') else 1}."
-    step["told"] = True
     save(run)
     return {"line": line, "move": {"tool": "SendMessage", "input": {"to": MAIN, "message": line}}}
 
@@ -295,13 +328,15 @@ def paged(result: str, out: dict[str, Any], page: str) -> str:
 
 
 def going(result: str) -> dict[str, Any]:
-    """The run going with its result at the path; stops where none is."""
+    """The run going with its result at the path, gone on with from the folder the call was made
+    from; stops where none is."""
     run = running(result)
     if run is None:
         raise call.Stop(
             f"turn: no run is going with its result at {result}; start one with"
             " `turn.py start '<call JSON>'`"
         )
+    os.chdir(run["root"])
     return run
 
 
@@ -309,16 +344,26 @@ def next_step(result: str, text: str) -> dict[str, Any]:
     """Takes what the run waits on, the orchestrator's check, decision or take, or a role's reply,
     and gives what the orchestrator does next."""
     run = going(result)
+    # What waits on the orchestrator's judgment is told first, before it is shown.
+    waits = [j for j in JUDGES if j in run]
+    if waits and not run.get("told") and not text.strip():
+        return judge(run, waits[0])
     # Asked with nothing, what the orchestrator is to judge is shown again, so it can always see it
     # whole.
     if "check" in run:
         return checked(run, text) if text.strip() else {"check": run["check"]}
+    if "ask" in run:
+        run["asked"] = run.pop("ask")
+        del run["told"]
+        save(run)
+        return {"asked": run["call"]["result"]}
     if "asked" in run:
         # The calling AI keeps the answer in its CCS, so the check is made again on it.
-        anew = call.check(run["call"])
+        anew = dict(call.check(run["call"]), root=run["root"], done="The calling AI answered.")
         anew["check"] = anew["items"]
-        save(anew)
-        return {"check": anew["check"]}
+        return judge(anew, "check")
+    if "returned" in run:
+        return returned(run)
     if "decide" in run:
         return decide(run, text) if text.strip() else {"decide": run["decide"]}
     if "take" in run:
@@ -393,7 +438,7 @@ def made(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     run["done"] = f"{GENERATOR} made {', '.join(run['work'])}."
     # The parts are given anew, as a remake may add or take away a section.
     remade = {
-        "remade": run["work"],
+        "remade": whole(run["work"]),
         "parts": forms.parts(run["work"]),
         "reply": reply_path(run["call"]["result"], FIRST_USER),
     }
@@ -426,9 +471,13 @@ def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
     asked = waited(found["items"], found["questions"])
     if asked:
         write(run["call"]["result"], {"questions": asked})
-        run["asked"] = asked
-        save(run)
-        return {"asked": run["call"]["result"]}
+        run["ask"] = asked
+        waiting = len([i for i in found["items"] if "question" in i])
+        run["done"] = (
+            f"{UP} found {waiting} of {len(run['items'])} items waiting on the user's answer."
+        )
+        return judge(run, "ask")
+    run["done"] = f"{UP} found in the CCS what gives the Good of {len(run['items'])} items."
     return ask(run, GENERATOR, generator_given(run, []))
 
 
@@ -449,8 +498,9 @@ def compare(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
         for i in run["items"]
     ]
     run["decide"] = {"items": every, "questions": run["claim"]["questions"]}
-    save(run)
-    return {"decide": run["decide"]}
+    found = len(reply["items"])
+    run["done"] = f"{EVALUATOR} found the Good of {found} of {len(run['items'])} items."
+    return judge(run, "decide")
 
 
 def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
@@ -504,7 +554,7 @@ def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) ->
         "reply": reply_path(result, LEARNER),
     }
     good_items = len([i for i in items if good(i)])
-    run["done"] = f"turn:up decided {good_items} of {len(items)} items Good."
+    run["done"] = f"{UP} decided {good_items} of {len(items)} items Good."
     return ask(run, LEARNER, learner)
 
 
@@ -517,11 +567,11 @@ def offer(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     """Offers the orchestrator every lesson the learner found on how the run went; with none to
     offer, the run goes on."""
     take = {"process": reply["process"], "checked": reply["checked"]}
+    run["done"] = f"{LEARNER} gave {len(take['process'])} lessons on how the round went."
     if not take["process"]:
         return took(run, [])
     run["take"] = take
-    save(run)
-    return {"take": take}
+    return judge(run, "take")
 
 
 def taking(run: dict[str, Any], text: str) -> dict[str, Any]:
@@ -531,14 +581,15 @@ def taking(run: dict[str, Any], text: str) -> dict[str, Any]:
         raise call.Stop("turn: what you take is not filled:\n" + "\n".join(said))
     chosen = json.loads(forms.unfenced(text))
     take = run.pop("take")
+    run["done"] = f"{UP} took {len(chosen['process'])} of {len(take['process'])} lessons."
     return took(run, [take["process"][n - 1] for n in chosen["process"]])
 
 
 def took(run: dict[str, Any], process: list) -> dict[str, Any]:
-    """With the lessons taken, the work is made again, or the run returns. The result holds each
-    item's Good, each question an item still waits on with the items it settles, each item without
-    Good with what the receiver gets once it has it and where it is not found, and every lesson on
-    the run taken; what the run kept beside it is removed."""
+    """With the lessons taken, the work is made again, or the result is written and the run is to
+    return. The result holds each item's Good, each question an item still waits on with the items
+    it settles, each item without Good with what the receiver gets once it has it and where it is
+    not found, and every lesson on the run taken."""
     again = remade(run)
     run.setdefault("lessons", []).extend(process)
     settled = run.pop("settled")
@@ -560,6 +611,13 @@ def took(run: dict[str, Any], process: list) -> dict[str, Any]:
             "lessons": run["lessons"],
         },
     )
+    run["returned"] = True
+    return judge(run, "returned")
+
+
+def returned(run: dict[str, Any]) -> dict[str, Any]:
+    """The run returned, once told: what it kept beside the result is removed."""
+    result = run["call"]["result"]
     os.remove(state_path(result))
     for agent in FORMS:
         # A role a round did not reach, such as one called again before, wrote no reply.

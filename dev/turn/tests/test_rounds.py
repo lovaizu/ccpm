@@ -5,10 +5,13 @@ from unittest import mock
 from helpers import (
     CALL,
     CAN,
+    CHECKED,
+    EVALUATED,
     FIRST_READ,
     FOUND,
     GOOD,
     IDS,
+    QUESTION,
     RESULT,
     STOPPED,
     WAITS,
@@ -56,7 +59,8 @@ class TestGeneratorKept(RoundTest):
         self.assertEqual(move["tool"], "SendMessage")
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
         message = json.loads(move["input"]["message"])
-        self.assertEqual(message, {"sent_back": [STOPPED], "reply": RESULT + ".generator.json"})
+        reply = self.here(RESULT + ".generator.json")
+        self.assertEqual(message, {"sent_back": [STOPPED], "reply": reply})
         self.assertFalse(os.path.exists(RESULT + ".generator.json"))
 
     def test_a_message_keeps_letters_beyond_ascii_as_they_are(self):
@@ -88,9 +92,9 @@ class TestGeneratorKept(RoundTest):
         move = self.due(self.answered(CLAIM))
         self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
         expected = {
-            "remade": ["README.md"],
+            "remade": [self.here("README.md")],
             "parts": ["README.md:1-4", "README.md:5-7"],
-            "reply": RESULT + ".first-user.json",
+            "reply": self.here(RESULT + ".first-user.json"),
         }
         self.assertEqual(json.loads(move["input"]["message"]), expected)
 
@@ -151,8 +155,9 @@ class TestTold(RepoTest):
         self.turn("start", json.dumps(CALL))
         out = self.next({"items": CAN, "questions": []})
         line = (
-            "turn: Next, turn:generator will make the work to give every item its Good, and run"
-            " what it gives as the receiver would, of README.md, for 2 items, round 1."
+            "turn: turn:up found in the CCS what gives the Good of 2 items. Next, turn:generator"
+            " will make the work to give every item its Good, and run what it gives as the"
+            " receiver would, of README.md, for 2 items, round 1."
         )
         self.assertEqual(out["line"], line)
         self.assertEqual(
@@ -165,6 +170,97 @@ class TestTold(RepoTest):
         self.assertTrue(
             str(out["line"]).startswith("turn: turn:generator made README.md. Next,"), out
         )
+
+    def test_the_orchestrators_check_is_told_first_and_its_outcome_after(self):
+        # Given: a run started
+        # When: the orchestrator goes on, then gives its check
+        # Then: a line telling the check is sent to `main` before the check is shown, and the
+        # line after it says what the check found
+        self.turn("start", json.dumps(CALL))
+        out = self.next()
+        line = (
+            "turn: Next, turn:up will check that the CCS gives every item its Good, of README.md,"
+            " for 2 items, round 1."
+        )
+        self.assertEqual(
+            out,
+            {
+                "line": line,
+                "move": {"tool": "SendMessage", "input": {"to": "main", "message": line}},
+            },
+        )
+        self.assertEqual(self.next()["check"][0]["item"], "F-1")
+        out = self.next({"items": CAN, "questions": []})
+        self.assertTrue(
+            str(out["line"]).startswith(
+                "turn: turn:up found in the CCS what gives the Good of 2 items. Next,"
+                " turn:generator will"
+            ),
+            out,
+        )
+
+    def test_a_question_is_told_before_it_is_asked_and_the_answer_before_the_check(self):
+        # Given: a run started and told its check
+        # When: the check finds an item waiting on the user's answer, and the run goes on, and
+        # on once answered
+        # Then: a line says what the check found and that the question is asked, before the run
+        # asks; once answered, a line says so before the check is shown again
+        self.turn("start", json.dumps(CALL))
+        self.next()
+        out = self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
+        self.assertEqual(
+            out["line"],
+            "turn: turn:up found 1 of 2 items waiting on the user's answer. Next, turn:up will ask"
+            " what only the user can decide, of README.md, for 2 items, round 1.",
+        )
+        self.assertEqual(self.next(), {"asked": RESULT})
+        out = self.next()
+        self.assertTrue(
+            str(out["line"]).startswith("turn: The calling AI answered. Next, turn:up will check"),
+            out,
+        )
+        self.assertEqual(self.next()["check"][1]["item"], "B-1")
+
+    def test_the_evaluators_outcome_is_told_before_the_decision(self):
+        # Given: a round taken to the evaluator's reply finding one item's Good
+        # When: the orchestrator goes on
+        # Then: a line says what the evaluator found and that the orchestrator decides next,
+        # and the items to decide come after it
+        self.started()
+        out = self.through(EVALUATED)
+        self.assertEqual(
+            out["line"],
+            "turn: turn:evaluator found the Good of 1 of 2 items. Next, turn:up will decide every"
+            " item from both readers' Goods, of README.md, for 2 items, round 1.",
+        )
+        self.assertEqual(self.next()["decide"]["items"][0]["item"], "F-1")
+
+    def test_a_learner_giving_no_lesson_is_told_before_the_run_returns(self):
+        # Given: a decision taken, and a learner giving no lesson
+        # When: the orchestrator goes on
+        # Then: a line says the learner gave none before the run returns, with the result
+        # written by then
+        self.started()
+        self.through(EVALUATED)
+        self.due(self.next({"items": [GOOD, WAITS], "questions": []}))
+        out = self.replied({"process": [], "checked": CHECKED})
+        self.assertEqual(
+            out["line"],
+            "turn: turn:learner gave 0 lessons on how the round went. Next, turn:up will return"
+            " the result, of README.md, for 2 items, round 1.",
+        )
+        self.assertEqual(self.read_json(RESULT)["items"], [GOOD])
+        self.assertEqual(self.next(), {"returned": RESULT})
+        self.assertFalse(os.path.exists(run.state_path(RESULT)))
+
+    def test_a_judgment_due_is_told_again_on_a_call_again(self):
+        # Given: a run whose check was told
+        # When: the same call is made again
+        # Then: the check is told again before it is shown
+        self.turn("start", json.dumps(CALL))
+        self.next()
+        self.turn("start", json.dumps(CALL))
+        self.assertEqual(self.next()["move"]["input"]["to"], "main")
 
     def test_a_move_is_printed_with_letters_beyond_ascii_as_they_are(self):
         # Given: a work named in letters beyond ASCII
@@ -187,13 +283,13 @@ class TestResumed(RepoTest):
         self.started()
         self.due(self.replied(CLAIM))
         code, out = self.turn("start", json.dumps(CALL))
-        self.assertEqual((code, json.loads(out)), (0, {"result": RESULT}))
+        self.assertEqual((code, json.loads(out)), (0, {"result": self.here(RESULT)}))
         move = self.due(self.next())
         self.assertEqual(move["input"]["subagent_type"], "turn:first-user")
         self.turn("start", json.dumps(dict(CALL, result="other.json")))
         self.turn("start", json.dumps(dict(CALL, result="other.json")))
-        code, out = self.turn("next", "other.json")
-        self.assertEqual(json.loads(out)["check"][0]["item"], "F-1")
+        self.result = "other.json"
+        self.assertEqual(self.heard(self.next())["check"][0]["item"], "F-1")
 
     def test_a_kept_role_due_a_message_is_started_anew_with_what_was_sent_to_it_since(self):
         # Given: a run whose generator, kept started, was sent two items back in turn, and is due
@@ -219,7 +315,9 @@ class TestResumed(RepoTest):
         self.replied({"items": FIRST_READ})
         self.turn("start", json.dumps(CALL))
         prompt = json.loads(self.due(self.next())["input"]["prompt"])
-        self.assertEqual(prompt["since"], [first])
+        self.assertEqual(
+            prompt["since"], [dict(first, reply=self.here(RESULT + ".generator.json"))]
+        )
 
     def test_a_call_again_with_another_call_on_the_same_result_stops(self):
         # Given: a run kept for a result
@@ -240,3 +338,47 @@ class TestResumed(RepoTest):
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 1)
         self.assertIn("is not there", out)
+
+
+class TestFolderMoved(RepoTest):
+    """The session's working folder moves when the calling AI runs `cd`, and every agent's commands
+    and hooks then run from there; the run's paths still mean where the call was made."""
+
+    def test_the_start_gives_the_result_where_the_call_was_made(self):
+        # Given: a call naming its result relative to the folder it is made from
+        # When: the run starts
+        # Then: the result is given as a whole path, so the orchestrator reaches it from anywhere
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual((code, json.loads(out)), (0, {"result": os.path.join(self.repo, RESULT)}))
+
+    def test_each_role_is_given_whole_paths_of_where_the_call_was_made(self):
+        # Given: a run started, and the session's working folder moved to notes/
+        # When: the orchestrator goes on with the result the start gave
+        # Then: the generator's prompt names each file as a whole path in the folder the call was
+        # made from, as its hooks and its commands run from notes/
+        self.turn("start", json.dumps(CALL))
+        os.chdir("notes")
+        self.result = os.path.join(self.repo, RESULT)
+        move = json.loads(self.due(self.next({"items": CAN, "questions": []}))["input"]["prompt"])
+        here = os.path.join(self.repo, "{}").format
+        self.assertEqual(move["work"], [here("README.md")])
+        self.assertEqual(move["checklists"], [here("checklists/readme.md")])
+        self.assertEqual(move["reply"], here(RESULT + ".generator.json"))
+        self.assertIn(here(CALL["ccs"]), move["given"])
+
+    def test_a_round_goes_on_from_another_folder_with_lines_named_by_whole_paths(self):
+        # Given: a run started, and the session's working folder moved to notes/
+        # When: the generator replies at the whole path it was given, with lines named by whole
+        # paths, and the first user is due
+        # Then: the reply is taken, and the first user is given the work's parts as the run names
+        # them and whole paths for its files
+        self.started()
+        os.chdir("notes")
+        self.result = os.path.join(self.repo, RESULT)
+        lines = [os.path.join(self.repo, "README.md:1-3")]
+        out = self.made(dict(GOOD, lines=lines), dict(GOOD, item="B-1", lines=lines))
+        prompt = json.loads(self.due(out)["input"]["prompt"])
+        self.assertEqual(prompt["parts"], ["README.md:1-3"])
+        self.assertEqual(prompt["given"][0], os.path.join(self.repo, "README.md"))
+        code, out = self.turn("parts", self.result)
+        self.assertEqual((code, json.loads(out)), (0, {"parts": ["README.md:1-3"]}))

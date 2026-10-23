@@ -269,6 +269,15 @@ class TestParts(FormTest):
                 found = forms.check(text, ITEMS + [EACH_ITEM], work, forms.GOOD, each=each)
                 self.assertEqual(len(found), said, found)
 
+    def test_lines_named_by_a_whole_path_are_inside_their_part(self):
+        # Given: an item asked of each part whose Goods name their lines by whole paths, as a role
+        # given whole paths names them
+        # When: it is checked
+        # Then: it passes, as each line is inside its part however the path is written
+        parts = [dict(p, lines=[self.here(p["lines"][0])]) for p in EACH_GOOD["parts"]]
+        said = self.each_said({"items": [dict(EACH_GOOD, parts=parts)]}, forms.GOOD)
+        self.assertEqual(said, [])
+
     def test_every_part_out_of_place_is_named(self):
         # Given: an item asked of each part whose two parts both name lines outside them
         # When: it is checked

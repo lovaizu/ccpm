@@ -48,6 +48,7 @@ class TestCheck(RepoTest):
         super().setUp()
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
+        self.heard(self.next())
 
     def test_a_check_in_a_json_fence_is_recorded(self):
         # Given: a check given as JSON inside a ```json fence
@@ -69,7 +70,7 @@ class TestCheck(RepoTest):
         # When: the check is recorded, and the questions are asked for
         # Then: the run asks, with no work made, the result holding the question alone with the
         # item it settles, printed as it holds it
-        out = self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
+        out = self.heard(self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]}))
         self.assertEqual(out, {"asked": RESULT})
         asked = {"questions": [dict(QUESTION, items=[ITEM_B1])]}
         self.assertEqual(self.read_json(RESULT), asked)
@@ -88,11 +89,11 @@ class TestCheck(RepoTest):
         # Given: a run that asked a question, and a CCS the calling AI added the answer to
         # When: the orchestrator goes on
         # Then: the items are checked again, on the CCS as it is now
-        self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
+        self.heard(self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]}))
         ccs = self.read_json(CALL["ccs"])
         ccs["retrieved_artifacts"].append({"license": "MIT"})
         self.write_json(CALL["ccs"], ccs)
-        self.assertEqual(self.next(), {"check": [ITEM_F1, ITEM_B1]})
+        self.assertEqual(self.heard(self.next()), {"check": [ITEM_F1, ITEM_B1]})
         self.assertNotIn("asked", self.state())
         self.assertEqual(self.due(self.next({"items": CAN, "questions": []}))["tool"], "Agent")
 
@@ -136,11 +137,11 @@ class TestMade(ReadTest):
         self.assertEqual(
             prompt,
             {
-                "work": ["README.md"],
-                "checklists": ["checklists/readme.md"],
+                "work": [self.here("README.md")],
+                "checklists": [self.here("checklists/readme.md")],
                 "sent_back": [],
                 "lessons": [],
-                "reply": RESULT + ".generator.json",
+                "reply": self.here(RESULT + ".generator.json"),
             },
         )
 
@@ -155,14 +156,18 @@ class TestMade(ReadTest):
         self.assertEqual(
             json.loads(move["input"]["prompt"]),
             {
-                "given": ["README.md", "docs/start.md", "checklists/readme.md"],
-                "work": ["README.md"],
-                "checklists": ["checklists/readme.md"],
+                "given": [
+                    self.here("README.md"),
+                    self.here("docs/start.md"),
+                    self.here("checklists/readme.md"),
+                ],
+                "work": [self.here("README.md")],
+                "checklists": [self.here("checklists/readme.md")],
                 "receiver": ["a developer new to it"],
                 "use": ["to try it on their own files"],
                 "parts": ["README.md:1-3"],
                 "lessons": [],
-                "reply": RESULT + ".first-user.json",
+                "reply": self.here(RESULT + ".first-user.json"),
             },
         )
 
@@ -224,7 +229,7 @@ class TestReaders(ReadTest):
         first = self.prompt()
         move = self.due(self.replied({"items": self.reading(FOUND)}))
         self.assertEqual(move["input"]["subagent_type"], "turn:evaluator")
-        expected = dict(first, reading=[FOUND], reply=RESULT + ".evaluator.json")
+        expected = dict(first, reading=[FOUND], reply=self.here(RESULT + ".evaluator.json"))
         self.assertEqual(json.loads(move["input"]["prompt"]), expected)
 
     def test_an_evaluator_agreeing_with_the_first_user_still_has_every_item_decided(self):
@@ -234,7 +239,7 @@ class TestReaders(ReadTest):
         # Then: both items come to decide; after the learner, the result holds where the work is,
         # the Good with its lines, and the question with the item it settles; the run has
         # returned, and what it kept beside the result is removed
-        decide = self.through(EVALUATED)["decide"]["items"]
+        decide = self.heard(self.through(EVALUATED))["decide"]["items"]
         self.assertEqual([i["item"] for i in decide], ["F-1", "B-1"])
         self.assertEqual(self.learnt(self.next(AGREED)), {"returned": RESULT})
         self.assertEqual(
@@ -267,7 +272,7 @@ class TestReaders(ReadTest):
         # user's, the second with the question the generator found it waits on
         good_b1 = dict(EVALUATED, item="B-1")
         self.assertEqual(
-            self.through(good_b1),
+            self.heard(self.through(good_b1)),
             {
                 "decide": {
                     "items": [
@@ -484,14 +489,14 @@ class TestLearner(ReadTest):
         # that replied and the orchestrator's, each shown as text beside the result, and no lesson
         move = self.due(self.learner)
         self.assertEqual(move["input"]["subagent_type"], "turn:learner")
-        texts = [f"{RESULT}.records/{n}.txt" for n in (1, 2, 3, 4)]
+        texts = [self.here(f"{RESULT}.records/{n}.txt") for n in (1, 2, 3, 4)]
         self.assertEqual(
             json.loads(move["input"]["prompt"]),
             {
                 "given": texts,
                 "findings": [GOOD, SENT_BACK],
                 "lessons": [],
-                "reply": RESULT + ".learner.json",
+                "reply": self.here(RESULT + ".learner.json"),
             },
         )
         self.assertIn("[user] {}", self.read(texts[0]))
@@ -511,7 +516,7 @@ class TestLearner(ReadTest):
         # When: the orchestrator goes on, and again with nothing given
         # Then: the lesson is offered to take, with what the learner checked, each time
         offer = {"take": {"process": [LESSON], "checked": CHECKED}}
-        self.assertEqual(self.offered(LESSON), offer)
+        self.assertEqual(self.heard(self.offered(LESSON)), offer)
         self.assertEqual(self.next(), offer)
 
     def test_what_is_taken_goes_to_the_generator_and_to_each_role_of_the_second_round(self):
@@ -527,6 +532,25 @@ class TestLearner(ReadTest):
         self.assertEqual((given["sent_back"], given["lessons"]), ([SENT_BACK], [LESSON["lesson"]]))
         self.assertEqual(self.due(self.made(GOOD, WAITS))["tool"], "Agent")
         self.assertEqual(self.prompt()["lessons"], ["read the opening first"])
+
+    def test_the_lessons_found_and_those_taken_are_told(self):
+        # Given: a learner that replied with two lessons
+        # When: the orchestrator goes on, and takes one
+        # Then: a line says how many lessons the learner gave before they are shown, and a line
+        # says how many were taken before the next round
+        out = self.offered(LESSON, dict(LESSON, lesson="it read the work once"))
+        self.assertTrue(
+            str(out["line"]).startswith(
+                "turn: turn:learner gave 2 lessons on how the round went. Next, turn:up will take"
+                " the learner's lessons that hold, of README.md, for 2 items, round 1."
+            ),
+            out,
+        )
+        out = self.next({"process": [2]})
+        self.assertTrue(
+            str(out["line"]).startswith("turn: turn:up took 1 of 2 lessons. Next, turn:generator"),
+            out,
+        )
 
     def test_each_lesson_taken_is_the_one_its_number_names(self):
         # Given: an offer of three lessons, each for another role
@@ -583,7 +607,7 @@ class TestLearner(ReadTest):
         self.assertEqual(self.prompt()["lessons"], [])
         second = dict(LESSON, role="learner", lesson="it read each record once")
         self.offered(second)
-        self.assertEqual(self.next({"process": [1]}), {"returned": RESULT})
+        self.assertEqual(self.heard(self.next({"process": [1]})), {"returned": RESULT})
         self.assertEqual(
             self.read_json(RESULT),
             {
