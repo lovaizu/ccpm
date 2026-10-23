@@ -416,6 +416,9 @@
   },
   {
    "fact": "the user (2026-10-23): checklists for the five works with none (points message, proposal and decisions' core, state.json, commit messages, lessons and issue) are designed now, before T14, not after a trial shows the need; which of them are works of their own is read from dev/rn/design.md first"
+  },
+  {
+   "fact": "rn's checklists brought to dev/rn/design.md (3aaa1a5, cfd5813, 962a4a9 and the five after): each opening the user and the idea, no steps; checklist B-7; code B-24-27; plan's completion criterion and four steps. The five works with no checklist need none: the conductor's and scripts' outputs are shaped by the design and the skills, judged by prompt.md and the skills' Content verification; the issue to rn's makers takes ccpm's issue form in /rn:ty at rn's remake. README stage 2 is the last task (dev/rn/design.md:142-147), settled from the purpose: every work is used by its first reader"
   }
  ],
  "semantic_gist": [
@@ -526,7 +529,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "go on without asking unless a point is the user's (the user, 2026-10-23 before /clear). Next, in order: (1) bring rn's checklists to dev/rn/design.md:110-177 as agreed: checklist.md's opening leads with the work's user and their purpose, its numbered order rewritten as the idea the items rest on, not steps; code.md's order made the idea (design, tests designed from the requirements before the code), its how-to-work steps (run existing tests, check by rules) out, test design (equivalence partitions, 3-value boundaries, decision tables, state transitions, properties) turned into items answered on the tests; plan.md's template gains per task a completion criterion and the four steps as boxes, with items asking each criterion concrete and checkable and each step traced to it; prompt.md, design.md, ux.md, readme.md, usability.md and plan.md read for steps that are how-to-work; each changed checklist read against checklist.md, check.sh rn run. (2) README stage 2: dev/rn/design.md has no time for product/readme.md steps 5-7 (write after the product is built); add it to the design. (3) T23: design the time cuts (round 2 and send-backs, the last learner 5-7 min, role prompts copied ~30 s a start) and the one-task-two-runs change in turn, trace on paper against the nine runs in dev/turn/trials/readme/results.json, then one small run, then six"
+   "first": "go on without asking unless a point is the user's. Next: T23: design the time cuts (round 2 and send-backs, the last learner 5-7 min, role prompts copied ~30 s a start) and the one-task-two-runs change in turn, trace on paper against the nine runs in dev/turn/trials/readme/results.json, then one small run, then six; at rn's remake, /rn:ty's issue takes ccpm's issue form"
   },
   {
    "next": "T23 fixes, then the six acceptance runs again: (1) told() at turn/scripts/run.py:192 gives a line only before a role move, the design (dev/turn/design.md:340) a line before each move and after each outcome; (2) a calling AI's cd moves the session's working folder and stalls turn (acc3); (3) trial.py stops before the first user starts, not during its reading, and sends answers to a returned question to the ended run, not a call again; (4) time: round 2 and send-backs, the last learner 5-7 min, the role prompt copied out about 30 s a start; Goods that do not hold ('every value stays as it was' while headers are rewritten) looked at with the time"

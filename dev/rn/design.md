@@ -140,8 +140,12 @@ flowchart LR
   answer into the decisions, has the work made again, and stops at the same sign-off with what
   changed.
 - After the plan sign-off, the conductor confirms with the user, as a point, which documents the
-  purpose needs, has each made in the order its checklist says it is drawn, the UX, then the README,
-  then the design, and stops at the design sign-off.
+  purpose needs, has each made from the one before it, the UX, then the README, then the design,
+  and stops at the design sign-off. What of the README only the built work can give, such as how to
+  install it and its links, is the last task, made and used by its first reader as every task is.
+
+  The design is built to what the README promises, and how the work is installed is known only once
+  it is built.
 - After the design sign-off, the conductor writes the tasks into the plan, each a part a user of
   the finished work can try, with its completion criterion, what it must do for the acceptance
   criteria it names, and its steps, each a box ticked when done, each traced to that criterion:
