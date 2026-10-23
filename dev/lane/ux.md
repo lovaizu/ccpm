@@ -90,7 +90,8 @@ sequenceDiagram
 
 - Lane's code is put in the plugin once for all its subagents: a link to it in a plugin of the ccpm
   marketplace, a copy with its version anywhere else. Run again where an older copy is, `lane:up`
-  brings the copy and the hooks to its own version.
+  proposes, with the lanes, bringing the copy and the hooks to its own version, and does so once
+  the builder types `/lane:ok`.
 
 ### A run that drifts
 

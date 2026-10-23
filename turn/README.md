@@ -53,9 +53,9 @@ nothing yet and sends the step's AI that one question:
 ```
 
 The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and sends it to turn,
-which goes on from there. turn tells the step's AI, before each of its agents starts its work, what
-it will do, how far and how, and as each step ends, what is done and what comes next, and the
-step's AI passes each on to you:
+which goes on from there. turn tells the conversation you talk with, even where the step's AI is an
+agent below it, before each of its agents starts its work, what it will do, how far and how, and as
+each step ends, what is done and what comes next:
 
 ```
 generator: will write README.md for the seven items, as MIT licensed, and run its install and
@@ -69,11 +69,13 @@ the lines that give it. Where an item gets none, README.md is made again and rea
 item that still gets none comes to the step's AI as a question for the user.
 
 When turn returns, README.md is in place, and the result gives each item's Good with the lines it
-rests on:
+rests on, and the README's few core decisions, each with why and its lines:
 
 ```json
 {"items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
             "lines": ["README.md:3-4"]}, ...],
+ "core": [{"decision": "the example comes before installing", "why": "the reader decides first",
+           "lines": ["README.md:6-20"]}, ...],
  "lessons": [...]}
 ```
 

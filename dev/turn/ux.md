@@ -92,8 +92,8 @@ sequenceDiagram
   Note over T: goes on from there
 ```
 
-- turn asks where the CCS lacks what the run needs, the work meets a point only the user can
-  decide, or an item is still without Good after the readings turn allows.
+- turn asks where the CCS lacks what the run needs, making the work meets a point only the user
+  can decide, or an item is still without Good after the readings turn allows.
 
 ### Stopped, and gone on
 

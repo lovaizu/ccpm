@@ -9,15 +9,16 @@ checklist, the receiver and a Good are, are in [turn's UX](ux.md).
 turn holds the [principles every plugin holds](../architecture.md#principles), named below
 Principle 1 to 8, and its own:
 
-1. Every role looks only for each item's Good, what the receiver gets, and works only to give it.
+1. Every role that makes or reads the work looks only for each item's Good, what the receiver gets,
+   and works only to give it.
 2. Each item is judged by what the receiver gets with what they have, never by whether the work
    matches its sources.
 
 ## User stories
 
 - As the calling AI, I want to start turn with the path of a CCS, its kinds and where the result
-  goes, and get the work back where it goes, with each item's Good and its lines, and the lessons
-  from the run to put to the user.
+  goes, and get the work back where it goes, with each item's Good and its lines, the work's core
+  decisions each with its intent and lines, and the lessons from the run to put to the user.
 - As the calling AI, I want the user told, as the run goes, what it will do and what is done, in
   the main conversation, which alone talks with them.
 - As the calling AI, I want to be sent each point only the user can decide as soon as the run meets
@@ -79,12 +80,14 @@ work.
 
   The run is a fixed loop, so its course and its bounds are kept in code, which holds them the same
   way each time where an AI counting may slip unseen (Principle 6).
-- A call naming a result whose state is there goes on from the move the state was last at: a role
-  that had not replied is started anew with what it was given, and one kept started is started anew
-  with what it was given and what was sent to it since.
+- A call naming a result whose state is there goes on from the move the state was last at. Each
+  role the run goes on with, one kept started included, is started anew, given what it was given
+  and what was sent to it since, and reads its inputs again; so a run gone on costs that reading
+  and reaches the same place.
 
   A conversation ends, is cleared or is compacted, and what lives only in it is lost; a role's
-  context is lost with its conversation, so what it is given is kept in the state to give again.
+  context is lost with its conversation, so what it is given and sent is kept in the state to give
+  again.
 - Before any work is made, the orchestrator checks that the CCS holds everything the run needs: it
   reads the CCS, the files it names but the work, and the checklists, and finds for every item what
   in them gives its Good, and that what the receiver has lets the first user do with the work what
@@ -94,16 +97,22 @@ work.
   A Good the CCS cannot give, the generator cannot give either, and a reader that has less than the
   receiver cannot find the Good they get; the making and the readings after it would be spent for
   nothing, and an answer may also change how the whole work is laid out.
-- A question, found at the check, in the generator's reply, or for an item the rounds leave
-  without Good, goes to the calling AI as soon as it is found, as the orchestrator's reply with the
-  answer it recommends; the run waits, the calling AI sends the answer back, and the orchestrator
-  hands it to the flow, and the run goes on from there with it.
+- A question goes to the calling AI as soon as it is found, as the orchestrator's reply, and the
+  run waits. The orchestrator words one found at the check from its own reading, and one for an
+  item two rounds leave without Good from the readers' findings the flow shows it, each with the
+  answer it recommends; one the generator gives, with the answer the generator recommends, it hands
+  on as the generator wrote it. The calling AI sends the answer back and keeps it in its CCS; the
+  orchestrator hands it to the flow, which gives it to the generator, by message where the
+  generator asked, and in what it is given where it is started next, and the run goes on from
+  there.
 
   The point is the user's to decide (Principle 2), and settled when it is met, it is not met again
   as rework, nor left in the result for the calling AI to fix (Principle 7). A subagent cannot ask
   the person (dev/architecture.md, Where the orchestrator runs); the calling AI fills what it can
-  from its sources and asks the user the rest. The calling AI keeps the answer in its CCS too, so a
-  call again reads it there.
+  from its sources and asks the user the rest. Each question is worded by the one that holds what
+  it rests on: the orchestrator holds the CCS it checked and the readers' findings the flow shows
+  it, and a generator's question retold would ask what the generator did not. The answer in the
+  CCS is read there by a call again.
 - Before each move and after each outcome, the flow makes a line for the user, what the move will
   do, how far and how, or what is done and what comes next, and the orchestrator sends it to the
   main conversation as a move of its own; no one answers it, and no role tells it.
@@ -123,7 +132,9 @@ work.
 
   What the receiver gets is the work's purpose; matching the sources is a means to it, and checked
   on its own it draws the work toward the sources' words and the product's edge cases rather than
-  toward the receiver. The receiver has no sources, so no reading in their place could answer it.
+  toward the receiver. A reader judges by what the receiver gets even where the sources are among
+  what the receiver has, such as a maintainer's repository, since matching them is not what the
+  receiver uses the work for.
 - Each item is answered where its checklist's `Scope` line says: `its part`, at the lines that give
   it; `each part`, in every part of the work on its own, a Good for each; `whole`, of the work at
   once. The flow splits the work into its parts, a document's sections under its top headings with
@@ -135,20 +146,26 @@ work.
   part for another item goes unseen; what lies between the parts, such as one name for each thing,
   is found only in the whole. The checklist says it once, so every role and every run answers an
   item at the same place.
-- The flow stops a reply that gives a Good at lines the work does not hold: a file not of the work,
-  lines past its end, or, for an each-part item, lines outside the part.
+- The flow stops a reply that gives a Good or a core decision at lines the work does not hold: a
+  file not of the work, lines past its end, or, for an each-part item, lines outside the part.
 
   The calling AI checks each Good by reading its lines, and a Good at lines that are not there
   cannot be checked; a script finds it at once (Principle 5).
 - The generator first sets, from the whole CCS, the Good the receiver is to get from the work for
-  each item and where the work gives it, then makes the work to give each, runs what it wrote as
-  the receiver would, and replies with each item's Good with its lines and the questions only the
-  user can decide.
+  each item and where the work gives it. Where only the user's answer can give an item its Good,
+  it replies with the questions, each with the answer it recommends, before making anything, and
+  goes on once the answers reach it. It then makes the work to give each Good, runs what it wrote
+  as the receiver would, and replies with each item's Good with its lines, the work's few core
+  decisions, each with its intent and the lines that carry it, and any question found while
+  making, handed on the same way.
 
   A work made to Goods set first gives each where it was meant; one written first and matched to
-  the items after is patched item by item. What is not run is not known to work, and a receiver who
-  meets it failing gets nothing from the rest. What the CCS does not say becomes a question, not
-  its own guess. Its Goods are its claim, not a judgment.
+  the items after is patched item by item. What the CCS does not say becomes a question, not its
+  own guess, and asked before the making, its answer shapes the work rather than a remake
+  (Principle 7). What is not run is not known to work, and a receiver who meets it failing gets
+  nothing from the rest. Its Goods are its claim, not a judgment. Only the maker knows which
+  decisions shape the work, and the calling AI, judging the work, reads those first; the flow puts
+  the generator's last core into the result, its lines held as a Good's are.
 - Where a path of the work already holds a file, the generator makes the work from it rather than
   from nothing, so what already gives its Good stays as it is.
 - The first user uses the work in the receiver's place, with everything the receiver has and doing
@@ -173,8 +190,8 @@ work.
   shrinks. A bound keeps a reading that does not settle from going on without end, and what it
   leaves goes on to the evaluator.
 - The orchestrator reads no file but the CCS, the files it names but the work, and the checklists,
-  and judges only at the check and on questions; every other move it makes is the one the flow
-  gives.
+  and judges only at the check and in wording the question for an item left without Good; every
+  other move it makes is the one the flow gives.
 
   The orchestrator holds the sources and the call, so its reading of the work finds the Good the
   work meant, not the one the receiver gets (Principle 4); put between the remake and a reader, it
@@ -203,8 +220,7 @@ work.
 - Where an item is without Good, the generator, started anew, is given each such item with the
   findings of the readers that found none, and the work is made again and read anew, from the first
   user to the evaluator, until every item has its Good or waits on a question. An item two rounds
-  leave without Good waits on a question: what the user is to decide for the receiver to get it,
-  which the orchestrator words from the readers' findings, with the answer it recommends.
+  leave without Good waits on a question: what the user is to decide for the receiver to get it.
 
   A bound keeps a reading that does not settle from going on without end; an item it leaves lacks
   what neither the CCS nor the readings give, so it comes back as a point for the user to decide,
@@ -213,12 +229,14 @@ work.
   included, and gives from them what fell short and why, each lesson with the words it rests on
   quoted and said to be the project's own or general, or that it found none and what it checked.
   The flow puts the lessons into the result, and the calling AI puts each to the user: a project's
-  own into the user's checklists or rules, a general one to turn's makers as an issue, opened on
-  the user's yes.
+  own into the user's checklists or rules, a general one to turn's makers as an issue. The issue is
+  the calling AI's part: it shows the issue to the user whole and opens it only on their yes, taken
+  as [The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)
+  says.
 
-  This is the learner of Principle 8, where its why is said; it reads the run, so turn's own
-  principles, which are on reading the work, are kept by the roles that do. The calling AI, not
-  turn, reaches the user, as with a question.
+  This is the learner of Principle 8, where its why is said; it reads the run's records, not the
+  work, so it holds that principle, and turn's own two hold the roles that make or read the work.
+  The calling AI, not turn, reaches the user, as with a question.
 - The flow writes the result where the call says, and the orchestrator ends only once it is there.
 
   A reply would be copied into a file by the calling AI, where a slip goes unseen.
@@ -226,9 +244,9 @@ work.
   the guard notices a drift from it and tells the role the step again: a role reads what it is given
   alone, and whole; writes only its work and its reply, its reply in its form; commits and pushes
   nothing; and ends only once its reply is there. The orchestrator begins with the flow, makes only
-  the move the flow gave, a line for the user among them, and hands on the flow's questions as they
-  are. That every item is answered, that each Good's lines are in the work, and that the result is
-  there, the flow checks itself.
+  the move the flow gave, a line for the user among them, and hands on a question of the
+  generator's as the flow printed it. That every item is answered, that each Good's lines are in
+  the work, and that the result is there, the flow checks itself.
 
   A role that reads only what it is given is not bent by what it was not meant to see, and an item
   judged on a part read is judged on a guess for the rest. The calling AI keeps the work in git on
@@ -281,9 +299,15 @@ turn/                      the plugin, installed by Claude Code
   a script reading what was kept got it word for word. The file is read by the flow alone, so no AI
   copies a reply, and each reader's lane on what it reads keeps it from the other replies.
 - The orchestrator gives the flow the agent ID each Agent call returns, by which the flow names the
-  role to send more work to, and the learner's records are found by those IDs.
+  role to send more work to and the learner is given each role's record.
 
   The Agent tool gives a subagent no name to be messaged by, so a role is reached by its ID.
+
+  The learner needs, beside the IDs, the folder Claude Code keeps the records in, and the
+  orchestrator's own record, and the orchestrator is told neither: a hook's event carries the
+  session's `transcript_path` and the `agent_id` it runs in, by which lane's guard finds a
+  subagent's record; the start_with lane on `turn.py start` hands both to the flow, so no AI copies
+  them, and turn keeps no hooks of its own.
 - The orchestrator replies with a question and ends its turn; the calling AI sends the answer to its
   agent ID with SendMessage, which resumes it, as `lane:up` is reached.
 - The lines go by SendMessage to `main`, loaded with ToolSearch: called from the main conversation,
@@ -298,8 +322,12 @@ turn/                      the plugin, installed by Claude Code
   `git commit` and `git push` on each role that runs commands; on the orchestrator, start_with on
   `turn.py start`, read_only and read_whole on the `{given}` that `turn.py start` prints, the CCS,
   the files it names but the work, and the checklists, follow_next on `turn.py next`, which holds
-  the lines it prints as moves, as_printed on the questions it hands on, and hands_off as on the
-  roles.
+  the lines it prints as moves, as_printed on a question of the generator's it hands on, and
+  hands_off as on the roles.
+
+  The generator's running what it wrote, and the readers' running what the receiver runs, are held
+  by their steps alone: what is run is found in the work and in what the receiver does with it, and
+  the CCS names no kind for a command, so turn has none to give test_after.
 
   The flow reads the result and every reply itself, so a lane on every item answered or on the
   result made would check what the flow holds already, and lane sees a write only in the call that
@@ -334,7 +362,8 @@ the records of every conversation and agent the check started.
     set for each way a run goes: every item given its Good by both readers at the first reading, an
     item the first user finds no Good for given at its next reading, an item sent back three times
     going on to the evaluator, an item the evaluator finds no Good for made again with its finding,
-    a question in the generator's reply sent at once and the run going on with the answer, and an
+    a question the generator replies with before making anything sent at once and its answer sent
+    to the generator, which then makes the work, a question found while making sent the same, and an
     item two rounds leave without Good sent as a question and the run going on with the answer,
     each with the learner once after the run; on the same task with its decision taken out, the
     check's question sent and the run going on with the answer; and the run stopped after the first
@@ -345,11 +374,13 @@ the records of every conversation and agent the check started.
 - Each of the four roles: works to its aim with what it is given, writing its form.
   - Flow: started on its own with a prompt set beforehand, as the flow would give it, on a task of
     two items, one answered at its part and one in each part; passes when its record shows it read
-    only and whole what it is given, and its reply fills its form; the generator runs what it wrote,
-    and the first user and the evaluator what the receiver runs; the generator, sent back by
-    message, remakes the work without reading its sources again, and the first user, sent the work
-    made again, gives the places it stopped at their Good; the learner gives each lesson with the
-    words it rests on quoted from the records, said to be the project's own or general.
+    only and whole what it is given, and its reply fills its form; the generator, on a CCS leaving
+    one item's Good to the user, replies with that question before making anything and makes the
+    work once sent the answer by message; the generator runs what it wrote, and the first user and
+    the evaluator what the receiver runs; the generator, sent back by message, remakes the work
+    without reading its sources again, and the first user, sent the work made again, gives the
+    places it stopped at their Good; the learner gives each lesson with the words it rests on
+    quoted from the records, said to be the project's own or general.
   - Content: what it makes in the acceptance trials below, read against its record.
 
 ### Acceptance

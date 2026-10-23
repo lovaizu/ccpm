@@ -13,8 +13,8 @@ its parts.
 A deliverable serves its reader by what they meet in the order they read: on opening it, whether it
 serves their purpose; reading on, each word and idea understood where they meet it, and each part
 one they need; and at the end, every question they came with answered. Each item is answered by
-what the reader has and does with the deliverable alone, never by the sources it was made from,
-which they do not have.
+what the reader has and does with the deliverable alone, never by whether it matches the sources it
+was made from, which is not what the reader uses it for.
 
 ## Format
 

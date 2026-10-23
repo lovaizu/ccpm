@@ -422,6 +422,9 @@
   },
   {
    "fact": "the user (2026-10-23) asked whether the quality is the same: it is not. On my own check of the nine runs, 0.1.0 left 0 items unmet after its stand-in's fixes, the new turn 1-4 (Goods that do not hold, which its stand-in passed); the '19-22 of 23' noted before was the stand-in's count. Quality (KR1.1) comes first: why false Goods pass is traced from the records alongside the time, and the time is cut only inside what keeps KR1.1"
+  },
+  {
+   "fact": "2026-10-23: the user decided the root is the principles: eight shared ones in dev/architecture.md#principles (8: a learner after each run, lessons to the user's checklists or rules or as an issue to the makers on the user's own yes), each design opening with its own two; checklists gained design B-32/B-33 and usability B-21 (general, not plugin-only, as the user said); turn, lane and rn designs read against them by independent readers twice and settled at the decisions: turn's two readers each on their own, Good only where both give it, questions before making, a core in the result; lane's /lane:ok, readers before the print, flow for lane:up; rn's guards in rn's conversation alone, issues on /rn:ty, turn's result and state in the record. Awaiting the user's review of the designs and the UX/README changes; then the code to the designs, then T23's runs"
   }
  ],
  "semantic_gist": [
@@ -532,7 +535,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "go on without asking unless a point is the user's. Next: T23: the four fixes before the time are in 9278715; bring KR1.1 at least to 0.1.0's from why false Goods passed, then design the time cuts inside that, from the per-move analysis of the nine runs in dev/turn/trials/readme/results.json, show the whole design to the user once (turn's design is agreed with the user), trace on paper, then one small run, then the six (3 plain, 3 stopped), 0.1.0's three reused. The one-task-two-runs of rn needs no change in turn on a trace of generator.md: rn's CCS for the first run names the design and the tests as the work, failing until the part is made; traced again at rn's remake. At rn's remake, /rn:ty's issue takes ccpm's issue form"
+   "first": "go on without asking unless a point is the user's. Next: the user reviews the changed designs, UXs and READMEs of turn, lane and rn (agreed documents); then turn's code to its design (evaluator on its own, flow's agreement, questions before making, core, learner once, lines checked), lane's code (wait_for wording, /lane:ok, flow, state path), rn's later at its remake; then T23: one small run, then 3 plain and 3 stopped, KR1.1 judged for both versions by one judge from the returned work; 0.1.0's three re-judged by that judge"
   }
  ],
  "uncertainty_signal": [
