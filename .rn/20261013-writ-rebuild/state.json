@@ -494,6 +494,9 @@
   },
   {
    "fact": "2026-10-23: acceptance at 6c2edbc: one ×3 every move in order (one placeholder `git clone <URL>` in one run, the missing URL learnt as the project's own each time); readme ×3 and stopped ×3: 5 of 6 looped on LICENSE, an answer adding it to the work kept in the CCS while the run held its first work (fixed d93ebfb: the CCS read again on every answer and call again); untrue claims on BOM and encoding passed first user and Good check in 2 runs; 0.1.0 baseline ×3 took 11-16 min against turn's 16-35; the one-run judge was shallow (9 calls, a missing LICENSE link passed), remade per folder (7edc487)"
+  },
+  {
+   "fact": "2026-10-23: read the six READMEs at 7edc487 against 0.1.0's: untrue words (BOM name in r6) and a link to a missing LICENSE (s4, the check passing it in round 2) passed every check, as the checks ran the Good's own words alone; turn's READMEs and 0.1.0's are close in what they give (turn: a BOM removal command, LICENSE with holder; 0.1.0: semicolon-separated files); fixed 9d39849: each thing the lines tell checked, and a file the work lacks asked to be added to the CCS's work. The user: quality over speed, read the content, not counts"
   }
  ],
  "semantic_gist": [
@@ -598,7 +601,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: running in the scratchpad (2026-10-23): trial.py readme r4-r6 and stopped s4-s6 at 7edc487, judge.py on base1-3 (base<n>.work.judged.json); find them with pgrep -af 'trial.py|judge.py'. Then judge r4-r6, s4-s6; compare KR1.1 and KR1.2 (call to return) with base; read each run's records for loops and untrue Goods passing the check; record in dev/turn/trials/readme/results.json and one/; decide fixes as a whole (untrue claims passing checks, reply removed before a remake, start_with stopping ToolSearch). No question is open for the user. Never publish an Artifact unasked"
+   "first": "on resume: running in the scratchpad (2026-10-23) at 9d39849: trial.py readme r7-r9 and stopped s7-s9; find them with pgrep -af trial.py. Then read each README whole myself, running what it says, set beside 0.1.0's base1-3 (scratchpad base<n>.work): what each gives the receiver, what is untrue or missing; the judge only as a check on my reading; report to the user in a few plain lines (the user found long reports hard to follow). No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
