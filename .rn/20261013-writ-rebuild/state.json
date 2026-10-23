@@ -437,6 +437,9 @@
   },
   {
    "fact": "the user decided (2026-10-23): the design document had become a specification, as every decision from talks and trials was written into it and each finding while building sent it back for approval; it is now the architecture (dev/<plugin>/architecture.md, checklist rn/checklists/product/architecture.md, fde2d4a and the rename): principles, user stories, a logical figure with only what it cannot show, a physical tree, and what and how far each unit, story and key result is checked; how each part behaves lives in its tests' Given/When/Then and its prompt's steps. The four ways of checking (users' model, records, flow apart from content, cost in parts) were folded into the checklist's B-8 and B-10 rather than plugin.md, as rn's users use the checklist"
+  },
+  {
+   "fact": "2026-10-23: turn's design had no concept and was not what the user meant; lane's and rn's architectures are the same (45-55 bullets, 330-430 lines of case rules), lane's still has the builder answering and choosing OK though the user said its user is an AI building a plugin, and rn's has not caught up with its agreed README and UX. The user agreed the order below for all three, code included, as each already has code"
   }
  ],
  "semantic_gist": [
@@ -547,7 +550,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume, in order: (1) rewrite dev/turn/architecture.md to rn/checklists/product/architecture.md, its case rules moved to turn's prompts and tests when turn is built, and show the user its Japanese translation before committing (no Artifact; in the conversation); (2) then lane's and rn's architectures; rn's own 'design' wording (README, UX, sign-off, rn.py) at rn's remake; (3) turn's code; (4) T23's runs"
+   "first": "on resume, one plugin at a time, turn, then lane, then rn: (1) show the user its user, purpose and concept (the opening sentence and the principles) in a few lines of Japanese, in the conversation, and agree them; (2) rewrite dev/<plugin>/architecture.md to rn/checklists/product/architecture.md on that concept, case rules left to tests (Given/When/Then) and prompt steps, Japanese shown before committing; (3) check the plugin's existing code and trial results against the concept, and set apart what is kept and what is rebuilt. Start with turn's concept proposal. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
