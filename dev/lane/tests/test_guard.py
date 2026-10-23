@@ -69,7 +69,7 @@ class TestStop(GuardTest):
         self.assertEqual(self.guard(self.stream("git status")), (0, ""))
 
     def test_a_step_no_longer_saying_the_sentence_stops_the_call(self):
-        # Given: step 3 changed by the builder since the lane was laid
+        # Given: step 3 changed by the building AI since the lane was laid
         self.write(self.agent_file, helpers.STEPS)
         # When: changelog-writer makes a call the hook watches, even one the lane allows
         # Then: the call is stopped, saying to have lane:up run again
@@ -182,7 +182,7 @@ class TestEnd(GuardTest):
         self.assertEqual(self.ended([CHANGE], agent_type="notes:other"), (0, ""))
 
     def test_a_step_no_longer_saying_the_sentence_is_told_once(self):
-        # Given: step 3 changed by the builder since the lane was laid
+        # Given: step 3 changed by the building AI since the lane was laid
         self.write(self.agent_file, helpers.STEPS)
         # When: changelog-writer is about to end, then again after answering in words alone
         # Then: it is told to reply that lane:up must be run again, then ends

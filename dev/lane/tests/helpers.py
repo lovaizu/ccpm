@@ -1,5 +1,5 @@
 """What lane's tests stand on beside what every plugin's tests do: lane's folders on sys.path, and a
-builder's plugin `notes` made in a test's folder, its subagent `changelog-writer` with the steps of
+plugin `notes` made in a test's folder, its subagent `changelog-writer` with the steps of
 lane's README."""
 
 from __future__ import annotations
@@ -74,7 +74,7 @@ LAID = STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {SENTENCE}\n")
 
 
 class PluginTest(testing.FolderTest):
-    """A test with the builder's plugin `notes` in `base/notes`, its subagent in
+    """A test with the building AI's plugin `notes` in `base/notes`, its subagent in
     `agents/writer.md`."""
 
     def setUp(self) -> None:

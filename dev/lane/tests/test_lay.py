@@ -1,4 +1,4 @@
-"""The layer: the proposal printed for the builder's OK, and written word for word into the plugin,
+"""The layer: the proposal printed for the building AI's OK, and written word for word into the plugin,
 with every other entry of its hooks.json as it was, lane's code put beside them, and the plugin
 checked by Claude Code."""
 
@@ -38,7 +38,7 @@ END_ENTRY = {
     "matcher": "notes:changelog-writer",
     "hooks": [{"type": "command", "timeout": 10, "command": END_COMMAND}],
 }
-# What `print` shows the builder for it.
+# What `print` shows the building AI for it.
 PRINTED = """Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
   run: Do not run `git commit` or `git push`.  hook hands_off
 
@@ -88,7 +88,7 @@ class LayTest(helpers.PluginTest):
 
 
 class TestPrint(LayTest):
-    def test_the_proposal_is_printed_as_the_builder_reads_it(self):
+    def test_the_proposal_is_printed_as_the_building_ai_reads_it(self):
         # Given: the proposal of hands_off on step 3 of changelog-writer
         # When: it is printed
         # Then: the lane shows under its action with its hook, and the step as it would read
@@ -308,7 +308,7 @@ class TestWriteHooks(LayTest):
         self.assertTrue(entry["hooks"][0]["command"].endswith(words))
 
     def test_every_other_entry_stays_as_it_was(self):
-        # Given: hooks.json with a description, an entry of the builder's own, and one of another
+        # Given: hooks.json with a description, an entry of the building AI's own, and one of another
         # event
         own = {"matcher": "Write", "hooks": [{"type": "command", "command": "own.sh"}]}
         stop = {"hooks": [{"type": "command", "command": "stop.sh"}]}
@@ -413,13 +413,13 @@ class TestWriteEndHooks(LayTest):
 
     def test_an_entry_of_an_event_no_lane_is_held_on_now_is_taken_out(self):
         # Given: hooks.json holding the subagent's entries of both events from before, beside an
-        # entry of the builder's own
+        # entry of the building AI's own
         own = {"hooks": [{"type": "command", "command": "own.sh"}]}
         hooks = {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own, END_ENTRY]}}
         self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
         # When: a proposal of hands_off alone is written
         self.lay("write", self.proposal_file)
-        # Then: the SubagentStop entry lane:up wrote is gone, the builder's kept
+        # Then: the SubagentStop entry lane:up wrote is gone, the building AI's kept
         self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own]}})
 
     def test_subagentstop_entries_not_in_claude_codes_shape_stop(self):
@@ -789,13 +789,13 @@ class TestUp(LayTest):
         return self.lay("up", self.plugin)
 
     def test_an_older_copy_and_its_hooks_are_brought_up_with_the_same_lanes(self):
-        # Given: the copy of 0.1.0, its hook in the older form between two entries of the builder's
+        # Given: the copy of 0.1.0, its hook in the older form between two entries of the building AI's
         # own
         own = {"matcher": "Write", "hooks": [{"type": "command", "command": "own.sh"}]}
         self.hooks_of(own, self.OLDER, own)
         # When: it is brought up
         code, said = self.up()
-        # Then: the hook is in the current form in its place, the builder's entries and the step
+        # Then: the hook is in the current form in its place, the building AI's entries and the step
         # as they were, the copy lane's code with lane's version, and what was done is said
         self.assertEqual(code, 0)
         self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [own, ENTRY, own]}})
@@ -875,7 +875,7 @@ class TestUp(LayTest):
         # When: it is brought up
         code, said = self.up()
         # Then: the hooks lay the lanes this version lays, the other subagent's hook taken out, and
-        # each lane left out is said, for lane:up to put to the builder
+        # each lane left out is said, for lane:up to put to the building AI
         self.assertEqual(code, 0)
         self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY]}})
         for agent, word in (
@@ -886,7 +886,7 @@ class TestUp(LayTest):
             with self.subTest(word=word):
                 self.assertIn(
                     f"Left out `{word}` from the hook of {agent}, as lane 0.10.0 lays no such lane;"
-                    " ask the builder whether to lay it again or leave it out.\n",
+                    " ask the building AI whether to lay it again or leave it out.\n",
                     said,
                 )
 

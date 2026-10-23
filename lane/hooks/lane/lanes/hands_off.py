@@ -1,5 +1,5 @@
 """hands_off: the subagent does not run the commands its step names, such as `git commit` held for
-the orchestrator once the builder has read the work."""
+the orchestrator once the building AI has read the work."""
 
 from __future__ import annotations
 

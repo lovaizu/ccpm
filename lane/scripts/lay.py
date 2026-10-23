@@ -1,6 +1,6 @@
-"""The layer: what lane:up runs to have the lanes it proposes printed for the builder's OK, and,
-once the builder has given it, written word for word into the builder's plugin from the same file,
-so no AI copies what the builder approved.
+"""The layer: what lane:up runs to have the lanes it proposes printed for the building AI's OK,
+and, once the building AI has given it, written word for word into its plugin from the same file,
+so no AI copies what the building AI approved.
 
 The proposal is a JSON file lane:up keeps in lane's data folder, `${CLAUDE_PLUGIN_DATA}/<plugin>.json`:
 
@@ -19,7 +19,7 @@ anywhere else; then has Claude Code check the plugin, and removes the proposal.
 Bringing a plugin up, run first on each run of lane:up, puts lane's code in place of an older copy
 of it, one whose VERSION is lower than lane's version or missing, and writes each hook lane:up wrote
 before in the current form, with the lanes it read from it, every other entry and each step left as
-it was; a lane this version no longer lays is left out and said, for the builder to lay again or
+it was; a lane this version no longer lays is left out and said, for the building AI to lay again or
 leave out.
 """
 
@@ -228,7 +228,7 @@ def steps_laid(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> lis
 
 
 def printed(path: str) -> str:
-    """The proposal as the builder reads it: for each subagent step, its lanes, each under its
+    """The proposal as the building AI reads it: for each subagent step, its lanes, each under its
     action with its hook, and the step as it would read; a step whose lanes are all taken out is
     shown so."""
     given = proposal(path)
@@ -257,7 +257,7 @@ def listed(name: str, step_given: dict[str, Any]) -> list[str]:
 
 
 def held(lane: dict[str, Any]) -> str:
-    """What the lane's hook holds beyond what its sentence shows, as the builder reads it after the
+    """What the lane's hook holds beyond what its sentence shows, as the building AI reads it after the
     hook, such as the commands wait_for holds back; "" for a lane whose sentence shows all."""
     shown = lanes.shown(lane["lane"])
     rest = [f"`{t}`" for t in lane["takes"][shown:]] if shown is not None else []
@@ -460,7 +460,7 @@ def older(root: str) -> str | None:
 def laid_before(hooks: dict[str, Any]) -> tuple[dict[str, list[dict[str, Any]]], list[str]]:
     """Each subagent the hooks lay lanes in, as `<plugin>:<subagent>`, with its lanes as steps of a
     proposal, each lane once, though held on both events; and each lane laid that lane does not lay
-    now, as said for lane:up to put to the builder."""
+    now, as said for lane:up to put to the building AI."""
     agents: dict[str, list[dict[str, Any]]] = {}
     left = []
     for event in EVENTS:
@@ -474,7 +474,7 @@ def laid_before(hooks: dict[str, Any]) -> tuple[dict[str, list[dict[str, Any]]],
                         name = given[0].split(":")[1]
                         left.append(
                             f"Left out `{w}` from the hook of {name}, as lane {lane_version()} lays"
-                            " no such lane; ask the builder whether to lay it again or leave it"
+                            " no such lane; ask the building AI whether to lay it again or leave it"
                             " out.\n"
                         )
                         continue

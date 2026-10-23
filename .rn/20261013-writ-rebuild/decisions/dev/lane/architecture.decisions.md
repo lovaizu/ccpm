@@ -24,19 +24,17 @@ about lane/README.md and dev/lane/ux.md, both agreed.
 ## design
 
 ### B-1: The stories
-- As the README and the UX give them: the builder asks Claude, which starts `lane:up`; `lane:up`
-  asks one point at a time through the calling AI, proposes, and on OK has the steps and the hooks
-  written; run again where an older copy is, it brings it up; a drift is stopped with the
+- As the README and the UX give them: the building AI starts `lane:up`; `lane:up` sends it every
+  open point in one reply, proposes, and on its OK has the steps and the hooks written; run again where an older copy is, it brings it up; a drift is stopped with the
   sentence; without Python 3.9 or later the hooks stop the calls they watch.
 
 ### B-2, B-3: The components and how they work
-- `lane:up` is the orchestrator, a subagent the calling AI starts, messaging the agent the caller
-  names (`main` from the main conversation); it reads and proposes itself and starts no subagents,
-  so the README says only that Claude starts it from a conversation or a subagent (the user,
-  2026-10-21).
-- The hearing shows the builder each fact found that the lanes rest on, one at a time, to confirm,
-  as well as each point only the builder decides (dev/architecture.md, Hearing).
-- What the builder approved is written by a script, word for word, not by an AI.
+- `lane:up` is the orchestrator, a subagent the building AI starts, its points given as its reply
+  and the answers sent to its agent ID; it reads and proposes itself and starts no subagents (the
+  user, 2026-10-21).
+- The hearing shows the building AI, in one reply, each fact found that the lanes rest on, to
+  confirm, as well as each point it decides (dev/architecture.md, Hearing; the user, 2026-10-23).
+- What the building AI approved is written by a script, word for word, not by an AI.
 - lane lays lanes on a plugin's subagents alone; their hooks go into the plugin's
   `hooks/hooks.json`, one entry acting only in its subagent by the event's `agent_type`, as Claude
   Code ignores `hooks` in a plugin subagent's file and a tool event's matcher filters by tool.
@@ -90,7 +88,7 @@ about lane/README.md and dev/lane/ux.md, both agreed.
 | test_after | turn's generator passes the work's checks after changing it |
 | as_printed | turn's prompts handed on as `turn.py` printed them; lane:up's proposal |
 | follow_next | turn's roles started in the order `turn.py` prints |
-| wait_for | lane:up writes the proposal only on the builder's OK |
+| wait_for | lane:up writes the proposal only on the building AI's OK |
 | end_when | turn's result made before ending |
 | every_item | turn's evaluator answers every item of `{checklists}` |
 

@@ -1,6 +1,6 @@
-"""Tries lane as its user, the builder, meets it, on the README's `notes`, kept in notes/ here, with a
-small project notes keeps the changelog of, and on turn. Each run makes a new folder outside any
-ccpm clone, so lane puts a copy of its code with VERSION in the plugin, and copies into it this
+"""Tries lane as its user, the building AI, meets it, on the README's `notes`, kept in notes/ here,
+with a small project notes keeps the changelog of, and on turn. Each run makes a new folder outside
+any ccpm clone, so lane puts a copy of its code with VERSION in the plugin, and copies into it this
 working tree's lane as it is when the run starts, the plugin and the project:
 
     python3 dev/lane/trials/trial.py lay <new folder>
@@ -11,18 +11,19 @@ working tree's lane as it is when the run starts, the plugin and the project:
     python3 dev/lane/trials/trial.py turn <new folder>
     python3 dev/lane/trials/trial.py memo <case> <new folder>
 
-`lay` has a stand-in for the builder, the main conversation given the builder's answers set
-beforehand, ask Claude to lay lanes on notes and give the proposal OK; `drift` runs
-`/notes:changelog`, as laid by `lay`, with a request that invites a commit; `python` does the same
-with no python3 on the PATH the hooks run with; `up` has the builder ask again, on notes as laid by
-`lay` with lane's code there made older; `changed` runs `/notes:changelog` once step 3 of
-changelog-writer is written again as it was before the lanes; `turn` has the stand-in ask Claude to
-lay lanes on turn, taking each answer recommended and giving the proposal OK; `memo` lays MEMO_LANES
-on memo, kept in memo/ here, a plugin whose subagents' steps call for every lane, by `lay.py write`,
-and runs it as its case of MEMO_RUNS says: `kept` the whole of `/memo:make`, each other one
-subagent prompted to drift from its steps. Each prints the session, from whose records the trial
-is judged, the minutes, and what the run left in the plugin or in the project. Nothing is removed: the folder holds what Claude Code printed, `<run>.jsonl`, beside
-the plugins and the project.
+`lay` has a stand-in for the building AI, the main conversation given what it knows of notes set
+down beforehand, lay lanes on notes, answering lane:up's points and giving the proposal OK itself;
+`drift` runs `/notes:changelog`, as laid by `lay`, with a request that invites a commit; `python`
+does the same with no python3 on the PATH the hooks run with; `up` has the stand-in lay lanes
+again, on notes as laid by `lay` with lane's code there made older; `changed` runs
+`/notes:changelog` once step 3 of changelog-writer is written again as it was before the lanes;
+`turn` has the stand-in lay lanes on turn, taking each answer recommended and giving the proposal
+OK; `memo` lays MEMO_LANES on memo, kept in memo/ here, a plugin whose subagents' steps call for
+every lane, by `lay.py write`, and runs it as its case of MEMO_RUNS says: `kept` the whole of
+`/memo:make`, each other one subagent prompted to drift from its steps. Each prints the session,
+from whose records the trial is judged, the minutes, and what the run left in the plugin or in the
+project. Nothing is removed: the folder holds what Claude Code printed, `<run>.jsonl`, beside the
+plugins and the project.
 """
 
 import json
@@ -67,22 +68,22 @@ HISTORY = [
         },
     ),
 ]
-# The builder's request, with what they set down for the stand-in to answer from.
-LAY = """Lay lanes on my plugin {name} at {plugin}.
-
-I am away while you do it, so stand in for me: wherever you would ask me, answer from what I set
-down here, and in your last reply tell me each point you were asked, word for word, and what you
-answered.
+# What the stand-in for the building AI is given: the plugin to lay lanes on, and what it knows of
+# the plugin, set down for it to answer from.
+LAY = """You are building the plugin {name} at {plugin}. Lay lanes on it with lane:up. You answer
+lane:up's points and approve its proposal yourself, from what you know of the plugin, set down
+here; no one else takes part. In your last reply, give each point lane:up sent you, word for word,
+and what you answered.
 """
 ANSWERS = {
     "notes": """- `CHANGELOG.md` is the only file changelog-writer writes.
-- The orchestrator, the conversation /notes:changelog runs in, commits `CHANGELOG.md` once I have
-  read it and said OK; changelog-writer never runs `git commit` or `git push`.
+- The orchestrator, the conversation /notes:changelog runs in, commits `CHANGELOG.md` once whoever
+  runs it has read it and said OK; changelog-writer never runs `git commit` or `git push`.
 - Where these do not settle a question, take the answer recommended to you; where you are shown a
-  fact, check it against my plugin's files.
+  fact, check it against the plugin's files.
 - When the lanes are proposed, give them OK.""",
     "turn": """- Take the answer recommended to you on each question; where you are shown a fact, check
-  it against my plugin's files.
+  it against the plugin's files.
 - When the lanes are proposed, give them OK.""",
 }
 DRIFT = (
@@ -317,9 +318,9 @@ def copied(source: str, folder: str, name: str) -> str:
 
 
 def lay(folder: str, name: str, before: str) -> None:
-    """The builder's request to lay lanes on the plugin name, copied in the folder beside lane;
-    then what changed in it from the plugin at before, lane's code put there against lane's, the
-    VERSION it holds, and Claude Code's strict check of it."""
+    """The stand-in for the building AI laying lanes on the plugin name, copied in the folder beside
+    lane; then what changed in it from the plugin at before, lane's code put there against lane's,
+    the VERSION it holds, and Claude Code's strict check of it."""
     proposal = os.path.expanduser(PROPOSAL.format(name=name))
     if os.path.exists(proposal):
         os.remove(proposal)

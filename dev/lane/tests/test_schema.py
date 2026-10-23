@@ -119,7 +119,7 @@ class TestRead(unittest.TestCase):
         # When: it is read
         with self.assertRaises(ValueError) as refused:
             schema.checked({"pattern": "x"})
-        # Then: the refusal names what lane reads, so the builder can write the form in them
+        # Then: the refusal names what lane reads, so the building AI can write the form in them
         self.assertIn(
             "minItems 0 or 1, as Anthropic's structured outputs accept", str(refused.exception)
         )
