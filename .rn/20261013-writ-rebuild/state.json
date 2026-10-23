@@ -419,6 +419,9 @@
   },
   {
    "fact": "rn's checklists brought to dev/rn/design.md (3aaa1a5, cfd5813, 962a4a9 and the five after): each opening the user and the idea, no steps; checklist B-7; code B-24-27; plan's completion criterion and four steps. The five works with no checklist need none: the conductor's and scripts' outputs are shaped by the design and the skills, judged by prompt.md and the skills' Content verification; the issue to rn's makers takes ccpm's issue form in /rn:ty at rn's remake. README stage 2 is the last task (dev/rn/design.md:142-147), settled from the purpose: every work is used by its first reader"
+  },
+  {
+   "fact": "the user (2026-10-23) asked whether the quality is the same: it is not. On my own check of the nine runs, 0.1.0 left 0 items unmet after its stand-in's fixes, the new turn 1-4 (Goods that do not hold, which its stand-in passed); the '19-22 of 23' noted before was the stand-in's count. Quality (KR1.1) comes first: why false Goods pass is traced from the records alongside the time, and the time is cut only inside what keeps KR1.1"
   }
  ],
  "semantic_gist": [
@@ -529,7 +532,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "go on without asking unless a point is the user's. Next: T23: the four fixes before the time are in 9278715; design the time cuts from the per-move analysis of the nine runs in dev/turn/trials/readme/results.json, show the whole design to the user once (turn's design is agreed with the user), trace on paper, then one small run, then the six (3 plain, 3 stopped), 0.1.0's three reused. The one-task-two-runs of rn needs no change in turn on a trace of generator.md: rn's CCS for the first run names the design and the tests as the work, failing until the part is made; traced again at rn's remake. At rn's remake, /rn:ty's issue takes ccpm's issue form"
+   "first": "go on without asking unless a point is the user's. Next: T23: the four fixes before the time are in 9278715; bring KR1.1 at least to 0.1.0's from why false Goods passed, then design the time cuts inside that, from the per-move analysis of the nine runs in dev/turn/trials/readme/results.json, show the whole design to the user once (turn's design is agreed with the user), trace on paper, then one small run, then the six (3 plain, 3 stopped), 0.1.0's three reused. The one-task-two-runs of rn needs no change in turn on a trace of generator.md: rn's CCS for the first run names the design and the tests as the work, failing until the part is made; traced again at rn's remake. At rn's remake, /rn:ty's issue takes ccpm's issue form"
   }
  ],
  "uncertainty_signal": [
