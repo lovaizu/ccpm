@@ -464,6 +464,9 @@
   },
   {
    "fact": "2026-10-23: dev/rn/architecture.md rewritten on rn's agreed concept to the checklist (329 to 238), ACC's CCS named as the state and the work's hand-over to turn, the guard lane's, case rules moved to decisions/dev/rn/architecture.decisions.md#moved-out; followed the README and UX where the old one differed (sign-off shows links and core decisions, learnings, no hand fix, rn's own learner by Principle 8)"
+  },
+  {
+   "fact": "2026-10-23: the user: a principle of dev/architecture.md whose requirement a plugin's purpose does not give is simply not used; lane has no learner (its defects show in the plugin's runs, not lane:up's) and Principle 4 is met by the building AI reading the proposal; nothing changed"
   }
  ],
  "semantic_gist": [
@@ -574,7 +577,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "awaiting the user: lane and Principles 4 and 8 (recommended: 4 held by the building AI reading the proposal, 8 left out of lane until a trial shows the need, said plainly); then, one at a time, rn's open points in uncertainty_signal (guard on the main conversation first); then the code of lane, turn, rn. Never publish an Artifact unasked"
+   "first": "ask the user, one at a time, rn's open points in uncertainty_signal, the guard on the main conversation first; then the code of lane, turn, rn. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
