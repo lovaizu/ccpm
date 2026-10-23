@@ -63,8 +63,8 @@ only by `lay.py write`, after that OK.
    Give each step the lanes the points settled, each thing a lane takes written as the README's
    Lanes say, a command word for word as the step writes it; wait_for takes the approval first, then
    each command it holds back. Put in, too, each lane laid before that the building AI kept.
-7. Run `lay.py print <proposal>` as the whole command, nothing added before or after it, so its
-   print is all the command gives back. Hand on `lay.py print` as it is. Where it exits with 1, fix
+7. Run `lay.py print <proposal>` as the whole command, so its print is all the command gives
+   back. Hand on `lay.py print` as it is. Where it exits with 1, fix
    `<proposal>` as it says and run it again, or, where it names something in the plugin to fix,
    reply with that as a fact as in step 5 and go on by the answer. Reply with the line
    `lane:up proposes these lanes; send OK or what to change.` and under it the print, ending with
