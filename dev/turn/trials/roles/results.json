@@ -259,5 +259,34 @@
    "whole": 3.3
   },
   "read": "Every JSONL read. The first user stopped at B-1 in the set README; the generator, sent back by message, read the work alone, not the CCS or its files again, and added the license; the first user, sent the work made again with its new parts, read it whole again, ran demo.sh and gave both items their Good, no form sent back."
+ },
+ {
+  "commit": "4afc6a8, by roles.py",
+  "sessions": {
+   "generator": "544d6ef5-c109-4249-bc56-f91a77022fbb",
+   "first-user": "d748dd49-904d-4520-be92-79b5f249354d",
+   "learner": "bbd77d80-d193-456f-8a59-32731738e7ba"
+  },
+  "minutes": {
+   "generator": 1.0,
+   "first-user": 0.9,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Each reply filled its form. The first user, given `.` as what the receiver has, read the generator's reply and the run's state beside the result.",
+  "cause": "the first user's given held `.`, under which the run keeps its files, so its read_only lane let it read them; fixed in 492ac76 by giving no role the run's own files"
+ },
+ {
+  "commit": "492ac76, by roles.py",
+  "sessions": {
+   "generator": "9c3cd835-7580-4bff-9281-d29fea35830a",
+   "first-user": "784ecf58-7a38-49e9-91fc-da0265660bf6",
+   "learner": "c935b446-4c6c-420b-b885-5d0c4883e8b3"
+  },
+  "minutes": {
+   "generator": 1.0,
+   "first-user": 1.0,
+   "learner": 1.1
+  },
+  "read": "Every JSONL read. Each reply filled its form. The generator read the CCS and its files whole, ran demo.sh in a folder from mktemp -d and gave each Good with its lines; the first user read none of the run's files, ran demo.sh, stopped at B-1 in the set README with places, did and lacking; the learner read both records whole and quoted them, once writing a script of its own in /tmp to check its quotes, whose sed -i its lanes stopped."
  }
 ]
