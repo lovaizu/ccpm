@@ -407,6 +407,9 @@
   },
   {
    "fact": "T24 done (2026-10-23): checklist.md step 6 and B-14 as the user agreed; all 123 items read against them, 7 fixed; design B-12 to B-15 kept, as they ask what a design's Verification says, and plan B-2 and B-4 kept, being what the plan and its decisions give"
+  },
+  {
+   "fact": "the user decided (2026-10-23): session/plan.md stays one checklist for the whole plan, as tasks are judged with their trace to the criteria and the whole kept consistent; unchanged parts come back Good at once"
   }
  ],
  "semantic_gist": [
