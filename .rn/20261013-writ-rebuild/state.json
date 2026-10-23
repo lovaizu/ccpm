@@ -410,6 +410,9 @@
   },
   {
    "fact": "the user decided (2026-10-23): session/plan.md stays one checklist for the whole plan, as tasks are judged with their trace to the criteria and the whole kept consistent; unchanged parts come back Good at once"
+  },
+  {
+   "fact": "agreed with the user and in dev/rn/design.md (2026-10-23): a checklist holds the work's user and purpose, the idea and items with why; plan chain G1 → AC → T with a completion criterion → four steps written in every task (context read and gaps confirmed by the conductor; part and its checks designed in turn's first run; traced on paper by that run's first reader; made test first in a second run), the order held by a guard; design into the project's design document, checks into its tests; where they live read from the repository, asked once, kept in the project's rules or CLAUDE.md and paths-scoped rules; .claude/rules/plugin.md scoped by paths, checked from JSONL"
   }
  ],
  "semantic_gist": [
@@ -520,6 +523,9 @@
  ],
  "predictive_cue": [
   {
+   "first": "go on without asking unless a point is the user's (the user, 2026-10-23 before /clear). Next, in order: (1) bring rn's checklists to dev/rn/design.md:110-177 as agreed: checklist.md's opening leads with the work's user and their purpose, its numbered order rewritten as the idea the items rest on, not steps; code.md's order made the idea (design, tests designed from the requirements before the code), its how-to-work steps (run existing tests, check by rules) out, test design (equivalence partitions, 3-value boundaries, decision tables, state transitions, properties) turned into items answered on the tests; plan.md's template gains per task a completion criterion and the four steps as boxes, with items asking each criterion concrete and checkable and each step traced to it; prompt.md, design.md, ux.md, readme.md, usability.md and plan.md read for steps that are how-to-work; each changed checklist read against checklist.md, check.sh rn run. (2) README stage 2: dev/rn/design.md has no time for product/readme.md steps 5-7 (write after the product is built); add it to the design. (3) T23: design the time cuts (round 2 and send-backs, the last learner 5-7 min, role prompts copied ~30 s a start) and the one-task-two-runs change in turn, trace on paper against the nine runs in dev/turn/trials/readme/results.json, then one small run, then six"
+  },
+  {
    "next": "T23 fixes, then the six acceptance runs again: (1) told() at turn/scripts/run.py:192 gives a line only before a role move, the design (dev/turn/design.md:340) a line before each move and after each outcome; (2) a calling AI's cd moves the session's working folder and stalls turn (acc3); (3) trial.py stops before the first user starts, not during its reading, and sends answers to a returned question to the ended run, not a call again; (4) time: round 2 and send-backs, the last learner 5-7 min, the role prompt copied out about 30 s a start; Goods that do not hold ('every value stays as it was' while headers are rewritten) looked at with the time"
   }
  ],
@@ -543,7 +549,7 @@
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
   },
   {
-   "open": "rn: a point put to the user rests on a summary, not its source lines, and sends the work the wrong way (my follow_next A/B/C, 2026-10-23); where rn holds it, asked the user"
+   "open": "the five works with no checklist (points message, proposal and decisions' core, state.json, commit messages, lessons and issue): asked the user whether to make them now or after T14 shows which causes send-backs; no answer yet"
   }
  ],
  "retrieved_artifacts": [
