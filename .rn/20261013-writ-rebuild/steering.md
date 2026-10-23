@@ -110,7 +110,7 @@ turn remade on `dev/architecture.md` and lane, before rn is remade on it.
   `dev/architecture.md`: an orchestrator agent holding the run by a flow script and a state file,
   roles answering it alone, questions sent to the calling AI and the run going on with the answer, a
   stopped run going on from its last step, and each role's steps held by lanes. Serves AC1.
-- [ ] T22: turn's agents, scripts and hooks are made to that design, the hooks laid by `lane:up`,
+- [x] T22: turn's agents, scripts and hooks are made to that design, the hooks laid by `lane:up`,
   and none of turn's own checks left; check.sh 100% and mutate.sh turn 0 survivors. Serves AC1.
 - [ ] T23: turn, tried as its user from start to end, achieves every story and its key results are
   counted, and passes `claude plugin validate --strict`. Serves AC1.

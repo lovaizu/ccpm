@@ -34,14 +34,12 @@ class Grounds(NamedTuple):
 
 
 class Form(NamedTuple):
-    """What an item may hold besides its checklist and ID, one shape of keys each; whether every
-    item is given; whether questions are asked; whether a reply asking questions gives only the
-    items waiting on them, as one asked before the work is made has no Good to give yet; and what
-    else the form holds beside its items, checked against the grounds. A form of no shapes gives no
-    items."""
+    """What an item may hold besides its checklist and ID, one shape of keys each, every item judged
+    given; whether questions are asked; whether a reply asking questions gives only the items
+    waiting on them, as one asked before the work is made has no Good to give yet; and what else the
+    form holds beside its items, checked against the grounds. A form of no shapes gives no items."""
 
     shapes: tuple[tuple[str, ...], ...]
-    every: bool = False
     asks: bool = False
     asks_first: bool = False
     more: Callable[[dict[str, Any], Grounds], list[str]] | None = None
@@ -52,14 +50,14 @@ class Form(NamedTuple):
 STOP = ("places", "did", "lacking")
 # Before the work is made, the orchestrator says for every item what in the CCS and its files gives
 # its Good, or the question it waits on.
-CHECK = Form((("can",), ("question",)), every=True, asks=True)
+CHECK = Form((("can",), ("question",)), asks=True)
 # The first user gives every item the Good it found, or where it stopped.
-FIRST_READING = Form((ONE, EACH, STOP), every=True)
+FIRST_READING = Form((ONE, EACH, STOP))
 # The orchestrator's check of each Good the first user gave: it holds, or where the receiver does
 # not get what the item asks, as a stop.
-HELD = Form((("holds",), STOP), every=True)
+HELD = Form((("holds",), STOP))
 # Each item two rounds leave without Good waits on a question the orchestrator words.
-LEFT = Form((("question",),), every=True, asks=True)
+LEFT = Form((("question",),), asks=True)
 
 
 def worded(value: Any) -> bool:
@@ -142,7 +140,7 @@ def ground_problems(name: str, grounds: Any, kept: tuple[str, ...]) -> list[str]
 
 # The generator claims the Good it set for every item, or the question it waits on; asking before
 # it makes anything, it gives only the items waiting.
-CLAIM = Form((ONE, EACH, ("question",)), every=True, asks=True, asks_first=True)
+CLAIM = Form((ONE, EACH, ("question",)), asks=True, asks_first=True)
 # The learner gives no items, only its lessons.
 LEARNT = Form((), more=lessons)
 
@@ -184,7 +182,7 @@ def check(
     if data is None:
         lists = ", ".join(f'"{k}": [...]' for k in listed(form))
         return ["give it as JSON: {" + (lists or '"lessons": [...], "checked": "..."') + "}"]
-    every = form.every and not (form.asks_first and data["questions"])
+    every = not (form.asks_first and data["questions"])
     said = item_problems(data["items"], items, work, form, list(each), every) if form.shapes else []
     if form.asks:
         said += question_problems(data)

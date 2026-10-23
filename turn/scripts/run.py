@@ -381,9 +381,9 @@ def next_step(result: str, text: str) -> dict[str, Any]:
     answer or a role's reply, and gives what the orchestrator does next."""
     run = going(result)
     # What waits on the orchestrator's judgment is told first, before it is shown.
-    waits = [j for j in JUDGES if j in run]
+    waits = next((j for j in JUDGES if j in run), None)
     if waits and not run.get("told") and not text.strip():
-        return judge(run, waits[0])
+        return judge(run, waits)
     # Asked with nothing, what the orchestrator is to judge is shown again, so it can always see it
     # whole.
     if "check" in run:
@@ -643,13 +643,13 @@ def taught(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
         },
     )
     run["done"] = f"{LEARNER} gave {len(reply['lessons'])} lessons from the run."
-    run["returned"] = True
+    run["returned"] = run["call"]["result"]
     return judge(run, "returned")
 
 
 def returned(run: dict[str, Any]) -> dict[str, Any]:
     """The run returned, once told: what it kept beside the result is removed."""
-    result = run["call"]["result"]
+    result = run["returned"]
     os.remove(state_path(result))
     for agent in FORMS:
         os.remove(reply_path(result, agent))

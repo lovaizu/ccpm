@@ -121,6 +121,22 @@ class TestItems(FormTest):
             ],
         )
 
+    def test_an_item_of_two_shapes_is_told_the_shapes_it_takes(self):
+        # Given: a reading whose F-1 holds a Good with its lines and a stop as well
+        both = dict(GOOD, places=["README.md:1-3"], did="read it", lacking="nothing")
+        # When: it is checked
+        # Then: F-1 is told the shapes it takes, one of them
+        said = self.said({"items": [both, STOPPED]}, forms.FIRST_READING)
+        self.assertEqual(
+            said,
+            [
+                (
+                    'checklists/readme.md F-1 must hold one of "good" with "lines" or "places" with'
+                    ' "did" with "lacking"'
+                )
+            ],
+        )
+
     def test_a_check_asks_its_questions_of_an_item(self):
         # Given: a check whose question no item waits on
         # When: it is checked
