@@ -580,7 +580,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "next: turn's prompts (up, generator, first-user, learner; evaluator.md removed) with prompt.md and usability.md open, by a subagent, checked by hand; then the lanes laid by lane:up (hooks.json and test_lanes.LAID still name turn:evaluator and goods.json; the orchestrator's read_whole on the {given} turn.py start prints; no lane yet holds handing the answer on as it came), the trials' reply sets (flow.py still names the evaluator), then the trials. No question is open for the user. Never publish an Artifact unasked"
+   "first": "on resume: a subagent was started (2026-10-23) to bring turn's four prompts (up, generator, first-user, learner; evaluator.md removed) to the architecture and the decisions' [step] lines with prompt.md and usability.md open, uncommitted. If /clear stopped it, read git status and git diff; redo it if partial; check by hand against prompt.md, usability.md and each [step] line, run check.sh turn, commit. Then the lanes laid by lane:up (hooks.json and test_lanes.LAID still name turn:evaluator and goods.json; the orchestrator's read_whole on the {given} turn.py start prints; no lane yet holds handing the answer on as it came), the trials' reply sets (flow.py still names the evaluator), then the trials. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
