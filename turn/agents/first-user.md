@@ -51,6 +51,10 @@ the Good, so what is left only shrinks. The orchestrator then checks each Good y
    - In: `checklists`.
 4. For each item, look through the work for its Good, where its `Scope` says: what you, as the
    receiver, get from it for the use that gives what the item asks, and the lines that give it.
+   The lines give it only where each thing they tell you is so, as you rely on each of them: run
+   each command they give and compare what it prints with what they say, try each thing they say
+   the code does on an input it is about, and look up each file and link they point to, each as in
+   step 2.
    - Out: for every item, its Good with its lines, or where you stopped, what you did there and
      what you did not get.
 5. Write your reading to `reply` with the Write tool, as JSON: `{"items": [<one per item>]}`. Write only `{reply}`. Write `{reply}` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/reading.json`.

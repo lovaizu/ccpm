@@ -111,16 +111,18 @@ ending with `EOF`.
    "good", "lines"}`, or, for an item asked of each part, `{"checklist", "item", "parts": [{"part",
    "good", "lines"}, ...]}`. Read the work whole, each file the CCS names under the call's `work`
    kind, as in step 4. Then, for each Good, read the work at its lines as the receiver the CCS
-   names, for the use it names, and run what the Good says the receiver gets, as the receiver
-   would, such as each command it says works, each in a command of its own with Bash, with any
-   input it needs made inside the command, in a folder from `mktemp -d` that the command removes
-   at its end; for an item asked of each part, each part's Good at its lines. Run
+   names, for the use it names, and check each thing those lines tell the receiver, as the
+   receiver relies on each of them, not the Good's words alone: run each command they give and
+   compare what it prints with what they say, try each thing they say the code does on an input it
+   is about, and look up each file and link they point to; each in a command of its own with Bash,
+   with any input it needs made inside the command, in a folder from `mktemp -d` that the command
+   removes at its end; for an item asked of each part, each part's Good at its lines. Run
    `turn.py next <result>` with your check of the Goods, and go to step 3.
    - In: `goods`, each Good with the lines it rests on, and what you read in step 4.
    - Out: your check, as JSON: `{"items": [<one per item of goods>]}`. Each item is
      `{"checklist": "<as in goods>", "item": "<as in goods>"}` with one of:
-     - `"holds": true`, written where the receiver gets at those lines what the item asks, and,
-       for an item asked of each part, gets it in every part;
+     - `"holds": true`, written where the receiver gets at those lines what the item asks and
+       each thing they tell is so, and, for an item asked of each part, gets it in every part;
      - where not, `"places"`: the lines of the work where the receiver does not get it, each
        `"<path of the work>:<from>-<to>"`, for an item asked of each part each part that does not
        give it; `"did"`: what you did there as the receiver, such as a command you ran; and

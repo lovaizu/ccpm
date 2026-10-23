@@ -70,11 +70,16 @@ gives each Good is yours to decide.
    For every item find the lines that give its Good; for an item asked of each part, run
    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" parts <the result>`, the result being `reply`
    without its last `.generator.json`, for the parts as they now stand, and find each part's Good
-   inside it. Then run what the work gives as the receiver would, such as each command it tells
-   them to run and its tests, each in a command of its own with Bash, with any input it needs made
-   inside the command, in a folder from `mktemp -d` that the command removes at its end. Where a
-   part gives no Good or a run does not do what the work says, make the work again, and read and
-   run it again. Where making shows an item only the user's answer can give, the item waits on a
+   inside it. Then check each thing the work tells the receiver, as they rely on each of them: run
+   each command it gives and its tests and compare what they print with what it says, try each
+   thing it says the code does on an input it is about, and look up each file and link it points
+   to; each in a command of its own with Bash, with any input it needs made inside the command, in
+   a folder from `mktemp -d` that the command removes at its end. Where a part gives no Good or a
+   thing it tells is not so, make the work again, and read and check it again. Where an item's
+   Good needs a file the work does not hold, such as one its lines link to, the item waits on a
+   question whether to add that file to the work, recommending it be added as an entry of the
+   CCS's kind for the work, as the run makes the work's files alone and reads the CCS again once
+   answered. Where making shows an item only the user's answer can give, the item waits on a
    question.
    - Out: for every item, the lines that give its Good, or the question it waits on.
 6. Write your claim to `reply` with the Write tool, as JSON:

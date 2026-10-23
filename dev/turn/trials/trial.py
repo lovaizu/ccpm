@@ -33,7 +33,8 @@ against its lines.
 
 The user is away: take each question's recommended answer as theirs, write it into the decisions
 file .tasks/ccs.json names, in place of what it changes there or as a line of its own, so the
-decisions say one thing, and send it to the agent with SendMessage, loaded with ToolSearch, to the
+decisions say one thing, and where the answer changes what the CCS names, such as a file added to
+the work, change the CCS too; then send it to the agent with SendMessage, loaded with ToolSearch, to the
 agent ID its start gave back. turn sends you a line before each move and after each outcome;
 nothing need answer them. Fix nothing in the work: it is judged as it came back.
 

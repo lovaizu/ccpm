@@ -106,3 +106,12 @@
   the CCS check with every answer and record kept (2026-10-23): in five of six acceptance runs on
   the readme task the answer adding LICENSE to the work was kept in the CCS while the run held its
   first work, so the generator, held to it, asked the same question again and again.
+- [step: generator, first user, orchestrator] A Good holds at its lines only where each thing they
+  tell the receiver is so: each command they give run and its print compared with what they say,
+  each thing they say the code does tried on an input it is about, each file and link they point
+  to looked up (2026-10-23): in the acceptance runs at 7edc487 READMEs came back with untrue words
+  on a byte order mark and a link to a LICENSE not there, each passed by the first user and the
+  check, which ran what the Good's own words said alone.
+- [step: generator] Where an item's Good needs a file the work does not hold, the item waits on a
+  question whether to add it to the work, recommending it be added under the CCS's kind for the
+  work (2026-10-23): an answer kept in the decisions alone left the run unable to write LICENSE.
