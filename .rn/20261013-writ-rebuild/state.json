@@ -443,6 +443,9 @@
   },
   {
    "fact": "2026-10-23: turn's user, purpose and concept agreed with the user, kept in decisions/dev/turn/architecture.decisions.md#concept: the calling AI deals only with the orchestrator; through the generator and first user's back and forth the orchestrator reads nothing and only passes, as anything between keeps the Goods from settling; the orchestrator checks each Good every round, so a run can end in one round"
+  },
+  {
+   "fact": "2026-10-23: dev/turn/architecture.md rewritten on the agreed concept to the architecture checklist (433 to 242 lines), case rules moved to decisions/dev/turn/architecture.decisions.md#moved-out for turn's tests and steps; the user does not read the architecture once its intent is agreed, so it is committed after my own check"
   }
  ],
  "semantic_gist": [
@@ -553,7 +556,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "rewrite dev/turn/architecture.md to rn/checklists/product/architecture.md on the agreed concept (decisions/dev/turn/architecture.decisions.md#concept), case rules left to tests (Given/When/Then) and prompt steps; show the Japanese before committing; then check turn's code and trial results against it, setting apart what is kept and rebuilt; then lane, then rn, each concept agreed first. Never publish an Artifact unasked"
+   "first": "check turn's code (agents, scripts, tests) and trial results against the agreed concept and dev/turn/architecture.md, with the moved-out list as what the tests and steps must hold; set apart what is kept and what is rebuilt; lane's concept awaits the user's answer on whether the calling AI alone answers and approves lane:up; then rn's concept. The user agrees the concept only, not the architecture text. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
