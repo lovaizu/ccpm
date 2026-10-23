@@ -54,7 +54,7 @@ sequenceDiagram
   L->>C: the points to decide, one at a time
   L->>C: the lanes proposed
   C->>B: asks for the OK
-  B->>C: types /lane:ok
+  B->>C: OK
   C->>L: OK
   Note over L: writes the steps and the hooks, and puts lane's code in the plugin
   Note over S: on a later run of the plugin
@@ -79,7 +79,7 @@ sequenceDiagram
   L->>C: the lanes, each under the action it watches, with the step as it would read and its hooks
   C->>B: asks for the OK
   alt OK
-    B->>C: types /lane:ok
+    B->>C: OK
     C->>L: OK
     Note over L: writes the steps and the hooks, and puts lane's code in the plugin
   else a change asked
@@ -90,8 +90,7 @@ sequenceDiagram
 
 - Lane's code is put in the plugin once for all its subagents: a link to it in a plugin of the ccpm
   marketplace, a copy with its version anywhere else. Run again where an older copy is, `lane:up`
-  proposes, with the lanes, bringing the copy and the hooks to its own version, and does so once
-  the builder types `/lane:ok`.
+  brings the copy and the hooks to its own version.
 
 ### A run that drifts
 

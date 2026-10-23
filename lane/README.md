@@ -43,9 +43,8 @@ Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
    or `git push`.
 ```
 
-You approve them by typing `/lane:ok`, lane's command that only you can run. `lane:up` writes the
-step into `agents/changelog-writer.md` and the hooks into `hooks/hooks.json`, and puts lane's code,
-which runs the hooks, in `hooks/lane/`.
+You choose OK when Claude asks. `lane:up` writes the step into `agents/changelog-writer.md` and the
+hooks into `hooks/hooks.json`, and puts lane's code, which runs the hooks, in `hooks/lane/`.
 
 Then you run `/notes:changelog`. When `changelog-writer` runs `git commit -m notes`, Claude Code
 does not run it, and the subagent reads:
@@ -112,9 +111,9 @@ read_only lets the subagent read, beside its inputs, the form each of its in_for
 step tells it to write in that form, and the form, a file of your plugin, holds nothing of the
 project's work.
 
-follow_next reads the next move your script prints as one JSON line last in its output: the tool
-call itself, `{"tool": ..., "input": {...}}`, or `{"reply": true}` where the move is the subagent's
-reply that ends its turn; a script printing its move in a form of its own gets no follow_next.
+follow_next reads the next move your script prints as the tool call itself, one JSON line
+`{"tool": ..., "input": {...}}` last in its output; a script printing its move in a form of its own
+gets no follow_next.
 
 ## Requirements
 
@@ -122,8 +121,6 @@ reply that ends its turn; a script printing its move in a form of its own gets n
 - Python 3.9 or later, run as `python3`, on the machines the plugin runs on.
 
   Without it, the hooks stop the tool calls they watch, each asking for Python to be installed.
-- jq, the command-line JSON tool, where you ask Claude to lay lanes.
-- GitHub CLI `gh`, signed in, where you send a lesson to lane's makers as an issue.
 
 ## Installation
 
@@ -138,8 +135,7 @@ Then ask Claude to lay lanes on your plugin, as in the example. Claude starts `l
 conversation, or from a subagent it started.
 
 lane's code in your plugin's `hooks/lane/` is a copy with its version, which `lane:up` brings to its
-own version, with the lanes you approve, the next time it is run there. In a plugin of ccpm itself,
-the code is a link to lane's.
+own version the next time it is run there. In a plugin of ccpm itself, the code is a link to lane's.
 
 ## Documentation
 

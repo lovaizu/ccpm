@@ -73,10 +73,10 @@ sequenceDiagram
   request of its own branch.
 - Sign-offs: before each, an AI that did not make the proposal reads and uses it in the user's
   place, the finished work for each acceptance criterion, and rn makes it again until that AI finds
-  nothing lacking; what only the user can settle comes to them as a point. At the sign-off rn
-  shows the link to each work and its core decisions, each with its intent, in a few short lines,
-  and nothing else: no summary of the text, no diff. The user glances at the work for its size and
-  diagrams and judges the decisions and intents; the text is for that AI and rn to check.
+  nothing lacking. At the sign-off rn shows the link to each work and its core decisions, each with
+  its intent, in a few short lines, and nothing else: no summary of the text, no diff. The user
+  glances at the work for its size and diagrams and judges the decisions and intents; the text is
+  for that AI and rn to check.
 
   Where the core decisions do not fit in a few short lines, rn takes it as a sign the work is not
   yet simple, and makes it again before it stops.
@@ -162,20 +162,15 @@ sequenceDiagram
   participant R as rn<br/>#lt;plugin#gt;
   loop one message per learning
     R->>U: what happened, and where it would make later work better
-    U->>R: the user's checklists or rules, an issue to rn's makers, both, or neither
-    opt an issue
-      R->>U: the issue, whole
-      U->>R: /rn:ty
-    end
+    U->>R: the user's checklists, an issue to rn's makers, both, or neither
   end
   R-->>U: each issue sent, and the pull request marked ready with the additions taken
 ```
 
-- A learning for the user's repository alone goes into the user's checklists or rules; one that
-  would help everyone's work, such as a question rn's own checklist does not ask or a slip of rn's
-  own steps, goes to rn's makers as an issue, since rn is open source and gets better for all its
-  users from it. rn recommends where each goes, and the user decides; an issue is opened only on
-  their `/rn:ty`, once they have seen it whole.
+- A learning for the user's repository alone goes into the user's checklists; one that would help
+  everyone's work, such as a question rn's own checklist does not ask or a slip of rn's own steps,
+  goes to rn's makers as an issue, since rn is open source and gets better for all its users from
+  it. rn recommends where each goes, and the user decides.
 
 ## Benefits
 
@@ -194,5 +189,5 @@ What the user gains with rn, each with why it holds; these are why the user choo
 - What was decided, and why, stays, in the README and the design in the user's repository and in
   rn's commit messages, so the next piece of work, or a teammate, starts from it.
 - What a piece of work taught is confirmed with the user one learning at a time: what they add to
-  their checklists or rules makes their later work better, and what they send rn's makers makes rn
-  better for them and everyone.
+  their checklists makes their later work better, and what they send rn's makers makes rn better
+  for them and everyone.

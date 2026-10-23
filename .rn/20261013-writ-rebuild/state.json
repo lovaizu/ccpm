@@ -425,6 +425,9 @@
   },
   {
    "fact": "2026-10-23: the user decided the root is the principles: eight shared ones in dev/architecture.md#principles (8: a learner after each run, lessons to the user's checklists or rules or as an issue to the makers on the user's own yes), each design opening with its own two; checklists gained design B-32/B-33 and usability B-21 (general, not plugin-only, as the user said); turn, lane and rn designs read against them by independent readers twice and settled at the decisions: turn's two readers each on their own, Good only where both give it, questions before making, a core in the result; lane's /lane:ok, readers before the print, flow for lane:up; rn's guards in rn's conversation alone, issues on /rn:ty, turn's result and state in the record. Awaiting the user's review of the designs and the UX/README changes; then the code to the designs, then T23's runs"
+  },
+  {
+   "fact": "2026-10-23: the user chose to return turn's, lane's and rn's designs, UXs and READMEs (and report.decisions R42) to 49e4e75, the agreed text with the principles linked at the top: I had changed agreed documents unshown, applied the principles without each plugin's user and purpose (a person's /lane:ok on lane, which only AIs use), and let subagents write decisions I made on the spot. Kept: the eight principles, the checklist items, usability's 'what the reader uses it for'"
   }
  ],
  "semantic_gist": [
@@ -535,7 +538,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "go on without asking unless a point is the user's. Next: the user reviews the changed designs, UXs and READMEs of turn, lane and rn (agreed documents); then turn's code to its design (evaluator on its own, flow's agreement, questions before making, core, learner once, lines checked), lane's code (wait_for wording, /lane:ok, flow, state path), rn's later at its remake; then T23: one small run, then 3 plain and 3 stopped, KR1.1 judged for both versions by one judge from the returned work; 0.1.0's three re-judged by that judge"
+   "first": "per plugin, one at a time: confirm its user and purpose with the user first; then list where the design breaks the principles; show the fixes once and write them only once agreed. lane first is not decided; ask the user which. Known from the readings, kept for that: turn's evaluator sees the first user's reading (design:165); no part checks a Good is true; lane's user is an AI (the user, 2026-10-23); the reading results are in this session's conversation only"
   }
  ],
  "uncertainty_signal": [

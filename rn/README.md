@@ -57,8 +57,8 @@ From your answers rn writes the plan. It holds the goal, which is your purpose a
 and the acceptance criteria, each one thing the finished work must do for that purpose; the goal
 and every criterion get an ID that later messages refer to. Before showing it to you, another AI
 that did not write it reads and uses it in your place, and rn makes it again until that AI finds
-nothing lacking; what only you can settle comes to you as a point. Then rn stops at the plan
-sign-off, the first of three stops where it shows you a proposal and waits for your answer:
+nothing lacking. Then rn stops at the plan sign-off, the first of three
+stops where it shows you a proposal and waits for your answer:
 
 ```console
 ● Plan sign-off
@@ -141,12 +141,9 @@ uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
 ```console
 ● Deliverable sign-off
   The finished work is on the pull request: https://github.com/you/app/pull/42
-  - src/cart and src/checkout build with strict type checks, the account pages without, so
-    the move stops there and the rest builds as before.
-  - Values from the account pages pass through one checker, src/checkout/parse.ts, so a
-    wrong type is stopped where it enters.
-  - The three bugs are kept in tests/type-bugs/, built on every run and expected to fail,
-    so AC1 stays checked.
+  AC1: Code that repeats each of the three bugs fails the build.
+  AC2: The app builds and runs as before.
+  AC3: Every file of src/cart and src/checkout is TypeScript.
   /rn:ty to approve, /rn:gm <feedback> to ask for a change.
 
 > /rn:ty
@@ -155,8 +152,8 @@ uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
 rn makes each document and the finished work with its checklist for that kind, which says what that
 kind, such as a README or code, must give its reader. What this piece of work taught, rn offers
 you as learnings, one per message, each with what happened and where it would make later work
-better: your own checklists or rules, for your repository alone, or rn itself, as an issue to
-rn's makers, for everyone's work; you decide each, and an issue is shown to you whole first:
+better: your own checklists, for your repository alone, or rn itself, as an issue to rn's makers,
+for everyone's work; you decide each:
 
 ```console
 ● Learnings to decide
@@ -174,21 +171,12 @@ rn's makers, for everyone's work; you decide each, and an issue is shown to you 
 
 > a
 
-● Issue to rn's makers, on lovaizu/ccpm
-  rn: the checklist for code does not ask that no value is typed any
-  A file moved from JavaScript to TypeScript was first given values typed any, which let a
-  wrong type through until the AI that used it caught it. The checklist for code could ask
-  that no value is typed any.
-  /rn:ty to open it, /rn:gm <feedback> to ask for a change.
-
-> /rn:ty
-
 ● Issue sent: https://github.com/lovaizu/ccpm/issues/120
 ● The pull request is ready to merge: https://github.com/you/app/pull/42
 ```
 
-What you add to your checklists or rules goes into the same pull request; your checklists sit in
-`.rn/checklists/` in your repository. The merge is yours.
+What you add to your checklists sits in `.rn/checklists/` in your repository and goes into the same
+pull request. The merge is yours.
 
 ## Why rn
 
@@ -224,8 +212,8 @@ that:
 
 - Every later piece of work gets better.
 
-  Each learning you take goes into your checklists or rules, which rn makes all later work with,
-  and one that would help everyone goes to rn's makers as an issue, so rn gets better for you too.
+  Each learning you take goes into your checklists, which rn makes all later work with, and one
+  that would help everyone goes to rn's makers as an issue, so rn gets better for you too.
 
 ## Requirements
 
@@ -246,11 +234,6 @@ that:
   The scripts of rn run on them, and so do those of turn, a plugin installed with rn that rn uses to
   make the plan, each document and the finished work, and to have an AI that did not make each use
   it.
-
-- A Claude Code conversation for rn alone.
-
-  rn's checks act in the conversation where you typed an rn command, so other work goes in another
-  conversation.
 
 - Recommended: Claude Code run in a [Docker Sandbox](https://docs.docker.com/ai/sandboxes/), with
   the permission mode `bypassPermissions`.
