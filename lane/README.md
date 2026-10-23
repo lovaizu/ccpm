@@ -43,8 +43,9 @@ Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
    or `git push`.
 ```
 
-You choose OK when Claude asks. `lane:up` writes the step into `agents/changelog-writer.md` and the
-hooks into `hooks/hooks.json`, and puts lane's code, which runs the hooks, in `hooks/lane/`.
+You approve them by typing `/lane:ok`, lane's command that only you can run. `lane:up` writes the
+step into `agents/changelog-writer.md` and the hooks into `hooks/hooks.json`, and puts lane's code,
+which runs the hooks, in `hooks/lane/`.
 
 Then you run `/notes:changelog`. When `changelog-writer` runs `git commit -m notes`, Claude Code
 does not run it, and the subagent reads:
@@ -121,6 +122,7 @@ gets no follow_next.
 - Python 3.9 or later, run as `python3`, on the machines the plugin runs on.
 
   Without it, the hooks stop the tool calls they watch, each asking for Python to be installed.
+- jq, the command-line JSON tool, where you ask Claude to lay lanes.
 
 ## Installation
 

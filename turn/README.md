@@ -1,11 +1,11 @@
 # turn
 
-turn has AI work only toward passing your checklist: every agent looks only for each item's Good and
-works only to give it, and what is to be doubted, such as whether a reply has its form or an input
-was read whole, is checked by turn's scripts, not by an agent. It is a Claude Code plugin for anyone
-who has AI make documents, code and the like in the steps of their own plugin. What a step has turn
-make comes back meeting the step's checklists, read first by an AI that did not make it, in the
-place of its reader.
+turn has AI work only toward passing your checklist: every agent that makes or reads the work looks
+only for each item's Good and works only to give it, and what is to be doubted, such as whether a
+reply has its form or an input was read whole, is checked by turn's scripts, not by an agent. It is
+a Claude Code plugin for anyone who has AI make documents, code and the like in the steps of their
+own plugin. What a step has turn make comes back meeting the step's checklists, read first by AIs
+that did not make it, in the place of its reader.
 
 ## Example
 
@@ -62,11 +62,11 @@ generator: will write README.md for the seven items, as MIT licensed, and run it
 usage commands as a developer would
 ```
 
-This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
-the developer meeting the project would, running what they would run. Each item is judged from that
-use: it gets its Good when the reader gets what the item asks, with the lines that give it. Where an item gets none, README.md is made again
-and read once more, and an item still without Good comes back with what the reader would get once
-it has one and where it was not found.
+This time turn writes README.md and runs what it tells, and two AIs that did not write it, each on
+its own, use it as the developer meeting the project would, running what they would run. Each item
+is judged from that use: it gets its Good when both find the reader gets what the item asks, with
+the lines that give it. Where an item gets none, README.md is made again and read again, and an
+item that still gets none comes to the step's AI as a question for the user.
 
 When turn returns, README.md is in place, and the result gives each item's Good with the lines it
 rests on:
@@ -74,19 +74,20 @@ rests on:
 ```json
 {"items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
             "lines": ["README.md:3-4"]}, ...],
- "not_good": [], "lessons": [...]}
+ "lessons": [...]}
 ```
 
 The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends. The
-lessons are what turn found on how its own run went, such as time spent for nothing, for you to
-hand on to turn's makers.
+lessons are what fell short in turn's run and why, which the step's AI puts to you: one of your
+project's own for your checklists or rules, a general one for turn's makers as an issue, opened
+once you say yes.
 
 ## Why turn
 
 turn gives your plugin's AI what it does not get by making the work and checking it itself.
 
-- The AI that reads the work did not make it, has only what the work's reader has, and uses the
-  work as they do.
+- The AIs that read the work did not make it, have only what the work's reader has, and use the
+  work as they do, each on its own.
 
   The AI that made a work finds the Good it meant; an AI meeting it for the first time finds only
   the Good its lines give, which is what the work's reader gets.

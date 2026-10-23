@@ -54,7 +54,7 @@ sequenceDiagram
   L->>C: the points to decide, one at a time
   L->>C: the lanes proposed
   C->>B: asks for the OK
-  B->>C: OK
+  B->>C: types /lane:ok
   C->>L: OK
   Note over L: writes the steps and the hooks, and puts lane's code in the plugin
   Note over S: on a later run of the plugin
@@ -79,7 +79,7 @@ sequenceDiagram
   L->>C: the lanes, each under the action it watches, with the step as it would read and its hooks
   C->>B: asks for the OK
   alt OK
-    B->>C: OK
+    B->>C: types /lane:ok
     C->>L: OK
     Note over L: writes the steps and the hooks, and puts lane's code in the plugin
   else a change asked

@@ -135,7 +135,8 @@ After each run, a learner that did no part of the work reads the records of ever
 and gives each lesson with the words it rests on quoted. The orchestrator puts each to the user: a
 lesson of their project's own goes into their checklists or rules; a general one goes to the
 plugin's makers as an issue, holding the need and its points alone, never the user's source, and
-opened only once the user says yes.
+opened only on the user's own yes, an approval as The caller approves what is theirs says, since an
+issue on a public repository is not undone.
 
 What fell short often lies in what a role did, which only its record shows, and a lesson without
 the facts it rests on is a guess. A lesson of the project's own improves that project's later work;
