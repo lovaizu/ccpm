@@ -601,7 +601,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: running in the scratchpad (2026-10-23) at 9d39849: trial.py readme r7-r9 and stopped s7-s9; find them with pgrep -af trial.py. Then read each README whole myself, running what it says, set beside 0.1.0's base1-3 (scratchpad base<n>.work): what each gives the receiver, what is untrue or missing; the judge only as a check on my reading; report to the user in a few plain lines (the user found long reports hard to follow). No question is open for the user. Never publish an Artifact unasked"
+   "first": "on resume: the six acceptance runs at 9d39849 (r7-r9, stopped s7-s9) all ended at once with `claude exited 1`, as the usage limit was reached (2026-10-23); run them again once usage is back: trial.py readme <new> and trial.py readme <new> stopped, three each at once. Then read each README whole myself, running what it says, set beside 0.1.0's base1-3 (scratchpad base<n>.work); judge only as a check; report to the user in a few plain lines. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
