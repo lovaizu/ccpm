@@ -586,7 +586,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "next: turn's flow trial reply sets made to the architecture's Verification ways (dev/turn/trials/flow: replies, roles stand-ins, flow.py; evaluator gone; the Good check by the real orchestrator), by a subagent, then the units' trials (flow, roles), then T23. No question is open for the user. Never publish an Artifact unasked"
+   "first": "on resume: a subagent was started (2026-10-23) to bring dev/turn/trials/flow to the architecture's orchestrator unit ways (stand-ins for generator, first-user, learner; a reply set per way; flow.py's ways), checked by feeding the sets through turn.py, uncommitted. If /clear stopped it, read git status and git diff; redo it if partial; check by hand, run check.sh turn, commit. Then run the units' trials (flow ways, roles.py) and judge from the records, then T23. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
