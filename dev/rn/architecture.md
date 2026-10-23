@@ -1,329 +1,238 @@
 # rn architecture
 
-rn is one AI, the conductor, that talks with the user and decides every move, and a maker that makes
-each work the user sees, such as the plan, a document or the finished work, and has it used first by
-an AI that did not make it; a record kept before each next move lets any conversation go on from
-where the last one stopped in a session, one piece of work from `/rn:up` to the merge. It brings
-about [rn's UX](ux.md), whose goal and key results it is checked against.
+rn is built on [how a plugin works](../architecture.md) so that a piece of work asked for in rough
+words reaches the user's purpose while they only answer, against two drifts: the work drifting from
+the purpose, and the AI itself drifting as the work goes on. The conductor, the one AI that talks
+with the user, decides every move from a short state it replaces at each one, and has each work
+made through turn; the user, the goal, the key results, and what a point to decide, a sign-off, a
+task and a learning are, are in [rn's UX](ux.md).
 
-rn holds the [principles every plugin holds](../architecture.md#principles), and its own:
+rn holds the [principles every plugin holds](../architecture.md#principles), named below
+Principle 1 to 8, and its own, named below rn's Principle 1 and 2:
 
 1. Every task traces back to the purpose, through the acceptance criteria it serves.
-2. The plan is remade from the facts each move brings alone, and only a short state is carried from
-   move to move.
+2. At every move the conductor replaces a short state with the checked facts alone, and replans
+   from that state alone.
 
 ## User stories
 
 - As the user, I want to ask for a piece of work in rough words with `/rn:up <what I want>`.
-
-  The UX's scenes Asking and The plan begin here.
-- As the user, I want to answer each point rn confirms with me, with an option's letter or in my own
-  words.
-
-  A point to decide is a choice that changes what is made. The points come while rn asks before it
-  writes the plan, the goal of the piece of work and its acceptance criteria, each one thing the
-  finished work must do for the goal; during the tasks, the parts the piece of work is divided
-  into; and as the lessons, what the session learned, at the end. The UX's scenes Asking, The tasks
-  and Lessons rest on this story, as the points they bring.
-- As the user, I want to approve a proposal with `/rn:ty` or ask for a change with
-  `/rn:gm <feedback>`.
-
-  A proposal is what rn shows the user at a sign-off, a stop where it waits for their answer; there
-  are three, in this order: the plan sign-off, the design sign-off on the documents the purpose
-  needs, and the deliverable sign-off on the finished work. The UX's scenes Feedback and
-  Checklists rest on this story: feedback is sent with `/rn:gm`, and each proposal shows what the
-  work gives for each item of its checklists.
+- As the user, I want to answer each point to decide and each learning rn puts to me, one per
+  message, with an option's letter or in my own words.
+- As the user, I want to approve the proposal at each sign-off with `/rn:ty`, or ask for a change
+  with `/rn:gm <feedback>`.
+- As the user, I want to be told before and after each step what rn does, and to stop a step going
+  a way I do not want.
 - As the user, I want to go on from where I stopped with `/rn:up` in a fresh conversation.
-
-  The UX's figure ends on this story, wherever the user stops, and so does Feedback's clearing of
-  the conversation.
-- As the user, I want to merge the pull request rn marked ready.
-
-  The plan, the documents and the finished work reach the user on a pull request of the session's
-  own branch, as the UX has it. The UX's scene Records rests on this story, as rn's commit messages
-  on that branch, and Lessons' additions go into the same pull request.
+- As the user, I want to merge the pull request rn marks ready.
 
 ## Architecture
 
 ### Logical view
 
-Six components take on the stories; the user meets only the conductor and the pull request. A move
-is one thing rn does next, such as confirming a point, having a work made or stopping at a
-sign-off; the steps of each command are made of moves.
-
 ```mermaid
-flowchart LR
-  user["user &lt;person&gt;"]
-  cond["conductor &lt;AI&gt;"]
-  maker["maker &lt;AI&gt;"]
-  rec["record &lt;store&gt;"]
-  cl["checklists &lt;store&gt;"]
-  guards["guards &lt;check&gt;"]
-  pr["pull request &lt;store&gt;"]
-  user -->|asks, answers, approves or sends back, goes on| cond
-  cond -->|asks each point, shows each proposal| user
-  cond -->|keeps each decision, feedback and approval and where the session stands, reads them| rec
-  cond -->|has each work made and used| maker
-  maker -->|makes each work from the decisions in| rec
-  maker -->|makes each work to those of its kind in| cl
-  maker -->|returns each work with what its first reader found, questions and lessons| cond
-  cond -->|adds the lessons the user takes to| cl
+flowchart TB
+  user["user"]
+  cond["conductor"]
+  state["state"]
+  record["record"]
+  turn["turn"]
+  cl["checklists"]
+  le["learner"]
+  pr["pull request"]
+  guard["guard"]
+  user <-->|asks, answers, approves or sends back, stops a step / asks each point, shows each proposal, tells each step| cond
+  cond <-->|replaces with the checked facts / gives what the next move rests on| state
+  cond -->|keeps the plan and each decision, answer, feedback and approval in| record
+  cond <-->|hands each work as a CCS, sends each answer / returns the work, tells each step, asks each point| turn
+  turn -->|makes each work from the decisions in| record
+  turn -->|makes and reads each work to| cl
+  cond <-->|starts / gives the lessons| le
+  cond -->|adds each learning the user takes to| cl
   cond -->|opens with the plan, puts each work on, marks ready| pr
-  guards -->|stops a move that breaks a rule| cond
   user -->|merges| pr
+  guard -.->|notices a drift, tells the step again| cond
 ```
 
-- On `/rn:up <what they want>`, the conductor finds the points to decide from the user's words, the
-  repository and its documentation, and confirms each with the user, the looked-up ones included,
-  one per message.
+- The arrows run in the order of the UX's From asking to the merge; the user meets only the
+  conductor and the pull request.
+- The work is kept from drifting from the purpose in two ways: each task names the acceptance
+  criteria it serves and its result is checked against them (rn's Principle 1), and after every
+  move the conductor replans from the facts that move brought (rn's Principle 2).
 
-  Each message lists the points, the settled ones with their outcome and the current one marked;
-  for the current one it gives the conclusion, its grounds and the options, the recommended one
-  first, each with its trade-off and whether it can be undone, then one question on that point
-  alone. The conductor alone decides each move: what to confirm with the user, what work to
-  have made, whether a work that comes back serves the purpose, and when to stop at a sign-off. A
-  decision taken without the goal and the conversation leaves a record the user cannot stand
-  behind; one decider keeps the course one.
-- Each answer goes into the record, in the decisions of the work it settles, before the work that
-  follows it.
+  A task that serves no criterion is work the purpose did not ask for, and a plan kept from what
+  was expected drifts from the purpose while every move looks done.
+- The AI is kept from drifting itself in two ways: the conductor carries only the state from move
+  to move, and the guard stops each rule a machine can judge at the moment it is broken.
 
-  The record is everything rn keeps of the session: the plan, the decisions for each work, what each
-  work was made from, and the state: where the session stands and what comes next, written whole
-  after each move, the states before it kept in the history of the record. The decisions say what
-  the work must say or do and hold what is true now; the history of the record holds how it was
-  reached, the options weighed with their reasons and each feedback with its answer. The next
-  conversation goes on only from what was kept, so nothing is made on a decision not yet kept.
-- At every move a machine can judge, a guard checks it before the conductor makes it, and stops it,
-  naming the step and why, where it would let a sign-off pass without the user's `/rn:ty`, keep a
-  plan outside the form rn's checklist for plans gives, start a work before the decision it follows
-  is kept, start a task's making before its steps before it are ticked, or keep a change anywhere
-  but the session's own branch.
+  A conversation that carries the whole of a long piece of work swells, and a fresh one starts
+  from nothing; a rule written only in words is followed by chance.
+- The state is ACC's CCS, the shape [ACC](https://arxiv.org/abs/2601.11653) gives an AI's state,
+  kept in `state.json`; at every move the conductor replaces it whole with the facts that move
+  brought, each checked, such as the user's answer, turn's result and the output of what was run,
+  and decides the next move from it and the files it names alone (rn's Principle 2).
 
-  A rule written in words is followed by chance; a stop at the moment holds every time.
-- The conductor has each work made by the maker from its decisions and the checklists of its kind,
-  and the maker has an AI that did not make it, the first reader, use it in the place of its
-  receiver, whoever the work is for, before it comes back.
+  A fact taken unchecked carries a slip into every move after it, and a state added to rather than
+  replaced swells as the conversation would.
+- Each work, the plan, each document, each task's result and each checklist made, goes to turn as a
+  CCS holding the work, its receiver, what they use it for and have with it, its checklists and the
+  decisions it is made from; turn's first user uses it in the receiver's place before it comes back
+  (Principle 4).
 
-  Besides the plan, a document and the finished work, a work may be a task's result or a checklist.
-  The checklists for a kind are rn's own, which say what a work of that kind must give its receiver,
-  and the user's addition for that kind, which holds only what it adds; for a kind rn has none for,
-  the user's addition, made to rn's checklist for checklists, is the whole checklist for that kind.
-  The maker returns, for each item of the checklists, its Good, what the receiver gets for what the
-  item asks, with the lines of the work that give it; the questions only the user can decide; and
-  lessons. The conductor reads each Good at its lines, puts each question to the user as a point,
-  and fixes by hand only what falls short of the purpose in a few lines; where the decisions change
-  much, it has the work made again. The maker of a work finds the Good it meant; an AI that did not
-  make it finds the Good its lines give, which is what the user gets.
-- A checklist serves the purpose of whoever uses a work of its kind: it says who they are and what
-  they achieve with the work, the idea its items rest on, and the items, each with why. How a work
-  is made is the plan's tasks.
+  turn takes its task as a CCS and makes the work from it and the files it names alone, so the work
+  does not stray from what was decided.
+- No work turn returns is fixed by the conductor: what would be a fix is settled before turn runs,
+  as a decision, and a change the user asks at a sign-off goes into the decisions, and turn goes on
+  from its last step.
 
-  A checklist is answered on the work, which holds no steps; the idea and each why let a maker
-  meet the items their own way, and steps there would be followed without the purpose.
-- After each move, the conductor replans from the facts the move brought alone, such as the user's
-  answer, the work with what its first reader found and the output of what it ran, and replaces the
-  state before the next move; a checklist or an environment a task lacks, such as a tool to
-  install, becomes a task of its own before the task that needs it. Each change, a lesson's place
-  among them, is decided from this design.
+  The conductor only talks and decides (Principle 1); a fix of its own would be work no guard keeps
+  and no first user reads.
+- While turn runs, the conductor passes each line turn tells on to the user and each point turn
+  asks to the user as a point to decide, keeps the answer in the decisions, and sends it back; it
+  judges none of turn's lines, and stops the run when the user stops a step.
 
-  A plan kept from what was expected drifts from the purpose while every move looks done, and a
-  work made without the checklist or environment it needs is made to a guess and made again. A
-  change decided case by case drifts from the others. A change to the goal or an acceptance
-  criterion is a point confirmed with the user.
-- The plan is the first work, and the conductor opens the pull request with it.
+  Only the main conversation talks with the user
+  ([Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs)); a conductor that
+  judged each way turn takes would ask the user more than what is theirs (Principle 2).
+- Every decision, answer, feedback and approval is in the record before the move after it, so any
+  stop is a place to go on from, and rn has no command to pause (Principle 6).
+- An approval is the user's `/rn:ty`, and feedback their `/rn:gm`, both skills the AI cannot call
+  ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
+- At a sign-off, the conductor shows the proposal the UX's Sign-offs gives, made from the record
+  alone.
 
-  The goal and each acceptance criterion get an ID that later messages refer to. The pull request
-  is where the user sees every work and, at the end, merges.
-- At a sign-off, the conductor stops with the proposal: where the session stands, the sign-offs
-  done and ahead; what changed since the last proposal; the work's link on the pull request; and
-  each item of the work's checklists with its Good and lines from the maker.
+  So it says nothing turn's first user did not read.
+- The guard is lane's code, laid on rn with `lane:up`, and rn has no hooks of its own; lane lays its
+  lanes on subagents alone, so each step of the conductor the guard holds is one its skill hands to
+  a subagent it starts.
 
-  The proposal is put together from what the maker returned and the record alone, so it says
-  nothing the first reader did not read.
-- On `/rn:ty`, the conductor keeps the approval in the record and goes on to the next move.
-- On `/rn:gm <feedback>`, the conductor keeps the feedback in the record and stops; the next
-  `/rn:up` finds the point behind it, one rn decided wrong or did not ask, confirms it, puts the
-  answer into the decisions, has the work made again, and stops at the same sign-off with what
-  changed.
-- After the plan sign-off, the conductor confirms with the user, as a point, which documents the
-  purpose needs, has each made from the one before it, the UX, then the README, then the design,
-  and stops at the design sign-off. What of the README only the built work can give, such as how to
-  install it and its links, is the last task, made and used by its first reader as every task is.
+  Each check is then written and tested once, in lane, and a drift told the step's own sentence
+  goes back to the step ([lane](../../lane/README.md)); a hook is not told which skill runs in the
+  main conversation
+  ([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)).
+- Once the user approves the finished work, the learner of
+  [Principle 8](../architecture.md#learning-from-each-run) reads the records of the conductor's
+  conversation and the agents it started; its lessons and those turn returned with each work are
+  the learnings the conductor puts to the user.
 
-  The design is built to what the README promises, and how the work is installed is known only once
-  it is built.
-- After the design sign-off, the conductor writes the tasks into the plan, each a part a user of
-  the finished work can try, with its completion criterion, what it must do for the acceptance
-  criteria it names, and its steps, each a box ticked when done, each traced to that criterion:
-
-  ```text
-  G1 → AC → T: completion criterion
-            ├ 1. read the context it needs; confirm what is lacking     conductor, with the user
-            ├ 2. design the part it makes, and how that part is checked  the maker, first run
-            ├ 3. trace the design on paper against its checks            that run's first reader
-            └ 4. make it, checked as it grows, code test first           the maker, second run
-  ```
-
-  The steps are written in every task, their content its own; what is done inside a step stays in
-  the commits and the records. The design goes into the part of the project's design document it
-  changes, or into the task's decisions where the purpose needs no design document, and the checks
-  into the project's tests, written before the making and failing, so nothing is made that no one
-  uses once the work is done.
-
-  A task begun on a gap fills it with a guess, and one whose checks are designed and traced before
-  its making shows its slips while they are small, before any making is spent on them; a step
-  written only where it differs leaves the others unseen and skipped. A point only the user can
-  decide that comes up here is confirmed with them as before the plan.
-- Where the project keeps its design document, its tests and how they are written is read from the
-  repository first, and only what it does not say is confirmed with the user, with the documents
-  after the plan sign-off; the answer goes where the project keeps such rules, or, where it keeps
-  none, a fact every session needs into `CLAUDE.md` and a rule for one part of it into a rule file
-  scoped to that part by `paths`, so no later session asks it again.
-
-  Claude Code loads `CLAUDE.md` in every session and a rule with `paths` only once a file it names
-  is read or written, as its documentation advises for what one part of a repository needs.
-- When the tasks are done, the conductor has the finished work used by the maker as the user would
-  use it, for every acceptance criterion, and stops at the deliverable sign-off.
-- On `/rn:ty` at the deliverable sign-off, the conductor confirms each lesson the maker returned
-  during the session with the user as a point, with what happened, the addition to the user's
-  checklists the conductor recommends for it, and whether a fault of rn's own goes as an issue to
-  the people who build rn; it puts each addition taken on the pull request, then marks the pull
-  request ready.
-
-  The conductor keeps each lesson in the record as the maker returns it, so a session that went on
-  in several conversations still has them all.
-- The user merges the pull request; rn never merges.
-- On `/rn:up` in a fresh conversation, the conductor reads the record on the session's branch and
-  goes on from where the session stands.
-
-  Any stop is a place to go on from, since every decision was kept before the work after it; so
-  there is no command to pause, and the user stops wherever they stop.
+  turn's learner reads turn's runs alone, so a slip of rn's own steps shows only to a learner of
+  rn's.
 
 ### Physical view
 
-```text
-rn/                                   the plugin, on the user's machine
+```
+rn/                                  the plugin, installed by Claude Code with turn
 ├── skills/
-│   ├── up/                           the conductor's steps for /rn:up
-│   ├── ty/                           the conductor's steps for /rn:ty
-│   └── gm/                           the conductor's steps for /rn:gm
-├── scripts/
+│   ├── up/SKILL.md                  the conductor for /rn:up <skill>
+│   ├── ty/SKILL.md                  the conductor for /rn:ty, which the AI cannot call <skill>
+│   └── gm/SKILL.md                  the conductor for /rn:gm, which the AI cannot call <skill>
+├── agents/
+│   ├── learner.md                   the learner <agent>
+│   └── *.md                         each subagent a skill hands a step the guard holds <agent>
+├── scripts/                         a work's CCS, the state, a kind's checklists, the proposal <Python 3>
 ├── hooks/
-│   ├── hooks.json                    one entry per hook event
-│   └── *.py                          one check each
-└── checklists/                       rn's own, one markdown file per kind
+│   ├── hooks.json                   the lanes, laid by lane:up
+│   └── lane/                        lane's code, the guard, a link to lane's <Python 3>
+└── checklists/                      rn's own, one per kind <Markdown>
 
-<the user's repository>, on the session's branch
+<the user's repository>, on the piece of work's own branch
 └── .rn/
-    ├── checklists/<kind>.md          the user's addition for a kind
-    └── <yyyymmdd>-<slug>/            the record of one session
-        ├── steering.md               the plan
+    ├── checklists/<kind>.md         the user's addition for a kind <Markdown>
+    └── <yyyymmdd>-<slug>/           the record of one piece of work
+        ├── steering.md              the plan <Markdown>
         ├── decisions/<work>.decisions.md
-        ├── ccs/<work>.json           what each work was made from
-        └── state.json                the state
+        ├── ccs/<work>.json          the CCS each work goes to turn as <JSON>
+        ├── ccs/<work>-result.json   what turn returned for it <JSON>
+        └── state.json               the state, ACC's CCS <JSON>
 ```
 
-- A fresh `/rn:up` goes on with the session whose folder the checked-out branch changed from the
-  default branch and whose plan is not finished; the folders of merged sessions stay in the
-  repository, finished, so they are never taken up again, and sessions rn 0.9.0 left are found the
-  same way.
-
-- The conductor is rn's three skills, one per command, each run in the user's Claude Code
-  conversation on the model the user runs it on.
-- The maker is turn, a plugin installed with rn as its dependency; the conductor calls its `turn:up`
-  agent with a work's CCS, a JSON file holding all turn's call takes, the work, its receiver, what
-  they use it for and have with it, its checklists and the files it is made from, kept in the
-  record as `ccs/<work>.json`, and reads the result turn writes.
-
-  turn's own design leaves the judging of its result to the caller, which is why the conductor
-  reads each Good at its lines.
-- While turn runs, the conductor passes each message turn's agents send it on to the user in the
-  conversation's language, judging nothing and asking nothing; when the user says to stop, it
-  stops the run.
-
-  Only the agent doing the work knows whether its way is right; a conductor that judged it would
-  ask the user each time, and the user would answer more than what is theirs.
-- rn's scripts serve the conductor: they find a kind's checklists, rn's and the user's addition;
-  write a work's CCS; put the proposal together from turn's result and the record; and read and
-  write `state.json`.
-- The guards are rn's hooks, one check for each rule above; the session's own branch is held by
-  stopping any commit or push on the default branch.
-- rn's scripts and hooks run on Python 3.9 or later with the standard library alone, and change
-  JSON with jq.
-- The record is the session's folder, kept by a commit and a push to the session's branch with git;
-  its history is the commit messages. The conductor alone commits and pushes.
+- rn runs on Claude Code, python3 3.9 or later, jq, git and `gh` logged in to an account that can
+  push to the repository; turn is installed with rn as its dependency, and the guard is
+  [lane](../../lane/README.md)'s.
+- The conductor is rn's skills, run in the user's main conversation on the model they run it on.
+- The conductor starts `turn:up` in the background with the CCS's path, its kinds and where the
+  result goes, answers turn's points by SendMessage, and stops a run with TaskStop, as
+  [turn](../../turn/README.md) is called.
+- The record is kept by a commit and a push to the piece of work's branch, made by the conductor
+  alone; the states before the current one, the options weighed with their reasons and each
+  feedback with its answer are in the commit messages.
 
   A push is what a fresh conversation, or another machine, reads from.
+- The pull request is a draft pull request on GitHub of that branch, opened and marked ready with
+  `gh`; a learning's issue is opened with it on `lovaizu/ccpm`, on the user's yes.
 - rn's checklists are read-only in the plugin; the user's additions are in their repository and go
-  into the session's pull request.
-- The pull request is a draft pull request on GitHub of the session's branch, opened and marked
-  ready with the GitHub CLI `gh`, logged in to an account that can push to the repository; a
-  lesson's issue is opened with it on `lovaizu/ccpm`.
+  into the piece of work's pull request.
 
 ## Verification
 
-Every trial runs in `lovaizu/playground` on a branch of its own, removed with its pull requests
-after, from code kept in `dev/rn/trials/`, where the real requests the trials use are kept too, the
-same for each version compared: pieces of work asked of rn in a user's rough words, each with the
-purpose the stand-in user holds behind them. Every AI part runs on Opus 5.5, the model Claude Code
-runs by default on every plan, and runs with `bypassPermissions` in a Docker Sandbox, as rn's README
-has its users run it, and is judged from the JSONL of every conversation and agent it started, not from its
-outcome alone.
-
 ### Units
 
-- rn's scripts: each gives what this design says it gives, for every input it may receive.
-  - Flow: unittest in `dev/rn/tests/`, fed the record, turn's results and checklists each reads, run
-    in CI on every push; passes with every line and branch run, every mutant caught, and property
-    tests wherever an input varies.
-- rn's hooks: each check stops what it must and lets through what it must.
-  - Flow: as for the scripts, fed the tool calls and the record each check receives.
-- Each skill: takes each step of its command in this design's order.
-  - Flow: on the smallest request that reaches each of the skill's steps, one of one point to
-    decide, one acceptance criterion, one document and one task whose stood-in result lacks a
-    checklist, with turn stood in for by an agent giving a result set beforehand and the user by
-    answers set beforehand; passes when the JSONL of the conversation shows each step in this
-    design's order and each hook stopping where its check should, the plan gains a task for the
-    lacking checklist before the task that needs it, and the branch
-    holds each commit the steps make, a new `state.json` among them after each move.
-  - Content: the messages, decisions, plans and proposals it makes on the real requests; passes
-    when each message is in the form above, each decision is as the user answered, each replan and
-    each `state.json` rests only on the facts the move before it brought, and each proposal says
-    only what turn's result and the record hold, read against the JSONL.
+Each skill and agent is checked on Claude Code's default model, the one users run rn on, with
+`bypassPermissions` in a Docker Sandbox as rn's README has its users run it, and judged from the
+records of every conversation and agent the check started.
+
+- rn's scripts: each gives what this architecture says it gives, for every input it may receive.
+  - Flow: unittest in `dev/rn/tests/`, fed the record, turn's results and the checklists each
+    reads, by [`dev/check.sh`](../check.sh) with lines and branches 100% covered and by
+    [`dev/mutate.sh`](../mutate.sh) with no mutant surviving, with Hypothesis wherever an input
+    varies.
+- The lanes: `hooks/hooks.json` holds the lanes the steps call for, and each step its sentence.
+  - Flow: unittest reading the agents and `hooks/hooks.json`; each lane's check is tested in lane.
+- The conductor: takes each move in this architecture's order, from `/rn:up` to the pull request
+  marked ready.
+  - Flow: on the smallest request that reaches each of the skills' moves, one point to decide, one
+    acceptance criterion, one document and one task, with turn stood in for by an agent giving a
+    result set beforehand and the user by answers set beforehand; passes when the records show each
+    move in this architecture's order, each lane stopping where its check should, and the branch
+    holding a new `state.json` after each move.
+  - Content: the messages, decisions, states, plans and proposals it makes on the real requests;
+    passes when each message is in the UX's form, each decision is as the user answered, each
+    state and replan rests only on the checked facts of the move before it, and each proposal says
+    only what the record holds, read against the records.
+- The learner: each lesson quotes from the records the words it rests on.
+  - Flow: started on its own on records set beforehand, holding one slip of the conductor's steps;
+    passes when that slip is a lesson with its words quoted.
 - rn's checklists: what is made with them on the real requests.
   - Content: each change sent back at the deliverable sign-off is traced to the checklist or the
-    skill it comes from, and fixed there; the fix passes when, on the same real requests run
-    again, that change is not sent back and every story is still achieved.
-- turn is checked by its own design.
+    skill it comes from, and fixed there; the fix passes when, on the same real requests run again,
+    that change is not sent back and every story is still achieved.
+- turn and lane are checked by their own architectures.
 
 ### Acceptance
 
+Each trial runs in `lovaizu/playground`, one at a time, on a branch of its own, removed with its
+pull requests after, from code kept in `dev/rn/trials/`. The real requests are kept there too, the
+same for each version compared: pieces of work asked of rn in a user's rough words, each with the
+purpose a stand-in user, an AI, holds behind them and does not write in the request.
+
 - Flow: from `/rn:up` to the pull request marked ready, on the smallest request above, with
-  stand-ins for turn and the user; each step shows in the JSONL and in the commits on the branch,
-  in this design's order.
-- Asking in rough words: from a request of a few words, the points to decide reach the user and the
-  plan holds their purpose.
-  - A stand-in user holding a purpose it does not write in the request plays it with real turn.
-- Answering each point: each answer shows in the decisions and in the work it settles, and every
-  point came one per message.
+  stand-ins for turn and the user; each move shows in the records and in the commits on the branch,
+  in this architecture's order.
+- Asking in rough words: from a request of a few words, the points to decide reach the stand-in
+  user, and the plan holds its purpose; played with real turn.
+- Answering each point: every point and every learning came one per message, and each answer shows
+  in the decisions and in the work it settles.
   - The stand-in user answers with letters and in its own words, and the record is read against
     the conversation.
 - Approving or asking for a change: `/rn:ty` passes the sign-off, and `/rn:gm` brings the same
   sign-off back with what changed.
   - The stand-in user sends back once at each sign-off, then approves.
+- Told and stopped: a line reaches the user before and after each step of the tasks, and a step the
+  stand-in user stops goes the way it then says.
+  - Read from the stand-in's conversation against the conductor's moves.
 - Going on: from each place the user may stop, while asking, at a sign-off and during the tasks,
   `/rn:up` in a fresh conversation goes on with nothing asked again and nothing lost.
   - The stand-in user's conversation is closed at each, and a fresh one started.
 - Merging: the pull request marked ready holds the finished work and every addition taken, and
   merges.
   - The stand-in user merges it.
-- KR1.1: the changes a stand-in user holding the purpose sends back at the deliverable sign-off.
-  - Each thing its feedback there asks to be different counts as one, compared with the version in
-    use, the latest released rn, on the real requests.
+- KR1.1: the changes the stand-in user sends back at the deliverable sign-off, as the UX's KR1.1
+  says.
+  - Counted for rn and for the version in use, the latest released rn, on the real requests.
 - KR1.2: the user's time from asking to the purpose achieved.
   - Read from the timestamps of the stand-in user's conversation in its parts, answering, checking
     proposals, sending back and doing by hand, and compared with the version in use on the real
-    requests; a part that adds nothing to KR1.1 is cut first.
+    requests; a part that adds nothing to the stories or KR1.1 is cut first.
 
-A change is taken when every story is still achieved and it brings KR1.1 closer, or KR1.2 closer
-without raising KR1.1.
+A change is taken when every story is still achieved and KR1.2 does not come closer at the cost of
+KR1.1.
