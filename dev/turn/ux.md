@@ -46,7 +46,7 @@ sequenceDiagram
   Note over C: writes a CCS
   C->>T: calls it with the CCS's path, its kinds, and where to write the result
   T-->>C: the work where it goes, and the result
-  Note over C: checks each Good against its lines, fixes each item without Good, ends its step
+  Note over C: checks each Good against its lines, ends its step
 ```
 
 - A CCS is the JSON file in which the calling AI keeps its task, in the shape
@@ -54,10 +54,9 @@ sequenceDiagram
   and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
   checklists, the receiver, what they use the work for and what they have with it; the call names
   the kinds the calling AI uses in it for each of these.
-- The result holds each item's Good with its lines, each item still without Good, with what the
-  receiver gets once it is Good and where it was not found, and the lessons turn took on how its run
-  went, to hand on to turn's makers. An item's Good is the judgment that the receiver gets from the
-  work what the item asks, with the lines that give it.
+- The result holds each item's Good with its lines, and the lessons from the run, for the calling
+  AI to put to the user. An item's Good is the judgment that the receiver gets from the work what
+  the item asks, with the lines that give it.
 
 ### While turn runs
 
@@ -76,6 +75,8 @@ sequenceDiagram
 ```
 
 - A run going a slow or wrong way shows before its time is spent, not after the work comes back.
+- Where the calling AI is an agent, the lines reach the main conversation above it, which alone
+  talks with the user, and it passes them on.
 
 ### A point only the user can decide
 
@@ -84,15 +85,15 @@ sequenceDiagram
   participant U as user<br/>#lt;person#gt;
   participant C as calling AI<br/>#lt;AI#gt;
   participant T as turn<br/>#lt;plugin#gt;
-  T->>C: the question, before the work that rests on it is made
+  T->>C: the question, as soon as it is found
   C->>U: puts it to the user
   U->>C: answer
   C->>T: the answer
   Note over T: goes on from there
 ```
 
-- turn asks where the CCS lacks what the run needs, or the work meets a point only the user can
-  decide.
+- turn asks where the CCS lacks what the run needs, making the work meets a point only the user
+  can decide, or an item is still without Good after the readings turn allows.
 
 ### Stopped, and gone on
 
