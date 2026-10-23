@@ -90,7 +90,8 @@ flowchart LR
 - At every move a machine can judge, a guard checks it before the conductor makes it, and stops it,
   naming the step and why, where it would let a sign-off pass without the user's `/rn:ty`, keep a
   plan outside the form rn's checklist for plans gives, start a work before the decision it follows
-  is kept, or keep a change anywhere but the session's own branch.
+  is kept, start a task's making before its steps before it are ticked, or keep a change anywhere
+  but the session's own branch.
 
   A rule written in words is followed by chance; a stop at the moment holds every time.
 - The conductor has each work made by the maker from its decisions and the checklists of its kind,
@@ -109,15 +110,10 @@ flowchart LR
   make it finds the Good its lines give, which is what the user gets.
 - A checklist serves the purpose of whoever uses a work of its kind: it says who they are and what
   they achieve with the work, the idea its items rest on, and the items, each with why. How a work
-  is made is the plan's: each task is broken into reading the context it needs, what is lacking
-  confirmed with whoever can give it, the design of what it makes, the design of how that is
-  checked, such as code's test cases and test data, the design traced on paper against them and
-  the record, and the making, checked as it grows, code test first.
+  is made is the plan's tasks.
 
   A checklist is answered on the work, which holds no steps; the idea and each why let a maker
-  meet the items their own way, and steps there would be followed without the purpose. A task
-  begun on a gap fills it with a guess; one whose checks are designed and traced before its making
-  shows its slips while they are small, and nothing is run to find what reading would show.
+  meet the items their own way, and steps there would be followed without the purpose.
 - After each move, the conductor replans from the facts the move brought alone, such as the user's
   answer, the work with what its first reader found and the output of what it ran, and replaces the
   state before the next move; a checklist or an environment a task lacks, such as a tool to
@@ -146,11 +142,35 @@ flowchart LR
 - After the plan sign-off, the conductor confirms with the user, as a point, which documents the
   purpose needs, has each made in the order its checklist says it is drawn, the UX, then the README,
   then the design, and stops at the design sign-off.
-- After the design sign-off, the conductor writes the tasks into the plan, each naming the
-  acceptance criteria it serves, and has each task's result made by the maker, used for those
-  criteria.
+- After the design sign-off, the conductor writes the tasks into the plan, each a part a user of
+  the finished work can try, with its completion criterion, what it must do for the acceptance
+  criteria it names, and its steps, each a box ticked when done, each traced to that criterion:
 
-  A point only the user can decide that comes up here is confirmed with them as before the plan.
+  ```text
+  G1 → AC → T: completion criterion
+            ├ 1. read the context it needs; confirm what is lacking     conductor, with the user
+            ├ 2. design the part it makes, and how that part is checked  the maker, first run
+            ├ 3. trace the design on paper against its checks            that run's first reader
+            └ 4. make it, checked as it grows, code test first           the maker, second run
+  ```
+
+  The steps are written in every task, their content its own; what is done inside a step stays in
+  the commits and the records. The design goes into the part of the project's design document it
+  changes, or into the task's decisions where the purpose needs no design document, and the checks into the project's tests, written before the making and failing, so
+  nothing is made that no one uses once the work is done.
+
+  A task begun on a gap fills it with a guess, and one whose checks are designed and traced before
+  its making shows its slips while they are small, before any making is spent on them; a step
+  written only where it differs leaves the others unseen and skipped. A point only the user can
+  decide that comes up here is confirmed with them as before the plan.
+- Where the project keeps its design document, its tests and how they are written is read from the
+  repository first, and only what it does not say is confirmed with the user, with the documents
+  after the plan sign-off; the answer goes where the project keeps such rules, or, where it keeps
+  none, a fact every session needs into `CLAUDE.md` and a rule for one part of it into a rule file
+  scoped to that part by `paths`, so no later session asks it again.
+
+  Claude Code loads `CLAUDE.md` in every session and a rule with `paths` only once a file it names
+  is read or written, as its documentation advises for what one part of a repository needs.
 - When the tasks are done, the conductor has the finished work used by the maker as the user would
   use it, for every acceptance criterion, and stops at the deliverable sign-off.
 - On `/rn:ty` at the deliverable sign-off, the conductor confirms each lesson the maker returned
