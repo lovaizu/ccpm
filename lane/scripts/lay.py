@@ -12,7 +12,8 @@ The proposal is a JSON file lane:up keeps in lane's data folder, `${CLAUDE_PLUGI
 Writing takes out of each step of the subagent's file the sentence of each lane its hook held before
 that the proposal no longer lays there, and puts each lane's sentence at the end of its step, the
 rest of the step as it was; then one entry for each subagent and each event its lanes are held on in
-the plugin's hooks/hooks.json, every other entry left as it was, and lane's code in its hooks/lane/:
+the plugin's hooks/hooks.json, the entries lane:up wrote for a subagent agents/ no longer has taken
+out, every other entry left as it was, and lane's code in its hooks/lane/:
 a relative link to lane's in a plugin of the ccpm marketplace, a copy with lane's version in VERSION
 anywhere else; then has Claude Code check the plugin, and removes the proposal.
 
@@ -391,6 +392,29 @@ def code_put(root: str) -> None:
         f.write(lane_version() + "\n")
 
 
+def gone_out(hooks: dict[str, Any], plugin: str, root: str) -> list[str]:
+    """Takes out of the hooks the entries lane:up wrote for a subagent the plugin's agents/ no
+    longer has, as there is no subagent left for its lanes to act in; gives each subagent taken
+    out, said."""
+    ours = f"{plugin}:"
+    gone = []
+    for event in EVENTS:
+        entries = hooks["hooks"].get(event, [])
+        kept = []
+        for e in entries:
+            firsts = [lanes.hook_words(h.get("command"), event)[:1] for h in e.get("hooks", [])]
+            names = [w[len(ours) :] for [w] in filter(None, firsts) if w.startswith(ours)]
+            lost = [n for n in names if step.agent_file(root, n) is None]
+            gone += lost
+            if not lost:
+                kept.append(e)
+        if entries:
+            hooks["hooks"][event] = kept
+    return [
+        f"Took out the hooks of {n}, which agents/ no longer has.\n" for n in dict.fromkeys(gone)
+    ]
+
+
 def hooks_written(root: str, hooks: dict[str, Any]) -> None:
     """Writes the hooks into the plugin's hooks/hooks.json, indented by two, as Claude Code reads
     them."""
@@ -417,6 +441,7 @@ def written(path: str) -> str:
             f.write("".join(lines))
         hooks_with(hooks, plugin, agent)
         said.append(f"Wrote the hook of {agent['name']} into hooks/hooks.json.\n")
+    said += gone_out(hooks, plugin, root)
     hooks_written(root, hooks)
     code_put(root)
     said.append("Put lane's code in hooks/lane/.\n")

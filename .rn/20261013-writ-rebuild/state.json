@@ -479,6 +479,9 @@
   },
   {
    "fact": "2026-10-23: turn's four prompts made to the architecture by a subagent with prompt.md and usability.md open, checked by hand; evaluator.md removed; lanes laid by lane:up through dev/lane/trials/trial.py turn (the stand-in took each recommendation): up's step 4 read_whole on {given} added, the evaluator's lanes left out; a reply naming a checklist by its whole path, as each role is given it, was stopped by the flow: items now matched by the checklist's real path (forms.key_of); check.sh turn passes, mutate.sh 0 survivors (a run with failing tests had shown 0 falsely)"
+  },
+  {
+   "fact": "2026-10-23: lane's layer takes out the entries it wrote for a subagent the plugin no longer has, and says so (lay.py gone_out), as the turn lay trial had the building AI remove turn:evaluator's by hand; architecture's layer line says it; check.sh lane passes, mutate.sh --since lane 0 survivors"
   }
  ],
  "semantic_gist": [
@@ -583,7 +586,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "next: lane's layer to drop the hooks of a subagent no longer in the plugin (lay.py write, with code.md open, tests in dev/lane/tests); then turn's flow trial reply sets made to the architecture's Verification ways (dev/turn/trials/flow: replies, roles stand-ins, flow.py; evaluator gone; the Good check by the real orchestrator), then the units' trials (flow, roles), then T23. No question is open for the user. Never publish an Artifact unasked"
+   "first": "next: turn's flow trial reply sets made to the architecture's Verification ways (dev/turn/trials/flow: replies, roles stand-ins, flow.py; evaluator gone; the Good check by the real orchestrator), by a subagent, then the units' trials (flow, roles), then T23. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -604,9 +607,6 @@
   },
   {
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
-  },
-  {
-   "open": "lane:up's layer leaves the hooks of a subagent the plugin no longer has, so the building AI removed turn:evaluator's two entries from hooks.json by hand (lane trial turn, 2026-10-23); lay.py write is to drop them"
   }
  ],
  "retrieved_artifacts": [

@@ -322,7 +322,10 @@ class TestWriteHooks(LayTest):
 
     def test_the_subagents_entry_written_before_is_replaced_in_its_place(self):
         # Given: hooks.json with two entries lane:up wrote for the subagent among others, one of
-        # them written by lane:up for another subagent whose name begins with this one's
+        # them written by lane:up for another subagent of the plugin whose name begins with this
+        # one's
+        second = helpers.STEPS.replace("name: changelog-writer", "name: changelog-writer-2")
+        self.write(os.path.join(self.plugin, "agents", "writer-2.md"), second)
         own = {"matcher": "Write", "hooks": [{"type": "command", "command": "own.sh"}]}
         older = {"matcher": "Bash", "hooks": [{"type": "command", "command": COMMAND + " x"}]}
         other = json.loads(json.dumps(ENTRY).replace("changelog-writer", "changelog-writer-2"))
@@ -334,6 +337,23 @@ class TestWriteHooks(LayTest):
         self.lay("write", self.proposal_file)
         # Then: the entry stands where the first stood, the second gone, the others as they were
         self.assertEqual(self.hooks()["hooks"]["PreToolUse"], [own, ENTRY, other])
+
+    def test_the_entries_of_a_subagent_the_plugin_no_longer_has_are_taken_out(self):
+        # Given: hooks.json with an entry of the building AI's own, one lane:up wrote for a
+        # subagent of another plugin, and the entries lane:up wrote for a subagent agents/ no
+        # longer has, on both events
+        own = {"matcher": "Write", "hooks": [{"type": "command", "command": "own.sh"}]}
+        other = json.loads(json.dumps(ENTRY).replace("notes:changelog-writer", "memo:summarizer"))
+        gone = json.loads(json.dumps(ENTRY).replace("changelog-writer", "summarizer"))
+        ended = json.loads(json.dumps(END_ENTRY).replace("changelog-writer", "summarizer"))
+        hooks = {"hooks": {"PreToolUse": [own, other, gone], "SubagentStop": [ended]}}
+        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+        # When: the proposal is written
+        _, said = self.lay("write", self.proposal_file)
+        # Then: they are taken out and said, the other entries as they were
+        kept = {"PreToolUse": [own, other, ENTRY], "SubagentStop": []}
+        self.assertEqual(self.hooks(), {"hooks": kept})
+        self.assertIn("Took out the hooks of summarizer, which agents/ no longer has.", said)
 
     def test_hooks_json_is_written_indented_by_two_its_text_as_written(self):
         # Given: hooks.json whose description is not ASCII

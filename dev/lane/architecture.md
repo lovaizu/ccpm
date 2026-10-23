@@ -178,10 +178,15 @@ the records of every conversation and agent the check started. Each unittest bel
   - Flow: unittest runs a hook's command with a `PATH` holding no `python3`, one holding a `python3`
     older than 3.9, and the one in use.
 - The layer: what it writes is the approved proposal, with every other entry of `hooks/hooks.json`
-  as it was, and an older copy is brought up with what it keeps unchanged, each lane it cannot
-  keep said.
+  as it was but those it wrote for a subagent the plugin no longer has, which it takes out and
+  says, and an older copy is brought up with what it keeps unchanged, each lane it cannot keep
+  said.
+
+  A hook left for a subagent that is gone has nothing to act in, and the building AI would be left
+  to edit what only the layer writes.
   - Flow: unittest on a plugin made for each test: a new plugin, one with hooks of its own, one
-    with an older copy, one in the ccpm marketplace.
+    with hooks of a subagent it no longer has, one with an older copy, one in the ccpm
+    marketplace.
 - `lane:up`: the run goes in the order of the logical view.
   - Flow: on a plugin with one orchestrator skill and one subagent of three steps, with the building
     AI stood in for by answers set beforehand; passes when the records show every open point in one reply,
