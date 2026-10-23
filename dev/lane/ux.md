@@ -49,7 +49,7 @@ sequenceDiagram
   participant L as lane:up<br/>#lt;agent#gt;
   participant S as subagent<br/>#lt;AI, with its hooks#gt;
   A->>L: starts it on its plugin
-  L->>A: the points to decide, one at a time
+  L->>A: the points to decide, all at once
   A->>L: the answers
   L->>A: the lanes proposed
   A->>L: OK
@@ -66,9 +66,9 @@ sequenceDiagram
   participant L as lane:up<br/>#lt;agent#gt;
   A->>L: starts it on its plugin
   Note over L: reads the plugin's skills and agents
-  loop one at a time
-    L->>A: a point the files do not settle, or a fact the proposal rests on
-    A->>L: the answer
+  loop until no point is left open
+    L->>A: every point the files do not settle, and every fact the proposal rests on, in one reply
+    A->>L: the answers
   end
   L->>A: the lanes, each under the action it watches, with the step as it would read and its hooks
   alt OK

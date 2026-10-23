@@ -458,6 +458,9 @@
   },
   {
    "fact": "2026-10-23: rn's concept agreed with the user, kept in decisions/dev/rn/architecture.decisions.md#concept: two drifts, the work from the purpose (traced tasks, replanning) and the AI itself (a short state replaced each move, guards); ACC's CCS and lane's guard are means named plainly in the architecture, not principles"
+  },
+  {
+   "fact": "2026-10-23: the user chose that lane:up sends the building AI every open point in one reply, and any an answer opens after, as one at a time was for a person; README, UX and architecture changed, lane/agents/up.md left for lane's code"
   }
  ],
  "semantic_gist": [

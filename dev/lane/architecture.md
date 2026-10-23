@@ -15,7 +15,7 @@ Principle 1 to 8, and its own:
 
 ## User stories
 
-- As the building AI, I want to start `lane:up` on my plugin, answer each point it sends, approve
+- As the building AI, I want to start `lane:up` on my plugin, answer the points it sends, approve
   the lanes it proposes, and find them written into my plugin with lane's code.
 - As the building AI, I want `lane:up`, run where an older copy of lane's code is, to bring the copy
   and the hooks to its own version.
@@ -37,23 +37,24 @@ flowchart TB
   plugin["building AI's plugin"]
   guard["guard"]
   sub["subagent"]
-  caller <-->|starts with the plugin, answers, approves / sends each point, the proposal, what was written| up
+  caller <-->|starts with the plugin, answers, approves / sends the points, the proposal, what was written| up
   up -->|reads the skills, agents and hooks of| plugin
   up -->|has the proposal printed, and written once approved, by| layer
   layer -->|writes the steps, the hooks and lane's code into| plugin
   guard -.->|notices a drift, tells the sentence again| sub
 ```
 
-- The building AI is the caller of [how a plugin works](../architecture.md): it answers each point
+- The building AI is the caller of [how a plugin works](../architecture.md): it answers the points
   and approves the proposal itself, and no person takes part; its answer is the caller's own action
   that an approval counts from
   ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
-- The arrows run in this order: `lane:up` reads the plugin, sends the building AI each point until
-  none is left open, then the proposal, and only once the building AI approves it does the layer
-  write it.
+- The arrows run in this order: `lane:up` reads the plugin, sends the building AI every point open
+  at once, and any an answer opens, until none is left open, then the proposal, and only once the
+  building AI approves it does the layer write it.
 
   The lanes are the caller's to decide, so nothing is written into the plugin before the approval
-  (Principle 2).
+  (Principle 2). The points go at once since an AI, unlike a person, weighs each as well in one
+  reply, and each reply more is a wait.
 - Run where an older copy of lane's code is, the layer first brings the copy and its hooks to the
   current form with the lanes they hold, before any point is sent.
 
@@ -124,8 +125,8 @@ ${CLAUDE_PLUGIN_DATA}/
 - lane runs on Claude Code, python3 3.9 or later, git and jq; the layer checks the plugin with
   `claude plugin validate`.
 - The building AI starts `lane:up` as a subagent with the plugin's folder in its prompt, from the
-  main conversation or from a subagent; `lane:up` gives each point as its reply and ends its turn,
-  and the building AI sends the answer with SendMessage to the agent ID the reply came with, which
+  main conversation or from a subagent; `lane:up` gives the points as its reply and ends its turn,
+  and the building AI sends the answers with SendMessage to the agent ID the reply came with, which
   resumes it.
 
   The Agent tool gives a subagent no name to be messaged by, and a subagent does not know its own
@@ -182,7 +183,7 @@ the records of every conversation and agent the check started. Each unittest bel
     with an older copy, one in the ccpm marketplace.
 - `lane:up`: the run goes in the order of the logical view.
   - Flow: on a plugin with one orchestrator skill and one subagent of three steps, with the building
-    AI stood in for by answers set beforehand; passes when the records show one point per reply,
+    AI stood in for by answers set beforehand; passes when the records show every open point in one reply,
     each fact found shown to confirm, and the layer run only on the proposal sent back with the
     approval.
   - Content: on the README's `notes` and on a trial plugin whose steps call for every lane;

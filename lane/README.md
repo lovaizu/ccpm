@@ -23,8 +23,8 @@ orchestrator, the AI that holds the run and decides each move. The orchestrator 
 ```
 
 While building `notes`, your AI starts lane's subagent `lane:up`, which reads the plugin's skills
-and subagents. It sends your AI, one at a time, each point they do not settle and each fact it found
-that its proposal rests on, and your AI answers each from what it knows of your plugin:
+and subagents. It sends your AI, all in one reply, each point they do not settle and each fact it found
+that its proposal rests on, and your AI answers them from what it knows of your plugin:
 
 ```
 Step 3 of changelog-writer writes `CHANGELOG.md`. Is it the only file it writes, and who commits it?
