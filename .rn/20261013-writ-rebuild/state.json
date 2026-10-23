@@ -539,13 +539,7 @@
  ],
  "focal_entities": [
   {
-   "task": "agreed order: lane (README, UX, then design) remade to dev/architecture.md, then prompt.md and plugin.md pointing to lane, common/ moved into lane, then turn, then rn"
-  },
-  {
-   "task": "lane: T16, the first unit; code (guard, layer, Python check, the move of common/) by a subagent with code.md open, then lane:up by a subagent with prompt.md and usability.md open, each checked and fixed by hand, then the unit tried as its user"
-  },
-  {
-   "task": "rn design to follow the agreed README and UX: 'first reader' becomes turn's first user by pointer, 'lesson'/'session' become learnings of the piece of work, learnings going to the user's checklists or an issue to rn's makers (dev/rn/design.md, also rn/scripts/rn.py and rn/skills/up/SKILL.md)"
+   "task": "T22: turn's agents, scripts and hooks made to its architecture, the hooks laid by lane:up; flow code first, then prompts, then lanes"
   }
  ],
  "relational_map": [
@@ -583,7 +577,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "next: turn's code to its architecture and moved-out list, then rn's; a principle of dev/architecture.md whose requirement the plugin's caller lacks (as Hearing's one-at-a-time, written for a person) is not a gap to raise. Never publish an Artifact unasked"
+   "first": "on resume: a subagent was started (2026-10-23, before /clear) to bring turn's flow, turn/scripts, turn/forms and dev/turn/tests, to dev/turn/architecture.md and the decisions' moved-out list with code.md open, uncommitted, checks from cf33744. It may have been stopped by /clear: read git status and git diff against cf33744; if its work is partial or absent, start it again on the same task; then check it by hand against code.md and the [test: flow] lines, run check.sh turn and mutate.sh --since cf33744 turn, commit. Next: turn's prompts (up, generator, first-user, learner; evaluator.md removed) with prompt.md and usability.md open, the lanes laid by lane:up, the trials' reply sets, then the trials. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
