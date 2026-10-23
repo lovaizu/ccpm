@@ -485,6 +485,9 @@
   },
   {
    "fact": "2026-10-23: turn's orchestrator unit tried on all eight ways at 4afc6a8 (dev/turn/trials/flow/results.json): every way took its moves in the architecture's order and returned the result the set replies make; each lane stop was on a drifting call (a turn.py next before the line, a cat of the work in a round, a ToolSearch before start); roles trial: each role's reply in its form, but the first user read the generator's reply beside the result under has '.'"
+  },
+  {
+   "fact": "2026-10-23: turn's units all tried at 492ac76: the orchestrator on its eight ways, each role on its own, the generator and first user kept in a round; the first user reads none of the run's files now (given without them); T22 done but its acceptance in T23"
   }
  ],
  "semantic_gist": [
@@ -589,7 +592,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: a subagent was started (2026-10-23) to move each role's reply and the learner's records into a run folder in the machine's temp folder (state stays beside the result), turn.py parts to take the work's paths, tests and architecture with it, uncommitted. If /clear stopped it, read git status and git diff; redo it if partial; check by hand, run check.sh turn and mutate.sh --since HEAD turn, commit. Then run roles.py again and the flow trial's plain way, then T23 (turn tried as its user, acceptance trials). No question is open for the user. Never publish an Artifact unasked"
+   "first": "next: T23, turn tried as its user from start to end by the architecture's Acceptance (dev/turn/trials/trial.py, baseline.py, readme/; each acceptance trial run three times at once in clones of lovaizu/playground), KR1.1 judged and KR1.2 timed against the version in use; first read trial.py and the Acceptance list and walk it on paper. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
