@@ -100,8 +100,7 @@ Scope: each part
 Can the reader read each sentence without going back or ahead, because each word, reason and step
 it rests on comes before it?
 
-Look for: a name used before the reader has met what it names, in a sentence, an example or a
-figure; a decision whose reason comes later or elsewhere; a link or a pointer that sends the reader
+Look for: a decision whose reason comes later or elsewhere; a link or a pointer that sends the reader
 ahead for what a sentence rests on.
 
 Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
@@ -147,11 +146,10 @@ what they already took in?
 Look for: a part meant for someone other than the reader, such as a reviewer; an opening or a
 section that tells what the document is or does in place of telling the subject; terms gathered
 ahead of the content; the history of how a decision was reached; a comparison or an example for an
-idea the reader already holds; a part that says again, in other words or in a figure, what another
-part says.
+idea the reader already holds.
 
 Why: a part the reader skips or reads twice costs effort beyond the subject, and buries the parts
-they need; once the reader skims a run of repeats, they skim the one new point among them too.
+they need.
 
 ### B-19: As short as the subject allows
 
@@ -191,5 +189,8 @@ Can the reader take each thing the document says as the one account of it, becau
 one place, with every case where it does not hold beside it, and not also in another place of the
 document?
 
+Look for: a part that says again, in other words or in a figure, what another part says.
+
 Why: two places that say one thing come to disagree as one of them changes, and the reader cannot
-tell which holds; a rule read apart from the case where it does not hold is followed there too.
+tell which holds; once the reader skims a run of repeats, they skim the one new point among them
+too; a rule read apart from the case where it does not hold is followed there too.

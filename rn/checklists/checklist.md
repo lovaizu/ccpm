@@ -280,8 +280,8 @@ holds what the user does not, so a deliverable the user cannot use passes.
 
 Scope: whole
 
-Does each item ask what no other item asks, in this checklist or in those answered beside it, such
-as `usability.md`?
+Does each item ask what no item of the checklists answered beside it, such as `usability.md`,
+asks?
 
 Why: a point asked in two places is fixed in one and left in the other, and the two drift until
 they ask different things.

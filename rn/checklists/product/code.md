@@ -271,23 +271,14 @@ tests, whose inputs change from run to run; any statement or branch not run fail
 Why: a line or branch no test takes may be broken without any test failing, and one taken only by
 an input made at random is taken on some runs and not on others.
 
-### B-13: Lines left out of the count say why
-
-Scope: whole
-
-For each line left out of the coverage count, can the maintainer tell from what is written beside it
-which environment, one the tests cannot make, decides whether the line runs?
-
-Why: a line left out without its reason cannot be told from a line left out to make the count pass,
-and the next maintainer keeps the gap.
-
 ### B-16: Each check left out, the user's decision
 
 Scope: whole
 
 For each line, branch, input or mutant left out of the coverage, the property tests or the
 mutation testing, can the maintainer tell from what is written beside it that the user decided it,
-and why no behavior changes with it, such as one in a type annotation never run?
+and why: an environment the tests cannot make decides whether it runs, or no behavior changes with
+it, such as one in a type annotation never run?
 
 Why: leaving a check out is easier than writing the test, so whoever makes the code and leaves
 them out on their own judgment ends with the checks full of gaps; one left out without the user's
@@ -304,7 +295,7 @@ from a test that it holds for the inputs no example names?
 Look at: property-based testing of each such behavior, on every run of the checks, which makes many
 inputs of the kind and checks a property every one must have, such as a parse giving back what was
 written; with new inputs on every run, CI included, so that inputs not yet tried are met, and each
-input that fails reproduced from what the failure prints, not run again, and kept as an example.
+input that once failed kept as an example.
 
 Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
 
@@ -322,14 +313,3 @@ made once and copied, fails.
 Why: a test run that takes minutes is run less often, and mutation testing multiplies its time by
 the number of mutants, so the maintainer waits on every change, or stops running the checks.
 
-### B-24: The documents follow the change
-
-Scope: whole
-
-When the code changes how its users build, test, run or release it, do the documents that tell
-them so say the same as the code?
-
-Look at: each README and guide that names a command, an option or a step the change touches.
-
-Why: a document that names a step the code no longer takes is followed and fails, and is believed
-over the code.

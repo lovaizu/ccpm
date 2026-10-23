@@ -211,12 +211,9 @@ Scope: whole
 Does the AI read each detail it needs only on some runs on those runs alone?
 
 Look at: each such detail of the prompt's own kept in a file of its own, which the prompt says when
-to read; one written in the prompt itself fails. Each input the AI needs only when something in the
-run calls for it, such as a file the work links, read where the steps meet that call; one read on
-every run, because the prompt names it, fails.
+to read; one written in the prompt itself fails.
 
-Why: a detail read on every run costs attention on the runs that do not need it, and an input read
-on a run that did not call for it shapes the work there, as the AI would not have had it.
+Why: a detail read on every run costs attention on the runs that do not need it.
 
 ### B-14: Detail files named in the prompt
 
