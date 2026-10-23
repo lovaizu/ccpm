@@ -156,8 +156,9 @@ flowchart LR
 
   The steps are written in every task, their content its own; what is done inside a step stays in
   the commits and the records. The design goes into the part of the project's design document it
-  changes, or into the task's decisions where the purpose needs no design document, and the checks into the project's tests, written before the making and failing, so
-  nothing is made that no one uses once the work is done.
+  changes, or into the task's decisions where the purpose needs no design document, and the checks
+  into the project's tests, written before the making and failing, so nothing is made that no one
+  uses once the work is done.
 
   A task begun on a gap fills it with a guess, and one whose checks are designed and traced before
   its making shows its slips while they are small, before any making is spent on them; a step
