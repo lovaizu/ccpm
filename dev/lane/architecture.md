@@ -62,9 +62,10 @@ flowchart TB
 - What the building AI approves is printed and written by the layer from one file.
 
   So no AI copies it, and what is written is what was approved.
-- A lane is proposed only for a sentence of a step whose drift shows in a tool call.
+- A lane is proposed only for a sentence of a step whose drift shows in a tool call or in how the
+  subagent ends.
 
-  What shows in no call, such as what the subagent weighs, no hook can see.
+  What shows in neither, such as what the subagent weighs, no hook can see.
 - A hook holds, for each of its lanes, the step, the lane and what the lane takes; the lane's
   sentence is made from them by the lane's wording in [Lanes](../../lane/README.md#lanes). The layer
   writes that sentence into the step, and the guard makes the same one when it stops a call.
@@ -194,7 +195,7 @@ the records of every conversation and agent the check started. Each unittest bel
     approval.
   - Content: on the README's `notes` and on a trial plugin whose steps call for every lane;
     passes when each proposed lane is one of the README's Lanes, and each step's drift that shows
-    in a tool call has its lane.
+    in a tool call or in how the subagent ends has its lane.
 
 ### Acceptance
 
