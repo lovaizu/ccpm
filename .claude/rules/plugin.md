@@ -117,7 +117,7 @@ b. **Write the code with `code.md` open until the tests pass.** What runs on use
      code checks the code against itself; mutation testing runs the tests once for each mutant, so a
      slow test run makes every change wait.
 
-c. **Write each prompt, a skill or an agent, with `usability.md` and `prompt.md` open, and run it to see
+c. **Write each prompt, a skill or an agent, with `prompt.md` open, and run it to see
    that the AI does what its Role and Steps say.**
    - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds
      the prompts' slips, not whether the plugin keeps its promises.

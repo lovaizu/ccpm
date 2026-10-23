@@ -1,6 +1,6 @@
 ---
 name: ux
-version: 0.1.0
+version: 1
 ---
 
 # UX

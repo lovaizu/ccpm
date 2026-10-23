@@ -1,6 +1,6 @@
 ---
 name: usability
-version: 0.2.0
+version: 1
 ---
 
 # Usability
@@ -15,6 +15,9 @@ serves their purpose; reading on, each word and idea understood where they meet 
 one they need; and at the end, every question they came with answered. Each item is answered by
 what the reader has and does with the deliverable alone, never by whether it matches the sources it
 was made from, which is not what the reader uses it for.
+
+Each kind's checklist is made from this file, as `checklist.md` says, taking in its own terms each
+point its user needs; a deliverable is judged by its kind's checklist alone.
 
 ## Format
 

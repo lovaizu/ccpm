@@ -1,6 +1,6 @@
 ---
 name: architecture
-version: 0.3.0
+version: 1
 ---
 
 # Architecture
