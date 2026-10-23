@@ -76,7 +76,7 @@ sequenceDiagram
 
 - A run going a slow or wrong way shows before its time is spent, not after the work comes back.
 - Where the calling AI is an agent, the lines reach the main conversation above it, which alone
-  talks with the user, and it passes them on.
+  talks with the user.
 
 ### A point only the user can decide
 
@@ -85,7 +85,7 @@ sequenceDiagram
   participant U as user<br/>#lt;person#gt;
   participant C as calling AI<br/>#lt;AI#gt;
   participant T as turn<br/>#lt;plugin#gt;
-  T->>C: the question, as soon as it is found
+  T->>C: the question, before the work that rests on it is made
   C->>U: puts it to the user
   U->>C: answer
   C->>T: the answer
