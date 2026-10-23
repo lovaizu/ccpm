@@ -9,35 +9,14 @@ Code is used by whoever runs it and whoever maintains it, a person or an AI. Who
 the behavior they asked for. Whoever maintains it trusts, from its tests passing, that the behavior
 holds, and so changes the code at once and with confidence.
 
-Code is written in this order, each step the ground of the next, and judged by the items below,
-drawn from Google's "What to look for in a code review" (google/eng-practices, CC BY 3.0); its
-tests are designed by the techniques of the ISTQB Certified Tester Foundation Level syllabus
-v4.0.1, chapter 4:
-
-1. Check the inputs: the requirements, how it is made, how it is checked and the development rules
-   are all there, and settle what the code needs, among it a tool for each of statement and branch
-   coverage (C0/C1), mutation testing and property-based testing in its language, chosen from what
-   is current and kept up now. What is missing, such as a stable tool for one of them, goes back to
-   whoever gave it.
-2. Design it: split it into functions and modules by what each takes on, each taking on one thing
-   alone, with each piece of knowledge in one place across the repository, what its code and tests
-   already share used rather than written again; decide what each takes in and gives back, and
-   where what comes from outside is checked. These are the units the tests are written for.
-3. Design the tests from the requirements, before the code, by the technique that fits what each
-   unit takes in and decides: for each input and output, its equivalence partitions, the invalid
-   among them, one test each; for each ordered partition, 3-value boundary value analysis, each
-   boundary and both its neighbors; for conditions that combine, a decision table, one test for each
-   feasible rule; for what moves between states, state transition testing, every transition, the
-   invalid ones tried; for each behavior over inputs of a kind, such as any text, the property
-   every input of the kind holds, such as a parse giving back what was written.
-4. Run the existing tests and see them pass, before changing anything.
-5. Build it test first, one designed test at a time: write the test, see it fail, write the least
-   code that passes it, then tidy it back to the design, such as putting what is written twice in
-   one place. A behavior found needed while writing goes back to step 3 and is designed first.
-6. Check it by the development rules and by how it is checked, each check, the tests, the
-   coverage, the property tests and the mutation testing alike, on what the change touches before
-   it is handed over, the property tests on few inputs, and on the whole in CI, the property tests
-   on many, so the time each change waits on grows with the change, not with the code.
+Code serves them through two designs. The code is split into functions and modules by what each
+takes on, one thing each, so the maintainer changes one thing in one place; each says what it takes
+in and gives back, and what comes from outside is checked where it comes in. Its tests are designed
+from the requirements before the code, by the technique that fits what each function takes in and
+decides, so they hold what the code must do rather than what it happens to do, and each fails when
+the behavior it holds breaks. The items on the code are drawn from Google's "What to look for in a
+code review" (google/eng-practices, CC BY 3.0), and those on the tests' design from the techniques
+of the ISTQB Certified Tester Foundation Level syllabus v4.0.1, chapter 4.
 
 Each item of `usability.md` applies to code, read by whoever maintains it, with its behavior as its
 subject and each file a part, the tests among them; its F-1 is answered by this F-1, its B-7 by each
@@ -196,18 +175,62 @@ is, in its idioms, its error handling and its layout?
 Why: the maintainer reads a difference as meaning something, and looks for a reason that is not
 there.
 
-### B-7: A test for each designed test case
+### B-24: Each partition of each input tested
 
 Scope: whole
 
-For each behavior the requirements ask of the code, can the maintainer learn from some test that
-the code does it?
+For each input and output of each function, can the maintainer find a test for each of its
+equivalence partitions, the sets of values the function treats alike, the invalid ones among them?
 
-Look at: the test cases the techniques of step 3 give, each equivalence partition, the invalid ones
-among them, each boundary and its neighbors, each feasible rule of each decision table and each
-transition, each matched to a test whose Then checks it; one left without a test fails.
+Look at: what each function says it takes in and gives back, against the values its tests give it
+and check; a partition no test takes a value from fails.
 
-Why: the tests passing give trust only in the behaviors they hold.
+Why: the tests passing give trust only in the values they try, and a partition left untried, an
+invalid one most of all, may be handled wrong with every test passing.
+
+### B-25: Each boundary and both its neighbors tested
+
+Scope: whole
+
+For each partition whose values stand in order, such as numbers or lengths, can the maintainer find
+a test at each of its boundaries and at the value on each side of it?
+
+Why: faults gather at boundaries, such as `<` written for `<=`, and a test inside the partition
+passes on them.
+
+### B-26: Each rule of each decision table tested
+
+Scope: whole
+
+For conditions that combine to decide what the code does, can the maintainer find a test for each
+feasible rule of their decision table, each combination of the conditions' values that can happen?
+
+Why: a combination no test takes is decided by however the conditions happen to fall, and tests of
+each condition alone pass on it.
+
+### B-27: Each transition between states tested
+
+Scope: whole
+
+For what the code moves between states, can the maintainer find a test for each transition, the
+invalid ones included, each an event given in a state that does not take it?
+
+Why: a transition no test takes lets the code reach a state it must not, or stay out of one it
+must, with every test passing.
+
+### B-17: A behavior holds for every input of its kind
+
+Scope: whole
+
+For each behavior over inputs of a kind, such as any text, path or list, can the maintainer learn
+from a test that it holds for the inputs no example names?
+
+Look at: property-based testing of each such behavior, on every run of the checks, which makes many
+inputs of the kind and checks a property every one must have, such as a parse giving back what was
+written; with new inputs on every run, CI included, so that inputs not yet tried are met, and each
+input that once failed kept as an example.
+
+Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
 
 ### B-8: A test fails when its behavior breaks
 
@@ -284,20 +307,6 @@ Why: leaving a check out is easier than writing the test, so whoever makes the c
 them out on their own judgment ends with the checks full of gaps; one left out without the user's
 decision and its reason cannot be told from one left out to make the run pass, and the next
 maintainer keeps the gap.
-
-### B-17: A behavior holds for every input of its kind
-
-Scope: whole
-
-For each behavior over inputs of a kind, such as any text, path or list, can the maintainer learn
-from a test that it holds for the inputs no example names?
-
-Look at: property-based testing of each such behavior, on every run of the checks, which makes many
-inputs of the kind and checks a property every one must have, such as a parse giving back what was
-written; with new inputs on every run, CI included, so that inputs not yet tried are met, and each
-input that once failed kept as an example.
-
-Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
 
 ### B-18: The whole test run in seconds
 
