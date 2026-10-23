@@ -452,6 +452,9 @@
   },
   {
    "fact": "2026-10-23: turn's code read against its architecture: about half kept, the round's middle and end rebuilt to the Good check, the evaluator removed; kept in decisions/dev/turn/architecture.decisions.md#turns-code-against-the-architecture"
+  },
+  {
+   "fact": "2026-10-23: lane's README (for the person who installs it, as the user said), UX and architecture brought to its concept: the building AI answers and approves lane:up, no person; architecture rewritten to the checklist (341 to 220), case rules moved to decisions/dev/lane/architecture.decisions.md#moved-out. Left for the user, one at a time after rn's concept: whether lane:up still sends one point at a time to an AI; whether lane holds Principles 4 and 8, which no part of it gives; lane/agents/up.md still assumes a person"
   }
  ],
  "semantic_gist": [
@@ -562,7 +565,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "awaiting the user: lane's README written for the person who installs lane (recommended) or for the AI building a plugin; then lane's README, UX and architecture on its agreed concept; turn's rebuild per decisions/dev/turn/architecture.decisions.md#turns-code-against-the-architecture, needing lane's start_with to hand IDs and a read lane by phase; then rn's concept. Never publish an Artifact unasked"
+   "first": "awaiting the user on rn's concept (proposed in the conversation, as the README, UX and architecture opening say); then ask, one at a time: lane:up's points one at a time or all at once to the AI; lane and Principles 4 and 8; then rn's documents, then the code of lane, turn, rn. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [

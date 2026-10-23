@@ -6,9 +6,11 @@ step the AI may drift from, a step being one line of what a subagent, an AI your
 one job, is told to do. The lane is a sentence of the step together with a hook that notices a
 drift from it and tells the AI the sentence again.
 
-lane is a Claude Code plugin for you if you build a plugin whose work an AI does in several steps.
-You answer and approve. lane lays the lanes on your plugin's subagents, and on every run lane's code
-lets the AI notice each drift and tells it the step again.
+lane is a Claude Code plugin for you if you have an AI build your plugin, one whose work an AI does
+in several steps. While building it, your AI calls lane, answers its points from what it knows of
+your plugin and approves the lanes itself; lane asks you nothing. lane lays the lanes on your plugin's
+subagents, and on every run lane's code lets each subagent notice its drift and tells it the step
+again.
 
 ## Example
 
@@ -20,19 +22,18 @@ orchestrator, the AI that holds the run and decides each move. The orchestrator 
 3. Write the new entries into `CHANGELOG.md`.
 ```
 
-You ask Claude in your conversation to lay lanes on `notes`. Claude starts lane's subagent
-`lane:up`, which reads the plugin's skills and subagents. It sends Claude, one at a time, each point
-the files do not settle and each fact it found that its proposal rests on. Claude puts each to you
-and sends your answer back:
+While building `notes`, your AI starts lane's subagent `lane:up`, which reads the plugin's skills
+and subagents. It sends your AI, one at a time, each point they do not settle and each fact it found
+that its proposal rests on, and your AI answers each from what it knows of your plugin:
 
 ```
 Step 3 of changelog-writer writes `CHANGELOG.md`. Is it the only file it writes, and who commits it?
 ```
 
-You answer that it is the only one, and that the orchestrator commits it once you have read it and
-said OK. Once every point is settled, `lane:up` proposes the lanes on the steps that alone are not
-sure to hold, each under the action it keeps: begin, read, write, run, test, hand on, wait or end;
-with its hook, and the step as it would read:
+Your AI answers that it is the only one, and that the orchestrator commits it once you have read it
+and said OK. Once every point is settled, `lane:up` proposes the lanes on the steps that alone are
+not sure to hold, each under the action it keeps: begin, read, write, run, test, hand on, wait or
+end; with its hook, and the step as it would read:
 
 ```
 Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
@@ -43,8 +44,8 @@ Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
    or `git push`.
 ```
 
-You choose OK when Claude asks. `lane:up` writes the step into `agents/changelog-writer.md` and the
-hooks into `hooks/hooks.json`, and puts lane's code, which runs the hooks, in `hooks/lane/`.
+Your AI approves them. `lane:up` writes the step into `agents/changelog-writer.md` and the hooks
+into `hooks/hooks.json`, and puts lane's code, which runs the hooks, in `hooks/lane/`.
 
 Then you run `/notes:changelog`. When `changelog-writer` runs `git commit -m notes`, Claude Code
 does not run it, and the subagent reads:
@@ -131,8 +132,8 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install lane@ccpm
 ```
 
-Then ask Claude to lay lanes on your plugin, as in the example. Claude starts `lane:up` from your
-conversation, or from a subagent it started.
+Then, as in the example, your AI calls `lane:up` while it builds your plugin, from your
+conversation or from a subagent it started.
 
 lane's code in your plugin's `hooks/lane/` is a copy with its version, which `lane:up` brings to its
 own version the next time it is run there. In a plugin of ccpm itself, the code is a link to lane's.
