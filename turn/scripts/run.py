@@ -632,13 +632,18 @@ def learn(run: dict[str, Any], goods: list) -> dict[str, Any]:
 def taught(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     """Writes the result and has the run return: where the work is, each item's Good as the first
     user gave it, and the learner's lessons with what it checked, for the calling AI to put to the
-    user."""
+    user; each ground names its record by its path, as the texts the learner read by number are
+    removed once the run returns."""
+    lessons = [
+        dict(n, grounds=[dict(g, record=run["learnt"][g["record"] - 1]) for g in n["grounds"]])
+        for n in reply["lessons"]
+    ]
     write(
         run["call"]["result"],
         {
             "work": run["work"],
             "items": run["held"],
-            "lessons": reply["lessons"],
+            "lessons": lessons,
             "checked": reply["checked"],
         },
     )

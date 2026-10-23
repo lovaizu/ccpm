@@ -692,16 +692,26 @@ class TestLearner(ReadTest):
         # Given: a learner replying with a general lesson and one of the project's own
         # When: the orchestrator goes on
         # Then: the result holds where the work is, each item's Good as the first user gave it,
-        # the lessons and what the learner checked, and the run returns
-        own = dict(LESSON, whose="own", lesson="the checklist names no license item")
+        # the lessons, each ground naming its record by its path, and what the learner checked,
+        # and the run returns
+        own = {
+            "lesson": "the checklist names no license item",
+            "whose": "own",
+            "grounds": [{"record": 2, "quote": "I open it."}, {"record": 3, "quote": "I open it."}],
+        }
         self.due(self.learner)
+        learnt = self.read_json(RESULT + ".run.json")["learnt"]
         out = self.replied({"lessons": [LESSON, own], "checked": CHECKED})
+        named = [
+            dict(LESSON, grounds=[dict(LESSON["grounds"][0], record=learnt[0])]),
+            dict(own, grounds=[dict(g, record=learnt[n]) for n, g in zip((1, 2), own["grounds"])]),
+        ]
         self.assertEqual(
             self.read_json(RESULT),
             {
                 "work": ["README.md"],
                 "items": [FOUND, FOUND_B1],
-                "lessons": [LESSON, own],
+                "lessons": named,
                 "checked": CHECKED,
             },
         )

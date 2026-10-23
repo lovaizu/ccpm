@@ -95,3 +95,9 @@
   given; the files stay beside the result, as Claude Code asks permission for each write outside the
   working directory, also under acceptEdits
   (https://code.claude.com/docs/en/permissions.md), and the README promises the state there.
+- The result names each lesson's record by its path, not by its number among the texts the learner
+  read, as those texts are removed once the run returns and the calling AI checks each lesson
+  against its record (2026-10-23).
+- KR1.1's judge reads the whole work each version returns, not its result (2026-10-23): turn
+  0.1.0's result gives lines without paths in a form of its own, so lines alone cannot be given
+  both by one bar, and a Good's words would lean the judge.

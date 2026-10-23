@@ -2,14 +2,15 @@
 compared with it: in a clone of lovaizu/playground on a branch of its own, pushing nothing, the
 calling AI runs 0.1.0's `turn:up` skill on the task's CCS written in 0.1.0's form, each question
 it asks is answered as trial.py's stand-in answers, and once turn is done the calling AI checks
-what came back and fixes the work where it falls short, as in trial.py. Prints what the calling AI
-showed, its session, the minutes from the call to turn being done, and the work.
+what came back and fixes nothing, as in trial.py, so both are judged on what came back. Prints
+what the calling AI showed, its session, the minutes from the call to turn being done, and the work.
 
     python3 dev/turn/trials/baseline.py <task folder, such as dev/turn/trials/readme> <new folder>
 
 0.1.0's turn runs in the main conversation and asks there, so the user's side is held by this
 script over Claude Code's stream input, as 0.1.0's own trial held it. The clone, its branch and the
-copy of turn are removed when the run ends; the records stay in Claude Code's own folder.
+copy of turn are removed when the run ends; what the run gave back is kept in `<new folder>.work/`
+for the judge, as trial.py keeps it, and the records stay in Claude Code's own folder.
 """
 
 import io
@@ -17,7 +18,6 @@ import json
 import os
 import shutil
 import subprocess
-import sys
 import tarfile
 import threading
 import time
@@ -26,16 +26,15 @@ import shared
 
 VERSION = "turn--v0.1.0"
 ANSWER = "Take the answer you recommend."
-CHECK = """turn is done. Check each item turn says the work meets against its lines in the work.
-Then fix in the work whatever falls short of an item of the checklists, and end with a list of
-every item of the checklists, saying of each whether the work met it when it came back, and of each
-you fixed, what and why."""
+CHECK = """turn is done. Check each item turn says the work meets against its lines in the work. Fix
+nothing in the work: it is judged as it came back. End with a list of every item of the checklists,
+saying of each whether the work met it when it came back, and why."""
+USAGE = "baseline.py <task folder, such as dev/turn/trials/readme> <new folder>"
 
-task, place = (os.path.abspath(p) for p in sys.argv[1:3])
+task, place, _ = shared.arguments(USAGE)
 shared.playground(task, place, "baseline")
 # The task's CCS in 0.1.0's form: its kinds named as 0.1.0 names them, and all nine parts.
-with open(os.path.join(task, "ccs.json"), encoding="utf-8") as f:
-    given = json.load(f)
+given = shared.ccs(task)
 kinds = {k: v for part in given.values() for entry in part for k, v in entry.items()}
 ccs = {
     "focal_entities": [{"deliverable": kinds["deliverable"]}, {"receiver": kinds["audience"]}],
@@ -138,10 +137,8 @@ claude.wait()
 print("session:", event.get("session_id"), "cost:", event.get("total_cost_usd"))
 if done:
     print("call to return minutes:", round((done - start) / 60, 1))
-for name in ("README.md", ".tasks/out.json"):
-    path = os.path.join(place, name)
-    if os.path.exists(path):
-        with open(path, encoding="utf-8") as f:
-            print(f"--- {name}\n{f.read()}")
+shared.shown(task, place, ".tasks/out.json")
+shared.keep(task, place, ".tasks/out.json")
+print("kept:", shared.kept(place))
 shutil.rmtree(place)
 shutil.rmtree(plugin)

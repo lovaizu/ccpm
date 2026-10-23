@@ -234,8 +234,9 @@ and keep their own folders do not touch each other.
   on from that move and returns, the records showing no move before it made again.
 - KR1.1: the items the work meets, as the UX's KR1.1 says.
   - Judged by one judge, an AI that took no part in either run, for turn and for the version in use
-    on the same task by one bar: an item counts where the judge, reading the work each returns at
-    the lines each gives, finds the receiver gets what the item asks; kept with the trial in
+    on the same task by one bar: an item counts where the judge, reading the whole work each
+    returns and not its result, finds the receiver gets what the item asks, as the two versions'
+    results differ in form and a Good's words would lean the judge; kept with the trial in
     `dev/turn/trials/`.
 - KR1.2: the time from the call to the work coming back.
   - Taken from the records' timestamps for a README-sized work, compared with the version in use on
