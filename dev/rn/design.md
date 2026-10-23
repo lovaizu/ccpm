@@ -125,8 +125,8 @@ flowchart LR
 
   A plan kept from what was expected drifts from the purpose while every move looks done, and a
   work made without the checklist or environment it needs is made to a guess and made again. A
-  change decided case by case drifts from the others. A change to the goal or an acceptance criterion is a point
-  confirmed with the user.
+  change decided case by case drifts from the others. A change to the goal or an acceptance
+  criterion is a point confirmed with the user.
 - The plan is the first work, and the conductor opens the pull request with it.
 
   The goal and each acceptance criterion get an ID that later messages refer to. The pull request
