@@ -190,3 +190,16 @@ Look for: a part that says again, in other words or in a figure, what another pa
 Why: two places that say one thing come to disagree as one of them changes, and the reader cannot
 tell which holds; once the reader skims a run of repeats, they skim the one new point among them
 too; a rule read apart from the case where it does not hold is followed there too.
+
+### B-21: Every statement true together
+
+Scope: whole
+
+Can the reader take every statement of the document as true at once, no two of them saying what
+cannot both hold?
+
+Look for: two parts, each right on its own, that ask or give opposite things, such as one keeping a
+reader from what another hands to it.
+
+Why: the reader cannot tell which of the two holds, and whoever follows the document follows one
+and breaks the other.

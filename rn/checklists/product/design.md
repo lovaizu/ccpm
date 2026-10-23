@@ -9,6 +9,10 @@ A design document is read by whoever builds or changes the product. From it they
 short time, the mechanism that brings about the UX the product must give, and how that is checked,
 and build or change the product to it.
 
+A design rests on a few principles: those of what it is built on, such as an architecture its
+products share, and its own, each said once in a line. Every decision is drawn from them and held
+to them, so the reader judges each part, and each change, by the same few lines.
+
 The UX is what the user experiences using the product, and its key results are what is measured to
 show how close the product brings them to their goals. Design turns that into a mechanism in
 layers, each drawn from the one before and fewer than it: the UX's scenes rest on a few user
@@ -43,6 +47,9 @@ Does the design document follow this template, headings included?
 # <Product name> design
 
 <The design's main point, with a link to where the UX is defined>
+
+<The principles it rests on: a link to those of what it is built on, and its own, each in a
+line>
 
 ## User stories
 
@@ -84,10 +91,20 @@ outside the product>
 higher one>
 ```
 
-Why: the builder reads the user stories, then the components that achieve them and how they are
+Why: the builder reads the principles, then the user stories, then the components that achieve them and how they are
 realized, then how the units and the whole are checked, each the ground of the next.
 
 ## Benefit
+
+### B-32: The principles it rests on
+
+Scope: its part
+
+Can the reader tell, from the opening, the principles every decision of the design rests on, its
+own each in a line and those of what it is built on by a link?
+
+Why: each decision's why can hold on its own while the decisions together break a principle no one
+wrote down; principles said once are what every decision, and every change, is held to.
 
 ### B-17: The stories the scenes rest on
 
@@ -234,3 +251,16 @@ Look at: each path or component that serves one case alone; one for a case anoth
 handles or a check already stops fails.
 
 Why: every path of its own is one more thing for users to learn and builders to keep right.
+
+### B-33: Each decision held to the principles
+
+Scope: whole
+
+Can the reader find that each interaction of the logical view and each check keeps every principle
+the design rests on?
+
+Look for: an interaction that hands a part what a principle says it must not see; a check a
+principle gives to some part that no part makes.
+
+Why: a decision read alone looks right by its own why; one that breaks a principle undoes what the
+principle was there to bring about, and shows only when the product fails at it.
