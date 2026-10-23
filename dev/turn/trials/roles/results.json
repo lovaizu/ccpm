@@ -298,5 +298,40 @@
    "whole": 2.8
   },
   "read": "Every JSONL read. The first user stopped at B-1 in the set README; the generator, sent back by message, read the work alone, not the CCS or its files again, and added the license with Edit; the first user, sent the work made again with its parts, read it whole again, ran demo.sh and gave both items their Good, no form sent back."
+ },
+ {
+  "commit": "first-user remade to prompt.md, by roles.py",
+  "sessions": {
+   "generator": "617cf42e-c252-4bf6-b52b-40ebeda59f26",
+   "first-user": "3c3c0f4e-51c8-4ccc-8e3d-edf26ccaabd7",
+   "learner": "5378aedb-df8b-4d26-8878-e33a49d3fba5"
+  },
+  "minutes": {
+   "generator": 1.3,
+   "first-user": 1.0,
+   "learner": 1.2
+  },
+  "read": "The first user's JSONL read. It read the set README, the checklist, demo.sh and the notes whole, ran demo.sh, stopped at B-1 with places, did and lacking and gave B-2 a Good in each part; its reply filled its form. Its `git ls-files`, `git log` and `grep -r .` were stopped by read_only and it went on with its steps."
+ },
+ {
+  "commit": "first-user remade, by kept.py",
+  "sessions": {
+   "stand-in": "a52fb49d-dd31-45d0-91d4-c0d3b9429c4b"
+  },
+  "minutes": {
+   "whole": 3.7
+  },
+  "read": "Every JSONL read. The round went as at 492ac76, but the first user read `.tasks/ccs.json` with `cat -n`, unstopped: the flow gave it the CCS among the entries of `.tasks`, opened on the way to the result.",
+  "cause": "without_run_files left out the run's files alone, not the CCS, which reader_given says the first user is not given; fixed by leaving out the CCS too, the folder on the way to it opened"
+ },
+ {
+  "commit": "after the CCS left out, by kept.py",
+  "sessions": {
+   "stand-in": "d372655d-9043-4ccb-b11c-046b22f24fb0"
+  },
+  "minutes": {
+   "whole": 3.3
+  },
+  "read": "Every JSONL read. The first user read the README, the checklist, demo.sh and the notes, not the CCS, ran demo.sh and stopped at B-1; sent the work made again, read the README again, ran demo.sh and gave both items their Good; no hook stop, no form sent back."
  }
 ]

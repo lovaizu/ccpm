@@ -170,8 +170,8 @@ turn/                      the plugin, installed by Claude Code
   alone.
 
   No AI copies a reply, and the first user's lane on what it reads keeps it from the generator's.
-- The flow gives no role the run's own files, a folder holding them given as its other entries,
-  as a lane lets a role read anything under a folder it is given.
+- The flow gives no role the run's own files, nor the first user the CCS, a folder holding them
+  given as its other entries, as a lane lets a role read anything under a folder it is given.
 
 ## Verification
 

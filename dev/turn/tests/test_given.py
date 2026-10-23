@@ -102,6 +102,27 @@ class TestWithoutRunFiles(GivenTest):
             run.without_run_files(["b.md", "."], ".tasks/result.json"), ["b.md", "a.md"]
         )
 
+    def test_a_path_kept_apart_is_left_out_and_the_folders_on_its_way_opened(self):
+        # Given: the result in `.tasks`, the CCS at the top of `.`, and a file in a folder
+        self.lay(".tasks/result.json", "ccs.json", "README.md", "docs/a.md", "docs/ccs.md")
+        # When: `.` and the CCS itself are given, the CCS kept apart
+        # Then: the CCS is left out, `.` given as its other entries, and a folder not on the way
+        # to the result or the CCS given as it is
+        self.assertEqual(
+            run.without_run_files([".", "ccs.json"], ".tasks/result.json", apart=("ccs.json",)),
+            ["README.md", "docs"],
+        )
+
+    def test_a_path_kept_apart_inside_a_folder_leaves_its_folder_s_other_entries(self):
+        # Given: the result at the top, and the CCS in `notes` beside another file
+        self.lay("result.json", "notes/ccs.json", "notes/a.md")
+        # When: `notes` is given, the CCS kept apart
+        # Then: `notes` is given as its other entries
+        self.assertEqual(
+            run.without_run_files(["notes"], "result.json", apart=("notes/ccs.json",)),
+            ["notes/a.md"],
+        )
+
     def test_the_paths_are_given_in_their_order(self):
         # Given: the result in `.tasks`, and paths that are none of the run's files
         # When: they are given
@@ -155,18 +176,16 @@ class TestRolesGiven(GivenTest):
             + self.entries[2:],
         )
 
-    def test_the_first_user_is_given_neither_the_generator_s_reply_nor_the_state(self):
-        # Given: a call whose receiver has `.`, and a generator that replied with every item's
-        # Good, its reply beside the result
+    def test_the_first_user_is_given_neither_the_ccs_nor_the_generator_s_reply_nor_the_state(self):
+        # Given: a call whose receiver has `.`, the CCS beside the result, and a generator that
+        # replied with every item's Good, its reply beside the result
         # When: the first user is to be started
-        # Then: its `given` holds the work, `.` as its entries without the run's files, and the
-        # checklists, each path once
+        # Then: its `given` holds the work, `.` as its entries without the CCS and the run's files,
+        # and the checklists, each path once
         self.started()
         move = self.due(self.made())
         self.assertTrue(os.path.exists(RESULT + ".generator.json"))
         self.assertEqual(
             json.loads(move["input"]["prompt"])["given"],
-            [self.here("README.md"), self.entries[0]]
-            + self.entries[2:]
-            + [self.here("checklists/readme.md")],
+            [self.here("README.md")] + self.entries[2:] + [self.here("checklists/readme.md")],
         )
