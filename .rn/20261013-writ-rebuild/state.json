@@ -446,6 +446,9 @@
   },
   {
    "fact": "2026-10-23: dev/turn/architecture.md rewritten on the agreed concept to the architecture checklist (433 to 242 lines), case rules moved to decisions/dev/turn/architecture.decisions.md#moved-out for turn's tests and steps; the user does not read the architecture once its intent is agreed, so it is committed after my own check"
+  },
+  {
+   "fact": "2026-10-23: lane's concept agreed with the user, kept in decisions/dev/lane/architecture.decisions.md#concept: its user is an AI building a plugin, which answers and approves lane:up itself, no person taking part; lane's README, UX and architecture still have the builder, a person, answering and choosing OK"
   }
  ],
  "semantic_gist": [

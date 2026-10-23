@@ -1,5 +1,19 @@
 # What lane's design says
 
+## Concept, agreed with the user (2026-10-23)
+
+- User: an AI building a Claude Code plugin.
+- Purpose: that plugin's subagents, on every run, notice when they drift from a step and are told
+  the right step, without the building AI writing the checks.
+- Concept: `lane:up` reads the plugin's steps and lays, on each step that alone is not sure to hold
+  and whose drift shows in a tool call, a lane: the step's sentence with a hook; on every run the
+  guard notices a drifting call and tells the sentence again, so the AI finds its way back itself.
+- The AI that calls `lane:up` answers its points and approves its proposal itself; no person takes
+  part.
+- lane's own principles: (1) the AI is made to notice its drift from a step and is told the step
+  again, so it finds its way back itself; (2) a lane is a sentence of a step together with the hook
+  that notices a drift from it.
+
 - lane is lanes alone, a step with its hook: no flow, no recorder, no run state; turn keeps its own
   flow, rn uses none and holds its steering's form by a hook of its own; a flow is built only if
   rn's trials show the need (the user, 2026-10-22).
