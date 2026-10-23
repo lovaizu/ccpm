@@ -51,7 +51,7 @@ flowchart TB
   cond -->|adds each learning the user takes to| cl
   cond -->|opens with the plan, puts each work on, marks ready| pr
   user -->|merges| pr
-  guard -.->|notices a drift, tells the step again| cond
+  guard -.->|notices a drift, tells the step again| le
 ```
 
 - The arrows run in the order of the UX's From asking to the merge; the user meets only the
@@ -63,7 +63,11 @@ flowchart TB
   A task that serves no criterion is work the purpose did not ask for, and a plan kept from what
   was expected drifts from the purpose while every move looks done.
 - The AI is kept from drifting itself in two ways: the conductor carries only the state from move
-  to move, and the guard stops each rule a machine can judge at the moment it is broken.
+  to move, and each rule a machine can judge is held where the AI acts, as
+  [The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)
+  says: the conductor, in the main conversation, by rn's scripts that keep the plan, the state and
+  the record, an approval by `/rn:ty`, and the default branch by GitHub's branch protection; each
+  subagent by the guard, laid with lane.
 
   A conversation that carries the whole of a long piece of work swells, and a fresh one starts
   from nothing; a rule written only in words is followed by chance.
@@ -102,14 +106,6 @@ flowchart TB
   alone.
 
   So it says nothing turn's first user did not read.
-- The guard is lane's code, laid on rn with `lane:up`, and rn has no hooks of its own; lane lays its
-  lanes on subagents alone, so each step of the conductor the guard holds is one its skill hands to
-  a subagent it starts.
-
-  Each check is then written and tested once, in lane, and a drift told the step's own sentence
-  goes back to the step ([lane](../../lane/README.md)); a hook is not told which skill runs in the
-  main conversation
-  ([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)).
 - Once the user approves the finished work, the learner of
   [Principle 8](../architecture.md#learning-from-each-run) reads the records of the conductor's
   conversation and the agents it started; its lessons and those turn returned with each work are
@@ -127,8 +123,7 @@ rn/                                  the plugin, installed by Claude Code with t
 │   ├── ty/SKILL.md                  the conductor for /rn:ty, which the AI cannot call <skill>
 │   └── gm/SKILL.md                  the conductor for /rn:gm, which the AI cannot call <skill>
 ├── agents/
-│   ├── learner.md                   the learner <agent>
-│   └── *.md                         each subagent a skill hands a step the guard holds <agent>
+│   └── learner.md                   the learner <agent>
 ├── scripts/                         a work's CCS, the state, a kind's checklists, the proposal <Python 3>
 ├── hooks/
 │   ├── hooks.json                   the lanes, laid by lane:up

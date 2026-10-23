@@ -467,6 +467,9 @@
   },
   {
    "fact": "2026-10-23: the user: a principle of dev/architecture.md whose requirement a plugin's purpose does not give is simply not used; lane has no learner (its defects show in the plugin's runs, not lane:up's) and Principle 4 is met by the building AI reading the proposal; nothing changed"
+  },
+  {
+   "fact": "2026-10-23: the user asked whether I think from the whole: the guard's place was settled in dev/architecture.md#the-guard-tells-each-role-its-steps-again (a main-conversation orchestrator held by its steps or its scripts, the hard to undo by branch protection or permission rules); rn's architecture brought to it (the conductor by rn's scripts, /rn:ty and branch protection, the learner by lane's guard), no subagent made for a guarded step"
   }
  ],
  "semantic_gist": [
@@ -577,7 +580,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "ask the user, one at a time, rn's open points in uncertainty_signal, the guard on the main conversation first; then the code of lane, turn, rn. Never publish an Artifact unasked"
+   "first": "before raising a point, read it against dev/architecture.md and the three plugins' agreed concepts; rn's state kinds and how a task's acceptance criteria go into its CCS are steps and scripts, settled when rn's code is made. Next: the code of lane, then turn, then rn, each to its architecture and the moved-out lists. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -598,18 +601,6 @@
   },
   {
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
-  },
-  {
-   "open": "rn's guard: lane lays lanes on subagents alone and the conductor runs in the main conversation; the architecture hands each guarded step to a subagent, which steps undecided"
-  },
-  {
-   "open": "what keeps a commit or push off the default branch in rn now its own hooks are gone"
-  },
-  {
-   "open": "how the acceptance criteria reach turn and are checked, turn checking checklist items alone"
-  },
-  {
-   "open": "what kinds rn's state.json holds as ACC's CCS"
   }
  ],
  "retrieved_artifacts": [
