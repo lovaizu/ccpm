@@ -455,6 +455,9 @@
   },
   {
    "fact": "2026-10-23: lane's README (for the person who installs it, as the user said), UX and architecture brought to its concept: the building AI answers and approves lane:up, no person; architecture rewritten to the checklist (341 to 220), case rules moved to decisions/dev/lane/architecture.decisions.md#moved-out. Left for the user, one at a time after rn's concept: whether lane:up still sends one point at a time to an AI; whether lane holds Principles 4 and 8, which no part of it gives; lane/agents/up.md still assumes a person"
+  },
+  {
+   "fact": "2026-10-23: rn's concept agreed with the user, kept in decisions/dev/rn/architecture.decisions.md#concept: two drifts, the work from the purpose (traced tasks, replanning) and the AI itself (a short state replaced each move, guards); ACC's CCS and lane's guard are means named plainly in the architecture, not principles"
   }
  ],
  "semantic_gist": [
@@ -565,7 +568,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "awaiting the user on rn's concept (proposed in the conversation, as the README, UX and architecture opening say); then ask, one at a time: lane:up's points one at a time or all at once to the AI; lane and Principles 4 and 8; then rn's documents, then the code of lane, turn, rn. Never publish an Artifact unasked"
+   "first": "rn's architecture rewritten on its agreed concept to the checklist, ACC/CCS named plainly as the state's means; then the user asked one at a time: lane:up's points one at a time to an AI or all at once; lane and Principles 4 and 8; then the code of lane, turn, rn. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
