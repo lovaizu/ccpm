@@ -72,8 +72,8 @@ sequenceDiagram
 ```
 
 Why: the builder reads who the users are and what they want, how close the product must bring
-them, how they get there, then what they gain, each the ground of the next; the design names each
-goal and key result by its ID.
+them, how they get there, then what they gain, each the ground of the next; the architecture names
+each goal and key result by its ID.
 
 ## Benefit
 
@@ -136,8 +136,8 @@ Scope: its part
 
 Does each scene show only the parts of the product the user deals with?
 
-Why: what the product does inside, out of the user's sight, is the design's; shown in the scenes,
-it is decided twice and drifts.
+Why: what the product does inside, out of the user's sight, is the architecture's; shown in the
+scenes, it is decided twice and drifts.
 
 ### B-6: The benefits
 

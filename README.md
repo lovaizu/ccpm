@@ -18,4 +18,4 @@ Add the marketplace once, then install any plugin from it:
 
 ## Building the plugins
 
-Each plugin's design, tests and trials are in [`dev/`](./dev/README.md), outside the folder that is installed.
+Each plugin's architecture, tests and trials are in [`dev/`](./dev/README.md), outside the folder that is installed.

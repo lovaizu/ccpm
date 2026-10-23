@@ -1,4 +1,4 @@
-# lane design
+# lane architecture
 
 lane is built on [how a plugin works](../architecture.md), and is itself a plugin of that form:
 `lane:up`, the orchestrator an AI starts, hears the builder through that AI, proposes, and has the

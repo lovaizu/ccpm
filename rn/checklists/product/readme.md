@@ -7,7 +7,7 @@ version: 0.2.0
 
 A README is read by someone meeting the product for the first time. From it alone they decide
 whether the product is for them, and if it is, get to their first result with it. Someone joining
-those who build it reaches the design and development documents from it.
+those who build it reaches the architecture and development documents from it.
 
 A README tells a newcomer what the product's UX holds for them before anything they must do: the
 idea the product rests on, what it does that gives its benefits where other ways of doing the same
@@ -56,7 +56,7 @@ thing that gives it, and whom it is for, in one or two sentences; under no headi
 
 ## Development
 
-<A link to the entrance to the design and development>
+<A link to the entrance to the architecture and development>
 
 ## License
 ```
@@ -147,10 +147,11 @@ reader can reach.
 
 Scope: its part
 
-Can someone joining those who build the product find the entrance to its design and development?
+Can someone joining those who build the product find the entrance to its architecture and
+development?
 
-Why: one who cannot find the design works from the code alone, and changes the product without the
-decisions behind it.
+Why: one who cannot find the architecture works from the code alone, and changes the product
+without the decisions behind it.
 
 ### B-7: Terms of use
 

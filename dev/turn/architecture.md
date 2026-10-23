@@ -1,4 +1,4 @@
-# turn design
+# turn architecture
 
 turn is built on [how a plugin works](../architecture.md): `turn:up`, the orchestrator the calling
 AI starts, runs a fixed loop kept in a script, in rounds: in each, one role makes the work and

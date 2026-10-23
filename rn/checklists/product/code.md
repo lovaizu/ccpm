@@ -42,7 +42,7 @@ Does the code follow this template, in the forms its language and its developmen
 ```
 
 Why: the maintainer finds what each module and function is for, and what each test checks, in the
-same place in every file, written when the design and the tests were decided.
+same place in every file, written when the architecture and the tests were decided.
 
 ## Benefit
 

@@ -39,13 +39,14 @@ before anything else is made.**
 - Rationale: everything after is built to what the README promises the user; built first, it would
   stand on a measure no one has settled.
 
-### 2. Write the design
+### 2. Write the architecture
 
-**Write `dev/<plugin>/design.md` on [how a plugin works](../../dev/architecture.md), with `usability.md`
-and `design.md` open, and have the user agree to it.**
-Beside it, put `dev/<plugin>/README.md`, which links the design and says how to run the tests and
-trials once they exist; `dev/README.md` lists each plugin's folder and links these rules, and the
-root `README.md` leads users to each plugin's README and builders to `dev/`. Put no README deeper.
+**Write `dev/<plugin>/architecture.md` on [how a plugin works](../../dev/architecture.md), with
+`usability.md` and `architecture.md` open, and have the user agree to it.**
+Beside it, put `dev/<plugin>/README.md`, which links the architecture and says how to run the tests
+and trials once they exist; `dev/README.md` lists each plugin's folder and links these rules, and
+the root `README.md` leads users to each plugin's README and builders to `dev/`. Put no README
+deeper.
 
 - Rationale: installing copies the plugin's folder, so what only builders need stays in `dev/`;
   GitHub shows a folder's README when it is opened, so a visitor finds the way by opening folders,
@@ -57,10 +58,10 @@ own**; what the user meets that the plugin lacks comes back as the lessons of
 
 - Rationale: the plugins are open source, so a need met once improves the plugin for every user.
 
-### 3. Have the README and the design read once
+### 3. Have the README and the architecture read once
 
-**Have a first user who does not know the discussion read the README and the design once, as their
-readers would, and settle each finding by fixing the decision or principle it comes from.**
+**Have a first user who does not know the discussion read the README and the architecture once, as
+their readers would, and settle each finding by fixing the decision or principle it comes from.**
 
 - Rationale: a reading after every fix turns each finding into a patch, and the documents drift
   from their aim while every reading passes.
@@ -128,16 +129,16 @@ d. **Lay the lanes the prompts' steps call for with lane's `lane:up`, with `prom
      through a link; a check kept in a plugin of its own reads the AI's calls apart from lane's and
      drifts from it; each check is read, fixed and tested on its own.
 
-e. **Try the unit as its user, by the design's Verification**, with the code that runs it kept in
-   `dev/<plugin>/trials/`, out of the line count. A trial that needs a real GitHub repository runs
-   in `lovaizu/playground`, one at a time, on a branch of its own, and the branch, its pull requests
-   and whatever else it made there are removed when it ends.
+e. **Try the unit as its user, by the architecture's Verification**, with the code that runs it kept
+   in `dev/<plugin>/trials/`, out of the line count. A trial that needs a real GitHub repository
+   runs in `lovaizu/playground`, one at a time, on a branch of its own, and the branch, its pull
+   requests and whatever else it made there are removed when it ends.
    - Rationale: CI cannot start Claude Code, so each run is its own check; pull requests and pushes
      a run makes stay out of every repository people use, `main` there takes nothing but through a
      reviewed pull request, and two runs at once, or one left behind, would mix with the next.
 
 **Change a prompt or a document after a trial only for a cause confirmed in the records and traced
-to what the README and the design say it should be.**
+to what the README and the architecture say it should be.**
 
 - Rationale: what an AI does varies from run to run; a line added for one run's slip meets a
   different slip in the next, and the additions never settle.
@@ -145,7 +146,7 @@ to what the README and the design say it should be.**
 ### 6. Check the whole
 
 **Try the plugin as its user from start to end, and check every story and how close every key
-result of the UX came, by the design's Verification.** Settle what it finds at the unit its cause lies in, then check the whole again.
+result of the UX came, by the architecture's Verification.** Settle what it finds at the unit its cause lies in, then check the whole again.
 
 - Rationale: each unit was checked on its own; what lies between units, and key results that show only
   over the whole, such as the time a whole run takes, show only here.

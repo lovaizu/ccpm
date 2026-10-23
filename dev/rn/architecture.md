@@ -1,4 +1,4 @@
-# rn design
+# rn architecture
 
 rn is one AI, the conductor, that talks with the user and decides every move, and a maker that makes
 each work the user sees, such as the plan, a document or the finished work, and has it used first by

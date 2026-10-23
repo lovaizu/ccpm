@@ -1,6 +1,6 @@
 # Building the plugins
 
-Each plugin's design, tests and trials live here. Installing a plugin copies only its own folder, so nothing here reaches its users' machines.
+Each plugin's architecture, tests and trials live here. Installing a plugin copies only its own folder, so nothing here reaches its users' machines.
 
 Every plugin is built on [how a plugin works](./architecture.md).
 

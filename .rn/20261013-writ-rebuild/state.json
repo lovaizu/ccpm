@@ -434,6 +434,9 @@
   },
   {
    "fact": "2026-10-23: turn's ux.md, README and design read whole against ux.md, readme.md, design.md and usability.md, every item; fixed without changing a decision (3c68597): Good and CCS said before use, one name for the main conversation, 'step' kept for the plugin's step, 'round' said in the opening, the CCS check named apart from the check of each Good, each interaction one sentence, repeats cut, rn's orchestrator out of the UX, acceptance on the users' model with its flow passing by its records, the roles' Content bar named as KR1.1's; checks 100%, 0 survivors"
+  },
+  {
+   "fact": "the user decided (2026-10-23): the design document had become a specification, as every decision from talks and trials was written into it and each finding while building sent it back for approval; it is now the architecture (dev/<plugin>/architecture.md, checklist rn/checklists/product/architecture.md, fde2d4a and the rename): principles, user stories, a logical figure with only what it cannot show, a physical tree, and what and how far each unit, story and key result is checked; how each part behaves lives in its tests' Given/When/Then and its prompt's steps. The four ways of checking (users' model, records, flow apart from content, cost in parts) were folded into the checklist's B-8 and B-10 rather than plugin.md, as rn's users use the checklist"
   }
  ],
  "semantic_gist": [
@@ -544,7 +547,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume, in order: (1) give the user the Japanese translations of turn's three documents (show-japanese) with the fixes of 3c68597 listed, for their review; (2) then lane's design from its user, an AI building a plugin, and rn's; (3) turn's code to its design; (4) T23's runs, KR1.1 judged for both versions by one judge. Use the right role names (first user, orchestrator), never 'readers' loosely"
+   "first": "on resume, in order: (1) rewrite dev/turn/architecture.md to rn/checklists/product/architecture.md, its case rules moved to turn's prompts and tests when turn is built, and show the user its Japanese translation before committing (no Artifact; in the conversation); (2) then lane's and rn's architectures; rn's own 'design' wording (README, UX, sign-off, rn.py) at rn's remake; (3) turn's code; (4) T23's runs"
   }
  ],
  "uncertainty_signal": [

@@ -27,7 +27,7 @@ def lane_code():
 
 lanes, step = lane_code()
 
-# The lanes each agent's steps call for, as the design gives them: its run's values as the flow
+# The lanes each agent's steps call for, as the architecture gives them: its run's values as the flow
 # gives them in the agent's prompt, or as turn.py start prints them.
 LAID = {
     "turn:up": {"start_with", "follow_next", "hands_off", "as_printed"},
@@ -64,7 +64,7 @@ class TestLanes(unittest.TestCase):
     def test_each_agent_has_the_lanes_its_steps_call_for(self):
         # Given: turn's hooks
         # When: the lanes on each agent are read
-        # Then: each agent has the lanes the design lays on it
+        # Then: each agent has the lanes the architecture lays on it
         on = {}
         for agent, _, lane, _ in laid():
             on.setdefault(agent, set()).add(lane)

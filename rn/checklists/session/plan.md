@@ -58,7 +58,7 @@ G1: <the user's purpose, with why they want it>
 
 ## Documents
 
-- <the document, such as the design>: <its path>
+- <the document, such as the architecture>: <its path>
 
 ## Tasks
 
@@ -68,7 +68,7 @@ G1: <the user's purpose, with why they want it>
 
   - [ ] 1. Read <the context it needs>; confirm <what is lacking>. The conductor, with the user.
   - [ ] 2. Design <the part it makes> and <how that part is checked>. turn, first run.
-  - [ ] 3. Trace <the design> on paper against <its checks>. That run's first reader.
+  - [ ] 3. Trace <the architecture> on paper against <its checks>. That run's first reader.
   - [ ] 4. Make <the part>, checked as it grows, code test first. turn, second run.
 ```
 
@@ -121,7 +121,7 @@ built?
 Look for: a criterion naming a library, a file layout or a way of building that the goal does not
 ask for.
 
-Why: a criterion of how it is built fixes a way before the design is drawn, and is met by a
+Why: a criterion of how it is built fixes a way before the architecture is drawn, and is met by a
 finished work that does nothing for the goal.
 
 ### B-4: Each criterion the user's

@@ -28,7 +28,7 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 
 - UX: `dev/rn/ux.md`
 - README: `rn/README.md`
-- Design: `dev/rn/design.md`
+- Architecture: `dev/rn/architecture.md`
 
 ## How the work goes
 

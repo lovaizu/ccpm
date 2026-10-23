@@ -1,20 +1,20 @@
 ---
-name: design
+name: architecture
 version: 0.3.0
 ---
 
-# Design document
+# Architecture
 
-A design document is read by whoever builds or changes the product and by whoever approves it. From
+An architecture is read by whoever builds or changes the product and by whoever approves it. From
 it they grasp, in a short time, how the product is put together to give the UX the product must
 give, and how far each part and the whole are checked, and build, change or approve the product by
 it.
 
-A design document holds the product's architecture: what the product rests on, the parts it is made
+An architecture holds what the product rests on, the parts it is made
 of, how they act on one another and where each is placed; and how far each is checked. These are
 what an approval rests on, as changing one changes what was approved. How each part behaves in each
 case is held where the part is built and checked: in the tests of a part made of code, each a Given,
-a When and a Then, and in the steps of a part run by an AI; in the design document it would be
+a When and a Then, and in the steps of a part run by an AI; in the architecture it would be
 decided twice and drift, and every finding made while building would change what was approved.
 
 The parts are drawn from the UX in layers, each fewer than the one before: the UX's scenes rest on a
@@ -24,8 +24,8 @@ is realized by a technology, chosen at this layer alone, so the stories and the 
 from what the UX needs. The checks go back up: each unit, then each story, then how close each key
 result came.
 
-Each item of `usability.md` applies to a design document with the architecture and its checks as its
-subject; its B-16 is answered by the logical view's figure.
+Each item of `usability.md` applies to an architecture with the product's parts and their checks as
+its subject; its B-16 is answered by the logical view's figure.
 
 ## Format
 
@@ -33,10 +33,10 @@ subject; its B-16 is answered by the logical view's figure.
 
 Scope: whole
 
-Does the design document follow this template, headings included?
+Does the architecture follow this template, headings included?
 
 ```markdown
-# <Product name> design
+# <Product name> architecture
 
 <How the product is put together, in a sentence or two, with a link to where the UX is defined>
 
@@ -88,8 +88,8 @@ that give it and where they are, then how far each is checked, each the ground o
 
 Scope: its part
 
-Can the reader tell, from the opening, the principles every decision of the design rests on, its
-own each in a line and those of what it is built on by a link?
+Can the reader tell, from the opening, the principles every decision of the architecture rests on,
+its own each in a line and those of what it is built on by a link?
 
 Why: each decision's why can hold on its own while the decisions together break a principle no one
 wrote down; principles said once are what every decision, and every change, is held to.
@@ -220,7 +220,7 @@ Why: every path of its own is one more thing for users to learn and builders to 
 Scope: whole
 
 Can the reader find that each arrow of the logical view and each check keeps every principle the
-design rests on?
+architecture rests on?
 
 Look for: an arrow that hands a part what a principle says it must not see; a check a principle
 gives to some part that no part makes.
