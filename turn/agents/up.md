@@ -59,8 +59,9 @@ ending with `EOF`.
      later installed, and end. If the command exits with 1, reply with what it printed, and end:
      the call names something turn cannot take, which the calling AI fixes.
    - Out: `{"result": "<where the result goes>", "given": ["<path>", ...]}`: `given` is the CCS and
-     each file or folder it names but the work, the checklists among them, the whole of what you
-     read for your check in step 4.
+     each file or folder it names but the work, the checklists among them, a folder holding the
+     run's own files given as its entries without them, the whole of what you read for your check
+     in step 4.
 2. Load SendMessage with ToolSearch (`select:SendMessage`), as it reaches the main conversation and
    the roles the run keeps started; then run `turn.py next <result>` with nothing, and go to step 3.
 3. Go on by what `turn.py next` printed last. Take the next move `turn.py next` printed. Do not run `git commit` or `git push`.

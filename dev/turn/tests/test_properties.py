@@ -3,6 +3,8 @@ makes, new on every run, CI included."""
 
 import json
 import os
+import shutil
+import tempfile
 import unittest
 
 # Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
@@ -122,3 +124,63 @@ class TestAnswer(RepoTest):
             self.assertEqual((code, kept["answers"][-1]["answer"]), (0, answer.strip()))
         else:
             self.assertEqual((code, "asked" in kept), (1, True))
+
+
+# Names a layout is made of: folders and files, some named as the result or as one of its run's
+# files, and some only beginning like them.
+NAMES = st.sampled_from(["a", "b", "r.json", "r.json.run.json", "r.json.x", "r.jsonx"])
+
+
+def reached(paths):
+    """Every file and folder at or under the paths, as real paths."""
+    found = set()
+    for path in paths:
+        found.add(os.path.realpath(path))
+        for folder, folders, files in os.walk(path):
+            found.update(os.path.realpath(os.path.join(folder, n)) for n in folders + files)
+    return found
+
+
+class TestGiven(RepoTest):
+    @given(
+        st.lists(st.lists(NAMES, min_size=1, max_size=3), max_size=12),
+        st.lists(st.sampled_from(["a", "b"]), max_size=2),
+        st.lists(st.lists(NAMES, max_size=3), min_size=1, max_size=3),
+    )
+    def test_the_paths_given_reach_all_they_reached_but_the_run_s_files(self, files, down, paths):
+        # Given: any layout of files and folders, the result at any depth with its state and a
+        # record beside it, and any paths that are there in it
+        # When: the paths are given without the run's files
+        # Then: they reach every file and folder the paths reached but the run's files and what is
+        # in them, and the folders opened on the way to the result's folder; and none of them is
+        # such a folder
+        place = tempfile.mkdtemp(dir=self.base)
+        os.chdir(place)
+        try:
+            result = os.path.join(*down, "r.json")
+            for path in (result, result + ".run.json", result + ".records/1.txt"):
+                self.write(path, "")
+            for names in files:
+                try:
+                    self.write(os.path.join(*names), "")
+                except OSError:
+                    pass
+            asked = [os.path.join(".", *p) for p in paths if os.path.exists(os.path.join(".", *p))]
+            folder = os.path.realpath(os.path.dirname(result) or ".")
+            ours = {
+                os.path.join(folder, n)
+                for n in os.listdir(folder)
+                if n == "r.json" or n.startswith("r.json.")
+            }
+            on_way = {p for p in reached(asked) if folder == p or folder.startswith(p + os.sep)}
+            kept = {
+                p
+                for p in reached(asked) - on_way
+                if not any(p == o or p.startswith(o + os.sep) for o in ours)
+            }
+            given_now = run.without_run_files(asked, result)
+            self.assertEqual(reached(given_now), kept)
+            self.assertFalse({os.path.realpath(p) for p in given_now} & on_way)
+        finally:
+            os.chdir(self.base)
+            shutil.rmtree(place)

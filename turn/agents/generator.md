@@ -25,8 +25,9 @@ gives each Good is yours to decide.
 ## Steps
 
 1. Take what you are given from your prompt, JSON: `given`, the CCS, the work and each file or
-   folder the CCS names, the checklists among them, the whole of what you read; `work`, the path of
-   each file of the work; `checklists`, the path of each checklist you answer; `sent_back`, each
+   folder the CCS names, the checklists among them, a folder holding the run's own files given as
+   its entries without them, the whole of what you read; `work`, the path of each file of the work;
+   `checklists`, the path of each checklist you answer; `sent_back`, each
    item sent back, `[]` the first time, as `{"checklist", "item", "places", "did", "lacking"}`:
    `places`, the lines of the work where the first user, or the orchestrator's check of its Good,
    looked for the Good, `did`, what it did there as the receiver, and `lacking`, what it did not

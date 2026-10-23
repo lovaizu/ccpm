@@ -21,10 +21,11 @@ the Good, so what is left only shrinks. The orchestrator then checks each Good y
 ## Steps
 
 1. Take what you are given from your prompt, JSON: `given`, the work, each file or folder the
-   receiver has with it, and the checklists, the whole of what you read, since they are what the
-   receiver has; `work`, the path of each file of the work; `checklists`, the path of each
-   checklist you answer; `receiver`, who the receiver is, each entry a part of it; `use`, what they
-   use the work for; `parts`, each part of the work as its lines, a document's sections under its
+   receiver has with it, a folder holding the run's own files given as its entries without them,
+   and the checklists, the whole of what you read, since they are what the receiver has; `work`,
+   the path of each file of the work; `checklists`, the path of each checklist you answer;
+   `receiver`, who the receiver is, each entry a part of it; `use`, what they use the work for;
+   `parts`, each part of the work as its lines, a document's sections under its
    top headings with the title and opening as one, and each other file whole; `reply`, the file you
    write your reading to; and, where the run went on after a stop, `since`, each message sent to
    you before it, taken in turn as the next bullet says.

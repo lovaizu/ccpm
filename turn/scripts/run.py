@@ -106,6 +106,32 @@ def records_folder(result: str) -> str:
     return os.path.abspath(result + ".records")
 
 
+def without_run_files(paths: list[str], result: str) -> list[str]:
+    """The paths, in their order, without the run's own files: the result, and each file beside it
+    whose name begins with the result's name and a dot, as every file the run keeps is named. A
+    path that is one of them is left out, and a folder holding the result's folder is given as its
+    entries, sorted, the one on the way to the result's folder opened the same way: a role's lane
+    lets it read anything under a folder it is given, and the first user is not to read the
+    generator's reply. A path inside one of them, such as a record shown to the learner, is left
+    out too; a path met again, as a checklist the CCS also names, is given once."""
+    folder = os.path.realpath(os.path.dirname(result) or ".")
+    name = os.path.basename(result)
+
+    def ours(path: str) -> bool:
+        # The entry of the result's folder the path is at or in; `..` for a path outside it.
+        entry = os.path.relpath(os.path.realpath(path), folder).split(os.sep)[0]
+        return entry == name or entry.startswith(name + ".")
+
+    def opened(path: str) -> list[str]:
+        real = os.path.realpath(path)
+        if real != folder and not folder.startswith(real + os.sep):
+            return [path]
+        entries = [os.path.normpath(os.path.join(path, e)) for e in sorted(os.listdir(path))]
+        return [p for e in entries if not ours(e) for p in opened(e)]
+
+    return list(dict.fromkeys(p for path in paths if not ours(path) for p in opened(path)))
+
+
 def whole(paths: list[str]) -> list[str]:
     """The paths as whole paths in the folder the call was made from, where the flow runs: a role's
     commands and hooks run from the session's working folder, which the calling AI may move with
@@ -133,7 +159,8 @@ def start(text: str) -> dict[str, Any]:
         run = resumed(kept)
     save(run)
     read = [p for p in run["given"] if p not in run["work"]]
-    return {"result": os.path.abspath(run["call"]["result"]), "given": whole(read)}
+    result = run["call"]["result"]
+    return {"result": os.path.abspath(result), "given": whole(without_run_files(read, result))}
 
 
 def begun(asked: dict[str, Any], root: str) -> dict[str, Any]:
@@ -184,7 +211,7 @@ def generator_given(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
     each item sent back with what was found lacking, every answer the calling AI gave, and where it
     replies."""
     return {
-        "given": whole(run["given"]),
+        "given": whole(without_run_files(run["given"], run["call"]["result"])),
         "work": whole(run["work"]),
         "checklists": whole(run["checklist"]),
         "sent_back": sent_back,
@@ -198,7 +225,7 @@ def reader_given(run: dict[str, Any]) -> dict[str, Any]:
     receiver and their use, the parts of the work, and where it replies; not the CCS nor the
     generator's reply, as a reader shown the maker's claim finds the Good it was told to find."""
     return {
-        "given": whole(run["shown"]),
+        "given": whole(without_run_files(run["shown"], run["call"]["result"])),
         "work": whole(run["work"]),
         "checklists": whole(run["checklist"]),
         "receiver": run["receiver"],

@@ -89,3 +89,9 @@
   README.md or the roles' replies in a round, and follow_next stopped each before it ran, as a
   move was printed and not yet taken (`dev/turn/trials/flow/results.json`, ways `sent` and
   `left`).
+- The flow gives no role the run's own files beside the result, a folder holding them given as its
+  other entries (2026-10-23): in the roles trial the first user, under `has` `.`, read the
+  generator's reply and the state, as its read_only lane lets it read anything under a folder it is
+  given; the files stay beside the result, as Claude Code asks permission for each write outside the
+  working directory, also under acceptEdits
+  (https://code.claude.com/docs/en/permissions.md), and the README promises the state there.
