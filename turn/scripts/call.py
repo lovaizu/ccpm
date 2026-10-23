@@ -38,8 +38,8 @@ def parse(text: str) -> dict[str, Any]:
 
 def check(call: dict[str, Any]) -> dict[str, Any]:
     """The run the call asks for: the call, each kind's entries, the checklists' items, the files
-    the orchestrator and the generator are given, and those the first user and the evaluator are
-    shown, as the receiver has them; stops at the first thing turn cannot take."""
+    the orchestrator and the generator are given, and those the first user is shown, as the
+    receiver has them; stops at the first thing turn cannot take."""
     unknown = sorted(set(call) - {"ccs", "kind", "result"})
     if unknown:
         raise Stop(

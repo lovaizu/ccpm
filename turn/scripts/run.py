@@ -169,7 +169,7 @@ def resumed(run: dict[str, Any]) -> dict[str, Any]:
 
 def each(run: dict[str, Any]) -> list[tuple[str, str]]:
     """The items asked of each part of the work, by their checklist and ID."""
-    return [key(i) for i in run["each"]]
+    return [forms.key_of(i) for i in run["each"]]
 
 
 def generate(run: dict[str, Any], sent_back: list, sent: Any = None) -> dict[str, Any]:
@@ -541,10 +541,10 @@ def goods_checked(run: dict[str, Any], text: str) -> dict[str, Any]:
     said = forms.check(text, [named(g) for g in goods], run["work"], forms.HELD)
     if said:
         raise call.Stop("turn: the check of the Goods is not filled:\n" + "\n".join(said))
-    found = {key(i): i for i in json.loads(forms.unfenced(text))["items"]}
+    found = {forms.key_of(i): i for i in json.loads(forms.unfenced(text))["items"]}
     del run["goods"]
-    kept = [g for g in goods if "holds" in found[key(g)]]
-    lacking = [found.get(key(i), i) for i in run.pop("read") if i not in kept]
+    kept = [g for g in goods if "holds" in found[forms.key_of(g)]]
+    lacking = [found.get(forms.key_of(i), i) for i in run.pop("read") if i not in kept]
     run["done"] = f"{UP} found {len(kept)} of {len(goods)} Goods hold."
     return ended(run, kept, lacking)
 
@@ -585,8 +585,8 @@ def left_asked(run: dict[str, Any], text: str) -> dict[str, Any]:
 def learn(run: dict[str, Any], goods: list) -> dict[str, Any]:
     """Once the run is done, the learner learns from every record of the run what fell short and
     why, each record shown as text it reads whole; every item's Good is kept for the result."""
-    found = {key(g): g for g in goods}
-    run["held"] = [found[key(i)] for i in run["items"]]
+    found = {forms.key_of(g): g for g in goods}
+    run["held"] = [found[forms.key_of(i)] for i in run["items"]]
     result = run["call"]["result"]
     kept = [p for p in (records.find(i) for i in run["records"]) if p]
     orchestrator = records.orchestrator(kept, result)
@@ -642,10 +642,6 @@ def waited(items: list[dict[str, Any]], questions: list) -> list[dict[str, Any]]
 def named(item: dict[str, Any]) -> dict[str, str]:
     """The checklist and ID that name an item."""
     return {"checklist": item["checklist"], "item": item["item"]}
-
-
-def key(item: dict[str, Any]) -> tuple[str, str]:
-    return (item["checklist"], item["item"])
 
 
 def good(item: dict[str, Any]) -> bool:

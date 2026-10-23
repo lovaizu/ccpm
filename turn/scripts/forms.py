@@ -213,12 +213,14 @@ def item_problems(
 ) -> list[str]:
     """What is wrong with the items given, against the items judged; every one of them is to be
     given where `every` says."""
-    keys = [(i["checklist"], i["item"]) for i in items]
+    keys = [key_of(i) for i in items]
+    each = [key_of({"checklist": c, "item": i}) for c, i in each]
     said: list[str] = []
     seen: list[tuple[str, str]] = []
     for item in given:
-        key = (item.get("checklist"), item.get("item")) if isinstance(item, dict) else None
-        name = f"{key[0]} {key[1]}" if key else json.dumps(item)
+        named = isinstance(item, dict) and isinstance(item.get("checklist"), str)
+        key = key_of(item) if named else None
+        name = f"{item['checklist']} {item.get('item')}" if named else json.dumps(item)
         if key not in keys:
             said.append(f"{name} is not an item judged here; give each item by its checklist")
             continue
@@ -238,11 +240,17 @@ def item_problems(
         said += value_problems(name, item, work)
     if every:
         said += [
-            f"{c} {i} is left out; give every item judged here"
-            for c, i in keys
-            if (c, i) not in seen
+            f"{i['checklist']} {i['item']} is left out; give every item judged here"
+            for i in items
+            if key_of(i) not in seen
         ]
     return said
+
+
+def key_of(item: dict[str, Any]) -> tuple[str, Any]:
+    """The checklist and ID that name an item, the checklist as the file it is, so a role given the
+    checklists' whole paths names the item the CCS names by another."""
+    return (os.path.realpath(item["checklist"]), item.get("item"))
 
 
 def allowed(shapes: list[tuple[str, ...]]) -> str:

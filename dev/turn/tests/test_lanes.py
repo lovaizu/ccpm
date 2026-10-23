@@ -13,7 +13,7 @@ lanes, step = lane_code("lanes", "step")
 # The lanes each agent's steps call for, as the architecture gives them: its run's values as the flow
 # gives them in the agent's prompt, or as turn.py start prints them.
 LAID = {
-    "turn:up": {"start_with", "follow_next", "hands_off", "as_printed"},
+    "turn:up": {"start_with", "follow_next", "hands_off", "read_whole", "as_printed"},
     "turn:generator": {"read_only", "read_whole", "write_only", "hands_off", "in_form", "end_when"},
     "turn:first-user": {
         "read_only",
@@ -23,7 +23,6 @@ LAID = {
         "in_form",
         "end_when",
     },
-    "turn:evaluator": {"read_only", "read_whole", "write_only", "hands_off", "in_form", "end_when"},
     "turn:learner": {"read_only", "read_whole", "write_only", "in_form", "end_when"},
 }
 

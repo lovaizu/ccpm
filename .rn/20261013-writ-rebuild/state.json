@@ -476,6 +476,9 @@
   },
   {
    "fact": "2026-10-23: turn's flow, forms and tests brought to its architecture by a subagent with code.md open, checked by hand: the evaluator, goods.json and the take step gone, the Good check, questions asked as met, the learner once after the run; roles.py trial fixed by hand to the three roles; old design sections of turn's decisions removed as the architecture holds them; check.sh turn passes, mutate.sh --since cf33744 turn 0 of 1131; cosmic-ray.toml had checked nothing, as its type check followed the link to lane and failed"
+  },
+  {
+   "fact": "2026-10-23: turn's four prompts made to the architecture by a subagent with prompt.md and usability.md open, checked by hand; evaluator.md removed; lanes laid by lane:up through dev/lane/trials/trial.py turn (the stand-in took each recommendation): up's step 4 read_whole on {given} added, the evaluator's lanes left out; a reply naming a checklist by its whole path, as each role is given it, was stopped by the flow: items now matched by the checklist's real path (forms.key_of); check.sh turn passes, mutate.sh 0 survivors (a run with failing tests had shown 0 falsely)"
   }
  ],
  "semantic_gist": [
@@ -580,7 +583,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: a subagent was started (2026-10-23) to bring turn's four prompts (up, generator, first-user, learner; evaluator.md removed) to the architecture and the decisions' [step] lines with prompt.md and usability.md open, uncommitted. If /clear stopped it, read git status and git diff; redo it if partial; check by hand against prompt.md, usability.md and each [step] line, run check.sh turn, commit. Then the lanes laid by lane:up (hooks.json and test_lanes.LAID still name turn:evaluator and goods.json; the orchestrator's read_whole on the {given} turn.py start prints; no lane yet holds handing the answer on as it came), the trials' reply sets (flow.py still names the evaluator), then the trials. No question is open for the user. Never publish an Artifact unasked"
+   "first": "next: lane's layer to drop the hooks of a subagent no longer in the plugin (lay.py write, with code.md open, tests in dev/lane/tests); then turn's flow trial reply sets made to the architecture's Verification ways (dev/turn/trials/flow: replies, roles stand-ins, flow.py; evaluator gone; the Good check by the real orchestrator), then the units' trials (flow, roles), then T23. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -601,6 +604,9 @@
   },
   {
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
+  },
+  {
+   "open": "lane:up's layer leaves the hooks of a subagent the plugin no longer has, so the building AI removed turn:evaluator's two entries from hooks.json by hand (lane trial turn, 2026-10-23); lay.py write is to drop them"
   }
  ],
  "retrieved_artifacts": [

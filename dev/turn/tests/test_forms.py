@@ -83,6 +83,26 @@ class TestItems(FormTest):
         self.assertEqual(sum("B-1 must hold" in s for s in said), 1)
         self.assertEqual(sum("B-1 is given twice" in s for s in said), 1)
 
+    def test_an_item_named_by_its_checklist_s_whole_path_is_the_item_the_ccs_names(self):
+        # Given: a claim naming every item by the whole path of its checklist, as each role is
+        # given the checklists, one of them asked of each part of the work
+        # When: it is checked against the items as the CCS names them
+        # Then: it is filled
+        whole = os.path.abspath("checklists/readme.md")
+        items = [dict(GOOD, checklist=whole), dict(EACH_GOOD, checklist=whole)]
+        said = self.each_said({"items": items, "questions": []}, forms.CLAIM, (ITEMS[0], EACH_ITEM))
+        self.assertEqual(said, [])
+
+    def test_an_item_naming_no_checklist_is_told_to_name_it(self):
+        # Given: a claim with an item that names no checklist, and one whose checklist is no path
+        # When: it is checked
+        # Then: each is shown as it was given and told to name its checklist
+        bare = {"item": "F-1", "good": "it", "lines": ["README.md:1-3"]}
+        said = self.said({"items": [bare, dict(bare, checklist=1)], "questions": []}, forms.CLAIM)
+        for item in (bare, dict(bare, checklist=1)):
+            with self.subTest(item=item):
+                self.assertIn(f"{json.dumps(item)} is not an item judged here", "\n".join(said))
+
     def test_an_item_of_no_shape_is_told_the_shapes_it_takes(self):
         # Given: an item holding none of the shapes its form takes
         # When: it is checked by a form of one shape, and by a form of two
