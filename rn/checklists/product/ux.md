@@ -1,6 +1,6 @@
 ---
 name: ux
-version: 0.2.0
+version: 0.1.0
 ---
 
 # UX
@@ -8,24 +8,15 @@ version: 0.2.0
 A UX is read by whoever builds the product. From it they know the experience the product must give
 its users and how each version is judged against it, and build the product to it.
 
-The UX is a user's experience of using the product until they achieve their goal. A goal says what
-the user wants to achieve, and its key results say what is measured to show how close the product
-brings them to it. Most of what a product gives, such as a document's worth or the time it takes,
-is not met or missed but come close to, so each version is judged against the version in use on the
-same tasks, with no target value: a value the user's need does not rest under draws the work toward
-the number rather than the user. The key results stand in order of priority: a version comes closer
-from the highest, and a lower one is never brought closer by moving a higher one away. Working out
-the UX is making that experience clear, in this order:
-
-1. Decide the users and the goal each wants to achieve.
-2. Decide, for each goal, its key results, each drawn from the goal: what is counted, how each case
-   is judged to count, and how the value stands once the user has reached the goal; then put them in
-   order of priority.
-3. Draw, as scenes, what the user does and gets back until they achieve the goal: the whole way in
-   one short sequence diagram, then each scene the user should see in one of its own, with what a
-   figure cannot show beside it.
-4. Decide what the user gains when they achieve the goal with this product: the benefits, which are
-   why the user chooses it.
+A UX holds a user's experience of using the product until they achieve their goal, each part resting
+on the one before: the users and the goal each wants; the key results, what is measured to show how
+close the product brings them to it, in order of priority; the scenes of what the user does and gets
+back until they reach it; and the benefits, what they gain with this product, which are why they
+choose it. Most of what a product gives, such as a document's worth or the time it takes, is not met
+or missed but come close to, so each version is judged against the version in use on the same tasks,
+with no target value: a value the user's need does not rest under draws the work toward the number
+rather than the user. A version comes closer from the highest key result, and a lower one is never
+brought closer by moving a higher one away.
 
 Each item of `usability.md` applies to a UX with the users' experience as its subject; its B-16 is
 answered by the scenes.
@@ -95,6 +86,16 @@ Can the reader tell the users and the goal each wants to achieve?
 Why: everything else in the UX is the experience of these users reaching these goals; without them,
 the builder cannot tell whom the product is for or when it has done its work.
 
+### B-7: The order of priority
+
+Scope: its part
+
+Can the reader tell which key result comes first, and why in that order?
+
+Why: bringing one key result closer often moves another away; without an order, the builder trades
+the one that matters more for one easier to move, and a version looks closer while the user is
+worse off.
+
 ### B-2: Results drawn from the goal
 
 Scope: its part
@@ -113,18 +114,8 @@ Scope: its part
 
 Can the reader tell, for each key result, why a better value shows the user closer to its goal?
 
-Why: a result without its why can grow better while the goal comes no closer, and no one can tell whether it
-is the right one to measure.
-
-### B-7: The order of priority
-
-Scope: its part
-
-Can the reader tell which key result comes first, and why in that order?
-
-Why: bringing one key result closer often moves another away; without an order, the builder trades
-the one that matters more for one easier to move, and a version looks closer while the user is
-worse off.
+Why: a result without its why can grow better while the goal comes no closer, and no one can tell
+whether it is the right one to measure.
 
 ### B-5: The scenes to the goal
 
@@ -132,14 +123,21 @@ Scope: its part
 
 Can the reader tell, from one sequence diagram of the whole way and one for each scene the user
 should see, what the user does and gets back until they achieve the goal, with what a figure cannot
-show written beside it, and with no part of the product shown that the user does not deal with?
+show written beside it?
 
 Why: the builder builds what the scenes show the user doing and getting; a step no scene shows is
 built by guess, or not at all. A sequence diagram shows at a glance who acts, in what order, and
 what repeats or branches, which a list of scenes leaves the reader to put together; a figure for
-each scene says one thing, and the whole way keeps the scenes from leaving a gap between them. What the
-product does inside, out of the user's sight, is the design's; shown in the scenes, it is decided
-twice and drifts.
+each scene says one thing, and the whole way keeps the scenes from leaving a gap between them.
+
+### B-8: The product as the user meets it
+
+Scope: its part
+
+Does each scene show only the parts of the product the user deals with?
+
+Why: what the product does inside, out of the user's sight, is the design's; shown in the scenes,
+it is decided twice and drifts.
 
 ### B-6: The benefits
 

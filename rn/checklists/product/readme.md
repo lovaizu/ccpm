@@ -7,28 +7,13 @@ version: 0.2.0
 
 A README is read by someone meeting the product for the first time. From it alone they decide
 whether the product is for them, and if it is, get to their first result with it. Someone joining
-those who build it reaches the design and development documents from it. A README is made in two
-stages: from the UX before the product is designed, so that it is built to what the README promises,
-and from the design and what is in the repository once the product is built.
+those who build it reaches the design and development documents from it.
 
-Before the design, from the UX:
-
-1. From the UX's benefits, say in one sentence the idea the product rests on: what it does that
-   gives its benefits, where other ways of doing the same work do not.
-2. From the UX's users and goals, and its benefits, say in one or two sentences whom the product is
-   for and what they gain.
-3. Choose one of the UX's scenes and show it as an example, from start to result, with what the
-   user does and what they get back.
-4. From the UX's benefits, take what doing the work by hand or with another tool does not give, as
-   why to choose this one.
-
-Once built, from the design and the repository:
-
-5. Write what the reader needs to repeat the example themselves: what must be in place beforehand,
-   and installing.
-6. Link the documents the reader goes on to: for users, fuller use and what changed in each
-   version; for those who build it, the entrance to the design and development.
-7. Write the terms on which the product may be used, the license.
+A README tells a newcomer what the product's UX holds for them before anything they must do: the
+idea the product rests on, what it does that gives its benefits where other ways of doing the same
+work do not; whom it is for and what they gain, from the UX's users, goals and benefits; one of the
+UX's scenes as the example; and what the benefits give that doing the work by hand or with another
+tool does not. What follows takes a reader who has decided from there to their first result, and on.
 
 Each item of `usability.md` applies to a README with deciding and getting to the first result as
 its subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation.
@@ -98,15 +83,6 @@ Why: the idea is what sets the product apart; a reader shown only what it does t
 tool that does the same, and reads the example and why to choose it without the thread that joins
 them.
 
-### B-2: Who it is for
-
-Scope: its part
-
-From the opening, can the reader tell whether they are someone the product is for?
-
-Why: a reader who cannot place themselves reads on to find out, or leaves a product that would have
-served them.
-
 ### B-1: What they gain
 
 Scope: its part
@@ -117,6 +93,15 @@ that gives it, such as a tool run from their editor?
 Why: the reader decides from the opening whether to read on, and weighs what they gain against what
 they already use, which takes the kind of thing; when the opening says how the product works
 instead, the reader is left to work out what they gain, and often leaves first.
+
+### B-2: Who it is for
+
+Scope: its part
+
+From the opening, can the reader tell whether they are someone the product is for?
+
+Why: a reader who cannot place themselves reads on to find out, or leaves a product that would have
+served them.
 
 ### B-4: Using it on their own work
 
@@ -138,15 +123,6 @@ does not?
 Why: what only this product gives is the reason to choose it; what every way gives, such as not
 losing work, does not decide the choice, and placed first it hides what does.
 
-### B-5: Started from the README alone
-
-Scope: whole
-
-Can a reader who has decided to use the product get what must be in place beforehand, install it,
-and repeat the example themselves, with the README alone?
-
-Why: each place the reader has to look elsewhere is a place they may stop.
-
 ### B-8: Getting ready their own way
 
 Scope: its part
@@ -162,11 +138,19 @@ steps even where they already have the thing or would get it ready another way.
 
 Scope: its part
 
-Can the reader find where to go next: a user, fuller use and what changed in each version; someone
-joining those who build it, the entrance to the design and development?
+Can a user find where to go next for fuller use and for what changed in each version?
 
 Why: a README that holds only what a newcomer needs stays short only when the rest has somewhere the
 reader can reach.
+
+### B-10: The way into building it
+
+Scope: its part
+
+Can someone joining those who build the product find the entrance to its design and development?
+
+Why: one who cannot find the design works from the code alone, and changes the product without the
+decisions behind it.
 
 ### B-7: Terms of use
 
@@ -175,3 +159,12 @@ Scope: its part
 Can the reader tell on what terms they may use the product?
 
 Why: a reader who cannot tell whether they may use it, or on what terms, cannot decide to use it.
+
+### B-5: Started from the README alone
+
+Scope: whole
+
+Can a reader who has decided to use the product get what must be in place beforehand, install it,
+and repeat the example themselves, with the README alone?
+
+Why: each place the reader has to look elsewhere is a place they may stop.

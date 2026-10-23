@@ -6,19 +6,15 @@ version: 0.2.0
 # Usability
 
 A deliverable, a document or code, is used by a reader who comes to it for a purpose, with what
-they have beside it; the reader may be a person or an AI. Reading it once from the top, they take
-in what it holds in a short time, meeting nothing they do not need and left with no question, and
-achieve that purpose. Below, a document is either, and each file of code is one of its parts.
+they have beside it; the reader may be a person or an AI. Reading it once from the top, they
+achieve that purpose in a short time. Below, a document is either, and each file of code is one of
+its parts.
 
-Each item is answered by what the reader has and does with the deliverable alone, never by the
-sources it was made from, which they do not have.
-
-A deliverable is made usable by thinking through what the reader meets, in the order they read:
-
-1. On opening it, they can tell whether it serves their purpose.
-2. Reading on from the top, they understand each word and idea where they meet it.
-3. They stop at nothing they do not need.
-4. When they finish, no question is left, and they achieve their purpose.
+A deliverable serves its reader by what they meet in the order they read: on opening it, whether it
+serves their purpose; reading on, each word and idea understood where they meet it, and each part
+one they need; and at the end, every question they came with answered. Each item is answered by
+what the reader has and does with the deliverable alone, never by the sources it was made from,
+which they do not have.
 
 ## Format
 
@@ -61,6 +57,25 @@ Look for: the main point right under the title.
 Why: a reader who cannot tell reads on to find out, or leaves a document that would have served
 them; one who can reads each part knowing what it supports.
 
+### B-16: Who does what, at a glance
+
+Scope: its part
+
+Where the document tells of several that act in turn, can the reader see who does what, what passes
+between them and in what order at a glance, instead of piecing it together from sentences spread
+through the document?
+
+For a reader who is a person, that is one figure, with the text beside it saying only what the
+figure cannot show; for an AI reading a prompt, it is the steps. A document that tells of no such
+thing passes.
+
+In a figure whose boxes are of different kinds, each box holds its name, with its kind beside it
+as one short word in angle brackets, such as `turn:up <agent>`.
+
+Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
+what rows of a table make them assemble, while an AI reads a figure as text, in order; a box that
+holds a description buries the name the text calls it by.
+
 ### B-12: Every term known
 
 Scope: each part
@@ -100,30 +115,11 @@ Scope: each part
 Can the reader read each sentence without going back or ahead, because each word, reason and step
 it rests on comes before it?
 
-Look for: a decision whose reason comes later or elsewhere; a link or a pointer that sends the reader
-ahead for what a sentence rests on.
+Look for: a decision whose reason comes later or elsewhere; a link or a pointer that sends the
+reader ahead for what a sentence rests on.
 
 Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
 guess, so the picture is not taken in by one reading from the top.
-
-### B-16: Who does what, at a glance
-
-Scope: its part
-
-Where the document tells of several that act in turn, can the reader see who does what, what passes
-between them and in what order at a glance, instead of piecing it together from sentences spread
-through the document?
-
-For a reader who is a person, that is one figure, with the text beside it saying only what the
-figure cannot show; for an AI reading a prompt, it is the steps. A document that tells of no such
-thing passes.
-
-In a figure whose boxes are of different kinds, each box holds its name, with its kind beside it
-as one short word in angle brackets, such as `turn:up <agent>`.
-
-Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
-what rows of a table make them assemble, while an AI reads a figure as text, in order; a box that
-holds a description buries the name the text calls it by.
 
 ### B-20: The form that fits
 

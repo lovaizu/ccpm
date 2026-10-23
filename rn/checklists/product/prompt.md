@@ -9,21 +9,15 @@ A prompt, a skill or an agent, is read by an AI. From it alone, the AI can judge
 achieves the same purpose however often it is run. What only the user can decide, it hands back to
 the user.
 
-A prompt is worked out in this order, each step the ground of the next:
+A prompt serves the AI by what it meets in turn, each the ground of the next: the `description`,
+by which Claude Code chooses it; the Role, the role expected of the AI and why, so it judges for
+itself, with what only the user decides set outside it; and the Steps, which bring the same result
+on every run, each with the form of what it takes in and hands on. Hooks back the steps where the
+AI's tool calls show them, each telling a step's sentence again when the AI drifts from it, so the
+AI goes back to the step.
 
-1. Decide its purpose: what it achieves, and when it is used. The `description` is written from
-   this.
-2. From the purpose, decide the role expected of the AI and why, since the AI can judge for itself
-   when it knows both. What only the user can decide is set apart here, outside the role.
-3. From the role, decide the steps that bring the same result each time it is run, with the form
-   of what each step takes in and hands on.
-4. From the steps, decide what hooks check on every run, where the AI's tool calls show it: each
-   notices where the AI drifts from a step, beyond what it allows or on before what it must do is
-   done, and tells it the step's sentence again, so it goes back to the step. A hook backs the step
-   and its reason and does not stand in for them, since what shows in no tool call, such as what
-   the AI weighs, rests on them alone.
-
-Each item of `usability.md` also applies to a prompt.
+Each item of `usability.md` applies to a prompt with the AI's work as its subject; its B-9 is
+answered by the `description`, and its B-16 by the Steps.
 
 ## Format
 
@@ -94,52 +88,6 @@ From the Role, can the AI tell why its work is needed?
 Why: an AI that knows why chooses, where the steps run out, the action that fits the purpose; given
 only what to do, it stops at the end of the steps or goes on by guessing.
 
-### B-6: The user's decisions handed back
-
-Scope: whole
-
-When the AI meets something only the user decides, does the user make that decision?
-
-Look at: the prompt has the AI hand such a thing to the user rather than settle it.
-
-Why: an AI that decides for the user leaves its guess to be taken as the user's choice.
-
-### B-10: An action hard to undo, asked first
-
-Scope: whole
-
-Can the user stop an action that is hard to undo before the AI takes it?
-
-Look at: the prompt has the AI ask the user before such an action, such as deleting, merging or
-sending.
-
-Why: an action hard to undo cannot be taken back once the user sees it.
-
-### B-21: The scope of its inputs
-
-Scope: whole
-
-Does the AI do all its work from a scope of inputs the prompt sets?
-
-Look at: the prompt names the whole of what the AI reads, what it works on and what it consults for
-reference, such as other code it follows, and has the AI work from that scope.
-
-Why: what the AI reads outside a set scope shapes its work without anyone having chosen it; what it
-is meant to consult, left unnamed, is found on some runs and missed on others.
-
-### B-27: Each input read in a way its tool calls show whole
-
-Scope: its part
-
-Does each step name how the AI reads each of its inputs, in a way its tool calls show read whole?
-
-Look at: each input of B-21 the step reads, with its way, such as one file to a command, or a
-script that shows page by page what is too long for one read; a step that says "read" with no way
-fails.
-
-Why: told no way to read, the AI reads in ways a hook cannot count, such as several files in a
-loop or part of a long file, and is stopped for nothing or goes on on a part read.
-
 ### B-3: Everything that must happen every time
 
 Scope: its part
@@ -167,6 +115,19 @@ file the work links, comes after that step; one placed before it fails.
 
 Why: a thing done before what it rests on is done on a guess, and a check done after the work is
 handed back catches nothing in time.
+
+### B-27: Each input read in a way its tool calls show whole
+
+Scope: its part
+
+Does each step name how the AI reads each of its inputs, in a way its tool calls show read whole?
+
+Look at: each input the step reads, with its way, such as one file to a command, or a
+script that shows page by page what is too long for one read; a step that says "read" with no way
+fails.
+
+Why: told no way to read, the AI reads in ways a hook cannot count, such as several files in a
+loop or part of a long file, and is stopped for nothing or goes on on a part read.
 
 ### B-8: What breaks, set down exactly
 
@@ -204,27 +165,6 @@ calls fails.
 Why: the AI writes words between its tool calls on some runs and not on others, so what rests on
 them reaches the user only sometimes; a hook shows it on every run.
 
-### B-13: Details read only when needed
-
-Scope: whole
-
-Does the AI read each detail it needs only on some runs on those runs alone?
-
-Look at: each such detail of the prompt's own kept in a file of its own, which the prompt says when
-to read; one written in the prompt itself fails.
-
-Why: a detail read on every run costs attention on the runs that do not need it.
-
-### B-14: Detail files named in the prompt
-
-Scope: whole
-
-Does the AI reach each file of details straight from the prompt?
-
-Look at: each such file named directly in the prompt; one named only in another file fails.
-
-Why: a file reached only through another file is often read in part.
-
 ### B-4: Its own judgment within a step
 
 Scope: its part
@@ -236,29 +176,6 @@ follows breaks if the AI reasons another way, fails.
 
 Why: the AI often reasons better than a plan written for it, so a step set down in more detail than
 its work needs narrows the AI where it would have done better.
-
-### B-12: What to do
-
-Scope: whole
-
-Can the AI tell from each instruction the action to take?
-
-Look at: each instruction says the action in positive terms; one that says what to avoid, even
-beside what to do, fails.
-
-Why: an instruction that names what to avoid leaves the right action to be guessed, and puts what
-to avoid in the AI's attention.
-
-### B-20: The reason for each instruction
-
-Scope: whole
-
-Can the AI tell why each instruction is there?
-
-Look at: each instruction whose reason the Role does not already give carries its reason beside it.
-
-Why: an AI that knows why applies the instruction to cases it did not name, and keeps to it where a
-bare rule is read narrowly.
 
 ### B-18: Each field used by someone
 
@@ -287,6 +204,83 @@ the AI can say about the item, fails.
 
 Why: a place written on a looser condition than its reader counts on is read as what it is not, such
 as a note that nothing was found read as a find.
+
+### B-6: The user's decisions handed back
+
+Scope: whole
+
+When the AI meets something only the user decides, does the user make that decision?
+
+Look at: the prompt has the AI hand such a thing to the user rather than settle it.
+
+Why: an AI that decides for the user leaves its guess to be taken as the user's choice.
+
+### B-10: An action hard to undo, asked first
+
+Scope: whole
+
+Can the user stop an action that is hard to undo before the AI takes it?
+
+Look at: the prompt has the AI ask the user before such an action, such as deleting, merging or
+sending.
+
+Why: an action hard to undo cannot be taken back once the user sees it.
+
+### B-21: The scope of its inputs
+
+Scope: whole
+
+Does the AI do all its work from a scope of inputs the prompt sets?
+
+Look at: the prompt names the whole of what the AI reads, what it works on and what it consults for
+reference, such as other code it follows, and has the AI work from that scope.
+
+Why: what the AI reads outside a set scope shapes its work without anyone having chosen it; what it
+is meant to consult, left unnamed, is found on some runs and missed on others.
+
+### B-13: Details read only when needed
+
+Scope: whole
+
+Does the AI read each detail it needs only on some runs on those runs alone?
+
+Look at: each such detail of the prompt's own kept in a file of its own, which the prompt says when
+to read; one written in the prompt itself fails.
+
+Why: a detail read on every run costs attention on the runs that do not need it.
+
+### B-14: Detail files named in the prompt
+
+Scope: whole
+
+Does the AI reach each file of details straight from the prompt?
+
+Look at: each such file named directly in the prompt; one named only in another file fails.
+
+Why: a file reached only through another file is often read in part.
+
+### B-12: What to do
+
+Scope: whole
+
+Can the AI tell from each instruction the action to take?
+
+Look at: each instruction says the action in positive terms; one that says what to avoid, even
+beside what to do, fails.
+
+Why: an instruction that names what to avoid leaves the right action to be guessed, and puts what
+to avoid in the AI's attention.
+
+### B-20: The reason for each instruction
+
+Scope: whole
+
+Can the AI tell why each instruction is there?
+
+Look at: each instruction whose reason the Role does not already give carries its reason beside it.
+
+Why: an AI that knows why applies the instruction to cases it did not name, and keeps to it where a
+bare rule is read narrowly.
 
 ### B-15: Examples close to the real work
 

@@ -11,33 +11,22 @@ and build or change the product to it.
 
 The UX is what the user experiences using the product, and its key results are what is measured to
 show how close the product brings them to their goals. Design turns that into a mechanism in
-layers, each drawn from the one before and fewer than it: the UX's scenes rest on a few user stories, each one way the user
-uses the product at its edge, such as a command they run; the stories are taken on by logical
-components, each of which may serve several; and each component is realized by a technology. The
-checks go back up: each unit, then each story, then how close each key result came.
+layers, each drawn from the one before and fewer than it: the UX's scenes rest on a few user
+stories, each one way the user uses the product at its edge, such as a command they run; the
+stories are taken on by logical components, each of which may serve several; and each component is
+realized by a technology, chosen at this layer alone, so the stories and the components follow from
+what the UX needs. The checks go back up: each unit, then each story, then how close each key
+result came.
 
 The checks are built up from the least, so that a problem shows as early as it can and the product
 comes closer to the user's goals for the least work. A part is checked before the whole it is in.
-Its flow, whether each step happens in its order and hands on what the next takes, is checked
-before its content, how good what a step makes is: the flow on the smallest task that shows it,
-with stand-ins for whatever lies around the part being checked, and the content on real work,
-which nothing stands in for. Each check takes the least means that shows what it is for.
-
-Design thinks in this order:
-
-1. From the UX's scenes, write the user stories they rest on: "As <the user>, I want <what they
-   do>." Their reasons are the UX's goals and key results, and are not written again.
-2. Decide the logical components that take on those stories, and the interactions between them.
-   A logical component is divided by what it takes on; its physical form is not decided yet.
-3. Choose the technology that realizes each component, and decide how it is realized physically
-   and where it is placed. Technology is chosen here first.
-4. Check each physical unit on its own, its flow and then its content, then check the whole the same
-   way: its flow from end to end, each story achieved, and each key result of the UX measured
-   against the version in use, in the UX's order of priority. A change is taken when every story is
-   still achieved and it brings the key results closer from the highest, never a lower one at the
-   cost of a higher. A key result that measures what the user pays, such as time, money or effort,
-   is read from the records in its parts, not only in total, and a part that adds nothing to a
-   higher key result is cut first, traded against nothing.
+Its flow, whether each step happens in its order and hands on what the next takes, is checked before
+its content, how good what a step makes is: the flow on the smallest task that shows it, with
+stand-ins for whatever lies around the part being checked, and the content on real work, which
+nothing stands in for. Each check takes the least means that shows what it is for. A change is taken
+when every story is still achieved and it brings the key results closer from the highest, each
+measured against the version in use on the same tasks, never a lower one at the cost of a higher; a
+part of what the user pays, such as time, that adds nothing to a higher key result is cut first.
 
 Each item of `usability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -100,9 +89,9 @@ realized, then how the units and the whole are checked, each the ground of the n
 
 ## Benefit
 
-### B-1: The stories the scenes rest on
+### B-17: The stories the scenes rest on
 
-Scope: whole
+Scope: its part
 
 Does every scene of the UX rest on a user story, each one way the user uses the product at its
 edge?
@@ -112,36 +101,24 @@ Look for: a story for a step inside the product, or one that says again what ano
 Why: the components are decided from the stories; a scene no story holds up is built by guess,
 and a story for each step inside multiplies the components without the user doing more.
 
-### B-2: Every logical component the stories need
+### B-18: Every logical component the stories need
 
-Scope: whole
+Scope: its part
 
 Is every logical component the stories need there?
 
 Why: a component left out is found only when a story it serves is built, and the architecture
 must change then.
 
-### B-3: The stories achieved by interactions
+### B-19: The stories achieved by interactions
 
-Scope: whole
+Scope: its part
 
 Do the interactions between the logical components achieve every user story?
 
 Why: components that each do their part achieve no story unless their interactions do.
 
-### B-11: Each case met by a mechanism already there
-
-Scope: whole
-
-Can the reader tell that each case the stories meet is taken by a component or a check already
-there, with no path of its own?
-
-Look at: each path or component that serves one case alone; one for a case another component already
-handles or a check already stops fails.
-
-Why: every path of its own is one more thing for users to learn and builders to keep right.
-
-### B-4: No technology before it is chosen
+### B-20: Stories and components that outlast a change of technology
 
 Scope: its part
 
@@ -151,7 +128,7 @@ Why: technology brought in first shapes the stories and components to it, so the
 follow from what the UX essentially needs, and changing the technology means making the stories
 again.
 
-### B-5: How each component is realized
+### B-21: How each component is realized
 
 Scope: its part
 
@@ -160,7 +137,7 @@ Can the reader tell how each component is realized physically, with the technolo
 Why: the builder makes each component as it is realized, and each way is made and changed in its
 own way.
 
-### B-6: Where each component is placed
+### B-22: Where each component is placed
 
 Scope: its part
 
@@ -169,7 +146,7 @@ Can the reader tell where each component is placed?
 Why: where a component is placed decides who owns it, where it runs and when a change to it reaches
 the user.
 
-### B-7: What each component depends on outside
+### B-23: What each component depends on outside
 
 Scope: its part
 
@@ -177,7 +154,7 @@ Can the reader tell what each component depends on outside the product?
 
 Why: what the product depends on is where it breaks for the user first.
 
-### B-8: Each unit checked, and how far
+### B-24: Each unit checked, and how far
 
 Scope: its part
 
@@ -186,7 +163,7 @@ Can the reader tell what is checked of each physical unit, and the bar it must p
 Why: the whole is built from units checked one by one; a unit left unchecked, or checked to no
 stated bar, breaks the whole where no check shows it.
 
-### B-12: An AI part checked on the model its users run it on
+### B-25: An AI part checked on the model its users run it on
 
 Scope: its part
 
@@ -196,7 +173,7 @@ Claude Code's default, never a smaller one?
 Why: a smaller model's slips are not the product's, and the product's own pass unseen beside them;
 a part checked on another model than its users' is checked on what they never meet.
 
-### B-13: An AI part judged from its records
+### B-26: An AI part judged from its records
 
 Scope: its part
 
@@ -205,7 +182,7 @@ and agent it started, not from its outcome alone?
 
 Why: the outcome shows that something went wrong; only the records show where.
 
-### B-14: The flow checked apart from the content
+### B-27: The flow checked apart from the content
 
 Scope: its part
 
@@ -216,7 +193,7 @@ Why: a check of the flow and the content at once costs the whole work each time 
 whatever path the work leads it down rather than the one meant, and, failing, does not say which
 went wrong.
 
-### B-9: Each story shown achieved
+### B-28: Each story shown achieved
 
 Scope: its part
 
@@ -225,7 +202,7 @@ Can the reader tell, from the checks of the whole, whether each user story is ac
 Why: units can each pass while a story is missed; only a check of the whole shows a story
 achieved.
 
-### B-10: Each change shown bringing the user closer
+### B-29: Each change shown bringing the user closer
 
 Scope: its part
 
@@ -236,7 +213,7 @@ Why: a key result is not met or missed but come close to, so no check of a story
 judged by no measure, or by one key result alone, can leave the user worse off while each version
 looks better.
 
-### B-15: What the user pays seen in its parts
+### B-30: What the user pays seen in its parts
 
 Scope: its part
 
@@ -245,3 +222,15 @@ effort, is read from the records in its parts, not only in total?
 
 Why: in a total, a part that gives the user nothing hides among those that do, and the user pays
 for it on every use.
+
+### B-31: Each case met by a mechanism already there
+
+Scope: whole
+
+Can the reader tell that each case the stories meet is taken by a component or a check already
+there, with no path of its own?
+
+Look at: each path or component that serves one case alone; one for a case another component already
+handles or a check already stops fails.
+
+Why: every path of its own is one more thing for users to learn and builders to keep right.
