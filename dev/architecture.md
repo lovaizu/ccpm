@@ -16,6 +16,24 @@ flowchart TB
   guard -.->|notices a drift, tells the step again| role
 ```
 
+## Principles
+
+Every plugin holds these; each is said with its reason under Why it is so, and a plugin's design
+adds only what that plugin gives on top of them.
+
+1. The orchestrator holds the whole run and decides each move.
+2. The caller answers only what is theirs to decide and approves it by their own action; the plugin
+   does the writing.
+3. Each job has a role of its own, given only what the job needs.
+4. Each work is first used by AIs that did not make it, in its receiver's place and with what the
+   receiver has, each reading it on its own.
+5. What a machine can judge is checked by a script or a hook at the moment it happens, which tells
+   the role its step again or stops what would break a rule.
+6. A fixed course is kept in a script, and the state and each decision are kept before the next
+   move, so a run stopped anywhere goes on from there.
+7. The purpose comes first and performance after: time is never saved by leaving the caller more
+   to fix.
+
 ## Why it is so
 
 ### The orchestrator holds the whole and decides
@@ -71,6 +89,15 @@ A role starts in a fresh context with its own prompt and tools
 ([subagents](https://code.claude.com/docs/en/sub-agents)), so nothing from other work leads it
 astray.
 
+### Read by those who did not make it
+
+Each work is used first by AIs that did not make it, standing in for its receiver with what the
+receiver has and doing what they do with it, and each gives its verdict from its own reading alone.
+
+The maker finds the Good it meant; a reader that did not make it finds the Good its lines give,
+which is what the receiver gets. A reader shown another's verdict finds what it was told, so two
+readings add a check only when each is made on its own.
+
 ### Where the course is kept
 
 A plugin whose run is a fixed loop, such as turn's make–read–check rounds, may keep its course in a
@@ -90,6 +117,13 @@ foresee.
 A run's state is kept in a file in its work folder, each plugin's own, so a run stopped anywhere
 goes on from its last move in a new conversation; a conversation ends, is cleared or is compacted,
 and what lives only in it is lost.
+
+### The purpose before performance
+
+A change is taken when the purpose is still met as fully; only then is time or cost cut.
+
+A work that misses the purpose costs the caller the fixing as well as the wait, so time saved by
+leaving them more to fix is spent again by them.
 
 ### JSON between agents
 
