@@ -2,6 +2,7 @@
 makes, new on every run, CI included."""
 
 import json
+import os
 import unittest
 
 # Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
@@ -11,25 +12,18 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import RepoTest, forms, records, run, testing
+from helpers import CALL, CAN, QUESTION, RESULT, WAITS, RepoTest, forms, records, run, testing
 
 call = run.call
 
 testing.load_hypothesis_profile()
 
-FORMS = (
-    forms.CHECK,
-    forms.DECISION,
-    forms.CLAIM,
-    forms.GOOD,
-    forms.FIRST_READING,
-    forms.LEARNT,
-)
+FORMS = (forms.CHECK, forms.CLAIM, forms.FIRST_READING, forms.HELD, forms.LEFT, forms.LEARNT)
 ITEMS = [{"checklist": "checklists/readme.md", "item": "F-1"}]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
-    ["items", "questions", "checklist", "item", "good", "lines", "question", "gets", "can"]
-    + ["process", "role", "lesson", "grounds", "record", "quote", "checked", "recommended"]
+    ["items", "questions", "checklist", "item", "good", "lines", "question", "can", "holds"]
+    + ["lessons", "whose", "lesson", "grounds", "record", "quote", "checked", "recommended"]
     + ["parts", "part", "places", "did", "lacking"]
 ) | st.text(max_size=5)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)
@@ -72,7 +66,7 @@ class TestForms(RepoTest):
         # Then: it is read as if given bare
         text = json.dumps(value)
         fenced = f"```json\n{text}\n```"
-        self.assertEqual(forms.parse(fenced, forms.GOOD), forms.parse(text, forms.GOOD))
+        self.assertEqual(forms.parse(fenced, forms.CLAIM), forms.parse(text, forms.CLAIM))
 
     @given(st.integers(1, 30), st.integers(0, 40), st.integers(0, 40))
     def test_lines_are_taken_when_they_lie_inside_the_work(self, count, start, end):
@@ -107,3 +101,24 @@ class TestRecords(RepoTest):
         self.assertEqual(forms.spaced(wrapped), forms.spaced(text))
         for line in wrapped.splitlines():
             self.assertTrue(len(line) <= records.WIDTH or len(line.split()) <= 1, line)
+
+
+class TestAnswer(RepoTest):
+    @given(st.text(max_size=200))
+    def test_any_answer_of_words_is_kept_as_it_came(self, answer):
+        # Given: a run whose check asked a question, started anew for each answer
+        # When: the calling AI's answer, any text, is handed on
+        # Then: an answer of words is kept as it came, the blanks at its ends aside; one of blanks
+        # alone is asked for again, and the run still waits on it
+        if os.path.exists(run.state_path(RESULT)):
+            os.remove(run.state_path(RESULT))
+        self.turn("start", json.dumps(CALL))
+        self.next()
+        self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
+        self.next()
+        code, _ = self.turn("next", RESULT, stdin=answer)
+        kept = self.state()
+        if answer.strip():
+            self.assertEqual((code, kept["answers"][-1]["answer"]), (0, answer.strip()))
+        else:
+            self.assertEqual((code, "asked" in kept), (1, True))

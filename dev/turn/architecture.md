@@ -140,6 +140,8 @@ turn/                      the plugin, installed by Claude Code
 │   ├── generator.md       <agent>
 │   ├── first-user.md      <agent>
 │   └── learner.md         <agent>
+├── forms/
+│   └── *.json             each role's reply form <JSON Schema>
 ├── scripts/
 │   ├── turn.py            the flow <Python 3>
 │   └── *.py               the call's check, the forms, the parts, the records <Python 3>

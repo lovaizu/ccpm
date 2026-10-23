@@ -1,10 +1,10 @@
-"""Tries each of turn's four roles on its own: the real role and its lanes, started by a stand-in for
+"""Tries each of turn's three roles on its own: the real role and its lanes, started by a stand-in for
 the orchestrator with the prompt the flow gives it, on the flow trial's task of two items, one
 answered at its part and one in each part. Between the roles the run is set as a trial means: the
 orchestrator's check finds each item's Good in the decisions, the generator's work is replaced by a
-set README that names no license, the evaluator is given the first user's Goods, and the learner is
-given B-1 without Good and the records of the three roles before it. Prints, for each role, its
-session, the minutes and cost, each tool it used, each stop, and whether its reply is in its form.
+set README that names no license, and the learner is given the records of the two roles before it.
+Prints, for each role, its session, the minutes and cost, each tool it used, each stop, and whether
+its reply is in its form.
 
     python3 dev/turn/trials/roles/roles.py <new folder>
 
@@ -24,12 +24,6 @@ sys.path.insert(0, os.path.dirname(HERE))
 import shared
 
 CALL = shared.call("has")
-UNMET = {
-    "checklist": "checklist.md",
-    "item": "B-1",
-    "gets": "The reader learns under which license they may use demo.",
-    "places": ["README.md:1-4", "README.md:5-7"],
-}
 
 place = os.path.abspath(sys.argv[1])
 shared.task(place, CALL)
@@ -92,11 +86,9 @@ kept = run.going(CALL["result"])
 ids = [role(run.GENERATOR, kept["next"]["prompt"])]
 with open("README.md", "w", encoding="utf-8") as f:
     f.write(shared.UNLICENSED)
-ids.append(role(run.FIRST_USER, run.reader_given(kept, run.FIRST_USER)))
-ids.append(role(run.EVALUATOR, dict(run.reader_given(kept, run.EVALUATOR), reading=[])))
+ids.append(role(run.FIRST_USER, run.reader_given(kept)))
 kept["records"] = [i for i in ids if i]
-run.settle(kept, [UNMET], [])
-kept = run.going(CALL["result"])
+run.learn(kept, [run.named(i) for i in kept["items"]])
 role(run.LEARNER, kept["next"]["prompt"])
 os.chdir(shared.ROOT)
 shutil.rmtree(place)

@@ -473,6 +473,9 @@
   },
   {
    "fact": "2026-10-23: lane/agents/up.md made to lane's architecture by a subagent with prompt.md and usability.md open, checked by hand: the building AI answers and approves, every open point in one reply, numbered so each answer names its point; lay.py, tests and lanes' docstrings say the building AI; check.sh lane 100%; trial lay on notes: all 10 points in one reply, the layer's print handed on, lay.py write only after the OK"
+  },
+  {
+   "fact": "2026-10-23: turn's flow, forms and tests brought to its architecture by a subagent with code.md open, checked by hand: the evaluator, goods.json and the take step gone, the Good check, questions asked as met, the learner once after the run; roles.py trial fixed by hand to the three roles; old design sections of turn's decisions removed as the architecture holds them; check.sh turn passes, mutate.sh --since cf33744 turn 0 of 1131; cosmic-ray.toml had checked nothing, as its type check followed the link to lane and failed"
   }
  ],
  "semantic_gist": [
@@ -577,7 +580,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: a subagent was started (2026-10-23, before /clear) to bring turn's flow, turn/scripts, turn/forms and dev/turn/tests, to dev/turn/architecture.md and the decisions' moved-out list with code.md open, uncommitted, checks from cf33744. It may have been stopped by /clear: read git status and git diff against cf33744; if its work is partial or absent, start it again on the same task; then check it by hand against code.md and the [test: flow] lines, run check.sh turn and mutate.sh --since cf33744 turn, commit. Next: turn's prompts (up, generator, first-user, learner; evaluator.md removed) with prompt.md and usability.md open, the lanes laid by lane:up, the trials' reply sets, then the trials. No question is open for the user. Never publish an Artifact unasked"
+   "first": "next: turn's prompts (up, generator, first-user, learner; evaluator.md removed) with prompt.md and usability.md open, by a subagent, checked by hand; then the lanes laid by lane:up (hooks.json and test_lanes.LAID still name turn:evaluator and goods.json; the orchestrator's read_whole on the {given} turn.py start prints; no lane yet holds handing the answer on as it came), the trials' reply sets (flow.py still names the evaluator), then the trials. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [

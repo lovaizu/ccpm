@@ -1,31 +1,14 @@
 """turn's lanes: what hooks/hooks.json lays on each agent is what its steps say, read by lane's own
 code, which turn takes through a link."""
 
-import importlib
 import json
 import os
 import shlex
-import sys
 import unittest
 
-from helpers import TURN
+from helpers import TURN, lane_code
 
-
-def lane_code():
-    """lane's lanes and its reading of a step, imported from the link in turn's hooks: lane's code
-    and turn's scripts share module names, such as call, so lane's are imported apart and turn's
-    put back after."""
-    shared = ("call", "forms")
-    turns = {n: sys.modules.pop(n) for n in shared if n in sys.modules}
-    sys.path.insert(0, os.path.join(TURN, "hooks", "lane"))
-    try:
-        return importlib.import_module("lanes"), importlib.import_module("step")
-    finally:
-        sys.path.pop(0)
-        sys.modules.update(turns)
-
-
-lanes, step = lane_code()
+lanes, step = lane_code("lanes", "step")
 
 # The lanes each agent's steps call for, as the architecture gives them: its run's values as the flow
 # gives them in the agent's prompt, or as turn.py start prints them.

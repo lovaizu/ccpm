@@ -15,7 +15,8 @@ from helpers import CALL, CCS, CHECKLIST, EACH, SCRIPTS, RepoTest
 # pylint: disable=duplicate-code
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your check, decision, take or the agent ID as JSON>]\n"
+    "       turn.py next <result> [< <your check or questions as JSON, the answer as it came,"
+    " or the agent ID as JSON>]\n"
     "       turn.py next <result> <page>\n"
     "       turn.py questions <result>\n"
     "       turn.py parts <result>"
@@ -144,7 +145,7 @@ class TestStart(RepoTest):
         # Then: it prints where the result goes, and the orchestrator is to check every item can
         # get its Good, before any agent starts
         code, out = self.turn("start", json.dumps(CALL))
-        self.assertEqual((code, json.loads(out)), (0, {"result": self.here(CALL["result"])}))
+        self.assertEqual((code, json.loads(out)["result"]), (0, self.here(CALL["result"])))
         self.assertEqual(
             self.heard(self.next()),
             {
@@ -154,6 +155,21 @@ class TestStart(RepoTest):
                 ]
             },
         )
+
+    def test_the_start_gives_what_the_orchestrator_reads_before_any_work_is_made(self):
+        # Given: a CCS naming the work, the checklist, the decisions and a page the receiver has
+        # When: the run is started, and started again on the same call
+        # Then: each time it gives the CCS and every file it names but the work, which the
+        # orchestrator reads whole for its check
+        given = [
+            self.here(".tasks/readme.json"),
+            self.here("checklists/readme.md"),
+            self.here("notes/readme.decisions.md"),
+            self.here("docs/start.md"),
+        ]
+        for _ in range(2):
+            code, out = self.turn("start", json.dumps(CALL))
+            self.assertEqual((code, json.loads(out)["given"]), (0, given))
 
     def test_a_run_checked_to_give_every_item_its_good_starts_the_generator(self):
         # Given: a run started
@@ -218,7 +234,7 @@ class TestStart(RepoTest):
         # Given: a call naming the kind of what the receiver has
         # When: the run is started
         # Then: the run keeps the work, what the receiver has and the checklists as what the first
-        # user and the evaluator may read, and not the CCS or the decisions
+        # user may read, and not the CCS or the decisions
         self.turn("start", json.dumps(CALL))
         running = self.state()
         self.assertEqual(running["shown"], ["README.md", "docs/start.md", "checklists/readme.md"])
@@ -273,7 +289,9 @@ class TestStartStops(RepoTest):
         self.assertEqual(code, 1)
         for words in said:
             self.assertIn(words, out)
+        # No run is started: neither the result nor the state is written.
         self.assertFalse(os.path.exists(CALL["result"]))
+        self.assertFalse(os.path.exists(CALL["result"] + ".run.json"))
 
     def test_a_call_that_is_not_json_stops(self):
         # Given: a call that is not JSON

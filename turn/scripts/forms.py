@@ -21,10 +21,8 @@ ONE = ("good", "lines")
 EACH = ("parts",)
 # A form given inside a ```json fence, as a model often writes JSON, is the form itself.
 FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
-
-
-# The roles a lesson on the run may be for.
-ROLES = ("orchestrator", "generator", "first-user", "evaluator", "learner")
+# Where a lesson goes: into the user's own checklists or rules, or to turn's makers.
+WHOSE = ("own", "general")
 
 
 class Grounds(NamedTuple):
@@ -37,28 +35,31 @@ class Grounds(NamedTuple):
 
 class Form(NamedTuple):
     """What an item may hold besides its checklist and ID, one shape of keys each; whether every
-    item is given; whether questions are asked; and what else the form holds beside its items,
-    checked against the grounds. A form of no shapes gives no items."""
+    item is given; whether questions are asked; whether a reply asking questions gives only the
+    items waiting on them, as one asked before the work is made has no Good to give yet; and what
+    else the form holds beside its items, checked against the grounds. A form of no shapes gives no
+    items."""
 
     shapes: tuple[tuple[str, ...], ...]
     every: bool = False
     asks: bool = False
+    asks_first: bool = False
     more: Callable[[dict[str, Any], Grounds], list[str]] | None = None
 
 
+# A stop: the places of the work where the Good was looked for, what was done there and what was
+# not got, so that the work made again is aimed at where it stopped and at what was missing there.
+STOP = ("places", "did", "lacking")
 # Before the work is made, the orchestrator says for every item what in the CCS and its files gives
 # its Good, or the question it waits on.
 CHECK = Form((("can",), ("question",)), every=True, asks=True)
-# The orchestrator judges, so its decision gives a Good, a question or what the receiver gets once
-# it has its Good with the places of the work where it is not found. The evaluator looks only for
-# the Good the work gives, so it names only the items it finds a Good for, and a script names the
-# rest.
-DECISION = Form((ONE, EACH, ("question",), ("gets", "places")), every=True, asks=True)
-GOOD = Form((ONE, EACH))
-# The first user gives every item the Good it found, or the places of the work where it looked for
-# it, what it did there and what it did not get, so that the work made again is aimed at where it
-# stopped and at what was missing there.
-FIRST_READING = Form((ONE, EACH, ("places", "did", "lacking")), every=True)
+# The first user gives every item the Good it found, or where it stopped.
+FIRST_READING = Form((ONE, EACH, STOP), every=True)
+# The orchestrator's check of each Good the first user gave: it holds, or where the receiver does
+# not get what the item asks, as a stop.
+HELD = Form((("holds",), STOP), every=True)
+# Each item two rounds leave without Good waits on a question the orchestrator words.
+LEFT = Form((("question",),), every=True, asks=True)
 
 
 def worded(value: Any) -> bool:
@@ -83,29 +84,30 @@ def span(line: str) -> tuple[str, int, int]:
 
 
 def lessons(data: dict[str, Any], at: Grounds) -> list[str]:
-    """The learner gives how the run went, each lesson for a role of turn and resting on words of
-    a record it was shown, and what it checked, so that a reply of no lesson says its scope."""
+    """The learner gives what fell short in the run and why, each lesson the project's own or
+    general and resting on words of a record it was shown, and what it checked, so that a reply of
+    no lesson says its scope."""
     said: list[str] = []
-    process = data.get("process")
-    if not isinstance(process, list):
+    given = data.get("lessons")
+    if not isinstance(given, list):
         said.append(
-            'give "process": [{"role", "lesson", "grounds"}, ...], each lesson on how the run'
-            " went, or [] when you found none"
+            'give "lessons": [{"lesson", "whose", "grounds"}, ...], each lesson on what fell short'
+            " in the run and why, or [] when you found none"
         )
-        process = []
+        given = []
     if not worded(data.get("checked")):
         said.append('give "checked": what you checked of the run, in words')
-    for n, lesson in enumerate(process, 1):
+    for n, lesson in enumerate(given, 1):
         name = f"lesson {n}"
         if (
             not isinstance(lesson, dict)
-            or set(lesson) != {"role", "lesson", "grounds"}
-            or lesson["role"] not in ROLES
+            or set(lesson) != {"lesson", "whose", "grounds"}
+            or lesson["whose"] not in WHOSE
             or not worded(lesson["lesson"])
         ):
             said.append(
-                f'{name} must hold "role", one of {", ".join(ROLES)}, "lesson" in words, and'
-                ' "grounds"'
+                f'{name} must hold "lesson" in words, "whose", "own" for the project\'s own or'
+                ' "general" for turn\'s makers, and "grounds"'
             )
             continue
         said += ground_problems(name, lesson["grounds"], at.records)
@@ -138,10 +140,10 @@ def ground_problems(name: str, grounds: Any, kept: tuple[str, ...]) -> list[str]
     return said
 
 
-# The generator claims the Good it set for every item, or the question it waits on.
-CLAIM = Form((ONE, EACH, ("question",)), every=True, asks=True)
-# The learner says how the run went alone, since a lesson on what the work should say tells the
-# generator how to give a Good, which is the generator's to decide.
+# The generator claims the Good it set for every item, or the question it waits on; asking before
+# it makes anything, it gives only the items waiting.
+CLAIM = Form((ONE, EACH, ("question",)), every=True, asks=True, asks_first=True)
+# The learner gives no items, only its lessons.
 LEARNT = Form((), more=lessons)
 
 
@@ -172,44 +174,22 @@ def check(
     items: list[dict[str, str]],
     work: list[str],
     form: Form,
-    asked: int = 0,
     records: tuple[str, ...] = (),
     each: Iterable[tuple[str, str]] = (),
 ) -> list[str]:
     """What is wrong with the form, each said with what to give instead; empty when it is filled.
-    The items are those the form judges; `asked` counts the questions already asked, which its
-    own questions are numbered after; `records` are the records its quotes of a record are found
+    The items are those the form judges; `records` are the records its quotes of a record are found
     in; `each` names the items asked of each part of the work."""
     data = parse(text, form)
     if data is None:
         lists = ", ".join(f'"{k}": [...]' for k in listed(form))
-        return ["give it as JSON: {" + (lists or '"process": [...], "checked": "..."') + "}"]
-    said = item_problems(data["items"], items, work, form, list(each)) if form.shapes else []
+        return ["give it as JSON: {" + (lists or '"lessons": [...], "checked": "..."') + "}"]
+    every = form.every and not (form.asks_first and data["questions"])
+    said = item_problems(data["items"], items, work, form, list(each), every) if form.shapes else []
     if form.asks:
-        said += question_problems(data, asked)
+        said += question_problems(data)
     if form.more:
         said += form.more(data, Grounds(work, records))
-    return said
-
-
-def taken(text: str, offer: dict[str, Any]) -> list[str]:
-    """What is wrong with what the orchestrator takes of the lessons offered, each by its number;
-    empty when it is filled."""
-    try:
-        data = json.loads(unfenced(text))
-    except ValueError:
-        data = None
-    if not isinstance(data, dict) or not isinstance(data.get("process"), list):
-        return ['give it as JSON: {"process": [...]}']
-    said: list[str] = []
-    count = len(offer["process"])
-    numbers: list[Any] = []
-    for n in data["process"]:
-        if not isinstance(n, int) or isinstance(n, bool) or not 1 <= n <= count:
-            said.append(f"lesson {n} is not one of 1 to {count}; take each by its number")
-        elif n in numbers:
-            said.append(f"lesson {n} is given twice; take each once")
-        numbers.append(n)
     return said
 
 
@@ -229,7 +209,10 @@ def item_problems(
     work: list[str],
     form: Form,
     each: list[tuple[str, str]],
+    every: bool,
 ) -> list[str]:
+    """What is wrong with the items given, against the items judged; every one of them is to be
+    given where `every` says."""
     keys = [(i["checklist"], i["item"]) for i in items]
     said: list[str] = []
     seen: list[tuple[str, str]] = []
@@ -253,7 +236,7 @@ def item_problems(
             said.append(f"{name} must hold {allowed(shapes)}{asked}")
             continue
         said += value_problems(name, item, work)
-    if form.every:
+    if every:
         said += [
             f"{c} {i} is left out; give every item judged here"
             for c, i in keys
@@ -278,6 +261,11 @@ def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str
         isinstance(item["question"], int) and not isinstance(item["question"], bool)
     ):
         said.append(f"{name}'s \"question\" is not a number; give the question's, from 1")
+    if "holds" in item and item["holds"] is not True:
+        said.append(
+            f'{name}\'s "holds" is not true; give true where the Good holds, or "places", "did"'
+            ' and "lacking" where it does not'
+        )
     if "lines" in item:
         said += lines_problems(name, item["lines"], work, "lines of the work")
     if "places" in item:
@@ -366,11 +354,12 @@ def in_files(line: Any, paths: list[str]) -> bool:
     return 1 <= start <= end <= count
 
 
-def question_problems(data: dict[str, Any], asked: int) -> list[str]:
+def question_problems(data: dict[str, Any]) -> list[str]:
+    """What is wrong with the questions, each numbered from 1, against the items waiting on them."""
     said: list[str] = []
     questions = data["questions"]
     waiting = [i.get("question") for i in data["items"] if isinstance(i, dict)]
-    for n, question in enumerate(questions, asked + 1):
+    for n, question in enumerate(questions, 1):
         if not isinstance(question, dict) or not all(
             isinstance(question.get(k), str) and question[k].strip()
             for k in ("question", "recommended")
@@ -384,7 +373,7 @@ def question_problems(data: dict[str, Any], asked: int) -> list[str]:
     said += [
         f"question {n} is waited on but not given; add it to the questions"
         for n in waiting
-        if isinstance(n, int) and not 1 <= n <= asked + len(questions)
+        if isinstance(n, int) and not 1 <= n <= len(questions)
     ]
     return said
 

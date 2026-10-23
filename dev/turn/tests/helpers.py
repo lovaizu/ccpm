@@ -1,4 +1,5 @@
 import contextlib
+import importlib
 import io
 import json
 import os
@@ -77,32 +78,20 @@ FOUND = {
     "good": "the name, then what it does, as READMEs open",
     "lines": ["README.md:1-3"],
 }
-EVALUATED = {
-    "checklist": "checklists/readme.md",
-    "item": "F-1",
-    "good": "the reader meets the name and what it does first",
-    "lines": ["README.md:1-3"],
-}
 # The orchestrator's check before the work is made: what in the CCS and its files gives each item's
 # Good.
 CAN = [
     {"checklist": "checklists/readme.md", "item": "F-1", "can": "the template the checklist gives"},
     {"checklist": "checklists/readme.md", "item": "B-1", "can": "the receiver the CCS names"},
 ]
-# A lesson on how the run went, for the generator, resting on words of the first record, which
-# every role's record holds.
+# A lesson on what fell short in the run, general, for turn's makers, resting on words of the first
+# record, which every role's record holds.
 LESSON = {
-    "role": "generator",
     "lesson": "it opened each file before it wrote",
+    "whose": "general",
     "grounds": [{"record": 1, "quote": "I open it."}],
 }
 CHECKED = "every page of every record"
-SENT_BACK = {
-    "checklist": "checklists/readme.md",
-    "item": "B-1",
-    "gets": "the reader sees at once that it is for CSV files",
-    "places": ["README.md:3-3"],
-}
 # An item the first user finds no Good for, with the places of the work where it looked for it, what
 # it did there and what it did not get.
 DID = "read the opening for whom it is"
@@ -116,6 +105,16 @@ STOPPED = {
 }
 # A first user's reading of every item: the Good it found for one, and where it stopped at the other.
 FIRST_READ = [FOUND, STOPPED]
+# The orchestrator's check of a Good the first user gave: it holds, or the receiver does not get
+# what the item asks, with where, what the orchestrator did there and what was not got.
+HOLDS = {"checklist": "checklists/readme.md", "item": "F-1", "holds": True}
+UNTRUE = {
+    "checklist": "checklists/readme.md",
+    "item": "F-1",
+    "places": ["README.md:1-1"],
+    "did": "ran the command the opening gives",
+    "lacking": "the command it gives fails",
+}
 # A checklist item asked of each part of the work, added to a run's checklist where a test needs
 # one; the work's parts, as the script splits a README of a title, an opening and one section;
 # and a Good for each.
@@ -143,12 +142,7 @@ EACH_GOOD = {
 
 
 # The agent ID the Agent call gives back for each role, as the orchestrator hands it on.
-IDS = {
-    "turn:generator": "agen",
-    "turn:first-user": "afirst",
-    "turn:evaluator": "aeval",
-    "turn:learner": "alearn",
-}
+IDS = {"turn:generator": "agen", "turn:first-user": "afirst", "turn:learner": "alearn"}
 RESULT = CALL["result"]
 
 
@@ -198,8 +192,8 @@ class RepoTest(testing.FolderTest):
         return json.loads(out)
 
     def next(self, given=None):
-        """What the script prints next for the run, handed the orchestrator's check, decision,
-        take or agent ID."""
+        """What the script prints next for the run, handed the orchestrator's check, its questions
+        or the agent ID, as JSON."""
         stdin = json.dumps(given) if given is not None else ""
         code, out = self.turn("next", self.result, stdin=stdin)
         self.assertEqual(code, 0, out)
@@ -212,6 +206,12 @@ class RepoTest(testing.FolderTest):
         for n in range(2, int(count.group(1)) + 1):
             page = page[:-1] + self.turn("next", self.result, str(n))[1].partition("\n")[2]
         return json.loads(page)
+
+    def answered(self, answer="MIT"):
+        """What the script prints once the calling AI's answer, handed on as it came, is given."""
+        code, out = self.turn("next", self.result, stdin=answer)
+        self.assertEqual(code, 0, out)
+        return self.printed(out)
 
     def refused(self, given=None):
         """What the script prints when it refuses to go on with the run."""
@@ -274,28 +274,28 @@ class RepoTest(testing.FolderTest):
             if (i["checklist"], i["item"]) not in given
         ]
 
-    def through(self, *evaluated, claim=(GOOD, WAITS), found=(FOUND,)):
-        """The run taken through the generator's claim, the first user's reading, after the round
-        has sent it back as often as it may, and the evaluator's Goods; and what the script prints
-        then."""
-        self.due(self.made(*claim))
+    def first_read(self, *found, claim=()):
+        """The round taken through the generator's claim and the first user's reading giving the
+        Goods found, the round having sent the work back as often as it may; and what the script
+        prints then."""
+        self.assertEqual(self.due(self.made(*claim))["input"]["subagent_type"], "turn:first-user")
         kept = self.state()
         kept["sent"] = run.SENDS
         self.write_json(run.state_path(self.result), kept)
-        out = self.replied({"items": self.reading(*found)})
-        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:evaluator")
-        return self.replied({"items": list(evaluated)})
+        return self.replied({"items": self.reading(*found)})
 
-    def learnt(self, out, reply=None, taken=None):
+    def held(self, *checked):
+        """The orchestrator's check of the Goods shown once the line telling it is sent, by default
+        every Good holding; and what the script prints then."""
+        goods = self.next()["goods"]
+        given = list(checked) or [dict(named(g), holds=True) for g in goods]
+        return self.next({"items": given})
+
+    def learnt(self, out, reply=None):
         """The learner told and started as the script printed, replying with what it found, by
-        default no lesson on the run; then what the orchestrator takes, by default every lesson
-        offered; and what the script prints after the line telling it."""
+        default no lesson; and what the script prints after the line telling the run returns."""
         self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
-        out = self.heard(self.replied(reply or {"process": [], "checked": CHECKED}))
-        if "take" in out:
-            every = list(range(1, len(out["take"]["process"]) + 1))
-            out = self.heard(self.next(taken or {"process": every}))
-        return out
+        return self.heard(self.replied(reply or {"lessons": [], "checked": CHECKED}))
 
     def given_record(self, agent_id, prompt, agent_type="", folder=None):
         """Writes what Claude Code keeps of an agent's conversation: its prompt as the first
@@ -312,3 +312,24 @@ class RepoTest(testing.FolderTest):
             os.path.join(folder, f"agent-{agent_id}.meta.json"), {"agentType": agent_type}
         )
         return path
+
+
+def named(item):
+    """The checklist and ID that name an item."""
+    return {"checklist": item["checklist"], "item": item["item"]}
+
+
+def lane_code(*names):
+    """lane's modules of the names, imported from the link in turn's hooks: lane's code and turn's
+    scripts share module names, such as call, so lane's are imported apart and turn's put back
+    after."""
+    shared = ("call", "forms")
+    turns = {n: sys.modules.pop(n) for n in shared if n in sys.modules}
+    sys.path.insert(0, os.path.join(TURN, "hooks", "lane"))
+    try:
+        return [importlib.import_module(n) for n in names]
+    finally:
+        sys.path.pop(0)
+        for n in shared:
+            sys.modules.pop(n, None)
+        sys.modules.update(turns)
