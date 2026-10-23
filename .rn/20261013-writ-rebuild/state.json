@@ -497,6 +497,9 @@
   },
   {
    "fact": "2026-10-23: read the six READMEs at 7edc487 against 0.1.0's: untrue words (BOM name in r6) and a link to a missing LICENSE (s4, the check passing it in round 2) passed every check, as the checks ran the Good's own words alone; turn's READMEs and 0.1.0's are close in what they give (turn: a BOM removal command, LICENSE with holder; 0.1.0: semicolon-separated files); fixed 9d39849: each thing the lines tell checked, and a file the work lacks asked to be added to the CCS's work. The user: quality over speed, read the content, not counts"
+  },
+  {
+   "fact": "2026-10-23: acceptance at 9d39849, readme x3 (r7-r9) and stopped x3 (s7-s9), all returned: no LICENSE loop; every README's example run gives its output byte for byte (CRLF aside), and each claim tried holds (BOM, Latin-1, missing file, usage, semicolons, quoting, same file twice, both BOM-removal commands); pandas' 007 not tried, not installed; set beside 0.1.0's base1-3 close, turn adding a LICENSE file; call to return 17-36 min (0.1.0 11-16), cost $5.7-11.5; lane stops: 11 orchestrator calls before `turn.py start`, 12 before the move `next` printed; r9's generator tried Edit 12 times on a reply file the flow removes before each message (run.py:285), learner gave it as a lesson"
   }
  ],
  "semantic_gist": [
@@ -601,7 +604,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: the six acceptance runs at 9d39849 (r7-r9, stopped s7-s9) all ended at once with `claude exited 1`, as the usage limit was reached (2026-10-23); run them again once usage is back: trial.py readme <new> and trial.py readme <new> stopped, three each at once. Then read each README whole myself, running what it says, set beside 0.1.0's base1-3 (scratchpad base<n>.work); judge only as a check; report to the user in a few plain lines. No question is open for the user. Never publish an Artifact unasked"
+   "first": "on resume: the 9d39849 acceptance is read and reported (trace, last entry); what remains is open to the user: the generator editing a removed reply, and the time against 0.1.0. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
