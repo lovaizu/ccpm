@@ -21,6 +21,12 @@ A checklist is worked out in this order, each step the ground of the next:
    thing; what the steps already bring about is not asked again.
 5. Ask each item so that what the deliverable's user has and does with it answers it, never the
    sources it was made from, which they do not have.
+6. Put each item in the one checklist whose deliverable's user it serves. An item asks what a
+   deliverable gives its user; how the work is done, such as trying a thing once small before
+   running it many times, goes into the steps of whoever does the work. An item that serves the
+   user of every kind goes into `usability.md`; one that serves one kind's user goes into that
+   kind's checklist, found by each checklist's purpose, or, for a kind with none, into a new
+   checklist for it. A point an item already asks goes into that item.
 
 This file is the checklist for checklists, and is written in the shape it asks for. Each item of
 `usability.md` applies to a checklist, with what a good deliverable of the kind gives its user as
@@ -269,6 +275,16 @@ behaves where the user cannot run it.
 
 Why: an item given to one who cannot answer it is left without an answer, or answered by one who
 holds what the user does not, so a deliverable the user cannot use passes.
+
+### B-14: Each point asked in one place
+
+Scope: whole
+
+Does each item ask what no other item asks, in this checklist or in those answered beside it, such
+as `usability.md`?
+
+Why: a point asked in two places is fixed in one and left in the other, and the two drift until
+they ask different things.
 
 ### B-12: Items in the order the maker meets them
 
