@@ -31,6 +31,11 @@ follow.
   turn to make in one run, after every task it builds on. The building of rn itself showed why: its
   hooks asked of turn whole, four checks with their shared parts and tests in one run, took two hours
   and stopped in the first round with nothing taken.
+- Each task with its completion criterion, checked on its result by a check it names, and the four
+  steps of `dev/rn/design.md`'s task, each a box with content of its own aimed at that criterion:
+  the context read and what is lacking confirmed, by the conductor with the user; the part and its
+  checks designed, by turn's first run; traced on paper, by that run's first reader; made, code test
+  first, by turn's second run.
 - No sign-off is a task, and the plan holds no state of the session: where the session stands is in
   `state.json`.
 - No split of the criteria into attractive and must-be quality: the README and the UX speak of
