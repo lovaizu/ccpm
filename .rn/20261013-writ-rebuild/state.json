@@ -440,6 +440,9 @@
   },
   {
    "fact": "2026-10-23: turn's design had no concept and was not what the user meant; lane's and rn's architectures are the same (45-55 bullets, 330-430 lines of case rules), lane's still has the builder answering and choosing OK though the user said its user is an AI building a plugin, and rn's has not caught up with its agreed README and UX. The user agreed the order below for all three, code included, as each already has code"
+  },
+  {
+   "fact": "2026-10-23: turn's user, purpose and concept agreed with the user, kept in decisions/dev/turn/architecture.decisions.md#concept: the calling AI deals only with the orchestrator; through the generator and first user's back and forth the orchestrator reads nothing and only passes, as anything between keeps the Goods from settling; the orchestrator checks each Good every round, so a run can end in one round"
   }
  ],
  "semantic_gist": [
@@ -550,7 +553,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume, one plugin at a time, turn, then lane, then rn: (1) show the user its user, purpose and concept (the opening sentence and the principles) in a few lines of Japanese, in the conversation, and agree them; (2) rewrite dev/<plugin>/architecture.md to rn/checklists/product/architecture.md on that concept, case rules left to tests (Given/When/Then) and prompt steps, Japanese shown before committing; (3) check the plugin's existing code and trial results against the concept, and set apart what is kept and what is rebuilt. Start with turn's concept proposal. Never publish an Artifact unasked"
+   "first": "rewrite dev/turn/architecture.md to rn/checklists/product/architecture.md on the agreed concept (decisions/dev/turn/architecture.decisions.md#concept), case rules left to tests (Given/When/Then) and prompt steps; show the Japanese before committing; then check turn's code and trial results against it, setting apart what is kept and rebuilt; then lane, then rn, each concept agreed first. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [

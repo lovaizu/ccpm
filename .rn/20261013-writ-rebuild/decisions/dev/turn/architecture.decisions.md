@@ -1,5 +1,20 @@
 # What turn's design says
 
+## Concept, agreed with the user (2026-10-23)
+
+- User: the AI that runs a step of a plugin and calls turn from it.
+- Purpose: the work comes back meeting every item of the checklists the calling AI gave, with
+  nothing left for the calling AI to fix.
+- Concept: an AI that did not make the work uses it in the receiver's place and goes back and forth
+  with the generator until it finds each item's Good; through that back and forth the orchestrator
+  reads no work and only passes what the flow gives. Each time the first user's reading ends, the
+  orchestrator checks that each Good holds, and only the items that do not hold are made again in
+  the next round. The orchestrator checks every round, so a run can end in one round.
+- The calling AI deals only with the orchestrator.
+- turn's own principles: (1) every role that makes or reads the work looks only for each item's
+  Good and works only to give it; (2) each item is judged by what the receiver gets with what they
+  have, never by whether the work matches its sources.
+
 ## design
 
 ### B-1: The stories the scenes rest on
