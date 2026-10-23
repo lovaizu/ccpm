@@ -109,14 +109,15 @@ flowchart LR
   make it finds the Good its lines give, which is what the user gets.
 - A checklist serves the purpose of whoever uses a work of its kind: it says who they are and what
   they achieve with the work, the idea its items rest on, and the items, each with why. How a work
-  is made is the plan's: each task is broken into the design of what it makes, the design of how
-  that is checked, such as code's test cases and test data, the design traced on paper against
-  them and the record, and the making, checked as it grows, code test first.
+  is made is the plan's: each task is broken into reading the context it needs, what is lacking
+  confirmed with whoever can give it, the design of what it makes, the design of how that is
+  checked, such as code's test cases and test data, the design traced on paper against them and
+  the record, and the making, checked as it grows, code test first.
 
   A checklist is answered on the work, which holds no steps; the idea and each why let a maker
   meet the items their own way, and steps there would be followed without the purpose. A task
-  whose checks are designed and traced before its making shows its slips while they are small,
-  and nothing is run to find what reading would show.
+  begun on a gap fills it with a guess; one whose checks are designed and traced before its making
+  shows its slips while they are small, and nothing is run to find what reading would show.
 - After each move, the conductor replans from the facts the move brought alone, such as the user's
   answer, the work with what its first reader found and the output of what it ran, and replaces the
   state before the next move; a checklist or an environment a task lacks, such as a tool to
