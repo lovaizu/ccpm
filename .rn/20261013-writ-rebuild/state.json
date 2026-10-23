@@ -488,6 +488,9 @@
   },
   {
    "fact": "2026-10-23: turn's units all tried at 492ac76: the orchestrator on its eight ways, each role on its own, the generator and first user kept in a round; the first user reads none of the run's files now (given without them); T22 done but its acceptance in T23"
+  },
+  {
+   "fact": "2026-10-23: acceptance Flow on the one-item task at 6c2edbc (session 5a8dc9b0): every move in order, result in form, stand-in checked Goods and lessons by record paths; the README held `git clone <this repository's URL>`, a placeholder the generator wrote rather than asking, run by neither first user nor check, which the learner gave as a lesson; watched for in the next runs"
   }
  ],
  "semantic_gist": [
@@ -592,7 +595,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: T22 done (turn whole mutation 0, lane whole 0). A subagent was started (2026-10-23) to bring turn's acceptance trials to the architecture: trial.py's stand-in on the README's step text fixing nothing and keeping <new folder>.work/, a one-item task, baseline.py the same, judge.py for KR1.1; uncommitted. If /clear stopped it, read git status and git diff; redo it if partial; check by hand, check.sh turn, commit. Then run one trial.py on the readme task first and read its records; then each acceptance trial three times at once, baseline three times, the judge, KR1.2 times; then T23 done. Acceptance runs cost $7-27 each. No question is open for the user. Never publish an Artifact unasked"
+   "first": "on resume: acceptance runs started (2026-10-23) in the scratchpad: one2, one3, readme1-3 (outputs <name>.out, work kept in <name>.work/); find them with pgrep -af trial.py. Next batch: readme stopped ×3 (trial.py readme <new> stopped) and baseline.py readme ×3, then judge.py over the readme .work folders of turn and baseline, KR1.2 from 'call to return'; record in dev/turn/trials/readme/results.json and one's; check whether the generator's placeholder-instead-of-question repeats. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
