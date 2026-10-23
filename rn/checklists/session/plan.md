@@ -186,3 +186,17 @@ Before the tasks are written, it is answered yes.
 Why: turn makes each task's result in one run and the conductor accepts it before the next starts,
 so a slip shows while only that slice is made; a task that makes much at once shows its slip only
 once all of it is made, and all of it is made again.
+
+### B-9: Each task making only what is used after
+
+Scope: its part
+
+Does each task, and each thing it says to make on the way, give what someone uses once the piece of
+work is done: the user using the finished work, or whoever builds it later?
+
+Look for: something only its maker reads on the way, such as a survey or a map to reach the result.
+
+Before the tasks are written, it is answered yes.
+
+Why: what only its maker reads is made for its own sake: it takes the time the result needed,
+drifts from the purpose, and is left for no one to keep.
