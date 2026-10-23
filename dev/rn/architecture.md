@@ -79,9 +79,9 @@ flowchart TB
   A fact taken unchecked carries a slip into every move after it, and a state added to rather than
   replaced swells as the conversation would.
 - Each work, the plan, each document, each task's result and each checklist made, goes to turn as a
-  CCS holding the work, its receiver, what they use it for and have with it, its checklists and the
-  decisions it is made from; turn's first user uses it in the receiver's place before it comes back
-  (Principle 4).
+  CCS holding the work, its receiver, what they use it for and have with it, its checklists, the
+  decisions it is made from and rn's checklist for a fix; turn's first user uses it in the
+  receiver's place before it comes back (Principle 4).
 
   turn takes its task as a CCS and makes the work from it and the files it names alone, so the work
   does not stray from what was decided.

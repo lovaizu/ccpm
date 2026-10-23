@@ -106,6 +106,7 @@ class RepoTest(helpers.MainAndWork):
         self.plugin = os.path.join(self.base, "plugin")
         self.checklist = os.path.join(self.plugin, "checklists", "product", f"{KIND}.md")
         self.write(self.checklist, "# Code\n")
+        self.fix = os.path.join(self.plugin, "checklists", "fix.md")
 
     def rn(self, *argv: str) -> tuple[int, str]:
         """The exit code and what rn printed for the arguments."""
@@ -525,17 +526,25 @@ class CcsTest(RepoTest):
         # Given: a session whose plan says the languages.
         # When: the conductor has a work's CCS written.
         self.made()
-        # Then: the CCS holds both.
+        # Then: the CCS holds both, first.
         want = [{key: value} for key, value in LANGUAGES.items()]
-        self.assertEqual(self.ccs()["constraints"], want)
+        self.assertEqual(self.ccs()["constraints"][:2], want)
 
     def test_ccs_before_the_plan_holds_no_language(self):
         # Given: a session with no plan yet, as before the plan is made.
         os.remove(plan_at())
         # When: the conductor has the plan's CCS written.
         self.made()
-        # Then: the CCS holds no language.
-        self.assertEqual(self.ccs()["constraints"], [])
+        # Then: the CCS holds no language, only the checklist a change is held to.
+        self.assertEqual(self.ccs()["constraints"], [{"fix": self.fix}])
+
+    def test_ccs_names_the_checklist_every_change_is_held_to(self):
+        # Given: a session.
+        # When: the conductor has a work's CCS written.
+        self.made()
+        # Then: the CCS names rn's checklist for a fix last among its bounds, so the generator
+        # holds it whenever it changes a work already there, in any round.
+        self.assertEqual(self.ccs()["constraints"][-1], {"fix": self.fix})
 
     def test_ccs_with_decisions_not_there_stops(self):
         # Given: a session, and no file at the decisions' path.

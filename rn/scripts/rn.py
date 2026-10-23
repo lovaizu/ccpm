@@ -297,7 +297,9 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     # A CCS holds its entries in four parts, the shape turn takes: focal_entities, what the work is
     # about, the work, its receiver and what they have with it; goal_orientation, what the work is
     # for; retrieved_artifacts, the files it is made from; and constraints, the bounds it is made
-    # in, such as the languages. turn finds each entry by its key, whichever part holds it.
+    # in: the languages, and rn's checklist for a fix, which turn's generator holds whenever it
+    # changes a work already there, sent back or in a later round as well. turn finds each entry by
+    # its key, whichever part holds it.
     ccs = {
         "focal_entities": [
             {ENTRIES["work"]: given(args.path, "path of the work")},
@@ -317,6 +319,7 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     # The plan is the first work, made before it can say the languages; its own decisions do.
     languages = front_matter(plan(folder))
     ccs["constraints"] = [{k: languages[k]} for k in LANGUAGES if k in languages]
+    ccs["constraints"].append({"fix": os.path.join(root, "checklists", "fix.md")})
     path = ccs_path(folder, work)
     write_json(path, ccs)
     # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
