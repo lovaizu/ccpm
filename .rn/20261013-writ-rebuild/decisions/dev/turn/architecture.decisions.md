@@ -210,10 +210,10 @@
 - [test: flow] `turn.py` prints each next move as one JSON line `{"tool": ..., "input": {...}}`, last in its output: an Agent call starting a role, a SendMessage to a role kept started, or a SendMessage to `main` with a line for the user; a role's prompt is a JSON object of what it is given, the files it reads, the work, the reply file and the checklists, each a path, and the flow's message what is sent back; the move printed as the tool call itself is a form lane holds the orchestrator to, and a role given its inputs as JSON is held by lanes on the values it starts from.
 - [test: flow] Each role's reply is held to its JSON Schema in `scripts/`; the flow reads it once the orchestrator runs `turn.py next`; a role sent more work writes its reply again, and `turn.py next` waits until it has been written since the send, as the reply of a subagent sent a message comes back later, not with the send; tried: an orchestrator that ended its turn after the send never got the reply, one that waited on a script reading what was kept got it word for word.
 - [step: orchestrator] It gives the flow the agent ID each Agent call returns, by which the flow names the role to send more work to and the learner is given each role's record; the Agent tool gives a subagent no name to be messaged by.
-- [test: lanes] The start_with lane on `turn.py start` hands the flow the session's `transcript_path` and the orchestrator's `agent_id` from the hook's event, by which the learner gets the records folder and the orchestrator's own record; the orchestrator is told neither, so no AI copies them.
+- [test: flow] The flow finds each role's record by the agent ID the orchestrator gives it, as `<conversation>/subagents/agent-<ID>.jsonl`, the place the hooks reference gives, and the orchestrator's own as the `turn:up` record beside them whose call names the result; the orchestrator is told no ID of its own, and lane hands a script nothing from a hook's event, so the flow finds them itself (2026-10-23).
 - [step: orchestrator] It replies with a question and ends its turn; the calling AI's SendMessage to its agent ID resumes it, as `lane:up` is reached.
 - [step: orchestrator] The lines go by SendMessage to `main`, loaded with ToolSearch: called from the main conversation, the calling AI is told them; called from an agent, they reach the main conversation above it, as that agent cannot be messaged by a name; tried with an agent started by an agent started in the background, its message to `main` reached the conversation while the agent that started it was still running.
-- [test: lanes] The lanes run values taken from what each agent starts from: on each role, read_only and read_whole on `{given}`, write_only on `{work}` and `{reply}`, in_form on `{reply}` and its form, end_when on `{reply}`, and hands_off on `git commit` and `git push` on each role that runs commands; on the orchestrator, start_with on `turn.py start`, read_only and read_whole on the `{given}` that `turn.py start` prints, the CCS, the files it names but the work, and the checklists, and on the work once the flow gives the check of each Good, follow_next on `turn.py next`, which holds the lines it prints as moves, as_printed on a generator's question it hands on, and hands_off as on the roles.
+- [test: lanes] The lanes run values taken from what each agent starts from: on each role, read_only and read_whole on `{given}`, write_only on `{work}` and `{reply}`, in_form on `{reply}` and its form, end_when on `{reply}`, and hands_off on `git commit` and `git push` on each role that runs commands; on the orchestrator, start_with on `turn.py start`, read_whole on the `{given}` that `turn.py start` prints, the CCS, the files it names but the work, and the checklists, follow_next on `turn.py next`, which holds the lines it prints as moves, as_printed on a generator's question it hands on, and hands_off as on the roles.
 - [step: generator, first user, orchestrator] The generator's running what it wrote, and the first user's and the orchestrator's running what the receiver runs, are held by their steps alone: what is run is found in the work and in what the receiver does with it, and the CCS names no kind for a command, so turn has none to give test_after.
 - [test: lanes] No lane on every item answered or on the result made: the flow reads the result and every reply itself, and lane sees a write only in the call that makes it, where the flow writes the result inside its own run.
 - [test: lanes] Each lane acts in its own agent alone, by `agent_type`, and reads that agent's own record and what it started from, so runs at once are told apart without turn tracing them; turn keeps no hooks of its own.
@@ -222,8 +222,7 @@
 
 ## turn's code against the architecture (2026-10-23)
 
-- Kept: `scripts/call.py`; `forms.py` but `GOOD`, `taken` and the lessons' roles; `records.py` but
-  `find` and `orchestrator`; in `run.py` the start, resume, moves, lines, reply wait, send bound and
+- Kept: `scripts/call.py`; `forms.py` but `GOOD`, `taken` and the lessons' roles; `records.py`; in `run.py` the start, resume, moves, lines, reply wait, send bound and
   paging; the three roles' core steps; the tests of start, forms, properties, kept rounds and resume;
   the trials' `kept.py`, `baseline.py`, `shared.py`, `stand.py`.
 - Rebuilt: `run.py`'s round middle and end (`first_read`, `compare`, `decide`, `settle`, `offer`,
@@ -236,6 +235,8 @@
 - The trials' false Goods (`dev/turn/trials/readme/results.json`, 89142d1 to 8c78852) came from the
   decision and the evaluator arguing the first user's stops away; the flow and roles trials held.
 - Settled from the purpose, no user decision: a round's first user and the Good check read every
-  item again, as a remake may break one that held; the rounds' bound is two; the orchestrator's
-  reading no work in a round and the IDs handed to `turn.py start` are built in lane or the flow,
-  as lane's lanes can do neither now (`lane/hooks/lane/started.py:28-36`).
+  item again, as a remake may break one that held; the rounds' bound is two; the records found by
+  the flow from the agent IDs (`records.find`, `records.orchestrator` kept); the orchestrator's
+  reading no work in a round held by its step alone, with no read_only on the orchestrator, until a
+  trial shows it drift, as lane reads a run's values only from the prompt and the start_with
+  script (`lane/README.md:91-93`) and build only what a trial shows is needed (2026-10-23).
