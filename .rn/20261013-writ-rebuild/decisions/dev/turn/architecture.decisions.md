@@ -84,3 +84,8 @@
   "checked"}`, so a run with no lesson still says what the learner checked; a lesson's `whose` is
   `own` or `general`; `dev/turn/cosmic-ray.toml` type-checks `turn/scripts` alone, as checking
   `turn` followed the link to lane's code, failed, and so caught every mutant.
+- The orchestrator's reading no work in a round stays held by its step and by follow_next, no
+  read_only added (2026-10-23): in the flow trial's eight ways at 4afc6a8 it twice ran `cat` of
+  README.md or the roles' replies in a round, and follow_next stopped each before it ran, as a
+  move was printed and not yet taken (`dev/turn/trials/flow/results.json`, ways `sent` and
+  `left`).

@@ -133,5 +133,77 @@
   "cost_usd": 1.17,
   "read": "Every JSONL read. The stand-in stopped the orchestrator at the line saying the first user will read, and called again: the new orchestrator went on from the first user's start, the generator not started again, and returned as plain.",
   "hooks": "none stopped a call."
+ },
+ {
+  "commit": "4afc6a8",
+  "session": "e7b0ddc0-3ff8-41a8-a240-bf176891755a",
+  "minutes_to_return": 2.7,
+  "cost_usd": 1.1,
+  "way": "plain: check, generator, first user every Good, Good check running sh demo.sh, both hold, learner no lesson, returned: every move in the architecture's order",
+  "hooks": "none",
+  "read": "Every orchestrator record read; it read README.md only at the Good check."
+ },
+ {
+  "commit": "4afc6a8",
+  "session": "4cab82a6-6c89-4823-9685-0846e250c758",
+  "minutes_to_return": 3.2,
+  "cost_usd": 1.3,
+  "way": "given: check, generator, first user stops at B-1, sent back by message, generator, first user sent the work again finds every Good, Good check holds both, learner, returned: every move in the architecture's order",
+  "hooks": "none",
+  "read": "Every orchestrator record read; the round's back and forth went by message to the roles kept started."
+ },
+ {
+  "commit": "4afc6a8",
+  "session": "47f5b103-5724-49d8-bd07-0329fe8f166d",
+  "minutes_to_return": 5.9,
+  "cost_usd": 2.45,
+  "way": "sent: B-1 sent back three times in round 1, the fourth stop going on without Good past the check of B-2's Good, round 2 started anew, every Good held, learner with a general lesson, returned: every move in the architecture's order",
+  "hooks": "one follow_next stop: in the round the orchestrator ran cat of the roles' replies and README.md instead of the move printed, stopped before it ran, cleared by the move",
+  "read": "Every orchestrator record read; the orchestrator read no work in the round past the stop."
+ },
+ {
+  "commit": "4afc6a8",
+  "session": "43228496-6a40-4e41-adc4-f45d9ea44412",
+  "minutes_to_return": 3.3,
+  "cost_usd": 1.54,
+  "way": "untrue: first user gives B-1 a Good at a line naming no license, the Good check finds it does not hold, round 2 gives it, held, learner with a general lesson, returned: every move in the architecture's order",
+  "hooks": "start_with on a ToolSearch before turn.py start; follow_next on a turn.py next before sending the line printed; each cleared by its action",
+  "read": "Every orchestrator record read; the check said where the receiver did not get the license."
+ },
+ {
+  "commit": "4afc6a8",
+  "session": "247f537b-29b8-46a1-95da-50a7d7ec8d6d",
+  "minutes_to_return": 5.4,
+  "cost_usd": 2.37,
+  "way": "left: B-1 Good untrue in two rounds, left, the orchestrator words a question with a recommended answer, the calling AI answers, round 3 gives B-1, held, learner with a lesson of the project's own, returned: every move in the architecture's order",
+  "hooks": "follow_next twice before the Good check: a turn.py next before the line, and a cat of README.md before the move printed; each cleared by its action",
+  "read": "Every orchestrator record read; the orchestrator's last reply added prose after the returned line, which its step does not ask."
+ },
+ {
+  "commit": "4afc6a8",
+  "session": "95b2b24d-a55b-4cb7-839c-87af8bc732a9",
+  "minutes_to_return": 3.8,
+  "cost_usd": 1.61,
+  "way": "generator: generator asks before making, the question handed on as printed, answer sent by message; asks again while making, answered, makes the work, first user, Good check, learner, returned: every move in the architecture's order",
+  "hooks": "start_with on a ToolSearch before turn.py start, cleared",
+  "read": "Every orchestrator record read; each question reached the calling AI as the generator wrote it."
+ },
+ {
+  "commit": "4afc6a8",
+  "session": "aac8f75f-3d9c-4e79-8878-ea24e5b7fa6d",
+  "minutes_to_return": 6.4,
+  "cost_usd": 1.4,
+  "way": "asked: check finds B-1 and B-2 waiting on the license, asked at once, the calling AI keeps MIT in the decisions and answers, check made again on the CCS, then as plain: every move in the architecture's order",
+  "hooks": "follow_next on a turn.py next before the line printed, cleared",
+  "read": "Every orchestrator record read; no role started before the answer."
+ },
+ {
+  "commit": "4afc6a8",
+  "session": "b5d68547-163a-449c-b0da-5b58a2521c56",
+  "minutes_to_return": 3.8,
+  "cost_usd": 1.24,
+  "way": "stopped: as plain until the line that the orchestrator will check each Good; stopped by TaskStop and called again with the same call; the new orchestrator told that line again and went on from the Good check, no role started again, returned: every move in the architecture's order",
+  "hooks": "follow_next twice, each a turn.py next before the line printed, cleared",
+  "read": "Every orchestrator record read; the run gone on started no role anew."
  }
 ]
