@@ -1,3 +1,14 @@
+---
+paths:
+  - "lane/**"
+  - "turn/**"
+  - "rn/**"
+  - "dev/**"
+  - ".claude-plugin/**"
+  - "*/README.md"
+  - "*/.claude-plugin/**"
+---
+
 # Plugin rules (ccpm)
 
 How a plugin in this marketplace is built, step by step in the order the work is done. Each step
