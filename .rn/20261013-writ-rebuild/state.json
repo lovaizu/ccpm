@@ -449,6 +449,9 @@
   },
   {
    "fact": "2026-10-23: lane's concept agreed with the user, kept in decisions/dev/lane/architecture.decisions.md#concept: its user is an AI building a plugin, which answers and approves lane:up itself, no person taking part; lane's README, UX and architecture still have the builder, a person, answering and choosing OK"
+  },
+  {
+   "fact": "2026-10-23: turn's code read against its architecture: about half kept, the round's middle and end rebuilt to the Good check, the evaluator removed; kept in decisions/dev/turn/architecture.decisions.md#turns-code-against-the-architecture"
   }
  ],
  "semantic_gist": [
@@ -559,7 +562,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "check turn's code (agents, scripts, tests) and trial results against the agreed concept and dev/turn/architecture.md, with the moved-out list as what the tests and steps must hold; set apart what is kept and what is rebuilt; lane's concept awaits the user's answer on whether the calling AI alone answers and approves lane:up; then rn's concept. The user agrees the concept only, not the architecture text. Never publish an Artifact unasked"
+   "first": "awaiting the user: lane's README written for the person who installs lane (recommended) or for the AI building a plugin; then lane's README, UX and architecture on its agreed concept; turn's rebuild per decisions/dev/turn/architecture.decisions.md#turns-code-against-the-architecture, needing lane's start_with to hand IDs and a read lane by phase; then rn's concept. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [

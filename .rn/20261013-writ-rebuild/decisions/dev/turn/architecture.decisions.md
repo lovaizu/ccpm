@@ -219,3 +219,23 @@
 - [test: lanes] Each lane acts in its own agent alone, by `agent_type`, and reads that agent's own record and what it started from, so runs at once are told apart without turn tracing them; turn keeps no hooks of its own.
 - [test: flow] The flow's unit cases: the call's check stops what it must; an item gets its Good only where the first user gave one and the orchestrator said yes; a reply giving a Good at lines the work does not hold is stopped; a question is sent at the move it is found; an item two rounds leave without Good becomes a question; a stopped run goes on from its last move; the result and each reply are held to their forms.
 - [test: orchestrator] The orchestrator unit's sets of replies, by the counts: an item sent back three times going on without Good; an item two rounds leave without Good sent as a question and the run going on with the answer; a question the generator replies with before making anything sent at once and its answer sent to the generator, which then makes the work; each with the learner once after the run.
+
+## turn's code against the architecture (2026-10-23)
+
+- Kept: `scripts/call.py`; `forms.py` but `GOOD`, `taken` and the lessons' roles; `records.py` but
+  `find` and `orchestrator`; in `run.py` the start, resume, moves, lines, reply wait, send bound and
+  paging; the three roles' core steps; the tests of start, forms, properties, kept rounds and resume;
+  the trials' `kept.py`, `baseline.py`, `shared.py`, `stand.py`.
+- Rebuilt: `run.py`'s round middle and end (`first_read`, `compare`, `decide`, `settle`, `offer`,
+  `taking`, `took`, `remade`) to the Good check; questions sent as met, not kept in the result;
+  `up.md` steps 5-6 to the check of each Good, running what it says; the generator asking before
+  making; the learner once after the run, its lessons in the result, own or general; the decision
+  tests and the flow trial's reply sets; the KR1.1 judge kept in `dev/turn/trials/`.
+- Removed: `agents/evaluator.md`, `forms/goods.json`, the evaluator's hooks, the take step, lessons
+  fed to the roles.
+- The trials' false Goods (`dev/turn/trials/readme/results.json`, 89142d1 to 8c78852) came from the
+  decision and the evaluator arguing the first user's stops away; the flow and roles trials held.
+- Settled from the purpose, no user decision: a round's first user and the Good check read every
+  item again, as a remake may break one that held; the rounds' bound is two; the orchestrator's
+  reading no work in a round and the IDs handed to `turn.py start` are built in lane or the flow,
+  as lane's lanes can do neither now (`lane/hooks/lane/started.py:28-36`).
