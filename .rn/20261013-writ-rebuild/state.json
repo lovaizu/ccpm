@@ -401,6 +401,9 @@
   },
   {
    "fact": "the user (2026-10-23): T24's map was made for its own sake, repeating each checklist's opening; dropped, the path in checklist.md written first and the present state checked against it; think back from the end product. What the map found, kept for rn's remake: product/readme.md steps 5-7 have no time in rn's flow (dev/rn/design.md:133-135 makes the README only before the design); no source of rn's flow names a prompt as a work; lessons and issues to rn's makers have no checklist"
+  },
+  {
+   "fact": "T23 acceptance on 8c78852 (2026-10-23), kept in dev/turn/trials/readme/results.json: new turn 19-22 of 23 met as returned, 13-53 min, $5-27; 0.1.0 18-20 of 23, 10-20 min, $3.7-4; every story met but Told as it goes, which the code falls short of; not yet taken"
   }
  ],
  "semantic_gist": [
@@ -514,7 +517,7 @@
    "next": "T24: write checklist.md's path for placing an item first (purpose and UX of whom it serves, the work met, product or how a task is carried out, every work or one kind, already asked), then read each checklist of rn against it"
   },
   {
-   "next": "T23: read the 9 acceptance outputs in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0c28e8a6-d4bd-4901-a7a4-2dbb63e3874d/scratchpad (acc*, accs*, base*; if gone, find the sessions in ~/.claude/projects/*scratchpad-acc*/ and *-base*), judge each story of dev/turn/design.md Acceptance from every JSONL, count KR1.1 (items the stand-in judged met on return) and KR1.2 (call to return) against 0.1.0, keep them in dev/turn/trials/readme/results.json; get the user's A/B/C answer; then validate --strict, then rn"
+   "next": "T23 fixes, then the six acceptance runs again: (1) told() at turn/scripts/run.py:192 gives a line only before a role move, the design (dev/turn/design.md:340) a line before each move and after each outcome; (2) a calling AI's cd moves the session's working folder and stalls turn (acc3); (3) trial.py stops before the first user starts, not during its reading, and sends answers to a returned question to the ended run, not a call again; (4) time: round 2 and send-backs, the last learner 5-7 min, the role prompt copied out about 30 s a start; Goods that do not hold ('every value stays as it was' while headers are rewritten) looked at with the time"
   }
  ],
  "uncertainty_signal": [

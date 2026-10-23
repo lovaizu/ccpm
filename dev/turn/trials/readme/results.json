@@ -275,5 +275,254 @@
   "fixed": "readme B-6 and F-1: Development named csvtidy.py without a link, now a link; usability B-3: a byte order mark stays stuck to the first header name, which the stand-in added as a bullet of Why csvtidy, putting a limit among the reasons. The first call's question, the license, answered with its recommended answer.",
   "goods_checked": "Every Good against its lines and a run of the example: all hold. Not satisfied, judged from the receiver's purpose and the decisions: none. The file name without a link loses the receiver nothing, csvtidy.py being beside the README; the byte order mark is an edge.",
   "read": "Every JSONL read. Every step in the design's order, the orchestrator reading the work only at the decision; no round 2. First call 0.8 minutes, the license question alone; second: check 0.7, generator 1.9, first user 1.3 sending back, generator 1.4, first user 1.3, evaluator 1.0, decision 0.9, learner 1.8, return 0.2."
+ },
+ {
+  "commit": "turn--v0.1.0",
+  "unit": 3,
+  "session": "183d85e1-9845-45e3-ac5c-d9f0f59c0660",
+  "minutes_to_return": 9.7,
+  "items_fixed_after_return": 3,
+  "items_not_satisfied": 0,
+  "questions": 1,
+  "cost_usd": 3.71,
+  "items_met_as_returned": 20,
+  "items_total": 23,
+  "fixed": "readme B-5: 'Copy csvtidy.py into any folder' became the folder holding the CSV file, the command being run there; readme B-8: 'with nothing else installed' became 'no other package is needed'; usability B-3, which turn itself left unmet: the rule for cells in double quotes was added beside the list of changes, with the space-before-quote case that splits a cell next to it. The first call's one question, the license, was answered with its recommended answer, MIT. turn ended by asking whether to run again, and the script answered with the check.",
+  "goods_checked": "Every Good turn gave in 0.1.0's round-2 orchestrator.json, checked against .turn/out/2/README.md as returned. The lines are still correct, since round 2 changed only line 35. The stand-in judged 20 of turn's 22 Goods to hold; the two it rejected, B-5 'any folder' and B-8 'nothing else installed', are wording that could be misread rather than wrong facts. Not satisfied, judged from the receiver's purpose and the decisions: none. In 0.1.0 the stand-in is the orchestrator itself, so it checked Goods it had written.",
+  "read": "Every JSONL read. Two rounds, each generator → orchestrator's hand-on → first user → evaluator → decision → learner. First call: question and brief 0.4 minutes, with the generator started in the background and the license answered meanwhile. Round 1: generator 1.1, hand-on 0.9 (ran the example; form refused once for a 'question' key), generator sent back for repeated sentences 0.5, hand-on 0.3, first user 0.7, evaluator 0.9, decision 0.5 (the script refused notes copied from the evaluator's grounds), learner 0.7 (usability B-12: CRLF not explained). Round 2: aim 0.3, generator 0.4, hand-on 0.2, first user 0.8, evaluator 0.7, decision 0.3, learner 0.8 (usability B-3: quoted cells), end 0.2. The stand-in's check took 1.3 more. Learners and the round-2 evaluator read other agents' JSONL records."
+ },
+ {
+  "commit": "turn--v0.1.0",
+  "unit": 3,
+  "session": "da9780be-e749-41da-9fef-187fa119c441",
+  "minutes_to_return": 20.3,
+  "items_fixed_after_return": 5,
+  "items_not_satisfied": 0,
+  "questions": 1,
+  "cost_usd": 4.0,
+  "items_met_as_returned": 18,
+  "items_total": 23,
+  "fixed": "usability B-12, B-11 and B-19, one cause: round 2's byte-order-mark sentence (line 33) used the term before explaining it and folded an exception into one long sentence; the stand-in rewrote lines 33-40 as a list plus a short paragraph. usability B-3: what a non-UTF-8 file, a semicolon-separated file and the same name for both files do, each run and written beside its requirement or command. usability B-13, which turn called met: the output file was named 'written file', 'second file' and 'output file'; it is now 'output file' throughout. The stand-in also made csvtidy.py under Installation a link, which no item required. The one question, the license, was answered with MIT.",
+  "goods_checked": "turn's 19 Goods checked against the README as returned (73 lines, the same as .turn/out/2/README.md). The stand-in rejected one, usability B-13, and that rejection holds: line 33 says 'written file' and line 60 'second file'. The B-6 Good links the commit history of csvtidy.py on lovaizu/playground main, which is empty until the file is pushed; the stand-in noted this and let the Good stand. Not satisfied, judged from the receiver's purpose and the decisions: none. 'Any folder' stays in Installation, the same wording base1's stand-in rejected for B-5.",
+  "read": "Every JSONL read. Two rounds. First call: question 0.9. Round 1: generator 1.9, hand-on 1.2 (readme F-1 not met: Development lacked a link), generator 0.6, hand-on 0.3, first user 1.1, evaluator 1.2, decision 0.8 (the script refused notes copied from grounds), learner 2.3 (readme B-6, usability B-3, B-6; it read the subagents' JSONL and ran edge cases). Round 2: setup 0.5, generator 1.2, hand-on 0.8 (usability B-3 not met: what a byte order mark does to the first name), generator 1.1, hand-on 0.4, first user 1.9 (it grepped forms.py for the form's fields), evaluator 1.1, decision 0.5, learner 2.2 (it read the subagents' JSONL and ran four more edge cases), end 0.2. The stand-in's check took 1.7 more. Round 2's byte-order-mark fix caused the four misses turn returned with."
+ },
+ {
+  "commit": "turn--v0.1.0",
+  "unit": 3,
+  "session": "15c6ce92-37ff-4567-ad7a-d425dd77038b",
+  "minutes_to_return": 10.4,
+  "items_fixed_after_return": 3,
+  "items_not_satisfied": 0,
+  "questions": 2,
+  "cost_usd": 3.91,
+  "items_met_as_returned": 20,
+  "items_total": 23,
+  "fixed": "readme B-4, which turn called met: GitHub trims the outer spaces of the inline code ` Full Name , Email ` on line 13, so the spaces the example means to show disappeared; the sentence now leaves them to the code block below. readme B-6, which turn left unmet: the README linked CHANGELOG.md, which did not exist; the stand-in wrote it with one Unreleased entry. usability B-13, which turn called met: line 41's 'the first row' became 'the header'. The first call asked about the license (MIT); round 1's learner raised where changes are recorded (CHANGELOG.md); both took the recommended answer.",
+  "goods_checked": "turn's 22 Goods checked against the README as returned (91 lines). The round-2 hand-on kept round-1 line numbers for lines 1-75, which round 2 did not change, so they still point right. The stand-in rejected B-4 and B-13, and both rejections hold. It said it ran the example, but in its own check it made no run; the run it relied on was its own, as orchestrator, at minute 2.1. Not satisfied, judged from the receiver's purpose and the decisions: none. Line 43 gives the line ending only as `\\r\\n`, 'the line ending the CSV standard uses', which tells the reader what it is if not how it looks; nothing is said of cells in quotes, an edge the decisions do not ask for.",
+  "read": "Every JSONL read. Two rounds. First call: question 0.4. Round 1: generator 1.3, hand-on 1.1 (ran the example; one rm stopped by the hook; form refused once for a 'question' key), generator sent back for a sentence said twice 0.4, hand-on 0.3, first user 0.9, evaluator 0.8, decision 0.5 (the script refused notes copied from grounds), learner 0.8 (readme B-6, usability B-6; it read the subagents' JSONL and raised the change-record question), question answered 0.3. Round 2: generator 0.4, hand-on 0.3, first user 0.6, evaluator 0.7 (it read the first user's JSONL), decision 0.2, learner 0.9 (readme B-6: CHANGELOG.md missing, handed to the caller), end 0.2. The stand-in's check took 1.0 more."
+ },
+ {
+  "commit": "8c78852",
+  "unit": 3,
+  "session": "a3a7eaaa-0966-4278-a096-53b92f0dfb9a",
+  "stopped": false,
+  "minutes_to_return": 12.6,
+  "items_fixed_after_return": 3,
+  "items_not_satisfied": 2,
+  "questions": 1,
+  "cost_usd": 4.97,
+  "fixed": "usability B-12 and B-11, one cause: line 21's 'the folder that holds both files' comes before csvtidy.py is named, now 'the folder that holds contacts.csv and a copy of csvtidy.py'; readme B-9, judged met, had its first sentence reworded for reading. The license question, asked before any work was made, was answered with its recommended answer, MIT.",
+  "goods_checked": "Every Good against its lines and a run of the example; all hold except usability B-3: 'Both files are read and written as UTF-8' (line 49) leaves out a file starting with a byte order mark, which comes out as '\\ufeff_full_name' against line 36, and the stand-in passed it. The stand-in's B-11 call holds; its B-12 call is the same pointer slip, which belongs to B-11.",
+  "read": "Every JSONL read. Every step in the design's order, the orchestrator reading only at the check and at the decision; no round 2. Check and license question 1.4; generator 2.8; first user 1.7, sending back; generator 1.2; first user 1.4; evaluator 1.1; decision 1.3; learner 1.7; return 0.1. The evaluator's and the learner's Agent calls came about 30 s after the flow printed them (prompts of 11-14k characters copied out).",
+  "stories": {
+   "The work back": [
+    "met",
+    "orchestrator: 'turn: turn:up decided 23 of 23 items Good.' then {\"returned\": \".tasks/result.json\"}; all 23 items carry a good and lines"
+   ],
+   "Told as it goes": [
+    "not met",
+    "every role move's line reached the stand-in (6 of 6), but `turn.py next` printed 'decide, page 1 of 2: ...' and {\"check\": ...} with no 'turn:' line, and no line followed the evaluator's or the learner's outcome"
+   ],
+   "A point asked": [
+    "met",
+    "question 23:08:06 'csvtidy has no license file and the sources name no license. Under what license may people use csvtidy?'; answer 23:08:14; generator started 23:08:40"
+   ],
+   "follow-the-design-order": [
+    "met",
+    "moves check, question, check, generator, first-user, send generator, send first-user, evaluator, decide, learner, take, '{\"returned\": \".tasks/result.json\"}'"
+   ]
+  }
+ },
+ {
+  "commit": "8c78852",
+  "unit": 3,
+  "session": "fc55f473-3689-45ce-90ab-a6e7e8bceebc",
+  "stopped": false,
+  "minutes_to_return": 33.1,
+  "items_fixed_after_return": 4,
+  "items_not_satisfied": 4,
+  "questions": 3,
+  "cost_usd": 15.56,
+  "fixed": "readme B-7: added an MIT LICENSE, as the README linked to one that did not exist; usability B-3: changed csvtidy.py:20 to read as utf-8-sig so a byte order mark is dropped, and replaced the README's BOM note; usability B-6 and B-7, one cause: 'changes only its layout' and 'writes each value as it read it' did not hold for the rewritten header names, now said once in the opening with the exception beside it. The license question came before any work; the two questions in the result (LICENSE file, BOM) were sent by SendMessage to the ended run, which did not take them in, so the stand-in did both itself.",
+  "goods_checked": "Every Good against its lines and a run of the example: readme B-9 ('fixed rules that change only its layout', line 3) and readme B-3 ('csvtidy writes each value as it read it', line 57) do not hold, as the header names are rewritten; usability B-12 part 1-7 never ties 'layout' to the three changes. The stand-in's B-7, B-6 and B-7 calls hold; its usability B-3 call does not, since lines 46-48 state the BOM result truly and changing the code was a product choice.",
+  "read": "Every JSONL read. Every step in the design's order, the orchestrator reading only at the check and at each decision; round 2 ran (decided 17 of 23). Check, license question and check again 1.5; round 1: generator 2.6; first user 2.8, sending back, once sent back by the flow to fill its form; generator 1.8; first user 1.6; evaluator 2.2; decision 1.7, stopped once by the flow ('turn: the decision is not filled:'); learner 1.7. Round 2: generator 1.9; first user 3.5, sending back; generator 1.8; first user 1.9; evaluator 1.6; decision 1.3; learner 4.9 (55 tool calls); return 0.1. The .out's 34.0 counts the orchestrator's reply to the late answers after the return.",
+  "stories": {
+   "The work back": [
+    "met",
+    "'turn: turn:up decided 19 of 23 items Good.'; result has 19 items with lines, 2 questions with items, 2 not_good with 'gets' and 'places'"
+   ],
+   "Told as it goes": [
+    "not met",
+    "12 of 12 role-move lines reached the stand-in; none before the check or the two decisions ('decide, page 1 of 2' printed bare), none after the evaluators' or learners' outcomes"
+   ],
+   "A point asked": [
+    "met",
+    "question 23:08:12 'csvtidy has no license anywhere in the repository ...'; answer 'MIT, with a LICENSE file added' 23:08:24; generator 23:08:51"
+   ],
+   "follow-the-design-order": [
+    "met",
+    "two rounds in order; after the return the orchestrator answered the stand-in's late SendMessage with 'The run had already ended when your answers arrived, so I did not apply them.'"
+   ]
+  }
+ },
+ {
+  "commit": "8c78852",
+  "unit": 3,
+  "session": "6bf3c750-eb04-42d2-b1da-2eddcb258654",
+  "stopped": false,
+  "minutes_to_return": 20.2,
+  "items_fixed_after_return": 3,
+  "items_not_satisfied": 3,
+  "questions": 3,
+  "cost_usd": 6.23,
+  "fixed": "readme B-7: added an MIT LICENSE, which the result's question asked for; usability B-13: 'edits' at line 49 to 'three changes'; usability B-14: lines 91-92 reworded so 'changes' no longer also means changes between versions. Before any work, two questions (Documentation and Development headings, license) were answered with their recommended answers. The stand-in left a BOM code change, suggested by turn, to the user.",
+  "goods_checked": "Every Good against its lines and a run of the example: readme B-9 and B-3, usability B-3, B-6 (parts 1-8, 44-54) and B-7 do not hold: line 4 'so every value in it stays as it was' and line 52 'it changes no value beyond trimming its spaces' are untrue for the header names, with no exception beside them; the stand-in missed this. Its B-7, B-13 and B-14 calls hold.",
+  "read": "Every JSONL read. Check and two questions 1.6. Generator stall 5.2: the stand-in's `cd notes` while writing the answers moved the session's working folder; the first generator's reads were all blocked ('turn: Read only `{given}`') and it wrote its reply into notes/.tasks/; the flow kept '{\"waiting\": \"turn:generator\"}'; the orchestrator removed the stray reply itself and ended its turn; told to go on, it ran `turn.py start`, and the flow started the generator anew. Then generator 2.6; first user 2.9, sending back; generator 1.6; first user 1.7; evaluator 1.4; decision 1.5; learner 1.8; return 0.1. The as_printed lane stopped one reply that put words before the questions.",
+  "stories": {
+   "The work back": [
+    "met",
+    "'turn: turn:up decided 22 of 23 items Good.'; 22 items with lines and readme B-7 under a question with its items"
+   ],
+   "Told as it goes": [
+    "not met",
+    "7 of 7 role-move lines reached the stand-in, but no line came before the check or the decision, or after the evaluator's or the learner's outcome"
+   ],
+   "A point asked": [
+    "met",
+    "questions 23:08:07 ('The decisions say there are no other documents yet, but the README template has Documentation ...', 'Nothing in the repository gives a license for csvtidy.'); answers 23:08:27; generator 23:08:53"
+   ],
+   "follow-the-design-order": [
+    "not met",
+    "a step the flow did not give: orchestrator `rm acc3/notes/.tasks/result.json.generator.json && rmdir acc3/notes/.tasks`, then 'The run is stuck at round 1.', ending its turn; the cause was the stand-in's `cd notes`"
+   ]
+  }
+ },
+ {
+  "commit": "8c78852",
+  "unit": 3,
+  "session": "f0ed74d3-aabd-4e42-8bb4-b09c8cb01c56",
+  "stopped": true,
+  "minutes_to_return": 52.9,
+  "items_fixed_after_return": 1,
+  "items_not_satisfied": 1,
+  "questions": 3,
+  "cost_usd": 27.05,
+  "fixed": "readme B-7: the stand-in added an MIT LICENSE after the second call returned with two questions (Development section, LICENSE file), and sent both answers to the ended run by SendMessage; the orchestrator, told 'no run is going ... start one with `turn.py start`', started a third run itself, which went two rounds and came back with only usability B-4 not met. The stand-in left B-4 as the decisions keep Development. The license question came before any work.",
+  "goods_checked": "Every Good against its lines and runs of each case: usability B-3 and readme B-4 do not hold: line 58 'A file in another encoding, such as Latin-1, stops csvtidy with a `UnicodeDecodeError`' is untrue for a Latin-1 file of ASCII letters alone; readme B-9 is a close call ('leaves every value as it was', line 3, against the header rewrite). The stand-in missed the Latin-1 error; its B-4 call holds.",
+  "read": "Every JSONL read. Call 1: check and license question 1.6; generator 2.5; stopped on 'turn:first-user will', before the first user was started. Call 2: first user 2.3, sending back; generator started anew with what it was sent back 2.9; first user 1.1; generator 1.7 with a form resend; first user 1.4; evaluator 1.4; decision 2.0, stopped once ('question 3 has no item waiting on it'); learner 2.7; returned with 2 questions at 20 minutes. Call 3, the orchestrator's own `turn.py start`: check 0.7; round 1: generator 2.2, first user 1.9, then three send-backs (9.0 together, two form resends), evaluator 1.7, decision 1.6, learner 3.5; round 2: generator 1.4, first user 2.4, evaluator 1.3, decision 1.4, learner 6.6 (64 tool calls, 3 writes stopped by 'Read `{given}` to its end'); return 0.1.",
+  "stories": {
+   "The work back": [
+    "met",
+    "'turn: turn:up decided 22 of 23 items Good.'; usability B-4 in not_good with 'gets' and 'places'"
+   ],
+   "Told as it goes": [
+    "not met",
+    "23 of 23 role-move lines reached the stand-in; no line before the checks or the three decisions, none after the evaluators' or learners' outcomes"
+   ],
+   "A point asked": [
+    "met",
+    "question 23:08:07 'csvtidy has no license: no LICENSE file is in the repository and the decisions name none.'; answer 23:08:14; generator 23:08:55"
+   ],
+   "Gone on": [
+    "met",
+    "call again 23:11:39 first printed 'turn: Next, turn:first-user will use the work in the receiver's place and give each item's Good, of README.md, for 23 items, round 1.'; no check, question or first making again"
+   ],
+   "follow-the-design-order": [
+    "met",
+    "each call in order; the third began from the orchestrator itself: 'turn: no run is going with its result at .tasks/result.json; start one with `turn.py start ...`', then `turn.py start`"
+   ]
+  }
+ },
+ {
+  "commit": "8c78852",
+  "unit": 3,
+  "session": "e1b61d24-145f-4f20-8105-b2705a42896c",
+  "stopped": true,
+  "minutes_to_return": 21.9,
+  "items_fixed_after_return": 4,
+  "items_not_satisfied": 4,
+  "questions": 1,
+  "cost_usd": 7.43,
+  "fixed": "readme B-9 and usability B-3, one cause: 'and changes nothing else' added to README.md:3; readme B-7 and B-5, one cause: added the missing LICENSE that the README linked; the decisions line 'There are no other documents yet' gained 'besides LICENSE'. The license question came before any work.",
+  "goods_checked": "Every Good against its lines and runs of each case: readme B-9 (the opening only lists what it does; what sets it apart comes at line 42), readme B-7 (the LICENSE link was dead, and line 87's 'copy csvtidy.py into your own work freely' drops MIT's notice condition), usability B-4 (Development part, lines 80-84, serves a builder) and usability B-7 (line 44, 'Each cell keeps every character', without the header exception) do not hold. The stand-in's B-9 and B-7 calls hold; its B-5 call does not (B-5 asks for setup and example, not the license); its B-3 ground restates B-9; it missed B-4. The orchestrator decided B-7 Good, yet its final reply said 'the README's link to it (line 88) goes nowhere'.",
+  "read": "Every JSONL read. Call 1: check and license question 1.9; generator 2.8; stopped on 'turn:first-user will', before the first user started. Call 2: first user 2.7, sending back; generator started anew 2.8; first user 1.6; generator 1.8; first user 1.6; evaluator 1.7; decision 2.0; learner 3.1; return. The orchestrator's final reply added lines after 'returned'.",
+  "stories": {
+   "The work back": [
+    "met",
+    "'turn: turn:up decided 23 of 23 items Good.'; all 23 items with good and lines"
+   ],
+   "Told as it goes": [
+    "not met",
+    "9 of 9 role-move lines reached the stand-in; none before the checks or the decision, none after the evaluator's or the learner's outcome"
+   ],
+   "A point asked": [
+    "met",
+    "question 23:08:17 'csvtidy has no license: neither the repository nor the decisions note names one ...'; answer 23:08:40; generator 23:09:13"
+   ],
+   "Gone on": [
+    "met",
+    "call again 23:12:23 first line 'turn: Next, turn:first-user will use the work in the receiver's place and give each item's Good ...'; no check or first making again"
+   ],
+   "follow-the-design-order": [
+    "met",
+    "first-user, generator (anew, with 'sent_back'), first-user, generator, first-user, evaluator, decide, learner, returned"
+   ]
+  }
+ },
+ {
+  "commit": "8c78852",
+  "unit": 3,
+  "session": "64808490-140e-4183-ac5f-e9c0b807460d",
+  "stopped": true,
+  "minutes_to_return": 34.3,
+  "items_fixed_after_return": 3,
+  "items_not_satisfied": 3,
+  "questions": 1,
+  "cost_usd": 16.73,
+  "fixed": "usability B-14: the opening's 'leaves every value as it was' then 'trims every cell' used 'value' two ways, now 'changes nothing else'; usability B-3: the Latin-1 sentence was untrue for an ASCII-only file, condition added at lines 75-76; usability B-7: 'trims every cell' restated the trim rule without the BOM exception, now said once under the example. The license question came before any work.",
+  "goods_checked": "Every Good against its lines and runs of each case (pandas' '007' claim not run, pandas absent): readme B-9 (line 3 contradicts itself), usability B-14, B-7 and B-3 (Latin-1, lines 75-76) and usability B-4 (Development, lines 93-97, for builders) do not hold; line 63 'reads values as numbers or dates' overstates pandas' defaults. The stand-in's three calls hold; it missed readme B-9 and usability B-4.",
+  "read": "Every JSONL read. Call 1: check and license question 1.3; generator 2.0; stopped at the first user's move (its `turn.py next` rejected). Call 2: first user 2.5, sending back; generator started anew 3.1; first user 1.6; evaluator 1.5; decision 1.8; learner 1.8. Round 2: generator 2.8; first user 2.3, sending back; generator 1.8; first user 1.2, sending back; generator 1.2; first user 1.5; evaluator 1.3; decision 1.4; learner 5.3 (62 tool calls, two writes stopped by 'Read `{given}` to its end'); return 0.1. The first user's and the evaluator's runs in folders of their own were stopped by the read and write lanes.",
+  "stories": {
+   "The work back": [
+    "met",
+    "'turn: turn:up decided 23 of 23 items Good.'; all 23 items with good and lines"
+   ],
+   "Told as it goes": [
+    "not met",
+    "15 of 15 role-move lines reached the stand-in; none before the checks or the two decisions, none after the evaluators' or learners' outcomes"
+   ],
+   "A point asked": [
+    "met",
+    "question 23:08:04 'No license for csvtidy is given in the CCS, its files or the repository.'; answer 23:08:13; generator 23:08:37"
+   ],
+   "Gone on": [
+    "met",
+    "call again 23:10:50 first line 'turn: Next, turn:first-user will use the work in the receiver's place and give each item's Good ...'; no check or first making again"
+   ],
+   "follow-the-design-order": [
+    "met",
+    "first-user, generator anew, first-user, evaluator, decide, learner, round 2 in order, returned"
+   ]
+  }
  }
 ]
