@@ -413,6 +413,9 @@
   },
   {
    "fact": "agreed with the user and in dev/rn/design.md (2026-10-23): a checklist holds the work's user and purpose, the idea and items with why; plan chain G1 → AC → T with a completion criterion → four steps written in every task (context read and gaps confirmed by the conductor; part and its checks designed in turn's first run; traced on paper by that run's first reader; made test first in a second run), the order held by a guard; design into the project's design document, checks into its tests; where they live read from the repository, asked once, kept in the project's rules or CLAUDE.md and paths-scoped rules; .claude/rules/plugin.md scoped by paths, checked from JSONL"
+  },
+  {
+   "fact": "the user (2026-10-23): checklists for the five works with none (points message, proposal and decisions' core, state.json, commit messages, lessons and issue) are designed now, before T14, not after a trial shows the need; which of them are works of their own is read from dev/rn/design.md first"
   }
  ],
  "semantic_gist": [
@@ -547,9 +550,6 @@
   },
   {
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
-  },
-  {
-   "open": "the five works with no checklist (points message, proposal and decisions' core, state.json, commit messages, lessons and issue): asked the user whether to make them now or after T14 shows which causes send-backs; no answer yet"
   }
  ],
  "retrieved_artifacts": [
