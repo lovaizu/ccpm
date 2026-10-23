@@ -592,7 +592,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "next: T23, turn tried as its user from start to end by the architecture's Acceptance (dev/turn/trials/trial.py, baseline.py, readme/; each acceptance trial run three times at once in clones of lovaizu/playground), KR1.1 judged and KR1.2 timed against the version in use; first read trial.py and the Acceptance list and walk it on paper. No question is open for the user. Never publish an Artifact unasked"
+   "first": "on resume: T22 done (turn whole mutation 0, lane whole 0). A subagent was started (2026-10-23) to bring turn's acceptance trials to the architecture: trial.py's stand-in on the README's step text fixing nothing and keeping <new folder>.work/, a one-item task, baseline.py the same, judge.py for KR1.1; uncommitted. If /clear stopped it, read git status and git diff; redo it if partial; check by hand, check.sh turn, commit. Then run one trial.py on the readme task first and read its records; then each acceptance trial three times at once, baseline three times, the judge, KR1.2 times; then T23 done. Acceptance runs cost $7-27 each. No question is open for the user. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
