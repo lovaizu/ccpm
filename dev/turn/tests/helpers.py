@@ -207,6 +207,12 @@ class RepoTest(testing.FolderTest):
             page = page[:-1] + self.turn("next", self.result, str(n))[1].partition("\n")[2]
         return json.loads(page)
 
+    def laid_out_anew(self):
+        """The calling AI keeps in the CCS an answer that adds a file to the work, LICENSE."""
+        ccs = self.read_json(CALL["ccs"])
+        ccs["focal_entities"].append({"deliverable": "LICENSE"})
+        self.write_json(CALL["ccs"], ccs)
+
     def answered(self, answer="MIT"):
         """What the script prints once the calling AI's answer, handed on as it came, is given."""
         code, out = self.turn("next", self.result, stdin=answer)

@@ -154,8 +154,9 @@ def start(text: str) -> dict[str, Any]:
             f"turn: a run of another call is kept at {state_path(result)}; call turn with that"
             " call to go on with it, or with another result"
         )
+    elif laid_out_anew(kept):
+        run = again(kept)
     else:
-        call.check(asked)
         run = resumed(kept)
     save(run)
     read = [p for p in run["given"] if p not in run["work"]]
@@ -503,14 +504,32 @@ def answered(run: dict[str, Any], text: str) -> dict[str, Any]:
     answer = {"questions": asked["questions"], "answer": text.strip()}
     run.setdefault("answers", []).append(answer)
     run["done"] = "The calling AI answered."
+    # An answer kept in the CCS may lay the whole work out anew, such as a file added to it.
+    if laid_out_anew(run):
+        return checked_again(run)
     return GOES_ON[asked["from"]](run)
+
+
+def laid_out_anew(run: dict[str, Any]) -> bool:
+    """Whether the CCS now gives the run other than it was begun with: other files of the work,
+    checklists, items, receiver, use or what the receiver has."""
+    anew = call.check(run["call"])
+    return any(anew[k] != run[k] for k in anew)
+
+
+def again(run: dict[str, Any]) -> dict[str, Any]:
+    """The run begun again on the CCS as it is now, waiting on the check, with every answer the
+    calling AI gave and the record of every role started so far."""
+    anew = begun(run["call"], run["root"])
+    anew.update({k: run[k] for k in ("answers", "records") if k in run})
+    return anew
 
 
 def checked_again(run: dict[str, Any]) -> dict[str, Any]:
     """The check made again on the CCS the calling AI kept the answer in, as an answer may also
     change how the whole work is laid out."""
-    anew = begun(run["call"], run["root"])
-    anew.update(answers=run["answers"], done=run["done"])
+    anew = again(run)
+    anew["done"] = run["done"]
     return judge(anew, "check")
 
 

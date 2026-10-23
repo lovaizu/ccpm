@@ -101,3 +101,8 @@
 - KR1.1's judge reads the whole work each version returns, not its result (2026-10-23): turn
   0.1.0's result gives lines without paths in a form of its own, so lines alone cannot be given
   both by one bar, and a Good's words would lean the judge.
+- [test: flow] On every answer, and on a call again, the flow reads the CCS again; where it gives
+  the run other than the run was begun with, such as a file added to the work, the run goes back to
+  the CCS check with every answer and record kept (2026-10-23): in five of six acceptance runs on
+  the readme task the answer adding LICENSE to the work was kept in the CCS while the run held its
+  first work, so the generator, held to it, asked the same question again and again.

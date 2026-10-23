@@ -242,6 +242,20 @@ class TestMade(ReadTest):
             json.loads(move["input"]["message"]), {"answers": [ANSWER], "reply": reply}
         )
 
+    def test_an_answer_that_lays_the_work_out_anew_has_the_ccs_checked_again(self):
+        # Given: a generator that asked before making anything, and a CCS the calling AI added a
+        # file of the work to with the answer
+        self.replied({"items": [WAITS], "questions": [QUESTION]})
+        self.next()
+        self.laid_out_anew()
+        # When: the answer is handed on
+        out = self.heard(self.answered())
+        # Then: the items are checked again on the CCS as it is now, the answer kept, and the
+        # work is made of both files
+        self.assertEqual(out, {"check": self.state()["items"]})
+        self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
+        self.assertEqual(self.state()["answers"][0]["answer"], "MIT")
+
     def test_a_generator_asking_again_is_sent_the_new_answer_alone(self):
         # Given: a generator sent the answer to its question, which asks another
         # When: the second answer is handed on

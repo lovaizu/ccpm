@@ -312,6 +312,19 @@ class TestResumed(RepoTest):
         self.result = "other.json"
         self.assertEqual(self.heard(self.next())["check"][0]["item"], "F-1")
 
+    def test_a_call_again_on_a_ccs_laid_out_anew_checks_it_again(self):
+        # Given: a run whose first user is due, and a CCS that now names another file of the work
+        self.started()
+        self.due(self.replied(CLAIM))
+        self.laid_out_anew()
+        # When: the same call is made again
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual(code, 0, out)
+        # Then: the items are checked again on the CCS as it is now, no role due
+        self.assertEqual(self.heard(self.next()), {"check": self.state()["items"]})
+        self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
+        self.assertNotIn("next", self.state())
+
     def test_a_kept_role_due_a_message_is_started_anew_with_what_was_sent_to_it_since(self):
         # Given: a run whose generator, kept started, was sent two items back in turn, and is due
         # the next
