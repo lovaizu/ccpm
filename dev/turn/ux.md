@@ -10,29 +10,35 @@ it gets that on every run.
   step makes to come back meeting the step's checklists on every run.
 
   A checklist lists what the receiver, the one the work is for, should get from the work, one item
-  each, asked as a question. rn's orchestrator, the agent that runs the steps of the rn plugin, is
-  one such calling AI.
+  each, asked as a question. An item's Good is the judgment that the receiver gets from the work
+  what the item asks, with the lines of the work that give it.
 
 ## Key results
 
 They stand from the highest priority: time is never saved by leaving the calling AI more to fix,
-since a work it must fix costs the user the fixing as well as the wait.
+since a work it must fix costs the user, the person using the plugin the calling AI runs a step
+of, the fixing as well as the wait.
 
 - KR1.1: The items of the step's checklists the calling AI judges the work, when it comes back,
   to meet; more is better, and every item once the goal is reached.
 
-  The calling AI judges each item from its own check against the lines turn gives, not from turn's
+  The calling AI judges each item from its own check of each Good at its lines, not from turn's
   judgment of itself, so an item turn says it meets and does not is not counted.
 - KR1.2: The time from calling turn to the work coming back, for a work the size of one README;
   shorter is better.
 
-  The calling AI cannot go on with its step while it waits, so the user, the person using the
-  plugin, waits as long.
+  The calling AI cannot go on with its step while it waits, so the user waits as long.
 
 ## Scenes
 
-The user, the calling AI and turn take part. The user is the person using the plugin the calling AI
-runs a step of.
+The user, the calling AI and turn take part.
+
+A CCS is the JSON file in which the calling AI keeps its task, in the shape
+[ACC](https://arxiv.org/abs/2601.11653) gives it: parts, each a list of entries, each entry a kind
+and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
+checklists, the receiver, what they use the work for and what they have with it; the call names the
+kinds the calling AI uses in it for each of these. The result holds each item's Good with its lines,
+and the lessons from the run, what fell short in it and why, for the calling AI to put to the user.
 
 ### From a step that needs a work to the step's end
 
@@ -49,15 +55,6 @@ sequenceDiagram
   Note over C: checks each Good against its lines, ends its step
 ```
 
-- A CCS is the JSON file in which the calling AI keeps its task, in the shape
-  [ACC](https://arxiv.org/abs/2601.11653) gives it: parts, each a list of entries, each entry a kind
-  and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
-  checklists, the receiver, what they use the work for and what they have with it; the call names
-  the kinds the calling AI uses in it for each of these.
-- The result holds each item's Good with its lines, and the lessons from the run, for the calling
-  AI to put to the user. An item's Good is the judgment that the receiver gets from the work what
-  the item asks, with the lines that give it.
-
 ### While turn runs
 
 ```mermaid
@@ -65,7 +62,7 @@ sequenceDiagram
   participant U as user<br/>#lt;person#gt;
   participant C as calling AI<br/>#lt;AI#gt;
   participant T as turn<br/>#lt;plugin#gt;
-  loop each agent's step
+  loop each of turn's agents
     T-->>C: what it will do, how far and how, then what is done and what comes next
     C-->>U: passes each on
   end
@@ -103,7 +100,7 @@ sequenceDiagram
   participant T as turn<br/>#lt;plugin#gt;
   Note over C,T: the run stopped anywhere, by the user or by a conversation that ended
   C->>T: calls it again with the same result
-  Note over T: goes on from its last step
+  Note over T: goes on from where it stopped
 ```
 
 ## Benefits

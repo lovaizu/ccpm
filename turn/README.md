@@ -1,7 +1,8 @@
 # turn
 
 turn has AI work only toward passing your checklist: every agent that makes or reads the work looks
-only for each item's Good and works only to give it, and what a machine can judge, such as whether
+only for each item's Good, that the work's reader gets from it what the item asks, and works only
+to give it, and what a machine can judge, such as whether
 a reply has its form or an input was read whole, is checked by turn's scripts, not by an agent. It
 is a Claude Code plugin for anyone who has AI make documents, code and the like in the steps of
 their own plugin. What a step has turn make comes back meeting the step's checklists, read first by
@@ -54,9 +55,9 @@ nothing yet and sends the step's AI that one question:
 ```
 
 The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and sends it to turn,
-which goes on from there. turn tells the conversation you talk with, even where the step's AI is an
-agent below it, before each of its agents starts its work, what it will do, how far and how, and as
-each step ends, what is done and what comes next:
+which goes on from there. turn tells the main conversation, the one you talk with, even where the
+step's AI is an agent below it, before each of its agents starts its work, what it will do, how far
+and how, and as each ends, what is done and what comes next:
 
 ```
 generator: will write README.md for the seven items, as MIT licensed, and run its install and
@@ -65,8 +66,8 @@ usage commands as a developer would
 
 This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
 the developer meeting the project would, running what they would run. Each item is judged from that
-use: it gets its Good when the reader gets what the item asks, with the lines that give it, and
-turn's orchestrator, running what each Good says, finds it holds. Where an item gets none,
+use, and gets its Good, with the lines that give it, only where `turn:up`, running what the Good
+says, also finds it holds. Where an item gets none,
 README.md is made again and read again, and an item that still gets none comes to the step's AI as
 a question for the user.
 
@@ -96,8 +97,8 @@ turn gives your plugin's AI what it does not get by making the work and checking
 - Each Good comes with the lines it rests on, so it is checked by reading them, not taken on trust.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
-- A run stopped anywhere, by you or by a conversation that ended, goes on from its last step when
-  the step calls turn again with the same result.
+- A run stopped anywhere, by you or by a conversation that ended, goes on from where it stopped
+  when the step calls turn again with the same result.
 
   turn keeps where the run stands in a file beside the result, not in a conversation.
 
