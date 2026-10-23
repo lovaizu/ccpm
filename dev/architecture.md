@@ -33,6 +33,10 @@ adds only what that plugin gives on top of them.
    move, so a run stopped anywhere goes on from there.
 7. The purpose comes first and performance after: time is never saved by leaving the caller more
    to fix.
+8. After each run, a learner that did no part of the work reads the run's records and gives, from
+   the facts, what fell short and why; each lesson goes to the user's own checklists or rules where
+   it is their project's own, and to the plugin's makers as an issue where it is general, opened
+   only on the user's yes.
 
 ## Why it is so
 
@@ -124,6 +128,19 @@ A change is taken when the purpose is still met as fully; only then is time or c
 
 A work that misses the purpose costs the caller the fixing as well as the wait, so time saved by
 leaving them more to fix is spent again by them.
+
+### Learning from each run
+
+After each run, a learner that did no part of the work reads the records of every agent of the run
+and gives each lesson with the words it rests on quoted. The orchestrator puts each to the user: a
+lesson of their project's own goes into their checklists or rules; a general one goes to the
+plugin's makers as an issue, holding the need and its points alone, never the user's source, and
+opened only once the user says yes.
+
+What fell short often lies in what a role did, which only its record shows, and a lesson without
+the facts it rests on is a guess. A lesson of the project's own improves that project's later work;
+a general one, met once, improves the plugin for every user. The work and its source are the
+user's, so they choose what leaves their project.
 
 ### JSON between agents
 
