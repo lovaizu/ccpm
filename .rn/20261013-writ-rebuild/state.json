@@ -503,6 +503,9 @@
   },
   {
    "fact": "the user decided (2026-10-23): each kind has one checklist, made from checklist.md and usability.md from its purpose, its few items each a thing the purpose needs asked as what the user gets, the ways to meet it the signs under it, and a deliverable judged by its own checklist alone; made_from names the inputs' versions; a checklist's version a whole number, 1 until the plugin holding it is first released, a plugin's semver; rn's checklists were never released (writ's were, and writ is gone), so IDs are free; checklist.md 21 items to 9, prompt.md 24 to 7"
+  },
+  {
+   "fact": "the user agreed the order (2026-10-23): lane's agents/up.md first, read against the new prompt.md and remade, read whole on paper, then tried once small on notes by dev/lane/trials as T20 did and set beside T20's results; then turn's four prompts one at a time from first-user (remade with prompt.md open to what turn/scripts/run.py gives and reads, read on paper, lanes laid again by lane:up so each hook's sentence is the step's own, roles.py tried and set beside roles/results.json), up.md last, a flow change designed and shown first; then T23's acceptance (readme x3, stopped x3) set beside r7-s9; then code, readme, architecture, ux and plan checklists remade; then rn (T3-T15)"
   }
  ],
  "semantic_gist": [
@@ -607,7 +610,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: remake turn's four prompts from prompt.md (one checklist), read them whole before any trial and fix what reading shows; then remake code, readme, architecture, ux and plan from checklist.md and usability.md, each with made_from, and plugin.md's steps opening the kind's checklist alone; rn.py's checklists (usability for every work, dev/rn/tests/test_rn.py:400) and rn's CHANGELOG line on usability.md change with rn's remake. Never publish an Artifact unasked"
+   "first": "on resume: start lane's agents/up.md as the last trace says, the user's OK given; run each claude -p trial as its own background command so its end notifies, no watcher loop. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
