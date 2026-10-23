@@ -431,6 +431,9 @@
   },
   {
    "fact": "2026-10-23: turn's design, UX and README held to the user's call (ef: the user): the evaluator out; the first user finds every item's Good (it passes on only when every item is Good, a question or at the send-back bound); the orchestrator checks each Good holds, reading the work whole and each Good at its lines and running what it says; a Good taken only where the first user gave it and the orchestrator said yes; items two rounds leave become questions; the generator asks before making; the learner of principle 8 once a run is done; lines checked by the flow. The false Goods came from up.md step 5 telling the orchestrator to defer to the readers and not to run. Not yet: turn's three documents read whole against ux.md, readme.md, design.md and usability.md; turn's code (up.md step 5, evaluator.md removed, run.py, forms, tests); lane (its user is an AI building a plugin, the user said: no /lane:ok, no builder reader) and rn, both at the agreed text"
+  },
+  {
+   "fact": "2026-10-23: turn's ux.md, README and design read whole against ux.md, readme.md, design.md and usability.md, every item; fixed without changing a decision (3c68597): Good and CCS said before use, one name for the main conversation, 'step' kept for the plugin's step, 'round' said in the opening, the CCS check named apart from the check of each Good, each interaction one sentence, repeats cut, rn's orchestrator out of the UX, acceptance on the users' model with its flow passing by its records, the roles' Content bar named as KR1.1's; checks 100%, 0 survivors"
   }
  ],
  "semantic_gist": [
@@ -541,7 +544,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume, in order: (1) read turn's dev/turn/ux.md, turn/README.md and dev/turn/design.md whole against rn/checklists/product/ux.md, readme.md, design.md and usability.md, every item, fix only what fails without changing what the user set, and say plainly what was read; (2) give the user Japanese translations of the three (show-japanese), as the user asked; (3) then lane's design from its user, an AI building a plugin, and rn's; (4) turn's code to its design; (5) T23's runs, KR1.1 judged for both versions by one judge. Use the right role names (first user, evaluator, orchestrator), never 'readers' loosely"
+   "first": "on resume, in order: (1) give the user the Japanese translations of turn's three documents (show-japanese) with the fixes of 3c68597 listed, for their review; (2) then lane's design from its user, an AI building a plugin, and rn's; (3) turn's code to its design; (4) T23's runs, KR1.1 judged for both versions by one judge. Use the right role names (first user, orchestrator), never 'readers' loosely"
   }
  ],
  "uncertainty_signal": [
