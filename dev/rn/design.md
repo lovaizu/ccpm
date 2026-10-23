@@ -6,6 +6,12 @@ an AI that did not make it; a record kept before each next move lets any convers
 where the last one stopped in a session, one piece of work from `/rn:up` to the merge. It brings
 about [rn's UX](ux.md), whose goal and key results it is checked against.
 
+rn holds the [principles every plugin holds](../architecture.md#principles), and its own:
+
+1. Every task traces back to the purpose, through the acceptance criteria it serves.
+2. The plan is remade from the facts each move brings alone, and only a short state is carried from
+   move to move.
+
 ## User stories
 
 - As the user, I want to ask for a piece of work in rough words with `/rn:up <what I want>`.

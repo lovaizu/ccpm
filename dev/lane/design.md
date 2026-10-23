@@ -7,6 +7,12 @@ lane's code, the guard, which notices a subagent's drift from its lanes and tell
 again. The goal and the key result are in
 [lane's UX](ux.md).
 
+lane holds the [principles every plugin holds](../architecture.md#principles), and its own:
+
+1. The AI is made to notice its drift from a step and is told the step again, so it finds its way
+   back itself.
+2. A lane is a sentence of a step together with the hook that notices a drift from it.
+
 ## User stories
 
 - As the builder, I want to ask Claude to lay lanes on my plugin, answer one point at a time,

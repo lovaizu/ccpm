@@ -7,6 +7,12 @@ decides from those readings which items get their Good. Each role's steps are he
 with lane. The goal, the key results, and what a checklist, the receiver and a Good are, are in
 [turn's UX](ux.md).
 
+turn holds the [principles every plugin holds](../architecture.md#principles), and its own:
+
+1. Every role looks only for each item's Good, what the receiver gets, and works only to give it.
+2. Each item is judged by what the receiver gets with what they have, never by whether the work
+   matches its sources.
+
 ## User stories
 
 - As the calling AI, I want to start turn with the path of a CCS, its kinds and where the result
