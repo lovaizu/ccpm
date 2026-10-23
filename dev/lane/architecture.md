@@ -147,8 +147,9 @@ ${CLAUDE_PLUGIN_DATA}/
   Claude Code reads no hooks from a plugin subagent's own file, and a tool event's matcher filters
   by tool, not by agent.
 - A subagent's record is the JSONL file Claude Code writes at
-  `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`, as Claude Code 2.1.306
-  writes it; neither the place nor the shape is documented, so the guard's tests hold both.
+  `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`, the place the hooks
+  reference gives as `agent_transcript_path`; its shape is not documented, so the guard's tests
+  hold it as Claude Code 2.1.306 writes it.
 - Each hook command first checks for Python in the shell, before the guard runs.
 
   With no Python the guard cannot read the event, and the machine may have nothing else.
