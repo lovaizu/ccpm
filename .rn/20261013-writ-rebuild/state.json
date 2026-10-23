@@ -404,6 +404,9 @@
   },
   {
    "fact": "T23 acceptance on 8c78852 (2026-10-23), kept in dev/turn/trials/readme/results.json: new turn 19-22 of 23 met as returned, 13-53 min, $5-27; 0.1.0 18-20 of 23, 10-20 min, $3.7-4; every story met but Told as it goes, which the code falls short of; not yet taken"
+  },
+  {
+   "fact": "T24 done (2026-10-23): checklist.md step 6 and B-14 as the user agreed; all 123 items read against them, 7 fixed; design B-12 to B-15 kept, as they ask what a design's Verification says, and plan B-2 and B-4 kept, being what the plan and its decisions give"
   }
  ],
  "semantic_gist": [
@@ -513,9 +516,6 @@
   }
  ],
  "predictive_cue": [
-  {
-   "next": "T24: write checklist.md's path for placing an item first (purpose and UX of whom it serves, the work met, product or how a task is carried out, every work or one kind, already asked), then read each checklist of rn against it"
-  },
   {
    "next": "T23 fixes, then the six acceptance runs again: (1) told() at turn/scripts/run.py:192 gives a line only before a role move, the design (dev/turn/design.md:340) a line before each move and after each outcome; (2) a calling AI's cd moves the session's working folder and stalls turn (acc3); (3) trial.py stops before the first user starts, not during its reading, and sends answers to a returned question to the ended run, not a call again; (4) time: round 2 and send-backs, the last learner 5-7 min, the role prompt copied out about 30 s a start; Goods that do not hold ('every value stays as it was' while headers are rewritten) looked at with the time"
   }

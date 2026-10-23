@@ -118,7 +118,7 @@ turn remade on `dev/architecture.md` and lane, before rn is remade on it.
 rn's checklists given one role each, alongside turn's trials and before rn is remade, as rn's
 scripts find a kind's checklists and each lesson goes into one.
 
-- [ ] T24: Whoever makes or updates a checklist with rn, or places a lesson in one, finds from
+- [x] T24: Whoever makes or updates a checklist with rn, or places a lesson in one, finds from
   `rn/checklists/checklist.md` alone which checklist each item goes into, from the purpose and UX
   of whom it serves, each item in one place; then every checklist of rn read against it. Serves
   AC1.
