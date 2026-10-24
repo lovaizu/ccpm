@@ -40,8 +40,8 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 - Before each piece of work, look for the practice that already exists for it.
 - A checklist or an environment a task lacks is a task of its own, before the task that needs it.
 - Facts decided by the user: only the README and the design are agreed with the user, the rest
-  built and checked by `.claude/rules/plugin.md` without asking; lane, turn and rn are built in
-  that order, each work made by a subagent with the checklists open, then checked and fixed by
+  built and checked by `.claude/rules/dev.md` and `dev/architecture.md` without asking; lane, turn
+  and rn are built in that order, each work made by a subagent with the checklists open, then checked and fixed by
   hand, with no turn run and no first-user reading; writ is folded into rn and removed.
 - The documents are written in English; questions to the user are asked one at a time.
 - Decisions taken by the assistant are kept in `decisions/report.decisions.md` and reported to the

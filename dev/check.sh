@@ -17,7 +17,7 @@ ruff check .
 ruff format --check .
 
 # Code copied between files is fixed in one and left wrong in the other, so code more than one file
-# needs is kept once (.claude/rules/plugin.md); every file is read at once, whichever plugins are
+# needs is kept once (dev/architecture.md, Code); every file is read at once, whichever plugins are
 # given, as a copy can lie in any two. A link is the file it points to, so is left out. pylint is in
 # dev/requirements-test-quality.txt, as it needs a newer Python than 3.9 only to check, not to run.
 if command -v pylint >/dev/null 2>&1; then
@@ -25,9 +25,9 @@ if command -v pylint >/dev/null 2>&1; then
     | xargs pylint --disable=all --enable=duplicate-code --score=no
 fi
 
-# Each plugin keeps its tests in dev/<plugin>/tests/ (.claude/rules/plugin.md), and its scripts find
-# their modules by putting their own folders on sys.path; plugins share module names, such as stop,
-# so each is type-checked on its own with its folders as search paths, and dev/lane/, where
+# Each plugin keeps its tests in dev/<plugin>/tests/ (dev/architecture.md, Test), and its scripts
+# find their modules by putting their own folders on sys.path; plugins share module names, such as
+# stop, so each is type-checked on its own with its folders as search paths, and dev/lane/, where
 # testing.py, what every plugin's tests share, is kept. What the plugins' hooks share is lane's,
 # reached through a link in each plugin's own folder; a folder of lane's code linked whole, as
 # turn's hooks/lane/, is checked in lane alone, as git lists the link and not the files in it.
@@ -37,7 +37,7 @@ for plugin in $plugins; do
   pyrefly check $(printf -- '--search-path %s ' $paths) $files
 done
 
-# The example tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
+# The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
 # tests, whose inputs change from run to run, are run apart by dev/properties.sh.
 for plugin in $plugins; do
   coverage run --source="$plugin" -m unittest discover -s "dev/$plugin/tests"

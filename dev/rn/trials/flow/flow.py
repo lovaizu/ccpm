@@ -1,9 +1,8 @@
 """Tries rn's orchestrator over the whole course, from `/rn:up <what they want>` to the pull request
-marked ready, as `dev/rn/architecture.md` Verification gives it: the real skills and scripts, in a
-fresh clone of lovaizu/playground, with turn's turn:up stood in for by `up.md` and `stand.py` of
-this folder, making each work from its CCS, and the user by answers set by what each reply of rn
-holds and what its steering holds as the last commit keeps it, on the smallest request that reaches
-each move.
+marked ready, as a unit test of its prompts: the real skills and scripts, in a fresh clone of
+lovaizu/playground, with turn's turn:up stood in for by `up.md` and `stand.py` of this folder,
+making each work from its CCS, and the user by answers set by what each reply of rn holds and what
+its steering holds as the last commit keeps it, on the smallest request that reaches each move.
 
     python3 dev/rn/trials/flow/flow.py <new folder>
 

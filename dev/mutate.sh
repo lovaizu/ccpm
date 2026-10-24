@@ -6,7 +6,7 @@
 # changed; CI gives none and tests every plugin. Given `--since <commit>` first, it tests only the
 # mutants on lines changed since that commit, files not yet added to git among them, by Cosmic
 # Ray's own git filter, as before a push.
-# Each mutant is to be caught by the example tests, which dev/check.sh runs, as the mutation testing
+# Each mutant is to be caught by the unit tests, which dev/check.sh runs, as the mutation testing
 # checks that they are enough; the property tests are left out of it.
 # Cosmic Ray changes the files it tests, so each worker runs on a copy of its own; one worker for
 # each processor, as each mutant is tested on its own, each on a port free when the run starts, so

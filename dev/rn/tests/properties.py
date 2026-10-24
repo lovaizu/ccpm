@@ -28,7 +28,7 @@ WORDS = st.text(
     ),
     min_size=1,
 ).filter(lambda t: t.strip() == t and t)
-# Any of those but a Markdown heading, which Next cannot hold, as an example test has it.
+# Any of those but a Markdown heading, which Next cannot hold, as an unit test has it.
 SENTENCES = WORDS.filter(lambda t: not template.HEADING.fullmatch(t))
 IDS = st.dictionaries(st.sampled_from(["G1", "AC1", "AC2", "AC3"]), st.text(max_size=3))
 

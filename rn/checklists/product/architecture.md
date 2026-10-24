@@ -10,11 +10,11 @@ made_from:
 
 An architecture is read by whoever builds or changes the product and by whoever approves it. From
 it they grasp, in a short time, how the product is put together to give the UX the product must
-give, and how far each part and the whole are checked, and build, change or approve the product by
-it.
+give, and how each part and the user stories are checked, and build, change or approve the product
+by it.
 
 An architecture holds the principles the product rests on, the parts it is made of, how they act on
-one another and where each is placed; and how far each is checked. These are what an approval rests
+one another and where each is placed; and how each is checked. These are what an approval rests
 on, as changing one changes what was approved. How each part behaves in each case is held where the
 part is built and checked: in the tests of a part made of code, each a Given, a When and a Then, and
 in the steps of a part run by an AI; in the architecture it would be decided twice and drift, and
@@ -24,8 +24,10 @@ The parts are drawn from the UX in layers, each fewer than the one before: the U
 few user stories, each one way the user uses the product at its edge, such as a command they run;
 the stories are taken on by logical components, each of which may serve several; and each component
 is realized by a technology, chosen at this layer alone, so the stories and the components follow
-from what the UX needs. The checks go back up: each unit, then each story, then how close each key
-result came.
+from what the UX needs. What to check of each kind of part and of the stories, and how far, is the
+project's rule, not the architecture's: the architecture links it, and where the project has none
+for a kind, the rule is made first. An architecture built on a base architecture writes only what is
+its own, and links the base for the rest.
 
 ## Format
 
@@ -63,27 +65,18 @@ component it acts on, labelled with what it does>
 
 - <What the product depends on outside itself, and how it is started>
 
-## Verification
+## Test
 
-### Units
+<A link to the project's rules for how each kind of part and the user stories are checked>
 
-- <A unit>: <what is checked of it, and how far>
-
-### Acceptance
-
-- <A story>: <what shows it achieved, and how far>
-- <The ID of each key result of the UX, in the UX's order of priority>: <what is measured, compared
-  with the version in use on the same tasks>
-
-<A change taken when every story is still achieved and no key result comes closer at the cost of a
-higher one>
+- <What this product's checks need that the project's rules do not give, if anything>
 ```
 
 Each line of a list is one sentence understood alone, its why, where it has one, after a blank line
 indented under it; nothing is set in bold.
 
 Why: the builder and the approver read the principles, then what the product gives, then the parts
-that give it and where they are, then how far each is checked, each the ground of the next; they
+that give it and where they are, then how each is checked, each the ground of the next; they
 skim the lines and read a why only where they question one.
 
 ## Benefit
@@ -152,32 +145,22 @@ Why: the builder makes each component as it is realized; where it is placed deci
 where it runs and when a change to it reaches the user; and what the product depends on is where it
 breaks for the user first.
 
-### B-5: How far each part and the whole are checked
+### B-5: Each part and the stories checked by the project's rules
 
 Scope: its part
 
-Can the reader tell what check shows each unit of the tree works, each user story achieved and how
-close each key result of the UX comes, each with the bar it must pass?
+Can the reader tell, for each kind of part in the tree and for the user stories, the project's rule
+that says how it is checked, from a link to it?
 
 Look for:
-- a unit, a story or a key result with no check, or a check with no bar;
-- a story shown only by its units' checks;
-- a part run by an AI checked on another model than its users run it on, such as one smaller than
-  Claude Code's default, or judged from its outcome rather than the records of every conversation
-  and agent it started;
-- a flow checked together with the content, rather than on the smallest task that shows it, with
-  stand-ins for whatever lies around the part;
-- a key result read as met or missed, rather than compared with the version in use on the same
-  tasks and weighed in the UX's order of priority;
-- a key result measuring what the user pays, such as time, money or effort, read only in total
-  rather than from the records in its parts.
+- a kind of part, such as code or a prompt, or the user stories, that no rule of the project
+  checks, which is a rule to be made first rather than a check written here;
+- a check written here that the project's rule already gives, or that differs from it;
+- a case's inputs, stand-ins or bar to pass, which belong to the tests.
 
-Why: a unit left unchecked, or checked to no stated bar, breaks the whole where no check shows it,
-and units can each pass while a story is missed; a key result is come close to, not met, so a change
-judged by no measure, or by one key result alone, can leave the user worse off while each version
-looks better. A smaller model's slips are not the product's, only the records show where a run went
-wrong, a check of flow and content at once does not say which went wrong, and in a total a part
-that gives the user nothing hides among those that do.
+Why: what to check and how far is decided once for the project, so every product is held to the
+same bar; written again in each architecture, the bars drift from the rule and from one another,
+and a case's detail changes with every test while the approval rests on the architecture.
 
 ### B-6: Every decision true together with the principles
 
@@ -205,7 +188,7 @@ Look for:
 - how a part behaves in a case, a count, a bound, a value, or a list of what a part does step by
   step, which belongs to the part's tests, as a Given, a When and a Then, or to its steps;
 - a line that says again, in other words, what the figure, the tree, another line, the UX or the
-  architecture it is built on says;
+  architecture it is built on says, which is linked instead;
 - how a decision was reached, or where the work stands;
 - terms gathered ahead of the lines that use them, or a comparison or an example for an idea the
   reader already holds.

@@ -605,6 +605,9 @@
   },
   {
    "fact": "2026-10-24: rn's flow trial brought to rn as it now is by a subagent, traced on paper by it and by me (the stand-in user by the steering's front matter, the stand-in turn by the numbered CCS); two slips of rn's fixed by hand (R56): the learnings after /rn:gm keep Open, a task's design step names its part's path and kind (b7c2b5c); lane's property test of start_with narrowed and its counterexample an example test (R55); trial 2 started in the background into the scratchpad's flow2"
+  },
+  {
+   "fact": "2026-10-24, the user decided: the Verification sections had become test specifications, and a flow 'unit' trial ran end to end for 20 min; what to test and how far is the project's rule: plugin.md's structural and non-functional rules moved into dev/architecture.md (Repository structure, Code, Test, Release), .claude/rules/dev.md keeps the order of the work and points there, each plugin architecture's Verification is a Test section linking the base, the architecture checklist asks only that the project's rules are followed; tests: code by unit tests C0/C1 100% with mutation and property tests passing, prompts tried role by role with mocks judged from IN/OUT and records, user stories by the whole tried and shown to the maintainer against the version in use; 'example tests' renamed 'unit tests'; flow trial 2 stopped, its playground PR #5 and branch removed"
   }
  ],
  "semantic_gist": [
@@ -686,7 +689,7 @@
  ],
  "constraints": [
   {
-   "rules": ".claude/rules/plugin.md"
+   "rules": ".claude/rules/dev.md, which points to dev/architecture.md"
   },
   {
    "environment": "on this Linux sandbox: uv venv -p /usr/bin/python3 in the session's scratchpad (venv/), uv pip install -r dev/requirements.txt -r dev/requirements-test-quality.txt, its bin first on PATH; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here"
@@ -709,7 +712,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "read flow trial 2's log and records when it ends (scratchpad flow2.log and flow2/<n>.jsonl): each move in the architecture's order, the steering rewritten at each commit, a call for each work, the pull request ready, the cost and minutes; fix a cause found in the records, traced to the architecture; then CHANGELOG"
+   "next": "remake rn's flow trial as unit tests of its prompts (dev/architecture.md#unit-tests-prompts): each move of the orchestrator from a steering state made by rn.py, turn, gh and the playground mocked, one claude -p each, run side by side in minutes; trace it on paper first; then CHANGELOG"
   }
  ],
  "uncertainty_signal": [

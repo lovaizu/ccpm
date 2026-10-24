@@ -155,7 +155,7 @@ Look for:
 - a behavior over inputs of a kind, such as any text, path or list, with no property test making
   many inputs of the kind on each run and checking what every one must give, such as a parse giving
   back what was written, with each input that once failed kept as an example;
-- a statement or a branch that no example test runs, counted without the property tests, whose
+- a statement or a branch that no unit test runs, counted without the property tests, whose
   inputs change from run to run;
 - a small change a fault could make, such as a comparison, an operator or a value replaced, that no
   test fails on: a survivor of mutation testing;

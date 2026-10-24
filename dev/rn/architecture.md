@@ -196,76 +196,9 @@ rn/                                  the plugin, installed by Claude Code with t
 - rn's checklists are read-only in the plugin; the user's additions are in their repository and go
   into the piece of work's pull request.
 
-## Verification
+## Test
 
-### Units
+rn is tested as [Test](../architecture.md#test) says.
 
-Each skill is checked on Claude Code's default model, the one users run rn on, with
-`bypassPermissions` in a Docker Sandbox as rn's README has its users run it, and judged from the
-records of every conversation and agent the check started.
-
-- rn's scripts: each gives what this architecture says it gives, for every input it may receive.
-  - Flow: unittest in `dev/rn/tests/`, fed the record, turn's results and the checklists each
-    reads, by [`dev/check.sh`](../check.sh) with lines and branches 100% covered and by
-    [`dev/mutate.sh`](../mutate.sh) with no mutant surviving, with Hypothesis wherever an input
-    varies.
-- The orchestrator: takes each move in this architecture's order, from `/rn:up` to the pull request
-  marked ready.
-  - Flow: on the smallest request that reaches each of the skills' moves, one point to decide, one
-    acceptance criterion, one document and one task, with turn stood in for by an agent making
-    each work from its CCS and the user by answers set by what each reply holds; passes when the
-    records show each move in this architecture's order, and the branch holding the steering
-    rewritten at each move and a call for each work.
-  - Content: the messages, decisions, steerings and proposals it makes on the real requests;
-    passes when each message is in the UX's form, each decision is as the user answered, each
-    replan rests only on the checked facts of the move before it, and each proposal says only what
-    the record holds, read against the records.
-- The learnings: each quotes from the records the words it rests on.
-  - Flow: made through turn on a piece of work of two stretches set beforehand, the first's
-    learnings kept, the second holding a slip of the orchestrator's steps the record shows and one
-    only a conversation shows; passes when each is a learning with its words quoted and nothing of
-    the first stretch is shown.
-- rn's checklists: what is made with them on the real requests.
-  - Content: each change sent back at the deliverable sign-off is traced to the checklist or the
-    skill it comes from, and fixed there; the fix passes when, on the same real requests run again,
-    that change is not sent back and every story is still achieved.
-- turn and lane are checked by their own architectures.
-
-### Acceptance
-
-Each trial runs in `lovaizu/playground`, one at a time, on a branch of its own, removed with its
-pull requests after, from code kept in `dev/rn/trials/`. The real requests are kept there too, the
-same for each version compared: pieces of work asked of rn in a user's rough words, each with the
-purpose a stand-in user, an AI, holds behind them and does not write in the request.
-
-- Flow: from `/rn:up` to the pull request marked ready, on the smallest request above, with
-  stand-ins for turn and the user; each move shows in the records and in the commits on the branch,
-  in this architecture's order.
-- Asking in rough words: from a request of a few words, the points to decide reach the stand-in
-  user, and the steering holds its purpose; played with real turn.
-- Answering each point: every point and every learning came one per message, and each answer shows
-  in the decisions and in the work it settles.
-  - The stand-in user answers with letters and in its own words, and the record is read against
-    the conversation.
-- Approving or asking for a change: `/rn:ty` passes the sign-off, and `/rn:gm` brings the same
-  sign-off back with what changed.
-  - The stand-in user sends back once at each sign-off, then approves.
-- Told and stopped: a line reaches the user before and after each step of the tasks, and a step the
-  stand-in user stops goes the way it then says.
-  - Read from the stand-in's conversation against the orchestrator's moves.
-- Going on: from each place the user may stop, while asking, at a sign-off and during the tasks,
-  `/rn:up` in a fresh conversation goes on with nothing asked again and nothing lost.
-  - The stand-in user's conversation is closed at each, and a fresh one started.
-- Merging: the pull request marked ready holds the finished work and every addition taken, and
-  merges.
-  - The stand-in user merges it.
-- KR1.1: the changes the stand-in user sends back at the deliverable sign-off, as the UX's KR1.1
-  says.
-  - Counted for rn and for the version in use, the latest released rn, on the real requests.
-- KR1.2: the user's time from asking to the purpose achieved.
-  - Read from the timestamps of the stand-in user's conversation in its parts, answering, checking
-    proposals, sending back and doing by hand, and compared with the version in use on the real
-    requests; a part that adds nothing to the stories or KR1.1 is cut first.
-
-A change is taken when every story is still achieved and KR1.2 does not come closer at the cost of
-KR1.1.
+- rn's roles are tried with `bypassPermissions` in a Docker Sandbox, as rn's README has its users
+  run it.

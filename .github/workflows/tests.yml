@@ -8,8 +8,8 @@ permissions:
   checks: read
 
 jobs:
-  # The example tests of every plugin run on each push, and the property tests and the mutation
-  # testing, which check that the example tests are enough, on what changed since the commit before
+  # The unit tests of every plugin run on each push, and the property tests and the mutation
+  # testing, which check that the unit tests are enough, on what changed since the commit before
   # it where that passed, else since the branch left main, for each plugin `sh dev/changed.sh`
   # names, each in a job of its own, all at once; whole on main after a commit not passed, and for a
   # plugin whose version the push changes, as before a release. A push that changes only what no
