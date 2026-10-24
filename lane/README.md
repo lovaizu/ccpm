@@ -2,16 +2,15 @@
 
 lane lets an AI notice when it drifts from the steps your plugin gives it, and tells it the right
 way, so it finds its way back at full speed with no one watching each move. A lane is laid on a
-step the AI may drift from, a step being one line of the steps a subagent, an AI your plugin starts
-for one job, or a skill of your plugin gives. The lane is a sentence of the step together with a
-hook that notices a drift from it and tells the AI the sentence again.
+step the AI may drift from, a step being one line of what a subagent, an AI your plugin starts for
+one job, is told to do. The lane is a sentence of the step together with a hook that notices a
+drift from it and tells the AI the sentence again.
 
 lane is a Claude Code plugin for you if you have an AI build your plugin, one whose work an AI does
 in several steps. While building it, your AI calls lane, answers its points from what it knows of
 your plugin and approves the lanes itself; lane asks you nothing. lane lays the lanes on your plugin's
-subagents, and one on the reply of the conversation your plugin's skill runs in, holding it to the
-language the person chose; on every run lane's code lets each notice its drift and tells it the
-sentence again.
+subagents, and on every run lane's code lets each subagent notice its drift and tells it the step
+again.
 
 ## Example
 
@@ -75,25 +74,20 @@ lane gives a plugin's run what steps and hooks written on their own do not.
   The hooks stay few and small. What must hold whatever the AI writes is held where it holds, such
   as GitHub's branch protection, Claude Code's sandbox or its permission rules, as Claude Code's own
   docs say a check on the command text is not a security boundary.
-- Each lane acts only where it is laid: in its subagent, or, for reply_in, in a conversation your
-  plugin's skill has run in.
+- Each lane acts only in its subagent.
 
   Claude Code reads no hooks from a plugin subagent's own file, so lane writes them into the
   plugin's `hooks/hooks.json`, each naming its subagent. A hook written into a skill instead goes on
   running for the rest of the session once the skill has started, and is not told which skill runs,
-  so it acts on work outside the skill too. So a step to keep goes into a subagent the skill starts.
-  The one lane laid on a step of a skill, reply_in, holds the reply to the language a script of
-  your plugin printed in that conversation, so it acts only once your plugin has run there, and from
-  then to the conversation's end, as the person's language holds.
+  so it acts on work outside the skill too. So lane lays lanes on subagents alone, and a step to
+  keep goes into a subagent the skill starts.
 
 ## Requirements
 
 - Claude Code, where your plugin runs and lane is installed.
 - Python 3.9 or later, run as `python3`, on the machines the plugin runs on.
 
-  Without it, the hooks stop the tool calls they watch, each asking for Python to be installed; the
-  hook on a conversation's reply lets every reply through, as without Python it cannot tell whether
-  your plugin runs there.
+  Without it, the hooks stop the tool calls they watch, each asking for Python to be installed.
 
 ## Installation
 

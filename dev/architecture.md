@@ -14,7 +14,6 @@ flowchart TB
   caller <-->|calls, answers, approves / asks, shows the work| orch
   orch <-->|starts with its prompt, sends more work / replies| role
   guard -.->|notices a drift, tells the step again| role
-  guard -.->|notices a drift in its reply, tells the step again| orch
 ```
 
 ## Principles
@@ -70,8 +69,7 @@ what it writes into the repository: those the repository and the person's instru
 the person's own for the talk and English for the repository; and records the answer. What goes into
 the repository is in the second; what is shown to the person is put into the first, adding nothing
 and leaving nothing out. A plugin an AI calls writes and tells in the repository's language, and
-the caller that talks with the person puts it into theirs. The talk language is held in each reply
-by lane's [reply_in](../lane/docs/lanes.md) lane.
+the caller that talks with the person puts it into theirs.
 
 The person decides from what they read, and a translation that adds or leaves out changes what they
 approve; the repository is read later by people who were not in the conversation, and English
@@ -209,6 +207,4 @@ which subagent it runs in, and not which skill runs in the main conversation, wh
 last the whole session once it has started
 ([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)); so an orchestrator in
 the main conversation is held by its steps, or the script that keeps its course, and what is hard
-to undo by GitHub's branch protection or Claude Code's permission rules. Its replies alone are
-watched, for what holds to the conversation's end once the plugin's script has run there, as the
-language the person talks in.
+to undo by GitHub's branch protection or Claude Code's permission rules.
