@@ -1,0 +1,3 @@
+target-version = "py39"
+# The width this repository's documents wrap at.
+line-length = 100

@@ -1,0 +1,53 @@
+{
+  "title": "What the learner found of the run: each lesson on what fell short and why, the project's own or general, resting on words of the records, and what it checked.",
+  "type": "object",
+  "required": [
+    "lessons",
+    "checked"
+  ],
+  "properties": {
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "lesson",
+          "whose",
+          "grounds"
+        ],
+        "properties": {
+          "lesson": {
+            "type": "string"
+          },
+          "whose": {
+            "enum": [
+              "own",
+              "general"
+            ]
+          },
+          "grounds": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "record",
+                "quote"
+              ],
+              "properties": {
+                "record": {
+                  "type": "integer"
+                },
+                "quote": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "checked": {
+      "type": "string"
+    }
+  }
+}

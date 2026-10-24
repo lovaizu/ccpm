@@ -1,0 +1,779 @@
+{
+ "episodic_trace": [
+  {
+   "fact": "turn's agents now tell `main` what they will do, how far and how before work, and what is done and next after each step (f402856); tried on rn's hooks: the generator's plan named `dev/mutate.sh rn` and the first guard only before it began, as the user wanted"
+  },
+  {
+   "fact": "three runs of T2 went wrong from my CCS: no check tools installed, `dev/mutate.sh` not named, and no `has`, so the first user could not run coverage or mutation; all could be seen by reading the CCS before running, as the user said"
+  },
+  {
+   "fact": "the user decided: turn's call requires `use` and `has`, and turn's orchestrator first checks the CCS holds everything the run needs (389027a); T7 agreed and committed (38c9550)"
+  },
+  {
+   "fact": "turn now requires use and has and checks the CCS first, committed with dev/check.sh at 100% and dev/mutate.sh turn at 0 survivors; rn.py's CCS names neither, so rn's calls to turn stop at start until rn.py and /rn:up are changed"
+  },
+  {
+   "fact": "rn's scripts and prompts decisions now take `--has` (the plan's receiver having `.`) and passing turn's messages on (e805a30); the flow trial's code is out of mutation and property tests too, as the user chose A (2d7ab45)"
+  },
+  {
+   "fact": "turn's readers could not read or run in a has of `.`, as read_in_given joined places without making them whole paths; reproduced by a test and fixed (a94184d), check.sh 100% and mutate.sh turn 0 of 1893 survivors"
+  },
+  {
+   "fact": "rn.py ccs takes --has, committed after check.sh 100% and mutate.sh rn 0 of 250; the turn run's claude -p exited before turn returned, as the runner lacked CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"
+  },
+  {
+   "fact": "/rn:up's step 4 made through turn (40f898a): --has ., turn's messages passed on, stop by TaskStop; turn's two questions settled from the sources (R28, R29)"
+  },
+  {
+   "fact": "turn's items to decide ran past the shell's 30 KB and the orchestrator could not read them; now shown in pages (7b42325, 1a2c7bd), CI green"
+  },
+  {
+   "fact": "turn's generator split the word git to get past no_commit and commit in a scratch repository it made to run what it gave; asked the user whether no_commit stops only the run's own repository (a, recommended) or all (b)"
+  },
+  {
+   "fact": "turn's hooks stop a role's git only in the repository the run works in (0ee1f70), as the user chose a"
+  },
+  {
+   "fact": "T2's run was stopped: its generator wrote rn's hooks with its own command reading and hook entry, the same as turn's; what it made (check.sh 100%, mutate rn 0 survivors) is kept as ccs/t2-first-run.patch"
+  },
+  {
+   "fact": "the user asked why the plugins share nothing: common/ now holds hook.py and shell.py, linked into turn/hooks, dev/common/testing.py what the tests share (rn's tests 16s to 11s), plugin.md 5b and code.md B-18 ask for both; a link inside the marketplace is copied as the file at install, checked by installing turn from a branch"
+  },
+  {
+   "fact": "mutation times: common 38s with 19 survivors to kill (shell.py was tested through turn's hook tests), turn 271s 0, rn 213s 0"
+  },
+  {
+   "fact": "common's 19 survivors killed: tests for each behavior they changed, the hook test holding Claude Code's exit 2, and ruff F632 before the tests, as `is` against a one-character literal changes nothing CPython shows; mutate common 0 of 350 in 39s, check.sh 100% in 19s"
+  },
+  {
+   "fact": "e343ada, the first run's patch, failed CI with 7 rn survivors, as I pushed without mutate.sh rn; the user chose a pre-push hook (A): dev/githooks/pre-push runs check.sh and the changed plugins' mutation testing on the pushed commits (e3978f7), core.hooksPath set; mutate.sh's fixed ports let two runs at once test each other's copies, now free ports"
+  },
+  {
+   "fact": "T2 turn run stopped at 1h04m: 5 full rn mutation runs took 33 of the generator's 36 min; it was a change to existing work, which turn cannot take yet; its work is in scratchpad t2-second-run.patch (session-local, may be gone)"
+  },
+  {
+   "fact": "code.md's order now lists behaviors first, writes each condition only for a failing test, and step 6 names, for each change mutation testing makes to a changed line, the example test that fails; shell.py finished by it (ae90b2e, 0edb132): the first form of step 6 left 6 survivors, as it tried only lines taken out, and a line run only by property inputs"
+  },
+  {
+   "fact": "the user chose A (2026-10-20): every check runs on what a change touches before a push and whole in CI; pre-push runs check.sh <plugins> and mutate.sh --since <base> (cr-filter-git), Hypothesis dev 10 / ci 1000 inputs from dev/common/testing.py, CI mutation per plugin in parallel, `tests` the gate main requires (ec8468f); code.md step 7 holds the principle once (63bb225); a push of an rn-only doc took 14s, one touching everything 62s"
+  },
+  {
+   "fact": "code.md rebuilt from established practice, as the user asked (2026-10-20): items from Google's 'What to look for in a code review' (CC BY 3.0), tests designed before the code by ISTQB CTFL v4.0.1 ch.4 (equivalence partitions, 3-value boundaries, decision tables, state transitions); my own steps (list behaviors, try each mutation by hand) removed; coverage counted from examples alone (B-12); existing IDs kept, new B-19..B-24"
+  },
+  {
+   "fact": "T2 survivors: 6 of 7 lie in default_branch.py tokens(), a second command reader beside common/hooks/shell.py; e343ada (18:16) committed the run's patch made before common/ (18:00) without reading it against plugin.md 5b; also rn pretooluse.py beside hook.py, test_hooks HookTest beside testing.GitTest, dev/turn/trials copies, USAGE in run.py and test_start.py (pylint symilar, 151 lines)"
+  },
+  {
+   "fact": "the user chose A (2026-10-20): rn hooks rebuilt on common/; prevention A: a duplicate-code check in check.sh, pre-push and CI, and plugin.md: work made before a rule or checklist changed is read against the new one before it is committed"
+  },
+  {
+   "fact": "one command reader and one hook entry (1708074, e46f857): rn's more exact reading moved into common/hooks/shell.py (line joins, backslashes, double-quote escapes, fd digits, <>, ;;, |&), hook.py checks the event's shape; rn hooks run on them; check.sh 100%, mutate common 0 (40s), rn 0 (32s), turn 0 (141s); T2's 7 survivors gone with the copy"
+  },
+  {
+   "fact": "the user chose A (2026-10-20): a test stating its expected value again is an oracle, left out of the duplicate-code check with its reason beside it; pylint 4.1.3 duplicate-code in check.sh over every .py not a link (0.7s), on the newest Python with the test-quality tools; turn trials keep the call, the flow task, the copy of turn, claude -p and the record reading once in dev/turn/trials/shared.py, smoke-run with one claude -p; plugin.md: work made before a rule changed is read against the new one before commit; check.sh 0 copies, 100%"
+  },
+  {
+   "fact": "the user asked why not go on through turn, in parallel (2026-10-20): T3 and T4 run through turn at once, each in a clone of its own, from ccs/t3.json and ccs/t4.json; T5 after them, as it touches the same files; turn not taking a change to existing work was the 5 full mutation runs, now --since"
+  },
+  {
+   "fact": "CI green for the duplicate-code check (39421926424) and the one command reader (39420897226); T2 done, held by dev/rn/tests/test_hooks.py as the design's Verification asks of hooks"
+  },
+  {
+   "fact": "the first T3 and T4 runs were stopped by turn's write_work_alone: my CCS named folders (dev/common/tests, rn/hooks/checks) as works and left out rn/hooks/events.py, while the hook passes exact paths alone; T4's generator tried to get round it and was told to undo; both stopped, the CCS name each file now, run again; its records in the scratchpad t3-run1.jsonl, t4-run1.jsonl"
+  },
+  {
+   "fact": "the user asked what .writ/decisions was, writ being gone: writ's decisions folder left after writ was removed (1736fbf), all of it added on this branch; moved into the session's decisions/ as rn's design places them, the paths kept below it, and .writ/ out of what CI and pre-push skip"
+  },
+  {
+   "fact": "mutate.sh --since left out files not yet added to git, as cr-filter-git reads git diff: T4's new signoff.py went untested by it; now each is marked intent-to-add in a copy of the index, git's own index untouched; tried in a scratch worktree: an untested new file passed before (rc 0), fails now with its 3 survivors"
+  },
+  {
+   "fact": "428ea38 took the execute bit off dev/githooks/pre-push, as sed -i rewrote it, so git skipped the hook on the pushes of 428ea38 and 7e49e47, saying so only as a hint; the bit is back; after editing a file with sed -i, check its mode with git diff"
+  },
+  {
+   "fact": "T4 run stopped by me in its round 2 (2026-10-20): its main asked whether to change how the guard stops, as no move gets round the check (decisions/rn/hooks.decisions.md) cannot be met by listing shell commands: signoff.py 416 lines, each round found new bypasses ({ }, if, nice, awk -i inplace, rsync, python3 -X); its options: A allow only the exact `python3 <rn.py> state …` form to touch the session folder (recommended by it), B keep going, C weaken the decision to the moves a conductor would make; its work kept in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t4 (signoff.py, events.py, hooks.json, test_hooks.py changed), record /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t4.jsonl"
+  },
+  {
+   "fact": "T3 run in its round 2 (background, may outlive the session): round 1 left B-7, prompt B-10, B-26, usability B-3 without Good for `env -C<folder>` with no space; round 2 reads wrapper options as getopt does (-C<folder>, -iC, --chdir=, --ch, -S), check.sh 100%; shell.py grew to ~370 lines; its questions: 1 add bypasses beyond the CCS ways, 2 B-25 for a guard of fixed scope, 3 prompt.md text items answered yes by decisions/rn/hooks.decisions.md:25-27 (settle myself: the decision answers it); work in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3, record /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3.jsonl, result /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3/.tasks/result.json"
+  },
+  {
+   "fact": "turn lessons seen: a CCS giving a whole checklist where decisions answer some items yes made T3 spend rounds 3 and 4 on nothing; the first user named the deciding decision yet held the item short, and gave Good while writing a bypass remained"
+  },
+  {
+   "fact": "CodeQL (GitHub default setup, not in .github/workflows) fails on every push since c4a2223 (12:15): Analyze (javascript-typescript) finds no JS/TS (only dev/package.json, tests.yml) and stops; it passed at c907be8 (11:30) though no JS/TS changed between; why it passed before is not yet found; gh api code-scanning/default-setup is 403 to this token, so the setting needs the user or admin"
+  },
+  {
+   "fact": "the user chose shared/ (2026-10-20) for the shared code, the word Claude Code docs use (\"Share files within a marketplace\", ../shared); renamed after T3 and T4 are merged"
+  },
+  {
+   "fact": "the user chose A (2026-10-20): the guards pass only fixed forms they read whole (git …, git -C <folder> …, python3 <rn.py> state …) where a command names git, the session folder or rn.py, and stop every other, as OWASP Input Validation prefers allowlists to denylists; a path built from variables is not stopped, so the decision is rewritten to say what is stopped"
+  },
+  {
+   "fact": "T3 run stopped by me in its round 2 after the choice: its first user found 5 more bypasses (if cd /r; then git commit; fi, { cd /r; git commit; }, command cd, bash -o pipefail -c, echo \"$(git -C /r push)\"), checks all green (check.sh 5.6s, 100%, 0 of 2862 mutants); its work kept in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3"
+  },
+  {
+   "fact": "decisions/rn/hooks.decisions.md rewritten to the allowlist (e564684); the workflow named Tests, as the user asked (3f379b7); T3 run again from the rewritten ccs/t3.json, its record /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3.jsonl, the stopped run kept as t3-run2"
+  },
+  {
+   "fact": "turn has no way for a change to existing work: generator.md:56-57 writes the work from nothing in the first round; the earlier fix (--since) touched only the time; T3 run 3 stopped on the user's word, kept in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3"
+  },
+  {
+   "fact": "the user agreed (2026-10-20): turn makes a work from the file already at its path, written from nothing only where none is; the readers still read whole and run the receiver's checks, so what a change breaks shows there, and what was Good gets its Good at once; rn's caller needs no change now, rn.py ccs taking one path is for T11"
+  },
+  {
+   "fact": "T4 runs beside T3, not after it: on the allowlist it needs only what common/hooks/shell.py already gives, so shell.py is not its work, and its tests go to a new dev/rn/tests/test_signoff.py, so the two touch no file in common"
+  },
+  {
+   "fact": "the user decided (2026-10-20): no model named in rn's skills, turn's agents or the trial stand-ins, each running on the user's model (plugin agents cannot set permissionMode either, per the sub-agents docs); trials on Opus 5.5, Claude Code's default on every plan (model-config docs); rn's README recommends a Docker Sandbox with bypassPermissions; design.md B-12 asks for the users' model; the released rn 0.9.0 and turn 0.1.0 named no model, so no changelog line"
+  },
+  {
+   "fact": "before /clear (2026-10-20 ~23:55): T3 run 4 (allowlist, turn with the change-from-existing generator, still auto and model opus, as started before those changes) and T4 run 3 (allowlist, its own test file) run in the background as claude -p, which outlives the conversation; records /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3.jsonl and t4.jsonl, clones /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3 and t4, results there at .tasks/result.json; Claude Code sessions 0feac21f-5b52-441c-a063-dc31536a18f3 (T3) and d7df36a6-d847-4077-a3fb-8dca91bb3c36 (T4) under ~/.claude/projects/-tmp-claude-1000--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild-b596bf79-a55d-4fa9-9eb6-15b30b5af888-scratchpad-t3 and -t4; T3 run 2 baseline per role (python3 /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/roletime.py <session folder>): generator 35.1m, first user 18.6m, evaluator 5.3m, learner 8.1m, round 2 generator 16.0m, whole 85.7m+"
+  },
+  {
+   "fact": "CodeQL passes since 4a29080 (2026-10-20 23:07): its runs analyze actions and python alone, javascript-typescript gone from the default setup; why it once passed is no longer needed"
+  },
+  {
+   "fact": "T4 run 3 round 1: the generator wrote signoff.py by code.md and mutate.sh --since left 12 survivors (1.69%, 41s); the generator kills them in the run, but by the user's gist the way of making failed; its transcript ~/.claude/projects/-tmp-…-scratchpad-t4/d7df36a6-d847-4077-a3fb-8dca91bb3c36/subagents/agent-af5f4165fbec1c31c.jsonl"
+  },
+  {
+   "fact": "T3 run 4 round 2: the generator's remade work left 4 survivors (0.73% of 547) before it closed them, now 0; transcript ~/.claude/projects/-tmp-…-scratchpad-t3/0feac21f-5b52-441c-a063-dc31536a18f3/subagents/agent-a637e57813d4a45e3.jsonl"
+  },
+  {
+   "fact": "T4 run 3 ended (00:4x, rc 0): 58 Good of 60, 2 questions (B-15 git checkout --/git restore of state.json, B-26 patterns inside sh -c), its stand-in found find /tmp -name '.*' stopped too; check.sh rn 100%, mutate --since 0 of 693; work uncommitted in the t4 clone"
+  },
+  {
+   "fact": "T4's 14 first survivors traced to code.md: 6 equivalent (!= [] to > [] twice, [:1] to [:2], c[0] to c[-1], [3:] to [2:], is not on a str), which code.md says nothing of; 8 killable by step 3 as written but not applied: == on a str or list mutated to <= or >= four times (3-value boundaries of a one-value partition), python3 <rn.py> with no more words (length boundary), a content block not a dict (decision table), a hidden name under a pattern twice (an equivalence partition)"
+  },
+  {
+   "fact": "T3 run 4 ended (rc 0) after two rounds: turn gave 53 items, 1 not Good (usability B-7), 3 questions (Q1 no_commit edit auto refused, Q2 no_commit read by git_read_whole, Q3 rn.py state feedback naming git push); its stand-in checking each Good found more not Good: bash <<EOF git push passes (shell.py:214-216), git push --all/--mirror/refs glob pass (default_branch.py:75), the stop names git switch -c not --no-track from origin (default_branch.py:98-100), rn.py errors given without why (139-140), B-16 Cs reason, B-23, usability B-9 B-14 B-11 B-12 B-20, 9 items null yet not in not_good, prompt 17 items citing the wrong lines; work uncommitted in the t3 clone (shell.py, default_branch.py, 4 test files)"
+  },
+  {
+   "fact": "T3 run 4 per role (roletime.py): generator 27.4m + 17.8m, first user 12.7m + 11.8m, evaluator 6.8m + 5.3m, learner 6.0m + 17.9m, turn:up 118.2m in all; against run 2: generator 35.1m, first user 18.6m, evaluator 5.3m, learner 8.1m, round 2 generator 16.0m. T4 run 3: generator 36.6m, first user 15.9m, evaluator 3.6m, learner 6.0m, turn:up 70.1m"
+  },
+  {
+   "fact": "turn lesson: in both runs the first user and evaluator gave Good where the stand-in, reading each Good at its lines, found bypasses and wrong citations; turn counts Good beyond what holds"
+  },
+  {
+   "fact": "the user stopped the implementation (2026-10-21 01:4x): much time and cost spent on must-be quality of no importance (T3: main is held by GitHub branch protection already); the user reviews rn's UX, README and design first, and asked whether turn has prompts or hooks beyond its core; T3 and T4 work left uncommitted in their clones, nothing merged"
+  },
+  {
+   "fact": "the user (2026-10-21): main is held by GitHub settings, so why hooks; rn's default-branch guard tries to prevent every possible way; turn's hooks beyond its README promise were added by design to support its core (my calling them non-core was wrong); built so far: skills up/ty/gm, rn.py, one hook (default_branch, T2); rn not yet run end to end (T8+)"
+  },
+  {
+   "fact": "hooks agreed with the user (2026-10-21), as the official docs hold (hooks-guide.md:9, hooks.md:434, permissions.md:252): a step and its hook are made as one pair; a step told clearly still drifts, so its hook notices the drift and says the right way, the step itself; not aiming at perfection (the forms usually written, a hard boundary left to GitHub, the sandbox, permissions); guard only what the steps want kept; start from the core. Patterns from turn (read whole, check every item, read only what is given, write only the work, leave hard-to-undo moves to their owner, pass what a script printed as it is, end only when done) to be made reusable. turn fits but two: no_commit has no step (the user chose A: generator step 4 says leave the work uncommitted, the caller keeps it in git), and shell.py reads past the usual forms"
+  },
+  {
+   "fact": "the user chose A (2026-10-21): the hooks read only the forms the steps tell and the AI writes (git …, git -C, git -c, cd <dir> &&, joined by && ; |), env, command, sh -c and heredoc reading taken out of shell.py, hooks.json narrowed with if Bash(git *); in T3 and T4 records git came only in those forms, env and sh -c only inside test strings; T3s widening dropped"
+  },
+  {
+   "fact": "the user decided (2026-10-21): the shared hook code becomes a plugin of its own in ccpm, not shared/: a folder with no stated purpose takes anything and grows wild, while a plugin has its README, design and version under plugin.md; it ships no hooks.json, rn and turn take its files by links within the marketplace (host-marketplace.md, Share files within a marketplace with symlinks) and pair them with their steps in their own hooks.json; its readers are those making ccpm plugins; the earlier rename to shared/ is dropped"
+  },
+  {
+   "fact": "the user named the hook plugin lane (2026-10-21): the steps are the lane the AI runs in at full speed, a drift out of it noticed and the right way told, not a force or a stop; cue was dropped, as it means a start signal, not a prompter"
+  },
+  {
+   "fact": "the user agreed the order (2026-10-21): lane README, lane design, prompt.md and plugin.md pointing to lane, common/ moved into lane cut to the usual forms, turn (no_commit step, if), rn hooks from its steps with its README and design review"
+  },
+  {
+   "fact": "the user decided (2026-10-21): each README opens with the idea the product rests on (readme.md B-9, e3491b4): lane, a step and its hook made as one pair, the step telling the way and the hook noticing a drift and telling it again; turn, every agent looks only for Good and works only to give it, what is doubted checked by scripts; rn, every move toward the purpose, traced to it, a compact record carried so the work neither swells nor drifts. turn idea vs up.md:21 (the orchestrator holds a doubt inside a Good) to bring to the user at turn review"
+  },
+  {
+   "fact": "the user chose A (2026-10-21): without python3 a hook stops the tool calls it checks with exit 2 and asks for Python 3.9 or later to be installed, not letting them through, as Claude Code needs no Python (setup.md, Additional dependencies: ripgrep alone) and a hook that cannot start lets the call go ahead (hooks.md); lane's way for every plugin, turn's hooks.json `|| exit 0` to change with it; onFailure block not taken"
+  },
+  {
+   "fact": "the user agreed to lane/README.md (2026-10-21)"
+  },
+  {
+   "fact": "the user decided (2026-10-21): lane is a library whose one key result is no defect when used as it is; it holds ready checks for the drifts steps commonly meet, and a builder writes the step and one hooks.json entry (lane/run <check> --agent <agent_type> --say <the step's way>), no code; a step no check fits gets a check added to lane; plugin agents ignore frontmatter hooks (sub-agents.md), so hooks.json is the one place; a folder link ../lane is copied at install (host-marketplace.md); README and dev/lane/ux.md agreed"
+  },
+  {
+   "fact": "the user decided (2026-10-21): lane is a plugin whose agent lane:up reads a plugin's steps, proposes for each the sentences worth keeping, asks one at a time only what the files do not settle (an AI caller answers and passes on what it cannot, by SendMessage), writes the hooks and the link to lane's code into the plugin, and hands back the sentences for the builder to place; the entry is by step: sentences listed under actions begin, read, write, run, test, hand on, wait, end (12: start_with, read_only, read_whole, write_only, in_form, hands_off, test_after, as_printed, follow_next, wait_for, end_when, every_item); the code gathers them in four parts: reading every tool call as read/write/run/hand on/end, the step's context (who, IN, OUT, the script's next move, the record), rules of a few kinds, and telling; README and UX rewritten, awaiting agreement"
+  },
+  {
+   "fact": "the user agreed lane/README.md and dev/lane/ux.md (2026-10-21): lane lays a lane (a step's sentence with a hook that tells it again) only where a step alone is not sure to hold; `/lane:up`, typed with no argument, asks one point at a time (first which skill or agent, offering those just changed), proposes the lanes under actions begin, read, write, run, test, hand on, wait, end, with the step as it would read and the hooks, and on OK writes both; lane's code goes once where the steps are (<plugin>/hooks/lane/, .claude/hooks/lane/, ~/.claude/hooks/lane/), a link in a ccpm plugin and a copy with VERSION elsewhere, migrated by the next /lane:up; hooks in the step's own file, or the plugin's hooks.json for a plugin agent; README example a generic /notes:write skill, as documents must read without knowing other ccpm plugins (usability.md B-12 Look for added)"
+  },
+  {
+   "fact": "checked (2026-10-22, Claude Code 2.1.305): a skill frontmatter hook runs for the rest of the session and its event carries no skill name; the transcript records a typed skill as <command-name> and a called one as Skill {skill}; UserPromptExpansion and PreToolUse Skill fire at a skill start; ${CLAUDE_PLUGIN_ROOT} expands in a plugin skill hook, ${CLAUDE_SKILL_DIR} does not; Anthropic calls skill-scoped hooks a feature request (claude-code #82801, #89669 open); prior art scopes by state files (ralph-loop, cc-sessions)"
+  },
+  {
+   "fact": "the user decided (2026-10-22): main only talks with the user and every job is done by an agent made for it, so each agent has its own steps and hooks scoped by agent_type in the plugin hooks.json, with no state and no transcript reading to tell which skill runs (that scope alone; a subagent hook reading its own record to check its steps order is another matter); conductor and orchestrator unified as orchestrator <agent>; agents talk by SendMessage, roles never with one another; lane README and UX to be rewritten to this, after the principles"
+  },
+  {
+   "fact": "dev/architecture.md drafted and pushed (da710f7), linked from dev/README.md: one flowchart of who does what, then 11 design intents with sources (grilling, Claude Code docs, Building effective agents); both figures rendered with the mermaid-cli docker image; awaiting the user feedback after /clear"
+  },
+  {
+   "fact": "the user agreed dev/architecture.md (2026-10-21, addf2d9): scope opens it (several steps, several roles, something made); one top-to-bottom figure of user, front <main conversation>, orchestrator and role <subagent>, flow <script>, state <json>, guard <hook>, names by role with what each is in Claude Code; each reason tied to its conclusion and claiming only what its source shows; commit and push need no approval, a merge does; the state kept in a file, git left out"
+  },
+  {
+   "fact": "plugin.md and rn/checklists read against dev/architecture.md (2026-10-21): plugin.md step 2 now has the design written on it and 5b no longer repeats its JSON and jq; prompt.md B-10 names merging, not pushing, as hard to undo; architecture.md drops \"Checked as the user runs it\", which design.md B-12 and B-13 already ask; prompt.md B-25/B-26 and design.md left, as they hold with it; session/plan.md conductor left for the rn rewrite"
+  },
+  {
+   "fact": "lane/README.md and dev/lane/ux.md rewritten to dev/architecture.md (2026-10-21): lanes on agents alone, the example a project agent changelog-writer, hooks in the agent file or, for a plugin agent, the plugin hooks.json acting only in that agent (hooks docs: agent_type in every tool event; frontmatter hooks of a subagent run only while it runs; tool-event matchers filter by tool, so the script reads agent_type); awaiting the user agreement"
+  },
+  {
+   "fact": "the user decided (2026-10-21): lane lays lanes on a plugin subagent alone, its hooks in the plugin hooks/hooks.json acting only in that subagent by agent_type, lane code in the plugin hooks/lane/; project and user subagents left out, as their frontmatter hooks need folder trust (none in -p) and add a second place; README and UX rewritten to it (subagents docs: hooks ignored for plugin subagents)"
+  },
+  {
+   "fact": "the user agreed lane/README.md and dev/lane/ux.md as of 6069bd1 (2026-10-21)"
+  },
+  {
+   "fact": "the user decided (2026-10-21): turn stays a plugin of its own, rn orchestrator starting turn orchestrator as a role, its questions passed on by message (subagents nest three layers below main); the hearing finds facts itself and still shows each it found that the work rests on, one at a time, to confirm; both written into dev/architecture.md"
+  },
+  {
+   "fact": "rn and turn read against dev/architecture.md: rn runs its conductor as skills in main with no orchestrator, flow or state split, one hook unscoped by agent, three promised hooks missing, decisions in Markdown; turn has no front, ends a run to ask, its orchestrator judges, no resume, roles message main, hooks write the state, agent scoping in Python"
+  },
+  {
+   "fact": "turn README and UX drafted to dev/architecture.md (2026-10-21): questions sent by message to the calling AI, turn going on with the answer; a stopped run going on from its last step on a call with the same result; turn called from main or an agent main starts, as turn takes the two layers below; progress told by turn, not by each role; lane design drafted in parallel by a fork"
+  },
+  {
+   "fact": "lane design decisions written (bcd33fd): a lane sentence kept once in its step, a subagent own record read for step order (the 10-22 no-transcript decision was about telling skills apart only; asking the user it was my misreading), common/ moved into lane"
+  },
+  {
+   "fact": "the user decided (2026-10-21): dev/common/testing.py goes to dev/lane/testing.py, rn's and turn's tests importing it from there; written in decisions/dev/lane/design.decisions.md"
+  },
+  {
+   "fact": "the user decided (2026-10-21): rn has no step finishing a work after turn; questions go by message during turn's run, Goods are read by turn's first user, fixes by hand become decisions before the run or at a sign-off; written in decisions/dev/rn/design.decisions.md"
+  },
+  {
+   "fact": "lane-design run done (24 items Good, 3 questions) and taken in with hand fixes: a lane's sentence made from its lanes.md wording and what it takes, written into the step and found there by the guard; lane/README.md example made to match its own promise; testing.py to dev/lane/testing.py; the 12 lanes settled by the agreed table; 'flow' against the checklist's 'Flow:' left to the user"
+  },
+  {
+   "fact": "the user decided (2026-10-21): the checklist's 'Flow:' stays beside the component flow; no renaming for a word met twice, as it never ends"
+  },
+  {
+   "fact": "the user decided (2026-10-21): the flow (next step, state, resume, questions passed to the front) is kept once in lane, each plugin writing only its flow definition; Claude Code's Workflow does not fit (no mid-run input, no resume in a new session, main conversation only; code.claude.com/docs/en/workflows)"
+  },
+  {
+   "fact": "the user decided (2026-10-21): no front; the orchestrator holds the whole and decides (asks, replans, remakes), talking with the caller itself; rn runs it in the main conversation, turn and lane are called by an AI, so theirs is a subagent; the flow keeps the state and refuses moves breaking fixed rules, kept once in lane; dev/architecture.md rewritten to it, awaiting agreement"
+  },
+  {
+   "fact": "the user decided (2026-10-21): the flow runs the phases and the steps of each piece of work, the plan being data it walks and the orchestrator changes with reasons; lane gives the keys (phases, each, type, gate, done_when, types), each plugin the values; approvals recorded from the caller's own action; written in dev/architecture.md and decisions/dev/lane/design.decisions.md after reading Spec Kit, Kiro, BMAD, OpenSpec, superpowers, cc-sdd, feature-dev"
+  },
+  {
+   "fact": "the user agreed dev/architecture.md as of 62f0861 (2026-10-21): no front, the orchestrator holds the whole and decides; flow in lane runs phases and each work's steps, plan as data"
+  },
+  {
+   "fact": "the user chose (2026-10-21): lane's README rests on one idea for the flow and the lanes, said by what it does (lane lets an AI run the course a plugin sets, to the end, at full speed); lane:up makes the flow definition too"
+  },
+  {
+   "fact": "lane-readme and lane-ux runs done (22 and 18 Good, none without); R31, R32 settled from the sources, the UX fixed by hand; open: where the flow definition goes and how the caller's OK reaches the flow; UserPromptSubmit also fires on a background subagent's report and another session's message, with no field telling the origin (code.claude.com/docs/en/hooks, UserPromptSubmit)"
+  },
+  {
+   "fact": "the user decided (2026-10-21): an approval counts only as the OK the caller chose from Claude Code's AskUserQuestion, recorded by lane's hook, which refuses a call whose answers an AI filled in"
+  },
+  {
+   "fact": "the user decided (2026-10-21): the flow judges only the moves the orchestrator tells it, no hook calling it, as a main-conversation hook cannot tell the run's moves from other work; turn's 12 recorded runs called turn.py before all 90 role moves"
+  },
+  {
+   "fact": "the user decided (2026-10-21): a run's state is state.json in the work's folder in the user's repository (rn .rn/<case>/, turn the CCS's folder), the folder given on the first call to the flow; where flow definitions go and how the script finds them is left to the design, after reading how AI-DLC, BMAD and the official plugins lay them out (the user: no rules made up on the spot)"
+  },
+  {
+   "fact": "lane/README.md and dev/lane/ux.md remade and finished at 95bf4fa, awaiting the user's agreement"
+  },
+  {
+   "fact": "the user agreed lane/README.md and dev/lane/ux.md as of 95bf4fa (2026-10-21)"
+  },
+  {
+   "fact": "read for the lane design (2026-10-21): AskUserQuestion is in the main conversation alone, its `answers` never set by Claude, PostToolUse's tool_response for it undocumented; Bash calls get no plugin variables, skill and agent Markdown get ${CLAUDE_PLUGIN_ROOT}; official plugins and spec-kit keep a run's state in the user's project; AI-DLC refuses the AI's own writes to its state"
+  },
+  {
+   "fact": "the user chose A (2026-10-21): lane:up starts no subagents, and lane/README.md's Installation no longer says it does"
+  },
+  {
+   "fact": "dev/lane/design.md remade by a subagent and fixed by hand against design.md and usability.md: flows/<orchestrator>.json, flow.py run with ${CLAUDE_PLUGIN_ROOT}, the recorder writing the OK into the state the question names and refusing writes to a state; awaiting the user's agreement"
+  },
+  {
+   "fact": "simulated rn on lane's flow over 2026-10-20..22: a design-level work found in the tasks phase has no way back, re-approval at each of the 44 direction changes, the flow cannot stop a plan left unwritten (lane never in steering's tasks) as it judges only moves told, the plan split between state.json and steering.md; turn's flow held as its output is on the AI's path"
+  },
+  {
+   "fact": "the user decided (2026-10-22): lane is lanes alone, a step with its hook; turn keeps its own flow; rn uses no flow, its steering format fixed by rn and a hook telling a drift; a flow is built only if rn's trials show the need"
+  },
+  {
+   "fact": "dev/architecture.md, lane/README.md, dev/lane/ux.md and dev/lane/design.md remade to lanes alone by a subagent and fixed by hand (the proposal printed and written by the layer from one file in lane's data folder); the first three await the user's agreement"
+  },
+  {
+   "fact": "the user decided (2026-10-22): a review shows the works' URLs and the core decisions with their intent alone, a long core a sign to rethink; kept in memory and in rn's UX decisions, to go into rn's README and UX"
+  },
+  {
+   "fact": "the user agreed dev/architecture.md, lane/README.md and dev/lane/ux.md as of 1a542e4 (2026-10-22): lanes alone, the AI made to notice its drift and told the right way, never 'kept' or 'held' to its steps"
+  },
+  {
+   "fact": "the user agreed rn/README.md and dev/rn/ux.md as of 90ebb34 (2026-10-22): the opening rests on rn's two ideas (every task traced to the purpose with the plan remade from each move's facts; only a short record carried, so a long work neither swells nor drifts), drawn from the UX's benefits; the scenes show the user and rn alone, the first reader said only as an AI that did not make the proposal; learnings go to the user's checklists or to rn's makers as an issue, rn recommending"
+  },
+  {
+   "fact": "the user chose (2026-10-22): a UX's scenes are the whole way in one short Mermaid sequence diagram and each scene the user should see in one of its own, with no part the user does not deal with; ux checklist 0.2.0 F-1 and B-5; lane's and turn's UX redrawn so, content unchanged (e875fc7)"
+  },
+  {
+   "fact": "the user agreed dev/lane/design.md as of bcbb322 (2026-10-22), VERSION written by the layer into a copy alone from lane's plugin.json"
+  },
+  {
+   "fact": "I ran plugin.md step 3 (a first user reading lane's README and design) against the user's 2026-10-21 process; the user restated (2026-10-22): building lane, turn and rn follows that process alone; the reading's fixes discarded. Gap seen and to settle at lane's first unit: lane/lanes.md, the 12 lanes' table agreed 2026-10-21 (session 7cc9e59c, 02:16), is not in the repository"
+  },
+  {
+   "fact": "lane/lanes.md written from the agreed table (59193eb); the user found its 8 one- or two-row tables hard to read and asked why a separate file; the user chose (2026-10-22): the 12 lanes go into one table with an action column, in a 'Lanes' section of lane/README.md, lanes.md removed, the design's mentions of lanes.md pointed to that section, the wording's source still each lane's code with a test holding the README's table to it; the repository keeps no docs/ folder (turn and rn hold README and CHANGELOG alone)"
+  },
+  {
+   "fact": "the 12 lanes put in one table with an action column in lane/README.md's Lanes, lanes.md removed, the design and its decisions pointed to it (879518c); shown to the user with the branch URL"
+  },
+  {
+   "fact": "the user OK'd the Lanes table (2026-10-22); lane's units listed as T16 to T20 in steering, common/ moving into lane with the first since a copy fails check.sh"
+  },
+  {
+   "fact": "T16's code checked and fixed by hand, committed a311761: guard with hands_off, layer, Python check, common/ moved into lane; agent_type of a plugin subagent is <plugin>:<frontmatter name>, seen on Claude Code 2.1.306; plugin.md's shared-code rule and the design's Physical view (step.py) brought to it. Four agents started at a311761, each in its own worktree: read lanes, write lanes, run/flow lanes, lane:up's prompt"
+  },
+  {
+   "fact": "in writ-rebuild and pushed: lane:up's prompt (tried once, all four pass conditions), write_only, read_only, read_whole and start_with on one Call read from the event and record.py; the design's record place fixed to transcript_path and agent_id; worktrees removed"
+  },
+  {
+   "fact": "the user decided (2026-10-22): in_form takes JSON/JSONL (JSON Schema, structured outputs' subset), Markdown templates' headings and Markdown frontmatter keys, being built; plugin.md step 2 holds that a plugin takes in what is general and a general need it lacks goes to its makers as an issue on the user's yes (to apply to lane's design); test_after tells at the subagent's end when the last change to the output has no passing run of the test after it, T18's SubagentStop brought forward"
+  },
+  {
+   "fact": "end lanes (dca0b24, worktree-agent-a7de576d344f751dd) and hand-on/wait lanes (d8dfbdc, worktree-agent-abcbaa375f35d5b70) built on efd2eff, each with design lines in its report; in_form being reworded to 'in the form of' with ${CLAUDE_PLUGIN_ROOT} paths after three trials read it as a place"
+  },
+  {
+   "fact": "all 12 lanes in writ-rebuild and pushed (3d9c26f): check.sh 100%, mutate.sh lane 2192 mutants 0 survivors, lane on 3.9; README's in_form wording and the design's lines for the lanes shown to the user for OK"
+  },
+  {
+   "fact": "the user could not judge the README and design changes against the ideal; I judged: design grew ~100 lines of code-level detail (record shapes, test_after's && rule, every_item's IDs) that belong in the tests, and whether lane is the ideal shows only by the builder's use (KR1.1); the user agreed (2026-10-22) to: trim the design to mechanism and why, run T16's trial, bring the result with lanes to drop or fix"
+  },
+  {
+   "fact": "lane's design trimmed to mechanism and why (ec8ff28); lane:up gives each point and the print as its reply and is resumed by its ID (a72a22d), as the Agent tool gives no name and a subagent does not know its ID, tried on Claude Code 2.1.306; as_printed holds the last reply (R33); lane:up's own lanes, as_printed and wait_for, laid by the layer on lane itself (ff83ee8)"
+  },
+  {
+   "fact": "the user (2026-10-22): judge README, UX, design and how-to from purpose and ideal, build lane, turn and rn through, report the decisions after; turn's KR1.1 now counts where the work falls short of the purpose the calling AI gave it (578eaa3), goal and KRs put to the user"
+  },
+  {
+   "fact": "T16 tried on notes (dev/lane/trials/trial.py): lay passed; the drift was not provoked in 7 runs, as changelog-writer kept its step, and the laid hook stopped a commit fed to it as an event; the Python check stopped main's calls and as_printed stopped lane:up twice, both fixed (7776e00) and the lay and no-Python runs passed again with no wrong stop"
+  },
+  {
+   "fact": "T17-T20 done (e417ec6): lane tried whole on notes (lay, drift, no Python, older copy brought up, changed step) and on turn; findings fixed at their cause (b258d0f, e417ec6) and the turn run passed again with no wrong stop, stall or wrong claim. Not met in a real run: a hands_off stop (the subagent never tried to commit in 10 runs; the laid hook stops one fed as an event), and the end lanes, in_form, test_after and follow_next, which neither notes nor turn has a step for; all held by unit tests"
+  },
+  {
+   "fact": "lane takes a run's value, written {<name>}, from the JSON the subagent starts from (design and README 6e795ca), as the agreed 12-lane table had each lane's IN/OUT per run; the table itself kept in decisions/dev/lane/design.decisions.md; lane's design reads without turn or rn (227e735); rn's steering.md is told by its place in the main conversation and its sign-off by /rn:ty (agreed 2026-10-21 23:32)"
+  },
+  {
+   "fact": "run values {<name>} built (started.py) and every one of the 12 lanes tried on the mock plugin memo (dev/lane/trials/memo): no wrong stop on runs keeping the steps, each induced drift stopped with `memo: <sentence>` and its value line, the subagent back on its step; a stopped Bash call no longer counted as a change; check.sh 100%, mutate 0. Seen outside lane: Claude Code refuses a subagent's Write of summary.md (report-like names); an OK from the caller counts only where the Role says the caller decides"
+  },
+  {
+   "fact": "prompt.md's step 4, B-25 and B-26 now have a hook tell the step's sentence again, as lane's idea; plugin.md 5d lays lanes with lane:up, a check no lane holds added to lane (2026-10-22)"
+  },
+  {
+   "fact": "turn's design (2cc7044, 10-20) predates dev/architecture.md and turn's new README and UX: roles message main, the orchestrator only starts agents, no resume, hooks of its own; T21-T23 added to steering for turn's remake (2026-10-22)"
+  },
+  {
+   "fact": "T21 done: dev/turn/design.md rewritten on dev/architecture.md and lane by a subagent, checked and fixed by hand (progress from an agent caller goes to main; jq dropped from README and design); its open points settled as R37-R41; lane's read_whole needs no re-read after change, as the first user re-reads only where it stopped"
+  },
+  {
+   "fact": "the user decided (2026-10-22): turn's KR1.1 is the items of the step's checklists the calling AI judges the work to meet, from its own check against turn's lines; turn's goal and KRs settled"
+  },
+  {
+   "fact": "T22 step 1 (2026-10-22): turn's flow remade to the design: state in <result>.run.json, each move told to main then printed as {tool,input}, roles reply to <result>.<role>.json read by the flow, agent IDs handed by the orchestrator, a call again goes on from the state, the learner shown each record as text in <result>.records/; turn's own hooks removed; check.sh turn 100%, mutate.sh turn 0 of 1205 in 65s. Next: agents' steps rewritten to it, then lanes laid with lay.py"
+  },
+  {
+   "fact": "the user agreed to try (2026-10-22): AC1 and AC2 measured with an AI standing in for the user, holding what is truly wanted, AC2 by what the stand-in does instead of minutes; T14's two requests set (Downloads tidy script, issue forms); rn's flow tried unit by unit with mocked roles; the user merges and gives the release; work resumes after the weekly limit lifts, Friday 7:00"
+  },
+  {
+   "fact": "T22 step 2 (2026-10-22): turn's five agents rewritten to the flow (each role takes its prompt JSON, writes its reply file, ends Written.; up makes each move printed, asks by turn.py questions), forms in turn/forms/, lanes laid by lane's lay.py write into turn/hooks/hooks.json with hooks/lane linked to lane's code; test_lanes holds each lane's sentence in its step; check.sh skips files inside a linked folder. Next: mutate.sh turn, then T23 trials (dev/turn/trials still on the old flow)"
+  },
+  {
+   "fact": "T22's code done by a subagent (89bece5, e2b0bc1): check.sh 100% in 6.6s, mutate turn 0 of 1205 in 65s, validate --strict passes; core.hooksPath was absolute to the main checkout without dev/githooks, so no pre-push check ran since; set relative (R44); design brought to R42-R43"
+  },
+  {
+   "fact": "turn's agents read against prompt.md by hand: up.md steps 1, 3 and 7 say each lane sentence once, with the step's reason; learner's typo fixed; long lines left (R45); generator's given holds the work, so read_only lets it read what it writes"
+  },
+  {
+   "fact": "T23 unit trials (2026-10-22/23): flow's four ways (plain, sent, asked, stopped) and each role alone pass on 8c78852, kept in dev/turn/trials/*/results.json (9ccbc20); found and fixed: lane read_only stopped the form in_form names (6da0587), the first user sent the work made again got no new parts (8c78852)"
+  },
+  {
+   "fact": "follow_next holds once a turn.py next sent in the same reply as the move it took, as dev/lane/design.md:253 accepts, but dev/turn/design.md:313 passes the flow trial only with no lane stopping a call that keeps its step; asked the user: A (recommended) turn's Verification excepts it, B up.md asks one move a reply, C lane keeps its own call log"
+  },
+  {
+   "fact": "acceptance trials started 2026-10-23: trial.py on the readme task, 3 plain and 3 stopped at once, outputs /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0c28e8a6-d4bd-4901-a7a4-2dbb63e3874d/scratchpad/acc1-3.out and accs1-3.out; baseline.py (turn 0.1.0 from its tag, the version in use, same task) 3 at once, /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0c28e8a6-d4bd-4901-a7a4-2dbb63e3874d/scratchpad/base1-3.out; trial.py, baseline.py and shared.playground committed with this state"
+  },
+  {
+   "fact": "the user decided (2026-10-23): the trying-once rule left code.md and prompt.md (6536c7f), as it is about how a task is carried out; the end product is rn/checklists/checklist.md telling where each item goes, purpose and UX first, the map of what rn makes and judges an intermediate in the decisions (T24, 09eb272); T24 runs alongside T23 and ends before rn is remade"
+  },
+  {
+   "fact": "follow_next's hold of a turn.py next sent in the same reply as its move is right, not an exception: up.md:56-58 says to run next after the move, so a next sent before the move's result tells the flow a move is done that has not come back; the stop is lane catching drift, and dev/turn/design.md:313 holds as written; no document changes (2026-10-23, the user asked what it should be)"
+  },
+  {
+   "fact": "background trial runs survive /clear (acc2, accs1, accs3 kept writing JSONL after 23:15Z); base1 checked from its JSONL: one question answered, turn ran on, check once, 9.7 min, 20 of 23 met as returned; base2 and base3 started 23:4xZ"
+  },
+  {
+   "fact": "the user (2026-10-23): T24's map was made for its own sake, repeating each checklist's opening; dropped, the path in checklist.md written first and the present state checked against it; think back from the end product. What the map found, kept for rn's remake: product/readme.md steps 5-7 have no time in rn's flow (dev/rn/design.md:133-135 makes the README only before the design); no source of rn's flow names a prompt as a work; lessons and issues to rn's makers have no checklist"
+  },
+  {
+   "fact": "T23 acceptance on 8c78852 (2026-10-23), kept in dev/turn/trials/readme/results.json: new turn 19-22 of 23 met as returned, 13-53 min, $5-27; 0.1.0 18-20 of 23, 10-20 min, $3.7-4; every story met but Told as it goes, which the code falls short of; not yet taken"
+  },
+  {
+   "fact": "T24 done (2026-10-23): checklist.md step 6 and B-14 as the user agreed; all 123 items read against them, 7 fixed; design B-12 to B-15 kept, as they ask what a design's Verification says, and plan B-2 and B-4 kept, being what the plan and its decisions give"
+  },
+  {
+   "fact": "the user decided (2026-10-23): session/plan.md stays one checklist for the whole plan, as tasks are judged with their trace to the criteria and the whole kept consistent; unchanged parts come back Good at once"
+  },
+  {
+   "fact": "agreed with the user and in dev/rn/design.md (2026-10-23): a checklist holds the work's user and purpose, the idea and items with why; plan chain G1 → AC → T with a completion criterion → four steps written in every task (context read and gaps confirmed by the conductor; part and its checks designed in turn's first run; traced on paper by that run's first reader; made test first in a second run), the order held by a guard; design into the project's design document, checks into its tests; where they live read from the repository, asked once, kept in the project's rules or CLAUDE.md and paths-scoped rules; .claude/rules/plugin.md scoped by paths, checked from JSONL"
+  },
+  {
+   "fact": "the user (2026-10-23): checklists for the five works with none (points message, proposal and decisions' core, state.json, commit messages, lessons and issue) are designed now, before T14, not after a trial shows the need; which of them are works of their own is read from dev/rn/design.md first"
+  },
+  {
+   "fact": "rn's checklists brought to dev/rn/design.md (3aaa1a5, cfd5813, 962a4a9 and the five after): each opening the user and the idea, no steps; checklist B-7; code B-24-27; plan's completion criterion and four steps. The five works with no checklist need none: the conductor's and scripts' outputs are shaped by the design and the skills, judged by prompt.md and the skills' Content verification; the issue to rn's makers takes ccpm's issue form in /rn:ty at rn's remake. README stage 2 is the last task (dev/rn/design.md:142-147), settled from the purpose: every work is used by its first reader"
+  },
+  {
+   "fact": "the user (2026-10-23) asked whether the quality is the same: it is not. On my own check of the nine runs, 0.1.0 left 0 items unmet after its stand-in's fixes, the new turn 1-4 (Goods that do not hold, which its stand-in passed); the '19-22 of 23' noted before was the stand-in's count. Quality (KR1.1) comes first: why false Goods pass is traced from the records alongside the time, and the time is cut only inside what keeps KR1.1"
+  },
+  {
+   "fact": "2026-10-23: the user decided the root is the principles: eight shared ones in dev/architecture.md#principles (8: a learner after each run, lessons to the user's checklists or rules or as an issue to the makers on the user's own yes), each design opening with its own two; checklists gained design B-32/B-33 and usability B-21 (general, not plugin-only, as the user said); turn, lane and rn designs read against them by independent readers twice and settled at the decisions: turn's two readers each on their own, Good only where both give it, questions before making, a core in the result; lane's /lane:ok, readers before the print, flow for lane:up; rn's guards in rn's conversation alone, issues on /rn:ty, turn's result and state in the record. Awaiting the user's review of the designs and the UX/README changes; then the code to the designs, then T23's runs"
+  },
+  {
+   "fact": "2026-10-23: the user chose to return turn's, lane's and rn's designs, UXs and READMEs (and report.decisions R42) to 49e4e75, the agreed text with the principles linked at the top: I had changed agreed documents unshown, applied the principles without each plugin's user and purpose (a person's /lane:ok on lane, which only AIs use), and let subagents write decisions I made on the spot. Kept: the eight principles, the checklist items, usability's 'what the reader uses it for'"
+  },
+  {
+   "fact": "2026-10-23: turn's design, UX and README held to the user's call (ef: the user): the evaluator out; the first user finds every item's Good (it passes on only when every item is Good, a question or at the send-back bound); the orchestrator checks each Good holds, reading the work whole and each Good at its lines and running what it says; a Good taken only where the first user gave it and the orchestrator said yes; items two rounds leave become questions; the generator asks before making; the learner of principle 8 once a run is done; lines checked by the flow. The false Goods came from up.md step 5 telling the orchestrator to defer to the readers and not to run. Not yet: turn's three documents read whole against ux.md, readme.md, design.md and usability.md; turn's code (up.md step 5, evaluator.md removed, run.py, forms, tests); lane (its user is an AI building a plugin, the user said: no /lane:ok, no builder reader) and rn, both at the agreed text"
+  },
+  {
+   "fact": "2026-10-23: turn's ux.md, README and design read whole against ux.md, readme.md, design.md and usability.md, every item; fixed without changing a decision (3c68597): Good and CCS said before use, one name for the main conversation, 'step' kept for the plugin's step, 'round' said in the opening, the CCS check named apart from the check of each Good, each interaction one sentence, repeats cut, rn's orchestrator out of the UX, acceptance on the users' model with its flow passing by its records, the roles' Content bar named as KR1.1's; checks 100%, 0 survivors"
+  },
+  {
+   "fact": "the user decided (2026-10-23): the design document had become a specification, as every decision from talks and trials was written into it and each finding while building sent it back for approval; it is now the architecture (dev/<plugin>/architecture.md, checklist rn/checklists/product/architecture.md, fde2d4a and the rename): principles, user stories, a logical figure with only what it cannot show, a physical tree, and what and how far each unit, story and key result is checked; how each part behaves lives in its tests' Given/When/Then and its prompt's steps. The four ways of checking (users' model, records, flow apart from content, cost in parts) were folded into the checklist's B-8 and B-10 rather than plugin.md, as rn's users use the checklist"
+  },
+  {
+   "fact": "2026-10-23: turn's design had no concept and was not what the user meant; lane's and rn's architectures are the same (45-55 bullets, 330-430 lines of case rules), lane's still has the builder answering and choosing OK though the user said its user is an AI building a plugin, and rn's has not caught up with its agreed README and UX. The user agreed the order below for all three, code included, as each already has code"
+  },
+  {
+   "fact": "2026-10-23: turn's user, purpose and concept agreed with the user, kept in decisions/dev/turn/architecture.decisions.md#concept: the calling AI deals only with the orchestrator; through the generator and first user's back and forth the orchestrator reads nothing and only passes, as anything between keeps the Goods from settling; the orchestrator checks each Good every round, so a run can end in one round"
+  },
+  {
+   "fact": "2026-10-23: dev/turn/architecture.md rewritten on the agreed concept to the architecture checklist (433 to 242 lines), case rules moved to decisions/dev/turn/architecture.decisions.md#moved-out for turn's tests and steps; the user does not read the architecture once its intent is agreed, so it is committed after my own check"
+  },
+  {
+   "fact": "2026-10-23: lane's concept agreed with the user, kept in decisions/dev/lane/architecture.decisions.md#concept: its user is an AI building a plugin, which answers and approves lane:up itself, no person taking part; lane's README, UX and architecture still have the builder, a person, answering and choosing OK"
+  },
+  {
+   "fact": "2026-10-23: turn's code read against its architecture: about half kept, the round's middle and end rebuilt to the Good check, the evaluator removed; kept in decisions/dev/turn/architecture.decisions.md#turns-code-against-the-architecture"
+  },
+  {
+   "fact": "2026-10-23: lane's README (for the person who installs it, as the user said), UX and architecture brought to its concept: the building AI answers and approves lane:up, no person; architecture rewritten to the checklist (341 to 220), case rules moved to decisions/dev/lane/architecture.decisions.md#moved-out. Left for the user, one at a time after rn's concept: whether lane:up still sends one point at a time to an AI; whether lane holds Principles 4 and 8, which no part of it gives; lane/agents/up.md still assumes a person"
+  },
+  {
+   "fact": "2026-10-23: rn's concept agreed with the user, kept in decisions/dev/rn/architecture.decisions.md#concept: two drifts, the work from the purpose (traced tasks, replanning) and the AI itself (a short state replaced each move, guards); ACC's CCS and lane's guard are means named plainly in the architecture, not principles"
+  },
+  {
+   "fact": "2026-10-23: the user chose that lane:up sends the building AI every open point in one reply, and any an answer opens after, as one at a time was for a person; README, UX and architecture changed, lane/agents/up.md left for lane's code"
+  },
+  {
+   "fact": "2026-10-23: dev/rn/architecture.md rewritten on rn's agreed concept to the checklist (329 to 238), ACC's CCS named as the state and the work's hand-over to turn, the guard lane's, case rules moved to decisions/dev/rn/architecture.decisions.md#moved-out; followed the README and UX where the old one differed (sign-off shows links and core decisions, learnings, no hand fix, rn's own learner by Principle 8)"
+  },
+  {
+   "fact": "2026-10-23: the user: a principle of dev/architecture.md whose requirement a plugin's purpose does not give is simply not used; lane has no learner (its defects show in the plugin's runs, not lane:up's) and Principle 4 is met by the building AI reading the proposal; nothing changed"
+  },
+  {
+   "fact": "2026-10-23: the user asked whether I think from the whole: the guard's place was settled in dev/architecture.md#the-guard-tells-each-role-its-steps-again (a main-conversation orchestrator held by its steps or its scripts, the hard to undo by branch protection or permission rules); rn's architecture brought to it (the conductor by rn's scripts, /rn:ty and branch protection, the learner by lane's guard), no subagent made for a guarded step"
+  },
+  {
+   "fact": "2026-10-23: lane/agents/up.md made to lane's architecture by a subagent with prompt.md and usability.md open, checked by hand: the building AI answers and approves, every open point in one reply, numbered so each answer names its point; lay.py, tests and lanes' docstrings say the building AI; check.sh lane 100%; trial lay on notes: all 10 points in one reply, the layer's print handed on, lay.py write only after the OK"
+  },
+  {
+   "fact": "2026-10-23: turn's flow, forms and tests brought to its architecture by a subagent with code.md open, checked by hand: the evaluator, goods.json and the take step gone, the Good check, questions asked as met, the learner once after the run; roles.py trial fixed by hand to the three roles; old design sections of turn's decisions removed as the architecture holds them; check.sh turn passes, mutate.sh --since cf33744 turn 0 of 1131; cosmic-ray.toml had checked nothing, as its type check followed the link to lane and failed"
+  },
+  {
+   "fact": "2026-10-23: turn's four prompts made to the architecture by a subagent with prompt.md and usability.md open, checked by hand; evaluator.md removed; lanes laid by lane:up through dev/lane/trials/trial.py turn (the stand-in took each recommendation): up's step 4 read_whole on {given} added, the evaluator's lanes left out; a reply naming a checklist by its whole path, as each role is given it, was stopped by the flow: items now matched by the checklist's real path (forms.key_of); check.sh turn passes, mutate.sh 0 survivors (a run with failing tests had shown 0 falsely)"
+  },
+  {
+   "fact": "2026-10-23: lane's layer takes out the entries it wrote for a subagent the plugin no longer has, and says so (lay.py gone_out), as the turn lay trial had the building AI remove turn:evaluator's by hand; architecture's layer line says it; check.sh lane passes, mutate.sh --since lane 0 survivors"
+  },
+  {
+   "fact": "2026-10-23: turn's orchestrator unit tried on all eight ways at 4afc6a8 (dev/turn/trials/flow/results.json): every way took its moves in the architecture's order and returned the result the set replies make; each lane stop was on a drifting call (a turn.py next before the line, a cat of the work in a round, a ToolSearch before start); roles trial: each role's reply in its form, but the first user read the generator's reply beside the result under has '.'"
+  },
+  {
+   "fact": "2026-10-23: turn's units all tried at 492ac76: the orchestrator on its eight ways, each role on its own, the generator and first user kept in a round; the first user reads none of the run's files now (given without them); T22 done but its acceptance in T23"
+  },
+  {
+   "fact": "2026-10-23: acceptance Flow on the one-item task at 6c2edbc (session 5a8dc9b0): every move in order, result in form, stand-in checked Goods and lessons by record paths; the README held `git clone <this repository's URL>`, a placeholder the generator wrote rather than asking, run by neither first user nor check, which the learner gave as a lesson; watched for in the next runs"
+  },
+  {
+   "fact": "2026-10-23: acceptance at 6c2edbc: one ×3 every move in order (one placeholder `git clone <URL>` in one run, the missing URL learnt as the project's own each time); readme ×3 and stopped ×3: 5 of 6 looped on LICENSE, an answer adding it to the work kept in the CCS while the run held its first work (fixed d93ebfb: the CCS read again on every answer and call again); untrue claims on BOM and encoding passed first user and Good check in 2 runs; 0.1.0 baseline ×3 took 11-16 min against turn's 16-35; the one-run judge was shallow (9 calls, a missing LICENSE link passed), remade per folder (7edc487)"
+  },
+  {
+   "fact": "2026-10-23: read the six READMEs at 7edc487 against 0.1.0's: untrue words (BOM name in r6) and a link to a missing LICENSE (s4, the check passing it in round 2) passed every check, as the checks ran the Good's own words alone; turn's READMEs and 0.1.0's are close in what they give (turn: a BOM removal command, LICENSE with holder; 0.1.0: semicolon-separated files); fixed 9d39849: each thing the lines tell checked, and a file the work lacks asked to be added to the CCS's work. The user: quality over speed, read the content, not counts"
+  },
+  {
+   "fact": "2026-10-23: acceptance at 9d39849, readme x3 (r7-r9) and stopped x3 (s7-s9), all returned: no LICENSE loop; every README's example run gives its output byte for byte (CRLF aside), and each claim tried holds (BOM, Latin-1, missing file, usage, semicolons, quoting, same file twice, both BOM-removal commands); pandas' 007 not tried, not installed; set beside 0.1.0's base1-3 close, turn adding a LICENSE file; call to return 17-36 min (0.1.0 11-16), cost $5.7-11.5; lane stops: 11 orchestrator calls before `turn.py start`, 12 before the move `next` printed; r9's generator tried Edit 12 times on a reply file the flow removes before each message (run.py:285), learner gave it as a lesson"
+  },
+  {
+   "fact": "the user decided (2026-10-23): each kind has one checklist, made from checklist.md and usability.md from its purpose, its few items each a thing the purpose needs asked as what the user gets, the ways to meet it the signs under it, and a deliverable judged by its own checklist alone; made_from names the inputs' versions; a checklist's version a whole number, 1 until the plugin holding it is first released, a plugin's semver; rn's checklists were never released (writ's were, and writ is gone), so IDs are free; checklist.md 21 items to 9, prompt.md 24 to 7"
+  },
+  {
+   "fact": "the user agreed the order (2026-10-23): lane's agents/up.md first, read against the new prompt.md and remade, read whole on paper, then tried once small on notes by dev/lane/trials as T20 did and set beside T20's results; then turn's four prompts one at a time from first-user (remade with prompt.md open to what turn/scripts/run.py gives and reads, read on paper, lanes laid again by lane:up so each hook's sentence is the step's own, roles.py tried and set beside roles/results.json), up.md last, a flow change designed and shown first; then T23's acceptance (readme x3, stopped x3) set beside r7-s9; then code, readme, architecture, ux and plan checklists remade; then rn (T3-T15)"
+  },
+  {
+   "fact": "2026-10-24: lane/agents/up.md remade to prompt.md (107 to 79 lines) by a subagent, checked by hand; tried on notes (trial.py lay) at the remake: lay.py print run with the proposal's heredoc and `; echo exit=$?`, so a faithful hand-on did not match and as_printed stopped twice, and end_when was not weighed as 'a reply is no tool call'; three words put back as what the hook and the guard read (print run as the whole command, the reply ending with the print's last line, Write first in step 6) and the Role and architecture say a hook sees a drift in a tool call or in how the subagent ends; tried again: 0 stops, 4 points in one reply, end_when weighed and declined with a sound ground, 2.2 min $0.60 against f4e4659's 2.2 min $0.80"
+  },
+  {
+   "fact": "2026-10-24: turn's four prompts remade to prompt.md by subagents, each read on paper against what run.py gives and reads and checked by hand, lanes' sentences kept (lay.py print added none): first-user 76 to 58 lines, generator 101 to 76 (its claim written anew with Write each time), learner 44 to 37, up 149 to 102 (each turn.py command and each call alone once the one before has given back); roles.py and kept.py tried for first-user and generator, flow.py plain and asked for up, every move in order and no hook stop (4afc6a8's had follow_next stops)"
+  },
+  {
+   "fact": "2026-10-24: flow fixes found while remaking: the first user was given the CCS among the entries of a folder on the way to it (without_run_files keeps it apart now); a check made again after an answer gave no `given`, so the orchestrator read the files of the first start (the check now comes with what to read as the CCS now names it, on every page)"
+  },
+  {
+   "fact": "the user asked (2026-10-24) for a checklist for a fix: rn/checklists/fix.md, drawn from 116 fixes of this branch later shown wrong in direction (decisions/rn/fix-checklist.decisions.md), four items (the cause gone, closer to the purpose, one place no more than the cause needs, the whole agreeing); passed from outside on every turn call, as the user said, since each send-back and later round inside turn is a fix: rn's CCS names it under constraints, turn unchanged; tracing on paper is the plan's task step 3"
+  },
+  {
+   "fact": "2026-10-24: T23's acceptance at the remade prompts (dev/turn/trials/readme/results.json, r10-r12, s10-s12): every run returned, each stopped run went on from its move; the calling AI judged 5 items unmet in six runs (r7-s9: 4), all whole-work judgments the first user and the orchestrator passed: repetition (usability B-7), a contradiction between the opening and a later line (B-21), and a pointer to a commit history no reader can follow (readme B-6); every example ran byte for byte; orchestrator hook stops 5 (r7-s9: 23); 22-37 min, $5.9-7.4; validate --strict passes; T23 done"
+  },
+  {
+   "fact": "2026-10-24: the code, readme, architecture, ux and plan checklists remade from checklist.md and usability.md as prompt.md was, each the one checklist of its kind, every old item kept as an item or a sign or left out with its reason (plan's old B-4, a match with the decisions, left to the plan sign-off as checklist.md B-4 asks): code 23 items to 9, readme 11 to 9 (with usability's 14 taken in; 379 lines read before to 219), architecture 14 to 9, ux 7 to 7, plan 13 to 8; readme's B-4, B-5, B-7 and B-8 ask what T23's whole-work misses needed; plugin.md's steps 1 and 2 and turn's readme trial now open the kind's checklist alone"
+  },
+  {
+   "fact": "2026-10-24: judged and shown to the user, as the user said to go on without asking: lane's Lanes table moved to lane/docs/lanes.md, reached from the README's Documentation (lane:up, test_lanes and the architecture read it there); rn's UX opens with what rn gives its user"
+  },
+  {
+   "fact": "2026-10-24: T27's subagent finished, changes uncommitted (rn/scripts/rn.py; call.py and template.py are links to turn's and lane's; dev/rn/tests; cosmic-ray.toml excludes the links); it reports check.sh rn 100% and mutate.sh rn 0 of 300 survivors. Its design: `session` prints the session and its state CCS; `start <slug> --message` makes the branch from origin/<default>, commits and pushes; `state --message` commits every change with the state replaced whole and pushes, refusing a plan out of plan.md F-1 (T5), a state not a CCS, or other changes with the state unchanged; `ccs` refuses uncommitted or unpushed changes (T6), takes decisions/<work>.decisions.md by name, names the kind's checklist, the user's addition and fix.md; `proposal plan|deliverable` made from the pushed record, kept as an empty commit `Rn-Sign-off:`; dropped: `state key=value`, `--decisions`, `--reference`, turn's items in the proposal. It decided the scripts commit and push (the old scripts.decisions 'scripts never commit' reversed), `git add -A`, the plan refused rather than kept"
+  },
+  {
+   "fact": "2026-10-24: T27 read whole against rn's architecture, UX and code checklist and committed: check.sh rn 100% (102 tests, 1.6 s), mutate.sh rn 0 of 312 survivors (37 s); fixed by hand: a checklist's CCS names rn's usability.md as a source, since checklist.md makes each checklist from it and --reference is gone; the architecture says the states before are in the history of state.json; scripts.decisions.md rewritten to the reasons alone; the design and deliverable proposals moved to T29 with the skills, as where the hearing keeps the core decisions is the skills' to set"
+  },
+  {
+   "fact": "2026-10-24: T28's design set and handed to a subagent in the background: `rn.py records` writes the branch's conductor conversations (entries with the repository's cwd and gitBranch) and the agents they started (meta without parentAgentId) as text under the git dir and prints the learner's prompt; `rn.py learnt` moves the reply to <session>/learnt.json with each ground's record path and removes the texts; rn/forms/learnt.json and rn/scripts/records.py link to turn's; lanes by lane:up; a trial on records holding one slip. Measured: this branch's own main conversations shown as text are 9.8M characters, so a long session's records may not fit one learner; to read on the trial"
+  },
+  {
+   "fact": "2026-10-24: T28 done: the learner reads the record whole (the history as each commit's message and files plus each state.json change, and the session's files) and searches the conductor's conversations (no tool results), turn's runs left to turn's learner, as the user chose; lane's in_form takes a linked form (f2b8a6f); check.sh lane, turn, rn 100%, mutate 0; trial passed twice (1.1 min, $0.42): the commit outside turn and two points in one message each a lesson with its words; the learner Read the conversation whole instead of Grep, to watch on rn's whole trials before any lane"
+  },
+  {
+   "fact": "2026-10-24: the learner runs at each sign-off on that stretch alone, as the user chose: the stretch from the last commit that kept learnt/ to HEAD, conversations cut at its time, lessons in <session>/learnt/<n>.json, `rn.py lessons` gives them all at the end; check.sh rn 100% (148 tests), mutate 0 of 472; trial of two stretches passed (1.1 min, $0.41), nothing of the first shown; the learner read each file twice and the conversation whole rather than by Grep"
+  },
+  {
+   "fact": "2026-10-24: T29 designed whole and traced on paper against every story: decisions/rn/prompts.decisions.md (the three skills, the whole course from /rn:up to the pull request marked ready) and scripts.decisions.md (session gives the sign-off waiting, `answer approved|feedback`, the plan as a source of every CCS, the deliverable's CCS and checklist, Documents as `- <name>: <path>`, the design and deliverable proposals with each work's decisions, five lines of 200 characters at most)"
+  },
+  {
+   "fact": "2026-10-24: T29's scripts part made by a subagent and read by hand against scripts.decisions.md: session's signoff, `answer approved|feedback`, ccs naming the plan and the finished work, Documents as `- <name>: <path>`, design and deliverable proposals with each work's decisions and what changed, rn/checklists/session/deliverable.md (B-1, each criterion done when used); check.sh rn 100% (189 tests, 5.9 s), mutate.sh rn 0 of 605 (1 min 39 s); tried on this branch: session gives signoff null, answer refuses with no sign-off waiting"
+  },
+  {
+   "fact": "2026-10-24: rn's three skills remade by a subagent to prompts.decisions.md and prompt.md (up 296 lines, ty 70, gm 64), read by hand against turn's up.md moves ({\"questions\"}, {\"returned\"}, `turn:` lines) and rn.py; two script gaps its trace found fixed by the scripts' subagent: the finishing move kept (status read at HEAD), turn's lessons of every result version in `rn.py lessons`; check.sh rn 100% (196 tests), mutate.sh rn 0 of 622; CHANGELOG's Unreleased written anew from 0.9.0"
+  },
+  {
+   "fact": "2026-10-24: rn's flow trial built by a subagent (dev/rn/trials/flow/: flow.py, the stand-in up.md on haiku and stand.py; lane's trying.claude takes resume), its stand-in script tried by hand on rn.py's real CCS and proposals; issues kept in issues.txt by a gh shim, as no trial opens one where people work; a reply with no option `a.` answered yes, fixed by hand"
+  },
+  {
+   "fact": "2026-10-24: rn's flow trial 1 stopped at the README, 60 messages, 21 min, about $7 (flow.py summed each resume's whole-conversation cost into $283): the course ran in order from the start through the plan sign-off, the feedback, the plan made again, the approval, the lessons and the document points; it failed on the trial's own make: the stand-in user read rn's words in English while rn spoke Japanese, so it missed the feedback kept and answered yes 40 times to a stopped session; the stand-in turn wrote over README.md and gave every Good at line 1, which the conductor rightly sent back. Fixed: the stand-in user answers by the moves kept (trailers, the pull request ready) and ends a stuck run; the stand-in is turn's generator alone, claiming each Good at its lines in turn's claim form checked by forms.py, a file there changed only where its decisions say. rn's slips fixed by hand: a decisions entry never says how it was reached (plan checklist B-6 said the decisions keep it, now their commit messages), and a user's word read wider or narrower is a point of its own"
+  },
+  {
+   "fact": "2026-10-24, agreed with the user: (1) languages go in a section of the common dev/architecture.md beside 'Where the orchestrator runs': a plugin a person calls proposes the conversation and artifact languages first, from what the repository and the user's instructions set, else the user's for talk and English for artifacts, and records the answer; what goes into the repository is in the artifact language; what is shown to the person is put into the conversation language, adding nothing and leaving nothing out; a plugin an AI calls writes and tells in the artifact language and the caller that talks with the person puts it into theirs; dev/rn/architecture.md says only where rn records them (the plan's front matter) and points there; dev/rn/ux.md and rn/skills/up/SKILL.md steps 2 and 9 take the first point on languages and the proposal shown translated, as rn 0.9.0 did (0.9.0 rn/docs/design.md:156-158, rn/references/conduct.md:256). (2) A language check as a command hook in lane, judging the last reply by script as 0.9.0's rn/hooks/checks/conversation_language.py did; pairs of one script (English and French) left unchecked, said in the common section. (3) lane's architecture gains its own Principle 3, as agreed: 'Each lane is general and reusable: it holds one kind of check, the same in every plugin it is laid in, and takes what differs from plugin to plugin from what its hook gives it.'; lane's code is read against it and fixed first, before rn's trial 2: lane/hooks/lane/shell.py:43 STEPS and :209 turn.py are turn's own, to be given from turn's hooks.json; hands_off lets `git -c a=b commit` and `env git commit` through (lanes/hands_off.py:402), a form the AI writes (dev/lane/architecture.md:88-92). The narrow command lists and subagents-only are by lane's design (dev/lane/architecture.md:74-78, 88-92), not faults"
+  },
+  {
+   "fact": "2026-10-24, the user decided: 0.9.0's steering sections `# Assumptions` and `# Rules` are not added back, as each fact found is confirmed with the user into the decisions before the work (dev/architecture.md:67-73) and a repository's own rules go into its .rn/checklists/<kind>.md"
+  },
+  {
+   "fact": "2026-10-24: a work's decisions are named `<session>/decisions/<work>.md`, the folder saying they are decisions, as the user found `decisions/<work>.decisions.md` says it twice and no record gives a reason for it; to change in rn.py (:10, :79, :629, :793), rn/skills/up/SKILL.md, rn/checklists/session/plan.md, dev/rn/architecture.md:145, dev/rn/tests/test_rn.py and dev/rn/trials/learner/learner.py, with the rn changes before trial 2"
+  },
+  {
+   "fact": "2026-10-24, agreed with the user, rn's record remade from its concepts, Plan and Log (the facts kept in order, the state built from them): the session folder holds steering.md, which steers the work to its purpose and always shows the latest (front matter: stage, the sign-off waiting, the two languages; body: goal, acceptance criteria, documents, tasks ticked; at its end the next move and what is open), and turn/<nnnn>-ccs.json with turn/<nnnn>-result.json, one numbered pair per call, four digits, in the order made, a work made again taking the next number, the work named inside the CCS; state.json, decisions/ and ccs/ go: a work's decisions are entries of its CCS, choices with reasons and feedback in the commit messages, the log being git's history; rn's learner becomes a work turn makes, so every maker but the orchestrator goes through a CCS; turn reads no steering: rn.py puts the goal and the criteria a work serves into the CCS's goal_orientation; steering's form is set strictly and held by rn.py at every keep, since rn.py takes data from it. Words: orchestrator, not conductor; learnings, not lessons. Open: whether the session's record stays on main after the merge"
+  },
+  {
+   "fact": "2026-10-24, agreed with the user: turn makes every part of steering.md, each passing its checklist and fix.md: the goal and criteria, and the tasks, made a few at a time and changed as each turn's facts replan them (tasks for the plan and for the design hold real research and trials too); the flow is steering.md > a part file cut by rn.py > turn's IN/OUT > the part file > put back into steering.md by rn.py, turn seeing nothing of steering but that part; the part file is turn/<nnnn>-steering.md beside turn/<nnnn>-ccs.json and turn/<nnnn>-result.json, made only for calls that make a part of steering; a deliverable turn writes directly"
+  },
+  {
+   "fact": "2026-10-24, agreed with the user: what turn only reads, the goal and the criteria a work serves, goes as text in the CCS's goal_orientation, copied by rn.py from steering.md; what turn makes is a file, the part file or the deliverable; so turn cannot change the goal while making a task"
+  },
+  {
+   "fact": "2026-10-24: the remade record drawn whole and traced on paper against start, hearing, each stage, resume mid-run, feedback and learnings: dev/rn/architecture.md rewritten (steering and numbered calls, tasks per stage, learnings made through turn as a part of the steering, no agent or hook of rn's own), dev/rn/ux.md's task line, decisions/rn/scripts.decisions.md and prompts.decisions.md rewritten, plan.md F-1 set to the steering's form; works: plan (title to tasks), learnings, t<n>, deliverable, checklist-<kind>"
+  },
+  {
+   "fact": "2026-10-24: rn.py remade by a subagent to scripts.decisions.md (check.sh rn 100%, 185 tests, 6 s; mutate.sh rn 0 of 1192, 4 min 40 s); learner agent, forms, hooks, test_lanes and trials/learner removed; plan.md items and session/learnings.md remade by another, read and fixed by hand; tried by hand in a scratch repository with a gh stand-in: start, decide, ccs plan, put, done, proposal, feedback, the proposal again with what changed, and a hand edit of the steering refused. Found: proposal leaves Next as it was, so the steering shows a stale Next while a sign-off waits; to fix with the skills"
+  },
+  {
+   "fact": "2026-10-24, the user decided (TDD): mutation and property tests check that the unit tests are enough, so on each push CI runs every unit test with 100% coverage and mutation and property tests on what the push changed, the property tests on many inputs; both whole before a release; each counterexample a property test finds is added as an example test; plugin.md step 5b and CI to change"
+  },
+  {
+   "fact": "2026-10-24: the TDD decision made in plugin.md 5b, CI, pre-push and dev/README.md: the property tests apart from the example tests (dev/<plugin>/tests/properties*.py, rn's cut out of test_rn.py into properties.py), run by dev/properties.sh; dev/changed.sh names the plugins a change touches, for pre-push and CI alike; CI runs every example test with 100% coverage on each push, the property tests and mutants of each changed plugin since the commit before where it passed, else since the branch left main, whole on main after a commit not passed and for a plugin whose version the push changes; mutation and coverage counted on the example tests alone: check.sh 100% (3188 lines, 1028 branches), mutate.sh lane 0 of 2400 (174 s), turn 0 of 1197 (76 s), rn 0 of 1192 (245 s); HYPOTHESIS_PROFILE dropped from testing.py, nothing setting it now; CI's changed step dry-run on three cases: nothing changed, a first push, main after a failure"
+  },
+  {
+   "fact": "2026-10-24: CI's first run on the new split (c8c74ab): check on 3.9 and 3.x, turn's mutants since the branch left main (4 min) and lane whole (10 min, its version new on the branch) passed; rn's property tests on 1000 inputs found Next `#`, a heading of its marks alone, which the steering rightly refuses (test_rn.py's `## Notes` example), the property's inputs too wide: heading-like text left out of them and `#` added to the example, as plugin.md 5b says"
+  },
+  {
+   "fact": "2026-10-24, the user chose A: this session's decisions/ keeps 0.9.0's `<work>.decisions.md` names, as the new record has no decisions/ to move them into; my notes call them by what they hold, not by file name"
+  },
+  {
+   "fact": "2026-10-24: rn's three skills remade by a subagent on the new record (up 275 lines, ty 74, gm 65), every command line run by it in a scratch repository with a gh stand-in; read by hand against prompt.md and the agreed languages: the proposal now put into the conversation language, gh pr ready before the stage finished, ty and gm told to end on a stop that is the user's; its open points judged and kept as R51; rn.py proposal sets Next while a sign-off waits (5cb87db); check.sh rn 100%"
+  },
+  {
+   "fact": "2026-10-24: CI on 182e6f5 passed whole (rn's mutants since the branch left main 23 min, lane whole 15 min on the runner); the languages section made in dev/architecture.md, rn's architecture and UX pointing there; lane's Principle 3 in, lane's code read against it by a subagent and checked by hand (R53): check.sh lane turn rn 100%, mutants since HEAD lane 0 of 2351, turn 0 of 1197"
+  },
+  {
+   "fact": "2026-10-24, the user decided: no hook checks the reply's language (low value toward the purpose); reply_in's documents reverted and its unfinished code discarded; rn keeps proposing the two languages first and writing them into the steering (R54)"
+  },
+  {
+   "fact": "2026-10-24: rn's flow trial brought to rn as it now is by a subagent, traced on paper by it and by me (the stand-in user by the steering's front matter, the stand-in turn by the numbered CCS); two slips of rn's fixed by hand (R56): the learnings after /rn:gm keep Open, a task's design step names its part's path and kind (b7c2b5c); lane's property test of start_with narrowed and its counterexample an example test (R55); trial 2 started in the background into the scratchpad's flow2"
+  },
+  {
+   "fact": "2026-10-24, the user decided: the Verification sections had become test specifications, and a flow 'unit' trial ran end to end for 20 min; what to test and how far is the project's rule: plugin.md's structural and non-functional rules moved into dev/architecture.md (Repository structure, Code, Test, Release), .claude/rules/dev.md keeps the order of the work and points there, each plugin architecture's Verification is a Test section linking the base, the architecture checklist asks only that the project's rules are followed; tests: code by unit tests C0/C1 100% with mutation and property tests passing, prompts tried role by role with mocks judged from IN/OUT and records, user stories by the whole tried and shown to the maintainer against the version in use; 'example tests' renamed 'unit tests'; flow trial 2 stopped, its playground PR #5 and branch removed"
+  },
+  {
+   "fact": "2026-10-24, the user decided: no comparison with an earlier version, as the plugins changed much; dev/architecture.md's acceptance test now shows the maintainer how close the plugin came and what could be improved, the maintainer judging (5241b92); lane's and turn's architectures read whole against the changed checklist, base rules linked (3860859)"
+  },
+  {
+   "fact": "2026-10-24, the user chose A: no comparison with an earlier version anywhere (R57)"
+  },
+  {
+   "fact": "2026-10-24: dev/rn/trials/moves/ built by a subagent (moves.py, cases.py, place.py, gh.py, stand.py, up.md; flow/ removed): 23 cases, one per move of rn's skills, each from a state made by rn.py in a fresh repository with a bare origin, turn:up and gh stood in for, one claude -p (resume for a second message), run side by side; --dry all passes every starting state; no claude run yet; not yet read by me"
+  },
+  {
+   "fact": "2026-10-24: dev/rn/trials/moves/ read against dev/architecture.md#unit-tests-prompts and rn's skills; `good` run once small, its records showing the background turn:up's SendMessage reaching main and -p waiting; then all 23 side by side (27 min of runs, about $10): 19 passed; good failed as the haiku stand-in skipped SendMessage, short, task and after-feedback as an answer by letter kept a decision the stand-in's fixed reply did not follow, rn rightly sending it back; fixed (R58), with /rn:up step 4 saying ticks are not read in turn's part; run again: 22 passed, last failing the same way on B-3, fixed and passed; every record's tool calls checked (no git commit or push, no edit of the steering) and every reply read against the skills' steps"
+  },
+  {
+   "fact": "2026-10-24, the user chose a: prompt trials run on Opus, the model the maintainer uses, named in each run (dev/lane/trying.py:42 keeps --model opus), dev/architecture.md's Unit tests: prompts saying so"
+  },
+  {
+   "fact": "2026-10-24: rn's five open slips fixed by their cause (R60): rn.py ccs keeps the call; turn's run files left out of changed() and keep's add; /rn:up steps 1, 2 and 11 worded for the fresh words, the languages' answer and an issue not yet sent; unit tests first, failing, then 177 passing, check.sh rn 100%; move cases none-answer and fresh-answer added; all 25 cases passed on Opus, the records holding no git commit, push or edit of the orchestrator's"
+  },
+  {
+   "fact": "2026-10-24: T29 ticked, its done-when read against the trials' proposals; T4 made: rn.py answer reads Claude Code's records for the user's /rn:ty or /rn:gm typed since the proposal (R61), tests first, check.sh rn 100%; T5 and T6 found held and ticked; /rn:up step 4 keeps every shortfall before asking, the slip seen twice; all 25 move cases passed again (23 min, $10), the answer taken from the real records of claude -p"
+  },
+  {
+   "fact": "2026-10-24: T25 made: root pyproject.toml (dev and test-quality groups, test-quality on Python >=3.11, uv >=0.13.5, package = false) and uv.lock, each tool at the newest that runs on each Python (coverage 7.10.7 on 3.9, 7.17.0 on 3.11+); CI on checkout v7.0.1, setup-python v7.1.0, setup-uv v10.3.2, setup-node v7.1.0 with Node 24, uv sync --locked and uv run --no-sync; pre-push needs uv only; Claude Code 2.1.310; dev/requirements* removed; dev/mutate.sh copies the tree without .venv, as cp -R took half-written .pyc; check.sh passed on 3.9 and 3.14 at 100%, properties.sh with CI=true, mutate.sh every plugin 0 survivors (6m44s)"
+  }
+ ],
+ "semantic_gist": [
+  {
+   "gist": "before each turn run, read the CCS as its receiver: what they have, what they run, whether the environment has it; decide what the sources settle without asking"
+  },
+  {
+   "gist": "use what a run made where it holds; redo only what a fault touched"
+  },
+  {
+   "gist": "the user (2026-10-20): make a procedure under which property and mutation tests do not fail in the first place; detecting and then fixing is not allowed; improve the way of making before any trial; what is not reproducible is not needed; balance quality and method; development is far too slow"
+  },
+  {
+   "gist": "turn ends before CI: its roles check by the affected checks alone (check.sh <plugin>, mutate.sh --since <start commit> <plugin>), and I check CI's whole result after the push, a failure going back as new work"
+  },
+  {
+   "gist": "a checklist is drawn from established best practice first, never from self-made steps fitted to what a check found; mutation, coverage and property tests confirm a test design, they are not how it is made"
+  },
+  {
+   "gist": "a CCS names each file a work is, never a folder, and every file the change touches, as turn lets a role write only what the CCS names"
+  },
+  {
+   "gist": "a CCS gives only the checklist items its work answers, the rest settled by the decisions it names"
+  },
+  {
+   "gist": "after a turn run, a fix of a few lines that changes no decision is made by hand by the caller, then the affected checks run and the fix shown apart as made by hand; a run again only where the decisions change much, as dev/rn/design.md:107-108 has the conductor do (the user, 2026-10-20)"
+  },
+  {
+   "gist": "a document reads without knowing other products beside it, such as other ccpm plugins (the user, 2026-10-21; usability.md B-12)"
+  },
+  {
+   "gist": "propose from how it can be done, the ideal first, not from why it cannot; the entry is shaped by the user's steps, the code gathered by software best practice (the user, 2026-10-21)"
+  },
+  {
+   "gist": "the user (2026-10-22): before proposing, investigate what the platform can do, the requirements, best practice and how to do it if nothing exists, and say what was checked; answer short, plain, one thing at a time"
+  },
+  {
+   "gist": "concept and principles written with the least explanation, figures first, as every word becomes a constraint (the user, 2026-10-22)"
+  },
+  {
+   "gist": "read the whole of what I wrote before showing it: each reason must reach its conclusion and claim no more than its source (the user, 2026-10-21)"
+  },
+  {
+   "gist": "from here on, no turn: a subagent makes the work with the checklists open, I check it against the same checklists, fix it by hand, and that ends it (the user, 2026-10-21)"
+  },
+  {
+   "gist": "keep it simple: build what a trial shows is needed, not what may be (the user, 2026-10-22: 欲張りすぎました)"
+  },
+  {
+   "gist": "ask a review with the works' URLs and the core decisions, each with its intent, briefly; nothing else; a core that will not fit short is a smell (the user, 2026-10-22)"
+  },
+  {
+   "gist": "lane's idea: the AI is made to notice its drift and is told the right way; not enforcing or keeping it to its steps (the user, 2026-10-21 and 2026-10-22)"
+  },
+  {
+   "gist": "review asks link the branch, not a commit, so a page left open shows the update on reload; the agreed commit is kept here (the user, 2026-10-22)"
+  },
+  {
+   "gist": "when only one way meets the purpose, do it and report; ask only for the goal and key results, merge and release (the user, 2026-10-22)"
+  },
+  {
+   "gist": "lane is specified and tried on its own, a mock plugin of its own exercising every lane; turn and rn are only the reference for reusable IN/OUT; lane's documents name neither (the user, 2026-10-22)"
+  }
+ ],
+ "focal_entities": [
+  {
+   "task": "T9-T13: rn's acceptance, tried as its user from start to end on lovaizu/playground"
+  }
+ ],
+ "relational_map": [
+  {
+   "T2": "AC1"
+  }
+ ],
+ "goal_orientation": [
+  {
+   "plan": ".rn/20261013-writ-rebuild/steering.md"
+  }
+ ],
+ "constraints": [
+  {
+   "rules": ".claude/rules/dev.md, which points to dev/architecture.md"
+  },
+  {
+   "environment": "on this Linux sandbox: uv 0.13.5 from `uv tool install`, ~/.local/bin first on PATH; `uv sync --locked --group test-quality -p 3.14` makes .venv and `uv run --no-sync` runs the checks in it; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here; trial records left in ~/.claude/projects/<scratchpad path>-* are removed by literal path after each run"
+  },
+  {
+   "watch": "watch a turn run without telling the user of each step: report only its end, a stop or a question (the user, 2026-10-21: the step-by-step notices were noise)"
+  },
+  {
+   "runner": "run-turn.sh sets CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS so claude -p waits for turn:up, and runs with bypassPermissions, as the user works in a Docker sandbox for it (2026-10-20); T3 run 4 and T4 run 3 started on auto"
+  },
+  {
+   "measure": "read how long each check and run takes, and fix a slow one at its cause before going on, as the user asked"
+  },
+  {
+   "push": "every push runs dev/githooks/pre-push, which needs uv on PATH"
+  },
+  {
+   "trials": "rn's trials run claude -p with bypassPermissions in the Docker sandbox, as turn's do (dev/turn/trials/shared.py:84-85), the user decided (2026-10-20)"
+  }
+ ],
+ "predictive_cue": [
+  {
+   "next": "read CI's whole result for the T25 push; then T9-T13, rn's acceptance tried as its user from start to end on lovaizu/playground"
+  }
+ ],
+ "uncertainty_signal": [
+  {
+   "open": "AC1"
+  },
+  {
+   "open": "AC2"
+  },
+  {
+   "open": "shell.git misses git after a redirect, as `>/dev/null git commit`, so turn's no_commit lets it through; T3's ground (git led by env, command, sh -c)"
+  },
+  {
+   "open": "whether the hearing asks one point per message (the user rule) or a round of points (grilling); the draft says each point, with recommendation"
+  },
+  {
+   "open": "turn/hooks/agents.py:55 finds a subagent's record apart from lane's record.py; to fold when turn is remade on lane"
+  },
+  {
+   "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
+  },
+  {
+   "open": "the learner may read a conversation whole rather than search it; no lane holds Grep-only; judge on rn's whole trials with real sizes"
+  },
+  {
+   "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
+  }
+ ],
+ "retrieved_artifacts": [
+  {
+   "decisions": ".rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md"
+  },
+  {
+   "report": ".rn/20261013-writ-rebuild/decisions/report.decisions.md"
+  },
+  {
+   "runner": ".rn/20261013-writ-rebuild/ccs/run-turn.sh, with TURN_RUNS set to a scratch folder holding the venv"
+  }
+ ]
+}

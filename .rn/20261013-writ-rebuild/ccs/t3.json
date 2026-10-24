@@ -1,0 +1,100 @@
+{
+  "focal_entities": [
+    {
+      "deliverable": "common/hooks/shell.py"
+    },
+    {
+      "deliverable": "rn/hooks/checks/default_branch.py"
+    },
+    {
+      "deliverable": "turn/hooks/checks/no_commit.py"
+    },
+    {
+      "deliverable": "dev/common/tests/test_shell.py"
+    },
+    {
+      "deliverable": "dev/common/tests/test_shell_properties.py"
+    },
+    {
+      "deliverable": "dev/rn/tests/test_hooks.py"
+    },
+    {
+      "deliverable": "dev/turn/tests/test_checks.py"
+    },
+    {
+      "audience": "rn's conductor, the AI in the user's Claude Code conversation running rn's skills, whose commands the hook judges and who does what a stop tells it; and whoever maintains rn's hooks, a person or an AI"
+    },
+    {
+      "has": "."
+    }
+  ],
+  "goal_orientation": [
+    {
+      "purpose": "the guard of the session's own branch, already made and tested, passes only the forms of git it reads whole and stops every other command holding the word `git` together with `commit` or `push`, saying the form to use instead, as .rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md says under The checks: the forms read whole are `git …` and `git -C <folder> …`, alone or after `cd <folder> &&`, judged on the branch checked out in the folder reached, a git worktree's own; so stopped are, for example, `env -C<folder> git commit`, `env -S \"git commit\"`, `exec git push`, `/usr/bin/git commit`, `GIT_DIR=<folder> git commit`, `>/dev/null git commit`, `pushd <folder>; git commit`, `if cd <folder>; then git commit; fi`, `{ cd <folder>; git commit; }`, `bash -o pipefail -c \"git commit\"` and `echo \"$(git -C <folder> push)\"`, each a way an earlier run found round a guard that listed the ways; nothing else the conductor does is stopped, and what the decisions leave unstopped is not tried. Of prompt.md, the hooks answer only the items the decisions name under Form, the rest answered yes there. The reading of a command stays in common/hooks/shell.py, which turn's hooks share, so turn's no_commit holds the same. The maintainer changing the hooks trusts the tests, run by `sh dev/check.sh rn common turn` and `sh dev/mutate.sh --since <the commit the run starts from> rn common turn`"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/product/code.md"
+    },
+    {
+      "checklist": "rn/checklists/product/prompt.md"
+    },
+    {
+      "checklist": "rn/checklists/usability.md"
+    },
+    {
+      "decisions": ".rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md"
+    },
+    {
+      "reference": "dev/rn/design.md"
+    },
+    {
+      "reference": "rn/scripts/rn.py"
+    },
+    {
+      "reference": "rn/skills/up/SKILL.md"
+    },
+    {
+      "reference": "common/hooks/hook.py"
+    },
+    {
+      "reference": "common/hooks/shell.py"
+    },
+    {
+      "reference": "dev/common/testing.py"
+    },
+    {
+      "reference": "turn/hooks/hooks.json"
+    },
+    {
+      "reference": "turn/hooks/pretooluse.py"
+    },
+    {
+      "reference": "turn/hooks/checks/no_commit.py"
+    },
+    {
+      "reference": "dev/rn/tests/test_rn.py"
+    },
+    {
+      "reference": ".claude/rules/plugin.md"
+    },
+    {
+      "reference": "dev/check.sh"
+    },
+    {
+      "reference": "dev/mutate.sh"
+    }
+  ],
+  "constraints": [
+    {
+      "artifact-language": "English"
+    },
+    {
+      "conversation-language": "English"
+    },
+    {
+      "environment": "the check tools are in the virtual environment first on PATH; `sh dev/check.sh rn common turn` and `sh dev/mutate.sh --since <the commit the run starts from> rn common turn` run as they are, each in seconds to a few minutes; git and a repository made in a temporary folder outside this one are free to use, and git has no identity here, so a commit there takes `git -c user.name=trial -c user.email=trial@example.com`"
+    }
+  ]
+}

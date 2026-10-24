@@ -1,107 +1,136 @@
 # turn
 
-With turn, Claude Code can make any work for you, such as a README, a design document, a skill or
-code, that passes your checklist. Another AI reads the work as the person it is for, and what does
-not pass yet is made again. You are asked only what you alone can answer, as soon as it comes up,
-while the work goes on.
-
-turn is for anyone who has Claude Code make such work, in a conversation or from a step of their
-own plugin. Any kind of work fits, as long as there is a checklist to measure it by.
-
-Why another reader: when Claude checks what it has just written, it reads as the writer. It knows
-what each line means, so it can miss what a newcomer would not understand, as people do with their
-own writing. turn is built on this assumption. Its reader did not write the work, and reads it in a
-fresh copy of your repository that holds only what the person it is for would have. Each item of
-the checklist counts as passed only where lines of the work show it.
-
-This README shows how to get a first result by asking in a conversation. To call turn from a step of
-your own plugin, see [Calling turn from a plugin's step](calling-from-a-plugin.md).
+turn has AI work only toward passing your checklist: every agent that makes or reads the work looks
+only for each item's Good, that the work's reader gets from it what the item asks, and works only
+to give it, and what a machine can judge, such as whether
+a reply has its form or an input was read whole, is checked by turn's scripts, not by an agent. It
+is a Claude Code plugin for anyone who has AI make documents, code and the like in the steps of
+their own plugin. What a step has turn make comes back meeting the step's checklists, read first by
+an AI that did not make it, in the place of its reader, and each Good it finds checked against what
+the work does.
 
 ## Example
 
-You want the README of a small command-line tool. You have notes on it, and a checklist for READMEs.
-In Claude Code you ask:
+Say your plugin has a step that writes a project's README to your checklist `checklists/readme.md`.
+A checklist lists what the README's reader should get from it, one item each, asked as a question,
+such as "On opening it, can the reader tell whether the project is for them?", and says under each
+item where it is answered: `Scope: its part`, as here; `each part`, every section on its own; or
+`whole`, the README at once.
 
-```console
-> With turn, write the README of this tool for developers who find it on GitHub,
-  from docs/notes.md, against checklists/readme.md.
+The step's AI asks the user what the items need for this project, writes what is decided to
+`notes/readme.decisions.md`, and writes its task in a CCS, `.tasks/readme.json`. A CCS is a JSON
+file of parts, each a list of entries, each entry a kind and its value, the shape
+[ACC](https://arxiv.org/abs/2601.11653) gives an AI's state; every name in it is your plugin's:
+
+```json
+{"focal_entities": [{"deliverable": "README.md"},
+                    {"audience": "a developer meeting the project for the first time"},
+                    {"has": "."}],
+ "goal_orientation": [{"purpose": "deciding whether to use the project, then installing it"}],
+ "retrieved_artifacts": [{"checklist": "checklists/readme.md"},
+                         {"decisions": "notes/readme.decisions.md"}]}
 ```
 
-Claude writes your request down as the task turn takes: where the work goes, who it is for, what
-they use it for, and which notes and checklist to work from. It starts turn with it, and turn shows:
+The step's text then calls turn with the CCS, the kinds in it that hold the work, the checklist, its
+reader, what the reader uses it for and has with it, here the whole repository, and where to write
+the result:
 
-```console
-Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)
-
-Round 1
-  1 write   To make: developers who find the tool on GitHub can tell what it saves them
-            and run it on their own files.
-            ❓ Which license is the tool under? Your notes do not say.
-
-> MIT
-
-            .turn/readme/1/README.md
-  2 read    Read as a developer who finds the tool on GitHub.
-            .turn/readme/1/first-user.json
-  3 check   ⚠️ Not yet: the developer can tell which Python version the tool needs.
-            ⚠️ Not yet: the developer can picture the result on their own files.
-Round 2
-  1 write   To make: the same, now naming the Python version and showing a result on a sample file.
-            .turn/readme/2/README.md
-  2 read    Read again, as the same developer.
-            .turn/readme/2/first-user.json
-  3 check   ✅ Nothing missing.
-done
-The work is at README.md.
+```
+Start the `turn:up` agent in the background with
+{"ccs": ".tasks/readme.json", "result": ".tasks/readme-result.json",
+ "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
+          "use": "purpose", "has": "has"}}
+Put each question it sends to the user and send it the answer. When it returns, check each Good
+against its lines.
 ```
 
-The line after `To make:` is shown before turn writes. If it is not what you want, press Esc and say
-what you want instead; Claude rewrites its request to turn from your words, as if you had asked so
-from the start, and turn starts again from the work as it stands.
+turn first checks that the CCS holds everything the run needs: that what it and its files say can
+give every item its Good, and that the reader has what the developer has, so it can do what they do
+with the README. No one had chosen under which license people may use the project, so turn writes
+nothing yet and sends the step's AI that one question:
 
-Each ⚠️ is something the work does not yet give the person it is for, said as what they will be
-able to do once it does. turn works out how the work would give it, such as a line on the Python
-version, makes the work again with that rather than patching the line where it showed, and has it
-read again.
+```json
+{"questions": [{"question": "Under which license may people use the project?",
+                "recommended": "MIT", "items": [{"item": "B-5", ...}]}]}
+```
 
-Answer a question marked ❓ when it shows. turn goes on writing meanwhile, and puts your answer
-into the work before it is read. If something is still missing after the second round, it comes
-back to you with what the work would need to give it, and you choose whether to run turn again.
+The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and sends it to turn,
+which goes on from there. turn tells the main conversation, the one you talk with, even where the
+step's AI is an agent below it, before each of its agents starts its work, what it will do, how far
+and how, and as each ends, what is done and what comes next:
 
-The paths are in `.turn/` in your repository, where turn keeps what you may want to open later:
-each round's work and its reading; for each item of the checklist, the lines that show it met, or
-what the work would need to meet it; and the version of the checklist the work was checked by.
+```
+generator: will write README.md for the seven items, as MIT licensed, and run its install and
+usage commands as a developer would
+```
+
+This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
+the developer meeting the project would, running what they would run. Each item is judged from that
+use, and gets its Good, with the lines that give it, only where `turn:up`, running what the Good
+says, also finds it holds. Where an item gets none,
+README.md is made again and read again, and an item that still gets none comes to the step's AI as
+a question for the user.
+
+When turn returns, README.md is in place, and the result gives each item's Good with the lines it
+rests on:
+
+```json
+{"items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
+            "lines": ["README.md:3-4"]}, ...],
+ "lessons": [...]}
+```
+
+The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends. The
+lessons are what fell short in turn's run and why, which the step's AI puts to you: one of your
+project's own for your checklists or rules, a general one for turn's makers as an issue, opened
+once you say yes.
+
+## Why turn
+
+turn gives your plugin's AI what it does not get by making the work and checking it itself.
+
+- The AI that reads the work did not make it, has only what the work's reader has, and uses the
+  work as they do; each Good it finds is then run against what the work does.
+
+  The AI that made a work finds the Good it meant; an AI meeting it for the first time finds only
+  the Good its lines give, which is what the work's reader gets.
+- Each Good comes with the lines it rests on, so it is checked by reading them, not taken on trust.
+- The work is made from the CCS and the files it names alone, so it does not stray from what was
+  decided.
+- A run stopped anywhere, by you or by a conversation that ended, goes on from where it stopped
+  when the step calls turn again with the same result.
+
+  turn keeps where the run stands in a file beside the result, not in a conversation.
 
 ## Requirements
 
-- Claude Code: turn runs inside it.
-- A git repository: the reader's fresh copy is made from it.
-- Python 3.9 or later, as `python3`, with nothing beyond what comes with it: turn's own scripts run
-  on it, for what must come out the same every time, such as checking the task and keeping the
-  record in `.turn/`.
-- jq: the task is kept in a JSON file, and turn, and whoever writes the task, Claude in your
-  conversation or your plugin's step, read and change parts of it with jq.
-- A checklist for each kind of work: the work is made and checked by its items. It is a Markdown
-  file that opens with front matter giving its `name` and `version`, then says what such work is
-  for, followed by each item under a heading `### <ID>: <title>`. Keep it in your repository, since the task names it by its path there. The
-  [writ checklists](../writ/references/essentials/) cover documents, READMEs, design documents and
-  prompts; copy the ones you need, as `checklists/readme.md` is in the Example.
+- Claude Code, in which turn runs.
+- Python 3.9 or later, run as `python3`, and git.
+
+  turn's scripts and hooks run on Python, and a run cut off leaves its writing as changes git
+  shows.
 
 ## Installation
 
 In Claude Code, add the marketplace once, then install turn:
 
 ```console
-> /plugin marketplace add lovaizu/ccpm
-> /plugin install turn@ccpm
+/plugin marketplace add lovaizu/ccpm
+/plugin install turn@ccpm
 ```
 
-Then ask as in the [Example](#example), with your own notes and checklist.
+Then have your plugin's step call `turn:up`, as in the example, from the main conversation or from
+an agent the main conversation starts. turn's agents take the two layers of agents below the one
+that calls it, and Claude Code starts agents down to three layers below the main conversation.
 
 ## Documentation
 
-- [Calling turn from a plugin's step](calling-from-a-plugin.md)
-- [Changelog](CHANGELOG.md)
+- [The changelog](CHANGELOG.md) says what changed in each version.
+
+## Development
+
+[turn's development folder](../dev/turn/README.md) leads to its UX, its design and how it is
+checked.
 
 ## License
 

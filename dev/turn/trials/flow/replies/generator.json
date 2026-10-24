@@ -1,0 +1,147 @@
+{
+  "generator": [
+    {
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "question": 1
+          }
+        ],
+        "questions": [
+          {
+            "question": "The decisions name MIT, and the repository has no LICENSE file: should the README name MIT in its own text, or link a LICENSE file to be added?",
+            "recommended": "Name MIT in the README's own text, as no LICENSE file is there for the reader to open."
+          }
+        ]
+      }
+    },
+    {
+      "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n\n## License\n\nMIT.\n",
+      "run": [
+        "sh demo.sh"
+      ],
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns demo is under MIT.",
+            "lines": [
+              "README.md:11-11"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "question": 1
+          }
+        ],
+        "questions": [
+          {
+            "question": "demo.sh takes no arguments and prints `Hello`: should the Use section say what it prints?",
+            "recommended": "Yes, say it prints `Hello`, so the reader knows what to expect before running it."
+          }
+        ]
+      }
+    },
+    {
+      "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`. It prints `Hello`.\n\n## License\n\nMIT.\n",
+      "run": [
+        "sh demo.sh"
+      ],
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns demo is under MIT.",
+            "lines": [
+              "README.md:11-11"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-8",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, as the part says it does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              },
+              {
+                "part": "README.md:9-11",
+                "good": "The reader learns on what terms they may use demo.",
+                "lines": [
+                  "README.md:11-11"
+                ]
+              }
+            ]
+          }
+        ],
+        "questions": []
+      }
+    }
+  ],
+  "first-user": [
+    {
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns demo is under MIT.",
+            "lines": [
+              "README.md:11-11"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-8",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, as the part says it does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              },
+              {
+                "part": "README.md:9-11",
+                "good": "The reader learns on what terms they may use demo.",
+                "lines": [
+                  "README.md:11-11"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "learner": [
+    {
+      "reply": {
+        "lessons": [],
+        "checked": "every page of every record"
+      }
+    }
+  ]
+}

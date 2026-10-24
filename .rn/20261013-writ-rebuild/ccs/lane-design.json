@@ -1,0 +1,47 @@
+{
+  "focal_entities": [
+    {
+      "deliverable": "dev/lane/design.md"
+    },
+    {
+      "audience": "whoever builds or changes lane, a person or an AI, who has not followed the discussion"
+    },
+    {
+      "has": "."
+    }
+  ],
+  "goal_orientation": [
+    {
+      "purpose": "the draft design is rewritten in place to the decisions, so that whoever builds lane understands in a short time the mechanism that brings about the README and the UX, and how it is checked, and builds or changes lane to it"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/product/design.md"
+    },
+    {
+      "checklist": "rn/checklists/usability.md"
+    },
+    {
+      "decisions": ".rn/20261013-writ-rebuild/decisions/dev/lane/design.decisions.md"
+    },
+    {
+      "reference": "dev/architecture.md"
+    },
+    {
+      "reference": "lane/README.md"
+    },
+    {
+      "reference": "dev/lane/ux.md"
+    },
+    {
+      "reference": "common/hooks/hook.py"
+    },
+    {
+      "reference": "common/hooks/shell.py"
+    },
+    {
+      "reference": "turn/hooks/hooks.json"
+    }
+  ]
+}

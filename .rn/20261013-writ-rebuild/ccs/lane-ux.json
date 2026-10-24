@@ -1,0 +1,35 @@
+{
+  "focal_entities": [
+    {
+      "deliverable": "dev/lane/ux.md"
+    },
+    {
+      "audience": "whoever builds or changes lane, a person or an AI, who has not followed the discussion"
+    },
+    {
+      "has": "."
+    }
+  ],
+  "goal_orientation": [
+    {
+      "purpose": "the agreed UX is rewritten in place to the decisions, which now follow dev/architecture.md: lane holds the flow and the lanes, lane:up is called by an AI and makes the flow definition too; it keeps all else it says now. building and changing every part of lane so that the builder gets what the UX says, and judging each change by its key results"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/product/ux.md"
+    },
+    {
+      "checklist": "rn/checklists/usability.md"
+    },
+    {
+      "reference": "dev/architecture.md"
+    },
+    {
+      "decisions": ".rn/20261013-writ-rebuild/decisions/lane/UX.decisions.md"
+    },
+    {
+      "decisions": ".rn/20261013-writ-rebuild/decisions/lane/README.decisions.md"
+    }
+  ]
+}
