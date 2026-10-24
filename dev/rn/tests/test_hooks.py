@@ -488,7 +488,7 @@ if importlib.util.find_spec("hypothesis") is not None:
         def test_any_refspec_sends_to_what_follows_its_colon(self, remote, source, target):
             # Given: a push of any branch to any other, to any remote. Left out, as the user
             # decided, since git refuses such a branch name: a name beginning with `-`, which
-            # git push reads as an option (code.md B-16). A `+` before a refspec marks it forced,
+            # git push reads as an option (code.md B-6). A `+` before a refspec marks it forced,
             # `HEAD` names the checked-out branch, and `refs/heads/` begins the full name of a
             # branch, so none of them is part of a branch's name.
             hypothesis.assume(not remote.startswith("-") and not source.startswith(("-", "+")))

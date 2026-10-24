@@ -33,8 +33,8 @@ best practices / skill authoring best practices) and the official plugins.
 
 ### 1. Write the README
 
-**Write `<plugin>/README.md` with `usability.md` and `readme.md` open, and have the user agree to it
-before anything else is made.**
+**Write `<plugin>/README.md` with `readme.md` open, and have the user agree to it before anything
+else is made.**
 
 - Rationale: everything after is built to what the README promises the user; built first, it would
   stand on a measure no one has settled.
@@ -42,7 +42,7 @@ before anything else is made.**
 ### 2. Write the architecture
 
 **Write `dev/<plugin>/architecture.md` on [how a plugin works](../../dev/architecture.md), with
-`usability.md` and `architecture.md` open, and have the user agree to it.**
+`architecture.md` open, and have the user agree to it.**
 Beside it, put `dev/<plugin>/README.md`, which links the architecture and says how to run the tests
 and trials once they exist; `dev/README.md` lists each plugin's folder and links these rules, and
 the root `README.md` leads users to each plugin's README and builders to `dev/`. Put no README

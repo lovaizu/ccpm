@@ -521,6 +521,9 @@
   },
   {
    "fact": "2026-10-24: T23's acceptance at the remade prompts (dev/turn/trials/readme/results.json, r10-r12, s10-s12): every run returned, each stopped run went on from its move; the calling AI judged 5 items unmet in six runs (r7-s9: 4), all whole-work judgments the first user and the orchestrator passed: repetition (usability B-7), a contradiction between the opening and a later line (B-21), and a pointer to a commit history no reader can follow (readme B-6); every example ran byte for byte; orchestrator hook stops 5 (r7-s9: 23); 22-37 min, $5.9-7.4; validate --strict passes; T23 done"
+  },
+  {
+   "fact": "2026-10-24: the code, readme, architecture, ux and plan checklists remade from checklist.md and usability.md as prompt.md was, each the one checklist of its kind, every old item kept as an item or a sign or left out with its reason (plan's old B-4, a match with the decisions, left to the plan sign-off as checklist.md B-4 asks): code 23 items to 9, readme 11 to 9 (with usability's 14 taken in; 379 lines read before to 219), architecture 14 to 9, ux 7 to 7, plan 13 to 8; readme's B-4, B-5, B-7 and B-8 ask what T23's whole-work misses needed; plugin.md's steps 1 and 2 and turn's readme trial now open the kind's checklist alone"
   }
  ],
  "semantic_gist": [
@@ -625,7 +628,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: the code, readme, architecture, ux and plan checklists remade, each from checklist.md and usability.md from its purpose as prompt.md was, one checklist per kind; the whole-work items T23 found passed loosely (repetition, contradiction, a pointer no reader can follow) judged there from the reader's purpose, not patched into turn's prompts; then rn (T3-T15). Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: put the two open points on agreed documents (lane README's Lanes, rn UX's opening) to the user one at a time; then rn (T3-T15), rn.py's checklists passing a kind's one checklist and fix.md. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -646,6 +649,12 @@
   },
   {
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
+  },
+  {
+   "open": "lane/README.md's `## Lanes` is outside readme.md F-1's template, and by B-7 fuller use goes to a page Documentation reaches; the README is agreed with the user, so whether to move the table is theirs"
+  },
+  {
+   "open": "dev/rn/ux.md opens 'The experience rn must give its user', saying what the document is (ux.md B-1's sign); the UX is agreed with the user, to settle with rn's remake"
   }
  ],
  "retrieved_artifacts": [
