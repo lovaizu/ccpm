@@ -172,3 +172,12 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   commit` and `git --git-dir .git commit` are stopped; a command hidden in another, as `bash -c`,
   `sudo` or `/usr/bin/git`, is left through, as lane holds the forms an AI writes
   (dev/lane/architecture.md:88-92).
+- R54 (the language lane, the user's A): lane's `reply_in`, held on Stop from its
+  `last_assistant_message`, its sentence in the skill's step whose script first prints the
+  language, holding from there to the conversation's end, so a lane stays a sentence of a step;
+  the language given for each run, from the JSON a script of the plugin printed in the
+  conversation's own record, so the lane acts only once the skill has run and lay.py refuses one
+  with nothing given for each run; judged by script as rn 0.9.0, two languages of one script left
+  unchecked; told once, let end where `stop_hook_active`; without Python the Stop hook lets the
+  reply end silently, as Stop fires on every reply of every conversation; `rn.py session` and
+  `start` print `conversation-language`, each of rn's skills laid with it.

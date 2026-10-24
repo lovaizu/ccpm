@@ -1,17 +1,19 @@
 # lane UX
 
-lane lets a plugin's subagents notice when they drift from the steps the building AI set, and tells
-them the right way, with lanes. Build and change every part of lane so that the building AI gets
-what this UX says, and judge each change by its key result.
+lane lets a plugin's subagents, and the conversation its skill runs in, notice when they drift from
+the steps the building AI set, and tells them the right way, with lanes. Build and change every part
+of lane so that the building AI gets what this UX says, and judge each change by its key result.
 
-A lane is laid on one step of a subagent, one line of its Steps. It is a sentence of that step with
-a hook that notices when the subagent drifts from it and tells it the sentence again.
+A lane is laid on one step of a subagent, one line of its Steps, or, for reply_in, which holds the
+reply to the person's language, on one step of a skill. It is a sentence of that step with a hook
+that notices when the AI drifts from it and tells it the sentence again.
 
 ## Users and goals
 
 - G1: The building AI, an AI building a Claude Code plugin whose work an AI does in several steps,
-  wants each subagent of that plugin, on every run, to notice when it drifts from one of its steps
-  and be told the right way, without writing the checks.
+  wants each subagent of that plugin, and the conversation its skill runs in, on every run, to
+  notice when it drifts from one of its steps and be told the right way, without writing the
+  checks.
 
   The building AI, the main conversation or a step of another plugin, calls lane by starting
   `lane:up`, lane's agent, answers its points and approves its proposal itself; no person takes
@@ -27,8 +29,8 @@ use, on the same plugins, with no target value.
 
   Each of these counts as one defect:
 
-  - a hook lets through a call that drifts from its sentence, in a form its step names, or stops a
-    call the sentence allows;
+  - a hook lets through a call or a reply that drifts from its sentence, in a form its step names,
+    or stops a call or keeps going a reply the sentence allows;
   - something lane writes into the plugin must be changed or worked around by the building AI: a
     step, a setting such as an entry in the plugin's hooks file, or the copy of lane's code it puts
     there.
@@ -38,8 +40,8 @@ use, on the same plugins, with no target value.
 
 ## Scenes
 
-The building AI, `lane:up` and a subagent of the building AI's plugin take part; the subagent is
-one with lanes laid in it.
+The building AI, `lane:up`, a subagent of the building AI's plugin and the conversation its skill
+runs in take part; the subagent is one with lanes laid in it.
 
 ### From starting lane:up to a run that drifts
 
@@ -96,10 +98,26 @@ sequenceDiagram
 ```
 
 - The sentence the hook tells is prefixed by the plugin's name.
-- A hook acts only in the subagent its lane is laid in; what must hold whatever the AI does, such as
-  a merge, is held by GitHub's branch protection or Claude Code's permission rules, not by lane.
+- A hook acts only where its lane is laid, in its subagent or, for reply_in, in the conversation
+  the plugin's skill runs in; what must hold whatever the AI does, such as a merge, is held by
+  GitHub's branch protection or Claude Code's permission rules, not by lane.
 - On a machine without Python 3.9 or later, the hooks stop the calls they watch, each asking for
-  Python to be installed.
+  Python to be installed, and let each reply of the conversation end unchecked.
+
+### A reply in another language
+
+```mermaid
+sequenceDiagram
+  participant C as conversation<br/>#lt;AI, running the plugin's skill#gt;
+  participant H as hook<br/>#lt;lane's#gt;
+  C->>H: a reply in another language than the one the skill's script printed
+  H-->>C: kept going, and reply_in's sentence told again with the language
+  C->>H: the reply in that language
+  H-->>C: let end
+```
+
+- reply_in acts from the step whose script printed the language to the conversation's end; told
+  once, the next reply ends.
 
 ## Benefits
 
