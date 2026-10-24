@@ -1,6 +1,7 @@
 #!/bin/sh
 # Mutation testing of each plugin that has dev/<plugin>/cosmic-ray.toml, run from the top of the
-# repository with the tools of dev/requirements.txt and dev/requirements-test-quality.txt; fails on any mutant no test catches.
+# repository with the tools of pyproject.toml's dev and test-quality groups; fails on any mutant no
+# test catches.
 # cr-rate is not used for that: it takes a limit of 0 as no limit.
 # Given plugin names, such as `sh dev/mutate.sh rn`, it tests those alone, as while one plugin is
 # changed; CI gives none and tests every plugin. Given `--since <commit>` first, it tests only the
@@ -33,8 +34,12 @@ for s in found:
 print(" ".join(str(s.getsockname()[1]) for s in found))
 EOF
 )
+# The virtual environment uv makes in .venv is left out of the copies: the workers run the tools
+# from where it is, and the files Python writes in it while the first workers start would be copied
+# half made.
 for port in $ports; do
-  cp -R . "$copy/worker-$port"
+  mkdir "$copy/worker-$port"
+  tar -cf - --exclude=./.venv . | tar -xf - -C "$copy/worker-$port"
   (cd "$copy/worker-$port" && exec cosmic-ray http-worker --port "$port") >/dev/null 2>&1 &
   pids="$pids $!"
 done

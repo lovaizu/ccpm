@@ -1,6 +1,6 @@
 #!/bin/sh
 # The property tests, `dev/<plugin>/tests/properties*.py`, run from the top of the repository with
-# the tools of dev/requirements.txt and dev/requirements-test-quality.txt: many inputs each in CI
+# the tools of pyproject.toml's dev and test-quality groups: many inputs each in CI
 # and few elsewhere. They check that the unit tests, which dev/check.sh runs, are enough, so
 # they are run apart from them. Given plugin names, such as `sh dev/properties.sh rn`, those
 # plugins' alone; given none, every plugin's.

@@ -629,6 +629,9 @@
   },
   {
    "fact": "2026-10-24: T29 ticked, its done-when read against the trials' proposals; T4 made: rn.py answer reads Claude Code's records for the user's /rn:ty or /rn:gm typed since the proposal (R61), tests first, check.sh rn 100%; T5 and T6 found held and ticked; /rn:up step 4 keeps every shortfall before asking, the slip seen twice; all 25 move cases passed again (23 min, $10), the answer taken from the real records of claude -p"
+  },
+  {
+   "fact": "2026-10-24: T25 made: root pyproject.toml (dev and test-quality groups, test-quality on Python >=3.11, uv >=0.13.5, package = false) and uv.lock, each tool at the newest that runs on each Python (coverage 7.10.7 on 3.9, 7.17.0 on 3.11+); CI on checkout v7.0.1, setup-python v7.1.0, setup-uv v10.3.2, setup-node v7.1.0 with Node 24, uv sync --locked and uv run --no-sync; pre-push needs uv only; Claude Code 2.1.310; dev/requirements* removed; dev/mutate.sh copies the tree without .venv, as cp -R took half-written .pyc; check.sh passed on 3.9 and 3.14 at 100%, properties.sh with CI=true, mutate.sh every plugin 0 survivors (6m44s)"
   }
  ],
  "semantic_gist": [
@@ -695,7 +698,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T25: the checks' tools by uv sync --locked from a root pyproject.toml and uv.lock"
+   "task": "T9-T13: rn's acceptance, tried as its user from start to end on lovaizu/playground"
   }
  ],
  "relational_map": [
@@ -713,7 +716,7 @@
    "rules": ".claude/rules/dev.md, which points to dev/architecture.md"
   },
   {
-   "environment": "on this Linux sandbox: uv venv -p /usr/bin/python3 in the session's scratchpad (venv/), uv pip install -r dev/requirements.txt -r dev/requirements-test-quality.txt (until T25 changes it), its bin first on PATH; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here; trial records left in ~/.claude/projects/<scratchpad path>-* are removed by literal path after each run"
+   "environment": "on this Linux sandbox: uv 0.13.5 from `uv tool install`, ~/.local/bin first on PATH; `uv sync --locked --group test-quality -p 3.14` makes .venv and `uv run --no-sync` runs the checks in it; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here; trial records left in ~/.claude/projects/<scratchpad path>-* are removed by literal path after each run"
   },
   {
    "watch": "watch a turn run without telling the user of each step: report only its end, a stop or a question (the user, 2026-10-21: the step-by-step notices were noise)"
@@ -725,7 +728,7 @@
    "measure": "read how long each check and run takes, and fix a slow one at its cause before going on, as the user asked"
   },
   {
-   "push": "every push runs dev/githooks/pre-push, which needs the venv bin first on PATH"
+   "push": "every push runs dev/githooks/pre-push, which needs uv on PATH"
   },
   {
    "trials": "rn's trials run claude -p with bypassPermissions in the Docker sandbox, as turn's do (dev/turn/trials/shared.py:84-85), the user decided (2026-10-20)"
@@ -733,7 +736,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T25 first, as decided (the order is mine): read T25 in the steering, look for uv's current practice for dependency groups and CI (astral-sh/setup-uv), make pyproject.toml and uv.lock, switch CI, dev/githooks/pre-push, dev/README.md and the constraints' venv line, remove dev/requirements*.in/.txt, run check.sh, properties.sh and mutate.sh as CI would; then T9-T13, rn's acceptance tried as its user from start to end on lovaizu/playground"
+   "next": "read CI's whole result for the T25 push; then T9-T13, rn's acceptance tried as its user from start to end on lovaizu/playground"
   }
  ],
  "uncertainty_signal": [

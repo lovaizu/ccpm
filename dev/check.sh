@@ -1,6 +1,6 @@
 #!/bin/sh
 # The checks CI runs on every push, beside the property tests and the mutation testing, run from the
-# top of the repository with the tools of dev/requirements.txt. Given plugin names, such as
+# top of the repository with the tools of pyproject.toml's dev group. Given plugin names, such as
 # `sh dev/check.sh rn`, the type check, the tests and the manifests are those plugins' alone, as
 # before a push that changes them; CI gives none and checks every plugin.
 set -e
@@ -19,7 +19,7 @@ ruff format --check .
 # Code copied between files is fixed in one and left wrong in the other, so code more than one file
 # needs is kept once (dev/architecture.md, Code); every file is read at once, whichever plugins are
 # given, as a copy can lie in any two. A link is the file it points to, so is left out. pylint is in
-# dev/requirements-test-quality.txt, as it needs a newer Python than 3.9 only to check, not to run.
+# pyproject.toml's test-quality group, as it needs a newer Python than 3.9 only to check, not to run.
 if command -v pylint >/dev/null 2>&1; then
   git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo "$file"; done \
     | xargs pylint --disable=all --enable=duplicate-code --score=no

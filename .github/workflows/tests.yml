@@ -21,7 +21,7 @@ jobs:
       check: ${{ steps.changed.outputs.check }}
       plugins: ${{ steps.changed.outputs.plugins }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - id: changed
@@ -68,23 +68,25 @@ jobs:
         python: ["3.9", "3.x"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python }}
-      - run: pip install --require-hashes -r dev/requirements.txt
-      - if: matrix.python == '3.x'
-        run: pip install --require-hashes -r dev/requirements-test-quality.txt
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - env:
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: uv sync --locked ${{ matrix.python == '3.x' && '--group test-quality' || '' }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22"
+          node-version: "24"
       # Claude Code is installed from its lock, scripts off but its own, which only links its binary.
       - working-directory: dev
         run: |
           npm ci --ignore-scripts
           node node_modules/@anthropic-ai/claude-code/install.cjs
           echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
-      - run: sh dev/check.sh
+      - run: uv run --no-sync sh dev/check.sh
 
   test-quality:
     needs: changed
@@ -95,18 +97,22 @@ jobs:
         include: ${{ fromJSON(needs.changed.outputs.plugins) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.x"
-      - run: pip install --require-hashes -r dev/requirements.txt -r dev/requirements-test-quality.txt
-      - run: sh dev/properties.sh ${{ matrix.plugin }}
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - env:
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: uv sync --locked --group test-quality
+      - run: uv run --no-sync sh dev/properties.sh ${{ matrix.plugin }}
       - if: hashFiles(format('dev/{0}/cosmic-ray.toml', matrix.plugin)) != ''
         env:
           SINCE: ${{ matrix.since }}
-        run: sh dev/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
+        run: uv run --no-sync sh dev/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
 
   # What main requires: every job passed, or the checks skipped as above.
   tests:

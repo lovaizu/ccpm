@@ -2,12 +2,12 @@
 # Before a push, the checks of what the push changes, on the commits pushed: `sh dev/check.sh`, the
 # property tests on few inputs and the mutation testing of the lines changed, for each plugin
 # `sh dev/changed.sh` names; CI checks again. Turned on in a clone by
-# `git config core.hooksPath dev/githooks`, with the tools of dev/requirements.txt and
-# dev/requirements-test-quality.txt first on PATH.
+# `git config core.hooksPath dev/githooks`, with uv on PATH, which sets up the check tools in the
+# commits pushed from their uv.lock.
 set -e
 
-if ! command -v cosmic-ray >/dev/null 2>&1; then
-  echo "pre-push: the check tools are not on PATH; make the virtual environment dev/README.md names and put its bin first" >&2
+if ! command -v uv >/dev/null 2>&1; then
+  echo "pre-push: uv is not on PATH; install it as dev/README.md says" >&2
   exit 1
 fi
 zero=0000000000000000000000000000000000000000
@@ -27,7 +27,11 @@ while read -r _ local _ remote; do
   git worktree add -q --detach "$copy" "$local"
   # git gives a hook the repository it runs for, such as GIT_DIR, which the git repositories the
   # tests make would take as theirs.
-  (cd "$copy" && unset $(git rev-parse --local-env-vars) && sh dev/check.sh $plugins && sh dev/properties.sh $plugins && sh dev/mutate.sh --since "$base" $plugins)
+  (cd "$copy" && unset $(git rev-parse --local-env-vars) \
+    && uv sync --locked --group test-quality --quiet \
+    && uv run --no-sync sh dev/check.sh $plugins \
+    && uv run --no-sync sh dev/properties.sh $plugins \
+    && uv run --no-sync sh dev/mutate.sh --since "$base" $plugins)
   git worktree remove --force "$copy"
   # Removed, so the cleanup on exit, which stops the push where it fails, has nothing left to do.
   trap - EXIT

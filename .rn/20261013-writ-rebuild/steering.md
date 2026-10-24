@@ -122,7 +122,7 @@ scripts find a kind's checklists and each lesson goes into one.
 
 The checks' tools kept as is now done in Python, after lane's code is brought to its architecture.
 
-- [ ] T25: Whoever builds ccpm sets up the checks' tools with `uv sync --locked` from the root
+- [x] T25: Whoever builds ccpm sets up the checks' tools with `uv sync --locked` from the root
   `pyproject.toml`'s dependency groups and the committed `uv.lock`, CI and `dev/githooks/pre-push`
   using the same, and `dev/requirements*.in` and `.txt` gone; as the user chose (2026-10-23), since
   that is the form Python projects now take and pip-tools' home, Jazzband, is winding down. CI's
