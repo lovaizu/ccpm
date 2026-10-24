@@ -1055,15 +1055,18 @@ class StateTest(RepoTest):
         )
 
     def test_a_move_the_steering_cannot_hold_stops_and_keeps_nothing(self):
-        # Given: a session kept.
-        # When: the orchestrator keeps Next holding a heading.
-        out = self.stopped("state", "--next", "## Notes", "--message", "m")
-        # Then: rn names the point and keeps nothing.
-        said = (
-            "rn: the steering would be out of the form of rn's plan checklist's F-1: line 34:"
-            " expected only the headings"
-        )
-        self.assertEqual((said in out, self.read(STEERING)), (True, STEERED))
+        # A heading with its text, and one of its marks alone, which a property test found.
+        for heading in ("## Notes", "#"):
+            with self.subTest(heading=heading):
+                # Given: a session kept.
+                # When: the orchestrator keeps Next holding a heading.
+                out = self.stopped("state", "--next", heading, "--message", "m")
+                # Then: rn names the point and keeps nothing.
+                said = (
+                    "rn: the steering would be out of the form of rn's plan checklist's F-1:"
+                    " line 34: expected only the headings"
+                )
+                self.assertEqual((said in out, self.read(STEERING)), (True, STEERED))
 
     def test_an_empty_value_stops(self):
         for argv, words in (

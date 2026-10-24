@@ -14,7 +14,7 @@ except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
 from helpers import testing
-from test_rn import STEERED, LearningTest, RepoTest, plan, rn, said, steering
+from test_rn import STEERED, LearningTest, RepoTest, plan, rn, said, steering, template
 
 testing.load_hypothesis_profile()
 ALLOWED = "abcdefghijklmnopqrstuvwxyz0123456789-"
@@ -28,6 +28,8 @@ WORDS = st.text(
     ),
     min_size=1,
 ).filter(lambda t: t.strip() == t and t)
+# Any of those but a Markdown heading, which Next cannot hold, as an example test has it.
+SENTENCES = WORDS.filter(lambda t: not template.HEADING.fullmatch(t))
 IDS = st.dictionaries(st.sampled_from(["G1", "AC1", "AC2", "AC3"]), st.text(max_size=3))
 
 
@@ -103,9 +105,9 @@ class PropertyTest(RepoTest):
         want = {"G1": goal, **{f"AC{n}": c for n, c in enumerate(criteria, 1)}}
         self.assertEqual((held, rn.decided(text.splitlines(), ("", rn.CRITERIA))), ("", want))
 
-    @hypothesis.given(WORDS, st.lists(WORDS, max_size=4))
+    @hypothesis.given(SENTENCES, st.lists(WORDS, max_size=4))
     def test_the_steering_rn_writes_holds_its_form_and_reads_back(self, next_step, opened):
-        # Given: any Next and any points open, each a text a line can hold.
+        # Given: any Next a line can hold but a heading, and any points open a line can hold.
         # When: rn writes the steering with them, and reads it back.
         open_lines = [f"- {o}" for o in dict.fromkeys(opened)] or ["None."]
         written = rn.render(rn.parsed(STEERED)._replace(next=next_step, open=open_lines))
