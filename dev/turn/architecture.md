@@ -154,12 +154,11 @@ turn/                      the plugin, installed by Claude Code
 └── <result>.run.json      the state <JSON>, read and written by the flow alone
 ```
 
-- turn runs on Claude Code, python3 3.9 or later, and git; each step of an agent that alone is not
-  sure to hold is a lane laid with [lane](../../lane/README.md).
+- turn runs on Claude Code, python3 3.9 or later, and git.
 - The calling AI starts `turn:up` in the background with the call as JSON, from the main
   conversation or from an agent it started, and stops a run with TaskStop; turn's agents take the
-  two layers below it, and Claude Code starts agents down to three layers below the main
-  conversation.
+  two layers below it, within the three
+  [a plugin that uses another](../architecture.md#a-plugin-that-uses-another) has.
 
   The calling AI can still take the user's pause while it waits; the user sees the run's agents in
   the panel below the prompt input. Each run's state is beside its own result, so several runs go at

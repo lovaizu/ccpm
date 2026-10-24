@@ -139,11 +139,12 @@ ${CLAUDE_PLUGIN_DATA}/
 - The proposal is kept in lane's data folder, which Claude Code keeps for the plugin's own files
   across its updates (plugins-reference, Environment variables).
 - lane's code goes into `<plugin>/hooks/lane/`: in a plugin of the ccpm marketplace a relative link
-  to lane's, which installing copies into the plugin; anywhere else a copy holding a `VERSION` file,
-  read from lane's `plugin.json`, by which the next run of `lane:up` tells an older copy.
+  to lane's, as [Code kept once](../architecture.md#code-kept-once) has it; anywhere else a copy
+  holding a `VERSION` file, read from lane's `plugin.json`, by which the next run of `lane:up` tells
+  an older copy.
 
-  lane's version is written once, in its `plugin.json`; a file of its own beside it would be a
-  second copy that drifts.
+  The version stays in one place, as [The version](../architecture.md#the-version) has it, and the
+  copy's `VERSION` is written from it.
 - A lane's hook is one entry of the plugin's `hooks/hooks.json` for one subagent and event, whose
   command gives the guard the subagent and, for each lane, its step, the lane and what it takes; the
   guard acts only where the event's `agent_type` is that subagent.
