@@ -557,6 +557,9 @@
   },
   {
    "fact": "2026-10-24: rn's flow trial 1 stopped at the README, 60 messages, 21 min, about $7 (flow.py summed each resume's whole-conversation cost into $283): the course ran in order from the start through the plan sign-off, the feedback, the plan made again, the approval, the lessons and the document points; it failed on the trial's own make: the stand-in user read rn's words in English while rn spoke Japanese, so it missed the feedback kept and answered yes 40 times to a stopped session; the stand-in turn wrote over README.md and gave every Good at line 1, which the conductor rightly sent back. Fixed: the stand-in user answers by the moves kept (trailers, the pull request ready) and ends a stuck run; the stand-in is turn's generator alone, claiming each Good at its lines in turn's claim form checked by forms.py, a file there changed only where its decisions say. rn's slips fixed by hand: a decisions entry never says how it was reached (plan checklist B-6 said the decisions keep it, now their commit messages), and a user's word read wider or narrower is a point of its own"
+  },
+  {
+   "fact": "2026-10-24, agreed with the user: (1) languages go in a section of the common dev/architecture.md beside 'Where the orchestrator runs': a plugin a person calls proposes the conversation and artifact languages first, from what the repository and the user's instructions set, else the user's for talk and English for artifacts, and records the answer; what goes into the repository is in the artifact language; what is shown to the person is put into the conversation language, adding nothing and leaving nothing out; a plugin an AI calls writes and tells in the artifact language and the caller that talks with the person puts it into theirs; dev/rn/architecture.md says only where rn records them (the plan's front matter) and points there; dev/rn/ux.md and rn/skills/up/SKILL.md steps 2 and 9 take the first point on languages and the proposal shown translated, as rn 0.9.0 did (0.9.0 rn/docs/design.md:156-158, rn/references/conduct.md:256). (2) A language check as a command hook in lane, judging the last reply by script as 0.9.0's rn/hooks/checks/conversation_language.py did; pairs of one script (English and French) left unchecked, said in the common section. (3) lane's architecture gains its own Principle 3, as agreed: 'Each lane is general and reusable: it holds one kind of check, the same in every plugin it is laid in, and takes what differs from plugin to plugin from what its hook gives it.'; lane's code is read against it and fixed first, before rn's trial 2: lane/hooks/lane/shell.py:43 STEPS and :209 turn.py are turn's own, to be given from turn's hooks.json; hands_off lets `git -c a=b commit` and `env git commit` through (lanes/hands_off.py:402), a form the AI writes (dev/lane/architecture.md:88-92). The narrow command lists and subagents-only are by lane's design (dev/lane/architecture.md:74-78, 88-92), not faults"
   }
  ],
  "semantic_gist": [
@@ -661,7 +664,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T29: the user's answer on the proposal's language, then run rn's flow trial 2 in the background (python3 dev/rn/trials/flow/flow.py <scratchpad>/trial-2, the venv bin first on PATH) and judge it against trials.decisions.md's What passes"
+   "next": "lane first: add Principle 3 to dev/lane/architecture.md as agreed, read lane/hooks/lane/ whole against it with rn/checklists/product/code.md open, fix shell.py's turn-only STEPS by an argument from turn's hooks.json and hands_off's git options, check.sh lane turn rn 100% and mutate 0; then ask the user the Stop-versus-subagents point; then the languages section in dev/architecture.md, rn's architecture, ux and up SKILL; then rn's flow trial 2 in the background. User's rules: positive phrasing, one decision per message, Japanese"
   }
  ],
  "uncertainty_signal": [
@@ -693,7 +696,10 @@
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
   },
   {
-   "open": "a proposal is printed in the artifact language, as it is the sign-off's commit message, while the skill says everything to the user is in the conversation language: put to the user"
+   "open": "the language check watches the main conversation's end (Stop), but lane lays lanes on subagents alone (dev/lane/architecture.md:74-78): put to the user after Principle 3 is in"
+  },
+  {
+   "open": "whether to bring back 0.9.0's steering sections `# Assumptions` and `# Rules` (0.9.0 rn/references/steering.md): put to the user later, one point"
   }
  ],
  "retrieved_artifacts": [
