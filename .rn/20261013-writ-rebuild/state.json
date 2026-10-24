@@ -551,6 +551,9 @@
   },
   {
    "fact": "2026-10-24: rn's three skills remade by a subagent to prompts.decisions.md and prompt.md (up 296 lines, ty 70, gm 64), read by hand against turn's up.md moves ({\"questions\"}, {\"returned\"}, `turn:` lines) and rn.py; two script gaps its trace found fixed by the scripts' subagent: the finishing move kept (status read at HEAD), turn's lessons of every result version in `rn.py lessons`; check.sh rn 100% (196 tests), mutate.sh rn 0 of 622; CHANGELOG's Unreleased written anew from 0.9.0"
+  },
+  {
+   "fact": "2026-10-24: rn's flow trial built by a subagent (dev/rn/trials/flow/: flow.py, the stand-in up.md on haiku and stand.py; lane's trying.claude takes resume), its stand-in script tried by hand on rn.py's real CCS and proposals; issues kept in issues.txt by a gh shim, as no trial opens one where people work; a reply with no option `a.` answered yes, fixed by hand"
   }
  ],
  "semantic_gist": [
@@ -655,7 +658,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: design the conductor's flow trial in dev/rn/trials/ from the architecture's Verification (smallest request: one point, one criterion, one document, one task; turn stood in by an agent giving set results; the user by set answers), trace it on paper, run it once small, read the records against each move; then T29 done in steering. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: the flow trial runs in the background (pgrep -f flow.py; its folder in the scratchpad, trial-1); when it ends, read what it printed and the JSONL against trials.decisions.md's What passes, fix at the cause in the skills or scripts, then T29 done in steering. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [

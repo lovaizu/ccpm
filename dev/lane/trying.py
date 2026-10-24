@@ -16,12 +16,15 @@ def claude(
     wait: int = 0,
     record: str | None = None,
     env: dict[str, str] | None = None,
+    resume: str | None = None,
 ) -> dict:
     """Runs Claude Code on prompt with the copies of plugins in place of the installed ones, as
     their user runs it, and gives what it printed last; wait is the minutes it waits for an agent
     started in the background, which it stops waiting for after 10 by default. Given record, it
     writes there each line Claude Code printed, kept before a failed run stops the trial; env is
-    set over the environment Claude Code runs in."""
+    set over the environment Claude Code runs in. Given resume, a session ID, the prompt goes on
+    that conversation, as the user types it where they read the reply before; without it, in a
+    fresh one."""
     run_env = {**os.environ, **(env or {})}
     if wait:
         run_env["CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"] = str(wait * 60 * 1000)
@@ -30,6 +33,8 @@ def claude(
         with open(os.path.join(plugin, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
             names.append(json.load(f)["name"])
     command = ["claude", "-p", prompt, "--output-format", "stream-json", "--verbose"]
+    if resume:
+        command += ["--resume", resume]
     for plugin in plugins:
         command += ["--plugin-dir", plugin]
     # The copy stands in for the installed plugin, which would otherwise run beside it.
