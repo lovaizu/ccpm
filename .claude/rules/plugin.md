@@ -86,22 +86,27 @@ a. **Write its tests in `dev/<plugin>/tests/` with `unittest` and `code.md` open
 
 b. **Write the code with `code.md` open until the tests pass.** What runs on users' machines is
    Python 3, 3.9 or later, with the standard library only, and the README says so; a script that
-   only calls an existing tool may be sh. CI counts the lines and branches on every push and fails
-   on any not run; it breaks the code with Cosmic Ray and fails on any break no test catches, and
-   runs property tests with Hypothesis, on new inputs each time. Each check runs on Python 3.9 and
-   the newest, Cosmic Ray and Hypothesis on the newest alone. Before each push,
-   `dev/githooks/pre-push` runs the checks on what the push changes: the tests of each plugin it
-   changes, the property tests on few inputs, and the mutants on the lines it changes; and stops the
-   push on a failure. CI runs them whole: every plugin's tests, the property tests on many inputs,
-   and every mutant, each plugin's in a job of its own, all at once. CI's `tests` job runs on every
-   push and skips the checks on a push that changes only what no check reads, such as the session
-   records and the decisions, where the commit before it passed.
+   only calls an existing tool may be sh. CI runs every plugin's example tests on every push,
+   counts the lines and branches they run, and fails on any not run. The property tests, with
+   Hypothesis on new inputs each time, and the mutation testing, which breaks the code with Cosmic
+   Ray and fails on any break no example test catches, check that the example tests are enough: CI
+   runs them on what the push changed, the property tests on many inputs, each plugin's in a job of
+   its own, all at once, and whole for a plugin whose version the push changes, before it is
+   released. Each input a property test fails on is added as an example test. Each check runs on
+   Python 3.9 and the newest, Cosmic Ray and Hypothesis on the newest alone. Before each push,
+   `dev/githooks/pre-push` runs the checks on what the push changes: the example tests of each
+   plugin it changes, the property tests on few inputs, and the mutants on the lines it changes;
+   and stops the push on a failure. CI's `tests` job runs on every push and skips the checks on a
+   push that changes only what no check reads, such as the session records and the decisions,
+   where the commit before it passed.
    - Rationale: python3 is wherever git is while Node.js may not be; a skipped check goes unnoticed;
-     users run 3.9, and the two tools need newer versions only to test, not to run; a check left to
-     be run by hand is forgotten and found only by CI after the push, and checking what a change
-     touches takes seconds to a minute where checking the whole takes long, which CI does on every
-     push anyway; `main` takes a pull request only when `tests` has passed, so it always runs, and
-     passes on only what was checked.
+     users run 3.9, and the two tools need newer versions only to test, not to run; the example
+     tests hold each behavior the code must have, and a gap the other two find is an example test
+     missing, kept so that every push catches it again; a check left to be run by hand is
+     forgotten and found only by CI after the push, and checking what a change touches takes
+     seconds to a minute where checking the whole takes long, so the whole is checked when it
+     reaches users; `main` takes a pull request only when `tests` has passed, so it always runs,
+     and passes on only what was checked.
 
    **Look first for what the plugins already share and use it.** Code more than one plugin needs,
    such as how a hook reads a command, is kept once in the plugin whose job it is, with its tests

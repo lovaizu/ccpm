@@ -1,8 +1,8 @@
 #!/bin/sh
-# Every check CI runs on a push, run from the top of the repository with the tools of
-# dev/requirements.txt. Given plugin names, such as `sh dev/check.sh rn`, the type check, the tests
-# and the manifests are those plugins' alone, as before a push that changes them; CI gives none and
-# checks every plugin.
+# The checks CI runs on every push, beside the property tests and the mutation testing, run from the
+# top of the repository with the tools of dev/requirements.txt. Given plugin names, such as
+# `sh dev/check.sh rn`, the type check, the tests and the manifests are those plugins' alone, as
+# before a push that changes them; CI gives none and checks every plugin.
 set -e
 
 plugins="$*"
@@ -37,6 +37,8 @@ for plugin in $plugins; do
   pyrefly check $(printf -- '--search-path %s ' $paths) $files
 done
 
+# The example tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
+# tests, whose inputs change from run to run, are run apart by dev/properties.sh.
 for plugin in $plugins; do
   coverage run --source="$plugin" -m unittest discover -s "dev/$plugin/tests"
 done

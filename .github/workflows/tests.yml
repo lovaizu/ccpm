@@ -8,12 +8,13 @@ permissions:
   checks: read
 
 jobs:
-  # A push that changes only the session records, the decisions, the rules for the assistant and the
-  # root's README or licence changes nothing the checks check, so where the commit before it passed,
-  # the checks are skipped and `tests` still passes, as main takes a pull request only when `tests`
-  # has passed. A first push of a branch, one whose earlier commit is gone, or one after a commit not
-  # passed, is checked whole, so a failure is never passed on. Each plugin with a
-  # dev/<plugin>/cosmic-ray.toml is mutation-tested in a job of its own, all at once.
+  # The example tests of every plugin run on each push, and the property tests and the mutation
+  # testing, which check that the example tests are enough, on what changed since the commit before
+  # it where that passed, else since the branch left main, for each plugin `sh dev/changed.sh`
+  # names, each in a job of its own, all at once; whole on main after a commit not passed, and for a
+  # plugin whose version the push changes, as before a release. A push that changes only what no
+  # check reads, such as the session records and the decisions, is not checked, and `tests` still
+  # passes, as main takes a pull request only when `tests` has passed.
   changed:
     runs-on: ubuntu-latest
     outputs:
@@ -31,15 +32,32 @@ jobs:
           passed=$(gh api "repos/$GITHUB_REPOSITORY/commits/$BEFORE/check-runs" \
             --jq '[.check_runs[] | select(.name == "tests") | select(.conclusion == "success")] | length' \
             2>/dev/null || echo 0)
-          if [ "$passed" -gt 0 ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null \
-            && ! git diff --name-only "$BEFORE" HEAD \
-              | grep -qvE '^(\.rn/|\.claude/rules/|README\.md$|LICENSE$)'; then
-            echo "check=false" >> "$GITHUB_OUTPUT"
+          if [ "$passed" -gt 0 ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base=$BEFORE
+          elif [ "$GITHUB_REF" != refs/heads/main ]; then
+            base=$(git merge-base HEAD origin/main)
           else
-            echo "check=true" >> "$GITHUB_OUTPUT"
+            base=""
           fi
-          plugins=$(ls dev/*/cosmic-ray.toml | cut -d/ -f2 | jq -Rnc '[inputs]')
-          echo "plugins=$plugins" >> "$GITHUB_OUTPUT"
+          if [ -n "$base" ]; then
+            plugins=$(sh dev/changed.sh "$base" HEAD)
+          else
+            plugins=$(ls -d dev/*/tests | cut -d/ -f2)
+          fi
+          matrix=$(for plugin in $plugins; do
+            since=$base
+            if [ -n "$base" ] && git diff "$base" HEAD -- "$plugin/.claude-plugin/plugin.json" \
+              | grep -qE '^[-+][[:space:]]*"version"'; then
+              since=""
+            fi
+            jq -nc --arg plugin "$plugin" --arg since "$since" '{plugin: $plugin, since: $since}'
+          done | jq -sc .)
+          echo "plugins=$matrix" >> "$GITHUB_OUTPUT"
+          if [ -n "$plugins" ]; then
+            echo "check=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "check=false" >> "$GITHUB_OUTPUT"
+          fi
 
   # Users run 3.9; Cosmic Ray and Hypothesis need a newer Python only to test, not to run.
   check:
@@ -68,25 +86,31 @@ jobs:
           echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
       - run: sh dev/check.sh
 
-  mutation:
+  test-quality:
     needs: changed
     if: needs.changed.outputs.check == 'true'
     strategy:
       fail-fast: false
       matrix:
-        plugin: ${{ fromJSON(needs.changed.outputs.plugins) }}
+        include: ${{ fromJSON(needs.changed.outputs.plugins) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.x"
       - run: pip install --require-hashes -r dev/requirements.txt -r dev/requirements-test-quality.txt
-      - run: sh dev/mutate.sh ${{ matrix.plugin }}
+      - run: sh dev/properties.sh ${{ matrix.plugin }}
+      - if: hashFiles(format('dev/{0}/cosmic-ray.toml', matrix.plugin)) != ''
+        env:
+          SINCE: ${{ matrix.since }}
+        run: sh dev/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
 
   # What main requires: every job passed, or the checks skipped as above.
   tests:
-    needs: [changed, check, mutation]
+    needs: [changed, check, test-quality]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -94,7 +118,7 @@ jobs:
           CHANGED: ${{ needs.changed.result }}
           CHECK: ${{ needs.changed.outputs.check }}
           CHECKED: ${{ needs.check.result }}
-          MUTATED: ${{ needs.mutation.result }}
+          TESTED: ${{ needs.test-quality.result }}
         run: |
           [ "$CHANGED" = success ] || exit 1
-          [ "$CHECK" = false ] || { [ "$CHECKED" = success ] && [ "$MUTATED" = success ]; }
+          [ "$CHECK" = false ] || { [ "$CHECKED" = success ] && [ "$TESTED" = success ]; }

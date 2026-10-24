@@ -584,6 +584,9 @@
   },
   {
    "fact": "2026-10-24, the user decided (TDD): mutation and property tests check that the unit tests are enough, so on each push CI runs every unit test with 100% coverage and mutation and property tests on what the push changed, the property tests on many inputs; both whole before a release; each counterexample a property test finds is added as an example test; plugin.md step 5b and CI to change"
+  },
+  {
+   "fact": "2026-10-24: the TDD decision made in plugin.md 5b, CI, pre-push and dev/README.md: the property tests apart from the example tests (dev/<plugin>/tests/properties*.py, rn's cut out of test_rn.py into properties.py), run by dev/properties.sh; dev/changed.sh names the plugins a change touches, for pre-push and CI alike; CI runs every example test with 100% coverage on each push, the property tests and mutants of each changed plugin since the commit before where it passed, else since the branch left main, whole on main after a commit not passed and for a plugin whose version the push changes; mutation and coverage counted on the example tests alone: check.sh 100% (3188 lines, 1028 branches), mutate.sh lane 0 of 2400 (174 s), turn 0 of 1197 (76 s), rn 0 of 1192 (245 s); HYPOTHESIS_PROFILE dropped from testing.py, nothing setting it now; CI's changed step dry-run on three cases: nothing changed, a first push, main after a failure"
   }
  ],
  "semantic_gist": [
@@ -688,7 +691,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "change plugin.md step 5b and CI to the user's TDD decision; then rn's skills to prompts.decisions.md (with proposal setting Next while a sign-off waits); then dev/rn/trials/flow; CHANGELOG"
+   "next": "check CI's whole result on this push; then rn's skills to prompts.decisions.md (with proposal setting Next while a sign-off waits); then dev/rn/trials/flow; CHANGELOG"
   }
  ],
  "uncertainty_signal": [
