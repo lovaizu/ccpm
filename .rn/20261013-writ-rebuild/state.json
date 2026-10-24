@@ -529,7 +529,7 @@
    "fact": "2026-10-24: judged and shown to the user, as the user said to go on without asking: lane's Lanes table moved to lane/docs/lanes.md, reached from the README's Documentation (lane:up, test_lanes and the architecture read it there); rn's UX opens with what rn gives its user"
   },
   {
-   "fact": "2026-10-24: T26 done (04f53b8). T27's subagent (rn's scripts to the architecture, with T5 and T6) finished with its changes uncommitted in the working tree: rn/scripts/rn.py, new rn/scripts/call.py and template.py, dev/rn/tests/test_rn.py and helpers.py, dev/rn/cosmic-ray.toml; its report was not read before /clear"
+   "fact": "2026-10-24: T27's subagent finished, changes uncommitted (rn/scripts/rn.py; call.py and template.py are links to turn's and lane's; dev/rn/tests; cosmic-ray.toml excludes the links); it reports check.sh rn 100% and mutate.sh rn 0 of 300 survivors. Its design: `session` prints the session and its state CCS; `start <slug> --message` makes the branch from origin/<default>, commits and pushes; `state --message` commits every change with the state replaced whole and pushes, refusing a plan out of plan.md F-1 (T5), a state not a CCS, or other changes with the state unchanged; `ccs` refuses uncommitted or unpushed changes (T6), takes decisions/<work>.decisions.md by name, names the kind's checklist, the user's addition and fix.md; `proposal plan|deliverable` made from the pushed record, kept as an empty commit `Rn-Sign-off:`; dropped: `state key=value`, `--decisions`, `--reference`, turn's items in the proposal. It decided the scripts commit and push (the old scripts.decisions 'scripts never commit' reversed), `git add -A`, the plan refused rather than kept"
   }
  ],
  "semantic_gist": [
@@ -634,7 +634,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: T27's uncommitted changes are in the working tree, unreviewed: read the diff of rn/scripts and dev/rn/tests whole against dev/rn/architecture.md and code.md (are call.py and template.py links to turn's/lane's or copies? check.sh fails on copies), run check.sh rn and mutate.sh rn, then commit; then T28 (learner, lanes by lane:up) and the conductor's skills remade (removing their words on rn's hooks). Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: read T27's uncommitted diff of rn/scripts and dev/rn/tests whole against dev/rn/architecture.md, ux.md and code.md, judging its own decisions and the open points in uncertainty_signal from the purpose (settle what the architecture and UX decide; bring to the user only what they leave to the user), run check.sh rn and mutate.sh rn, commit; then T28 (learner, lanes by lane:up) and the conductor's skills remade to the new commands. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -655,6 +655,15 @@
   },
   {
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
+  },
+  {
+   "open": "T27 left: the design sign-off's proposal not made (where the core decisions are kept is set nowhere); the deliverable proposal shows the ACs alone, '(… as before)' after /rn:gm; no bound on the proposal's lines"
+  },
+  {
+   "open": "T27 differs from the architecture's words: the states before are in each commit's state.json, not in the commit messages; the proposal commit's fixed words are English whatever the artifact language; with --reference gone, where a checklist's CCS names usability.md is unset"
+  },
+  {
+   "open": "the skills call what T27 dropped (state stage=..., ccs --decisions, start without --message, proposal <work>); to remake with the conductor"
   }
  ],
  "retrieved_artifacts": [
