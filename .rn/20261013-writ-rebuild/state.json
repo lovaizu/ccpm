@@ -575,6 +575,9 @@
   },
   {
    "fact": "2026-10-24, agreed with the user: what turn only reads, the goal and the criteria a work serves, goes as text in the CCS's goal_orientation, copied by rn.py from steering.md; what turn makes is a file, the part file or the deliverable; so turn cannot change the goal while making a task"
+  },
+  {
+   "fact": "2026-10-24: the remade record drawn whole and traced on paper against start, hearing, each stage, resume mid-run, feedback and learnings: dev/rn/architecture.md rewritten (steering and numbered calls, tasks per stage, learnings made through turn as a part of the steering, no agent or hook of rn's own), dev/rn/ux.md's task line, decisions/rn/scripts.decisions.md and prompts.decisions.md rewritten, plan.md F-1 set to the steering's form; works: plan (title to tasks), learnings, t<n>, deliverable, checklist-<kind>"
   }
  ],
  "semantic_gist": [
@@ -679,7 +682,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: draw the whole remade record (steering.md's strict form, who writes each part, rn.py's keep, the part file, the CCS's goal_orientation) into dev/rn/architecture.md and the decisions, trace it on paper against resume, feedback, each sign-off and learnings, then build: rn.py, the skills, the plan checklist, tests, trials"
+   "next": "build: a subagent remakes rn.py and its tests to decisions/rn/scripts.decisions.md, removing the learner agent, forms, hooks and their tests; another remakes rn/checklists/session/plan.md's items and adds session/learnings.md; then the skills to prompts.decisions.md; then dev/rn/trials/flow; each read by hand against its checklists"
   }
  ],
  "uncertainty_signal": [

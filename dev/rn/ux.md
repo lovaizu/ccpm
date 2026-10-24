@@ -46,8 +46,9 @@ the version in use, on the same requests.
 ## Scenes
 
 The user and rn take part. `/rn:ty` approves a proposal and `/rn:gm <feedback>` asks for a change. A
-task is one part of building the finished work; after the design sign-off, rn divides the piece of
-work into tasks. A learning is what the piece of work taught that would make later work better.
+task is one part of the piece of work, such as the plan, a document or a part of the finished work;
+rn divides each stage into tasks as it reaches it, and changes them as each task brings its facts.
+A learning is what the piece of work taught that would make later work better.
 
 ### From asking to the merge
 
@@ -140,8 +141,9 @@ sequenceDiagram
   end
 ```
 
-- Each task names the acceptance criteria it serves and is checked against them; the user need not
-  watch. A change to the goal or an acceptance criterion comes to the user as a point to decide.
+- Each task names the goal or the acceptance criteria it serves and is checked against them; the
+  user need not watch. A change to the goal or an acceptance criterion comes to the user as a point
+  to decide.
 
 ### Stopped, and gone on
 

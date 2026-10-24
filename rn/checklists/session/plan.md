@@ -40,9 +40,10 @@ Does the plan follow this template, front matter, headings and IDs included?
 
 ```markdown
 ---
-rn: <the installed rn version>
-pr: <the session's pull request URL>
-status: <running; finished once the pull request is marked ready>
+rn: <rn's version>
+pr: <the pull request's URL>
+stage: <plan, design, build, deliverable, learnings or finished>
+signoff: <none, plan, design or deliverable>
 artifact-language: <the language of everything rn writes into the repository>
 conversation-language: <the language rn speaks to the user in>
 ---
@@ -55,25 +56,39 @@ G1: <the user's purpose, with why they want it>
 
 - AC1: <one thing the finished work must do for the goal>
 
-## Documents
-
-- <its name, the one in the file name of its decisions>: <its path>
-
 ## Tasks
 
-- [ ] T1: <the part of the piece of work>. Serves AC1.
+- [ ] T1: <the part of the piece of work>. Serves <G1, or the criteria by ID>.
 
-  Completion criterion: <what its result must do for AC1, and the check that shows it>
+  Completion criterion: <what its result must do for what it serves, and the check that shows it>
 
-  - [ ] 1. Read <the context it needs>; confirm <what is lacking>. The conductor, with the user.
+  - [ ] 1. Read <the context it needs>, finding out <what it must>; confirm <what is lacking>. The orchestrator, with the user.
   - [ ] 2. Design <the part it makes> and <how that part is checked>. turn, first run.
-  - [ ] 3. Trace <the architecture> on paper against <its checks>. That run's first reader.
+  - [ ] 3. Trace <the design> on paper, or try it, against <its checks>. That run's first reader.
   - [ ] 4. Make <the part>, checked as it grows, code test first. turn, second run.
+
+## Learnings
+
+- L1: <what happened, with the words it rests on, and where it would make later work better>
+
+## Next
+
+<the step of /rn:up to take next, by its number, and on what>
+
+## Open
+
+- <what is open>
 ```
 
-Why: a check of rn's refuses a plan kept outside this form, and rn's script reads `pr`, `status` and
-the two languages by these names, and finds each document's decisions by its name, so a plan in
-another form halts the session.
+The goal, the criteria, the tasks and the learnings are each there once made; a task has the steps
+it needs, numbered from 1, each saying who does it, these four for a part made; `## Open` holds
+`None.` where nothing is open. A call to turn makes one part in a file of its own: the plan, from
+the title to the tasks, or the learnings; the front matter, the ticks, Next and Open are written by
+rn's scripts.
+
+Why: rn's scripts refuse a steering out of this form at every keep, as they read the front matter,
+the IDs, the ticks, Next and Open by these names, and the user reads the same file at each
+sign-off.
 
 ## Benefit
 
