@@ -54,8 +54,6 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 - [x] T2: A conductor committing or pushing on the default branch, or pushing to it, by a plain
   `git commit` or `git push`, is stopped with the step and why, and nothing else it does is
   stopped. Serves AC1.
-- [ ] T3: The same stop holds where git reaches the default branch through `-C`, a `cd`, `env`,
-  `command`, `sh -c` or a worktree. Serves AC1.
 - [ ] T4: A sign-off passes only by the user's `/rn:ty`. Serves AC1.
 - [ ] T5: A plan outside the form of rn's plan checklist is stopped before it is kept. Serves AC1,
   AC2.
@@ -132,3 +130,16 @@ The checks' tools kept as is now done in Python, after lane's code is brought to
   actions on their current majors, which run on Node 24 (checkout, setup-python and setup-node v7,
   Node 20 gone from the runners on 2026-09-23), and the tools at their latest that run where they
   run now. Serves AC1.
+
+rn remade on its architecture and lane, after turn: the conductor held by rn's scripts, `/rn:ty` and
+GitHub's branch protection, each subagent by lanes; T3 dropped, as the default branch is held by
+branch protection rather than a check of commands.
+
+- [x] T26: rn has no hook of its own, the default branch held by GitHub's branch protection, which
+  rn's README asks the user to turn on, and T2's check gone with it. Serves AC1.
+- [ ] T27: rn's scripts give what the architecture says: the state replaced whole at each move, each
+  work's CCS naming its kind's one checklist, the user's addition and rn's checklist for a fix, and
+  each proposal made from the record alone; check.sh 100% and mutate.sh rn 0 survivors. Serves AC1,
+  AC2.
+- [ ] T28: rn's learner reads the records of the conductor's conversation and its agents and gives
+  each lesson with the words it rests on, held by lanes laid with `lane:up`. Serves AC1.

@@ -229,6 +229,12 @@ that:
 
   rn opens and updates the pull request with it.
 
+- The default branch protected on GitHub, so that it takes a change only through a reviewed pull
+  request.
+
+  rn works on a branch of its own and never needs to push to the default branch, and the protection
+  keeps any command, whatever form it takes, from changing it before you merge.
+
 - Python 3.9 or later, run as `python3`, and jq, the command-line JSON tool.
 
   The scripts of rn run on them, and so do those of turn, a plugin installed with rn that rn uses to
