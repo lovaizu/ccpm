@@ -695,7 +695,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T9 to T13: the user stories of rn, tried as the user would on the whole, next to judge"
+   "task": "T25: the checks' tools by uv sync --locked from a root pyproject.toml and uv.lock"
   }
  ],
  "relational_map": [
@@ -713,7 +713,7 @@
    "rules": ".claude/rules/dev.md, which points to dev/architecture.md"
   },
   {
-   "environment": "on this Linux sandbox: uv venv -p /usr/bin/python3 in the session's scratchpad (venv/), uv pip install -r dev/requirements.txt -r dev/requirements-test-quality.txt, its bin first on PATH; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here"
+   "environment": "on this Linux sandbox: uv venv -p /usr/bin/python3 in the session's scratchpad (venv/), uv pip install -r dev/requirements.txt -r dev/requirements-test-quality.txt (until T25 changes it), its bin first on PATH; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here; trial records left in ~/.claude/projects/<scratchpad path>-* are removed by literal path after each run"
   },
   {
    "watch": "watch a turn run without telling the user of each step: report only its end, a stop or a question (the user, 2026-10-21: the step-by-step notices were noise)"
@@ -733,7 +733,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "judge T9-T13 (user stories) and T25 (uv) by the plan's order: T25 is the checks' tools, apart from rn; T9-T13 are rn's acceptance, tried as the user from start to end as dev/architecture.md's Acceptance tests say, then T14 on real requests; confirm with the user which first if the plan does not settle it"
+   "next": "T25 first, as decided (the order is mine): read T25 in the steering, look for uv's current practice for dependency groups and CI (astral-sh/setup-uv), make pyproject.toml and uv.lock, switch CI, dev/githooks/pre-push, dev/README.md and the constraints' venv line, remove dev/requirements*.in/.txt, run check.sh, properties.sh and mutate.sh as CI would; then T9-T13, rn's acceptance tried as its user from start to end on lovaizu/playground"
   }
  ],
  "uncertainty_signal": [
