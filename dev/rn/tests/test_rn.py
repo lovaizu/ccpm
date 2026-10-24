@@ -1,8 +1,8 @@
-"""The tests of rn's scripts: each subcommand gives what rn's design and the decisions for the scripts
-say, for the conductor that runs it, and stops, saying what went wrong and what to do, on each input
-it must not take. Each test runs in a git repository of its own, made in a temporary folder, standing
-for the user's repository on a session's branch, beside a plugin folder of its own holding rn's
-checklists."""
+"""The tests of rn's scripts: each subcommand gives what rn's architecture says, for the conductor that
+runs it, and stops, saying what went wrong and what to do, on each input it must not take. Each test
+runs in a git repository of its own, made in a temporary folder, standing for the user's repository
+on a session's branch, with the remote it pushes to beside it, and a plugin folder of its own holding
+rn's checklists."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ import io
 import json
 import os
 import runpy
+import subprocess
 import sys
 import unittest
 from typing import Any
@@ -38,47 +39,53 @@ SLUG = "add-login"
 FOLDER = f"{RECORD}/{TODAY:%Y%m%d}-{SLUG}"
 # The kind of the checklist the plugin folder holds.
 KIND = "code"
-# The work the ccs and proposal tests have made, at its path, with its CCS and turn's result for it.
+# The work the ccs tests have written, at its path, with its CCS, turn's result and its decisions.
 WORK = "readme"
 WORK_PATH = "README.md"
 CCS = f"{FOLDER}/ccs/{WORK}.json"
 CCS_RESULT = f"{FOLDER}/ccs/{WORK}-result.json"
+DECISIONS = f"{FOLDER}/decisions/{WORK}.decisions.md"
+# The plan's result, which the plan sign-off waits on.
+PLAN_RESULT = f"{FOLDER}/ccs/plan-result.json"
 # The options ccs needs, each with a value it takes.
 NEEDED = {"--kind": KIND, "--receiver": "a new user", "--use": "to try it", "--has": "."}
-# The state a session starts with, and the state of one waiting at the plan sign-off.
-STARTED = {"stage": "asking"}
-AT_PLAN = {"stage": "plan", "signoff": "plan"}
-# The pull request the plan gives, a plan giving it, and one giving none.
+# A state, as the conductor writes it, and another for the next move.
+STATE = {"focal_entities": [{"signoff": "plan"}]}
+NEXT = {"focal_entities": [{"signoff": "design"}], "episodic_trace": [{"fact": "plan approved"}]}
+# The pull request the plan gives, and the languages it says.
 PR = "https://github.com/o/r/pull/1"
-PLAN = f"---\npr: {PR}\nstatus: running\n---\n\n# Goal\n"
-NO_PR = "---\nstatus: running\n---\n"
-# The languages the plan of the ccs tests' session says.
 LANGUAGES = {"artifact-language": "English", "conversation-language": "Japanese"}
-# Entries of the result turn writes: an item Good, one Good in each part, one without Good, and a
-# question an item waits on.
-GOOD = {
-    "checklist": "c/readme.md",
-    "item": "B-1",
-    "good": "who it is for",
-    "lines": ["README.md:1-3"],
-}
-PARTS = {
-    "checklist": "c/readme.md",
-    "item": "B-4",
-    "parts": [{"part": "README.md:1-4", "good": "what it is", "lines": ["README.md:3"]}],
-}
-NOT_GOOD = {
-    "checklist": "c/readme.md",
-    "item": "B-6",
-    "gets": "a stop it clears",
-    "places": ["README.md:9"],
-}
-QUESTION = {
-    "question": "Which licence?",
-    "recommended": "MIT",
-    "items": [{"checklist": "c/readme.md", "item": "B-7"}],
-}
-RESULT = {"work": [WORK_PATH], "items": [GOOD], "questions": [], "not_good": [], "lessons": []}
+# The real plan checklist of rn, whose template every plan is held to.
+PLAN_CHECKLIST = os.path.join(SCRIPTS, "..", "checklists", "session", "plan.md")
+
+
+def plan_text(
+    goal: str = "G1: Users sign in,\nso their carts stay theirs.",
+    criteria: str = "- AC1: A user signs in with their email.\n"
+    "- AC2: A signed-in user sees only their cart,\n  on every page.",
+    tasks: str = "",
+    opening: str = "",
+) -> str:
+    """A plan in the form of rn's plan checklist, with the goal, criteria and tasks given, and the
+    front matter after the opening given."""
+    said = "".join(f"{key}: {value}\n" for key, value in LANGUAGES.items())
+    return (
+        f"{opening}---\nrn: 0.10.0\npr: {PR}\nstatus: running\n{said}---\n\n# Add login\n\n"
+        f"{goal}\n\n## Acceptance criteria\n\n{criteria}\n\n## Documents\n\n- UX: docs/ux.md\n\n"
+        f"## Tasks\n\n{tasks}"
+    )
+
+
+PLAN = plan_text()
+# The first proposal at the plan sign-off on PLAN.
+FIRST = (
+    "Plan sign-off\n"
+    f"The plan is on the draft pull request: {PR}\n"
+    "G1: Users sign in, so their carts stay theirs.\n"
+    "AC1: A user signs in with their email.\n"
+    "AC2: A signed-in user sees only their cart, on every page.\n"
+    "/rn:ty to approve, /rn:gm <feedback> to ask for a change."
+)
 
 
 def state_at(folder: str = FOLDER) -> str:
@@ -97,15 +104,18 @@ def ccs_argv(needed: dict[str, str]) -> list[str]:
 
 
 class RepoTest(helpers.MainAndWork):
-    """A git repository whose default branch is `main` and whose checked-out branch is `work`, with
-    git reading no setting of the machine it runs on; and a plugin folder with rn's checklists."""
+    """A git repository whose default branch is `main` and whose checked-out branch is `work`, both
+    pushed to the remote beside it, with git reading no setting of the machine it runs on; and a
+    plugin folder with rn's checklists."""
 
     def setUp(self) -> None:
         super().setUp()
-        self.repo = self.copied("repo", self.main_and_work)
+        os.chdir(os.path.join(self.copied("repo", self.main_and_work), helpers.REPO))
         self.plugin = os.path.join(self.base, "plugin")
         self.checklist = os.path.join(self.plugin, "checklists", "product", f"{KIND}.md")
         self.write(self.checklist, "# Code\n")
+        self.plan_checklist = os.path.join(self.plugin, "checklists", "session", "plan.md")
+        self.write(self.plan_checklist, self.read(PLAN_CHECKLIST))
         self.fix = os.path.join(self.plugin, "checklists", "fix.md")
 
     def rn(self, *argv: str) -> tuple[int, str]:
@@ -131,13 +141,27 @@ class RepoTest(helpers.MainAndWork):
         self.assertEqual(code, 1, out)
         return out
 
-    def session(self, folder: str = FOLDER, plan: str | None = PLAN, state: Any = None) -> None:
+    def out(self, *args: str) -> str:
+        """What git prints for the arguments."""
+        done = subprocess.run(["git", *args], check=True, capture_output=True, text=True)
+        return done.stdout
+
+    def session(
+        self, folder: str = FOLDER, plan: str | None = PLAN, state: Any = None, push: bool = False
+    ) -> None:
         """A session's folder committed on the branch, with its plan, none where it is None, and
-        its state, at its first stage where none is given."""
+        its state, STATE where none is given; pushed where asked."""
         if plan is not None:
             self.write(plan_at(folder), plan)
-        self.write_json(state_at(folder), state or STARTED)
+        self.write_json(state_at(folder), state or STATE)
         self.commit()
+        if push:
+            self.git("push", "-q")
+
+    def kept(self) -> None:
+        """Commits every change and pushes it, as the conductor's last move did."""
+        self.commit()
+        self.git("push", "-q")
 
 
 class SessionTest(RepoTest):
@@ -148,12 +172,18 @@ class SessionTest(RepoTest):
         self.assertEqual(self.ran("session"), {"session": None, "state": None})
 
     def test_the_session_the_branch_changed_is_found_with_its_state(self):
-        # Given: a session's folder committed on the branch, waiting at the plan sign-off.
-        self.session(state=AT_PLAN)
+        # Given: a session's folder committed on the branch, with its state.
+        self.session()
         # When: the conductor asks for the session.
         # Then: rn gives its folder and its state.
-        want = {"session": FOLDER, "state": AT_PLAN}
-        self.assertEqual(self.ran("session"), want)
+        self.assertEqual(self.ran("session"), {"session": FOLDER, "state": STATE})
+
+    def test_the_state_is_printed_with_text_beyond_ascii_as_it_is(self):
+        # Given: a session whose state holds a fact in Japanese.
+        self.session(state={"episodic_trace": [{"fact": "計画を承認"}]})
+        # When: the conductor asks for the session.
+        # Then: rn prints it as it is, for the conductor to read.
+        self.assertIn('"fact": "計画を承認"', self.printed("session"))
 
     def test_a_finished_session_is_not_taken_up(self):
         # Given: a session on the branch whose plan is finished.
@@ -201,7 +231,7 @@ class SessionTest(RepoTest):
         # Then: there is none.
         self.assertIsNone(self.ran("session")["session"])
 
-    def test_a_session_without_state_reads_as_empty_state(self):
+    def test_a_session_without_state_reads_as_an_empty_state(self):
         # Given: a session rn 0.9.0 left, with a plan and no state.json.
         self.write(plan_at(), PLAN)
         self.commit()
@@ -216,29 +246,23 @@ class SessionTest(RepoTest):
         # Then: it is found.
         self.assertEqual(self.ran("session")["session"], FOLDER)
 
-    def test_a_plan_without_front_matter_is_not_finished(self):
-        for opening in ("status: finished\n---\n", "--\nstatus: finished\n---\n", "x\n"):
-            with self.subTest(opening=opening):
-                # Given: a session whose plan opens with a line other than `---`, though a `---`
-                # may come later.
-                self.session(plan=opening)
+    def test_a_plan_without_a_readable_front_matter_is_not_finished(self):
+        plans = (
+            "status: finished\n---\n",
+            "--\nstatus: finished\n---\n",
+            "x\n",
+            "",
+            "---\nstatus: finished\n",
+            "---\nnotes\nstatus: finished\n---\n",
+        )
+        for plan in plans:
+            with self.subTest(plan=plan):
+                # Given: a session whose plan says it is finished in no front matter rn reads: one
+                # it does not open with, never closes, or holds a line that is no `key: value`.
+                self.session(plan=plan)
                 # When: the conductor asks for the session.
-                # Then: it is found.
+                # Then: it is found, as nothing says it is over.
                 self.assertEqual(self.ran("session")["session"], FOLDER)
-
-    def test_a_plan_whose_front_matter_is_not_closed_is_not_finished(self):
-        # Given: a session whose plan opens a front matter it never closes.
-        self.session(plan="---\nstatus: finished\n")
-        # When: the conductor asks for the session.
-        # Then: it is found.
-        self.assertEqual(self.ran("session")["session"], FOLDER)
-
-    def test_an_empty_plan_is_not_finished(self):
-        # Given: a session whose plan is empty.
-        self.session(plan="")
-        # When: the conductor asks for the session.
-        # Then: it is found.
-        self.assertEqual(self.ran("session")["session"], FOLDER)
 
     def test_an_empty_front_matter_reads_no_line_after_it(self):
         # Given: a session whose plan opens with an empty front matter, and has a `---` later.
@@ -246,13 +270,6 @@ class SessionTest(RepoTest):
         # When: the conductor asks for the session.
         # Then: the status after the front matter is not read, and the session is found.
         self.assertEqual(self.ran("session")["session"], FOLDER)
-
-    def test_a_front_matter_line_without_a_colon_is_passed_over(self):
-        # Given: a finished plan whose front matter holds a line with no colon.
-        self.session(plan="---\nnotes\nstatus: finished\n---\n")
-        # When: the conductor asks for the session.
-        # Then: the status is still read, and there is none.
-        self.assertIsNone(self.ran("session")["session"])
 
     def test_two_sessions_not_finished_stop(self):
         # Given: a branch that changed two sessions, neither finished.
@@ -267,26 +284,21 @@ class SessionTest(RepoTest):
             self.stopped("session"),
         )
 
-    def test_a_state_that_is_not_an_object_stops(self):
-        # Given: a session whose state.json holds a list.
-        self.session(state=["plan"])
-        # When: the conductor asks for the session.
-        # Then: rn says it is not an object and how to restore it.
-        self.assertIn(
-            f"{state_at()} is not a JSON object; restore it with `git checkout --",
-            self.stopped("session"),
-        )
-
-    def test_a_state_that_is_not_json_stops(self):
-        # Given: a session whose state.json is not JSON.
+    def test_a_state_that_is_not_a_ccs_stops(self):
         self.session()
-        self.write(state_at(), "{")
-        # When: the conductor asks for the session.
-        # Then: rn says it is not JSON and what to make it.
-        self.assertIn(
-            f"{state_at()} is not JSON; make it again as a JSON object",
-            self.stopped("session"),
-        )
+        for state in ("[]", "{", '{"focal_entities": [{"a": "b", "c": "d"}]}'):
+            with self.subTest(state=state):
+                # Given: a session whose state.json is written as no CCS: a list, no JSON, or an
+                # entry of two kinds.
+                self.write(state_at(), state)
+                # When: the conductor asks for the session.
+                # Then: rn says it is no CCS, what one is, and how to restore the state kept.
+                self.assertRegex(
+                    self.stopped("session"),
+                    rf"^rn: {state_at()} is not a CCS; a CCS is a JSON object of parts, .*;"
+                    rf" restore the state kept with `git checkout HEAD -- {state_at()}`, or write"
+                    " it again as one",
+                )
 
     def test_below_the_top_of_the_repository_stops(self):
         # Given: rn run from a folder below the top of the repository.
@@ -334,50 +346,97 @@ class SessionTest(RepoTest):
 
 
 class StartTest(RepoTest):
-    def test_start_makes_the_session_folder_with_its_state(self):
-        # Given: a branch with no session.
-        # When: the conductor starts one with a slug.
-        self.ran("start", SLUG)
-        # Then: the folder of today's date and the slug holds the state at its first stage.
-        self.assertEqual(self.read_json(state_at()), STARTED)
+    def start(self, slug: str = SLUG, message: str = "Start add-login") -> list[str]:
+        """The arguments that start a session with the slug and the message."""
+        return ["start", slug, "--message", message]
 
-    def test_start_gives_the_session_and_its_state(self):
-        # Given: a branch with no session.
-        # When: the conductor starts one with a slug.
-        # Then: rn gives the session's folder and its state, for the conductor to commit.
-        want = {"session": FOLDER, "state": STARTED}
-        self.assertEqual(self.ran("start", SLUG), want)
+    def test_start_makes_the_sessions_branch_from_the_remotes_default_branch(self):
+        # Given: the branch `work`, holding a commit the default branch does not.
+        self.write("work.md", "x\n")
+        self.commit()
+        # When: the conductor starts a session.
+        self.ran(*self.start())
+        # Then: the branch named by the slug is checked out, made from origin's main alone.
+        here = (self.out("branch", "--show-current"), os.path.exists("work.md"))
+        self.assertEqual(here, (f"{SLUG}\n", False))
 
-    def test_start_writes_the_state_one_key_to_a_line(self):
+    def test_start_makes_the_folder_with_an_empty_state(self):
         # Given: a branch with no session.
         # When: the conductor starts one.
-        self.ran("start", SLUG)
-        # Then: state.json holds one key to a line, for the user to read on the pull request.
-        self.assertEqual(self.read(state_at()), '{\n "stage": "asking"\n}\n')
+        self.ran(*self.start())
+        # Then: the folder of today's date and the slug holds an empty state, to be replaced at
+        # the first move.
+        self.assertEqual(self.read(state_at()), "{}\n")
 
-    def test_start_on_a_folder_there_stops(self):
-        # Given: a session folder of today's date and the slug.
-        os.makedirs(FOLDER)
+    def test_start_keeps_the_folder_on_the_remote_with_the_message(self):
+        # Given: a branch with no session.
+        # When: the conductor starts one with a message.
+        self.ran(*self.start(message="Start add-login\n\nFrom the user's words."))
+        # Then: the remote's branch holds the state, committed with the message as given.
+        kept = (
+            self.out("show", f"origin/{SLUG}:{state_at()}"),
+            self.out("log", "-1", "--format=%B", f"origin/{SLUG}"),
+        )
+        self.assertEqual(kept, ("{}\n", "Start add-login\n\nFrom the user's words.\n\n"))
+
+    def test_start_gives_the_session_its_branch_and_the_base(self):
+        # Given: a branch with no session.
+        # When: the conductor starts one.
+        # Then: rn gives the session's folder, its branch and the branch a pull request goes to.
+        want = {"session": FOLDER, "branch": SLUG, "base": "main"}
+        self.assertEqual(self.ran(*self.start()), want)
+
+    def test_start_with_changes_not_committed_stops_and_stays(self):
+        # Given: a file changed and not committed.
+        self.write("README.md", "# changed\n")
+        # When: the conductor starts a session.
+        out = self.stopped(*self.start())
+        # Then: rn names the change and says to commit or stash it, and the branch stays.
+        said = "rn: the working tree has changes not committed: README.md; rn leaves them as" in out
+        self.assertEqual((said, self.out("branch", "--show-current")), (True, "work\n"))
+
+    def test_start_on_a_folder_the_default_branch_holds_stops_and_stays(self):
+        # Given: the default branch holding a session folder of today's date and the slug.
+        self.git("checkout", "-q", "main")
+        self.session()
+        self.git("push", "-q")
+        self.git("checkout", "-q", "work")
         # When: the conductor starts one with that slug.
-        # Then: rn says it is there and to give another slug.
-        self.assertIn(f"{FOLDER} is there already; give another slug", self.stopped("start", SLUG))
+        out = self.stopped(*self.start())
+        # Then: rn says it is there and to give another slug, and the branch stays.
+        said = f"{FOLDER} is on origin/main already; give another slug" in out
+        self.assertEqual((said, self.out("branch", "--show-current")), (True, "work\n"))
 
-    def test_start_below_the_top_stops(self):
+    def test_start_on_a_branch_there_stops(self):
+        # Given: a branch named as the slug.
+        self.git("branch", SLUG)
+        # When: the conductor starts a session with that slug.
+        # Then: rn says what git said and to give another slug.
+        self.assertRegex(
+            self.stopped(*self.start()),
+            rf"rn: git checkout -q --no-track -b {SLUG} origin/main failed: fatal: .*; give"
+            " another slug",
+        )
+
+    def test_start_with_the_remote_not_reached_stops(self):
+        # Given: a remote that cannot be reached.
+        self.git("remote", "set-url", "origin", "../none.git")
+        # When: the conductor starts a session.
+        # Then: rn says what git said and to fix it.
+        self.assertRegex(
+            self.stopped(*self.start()),
+            r"(?s)rn: git fetch -q origin failed: .*; fix it as git says",
+        )
+
+    def test_start_below_the_top_stops_and_makes_no_folder(self):
         # Given: rn run from a folder below the top of the repository.
         os.makedirs("src")
         os.chdir("src")
         # When: the conductor starts a session.
-        # Then: rn says to run it from the top.
-        self.assertIn("below the top of the repository", self.stopped("start", SLUG))
-
-    def test_start_below_the_top_makes_no_folder(self):
-        # Given: rn run from a folder below the top of the repository.
-        os.makedirs("src")
-        os.chdir("src")
-        # When: the conductor starts a session.
-        self.stopped("start", SLUG)
-        # Then: no session folder is made there.
-        self.assertFalse(os.path.exists(RECORD))
+        out = self.stopped(*self.start())
+        # Then: rn says to run it from the top, and makes no session folder.
+        said = "below the top of the repository" in out
+        self.assertEqual((said, os.path.exists(os.path.join("..", RECORD))), (True, False))
 
     def test_a_slug_of_other_characters_stops(self):
         # Given: a slug with a character other than lowercase letters, digits and hyphens.
@@ -385,7 +444,306 @@ class StartTest(RepoTest):
         # Then: rn says what a slug holds.
         self.assertIn(
             "the slug '../x' is not lowercase letters, digits and hyphens alone; give it as such",
-            self.stopped("start", "../x"),
+            self.stopped(*self.start(slug="../x")),
+        )
+
+    def test_start_without_a_message_stops_with_the_usage(self):
+        # Given: a branch with no session.
+        # When: the conductor starts one with no message.
+        # Then: rn says the message is required and how the subcommand is given.
+        self.assertIn(
+            "rn: the following arguments are required: --message; give it as rn.py start",
+            self.stopped("start", SLUG),
+        )
+
+    def test_start_with_an_empty_message_stops_and_stays(self):
+        # Given: a branch with no session.
+        # When: the conductor starts one with a message of blanks.
+        out = self.stopped(*self.start(message=" \n"))
+        # Then: rn says the message is empty, and the branch stays.
+        said = "rn: the message is empty; give it in words" in out
+        self.assertEqual((said, self.out("branch", "--show-current")), (True, "work\n"))
+
+
+class StateTest(RepoTest):
+    """The state replaced, and every change kept, at each move."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.session(push=True)
+
+    def keep(self, message: str = "Plan approved") -> str:
+        """What rn printed, having kept the move with the message."""
+        return self.printed("state", "--message", message)
+
+    def refused(self, message: str = "Plan approved") -> str:
+        """What rn printed, having stopped keeping the move with the message."""
+        return self.stopped("state", "--message", message)
+
+    def head(self, ref: str = "HEAD") -> str:
+        """The commit the ref names."""
+        return self.out("rev-parse", ref).strip()
+
+    def test_the_state_written_is_kept_on_the_remote_with_the_message(self):
+        # Given: the conductor's state for the next move, written whole.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move.
+        self.keep("Plan approved\n\nThe user typed /rn:ty.")
+        # Then: the remote's branch holds the state, committed with the message as given.
+        kept = (
+            json.loads(self.out("show", f"origin/work:{state_at()}")),
+            self.out("log", "-1", "--format=%B", "origin/work"),
+        )
+        self.assertEqual(kept, (NEXT, "Plan approved\n\nThe user typed /rn:ty.\n\n"))
+
+    def test_every_change_of_the_move_is_kept_with_the_state(self):
+        # Given: the state replaced, a decision written and a work turn made.
+        self.write_json(state_at(), NEXT)
+        self.write(DECISIONS, "# What the README says\n")
+        self.write(WORK_PATH, "# app, made\n")
+        # When: the conductor keeps the move.
+        self.keep()
+        # Then: the remote's branch holds every one of them, and nothing is left.
+        changed = self.out("diff", "--name-only", "HEAD~1", "origin/work").split()
+        left = self.out("status", "--porcelain")
+        self.assertEqual((changed, left), ([DECISIONS, state_at(), WORK_PATH], ""))
+
+    def test_keeping_gives_the_commit(self):
+        # Given: the conductor's state for the next move.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move.
+        out = json.loads(self.keep())
+        # Then: rn gives the commit it kept it in.
+        self.assertEqual(out, {"kept": self.head()})
+
+    def test_changes_with_the_state_as_kept_stop_and_keep_nothing(self):
+        # Given: a decision written, with the state as last kept.
+        self.write(DECISIONS, "# What the README says\n")
+        # When: the conductor keeps the move.
+        out = self.refused()
+        # Then: rn names the changes, says to replace the state first, and commits nothing.
+        said = (
+            f"rn: the move changed {DECISIONS}, but {state_at()} is as kept last; replace it"
+            " whole with the facts this move brought, then run this again"
+        ) in out
+        self.assertEqual((said, self.head()), (True, self.head("origin/work")))
+
+    def test_nothing_changed_pushes_what_is_committed(self):
+        # Given: a move committed but not pushed, as when a push failed.
+        self.write_json(state_at(), NEXT)
+        self.commit()
+        # When: the conductor keeps the move again.
+        self.keep()
+        # Then: the remote's branch holds it.
+        self.assertEqual(self.head("origin/work"), self.head())
+
+    def test_a_state_that_is_not_a_ccs_stops_and_keeps_nothing(self):
+        # Given: a state written as a list.
+        self.write(state_at(), "[]")
+        # When: the conductor keeps the move.
+        out = self.refused()
+        # Then: rn says it is no CCS and to write it again, and commits nothing.
+        said = f"rn: {state_at()} is not a CCS; a CCS is a JSON object of parts" in out
+        written = out.rstrip().endswith("; write the state again as one, then run this again")
+        self.assertEqual((said, written, self.head()), (True, True, self.head("origin/work")))
+
+    def test_a_state_removed_stops(self):
+        # Given: state.json removed.
+        os.remove(state_at())
+        # When: the conductor keeps the move.
+        # Then: rn says to write the state there.
+        self.assertIn(
+            f"rn: {state_at()} is not there; write the state there, as a CCS, then run this again",
+            self.refused(),
+        )
+
+    def test_a_plan_in_its_form_with_tasks_is_kept(self):
+        # Given: a plan whose tasks are written, one done, each with lines under it.
+        tasks = (
+            "- [x] T1: Sign in. Serves AC1.\n\n  Completion criterion: a user signs in.\n\n"
+            "  - [x] 1. Read the login page.\n- [ ] T2: Carts. Serves AC2.\n"
+        )
+        self.write(plan_at(), plan_text(tasks=tasks))
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move.
+        self.keep()
+        # Then: the remote's branch holds the plan.
+        self.assertIn("T2: Carts", self.out("show", f"origin/work:{plan_at()}"))
+
+    def test_a_plan_out_of_its_form_stops_saying_where(self):
+        plans = {
+            "a key": (
+                PLAN.replace(f"pr: {PR}\n", ""),
+                'line 1: expected the frontmatter key "pr", found none',
+            ),
+            "a heading": (
+                PLAN.replace("## Documents", "## Docs"),
+                'from line 15: expected the heading "## Documents", found none',
+            ),
+            "the goal": (
+                plan_text(goal="Users sign in."),
+                (
+                    "expected the goal as `G1: <the user's purpose, with why they want it>` above"
+                    " `## Acceptance criteria`, found none"
+                ),
+            ),
+            "a criterion": (
+                plan_text(criteria="- AC1: Sign in.\n- Carts."),
+                (
+                    "line 17: expected an acceptance criterion as `- AC<n>: <one thing the finished"
+                    " work must do for the goal>`, found `- Carts.`"
+                ),
+            ),
+            "any criterion": (
+                plan_text(criteria="Signing in."),
+                (
+                    "expected an acceptance criterion as `- AC<n>: <one thing the finished work must"
+                    " do for the goal>` under `## Acceptance criteria`, found none"
+                ),
+            ),
+            "a criterion's ID": (
+                plan_text(criteria="- AC1: Sign in.\n- AC1: Carts."),
+                "line 17: expected each ID once, found AC1 again",
+            ),
+            "a task": (
+                plan_text(tasks="- T1: Sign in.\n"),
+                (
+                    "line 26: expected a task as `- [ ] T<n>: <the part of the piece of work>`, found"
+                    " `- T1: Sign in.`"
+                ),
+            ),
+            "a task's ID": (
+                plan_text(tasks="- [ ] T1: Sign in.\n- [x] T1: Carts.\n"),
+                "line 27: expected each ID once, found T1 again",
+            ),
+        }
+        for lacking, (plan, point) in plans.items():
+            with self.subTest(lacking=lacking):
+                # Given: a plan lacking the template's form in one point, and the state replaced.
+                self.write(plan_at(), plan)
+                self.write_json(state_at(), NEXT)
+                # When: the conductor keeps the move.
+                out = self.refused()
+                # Then: rn says the point it is out of the form by, and commits nothing.
+                said = (
+                    f"rn: {plan_at()} is out of the form of rn's plan checklist"
+                    f" ({self.plan_checklist} F-1): {point};"
+                ) in out
+                self.assertEqual((said, self.head()), (True, self.head("origin/work")), out)
+
+    def test_a_plan_kept_before_and_out_of_form_now_is_restored(self):
+        # Given: a plan kept, then written out of its form.
+        self.write(plan_at(), "# Add login\n")
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move.
+        # Then: rn says to restore the plan kept and have turn make it again.
+        self.assertIn(
+            f"; the plan is not kept: restore the one kept with `git checkout HEAD -- {plan_at()}`,"
+            " replace the state, and have turn make the plan again",
+            self.refused(),
+        )
+
+    def test_a_plan_never_kept_and_out_of_form_is_removed(self):
+        # Given: a session with no plan kept, then a plan written out of its form.
+        self.git("rm", "-q", plan_at())
+        self.kept()
+        self.write(plan_at(), "# Add login\n")
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move.
+        # Then: rn says to remove the plan and have turn make it again.
+        self.assertIn(
+            f"; the plan is not kept: remove it with `rm {plan_at()}`, replace the state, and have"
+            " turn make the plan again",
+            self.refused(),
+        )
+
+    def test_without_rns_plan_checklist_stops(self):
+        # Given: a plugin folder without rn's plan checklist.
+        os.remove(self.plan_checklist)
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move.
+        # Then: rn says to install rn again.
+        self.assertIn(
+            f"rn: rn has no checklist for plans in {self.plugin}/checklists; install rn again",
+            self.refused(),
+        )
+
+    def test_a_plan_checklist_without_its_template_stops(self):
+        texts = (
+            "# Plan\n",
+            "# Plan\n\n### F-1: Shape\n\nNo template.\n",
+            "# Plan\n\n### F-1: Shape\n\n```markdown\n# <x>\n",
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                # Given: rn's plan checklist holding no fenced template under F-1, or one never
+                # closed.
+                self.write(self.plan_checklist, text)
+                self.write_json(state_at(), NEXT)
+                # When: the conductor keeps the move.
+                # Then: rn says the checklist holds no template, and to install rn again.
+                self.assertIn(
+                    f"rn: {self.plan_checklist} holds no template under its F-1; install rn again",
+                    self.refused(),
+                )
+
+    def test_the_template_is_the_first_fence_under_f1(self):
+        # Given: rn's plan checklist with a fence before F-1 and one after its template.
+        before = "```text\n# Before\n```\n\n"
+        after = "\n\n```text\n# After\n```\n"
+        self.write(self.plan_checklist, before + self.read(PLAN_CHECKLIST) + after)
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move with a plan in the form of the template under F-1.
+        # Then: the plan is kept.
+        self.assertEqual(json.loads(self.keep()), {"kept": self.head()})
+
+    def test_a_plan_checklist_whose_template_lane_cannot_read_stops(self):
+        # Given: rn's plan checklist whose template holds nothing to check.
+        self.write(self.plan_checklist, "### F-1: Shape\n\n```markdown\nplain\n```\n")
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move.
+        # Then: rn says why, and to install rn again.
+        self.assertIn(
+            f"rn: {self.plan_checklist} F-1 is no template rn reads: holds no heading and no"
+            " frontmatter key, so it would check nothing; install rn again",
+            self.refused(),
+        )
+
+    def test_an_empty_message_stops(self):
+        # Given: the conductor's state for the next move.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps it with a message of blanks.
+        # Then: rn says the message is empty.
+        self.assertIn("rn: the message is empty; give it in words", self.refused(" "))
+
+    def test_keeping_without_a_message_stops_with_the_usage(self):
+        # Given: the conductor's state for the next move.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps it with no message.
+        # Then: rn says the message is required and how the subcommand is given.
+        self.assertIn(
+            "rn: the following arguments are required: --message; give it as rn.py state",
+            self.stopped("state"),
+        )
+
+    def test_keeping_without_a_session_stops(self):
+        # Given: a branch with no session.
+        self.git("rm", "-q", "-r", RECORD)
+        self.kept()
+        # When: the conductor keeps a move.
+        # Then: rn says to start a session.
+        self.assertIn("holds no session; start one with `rn.py start <slug>`", self.refused())
+
+    def test_a_push_that_fails_stops_saying_how_to_push_again(self):
+        # Given: the state replaced, and a remote that cannot be reached.
+        self.write_json(state_at(), NEXT)
+        self.git("remote", "set-url", "origin", "../none.git")
+        # When: the conductor keeps the move.
+        # Then: rn says what git said and how to push once it is fixed.
+        self.assertRegex(
+            self.refused(),
+            r"(?s)rn: git push -q -u origin HEAD failed: .*; fix it as git says, then push with"
+            r" `git push -u origin HEAD`",
         )
 
 
@@ -442,8 +800,8 @@ class CcsTest(RepoTest):
 
     def setUp(self) -> None:
         super().setUp()
-        said = "".join(f"{key}: {value}\n" for key, value in LANGUAGES.items())
-        self.session(plan=f"---\n{said}---\n")
+        self.write(DECISIONS, "# What the README says\n")
+        self.session(push=True)
 
     def made(self, *more: str) -> Any:
         """What rn printed for the work's CCS, given each option it needs, then more arguments."""
@@ -459,7 +817,7 @@ class CcsTest(RepoTest):
         return self.read_json(CCS)
 
     def test_ccs_gives_the_call_to_hand_turn(self):
-        # Given: a session.
+        # Given: a session, kept.
         # When: the conductor has a work's CCS written.
         out = self.made()
         # Then: rn gives the call naming the CCS, the key of each entry and the result's path.
@@ -482,7 +840,7 @@ class CcsTest(RepoTest):
         self.assertEqual(out, want)
 
     def test_ccs_names_the_work_and_its_receiver(self):
-        # Given: a session.
+        # Given: a session, kept.
         # When: the conductor has a work's CCS written.
         self.made()
         # Then: the CCS names the work and its receiver, first.
@@ -490,8 +848,9 @@ class CcsTest(RepoTest):
         self.assertEqual(self.ccs()["focal_entities"][:2], want)
 
     def test_ccs_names_each_path_the_receiver_has(self):
-        # Given: a session, and a folder and a file in it the receiver has with the work.
+        # Given: a session, and a folder and a file in it the receiver has with the work, kept.
         self.write("docs/guide.md", "x\n")
+        self.kept()
         # When: the conductor has the work's CCS written with both, after the repository.
         self.made("--has", "docs", "--has", "docs/guide.md")
         # Then: the CCS names each, after the receiver, in the order given.
@@ -499,28 +858,35 @@ class CcsTest(RepoTest):
         self.assertEqual(self.ccs()["focal_entities"][2:], want)
 
     def test_ccs_names_what_the_work_is_used_for(self):
-        # Given: a session.
+        # Given: a session, kept.
         # When: the conductor has a work's CCS written.
         self.made()
         # Then: the CCS names what the work is used for.
         self.assertEqual(self.ccs()["goal_orientation"], [{"purpose": NEEDED["--use"]}])
 
-    def test_ccs_names_the_kinds_checklists(self):
-        # Given: a session, and rn's checklist for the kind.
+    def test_ccs_names_the_kinds_checklists_and_the_works_decisions(self):
+        # Given: a session, rn's checklist for the kind, the user's addition, and the work's
+        # decisions, kept.
+        added = f"{RECORD}/checklists/{KIND}.md"
+        self.write(added, "# Code\n")
+        self.kept()
         # When: the conductor has a work's CCS written.
         self.made()
-        # Then: the CCS names the kind's checklist.
-        self.assertEqual(self.ccs()["retrieved_artifacts"], [{"checklist": self.checklist}])
+        # Then: the CCS names rn's checklist, the user's addition, then the decisions.
+        want = [{"checklist": self.checklist}, {"checklist": added}, {"decisions": DECISIONS}]
+        self.assertEqual(self.ccs()["retrieved_artifacts"], want)
 
-    def test_ccs_names_the_decisions_and_each_reference(self):
-        # Given: a session, the work's decisions and two references.
-        for path in ("d.md", "r1.md", "r2.md"):
-            self.write(path, "x\n")
-        # When: the conductor has the work's CCS written with them.
-        self.made("--decisions", "d.md", "--reference", "r1.md", "--reference", "r2.md")
-        # Then: the CCS names each, after the checklists.
-        want = [{"decisions": "d.md"}, {"reference": "r1.md"}, {"reference": "r2.md"}]
-        self.assertEqual(self.ccs()["retrieved_artifacts"][1:], want)
+    def test_ccs_of_a_checklist_names_rns_usability_before_the_decisions(self):
+        # Given: a session and rn's checklist for checklists, kept.
+        self.write(os.path.join(self.plugin, "checklists", "checklist.md"), "# Checklist\n")
+        # When: the conductor has the CCS of a checklist written.
+        self.ran(*ccs_argv({**NEEDED, "--kind": "checklist"}))
+        # Then: the CCS names rn's usability.md as a source, after the checklist and before the
+        # decisions, as rn's checklist for checklists makes each from it.
+        usability = os.path.join(self.plugin, "checklists", "usability.md")
+        self.assertEqual(
+            self.ccs()["retrieved_artifacts"][1:], [{"source": usability}, {"decisions": DECISIONS}]
+        )
 
     def test_ccs_takes_the_languages_from_the_plan(self):
         # Given: a session whose plan says the languages.
@@ -532,80 +898,121 @@ class CcsTest(RepoTest):
 
     def test_ccs_before_the_plan_holds_no_language(self):
         # Given: a session with no plan yet, as before the plan is made.
-        os.remove(plan_at())
+        self.git("rm", "-q", plan_at())
+        self.kept()
         # When: the conductor has the plan's CCS written.
         self.made()
         # Then: the CCS holds no language, only the checklist a change is held to.
         self.assertEqual(self.ccs()["constraints"], [{"fix": self.fix}])
 
     def test_ccs_names_the_checklist_every_change_is_held_to(self):
-        # Given: a session.
+        # Given: a session, kept.
         # When: the conductor has a work's CCS written.
         self.made()
         # Then: the CCS names rn's checklist for a fix last among its bounds, so the generator
         # holds it whenever it changes a work already there, in any round.
         self.assertEqual(self.ccs()["constraints"][-1], {"fix": self.fix})
 
-    def test_ccs_with_decisions_not_there_stops(self):
-        # Given: a session, and no file at the decisions' path.
-        # When: the conductor has a work's CCS written with that path.
-        # Then: rn says the decisions are not there.
+    def test_ccs_is_written_beside_those_kept(self):
+        # Given: a session whose ccs/ folder holds the plan's CCS, kept.
+        self.write_json(f"{FOLDER}/ccs/plan.json", {})
+        self.kept()
+        # When: the conductor has another work's CCS written.
+        self.made()
+        # Then: it is written beside it.
+        self.assertEqual(sorted(os.listdir(f"{FOLDER}/ccs")), ["plan.json", f"{WORK}.json"])
+
+    def test_ccs_is_written_one_key_to_a_line(self):
+        # Given: a session, kept.
+        # When: the conductor has a work's CCS written.
+        self.made()
+        # Then: it is written one key or value to a line, for the user to read on the pull request.
+        self.assertTrue(self.read(CCS).startswith('{\n "focal_entities": [\n  {\n'))
+
+    def test_ccs_holds_text_beyond_ascii_as_it_is(self):
+        # Given: a session, kept.
+        # When: the conductor has a work's CCS written for a receiver named in Japanese.
+        self.ran(*ccs_argv(dict(NEEDED, **{"--receiver": "初めての利用者"})))
+        # Then: the CCS holds it as it is, for the user to read on the pull request.
+        self.assertIn('"audience": "初めての利用者"', self.read(CCS))
+
+    def test_ccs_without_the_works_decisions_stops(self):
+        # Given: a session without the work's decisions, kept.
+        self.git("rm", "-q", DECISIONS)
+        self.kept()
+        # When: the conductor has the work's CCS written.
+        out = self.refused()
+        # Then: rn says to write and keep the decisions first, and writes no CCS.
+        said = (
+            f"rn: the work's decisions {DECISIONS} are not there; write there what the work is"
+            " made from, keep it, then run this again"
+        ) in out
+        self.assertEqual((said, os.path.exists(CCS)), (True, False))
+
+    def test_ccs_with_the_record_not_kept_stops(self):
+        # Given: a decision written and not kept.
+        self.write(DECISIONS, "# What the README says\n\n## License\n\nMIT\n")
+        # When: the conductor has the work's CCS written.
+        out = self.refused()
+        # Then: rn names the change, says to keep it first, and writes no CCS.
+        said = (
+            f"rn: the record has changes not kept, {DECISIONS}; rn goes on only from what is"
+            " pushed, so keep the move with `rn.py state --message <what it brought>` first, then"
+            " run this again"
+        ) in out
+        self.assertEqual((said, os.path.exists(CCS)), (True, False))
+
+    def test_ccs_with_commits_not_pushed_stops(self):
+        # Given: a decision committed and not pushed.
+        self.write(DECISIONS, "# What the README says\n\n## License\n\nMIT\n")
+        self.commit()
+        # When: the conductor has the work's CCS written.
+        # Then: rn says to push them first.
         self.assertIn(
-            "the decisions d.md is not there; give the path of a file",
-            self.refused("--decisions", "d.md"),
+            "rn: the branch has 1 commit(s) not pushed; push with `git push`, then run this again",
+            self.refused(),
         )
 
-    def test_ccs_with_decisions_not_there_writes_no_ccs(self):
-        # Given: a session, and no file at the decisions' path.
-        # When: the conductor has a work's CCS written with that path.
-        self.refused("--decisions", "d.md")
-        # Then: no CCS is written.
-        self.assertFalse(os.path.exists(os.path.dirname(CCS)))
-
-    def test_ccs_with_a_reference_not_there_stops(self):
-        # Given: a session, and no file at a reference's path.
-        # When: the conductor has a work's CCS written with that path.
-        # Then: rn says the reference is not there.
-        self.assertIn("the reference r.md is not there", self.refused("--reference", "r.md"))
+    def test_ccs_on_a_branch_never_pushed_stops(self):
+        # Given: the session on a branch never pushed.
+        self.git("checkout", "-q", "-b", "other")
+        # When: the conductor has the work's CCS written.
+        # Then: rn says what git said and to push the branch.
+        self.assertRegex(
+            self.refused(),
+            r"rn: git rev-list --count @\{upstream\}\.\.HEAD failed: fatal: .*; push the branch"
+            r" with `git push -u origin HEAD`, then run this again",
+        )
 
     def test_ccs_with_what_the_receiver_has_not_there_stops(self):
         # Given: a session, and nothing at a path given as what the receiver has.
         # When: the conductor has a work's CCS written with that path.
-        # Then: rn says it is not there, and to give a file or folder they have, from the top.
-        self.assertIn(
+        out = self.refused("--has", "docs")
+        # Then: rn says it is not there, and to give a file or folder they have, from the top,
+        # and writes no CCS.
+        said = (
             "rn: what the receiver has, docs, is not there; give the path of a file or folder they"
-            " have with the work, from the top",
-            self.refused("--has", "docs"),
-        )
+            " have with the work, from the top"
+        ) in out
+        self.assertEqual((said, os.path.exists(CCS)), (True, False))
 
     def test_ccs_below_the_top_stops_saying_to_run_it_from_the_top(self):
-        # Given: a folder at the top of the repository the receiver has, and rn run from a folder
-        # below the top, where the path to that folder from the top leads nowhere.
-        os.makedirs("docs")
+        # Given: rn run from a folder below the top of the repository.
         os.makedirs("src")
         os.chdir("src")
-        # When: the conductor has a work's CCS written with the path from the top.
-        # Then: rn says to run it from the top, after which the same path is found.
-        self.assertIn(
-            "below the top of the repository; run it from the top", self.refused("--has", "docs")
-        )
-
-    def test_ccs_with_what_the_receiver_has_not_there_writes_no_ccs(self):
-        # Given: a session, and nothing at a path given as what the receiver has.
-        # When: the conductor has a work's CCS written with that path.
-        self.refused("--has", "docs")
-        # Then: no CCS is written.
-        self.assertFalse(os.path.exists(os.path.dirname(CCS)))
+        # When: the conductor has a work's CCS written.
+        # Then: rn says to run it from the top.
+        self.assertIn("below the top of the repository; run it from the top", self.refused())
 
     def test_ccs_with_an_empty_receiver_stops(self):
-        # Given: a session.
+        # Given: a session, kept.
         # When: the conductor has a work's CCS written for a receiver of blanks.
         out = self.stopped(*ccs_argv(dict(NEEDED, **{"--receiver": " "})))
         # Then: rn says the receiver is empty.
         self.assertIn("the receiver is empty; give it in words", out)
 
     def test_ccs_without_an_option_it_needs_stops_with_the_usage(self):
-        # Given: a session.
+        # Given: a session, kept.
         for option in NEEDED:
             with self.subTest(option=option):
                 # When: the conductor has a work's CCS written without the option.
@@ -620,359 +1027,199 @@ class CcsTest(RepoTest):
     def test_ccs_without_a_session_stops(self):
         # Given: a branch with no session.
         self.git("rm", "-q", "-r", RECORD)
-        self.commit()
+        self.kept()
         # When: the conductor has a work's CCS written.
-        out = self.refused()
         # Then: rn says to start a session.
-        self.assertIn("holds no session; start one with `rn.py start <slug>`", out)
-
-
-class StateTest(RepoTest):
-    def setUp(self) -> None:
-        super().setUp()
-        self.session(state=AT_PLAN)
-
-    def test_state_prints_where_the_session_stands(self):
-        # Given: a session waiting at the plan sign-off.
-        # When: the conductor asks for the state.
-        # Then: rn gives it.
-        self.assertEqual(self.ran("state"), AT_PLAN)
-
-    def test_asking_for_the_state_leaves_state_json_as_it_was(self):
-        # Given: a session whose state.json is written on one line.
-        # When: the conductor asks for the state.
-        self.ran("state")
-        # Then: state.json is as it was, written again by no one.
-        self.assertEqual(self.read(state_at()), json.dumps(AT_PLAN))
-
-    def test_state_prints_text_beyond_ascii_as_it_is(self):
-        # Given: a session.
-        # When: the conductor keeps feedback in Japanese.
-        out = self.printed("state", "feedback=理由を書いて")
-        # Then: rn prints it as it is, for the conductor to read.
-        self.assertIn('"feedback": "理由を書いて"', out)
-
-    def test_state_json_holds_text_beyond_ascii_as_it_is(self):
-        # Given: a session.
-        # When: the conductor keeps feedback in Japanese.
-        self.printed("state", "feedback=理由を書いて")
-        # Then: state.json holds it as it is, for the user to read on the pull request.
-        self.assertIn('"feedback": "理由を書いて"', self.read(state_at()))
-
-    def test_state_sets_each_key_given(self):
-        # Given: a session waiting at the plan sign-off.
-        # When: the conductor sets the stage and the feedback.
-        self.ran("state", "stage=documents", "feedback=say why")
-        # Then: state.json holds both.
-        want = {"stage": "documents", "signoff": "plan", "feedback": "say why"}
-        self.assertEqual(self.read_json(state_at()), want)
-
-    def test_state_gives_the_state_after_setting(self):
-        # Given: a session waiting at the plan sign-off.
-        # When: the conductor sets the stage.
-        # Then: rn gives the state as it now stands.
-        want = {"stage": "documents", "signoff": "plan"}
-        self.assertEqual(self.ran("state", "stage=documents"), want)
-
-    def test_an_empty_value_clears_its_key(self):
-        # Given: a session waiting at the plan sign-off.
-        # When: the conductor sets the sign-off to nothing.
-        self.ran("state", "signoff=")
-        # Then: state.json names no sign-off.
-        self.assertEqual(self.read_json(state_at()), {"stage": "plan"})
-
-    def test_clearing_a_key_not_set_leaves_the_state(self):
-        # Given: a session with no feedback kept.
-        # When: the conductor clears the feedback.
-        self.ran("state", "feedback=")
-        # Then: state.json is as it was.
-        self.assertEqual(self.read_json(state_at()), AT_PLAN)
-
-    def test_a_stage_rn_does_not_have_stops(self):
-        # Given: a session.
-        # When: the conductor sets a stage rn does not have.
-        # Then: rn names the stages it takes.
-        self.assertIn(
-            "stage takes one of asking, plan, documents, tasks, deliverable, lessons, ready;"
-            " 'review' is none of them",
-            self.stopped("state", "stage=review"),
-        )
-
-    def test_a_setting_that_stops_leaves_the_state(self):
-        # Given: a session waiting at the plan sign-off.
-        # When: the conductor sets the feedback and a stage rn does not have.
-        self.stopped("state", "feedback=x", "stage=review")
-        # Then: state.json is as it was.
-        self.assertEqual(self.read_json(state_at()), AT_PLAN)
-
-    def test_an_empty_stage_stops(self):
-        # Given: a session.
-        # When: the conductor sets the stage to nothing.
-        # Then: rn names the stages, without offering to clear it.
-        self.assertIn("lessons, ready; '' is none of them", self.stopped("state", "stage="))
-
-    def test_a_signoff_rn_does_not_have_stops(self):
-        # Given: a session.
-        # When: the conductor sets a sign-off rn does not have.
-        # Then: rn names the sign-offs, and that nothing clears it.
-        self.assertIn(
-            "signoff takes one of plan, design, deliverable, or nothing to clear it",
-            self.stopped("state", "signoff=review"),
-        )
-
-    def test_a_key_rn_does_not_keep_stops(self):
-        # Given: a session.
-        # When: the conductor sets a key rn does not keep.
-        # Then: rn names the keys it keeps.
-        self.assertIn(
-            "'shown' is no key rn keeps; give one of stage, signoff, feedback",
-            self.stopped("state", "shown=x"),
-        )
-
-    def test_a_setting_without_equals_stops(self):
-        # Given: a session.
-        # When: the conductor gives a key without a value.
-        # Then: rn says the `=` is missing and how a setting is given.
-        self.assertIn(
-            "'stage' has no `=`; give each setting as `<key>=<value>`",
-            self.stopped("state", "stage"),
-        )
+        self.assertIn("holds no session; start one with `rn.py start <slug>`", self.refused())
 
 
 class ProposalTest(RepoTest):
+    """The proposal at a sign-off, made from what is pushed alone, and kept as shown."""
+
     def setUp(self) -> None:
         super().setUp()
-        self.session(state=AT_PLAN)
-        self.result(RESULT)
+        self.write_json(PLAN_RESULT, {"work": [plan_at()], "items": [], "lessons": []})
+        self.session(push=True)
 
-    def result(self, data: Any) -> None:
-        """Writes the data as turn's result for the work."""
-        self.write_json(CCS_RESULT, data)
+    def proposed(self, signoff: str = "plan") -> str:
+        """The proposal rn printed at the sign-off."""
+        return self.printed("proposal", signoff)
 
-    def proposed(self) -> str:
-        """The proposal rn printed for the work."""
-        return self.printed("proposal", WORK)
+    def refused(self, signoff: str = "plan") -> str:
+        """What rn printed, having stopped putting the proposal together at the sign-off."""
+        return self.stopped("proposal", signoff)
 
-    def refused(self) -> str:
-        """What rn printed, having stopped putting the work's proposal together."""
-        return self.stopped("proposal", WORK)
+    def remade(self, plan: str) -> None:
+        """The plan made again as given, and kept."""
+        self.write(plan_at(), plan)
+        self.kept()
 
-    def section(self, out: str, heading: str) -> list[str]:
-        """The lines of the proposal's section under the heading."""
-        return out.split(f"## {heading}\n\n", 1)[1].split("\n\n", 1)[0].splitlines()
+    def test_the_first_proposal_shows_the_goal_and_each_criterion(self):
+        # Given: a plan, made by turn and kept, shown at no sign-off before.
+        # When: the conductor has the plan's proposal put together.
+        # Then: it names the sign-off and the pull request, gives the goal and each criterion,
+        # each on a line of its own, and how to answer.
+        self.assertEqual(self.proposed(), FIRST + "\n")
 
-    def test_the_proposal_opens_with_the_signoff_and_the_work(self):
-        # Given: a session waiting at the plan sign-off, with turn's result for the plan.
-        # When: the conductor has the proposal put together.
-        # Then: it opens naming the sign-off and the work.
-        self.assertTrue(self.proposed().startswith(f"# The plan sign-off: {WORK}\n"))
-
-    def test_the_proposal_shows_each_signoff_done_now_or_ahead(self):
-        stands = {
-            "plan": ["now", "ahead", "ahead"],
-            "design": ["done", "now", "ahead"],
-            "deliverable": ["done", "done", "now"],
-        }
-        for signoff, words in stands.items():
-            with self.subTest(signoff=signoff):
-                # Given: a session waiting at the sign-off.
-                self.write_json(state_at(), dict(AT_PLAN, signoff=signoff))
-                # When: the conductor has the proposal put together.
-                # Then: it shows each sign-off before it done, it now, and each after it ahead.
-                want = [
-                    f"- {name} sign-off: {word}"
-                    for name, word in zip(("Plan", "Design", "Deliverable"), words)
-                ]
-                self.assertEqual(self.section(self.proposed(), "Sign-offs"), want)
-
-    def test_the_first_proposal_at_a_signoff_says_so(self):
-        # Given: no proposal shown at the plan sign-off before.
-        # When: the conductor has the proposal put together.
-        # Then: what changed says it is the first.
-        want = ["- The first proposal at this sign-off."]
-        self.assertEqual(self.section(self.proposed(), "What changed"), want)
-
-    def test_the_proposal_shows_the_items_changed_since_the_last(self):
-        # Given: a proposal shown at the plan sign-off, then turn's result made again with one item
-        # changed and one added.
+    def test_the_proposal_is_kept_as_shown(self):
+        # Given: a plan, made by turn and kept.
+        # When: the conductor has the plan's proposal put together.
         self.proposed()
-        self.result(dict(RESULT, items=[dict(GOOD, good="whom it serves"), PARTS]))
-        # When: the conductor has the proposal put together again.
-        # Then: what changed shows those two alone.
-        want = [
-            "- c/readme.md B-1: Good: whom it serves (README.md:1-3)",
-            "- c/readme.md B-4: Good in each part: README.md:1-4: what it is (README.md:3)",
-        ]
-        self.assertEqual(self.section(self.proposed(), "What changed"), want)
+        # Then: the remote's branch holds a commit whose message is the proposal, marked with its
+        # sign-off, changing nothing.
+        kept = (
+            self.out("log", "-1", "--format=%B", "origin/work"),
+            self.out("diff", "--name-only", "HEAD~1", "origin/work"),
+        )
+        self.assertEqual(kept, (f"{FIRST}\n\nRn-Sign-off: plan\n\n", ""))
 
-    def test_a_proposal_with_no_item_changed_says_so(self):
-        # Given: a proposal shown at the plan sign-off, and the same result.
+    def test_the_proposal_made_again_shows_what_changed(self):
+        # Given: a proposal shown, then the plan made again with one criterion changed and one
+        # added.
         self.proposed()
-        # When: the conductor has the proposal put together again.
-        # Then: what changed says no item changed.
-        want = ["- No item changed since the last proposal at this sign-off."]
-        self.assertEqual(self.section(self.proposed(), "What changed"), want)
+        changed = "- AC1: A user signs in with their email.\n- AC2: Only their cart.\n- AC3: Out."
+        self.remade(plan_text(criteria=changed))
+        # When: the conductor has the plan's proposal put together again.
+        out = self.proposed()
+        # Then: it shows each changed and added, and names the rest as before.
+        self.assertEqual(
+            out.splitlines()[2:],
+            [
+                "Changed: AC2: Only their cart.",
+                "Changed: AC3: Out.",
+                "(G1 and AC1 as before)",
+                "/rn:ty to approve, /rn:gm <feedback> to ask for a change.",
+            ],
+        )
 
-    def test_the_proposal_shows_the_feedback_sent_back(self):
-        # Given: a session that kept the feedback the user sent back at the sign-off.
-        self.session(state=dict(AT_PLAN, feedback="say why"))
-        # When: the conductor has the proposal put together.
-        # Then: what changed opens with the feedback.
-        changed = self.section(self.proposed(), "What changed")
-        self.assertEqual(changed[0], "- Sent back with: say why")
-
-    def test_the_proposal_links_the_pull_request(self):
-        # Given: a plan whose front matter gives the pull request.
-        # When: the conductor has the proposal put together.
-        # Then: it gives the link.
-        self.assertEqual(self.section(self.proposed(), "Pull request"), [PR])
-
-    def test_the_proposal_shows_each_item_good_lacking_or_waiting(self):
-        # Given: turn's result with an item Good, one Good in each part, one without Good and one
-        # waiting on a question.
-        self.result(dict(RESULT, items=[GOOD, PARTS], not_good=[NOT_GOOD], questions=[QUESTION]))
-        # When: the conductor has the proposal put together.
-        # Then: it shows each item with its Good and lines, what it lacks, or its question.
-        want = [
-            "- c/readme.md B-1: Good: who it is for (README.md:1-3)",
-            "- c/readme.md B-4: Good in each part: README.md:1-4: what it is (README.md:3)",
-            "- c/readme.md B-6: lacks: a stop it clears (not found at README.md:9)",
-            "- c/readme.md B-7: waits on: Which licence?",
-        ]
-        self.assertEqual(self.section(self.proposed(), "Checklists"), want)
-
-    def test_a_result_of_questions_alone_shows_each_item_waiting(self):
-        # Given: turn's result of questions alone, returned before any work was made.
-        self.result({"questions": [QUESTION]})
-        # When: the conductor has the proposal put together.
-        # Then: it shows the item waiting on its question.
-        want = ["- c/readme.md B-7: waits on: Which licence?"]
-        self.assertEqual(self.section(self.proposed(), "Checklists"), want)
-
-    def test_the_proposal_keeps_the_items_shown_at_its_signoff(self):
-        # Given: a session waiting at the plan sign-off, with turn's result.
-        # When: the conductor has the proposal put together.
+    def test_the_proposal_made_again_shows_each_removed(self):
+        # Given: a proposal shown, then the plan made again with a criterion removed.
         self.proposed()
-        # Then: state.json keeps the items shown, under the plan sign-off.
-        want = {"plan": {"c/readme.md B-1": "Good: who it is for (README.md:1-3)"}}
-        self.assertEqual(self.read_json(state_at())["shown"], want)
+        self.remade(plan_text(criteria="- AC1: A user signs in with their email."))
+        # When: the conductor has the plan's proposal put together again.
+        # Then: it names the criterion removed, and the rest as before.
+        self.assertEqual(
+            self.proposed().splitlines()[2:4], ["Removed: AC2", "(G1 and AC1 as before)"]
+        )
 
-    def test_a_proposal_without_a_result_stops(self):
-        # Given: a session with no result of turn for the work.
-        os.remove(CCS_RESULT)
-        # When: the conductor has the proposal put together.
-        # Then: rn says to run turn:up first.
-        self.assertIn(f"{CCS_RESULT} is not there; run turn:up", self.refused())
+    def test_the_proposal_made_again_names_one_as_before(self):
+        # Given: a proposal shown, then the plan made again with every criterion changed.
+        self.proposed()
+        self.remade(plan_text(criteria="- AC1: Sign in.\n- AC2: Carts."))
+        # When: the conductor has the plan's proposal put together again.
+        # Then: it names the goal alone as before.
+        self.assertEqual(self.proposed().splitlines()[4], "(G1 as before)")
 
-    def test_a_proposal_while_turn_runs_stops(self):
-        # Given: a result turn is still writing, its run kept under "running".
-        self.result({"running": {}})
-        # When: the conductor has the proposal put together.
-        # Then: rn says to wait for turn:up to end.
+    def test_the_proposal_made_again_names_three_or_more_as_before(self):
+        # Given: a proposal shown, then the plan made again with a criterion added.
+        self.proposed()
+        criteria = "- AC1: A user signs in with their email.\n- AC2: A signed-in user sees only"
+        self.remade(plan_text(criteria=f"{criteria} their cart,\n  on every page.\n- AC3: Out."))
+        # When: the conductor has the plan's proposal put together again.
+        # Then: it names the three as before, the last after "and".
+        self.assertIn("(G1, AC1 and AC2 as before)\n", self.proposed())
+
+    def test_the_plan_unchanged_since_shown_gives_the_same_proposal_again(self):
+        # Given: a proposal shown, and the plan left as it was, as when the user comes back later.
+        self.proposed()
+        shown = self.out("rev-parse", "HEAD")
+        # When: the conductor has the plan's proposal put together again.
+        out = self.proposed()
+        # Then: it is the proposal shown before, and nothing more is committed.
+        self.assertEqual((out, self.out("rev-parse", "HEAD")), (FIRST + "\n", shown))
+
+    def test_the_plan_changed_elsewhere_names_every_line_as_before(self):
+        # Given: a proposal shown, then the plan made again with its goal and criteria as they
+        # were.
+        self.proposed()
+        self.remade(PLAN.replace("- UX: docs/ux.md", "- README: README.md"))
+        # When: the conductor has the plan's proposal put together again.
+        # Then: it names each as before, and nothing as changed.
+        self.assertEqual(self.proposed().splitlines()[2], "(G1, AC1 and AC2 as before)")
+
+    def test_a_criterion_ending_its_section_is_shown_whole(self):
+        # Given: a plan whose last criterion runs on to the heading after it, with no blank line.
+        self.remade(PLAN.replace("on every page.\n\n## Documents", "on every page.\n## Documents"))
+        # When: the conductor has the plan's proposal put together.
+        # Then: it shows the criterion whole, and nothing of the heading.
+        want = "AC2: A signed-in user sees only their cart, on every page."
+        self.assertEqual(self.proposed().splitlines()[4], want)
+
+    def test_the_deliverable_proposal_shows_each_criterion_alone(self):
+        # Given: a plan kept, its tasks done.
+        # When: the conductor has the deliverable's proposal put together.
+        # Then: it names the sign-off and the pull request, and gives each criterion alone.
+        self.assertEqual(
+            self.proposed("deliverable").splitlines()[:4],
+            [
+                "Deliverable sign-off",
+                f"The finished work is on the pull request: {PR}",
+                "AC1: A user signs in with their email.",
+                "AC2: A signed-in user sees only their cart, on every page.",
+            ],
+        )
+
+    def test_each_signoff_reads_only_its_own_proposals(self):
+        # Given: a proposal shown at the plan sign-off, then the plan made again.
+        self.proposed()
+        self.remade(plan_text(criteria="- AC1: A user signs in with their email."))
+        # When: the conductor has the deliverable's proposal put together.
+        # Then: it is the first at its sign-off, showing each criterion as it is.
+        self.assertEqual(
+            self.proposed("deliverable").splitlines()[2:],
+            [
+                "AC1: A user signs in with their email.",
+                "/rn:ty to approve, /rn:gm <feedback> to ask for a change.",
+            ],
+        )
+
+    def test_a_plan_proposal_before_turn_returned_stops(self):
+        # Given: a session whose plan turn has not returned, kept.
+        self.git("rm", "-q", PLAN_RESULT)
+        self.kept()
+        # When: the conductor has the plan's proposal put together.
+        # Then: rn says turn has not returned it, and to have turn make it.
         self.assertIn(
-            f"turn has not returned its result at {CCS_RESULT}; wait for turn:up to end, then run"
-            " this again",
+            f"rn: turn has not returned the plan: {PLAN_RESULT} is not there; have turn:up make it"
+            " with the call `rn.py ccs plan ...` printed, then run this again",
             self.refused(),
         )
 
-    def test_a_result_that_is_not_an_object_stops(self):
-        # Given: a result that is JSON, but a list.
-        self.result([])
-        # When: the conductor has the proposal put together.
-        # Then: rn says it is not a JSON object, and to have turn:up make the work again.
+    def test_a_proposal_with_the_record_not_kept_stops(self):
+        # Given: the plan changed and not kept.
+        self.write(plan_at(), PLAN + "\n")
+        # When: the conductor has the plan's proposal put together.
+        # Then: rn says the plan is not kept.
+        self.assertIn(f"rn: the record has changes not kept, {plan_at()};", self.refused())
+
+    def test_a_proposal_without_a_plan_stops(self):
+        # Given: a session without a plan, kept.
+        self.git("rm", "-q", plan_at())
+        self.kept()
+        # When: the conductor has the deliverable's proposal put together.
+        # Then: rn says there is no plan.
         self.assertIn(
-            f"{CCS_RESULT} is not a result turn writes: it is not a JSON object; have turn:up make"
-            " the work again",
+            f"rn: the plan {plan_at()} is not there; have turn make it, then run this again",
+            self.refused("deliverable"),
+        )
+
+    def test_a_proposal_of_a_plan_out_of_its_form_stops(self):
+        # Given: a plan out of its form, committed and pushed by hand rather than by rn.
+        self.remade(PLAN.replace("G1: ", "Goal: "))
+        # When: the conductor has the plan's proposal put together.
+        # Then: rn says where, and to have turn make the plan again.
+        self.assertIn(
+            "expected the goal as `G1: <the user's purpose, with why they want it>` above `##"
+            " Acceptance criteria`, found none; have turn make the plan again in that form, keep"
+            " it with `rn.py state`, then run this again",
             self.refused(),
         )
 
-    def test_a_result_that_is_not_json_stops(self):
-        # Given: a result that is not JSON.
-        self.write(CCS_RESULT, "{")
-        # When: the conductor has the proposal put together.
-        # Then: rn says it is not JSON.
-        self.assertIn(f"{CCS_RESULT} is not JSON", self.refused())
-
-    def test_a_result_group_that_is_not_a_list_stops(self):
-        for key in ("items", "not_good", "questions"):
-            with self.subTest(key=key):
-                # Given: a result whose group of entries is not a list.
-                self.result(dict(RESULT, **{key: {}}))
-                # When: the conductor has the proposal put together.
-                # Then: rn names the group that is not a list.
-                self.assertIn(f'is not a result turn writes: "{key}" is not a list', self.refused())
-
-    def test_a_result_entry_lacking_a_key_stops(self):
-        entries = {
-            "items": [{"checklist": "c", "item": "B-1", "good": "g"}],
-            "not_good": [{"checklist": "c", "item": "B-1", "gets": "g"}],
-            "questions": [{"question": "q"}],
-        }
-        for key, value in entries.items():
-            with self.subTest(key=key):
-                # Given: a result whose entry lacks a key turn writes.
-                self.result(dict(RESULT, **{key: value}))
-                # When: the conductor has the proposal put together.
-                # Then: rn shows the entry and the keys it should hold.
-                shown = json.dumps(value[0])
-                self.assertIn(f"the entry {shown} is not an object holding", self.refused())
-
-    def test_a_part_or_waiting_item_lacking_a_key_stops(self):
-        entries = {
-            "items": [dict(PARTS, parts=[{"part": "p", "good": "g"}])],
-            "questions": [dict(QUESTION, items=[{"checklist": "c"}])],
-        }
-        for key, value in entries.items():
-            with self.subTest(key=key):
-                # Given: a result whose part, or item waiting on a question, lacks a key.
-                self.result(dict(RESULT, **{key: value}))
-                # When: the conductor has the proposal put together.
-                # Then: rn says the entry is not an object holding the keys turn writes.
-                self.assertIn("is not an object holding", self.refused())
-
-    def test_a_result_entry_that_is_not_an_object_stops(self):
-        # Given: a result whose items are texts.
-        self.result(dict(RESULT, items=["B-1"]))
-        # When: the conductor has the proposal put together.
-        # Then: rn shows the entry, and says it is not an object.
-        self.assertIn(
-            'the entry "B-1" is not an object holding checklist, item; have turn:up make the work'
-            " again",
-            self.refused(),
-        )
-
-    def test_lines_that_are_not_a_list_of_texts_stop(self):
-        for lines in ("README.md:1", ["README.md:1", 2]):
-            with self.subTest(lines=lines):
-                # Given: a result whose item's lines are not a list of texts.
-                self.result(dict(RESULT, items=[dict(GOOD, lines=lines)]))
-                # When: the conductor has the proposal put together.
-                # Then: rn shows them, and says they are not a list of texts.
-                self.assertIn(f"{json.dumps(lines)} is not a list of texts", self.refused())
-
-    def test_a_proposal_at_no_signoff_stops(self):
-        # Given: a session waiting at no sign-off.
-        self.session(state=STARTED)
-        # When: the conductor has the proposal put together.
-        # Then: rn says to set the sign-off first.
-        self.assertIn("`rn.py state signoff=<plan|design|deliverable>`", self.refused())
-
-    def test_a_proposal_without_the_pull_request_stops(self):
-        # Given: a plan whose front matter gives no pull request.
-        self.session(plan=NO_PR, state=AT_PLAN)
-        # When: the conductor has the proposal put together.
-        # Then: rn says to put its URL in the plan.
-        self.assertIn(
-            "has no `pr` in its front matter; put the pull request's URL there", self.refused()
-        )
-
-    def test_a_proposal_that_stops_keeps_nothing_shown(self):
-        # Given: a plan whose front matter gives no pull request.
-        self.session(plan=NO_PR, state=AT_PLAN)
-        # When: the conductor has the proposal put together.
-        self.refused()
-        # Then: state.json keeps no item as shown.
-        self.assertNotIn("shown", self.read_json(state_at()))
+    def test_a_signoff_rn_does_not_have_stops(self):
+        # Given: a session, kept.
+        # When: the conductor has a proposal put together at a sign-off rn does not have.
+        # Then: rn names the sign-offs it has.
+        self.assertIn("invalid choice: 'review'", self.refused("review"))
 
 
 class CommandTest(RepoTest):
@@ -995,7 +1242,7 @@ class CommandTest(RepoTest):
         # Then: it says a subcommand is required, and names them.
         self.assertIn(
             "required: subcommand; give it as rn.py [-h]"
-            " {session,start,checklists,ccs,state,proposal}",
+            " {session,start,state,checklists,ccs,proposal}",
             self.stopped(),
         )
 
@@ -1008,15 +1255,17 @@ if importlib.util.find_spec("hypothesis") is not None:
 
     testing.load_hypothesis_profile()
     ALLOWED = "abcdefghijklmnopqrstuvwxyz0123456789-"
-    # Any value a front matter line can hold: every character but the line breaks `splitlines`
-    # splits at, which end the line, and the lone surrogates, which a UTF-8 file cannot hold. No
-    # value a plan can hold is left out.
-    ONE_LINE = st.text(
+    # Any text a line of the plan can hold after an ID: no line break `splitlines` splits at, no
+    # lone surrogate, which a UTF-8 file cannot hold, and no blank at either end, which a line of
+    # the plan does not keep; some text, as an ID's line is not empty.
+    WORDS = st.text(
         st.characters(
             blacklist_categories=("Cs",),
-            blacklist_characters="\n\r\x0b\x0c\x1c\x1d\x1e\x85\u2028\u2029",
-        )
-    )
+            blacklist_characters="\n\r\x0b\x0c\x1c\x1d\x1e\x85  ",
+        ),
+        min_size=1,
+    ).filter(lambda t: t.strip() == t and t)
+    IDS = st.dictionaries(st.sampled_from(["G1", "AC1", "AC2", "AC3"]), st.text(max_size=3))
 
     class PropertyTest(RepoTest):
         @hypothesis.given(st.text(alphabet=ALLOWED, min_size=1))
@@ -1079,58 +1328,38 @@ if importlib.util.find_spec("hypothesis") is not None:
             with self.assertRaisesRegex(rn.Stop, "the receiver is empty"):
                 rn.given(text, "receiver")
 
-        @hypothesis.given(
-            st.text().filter(lambda k: "=" not in k and k not in rn.SETTABLE), st.text()
-        )
-        def test_any_key_rn_does_not_keep_stops(self, key, value):
-            # Given: any key rn does not keep, with any value.
-            # When: it is set.
-            # Then: rn stops, saying it is no key rn keeps.
-            with self.assertRaisesRegex(rn.Stop, "is no key rn keeps"):
-                rn.settings([f"{key}={value}"])
+        @hypothesis.given(WORDS, st.lists(WORDS, min_size=1, max_size=5))
+        def test_the_plan_gives_back_its_goal_and_each_criterion_as_written(self, goal, criteria):
+            # Given: a plan in its form whose goal and criteria are any texts a line can hold.
+            listed = "\n".join(f"- AC{n}: {c}" for n, c in enumerate(criteria, 1))
+            text = plan_text(goal=f"G1: {goal}", criteria=listed)
+            self.write("steering.md", text)
+            # When: it is held to its form, and its goal and criteria are read.
+            held = rn.out_of_form("steering.md", self.plugin)
+            # Then: it holds, and gives back each as written, by its ID.
+            want = {"G1": goal, **{f"AC{n}": c for n, c in enumerate(criteria, 1)}}
+            self.assertEqual((held, rn.decided(text.splitlines(), ("", rn.CRITERIA))), ("", want))
 
-        @hypothesis.given(st.sampled_from(rn.STAGES), st.text())
-        def test_any_stage_and_feedback_are_taken(self, stage, feedback):
-            # Given: any stage rn has, and any feedback.
-            # When: both are set.
-            # Then: rn takes each as it is.
-            want = {"stage": stage, "feedback": feedback}
-            self.assertEqual(rn.settings([f"stage={stage}", f"feedback={feedback}"]), want)
-
-        @hypothesis.given(st.text(), st.lists(st.text()))
-        def test_any_good_is_shown_with_its_lines(self, good, lines):
-            # Given: turn's result with an item whose Good and lines are any texts.
-            result = {"items": [dict(GOOD, good=good, lines=lines)]}
-            # When: the proposal's lines are made from it.
-            # Then: the item shows its Good and its lines as they are.
-            want = {"c/readme.md B-1": f"Good: {good} ({', '.join(lines)})"}
-            self.assertEqual(rn.shown(result, "r.json"), want)
-
-        @hypothesis.given(
-            st.dictionaries(
-                st.text(alphabet="abcdefghijklmnopqrstuvwxyz-", min_size=1),
-                ONE_LINE.map(str.strip),
+        @hypothesis.given(IDS, IDS)
+        def test_what_changed_names_each_line_shown_once(self, before, now):
+            # Given: any goal and criteria shown before, and any now.
+            # When: what changed is said.
+            said = rn.changes(before, now)
+            # Then: each now is named once, as changed or among those as before, the last line,
+            # and each gone as removed.
+            named = [line.split(": ")[1] for line in said if line.startswith("Changed: ")]
+            same = [i for i in now if before.get(i) == now[i]]
+            removed = [line[len("Removed: ") :] for line in said if line.startswith("Removed: ")]
+            last = said[-1] if same else ""
+            words = last.removeprefix("(").removesuffix(" as before)").replace(" and ", ", ")
+            self.assertEqual(
+                (sorted(named), removed, words.split(", ") if same else []),
+                (
+                    sorted(i for i in now if i not in same),
+                    [i for i in before if i not in now],
+                    same,
+                ),
             )
-        )
-        def test_the_front_matter_gives_back_each_line_written(self, keys):
-            # Given: a plan whose front matter holds any keys, each with any value a line can
-            # hold, without the blanks around it, which the front matter does not keep.
-            text = "".join(f"{k}: {v}\n" for k, v in keys.items())
-            self.write("steering.md", f"---\n{text}---\n\n# Goal\n")
-            # When: its front matter is read.
-            # Then: it gives back each key with its value.
-            self.assertEqual(rn.front_matter("steering.md"), keys)
-
-        @hypothesis.given(st.text(min_size=1))
-        def test_any_feedback_is_kept_as_given(self, feedback):
-            # Given: a session, and any feedback the user sends back; an empty one clears the
-            # feedback instead, as test_an_empty_value_clears_its_key holds.
-            if not os.path.isdir(FOLDER):
-                self.session()
-            # When: the conductor keeps it in the state.
-            self.ran("state", f"feedback={feedback}")
-            # Then: the state gives it back as it was given.
-            self.assertEqual(self.ran("state")["feedback"], feedback)
 
 
 if __name__ == "__main__":

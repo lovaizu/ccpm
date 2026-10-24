@@ -530,6 +530,9 @@
   },
   {
    "fact": "2026-10-24: T27's subagent finished, changes uncommitted (rn/scripts/rn.py; call.py and template.py are links to turn's and lane's; dev/rn/tests; cosmic-ray.toml excludes the links); it reports check.sh rn 100% and mutate.sh rn 0 of 300 survivors. Its design: `session` prints the session and its state CCS; `start <slug> --message` makes the branch from origin/<default>, commits and pushes; `state --message` commits every change with the state replaced whole and pushes, refusing a plan out of plan.md F-1 (T5), a state not a CCS, or other changes with the state unchanged; `ccs` refuses uncommitted or unpushed changes (T6), takes decisions/<work>.decisions.md by name, names the kind's checklist, the user's addition and fix.md; `proposal plan|deliverable` made from the pushed record, kept as an empty commit `Rn-Sign-off:`; dropped: `state key=value`, `--decisions`, `--reference`, turn's items in the proposal. It decided the scripts commit and push (the old scripts.decisions 'scripts never commit' reversed), `git add -A`, the plan refused rather than kept"
+  },
+  {
+   "fact": "2026-10-24: T27 read whole against rn's architecture, UX and code checklist and committed: check.sh rn 100% (102 tests, 1.6 s), mutate.sh rn 0 of 312 survivors (37 s); fixed by hand: a checklist's CCS names rn's usability.md as a source, since checklist.md makes each checklist from it and --reference is gone; the architecture says the states before are in the history of state.json; scripts.decisions.md rewritten to the reasons alone; the design and deliverable proposals moved to T29 with the skills, as where the hearing keeps the core decisions is the skills' to set"
   }
  ],
  "semantic_gist": [
@@ -596,7 +599,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T22: turn's agents, scripts and hooks made to its architecture, the hooks laid by lane:up; flow code first, then prompts, then lanes"
+   "task": "T28: rn's learner, lanes laid by lane:up; then T29: rn's skills remade to the scripts, with the proposal at every sign-off"
   }
  ],
  "relational_map": [
@@ -634,7 +637,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: read T27's uncommitted diff of rn/scripts and dev/rn/tests whole against dev/rn/architecture.md, ux.md and code.md, judging its own decisions and the open points in uncertainty_signal from the purpose (settle what the architecture and UX decide; bring to the user only what they leave to the user), run check.sh rn and mutate.sh rn, commit; then T28 (learner, lanes by lane:up) and the conductor's skills remade to the new commands. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: T28 (rn's learner, its lanes by lane:up), then T29 (the skills and the proposals designed together: where the hearing keeps each work's core decisions, the design and deliverable proposals, the bound on their lines). Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -657,13 +660,10 @@
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
   },
   {
-   "open": "T27 left: the design sign-off's proposal not made (where the core decisions are kept is set nowhere); the deliverable proposal shows the ACs alone, '(… as before)' after /rn:gm; no bound on the proposal's lines"
+   "open": "T29: the design sign-off's proposal not made, the deliverable's shows the ACs alone and '(… as before)' after /rn:gm, no bound on a proposal's lines; the proposal's fixed words are English whatever the artifact language"
   },
   {
-   "open": "T27 differs from the architecture's words: the states before are in each commit's state.json, not in the commit messages; the proposal commit's fixed words are English whatever the artifact language; with --reference gone, where a checklist's CCS names usability.md is unset"
-  },
-  {
-   "open": "the skills call what T27 dropped (state stage=..., ccs --decisions, start without --message, proposal <work>); to remake with the conductor"
+   "open": "T29: the skills call what T27 dropped (state stage=..., ccs --decisions, start without --message, proposal <work>)"
   }
  ],
  "retrieved_artifacts": [

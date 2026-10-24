@@ -137,9 +137,13 @@ branch protection rather than a check of commands.
 
 - [x] T26: rn has no hook of its own, the default branch held by GitHub's branch protection, which
   rn's README asks the user to turn on, and T2's check gone with it. Serves AC1.
-- [ ] T27: rn's scripts give what the architecture says: the state replaced whole at each move, each
+- [x] T27: rn's scripts give what the architecture says: the state replaced whole at each move, each
   work's CCS naming its kind's one checklist, the user's addition and rn's checklist for a fix, and
   each proposal made from the record alone; check.sh 100% and mutate.sh rn 0 survivors. Serves AC1,
   AC2.
 - [ ] T28: rn's learner reads the records of the conductor's conversation and its agents and gives
   each lesson with the words it rests on, held by lanes laid with `lane:up`. Serves AC1.
+- [ ] T29: rn's skills take each move with rn's scripts as they now are, and the proposal at each
+  sign-off, the design's and the deliverable's included, shows the link to each work and its core
+  decisions with their intent in a few short lines, read from where the hearing keeps them, the
+  scripts and the skills designed together. Serves AC1, AC2.

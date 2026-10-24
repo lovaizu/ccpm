@@ -149,8 +149,9 @@ rn/                                  the plugin, installed by Claude Code with t
   result goes, answers turn's points by SendMessage, and stops a run with TaskStop, as
   [turn](../../turn/README.md) is called.
 - The record is kept by a commit and a push to the piece of work's branch, made by the conductor
-  alone; the states before the current one, the options weighed with their reasons and each
-  feedback with its answer are in the commit messages.
+  alone, through rn's scripts; the states before the current one are in the history of
+  `state.json`, and the options weighed with their reasons and each feedback with its answer in the
+  commit messages.
 
   A push is what a fresh conversation, or another machine, reads from.
 - The pull request is a draft pull request on GitHub of that branch, opened and marked ready with
