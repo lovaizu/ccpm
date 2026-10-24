@@ -205,5 +205,23 @@
   "way": "stopped: as plain until the line that the orchestrator will check each Good; stopped by TaskStop and called again with the same call; the new orchestrator told that line again and went on from the Good check, no role started again, returned: every move in the architecture's order",
   "hooks": "follow_next twice, each a turn.py next before the line printed, cleared",
   "read": "Every orchestrator record read; the run gone on started no role anew."
+ },
+ {
+  "commit": "after the four prompts remade, plain",
+  "session": "576ede1c-62cb-4c44-82c7-e59e123fb89d",
+  "minutes_to_return": 3.3,
+  "cost_usd": 1.16,
+  "way": "plain: returned, every move in the architecture's order; nothing before turn.py start, ToolSearch after it; the check given with what to read for it",
+  "hooks": "none",
+  "read": "Every orchestrator record read."
+ },
+ {
+  "commit": "after the four prompts remade, asked",
+  "session": "da479a87-0302-4901-9468-a309b499073f",
+  "minutes_to_return": 4.3,
+  "cost_usd": 1.36,
+  "way": "asked: the check asked the license, the calling AI's answer kept in the decisions, the check made again with what to read as the CCS now names it, the CCS and the decisions read again; returned, every move in order",
+  "hooks": "none",
+  "read": "Every orchestrator record read."
  }
 ]
