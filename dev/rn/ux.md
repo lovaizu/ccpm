@@ -70,6 +70,9 @@ sequenceDiagram
   Note over U: merges
 ```
 
+- Languages: rn's first point is the language it talks in and the one it writes into the
+  repository, proposed from what the repository and the user's instructions set; all it shows the
+  user, the proposals included, is in the first, adding nothing and leaving nothing out.
 - The plan: rn gives the goal and each acceptance criterion an ID and puts the plan on a draft pull
   request of its own branch.
 - Sign-offs: before each, an AI that did not make the proposal reads and uses it in the user's

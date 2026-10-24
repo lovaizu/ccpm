@@ -71,9 +71,10 @@ flowchart TB
   A conversation that carries the whole of a long piece of work swells, and a fresh one starts
   from nothing; a rule written only in words is followed by chance.
 - The steering is one file that steers the work to its purpose and always shows the latest: the
-  stage, the sign-off waiting and the two languages; the goal, the acceptance criteria, the tasks
-  with their steps ticked; the next move and what is open. rn's scripts alone write it, and hold it
-  to the form of rn's plan checklist at every keep, as they take their data from it.
+  stage, the sign-off waiting and the two languages, as `dev/architecture.md`'s Languages has them;
+  the goal, the acceptance criteria, the tasks with their steps ticked; the next move and what is
+  open. rn's scripts alone write it, and hold it to the form of rn's plan checklist at every keep,
+  as they take their data from it.
 
   The user reads it at each sign-off and on the pull request, and a fresh conversation goes on
   from it alone (rn's Principle 2); one file holding both the plan and where it stands cannot say

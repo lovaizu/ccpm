@@ -62,6 +62,19 @@ Only the main conversation can ask the person; a subagent cannot
 ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). A plugin an AI calls asks
 that AI, which answers or asks the person in turn.
 
+### Languages
+
+A plugin a person calls proposes, as its first point, the language it talks in and the language of
+what it writes into the repository: those the repository and the person's instructions set, else
+the person's own for the talk and English for the repository; and records the answer. What goes into
+the repository is in the second; what is shown to the person is put into the first, adding nothing
+and leaving nothing out. A plugin an AI calls writes and tells in the repository's language, and
+the caller that talks with the person puts it into theirs.
+
+The person decides from what they read, and a translation that adds or leaves out changes what they
+approve; the repository is read later by people who were not in the conversation, and English
+reaches the most of them.
+
 ### Hearing until nothing is left to decide
 
 The orchestrator asks the caller, with its recommendation, each point only they can decide, until
