@@ -658,7 +658,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: the flow trial runs in the background (pgrep -f flow.py; its folder in the scratchpad, trial-1); when it ends, read what it printed and the JSONL against trials.decisions.md's What passes, fix at the cause in the skills or scripts, then T29 done in steering. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: rn's flow trial was started in the background on 2026-10-24 and survives /clear: see whether it still runs with pgrep -f dev/rn/trials/flow/flow.py; what it prints goes to /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/56aa29d0-fbb5-4e4f-abe9-f9e682d24658/scratchpad/trial-1.out and its folder is /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/56aa29d0-fbb5-4e4f-abe9-f9e682d24658/scratchpad/trial-1 (an earlier session's scratchpad; its venv is /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/56aa29d0-fbb5-4e4f-abe9-f9e682d24658/scratchpad/venv, put its bin first on PATH). When it has ended, read the .out and the JSONL against .rn/20261013-writ-rebuild/decisions/rn/trials.decisions.md's What passes, fix each slip at its cause in the skills or scripts with rn/checklists/fix.md, then mark T29 done in steering.md and go on to the next task. Do not start a second run while one runs. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
