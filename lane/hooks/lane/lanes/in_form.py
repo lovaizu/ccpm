@@ -30,8 +30,10 @@ def form(root: str, named: str) -> forms.Form:
         raise ValueError(
             f"is not named as {step.ROOT}/<path in the plugin>, the path the subagent reads it by"
         )
-    path = os.path.realpath(step.expanded(named, root))
-    if not shell.inside(path, os.path.realpath(root)):
+    # The path is judged as named, not as a link in it resolves: installing copies the file a link
+    # in the plugin points to into the plugin, as a plugin takes another's form.
+    path = os.path.normpath(step.expanded(named, root))
+    if not shell.inside(path, os.path.normpath(root)):
         raise ValueError("lies out of the plugin, whose folder alone installing copies")
     return forms.read(path)
 

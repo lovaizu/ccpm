@@ -138,6 +138,16 @@ class TestForm(InFormTest):
                     in_form.form(self.plugin, named)
                 self.assertIn("out of the plugin", str(refused.exception))
 
+    def test_a_form_linked_from_the_plugin_is_read(self):
+        # Given: the form, a link in the plugin to a file beside it, as a plugin takes another's
+        self.write_json(os.path.join(self.base, "form.json"), FORM)
+        os.symlink(
+            os.path.join("..", "..", "form.json"), os.path.join(self.plugin, "forms", "linked.json")
+        )
+        # When: it is read for the lane
+        # Then: it is the schema, as installing copies the file a link points to into the plugin
+        self.assertEqual(in_form.form(self.plugin, "${CLAUDE_PLUGIN_ROOT}/forms/linked.json"), FORM)
+
     def test_a_form_not_named_from_the_plugins_folder_is_refused(self):
         for named in ("forms/entry.json", os.path.join(self.plugin, "forms", "entry.json")):
             with self.subTest(named=named):
