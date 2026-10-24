@@ -67,7 +67,7 @@ G1: <the user's purpose, with why they want it>
   Completion criterion: <what its result must do for what it serves, and the check that shows it>
 
   - [ ] 1. Read <the context it needs>, finding out <what it must>; confirm <what is lacking>. The orchestrator, with the user.
-  - [ ] 2. Design <the part it makes> and <how that part is checked>. turn, first run.
+  - [ ] 2. Design <the part it makes>, `<its path>` as a <kind> work, and <how that part is checked>. turn, first run.
   - [ ] 3. Trace <the design> on paper, or try it, against <its checks>. That run's first reader.
   - [ ] 4. Make <the part>, checked as it grows, code test first. turn, second run.
 
@@ -157,6 +157,8 @@ criterion?
 
 Look for:
 - a step that holds only the template's words, the same in every task;
+- a design step that names no path or kind of the part it makes, which turn's calls of the task
+  are made on;
 - a step whose content does nothing toward the completion criterion;
 - a task, or a thing a step says to make, that only its maker reads on the way, such as a survey or
   a map to reach the result, rather than what the user of the finished work, or whoever builds it

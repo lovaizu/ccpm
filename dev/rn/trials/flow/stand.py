@@ -1,8 +1,8 @@
-"""Stands in for turn's flow in rn's conductor flow trial, as its generator alone: from the call rn's
-conductor hands turn:up, gives the stand-in agent the line it sends the main conversation and what
+"""Stands in for turn's flow in rn's flow trial, as its generator alone: from the call rn's
+orchestrator hands turn:up, gives the stand-in agent the line it sends the main conversation and what
 it makes the work from, then takes the agent's claim, each item's Good with the lines that give it,
-in turn's claim form, as turn's result, so the conductor reads a result it can check at its lines,
-as it does once the real turn returns.
+in turn's claim form, as turn's result, so the orchestrator reads a result it can check at its
+lines, as it does once the real turn returns.
 
 The trial copies it into the copy of turn's `scripts/`, beside turn's `call.py` and `forms.py`, which
 read the call, the CCS, the checklists and the parts of the work and check the claim as turn does:
@@ -22,50 +22,71 @@ from typing import Any
 import call
 import forms
 
-# The work a CCS is of, named by the CCS's file, `ccs/<work>.json`, as rn.py writes it: the finished
-# work is left as it is, and any other work made from its decisions in its checklist's template.
+# The CCS entries rn.py writes that name the work, the stage it is made in, each of its decisions as
+# `<title>: <what it says>`, and the goal and each criterion it serves, each as one line.
+WORK = "work"
+STAGE = "stage"
+DECISION = "decision"
+SERVES = "serves"
+# The finished work is left as it is; any other work is made from its decisions.
 FINISHED = "deliverable"
-# The CCS entry naming the work's decisions, as rn.py writes it.
-DECISIONS = "decisions"
+# The plan's call makes the part of the steering from its title to its tasks, so its template is the
+# plan checklist's cut from the title to the learnings, as rn's scripts write the rest.
+PLAN = "plan"
+TITLE = "# "
+LEARNINGS = "## Learnings"
 F1 = "### F-1: "
+FENCE = "```"
 CHECKED = "Read the work at each Good's lines against its item."
 USAGE = "usage: stand.py given '<call>'\n       stand.py result '<call>' < <claim>"
 
 
-def work_of(run: dict[str, Any]) -> str:
-    """The name of the work the call is for, from its CCS's file name."""
-    return os.path.splitext(os.path.basename(run["call"]["ccs"]))[0]
-
-
-def template(checklists: list[str]) -> str:
-    """The template in the fence under F-1 of the first checklist holding one, as each of rn's
-    checklists sets its work's; "" where none holds one."""
+def template(checklists: list[str], work: str) -> str:
+    """The template in the fence under F-1 of the first checklist holding one, closed by a fence of
+    the same marks, as each of rn's checklists sets its work's, cut to the plan's part for the plan;
+    "" where none holds one."""
     for path in checklists:
         with open(path, encoding="utf-8") as f:
             lines = f.read().splitlines()
         heading = next((n for n, line in enumerate(lines) if line.startswith(F1)), None)
         if heading is None:
             continue
-        fences = [n for n in range(heading, len(lines)) if lines[n].startswith("```")]
-        if len(fences) >= 2:
-            return "\n".join(lines[fences[0] + 1 : fences[1]])
+        opening = next((n for n in range(heading, len(lines)) if lines[n].startswith(FENCE)), None)
+        if opening is None:
+            continue
+        marks = lines[opening][: len(lines[opening]) - len(lines[opening].lstrip("`"))]
+        closing = next((n for n in range(opening + 1, len(lines)) if lines[n] == marks), None)
+        if closing is None:
+            continue
+        shape = lines[opening + 1 : closing]
+        if work == PLAN:
+            start = next((n for n, line in enumerate(shape) if line.startswith(TITLE)), 0)
+            end = next((n for n, line in enumerate(shape) if line == LEARNINGS), len(shape))
+            shape = shape[start:end]
+        return "\n".join(shape).strip("\n")
     return ""
 
 
 def given(run: dict[str, Any]) -> dict[str, Any]:
     """What the stand-in agent is given: the `turn:` line it sends the main conversation, the work's
-    paths, its decisions, whether it makes the work, `write`, or leaves it, `none`, the checklists
-    whose items it claims, the items asked of each part, and the template the work is written in."""
-    decisions = call.entries(call.read_ccs(run["call"]["ccs"]), DECISIONS)
+    name, paths and stage, its decisions and what it serves, whether it makes the work, `write`, or
+    leaves it, `none`, the checklists whose items it claims, what the receiver has, the items asked
+    of each part, and the template the work is written in."""
+    ccs = call.read_ccs(run["call"]["ccs"])
+    work = (call.entries(ccs, WORK) or [""])[0]
     return {
         "line": f"turn: Next, turn:up will make the work and give every item its Good, of"
         f" {', '.join(run['work'])}, for {len(run['items'])} items, round 1.",
+        "name": work,
         "work": run["work"],
-        "decisions": decisions[0] if decisions else "",
-        "make": "none" if work_of(run) == FINISHED else "write",
+        "stage": (call.entries(ccs, STAGE) or [""])[0],
+        "decisions": call.entries(ccs, DECISION),
+        "serves": call.entries(ccs, SERVES),
+        "make": "none" if work == FINISHED else "write",
         "checklists": run["checklist"],
+        "has": run["has"],
         "each": [f"{i['checklist']} {i['item']}" for i in run["each"]],
-        "template": template(run["checklist"]),
+        "template": template(run["checklist"], work),
     }
 
 
@@ -88,9 +109,9 @@ def spread(claim: Any, run: dict[str, Any]) -> Any:
 
 
 def result(run: dict[str, Any], text: str) -> dict[str, str]:
-    """Writes turn's result for the call from the claim, every item with its Good at its lines and
-    no lesson; gives `{"returned": <result>}` as turn:up replies it. Stops where the claim is not in
-    turn's claim form, saying each thing to give instead."""
+    """Writes turn's result for the call from the claim, in the form turn's flow writes it, every
+    item with its Good at its lines and no lesson; gives `{"returned": <result>}` as turn:up replies
+    it. Stops where the claim is not in turn's claim form, saying each thing to give instead."""
     try:
         claim = spread(json.loads(forms.unfenced(text)), run)
     except json.JSONDecodeError:

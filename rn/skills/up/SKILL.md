@@ -178,8 +178,8 @@ to the repository in its `artifact-language`.
      - A step of the orchestrator's, with the user: step 3 on the task's work, what it says to find
        out found out; then `rn.py state --done T<n>.<step>`, Next the step after.
      - A step of turn's: a call, step 4 on the task's work. For `plan`: no path, kind `plan`, the
-       receiver, use and has of step 6. For `t<n>`: the path and kind the step names, the receiver
-       and their use as the opening of the kind's checklist names its reader, from `rn.py
+       receiver, use and has of step 6. For `t<n>`: the path and kind its design step names, the
+       receiver and their use as the opening of the kind's checklist names its reader, from `rn.py
        checklists <kind>`, which prints the paths of the kind's checklists, for the task's
        completion criterion, `--has .` or what the task's decisions say the receiver has. A step
        done by that run's first reader, such as the trace on paper, is done within the call before

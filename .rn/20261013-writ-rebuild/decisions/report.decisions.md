@@ -181,3 +181,9 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   and a folder `A=` made the path a word the shell reads as an assignment, so the command run was
   the next word, which start_with rightly reads as a drift; such a path is left out of its inputs
   and `A=/scripts/turn.py 0` added to the example test, as plugin.md 5b says.
+- R56 (rn's flow trial 2, traced on paper first): the trial brought to rn as it now is, the stand-in
+  user reading the steering's front matter as the last commit holds it, the stand-in turn reading
+  the numbered CCS and its decision entries; two slips of rn's the trace showed fixed by hand: the
+  learnings kept after `/rn:gm` pass the steering's Open on, as Open is replaced whole and step 10
+  reads the feedback there; a task's design step names the path and kind of the part it makes, which
+  turn's calls of the task are made on, as nothing else in the plan named them.
