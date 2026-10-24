@@ -47,8 +47,10 @@ WORK_PATH = "README.md"
 CCS = f"{FOLDER}/ccs/{WORK}.json"
 CCS_RESULT = f"{FOLDER}/ccs/{WORK}-result.json"
 DECISIONS = f"{FOLDER}/decisions/{WORK}.decisions.md"
-# The plan's result, which the plan sign-off waits on.
+# The plan's result, which the plan sign-off waits on, and the finished work's, which the
+# deliverable sign-off waits on.
 PLAN_RESULT = f"{FOLDER}/ccs/plan-result.json"
+DELIVERABLE_RESULT = f"{FOLDER}/ccs/deliverable-result.json"
 # The options ccs needs, each with a value it takes.
 NEEDED = {"--kind": KIND, "--receiver": "a new user", "--use": "to try it", "--has": "."}
 # A state, as the conductor writes it, and another for the next move.
@@ -65,15 +67,16 @@ def plan_text(
     goal: str = "G1: Users sign in,\nso their carts stay theirs.",
     criteria: str = "- AC1: A user signs in with their email.\n"
     "- AC2: A signed-in user sees only their cart,\n  on every page.",
+    documents: str = "- ux: docs/ux.md",
     tasks: str = "",
     opening: str = "",
 ) -> str:
-    """A plan in the form of rn's plan checklist, with the goal, criteria and tasks given, and the
-    front matter after the opening given."""
+    """A plan in the form of rn's plan checklist, with the goal, criteria, documents and tasks given,
+    and the front matter after the opening given."""
     said = "".join(f"{key}: {value}\n" for key, value in LANGUAGES.items())
     return (
         f"{opening}---\nrn: 0.10.0\npr: {PR}\nstatus: running\n{said}---\n\n# Add login\n\n"
-        f"{goal}\n\n## Acceptance criteria\n\n{criteria}\n\n## Documents\n\n- UX: docs/ux.md\n\n"
+        f"{goal}\n\n## Acceptance criteria\n\n{criteria}\n\n## Documents\n\n{documents}\n\n"
         f"## Tasks\n\n{tasks}"
     )
 
@@ -100,9 +103,14 @@ def plan_at(folder: str = FOLDER) -> str:
     return f"{folder}/steering.md"
 
 
+def options(needed: dict[str, str]) -> list[str]:
+    """The arguments giving each option of ccs and its value."""
+    return [part for option in needed.items() for part in option]
+
+
 def ccs_argv(needed: dict[str, str]) -> list[str]:
     """The arguments that have the work's CCS written, with each option given and its value."""
-    return ["ccs", WORK, WORK_PATH] + [part for option in needed.items() for part in option]
+    return ["ccs", WORK, WORK_PATH] + options(needed)
 
 
 class RepoTest(helpers.MainAndWork):
@@ -160,9 +168,21 @@ class RepoTest(helpers.MainAndWork):
         if push:
             self.git("push", "-q")
 
+    def head(self, ref: str = "HEAD") -> str:
+        """The commit the ref names."""
+        return self.out("rev-parse", ref).strip()
+
     def kept(self) -> None:
         """Commits every change and pushes it, as the conductor's last move did."""
         self.commit()
+        self.git("push", "-q")
+
+    def commit_with(self, message: str, at: str = helpers.DATE) -> None:
+        """Commits every change with the message at the time, and pushes it, as a move kept; one of
+        no change as well, as a proposal shown is kept."""
+        self.git("add", "-A")
+        with mock.patch.dict(os.environ, {"GIT_COMMITTER_DATE": at}):
+            self.git("commit", "-q", "--allow-empty", "-m", message)
         self.git("push", "-q")
 
 
@@ -171,14 +191,14 @@ class SessionTest(RepoTest):
         # Given: a branch that changed nothing under .rn/.
         # When: the conductor asks for the session.
         # Then: rn says there is none.
-        self.assertEqual(self.ran("session"), {"session": None, "state": None})
+        self.assertEqual(self.ran("session"), {"session": None, "state": None, "signoff": None})
 
     def test_the_session_the_branch_changed_is_found_with_its_state(self):
         # Given: a session's folder committed on the branch, with its state.
         self.session()
         # When: the conductor asks for the session.
         # Then: rn gives its folder and its state.
-        self.assertEqual(self.ran("session"), {"session": FOLDER, "state": STATE})
+        self.assertEqual(self.ran("session"), {"session": FOLDER, "state": STATE, "signoff": None})
 
     def test_the_state_is_printed_with_text_beyond_ascii_as_it_is(self):
         # Given: a session whose state holds a fact in Japanese.
@@ -239,7 +259,7 @@ class SessionTest(RepoTest):
         self.commit()
         # When: the conductor asks for the session.
         # Then: it is found, with an empty state.
-        self.assertEqual(self.ran("session"), {"session": FOLDER, "state": {}})
+        self.assertEqual(self.ran("session"), {"session": FOLDER, "state": {}, "signoff": None})
 
     def test_a_session_without_a_plan_is_not_finished(self):
         # Given: a session just started, with no plan yet.
@@ -272,6 +292,46 @@ class SessionTest(RepoTest):
         # When: the conductor asks for the session.
         # Then: the status after the front matter is not read, and the session is found.
         self.assertEqual(self.ran("session")["session"], FOLDER)
+
+    def test_a_proposal_shown_waits_for_the_users_answer(self):
+        # Given: a session, and a proposal shown at the plan sign-off, kept as rn keeps it.
+        self.session()
+        self.commit_with("Plan sign-off\n\nRn-Sign-off: plan")
+        # When: the conductor asks for the session.
+        # Then: rn gives the sign-off waiting for the user's answer.
+        self.assertEqual(self.ran("session")["signoff"], "plan")
+
+    def test_a_proposal_answered_waits_no_more(self):
+        # Given: a session, a proposal shown at the plan sign-off, then the user's answer kept.
+        self.session()
+        self.commit_with("Plan sign-off\n\nRn-Sign-off: plan")
+        self.commit_with("Plan approved\n\nRn-Answer: approved plan")
+        # When: the conductor asks for the session.
+        # Then: no sign-off waits.
+        self.assertIsNone(self.ran("session")["signoff"])
+
+    def test_the_last_proposal_shown_is_the_one_waiting(self):
+        # Given: the plan's proposal shown and answered, then the design's shown, and a move kept
+        # after it.
+        self.session()
+        self.commit_with("Plan sign-off\n\nRn-Sign-off: plan")
+        self.commit_with("Plan approved\n\nRn-Answer: approved plan")
+        self.commit_with("Design sign-off\n\nRn-Sign-off: design")
+        self.commit_with("A move")
+        # When: the conductor asks for the session.
+        # Then: the design sign-off waits.
+        self.assertEqual(self.ran("session")["signoff"], "design")
+
+    def test_a_proposal_before_the_branch_left_the_default_branch_is_not_read(self):
+        # Given: a proposal shown on the default branch, and the session's branch made from it.
+        self.git("checkout", "-q", "main")
+        self.commit_with("Plan sign-off\n\nRn-Sign-off: plan")
+        self.git("update-ref", "refs/remotes/origin/main", "HEAD")
+        self.git("checkout", "-q", "-B", "work")
+        self.session()
+        # When: the conductor asks for the session.
+        # Then: no sign-off waits.
+        self.assertIsNone(self.ran("session")["signoff"])
 
     def test_two_sessions_not_finished_stop(self):
         # Given: a branch that changed two sessions, neither finished.
@@ -482,10 +542,6 @@ class StateTest(RepoTest):
         """What rn printed, having stopped keeping the move with the message."""
         return self.stopped("state", "--message", message)
 
-    def head(self, ref: str = "HEAD") -> str:
-        """The commit the ref names."""
-        return self.out("rev-parse", ref).strip()
-
     def test_the_state_written_is_kept_on_the_remote_with_the_message(self):
         # Given: the conductor's state for the next move, written whole.
         self.write_json(state_at(), NEXT)
@@ -606,6 +662,18 @@ class StateTest(RepoTest):
             "a criterion's ID": (
                 plan_text(criteria="- AC1: Sign in.\n- AC1: Carts."),
                 "line 17: expected each ID once, found AC1 again",
+            ),
+            "a document": (
+                plan_text(documents="- UX: docs/ux.md"),
+                (
+                    "line 22: expected a document as `- <its name, the one in the file name of its"
+                    " decisions>: <its path>`, its name of lowercase letters, digits and hyphens,"
+                    " found `- UX: docs/ux.md`"
+                ),
+            ),
+            "a document's name": (
+                plan_text(documents="- ux: docs/ux.md\n- ux: docs/flows.md"),
+                "line 23: expected each ID once, found ux again",
             ),
             "a task": (
                 plan_text(tasks="- T1: Sign in.\n"),
@@ -749,6 +817,131 @@ class StateTest(RepoTest):
         )
 
 
+class AnswerTest(RepoTest):
+    """The user's answer to the proposal shown, kept as a move."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.session(push=True)
+        self.commit_with("Plan sign-off\n\nRn-Sign-off: plan")
+
+    def answer(self, said: str = "approved", message: str = "Plan approved") -> str:
+        """What rn printed, having kept the answer with the message."""
+        return self.printed("answer", said, "--message", message)
+
+    def refused(self, said: str = "approved", message: str = "Plan approved") -> str:
+        """What rn printed, having stopped keeping the answer with the message."""
+        return self.stopped("answer", said, "--message", message)
+
+    def test_the_answer_is_kept_with_the_state_marked_with_the_signoff(self):
+        # Given: the state replaced with the user's approval.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the answer.
+        self.answer(message="Plan approved\n\nThe user typed /rn:ty.")
+        # Then: the remote's branch holds the state, committed with the message, marked with the
+        # answer and the sign-off it answers.
+        kept = (
+            json.loads(self.out("show", f"origin/work:{state_at()}")),
+            self.out("log", "-1", "--format=%B", "origin/work"),
+        )
+        self.assertEqual(
+            kept,
+            (NEXT, "Plan approved\n\nThe user typed /rn:ty.\n\nRn-Answer: approved plan\n\n"),
+        )
+
+    def test_feedback_is_kept_marked_as_feedback(self):
+        # Given: the state replaced with the user's feedback.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps it.
+        self.answer("feedback", "Feedback at the plan sign-off: leave the account pages")
+        # Then: the commit is marked as feedback on the sign-off.
+        self.assertTrue(
+            self.out("log", "-1", "--format=%B").endswith("\n\nRn-Answer: feedback plan\n\n")
+        )
+
+    def test_the_answer_gives_the_commit_and_no_signoff_waits_after_it(self):
+        # Given: the state replaced with the user's approval.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the answer.
+        out = json.loads(self.answer())
+        # Then: rn gives the commit, and the session has no sign-off waiting.
+        self.assertEqual((out, self.ran("session")["signoff"]), ({"kept": self.head()}, None))
+
+    def test_every_change_of_the_move_is_kept_with_the_answer(self):
+        # Given: the state replaced, and the feedback written into a work's decisions.
+        self.write_json(state_at(), NEXT)
+        self.write(DECISIONS, "# What the README says\n")
+        # When: the conductor keeps the feedback.
+        self.answer("feedback")
+        # Then: the remote's branch holds both.
+        changed = self.out("diff", "--name-only", "HEAD~1", "origin/work").split()
+        self.assertEqual(changed, [DECISIONS, state_at()])
+
+    def test_an_answer_with_no_proposal_shown_stops_and_keeps_nothing(self):
+        # Given: the proposal answered already, and the state replaced again.
+        self.commit_with("Plan approved\n\nRn-Answer: approved plan")
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps an answer.
+        out = self.refused()
+        # Then: rn says no sign-off waits and how one comes to, and commits nothing.
+        said = (
+            "rn: no sign-off waits for the user's answer, as no proposal is shown since the last"
+            " answer; show one with `rn.py proposal <plan|design|deliverable>`, and keep the answer"
+            " the user gives it"
+        ) in out
+        self.assertEqual((said, self.head()), (True, self.head("origin/work")))
+
+    def test_an_answer_with_the_state_as_kept_stops_and_keeps_nothing(self):
+        # Given: the state as kept last, and a decision written.
+        self.write(DECISIONS, "# What the README says\n")
+        # When: the conductor keeps the answer.
+        out = self.refused()
+        # Then: rn says to replace the state with the answer, and commits nothing.
+        said = (
+            f"rn: {state_at()} is as kept last; replace it whole with the user's answer as a fact"
+            " and the next move as its cue, then run this again"
+        ) in out
+        self.assertEqual((said, self.head()), (True, self.head("origin/work")))
+
+    def test_an_answer_with_nothing_changed_stops(self):
+        # Given: nothing changed since the proposal was shown.
+        # When: the conductor keeps the answer.
+        # Then: rn says to replace the state with it.
+        self.assertIn(f"rn: {state_at()} is as kept last;", self.refused())
+
+    def test_an_answer_with_an_empty_message_stops(self):
+        # Given: the state replaced with the user's approval.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps it with a message of blanks.
+        # Then: rn says the message is empty.
+        self.assertIn("rn: the message is empty; give it in words", self.refused(message=" "))
+
+    def test_an_answer_rn_does_not_take_stops(self):
+        # Given: the state replaced.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps an answer other than approved or feedback.
+        # Then: rn names the answers it takes.
+        self.assertIn("invalid choice: 'maybe'", self.refused("maybe"))
+
+    def test_an_answer_without_a_message_stops_with_the_usage(self):
+        # Given: the state replaced.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the answer with no message.
+        # Then: rn says the message is required and how the subcommand is given.
+        self.assertIn(
+            "rn: the following arguments are required: --message; give it as rn.py answer",
+            self.stopped("answer", "approved"),
+        )
+
+    def test_an_answer_without_a_session_stops(self):
+        # Given: a branch with no session.
+        self.git("rm", "-q", "-r", RECORD)
+        self.kept()
+        # When: the conductor keeps an answer.
+        # Then: rn says to start a session.
+        self.assertIn("holds no session; start one with `rn.py start <slug>`", self.refused())
+
+
 class ChecklistsTest(RepoTest):
     def test_rns_own_checklist_is_found_in_any_folder(self):
         # Given: rn's checklist for the kind, in a folder of rn's checklists.
@@ -874,8 +1067,13 @@ class CcsTest(RepoTest):
         self.kept()
         # When: the conductor has a work's CCS written.
         self.made()
-        # Then: the CCS names rn's checklist, the user's addition, then the decisions.
-        want = [{"checklist": self.checklist}, {"checklist": added}, {"decisions": DECISIONS}]
+        # Then: the CCS names rn's checklist, the user's addition, the plan, then the decisions.
+        want = [
+            {"checklist": self.checklist},
+            {"checklist": added},
+            {"source": plan_at()},
+            {"decisions": DECISIONS},
+        ]
         self.assertEqual(self.ccs()["retrieved_artifacts"], want)
 
     def test_ccs_of_a_checklist_names_rns_usability_before_the_decisions(self):
@@ -884,10 +1082,96 @@ class CcsTest(RepoTest):
         # When: the conductor has the CCS of a checklist written.
         self.ran(*ccs_argv({**NEEDED, "--kind": "checklist"}))
         # Then: the CCS names rn's usability.md as a source, after the checklist and before the
-        # decisions, as rn's checklist for checklists makes each from it.
+        # plan and the decisions, as rn's checklist for checklists makes each from it.
         usability = os.path.join(self.plugin, "checklists", "usability.md")
         self.assertEqual(
-            self.ccs()["retrieved_artifacts"][1:], [{"source": usability}, {"decisions": DECISIONS}]
+            self.ccs()["retrieved_artifacts"][1:],
+            [{"source": usability}, {"source": plan_at()}, {"decisions": DECISIONS}],
+        )
+
+    def test_ccs_of_the_plan_names_no_plan_as_a_source(self):
+        # Given: a session with the plan's decisions, kept.
+        decisions = f"{FOLDER}/decisions/plan.decisions.md"
+        self.write(decisions, "# What the plan says\n")
+        self.kept()
+        # When: the conductor has the plan's CCS written.
+        self.ran("ccs", "plan", plan_at(), *options(NEEDED))
+        # Then: it names the checklist and the decisions alone, as the plan is the work itself.
+        want = [{"checklist": self.checklist}, {"decisions": decisions}]
+        self.assertEqual(self.read_json(f"{FOLDER}/ccs/plan.json")["retrieved_artifacts"], want)
+
+    def test_ccs_names_each_path_of_the_work_given(self):
+        # Given: a session, kept.
+        # When: the conductor has a work's CCS written with two paths.
+        self.ran("ccs", WORK, WORK_PATH, "docs/guide.md", *options(NEEDED))
+        # Then: the CCS names each as the work, in the order given, before the receiver.
+        want = [{"deliverable": WORK_PATH}, {"deliverable": "docs/guide.md"}]
+        self.assertEqual(self.ccs()["focal_entities"][:2], want)
+
+    def test_ccs_of_a_work_with_no_path_stops(self):
+        # Given: a session, kept.
+        # When: the conductor has a work's CCS written with no path.
+        out = self.stopped("ccs", WORK, *options(NEEDED))
+        # Then: rn says to give the work's paths, and writes no CCS.
+        said = (
+            f"rn: no path of the work {WORK} is given; give the path of each file or folder of it,"
+            " from the top"
+        ) in out
+        self.assertEqual((said, os.path.exists(CCS)), (True, False))
+
+    def finished(self) -> list[dict[str, str]]:
+        """The work the finished work's CCS names, written with no path given."""
+        self.write(f"{FOLDER}/decisions/deliverable.decisions.md", "# The finished work\n")
+        self.kept()
+        self.ran("ccs", "deliverable", *options(NEEDED))
+        part = self.read_json(f"{FOLDER}/ccs/deliverable.json")["focal_entities"]
+        return [e for e in part if "deliverable" in e]
+
+    def test_the_finished_work_is_every_file_the_branch_changed_outside_rn(self):
+        # Given: the branch's changes to a file of the default branch, a file it added, a
+        # checklist of the user's and the session's record, kept.
+        self.write("README.md", "# app, typed\n")
+        self.write("src/app.ts", "x\n")
+        self.write(f"{RECORD}/checklists/{KIND}.md", "# Code\n")
+        # When: the conductor has the finished work's CCS written with no path.
+        # Then: the work is each file changed outside .rn/, in the order of their paths.
+        self.assertEqual(
+            self.finished(), [{"deliverable": "README.md"}, {"deliverable": "src/app.ts"}]
+        )
+
+    def test_a_file_the_branch_removed_is_not_the_finished_work(self):
+        # Given: a file of the default branch removed, and a file added.
+        os.remove("README.md")
+        self.write("src/app.ts", "x\n")
+        # When: the conductor has the finished work's CCS written with no path.
+        # Then: the file added alone is the work, as the one removed is not there to use.
+        self.assertEqual(self.finished(), [{"deliverable": "src/app.ts"}])
+
+    def test_the_finished_work_given_paths_is_those_paths(self):
+        # Given: a file the branch added, and the finished work's decisions, kept.
+        self.write("src/app.ts", "x\n")
+        self.write(f"{FOLDER}/decisions/deliverable.decisions.md", "# The finished work\n")
+        self.kept()
+        # When: the conductor has the finished work's CCS written with a path.
+        self.ran("ccs", "deliverable", WORK_PATH, *options(NEEDED))
+        # Then: the work is the path given alone.
+        part = self.read_json(f"{FOLDER}/ccs/deliverable.json")["focal_entities"]
+        self.assertEqual(
+            part[0:2], [{"deliverable": WORK_PATH}, {"audience": NEEDED["--receiver"]}]
+        )
+
+    def test_the_finished_work_with_no_file_changed_stops(self):
+        # Given: a branch that changed nothing outside .rn/, and the finished work's decisions.
+        self.write(f"{FOLDER}/decisions/deliverable.decisions.md", "# The finished work\n")
+        self.kept()
+        # When: the conductor has the finished work's CCS written with no path.
+        out = self.stopped("ccs", "deliverable", *options(NEEDED))
+        # Then: rn says there is no finished work yet, and what to do.
+        self.assertIn(
+            "rn: the branch changed no file outside .rn/ since it left origin/main, so there is no"
+            " finished work to name; have each task made and kept, or give the work's paths, then"
+            " run this again",
+            out,
         )
 
     def test_ccs_takes_the_languages_from_the_plan(self):
@@ -1035,13 +1319,20 @@ class CcsTest(RepoTest):
         self.assertIn("holds no session; start one with `rn.py start <slug>`", self.refused())
 
 
-class ProposalTest(RepoTest):
-    """The proposal at a sign-off, made from what is pushed alone, and kept as shown."""
+class ShownTest(RepoTest):
+    """A session whose plan and finished work turn returned, kept, for a proposal at a sign-off."""
 
     def setUp(self) -> None:
         super().setUp()
-        self.write_json(PLAN_RESULT, {"work": [plan_at()], "items": [], "lessons": []})
+        self.returned("plan")
+        self.returned("deliverable")
         self.session(push=True)
+
+    def returned(self, work: str) -> None:
+        """turn's result for the work, written in the session."""
+        self.write_json(
+            f"{FOLDER}/ccs/{work}-result.json", {"work": [], "items": [], "lessons": []}
+        )
 
     def proposed(self, signoff: str = "plan") -> str:
         """The proposal rn printed at the sign-off."""
@@ -1055,6 +1346,10 @@ class ProposalTest(RepoTest):
         """The plan made again as given, and kept."""
         self.write(plan_at(), plan)
         self.kept()
+
+
+class ProposalTest(ShownTest):
+    """The proposal at a sign-off, made from what is pushed alone, and kept as shown."""
 
     def test_the_first_proposal_shows_the_goal_and_each_criterion(self):
         # Given: a plan, made by turn and kept, shown at no sign-off before.
@@ -1130,14 +1425,28 @@ class ProposalTest(RepoTest):
         # Then: it is the proposal shown before, and nothing more is committed.
         self.assertEqual((out, self.out("rev-parse", "HEAD")), (FIRST + "\n", shown))
 
-    def test_the_plan_changed_elsewhere_names_every_line_as_before(self):
+    def test_the_plan_changed_where_not_shown_gives_the_same_proposal_again(self):
         # Given: a proposal shown, then the plan made again with its goal and criteria as they
         # were.
         self.proposed()
-        self.remade(PLAN.replace("- UX: docs/ux.md", "- README: README.md"))
+        self.remade(plan_text(documents="- readme: README.md"))
+        shown = self.head()
         # When: the conductor has the plan's proposal put together again.
-        # Then: it names each as before, and nothing as changed.
-        self.assertEqual(self.proposed().splitlines()[2], "(G1, AC1 and AC2 as before)")
+        out = self.proposed()
+        # Then: it is the proposal shown before, and nothing more is committed.
+        self.assertEqual((out, self.head()), (FIRST + "\n", shown))
+
+    def test_a_proposal_after_feedback_is_kept_anew_though_nothing_shown_changed(self):
+        # Given: a proposal shown, the user's feedback kept, and the plan left as it was.
+        self.proposed()
+        self.commit_with("Feedback at the plan sign-off\n\nRn-Answer: feedback plan")
+        # When: the conductor has the plan's proposal put together again.
+        out = self.proposed()
+        # Then: it names each line as before, and is kept as the proposal waiting.
+        self.assertEqual(
+            (out.splitlines()[2], self.ran("session")["signoff"]),
+            ("(G1, AC1 and AC2 as before)", "plan"),
+        )
 
     def test_a_criterion_ending_its_section_is_shown_whole(self):
         # Given: a plan whose last criterion runs on to the heading after it, with no blank line.
@@ -1182,8 +1491,8 @@ class ProposalTest(RepoTest):
         # When: the conductor has the plan's proposal put together.
         # Then: rn says turn has not returned it, and to have turn make it.
         self.assertIn(
-            f"rn: turn has not returned the plan: {PLAN_RESULT} is not there; have turn:up make it"
-            " with the call `rn.py ccs plan ...` printed, then run this again",
+            f"rn: turn has not returned the work plan: {PLAN_RESULT} is not there; have turn:up"
+            " make it with the call `rn.py ccs plan ...` printed, then run this again",
             self.refused(),
         )
 
@@ -1222,6 +1531,280 @@ class ProposalTest(RepoTest):
         # When: the conductor has a proposal put together at a sign-off rn does not have.
         # Then: rn names the sign-offs it has.
         self.assertIn("invalid choice: 'review'", self.refused("review"))
+
+
+# The decisions of the plan's document, the UX, each entry its title over one paragraph, and the
+# link to the document on the branch.
+UX_DECISIONS = f"{FOLDER}/decisions/ux.decisions.md"
+UX = (
+    "---\nrn: 0.10.0\n---\n\n# What the UX says\n\nWhat this file holds.\n\n"
+    "## Who uses it\n\nA shopper on a phone,\n  who signs in once.\n\n## Sign-in\n\nBy email alone.\n"
+)
+UX_LINK = "ux: https://github.com/o/r/blob/work/docs/ux.md"
+# What the proposals end with.
+HOW = "/rn:ty to approve, /rn:gm <feedback> to ask for a change."
+
+
+def decisions(*entries: tuple[str, str]) -> str:
+    """A work's decisions holding each entry, its title over its paragraph."""
+    return "# Decisions\n" + "".join(f"\n## {title}\n\n{said}\n" for title, said in entries)
+
+
+class DesignTest(ShownTest):
+    """The proposal at the design sign-off: each document of the plan, with its decisions."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write(UX_DECISIONS, UX)
+        self.returned("ux")
+        self.kept()
+
+    def proposed(self, signoff: str = "design") -> str:
+        """The proposal rn printed at the design sign-off."""
+        return super().proposed(signoff)
+
+    def refused(self, signoff: str = "design") -> str:
+        """What rn printed, having stopped putting the design's proposal together."""
+        return super().refused(signoff)
+
+    def decided(self, *entries: tuple[str, str], work: str = "ux") -> None:
+        """The work's decisions written again with the entries, and kept."""
+        self.write(f"{FOLDER}/decisions/{work}.decisions.md", decisions(*entries))
+        self.kept()
+
+    def test_the_design_proposal_shows_each_documents_link_and_its_decisions(self):
+        # Given: a plan naming the UX, and its decisions, made by turn and kept.
+        # When: the conductor has the design's proposal put together.
+        # Then: it names the sign-off and the pull request, then the document's name and its link
+        # on the branch, and each decision as one line, with neither the front matter nor what
+        # comes before the first entry.
+        self.assertEqual(
+            self.proposed(),
+            "Design sign-off\n"
+            f"The design is on the draft pull request: {PR}\n"
+            f"{UX_LINK}\n"
+            "- A shopper on a phone, who signs in once.\n"
+            "- By email alone.\n"
+            f"{HOW}\n",
+        )
+
+    def test_each_document_is_shown_in_the_plans_order(self):
+        # Given: a plan naming the UX, then the README, each with its decisions and result.
+        self.write(f"{FOLDER}/decisions/readme.decisions.md", decisions(("License", "MIT.")))
+        self.returned("readme")
+        self.remade(plan_text(documents="- ux: docs/ux.md\n- readme: README.md"))
+        # When: the conductor has the design's proposal put together.
+        # Then: each document comes with its decisions, in the order of the plan.
+        self.assertEqual(
+            self.proposed().splitlines()[2:7],
+            [
+                UX_LINK,
+                "- A shopper on a phone, who signs in once.",
+                "- By email alone.",
+                "readme: https://github.com/o/r/blob/work/README.md",
+                "- MIT.",
+            ],
+        )
+
+    def test_a_document_turn_has_not_returned_stops(self):
+        # Given: a plan naming the README, whose result turn has not returned.
+        self.remade(plan_text(documents="- ux: docs/ux.md\n- readme: README.md"))
+        # When: the conductor has the design's proposal put together.
+        # Then: rn names the result and says to have turn make it.
+        self.assertIn(
+            f"rn: turn has not returned the work readme: {FOLDER}/ccs/readme-result.json is not"
+            " there; have turn:up make it with the call `rn.py ccs readme ...` printed, then run"
+            " this again",
+            self.refused(),
+        )
+
+    def test_a_document_without_decisions_is_shown_by_its_link_alone(self):
+        # Given: a plan naming the README, which turn returned and which has no decisions.
+        self.returned("readme")
+        self.remade(plan_text(documents="- readme: README.md"))
+        # When: the conductor has the design's proposal put together.
+        # Then: the README's link is shown, with nothing under it.
+        self.assertEqual(
+            self.proposed().splitlines()[2:],
+            ["readme: https://github.com/o/r/blob/work/README.md", HOW],
+        )
+
+    def test_a_design_proposal_without_a_plan_stops(self):
+        # Given: a session without a plan, kept.
+        self.git("rm", "-q", plan_at())
+        self.kept()
+        # When: the conductor has the design's proposal put together.
+        # Then: rn says there is no plan.
+        self.assertIn(f"rn: the plan {plan_at()} is not there;", self.refused())
+
+    def test_the_design_made_again_shows_each_decision_changed_and_added(self):
+        # Given: a proposal shown, then one decision changed and one added.
+        self.proposed()
+        self.decided(
+            ("Who uses it", "A shopper on a phone, who signs in once."),
+            ("Sign-in", "By email or phone."),
+            ("Carts", "Kept for each user."),
+        )
+        # When: the conductor has the design's proposal put together again.
+        # Then: under the document, it shows each changed and added, and names the rest as before.
+        self.assertEqual(
+            self.proposed().splitlines()[2:],
+            [
+                UX_LINK,
+                "- Changed: By email or phone.",
+                "- Changed: Kept for each user.",
+                "(Who uses it as before)",
+                HOW,
+            ],
+        )
+
+    def test_the_design_made_again_names_each_decision_removed(self):
+        # Given: a proposal shown, then a decision removed.
+        self.proposed()
+        self.decided(("Who uses it", "A shopper on a phone, who signs in once."))
+        # When: the conductor has the design's proposal put together again.
+        # Then: it names the decision removed by its title, and the rest as before.
+        self.assertEqual(
+            self.proposed().splitlines()[3:5], ["- Removed: Sign-in", "(Who uses it as before)"]
+        )
+
+    def test_a_document_added_since_shows_each_decision_as_changed(self):
+        # Given: a proposal shown, then the README added to the plan, with its decisions.
+        self.proposed()
+        self.write(f"{FOLDER}/decisions/readme.decisions.md", decisions(("License", "MIT.")))
+        self.returned("readme")
+        self.remade(plan_text(documents="- ux: docs/ux.md\n- readme: README.md"))
+        # When: the conductor has the design's proposal put together again.
+        # Then: the UX's decisions are named as before, and the README's shown as changed.
+        self.assertEqual(
+            self.proposed().splitlines()[2:6],
+            [
+                UX_LINK,
+                "(Who uses it and Sign-in as before)",
+                "readme: https://github.com/o/r/blob/work/README.md",
+                "- Changed: MIT.",
+            ],
+        )
+
+    def test_a_document_removed_since_is_named(self):
+        # Given: a proposal shown of two documents, then the README removed from the plan.
+        self.write(f"{FOLDER}/decisions/readme.decisions.md", decisions(("License", "MIT.")))
+        self.returned("readme")
+        self.remade(plan_text(documents="- ux: docs/ux.md\n- readme: README.md"))
+        self.proposed()
+        self.remade(PLAN)
+        # When: the conductor has the design's proposal put together again.
+        # Then: it names the document removed, after those shown.
+        self.assertEqual(
+            self.proposed().splitlines()[2:5],
+            [UX_LINK, "(Who uses it and Sign-in as before)", "Removed: readme"],
+        )
+
+    def test_the_design_unchanged_since_shown_gives_the_same_proposal_again(self):
+        # Given: a proposal shown, and the decisions left as they were.
+        first = self.proposed()
+        shown = self.head()
+        # When: the conductor has the design's proposal put together again.
+        # Then: it is the proposal shown before, and nothing more is committed.
+        self.assertEqual((self.proposed(), self.head()), (first, shown))
+
+    def test_five_decisions_of_200_characters_are_shown(self):
+        # Given: a document of five decisions, each of 200 characters.
+        self.decided(*[(f"Point {n}", str(n) * 200) for n in range(1, 6)])
+        # When: the conductor has the design's proposal put together.
+        # Then: each is shown whole.
+        self.assertEqual(
+            self.proposed().splitlines()[3:8], ["- " + str(n) * 200 for n in range(1, 6)]
+        )
+
+    def test_more_than_five_decisions_stop_as_not_yet_simple(self):
+        # Given: a document of six decisions.
+        self.decided(*[(f"Point {n}", "Short.") for n in range(1, 7)])
+        # When: the conductor has the design's proposal put together.
+        # Then: rn says the work is not yet simple, and what to do.
+        self.assertIn(
+            f"rn: {UX_DECISIONS} holds 6 decisions, more than the 5 a sign-off shows of a work;"
+            " the work is not yet simple: settle its points again more simply with the user, have"
+            " turn make it again, then run this again",
+            self.refused(),
+        )
+
+    def test_a_decision_over_200_characters_stops_as_not_yet_simple(self):
+        # Given: a document with a decision of 201 characters.
+        self.decided(("Who uses it", "a" * 201))
+        # When: the conductor has the design's proposal put together.
+        # Then: rn names the decision, says the work is not yet simple, and what to do.
+        self.assertIn(
+            f'rn: the decision "Who uses it" of {UX_DECISIONS} is 201 characters long, more than'
+            " the 200 a line of a sign-off holds; the work is not yet simple: settle its points"
+            " again more simply with the user",
+            self.refused(),
+        )
+
+    def test_a_pr_that_is_no_pull_requests_url_stops(self):
+        # Given: a plan whose pr is no pull request's URL.
+        self.remade(PLAN.replace(f"pr: {PR}", "pr: none"))
+        # When: the conductor has the design's proposal put together.
+        # Then: rn says what the pr must be.
+        self.assertIn(
+            "rn: the plan's pr, 'none', is no pull request's URL, such as"
+            " https://github.com/<owner>/<repository>/pull/<n>; set it to the session's pull"
+            " request, keep it with `rn.py state`, then run this again",
+            self.refused(),
+        )
+
+
+class DeliverableTest(ShownTest):
+    """The proposal at the deliverable sign-off: the criteria, and each task's decisions."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        tasks = "- [x] T1: Sign in. Serves AC1.\n- [x] T2: Carts. Serves AC2.\n"
+        self.write(f"{FOLDER}/decisions/t1.decisions.md", decisions(("Form", "Email first.")))
+        self.remade(plan_text(tasks=tasks))
+
+    def proposed(self, signoff: str = "deliverable") -> str:
+        """The proposal rn printed at the deliverable sign-off."""
+        return super().proposed(signoff)
+
+    def test_the_deliverable_proposal_shows_each_tasks_decisions_after_the_criteria(self):
+        # Given: a plan of two tasks done, the first with its decisions.
+        # When: the conductor has the deliverable's proposal put together.
+        # Then: after the criteria, it gives the task with decisions by its ID, and each decision
+        # as one line.
+        self.assertEqual(
+            self.proposed().splitlines()[2:],
+            [
+                "AC1: A user signs in with their email.",
+                "AC2: A signed-in user sees only their cart, on every page.",
+                "T1",
+                "- Email first.",
+                HOW,
+            ],
+        )
+
+    def test_the_deliverable_made_again_shows_each_decision_changed(self):
+        # Given: a proposal shown, then the first task's decision changed.
+        self.proposed()
+        self.write(f"{FOLDER}/decisions/t1.decisions.md", decisions(("Form", "Phone first.")))
+        self.kept()
+        # When: the conductor has the deliverable's proposal put together again.
+        # Then: it names the criteria as before, and shows the decision changed under its task.
+        self.assertEqual(
+            self.proposed().splitlines()[2:5],
+            ["(AC1 and AC2 as before)", "T1", "- Changed: Phone first."],
+        )
+
+    def test_a_deliverable_proposal_before_turn_returned_stops(self):
+        # Given: a session whose finished work turn has not returned, kept.
+        self.git("rm", "-q", DELIVERABLE_RESULT)
+        self.kept()
+        # When: the conductor has the deliverable's proposal put together.
+        # Then: rn says turn has not returned it, and to have turn make it.
+        self.assertIn(
+            f"rn: turn has not returned the work deliverable: {DELIVERABLE_RESULT} is not there;",
+            self.stopped("proposal", "deliverable"),
+        )
 
 
 # The branch each test's session is on.
@@ -1300,14 +1883,6 @@ class LearningTest(RepoTest):
     def range_shown(self) -> str:
         """The commits since the default branch, as rn names the history it showed."""
         return f"git log {self.start()}..{self.out('rev-parse', 'HEAD').strip()}"
-
-    def commit_with(self, message: str, at: str = helpers.DATE) -> None:
-        """Commits every change with the message at the time, and pushes it, as a move kept; one of
-        no change as well, as a proposal shown is kept."""
-        self.git("add", "-A")
-        with mock.patch.dict(os.environ, {"GIT_COMMITTER_DATE": at}):
-            self.git("commit", "-q", "--allow-empty", "-m", message)
-        self.git("push", "-q")
 
     def lessons_kept(self, n: int, *lessons: dict[str, Any], at: str = KEPT_AT) -> str:
         """The lessons of a stretch kept as its number, committed at the time; gives the commit."""
@@ -1883,7 +2458,7 @@ class CommandTest(RepoTest):
         # Then: it says a subcommand is required, and names them.
         self.assertIn(
             "required: subcommand; give it as rn.py [-h]"
-            " {session,start,state,checklists,ccs,proposal,records,learnt,lessons}",
+            " {session,start,state,answer,checklists,ccs,proposal,records,learnt,lessons}",
             self.stopped(),
         )
 
@@ -1981,26 +2556,42 @@ if importlib.util.find_spec("hypothesis") is not None:
             want = {"G1": goal, **{f"AC{n}": c for n, c in enumerate(criteria, 1)}}
             self.assertEqual((held, rn.decided(text.splitlines(), ("", rn.CRITERIA))), ("", want))
 
-        @hypothesis.given(IDS, IDS)
-        def test_what_changed_names_each_line_shown_once(self, before, now):
-            # Given: any goal and criteria shown before, and any now.
+        @hypothesis.given(IDS, IDS, st.sampled_from(["", "- "]))
+        def test_what_changed_names_each_line_shown_once(self, before, now, bullet):
+            # Given: any lines shown before and any now, by their keys, under a bullet or none.
             # When: what changed is said.
-            said = rn.changes(before, now)
-            # Then: each now is named once, as changed or among those as before, the last line,
-            # and each gone as removed.
-            named = [line.split(": ")[1] for line in said if line.startswith("Changed: ")]
+            said = rn.changes(before, now, bullet)
+            # Then: each now is shown once as changed or named once among those as before, the last
+            # line, and each gone named as removed, each change under the bullet.
+            changed = [line[len(f"{bullet}Changed: ") :] for line in said if "Changed: " in line]
             same = [i for i in now if before.get(i) == now[i]]
-            removed = [line[len("Removed: ") :] for line in said if line.startswith("Removed: ")]
+            removed = [line[len(f"{bullet}Removed: ") :] for line in said if "Removed: " in line]
             last = said[-1] if same else ""
             words = last.removeprefix("(").removesuffix(" as before)").replace(" and ", ", ")
             self.assertEqual(
-                (sorted(named), removed, words.split(", ") if same else []),
+                (sorted(changed), removed, words.split(", ") if same else []),
                 (
-                    sorted(i for i in now if i not in same),
+                    sorted(now[i] for i in now if i not in same),
                     [i for i in before if i not in now],
                     same,
                 ),
             )
+
+        @hypothesis.given(
+            st.dictionaries(
+                st.text(alphabet="abcdefghij -", min_size=1).filter(lambda t: t.strip() == t),
+                st.lists(WORDS.filter(lambda t: not t.startswith(("#", "`", "~"))), min_size=1),
+                max_size=5,
+            )
+        )
+        def test_the_decisions_give_back_each_entry_as_one_line(self, entries):
+            # Given: a work's decisions whose entries have any titles, each over a paragraph of any
+            # lines a paragraph can hold.
+            text = decisions(*[(title, "\n".join(lines)) for title, lines in entries.items()])
+            # When: its entries are read.
+            # Then: each is given back by its title, its lines joined into one, in the order written.
+            want = {title: " ".join(lines) for title, lines in entries.items()}
+            self.assertEqual(list(rn.decisions_of(text).items()), list(want.items()))
 
     class LearningPropertyTest(LearningTest):
         @hypothesis.given(

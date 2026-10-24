@@ -56,7 +56,7 @@ G1: <the user's purpose, with why they want it>
 
 ## Documents
 
-- <the document, such as the architecture>: <its path>
+- <its name, the one in the file name of its decisions>: <its path>
 
 ## Tasks
 
@@ -71,7 +71,8 @@ G1: <the user's purpose, with why they want it>
 ```
 
 Why: a check of rn's refuses a plan kept outside this form, and rn's script reads `pr`, `status` and
-the two languages by these names, so a plan in another form halts the session.
+the two languages by these names, and finds each document's decisions by its name, so a plan in
+another form halts the session.
 
 ## Benefit
 

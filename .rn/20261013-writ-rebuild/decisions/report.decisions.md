@@ -139,3 +139,15 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
 - R45 (lane's layer and long lines): a lane's sentence stays added at the end of its step's last
   line, unwrapped, as a wrapped sentence could not be taken out again when lanes are laid anew,
   and an AI reads a long line as well as a short one.
+- R46 (T29's design): `/rn:ty` goes on by reading `/rn:up`'s steps whole, so the course is in one
+  place and the work goes on after an approval with nothing more typed, as the README shows.
+- R47 (T29's design): the deliverable is read before its sign-off with rn's checklist
+  `session/deliverable.md`, one item asking each acceptance criterion done when used, its work every
+  file the branch changed outside `.rn/`; a task's two runs of turn are one work `t<n>` with one
+  decisions file.
+- R48 (T29's design): a proposal shows at most five decisions of a work, each at most 200
+  characters, and stops otherwise, as the UX takes a core that does not fit as a sign the work is
+  not yet simple.
+- R49 (T29's scripts): a proposal shown again after an answer is a new commit even where nothing
+  changed, showing "(… as before)", so `/rn:ty` finds a sign-off waiting; `answer` refuses a state
+  as kept last; a file the branch removed is not part of the finished work.

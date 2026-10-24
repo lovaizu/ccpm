@@ -545,6 +545,9 @@
   },
   {
    "fact": "2026-10-24: T29 designed whole and traced on paper against every story: decisions/rn/prompts.decisions.md (the three skills, the whole course from /rn:up to the pull request marked ready) and scripts.decisions.md (session gives the sign-off waiting, `answer approved|feedback`, the plan as a source of every CCS, the deliverable's CCS and checklist, Documents as `- <name>: <path>`, the design and deliverable proposals with each work's decisions, five lines of 200 characters at most)"
+  },
+  {
+   "fact": "2026-10-24: T29's scripts part made by a subagent and read by hand against scripts.decisions.md: session's signoff, `answer approved|feedback`, ccs naming the plan and the finished work, Documents as `- <name>: <path>`, design and deliverable proposals with each work's decisions and what changed, rn/checklists/session/deliverable.md (B-1, each criterion done when used); check.sh rn 100% (189 tests, 5.9 s), mutate.sh rn 0 of 605 (1 min 39 s); tried on this branch: session gives signoff null, answer refuses with no sign-off waiting"
   }
  ],
  "semantic_gist": [
@@ -611,7 +614,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T29: the scripts' part first (rn.py, tests, plan F-1's Documents, checklists/session/deliverable.md), then the skills, README's design sign-off example, CHANGELOG, then the conductor's flow trial"
+   "task": "T29: the skills next, then CHANGELOG, then the conductor's flow trial"
   }
  ],
  "relational_map": [
@@ -649,7 +652,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: read the subagent's T29 scripts work against scripts.decisions.md, code.md and checklist.md, check.sh rn 100% and mutate.sh rn 0, fix by hand, commit; then hand the skills to a subagent with prompts.decisions.md and prompt.md open; then README's design sign-off example, CHANGELOG's Unreleased made to what rn now does, and the flow trial of the architecture's Verification. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: hand the three skills to a subagent with prompts.decisions.md and prompt.md open, read its work by hand against them and rn.py as it now is; then CHANGELOG's Unreleased made to what rn now does; then the flow trial of the architecture's Verification. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [

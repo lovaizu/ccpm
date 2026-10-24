@@ -120,6 +120,7 @@ an AI that did not write them use them, and stops at the design sign-off:
 ```console
 ● Design sign-off
   The design is on the draft pull request: https://github.com/you/app/pull/42
+  design: https://github.com/you/app/blob/typescript/docs/design.md
   - Each file moves with strict type checks on, so a moved file lets no wrong type through.
   - Values from the account pages are checked where they enter the cart and the checkout,
     so the JavaScript left there cannot pass a wrong type in.

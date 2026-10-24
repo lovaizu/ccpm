@@ -78,10 +78,11 @@ flowchart TB
 
   A fact taken unchecked carries a slip into every move after it, and a state added to rather than
   replaced swells as the conversation would.
-- Each work, the plan, each document, each task's result and each checklist made, goes to turn as a
-  CCS holding the work, its receiver, what they use it for and have with it, its checklists, the
-  decisions it is made from and rn's checklist for a fix; turn's first user uses it in the
-  receiver's place before it comes back (Principle 4).
+- Each work, the plan, each document, each task's result, each checklist made and the finished
+  work, goes to turn as a CCS holding the work, its receiver, what they use it for and have with it,
+  its checklists, the decisions it is made from, the plan for every work but the plan itself, and
+  rn's checklist for a fix; turn's first user uses it in the receiver's place before it comes back
+  (Principle 4).
 
   turn takes its task as a CCS and makes the work from it and the files it names alone, so the work
   does not stray from what was decided.
@@ -129,7 +130,7 @@ rn/                                  the plugin, installed by Claude Code with t
 │   └── gm/SKILL.md                  the conductor for /rn:gm, which the AI cannot call <skill>
 ├── agents/
 │   └── learner.md                   the learner <agent>
-├── scripts/                         a work's CCS, the state, a kind's checklists, the proposal, the learner's records <Python 3>
+├── scripts/                         a work's CCS, the state, a kind's checklists, the proposal, the user's answer, the learner's records <Python 3>
 ├── forms/learnt.json                the learner's reply, a link to turn's <JSON Schema>
 ├── hooks/
 │   ├── hooks.json                   the lanes, laid by lane:up

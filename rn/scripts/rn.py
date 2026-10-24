@@ -1,8 +1,8 @@
 """What rn's conductor runs for what must come out the same on every run, so that a rule a machine
 can judge holds at the moment of the move: the session found and started, the state replaced and
 every change kept on the session's branch, a kind's checklists, the CCS each work is made from, the
-proposal at a sign-off made from what is pushed alone, and the records of the session shown to rn's
-learner and its lessons kept.
+proposal at a sign-off made from what is pushed alone, the user's answer to it kept, and the records
+of the session shown to rn's learner and its lessons kept.
 
 The conductor is the AI that runs rn's commands `/rn:up`, `/rn:ty` and `/rn:gm` with the user. A
 session is one piece of work from `/rn:up` to the merge, on a branch of its own; its record is the
@@ -13,7 +13,7 @@ gives an AI's state: a JSON object of parts, each a list of entries, each entry 
 value as text. A work, such as the plan, a document or a task's result, is made by turn, a plugin rn
 depends on, from such a CCS. A kind, such as readme or code, has rn's own checklist, and may have
 the user's addition `.rn/checklists/<kind>.md`. At a sign-off, plan, design or deliverable, the
-conductor shows the user a proposal and waits for `/rn:ty` or `/rn:gm`.
+conductor shows the user a proposal and waits for `/rn:ty` or `/rn:gm`, whose answer it keeps.
 
 Once the user approves the finished work, rn's learner reads the session's record whole, its history
 on the branch and its files, and searches the conductor's conversations, as Claude Code keeps them,
@@ -85,23 +85,40 @@ GOAL_FORM = "`G1: <the user's purpose, with why they want it>`"
 CRITERIA = "Acceptance criteria"
 CRITERION = re.compile(r"- (AC\d+): \S.*")
 CRITERION_FORM = "`- AC<n>: <one thing the finished work must do for the goal>`"
+# Each document of the plan by the name its decisions and its CCS take, so a name as a work's is,
+# and its path.
+DOCUMENTS = "Documents"
+DOCUMENT = re.compile(rf"- ({NAME.pattern}): (\S.*)")
+DOCUMENT_FORM = "`- <its name, the one in the file name of its decisions>: <its path>`"
 TASKS = "Tasks"
 TASK = re.compile(r"- \[[ x]\] (T\d+): \S.*")
 TASK_FORM = "`- [ ] T<n>: <the part of the piece of work>`"
 # The parts of the plan a proposal shows, by the heading each is under, "" for the part above the
 # first, with how each line holding an ID in it begins.
 SHOWS = {"": GOAL, CRITERIA: "- "}
-# The sign-offs a proposal is made at from the plan alone, each with the words naming where the work
-# is and the parts of the plan it shows: the goal and the criteria at the plan's, as the user
-# approves what the finished work will do and why, and the criteria at the deliverable's, as the
-# finished work is checked against them.
+# The sign-offs, each with the words naming where the work is and the parts of the plan it shows:
+# the goal and the criteria at the plan's, as the user approves what the finished work will do and
+# why; none at the design's, which shows each document's decisions instead; and the criteria at the
+# deliverable's, as the finished work is checked against them, with each task's decisions.
+DESIGN = "design"
+DELIVERABLE = "deliverable"
 SIGNOFFS = {
-    "plan": ("The plan is on the draft pull request", ("", CRITERIA)),
-    "deliverable": ("The finished work is on the pull request", (CRITERIA,)),
+    PLAN: ("The plan is on the draft pull request", ("", CRITERIA)),
+    DESIGN: ("The design is on the draft pull request", ()),
+    DELIVERABLE: ("The finished work is on the pull request", (CRITERIA,)),
 }
-# The trailer marking the commit of a proposal shown, with its sign-off.
+# The trailer marking the commit of a proposal shown, with its sign-off, and that of the user's
+# answer to it, with the answer and the sign-off.
 SHOWN = "Rn-Sign-off: "
+ANSWERED = "Rn-Answer: "
+ANSWERS = ("approved", "feedback")
 ANSWER = "/rn:ty to approve, /rn:gm <feedback> to ask for a change."
+# The most decisions of a work a sign-off shows, and the most characters of each, as five short
+# lines are what a glance at the proposal takes in; a work past them is not yet simple.
+MOST = 5
+LONGEST = 200
+# A pull request's URL, after the repository's.
+PULL = re.compile(r"(\S+)/pull/[0-9]+")
 # The folder in the repository's git folder where the learner is shown the records and replies, so
 # nothing of it shows as a change to keep.
 LEARNING = "rn"
@@ -266,18 +283,38 @@ def read_state(folder: str, failed: str) -> dict[str, list[dict[str, str]]]:
         raise Stop(f"rn: {said}; {failed}") from None
 
 
+def marked(pattern: str, since: str) -> str:
+    """The last commit after the one given with a line of its message matching the pattern, an
+    extended regular expression; "" where none has."""
+    found = git(
+        ["log", "-1", "--format=%H", "-E", f"--grep={pattern}", f"{since}..HEAD"], AS_GIT_SAYS
+    )
+    return found.strip()
+
+
+def waiting() -> str | None:
+    """The sign-off waiting for the user's answer: that of the last proposal shown on the branch
+    since it left the default branch, where no answer is kept after it; None where none waits."""
+    shown = marked(f"^{SHOWN}", base())
+    if not shown or marked(f"^{ANSWERED}", shown):
+        return None
+    message = git(["log", "-1", "--format=%B", shown], AS_GIT_SAYS)
+    return message.rpartition(f"\n\n{SHOWN}")[2].strip()
+
+
 def run_session(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """The session the checked-out branch is in, with its state, empty where it has no
-    `state.json`, as a session rn 0.9.0 left; None for both where there is none. Stops where rn is
-    not at the top of a repository, git cannot tell the branch's changes, the branch changed more
-    than one session not finished, or the state is no CCS."""
+    `state.json`, as a session rn 0.9.0 left, and the sign-off waiting for the user's answer; None
+    for each where there is none. Stops where rn is not at the top of a repository, git cannot tell
+    the branch's changes, the branch changed more than one session not finished, or the state is no
+    CCS."""
     found = session()
     if found is None:
-        return {"session": None, "state": None}
+        return {"session": None, "state": None, "signoff": None}
     path = state_path(found)
     restore = f"restore the state kept with `git checkout HEAD -- {path}`, or write it again as one"
     state = read_state(found, restore) if os.path.isfile(path) else {}
-    return {"session": found, "state": state}
+    return {"session": found, "state": state, "signoff": waiting()}
 
 
 def given(value: str, what: str) -> str:
@@ -335,17 +372,22 @@ def sections(lines: list[str]) -> dict[str, list[tuple[int, str]]]:
     return found
 
 
-# For each list of the plan whose items have IDs: its heading, the form of an item, and the item in
-# words, as the stop names it.
+# For each list of the plan whose items have IDs, a document's name standing as its ID: its
+# heading, the form of an item, and the item in words, as the stop names it.
 LISTS = (
     (CRITERIA, CRITERION, f"an acceptance criterion as {CRITERION_FORM}"),
+    (
+        DOCUMENTS,
+        DOCUMENT,
+        f"a document as {DOCUMENT_FORM}, its name of lowercase letters, digits and hyphens",
+    ),
     (TASKS, TASK, f"a task as {TASK_FORM}"),
 )
 
 
 def ids_out(lines: list[str]) -> str:
-    """The point the plan's goal, criteria and tasks are out of their IDs by, at its line; "" where
-    they hold."""
+    """The point the plan's goal, criteria, documents and tasks are out of their IDs by, at its
+    line; "" where they hold."""
     parts = sections(lines)
     if not any(line.startswith(GOAL) for _, line in parts[""]):
         return f"expected the goal as {GOAL_FORM} above `## {CRITERIA}`, found none"
@@ -476,6 +518,30 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     return {"kept": keep(folder, args.message, root)}
 
 
+def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
+    """Keeps the user's answer to the sign-off waiting as a move: the state the conductor replaced
+    whole with it, with every other change of the move, committed with the message, marked with the
+    answer and the sign-off, and pushed; gives the commit. Stops where the branch holds no session,
+    the message is empty, no sign-off waits, or the state is as kept last, or as keeping a move
+    stops."""
+    folder = current()
+    message = given(args.message, "message")
+    signoff = waiting()
+    if signoff is None:
+        raise Stop(
+            "rn: no sign-off waits for the user's answer, as no proposal is shown since the last"
+            " answer; show one with `rn.py proposal <plan|design|deliverable>`, and keep the answer"
+            " the user gives it"
+        )
+    path = state_path(folder)
+    if path not in changed():
+        raise Stop(
+            f"rn: {path} is as kept last; replace it whole with the user's answer as a fact and the"
+            " next move as its cue, then run this again"
+        )
+    return {"kept": keep(folder, f"{message}\n\n{ANSWERED}{args.answer} {signoff}", root)}
+
+
 def checklists(kind: str, root: str) -> list[str]:
     """The checklists for the kind: rn's own, then the user's addition; stops where neither is
     there."""
@@ -513,15 +579,40 @@ def ccs_path(folder: str, work: str, suffix: str = "") -> str:
     return os.path.join(folder, "ccs", f"{work}{suffix}.json")
 
 
+def finished_work() -> list[str]:
+    """Each file the branch changed since it left the default branch outside `.rn/`, in the order
+    of their paths, which is the finished work; a file it removed is not, as it is not there to
+    use. Stops where there is none."""
+    paths = git(
+        ["diff", "--name-only", "--diff-filter=d", base(), "HEAD", "--", f":(exclude){RECORD}"],
+        AS_GIT_SAYS,
+    ).splitlines()
+    if not paths:
+        raise Stop(
+            f"rn: the branch changed no file outside {RECORD}/ since it left {default_branch()}, so"
+            " there is no finished work to name; have each task made and kept, or give the work's"
+            " paths, then run this again"
+        )
+    return paths
+
+
 def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Writes the work's CCS into the session and gives the call that hands it to turn:up, once
-    every change is pushed, so the work is made from decisions a fresh conversation also has.
-    Stops where a name, a text or a path given is wrong, the work's decisions are not there, the
-    branch holds no session, or a change is not kept or pushed."""
+    every change is pushed, so the work is made from decisions a fresh conversation also has. The
+    work is each path given, or, for the finished work given none, every file it is. Stops where a
+    name, a text or a path given is wrong, no path is given of another work, the work's decisions
+    are not there, the branch holds no session, a change is not kept or pushed, or the finished work
+    is not there."""
     work = named(args.work, "work")
     kind = named(args.kind, "kind")
     receiver = given(args.receiver, "receiver")
     use = given(args.use, "use")
+    paths = [given(p, "path of the work") for p in args.path]
+    if not paths and work not in (DELIVERABLE,):
+        raise Stop(
+            f"rn: no path of the work {work} is given; give the path of each file or folder of it,"
+            " from the top"
+        )
     # The session is found first, which stops below the top of the repository, since each path
     # given is read from the top.
     folder = current()
@@ -536,17 +627,17 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     # A CCS holds its entries in four parts, the shape turn takes: focal_entities, what the work is
     # about, the work, its receiver and what they have with it; goal_orientation, what the work is
     # for; retrieved_artifacts, the files it is made from, the kind's checklists, rn's
-    # `usability.md` where the work is a checklist, and its decisions; and constraints, the bounds
+    # `usability.md` where the work is a checklist, the plan for every work but the plan itself, as
+    # each work serves the goal through the criteria, and its decisions; and constraints, the bounds
     # it is made in: the languages, and rn's checklist for a fix, which turn's generator holds
     # whenever it changes a work already there, sent back or in a later round as well. turn finds
     # each entry by its key, whichever part holds it.
     usability = os.path.join(root, "checklists", "usability.md")
     sources = [{"source": usability}] if kind in (CHECKLIST,) else []
+    sources += [] if work in (PLAN,) else [{"source": plan(folder)}]
     ccs = {
-        "focal_entities": [
-            {ENTRIES["work"]: given(args.path, "path of the work")},
-            {ENTRIES["receiver"]: receiver},
-        ]
+        "focal_entities": [{ENTRIES["work"]: p} for p in paths or finished_work()]
+        + [{ENTRIES["receiver"]: receiver}]
         + [{ENTRIES["has"]: p} for p in has],
         "goal_orientation": [{ENTRIES["use"]: use}],
         "retrieved_artifacts": [{ENTRIES["checklist"]: p} for p in checklists(kind, root)]
@@ -597,39 +688,167 @@ def joined(ids: list[str]) -> str:
     return f"{', '.join(rest)} and {last}" if rest else last
 
 
-def changes(before: dict[str, str] | None, now: dict[str, str]) -> list[str]:
-    """The lines the proposal shows of the plan's IDs: each as it is, at the first proposal; then
-    each changed or added, each removed, and the rest named as before."""
+def documents(lines: list[str]) -> list[tuple[str, str]]:
+    """Each document the plan names, by its name and its path, in the order of the plan; read from
+    a plan that holds its form."""
+    found = (DOCUMENT.fullmatch(line) for _, line in sections(lines).get(DOCUMENTS, []))
+    return [(m.group(1), m.group(2)) for m in found if m]
+
+
+def tasks(lines: list[str]) -> list[str]:
+    """The ID of each task of the plan, in the order of the plan; read from a plan that holds its
+    form."""
+    found = (TASK.fullmatch(line) for _, line in sections(lines).get(TASKS, []))
+    return [m.group(1) for m in found if m]
+
+
+def decisions_of(text: str) -> dict[str, str]:
+    """Each entry of a work's decisions, a `## <title>` over its paragraph, by its title, the lines
+    under it joined into one, in the order of the file; what comes before the first is no entry."""
+    return {
+        title: " ".join(line.strip() for _, line in under if line.strip())
+        for title, under in sections(text.splitlines()).items()
+        if title
+    }
+
+
+def simple(path: str, found: dict[str, str]) -> dict[str, str]:
+    """The decisions of the work, read from the path, when a sign-off can show them; stops where
+    they are more than it shows of a work, or one is longer than a line of it holds, as the work is
+    then not yet simple."""
+    again = (
+        "the work is not yet simple: settle its points again more simply with the user, have turn"
+        " make it again, then run this again"
+    )
+    if len(found) > MOST:
+        raise Stop(
+            f"rn: {path} holds {len(found)} decisions, more than the {MOST} a sign-off shows of a"
+            f" work; {again}"
+        )
+    for title, said in found.items():
+        if len(said) > LONGEST:
+            raise Stop(
+                f'rn: the decision "{title}" of {path} is {len(said)} characters long, more than the'
+                f" {LONGEST} a line of a sign-off holds; {again}"
+            )
+    return found
+
+
+def at(commit: str, path: str) -> str | None:
+    """The text of the file at the path as the commit holds it; None where it holds none."""
+    if not git(["ls-tree", "--name-only", commit, "--", path], AS_GIT_SAYS):
+        return None
+    return git(["show", f"{commit}:{path}"], AS_GIT_SAYS)
+
+
+def blob(steering: str) -> str:
+    """Where the repository of the plan's pull request shows the files of the checked-out branch;
+    stops where the plan's pr is no pull request's URL."""
+    pr = front_matter(steering)["pr"]
+    found = PULL.fullmatch(pr)
+    if found is None:
+        raise Stop(
+            f"rn: the plan's pr, {pr!r}, is no pull request's URL, such as"
+            " https://github.com/<owner>/<repository>/pull/<n>; set it to the session's pull"
+            " request, keep it with `rn.py state`, then run this again"
+        )
+    branch = git(["branch", "--show-current"], AS_GIT_SAYS).strip()
+    return f"{found.group(1)}/blob/{branch}"
+
+
+# What a proposal shows, by the work each part is of, "" for the plan's own: the line naming the
+# work, none for the plan's, and the part's lines by what each is of, an ID or a decision's title.
+Shown = dict[str, tuple[str, dict[str, str]]]
+
+
+def shown_at(commit: str, signoff: str, folder: str) -> Shown:
+    """What the proposal at the sign-off shows of the session as the commit holds it: the parts of
+    the plan the sign-off shows, each line by its ID; then, at the design's, each document of the
+    plan by its name and its link with its decisions, and at the deliverable's each task with
+    decisions by its ID. Stops where a work's decisions are not simple, or the plan's pr is no pull
+    request's URL."""
+    steering = plan(folder)
+    lines = (at(commit, steering) or "").splitlines()
+    parts = SIGNOFFS[signoff][1]
+    found: Shown = {}
+    if parts:
+        found[""] = ("", {key: f"{key}: {said}" for key, said in decided(lines, parts).items()})
+    # Each work shown with its decisions, by what names it in the proposal, with the line naming
+    # it, and the work's name.
+    works: list[tuple[str, str, str]] = []
+    if signoff in (DESIGN,):
+        link = blob(steering)
+        works = [(name, f"{name}: {link}/{path}", name) for name, path in documents(lines)]
+    if signoff in (DELIVERABLE,):
+        works = [(task, task, task.lower()) for task in tasks(lines)]
+    for key, line, work in works:
+        path = os.path.join(folder, "decisions", f"{work}.decisions.md")
+        text = at(commit, path)
+        # A document is shown with its link whether or not it has decisions; a task only with them.
+        if text is not None or signoff in (DESIGN,):
+            found[key] = (line, simple(path, decisions_of(text or "")))
+    return found
+
+
+def changes(before: dict[str, str] | None, now: dict[str, str], bullet: str) -> list[str]:
+    """The lines the proposal shows of one part, each after the bullet: each as it is, at the first
+    proposal; then each changed or added, each removed, by what it is of, and the rest named as
+    before."""
     if before is None:
-        return [f"{key}: {said}" for key, said in now.items()]
-    same = [key for key, said in now.items() if before.get(key) == said]
+        return [f"{bullet}{line}" for line in now.values()]
+    same = [key for key, line in now.items() if before.get(key) == line]
     return (
-        [f"Changed: {key}: {said}" for key, said in now.items() if key not in same]
-        + [f"Removed: {key}" for key in before if key not in now]
+        [f"{bullet}Changed: {line}" for key, line in now.items() if key not in same]
+        + [f"{bullet}Removed: {key}" for key in before if key not in now]
         + ([f"({joined(same)} as before)"] if same else [])
     )
 
 
+def compared(then: Shown | None, now: Shown) -> list[str]:
+    """The lines the proposal shows: each work's line and what changed of its part since the
+    proposal shown before, none for the first, the plan's lines on their own and each decision
+    after a bullet; then each work shown before and no longer, named as removed."""
+    lines: list[str] = []
+    for work, (line, said) in now.items():
+        before = None if then is None else then.get(work, ("", {}))[1]
+        lines += [line] if line else []
+        lines += changes(before, said, "- " if work else "")
+    return lines + [f"Removed: {work}" for work in then or {} if work not in now]
+
+
+def awaited(signoff: str, steering: str) -> list[str]:
+    """The works whose results turn must have returned before the sign-off: each document of the
+    plan at the design's; the work of the sign-off's name at the others', the plan or the finished
+    work."""
+    if signoff not in (DESIGN,):
+        return [signoff]
+    text = read_text(steering) if os.path.isfile(steering) else ""
+    return [name for name, _ in documents(text.splitlines())]
+
+
 def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> str:
-    """The proposal at the sign-off, made from what is pushed alone: the pull request's link and
-    the plan's goal and acceptance criteria at the plan sign-off, the criteria alone at the
-    deliverable's, with what changed since the last proposal at the same sign-off; kept as a commit
-    marked with its sign-off. The same proposal again where the plan is as it was then. Stops where
-    turn has not returned the plan, a change is not kept or pushed, or the plan is not there or out
-    of its form."""
+    """The proposal at the sign-off, made from what is pushed alone: the pull request's link, then
+    the plan's goal and acceptance criteria at the plan sign-off, each document's link and its
+    decisions at the design's, and the criteria and each task's decisions at the deliverable's,
+    with what changed since the last proposal at the same sign-off; kept as a commit marked with its
+    sign-off. The same proposal again, with no commit, where it waits for the user's answer and
+    nothing it shows changed since. Stops where turn has not returned a work the sign-off shows, a
+    change is not kept or pushed, the plan is not there or out of its form, a work's decisions are
+    not simple, or the plan's pr is no pull request's URL."""
     signoff = args.signoff
-    where, shown = SIGNOFFS[signoff]
+    where = SIGNOFFS[signoff][0]
     folder = current()
+    steering = plan(folder)
     # Asked before what is pushed, as turn's run keeps its own files beside the result until it
     # returns, which would read as changes not kept.
-    result = ccs_path(folder, PLAN, "-result")
-    if signoff in (PLAN,) and not os.path.isfile(result):
-        raise Stop(
-            f"rn: turn has not returned the plan: {result} is not there; have turn:up make it with"
-            f" the call `rn.py ccs {PLAN} ...` printed, then run this again"
-        )
+    for work in awaited(signoff, steering):
+        result = ccs_path(folder, work, "-result")
+        if not os.path.isfile(result):
+            raise Stop(
+                f"rn: turn has not returned the work {work}: {result} is not there; have turn:up"
+                f" make it with the call `rn.py ccs {work} ...` printed, then run this again"
+            )
     pushed()
-    steering = plan(folder)
     if not os.path.isfile(steering):
         raise Stop(f"rn: the plan {steering} is not there; have turn make it, then run this again")
     said = out_of_form(steering, root)
@@ -638,22 +857,17 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
             f"rn: {said}; have turn make the plan again in that form, keep it with `rn.py state`,"
             " then run this again"
         )
-    with open(steering, encoding="utf-8") as f:
-        text = f.read()
-    last = git(
-        ["log", "-1", "--format=%H", "-E", f"--grep=^{SHOWN}{signoff}$", f"{base()}..HEAD"],
-        AS_GIT_SAYS,
-    ).strip()
-    before = git(["show", f"{last}:{steering}"], AS_GIT_SAYS) if last else None
-    if before == text:
+    now = shown_at("HEAD", signoff, folder)
+    last = marked(f"^{SHOWN}{signoff}$", base())
+    then = shown_at(last, signoff, folder) if last else None
+    if then == now and waiting() == signoff:
         message = git(["log", "-1", "--format=%B", last], AS_GIT_SAYS)
         return message.rpartition(f"\n\n{SHOWN}")[0]
-    then = None if before is None else decided(before.splitlines(), shown)
     proposal = "\n".join(
         [
             f"{signoff.capitalize()} sign-off",
             f"{where}: {front_matter(steering)['pr']}",
-            *changes(then, decided(text.splitlines(), shown)),
+            *compared(then, now),
             ANSWER,
         ]
     )
@@ -922,13 +1136,17 @@ def parser() -> Parser:
     state = sub.add_parser("state")
     state.set_defaults(run=run_state)
     state.add_argument("--message", required=True)
+    answer = sub.add_parser("answer")
+    answer.set_defaults(run=run_answer)
+    answer.add_argument("answer", choices=ANSWERS)
+    answer.add_argument("--message", required=True)
     lists = sub.add_parser("checklists")
     lists.set_defaults(run=run_checklists)
     lists.add_argument("kind")
     ccs = sub.add_parser("ccs")
     ccs.set_defaults(run=run_ccs)
     ccs.add_argument("work")
-    ccs.add_argument("path")
+    ccs.add_argument("path", nargs="*")
     ccs.add_argument("--kind", required=True)
     ccs.add_argument("--receiver", required=True)
     ccs.add_argument("--use", required=True)
