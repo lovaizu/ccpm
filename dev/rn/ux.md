@@ -1,7 +1,7 @@
 # rn UX
 
-The experience rn must give its user, and the two measures every version of rn is judged by against
-the version in use. Build or change any part of rn to it.
+rn takes a whole piece of work its user asks for in their own words to their purpose, asking them
+only what is theirs to decide. Build and change every part of rn so that its user gets that.
 
 ## Users and goals
 
