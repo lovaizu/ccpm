@@ -177,3 +177,7 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   would widen lane to the main conversation and run on every reply; rn still proposes the two
   languages first and keeps them in the steering, and its skills say to talk in the conversation
   language.
+- R55 (the checks): lane's property test of start_with ran the script by its path from any folder,
+  and a folder `A=` made the path a word the shell reads as an assignment, so the command run was
+  the next word, which start_with rightly reads as a drift; such a path is left out of its inputs
+  and `A=/scripts/turn.py 0` added to the example test, as plugin.md 5b says.

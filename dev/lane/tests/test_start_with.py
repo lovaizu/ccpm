@@ -50,12 +50,14 @@ class TestFirstCall(unittest.TestCase):
             "python3 /p/scripts/other.py",
             "python3 /p/myscripts/turn.py",
             "python3 /p/turn.py",
+            "A=/scripts/turn.py 0",
         ):
             with self.subTest(command=command):
                 # Given: no call made before
                 # When: the subagent's first call runs something else, a command sorting before
-                # the script's name or after it, the script only read, or a script of another name
-                # or folder
+                # the script's name or after it, the script only read, a script of another name
+                # or folder, or the script's path as an assignment's value, as the shell reads a
+                # path whose folder is a name and `=` before the command it runs
                 # Then: it is a drift
                 self.assertTrue(drifts(command))
 

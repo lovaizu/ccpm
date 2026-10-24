@@ -148,8 +148,10 @@ class TestStartWith(unittest.TestCase):
     @given(st.text(min_size=1), st.sampled_from(["python3 ", "sh ", ""]), WORDS)
     def test_the_script_run_first_from_any_folder_is_no_drift(self, folder, interpreter, words):
         # Given: a subagent that has made no call, and the script taken run from any folder,
-        # quoted as a shell quotes it, by python3, by sh or by its path, with any words after it
+        # quoted as a shell quotes it, by python3, by sh or by its path, with any words after it;
+        # by its path, not a word the shell reads as an assignment, as a folder `A=` makes it
         script = shlex.quote(os.path.join(folder, "scripts", "turn.py"))
+        assume(interpreter or not shell.ASSIGNMENT.fullmatch(script))
         command = f"{interpreter}{script} {said(words)}"
         made = call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}})
         # When: start_with reads it as the subagent's first call
