@@ -566,6 +566,9 @@
   },
   {
    "fact": "2026-10-24: a work's decisions are named `<session>/decisions/<work>.md`, the folder saying they are decisions, as the user found `decisions/<work>.decisions.md` says it twice and no record gives a reason for it; to change in rn.py (:10, :79, :629, :793), rn/skills/up/SKILL.md, rn/checklists/session/plan.md, dev/rn/architecture.md:145, dev/rn/tests/test_rn.py and dev/rn/trials/learner/learner.py, with the rn changes before trial 2"
+  },
+  {
+   "fact": "2026-10-24, agreed with the user, rn's record remade from its concepts, Plan and Log (the facts kept in order, the state built from them): the session folder holds steering.md, which steers the work to its purpose and always shows the latest (front matter: stage, the sign-off waiting, the two languages; body: goal, acceptance criteria, documents, tasks ticked; at its end the next move and what is open), and turn/<nnnn>-ccs.json with turn/<nnnn>-result.json, one numbered pair per call, four digits, in the order made, a work made again taking the next number, the work named inside the CCS; state.json, decisions/ and ccs/ go: a work's decisions are entries of its CCS, choices with reasons and feedback in the commit messages, the log being git's history; rn's learner becomes a work turn makes, so every maker but the orchestrator goes through a CCS; turn reads no steering: rn.py puts the goal and the criteria a work serves into the CCS's goal_orientation; steering's form is set strictly and held by rn.py at every keep, since rn.py takes data from it. Words: orchestrator, not conductor; learnings, not lessons. Open: whether the session's record stays on main after the merge"
   }
  ],
  "semantic_gist": [
@@ -670,7 +673,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "lane first: add Principle 3 to dev/lane/architecture.md as agreed, read lane/hooks/lane/ whole against it with rn/checklists/product/code.md open, fix shell.py's turn-only STEPS by an argument from turn's hooks.json and hands_off's git options, check.sh lane turn rn 100% and mutate 0; then ask the user the Stop-versus-subagents point; then the languages section in dev/architecture.md, rn's architecture, ux and up SKILL; then rn's flow trial 2 in the background. User's rules: positive phrasing, one decision per message, Japanese"
+   "next": "show the user steering.md's strict form (each field rn.py reads and how it is held), then draw the whole remade record on paper against every flow (resume, feedback, each sign-off, learnings) before building; lane's Principle 3 and the language section stay as agreed and ordered before rn's trial 2"
   }
  ],
  "uncertainty_signal": [
