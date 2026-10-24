@@ -1443,6 +1443,54 @@ class CcsTest(RepoTest):
         # pylint: enable=duplicate-code
         self.assertEqual(self.ccs(), want)
 
+    def test_ccs_keeps_the_call_before_turn_is_handed_it(self):
+        # Given: a session.
+        # When: the orchestrator has the CCS of the plan written.
+        self.ccs("plan", **{"--kind": "plan"})
+        # Then: the CCS and the part are committed and pushed with a message naming the call, and
+        # nothing is left to keep, so a conversation cut while turn runs goes on from them.
+        kept = (
+            sorted(self.out("show", "--name-only", "--format=", "origin/work").split()),
+            self.out("log", "-1", "--format=%s", "origin/work").strip(),
+            self.head(),
+            self.out("status", "--porcelain"),
+        )
+        want = (
+            [call_at("0001"), call_at("0001", "steering.md")],
+            "Call 0001 on plan: handed to turn",
+            self.head("origin/work"),
+            "",
+        )
+        self.assertEqual(kept, want)
+
+    def test_ccs_made_again_the_same_keeps_nothing_more(self):
+        # Given: the call on t1 kept, turn not yet returned.
+        self.ccs()
+        before = self.head()
+        # When: the orchestrator has the same CCS written again, as a fresh conversation does.
+        out = self.ccs()
+        # Then: the same call is given, and no commit is made.
+        self.assertEqual((out["ccs"], self.head()), (call_at("0001"), before))
+
+    def test_turns_run_files_are_no_change_to_keep(self):
+        # Given: the call on t1 kept, and the files turn keeps beside its result while it runs.
+        self.ccs()
+        for name in ("run.json", "up.json", "records/a.txt"):
+            self.write(call_at("0001", f"result.json.{name}"), "x\n")
+        before = self.head()
+        # When: the orchestrator has the CCS written again, and keeps a decision while turn asks.
+        self.ccs()
+        self.ran("decide", "t1", "--title", "Login", "--says", "email", "--message", "Login")
+        # Then: neither stops, and the decision's commit holds the CCS alone, the run files left.
+        changed = self.out("show", "--name-only", "--format=", "HEAD").split()
+        left = sorted(line[3:] for line in self.out("status", "--porcelain", "-uall").splitlines())
+        want = (
+            [call_at("0001")],
+            [call_at("0001", f"result.json.{n}") for n in ("records/a.txt", "run.json", "up.json")],
+        )
+        self.assertNotEqual(self.head(), before)
+        self.assertEqual((changed, left), want)
+
     def test_the_ccs_of_a_task_holds_what_its_task_serves(self):
         # Given: a session whose T1 serves AC1.
         # When: the orchestrator has the CCS of t1 written, with a path the receiver has.

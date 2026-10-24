@@ -201,3 +201,12 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   part's unticked T1 as a shortfall.
 - R59 (the model of the prompt trials, the user's a): Opus, the model the maintainer uses, named in
   each run, rather than the runner's default, so the model does not change with whoever runs them.
+- R60 (rn's open slips): `rn.py ccs` keeps the call it writes, as every move is pushed before the
+  next (dev/rn/architecture.md:136), so a conversation cut while turn runs goes on from it; turn's
+  files beside a result, named with the result's name and a dot (turn/scripts/run.py:109-111), are
+  neither kept nor a change to keep, as the record holds the CCS, the part and the result alone
+  (dev/rn/architecture.md:174-176); /rn:up asks again a point a fresh conversation has not shown,
+  weighing the words, and with no session tells how to start one where the words ask for no work;
+  the languages' answer kept by `rn.py start`; a learning taken for an issue kept in Open until it
+  is sent. Two move cases added for the fresh words, and the trials' decisions rewritten for the
+  move trials.

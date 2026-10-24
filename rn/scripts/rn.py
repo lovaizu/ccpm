@@ -280,10 +280,18 @@ def base() -> str:
     ).strip()
 
 
+# The files turn keeps beside a call's result while it runs, each named with the result's name and
+# a dot, and removed once it returns: no part of the record, so neither kept nor a change to keep.
+RUN_FILES = [
+    ":(top,exclude,glob).rn/*/turn/*-result.json.*",
+    ":(top,exclude,glob).rn/*/turn/*-result.json.*/**",
+]
+
+
 def changed() -> list[str]:
     """Each path of the working tree changed since the last commit, every file of a folder not
-    yet added among them."""
-    listed = git(["status", "--porcelain", "-uall"], AS_GIT_SAYS)
+    yet added among them, turn's run files left out."""
+    listed = git(["status", "--porcelain", "-uall", "--", ":/", *RUN_FILES], AS_GIT_SAYS)
     return [line[3:] for line in listed.splitlines()]
 
 
@@ -693,7 +701,7 @@ def keep(folder: str, steering: Steering, message: str) -> str:
     held_form(text)
     write_text(steering_path(folder), text)
     if changed():
-        git(["add", "-A"], AS_GIT_SAYS)
+        git(["add", "-A", "--", ":/", *RUN_FILES], AS_GIT_SAYS)
         git(["commit", "-q", "-F", "-"], AS_GIT_SAYS, message)
     push()
     return git(["rev-parse", "HEAD"], AS_GIT_SAYS).strip()
@@ -1152,8 +1160,9 @@ def served(steering: Steering, work: str) -> dict[str, str]:
 
 
 def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Writes the work's CCS into the session and gives the call that hands it to turn:up, once
-    every change is pushed, so the work is made from decisions a fresh conversation also has: in the
+    """Writes the work's CCS into the session, keeps it, and gives the call that hands it to
+    turn:up, once every change is pushed, so the work is made from decisions a fresh conversation
+    also has, and a conversation cut while turn runs goes on from the call: in the
     work's latest call where turn has not returned it, else in a new one carrying that call's
     decisions. The work is each path given; for the plan or the learnings, their part of the
     steering, cut into the call's part, the learnings with none of those kept; for the finished
@@ -1216,6 +1225,7 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     }
     path = call_path(folder, number, CCS)
     write_json(path, ccs)
+    keep(folder, steering, f"Call {number} on {work}: handed to turn")
     # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
     # of work.
     return {"ccs": path, "kind": ENTRIES, "result": call_path(folder, number, RESULT)}

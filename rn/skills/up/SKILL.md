@@ -81,20 +81,23 @@ to the repository in its `artifact-language`.
      sign-off waiting for the user's answer, or null>}`. Where `session` is not null, read
      `<session>/steering.md` whole with `cat -n`.
    - Go on by the first case that fits:
-     - `session` null and no words: tell the user, in their language, that no session is on this
-       branch and that `/rn:up <what you want>` starts one; end.
+     - `session` null and no words, or words that ask for no work, such as the answer to a point
+       asked in a conversation since cleared: tell the user, in their language, that no session is
+       on this branch and that `/rn:up <what you want>` starts one; end.
      - `session` null with words: go to step 2.
      - `signoff` not null: step 9 on that sign-off, as the user is yet to answer it.
      - Otherwise: take the step the steering's Next names, the user's words, if any, as what they
-       say now, such as the answer to the point last asked.
+       say now, such as the answer to the point last asked; where this conversation has not shown
+       the point they answer, as after it was cleared, ask that point again, weighing their words.
    - Out: the step to take and its work, from what `rn.py session` printed and the steering.
 
 2. Start the session, so every move from here has a place to be kept and shown.
    - In: the user's words; the repository's README, `cat -n README.md`, and `git log -10
      --format=%s`; the user's instructions in this conversation, such as their CLAUDE.md.
-   - The first point to decide is the two languages, asked as in step 3: the conversation language
-     and the artifact language each as the repository and the user's instructions set them, else
-     the user's own for the conversation and English for the repository.
+   - The first point to decide is the two languages, asked in step 3's form: the conversation
+     language and the artifact language each as the repository and the user's instructions set
+     them, else the user's own for the conversation and English for the repository. Their answer is
+     kept by `rn.py start` below, as no session holds a decision before it.
    - On the answer, choose the slug, a few lowercase words of the request joined by hyphens, such as
      `move-to-typescript`, and the title, the request in a few words, and run `rn.py start <slug>
      --title <t> --artifact-language <a> --conversation-language <c> --next "Step 6 of /rn:up on
@@ -135,7 +138,7 @@ to the repository in its `artifact-language`.
      steps it ticks and the step that comes after, as the step that sent you here gives them.
    - Run `rn.py ccs <work> [<path>...] --kind <kind> --receiver "<receiver>" --use "<use>" [--has
      <path>]...`, no path for `plan`, `learnings` or `deliverable`, which the script cuts or finds.
-     It writes the CCS and prints one line, the call to turn,
+     It writes the CCS, keeps it and prints one line, the call to turn,
      `{"ccs": "<session>/turn/<nnnn>-ccs.json", "kind": {...}, "result": "..."}`; `<nnnn>` is the
      call's number. Where it stops for a kind with
      no checklist, make the checklist first: step 3 on work `checklist-<kind>`, then this step on it,
@@ -260,13 +263,14 @@ to the repository in its `artifact-language`.
       with where it is recommended to go: the user's `.rn/checklists/<kind>.md` for one of their
       repository's own, an issue to `lovaizu/ccpm` for a general one, both, or neither. Keep each
       answer before the next: one taken for a checklist with `rn.py decide checklist-<kind>`, then
-      every answer with `rn.py state`, Next this step on the learning after it, the message holding
-      the answer.
+      every answer with `rn.py state`, Next this step on the learning after it, Open each learning
+      taken for an issue and not yet sent, with its answer, the message holding the answer.
     - For each learning taken for an issue: write it in the form of the recent issues there,
       `gh issue list --repo lovaizu/ccpm --state all --limit 5 --json title,body`, holding the need
       and its points alone, never the user's source; show it to the user whole and ask; on their yes
       alone, `gh issue create --repo lovaizu/ccpm --title <t> --body <b>`, which prints the issue's
-      URL, and tell them `Issue sent: <url>`.
+      URL; keep it with `rn.py state`, Next this step, Open without it, the message holding the URL,
+      and tell them `Issue sent: <url>`.
     - For each kind with a learning taken for a checklist: have it made, step 4 on work
       `checklist-<kind>` as step 4 makes a checklist.
     - Run `gh pr ready <the steering's pr>`, then `rn.py state --stage finished`, Next that the pull

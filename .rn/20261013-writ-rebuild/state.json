@@ -623,6 +623,9 @@
   },
   {
    "fact": "2026-10-24, the user chose a: prompt trials run on Opus, the model the maintainer uses, named in each run (dev/lane/trying.py:42 keeps --model opus), dev/architecture.md's Unit tests: prompts saying so"
+  },
+  {
+   "fact": "2026-10-24: rn's five open slips fixed by their cause (R60): rn.py ccs keeps the call; turn's run files left out of changed() and keep's add; /rn:up steps 1, 2 and 11 worded for the fresh words, the languages' answer and an issue not yet sent; unit tests first, failing, then 177 passing, check.sh rn 100%; move cases none-answer and fresh-answer added; all 25 cases passed on Opus, the records holding no git commit, push or edit of the orchestrator's"
   }
  ],
  "semantic_gist": [
@@ -689,7 +692,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T29: rn's skills tried move by move with dev/rn/trials/moves/, all 23 passing; rn's open slips next"
+   "task": "T29: rn's skills tried move by move, all 25 cases passing, the open slips fixed; T29's done-when to be read against the whole"
   }
  ],
  "relational_map": [
@@ -727,7 +730,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "fix rn's five open slips (uncertainty_signal: the point asked kept nowhere, the issue answer only in the commit message, keep's git add -A taking turn's mid-run files, the CCS left uncommitted, the languages asked 'as in step 3') by their cause, traced to the architecture, each with its unit tests and the move cases it touches run again"
+   "next": "read T29's done-when against what is built (each move with rn's scripts as they are; each sign-off's proposal with the link to each work and its core decisions); tick T29 if it holds; then judge the next task by the plan: T4, T5, T6 against what T26-T29 already hold"
   }
  ],
  "uncertainty_signal": [
@@ -757,24 +760,6 @@
   },
   {
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
-  },
-  {
-   "open": "rn up:88-89, :86: a point asked is kept nowhere until answered, so a fresh /rn:up <answer> cannot tell what it answers; languages answered in a fresh conversation are read as a new request"
-  },
-  {
-   "open": "rn up:261-264: a learning answered 'to an issue' is kept only in the commit message, not in the steering, so a fresh conversation may drop the issue"
-  },
-  {
-   "open": "rn.py:695-697 keep's git add -A commits turn's mid-run files (.run.json, replies, .records, turn/scripts/run.py:94-106) when rn.py decide runs while turn asks"
-  },
-  {
-   "open": "rn.py ccs writes the CCS uncommitted (:1217-1218), so a conversation cut while turn runs stops the next ccs at pushed() (:714-720)"
-  },
-  {
-   "open": "rn up:95 asks the languages 'as in step 3', which keeps answers with rn.py decide, which stops before rn.py start"
-  },
-  {
-   "open": ".rn/20261013-writ-rebuild/decisions/rn/trials.decisions.md describes the removed flow trial; stale"
   },
   {
    "open": "in after-feedback's first run the orchestrator asked a point after a second shortfall without keeping the move with rn.py state, as /rn:up step 4 says; not seen in the second run; watch for it"

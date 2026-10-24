@@ -31,6 +31,7 @@ WHY_ANSWER = "歓迎されていると感じて、早く最初の変更を出し
 USE_ANSWER = "いいえ、Use の節は指さなくていいです"
 PLACE_ANSWER = "タイトルのすぐ下に置いてください"
 ASK_ANSWER = "挨拶の行に、質問があれば issue を開くよう書いてください。リンクはいりません"
+L1_OPEN = "L1: an issue to lovaizu/ccpm alone, not yet sent"
 SLUG = "greet-contributors"
 TITLE = "Greet new contributors"
 PR = "https://github.com/trial/demo/pull/1"
@@ -636,9 +637,9 @@ def learnings_due(p: Place) -> None:
 
 
 def l1_answered(p: Place) -> None:
-    """L1 answered, taken for an issue, the answer in the commit message alone, Next L2."""
+    """L1 answered, taken for an issue not yet sent, kept in Open, Next L2."""
     learnings_due(p)
-    state(p, NEXT_L2, "L1: the user chose an issue to lovaizu/ccpm alone")
+    state(p, NEXT_L2, "L1: the user chose an issue to lovaizu/ccpm alone", "--open", L1_OPEN)
 
 
 # What a move must leave, each check with what it checks in words.
@@ -859,6 +860,23 @@ CASES = {
                 ],
             ),
         ],
+        {},
+    ),
+    "none-answer": Case(
+        "/rn:up <an answer> with no session, as after the conversation asking the languages was"
+        " cleared",
+        "up 1 (no session, words asking for no work)",
+        nothing,
+        [NO_SESSION],
+        [(f"/rn:up {LANGUAGES_ANSWER}", [NO_SESSION, STAYS, NO_PR, JAPANESE, says("/rn:up")])],
+        {},
+    ),
+    "fresh-answer": Case(
+        "/rn:up <a letter> in a fresh conversation while a point is asked: the point asked again",
+        "up 1 (Next, words answering a point this conversation has not shown), 3",
+        purposed,
+        [front("plan", "none"), next_has("Step 6"), decisions("plan", 1)],
+        [("/rn:up a", [STAYS, decisions("plan", 1), ONE_POINT, JAPANESE])],
         {},
     ),
     "point": Case(
@@ -1119,7 +1137,7 @@ CASES = {
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
             (
                 "issue だけに送ってください",
-                [MOVED, KEPT, next_has("L2"), issues(0), ONE_POINT],
+                [MOVED, KEPT, next_has("L2"), open_has("L1"), issues(0), ONE_POINT],
             ),
         ],
         {},
