@@ -328,12 +328,10 @@ smaller model's slips are not the ones users meet.
 
 The whole plugin is tried as its user uses it, its results are checked, and it is shown to the
 maintainer, the person who has the plugins built and decides what reaches their users, with how
-close it came to the goal and to each key result of the UX and what could be improved, compared
-with the version in use on the same tasks; the maintainer judges.
+close it came to the goal and to each key result of the UX and what could be improved; the
+maintainer judges.
 
-Each part can pass while a story is missed; a key result is come close to, not met, so a version
-judged without the one in use beside it can leave users worse off while it looks better; and what
-reaches users is the maintainer's to decide.
+Each part can pass while a story is missed; and what reaches users is the maintainer's to decide.
 
 A trial that needs a real GitHub repository runs in `lovaizu/playground`, one at a time, on a
 branch of its own, and the branch, its pull requests and whatever else it made there are removed
