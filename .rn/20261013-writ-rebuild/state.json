@@ -614,6 +614,9 @@
   },
   {
    "fact": "2026-10-24, the user chose A: no comparison with an earlier version anywhere (R57)"
+  },
+  {
+   "fact": "2026-10-24: dev/rn/trials/moves/ built by a subagent (moves.py, cases.py, place.py, gh.py, stand.py, up.md; flow/ removed): 23 cases, one per move of rn's skills, each from a state made by rn.py in a fresh repository with a bare origin, turn:up and gh stood in for, one claude -p (resume for a second message), run side by side; --dry all passes every starting state; no claude run yet; not yet read by me"
   }
  ],
  "semantic_gist": [
@@ -718,7 +721,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "a subagent was building dev/rn/trials/moves/ (per-move unit tests of rn's prompts, flow/ removed, --dry mode); on resume check git status for its files, read them against dev/architecture.md#unit-tests-prompts and rn's skills, run moves.py --dry, then one case small, then all"
+   "next": "read dev/rn/trials/moves/ against dev/architecture.md#unit-tests-prompts and rn's skills; run `python3 dev/rn/trials/moves/moves.py <new folder> good` once small and check from its records that a background turn:up's SendMessage reaches main and -p waits for it; then all cases side by side; fix rn's five open slips (uncertainty_signal) by their cause, traced to the architecture; ask the user about the model"
   }
  ],
  "uncertainty_signal": [
@@ -748,6 +751,27 @@
   },
   {
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
+  },
+  {
+   "open": "rn up:88-89, :86: a point asked is kept nowhere until answered, so a fresh /rn:up <answer> cannot tell what it answers; languages answered in a fresh conversation are read as a new request"
+  },
+  {
+   "open": "rn up:261-264: a learning answered 'to an issue' is kept only in the commit message, not in the steering, so a fresh conversation may drop the issue"
+  },
+  {
+   "open": "rn.py:695-697 keep's git add -A commits turn's mid-run files (.run.json, replies, .records, turn/scripts/run.py:94-106) when rn.py decide runs while turn asks"
+  },
+  {
+   "open": "rn.py ccs writes the CCS uncommitted (:1217-1218), so a conversation cut while turn runs stops the next ccs at pushed() (:714-720)"
+  },
+  {
+   "open": "rn up:95 asks the languages 'as in step 3', which keeps answers with rn.py decide, which stops before rn.py start"
+  },
+  {
+   "open": "to the user: dev/lane/trying.py:42 fixes --model opus; is that Claude Code's default model as dev/architecture.md's prompt tests say"
+  },
+  {
+   "open": ".rn/20261013-writ-rebuild/decisions/rn/trials.decisions.md describes the removed flow trial; stale"
   }
  ],
  "retrieved_artifacts": [
