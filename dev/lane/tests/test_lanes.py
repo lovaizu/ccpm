@@ -1,4 +1,4 @@
-"""Each lane's wording, held to the README's Lanes, and the sentence made from it with what the lane
+"""Each lane's wording, held to lane's docs/lanes.md, and the sentence made from it with what the lane
 takes, the one the step says and the subagent is told."""
 
 import json
@@ -11,20 +11,20 @@ from unittest import mock
 import helpers
 from helpers import lanes
 
-# A row of the README's Lanes: its action, its lane, its sentence and when its hook tells it.
+# A row of the lanes' table: its action, its lane, its sentence and when its hook tells it.
 ROW = re.compile(r"^\| (?P<action>[a-z ]+) \| (?P<lane>[a-z_]+) \| (?P<sentence>.+?) \| .+ \|$")
 
 
 def readme_rows() -> dict:
-    """Each lane of the README's Lanes table, by its name: its action and its sentence."""
-    with open(os.path.join(helpers.LANE, "README.md"), encoding="utf-8") as f:
-        found = [ROW.match(line) for line in f.read().split("## Lanes")[1].splitlines()]
+    """Each lane of the lanes' table, by its name: its action and its sentence."""
+    with open(os.path.join(helpers.LANE, "docs", "lanes.md"), encoding="utf-8") as f:
+        found = [ROW.match(line) for line in f.read().splitlines()]
     return {m["lane"]: (m["action"], m["sentence"]) for m in found if m}
 
 
 class TestWording(unittest.TestCase):
     def test_each_lane_has_the_action_and_wording_of_its_row_in_the_readme(self):
-        # Given: the README's Lanes table
+        # Given: the lanes' table
         rows = readme_rows()
         for name, lane in lanes.LANES.items():
             with self.subTest(lane=name):

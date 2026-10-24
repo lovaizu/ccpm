@@ -1,4 +1,4 @@
-"""The lanes lane lays, one module each holding its action, its wording as the README's Lanes writes
+"""The lanes lane lays, one module each holding its action, its wording as lane's docs/lanes.md writes
 it, the tools it watches and its check; and the lanes a hook's command lays, each a sentence of a
 subagent's step with the check that notices a drift from it.
 

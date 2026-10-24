@@ -67,7 +67,7 @@ flowchart TB
 
   What shows in neither, such as what the subagent weighs, no hook can see.
 - A hook holds, for each of its lanes, the step, the lane and what the lane takes; the lane's
-  sentence is made from them by the lane's wording in [Lanes](../../lane/README.md#lanes). The layer
+  sentence is made from them by the lane's wording in [the lanes](../../lane/docs/lanes.md). The layer
   writes that sentence into the step, and the guard makes the same one when it stops a call.
 
   So the sentence the subagent is told and the one its step says cannot differ, and no sentence is
@@ -110,8 +110,9 @@ lane/                          the plugin, installed by Claude Code
 │       ├── step.py            a subagent's step, read from its file
 │       ├── record.py          what the subagent did before, from its record
 │       ├── started.py         what the subagent started from, for a thing given for each run
-│       └── lanes/<lane>.py    one check per lane of the README's Lanes, with its wording
-└── README.md                  its Lanes: each lane, its action and what its hook notices
+│       └── lanes/<lane>.py    one check per lane of the lanes, with its wording
+├── docs/lanes.md              each lane, its action and what its hook notices
+└── README.md                  what lane gives, its example and installation
 
 ${CLAUDE_PLUGIN_DATA}/
 └── <plugin>.json              the proposal <JSON>, kept by lane:up until the layer writes it
@@ -194,7 +195,7 @@ the records of every conversation and agent the check started. Each unittest bel
     each fact found shown to confirm, and the layer run only on the proposal sent back with the
     approval.
   - Content: on the README's `notes` and on a trial plugin whose steps call for every lane;
-    passes when each proposed lane is one of the README's Lanes, and each step's drift that shows
+    passes when each proposed lane is one of the lanes, and each step's drift that shows
     in a tool call or in how the subagent ends has its lane.
 
 ### Acceptance
