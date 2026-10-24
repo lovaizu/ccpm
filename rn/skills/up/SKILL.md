@@ -165,7 +165,8 @@ to the repository in its `artifact-language`.
      step 3, kept with `rn.py decide`; and have the work made again from the top of this step.
    - Once every item's Good holds at its lines, keep the move with `rn.py state --next <the step
      that comes after>`, with `--done` for each step it ticks, and `--put <nnnn>` for `plan` and
-     `learnings`, which puts turn's part back into the steering.
+     `learnings`, which puts turn's part back into the steering. A plan's ticks are not read in
+     turn's part, as `--put` keeps each step ticked as the steering had it.
    - Out: every item with a Good its lines give; go to the step that comes after.
 
 5. Carry out a task, so each part is built traced to what it serves, with a slip shown while it is

@@ -192,3 +192,10 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   against an earlier version, as the plugins changed much: lane's and rn's UX, the UX checklist's
   opening and B-2, this session's AC1 and AC2 and T14; T8, which ran rn 0.8.0 beside this rn, and
   turn's baseline.py, which ran turn 0.1.0, removed.
+- R58 (rn's move trials, first runs): the stand-in turn:up runs on the model it inherits, as the
+  real one does, since on haiku it skipped sending turn's line to `main`; each answer of a case is
+  the user's own words, not a letter, as rn orders its options as it judges and an answer by letter
+  kept a decision the stand-in's fixed reply did not follow, which rn rightly sent back (short,
+  task, after-feedback, and last's B-3 brought to the file alone); /rn:up step 4 says the ticks are
+  not read in turn's part, as `--put` keeps them (rn.py put_plan), after the orchestrator read a
+  part's unticked T1 as a shortfall.

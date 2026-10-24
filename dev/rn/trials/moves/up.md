@@ -1,7 +1,6 @@
 ---
 name: up
 description: Stands in for turn's turn:up in rn's move trials, giving back what the trial set for the call's work, with the line turn sends the main conversation, so a trial judges rn's orchestrator alone. Use when rn's orchestrator hands turn a call as JSON, {"ccs", "kind", "result"}, or sends it the answers to its questions.
-model: haiku
 ---
 
 ## Role

@@ -617,6 +617,9 @@
   },
   {
    "fact": "2026-10-24: dev/rn/trials/moves/ built by a subagent (moves.py, cases.py, place.py, gh.py, stand.py, up.md; flow/ removed): 23 cases, one per move of rn's skills, each from a state made by rn.py in a fresh repository with a bare origin, turn:up and gh stood in for, one claude -p (resume for a second message), run side by side; --dry all passes every starting state; no claude run yet; not yet read by me"
+  },
+  {
+   "fact": "2026-10-24: dev/rn/trials/moves/ read against dev/architecture.md#unit-tests-prompts and rn's skills; `good` run once small, its records showing the background turn:up's SendMessage reaching main and -p waiting; then all 23 side by side (27 min of runs, about $10): 19 passed; good failed as the haiku stand-in skipped SendMessage, short, task and after-feedback as an answer by letter kept a decision the stand-in's fixed reply did not follow, rn rightly sending it back; fixed (R58), with /rn:up step 4 saying ticks are not read in turn's part; run again: 22 passed, last failing the same way on B-3, fixed and passed; every record's tool calls checked (no git commit or push, no edit of the steering) and every reply read against the skills' steps"
   }
  ],
  "semantic_gist": [
@@ -683,7 +686,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T29: the conductor's flow trial, the architecture's Verification Units 'The conductor', turn and the user stood in for"
+   "task": "T29: rn's skills tried move by move with dev/rn/trials/moves/, all 23 passing; rn's open slips next"
   }
  ],
  "relational_map": [
@@ -721,7 +724,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "read dev/rn/trials/moves/ against dev/architecture.md#unit-tests-prompts and rn's skills; run `python3 dev/rn/trials/moves/moves.py <new folder> good` once small and check from its records that a background turn:up's SendMessage reaches main and -p waits for it; then all cases side by side; fix rn's five open slips (uncertainty_signal) by their cause, traced to the architecture; ask the user about the model"
+   "next": "wait for the user's answer on the model of the prompt trials (a: keep --model opus and say so in dev/architecture.md, recommended; b: drop it); then fix rn's five open slips (uncertainty_signal) by their cause, traced to the architecture, each with its unit tests and the move cases it touches run again"
   }
  ],
  "uncertainty_signal": [
@@ -768,10 +771,13 @@
    "open": "rn up:95 asks the languages 'as in step 3', which keeps answers with rn.py decide, which stops before rn.py start"
   },
   {
-   "open": "to the user: dev/lane/trying.py:42 fixes --model opus; is that Claude Code's default model as dev/architecture.md's prompt tests say"
+   "open": ".rn/20261013-writ-rebuild/decisions/rn/trials.decisions.md describes the removed flow trial; stale"
   },
   {
-   "open": ".rn/20261013-writ-rebuild/decisions/rn/trials.decisions.md describes the removed flow trial; stale"
+   "open": "to the user (asked 2026-10-24): dev/lane/trying.py:42 fixes --model opus while dev/architecture.md's prompt tests say Claude Code's default model; the user's settings set opus"
+  },
+  {
+   "open": "in after-feedback's first run the orchestrator asked a point after a second shortfall without keeping the move with rn.py state, as /rn:up step 4 says; not seen in the second run; watch for it"
   }
  ],
  "retrieved_artifacts": [

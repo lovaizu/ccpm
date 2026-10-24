@@ -23,6 +23,14 @@ import rn
 # The user's words, in the conversation language their instructions set.
 REQUEST = "/rn:up README に新しいコントリビューター向けの挨拶を一行足して"
 FEEDBACK = "挨拶には、質問があるときは issue を開けばよいことも書いてほしい"
+# Each answer in the user's own words, so the decision kept is the one the stand-in turn's reply
+# was made from, whichever order rn puts its options in.
+LANGUAGES_ANSWER = "会話は日本語、リポジトリは英語でお願いします"
+DONE_ANSWER = "README に、新しいコントリビューターを迎えて `sh demo.sh` を実行するよう伝える一行があることです"
+WHY_ANSWER = "歓迎されていると感じて、早く最初の変更を出してもらうためです"
+USE_ANSWER = "いいえ、Use の節は指さなくていいです"
+PLACE_ANSWER = "タイトルのすぐ下に置いてください"
+ASK_ANSWER = "挨拶の行に、質問があれば issue を開くよう書いてください。リンクはいりません"
 SLUG = "greet-contributors"
 TITLE = "Greet new contributors"
 PR = "https://github.com/trial/demo/pull/1"
@@ -382,11 +390,11 @@ NOTE_ADDED = (
 
 Scope: its part
 
-Can whoever copies the decided lines tell from the note which file they go into, and where in it?
+Can whoever copies the decided lines tell from the note which file they go into?
 
-Look for: lines with no file named, or a file named with no place in it.
+Look for: lines with no file named.
 
-Why: lines copied into the wrong file, or the wrong place in it, are read by no one they were for.
+Why: lines copied into the wrong file are read by no one they were for.
 """
 )
 CHECKLIST_GOODS = {
@@ -399,7 +407,7 @@ CHECKLIST_GOODS = {
     "B-1": "The opening says who uses a note, a contributor and whoever copies its lines, what"
     " they then do, and the idea: the decided lines where the reader looks first",
     "B-2": "Each thing the opening names has an item: finding the lines B-1, doing what they say"
-    " B-2, copying them where they go B-3",
+    " B-2, copying them into the file they go into B-3",
     "B-3": "Each item asks one thing of the purpose that no other asks",
     "B-4": "Each item is answered by pointing at the note's lines: the lines, the command they give,"
     " the file they name",
@@ -838,7 +846,7 @@ CASES = {
         [
             (REQUEST, [NO_SESSION, ONE_POINT]),
             (
-                "a",
+                LANGUAGES_ANSWER,
                 [
                     MOVED,
                     KEPT,
@@ -860,7 +868,7 @@ CASES = {
         [front("plan", "none"), next_has("Step 6"), decisions("plan", 1)],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
-            ("a", [MOVED, KEPT, decisions("plan", 2), ONE_POINT]),
+            (DONE_ANSWER, [MOVED, KEPT, decisions("plan", 2), ONE_POINT]),
         ],
         {"plan": [PLAN_FIRST]},
     ),
@@ -904,7 +912,10 @@ CASES = {
                     ONE_POINT,
                 ],
             ),
-            ("a", [KEPT, returned("plan", 2), plan_has("so they feel welcome"), open_none()]),
+            (
+                WHY_ANSWER,
+                [KEPT, returned("plan", 2), plan_has("so they feel welcome"), open_none()],
+            ),
         ],
         {"plan": [PLAN_BARE, PLAN_FIRST]},
     ),
@@ -915,7 +926,7 @@ CASES = {
         [next_has("Step 6"), returned("plan", 0)],
         [
             ("/rn:up", [returned("plan", 0), ONE_POINT, JAPANESE]),
-            ("a", [KEPT, decisions("plan", 3), returned("plan", 1), next_has("T1")]),
+            (USE_ANSWER, [KEPT, decisions("plan", 3), returned("plan", 1), next_has("T1")]),
         ],
         {"plan": [QUESTIONS, PLAN_FIRST]},
     ),
@@ -927,7 +938,7 @@ CASES = {
         [next_has("Step 5 of /rn:up on T1: step 1"), returned("plan", 1)],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
-            ("a", [MOVED, KEPT, decisions("plan", 3), ticked("T1"), *proposal("plan")]),
+            (PLACE_ANSWER, [MOVED, KEPT, decisions("plan", 3), ticked("T1"), *proposal("plan")]),
         ],
         {"plan": [PLAN_PLACED]},
     ),
@@ -1025,7 +1036,7 @@ CASES = {
         [
             ("/rn:up", [STAYS, ONE_POINT, open_has(FEEDBACK)]),
             (
-                "a",
+                ASK_ANSWER,
                 [
                     MOVED,
                     KEPT,
