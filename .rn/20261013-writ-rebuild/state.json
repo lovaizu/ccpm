@@ -599,6 +599,9 @@
   },
   {
    "fact": "2026-10-24: CI on 182e6f5 passed whole (rn's mutants since the branch left main 23 min, lane whole 15 min on the runner); the languages section made in dev/architecture.md, rn's architecture and UX pointing there; lane's Principle 3 in, lane's code read against it by a subagent and checked by hand (R53): check.sh lane turn rn 100%, mutants since HEAD lane 0 of 2351, turn 0 of 1197"
+  },
+  {
+   "fact": "2026-10-24, the user chose A for the language check: a lane in lane laid on the main conversation's reply end (Stop), its expected language given by the hook (Principle 3), rn's from the steering's conversation-language, judged by script as 0.9.0's rn/hooks/checks/conversation_language.py (git show rn--v0.9.0:...), pairs of one script left unchecked; dev/lane/architecture.md:77 'Lanes are laid on subagents alone' widened to it; rn lays it with lane:up; grounds: this session's own replies slipped into English several times, plugin.md has a check no lane holds added to lane, rn has no hook of its own (T26)"
   }
  ],
  "semantic_gist": [
@@ -703,7 +706,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "check CI; then (2) the language check, put to the user: the check watches the main conversation's end, where lane lays lanes on subagents alone; then dev/rn/trials/flow trial 2; CHANGELOG"
+   "next": "check CI on 0ff4055 (gh run list --branch writ-rebuild); then build the language lane as chosen (A): dev/lane/architecture.md and lane/README + lane/docs/lanes.md first, then code test first, laid on rn with lane:up, the common Languages section (dev/architecture.md) saying pairs of one script are left unchecked; then dev/rn/trials/flow trial 2; CHANGELOG"
   }
  ],
  "uncertainty_signal": [
