@@ -569,6 +569,9 @@
   },
   {
    "fact": "2026-10-24, agreed with the user, rn's record remade from its concepts, Plan and Log (the facts kept in order, the state built from them): the session folder holds steering.md, which steers the work to its purpose and always shows the latest (front matter: stage, the sign-off waiting, the two languages; body: goal, acceptance criteria, documents, tasks ticked; at its end the next move and what is open), and turn/<nnnn>-ccs.json with turn/<nnnn>-result.json, one numbered pair per call, four digits, in the order made, a work made again taking the next number, the work named inside the CCS; state.json, decisions/ and ccs/ go: a work's decisions are entries of its CCS, choices with reasons and feedback in the commit messages, the log being git's history; rn's learner becomes a work turn makes, so every maker but the orchestrator goes through a CCS; turn reads no steering: rn.py puts the goal and the criteria a work serves into the CCS's goal_orientation; steering's form is set strictly and held by rn.py at every keep, since rn.py takes data from it. Words: orchestrator, not conductor; learnings, not lessons. Open: whether the session's record stays on main after the merge"
+  },
+  {
+   "fact": "2026-10-24, agreed with the user: turn makes every part of steering.md, each passing its checklist and fix.md: the goal and criteria, and the tasks, made a few at a time and changed as each turn's facts replan them (tasks for the plan and for the design hold real research and trials too); the flow is steering.md > a part file cut by rn.py > turn's IN/OUT > the part file > put back into steering.md by rn.py, turn seeing nothing of steering but that part; the part file is turn/<nnnn>-steering.md beside turn/<nnnn>-ccs.json and turn/<nnnn>-result.json, made only for calls that make a part of steering; a deliverable turn writes directly"
   }
  ],
  "semantic_gist": [
@@ -673,7 +676,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: design steering.md's strict form, for the user reading it at each sign-off and on the pull request as well as for rn.py taking data from it (each field rn.py reads, its allowed values, how a keep holds it), and show it to the user in Japanese before building; then trace the remade record on paper against resume, feedback, each sign-off and learnings; lane's Principle 3, the language section and decisions/<work>.md (now folded into the CCS) stay as agreed, before rn's trial 2. User's rules: positive phrasing, one decision per message, plain words, purpose and ideal first, the fix checklist when fixing"
+   "next": "on resume: settle with the user whether the goal and criteria handed to every call go as text in the CCS's goal_orientation or in the part file's form; then draw the whole remade record (steering.md's strict form, who writes each part, rn.py's keep, the part file) and trace it on paper against resume, feedback, each sign-off and learnings before building"
   }
  ],
  "uncertainty_signal": [
