@@ -19,8 +19,8 @@ close the product brings them to it, in order of priority; the scenes of what th
 back until they reach it; and the benefits, what they gain with this product, which are why they
 choose it. It holds only what the user deals with; what the product does inside is the
 architecture's. Most of what a product gives, such as a document's worth or the time it takes, is
-not met or missed but come close to, so each version is judged against the version in use on the
-same tasks, with no target value: a value the user's need does not rest under draws the work toward
+not met or missed but come close to, so each version is judged by how close it brings the user,
+with no target value: a value the user's need does not rest under draws the work toward
 the number rather than the user. A version comes closer from the highest key result, and a lower one
 is never brought closer by moving a higher one away.
 
@@ -103,8 +103,7 @@ it has done its work.
 
 Scope: its part
 
-From the key results, can the builder tell whether a version brings the users closer to their goals
-than the version in use?
+From the key results, can the builder tell how close a version brings the users to their goals?
 
 Look for:
 - no order of priority, or an order given without why;

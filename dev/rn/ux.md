@@ -23,8 +23,8 @@ deliverable sign-off, on the finished work.
 The key results stand from the highest priority: the changes sent back at the end come before the
 user's time. Time saved on a finished work that misses the purpose is lost, since what is sent back
 then is made again after all of it is built; so a version saves the user time only without raising
-the changes sent back. Neither has a target value: a version is better when it comes closer than
-the version in use, on the same requests.
+the changes sent back. Neither has a target value: each version is judged by how close it brings
+the user to G1.
 
 - KR1.1: The changes the user sends back at the deliverable sign-off; fewer is better, and none once
   G1 is reached.

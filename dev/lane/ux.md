@@ -19,8 +19,8 @@ a hook that notices when the subagent drifts from it and tells it the sentence a
 
 ## Key results
 
-There is one key result, so none is traded against another. It is judged against the version in
-use, on the same plugins, with no target value.
+There is one key result, so none is traded against another. It has no target value: each version
+is judged by how close it brings the building AI to the goal.
 
 - KR1.1: The defects the building AI meets using lane as it is; fewer is better, and none once the
   goal is reached.

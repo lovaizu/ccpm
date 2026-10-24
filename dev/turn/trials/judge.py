@@ -1,4 +1,4 @@
-"""Judges KR1.1 for the acceptance trials: for each work folder trial.py and baseline.py kept, a
+"""Judges KR1.1 for the acceptance trials: for each work folder trial.py kept, a
 Claude Code run of its own, all at once and on one prompt, an AI that took no part in any of the
 runs, judges by one bar each item of the task's checklists, whether the receiver the CCS names gets
 from that work what the item asks, with what it read and ran for it. Writes each folder's judgment
@@ -56,7 +56,7 @@ if not folders:
     sys.exit("usage: judge.py <work folder> [<work folder> ...]")
 for folder in folders:
     if not os.path.isfile(os.path.join(folder, ".tasks", "ccs.json")):
-        sys.exit(f"{folder} holds no .tasks/ccs.json; give a folder trial.py or baseline.py kept")
+        sys.exit(f"{folder} holds no .tasks/ccs.json; give a folder trial.py kept")
     if os.path.exists(judged(folder)):
         sys.exit(f"{judged(folder)} is there already; move it away to judge again")
 ends: dict = {}

@@ -187,3 +187,8 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   learnings kept after `/rn:gm` pass the steering's Open on, as Open is replaced whole and step 10
   reads the feedback there; a task's design step names the path and kind of the part it makes, which
   turn's calls of the task are made on, as nothing else in the plan named them.
+- R57 (no comparison, the user's A): every key result and acceptance criterion is judged by how
+  close the version brings the user, shown with what could be improved, the user judging, never
+  against an earlier version, as the plugins changed much: lane's and rn's UX, the UX checklist's
+  opening and B-2, this session's AC1 and AC2 and T14; T8, which ran rn 0.8.0 beside this rn, and
+  turn's baseline.py, which ran turn 0.1.0, removed.

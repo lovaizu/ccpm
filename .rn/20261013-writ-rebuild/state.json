@@ -611,6 +611,9 @@
   },
   {
    "fact": "2026-10-24, the user decided: no comparison with an earlier version, as the plugins changed much; dev/architecture.md's acceptance test now shows the maintainer how close the plugin came and what could be improved, the maintainer judging (5241b92); lane's and turn's architectures read whole against the changed checklist, base rules linked (3860859)"
+  },
+  {
+   "fact": "2026-10-24, the user chose A: no comparison with an earlier version anywhere (R57)"
   }
  ],
  "semantic_gist": [
@@ -715,7 +718,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "(1) ask the user, open: drop 'judged against the version in use' everywhere (A, recommended: dev/lane/ux.md:22, dev/rn/ux.md:24-27, rn/checklists/product/ux.md:22 and :107, steering AC1/AC2 rewritten to show this rn's results, T8 removed, T14 without 0.8.0) or only from this rebuild (B); (2) a subagent was building dev/rn/trials/moves/ (per-move unit tests of rn's prompts, flow/ removed, --dry mode); on resume check git status for its files, read them against dev/architecture.md#unit-tests-prompts and rn's skills, run moves.py --dry, then one case small, then all"
+   "next": "a subagent was building dev/rn/trials/moves/ (per-move unit tests of rn's prompts, flow/ removed, --dry mode); on resume check git status for its files, read them against dev/architecture.md#unit-tests-prompts and rn's skills, run moves.py --dry, then one case small, then all"
   }
  ],
  "uncertainty_signal": [
