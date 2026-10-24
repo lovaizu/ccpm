@@ -608,6 +608,9 @@
   },
   {
    "fact": "2026-10-24, the user decided: the Verification sections had become test specifications, and a flow 'unit' trial ran end to end for 20 min; what to test and how far is the project's rule: plugin.md's structural and non-functional rules moved into dev/architecture.md (Repository structure, Code, Test, Release), .claude/rules/dev.md keeps the order of the work and points there, each plugin architecture's Verification is a Test section linking the base, the architecture checklist asks only that the project's rules are followed; tests: code by unit tests C0/C1 100% with mutation and property tests passing, prompts tried role by role with mocks judged from IN/OUT and records, user stories by the whole tried and shown to the maintainer against the version in use; 'example tests' renamed 'unit tests'; flow trial 2 stopped, its playground PR #5 and branch removed"
+  },
+  {
+   "fact": "2026-10-24, the user decided: no comparison with an earlier version, as the plugins changed much; dev/architecture.md's acceptance test now shows the maintainer how close the plugin came and what could be improved, the maintainer judging (5241b92); lane's and turn's architectures read whole against the changed checklist, base rules linked (3860859)"
   }
  ],
  "semantic_gist": [
@@ -712,7 +715,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "remake rn's flow trial as unit tests of its prompts (dev/architecture.md#unit-tests-prompts): each move of the orchestrator from a steering state made by rn.py, turn, gh and the playground mocked, one claude -p each, run side by side in minutes; trace it on paper first; then CHANGELOG"
+   "next": "(1) ask the user, open: drop 'judged against the version in use' everywhere (A, recommended: dev/lane/ux.md:22, dev/rn/ux.md:24-27, rn/checklists/product/ux.md:22 and :107, steering AC1/AC2 rewritten to show this rn's results, T8 removed, T14 without 0.8.0) or only from this rebuild (B); (2) a subagent was building dev/rn/trials/moves/ (per-move unit tests of rn's prompts, flow/ removed, --dry mode); on resume check git status for its files, read them against dev/architecture.md#unit-tests-prompts and rn's skills, run moves.py --dry, then one case small, then all"
   }
  ],
  "uncertainty_signal": [
