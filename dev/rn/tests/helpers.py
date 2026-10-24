@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 import sys
+from unittest import mock
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "lane"))
 
@@ -12,6 +13,9 @@ import testing
 
 # The folder of the copy holding the user's repository, beside `origin.git`, its remote.
 REPO = "repo"
+# When each commit a test makes is made, unless the test says another time: before every entry of
+# Claude Code's records the tests write.
+DATE = "2000-01-01T00:00:00Z"
 
 
 class MainAndWork(testing.GitTest):
@@ -22,7 +26,10 @@ class MainAndWork(testing.GitTest):
         """Makes where the test stands `origin.git`, a bare repository standing for the remote, and
         the repository `repo`: `main` with a README and `work` checked out from it, each pushed and
         tracking the remote's. The remote is named by a path from the repository, so a copy pushes
-        to its own."""
+        to its own. Its commits are dated, so no test reads the clock through them."""
+        dated = mock.patch.dict(os.environ, {"GIT_AUTHOR_DATE": DATE, "GIT_COMMITTER_DATE": DATE})
+        dated.start()
+        self.addCleanup(dated.stop)
         self.git("init", "-q", "--bare", "origin.git")
         os.makedirs(REPO)
         os.chdir(REPO)

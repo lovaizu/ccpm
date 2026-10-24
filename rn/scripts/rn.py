@@ -70,8 +70,8 @@ ENTRIES = {
     "use": "purpose",
     "has": "has",
 }
-# The kind of a checklist, which rn's checklist for checklists makes from rn's `usability.md`, what any
-# reader needs, as well.
+# The kind of a checklist, which rn's checklist for checklists makes from rn's `usability.md`, what
+# any reader needs, as well.
 CHECKLIST = "checklist"
 # The plan's front matter keys for the languages, which go into every CCS.
 LANGUAGES = ("artifact-language", "conversation-language")
@@ -105,8 +105,12 @@ ANSWER = "/rn:ty to approve, /rn:gm <feedback> to ask for a change."
 # The folder in the repository's git folder where the learner is shown the records and replies, so
 # nothing of it shows as a change to keep.
 LEARNING = "rn"
-# The learner's lessons, kept in the session.
+# The learner's reply, in the git folder.
 LEARNT = "learnt.json"
+# The folder in the session where the lessons of each stretch are kept, as `<n>.json`, n counting
+# the stretches from 1.
+LESSONS = "learnt"
+KEPT = re.compile(r"([0-9]+)\.json")
 # Claude Code names the folder of a project's records by the project's path, each character that is
 # not a letter or digit as `-`, counted as JavaScript counts, a character beyond the basic plane as
 # two; a name longer than this is cut to it and a hash of the path put after, which rn does not make
@@ -532,9 +536,10 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     # A CCS holds its entries in four parts, the shape turn takes: focal_entities, what the work is
     # about, the work, its receiver and what they have with it; goal_orientation, what the work is
     # for; retrieved_artifacts, the files it is made from, the kind's checklists, rn's
-    # `usability.md` where the work is a checklist, and its decisions; and constraints, the bounds it is made in: the languages, and rn's checklist for a
-    # fix, which turn's generator holds whenever it changes a work already there, sent back or in a
-    # later round as well. turn finds each entry by its key, whichever part holds it.
+    # `usability.md` where the work is a checklist, and its decisions; and constraints, the bounds
+    # it is made in: the languages, and rn's checklist for a fix, which turn's generator holds
+    # whenever it changes a work already there, sent back or in a later round as well. turn finds
+    # each entry by its key, whichever part holds it.
     usability = os.path.join(root, "checklists", "usability.md")
     sources = [{"source": usability}] if kind in (CHECKLIST,) else []
     ccs = {
@@ -704,12 +709,23 @@ def conversations(top: str, branch: str) -> list[str]:
     return sorted(found, key=begun)
 
 
+def stretch(folder: str) -> str:
+    """The commit the stretch the learner reads starts after: the last that kept the lessons of a
+    stretch, or, where none did, the one the branch left the default branch at."""
+    start = base()
+    kept = git(
+        ["log", "-1", "--format=%H", f"{start}..HEAD", "--", os.path.join(folder, LESSONS)],
+        AS_GIT_SAYS,
+    )
+    return kept.strip() or start
+
+
 def history(folder: str, start: str) -> str:
-    """The session's history on the branch since it left the default branch, each command before
-    what it printed: each commit, oldest first, with its message, which holds each feedback, answer
-    and proposal shown, and the files it changed, so a change to the work made outside turn shows,
-    without their lines, as the record gives the session's files as they are now; then each change
-    to the state, under the commit that made it, which shows what each move rested on."""
+    """The session's history on the branch since the start, each command before what it printed:
+    each commit, oldest first, with its message, which holds each feedback, answer and proposal
+    shown, and the files it changed, so a change to the work made outside turn shows, without their
+    lines, as the record gives the session's files as they are now; then each change to the state,
+    under the commit that made it, which shows what each move rested on."""
     asked = [
         ["log", "--reverse", "--stat", f"{start}..HEAD"],
         ["log", "--reverse", "-p", "--format=%h", f"{start}..HEAD", "--", state_path(folder)],
@@ -727,32 +743,47 @@ def session_files(folder: str) -> list[str]:
     return [p for p in found if os.path.isfile(p)]
 
 
-def told(path: str) -> str:
-    """A conversation of the conductor as the learner searches it: the user's words, each skill's
-    text, the conductor's words and each tool it called, one to a line; what each tool gave back is
-    left out, as the record shows what was kept, and it is most of the conversation."""
+def since(entry: dict[str, Any], start: float) -> bool:
+    """Whether the entry was kept at or after the time, in seconds since 1970; not where it has no
+    time."""
+    at = entry.get("timestamp")
+    # Python 3.9 reads no `Z` for UTC, which Claude Code writes.
+    return (
+        at is not None
+        and datetime.datetime.fromisoformat(at.replace("Z", "+00:00")).timestamp() >= start
+    )
+
+
+def told(path: str, start: float) -> str:
+    """A conversation of the conductor as the learner searches it, from the time, in seconds since
+    1970: the user's words, each skill's text, the conductor's words and each tool it called, one to
+    a line; what each tool gave back is left out, as the record shows what was kept, and it is most
+    of the conversation; "" where it holds none of them from the time."""
     said: list[str] = []
-    for entry in records.entries(path):
+    for entry in (e for e in records.entries(path) if since(e, start)):
         content = entry.get("message", {}).get("content")
         if isinstance(content, str):
             said.append(f"[{entry.get('type')}] {content}")
         for part in content if isinstance(content, list) else []:
             if part.get("type") in ("text", "tool_use"):
                 said.append(records.said(part))
-    return "\n".join(said) + "\n"
+    return "".join(f"{line}\n" for line in said)
 
 
 def run_records(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Shows rn's learner the session, once every change is pushed: its record, the history on the
-    branch and the session's files, to read whole; then each conversation of the conductor, run at
-    the top of the repository on the session's branch, to search for what only it shows, none where
-    Claude Code keeps none here, as when the session ran on another machine. Each is written as
-    text in the git folder, made afresh, numbered in one list, the record first; what each stands
-    for is kept there for the reply; and gives the learner's prompt. Stops where the branch holds
-    no session, or a change is not kept or pushed."""
+    """Shows rn's learner one stretch of the session, from the sign-off before to the one the user
+    just answered, once every change is pushed: its record, the history on the branch since the
+    lessons of the stretch before were kept and the session's files as they are now, to read whole;
+    then each conversation of the conductor, run at the top of the repository on the session's
+    branch, from the time the stretch began, to search for what only it shows, none where Claude
+    Code keeps none here, as when the session ran on another machine. Each is written as text in the
+    git folder, made afresh, numbered in one list, the record first; what each stands for is kept
+    there for the reply; and gives the learner's prompt. Stops where the branch holds no session, or
+    a change is not kept or pushed."""
     folder = current()
     pushed()
-    start = base()
+    start = stretch(folder)
+    began = float(git(["log", "-1", "--format=%ct", start], AS_GIT_SAYS))
     head = git(["rev-parse", "HEAD"], AS_GIT_SAYS).strip()
     top = git(["rev-parse", "--show-toplevel"], AS_GIT_SAYS).strip()
     branch = git(["branch", "--show-current"], AS_GIT_SAYS).strip()
@@ -766,7 +797,9 @@ def run_records(args: argparse.Namespace, root: str, today: datetime.date) -> An
     whole = len(shown)
     for path in conversations(top, branch):
         name = os.path.basename(path)[: -len(".jsonl")] + ".txt"
-        shown.append((os.path.join("conversations", name), path, told(path)))
+        text = told(path, began)
+        if text:
+            shown.append((os.path.join("conversations", name), path, text))
     for name, _, text in shown:
         os.makedirs(os.path.dirname(os.path.join(place, name)), exist_ok=True)
         with open(os.path.join(place, name), "w", encoding="utf-8") as f:
@@ -783,13 +816,14 @@ def run_records(args: argparse.Namespace, root: str, today: datetime.date) -> An
 
 
 def run_learnt(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Keeps the learner's lessons in the session, each ground naming what its text stands for, a
-    file of the session by its path, the history by its range of commits and a conversation by its
-    record, as the texts it read by number go; removes what the learner was shown; and gives the
-    lessons, with what it checked, for the conductor to put to the user. Stops where the branch
-    holds no session, the session was not shown, the reply is not there, or the reply is out of its
-    form, each quote found in the text it numbers, which is then removed, with the message that has
-    the learner write it again."""
+    """Keeps the learner's lessons on the stretch in the session, as the next stretch's number,
+    a stretch of no lesson as well, so the next starts after it; each ground naming what its
+    text stands for, a file of the session by its path, the history by its range of commits and
+    a conversation by its record, as the texts it read by number go; removes what the learner
+    was shown; and gives the lessons, with what it checked, for the conductor to put to the
+    user. Stops where the branch holds no session, the session was not shown, the reply is not
+    there, or the reply is out of its form, each quote found in the text it numbers, which is
+    then removed, with the message that has the learner write it again."""
     folder = current()
     place = learning()
     kept = os.path.join(place, "records.json")
@@ -825,9 +859,40 @@ def run_learnt(args: argparse.Namespace, root: str, today: datetime.date) -> Any
         ],
         "checked": data["checked"],
     }
-    write_json(os.path.join(folder, LEARNT), learnt)
+    numbers = [int(n) for n in kept_numbers(folder)]
+    write_json(os.path.join(folder, LESSONS, f"{max(numbers, default=0) + 1}.json"), learnt)
     shutil.rmtree(place)
     return learnt
+
+
+def kept_numbers(folder: str) -> list[str]:
+    """The number of each stretch whose lessons the session keeps, in order."""
+    names = (
+        os.listdir(os.path.join(folder, LESSONS))
+        if os.path.isdir(os.path.join(folder, LESSONS))
+        else []
+    )
+    found = [m.group(1) for m in map(KEPT.fullmatch, names) if m]
+    return sorted(found, key=int)
+
+
+def run_lessons(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
+    """Every lesson the session keeps, stretch by stretch in their order, for the conductor to put
+    to the user one per message once the finished work is approved. Stops where the branch holds no
+    session, or no stretch's lessons are kept."""
+    folder = current()
+    numbers = kept_numbers(folder)
+    if not numbers:
+        raise Stop(
+            f"rn: no lessons are kept in {os.path.join(folder, LESSONS)}; at each sign-off the user"
+            " answered, run `rn.py records`, have rn:learner reply, run `rn.py learnt` and keep it"
+            " with `rn.py state --message`"
+        )
+    lessons = []
+    for n in numbers:
+        with open(os.path.join(folder, LESSONS, f"{n}.json"), encoding="utf-8") as f:
+            lessons += json.load(f)["lessons"]
+    return {"lessons": lessons}
 
 
 def read_text(path: str) -> str:
@@ -873,6 +938,7 @@ def parser() -> Parser:
     proposal.add_argument("signoff", choices=list(SIGNOFFS))
     sub.add_parser("records").set_defaults(run=run_records)
     sub.add_parser("learnt").set_defaults(run=run_learnt)
+    sub.add_parser("lessons").set_defaults(run=run_lessons)
     return top
 
 

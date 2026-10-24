@@ -539,6 +539,9 @@
   },
   {
    "fact": "2026-10-24: T28 done: the learner reads the record whole (the history as each commit's message and files plus each state.json change, and the session's files) and searches the conductor's conversations (no tool results), turn's runs left to turn's learner, as the user chose; lane's in_form takes a linked form (f2b8a6f); check.sh lane, turn, rn 100%, mutate 0; trial passed twice (1.1 min, $0.42): the commit outside turn and two points in one message each a lesson with its words; the learner Read the conversation whole instead of Grep, to watch on rn's whole trials before any lane"
+  },
+  {
+   "fact": "2026-10-24: the learner runs at each sign-off on that stretch alone, as the user chose: the stretch from the last commit that kept learnt/ to HEAD, conversations cut at its time, lessons in <session>/learnt/<n>.json, `rn.py lessons` gives them all at the end; check.sh rn 100% (148 tests), mutate 0 of 472; trial of two stretches passed (1.1 min, $0.41), nothing of the first shown; the learner read each file twice and the conversation whole rather than by Grep"
   }
  ],
  "semantic_gist": [
@@ -643,7 +646,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: T29: design the skills and the proposals together (where the hearing keeps each work's core decisions, the design and deliverable proposals, the bound on their lines), the /rn:ty steps running rn.py records, rn:learner and rn.py learnt, rn's CHANGELOG; a subagent makes it with prompt.md and code.md open, I check by hand. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: T29: design the skills and the proposals together (where the hearing keeps each work's core decisions, the design and deliverable proposals, the bound on their lines), each sign-off's answer followed by rn.py records, rn:learner, rn.py learnt and state --message, and rn.py lessons after the deliverable's approval; rn's CHANGELOG; a subagent makes it with prompt.md and code.md open, I check by hand. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [

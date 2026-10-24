@@ -106,15 +106,18 @@ flowchart TB
   alone.
 
   So it says nothing turn's first user did not read.
-- Once the user approves the finished work, the learner of
-  [Principle 8](../architecture.md#learning-from-each-run) reads the piece of work's record whole,
-  its history on the branch and its files, and searches the conductor's conversations for what only
-  they show, such as the form of each message to the user; its lessons and those turn returned with
-  each work are the learnings the conductor puts to the user.
+- At each sign-off, once the user answers it, the learner of
+  [Principle 8](../architecture.md#learning-from-each-run) reads the stretch of the record since the
+  sign-off before whole, its history on the branch and the files as they are now, and searches the
+  conductor's conversations of that stretch for what only they show, such as the form of each
+  message to the user; its lessons are kept in the record, and once the user approves the finished
+  work, they and those turn returned with each work are the learnings the conductor puts to the
+  user.
 
   turn's learner reads turn's runs alone, so a slip of rn's own steps shows only to a learner of
-  rn's; the record shows where the work fell short, such as each change sent back, and is a small
-  part of the conversations, most of which is what each tool gave back.
+  rn's; a stretch ends where the user sent the work back or approved it, so what led there is near,
+  and is small enough to read whole, where a whole piece of work is not; the learnings wait for the
+  end, as each put to the user mid-way is a stop in the work.
 
 ### Physical view
 
@@ -141,7 +144,7 @@ rn/                                  the plugin, installed by Claude Code with t
         ├── decisions/<work>.decisions.md
         ├── ccs/<work>.json          the CCS each work goes to turn as <JSON>
         ├── ccs/<work>-result.json   what turn returned for it <JSON>
-        ├── learnt.json              the learner's lessons, each ground named by where it is <JSON>
+        ├── learnt/<n>.json          the learner's lessons of each stretch, each ground named by where it is <JSON>
         └── state.json               the state, ACC's CCS <JSON>
 ```
 
@@ -192,9 +195,10 @@ records of every conversation and agent the check started.
     state and replan rests only on the checked facts of the move before it, and each proposal says
     only what the record holds, read against the records.
 - The learner: each lesson quotes from the records the words it rests on.
-  - Flow: started on its own on a record and a conversation set beforehand, holding a slip of the
-    conductor's steps the record shows and one only the conversation shows; passes when each is a
-    lesson with its words quoted.
+  - Flow: started on its own on a piece of work of two stretches set beforehand, the first's
+    lessons kept, the second holding a slip of the conductor's steps the record shows and one only
+    a conversation shows; passes when each is a lesson with its words quoted and nothing of the
+    first stretch is shown.
 - rn's checklists: what is made with them on the real requests.
   - Content: each change sent back at the deliverable sign-off is traced to the checklist or the
     skill it comes from, and fixed there; the fix passes when, on the same real requests run again,

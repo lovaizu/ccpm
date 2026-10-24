@@ -1234,6 +1234,10 @@ HISTORY = f"{LEARNING}/record/history.txt"
 SHOWN_PLAN = f"{LEARNING}/record/{FOLDER}/steering.md"
 CONVERSATIONS = f"{LEARNING}/conversations"
 REPLY = f"{LEARNING}/learnt.json"
+# Where the lessons of each stretch of the session are kept, by its number.
+LESSONS = f"{FOLDER}/learnt"
+# When the lessons of a stretch are kept, between the entries of the conversations the tests write.
+KEPT_AT = "2026-10-20T09:30:00Z"
 SHOWN_LIST = f"{LEARNING}/records.json"
 # What the learner checked, as it says.
 CHECKED = "every move of the conductor"
@@ -1297,11 +1301,19 @@ class LearningTest(RepoTest):
         """The commits since the default branch, as rn names the history it showed."""
         return f"git log {self.start()}..{self.out('rev-parse', 'HEAD').strip()}"
 
-    def commit_with(self, message: str) -> None:
-        """Commits every change with the message, and pushes it, as a move kept."""
+    def commit_with(self, message: str, at: str = helpers.DATE) -> None:
+        """Commits every change with the message at the time, and pushes it, as a move kept; one of
+        no change as well, as a proposal shown is kept."""
         self.git("add", "-A")
-        self.git("commit", "-q", "-m", message)
+        with mock.patch.dict(os.environ, {"GIT_COMMITTER_DATE": at}):
+            self.git("commit", "-q", "--allow-empty", "-m", message)
         self.git("push", "-q")
+
+    def lessons_kept(self, n: int, *lessons: dict[str, Any], at: str = KEPT_AT) -> str:
+        """The lessons of a stretch kept as its number, committed at the time; gives the commit."""
+        self.write_json(f"{LESSONS}/{n}.json", {"lessons": list(lessons), "checked": CHECKED})
+        self.commit_with(f"lessons of stretch {n}", at)
+        return self.out("rev-parse", "HEAD").strip()
 
 
 class RecordsTest(LearningTest):
@@ -1470,6 +1482,68 @@ class RecordsTest(LearningTest):
         self.ran("records")
         # Then: what the earlier run left is gone.
         self.assertEqual((os.path.exists(CONVERSATIONS), os.path.exists(REPLY)), (False, False))
+
+    def test_the_history_starts_after_the_lessons_kept_last(self):
+        # Given: the lessons of the stretch before kept, after a move, and a move after them.
+        self.commit_with("plan: approved")
+        kept = self.lessons_kept(1)
+        self.commit_with("deliverable: sent back")
+        # When: the conductor has the stretch shown.
+        out = self.ran("records")
+        # Then: the history runs from the commit that kept the lessons, and names its range so.
+        history = self.read(HISTORY)
+        sources = self.read_json(SHOWN_LIST)["sources"]
+        self.assertEqual(
+            (
+                history.startswith(f"$ git log --reverse --stat {kept}..HEAD\n"),
+                "plan: approved" in history,
+                "deliverable: sent back" in history,
+                sources[0],
+                len(out["record"]),
+            ),
+            (True, False, True, f"git log {kept}..{self.out('rev-parse', 'HEAD').strip()}", 2),
+        )
+
+    def test_the_lessons_kept_last_start_the_stretch(self):
+        # Given: the lessons of two stretches kept, a move between them.
+        self.lessons_kept(1)
+        self.commit_with("design: approved")
+        kept = self.lessons_kept(2)
+        # When: the conductor has the stretch shown.
+        self.ran("records")
+        # Then: the history runs from the commit that kept the later lessons.
+        self.assertIn(f"$ git log --reverse --stat {kept}..HEAD\n", self.read(HISTORY))
+
+    def test_a_conversation_shows_its_entries_from_the_stretchs_start(self):
+        # Given: the lessons of the stretch before kept, and a conversation with an entry before,
+        # one at that very time and one after.
+        self.lessons_kept(1)
+        self.conversation(
+            "c",
+            said("before", "2026-10-20T09:29:59.999Z", self.top),
+            said("at", "2026-10-20T09:30:00.000Z", self.top),
+            said("after", "2026-10-20T10:00:00.000Z", self.top),
+        )
+        # When: the conductor has the stretch shown.
+        # Then: the entries at and after the start alone are shown.
+        self.assertEqual(self.shown(), ["[user] at\n[user] after\n"])
+
+    def test_a_conversation_all_before_the_stretch_is_left_out(self):
+        # Given: the lessons of the stretch before kept, a conversation ended before them and one
+        # after.
+        self.lessons_kept(1)
+        self.conversation("a", said("old", "2026-10-20T09:00:00Z", self.top))
+        self.conversation("b", said("new", "2026-10-20T10:00:00Z", self.top))
+        # When: the conductor has the stretch shown.
+        out = self.ran("records")
+        # Then: the one in the stretch alone is shown and named.
+        self.assertEqual(
+            (
+                [self.read(p) for p in out["conversations"]],
+                self.read_json(SHOWN_LIST)["sources"][-1],
+            ),
+            (["[user] new\n"], os.path.join(self.project, "b.jsonl")),
+        )
 
     def test_records_with_a_move_not_kept_stop(self):
         # Given: a change to the session not kept.
@@ -1642,14 +1716,27 @@ class LearntTest(LearningTest):
             ],
             "checked": CHECKED,
         }
-        self.assertEqual((out, self.read_json(f"{FOLDER}/learnt.json")), (want, want))
+        self.assertEqual((out, self.read_json(f"{LESSONS}/1.json")), (want, want))
 
     def test_learnt_of_no_lesson_keeps_what_was_checked(self):
         # Given: the learner's reply of no lesson.
         self.replied([])
         # When: the conductor takes it.
-        # Then: rn keeps what the learner checked.
-        self.assertEqual(self.ran("learnt"), {"lessons": [], "checked": CHECKED})
+        out = self.ran("learnt")
+        # Then: rn keeps the stretch with what the learner checked, so the next starts after it.
+        want = {"lessons": [], "checked": CHECKED}
+        self.assertEqual((out, self.read_json(f"{LESSONS}/1.json")), (want, want))
+
+    def test_learnt_keeps_the_stretch_under_the_next_free_number(self):
+        # Given: the lessons of three stretches kept, and the learner's reply on the fourth.
+        for n in (1, 2, 3):
+            self.lessons_kept(n)
+        self.ran("records")
+        self.replied([])
+        # When: the conductor takes it.
+        self.ran("learnt")
+        # Then: rn keeps it as the fourth.
+        self.assertEqual(sorted(os.listdir(LESSONS)), [f"{n}.json" for n in (1, 2, 3, 4)])
 
     def test_learnt_takes_a_reply_in_a_json_fence(self):
         # Given: the learner's reply written inside a ```json fence.
@@ -1731,6 +1818,51 @@ class LearntTest(LearningTest):
         self.assertIn("holds no session", self.stopped("learnt"))
 
 
+class LessonsTest(LearningTest):
+    """Every lesson kept, once the finished work is approved."""
+
+    def lesson(self, words: str) -> dict[str, Any]:
+        """A lesson in the words, as `rn.py learnt` keeps it."""
+        return {"lesson": words, "whose": "own", "grounds": [{"record": "README.md", "quote": "x"}]}
+
+    def test_lessons_gives_every_lesson_kept_in_the_order_of_the_stretches(self):
+        # Given: the lessons of stretches 1, 2 and 10, one of them of no lesson, two in the tenth.
+        self.lessons_kept(10, self.lesson("c"), self.lesson("d"))
+        self.lessons_kept(2)
+        self.lessons_kept(1, self.lesson("a"))
+        # When: the conductor asks for the lessons.
+        # Then: rn gives each, stretch by stretch in the order of their numbers.
+        want = [self.lesson(w) for w in ("a", "c", "d")]
+        self.assertEqual(self.ran("lessons"), {"lessons": want})
+
+    def test_lessons_reads_only_what_learnt_keeps(self):
+        # Given: the lessons of a stretch, beside a file of another name.
+        self.lessons_kept(1, self.lesson("a"))
+        self.write_json(f"{LESSONS}/notes.json", {"lessons": [self.lesson("b")]})
+        # When: the conductor asks for the lessons.
+        # Then: the stretch's alone are given.
+        self.assertEqual(self.ran("lessons"), {"lessons": [self.lesson("a")]})
+
+    def test_lessons_before_any_are_kept_stop(self):
+        # Given: a session whose stretches have no lessons kept.
+        # When: the conductor asks for the lessons.
+        # Then: rn stops, saying how lessons are kept.
+        self.assertIn(
+            f"rn: no lessons are kept in {LESSONS}; at each sign-off the user answered, run"
+            " `rn.py records`, have rn:learner reply, run `rn.py learnt` and keep it with"
+            " `rn.py state --message`",
+            self.stopped("lessons"),
+        )
+
+    def test_lessons_without_a_session_stop(self):
+        # Given: a branch holding no session.
+        self.git("checkout", "-q", "main")
+        self.git("checkout", "-q", "-b", "other")
+        # When: the conductor asks for the lessons.
+        # Then: rn stops, saying how to start one.
+        self.assertIn("holds no session", self.stopped("lessons"))
+
+
 class CommandTest(RepoTest):
     def test_the_command_prints_and_exits_1_on_a_stop(self):
         # Given: rn.py run as a command, as the conductor runs it, with the plugin's own
@@ -1751,7 +1883,7 @@ class CommandTest(RepoTest):
         # Then: it says a subcommand is required, and names them.
         self.assertIn(
             "required: subcommand; give it as rn.py [-h]"
-            " {session,start,state,checklists,ccs,proposal,records,learnt}",
+            " {session,start,state,checklists,ccs,proposal,records,learnt,lessons}",
             self.stopped(),
         )
 

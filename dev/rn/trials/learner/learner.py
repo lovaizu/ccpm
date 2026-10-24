@@ -1,20 +1,16 @@
 """Tries rn's learner on its own: the real agent and its lanes, started by a stand-in for the
-conductor with the prompt `rn.py records` prints, on a session set beforehand that holds two slips
-of the conductor's steps. One the record shows: after the user sent the deliverable back with
-`/rn:gm`, the README is changed by a commit of the conductor's own, where the skill's steps have the
-change written into the work's decisions and turn make the work again. One only a conversation
-shows: the conductor asks the user two points in one message. Passes when each is a lesson resting
-on its words. Prints the size of each text shown, the stand-in's session, from whose record and its
-agent's the trial is judged, the minutes and cost, each tool the learner used, each stop, what
-`rn.py learnt` printed, and the quotes of each slip.
-
-    python3 dev/rn/trials/learner/learner.py <new folder>
-
-The folder holds the user's repository with the session on its branch, its remote, and Claude
-Code's records for the repository, read by rn.py through CLAUDE_CONFIG_DIR; it is removed with the
-copies of rn and turn when the run ends, and the stand-in's records stay in Claude Code's own
-folder of its session.
-"""
+conductor with the prompt `rn.py records` prints, on a session set beforehand in two stretches.
+The first, to the plan sign-off, holds a slip of its own, a point asked with no option recommended,
+and its lessons are kept already, as `rn.py learnt` and `rn.py state` keep them once the user
+answered the plan sign-off. The second, to the deliverable sign-off the user just sent back with
+`/rn:gm`, holds two slips: one the record shows, the README changed by a commit of the conductor's
+own after the feedback, where the skill's steps have the change written into the work's decisions
+and turn make the work again; and one only a conversation shows, two points asked in one message.
+Passes when each slip of the second stretch is a lesson resting on its words, and nothing of the
+first is shown the learner. Prints the size of each text shown, whether any holds the first
+stretch's words, the stand-in's session, from whose record and its agent's the trial is judged,
+the minutes and cost, each tool the learner used, each stop, what `rn.py learnt` and
+`rn.py lessons` printed, and the quotes of each slip."""
 
 import json
 import os
@@ -35,10 +31,13 @@ import trying
 BRANCH = "license"
 SESSION = ".rn/20261020-license"
 FEEDBACK = "The README should say the license is MIT."
-# The slip only the conversation shows: two points in one message.
+# The first stretch's slip, whose lesson is kept already: a point asked with no option recommended.
+UNRECOMMENDED = "Which license should the README name?"
+ASKED = "asking: the license is MIT"
+# The second stretch's slip only the conversation shows: two points in one message.
 TWO_POINTS = (
-    "Two points to decide. 1. Which license should the README name: MIT (recommended, as LICENSE"
-    " holds it) or Apache-2.0? 2. Should the README also name who holds the copyright?"
+    "Two points to decide. 1. Should the section be headed License (recommended, as most READMEs"
+    " do) or Licensing? 2. Should it also name who holds the copyright?"
 )
 # The slip the record shows: the conductor's own commit of the work, after the feedback.
 OWN_COMMIT = "README: say MIT, as the user asked"
@@ -74,15 +73,26 @@ def git(*args: str, cwd: str, fed: "str | None" = None) -> str:
     return done.stdout
 
 
-def kept(top: str, message: str, files: dict) -> None:
-    """A move kept: the files written, every change committed with the message, and pushed."""
+def kept(top: str, at: str, message: str, files: dict) -> None:
+    """A move kept at the minute after 10:00 of the session's day: the files written, every change
+    committed with the message, and pushed."""
     for name, text in files.items():
         path = os.path.join(top, name)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             f.write(text if isinstance(text, str) else json.dumps(text, indent=1) + "\n")
     git("add", "-A", cwd=top)
-    git("commit", "-q", "--allow-empty", "-F", "-", cwd=top, fed=message)
+    when = f"2026-10-20T10:{at}:00Z"
+    dated = {**os.environ, "GIT_AUTHOR_DATE": when, "GIT_COMMITTER_DATE": when}
+    subprocess.run(
+        ["git", "-c", "user.name=trial", "-c", "user.email=trial@example.invalid", "commit", "-q"]
+        + ["--allow-empty", "-F", "-"],
+        cwd=top,
+        env=dated,
+        check=True,
+        input=message,
+        text=True,
+    )
     git("push", "-q", "-u", "origin", "HEAD", cwd=top)
 
 
@@ -90,47 +100,84 @@ def state(*facts: dict) -> dict:
     return {"focal_entities": [{"session": SESSION}], "episodic_trace": list(facts)}
 
 
-def repository(place: str) -> str:
+def repository(place: str, record: str) -> str:
     """The user's repository at place/repo, its remote place/origin.git, with the session on its
-    branch: asked, planned, the README made by turn, sent back at the deliverable sign-off, and
-    then changed by the conductor's own commit; gives its top."""
+    branch: asked and planned, the plan approved and its stretch's lessons kept, each ground of
+    them naming the conversation's record; then the README made by turn, sent back at the
+    deliverable sign-off, and changed by the conductor's own commit; gives its top."""
     top = os.path.join(place, "repo")
     os.makedirs(top)
     git("init", "-q", "--bare", os.path.join(place, "origin.git"), cwd=place)
     git("init", "-q", "-b", "main", cwd=top)
     git("remote", "add", "origin", os.path.join(place, "origin.git"), cwd=top)
-    kept(top, "demo", {"README.md": "# demo\n\ndemo prints a greeting.\n", "LICENSE": "MIT\n"})
+    kept(
+        top, "00", "demo", {"README.md": "# demo\n\ndemo prints a greeting.\n", "LICENSE": "MIT\n"}
+    )
     git("remote", "set-head", "origin", "main", cwd=top)
     git("checkout", "-q", "-b", BRANCH, cwd=top)
     s = SESSION
-    kept(top, "start: the README names its license", {f"{s}/state.json": {}})
+    plan_proposal = (
+        "Plan sign-off\nThe plan is on the draft pull request: https://github.com/o/r/pull/1\n"
+        "G1: The README names the license, so users know they may use it.\n"
+        "AC1: The README names the license.\n/rn:ty to approve, /rn:gm <feedback> to ask for a change."
+    )
+    kept(top, "01", "start: the README names its license", {f"{s}/state.json": {}})
     kept(
         top,
-        "asking: the license is MIT; the copyright holder is not named",
+        "03",
+        f"{ASKED}; the copyright holder is not named",
         {
-            f"{s}/decisions/plan.decisions.md": "# Plan\n\n- The README names the license, MIT.\n"
-            "- The copyright holder is not named.\n",
-            f"{s}/state.json": state({"answer": "MIT, no copyright holder"}),
+            f"{s}/decisions/plan.decisions.md": "# Plan\n\n- The README names the license, MIT.\n",
+            f"{s}/state.json": state({"answer": "MIT"}),
         },
     )
     kept(
         top,
+        "08",
         "plan: kept as turn returned it",
         {
             f"{s}/steering.md": "---\npr: https://github.com/o/r/pull/1\nstatus: running\n---\n\n"
             "# License\n\nG1: The README names the license, so users know they may use it.\n\n"
             "## Acceptance criteria\n\n- AC1: The README names the license.\n\n## Tasks\n\n"
             "- [x] T1: The README's license section.\n",
-            f"{s}/state.json": state({"signoff": "plan approved"}),
+            f"{s}/state.json": state({"turn": "plan returned"}),
+        },
+    )
+    kept(top, "09", f"{plan_proposal}\n\nRn-Sign-off: plan", {})
+    kept(top, "12", "plan: approved", {f"{s}/state.json": state({"signoff": "plan approved"})})
+    lesson = {
+        "lesson": "The conductor asked which license to name with no option recommended.",
+        "whose": "general",
+        "grounds": [{"record": record, "quote": UNRECOMMENDED}],
+    }
+    kept(
+        top,
+        "15",
+        "learnt: one lesson of the plan sign-off",
+        {
+            f"{s}/learnt/1.json": {
+                "lessons": [lesson],
+                "checked": "the stretch to the plan sign-off",
+            },
+            f"{s}/state.json": state({"learnt": "1 lesson of the plan sign-off"}),
         },
     )
     kept(
         top,
+        "32",
+        "asking: the section is headed License; the copyright holder is not named",
+        {
+            f"{s}/decisions/readme.decisions.md": "# README\n\n- A section `License` points to"
+            " LICENSE.\n",
+            f"{s}/state.json": state({"answer": "License, no copyright holder"}),
+        },
+    )
+    kept(
+        top,
+        "38",
         "readme: turn returned the README",
         {
             "README.md": "# demo\n\ndemo prints a greeting.\n\n## License\n\nSee LICENSE.\n",
-            f"{s}/decisions/readme.decisions.md": "# README\n\n- A section `License` points to"
-            " LICENSE.\n",
             f"{s}/ccs/readme-result.json": {
                 "work": ["README.md"],
                 "items": [{"checklist": "readme.md", "item": "B-1", "good": "names LICENSE"}],
@@ -145,27 +192,35 @@ def repository(place: str) -> str:
         " https://github.com/o/r/pull/1\nAC1: The README names the license.\n"
         "/rn:ty to approve, /rn:gm <feedback> to ask for a change."
     )
-    kept(top, f"{proposal}\n\nRn-Sign-off: deliverable", {})
+    kept(top, "39", f"{proposal}\n\nRn-Sign-off: deliverable", {})
     kept(
         top,
+        "45",
         f"deliverable sent back: {FEEDBACK}",
         {f"{s}/state.json": state({"signoff": "deliverable"}, {"feedback": FEEDBACK})},
     )
     kept(
         top,
+        "46",
         OWN_COMMIT,
         {
             "README.md": "# demo\n\ndemo prints a greeting.\n\n## License\n\nMIT; see LICENSE.\n",
             f"{s}/state.json": state({"signoff": "deliverable"}, {"fixed": "README says MIT"}),
         },
     )
-    kept(top, f"{proposal}\n\nRn-Sign-off: deliverable", {})
+    kept(top, "47", f"{proposal}\n\nRn-Sign-off: deliverable", {})
+    kept(
+        top,
+        "50",
+        "deliverable: approved",
+        {f"{s}/state.json": state({"signoff": "deliverable approved"})},
+    )
     return os.path.realpath(top)
 
 
 def conversation(top: str, plugin: str) -> list:
-    """The conductor's conversation, as Claude Code keeps it: asking, then at the deliverable sign-off
-    sent back."""
+    """The conductor's conversation, as Claude Code keeps it, across both stretches: asking and the
+    plan sign-off, then asking again, the deliverable sign-off sent back, and approved."""
 
     def entry(kind: str, at: str, content) -> dict:
         return {
@@ -187,47 +242,34 @@ def conversation(top: str, plugin: str) -> list:
     def says(at: str, text: str) -> dict:
         return entry("assistant", at, [{"type": "text", "text": text}])
 
+    def command(at: str, name: str, args: str = "") -> dict:
+        return entry(
+            "user", at, f"<command-name>/{name}</command-name>\n<command-args>{args}</command-args>"
+        )
+
     rn = f'python3 "{plugin}/scripts/rn.py"'
     skill = SKILL.format(plugin=plugin)
     return [
         {"type": "mode", "mode": "normal"},
-        entry(
-            "user",
-            "00:00.000",
-            "<command-name>/rn:up</command-name>\n"
-            "<command-args>Put the license in the README</command-args>",
-        ),
-        {**entry("user", "00:00.010", [{"type": "text", "text": skill}]), "isMeta": True},
+        command("00:30.000", "rn:up", "Put the license in the README"),
+        {**entry("user", "00:30.010", [{"type": "text", "text": skill}]), "isMeta": True},
+        used("01:00.000", 1, "Bash", {"command": f"{rn} start license --message 'start'"}),
+        back("01:01.000", 1, json.dumps({"session": SESSION, "branch": BRANCH, "base": "main"})),
+        says("02:00.000", UNRECOMMENDED),
+        entry("user", "02:30.000", "MIT."),
+        used("03:00.000", 2, "Bash", {"command": f"{rn} state --message '{ASKED}'"}),
+        back("03:01.000", 2, json.dumps({"kept": "1a2b3c4"})),
+        command("11:00.000", "rn:ty"),
+        command("30:00.000", "rn:up"),
+        {**entry("user", "30:00.010", [{"type": "text", "text": skill}]), "isMeta": True},
+        says("31:00.000", TWO_POINTS),
+        entry("user", "31:30.000", "License. No copyright holder."),
+        command("44:00.000", "rn:gm", FEEDBACK),
+        command("45:30.000", "rn:up"),
+        {**entry("user", "45:30.010", [{"type": "text", "text": skill}]), "isMeta": True},
+        says("45:40.000", "The feedback is one line, so I fix the README myself."),
         used(
-            "00:05.000",
-            1,
-            "Bash",
-            {"command": f"{rn} start license --message 'start: the README names its license'"},
-        ),
-        back("00:06.000", 1, json.dumps({"session": SESSION, "branch": BRANCH, "base": "main"})),
-        says("00:10.000", TWO_POINTS),
-        entry("user", "01:00.000", "MIT. No copyright holder."),
-        used(
-            "01:05.000",
-            2,
-            "Bash",
-            {"command": f"{rn} state --message 'asking: the license is MIT'"},
-        ),
-        back("01:06.000", 2, json.dumps({"kept": "1a2b3c4"})),
-        entry(
-            "user",
-            "30:00.000",
-            f"<command-name>/rn:gm</command-name>\n<command-args>{FEEDBACK}</command-args>",
-        ),
-        entry(
-            "user",
-            "31:00.000",
-            "<command-name>/rn:up</command-name>\n<command-args></command-args>",
-        ),
-        {**entry("user", "31:00.010", [{"type": "text", "text": skill}]), "isMeta": True},
-        says("31:10.000", "The feedback is one line, so I fix the README myself."),
-        used(
-            "31:11.000",
+            "45:41.000",
             3,
             "Edit",
             {
@@ -236,11 +278,12 @@ def conversation(top: str, plugin: str) -> list:
                 "new_string": "MIT; see LICENSE.",
             },
         ),
-        back("31:12.000", 3, "The file README.md has been updated successfully."),
-        used("31:15.000", 4, "Bash", {"command": f"{rn} state --message '{OWN_COMMIT}'"}),
-        back("31:17.000", 4, json.dumps({"kept": "4f2c9a1"})),
-        used("31:20.000", 5, "Bash", {"command": f"{rn} proposal deliverable"}),
-        back("31:22.000", 5, "Deliverable sign-off ..."),
+        back("45:42.000", 3, "The file README.md has been updated successfully."),
+        used("45:50.000", 4, "Bash", {"command": f"{rn} state --message '{OWN_COMMIT}'"}),
+        back("45:51.000", 4, json.dumps({"kept": "4f2c9a1"})),
+        used("46:30.000", 5, "Bash", {"command": f"{rn} proposal deliverable"}),
+        back("46:31.000", 5, "Deliverable sign-off ..."),
+        command("49:00.000", "rn:ty"),
     ]
 
 
@@ -265,7 +308,6 @@ def size(path: str) -> str:
 
 place = os.path.abspath(sys.argv[1])
 os.makedirs(place)
-top = repository(place)
 # The copies stand in for the installed plugins, each link as the file it points to, as installing
 # does.
 plugins = {}
@@ -281,16 +323,20 @@ sys.path.insert(0, os.path.join(plugins["rn"], "scripts"))
 import rn as rn_script
 
 os.environ.update(config)
-folder = rn_script.project_folders(top)[0]
+folder = rn_script.project_folders(os.path.realpath(os.path.join(place, "repo")))[0]
 os.environ.pop("CLAUDE_CONFIG_DIR")
 record = os.path.join(folder, "5f0e3c2a-0000-4000-8000-000000000001.jsonl")
 os.makedirs(folder)
+top = repository(place, record)
 with open(record, "w", encoding="utf-8") as f:
     f.write("".join(json.dumps(e) + "\n" for e in conversation(top, plugins["rn"])))
 
 prompt = json.loads(rn(plugins["rn"], top, config, "records"))
+first = [UNRECOMMENDED, ASKED]
 for path in prompt["record"] + prompt["conversations"]:
-    print("size:", size(path))
+    with open(path, encoding="utf-8") as f:
+        held = [w for w in first if w in f.read()]
+    print("size:", size(path), "| the first stretch's words:", held or "none")
 ask = f"""Start the `rn:learner` agent with the JSON on the line below as its whole prompt, exactly
 as it is, and wait for its reply. Then reply with its reply as it is.
 {json.dumps(prompt, ensure_ascii=False)}"""
@@ -317,4 +363,6 @@ slips = {
 for slip, words in slips.items():
     found = [q for q in quotes if any(q in w or w in q for w in words)]
     print(f"{slip}:", found or "no lesson quotes it")
+print("the first stretch's slip quoted:", [q for q in quotes if UNRECOMMENDED in q] or "no")
+rn(plugins["rn"], top, config, "lessons")
 shutil.rmtree(place)

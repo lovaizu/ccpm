@@ -141,9 +141,9 @@ branch protection rather than a check of commands.
   work's CCS naming its kind's one checklist, the user's addition and rn's checklist for a fix, and
   each proposal made from the record alone; check.sh 100% and mutate.sh rn 0 survivors. Serves AC1,
   AC2.
-- [x] T28: rn's learner reads the piece of work's record whole and searches the conductor's
-  conversations for what only they show, turn's runs left to turn's learner, as the user chose
-  (2026-10-24), and gives each lesson with the words it rests on, held by lanes laid with
+- [x] T28: rn's learner, at each sign-off the user answers, reads that stretch's record whole and
+  searches the conductor's conversations of it for what only they show, turn's runs left to turn's
+  learner, its lessons kept and put to the user at the end, as the user chose (2026-10-24), and gives each lesson with the words it rests on, held by lanes laid with
   `lane:up`. Serves AC1.
 - [ ] T29: rn's skills take each move with rn's scripts as they now are, and the proposal at each
   sign-off, the design's and the deliverable's included, shows the link to each work and its core
