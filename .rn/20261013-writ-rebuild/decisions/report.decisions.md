@@ -199,3 +199,5 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   task, after-feedback, and last's B-3 brought to the file alone); /rn:up step 4 says the ticks are
   not read in turn's part, as `--put` keeps them (rn.py put_plan), after the orchestrator read a
   part's unticked T1 as a shortfall.
+- R59 (the model of the prompt trials, the user's a): Opus, the model the maintainer uses, named in
+  each run, rather than the runner's default, so the model does not change with whoever runs them.

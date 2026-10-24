@@ -317,12 +317,13 @@ Mutation testing runs the tests once for each mutant, so a slow test run makes e
 ### Unit tests: prompts
 
 Each role, a skill or an agent, is tried on its own, with everything but it stood in for by mocks,
-on Claude Code's default model, and judged from its input, its output and the records of the run
-against its Role and Steps.
+on Opus, the model the maintainer uses, named in each run, and judged from its input, its output
+and the records of the run against its Role and Steps.
 
 A prompt is known by what the AI does with it, and only the records show where a run went wrong;
-a role tried together with what lies around it does not show which of them went wrong, and a
-smaller model's slips are not the ones users meet.
+a role tried together with what lies around it does not show which of them went wrong; a smaller
+model's slips are not the ones users meet, and a model left to the runner's settings changes with
+whoever runs the trial.
 
 ### Acceptance tests: user stories
 

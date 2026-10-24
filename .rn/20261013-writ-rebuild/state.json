@@ -620,6 +620,9 @@
   },
   {
    "fact": "2026-10-24: dev/rn/trials/moves/ read against dev/architecture.md#unit-tests-prompts and rn's skills; `good` run once small, its records showing the background turn:up's SendMessage reaching main and -p waiting; then all 23 side by side (27 min of runs, about $10): 19 passed; good failed as the haiku stand-in skipped SendMessage, short, task and after-feedback as an answer by letter kept a decision the stand-in's fixed reply did not follow, rn rightly sending it back; fixed (R58), with /rn:up step 4 saying ticks are not read in turn's part; run again: 22 passed, last failing the same way on B-3, fixed and passed; every record's tool calls checked (no git commit or push, no edit of the steering) and every reply read against the skills' steps"
+  },
+  {
+   "fact": "2026-10-24, the user chose a: prompt trials run on Opus, the model the maintainer uses, named in each run (dev/lane/trying.py:42 keeps --model opus), dev/architecture.md's Unit tests: prompts saying so"
   }
  ],
  "semantic_gist": [
@@ -724,7 +727,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "wait for the user's answer on the model of the prompt trials (a: keep --model opus and say so in dev/architecture.md, recommended; b: drop it); then fix rn's five open slips (uncertainty_signal) by their cause, traced to the architecture, each with its unit tests and the move cases it touches run again"
+   "next": "fix rn's five open slips (uncertainty_signal: the point asked kept nowhere, the issue answer only in the commit message, keep's git add -A taking turn's mid-run files, the CCS left uncommitted, the languages asked 'as in step 3') by their cause, traced to the architecture, each with its unit tests and the move cases it touches run again"
   }
  ],
  "uncertainty_signal": [
@@ -772,9 +775,6 @@
   },
   {
    "open": ".rn/20261013-writ-rebuild/decisions/rn/trials.decisions.md describes the removed flow trial; stale"
-  },
-  {
-   "open": "to the user (asked 2026-10-24): dev/lane/trying.py:42 fixes --model opus while dev/architecture.md's prompt tests say Claude Code's default model; the user's settings set opus"
   },
   {
    "open": "in after-feedback's first run the orchestrator asked a point after a second shortfall without keeping the move with rn.py state, as /rn:up step 4 says; not seen in the second run; watch for it"
