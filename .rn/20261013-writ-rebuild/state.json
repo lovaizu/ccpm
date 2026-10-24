@@ -560,6 +560,9 @@
   },
   {
    "fact": "2026-10-24, agreed with the user: (1) languages go in a section of the common dev/architecture.md beside 'Where the orchestrator runs': a plugin a person calls proposes the conversation and artifact languages first, from what the repository and the user's instructions set, else the user's for talk and English for artifacts, and records the answer; what goes into the repository is in the artifact language; what is shown to the person is put into the conversation language, adding nothing and leaving nothing out; a plugin an AI calls writes and tells in the artifact language and the caller that talks with the person puts it into theirs; dev/rn/architecture.md says only where rn records them (the plan's front matter) and points there; dev/rn/ux.md and rn/skills/up/SKILL.md steps 2 and 9 take the first point on languages and the proposal shown translated, as rn 0.9.0 did (0.9.0 rn/docs/design.md:156-158, rn/references/conduct.md:256). (2) A language check as a command hook in lane, judging the last reply by script as 0.9.0's rn/hooks/checks/conversation_language.py did; pairs of one script (English and French) left unchecked, said in the common section. (3) lane's architecture gains its own Principle 3, as agreed: 'Each lane is general and reusable: it holds one kind of check, the same in every plugin it is laid in, and takes what differs from plugin to plugin from what its hook gives it.'; lane's code is read against it and fixed first, before rn's trial 2: lane/hooks/lane/shell.py:43 STEPS and :209 turn.py are turn's own, to be given from turn's hooks.json; hands_off lets `git -c a=b commit` and `env git commit` through (lanes/hands_off.py:402), a form the AI writes (dev/lane/architecture.md:88-92). The narrow command lists and subagents-only are by lane's design (dev/lane/architecture.md:74-78, 88-92), not faults"
+  },
+  {
+   "fact": "2026-10-24, the user decided: 0.9.0's steering sections `# Assumptions` and `# Rules` are not added back, as each fact found is confirmed with the user into the decisions before the work (dev/architecture.md:67-73) and a repository's own rules go into its .rn/checklists/<kind>.md"
   }
  ],
  "semantic_gist": [
@@ -697,9 +700,6 @@
   },
   {
    "open": "the language check watches the main conversation's end (Stop), but lane lays lanes on subagents alone (dev/lane/architecture.md:74-78): put to the user after Principle 3 is in"
-  },
-  {
-   "open": "whether to bring back 0.9.0's steering sections `# Assumptions` and `# Rules` (0.9.0 rn/references/steering.md): put to the user later, one point"
   }
  ],
  "retrieved_artifacts": [
