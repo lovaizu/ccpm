@@ -518,6 +518,9 @@
   },
   {
    "fact": "the user asked (2026-10-24) for a checklist for a fix: rn/checklists/fix.md, drawn from 116 fixes of this branch later shown wrong in direction (decisions/rn/fix-checklist.decisions.md), four items (the cause gone, closer to the purpose, one place no more than the cause needs, the whole agreeing); passed from outside on every turn call, as the user said, since each send-back and later round inside turn is a fix: rn's CCS names it under constraints, turn unchanged; tracing on paper is the plan's task step 3"
+  },
+  {
+   "fact": "2026-10-24: T23's acceptance at the remade prompts (dev/turn/trials/readme/results.json, r10-r12, s10-s12): every run returned, each stopped run went on from its move; the calling AI judged 5 items unmet in six runs (r7-s9: 4), all whole-work judgments the first user and the orchestrator passed: repetition (usability B-7), a contradiction between the opening and a later line (B-21), and a pointer to a commit history no reader can follow (readme B-6); every example ran byte for byte; orchestrator hook stops 5 (r7-s9: 23); 22-37 min, $5.9-7.4; validate --strict passes; T23 done"
   }
  ],
  "semantic_gist": [
@@ -622,7 +625,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: T23's acceptance, trial.py on dev/turn/trials/readme x3 and stopped x3, each its own background command, read each README whole and set beside r7-s9 (9d39849) and 0.1.0's base1-3: content first, then hook stops and minutes. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: the code, readme, architecture, ux and plan checklists remade, each from checklist.md and usability.md from its purpose as prompt.md was, one checklist per kind; the whole-work items T23 found passed loosely (repetition, contradiction, a pointer no reader can follow) judged there from the reader's purpose, not patched into turn's prompts; then rn (T3-T15). Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
