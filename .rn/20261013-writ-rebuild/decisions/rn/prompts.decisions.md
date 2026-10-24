@@ -99,7 +99,8 @@ learnings.
 
 ### A sign-off
 
-- `rn.py proposal <plan|design|deliverable>`; reply with what it printed, as printed; end. A stop
+- `rn.py proposal <plan|design|deliverable>`; reply with what it printed put into the conversation
+  language, adding nothing and leaving nothing out, as agreed for the languages; end. A stop
   saying the core decisions do not fit is a sign the work is not yet simple: its points settled
   again more simply with the user and the work made again.
 
@@ -117,7 +118,8 @@ learnings.
   taken for a checklist is a decision of `checklist-<kind>`, made through turn; an issue holds the
   need and its points alone, never the user's source, is shown to the user whole and opened with
   `gh issue create` only on their yes. Each answer is kept before the next.
-- Then the stage moved to finished, and `gh pr ready`; tell the user the pull request is ready to
+- Then `gh pr ready`, and the stage moved to finished, so a failed `gh` leaves the session to go
+  on; tell the user the pull request is ready to
   merge, and that the merge is theirs.
 
 ## `/rn:ty`

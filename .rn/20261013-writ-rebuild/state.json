@@ -593,6 +593,9 @@
   },
   {
    "fact": "2026-10-24, the user chose A: this session's decisions/ keeps 0.9.0's `<work>.decisions.md` names, as the new record has no decisions/ to move them into; my notes call them by what they hold, not by file name"
+  },
+  {
+   "fact": "2026-10-24: rn's three skills remade by a subagent on the new record (up 275 lines, ty 74, gm 65), every command line run by it in a scratch repository with a gh stand-in; read by hand against prompt.md and the agreed languages: the proposal now put into the conversation language, gh pr ready before the stage finished, ty and gm told to end on a stop that is the user's; its open points judged and kept as R51; rn.py proposal sets Next while a sign-off waits (5cb87db); check.sh rn 100%"
   }
  ],
  "semantic_gist": [
@@ -697,7 +700,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "check CI on 182e6f5; then rn's skills remade to the new record (rn's prompts decisions, rn.py as it now is), with proposal setting Next while a sign-off waits; then dev/rn/trials/flow; CHANGELOG"
+   "next": "check CI; then the languages agreed 2026-10-24, not yet made: (1) the section in dev/architecture.md and dev/rn/ux.md, (3) lane's Principle 3 and lane's code read against it (shell.py STEPS and turn.py, hands_off's `git -c` and `env git`), (2) the language check, put to the user after Principle 3; then dev/rn/trials/flow trial 2; CHANGELOG"
   }
  ],
  "uncertainty_signal": [

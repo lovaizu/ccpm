@@ -155,3 +155,13 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   the move that sets `status: finished` is kept; `rn.py lessons` also gives turn's lessons from
   every version of each result on the branch, as a remake overwrites the result; a learning taken
   into the user's checklist is made through turn as a checklist work, as every checklist made is.
+- R51 (T29's skills, remade on the new record): a stop whose action is the user's, such as their
+  changes not committed, is told to them and the skill ends; the slug is chosen by the orchestrator
+  from the request; a move is kept before a work is made again for a Good its lines fall short of,
+  as `rn.py ccs` refuses changes not kept; `--has .` where the decisions give no other; each
+  learning's answer kept with `rn.py state` before the next, each checklist made once all are
+  answered; the proposal shown put into the conversation language, as agreed for the languages;
+  `gh pr ready` before the stage moves to finished, so a failed `gh` leaves the session to go on.
+- R52 (the checks): rn's property test of Next took text that reads as a heading, which the
+  steering rightly refuses; such text is left out of its inputs and `#` added to the example test;
+  `rn.py proposal` sets Next to waiting at the sign-off, so the steering is never stale there.
