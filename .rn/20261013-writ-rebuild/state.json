@@ -673,7 +673,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "show the user steering.md's strict form (each field rn.py reads and how it is held), then draw the whole remade record on paper against every flow (resume, feedback, each sign-off, learnings) before building; lane's Principle 3 and the language section stay as agreed and ordered before rn's trial 2"
+   "next": "on resume: design steering.md's strict form, for the user reading it at each sign-off and on the pull request as well as for rn.py taking data from it (each field rn.py reads, its allowed values, how a keep holds it), and show it to the user in Japanese before building; then trace the remade record on paper against resume, feedback, each sign-off and learnings; lane's Principle 3, the language section and decisions/<work>.md (now folded into the CCS) stay as agreed, before rn's trial 2. User's rules: positive phrasing, one decision per message, plain words, purpose and ideal first, the fix checklist when fixing"
   }
  ],
  "uncertainty_signal": [
