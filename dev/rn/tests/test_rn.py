@@ -1752,9 +1752,10 @@ class ProposalTest(ShownTest):
         # Given: a session at the plan stage, its plan made.
         # When: the orchestrator asks for the plan's proposal.
         self.proposal()
-        # Then: the steering waits at the plan sign-off, kept on the remote with the proposal as
-        # its message.
-        want = DONE.replace("signoff: none", "signoff: plan")
+        # Then: the steering waits at the plan sign-off, its Next saying so, kept on the remote
+        # with the proposal as its message.
+        waits = f"Wait at the plan sign-off for the user's answer: {rn.ANSWER}"
+        want = DONE.replace("signoff: none", "signoff: plan").replace(NEXT, waits)
         kept = (
             self.out("show", f"origin/work:{STEERING}"),
             self.out("log", "-1", "--format=%B", "origin/work"),

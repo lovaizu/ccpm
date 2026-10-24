@@ -590,6 +590,9 @@
   },
   {
    "fact": "2026-10-24: CI's first run on the new split (c8c74ab): check on 3.9 and 3.x, turn's mutants since the branch left main (4 min) and lane whole (10 min, its version new on the branch) passed; rn's property tests on 1000 inputs found Next `#`, a heading of its marks alone, which the steering rightly refuses (test_rn.py's `## Notes` example), the property's inputs too wide: heading-like text left out of them and `#` added to the example, as plugin.md 5b says"
+  },
+  {
+   "fact": "2026-10-24, the user chose A: this session's decisions/ keeps 0.9.0's `<work>.decisions.md` names, as the new record has no decisions/ to move them into; my notes call them by what they hold, not by file name"
   }
  ],
  "semantic_gist": [
@@ -694,7 +697,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "check CI's whole result on this push; then rn's skills to prompts.decisions.md (with proposal setting Next while a sign-off waits); then dev/rn/trials/flow; CHANGELOG"
+   "next": "check CI on 182e6f5; then rn's skills remade to the new record (rn's prompts decisions, rn.py as it now is), with proposal setting Next while a sign-off waits; then dev/rn/trials/flow; CHANGELOG"
   }
  ],
  "uncertainty_signal": [

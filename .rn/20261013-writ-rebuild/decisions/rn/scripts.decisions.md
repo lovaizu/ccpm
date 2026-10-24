@@ -117,7 +117,8 @@ G1: <the user's purpose, with why they want it>
   - Why: turn makes the work from what was decided and pushed alone; what it only reads is text in
     the CCS, what it makes a file (agreed with the user, 2026-10-24).
 - `proposal plan|design|deliverable`: the proposal from the pushed steering and calls alone;
-  `signoff` set and kept where it was `none`, shown again unchanged where it is the same. Plan:
+  `signoff` set, and Next to waiting there for the user's answer, and kept where it was `none`,
+  shown again unchanged where it is the same. Plan:
   stage plan, G1 and the criteria; design: stage design, each task made in the design stage with its
   works' links on the branch and its decisions, from each `t<n>` and `checklist-<kind>` called in
   the design stage; deliverable: stage deliverable, the criteria and the decisions of each `t<n>`

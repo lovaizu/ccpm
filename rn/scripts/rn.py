@@ -1418,7 +1418,8 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
     the goal and the acceptance criteria at the plan sign-off, each work made in the design stage
     with its links and its decisions at the design's, and the criteria and each task's decisions
     of the build stage at the deliverable's, with what changed since the last proposal at the same
-    sign-off; the steering set waiting at the sign-off and kept with the proposal as its message.
+    sign-off; the steering set waiting at the sign-off, Next saying so, and kept with the proposal
+    as its message.
     The same proposal again, keeping nothing, where it waits at that sign-off already. Stops where
     the branch holds no session, a change is not kept or pushed, the steering differs from what the
     last keep left, the session is at another stage, another sign-off waits, the session lacks what
@@ -1452,7 +1453,12 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
         ]
     )
     if waiting in (NONE,):
-        keep(folder, steering._replace(keys=dict(steering.keys, signoff=signoff)), proposal)
+        waits = f"Wait at the {signoff} sign-off for the user's answer: {ANSWER}"
+        keep(
+            folder,
+            steering._replace(keys=dict(steering.keys, signoff=signoff), next=waits),
+            proposal,
+        )
     return proposal
 
 
