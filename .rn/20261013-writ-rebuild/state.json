@@ -602,6 +602,9 @@
   },
   {
    "fact": "2026-10-24, the user chose A for the language check: a lane in lane laid on the main conversation's reply end (Stop), its expected language given by the hook (Principle 3), rn's from the steering's conversation-language, judged by script as 0.9.0's rn/hooks/checks/conversation_language.py (git show rn--v0.9.0:...), pairs of one script left unchecked; dev/lane/architecture.md:77 'Lanes are laid on subagents alone' widened to it; rn lays it with lane:up; grounds: this session's own replies slipped into English several times, plugin.md has a check no lane holds added to lane, rn has no hook of its own (T26)"
+  },
+  {
+   "fact": "2026-10-24: reply_in's documents made by a subagent with readme, architecture and ux checklists open, checked by hand against them; the sentence moved from the skill's Role to its step 1, which prints the language, as Principle 2 holds a lane to a step (architecture B-6, B-3); dev/architecture.md's guard line and figure widened by hand to the orchestrator's reply (013a06e)"
   }
  ],
  "semantic_gist": [
@@ -706,7 +709,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "check CI on 0ff4055 (gh run list --branch writ-rebuild); then build the language lane as chosen (A): dev/lane/architecture.md and lane/README + lane/docs/lanes.md first, then code test first, laid on rn with lane:up, the common Languages section (dev/architecture.md) saying pairs of one script are left unchecked; then dev/rn/trials/flow trial 2; CHANGELOG"
+   "next": "the code of reply_in is being made by a subagent, test first with code.md and prompt.md open (lane's lanes/reply_in.py, stop.py, lay.py skills, lane:up's steps, rn.py session/start printing conversation-language, reply_in laid on rn's three skills); check it by hand against code.md and the design, run check.sh lane rn, mutate.sh --since 013a06e, properties.sh lane; then dev/rn/trials/flow trial 2; CHANGELOG"
   }
  ],
  "uncertainty_signal": [
@@ -738,7 +741,7 @@
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
   },
   {
-   "open": "the language check watches the main conversation's end (Stop), but lane lays lanes on subagents alone (dev/lane/architecture.md:74-78): put to the user after Principle 3 is in"
+   "open": "reply_in reads the scripts' output from transcript_path, which the hooks reference says may lag at Stop; a reply in the same turn as the first `rn.py session` may go unchecked"
   }
  ],
  "retrieved_artifacts": [
