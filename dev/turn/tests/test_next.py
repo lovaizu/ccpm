@@ -67,7 +67,7 @@ class TestCheck(RepoTest):
         # Given: a run started
         # When: the script is asked to go on with no check given
         # Then: it prints the items to check again
-        self.assertEqual(self.next(), {"check": [ITEM_F1, ITEM_B1]})
+        self.assertEqual(self.next()["check"], [ITEM_F1, ITEM_B1])
 
     def test_a_check_with_an_item_waiting_on_a_question_asks_it_before_any_work(self):
         # Given: a check finding what gives one item its Good and nothing in the CCS for the other
@@ -100,6 +100,20 @@ class TestCheck(RepoTest):
         check = self.heard(self.answered())["check"]
         self.assertEqual([i["item"] for i in check], ["F-1", "B-1", "F-1", "B-3"])
         self.assertNotIn("asked", self.state())
+
+    def test_the_check_made_again_gives_what_to_read_as_the_ccs_now_names_it(self):
+        # Given: a run that asked a question, and a CCS the calling AI added a file of notes to with
+        # the answer
+        self.asked()
+        ccs = self.read_json(CALL["ccs"])
+        ccs["retrieved_artifacts"].append({"decisions": "notes/answer.md"})
+        self.write_json(CALL["ccs"], ccs)
+        self.write("notes/answer.md", "MIT\n")
+        # When: the orchestrator goes on with the answer
+        given = self.heard(self.answered())["given"]
+        # Then: what it reads for the check holds the file added, as a whole path, and the CCS
+        self.assertIn(self.here("notes/answer.md"), given)
+        self.assertIn(self.here(CALL["ccs"]), given)
 
     def test_the_answer_is_given_to_the_generator_where_it_is_started_next(self):
         # Given: a run whose check asked a question
@@ -144,7 +158,7 @@ class TestCheck(RepoTest):
                 out = self.refused({"items": items, "questions": []})
                 self.assertIn("the check is not filled", out)
                 self.assertIn(said, out)
-        self.assertEqual(self.next(), {"check": [ITEM_F1, ITEM_B1]})
+        self.assertEqual(self.next()["check"], [ITEM_F1, ITEM_B1])
 
 
 class TestMade(ReadTest):
@@ -252,7 +266,7 @@ class TestMade(ReadTest):
         out = self.heard(self.answered())
         # Then: the items are checked again on the CCS as it is now, the answer kept, and the
         # work is made of both files
-        self.assertEqual(out, {"check": self.state()["items"]})
+        self.assertEqual(out["check"], self.state()["items"])
         self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
         self.assertEqual(self.state()["answers"][0]["answer"], "MIT")
 

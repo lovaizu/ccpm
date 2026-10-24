@@ -321,7 +321,7 @@ class TestResumed(RepoTest):
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
         # Then: the items are checked again on the CCS as it is now, no role due
-        self.assertEqual(self.heard(self.next()), {"check": self.state()["items"]})
+        self.assertEqual(self.heard(self.next())["check"], self.state()["items"])
         self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
         self.assertNotIn("next", self.state())
 

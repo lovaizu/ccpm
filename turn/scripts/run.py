@@ -163,9 +163,14 @@ def start(text: str) -> dict[str, Any]:
     else:
         run = resumed(kept)
     save(run)
+    return {"result": os.path.abspath(run["call"]["result"]), "given": checked_given(run)}
+
+
+def checked_given(run: dict[str, Any]) -> list[str]:
+    """What the orchestrator reads for its check: the CCS and every file it names but the work,
+    as the CCS now names them."""
     read = [p for p in run["given"] if p not in run["work"]]
-    result = run["call"]["result"]
-    return {"result": os.path.abspath(result), "given": whole(without_run_files(read, result))}
+    return whole(without_run_files(read, run["call"]["result"]))
 
 
 def begun(asked: dict[str, Any], root: str) -> dict[str, Any]:
@@ -337,10 +342,19 @@ def view(result: str) -> dict[str, Any]:
     run = going(result)
     for step in SHOWN:
         if step in run:
-            return {step: run[step]}
+            return judged(run, step)
     raise call.Stop(
         f"turn: nothing waits on your judgment to show in pages; run `turn.py next {result}`"
     )
+
+
+def judged(run: dict[str, Any], step: str) -> dict[str, Any]:
+    """What the orchestrator is to judge at the step, the same on every page: the check with what to
+    read for it as the CCS now names it, as an answer may name more."""
+    shown = {step: run[step]}
+    if step in ("check",):
+        shown["given"] = checked_given(run)
+    return shown
 
 
 def shown(result: str, out: dict[str, Any], page: str) -> str:
@@ -394,7 +408,7 @@ def next_step(result: str, text: str) -> dict[str, Any]:
     # Asked with nothing, what the orchestrator is to judge is shown again, so it can always see it
     # whole.
     if "check" in run:
-        return checked(run, text) if text.strip() else {"check": run["check"]}
+        return checked(run, text) if text.strip() else judged(run, "check")
     if "ask" in run:
         run["asked"] = run.pop("ask")
         del run["told"]
@@ -405,9 +419,9 @@ def next_step(result: str, text: str) -> dict[str, Any]:
     if "returned" in run:
         return returned(run)
     if "goods" in run:
-        return goods_checked(run, text) if text.strip() else {"goods": run["goods"]}
+        return goods_checked(run, text) if text.strip() else judged(run, "goods")
     if "left" in run:
-        return left_asked(run, text) if text.strip() else {"left": run["left"]}
+        return left_asked(run, text) if text.strip() else judged(run, "left")
     step = run["next"]
     if not step.get("told"):
         return told(run)

@@ -147,13 +147,11 @@ class TestStart(RepoTest):
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual((code, json.loads(out)["result"]), (0, self.here(CALL["result"])))
         self.assertEqual(
-            self.heard(self.next()),
-            {
-                "check": [
-                    {"checklist": "checklists/readme.md", "item": "F-1"},
-                    {"checklist": "checklists/readme.md", "item": "B-1"},
-                ]
-            },
+            self.heard(self.next())["check"],
+            [
+                {"checklist": "checklists/readme.md", "item": "F-1"},
+                {"checklist": "checklists/readme.md", "item": "B-1"},
+            ],
         )
 
     def test_the_start_gives_what_the_orchestrator_reads_before_any_work_is_made(self):
