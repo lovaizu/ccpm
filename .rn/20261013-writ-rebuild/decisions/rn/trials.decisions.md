@@ -1,53 +1,68 @@
 # What rn's trials do
 
-The trial of the first unit tries the flow of rn's skills from `/rn:up <what they want>` to the
-plan sign-off, as the design's Verification gives it for each skill (`dev/rn/design.md`,
-Verification, Units, "Each skill", Flow): the real skills, scripts and hooks, with turn and the
-user stood in for, on the smallest request. Later units add their steps to the same trial.
+The conductor's flow trial tries rn's skills over the whole course, from `/rn:up <what they want>`
+to the pull request marked ready, as `dev/rn/architecture.md` Verification, Units, "The conductor",
+Flow, gives it: the real skills, scripts, learner and its lanes, with turn and the user stood in
+for, on the smallest request that reaches each move: one point or more to decide, one criterion,
+one document and one task.
 
 ## Form
 
-- `dev/rn/trials/flow/flow.py`, run as `python3 dev/rn/trials/flow/flow.py`, with what it stands
-  in with beside it in `dev/rn/trials/flow/`, as turn's flow trial is (`dev/turn/trials/flow/`):
-  copies of rn and turn as they are when the trial starts, turn's `turn:up` agent replaced in the
-  copy by a stand-in agent that gives a result set beforehand.
-- It runs in a fresh clone of `lovaizu/playground` in a new temporary folder, one run at a time;
-  the session's branch, its pull request and the clone are removed when the run ends, whether it
-  passed, failed or stopped.
-- Each message of the user is a `claude -p` call on Opus with `--permission-mode auto`, the
-  user's next words set beforehand; a message goes on the same conversation with `--resume`, and
-  "a fresh conversation" is a new `claude -p` without it. `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS`
-  is set so `claude -p` waits for turn's stand-in in the background.
-- It prints each conversation's session ID, from whose JSONL the run is judged, the commits on the
-  session's branch, `state.json` after each message, the minutes and the cost; it keeps no record
-  in the repository.
-- Code in `dev/rn/trials/` is out of the line count, mutation testing and property tests, its
-  run being its check, as plugin.md keeps it out of the line count; it is Python 3 with the
-  standard library alone, checked by ruff and the type checker as the rest is.
+- `dev/rn/trials/flow/flow.py`, run as `python3 dev/rn/trials/flow/flow.py <new folder>`, with
+  its stand-in for turn beside it in `dev/rn/trials/flow/`: copies of rn and turn as they are when
+  the trial starts, the copy of turn's `turn:up` agent replaced by the stand-in.
+- It runs in a fresh clone of `lovaizu/playground` in the new folder; the session's branch on the
+  playground and its pull request are removed when the run ends, whether it passed, failed or
+  stopped; the clone is left in the folder to read.
+- Each message of the user is a `claude -p` call by lane's `dev/lane/trying.py` `claude`, which
+  takes the conversation to go on with (`--resume <session id>`) where one is given; a fresh
+  conversation is a call without it. It waits for the stand-in in the background, as turn's trials
+  do.
+- Code in `dev/rn/trials/` is out of the line count, mutation testing and property tests, its run
+  being its check; Python 3 with the standard library alone, checked by ruff and the type checker.
 
-## The run
+## turn's stand-in
+
+- An agent `turn:up` in the copy of turn, on a fast model, given the call as its prompt as the
+  real one is. It reads the CCS, sends the main conversation one line beginning `turn:` by
+  SendMessage, as turn's runs do, writes the work at each path the CCS names, and writes the
+  result with a script beside it, every item of every checklist the CCS names with a Good at the
+  work's first line and no lesson, then replies `{"returned": "<result>"}`.
+- The plan it writes from the plan's decisions in the template of rn's plan checklist F-1, its
+  front matter taken from them, a goal, the criteria, the Documents and the Tasks the decisions
+  hold, each in its form; any other work as a few lines saying what its decisions say; the
+  finished work it leaves as it is.
+- What the stand-in makes is not what is judged: the trial judges the conductor's moves.
+
+## The stand-in user
 
 - The request: `/rn:up add a line greeting new contributors to the README`.
-- The stand-in user answers each point with `a`, the recommended option, until rn stops at the plan
-  sign-off, at most ten answers; then sends `/rn:gm the greeting should name the CONTRIBUTING file
-  too`; then, in a fresh conversation, `/rn:up`, answering each point with `a` until the same
-  sign-off; then, in another fresh conversation, `/rn:ty`.
-- turn's stand-in writes the plan at the path the CCS names, in the form of rn's plan checklist,
-  its front matter taken from the session's `decisions/plan.decisions.md`, a goal and one
-  criterion, and the result in the form turn writes, every item of the plan checklist and
-  `usability.md` with a Good at the plan's lines; its second call writes the criterion changed, so
-  the second proposal shows what changed.
+- Each reply of rn is answered by what it holds, at most 60 messages in all:
+  - "Plan sign-off": the first time `/rn:gm the greeting should name the CONTRIBUTING file too`;
+    after that, `/rn:ty`.
+  - "Design sign-off" or "Deliverable sign-off": `/rn:ty`.
+  - "feedback is kept": a fresh conversation, `/rn:up`.
+  - "ready to merge": the run ends.
+  - anything else, a point, a learning or a line of turn's: `a`, the recommended option.
+- Each `/rn:ty` and `/rn:gm` goes on the same conversation, as the user types them where they read
+  the proposal.
+
+## What it prints
+
+- Each conversation's session ID, each message sent and the last lines of each reply, from whose
+  JSONL the run is judged; the commits on the session's branch with the files each changed and its
+  trailers; whether each commit but a proposal's changed `state.json`; the learner's stops and
+  `learnt/` files; the pull request's state at the end; the minutes and the cost.
 
 ## What passes
 
-- The JSONL of the conversations shows each step of the skills in their order: the session looked
-  for, the branch, `rn.py start`, the draft pull request, each point asked alone in its message
-  with its answer kept by a commit and a push before the next, the CCS, turn's stand-in started in
-  the background, the result read, the proposal given as `rn.py proposal plan` printed it; on
-  `/rn:gm`, the feedback kept and the stop; on the fresh `/rn:up`, the point behind the feedback
-  asked, the plan made again and the same sign-off shown with what changed; on `/rn:ty`, the
-  approval kept.
-- No hook of rn stops a move the steps take; where one stops a move, it is read in the JSONL
-  whether the move broke its rule.
-- The branch holds a commit for each keep the steps make, and nothing is committed on the default
-  branch.
+- The commits show each move in the architecture's order: the start, each point kept before the
+  next, the plan, the plan proposal, the feedback, the plan made again, the plan proposal with what
+  changed, the approval, the lessons kept, the documents' points, the plan with its Documents, the
+  document, the design proposal, the approval, the lessons, the tasks into the plan, the task's
+  steps ticked, the deliverable, its proposal, the approval, the lessons, each learning's answer,
+  `status: finished`; each commit but a proposal's replaces `state.json`; nothing is committed on
+  the default branch; the pull request is ready.
+- The JSONL shows each point asked alone in its message in the README's form, each `turn:` line
+  passed on, each proposal given as `rn.py proposal` printed it, and the learner's lanes stopping
+  only where their checks should.
