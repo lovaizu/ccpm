@@ -210,3 +210,11 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   the languages' answer kept by `rn.py start`; a learning taken for an issue kept in Open until it
   is sent. Two move cases added for the fresh words, and the trials' decisions rewritten for the
   move trials.
+- R61 (T4, T5, T6): `rn.py answer` keeps an approval or feedback only where Claude Code's record of
+  a conversation on the branch shows the user typed `/rn:ty` or `/rn:gm` after the proposal, an
+  entry of the user's that is a command, as an approval counts only from the user's own action
+  (dev/architecture.md:98-100) and the orchestrator runs rn's scripts itself; rn has no hook of its
+  own (T26), so the script holds it. T5 is held by `keep`'s form check and T6 by `rn.py ccs`
+  refusing what is not pushed and keeping the call, so neither needs more. /rn:up step 4 keeps the
+  move each time a result falls short, a work made again included, as twice in the trials the
+  orchestrator asked after a second shortfall with the result not kept.

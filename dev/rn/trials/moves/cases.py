@@ -9,10 +9,12 @@ building the finished work, and two learnings, one general and one of the projec
 
 from __future__ import annotations
 
+import datetime
 import json
 import os
 import re
 import sys
+import uuid
 from typing import Callable, NamedTuple
 
 from place import ROOT, SEED, Place, Seen
@@ -345,7 +347,9 @@ LEARNT_TWICE = learnt([L_TWICE], "The stretch's one shortfall, the words settled
 
 # The works the tasks make, and the finished work used.
 LINE = "Welcome, new contributor! Start by running `sh demo.sh`, then open a pull request."
-GREETING = f"# Greeting\n\nThe README greets new contributors on the line right under its title:\n\n> {LINE}\n"
+GREETING = (
+    f"# Greeting\n\nThe line new contributors read first, right under the title:\n\n> {LINE}\n"
+)
 README = SEED["README.md"].replace("\n\n", f"\n\n{LINE}\n\n", 1)
 
 
@@ -548,13 +552,38 @@ def plan_signoff(p: Place) -> None:
     p.rn("proposal", "plan")
 
 
+def typed(p: Place, words: str) -> None:
+    """The user's command typed, written as Claude Code keeps it in a conversation's record, a
+    record of its own among those of the repository, where rn's scripts read it."""
+    top = p.git("rev-parse", "--show-toplevel")
+    command, _, args = words.partition(" ")
+    entry = {
+        "type": "user",
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "cwd": top,
+        "gitBranch": p.git("branch", "--show-current"),
+        "message": {
+            "role": "user",
+            "content": f"<command-message>{command[1:]}</command-message>\n<command-name>"
+            f"{command}</command-name>\n<command-args>{args}</command-args>",
+        },
+    }
+    folder = rn.project_folders(top)[0]
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, f"{uuid.uuid4()}.jsonl"), "w", encoding="utf-8") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+
 def answered(p: Place, answer: str, next_step: str, opened: list, given: dict) -> None:
-    """The user's answer at the sign-off kept, and the stretch's learnings made and put back."""
+    """The user's answer at the sign-off typed and kept, and the stretch's learnings made and put
+    back."""
     more = [arg for point in opened for arg in ("--open", point)]
     if answer == "approved":
         message = "The user approved the sign-off with /rn:ty"
+        typed(p, "/rn:ty")
     else:
         message = f"The user sent the sign-off back with /rn:gm: {opened[0]}"
+        typed(p, f"/rn:gm {opened[0]}")
     p.rn("answer", answer, "--next", next_step, *more, "--message", message)
     put = made(p, learnings_ccs(json.loads(p.rn("records"))), given)
     state(p, next_step, "The stretch's learnings kept", "--put", put, *more)

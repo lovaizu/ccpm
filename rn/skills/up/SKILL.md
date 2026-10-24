@@ -163,9 +163,11 @@ to the repository in its `artifact-language`.
        Ask the user, as a point, which way the work goes now.
    - When it ends with `{"returned": "<result>"}`: read the result whole, then each item's `good` at
      its `lines` in the work. A Good its lines fall short of, or an item without one, is a point
-     behind it: keep the move with `rn.py state`, Next step 3 on the work and then this step again,
-     Open each shortfall at its lines; confirm the point with the user where it is theirs, as in
-     step 3, kept with `rn.py decide`; and have the work made again from the top of this step.
+     behind it: first keep the move with `rn.py state`, Next step 3 on the work and then this step
+     again, Open each shortfall at its lines, each time a result falls short, a work made again
+     included, so the result read is kept before anything is asked; then confirm the point with the
+     user where it is theirs, as in step 3, kept with `rn.py decide`; and have the work made again
+     from the top of this step.
    - Once every item's Good holds at its lines, keep the move with `rn.py state --next <the step
      that comes after>`, with `--done` for each step it ticks, and `--put <nnnn>` for `plan` and
      `learnings`, which puts turn's part back into the steering. A plan's ticks are not read in

@@ -136,7 +136,12 @@ flowchart TB
 - Every decision, answer, feedback and approval is pushed before the move after it, so any stop is
   a place to go on from, and rn has no command to pause (Principle 6).
 - An approval is the user's `/rn:ty`, and feedback their `/rn:gm`, both skills the AI cannot call
-  ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
+  ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs));
+  rn's scripts keep either only where Claude Code's record of the conversation shows the user typed
+  it after the proposal.
+
+  The orchestrator runs rn's scripts itself, so a script that took an answer on its word would
+  take an approval the user never gave.
 - At a sign-off, the orchestrator shows the proposal the UX's Sign-offs gives, made from the
   steering and the calls to turn alone.
 

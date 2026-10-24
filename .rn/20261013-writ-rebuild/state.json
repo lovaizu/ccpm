@@ -626,6 +626,9 @@
   },
   {
    "fact": "2026-10-24: rn's five open slips fixed by their cause (R60): rn.py ccs keeps the call; turn's run files left out of changed() and keep's add; /rn:up steps 1, 2 and 11 worded for the fresh words, the languages' answer and an issue not yet sent; unit tests first, failing, then 177 passing, check.sh rn 100%; move cases none-answer and fresh-answer added; all 25 cases passed on Opus, the records holding no git commit, push or edit of the orchestrator's"
+  },
+  {
+   "fact": "2026-10-24: T29 ticked, its done-when read against the trials' proposals; T4 made: rn.py answer reads Claude Code's records for the user's /rn:ty or /rn:gm typed since the proposal (R61), tests first, check.sh rn 100%; T5 and T6 found held and ticked; /rn:up step 4 keeps every shortfall before asking, the slip seen twice; all 25 move cases passed again (23 min, $10), the answer taken from the real records of claude -p"
   }
  ],
  "semantic_gist": [
@@ -692,7 +695,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T29: rn's skills tried move by move, all 25 cases passing, the open slips fixed; T29's done-when to be read against the whole"
+   "task": "T9 to T13: the user stories of rn, tried as the user would on the whole, next to judge"
   }
  ],
  "relational_map": [
@@ -730,7 +733,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "read T29's done-when against what is built (each move with rn's scripts as they are; each sign-off's proposal with the link to each work and its core decisions); tick T29 if it holds; then judge the next task by the plan: T4, T5, T6 against what T26-T29 already hold"
+   "next": "judge T9-T13 (user stories) and T25 (uv) by the plan's order: T25 is the checks' tools, apart from rn; T9-T13 are rn's acceptance, tried as the user from start to end as dev/architecture.md's Acceptance tests say, then T14 on real requests; confirm with the user which first if the plan does not settle it"
   }
  ],
  "uncertainty_signal": [
@@ -756,13 +759,7 @@
    "open": "the learner may read a conversation whole rather than search it; no lane holds Grep-only; judge on rn's whole trials with real sizes"
   },
   {
-   "open": "T4: `rn.py answer approved` can be run by the conductor outside /rn:ty; held by the skills alone until T4"
-  },
-  {
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
-  },
-  {
-   "open": "in after-feedback's first run the orchestrator asked a point after a second shortfall without keeping the move with rn.py state, as /rn:up step 4 says; not seen in the second run; watch for it"
   }
  ],
  "retrieved_artifacts": [

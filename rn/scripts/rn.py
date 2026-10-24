@@ -1472,12 +1472,39 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
     return proposal
 
 
+# The command the user types for each answer, which the AI cannot call.
+COMMANDS = {"approved": "/rn:ty", "feedback": "/rn:gm"}
+
+
+def typed(command: str, start: float) -> bool:
+    """Whether the user typed the command, at or after the time in seconds since 1970, in a
+    conversation run at the top of the repository on the checked-out branch: an entry of the
+    user's that is a command, as Claude Code keeps one typed, and names it; never an agent's
+    message nor what a tool gave back, which are kept otherwise."""
+    top = git(["rev-parse", "--show-toplevel"], AS_GIT_SAYS).strip()
+    branch = git(["branch", "--show-current"], AS_GIT_SAYS).strip()
+    name = f"<command-name>{command}</command-name>"
+    for path in conversations(top, branch):
+        for e in lines_of(path):
+            content = e.get("message", {}).get("content")
+            if (
+                e.get("type") in ("user",)
+                and isinstance(content, str)
+                and content.startswith("<command-")
+                and name in content
+                and since(e, start)
+            ):
+                return True
+    return False
+
+
 def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Keeps the user's answer to the sign-off waiting: on approval the stage moved on, plan to
     design, design to build, deliverable to learnings; on either no sign-off waiting, and Next and
     Open replaced whole; kept with the message and pushed; gives the commit. Stops where a value is
-    empty, the branch holds no session, the steering differs from what the last keep left, or no
-    sign-off waits; and where git fails."""
+    empty, the branch holds no session, the steering differs from what the last keep left, no
+    sign-off waits, or the user has not typed the answer's command since the sign-off was shown, as
+    an approval counts only from the user's own action; and where git fails."""
     next_step = given(args.next, "next step")
     message = given(args.message, "message")
     folder = current()
@@ -1487,6 +1514,13 @@ def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any
         raise Stop(
             "rn: no sign-off waits for the user's answer; show the proposal with `rn.py proposal"
             " <plan|design|deliverable>` first, and keep the answer the user gives it"
+        )
+    command = COMMANDS[args.answer]
+    shown = float(git(["log", "-1", "--format=%ct", proposed(waiting, folder)[-1]], AS_GIT_SAYS))
+    if not typed(command, shown):
+        raise Stop(
+            f"rn: the user has not typed {command} since the {waiting} sign-off was shown; the"
+            " answer is theirs alone, so wait for them to type it, and keep it then"
         )
     keys = dict(steering.keys, signoff=NONE)
     if args.answer in ("approved",):

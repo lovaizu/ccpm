@@ -56,10 +56,10 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 - [x] T2: A conductor committing or pushing on the default branch, or pushing to it, by a plain
   `git commit` or `git push`, is stopped with the step and why, and nothing else it does is
   stopped. Serves AC1.
-- [ ] T4: A sign-off passes only by the user's `/rn:ty`. Serves AC1.
-- [ ] T5: A plan outside the form of rn's plan checklist is stopped before it is kept. Serves AC1,
+- [x] T4: A sign-off passes only by the user's `/rn:ty`. Serves AC1.
+- [x] T5: A plan outside the form of rn's plan checklist is stopped before it is kept. Serves AC1,
   AC2.
-- [ ] T6: No work starts before the decision it follows is pushed, so wherever the user stops, the
+- [x] T6: No work starts before the decision it follows is pushed, so wherever the user stops, the
   next conversation goes on from there. Serves AC2.
 - [x] T7: A reader of rn's design can tell how the conductor replans every turn from the facts the
   turn brought and keeps one state, replaced each turn, and that a missing checklist or environment
@@ -144,7 +144,7 @@ branch protection rather than a check of commands.
   searches the conductor's conversations of it for what only they show, turn's runs left to turn's
   learner, its lessons kept and put to the user at the end, as the user chose (2026-10-24), and gives each lesson with the words it rests on, held by lanes laid with
   `lane:up`. Serves AC1.
-- [ ] T29: rn's skills take each move with rn's scripts as they now are, and the proposal at each
+- [x] T29: rn's skills take each move with rn's scripts as they now are, and the proposal at each
   sign-off, the design's and the deliverable's included, shows the link to each work and its core
   decisions with their intent in a few short lines, read from where the hearing keeps them, the
   scripts and the skills designed together. Serves AC1, AC2.
