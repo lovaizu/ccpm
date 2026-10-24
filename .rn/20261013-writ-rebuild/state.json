@@ -533,6 +533,9 @@
   },
   {
    "fact": "2026-10-24: T27 read whole against rn's architecture, UX and code checklist and committed: check.sh rn 100% (102 tests, 1.6 s), mutate.sh rn 0 of 312 survivors (37 s); fixed by hand: a checklist's CCS names rn's usability.md as a source, since checklist.md makes each checklist from it and --reference is gone; the architecture says the states before are in the history of state.json; scripts.decisions.md rewritten to the reasons alone; the design and deliverable proposals moved to T29 with the skills, as where the hearing keeps the core decisions is the skills' to set"
+  },
+  {
+   "fact": "2026-10-24: T28's design set and handed to a subagent in the background: `rn.py records` writes the branch's conductor conversations (entries with the repository's cwd and gitBranch) and the agents they started (meta without parentAgentId) as text under the git dir and prints the learner's prompt; `rn.py learnt` moves the reply to <session>/learnt.json with each ground's record path and removes the texts; rn/forms/learnt.json and rn/scripts/records.py link to turn's; lanes by lane:up; a trial on records holding one slip. Measured: this branch's own main conversations shown as text are 9.8M characters, so a long session's records may not fit one learner; to read on the trial"
   }
  ],
  "semantic_gist": [
@@ -637,7 +640,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: T28 (rn's learner, its lanes by lane:up), then T29 (the skills and the proposals designed together: where the hearing keeps each work's core decisions, the design and deliverable proposals, the bound on their lines). Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: T28's subagent may still run (its work uncommitted in the working tree); read its report and the diff whole against rn's architecture, code.md and prompt.md, run check.sh rn and mutate.sh rn, fix by hand, put records and learnt.json in the architecture's Physical view, commit; then T29 (the skills and the proposals designed together). Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
