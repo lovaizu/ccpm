@@ -12,6 +12,8 @@ Principle 1 to 8, and its own:
 1. The AI is made to notice its drift from a step and is told the step again, so it finds its way
    back itself.
 2. A lane is a sentence of a step together with the hook that notices a drift from it.
+3. Each lane is general and reusable: it holds one kind of check, the same in every plugin it is
+   laid in, and takes what differs from plugin to plugin from what its hook gives it.
 
 ## User stories
 

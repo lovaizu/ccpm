@@ -43,6 +43,36 @@ class TestBash(unittest.TestCase):
             with self.subTest(command=command):
                 self.assertEqual(runs(command).what, [["git", "commit", "-m", "m"]])
 
+    def test_gits_own_options_taking_the_next_word_by_their_long_names_are_left_out(self):
+        # Given: git with each of its own long options that take the next word before its command
+        # When: it is read
+        # Then: the command run is git's command, as the step names it
+        command = "git --git-dir .git --work-tree . --namespace n --config-env a.b=C commit -m m"
+        self.assertEqual(runs(command).what, [["git", "commit", "-m", "m"]])
+
+    def test_assignments_and_env_before_a_command_are_left_out(self):
+        # Given: a command after assignments, after env with its options, one taking the next
+        # word, and assignments, or after both
+        # When: it is read
+        # Then: the command run is the one after them, as the step names it
+        for command in (
+            "A=b C_1=d git commit -m m",
+            "env git commit -m m",
+            "env -i -u A -C x B=c git commit -m m",
+            "A=b env git commit -m m",
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(runs(command).what, [["git", "commit", "-m", "m"]])
+
+    def test_a_word_not_an_assignment_or_env_alone_is_the_command_run(self):
+        # Given: a word with `=` that is no assignment, a name begun with a digit or holding a
+        # sign, or with nothing before `=`; and env or an assignment with no command after it
+        # When: it is read
+        # Then: the words are the command run, as they are
+        for words in (["1A=b", "x"], ["a-b=c", "x"], ["=b", "x"], ["env"], ["env", "-i"], ["A=b"]):
+            with self.subTest(words=words):
+                self.assertEqual(runs(" ".join(words)).what, [words])
+
     def test_a_cd_before_a_command_is_no_command_run(self):
         # Given: a cd before the command, as the AI writes it to run it in another folder
         # When: it is read

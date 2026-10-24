@@ -596,6 +596,9 @@
   },
   {
    "fact": "2026-10-24: rn's three skills remade by a subagent on the new record (up 275 lines, ty 74, gm 65), every command line run by it in a scratch repository with a gh stand-in; read by hand against prompt.md and the agreed languages: the proposal now put into the conversation language, gh pr ready before the stage finished, ty and gm told to end on a stop that is the user's; its open points judged and kept as R51; rn.py proposal sets Next while a sign-off waits (5cb87db); check.sh rn 100%"
+  },
+  {
+   "fact": "2026-10-24: CI on 182e6f5 passed whole (rn's mutants since the branch left main 23 min, lane whole 15 min on the runner); the languages section made in dev/architecture.md, rn's architecture and UX pointing there; lane's Principle 3 in, lane's code read against it by a subagent and checked by hand (R53): check.sh lane turn rn 100%, mutants since HEAD lane 0 of 2351, turn 0 of 1197"
   }
  ],
  "semantic_gist": [
@@ -700,7 +703,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "check CI; then the languages agreed 2026-10-24, not yet made: (1) the section in dev/architecture.md and dev/rn/ux.md, (3) lane's Principle 3 and lane's code read against it (shell.py STEPS and turn.py, hands_off's `git -c` and `env git`), (2) the language check, put to the user after Principle 3; then dev/rn/trials/flow trial 2; CHANGELOG"
+   "next": "check CI; then (2) the language check, put to the user: the check watches the main conversation's end, where lane lays lanes on subagents alone; then dev/rn/trials/flow trial 2; CHANGELOG"
   }
  ],
  "uncertainty_signal": [

@@ -22,6 +22,8 @@ WORDS = st.lists(st.text(min_size=1), min_size=1, max_size=5)
 NAMES = st.text(string.ascii_letters + string.digits + "._/", min_size=1, max_size=12).filter(
     lambda n: n not in (".", "..") and not n.startswith("-")
 )
+# A variable's name, as an assignment before a command sets it.
+VARIABLES = st.from_regex(r"[A-Za-z_][A-Za-z0-9_]*", fullmatch=True)
 SEPARATORS = st.sampled_from([";", "&&", "||", "|", "&", "\n"])
 
 
@@ -65,18 +67,18 @@ class TestPaths(unittest.TestCase):
     @given(st.text(max_size=200))
     def test_any_command_is_read_into_paths_whole(self, command):
         # Given: any command
-        # When: the paths it names, writes and prints whole are read
+        # When: the paths it writes are read
         # Then: they are read without breaking, each path whole
-        for paths in (shell.named, shell.written, shell.printed):
-            self.assertTrue(all(os.path.isabs(p) for p in paths(command, "/r")))
+        self.assertTrue(all(os.path.isabs(p) for p in shell.written(command, "/r")))
 
     @given(st.lists(NAMES, min_size=1, max_size=5))
     def test_cat_reads_each_file_it_names(self, names):
         # Given: files of any plain names
         # When: a command prints them with cat
         # Then: each is taken as read whole
-        found = shell.printed("cat " + " ".join(names), "/r")
-        self.assertEqual(found, [os.path.realpath(os.path.join("/r", n)) for n in names])
+        found = shell.reads("cat " + " ".join(names), "/r")
+        whole = [(os.path.realpath(os.path.join("/r", n)), shell.WHOLE) for n in names]
+        self.assertEqual(found, whole)
 
 
 class TestReads(unittest.TestCase):
@@ -102,9 +104,10 @@ class TestReads(unittest.TestCase):
 class TestRuns(unittest.TestCase):
     @given(st.lists(WORDS, min_size=1, max_size=4), st.data())
     def test_commands_of_any_quoted_words_joined_by_any_separator_are_each_run(self, runs, data):
-        # Given: commands of any words, each quoted as a shell quotes it, the first word no cd
-        # and no git, which are read apart, joined by any separator
-        assume(all(words[0] not in ("cd", "git") for words in runs))
+        # Given: commands of any words, each quoted as a shell quotes it, the first word no cd,
+        # git, env or assignment, which are read apart, joined by any separator
+        assume(all(words[0] not in ("cd", "git", "env") for words in runs))
+        assume(not any(shell.ASSIGNMENT.fullmatch(words[0]) for words in runs))
         command = " ".join(f"{said(words)} {data.draw(SEPARATORS)}" for words in runs)
         # When: the call is read
         # Then: it runs each command with its words as they were written
@@ -122,6 +125,22 @@ class TestRuns(unittest.TestCase):
         self.assertEqual(
             call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}).what,
             [["git", *words]],
+        )
+
+    @given(st.lists(st.tuples(VARIABLES, st.text()), max_size=3), st.booleans(), WORDS)
+    def test_a_command_after_any_assignments_and_env_runs_itself(self, assigned, env, words):
+        # Given: a command of any words, its first no env and no assignment, after assignments of
+        # any names and values, each value quoted as a shell quotes it, with env before them or
+        # not, the command then beginning with no `-`, which env takes as its own option
+        assume(words[0] != "env" and not shell.ASSIGNMENT.fullmatch(words[0]))
+        assume(not (env and words[0].startswith("-")))
+        before = ["env"] * env + [f"{name}={shlex.quote(value)}" for name, value in assigned]
+        # When: the call is read
+        # Then: it runs the command with its words, as they were written
+        command = " ".join([*before, said(words)])
+        self.assertEqual(
+            call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}).what,
+            [words],
         )
 
 

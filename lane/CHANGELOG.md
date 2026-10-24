@@ -4,7 +4,7 @@
 
 ### Added
 
-- The hands_off lane stops a subagent running a command its step says not to run, in the forms the AI writes, such as `git -C notes commit` or `cd notes && git commit`, and tells it `<plugin>: Do not run <commands>.` — the subagent goes back to its step instead of looking for another way round the refusal.
+- The hands_off lane stops a subagent running a command its step says not to run, in the forms the AI writes, such as `git -C notes commit`, `cd notes && git commit` or `GIT_EDITOR=true git commit`, and tells it `<plugin>: Do not run <commands>.` — the subagent goes back to its step instead of looking for another way round the refusal.
 - The start_with lane stops each call a subagent makes before it has run the script its step says to run first, the script taken as the step writes the command, such as `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given`, and tells it `<plugin>: First run <script>.` — the subagent begins from what the script gives it, not from what it looked for on its own.
 - The read_only lane stops a subagent reading a file beside the inputs its step names, by the Read or Grep tool or by `cat`, `head`, `tail`, `sed` or `grep`, and tells it `<plugin>: Read only <input>.`, letting it read the form its in_form lane names — it works from what its step gives it, not from what it happened to find, and still reads the form its step tells it to write in.
 - The read_whole lane stops a subagent writing while it has read only part of an input its step names, read from what it has done since it started, and tells it `<plugin>: Read <input> to its end.` — it does not act on the first part of a long input alone.

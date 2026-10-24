@@ -159,11 +159,12 @@ def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:
 
 def runs(command: str, cwd: str) -> list[list[str]]:
     """Each command the shell command runs, in order, as its words, in the forms the steps tell and
-    the AI writes: a cd is no command, a redirect and its target are no words, and git's own
-    options before its command are left out, so `git -C notes commit` runs `git commit`."""
+    the AI writes: a cd is no command, a redirect and its target are no words, the assignments
+    and env before the program are left out, and git's own options before its command too, so
+    `GIT_EDITOR=true git -C notes commit` runs `git commit`."""
     found = []
     for here, said, _ in shell.statements(command, cwd):
-        words = shell.without_redirects(said)
+        words = shell.after_env(shell.without_redirects(said))
         if words[:1] == ["git"]:
             words = ["git", *shell.git_statement(here, words)[1]]
         found.append(words)

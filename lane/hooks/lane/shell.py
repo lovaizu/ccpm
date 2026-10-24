@@ -4,6 +4,7 @@ not paths."""
 
 from __future__ import annotations
 
+import itertools
 import os
 import re
 from collections.abc import Iterator
@@ -40,13 +41,16 @@ PIECE = re.compile(
 )
 # In double quotes a backslash escapes only these, and before a line's end joins the two lines.
 DOUBLE_ESCAPED = re.compile(r'\\([$`"\\])|\\\n')
-# turn's script and each step it is asked, whose next word is where the run is kept.
-STEPS = {"start", "next", "given", "parts", "record"}
 # Commands that write each path they name, and those that write the last.
 WRITE_EACH = {"rm", "rmdir", "touch", "mkdir", "tee", "truncate"}
 WRITE_LAST = {"cp", "mv", "ln", "install"}
 # git's options that take the next word.
-GIT_VALUED = {"-C", "-c"}
+GIT_VALUED = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env"}
+# A word setting a variable for the command after it: a name of letters, digits and `_`, not begun
+# with a digit, then `=` and the value.
+ASSIGNMENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*=.*", re.DOTALL)
+# env's options that take the next word.
+ENV_VALUED = {"-u", "-C"}
 # The lines a command reads of a file, from the first to the last, 1 the file's first line: the last
 # None for the file's end, and a first of 0 or below counted back from the end, -1 its last line and
 # 0 the end after it.
@@ -156,15 +160,6 @@ def statements(command: str, cwd: str) -> Iterator[tuple[str | None, list[str], 
         statement = []
 
 
-def git(command: str, cwd: str) -> Iterator[tuple[str | None, list[str]]]:
-    """Each git statement of the command: the folder it acts in, where the last cd went and each
-    `-C` moved it, or None where the words do not settle it, such as `cd "$d"` into a folder of its
-    own; and its words after git's options, the git command first."""
-    for here, said, _ in statements(command, cwd):
-        if said[0] == "git":
-            yield git_statement(here, said)
-
-
 def git_statement(here: str | None, said: list[str]) -> tuple[str | None, list[str]]:
     """The folder a git statement run from here acts in, each `-C` moving it, and its words after
     git's options, the git command first."""
@@ -174,6 +169,18 @@ def git_statement(here: str | None, said: list[str]) -> tuple[str | None, list[s
             here = path(here, rest[1])
         rest = rest[2:] if rest[0] in GIT_VALUED else rest[1:]
     return here, rest
+
+
+def after_env(said: list[str]) -> list[str]:
+    """A statement's words after the assignments and env before its program, env with its options
+    and assignments, so `A=b env -u C git commit` runs `git commit`; the words as they are where no
+    program follows them, as `env` alone runs env."""
+    rest = list(itertools.dropwhile(ASSIGNMENT.fullmatch, said))
+    if rest[:1] == ["env"]:
+        rest = rest[1:]
+        while rest and (rest[0].startswith("-") or ASSIGNMENT.fullmatch(rest[0])):
+            rest = rest[2:] if rest[0] in ENV_VALUED else rest[1:]
+    return rest or said
 
 
 def inside(folder: str | None, top: str) -> bool:
@@ -197,21 +204,6 @@ def paths(here: str, words: list[str]) -> list[str]:
     return [p for p in (path(here, w) for w in words) if p]
 
 
-def named(command: str, cwd: str) -> list[str]:
-    """Each path the command names, but where cd goes, a redirect's target and where the run is
-    kept, which turn's script is asked of."""
-    found = []
-    for here, said, _ in statements(command, cwd):
-        # Each word with the two before it.
-        for second, first, word in zip(["", ""] + said, [""] + said, said):
-            if sign(word, REDIRECTS) or sign(first, NOT_PATHS):
-                continue
-            if second.endswith("turn.py") and first in STEPS:
-                continue
-            found.append(path(here, word))
-    return [p for p in found if p]
-
-
 def written(command: str, cwd: str) -> list[str]:
     """Each path the command writes: by a redirect, by a command that writes the paths it names, or
     in place by sed."""
@@ -230,15 +222,6 @@ def written(command: str, cwd: str) -> list[str]:
             found += [path(here, w) for w in args[-1:]]
         elif head == "sed" and any(w.startswith(("-i", "--in-place")) for w in plain):
             found += [path(here, w) for w in args[1:]]
-    return [p for p in found if p]
-
-
-def printed(command: str, cwd: str) -> list[str]:
-    """The files the command prints whole with cat, in a statement not piped or redirected."""
-    found = []
-    for here, said, end in statements(command, cwd):
-        if said[0] == "cat" and end != "|" and not any(sign(w, REDIRECTS) for w in said):
-            found += [path(here, w) for w in said[1:] if not w.startswith("-")]
     return [p for p in found if p]
 
 

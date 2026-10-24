@@ -165,3 +165,10 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
 - R52 (the checks): rn's property test of Next took text that reads as a heading, which the
   steering rightly refuses; such text is left out of its inputs and `#` added to the example test;
   `rn.py proposal` sets Next to waiting at the sign-off, so the steering is never stale there.
+- R53 (lane's Principle 3): lane's code read against it: turn's step words in shell.py went with
+  `named()`, which nothing called since turn's own hooks were removed; `printed()` and `git()`,
+  called by tests alone, removed too (code.md B-4); hands_off now reads assignments and `env`
+  before a command and git's long options taking a word, so `env git commit`, `GIT_EDITOR=true git
+  commit` and `git --git-dir .git commit` are stopped; a command hidden in another, as `bash -c`,
+  `sudo` or `/usr/bin/git`, is left through, as lane holds the forms an AI writes
+  (dev/lane/architecture.md:88-92).

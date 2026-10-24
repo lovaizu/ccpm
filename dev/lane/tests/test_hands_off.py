@@ -20,6 +20,10 @@ class TestDrift(unittest.TestCase):
             "git -C notes commit -m notes",
             "cd notes && git commit -m notes",
             "git add -A; git push origin work",
+            "GIT_EDITOR=true git commit",
+            "env git commit -m notes",
+            "env -u GIT_DIR GIT_EDITOR=true git commit",
+            "git --git-dir .git commit -m notes",
         ):
             with self.subTest(command=command):
                 # Given: a run of a command the lane takes, in a form the AI writes
@@ -40,6 +44,8 @@ class TestLetThrough(unittest.TestCase):
             "git status",
             "git commit-tree HEAD^{tree}",
             "echo git commit",
+            "env echo git commit",
+            "GIT_EDITOR=true git status",
             "git",
             "",
         ):
