@@ -137,7 +137,8 @@ plan's front matter does once it is there.
    - Find the points from the user's words, the decisions, the plan where it is there, the
      repository's README and the documentation it points to, and each file the request's words
      name or touch, found with `git ls-files` or `git grep -l <word>`, each read whole: what the
-     points rest on is all you read.
+     points rest on is all you read. A word of the user's read otherwise than they said it, wider
+     or narrower, is a point of its own.
      - For the plan: the first point is what the work is for, its answer the goal; then what shows
        it is done; then the rest the plan needs.
      - For a document: the points its kind's checklist asks of it, from `rn.py checklists <kind>`,
@@ -149,9 +150,10 @@ plan's front matter does once it is there.
      slips you corrected that leave nothing to decide. End your reply after its question.
    - When the answer settles the point, write it into the decisions as an entry, `## <title>` over
      one paragraph saying what the work must be on that point, with what it is for, short enough
-     for the sign-off to show as one line; rewrite an entry the answer
-     changes to say what holds now. Keep the move, the cue this step on the same work, then the step
-     that comes after. Then ask the next point; an answer may show a new one.
+     for the sign-off to show as one line, and never how it was reached, which the move's message
+     keeps; rewrite an entry the answer changes to say what holds now. Keep the move, the cue this
+     step on the same work, then the step that comes after. Then ask the next point; an answer
+     may show a new one.
    - When the answer is a question, or leaves the point open, answer it and ask the same point
      again.
    - Out: no point left, each entry as the user answered it; go to the step that comes after.

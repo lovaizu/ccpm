@@ -9,9 +9,10 @@ smallest request that reaches each move.
 The new folder holds the copies of rn and turn as they are when the trial starts, the clone, left
 there to read, and what Claude Code printed for each message, `<n>.jsonl`. Each message is a
 `claude -p` call: `/rn:ty` and `/rn:gm` go on the conversation of the reply they answer, and the
-`/rn:up` after "feedback is kept" starts a fresh one. Whether the run passes, failed or stopped,
-the session's branch is deleted from the playground and its pull request closed; an issue the
-conductor would open is kept in `issues.txt` instead, as no trial opens one where people work.
+`/rn:up` after the feedback is kept starts a fresh one; a run whose reply offers nothing and keeps
+no move is stuck, and ends. Whether the run passes, failed or stopped, the session's branch is
+deleted from the playground and its pull request closed; an issue the conductor would open is kept
+in `issues.txt` instead, as no trial opens one where people work.
 
 Prints each conversation's session ID, each message sent and the last lines of each reply; the
 commits on the session's branch with the files each changed, its trailers and whether it replaced
@@ -48,25 +49,40 @@ WAIT = 60
 SHOWN = 12
 
 
-def answer(reply: str, sent_back: bool) -> "tuple[str, bool] | None":
-    """The stand-in user's next message to the reply, with whether it starts a fresh conversation;
-    None where the reply says the pull request is ready to merge, which ends the run. A sign-off is
-    known by its proposal's first line, `<Plan|Design|Deliverable> sign-off`, on a line of its own;
-    the plan's is sent back the first time, sent_back False, and approved after; a reply offering no
-    option `a.` is answered yes, and any other the recommended option."""
-    said = reply.lower()
-    lines = [line.strip(" *#>`●").lower() for line in reply.splitlines()]
-    if "ready to merge" in said:
+def answer(
+    reply: str, last: str, moved: bool, ready: bool, sent_back: bool
+) -> "tuple[str, bool] | None":
+    """The stand-in user's next message to the reply, with whether it starts a fresh conversation,
+    known by what the conductor kept rather than by its words, which are in the conversation
+    language: None where the pull request is marked ready, which ends the run, or where the reply
+    offers no option `a.` and the branch has not moved since the message before, which leaves the
+    run stuck. `last` holds the messages of the commits the reply's move kept, the learner's lessons
+    kept after them among them: a sign-off's proposal holds its `Rn-Sign-off:` trailer, the plan's sent back the first time, sent_back False, and approved
+    after; kept feedback its `Rn-Answer: feedback` trailer, gone on with in a fresh conversation. A
+    reply offering no option `a.` is answered yes, and any other the recommended option."""
+    lines = [line.strip(" *#>`\u25cf").lower() for line in reply.splitlines()]
+    offers = any(line.startswith("a. ") for line in lines)
+    if ready or not (offers or moved):
         return None
-    if "feedback is kept" in said:
-        return GO_ON, True
-    if "plan sign-off" in lines:
+    trailers = [line for line in last.splitlines() if line.startswith("Rn-")]
+    if moved and "Rn-Sign-off: plan" in trailers:
         return (APPROVE if sent_back else FEEDBACK), False
-    if "design sign-off" in lines or "deliverable sign-off" in lines:
+    if moved and any(t.startswith("Rn-Sign-off:") for t in trailers):
         return APPROVE, False
-    if not any(line.startswith("a. ") for line in lines):
-        return YES, False
-    return RECOMMENDED, False
+    if moved and any(t.startswith("Rn-Answer: feedback") for t in trailers):
+        return GO_ON, True
+    return (RECOMMENDED if offers else YES), False
+
+
+def kept(clone: str, before: str = "") -> "tuple[str, str, bool]":
+    """The clone's HEAD, the messages of the commits since before, and whether the pull request of
+    its branch is marked ready, none before the session starts."""
+    head = run("git", "rev-parse", "HEAD", cwd=clone)
+    last = run("git", "log", "--format=%B", f"{before}..HEAD", cwd=clone) if before else ""
+    branch = run("git", "branch", "--show-current", cwd=clone)
+    view = run("gh", "pr", "view", branch, "--repo", PLAYGROUND, "--json", "isDraft", cwd=clone)
+    ready = bool(view) and json.loads(view).get("isDraft") is False
+    return head, last, ready
 
 
 def run(*args: str, cwd: "str | None" = None) -> str:
@@ -128,12 +144,13 @@ def converse(
     plugins: "list[str]", clone: str, place: str, env: "dict[str, str]", talked: dict
 ) -> None:
     """The stand-in user's messages, each answering the reply before, until a reply says the pull
-    request is ready to merge or MOST are sent; keeps in talked each conversation's session ID, the
+    request is marked ready, the run is stuck, or MOST are sent; keeps in talked each conversation's session ID, the
     cost and whether the run reached the end, as each message is answered, so a run that stops
     still reports them."""
     session = None
     message = REQUEST
     sent_back = False
+    before = kept(clone)[0]
     for n in range(1, MOST + 1):
         print(f"--- message {n}, {'on ' + session if session else 'a fresh conversation'}")
         print("sent:", message)
@@ -149,13 +166,19 @@ def converse(
         session = end["session_id"]
         if session not in talked["sessions"]:
             talked["sessions"].append(session)
-        talked["cost"] += end.get("total_cost_usd") or 0
+        # A conversation gone on with gives the cost of the whole conversation so far.
+        talked["cost"][session] = end.get("total_cost_usd") or 0
         reply = end.get("result") or ""
         print("session:", session)
         print("reply ends:\n" + "\n".join(reply.splitlines()[-SHOWN:]))
-        given = answer(reply, sent_back)
+        head, last, ready = kept(clone, before)
+        given = answer(reply, last, head != before, ready, sent_back)
+        before = head
         if given is None:
-            talked["ended"] = True
+            talked["ended"] = ready
+            print(
+                "the pull request is ready" if ready else "stuck: no option offered, no move kept"
+            )
             return
         message, fresh = given
         sent_back = sent_back or message == FEEDBACK
@@ -217,7 +240,12 @@ def report(place: str, clone: str, default: str, before: str, talked: dict) -> N
         with open(issues, encoding="utf-8") as f:
             print(f"--- issues the conductor would have opened\n{f.read()}")
     print("sessions:", ", ".join(talked["sessions"]))
-    print("minutes:", round((time.time() - talked["start"]) / 60, 1), "cost:", talked["cost"])
+    print(
+        "minutes:",
+        round((time.time() - talked["start"]) / 60, 1),
+        "cost:",
+        round(sum(talked["cost"].values()), 2),
+    )
     print("reached ready to merge:", talked["ended"])
 
 
@@ -255,7 +283,7 @@ def main(argv: "list[str]") -> int:
     default = run("git", "symbolic-ref", "--short", "refs/remotes/origin/HEAD", cwd=clone)
     default = default.partition("/")[2]
     before = run("git", "rev-parse", f"origin/{default}", cwd=clone)
-    talked = {"sessions": [], "cost": 0.0, "ended": False, "start": time.time()}
+    talked = {"sessions": [], "cost": {}, "ended": False, "start": time.time()}
     try:
         converse(plugins, clone, place, env, talked)
     finally:

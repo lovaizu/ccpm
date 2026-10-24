@@ -554,6 +554,9 @@
   },
   {
    "fact": "2026-10-24: rn's flow trial built by a subagent (dev/rn/trials/flow/: flow.py, the stand-in up.md on haiku and stand.py; lane's trying.claude takes resume), its stand-in script tried by hand on rn.py's real CCS and proposals; issues kept in issues.txt by a gh shim, as no trial opens one where people work; a reply with no option `a.` answered yes, fixed by hand"
+  },
+  {
+   "fact": "2026-10-24: rn's flow trial 1 stopped at the README, 60 messages, 21 min, about $7 (flow.py summed each resume's whole-conversation cost into $283): the course ran in order from the start through the plan sign-off, the feedback, the plan made again, the approval, the lessons and the document points; it failed on the trial's own make: the stand-in user read rn's words in English while rn spoke Japanese, so it missed the feedback kept and answered yes 40 times to a stopped session; the stand-in turn wrote over README.md and gave every Good at line 1, which the conductor rightly sent back. Fixed: the stand-in user answers by the moves kept (trailers, the pull request ready) and ends a stuck run; the stand-in is turn's generator alone, claiming each Good at its lines in turn's claim form checked by forms.py, a file there changed only where its decisions say. rn's slips fixed by hand: a decisions entry never says how it was reached (plan checklist B-6 said the decisions keep it, now their commit messages), and a user's word read wider or narrower is a point of its own"
   }
  ],
  "semantic_gist": [
@@ -658,7 +661,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: rn's flow trial was started in the background on 2026-10-24 and survives /clear: see whether it still runs with pgrep -f dev/rn/trials/flow/flow.py; what it prints goes to /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/56aa29d0-fbb5-4e4f-abe9-f9e682d24658/scratchpad/trial-1.out and its folder is /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/56aa29d0-fbb5-4e4f-abe9-f9e682d24658/scratchpad/trial-1 (an earlier session's scratchpad; its venv is /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/56aa29d0-fbb5-4e4f-abe9-f9e682d24658/scratchpad/venv, put its bin first on PATH). When it has ended, read the .out and the JSONL against .rn/20261013-writ-rebuild/decisions/rn/trials.decisions.md's What passes, fix each slip at its cause in the skills or scripts with rn/checklists/fix.md, then mark T29 done in steering.md and go on to the next task. Do not start a second run while one runs. Never publish an Artifact unasked"
+   "next": "T29: the user's answer on the proposal's language, then run rn's flow trial 2 in the background (python3 dev/rn/trials/flow/flow.py <scratchpad>/trial-2, the venv bin first on PATH) and judge it against trials.decisions.md's What passes"
   }
  ],
  "uncertainty_signal": [
@@ -688,6 +691,9 @@
   },
   {
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
+  },
+  {
+   "open": "a proposal is printed in the artifact language, as it is the sign-off's commit message, while the skill says everything to the user is in the conversation language: put to the user"
   }
  ],
  "retrieved_artifacts": [

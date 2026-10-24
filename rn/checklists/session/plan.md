@@ -23,11 +23,12 @@ each task, a part a user of the finished work can try, names the criteria it ser
 completion criterion checked on its result and four steps that reach it: the context read and what
 is lacking confirmed; the part and its checks designed by turn, then traced on paper by turn's first
 reader, an AI that did not design them; and only then the part made, so a slip shows while it is
-small. The plan holds only what was decided: how each point was reached is kept in the plan's
-decisions, `decisions/plan.decisions.md`, and where the session stands in `state.json`, both beside
-it. It fills in as the session moves on: the goal and the criteria before the plan sign-off, the
-documents the purpose needs after it, and the tasks after the design sign-off, where rn waits for
-the user's answer on those documents; an item on the tasks passes a plan that has none yet.
+small. The plan holds only what was decided: how each point was reached is kept in the commit
+messages of the plan's decisions, `decisions/plan.decisions.md`, and where the session stands in
+`state.json`, both beside it. It fills in as the session moves on: the goal and the criteria before
+the plan sign-off, the documents the purpose needs after it, and the tasks after the design
+sign-off, where rn waits for the user's answer on those documents; an item on the tasks passes a
+plan that has none yet.
 
 ## Format
 
@@ -168,7 +169,7 @@ Does each line give the user at the plan sign-off, or the conductor and turn lat
 would lose without it?
 
 Look for:
-- how a point was reached or confirmed, which the plan's decisions keep;
+- how a point was reached or confirmed, which the commit messages of the plan's decisions keep;
 - where the session stands, which `state.json` keeps;
 - one thing said in two places, such as a task saying again what a criterion it serves says.
 

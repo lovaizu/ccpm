@@ -24,26 +24,29 @@ one document and one task.
 ## turn's stand-in
 
 - An agent `turn:up` in the copy of turn, on a fast model, given the call as its prompt as the
-  real one is. It reads the CCS, sends the main conversation one line beginning `turn:` by
-  SendMessage, as turn's runs do, writes the work at each path the CCS names, and writes the
-  result with a script beside it, every item of every checklist the CCS names with a Good at the
-  work's first line and no lesson, then replies `{"returned": "<result>"}`.
-- The plan it writes from the plan's decisions in the template of rn's plan checklist F-1, its
-  front matter taken from them, a goal, the criteria, the Documents and the Tasks the decisions
-  hold, each in its form; any other work as a few lines saying what its decisions say; the
-  finished work it leaves as it is.
+  real one is, doing turn's generator's part alone, as the conductor reads each Good at its lines
+  and sends back a work whose lines do not give it. It reads the CCS, sends the main conversation
+  one line beginning `turn:` by SendMessage, as turn's runs do, makes the work from its decisions
+  and checklists, and claims each item's Good with the lines that give it in turn's claim form,
+  checked by turn's own `forms.py`; a script beside it writes the claim as the result, with no
+  lesson, then it replies `{"returned": "<result>"}`.
+- A file of the work that is there changes only where its decisions say; a new one is written in
+  the template of its checklist's F-1; the finished work it leaves as it is.
 - What the stand-in makes is not what is judged: the trial judges the conductor's moves.
 
 ## The stand-in user
 
 - The request: `/rn:up add a line greeting new contributors to the README`.
-- Each reply of rn is answered by what it holds, at most 60 messages in all:
-  - "Plan sign-off": the first time `/rn:gm the greeting should name the CONTRIBUTING file too`;
-    after that, `/rn:ty`.
-  - "Design sign-off" or "Deliverable sign-off": `/rn:ty`.
-  - "feedback is kept": a fresh conversation, `/rn:up`.
-  - "ready to merge": the run ends.
-  - anything else, a point, a learning or a line of turn's: `a`, the recommended option.
+- Each reply of rn is answered by what the moves it kept hold, as its words are in the
+  conversation language, at most 60 messages in all:
+  - A plan proposal kept, `Rn-Sign-off: plan`: the first time `/rn:gm the greeting should name the
+    CONTRIBUTING file too`; after that, `/rn:ty`.
+  - A design or deliverable proposal kept: `/rn:ty`.
+  - Feedback kept, `Rn-Answer: feedback`: a fresh conversation, `/rn:up`.
+  - The pull request marked ready: the run ends.
+  - A reply offering option `a.`, a point, a learning or a line of turn's: `a`, the recommended
+    option; one offering none, such as whether to open an issue shown: `yes`, and where it keeps no
+    move either, the run is stuck and ends.
 - Each `/rn:ty` and `/rn:gm` goes on the same conversation, as the user types them where they read
   the proposal.
 
