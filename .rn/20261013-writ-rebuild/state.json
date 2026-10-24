@@ -527,6 +527,9 @@
   },
   {
    "fact": "2026-10-24: judged and shown to the user, as the user said to go on without asking: lane's Lanes table moved to lane/docs/lanes.md, reached from the README's Documentation (lane:up, test_lanes and the architecture read it there); rn's UX opens with what rn gives its user"
+  },
+  {
+   "fact": "2026-10-24: T26 done (04f53b8). T27's subagent (rn's scripts to the architecture, with T5 and T6) finished with its changes uncommitted in the working tree: rn/scripts/rn.py, new rn/scripts/call.py and template.py, dev/rn/tests/test_rn.py and helpers.py, dev/rn/cosmic-ray.toml; its report was not read before /clear"
   }
  ],
  "semantic_gist": [
@@ -631,7 +634,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: rn (T3-T15) on dev/rn/architecture.md and lane, as turn was remade: read rn's architecture, README and UX whole, list its units, and make each by a subagent with the kind's one checklist open, checked by hand; rn.py passes a kind's one checklist and fix.md. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: T27's uncommitted changes are in the working tree, unreviewed: read the diff of rn/scripts and dev/rn/tests whole against dev/rn/architecture.md and code.md (are call.py and template.py links to turn's/lane's or copies? check.sh fails on copies), run check.sh rn and mutate.sh rn, then commit; then T28 (learner, lanes by lane:up) and the conductor's skills remade (removing their words on rn's hooks). Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
