@@ -536,6 +536,9 @@
   },
   {
    "fact": "2026-10-24: T28's design set and handed to a subagent in the background: `rn.py records` writes the branch's conductor conversations (entries with the repository's cwd and gitBranch) and the agents they started (meta without parentAgentId) as text under the git dir and prints the learner's prompt; `rn.py learnt` moves the reply to <session>/learnt.json with each ground's record path and removes the texts; rn/forms/learnt.json and rn/scripts/records.py link to turn's; lanes by lane:up; a trial on records holding one slip. Measured: this branch's own main conversations shown as text are 9.8M characters, so a long session's records may not fit one learner; to read on the trial"
+  },
+  {
+   "fact": "2026-10-24: T28 done: the learner reads the record whole (the history as each commit's message and files plus each state.json change, and the session's files) and searches the conductor's conversations (no tool results), turn's runs left to turn's learner, as the user chose; lane's in_form takes a linked form (f2b8a6f); check.sh lane, turn, rn 100%, mutate 0; trial passed twice (1.1 min, $0.42): the commit outside turn and two points in one message each a lesson with its words; the learner Read the conversation whole instead of Grep, to watch on rn's whole trials before any lane"
   }
  ],
  "semantic_gist": [
@@ -602,7 +605,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T28: rn's learner, lanes laid by lane:up; then T29: rn's skills remade to the scripts, with the proposal at every sign-off"
+   "task": "T29: rn's skills remade to the scripts, with the proposal at every sign-off and the learner's start"
   }
  ],
  "relational_map": [
@@ -640,7 +643,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: T28's subagent may still run (its work uncommitted in the working tree); read its report and the diff whole against rn's architecture, code.md and prompt.md, run check.sh rn and mutate.sh rn, fix by hand, put records and learnt.json in the architecture's Physical view, commit; then T29 (the skills and the proposals designed together). Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: T29: design the skills and the proposals together (where the hearing keeps each work's core decisions, the design and deliverable proposals, the bound on their lines), the /rn:ty steps running rn.py records, rn:learner and rn.py learnt, rn's CHANGELOG; a subagent makes it with prompt.md and code.md open, I check by hand. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -667,6 +670,9 @@
   },
   {
    "open": "T29: the skills call what T27 dropped (state stage=..., ccs --decisions, start without --message, proposal <work>)"
+  },
+  {
+   "open": "the learner may read a conversation whole rather than search it; no lane holds Grep-only; judge on rn's whole trials with real sizes"
   }
  ],
  "retrieved_artifacts": [

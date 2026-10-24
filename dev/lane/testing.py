@@ -1,15 +1,19 @@
 """What every plugin's tests stand on: a temporary folder each test runs in, with its files written
-and read; and, for a test that reads git, a repository made once a run and copied into each test's
+and read; for a test that reads git, a repository made once a run and copied into each test's
 folder, git reading no setting of the machine it runs on, since a repository made by git commands
-for every test spends most of the tests' time."""
+for every test spends most of the tests' time; and, for a plugin whose lanes lane laid, lane's code
+as the plugin takes it through a link, and each lane its hooks/hooks.json lays."""
 
 from __future__ import annotations
 
 import atexit
+import importlib
 import json
 import os
+import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from typing import Any, Callable
@@ -111,3 +115,38 @@ def load_hypothesis_profile() -> None:
     hypothesis.settings.register_profile("ci", max_examples=1000, **kept)
     default = "ci" if os.environ.get("CI") else "dev"
     hypothesis.settings.load_profile(os.environ.get("HYPOTHESIS_PROFILE", default))
+
+
+def lane_code(plugin: str, *names: str) -> list[Any]:
+    """lane's modules of the names, imported from the link in the plugin's hooks: lane's code and
+    the plugin's scripts share module names, such as call, so lane's are imported apart and the
+    plugin's put back after."""
+    code = os.path.join(plugin, "hooks", "lane")
+    shared = {os.path.splitext(n)[0] for n in os.listdir(code)} & {
+        os.path.splitext(n)[0] for n in os.listdir(os.path.join(plugin, "scripts"))
+    }
+    own = {n: sys.modules.pop(n) for n in shared if n in sys.modules}
+    sys.path.insert(0, code)
+    try:
+        return [importlib.import_module(n) for n in names]
+    finally:
+        sys.path.pop(0)
+        for n in shared:
+            sys.modules.pop(n, None)
+        sys.modules.update(own)
+
+
+def laid(plugin: str) -> list[tuple[str, int, str, list[str]]]:
+    """Each lane the plugin's hooks/hooks.json lays, as (agent, step, lane, takes), read from the
+    words after the command's last `; exec `, as lane writes them."""
+    with open(os.path.join(plugin, "hooks", "hooks.json"), encoding="utf-8") as f:
+        hooks = json.load(f)["hooks"]
+    found = []
+    for entries in hooks.values():
+        for entry in entries:
+            words = shlex.split(entry["hooks"][0]["command"].rpartition("; exec ")[2])
+            agent, *held = words[2:]
+            for one in held:
+                number, lane, takes = one.split(":", 2)
+                found.append((agent, int(number), lane, takes.split(",")))
+    return found

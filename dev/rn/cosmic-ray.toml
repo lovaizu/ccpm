@@ -4,7 +4,12 @@
 module-path = ["rn/scripts"]
 timeout = 60.0
 # What rn takes from turn and lane through a link is mutated there, with their tests.
-excluded-modules = ["rn/scripts/call.py", "rn/scripts/template.py"]
+excluded-modules = [
+    "rn/scripts/call.py",
+    "rn/scripts/forms.py",
+    "rn/scripts/records.py",
+    "rn/scripts/template.py",
+]
 # The type checker runs first: a change to a type annotation changes no behavior a test could see,
 # and the type checker is what checks annotations.
 test-command = "sh -c 'pyrefly check --search-path dev/lane --search-path dev/rn/tests --search-path rn/scripts rn/scripts dev/rn/tests && python -m unittest discover -f -s dev/rn/tests'"

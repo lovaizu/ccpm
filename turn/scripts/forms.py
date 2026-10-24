@@ -26,11 +26,12 @@ WHOSE = ("own", "general")
 
 
 class Grounds(NamedTuple):
-    """What a form's lines and quotes are found in: the work, and the records of the agents the
-    learner's quotes come from."""
+    """What a form's lines and quotes are found in: the work, the records the learner's quotes come
+    from, and how a record is read as the learner was shown it."""
 
     work: list[str]
     records: tuple[str, ...]
+    read: Callable[[str], str]
 
 
 class Form(NamedTuple):
@@ -108,11 +109,12 @@ def lessons(data: dict[str, Any], at: Grounds) -> list[str]:
                 ' "general" for turn\'s makers, and "grounds"'
             )
             continue
-        said += ground_problems(name, lesson["grounds"], at.records)
+        said += ground_problems(name, lesson["grounds"], at)
     return said
 
 
-def ground_problems(name: str, grounds: Any, kept: tuple[str, ...]) -> list[str]:
+def ground_problems(name: str, grounds: Any, at: Grounds) -> list[str]:
+    kept = at.records
     if not isinstance(grounds, list) or not grounds:
         return [f'{name} gives its grounds as no list; give [{{"record": ..., "quote": ...}}, ...]']
     said: list[str] = []
@@ -130,7 +132,7 @@ def ground_problems(name: str, grounds: Any, kept: tuple[str, ...]) -> list[str]
                 f'{name}: ground {k} must hold "record", its number from 1 to {len(kept)}, and'
                 ' "quote", its words'
             )
-        elif spaced(ground["quote"]) not in spaced(records.shown(kept[number - 1])):
+        elif spaced(ground["quote"]) not in spaced(at.read(kept[number - 1])):
             said.append(
                 f"{name}: ground {k} is not in record {number} as written; quote its words as they"
                 " are"
@@ -174,10 +176,14 @@ def check(
     form: Form,
     records: tuple[str, ...] = (),
     each: Iterable[tuple[str, str]] = (),
+    # The default is taken when the function is made, from the module, before the parameter of the
+    # same name stands for the records.
+    read: Callable[[str], str] = records.shown,
 ) -> list[str]:
     """What is wrong with the form, each said with what to give instead; empty when it is filled.
     The items are those the form judges; `records` are the records its quotes of a record are found
-    in; `each` names the items asked of each part of the work."""
+    in, each read by `read`, by default as the record of an agent is shown the learner; `each`
+    names the items asked of each part of the work."""
     data = parse(text, form)
     if data is None:
         lists = ", ".join(f'"{k}": [...]' for k in listed(form))
@@ -187,7 +193,7 @@ def check(
     if form.asks:
         said += question_problems(data)
     if form.more:
-        said += form.more(data, Grounds(work, records))
+        said += form.more(data, Grounds(work, records, read))
     return said
 
 

@@ -1,5 +1,4 @@
 import contextlib
-import importlib
 import io
 import json
 import os
@@ -323,19 +322,3 @@ class RepoTest(testing.FolderTest):
 def named(item):
     """The checklist and ID that name an item."""
     return {"checklist": item["checklist"], "item": item["item"]}
-
-
-def lane_code(*names):
-    """lane's modules of the names, imported from the link in turn's hooks: lane's code and turn's
-    scripts share module names, such as call, so lane's are imported apart and turn's put back
-    after."""
-    shared = ("call", "forms")
-    turns = {n: sys.modules.pop(n) for n in shared if n in sys.modules}
-    sys.path.insert(0, os.path.join(TURN, "hooks", "lane"))
-    try:
-        return [importlib.import_module(n) for n in names]
-    finally:
-        sys.path.pop(0)
-        for n in shared:
-            sys.modules.pop(n, None)
-        sys.modules.update(turns)

@@ -107,12 +107,14 @@ flowchart TB
 
   So it says nothing turn's first user did not read.
 - Once the user approves the finished work, the learner of
-  [Principle 8](../architecture.md#learning-from-each-run) reads the records of the conductor's
-  conversation and the agents it started; its lessons and those turn returned with each work are
-  the learnings the conductor puts to the user.
+  [Principle 8](../architecture.md#learning-from-each-run) reads the piece of work's record whole,
+  its history on the branch and its files, and searches the conductor's conversations for what only
+  they show, such as the form of each message to the user; its lessons and those turn returned with
+  each work are the learnings the conductor puts to the user.
 
   turn's learner reads turn's runs alone, so a slip of rn's own steps shows only to a learner of
-  rn's.
+  rn's; the record shows where the work fell short, such as each change sent back, and is a small
+  part of the conversations, most of which is what each tool gave back.
 
 ### Physical view
 
@@ -124,7 +126,8 @@ rn/                                  the plugin, installed by Claude Code with t
 │   └── gm/SKILL.md                  the conductor for /rn:gm, which the AI cannot call <skill>
 ├── agents/
 │   └── learner.md                   the learner <agent>
-├── scripts/                         a work's CCS, the state, a kind's checklists, the proposal <Python 3>
+├── scripts/                         a work's CCS, the state, a kind's checklists, the proposal, the learner's records <Python 3>
+├── forms/learnt.json                the learner's reply, a link to turn's <JSON Schema>
 ├── hooks/
 │   ├── hooks.json                   the lanes, laid by lane:up
 │   └── lane/                        lane's code, the guard, a link to lane's <Python 3>
@@ -138,6 +141,7 @@ rn/                                  the plugin, installed by Claude Code with t
         ├── decisions/<work>.decisions.md
         ├── ccs/<work>.json          the CCS each work goes to turn as <JSON>
         ├── ccs/<work>-result.json   what turn returned for it <JSON>
+        ├── learnt.json              the learner's lessons, each ground named by where it is <JSON>
         └── state.json               the state, ACC's CCS <JSON>
 ```
 
@@ -154,6 +158,8 @@ rn/                                  the plugin, installed by Claude Code with t
   commit messages.
 
   A push is what a fresh conversation, or another machine, reads from.
+- The texts the learner reads are written in the repository's git folder, where nothing is
+  committed, and removed once its lessons are kept.
 - The pull request is a draft pull request on GitHub of that branch, opened and marked ready with
   `gh`; a learning's issue is opened with it on `lovaizu/ccpm`, on the user's yes.
 - rn's checklists are read-only in the plugin; the user's additions are in their repository and go
@@ -186,8 +192,9 @@ records of every conversation and agent the check started.
     state and replan rests only on the checked facts of the move before it, and each proposal says
     only what the record holds, read against the records.
 - The learner: each lesson quotes from the records the words it rests on.
-  - Flow: started on its own on records set beforehand, holding one slip of the conductor's steps;
-    passes when that slip is a lesson with its words quoted.
+  - Flow: started on its own on a record and a conversation set beforehand, holding a slip of the
+    conductor's steps the record shows and one only the conversation shows; passes when each is a
+    lesson with its words quoted.
 - rn's checklists: what is made with them on the real requests.
   - Content: each change sent back at the deliverable sign-off is traced to the checklist or the
     skill it comes from, and fixed there; the fix passes when, on the same real requests run again,

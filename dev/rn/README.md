@@ -8,3 +8,6 @@ in [architecture.md](architecture.md).
   practice repository, with the rn and turn of this working tree copied as they are when the trial
   starts: `python3 dev/rn/trials/<scene>.py --help` says what it takes. Trials run one at a time,
   since they share the practice repository.
+- The learner on its own: `python3 dev/rn/trials/learner/learner.py <new folder>` starts rn:learner
+  on a session set beforehand, its record and a conversation of the conductor's, holding a slip
+  each shows, as the architecture's Verification says; it needs no practice repository.

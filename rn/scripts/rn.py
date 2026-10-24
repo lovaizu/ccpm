@@ -1,7 +1,8 @@
 """What rn's conductor runs for what must come out the same on every run, so that a rule a machine
 can judge holds at the moment of the move: the session found and started, the state replaced and
-every change kept on the session's branch, a kind's checklists, the CCS each work is made from, and
-the proposal at a sign-off made from what is pushed alone.
+every change kept on the session's branch, a kind's checklists, the CCS each work is made from, the
+proposal at a sign-off made from what is pushed alone, and the records of the session shown to rn's
+learner and its lessons kept.
 
 The conductor is the AI that runs rn's commands `/rn:up`, `/rn:ty` and `/rn:gm` with the user. A
 session is one piece of work from `/rn:up` to the merge, on a branch of its own; its record is the
@@ -13,6 +14,12 @@ value as text. A work, such as the plan, a document or a task's result, is made 
 depends on, from such a CCS. A kind, such as readme or code, has rn's own checklist, and may have
 the user's addition `.rn/checklists/<kind>.md`. At a sign-off, plan, design or deliverable, the
 conductor shows the user a proposal and waits for `/rn:ty` or `/rn:gm`.
+
+Once the user approves the finished work, rn's learner reads the session's record whole, its history
+on the branch and its files, and searches the conductor's conversations, as Claude Code keeps them,
+for what only they show; each is shown as text in the repository's git folder, where nothing is
+committed, and its lessons, each resting on words quoted from a text, are kept in the session as
+`learnt.json`.
 
 Keeping a move is a commit of every change on the session's branch and a push of it, so a fresh
 conversation, or another machine, goes on from it; the plan is held to the template of rn's plan
@@ -32,13 +39,18 @@ import glob
 import json
 import os
 import re
+import shlex
+import shutil
 import subprocess
 import sys
 from collections.abc import Callable
 from typing import Any, NoReturn
 
-# turn's reader of a CCS, and lane's of a Markdown template, each taken through a link.
+# turn's reader of a CCS, of Claude Code's records and of the learner's reply, and lane's of a
+# Markdown template, each taken through a link.
 import call
+import forms
+import records
 import template
 
 # The plugin's own folder, which holds rn's checklists.
@@ -90,6 +102,16 @@ SIGNOFFS = {
 # The trailer marking the commit of a proposal shown, with its sign-off.
 SHOWN = "Rn-Sign-off: "
 ANSWER = "/rn:ty to approve, /rn:gm <feedback> to ask for a change."
+# The folder in the repository's git folder where the learner is shown the records and replies, so
+# nothing of it shows as a change to keep.
+LEARNING = "rn"
+# The learner's lessons, kept in the session.
+LEARNT = "learnt.json"
+# Claude Code names the folder of a project's records by the project's path, each character that is
+# not a letter or digit as `-`, counted as JavaScript counts, a character beyond the basic plane as
+# two; a name longer than this is cut to it and a hash of the path put after, which rn does not make
+# again, so it finds that folder by what goes before the hash.
+NAME_LENGTH = 200
 # What a stop whose git command failed says to do where only git's own words tell what is wrong.
 AS_GIT_SAYS = "fix it as git says, then run this again"
 
@@ -636,11 +658,191 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
     return proposal
 
 
+def learning() -> str:
+    """The folder where the learner is shown the records and replies, in the repository's git
+    folder, as a whole path."""
+    return os.path.join(git(["rev-parse", "--absolute-git-dir"], AS_GIT_SAYS).strip(), LEARNING)
+
+
+def project_folders(top: str) -> list[str]:
+    """The folders where Claude Code keeps the records of conversations run at the path: the one
+    named by it, or, where the name is longer than Claude Code keeps, each there named by its
+    beginning and a hash."""
+    name = "".join(
+        c if c.isascii() and c.isalnum() else "-" * (len(c.encode("utf-16-le")) // 2) for c in top
+    )
+    kept = records.kept()
+    if len(name) <= NAME_LENGTH:
+        return [os.path.join(kept, name)]
+    return sorted(
+        glob.glob(os.path.join(glob.escape(kept), glob.escape(name[:NAME_LENGTH]) + "-*"))
+    )
+
+
+def lines(path: str) -> list[dict[str, Any]]:
+    """Each entry of a record, as Claude Code keeps it, one JSON object to a line."""
+    with open(path, encoding="utf-8") as f:
+        return [json.loads(line) for line in f]
+
+
+def begun(path: str) -> tuple[str, str]:
+    """When the record began, its earliest entry's time, Claude Code writing each in one form; and
+    its path, so records begun at once come in one order."""
+    times = [e["timestamp"] for e in lines(path) if "timestamp" in e]
+    return min(times, default=""), path
+
+
+def conversations(top: str, branch: str) -> list[str]:
+    """The record of each conversation run at the top of the repository that was on the branch at
+    some entry, in the order they began."""
+    found = [
+        path
+        for folder in project_folders(top)
+        for path in glob.glob(os.path.join(glob.escape(folder), "*.jsonl"))
+        if any(e.get("cwd") == top and e.get("gitBranch") == branch for e in lines(path))
+    ]
+    return sorted(found, key=begun)
+
+
+def history(folder: str, start: str) -> str:
+    """The session's history on the branch since it left the default branch, each command before
+    what it printed: each commit, oldest first, with its message, which holds each feedback, answer
+    and proposal shown, and the files it changed, so a change to the work made outside turn shows,
+    without their lines, as the record gives the session's files as they are now; then each change
+    to the state, under the commit that made it, which shows what each move rested on."""
+    asked = [
+        ["log", "--reverse", "--stat", f"{start}..HEAD"],
+        ["log", "--reverse", "-p", "--format=%h", f"{start}..HEAD", "--", state_path(folder)],
+    ]
+    return "".join(f"$ {shlex.join(['git', *a])}\n{git(a, AS_GIT_SAYS)}\n" for a in asked)
+
+
+def session_files(folder: str) -> list[str]:
+    """The session's files the learner reads as they are now: the plan, each work's decisions and
+    each result turn returned, each where it is there."""
+    found = [plan(folder)] + sorted(
+        glob.glob(os.path.join(glob.escape(folder), "decisions", "*.md"))
+    )
+    found += sorted(glob.glob(os.path.join(glob.escape(folder), "ccs", "*-result.json")))
+    return [p for p in found if os.path.isfile(p)]
+
+
+def told(path: str) -> str:
+    """A conversation of the conductor as the learner searches it: the user's words, each skill's
+    text, the conductor's words and each tool it called, one to a line; what each tool gave back is
+    left out, as the record shows what was kept, and it is most of the conversation."""
+    said: list[str] = []
+    for entry in records.entries(path):
+        content = entry.get("message", {}).get("content")
+        if isinstance(content, str):
+            said.append(f"[{entry.get('type')}] {content}")
+        for part in content if isinstance(content, list) else []:
+            if part.get("type") in ("text", "tool_use"):
+                said.append(records.said(part))
+    return "\n".join(said) + "\n"
+
+
+def run_records(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
+    """Shows rn's learner the session, once every change is pushed: its record, the history on the
+    branch and the session's files, to read whole; then each conversation of the conductor, run at
+    the top of the repository on the session's branch, to search for what only it shows, none where
+    Claude Code keeps none here, as when the session ran on another machine. Each is written as
+    text in the git folder, made afresh, numbered in one list, the record first; what each stands
+    for is kept there for the reply; and gives the learner's prompt. Stops where the branch holds
+    no session, or a change is not kept or pushed."""
+    folder = current()
+    pushed()
+    start = base()
+    head = git(["rev-parse", "HEAD"], AS_GIT_SAYS).strip()
+    top = git(["rev-parse", "--show-toplevel"], AS_GIT_SAYS).strip()
+    branch = git(["branch", "--show-current"], AS_GIT_SAYS).strip()
+    place = learning()
+    shutil.rmtree(place, ignore_errors=True)
+    # Each text shown, by where it is written, with what it stands for and its text.
+    shown = [
+        (os.path.join("record", "history.txt"), f"git log {start}..{head}", history(folder, start))
+    ]
+    shown += [(os.path.join("record", p), p, read_text(p)) for p in session_files(folder)]
+    whole = len(shown)
+    for path in conversations(top, branch):
+        name = os.path.basename(path)[: -len(".jsonl")] + ".txt"
+        shown.append((os.path.join("conversations", name), path, told(path)))
+    for name, _, text in shown:
+        os.makedirs(os.path.dirname(os.path.join(place, name)), exist_ok=True)
+        with open(os.path.join(place, name), "w", encoding="utf-8") as f:
+            f.write(records.wrapped(text))
+    texts = [os.path.join(place, name) for name, _, _ in shown]
+    write_json(
+        os.path.join(place, "records.json"), {"texts": texts, "sources": [s for _, s, _ in shown]}
+    )
+    return {
+        "record": texts[:whole],
+        "conversations": texts[whole:],
+        "reply": os.path.join(place, LEARNT),
+    }
+
+
+def run_learnt(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
+    """Keeps the learner's lessons in the session, each ground naming what its text stands for, a
+    file of the session by its path, the history by its range of commits and a conversation by its
+    record, as the texts it read by number go; removes what the learner was shown; and gives the
+    lessons, with what it checked, for the conductor to put to the user. Stops where the branch
+    holds no session, the session was not shown, the reply is not there, or the reply is out of its
+    form, each quote found in the text it numbers, which is then removed, with the message that has
+    the learner write it again."""
+    folder = current()
+    place = learning()
+    kept = os.path.join(place, "records.json")
+    if not os.path.isfile(kept):
+        raise Stop(
+            "rn: the session was not shown to the learner; run `rn.py records` first, start"
+            " rn:learner with the prompt it prints, then run this again"
+        )
+    with open(kept, encoding="utf-8") as f:
+        shown = json.load(f)
+    reply = os.path.join(place, LEARNT)
+    if not os.path.isfile(reply):
+        raise Stop(
+            f"rn: the learner's reply {reply} is not there; start rn:learner with the prompt"
+            " `rn.py records` printed and wait for it to end, then run this again"
+        )
+    with open(reply, encoding="utf-8") as f:
+        text = f.read()
+    said = forms.check(text, [], [], forms.LEARNT, records=tuple(shown["texts"]), read=read_text)
+    if said:
+        os.remove(reply)
+        fix = f"Write your reply to {reply} again in your form, filled:\n" + "\n".join(said)
+        raise Stop(
+            "rn: the learner's reply is out of its form; send rn:learner by SendMessage this"
+            f" message as it is, wait for it to end, then run this again:\n{fix}"
+        )
+    data = json.loads(forms.unfenced(text))
+    sources = shown["sources"]
+    learnt = {
+        "lessons": [
+            dict(n, grounds=[dict(g, record=sources[g["record"] - 1]) for g in n["grounds"]])
+            for n in data["lessons"]
+        ],
+        "checked": data["checked"],
+    }
+    write_json(os.path.join(folder, LEARNT), learnt)
+    shutil.rmtree(place)
+    return learnt
+
+
+def read_text(path: str) -> str:
+    """The text at the path, as the learner was shown it."""
+    with open(path, encoding="utf-8") as f:
+        return f.read()
+
+
 class Parser(argparse.ArgumentParser):
     """argparse, stopping as rn stops rather than exiting with its own code."""
 
     def error(self, message: str) -> NoReturn:
-        raise Stop(f"rn: {message}; give it as {self.format_usage().strip()[len('usage: ') :]}")
+        # The usage on one line, as argparse breaks a long one where a terminal would.
+        usage = " ".join(self.format_usage().split()[1:])
+        raise Stop(f"rn: {message}; give it as {usage}")
 
 
 def parser() -> Parser:
@@ -669,6 +871,8 @@ def parser() -> Parser:
     proposal = sub.add_parser("proposal")
     proposal.set_defaults(run=run_proposal)
     proposal.add_argument("signoff", choices=list(SIGNOFFS))
+    sub.add_parser("records").set_defaults(run=run_records)
+    sub.add_parser("learnt").set_defaults(run=run_learnt)
     return top
 
 

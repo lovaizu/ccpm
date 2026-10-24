@@ -12,7 +12,9 @@ import importlib.util
 import io
 import json
 import os
+import re
 import runpy
+import shutil
 import subprocess
 import sys
 import unittest
@@ -1222,6 +1224,513 @@ class ProposalTest(RepoTest):
         self.assertIn("invalid choice: 'review'", self.refused("review"))
 
 
+# The branch each test's session is on.
+BRANCH = "work"
+# Where rn shows the learner the session and has it reply, in the repository's git folder: the
+# record, read whole, the conductor's conversations, searched, and the list it keeps of each text
+# shown with what it stands for.
+LEARNING = ".git/rn"
+HISTORY = f"{LEARNING}/record/history.txt"
+SHOWN_PLAN = f"{LEARNING}/record/{FOLDER}/steering.md"
+CONVERSATIONS = f"{LEARNING}/conversations"
+REPLY = f"{LEARNING}/learnt.json"
+SHOWN_LIST = f"{LEARNING}/records.json"
+# What the learner checked, as it says.
+CHECKED = "every move of the conductor"
+
+
+def slug(top: str) -> str:
+    """The name Claude Code gives the folder of a project's records, for a path of 200 characters or
+    fewer: each character that is not a letter or digit as `-`."""
+    return re.sub(r"[^a-zA-Z0-9]", "-", top)
+
+
+def said(text: str, at: str, cwd: str, branch: str = BRANCH) -> dict[str, Any]:
+    """An entry of a record, as Claude Code keeps it: the user's words at the time, where the
+    conversation ran and on what branch."""
+    return {
+        "type": "user",
+        "timestamp": at,
+        "cwd": cwd,
+        "gitBranch": branch,
+        "message": {"role": "user", "content": text},
+    }
+
+
+class LearningTest(RepoTest):
+    """A session kept, and Claude Code's records in a folder of their own, as CLAUDE_CONFIG_DIR
+    names it."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.session(push=True)
+        self.top = os.getcwd()
+        self.config = os.path.join(self.base, "config")
+        patcher = mock.patch.dict(os.environ, {"CLAUDE_CONFIG_DIR": self.config})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.project = os.path.join(self.config, "projects", slug(self.top))
+
+    def conversation(self, name: str, *entries: dict[str, Any]) -> str:
+        """Writes the record of a conversation in the project's folder; gives its path."""
+        path = os.path.join(self.project, f"{name}.jsonl")
+        self.write(path, "".join(json.dumps(e) + "\n" for e in entries))
+        return path
+
+    def agent(self, conversation: str, name: str, at: str, meta: dict[str, Any]) -> str:
+        """Writes the record of an agent the conversation started, saying its name at the time,
+        with its meta file; gives its path."""
+        path = os.path.join(conversation[: -len(".jsonl")], "subagents", f"agent-{name}.jsonl")
+        self.write(path, json.dumps(said(name, at, self.top)) + "\n")
+        self.write_json(path[: -len(".jsonl")] + ".meta.json", meta)
+        return path
+
+    def shown(self) -> list[str]:
+        """The text of each conversation rn showed the learner, in order."""
+        return [self.read(p) for p in self.ran("records")["conversations"]]
+
+    def start(self) -> str:
+        """The commit the branch left the default branch at."""
+        return self.out("merge-base", "origin/main", "HEAD").strip()
+
+    def range_shown(self) -> str:
+        """The commits since the default branch, as rn names the history it showed."""
+        return f"git log {self.start()}..{self.out('rev-parse', 'HEAD').strip()}"
+
+    def commit_with(self, message: str) -> None:
+        """Commits every change with the message, and pushes it, as a move kept."""
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", message)
+        self.git("push", "-q")
+
+
+class RecordsTest(LearningTest):
+    def test_records_gives_the_learner_the_record_the_conversations_and_where_to_reply(self):
+        # Given: a session kept with its plan, and a conversation of the conductor.
+        self.conversation("c1", said("/rn:up add login", "2026-10-20T09:00:00Z", self.top))
+        # When: the conductor has the session shown.
+        out = self.ran("records")
+        # Then: rn gives the learner's prompt: the history and the plan to read whole, the
+        # conversation to search, and the reply, each in the git folder.
+        want = {
+            "record": [os.path.join(self.top, HISTORY), os.path.join(self.top, SHOWN_PLAN)],
+            "conversations": [os.path.join(self.top, CONVERSATIONS, "c1.txt")],
+            "reply": os.path.join(self.top, REPLY),
+        }
+        self.assertEqual(out, want)
+
+    def test_the_history_holds_each_commit_with_its_message_and_the_files_it_changed(self):
+        # Given: a move kept with its message, which changed a work's decisions, then a proposal
+        # kept as an empty commit.
+        self.write(f"{FOLDER}/decisions/readme.decisions.md", "# README\n\nMIT\n")
+        self.commit_with("deliverable: the user asked for MIT")
+        self.git("commit", "-q", "--allow-empty", "-m", "Plan sign-off\n\nRn-Sign-off: plan")
+        self.git("push", "-q")
+        # When: the conductor has the session shown.
+        self.ran("records")
+        # Then: the history gives each commit, oldest first, with its message and the files it
+        # changed, not their lines, as the record gives each file as it is now.
+        commits = self.read(HISTORY).split(" -- ")[0]
+        self.assertEqual(
+            (
+                commits.startswith(f"$ git log --reverse --stat {self.start()}..HEAD\n"),
+                "readme.decisions.md | 3 +++" in commits,
+                "+MIT" in commits,
+                commits.index("deliverable: the user") < commits.index("Rn-Sign-off: plan"),
+            ),
+            (True, True, False, True),
+        )
+
+    def test_the_history_holds_each_state_replaced_by_its_commit(self):
+        # Given: a move kept with its message, which replaced the state.
+        self.write_json(state_at(), NEXT)
+        self.commit_with("design: plan approved")
+        # When: the conductor has the session shown.
+        self.ran("records")
+        # Then: after the commits, the history gives each change to the state under the commit
+        # that made it, without its message again.
+        head = self.out("rev-parse", "--short", "HEAD").strip()
+        states = self.read(HISTORY).split(f" -- {state_at()}\n")[1]
+        made = states.split(f"\n{head}\n")
+        self.assertEqual(
+            (
+                len(made),
+                '"episodic_trace": [{"fact": "plan approved"}]}' in made[-1],
+                "design: plan approved" in states,
+            ),
+            (2, True, False),
+        )
+
+    def test_the_history_names_the_files_a_commit_outside_the_session_changed(self):
+        # Given: the work changed by a commit of its own, outside the session's folder.
+        self.write("README.md", "# app\n\nMIT\n")
+        self.commit_with("README: say MIT")
+        # When: the conductor has the session shown.
+        self.ran("records")
+        # Then: the history gives that commit with the files it changed, not their lines.
+        history = self.read(HISTORY)
+        self.assertEqual(
+            ("    README: say MIT" in history, "README.md | 2 ++" in history, "+MIT" in history),
+            (True, True, False),
+        )
+
+    def test_the_record_holds_the_plan_each_decisions_and_each_result(self):
+        # Given: a session with decisions and results of two works, and its state.
+        for path in (f"{FOLDER}/decisions/b.decisions.md", f"{FOLDER}/decisions/a.decisions.md"):
+            self.write(path, f"# {path}\n")
+        self.write_json(f"{FOLDER}/ccs/a-result.json", {"work": ["A.md"]})
+        self.write_json(f"{FOLDER}/ccs/a.json", {"focal_entities": []})
+        self.commit_with("works")
+        # When: the conductor has the session shown.
+        out = self.ran("records")
+        # Then: the record gives the history, the plan, each decisions file and each result, as
+        # they are, by their paths, and neither the CCS nor the state.
+        names = [
+            os.path.relpath(p, os.path.join(self.top, LEARNING, "record")) for p in out["record"]
+        ]
+        self.assertEqual(
+            (names, self.read(out["record"][2])),
+            (
+                [
+                    "history.txt",
+                    plan_at(),
+                    f"{FOLDER}/decisions/a.decisions.md",
+                    f"{FOLDER}/decisions/b.decisions.md",
+                    f"{FOLDER}/ccs/a-result.json",
+                ],
+                f"# {FOLDER}/decisions/a.decisions.md\n",
+            ),
+        )
+
+    def test_a_session_without_its_plan_shows_the_history_alone(self):
+        # Given: a session kept without a plan yet.
+        self.write_json(state_at(), NEXT)
+        os.remove(plan_at())
+        self.commit_with("no plan")
+        # When: the conductor has the session shown.
+        # Then: the record is the history alone.
+        self.assertEqual(self.ran("records")["record"], [os.path.join(self.top, HISTORY)])
+
+    def test_a_conversation_shows_the_words_and_tool_calls_without_what_tools_gave_back(self):
+        # Given: a conversation with the user's words, the conductor's, a tool call and what it gave
+        # back, and a part of the conductor's thinking.
+        entries = [
+            said("/rn:up", "2026-10-20T09:00:00Z", self.top),
+            dict(
+                said("", "2026-10-20T09:01:00Z", self.top),
+                type="assistant",
+                message={
+                    "content": [
+                        {"type": "thinking", "thinking": "hmm"},
+                        {"type": "text", "text": "I keep the move."},
+                        {"type": "tool_use", "name": "Bash", "input": {"command": "rn.py state"}},
+                    ]
+                },
+            ),
+            dict(
+                said("", "2026-10-20T09:02:00Z", self.top),
+                message={"content": [{"type": "tool_result", "content": "kept 4f2c9a1"}]},
+            ),
+        ]
+        self.conversation("c", *entries)
+        # When: the conductor has the session shown.
+        # Then: the words and the call are shown, one to a line, and nothing else.
+        self.assertEqual(
+            self.shown(),
+            [
+                '[user] /rn:up\n[text] I keep the move.\n[tool_use Bash] {"command": "rn.py state"}\n'
+            ],
+        )
+
+    def test_no_conversation_kept_here_shows_the_record_alone(self):
+        # Given: no record of a conversation for the repository, as when the session ran on another
+        # machine.
+        # When: the conductor has the session shown.
+        # Then: the learner is given the record, and no conversation.
+        self.assertEqual(self.ran("records")["conversations"], [])
+
+    def test_what_each_text_stands_for_is_kept_in_order_for_the_reply(self):
+        # Given: two conversations.
+        first = self.conversation("b", said("first", "2026-10-20T09:00:00Z", self.top))
+        second = self.conversation("a", said("second", "2026-10-20T09:01:00Z", self.top))
+        # When: the conductor has the session shown.
+        out = self.ran("records")
+        # Then: rn keeps each text in one list, the record first, with what it stands for.
+        want = {
+            "texts": out["record"] + out["conversations"],
+            "sources": [self.range_shown(), plan_at(), first, second],
+        }
+        self.assertEqual(self.read_json(SHOWN_LIST), want)
+
+    def test_the_session_is_shown_afresh(self):
+        # Given: a text shown by an earlier run, and a reply it left.
+        self.write(f"{CONVERSATIONS}/old.txt", "old")
+        self.write(REPLY, "{}")
+        # When: the conductor has the session shown.
+        self.ran("records")
+        # Then: what the earlier run left is gone.
+        self.assertEqual((os.path.exists(CONVERSATIONS), os.path.exists(REPLY)), (False, False))
+
+    def test_records_with_a_move_not_kept_stop(self):
+        # Given: a change to the session not kept.
+        self.write_json(state_at(), NEXT)
+        # When: the conductor has the session shown.
+        # Then: rn stops, saying to keep the move first, as the learner reads what is pushed.
+        self.assertIn("keep the move with `rn.py state --message", self.stopped("records"))
+
+    def test_conversations_come_in_the_order_they_began(self):
+        # Given: two conversations named against the order they began.
+        self.conversation("b", said("first", "2026-10-20T09:00:00Z", self.top))
+        self.conversation("a", said("second", "2026-10-20T10:00:00Z", self.top))
+        # When: the conductor has the records shown.
+        # Then: each conversation comes in the order it began.
+        self.assertEqual(self.shown(), ["[user] first\n", "[user] second\n"])
+
+    def test_a_conversation_begins_at_its_earliest_entry(self):
+        # Given: a conversation whose first entry is later than its second, and one between.
+        early = said("early", "2026-10-20T09:00:00Z", self.top)
+        self.conversation("a", said("late", "2026-10-20T09:10:00Z", self.top), early)
+        self.conversation("b", said("between", "2026-10-20T09:05:00Z", self.top))
+        # When: the conductor has the records shown.
+        # Then: the conversation that began earliest comes first.
+        self.assertEqual(self.shown(), ["[user] late\n[user] early\n", "[user] between\n"])
+
+    def test_an_entry_without_a_time_is_passed_over(self):
+        # Given: a conversation opening with an entry Claude Code keeps without a time.
+        kept = {"type": "mode", "mode": "normal"}
+        self.conversation("a", kept, said("later", "2026-10-20T09:10:00Z", self.top))
+        self.conversation("b", said("earlier", "2026-10-20T09:05:00Z", self.top))
+        # When: the conductor has the records shown.
+        # Then: it begins at its first entry with a time.
+        self.assertEqual(self.shown(), ["[user] earlier\n", "[user] later\n"])
+
+    def test_a_conversation_on_another_branch_is_left_out(self):
+        # Given: a conversation on another branch beside the session's.
+        self.conversation("a", said("main", "2026-10-20T09:00:00Z", self.top, "main"))
+        self.conversation("b", said("work", "2026-10-20T09:05:00Z", self.top))
+        # When: the conductor has the records shown.
+        # Then: the session's alone is shown.
+        self.assertEqual(self.shown(), ["[user] work\n"])
+
+    def test_a_conversation_that_reached_the_branch_later_is_taken_whole(self):
+        # Given: a conversation that began on the default branch and went on on the session's.
+        self.conversation(
+            "a",
+            said("on main", "2026-10-20T09:00:00Z", self.top, "main"),
+            said("on work", "2026-10-20T09:05:00Z", self.top),
+        )
+        # When: the conductor has the records shown.
+        # Then: it is shown whole.
+        self.assertEqual(self.shown(), ["[user] on main\n[user] on work\n"])
+
+    def test_a_conversation_run_elsewhere_is_left_out(self):
+        # Given: a conversation run in a folder below the top, beside one run at the top.
+        below = os.path.join(self.top, "docs")
+        self.conversation("a", said("below", "2026-10-20T09:00:00Z", below))
+        self.conversation("b", said("top", "2026-10-20T09:05:00Z", self.top))
+        # When: the conductor has the records shown.
+        # Then: the one run at the top alone is shown.
+        self.assertEqual(self.shown(), ["[user] top\n"])
+
+    def test_the_agents_a_conversation_started_are_left_out(self):
+        # Given: a conversation, an agent it started, and one that agent started in turn.
+        conversation = self.conversation("c", said("conductor", "2026-10-20T09:00:00Z", self.top))
+        self.agent(conversation, "up", "2026-10-20T09:01:00Z", {"agentType": "turn:up"})
+        self.agent(conversation, "gen", "2026-10-20T09:02:00Z", {"parentAgentId": "up"})
+        # When: the conductor has the records shown.
+        # Then: the conversation alone is shown, as turn's learner reads turn's runs.
+        self.assertEqual(self.shown(), ["[user] conductor\n"])
+
+    def test_the_session_shown_leaves_the_working_tree_as_it_was(self):
+        # Given: a conversation's record.
+        self.conversation("c", said("now", "2026-10-20T09:00:00Z", self.top))
+        # When: the conductor has the records shown.
+        self.ran("records")
+        # Then: git sees no change to keep.
+        self.assertEqual(self.out("status", "--porcelain"), "")
+
+    def test_records_without_a_session_stop(self):
+        # Given: a branch holding no session.
+        self.git("checkout", "-q", "main")
+        self.git("checkout", "-q", "-b", "other")
+        # When: the conductor has the records shown.
+        # Then: rn stops, saying how to start one.
+        self.assertIn("holds no session", self.stopped("records"))
+
+
+class ProjectFoldersTest(LearningTest):
+    """Where Claude Code keeps the records of a project, by the project's path."""
+
+    def projects(self, *names: str) -> None:
+        """Makes a folder of each name in Claude Code's projects folder."""
+        for name in names:
+            os.makedirs(os.path.join(self.config, "projects", name))
+
+    def test_a_path_of_200_characters_names_its_folder_whole(self):
+        # Given: a path of 200 characters.
+        top = "/" + "a" * 199
+        # When: its folder is looked for.
+        # Then: it is named by the path, each character not a letter or digit as `-`.
+        self.assertEqual(
+            rn.project_folders(top), [os.path.join(self.config, "projects", "-" + "a" * 199)]
+        )
+
+    def test_a_longer_path_is_found_by_its_first_200_characters(self):
+        # Given: a path of 201 characters, with the folder Claude Code made for it, its first 200
+        # characters and a hash, beside one for another path of the same beginning.
+        top = "/" + "a" * 200
+        self.projects("-" + "a" * 199 + "-h1", "-" + "a" * 200)
+        # When: its folder is looked for.
+        # Then: the one of its first 200 characters and a hash is found.
+        self.assertEqual(
+            rn.project_folders(top),
+            [os.path.join(self.config, "projects", "-" + "a" * 199 + "-h1")],
+        )
+
+    def test_a_character_beyond_the_basic_plane_is_two(self):
+        # Given: a path holding a character JavaScript counts as two.
+        # When: its folder is looked for.
+        # Then: it stands as two `-`, as Claude Code replaces each half.
+        self.assertEqual(
+            rn.project_folders("/a\U0001f600b"), [os.path.join(self.config, "projects", "-a--b")]
+        )
+
+
+class LearntTest(LearningTest):
+    """The learner's reply, once the session was shown it: the history, the plan, then the
+    conductor's conversation, numbered 1 to 3."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.record = self.conversation(
+            "c", said("/rn:gm say MIT", "2026-10-20T09:00:00Z", self.top)
+        )
+        self.ran("records")
+
+    def replied(self, lessons: list[dict[str, Any]], checked: str = CHECKED) -> None:
+        """The learner's reply, with the lessons and what it checked."""
+        self.write_json(REPLY, {"lessons": lessons, "checked": checked})
+
+    def lesson(self, quote: str = "say MIT", number: int = 3) -> dict[str, Any]:
+        """A lesson resting on the quote from the text of the number, by default the
+        conversation."""
+        return {
+            "lesson": "The conductor fixed the README itself.",
+            "whose": "general",
+            "grounds": [{"record": number, "quote": quote}],
+        }
+
+    def test_learnt_keeps_each_lesson_naming_what_each_text_stands_for(self):
+        # Given: the learner's reply of one lesson resting on words of each text.
+        grounds = [
+            {"record": 1, "quote": "git log --reverse --stat"},
+            {"record": 2, "quote": "# Add login"},
+            {"record": 3, "quote": "say MIT"},
+        ]
+        self.replied([dict(self.lesson(), grounds=grounds)])
+        # When: the conductor takes it.
+        out = self.ran("learnt")
+        # Then: rn keeps it in the session, each ground naming the commits of the history, the
+        # plan's path and the conversation's record, and prints it.
+        sources = [self.range_shown(), plan_at(), self.record]
+        want = {
+            "lessons": [
+                dict(
+                    self.lesson(),
+                    grounds=[dict(g, record=s) for g, s in zip(grounds, sources)],
+                )
+            ],
+            "checked": CHECKED,
+        }
+        self.assertEqual((out, self.read_json(f"{FOLDER}/learnt.json")), (want, want))
+
+    def test_learnt_of_no_lesson_keeps_what_was_checked(self):
+        # Given: the learner's reply of no lesson.
+        self.replied([])
+        # When: the conductor takes it.
+        # Then: rn keeps what the learner checked.
+        self.assertEqual(self.ran("learnt"), {"lessons": [], "checked": CHECKED})
+
+    def test_learnt_takes_a_reply_in_a_json_fence(self):
+        # Given: the learner's reply written inside a ```json fence.
+        self.write(REPLY, "```json\n" + json.dumps({"lessons": [], "checked": CHECKED}) + "\n```")
+        # When: the conductor takes it.
+        # Then: rn takes the reply inside.
+        self.assertEqual(self.ran("learnt")["checked"], CHECKED)
+
+    def test_learnt_removes_what_was_shown_the_learner(self):
+        # Given: the learner's reply.
+        self.replied([])
+        # When: the conductor takes it.
+        self.ran("learnt")
+        # Then: the records shown and the reply are gone.
+        self.assertFalse(os.path.exists(LEARNING))
+
+    def test_a_quote_not_in_its_record_stops_and_has_the_learner_write_again(self):
+        # Given: the learner's reply quoting words its record does not hold.
+        self.replied([self.lesson("say GPL")])
+        # When: the conductor takes it.
+        out = self.stopped("learnt")
+        # Then: rn stops with the message to send the learner, and the reply is gone for it to
+        # write again, the records kept.
+        reply = os.path.join(self.top, REPLY)
+        message = (
+            f"Write your reply to {reply} again in your form, filled:\n"
+            "lesson 1: ground 1 is not in record 3 as written; quote its words as they are"
+        )
+        self.assertEqual(
+            (message in out, os.path.exists(REPLY), os.path.exists(SHOWN_LIST)),
+            (True, False, True),
+        )
+
+    def test_a_quote_is_looked_for_in_the_text_it_numbers(self):
+        # Given: the learner's reply quoting the conversation's words as the history's.
+        self.replied([self.lesson(number=1)])
+        # When: the conductor takes it.
+        # Then: rn stops, saying the words are not in the history.
+        self.assertIn("ground 1 is not in record 1 as written", self.stopped("learnt"))
+
+    def test_a_reply_that_is_not_json_stops(self):
+        # Given: the learner's reply in words, not JSON.
+        self.write(REPLY, "No lessons.")
+        # When: the conductor takes it.
+        # Then: rn stops, saying it has the learner give it as JSON, by SendMessage.
+        out = self.stopped("learnt")
+        self.assertEqual(
+            ("give it as JSON" in out, "send rn:learner by SendMessage" in out), (True, True)
+        )
+
+    def test_learnt_without_a_reply_stops(self):
+        # Given: no reply written by the learner.
+        # When: the conductor takes it.
+        # Then: rn stops, saying to have the learner reply first.
+        self.assertIn(
+            f"rn: the learner's reply {os.path.join(self.top, REPLY)} is not there; start"
+            " rn:learner with the prompt `rn.py records` printed and wait for it to end,"
+            " then run this again",
+            self.stopped("learnt"),
+        )
+
+    def test_learnt_before_the_records_were_shown_stops(self):
+        # Given: the learner's reply, with no list of the records shown.
+        self.replied([])
+        os.remove(SHOWN_LIST)
+        # When: the conductor takes it.
+        # Then: rn stops, saying to show the records first.
+        self.assertIn(
+            "the session was not shown to the learner; run `rn.py records` first",
+            self.stopped("learnt"),
+        )
+
+    def test_learnt_without_a_session_stops(self):
+        # Given: a branch holding no session.
+        self.git("checkout", "-q", "main")
+        self.git("checkout", "-q", "-b", "other")
+        # When: the conductor takes the learner's reply.
+        # Then: rn stops, saying how to start one.
+        self.assertIn("holds no session", self.stopped("learnt"))
+
+
 class CommandTest(RepoTest):
     def test_the_command_prints_and_exits_1_on_a_stop(self):
         # Given: rn.py run as a command, as the conductor runs it, with the plugin's own
@@ -1242,7 +1751,7 @@ class CommandTest(RepoTest):
         # Then: it says a subcommand is required, and names them.
         self.assertIn(
             "required: subcommand; give it as rn.py [-h]"
-            " {session,start,state,checklists,ccs,proposal}",
+            " {session,start,state,checklists,ccs,proposal,records,learnt}",
             self.stopped(),
         )
 
@@ -1360,6 +1869,40 @@ if importlib.util.find_spec("hypothesis") is not None:
                     same,
                 ),
             )
+
+    class LearningPropertyTest(LearningTest):
+        @hypothesis.given(
+            st.lists(
+                st.datetimes(datetime.datetime(2000, 1, 1), datetime.datetime(2099, 12, 31)).map(
+                    lambda t: f"{t:%Y-%m-%dT%H:%M:%S}.{t.microsecond // 1000:03d}Z"
+                ),
+                min_size=1,
+                max_size=4,
+                unique=True,
+            )
+        )
+        def test_conversations_come_in_the_order_they_began(self, times):
+            # Given: conversations begun at any times, as Claude Code writes them, named in another
+            # order.
+            shutil.rmtree(self.project, ignore_errors=True)
+            for n, at in enumerate(times):
+                self.conversation(f"c{n}", said(str(n), at, self.top))
+            # When: the conductor has the records shown.
+            # Then: each comes in the order it began.
+            begun = sorted(range(len(times)), key=lambda n: times[n])
+            self.assertEqual(self.shown(), [f"[user] {n}\n" for n in begun])
+
+        @hypothesis.given(st.text(st.characters(blacklist_categories=("Cs",)), max_size=100))
+        def test_any_path_names_its_folder_by_letters_digits_and_hyphens(self, top):
+            # Given: any path short enough to name its folder whole.
+            # When: its folder is looked for.
+            # Then: each ASCII letter and digit stands as it is, and each UTF-16 unit of any other
+            # character as `-`, as JavaScript counts them.
+            want = "".join(
+                c if c.isascii() and c.isalnum() else "-" * (len(c.encode("utf-16-le")) // 2)
+                for c in top
+            )
+            self.assertEqual(rn.project_folders(top), [os.path.join(self.config, "projects", want)])
 
 
 if __name__ == "__main__":

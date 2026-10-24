@@ -1,14 +1,11 @@
 """turn's lanes: what hooks/hooks.json lays on each agent is what its steps say, read by lane's own
 code, which turn takes through a link."""
 
-import json
-import os
-import shlex
 import unittest
 
-from helpers import TURN, lane_code
+from helpers import TURN, testing
 
-lanes, step = lane_code("lanes", "step")
+lanes, step = testing.lane_code(TURN, "lanes", "step")
 
 # The lanes each agent's steps call for, as the architecture gives them: its run's values as the flow
 # gives them in the agent's prompt, or as turn.py start prints them.
@@ -27,28 +24,13 @@ LAID = {
 }
 
 
-def laid():
-    """Each lane hooks/hooks.json lays, as (agent, step, lane, takes)."""
-    with open(os.path.join(TURN, "hooks", "hooks.json"), encoding="utf-8") as f:
-        hooks = json.load(f)["hooks"]
-    found = []
-    for entries in hooks.values():
-        for entry in entries:
-            words = shlex.split(entry["hooks"][0]["command"].rpartition("; exec ")[2])
-            agent, *held = words[2:]
-            for one in held:
-                number, lane, takes = one.split(":", 2)
-                found.append((agent, int(number), lane, takes.split(",")))
-    return found
-
-
 class TestLanes(unittest.TestCase):
     def test_each_agent_has_the_lanes_its_steps_call_for(self):
         # Given: turn's hooks
         # When: the lanes on each agent are read
         # Then: each agent has the lanes the architecture lays on it
         on = {}
-        for agent, _, lane, _ in laid():
+        for agent, _, lane, _ in testing.laid(TURN):
             on.setdefault(agent, set()).add(lane)
         self.assertEqual(on, LAID)
 
@@ -56,7 +38,7 @@ class TestLanes(unittest.TestCase):
         # Given: turn's hooks and agents
         # When: each lane's step is read
         # Then: it says the lane's sentence word for word
-        for agent, number, lane, takes in laid():
+        for agent, number, lane, takes in testing.laid(TURN):
             with self.subTest(agent=agent, lane=lane):
                 name = agent.partition(":")[2]
                 said = lanes.sentence(lane, takes)

@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Bash|Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"rn:learner\"'*|*'\"agent_type\": \"rn:learner\"'*) echo \"rn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 2;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" rn:learner '2:read_only:{record},{conversations}' '2:read_whole:{record}' '5:in_form:{reply},${CLAUDE_PLUGIN_ROOT}/forms/learnt.json' '5:write_only:{reply}'"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "rn:learner",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"rn:learner\"'*|*'\"agent_type\": \"rn:learner\"'*) echo \"rn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 1;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" rn:learner '6:end_when:{reply}'"
+          }
+        ]
+      }
+    ]
+  }
+}

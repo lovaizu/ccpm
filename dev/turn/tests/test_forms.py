@@ -17,10 +17,10 @@ from helpers import (
     WAITS,
     RepoTest,
     forms,
-    lane_code,
+    testing,
 )
 
-(schema,) = lane_code("schema")
+(schema,) = testing.lane_code(TURN, "schema")
 
 ITEMS = [
     {"checklist": "checklists/readme.md", "item": "F-1"},
@@ -584,6 +584,18 @@ class TestLessons(FormTest):
                 said_now = self.lessons(lessons=[lesson])
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn(said, said_now[0])
+
+    def test_a_ground_is_found_in_the_text_the_reader_gives(self):
+        # Given: a text that is no record of an agent, and a reader giving it as it is
+        self.write("history.txt", "commit 1\n    the README says MIT\n")
+        grounds = [{"record": 1, "quote": "the README says MIT"}]
+        reply = {"lessons": [dict(LESSON, grounds=grounds)], "checked": CHECKED}
+        # When: a lesson quoting its words is checked with that reader
+        said = forms.check(
+            json.dumps(reply), [], [], forms.LEARNT, records=("history.txt",), read=self.read
+        )
+        # Then: it passes
+        self.assertEqual(said, [])
 
     def test_every_lesson_out_of_its_form_is_named(self):
         # Given: two lessons neither own nor general
