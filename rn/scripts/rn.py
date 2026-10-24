@@ -201,14 +201,19 @@ def changed() -> list[str]:
 
 def front_matter(path: str) -> dict[str, str]:
     """The `key: value` lines of the front matter the file opens with, as lane reads them; none
-    where the file is not there, opens with no front matter, or holds one lane cannot read, as
-    nothing it says can be told."""
+    where the file is not there, or as `keys_of` gives none."""
     if not os.path.isfile(path):
         return {}
     with open(path, encoding="utf-8") as f:
-        lines = f.read().splitlines()
+        return keys_of(f.read())
+
+
+def keys_of(text: str) -> dict[str, str]:
+    """The `key: value` lines of the front matter the text opens with, as lane reads them; none
+    where it opens with no front matter, or holds one lane cannot read, as nothing it says can be
+    told."""
     try:
-        found = template.keys(lines) or {}
+        found = template.keys(text.splitlines()) or {}
     except ValueError:
         return {}
     return {key: value for key, (_, value) in found.items()}
@@ -221,8 +226,9 @@ def plan(folder: str) -> str:
 
 def session() -> str | None:
     """The session the checked-out branch is in: the folder under `.rn/` the branch changed from
-    the default branch whose plan is not finished; None where there is none, and a stop where there
-    are more than one."""
+    the default branch whose plan, as the branch's last commit holds it, is not finished, so the
+    move that finishes it is kept and every run after it finds none; None where there is none, and
+    a stop where there are more than one."""
     at_top()
     paths = git(["diff", "--name-only", base(), "HEAD", "--", RECORD], AS_GIT_SAYS)
     folders = sorted(
@@ -233,7 +239,9 @@ def session() -> str | None:
         }
     )
     going = [
-        f for f in folders if os.path.isdir(f) and front_matter(plan(f)).get("status") != "finished"
+        f
+        for f in folders
+        if os.path.isdir(f) and keys_of(at("HEAD", plan(f)) or "").get("status") != "finished"
     ]
     if len(going) > 1:
         raise Stop(
@@ -1090,23 +1098,66 @@ def kept_numbers(folder: str) -> list[str]:
     return sorted(found, key=int)
 
 
+def turns_lessons(folder: str) -> list[dict[str, Any]]:
+    """Each lesson turn returned for a work of the session, from every version of every result
+    committed on the branch since it left the default branch, as a work made again overwrites or
+    removes the one before; oldest first, each once, with the work and the commit that first held
+    it. A version that is no JSON object holding a list of lessons is passed over, as no result of
+    turn's."""
+    listed = git(
+        [
+            "log",
+            "--reverse",
+            "--format=commit %H",
+            "--name-only",
+            "--diff-filter=AM",
+            f"{base()}..HEAD",
+            "--",
+            os.path.join(folder, "ccs"),
+        ],
+        AS_GIT_SAYS,
+    )
+    found: list[dict[str, Any]] = []
+    seen: list[dict[str, Any]] = []
+    commit = ""
+    for line in listed.splitlines():
+        if line.startswith("commit "):
+            commit = line[len("commit ") :]
+        if not line.endswith("-result.json"):
+            continue
+        try:
+            data = json.loads(git(["show", f"{commit}:{line}"], AS_GIT_SAYS))
+        except ValueError:
+            continue
+        work = os.path.basename(line)[: -len("-result.json")]
+        for lesson in data.get("lessons", []) if isinstance(data, dict) else []:
+            if lesson not in seen:
+                seen.append(lesson)
+                found.append(dict(lesson, work=work, commit=commit))
+    return found
+
+
 def run_lessons(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Every lesson the session keeps, stretch by stretch in their order, for the conductor to put
-    to the user one per message once the finished work is approved. Stops where the branch holds no
-    session, or no stretch's lessons are kept."""
+    """Every lesson of the session, for the conductor to put to the user one per message once the
+    finished work is approved: under "lessons", rn's learner's, stretch by stretch in their order,
+    each as `rn.py learnt` kept it; under "turn", turn's, each as turn's result gives it, a lesson,
+    whose it is and its grounds, with the work it was returned for and the commit that kept it.
+    Stops where the branch holds no session, or neither the learner kept a lesson nor turn returned
+    one."""
     folder = current()
     numbers = kept_numbers(folder)
-    if not numbers:
+    turns = turns_lessons(folder)
+    if not numbers and not turns:
         raise Stop(
-            f"rn: no lessons are kept in {os.path.join(folder, LESSONS)}; at each sign-off the user"
-            " answered, run `rn.py records`, have rn:learner reply, run `rn.py learnt` and keep it"
-            " with `rn.py state --message`"
+            f"rn: no lessons are kept in {os.path.join(folder, LESSONS)}, and turn returned none; at"
+            " each sign-off the user answered, run `rn.py records`, have rn:learner reply, run"
+            " `rn.py learnt` and keep it with `rn.py state --message`"
         )
     lessons = []
     for n in numbers:
         with open(os.path.join(folder, LESSONS, f"{n}.json"), encoding="utf-8") as f:
             lessons += json.load(f)["lessons"]
-    return {"lessons": lessons}
+    return {"lessons": lessons, "turn": turns}
 
 
 def read_text(path: str) -> str:

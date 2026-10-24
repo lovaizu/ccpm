@@ -112,8 +112,8 @@ flowchart TB
   sign-off before whole, its history on the branch and the files as they are now, and searches the
   conductor's conversations of that stretch for what only they show, such as the form of each
   message to the user; its lessons are kept in the record, and once the user approves the finished
-  work, they and those turn returned with each work are the learnings the conductor puts to the
-  user.
+  work, they and those turn returned with each run of each work, read from every result kept on
+  the branch, are the learnings the conductor puts to the user.
 
   turn's learner reads turn's runs alone, so a slip of rn's own steps shows only to a learner of
   rn's; a stretch ends where the user sent the work back or approved it, so what led there is near,

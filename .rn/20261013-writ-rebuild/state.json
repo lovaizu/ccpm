@@ -548,6 +548,9 @@
   },
   {
    "fact": "2026-10-24: T29's scripts part made by a subagent and read by hand against scripts.decisions.md: session's signoff, `answer approved|feedback`, ccs naming the plan and the finished work, Documents as `- <name>: <path>`, design and deliverable proposals with each work's decisions and what changed, rn/checklists/session/deliverable.md (B-1, each criterion done when used); check.sh rn 100% (189 tests, 5.9 s), mutate.sh rn 0 of 605 (1 min 39 s); tried on this branch: session gives signoff null, answer refuses with no sign-off waiting"
+  },
+  {
+   "fact": "2026-10-24: rn's three skills remade by a subagent to prompts.decisions.md and prompt.md (up 296 lines, ty 70, gm 64), read by hand against turn's up.md moves ({\"questions\"}, {\"returned\"}, `turn:` lines) and rn.py; two script gaps its trace found fixed by the scripts' subagent: the finishing move kept (status read at HEAD), turn's lessons of every result version in `rn.py lessons`; check.sh rn 100% (196 tests), mutate.sh rn 0 of 622; CHANGELOG's Unreleased written anew from 0.9.0"
   }
  ],
  "semantic_gist": [
@@ -614,7 +617,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T29: the skills next, then CHANGELOG, then the conductor's flow trial"
+   "task": "T29: the conductor's flow trial, the architecture's Verification Units 'The conductor', turn and the user stood in for"
   }
  ],
  "relational_map": [
@@ -652,7 +655,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: hand the three skills to a subagent with prompts.decisions.md and prompt.md open, read its work by hand against them and rn.py as it now is; then CHANGELOG's Unreleased made to what rn now does; then the flow trial of the architecture's Verification. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: design the conductor's flow trial in dev/rn/trials/ from the architecture's Verification (smallest request: one point, one criterion, one document, one task; turn stood in by an agent giving set results; the user by set answers), trace it on paper, run it once small, read the records against each move; then T29 done in steering. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -679,6 +682,9 @@
   },
   {
    "open": "T4: `rn.py answer approved` can be run by the conductor outside /rn:ty; held by the skills alone until T4"
+  },
+  {
+   "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
   }
  ],
  "retrieved_artifacts": [

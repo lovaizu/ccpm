@@ -151,3 +151,7 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
 - R49 (T29's scripts): a proposal shown again after an answer is a new commit even where nothing
   changed, showing "(… as before)", so `/rn:ty` finds a sign-off waiting; `answer` refuses a state
   as kept last; a file the branch removed is not part of the finished work.
+- R50 (T29's skills): the session counts as finished by its plan as the last commit holds it, so
+  the move that sets `status: finished` is kept; `rn.py lessons` also gives turn's lessons from
+  every version of each result on the branch, as a remake overwrites the result; a learning taken
+  into the user's checklist is made through turn as a checklist work, as every checklist made is.

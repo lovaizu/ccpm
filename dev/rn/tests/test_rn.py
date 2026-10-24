@@ -214,6 +214,15 @@ class SessionTest(RepoTest):
         # Then: there is none.
         self.assertIsNone(self.ran("session")["session"])
 
+    def test_a_plan_finished_and_not_yet_kept_is_still_the_session(self):
+        # Given: a session, whose plan is set finished in the working tree and not committed, as
+        # by the move that finishes it.
+        self.session()
+        self.write(plan_at(), PLAN.replace("status: running", "status: finished"))
+        # When: the conductor asks for the session.
+        # Then: it is found, as the last commit holds it running.
+        self.assertEqual(self.ran("session")["session"], FOLDER)
+
     def test_a_session_on_the_default_branch_is_not_taken_up(self):
         # Given: a session merged into the default branch, which the branch did not change.
         self.git("checkout", "-q", "main")
@@ -565,6 +574,16 @@ class StateTest(RepoTest):
         changed = self.out("diff", "--name-only", "HEAD~1", "origin/work").split()
         left = self.out("status", "--porcelain")
         self.assertEqual((changed, left), ([DECISIONS, state_at(), WORK_PATH], ""))
+
+    def test_the_move_that_finishes_the_session_is_kept_and_ends_it(self):
+        # Given: the plan set finished, and the state replaced.
+        self.write(plan_at(), PLAN.replace("status: running", "status: finished"))
+        self.write_json(state_at(), NEXT)
+        # When: the conductor keeps the move.
+        self.keep("Finished")
+        # Then: the remote's branch holds the plan finished, and the branch holds no session after.
+        kept = "status: finished" in self.out("show", f"origin/work:{plan_at()}")
+        self.assertEqual((kept, self.ran("session")["session"]), (True, None))
 
     def test_keeping_gives_the_commit(self):
         # Given: the conductor's state for the next move.
@@ -2408,7 +2427,7 @@ class LessonsTest(LearningTest):
         # When: the conductor asks for the lessons.
         # Then: rn gives each, stretch by stretch in the order of their numbers.
         want = [self.lesson(w) for w in ("a", "c", "d")]
-        self.assertEqual(self.ran("lessons"), {"lessons": want})
+        self.assertEqual(self.ran("lessons"), {"lessons": want, "turn": []})
 
     def test_lessons_reads_only_what_learnt_keeps(self):
         # Given: the lessons of a stretch, beside a file of another name.
@@ -2416,14 +2435,85 @@ class LessonsTest(LearningTest):
         self.write_json(f"{LESSONS}/notes.json", {"lessons": [self.lesson("b")]})
         # When: the conductor asks for the lessons.
         # Then: the stretch's alone are given.
-        self.assertEqual(self.ran("lessons"), {"lessons": [self.lesson("a")]})
+        self.assertEqual(self.ran("lessons"), {"lessons": [self.lesson("a")], "turn": []})
+
+    def returned(self, work: str, *lessons: dict[str, Any]) -> str:
+        """turn's result for the work, holding the lessons, kept in a commit of its own; gives the
+        commit."""
+        result = {"work": [WORK_PATH], "items": [], "lessons": list(lessons), "checked": CHECKED}
+        self.write_json(f"{FOLDER}/ccs/{work}-result.json", result)
+        self.commit_with(f"{work} made")
+        return self.head()
+
+    def test_lessons_gives_turns_lessons_of_every_result_kept_with_its_work_and_commit(self):
+        # Given: the plan's result, then a task's result, then that task's made again over it.
+        plan = self.returned("plan", self.lesson("a"))
+        first = self.returned("t1", self.lesson("b"))
+        again = self.returned("t1", self.lesson("c"))
+        self.lessons_kept(1)
+        # When: the conductor asks for the lessons.
+        # Then: rn gives each of turn's lessons, oldest first, each with its work and commit.
+        want = [
+            dict(self.lesson("a"), work="plan", commit=plan),
+            dict(self.lesson("b"), work="t1", commit=first),
+            dict(self.lesson("c"), work="t1", commit=again),
+        ]
+        self.assertEqual(self.ran("lessons"), {"lessons": [], "turn": want})
+
+    def test_a_lesson_in_several_versions_is_given_once(self):
+        # Given: a result made again, holding its first lesson and a new one.
+        first = self.returned("t1", self.lesson("a"))
+        again = self.returned("t1", self.lesson("a"), self.lesson("b"))
+        # When: the conductor asks for the lessons.
+        # Then: each is given once, with the commit that first held it.
+        want = [
+            dict(self.lesson("a"), work="t1", commit=first),
+            dict(self.lesson("b"), work="t1", commit=again),
+        ]
+        self.assertEqual(self.ran("lessons")["turn"], want)
+
+    def test_the_lessons_of_a_result_removed_are_given(self):
+        # Given: a result, then removed to make the work again.
+        made = self.returned("readme", self.lesson("a"))
+        os.remove(f"{FOLDER}/ccs/readme-result.json")
+        self.commit_with("readme to be made again")
+        # When: the conductor asks for the lessons.
+        # Then: its lessons are given still.
+        self.assertEqual(
+            self.ran("lessons")["turn"], [dict(self.lesson("a"), work="readme", commit=made)]
+        )
+
+    def test_only_turns_results_are_read(self):
+        # Given: a CCS, a result that is no JSON and one that is no object, named before a result
+        # in the ccs folder.
+        self.write_json(f"{FOLDER}/ccs/t1.json", {"lessons": [self.lesson("a")]})
+        self.write(f"{FOLDER}/ccs/s1-result.json", "{")
+        self.write(f"{FOLDER}/ccs/s2-result.json", "[]")
+        made = self.returned("t1", self.lesson("b"))
+        # When: the conductor asks for the lessons.
+        # Then: the result's alone are given.
+        self.assertEqual(
+            self.ran("lessons")["turn"], [dict(self.lesson("b"), work="t1", commit=made)]
+        )
+
+    def test_turns_lessons_with_no_learners_kept_do_not_stop(self):
+        # Given: a result with a lesson, and no learner's lessons kept.
+        made = self.returned("plan", self.lesson("a"))
+        # When: the conductor asks for the lessons.
+        # Then: rn gives turn's, and none of the learner's.
+        self.assertEqual(
+            self.ran("lessons"),
+            {"lessons": [], "turn": [dict(self.lesson("a"), work="plan", commit=made)]},
+        )
 
     def test_lessons_before_any_are_kept_stop(self):
-        # Given: a session whose stretches have no lessons kept.
+        # Given: a session whose stretches have no lessons kept, and a result of no lesson.
+        self.returned("plan")
         # When: the conductor asks for the lessons.
         # Then: rn stops, saying how lessons are kept.
         self.assertIn(
-            f"rn: no lessons are kept in {LESSONS}; at each sign-off the user answered, run"
+            f"rn: no lessons are kept in {LESSONS}, and turn returned none; at each sign-off the"
+            " user answered, run"
             " `rn.py records`, have rn:learner reply, run `rn.py learnt` and keep it with"
             " `rn.py state --message`",
             self.stopped("lessons"),

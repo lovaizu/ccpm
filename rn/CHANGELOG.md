@@ -9,21 +9,25 @@ last for fixes that change nothing you do.
 
 ### Added
 
-- Every piece of work, the plan, the design documents, each task's result and each proposal, is made by turn and read or used by an AI that did not make it, as the person it is for would, and checked item by item against a checklist — nothing reaches you that was not read in its receiver's place, and what fell short was made again or settled before you see it.
-- The report shows each item's lines as they stand in the document you get, mapped through what rn changed after turn — you open the line the report names and find the item there.
-- The proposal at each sign-off puts first what rn decided for you, each with its ground, and lists each item of the work's checklist met with the lines that give it — you see what is yours to overturn before anything else, and open the work only where you doubt it.
-- The checklists live in rn, with four new ones: the plan, a proposal, a verification document and a hook, kept by what each is for: `usability.md` for what the person a work is for gets using it, for every work, `product/` for what goes into your product, `session/` for rn's own plan and proposal — one measure for everything a session makes, you find the ones to copy for your own work at a glance, and your own checklist at `.rn/checklists/<kind>.md` is used for its kind.
-- The decisions for each piece of work, what it must say or do and leave out, are kept under `.rn/<session>/decisions/`, and each call to turn under `.rn/<session>/tasks/`, committed with the decision that made them — each item met traces back to what was asked of it, and a fresh conversation settles points from them.
-- Before the Deliverable sign-off, rn takes stock of every learning turn returned in the session and puts each to you, one per message, with what it recommends: an item for your checklist at `.rn/checklists/<kind>.md`, an issue, or letting it go — what a session learned about making its kind of work is decided by you once, instead of being left in the records or pushed into the next work unasked.
-- Each checklist gives the shape of its kind first, and its items stand in the order the maker meets them writing from the top, those over the whole last — the maker takes the items as it writes, and you read a checklist in the order the document it measures is read.
+- Every piece of work, the plan, each document, each task's result and the finished work, is made by turn and used in your place by an AI that did not make it, and made again until it finds nothing lacking — what reaches you at a sign-off has already been used as you would use it.
+- Before the deliverable sign-off, an AI that did not make the finished work uses it as you would for each acceptance criterion — a criterion that is not done when used is found before you are asked, not after.
+- Each sign-off shows the link to each work and its core decisions, each with what it is for, in at most five short lines, and after `/rn:gm` what changed — you judge the decisions, not the text, and a work whose core does not fit is made simpler before it reaches you.
+- At each sign-off you answer, rn's own learner reads what led there; once you approve the finished work, rn puts each learning to you, one per message, for your `.rn/checklists/<kind>.md`, for rn's makers as an issue opened only on your yes, both or neither — what a piece of work taught makes your later work, and rn, better.
+- While the tasks are carried out, rn says before each step what it will do, how far and how, and after it what is done and what comes next — you can stop a step going a way you do not want, without watching.
 
 ### Changed
 
-- `/rn:on` is folded into `/rn:up`: `/rn:up <what you want>` starts a session on a branch that has none, and `/rn:up` takes up the one on the branch — one command, whether you start or come back.
-- rn needs turn, which installing rn installs, and no longer needs writ — the writing, reading and checking are turn's, done one way for every piece of work.
-- turn's evidence under `.turn/` is left uncommitted — the report in the pull request's history holds what the record needs, and you delete `.turn/` when you no longer need to follow an item back.
-- A session recorded by rn 0.9.0 is taken up as it stands, since its record has the same form; only a session from before 0.9.0 has its goal worked out again — you lose nothing of a session you started on 0.9.0.
-- A question only you can decide that turn finds while making a piece of work is asked when turn returns, one per message with a recommended answer — you answer a few at a time instead of watching the work.
+- `/rn:on` and `/rn:dn` are folded into `/rn:up`: `/rn:up <what you want>` starts a session, and `/rn:up` alone, in this conversation or a fresh one, goes on from wherever you stopped — every decision is pushed before the work after it, so there is nothing to pause.
+- `/rn:ty` goes straight on to what comes after the sign-off, and `/rn:gm` keeps your feedback and stops — after an approval nothing more is typed, and after feedback you can clear the conversation and lose nothing.
+- Each point to decide is confirmed with you one per message, even one rn could look up, with what it looked up and the answer it recommends — a point decided in your place is made again when it is wrong.
+- The documents the purpose needs are settled with you after the plan sign-off instead of a fixed README, design and verification document — you get only the documents your purpose needs.
+- Each kind of work, such as a README or code, is made with rn's one checklist for it and your addition at `.rn/checklists/<kind>.md` — what your project needs beyond rn's goes into every later work of that kind.
+- rn needs turn, which installing rn installs, and no longer writ — the making and the reading in your place are done one way for every piece of work.
+- rn has no hooks of its own and asks you to protect the default branch on GitHub — the protection keeps any command from changing it before you merge, whatever form the command takes.
+
+### Removed
+
+- The reviewers' reports and the reach of each finding in the proposal — the AI that used the work in your place has settled them before the sign-off, and what is left for you is a point to decide.
 
 ## [0.9.0] - 2026-10-06
 
