@@ -509,6 +509,15 @@
   },
   {
    "fact": "2026-10-24: lane/agents/up.md remade to prompt.md (107 to 79 lines) by a subagent, checked by hand; tried on notes (trial.py lay) at the remake: lay.py print run with the proposal's heredoc and `; echo exit=$?`, so a faithful hand-on did not match and as_printed stopped twice, and end_when was not weighed as 'a reply is no tool call'; three words put back as what the hook and the guard read (print run as the whole command, the reply ending with the print's last line, Write first in step 6) and the Role and architecture say a hook sees a drift in a tool call or in how the subagent ends; tried again: 0 stops, 4 points in one reply, end_when weighed and declined with a sound ground, 2.2 min $0.60 against f4e4659's 2.2 min $0.80"
+  },
+  {
+   "fact": "2026-10-24: turn's four prompts remade to prompt.md by subagents, each read on paper against what run.py gives and reads and checked by hand, lanes' sentences kept (lay.py print added none): first-user 76 to 58 lines, generator 101 to 76 (its claim written anew with Write each time), learner 44 to 37, up 149 to 102 (each turn.py command and each call alone once the one before has given back); roles.py and kept.py tried for first-user and generator, flow.py plain and asked for up, every move in order and no hook stop (4afc6a8's had follow_next stops)"
+  },
+  {
+   "fact": "2026-10-24: flow fixes found while remaking: the first user was given the CCS among the entries of a folder on the way to it (without_run_files keeps it apart now); a check made again after an answer gave no `given`, so the orchestrator read the files of the first start (the check now comes with what to read as the CCS now names it, on every page)"
+  },
+  {
+   "fact": "the user asked (2026-10-24) for a checklist for a fix: rn/checklists/fix.md, drawn from 116 fixes of this branch later shown wrong in direction (decisions/rn/fix-checklist.decisions.md), four items (the cause gone, closer to the purpose, one place no more than the cause needs, the whole agreeing); passed from outside on every turn call, as the user said, since each send-back and later round inside turn is a fix: rn's CCS names it under constraints, turn unchanged; tracing on paper is the plan's task step 3"
   }
  ],
  "semantic_gist": [
@@ -613,7 +622,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: turn's four prompts one at a time from first-user, each remade with prompt.md open to what turn/scripts/run.py gives and reads, read on paper, lanes laid again by lane:up, roles.py tried and set beside roles/results.json; up.md last. Words a hook or the guard reads are kept exact, as up.md's remake showed. Run each claude -p trial as its own background command. Never publish an Artifact unasked"
+   "first": "on resume: T23's acceptance, trial.py on dev/turn/trials/readme x3 and stopped x3, each its own background command, read each README whole and set beside r7-s9 (9d39849) and 0.1.0's base1-3: content first, then hook stops and minutes. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
