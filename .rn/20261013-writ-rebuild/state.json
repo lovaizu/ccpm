@@ -602,6 +602,9 @@
   },
   {
    "fact": "2026-10-24, the user decided: no hook checks the reply's language (low value toward the purpose); reply_in's documents reverted and its unfinished code discarded; rn keeps proposing the two languages first and writing them into the steering (R54)"
+  },
+  {
+   "fact": "2026-10-24: rn's flow trial brought to rn as it now is by a subagent, traced on paper by it and by me (the stand-in user by the steering's front matter, the stand-in turn by the numbered CCS); two slips of rn's fixed by hand (R56): the learnings after /rn:gm keep Open, a task's design step names its part's path and kind (b7c2b5c); lane's property test of start_with narrowed and its counterexample an example test (R55); trial 2 started in the background into the scratchpad's flow2"
   }
  ],
  "semantic_gist": [
@@ -706,7 +709,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "check CI on the branch's last commits (gh run list --branch writ-rebuild); then dev/rn/trials/flow trial 2; CHANGELOG"
+   "next": "read flow trial 2's log and records when it ends (scratchpad flow2.log and flow2/<n>.jsonl): each move in the architecture's order, the steering rewritten at each commit, a call for each work, the pull request ready, the cost and minutes; fix a cause found in the records, traced to the architecture; then CHANGELOG"
   }
  ],
  "uncertainty_signal": [
