@@ -542,6 +542,9 @@
   },
   {
    "fact": "2026-10-24: the learner runs at each sign-off on that stretch alone, as the user chose: the stretch from the last commit that kept learnt/ to HEAD, conversations cut at its time, lessons in <session>/learnt/<n>.json, `rn.py lessons` gives them all at the end; check.sh rn 100% (148 tests), mutate 0 of 472; trial of two stretches passed (1.1 min, $0.41), nothing of the first shown; the learner read each file twice and the conversation whole rather than by Grep"
+  },
+  {
+   "fact": "2026-10-24: T29 designed whole and traced on paper against every story: decisions/rn/prompts.decisions.md (the three skills, the whole course from /rn:up to the pull request marked ready) and scripts.decisions.md (session gives the sign-off waiting, `answer approved|feedback`, the plan as a source of every CCS, the deliverable's CCS and checklist, Documents as `- <name>: <path>`, the design and deliverable proposals with each work's decisions, five lines of 200 characters at most)"
   }
  ],
  "semantic_gist": [
@@ -608,7 +611,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T29: rn's skills remade to the scripts, with the proposal at every sign-off and the learner's start"
+   "task": "T29: the scripts' part first (rn.py, tests, plan F-1's Documents, checklists/session/deliverable.md), then the skills, README's design sign-off example, CHANGELOG, then the conductor's flow trial"
   }
  ],
  "relational_map": [
@@ -626,7 +629,7 @@
    "rules": ".claude/rules/plugin.md"
   },
   {
-   "environment": "on this Linux sandbox: uv venv -p /usr/bin/python3 in the scratchpad, uv pip install -r dev/requirements.txt -r dev/requirements-test-quality.txt, its bin first on PATH; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here"
+   "environment": "on this Linux sandbox: uv venv -p /usr/bin/python3 in the session's scratchpad (venv/), uv pip install -r dev/requirements.txt -r dev/requirements-test-quality.txt, its bin first on PATH; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here"
   },
   {
    "watch": "watch a turn run without telling the user of each step: report only its end, a stop or a question (the user, 2026-10-21: the step-by-step notices were noise)"
@@ -646,7 +649,7 @@
  ],
  "predictive_cue": [
   {
-   "first": "on resume: T29: design the skills and the proposals together (where the hearing keeps each work's core decisions, the design and deliverable proposals, the bound on their lines), each sign-off's answer followed by rn.py records, rn:learner, rn.py learnt and state --message, and rn.py lessons after the deliverable's approval; rn's CHANGELOG; a subagent makes it with prompt.md and code.md open, I check by hand. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
+   "first": "on resume: read the subagent's T29 scripts work against scripts.decisions.md, code.md and checklist.md, check.sh rn 100% and mutate.sh rn 0, fix by hand, commit; then hand the skills to a subagent with prompts.decisions.md and prompt.md open; then README's design sign-off example, CHANGELOG's Unreleased made to what rn now does, and the flow trial of the architecture's Verification. Hold rn/checklists/fix.md for every fix. Never publish an Artifact unasked"
   }
  ],
  "uncertainty_signal": [
@@ -669,13 +672,10 @@
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
   },
   {
-   "open": "T29: the design sign-off's proposal not made, the deliverable's shows the ACs alone and '(… as before)' after /rn:gm, no bound on a proposal's lines; the proposal's fixed words are English whatever the artifact language"
-  },
-  {
-   "open": "T29: the skills call what T27 dropped (state stage=..., ccs --decisions, start without --message, proposal <work>)"
-  },
-  {
    "open": "the learner may read a conversation whole rather than search it; no lane holds Grep-only; judge on rn's whole trials with real sizes"
+  },
+  {
+   "open": "T4: `rn.py answer approved` can be run by the conductor outside /rn:ty; held by the skills alone until T4"
   }
  ],
  "retrieved_artifacts": [
