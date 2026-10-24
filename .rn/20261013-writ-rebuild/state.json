@@ -578,6 +578,12 @@
   },
   {
    "fact": "2026-10-24: the remade record drawn whole and traced on paper against start, hearing, each stage, resume mid-run, feedback and learnings: dev/rn/architecture.md rewritten (steering and numbered calls, tasks per stage, learnings made through turn as a part of the steering, no agent or hook of rn's own), dev/rn/ux.md's task line, decisions/rn/scripts.decisions.md and prompts.decisions.md rewritten, plan.md F-1 set to the steering's form; works: plan (title to tasks), learnings, t<n>, deliverable, checklist-<kind>"
+  },
+  {
+   "fact": "2026-10-24: rn.py remade by a subagent to scripts.decisions.md (check.sh rn 100%, 185 tests, 6 s; mutate.sh rn 0 of 1192, 4 min 40 s); learner agent, forms, hooks, test_lanes and trials/learner removed; plan.md items and session/learnings.md remade by another, read and fixed by hand; tried by hand in a scratch repository with a gh stand-in: start, decide, ccs plan, put, done, proposal, feedback, the proposal again with what changed, and a hand edit of the steering refused. Found: proposal leaves Next as it was, so the steering shows a stale Next while a sign-off waits; to fix with the skills"
+  },
+  {
+   "fact": "2026-10-24, the user decided (TDD): mutation and property tests check that the unit tests are enough, so on each push CI runs every unit test with 100% coverage and mutation and property tests on what the push changed, the property tests on many inputs; both whole before a release; each counterexample a property test finds is added as an example test; plugin.md step 5b and CI to change"
   }
  ],
  "semantic_gist": [
@@ -682,7 +688,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "build: a subagent remakes rn.py and its tests to decisions/rn/scripts.decisions.md, removing the learner agent, forms, hooks and their tests; another remakes rn/checklists/session/plan.md's items and adds session/learnings.md; then the skills to prompts.decisions.md; then dev/rn/trials/flow; each read by hand against its checklists"
+   "next": "change plugin.md step 5b and CI to the user's TDD decision; then rn's skills to prompts.decisions.md (with proposal setting Next while a sign-off waits); then dev/rn/trials/flow; CHANGELOG"
   }
  ],
  "uncertainty_signal": [
