@@ -572,6 +572,9 @@
   },
   {
    "fact": "2026-10-24, agreed with the user: turn makes every part of steering.md, each passing its checklist and fix.md: the goal and criteria, and the tasks, made a few at a time and changed as each turn's facts replan them (tasks for the plan and for the design hold real research and trials too); the flow is steering.md > a part file cut by rn.py > turn's IN/OUT > the part file > put back into steering.md by rn.py, turn seeing nothing of steering but that part; the part file is turn/<nnnn>-steering.md beside turn/<nnnn>-ccs.json and turn/<nnnn>-result.json, made only for calls that make a part of steering; a deliverable turn writes directly"
+  },
+  {
+   "fact": "2026-10-24, agreed with the user: what turn only reads, the goal and the criteria a work serves, goes as text in the CCS's goal_orientation, copied by rn.py from steering.md; what turn makes is a file, the part file or the deliverable; so turn cannot change the goal while making a task"
   }
  ],
  "semantic_gist": [
@@ -676,7 +679,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: settle with the user whether the goal and criteria handed to every call go as text in the CCS's goal_orientation or in the part file's form; then draw the whole remade record (steering.md's strict form, who writes each part, rn.py's keep, the part file) and trace it on paper against resume, feedback, each sign-off and learnings before building"
+   "next": "on resume: draw the whole remade record (steering.md's strict form, who writes each part, rn.py's keep, the part file, the CCS's goal_orientation) into dev/rn/architecture.md and the decisions, trace it on paper against resume, feedback, each sign-off and learnings, then build: rn.py, the skills, the plan checklist, tests, trials"
   }
  ],
  "uncertainty_signal": [
