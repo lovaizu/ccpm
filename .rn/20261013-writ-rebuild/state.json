@@ -563,6 +563,9 @@
   },
   {
    "fact": "2026-10-24, the user decided: 0.9.0's steering sections `# Assumptions` and `# Rules` are not added back, as each fact found is confirmed with the user into the decisions before the work (dev/architecture.md:67-73) and a repository's own rules go into its .rn/checklists/<kind>.md"
+  },
+  {
+   "fact": "2026-10-24: a work's decisions are named `<session>/decisions/<work>.md`, the folder saying they are decisions, as the user found `decisions/<work>.decisions.md` says it twice and no record gives a reason for it; to change in rn.py (:10, :79, :629, :793), rn/skills/up/SKILL.md, rn/checklists/session/plan.md, dev/rn/architecture.md:145, dev/rn/tests/test_rn.py and dev/rn/trials/learner/learner.py, with the rn changes before trial 2"
   }
  ],
  "semantic_gist": [
