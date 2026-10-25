@@ -6,7 +6,7 @@ Every plugin is built on [how a plugin works](./architecture.md).
 
 - [turn](./turn/)
 - [rn](./rn/)
-- [lane](./lane/): also `testing.py`, what every plugin's tests share
+- [lane](./lane/): also `testing.py` and `trials/trying.py`, what every plugin's tests and trials share
 
 The checks CI runs on every push, the linter, the formatter, the check for code copied between files, the type checker, each plugin's unit tests with the lines and branches they run counted, and Claude Code's check of every manifest, are run by `uv run sh dev/check.sh` from the top of the repository, [uv](https://docs.astral.sh/uv/) setting up the tools of `pyproject.toml`'s `dev` group in `.venv` with `uv sync --locked`. A `coverage` installed outside a virtual environment does not count the scripts the tests start as separate processes.
 

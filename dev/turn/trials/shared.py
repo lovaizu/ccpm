@@ -15,7 +15,7 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 # Starting Claude Code and reading its records are what every plugin's trials share, kept in lane's;
 # how a CCS and a checklist are read is turn's own.
-sys.path.insert(0, os.path.join(ROOT, "dev", "lane"))
+sys.path.insert(0, os.path.join(ROOT, "dev", "lane", "trials"))
 sys.path.insert(0, os.path.join(ROOT, "turn", "scripts"))
 
 from call import entries, items  # noqa: F401

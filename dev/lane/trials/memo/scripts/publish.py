@@ -1,4 +1,4 @@
-"""Publishes the memo in the folder it runs in, standing in for sending it out: prints its title."""
+"""Publishes the memo in the folder it runs in, standing in for sending it out: prints the memo's path."""
 
 import json
 

@@ -52,7 +52,7 @@ TRIALS = os.path.dirname(HERE)
 # The place, the stand-in gh and the greeting session's request are the move trials';
 # starting Claude Code is what every plugin's trials share, kept in lane's.
 sys.path.insert(0, os.path.join(TRIALS, "moves"))
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(TRIALS)), "lane"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(TRIALS)), "lane", "trials"))
 
 import cases
 import trying

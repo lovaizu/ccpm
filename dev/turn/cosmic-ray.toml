@@ -9,7 +9,7 @@ excluded-modules = []
 # code in turn's hooks, which is checked in lane: read through the link, lane's modules meet turn's
 # of the same names, such as call, and the check fails on every mutant, so none survives whatever
 # the tests catch.
-test-command = "sh -c 'pyrefly check --search-path dev/lane --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn/scripts dev/turn && python -m unittest discover -f -s dev/turn/tests'"
+test-command = "sh -c 'pyrefly check --search-path dev/lane --search-path dev/lane/trials --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn/scripts dev/turn && python -m unittest discover -f -s dev/turn/tests'"
 
 [cosmic-ray.distributor]
 name = "local"
