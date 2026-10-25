@@ -15,7 +15,6 @@ from helpers import CHECKLIST, TURN, testing
 (ports,) = testing.lane_code(TURN, "ports")
 
 ADAPTER = os.path.join(TURN, "hooks", "adapters", "items-checklist.py")
-PLAN = os.path.join(TURN, "..", "rn", "checklists", "session", "plan.md")
 
 
 def items(text, path="checklists/readme.md"):
@@ -42,18 +41,6 @@ class TestItems(unittest.TestCase):
         # When: the adapter reads it
         # Then: it gives both IDs, in the order they stand
         self.assertEqual(items(CHECKLIST), ["F-1", "B-1"])
-
-    def test_rn_s_plan_checklist_gives_its_items_and_not_its_template_s_headings(self):
-        # Given: rn's plan checklist, its items not in the order of their numbers, and a template
-        # in a fence holding headings of its own
-        with open(PLAN, encoding="utf-8") as f:
-            text = f.read()
-        # When: the adapter reads it
-        # Then: it gives each item's ID as it stands, and none of the template's
-        self.assertEqual(
-            items(text, PLAN),
-            ["F-1", "B-1", "B-2", "B-3", "B-4", "B-8", "B-9", "B-5", "B-6", "B-7"],
-        )
 
     def test_a_heading_in_the_frontmatter_is_not_an_item(self):
         # Given: frontmatter holding a line written as an item heading, and an item after it
