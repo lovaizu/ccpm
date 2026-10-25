@@ -158,8 +158,9 @@ turn/                      the plugin, installed by Claude Code
 └── hooks/
     ├── hooks.json         the hook of each agent and event, written by lane's lay.py <JSON>
     ├── lanes.json         the lanes on every agent, laid by lane's lay.py <JSON>
-    ├── adapters/          items-checklist.py, a checklist's items read at lane's items port, as
-    │                      turn's are headings, with its cases, laid by lane's lay.py <Python 3>
+    ├── adapters/          items-checklist.py, a checklist's items, as turn's are headings, read
+    │                      at lane's items port and by call.py, with its cases, laid by lane's
+    │                      lay.py <Python 3>
     └── lane/              lane's code, the guard, a link to lane's <Python 3>
 
 <where the call puts the result, in the calling AI's work folder>/

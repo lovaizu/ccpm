@@ -29,11 +29,12 @@ def shown(run: dict) -> dict:
     titles = {}
     for path in run["checklist"]:
         with open(path, encoding="utf-8") as f:
-            lines = f.read().splitlines()
-        for _, level, text in template.headings(lines, template.body(lines)):
-            heading = call.ITEM.match(text) if level == call.LEVEL else None
-            if heading:
-                titles[(path, heading.group(1))] = text[len(heading.group(0)) :]
+            text = f.read()
+        lines = text.splitlines()
+        # Each heading's text by its line, of which turn's reading gives the items' lines.
+        said = {n: words for n, _, words in template.headings(lines, template.body(lines))}
+        for number, item in call.READ_ITEMS(text):
+            titles[(path, item)] = said[number][len(f"{item}: ") :]
     items = [
         {
             "checklist": os.path.basename(i["checklist"]),

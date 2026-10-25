@@ -186,30 +186,6 @@ class TestStart(RepoTest):
         running = self.state()
         self.assertEqual(running["each"], [EACH_ITEM])
 
-    def test_an_item_in_a_template_is_not_an_item(self):
-        for fence in ("```", "~~~", "   ```"):
-            with self.subTest(fence=fence):
-                # Given: a checklist whose template, in a fence of backticks, of tildes or indented,
-                # holds an item heading of its own
-                fenced = f"\n{fence}markdown\n### B-7: <Item name>\n\n<Question>\n{fence}\n"
-                text = CHECKLIST.replace("## Benefit", fenced + "\n## Benefit")
-                self.write("checklists/readme.md", text)
-                # When: the run is started
-                self.turn("start", json.dumps(CALL))
-                # Then: the run keeps the checklist's own items alone
-                self.assertEqual([i["item"] for i in self.state()["items"]], ["F-1", "B-1"])
-                os.remove(CALL["result"] + ".run.json")
-
-    def test_a_heading_of_another_level_is_not_an_item(self):
-        # Given: a checklist whose headings of the level above an item's and of the level below
-        # are written as items are
-        other = "\n## B-8: Above\n\nScope: whole\n\n#### B-9: Below\n\nScope: whole\n"
-        self.write("checklists/readme.md", CHECKLIST + other)
-        # When: the run is started
-        self.turn("start", json.dumps(CALL))
-        # Then: the run keeps the items of an item's level alone
-        self.assertEqual([i["item"] for i in self.state()["items"]], ["F-1", "B-1"])
-
     def test_the_run_keeps_what_the_roles_may_read(self):
         # Given: a CCS whose entries name existing files, and text that names none
         # When: the run is started

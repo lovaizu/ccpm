@@ -5,11 +5,10 @@ from __future__ import annotations
 
 import json
 import os
-import re
+import runpy
 from typing import Any
 
 import forms
-import template
 
 SHAPE = (
     '{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "receiver": "<kind>",'
@@ -24,10 +23,12 @@ PLACES = ("ccs", "result")
 # folder named `docs/` is found within `docs`.
 PATHS = ("work", "checklist", "has")
 KINDS = ("work", "checklist", "receiver", "use", "has")
-# An item of a checklist is a heading of the form `### B-1: <title>`, outside a fence, with the
-# line under it saying where in the work it is answered.
-LEVEL = 3
-ITEM = re.compile(r"([A-Z]+-\d+): ")
+# An item of a checklist is a heading of the form `### B-1: <title>`, with the line under it saying
+# where in the work it is answered; the headings are read by turn's adapter of lane's items port,
+# where what an item is is kept once, loaded from its file, as its name is no module's.
+READ_ITEMS = runpy.run_path(
+    os.path.join(os.path.dirname(__file__), "..", "hooks", "adapters", "items-checklist.py")
+)["items"]
 SCOPES = ("its part", "each part", "whole")
 
 
@@ -157,24 +158,19 @@ def items(path: str) -> list[dict[str, str]]:
     """Every item of a checklist, by its path, ID and scope; stops when it holds none, or at an
     item whose scope is not said."""
     with open(path, encoding="utf-8") as f:
-        lines = f.read().splitlines()
+        text = f.read()
+    lines = text.splitlines()
     found: list[dict[str, str]] = []
-    for number, level, text in template.headings(lines, template.body(lines)):
-        heading = ITEM.match(text)
-        if (
-            level != LEVEL  # pragma: no mutate
-            or heading is None
-        ):
-            continue
+    for number, item in READ_ITEMS(text):
         below = lines[number : number + 2]
         scope = next((s for s in SCOPES if below == ["", f"Scope: {s}"]), None)
         if scope is None:
             raise Stop(
-                f"turn: {path} {heading.group(1)} does not say where it is answered; put the line"
+                f"turn: {path} {item} does not say where it is answered; put the line"
                 " `Scope: its part`, `Scope: each part` or `Scope: whole` after a blank line"
                 " under its heading"
             )
-        found.append({"checklist": path, "item": heading.group(1), "scope": scope})
+        found.append({"checklist": path, "item": item, "scope": scope})
     if not found:
         raise Stop(f"turn: {path} holds no item, a heading such as `### B-1: <title>`")
     return found

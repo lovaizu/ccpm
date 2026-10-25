@@ -1,9 +1,10 @@
 """turn's adapter of lane's items port: given {"input": <path>, "text": <its text>} on stdin, prints
 {"items": [<ID>, ...]}, the ID of each item of a turn checklist in the order it stands. An item is a
 heading of the third level whose text begins `<ID>: `, its ID capitals, a hyphen and a number, such
-as `B-1`, outside the frontmatter and any code fence, as turn's scripts/call.py reads a checklist;
-lane's own reading takes list items instead. A Python 3 script on the standard library alone, as
-lane runs it both beside the proposal and in the plugin, where turn's scripts are not beside it."""
+as `B-1`, outside the frontmatter and any code fence; lane's own reading takes list items instead.
+This is turn's one reading of what an item is, which turn's scripts/call.py loads by its path too.
+A Python 3 script on the standard library alone, as lane runs it both beside the proposal and in the
+plugin, where turn's scripts are not beside it."""
 
 from __future__ import annotations
 
@@ -24,15 +25,15 @@ MARK = "---"
 FENCE = re.compile(r" {0,3}(?P<marks>`{3,}|~{3,})(?P<rest>.*)")
 
 
-def ids(text: str) -> list[str]:
-    """The ID of each item heading of the text outside the frontmatter and any code fence, in
-    order."""
+def items(text: str) -> list[tuple[int, str]]:
+    """Each item heading of the text outside the frontmatter and any code fence, in order, as the
+    line it stands on, counted from 1, and its ID."""
     lines = text.splitlines()
     start = lines.index(MARK, 1) + 1 if lines[:1] == [MARK] and MARK in lines[1:] else 0
-    found: list[str] = []
+    found: list[tuple[int, str]] = []
     # The marks of the fence open, None where none is.
     opened = None
-    for line in lines[start:]:
+    for number, line in enumerate(lines[start:], start=start + 1):
         fence = FENCE.fullmatch(line)
         if opened is not None:
             opened = None if fence is not None and closes(fence, opened) else opened
@@ -43,7 +44,7 @@ def ids(text: str) -> list[str]:
         heading = HEADING.fullmatch(line)
         item = heading and ID.match(CLOSED.sub("", heading["text"] or "").strip())
         if item:
-            found.append(item["id"])
+            found.append((number, item["id"]))
     return found
 
 
@@ -55,4 +56,4 @@ def closes(fence: re.Match[str], opened: str) -> bool:
 
 
 if __name__ == "__main__":
-    print(json.dumps({"items": ids(json.load(sys.stdin)["text"])}))
+    print(json.dumps({"items": [i for _, i in items(json.load(sys.stdin)["text"])]}))

@@ -1,7 +1,7 @@
-"""turn's adapter of lane's items port: the items of a checklist as every_item counts them, each
-item a heading `### <ID>: <title>` outside a code fence, as turn reads a checklist, where lane's own
-reading takes list items; run as the guard runs it, through lane's port, which holds what it gives
-to the port's JSON."""
+"""turn's adapter of lane's items port, turn's one reading of a checklist's items, which every_item
+counts and call.py takes, each item a heading `### <ID>: <title>` outside a code fence, where lane's
+own reading takes list items; run as the guard runs it, through lane's port, which holds what it
+gives to the port's JSON."""
 
 import contextlib
 import io
@@ -29,6 +29,13 @@ class TestItems(unittest.TestCase):
         # When: the adapter reads it
         # Then: it gives the item's ID
         self.assertEqual(items("### B-1: Who it is for\n\nScope: its part\n"), ["B-1"])
+
+    def test_each_item_is_read_with_the_line_its_heading_stands_on(self):
+        # Given: a checklist with frontmatter, a fence holding a heading, and two items
+        text = "---\nname: readme\n---\n```\n### B-7: x\n```\n### F-1: Shape\n\n### B-1: Who\n"
+        # When: the adapter's reading is given it
+        # Then: it gives each item by the line of its heading, counted from 1, and its ID
+        self.assertEqual(runpy.run_path(ADAPTER)["items"](text), [(7, "F-1"), (9, "B-1")])
 
     def test_the_items_under_format_and_benefit_are_given_in_order(self):
         # Given: a checklist with frontmatter, an item under Format and one under Benefit
@@ -118,7 +125,7 @@ class TestItems(unittest.TestCase):
         with contextlib.redirect_stdout(out):
             read = runpy.run_path(ADAPTER)
         # Then: it gives its reading and prints nothing, waiting on no input
-        self.assertEqual((read["ids"]("### B-1: x\n"), out.getvalue()), (["B-1"], ""))
+        self.assertEqual((read["items"]("### B-1: x\n"), out.getvalue()), ([(1, "B-1")], ""))
 
     def test_the_adapter_gives_each_of_its_cases(self):
         # Given: the cases kept beside the adapter, which lane's layer runs it on

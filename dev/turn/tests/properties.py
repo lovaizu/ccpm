@@ -3,7 +3,6 @@ makes, new on every run, CI included."""
 
 import json
 import os
-import runpy
 import shutil
 import tempfile
 import unittest
@@ -14,7 +13,6 @@ from helpers import (
     ITEM_F1,
     QUESTION,
     RESULT,
-    TURN,
     WAITS,
     RepoTest,
     call,
@@ -117,21 +115,6 @@ CHECKLIST_LINES = st.sampled_from(
 )
 
 
-# Parts of a checklist for turn's adapter of the items port: items with their scope, and what is
-# not an item, a heading of another level or with no ID, the frontmatter's mark, fences and text.
-CHECKLIST_PARTS = st.sampled_from(
-    [
-        "### B-1: x\n\nScope: whole",
-        "### B-2: y ###\n\nScope: whole",
-        "   ### B-5: v\n\nScope: whole",
-    ]
-    + ["## B-3: z", "#### B-4: w", "### Notes", "###B-6: u", "### B-7:", "### b-8: t"]
-    + ["---", "```", "````", "~~~", "```md", "    ```", "x", ""]
-)
-# turn's adapter of lane's items port, read from its file, as its name is no module's: its reading.
-ITEMS_READ = runpy.run_path(os.path.join(TURN, "hooks", "adapters", "items-checklist.py"))["ids"]
-
-
 class TestItems(RepoTest):
     @given(st.lists(CHECKLIST_LINES, max_size=30))
     def test_any_checklist_gives_its_items_outside_fences_or_stops_with_words(self, lines):
@@ -145,24 +128,9 @@ class TestItems(RepoTest):
             # outside a fence, as lane's template reads them, with the scope its line says
             self.assertIn("turn: checklist.md", str(stop))
             return
-        outside = {n for n, level, _ in call.template.headings(lines, 0) if level == 3}
+        outside = {n for n, level, _ in forms.template.headings(lines, 0) if level == 3}
         self.assertEqual(len(found), len([n for n in outside if lines[n - 1][4:6] == "B-"]))
         self.assertTrue(all(i["scope"] in call.SCOPES for i in found))
-
-    @given(st.lists(CHECKLIST_PARTS, max_size=20))
-    def test_turn_s_adapter_gives_the_items_turn_reads_in_any_checklist(self, parts):
-        # Given: a checklist of any parts: items with their scope, as written plainly, closed or
-        # indented, headings of other levels or with no ID, frontmatter marks, fences and text
-        text = "".join(part + "\n" for part in parts)
-        self.write("checklist.md", text)
-        # When: turn reads its items, and turn's adapter of lane's items port reads them
-        try:
-            read = [i["item"] for i in call.items("checklist.md")]
-        except call.Stop as stop:
-            self.assertIn("holds no item", str(stop))
-            read = []
-        # Then: the adapter gives the IDs turn reads, in the same order
-        self.assertEqual(ITEMS_READ(text), read)
 
 
 # Entries a record holds: messages of text and of parts, attachments, Claude Code's copies, and
