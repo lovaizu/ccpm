@@ -6,7 +6,7 @@ import os
 import unittest
 
 import helpers
-from laying import LayTest
+from laying import LANES, PUSH, LayTest
 
 
 class TestProposal(LayTest):
@@ -27,6 +27,22 @@ class TestProposal(LayTest):
                 "no number",
             ),
             "a lane that is no object": (self.proposal([1]), "no lane"),
+            "a step given twice": (
+                dict(
+                    plugin,
+                    subagents=[
+                        {
+                            "name": "changelog-writer",
+                            "steps": [{"step": 3, "lanes": LANES}, {"step": 3, "lanes": PUSH}],
+                        }
+                    ],
+                ),
+                "gives step 3 of changelog-writer twice",
+            ),
+            "a subagent given twice": (
+                dict(plugin, subagents=plugin["subagents"] * 2),
+                "gives changelog-writer twice",
+            ),
             "a subagent of a name no file has": (self.proposal(name="other"), "other"),
             "a step the file has not": (self.proposal(number=9), "step 9"),
             "a step of no number": (self.proposal(number="3"), "step"),
@@ -71,6 +87,26 @@ class TestProposal(LayTest):
                     self.assertIn(named, said)
                     self.assertIn("write the proposal again", said)
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
+
+    def test_each_subagent_and_each_step_given_once_is_taken(self):
+        # Given: a proposal of two subagents, each with two steps
+        second = helpers.STEPS.replace("name: changelog-writer", "name: changelog-writer-2")
+        self.write(os.path.join(self.plugin, "agents", "writer-2.md"), second)
+        steps = [{"step": n, "lanes": PUSH} for n in (3, 2)]
+        self.propose(
+            {
+                "plugin": self.plugin,
+                "subagents": [
+                    {"name": "changelog-writer", "steps": steps},
+                    {"name": "changelog-writer-2", "steps": steps},
+                ],
+            }
+        )
+        # When: it is printed
+        code, said = self.lay("print", self.proposal_file)
+        # Then: it is taken, each step of each subagent printed
+        self.assertEqual(code, 0)
+        self.assertEqual(said.count("Lanes on step"), 4)
 
     def test_a_proposal_not_there_or_holding_no_json_stops_saying_so(self):
         for what, made, named in (

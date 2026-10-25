@@ -32,8 +32,9 @@ def wrong(what: str) -> Stop:
 
 
 def proposal(path: str) -> dict[str, Any]:
-    """The proposal at the path, checked to be as lane:up writes it, with the plugin's name, and
-    each subagent with its file and its lines, and each step with where it is among them."""
+    """The proposal at the path, checked to be as lane:up writes it, each subagent given once, with
+    the plugin's name, and each subagent with its file and its lines, and each step with where it is
+    among them."""
     try:
         with open(path, encoding="utf-8") as f:
             given = json.load(f)
@@ -47,11 +48,15 @@ def proposal(path: str) -> dict[str, Any]:
     subagents = given.get("subagents")
     if not isinstance(subagents, list) or not subagents:
         raise wrong("gives no subagents")
-    return {
-        "plugin": root,
-        "name": plugin_name(root),
-        "subagents": [subagent(root, s) for s in subagents],
-    }
+    name, checked = plugin_name(root), []
+    for given_agent in subagents:
+        agent = subagent(root, given_agent)
+        # A subagent given twice would be written twice, its file and its hook the second time from
+        # the second's lanes alone, and the first's lost though the building AI approved them.
+        if agent["name"] in [a["name"] for a in checked]:
+            raise wrong(f"gives {agent['name']} twice, where each subagent comes once")
+        checked.append(agent)
+    return {"plugin": root, "name": name, "subagents": checked}
 
 
 def plugin_name(root: str) -> str:
@@ -74,8 +79,8 @@ def plugin_name(root: str) -> str:
 
 
 def subagent(root: str, given: Any) -> dict[str, Any]:
-    """A subagent of the proposal, checked, with its file and its lines, and each step with where
-    it is among them."""
+    """A subagent of the proposal, checked, each of its steps given once, with its file and its
+    lines, and each step with where it is among them."""
     name = given.get("name") if isinstance(given, dict) else None
     if not isinstance(name, str) or not re.fullmatch(hooks_file.NAME, name):
         raise wrong("gives a subagent no name")
@@ -87,10 +92,16 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
     steps = given.get("steps")
     if not isinstance(steps, list) or not steps:
         raise wrong(f"gives {name} no steps")
+    numbers = []
     for s in steps:
         number = s.get("step") if isinstance(s, dict) else None
         if not isinstance(number, int):
             raise wrong(f"gives a step of {name} no number")
+        # A step given twice would be printed as two readings of it and written with the sentences
+        # of one, so the step would say what no print showed.
+        if number in numbers:
+            raise wrong(f"gives step {number} of {name} twice, where each step comes once")
+        numbers.append(number)
         where = step.span([line.rstrip("\n") for line in lines], number)
         if where is None:
             raise wrong(f"gives step {number}, which the Steps of {name} do not have")
