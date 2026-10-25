@@ -74,7 +74,7 @@ for folder in folders:
     with open(os.path.join(folder, ".tasks", "ccs.json"), encoding="utf-8") as f:
         checklists = shared.entries(json.load(f), "checklist")
     # The folder's items, from the checklists its CCS names, to find any the judge left out.
-    asked = {(c, i) for c in checklists for _, i, _ in shared.items(os.path.join(folder, c))}
+    asked = {(c, i["item"]) for c in checklists for i in shared.items(os.path.join(folder, c))}
     with open(judged(folder), encoding="utf-8") as f:
         given = json.load(f)
     met = asked & {(g.get("checklist"), g.get("item")) for g in given if g.get("met") is True}
