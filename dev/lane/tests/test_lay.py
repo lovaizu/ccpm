@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import os
 import runpy
 import shutil
@@ -75,9 +76,9 @@ class TestWriteEnd(LayTest):
 
 
 class TestUp(LayTest):
-    """`lay.py up <plugin>`: an older copy of lane's code brought up, with the hooks lane:up wrote
-    in the current form and the same lanes; and each lane laid before said, for lane:up to put to
-    the building AI."""
+    """`lay.py up <plugin> <data folder>`: an older copy of lane's code brought up, with the hooks
+    lane:up wrote in the current form and the same lanes; each lane laid before said, for lane:up to
+    put to the building AI; and last what lane:up reads, as one JSON line."""
 
     # The hook's command for hands_off as an older version of lane wrote it, with no Python check.
     OLDER = (
@@ -101,6 +102,16 @@ class TestUp(LayTest):
         current = mock.patch.object(placed, "lane_version", return_value="0.10.0")
         current.start()
         self.addCleanup(current.stop)
+        # What lane:up reads, as `up` prints it last: the plugin's manifest, skills and agents,
+        # lane's docs/lanes.md, and the proposal, kept in the data folder by the plugin's name.
+        reads = [
+            os.path.join(self.plugin, ".claude-plugin", "plugin.json"),
+            os.path.join(self.plugin, "skills"),
+            os.path.join(self.plugin, "agents"),
+            os.path.join(helpers.LANE, "docs", "lanes.md"),
+            self.proposal_file,
+        ]
+        self.reads = json.dumps({"reads": reads}) + "\n"
 
     def hooks_of(self, *entries, event="PreToolUse"):
         """Writes hooks.json holding the entries of the event, each a command or an entry."""
@@ -113,8 +124,8 @@ class TestUp(LayTest):
         self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": {event: given}})
 
     def up(self) -> tuple:
-        """What `lay.py up` on the plugin exits with and prints."""
-        return self.lay("up", self.plugin)
+        """What `lay.py up` on the plugin and lane's data folder exits with and prints."""
+        return self.lay("up", self.plugin, os.path.dirname(self.proposal_file))
 
     def test_an_older_copy_and_its_hooks_are_brought_up_with_the_same_lanes(self):
         # Given: the copy of 0.1.0, its hook in the older form between two entries of the building
@@ -134,7 +145,8 @@ class TestUp(LayTest):
             said,
             "Brought lane's code in hooks/lane/ up from 0.1.0 to 0.10.0.\n"
             "Wrote the hook of changelog-writer into hooks/hooks.json with the lanes it held.\n"
-            + self.LAID,
+            + self.LAID
+            + self.reads,
         )
 
     def test_hooks_of_both_events_are_brought_up_each_lane_once(self):
@@ -205,7 +217,7 @@ class TestUp(LayTest):
                 # Then: nothing is brought up, and it says so, and the lane laid before
                 self.assertEqual(code, 0)
                 no_copy = "hooks/lane/ holds no older copy of lane's code.\n"
-                self.assertEqual(said, no_copy + self.LAID)
+                self.assertEqual(said, no_copy + self.LAID + self.reads)
                 self.assertEqual(
                     self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"], self.OLDER
                 )
@@ -275,8 +287,44 @@ class TestUp(LayTest):
         # Given: a plugin with no hooks.json and no copy of lane's code
         shutil.rmtree(self.code)
         # When: it is brought up
-        # Then: it says there is no older copy, and nothing else
-        self.assertEqual(self.up(), (0, "hooks/lane/ holds no older copy of lane's code.\n"))
+        # Then: it says there is no older copy, and what lane:up reads
+        no_copy = "hooks/lane/ holds no older copy of lane's code.\n"
+        self.assertEqual(self.up(), (0, no_copy + self.reads))
+
+    def test_what_lane_up_reads_is_given_by_whole_paths(self):
+        # Given: the plugin's folder and lane's data folder named from the folder lay.py runs in
+        # When: it is brought up
+        code, said = self.lay("up", "notes", "data")
+        # Then: what lane:up reads is given by whole paths, as the last line
+        self.assertEqual(code, 0)
+        self.assertTrue(said.endswith(self.reads))
+
+    def test_a_folder_with_no_manifest_stops_with_nothing_brought_up(self):
+        # Given: the older copy and its hook, in a folder with no .claude-plugin/plugin.json
+        self.hooks_of(self.OLDER)
+        os.remove(os.path.join(self.plugin, ".claude-plugin", "plugin.json"))
+        # When: it is brought up
+        code, said = self.up()
+        # Then: it exits 1 saying the folder is no plugin's and to name one, the copy and the
+        # hook left as they were
+        stop = (
+            f"lay.py: {self.plugin} holds no .claude-plugin/plugin.json, so it is no plugin's"
+            " folder; name the folder of the plugin to lay lanes on.\n"
+        )
+        self.assertEqual((code, said), (1, stop))
+        self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.1.0\n")
+        command = self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        self.assertEqual(command, self.OLDER)
+
+    def test_a_manifest_naming_no_plugin_stops(self):
+        # Given: a manifest giving the plugin no name
+        self.write_json(os.path.join(self.plugin, ".claude-plugin", "plugin.json"), {})
+        # When: it is brought up
+        code, said = self.up()
+        # Then: it exits 1 naming the manifest, the copy left as it was
+        self.assertEqual(code, 1)
+        self.assertIn("plugin.json names the plugin by no name", said)
+        self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.1.0\n")
 
     def test_hooks_not_in_claude_codes_shape_stop(self):
         # Given: hooks.json holding no JSON
@@ -291,7 +339,15 @@ class TestUp(LayTest):
 
 class TestMain(LayTest):
     def test_any_other_arguments_print_how_to_run_it(self):
-        for argv in ([], ["print"], ["up"], ["lay", self.proposal_file], ["print", "a", "b"]):
+        for argv in (
+            [],
+            ["print"],
+            ["up"],
+            ["up", self.plugin],
+            ["up", self.plugin, "data", "x"],
+            ["lay", self.proposal_file],
+            ["print", "a", "b"],
+        ):
             with self.subTest(argv=argv):
                 # Given: arguments lay.py does not take
                 # When: it is run with them

@@ -19,14 +19,13 @@ only by `lay.py up`, which brings lane's code and hooks there up with the same l
 
 ## Steps
 
-1. Take the plugin's folder from your prompt; where none is named, or it holds no
-   `.claude-plugin/plugin.json`, reply with what is missing and end. Run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" up <the folder>` as the whole command; `lay.py`
-   below stands for `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py"`. Its print gives each lane laid
-   before in the plugin's hooks, with its step and its subagent, as `<proposal>` gives a lane in
-   step 6. Where it printed `Brought lane's code`, its print begins your first reply in step 5, or,
-   where no point is left open, your reply in step 9. Where it exits with 1, its print is a fact for
-   step 5.
+1. Take the plugin's folder from your prompt; where none is named, reply so and end. `lay.py` below
+   stands for `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py"`. Run
+   `lay.py up <the folder> "${CLAUDE_PLUGIN_DATA}"` as the whole command; where it exits with 1,
+   reply with its print and end. Its print gives each lane laid before in the plugin's hooks, with
+   its step and its subagent, as `<proposal>` gives a lane in step 6. Where it printed
+   `Brought lane's code`, its print without its last line begins your first reply in step 5, or,
+   where no point is left open, your reply in step 9.
 2. Read lane's lanes with `cat -n "${CLAUDE_PLUGIN_ROOT}/docs/lanes.md"`.
 3. Read, as the whole of what you read of the plugin, each file with `cat -n <path>` in a command of
    its own: `.claude-plugin/plugin.json`, and each file
