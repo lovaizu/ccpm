@@ -142,13 +142,17 @@ and what lives only in it is lost.
 Besides the work and the files its caller names, a plugin writes what may be kept in
 `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository, as rn keeps `.rn/<yyyymmdd>-<slug>/`,
 and what is used only while it runs, its tests' and trials' too, in `<plugin>/<yyyymmdd>-<name>/`
-in the system's temporary folder, the one Python's `tempfile.gettempdir()` gives.
+in the system's temporary folder, the one Python's `tempfile.gettempdir()` gives. A file an agent
+reads with its tools, though used only while the plugin runs, goes in the folder that may be kept,
+and is removed once it is used.
 
 In one folder of the plugin's name, what may be kept goes into git or stays out as the user
 chooses, by one line of `.gitignore`, and the date at the front sorts the runs and shows the old
 ones. What is used only while running needs no step to remove it, which a run stopped partway
 would miss, as the system clears its temporary folder itself; that folder is the one TMPDIR names
-where it is set, as macOS and sandboxes set it to a folder of their own, not always `/tmp`.
+where it is set, as macOS and sandboxes set it to a folder of their own, not always `/tmp`. Claude
+Code lets an agent read without asking only inside the working folder and the folders added to it
+(permissions, Permission system), so a file outside it stops an agent working on its own to ask.
 
 ### The purpose before performance
 
