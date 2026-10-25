@@ -179,7 +179,7 @@ def lane_check(lane: Any, on: str, root: str) -> None:
         raise wrong(
             f"gives {known} on {on} takes of another count than its wording and its hook hold"
         )
-    if known in ("in_form",):
+    if known == "in_form":
         try:
             in_form.form(root, takes[1])
         except ValueError as why:
@@ -288,7 +288,7 @@ def entry(plugin: str, agent: dict[str, Any], event: str = "PreToolUse") -> dict
     name = f"{plugin}:{agent['name']}"
     laid = [lanes.word(n, g["lane"], g["takes"]) for n, g in on_it]
     each = [t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ())]
-    tools = [name] if event in ("SubagentStop",) else each
+    tools = [name] if event == "SubagentStop" else each
     run_it = command(plugin, name, laid, event)
     return {
         "matcher": "|".join(dict.fromkeys(tools)),
@@ -360,9 +360,7 @@ def marketplace(folder: str) -> str | None:
 
 def lanes_own(place: str) -> bool:
     """Whether the folder is lane's code itself, as hooks/lane/ is on lane."""
-    # Told by membership rather than `==`, as an order comparison such as `<=` would hold for other
-    # paths too, and a mutant making it one would pass every test.
-    return os.path.realpath(place) in (os.path.realpath(CODE),)
+    return os.path.realpath(place) == os.path.realpath(CODE)
 
 
 def lane_version() -> str:
@@ -529,8 +527,6 @@ def brought_up(root: str) -> str:
     return "".join([*said, *left])
 
 
-# Run as the command, and not when the tests import it under the name lay. It is written as
-# membership rather than `==`, since an order comparison such as `<=` would also tell "__main__"
-# from "lay", and a mutant making it one would pass every test.
-if __name__ in ("__main__",):
+# Run as the command, and not when the tests import it under the name lay.
+if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

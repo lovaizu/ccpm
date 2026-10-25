@@ -34,7 +34,7 @@ def runs(call: Call, takes: list[str]) -> bool:
     python3 or sh, its script named from the plugin's folder where it begins with
     `${CLAUDE_PLUGIN_ROOT}/`; a take naming no script is run by no call."""
     found = []
-    for words in call.what if call.action in ("run",) else []:
+    for words in call.what if call.action == "run" else []:
         ran = program(words)
         path = ran[0] if ran else ""
         for taken in (program(shell.words(t)) for t in takes):

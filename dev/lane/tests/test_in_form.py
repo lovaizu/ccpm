@@ -128,15 +128,13 @@ class TestForm(InFormTest):
         self.assertEqual(in_form.form(self.plugin, TAKES[1]), FORM)
 
     def test_a_form_out_of_the_plugin_is_refused(self):
-        for named in ("${CLAUDE_PLUGIN_ROOT}/../form.json",):
-            with self.subTest(named=named):
-                # Given: a form beside the plugin, out of it
-                self.write_json(os.path.join(self.base, "form.json"), FORM)
-                # When: it is read for the lane
-                # Then: it is refused, as installing copies the plugin's folder alone
-                with self.assertRaises(ValueError) as refused:
-                    in_form.form(self.plugin, named)
-                self.assertIn("out of the plugin", str(refused.exception))
+        # Given: a form beside the plugin, out of it
+        self.write_json(os.path.join(self.base, "form.json"), FORM)
+        # When: it is read for the lane
+        # Then: it is refused, as installing copies the plugin's folder alone
+        with self.assertRaises(ValueError) as refused:
+            in_form.form(self.plugin, "${CLAUDE_PLUGIN_ROOT}/../form.json")
+        self.assertIn("out of the plugin", str(refused.exception))
 
     def test_a_form_linked_from_the_plugin_is_read(self):
         # Given: the form, a link in the plugin to a file beside it, as a plugin takes another's

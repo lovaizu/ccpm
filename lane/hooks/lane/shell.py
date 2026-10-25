@@ -101,16 +101,13 @@ def words(command: str) -> list[str]:
     while left is not None:
         reading, left = left, None
         for piece in PIECE.finditer(reading):
-            # Each alternative of PIECE is a named group, so the piece has its kind. A kind is
-            # told by membership rather than `==`, since an order comparison such as `>=` would
-            # tell it from the kinds that come there too, and a mutant making it one would pass
-            # every test.
+            # Each alternative of PIECE is a named group, so the piece has its kind.
             kind = str(piece.lastgroup)
             text = piece.group(kind)
-            if kind in ("unclosed",):
+            if kind == "unclosed":
                 return [Operator(w) if w in OPERATORS else w for w in command.split()]
             if kind in ("single", "double", "escaped", "plain"):
-                if kind in ("double",):
+                if kind == "double":
                     text = DOUBLE_ESCAPED.sub(lambda m: m.group(1) or "", text)
                 word = (word or "") + text
                 quoted = quoted or kind != "plain"
@@ -125,7 +122,7 @@ def words(command: str) -> list[str]:
                     ends.append((word, HEREDOCS[found[-1]]))
                 found.append(word)
             word, quoted = None, False
-            if kind in ("operator",):
+            if kind == "operator":
                 found.append(Operator(text))
             if text == "\n" and ends:
                 left = reading[heredocs_end(reading, piece.end(), ends) :]
@@ -246,7 +243,7 @@ def split(args: list[str], valued: set[str]) -> tuple[list[tuple[str, str]], lis
     operands: list[str] = []
     rest = iter(args)
     for word in rest:
-        if word in ("--",):
+        if word == "--":
             operands += rest
         elif word.startswith("-"):
             options.append((word, next(rest, "") if word in valued else ""))
@@ -259,7 +256,7 @@ def counted(options: list[tuple[str, str]]) -> re.Match[str] | None:
     """The count of lines the last of head's or tail's options gives; None where it gives none,
     such as a count of bytes."""
     option, value = options[-1]
-    return COUNT.fullmatch(value if option in ("-n",) else option)
+    return COUNT.fullmatch(value if option == "-n" else option)
 
 
 def cat_lines(args: list[str]) -> tuple[Lines, list[str]]:
@@ -289,7 +286,7 @@ def sed_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
     """The lines sed prints, every line but with -n, then those its script prints by number, and
     the files; its script is what -e gives, one line each, or else its first operand."""
     options, operands = split(args, {"-e", "-f"})
-    scripts = [value for option, value in options if option in ("-e",)]
+    scripts = [value for option, value in options if option == "-e"]
     if not scripts:
         scripts, operands = operands[:1], operands[1:]
     if ("-n", "") not in options:
@@ -298,7 +295,7 @@ def sed_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
     if not found:
         return None, operands
     last = found["last"] or found["first"]
-    return (int(found["first"]), None if last in ("$",) else int(last)), operands
+    return (int(found["first"]), None if last == "$" else int(last)), operands
 
 
 def grep_lines(args: list[str]) -> tuple[Lines | None, list[str]]:

@@ -28,9 +28,7 @@ def drifts(call: Call, takes: list[str], root: str) -> bool:
 def writes(call: Call) -> bool:
     """Whether the call writes a file: by a tool that writes, or by a command that writes a path but
     the null device, where the AI throws what it does not want to see."""
-    # Told by membership rather than `==`, as an order comparison such as `<=` would tell this
-    # action from others too, and a mutant making it one would pass every test.
-    return call.action in ("write",) or any(p not in (os.devnull,) for p in call.written)
+    return call.action == "write" or any(p != os.devnull for p in call.written)
 
 
 def left(file: str, before: list[Call]) -> bool:
@@ -41,7 +39,7 @@ def left(file: str, before: list[Call]) -> bool:
             count = len(f.read().splitlines())
     except OSError:
         return False
-    reads = [numbers(lines, count) for c in before for p, lines in c.reads if p in (file,)]
+    reads = [numbers(lines, count) for c in before for p, lines in c.reads if p == file]
     return bool(reads) and not set(range(1, count + 1)) <= set().union(*reads)
 
 

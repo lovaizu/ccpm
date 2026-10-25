@@ -96,7 +96,7 @@ def text(entry: dict[str, Any]) -> str | None:
     """The text of a user entry whose message is a text, as a message brought to the subagent is;
     None for any other entry."""
     given = content(entry)
-    return given if isinstance(given, str) and entry.get("type") in ("user",) else None
+    return given if isinstance(given, str) and entry.get("type") == "user" else None
 
 
 def prompt(found: list[dict[str, Any]]) -> str:
@@ -108,8 +108,8 @@ def prompt(found: list[dict[str, Any]]) -> str:
 def of(entry: dict[str, Any], kind: str, block: str) -> list[dict[str, Any]]:
     """Each block of the type given in an entry of the kind given, such as an assistant entry's
     tool uses; none in an entry of another kind."""
-    found = [b for b in blocks(entry) if b.get("type") in (block,)]
-    return found if entry.get("type") in (kind,) else []
+    found = [b for b in blocks(entry) if b.get("type") == block]
+    return found if entry.get("type") == kind else []
 
 
 def uses(entry: dict[str, Any]) -> list[dict[str, Any]]:
@@ -128,7 +128,7 @@ def ends_turn(entry: dict[str, Any]) -> bool:
     stopped at the turn's end, as Claude Code 2.1.306 writes the last entry of a reply."""
     message = entry.get("message")
     stop = message.get("stop_reason") if isinstance(message, dict) else None
-    return entry.get("type") in ("assistant",) and stop in ("end_turn",)
+    return entry.get("type") == "assistant" and stop == "end_turn"
 
 
 def replies(found: list[dict[str, Any]]) -> list[int]:
@@ -192,7 +192,7 @@ def heard(found: list[dict[str, Any]]) -> list[str]:
     messages: list[str] = []
     asked = replies(found)
     for number, entry in enumerate(found):
-        if number in asked or any(b.get("name") in ("SendMessage",) for b in uses(entry)):
+        if number in asked or any(b.get("name") == "SendMessage" for b in uses(entry)):
             messages = []
         messages.extend(message(entry))
     return messages
@@ -209,8 +209,8 @@ def message(entry: dict[str, Any]) -> list[str]:
         return [said]
     sender = origin if isinstance(origin, dict) else {}
     kind = sender.get("kind")
-    if kind in ("coordinator",):
+    if kind == "coordinator":
         sent = FROM_MAIN.match(said)
         return [sent["message"] if sent else said]
-    body = sender.get("body") if kind in ("peer",) else None
+    body = sender.get("body") if kind == "peer" else None
     return [body] if isinstance(body, str) else []

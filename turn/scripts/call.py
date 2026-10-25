@@ -83,7 +83,7 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
             raise Stop(f"turn: {path}, named in {call['ccs']}, is not there; fix its entry")
     scoped = [item for path in run["checklist"] for item in items(path)]
     run["items"] = [{"checklist": c, "item": i} for c, i, _ in scoped]
-    run["each"] = [{"checklist": c, "item": i} for c, i, scope in scoped if scope in (EACH,)]
+    run["each"] = [{"checklist": c, "item": i} for c, i, scope in scoped if scope == EACH]
     run["given"] = given(call["ccs"], ccs, run["work"])
     run["shown"] = run["work"] + run["has"] + run["checklist"]
     return run

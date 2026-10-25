@@ -27,7 +27,7 @@ def drifts(given: Call | End, takes: list[str], root: str) -> bool:
     fail, with no hand-on since holding it."""
     if isinstance(given, End):
         before, text = given.made or [], given.reply
-    elif given.action in (ACTION,):
+    elif given.action == ACTION:
         before, text = given.before or [], handed(given)
     else:
         return False
@@ -42,7 +42,7 @@ def due_output(before: list[Call], command: str) -> str:
     for c in before:
         if runs(c, [command]):
             output = c.result.strip()
-            due = "" if c.failed or output in (SILENT,) else output
+            due = "" if c.failed or output == SILENT else output
         elif due and holds(handed(c), due):
             due = ""
     return due

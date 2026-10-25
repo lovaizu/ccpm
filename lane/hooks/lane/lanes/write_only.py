@@ -20,7 +20,5 @@ def drifts(call: Call, takes: list[str], root: str) -> bool:
     it makes to run what the work gives."""
     outputs = {os.path.realpath(t) for t in takes}
     here = os.getcwd()
-    # Told by membership rather than `==`, as an order comparison such as `<=` would tell this
-    # action from others too, and a mutant making it one would pass every test.
-    counted = [f for f in call.written if call.action in (ACTION,) or shell.inside(f, here)]
+    counted = [f for f in call.written if call.action == ACTION or shell.inside(f, here)]
     return any(f not in outputs for f in counted)

@@ -103,7 +103,7 @@ def text_of(value: str) -> str | None:
         inner = value[1:-1]
         # In single quotes a quote is written twice; in double quotes a backslash begins an escape,
         # which is left unread as a lone quote is.
-        single = quote in ("'",)
+        single = quote == "'"
         bare = inner.replace("''", "") if single else inner.replace("\\", '"')
         if len(value) < 2 or not value.endswith(quote) or quote in bare:
             return None
@@ -172,9 +172,7 @@ def headings_held(asked: Template, lines: list[str]) -> str:
     written = headings(lines, body(lines))
     line = body(lines) + 1
     for level, said in asked.headings:
-        # Told by membership, as `is` tells small numbers apart as `==` does, and a mutant making
-        # it one would pass every test.
-        same = [w for w in written if w[1] in (level,) and fits(said, w[2])]
+        same = [w for w in written if w[1] == level and fits(said, w[2])]
         if not same:
             near = [w for w in written if fits(said, w[2])]
             found = f'"{"#" * near[0][1]} {near[0][2]}" at line {near[0][0]}' if near else "none"

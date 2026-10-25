@@ -241,7 +241,7 @@ class RepoTest(helpers.MainAndWork):
         if result is not None:
             self.write_json(call_at(number, "result.json"), result)
         if part is not None:
-            name = "learnings.md" if work in ("learnings",) else "steering.md"
+            name = "learnings.md" if work == "learnings" else "steering.md"
             self.write(call_at(number, name), part)
 
     def asked(self) -> list[list[str]]:
@@ -624,7 +624,7 @@ class StartTest(RepoTest):
             with self.subTest(option=option):
                 # Given: a branch with no session.
                 # When: the orchestrator starts one with a value of blanks.
-                given = {"message": " \n"} if option in ("message",) else {option: " "}
+                given = {"message": " \n"} if option == "message" else {option: " "}
                 out = self.stopped(*self.start(**given))
                 # Then: rn says it is empty, and the branch stays.
                 said = f"rn: the {words} is empty; give it in words" in out
@@ -2274,7 +2274,7 @@ class DeliverableTest(ShownTest):
         for given in ("not returned", "not called"):
             with self.subTest(given=given):
                 # Given: the finished work called again and not returned, or never called.
-                if given in ("not returned",):
+                if given == "not returned":
                     self.call("0004", "deliverable", "deliverable")
                 else:
                     shutil.rmtree(TURN)

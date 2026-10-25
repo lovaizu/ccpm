@@ -113,10 +113,7 @@ def fits(lane: str, takes: list[str]) -> bool:
     no more than the most its module names, where it names one."""
     showing, most = shown(lane), getattr(LANES[lane], "MOST", len(takes))
     least = slots(lane) if showing is None else showing + 1
-    # Told by membership in the counts it takes, as an order comparison such as `<=` against a most
-    # that is also the least would be told from `==` by no count, and a mutant making it one would
-    # pass every test.
-    return len(takes) in range(least, most + 1)
+    return least <= len(takes) <= most
 
 
 def word(number: int, lane: str, takes: list[str]) -> str:
@@ -138,7 +135,7 @@ class Laid:
         says it, that lane:up must be run again; nothing otherwise."""
         # A lane held as the subagent ends lets it end where what it did is not known, or where,
         # told before, it has answered with words alone, so it is told and never held for good.
-        end = call.ended(event) if event["hook_event_name"] in ("SubagentStop",) else None
+        end = call.ended(event) if event["hook_event_name"] == "SubagentStop" else None
         if end is not None and (end.made is None or end.answered):
             return []
         said = sentence(self.lane, self.takes)
@@ -156,7 +153,7 @@ class Laid:
         lane: Any = LANES[self.lane]
         acted = call.read(event) if end is None else end
         each = started.resolved(self.takes, run, alone(self.lane))
-        if self.lane in ("read_only",):
+        if self.lane == "read_only":
             each = [[*inputs, *self.forms()] for inputs in each]
         drift = next(filter(None, (lane.drifts(acted, t, self.root) for t in each)), "")
         if not drift:
@@ -196,7 +193,7 @@ def taken(root: str, agent: str, lane: str) -> list[list[str]]:
         except ValueError:
             continue
         if named == agent:
-            found += [each.takes for each in laid_in if each.lane in (lane,)]
+            found += [each.takes for each in laid_in if each.lane == lane]
     return found
 
 

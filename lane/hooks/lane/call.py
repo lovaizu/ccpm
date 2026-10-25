@@ -104,11 +104,11 @@ def text(tool: str, given: dict[str, Any], cwd: str) -> str | None:
     a Write's content; the file's text, none where it is not there, with an Edit's old_string
     replaced by its new_string, every one where replace_all is true; None where the input does not
     give it, or an Edit's old_string is not in the file, as the tool then writes nothing."""
-    if tool in ("Write",):
+    if tool == "Write":
         content = given.get("content")
         return content if isinstance(content, str) else None
     old, new = given.get("old_string"), given.get("new_string")
-    if tool not in ("Edit",) or not isinstance(old, str) or not isinstance(new, str):
+    if tool != "Edit" or not isinstance(old, str) or not isinstance(new, str):
         return None
     try:
         named = os.path.join(cwd, str(given.get("file_path", "")))
@@ -124,7 +124,7 @@ def text(tool: str, given: dict[str, Any], cwd: str) -> str | None:
 def changed(made: Call, file: str) -> bool:
     """Whether the call changed the file: wrote it, but by a tool that writes a file and gave back
     an error, which writes nothing; a command that failed may have written it before it failed."""
-    return file in made.written and not (made.failed and made.action in ("write",))
+    return file in made.written and not (made.failed and made.action == "write")
 
 
 def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:
@@ -169,7 +169,7 @@ def reads(tool: str, given: dict[str, Any], cwd: str) -> list[tuple[str, shell.L
     it reads of it, None where the input does not tell them: by Bash, what its commands print of
     what they read; by the Read tool, its file; by the Grep tool, the path it searches, the folder
     it runs in where it names none."""
-    if tool in ("Bash",):
+    if tool == "Bash":
         return shell.reads(str(given.get("command", "")), cwd)
     if tool not in READ_TOOLS:
         return []
@@ -187,5 +187,5 @@ def shown(result: str) -> shell.Lines | None:
 
 def handed(call: Call) -> str:
     """The text a hand-on hands on, as the AI gave it; "" for a call that hands nothing on."""
-    text = call.given.get(HANDED[call.tool], "") if call.action in ("hand on",) else ""
+    text = call.given.get(HANDED[call.tool], "") if call.action == "hand on" else ""
     return text if isinstance(text, str) else ""

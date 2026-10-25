@@ -45,7 +45,7 @@ def drifts(call: Call, takes: list[str], root: str) -> str:
     output, named = takes
     if os.path.realpath(output) not in call.written:
         return ""
-    if call.action not in (ACTION,):
+    if call.action != ACTION:
         return (
             f"`{output}`: expected a write by Write or Edit, whose text is held to the form,"
             " found a command writing it"
