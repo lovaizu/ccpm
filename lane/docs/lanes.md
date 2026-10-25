@@ -40,3 +40,60 @@ project's work.
 follow_next reads the next move your script prints as the tool call itself, one JSON line
 `{"tool": ..., "input": {...}}` last in its output; a script printing its move in a form of its own
 gets no follow_next.
+
+## What each lane is given
+
+Before any lane's check, the guard holds what each lane is given to the lane's IN, a JSON Schema:
+the texts put in each place of its sentence, with each `{<name>}` given for the run put in, one or
+more in each place; and, where its check rests on what the subagent did before, its record. The
+layer holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid, not on
+a run. Anything not as its IN says, a value not given or given empty, the record not found, the
+event or `hooks/lanes.json` not as Claude Code and `lane:up` write them, or a step no longer saying
+its lane's sentence, is an error, not a drift: the call is stopped, or the subagent kept going once
+as it ends, and it and you are told
+
+```
+<plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Stop here and reply that <who must fix it>.
+```
+
+A lane taking a value given for the run is held once the script start_with runs first has run, as
+the value comes with what it prints; until then start_with holds the subagent.
+
+The IN of a lane, `<place>` standing for each of its places below, and `record` required only where
+it rests on the record:
+
+```json
+{
+  "type": "object",
+  "required": ["takes", "record"],
+  "additionalProperties": false,
+  "properties": {
+    "takes": {
+      "type": "object",
+      "required": ["<place>"],
+      "additionalProperties": false,
+      "properties": {
+        "<place>": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+      }
+    },
+    "record": {"type": "array"}
+  }
+}
+```
+
+| Lane | Places | Rests on the record |
+|---|---|---|
+| start_with | `script` | yes |
+| read_only | `input` | no |
+| read_whole | `input` | yes |
+| write_only | `output` | no |
+| in_form | `output`, `form` | no |
+| hands_off | `commands` | no |
+| test_after | `output`, `test` | yes |
+| as_printed | `command` | yes |
+| follow_next | `script` | yes |
+| wait_for | `approval`, `held` | yes |
+| end_when | `output` | yes |
+| every_item | `input` | yes |
+
+`held` is the commands wait_for holds back.

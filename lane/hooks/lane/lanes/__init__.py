@@ -11,11 +11,20 @@ module may name, beside its action, wording and check, the events it is held on,
 things it takes its sentence shows, and the most things it takes; and give `beside(laid, root)`,
 what it takes beside what its step names, from every lane laid in the subagent, as the guard calls
 it, and `refused(takes, root)`, why it cannot be laid taking these, "" where it can, as the layer
-calls it."""
+calls it; and RECORD, where its check rests on what the subagent did before, read from its record,
+as every lane held at the subagent's end does.
+
+What a lane's check is given is held first to the lane's IN, a JSON Schema `given_in` makes: the
+texts put in each place of its sentence, and its subagent's record where its check rests on it; the
+layer holds the things a proposal's lane takes to it, and the guard what each lane is given on a
+run, so a lane's check meets only what it can check."""
 
 from __future__ import annotations
 
 import re
+from typing import Any
+
+import schema
 
 from lanes import (
     as_printed,
@@ -46,8 +55,10 @@ LANES = {
     "end_when": end_when,
     "every_item": every_item,
 }
-# Where a wording shows what the lane takes, in quotes.
-TAKEN = re.compile(r"`<[a-z]+>`")
+# Where a wording shows what the lane takes, in quotes, and the name of the place.
+TAKEN = re.compile(r"`<([a-z]+)>`")
+# What each place of a lane's sentence is given: the texts put in it, one or more.
+TEXTS = {"type": "array", "items": {"type": "string"}, "minItems": 1}
 
 
 def held_on(lane: str) -> tuple[str, ...]:
@@ -91,9 +102,55 @@ def alone(lane: str) -> int:
 
 
 def fits(lane: str, takes: list[str]) -> bool:
-    """Whether the lane takes so many things: one or more for each place its wording shows, the last
-    taking the rest; of a lane that holds more than it shows, one or more after those it shows; and
-    no more than the most its module names, where it names one."""
-    showing, most = shown(lane), getattr(LANES[lane], "MOST", len(takes))
-    least = slots(lane) if showing is None else showing + 1
-    return least <= len(takes) <= most
+    """Whether the lane takes so many things: its IN holding them put in the places of its
+    sentence, one or more in each, and no more than the most its module names, where it names one;
+    so the layer, laying them, and the guard, reading them laid, hold them to the IN the guard holds
+    a run's to."""
+    held = given_in(lane)["properties"]["takes"]
+    out = schema.held(held, dict(zip(places(lane), placed(lane, takes))))
+    return out is None and len(takes) <= getattr(LANES[lane], "MOST", len(takes))
+
+
+def places(lane: str) -> list[str]:
+    """The name of each place the things the lane takes are put in, as its wording names them, such
+    as `output` and `form`; of a lane that holds more than it shows, such as wait_for, one for each
+    thing it shows, named by its place in the sentence and, after the first in the last place, by
+    its number too, and `held` for the rest."""
+    named = TAKEN.findall(LANES[lane].WORDING)
+    if shown(lane) is None:
+        return named
+    each = [named[i] if i < len(named) else f"{named[-1]}-{i + 1}" for i in range(alone(lane))]
+    return [*each, "held"]
+
+
+def placed(lane: str, takes: list[str]) -> list[list[str]]:
+    """The things the lane takes, put in the places of its sentence, as `places` names them, in
+    order: one in each of the first `alone` places, and the rest in the last."""
+    first = alone(lane)
+    return [*([t] for t in takes[:first]), takes[first:]]
+
+
+def on_record(lane: str) -> bool:
+    """Whether the lane's check rests on its subagent's record: its module says so, or it is held
+    at the subagent's end."""
+    return getattr(LANES[lane], "RECORD", False) or "SubagentStop" in held_on(lane)
+
+
+def given_in(lane: str) -> dict[str, Any]:
+    """The lane's IN, the JSON Schema of what its check is given: `takes`, the texts put in each
+    place of its sentence, one or more each, and, where its check rests on its subagent's record,
+    `record`, the record's entries."""
+    named = places(lane)
+    takes = {
+        "type": "object",
+        "required": named,
+        "additionalProperties": False,
+        "properties": dict.fromkeys(named, TEXTS),
+    }
+    record = ["record"] if on_record(lane) else []
+    return {
+        "type": "object",
+        "required": ["takes", *record],
+        "additionalProperties": False,
+        "properties": {"takes": takes, "record": {"type": "array"}},
+    }

@@ -19,6 +19,8 @@ WORDING = "Take the next move `<script>` printed."
 # Any call may be the move printed, so every tool is watched, as a matcher's pattern.
 TOOLS = (".*",)
 EVENTS = ("PreToolUse", "SubagentStop")
+# Its check reads the calls made before, from the record, on a tool call too.
+RECORD = True
 
 
 def drifts(given: Call | End, takes: list[str], root: str) -> bool:

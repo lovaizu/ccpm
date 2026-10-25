@@ -335,12 +335,14 @@ class TestGuard(GuardTest):
         # Then: it ends, nothing said, as it is told and never held for good
         self.assertEqual(self.ended("The lanes are proposed.", active=True), ("", ""))
 
-    def test_with_no_record_found_it_ends(self):
+    def test_with_no_record_found_it_is_kept_going_once_with_the_error(self):
         # Given: no record of what changelog-writer did
         os.remove(os.path.join(self.base, "session", "subagents", "agent-a1.jsonl"))
         # When: it is about to end
-        # Then: it ends, nothing said, as what it printed is not known
-        self.assertEqual(self.ended("The lanes are proposed."), ("", ""))
+        whom, said = self.ended("The lanes are proposed.")
+        # Then: it is kept going once with the error, as what it printed is not known
+        self.assertEqual(whom, "error")
+        self.assertIn("as_printed on step 4 of changelog-writer: its record is not found", said)
 
 
 if __name__ == "__main__":

@@ -14,9 +14,10 @@ import call
 import called
 import hook
 import hooks_file
+import schema
 import started
 import step
-from lanes import LANES, alone, held_on, sentence
+from lanes import LANES, alone, given_in, held_on, placed, places, sentence
 
 
 class Seen(NamedTuple):
@@ -26,6 +27,13 @@ class Seen(NamedTuple):
 
     found: list[dict[str, Any]] | None
     acted: call.Call | call.End
+
+
+# Who must fix an error in what the plugin gives a lane, as the subagent replies it.
+LANE_UP = "lane:up must be run again on {plugin}, so its lanes match its steps"
+MAKER = "the maker of {plugin} must fix it"
+# What a lane resting on its subagent's record meets where the record is not there.
+NOT_FOUND = "its record is not found where Claude Code keeps it"
 
 
 class Lanes:
@@ -38,18 +46,22 @@ class Lanes:
     def check(self, event: dict[str, Any]) -> list[hook.Said]:
         """What each lane held on the event says on it, read from the plugin's hooks/lanes.json,
         its subagent's record and kept calls read once for all of them; where the file cannot be
-        read so, the user told what is wrong, as no lane can be told from it."""
+        read so, an error, as no lane can be checked from it."""
+        plugin, name = self.agent.split(":")
         try:
-            given = hooks_file.laid_in(self.root, self.agent.split(":")[1])
+            given = hooks_file.laid_in(self.root, name)
         except ValueError as wrong:
-            unread = f"{wrong}, so this goes on unchecked; run lane:up again on the plugin"
-            return [hook.Said(unread, user=True)]
+            fix = LANE_UP.format(plugin=plugin)
+            unread = (
+                f"lane cannot check the lanes of {name}: {wrong}. Stop here and reply that {fix}."
+            )
+            return [hook.Said(unread, True)]
         laid = [(lane, takes) for _, lane, takes in given]
         on = [Laid(self.root, self.agent, g, laid) for g in given if self.held in held_on(g[1])]
         found = called.entries(event)
         ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
         seen = Seen(found, call.ended(event, found) if ending else call.read(event, found))
-        return [hook.Said(s) for lane in on for s in lane.check(event, seen)]
+        return [s for lane in on for s in lane.check(event, seen)]
 
 
 class Laid:
@@ -68,28 +80,35 @@ class Laid:
         self.number, self.lane, self.takes = given
         self.laid = laid
 
-    def check(self, event: dict[str, Any], seen: Seen) -> list[str]:
+    def check(self, event: dict[str, Any], seen: Seen) -> list[hook.Said]:
         """The lane's sentence where what the event shows drifts from it, as the subagent reads its
-        step, with the point it drifts by on the next line where its check gives one; where the step
-        no longer says it, that lane:up must be run again; nothing otherwise."""
-        # A lane held as the subagent ends lets it end where what it did is not known, or where,
-        # told before, it has answered with words alone, so it is told and never held for good.
+        step, with the point it drifts by on the next line where its check gives one; an error where
+        what the lane is given is not as its IN says, or its step no longer says its sentence;
+        nothing otherwise."""
+        # Told before as it ends, a subagent that has answered with words alone is let end, so it
+        # is told and never held for good.
         acted = seen.acted
-        if isinstance(acted, call.End) and (acted.made is None or acted.answered):
+        if isinstance(acted, call.End) and acted.answered:
             return []
         said = sentence(self.lane, self.takes)
         if not step.holds(self.root, self.name, self.number, said):
-            gone = f"step {self.number} of {self.name} no longer says: {said}"
-            again = f"lane:up must be run again on {self.plugin}, so its lanes match its steps"
-            return [f"{gone} Stop here and reply that {again}."]
-        # A lane taking a thing given for each run lets every call through until the subagent
-        # has been given it.
+            return [self.error(f"step {self.number} no longer says: {said}", LANE_UP)]
         named = started.names(self.takes)
-        run = self.run_values(event["cwd"], seen.found) if named else {}
-        if not set(named) <= set(run):
+        # The run's values are read from the record, given by its prompt and by the script
+        # start_with runs first, so a lane taking one is held once that script has run, start_with
+        # holding the subagent until.
+        if named and seen.found is None:
+            return [self.error(NOT_FOUND, "")]
+        if named and not self.started(seen):
             return []
+        run = self.run_values(event["cwd"], seen.found) if named else {}
+        texts = started.put(placed(self.lane, self.takes), run)
+        given = {"takes": dict(zip(places(self.lane), texts))}
+        out = schema.held(given_in(self.lane), {**given, **self.record(seen)})
+        if out is not None:
+            return [self.wrong(out, run)]
         lane: Any = LANES[self.lane]
-        each = started.resolved(self.takes, run, alone(self.lane))
+        each = started.resolved([t or [] for t in texts], alone(self.lane))
         # A lane may take more beside what its step names, from the lanes laid in the subagent.
         more = getattr(lane, "beside", None)
         if more is not None:
@@ -98,7 +117,38 @@ class Laid:
         if not drift:
             return []
         told = [step.expanded(said, self.root), *(started.told(n, run[n]) for n in named)]
-        return ["\n".join([*told, *([drift] if isinstance(drift, str) else [])])]
+        return [hook.Said("\n".join([*told, *([drift] if isinstance(drift, str) else [])]))]
+
+    def record(self, seen: Seen) -> dict[str, Any]:
+        """The record the lane's check may rest on, as its IN names it, where it is found."""
+        return {} if seen.found is None else {"record": seen.found}
+
+    def started(self, seen: Seen) -> bool:
+        """Whether the subagent has run each script start_with takes in it, before the call or the
+        end the event shows, or start_with is laid in it on none."""
+        scripts = [s for t in hooks_file.taken(self.root, self.name, "start_with") for s in t]
+        acted = seen.acted
+        before = (acted.made if isinstance(acted, call.End) else acted.before) or []
+        return not scripts or any(call.runs(c, scripts) for c in before)
+
+    def wrong(self, out: schema.Out, run: dict[str, list[str]]) -> hook.Said:
+        """The error of what the lane is given out of its IN by the point: its record not found,
+        which Claude Code must fix; or a take given for each run, in the place of its sentence the
+        point names, not given, or given empty, which the plugin's maker must."""
+        if out.path[:1] != ("takes",):
+            return self.error(NOT_FOUND, "")
+        takes = placed(self.lane, self.takes)[places(self.lane).index(out.path[1])]
+        name = next(n for n in started.names(takes) if not run.get(n))
+        how = "not given" if name not in run else "given empty"
+        return self.error(f"`{{{name}}}` is {how} in what {self.name} started from", MAKER)
+
+    def error(self, wrong: str, fix: str) -> hook.Said:
+        """The error the lane meets, told with what is wrong and who must fix it, "" for Claude
+        Code."""
+        who = fix.format(plugin=self.plugin) if fix else hook.CLAUDE_CODE
+        on = f"{self.lane} on step {self.number} of {self.name}"
+        said = f"lane cannot check {on}: {wrong.rstrip('.')}. Stop here and reply that {who}."
+        return hook.Said(said, True)
 
     def run_values(self, cwd: str, found: list[dict[str, Any]] | None) -> dict[str, list[str]]:
         """The run's value of each name the JSON the subagent started from gives, from the entries
@@ -113,17 +163,18 @@ def main(held: str, words: list[str]) -> None:
     """Runs the lanes laid in the subagent a hook's command names, held on the event, on the event
     Claude Code hands on stdin, for the plugin found where Claude Code gives its folder,
     CLAUDE_PLUGIN_ROOT, or, on an event a call is kept on, keeps the call, answering Claude Code on
-    stdout. A command not in the form lane:up writes lets the subagent go on, telling the user, as
-    no subagent can be told from it."""
+    stdout. A command not in the form lane:up writes is an error, as no subagent can be told from
+    it."""
     root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
     if len(words) != 1 or not hooks_file.AGENT.fullmatch(words[0]):
         unread = (
-            f"lane: the hook's command gives `{' '.join(words)}`, not the subagent alone as"
-            " <plugin>:<name>, as lane:up writes it, so this goes on unchecked; run lane:up again"
-            " on the plugin to write its hooks anew"
+            f"lane: lane cannot check the lanes of this hook: its command gives"
+            f" `{' '.join(words)}`, not the subagent alone as <plugin>:<name>, as lane:up writes"
+            " it. Stop here and reply that lane:up must be run again on the plugin, to write its"
+            " hooks anew."
         )
-        hook.answered(sys.stdout, hook.answer(held, "", unread))
+        hook.failed(held, unread, sys.stdin, sys.stdout)
         return
     agent = words[0]
     check = called.Kept() if held in hooks_file.KEPT else Lanes(root, agent, held)
-    hook.run(agent.split(":")[0], [check], sys.stdin, sys.stdout, agent)
+    hook.run(agent.split(":")[0], held, [check], sys.stdin, sys.stdout, agent)

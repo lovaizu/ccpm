@@ -78,21 +78,30 @@ def texts_of(value: Any) -> list[str] | None:
     return None
 
 
-def resolved(takes: list[str], run: dict[str, list[str]], alone: int) -> list[list[str]]:
-    """Each list of things the lane is checked on, the run's texts put in for each take given for
-    each run: in one of the first `alone` places, each of which takes one thing, the lane is checked
-    once for each text, so an output given as a list is held one by one; in a place taking the rest,
-    the texts stand side by side."""
-    places = []
-    for at, take in enumerate(takes):
-        named = NAMED.fullmatch(take)
-        texts = run[named["name"]] if named else [take]
-        places.append([[t] for t in texts] if at < alone else [texts])
-    return [list(itertools.chain(*each)) for each in itertools.product(*places)]
+def put(places: list[list[str]], run: dict[str, list[str]]) -> list[list[str] | None]:
+    """The texts in each place of a lane's sentence, the run's texts put in for each take given for
+    each run, beside the takes fixed in the step, in the order taken; None for a place where a take
+    given for each run is not given."""
+    found: list[list[str] | None] = []
+    for takes in places:
+        named = [NAMED.fullmatch(t) for t in takes]
+        given = [run.get(m["name"]) if m else [t] for m, t in zip(named, takes)]
+        texts = [t for g in given if g is not None for t in g]
+        found.append(None if None in given else texts)
+    return found
+
+
+def resolved(places: list[list[str]], alone: int) -> list[list[str]]:
+    """Each list of things the lane is checked on, of the texts in each place: in one of the first
+    `alone` places, each of which takes one thing, the lane is checked once for each text, so an
+    output given as a list is held one by one; in a place taking the rest, the texts stand side by
+    side."""
+    each = [[[t] for t in p] if at < alone else [p] for at, p in enumerate(places)]
+    return [list(itertools.chain(*e)) for e in itertools.product(*each)]
 
 
 def told(name: str, texts: list[str]) -> str:
     """The line telling the subagent the run's value of the name, after the sentence that shows the
     name as its step says it."""
-    listed = ", ".join(f"`{t}`" for t in texts) or "an empty list"
+    listed = ", ".join(f"`{t}`" for t in texts)
     return f"`{{{name}}}` is {listed}."

@@ -97,14 +97,6 @@ class TestLetThrough(WaitForTest):
         # Then: it is no drift
         self.assertFalse(self.drifts([ASK], WRITE.replace("write", "print")))
 
-    def test_with_no_record_found_the_held_command_is_no_drift(self):
-        # Given: no record of the subagent where Claude Code keeps it
-        # When: it runs the command held back
-        # Then: it is no drift, as the messages that reached it are not known
-        self.assertFalse(
-            wait_for.drifts(helpers.call_of(self.event(WRITE)), TAKES, helpers.NO_PLUGIN)
-        )
-
 
 class TestGuard(GuardTest):
     """wait_for laid on step 4 of changelog-writer, run as Claude Code runs the hook."""

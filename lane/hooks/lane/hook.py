@@ -1,6 +1,8 @@
 """What each entry of a plugin's hooks runs: every check of its event on the event Claude Code hands
-it, in one subagent alone, a use denied or the subagent kept going with what they say, answered in
-Claude Code's JSON output."""
+it, in one subagent alone, answered in Claude Code's JSON output. A drift is told the subagent,
+its tool's use denied or it kept going; an error, where what a lane is given is not as its IN says,
+is told the subagent and the user alike, the use denied or the subagent kept going once, as a
+drift is the subagent's to put right and an error the plugin's, which a pass would hide."""
 
 from __future__ import annotations
 
@@ -9,53 +11,72 @@ import os
 from collections.abc import Sequence
 from typing import IO, Any, NamedTuple
 
+import schema
+
+# Who must fix an error lane meets in what Claude Code hands it, as the subagent replies it.
+CLAUDE_CODE = (
+    "Claude Code must be updated with `claude update`, and where this goes on, it must be reported"
+    " at https://github.com/lovaizu/ccpm/issues"
+)
 # The fields each event of these hooks holds beside hook_event_name and cwd, and the types of each:
 # at SubagentStop the agent's last reply, which Claude Code gives as null after the agent hands its
 # reply back with SubagentHandback; as a call comes back, its ID, and of a failed one its error.
-CALLED = {"tool_name": (str,), "tool_input": (dict,)}
+CALLED = {"tool_name": {"type": "string"}, "tool_input": {"type": "object"}}
 FIELDS = {
     "PreToolUse": CALLED,
-    "SubagentStop": {"last_assistant_message": (str, type(None))},
-    "PostToolUse": {**CALLED, "tool_use_id": (str,)},
-    "PostToolUseFailure": {**CALLED, "tool_use_id": (str,), "error": (str,)},
+    "SubagentStop": {"last_assistant_message": {"type": ["string", "null"]}},
+    "PostToolUse": {**CALLED, "tool_use_id": {"type": "string"}},
+    "PostToolUseFailure": {
+        **CALLED,
+        "tool_use_id": {"type": "string"},
+        "error": {"type": "string"},
+    },
 }
 
 
+def event_in(name: str) -> dict[str, Any]:
+    """The IN of an event of the name, as Claude Code hands it: a JSON object holding the hook's
+    event name, the folder it comes from, and the event's fields FIELDS gives."""
+    fields = {"hook_event_name": {"const": name}, "cwd": {"type": "string"}, **FIELDS[name]}
+    return {"type": "object", "required": list(fields), "properties": fields}
+
+
 class Said(NamedTuple):
-    """What a check says: told the subagent, or, where it is for the user, told them alone, the use
-    or the end let go on."""
+    """What a check says: a drift, told the subagent; or an error, told the subagent and the user
+    alike."""
 
     text: str
-    user: bool = False
+    error: bool = False
 
 
-def event_read(stream: IO[str]) -> dict[str, Any] | None:
-    """The event on the stream, when it is a JSON object holding the hook's event name, the folder
-    it comes from and its event's fields, as Claude Code hands it; None otherwise."""
+def event_read(text: str, held: str) -> tuple[dict[str, Any] | None, str]:
+    """The event of the hook's event held in the text, and "" where it is as its IN says, the folder
+    it comes from there; otherwise None, or the text read as JSON where it is an object, and what is
+    wrong."""
     try:
-        event = json.load(stream)
+        event = json.loads(text)
     except ValueError:
-        return None
-    if not isinstance(event, dict) or not isinstance(event.get("hook_event_name"), str):
-        return None
-    fields = FIELDS.get(event["hook_event_name"], {})
-    shaped = all(isinstance(event.get(k), kind) for k, kind in fields.items())
-    folder = event.get("cwd")
-    return event if shaped and isinstance(folder, str) and os.path.isdir(folder) else None
+        return None, "it holds no JSON"
+    out = schema.held(event_in(held), event)
+    if out is not None:
+        return (event if isinstance(event, dict) else None), out.told()
+    if not os.path.isdir(event["cwd"]):
+        return event, f"$.cwd: expected a folder, found {schema.shown(event['cwd'])}"
+    return event, ""
 
 
 def answer(event: str, told: str, user: str) -> dict[str, Any]:
     """What a hook of the event answers Claude Code, as its JSON output on exit 0 has it: what the
     subagent is told, where there is anything, as the reason a tool's use is denied at PreToolUse,
     and at SubagentStop as the reason the subagent is kept going, which Claude Code gives it as its
-    next instruction; and what the user is told, where there is anything, as the systemMessage
-    Claude Code shows them, letting the use or the end go on. Nothing told answers nothing, which
-    lets it go on."""
+    next instruction, as a call that has come back cannot be stopped; and what the user is told,
+    where there is anything, as the systemMessage Claude Code shows them. Nothing told answers
+    nothing, which lets it go on."""
     found: dict[str, Any] = {"systemMessage": user} if user else {}
     if told and event == "PreToolUse":
         denied = {"hookEventName": event, "permissionDecision": "deny"}
         found["hookSpecificOutput"] = {**denied, "permissionDecisionReason": told}
-    elif told:
+    elif told and event == "SubagentStop":
         found.update(decision="block", reason=told)
     return found
 
@@ -67,27 +88,46 @@ def answered(out: IO[str], found: dict[str, Any]) -> None:
         out.write(json.dumps(found) + "\n")
 
 
-def run(plugin: str, checks: Sequence[Any], stream: IO[str], out: IO[str], agent: str) -> None:
-    """Runs each check on the event in the stream, from the folder the event comes from, where the
-    event's agent_type is the agent, such as `notes:changelog-writer`, and answers on out what they
-    say, each headed by the plugin's name; nothing where none says anything or the event is another
-    agent's, as a tool event's matcher tells tools apart, not agents; where the stream holds no
-    event as Claude Code hands it, tells the user so, letting it through unchecked."""
-    event = event_read(stream)
-    if event is None:
-        each = ", ".join(f"for {e} {' and '.join(f)}" for e, f in FIELDS.items())
+def said_on(event: dict[str, Any] | None, held: str, said: list[Said]) -> dict[str, Any]:
+    """The answer to the event of the hook's event held, None where it could not be read, of what
+    was said: each drift and each error told the subagent, each error the user too; at the
+    subagent's end, once a stop hook has kept it going, as the event says, an error told the user
+    alone, letting it end, so an error is told it once and it is never held for good."""
+    again = held == "SubagentStop" and bool((event or {}).get("stop_hook_active"))
+    told = "\n".join(s.text for s in said if not (again and s.error))
+    return answer(held, told, "\n".join(s.text for s in said if s.error))
+
+
+def failed(held: str, text: str, stream: IO[str], out: IO[str]) -> None:
+    """Answers, on the event of the hook's event held on the stream, the error the text says, where
+    no subagent can be told from what the hook was given."""
+    try:
+        event = json.load(stream)
+    except ValueError:
+        event = None
+    answered(out, said_on(event if isinstance(event, dict) else None, held, [Said(text, True)]))
+
+
+def run(
+    plugin: str, held: str, checks: Sequence[Any], stream: IO[str], out: IO[str], agent: str
+) -> None:
+    """Runs each check on the event of the hook's event held in the stream, from the folder the
+    event comes from, where the event's agent_type is the agent, such as `notes:changelog-writer`,
+    and answers on out what they say, each headed by the plugin's name; nothing where none says
+    anything or the event is another agent's, as a tool event's matcher tells tools apart, not
+    agents. Where the stream holds no event as its IN says, that is an error, as no lane can check
+    the call."""
+    event, wrong = event_read(stream.read(), held)
+    if wrong or event is None:
+        name = agent.split(":")[1]
         unread = (
-            f"{plugin}: the hook was handed no event as Claude Code hands it, a JSON object with"
-            f" hook_event_name and cwd, and {each}, so it lets this through unchecked; update"
-            " Claude Code with `claude update`, and where it goes on, report it at"
-            " https://github.com/lovaizu/ccpm/issues"
+            f"{plugin}: lane cannot check the lanes of {name}: the hook was handed no event as"
+            f" Claude Code hands it, {wrong}. Stop here and reply that {CLAUDE_CODE}."
         )
-        answered(out, answer("", "", unread))
+        answered(out, said_on(event, held, [Said(unread, True)]))
         return
     if event.get("agent_type") != agent:
         return
     os.chdir(event["cwd"])
-    said = [s for c in checks for s in c.check(event)]
-    told = "\n".join(f"{plugin}: {s.text}" for s in said if not s.user)
-    users = "\n".join(f"{plugin}: {s.text}" for s in said if s.user)
-    answered(out, answer(event["hook_event_name"], told, users))
+    said = [Said(f"{plugin}: {s.text}", s.error) for c in checks for s in c.check(event)]
+    answered(out, said_on(event, held, said))

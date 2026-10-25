@@ -14,6 +14,8 @@ from call import Call, runs
 ACTION = "wait"
 WORDING = "Do not go on until `<approval>`."
 TOOLS = ("Bash",)
+# Its check reads the messages that reached the subagent, from the record.
+RECORD = True
 # The sentence shows the first thing taken, the approval; the commands after it the hook alone
 # holds.
 SHOWN = 1
@@ -21,12 +23,9 @@ SHOWN = 1
 
 def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call runs a command held back with no message holding the approval since the
-    subagent last asked; never where its record is not found, as a stop then would hold even once
-    the approval has come."""
+    subagent last asked."""
     approval, held = takes[0], takes[SHOWN:]
-    if call.heard is None or not runs(call, held):
-        return False
-    return not any(approves(m, approval) for m in call.heard)
+    return runs(call, held) and not any(approves(m, approval) for m in call.heard or [])
 
 
 def approves(message: str, approval: str) -> bool:

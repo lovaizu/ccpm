@@ -154,13 +154,6 @@ class TestLaterCalls(unittest.TestCase):
         # Then: it is a drift still
         self.assertTrue(drifts("ls", before=["pwd"]))
 
-    def test_with_no_record_found_every_call_goes_on(self):
-        # Given: a call whose subagent's record is not found, so what it did before is not known
-        made = read("ls")
-        # When: start_with reads it
-        # Then: it is no drift, as a stop then would hold even after the script is run
-        self.assertFalse(start_with.drifts(made, TAKES, NO_PLUGIN))
-
 
 if __name__ == "__main__":
     unittest.main()

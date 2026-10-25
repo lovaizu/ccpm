@@ -14,6 +14,8 @@ from call import WRITERS, Call, file_text
 ACTION = "read"
 WORDING = "Read `<input>` to its end."
 TOOLS = ("Bash", *WRITERS)
+# Its check reads what was read before, from the record.
+RECORD = True
 
 
 def drifts(call: Call, takes: list[str], root: str) -> bool:

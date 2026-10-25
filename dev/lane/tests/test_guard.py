@@ -23,10 +23,11 @@ HANDS_OFF = (3, "hands_off", ["git commit", "git push"])
 BEGIN = "First run `scripts/log.py`."
 # The changelog written by the Write tool, as the record holds it.
 CHANGE = helpers.writing("CHANGELOG.md")
-# What the subagent is told where step 3 no longer says the lane's sentence.
+# What the subagent and the user are told where step 3 no longer says the lane's sentence.
 GONE = (
-    "notes: step 3 of changelog-writer no longer says: Do not run `git commit` or `git push`."
-    " Stop here and reply that lane:up must be run again on notes, so its lanes match its steps."
+    "notes: lane cannot check hands_off on step 3 of changelog-writer: step 3 no longer says: Do"
+    " not run `git commit` or `git push`. Stop here and reply that lane:up must be run again on"
+    " notes, so its lanes match its steps."
 )
 
 
@@ -82,19 +83,23 @@ class GuardTest(helpers.PluginTest):
 
 def told(out: str, entry: str) -> tuple:
     """Whom the guard's answer on stdout tells and what, as GuardTest.guard gives it, the subagent
-    told only by the decision of the entry's event; "other" and the answer for any other."""
+    told only by the decision of the entry's event; "error" where the user is told the same as the
+    subagent; "other" and the answer for any other."""
     if not out:
         return "", ""
     found = json.loads(out)
-    if set(found) == {"systemMessage"}:
-        return "user", found["systemMessage"]
+    user = found.pop("systemMessage", None)
+    if not found:
+        return "user", user
     if entry == "pretooluse.py":
         reason = found.get("hookSpecificOutput", {}).get("permissionDecisionReason")
         expected = helpers.denied(reason)
     else:
         reason = found.get("reason")
         expected = {"decision": "block", "reason": reason}
-    return ("told", reason) if found == expected else ("other", found)
+    if found != expected or user not in (None, reason):
+        return "other", {**found, "systemMessage": user}
+    return ("told" if user is None else "error"), reason
 
 
 class TestStop(GuardTest):
@@ -117,8 +122,9 @@ class TestStop(GuardTest):
         # Given: step 3 changed by the building AI since the lane was laid
         self.write(self.agent_file, helpers.STEPS)
         # When: changelog-writer makes a call the hook watches, even one the lane allows
-        # Then: the call is stopped, saying to have lane:up run again
-        self.assertEqual(self.guard(self.stream("git status")), ("told", GONE))
+        # Then: it is an error: the call is stopped, saying to have lane:up run again, and the user
+        # told the same
+        self.assertEqual(self.guard(self.stream("git status")), ("error", GONE))
 
     def test_the_subagents_record_is_read_once_for_every_lane(self):
         # Given: hands_off and start_with laid on changelog-writer, and its record
@@ -222,11 +228,18 @@ class TestEnd(GuardTest):
         # Then: it is told again
         self.assertEqual(self.ended(calls, active=True), ("told", f"notes: {self.TESTED}"))
 
-    def test_with_no_record_found_it_ends(self):
-        # Given: no record of what changelog-writer did
-        # When: it is about to end
-        # Then: it ends, nothing said, as what it did is not known
-        self.assertEqual(self.ended(None), ("", ""))
+    def test_with_no_record_found_it_is_kept_going_once_with_the_error(self):
+        for active, whom in ((False, "error"), (True, "user")):
+            with self.subTest(active=active):
+                # Given: no record of what changelog-writer did, kept going by a stop hook before
+                # or not
+                # When: it is about to end
+                found, said = self.ended(None, active=active)
+                # Then: the first time it is kept going, told the error and who must fix it, the
+                # user told too; once kept going, the user alone is told, and it ends
+                self.assertEqual(found, whom)
+                self.assertIn("test_after on step 3 of changelog-writer: its record is not", said)
+                self.assertIn("Claude Code must be updated", said)
 
     def test_another_agent_ends(self):
         # Given: a change not passed
@@ -239,8 +252,8 @@ class TestEnd(GuardTest):
         self.write(self.agent_file, helpers.STEPS)
         # When: changelog-writer is about to end
         whom, said = self.ended([CHANGE])
-        # Then: it is told to reply that lane:up must be run again
-        self.assertEqual(whom, "told")
+        # Then: it is an error, telling it to reply that lane:up must be run again
+        self.assertEqual(whom, "error")
         self.assertIn("lane:up must be run again on notes", said)
 
     def test_a_step_no_longer_saying_the_sentence_answered_in_words_alone_ends(self):
@@ -290,20 +303,43 @@ class TestRunValues(GuardTest):
         # Then: it goes on, nothing said
         self.assertEqual(self.wrote("b.md"), ("", ""))
 
-    def test_until_the_value_is_given_every_call_goes_on(self):
-        for prompt in (helpers.PROMPT, '{"has": "a.md"}', '{"work": 1}'):
+    def test_a_value_not_given_or_given_empty_is_an_error(self):
+        for prompt, how in (
+            (helpers.PROMPT, "not given"),
+            ('{"has": "a.md"}', "not given"),
+            ('{"work": 1}', "not given"),
+            ('{"work": []}', "given empty"),
+        ):
             with self.subTest(prompt=prompt):
-                # Given: a prompt of words, of JSON naming no work, or naming it by no text
+                # Given: a prompt of words, of JSON naming no work, naming it by no text, or by an
+                # empty list
                 self.record([], prompt)
                 # When: changelog-writer writes any file
-                # Then: it goes on, nothing said
-                self.assertEqual(self.wrote("c.md"), ("", ""))
+                # Then: it is an error, saying so and that the plugin's maker must fix it
+                told = (
+                    "notes: lane cannot check write_only on step 3 of changelog-writer: `{work}`"
+                    f" is {how} in what changelog-writer started from. Stop here and reply that"
+                    " the maker of notes must fix it."
+                )
+                self.assertEqual(self.wrote("c.md"), ("error", told))
 
-    def test_with_no_record_found_every_call_goes_on(self):
+    def test_with_no_record_found_it_is_an_error(self):
         # Given: no record of what changelog-writer was given
         # When: it writes any file
-        # Then: it goes on, nothing said
-        self.assertEqual(self.wrote("c.md"), ("", ""))
+        whom, said = self.wrote("c.md")
+        # Then: it is an error, saying the record is not found and who must fix it
+        self.assertEqual(whom, "error")
+        self.assertIn("write_only on step 3 of changelog-writer: its record is not found", said)
+
+    def test_a_lane_taking_a_value_is_held_once_the_script_start_with_takes_has_run(self):
+        # Given: start_with laid on step 1, taking `scripts/given.py`, which gives the work, not
+        # yet run, the prompt naming no work
+        self.lay((1, "start_with", ["scripts/given.py"]), *self.LAID)
+        self.record([])
+        # When: changelog-writer runs the script
+        event = self.event(f"python3 {self.plugin}/scripts/given.py")
+        # Then: it goes on, write_only not yet held, as the value comes with what the script prints
+        self.assertEqual(self.guard(json.dumps(event)), ("", ""))
 
     def test_a_script_start_with_takes_gives_the_value_over_the_prompt(self):
         # Given: start_with laid on step 1, taking `scripts/given.py`, which printed the work
@@ -358,20 +394,19 @@ class TestOtherAgents(GuardTest):
 
 
 class TestCommandLine(GuardTest):
-    def test_a_command_line_not_naming_the_subagent_alone_lets_the_call_through_saying_so(self):
+    def test_a_command_line_not_naming_the_subagent_alone_is_an_error(self):
         for words in ([], ["changelog-writer"], [helpers.AGENT, "3:hands_off:git push"]):
             with self.subTest(words=words):
                 # Given: a hook's command edited out of the form lane:up writes, or as an older
                 # lane wrote it
                 # When: the guard is run by it
                 whom, said = self.guard(self.stream("git commit"), words)
-                # Then: it lets the call through and tells the user what was wrong, naming the
-                # words, and to have lane:up write the hooks again
-                self.assertEqual(whom, "user")
+                # Then: it is an error, naming the words, and to have lane:up write the hooks again
+                self.assertEqual(whom, "error")
                 self.assertIn(f"gives `{' '.join(words)}`", said)
-                self.assertTrue(said.startswith("lane: ") and "run lane:up again" in said, said)
+                self.assertTrue(said.startswith("lane: ") and "lane:up must be run again" in said)
 
-    def test_lanes_json_not_as_lane_up_writes_it_lets_the_call_through_saying_so(self):
+    def test_lanes_json_not_as_lane_up_writes_it_is_an_error(self):
         path = os.path.join(self.plugin, "hooks", "lanes.json")
         for text, named in (("{", "holds no JSON"), ('{"subagents": []}', "lays no lanes in")):
             with self.subTest(text=text):
@@ -379,12 +414,15 @@ class TestCommandLine(GuardTest):
                 self.write(path, text)
                 # When: the guard is run on a call of the subagent
                 whom, said = self.guard(self.stream("git commit"))
-                # Then: it lets the call through and tells the user, headed by the plugin, what is
-                # wrong and to have lane:up run again
-                self.assertEqual(whom, "user")
-                self.assertTrue(said.startswith("notes: hooks/lanes.json"), said)
+                # Then: it is an error, headed by the plugin, saying what is wrong and to have
+                # lane:up run again
+                self.assertEqual(whom, "error")
+                expected = (
+                    "notes: lane cannot check the lanes of changelog-writer: hooks/lanes.json"
+                )
+                self.assertTrue(said.startswith(expected), said)
                 self.assertIn(named, said)
-                self.assertIn("run lane:up again", said)
+                self.assertIn("lane:up must be run again on notes", said)
 
     def test_lanes_json_is_read_only_on_an_event_of_its_subagent(self):
         # Given: hooks/lanes.json holding no JSON

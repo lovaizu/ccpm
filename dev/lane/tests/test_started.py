@@ -77,39 +77,37 @@ class TestValues(unittest.TestCase):
                 self.assertEqual(started.values([text]), {})
 
 
-class TestResolved(unittest.TestCase):
-    def test_fixed_takes_are_checked_once_as_they_are(self):
-        # Given: takes all fixed
-        # When: they are put in
-        # Then: the lane is checked once on them
-        self.assertEqual(started.resolved(["x", "y"], VALUES, 1), [["x", "y"]])
-
-    def test_a_list_in_a_place_taking_the_rest_stands_for_its_texts_side_by_side(self):
-        # Given: a lane of one place taking a fixed thing and `{work}`, its place taking the rest
-        # When: it is put in
-        # Then: the lane is checked once on every text of the work
-        self.assertEqual(started.resolved(["x", "{work}"], VALUES, 0), [["x", "a.md", "b.md"]])
-
-    def test_a_list_in_a_place_taking_one_thing_is_checked_once_for_each_text(self):
-        # Given: test_after taking `{work}` for its output, a place of one thing, then a test
-        # When: it is put in
-        # Then: the lane is checked for each output in turn
+class TestPut(unittest.TestCase):
+    def test_the_runs_texts_are_put_in_for_each_take_given_for_each_run(self):
+        # Given: a place of a fixed thing and `{work}`, and a place of `{test}`
+        # When: the run's values are put in
+        # Then: each place holds its texts in the order taken
         self.assertEqual(
-            started.resolved(["{work}", "{test}"], VALUES, 1),
-            [["a.md", "make"], ["b.md", "make"]],
+            started.put([["x", "{work}"], ["{test}"]], VALUES), [["x", "a.md", "b.md"], ["make"]]
         )
 
-    def test_an_empty_list_in_a_place_taking_one_thing_is_checked_on_nothing(self):
-        # Given: an output given as an empty list
-        # When: it is put in
-        # Then: the lane is checked on nothing
-        self.assertEqual(started.resolved(["{none}", "make"], VALUES, 1), [])
+    def test_a_place_of_a_take_not_given_holds_none(self):
+        # Given: a place of `{other}`, which the run does not give, and one of `{none}`, given empty
+        # When: the run's values are put in
+        # Then: the first holds None, told apart from the second's empty list
+        self.assertEqual(started.put([["{other}", "x"], ["{none}"]], VALUES), [None, []])
 
-    def test_an_empty_list_in_a_place_taking_the_rest_stands_for_nothing(self):
-        # Given: write_only taking `{none}`, an empty list
-        # When: it is put in
-        # Then: the lane is checked once, taking nothing
-        self.assertEqual(started.resolved(["{none}"], VALUES, 0), [[]])
+
+class TestResolved(unittest.TestCase):
+    def test_fixed_takes_are_checked_once_as_they_are(self):
+        # Given: one place of two fixed things
+        # When: the lists checked on are made
+        # Then: the lane is checked once on them
+        self.assertEqual(started.resolved([["x", "y"]], 0), [["x", "y"]])
+
+    def test_a_list_in_a_place_taking_one_thing_is_checked_once_for_each_text(self):
+        # Given: test_after's two places, its output, a place of one thing, holding two texts
+        # When: the lists checked on are made
+        # Then: the lane is checked for each output in turn
+        self.assertEqual(
+            started.resolved([["a.md", "b.md"], ["make"]], 1),
+            [["a.md", "make"], ["b.md", "make"]],
+        )
 
 
 class TestTold(unittest.TestCase):
@@ -117,7 +115,6 @@ class TestTold(unittest.TestCase):
         for texts, told in (
             (["a.md", "b.md"], "`{work}` is `a.md`, `b.md`."),
             (["a.md"], "`{work}` is `a.md`."),
-            ([], "`{work}` is an empty list."),
         ):
             with self.subTest(texts=texts):
                 # Given: the run's value of `{work}`

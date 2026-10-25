@@ -18,6 +18,8 @@ WORDING = "Hand on `<command>` as it is."
 # Any call may come before the hand-on, so every tool is watched, as a matcher's pattern.
 TOOLS = (".*",)
 EVENTS = ("PreToolUse", "SubagentStop")
+# Its check reads the calls made before, from the record, on a tool call too.
+RECORD = True
 
 
 def drifts(given: Call | End, takes: list[str], root: str) -> bool:

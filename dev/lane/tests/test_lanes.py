@@ -1,6 +1,7 @@
 """Each lane's wording, held to lane's docs/lanes.md, and the sentence made from it with what the
 lane takes, the one the step says and the subagent is told."""
 
+import json
 import os
 import re
 import types
@@ -16,9 +17,72 @@ ROW = re.compile(r"^\| (?P<action>[a-z ]+) \| (?P<lane>[a-z_]+) \| (?P<sentence>
 
 def lanes_rows() -> dict:
     """Each lane of the lanes' table, by its name: its action and its sentence."""
-    with open(os.path.join(helpers.LANE, "docs", "lanes.md"), encoding="utf-8") as f:
-        found = [ROW.match(line) for line in f.read().splitlines()]
+    found = [ROW.match(line) for line in lanes_md().splitlines()]
     return {m["lane"]: (m["action"], m["sentence"]) for m in found if m}
+
+
+# A row of the table of what each lane is given: its lane, its places and whether it rests on its
+# record.
+GIVEN = re.compile(r"^\| (?P<lane>[a-z_]+) \| (?P<places>`.+`) \| (?P<record>yes|no) \|$")
+
+
+def lanes_md() -> str:
+    """lane's docs/lanes.md."""
+    with open(os.path.join(helpers.LANE, "docs", "lanes.md"), encoding="utf-8") as f:
+        return f.read()
+
+
+class TestIn(unittest.TestCase):
+    def test_each_lanes_in_is_the_one_docs_lanes_md_gives(self):
+        # Given: the IN docs/lanes.md gives, each place standing as `<place>`, and the table of
+        # each lane's places and whether it rests on its record
+        text = lanes_md()
+        shown = json.loads(text.split("```json\n")[1].split("```")[0])
+        rows = {m["lane"]: m for m in map(GIVEN.match, text.splitlines()) if m}
+        self.assertEqual(set(rows), set(lanes.LANES))
+        for name, row in rows.items():
+            with self.subTest(lane=name):
+                # When: its IN is made by lane's code
+                # Then: it is the one shown, its places the row's, record required as it says
+                places = re.findall(r"`([a-z]+)`", row["places"])
+                takes = shown["properties"]["takes"]
+                place = takes["properties"]["<place>"]
+                record = ["record"] if row["record"] == "yes" else []
+                expected = {
+                    **shown,
+                    "required": ["takes", *record],
+                    "properties": {
+                        **shown["properties"],
+                        "takes": {
+                            **takes,
+                            "required": places,
+                            "properties": dict.fromkeys(places, place),
+                        },
+                    },
+                }
+                self.assertEqual(lanes.given_in(name), expected)
+
+
+class TestPlaced(unittest.TestCase):
+    def test_the_things_taken_are_put_in_the_places_one_in_each_the_last_taking_the_rest(self):
+        for lane, takes, placed in (
+            ("hands_off", ["a", "b"], [["a", "b"]]),
+            ("test_after", ["a.py", "make", "tox"], [["a.py"], ["make", "tox"]]),
+            ("wait_for", ["OK", "a", "b"], [["OK"], ["a", "b"]]),
+        ):
+            with self.subTest(lane=lane):
+                # Given: a lane of one place, of two, or holding more than it shows
+                # When: the things it takes are put in its places
+                # Then: each place before the last holds one, and the last the rest
+                self.assertEqual(lanes.placed(lane, takes), placed)
+
+    def test_a_lane_showing_more_than_its_places_names_each_shown_by_its_number(self):
+        # Given: a lane of one place whose sentence shows the first two things it takes
+        two = types.SimpleNamespace(WORDING="Put `<a>`.", SHOWN=2)
+        with mock.patch.dict(lanes.LANES, {"two": two}):
+            # When: its places are named
+            # Then: the first is the place's name, the second numbered, and the rest held
+            self.assertEqual(lanes.places("two"), ["a", "a-2", "held"])
 
 
 class TestWording(unittest.TestCase):
