@@ -31,14 +31,16 @@ file of parts, each a list of entries, each entry a kind and its value, the shap
 ```
 
 The step's text then calls turn with the CCS, the kinds in it that hold the work, the checklist, its
-reader, what the reader uses it for and has with it, here the whole repository, and where to write
-the result:
+reader, what the reader uses it for and has with it, here the whole repository, where to write the
+result, and the one command that checks the work, such as `make check` for code, or `null`, as here,
+where the work has none:
 
 ```
 Start the `turn:up` agent in the background with
 {"ccs": ".tasks/readme.json", "result": ".tasks/readme-result.json",
  "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
-          "use": "purpose", "has": "has"}}
+          "use": "purpose", "has": "has"},
+ "test": null}
 Put each question it sends to the user and send it the answer.
 ```
 

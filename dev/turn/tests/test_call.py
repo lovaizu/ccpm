@@ -274,6 +274,26 @@ class TestStart(RepoTest):
         self.assertIn("docs", running["given"])
         self.assertNotIn("docs/", running["given"])
 
+    def test_the_generator_is_given_the_calls_test_or_null(self):
+        for test in ("make check", None):
+            with self.subTest(test=test):
+                # Given: a call whose test is a command, or null, the caller saying the work has
+                # none
+                # When: the run is started and checked
+                self.started(dict(CALL, test=test))
+                # Then: the generator is to start from the call's test as it was given
+                self.assertEqual(self.prompt()["test"], test)
+                os.remove(CALL["result"] + ".run.json")
+
+    def test_a_call_again_with_another_test_is_another_call(self):
+        # Given: a run started on a call whose test is a command
+        self.turn("start", json.dumps(CALL))
+        # When: turn is called again with the same call but its test null
+        code, out = self.turn("start", json.dumps(dict(CALL, test=None)))
+        # Then: it stops, saying a run of another call is kept at the result
+        self.assertEqual(code, 1)
+        self.assertIn("a run of another call is kept", out)
+
     def test_a_result_at_the_top_of_the_folder_is_kept_beside_it(self):
         # Given: a call whose result goes at the top of the folder it is made from
         # When: the run is started
@@ -306,11 +326,11 @@ class TestStartStops(RepoTest):
         # Then: it stops, saying the call is not JSON and the shape to give
         self.stops("ccs: x", "the call is not JSON", '{"ccs": "<path>"')
 
-    def test_a_call_without_ccs_kind_or_result_stops(self):
-        # Given: a call missing where the CCS is, its kinds, or where the result goes
+    def test_a_call_without_ccs_kind_result_or_test_stops(self):
+        # Given: a call missing where the CCS is, its kinds, where the result goes, or its test
         # When: the run is started
         # Then: it stops, naming what is missing
-        for key in ("ccs", "result", "kind"):
+        for key in ("ccs", "result", "kind", "test"):
             with self.subTest(key=key):
                 self.stops(call_with(**{key: None}), f'the call has no "{key}"')
 
@@ -323,11 +343,25 @@ class TestStartStops(RepoTest):
                 with self.subTest(key=key, value=value):
                     self.stops(call_with(**{key: value}), f'"{key}" is not a path', '{"ccs"')
 
+    def test_a_call_whose_test_is_empty_or_no_command_stops(self):
+        # Given: a call whose test is an empty text, blanks alone, a number, a list of commands,
+        # an object or true
+        # When: the run is started
+        # Then: it stops, saying the test is not a command and that null says there is none
+        for value in ("", " ", 5, ["make check"], {"run": "make check"}, True):
+            with self.subTest(value=value):
+                self.stops(
+                    dict(CALL, test=value),
+                    'the call\'s "test" is not a command',
+                    "null",
+                    '"test": "<command> or null"',
+                )
+
     def test_a_call_with_an_unknown_key_stops(self):
         # Given: a call with a key turn does not take, at the top or among the kinds
         # When: the run is started
         # Then: it stops, naming the key, the first of them by name, and those turn takes
-        self.stops(dict(CALL, out="x.json"), '"out"', '"ccs", "kind" and "result"')
+        self.stops(dict(CALL, out="x.json"), '"out"', '"ccs", "kind", "result" and "test"')
         self.stops(dict(CALL, out="x.json", extra="y"), 'holds "extra"')
         call = copy.deepcopy(CALL)
         call["kind"]["reader"] = "audience"

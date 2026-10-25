@@ -18,7 +18,7 @@
 
 ### Changed
 
-- turn is called from your plugin's step: started in the background with `{"ccs", "kind", "result"}`, the CCS your step's own JSON file and every name in it yours, turn taking what it needs by the kinds you name — your step keeps its task in its own shape, and its context holds only what comes back.
+- turn is called from your plugin's step: started in the background with `{"ccs", "kind", "result", "test"}`, the CCS your step's own JSON file and every name in it yours, turn taking what it needs by the kinds you name — your step keeps its task in its own shape, and its context holds only what comes back.
 - The call names, besides where the work goes, the checklists and the receiver, what the receiver uses the work for and what they have with it, such as the whole repository, and turn first checks that what they have lets its reader do what they do with the work, returning the questions alone where something is lacking — the AI reading in the receiver's place stands where they stand, and a Good it finds holds for them.
 - The work is made where it goes, and a run cut off leaves its writing as changes git shows — you see what it wrote before you call again.
 - Where the AI reading in the receiver's place finds no Good, the work is made again aimed at where it stopped, what it did there and what it did not get, with no other reading between, up to three times a round and two rounds, after which an item still without Good comes to your step as a question — each remake changes only what fell short, and a run that does not settle asks you rather than going on.

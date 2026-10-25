@@ -19,9 +19,10 @@ Good is yours to decide.
 ## Steps
 
 1. Your prompt is JSON: `given`, all you read, being the CCS and each file it names, the checklists
-   among them; `work`, the files of the work; `checklists`, the checklists you answer; `sent_back`,
-   the items found without Good, each with the `places` of the work looked at, what was
-   `did` there and what was `lacking`, `[]` where none; `answers`, each answer the user gave, with
+   among them; `work`, the files of the work; `checklists`, the checklists you answer; `test`, the
+   command that checks the work, `null` where it has none; `sent_back`, the items found without
+   Good, each with the `places` of the work looked at, what was `did` there and what was
+   `lacking`, `[]` where none; `answers`, each answer the user gave, with
    the questions it answers; `result`, the run's result; `reply`, the file you write your claim to;
    and, on a run gone on after a stop, `since`, the messages sent to you before, each taken in turn
    as step 8 says.

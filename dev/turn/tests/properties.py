@@ -169,6 +169,22 @@ class TestRecords(RepoTest):
             self.assertTrue(len(line) <= records.WIDTH or len(line.split()) <= 1, line)
 
 
+class TestCallTest(unittest.TestCase):
+    @given(st.text(max_size=50))
+    def test_any_test_of_words_is_taken_as_it_is_and_one_of_blanks_stops(self, test):
+        # Given: a call whose test is any text
+        # When: the call is checked
+        # Then: a test of words is taken as it came, blanks at its ends and all; one of blanks
+        # alone, or empty, stops, saying the test is not a command
+        asked = dict(CALL, test=test)
+        if test.strip():
+            self.assertEqual(call.checked(asked)["test"], test)
+        else:
+            with self.assertRaises(call.Stop) as stop:
+                call.checked(asked)
+            self.assertIn('"test" is not a command', str(stop.exception))
+
+
 class TestAnswer(RepoTest):
     @given(st.text(max_size=200))
     def test_any_answer_of_words_is_kept_as_it_came(self, answer):

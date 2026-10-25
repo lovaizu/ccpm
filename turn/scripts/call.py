@@ -13,8 +13,11 @@ import template
 
 SHAPE = (
     '{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "receiver": "<kind>",'
-    ' "use": "<kind>", "has": "<kind>"}, "result": "<path>"}'
+    ' "use": "<kind>", "has": "<kind>"}, "result": "<path>", "test": "<command> or null"}'
 )
+# The call's keys, each required, `test` given as null where the work has none
+# (dev/turn/architecture.md, Logical view).
+KEYS = ("ccs", "kind", "result", "test")
 # The call's keys whose value is a path.
 PLACES = ("ccs", "result")
 # The kinds whose entries are paths, kept without a trailing slash or a `./`, so a file inside a
@@ -44,20 +47,25 @@ def parse(text: str) -> dict[str, Any]:
 
 
 def checked(given: dict[str, Any]) -> dict[str, Any]:
-    """The call, its keys and kinds as turn takes them, each path and kind a name; stops at the
-    first thing turn cannot take."""
-    unknown = sorted(set(given) - {"ccs", "kind", "result"})
+    """The call, its keys and kinds as turn takes them, each path and kind a name and its test a
+    command or None; stops at the first thing turn cannot take."""
+    unknown = sorted(set(given) - set(KEYS))
     if unknown:
         raise Stop(
             f'turn: the call holds "{unknown[0]}", which turn does not take; it takes'
-            f' "ccs", "kind" and "result": {SHAPE}'
+            f' "ccs", "kind", "result" and "test": {SHAPE}'
         )
-    for key in ("ccs", "kind", "result"):
+    for key in KEYS:
         if key not in given:
             raise Stop(f'turn: the call has no "{key}"; give it as {SHAPE}')
     for key in PLACES:
         if not forms.worded(given[key]):
             raise Stop(f'turn: the call\'s "{key}" is not a path; give it as {SHAPE}')
+    if given["test"] is not None and not forms.worded(given["test"]):
+        raise Stop(
+            'turn: the call\'s "test" is not a command; give the one command that checks the'
+            f" work, or null where it has none: {SHAPE}"
+        )
     kind = given["kind"]
     if not isinstance(kind, dict):
         raise Stop(f'turn: the call\'s "kind" is not an object; give it as {SHAPE}')

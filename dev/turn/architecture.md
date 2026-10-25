@@ -24,8 +24,8 @@ Principle 1 to 8, and two of its own, named turn's Principle 1 and 2:
 
 ## User stories
 
-- As the calling AI, I want to start turn with the path of a CCS, its kinds and where the result
-  goes, and get the work back where it goes, with each item's Good and its lines, and the lessons
+- As the calling AI, I want to start turn with the path of a CCS, its kinds, where the result
+  goes and the command that checks the work, and get the work back where it goes, with each item's Good and its lines, and the lessons
   from the run to put to the user.
 - As the calling AI, I want the user told, as the run goes, what it will do and what is done, in
   the main conversation, which alone talks with them.
@@ -63,13 +63,17 @@ flowchart TB
 - The calling AI is the main conversation, or an agent the main conversation started; the guard acts
   in every role as it does in the generator, and the figure draws it for the orchestrator and the
   generator alone.
-- The call names, beside the CCS's path and where the result goes, the kinds the CCS uses for where
-  the work goes, the checklists, the receiver, what the receiver uses the work for and what they
-  have with it; turn defines nothing else of the CCS.
+- The call names, beside the CCS's path, where the result goes and `test`, the one command that
+  checks the work or `null` where it has none, the kinds the CCS uses for where the work goes, the
+  checklists, the receiver, what the receiver uses the work for and what they have with it; turn
+  defines nothing else of the CCS.
 
   The values stay in the CCS alone, so the call and the CCS cannot differ; without what the
   receiver uses the work for and has with it, no reader can stand in their place. Where the result
-  goes is this call's answer, not the task's state, so it is not in the CCS.
+  goes and the test are settled when the caller calls, this call's answer, not the task's state, so
+  they are not in the CCS; the test is required and given as `null` for none, as a field required
+  and nullable says "explicitly none" in structured outputs and OpenAPI 3.1, so a test left out
+  by a slip is not taken for none.
 - The flow, a script, keeps where the run stands in the state and gives the orchestrator each next
   move, and the orchestrator makes only that move and hands the flow its outcome.
 

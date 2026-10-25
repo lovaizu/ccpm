@@ -78,6 +78,7 @@ CALL = {
         "has": "page",
     },
     "result": ".tasks/readme-result.json",
+    "test": "sh tests/readme.sh",
 }
 GOOD = {
     "checklist": "checklists/readme.md",
