@@ -1,6 +1,6 @@
 {
   "name": "turn",
-  "description": "With turn, Claude Code can make any work, such as a document, a prompt or code, that passes your checklist: another AI reads it as the one it is for, and what does not pass yet is made again.",
+  "description": "With turn, each step of your plugin has AI make its work, such as a document or code, until it passes the step's checklists: an AI that did not make it reads it first as the one it is for, and what does not pass yet is made again.",
   "version": "0.1.0",
   "author": { "name": "lovaizu" }
 }

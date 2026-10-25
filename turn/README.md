@@ -1,12 +1,12 @@
 # turn
 
 turn has AI work only toward passing your checklist: every agent that makes or reads the work looks
-only for each item's Good, that the work's reader gets from it what the item asks, and works only
-to give it, and what a machine can judge, such as whether
-a reply has its form or an input was read whole, is checked by turn's scripts, not by an agent. It
-is a Claude Code plugin for anyone who has AI make documents, code and the like in the steps of
-their own plugin. What a step has turn make comes back meeting the step's checklists, read first by
-an AI that did not make it, in the place of its reader.
+only for each item's Good, that the work's reader gets from it what the item asks, and works only to
+give it, and what a machine can judge, such as whether a reply has its form or an input was read
+whole, is checked by turn's scripts, not by an agent. It is a Claude Code plugin for anyone who has
+AI make documents, code and the like in the steps of their own plugin. What a step has turn make
+comes back meeting the step's checklists, read first by an AI that did not make it, in the place of
+its reader.
 
 ## Example
 
@@ -58,8 +58,7 @@ step's AI is an agent below it, before each of its agents starts its work, what 
 and how, and as each ends, what is done and what comes next:
 
 ```
-generator: will write README.md for the seven items, as MIT licensed, and run its install and
-usage commands as a developer would
+turn: turn:up found in the CCS what gives the Good of 7 items. Next, turn:generator will make the work to give every item its Good, and run what it gives as the receiver would, of README.md, for 7 items, round 1.
 ```
 
 This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
@@ -71,9 +70,10 @@ When turn returns, README.md is in place, and the result gives each item's Good 
 rests on:
 
 ```json
-{"items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
+{"work": ["README.md"],
+ "items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
             "lines": ["README.md:3-4"]}, ...],
- "lessons": [...]}
+ "lessons": [...], "checked": "..."}
 ```
 
 The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends. The
@@ -94,17 +94,16 @@ turn gives your plugin's AI what it does not get by making the work and checking
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
 - A run stopped anywhere, by you or by a conversation that ended, goes on from where it stopped
-  when the step calls turn again with the same result.
+  when the step calls turn again with the same call.
 
   turn keeps where the run stands in a file beside the result, not in a conversation.
 
 ## Requirements
 
 - Claude Code, in which turn runs.
-- Python 3.9 or later, run as `python3`, and git.
+- Python 3.9 or later, run as `python3`.
 
-  turn's scripts and hooks run on Python, and a run cut off leaves its writing as changes git
-  shows.
+  turn's scripts and hooks run on Python.
 
 ## Installation
 

@@ -5,7 +5,7 @@ Claude Code plugin marketplace for lovaizu projects.
 ## Plugins
 
 - **[rn](./rn/README.md)** — Carries work that takes days from your rough words to a pull request ready to merge; you decide what you really want, how it is built and whether the result is it, and nothing else.
-- **[turn](./turn/README.md)** — With turn, Claude Code can make any work, such as a document, a prompt or code, that passes your checklist: another AI reads it as the one it is for, and what does not pass yet is made again.
+- **[turn](./turn/README.md)** — With turn, each step of your plugin has AI make its work, such as a document or code, until it passes the step's checklists: an AI that did not make it reads it first as the one it is for, and what does not pass yet is made again.
 
 ## Install
 

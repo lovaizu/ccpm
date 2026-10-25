@@ -9,7 +9,7 @@ only the items that reading ends without Good are made again in the next round, 
 one round.
 
 turn holds the [principles every plugin holds](../architecture.md#principles), named below
-Principle 1 to 8, and its own:
+Principle 1 to 8, and two of its own, named turn's Principle 1 and 2:
 
 1. Every role that makes or reads the work looks only for each item's Good and works only to give
    it.
@@ -31,7 +31,7 @@ Principle 1 to 8, and its own:
   the main conversation, which alone talks with them.
 - As the calling AI, I want to be sent each point only the user can decide as soon as the run meets
   it, and to send back the answer for the run to go on.
-- As the calling AI, I want to call turn again with the same result after a run stopped anywhere,
+- As the calling AI, I want to call turn again with the same call after a run stopped anywhere,
   and have it go on from where it stopped.
 
 ## Architecture
@@ -61,7 +61,8 @@ flowchart TB
 ```
 
 - The calling AI is the main conversation, or an agent the main conversation started; the guard acts
-  in every role as it does in the generator, and the figure draws it once.
+  in every role as it does in the generator, and the figure draws it for the orchestrator and the
+  generator alone.
 - The call names, beside the CCS's path and where the result goes, the kinds the CCS uses for where
   the work goes, the checklists, the receiver, what the receiver uses the work for and what they
   have with it; turn defines nothing else of the CCS.
@@ -101,14 +102,17 @@ flowchart TB
   the flow's bound ends its reading.
 
   The generator holds the sources and the Good it meant at each line, so it changes only what is
-  sent back, and how the work gives the Good is its to decide, since an edit told per item broke
-  other items.
-- The orchestrator reads no work, and the first user is not given the generator's reply; an item
-  gets its Good where the first user gives one, and the result gives that Good and its lines.
+  sent back, and how the work gives the Good is its to decide, as an edit told per item breaks other
+  items.
+- The orchestrator reads no work, held to what `turn.py start` gives it by a lane, and the first
+  user is not given the generator's reply; an item gets its Good where the first user gives one,
+  and the result gives that Good and its lines.
 
   The orchestrator holds the sources and the call, so its own reading finds the Good the work
   meant, not the one the receiver gets, and pulls the remake toward its view; a reader shown the
-  maker's claim finds the Good it was told to find (Principle 4).
+  maker's claim finds the Good it was told to find (Principle 4). A lane takes a run's files from
+  what its subagent starts from, so an answer whose CCS lays the run out anew has the orchestrator
+  start the run again, and the lane takes the files the CCS now names.
 - Only the items without Good are made again in the next round, with what was found lacking, and an
   item the rounds leave without Good becomes a question.
 
@@ -138,18 +142,27 @@ turn/                      the plugin, installed by Claude Code
 ├── forms/
 │   └── *.json             each role's reply form <JSON Schema>
 ├── scripts/
-│   ├── turn.py            the flow <Python 3>
-│   └── *.py               the call's check, the forms, the parts, the records <Python 3>
+│   ├── turn.py            what the orchestrator and the roles run <Python 3>
+│   ├── run.py             the flow: the move at each stage of the run <Python 3>
+│   ├── state.py           where the run stands <Python 3>
+│   ├── call.py            the call checked, and the run laid out of the CCS <Python 3>
+│   ├── prompts.py         what each role is given <Python 3>
+│   ├── forms.py           each reply checked, and the parts of the work <Python 3>
+│   ├── records.py         each record as the learner reads it <Python 3>
+│   └── record.py,         links to lane's, Claude Code's records and Markdown read
+│       template.py
 └── hooks/
     ├── hooks.json         the lanes on every agent, laid by lane:up
     └── lane/              lane's code, the guard, a link to lane's <Python 3>
 
 <where the call puts the result, in the calling AI's work folder>/
 ├── <result>               the result <JSON>
-└── <result>.run.json      the state <JSON>, read and written by the flow alone
+├── <result>.run.json      the state <JSON>, read and written by the flow alone
+├── <result>.<role>.json   each role's reply <JSON>, read by the flow alone
+└── <result>.records/      each record shown to the learner as text, gone once the run returns
 ```
 
-- turn runs on Claude Code, python3 3.9 or later, and git.
+- turn runs on Claude Code and python3 3.9 or later.
 - The calling AI starts `turn:up` in the background with the call as JSON, from the main
   conversation or from an agent it started, and stops a run with TaskStop; turn's agents take the
   two layers below it, within the three

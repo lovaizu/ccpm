@@ -63,8 +63,7 @@ sequenceDiagram
   participant C as calling AI<br/>#lt;AI#gt;
   participant T as turn<br/>#lt;plugin#gt;
   loop each of turn's agents
-    T-->>C: what it will do, how far and how, then what is done and what comes next
-    C-->>U: passes each on
+    T-->>U: in the main conversation, what it will do, how far and how, then what is done and what comes next
   end
   opt a run going a slow or wrong way
     U->>C: stops it
@@ -99,7 +98,7 @@ sequenceDiagram
   participant C as calling AI<br/>#lt;AI#gt;
   participant T as turn<br/>#lt;plugin#gt;
   Note over C,T: the run stopped anywhere, by the user or by a conversation that ended
-  C->>T: calls it again with the same result
+  C->>T: calls it again with the same call
   Note over T: goes on from where it stopped
 ```
 
