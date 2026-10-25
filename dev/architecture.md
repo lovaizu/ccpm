@@ -286,7 +286,9 @@ trial of it alone, and the plugin as a whole by acceptance tests of its user sto
 
 Each part made of code has unit tests, written with `unittest` in `dev/<plugin>/tests/`, that run
 every line and every branch of it (C0 and C1 coverage, 100%). Mutation testing with Cosmic Ray, in
-which the unit tests must catch every mutant, and property tests with Hypothesis, on new inputs each
+which the unit tests must catch every mutant but those of a line marked `# pragma: no mutate`, where
+no input the code takes tells the mutant apart, for the reason the plugin's `cosmic-ray.toml` gives
+once, and property tests with Hypothesis, on new inputs each
 time, which must all pass, check that the unit tests are enough; each input a property test fails on
 is added as a unit test.
 

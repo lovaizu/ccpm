@@ -161,8 +161,8 @@ Look for:
   test fails on: a survivor of mutation testing;
 - a test whose expected value is taken from the code it checks;
 - a line, branch, input or mutant left out of the coverage, the property tests or the mutation
-  testing, with nothing beside it saying that the user decided it and why, such as an environment
-  the tests cannot make, or a line no behavior changes with.
+  testing, with nothing beside it or in the check's settings saying that the user decided it and
+  why, such as an environment the tests cannot make, or a line no behavior changes with.
 
 Why: tests passing give trust only in the behaviors they would fail on; a gap looks the same as a
 test that works and lets a fault pass, faults gather at boundaries, such as `<` written for `<=`,

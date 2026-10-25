@@ -18,11 +18,13 @@ ruff format --check .
 
 # Code copied between files is fixed in one and left wrong in the other, so code more than one file
 # needs is kept once (dev/architecture.md, Code); every file is read at once, whichever plugins are
-# given, as a copy can lie in any two. A link is the file it points to, so is left out. pylint is in
-# pyproject.toml's test-quality group, as it needs a newer Python than 3.9 only to check, not to run.
+# given, as a copy can lie in any two. A link is the file it points to, so is left out.
 if command -v pylint >/dev/null 2>&1; then
   git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo "$file"; done \
     | xargs pylint --disable=all --enable=duplicate-code --score=no
+else
+  echo "check.sh: copied code not checked, as pylint is not installed; it comes with pyproject.toml's"\
+    "test-quality group, on Python 3.11 or later"
 fi
 
 # Each plugin keeps its tests in dev/<plugin>/tests/ (dev/architecture.md, Test), and its scripts

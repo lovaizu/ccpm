@@ -78,6 +78,9 @@ with open(target, "w", encoding="utf-8") as f:
     f.write(f'\n[cosmic-ray.filters.git-filter]\nbranch = "{since}"\n')
 EOF
   cosmic-ray init "$copy/config.toml" "$db"
+  # A line marked `# pragma: no mutate` has no mutant a test can tell apart, for the reason the
+  # plugin's cosmic-ray.toml gives (dev/architecture.md, Unit tests: code).
+  cr-filter-pragma "$db"
   # The git filter reads the lines changed from `git diff`, which leaves out a file not yet added to
   # git, such as a check just written; each is marked as to be added in a copy of the index, the
   # index git uses itself left as it is, so all its lines count as changed.
