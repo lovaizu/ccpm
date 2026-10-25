@@ -1,24 +1,31 @@
 """The call checked and each kind it names taken from the CCS, so that no AI copies a value and a run
 starts only on what it can make the work from."""
 
+from __future__ import annotations
+
 import json
 import os
 import re
 from typing import Any
 
+import forms
+import template
+
 SHAPE = (
     '{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "receiver": "<kind>",'
     ' "use": "<kind>", "has": "<kind>"}, "result": "<path>"}'
 )
+# The call's keys whose value is a path.
+PLACES = ("ccs", "result")
 # The kinds whose entries are paths, kept without a trailing slash or a `./`, so a file inside a
 # folder named `docs/` is found within `docs`.
 PATHS = ("work", "checklist", "has")
 KINDS = ("work", "checklist", "receiver", "use", "has")
 # An item of a checklist is a heading of the form `### B-1: <title>`, outside a fence, with the
 # line under it saying where in the work it is answered.
-ITEM = re.compile(r"^### ([A-Z]+-\d+): ")
+LEVEL = 3
+ITEM = re.compile(r"([A-Z]+-\d+): ")
 SCOPES = ("its part", "each part", "whole")
-EACH = "each part"
 
 
 class Stop(Exception):
@@ -28,33 +35,36 @@ class Stop(Exception):
 def parse(text: str) -> dict[str, Any]:
     """The call as JSON; stops when it is not a JSON object."""
     try:
-        call = json.loads(text)
+        given = json.loads(text)
     except ValueError:
-        call = None
-    if not isinstance(call, dict):
+        given = None
+    if not isinstance(given, dict):
         raise Stop(f"turn: the call is not JSON; give it as {SHAPE}")
-    return call
+    return given
 
 
-def check(call: dict[str, Any]) -> dict[str, Any]:
-    """The run the call asks for: the call, each kind's entries, the checklists' items, the files
-    the orchestrator and the generator are given, and those the first user is shown, as the
-    receiver has them; stops at the first thing turn cannot take."""
-    unknown = sorted(set(call) - {"ccs", "kind", "result"})
+def checked(given: dict[str, Any]) -> dict[str, Any]:
+    """The call, its keys and kinds as turn takes them, each path and kind a name; stops at the
+    first thing turn cannot take."""
+    unknown = sorted(set(given) - {"ccs", "kind", "result"})
     if unknown:
         raise Stop(
             f'turn: the call holds "{unknown[0]}", which turn does not take; it takes'
             f' "ccs", "kind" and "result": {SHAPE}'
         )
     for key in ("ccs", "kind", "result"):
-        if key not in call:
+        if key not in given:
             raise Stop(f'turn: the call has no "{key}"; give it as {SHAPE}')
-    kind = call["kind"]
+    for key in PLACES:
+        if not forms.worded(given[key]):
+            raise Stop(f'turn: the call\'s "{key}" is not a path; give it as {SHAPE}')
+    kind = given["kind"]
     if not isinstance(kind, dict):
         raise Stop(f'turn: the call\'s "kind" is not an object; give it as {SHAPE}')
-    for name in sorted(set(kind) - set(KINDS)):
+    unknown = sorted(set(kind) - set(KINDS))
+    if unknown:
         raise Stop(
-            f'turn: the call names the kind of "{name}", which turn does not take; it takes'
+            f'turn: the call names the kind of "{unknown[0]}", which turn does not take; it takes'
             ' "work", "checklist", "receiver", "use" and "has"'
         )
     for name in KINDS:
@@ -63,30 +73,42 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
     for name, value in kind.items():
         if not isinstance(value, str):
             raise Stop(f'turn: the kind for "{name}" is not a name; give the kind as a string')
-    ccs = read_ccs(call["ccs"])
-    run: dict[str, Any] = {"call": call}
+    return given
+
+
+def laid_out(given: dict[str, Any]) -> dict[str, Any]:
+    """The run the call asks for, laid out from the CCS as it is now: the call, each kind's
+    entries, the checklists' items, those asked of each part, the files the orchestrator and the
+    generator are given, and those the first user may read, as the receiver has them; stops at the
+    first thing turn cannot take."""
+    asked = checked(given)
+    ccs = read_ccs(asked["ccs"])
+    run: dict[str, Any] = {"call": asked}
     for name in KINDS:
-        values = entries(ccs, kind[name])
+        values = entries(ccs, asked["kind"][name])
         if name in PATHS:
             values = [os.path.normpath(v) for v in values]
         if not values:
             raise Stop(
-                f'turn: {call["ccs"]} has no entry of the kind "{kind[name]}", which the call'
-                f' names for "{name}"; add one to the CCS, or name the kind it uses'
+                f'turn: {asked["ccs"]} has no entry of the kind "{asked["kind"][name]}", which the'
+                f' call names for "{name}"; add one to the CCS, or name the kind it uses'
             )
         run[name] = values
     for path in run["checklist"]:
         if not os.path.isfile(path):
-            raise Stop(f"turn: {path}, named in {call['ccs']}, is not there; fix its entry")
+            raise Stop(f"turn: {path}, named in {asked['ccs']}, is not there; fix its entry")
     for path in run["has"]:
         if not os.path.exists(path):
-            raise Stop(f"turn: {path}, named in {call['ccs']}, is not there; fix its entry")
-    scoped = [item for path in run["checklist"] for item in items(path)]
-    run["items"] = [{"checklist": c, "item": i} for c, i, _ in scoped]
-    of_each = [(c, i) for c, i, scope in scoped if scope == EACH]  # pragma: no mutate
-    run["each"] = [{"checklist": c, "item": i} for c, i in of_each]
-    run["given"] = given(call["ccs"], ccs, run["work"])
-    run["shown"] = run["work"] + run["has"] + run["checklist"]
+            raise Stop(f"turn: {path}, named in {asked['ccs']}, is not there; fix its entry")
+    found = [item for path in run["checklist"] for item in items(path)]
+    run["items"] = [forms.named(i) for i in found]
+    run["each"] = [
+        forms.named(i)
+        for i in found
+        if i["scope"] == "each part"  # pragma: no mutate
+    ]
+    run["given"] = given_of(asked["ccs"], ccs, run["work"])
+    run["readable"] = run["work"] + run["has"] + run["checklist"]
     return run
 
 
@@ -123,20 +145,17 @@ def entries(ccs: dict[str, list[dict[str, str]]], kind: str) -> list[str]:
     return [e[kind] for part in ccs.values() for e in part if kind in e]
 
 
-def items(path: str) -> list[tuple[str, str, str]]:
+def items(path: str) -> list[dict[str, str]]:
     """Every item of a checklist, by its path, ID and scope; stops when it holds none, or at an
     item whose scope is not said."""
     with open(path, encoding="utf-8") as f:
         lines = f.read().splitlines()
-    found: list[tuple[str, str, str]] = []
-    fenced = False
-    for n, line in enumerate(lines):
-        if line.startswith("```"):
-            fenced = not fenced
-        heading = None if fenced else ITEM.match(line)
+    found: list[dict[str, str]] = []
+    for number, level, text in template.headings(lines, template.body(lines)):
+        heading = ITEM.match(text) if level == LEVEL else None
         if heading is None:
             continue
-        below = lines[n + 1 : n + 3]
+        below = lines[number : number + 2]
         scope = next((s for s in SCOPES if below == ["", f"Scope: {s}"]), None)
         if scope is None:
             raise Stop(
@@ -144,13 +163,13 @@ def items(path: str) -> list[tuple[str, str, str]]:
                 " `Scope: its part`, `Scope: each part` or `Scope: whole` after a blank line"
                 " under its heading"
             )
-        found.append((path, heading.group(1), scope))
+        found.append({"checklist": path, "item": heading.group(1), "scope": scope})
     if not found:
         raise Stop(f"turn: {path} holds no item, a heading such as `### B-1: <title>`")
     return found
 
 
-def given(ccs_path: str, ccs: dict[str, list[dict[str, str]]], work: list[str]) -> list[str]:
+def given_of(ccs_path: str, ccs: dict[str, list[dict[str, str]]], work: list[str]) -> list[str]:
     """What the roles may read: the CCS, the work and each file or folder an entry names."""
     named = [
         os.path.normpath(v)
@@ -159,8 +178,4 @@ def given(ccs_path: str, ccs: dict[str, list[dict[str, str]]], work: list[str]) 
         for v in e.values()
         if os.path.exists(v)
     ]
-    found: list[str] = []
-    for path in [ccs_path] + work + named:
-        if path not in found:
-            found.append(path)
-    return found
+    return list(dict.fromkeys([ccs_path, *work, *named]))

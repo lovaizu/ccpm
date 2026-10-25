@@ -1,13 +1,18 @@
+"""Each form a judgment is given in, checked against the run's items and the work, and the parts
+of the work an item asked of each part is judged in."""
+
 import json
 import os
+import unittest
 
 from helpers import (
     CHECKED,
     EACH_GOOD,
+    EACH_ITEM,
     FOUND,
     GOOD,
+    ITEMS,
     LESSON,
-    PARTS,
     QUESTION,
     SECTIONED,
     STOPPED,
@@ -20,26 +25,21 @@ from helpers import (
 
 (schema,) = testing.lane_code(TURN, "schema")
 
-ITEMS = [
-    {"checklist": "checklists/readme.md", "item": "F-1"},
-    {"checklist": "checklists/readme.md", "item": "B-1"},
-]
 WORK = ["README.md"]
-
-
-EACH_ITEM = {"checklist": "checklists/readme.md", "item": "B-2"}
+# The form files of the roles, as lane's in_form holds each role's reply to its own.
+FORM_FILES = os.path.join(TURN, "forms")
 
 
 class FormTest(RepoTest):
-    def said(self, data, form, records=()):
-        return forms.check(json.dumps(data), ITEMS, WORK, form, records=records)
+    def said(self, data, form):
+        """What is wrong with a reply of the data in the form, over the run's two items."""
+        return forms.check(json.dumps(data), ITEMS, WORK, form, [])
 
     def each_said(self, data, form, items=(EACH_ITEM,)):
         """What is wrong with a form over the items, an item asked of each part among them, on a
         work of two parts."""
         self.write("README.md", SECTIONED)
-        each = [(EACH_ITEM["checklist"], EACH_ITEM["item"])]
-        return forms.check(json.dumps(data), list(items), WORK, form, each=each)
+        return forms.check(json.dumps(data), list(items), WORK, form, [EACH_ITEM])
 
 
 class TestItems(FormTest):
@@ -50,9 +50,9 @@ class TestItems(FormTest):
         # Then: each is told the shape to give, the lists its form takes
         for text in ("good", "[]", '{"items": []}'):
             with self.subTest(text=text):
-                said = forms.check(text, ITEMS, WORK, forms.CLAIM)
+                said = forms.check(text, ITEMS, WORK, forms.CLAIM, [])
                 self.assertEqual(said, ['give it as JSON: {"items": [...], "questions": [...]}'])
-        said = forms.check("good", ITEMS, WORK, forms.FIRST_READING)
+        said = forms.check("good", ITEMS, WORK, forms.FIRST_READING, [])
         self.assertEqual(said, ['give it as JSON: {"items": [...]}'])
 
     def test_each_item_out_of_place_is_named_by_its_checklist_and_id(self):
@@ -133,16 +133,6 @@ class TestItems(FormTest):
                     ' "did" with "lacking"'
                 )
             ],
-        )
-
-    def test_a_check_asks_its_questions_of_an_item(self):
-        # Given: a check whose question no item waits on
-        # When: it is checked
-        # Then: the question is named
-        can = [dict(i, can="the decisions") for i in ITEMS]
-        said = self.said({"items": can, "questions": [QUESTION]}, forms.CHECK)
-        self.assertEqual(
-            said, ["question 1 has no item waiting on it; name it at the item it settles"]
         )
 
     def test_an_item_waiting_on_a_question_not_given_is_named(self):
@@ -271,6 +261,20 @@ class TestClaim(FormTest):
             said, ["checklists/readme.md B-1 is left out; give every item judged here"]
         )
 
+
+class TestCheck(FormTest):
+    """The orchestrator's check of the CCS, before any work is made."""
+
+    def test_a_check_asks_its_questions_of_an_item(self):
+        # Given: a check whose question no item waits on
+        # When: it is checked
+        # Then: the question is named
+        can = [dict(i, can="the decisions") for i in ITEMS]
+        said = self.said({"items": can, "questions": [QUESTION]}, forms.CHECK)
+        self.assertEqual(
+            said, ["question 1 has no item waiting on it; name it at the item it settles"]
+        )
+
     def test_a_check_asking_a_question_still_gives_every_item(self):
         # Given: the orchestrator's check of the CCS naming only the item waiting on its question
         # When: it is checked
@@ -323,6 +327,16 @@ class TestParts(FormTest):
             forms.parts(["README.md"]), ["README.md:1-3", "README.md:4-10", "README.md:11-12"]
         )
 
+    def test_a_heading_in_a_fence_of_tildes_or_an_indented_one_opens_no_part(self):
+        for fence in ("~~~", "  ```"):
+            with self.subTest(fence=fence):
+                # Given: a README whose top heading in a fence of tildes, or an indented one, stands
+                # between its opening and its one section
+                self.write("README.md", f"# x\n\n{fence}\n## not one\n{fence}\n## B\nb\n")
+                # When: it is split
+                # Then: the fence lies in the opening's part
+                self.assertEqual(forms.parts(["README.md"]), ["README.md:1-5", "README.md:6-7"])
+
     def test_a_document_opening_with_a_section_has_no_opening_part(self):
         # Given: a document whose first line is a top heading, and one with none
         # When: each is split
@@ -354,7 +368,6 @@ class TestParts(FormTest):
             with self.subTest(form=form):
                 data = {"items": [GOOD, dict(GOOD, item="B-1"), EACH_GOOD], "questions": []}
                 self.assertEqual(self.each_said(data, form, ITEMS + [EACH_ITEM]), [])
-        self.assertEqual(forms.parts(WORK), PARTS)
 
     def test_an_item_given_at_the_wrong_scope_stops(self):
         # Given: an item asked of each part given one Good with its lines, and an item of its part
@@ -428,13 +441,12 @@ class TestParts(FormTest):
         self.write("z.py", "x\n" * 7)
         work = ["README.md", "0.py", "z.py"]
         rest = [{"part": f"{p}:1-7", "good": "x", "lines": [f"{p}:1"]} for p in ("0.py", "z.py")]
-        each = [(EACH_ITEM["checklist"], EACH_ITEM["item"])]
         for lines, said in (("README.md:5-7", 0), ("0.py:5-7", 1), ("z.py:5-7", 1)):
             with self.subTest(lines=lines):
                 second = dict(EACH_GOOD["parts"][1], lines=[lines])
                 item = dict(EACH_GOOD, parts=[EACH_GOOD["parts"][0], second, *rest])
                 text = json.dumps({"items": [item]})
-                found = forms.check(text, [EACH_ITEM], work, forms.FIRST_READING, each=each)
+                found = forms.check(text, [EACH_ITEM], work, forms.FIRST_READING, [EACH_ITEM])
                 self.assertEqual(len(found), said, found)
 
     def test_lines_named_by_a_whole_path_are_inside_their_part(self):
@@ -497,14 +509,13 @@ class TestLessons(FormTest):
 
     def setUp(self):
         super().setUp()
-        self.records: tuple[str, ...] = (
-            self.given_record("first-user", "{}"),
-            self.given_record("generator", "{}"),
-        )
+        self.records = [self.given_record("first-user", "{}"), self.given_record("generator", "{}")]
 
     def lessons(self, **reply):
+        """What is wrong with the learner's reply, by default one general lesson, the records
+        those the test has written."""
         reply = dict({"lessons": [LESSON], "checked": CHECKED}, **reply)
-        return self.said(reply, forms.LEARNT, records=self.records)
+        return forms.learnt(json.dumps(reply), self.records)
 
     def test_lessons_resting_on_words_of_the_records_pass(self):
         # Given: a lesson of the project's own and a general one, each quoting a record, and a
@@ -545,18 +556,6 @@ class TestLessons(FormTest):
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn(said, said_now[0])
 
-    def test_a_ground_is_found_in_the_text_the_reader_gives(self):
-        # Given: a text that is no record of an agent, and a reader giving it as it is
-        self.write("history.txt", "commit 1\n    the README says MIT\n")
-        grounds = [{"record": 1, "quote": "the README says MIT"}]
-        reply = {"lessons": [dict(LESSON, grounds=grounds)], "checked": CHECKED}
-        # When: a lesson quoting its words is checked with that reader
-        said = forms.check(
-            json.dumps(reply), [], [], forms.LEARNT, records=("history.txt",), read=self.read
-        )
-        # Then: it passes
-        self.assertEqual(said, [])
-
     def test_every_lesson_out_of_its_form_is_named(self):
         # Given: two lessons neither own nor general
         # When: they are checked
@@ -569,7 +568,7 @@ class TestLessons(FormTest):
         # When: a lesson quotes each record's words by its number, or the third's words by
         # another number
         # Then: each found where it numbers passes, and the other is named
-        self.records = tuple(self.given_record(f"r{n}", f"words of {n}") for n in (1, 2, 3))
+        self.records = [self.given_record(f"r{n}", f"words of {n}") for n in (1, 2, 3)]
         for n in (1, 2, 3):
             with self.subTest(n=n):
                 ground = {"record": n, "quote": f"words of {n}"}
@@ -590,12 +589,9 @@ class TestLessons(FormTest):
             ([], 'give it as JSON: {"lessons": [...], "checked": "..."}'),
         ):
             with self.subTest(reply=reply):
-                said_now = self.said(reply, forms.LEARNT, records=self.records)
+                said_now = forms.learnt(json.dumps(reply), self.records)
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn(said, said_now[0])
-
-
-FORMS = os.path.join(TURN, "forms")
 
 
 class TestSchemas(FormTest):
@@ -604,7 +600,7 @@ class TestSchemas(FormTest):
 
     def out_of(self, name, value):
         """Where the value is out of the role's schema of the name, None where it holds."""
-        with open(os.path.join(FORMS, name), encoding="utf-8") as f:
+        with open(os.path.join(FORM_FILES, name), encoding="utf-8") as f:
             form = json.load(f)
         schema.checked(form)
         return schema.held(form, value)
@@ -613,7 +609,9 @@ class TestSchemas(FormTest):
         # Given: turn's forms
         # When: they are listed
         # Then: there is one for the generator, the first user and the learner, and none else
-        self.assertEqual(sorted(os.listdir(FORMS)), ["claim.json", "learnt.json", "reading.json"])
+        self.assertEqual(
+            sorted(os.listdir(FORM_FILES)), ["claim.json", "learnt.json", "reading.json"]
+        )
 
     def test_each_reply_the_flow_takes_is_one_its_schema_takes(self):
         # Given: a claim, a claim asking before making, a reading and the learner's lessons, each
@@ -631,9 +629,13 @@ class TestSchemas(FormTest):
                 self.assertIsNone(self.out_of(name, value))
 
     def test_a_lesson_neither_own_nor_general_is_out_of_its_schema(self):
-        # Given: the learner's lesson said to be for a role, as before
+        # Given: the learner's lesson said to be for a role
         # When: it is held to the learner's schema
         # Then: it is out at the lesson's whose
         reply = {"lessons": [dict(LESSON, whose="generator")], "checked": CHECKED}
         out = self.out_of("learnt.json", reply)
         self.assertEqual(out.told()[: len("$.lessons[0].whose")], "$.lessons[0].whose")
+
+
+if __name__ == "__main__":
+    unittest.main()

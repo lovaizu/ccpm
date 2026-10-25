@@ -6,6 +6,7 @@ from helpers import (
     CALL,
     CAN,
     CHECKED,
+    CHECKLIST,
     FIRST_READ,
     FOUND,
     GOOD,
@@ -16,6 +17,7 @@ from helpers import (
     WAITS,
     RepoTest,
     run,
+    state,
 )
 
 # The generator's claim of every item's Good.
@@ -92,7 +94,7 @@ class TestGeneratorKept(RoundTest):
         self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
         expected = {
             "remade": [self.here("README.md")],
-            "parts": ["README.md:1-4", "README.md:5-7"],
+            "parts": [self.here("README.md:1-4"), self.here("README.md:5-7")],
             "reply": self.here(RESULT + ".first-user.json"),
         }
         self.assertEqual(json.loads(move["input"]["message"]), expected)
@@ -251,7 +253,15 @@ class TestTold(RepoTest):
         )
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, dict(FOUND, item="B-1")])
         self.assertEqual(self.next(), {"returned": RESULT})
-        self.assertFalse(os.path.exists(run.state_path(RESULT)))
+        self.assertFalse(os.path.exists(state.state_path(RESULT)))
+
+    def test_a_line_counts_one_item_as_one(self):
+        # Given: a checklist of one item
+        self.write("checklists/readme.md", CHECKLIST.split("## Benefit")[0])
+        # When: the run is started, and the check told
+        self.turn("start", json.dumps(CALL))
+        # Then: the line counts it as one item
+        self.assertTrue(str(self.next()["line"]).endswith("of README.md, for 1 item, round 1."))
 
     def test_a_judgment_due_is_told_again_on_a_call_again(self):
         # Given: a run whose check was told
@@ -358,6 +368,17 @@ class TestResumed(RepoTest):
         self.assertEqual(move["tool"], "Agent")
         self.assertEqual(json.loads(move["input"]["prompt"])["sent_back"], self.reading(FOUND)[1:])
 
+    def test_a_run_stopped_once_its_result_is_written_returns_on_a_call_again(self):
+        # Given: a run whose learner replied, the result written, not yet returned
+        self.started()
+        self.due(self.first_read(FOUND, dict(FOUND, item="B-1")))
+        self.replied({"lessons": [], "checked": CHECKED})
+        # When: the same call is made again
+        self.turn("start", json.dumps(CALL))
+        # Then: the return is told again, and the run then returns
+        self.assertIn("turn:up will return the result", self.next()["line"])
+        self.assertEqual(self.next(), {"returned": RESULT})
+
     def test_a_call_again_with_another_call_on_the_same_result_stops(self):
         # Given: a run kept for a result
         # When: another call names the same result
@@ -424,7 +445,7 @@ class TestFolderMoved(RepoTest):
         lines = [os.path.join(self.repo, "README.md:1-3")]
         out = self.made(dict(GOOD, lines=lines), dict(GOOD, item="B-1", lines=lines))
         prompt = json.loads(self.due(out)["input"]["prompt"])
-        self.assertEqual(prompt["parts"], ["README.md:1-3"])
-        self.assertEqual(prompt["given"][0], os.path.join(self.repo, "README.md"))
+        self.assertEqual(prompt["parts"], [self.here("README.md:1-3")])
+        self.assertEqual(prompt["given"][0], self.here("README.md"))
         code, out = self.turn("parts", self.result)
-        self.assertEqual((code, json.loads(out)), (0, {"parts": ["README.md:1-3"]}))
+        self.assertEqual((code, json.loads(out)), (0, {"parts": [self.here("README.md:1-3")]}))

@@ -127,7 +127,7 @@ def main(argv: list[str]) -> int:
         print(USAGE)
         return 1
     try:
-        run = call.check(call.parse(argv[0]))
+        run = call.laid_out(call.parse(argv[0]))
         work = (call.entries(call.read_ccs(run["call"]["ccs"]), "work") or [""])[0]
         made = json.loads(argv[1]) if len(argv) == 2 else next_made(work)
         reply = {"questions": made["questions"]} if "questions" in made else returned(run, made)

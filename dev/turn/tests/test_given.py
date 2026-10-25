@@ -4,7 +4,7 @@ the result, as a role's lane lets it read anything under a folder it is given.""
 import json
 import os
 
-from helpers import CALL, CCS, RESULT, RepoTest, run
+from helpers import CALL, CCS, RESULT, RepoTest, prompts
 
 
 class GivenTest(RepoTest):
@@ -39,7 +39,7 @@ class TestWithoutRunFiles(GivenTest):
             "a/run/result.json.records/1.txt",
         )
         self.assertEqual(
-            run.without_run_files(["."], "a/run/result.json"),
+            prompts.without_run_files(["."], "a/run/result.json"),
             ["a/run/notes.md", "a/run/result.jsonx", "a/x.md", "b.md"],
         )
 
@@ -49,7 +49,7 @@ class TestWithoutRunFiles(GivenTest):
         # Then: each is given as it is
         self.lay(".tasks/result.json", ".tasks/result.json.run.json", ".task/a.md", "docs/a.md")
         self.assertEqual(
-            run.without_run_files([".task", "docs"], ".tasks/result.json"), [".task", "docs"]
+            prompts.without_run_files([".task", "docs"], ".tasks/result.json"), [".task", "docs"]
         )
 
     def test_the_result_s_own_folder_is_given_as_its_entries_but_the_run_s_files(self):
@@ -58,7 +58,7 @@ class TestWithoutRunFiles(GivenTest):
         # Then: every entry of `.tasks` is given but the result and the run's files
         self.lay(".tasks/ccs.json", ".tasks/result.json", ".tasks/result.json.run.json")
         self.assertEqual(
-            run.without_run_files([".tasks"], ".tasks/result.json"), [".tasks/ccs.json"]
+            prompts.without_run_files([".tasks"], ".tasks/result.json"), [".tasks/ccs.json"]
         )
 
     def test_a_path_that_is_one_of_the_run_s_files_is_left_out(self):
@@ -83,7 +83,7 @@ class TestWithoutRunFiles(GivenTest):
             "docs/result.json.run.json",
         ]
         self.assertEqual(
-            run.without_run_files(paths, ".tasks/result.json"), ["docs/result.json.run.json"]
+            prompts.without_run_files(paths, ".tasks/result.json"), ["docs/result.json.run.json"]
         )
 
     def test_a_result_at_the_top_leaves_out_its_files_from_the_top_s_entries(self):
@@ -91,7 +91,7 @@ class TestWithoutRunFiles(GivenTest):
         # When: `.` is given
         # Then: every entry of `.` is given but the result and the run's files
         self.lay("result.json", "result.json.run.json", "README.md", "docs/a.md")
-        self.assertEqual(run.without_run_files(["."], "result.json"), ["README.md", "docs"])
+        self.assertEqual(prompts.without_run_files(["."], "result.json"), ["README.md", "docs"])
 
     def test_a_path_met_again_is_given_once_where_it_is_first_met(self):
         # Given: the result in `.tasks`, and a file given by itself and again as an entry of `.`
@@ -99,7 +99,7 @@ class TestWithoutRunFiles(GivenTest):
         # When: the file and `.` are given
         # Then: the file is given once, where it is first met
         self.assertEqual(
-            run.without_run_files(["b.md", "."], ".tasks/result.json"), ["b.md", "a.md"]
+            prompts.without_run_files(["b.md", "."], ".tasks/result.json"), ["b.md", "a.md"]
         )
 
     def test_a_path_kept_apart_is_left_out_and_the_folders_on_its_way_opened(self):
@@ -109,7 +109,7 @@ class TestWithoutRunFiles(GivenTest):
         # Then: the CCS is left out, `.` given as its other entries, and a folder not on the way
         # to the result or the CCS given as it is
         self.assertEqual(
-            run.without_run_files([".", "ccs.json"], ".tasks/result.json", apart=("ccs.json",)),
+            prompts.without_run_files([".", "ccs.json"], ".tasks/result.json", apart=("ccs.json",)),
             ["README.md", "docs"],
         )
 
@@ -119,7 +119,7 @@ class TestWithoutRunFiles(GivenTest):
         # When: `notes` is given, the CCS kept apart
         # Then: `notes` is given as its other entries
         self.assertEqual(
-            run.without_run_files(["notes"], "result.json", apart=("notes/ccs.json",)),
+            prompts.without_run_files(["notes"], "result.json", apart=("notes/ccs.json",)),
             ["notes/a.md"],
         )
 
@@ -129,7 +129,7 @@ class TestWithoutRunFiles(GivenTest):
         # Then: they are given in the order they came, each as it is
         self.lay(".tasks/result.json", "z.md", "a.md")
         self.assertEqual(
-            run.without_run_files(["z.md", "a.md"], ".tasks/result.json"), ["z.md", "a.md"]
+            prompts.without_run_files(["z.md", "a.md"], ".tasks/result.json"), ["z.md", "a.md"]
         )
 
 

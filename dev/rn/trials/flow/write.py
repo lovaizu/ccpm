@@ -18,6 +18,7 @@ import sys
 
 import call
 import stand
+import template
 
 USAGE = "usage: write.py '<call>' [-]"
 
@@ -28,10 +29,11 @@ def shown(run: dict) -> dict:
     titles = {}
     for path in run["checklist"]:
         with open(path, encoding="utf-8") as f:
-            for line in f.read().splitlines():
-                heading = call.ITEM.match(line)
-                if heading:
-                    titles[(path, heading.group(1))] = line[len(heading.group(0)) :]
+            lines = f.read().splitlines()
+        for _, level, text in template.headings(lines, template.body(lines)):
+            heading = call.ITEM.match(text) if level == call.LEVEL else None
+            if heading:
+                titles[(path, heading.group(1))] = text[len(heading.group(0)) :]
     items = [
         {
             "checklist": os.path.basename(i["checklist"]),
@@ -55,7 +57,7 @@ def main(argv: list[str]) -> int:
         print(USAGE)
         return 1
     try:
-        run = call.check(call.parse(argv[0]))
+        run = call.laid_out(call.parse(argv[0]))
         if len(argv) == 1:
             print(json.dumps(shown(run), ensure_ascii=False))
             return 0

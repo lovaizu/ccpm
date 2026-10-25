@@ -10,8 +10,8 @@ from unittest import mock
 
 from helpers import CALL, CCS, CHECKLIST, EACH, SCRIPTS, RepoTest
 
-# The usage written out as the user is to read it, not taken from run.py, so a change to it in
-# run.py by mistake fails the tests; the duplicate-code check leaves it out, as the user chose.
+# The usage written out as the user is to read it, not taken from turn.py, so a change to it in
+# turn.py by mistake fails the tests; the duplicate-code check leaves it out, as the user chose.
 # pylint: disable=duplicate-code
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
@@ -202,14 +202,18 @@ class TestStart(RepoTest):
         self.assertEqual(running["each"], [{"checklist": "checklists/readme.md", "item": "B-2"}])
 
     def test_an_item_in_a_template_is_not_an_item(self):
-        # Given: a checklist whose template, in a fence, holds an item heading of its own
-        # When: the run is started
-        # Then: the run keeps the checklist's own items alone
-        fenced = "\n```markdown\n### B-7: <Item name>\n\n<Question>\n```\n"
-        self.write("checklists/readme.md", CHECKLIST.replace("## Benefit", fenced + "\n## Benefit"))
-        self.turn("start", json.dumps(CALL))
-        running = self.state()
-        self.assertEqual([i["item"] for i in running["items"]], ["F-1", "B-1"])
+        for fence in ("```", "~~~", "   ```"):
+            with self.subTest(fence=fence):
+                # Given: a checklist whose template, in a fence of backticks, of tildes or indented,
+                # holds an item heading of its own
+                fenced = f"\n{fence}markdown\n### B-7: <Item name>\n\n<Question>\n{fence}\n"
+                text = CHECKLIST.replace("## Benefit", fenced + "\n## Benefit")
+                self.write("checklists/readme.md", text)
+                # When: the run is started
+                self.turn("start", json.dumps(CALL))
+                # Then: the run keeps the checklist's own items alone
+                self.assertEqual([i["item"] for i in self.state()["items"]], ["F-1", "B-1"])
+                os.remove(CALL["result"] + ".run.json")
 
     def test_the_run_keeps_what_the_roles_may_read(self):
         # Given: a CCS whose entries name existing files, and text that names none
@@ -235,7 +239,9 @@ class TestStart(RepoTest):
         # user may read, and not the CCS or the decisions
         self.turn("start", json.dumps(CALL))
         running = self.state()
-        self.assertEqual(running["shown"], ["README.md", "docs/start.md", "checklists/readme.md"])
+        self.assertEqual(
+            running["readable"], ["README.md", "docs/start.md", "checklists/readme.md"]
+        )
 
     def test_the_use_and_what_the_receiver_has_are_taken(self):
         # Given: a call naming the kinds of the use and of what the receiver has
@@ -257,7 +263,7 @@ class TestStart(RepoTest):
         self.started(CALL)
         running = self.state()
         self.assertEqual(running["has"], ["docs", "docs/start.md"])
-        self.assertIn("docs", running["shown"])
+        self.assertIn("docs", running["readable"])
 
     def test_a_folder_named_with_a_trailing_slash_is_kept_as_the_folder(self):
         # Given: a CCS naming a folder with a trailing slash, as a caller names a folder
@@ -304,6 +310,15 @@ class TestStartStops(RepoTest):
         for key in ("ccs", "result", "kind"):
             with self.subTest(key=key):
                 self.stops(call_with(**{key: None}), f'the call has no "{key}"')
+
+    def test_a_call_whose_ccs_or_result_is_no_path_stops(self):
+        # Given: a call whose CCS or result is no text, or empty
+        # When: the run is started
+        # Then: it stops, naming the key and the shape to give
+        for key in ("ccs", "result"):
+            for value in (5, ["x"], " "):
+                with self.subTest(key=key, value=value):
+                    self.stops(call_with(**{key: value}), f'"{key}" is not a path', '{"ccs"')
 
     def test_a_call_with_an_unknown_key_stops(self):
         # Given: a call with a key turn does not take, at the top or among the kinds

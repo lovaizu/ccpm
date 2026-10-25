@@ -14,13 +14,24 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import CALL, CAN, QUESTION, RESULT, WAITS, RepoTest, forms, records, run, testing
-
-call = run.call
+from helpers import (
+    CALL,
+    CAN,
+    QUESTION,
+    RESULT,
+    WAITS,
+    RepoTest,
+    call,
+    forms,
+    prompts,
+    records,
+    state,
+    testing,
+)
 
 testing.load_hypothesis_profile()
 
-FORMS = (forms.CHECK, forms.CLAIM, forms.FIRST_READING, forms.LEFT, forms.LEARNT)
+FORMS = (forms.CHECK, forms.CLAIM, forms.FIRST_READING, forms.LEFT)
 ITEMS = [{"checklist": "checklists/readme.md", "item": "F-1"}]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
@@ -42,9 +53,16 @@ class TestForms(RepoTest):
         # Given: a reply of any shape, as JSON, on an item of its part or one asked of each part
         # When: it is checked by any form
         # Then: what is wrong is said in words, and nothing else happens
-        keys = [(i["checklist"], i["item"]) for i in ITEMS] if each else []
-        said = forms.check(json.dumps(value), ITEMS, ["README.md"], form, each=keys)
+        said = forms.check(json.dumps(value), ITEMS, ["README.md"], form, ITEMS if each else [])
         self.assertIsInstance(said, list)
+        self.assertTrue(all(isinstance(s, str) and s for s in said))
+
+    @given(VALUES)
+    def test_any_reply_of_the_learner_is_told_what_is_wrong(self, value):
+        # Given: a learner's reply of any shape, as JSON, on a record kept
+        # When: it is checked
+        # Then: what is wrong is said in words, and nothing else happens
+        said = forms.learnt(json.dumps(value), [self.given_record("a1", "{}")])
         self.assertTrue(all(isinstance(s, str) and s for s in said))
 
     @given(st.lists(st.sampled_from(["# t", "## h", "### s", "```", "x", ""]), max_size=30))
@@ -54,7 +72,7 @@ class TestForms(RepoTest):
         # Then: the parts run from its first line to its last, each starting where the one before
         # ends, and each but the first opens at a top heading
         self.write("README.md", "".join(line + "\n" for line in lines))
-        spans = [forms.span(p)[1:] for p in forms.parts(["README.md"])]
+        spans = [s[1:] for s in map(forms.span, forms.parts(["README.md"])) if s]
         starts = [a for a, _ in spans]
         self.assertEqual(
             [n for a, b in spans for n in range(a, b + 1)], list(range(1, len(lines) + 1))
@@ -68,7 +86,8 @@ class TestForms(RepoTest):
         # Then: it is read as if given bare
         text = json.dumps(value)
         fenced = f"```json\n{text}\n```"
-        self.assertEqual(forms.parse(fenced, forms.CLAIM), forms.parse(text, forms.CLAIM))
+        lists = ("items", "questions")
+        self.assertEqual(forms.parsed(fenced, lists), forms.parsed(text, lists))
 
     @given(st.integers(1, 30), st.integers(0, 40), st.integers(0, 40))
     def test_lines_are_taken_when_they_lie_inside_the_work(self, count, start, end):
@@ -112,8 +131,8 @@ class TestAnswer(RepoTest):
         # When: the calling AI's answer, any text, is handed on
         # Then: an answer of words is kept as it came, the blanks at its ends aside; one of blanks
         # alone is asked for again, and the run still waits on it
-        if os.path.exists(run.state_path(RESULT)):
-            os.remove(run.state_path(RESULT))
+        if os.path.exists(state.state_path(RESULT)):
+            os.remove(state.state_path(RESULT))
         self.turn("start", json.dumps(CALL))
         self.next()
         self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
@@ -123,7 +142,7 @@ class TestAnswer(RepoTest):
         if answer.strip():
             self.assertEqual((code, kept["answers"][-1]["answer"]), (0, answer.strip()))
         else:
-            self.assertEqual((code, "asked" in kept), (1, True))
+            self.assertEqual((code, kept["stage"]), (1, "asked"))
 
 
 # Names a layout is made of: folders and files, some named as the result or as one of its run's
@@ -178,7 +197,7 @@ class TestGiven(RepoTest):
                 for p in reached(asked) - on_way
                 if not any(p == o or p.startswith(o + os.sep) for o in ours)
             }
-            given_now = run.without_run_files(asked, result)
+            given_now = prompts.without_run_files(asked, result)
             self.assertEqual(reached(given_now), kept)
             self.assertFalse({os.path.realpath(p) for p in given_now} & on_way)
         finally:

@@ -28,12 +28,14 @@ CALL = shared.call("has")
 place = os.path.abspath(sys.argv[1])
 shared.task(place, CALL)
 plugin = shared.turn(place)
-sys.path.insert(0, os.path.join(plugin, "scripts"))
+shared.use(plugin)
 os.chdir(place)
 
 # The copy of turn's scripts, on the path only once it is made.
 import forms
+import prompts
 import run
+import state
 
 
 def turn(*args: str, given: str = "") -> str:
@@ -64,15 +66,7 @@ as it is, and wait for its reply. Then reply with its reply as it is.
     if os.path.exists(reply):
         with open(reply, encoding="utf-8") as f:
             text = f.read()
-        kept = run.going(CALL["result"])
-        said = forms.check(
-            text,
-            kept["items"],
-            kept["work"],
-            run.FORMS[agent],
-            records=tuple(kept.get("learnt", [])),
-            each=run.each(kept),
-        )
+        said = run.PROBLEMS[agent](state.going(CALL["result"]), text)
         print("reply:", text.strip())
         print("form:", "filled" if not said else said)
     else:
@@ -82,14 +76,14 @@ as it is, and wait for its reply. Then reply with its reply as it is.
 
 turn("start", json.dumps(CALL))
 turn("next", CALL["result"], given=json.dumps(shared.CHECK))
-kept = run.going(CALL["result"])
-ids = [role(run.GENERATOR, kept["next"]["prompt"])]
+kept = state.going(CALL["result"])
+ids = [role(prompts.GENERATOR, kept["next"]["prompt"])]
 with open("README.md", "w", encoding="utf-8") as f:
     f.write(shared.UNLICENSED)
-ids.append(role(run.FIRST_USER, run.reader_given(kept)))
-kept["records"] = [i for i in ids if i]
-run.learn(kept, [run.named(i) for i in kept["items"]])
-role(run.LEARNER, kept["next"]["prompt"])
+ids.append(role(prompts.FIRST_USER, prompts.reader(kept)))
+kept["agent_ids"] = [i for i in ids if i]
+run.learn(kept, [forms.named(i) for i in kept["items"]])
+role(prompts.LEARNER, kept["next"]["prompt"])
 os.chdir(shared.ROOT)
 shutil.rmtree(place)
 shutil.rmtree(plugin)

@@ -21,7 +21,9 @@ from helpers import (
     STOPPED,
     WAITS,
     RepoTest,
+    records,
     run,
+    state,
 )
 
 ITEM_F1 = {"checklist": "checklists/readme.md", "item": "F-1"}
@@ -88,31 +90,64 @@ class TestCheck(RepoTest):
         self.assertIn("どのライセンスで公開しますか", self.turn("questions", RESULT)[1])
 
     def test_once_answered_the_check_is_made_again_on_the_ccs(self):
-        # Given: a run that asked a question, and a CCS the calling AI added the answer to
+        # Given: a run that asked a question, and a CCS the calling AI added the answer to, in a
+        # file the CCS named before
+        self.asked()
+        self.write("notes/readme.decisions.md", "# Decisions\n\nMIT\n")
         # When: the orchestrator goes on with the answer
-        # Then: the items are checked again, on the CCS as it is now
+        out = self.answered()
+        # Then: a line says the calling AI answered and that the check is made again, and the
+        # items are checked again
+        self.assertTrue(
+            str(out["line"]).startswith("turn: The calling AI answered. Next, turn:up will check"),
+            out,
+        )
+        self.assertEqual(self.next()["check"], [ITEM_F1, ITEM_B1])
+
+    def test_an_answer_laying_the_run_out_anew_has_the_run_started_again(self):
+        # Given: a run that asked a question, and a CCS the calling AI added a checklist to with
+        # the answer
         self.asked()
         ccs = self.read_json(CALL["ccs"])
         ccs["retrieved_artifacts"].append({"checklist": "checklists/more.md"})
         self.write_json(CALL["ccs"], ccs)
         self.write("checklists/more.md", CHECKLIST.replace("B-1", "B-3"))
-        check = self.heard(self.answered())["check"]
-        self.assertEqual([i["item"] for i in check], ["F-1", "B-1", "F-1", "B-3"])
-        self.assertNotIn("asked", self.state())
+        # When: the orchestrator goes on with the answer, and with nothing again
+        # Then: the run is to be started again, and is to be till it is
+        self.assertEqual(self.answered(), {"anew": RESULT})
+        self.assertEqual(self.next(), {"anew": RESULT})
 
-    def test_the_check_made_again_gives_what_to_read_as_the_ccs_now_names_it(self):
-        # Given: a run that asked a question, and a CCS the calling AI added a file of notes to with
-        # the answer
+    def test_the_run_started_again_checks_every_item_as_the_ccs_now_names_them(self):
+        # Given: a run whose answer added a checklist to the CCS
         self.asked()
         ccs = self.read_json(CALL["ccs"])
-        ccs["retrieved_artifacts"].append({"decisions": "notes/answer.md"})
+        ccs["retrieved_artifacts"].append({"checklist": "checklists/more.md"})
         self.write_json(CALL["ccs"], ccs)
+        self.write("checklists/more.md", CHECKLIST.replace("B-1", "B-3"))
+        self.answered()
+        # When: the run is started again with the same call
+        code, out = self.turn("start", json.dumps(CALL))
+        # Then: it gives the checklist added to read, and the check, told with the answer, holds
+        # the items of both checklists
+        self.assertEqual(code, 0, out)
+        self.assertIn(self.here("checklists/more.md"), json.loads(out)["given"])
+        line = str(self.next()["line"])
+        self.assertTrue(line.startswith("turn: The calling AI answered. Next, turn:up will"), line)
+        check = self.next()["check"]
+        self.assertEqual([i["item"] for i in check], ["F-1", "B-1", "F-1", "B-3"])
+
+    def test_a_ccs_laid_out_as_before_by_the_time_the_run_goes_on_is_checked_again(self):
+        # Given: a run whose answer added a file of notes to the CCS, taken out again before the
+        # orchestrator goes on
+        self.asked()
+        ccs = self.read_json(CALL["ccs"])
+        self.write_json(CALL["ccs"], dict(ccs, more=[{"decisions": "notes/answer.md"}]))
         self.write("notes/answer.md", "MIT\n")
-        # When: the orchestrator goes on with the answer
-        given = self.heard(self.answered())["given"]
-        # Then: what it reads for the check holds the file added, as a whole path, and the CCS
-        self.assertIn(self.here("notes/answer.md"), given)
-        self.assertIn(self.here(CALL["ccs"]), given)
+        self.assertEqual(self.answered(), {"anew": RESULT})
+        self.write_json(CALL["ccs"], ccs)
+        # When: the orchestrator goes on with nothing
+        # Then: the run goes on to the check made again
+        self.assertEqual(self.heard(self.next())["check"], [ITEM_F1, ITEM_B1])
 
     def test_the_answer_is_given_to_the_generator_where_it_is_started_next(self):
         # Given: a run whose check asked a question
@@ -132,7 +167,7 @@ class TestCheck(RepoTest):
             with self.subTest(given=given):
                 out = self.refused(given) if given else self.refused()
                 self.assertIn("the run waits on the calling AI's answer", out)
-        self.assertIn("asked", self.state())
+        self.assertEqual(self.state()["stage"], "asked")
 
     def test_the_questions_when_none_is_asked_stop(self):
         # Given: a run waiting on the check, and no run at all
@@ -143,6 +178,15 @@ class TestCheck(RepoTest):
                 code, out = self.turn("questions", result)
                 self.assertEqual(code, 1)
                 self.assertIn(said, out)
+
+    def test_the_questions_before_the_run_asks_them_stop(self):
+        # Given: a check finding an item waiting on a question, the asking told and not yet done
+        self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
+        # When: the questions are asked for
+        code, out = self.turn("questions", RESULT)
+        # Then: it stops, saying no question is asked now
+        self.assertEqual(code, 1)
+        self.assertIn("asks no question now", out)
 
     def test_a_check_out_of_its_form_stops(self):
         # Given: a check leaving an item out, giving one empty words, or one a Good
@@ -200,7 +244,7 @@ class TestMade(ReadTest):
                 "checklists": [self.here("checklists/readme.md")],
                 "receiver": ["a developer new to it"],
                 "use": ["to try it on their own files"],
-                "parts": ["README.md:1-3"],
+                "parts": [self.here("README.md:1-3")],
                 "reply": self.here(RESULT + ".first-user.json"),
             },
         )
@@ -261,11 +305,12 @@ class TestMade(ReadTest):
         self.replied({"items": [WAITS], "questions": [QUESTION]})
         self.next()
         self.laid_out_anew()
-        # When: the answer is handed on
-        out = self.heard(self.answered())
+        # When: the answer is handed on, and the run started again
+        self.assertEqual(self.answered(), {"anew": RESULT})
+        self.turn("start", json.dumps(CALL))
         # Then: the items are checked again on the CCS as it is now, the answer kept, and the
         # work is made of both files
-        self.assertEqual(out["check"], self.state()["items"])
+        self.assertEqual(self.heard(self.next())["check"], self.state()["items"])
         self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
         self.assertEqual(self.state()["answers"][0]["answer"], "MIT")
 
@@ -303,7 +348,7 @@ class TestMade(ReadTest):
         reading = json.dumps({"items": [GOOD, WAITS], "questions": [QUESTION]})
         self.next({"agent_id": IDS["turn:generator"]})
         self.assertIn("waits on turn:generator's reply, not on yours", self.refused(reading))
-        self.assertTrue(os.path.exists(run.state_path(RESULT)))
+        self.assertTrue(os.path.exists(state.state_path(RESULT)))
 
     def test_going_on_without_the_agent_id_of_a_role_started_stops(self):
         # Given: a run whose generator was started
@@ -331,7 +376,7 @@ class TestMade(ReadTest):
         # When: the parts of its work are asked for
         # Then: each part is printed as its lines
         code, out = self.turn("parts", RESULT)
-        self.assertEqual((code, json.loads(out)), (0, {"parts": ["README.md:1-3"]}))
+        self.assertEqual((code, json.loads(out)), (0, {"parts": [self.here("README.md:1-3")]}))
 
     def test_going_on_for_a_result_never_started_stops(self):
         # Given: no run going at a path
@@ -665,7 +710,7 @@ class TestLearner(ReadTest):
             "grounds": [{"record": 2, "quote": "I open it."}, {"record": 3, "quote": "I open it."}],
         }
         self.due(self.learner)
-        learnt = self.read_json(RESULT + ".run.json")["learnt"]
+        learnt = self.state()["record_paths"]
         out = self.replied({"lessons": [LESSON, own], "checked": CHECKED})
         named = [
             dict(LESSON, grounds=[dict(LESSON["grounds"][0], record=learnt[0])]),
@@ -786,8 +831,8 @@ class TestRecordsShown(ReadTest):
         # Given: a line of a thousand characters, the last a blank, and one a character longer
         # When: they are wrapped for the learner
         # Then: the first is kept as it is, and the second cut at its blank
-        self.assertEqual(run.records.wrapped("a" * 999 + " "), "a" * 999 + " \n")
-        self.assertEqual(run.records.wrapped("a" * 999 + " b"), "a" * 999 + "\nb\n")
+        self.assertEqual(records.wrapped("a" * 999 + " "), "a" * 999 + " \n")
+        self.assertEqual(records.wrapped("a" * 999 + " b"), "a" * 999 + "\nb\n")
 
     def test_the_orchestrator_s_record_is_the_latest_naming_the_result(self):
         # Given: beside the roles' records, agents of another type, a meta file not JSON or not an
@@ -816,4 +861,4 @@ class TestRecordsShown(ReadTest):
         texts = self.prompt()["given"]
         self.assertEqual(len(texts), 2)
         self.assertIn(json.dumps(CALL)[:20], self.read(texts[1]))
-        self.assertEqual(run.records.orchestrator([self.path], RESULT), newer)
+        self.assertEqual(records.orchestrator([self.path], RESULT), newer)

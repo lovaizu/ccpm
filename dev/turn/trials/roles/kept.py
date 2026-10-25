@@ -30,16 +30,16 @@ CALL = shared.call("has")
 if sys.argv[1:2] == ["swap"]:
     # Run by the stand-in from the repository once the generator's work is taken: the set README
     # takes its place, and the first user, due next, is given the parts of the set README.
-    unlicensed, scripts = sys.argv[2:4]
-    sys.path.insert(0, scripts)
-    import forms
-    import run
+    unlicensed, copy = sys.argv[2:4]
+    shared.use(copy)
+    import prompts
+    import state
 
     shutil.copyfile(unlicensed, "README.md")
-    kept = run.going(CALL["result"])
-    for prompt in (kept["next"]["prompt"], kept["prompts"][run.FIRST_USER]):
-        prompt["parts"] = forms.parts(kept["work"])
-    run.save(kept)
+    kept = state.going(CALL["result"])
+    for prompt in (kept["next"]["prompt"], kept["prompts"][prompts.FIRST_USER]):
+        prompt["parts"] = prompts.parts(kept)
+    state.save(kept)
     sys.exit()
 
 place = os.path.abspath(sys.argv[1])
@@ -50,9 +50,7 @@ unlicensed = place.rstrip("/") + "-unlicensed.md"
 with open(unlicensed, "w", encoding="utf-8") as f:
     f.write(shared.UNLICENSED)
 script = f'python3 "{os.path.join(plugin, "scripts", "turn.py")}"'
-swap = (
-    f'python3 "{os.path.abspath(__file__)}" swap "{unlicensed}" "{os.path.join(plugin, "scripts")}"'
-)
+swap = f'python3 "{os.path.abspath(__file__)}" swap "{unlicensed}" "{plugin}"'
 result = CALL["result"]
 for args, given in (
     (["start", json.dumps(CALL)], ""),

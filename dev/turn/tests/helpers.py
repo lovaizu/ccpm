@@ -13,11 +13,21 @@ SCRIPTS = os.path.join(TURN, "scripts")
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, os.path.join(TURN, "..", "dev", "lane"))
 
-import forms  # noqa: F401  (the forms, for their own tests)
-import records  # noqa: F401  (the records, for their own tests)
+import call  # noqa: F401  (each of turn's modules, for its own tests)
+import forms  # noqa: F401
+import prompts  # noqa: F401
+import records  # noqa: F401
 import run
+import state
 import testing
 
+import turn
+
+# The items of the run's checklist, by its path and ID.
+ITEMS = [
+    {"checklist": "checklists/readme.md", "item": "F-1"},
+    {"checklist": "checklists/readme.md", "item": "B-1"},
+]
 CHECKLIST = """---
 name: readme
 version: 0.1.0
@@ -114,8 +124,8 @@ Scope: each part
 
 Does the reader use each part toward their purpose?
 """
+EACH_ITEM = {"checklist": "checklists/readme.md", "item": "B-2"}
 SECTIONED = "# csvtidy\n\nTidies CSV files.\n\n## Use\n\nRun it.\n"
-PARTS = ["README.md:1-4", "README.md:5-7"]
 EACH_GOOD = {
     "checklist": "checklists/readme.md",
     "item": "B-2",
@@ -162,11 +172,11 @@ class RepoTest(testing.FolderTest):
     def turn(self, *argv, stdin=""):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
-            code = run.main(list(argv), io.StringIO(stdin))
+            code = turn.main(list(argv), io.StringIO(stdin))
         return code, out.getvalue()
 
     def state(self):
-        return self.read_json(run.state_path(self.result))
+        return self.read_json(state.state_path(self.result))
 
     def printed(self, out):
         """What the script printed: a move as the line it tells, where it has one, and the tool
@@ -235,12 +245,12 @@ class RepoTest(testing.FolderTest):
         """What the role due is given, as its prompt holds it."""
         return self.state()["next"]["prompt"]
 
-    def started(self, call=None):
-        """The run started on a call and checked to give every item its Good; and the move starting
-        the generator."""
-        call = call or CALL
-        self.result = str(call["result"])
-        code, out = self.turn("start", json.dumps(call))
+    def started(self, asked=None):
+        """The run started on a call, by default the run's, and checked to give every item its
+        Good; and the move starting the generator."""
+        asked = asked or CALL
+        self.result = str(asked["result"])
+        code, out = self.turn("start", json.dumps(asked))
         self.assertEqual(code, 0, out)
         return self.due(self.next({"items": CAN, "questions": []}))
 

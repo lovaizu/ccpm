@@ -153,6 +153,16 @@ def shown(task: str, place: str, result: str) -> None:
                 print(f"--- {name}\n{f.read()}")
 
 
+def use(plugin: str) -> None:
+    """Puts the scripts of the copy of turn at plugin first on the path, in place of the working
+    tree's this module took, so what a trial imports of turn from here on is the copy's, as the run
+    uses it."""
+    scripts = os.path.join(plugin, "scripts")
+    sys.path.insert(0, scripts)
+    for name in os.listdir(scripts):
+        sys.modules.pop(os.path.splitext(name)[0], None)
+
+
 def turn(place: str) -> str:
     """Copies the turn of this working tree beside place, so the run uses it as it is when the run
     starts, and gives the copy's folder."""
