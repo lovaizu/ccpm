@@ -635,6 +635,9 @@
   },
   {
    "fact": "2026-10-25: rn redesigned as the user agreed: the steering is the map kept current, holding only what is left (done tasks and learnings out; learnings in <session>/learnings.md); tasks laid backward from the criteria, one result each, actions only what it needs, one turn call per output; research and trial results new kinds with checklists, handed by name as has; the plan CCS serves nothing and has each done task's calls; the design sign-off only where a document is needed (README/UX wording approved); faults of flow run 2 fixed by fix.md (language of one-line reports, --says in the user's words, learnings not acted on mid-session, a point kept on the work it settles). check.sh 100%, mutate rn 0 survivors (1214), move trials 25/25 (4 re-run after fixture and skill fixes). Flow trial run 2 had PASSED before the redesign (35 min, $12)."
+  },
+  {
+   "fact": "2026-10-25: three read-only audits of lane, turn and rn against their checklists, kept whole in .rn/20261013-writ-rebuild/audits/{lane,turn,rn}.md: rn.py ~8 jobs in 1,895 lines (a 9-module split drawn), turn's run.py ~6 jobs in 751 lines and each reply's form in three places, lay.py 6 jobs and lanes/__init__.py 5; knowledge read two or three ways (Markdown, Claude Code's records, the hook-command format, the CCS); rn/scripts/call.py and forms.py links unused; defects: dev/changed.sh misses plugins linking lane's code, lane trial.py DRIFT defined twice, lane CHANGELOG:22 untrue; many doc/code contradictions. All automated checks had passed."
   }
  ],
  "semantic_gist": [
@@ -701,7 +704,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T31: lane, turn and rn brought to what they should be: no module or prompt taking on two things, no noise, duplication or inconsistency; rn.py split by what each part takes on"
+   "task": "T31: lane, turn and rn brought to what they should be, from the three audits"
   }
  ],
  "relational_map": [
@@ -739,7 +742,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "read the three audits (lane, turn, rn), draw the whole refactor, build it with the checklists open, run check.sh, mutate.sh, the move trials and the flow trial; then rewrite steering T9-T14 as agreed and ask for T15"
+   "next": "after /clear: read steering.md, this state and audits/*.md whole; put the four open decisions below to the user one at a time (recommendation first); then draw the whole refactor from the audits (one place for each piece of knowledge across lane, turn, rn), build it with the checklists open, judge every fix by rn/checklists/fix.md, run check.sh, properties.sh, mutate.sh, the move trials and the flow trial; then T9-T14 rewrite and T15 on the user's word"
   }
  ],
  "uncertainty_signal": [
@@ -766,6 +769,18 @@
   },
   {
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
+  },
+  {
+   "open": "decision 1 (turn audit 1.3/4.4): turn's orchestrator reads the work to check each Good, against its own architecture (:104-109) and base Principle 3; recommended: give that check to a role of its own"
+  },
+  {
+   "open": "decision 2 (rn audit 4.1): a task's several outputs (research, trial, document) are all calls on work t<n>, so decisions carry between them and the proposal shows the latest only; each output its own work name, or change plan.md's sign"
+  },
+  {
+   "open": "decision 3 (rn audit 4.5): the plan's CCS has every returned call of each done task (code, architecture :130) or only the latest (redesign.md)"
+  },
+  {
+   "open": "decision 4 (lane audit 2.1): drop the `in (x,)` membership idiom (lane 38, rn 35) for plain ==, excluding the equivalent mutants once in each cosmic-ray.toml with the reason written there"
   }
  ],
  "retrieved_artifacts": [
