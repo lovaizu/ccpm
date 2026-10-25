@@ -122,8 +122,9 @@ class Laid:
         self, event: dict[str, Any], seen: Seen, said: str, named: list[str]
     ) -> list[hook.Said]:
         """The lane's sentence where what the event shows drifts from it, the run's values read and
-        held to its IN, nothing where one is given as null, as `check` says; stops with ports.Failed, holding what the adapter did and
-        its path, where an adapter it reads by is not as its port says."""
+        held to its IN, nothing where one is given as null, as `check` says; stops with
+        ports.Failed, holding what the adapter did and its path, where an adapter it reads by is not
+        as its port says."""
         acted = seen.acted
         run = started.held(named, self.run_values(event["cwd"], seen.found)) if named else {}
         if run is None:
