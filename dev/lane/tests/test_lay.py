@@ -200,28 +200,50 @@ class TestUp(LayTest):
         self.code_gone()
         os.symlink(helpers.CODE, self.code)
 
-    def test_code_not_an_older_copy_is_left_as_it_is(self):
-        for what, made, own in (
+    def code_kinds(self) -> tuple:
+        """What hooks/lane/ may hold that is no older copy, each a name, how it is made and what
+        lane's own code is taken to be: a copy of lane's version or a newer, a link, no code, or
+        lane itself."""
+        return (
             ("the same version", lambda: self.code_as("0.10.0\n"), "x"),
             ("a newer version", lambda: self.code_as("0.11.0\n"), "x"),
             ("a link", self.code_linked, "x"),
             ("no code", lambda: self.code_as(None), "x"),
             ("lane's own", lambda: None, self.code),
-        ):
+        )
+
+    def test_hooks_in_an_older_form_are_brought_up_wherever_the_code_is_no_older_copy(self):
+        for what, made, own in self.code_kinds():
             with self.subTest(what=what):
-                # Given: a copy of lane's version or a newer, a link, no code, or lane itself
+                # Given: the hook in an older form, and code that is no older copy
                 self.hooks_of(self.OLDER)
                 made()
                 # When: it is brought up
                 with mock.patch.object(placed, "CODE", own):
                     code, said = self.up()
-                # Then: nothing is brought up, and it says so, and the lane laid before
+                # Then: the hook is in the current form with the same lanes, the code left as it
+                # was, and what was written is said, with the lane laid before
+                self.assertEqual(code, 0)
+                self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], **KEPT}})
+                wrote = "Wrote the hook of changelog-writer into hooks/hooks.json with the lanes"
+                self.assertEqual(said, f"{wrote} it held.\n" + self.LAID + self.reads)
+
+    def test_hooks_in_the_current_form_and_code_no_older_copy_are_left_as_they_are(self):
+        for what, made, own in self.code_kinds():
+            with self.subTest(what=what):
+                # Given: the hook in the current form, and code that is no older copy
+                hooks = {"hooks": {"PreToolUse": [ENTRY], **KEPT}}
+                self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+                written = self.hooks()
+                made()
+                # When: it is brought up
+                with mock.patch.object(placed, "CODE", own):
+                    code, said = self.up()
+                # Then: nothing is written, and it says so, and the lane laid before
                 self.assertEqual(code, 0)
                 no_copy = "hooks/lane/ holds no older copy of lane's code.\n"
                 self.assertEqual(said, no_copy + self.LAID + self.reads)
-                self.assertEqual(
-                    self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"], self.OLDER
-                )
+                self.assertEqual(self.hooks(), written)
 
     def test_a_lane_this_version_does_not_lay_is_left_out_and_said(self):
         # Given: a hook laying hands_off beside a lane lane has not and in_form taking too few, and

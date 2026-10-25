@@ -112,16 +112,27 @@ def brought_up(root: str, data: str) -> str:
     hooks = entries.hooks_read(root)
     agents, left = entries.laid_before(hooks)
     was = placed.older(root)
-    if was is None:
-        no_copy = "hooks/lane/ holds no older copy of lane's code.\n"
-        return "".join([no_copy, *steps.said(root, agents), read])
-    said = [f"Brought lane's code in hooks/lane/ up from {was} to {placed.lane_version()}.\n"]
+    said = []
+    if was is not None:
+        said.append(
+            f"Brought lane's code in hooks/lane/ up from {was} to {placed.lane_version()}.\n"
+        )
+        placed.code_put(root)
+    # The hooks are written in the current form wherever they are in another, as a link to lane's
+    # code, in a plugin of the ccpm marketplace, is always lane's version while the hooks lane:up
+    # wrote with an older one are not.
+    before = json.dumps(hooks)
     for agent, laid in agents.items():
         plugin, name = agent.split(":")
         entries.hooks_with(hooks, plugin, {"name": name, "steps": laid})
-        said.append(f"Wrote the hook of {name} into hooks/hooks.json with the lanes it held.\n")
-    entries.hooks_written(root, hooks)
-    placed.code_put(root)
+    if json.dumps(hooks) != before:
+        entries.hooks_written(root, hooks)
+        said += [
+            f"Wrote the hook of {a.split(':')[1]} into hooks/hooks.json with the lanes it held.\n"
+            for a in agents
+        ]
+    if not said:
+        said.append("hooks/lane/ holds no older copy of lane's code.\n")
     return "".join([*said, *left, *steps.said(root, agents), read])
 
 
