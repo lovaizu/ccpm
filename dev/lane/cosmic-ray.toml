@@ -9,9 +9,9 @@ timeout = 30.0
 # A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
 # where no input tells a mutant of it apart: by order with the first or the last of them, such as
 # "write", the last of a call's actions in order, or `__name__`, which is "__main__" or, imported by
-# the tests, "lay", after it; or by `is` with a small number or a text like a name, of which CPython
-# keeps one copy. Each such line holds that comparison alone, as the mark leaves out every mutant
-# of its line.
+# the tests, "lay", after it; or by `is` with a small number or a text like a name the code itself
+# writes, of which CPython keeps one copy, not a text read from JSON or the command line. Each such
+# line holds that comparison alone, as the mark leaves out every mutant of its line.
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a tool named before Bash and one after, so a comparison changed to `<=`
 # or `>=` fails a test; their comments say what each value is, not where it sorts.
