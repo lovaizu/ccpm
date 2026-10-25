@@ -215,6 +215,16 @@ class TestStart(RepoTest):
                 self.assertEqual([i["item"] for i in self.state()["items"]], ["F-1", "B-1"])
                 os.remove(CALL["result"] + ".run.json")
 
+    def test_a_heading_of_another_level_is_not_an_item(self):
+        # Given: a checklist whose headings of the level above an item's and of the level below
+        # are written as items are
+        other = "\n## B-8: Above\n\nScope: whole\n\n#### B-9: Below\n\nScope: whole\n"
+        self.write("checklists/readme.md", CHECKLIST + other)
+        # When: the run is started
+        self.turn("start", json.dumps(CALL))
+        # Then: the run keeps the items of an item's level alone
+        self.assertEqual([i["item"] for i in self.state()["items"]], ["F-1", "B-1"])
+
     def test_the_run_keeps_what_the_roles_may_read(self):
         # Given: a CCS whose entries name existing files, and text that names none
         # When: the run is started
@@ -329,6 +339,8 @@ class TestStartStops(RepoTest):
         call = copy.deepcopy(CALL)
         call["kind"]["reader"] = "audience"
         self.stops(call, '"reader"', '"receiver"')
+        call["kind"]["also"] = "audience"
+        self.stops(call, 'the kind of "also"')
 
     def test_a_call_without_a_kind_stops(self):
         # Given: a call that leaves out the kind of the work, the checklist, the receiver, what the
@@ -399,7 +411,7 @@ class TestStartStops(RepoTest):
                 self.write("checklists/readme.md", text)
                 self.stops(
                     CALL,
-                    "checklists/readme.md B-1",
+                    "checklists/readme.md B-1 does not say where it is answered",
                     "`Scope: its part`, `Scope: each part` or `Scope: whole`",
                 )
 

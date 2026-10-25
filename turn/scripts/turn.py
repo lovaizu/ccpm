@@ -68,7 +68,7 @@ def paged(result: str, out: dict[str, Any], page: str) -> str:
         raise call.Stop(f"turn: page {page} is not one of 1 to {len(pages)}")
     # A print in one page comes as it is.
     if not pages[1:]:
-        return pages[0]
+        return text
     head = (
         f"{next(iter(out))}, page {page} of {len(pages)}: see every page, each with"
         f" `turn.py next {result} <page>` in a command of its own with no pipe or redirect"
@@ -76,5 +76,7 @@ def paged(result: str, out: dict[str, Any], page: str) -> str:
     return head + "\n" + pages[int(page) - 1]
 
 
-if __name__ == "__main__":
+if (
+    __name__ == "__main__"  # pragma: no mutate
+):
     sys.exit(main(sys.argv[1:], sys.stdin))

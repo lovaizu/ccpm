@@ -152,8 +152,11 @@ def items(path: str) -> list[dict[str, str]]:
         lines = f.read().splitlines()
     found: list[dict[str, str]] = []
     for number, level, text in template.headings(lines, template.body(lines)):
-        heading = ITEM.match(text) if level == LEVEL else None
-        if heading is None:
+        heading = ITEM.match(text)
+        if (
+            level != LEVEL  # pragma: no mutate
+            or heading is None
+        ):
             continue
         below = lines[number : number + 2]
         scope = next((s for s in SCOPES if below == ["", f"Scope: {s}"]), None)

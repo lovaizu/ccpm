@@ -268,7 +268,11 @@ def parts(work: list[str]) -> list[str]:
             lines = f.read().splitlines()
         starts = [1] if lines else []
         if path.endswith(DOCUMENT):
-            tops = [n for n, level, _ in template.headings(lines, 0) if level == TOP]
+            tops = [
+                n
+                for n, level, _ in template.headings(lines, template.body(lines))
+                if level == TOP  # pragma: no mutate
+            ]
             starts += [n for n in tops if n not in starts]
         ends = [n - 1 for n in starts[1:]] + [len(lines)]
         found += [f"{path}:{a}-{b}" for a, b in zip(starts, ends)]

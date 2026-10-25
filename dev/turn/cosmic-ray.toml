@@ -1,21 +1,28 @@
 # Mutation testing of turn's scripts, run from the top of the repository on a copy that may be
-# changed. turn's hooks are lane's code, taken through a link and mutated there, with lane's tests.
+# changed. What turn takes from lane through a link, its hooks and the modules linked into its
+# scripts' folder, is mutated there, with lane's tests.
 [cosmic-ray]
 module-path = "turn/scripts"
 timeout = 30.0
-excluded-modules = []
-# The type checker runs first: a change to a type annotation changes no behavior a test could see,
-# and the type checker is what checks annotations. It checks turn's scripts, not the link to lane's
-# code in turn's hooks, which is checked in lane: read through the link, lane's modules meet turn's
-# of the same names, such as call, and the check fails on every mutant, so none survives whatever
-# the tests catch.
+excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
+# The type checker and the linter run first: a change to a type annotation, or a comparison of a
+# string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
+# type checker is what checks annotations, the linter what checks `is` against a literal. The type
+# checker checks turn's scripts and their tests, not the link to lane's code in turn's hooks, which
+# is checked in lane: read through that link, lane's modules meet turn's of the same names, such as
+# call, and the check fails on every mutant, so none survives whatever the tests catch.
 # A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
 # where no input tells a mutant of it apart: by order with the first or the last of them, such as
-# "check", the first of the steps shown, or "each part", the first of the scopes in order; or by
-# `is` with the very object the value is, as a scope is a text of SCOPES and a shape one of the
-# tuples a form is made of. Each such line holds that comparison alone, as the mark leaves out
-# every mutant of its line.
-test-command = "sh -c 'pyrefly check --search-path dev/lane --search-path dev/lane/trials --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn/scripts dev/turn && python -m unittest discover -f -s dev/turn/tests'"
+# "each part", the first of the scopes in order, or `__name__`, which is "__main__" or, imported by
+# the tests, "turn", after it; or by `is` with a small number, of which CPython keeps one copy, such
+# as a heading's level, or with the very object the value is, as a shape is one of the tuples a
+# form is made of. Each such line holds that comparison alone, as the mark leaves out every mutant
+# of its line.
+# Where the code compares a value with one it knows, its tests take values on either side of that
+# one in order too, such as a heading of the level below and one of the level above, so a
+# comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not
+# where it sorts.
+test-command = "sh -c 'ruff check --select F632 turn && pyrefly check --search-path dev/lane --search-path dev/lane/trials --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn/scripts dev/turn && python -m unittest discover -f -s dev/turn/tests'"
 
 [cosmic-ray.distributor]
 name = "local"

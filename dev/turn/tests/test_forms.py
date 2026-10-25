@@ -337,6 +337,14 @@ class TestParts(FormTest):
                 # Then: the fence lies in the opening's part
                 self.assertEqual(forms.parts(["README.md"]), ["README.md:1-5", "README.md:6-7"])
 
+    def test_a_heading_of_another_level_or_in_the_frontmatter_opens_no_part(self):
+        # Given: a README with a heading of the level above a top one and one below it after its
+        # opening, and frontmatter holding a line written as a top heading
+        self.write("README.md", "---\nname: x\n## not one\n---\n# x\n\n# y\n### z\n## B\nb\n")
+        # When: it is split
+        # Then: its one top heading alone opens a part
+        self.assertEqual(forms.parts(["README.md"]), ["README.md:1-8", "README.md:9-10"])
+
     def test_a_document_opening_with_a_section_has_no_opening_part(self):
         # Given: a document whose first line is a top heading, and one with none
         # When: each is split
@@ -457,6 +465,14 @@ class TestParts(FormTest):
         parts = [dict(p, lines=[self.here(p["lines"][0])]) for p in EACH_GOOD["parts"]]
         said = self.each_said({"items": [dict(EACH_GOOD, parts=parts)]}, forms.FIRST_READING)
         self.assertEqual(said, [])
+
+    def test_every_part_of_no_shape_is_named(self):
+        # Given: an item asked of each part whose two parts both hold no Good
+        # When: it is checked
+        # Then: both are named
+        parts = [{"part": p["part"]} for p in EACH_GOOD["parts"]]
+        said = self.each_said({"items": [dict(EACH_GOOD, parts=parts)]}, forms.FIRST_READING)
+        self.assertEqual([s.split(": ")[1][:6] for s in said], ["part 1", "part 2"])
 
     def test_every_part_out_of_place_is_named(self):
         # Given: an item asked of each part whose two parts both name lines outside them
