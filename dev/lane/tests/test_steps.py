@@ -123,6 +123,16 @@ class TestLayAgain(LayTest):
         self.lay("write", self.proposal_file)
         self.propose(proposal)
 
+    def lay_before(self, name, number):
+        """Lays hands_off of lane's README on the step of the number of the subagent of the name,
+        as hooks/lanes.json and hooks.json hold it once laid."""
+        steps = [{"step": number, "lanes": LANES}]
+        laid = {"subagents": [{"name": name, "steps": steps}]}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        entry = json.loads(json.dumps(ENTRY).replace("changelog-writer", name))
+        hooks = {"hooks": {"PreToolUse": [entry]}}
+        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+
     def test_a_lane_laid_again_taking_other_things_has_its_old_sentence_taken_out(self):
         # Given: hands_off laid on step 3 taking `git commit` and `git push`, proposed again taking
         # `git push` alone
@@ -159,12 +169,10 @@ class TestLayAgain(LayTest):
             printed,
         )
 
-    def test_a_lane_held_on_a_step_the_steps_no_longer_have_is_passed_over(self):
-        # Given: the subagent's hook holding a lane on step 9, which its Steps do not have
-        held = json.loads(json.dumps(ENTRY).replace("'3:hands_off", "'9:hands_off"))
-        self.write_json(
-            os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": {"PreToolUse": [held]}}
-        )
+    def test_a_lane_laid_on_a_step_the_steps_no_longer_have_is_passed_over(self):
+        # Given: hooks/lanes.json laying hands_off on step 9 of the subagent, which its Steps do not
+        # have, and its hook
+        self.lay_before("changelog-writer", 9)
         # When: the proposal is printed and written
         printed = self.lay("print", self.proposal_file)
         self.lay("write", self.proposal_file)
@@ -172,13 +180,11 @@ class TestLayAgain(LayTest):
         self.assertEqual(printed, (0, PRINTED))
         self.assertEqual(self.read(self.agent_file), helpers.LAID)
 
-    def test_a_sentence_no_hook_of_the_subagent_held_stays(self):
-        # Given: step 3 saying the sentence, held by the hook of another subagent alone, and
-        # hands_off proposed on step 3 taking `git push` alone
+    def test_a_sentence_no_lane_of_the_subagent_laid_stays(self):
+        # Given: step 3 saying the sentence, hooks/lanes.json laying its lane on step 3 of another
+        # subagent alone, and hands_off proposed on step 3 taking `git push` alone
         self.write(self.agent_file, helpers.LAID)
-        other = json.loads(json.dumps(ENTRY).replace("changelog-writer", "other"))
-        hooks = {"hooks": {"PreToolUse": [other]}}
-        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+        self.lay_before("other", 3)
         self.propose(self.proposal(PUSH))
         # When: it is written
         self.lay("write", self.proposal_file)
