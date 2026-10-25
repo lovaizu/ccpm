@@ -14,7 +14,7 @@ Principle 1 to 8, and its own, named below rn's Principle 1 and 2:
 
 1. Every task traces back to the purpose, through the goal or the acceptance criteria it serves.
 2. At every move the orchestrator sets where the session stands from the checked facts alone, and
-   replans from the steering alone.
+   replans from the steering and what each done task served, decided and made.
 
 ## User stories
 
