@@ -7,16 +7,10 @@ import shutil
 import tempfile
 import unittest
 
-# Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
-try:
-    from hypothesis import given  # pyrefly: ignore[missing-import]
-    from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
-except ImportError:
-    raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
-
 from helpers import (
     CALL,
     CAN,
+    ITEM_F1,
     QUESTION,
     RESULT,
     WAITS,
@@ -29,10 +23,12 @@ from helpers import (
     testing,
 )
 
-testing.load_hypothesis_profile()
+hypothesis = testing.hypothesis()
+given = hypothesis.given
+st = hypothesis.strategies
 
 FORMS = (forms.CHECK, forms.CLAIM, forms.FIRST_READING, forms.LEFT)
-ITEMS = [{"checklist": "checklists/readme.md", "item": "F-1"}]
+ITEMS = [ITEM_F1]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
     ["items", "questions", "checklist", "item", "good", "lines", "question", "can"]
@@ -111,7 +107,56 @@ class TestCall(unittest.TestCase):
             self.assertIn("give it as", str(stop))
 
 
+# Lines a checklist is made of: items of each scope, the line of a scope, headings of other levels,
+# fences of each mark, and text.
+CHECKLIST_LINES = st.sampled_from(
+    ["### B-1: x", "### B-2: y", "## B-3: z", "#### B-4: w", "", "Scope: its part"]
+    + ["Scope: each part", "```", "~~~", "  ```", "x"]
+)
+
+
+class TestItems(RepoTest):
+    @given(st.lists(CHECKLIST_LINES, max_size=30))
+    def test_any_checklist_gives_its_items_outside_fences_or_stops_with_words(self, lines):
+        # Given: a checklist of any lines of items, scopes, other headings, fences and text
+        self.write("checklist.md", "".join(line + "\n" for line in lines))
+        # When: its items are read
+        try:
+            found = call.items("checklist.md")
+        except call.Stop as stop:
+            # Then: it stops saying what to put, or each item is a heading of an item's level
+            # outside a fence, as lane's template reads them, with the scope its line says
+            self.assertIn("turn: checklist.md", str(stop))
+            return
+        outside = {n for n, level, _ in call.template.headings(lines, 0) if level == 3}
+        self.assertEqual(len(found), len([n for n in outside if lines[n - 1][4:6] == "B-"]))
+        self.assertTrue(all(i["scope"] in call.SCOPES for i in found))
+
+
+# Entries a record holds: messages of text and of parts, attachments, Claude Code's copies, and
+# values of no shape.
+ENTRIES = st.lists(
+    st.dictionaries(
+        st.sampled_from(["type", "message", "attachment"]),
+        st.sampled_from(["user", "assistant", "attachment", "api-request-blob"])
+        | st.dictionaries(st.sampled_from(["content", "type", "filename", "snippet"]), VALUES),
+        max_size=3,
+    ),
+    max_size=8,
+)
+
+
 class TestRecords(RepoTest):
+    @given(ENTRIES)
+    def test_any_record_is_shown_as_text_of_its_own_entries(self, entries):
+        # Given: a record of any entries, as Claude Code might write them
+        self.write("agent.jsonl", "".join(json.dumps(e) + "\n" for e in entries))
+        # When: it is shown as text for the learner
+        shown = records.as_text("agent.jsonl")
+        # Then: it is text, a line for each message or part shown, ending a line
+        self.assertIsInstance(shown, str)
+        self.assertTrue(shown.endswith("\n"))
+
     @given(st.text(max_size=5000))
     def test_a_record_wrapped_keeps_every_word_on_lines_a_read_shows(self, text):
         # Given: a record shown as any text
@@ -172,7 +217,8 @@ class TestGiven(RepoTest):
         # When: the paths are given without the run's files
         # Then: they reach every file and folder the paths reached but the run's files and what is
         # in them, and the folders opened on the way to the result's folder; and none of them is
-        # such a folder
+        # such a folder. What the paths reach is found here by walking the layout, apart from how
+        # without_run_files opens folders, so the two cannot share a slip.
         place = tempfile.mkdtemp(dir=self.base)
         os.chdir(place)
         try:

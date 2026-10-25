@@ -1,3 +1,6 @@
+"""turn.py run from the shell and the call it starts the run on: the usage, the run started, and
+each call turn cannot take stopped with what to give instead."""
+
 import contextlib
 import copy
 import io
@@ -6,9 +9,19 @@ import os
 import runpy
 import subprocess
 import sys
+import unittest
 from unittest import mock
 
-from helpers import CALL, CCS, CHECKLIST, EACH, SCRIPTS, RepoTest
+from helpers import (
+    CALL,
+    CCS,
+    CHECKLIST,
+    EACH,
+    EACH_ITEM,
+    ITEMS,
+    SCRIPTS,
+    RepoTest,
+)
 
 # The usage written out as the user is to read it, not taken from turn.py, so a change to it in
 # turn.py by mistake fails the tests; the duplicate-code check leaves it out, as the user chose.
@@ -25,6 +38,7 @@ USAGE = (
 
 
 def call_with(**change):
+    """The run's call with each key or kind changed to the value given, or left out for None."""
     call = copy.deepcopy(CALL)
     for key, value in change.items():
         if key in call["kind"]:
@@ -67,14 +81,6 @@ class TestUsage(RepoTest):
             with self.subTest(argv=argv):
                 self.assertEqual(self.turn(*argv), (1, USAGE + "\n"))
 
-    def test_the_script_runs_from_the_shell(self):
-        # Given: the orchestrator runs the script by its path, as its steps say
-        # When: it is run with no command
-        # Then: it exits with the usage's code
-        with mock.patch.object(sys, "argv", ["turn.py"]), self.assertRaises(SystemExit) as end:
-            runpy.run_path(os.path.join(SCRIPTS, "turn.py"), run_name="__main__")
-        self.assertEqual(end.exception.code, 1)
-
     def test_the_script_finds_its_own_modules_before_any_of_the_same_name(self):
         # Given: a folder on PYTHONPATH holding a module named as one of turn's scripts, which
         # breaks when imported
@@ -82,7 +88,7 @@ class TestUsage(RepoTest):
         # Then: it prints the usage, as its own modules are found first
         self.write("elsewhere/run.py", "raise SystemExit('not turn')\n")
         done = subprocess.run(
-            ["python3", os.path.join(SCRIPTS, "turn.py")],
+            [sys.executable, os.path.join(SCRIPTS, "turn.py")],
             check=False,
             env=dict(os.environ, PYTHONPATH="elsewhere"),
             capture_output=True,
@@ -148,26 +154,8 @@ class TestStart(RepoTest):
         self.assertEqual((code, json.loads(out)["result"]), (0, self.here(CALL["result"])))
         self.assertEqual(
             self.heard(self.next())["check"],
-            [
-                {"checklist": "checklists/readme.md", "item": "F-1"},
-                {"checklist": "checklists/readme.md", "item": "B-1"},
-            ],
+            ITEMS,
         )
-
-    def test_the_start_gives_what_the_orchestrator_reads_before_any_work_is_made(self):
-        # Given: a CCS naming the work, the checklist, the decisions and a page the receiver has
-        # When: the run is started, and started again on the same call
-        # Then: each time it gives the CCS and every file it names but the work, which the
-        # orchestrator reads whole for its check
-        given = [
-            self.here(".tasks/readme.json"),
-            self.here("checklists/readme.md"),
-            self.here("notes/readme.decisions.md"),
-            self.here("docs/start.md"),
-        ]
-        for _ in range(2):
-            code, out = self.turn("start", json.dumps(CALL))
-            self.assertEqual((code, json.loads(out)["given"]), (0, given))
 
     def test_a_run_checked_to_give_every_item_its_good_starts_the_generator(self):
         # Given: a run started
@@ -185,10 +173,7 @@ class TestStart(RepoTest):
         running = self.state()
         self.assertEqual(
             running["items"],
-            [
-                {"checklist": "checklists/readme.md", "item": "F-1"},
-                {"checklist": "checklists/readme.md", "item": "B-1"},
-            ],
+            ITEMS,
         )
 
     def test_the_run_keeps_the_items_asked_of_each_part(self):
@@ -199,7 +184,7 @@ class TestStart(RepoTest):
         self.write("checklists/readme.md", CHECKLIST + EACH)
         self.turn("start", json.dumps(CALL))
         running = self.state()
-        self.assertEqual(running["each"], [{"checklist": "checklists/readme.md", "item": "B-2"}])
+        self.assertEqual(running["each"], [EACH_ITEM])
 
     def test_an_item_in_a_template_is_not_an_item(self):
         for fence in ("```", "~~~", "   ```"):
@@ -257,7 +242,7 @@ class TestStart(RepoTest):
         # Given: a call naming the kinds of the use and of what the receiver has
         # When: the run is started
         # Then: the run keeps each kind's entries
-        self.started(CALL)
+        self.turn("start", json.dumps(CALL))
         running = self.state()
         self.assertEqual(running["use"], ["to try it on their own files"])
         self.assertEqual(running["has"], ["docs/start.md"])
@@ -270,7 +255,7 @@ class TestStart(RepoTest):
         self.write_json(
             CALL["ccs"], dict(CCS, goal_orientation=CCS["goal_orientation"] + [{"page": "docs"}])
         )
-        self.started(CALL)
+        self.turn("start", json.dumps(CALL))
         running = self.state()
         self.assertEqual(running["has"], ["docs", "docs/start.md"])
         self.assertIn("docs", running["readable"])
@@ -283,11 +268,18 @@ class TestStart(RepoTest):
         self.write_json(
             CALL["ccs"], dict(CCS, goal_orientation=CCS["goal_orientation"] + [{"page": "docs/"}])
         )
-        self.started(CALL)
+        self.turn("start", json.dumps(CALL))
         running = self.state()
         self.assertEqual(running["has"], ["docs", "docs/start.md"])
         self.assertIn("docs", running["given"])
         self.assertNotIn("docs/", running["given"])
+
+    def test_a_result_at_the_top_of_the_folder_is_kept_beside_it(self):
+        # Given: a call whose result goes at the top of the folder it is made from
+        # When: the run is started
+        # Then: the run is kept beside it
+        self.turn("start", json.dumps(call_with(result="result.json")))
+        self.assertTrue(os.path.exists("result.json.run.json"))
 
     def test_a_result_in_a_new_folder_is_written(self):
         # Given: a call whose result goes in a folder not yet there
@@ -299,6 +291,7 @@ class TestStart(RepoTest):
 
 class TestStartStops(RepoTest):
     def stops(self, call, *said):
+        """The start of the call stops, saying each of the words, and starts no run."""
         code, out = self.turn("start", call if isinstance(call, str) else json.dumps(call))
         self.assertEqual(code, 1)
         for words in said:
@@ -313,8 +306,8 @@ class TestStartStops(RepoTest):
         # Then: it stops, saying the call is not JSON and the shape to give
         self.stops("ccs: x", "the call is not JSON", '{"ccs": "<path>"')
 
-    def test_a_call_without_ccs_or_result_stops(self):
-        # Given: a call missing where the CCS is, or where the result goes
+    def test_a_call_without_ccs_kind_or_result_stops(self):
+        # Given: a call missing where the CCS is, its kinds, or where the result goes
         # When: the run is started
         # Then: it stops, naming what is missing
         for key in ("ccs", "result", "kind"):
@@ -385,7 +378,7 @@ class TestStartStops(RepoTest):
         # Given: a CCS naming a checklist that is not there, or one with no items
         # When: the run is started
         # Then: it stops, naming the checklist, and for the one with no items, saying it holds none
-        empty = "---\nname: other\ncheck: usability\nversion: 0.1.0\n---\n\n# Nothing\n"
+        empty = "---\nname: other\nversion: 0.1.0\n---\n\n# Nothing\n"
         for text in (None, empty):
             with self.subTest(text=text):
                 ccs = copy.deepcopy(CCS)
@@ -432,4 +425,8 @@ class TestStartStops(RepoTest):
         # Given: a call whose kind is not a word but a list
         # When: the run is started
         # Then: it stops, saying a kind is a name
-        self.stops(call_with(work=["deliverable"]), '"work"')
+        self.stops(call_with(work=["deliverable"]), 'the kind for "work" is not a name')
+
+
+if __name__ == "__main__":
+    unittest.main()

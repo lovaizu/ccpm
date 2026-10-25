@@ -33,8 +33,7 @@ def as_text(path: str) -> str:
         content = record.content(entry)
         if isinstance(content, str):
             lines.append(f"[{entry.get('type')}] {content}")
-        for part in content if isinstance(content, list) else []:
-            lines.append(said(part))
+        lines += [said(part) for part in record.blocks(entry)]
     return "\n".join(lines) + "\n"
 
 
@@ -51,7 +50,7 @@ def result(part: dict[str, Any]) -> str:
     """What a tool gave back, its text parts joined."""
     content = part.get("content")
     if isinstance(content, list):
-        return "\n".join(str(c.get("text", "")) for c in content)
+        return "\n".join(str(c.get("text", "")) for c in content if isinstance(c, dict))
     return str(content)
 
 

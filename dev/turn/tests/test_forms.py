@@ -11,11 +11,13 @@ from helpers import (
     EACH_ITEM,
     FOUND,
     GOOD,
+    ITEM_B1,
+    ITEM_F1,
     ITEMS,
     LESSON,
     QUESTION,
     SECTIONED,
-    STOPPED,
+    STOPPED_B1,
     TURN,
     WAITS,
     RepoTest,
@@ -60,7 +62,7 @@ class TestItems(FormTest):
         # and one of no shape it takes, then another of none
         # When: it is checked
         # Then: each is named in full with what is wrong, not only the first
-        bare = {"checklist": "checklists/readme.md", "item": "B-1"}
+        bare = ITEM_B1
         said = self.said(
             {
                 "items": [
@@ -105,10 +107,10 @@ class TestItems(FormTest):
         # Given: an item holding none of the shapes its form takes
         # When: it is checked by a form of one shape, and by a form of two
         # Then: it is told the one shape, or the two
-        bare = {"checklist": "checklists/readme.md", "item": "F-1"}
+        bare = ITEM_F1
         said = self.said({"items": [bare, WAITS], "questions": [QUESTION]}, forms.LEFT)
         self.assertEqual(said, ['checklists/readme.md F-1 must hold "question"'])
-        said = self.said({"items": [bare, STOPPED]}, forms.FIRST_READING)
+        said = self.said({"items": [bare, STOPPED_B1]}, forms.FIRST_READING)
         self.assertEqual(
             said,
             [
@@ -124,7 +126,7 @@ class TestItems(FormTest):
         both = dict(GOOD, places=["README.md:1-3"], did="read it", lacking="nothing")
         # When: it is checked
         # Then: F-1 is told the shapes it takes, one of them
-        said = self.said({"items": [both, STOPPED]}, forms.FIRST_READING)
+        said = self.said({"items": [both, STOPPED_B1]}, forms.FIRST_READING)
         self.assertEqual(
             said,
             [
@@ -194,14 +196,14 @@ class TestFirstReading(FormTest):
         # item asked of each part where it stopped in place of its parts
         # When: it is checked
         # Then: the first and the third pass, and the second is told the item left out
-        self.assertEqual(self.said({"items": [GOOD, STOPPED]}, forms.FIRST_READING), [])
+        self.assertEqual(self.said({"items": [GOOD, STOPPED_B1]}, forms.FIRST_READING), [])
         said = self.said({"items": [GOOD]}, forms.FIRST_READING)
         self.assertEqual(
             said, ["checklists/readme.md B-1 is left out; give every item judged here"]
         )
-        each = dict(STOPPED, item="B-2", places=["README.md:5-7"])
+        each = dict(STOPPED_B1, item="B-2", places=["README.md:5-7"])
         said = self.each_said(
-            {"items": [GOOD, STOPPED, each]}, forms.FIRST_READING, ITEMS + [EACH_ITEM]
+            {"items": [GOOD, STOPPED_B1, each]}, forms.FIRST_READING, ITEMS + [EACH_ITEM]
         )
         self.assertEqual(said, [])
 
@@ -210,14 +212,14 @@ class TestFirstReading(FormTest):
         # get are empty
         # When: each is checked
         # Then: the first is told the shape a stop takes, and each other the key left empty
-        places = {k: v for k, v in STOPPED.items() if k in ("checklist", "item", "places")}
+        places = {k: v for k, v in STOPPED_B1.items() if k in ("checklist", "item", "places")}
         said = self.said({"items": [GOOD, places]}, forms.FIRST_READING)
         self.assertEqual(len(said), 1, said)
         self.assertIn('"places" with "did" with "lacking"', said[0])
         for key in ("did", "lacking"):
             with self.subTest(key=key):
                 said = self.said(
-                    {"items": [GOOD, dict(STOPPED, **{key: " "})]}, forms.FIRST_READING
+                    {"items": [GOOD, dict(STOPPED_B1, **{key: " "})]}, forms.FIRST_READING
                 )
                 self.assertEqual(
                     said, [f'checklists/readme.md B-1 has an empty "{key}"; say it in words']
@@ -228,14 +230,14 @@ class TestFirstReading(FormTest):
         # with lines outside the work
         # When: each is checked
         # Then: the first passes, and each other is named
-        self.assertEqual(self.said({"items": [GOOD, STOPPED]}, forms.FIRST_READING), [])
+        self.assertEqual(self.said({"items": [GOOD, STOPPED_B1]}, forms.FIRST_READING), [])
         for places, said in (
             ([], "names no lines"),
             ("README.md:3", "names no lines"),
             (["README.md:9"], "README.md:9 is not lines of the work"),
         ):
             with self.subTest(places=places):
-                item = dict(STOPPED, places=places)
+                item = dict(STOPPED_B1, places=places)
                 said_now = self.said({"items": [GOOD, item]}, forms.FIRST_READING)
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn(said, said_now[0])
@@ -492,7 +494,7 @@ class TestLines(FormTest):
         for lines in ("README.md:1-1", "README.md:2-3", "README.md:1-2", "README.md:3"):
             with self.subTest(lines=lines):
                 said = self.said(
-                    {"items": [dict(FOUND, lines=[lines]), STOPPED]}, forms.FIRST_READING
+                    {"items": [dict(FOUND, lines=[lines]), STOPPED_B1]}, forms.FIRST_READING
                 )
                 self.assertEqual(said, [])
 
@@ -512,7 +514,7 @@ class TestLines(FormTest):
         ):
             with self.subTest(lines=lines):
                 said = self.said(
-                    {"items": [dict(FOUND, lines=[lines]), STOPPED]}, forms.FIRST_READING
+                    {"items": [dict(FOUND, lines=[lines]), STOPPED_B1]}, forms.FIRST_READING
                 )
                 self.assertEqual(len(said), 1, said)
                 self.assertIn(f"{lines} is not lines of the work", said[0])
@@ -637,7 +639,7 @@ class TestSchemas(FormTest):
         for name, value in (
             ("claim.json", {"items": [GOOD, WAITS, EACH_GOOD], "questions": [QUESTION]}),
             ("claim.json", {"items": [WAITS], "questions": [QUESTION]}),
-            ("reading.json", {"items": [FOUND, STOPPED, EACH_GOOD]}),
+            ("reading.json", {"items": [FOUND, STOPPED_B1, EACH_GOOD]}),
             ("learnt.json", {"lessons": [LESSON, dict(LESSON, whose="own")], "checked": CHECKED}),
             ("learnt.json", {"lessons": [], "checked": CHECKED}),
         ):

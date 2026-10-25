@@ -1,13 +1,17 @@
-"""What the flow gives each role and prints as `given` leaves out the run's own files, kept beside
+"""What the flow gives the orchestrator and each role to read: whole paths in the folder the call was
+made from, wherever the session's working folder moves, and none of the run's own files, kept beside
 the result, as a role's lane lets it read anything under a folder it is given."""
 
 import json
 import os
+import unittest
 
-from helpers import CALL, CCS, RESULT, RepoTest, prompts
+from helpers import CALL, CAN, CCS, GOOD, RESULT, RepoTest, prompts
 
 
 class GivenTest(RepoTest):
+    """A run of turn on a layout of files the test lays."""
+
     def lay(self, *paths):
         """Writes an empty file at each path."""
         for path in paths:
@@ -133,8 +137,28 @@ class TestWithoutRunFiles(GivenTest):
         )
 
 
+class TestStartGiven(RepoTest):
+    """What the start gives the orchestrator to read for its check."""
+
+    def test_the_start_gives_what_the_orchestrator_reads_before_any_work_is_made(self):
+        # Given: a CCS naming the work, the checklist, the decisions and a page the receiver has
+        # When: the run is started, and started again on the same call
+        # Then: each time it gives the CCS and every file it names but the work, which the
+        # orchestrator reads whole for its check
+        given = [
+            self.here(".tasks/readme.json"),
+            self.here("checklists/readme.md"),
+            self.here("notes/readme.decisions.md"),
+            self.here("docs/start.md"),
+        ]
+        for _ in range(2):
+            code, out = self.turn("start", json.dumps(CALL))
+            self.assertEqual((code, json.loads(out)["given"]), (0, given))
+
+
 class TestRolesGiven(GivenTest):
-    """A run whose receiver has the whole repository, `.`, as the trial of the roles had it."""
+    """A run whose receiver has the whole repository, `.`, as a maintainer's repository is to its
+    maintainer."""
 
     def setUp(self):
         super().setUp()
@@ -189,3 +213,43 @@ class TestRolesGiven(GivenTest):
             json.loads(move["input"]["prompt"])["given"],
             [self.here("README.md")] + self.entries[2:] + [self.here("checklists/readme.md")],
         )
+
+
+class TestFolderMoved(RepoTest):
+    """The session's working folder moves when the calling AI runs `cd`, and every agent's commands
+    and hooks then run from there; the run's paths still mean where the call was made."""
+
+    def test_each_role_is_given_whole_paths_of_where_the_call_was_made(self):
+        # Given: a run started, and the session's working folder moved to notes/
+        # When: the orchestrator goes on with the result the start gave
+        # Then: the generator's prompt names each file as a whole path in the folder the call was
+        # made from, as its hooks and its commands run from notes/
+        self.turn("start", json.dumps(CALL))
+        os.chdir("notes")
+        self.result = self.here(RESULT)
+        move = json.loads(self.due(self.next({"items": CAN, "questions": []}))["input"]["prompt"])
+        self.assertEqual(move["work"], [self.here("README.md")])
+        self.assertEqual(move["checklists"], [self.here("checklists/readme.md")])
+        self.assertEqual(move["reply"], self.here(RESULT + ".generator.json"))
+        self.assertIn(self.here(CALL["ccs"]), move["given"])
+
+    def test_a_round_goes_on_from_another_folder_with_lines_named_by_whole_paths(self):
+        # Given: a run started, and the session's working folder moved to notes/
+        # When: the generator replies at the whole path it was given, with lines named by whole
+        # paths, and the first user is due
+        # Then: the reply is taken, and the first user is given the work's parts as the run names
+        # them and whole paths for its files
+        self.started()
+        os.chdir("notes")
+        self.result = self.here(RESULT)
+        lines = [self.here("README.md:1-3")]
+        out = self.made(dict(GOOD, lines=lines), dict(GOOD, item="B-1", lines=lines))
+        prompt = json.loads(self.due(out)["input"]["prompt"])
+        self.assertEqual(prompt["parts"], [self.here("README.md:1-3")])
+        self.assertEqual(prompt["given"][0], self.here("README.md"))
+        code, out = self.turn("parts", self.result)
+        self.assertEqual((code, json.loads(out)), (0, {"parts": [self.here("README.md:1-3")]}))
+
+
+if __name__ == "__main__":
+    unittest.main()

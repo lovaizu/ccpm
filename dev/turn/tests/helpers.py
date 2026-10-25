@@ -1,3 +1,7 @@
+"""What turn's tests share: a temporary folder standing for the user's repository, holding a task's
+CCS, its checklist, its decisions and a work already written, turn run on it as the orchestrator
+runs it, and the replies, checks and records of a run, each written once here."""
+
 import contextlib
 import io
 import json
@@ -23,11 +27,13 @@ import testing
 
 import turn
 
+# The wait for a messaged role's reply as turn has it, before each test sets its own.
+WAITED = run.WAIT
+
 # The items of the run's checklist, by its path and ID.
-ITEMS = [
-    {"checklist": "checklists/readme.md", "item": "F-1"},
-    {"checklist": "checklists/readme.md", "item": "B-1"},
-]
+ITEM_F1 = {"checklist": "checklists/readme.md", "item": "F-1"}
+ITEM_B1 = {"checklist": "checklists/readme.md", "item": "B-1"}
+ITEMS = [ITEM_F1, ITEM_B1]
 CHECKLIST = """---
 name: readme
 version: 0.1.0
@@ -79,14 +85,21 @@ GOOD = {
     "good": "the reader finds each part where a README keeps it",
     "lines": ["README.md:1-3"],
 }
+# The generator's claim of every item's Good.
+CLAIM = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": []}
 WAITS = {"checklist": "checklists/readme.md", "item": "B-1", "question": 1}
 QUESTION = {"question": "Under which license may people use it?", "recommended": "MIT"}
+# The question an item waits on, as the calling AI is sent it, and the answer kept for it.
+ASKED = {"questions": [dict(QUESTION, items=[ITEM_B1])]}
+ANSWER = dict(ASKED, answer="MIT")
+# The first user's Good for each item.
 FOUND = {
     "checklist": "checklists/readme.md",
     "item": "F-1",
     "good": "the name, then what it does, as READMEs open",
     "lines": ["README.md:1-3"],
 }
+FOUND_B1 = dict(FOUND, item="B-1")
 # The orchestrator's check before the work is made: what in the CCS and its files gives each item's
 # Good.
 CAN = [
@@ -105,15 +118,18 @@ CHECKED = "every page of every record"
 # it did there and what it did not get.
 DID = "read the opening for whom it is"
 LACKING = "whether it is for a developer"
-STOPPED = {
-    "checklist": "checklists/readme.md",
-    "item": "B-1",
-    "places": ["README.md:3-3"],
-    "did": DID,
-    "lacking": LACKING,
-}
+
+
+def stopped(item):
+    """The first user's stop at the item: where it looked for its Good, what it did there and what
+    it did not get."""
+    return dict(item, places=["README.md:1-1"], did=DID, lacking=LACKING)
+
+
+STOPPED_F1 = stopped(ITEM_F1)
+STOPPED_B1 = stopped(ITEM_B1)
 # A first user's reading of every item: the Good it found for one, and where it stopped at the other.
-FIRST_READ = [FOUND, STOPPED]
+FIRST_READ = [FOUND, STOPPED_B1]
 # A checklist item asked of each part of the work, added to a run's checklist where a test needs
 # one; the work's parts, as the script splits a README of a title, an opening and one section;
 # and a Good for each.
@@ -146,20 +162,19 @@ RESULT = CALL["result"]
 
 
 class RepoTest(testing.FolderTest):
-    """Each test runs turn from a temporary folder standing for the user's repository, holding a
-    task's CCS, its checklist, its decisions and a work already written; Claude Code's records are
-    kept in a folder of its own inside it."""
+    """Each test runs turn from a temporary folder standing for the user's repository, `base`,
+    holding a task's CCS, its checklist, its decisions and a work already written; Claude Code's
+    records are kept in a folder of its own inside it."""
 
     def setUp(self):
         super().setUp()
-        self.repo = self.base
         self.write_json(CALL["ccs"], CCS)
         self.write("checklists/readme.md", CHECKLIST)
         self.write("notes/readme.decisions.md", "# Decisions\n")
         self.write("docs/start.md", "# Start\n")
         self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
         self.result = RESULT
-        self.claude = os.path.join(self.repo, ".claude-home")
+        self.claude = os.path.join(self.base, ".claude-home")
         self.session = os.path.join(self.claude, "projects", "repo", "s1", "subagents")
         patched = mock.patch.dict(os.environ, {"CLAUDE_CONFIG_DIR": self.claude})
         patched.start()
@@ -170,12 +185,14 @@ class RepoTest(testing.FolderTest):
         self.addCleanup(self.waiting.stop)
 
     def turn(self, *argv, stdin=""):
+        """What turn.py gives back and prints, run with the arguments and the standard input."""
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             code = turn.main(list(argv), io.StringIO(stdin))
         return code, out.getvalue()
 
     def state(self):
+        """Where the run stands, as its state keeps it."""
         return self.read_json(state.state_path(self.result))
 
     def printed(self, out):
@@ -239,7 +256,7 @@ class RepoTest(testing.FolderTest):
 
     def here(self, path):
         """The path as a whole path in the folder the call was made from, as a role is given it."""
-        return os.path.join(self.repo, path)
+        return os.path.join(self.base, path)
 
     def prompt(self):
         """What the role due is given, as its prompt holds it."""
@@ -265,7 +282,7 @@ class RepoTest(testing.FolderTest):
     def made(self, *claim):
         """The generator due replies with its claim, by default every item Good; and what the
         script prints then."""
-        claim = claim or (GOOD, dict(GOOD, item="B-1"))
+        claim = claim or tuple(CLAIM["items"])
         asks = [QUESTION] if any("question" in i for i in claim) else []
         return self.replied({"items": list(claim), "questions": asks})
 
@@ -274,9 +291,7 @@ class RepoTest(testing.FolderTest):
         for its Good, what it did there and what it did not get."""
         given = {(i["checklist"], i["item"]) for i in found}
         return list(found) + [
-            dict(i, places=["README.md:1-1"], did=DID, lacking=LACKING)
-            for i in self.state()["items"]
-            if (i["checklist"], i["item"]) not in given
+            stopped(i) for i in self.state()["items"] if (i["checklist"], i["item"]) not in given
         ]
 
     def first_read(self, *found, claim=()):
@@ -292,11 +307,10 @@ class RepoTest(testing.FolderTest):
         self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
         return self.heard(self.replied(reply or {"lessons": [], "checked": CHECKED}))
 
-    def given_record(self, agent_id, prompt, agent_type="", folder=None):
+    def given_record(self, agent_id, prompt, agent_type=""):
         """Writes what Claude Code keeps of an agent's conversation: its prompt as the first
         record, then what it said, kept twice as Claude Code keeps it, and its meta file."""
-        folder = folder or self.session
-        path = os.path.join(folder, f"agent-{agent_id}.jsonl")
+        path = os.path.join(self.session, f"agent-{agent_id}.jsonl")
         said = {
             "type": "assistant",
             "message": {"content": [{"type": "text", "text": "I open it."}]},
@@ -304,6 +318,14 @@ class RepoTest(testing.FolderTest):
         entries = [{"type": "user", "message": {"role": "user", "content": prompt}}, said, said]
         self.write(path, "".join(json.dumps(r) + "\n" for r in entries))
         self.write_json(
-            os.path.join(folder, f"agent-{agent_id}.meta.json"), {"agentType": agent_type}
+            os.path.join(self.session, f"agent-{agent_id}.meta.json"), {"agentType": agent_type}
         )
         return path
+
+
+class ReadTest(RepoTest):
+    """A run started and checked to give every item its Good, its generator due."""
+
+    def setUp(self):
+        super().setUp()
+        self.started()
