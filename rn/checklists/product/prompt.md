@@ -69,8 +69,12 @@ Scope: its part
 From the Role, can the AI tell what is expected of it and why, so that where the steps run out it
 chooses the action that fits the purpose?
 
+Look for: a role holding two jobs that need different things given or a different stance, such as
+making a work and judging it, where one could be another role's.
+
 Why: what is expected is what the AI spends its judgment on and checks its work against; given only
-what to do, it stops at the end of the steps or goes on by guessing.
+what to do, it stops at the end of the steps or goes on by guessing; a role holding two jobs judges
+each with what it holds for the other.
 
 ### B-3: The same result on every run
 

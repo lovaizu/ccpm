@@ -647,6 +647,9 @@
   },
   {
    "fact": "2026-10-25: the three audits were partial (prompts not read against prompt.md item by item); a whole audit begun, every file of lane, turn, rn, dev and the checklists read against its checklists, by seven read-only subagents, reports in the scratchpad, each finding to be checked by hand before the refactor is drawn"
+  },
+  {
+   "fact": "2026-10-25, the user decided: what the calling AI does with turn's result is not turn's to say, so turn's README example drops 'When it returns, check each Good against its lines.'; rn's orchestrator does check the work turn returns (rn up step 4 stays), and dev/rn/architecture.md:151-153 'it judges none of turn's lines' is rewritten to agree"
   }
  ],
  "semantic_gist": [
