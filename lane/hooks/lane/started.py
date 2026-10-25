@@ -36,6 +36,15 @@ def texts(
     return [record.prompt(found), *(d.result for d in made)]
 
 
+def held(named: list[str], run: dict[str, list[str] | None]) -> dict[str, list[str]] | None:
+    """The run's texts of each name a lane takes, an empty text left out; None where the run gives
+    one of them as null, the caller saying there is none, so the lane lets the call or the end
+    through on that run, as every lane taking that name does."""
+    if any(n in run and run[n] is None for n in named):
+        return None
+    return {n: [t for t in v if t] for n in named if (v := run.get(n)) is not None}
+
+
 def put(places: list[list[str]], run: dict[str, list[str]]) -> list[list[str] | None]:
     """The texts in each place of a lane's sentence, the run's texts put in for each take given for
     each run, beside the takes fixed in the step, in the order taken; None for a place where a take

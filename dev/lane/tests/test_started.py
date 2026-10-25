@@ -44,6 +44,26 @@ class TestPut(unittest.TestCase):
         self.assertEqual(started.put([["{other}", "x"], ["{none}"]], VALUES), [None, []])
 
 
+class TestHeld(unittest.TestCase):
+    def test_a_name_the_lane_takes_given_as_null_rests_the_lane(self):
+        # Given: a lane taking `{work}` and `{test}`, the run giving the work as null
+        # When: the run's values it is held to are read
+        # Then: there are none, the lane resting on the run
+        self.assertIsNone(started.held(["work", "test"], {"work": None, "test": ["make"]}))
+
+    def test_the_names_the_lane_takes_give_their_texts_one_not_given_left_out(self):
+        # Given: a lane taking `{work}`, `{none}`, `{blank}` and `{other}`, the run giving the work
+        # with an empty text among it, an empty list for none, an empty text for blank, nothing for
+        # other, and null for a name the lane does not take
+        run = {**VALUES, "work": ["a.md", "", "b.md"], "blank": [""], "skip": None}
+        # When: the run's values it is held to are read
+        # Then: each name given gives its texts that are not empty, and the one not given none
+        self.assertEqual(
+            started.held(["work", "none", "blank", "other"], run),
+            {"work": ["a.md", "b.md"], "none": [], "blank": []},
+        )
+
+
 class TestResolved(unittest.TestCase):
     def test_fixed_takes_are_checked_once_as_they_are(self):
         # Given: one place of two fixed things

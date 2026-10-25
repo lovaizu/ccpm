@@ -11,8 +11,9 @@ says.
 What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
 `{<name>}`: the value under that name the values port reads in what the subagent starts from, its
 prompt and what the script it first runs prints. The sentence `Write only {work}.` holds a subagent
-to the files its run's `work` names, whichever they are. A thing taken holds any text, a comma among
-the rest.
+to the files its run's `work` names, whichever they are. A value given as `null` is the caller
+saying there is none: each lane taking that name lets the call or the end through on that run, with
+nothing told. A thing taken holds any text, a comma among the rest.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -89,7 +90,7 @@ giving no answer in time or answering out of its port is an error, as below.
 
 | Port | Given | Gives | lane's form |
 |---|---|---|---|
-| values | `{"texts": ["<the prompt>", "<each print of a start_with script>"]}` | `{"values": {"<name>": ["<text>", ...]}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself |
+| values | `{"texts": ["<the prompt>", "<each print of a start_with script>"]}` | `{"values": {"<name>": ["<text>", ...]}}` or `{"values": {"<name>": null}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself, `null` for itself |
 | items | `{"input": "<path>", "text": "<its text>"}` | `{"items": ["<ID>", ...]}` | each top-level item of a Markdown list beginning with an ID, such as `B-1`, `R33` or `KR1.1`, in bold, code or brackets or not |
 | move | `{"output": "<what the script printed>"}` | `{"move": {"tool": "...", "input": {...}}}` or `{"move": null}` | the tool call itself, one JSON line `{"tool": ..., "input": {...}}` last in the output |
 
@@ -102,7 +103,7 @@ The ports' JSON Schemas:
            "properties": {"texts": {"type": "array", "items": {"type": "string"}}}},
     "out": {"type": "object", "required": ["values"], "additionalProperties": false,
             "properties": {"values": {"type": "object",
-                                      "additionalProperties": {"type": "array", "items": {"type": "string"}}}}}
+                                      "additionalProperties": {"type": ["array", "null"], "items": {"type": "string"}}}}}
   },
   "items": {
     "in": {"type": "object", "required": ["input", "text"], "additionalProperties": false,
@@ -125,8 +126,8 @@ The ports' JSON Schemas:
 ## What each lane is given
 
 Before any lane's check, the guard holds what each lane is given to the lane's IN, a JSON Schema:
-the texts put in each place of its sentence, with each `{<name>}` given for the run put in, one or
-more in each place; and, where its check rests on what the subagent did before, its record. The
+the texts put in each place of its sentence, with each `{<name>}` given for the run put in, its
+empty texts left out, one or more in each place; and, where its check rests on what the subagent did before, its record. The
 layer holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid, not on
 a run. Anything not as its IN says, a value not given or given empty, an adapter failing, giving no
 answer in time or answering out of its port, the record not found, the event or `hooks/lanes.json`

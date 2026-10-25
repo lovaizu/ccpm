@@ -122,10 +122,12 @@ class Laid:
         self, event: dict[str, Any], seen: Seen, said: str, named: list[str]
     ) -> list[hook.Said]:
         """The lane's sentence where what the event shows drifts from it, the run's values read and
-        held to its IN, as `check` says; stops with ports.Failed, holding what the adapter did and
+        held to its IN, nothing where one is given as null, as `check` says; stops with ports.Failed, holding what the adapter did and
         its path, where an adapter it reads by is not as its port says."""
         acted = seen.acted
-        run = self.run_values(event["cwd"], seen.found) if named else {}
+        run = started.held(named, self.run_values(event["cwd"], seen.found)) if named else {}
+        if run is None:
+            return []
         texts = started.put(placed(self.lane, self.takes), run)
         given = {"takes": dict(zip(places(self.lane), texts))}
         out = schema.held(given_in(self.lane), {**given, **self.record(seen)})
@@ -185,7 +187,9 @@ class Laid:
         said = f"lane cannot check {on}: {wrong.rstrip('.')}. Stop here and reply that {who}."
         return hook.Said(said, True)
 
-    def run_values(self, cwd: str, found: list[dict[str, Any]] | None) -> dict[str, list[str]]:
+    def run_values(
+        self, cwd: str, found: list[dict[str, Any]] | None
+    ) -> dict[str, list[str] | None]:
         """The run's value of each name the JSON the subagent started from gives, from the entries
         found of its record, made in the folder: its prompt and what each script start_with takes
         in it printed; none where its record is not found."""

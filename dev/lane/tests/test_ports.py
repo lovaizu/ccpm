@@ -52,12 +52,24 @@ class TestValues(unittest.TestCase):
         # Then: the line that is an object gives its names
         self.assertEqual(values([text]), {"work": ["a.md"]})
 
-    def test_a_value_neither_a_text_nor_a_list_gives_nothing(self):
-        # Given: names of a number, an object and null, and a list of texts and a number
-        text = '{"n": 1, "o": {}, "z": null, "l": ["a.md", 2]}'
+    def test_a_value_of_another_kind_gives_nothing(self):
+        # Given: names of a number and an object, and a list of texts and a number
+        text = '{"n": 1, "o": {}, "l": ["a.md", 2]}'
         # When: the values are read
         # Then: the list gives its texts alone, and the others nothing
         self.assertEqual(values([text]), {"l": ["a.md"]})
+
+    def test_null_gives_null_the_caller_saying_there_is_none(self):
+        for texts, value in (
+            (['{"work": null}'], None),
+            (['{"work": ["a.md"]}', '{"work": null}'], None),
+            (['{"work": null}', '{"work": "a.md"}'], ["a.md"]),
+        ):
+            with self.subTest(texts=texts):
+                # Given: the work given as null, alone, over a list before it, or under a text after
+                # When: the values are read
+                # Then: the later gives the work, null standing as null
+                self.assertEqual(values(texts), {"work": value})
 
     def test_text_that_holds_no_json_object_gives_nothing(self):
         for text in ("Do your steps.", "", '["a.md"]', "1"):
@@ -93,9 +105,15 @@ class TestSchemas(unittest.TestCase):
                 # Then: what it gives back holds to the port's out
                 self.assertIsNone(schema.held(ports.PORTS[port]["out"], found), found)
 
+    def test_null_given_for_a_value_holds_to_the_values_ports_out(self):
+        # Given: an adapter's answer giving the work as null
+        # When: it is held to the values port's out
+        # Then: it holds, null being a value of its own beside the list of texts
+        self.assertIsNone(schema.held(ports.PORTS["values"]["out"], {"values": {"work": None}}))
+
     def test_an_answer_out_of_a_ports_out_is_found_with_its_point(self):
         for port, found, point in (
-            ("values", {"values": {"work": "a.md"}}, "$.values.work: expected an array"),
+            ("values", {"values": {"work": "a.md"}}, "$.values.work: expected an array or null"),
             ("values", {"values": {"work": [1]}}, "$.values.work[0]: expected a string"),
             ("items", {"items": "B-1"}, "$.items: expected an array"),
             ("items", {}, '$: expected the key "items"'),

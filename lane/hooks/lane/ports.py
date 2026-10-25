@@ -4,9 +4,9 @@ JSON it gives back, a JSON Schema each, as docs/lanes.md shows them, and read by
 of it; so each lane checks only what lanes.md defines it to take, and knows no plugin's form.
 
 - `values`: given `{"texts": [<the prompt>, <each print of a start_with script>]}`, gives
-  `{"values": {"<name>": ["<text>", ...]}}`: the value under each name in the JSON objects the texts
-  hold, the later over the earlier, a list standing for each of its texts, a text for itself; a
-  value of another kind gives nothing.
+  `{"values": {"<name>": ["<text>", ...] or null}}`: the value under each name in the JSON objects
+  the texts hold, the later over the earlier, a list standing for each of its texts, a text for
+  itself, null for null, the caller saying there is none; a value of another kind gives nothing.
 - `items`: given `{"input": "<path>", "text": "<its text>"}`, gives `{"items": ["<ID>", ...]}`: the
   ID each top-level item of a Markdown list in the text begins with.
 - `move`: given `{"output": "<what the script printed>"}`, gives
@@ -44,13 +44,16 @@ def shape(**fields: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+# A run's value, its texts or null, the caller saying there is none, as OpenAPI 3.1 writes a value
+# that may be null.
+VALUE = {**TEXTS, "type": ["array", "null"]}
 # A move, the tool call itself: a tool's name and its input.
 MOVE = shape(tool=TEXT, input={"type": "object"})
 # Each port, by its name: the JSON it is given, "in", and the JSON it gives back, "out".
 PORTS: dict[str, dict[str, dict[str, Any]]] = {
     "values": {
         "in": shape(texts=TEXTS),
-        "out": shape(values={"type": "object", "additionalProperties": TEXTS}),
+        "out": shape(values={"type": "object", "additionalProperties": VALUE}),
     },
     "items": {"in": shape(input=TEXT, text=TEXT), "out": shape(items=TEXTS)},
     "move": {
@@ -70,13 +73,13 @@ ITEM = re.compile(
 
 def values(given: dict[str, Any]) -> dict[str, Any]:
     """lane's reading of the values port: the run's value of each name the JSON objects in the
-    texts give, the later over the earlier, as the texts it stands for."""
+    texts give, the later over the earlier, as the texts it stands for, or null for null."""
     merged: dict[str, Any] = {}
     for text in given["texts"]:
         for found in objects(text):
             merged.update(found)
     each = {name: texts_of(value) for name, value in merged.items()}
-    return {"values": {name: value for name, value in each.items() if value is not None}}
+    return {"values": {n: v for n, v in each.items() if v is not None or merged[n] is None}}
 
 
 def items(given: dict[str, Any]) -> dict[str, Any]:
@@ -121,8 +124,8 @@ def loaded(line: str) -> Any:
 
 
 def texts_of(value: Any) -> list[str] | None:
-    """The texts a value stands for: a text itself, a list its texts; None for a value of another
-    kind, which gives a lane nothing to hold to."""
+    """The texts a value stands for: a text itself, a list its texts; None for null, and for a value
+    of another kind, which gives a lane nothing to hold to."""
     if isinstance(value, str):
         return [value]
     if isinstance(value, list):

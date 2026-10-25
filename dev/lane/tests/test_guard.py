@@ -321,10 +321,11 @@ class TestRunValues(GuardTest):
             ('{"has": "a.md"}', "not given"),
             ('{"work": 1}', "not given"),
             ('{"work": []}', "given empty"),
+            ('{"work": ""}', "given empty"),
         ):
             with self.subTest(prompt=prompt):
-                # Given: a prompt of words, of JSON naming no work, naming it by no text, or by an
-                # empty list
+                # Given: a prompt of words, of JSON naming no work, naming it by no text, by an
+                # empty list, or by an empty text
                 self.record([], prompt)
                 # When: changelog-writer writes any file
                 # Then: it is an error, saying so and that the plugin's maker must fix it
@@ -334,6 +335,29 @@ class TestRunValues(GuardTest):
                     " the maker of notes must fix it."
                 )
                 self.assertEqual(self.wrote("c.md"), ("error", told))
+
+    def test_a_value_given_as_null_lets_the_call_through_nothing_told(self):
+        for laid, prompt in (
+            (self.LAID, '{"work": null}'),
+            (((3, "write_only", ["{work}", "{notes}"]),), '{"work": null, "notes": "n.md"}'),
+        ):
+            with self.subTest(laid=laid):
+                # Given: write_only taking `{work}`, or `{work}` and `{notes}`, the prompt giving
+                # the work as null, the caller saying there is none
+                self.lay(*laid)
+                self.record([], prompt)
+                # When: changelog-writer writes any file
+                # Then: it goes on, nothing said, the lane resting on this run
+                self.assertEqual(self.wrote("c.md"), ("", ""))
+
+    def test_a_value_given_as_null_lets_the_end_through_nothing_told(self):
+        # Given: end_when taking `{work}` on step 4, the prompt giving the work as null, none made
+        self.lay((4, "end_when", ["{work}"]))
+        self.record([], '{"work": null}')
+        # When: changelog-writer is about to end
+        stream = json.dumps(self.stopped("Done."))
+        # Then: it ends, nothing said, the lane resting on this run
+        self.assertEqual(self.guard(stream, entry="subagentstop.py"), ("", ""))
 
     def test_with_no_record_found_it_is_an_error(self):
         # Given: no record of what changelog-writer was given
