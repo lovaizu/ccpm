@@ -698,6 +698,9 @@
   },
   {
    "fact": "2026-10-25: turn read whole by a read-only subagent (18 findings); 13 fixed by hand and pushed (7139bcd..ad72a12): judge's item IDs, call.py's adapter through rn's link (links kept as dev/architecture.md's Code kept once has them, rn's trials type-checked through them), learner's checked always, up.md step 1 order, stops naming the command again, the line counting the items a move covers (read from the prompt's sent_back, 6 survivors fixed), empty grounds told, turn's test off rn's checklist, turn/docs/calling.md the README decision placed, rn:up reading each part's Good, decisions to what holds, lane linked, kinds in the tree, lines wrapped; check.sh 100% in lane, turn, rn, mutate 0. F6 (read_whole's sentence over a list) left until a record shows the misreading"
+  },
+  {
+   "fact": "2026-10-25: the user decided F11 A (9cf409d), F17 A (KR1.2 keeps no value; no comparison with an earlier version, as R57; lane's and turn's UX decisions and rn's design decisions fixed to that), F18 A (f87008c: every trial of lane, turn and rn makes its own folder in the system's temporary folder through trying.folder and prints it; judge.py takes the run folders trial.py printed)"
   }
  ],
  "semantic_gist": [
@@ -802,7 +805,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "ask the user one at a time: F11 (Concept rewritten to D1 and the three superseded turn decision files removed, recommended A), then F17 (KR1.2's value once G1 is reached), then F18 (trial folders against dev/architecture.md's temporary folder rule, repo-wide); then roles trial, rn from build-brief.md (plan.md B-9; rn's 28 lines past 100 columns, then E501 in ruff.toml), shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Never change agreed principles, UX or README intent unasked"
+   "next": "roles trial, rn from build-brief.md (plan.md B-9; rn's 28 lines past 100 columns, then E501 in ruff.toml), shared.md, final check; at release: lane into .claude-plugin/marketplace.json; ask the user whether to delete older sessions' folders under /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/. Never change agreed principles, UX or README intent unasked"
   }
  ],
  "uncertainty_signal": [
