@@ -27,12 +27,11 @@ class TestWriteHooks(LayTest):
         self.propose(self.proposal(laid))
         # When: the proposal is written
         self.lay("write", self.proposal_file)
-        # Then: the hook watches every tool, and gives each lane with all it takes, the command
-        # held back among them
+        # Then: the hook watches every tool, and hooks/lanes.json gives each lane with all it
+        # takes, the command held back among them
         entry = self.hooks()["hooks"]["PreToolUse"][0]
         self.assertEqual(entry["matcher"], ".*|Bash")
-        words = "notes:changelog-writer '3:as_printed:lay.py print' '3:wait_for:OK,lay.py write'"
-        self.assertTrue(entry["hooks"][0]["command"].endswith(words))
+        self.assertEqual(self.laid()["subagents"][0]["steps"][0]["lanes"], laid)
 
     def test_every_other_entry_stays_as_it_was(self):
         # Given: hooks.json with a description, an entry of the building AI's own, and one of
@@ -147,10 +146,9 @@ class TestWriteEndHooks(LayTest):
         self.propose(self.proposal([{"lane": "as_printed", "takes": ["lay.py print"]}]))
         # When: the proposal is written
         self.lay("write", self.proposal_file)
-        # Then: each event's entry gives the lane, PreToolUse's matching every tool, SubagentStop's
-        # the subagent
+        # Then: each event has an entry of the subagent, PreToolUse's matching every tool,
+        # SubagentStop's the subagent
         events = self.hooks()["hooks"]
-        word = "notes:changelog-writer '3:as_printed:lay.py print'"
         for event, matcher in (
             ("PreToolUse", ".*"),
             ("SubagentStop", "notes:changelog-writer"),
@@ -158,7 +156,7 @@ class TestWriteEndHooks(LayTest):
             with self.subTest(event=event):
                 entry = events[event][0]
                 self.assertEqual(entry["matcher"], matcher)
-                self.assertTrue(entry["hooks"][0]["command"].endswith(word))
+                self.assertTrue(entry["hooks"][0]["command"].endswith(" notes:changelog-writer"))
 
     def test_an_entry_of_an_event_no_lane_is_held_on_now_is_taken_out(self):
         # Given: hooks.json holding the subagent's entries of both events from before, beside an

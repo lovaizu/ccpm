@@ -1,6 +1,6 @@
-"""The hook commands lane:up writes in a plugin's hooks/hooks.json and the file read: each lane laid
-written for the command and read back from it, the words a command gives its event's script, and
-what each lane of a kind takes in a subagent, read from the file."""
+"""The hook commands lane:up writes in a plugin's hooks/hooks.json and the file read, and the lanes
+laid read from its hooks/lanes.json: the words a command gives its event's script, the lanes laid in
+a subagent, and what each lane of a kind takes in it."""
 
 from __future__ import annotations
 
@@ -11,64 +11,119 @@ import unittest
 import helpers
 from helpers import hooks_file
 
+# hooks/lanes.json laying start_with on step 1 and hands_off on step 3 of changelog-writer, and
+# hands_off on step 2 of another subagent.
+LAID = {
+    "subagents": [
+        {
+            "name": "other",
+            "steps": [{"step": 2, "lanes": [{"lane": "hands_off", "takes": ["git"]}]}],
+        },
+        {
+            "name": "changelog-writer",
+            "steps": [
+                {"step": 1, "lanes": [{"lane": "start_with", "takes": ["scripts/given.py"]}]},
+                {"step": 3, "lanes": [{"lane": "hands_off", "takes": ["git commit, -a", "x"]}]},
+            ],
+        },
+    ]
+}
 
-class TestTaken(helpers.PluginTest):
-    # A hook's command laying start_with on step 1 and hands_off on step 3 of the subagent.
-    COMMAND = hooks_file.command(
-        "notes",
-        helpers.AGENT,
-        ["1:start_with:python3 scripts/given.py", "3:hands_off:git"],
-        "PreToolUse",
-    )
 
-    def taken(self, hooks: str | None, lane: str = "start_with") -> list:
-        """What each lane of the kind takes in changelog-writer, read from the hooks written."""
-        if hooks is not None:
-            self.write(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
-        return hooks_file.taken(self.plugin, helpers.AGENT, lane)
+class LanesTest(helpers.PluginTest):
+    def lanes(self, text: str | None) -> None:
+        """Writes the text as the plugin's hooks/lanes.json, or none where it is None."""
+        if text is not None:
+            self.write(os.path.join(self.plugin, "hooks", "lanes.json"), text)
 
-    def entry(self, command: str) -> dict:
-        """An entry of hooks.json running the command on every tool."""
-        return {"matcher": ".*", "hooks": [{"type": "command", "command": command}]}
 
-    def test_what_each_lane_of_the_kind_takes_in_the_subagent_is_read_from_its_hooks(self):
-        # Given: the subagent's hook laying start_with and hands_off, beside the hooks of
-        # other subagents, and one lane does not read
-        others = [self.COMMAND.replace("changelog-writer", n) for n in ("a", "z")]
-        wrong = self.COMMAND.replace("3:hands_off:git", "3:no_lane:git")
-        entries = [self.entry(c) for c in (*others, wrong, self.COMMAND)]
-        hooks = json.dumps({"hooks": {"PreToolUse": entries}})
+class TestLaidIn(LanesTest):
+    def test_the_lanes_of_the_subagent_are_read_each_take_as_written(self):
+        # Given: hooks/lanes.json laying lanes in changelog-writer and another subagent, a thing
+        # taken holding a comma
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), LAID)
+        # When: the lanes laid in changelog-writer are read
+        # Then: they are its own, each its step, the lane and what it takes, the comma kept
+        self.assertEqual(
+            hooks_file.laid_in(self.plugin, "changelog-writer"),
+            [(1, "start_with", ["scripts/given.py"]), (3, "hands_off", ["git commit, -a", "x"])],
+        )
+
+    def test_lanes_json_not_as_lane_up_writes_it_stops_saying_what_is_wrong(self):
+        lane = {"lane": "hands_off", "takes": ["git"]}
+
+        def laying(*lanes: object, name: str = "changelog-writer") -> str:
+            steps = [{"step": 3, "lanes": list(lanes)}]
+            return json.dumps({"subagents": [{"name": name, "steps": steps}]})
+
+        for what, text, named in (
+            ("not there", None, "hooks/lanes.json is not there"),
+            ("no JSON", "{", "hooks/lanes.json holds no JSON"),
+            ("no subagents", "{}", '$: expected the key "subagents"'),
+            ("a key beside them", '{"subagents": [], "x": 1}', 'found the key "x"'),
+            ("a lane lane has not", laying({"lane": "x", "takes": ["a"]}), "$.subagents[0]"),
+            ("takes that are no list", laying({"lane": "hands_off", "takes": "a"}), "takes"),
+            ("a thing taken empty", laying({"lane": "hands_off", "takes": [""]}), "hands_off on"),
+            ("takes too few", laying({"lane": "in_form", "takes": ["a.json"]}), "in_form on"),
+            ("no lanes in it", laying(lane, name="other"), "lays no lanes in changelog-writer"),
+        ):
+            with self.subTest(what=what):
+                # Given: hooks/lanes.json in another shape, or laying no lanes in the subagent
+                os.makedirs(os.path.join(self.plugin, "hooks"), exist_ok=True)
+                path = os.path.join(self.plugin, "hooks", "lanes.json")
+                if os.path.exists(path):
+                    os.remove(path)
+                self.lanes(text)
+                # When: the lanes laid in changelog-writer are read
+                # Then: it stops, saying what is wrong
+                with self.assertRaises(ValueError) as stop:
+                    hooks_file.laid_in(self.plugin, "changelog-writer")
+                self.assertIn(named, str(stop.exception))
+
+
+class TestTaken(LanesTest):
+    def test_what_each_lane_of_the_kind_takes_in_the_subagent_is_read_from_its_lanes(self):
+        # Given: hooks/lanes.json laying start_with and hands_off in changelog-writer
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), LAID)
         for lane, takes in (
-            ("start_with", [["python3 scripts/given.py"]]),
-            ("hands_off", [["git"]]),
+            ("start_with", [["scripts/given.py"]]),
+            ("hands_off", [["git commit, -a", "x"]]),
         ):
             with self.subTest(lane=lane):
                 # When: what its lanes of the kind take is read
-                # Then: it is what its lane of the kind takes in the hook lane reads, once
-                self.assertEqual(self.taken(hooks, lane), takes)
+                # Then: it is what its lane of the kind takes
+                self.assertEqual(hooks_file.taken(self.plugin, "changelog-writer", lane), takes)
 
-    def test_hooks_not_there_or_not_json_give_none(self):
-        for hooks in (None, "{", "[]"):
-            with self.subTest(hooks=hooks):
-                # Given: no hooks.json, one not JSON, or one holding no hook
+    def test_lanes_json_not_there_or_not_json_give_none(self):
+        for text in (None, "{"):
+            with self.subTest(text=text):
+                # Given: no hooks/lanes.json, or one holding no JSON
+                self.lanes(text)
                 # When: what start_with takes is read
                 # Then: there is nothing
-                self.assertEqual(self.taken(hooks), [])
+                self.assertEqual(
+                    hooks_file.taken(self.plugin, "changelog-writer", "start_with"), []
+                )
 
 
 class TestWords(unittest.TestCase):
-    COMMAND = hooks_file.command(
-        "notes", helpers.AGENT, ["3:hands_off:git commit,git push"], "PreToolUse"
+    COMMAND = hooks_file.command("notes", helpers.AGENT, "PreToolUse")
+    # A hook's command as an older lane wrote it, giving each lane laid after the subagent.
+    OLDER = (
+        'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
+        " '3:hands_off:git commit,git push'"
     )
 
     def test_the_words_a_hooks_command_gives_its_event_script_are_read(self):
-        # Given: a hook's command as lane:up writes it
-        # When: its words for PreToolUse are read
-        # Then: they are the subagent, then each lane laid
-        self.assertEqual(
-            hooks_file.words(self.COMMAND, "PreToolUse"),
-            ["notes:changelog-writer", "3:hands_off:git commit,git push"],
-        )
+        for command, words in (
+            (self.COMMAND, ["notes:changelog-writer"]),
+            (self.OLDER, ["notes:changelog-writer", "3:hands_off:git commit,git push"]),
+        ):
+            with self.subTest(command=command):
+                # Given: a hook's command as lane:up writes it, or as an older lane wrote it
+                # When: its words for PreToolUse are read
+                # Then: they are the subagent, then each lane an older lane gave
+                self.assertEqual(hooks_file.words(command, "PreToolUse"), words)
 
     def test_a_command_of_another_event_no_subagent_or_unread_words_gives_none(self):
         for command, event in (
@@ -83,17 +138,6 @@ class TestWords(unittest.TestCase):
                 # When: its words are read
                 # Then: there are none
                 self.assertEqual(hooks_file.words(command, event), [])
-
-
-class TestWord(unittest.TestCase):
-    def test_a_lane_is_written_as_its_step_its_name_and_what_it_takes(self):
-        # Given: hands_off on step 3 taking two commands
-        # When: it is written for the hook's command
-        # Then: it reads `<step>:<lane>:<what it takes>`, the things taken joined by commas
-        self.assertEqual(
-            hooks_file.word(3, "hands_off", ["git commit", "git push"]),
-            "3:hands_off:git commit,git push",
-        )
 
 
 if __name__ == "__main__":

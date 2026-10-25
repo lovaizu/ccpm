@@ -18,6 +18,7 @@ import placed
 sys.path.insert(0, placed.CODE)
 
 import entries
+import step
 import steps
 from proposal import Stop, plugin_name, proposal
 
@@ -52,9 +53,10 @@ def printed(path: str) -> str:
     shown so."""
     given = proposal(path)
     hooks = entries.hooks_read(given["plugin"])
+    before = entries.laid_before(given["plugin"], given["name"], hooks)[0]
     blocks = []
     for agent in given["subagents"]:
-        for s in steps.steps_laid(hooks, given["name"], agent):
+        for s in steps.steps_laid(before, given["name"], agent):
             out = [*steps.listed(agent["name"], s), "\n", *steps.read_as_laid(agent["lines"], s)]
             blocks.append("".join(out))
     return "\n".join(blocks)
@@ -62,24 +64,34 @@ def printed(path: str) -> str:
 
 def written(path: str) -> str:
     """Writes the proposal into the plugin, has Claude Code check it, removes the proposal, and
-    gives what was written."""
+    gives what was written. The lanes laid in hooks/lanes.json are those laid before in each other
+    subagent the plugin's agents/ still has, and the proposal's in each of its subagents."""
     given = proposal(path)
     root, plugin = given["plugin"], given["name"]
     hooks = entries.hooks_read(root)
+    before, left = entries.laid_before(root, plugin, hooks)
+    laid = dict(before)
     said = []
     for agent in given["subagents"]:
         lines = agent["lines"]
-        for s in steps.steps_laid(hooks, plugin, agent):
+        for s in steps.steps_laid(before, plugin, agent):
             start, end = s["span"]
             lines[start:end] = steps.read_as_laid(lines, s)
             where = os.path.relpath(agent["file"], root)
             said.append(f"Wrote step {s['step']} of {agent['name']} into {where}.\n")
         with open(agent["file"], "w", encoding="utf-8") as f:
             f.write("".join(lines))
-        entries.hooks_with(hooks, plugin, agent)
+        laid[f"{plugin}:{agent['name']}"] = [
+            {"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]
+        ]
         said.append(f"Wrote the hook of {agent['name']} into hooks/hooks.json.\n")
     said += entries.gone_out(hooks, plugin, root)
+    kept = {a: s for a, s in laid.items() if step.agent_file(root, a.split(":")[1]) is not None}
+    for agent, on in kept.items():
+        entries.hooks_with(hooks, plugin, {"name": agent.split(":")[1], "steps": on})
     entries.hooks_written(root, hooks)
+    entries.lanes_written(root, kept)
+    said += [*left, "Wrote the lanes laid into hooks/lanes.json.\n"]
     placed.code_put(root)
     said.append("Put lane's code in hooks/lane/.\n")
     try:
@@ -98,9 +110,9 @@ def written(path: str) -> str:
 
 
 def brought_up(root: str, data: str) -> str:
-    """Brings up the plugin's copy of lane's code where it is older than lane, with each hook
-    lane:up wrote in it in the current form, laying the same lanes, every other entry and each step
-    as it was; gives what was done, each lane left out, as lane does not lay it now, and each lane
+    """Brings up the plugin's copy of lane's code where it is older than lane, and each hook lane:up
+    wrote in it to the current form wherever it is in another, laying the same lanes, kept in
+    hooks/lanes.json, every other entry and each step as it was; gives what was done, each lane left out, as lane does not lay it now, and each lane
     the hooks laid before, for lane:up to put to the building AI, and last what lane:up reads, by
     lane's data folder. Stops, bringing nothing up, where the folder holds no plugin's manifest."""
     if not os.path.isfile(os.path.join(root, ".claude-plugin", "plugin.json")):
@@ -108,9 +120,10 @@ def brought_up(root: str, data: str) -> str:
             f"lay.py: {root} holds no .claude-plugin/plugin.json, so it is no plugin's folder;"
             " name the folder of the plugin to lay lanes on."
         )
-    read = reads(root, data, plugin_name(root))
+    name = plugin_name(root)
+    read = reads(root, data, name)
     hooks = entries.hooks_read(root)
-    agents, left = entries.laid_before(hooks)
+    agents, left = entries.laid_before(root, name, hooks)
     was = placed.older(root)
     said = []
     if was is not None:
@@ -123,10 +136,11 @@ def brought_up(root: str, data: str) -> str:
     # wrote with an older one are not.
     before = json.dumps(hooks)
     for agent, laid in agents.items():
-        plugin, name = agent.split(":")
-        entries.hooks_with(hooks, plugin, {"name": name, "steps": laid})
+        plugin, sub = agent.split(":")
+        entries.hooks_with(hooks, plugin, {"name": sub, "steps": laid})
     if json.dumps(hooks) != before:
         entries.hooks_written(root, hooks)
+        entries.lanes_written(root, agents)
         said += [
             f"Wrote the hook of {a.split(':')[1]} into hooks/hooks.json with the lanes it held.\n"
             for a in agents

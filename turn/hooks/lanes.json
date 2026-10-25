@@ -1,0 +1,239 @@
+{
+  "subagents": [
+    {
+      "name": "up",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "start_with",
+              "takes": [
+                "turn.py start"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "lanes": [
+            {
+              "lane": "follow_next",
+              "takes": [
+                "turn.py next"
+              ]
+            },
+            {
+              "lane": "hands_off",
+              "takes": [
+                "git commit",
+                "git push"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{given}"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{given}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "lanes": [
+            {
+              "lane": "as_printed",
+              "takes": [
+                "turn.py questions"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "generator",
+      "steps": [
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{given}"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{given}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{work}",
+                "{reply}"
+              ]
+            },
+            {
+              "lane": "hands_off",
+              "takes": [
+                "git commit",
+                "git push"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "lanes": [
+            {
+              "lane": "in_form",
+              "takes": [
+                "{reply}",
+                "${CLAUDE_PLUGIN_ROOT}/forms/claim.json"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "lanes": [
+            {
+              "lane": "end_when",
+              "takes": [
+                "{reply}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "first-user",
+      "steps": [
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{given}"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{given}"
+              ]
+            },
+            {
+              "lane": "hands_off",
+              "takes": [
+                "git commit",
+                "git push"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{reply}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{reply}",
+                "${CLAUDE_PLUGIN_ROOT}/forms/reading.json"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "lanes": [
+            {
+              "lane": "end_when",
+              "takes": [
+                "{reply}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "learner",
+      "steps": [
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{given}"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{given}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{reply}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{reply}",
+                "${CLAUDE_PLUGIN_ROOT}/forms/learnt.json"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "lanes": [
+            {
+              "lane": "end_when",
+              "takes": [
+                "{reply}"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

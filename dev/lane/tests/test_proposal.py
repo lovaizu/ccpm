@@ -53,10 +53,6 @@ class TestProposal(LayTest):
                 self.proposal([{"lane": "hands_off", "takes": "git push"}]),
                 "no takes",
             ),
-            "a thing taken with a comma": (
-                self.proposal([{"lane": "hands_off", "takes": ["a,b"]}]),
-                "takes",
-            ),
             "a lane taking fewer things than its wording shows": (
                 self.proposal([{"lane": "in_form", "takes": ["out.json"]}]),
                 "takes",
@@ -145,6 +141,19 @@ class TestProposal(LayTest):
         self.assertIn("plugin.json holds no JSON", said)
 
 
+class TestComma(LayTest):
+    def test_a_thing_taken_holding_a_comma_is_written_as_it_is(self):
+        # Given: a proposal of hands_off taking a command holding a comma
+        self.propose(self.proposal([{"lane": "hands_off", "takes": ["git commit -m a,b"]}]))
+        # When: it is written
+        code, _ = self.lay("write", self.proposal_file)
+        # Then: the step says it, and hooks/lanes.json gives it as it is
+        self.assertEqual(code, 0)
+        self.assertIn("Do not run `git commit -m a,b`.", self.read(self.agent_file))
+        [lane] = self.laid()["subagents"][0]["steps"][0]["lanes"]
+        self.assertEqual(lane["takes"], ["git commit -m a,b"])
+
+
 class TestRunValue(LayTest):
     """A proposal of write_only taking `{work}`, a value given for each run."""
 
@@ -164,10 +173,10 @@ class TestRunValue(LayTest):
         # Given: the proposal
         # When: it is written
         self.lay("write", self.proposal_file)
-        # Then: the step says `{work}`, and the hook's command gives it as written
+        # Then: the step says `{work}`, and hooks/lanes.json gives it as written
         self.assertIn("`CHANGELOG.md`. Write only `{work}`.\n", self.read(self.agent_file))
-        command = self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
-        self.assertTrue(command.endswith(" '3:write_only:{work}'"), command)
+        [lane] = self.laid()["subagents"][0]["steps"][0]["lanes"]
+        self.assertEqual(lane, {"lane": "write_only", "takes": ["{work}"]})
 
 
 class TestInForm(LayTest):
@@ -194,17 +203,16 @@ class TestInForm(LayTest):
                     f"Write `entry.json` in the form of `{form}`.", self.read(self.agent_file)
                 )
 
-    def test_the_hook_gives_the_form_as_the_step_names_it_unexpanded_by_the_shell(self):
+    def test_the_lanes_give_the_form_as_the_step_names_it(self):
         # Given: a proposal of in_form whose form is named from the plugin's folder
         form = "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"
         self.write(os.path.join(self.plugin, "forms", "entry.json"), "{}")
         self.propose(self.in_form(form))
         # When: it is written
         self.lay("write", self.proposal_file)
-        # Then: the hook's command gives the lane in single quotes, so the guard reads the form as
-        # the step names it
-        command = self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
-        self.assertTrue(command.endswith(f" '3:in_form:entry.json,{form}'"), command)
+        # Then: hooks/lanes.json gives the form as the step names it, for the guard to read so
+        [lane] = self.laid()["subagents"][0]["steps"][0]["lanes"]
+        self.assertEqual(lane["takes"], ["entry.json", form])
 
     def test_a_form_lane_cannot_read_stops_naming_it_before_anything_is_written(self):
         self.write(os.path.join(self.base, "outside.json"), "{}")

@@ -30,8 +30,10 @@ class TestPythonCheck(helpers.PluginTest):
         os.makedirs(os.path.join(self.plugin, "hooks"))
         os.symlink(helpers.CODE, os.path.join(self.plugin, "hooks", "lane"))
         self.write(self.agent_file, helpers.LAID)
-        laid = [hooks_file.word(3, "hands_off", ["git commit", "git push"])]
-        self.command = hooks_file.command("notes", helpers.AGENT, laid, "PreToolUse")
+        lanes = [{"lane": "hands_off", "takes": ["git commit", "git push"]}]
+        laid = {"subagents": [{"name": "changelog-writer", "steps": [{"step": 3, "lanes": lanes}]}]}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        self.command = hooks_file.command("notes", helpers.AGENT, "PreToolUse")
 
     def run_hook(self, *folders, command=None, agent_type=helpers.AGENT):
         """The hook's command, or the one given, run by sh with PATH holding the folders, handed a
@@ -82,10 +84,8 @@ class TestPythonCheck(helpers.PluginTest):
                 self.assertEqual(self.run_hook(none, agent_type=agent_type), (0, None))
 
     def test_without_python3_at_the_subagents_end_the_user_is_told_and_it_ends(self):
-        # Given: the hook's command for a lane held as the subagent ends, and a PATH holding no
-        # python3
-        laid = [hooks_file.word(3, "test_after", ["CHANGELOG.md", "python3 check.py"])]
-        command = hooks_file.command("notes", helpers.AGENT, laid, "SubagentStop")
+        # Given: the hook's command of the subagent's end, and a PATH holding no python3
+        command = hooks_file.command("notes", helpers.AGENT, "SubagentStop")
         # When: it is run
         # Then: it tells the user to install Python, letting the subagent end
         none = os.path.join(self.base, "none")
@@ -97,7 +97,7 @@ class TestPythonCheck(helpers.PluginTest):
             with self.subTest(event=event):
                 # Given: the hook's command keeping the subagent's calls, and a PATH holding no
                 # python3
-                command = hooks_file.command("notes", helpers.AGENT, [], event)
+                command = hooks_file.command("notes", helpers.AGENT, event)
                 # When: it is run as a call comes back
                 found = self.run_hook(os.path.join(self.base, "none"), command=command)
                 # Then: it answers nothing, as the call has run, and the hook of the next call

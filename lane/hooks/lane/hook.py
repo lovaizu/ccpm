@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import os
 from collections.abc import Sequence
-from typing import IO, Any
+from typing import IO, Any, NamedTuple
 
 # The fields each event of these hooks holds beside hook_event_name and cwd, and the types of each:
 # at SubagentStop the agent's last reply, which Claude Code gives as null after the agent hands its
@@ -19,6 +19,14 @@ FIELDS = {
     "PostToolUse": {**CALLED, "tool_use_id": (str,)},
     "PostToolUseFailure": {**CALLED, "tool_use_id": (str,), "error": (str,)},
 }
+
+
+class Said(NamedTuple):
+    """What a check says: told the subagent, or, where it is for the user, told them alone, the use
+    or the end let go on."""
+
+    text: str
+    user: bool = False
 
 
 def event_read(stream: IO[str]) -> dict[str, Any] | None:
@@ -79,5 +87,7 @@ def run(plugin: str, checks: Sequence[Any], stream: IO[str], out: IO[str], agent
     if event.get("agent_type") != agent:
         return
     os.chdir(event["cwd"])
-    said = [f"{plugin}: {s}" for c in checks for s in c.check(event)]
-    answered(out, answer(event["hook_event_name"], "\n".join(said), ""))
+    said = [s for c in checks for s in c.check(event)]
+    told = "\n".join(f"{plugin}: {s.text}" for s in said if not s.user)
+    users = "\n".join(f"{plugin}: {s.text}" for s in said if s.user)
+    answered(out, answer(event["hook_event_name"], told, users))

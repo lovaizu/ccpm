@@ -15,7 +15,7 @@ from collections.abc import Sequence
 from unittest import mock
 
 import helpers
-from helpers import hooks_file, lanes
+from helpers import lanes
 
 # hands_off of the README's proposal, on step 3: its step, the lane and what it takes.
 HANDS_OFF = (3, "hands_off", ["git commit", "git push"])
@@ -42,14 +42,17 @@ class GuardTest(helpers.PluginTest):
 
     def lay(self, *laid: tuple) -> None:
         """Lays the lanes on changelog-writer: each lane's sentence put after its step's numbered
-        line, and `words`, the words a hook's command gives the guard, the subagent first, each
-        lane as the command gives it."""
+        line, and the lanes written into the plugin's hooks/lanes.json, each on its own step; and
+        `words`, the words a hook's command gives the guard, the subagent alone."""
         text = helpers.STEPS
         for number, lane, takes in laid:
             line = next(s for s in text.splitlines() if s.startswith(f"{number}. "))
             text = text.replace(line, f"{line} {lanes.sentence(lane, takes)}", 1)
         self.write(self.agent_file, text)
-        self.words = (helpers.AGENT, *(hooks_file.word(n, lane, t) for n, lane, t in laid))
+        steps = [{"step": n, "lanes": [{"lane": lane, "takes": t}]} for n, lane, t in laid]
+        subagents = [{"name": "changelog-writer", "steps": steps}]
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": subagents})
+        self.words = (helpers.AGENT,)
 
     def guard(
         self,
@@ -306,9 +309,6 @@ class TestRunValues(GuardTest):
         # Given: start_with laid on step 1, taking `scripts/given.py`, which printed the work
         # after the prompt named another
         self.lay((1, "start_with", ["scripts/given.py"]), *self.LAID)
-        command = hooks_file.command("notes", helpers.AGENT, list(self.words[1:]), "PreToolUse")
-        hooks = {"hooks": {"PreToolUse": [{"hooks": [{"command": command}]}]}}
-        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
         run = ("Bash", {"command": f"python3 {self.plugin}/scripts/given.py"}, '{"work": "c.md"}')
         self.record([run], self.RUN)
         # When: changelog-writer writes the file the script named, then one the prompt named
@@ -358,45 +358,47 @@ class TestOtherAgents(GuardTest):
 
 
 class TestCommandLine(GuardTest):
-    def test_a_command_line_not_as_lane_up_writes_it_lets_the_call_through_saying_so(self):
-        wrong = {
-            "no subagent": ([], "gives no subagent"),
-            "a subagent of no plugin": (["changelog-writer", *self.words[1:]], "gives no subagent"),
-            "a lane of no step": ([helpers.AGENT, "x:hands_off:git push"], "x:hands_off:git push"),
-            "a lane lane has not": ([helpers.AGENT, "3:no_lane:git push"], "3:no_lane:git push"),
-            "a lane taking nothing": ([helpers.AGENT, "3:hands_off:"], "3:hands_off:"),
-            "a lane taking an empty thing": ([helpers.AGENT, "3:hands_off:a,"], "3:hands_off:a,"),
-            "a lane of two parts": ([helpers.AGENT, "3:hands_off"], "3:hands_off"),
-            "a lane taking too few": ([helpers.AGENT, "3:in_form:a.json"], "3:in_form:a.json"),
-        }
-        for what, (words, named) in wrong.items():
-            with self.subTest(what=what):
-                # Given: a hook's command edited out of the form lane:up writes
+    def test_a_command_line_not_naming_the_subagent_alone_lets_the_call_through_saying_so(self):
+        for words in ([], ["changelog-writer"], [helpers.AGENT, "3:hands_off:git push"]):
+            with self.subTest(words=words):
+                # Given: a hook's command edited out of the form lane:up writes, or as an older
+                # lane wrote it
                 # When: the guard is run by it
                 whom, said = self.guard(self.stream("git commit"), words)
-                # Then: it lets the call through and tells the user what was wrong, naming it,
-                # and to have lane:up write the hooks again
+                # Then: it lets the call through and tells the user what was wrong, naming the
+                # words, and to have lane:up write the hooks again
                 self.assertEqual(whom, "user")
-                self.assertIn(named, said)
+                self.assertIn(f"gives `{' '.join(words)}`", said)
                 self.assertTrue(said.startswith("lane: ") and "run lane:up again" in said, said)
 
-    def test_lanes_given_to_the_entry_of_another_event_let_it_through_saying_so(self):
-        wrong = {
-            "a lane held on a tool call": ("subagentstop.py", "3:hands_off:git push"),
-            "a lane held at the end": ("pretooluse.py", "3:test_after:CHANGELOG.md,make"),
-            "fewer things than places": ("subagentstop.py", "3:test_after:CHANGELOG.md"),
-        }
-        for what, (entry, word) in wrong.items():
-            with self.subTest(what=what):
-                # Given: a hook's command giving its event's entry a lane not held on that event,
-                # or taking fewer things than its wording has places
-                # When: the entry is run by it
-                whom, said = self.guard(self.stream("ls"), (helpers.AGENT, word), entry)
-                # Then: it tells the user, naming the lane and to have lane:up write the hooks
-                # again
+    def test_lanes_json_not_as_lane_up_writes_it_lets_the_call_through_saying_so(self):
+        path = os.path.join(self.plugin, "hooks", "lanes.json")
+        for text, named in (("{", "holds no JSON"), ('{"subagents": []}', "lays no lanes in")):
+            with self.subTest(text=text):
+                # Given: hooks/lanes.json holding no JSON, or no lanes of the subagent
+                self.write(path, text)
+                # When: the guard is run on a call of the subagent
+                whom, said = self.guard(self.stream("git commit"))
+                # Then: it lets the call through and tells the user, headed by the plugin, what is
+                # wrong and to have lane:up run again
                 self.assertEqual(whom, "user")
-                self.assertIn(word, said)
+                self.assertTrue(said.startswith("notes: hooks/lanes.json"), said)
+                self.assertIn(named, said)
                 self.assertIn("run lane:up again", said)
+
+    def test_lanes_json_is_read_only_on_an_event_of_its_subagent(self):
+        # Given: hooks/lanes.json holding no JSON
+        self.write(os.path.join(self.plugin, "hooks", "lanes.json"), "{")
+        # When: the guard is run on a call of another agent
+        # Then: it answers nothing
+        self.assertEqual(self.guard(self.stream("git commit", "notes:other")), ("", ""))
+
+    def test_the_lanes_of_the_subagent_held_on_another_event_are_left(self):
+        # Given: hands_off, held on a tool call, laid on changelog-writer
+        # When: changelog-writer is about to end
+        stream = json.dumps(self.stopped("Done."))
+        # Then: it ends, nothing said
+        self.assertEqual(self.guard(stream, entry="subagentstop.py"), ("", ""))
 
 
 if __name__ == "__main__":

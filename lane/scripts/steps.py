@@ -7,7 +7,6 @@ from __future__ import annotations
 import json
 from typing import Any
 
-import entries
 import lanes
 import step
 
@@ -32,15 +31,17 @@ def read_as_laid(lines: list[str], step_given: dict[str, Any]) -> list[str]:
     return [*kept[:-1], " ".join([last, *added]) + "\n"]
 
 
-def steps_laid(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> list[dict[str, Any]]:
+def steps_laid(
+    before: dict[str, list[dict[str, Any]]], plugin: str, agent: dict[str, Any]
+) -> list[dict[str, Any]]:
     """Each step the layer writes in the subagent, with its lanes, where it is and the sentences
-    gone from it: the sentence of each lane the subagent's hook held before on the step, as lane:up
-    wrote it, that the proposal no longer lays there. They are the proposal's steps, then each other
+    gone from it: the sentence of each lane laid before on the step, of the lanes laid before in
+    each subagent as entries.laid_before gives them, that the proposal no longer lays there. They are the proposal's steps, then each other
     step any sentence is gone from, with no lanes, in order, where the Steps still have it."""
-    before = entries.laid_before(hooks)[0].get(f"{plugin}:{agent['name']}", [])
+    laid = before.get(f"{plugin}:{agent['name']}", [])
     now = {s["step"]: sentences(s) for s in agent["steps"]}
     gone: dict[int, list[str]] = {}
-    for s in before:
+    for s in laid:
         kept = now.get(s["step"], [])
         gone.setdefault(s["step"], []).extend(t for t in sentences(s) if t not in kept)
     lines = [line.rstrip("\n") for line in agent["lines"]]

@@ -1,4 +1,4 @@
-"""turn's lanes: what hooks/hooks.json lays on each agent is what its steps say, read by lane's own
+"""turn's lanes: what hooks/lanes.json lays on each agent is what its steps say, read by lane's own
 code, which turn takes through a link."""
 
 import unittest

@@ -2,7 +2,7 @@
 and read; for a test that reads git, a repository made once a run and copied into each test's
 folder, git reading no setting of the machine it runs on, since a repository made by git commands
 for every test spends most of the tests' time; and, for a plugin whose lanes lane laid, lane's code
-as the plugin takes it through a link, and each lane its hooks/hooks.json lays. What a run of a
+as the plugin takes it through a link, and each lane its hooks/lanes.json lays. What a run of a
 plugin's tests writes is in one folder of its own, `<plugin>/<yyyymmdd>-tests-<random>/` in the
 system's temporary folder, as dev/architecture.md's Where a plugin writes its files has it, the
 plugin's tests being in dev/<plugin>/tests/; and such a folder for what a trial uses only while
@@ -176,13 +176,13 @@ def lane_code(plugin: str, *names: str) -> list[Any]:
 
 
 def laid(plugin: str) -> list[tuple[str, int, str, list[str]]]:
-    """Each lane the plugin's hooks/hooks.json lays, as (agent, step, lane, takes), read by lane's
-    code as the plugin takes it, as the guard reads them."""
+    """Each lane the plugin's hooks/lanes.json lays, as (agent, step, lane, takes), the agent as
+    `<plugin>:<name>`, read by lane's code as the plugin takes it, as the guard reads them."""
     (hooks_file,) = lane_code(plugin, "hooks_file")
-    hooks = hooks_file.read(plugin)
+    with open(os.path.join(plugin, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
+        name = json.load(f)["name"]
     found = []
-    for event in hooks_file.EVENTS:
-        for command in hooks_file.commands(hooks, event):
-            agent, held = hooks_file.parsed(hooks_file.words(command, event), event)
-            found += [(agent, number, lane, takes) for number, lane, takes in held]
+    for agent in hooks_file.laid(plugin)["subagents"]:
+        for number, lane, takes in hooks_file.laid_in(plugin, agent["name"]):
+            found.append((f"{name}:{agent['name']}", number, lane, takes))
     return found

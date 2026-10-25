@@ -33,10 +33,10 @@ class Says:
         self.said = list(said)
         self.ran_in = None
 
-    def check(self, event: dict) -> list[str]:
+    def check(self, event: dict) -> list:
         """What the check says, the folder it runs from kept."""
         self.ran_in = os.getcwd()
-        return self.said
+        return [hook.Said(s) for s in self.said]
 
 
 class TestRun(testing.FolderTest):

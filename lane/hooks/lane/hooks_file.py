@@ -1,9 +1,11 @@
-"""How lanes are laid in a plugin's hooks/hooks.json, the layer writing it and the guard and the
-layer reading it: the command of each entry lane:up writes, and the file itself.
+"""How lanes are laid in a plugin, the layer writing it and the guard and the layer reading it: the
+command of each entry lane:up writes in the plugin's hooks/hooks.json, and that file read; and the
+lanes laid, kept in its hooks/lanes.json in the shape of the proposal, read.
 
 A command first checks that lane's code can run, then runs its event's script in lane's code with
-the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's agent_type, and each lane
-laid in it as `<step>:<lane>:<what it takes>`, the things taken joined by commas."""
+the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's agent_type; the guard
+reads that subagent's lanes from hooks/lanes.json, so what was approved is what is read, and a thing
+taken holds any text, a comma among the rest."""
 
 from __future__ import annotations
 
@@ -15,11 +17,40 @@ from typing import Any
 
 import hook
 import lanes
+import schema
 
 # A plugin's or a subagent's name, as a hook's command carries it unquoted.
 NAME = r"[A-Za-z0-9._-]+"
 AGENT = re.compile(rf"{NAME}:{NAME}")
-LANE = re.compile(r"(?P<step>[0-9]+):(?P<lane>[a-z_]+):(?P<takes>.*)")
+# The lanes laid in a plugin, as hooks/lanes.json holds them: each subagent by its name, with each
+# step its lanes are laid on, by its number, and each lane, its name and what it takes.
+LANE = {
+    "type": "object",
+    "required": ["lane", "takes"],
+    "additionalProperties": False,
+    "properties": {
+        "lane": {"enum": list(lanes.LANES)},
+        "takes": {"type": "array", "items": {"type": "string"}},
+    },
+}
+STEP = {
+    "type": "object",
+    "required": ["step", "lanes"],
+    "additionalProperties": False,
+    "properties": {"step": {"type": "integer"}, "lanes": {"type": "array", "items": LANE}},
+}
+SUBAGENT = {
+    "type": "object",
+    "required": ["name", "steps"],
+    "additionalProperties": False,
+    "properties": {"name": {"type": "string"}, "steps": {"type": "array", "items": STEP}},
+}
+LAID = {
+    "type": "object",
+    "required": ["subagents"],
+    "additionalProperties": False,
+    "properties": {"subagents": {"type": "array", "items": SUBAGENT}},
+}
 # The events a call is kept on as it comes back, for every subagent lanes are laid in, as called.py
 # says.
 KEPT = ("PostToolUse", "PostToolUseFailure")
@@ -54,61 +85,30 @@ def missing(plugin: str, event: str) -> dict[str, Any]:
     return hook.answer(event, said if on_call else "", "" if on_call else said)
 
 
-def word(number: int, lane: str, takes: list[str]) -> str:
-    """The lane as a hook's command gives it."""
-    return f"{number}:{lane}:{','.join(takes)}"
-
-
-def lane_of(w: str) -> tuple[int, str, list[str]] | None:
-    """The step, the lane and what it takes, of a lane as a hook's command gives it; None where it
-    is no lane of these as `word` writes it."""
-    m = LANE.fullmatch(w)
-    takes = m["takes"].split(",") if m else []
-    if not m or m["lane"] not in lanes.LANES or not all(takes) or not lanes.fits(m["lane"], takes):
-        return None
-    return int(m["step"]), m["lane"], takes
-
-
 def script(event: str) -> str:
     """What a hook's command runs for the event: its script in lane's code."""
     return f'exec python3 "${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/{event.lower()}.py"'
 
 
-def command(plugin: str, agent: str, laid: list[str], event: str) -> str:
+def command(plugin: str, agent: str, event: str) -> str:
     """The hook's command running lane's code on the lanes laid in the subagent, held on the
     event."""
-    words = " ".join(shlex.quote(w) for w in [agent, *laid])
     answer = shlex.quote(json.dumps(missing(plugin, event)))
     check = f"{PYTHON} || exit 0" if event in KEPT else CHECK.format(agent=agent, answer=answer)
-    return f"{check}; {script(event)} {words}"
+    return f"{check}; {script(event)} {agent}"
 
 
 def words(command: Any, event: str) -> list[str]:
     """The words a hook's command gives the event's script in lane's code, the first the subagent
-    as `<plugin>:<subagent>`, each after it a lane laid; none for a command that runs no script of
-    lane's, names no subagent so, or gives words the shell cannot read."""
+    as `<plugin>:<subagent>`, each after it a lane laid, where an older lane wrote them; none for a
+    command that runs no script of lane's, names no subagent so, or gives words the shell cannot
+    read."""
     found = re.search(rf'/hooks/lane/{event.lower()}\.py"?(.*)', str(command))
     try:
         given = shlex.split(found[1]) if found else []
     except ValueError:
         return []
     return given if given and AGENT.fullmatch(given[0]) else []
-
-
-def parsed(words: list[str], held: str) -> tuple[str, list[tuple[int, str, list[str]]]]:
-    """The subagent a hook's command names and the lanes it lays in it, each held on the event
-    given; stops with ValueError saying which word is not as lane:up writes it."""
-    if not words or not AGENT.fullmatch(words[0]):
-        raise ValueError("gives no subagent as <plugin>:<name>")
-    found = []
-    for w in words[1:]:
-        given = lane_of(w)
-        if given is None:
-            raise ValueError(f"gives `{w}`, no lane as <step>:<lane>:<what it takes>")
-        if held not in lanes.held_on(given[1]):
-            raise ValueError(f"gives `{w}`, no lane held on {held}")
-        found.append(given)
-    return words[0], found
 
 
 def read(root: str) -> dict[str, Any]:
@@ -142,21 +142,49 @@ def commands(hooks: dict[str, Any], event: str) -> list[Any]:
     return [h.get("command") for e in hooks["hooks"].get(event, []) for h in e.get("hooks", [])]
 
 
-def taken(root: str, agent: str, lane: str) -> list[list[str]]:
-    """What each lane of the kind laid in the subagent, as `<plugin>:<name>`, on a tool call takes,
-    read from the hooks the plugin at root lays; none where its hooks.json is not there or not in
-    Claude Code's shape. Read there, as a lane may be given in a hook apart from the one asking,
-    such as one held at the subagent's end apart from start_with's."""
+def laid(root: str) -> dict[str, Any]:
+    """The lanes laid in the plugin at root, as its hooks/lanes.json holds them; stops with
+    ValueError saying what is wrong where it is not there, holds no JSON, is not in the shape LAID
+    gives, or lays a lane taking an empty thing, or another count of things than the lane holds."""
+    path = os.path.join(root, "hooks", "lanes.json")
     try:
-        hooks = read(root)
+        with open(path, encoding="utf-8") as f:
+            given = json.load(f)
+    except OSError:
+        raise ValueError("hooks/lanes.json is not there") from None
+    except ValueError:
+        raise ValueError("hooks/lanes.json holds no JSON") from None
+    out = schema.held(LAID, given)
+    if out is not None:
+        raise ValueError(f"hooks/lanes.json is out of its shape at {out.told()}")
+    for agent in given["subagents"]:
+        for s in agent["steps"]:
+            for lane in s["lanes"]:
+                if not all(lane["takes"]) or not lanes.fits(lane["lane"], lane["takes"]):
+                    raise ValueError(
+                        f"hooks/lanes.json gives {lane['lane']} on step {s['step']} of"
+                        f" {agent['name']} takes of another count than it holds, or one empty"
+                    )
+    return given
+
+
+def laid_in(root: str, name: str) -> list[tuple[int, str, list[str]]]:
+    """Each lane laid in the subagent of the name, its step, the lane and what it takes, as the
+    plugin at root's hooks/lanes.json holds them; stops with ValueError, as `laid` does, or where
+    the file lays no lanes in the subagent."""
+    found = [a for a in laid(root)["subagents"] if a["name"] == name]
+    if not found:
+        raise ValueError(f"hooks/lanes.json lays no lanes in {name}")
+    return [(int(s["step"]), g["lane"], g["takes"]) for s in found[0]["steps"] for g in s["lanes"]]
+
+
+def taken(root: str, name: str, lane: str) -> list[list[str]]:
+    """What each lane of the kind laid in the subagent of the name takes, read from the lanes the
+    plugin at root lays; none where its hooks/lanes.json cannot be read so. Read there, as a lane
+    may be held on an event apart from the one asking, such as one held at the subagent's end apart
+    from start_with's."""
+    try:
+        each = laid_in(root, name)
     except ValueError:
         return []
-    found = []
-    for c in commands(hooks, "PreToolUse"):
-        try:
-            named, laid_in = parsed(words(c, "PreToolUse"), "PreToolUse")
-        except ValueError:
-            continue
-        if named == agent:
-            found += [takes for _, kind, takes in laid_in if kind == lane]
-    return found
+    return [takes for _, kind, takes in each if kind == lane]

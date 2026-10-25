@@ -115,8 +115,7 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
 
 
 def lane_check(lane: Any, on: str, root: str) -> None:
-    """Stops where the lane is not one lane lays, taking a text with no comma for each thing it
-    shows; or where its module refuses what it takes in the plugin at root, as in_form a form lane
+    """Stops where the lane is not one lane lays, taking a text for each thing it shows; or where its module refuses what it takes in the plugin at root, as in_form a form lane
     does not read."""
     known = lane.get("lane") if isinstance(lane, dict) else None
     if known not in lanes.LANES:
@@ -124,8 +123,8 @@ def lane_check(lane: Any, on: str, root: str) -> None:
     takes = lane.get("takes")
     if not isinstance(takes, list):
         raise wrong(f"gives {known} on {on} no takes")
-    if not all(isinstance(t, str) and t and "," not in t for t in takes):
-        raise wrong(f"gives {known} on {on} takes that are not each a text with no comma")
+    if not all(isinstance(t, str) and t for t in takes):
+        raise wrong(f"gives {known} on {on} takes that are not each a text")
     if not lanes.fits(known, takes):
         raise wrong(
             f"gives {known} on {on} takes of another count than its wording and its hook hold"

@@ -1,6 +1,6 @@
 """What the tests of the layer stand on: the plugin `notes` with a proposal of lanes on step 3 of
-changelog-writer, kept where lane:up keeps it, the hook lane:up writes for it, and a stand-in for
-Claude Code's command."""
+changelog-writer, kept where lane:up keeps it, the hook lane:up writes for it and the lanes it
+writes into hooks/lanes.json, and a stand-in for Claude Code's command."""
 
 import contextlib
 import io
@@ -12,7 +12,7 @@ from helpers import lay
 
 # hands_off of the README's proposal, on step 3 of changelog-writer.
 LANES = [{"lane": "hands_off", "takes": ["git commit", "git push"]}]
-# The hook's command lane:up writes for it.
+# The hook's command lane:up writes for it, naming the subagent alone.
 COMMAND = (
     'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
     ' || { e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done; case "$e" in'
@@ -20,23 +20,20 @@ COMMAND = (
     """ echo '{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision":"""
     """ "deny", "permissionDecisionReason": "notes: install Python 3.9 or later, run as python3,"""
     """ for its hooks to run"}}';; esac; exit 0; };"""
-    ' exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py"'
-    " notes:changelog-writer '3:hands_off:git commit,git push'"
+    ' exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
 )
 ENTRY = {"matcher": "Bash", "hooks": [{"type": "command", "timeout": 10, "command": COMMAND}]}
+# hooks/lanes.json laying hands_off on step 3, as lane:up writes it for the proposal.
+LAID = {"subagents": [{"name": "changelog-writer", "steps": [{"step": 3, "lanes": LANES}]}]}
 # test_after on step 3, held as the subagent is about to end, and its entry of SubagentStop, which
 # matches the subagent, tells the user where Python is missing, and runs that event's entry.
 TESTED = {"lane": "test_after", "takes": ["CHANGELOG.md", "python3 check.py"]}
-END_COMMAND = (
-    COMMAND.replace("pretooluse.py", "subagentstop.py")
-    .replace(
-        """{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny","""
-        """ "permissionDecisionReason": "notes: install Python 3.9 or later, run as python3, for"""
-        """ its hooks to run"}}""",
-        """{"systemMessage": "notes: install Python 3.9 or later, run as python3, for its hooks"""
-        """ to run"}""",
-    )
-    .replace("'3:hands_off:git commit,git push'", "'3:test_after:CHANGELOG.md,python3 check.py'")
+END_COMMAND = COMMAND.replace("pretooluse.py", "subagentstop.py").replace(
+    """{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny","""
+    """ "permissionDecisionReason": "notes: install Python 3.9 or later, run as python3, for"""
+    """ its hooks to run"}}""",
+    """{"systemMessage": "notes: install Python 3.9 or later, run as python3, for its hooks"""
+    """ to run"}""",
 )
 END_ENTRY = {
     "matcher": "notes:changelog-writer",
@@ -115,3 +112,7 @@ class LayTest(helpers.PluginTest):
     def hooks(self) -> dict:
         """The plugin's hooks.json."""
         return self.read_json(os.path.join(self.plugin, "hooks", "hooks.json"))
+
+    def laid(self) -> dict:
+        """The plugin's hooks/lanes.json."""
+        return self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))

@@ -1,8 +1,8 @@
-"""PreToolUse entry of lane's hooks: runs the lanes its command lays in one subagent as that
-subagent is about to use a tool, and denies the use with the sentence of each lane it drifts from.
+"""PreToolUse entry of lane's hooks: runs the lanes laid in one subagent as that subagent is about
+to use a tool, and denies the use with the sentence of each lane it drifts from.
 
-hooks.json runs it as `pretooluse.py <plugin>:<subagent> <step>:<lane>:<what it takes>...`, the
-plugin found where Claude Code gives its folder, CLAUDE_PLUGIN_ROOT.
+hooks.json runs it as `pretooluse.py <plugin>:<subagent>`, the plugin found where Claude Code gives
+its folder, CLAUDE_PLUGIN_ROOT, and the subagent's lanes in its hooks/lanes.json.
 """
 
 import sys

@@ -20,6 +20,8 @@ from laying import (
     COMMAND,
     ENTRY,
     KEPT,
+    LAID,
+    LANES,
     PRINTED,
     TESTED,
     LayTest,
@@ -42,6 +44,7 @@ class TestWriteEnd(LayTest):
             said,
             "Wrote step 3 of changelog-writer into agents/writer.md.\n"
             "Wrote the hook of changelog-writer into hooks/hooks.json.\n"
+            "Wrote the lanes laid into hooks/lanes.json.\n"
             "Put lane's code in hooks/lane/.\n"
             "claude plugin validate passed.\n"
             f"Removed the proposal {self.proposal_file}.\n",
@@ -74,6 +77,32 @@ class TestWriteEnd(LayTest):
         self.assertEqual(code, 1)
         self.assertIn("install Claude Code", said)
         self.assertTrue(os.path.exists(self.proposal_file))
+
+
+class TestWriteLanes(LayTest):
+    def test_the_lanes_of_other_subagents_are_kept_and_those_of_one_gone_taken_out(self):
+        # Given: hooks/lanes.json laying lanes in changelog-writer, in another subagent the plugin
+        # has, and in one agents/ no longer has
+        second = helpers.STEPS.replace("name: changelog-writer", "name: summarizer")
+        self.write(os.path.join(self.plugin, "agents", "summarizer.md"), second)
+        steps = [{"step": 2, "lanes": [{"lane": "hands_off", "takes": ["git push"]}]}]
+        before = [
+            {"name": "summarizer", "steps": steps},
+            {"name": "changelog-writer", "steps": steps},
+            {"name": "gone", "steps": steps},
+        ]
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": before})
+        # When: the proposal of changelog-writer is written
+        self.lay("write", self.proposal_file)
+        # Then: the other subagent's lanes are kept, changelog-writer's are the proposal's, in
+        # their place, and the gone one's are taken out, each with its hooks
+        self.assertEqual(
+            self.laid(),
+            {"subagents": [before[0], LAID["subagents"][0]]},
+        )
+        names = {e["matcher"] for e in self.hooks()["hooks"]["PreToolUse"]}
+        self.assertEqual(names, {"Bash"})
+        self.assertEqual(len(self.hooks()["hooks"]["PreToolUse"]), 2)
 
 
 class TestUp(LayTest):
@@ -139,6 +168,7 @@ class TestUp(LayTest):
         # as they were, the copy lane's code with lane's version, and what was done is said
         self.assertEqual(code, 0)
         self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [own, ENTRY, own], **KEPT}})
+        self.assertEqual(self.laid(), LAID)
         self.assertEqual(self.read(self.agent_file), helpers.LAID)
         self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.10.0\n")
         self.assertFalse(os.path.exists(os.path.join(self.code, "old.py")))
@@ -234,6 +264,7 @@ class TestUp(LayTest):
                 # Given: the hook in the current form, and code that is no older copy
                 hooks = {"hooks": {"PreToolUse": [ENTRY], **KEPT}}
                 self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
+                self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), LAID)
                 written = self.hooks()
                 made()
                 # When: it is brought up
@@ -347,6 +378,26 @@ class TestUp(LayTest):
         # Then: it exits 1 naming the manifest, the copy left as it was
         self.assertEqual(code, 1)
         self.assertIn("plugin.json names the plugin by no name", said)
+        self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.1.0\n")
+
+    def test_the_lanes_an_older_lane_gave_on_one_step_are_kept_on_it_together(self):
+        # Given: the hook in the older form giving hands_off and write_only on step 3
+        self.hooks_of(f"{self.OLDER} '3:write_only:CHANGELOG.md'")
+        # When: it is brought up
+        self.up()
+        # Then: hooks/lanes.json gives step 3 once, with both lanes
+        write = {"lane": "write_only", "takes": ["CHANGELOG.md"]}
+        steps = [{"step": 3, "lanes": [*LANES, write]}]
+        self.assertEqual(self.laid(), {"subagents": [{"name": "changelog-writer", "steps": steps}]})
+
+    def test_lanes_json_that_cannot_be_read_stops(self):
+        # Given: hooks/lanes.json holding no JSON
+        self.write(os.path.join(self.plugin, "hooks", "lanes.json"), "{")
+        # When: it is brought up
+        code, said = self.up()
+        # Then: it exits 1 naming the file and what is wrong, the copy left as it was
+        self.assertEqual(code, 1)
+        self.assertIn(f"{self.plugin}/hooks/lanes.json holds no JSON; fix it", said)
         self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.1.0\n")
 
     def test_hooks_not_in_claude_codes_shape_stop(self):
