@@ -1,19 +1,20 @@
 # lane architecture
 
-lane is built on [how a plugin works](../architecture.md): the building AI writes the lanes it
-proposes for its plugin in a proposal and has the layer, a script, print them and, once it approves
-them, write them into its plugin; the guard, lane's code put in that plugin, notices a subagent's
-drift from its lanes and tells it the step again. A lane is a sentence of a step together with the
-hook that notices a drift from it. The building AI, the goal and the key result are in
-[lane's UX](ux.md).
+lane is built on [how a plugin works](../architecture.md), as a plugin of another kind: not one
+whose orchestrator and roles do a job for its user, but a part other plugins are built with. It is
+general and reusable: each lane holds one kind of check, the same in every plugin it is laid in, and
+takes what differs from plugin to plugin from what its hook gives it. The building AI writes the
+lanes it proposes for its plugin in a proposal and has the layer, a script, print them and, once it
+approves them, write them into its plugin; the guard, lane's code put in that plugin, notices a
+subagent's drift from its lanes and tells it the step again. The building AI, the goal and the key
+result are in [lane's UX](ux.md).
 
 lane holds the [principles every plugin holds](../architecture.md#principles), named below
 Principle 1 to 8, and its own, named below lane's Principle 1 and 2:
 
-1. A drift is answered by telling the AI its step again, and the AI finds its way back to it
-   itself.
-2. Each lane is general and reusable: it holds one kind of check, the same in every plugin it is
-   laid in, and takes what differs from plugin to plugin from what its hook gives it.
+1. The AI is made to notice its drift from a step and is told the step again, so it finds its way
+   back itself.
+2. A lane is a sentence of a step together with the hook that notices a drift from it.
 
 ## User stories
 

@@ -15,6 +15,10 @@
 - lane's own principles: (1) the AI is made to notice its drift from a step and is told the step
   again, so it finds its way back itself; (2) a lane is a sentence of a step together with the hook
   that notices a drift from it.
+- lane is general and reusable, each lane one kind of check the same in every plugin, what differs
+  taken from its hook: this is lane's kind, a part other plugins are built with rather than a
+  plugin whose roles do a job, said in the architecture's opening, not a principle (the user,
+  2026-10-25, the two principles above restored as agreed).
 
 - lane is lanes alone, a step with its hook: no flow, no recorder, no run state; turn keeps its own
   flow, rn uses none and holds its steering's form by a hook of its own; a flow is built only if
