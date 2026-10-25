@@ -352,7 +352,7 @@ def judged(run: dict[str, Any], step: str) -> dict[str, Any]:
     """What the orchestrator is to judge at the step, the same on every page: the check with what to
     read for it as the CCS now names it, as an answer may name more."""
     shown = {step: run[step]}
-    if step == "check":
+    if step == "check":  # pragma: no mutate
         shown["given"] = checked_given(run)
     return shown
 

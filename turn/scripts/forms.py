@@ -233,7 +233,8 @@ def item_problems(
             continue
         seen.append(key)
         # An item asked of each part gives a Good for every part, and any other one Good.
-        shapes = [s for s in form.shapes if s != (ONE if key in each else EACH)]
+        barred = ONE if key in each else EACH
+        shapes = [s for s in form.shapes if s != barred]  # pragma: no mutate
         held = [s for s in shapes if all(k in item for k in s)]
         shaped = [k for s in held for k in s]
         rest = [k for k in item if k not in ("checklist", "item") and k not in shaped]

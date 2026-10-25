@@ -9,6 +9,12 @@ excluded-modules = []
 # code in turn's hooks, which is checked in lane: read through the link, lane's modules meet turn's
 # of the same names, such as call, and the check fails on every mutant, so none survives whatever
 # the tests catch.
+# A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
+# where no input tells a mutant of it apart: by order with the first or the last of them, such as
+# "check", the first of the steps shown, or "each part", the first of the scopes in order; or by
+# `is` with the very object the value is, as a scope is a text of SCOPES and a shape one of the
+# tuples a form is made of. Each such line holds that comparison alone, as the mark leaves out
+# every mutant of its line.
 test-command = "sh -c 'pyrefly check --search-path dev/lane --search-path dev/lane/trials --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn/scripts dev/turn && python -m unittest discover -f -s dev/turn/tests'"
 
 [cosmic-ray.distributor]
