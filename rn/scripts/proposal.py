@@ -41,23 +41,25 @@ LONGEST = 200
 
 
 def simple(work: str, decisions: list[str]) -> dict[str, str]:
-    """The work's decisions, by their titles, when a sign-off can show them; stops where they are
+    """What each of the work's decisions says, by its title, when a sign-off can show them, as the
+    user judges what the work must be, not the names of the points; stops where they are
     more than it shows of a work, or one is longer than a line of it holds, as the work is then not
     yet simple."""
     again = (
         "the work is not yet simple: settle its points again more simply with the user, have turn"
         " make it again, then run this again"
     )
-    found = {d.partition(": ")[0]: d for d in decisions}
+    found = {title: said for title, _, said in (d.partition(": ") for d in decisions)}
     if len(found) > MOST:
         raise stop.Stop(
             f"rn: the work {work} holds {len(found)} decisions, more than the {MOST} a sign-off"
             f" shows of a work; {again}"
         )
     for title, said in found.items():
-        if len(said) > LONGEST:
+        long = len(f"{title}: {said}")
+        if long > LONGEST:
             raise stop.Stop(
-                f'rn: the decision "{title}" of the work {work} is {len(said)} characters long,'
+                f'rn: the decision "{title}" of the work {work} is {long} characters long,'
                 f" more than the {LONGEST} a line of a sign-off holds; {again}"
             )
     return found
@@ -96,8 +98,9 @@ def shown_works(made: list[session.Call], signoff: str) -> list[str]:
 def shown_at(commit: str, signoff: str, folder: str) -> Shows:
     """What the proposal at the sign-off shows of the session as the commit holds it: at the plan's,
     the goal and each criterion by its ID, and at the deliverable's each criterion; then each work
-    the sign-off shows by its name: at the design's, its paths as links, from its latest call, with
-    its decisions; at the deliverable's, its decisions, where it has any. Stops where turn has not
+    the sign-off shows by its kind and its paths as links, from its latest call, as the user knows a
+    work by what it is and where, not by rn's name for it, with what its decisions say: at the
+    design's each, at the deliverable's each with a decision. Stops where turn has not
     returned a work's latest call, a work's decisions are not simple, or the pull request was not
     opened."""
     steered = steering.parsed(repo.at(commit, session.steering_path(folder)) or "")
@@ -118,44 +121,49 @@ def shown_at(commit: str, signoff: str, folder: str) -> Shows:
                 " again"
             )
         said = simple(work, session.decisions_of(last))
-        label = work.upper() if session.TASK_WORK.fullmatch(work) else work
-        if signoff == steering.DESIGN:  # pragma: no mutate
+        if signoff == steering.DESIGN or said:
+            focal = last.ccs.get("focal_entities", [])
+            kind = next((e[ccs.KIND] for e in focal if ccs.KIND in e), "")
             link = blob(steered.keys[steering.PR])
-            paths = [
-                e[ccs.ENTRIES["work"]]
-                for e in last.ccs.get("focal_entities", [])
-                if ccs.ENTRIES["work"] in e
-            ]
-            found[work] = (f"{label}: {', '.join(f'{link}/{p}' for p in paths)}", said)
-        elif said:
-            found[work] = (label, said)
+            paths = [e[ccs.ENTRIES["work"]] for e in focal if ccs.ENTRIES["work"] in e]
+            found[work] = (f"{kind}: {', '.join(f'{link}/{p}' for p in paths)}", said)
     return found
 
 
-def changes(before: dict[str, str] | None, now: dict[str, str], bullet: str) -> list[str]:
-    """The lines the proposal shows of one part, each after the bullet: each as it is, at the first
-    proposal; then each changed or added, each removed, by what it is of, and the rest named as
-    before."""
+def changes(before: dict[str, str] | None, now: dict[str, str]) -> list[str]:
+    """The lines the proposal shows of the steering, each by its ID: each as it is, at the first
+    proposal; then each changed or added, each removed, by its ID, and the rest named as before."""
     if before is None:
-        return [f"{bullet}{line}" for line in now.values()]
+        return list(now.values())
     same = [key for key, line in now.items() if before.get(key) == line]
     return (
-        [f"{bullet}Changed: {line}" for key, line in now.items() if key not in same]
-        + [f"{bullet}Removed: {key}" for key in before if key not in now]
+        [f"Changed: {line}" for key, line in now.items() if key not in same]
+        + [f"Removed: {key}" for key in before if key not in now]
         + ([f"({stop.joined(same)} as before)"] if same else [])
     )
 
 
+def decisions_changed(before: dict[str, str] | None, now: dict[str, str]) -> list[str]:
+    """The lines the proposal shows of a work's decisions, each after a bullet: each as it says,
+    marked where it changed or was added since the proposal before, then each gone, by what it said,
+    as the user knows a decision by its words alone."""
+    if before is None:
+        before = now
+    return [
+        f"- {'' if before.get(title) == said else 'Changed: '}{said}" for title, said in now.items()
+    ] + [f"- Removed: {said}" for title, said in before.items() if title not in now]
+
+
 def compared(then: Shows | None, now: Shows) -> list[str]:
-    """The lines the proposal shows: each work's line and what changed of its part since the
-    proposal shown before, none for the first, the steering's lines on their own and each decision
-    after a bullet; then each work shown before and no longer, named as removed."""
+    """The lines the proposal shows: the steering's and each work's line with what changed of its
+    part since the proposal shown before, none for the first; then each work shown before and no
+    longer, by its line, shown as removed."""
     lines: list[str] = []
     for work, (line, said) in now.items():
         before = None if then is None else then.get(work, ("", {}))[1]
-        lines += [line] if line else []
-        lines += changes(before, said, "- " if work else "")
-    return lines + [f"Removed: {work}" for work in then or {} if work not in now]
+        lines += [line] + decisions_changed(before, said) if work else changes(before, said)
+    gone = [shown for work, (shown, _) in (then or {}).items() if work not in now]
+    return lines + [f"Removed: {shown}" for shown in gone]
 
 
 def proposed(signoff: str, folder: str) -> list[str]:

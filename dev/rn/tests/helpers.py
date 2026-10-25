@@ -290,13 +290,15 @@ class RepoTest(MainAndWork):
         works: tuple[str, ...] = (),
         result: Any = None,
         part: str | None = None,
+        kind: str = KIND,
     ) -> None:
-        """Writes a call to turn on the work, made in the stage, with the decisions and the works
-        its CCS names, turn's result where one is given, and its part where one is given, the
-        learnings' in a file of their name, the plan's in one of the steering's; commits
+        """Writes a call to turn on the work of the kind, made in the stage, with the decisions and
+        the works its CCS names, turn's result where one is given, and its part where one is given,
+        the learnings' in a file of their name, the plan's in one of the steering's; commits
         nothing."""
         written = {
-            "focal_entities": [{"work": work}, {"stage": stage}] + [{"path": p} for p in works],
+            "focal_entities": [{"work": work}, {"stage": stage}, {"kind": kind}]
+            + [{"path": p} for p in works],
             "constraints": [{"decision": d} for d in decisions],
         }
         self.write_json(call_at(number), written)

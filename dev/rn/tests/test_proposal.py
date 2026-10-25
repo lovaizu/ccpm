@@ -41,7 +41,7 @@ FIRST = (
     f"{HOW}"
 )
 # The links of the design stage's work t1.1, as the design proposal shows them.
-UX_LINK = f"T1.1: {REPOSITORY}/blob/work/docs/ux.md, {REPOSITORY}/blob/work/docs/flow.md"
+UX_LINK = f"ux: {REPOSITORY}/blob/work/docs/ux.md, {REPOSITORY}/blob/work/docs/flow.md"
 
 
 class ShownTest(RepoTest):
@@ -223,8 +223,17 @@ class DesignTest(ShownTest):
             ("Users: people who shop", "Flow: sign in first"),
             ("docs/ux.md", "docs/flow.md"),
             {},
+            kind="ux",
         )
-        self.call("0003", "checklist-code", "design", (), (".rn/checklists/code.md",), {})
+        self.call(
+            "0003",
+            "checklist-code",
+            "design",
+            (),
+            (".rn/checklists/code.md",),
+            {},
+            kind="checklist",
+        )
         self.call("0004", "t2.1", "build", ("Form: a page",), ("src/app.py",), {})
         self.kept()
 
@@ -237,9 +246,9 @@ class DesignTest(ShownTest):
             "Design sign-off\n"
             f"The design is on the draft pull request: {PR}\n"
             f"{UX_LINK}\n"
-            "- Users: people who shop\n"
-            "- Flow: sign in first\n"
-            f"checklist-code: {REPOSITORY}/blob/work/.rn/checklists/code.md\n"
+            "- people who shop\n"
+            "- sign in first\n"
+            f"checklist: {REPOSITORY}/blob/work/.rn/checklists/code.md\n"
             f"{HOW}\n",
         )
 
@@ -259,19 +268,19 @@ class DesignTest(ShownTest):
         self.proposal("design")
         self.keep(steered(stage="design"), "feedback")
         decided = ("Users: people who shop", "Flow: ask first", "Look: plain")
-        self.call("0005", "t1.1", "design", decided, ("docs/ux.md",), {})
+        self.call("0005", "t1.1", "design", decided, ("docs/ux.md",), {}, kind="ux")
         self.kept()
         # When: the orchestrator asks for the design's proposal again.
-        # Then: t1.1 shows its link now, each decision changed or added, and the rest as before; the
+        # Then: t1.1 shows its link now and each decision, those changed or added marked so; the
         # checklist its link and nothing changed.
         self.assertEqual(
             self.proposal("design").splitlines()[2:-1],
             [
-                f"T1.1: {REPOSITORY}/blob/work/docs/ux.md",
-                "- Changed: Flow: ask first",
-                "- Changed: Look: plain",
-                "(Users as before)",
-                f"checklist-code: {REPOSITORY}/blob/work/.rn/checklists/code.md",
+                f"ux: {REPOSITORY}/blob/work/docs/ux.md",
+                "- people who shop",
+                "- Changed: ask first",
+                "- Changed: plain",
+                f"checklist: {REPOSITORY}/blob/work/.rn/checklists/code.md",
             ],
         )
 
@@ -295,7 +304,7 @@ class DesignTest(ShownTest):
         self.kept()
         # When: the orchestrator asks for the design's proposal.
         # Then: each is shown.
-        self.assertEqual(self.proposal("design").count("- D"), 5)
+        self.assertEqual(self.proposal("design").count("\n- x"), 5)
 
     def test_more_than_five_decisions_stop_as_not_yet_simple(self):
         # Given: t1.1 made again with six decisions.
@@ -349,15 +358,15 @@ class DeliverableTest(ShownTest):
         self.call("0004", "t3.1", "design", ("Flow: one page",), ("docs/flow.md",), {})
         self.kept()
         # When: the orchestrator asks for the deliverable's proposal.
-        # Then: rn shows each criterion, then t1.1 and its decision, and not t2.1 nor t3.
+        # Then: rn shows each criterion, then t1.1 with its link and decision, and not t2.1 nor t3.
         self.assertEqual(
             self.proposal("deliverable"),
             "Deliverable sign-off\n"
             f"The finished work is on the pull request: {PR}\n"
             "AC1: A user signs in with their email.\n"
             "AC2: A signed-in user sees only their cart, on every page.\n"
-            "T1.1\n"
-            "- Form: a page\n"
+            f"code: {REPOSITORY}/blob/work/src/app.py\n"
+            "- a page\n"
             f"{HOW}\n",
         )
 
@@ -380,12 +389,20 @@ class DeliverableTest(ShownTest):
 
 
 class ComparedTest(unittest.TestCase):
-    def test_a_work_shown_before_and_not_now_is_named_as_removed(self):
+    def test_a_work_shown_before_and_not_now_is_shown_as_removed_by_its_line(self):
         # Given: a work shown before with a decision, and none now.
-        then = {"t1.1": ("T1.1", {"A": "A: B"})}
+        then = {"t1.1": ("ux: L", {"A": "B"})}
         # When: what changed is said.
-        # Then: it is named as removed.
-        self.assertEqual(proposal.compared(then, {}), ["Removed: t1.1"])
+        # Then: its line, as the user saw it, is shown as removed.
+        self.assertEqual(proposal.compared(then, {}), ["Removed: ux: L"])
+
+    def test_a_decision_gone_is_shown_as_removed_by_what_it_said(self):
+        # Given: a work shown before with two decisions, and now with one of them changed.
+        then = {"t1.1": ("ux: L", {"A": "B", "C": "D"})}
+        now = {"t1.1": ("ux: L", {"A": "E"})}
+        # When: what changed is said.
+        # Then: the decision changed is marked, and the one gone is shown by what it said.
+        self.assertEqual(proposal.compared(then, now), ["ux: L", "- Changed: E", "- Removed: D"])
 
 
 class AnswerTest(RepoTest):

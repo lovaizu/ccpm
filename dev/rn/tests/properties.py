@@ -128,11 +128,12 @@ class PropertyTest(RepoTest):
             (steering.out_of_form(written), back.next, back.open), ("", next_step, open_lines)
         )
 
-    @hypothesis.given(IDS, IDS, st.sampled_from(["", "- "]))
-    def test_what_changed_names_each_line_shown_once(self, before, now, bullet):
-        # Given: any lines shown before and any now, by their keys, under a bullet or none.
+    @hypothesis.given(IDS, IDS)
+    def test_what_changed_names_each_line_shown_once(self, before, now):
+        # Given: any lines of the steering shown before and any now, by their keys.
         # When: what changed is said.
-        told = proposal.changes(before, now, bullet)
+        bullet = ""
+        told = proposal.changes(before, now)
         # Then: each now is shown once as changed or named once among those as before, the last
         # line, and each gone named as removed, each change under the bullet.
         changed = [line[len(f"{bullet}Changed: ") :] for line in told if "Changed: " in line]
@@ -147,6 +148,19 @@ class PropertyTest(RepoTest):
                 [i for i in before if i not in now],
                 same,
             ),
+        )
+
+    @hypothesis.given(IDS, IDS)
+    def test_what_changed_shows_each_decision_once_and_each_gone_by_its_words(self, before, now):
+        # Given: any decisions shown before and any now, by their titles.
+        # When: what changed is said.
+        told = proposal.decisions_changed(before, now)
+        # Then: each now is shown once, in order, marked where it is changed or added, then each
+        # gone by what it said.
+        self.assertEqual(
+            told,
+            [f"- {'' if before.get(t) == said else 'Changed: '}{said}" for t, said in now.items()]
+            + [f"- Removed: {said}" for t, said in before.items() if t not in now],
         )
 
     @hypothesis.given(
@@ -187,8 +201,8 @@ class PropertyTest(RepoTest):
         decision = f"{title}: {says}"
         hypothesis.assume(len(decision) <= proposal.LONGEST)
         # When: a sign-off shows it.
-        # Then: it is shown whole, under its title.
-        self.assertEqual(proposal.simple("t1", [decision]), {title: decision})
+        # Then: what it says is shown whole, under its title.
+        self.assertEqual(proposal.simple("t1", [decision]), {title: says})
 
 
 class LearningPropertyTest(LearningTest):
