@@ -118,14 +118,13 @@ class TestCases(AdapterTest):
     def test_an_adapter_named_out_of_its_lanes_port_stops(self):
         for lane, named in (
             ({**EVERY, "adapter": "hooks/adapters/move-x.py"}, "not hooks/adapters/items-"),
-            ({**EVERY, "adapter": 1}, "`1`, not hooks/adapters/items-"),
             (
                 {"lane": "hands_off", "takes": ["git push"], "adapter": PATH},
                 "names an adapter for hands_off on step 3 of changelog-writer",
             ),
         ):
             with self.subTest(lane=lane):
-                # Given: an adapter named as another port's, by no path, or for a lane reading none
+                # Given: an adapter named as another port's, or for a lane reading none
                 self.propose(self.proposal([lane]))
                 # When: the proposal is printed
                 code, said = self.lay("print", self.proposal_file)

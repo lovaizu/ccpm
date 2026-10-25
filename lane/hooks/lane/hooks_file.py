@@ -22,42 +22,61 @@ import schema
 # A plugin's or a subagent's name, as a hook's command carries it unquoted.
 NAME = r"[A-Za-z0-9._-]+"
 AGENT = re.compile(rf"{NAME}:{NAME}")
-# The lanes laid in a plugin, as hooks/lanes.json holds them: each subagent by its name, with each
-# step its lanes are laid on, by its number, and each lane, its name and what it takes; a lane that
-# reads a port may name the plugin's adapter of it, and a subagent its adapter of the values port,
-# as every lane of the subagent reads them, each by its path in the plugin.
-LANE = {
-    "type": "object",
-    "required": ["lane", "takes"],
-    "additionalProperties": False,
-    "properties": {
-        "lane": {"enum": list(lanes.LANES)},
-        "takes": {"type": "array", "items": {"type": "string"}},
-        "adapter": {"type": "string"},
-    },
-}
-STEP = {
-    "type": "object",
-    "required": ["step", "lanes"],
-    "additionalProperties": False,
-    "properties": {"step": {"type": "integer"}, "lanes": {"type": "array", "items": LANE}},
-}
-SUBAGENT = {
-    "type": "object",
-    "required": ["name", "steps"],
-    "additionalProperties": False,
-    "properties": {
-        "name": {"type": "string"},
-        "adapter": {"type": "string"},
-        "steps": {"type": "array", "items": STEP},
-    },
-}
-LAID = {
-    "type": "object",
-    "required": ["subagents"],
-    "additionalProperties": False,
-    "properties": {"subagents": {"type": "array", "items": SUBAGENT}},
-}
+
+
+def lanes_shape(least: int) -> dict[str, Any]:
+    """The JSON Schema of the lanes laid in a plugin, as hooks/lanes.json holds them and a proposal
+    gives them: each subagent by its name, with each step its lanes are laid on, by its number, and
+    each lane, its name and what it takes; a lane that reads a port may name the plugin's adapter of
+    it, and a subagent its adapter of the values port, as every lane of the subagent reads them,
+    each by its path in the plugin. Each list of subagents, steps and lanes holds at least `least`:
+    0 in hooks/lanes.json, which keeps a subagent whose lanes `lay.py up` left out, 1 in a
+    proposal."""
+
+    def listed(each: dict[str, Any]) -> dict[str, Any]:
+        return {"type": "array", "items": each, "minItems": least}
+
+    def adapter(port: str) -> dict[str, Any]:
+        return {"type": "string", "description": f"hooks/adapters/{port}-<name>.py"}
+
+    lane = {
+        "type": "object",
+        "required": ["lane", "takes"],
+        "additionalProperties": False,
+        "properties": {
+            "lane": {"enum": list(lanes.LANES)},
+            "takes": {"type": "array", "items": {"type": "string"}},
+            "adapter": adapter("<port>"),
+        },
+    }
+    step = {
+        "type": "object",
+        "required": ["step", "lanes"],
+        "additionalProperties": False,
+        "properties": {
+            "step": {"type": "integer", "description": "its number in the subagent's Steps"},
+            "lanes": listed(lane),
+        },
+    }
+    subagent = {
+        "type": "object",
+        "required": ["name", "steps"],
+        "additionalProperties": False,
+        "properties": {
+            "name": {"type": "string", "description": "the subagent, as its file's name: field"},
+            "adapter": adapter("values"),
+            "steps": listed(step),
+        },
+    }
+    return {
+        "type": "object",
+        "required": ["subagents"],
+        "additionalProperties": False,
+        "properties": {"subagents": listed(subagent)},
+    }
+
+
+LAID = lanes_shape(0)
 # The events a call is kept on as it comes back, for every subagent lanes are laid in, as called.py
 # says.
 KEPT = ("PostToolUse", "PostToolUseFailure")
@@ -178,7 +197,7 @@ def laid(root: str) -> dict[str, Any]:
     return given
 
 
-def adapter_wrong(path: Any, port: str | None) -> str:
+def adapter_wrong(path: str | None, port: str | None) -> str:
     """Why the adapter named by the path, None for none, cannot be the port's, the port a lane
     reads, None for none; "" where none is named or it can, being `hooks/adapters/<port>-<name>.py`
     in the plugin."""
@@ -186,7 +205,7 @@ def adapter_wrong(path: Any, port: str | None) -> str:
         return ""
     if port is None:
         return f"`{path}`, which reads no port"
-    if not isinstance(path, str) or not re.fullmatch(rf"hooks/adapters/{port}-{NAME}\.py", path):
+    if not re.fullmatch(rf"hooks/adapters/{port}-{NAME}\.py", path):
         return f"`{path}`, not hooks/adapters/{port}-<name>.py"
     return ""
 

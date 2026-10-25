@@ -46,15 +46,30 @@ at the move port, as the ports below say.
 ## The proposal
 
 Your AI writes the lanes it proposes as one JSON file, has `lay.py print` show them as they will be
-laid, and once it approves them has `lay.py write` lay them from the same file:
+laid, and once it approves them has `lay.py write` lay them from the same file, held to this JSON
+Schema:
 
-```text
-{"plugin": "<your plugin's folder>",
- "subagents": [{"name": "<the subagent, as its file's name: field>",
-                "adapter": "hooks/adapters/values-<name>.py",
-                "steps": [{"step": <its number>,
-                           "lanes": [{"lane": "<lane>", "takes": ["<thing>", ...],
-                                      "adapter": "hooks/adapters/<port>-<name>.py"}]}]}]}
+```json
+{"type": "object", "required": ["plugin", "subagents"], "additionalProperties": false,
+ "properties": {
+  "plugin": {"type": "string", "description": "your plugin's folder"},
+  "subagents": {"type": "array", "minItems": 1, "items": {
+   "type": "object", "required": ["name", "steps"], "additionalProperties": false,
+   "properties": {
+    "name": {"type": "string", "description": "the subagent, as its file's name: field"},
+    "adapter": {"type": "string", "description": "hooks/adapters/values-<name>.py"},
+    "steps": {"type": "array", "minItems": 1, "items": {
+     "type": "object", "required": ["step", "lanes"], "additionalProperties": false,
+     "properties": {
+      "step": {"type": "integer", "description": "its number in the subagent's Steps"},
+      "lanes": {"type": "array", "minItems": 1, "items": {
+       "type": "object", "required": ["lane", "takes"], "additionalProperties": false,
+       "properties": {
+        "lane": {"enum": ["start_with", "read_only", "read_whole", "write_only", "in_form",
+                          "hands_off", "test_after", "as_printed", "follow_next", "wait_for",
+                          "end_when", "every_item"]},
+        "takes": {"type": "array", "items": {"type": "string"}},
+        "adapter": {"type": "string", "description": "hooks/adapters/<port>-<name>.py"}}}}}}}}}}}}
 ```
 
 - A lane goes only on a sentence whose drift shows in a tool call or in how the subagent ends, and

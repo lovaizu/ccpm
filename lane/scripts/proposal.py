@@ -1,7 +1,10 @@
 """The proposal the building AI writes for the layer, a JSON file at a path it gives lay.py, read and
-checked to be in the shape lane's docs/lanes.md gives, each adapter it names found beside it, in
-`<plugin>/adapters/` of the folder it is in, or laid before in the plugin's hooks/adapters/, and run
-on each of its cases before the proposal is printed or written."""
+held to its JSON Schema, PROPOSAL, which lane's docs/lanes.md shows, then checked for what no schema
+can say: the plugin and each subagent's file found, each name one a hook's command can carry, each
+subagent and step given once, each step in its file, and what each lane takes fitting it; and each
+adapter it names found beside it, in `<plugin>/adapters/` of the folder it is in, or laid before in
+the plugin's hooks/adapters/, and run on each of its cases before the proposal is printed or
+written."""
 
 from __future__ import annotations
 
@@ -21,6 +24,17 @@ import step
 # its whole path, as the building AI may run lay.py from any folder.
 LANES_MD = os.path.join(placed.LANE, "docs", "lanes.md")
 AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
+# The proposal's JSON Schema: the lanes laid, as hooks/lanes.json holds them, with the plugin's
+# folder, and at least one subagent, one step in each and one lane on each, as a proposal lays them.
+SHAPE = hooks_file.lanes_shape(1)
+PROPOSAL = {
+    **SHAPE,
+    "required": ["plugin", *SHAPE["required"]],
+    "properties": {
+        "plugin": {"type": "string", "description": "your plugin's folder"},
+        **SHAPE["properties"],
+    },
+}
 
 
 class Stop(Exception):
@@ -33,7 +47,7 @@ def wrong(what: str) -> Stop:
 
 
 def proposal(path: str) -> dict[str, Any]:
-    """The proposal at the path, checked to be in its shape, each subagent given once, with
+    """The proposal at the path, held to its schema and checked, each subagent given once, with
     the plugin's name, each subagent with its file and its lines, each step with where it is among
     them, and each adapter it names found and checked on its cases, as `adapter_found` gives it."""
     try:
@@ -43,14 +57,12 @@ def proposal(path: str) -> dict[str, Any]:
         raise Stop(f"lay.py: there is no file {path}; {AGAIN}.") from None
     except ValueError:
         raise Stop(f"lay.py: {path} holds no JSON; {AGAIN}.") from None
-    root = given.get("plugin") if isinstance(given, dict) else None
-    if not isinstance(root, str):
-        raise wrong("names no plugin")
-    subagents = given.get("subagents")
-    if not isinstance(subagents, list) or not subagents:
-        raise wrong("gives no subagents")
+    out = schema.held(PROPOSAL, given)
+    if out is not None:
+        raise wrong(f"is out of its shape at {out.told()}")
+    root = given["plugin"]
     name, checked = plugin_name(root), []
-    for given_agent in subagents:
+    for given_agent in given["subagents"]:
         agent = subagent(root, given_agent)
         # A subagent given twice would be written twice, its file and its hook the second time from
         # the second's lanes alone, and the first's lost though the building AI approved them.
@@ -160,11 +172,11 @@ def plugin_name(root: str) -> str:
     return name
 
 
-def subagent(root: str, given: Any) -> dict[str, Any]:
-    """A subagent of the proposal, checked, each of its steps given once, with its file and its
-    lines, and each step with where it is among them."""
-    name = given.get("name") if isinstance(given, dict) else None
-    if not isinstance(name, str) or not re.fullmatch(hooks_file.NAME, name):
+def subagent(root: str, given: dict[str, Any]) -> dict[str, Any]:
+    """A subagent of the proposal, held to its schema, checked, each of its steps given once, with
+    its file and its lines, and each step with where it is among them."""
+    name = given["name"]
+    if not re.fullmatch(hooks_file.NAME, name):
         raise wrong("gives a subagent no name")
     why = hooks_file.adapter_wrong(given.get("adapter"), "values")
     if why:
@@ -174,14 +186,10 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
         raise wrong(f"gives {name}, which no file in agents/ names")
     with open(file, encoding="utf-8") as f:
         lines = f.read().splitlines(keepends=True)
-    steps = given.get("steps")
-    if not isinstance(steps, list) or not steps:
-        raise wrong(f"gives {name} no steps")
+    steps = given["steps"]
     numbers = []
     for s in steps:
-        number = s.get("step") if isinstance(s, dict) else None
-        if not isinstance(number, int):
-            raise wrong(f"gives a step of {name} no number")
+        number = s["step"]
         # A step given twice would be printed as two readings of it and written with the sentences
         # of one, so the step would say what no print showed.
         if number in numbers:
@@ -190,27 +198,20 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
         where = step.span([line.rstrip("\n") for line in lines], number)
         if where is None:
             raise wrong(f"gives step {number}, which the Steps of {name} do not have")
-        laid = s.get("lanes")
-        if not isinstance(laid, list) or not laid:
-            raise wrong(f"gives step {number} of {name} no lanes")
-        for lane in laid:
+        for lane in s["lanes"]:
             lane_check(lane, f"step {number} of {name}", root)
         s["span"] = where
     named = {"adapter": given["adapter"]} if "adapter" in given else {}
     return {"name": name, **named, "file": file, "lines": lines, "steps": steps}
 
 
-def lane_check(lane: Any, on: str, root: str) -> None:
-    """Stops where the lane is not one lane lays, taking a text for each thing it shows; or where its module refuses what it takes in the plugin at root, as in_form a form lane
-    does not read."""
-    known = lane.get("lane") if isinstance(lane, dict) else None
-    if known not in lanes.LANES:
-        raise wrong(f"gives {known}, which is no lane, on {on}")
-    takes = lane.get("takes")
-    if not isinstance(takes, list):
-        raise wrong(f"gives {known} on {on} no takes")
-    if not all(isinstance(t, str) and t for t in takes):
-        raise wrong(f"gives {known} on {on} takes that are not each a text")
+def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
+    """Stops where the lane, held to its schema, takes an empty thing, or another count of things
+    than its wording and its hook hold, or names an adapter that cannot be its port's; or where its
+    module refuses what it takes in the plugin at root, as in_form a form lane does not read."""
+    known, takes = lane["lane"], lane["takes"]
+    if not all(takes):
+        raise wrong(f"gives {known} on {on} a take that is empty")
     if not lanes.fits(known, takes):
         raise wrong(
             f"gives {known} on {on} takes of another count than its wording and its hook hold"
