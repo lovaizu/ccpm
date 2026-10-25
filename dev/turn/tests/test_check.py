@@ -166,7 +166,8 @@ class TestCheck(RepoTest):
     def test_a_check_out_of_its_form_stops(self):
         # Given: a check leaving an item out, giving one empty words, or one a Good
         # When: the check is recorded
-        # Then: it is stopped, naming each place to fill, and the run waits on the check still
+        # Then: it is stopped, naming each place to fill and the command to run again, and the run
+        # waits on the check still
         for items, said in (
             ([CAN[0]], "B-1 is left out"),
             ([CAN[0], dict(CAN[1], can=" ")], 'empty "can"'),
@@ -176,6 +177,7 @@ class TestCheck(RepoTest):
                 out = self.refused({"items": items, "questions": []})
                 self.assertIn("the check is not filled", out)
                 self.assertIn(said, out)
+                self.assertIn("again with the check filled", out)
         self.assertEqual(self.next()["check"], [ITEM_F1, ITEM_B1])
 
 

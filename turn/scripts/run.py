@@ -161,6 +161,16 @@ def counted(count: int, word: str) -> str:
     return f"{count} {word}{PLURAL.get(count, 's')}"
 
 
+def covered(run: dict[str, Any], agent: str) -> list[dict[str, Any]]:
+    """The items the next move covers: those left to word a question for, those sent back to the
+    generator, or else every item."""
+    if agent == UP and run["stage"] == "left":
+        return run["left"]
+    if agent == GENERATOR and run.get("back"):
+        return run["back"]
+    return run["items"]
+
+
 def tell(run: dict[str, Any]) -> dict[str, Any]:
     """The move telling the calling AI what was done and what the next move will do, how far and
     how: the role due, or the orchestrator's own move at the stage; the flow makes the line from
@@ -174,7 +184,7 @@ def tell(run: dict[str, Any]) -> dict[str, Any]:
     work = ", ".join(run["work"])
     done = run.pop("done", "")
     line = f"turn: {done + ' ' if done else ''}Next, {agent} will {does}, of {work}"
-    line += f", for {counted(len(run['items']), 'item')}, round {run['round']}."
+    line += f", for {counted(len(covered(run, agent)), 'item')}, round {run['round']}."
     run["told"] = True
     state.save(run)
     return {"line": line, "move": {"tool": "SendMessage", "input": {"to": MAIN, "message": line}}}
@@ -352,7 +362,11 @@ def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
     work = prompts.absolute(run["work"])
     said = forms.check(text, run["items"], work, forms.CHECK, run["each"])
     if said:
-        raise call.Stop("turn: the check is not filled:\n" + "\n".join(said))
+        raise call.Stop(
+            "turn: the check is not filled:\n"
+            + "\n".join(said)
+            + f"\nrun `turn.py next {run['call']['result']}` again with the check filled"
+        )
     found = json.loads(forms.unfenced(text))
     if found["questions"]:
         return asking(run, "check", UP, found)
@@ -491,7 +505,11 @@ def left_asked(run: dict[str, Any], text: str) -> dict[str, Any]:
     left = [forms.named(i) for i in run["left"]]
     said = forms.check(text, left, prompts.absolute(run["work"]), forms.LEFT, run["each"])
     if said:
-        raise call.Stop("turn: the questions are not filled:\n" + "\n".join(said))
+        raise call.Stop(
+            "turn: the questions are not filled:\n"
+            + "\n".join(said)
+            + f"\nrun `turn.py next {run['call']['result']}` again with the questions filled"
+        )
     run["back"] = run.pop("left")
     return asking(run, "left", UP, json.loads(forms.unfenced(text)))
 

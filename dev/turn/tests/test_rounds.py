@@ -45,7 +45,7 @@ class TestRoundEnd(ReadTest):
             out["line"],
             "turn: turn:first-user found the Good of 1 of 2 items. Next, turn:generator will make"
             " the work to give every item its Good, and run what it gives as the receiver would,"
-            " of README.md, for 2 items, round 2.",
+            " of README.md, for 1 item, round 2.",
         )
         self.due(out)
         self.assertEqual(self.prompt()["sent_back"], [STOPPED_B1])
@@ -76,7 +76,7 @@ class TestRounds(ReadTest):
         self.assertEqual(
             out["line"],
             "turn: turn:first-user found the Good of 1 of 2 items. Next, turn:up will word a"
-            " question for each item two rounds left without Good, of README.md, for 2 items,"
+            " question for each item two rounds left without Good, of README.md, for 1 item,"
             " round 2.",
         )
         return self.next()
@@ -191,7 +191,8 @@ class TestRounds(ReadTest):
     def test_questions_for_the_items_left_out_of_their_form_stop(self):
         # Given: an item two rounds left without Good
         # When: the orchestrator gives it a Good, or leaves it out
-        # Then: it stops, naming what is wrong, and the item is still shown
+        # Then: it stops, naming what is wrong and the command to run again, and the item is still
+        # shown
         self.left()
         for items, said in (
             ([dict(FOUND_B1)], 'must hold "question"'),
@@ -201,6 +202,7 @@ class TestRounds(ReadTest):
                 out = self.refused({"items": items, "questions": []})
                 self.assertIn("the questions are not filled", out)
                 self.assertIn(said, out)
+                self.assertIn("again with the questions filled", out)
         self.assertEqual(self.next(), {"left": [STOPPED_B1]})
 
     def test_items_left_too_long_for_one_read_are_shown_page_by_page(self):
