@@ -243,10 +243,15 @@ def written(
     have with it; goal_orientation, what the work is for, its use and what it serves as text, as
     turn makes the work from the CCS and the files it names alone; retrieved_artifacts, the kind's
     checklists and rn's `usability.md` where the work is a checklist; and constraints, the bounds
-    it is made in: its decisions, the languages, and rn's checklist for a fix, which turn's roles
+    it is made in: its decisions, the languages, English for an issue to rn's makers, and rn's
+    checklist for a fix, which turn's roles
     are given to read, as each file a CCS names is, for a work made again. turn finds each entry by
     its key, whichever part holds it."""
     usability = os.path.join(root, "checklists", "usability.md")
+    # An issue is written in English, the language of rn's makers' repository, whatever the
+    # language of the user's.
+    english = {steering.LANGUAGES[0]: "English"} if session.ISSUE_WORK.fullmatch(work) else {}
+    languages = {**steered.keys, **english}
     return {
         "focal_entities": [
             {session.WORK: work},
@@ -261,7 +266,7 @@ def written(
         "retrieved_artifacts": [{ENTRIES["checklist"]: p} for p in checklists]
         + ([{"source": usability}] if made.kind == CHECKLIST else []),
         "constraints": [{session.DECISION: d} for d in decisions]
-        + [{key: steered.keys[key]} for key in steering.LANGUAGES]
+        + [{key: languages[key]} for key in steering.LANGUAGES]
         + [{"fix": os.path.join(root, "checklists", "fix.md")}],
     }
 

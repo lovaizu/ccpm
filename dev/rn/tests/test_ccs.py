@@ -488,6 +488,14 @@ class CcsTest(RepoTest):
                     (paths, kind, {"checklist": self.own[kind]}, True, True, [has]),
                 )
 
+    def test_an_issue_to_rns_makers_is_written_in_english(self):
+        # Given: a session whose artifact language is Japanese.
+        self.session(steered().replace("artifact-language: English", "artifact-language: 日本語"))
+        # When: the orchestrator has the CCS of an issue written.
+        written = self.read_json(self.ran("ccs", "issue-1")["ccs"])
+        # Then: it is to be written in English.
+        self.assertIn({"artifact-language": "English"}, written["constraints"])
+
     def test_a_work_made_again_takes_what_its_last_call_named(self):
         # Given: the call on t1.2 made with a receiver, a use and what they have, and returned.
         self.ran("ccs", "t1.2", "--receiver", "a new user", "--use", "to try it", "--has", ".")

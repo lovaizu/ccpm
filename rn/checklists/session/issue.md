@@ -46,10 +46,11 @@ Does the issue follow this template?
 rn <the version the steering's front matter names>
 ```
 
-The first line is the issue's title, and the rest its body, as rn sends them.
+The first line is the issue's title, and the rest its body, as rn sends them. It is written in
+English, the language of rn's makers' repository, whatever the language of the user's.
 
-Why: the makers find the same thing under the same heading in every issue, and rn sends the title
-and the body apart.
+Why: the makers find the same thing under the same heading in every issue, rn sends the title and
+the body apart, and every issue of rn's is read by makers who read English.
 
 ## Benefit
 

@@ -27,6 +27,25 @@ import stretch
 
 # The plugin's own folder, which holds rn's checklists and its manifest.
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# The step of /rn:up each move whose next step is always the same leads to, as Next, by the number
+# up's SKILL.md and the files of its stages give it: a session started, a sign-off approved, a
+# sign-off sent back, a sign-off waiting, and a stage moved at its end.
+STARTED = "Step 8 of /rn:up on plan: hear the purpose and what shows it done"
+APPROVED_NEXT = {
+    steering.PLAN: "Step 9 of /rn:up on plan: hear which documents the purpose needs",
+    steering.DESIGN: "Step 10 of /rn:up on plan: make the tasks that build the finished work",
+    steering.DELIVERABLE: "Step 11 of /rn:up: put each learning to the user",
+}
+FEEDBACK = "Step 6 of /rn:up on {}: find the point behind the feedback"
+WAITING = "Step 5 of /rn:up on {}: wait for the user's answer, " + proposal.ANSWER
+STAGED = {
+    steering.BUILD: APPROVED_NEXT[steering.DESIGN],
+    steering.DELIVERABLE: (
+        "Step 10 of /rn:up on deliverable: have the finished work used for each acceptance"
+        " criterion"
+    ),
+    steering.FINISHED: "Nothing is left: the pull request waits for the user's merge",
+}
 
 
 def run_session(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
@@ -70,7 +89,6 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     languages = {
         key: stop.given(getattr(args, key.replace("-", "_")), key) for key in steering.LANGUAGES
     }
-    next_step = stop.given(args.next, "next step")
     message = stop.given(args.message, "message")
     repo.at_top()
     paths = repo.changed()
@@ -101,7 +119,7 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
             steering.SIGNOFF: steering.NONE,
             **languages,
         }
-        steered = steering.Steering(keys, [f"# {title}"], next_step, [steering.NOTHING_OPEN])
+        steered = steering.Steering(keys, [f"# {title}"], STARTED, [steering.NOTHING_OPEN])
         steering.held_form(steering.render(steered))
         repo.git(["checkout", "-q", "--no-track", "-b", slug, branch], "give another slug")
         session.keep(folder, steered, message)
@@ -138,10 +156,15 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     empty, the branch holds no session, the steering differs from what the last keep left, a part,
     an ID, an action or a stage cannot be taken, or the steering or the learnings would be out of
     their form; and where git fails."""
-    next_step = stop.given(args.next, "next step")
     message = stop.given(args.message, "message")
     folder = session.current()
     steered = session.kept_steering(folder)
+    if args.next is not None:
+        next_step = stop.given(args.next, "next step")
+    elif args.stage is not None:
+        next_step = STAGED[args.stage]
+    else:
+        next_step = steered.next
     work = None
     learnt: list[str] = []
     if args.put is not None:
@@ -359,7 +382,7 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
         ]
     )
     if waiting == steering.NONE:
-        waits = f"Wait at the {signoff} sign-off for the user's answer: {proposal.ANSWER}"
+        waits = WAITING.format(signoff)
         session.keep(
             folder,
             steered._replace(keys={**steered.keys, steering.SIGNOFF: signoff}, next=waits),
@@ -375,7 +398,6 @@ def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any
     empty, the branch holds no session, the steering differs from what the last keep left, no
     sign-off waits, or the user has not typed the answer's command since the sign-off was shown, as
     an approval counts only from the user's own action; and where git fails."""
-    next_step = stop.given(args.next, "next step")
     message = stop.given(args.message, "message")
     folder = session.current()
     steered = session.kept_steering(folder)
@@ -397,8 +419,10 @@ def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any
             " answer is theirs alone, so wait for them to type it, and keep it then"
         )
     keys = {**steered.keys, steering.SIGNOFF: steering.NONE}
+    next_step = FEEDBACK.format(waiting)
     if args.answer == "approved":  # pragma: no mutate
         keys[steering.STAGE] = steering.APPROVED[waiting]
+        next_step = APPROVED_NEXT[waiting]
     # The points open stay, as the answer settles none of them, each one given added after them.
     still = [line[2:] for line in steered.open if line.startswith("- ")]
     answered = steered._replace(keys=keys, next=next_step, open=steering.opened(still + args.open))
@@ -435,11 +459,11 @@ def parser() -> Parser:
     start = sub.add_parser("start")
     start.set_defaults(run=run_start)
     start.add_argument("slug")
-    for option in ("--title", *(f"--{key}" for key in steering.LANGUAGES), "--next", "--message"):
+    for option in ("--title", *(f"--{key}" for key in steering.LANGUAGES), "--message"):
         start.add_argument(option, required=True)
     state = sub.add_parser("state")
     state.set_defaults(run=run_state)
-    state.add_argument("--next", required=True)
+    state.add_argument("--next")
     state.add_argument("--open", action="append", default=[])
     state.add_argument("--done", action="append", default=[])
     state.add_argument("--put")
@@ -463,7 +487,6 @@ def parser() -> Parser:
     answer = sub.add_parser("answer")
     answer.set_defaults(run=run_answer)
     answer.add_argument("answer", choices=list(proposal.COMMANDS))
-    answer.add_argument("--next", required=True)
     answer.add_argument("--open", action="append", default=[])
     answer.add_argument("--message", required=True)
     lists = sub.add_parser("checklists")

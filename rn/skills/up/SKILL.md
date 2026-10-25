@@ -13,31 +13,26 @@ their purpose, from their request to the pull request marked ready, and they mer
 is your map to that purpose, kept current at every move: from it and from what each move found,
 turn's outputs included, you decide the next move and lead the user and turn there, and as every
 move is led by it, the hearing that draws its first draft weighs most. You talk and decide; every
-work, the plan, each document, each task's result, each checklist, the finished work and the
-learnings, is made by turn, a plugin installed with rn, and you write no line of what turn makes:
-what would be a fix is settled as a decision before turn runs, so every line has been read by an AI
-that did not make it.
+work, the plan, each research result, document and task's result, each checklist, the finished
+work, the learnings and each issue to rn's makers, is made by turn, a plugin installed with rn, and
+you write no line of what turn makes: what would be a fix is settled as a decision before turn
+runs, so every line has been read by an AI that did not make it.
 
 - A point to decide is a choice that changes what is made. You confirm each with the user, one per
   message, even one you could look up, with what you looked up and the answer you recommend: a
   point decided unasked is made again when it is wrong, and one per message lets the user weigh
   each on its own.
-- A session is one piece of work on a branch of its own; its record, the folder `<session>`
-  (`.rn/<yyyymmdd>-<slug>/`), holds `steering.md`, what is left to reach the goal and where the
-  session stands; `learnings.md`, the learnings, which rn's scripts keep for step 11; each research
-  result and trial's result a task makes; and `turn/`, each call to turn as the files of one number:
-  `<nnnn>-ccs.json`, the CCS the work is made from, its decisions among its `constraints`;
-  `<nnnn>-result.json`, what turn returned; and the part turn makes, `<nnnn>-steering.md` for a call
-  on `plan` and `<nnnn>-learnings.md` for a call on `learnings`. A work is named `plan`,
-  `learnings`, `t<n>` for what task T<n> makes outside the steering, `deliverable`, or
-  `checklist-<kind>`; its latest call is the highest number whose CCS names it.
+- A session is one piece of work on a branch of its own; its record is the folder `<session>`
+  (`.rn/<yyyymmdd>-<slug>/`), whose `steering.md` holds what is left to reach the goal and where
+  the session stands. A work is named `plan`, `learnings`, `deliverable`, `t<n>.<k>` for what
+  action k of task T<n> makes, `checklist-<kind>` or `issue-<n>`.
 - A sign-off is a stop where you show the user a proposal and wait for `/rn:ty`, their approval, or
   `/rn:gm <feedback>`, a change they ask for: the plan's, the design's and the deliverable's, in
   that order. Only the user can type these; you never answer a sign-off for them.
 
 You hand back to the user each point to decide, each question turn asks, each sign-off, each
 learning, kept as it is until step 11 puts it to the user, the first move that acts on it, as where
-it goes is theirs to choose; each issue before it is opened, and the merge.
+it goes is theirs to choose; each issue before it is sent, and the merge.
 
 You carry nothing from move to move but the steering: a conversation ends or is cleared, and a fresh
 one knows only what is pushed. rn's scripts alone write the steering and keep each move; you never
@@ -47,25 +42,23 @@ prints as printed. Where it stops, it prints what went wrong and what to do: do 
 again; where what it says to do is the user's to do, such as their own changes not committed, tell
 the user and end.
 
-You keep a move with one of these subcommands, each committing every change with `--message` and
-pushing it:
+You keep a move with one of these, each committing every change with `--message` and pushing it:
 
-- `rn.py decide <work> --title <t> --says <s> --message <m>` keeps one decision of the work in its
-  call, and prints `{"call": "<nnnn>", "kept": "<commit>"}`.
-- `rn.py state --next <n> [--open <o>]... [--done T<n>.<action>]... [--put <nnnn>] [--stage
-  build|deliverable|finished] --message <m>` replaces Next and Open whole, ticks each action done,
-  taking out of the steering a task whose actions are then all ticked, puts the part a call made
-  back, a plan's into the steering and learnings into `<session>/learnings.md`, moves the stage
-  where given, and prints `{"kept": "<commit>"}`.
+- `rn.py decide <work> --title <t> --says <s> --message <m>`, one decision of the work, which
+  prints `{"call": "<nnnn>", "kept": "<commit>"}`.
+- `rn.py state [--next <n>] [--open <o>]... [--done T<n>.<action>]... [--put <nnnn>] [--stage
+  build|deliverable|finished] --message <m>`, where the session stands, which prints `{"kept":
+  "<commit>"}`, and `"tell"` beside it where an action is done: reply with that line, put into the
+  conversation language.
 
 `--next` is the step of this skill to take next, by its number and on what, as
 `Step <n> of /rn:up on <work>: <what is left of it>`, so a fresh conversation takes it from the
-steering alone. `--open` is each point still open after the move, one `--open` each, as Open is
-replaced whole: each a checked fact, the user's words, what a script printed or turn's result read
-at its lines; none where nothing is open. The message, in the artifact language, says what the move
-records; for a decision also the options weighed with their reasons, and for feedback the feedback
-whole with its answer, as the steering and the calls keep only what holds now. Pass a message of
-more than one line as:
+steering alone; where a step says rn sets Next, give none. `--open` is each point still open after
+the move, one `--open` each, as Open is replaced whole: each a checked fact, the user's words, what
+a script printed or turn's result read at its lines; none where nothing is open. The message, in the
+artifact language, says what the move records; for a decision also the options weighed with their
+reasons, and for feedback the feedback whole with its answer, as the steering and the calls keep
+only what holds now. Pass a message of more than one line as:
 
 ```sh
 --message "$(cat <<'EOF'
@@ -76,7 +69,14 @@ EOF
 
 Every line you say to the user, the one-line reports included, is in the steering's
 `conversation-language`, whatever language what you read was in; everything you write to the
-repository is in its `artifact-language`.
+repository is in its `artifact-language`. The forms of the messages that ask a point or put a
+learning are in `${CLAUDE_PLUGIN_ROOT}/skills/up/messages.md`: read it whole before the first such
+message in a conversation.
+
+Steps 1 to 6 below serve every stage; the steps of each stage are in a file of this skill's folder,
+`${CLAUDE_PLUGIN_ROOT}/skills/up/`: steps 7 and 8 in `plan.md`, step 9 in `design.md`, step 10 in
+`build.md` and step 11 in `learnings.md`. Read the file whole before you take a step of it in a
+conversation.
 
 ## Steps
 
@@ -92,45 +92,25 @@ repository is in its `artifact-language`.
      - `session` null and no words, or words that ask for no work, such as the answer to a point
        asked in a conversation since cleared: tell the user, in their language, that no session is
        on this branch and that `/rn:up <what you want>` starts one; end.
-     - `session` null with words: go to step 2.
-     - `signoff` not null: step 9 on that sign-off, as the user is yet to answer it.
+     - `session` null with words: step 7.
+     - `signoff` not null: step 5 on that sign-off, as the user is yet to answer it.
      - Otherwise: take the step the steering's Next names, the user's words, if any, as what they
        say now, such as the answer to the point last asked; where this conversation has not shown
        the point they answer, as after it was cleared, ask that point again, weighing their words.
    - Out: the step to take and its work, from what `rn.py session` printed and the steering.
 
-2. Start the session, so every move from here has a place to be kept and shown.
-   - In: the user's words; the repository's README, `cat -n README.md`, and `git log -10
-     --format=%s`; the user's instructions in this conversation, such as their CLAUDE.md.
-   - The first point to decide is the two languages, asked in step 3's form: the conversation
-     language and the artifact language each as the repository and the user's instructions set
-     them, else the user's own for the conversation and English for the repository. Their answer is
-     kept by `rn.py start` below, as no session holds a decision before it.
-   - On the answer, choose the slug, a few lowercase words of the request joined by hyphens, such as
-     `move-to-typescript`, and the title, the request in a few words, and run `rn.py start <slug>
-     --title <t> --artifact-language <a> --conversation-language <c> --next "Step 6 of /rn:up on
-     plan: hear the purpose and what shows it done" --message <m>`, the message saying that the user
-     asked for the work, in their words, and the languages they chose. It makes the branch and the
-     steering, opens the draft pull request and prints `{"session": "<session>", "branch":
-     "<branch>", "pr": "<the pull request's URL>"}`.
-   - Out: the session started; go to step 6.
-
-3. Hear the points of a work until none is left to decide, so the work is made from what the user
+2. Hear the points of a work until none is left to decide, so the work is made from what the user
    decided rather than from a guess.
-   - In: the work, and the step that comes after; `${CLAUDE_PLUGIN_ROOT}/README.md`, read whole the
-     first time in a conversation, for the forms "Points to decide" and "Learnings to decide" of
-     its Example.
-   - Find the points from the user's words; the steering; the work's decisions in its latest call,
-     `grep -l '"work": "<work>"' <session>/turn/*-ccs.json | tail -n 1`, read whole, each
-     `decision` in its `constraints` a point settled as `<title>: <what it says>`; the repository's
-     README and the documentation it points to; and each file the request's words name or touch,
-     found with `git ls-files` or `git grep -l <word>`; each read whole. What a task's action of
-     yours says to find out, find out by reading. A word of the user's read wider or narrower than
-     they said it is a point of its own.
-   - Ask the first point not settled, the only point in your reply, in the README's "Points to
-     decide" form, its fixed words in the conversation language and its marks, numbers and letters
-     as they are; above it and apart from it, your answers to questions the user asked and the slips
-     you corrected that leave nothing to decide. End your reply after its question.
+   - In: the work, and the step that comes after.
+   - Find the points from the user's words; the steering; the work's decisions, which `rn.py
+     decisions <work>` prints as `{"work": "<work>", "call": <its latest call, or null>,
+     "decisions": ["<title>: <what it says>", ...]}`, each a point settled; the repository's README
+     and the documentation it points to; and each file the request's words name or touch, found
+     with `git ls-files` or `git grep -l <word>`; each read whole. What a task's action of yours
+     says to find out, find out by reading. A word of the user's read wider or narrower than they
+     said it is a point of its own.
+   - Ask the first point not settled, the only point in your reply, in the form "Points to decide"
+     of `messages.md`. End your reply after its question.
    - When the answer settles the point, keep it with `rn.py decide <work> --title <t> --says <s>
      --message <m>`: the title names the point; `--says` what the work must be on that point, in the
      words of the option or answer the user gave, as strong and as wide as they are, what it leaves
@@ -142,27 +122,26 @@ repository is in its `artifact-language`.
      again.
    - Out: no point left; go to the step that comes after.
 
-4. Have a work made by turn, and check what it returns, so the work comes back used in its
+3. Have a work made by turn, and check what it returns, so the work comes back used in its
    receiver's place by an AI that did not make it.
-   - In: the work, its paths, its kind, its receiver and their use, what they have with it, the
-     actions it ticks and the step that comes after, as the step that sent you here gives them.
-   - Run `rn.py ccs <work> [<path>...] --kind <kind> --receiver "<receiver>" --use "<use>" [--has
-     <path>]...`, no path for `plan`, `learnings` or `deliverable`, which the script cuts or finds.
-     It writes the CCS, keeps it and prints one line, the call to turn,
-     `{"ccs": "<session>/turn/<nnnn>-ccs.json", "kind": {...}, "result": "...", "test": null}`;
-     `<nnnn>` is the call's number. Where it stops for a kind with no checklist, make the
-     checklist first: step 3 on work `checklist-<kind>`, then this step on it, path
-     `.rn/checklists/<kind>.md`, kind `checklist`, receiver `whoever makes a <kind> work in this
-     repository and whoever judges it`, use `making and judging each <kind> work`, `--has .`; then
-     run `rn.py ccs` for this work again.
-   - Start the agent `turn:up` with the Agent tool, the printed line as its whole prompt and
+   - In: the work, the paths, receiver, use and what they have that the step that sent you gives,
+     the actions it ticks and the step that comes after.
+   - Run `rn.py ccs <work> [<path>...] [--receiver "<receiver>"] [--use "<use>"] [--has <path>]...`
+     with only what that step gives; rn.py makes its own works and a task's work at the path and of
+     the kind its action names, and a work made again as its last call did. It writes the CCS,
+     keeps it and prints two lines: the call to turn, `{"ccs": "<session>/turn/<nnnn>-ccs.json",
+     "kind": {...}, "result": "...", "test": <the command that checks the work, or null>}`,
+     `<nnnn>` the call's number; and the line telling the user what turn makes. Where it stops for a
+     kind with no checklist, make the checklist first: step 2 on work `checklist-<kind>`, then this
+     step on it, giving nothing more; then run `rn.py ccs` for this work again.
+   - Start the agent `turn:up` with the Agent tool, the call's line as its whole prompt and
      `run_in_background` true, and hold the ID it gives back: a run takes longer than a tool call
-     waits, and stopping it takes the ID. Reply in one line that the work is being made, and used in
-     the user's place by an AI that did not make it, and that they can say stop; end your reply.
+     waits, and stopping it takes the ID. Reply with the second line, put into the conversation
+     language; end your reply.
    - While it runs:
      - A message from one of its agents, a line beginning `turn:`: reply with that line alone, put
        into the conversation language, judging none of it; end your reply.
-     - turn ends with `{"questions": [...]}`: ask each as a point, as in step 3, its `recommended`
+     - turn ends with `{"questions": [...]}`: ask each as a point, as in step 2, its `recommended`
        the recommended option, one per message, each answer kept with `rn.py decide <work>`; where
        the work's decisions already hold its answer, as when a fresh conversation called turn
        again, take that. Then load SendMessage with ToolSearch (`select:SendMessage`) and send the
@@ -173,130 +152,58 @@ repository is in its `artifact-language`.
        Ask the user, as a point, which way the work goes now.
    - When it ends with `{"returned": "<result>"}`: read the result whole, then each item's `good` at
      its `lines` in the work, or, for an item with `parts`, each part's `good` at its `lines`. A
-     Good its lines fall short of, or an item without one, is a point
-     behind it: first keep the move with `rn.py state`, Next step 3 on the work and then this step
-     again, Open each shortfall at its lines, each time a result falls short, a work made again
-     included, so the result read is kept before anything is asked; then confirm the point with the
-     user where it is theirs, as in step 3, kept with `rn.py decide`; and have the work made again
-     from the top of this step.
+     Good its lines fall short of, or an item without one, is a point behind it: first keep the
+     move with `rn.py state`, Next step 2 on the work and then this step again, Open each shortfall
+     at its lines, each time a result falls short, a work made again included, so the result read
+     is kept before anything is asked; then confirm the point with the user where it is theirs, as
+     in step 2, kept with `rn.py decide`; and have the work made again from the top of this step.
    - Once every item's Good holds at its lines, keep the move with `rn.py state --next <the step
      that comes after>`, with `--done` for each action it ticks, and `--put <nnnn>` for `plan` and
-     `learnings`. A plan's ticks are not read in turn's part, as `--put` keeps each action ticked as
-     the steering had it.
+     `learnings`; reply with the line it tells, where it prints one. A plan's ticks are not read in
+     turn's part, as `--put` keeps each action ticked as the steering had it.
    - Out: every item with a Good its lines give; go to the step that comes after.
 
-5. Carry out a task, so its result is made traced to what it serves, with a slip shown while it is
+4. Carry out a task, so its result is made traced to what it serves, with a slip shown while it is
    small.
    - In: the task T<n> and its actions, as the steering says them.
-   - The task's work is `t<n>`. Take each action not ticked, in order, as the steering says it;
-     before it, tell the user in one line what it will do, how far and how, and after it, in one
-     line, what is done and what comes next. Next after an action is the action after it, and after
-     the last, `Step 5 of /rn:up on t<n>: weigh what it brought`.
-     - An action of the orchestrator's, with the user: step 3 on the work each point settles, `plan`
-       for the goal or a criterion and the task's work otherwise; then `rn.py state --done
-       T<n>.<action>`.
-     - An action of turn's: one call, step 4 on the task's work, the path and kind the action names,
-       a research result's kind `research` and a trial's `trial`, their paths in `<session>/`; the
-       receiver and their use as the opening of the kind's checklist names its reader, from `rn.py
-       checklists <kind>`, which prints the paths of the kind's checklists, for the task's
-       completion criterion; and a `--has` for each earlier output the action uses, named, such as
-       the research result a document rests on, and for what the receiver has with it, `--has .`
-       only where that is the whole repository.
-   - The user stops an action: what they then say is a point, as in step 3, and the action goes that
+   - Take each action not ticked, in order, as the steering says it. Next after an action is the
+     action after it, and after the last, `Step 4 of /rn:up on T<n>: weigh what it brought`.
+     - An action of the orchestrator's, with the user: step 2 on the work each point settles, `plan`
+       for the goal or a criterion, otherwise the work of the task's action of turn's it is for,
+       `t<n>.<k>`; then `rn.py state --done T<n>.<action>`, replying with the line it tells.
+     - An action of turn's: step 3 on its work, `t<n>.<k>`, which rn.py makes at the path and of
+       the kind the action names. Give `--receiver` and `--use` as the opening of the kind's
+       checklist names its reader, from `rn.py checklists <kind>`, which prints the paths of the
+       kind's checklists, for the task's completion criterion; and a `--has` for each earlier
+       output the action uses, named, such as the research result a document rests on, and for what
+       the receiver has with it, `--has .` only where that is the whole repository.
+   - The user stops an action: what they then say is a point, as in step 2, and the action goes that
      way.
    - Once every action is ticked, the task leaves the steering. Weigh whether what it brought
      changes the remaining tasks or the criteria; only where it does, have the plan made again,
-     step 4 on work `plan` as in step 6, a change to the goal or a criterion first a point to
-     decide, step 3 on work `plan`.
-   - Out: the task done and the plan current; go on with the step of the stage, 6, 7 or 8.
+     step 3 on work `plan`, a change to the goal or a criterion first a point to decide, step 2 on
+     work `plan`.
+   - Out: the task done and the plan current; go on with the step of the stage, 8, 9 or 10.
 
-6. Make the plan and stop at the plan sign-off, so the user approves the goal and the criteria
-   before anything is built on them.
-   - In: the session started, at the plan stage.
-   - Hear the purpose, with why the user wants it, and what shows it done: step 3 on work `plan`.
-   - Have the plan made: step 4 on work `plan`, no path, kind `plan`, receiver `the user at the plan
-     sign-off, approving what the finished work will do and why, and rn's orchestrator in any later
-     conversation, carrying the work on without asking them again`, use `approving the goal and the
-     acceptance criteria, then carrying each later work to them`, `--has .`; turn makes the goal,
-     the criteria and only such tasks as the plan stage needs, the research or trials a gap in them
-     calls for, none where none is needed.
-   - Carry out each task in order, step 5; once the steering holds no task, step 9 on the plan
-     sign-off.
-   - Out: the plan sign-off waiting.
-
-7. Make the documents the purpose needs and stop at the design sign-off, so the user approves how
-   the work will meet the goal before it is built.
-   - In: the plan approved, the stage design.
-   - Hear which documents the purpose needs, such as a UX, a README and an architecture, in the
-     order their checklists draw them, UX, README, architecture: step 3 on work `plan`, each a
-     decision naming the document's path and its kind, `ux`, `readme`, `architecture` or the user's
-     own. Where the user decides the purpose needs none, run `rn.py state --stage build --next
-     "Step 8 of /rn:up on plan: make the tasks that build the finished work" --message <m>` and
-     go on to step 8, as no design sign-off is needed.
-   - Have the plan made again, step 4 on work `plan` as in step 6, turn making a task for each
-     document.
-   - Carry out each task in order, step 5; once the steering holds no task, step 9 on the design
-     sign-off.
-   - Out: the design sign-off waiting.
-
-8. Build the finished work, task by task, and stop at the deliverable sign-off, so the user decides
-   from the proposal alone.
-   - In: the design approved, the stage build.
-   - Have the plan made again, step 4 on work `plan` as in step 6, turn making the tasks that build
-     the finished work.
-   - Carry out each task in order, step 5.
-   - Once the steering holds no task: `rn.py state --stage deliverable`, Next this step on
-     `deliverable`. Have the finished work used: step 4 on work `deliverable`, no path, kind
-     `deliverable`, receiver `the user at the deliverable sign-off`, use `checking that the finished
-     work does each acceptance criterion`, `--has .`.
-   - Then step 9 on the deliverable sign-off.
-   - Out: the deliverable sign-off waiting.
-
-9. Stop at a sign-off, so the user answers it with their own command.
+5. Stop at a sign-off, so the user answers it with their own command.
    - In: the sign-off, `plan`, `design` or `deliverable`.
-   - Run `rn.py proposal <sign-off>`, which sets the sign-off waiting and keeps the move where it
-     was not, and prints the proposal, with what changed since the last at the same sign-off and
-     its answer line. Reply with what it printed put into the conversation language, adding nothing
-     and leaving nothing out, its links and commands as they are; end.
+   - Run `rn.py proposal <sign-off>`, which sets the sign-off waiting and Next, keeps the move where
+     it was not waiting, and prints the proposal, with what changed since the last at the same
+     sign-off and its answer line. Reply with what it printed put into the conversation language,
+     adding nothing and leaving nothing out, its links and commands as they are; end.
    - Where it stops saying a work's core decisions do not fit, the work is not yet simple: settle
-     its points again more simply with the user, step 3 on that work, have it made again, step 4,
+     its points again more simply with the user, step 2 on that work, have it made again, step 3,
      and come back here.
    - Out: the proposal in your reply, whole.
 
-10. Go on from the user's feedback, so the work is made again on the point behind it, not patched at
-    the sign of it.
-    - In: the feedback whole in the steering's Open, kept by `/rn:gm`; the sign-off it answered, the
-      steering's stage.
-    - Find the point behind it, one rn decided wrong or did not ask, and confirm it with the user as
-      in step 3, on the work it touches, keeping the feedback in Open until the works are made
-      again.
-    - Have each work it touches made again, step 4, as the step that made it gave it.
-    - Then step 9 on the same sign-off, whose proposal shows what changed.
-    - Out: the same sign-off waiting.
-
-11. Put each learning to the user and mark the pull request ready, so what this work taught makes
-    later work better where the user chooses.
-    - In: the finished work approved, the stage learnings.
-    - Run `rn.py learnings`, which prints `{"learnings": {"L<n>": "<the learning>", ...}, "turn":
-      [...]}`, the learnings in `<session>/learnings.md` and those turn returned with every call,
-      each of turn's with its `whose`, `own` for the user's repository and `general` otherwise, and
-      the work, call and commit that kept it.
-    - Put each learning to the user, one per message, in the README's "Learnings to decide" form,
-      with where it is recommended to go: the user's `.rn/checklists/<kind>.md` for one of their
-      repository's own, an issue to `lovaizu/ccpm` for a general one, both, or neither. Keep each
-      answer before the next: one taken for a checklist with `rn.py decide checklist-<kind>`, then
-      every answer with `rn.py state`, Next this step on the learning after it, Open each learning
-      taken for an issue and not yet sent, with its answer, the message holding the answer.
-    - For each learning taken for an issue: write it in the form of the recent issues there,
-      `gh issue list --repo lovaizu/ccpm --state all --limit 5 --json title,body`, holding the need
-      and its points alone, never the user's source; show it to the user whole and ask; on their yes
-      alone, `gh issue create --repo lovaizu/ccpm --title <t> --body <b>`, which prints the issue's
-      URL; keep it with `rn.py state`, Next this step, Open without it, the message holding the URL,
-      and tell them `Issue sent: <url>`.
-    - For each kind with a learning taken for a checklist: have it made, step 4 on work
-      `checklist-<kind>` as step 4 makes a checklist.
-    - Run `gh pr ready <the steering's pr>`, then `rn.py state --stage finished`, Next that the pull
-      request waits for the user's merge, so a failed `gh` leaves the session to go on from here.
-    - Tell the user `The pull request is ready to merge: <the steering's pr>`, and that the merge is
-      theirs; end.
-    - Out: the pull request ready, every learning answered and kept.
+6. Go on from the user's feedback, so the work is made again on the point behind it, not patched at
+   the sign of it.
+   - In: the feedback whole in the steering's Open, kept by `/rn:gm`; the sign-off it answered, the
+     steering's stage.
+   - Find the point behind it, one rn decided wrong or did not ask, and confirm it with the user as
+     in step 2, on the work it touches, keeping the feedback in Open until the works are made
+     again.
+   - Have each work it touches made again, step 3 on it, giving nothing more, as rn.py makes it as
+     its last call did.
+   - Then step 5 on the same sign-off, whose proposal shows what changed.
+   - Out: the same sign-off waiting.

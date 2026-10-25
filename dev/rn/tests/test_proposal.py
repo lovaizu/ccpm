@@ -23,6 +23,7 @@ from helpers import (
     call_at,
     plan,
     proposal,
+    rn,
     said,
     steered,
     task,
@@ -73,7 +74,7 @@ class ProposalTest(ShownTest):
         self.proposal()
         # Then: the steering waits at the plan sign-off, its Next saying so, kept on the remote
         # with the proposal as its message.
-        waits = f"Wait at the plan sign-off for the user's answer: {proposal.ANSWER}"
+        waits = f"Step 5 of /rn:up on plan: wait for the user's answer, {proposal.ANSWER}"
         want = DONE.replace("signoff: none", "signoff: plan").replace(NEXT, waits)
         kept = (
             self.out("show", f"origin/work:{STEERING}"),
@@ -404,7 +405,7 @@ class AnswerTest(RepoTest):
 
     def answer(self, answer: str = "approved") -> list[str]:
         """The arguments that keep the user's answer, with Next, a point open and a message."""
-        return ["answer", answer, "--next", "1. Make the design.", "--open", "Which page?"] + [
+        return ["answer", answer, "--open", "Which page?"] + [
             "--message",
             "plan: approved",
         ]
@@ -414,7 +415,7 @@ class AnswerTest(RepoTest):
         self.session(steered(signoff="plan", opened="- Which login?"))
         self.typed("/rn:gm the page")
         # When: the orchestrator keeps the user's feedback, adding it as a point open.
-        self.ran("answer", "feedback", "--next", "n", "--open", "The page.", "--message", "m")
+        self.ran("answer", "feedback", "--open", "The page.", "--message", "m")
         # Then: the point open before stays, the feedback after it.
         self.assertIn("## Open\n\n- Which login?\n- The page.\n", self.read(STEERING))
 
@@ -432,7 +433,9 @@ class AnswerTest(RepoTest):
                 out = self.ran(*self.answer())
                 # Then: the stage moves on, no sign-off waits, and Next and Open are replaced,
                 # kept on the remote with the message.
-                want = steered(stage=stage, next_step="1. Make the design.", opened="- Which page?")
+                want = steered(
+                    stage=stage, next_step=rn.APPROVED_NEXT[signoff], opened="- Which page?"
+                )
                 kept = (
                     out,
                     self.out("show", f"origin/work:{STEERING}"),
@@ -447,7 +450,11 @@ class AnswerTest(RepoTest):
         # When: the orchestrator keeps the user's feedback.
         self.ran(*self.answer("feedback"))
         # Then: the stage stays, and no sign-off waits.
-        want = steered(stage="design", next_step="1. Make the design.", opened="- Which page?")
+        want = steered(
+            stage="design",
+            next_step="Step 6 of /rn:up on design: find the point behind the feedback",
+            opened="- Which page?",
+        )
         self.assertEqual(self.read(STEERING), want)
 
     def test_an_answer_the_user_did_not_type_stops_and_keeps_nothing(self):
@@ -532,7 +539,7 @@ class AnswerTest(RepoTest):
 
     def test_an_empty_value_stops(self):
         self.session(steered(signoff="plan"))
-        for option, words in (("--next", "next step"), ("--message", "message")):
+        for option, words in (("--message", "message"),):
             with self.subTest(option=option):
                 # Given: a session waiting at the plan sign-off.
                 argv = self.answer()

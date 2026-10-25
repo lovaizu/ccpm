@@ -6,6 +6,7 @@ from __future__ import annotations
 import contextlib
 import io
 import os
+import re
 import runpy
 import sys
 import unittest
@@ -14,6 +15,7 @@ from unittest import mock
 from helpers import (
     SCRIPTS,
     RepoTest,
+    rn,
     steered,
 )
 
@@ -22,10 +24,10 @@ class UsageTest(RepoTest):
     def test_each_option_needed_left_out_stops_with_the_usage(self):
         start = ["start", "add-login", "--title", "t", "--artifact-language", "a"]
         given = {
-            "start": start + ["--conversation-language", "c", "--next", "n", "--message", "m"],
-            "state": ["state", "--next", "n", "--message", "m"],
+            "start": start + ["--conversation-language", "c", "--message", "m"],
+            "state": ["state", "--message", "m"],
             "decide": ["decide", "t1.1", "--title", "t", "--says", "s", "--message", "m"],
-            "answer": ["answer", "approved", "--next", "n", "--message", "m"],
+            "answer": ["answer", "approved", "--message", "m"],
         }
         for name, argv in given.items():
             for k in (k for k, arg in enumerate(argv) if arg.startswith("--")):
@@ -39,6 +41,26 @@ class UsageTest(RepoTest):
                         f" {name}",
                         self.stopped(*argv[:k], *argv[k + 2 :]),
                     )
+
+
+class StepsTest(unittest.TestCase):
+    def test_each_next_rn_sets_names_a_step_of_rn_up(self):
+        # Given: each Next rn sets itself, and the steps of /rn:up, in its SKILL.md and the files
+        # of its stages.
+        folder = os.path.join(SCRIPTS, "..", "skills", "up")
+        steps = set()
+        for name in os.listdir(folder):
+            with open(os.path.join(folder, name), encoding="utf-8") as f:
+                steps.update(re.findall(r"^ ?([0-9]+)\. ", f.read(), re.MULTILINE))
+        nexts = [rn.STARTED, rn.FEEDBACK, rn.WAITING]
+        nexts += list(rn.APPROVED_NEXT.values()) + list(rn.STAGED.values())
+        # When: the step each names is read.
+        named = [re.match(r"Step ([0-9]+) of /rn:up", n) for n in nexts]
+        # Then: each but the session finished names a step of /rn:up that is there.
+        self.assertEqual(
+            [m[1] in steps if m else n for m, n in zip(named, nexts)],
+            [True] * 8 + [rn.STAGED["finished"]],
+        )
 
 
 class CommandTest(RepoTest):

@@ -13,32 +13,15 @@ they ask for. You keep the feedback whole, as their words are what the next `/rn
 conversation or a fresh one, finds the point behind it from; have the learnings of the stretch that
 led to it made while that stretch is near; and stop, so the user may clear the conversation.
 
-A session is one piece of work on a branch of its own; its record, the folder `<session>`
-(`.rn/<yyyymmdd>-<slug>/`), holds `steering.md`, the plan and where the session stands, which rn's
-scripts alone write, and `turn/`, each call to turn. You never edit the steering, and never run
-`git commit` or `git push`: each move is kept by a subcommand of `rn.py`, which stands for
-`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/rn.py"`, run from the top of the repository. Use what it
-prints as printed; where it stops, it prints what went wrong and what to do: do that, then run it
-again; where what it says to do is the user's to do, tell the user and end.
-
-`--next` is the step of `/rn:up` to take next, by its number and on what, as
-`Step <n> of /rn:up on <work>: <what is left of it>`, so a fresh conversation takes it from the
-steering alone; `--open` each point still open, a checked fact, one `--open` each, as Open is
-replaced whole. The message, in the artifact language, says what the move records, and for
-feedback the feedback whole, as the steering keeps only what holds now. Pass a message of more than
-one line as `--message "$(cat <<'EOF'`, the message on the lines after, then `EOF` and `)"`.
-Everything you say to the user is in the steering's `conversation-language`, everything you write
-to the repository in its `artifact-language`.
+Read `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` whole first: its Role says what a session is, how
+`rn.py` is run and how each move is kept, and its steps are those this skill takes.
 
 ## Steps
 
 1. Find the sign-off the feedback answers, so it is kept only for a proposal the user was shown and
    has not answered.
    - In: the user's feedback after `/rn:gm`, which is "$ARGUMENTS".
-   - Run `cd "$(git rev-parse --show-toplevel)"`, then `rn.py session`, which prints
-     `{"session": <the session's folder, or null>, "stage": <its stage, or null>, "signoff": <the
-     sign-off waiting for the user's answer, or null>}`. Where `session` is not null, read
-     `<session>/steering.md` whole with `cat -n`.
+   - Take `/rn:up`'s step 1 as far as the steering read.
    - Where `session` is null: tell the user, in their language, that no session is on this branch
      and that `/rn:up <what you want>` starts one; end.
    - Where `signoff` is null: tell the user where the session stands, from the steering's stage and
@@ -49,14 +32,13 @@ to the repository in its `artifact-language`.
 
 2. Keep the feedback whole, so the next `/rn:up` acts on the user's own words.
    - In: the sign-off waiting and the feedback.
-   - Run `rn.py answer feedback --next "Step 10 of /rn:up on <the sign-off>: find the point behind
-     the feedback" --open "<the feedback whole, as the user wrote it>" [--open <o>]... --message
-     <m>`, the other `--open` each point the steering's Open holds still open, the message naming
-     the sign-off and holding the feedback whole. It prints `{"kept": "<commit>"}`.
+   - Run `rn.py answer feedback --open "<the feedback whole, as the user wrote it>" --message <m>`,
+     the message naming the sign-off and holding the feedback whole. It sets Next to finding the
+     point behind it, keeps what is open beside it and prints `{"kept": "<commit>"}`.
    - Out: the feedback whole in the steering's Open, kept.
 
-3. Have the learnings of the stretch just answered made: take step 3 of
-   `${CLAUDE_PLUGIN_ROOT}/skills/ty/SKILL.md` as it is written there, that step alone.
+3. Have the learnings of the stretch just answered made: take `/rn:ty`'s step 3 as it is written
+   there, that step alone.
    - In: the feedback kept.
    - Out: the stretch's learnings kept, Next as step 2 set it.
 

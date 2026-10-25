@@ -26,6 +26,7 @@ from helpers import (
     call_at,
     options,
     plan,
+    rn,
     steered,
     task,
 )
@@ -202,7 +203,6 @@ class StartTest(RepoTest):
             "title": "Add login",
             "artifact-language": "English",
             "conversation-language": "Japanese",
-            "next": NEXT,
             **{key.replace("_", "-"): value for key, value in given.items()},
         }
         return ["start", slug, *options({f"--{k}": v for k, v in values.items()})] + [
@@ -233,8 +233,9 @@ class StartTest(RepoTest):
         # When: the orchestrator starts one.
         self.ran(*self.start())
         # Then: the steering holds rn's version, the pull request, the plan stage, no sign-off,
-        # the languages, the title, Next as given and nothing open, as kept on the remote.
-        want = steered(part="# Add login")
+        # the languages, the title, Next the step that makes the plan and nothing open, as kept
+        # on the remote.
+        want = steered(part="# Add login", next_step=rn.STARTED)
         self.assertEqual(
             (self.read(STEERING), self.out("show", f"origin/{SLUG}:{STEERING}")), (want, want)
         )
@@ -295,7 +296,7 @@ class StartTest(RepoTest):
                 True,
                 True,
                 {"session": FOLDER, "branch": SLUG, "pr": PR},
-                steered(part="# Add login"),
+                steered(part="# Add login", next_step=rn.STARTED),
             ),
         )
 
@@ -398,7 +399,6 @@ class StartTest(RepoTest):
             ("title", "title"),
             ("artifact_language", "artifact-language"),
             ("conversation_language", "conversation-language"),
-            ("next", "next step"),
         ):
             with self.subTest(option=option):
                 # Given: a branch with no session.
@@ -757,6 +757,27 @@ class StateTest(RepoTest):
                     " line 34: expected only the headings"
                 )
                 self.assertEqual((said in out, self.read(STEERING)), (True, STEERED))
+
+    def test_next_not_given_stays_as_it_was(self):
+        # Given: a session.
+        # When: the orchestrator keeps a move with no Next.
+        self.ran("state", "--open", "Which login?", "--message", "m")
+        # Then: Next stays as it was.
+        self.assertEqual(self.read(STEERING), steered(opened="- Which login?"))
+
+    def test_a_stage_moved_sets_next_to_the_step_it_leads_to(self):
+        for stage, to, tasks in (
+            ("design", "build", plan()),
+            ("build", "deliverable", plan(tasks="")),
+            ("learnings", "finished", plan()),
+        ):
+            with self.subTest(to=to):
+                # Given: a session at the stage the move starts from.
+                self.session(steered(part=tasks, stage=stage))
+                # When: the orchestrator moves the stage, giving no Next.
+                self.ran("state", "--stage", to, "--message", "m")
+                # Then: Next is the step of /rn:up the stage leads to.
+                self.assertIn(f"## Next\n\n{rn.STAGED[to]}\n", self.read(STEERING))
 
     def test_an_empty_value_stops(self):
         for argv, words in (
