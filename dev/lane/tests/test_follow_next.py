@@ -192,13 +192,13 @@ class TestGuard(GuardTest):
         # Given: changelog-writer's record of the script run, having printed the move
         # When: it runs another command
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
-        self.assertEqual(self.moved("git diff"), (2, f"notes: {self.FOLLOW}\n"))
+        self.assertEqual(self.moved("git diff"), ("told", f"notes: {self.FOLLOW}"))
 
     def test_the_move_printed_goes_on(self):
         # Given: changelog-writer's record of the script run, having printed the move
         # When: it takes the move
         # Then: the call goes on, nothing said
-        self.assertEqual(self.moved("git status"), (0, ""))
+        self.assertEqual(self.moved("git status"), ("", ""))
 
     def ended(self):
         """What the guard does as the subagent is about to end."""
@@ -208,14 +208,14 @@ class TestGuard(GuardTest):
         # Given: changelog-writer's record of the script run, having printed the move
         # When: it is about to end
         # Then: it is kept going, and told the sentence headed by the plugin
-        self.assertEqual(self.ended(), (2, f"notes: {self.FOLLOW}\n"))
+        self.assertEqual(self.ended(), ("told", f"notes: {self.FOLLOW}"))
 
     def test_ending_once_the_move_is_taken_ends(self):
         # Given: changelog-writer's record of the script run and the move taken
         self.record([ran(), helpers.bash("git status")])
         # When: it is about to end
         # Then: it ends, nothing said
-        self.assertEqual(self.ended(), (0, ""))
+        self.assertEqual(self.ended(), ("", ""))
 
 
 if __name__ == "__main__":

@@ -9,4 +9,4 @@ import sys
 
 import guard
 
-sys.exit(guard.main("PostToolUse", sys.argv[1:]))
+guard.main("PostToolUse", sys.argv[1:])

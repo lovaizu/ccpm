@@ -295,21 +295,21 @@ class TestGuard(GuardTest):
         # Given: changelog-writer's record of the command run, having printed
         # When: it runs another command
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
-        expected = (2, "notes: Hand on `lay.py print` as it is.\n")
+        expected = ("told", "notes: Hand on `lay.py print` as it is.")
         self.assertEqual(self.guard(self.stream("turn.py next r.json")), expected)
 
     def test_a_hand_on_of_something_else_is_stopped_with_the_sentence(self):
         # Given: changelog-writer's record of the command run, having printed
         # When: it sends something else
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
-        expected = (2, "notes: Hand on `lay.py print` as it is.\n")
+        expected = ("told", "notes: Hand on `lay.py print` as it is.")
         self.assertEqual(self.sent("lane:up proposes hands_off."), expected)
 
     def test_the_print_handed_on_under_a_heading_goes_on(self):
         # Given: changelog-writer's record of the command run, having printed
         # When: it sends the print under a heading
         # Then: the call goes on, nothing said
-        self.assertEqual(self.sent(f"{HEADING}\n{OUTPUT}"), (0, ""))
+        self.assertEqual(self.sent(f"{HEADING}\n{OUTPUT}"), ("", ""))
 
     def ended(self, reply, active=False):
         """What the guard does as the subagent is about to end with the reply after the print."""
@@ -319,28 +319,28 @@ class TestGuard(GuardTest):
         # Given: changelog-writer's record of the command run, having printed
         # When: it is about to end with a reply of something else
         # Then: it is kept going, and told the sentence headed by the plugin
-        expected = (2, "notes: Hand on `lay.py print` as it is.\n")
+        expected = ("told", "notes: Hand on `lay.py print` as it is.")
         self.assertEqual(self.ended("The lanes are proposed."), expected)
 
     def test_ending_with_the_print_under_a_heading_ends(self):
         # Given: changelog-writer's record of the command run, having printed
         # When: it is about to end with the print under a heading as its reply
         # Then: it ends, nothing said
-        self.assertEqual(self.ended(f"{HEADING}\n{OUTPUT}"), (0, ""))
+        self.assertEqual(self.ended(f"{HEADING}\n{OUTPUT}"), ("", ""))
 
     def test_told_and_answering_in_words_alone_ends(self):
         # Given: the print due, told before, and answered with words alone since
         self.record([printed(), "told"])
         # When: changelog-writer, kept going by the stop hook, is about to end again
         # Then: it ends, nothing said, as it is told and never held for good
-        self.assertEqual(self.ended("The lanes are proposed.", active=True), (0, ""))
+        self.assertEqual(self.ended("The lanes are proposed.", active=True), ("", ""))
 
     def test_with_no_record_found_it_ends(self):
         # Given: no record of what changelog-writer did
         os.remove(os.path.join(self.base, "session", "subagents", "agent-a1.jsonl"))
         # When: it is about to end
         # Then: it ends, nothing said, as what it printed is not known
-        self.assertEqual(self.ended("The lanes are proposed."), (0, ""))
+        self.assertEqual(self.ended("The lanes are proposed."), ("", ""))
 
 
 if __name__ == "__main__":

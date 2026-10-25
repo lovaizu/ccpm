@@ -18,7 +18,7 @@ from test_guard import GuardTest
 LAY = f"python3 {os.path.join(helpers.SCRIPTS, 'lay.py')}"
 LANES_MD = os.path.join(helpers.LANE, "docs", "lanes.md")
 # start_with's sentence, as lane:up is told it.
-BEGIN = "lane: First run `lay.py up`.\n"
+BEGIN = "lane: First run `lay.py up`."
 
 
 class UpTest(GuardTest):
@@ -56,7 +56,7 @@ class UpTest(GuardTest):
 
     def run_as_made(self, tool: str, given: dict, result: str = "") -> None:
         """Checks that lane:up's call is let through, then makes it, giving back the result."""
-        self.assertEqual(self.check(tool, given), (0, ""), given)
+        self.assertEqual(self.check(tool, given), ("", ""), given)
         self.made.append((tool, given, result))
 
     def bash(self, command: str, result: str = "") -> None:
@@ -81,7 +81,7 @@ class UpTest(GuardTest):
         self.bash(f"cat -n {self.agent_file}")
         self.run_as_made("Read", {"file_path": self.agent_file, "offset": 23, "limit": 1})
         point = "1. lane:up asks: is `CHANGELOG.md` the only file step 3 writes?"
-        self.assertEqual(self.ending(point), (0, ""))
+        self.assertEqual(self.ending(point), ("", ""))
         self.made.append(helpers.from_main("1. Yes."))
 
     def up_to_step_7(self) -> None:
@@ -103,7 +103,7 @@ class UpTest(GuardTest):
         printed = self.lay_py("print", self.proposal_file)
         self.bash(f"{LAY} print {self.proposal_file}", printed)
         heading = "lane:up proposes these lanes; send OK or what to change."
-        self.assertEqual(self.ending(f"{heading}\n\n{printed}"), (0, ""))
+        self.assertEqual(self.ending(f"{heading}\n\n{printed}"), ("", ""))
 
 
 class TestStepsLetThrough(UpTest):
@@ -114,7 +114,7 @@ class TestStepsLetThrough(UpTest):
         # When: it runs `lay.py write`, and ends with its print
         # Then: each call goes on, and it ends, nothing said
         self.bash(f"{LAY} write {self.proposal_file}")
-        self.assertEqual(self.ending("Wrote step 3 of changelog-writer."), (0, ""))
+        self.assertEqual(self.ending("Wrote step 3 of changelog-writer."), ("", ""))
 
     def test_a_proposal_declined_is_removed(self):
         # Given: lane:up's steps 1 to 7 made, and the building AI asking for no lanes at all
@@ -123,7 +123,7 @@ class TestStepsLetThrough(UpTest):
         # When: it removes the proposal, and ends saying nothing was written
         # Then: the call goes on, and it ends, nothing said
         self.bash(f"rm -f {self.proposal_file}")
-        self.assertEqual(self.ending("Nothing was written into the plugin."), (0, ""))
+        self.assertEqual(self.ending("Nothing was written into the plugin."), ("", ""))
 
 
 class TestStopped(UpTest):
@@ -136,7 +136,7 @@ class TestStopped(UpTest):
                 # Given: lane:up having made no call
                 # When: it first looks into the plugin
                 # Then: the call is stopped with start_with's sentence
-                self.assertEqual(self.check(tool, given), (2, BEGIN))
+                self.assertEqual(self.check(tool, given), ("told", BEGIN))
 
     def test_a_read_beyond_what_lay_py_up_printed_is_stopped(self):
         # Given: lane:up's steps 1 to 5 made, `lay.py up` having printed what it reads
@@ -160,7 +160,7 @@ class TestStopped(UpTest):
                 # When: it reads lane's own code, searches the folder it runs in, or reads a file
                 # of the plugin beside its manifest, skills and agents
                 # Then: the call is stopped with read_only's sentence and what lane:up reads
-                self.assertEqual(self.check(tool, given), (2, f"{told}.\n"))
+                self.assertEqual(self.check(tool, given), ("told", f"{told}."))
 
 
 if __name__ == "__main__":

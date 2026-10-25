@@ -106,7 +106,7 @@ class TestGuard(GuardTest):
         # Given: read_only and in_form laid on changelog-writer
         # When: it reads the form its in_form names, a file of the plugin
         # Then: the call goes on, nothing said
-        self.assertEqual(self.reading("forms/entry.json"), (0, ""))
+        self.assertEqual(self.reading("forms/entry.json"), ("", ""))
 
     def test_a_read_of_another_file_of_the_plugin_is_stopped(self):
         # Given: read_only and in_form laid on changelog-writer
@@ -115,7 +115,7 @@ class TestGuard(GuardTest):
         for name in ("agents/writer.md", "forms/other.json"):
             with self.subTest(name=name):
                 # Then: the call is stopped with read_only's sentence
-                expected = (2, "notes: Read only `in.md`.\n")
+                expected = ("told", "notes: Read only `in.md`.")
                 self.assertEqual(self.reading(name), expected)
 
     def test_the_form_is_let_through_to_read_only_alone(self):
@@ -125,7 +125,7 @@ class TestGuard(GuardTest):
         event = self.called("Write", {"file_path": form, "content": "{}"})
         # When: it writes the form its in_form names
         # Then: the call is stopped with write_only's sentence, as the form is no output of it
-        expected = (2, "notes: Write only `entry.json`.\n")
+        expected = ("told", "notes: Write only `entry.json`.")
         self.assertEqual(self.guard(json.dumps(event)), expected)
 
 

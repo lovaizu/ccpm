@@ -120,13 +120,13 @@ class TestGuard(GuardTest):
         # Given: changelog-writer's record of asking, and no answer since
         # When: it runs the command held back
         # Then: the call is stopped, and the subagent told the sentence, the approval alone
-        self.assertEqual(self.written_after([ASK]), (2, "notes: Do not go on until `OK`.\n"))
+        self.assertEqual(self.written_after([ASK]), ("told", "notes: Do not go on until `OK`."))
 
     def test_the_held_command_after_the_approval_goes_on(self):
         # Given: changelog-writer's record of asking, and the approval sent back
         # When: it runs the command held back
         # Then: the call goes on, nothing said
-        self.assertEqual(self.written_after([ASK, helpers.from_main("OK")]), (0, ""))
+        self.assertEqual(self.written_after([ASK, helpers.from_main("OK")]), ("", ""))
 
 
 if __name__ == "__main__":

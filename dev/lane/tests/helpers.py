@@ -168,6 +168,12 @@ class PluginTest(testing.FolderTest):
         return json.dumps(self.event(command, agent_type))
 
 
+def denied(reason: str) -> dict[str, Any]:
+    """The answer denying a tool call for the reason, as Claude Code reads it at PreToolUse."""
+    output = {"hookEventName": "PreToolUse", "permissionDecision": "deny"}
+    return {"hookSpecificOutput": {**output, "permissionDecisionReason": reason}}
+
+
 def acted(tool: str, given: dict[str, Any], cwd: str = HERE) -> call.Call:
     """A call of the tool with the input, made in the folder, read as the guard reads a call whose
     subagent's record is not found."""

@@ -210,14 +210,14 @@ class TestGuard(GuardTest):
         told = SENTENCE.replace("${CLAUDE_PLUGIN_ROOT}", self.plugin)
         self.assertEqual(
             self.written('{"version": 1}'),
-            (2, f"notes: {told}\n$.version: expected a string, found 1\n"),
+            ("told", f"notes: {told}\n$.version: expected a string, found 1"),
         )
 
     def test_a_write_in_the_form_is_let_through(self):
         # Given: in_form on step 3 of changelog-writer
         # When: changelog-writer writes entry.json in its form
         # Then: the call goes on, nothing said
-        self.assertEqual(self.written('{"version": "1.0"}'), (0, ""))
+        self.assertEqual(self.written('{"version": "1.0"}'), ("", ""))
 
 
 if __name__ == "__main__":

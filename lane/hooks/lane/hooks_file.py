@@ -24,22 +24,34 @@ LANE = re.compile(r"(?P<step>[0-9]+):(?P<lane>[a-z_]+):(?P<takes>.*)")
 # says.
 KEPT = ("PostToolUse", "PostToolUseFailure")
 # The events lanes are held on, and those a call is kept on, each with its own script in lane's
-# code, named after it, and what its hook exits with where lane's code cannot run: on a tool call
-# STOPPED, which stops the call; at the subagent's end UNREAD, which tells the user and lets the
-# subagent end, as it cannot install Python and kept going it would only be asked again; as a call
-# comes back 0, as the call has run and the hook on the next call says what to install.
-EVENTS = {"PreToolUse": hook.STOPPED, "SubagentStop": hook.UNREAD, **dict.fromkeys(KEPT, 0)}
-# Each hook's command first checks that lane's code can run, and where it cannot, on an event of
-# its subagent, read from the event's text by the shell alone, as Claude Code writes it, with or
-# without a blank after the colon, says what to install and exits with its event's code; it lets
-# any other event through, as its lanes act in their subagent alone.
+# code, named after it.
+EVENTS = ("PreToolUse", "SubagentStop", *KEPT)
+# What a hook says where lane's code cannot run.
+INSTALL = "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run"
+# Each hook's command first checks that lane's code can run. Where it cannot, a hook of an event
+# lanes are held on, on an event of its subagent, read from the event's text by the shell alone, as
+# Claude Code writes it, with or without a blank after the colon, answers as `missing` gives it; it
+# lets any other event through, as its lanes act in their subagent alone. A hook of an event a call
+# is kept on lets every event through.
+PYTHON = 'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
 CHECK = (
-    'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
-    ' || {{ e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done;'
+    PYTHON + ' || {{ e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done;'
     """ case "$e" in *'"agent_type":"{agent}"'*|*'"agent_type": "{agent}"'*)"""
-    ' echo "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run" >&2;'
-    " exit {code};; esac; exit 0; }}"
+    " echo {answer};; esac; exit 0; }}"
 )
+
+
+def missing(plugin: str, event: str) -> dict[str, Any]:
+    """What a hook of the event answers where lane's code cannot run: on a tool call the call
+    denied, telling the subagent what to install, as letting it through would leave it unkept with
+    no one told; at the subagent's end the user told so, letting it end, as it cannot install
+    Python and kept going it would only be asked again; as a call comes back nothing, as the call
+    has run and the hook on the next call says what to install."""
+    said = INSTALL.format(plugin=plugin)
+    if event in KEPT:
+        return {}
+    on_call = event == "PreToolUse"  # pragma: no mutate
+    return hook.answer(event, said if on_call else "", "" if on_call else said)
 
 
 def word(number: int, lane: str, takes: list[str]) -> str:
@@ -66,9 +78,9 @@ def command(plugin: str, agent: str, laid: list[str], event: str) -> str:
     """The hook's command running lane's code on the lanes laid in the subagent, held on the
     event."""
     words = " ".join(shlex.quote(w) for w in [agent, *laid])
-    return (
-        f"{CHECK.format(plugin=plugin, agent=agent, code=EVENTS[event])}; {script(event)} {words}"
-    )
+    answer = shlex.quote(json.dumps(missing(plugin, event)))
+    check = f"{PYTHON} || exit 0" if event in KEPT else CHECK.format(agent=agent, answer=answer)
+    return f"{check}; {script(event)} {words}"
 
 
 def words(command: Any, event: str) -> list[str]:

@@ -10,4 +10,4 @@ import sys
 
 import guard
 
-sys.exit(guard.main("SubagentStop", sys.argv[1:]))
+guard.main("SubagentStop", sys.argv[1:])

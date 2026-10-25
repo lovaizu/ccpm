@@ -10,4 +10,4 @@ import sys
 
 import guard
 
-sys.exit(guard.main("PostToolUseFailure", sys.argv[1:]))
+guard.main("PostToolUseFailure", sys.argv[1:])

@@ -196,14 +196,14 @@ class TestGuard(GuardTest):
         # Given: changelog-writer's record of the first 50 lines of in.md read
         # When: it writes
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
-        self.assertEqual(self.written_after(self.part), (2, "notes: Read `in.md` to its end.\n"))
+        self.assertEqual(self.written_after(self.part), ("told", "notes: Read `in.md` to its end."))
 
     def test_a_write_after_reading_the_rest_goes_on(self):
         # Given: changelog-writer's record of in.md read in two parts to its end
         rest = [*self.part, ("Read", {"file_path": "in.md", "offset": 51}, shown(51, 101))]
         # When: it writes
         # Then: the call goes on, nothing said
-        self.assertEqual(self.written_after(rest), (0, ""))
+        self.assertEqual(self.written_after(rest), ("", ""))
 
 
 if __name__ == "__main__":

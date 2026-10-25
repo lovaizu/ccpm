@@ -1,12 +1,14 @@
 """The entry every plugin's hooks run: each check on the event Claude Code hands it, from the folder
-the event comes from, the use stopped with what the checks say; an event in another shape let
-through unchecked, saying so."""
+the event comes from, answering Claude Code in its JSON output: a tool's use denied, or the subagent
+kept going, with what the checks say; an event in another shape let through unchecked, the user
+told so."""
 
 import io
 import json
 import os
 import unittest
 
+import helpers
 from helpers import hook, testing
 
 # What the entry says when it is handed no event as Claude Code hands it.
@@ -17,8 +19,11 @@ UNREAD = (
     " PostToolUseFailure tool_name and tool_input and tool_use_id and error, so it lets this"
     " through unchecked;"
     " update Claude Code with `claude update`, and where it goes on, report it at"
-    " https://github.com/lovaizu/ccpm/issues\n"
+    " https://github.com/lovaizu/ccpm/issues"
 )
+
+# The subagent kept going at its end, told what a check says.
+BLOCK = {"decision": "block", "reason": "p: a"}
 
 
 class Says:
@@ -46,36 +51,38 @@ class TestRun(testing.FolderTest):
         }
         return {**event, **fields}
 
-    def handed(self, stream: str, *checks: Says) -> tuple:
-        """What the entry gives and writes, run from `/` on the stream with the checks."""
-        err = io.StringIO()
+    def handed(self, stream: str, *checks: Says) -> object:
+        """What the entry answers Claude Code, run from `/` on the stream with the checks: the JSON
+        object it writes on stdout, None where it writes nothing."""
+        out = io.StringIO()
         os.chdir("/")
-        code = hook.run("p", checks, io.StringIO(stream), err, "p:a")
-        return code, err.getvalue()
+        hook.run("p", checks, io.StringIO(stream), out, "p:a")
+        return json.loads(out.getvalue()) if out.getvalue() else None
 
-    def ran(self, *checks: Says) -> tuple:
-        """What the entry gives and writes, run with the checks on an event of Claude Code's."""
+    def ran(self, *checks: Says) -> object:
+        """What the entry answers, run with the checks on an event of Claude Code's."""
         return self.handed(json.dumps(self.event()), *checks)
 
-    def ran_on(self, check: Says, **fields: object) -> tuple:
-        """What the entry gives and writes, run with the check on an event of the fields."""
+    def ran_on(self, check: Says, **fields: object) -> object:
+        """What the entry answers, run with the check on an event of the fields."""
         return self.handed(json.dumps(self.event(**fields)), check)
 
-    def test_checks_saying_something_stop_with_what_each_says(self):
+    def test_checks_saying_something_deny_the_use_with_what_each_says(self):
         # Given: two checks, each saying something
-        # When: the entry runs them on an event
-        # Then: it gives 2, on which Claude Code stops the use, with what both say, one to a line,
-        # each headed by the plugin's name, each check run from the folder the event comes from
+        # When: the entry runs them on a PreToolUse event
+        # Then: it denies the use, giving as the reason, which Claude shows the subagent, what both
+        # say, one to a line, each headed by the plugin's name, each check run from the folder the
+        # event comes from
         first, second = Says("a"), Says("b")
-        self.assertEqual(self.ran(first, Says(), second), (2, "p: a\np: b\n"))
+        self.assertEqual(self.ran(first, Says(), second), helpers.denied("p: a\np: b"))
         self.assertEqual((first.ran_in, second.ran_in), (self.base, self.base))
 
     def test_checks_saying_nothing_let_the_use_go_on(self):
         # Given: checks that say nothing, or none
         # When: the entry runs them
-        # Then: it gives 0 and writes nothing
-        self.assertEqual(self.ran(Says(), Says()), (0, ""))
-        self.assertEqual(self.ran(), (0, ""))
+        # Then: it answers nothing, which lets the use go on
+        self.assertIsNone(self.ran(Says(), Says()))
+        self.assertIsNone(self.ran())
 
     def test_an_event_of_another_hook_needs_no_tool(self):
         # Given: a SubagentStop event, which names no tool and holds the subagent's last reply
@@ -86,8 +93,9 @@ class TestRun(testing.FolderTest):
             "last_assistant_message": "",
         }
         # When: the entry runs a check on it
-        # Then: the check runs and says what it says
-        self.assertEqual(self.handed(json.dumps(event), Says("a")), (2, "p: a\n"))
+        # Then: the check runs, and the subagent is kept going with what it says as the reason,
+        # which Claude Code gives it as its next instruction
+        self.assertEqual(self.handed(json.dumps(event), Says("a")), BLOCK)
 
     def test_a_subagentstop_of_no_last_reply_is_read(self):
         stop = {"hook_event_name": "SubagentStop", "cwd": self.base, "agent_type": "p:a"}
@@ -97,15 +105,15 @@ class TestRun(testing.FolderTest):
                 # back with SubagentHandback
                 # When: the entry runs a check on it
                 # Then: the check runs and says what it says
-                self.assertEqual(self.handed(json.dumps(event), Says("a")), (2, "p: a\n"))
+                self.assertEqual(self.handed(json.dumps(event), Says("a")), BLOCK)
 
     def test_a_stream_that_is_not_json_goes_on_saying_so(self):
         # Given: a stream that is not JSON
         # When: the entry is handed it
-        # Then: it gives 1, on which Claude Code lets the use go on, saying it was handed no event
-        # and what to do, and runs no check
+        # Then: it tells the user, as Claude Code shows them a systemMessage, that it was handed no
+        # event and what to do, letting the use go on, and runs no check
         check = Says("a")
-        self.assertEqual(self.handed("{", check), (1, UNREAD))
+        self.assertEqual(self.handed("{", check), {"systemMessage": UNREAD})
         self.assertIsNone(check.ran_in)
 
     def test_an_event_not_in_claude_codes_shape_goes_on_unchecked(self):
@@ -136,16 +144,16 @@ class TestRun(testing.FolderTest):
                 # Given: an event in another shape
                 check = Says("a")
                 # When: the entry is handed it
-                # Then: it gives 1, saying it was handed no event, and runs no check
-                self.assertEqual(self.handed(json.dumps(value), check), (1, UNREAD))
+                # Then: it tells the user it was handed no event, and runs no check
+                self.assertEqual(self.handed(json.dumps(value), check), {"systemMessage": UNREAD})
                 self.assertIsNone(check.ran_in)
 
     def test_checks_do_not_run_on_an_event_of_another_agent(self):
         # Given: a check saying something
         # When: the entry runs it on an event of another agent than the one named
-        # Then: it lets the use go on, the check not run and nothing said
+        # Then: it answers nothing, the check not run
         says = Says("a")
-        self.assertEqual(self.ran_on(says, agent_type="p:other"), (0, ""))
+        self.assertIsNone(self.ran_on(says, agent_type="p:other"))
         self.assertIsNone(says.ran_in)
 
 

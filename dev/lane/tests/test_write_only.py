@@ -146,13 +146,13 @@ class TestGuard(GuardTest):
         # Given: write_only on step 3 of changelog-writer
         # When: changelog-writer writes README.md
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
-        self.assertEqual(self.written("README.md"), (2, f"notes: {SENTENCE}\n"))
+        self.assertEqual(self.written("README.md"), ("told", f"notes: {SENTENCE}"))
 
     def test_a_write_of_the_output_is_let_through(self):
         # Given: write_only on step 3 of changelog-writer
         # When: changelog-writer writes CHANGELOG.md
         # Then: the call goes on, nothing said
-        self.assertEqual(self.written("CHANGELOG.md"), (0, ""))
+        self.assertEqual(self.written("CHANGELOG.md"), ("", ""))
 
 
 if __name__ == "__main__":

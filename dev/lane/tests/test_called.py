@@ -270,7 +270,7 @@ class TestGuard(GuardTest):
         """Runs the entry of a call coming back, as Claude Code runs it, on the call; it exits 0
         and says nothing."""
         event = self.came_back(tool, given, back, None if entry == "posttooluse.py" else "x")
-        self.assertEqual(self.guard(json.dumps(event), (helpers.AGENT,), entry), (0, ""))
+        self.assertEqual(self.guard(json.dumps(event), (helpers.AGENT,), entry), ("", ""))
 
     def test_the_move_taken_in_the_same_reply_is_seen(self):
         # Given: the script's run in the record, printing the move, and the move taken come back
@@ -279,14 +279,14 @@ class TestGuard(GuardTest):
         self.back("SendMessage", MOVE["input"], {"success": True})
         # When: the subagent runs the script again in the same reply
         # Then: the call goes on, nothing said
-        self.assertEqual(self.guard(json.dumps(self.called("Bash", self.run_next))), (0, ""))
+        self.assertEqual(self.guard(json.dumps(self.called("Bash", self.run_next))), ("", ""))
 
     def test_a_move_printed_in_the_same_reply_holds_the_next_call(self):
         # Given: the script run, printing the move, come back in a reply not yet ended
         self.back("Bash", self.run_next, {"stdout": json.dumps(MOVE), "stderr": ""})
         # When: the subagent makes another call
         # Then: it is stopped, told the sentence
-        expected = (2, "notes: Take the next move `scripts/next.py` printed.\n")
+        expected = ("told", "notes: Take the next move `scripts/next.py` printed.")
         self.assertEqual(self.guard(self.stream("ls")), expected)
 
     def test_a_failed_call_is_kept_by_its_own_entry(self):
@@ -303,7 +303,7 @@ class TestGuard(GuardTest):
         stream = json.dumps(dict(event, agent_type="notes:other"))
         # When: the entry is run on it
         # Then: it exits 0, nothing kept
-        self.assertEqual(self.guard(stream, (helpers.AGENT,), "posttooluse.py"), (0, ""))
+        self.assertEqual(self.guard(stream, (helpers.AGENT,), "posttooluse.py"), ("", ""))
         self.assertFalse(os.path.exists(self.tmp))
 
 

@@ -99,22 +99,23 @@ class Laid:
         return {} if texts is None else started.values(texts)
 
 
-def main(held: str, words: list[str]) -> int:
+def main(held: str, words: list[str]) -> None:
     """Runs the lanes a hook's command lays, held on the event, on the event Claude Code hands on
     stdin, for the plugin found where Claude Code gives its folder, CLAUDE_PLUGIN_ROOT, or, on an
-    event a call is kept on, keeps the call; what the event script exits with. A command not in the
+    event a call is kept on, keeps the call, answering Claude Code on stdout. A command not in the
     form lane:up writes lets the subagent go on, telling the user, as no subagent or lane can be
     told from it."""
     root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
     try:
         agent, given = hooks_file.parsed(words, held)
     except ValueError as wrong:
-        sys.stderr.write(
+        unread = (
             f"lane: the hook's command {wrong}, not as lane:up writes it, so this goes on"
-            " unchecked; run lane:up again on the plugin to write its hooks anew\n"
+            " unchecked; run lane:up again on the plugin to write its hooks anew"
         )
-        return hook.UNREAD
+        hook.answered(sys.stdout, hook.answer(held, "", unread))
+        return
     laid = [(lane, takes) for _, lane, takes in given]
     found = [Laid(root, agent, g, laid) for g in given]
     check = called.Kept() if held in hooks_file.KEPT else Lanes(found)
-    return hook.run(agent.split(":")[0], [check], sys.stdin, sys.stderr, agent)
+    hook.run(agent.split(":")[0], [check], sys.stdin, sys.stdout, agent)

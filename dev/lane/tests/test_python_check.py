@@ -1,7 +1,9 @@
 """The Python check each hook's command begins with: where python3 is missing or older than 3.9, the
-call is stopped with what to install, and at the subagent's end the user is told it and the
-subagent let end; with the one in use, the guard runs."""
+call is denied with what to install, and at the subagent's end the user is told it and the
+subagent let end, each answered in Claude Code's JSON output as the guard answers; with the one in
+use, the guard runs."""
 
+import json
 import os
 import subprocess
 import sys
@@ -10,8 +12,8 @@ import unittest
 import helpers
 from helpers import hooks_file
 
-# What the subagent is told where the check stops the call.
-INSTALL = "notes: install Python 3.9 or later, run as python3, for its hooks to run\n"
+# What the subagent, or the user, is told where python3 cannot run the hooks.
+INSTALL = "notes: install Python 3.9 or later, run as python3, for its hooks to run"
 # A python3 that is 3.8 to whatever asks its version, standing in for an older Python.
 OLDER = f"""#!/bin/sh
 shift
@@ -34,7 +36,7 @@ class TestPythonCheck(helpers.PluginTest):
     def run_hook(self, *folders, command=None, agent_type=helpers.AGENT):
         """The hook's command, or the one given, run by sh with PATH holding the folders, handed a
         commit's event in the subagent of the type, or in the main conversation where it is None;
-        what it exits with and what it writes on stderr."""
+        what it exits with and the JSON it writes on stdout, None where it writes nothing."""
         env = dict(os.environ, PATH=os.pathsep.join(folders), CLAUDE_PLUGIN_ROOT=self.plugin)
         env.pop("PYTHONPATH", None)
         done = subprocess.run(
@@ -45,7 +47,7 @@ class TestPythonCheck(helpers.PluginTest):
             env=env,
             check=False,
         )
-        return done.returncode, done.stderr
+        return done.returncode, json.loads(done.stdout) if done.stdout else None
 
     def folder_with_python3(self, script):
         """A folder holding a python3 that is the script."""
@@ -57,15 +59,17 @@ class TestPythonCheck(helpers.PluginTest):
     def test_without_python3_the_call_is_stopped_with_what_to_install(self):
         # Given: a PATH holding no python3
         # When: the hook's command is run
-        # Then: it exits 2, telling the subagent to install Python
-        self.assertEqual(self.run_hook(os.path.join(self.base, "none")), (2, INSTALL))
+        # Then: it denies the call, telling the subagent to install Python
+        self.assertEqual(
+            self.run_hook(os.path.join(self.base, "none")), (0, helpers.denied(INSTALL))
+        )
 
     def test_with_a_python3_older_than_3_9_the_call_is_stopped_with_what_to_install(self):
         # Given: a PATH whose python3 is 3.8
         older = self.folder_with_python3(OLDER)
         # When: the hook's command is run
-        # Then: it exits 2, telling the subagent to install Python
-        self.assertEqual(self.run_hook(older), (2, INSTALL))
+        # Then: it denies the call, telling the subagent to install Python
+        self.assertEqual(self.run_hook(older), (0, helpers.denied(INSTALL)))
 
     def test_without_python3_a_call_of_another_agent_is_let_through(self):
         # Given: a PATH holding no python3, and a commit of the main conversation, or of another
@@ -75,7 +79,7 @@ class TestPythonCheck(helpers.PluginTest):
             with self.subTest(agent_type=agent_type):
                 # When: the hook's command is run on it
                 # Then: it lets the call through, as the lane acts in its subagent alone
-                self.assertEqual(self.run_hook(none, agent_type=agent_type), (0, ""))
+                self.assertEqual(self.run_hook(none, agent_type=agent_type), (0, None))
 
     def test_without_python3_at_the_subagents_end_the_user_is_told_and_it_ends(self):
         # Given: the hook's command for a lane held as the subagent ends, and a PATH holding no
@@ -83,9 +87,10 @@ class TestPythonCheck(helpers.PluginTest):
         laid = [hooks_file.word(3, "test_after", ["CHANGELOG.md", "python3 check.py"])]
         command = hooks_file.command("notes", helpers.AGENT, laid, "SubagentStop")
         # When: it is run
-        # Then: it exits 1, telling the user to install Python and letting the subagent end
+        # Then: it tells the user to install Python, letting the subagent end
         none = os.path.join(self.base, "none")
-        self.assertEqual(self.run_hook(none, command=command), (1, INSTALL))
+        told = (0, {"systemMessage": INSTALL})
+        self.assertEqual(self.run_hook(none, command=command), told)
 
     def test_without_python3_a_call_coming_back_goes_on(self):
         for event in hooks_file.KEPT:
@@ -94,18 +99,18 @@ class TestPythonCheck(helpers.PluginTest):
                 # python3
                 command = hooks_file.command("notes", helpers.AGENT, [], event)
                 # When: it is run as a call comes back
-                code, _ = self.run_hook(os.path.join(self.base, "none"), command=command)
-                # Then: it exits 0, as the call has run, and the hook of the next call stops it,
-                # saying what to install
-                self.assertEqual(code, 0)
+                found = self.run_hook(os.path.join(self.base, "none"), command=command)
+                # Then: it answers nothing, as the call has run, and the hook of the next call
+                # denies it, saying what to install
+                self.assertEqual(found, (0, None))
 
     def test_with_the_python3_in_use_the_guard_runs(self):
         # Given: a PATH whose python3 is the one in use
         # When: the hook's command is run for a call the lane stops
-        # Then: the guard stops it with the lane's sentence
+        # Then: the guard denies it with the lane's sentence
         self.assertEqual(
             self.run_hook(os.path.dirname(sys.executable)),
-            (2, "notes: " + helpers.SENTENCE + "\n"),
+            (0, helpers.denied("notes: " + helpers.SENTENCE)),
         )
 
 
