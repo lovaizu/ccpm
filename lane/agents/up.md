@@ -25,11 +25,10 @@ only by `lay.py up`, which brings lane's code and hooks there up with the same l
    reply with its print and end. Its print gives each lane laid before in the plugin's hooks, with
    its step and its subagent, as `<proposal>` gives a lane in step 6. Where it printed
    `Brought lane's code`, its print without its last line begins your first reply in step 5, or,
-   where no point is left open, your reply in step 9.
+   where no point is left open, your reply in step 9. First run `lay.py up`.
 2. Read lane's lanes with `cat -n "${CLAUDE_PLUGIN_ROOT}/docs/lanes.md"`.
-3. Read, as the whole of what you read of the plugin, each file with `cat -n <path>` in a command of
-   its own: `.claude-plugin/plugin.json`, and each file
-   `find <the folder>/skills <the folder>/agents -name '*.md'` lists.
+3. Read each file with `cat -n <path>` in a command of its own: `.claude-plugin/plugin.json`, and
+   each file `find <the folder>/skills <the folder>/agents -name '*.md'` lists. Read only `{reads}`.
 4. List your points for each subagent in `agents/`, in the order of its Steps, with what the skills
    say of how it is started and what is done with its work:
    - each fact a lane rests on, such as a file a step reads or writes, a command it runs, who

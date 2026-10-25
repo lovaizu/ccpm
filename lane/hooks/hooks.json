@@ -2,12 +2,12 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Agent|SendMessage|Bash",
+        "matcher": ".*|Read|Grep|Bash|Agent|SendMessage",
         "hooks": [
           {
             "type": "command",
             "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"lane:up\"'*|*'\"agent_type\": \"lane:up\"'*) echo \"lane: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 2;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" lane:up '7:as_printed:lay.py print' '9:wait_for:OK,lay.py write'"
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"lane:up\"'*|*'\"agent_type\": \"lane:up\"'*) echo \"lane: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 2;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" lane:up '1:start_with:lay.py up' '3:read_only:{reads}' '7:as_printed:lay.py print' '9:wait_for:OK,lay.py write'"
           }
         ]
       }

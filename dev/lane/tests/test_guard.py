@@ -52,17 +52,22 @@ class GuardTest(helpers.PluginTest):
         self.words = (helpers.AGENT, *(hooks_file.word(n, lane, t) for n, lane, t in laid))
 
     def guard(
-        self, stream: str, words: Sequence[str] | None = None, entry: str = "pretooluse.py"
+        self,
+        stream: str,
+        words: Sequence[str] | None = None,
+        entry: str = "pretooluse.py",
+        plugin: str | None = None,
     ) -> tuple:
         """The event's entry, PreToolUse's where none is named, run as Claude Code runs it, on the
-        stream, for the plugin, with the words given, or those of the lanes laid, in this process
-        so that the coverage of the test run counts it; what it exits with and what it writes on
-        stderr."""
+        stream, for the plugin at the folder given, or `notes`, with the words given, or those of
+        the lanes laid, in this process so that the coverage of the test run counts it; what it
+        exits with and what it writes on stderr."""
         words = self.words if words is None else words
         script = os.path.join(helpers.CODE, entry)
         argv = mock.patch.object(sys, "argv", [script, *words])
         stdin = mock.patch.object(sys, "stdin", io.StringIO(stream))
-        root = mock.patch.dict(os.environ, {"CLAUDE_PLUGIN_ROOT": self.plugin})
+        folder = self.plugin if plugin is None else plugin
+        root = mock.patch.dict(os.environ, {"CLAUDE_PLUGIN_ROOT": folder})
         err = io.StringIO()
         with (
             argv,
