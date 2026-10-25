@@ -5,7 +5,8 @@ for every test spends most of the tests' time; and, for a plugin whose lanes lan
 as the plugin takes it through a link, and each lane its hooks/hooks.json lays. What a run of a
 plugin's tests writes is in one folder of its own, `<plugin>/<yyyymmdd>-tests-<random>/` in the
 system's temporary folder, as dev/architecture.md's Where a plugin writes its files has it, the
-plugin's tests being in dev/<plugin>/tests/."""
+plugin's tests being in dev/<plugin>/tests/; and such a folder for what a trial uses only while
+it runs."""
 
 from __future__ import annotations
 
@@ -29,14 +30,21 @@ MADE: dict[str, str] = {}
 RUNS: dict[str, str] = {}
 
 
+def temporary(plugin: str, name: str) -> str:
+    """A new folder of the plugin's, `<plugin>/<yyyymmdd>-<name>-<random>/` in the system's
+    temporary folder, for what a test or a trial uses only while it runs, as dev/architecture.md's
+    Where a plugin writes its files has it."""
+    top = os.path.join(tempfile.gettempdir(), plugin)
+    os.makedirs(top, exist_ok=True)
+    return tempfile.mkdtemp(prefix=time.strftime(f"%Y%m%d-{name}-"), dir=top)
+
+
 def run_folder(file: str) -> str:
     """The folder of this run of the tests of the plugin the file is a test of, made the first time
     it is asked for and removed when the run ends."""
     plugin = os.path.basename(os.path.dirname(os.path.dirname(os.path.abspath(file))))
     if plugin not in RUNS:
-        top = os.path.join(tempfile.gettempdir(), plugin)
-        os.makedirs(top, exist_ok=True)
-        made = tempfile.mkdtemp(prefix=time.strftime("%Y%m%d-tests-"), dir=top)
+        made = temporary(plugin, "tests")
         RUNS[plugin] = os.path.realpath(made)
         atexit.register(shutil.rmtree, made, True)
     return RUNS[plugin]

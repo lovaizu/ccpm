@@ -14,10 +14,10 @@ from __future__ import annotations
 import json
 import os
 import sys
-import tempfile
 import threading
 
 import shared
+import testing
 
 KIND = shared.call("has")["kind"]
 PROMPT = """You judge work that was made for a task, in the folder {folder}.
@@ -50,7 +50,7 @@ def judged(folder: str) -> str:
 def judge(folder: str, ends: dict) -> None:
     """Runs the judge on the folder, in a folder of its own, so it starts from none of the runs'
     folders."""
-    place = tempfile.mkdtemp()
+    place = testing.temporary("turn", "judge")
     with shared.removed(place):
         prompt = PROMPT.format(folder=folder, out=judged(folder), **KIND)
         ends[folder] = shared.claude(prompt, [], cwd=place)
