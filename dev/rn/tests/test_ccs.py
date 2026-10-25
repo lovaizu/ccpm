@@ -316,19 +316,14 @@ class CcsTest(RepoTest):
         self.kept()
         # When: the orchestrator has the CCS of the plan written, with a path the receiver has.
         self.ccs("plan", **{"--kind": "plan", "--has": "README.md"})
-        # Then: it serves nothing, and has the path given, then, in the order made, the CCS and the
-        # result of each call of a task done turn returned, and the CCS of a task's latest call it
-        # has not, an earlier one it has not left out.
+        # Then: it serves nothing, and has the path given, then, in the order made, the latest
+        # call of each work of a task done, which holds what the work served and decided and the
+        # files it made, returned or not, and none of turn's results.
         ccs = self.read_json(call_at("0005"))
         has = [e for e in ccs["focal_entities"] if "has" in e]
         want = (
             [{"purpose": "to try it"}],
-            [
-                {"has": "README.md"},
-                {"has": call_at("0003")},
-                {"has": call_at("0004")},
-                {"has": call_at("0004", "result.json")},
-            ],
+            [{"has": "README.md"}, {"has": call_at("0003")}, {"has": call_at("0004")}],
         )
         self.assertEqual((ccs["goal_orientation"], has), want)
 
@@ -342,10 +337,21 @@ class CcsTest(RepoTest):
         has = [[e for e in self.read_json(p)["focal_entities"] if "has" in e] for p in made]
         self.assertEqual(has, [[], []])
 
-    def test_the_ccs_of_any_other_work_holds_the_goal_and_every_criterion(self):
+    def test_the_ccs_of_a_checklist_or_the_learnings_serves_nothing(self):
+        for work, paths in (("checklist-code", (".rn/checklists/code.md",)), ("learnings", ())):
+            with self.subTest(work=work):
+                # Given: a session.
+                # When: the orchestrator has the CCS of a checklist, or of the learnings, written.
+                made = self.ccs(work, *paths)["ccs"]
+                # Then: it holds the use alone, as neither serves the user's work.
+                self.assertEqual(
+                    self.read_json(made)["goal_orientation"], [{"purpose": "to try it"}]
+                )
+
+    def test_the_ccs_of_the_finished_work_holds_the_goal_and_every_criterion(self):
         # Given: a session.
-        # When: the orchestrator has the CCS of a checklist written.
-        self.ccs("checklist-code", ".rn/checklists/code.md")
+        # When: the orchestrator has the CCS of the finished work written.
+        self.ccs("deliverable", "README.md")
         # Then: it holds the goal and every criterion.
         self.assertEqual(
             self.read_json(call_at("0001"))["goal_orientation"],
@@ -388,11 +394,12 @@ class CcsTest(RepoTest):
         self.kept()
         # When: the orchestrator has the CCS of the learnings written.
         self.ccs("learnings")
-        # Then: the part holds the heading alone, the work the CCS names.
+        # Then: the part is empty, as the form of rn's learnings checklist holds no heading, the
+        # work the CCS names.
         part = call_at("0001", "learnings.md")
         self.assertEqual(
             (self.read(part), self.read_json(call_at("0001"))["focal_entities"][2]),
-            ("## Learnings\n", {"deliverable": part}),
+            ("", {"deliverable": part}),
         )
 
     def test_a_path_given_for_a_part_rn_cuts_stops(self):
@@ -579,6 +586,19 @@ class CcsTest(RepoTest):
             "rn: the following arguments are required: --use; give it as rn.py ccs",
             self.stopped("ccs", "t1", "README.md", "--kind", KIND, "--receiver", "r"),
         )
+
+    def test_a_ccs_that_cannot_be_written_writes_nothing(self):
+        for work, kind in (("plan", "no-such-kind"), ("learnings", "no-such-kind")):
+            with self.subTest(work=work):
+                # Given: a session.
+                # When: the orchestrator has the CCS of a work rn cuts a part of written, of a kind
+                # with no checklist.
+                out = self.stopped("ccs", work, *options({**NEEDED, "--kind": kind}))
+                # Then: rn says there is no checklist for it, and writes nothing.
+                self.assertEqual(
+                    ("no checklist for the kind no-such-kind" in out, self.out("status", "-s")),
+                    (True, ""),
+                )
 
     def test_ccs_below_the_top_stops(self):
         # Given: rn run below the top.

@@ -10,7 +10,6 @@ import unittest
 from unittest import mock
 
 import helpers
-import proposal
 from helpers import (
     BRANCH,
     CRITERIA,
@@ -23,6 +22,7 @@ from helpers import (
     RepoTest,
     call_at,
     plan,
+    proposal,
     said,
     steered,
     task,

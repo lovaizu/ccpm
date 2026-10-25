@@ -61,11 +61,10 @@ def history(folder: str, start: str) -> str:
 
 
 def session_files(folder: str) -> list[str]:
-    """The session's files as they are now: the steering, the learnings, and each file of its calls
-    to turn."""
-    found = [session.steering_path(folder), session.learnings_path(folder)]
-    found += sorted(glob.glob(os.path.join(glob.escape(folder), session.TURN, "*")))
-    return [p for p in found if os.path.isfile(p)]
+    """Each file in the session's folder as it is now, in the order of their paths: the steering,
+    the learnings, each research and trial result and each file of its calls to turn."""
+    found = glob.glob(os.path.join(glob.escape(folder), "**", "*"), recursive=True)
+    return sorted(p for p in found if os.path.isfile(p))
 
 
 def turns_learnings(folder: str) -> list[dict[str, Any]]:

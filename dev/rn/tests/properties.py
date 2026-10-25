@@ -6,13 +6,22 @@ import os
 import shutil
 import unittest
 
-import ccs
-import proposal
-import steering
-import stop
-import template
-import testing
-from helpers import STEERED, LearningTest, RepoTest, plan, said, steered
+from helpers import (
+    STEERED,
+    LearningTest,
+    RepoTest,
+    ccs,
+    plan,
+    proposal,
+    said,
+    session,
+    steered,
+    steering,
+    stop,
+    task,
+    template,
+    testing,
+)
 
 hypothesis = testing.hypothesis()
 st = hypothesis.strategies
@@ -139,6 +148,47 @@ class PropertyTest(RepoTest):
                 same,
             ),
         )
+
+    @hypothesis.given(
+        st.integers(0, 4),
+        st.lists(st.tuples(st.integers(0, 99), WORDS), max_size=4),
+    )
+    def test_learnings_put_back_are_numbered_on_from_those_kept(self, kept, made):
+        # Given: any count of learnings kept, and any learnings of a part, numbered as turn may
+        # number them, each of any text a line can hold.
+        before = [f"- L{n}: Kept {n}." for n in range(1, kept + 1)]
+        part = [f"- L{n}: {text}" for n, text in made]
+        # When: they are put back.
+        # Then: those kept stay, and each of the part follows, numbered on from them, its text as
+        # written.
+        want = before + [f"- L{kept + k}: {text}" for k, (_, text) in enumerate(made, 1)]
+        self.assertEqual(session.put_learnings(before, part), want)
+
+    @hypothesis.given(
+        st.text(alphabet=" x", min_size=1, max_size=5),
+        st.text(alphabet=" x", min_size=1, max_size=5),
+    )
+    def test_the_ticks_of_a_plan_put_back_are_those_kept(self, was, made):
+        # Given: a task's actions ticked as any ticks, and a part turn made of the same task, its
+        # actions ticked as any ticks, of any count.
+        # When: the part is put back.
+        lines = steering.put_plan(
+            plan(tasks=task(ticks=was)).splitlines(), plan(tasks=task(ticks=made)).splitlines()
+        )
+        # Then: each action is ticked as the one of its number was before, or not where none was.
+        want = [was[k] if k < len(was) else " " for k in range(len(made))]
+        actions = steering.tasks_of(lines)[0].actions
+        self.assertEqual([line[steering.TICK] for _, line, _ in actions], want)
+
+    @hypothesis.given(WORDS.filter(lambda t: ": " not in t), WORDS)
+    def test_a_decision_is_shown_under_its_title(self, title, says):
+        # Given: a decision of any title without `: `, which parts it from what it says, and of
+        # anything it says, as rn.py decide keeps it, short enough for a sign-off to show.
+        decision = f"{title}: {says}"
+        hypothesis.assume(len(decision) <= proposal.LONGEST)
+        # When: a sign-off shows it.
+        # Then: it is shown whole, under its title.
+        self.assertEqual(proposal.simple("t1", [decision]), {title: decision})
 
 
 class LearningPropertyTest(LearningTest):

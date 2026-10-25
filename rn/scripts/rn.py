@@ -262,13 +262,13 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     last = session.latest(found, work)
     number = last.number if last is not None and not last.result else session.next_number(found)
     carried = [] if last is None else session.decisions_of(last)
+    checklists = ccs.checklists(kind, root)
+    # The part a call on the plan or the learnings makes, cut into a file of its own: the plan from
+    # the title through the tasks, the learnings none, as those kept are not made again.
+    cut = None
     if work in session.PARTS:
-        cut = (
-            "\n".join(steered.plan) if work == steering.PLAN else f"## {session.LEARNINGS}"
-        )  # pragma: no mutate
-        part = session.call_path(folder, number, session.PART[work])
-        repo.write_text(part, cut + "\n")
-        paths = [part]
+        cut = {steering.PLAN: "\n".join(steered.plan) + "\n", steering.LEARNINGS: ""}[work]
+        paths = [session.call_path(folder, number, session.PART[work])]
     if work == steering.PLAN:
         has += ccs.done_made(folder, found, steered.plan)
     # A CCS holds its entries in four parts, the shape turn takes: focal_entities, what the work is
@@ -277,8 +277,8 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     # turn makes the work from the CCS and the files it names alone; retrieved_artifacts, the
     # kind's checklists and rn's `usability.md` where the work is a checklist; and constraints, the
     # bounds it is made in: its decisions, the languages, and rn's checklist for a fix, which turn's
-    # generator holds whenever it changes a work already there. turn finds each entry by its key,
-    # whichever part holds it.
+    # roles are given to read, as each file a CCS names is, for a work made again. turn finds each
+    # entry by its key, whichever part holds it.
     usability = os.path.join(root, "checklists", "usability.md")
     written = {
         "focal_entities": [{session.WORK: work}, {steering.STAGE: steered.keys[steering.STAGE]}]
@@ -287,12 +287,15 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         + [{ccs.ENTRIES["has"]: p} for p in has],
         "goal_orientation": [{ccs.ENTRIES["use"]: use}]
         + [{ccs.SERVES: f"{key}: {text}"} for key, text in serving.items()],
-        "retrieved_artifacts": [{ccs.ENTRIES["checklist"]: p} for p in ccs.checklists(kind, root)]
+        "retrieved_artifacts": [{ccs.ENTRIES["checklist"]: p} for p in checklists]
         + ([{"source": usability}] if kind == ccs.CHECKLIST else []),
         "constraints": [{session.DECISION: d} for d in carried]
         + [{key: steered.keys[key]} for key in steering.LANGUAGES]
         + [{"fix": os.path.join(root, "checklists", "fix.md")}],
     }
+    # Every check is made above, so a stop leaves nothing written.
+    if cut is not None:
+        repo.write_text(paths[0], cut)
     path = session.call_path(folder, number, session.CCS)
     repo.write_json(path, written)
     session.keep(folder, steered, f"Call {number} on {work}: handed to turn")
@@ -422,7 +425,7 @@ def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> 
     branch holds no session."""
     folder = session.current()
     listed = steering.items_of(
-        list(enumerate(session.learnings_of(folder), 1)), session.LEARNING, session.LEARNING_FORM
+        list(enumerate(session.learnings_of(folder))), session.LEARNING, session.LEARNING_FORM
     )[0]
     said = {i.id: steering.said(i.lines).partition(": ")[2] for i in listed}
     return {"learnings": said, "turn": stretch.turns_learnings(folder)}

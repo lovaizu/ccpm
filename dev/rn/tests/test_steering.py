@@ -5,8 +5,6 @@ from __future__ import annotations
 
 import unittest
 
-import steering
-import template
 from helpers import (
     CRITERIA,
     NEXT,
@@ -15,7 +13,9 @@ from helpers import (
     VERSION,
     plan,
     steered,
+    steering,
     task,
+    template,
 )
 
 

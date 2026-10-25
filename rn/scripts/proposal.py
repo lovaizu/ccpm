@@ -4,8 +4,6 @@ proposal at the same sign-off before; with the answers the user gives it."""
 
 from __future__ import annotations
 
-import re
-
 import ccs
 import repo
 import session
@@ -27,10 +25,7 @@ WHERE = dict(
 # the design's, each task's and checklist's called in the design stage; at the deliverable's, each
 # task's called in the build stage.
 WORKS_SHOWN = {
-    steering.DESIGN: (
-        steering.DESIGN,
-        re.compile(rf"{session.TASK_WORK.pattern}|{session.CHECKLIST_WORK.pattern}"),
-    ),
+    steering.DESIGN: (steering.DESIGN, session.DESIGNED),
     steering.DELIVERABLE: (steering.BUILD, session.TASK_WORK),
 }
 # Each answer the user gives a sign-off, with the command they type for it, which the AI cannot

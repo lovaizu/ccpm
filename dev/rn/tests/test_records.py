@@ -8,6 +8,7 @@ import unittest
 
 from helpers import (
     CONVERSATIONS,
+    FOLDER,
     HISTORY,
     LEARNINGS,
     STEERING,
@@ -21,21 +22,23 @@ from helpers import (
 
 class RecordsTest(LearningTest):
     def test_records_gives_the_history_the_sessions_files_and_the_conversations(self):
-        # Given: a session kept with its steering, its learnings and a call, and a conversation of
-        # the orchestrator.
+        # Given: a session kept with its steering, its learnings, a call and a research result,
+        # and a conversation of the orchestrator.
         self.write(LEARNINGS, "- L1: Kept.\n")
         self.call("0001", "plan", result={"items": []}, part="# Add login\n")
+        self.write(f"{FOLDER}/research/login.md", "# Login\n")
         self.kept()
         self.conversation("c1", said("/rn:up add login", "2026-10-20T09:00:00Z", self.top))
         # When: the orchestrator has the records shown.
-        # Then: rn gives the history, the steering, the learnings and each file of the calls, then
-        # the conversation, each a text in the git folder.
+        # Then: rn gives the history, then each file in the session's folder in the order of their
+        # paths, then the conversation, each a text in the git folder.
         self.assertEqual(
             self.records(),
             [
                 "record/history.txt",
-                f"record/{STEERING}",
                 f"record/{LEARNINGS}",
+                f"record/{FOLDER}/research/login.md",
+                f"record/{STEERING}",
                 f"record/{call_at('0001')}",
                 f"record/{call_at('0001', 'result.json')}",
                 f"record/{call_at('0001', 'steering.md')}",
@@ -120,6 +123,17 @@ class RecordsTest(LearningTest):
         self.ran("records")
         # Then: the history runs from the commit the branch left the default branch at.
         self.assertIn(f"$ git log --reverse --stat {self.left_at()}..HEAD\n", self.read(HISTORY))
+
+    def test_the_stretch_starts_after_the_last_learnings_call_whatever_was_returned_after(self):
+        # Given: a learnings call returned, then a call on the plan, a work named after the
+        # learnings, returned.
+        kept = self.learnt("0001")
+        self.call("0002", "plan", "learnings", result={})
+        self.kept()
+        # When: the orchestrator has the records shown.
+        self.ran("records")
+        # Then: the history runs from the commit that kept the learnings call's result.
+        self.assertIn(f"$ git log --reverse --stat {kept}..HEAD\n", self.read(HISTORY))
 
     def test_the_stretch_starts_after_the_later_of_two_learnings_calls(self):
         # Given: two learnings calls returned, a move between them.

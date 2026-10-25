@@ -30,6 +30,8 @@ TURN = "turn"
 # steering; the finished work; and a checklist of a kind.
 TASK_WORK = re.compile(r"t[0-9]+")
 CHECKLIST_WORK = re.compile(r"checklist-[a-z0-9-]+")
+# The works the design stage makes for its sign-off: each task's result and each checklist.
+DESIGNED = re.compile(rf"{TASK_WORK.pattern}|{CHECKLIST_WORK.pattern}")
 WORKS = "plan, learnings, deliverable, t<n> for task T<n>, or checklist-<kind>"
 # The works whose call makes a part, cut into a file of its own, each with what its file is named:
 # the plan's a part of the steering, the learnings' those it adds to the session's.
@@ -44,9 +46,7 @@ CALL = re.compile(rf"([0-9]{{4}})-({'|'.join(map(re.escape, (CCS, RESULT, *PART.
 # `<title>: <what it says>`; the stage it was made in is under the front matter's key of the stage.
 WORK = "work"
 DECISION = "decision"
-# The heading a part of the learnings opens with, which rn cuts for turn and leaves out when it
-# adds the learnings to the session's; and each learning, in the form of rn's learnings checklist.
-LEARNINGS = "Learnings"
+# Each learning, in the form of rn's learnings checklist's F-1, which holds no heading.
 LEARNING = re.compile(r"- (?P<id>L[0-9]+): (?P<said>\S.*)")
 LEARNING_FORM = (
     "a learning as `- L<n>: <what happened, with the words it rests on, and where it would make"
@@ -240,12 +240,11 @@ def learnings_of(folder: str) -> list[str]:
 
 
 def put_learnings(learnings: list[str], part: list[str]) -> list[str]:
-    """The session's learnings with those of the part turn made after them, the part's own heading
-    left out, each numbered on from those kept."""
+    """The session's learnings with those of the part turn made after them, each numbered on from
+    those kept."""
     count = len([line for line in learnings if LEARNING.fullmatch(line)])
-    lines = steering.trimmed(part[1:]) if part[:1] == [f"## {LEARNINGS}"] else part
     put = []
-    for line in lines:
+    for line in part:
         learnt = LEARNING.fullmatch(line)
         if learnt:
             count += 1
@@ -299,8 +298,8 @@ def part_of(folder: str, number: str) -> tuple[str, list[str]]:
 def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dict[str, str]:
     """The front matter's keys with the stage moved to the one given; stops where the session is
     not at the stage it moves from; to the build stage, where a call made in the design stage is on
-    a work other than the plan, a document made, which goes to the design sign-off; and to the
-    deliverable stage, where a task is left."""
+    a work its sign-off shows, a document or a checklist made, which goes to that sign-off; and to
+    the deliverable stage, where a task is left."""
     if keys[steering.STAGE] != steering.MOVES[stage]:
         raise stop.Stop(
             f"rn: the session is at the {keys[steering.STAGE]} stage, and moves to {stage} from the"
@@ -309,7 +308,7 @@ def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dic
         )
     if stage == steering.BUILD:  # pragma: no mutate
         designed = [c for c in calls(folder) if c.stage == steering.DESIGN]  # pragma: no mutate
-        made = [c.work for c in designed if c.work != steering.PLAN]
+        made = [c.work for c in designed if DESIGNED.fullmatch(c.work)]
         if made:
             raise stop.Stop(
                 f"rn: the design stage made {stop.joined(list(dict.fromkeys(made)))}, which go to the"

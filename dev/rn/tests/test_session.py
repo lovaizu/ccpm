@@ -567,11 +567,12 @@ class StateTest(RepoTest):
         self.assertEqual((said in out, self.read(STEERING)), (True, want))
 
     def test_the_stage_moves_to_build_from_design_where_no_document_was_made(self):
-        # Given: a session at the design stage, whose calls in it are on the plan alone, and a
-        # call on t1 made in the plan stage.
+        # Given: a session at the design stage, whose calls in it are on the plan and on the
+        # learnings of the plan sign-off, and a call on t1 made in the plan stage.
         self.session(steered(stage="design"))
         self.call("0001", "t1", "plan", result={})
-        self.call("0002", "plan", "design", result={})
+        self.call("0002", "learnings", "design", result={})
+        self.call("0003", "plan", "design", result={})
         self.kept()
         # When: the orchestrator moves the stage to build.
         self.ran(*self.state("--stage", "build"))
@@ -865,7 +866,7 @@ class PutTest(RepoTest):
         self.session()
         self.write(LEARNINGS, "- L1: Kept.\n")
         self.write(HISTORY, "x")
-        made = "## Learnings\n- L1: First.\n  Its words.\n- L2: Second.\n"
+        made = "- L1: First.\n  Its words.\n- L2: Second.\n"
         self.call("0001", "learnings", result={}, part=made)
         self.kept()
         # When: the orchestrator puts it back.
@@ -881,9 +882,9 @@ class PutTest(RepoTest):
         )
         self.assertEqual(kept, (want, want, STEERED, False))
 
-    def test_the_first_learnings_are_numbered_from_one_with_no_heading_given(self):
+    def test_the_first_learnings_are_numbered_from_one(self):
         # Given: a session with no learnings, and a call on the learnings whose part holds one
-        # without its heading.
+        # numbered otherwise.
         self.session()
         self.call("0001", "learnings", result={}, part="- L4: First.\n")
         # When: the orchestrator puts it back.
@@ -892,9 +893,9 @@ class PutTest(RepoTest):
         self.assertEqual(self.read(LEARNINGS), "- L1: First.\n")
 
     def test_no_learning_made_leaves_no_learnings(self):
-        # Given: a call on the learnings whose part holds its heading alone.
+        # Given: a call on the learnings whose part turn left empty.
         self.session()
-        self.call("0001", "learnings", result={}, part="## Learnings\n")
+        self.call("0001", "learnings", result={}, part="")
         # When: the orchestrator puts it back.
         self.ran(*self.put())
         # Then: the session has no learnings, and the steering is as it was.
@@ -915,7 +916,7 @@ class PutTest(RepoTest):
         # with no ID.
         self.session()
         self.write(HISTORY, "x")
-        self.call("0001", "learnings", result={}, part="## Learnings\n- A slip.\n")
+        self.call("0001", "learnings", result={}, part="- A slip.\n")
         self.kept()
         before = self.head()
         # When: the orchestrator puts it back.
@@ -931,17 +932,21 @@ class PutTest(RepoTest):
         kept = (os.path.exists(LEARNINGS), self.head(), os.path.exists(SHOWN))
         self.assertEqual((said in out, kept), (True, (False, before, True)))
 
-    def test_learnings_under_a_heading_of_another_level_stop(self):
-        # Given: a call on the learnings whose part holds one under `# Learnings`.
-        self.session()
-        self.call("0001", "learnings", result={}, part="# Learnings\n- L1: First.\n")
-        # When: the orchestrator puts it back.
-        out = self.stopped(*self.put())
-        # Then: rn names the heading as out of the learnings' form, and writes none.
-        said = f"rn: {LEARNINGS} would be out of its form: line 1: expected a learning" in out
-        self.assertEqual(
-            (said, "found `# Learnings`" in out, os.path.exists(LEARNINGS)), (True, True, False)
-        )
+    def test_learnings_under_a_heading_stop(self):
+        for heading in ("## Learnings", "# Learnings"):
+            with self.subTest(heading=heading):
+                # Given: a call on the learnings whose part holds one under a heading, which the
+                # form of rn's learnings checklist has none of.
+                self.session()
+                self.call("0001", "learnings", result={}, part=f"{heading}\n- L1: First.\n")
+                # When: the orchestrator puts it back.
+                out = self.stopped(*self.put())
+                # Then: rn names the heading as out of the learnings' form, and writes none.
+                said = f"rn: {LEARNINGS} would be out of its form: line 1: expected a learning"
+                self.assertEqual(
+                    (said in out, f"found `{heading}`" in out, os.path.exists(LEARNINGS)),
+                    (True, True, False),
+                )
 
     def test_the_plan_put_back_leaves_the_records(self):
         # Given: records shown in the git folder, and a call on the plan.

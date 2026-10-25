@@ -21,7 +21,13 @@ SCRIPTS = os.path.normpath(
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "lane"))
 
+import ccs  # noqa: F401  (each of rn's modules, for its own tests)
+import proposal  # noqa: F401
 import record
+import session  # noqa: F401
+import steering  # noqa: F401
+import stop  # noqa: F401
+import template  # noqa: F401
 import testing
 
 import rn
@@ -266,12 +272,12 @@ class RepoTest(MainAndWork):
         its CCS names, turn's result where one is given, and its part where one is given, the
         learnings' in a file of their name, the plan's in one of the steering's; commits
         nothing."""
-        ccs = {
+        written = {
             "focal_entities": [{"work": work}, {"stage": stage}]
             + [{"deliverable": p} for p in works],
             "constraints": [{"decision": d} for d in decisions],
         }
-        self.write_json(call_at(number), ccs)
+        self.write_json(call_at(number), written)
         if result is not None:
             self.write_json(call_at(number, "result.json"), result)
         if part is not None:

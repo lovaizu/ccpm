@@ -86,13 +86,15 @@ def finished_work() -> list[str]:
 
 def served(steered: steering.Steering, work: str) -> dict[str, str]:
     """The goal and each criterion the work serves, by ID, as the steering says each on one line:
-    none for the plan, which makes them; those its task's line names for a task's work; the goal
-    and every criterion for any other. Stops where the steering holds no task of a task's work."""
+    those its task's line names for a task's work; the goal and every criterion for the finished
+    work, which is checked for each; none for any other, the plan making them, and the learnings
+    and a checklist serving none of the user's work. Stops where the steering holds no task of a
+    task's work."""
     said = steering.decided(steered.plan)
-    if work == steering.PLAN:
-        return {}
-    if not session.TASK_WORK.fullmatch(work):
+    if work == steering.DELIVERABLE:
         return said
+    if not session.TASK_WORK.fullmatch(work):
+        return {}
     task = next((t for t in steering.tasks_of(steered.plan) if t.id == work.upper()), None)
     if task is None:
         raise stop.Stop(
@@ -103,17 +105,14 @@ def served(steered: steering.Steering, work: str) -> dict[str, str]:
 
 
 def done_made(folder: str, found: list[session.Call], plan: list[str]) -> list[str]:
-    """For each call on a task's work whose task the plan no longer holds, done, in the order made,
-    its CCS and its result where turn returned it, and the CCS of the work's latest call where turn
-    has not, as it holds the decisions kept last: what the task served, decided and made, a research
-    result made before a decision among them."""
+    """The CCS of the latest call of each work of a task the plan no longer holds, done, in the
+    order those calls were made: what the task served and decided, and the files it made, which
+    is what the plan is made again from; turn's results are left out, as what they hold beside the
+    work, each item's Good and turn's lessons, changes no task."""
     left = [task.id for task in steering.tasks_of(plan)]
     last = {c.work: c.number for c in found}
-    paths = []
-    for call in found:
-        if session.TASK_WORK.fullmatch(call.work) and call.work.upper() not in left:
-            latest_call = call.number == last[call.work]  # pragma: no mutate
-            if call.result or latest_call:
-                paths.append(session.call_path(folder, call.number, session.CCS))
-            paths += [session.call_path(folder, call.number, session.RESULT)] if call.result else []
-    return paths
+    return [
+        session.call_path(folder, number, session.CCS)
+        for work, number in sorted(last.items(), key=lambda item: item[1])
+        if session.TASK_WORK.fullmatch(work) and work.upper() not in left
+    ]
