@@ -1,6 +1,6 @@
-"""What a subagent started from, for a take written `{<name>}`: the texts it started from, its prompt
-and what a script start_with takes prints, whose values the values port reads; those values put in
-the places of a lane's sentence, and told."""
+"""What a subagent started from, for a take written `{<name>}`: the texts it started from, its
+prompt and what a script start_with takes prints, whose values the values port reads; those values
+put in the places of a lane's sentence, and told."""
 
 import unittest
 

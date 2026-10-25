@@ -186,7 +186,7 @@ class TestGuard(GuardTest):
         return self.guard(json.dumps(event))
 
     def test_a_step_still_saying_the_sentence_as_written_holds(self):
-        # Given: in_form on step 3, the step saying ${CLAUDE_PLUGIN_ROOT} as `lay.py write` writes it
+        # Given: in_form on step 3, the step saying ${CLAUDE_PLUGIN_ROOT} as the layer writes it
         # When: changelog-writer writes entry.json in its form
         # Then: the step is read as holding the sentence, not as changed
         self.assertNotIn("no longer says", self.written('{"version": "1.0"}')[1])

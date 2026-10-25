@@ -11,9 +11,10 @@ module may name, beside its action, wording and check, the events it is held on,
 things it takes its sentence shows, and the most things it takes; and give `beside(laid, root)`,
 what it takes beside what its step names, from every lane laid in the subagent, as the guard calls
 it, and `refused(takes, root)`, why it cannot be laid taking these, "" where it can, as the layer
-calls it laying the lane and the guard on each run, where it is an error; RECORD, where its check rests on what the subagent did before, read from its record,
-as every lane held at the subagent's end does; and PORT, the port it reads a plugin's text at, as
-ports.py defines them, its check then given, fourth, what reads that port.
+calls it laying the lane and the guard on each run, where it is an error; RECORD, where its check
+rests on what the subagent did before, read from its record, as every lane held at the subagent's
+end does; and PORT, the port it reads a plugin's text at, as ports.py defines them, its check then
+given, fourth, what reads that port.
 
 What a lane's check is given is held first to the lane's IN, a JSON Schema `given_in` makes: the
 texts put in each place of its sentence, and its subagent's record where its check rests on it; the

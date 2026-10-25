@@ -1,10 +1,10 @@
-"""The proposal the building AI writes for the layer, a JSON file at a path it gives lay.py, read and
-held to its JSON Schema, PROPOSAL, which lane's docs/lanes.md shows, then checked for what no schema
-can say: the plugin and each subagent's file found, each name one a hook's command can carry, each
-subagent and step given once, each step in its file, and what each lane takes fitting it; and each
-adapter it names found beside it, in `<plugin>/adapters/` of the folder it is in, or laid before in
-the plugin's hooks/adapters/, and run on each of its cases before the proposal is printed or
-written."""
+"""The proposal the building AI writes for the layer, a JSON file at a path it gives lay.py, read
+and held to its JSON Schema, PROPOSAL, which lane's docs/lanes.md shows, then checked for what no
+schema can say: the plugin and each subagent's file found, each name one a hook's command can carry,
+each subagent and step given once, each step in its file, and what each lane takes fitting it; and
+each adapter it names found beside it, in `<plugin>/adapters/` of the folder it is in, or laid
+before in the plugin's hooks/adapters/, and run on each of its cases before the proposal is printed
+or written."""
 
 from __future__ import annotations
 

@@ -1,6 +1,6 @@
 """Property-based tests of the lanes on handing on and waiting: as_printed on any print and heading,
-the move port on any move printed, wait_for on any approval; checked on many inputs Hypothesis makes,
-new on every run, CI included."""
+the move port on any move printed, wait_for on any approval; checked on many inputs Hypothesis
+makes, new on every run, CI included."""
 
 import json
 import string

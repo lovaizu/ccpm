@@ -1,6 +1,6 @@
 """The adapters a proposal names, as the layer takes them: each found beside the proposal, in the
-folder it is in, or laid before in the plugin, run on each of its cases before anything is printed or
-written, shown in the print, and written into the plugin with the lanes once approved, its copies
+folder it is in, or laid before in the plugin, run on each of its cases before anything is printed
+or written, shown in the print, and written into the plugin with the lanes once approved, its copies
 beside the proposal then removed."""
 
 from __future__ import annotations

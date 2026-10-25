@@ -146,17 +146,26 @@ class TestProposal(LayTest):
             "a key beside a subagent's": (
                 (*SUBAGENT, "x"),
                 1,
-                '$.subagents[0]: expected only the keys "name", "adapter", "steps", found the key "x"',
+                (
+                    '$.subagents[0]: expected only the keys "name", "adapter", "steps", found'
+                    ' the key "x"'
+                ),
             ),
             "a key beside a step's": (
                 (*STEP, "x"),
                 1,
-                '$.subagents[0].steps[0]: expected only the keys "step", "lanes", found the key "x"',
+                (
+                    '$.subagents[0].steps[0]: expected only the keys "step", "lanes", found the key'
+                    ' "x"'
+                ),
             ),
             "a key beside a lane's": (
                 (*LANE, "x"),
                 1,
-                '$.subagents[0].steps[0].lanes[0]: expected only the keys "lane", "takes", "adapter", found the key "x"',
+                (
+                    '$.subagents[0].steps[0].lanes[0]: expected only the keys "lane", "takes",'
+                    ' "adapter", found the key "x"'
+                ),
             ),
             "no subagent": (
                 ("subagents",),

@@ -36,8 +36,9 @@ def steps_laid(
 ) -> list[dict[str, Any]]:
     """Each step the layer writes in the subagent, with its lanes, where it is and the sentences
     gone from it: the sentence of each lane laid before on the step, of the lanes laid before in
-    each subagent as entries.laid_before gives them, that the proposal no longer lays there. They are the proposal's steps, then each other
-    step any sentence is gone from, with no lanes, in order, where the Steps still have it."""
+    each subagent as entries.laid_before gives them, that the proposal no longer lays there. They
+    are the proposal's steps, then each other step any sentence is gone from, with no lanes, in
+    order, where the Steps still have it."""
     laid = before.get(f"{plugin}:{agent['name']}", [])
     now = {s["step"]: sentences(s) for s in agent["steps"]}
     gone: dict[int, list[str]] = {}

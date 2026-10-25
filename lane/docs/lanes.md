@@ -103,8 +103,8 @@ text takes and one that gives nothing. An adapter is part of the proposal: kept 
 your plugin, `hooks/adapters/<port>-<name>.py`, on the lane reading the port, or, for the values
 port, on the subagent, as every lane of the subagent reads its values; it is run on each of its
 cases before the proposal is printed, shown in the print, and written into your plugin's
-`hooks/adapters/` with its cases once approved. On a run the guard runs it within the hook's time, and an adapter failing,
-giving no answer in time or answering out of its port is an error, as below.
+`hooks/adapters/` with its cases once approved. On a run the guard runs it within the hook's time,
+and an adapter failing, giving no answer in time or answering out of its port is an error, as below.
 
 | Port | Given | Gives | lane's form |
 |---|---|---|---|
@@ -143,16 +143,17 @@ The ports' JSON Schemas:
 
 ## What each lane is given
 
-The guard first holds the event to the form Claude Code hands it and `hooks/lanes.json` to the
-form `lay.py write` writes it in; then, before any lane's check, what each lane is given to the
-lane's IN, a JSON Schema: the texts put in each place of its sentence, with each `{<name>}` given
-for the run put in, its empty texts left out, one or more in each place; and, where its check rests
-on what the subagent did before, its record. The layer holds a proposal's takes to the same IN, so
-a wrong take shows when the lanes are laid, not on a run. Anything not as these say, a value not
-given or given empty, an adapter failing, giving no answer in time or answering out of its port,
-the record not found, the event or `hooks/lanes.json` not as Claude Code and `lay.py write` write
-them, a step no longer saying its lane's sentence, or a thing a lane takes that `lay.py write`
-would now refuse, such as in_form's form gone, is an error, not a drift: the call is stopped, or the subagent kept going once as it ends, and it and you are told
+The guard first holds the event to the form Claude Code hands it and `hooks/lanes.json` to the form
+`lay.py write` writes it in; then, before any lane's check, what each lane is given to the lane's
+IN, a JSON Schema: the texts put in each place of its sentence, with each `{<name>}` given for the
+run put in, its empty texts left out, one or more in each place; and, where its check rests on what
+the subagent did before, its record. The layer holds a proposal's takes to the same IN, so a wrong
+take shows when the lanes are laid, not on a run. Anything not as these say, a value not given or
+given empty, an adapter failing, giving no answer in time or answering out of its port, the record
+not found, the event or `hooks/lanes.json` not as Claude Code and `lay.py write` write them, a step
+no longer saying its lane's sentence, or a thing a lane takes that `lay.py write` would now refuse,
+such as in_form's form gone, is an error, not a drift: the call is stopped, or the subagent kept
+going once as it ends, and it and you are told
 
 ```
 <plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Stop here and reply that <who must fix it>.

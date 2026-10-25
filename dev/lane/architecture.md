@@ -111,10 +111,10 @@ flowchart TB
 - Each lane checks only what [the lanes](../../lane/docs/lanes.md) define it to take, and knows no
   plugin's forms. Where a check reads a plugin's text, it reads it at a port, a point lanes.md
   defines with the JSON it is given and gives back: the values a subagent started from, the items of
-  an input, the move a script printed. At each port lane reads one form, the one lanes.md gives;
-  a plugin whose text is in another form has an adapter, a command of its own that the building AI
-  writes with the cases it must give, which the guard runs at that port in place of lane's reading. An
-  adapter is part of the proposal: kept beside it, run on its cases and shown in the print, and
+  an input, the move a script printed. At each port lane reads one form, the one lanes.md gives; a
+  plugin whose text is in another form has an adapter, a command of its own that the building AI
+  writes with the cases it must give, which the guard runs at that port in place of lane's reading.
+  An adapter is part of the proposal: kept beside it, run on its cases and shown in the print, and
   written into the plugin with the lanes once approved.
 
   So lane holds one check per lane however many forms plugins write in, and a new form is a

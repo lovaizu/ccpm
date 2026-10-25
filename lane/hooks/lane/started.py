@@ -1,8 +1,8 @@
-"""What a subagent started from, for a lane taking a thing given for each run, written
-`{<name>}` in its step, such as `{work}`: the texts the subagent started from, its prompt and what
-each script laid by start_with printed, whose values the values port reads, as ports.py says; those
-values put in the places of a lane's sentence, and told. The JSON a subagent starts from is the one place a plugin hands it the
-files of its run, so a lane reads them there, the same way in every plugin."""
+"""What a subagent started from, for a lane taking a thing given for each run, written `{<name>}` in
+its step, such as `{work}`: the texts the subagent started from, its prompt and what each script
+laid by start_with printed, whose values the values port reads, as ports.py says; those values put
+in the places of a lane's sentence, and told. The JSON a subagent starts from is the one place a
+plugin hands it the files of its run, so a lane reads them there, the same way in every plugin."""
 
 from __future__ import annotations
 

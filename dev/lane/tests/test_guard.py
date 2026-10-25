@@ -134,8 +134,8 @@ class TestStop(GuardTest):
         # Given: step 3 changed by the building AI since the lane was laid
         self.write(self.agent_file, helpers.STEPS)
         # When: changelog-writer makes a call the hook watches, even one the lane allows
-        # Then: it is an error: the call is stopped, saying to have the lanes laid again, and the user
-        # told the same
+        # Then: it is an error: the call is stopped, saying to have the lanes laid again, and the
+        # user told the same
         self.assertEqual(self.guard(self.stream("git status")), ("error", GONE))
 
     def test_with_no_record_found_a_lane_resting_on_it_is_an_error_before_its_check(self):
