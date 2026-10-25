@@ -7,9 +7,7 @@ import io
 import json
 import os
 import re
-import shutil
 import sys
-import tempfile
 import time
 from unittest import mock
 
@@ -174,8 +172,7 @@ RUN = f".turn/{TODAY}-.tasks%2Freadme-result.json"
 class RepoTest(testing.FolderTest):
     """Each test runs turn from a temporary folder standing for the user's repository, `base`, its
     root, holding a task's CCS, its checklist, its decisions and a work already written, on the
-    day TODAY; Claude Code's records are kept in a folder of its own inside it, and the system's
-    temporary folder is `tmp`, a folder of the run's beside it."""
+    day TODAY; Claude Code's records are kept in a folder of its own inside it."""
 
     def setUp(self):
         super().setUp()
@@ -183,11 +180,6 @@ class RepoTest(testing.FolderTest):
         today = mock.patch.object(time, "strftime", return_value=TODAY)
         today.start()
         self.addCleanup(today.stop)
-        self.tmp = os.path.realpath(tempfile.mkdtemp(dir=self.run_folder))
-        self.addCleanup(shutil.rmtree, self.tmp)
-        temporary = mock.patch.object(tempfile, "tempdir", self.tmp)
-        temporary.start()
-        self.addCleanup(temporary.stop)
         self.write_json(CALL["ccs"], CCS)
         self.write("checklists/readme.md", CHECKLIST)
         self.write("notes/readme.decisions.md", "# Decisions\n")

@@ -170,12 +170,8 @@ turn/                      the plugin, installed by Claude Code
 └── .turn/
     └── <yyyymmdd>-<name>/ one run, gone once it returns
         ├── run.json       the state <JSON>, read and written by the flow alone
-        └── <role>.json    each role's reply <JSON>, read by the flow alone
-
-<the system's temporary folder>/
-└── turn/
-    └── <yyyymmdd>-<name>-<random>/
-                           each record shown to the learner as text, gone once the run returns
+        ├── <role>.json    each role's reply <JSON>, read by the flow alone
+        └── records/       each record shown to the learner as text, written when it is started
 ```
 
 - turn runs on Claude Code and python3 3.9 or later.
@@ -190,21 +186,19 @@ turn/                      the plugin, installed by Claude Code
   [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) says:
   `<name>` is the result's path from the root, each `%` written `%25` and each `/` `%2F`, the
   root the nearest folder above the result holding `.git`, or the result's folder where none does,
-  and `<yyyymmdd>` the day the run began, its folder found by the name on any later day; the
-  records' folder ends in a random part.
+  and `<yyyymmdd>` the day the run began, its folder found by the name on any later day.
 
   A call again with the same result finds the run however long after and from whichever folder of
   the repository it is made, and two runs with other results do not meet; the records are made
-  again each time the learner is started, and the random part keeps apart two repositories'
-  runs of results at the same path, as the temporary folder is the machine's.
+  again each time the learner is started, so a learner started anew reads them as they are then.
 - The orchestrator reaches each role and the main conversation with Claude Code's Agent and
   SendMessage, and its question is its reply, which the calling AI answers by SendMessage to it.
 - Each role writes its reply to a file its prompt names, in a JSON form of its own, read by the flow
   alone.
 
   No AI copies a reply, and the first user's lane on what it reads keeps it from the generator's.
-- The flow gives no role the run's own files, nor the first user the CCS, a folder holding them
-  given as its other entries, as a lane lets a role read anything under a folder it is given.
+- The flow gives no role the run's own files but the learner the records shown to it, nor the
+  first user the CCS, a folder holding them given as its other entries, as a lane lets a role read anything under a folder it is given.
 
 ## Test
 

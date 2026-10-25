@@ -228,14 +228,12 @@ def asking_now(run: dict[str, Any], text: str) -> dict[str, Any]:
 
 
 def returning(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """At the result written, once told: the run's folder and the records shown to the learner are
+    """At the result written, once told: the run's folder, with the records shown to the learner, is
     removed, the result alone staying, and the run returns."""
     if not run["told"] and not text.strip():
         return tell(run)
     result = run["call"]["result"]
     shutil.rmtree(state.folder(result))
-    # The system may have cleared its temporary folder since.
-    shutil.rmtree(run["records"], ignore_errors=True)
     return {"returned": result}
 
 
@@ -252,7 +250,8 @@ def role(run: dict[str, Any], text: str) -> dict[str, Any]:
 def moved(run: dict[str, Any]) -> dict[str, Any]:
     """The move starting the role due, or sending it what is sent, the message kept among those sent
     to it since it started; its reply is written anew, and the records the learner is given are
-    shown as text again, as the system may clear its temporary folder while a run waits."""
+    shown as text again, so a learner started anew, as on a run gone on with, reads them as they
+    are then."""
     step = run["next"]
     agent = step["agent"]
     reply = step["prompt"]["reply"]
@@ -507,17 +506,15 @@ def learn(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
     roles = [p for p in (records.find(i) for i in run["agent_ids"]) if p]
     orchestrator = records.orchestrator(roles, result)
     run["record_paths"] = roles + ([orchestrator] if orchestrator else [])
-    run["records"] = prompts.records_folder(result)
-    texts = [
-        os.path.join(run["records"], f"{n}.txt") for n in range(1, len(run["record_paths"]) + 1)
-    ]
+    folder = prompts.records_folder(result)
+    texts = [os.path.join(folder, f"{n}.txt") for n in range(1, len(run["record_paths"]) + 1)]
     return due(run, LEARNER, prompts.learner(run, texts))
 
 
 def shown(run: dict[str, Any], texts: list[str]) -> None:
     """Writes each record of the run as the learner reads it, as text, at its path among the
     texts, making their folder where it is gone."""
-    os.makedirs(run["records"], exist_ok=True)
+    os.makedirs(prompts.records_folder(run["call"]["result"]), exist_ok=True)
     for path, text in zip(run["record_paths"], texts):
         with open(text, "w", encoding="utf-8") as f:
             f.write(records.wrapped(records.as_text(path)))

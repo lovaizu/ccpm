@@ -1,13 +1,11 @@
 """Where a run keeps its files, as dev/architecture.md's Where a plugin writes its files places
 them: its state and each role's reply in `.turn/<yyyymmdd>-<name>/` at the root of the repository,
 the name made from the result's path, so a call again finds them on any day and runs at once do not
-meet; the records shown to the learner in `turn/<yyyymmdd>-<name>-<random>/` in the system's
-temporary folder; and the result alone where the call puts it."""
+meet, and the records shown to the learner in `records/` of that folder; and the result alone where
+the call puts it."""
 
-import glob
 import json
 import os
-import tempfile
 import time
 import unittest
 from unittest import mock
@@ -23,9 +21,7 @@ from helpers import (
     RESULT,
     RUN,
     TODAY,
-    ReadTest,
     RepoTest,
-    prompts,
     state,
 )
 
@@ -150,6 +146,21 @@ class TestRunFolder(RepoTest):
             self.read_json(f".turn/{TODAY}-r.json/run.json")["call"]["result"], "r.json"
         )
 
+    def test_a_run_begun_on_an_earlier_day_shows_its_records_in_its_folder(self):
+        # Given: a run begun the day before, every item given its Good today
+        for agent, agent_id in IDS.items():
+            self.given_record(agent_id, "{}", agent)
+        with mock.patch.object(time, "strftime", return_value=YESTERDAY):
+            self.started()
+        out = self.first_read(FOUND, FOUND_B1)
+        # When: the learner is started
+        given = json.loads(self.due(out)["input"]["prompt"])["given"]
+        # Then: the records are shown in `records/` of the folder of the day the run began, and
+        # no folder of today is made
+        folder = f".turn/{YESTERDAY}-.tasks%2Freadme-result.json"
+        self.assertEqual(given, [self.here(f"{folder}/records/{n}.txt") for n in (1, 2)])
+        self.assertEqual(self.runs(), [os.path.basename(folder)])
+
     def test_two_runs_at_once_with_other_results_keep_folders_of_their_own(self):
         # Given: a run started on the call's result
         self.start()
@@ -160,62 +171,6 @@ class TestRunFolder(RepoTest):
         self.assertEqual(self.runs(), sorted([os.path.basename(RUN), os.path.basename(other)]))
         results = [self.read_json(f"{f}/run.json")["call"]["result"] for f in (RUN, other)]
         self.assertEqual(results, [RESULT, ".tasks/other-result.json"])
-
-
-class TestRecordsFolder(ReadTest):
-    def setUp(self):
-        super().setUp()
-        for agent, agent_id in IDS.items():
-            self.given_record(agent_id, "{}", agent)
-
-    def texts(self):
-        """The records the learner is given once every item has its Good, as its prompt names
-        them."""
-        return json.loads(self.due(self.first_read(FOUND, FOUND_B1))["input"]["prompt"])["given"]
-
-    def shown_in(self, top):
-        """The folder of the records shown to the learner, the one folder in `turn/` in the
-        temporary folder `top` named by the run's day and the result's path."""
-        name = f"{TODAY}-.tasks%2Freadme-result.json-*"
-        [folder] = glob.glob(os.path.join(glob.escape(top), "turn", name))
-        return folder
-
-    def test_the_records_are_shown_in_the_folder_tmpdir_names(self):
-        # Given: TMPDIR naming a folder
-        top = os.path.join(self.tmp, "named")
-        os.makedirs(top)
-        with (
-            mock.patch.object(tempfile, "tempdir", None),
-            mock.patch.dict(os.environ, {"TMPDIR": top}),
-        ):
-            # When: the learner is started
-            texts = self.texts()
-        # Then: the records are shown in turn's folder in it
-        self.assertEqual(os.path.dirname(texts[0]), self.shown_in(top))
-
-    def test_the_records_are_shown_in_the_system_s_temporary_folder_where_tmpdir_is_not_set(self):
-        # Given: no TMPDIR, and TEMP naming a folder, which the system's temporary folder is then
-        top = os.path.join(self.tmp, "system")
-        os.makedirs(top)
-        env = {k: v for k, v in os.environ.items() if k != "TMPDIR"}
-        with (
-            mock.patch.object(tempfile, "tempdir", None),
-            mock.patch.dict(os.environ, dict(env, TEMP=top), clear=True),
-        ):
-            # When: the learner is started
-            texts = self.texts()
-        # Then: the records are shown in turn's folder in it
-        self.assertEqual(os.path.dirname(texts[0]), self.shown_in(top))
-
-    def test_two_runs_of_the_same_name_show_their_records_apart(self):
-        # Given: a run of the result, as another repository's of the same path would be
-        # When: a folder for the records is made twice
-        made = [prompts.records_folder(RESULT) for _ in range(2)]
-        # Then: the two are folders of their own, each in turn's folder in the temporary folder
-        self.assertNotEqual(made[0], made[1])
-        for folder in made:
-            self.assertTrue(os.path.isdir(folder))
-            self.assertEqual(os.path.dirname(folder), os.path.join(self.tmp, "turn"))
 
 
 if __name__ == "__main__":
