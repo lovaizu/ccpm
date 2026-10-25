@@ -4,9 +4,11 @@
   "required": [
     "items"
   ],
+  "additionalProperties": false,
   "properties": {
     "items": {
       "type": "array",
+      "description": "one for each item of every checklist",
       "items": {
         "$ref": "#/$defs/item"
       }
@@ -14,17 +16,141 @@
   },
   "$defs": {
     "item": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/good"
+        },
+        {
+          "$ref": "#/$defs/parts"
+        },
+        {
+          "$ref": "#/$defs/stop"
+        }
+      ]
+    },
+    "good": {
       "type": "object",
+      "description": "an item given its Good, at the lines that give it",
       "required": [
         "checklist",
-        "item"
+        "item",
+        "good",
+        "lines"
       ],
+      "additionalProperties": false,
       "properties": {
         "checklist": {
-          "type": "string"
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
         },
         "item": {
-          "type": "string"
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "good": {
+          "type": "string",
+          "description": "what you get from the work that gives what the item asks"
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "<path of the work>:<from>-<to>"
+          },
+          "description": "the lines of the work that give it"
+        }
+      }
+    },
+    "parts": {
+      "type": "object",
+      "description": "an item whose Scope is `each part`, given a Good in every part of the work on its own",
+      "required": [
+        "checklist",
+        "item",
+        "parts"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "checklist": {
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
+        },
+        "item": {
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "parts": {
+          "type": "array",
+          "description": "one for every part of the work",
+          "items": {
+            "$ref": "#/$defs/part"
+          }
+        }
+      }
+    },
+    "part": {
+      "type": "object",
+      "description": "a part of the work and the Good it gives",
+      "required": [
+        "part",
+        "good",
+        "lines"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "part": {
+          "type": "string",
+          "description": "the part, as you were given it"
+        },
+        "good": {
+          "type": "string",
+          "description": "what you get there"
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "<path of the work>:<from>-<to>"
+          },
+          "description": "the lines inside the part that give it"
+        }
+      }
+    },
+    "stop": {
+      "type": "object",
+      "description": "an item you found no Good for",
+      "required": [
+        "checklist",
+        "item",
+        "places",
+        "did",
+        "lacking"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "checklist": {
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
+        },
+        "item": {
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "places": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "<path of the work>:<from>-<to>"
+          },
+          "description": "the lines you looked at; for an item whose Scope is `each part`, those of each part that does not give it"
+        },
+        "did": {
+          "type": "string",
+          "description": "what you did there, such as a command you ran"
+        },
+        "lacking": {
+          "type": "string",
+          "description": "what you did not get"
         }
       }
     }

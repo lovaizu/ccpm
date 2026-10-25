@@ -1,6 +1,6 @@
 ---
 name: up
-description: Makes the work a plugin's step asks for in a CCS so that every item of its checklists has its Good, used first by an AI that did not make it, in its receiver's place; writes to the result file where the work is, each item's Good with its lines, and the lessons from the run. Asks the calling AI each point only the user can decide as soon as the run meets it, goes on with the answer, and tells the main conversation what each move will do and what is done. Use when a plugin's step hands turn a call as JSON, {"ccs", "kind", "result"}, or calls it again with the same call after a run stopped.
+description: Makes the work a plugin's step asks for in a CCS so that every item of its checklists has its Good, the work used first by an AI that did not make it in its receiver's place, and writes to the result file each item's Good with its lines and the lessons from the run; asks the calling AI each point only the user can decide as soon as the run meets it. Used when a plugin's step hands turn a call as JSON, {"ccs", "kind", "result"}, or calls it again with the same call after a run stopped.
 ---
 
 ## Role
@@ -30,15 +30,16 @@ of the work at once.
 What only the user can decide you send the calling AI as a question, with the answer you recommend,
 as soon as the run meets it; the calling AI asks the user, and the run goes on with the answer.
 
+`turn.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py"`, run from where you start.
+What you hand `turn.py next` goes on its standard input: `turn.py next <result> <<'EOF'`, then what
+you hand it on the lines after, ending with `EOF`. Make each call of the steps alone, once the call
+before it has given back, as each `turn.py` command takes the outcome of the one before.
+
 ## Steps
 
-1. `turn.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py"`, run from where you start.
-   First run `turn.py start`. Give it your prompt, the call, as it is:
-   `turn.py start '<your prompt>'`. It prints `{"result": ..., "given": [...]}`: `<result>` below
-   is its `result`. Where it exits with 1, reply with what it printed, and end. What you hand
-   `turn.py next` goes on its standard input: `turn.py next <result> <<'EOF'`, then what you hand
-   it on the lines after, ending with `EOF`. Make each `turn.py` command, and each other call of
-   steps 2 and 3, alone, once the call before it has given back.
+1. Run `turn.py start '<your prompt>'`, your prompt, the call, as it is. First run `turn.py start`.
+   It prints `{"result": ..., "given": [...]}`: `<result>` below is its `result`. Where it exits
+   with 1, reply with what it printed, and end.
 2. Load SendMessage with ToolSearch (`select:SendMessage`), then run `turn.py next <result>` with
    nothing.
 3. Take the next move `turn.py next` printed. Do not run `git commit` or `git push`. Where it prints
@@ -48,13 +49,14 @@ as soon as the run meets it; the calling AI asks the user, and the run goes on w
      `{"tool": ..., "input": {...}}`: after an Agent call, run `turn.py next <result>` with
      `{"agent_id": "<the agent ID the call gave back>"}`; after a SendMessage, with nothing.
    - `{"waiting": "<agent>"}`: run `turn.py next <result>` with nothing again.
+   - `{"anew": "<result>"}`: the CCS now lays the run out anew; go to step 1.
    - `{"check": [...], "given": [...]}`: go to step 4.
    - `{"left": [...]}`: go to step 5.
    - `{"asked": "<result>"}`: go to step 6.
    - `{"returned": "<result>"}`: reply with that line, and end.
-4. Check the CCS. Read each file of the `given` that came with `check` whole, each with
-   `cat -n <path>` in a command of its own, or with Read and no offset or limit; of a folder, list
-   it with `ls` and read the same way each file in it the receiver would use with the work.
+4. Check the CCS. Read each file of the `given` that came with `check` with `cat -n <path>` in a
+   command of its own, or with Read and no offset or limit; of a folder, list it with `ls` and read
+   the same way each file in it the receiver would use with the work. Read only `{given}`.
    Read `{given}` to its end. Then, for every item of `check`, find what in them gives its Good:
    what the receiver the CCS names is to get, for the use it names, that gives what the item asks,
    where its `Scope` says. Check also that what the receiver has, under the call's `has` kind, lets
@@ -75,6 +77,6 @@ as soon as the run meets it; the calling AI asks the user, and the run goes on w
    each item `{"checklist": "<as in left>", "item": "<as in left>", "question": <the number of the
    question it waits on, counted from 1>}`, items one answer settles naming the same one, and
    `recommended` as in step 4.
-6. Run `turn.py questions <result>`, in a command of its own with nothing after it. Hand on `turn.py questions` as it is.
-   Then end your turn. When the answer comes, as a message from the calling AI, run
-   `turn.py next <result>` with the answer as it came, and go to step 3.
+6. Run `turn.py questions <result>`, in a command of its own with nothing after it.
+   Hand on `turn.py questions` as it is. Then end your turn. When the answer comes, as a message
+   from the calling AI, run `turn.py next <result>` with the answer as it came, and go to step 3.

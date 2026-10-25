@@ -7,10 +7,10 @@ from helpers import TURN, testing
 
 lanes, step = testing.lane_code(TURN, "lanes", "step")
 
-# The lanes each agent's steps call for, as the architecture gives them: its run's values as the flow
-# gives them in the agent's prompt, or as turn.py start prints them.
+# The lanes each agent's steps call for, taking its run's values as the flow gives them in the
+# agent's prompt, or as turn.py start prints them.
 LAID = {
-    "turn:up": {"start_with", "follow_next", "hands_off", "read_whole", "as_printed"},
+    "turn:up": {"start_with", "follow_next", "hands_off", "read_only", "read_whole", "as_printed"},
     "turn:generator": {"read_only", "read_whole", "write_only", "hands_off", "in_form", "end_when"},
     "turn:first-user": {
         "read_only",
@@ -28,7 +28,7 @@ class TestLanes(unittest.TestCase):
     def test_each_agent_has_the_lanes_its_steps_call_for(self):
         # Given: turn's hooks
         # When: the lanes on each agent are read
-        # Then: each agent has the lanes the architecture lays on it
+        # Then: each agent has the lanes its steps call for
         on = {}
         for agent, _, lane, _ in testing.laid(TURN):
             on.setdefault(agent, set()).add(lane)

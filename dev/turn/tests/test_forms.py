@@ -644,6 +644,29 @@ class TestSchemas(FormTest):
             with self.subTest(name=name, value=value):
                 self.assertIsNone(self.out_of(name, value))
 
+    def test_the_shapes_of_an_item_each_schema_takes_are_those_the_flow_takes(self):
+        for name, form in (("claim.json", forms.CLAIM), ("reading.json", forms.FIRST_READING)):
+            with self.subTest(name=name):
+                # Given: a role's schema
+                with open(os.path.join(FORM_FILES, name), encoding="utf-8") as f:
+                    defs = json.load(f)["$defs"]
+                # When: the keys each choice of its item requires, but the checklist and ID, are
+                # read
+                choices = [defs[c["$ref"].rpartition("/")[2]] for c in defs["item"]["anyOf"]]
+                kept = ("checklist", "item")
+                shapes = {tuple(k for k in c["required"] if k not in kept) for c in choices}
+                # Then: they are the shapes the flow takes of the role's reply
+                self.assertEqual(shapes, set(form.shapes))
+
+    def test_an_item_of_two_shapes_or_a_key_of_its_own_is_out_of_its_schema(self):
+        for item in (dict(GOOD, places=["README.md:1-3"], did="x", lacking="y"), dict(GOOD, x=1)):
+            with self.subTest(item=item):
+                # Given: a reading whose item holds a Good and a stop, or a key no shape has
+                # When: it is held to the first user's schema
+                # Then: it is out at the item
+                out = self.out_of("reading.json", {"items": [item]})
+                self.assertEqual(out.told()[: len("$.items[0]")], "$.items[0]")
+
     def test_a_lesson_neither_own_nor_general_is_out_of_its_schema(self):
         # Given: the learner's lesson said to be for a role
         # When: it is held to the learner's schema

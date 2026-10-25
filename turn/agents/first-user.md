@@ -21,15 +21,15 @@ made again aimed at it, and you read it again.
    `receiver`, who the receiver is; `use`, what they use the work for; `parts`, the parts of the
    work, each `<path>:<from>-<to>`; `reply`, the file you write your reading to; and, on a run gone
    on after a stop, `since`, the messages sent to you before, each taken in turn as step 6 says.
-2. Read the work once from the top as the receiver, for the use, each file whole with
-   `cat -n <path>` in a command of its own, or with Read and no offset or limit. Of the rest of
-   `given`, open what the receiver would open for the use, each file whole the same way, and run
-   what they would run with the work, such as its tests or the commands it gives, each in a Bash
-   command of its own; make any input a command needs inside that command, in a folder from
-   `mktemp -d` that the command removes at its end.
-   Read only `{given}`. Read `{given}` to its end. Do not run `git commit` or `git push`.
-3. Read each checklist whole, the same way. Each item is a heading such as `### B-1: <title>`, its
-   ID `B-1`, and its `Scope` line says where its Good is:
+2. Read the work once from the top as the receiver, for the use, each file with `cat -n <path>` in a
+   command of its own, or with Read and no offset or limit. Of the rest of `given`, open what the
+   receiver would open for the use, each file the same way, and run what they would run with the
+   work, such as its tests or the commands it gives, each in a Bash command of its own; make any
+   input a command needs inside that command, in a folder from `mktemp -d` that the command removes
+   at its end. Read only `{given}`. Read `{given}` to its end.
+   Do not run `git commit` or `git push`.
+3. Read each checklist the same way. Each item is a heading such as `### B-1: <title>`, its ID
+   `B-1`, and its `Scope` line says where its Good is:
    - `its part`: at the lines that give it;
    - `each part`: in every part of `parts` on its own, at lines inside that part; the item has its
      Good only where every part gives it;
@@ -38,18 +38,8 @@ made again aimed at it, and you read it again.
    they tell you is so: run each command they give and compare what it prints with what they say,
    try each thing they say the code does on an input it is about, and look up each file and link
    they point to, each as in step 2.
-5. Write your reading to `reply` with the Write tool, as
-   `{"items": [<one per item of every checklist>]}`, each item
-   `{"checklist": "<its path>", "item": "<its ID>"}` with one of the three below.
-   Write only `{reply}`. Write `{reply}` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/reading.json`.
-   - `"good"`: what you get, and `"lines"`: the lines that give it, each
-     `"<path of the work>:<from>-<to>"`;
-   - for an item whose `Scope` is `each part`, `"parts"` in place of both:
-     `[{"part": "<as in parts>", "good": "<what you get there>", "lines": [...]}, ...]`, one for
-     every part;
-   - where you found no Good, `"places"`: the lines you looked at, for an item whose `Scope` is
-     `each part` those of each part that does not give it; `"did"`: what you did there, such as a
-     command you ran; and `"lacking"`: what you did not get.
+5. Write your reading to `reply` with the Write tool. Write only `{reply}`.
+   Write `{reply}` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/reading.json`.
 6. End your turn; a message may then come, as below. End only once `{reply}` is made.
    - JSON `{"remade": [<each file of the work>], "parts": [...], "reply": "..."}`: the work made
      again, with its parts as they are now. Do step 2 again on it, then go on from step 4, looking

@@ -69,15 +69,17 @@ def checked(run: dict[str, Any]) -> list[str]:
 
 def generator(run: dict[str, Any], sent_back: list[dict[str, Any]]) -> dict[str, Any]:
     """What the generator is given: the files it makes the work from, the work, the checklists,
-    each item sent back with what was found lacking, every answer the calling AI gave, and where it
-    replies."""
+    each item sent back with what was found lacking, every answer the calling AI gave, the run's
+    result, by which it has turn.py print the parts of the work it makes, and where it replies."""
+    result = run["call"]["result"]
     return {
-        "given": absolute(without_run_files(run["given"], run["call"]["result"])),
+        "given": absolute(without_run_files(run["given"], result)),
         "work": absolute(run["work"]),
         "checklists": absolute(run["checklist"]),
         "sent_back": sent_back,
         "answers": run.get("answers", []),
-        "reply": reply_path(run["call"]["result"], GENERATOR),
+        "result": os.path.abspath(result),
+        "reply": reply_path(result, GENERATOR),
     }
 
 

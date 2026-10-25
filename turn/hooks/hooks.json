@@ -2,12 +2,12 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": ".*|Bash|Write|Edit|NotebookEdit|Agent|SendMessage",
+        "matcher": ".*|Bash|Read|Grep|Write|Edit|NotebookEdit|Agent|SendMessage",
         "hooks": [
           {
             "type": "command",
             "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:up\"'*|*'\"agent_type\": \"turn:up\"'*) echo \"turn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 2;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:up '1:start_with:turn.py start' '3:follow_next:turn.py next' '3:hands_off:git commit,git push' '4:read_whole:{given}' '6:as_printed:turn.py questions'"
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:up\"'*|*'\"agent_type\": \"turn:up\"'*) echo \"turn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 2;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:up '1:start_with:turn.py start' '3:follow_next:turn.py next' '3:hands_off:git commit,git push' '4:read_only:{given}' '4:read_whole:{given}' '6:as_printed:turn.py questions'"
           }
         ]
       },
@@ -17,7 +17,7 @@
           {
             "type": "command",
             "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:generator\"'*|*'\"agent_type\": \"turn:generator\"'*) echo \"turn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 2;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:generator '2:read_only:{given}' '2:read_whole:{given}' '4:write_only:{work},{reply}' '4:hands_off:git commit,git push' '6:in_form:{reply},${CLAUDE_PLUGIN_ROOT}/forms/claim.json'"
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:generator\"'*|*'\"agent_type\": \"turn:generator\"'*) echo \"turn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 2;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:generator '2:read_only:{given}' '2:read_whole:{given}' '4:write_only:{work},{reply}' '4:hands_off:git commit,git push' '7:in_form:{reply},${CLAUDE_PLUGIN_ROOT}/forms/claim.json'"
           }
         ]
       },
@@ -59,7 +59,7 @@
           {
             "type": "command",
             "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:generator\"'*|*'\"agent_type\": \"turn:generator\"'*) echo \"turn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 1;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" turn:generator '7:end_when:{reply}'"
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:generator\"'*|*'\"agent_type\": \"turn:generator\"'*) echo \"turn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 1;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" turn:generator '8:end_when:{reply}'"
           }
         ]
       },

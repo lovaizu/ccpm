@@ -5,15 +5,18 @@
     "items",
     "questions"
   ],
+  "additionalProperties": false,
   "properties": {
     "items": {
       "type": "array",
+      "description": "one for each item of every checklist, or, before you have made anything, only the items that wait",
       "items": {
         "$ref": "#/$defs/item"
       }
     },
     "questions": {
       "type": "array",
+      "description": "numbered from 1 in their order, [] where none",
       "items": {
         "$ref": "#/$defs/question"
       }
@@ -21,32 +24,146 @@
   },
   "$defs": {
     "item": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/good"
+        },
+        {
+          "$ref": "#/$defs/parts"
+        },
+        {
+          "$ref": "#/$defs/waits"
+        }
+      ]
+    },
+    "good": {
       "type": "object",
+      "description": "an item given its Good, at the lines that give it",
       "required": [
         "checklist",
-        "item"
+        "item",
+        "good",
+        "lines"
       ],
+      "additionalProperties": false,
       "properties": {
         "checklist": {
-          "type": "string"
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
         },
         "item": {
-          "type": "string"
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "good": {
+          "type": "string",
+          "description": "what the receiver gets from the work that gives what the item asks"
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "<path of the work>:<from>-<to>"
+          },
+          "description": "the lines of the work that give it"
+        }
+      }
+    },
+    "parts": {
+      "type": "object",
+      "description": "an item whose Scope is `each part`, given a Good in every part of the work on its own",
+      "required": [
+        "checklist",
+        "item",
+        "parts"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "checklist": {
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
+        },
+        "item": {
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "parts": {
+          "type": "array",
+          "description": "one for every part of the work",
+          "items": {
+            "$ref": "#/$defs/part"
+          }
+        }
+      }
+    },
+    "part": {
+      "type": "object",
+      "description": "a part of the work and the Good it gives",
+      "required": [
+        "part",
+        "good",
+        "lines"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "part": {
+          "type": "string",
+          "description": "the part, as you were given it"
+        },
+        "good": {
+          "type": "string",
+          "description": "what the receiver gets there"
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "<path of the work>:<from>-<to>"
+          },
+          "description": "the lines inside the part that give it"
+        }
+      }
+    },
+    "waits": {
+      "type": "object",
+      "description": "an item only the user's answer can give its Good",
+      "required": [
+        "checklist",
+        "item",
+        "question"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "checklist": {
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
+        },
+        "item": {
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "question": {
+          "type": "integer",
+          "description": "the number of the question it waits on"
         }
       }
     },
     "question": {
       "type": "object",
+      "description": "a question for the user",
       "required": [
         "question",
         "recommended"
       ],
+      "additionalProperties": false,
       "properties": {
         "question": {
-          "type": "string"
+          "type": "string",
+          "description": "what to ask the user"
         },
         "recommended": {
-          "type": "string"
+          "type": "string",
+          "description": "the answer you would choose, and why, in one sentence"
         }
       }
     }
