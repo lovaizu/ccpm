@@ -40,10 +40,21 @@ def as_text(path: str) -> str:
 def said(part: dict[str, Any]) -> str:
     """One part of a message as the learner reads it."""
     if part.get("type") == "tool_use":
-        return f"[tool_use {part.get('name')}] {json.dumps(part.get('input'), ensure_ascii=False)}"
+        return f"[tool_use {part.get('name')}] {given(part.get('input'))}"
     if part.get("type") == "tool_result":
         return f"[tool_result] {result(part)}"
     return f"[{part.get('type')}] {part.get('text', '')}"
+
+
+def given(values: Any) -> str:
+    """What a tool was given, each value under its name, text as the agent wrote it, so a quote
+    of a file it wrote is found with its quotes and lines as they are; any other value as JSON."""
+    if not isinstance(values, dict):
+        return json.dumps(values, ensure_ascii=False)
+    return "\n".join(
+        f"{name}: {v if isinstance(v, str) else json.dumps(v, ensure_ascii=False)}"
+        for name, v in values.items()
+    )
 
 
 def result(part: dict[str, Any]) -> str:

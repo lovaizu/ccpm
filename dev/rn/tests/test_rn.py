@@ -2849,9 +2849,7 @@ class RecordsTest(LearningTest):
         # Then: the words and the call are shown, one to a line, and nothing else.
         self.assertEqual(
             self.shown(),
-            [
-                '[user] /rn:up\n[text] I keep the move.\n[tool_use Bash] {"command": "rn.py state"}\n'
-            ],
+            ["[user] /rn:up\n[text] I keep the move.\n[tool_use Bash] command: rn.py state\n"],
         )
 
     def test_records_with_a_move_not_kept_stop(self):

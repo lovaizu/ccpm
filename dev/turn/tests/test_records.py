@@ -42,13 +42,31 @@ class TestAsText(RecordTest):
         # Then: each part is shown by its type, the file shown whole by its name, and neither the
         # other attachment nor the copy
         self.assertIn('[user] {"given": []}', shown)
-        self.assertIn('[tool_use Read] {"file_path": "読む.md"}', shown)
+        self.assertIn("[tool_use Read] file_path: 読む.md\n", shown)
         self.assertIn("[tool_result] " + "x" * 2500 + "\n", shown)
         self.assertIn("[tool_result] done", shown)
         self.assertIn("[web_search_tool_result] found", shown)
         self.assertIn("[shown R.md] 1\t# csvtidy", shown)
         self.assertNotIn("copied request", shown)
         self.assertEqual(shown.count("[shown"), 1)
+
+    def test_a_tool_s_words_are_shown_as_the_agent_wrote_them(self):
+        # Given: a record holding a file written with quotes and lines, a tool given a value that
+        # is no text, and a tool given no object, each with words beyond ASCII
+        write = {"file_path": "R.md", "content": '{\n  "questions": []\n}\n'}
+        parts = [
+            {"type": "tool_use", "name": "Write", "input": write},
+            {"type": "tool_use", "name": "Bash", "input": {"command": "ls", "paths": ["読む.md"]}},
+            {"type": "tool_use", "name": "Odd", "input": ["読む"]},
+        ]
+        self.written({"type": "assistant", "message": {"content": parts}})
+        # When: it is shown as text
+        shown = records.as_text(self.path)
+        # Then: each value given is shown under its name, text as it is, so a quote of it is found
+        # as the agent wrote it, any other value as JSON
+        self.assertIn('[tool_use Write] file_path: R.md\ncontent: {\n  "questions": []\n}\n', shown)
+        self.assertIn('[tool_use Bash] command: ls\npaths: ["読む.md"]\n', shown)
+        self.assertIn('[tool_use Odd] ["読む"]\n', shown)
 
     def test_a_part_or_a_result_s_part_of_no_object_is_left_out(self):
         # Given: a record whose message holds a part that is no object, and a tool result whose

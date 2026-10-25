@@ -353,5 +353,20 @@
    "whole": 3.4
   },
   "read": "Every JSONL read. Sent back B-1, the generator read the README again, changed only its license with Edit, read and ran it again and wrote its claim anew with Write, no Edit on the reply the flow had removed; the first user read the work again and gave both items their Good; no hook stop."
+ },
+ {
+  "commit": "f87008c, each trial in its own temporary folder, by roles.py",
+  "sessions": {
+   "generator": "8756b366-eefe-4493-a964-cf8ca1d8e041",
+   "first-user": "60c44311-6c70-4052-90c0-9f5965196403",
+   "learner": "c1b03e1a-b4cd-4f5d-9f8f-7368b2cbf04f"
+  },
+  "minutes": {
+   "generator": 1.0,
+   "first-user": 0.8,
+   "learner": 1.0
+  },
+  "read": "Every JSONL read. The run made and removed /tmp/turn/20261026-roles-f647oun3, writing nothing beside it. The generator read the CCS and its files whole, wrote the README with its license, read it with cat -n, ran demo.sh in a folder from mktemp -d and claimed both items in its form. The first user, given the set README, read it, the checklist, demo.sh and the notes, ran demo.sh and stopped at B-1, its form filled. The learner read both records whole and found the set README as the first user's file differing from the generator's, rightly, as it cannot know the trial set it; its third lesson quoted the generator's Write of its claim, shown as JSON with every quote escaped, with the quotes unescaped, and the form sent it back.",
+  "cause": "records.as_text showed a tool's input as JSON, so a file an agent wrote was shown with its quotes and lines escaped and a quote of it as written was not found; each value is now shown under its name, text as it is, and the learner's three lessons pass the check on this run's records."
  }
 ]
