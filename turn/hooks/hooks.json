@@ -49,7 +49,7 @@
           {
             "type": "command",
             "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:up\"'*|*'\"agent_type\": \"turn:up\"'*) echo \"turn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 1;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" turn:up '6:as_printed:turn.py questions'"
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:up\"'*|*'\"agent_type\": \"turn:up\"'*) echo \"turn: install Python 3.9 or later, run as python3, for its hooks to run\" >&2; exit 1;; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" turn:up '3:follow_next:turn.py next' '6:as_printed:turn.py questions'"
           }
         ]
       },

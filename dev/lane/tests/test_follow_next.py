@@ -1,6 +1,7 @@
 """follow_next: once a script the lane takes has printed a move, one JSON line of a tool and its
-input, each call is a drift until one is that tool with each field printed equal; held from the
-subagent's record. Every other call is not."""
+input, each call, and the subagent's end, is a drift until a call is that tool with each field
+printed equal; held from the calls the subagent made before, on a tool call and as the subagent is
+about to end. Every other call, and end, is not."""
 
 import json
 import unittest
@@ -30,6 +31,11 @@ class FollowNextTest(helpers.PluginTest):
         return follow_next.drifts(
             helpers.call_of(self.called(tool, given)), TAKES, helpers.NO_PLUGIN
         )
+
+    def ends(self, calls):
+        """Whether the subagent drifts, about to end after the calls in its record."""
+        self.record(calls)
+        return follow_next.drifts(helpers.end_of(self.stopped("Done.")), TAKES, helpers.NO_PLUGIN)
 
 
 class TestDrift(FollowNextTest):
@@ -137,6 +143,35 @@ class TestLetThrough(FollowNextTest):
         self.assertFalse(follow_next.drifts(made, TAKES, helpers.NO_PLUGIN))
 
 
+class TestEnd(FollowNextTest):
+    """follow_next as the subagent is about to end."""
+
+    def test_ending_before_the_move_printed_is_taken_drifts(self):
+        for what, calls in {
+            "right after the print": [ran()],
+            "after another call": [ran(), helpers.bash("git diff")],
+            "after the move of the run before": [ran(), helpers.bash("git status"), ran()],
+        }.items():
+            with self.subTest(what=what):
+                # Given: the script run, having printed a move not taken since
+                # When: the subagent is about to end
+                # Then: it is a drift, as the move is its next
+                self.assertTrue(self.ends(calls))
+
+    def test_ending_with_no_move_due_is_no_drift(self):
+        for what, calls in {
+            "the move taken": [ran(), helpers.bash("git status")],
+            "the script not run": [helpers.bash("ls")],
+            "the script run, printing no move": [ran('{"returned": "r.json"}')],
+            "the script run again, printing no move": [ran(), ran('{"asked": "r.json"}')],
+        }.items():
+            with self.subTest(what=what):
+                # Given: no move printed by the script left to take
+                # When: the subagent is about to end
+                # Then: it is no drift
+                self.assertFalse(self.ends(calls))
+
+
 class TestGuard(GuardTest):
     """follow_next laid on step 2 of changelog-writer, run as Claude Code runs the hook."""
 
@@ -164,6 +199,23 @@ class TestGuard(GuardTest):
         # When: it takes the move
         # Then: the call goes on, nothing said
         self.assertEqual(self.moved("git status"), (0, ""))
+
+    def ended(self):
+        """What the guard does as the subagent is about to end."""
+        return self.guard(json.dumps(self.stopped("Done.")), entry="subagentstop.py")
+
+    def test_ending_before_the_move_is_taken_is_kept_going_with_the_sentence(self):
+        # Given: changelog-writer's record of the script run, having printed the move
+        # When: it is about to end
+        # Then: it is kept going, and told the sentence headed by the plugin
+        self.assertEqual(self.ended(), (2, f"notes: {self.FOLLOW}\n"))
+
+    def test_ending_once_the_move_is_taken_ends(self):
+        # Given: changelog-writer's record of the script run and the move taken
+        self.record([ran(), helpers.bash("git status")])
+        # When: it is about to end
+        # Then: it ends, nothing said
+        self.assertEqual(self.ended(), (0, ""))
 
 
 if __name__ == "__main__":

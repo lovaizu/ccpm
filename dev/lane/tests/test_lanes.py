@@ -169,13 +169,15 @@ class TestHeldOn(unittest.TestCase):
     def test_a_lane_is_held_on_the_events_its_module_names_or_on_a_tool_call(self):
         # Given: the lanes lane lays
         # When: the events each is held on are read
-        # Then: those on how the subagent ends are held on SubagentStop, as_printed, whose hand-on
-        # may be the last reply, on both, every other on PreToolUse alone
+        # Then: those on how the subagent ends are held on SubagentStop; as_printed, whose hand-on
+        # may be the last reply, and follow_next, whose move is due before the subagent ends, on
+        # both; every other on PreToolUse alone
         held = {
             "test_after": ("SubagentStop",),
             "end_when": ("SubagentStop",),
             "every_item": ("SubagentStop",),
             "as_printed": ("PreToolUse", "SubagentStop"),
+            "follow_next": ("PreToolUse", "SubagentStop"),
         }
         for name in lanes.LANES:
             with self.subTest(lane=name):
