@@ -701,6 +701,9 @@
   },
   {
    "fact": "2026-10-25: the user decided F11 A (9cf409d), F17 A (KR1.2 keeps no value; no comparison with an earlier version, as R57; lane's and turn's UX decisions and rn's design decisions fixed to that), F18 A (f87008c: every trial of lane, turn and rn makes its own folder in the system's temporary folder through trying.folder and prints it; judge.py takes the run folders trial.py printed)"
+  },
+  {
+   "fact": "2026-10-25: old sessions' temporary folders removed by name; roles trial run on f87008c in /tmp/turn/20261026-roles-f647oun3 (removed by the trial): generator, first user and learner each in form but one learner ground, a quote of a Write shown as escaped JSON; records.as_text now shows each tool value under its name, text as written (496199a), the learner's three lessons then pass; results.json kept"
   }
  ],
  "semantic_gist": [
@@ -805,7 +808,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "roles trial, rn from build-brief.md (plan.md B-9; rn's 28 lines past 100 columns, then E501 in ruff.toml), shared.md, final check; at release: lane into .claude-plugin/marketplace.json; ask the user whether to delete older sessions' folders under /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/. Never change agreed principles, UX or README intent unasked"
+   "next": "rn from build-brief.md (plan.md B-9; rn's 28 lines past 100 columns, then E501 in ruff.toml), shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Decide from the decisions, agreed docs and rules before asking; never change agreed principles, UX or README intent unasked"
   }
  ],
  "uncertainty_signal": [
