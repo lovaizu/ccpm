@@ -191,7 +191,18 @@ rn/                                  the plugin, installed by Claude Code with t
 │   ├── up/SKILL.md                  the orchestrator for /rn:up <skill>
 │   ├── ty/SKILL.md                  the orchestrator for /rn:ty, which the AI cannot call <skill>
 │   └── gm/SKILL.md                  the orchestrator for /rn:gm, which the AI cannot call <skill>
-├── scripts/                         the steering, each call to turn, a kind's checklists, the proposal, the user's answer, the records the learnings are made from <Python 3>
+├── scripts/                         what the orchestrator runs for each move a machine can judge <Python 3>
+│   ├── rn.py                        the command line, a subcommand for each move
+│   ├── steering.py                  the steering's form, read, held at every keep and changed
+│   ├── session.py                   the session's record: each move kept, each call to turn
+│   ├── ccs.py                       what each work's CCS holds beside its decisions
+│   ├── proposal.py                  the proposal at each sign-off, and the answers to it
+│   ├── conversations.py             the orchestrator's conversations, as Claude Code keeps them
+│   ├── stretch.py                   the stretch the learnings are made from
+│   ├── repo.py                      git and gh run, and the files written
+│   ├── stop.py                      each stop, and each value given checked
+│   ├── record.py, template.py       lane's readers of Claude Code's records and of Markdown, by links
+│   └── call.py, forms.py, records.py  turn's readers of a CCS, a checklist's items and a record, by links
 └── checklists/                      rn's own, one per kind <Markdown>
 
 <the user's repository>, on the piece of work's own branch

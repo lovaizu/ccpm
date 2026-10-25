@@ -22,8 +22,8 @@ from place import ROOT, SEED, Place, Seen
 
 sys.path.insert(0, os.path.join(ROOT, "rn", "scripts"))
 import record
-
-import rn
+import session
+import steering
 
 # The user's words, in the conversation language their instructions set.
 REQUEST = "/rn:up README に新しいコントリビューター向けの挨拶を一行足して"
@@ -42,7 +42,7 @@ TITLE = "Greet new contributors"
 PR = "https://github.com/trial/demo/pull/1"
 # The session's folder, named by the day rn.py start runs, as the state is made on the day the trial
 # runs; and the research T1 makes there.
-SESSION = f"{rn.RECORD}/{datetime.date.today():%Y%m%d}-{SLUG}"
+SESSION = f"{session.RECORD}/{datetime.date.today():%Y%m%d}-{SLUG}"
 RESEARCH = f"{SESSION}/place.md"
 
 # What rn.py ccs is given for each work, as the steps of /rn:up give it.
@@ -758,11 +758,11 @@ class Check(NamedTuple):
     holds: Callable[[Seen], bool]
 
 
-def steered(seen: Seen) -> rn.Steering | None:
+def steered(seen: Seen) -> steering.Steering | None:
     """The steering as the last commit holds it, where it holds its form."""
-    if not seen.text or rn.out_of_form(seen.text):
+    if not seen.text or steering.out_of_form(seen.text):
         return None
-    return rn.parsed(seen.text)
+    return steering.parsed(seen.text)
 
 
 def front(stage: str, signoff: str) -> Check:
@@ -788,7 +788,7 @@ def open_has(words: str, held: bool = True) -> Check:
 def open_none(nothing: bool = True) -> Check:
     def holds(seen: Seen) -> bool:
         s = steered(seen)
-        return s is not None and (s.open == [rn.NOTHING_OPEN]) == nothing
+        return s is not None and (s.open == [steering.NOTHING_OPEN]) == nothing
 
     return Check("Open is `None.`" if nothing else "Open holds a point", holds)
 
@@ -807,7 +807,7 @@ def ticked(action: str) -> Check:
         task, _, number = action.partition(".")
         return s is not None and any(
             t.id == task and a is not None and (a["number"], a["tick"]) == (number, "x")
-            for t in rn.tasks_of(s.plan)
+            for t in steering.tasks_of(s.plan)
             for _, _, a in t.actions
         )
 
@@ -817,7 +817,7 @@ def ticked(action: str) -> Check:
 def done(task: str) -> Check:
     def holds(seen: Seen) -> bool:
         s = steered(seen)
-        return s is not None and all(t.id != task for t in rn.tasks_of(s.plan))
+        return s is not None and all(t.id != task for t in steering.tasks_of(s.plan))
 
     return Check(f"{task} done, out of the steering", holds)
 
@@ -825,8 +825,8 @@ def done(task: str) -> Check:
 def kept_learnings(seen: Seen) -> list:
     """Each learning of the session's learnings as the last commit holds them, none before any is
     made."""
-    path = rn.learnings_path(os.path.dirname(seen.steering))
-    return [x for x in seen.texts.get(path, "").splitlines() if rn.LEARNING.fullmatch(x)]
+    path = session.learnings_path(os.path.dirname(seen.steering))
+    return [x for x in seen.texts.get(path, "").splitlines() if session.LEARNING.fullmatch(x)]
 
 
 def learnings(n: int) -> Check:

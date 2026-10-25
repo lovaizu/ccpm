@@ -6,17 +6,16 @@ import os
 import shutil
 import unittest
 
-# Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
-try:
-    import hypothesis  # pyrefly: ignore[missing-import]
-    from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
-except ImportError:
-    raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
+import ccs
+import proposal
+import steering
+import stop
+import template
+import testing
+from helpers import STEERED, LearningTest, RepoTest, plan, said, steered
 
-from helpers import testing
-from test_rn import STEERED, LearningTest, RepoTest, plan, rn, said, steering, template
-
-testing.load_hypothesis_profile()
+hypothesis = testing.hypothesis()
+st = hypothesis.strategies
 ALLOWED = "abcdefghijklmnopqrstuvwxyz0123456789-"
 # Any text a line of the steering can hold after an ID: no line break `splitlines` splits at,
 # no lone surrogate, which a UTF-8 file cannot hold, and no blank at either end, which a line
@@ -39,7 +38,7 @@ class PropertyTest(RepoTest):
         # Given: any slug of lowercase letters, digits and hyphens.
         # When: it is checked as a name.
         # Then: it is taken as it is.
-        self.assertEqual(rn.named(name, "slug"), name)
+        self.assertEqual(stop.named(name, "slug"), name)
 
     @hypothesis.given(
         st.tuples(
@@ -53,9 +52,9 @@ class PropertyTest(RepoTest):
         name = "".join(parts)
         # When: it is checked as a name.
         # Then: rn stops, naming it.
-        with self.assertRaises(rn.Stop) as stop:
-            rn.named(name, "kind")
-        self.assertIn(f"the kind {name!r} is not", str(stop.exception))
+        with self.assertRaises(stop.Stop) as stopped:
+            stop.named(name, "kind")
+        self.assertIn(f"the kind {name!r} is not", str(stopped.exception))
 
     @hypothesis.given(st.text(alphabet=ALLOWED, min_size=1), st.booleans())
     def test_any_path_with_a_file_or_folder_there_is_taken(self, name, folder):
@@ -67,7 +66,7 @@ class PropertyTest(RepoTest):
             self.write(path, "")
         # When: it is checked as what the receiver has.
         # Then: it is taken as it is.
-        self.assertEqual(rn.held(path), path)
+        self.assertEqual(ccs.held(path), path)
 
     @hypothesis.given(st.text(alphabet=ALLOWED, min_size=1))
     def test_any_path_with_nothing_there_stops(self, name):
@@ -75,53 +74,57 @@ class PropertyTest(RepoTest):
         path = os.path.join("none", name)
         # When: it is checked as what the receiver has.
         # Then: rn stops, naming it.
-        with self.assertRaises(rn.Stop) as stop:
-            rn.held(path)
-        self.assertIn(f"what the receiver has, {path}, is not there", str(stop.exception))
+        with self.assertRaises(stop.Stop) as stopped:
+            ccs.held(path)
+        self.assertIn(f"what the receiver has, {path}, is not there", str(stopped.exception))
 
     @hypothesis.given(st.text().filter(lambda t: t.strip()))
     def test_any_text_with_a_word_is_taken(self, text):
         # Given: any text holding something other than blanks.
         # When: it is checked as given.
         # Then: it is taken as it is.
-        self.assertEqual(rn.given(text, "receiver"), text)
+        self.assertEqual(stop.given(text, "receiver"), text)
 
     @hypothesis.given(st.text(alphabet=" \t\n\r"))
     def test_any_text_of_blanks_stops(self, text):
         # Given: any text of blanks alone, or nothing.
         # When: it is checked as given.
         # Then: rn stops, saying it is empty.
-        with self.assertRaisesRegex(rn.Stop, "the receiver is empty"):
-            rn.given(text, "receiver")
+        with self.assertRaisesRegex(stop.Stop, "the receiver is empty"):
+            stop.given(text, "receiver")
 
     @hypothesis.given(WORDS, st.lists(WORDS, min_size=1, max_size=5))
     def test_the_steering_gives_back_its_goal_and_each_criterion_as_written(self, goal, criteria):
         # Given: a steering whose goal and criteria are any texts a line can hold.
         listed = "\n".join(f"- AC{n}: {c}" for n, c in enumerate(criteria, 1))
-        text = steering(part=plan(goal=f"G1: {goal}", criteria=listed, tasks=""))
+        text = steered(part=plan(goal=f"G1: {goal}", criteria=listed, tasks=""))
         # When: it is held to its form, and its goal and criteria are read.
-        held = rn.out_of_form(text)
+        held = steering.out_of_form(text)
         # Then: it holds, and gives back each as written, by its ID.
         want = {"G1": goal, **{f"AC{n}": c for n, c in enumerate(criteria, 1)}}
-        self.assertEqual((held, rn.decided(text.splitlines(), ("", rn.CRITERIA))), ("", want))
+        self.assertEqual(
+            (held, steering.decided(text.splitlines(), ("", steering.CRITERIA))), ("", want)
+        )
 
     @hypothesis.given(SENTENCES, st.lists(WORDS, max_size=4))
     def test_the_steering_rn_writes_holds_its_form_and_reads_back(self, next_step, opened):
         # Given: any Next a line can hold but a heading, and any points open a line can hold.
         # When: rn writes the steering with them, and reads it back.
         open_lines = [f"- {o}" for o in dict.fromkeys(opened)] or ["None."]
-        written = rn.render(rn.parsed(STEERED)._replace(next=next_step, open=open_lines))
+        written = steering.render(
+            steering.parsed(STEERED)._replace(next=next_step, open=open_lines)
+        )
         # Then: it holds its form, and gives them back as written.
-        back = rn.parsed(written)
+        back = steering.parsed(written)
         self.assertEqual(
-            (rn.out_of_form(written), back.next, back.open), ("", next_step, open_lines)
+            (steering.out_of_form(written), back.next, back.open), ("", next_step, open_lines)
         )
 
     @hypothesis.given(IDS, IDS, st.sampled_from(["", "- "]))
     def test_what_changed_names_each_line_shown_once(self, before, now, bullet):
         # Given: any lines shown before and any now, by their keys, under a bullet or none.
         # When: what changed is said.
-        told = rn.changes(before, now, bullet)
+        told = proposal.changes(before, now, bullet)
         # Then: each now is shown once as changed or named once among those as before, the last
         # line, and each gone named as removed, each change under the bullet.
         changed = [line[len(f"{bullet}Changed: ") :] for line in told if "Changed: " in line]
