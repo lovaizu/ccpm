@@ -100,6 +100,18 @@ def served(steered: steering.Steering, work: str) -> dict[str, str]:
     return {key: text for key, text in said.items() if key in (task.serves or [])}
 
 
+def test_of(steered: steering.Steering, work: str) -> str | None:
+    """The command that checks the work, for the call that makes it: the one the completion
+    criterion of the work's task names, where it is one, for the task's last action of turn's, which
+    makes its result, the actions of turn's before it making the check and seeing it fail; None for
+    any other work."""
+    task = next((t for t in steering.tasks_of(steered.plan) if t.id == session.task_of(work)), None)
+    if task is None or not task.tests:
+        return None
+    last = [action.number for _, _, action in task.actions if action and action.path][-1]
+    return task.tests[0][2] if f"{task.id.lower()}.{last}" == work else None
+
+
 def done_made(folder: str, found: list[session.Call], plan: list[str]) -> list[str]:
     """The CCS of the latest call of each work of a task the plan no longer holds, done, in the
     order those calls were made: what the task served and decided, and the files it made, which

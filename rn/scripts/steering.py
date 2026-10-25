@@ -69,6 +69,10 @@ COMPLETION_FORM = (
     "`  Completion criterion: <what its result must do for what it serves, and the check that"
     " shows it>`"
 )
+# The one command that runs the check a task's completion criterion names, where it is one, on a
+# line of its own under it.
+TEST = re.compile(r"  Test: `(?P<command>[^`]+)`")
+TEST_FORM = "`  Test: `<the command>``"
 # Each action opens a line of its own under its task's completion criterion, ticked or not and
 # numbered, and runs on in lines indented under it, in one of two forms: the orchestrator's, with
 # the user, or turn's, making one work of a kind at a path, which turn's call is made on.
@@ -174,14 +178,16 @@ class Action(NamedTuple):
 class Task(NamedTuple):
     """A task of the steering: its ID, the number of its line, its line with those it runs on to as
     one, the IDs it serves, None where its line names none, whether it has its completion
-    criterion, and each line opening an action under it with its number, as the action it is, None
-    where it is out of an action's form."""
+    criterion, each line giving the command that checks its result with its number, as the command
+    it gives, None where it is out of that form, and each line opening an action under it with its
+    number, as the action it is, None where it is out of an action's form."""
 
     id: str
     n: int
     text: str
     serves: list[str] | None
     completion: bool
+    tests: list[tuple[int, str, str | None]]
     actions: list[tuple[int, str, Action | None]]
 
 
@@ -204,8 +210,16 @@ def task_of(item: Item) -> Task:
         text,
         None if served is None else ID.findall(served["ids"]),
         any(COMPLETION.fullmatch(said) for _, said in rest),
+        [(k, line, command_in(line)) for k, line in rest if line.startswith("  Test:")],
         actions_of(rest),
     )
+
+
+def command_in(line: str) -> str | None:
+    """The command the line gives as the one that checks a task's result, None where it is out of
+    that form."""
+    found = TEST.fullmatch(line)
+    return found["command"] if found else None
 
 
 def actions_of(lines: list[tuple[int, str]]) -> list[tuple[int, str, Action | None]]:
@@ -375,6 +389,17 @@ def task_out(task: Task, held: set[str]) -> str:
         )
     if not task.completion:
         return f"line {task.n}: expected {COMPLETION_FORM} under {task.id}, found none"
+    for k, (n, line, command) in enumerate(task.tests):
+        if command is None:
+            return (
+                f"line {n}: expected the one command that runs {task.id}'s check as {TEST_FORM},"
+                f" found `{line}`"
+            )
+        if k:
+            return (
+                f"line {n}: expected the one command that runs {task.id}'s check once, found"
+                f" `{line}`"
+            )
     if not task.actions:
         return f"line {task.n}: expected the actions of {task.id}, found none"
     for number, (n, line, action) in enumerate(task.actions, 1):

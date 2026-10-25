@@ -58,6 +58,9 @@ class FormTest(unittest.TestCase):
             "an action of the orchestrator's": steered(
                 part=plan(tasks=task().replace(ORCHESTRATED[0], ORCHESTRATED[1]))
             ),
+            "a command that checks the result": steered(
+                part=plan(tasks=task(test="sh dev/check.sh"))
+            ),
             "a kind after an": steered(
                 part=plan(tasks=task().replace("as a code work", "as an architecture work"))
             ),
@@ -241,6 +244,13 @@ class FormTest(unittest.TestCase):
             task().replace("as a code work. turn.", "as a code work.", 1): f"line 27: expected"
             f" action 1 of T1 {actions.format(1)}, found `  - [ ] 1. Make part 1 of T1,"
             " `src/t1-1.py` as a code work.`",
+            task(test="sh dev/check.sh").replace("`sh dev/check.sh`", "sh dev/check.sh"): (
+                "line 27: expected the one command that runs T1's check as `  Test: `<the"
+                " command>``, found `  Test: sh dev/check.sh`"
+            ),
+            task(test="a").replace("  Test: `a`", "  Test: `a`\n\n  Test: `b`"): (
+                "line 29: expected the one command that runs T1's check once, found `  Test: `b``"
+            ),
             task(ticks="xxxx"): "line 23: expected only tasks with an action not ticked, as a"
             " task leaves the steering once all its actions are, found T1 with every action"
             " ticked",

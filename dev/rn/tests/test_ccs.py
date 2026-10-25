@@ -410,6 +410,23 @@ class CcsTest(RepoTest):
             ({"deliverable": "src/t1-2.py"}, [{"checklist": self.checklist}]),
         )
 
+    def test_the_call_of_a_tasks_last_action_of_turns_tests_its_result(self):
+        # Given: a session whose T1's check is a command, its last action, the fourth, turn's.
+        tasks = task(test="sh dev/check.sh")
+        self.session(steered(part=plan(tasks=tasks), stage="build"))
+        # When: the orchestrator has the CCS of each of its actions written.
+        tests = [self.ccs(f"t1.{k}")["test"] for k in (1, 2, 3, 4)]
+        # Then: the call of the last gives turn that command, which checks the result it makes,
+        # and those before it none, as they make the check and see it fail.
+        self.assertEqual(tests, [None, None, None, "sh dev/check.sh"])
+
+    def test_the_call_of_a_task_with_no_command_or_of_another_work_tests_nothing(self):
+        # Given: a session whose T1 gives no command that checks its result.
+        # When: the orchestrator has the CCS of T1's last action written, and of the finished work.
+        tests = [self.ccs(work, "README.md")["test"] for work in ("t1.4", "deliverable")]
+        # Then: neither gives turn a command.
+        self.assertEqual(tests, [None, None])
+
     def test_a_work_not_a_tasks_with_no_kind_stops(self):
         # Given: a session.
         # When: the orchestrator has the CCS of the finished work written with no kind.

@@ -115,17 +115,20 @@ esac
 """
 
 
-def task(name: str = "T1", serves: str = "AC1", ticks: str = "    ") -> str:
-    """A task in the form of F-1 serving the IDs given, with an action of turn's for each character
-    of the ticks, ticked where it is `x`, each making a work of the kind KIND at a path of its own,
-    which `work_path` gives."""
+def task(
+    name: str = "T1", serves: str = "AC1", ticks: str = "    ", test: str | None = None
+) -> str:
+    """A task in the form of F-1 serving the IDs given, with the command that checks its result
+    where one is given, and an action of turn's for each character of the ticks, ticked where it is
+    `x`, each making a work of the kind KIND at a path of its own, which `work_path` gives."""
     actions = "\n".join(
         f"  - [{t}] {n}. Make part {n} of {name}, `{work_path(name, n)}` as a {KIND} work. turn."
         for n, t in enumerate(ticks, 1)
     )
+    command = "" if test is None else f"  Test: `{test}`\n\n"
     return (
         f"- {name}: Make the part {name}. Serves {serves}.\n\n"
-        f"  Completion criterion: it does what it serves, tried by hand.\n\n{actions}"
+        f"  Completion criterion: it does what it serves, tried by hand.\n\n{command}{actions}"
     )
 
 

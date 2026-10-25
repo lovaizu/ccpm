@@ -71,6 +71,8 @@ G1: <the user's purpose, with why they want it>
 
   Completion criterion: <what its result must do for what it serves, and the check that shows it>
 
+  Test: `<the one command that runs that check>`
+
   - [ ] 1. <what is found out or settled>. The orchestrator, with the user.
   - [ ] 2. <what is made, from which works before it>, `<its path>` as a <kind> work. turn.
 
@@ -86,8 +88,10 @@ G1: <the user's purpose, with why they want it>
 The goal and the criteria are there once made, and `## Tasks` while a task is left. A task has as
 many actions as its result needs, numbered from 1, each in one of the two forms above: the
 orchestrator's, with the user, or turn's, one work at one path, and research or a trial made at a
-path in the session's folder as a `research` or `trial` work. A task line has no tick, as a task is
-in the steering only while an action of it is not ticked.
+path in the session's folder as a `research` or `trial` work. The line `Test:` is there where the
+check is one command, such as the tests, which rn gives turn with the task's last action of
+turn's, the one that makes the result. A task line has no tick, as a task is in the steering only
+while an action of it is not ticked.
 `## Open` holds `None.` where nothing is open. The front matter, the ticks, Next and Open are
 written by rn's scripts.
 
@@ -143,6 +147,8 @@ Look for:
   a user could try apart;
 - a completion criterion that names no check, or a check made on something other than the task's
   result, such as how the task went;
+- a check that is one command, such as the tests, with no `Test:` line giving it, or a `Test:` line
+  whose command runs another check than the one the completion criterion names;
 - a task placed before one it builds on.
 
 Why: each task's result is made and accepted before the next task starts, so a slip shows while only
@@ -205,13 +211,16 @@ Look for:
 - the check made in the same action as the result, or after it;
 - a check named that no action makes, left to whoever makes the result;
 - no action seeing the check fail before the result is made;
-- the check made as a task of its own, apart from the result it checks.
+- the check made as a task of its own, apart from the result it checks;
+- an action of turn's after the one that makes the result, which the command that runs the check
+  would be given to in its place.
 
 Why: a check made with or after the result is fitted to what the result does, not to what it must
 do, and passes whatever was made; one seen failing first is shown to tell a result that meets the
-criterion from one that does not, and made in the same task it is accepted with that result. A
-check that is not made, such as a checklist read by turn's first user, is there before the result
-already.
+criterion from one that does not, and made in the same task it is accepted with that result; rn
+gives the command that runs it to the task's last action of turn's, so a work made after the result
+is checked in the result's place. A check that is not made, such as a checklist read by turn's first
+user, is there before the result already.
 
 ### B-5: The tasks give what their stage needs
 

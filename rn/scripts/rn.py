@@ -311,10 +311,14 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     repo.write_json(path, written)
     session.keep(folder, steered, f"Call {number} on {work}: handed to turn")
     # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
-    # of work; and the command that checks the work under "test", null for none for now, as rn's
-    # tasks name no such command yet, which they will give once rn is rebuilt.
+    # of work; and the command that checks the work under "test", null where there is none.
     result = session.call_path(folder, number, session.RESULT)
-    return {"ccs": path, "kind": ccs.ENTRIES, "result": result, "test": None}
+    return {
+        "ccs": path,
+        "kind": ccs.ENTRIES,
+        "result": result,
+        "test": ccs.test_of(steered, work),
+    }
 
 
 def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> str:
