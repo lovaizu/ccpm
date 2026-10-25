@@ -50,6 +50,17 @@ class TestRoundEnd(ReadTest):
         self.due(out)
         self.assertEqual(self.prompt()["sent_back"], [STOPPED_B1])
 
+    def test_after_an_item_made_again_the_first_user_and_the_learner_take_every_item(self):
+        # Given: a round ended with one item without Good, made again by the generator
+        # When: the first user reads the work again, finding every Good, and the learner is due
+        # Then: the line for each counts every item, not the one made again
+        self.due(self.first_read(FOUND))
+        out = self.made()
+        self.assertTrue(str(out["line"]).endswith("of README.md, for 2 items, round 2."), out)
+        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:first-user")
+        out = self.replied({"items": self.reading(FOUND, FOUND_B1)})
+        self.assertTrue(str(out["line"]).endswith("of README.md, for 2 items, round 2."), out)
+
     def test_a_reading_with_no_good_goes_to_the_next_round_with_every_item(self):
         # Given: a first user finding no item's Good
         # When: the orchestrator goes on

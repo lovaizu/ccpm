@@ -161,14 +161,13 @@ def counted(count: int, word: str) -> str:
     return f"{count} {word}{PLURAL.get(count, 's')}"
 
 
-def covered(run: dict[str, Any], agent: str) -> list[dict[str, Any]]:
-    """The items the next move covers: those left to word a question for, those sent back to the
-    generator, or else every item."""
-    if agent == UP and run["stage"] == "left":
-        return run["left"]
-    if agent == GENERATOR and run.get("back"):
-        return run["back"]
-    return run["items"]
+def covered(run: dict[str, Any]) -> list[dict[str, Any]]:
+    """The items the next move covers: those the generator is given to make again, those left to
+    word a question for, or else every item."""
+    step = run.get("next")
+    if step:
+        return step["prompt"].get("sent_back") or run["items"]
+    return run["left"] if run["stage"] == "left" else run["items"]
 
 
 def tell(run: dict[str, Any]) -> dict[str, Any]:
@@ -184,7 +183,7 @@ def tell(run: dict[str, Any]) -> dict[str, Any]:
     work = ", ".join(run["work"])
     done = run.pop("done", "")
     line = f"turn: {done + ' ' if done else ''}Next, {agent} will {does}, of {work}"
-    line += f", for {counted(len(covered(run, agent)), 'item')}, round {run['round']}."
+    line += f", for {counted(len(covered(run)), 'item')}, round {run['round']}."
     run["told"] = True
     state.save(run)
     return {"line": line, "move": {"tool": "SendMessage", "input": {"to": MAIN, "message": line}}}
