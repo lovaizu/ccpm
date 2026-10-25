@@ -683,6 +683,9 @@
   },
   {
    "fact": "2026-10-25: the user: lane:up is deleted, not kept unchanged (left, it is noise); lane's README and UX rewritten to the use without it (the building AI writes the proposal JSON, `lay.py print` to check, `lay.py write`), not shown to the user as it follows from the deletion; report only what was removed. A subagent rebuilding lane to the brief (scratchpad lane-ports-brief.md) was still running at /clear, commits d247485..19cd4ba made (lanes.json, JSON out, IN validation and errors, ports, adapters run, adapters in the proposal); told: hold the empty value, then validation at entry with errors stopped; one schema per lane used by lanes.md, the layer and the guard; skip up.md and list its untrue lines. It writes logs into this session's scratchpad (mutate*.log), to remove after"
+  },
+  {
+   "fact": "2026-10-25: the lane subagent's 8 commits (65f7ec9..37c5531) read by hand at ports, guard, hook, lanes, hooks_file, lanes.md (lay.py and proposal.py rested on tests and mutation); check.sh lane 601, turn 180, rn 197 OK 100%, properties OK; its two points settled as the only way: a lane taking a run's value is held once start_with's script has run, and the values port lets keys known only on a run. The user decided test_after's test for turn: turn's call takes `test`, required, one command (the caller joins lint, tests, link checks into one, as `sh dev/check.sh <plugin>`) or null for none, as structured outputs and OpenAPI 3.1 make a field required and nullable; turn passes it to the generator as a run value and lays test_after on `{work}` and `{test}`; lane, for every lane alike: a run value given as null rests the lane on that run, a value not given or given empty stays an error. test_after's several tests stay 'any one passes', for other spellings of one test"
   }
  ],
  "semantic_gist": [
@@ -787,7 +790,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: the lane subagent's report arrives as a notification (it survives /clear); if none, find whether it still runs (pgrep -af cosmic-ray, git log 683cd5f..HEAD, git status). Then check its commits by hand against the brief and the messages above; check.sh, properties, mutate for lane, turn, rn; then delete lane:up: lane/agents/up.md, the lanes on lane:up in lane/hooks/hooks.json and lanes.json, its trials in dev/lane/trials/, its parts in CHANGELOG, dev/lane/architecture.md, dev/lane/ux.md, lane/README.md and the decisions file, keeping lay.py; README and UX to the use by the proposal and lay.py; push; remove scratchpad logs; then lay turn's every_item on generator and first-user with an items adapter for `### <ID>:` headings through the layer; then ask the user where turn's roles get the test command for test_after, a value never empty now; then the earlier steps: turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check"
+   "next": "mutate lane, turn, rn on 37c5531 running (scratchpad mutate-*.log); on its end, start a subagent on scratchpad lane-up-delete-brief.md (lane:up deleted, README and UX to the proposal and lay.py), check it by hand, push; then lane's null run value (tests first) and turn's `test` in its call, passed to the generator, test_after laid on {work} and {test}, with every_item on generator and first-user and an items adapter for `### <ID>:` headings, through the layer; then the earlier steps: turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check"
   }
  ],
  "uncertainty_signal": [
