@@ -686,6 +686,9 @@
   },
   {
    "fact": "2026-10-25: the lane subagent's 8 commits (65f7ec9..37c5531) read by hand at ports, guard, hook, lanes, hooks_file, lanes.md (lay.py and proposal.py rested on tests and mutation); check.sh lane 601, turn 180, rn 197 OK 100%, properties OK; its two points settled as the only way: a lane taking a run's value is held once start_with's script has run, and the values port lets keys known only on a run. The user decided test_after's test for turn: turn's call takes `test`, required, one command (the caller joins lint, tests, link checks into one, as `sh dev/check.sh <plugin>`) or null for none, as structured outputs and OpenAPI 3.1 make a field required and nullable; turn passes it to the generator as a run value and lays test_after on `{work}` and `{test}`; lane, for every lane alike: a run value given as null rests the lane on that run, a value not given or given empty stays an error. test_after's several tests stay 'any one passes', for other spellings of one test"
+  },
+  {
+   "fact": "2026-10-25: pushed up to 6b50879: lane:up deleted (544755b..66ac56c; lay.py reached by claude plugin list --json's installPath, the proposal in lane/<yyyymmdd>-<plugin>/ in the temporary folder); lane's null run value rests a lane, empty text an error (cbc7631); the proposal held to one JSON Schema made from hooks/lanes.json's (f5c9342, 927a065); turn's call takes `test`, one command or null, passed to the generator (e1f9396), rn and turn's trials pass null (9b3bc44); test_after on generator step 4 ({work}, {test}), every_item on first-user step 4 ({checklists}) with turn/hooks/adapters/items-checklist.py, not on the generator, whose claim before making holds only the items that wait (1969f46); the item rule in the adapter alone, call.py loading it by runpy, the adapter mutated (7b56c7f, 6b50879); rn's plan.md B-9: a check made in the session is made first and seen failing (990cc03, 9f05db9). The user: mutation left to pre-push and CI; tests designed first (cases and data by ISTQB) then failing then code, in every brief; build up lane, turn, rn in order, never jump"
   }
  ],
  "semantic_gist": [
@@ -790,7 +793,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "a subagent runs scratchpad lane-null-brief.md (lane's null run value, the proposal held to one JSON Schema); check it by hand from its test design, push with 9f05db9; then turn's `test` in its call (one command or null), passed to the generator, test_after laid on {work} and {test}, every_item on generator and first-user with an items adapter for `### <ID>:` headings, through lay.py; then turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check; at release: lane into .claude-plugin/marketplace.json"
+   "next": "on resume: a subagent runs scratchpad turn-folders-brief.md (turn's state and replies in .turn/<yyyymmdd>-<name>/ at the root, the learner's records in turn/<yyyymmdd>-<name>/ in the temporary folder; rn.py's commits and refusals meeting .turn/); its report arrives as a notification, survives /clear; if none, check git log 6b50879..HEAD and git status. Check it by hand from its test design, check.sh lane turn rn, push (pre-push mutates). Then: lane read whole against fix.md B-4 (dev/lane/architecture.md:77-78 on the record), roles trial, rn from build-brief.md (rn's code tasks: a check made first per plan.md B-9; feedback back by rn's learnings), shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Remove the scratchpad brief after"
   }
  ],
  "uncertainty_signal": [
