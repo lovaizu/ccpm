@@ -19,13 +19,15 @@ DOCUMENT = ".md"
 TOP = 2
 # A form given inside a ```json fence, as a model often writes JSON, is the form itself.
 FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
-# The shapes of a Good: one, with the lines that give it, or one for each part of the work, for an
-# item asked of each part.
-ONE = ("good", "lines")
-EACH = ("parts",)
-# A stop: the places of the work where the Good was looked for, what was done there and what was
-# not got, so that the work made again is aimed at where it stopped and at what was missing there.
-STOP = ("places", "did", "lacking")
+# The roles' form files, each holding the shapes of an item, one choice each, beside the plugin's
+# scripts, found from this file as it is, as rn takes it through a link.
+FORM_FILES = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "forms")
+# The keys every item holds beside its shape, which name it.
+NAMING = ("checklist", "item")
+# The key of a Good given at its lines, which an item asked of each part does not take, and of the
+# Goods given for each part, which no other item takes.
+ONE_GOOD = "lines"
+EACH_GOOD = "parts"
 # The keys whose value is words, wherever an item holds them.
 WORDED = ("can", "good", "did", "lacking")
 # The keys of a lesson and of each of its grounds, and where a lesson goes: into the user's own
@@ -33,6 +35,15 @@ WORDED = ("can", "good", "did", "lacking")
 LESSON = {"lesson", "whose", "grounds"}
 GROUND = {"record", "quote"}
 WHOSE = ("own", "general")
+
+
+def shapes(path: str) -> tuple[tuple[str, ...], ...]:
+    """The shapes of an item the form file at the path takes: the keys each choice of its item
+    requires but those that name it, in the order of the choices."""
+    with open(path, encoding="utf-8") as f:
+        defs = json.load(f)["$defs"]
+    choices = [defs[c["$ref"].rpartition("/")[2]] for c in defs["item"]["anyOf"]]
+    return tuple(tuple(k for k in c["required"] if k not in NAMING) for c in choices)
 
 
 class Form(NamedTuple):
@@ -53,9 +64,9 @@ class Form(NamedTuple):
 CHECK = Form((("can",), ("question",)), asks=True)
 # The generator claims the Good it set for every item, or the question it waits on; asking before
 # it makes anything, it gives only the items waiting.
-CLAIM = Form((ONE, EACH, ("question",)), asks=True, asks_first=True)
+CLAIM = Form(shapes(os.path.join(FORM_FILES, "claim.json")), asks=True, asks_first=True)
 # The first user gives every item the Good it found, or where it stopped.
-FIRST_READING = Form((ONE, EACH, STOP))
+FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")))
 # Each item two rounds leave without Good waits on a question the orchestrator words.
 LEFT = Form((("question",),), asks=True)
 
@@ -156,14 +167,14 @@ def item_problems(
             continue
         seen.append(key)
         # An item asked of each part gives a Good for every part, and any other one Good.
-        barred = ONE if key in of_each else EACH
-        shapes = [s for s in form.shapes if s != barred]  # pragma: no mutate
-        held = [s for s in shapes if all(k in item for k in s)]
+        barred = ONE_GOOD if key in of_each else EACH_GOOD
+        taken = [s for s in form.shapes if barred not in s]
+        held = [s for s in taken if all(k in item for k in s)]
         shaped = [k for s in held for k in s]
-        rest = [k for k in item if k not in ("checklist", "item") and k not in shaped]
+        rest = [k for k in item if k not in NAMING and k not in shaped]
         if len(held) != 1 or rest:
             asked = ", as it is asked of each part" if key in of_each else ""
-            said.append(f"{name} must hold {allowed(shapes)}{asked}")
+            said.append(f"{name} must hold {allowed(taken)}{asked}")
             continue
         said += value_problems(name, item, work)
     if every:

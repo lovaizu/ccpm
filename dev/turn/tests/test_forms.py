@@ -646,19 +646,16 @@ class TestSchemas(FormTest):
             with self.subTest(name=name, value=value):
                 self.assertIsNone(self.out_of(name, value))
 
-    def test_the_shapes_of_an_item_each_schema_takes_are_those_the_flow_takes(self):
-        for name, form in (("claim.json", forms.CLAIM), ("reading.json", forms.FIRST_READING)):
-            with self.subTest(name=name):
-                # Given: a role's schema
-                with open(os.path.join(FORM_FILES, name), encoding="utf-8") as f:
-                    defs = json.load(f)["$defs"]
-                # When: the keys each choice of its item requires, but the checklist and ID, are
-                # read
-                choices = [defs[c["$ref"].rpartition("/")[2]] for c in defs["item"]["anyOf"]]
-                kept = ("checklist", "item")
-                shapes = {tuple(k for k in c["required"] if k not in kept) for c in choices}
-                # Then: they are the shapes the flow takes of the role's reply
-                self.assertEqual(shapes, set(form.shapes))
+    def test_the_shapes_of_an_item_are_the_choices_its_form_file_gives(self):
+        # Given: a form file whose item is a choice of two shapes, each requiring the checklist,
+        # the ID and keys of its own
+        choice = {"type": "object", "required": ["checklist", "item", "a", "b"]}
+        defs = {"item": {"anyOf": [{"$ref": "#/$defs/x"}, {"$ref": "#/$defs/y"}]}, "x": choice}
+        defs["y"] = dict(choice, required=["checklist", "item", "c"])
+        self.write_json("form.json", {"type": "object", "$defs": defs})
+        # When: the shapes of its item are read
+        # Then: they are each choice's own keys, in the order of the choices
+        self.assertEqual(forms.shapes("form.json"), (("a", "b"), ("c",)))
 
     def test_an_item_of_two_shapes_or_a_key_of_its_own_is_out_of_its_schema(self):
         for item in (dict(GOOD, places=["README.md:1-3"], did="x", lacking="y"), dict(GOOD, x=1)):

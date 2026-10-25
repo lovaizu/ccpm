@@ -15,9 +15,8 @@ excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
 # where no input tells a mutant of it apart: by order with the first or the last of them, such as
 # "each part", the first of the scopes in order, or `__name__`, which is "__main__" or, imported by
 # the tests, "turn", after it; or by `is` with a small number, of which CPython keeps one copy, such
-# as a heading's level, or with the very object the value is, as a shape is one of the tuples a
-# form is made of. Each such line holds that comparison alone, as the mark leaves out every mutant
-# of its line.
+# as a heading's level. Each such line holds that comparison alone, as the mark leaves out every
+# mutant of its line.
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a heading of the level below and one of the level above, so a
 # comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not
