@@ -790,7 +790,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "a subagent runs scratchpad lane-up-delete-brief.md (lane:up deleted, README and UX to the proposal and lay.py), check it by hand from its test design first, push (mutation left to pre-push and CI, as the user said); then lane's null run value (tests first) and turn's `test` in its call, passed to the generator, test_after laid on {work} and {test}, with every_item on generator and first-user and an items adapter for `### <ID>:` headings, through the layer; then the earlier steps: turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check"
+   "next": "a subagent runs scratchpad lane-null-brief.md (lane's null run value, the proposal held to one JSON Schema); check it by hand from its test design, push with 9f05db9; then turn's `test` in its call (one command or null), passed to the generator, test_after laid on {work} and {test}, every_item on generator and first-user with an items adapter for `### <ID>:` headings, through lay.py; then turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check; at release: lane into .claude-plugin/marketplace.json"
   }
  ],
  "uncertainty_signal": [
@@ -825,7 +825,7 @@
    "open": "turn's 5 items the calling AI judged unmet (whole-work repetition, contradiction, an unfollowable pointer): investigate from the records whether the first user's miss lies in the checklist, its steps or a hook, after the Good check goes, as the user asked"
   },
   {
-   "open": "for rn's step (the user, 2026-10-25): a task making code runs as two actions in order, tests first (cases and data designed by code.md's ISTQB techniques, read by a first user, seen failing), then the code holding the tests fixed; the order is the flow's, as a checklist judges only the deliverable. Also: the user's repeated feedback must flow back into rules and checklists by rn, as now it is noted and lost"
+   "open": "for rn's step (the user, 2026-10-25): rn makes work of any kind, not a plugin's alone; a check made first is asked in plan.md B-9 (9f05db9) only where the check is itself made in the session; the user's repeated feedback, kept now as memories, goes back by rn's learnings (Principle 8), sorted by checklist.md's path into the repository's .rn/checklists/ or rn's own checklists, once rn runs; lane, turn, rn built up in that order meanwhile"
   }
  ],
  "retrieved_artifacts": [
