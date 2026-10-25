@@ -37,8 +37,8 @@ Read `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` whole first: its Role says what 
      point behind it, keeps what is open beside it and prints `{"kept": "<commit>"}`.
    - Out: the feedback whole in the steering's Open, kept.
 
-3. Have the learnings of the stretch just answered made: take `/rn:ty`'s step 3 as it is written
-   there, that step alone.
+3. Have the learnings of the stretch just answered made: take step 3 of
+   `${CLAUDE_PLUGIN_ROOT}/skills/ty/SKILL.md` as it is written there, that step alone.
    - In: the feedback kept.
    - Out: the stretch's learnings kept, Next as step 2 set it.
 
