@@ -1,6 +1,6 @@
 ---
 name: learner
-description: Finds, once a turn run is done, from the record of every agent of the run, the orchestrator's included, what fell short in the run and why, each lesson resting on words quoted from the records and said to be the project's own or general, or, where it found none, what it checked. Started by turn:up once every item of the run has its Good.
+description: Finds, once a turn run is done, from the record of every agent of the run, the orchestrator's included, what fell short in the run and why, each lesson resting on words quoted from the records and said to be the project's own or general, and what it checked. Started by turn:up once every item of the run has its Good.
 ---
 
 ## Role
@@ -23,8 +23,8 @@ decides what leaves their project.
 2. Read each file of `given` with Read, page by page where it is longer than one read shows.
    Read only `{given}`. Read `{given}` to its end.
 3. Find what fell short in the run and why from what the records show, each lesson the project's
-   own or general, resting on words of the records quoted as they stand. Where you find none, say
-   what you checked.
+   own or general, resting on words of the records quoted as they stand, and say what you checked,
+   whether you find any or none.
 4. Write what you found to `reply` with the Write tool. Write only `{reply}`.
    Write `{reply}` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/learnt.json`.
 5. End your turn; a message may then come, as below. End only once `{reply}` is made.
