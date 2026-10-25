@@ -25,8 +25,7 @@ few user stories, each one way the user uses the product at its edge, such as a 
 the stories are taken on by logical components, each of which may serve several; and each component
 is realized by a technology, chosen at this layer alone, so the stories and the components follow
 from what the UX needs. What to check of each kind of part and of the stories, and how far, is the
-project's rule, not the architecture's: the architecture links it, and where the project has none
-for a kind, the rule is made first. An architecture built on a base architecture writes only what is
+project's rule, not the architecture's: the architecture links it. An architecture built on a base architecture writes only what is
 its own, and links the base for the rest.
 
 ## Format
@@ -154,7 +153,7 @@ that says how it is checked, from a link to it?
 
 Look for:
 - a kind of part, such as code or a prompt, or the user stories, that no rule of the project
-  checks, which is a rule to be made first rather than a check written here;
+  checks;
 - a check written here that the project's rule already gives, or that differs from it;
 - a case's inputs, stand-ins or bar to pass, which belong to the tests.
 

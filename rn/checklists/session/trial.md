@@ -29,11 +29,12 @@ says whether it works, and whether it passed?
 
 Look for:
 - no check, or one that depends on who reads the output, such as "runs well";
+- a check set after the run, fitted to what came out;
 - a verdict on more than was tried, such as a whole tool judged by one of its commands.
 
-Why: the user decides and the maker builds on the verdict; one without a check is a reading of the
-output that another would read otherwise, and one wider than the try is built on where it was never
-tried.
+Why: the user decides and the maker builds on the verdict; one without a check, or with a check
+fitted to the output, is a reading of the output that another would read otherwise, and one wider
+than the try is built on where it was never tried.
 
 ### B-2: Run again by another
 
@@ -79,7 +80,17 @@ Look for:
   bears on the verdict;
 - output the verdict does not rest on, given whole;
 - one thing said in two places;
-- a term of the tool tried that the reader may not know, with no line showing its meaning.
 
 Why: the reader reads the result to decide or to build, so each line beyond that costs them a
-reading and buries what came out, and a term read with a guess is acted on the wrong way.
+reading and buries what came out.
+
+### B-5: Each term known
+
+Scope: whole
+
+Can the reader tell what each term means where they meet it, because they know it or a line shows
+its meaning?
+
+Look for: a term of the tool tried that the reader may not know, with no line showing its meaning.
+
+Why: a term read with a guess is acted on the wrong way.

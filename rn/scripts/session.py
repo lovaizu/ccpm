@@ -162,8 +162,8 @@ def kept_steering(folder: str) -> steering.Steering:
     point = steering.out_of_form(last or "")
     if point:
         raise stop.Stop(
-            f"rn: {path} as the last commit holds it is out of the form of rn's plan checklist's"
-            f" F-1: {point}; rn keeps none so, so restore the last one rn kept from"
+            f"rn: {path} as the last commit holds it is out of its form: {point}; rn keeps none so,"
+            " so restore the last one rn kept from"
             f" `git log -p -- {path}`, commit it, then run this again"
         )
     return steering.parsed(last or "")

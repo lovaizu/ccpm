@@ -1,5 +1,5 @@
-"""The tests of the steering's form, rn's plan checklist's F-1, which a steering is held to at every
-keep, and of how it is read."""
+"""The tests of the steering's form, its plan in the form of rn's plan checklist's F-1, which a
+steering is held to at every keep, and of how it is read."""
 
 from __future__ import annotations
 
@@ -26,8 +26,8 @@ ORCHESTRATED = (
 
 
 class FormTest(unittest.TestCase):
-    """What a steering is held to at every keep: rn's plan checklist's F-1, front matter, headings,
-    IDs and ticks."""
+    """What a steering is held to at every keep: its front matter, its plan in the form of rn's plan
+    checklist's F-1, headings, IDs and ticks, and Next and Open."""
 
     def assert_out(self, text: str, point: str) -> None:
         """Asserts the steering's text is out of its form by the point."""

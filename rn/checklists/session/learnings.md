@@ -8,8 +8,8 @@ made_from:
 
 # Learnings
 
-The learnings, `learnings.md` in the session's record, the folder where rn keeps one piece of work,
-are used by the user once they approve the finished work, as rn puts each to them one per message,
+The learnings, `learnings.md` in the session's folder `.rn/<yyyymmdd>-<slug>/`, where rn keeps one
+piece of work, are used by the user once they approve the finished work, as rn puts each to them one per message,
 to decide where it goes: into their checklists, `.rn/checklists/<kind>.md` in their repository,
 which their later work is made with; to rn's makers as an issue, which makes rn better for everyone;
 both; or neither. They decide from each learning alone, without opening the records it was found in.
@@ -50,14 +50,14 @@ reads what happened before where it goes, the order in which they judge it.
 Scope: its part
 
 Can the user tell from each learning what happened in the session, and see it in the quoted words of
-the records it rests on, each quote saying whose words they are and at which move?
+the records it rests on, each quote saying whose words they are and at which move, each thing rn's
+orchestrator did in turn, such as a point asked or a work handed to turn?
 
 Look for:
 - a learning with no quote, or a quote not as the record shows it;
 - a cause the quoted words do not show;
 - a quote with nothing saying whose words they are and where, such as the user's feedback at the
   plan sign-off, a commit message or a message the orchestrator sent;
-- a term of rn's insides, such as a script's subcommand, that no line shows the meaning of;
 - how the learning was found, which the user's decision does not use.
 
 Why: the user decides from the learning alone, so one resting on a guess sends a wrong rule to their
@@ -104,14 +104,25 @@ Scope: whole
 
 Does each place where the stretch's records show rn fell short come to the user as a learning?
 
-Look for a place no learning takes up:
-- a change the user sent back at a sign-off, which the feedback in a commit message shows;
+Look for:
+- a change the user sent back at a sign-off, which the feedback in a commit message shows, that no
+  learning takes up;
 - a question turn asked while it ran that the points put to the user could have settled, an answer
-  added to a work's decisions during the run;
-- a move that does not rest on the facts of the move before it;
-- a change to the work that no result of turn's names;
+  added to a work's decisions during the run, that no learning takes up;
+- a move that does not rest on the facts of the move before it, that no learning takes up;
+- a change to the work that no result of turn's names, that no learning takes up;
 - a message to the user out of the form rn gives it, such as one holding more than one point, or the
-  recommended option not first.
+  recommended option not first, that no learning takes up.
 
 Why: a shortfall not learnt is met again in later work, and the user, who saw only what came to
 them, cannot add what the records alone show.
+
+### B-5: Each word known to the user
+
+Scope: whole
+
+Can the user tell what each word of a learning means, without knowing rn's insides?
+
+Look for: a term of rn's insides, such as a script's subcommand, that no line shows the meaning of.
+
+Why: the user decides from the learning alone, and a word they cannot read is decided with a guess.

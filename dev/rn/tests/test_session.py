@@ -414,10 +414,7 @@ class StartTest(RepoTest):
         # When: the orchestrator starts one with a title over two lines.
         out = self.stopped(*self.start(title="Add\nlogin"))
         # Then: rn says the steering would be out of its form, and the branch stays.
-        said = (
-            "rn: the steering would be out of the form of rn's plan checklist's F-1: line 11: expected the goal"
-            in out
-        )
+        said = "rn: the steering would be out of its form: line 11: expected the goal" in out
         self.assertEqual((said, self.out("branch", "--show-current")), (True, "work\n"))
 
 
@@ -725,8 +722,7 @@ class StateTest(RepoTest):
         # When: the orchestrator keeps a move.
         # Then: rn names the point and says to restore one rn kept from its history.
         self.assertIn(
-            f"rn: {STEERING} as the last commit holds it is out of the form of rn's plan"
-            " checklist's F-1: line 4: expected stage to be plan, design, build, deliverable,"
+            f"rn: {STEERING} as the last commit holds it is out of its form: line 4: expected stage to be plan, design, build, deliverable,"
             " learnings or finished, found done; rn keeps none so, so restore the last one rn"
             f" kept from `git log -p -- {STEERING}`, commit it, then run this again",
             self.stopped(*self.state()),
@@ -740,7 +736,7 @@ class StateTest(RepoTest):
         # When: the orchestrator keeps a move.
         # Then: rn says it is out of form, as there is none.
         self.assertIn(
-            "out of the form of rn's plan checklist's F-1: line 1: expected the front matter",
+            "out of its form: line 1: expected the front matter",
             self.stopped(*self.state()),
         )
 
@@ -753,8 +749,7 @@ class StateTest(RepoTest):
                 out = self.stopped("state", "--next", heading, "--message", "m")
                 # Then: rn names the point and keeps nothing.
                 said = (
-                    "rn: the steering would be out of the form of rn's plan checklist's F-1:"
-                    " line 34: expected only the headings"
+                    "rn: the steering would be out of its form: line 34: expected only the headings"
                 )
                 self.assertEqual((said in out, self.read(STEERING)), (True, STEERED))
 
@@ -841,7 +836,7 @@ class PutTest(RepoTest):
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
         # Then: rn says a done task is in no steering, and keeps nothing.
-        said = "F-1: line 23: expected only tasks with an action not ticked" in out
+        said = "its form: line 23: expected only tasks with an action not ticked" in out
         self.assertEqual((said, self.read(STEERING)), (True, before))
 
     def test_the_first_tasks_are_taken_from_t1(self):
@@ -962,7 +957,7 @@ class PutTest(RepoTest):
         # When: the orchestrator puts it back with Next holding a heading.
         out = self.stopped("state", "--next", "## Notes", "--put", "0001", "--message", "m")
         # Then: rn names the point, and writes no learnings.
-        said = "rn: the steering would be out of the form of rn's plan checklist's F-1" in out
+        said = "rn: the steering would be out of its form" in out
         self.assertEqual((said, os.path.exists(LEARNINGS)), (True, False))
 
     def test_learnings_out_of_form_stop_and_keep_nothing(self):
@@ -1019,10 +1014,7 @@ class PutTest(RepoTest):
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
         # Then: rn names the point, says to have turn make it again, and keeps nothing.
-        said = (
-            "rn: the steering would be out of the form of rn's plan checklist's F-1: line 32:"
-            " expected only the headings"
-        )
+        said = "rn: the steering would be out of its form: line 32: expected only the headings"
         kept = "nothing is kept: give what this move writes again so it holds, or have turn make the part it puts back again"
         self.assertEqual((said in out, kept in out, self.read(STEERING)), (True, True, STEERED))
 
@@ -1035,7 +1027,7 @@ class PutTest(RepoTest):
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
         # Then: rn names the action, and keeps nothing.
-        said = "F-1: line 29: expected action 3 of T1 in one of the forms" in out
+        said = "its form: line 29: expected action 3 of T1 in one of the forms" in out
         self.assertEqual((said, self.read(STEERING)), (True, STEERED))
 
     def test_a_call_not_there_stops(self):

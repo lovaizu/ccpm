@@ -47,22 +47,18 @@ same place in every file, before reading any body.
 
 ## Benefit
 
-### B-1: The same behavior wherever it is run
+### B-1: The same behavior on any machine
 
 Scope: whole
 
 Does whoever runs the code get the behavior the requirements ask, on any machine with only what the
-development rules name, and alongside another run of it?
+development rules name?
 
-Look for:
-- an import, a tool or a feature of the language beyond what the development rules name, or newer
-  than the oldest version of the runtime they name;
-- a file, port, folder or other place a run writes or holds that another run at the same time, such
-  as a second session or a second test worker, could write or hold too.
+Look for: an import, a tool or a feature of the language beyond what the development rules name, or
+newer than the oldest version of the runtime they name.
 
 Why: what the code uses beyond the development rules is missing on some user's machine, and the code
-fails there for a reason the user was never told; runs that share a place they write overwrite each
-other's work, and the fault shows only when they happen to meet, so a test seldom finds it.
+fails there for a reason the user was never told.
 
 ### B-2: A stop cleared by what it says
 
@@ -200,3 +196,16 @@ for every test, where it could be made once and copied.
 
 Why: a test run that takes minutes is run less often, and mutation testing multiplies its time by
 the number of mutants, so the maintainer waits on every change, or stops running the checks.
+
+### B-9: The same behavior beside another run
+
+Scope: whole
+
+Does whoever runs the code get the behavior the requirements ask while another run of it goes on at
+the same time?
+
+Look for: a file, port, folder or other place a run writes or holds that another run at the same
+time, such as a second session or a second test worker, could write or hold too.
+
+Why: runs that share a place they write overwrite each other's work, and the fault shows only when
+they happen to meet, so a test seldom finds it.

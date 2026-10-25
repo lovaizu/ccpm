@@ -1,4 +1,5 @@
-"""The steering, the map to the user's purpose kept current: its form, rn's plan checklist's F-1, read
+"""The steering, the map to the user's purpose kept current: its form, the plan in the form of rn's
+plan checklist's F-1 under the front matter and above Next and Open, which rn's scripts write, read
 and held at every keep, as rn's scripts read their data from it and the user reads the same file at
 each sign-off; written back in that form's layout; and changed only as a move changes it, each
 action done ticked, each task done taken out and each part turn made put back."""
@@ -280,8 +281,9 @@ def all_ticked(task: Task) -> bool:
 
 
 def out_of_form(text: str) -> str:
-    """The point the steering's text is out of the form of rn's plan checklist's F-1 by, at its
-    line, what was expected and what was found; "" where it holds."""
+    """The point the steering's text is out of its form by, at its line, what was expected and what
+    was found: the front matter, Next and Open as rn's scripts write them, and the plan between them
+    as rn's plan checklist's F-1 gives it; "" where it holds."""
     lines = text.splitlines()
     try:
         found = template.keys(lines)
@@ -475,7 +477,7 @@ def held_form(text: str) -> None:
     point = out_of_form(text)
     if point:
         raise stop.Stop(
-            f"rn: the steering would be out of the form of rn's plan checklist's F-1: {point};"
+            f"rn: the steering would be out of its form: {point};"
             " nothing is kept: give what this move writes again so it holds, or have turn make the"
             " part it puts back again"
         )

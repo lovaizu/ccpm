@@ -8,13 +8,13 @@ made_from:
 
 # Plan
 
-A plan, the part of `steering.md` from its title to its tasks, in the session's record, the folder
-where rn keeps one piece of work, is read by the user at each sign-off, where rn waits for their
-answer, to approve what the finished work will do and why or send it back, and on the pull request,
-to see what is left of the work. In every later conversation the orchestrator, the AI of rn that
-talks with the user and decides each move, reads it as the map to the user's purpose: from it and
-what each move found, it decides what to do next and leads the user and turn, the plugin that makes
-each work for rn, there without asking the user again.
+A plan, the part of `steering.md` from its title to its tasks, in the session's folder
+`.rn/<yyyymmdd>-<slug>/`, where rn keeps one piece of work, is read by the user at each sign-off,
+where rn waits for their answer, to approve what the finished work will do and why or send it back,
+and on the pull request, to see what is left of the work. In every later conversation the
+orchestrator, the AI of rn that talks with the user and decides each move, reads it as the map to
+the user's purpose: from it and what each move found, it decides what to do next and leads the user
+and turn, the plugin that makes each work for rn, there without asking the user again.
 
 A plan serves them by tying each thing made to the user's purpose in links of one kind, each checked
 against the one above it. The goal holds that purpose, with why the user wants it; the acceptance
@@ -23,20 +23,10 @@ the deliverable sign-off, where rn last waits for the user's answer, so that a f
 every criterion reaches the goal; and each task's completion criterion says what its result must do
 for the criteria it serves, so that results passing every completion criterion pass the criteria
 they serve. The tasks are laid backward from the criteria, from what each criterion needs back to
-what can be made now, and are made for the stage at hand, as each stage rests on what the one before
-it settled: in the plan stage those that reach the criteria, in the design stage one for each
-document the purpose needs, if any, and in the build stage those that build the finished work. A
-task is one result, accepted by its completion criterion; its actions are only what that result
-needs, each saying who does it: the orchestrator with the user, or turn making one work of a named
-kind at a named path, one call to turn for each work. Where the result rests on what no one in the
-session yet knows, an action before the making finds it out: research into current practice, best
-practice and official information, or a small trial of a way before it is built on, each a work turn
-makes in the session's folder and hands, by name, to the later works that rest on it; what it finds
-may add tasks or drop them when the plan is made again. Where the check a completion criterion
-names is itself made, such as tests, it is made by an action before the result's and seen to fail
-on what is there, so the result is made to the check and not the check to the result. The plan
-holds only what is left of the work, what is done or learnt kept elsewhere. turn makes the plan,
-from the title to the tasks, in a file of its own, and these items judge it.
+what can be made now; a task is one result, accepted by its completion criterion, and its actions
+are only what that result needs. turn makes the plan in a file of its own, and these items judge
+it; rn's scripts put it back into the steering, under the front matter they write and above what
+comes next and what is open.
 
 ## Format
 
@@ -44,19 +34,9 @@ from the title to the tasks, in a file of its own, and these items judge it.
 
 Scope: whole
 
-Does the steering the plan is put back into follow this template, front matter, headings and IDs
-included?
+Does the plan follow this template, headings and IDs included?
 
 ```markdown
----
-rn: <rn's version>
-pr: <the pull request's URL>
-stage: <plan, design, build, deliverable, learnings or finished>
-signoff: <none, plan, design or deliverable>
-artifact-language: <the language of everything rn writes into the repository>
-conversation-language: <the language rn speaks to the user in>
----
-
 # <The piece of work, in a few words>
 
 G1: <the user's purpose, with why they want it>
@@ -75,14 +55,6 @@ G1: <the user's purpose, with why they want it>
 
   - [ ] 1. <what is found out or settled>. The orchestrator, with the user.
   - [ ] 2. <what is made, from which works before it>, `<its path>` as a <kind> work. turn.
-
-## Next
-
-<the step of /rn:up to take next, by its number, and on what>
-
-## Open
-
-- <what is open>
 ```
 
 The goal and the criteria are there once made, and `## Tasks` while a task is left. A task has as
@@ -90,13 +62,11 @@ many actions as its result needs, numbered from 1, each in one of the two forms 
 orchestrator's, with the user, or turn's, one work at one path, and research or a trial made at a
 path in the session's folder as a `research` or `trial` work. The line `Test:` is there where the
 check is one command, such as the tests, which rn gives turn with the task's last action of
-turn's, the one that makes the result. A task line has no tick, as a task is in the steering only
-while an action of it is not ticked.
-`## Open` holds `None.` where nothing is open. The front matter, the ticks, Next and Open are
-written by rn's scripts.
+turn's, the one that makes the result. A task line has no tick; the ticks are rn's scripts' to
+write.
 
-Why: rn's scripts refuse a steering out of this form at every keep, as they read the front matter,
-the IDs, the ticks, Next and Open by these names, and the user reads the same file at each sign-off.
+Why: rn's scripts refuse a plan out of this form at every keep, as they read the IDs, the forms of
+the actions and the ticks by these names, and the user reads the same lines at each sign-off.
 
 ## Benefit
 
@@ -180,7 +150,7 @@ left or done twice, and two calls on one work make it twice; one the result does
 only its maker reads, takes the time the result needed, drifts from the purpose, and is left for no
 one to keep.
 
-### B-8: Each task made on checked ground
+### B-5: Each task made on checked ground
 
 Scope: its part
 
@@ -199,7 +169,7 @@ Why: a task begun on a gap fills it with a guess, which the user sends back once
 a fact checked or a way tried before anything is built on it shows a wrong guess while it is small;
 and a finding not handed on is guessed again by the maker who needed it.
 
-### B-9: Each result made to a check made first
+### B-6: Each result made to a check made first
 
 Scope: its part
 
@@ -222,7 +192,7 @@ gives the command that runs it to the task's last action of turn's, so a work ma
 is checked in the result's place. A check that is not made, such as a checklist read by turn's first
 user, is there before the result already.
 
-### B-5: The tasks give what their stage needs
+### B-7: The tasks give what their stage needs
 
 Scope: whole
 
@@ -249,7 +219,7 @@ nothing builds it, one no task gives is never built, and the finished work misse
 approved; a task made for a later stage rests on guesses about what the stages before it settle,
 and one kept after a finding showed it needless is made for nothing.
 
-### B-6: Each line used by its readers
+### B-8: Each line used by its readers
 
 Scope: whole
 
@@ -261,7 +231,7 @@ Look for:
 - a decision of one work, such as a library a task's result uses, which the call to turn that makes
   that work keeps;
 - a task whose actions are all done, whose result the repository and its call to turn keep;
-- a learning, which `learnings.md` in the session's record keeps;
+- a learning, which `learnings.md` in the session's folder keeps;
 - where the session stands, such as what is next or open, written in the goal, a criterion or a
   task, which the ticks, Next and Open hold;
 - one thing said in two places, such as a task saying again what a criterion it serves says.
@@ -269,7 +239,7 @@ Look for:
 Why: the plan is read in every conversation, so each line beyond what its readers use costs them a
 reading each time, and a thing said in two places comes to say two things as one of them changes.
 
-### B-7: Each line taken as meant
+### B-9: Each line taken as meant
 
 Scope: whole
 

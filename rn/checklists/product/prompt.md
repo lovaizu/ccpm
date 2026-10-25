@@ -16,9 +16,9 @@ The AI already reasons well and knows common practice, so a prompt gives it only
 know or do without it: the role expected of it and why, and the steps whose doing or order it would
 otherwise vary. How exactly a step is set down follows how easily it breaks: what a script, a hook
 or another step reads is written exactly, and what nothing reads is left to the AI's judgment. What
-must come out the same is done by a script, its form is kept in a form file, and a step a hook
-holds is told again by that hook; the prompt names each of these files and does not say what they
-hold again.
+must come out the same is done by a script, its form is kept in a form file, and a hook tells the
+AI a step it holds again when the AI drifts from it; the prompt names each of these files and does
+not say what they hold again.
 
 ## Format
 
@@ -137,18 +137,26 @@ Look for:
 Why: an instruction read another way than meant is followed the other way, and the result looks
 right to the AI that followed it.
 
-### B-6: What is the user's reaches the user
+### B-6: What is the user's decided by the user
 
 Scope: whole
 
-Does each thing only the user can decide, or must see while the AI works, reach the user?
+Does each thing only the user can decide reach the user before it is acted on?
 
 Look for:
 - a choice only the user can make that the prompt has the AI settle;
-- an action hard to undo, such as deleting, merging or sending, taken without asking first;
-- what the user must see while the AI works left to the AI's words between its tool calls, rather
-  than shown by a script or a hook.
+- an action hard to undo, such as deleting, merging or sending, taken without asking first.
 
-Why: an AI that decides for the user leaves its guess to be taken as the user's choice, an action
-hard to undo cannot be taken back once the user sees it, and words between tool calls are written
-on some runs only.
+Why: an AI that decides for the user leaves its guess to be taken as the user's choice, and an
+action hard to undo cannot be taken back once the user sees it.
+
+### B-7: What the user must see shown to them
+
+Scope: whole
+
+Does each thing the user must see while the AI works reach them on every run?
+
+Look for: what the user must see while the AI works left to the AI's words between its tool calls,
+rather than shown by a script or a hook.
+
+Why: words between tool calls are written on some runs only.

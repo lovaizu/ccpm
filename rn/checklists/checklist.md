@@ -59,7 +59,8 @@ Scope: <its part, each part or whole>
 
 <Question answered yes or no, asking what the user gets>
 
-Look for: <the signs a deliverable falls short of it; left out where the question needs none>
+Look for: <the signs a deliverable falls short of it, each a thing to be found in the deliverable;
+left out where the question needs none>
 
 Why: <what goes wrong for the user without it>
 ```
@@ -89,7 +90,8 @@ Why: a judgment names the text it was made by, and no draft between releases tak
 Scope: its part
 
 Does `made_from` name the version of this file and of `usability.md` that stand now? This file
-names `usability.md` alone, as it is made from itself.
+names `usability.md` alone, as it is made from itself, and `usability.md`, what every checklist is
+made from, names none.
 
 Why: a checklist made from an earlier version of its inputs asks what they no longer ask, and the
 version shows which checklists to make again when an input changes.
@@ -133,7 +135,8 @@ Does each item ask a thing the purpose needs that no other item asks?
 
 Look for: an item that is one way of meeting another item, such as an example or a file layout; a
 point asked in two items; a point of `usability.md` the kind does not need; steps of the work,
-which are the plan's tasks; a part of the template only some deliverables need.
+which say how a deliverable is made rather than what its user gets; a part of the template only
+some deliverables need.
 
 Why: what is asked is answered on every deliverable, so an item beyond the purpose is added to
 every deliverable of the kind, and each answer costs the maker and the judge a reading.

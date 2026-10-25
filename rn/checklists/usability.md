@@ -16,9 +16,6 @@ one they need; and at the end, every question they came with answered. Each item
 what the reader has and does with the deliverable alone, never by whether it matches the sources it
 was made from, which is not what the reader uses it for.
 
-Each kind's checklist is made from this file, as `checklist.md` says, taking in its own terms each
-point its user needs; a deliverable is judged by its kind's checklist alone.
-
 ## Format
 
 ### F-1: Shape
@@ -49,44 +46,40 @@ bold marks where to stop, and on every item it marks nothing out.
 
 ## Benefit
 
-### B-9: Whether it serves their purpose
+### B-1: Whether it serves their purpose
 
 Scope: its part
 
 On opening the document, can the reader tell whether it serves their purpose?
 
-Look for: the main point right under the title.
-
 Why: a reader who cannot tell reads on to find out, or leaves a document that would have served
 them; one who can reads each part knowing what it supports.
 
-### B-16: Who does what, at a glance
+### B-2: Who does what, at a glance
 
 Scope: its part
 
 Where the document tells of several that act in turn, can the reader see who does what, what passes
 between them and in what order at a glance, instead of piecing it together from sentences spread
-through the document?
+through the document? A document that tells of no such thing passes.
 
-For a reader who is a person, that is one figure, with the text beside it saying only what the
-figure cannot show; for an AI reading a prompt, it is the steps. A document that tells of no such
-thing passes.
-
-In a figure whose boxes are of different kinds, each box holds its name, with its kind beside it
-as one short word in angle brackets, such as `turn:up <agent>`.
+Look for:
+- for a reader who is a person, no one figure of it, or text beside the figure saying again what
+  the figure shows; for an AI reading a prompt, no steps of it;
+- in a figure whose boxes are of different kinds, a box without its name, or without its kind
+  beside it as one short word in angle brackets, such as `turn:up <agent>`.
 
 Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
 what rows of a table make them assemble, while an AI reads a figure as text, in order; a box that
 holds a description buries the name the text calls it by.
 
-### B-12: Every term known
+### B-3: Every term known
 
 Scope: each part
 
-Can the reader tell what each term means where they meet it, because they already know it or the
-place where it is first used, a sentence, an example or a figure, shows what it means?
-
-A term is any word the document uses for a thing of its subject, whether set in code or not.
+Can the reader tell what each term, any word the document uses for a thing of its subject, set in
+code or not, means where they meet it, because they already know it or the place where it is first
+used, a sentence, an example or a figure, shows what it means?
 
 Look for: a plain word used in a sense of its own, such as a word for a part of the subject or for
 someone who acts in it, that no sentence explains; a name or an example taken from another product
@@ -95,7 +88,7 @@ beside it, such as another plugin of the same marketplace, which the reader may 
 Why: a term never explained is read with a guess at its meaning, and the reader's picture differs
 from the writer's where the guess is wrong.
 
-### B-13: One name for each thing
+### B-4: One name for each thing
 
 Scope: whole
 
@@ -103,7 +96,7 @@ Does the reader meet each thing under one name from start to end?
 
 Why: a reader takes a second name for a second thing.
 
-### B-14: One meaning for each name
+### B-5: One meaning for each name
 
 Scope: whole
 
@@ -111,12 +104,12 @@ Does each name keep one meaning for the reader from start to end?
 
 Why: a name whose meaning shifts carries its first meaning into the place where it has changed.
 
-### B-11: Read once from the top
+### B-6: Read once from the top
 
 Scope: each part
 
-Can the reader read each sentence without going back or ahead, because each word, reason and step
-it rests on comes before it?
+Can the reader read each sentence without going back or ahead, because each reason and step it
+rests on comes before it?
 
 Look for: a decision whose reason comes later or elsewhere; a link or a pointer that sends the
 reader ahead for what a sentence rests on.
@@ -124,42 +117,34 @@ reader ahead for what a sentence rests on.
 Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
 guess, so the picture is not taken in by one reading from the top.
 
-### B-20: The form that fits
+### B-7: The form that fits
 
 Scope: each part
 
 Is each thing shown in the form its reader takes in most easily for that thing, such as a directory
-tree for where files are placed, a table for values set side by side, a figure for who acts on whom,
-and sentences for a reason?
+tree for where files are placed, a table for values set side by side, and sentences for a reason?
 
 Why: a thing put in a form that does not fit it, such as files drawn as boxes, makes the reader
 turn it back into the shape they know before they can use it.
 
-### B-4: Every part used
+### B-8: Every part and word used
 
 Scope: each part
 
-Does the reader use each part toward the purpose they came for, without skipping it or reading again
-what they already took in?
+Does the reader use each part toward the purpose they came for, without skipping it or reading
+again what they already took in, each word of it giving them something they would lose without
+it?
 
 Look for: a part meant for someone other than the reader, such as a reviewer; an opening or a
 section that tells what the document is or does in place of telling the subject; terms gathered
-ahead of the content; the history of how a decision was reached; a comparison or an example for an
-idea the reader already holds.
+ahead of the content; a comparison or an example for an idea the reader already holds; a word the
+sentence says as well without.
 
-Why: a part the reader skips or reads twice costs effort beyond the subject, and buries the parts
-they need.
+Why: a part the reader skips or reads twice, and every word beyond what the subject asks, costs
+effort spent on how the document is written instead of on the subject, and buries the parts they
+need.
 
-### B-19: As short as the subject allows
-
-Scope: each part
-
-Does each word the reader reads give them something they would lose without it?
-
-Why: every word beyond what the subject asks is effort spent on how the document is written instead
-of on the subject.
-
-### B-3: Each idea taken in whole
+### B-9: Each idea taken in whole
 
 Scope: whole
 
@@ -168,19 +153,19 @@ Can the reader take in each idea the document takes up whole, without guessing a
 Why: an idea touched on in part is completed by a guess, and a gap covered by smooth sentences is
 acted on without the reader noticing.
 
-### B-6: Still true later
+### B-10: Still true later
 
 Scope: each part
 
 Can the reader rely on what the document says for as long as the subject's purpose and decisions
 stand?
 
-What stays true is the purpose, the decisions and their reasons; steps, status and how the work went
-change with each piece of work.
+Look for: steps, status, or how the work went or a decision was reached, which change with each
+piece of work where the purpose, the decisions and their reasons stay.
 
 Why: a document that has turned wrong is worse than none, since it is believed.
 
-### B-7: Said in one place
+### B-11: Said in one place
 
 Scope: whole
 
@@ -194,7 +179,7 @@ Why: two places that say one thing come to disagree as one of them changes, and 
 tell which holds; once the reader skims a run of repeats, they skim the one new point among them
 too; a rule read apart from the case where it does not hold is followed there too.
 
-### B-21: Every statement true together
+### B-12: Every statement true together
 
 Scope: whole
 

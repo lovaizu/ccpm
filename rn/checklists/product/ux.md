@@ -20,8 +20,8 @@ back until they reach it; and the benefits, what they gain with this product, wh
 choose it. It holds only what the user deals with; what the product does inside is the
 architecture's. Most of what a product gives, such as a document's worth or the time it takes, is
 not met or missed but come close to, so each version is judged by how close it brings the user,
-with no target value: a value the user's need does not rest under draws the work toward
-the number rather than the user. A version comes closer from the highest key result, and a lower one
+with no target value: a number the user's need does not set draws the work toward the number
+rather than toward the user. A version comes closer from the highest key result, and a lower one
 is never brought closer by moving a higher one away.
 
 ## Format
@@ -45,7 +45,7 @@ Does the UX follow this template, headings and IDs included?
 
 <That they stand from the highest priority, and why in that order>
 
-- KR1.1: <What is measured for G1, which way is better, and its value once G1 is reached>
+- KR1.1: <What is measured for G1, which way is better, and how it stands once G1 is reached>
 
   <Why a better value shows the user closer to G1>
 

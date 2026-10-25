@@ -84,8 +84,18 @@ Look for:
 - how the research went, such as what was searched for or sources read that gave nothing;
 - a finding the question does not need;
 - one fact said in two places;
-- a term from a source that the reader may not know, with no line showing its meaning;
 - options set side by side in sentences where a table would show them at once.
 
 Why: the reader reads the result to decide or to build, so each line beyond that costs them a
-reading and buries the facts they came for, and a term read with a guess is acted on the wrong way.
+reading and buries the facts they came for.
+
+### B-5: Each term known
+
+Scope: whole
+
+Can the reader tell what each term means where they meet it, because they know it or a line shows
+its meaning?
+
+Look for: a term from a source that the reader may not know, with no line showing its meaning.
+
+Why: a term read with a guess is acted on the wrong way.

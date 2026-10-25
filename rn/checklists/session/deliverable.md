@@ -8,11 +8,11 @@ made_from:
 
 # Deliverable
 
-The finished work, every file a piece of work's branch changed outside `.rn/`, the folder where rn
-keeps its record of the work, is used by the user at the deliverable sign-off, where rn last waits
-for their answer, to approve it or send it back. Using it as they would once it is merged, with
-what they have, they find that it does each acceptance criterion of the plan, `steering.md` in that
-record, each one thing the finished work must do for the user's purpose.
+The finished work is every file a piece of work's branch changed outside `.rn/`, where rn keeps the
+session's folder. The user uses it at the deliverable sign-off, where rn last waits for their
+answer, to approve it or send it back. Using it as they would once it is merged, with what they
+have, they find that it does each acceptance criterion of the plan, the part of `steering.md` in
+the session's folder that says what the finished work must do for the user's purpose.
 
 The finished work serves the user by what it does when used, not by what it holds: each task's
 result was made with its own kind's checklist and accepted on its own, so what is left to check is
@@ -37,7 +37,8 @@ Look for:
   command, a setting or a tool to install;
 - two files that lead the user two ways, such as a README naming a command the code does not take.
 
-Why: the user approves the finished work from the proposal, which shows the criteria, so a
+Why: the user approves the finished work from the proposal, what rn shows them at the sign-off,
+which shows the criteria, so a
 criterion not done when used is a change they send back at the end, after all of the work is built;
 and one done only for whoever made the work, who knows the step no file tells, is not done for the
 user.
