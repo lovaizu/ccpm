@@ -52,8 +52,8 @@ ASKS = (
     START
     + "If it returns with questions, take each question's recommended answer as the user's, write"
     " it into notes/decisions.md as a line of its own, and send the answer to the same agent with"
-    " SendMessage, to the agent ID its start gave back. When it returns with a line saying the"
-    " result is written, reply with that line."
+    " SendMessage, to the agent ID its start gave back. When it returns with no questions, reply"
+    " with the line it returned."
 )
 PLAIN = START + "When it returns, reply with the line it returned."
 # Each way's steps for the calling AI, in the order the docstring lists them.
