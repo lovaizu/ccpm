@@ -7,10 +7,10 @@ starts for one job, is told to do. The lane is a sentence of the step together w
 drift from it and tells the AI the sentence again.
 
 lane is a Claude Code plugin for you if you have an AI build your plugin, one whose work an AI does
-in several steps. While building it, your AI calls lane, answers its points from what it knows of
-your plugin and approves the lanes itself; lane asks you nothing. lane lays the lanes on your plugin's
-subagents, and on every run lane's code lets each subagent notice its drift and tells it the step
-again.
+in several steps. While building it, your AI proposes the lanes from what it knows of your plugin,
+has lane show them as they would be laid and approves them itself; lane asks you nothing. lane lays
+the lanes on your plugin's subagents, and on every run lane's code lets each subagent notice its
+drift and tells it the step again.
 
 ## Example
 
@@ -22,18 +22,12 @@ orchestrator, the AI that holds the run and decides each move. The orchestrator 
 3. Write the new entries into `CHANGELOG.md`.
 ```
 
-While building `notes`, your AI starts lane's subagent `lane:up`, which reads the plugin's skills
-and subagents. It sends your AI, all in one reply, each point they do not settle and each fact it found
-that its proposal rests on, and your AI answers them from what it knows of your plugin:
-
-```
-Step 3 of changelog-writer writes `CHANGELOG.md`. Is it the only file it writes, and who commits it?
-```
-
-Your AI answers that it is the only one, and that the orchestrator commits it once you have read it
-and said OK. Once every point is settled, `lane:up` proposes the lanes on the steps that alone are
-not sure to hold, each under the action it watches: begin, read, write, run, test, hand on, follow,
-wait or end; with its hook, and the step as it would read:
+While building `notes`, your AI knows that `CHANGELOG.md` is the only file step 3 writes, and that
+the orchestrator commits it once you have read it and said OK. It proposes lanes on the steps that
+alone are not sure to hold, writing them into a proposal, a JSON file laying write_only and
+hands_off on step 3 of changelog-writer, and has lane's `lay.py print` show them, each under the
+action it watches: begin, read, write, run, test, hand on, follow, wait or end; with its hook, and
+the step as it would read:
 
 ```
 Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
@@ -43,9 +37,9 @@ Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`. Do not run `git commit` or `git push`.
 ```
 
-Your AI approves them. `lane:up` writes the step into `agents/changelog-writer.md`, the lanes into
-`hooks/lanes.json` and the hooks into `hooks/hooks.json`, and puts lane's code, which runs the
-hooks, in `hooks/lane/`.
+Your AI approves them, and has lane's `lay.py write` lay them from the same file: it writes the step
+into `agents/changelog-writer.md`, the lanes into `hooks/lanes.json` and the hooks into
+`hooks/hooks.json`, and puts lane's code, which runs the hooks, in `hooks/lane/`.
 
 Then you run `/notes:changelog`. When `changelog-writer` runs `git commit -m notes`, Claude Code
 does not run it, and the subagent reads:
@@ -98,16 +92,27 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install lane@ccpm
 ```
 
-Then, as in the example, your AI calls `lane:up` while it builds your plugin, from your
-conversation or from a subagent it started.
+Then, as in the example, your AI lays lanes with lane's `scripts/lay.py`, in the folder Claude Code
+installed lane in. `claude plugin list --json` gives that folder as the `installPath` of
+`lane@ccpm`, and a new one for each version of lane, so your AI reads it there each time:
 
-lane's code in your plugin's `hooks/lane/` is a copy with its version, which `lane:up` brings to its
-own version the next time it is run there.
+```console
+python3 <lane's folder>/scripts/lay.py up <your plugin's folder>
+python3 <lane's folder>/scripts/lay.py print <proposal>
+python3 <lane's folder>/scripts/lay.py write <proposal>
+```
+
+- `up` comes first on a plugin with lanes laid before, and says each of them for the proposal.
+
+  lane's code in your plugin's `hooks/lane/` is a copy with its version, which `up` brings to lane's
+  version with its hooks and the same lanes.
+- `print` shows the proposal, written as [the lanes](docs/lanes.md#the-proposal) gives it, as in the
+  example, and `write` lays it once your AI has approved it.
 
 ## Documentation
 
 - [The lanes](docs/lanes.md) lists each lane lane can lay, the sentence it writes into a step and
-  when its hook tells it.
+  when its hook tells it, and gives the proposal your AI writes them in.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development

@@ -283,8 +283,8 @@ the code checks the code against itself.
 
 ### Checks kept in lane
 
-A check on what an AI does is a lane of [lane](../lane/README.md), laid in each plugin with
-`lane:up`; one no lane holds is added to lane as a lane of its own, in its own named file, with one
+A check on what an AI does is a lane of [lane](../lane/README.md), laid in each plugin by lane's
+`lay.py`; one no lane holds is added to lane as a lane of its own, in its own named file, with one
 entry file per hook event, as the official `hookify` plugin does.
 
 Each check is then written and tested once, in lane, and each plugin takes lane's code through a

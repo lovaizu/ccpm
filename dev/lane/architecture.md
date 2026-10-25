@@ -1,11 +1,11 @@
 # lane architecture
 
-lane is built on [how a plugin works](../architecture.md), and is itself a plugin of that form:
-`lane:up`, the orchestrator the building AI starts, settles with that AI each point its plugin's
-files leave open, and has the layer, a script, write the lanes the building AI approves; the guard,
-lane's code put in that plugin, notices a subagent's drift from its lanes and tells it the step
-again. A lane is a sentence of a step together with the hook that notices a drift from it. The
-building AI, the goal and the key result are in [lane's UX](ux.md).
+lane is built on [how a plugin works](../architecture.md): the building AI writes the lanes it
+proposes for its plugin in a proposal and has the layer, a script, print them and, once it approves
+them, write them into its plugin; the guard, lane's code put in that plugin, notices a subagent's
+drift from its lanes and tells it the step again. A lane is a sentence of a step together with the
+hook that notices a drift from it. The building AI, the goal and the key result are in
+[lane's UX](ux.md).
 
 lane holds the [principles every plugin holds](../architecture.md#principles), named below
 Principle 1 to 8, and its own, named below lane's Principle 1 and 2:
@@ -17,10 +17,10 @@ Principle 1 to 8, and its own, named below lane's Principle 1 and 2:
 
 ## User stories
 
-- As the building AI, I want to start `lane:up` on my plugin, answer the points it sends, approve
-  the lanes it proposes, and find them written into my plugin with lane's code.
-- As the building AI, I want `lane:up`, run where an older copy of lane's code is, to bring the copy
-  and the hooks to its own version.
+- As the building AI, I want to write the lanes I propose for my plugin, see them printed as they
+  would be laid, and once I approve them find them written into my plugin with lane's code.
+- As the building AI, I want `lay.py up`, run where an older copy of lane's code is, to bring the
+  copy and the hooks to lane's version with the same lanes, and to tell me each lane laid before.
 - As the building AI, I want my subagent, when a call drifts from a lane, to be stopped and told the
   lane's sentence headed by my plugin's name, and every call the sentence allows let through.
 - As the building AI, I want the hooks, on a machine without Python 3.9 or later, to stop the calls
@@ -34,33 +34,31 @@ Principle 1 to 8, and its own, named below lane's Principle 1 and 2:
 ```mermaid
 flowchart TB
   caller["building AI<br/>#lt;AI#gt;"]
-  up["lane:up<br/>#lt;subagent#gt;"]
   layer["layer<br/>#lt;script#gt;"]
   plugin["building AI's plugin<br/>#lt;files#gt;"]
   guard["guard<br/>#lt;hook#gt;"]
   sub["subagent<br/>#lt;AI#gt;"]
-  caller <-->|starts with the plugin, answers, approves / sends the points, the proposal, what was written| up
-  up -->|reads the skills and agents of| plugin
-  up -->|has the lanes laid before told, the proposal printed, and written once approved, by| layer
+  caller <-->|has the lanes laid before told, the proposal printed, and written once approved / tells, prints, writes| layer
   layer -->|reads the hooks of, writes the steps, the hooks and lane's code into| plugin
   guard -->|reads the steps and the hooks of| plugin
   guard -.->|notices a drift, tells the sentence again| sub
 ```
 
-- The building AI is the caller of [how a plugin works](../architecture.md): it answers the points
-  and approves the proposal itself, and no person takes part; its answer is the caller's own action
-  that an approval counts from
+- The building AI is the caller of [how a plugin works](../architecture.md): it writes and approves
+  the proposal itself, and no person takes part; its running `lay.py write` on the print it has
+  read is the caller's own action that an approval counts from
   ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
 - The arrows run in the order of the UX's [Laying lanes](ux.md#laying-lanes), the layer writing the
   proposal only once the building AI approves it.
 
   The lanes are the caller's to decide, so no lane is written into the plugin before the approval
-  (Principle 2). The points go at once since an AI, unlike a person, weighs each as well in one
-  reply, and each reply more is a wait.
-- Run where an older copy of lane's code is, the layer first brings the copy and its hooks to the
-  current form with the lanes they hold, before any point is sent.
+  (Principle 2).
+- Run where an older copy of lane's code is, `lay.py up` brings the copy and its hooks to the
+  current form with the lanes they hold, and tells the building AI each lane laid before, which it
+  keeps in a subagent the proposal gives by putting it in the proposal.
 
-  Those lanes were approved before, so keeping them asks nothing.
+  Those lanes were approved before, so keeping them asks nothing; a subagent the proposal gives has
+  its lanes alone, so a lane the building AI drops is taken out with its sentence.
 - What the building AI approves is printed and written by the layer from one file.
 
   So no AI copies it, and what is written is what was approved.
@@ -113,8 +111,8 @@ flowchart TB
   plugin's forms. Where a check reads a plugin's text, it reads it at a port, a point lanes.md
   defines with the JSON it is given and gives back: the values a subagent started from, the items of
   an input, the move a script printed. At each port lane reads one form, the one lanes.md gives;
-  a plugin whose text is in another form has an adapter, a command of its own that `lane:up` writes
-  with the cases it must give, which the guard runs at that port in place of lane's reading. An
+  a plugin whose text is in another form has an adapter, a command of its own that the building AI
+  writes with the cases it must give, which the guard runs at that port in place of lane's reading. An
   adapter is part of the proposal: kept beside it, run on its cases and shown in the print, and
   written into the plugin with the lanes once approved.
 
@@ -135,15 +133,13 @@ flowchart TB
 ```
 lane/                          the plugin, installed by Claude Code
 ├── .claude-plugin/plugin.json lane's manifest, holding its version <JSON>
-├── agents/up.md               lane:up, the orchestrator <agent>
 ├── scripts/                   the layer <Python 3>
-│   ├── lay.py                 what lane:up runs: print, write and up
+│   ├── lay.py                 what the building AI runs: print, write and up
 │   ├── proposal.py            the proposal read and checked
 │   ├── steps.py               each step as written and as printed
 │   ├── entries.py             the entries of the plugin's hooks.json
 │   └── placed.py              lane's code placed in the plugin, with its version
 ├── hooks/
-│   ├── hooks.json             the lanes on lane:up, laid by the layer <JSON>
 │   └── lane/                  lane's code, the guard, put in each plugin <Python 3>
 │       ├── pretooluse.py      the event script for lanes on a tool call
 │       ├── subagentstop.py    the event script for lanes on how the subagent ends
@@ -164,23 +160,23 @@ lane/                          the plugin, installed by Claude Code
 │       ├── started.py         what the subagent started from, for a thing given for each run
 │       ├── lanes/__init__.py  the lanes, and each lane's sentence made from its wording
 │       └── lanes/<lane>.py    one check per lane of the lanes, with its wording
-├── docs/lanes.md              each lane, its action and what its hook notices <Markdown>
+├── docs/lanes.md              each lane, its action and what its hook notices, and the proposal <Markdown>
 ├── README.md                  what lane gives, its example and installation <Markdown>
 └── CHANGELOG.md               what changed for its users in each version <Markdown>
 
-${CLAUDE_PLUGIN_DATA}/
-├── <plugin>.json              the proposal <JSON>, kept by lane:up until the layer writes it
-└── <plugin>/adapters/         the adapters the proposal names, until the layer writes them
-
-<the system's temporary folder>/lane/<yyyymmdd>-<session>/
-└── <agent>.jsonl              each call of a subagent lanes are laid in, kept by the guard <JSONL>
+<the system's temporary folder>/lane/
+├── <yyyymmdd>-<plugin>/       the building AI's, until the layer writes them into the plugin
+│   ├── <plugin>.json          the proposal <JSON>
+│   └── <plugin>/adapters/     the adapters the proposal names
+└── <yyyymmdd>-<session>/
+    └── <agent>.jsonl          each call of a subagent lanes are laid in, kept by the guard <JSONL>
 
 <plugin>/                      the building AI's plugin, as the layer writes it
 ├── agents/                    the subagents' steps
 └── hooks/
     ├── hooks.json             one entry per subagent and event
     ├── lanes.json             the lanes laid, as approved <JSON>
-    ├── adapters/              the plugin's adapters, written by lane:up
+    ├── adapters/              the plugin's adapters, written by the layer
     │   ├── <port>-<name>.py   one adapter <Python 3>
     │   └── <port>-<name>.json the cases it must give <JSON>
     └── lane/                  lane's code
@@ -188,22 +184,25 @@ ${CLAUDE_PLUGIN_DATA}/
 
 - lane runs on Claude Code and python3 3.9 or later; the layer checks the plugin with
   `claude plugin validate`.
-- The building AI starts `lane:up` as a subagent with the plugin's folder in its prompt, from the
-  main conversation or from a subagent; `lane:up` gives the points as its reply and ends its turn,
-  and the building AI sends the answers with SendMessage to the agent ID the reply came with, which
-  resumes it.
+- The building AI runs the layer as `python3 <lane>/scripts/lay.py`, `<lane>` being lane's folder:
+  the `installPath` that `claude plugin list --json` gives for lane, or `lane/` in the ccpm
+  repository.
 
-  The Agent tool gives a subagent no name to be messaged by, and a subagent does not know its own
-  ID, so it is reached by the ID its reply comes with, from the main conversation and from a
-  subagent alike.
-- The proposal is kept in lane's data folder, which Claude Code keeps for the plugin's own files
-  across its updates (plugins-reference, Environment variables).
-- The calls the guard keeps are in `lane/<yyyymmdd>-<session>/` in the system's temporary folder,
-  as [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) has it.
+  Claude Code puts a plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in that plugin's own hooks,
+  skills and agents alone, not in what the Bash tool runs (plugins-reference, Environment
+  variables), and installs each version in a folder of its own (plugins/loading, Find plugins on
+  disk).
+- The proposal and its adapters are the building AI's files, at a path it gives the layer, in
+  `lane/<yyyymmdd>-<plugin>/` in the system's temporary folder, and the calls the guard keeps in
+  `lane/<yyyymmdd>-<session>/` there, as
+  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) has it.
+
+  Each is used only while lanes are laid or a subagent runs; the layer removes the proposal and its
+  adapters once it has written them.
 - lane's code goes into `<plugin>/hooks/lane/`: in a plugin of the ccpm marketplace a relative link
   to lane's, as [Code kept once](../architecture.md#code-kept-once) has it; anywhere else a copy
-  holding a `VERSION` file, read from lane's `plugin.json`, by which the next run of `lane:up` tells
-  an older copy.
+  holding a `VERSION` file, read from lane's `plugin.json`, by which `lay.py up` tells an older
+  copy.
 
   The version stays in one place, as [The version](../architecture.md#the-version) has it, and the
   copy's `VERSION` is written from it.

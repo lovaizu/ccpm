@@ -13,9 +13,8 @@ step with a hook that notices when the subagent drifts from it and tells it the 
   wants each subagent of that plugin, on every run, to notice when it drifts from one of its steps
   and be told the right way, without writing the checks.
 
-  The building AI, the main conversation or a step of another plugin, calls lane by starting
-  `lane:up`, lane's agent, answers its points and approves its proposal itself; no person takes
-  part.
+  The building AI, the main conversation or a step of another plugin, calls lane by running its
+  layer, `lay.py`, on the lanes it proposes, and approves them itself; no person takes part.
 
 ## Key results
 
@@ -38,21 +37,20 @@ is judged by how close it brings the building AI to the goal.
 
 ## Scenes
 
-The building AI, `lane:up` and a subagent of the building AI's plugin take part; the subagent is
-one with lanes laid in it.
+The building AI, `lay.py` and a subagent of the building AI's plugin take part; the proposal is the
+file the building AI writes the lanes it proposes in, and the subagent is one with lanes laid in it.
 
-### From starting lane:up to a run that drifts
+### From proposing lanes to a run that drifts
 
 ```mermaid
 sequenceDiagram
   participant A as building AI<br/>#lt;AI#gt;
-  participant L as lane:up<br/>#lt;agent#gt;
+  participant L as lay.py<br/>#lt;script#gt;
   participant S as subagent<br/>#lt;AI, with its hooks#gt;
-  A->>L: starts it on its plugin
-  L->>A: the points to decide, all at once
-  A->>L: the answers
-  L->>A: the lanes proposed
-  A->>L: OK
+  Note over A: writes the proposal
+  A->>L: print the proposal
+  L->>A: the lanes as they would be laid
+  A->>L: write the proposal, approved
   Note over L: writes the steps and the hooks, and puts lane's code in the plugin
   Note over S: on a later run of the plugin
   S->>S: a call that drifts from a lane, stopped and told the lane's sentence
@@ -63,25 +61,24 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   participant A as building AI<br/>#lt;AI#gt;
-  participant L as lane:up<br/>#lt;agent#gt;
-  A->>L: starts it on its plugin
-  Note over L: reads the plugin's skills and agents
-  loop until no point is left open
-    L->>A: every point the files do not settle, and every fact the proposal rests on, in one reply
-    A->>L: the answers
+  participant L as lay.py<br/>#lt;script#gt;
+  opt the plugin has lanes laid before
+    A->>L: up on the plugin
+    L->>A: the lanes laid before, and lane's code brought up where it was older
   end
-  L->>A: the lanes, each under the action it watches, with the step as it would read and its hooks
-  alt OK
-    A->>L: OK
-    Note over L: writes the steps and the hooks, and puts lane's code in the plugin
-  else a change asked
-    A->>L: what to change, and the lanes are proposed again
+  Note over A: writes the proposal
+  loop until the building AI approves it
+    A->>L: print the proposal
+    L->>A: the lanes, each under the action it watches, with the step as it would read and its hooks
+    Note over A: changes the proposal, or approves it
   end
+  A->>L: write the proposal
+  Note over L: writes the steps and the hooks, and puts lane's code in the plugin
 ```
 
 - Lane's code is put in the plugin once for all its subagents: a link to it in a plugin of the ccpm
-  marketplace, a copy with its version anywhere else. Run again where an older copy is, `lane:up`
-  brings the copy and the hooks to its own version.
+  marketplace, a copy with its version anywhere else. Where an older copy is, `lay.py up` brings
+  the copy and the hooks to lane's version with the same lanes.
 
 ### A run that drifts
 
@@ -103,6 +100,6 @@ sequenceDiagram
 
 ## Benefits
 
-- The building AI answers and approves instead of writing checks; noticing a drift and telling the
-  sentence are lane's, and already tested.
+- The building AI proposes and approves lanes instead of writing checks; noticing a drift and
+  telling the sentence are lane's, and already tested.
 - Hooks stay few, laid only where a step alone is not sure to hold.

@@ -1,7 +1,8 @@
 # lane's lanes
 
-Each lane lane can lay, under the action it watches, so you can tell what `lane:up` proposes for
-your plugin's steps and what each hook tells your subagent.
+Each lane lane can lay, under the action it watches, so your AI can tell which lanes to propose for
+your plugin's steps and you can tell what each hook tells your subagent; and the proposal your AI
+writes them in.
 
 The sentence is what the step says and what the subagent is told on a drift, with what the lane
 takes put in where it shows `<...>`; the hook tells it when the subagent does what the last column
@@ -41,6 +42,36 @@ project's work.
 every_item reads its input's items at the items port, and follow_next the move your script printed
 at the move port, as the ports below say.
 
+## The proposal
+
+Your AI writes the lanes it proposes as one JSON file, has `lay.py print` show them as they will be
+laid, and once it approves them has `lay.py write` lay them from the same file:
+
+```text
+{"plugin": "<your plugin's folder>",
+ "subagents": [{"name": "<the subagent, as its file's name: field>",
+                "adapter": "hooks/adapters/values-<name>.py",
+                "steps": [{"step": <its number>,
+                           "lanes": [{"lane": "<lane>", "takes": ["<thing>", ...],
+                                      "adapter": "hooks/adapters/<port>-<name>.py"}]}]}]}
+```
+
+- A lane goes only on a sentence whose drift shows in a tool call or in how the subagent ends, and
+  only where the step alone is not sure to hold.
+
+  What the subagent only weighs no hook sees.
+- A lane's `takes` are its things in the order of its places under What each lane is given, each
+  written as the step writes it, a script or a command word for word.
+- An adapter is named only where your text is in another form than lane's, as the ports below say.
+- A subagent the proposal gives has, once it is written, the proposal's lanes alone: put in each
+  lane `lay.py up` says was laid before in it that you keep, as it says the lane.
+
+  The sentence of each lane left out is taken out of its step.
+- Keep the proposal as `lane/<yyyymmdd>-<plugin>/<plugin>.json` in the system's temporary folder,
+  the one Python's `tempfile.gettempdir()` gives, and its adapters beside it.
+
+  `lay.py write` removes them once they are written into your plugin.
+
 ## The ports
 
 Where a lane reads your plugin's text, it reads it at a port: given JSON, the port gives back JSON,
@@ -48,12 +79,12 @@ each held to the JSON Schema below. lane reads one form at each port; where your
 your plugin has an adapter for it, a Python 3 script given the port's JSON on stdin and printing the
 port's JSON on stdout, with the cases it must give, `<port>-<name>.json`, a list of
 `{"given": <the port's JSON in>, "gives": <the port's JSON out>}`, at least one for each form the
-text takes and one that gives nothing. An adapter is part of the proposal: kept beside it, in
-`${CLAUDE_PLUGIN_DATA}/<plugin>/adapters/<port>-<name>.py`, it is named by its path in your plugin,
-`hooks/adapters/<port>-<name>.py`, on the lane reading the port, or, for the values port, on the
-subagent, as every lane of the subagent reads its values; it is run on each of its cases before the
-proposal is printed, shown in the print, and written into your plugin's `hooks/adapters/` with its
-cases once approved. On a run the guard runs it within the hook's time, and an adapter failing,
+text takes and one that gives nothing. An adapter is part of the proposal: kept beside it, as
+`<plugin>/adapters/<port>-<name>.py` in the folder the proposal is in, it is named by its path in
+your plugin, `hooks/adapters/<port>-<name>.py`, on the lane reading the port, or, for the values
+port, on the subagent, as every lane of the subagent reads its values; it is run on each of its
+cases before the proposal is printed, shown in the print, and written into your plugin's
+`hooks/adapters/` with its cases once approved. On a run the guard runs it within the hook's time, and an adapter failing,
 giving no answer in time or answering out of its port is an error, as below.
 
 | Port | Given | Gives | lane's form |
@@ -99,9 +130,9 @@ more in each place; and, where its check rests on what the subagent did before, 
 layer holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid, not on
 a run. Anything not as its IN says, a value not given or given empty, an adapter failing, giving no
 answer in time or answering out of its port, the record not found, the event or `hooks/lanes.json`
-not as Claude Code and `lane:up` write them, or a step no longer saying its lane's sentence, is an
-error, not a drift: the call is stopped, or the subagent kept going once
-as it ends, and it and you are told
+not as Claude Code and `lay.py write` write them, or a step no longer saying its lane's sentence,
+is an error, not a drift: the call is stopped, or the subagent kept going once as it ends, and it
+and you are told
 
 ```
 <plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Stop here and reply that <who must fix it>.

@@ -8,6 +8,6 @@ in [architecture.md](architecture.md).
   set in `cosmic-ray.toml`, by `sh dev/mutate.sh lane`, as [dev/README.md](../README.md) says.
 - What every plugin's tests stand on is `testing.py`, and what every plugin's trials stand on
   `trials/trying.py`.
-- Trials: `trials/notes_trial.py` tries lane as the building AI meets it, laying lanes on the
-  README's `notes` and on turn and running notes as laid; `trials/memo_trial.py` tries every lane
-  on memo, a plugin whose steps call for each. The top of each file says what it takes.
+- Trials: `trials/notes_trial.py` tries lane as the building AI meets it, laying the README's lanes
+  on its `notes` by `lay.py write` and running notes as laid; `trials/memo_trial.py` tries every
+  lane on memo, a plugin whose steps call for each. The top of each file says what it takes.

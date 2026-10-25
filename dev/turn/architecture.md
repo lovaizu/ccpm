@@ -152,7 +152,8 @@ turn/                      the plugin, installed by Claude Code
 │   └── record.py,         links to lane's, Claude Code's records and Markdown read
 │       template.py
 └── hooks/
-    ├── hooks.json         the lanes on every agent, laid by lane:up
+    ├── hooks.json         the hook of each agent and event, written by lane's lay.py <JSON>
+    ├── lanes.json         the lanes on every agent, laid by lane's lay.py <JSON>
     └── lane/              lane's code, the guard, a link to lane's <Python 3>
 
 <where the call puts the result, in the calling AI's work folder>/

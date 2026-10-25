@@ -84,8 +84,10 @@ c. **Write each prompt, a skill or an agent, with `prompt.md` open, and try it a
    - Rationale: a trial on unchecked prompts finds the prompts' slips, not whether the plugin keeps
      its promises.
 
-d. **Lay the lanes the prompts' steps call for with lane's `lane:up`, with `prompt.md` open.** A
-   check no lane holds is added to lane with `code.md` open, as
+d. **Lay the lanes the prompts' steps call for with `lane/scripts/lay.py`, with `prompt.md` open:**
+   write them in a proposal as [the lanes](../../lane/docs/lanes.md#the-proposal) gives it, read
+   what `lay.py print` prints of it, and lay it with `lay.py write`. A check no lane holds is added
+   to lane with `code.md` open, as
    [Checks kept in lane](../../dev/architecture.md#checks-kept-in-lane) says.
 
 e. **Try the unit as its user, as
