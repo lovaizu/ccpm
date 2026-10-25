@@ -1,10 +1,10 @@
 """Tries rn's prompts one move at a time, as a unit test of them: each case, one move the steps of
 rn's skills take, starts from a session state made beforehand by rn's own commands, sends one
 message, or more on the same conversation where the move takes more, and checks by script what
-the move must leave. The real skills and scripts run, on Opus, named in each run as trying.claude
-runs Claude Code, with
-everything but them stood in for: turn's turn:up by an agent giving back what the case set, `gh` by
-a script keeping the pull request and the issues in a file, and the user by the case's messages.
+the move must leave. The real skills and scripts run, on Opus, which trying.claude names in each
+run, with everything but them stood in for: turn's turn:up by an agent giving back what the case
+set, `gh` by a script keeping the pull request and the issues in a file, and the user by the
+case's messages.
 
     python3 dev/rn/trials/moves/moves.py <case>... | all [--dry]
 

@@ -1,6 +1,6 @@
 """Stands in for GitHub's `gh` in rn's move trials, for the commands rn and its orchestrator run: the
-repository's URL, the pull request created, viewed, edited and marked ready, and the issues listed
-and created on lovaizu/ccpm. It keeps the pull request, the issues and every command it was given
+repository's URL, the pull request created, viewed, edited and marked ready, and the issues created
+on lovaizu/ccpm. It keeps the pull request, the issues and every command it was given
 in `gh.json`, in the case's folder above its own, and prints what gh would; a command it does not
 stand in for it names, exiting 1, as gh does on a failure.
 
@@ -16,21 +16,6 @@ REPOSITORY = "https://github.com/trial/demo"
 ISSUES = "https://github.com/lovaizu/ccpm/issues"
 # The options that take no value.
 FLAGS = ("--draft",)
-# The recent issues `gh issue list` gives, in the form lovaizu/ccpm's issues are written in.
-RECENT = [
-    {
-        "title": "turn: a result's Good names lines past the end of its file",
-        "body": "## What happened\n\nturn returned a Good at `README.md:40-44`, and README.md has"
-        " 31 lines.\n\n## Why it matters\n\nThe calling AI cannot check the Good at its lines.\n\n"
-        "## Seen in\n\nturn 0.1.0, Claude Code 2.1.0.",
-    },
-    {
-        "title": "lane: a hook names the step it stops at by its number",
-        "body": "## What it should be\n\nA hook's stop names the step it stops at by its number"
-        " and its words.\n\n## Why\n\nThe agent stopped finds the step without counting.\n\n"
-        "## Order\n\nWith lane's next release.",
-    },
-]
 
 
 def parsed(args: list) -> tuple:
@@ -113,8 +98,6 @@ def answer(state: dict, args: list) -> str:
         pr = found(state, words)
         pr["isDraft"] = False
         return f'Pull request trial/demo#{pr["number"]} is marked as "ready for review"'
-    if command == "issue list":
-        return shown(RECENT, options)
     if command == "issue create":
         state["issues"].append(
             {k[2:]: options.get(k) for k in ("--repo", "--title", "--body")},
