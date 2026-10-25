@@ -14,10 +14,10 @@ from test_guard import GuardTest
 # The command the lane takes, as a step names it, run as the AI writes it once Claude Code
 # has put lane's folder in for `${CLAUDE_PLUGIN_ROOT}`.
 TAKES = ["lay.py print"]
-PRINT = "python3 /home/u/.claude/plugins/lane/scripts/lay.py print /home/u/data/notes.json"
+PRINT = "python3 /home/u/.claude/plugins/lane/scripts/lay.py print .lane/20261025-notes/notes.json"
 # What it printed, as the Bash tool gives it back, and a heading the subagent puts above it.
 OUTPUT = "Lanes on step 3 of changelog-writer:\n  run: Do not run `git push`.  hook hands_off\n"
-HEADING = "These lanes are proposed; send OK or what to change."
+HEADING = "The lanes as lay.py prints them:"
 
 
 def printed(output=OUTPUT, command=PRINT, failed=False):
