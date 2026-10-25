@@ -695,6 +695,9 @@
   },
   {
    "fact": "2026-10-25: lane read whole by a subagent (12 findings, all settled by the purpose and design) and fixed in 13 commits (0f66a50..4e72485), pushed: decisions to what holds, the proposal in .lane/<yyyymmdd>-<plugin>/ at the root, error forms documented, the lanes' no-record guards gone, a form gone an error, lanes.json read once, one Claude Code version, the UX scene of an error. lane's principles had been changed unasked (0ff4055 added 'general and reusable', 6a53838 moved principle 2 into the opening and dropped 'notice' from 1); restored as agreed, 'general and reusable' said as lane's kind in the opening, a part other plugins are built with, as the user said (7975339). E501 is off though ruff.toml sets 100 columns: lane and turn now within it (2fe82f8); rn has 28 lines past it"
+  },
+  {
+   "fact": "2026-10-25: turn read whole by a read-only subagent (18 findings); 13 fixed by hand and pushed (7139bcd..ad72a12): judge's item IDs, call.py's adapter through rn's link (links kept as dev/architecture.md's Code kept once has them, rn's trials type-checked through them), learner's checked always, up.md step 1 order, stops naming the command again, the line counting the items a move covers (read from the prompt's sent_back, 6 survivors fixed), empty grounds told, turn's test off rn's checklist, turn/docs/calling.md the README decision placed, rn:up reading each part's Good, decisions to what holds, lane linked, kinds in the tree, lines wrapped; check.sh 100% in lane, turn, rn, mutate 0. F6 (read_whole's sentence over a list) left until a record shows the misreading"
   }
  ],
  "semantic_gist": [
@@ -799,7 +802,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "turn read whole by a read-only subagent against fix.md B-4 and the product checklists, as lane was (lane-audit form: scope, finding path:line quoted, item, settled or the maintainer's); check each, fix, push; then roles trial, rn from build-brief.md (plan.md B-9; feedback back by rn's learnings; rn's 28 lines past 100 columns, then E501 in ruff.toml), shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Never change agreed principles, UX or README intent unasked"
+   "next": "ask the user one at a time: F11 (Concept rewritten to D1 and the three superseded turn decision files removed, recommended A), then F17 (KR1.2's value once G1 is reached), then F18 (trial folders against dev/architecture.md's temporary folder rule, repo-wide); then roles trial, rn from build-brief.md (plan.md B-9; rn's 28 lines past 100 columns, then E501 in ruff.toml), shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Never change agreed principles, UX or README intent unasked"
   }
  ],
  "uncertainty_signal": [
