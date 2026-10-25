@@ -28,8 +28,8 @@ def copied(source: str, folder: str, name: str) -> str:
 def laid(folder: str, source: str, name: str, lanes: dict[str, dict[int, list[Any]]]) -> str:
     """Copies lane and the plugin at source into the folder, the plugin as name, and lays the lanes
     on it, each subagent's steps by number, each lane with what it takes, by the copied lane's
-    `lay.py write` from a proposal written in the folder, as the building AI lays them; gives the
-    plugin's path."""
+    `lay.py write` from a proposal written in `.lane/<yyyymmdd>-<name>/` of the folder, where
+    docs/lanes.md keeps it, as the building AI lays them; gives the plugin's path."""
     copy = copied(os.path.join(ROOT, "lane"), folder, "lane")
     plugin = copied(source, folder, name)
     proposal = {
@@ -45,7 +45,8 @@ def laid(folder: str, source: str, name: str, lanes: dict[str, dict[int, list[An
             for agent, steps in lanes.items()
         ],
     }
-    path = os.path.join(folder, "proposal.json")
+    path = os.path.join(folder, ".lane", f"{time.strftime('%Y%m%d')}-{name}", f"{name}.json")
+    os.makedirs(os.path.dirname(path))
     with open(path, "w", encoding="utf-8") as f:
         json.dump(proposal, f)
     subprocess.run(["python3", os.path.join(copy, "scripts", "lay.py"), "write", path], check=True)

@@ -164,10 +164,12 @@ lane/                          the plugin, installed by Claude Code
 ├── README.md                  what lane gives, its example and installation <Markdown>
 └── CHANGELOG.md               what changed for its users in each version <Markdown>
 
+<the root of the repository holding the plugin>/.lane/
+└── <yyyymmdd>-<plugin>/       the building AI's, until the layer writes them into the plugin
+    ├── <plugin>.json          the proposal <JSON>
+    └── <plugin>/adapters/     the adapters the proposal names
+
 <the system's temporary folder>/lane/
-├── <yyyymmdd>-<plugin>/       the building AI's, until the layer writes them into the plugin
-│   ├── <plugin>.json          the proposal <JSON>
-│   └── <plugin>/adapters/     the adapters the proposal names
 └── <yyyymmdd>-<session>/
     └── <agent>.jsonl          each call of a subagent lanes are laid in, kept by the guard <JSONL>
 
@@ -193,12 +195,14 @@ lane/                          the plugin, installed by Claude Code
   variables), and installs each version in a folder of its own (plugins/loading, Find plugins on
   disk).
 - The proposal and its adapters are the building AI's files, at a path it gives the layer, in
-  `lane/<yyyymmdd>-<plugin>/` in the system's temporary folder, and the calls the guard keeps in
-  `lane/<yyyymmdd>-<session>/` there, as
+  `.lane/<yyyymmdd>-<plugin>/` at the root of the repository holding the plugin, the nearest folder
+  above it holding `.git`, or the plugin's folder where none does, and the calls the guard keeps in
+  `lane/<yyyymmdd>-<session>/` in the system's temporary folder, as
   [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) has it.
 
-  Each is used only while lanes are laid or a subagent runs; the layer removes the proposal and its
-  adapters once it has written them.
+  The building AI reads and writes the proposal and its adapters with its tools, so they go in the
+  folder that may be kept, and the layer removes them, and their folder, once it has written them;
+  the calls kept are read by the guard alone, only while a subagent runs.
 - lane's code goes into `<plugin>/hooks/lane/`: in a plugin of the ccpm marketplace a relative link
   to lane's, as [Code kept once](../architecture.md#code-kept-once) has it; anywhere else a copy
   holding a `VERSION` file, read from lane's `plugin.json`, by which `lay.py up` tells an older

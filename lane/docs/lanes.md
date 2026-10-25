@@ -83,10 +83,13 @@ Schema:
   lane `lay.py up` says was laid before in it that you keep, as it says the lane.
 
   The sentence of each lane left out is taken out of its step.
-- Keep the proposal as `lane/<yyyymmdd>-<plugin>/<plugin>.json` in the system's temporary folder,
-  the one Python's `tempfile.gettempdir()` gives, and its adapters beside it.
+- Keep the proposal as `.lane/<yyyymmdd>-<plugin>/<plugin>.json` at the root of the repository
+  your plugin is in, the nearest folder above it holding `.git`, or your plugin's folder where none
+  does, and its adapters beside it.
 
-  `lay.py write` removes them once they are written into your plugin.
+  Your AI reads and writes them with its tools, and Claude Code lets it do so without asking only
+  inside the folder it works in; `lay.py write` removes them, and their folder, once they are
+  written into your plugin.
 
 ## The ports
 

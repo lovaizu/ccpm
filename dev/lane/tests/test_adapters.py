@@ -35,7 +35,7 @@ class AdapterTest(LayTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.beside = os.path.join(self.base, "data", "notes", "adapters")
+        self.beside = os.path.join(self.folder, "notes", "adapters")
         self.adapter(HEADINGS, CASES)
         self.propose(self.proposal([EVERY]))
 
@@ -166,7 +166,7 @@ class TestWrite(AdapterTest):
         [agent] = self.laid()["subagents"]
         self.assertEqual(agent["adapter"], "hooks/adapters/values-words.py")
         self.assertEqual(agent["steps"][0]["lanes"], [EVERY])
-        self.assertFalse(os.path.exists(os.path.join(self.base, "data", "notes")))
+        self.assertFalse(os.path.exists(self.folder))
         self.assertIn(f"Wrote the adapter {PATH} with its cases.\n", said)
         self.assertIn(f"Removed the adapter {self.beside}/items-headings.py", said)
         # And: laid again from the plugin, the adapters are kept and found there

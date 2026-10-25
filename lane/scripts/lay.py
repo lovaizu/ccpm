@@ -58,8 +58,9 @@ def printed(path: str) -> str:
 
 
 def written(path: str) -> str:
-    """Writes the proposal into the plugin, has Claude Code check it, removes the proposal, and
-    gives what was written. The lanes laid in hooks/lanes.json are those laid before in each other
+    """Writes the proposal into the plugin, has Claude Code check it, removes the proposal, its
+    adapters beside it and its folder once nothing else is left there, and gives what was
+    written. The lanes laid in hooks/lanes.json are those laid before in each other
     subagent the plugin's agents/ still has, and the proposal's in each of its subagents."""
     given = proposal(path)
     root, plugin = given["plugin"], given["name"]
@@ -115,10 +116,16 @@ def written(path: str) -> str:
         for source in (adapter["source"], os.path.splitext(adapter["source"])[0] + ".json"):
             os.remove(source)
         said.append(f"Removed the adapter {adapter['source']} and its cases from beside it.\n")
-    folder = os.path.join(os.path.dirname(os.path.abspath(path)), plugin, "adapters")
+    # The proposal's folder, `.lane/<yyyymmdd>-<plugin>/`, goes once nothing of the building AI's
+    # is left in it, `.lane/` kept, as turn keeps `.turn/`.
+    day = os.path.dirname(os.path.abspath(path))
+    folder = os.path.join(day, plugin, "adapters")
     for place in (folder, os.path.dirname(folder)):
         if os.path.isdir(place) and not os.listdir(place):
             os.rmdir(place)
+    if not os.listdir(day):
+        os.rmdir(day)
+        said.append(f"Removed its folder {day}.\n")
     return "".join(said)
 
 

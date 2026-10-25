@@ -82,12 +82,14 @@ exit "${CLAUDE_EXIT:-0}"
 
 
 class LayTest(helpers.PluginTest):
-    """A test of the layer on the plugin `notes`, the proposal kept in `base/data/notes.json` and a
+    """A test of the layer on the plugin `notes`, the proposal kept as lanes.md says, in
+    `.lane/20261025-notes/notes.json` at the root of the repository the plugin is in, `base`, and a
     stand-in for Claude Code's command first on PATH."""
 
     def setUp(self) -> None:
         super().setUp()
-        self.proposal_file = os.path.join(self.base, "data", "notes.json")
+        self.folder = os.path.join(self.base, ".lane", "20261025-notes")
+        self.proposal_file = os.path.join(self.folder, "notes.json")
         self.propose(self.proposal())
         self.bin = os.path.join(self.base, "bin")
         self.write(os.path.join(self.bin, "claude"), CLAUDE)

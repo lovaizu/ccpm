@@ -29,17 +29,18 @@ from laying import (
 
 
 class TestWriteEnd(LayTest):
-    def test_the_plugin_is_validated_and_the_proposal_removed(self):
-        # Given: the proposal
+    def test_the_plugin_is_validated_and_the_proposal_removed_with_its_folder(self):
+        # Given: the proposal alone in its folder of the day, `.lane/20261025-notes/`
         # When: it is written
         code, said = self.lay("write", self.proposal_file)
-        # Then: Claude Code validated the plugin, the proposal is removed, and what was written is
-        # said
+        # Then: Claude Code validated the plugin, the proposal and its folder are removed, `.lane/`
+        # left, and what was written is said
         self.assertEqual(code, 0)
         self.assertEqual(
             self.read(os.path.join(self.bin, "asked")), f"plugin validate {self.plugin}\n"
         )
-        self.assertFalse(os.path.exists(self.proposal_file))
+        self.assertFalse(os.path.exists(self.folder))
+        self.assertTrue(os.path.isdir(os.path.join(self.base, ".lane")))
         self.assertEqual(
             said,
             "Wrote step 3 of changelog-writer into agents/writer.md.\n"
@@ -47,8 +48,21 @@ class TestWriteEnd(LayTest):
             "Wrote the lanes laid into hooks/lanes.json.\n"
             "Put lane's code in hooks/lane/.\n"
             "claude plugin validate passed.\n"
-            f"Removed the proposal {self.proposal_file}.\n",
+            f"Removed the proposal {self.proposal_file}.\n"
+            f"Removed its folder {self.folder}.\n",
         )
+
+    def test_a_proposals_folder_holding_anything_else_is_kept(self):
+        # Given: the proposal in its folder beside a file of the building AI's
+        other = os.path.join(self.folder, "notes.md")
+        self.write(other, "kept")
+        # When: it is written
+        code, said = self.lay("write", self.proposal_file)
+        # Then: the proposal is removed, and the folder kept with the file, nothing said of it
+        self.assertEqual(code, 0, said)
+        self.assertFalse(os.path.exists(self.proposal_file))
+        self.assertEqual(self.read(other), "kept")
+        self.assertNotIn("Removed its folder", said)
 
     def test_a_plugin_claude_code_finds_malformed_keeps_the_proposal(self):
         # Given: Claude Code finding the plugin malformed
@@ -423,7 +437,7 @@ class TestMain(LayTest):
             [],
             ["print"],
             ["up"],
-            ["up", self.plugin, "data"],
+            ["up", self.plugin, self.proposal_file],
             ["lay", self.proposal_file],
             ["print", "a", "b"],
         ):
