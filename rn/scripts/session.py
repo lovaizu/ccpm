@@ -31,9 +31,10 @@ TURN = "turn"
 # research result, a document or a task's result; and a checklist of a kind.
 TASK_WORK = re.compile(r"t(?P<task>[0-9]+)\.(?P<action>[0-9]+)")
 CHECKLIST_WORK = re.compile(r"checklist-[a-z0-9-]+")
+ISSUE_WORK = re.compile(r"issue-[0-9]+")
 WORKS = (
     f"{steering.PLAN}, {steering.LEARNINGS}, {steering.DELIVERABLE}, t<n>.<k> for action k of"
-    " task T<n>, or checklist-<kind>"
+    " task T<n>, checklist-<kind>, or issue-<n> for the issue n to rn's makers"
 )
 # The works the design stage makes for its sign-off: what each action of its tasks makes, and each
 # checklist.
@@ -61,9 +62,8 @@ LEARNING_FORM = (
 
 def worked(work: str) -> str:
     """The work, when it names one rn has turn make; stops otherwise."""
-    if work not in PARTS + (steering.DELIVERABLE,) and not (
-        TASK_WORK.fullmatch(work) or CHECKLIST_WORK.fullmatch(work)
-    ):
+    named = (TASK_WORK, CHECKLIST_WORK, ISSUE_WORK)
+    if work not in PARTS + (steering.DELIVERABLE,) and not any(n.fullmatch(work) for n in named):
         raise stop.Stop(f"rn: the work {work!r} is none rn makes; give {WORKS}, such as t1.2")
     return work
 

@@ -90,8 +90,8 @@ VERSION = "0.10.0"
 # The repository on GitHub and the pull request the stand-in for gh gives.
 REPOSITORY = "https://github.com/o/r"
 PR = f"{REPOSITORY}/pull/7"
-# The options ccs needs, each with a value it takes.
-NEEDED = {"--kind": KIND, "--receiver": "a new user", "--use": "to try it"}
+# The options ccs needs for a task's work made the first time, each with a value it takes.
+NEEDED = {"--receiver": "a new user", "--use": "to try it", "--has": "."}
 # The real plan checklist of rn, whose F-1 every steering holds to.
 PLAN_CHECKLIST = os.path.join(SCRIPTS, "..", "checklists", "session", "plan.md")
 # What rn says to do at a sign-off, as the last line of every proposal.
@@ -192,7 +192,19 @@ class RepoTest(MainAndWork):
         )
         self.checklist = os.path.join(self.plugin, "checklists", "product", f"{KIND}.md")
         self.write(self.checklist, "# Code\n")
-        self.write(os.path.join(self.plugin, "checklists", "session", "plan.md"), "# Plan\n")
+        # A stand-in for each checklist of the works rn makes itself.
+        self.own = {
+            kind: os.path.join(self.plugin, "checklists", folder, f"{kind}.md")
+            for kind, folder in (
+                ("plan", "session"),
+                ("learnings", "session"),
+                ("deliverable", "session"),
+                ("issue", "session"),
+                ("checklist", ""),
+            )
+        }
+        for kind, path in self.own.items():
+            self.write(path, f"# {kind.capitalize()}\n")
         self.fix = os.path.join(self.plugin, "checklists", "fix.md")
         self.usability = os.path.join(self.plugin, "checklists", "usability.md")
         self.bin = os.path.join(self.base, "bin")
@@ -283,8 +295,7 @@ class RepoTest(MainAndWork):
         learnings' in a file of their name, the plan's in one of the steering's; commits
         nothing."""
         written = {
-            "focal_entities": [{"work": work}, {"stage": stage}]
-            + [{"deliverable": p} for p in works],
+            "focal_entities": [{"work": work}, {"stage": stage}] + [{"path": p} for p in works],
             "constraints": [{"decision": d} for d in decisions],
         }
         self.write_json(call_at(number), written)
@@ -338,13 +349,19 @@ class LearningTest(RepoTest):
         self.write_json(path[: -len(".jsonl")] + ".meta.json", meta)
         return path
 
+    def show(self) -> list[str]:
+        """The paths of the texts rn showed for the learnings' call, as the CCS it wrote names them
+        as what its receiver has."""
+        written = self.read_json(self.ran("ccs", "learnings")["ccs"])
+        return [e["has"] for e in written["focal_entities"] if "has" in e]
+
     def records(self) -> list[str]:
         """The paths of the texts rn showed, relative to where it shows them."""
-        return [os.path.relpath(p, os.path.join(self.top, SHOWN)) for p in self.ran("records")]
+        return [os.path.relpath(p, os.path.join(self.top, SHOWN)) for p in self.show()]
 
     def shown(self) -> list[str]:
         """The text of each conversation rn showed, in order."""
-        return [self.read(p) for p in self.ran("records") if f"{os.sep}conversations{os.sep}" in p]
+        return [self.read(p) for p in self.show() if f"{os.sep}conversations{os.sep}" in p]
 
     def left_at(self) -> str:
         """The commit the branch left the default branch at."""

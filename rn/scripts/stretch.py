@@ -9,8 +9,11 @@ import glob
 import json
 import os
 import shlex
+import shutil
 from typing import Any
 
+import conversations
+import records
 import repo
 import session
 import steering
@@ -65,6 +68,30 @@ def session_files(folder: str) -> list[str]:
     the learnings, each research and trial result and each file of its calls to turn."""
     found = glob.glob(os.path.join(glob.escape(folder), "**", "*"), recursive=True)
     return sorted(p for p in found if os.path.isfile(p))
+
+
+def show(folder: str) -> list[str]:
+    """Shows the stretch of the session the learnings are made from: its record, the history on the
+    branch since the stretch began and the session's files as they are now; then each conversation
+    of the orchestrator, run at the top of the repository on the session's branch, from the time
+    the stretch began, none where Claude Code keeps none here, as when the session ran on another
+    machine. Each is written as text in the git folder, made afresh, where nothing is committed;
+    gives their paths, the record first."""
+    start = stretch(folder)
+    began = float(repo.git(["log", "-1", "--format=%ct", start], repo.AS_GIT_SAYS))
+    place = records_folder()
+    shutil.rmtree(place, ignore_errors=True)
+    # Each text shown, by where it is written, with its text.
+    texts = [(os.path.join("record", "history.txt"), history(folder, start))]
+    texts += [(os.path.join("record", p), repo.read_text(p)) for p in session_files(folder)]
+    for path in conversations.conversations(repo.top(), repo.branch()):
+        name = os.path.basename(path)[: -len(".jsonl")] + ".txt"
+        text = conversations.told(path, began)
+        if text:
+            texts.append((os.path.join("conversations", name), text))
+    for name, text in texts:
+        repo.write_text(os.path.join(place, name), records.wrapped(text))
+    return [os.path.join(place, name) for name, _ in texts]
 
 
 def turns_learnings(folder: str) -> list[dict[str, Any]]:

@@ -392,15 +392,6 @@ class StartTest(RepoTest):
             self.stopped(*self.start(slug="../x")),
         )
 
-    def test_start_without_an_option_stops_with_the_usage(self):
-        # Given: a branch with no session.
-        # When: the orchestrator starts one with no title.
-        # Then: rn says the title is required and how the subcommand is given.
-        self.assertIn(
-            "rn: the following arguments are required: --title; give it as rn.py start",
-            self.stopped(*[a for a in self.start() if a not in ("--title", "Add login")]),
-        )
-
     def test_start_with_an_empty_value_stops_and_stays(self):
         for option, words in (
             ("message", "message"),
@@ -726,15 +717,6 @@ class StateTest(RepoTest):
                 # When: the orchestrator keeps a move with a value of blanks.
                 # Then: rn says it is empty.
                 self.assertIn(f"rn: the {words} is empty; give it in words", self.stopped(*argv))
-
-    def test_keeping_without_next_stops_with_the_usage(self):
-        # Given: a session.
-        # When: the orchestrator keeps a move with no Next.
-        # Then: rn says Next is required.
-        self.assertIn(
-            "rn: the following arguments are required: --next; give it as rn.py state",
-            self.stopped("state", "--message", "m"),
-        )
 
     def test_keeping_without_a_session_stops(self):
         # Given: a branch holding no session.

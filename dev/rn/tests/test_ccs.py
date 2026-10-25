@@ -9,6 +9,7 @@ import unittest
 from typing import Any
 
 from helpers import (
+    FOLDER,
     KIND,
     LEARNINGS,
     NEEDED,
@@ -129,7 +130,8 @@ class DecideTest(RepoTest):
                 # Then: rn names the works it makes.
                 self.assertIn(
                     f"rn: the work {work!r} is none rn makes; give plan, learnings, deliverable,"
-                    " t<n>.<k> for action k of task T<n>, or checklist-<kind>, such as t1.2",
+                    " t<n>.<k> for action k of task T<n>, checklist-<kind>, or issue-<n> for the"
+                    " issue n to rn's makers, such as t1.2",
                     out,
                 )
 
@@ -206,7 +208,7 @@ class CcsTest(RepoTest):
         want = {
             "ccs": call_at("0001"),
             "kind": {
-                "work": "deliverable",
+                "work": "path",
                 "checklist": "checklist",
                 "receiver": "audience",
                 "use": "purpose",
@@ -221,7 +223,7 @@ class CcsTest(RepoTest):
     def test_ccs_keeps_the_call_before_turn_is_handed_it(self):
         # Given: a session.
         # When: the orchestrator has the CCS of the plan written.
-        self.ccs("plan", **{"--kind": "plan"})
+        self.ccs("plan")
         # Then: the CCS and the part are committed and pushed with a message naming the call, and
         # nothing is left to keep, so a conversation cut while turn runs goes on from them.
         kept = (
@@ -278,14 +280,15 @@ class CcsTest(RepoTest):
     def test_the_ccs_of_a_task_holds_what_its_task_serves(self):
         # Given: a session whose T1 serves AC1.
         # When: the orchestrator has the CCS of t1.1 written, with a path the receiver has.
-        self.ran("ccs", "t1.1", "README.md", *options(NEEDED), "--has", ".")
+        self.ran("ccs", "t1.1", "README.md", *options(NEEDED))
         # Then: it holds the work, the stage, the path, the receiver and what they have; the use
         # and the criterion T1 serves as text; the checklists; and the languages and the fix.
         want = {
             "focal_entities": [
                 {"work": "t1.1"},
                 {"stage": "design"},
-                {"deliverable": "README.md"},
+                {"kind": "code"},
+                {"path": "README.md"},
                 {"audience": "a new user"},
                 {"has": "."},
             ],
@@ -324,7 +327,7 @@ class CcsTest(RepoTest):
         self.call("0004", "t3.1", result={})
         self.kept()
         # When: the orchestrator has the CCS of the plan written, with a path the receiver has.
-        self.ccs("plan", **{"--kind": "plan", "--has": "README.md"})
+        self.ccs("plan", **{"--has": "README.md"})
         # Then: it serves nothing, and has the path given, then, in the order made, the latest
         # call of each work of a task done, which holds what the work served and decided and the
         # files it made, returned or not, and none of turn's results.
@@ -342,9 +345,9 @@ class CcsTest(RepoTest):
         self.kept()
         # When: the orchestrator has the CCS of the finished work written, then of t1.
         made = [self.ccs(work, "README.md")["ccs"] for work in ("deliverable", "t1.1")]
-        # Then: neither has anything.
+        # Then: each has what was given alone.
         has = [[e for e in self.read_json(p)["focal_entities"] if "has" in e] for p in made]
-        self.assertEqual(has, [[], []])
+        self.assertEqual(has, [[{"has": "."}], [{"has": "."}]])
 
     def test_the_ccs_of_a_checklist_or_the_learnings_serves_nothing(self):
         for work, paths in (("checklist-code", (".rn/checklists/code.md",)), ("learnings", ())):
@@ -402,12 +405,12 @@ class CcsTest(RepoTest):
     def test_the_ccs_of_an_action_names_the_path_and_the_kind_it_names(self):
         # Given: a session whose T1's second action makes `src/t1-2.py` as a code work.
         # When: the orchestrator has its CCS written with no path and no kind.
-        self.ran("ccs", "t1.2", "--receiver", "a new user", "--use", "to try it")
+        self.ran("ccs", "t1.2", *options(NEEDED))
         # Then: it holds that path, and the checklists of that kind.
         ccs = self.read_json(call_at("0001"))
         self.assertEqual(
-            (ccs["focal_entities"][2], ccs["retrieved_artifacts"]),
-            ({"deliverable": "src/t1-2.py"}, [{"checklist": self.checklist}]),
+            (ccs["focal_entities"][3], ccs["retrieved_artifacts"]),
+            ({"path": "src/t1-2.py"}, [{"checklist": self.checklist}]),
         )
 
     def test_the_call_of_a_tasks_last_action_of_turns_tests_its_result(self):
@@ -427,28 +430,80 @@ class CcsTest(RepoTest):
         # Then: neither gives turn a command.
         self.assertEqual(tests, [None, None])
 
-    def test_a_work_not_a_tasks_with_no_kind_stops(self):
-        # Given: a session.
-        # When: the orchestrator has the CCS of the finished work written with no kind.
-        out = self.stopped("ccs", "deliverable", "README.md", "--receiver", "r", "--use", "u")
-        # Then: rn says to give its kind.
-        self.assertIn(
-            "rn: no kind of the work deliverable is given, which a task's work takes from its"
-            " action; give it with --kind",
-            out,
-        )
+    def test_each_work_rn_makes_itself_is_made_with_its_own_kind_receiver_use_and_had(self):
+        root = os.path.realpath(self.plugin)
+        cases = {
+            "plan": (
+                [call_at("0001", "steering.md")],
+                "plan",
+                "the user at the plan sign-off",
+                ".",
+            ),
+            "deliverable": (["src/app.py"], "deliverable", "the user at the deliverable", "."),
+            "checklist-api": ([".rn/checklists/api.md"], "checklist", "whoever makes an api", "."),
+            "issue-1": ([f"{FOLDER}/issue-1.md"], "issue", "rn's makers", root),
+        }
+        self.write("src/app.py", "x\n")
+        self.kept()
+        for work, (paths, kind, receiver, has) in cases.items():
+            with self.subTest(work=work):
+                # Given: a session, and a file the branch changed.
+                # When: the orchestrator has the work's CCS written, giving nothing more.
+                written = self.read_json(self.ran("ccs", work)["ccs"])
+                entities = written["focal_entities"]
+                # Then: it holds the paths, the kind and its checklist, the receiver, their use and
+                # what they have, as rn makes that work every time.
+                self.assertEqual(
+                    (
+                        [e["path"] for e in entities if "path" in e],
+                        next(e["kind"] for e in entities if "kind" in e),
+                        written["retrieved_artifacts"][0],
+                        next(e["audience"] for e in entities if "audience" in e).startswith(
+                            receiver
+                        ),
+                        bool(written["goal_orientation"][0]["purpose"]),
+                        [e["has"] for e in entities if "has" in e],
+                    ),
+                    (paths, kind, {"checklist": self.own[kind]}, True, True, [has]),
+                )
+
+    def test_a_work_made_again_takes_what_its_last_call_named(self):
+        # Given: the call on t1.2 made with a receiver, a use and what they have, and returned.
+        self.ran("ccs", "t1.2", "--receiver", "a new user", "--use", "to try it", "--has", ".")
+        self.write_json(call_at("0001", "result.json"), {})
+        self.kept()
+        # When: the orchestrator has its CCS written again, giving nothing more.
+        out = self.ran("ccs", "t1.2")
+        # Then: a new call names the same, its stage now.
+        before, now = (self.read_json(call_at(n)) for n in ("0001", "0002"))
+        self.assertEqual((out["ccs"], now), (call_at("0002"), before))
+
+    def test_a_work_with_no_receiver_use_or_had_given_or_kept_stops(self):
+        for left, option in (("receiver", "--receiver"), ("use", "--use"), ("has", "--has")):
+            with self.subTest(left=left):
+                # Given: a session with no call on t1.2.
+                given = {"--receiver": "r", "--use": "u", "--has": "."}
+                del given[option]
+                # When: the orchestrator has its CCS written without one of them.
+                out = self.stopped("ccs", "t1.2", *options(given))
+                # Then: rn says none is given or kept, and to give it.
+                self.assertIn(
+                    f"rn: no {left} of the work t1.2 is given, and no call on it names one; give"
+                    f" it with {option}",
+                    out,
+                )
 
     def test_the_plan_is_cut_into_its_part_and_handed_as_the_work(self):
         # Given: a session.
         # When: the orchestrator has the CCS of the plan written.
-        self.ccs("plan", **{"--kind": "plan"})
+        self.ccs("plan")
         # Then: the part from the title through the tasks is cut into the call's part, the work
         # the CCS names.
         part = call_at("0001", "steering.md")
         tasks = f"{task()}\n\n{task('T2', 'G1 and AC2')}"
         self.assertEqual(
-            (self.read(part), self.read_json(call_at("0001"))["focal_entities"][2]),
-            (plan(tasks=tasks) + "\n", {"deliverable": part}),
+            (self.read(part), self.read_json(call_at("0001"))["focal_entities"][3]),
+            (plan(tasks=tasks) + "\n", {"path": part}),
         )
 
     def test_the_learnings_are_cut_into_a_part_of_their_name_with_none_of_those_kept(self):
@@ -461,8 +516,8 @@ class CcsTest(RepoTest):
         # work the CCS names.
         part = call_at("0001", "learnings.md")
         self.assertEqual(
-            (self.read(part), self.read_json(call_at("0001"))["focal_entities"][2]),
-            ("", {"deliverable": part}),
+            (self.read(part), self.read_json(call_at("0001"))["focal_entities"][3]),
+            ("", {"path": part}),
         )
 
     def test_a_path_given_for_a_part_rn_cuts_stops(self):
@@ -480,26 +535,27 @@ class CcsTest(RepoTest):
 
     def test_the_ccs_of_a_checklist_names_rns_usability_after_its_checklists(self):
         # Given: rn's checklist for checklists.
-        checklist = os.path.join(self.plugin, "checklists", "checklist.md")
-        self.write(checklist, "# Checklist\n")
-        # When: the orchestrator has the CCS of a checklist written, of the checklist kind.
-        self.ccs("checklist-code", ".rn/checklists/code.md", **{"--kind": "checklist"})
+        # When: the orchestrator has the CCS of a checklist written.
+        self.ran("ccs", "checklist-code")
         # Then: it names rn's usability.md after the checklists.
         self.assertEqual(
             self.read_json(call_at("0001"))["retrieved_artifacts"],
-            [{"checklist": checklist}, {"source": self.usability}],
+            [{"checklist": self.own["checklist"]}, {"source": self.usability}],
         )
 
     def test_the_ccs_of_another_kind_names_its_checklists_alone(self):
         for kind in ("architecture", KIND):
             with self.subTest(kind=kind):
-                # Given: rn's checklist of the kind.
+                # Given: rn's checklist of the kind, and a task whose first action makes a work of
+                # it.
                 checklist = os.path.join(self.plugin, "checklists", "product", f"{kind}.md")
                 self.write(checklist, "# A kind\n")
-                # When: the orchestrator has the CCS of t1.1 written, of the kind.
-                made = self.ccs("t1.1", **{"--kind": kind})["ccs"]
+                made = task().replace("as a code work", f"as a {kind} work", 1)
+                self.session(steered(part=plan(tasks=made), stage="design"))
+                # When: the orchestrator has the CCS of that action written.
+                written = self.ccs("t1.1")["ccs"]
                 # Then: it names the kind's checklist alone.
-                found = self.read_json(made)["retrieved_artifacts"]
+                found = self.read_json(written)["retrieved_artifacts"]
                 self.assertEqual(found, [{"checklist": checklist}])
 
     def test_the_decisions_of_the_latest_call_not_returned_are_kept(self):
@@ -536,8 +592,8 @@ class CcsTest(RepoTest):
         # When: the orchestrator has the finished work's CCS written with no path.
         self.ccs("deliverable")
         # Then: the work is the file changed outside .rn/ and there.
-        works = [e for e in self.read_json(call_at("0001"))["focal_entities"] if "deliverable" in e]
-        self.assertEqual(works, [{"deliverable": "src/app.py"}])
+        works = [e for e in self.read_json(call_at("0001"))["focal_entities"] if "path" in e]
+        self.assertEqual(works, [{"path": "src/app.py"}])
 
     def test_the_finished_work_given_paths_is_those_paths(self):
         # Given: a file the branch changed.
@@ -546,8 +602,8 @@ class CcsTest(RepoTest):
         # When: the orchestrator has the finished work's CCS written with a path.
         self.ccs("deliverable", "README.md")
         # Then: the work is that path.
-        works = [e for e in self.read_json(call_at("0001"))["focal_entities"] if "deliverable" in e]
-        self.assertEqual(works, [{"deliverable": "README.md"}])
+        works = [e for e in self.read_json(call_at("0001"))["focal_entities"] if "path" in e]
+        self.assertEqual(works, [{"path": "README.md"}])
 
     def test_the_finished_work_with_no_file_changed_stops(self):
         # Given: a branch that changed nothing outside .rn/.
@@ -556,16 +612,6 @@ class CcsTest(RepoTest):
         self.assertIn(
             "rn: the branch changed no file outside .rn/ since it left origin/main",
             self.stopped("ccs", "deliverable", *options(NEEDED)),
-        )
-
-    def test_a_work_with_no_path_stops(self):
-        # Given: a session.
-        # When: the orchestrator has a checklist's CCS written with no path.
-        # Then: rn says to give the path of each file of it.
-        self.assertIn(
-            "rn: no path of the work checklist-code is given; give the path of each file or folder"
-            " of it",
-            self.stopped("ccs", "checklist-code", *options(NEEDED)),
         )
 
     def test_ccs_is_written_one_key_to_a_line_with_text_beyond_ascii_as_it_is(self):
@@ -628,39 +674,29 @@ class CcsTest(RepoTest):
 
     def test_an_empty_or_wrong_value_stops(self):
         self.kept()
-        for argv, said in (
-            (["t1.1", "README.md", "--receiver", " "], "rn: the receiver is empty"),
-            (["t1.1", "README.md", "--use", " "], "rn: the use is empty"),
-            (["t1.1", " "], "rn: the path of the work is empty"),
-            (["t1.1", "README.md", "--kind", "A"], "rn: the kind 'A' is not"),
-            (["readme", "README.md"], "rn: the work 'readme' is none rn makes"),
+        for work, paths, given, said in (
+            ("t1.1", ["README.md"], {"--receiver": " "}, "rn: the receiver is empty"),
+            ("t1.1", ["README.md"], {"--use": " "}, "rn: the use is empty"),
+            ("t1.1", [" "], {}, "rn: the path of the work is empty"),
+            ("readme", ["README.md"], {}, "rn: the work 'readme' is none rn makes"),
         ):
             with self.subTest(said=said):
                 # Given: a session.
-                values = dict(NEEDED, **dict(zip(argv[2::2], argv[3::2])))
                 # When: the orchestrator has a CCS written with a value it does not take.
                 # Then: rn names it.
-                self.assertIn(said, self.stopped("ccs", *argv[:2], *options(values)))
-
-    def test_ccs_without_an_option_it_needs_stops_with_the_usage(self):
-        # Given: a session.
-        # When: the orchestrator has a CCS written without --use.
-        # Then: rn says it is required.
-        self.assertIn(
-            "rn: the following arguments are required: --use; give it as rn.py ccs",
-            self.stopped("ccs", "t1.1", "README.md", "--kind", KIND, "--receiver", "r"),
-        )
+                argv = [work, *paths, *options({**NEEDED, **given})]
+                self.assertIn(said, self.stopped("ccs", *argv))
 
     def test_a_ccs_that_cannot_be_written_writes_nothing(self):
-        for work, kind in (("plan", "no-such-kind"), ("learnings", "no-such-kind")):
+        for work in ("plan", "learnings"):
             with self.subTest(work=work):
-                # Given: a session.
-                # When: the orchestrator has the CCS of a work rn cuts a part of written, of a kind
-                # with no checklist.
-                out = self.stopped("ccs", work, *options({**NEEDED, "--kind": kind}))
+                # Given: a session, and rn's checklist of the work's kind not there.
+                os.remove(self.own[work])
+                # When: the orchestrator has the CCS of the work, a part rn cuts, written.
+                out = self.stopped("ccs", work)
                 # Then: rn says there is no checklist for it, and writes nothing.
                 self.assertEqual(
-                    ("no checklist for the kind no-such-kind" in out, self.out("status", "-s")),
+                    (f"no checklist for the kind {work}" in out, self.out("status", "-s")),
                     (True, ""),
                 )
 
@@ -671,6 +707,40 @@ class CcsTest(RepoTest):
         # When: the orchestrator has a CCS written.
         # Then: rn says to run it from the top.
         self.assertIn("below the top", self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)))
+
+
+class DecisionsTest(RepoTest):
+    """Each decision of a work, as its latest call keeps it."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.session(steered(stage="design"))
+
+    def test_the_decisions_of_a_works_latest_call_are_given(self):
+        # Given: a call on t1.1 returned, and one made again with a decision changed and one added.
+        self.call("0001", "t1.1", decisions=("A: B",), result={})
+        self.call("0002", "t1.1", decisions=("A: C", "D: E"))
+        self.kept()
+        # When: the orchestrator asks for t1.1's decisions.
+        # Then: rn gives those of the latest call, with its number.
+        self.assertEqual(
+            self.ran("decisions", "t1.1"),
+            {"work": "t1.1", "call": "0002", "decisions": ["A: C", "D: E"]},
+        )
+
+    def test_a_work_never_called_has_no_decisions(self):
+        # Given: a session with no call on t1.2.
+        # When: the orchestrator asks for its decisions.
+        # Then: rn gives no call and no decision.
+        self.assertEqual(
+            self.ran("decisions", "t1.2"), {"work": "t1.2", "call": None, "decisions": []}
+        )
+
+    def test_the_decisions_of_a_work_rn_does_not_make_stop(self):
+        # Given: a session.
+        # When: the orchestrator asks for the decisions of a work rn does not make.
+        # Then: rn names the works it makes.
+        self.assertIn("rn: the work 'readme' is none rn makes", self.stopped("decisions", "readme"))
 
 
 class ChecklistsTest(RepoTest):

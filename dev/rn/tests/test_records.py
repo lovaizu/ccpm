@@ -51,7 +51,7 @@ class RecordsTest(LearningTest):
         self.write("README.md", "# app\n\nMIT\n")
         self.commit_with("README: say MIT")
         # When: the orchestrator has the records shown.
-        self.ran("records")
+        self.show()
         # Then: the history gives each commit, oldest first, with its message and the files it
         # changed, not their lines.
         history = self.read(HISTORY)
@@ -69,11 +69,11 @@ class RecordsTest(LearningTest):
         # Given: a move that rewrote the steering.
         self.write(STEERING, steered(next_step="3. Sign off."))
         self.commit_with("plan: made")
+        head = self.out("rev-parse", "--short", "HEAD").strip()
         # When: the orchestrator has the records shown.
-        self.ran("records")
+        self.show()
         # Then: after the commits, the history gives each change to the steering under the commit
         # that made it, without its message again.
-        head = self.out("rev-parse", "--short", "HEAD").strip()
         changes = self.read(HISTORY).split(f" -- {STEERING}\n")[1]
         self.assertEqual(
             (f"\n{head}\n" in changes, "+3. Sign off." in changes, "plan: made" in changes),
@@ -90,7 +90,7 @@ class RecordsTest(LearningTest):
         # Given: a text shown by an earlier run.
         self.write(f"{CONVERSATIONS}/old.txt", "old")
         # When: the orchestrator has the records shown.
-        self.ran("records")
+        self.show()
         # Then: what the earlier run left is gone.
         self.assertFalse(os.path.exists(CONVERSATIONS))
 
@@ -103,7 +103,7 @@ class RecordsTest(LearningTest):
         self.call("0002", "learnings", "learnings")
         self.kept()
         # When: the orchestrator has the records shown.
-        self.ran("records")
+        self.show()
         # Then: the history runs from the commit that kept the learnings call's result.
         history = self.read(HISTORY)
         self.assertEqual(
@@ -120,7 +120,7 @@ class RecordsTest(LearningTest):
         self.call("0001", "deliverable", "deliverable", result={})
         self.kept()
         # When: the orchestrator has the records shown.
-        self.ran("records")
+        self.show()
         # Then: the history runs from the commit the branch left the default branch at.
         self.assertIn(f"$ git log --reverse --stat {self.left_at()}..HEAD\n", self.read(HISTORY))
 
@@ -131,7 +131,7 @@ class RecordsTest(LearningTest):
         self.call("0002", "plan", "learnings", result={})
         self.kept()
         # When: the orchestrator has the records shown.
-        self.ran("records")
+        self.show()
         # Then: the history runs from the commit that kept the learnings call's result.
         self.assertIn(f"$ git log --reverse --stat {kept}..HEAD\n", self.read(HISTORY))
 
@@ -141,7 +141,7 @@ class RecordsTest(LearningTest):
         self.commit_with("design: approved")
         kept = self.learnt("0002")
         # When: the orchestrator has the records shown.
-        self.ran("records")
+        self.show()
         # Then: the history runs from the commit that kept the later.
         self.assertIn(f"$ git log --reverse --stat {kept}..HEAD\n", self.read(HISTORY))
 
@@ -202,7 +202,7 @@ class RecordsTest(LearningTest):
         self.write("notes.md", "x\n")
         # When: the orchestrator has the records shown.
         # Then: rn stops, saying to keep the move first.
-        self.assertIn("keep the move with `rn.py state", self.stopped("records"))
+        self.assertIn("keep the move with `rn.py state", self.stopped("ccs", "learnings"))
 
     def test_conversations_come_in_the_order_they_began(self):
         # Given: two conversations named against the order they began.
@@ -273,7 +273,7 @@ class RecordsTest(LearningTest):
         # Given: a conversation's record.
         self.conversation("c", said("now", "2026-10-20T09:00:00Z", self.top))
         # When: the orchestrator has the records shown.
-        self.ran("records")
+        self.show()
         # Then: git sees no change to keep.
         self.assertEqual(self.out("status", "--porcelain"), "")
 
@@ -282,7 +282,7 @@ class RecordsTest(LearningTest):
         self.git("checkout", "-q", "-b", "other", "main")
         # When: the orchestrator has the records shown.
         # Then: rn stops, saying how to start one.
-        self.assertIn("holds no session", self.stopped("records"))
+        self.assertIn("holds no session", self.stopped("ccs", "learnings"))
 
 
 class LearningsTest(RepoTest):

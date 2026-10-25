@@ -20,7 +20,9 @@ from helpers import (
 
 class UsageTest(RepoTest):
     def test_each_option_needed_left_out_stops_with_the_usage(self):
+        start = ["start", "add-login", "--title", "t", "--artifact-language", "a"]
         given = {
+            "start": start + ["--conversation-language", "c", "--next", "n", "--message", "m"],
             "state": ["state", "--next", "n", "--message", "m"],
             "decide": ["decide", "t1.1", "--title", "t", "--says", "s", "--message", "m"],
             "answer": ["answer", "approved", "--next", "n", "--message", "m"],
@@ -59,7 +61,7 @@ class CommandTest(RepoTest):
         # Then: it says a subcommand is required, and names them.
         self.assertIn(
             "required: subcommand; give it as rn.py [-h]"
-            " {session,start,state,decide,ccs,proposal,answer,checklists,records,learnings}",
+            " {session,start,state,decide,ccs,proposal,answer,checklists,decisions,learnings}",
             self.stopped(),
         )
 

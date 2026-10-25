@@ -19,7 +19,6 @@ from typing import Any, NoReturn
 import ccs
 import conversations
 import proposal
-import records
 import repo
 import session
 import steering
@@ -230,18 +229,20 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Writes the work's CCS into the session, keeps it, and gives the call that hands it to
     turn:up, once every change is pushed, so the work is made from decisions a fresh conversation
     also has, and a conversation cut while turn runs goes on from the call: in the work's latest
-    call where turn has not returned it, else in a new one carrying that call's decisions. The work
-    is each path given; for the plan, its part of the steering, cut into the call's part, with what
-    each task done served and made as what the receiver has, after those given; for the learnings,
-    a part of their heading alone, cut into the call's part, as those kept are not made again; for
-    the finished work given none, every file it is. Stops where a name, a text or a path given is
-    wrong, the branch holds no session, a change is not kept or pushed, the steering differs from
-    what the last keep left, the steering holds no task of a task's work, or the finished work is
-    not there."""
+    call where turn has not returned it, else in a new one carrying that call's decisions. What is
+    given makes the work; what is not, rn's own way of making it, or what the work's latest call
+    named, as ccs.made_as and ccs.kept_as say: for the plan, its part of the steering, cut into the
+    call's part, with what each task done served and made after what the receiver has; for the
+    learnings, an empty part, as those kept are not made again, the receiver having the records of
+    the stretch, shown afresh; for the finished work given none, every file it is. Stops, writing
+    nothing, where a name, a text or a path given is wrong, the branch holds no session, a change
+    is not kept or pushed, the steering differs from what the last keep left, the steering holds
+    no action of turn's of a task's work, the receiver, their use or what they have is neither
+    given nor kept, the kind has no checklist, or the finished work is not there."""
     work = session.worked(args.work)
-    receiver = stop.given(args.receiver, "receiver")
-    use = stop.given(args.use, "use")
     paths = [stop.given(p, "path of the work") for p in args.path]
+    receiver = None if args.receiver is None else stop.given(args.receiver, "receiver")
+    use = None if args.use is None else stop.given(args.use, "use")
     if work in session.PARTS and paths:
         raise stop.Stop(
             f"rn: the work {work} is a part rn cuts for turn from the session's record; give no"
@@ -254,59 +255,36 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     has = [ccs.has_path(p) for p in args.has]
     steered = session.kept_steering(folder)
     serving = ccs.served(steered, work)
-    # A task's work is made at the path, and of the kind, its action names.
-    action = session.made_by(steered, work) if session.task_of(work) else None
-    paths = paths or ([action.path] if action and action.path else [])
-    given_kind = args.kind or (action.kind if action else None)
-    if given_kind is None:
-        raise stop.Stop(
-            f"rn: no kind of the work {work} is given, which a task's work takes from its action;"
-            " give it with --kind"
-        )
-    kind = stop.named(given_kind, "kind")
-    if not paths and work not in session.PARTS + (steering.DELIVERABLE,):
-        raise stop.Stop(
-            f"rn: no path of the work {work} is given; give the path of each file or folder of it,"
-            " from the top"
-        )
     found = session.calls(folder)
     last = session.latest(found, work)
     number = last.number if last is not None and not last.result else session.next_number(found)
-    carried = [] if last is None else session.decisions_of(last)
+    made, kept = ccs.made_as(work, steered, folder, root), ccs.kept_as(last)
+    receiver = ccs.needed(receiver or made.receiver or kept.receiver, "receiver", work)
+    use = ccs.needed(use or made.use or kept.use, "use", work)
+    has = has or made.has or kept.has
+    if work != steering.LEARNINGS:
+        ccs.needed(has, "has", work)
+    kind = made.kind or ""
     checklists = ccs.checklists(kind, root)
-    # The part a call on the plan or the learnings makes, cut into a file of its own: the plan from
-    # the title through the tasks, the learnings none, as those kept are not made again.
-    cut = None
     if work in session.PARTS:
-        cut = {steering.PLAN: "\n".join(steered.plan) + "\n", steering.LEARNINGS: ""}[work]
         paths = [session.call_path(folder, number, session.PART[work])]
+    paths = paths or made.paths or ccs.finished_work()
     if work == steering.PLAN:
         has += ccs.done_made(folder, found, steered.plan)
-    # A CCS holds its entries in four parts, the shape turn takes: focal_entities, what the work is
-    # about, the work by its name, the stage it is made in, its paths, its receiver and what they
-    # have with it; goal_orientation, what the work is for, its use and what it serves as text, as
-    # turn makes the work from the CCS and the files it names alone; retrieved_artifacts, the
-    # kind's checklists and rn's `usability.md` where the work is a checklist; and constraints, the
-    # bounds it is made in: its decisions, the languages, and rn's checklist for a fix, which turn's
-    # roles are given to read, as each file a CCS names is, for a work made again. turn finds each
-    # entry by its key, whichever part holds it.
-    usability = os.path.join(root, "checklists", "usability.md")
-    written = {
-        "focal_entities": [{session.WORK: work}, {steering.STAGE: steered.keys[steering.STAGE]}]
-        + [{ccs.ENTRIES["work"]: p} for p in paths or ccs.finished_work()]
-        + [{ccs.ENTRIES["receiver"]: receiver}]
-        + [{ccs.ENTRIES["has"]: p} for p in has],
-        "goal_orientation": [{ccs.ENTRIES["use"]: use}]
-        + [{ccs.SERVES: f"{key}: {text}"} for key, text in serving.items()],
-        "retrieved_artifacts": [{ccs.ENTRIES["checklist"]: p} for p in checklists]
-        + ([{"source": usability}] if kind == ccs.CHECKLIST else []),
-        "constraints": [{session.DECISION: d} for d in carried]
-        + [{key: steered.keys[key]} for key in steering.LANGUAGES]
-        + [{"fix": os.path.join(root, "checklists", "fix.md")}],
-    }
     # Every check is made above, so a stop leaves nothing written.
-    if cut is not None:
-        repo.write_text(paths[0], cut)
+    if work == steering.LEARNINGS:
+        has = stretch.show(folder)
+    if work in session.PARTS:
+        repo.write_text(paths[0], ccs.cut(work, steered))
+    written = ccs.written(
+        work,
+        steered,
+        ccs.Made(kind, receiver, use, paths, has),
+        serving,
+        checklists,
+        [] if last is None else session.decisions_of(last),
+        root,
+    )
     path = session.call_path(folder, number, session.CCS)
     repo.write_json(path, written)
     session.keep(folder, steered, f"Call {number} on {work}: handed to turn")
@@ -318,6 +296,19 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         "kind": ccs.ENTRIES,
         "result": result,
         "test": ccs.test_of(steered, work),
+    }
+
+
+def run_decisions(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
+    """Each decision of the work, as its latest call keeps it, with that call's number; none, and
+    no call, where it has none. Stops where the work is none rn makes, or the branch holds no
+    session."""
+    work = session.worked(args.work)
+    last = session.latest(session.calls(session.current()), work)
+    return {
+        "work": work,
+        "call": None if last is None else last.number,
+        "decisions": [] if last is None else session.decisions_of(last),
     }
 
 
@@ -405,34 +396,6 @@ def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any
     return {"kept": session.keep(folder, answered, message)}
 
 
-def run_records(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Shows the stretch of the session the learnings are made from, once every change is pushed:
-    its record, the history on the branch since the last call on the learnings turn returned and
-    the session's files as they are now; then each conversation of the orchestrator, run at the top
-    of the repository on the session's branch, from the time the stretch began, none where Claude
-    Code keeps none here, as when the session ran on another machine. Each is written as text in the
-    git folder, made afresh, where nothing is committed; gives their paths, the record first, what
-    the receiver of the learnings' call has. Stops where the branch holds no session, or a change
-    is not kept or pushed."""
-    folder = session.current()
-    repo.pushed()
-    start = stretch.stretch(folder)
-    began = float(repo.git(["log", "-1", "--format=%ct", start], repo.AS_GIT_SAYS))
-    place = stretch.records_folder()
-    shutil.rmtree(place, ignore_errors=True)
-    # Each text shown, by where it is written, with its text.
-    texts = [(os.path.join("record", "history.txt"), stretch.history(folder, start))]
-    texts += [(os.path.join("record", p), repo.read_text(p)) for p in stretch.session_files(folder)]
-    for path in conversations.conversations(repo.top(), repo.branch()):
-        name = os.path.basename(path)[: -len(".jsonl")] + ".txt"
-        text = conversations.told(path, began)
-        if text:
-            texts.append((os.path.join("conversations", name), text))
-    for name, text in texts:
-        repo.write_text(os.path.join(place, name), records.wrapped(text))
-    return [os.path.join(place, name) for name, _ in texts]
-
-
 def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Every learning of the session, for the orchestrator to put to the user one per message once
     the finished work is approved: the session's, by ID, each as one line; and turn's, each as
@@ -482,9 +445,8 @@ def parser() -> Parser:
     hand.set_defaults(run=run_ccs)
     hand.add_argument("work")
     hand.add_argument("path", nargs="*")
-    hand.add_argument("--kind")
-    for option in ("--receiver", "--use"):
-        hand.add_argument(option, required=True)
+    hand.add_argument("--receiver")
+    hand.add_argument("--use")
     hand.add_argument("--has", action="append", default=[])
     shown_text = sub.add_parser("proposal")
     shown_text.set_defaults(run=run_proposal)
@@ -498,7 +460,9 @@ def parser() -> Parser:
     lists = sub.add_parser("checklists")
     lists.set_defaults(run=run_checklists)
     lists.add_argument("kind")
-    sub.add_parser("records").set_defaults(run=run_records)
+    decisions = sub.add_parser("decisions")
+    decisions.set_defaults(run=run_decisions)
+    decisions.add_argument("work")
     sub.add_parser("learnings").set_defaults(run=run_learnings)
     return top
 
