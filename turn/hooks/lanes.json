@@ -98,6 +98,13 @@
                 "git commit",
                 "git push"
               ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{work}",
+                "{test}"
+              ]
             }
           ]
         },
@@ -150,6 +157,18 @@
                 "git commit",
                 "git push"
               ]
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "lanes": [
+            {
+              "lane": "every_item",
+              "takes": [
+                "{checklists}"
+              ],
+              "adapter": "hooks/adapters/items-checklist.py"
             }
           ]
         },

@@ -37,7 +37,7 @@ made again aimed at it, and you read it again.
 4. For each item, look for its Good where its `Scope` says. Lines give it only where each thing
    they tell you is so: run each command they give and compare what it prints with what they say,
    try each thing they say the code does on an input it is about, and look up each file and link
-   they point to, each as in step 2.
+   they point to, each as in step 2. Answer every item of `{checklists}`.
 5. Write your reading to `reply` with the Write tool. Write only `{reply}`.
    Write `{reply}` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/reading.json`.
 6. End your turn; a message may then come, as below. End only once `{reply}` is made.

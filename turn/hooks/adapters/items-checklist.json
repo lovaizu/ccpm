@@ -1,0 +1,115 @@
+[
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": "### B-1: Who it is for\n\nScope: its part\n"
+    },
+    "gives": {
+      "items": [
+        "B-1"
+      ]
+    }
+  },
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": "---\nname: readme\nversion: 0.1.0\n---\n\n# README\n\n## Format\n\n### F-1: Shape\n\nScope: whole\n\n## Benefit\n\n### B-1: Who it is for\n\nScope: its part\n"
+    },
+    "gives": {
+      "items": [
+        "F-1",
+        "B-1"
+      ]
+    }
+  },
+  {
+    "given": {
+      "input": "rn/checklists/session/plan.md",
+      "text": "# Plan\n## Format\n### F-1: Shape\n```markdown\n# <The piece of work, in a few words>\n## Acceptance criteria\n## Tasks\n## Next\n## Open\n```\n## Benefit\n### B-1: The user's purpose, with why\n### B-2: The whole goal, checked on the finished work\n### B-3: Each task's result accepted in its turn\n### B-4: Each action done by what it says\n### B-8: Each task made on checked ground\n### B-9: Each result made to a check made first\n### B-5: The tasks give what their stage needs\n### B-6: Each line used by its readers\n### B-7: Each line taken as meant\n"
+    },
+    "gives": {
+      "items": [
+        "F-1",
+        "B-1",
+        "B-2",
+        "B-3",
+        "B-4",
+        "B-8",
+        "B-9",
+        "B-5",
+        "B-6",
+        "B-7"
+      ]
+    }
+  },
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": "## B-8: Above\n\n#### B-9: Below\n"
+    },
+    "gives": {
+      "items": []
+    }
+  },
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": "---\nname: readme\n### B-7: Kept out\n---\n### B-1: After\n"
+    },
+    "gives": {
+      "items": [
+        "B-1"
+      ]
+    }
+  },
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": "~~~markdown\n### B-7: <Item name>\n~~~\n\n### B-1: After\n"
+    },
+    "gives": {
+      "items": [
+        "B-1"
+      ]
+    }
+  },
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": "### Notes\n### b-1: Small\n### B-1 Title\n"
+    },
+    "gives": {
+      "items": []
+    }
+  },
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": "   ### B-3: Indented\n### B-4: Closed ###\n"
+    },
+    "gives": {
+      "items": [
+        "B-3",
+        "B-4"
+      ]
+    }
+  },
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": "# Plan\n\n- B-1: a list item\n"
+    },
+    "gives": {
+      "items": []
+    }
+  },
+  {
+    "given": {
+      "input": "checklists/readme.md",
+      "text": ""
+    },
+    "gives": {
+      "items": []
+    }
+  }
+]

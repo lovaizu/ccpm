@@ -43,6 +43,7 @@ Good is yours to decide.
    from nothing, and change a file already there, read whole, keeping what already gives its Good.
    With items in `sent_back`, change only what gives their Goods.
    Write only `{work}` or `{reply}`. Do not run `git commit` or `git push`.
+   After changing `{work}`, pass `{test}`.
 5. Read the work once from the top as the receiver meeting it for the first time, each file with
    `cat -n <path>`, as Read gives nothing back for a file you just wrote. For every item find the
    lines that give its Good; for an item whose `Scope` is `each part`, find each part's Good inside

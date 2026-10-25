@@ -5,13 +5,21 @@ import unittest
 
 from helpers import TURN, testing
 
-lanes, step = testing.lane_code(TURN, "lanes", "step")
+lanes, step, hooks_file = testing.lane_code(TURN, "lanes", "step", "hooks_file")
 
 # The lanes each agent's steps call for, taking its run's values as the flow gives them in the
 # agent's prompt, or as turn.py start prints them.
 LAID = {
     "turn:up": {"start_with", "follow_next", "hands_off", "read_only", "read_whole", "as_printed"},
-    "turn:generator": {"read_only", "read_whole", "write_only", "hands_off", "in_form", "end_when"},
+    "turn:generator": {
+        "read_only",
+        "read_whole",
+        "write_only",
+        "hands_off",
+        "test_after",
+        "in_form",
+        "end_when",
+    },
     "turn:first-user": {
         "read_only",
         "read_whole",
@@ -19,6 +27,7 @@ LAID = {
         "hands_off",
         "in_form",
         "end_when",
+        "every_item",
     },
     "turn:learner": {"read_only", "read_whole", "write_only", "in_form", "end_when"},
 }
