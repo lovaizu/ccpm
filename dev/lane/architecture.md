@@ -108,7 +108,9 @@ flowchart TB
   defines with the JSON it is given and gives back: the values a subagent started from, the items of
   an input, the move a script printed. At each port lane reads one form, the one lanes.md gives;
   a plugin whose text is in another form has an adapter, a command of its own that `lane:up` writes
-  with the cases it must give, which the guard runs at that port in place of lane's reading.
+  with the cases it must give, which the guard runs at that port in place of lane's reading. An
+  adapter is part of the proposal: kept beside it, run on its cases and shown in the print, and
+  written into the plugin with the lanes once approved.
 
   So lane holds one check per lane however many forms plugins write in, and a new form is a
   plugin's adapter, never a new version of lane (ports and adapters; a command handed JSON as git's
@@ -161,7 +163,8 @@ lane/                          the plugin, installed by Claude Code
 └── CHANGELOG.md               what changed for its users in each version <Markdown>
 
 ${CLAUDE_PLUGIN_DATA}/
-└── <plugin>.json              the proposal <JSON>, kept by lane:up until the layer writes it
+├── <plugin>.json              the proposal <JSON>, kept by lane:up until the layer writes it
+└── <plugin>/adapters/         the adapters the proposal names, until the layer writes them
 
 <the system's temporary folder>/lane/<yyyymmdd>-<session>/
 └── <agent>.jsonl              each call of a subagent lanes are laid in, kept by the guard <JSONL>
