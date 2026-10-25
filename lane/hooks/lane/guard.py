@@ -36,6 +36,7 @@ LAY_AGAIN = (
 )
 MAKER = "the maker of {plugin} must fix it"
 ADAPTER = "the maker of {plugin} must fix the adapter and lay its lanes again with `lay.py write`"
+REFUSED = "the maker of {plugin} must fix it and lay its lanes again with `lay.py write`"
 # What a lane resting on its subagent's record meets where the record is not there.
 NOT_FOUND = "its record is not found where Claude Code keeps it"
 
@@ -95,7 +96,8 @@ class Laid:
         """The lane's sentence where what the event shows drifts from it, as the subagent reads its
         step, with the point it drifts by on the next line where its check gives one; an error where
         what the lane is given is not as its IN says, an adapter it reads by is not as its port
-        says, or its step no longer says its sentence; nothing otherwise."""
+        says, its step no longer says its sentence, or what it takes is refused now as the layer
+        refuses it, such as in_form's form gone; nothing otherwise."""
         # Told before as it ends, a subagent that has answered with words alone is let end, so it
         # is told and never held for good.
         acted = seen.acted
@@ -104,6 +106,12 @@ class Laid:
         said = sentence(self.lane, self.takes)
         if not step.holds(self.root, self.name, self.number, said):
             return [self.error(f"step {self.number} no longer says: {said}", LAY_AGAIN)]
+        # What the layer refuses to lay is held again on each run, as the plugin may have changed
+        # since, such as in_form's form gone.
+        refused = getattr(LANES[self.lane], "refused", None)
+        why = refused(self.takes, self.root) if refused is not None else ""
+        if why:
+            return [self.error(f"it {why}", REFUSED)]
         named = started.names(self.takes)
         # The run's values are read from the record, given by its prompt and by the script
         # start_with runs first, so a lane taking one is held once that script has run, start_with

@@ -50,8 +50,9 @@ def refused(takes: list[str], root: str) -> str:
 
 def drifts(call: Call, takes: list[str], root: str) -> str:
     """The point the call's write of the output taken is out of the form taken by, the output named
-    from the folder the call is made in, where the guard stands, and the form from the plugin's;
-    "" where the call keeps the form or writes no output, or an Edit would write nothing."""
+    from the folder the call is made in, where the guard stands, and the form from the plugin's,
+    which the guard has found one lane reads, as `refused` does; "" where the call keeps the form or
+    writes no output, or an Edit would write nothing."""
     output, named = takes
     if shell.path(os.getcwd(), output) not in call.written:
         return ""
@@ -62,11 +63,4 @@ def drifts(call: Call, takes: list[str], root: str) -> str:
         )
     if call.text is None:
         return ""
-    try:
-        asked = form(root, named)
-    except ValueError as why:
-        return (
-            f"the form `{step.expanded(named, root)}` {why}. Stop here and reply that the plugin's"
-            " maker must fix the form and lay its lanes again with `lay.py write`."
-        )
-    return forms.held(asked, output, call.text)
+    return forms.held(form(root, named), output, call.text)

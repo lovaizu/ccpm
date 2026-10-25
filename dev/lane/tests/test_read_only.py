@@ -88,7 +88,8 @@ class TestLetThrough(ReadOnlyTest):
 
 class TestGuard(GuardTest):
     """read_only and in_form laid on changelog-writer, with write_only and hands_off beside them on
-    the step of in_form, run by the guard as Claude Code runs it."""
+    the step of in_form, run by the guard as Claude Code runs it, the form in the plugin as laying
+    in_form asks."""
 
     LAID = (
         (1, "read_only", TAKES),
@@ -96,6 +97,10 @@ class TestGuard(GuardTest):
         (3, "write_only", ["entry.json"]),
         (3, "hands_off", ["git push"]),
     )
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), {"type": "object"})
 
     def reading(self, name):
         """The guard on changelog-writer reading the file of the plugin with Read."""

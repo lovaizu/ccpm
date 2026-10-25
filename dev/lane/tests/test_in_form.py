@@ -170,22 +170,6 @@ class TestForm(InFormTest):
                     "named as ${CLAUDE_PLUGIN_ROOT}/<path in the plugin>", str(refused.exception)
                 )
 
-    def test_a_form_gone_since_the_lane_was_laid_stops_the_write_saying_so(self):
-        # Given: in_form whose form is no longer there
-        os.remove(os.path.join(self.plugin, "forms", "entry.json"))
-        # When: the output is written
-        told = self.wrote('{"version": "1.0"}')
-        # Then: it drifts, saying the form cannot be read and to stop for the plugin to be fixed
-        named = os.path.join(self.plugin, "forms", "entry.json")
-        self.assertTrue(told.startswith(f"the form `{named}` cannot be read: "), told)
-        self.assertTrue(
-            told.endswith(
-                ". Stop here and reply that the plugin's maker must fix the form and lay its lanes"
-                " again with `lay.py write`."
-            ),
-            told,
-        )
-
 
 class TestGuard(GuardTest):
     """in_form laid on step 3 of changelog-writer, run by the guard as Claude Code runs it."""
@@ -218,6 +202,35 @@ class TestGuard(GuardTest):
             self.written('{"version": 1}'),
             ("told", f"notes: {told}\n$.version: expected a string, found 1"),
         )
+
+    def test_a_form_gone_since_the_lane_was_laid_is_an_error_on_every_call_it_holds(self):
+        for what, given in (
+            ("a write of the output", ("Write", {"file_path": "entry.json", "content": "{}"})),
+            ("a write of another file", ("Write", {"file_path": "notes.md", "content": "x"})),
+            ("a command", ("Bash", {"command": "ls"})),
+        ):
+            with self.subTest(what=what):
+                # Given: in_form on step 3, its form no longer there
+                os.remove(os.path.join(self.plugin, "forms", "entry.json"))
+                # When: changelog-writer makes a call the lane holds
+                with mock.patch.object(in_form, "drifts") as drifts:
+                    found = self.guard(json.dumps(self.called(*given)))
+                # Then: it is an error, the subagent and the user told the form cannot be read and
+                # that the plugin's maker must fix it, the lane's check never run
+                self.assertEqual(
+                    found,
+                    (
+                        "error",
+                        (
+                            "notes: lane cannot check in_form on step 3 of changelog-writer: it"
+                            f" names the form {TAKES[1]}, which cannot be read: No such file or"
+                            " directory. Stop here and reply that the maker of notes must fix it"
+                            " and lay its lanes again with `lay.py write`."
+                        ),
+                    ),
+                )
+                drifts.assert_not_called()
+                self.write_json(os.path.join(self.plugin, "forms", "entry.json"), FORM)
 
     def test_a_write_in_the_form_is_let_through(self):
         # Given: in_form on step 3 of changelog-writer

@@ -151,8 +151,8 @@ on what the subagent did before, its record. The layer holds a proposal's takes 
 a wrong take shows when the lanes are laid, not on a run. Anything not as these say, a value not
 given or given empty, an adapter failing, giving no answer in time or answering out of its port,
 the record not found, the event or `hooks/lanes.json` not as Claude Code and `lay.py write` write
-them, or a step no longer saying its lane's sentence, is an error, not a drift: the call is
-stopped, or the subagent kept going once as it ends, and it and you are told
+them, a step no longer saying its lane's sentence, or a thing a lane takes that `lay.py write`
+would now refuse, such as in_form's form gone, is an error, not a drift: the call is stopped, or the subagent kept going once as it ends, and it and you are told
 
 ```
 <plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Stop here and reply that <who must fix it>.
