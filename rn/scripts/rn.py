@@ -281,18 +281,10 @@ def base() -> str:
     ).strip()
 
 
-# The files turn keeps beside a call's result while it runs, each named with the result's name and
-# a dot, and removed once it returns: no part of the record, so neither kept nor a change to keep.
-RUN_FILES = [
-    ":(top,exclude,glob).rn/*/turn/*-result.json.*",
-    ":(top,exclude,glob).rn/*/turn/*-result.json.*/**",
-]
-
-
 def changed() -> list[str]:
     """Each path of the working tree changed since the last commit, every file of a folder not
-    yet added among them, turn's run files left out."""
-    listed = git(["status", "--porcelain", "-uall", "--", ":/", *RUN_FILES], AS_GIT_SAYS)
+    yet added among them."""
+    listed = git(["status", "--porcelain", "-uall"], AS_GIT_SAYS)
     return [line[3:] for line in listed.splitlines()]
 
 
@@ -718,7 +710,7 @@ def keep(folder: str, steering: Steering, message: str) -> str:
     held_form(text)
     write_text(steering_path(folder), text)
     if changed():
-        git(["add", "-A", "--", ":/", *RUN_FILES], AS_GIT_SAYS)
+        git(["add", "-A"], AS_GIT_SAYS)
         git(["commit", "-q", "-F", "-"], AS_GIT_SAYS, message)
     push()
     return git(["rev-parse", "HEAD"], AS_GIT_SAYS).strip()

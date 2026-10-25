@@ -1694,24 +1694,33 @@ class CcsTest(RepoTest):
         # Then: the same call is given, and no commit is made.
         self.assertEqual((out["ccs"], self.head()), (call_at("0001"), before))
 
-    def test_turns_run_files_are_no_change_to_keep(self):
-        # Given: the call on t1 kept, and the files turn keeps beside its result while it runs.
+    def test_turns_files_at_the_root_are_kept_with_the_move(self):
+        # Given: the call on t1 kept, and the state turn keeps in its folder at the root while it
+        # runs
         self.ccs()
-        for name in ("run.json", "up.json", "records/a.txt"):
-            self.write(call_at("0001", f"result.json.{name}"), "x\n")
-        before = self.head()
-        # When: the orchestrator has the CCS written again, and keeps a decision while turn asks.
-        self.ccs()
+        self.write(".turn/20261025-result.json/run.json", "x\n")
+        # When: the orchestrator keeps a decision while turn asks
         self.ran("decide", "t1", "--title", "Login", "--says", "email", "--message", "Login")
-        # Then: neither stops, and the decision's commit holds the CCS alone, the run files left.
+        # Then: the decision's commit holds the CCS and turn's state, as git keeps what the user's
+        # .gitignore does not name, and nothing is left
         changed = self.out("show", "--name-only", "--format=", "HEAD").split()
-        left = sorted(line[3:] for line in self.out("status", "--porcelain", "-uall").splitlines())
-        want = (
-            [call_at("0001")],
-            [call_at("0001", f"result.json.{n}") for n in ("records/a.txt", "run.json", "up.json")],
+        left = self.out("status", "--porcelain", "-uall")
+        self.assertEqual(
+            (changed, left), ([call_at("0001"), ".turn/20261025-result.json/run.json"], "")
         )
-        self.assertNotEqual(self.head(), before)
-        self.assertEqual((changed, left), want)
+
+    def test_turns_files_named_by_gitignore_are_no_change_to_keep(self):
+        # Given: a .gitignore naming turn's folder, kept, the call on t1 kept, and the state turn
+        # keeps there while it runs
+        self.write(".gitignore", ".turn/\n")
+        self.commit_with("ignore turn's folder")
+        self.ccs()
+        self.write(".turn/20261025-result.json/run.json", "x\n")
+        before = self.head()
+        # When: the orchestrator has the CCS written again, as a fresh conversation does
+        out = self.ccs()
+        # Then: it does not stop, gives the same call, and keeps nothing
+        self.assertEqual((out["ccs"], self.head()), (call_at("0001"), before))
 
     def test_the_ccs_of_a_task_holds_what_its_task_serves(self):
         # Given: a session whose T1 serves AC1.
