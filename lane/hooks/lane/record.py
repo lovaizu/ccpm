@@ -3,12 +3,13 @@ session's record, each line an entry, among them each tool the subagent used, as
 what the tool gave back, each reply that ended its turn, and each message that reached the
 subagent, its prompt first. A tool event carries no path to it, but the session's record and the
 subagent's ID, by which Claude Code keeps it. Claude Code does not document the record, so it is
-read as Claude Code 2.1.306 writes it, which the tests hold, and a line not in that shape is left
-out. The calls of one reply of the AI are written there once their hooks have run, a call a hook
-stopped among them, so the record holds every call of the replies before, and none of the reply
-being handed, whose calls called.py keeps. Where Claude Code keeps the records, a conversation's
-beside each subagent's of it, and the agent type of each, are read here too, for every plugin that
-reads a record, kept as Claude Code 2.1.306 keeps them."""
+read as Claude Code 2.1.309 writes it, the one version lane's code and tests name for it, and a
+line not in that shape is left out. The calls of one reply of the AI are written
+there only once the whole reply has ended, their hooks run, a call a PreToolUse hook stopped among
+them with the hook's error, which `done` leaves out, as it never ran; so the record holds every
+call of the replies before, and none of the reply being handed, whose calls called.py keeps. Where
+Claude Code keeps the records, a conversation's beside each subagent's of it, and the agent type of
+each, are read here too, for every plugin that reads a record, kept as that version keeps them."""
 
 from __future__ import annotations
 
@@ -19,19 +20,18 @@ import re
 from typing import Any, NamedTuple
 
 # What a user entry's message begins with where a stop hook keeps the subagent going, telling it
-# what the hook wrote, as Claude Code 2.1.306 writes it.
+# what the hook wrote.
 TOLD = "Stop hook feedback:"
-# How Claude Code 2.1.306 puts a message the main conversation sends into the subagent's record,
+# How Claude Code puts a message the main conversation sends into the subagent's record,
 # around the message itself; a message from another subagent has the message apart, as its body.
 FROM_MAIN = re.compile(
     r"\AThe coordinator sent a message while you were working:\n(?P<message>.*)"
     r"\n\nAddress this before completing your current task\.\Z",
     re.DOTALL,
 )
-# What a call's result begins with where a PreToolUse hook stopped it, as Claude Code 2.1.306
-# writes it, the call never run.
+# What a call's result begins with where a PreToolUse hook stopped it, the call never run.
 HOOK_STOPPED = re.compile(r"\APreToolUse:\S+ hook error: ")
-# What a Bash call's result is where its command printed nothing, as Claude Code 2.1.306 writes it.
+# What a Bash call's result is where its command printed nothing.
 SILENT = "(Bash completed with no output)"
 # A reply that ended the subagent's turn, read among the tools it used as one of no tool, the reply
 # its input's `text`, as it hands its text on to whoever started or resumed the subagent, as a call
@@ -186,7 +186,7 @@ def told(entry: dict[str, Any]) -> bool:
 
 def ends_turn(entry: dict[str, Any]) -> bool:
     """Whether the entry is the subagent's reply ending its turn: an assistant entry whose message
-    stopped at the turn's end, as Claude Code 2.1.306 writes the last entry of a reply."""
+    stopped at the turn's end, as Claude Code writes the last entry of a reply."""
     message = entry.get("message")
     stop = message.get("stop_reason") if isinstance(message, dict) else None
     return entry.get("type") == "assistant" and stop == "end_turn"

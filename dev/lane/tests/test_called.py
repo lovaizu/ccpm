@@ -16,7 +16,8 @@ from test_guard import GuardTest
 
 # The day a call is kept on, as the clock gives it.
 TODAY = "20261025"
-# The output of a Bash call, as Claude Code 2.1.309 gives it back to PostToolUse.
+# The output of a Bash call, as the version of Claude Code record.py names gives it back to
+# PostToolUse.
 OUTPUT = {"stdout": "out", "stderr": "", "interrupted": False, "isImage": False}
 # The move the script follow_next takes prints.
 MOVE = {"tool": "SendMessage", "input": {"to": "a2", "message": "go"}}
@@ -107,7 +108,7 @@ class TestKept(CallsTest):
 
 class TestGivenBack(CallsTest):
     """What a call gave back, as the text the AI is shown, in the form the record's tool result has
-    for the same call, as Claude Code 2.1.309 gave both on a run."""
+    for the same call, as the version record.py names gave both on a run."""
 
     def given_back(self, tool: str, back: object) -> str:
         """The text kept of a call of the tool that gave back what is given."""

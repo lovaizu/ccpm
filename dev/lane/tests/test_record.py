@@ -1,5 +1,5 @@
 """What the subagent did before, read from its record, the file Claude Code keeps beside the
-session's, in the shape Claude Code 2.1.306 writes it."""
+session's, in the shape the version of Claude Code record.py names writes it."""
 
 import json
 import os

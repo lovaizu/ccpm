@@ -151,10 +151,10 @@ class PluginTest(testing.FolderTest):
         }
 
     def came_back(self, tool: str, given: dict, back: Any = None, error: str | None = None) -> dict:
-        """The event in Claude Code's shape, of Claude Code 2.1.309, of a call of the tool with the
-        input coming back in the subagent a1 of the session s1, as the event above: PostToolUse with
-        what it gave back, or, given an error, PostToolUseFailure with that error; its ID
-        `toolu_k<n>`, n counting the calls come back in the test."""
+        """The event in Claude Code's shape, of the version record.py names, of a call of the tool
+        with the input coming back in the subagent a1 of the session s1, as the event above:
+        PostToolUse with what it gave back, or, given an error, PostToolUseFailure with that error;
+        its ID `toolu_k<n>`, n counting the calls come back in the test."""
         self.calls_back = getattr(self, "calls_back", 0) + 1
         event = {
             **self.called(tool, given),
@@ -202,7 +202,7 @@ class Failed(str):
 
 def from_main(text: str) -> dict[str, Any]:
     """The entry of a message the main conversation sent the subagent by SendMessage, as Claude
-    Code 2.1.306 writes it into the subagent's record, the message put inside words of its own."""
+    Code writes it into the subagent's record, the message put inside words of its own."""
     content = (
         f"The coordinator sent a message while you were working:\n{text}\n\n"
         "Address this before completing your current task."
@@ -217,7 +217,7 @@ def from_main(text: str) -> dict[str, Any]:
 
 def from_subagent(text: str) -> dict[str, Any]:
     """The entry of a message another subagent sent the subagent by SendMessage, as Claude Code
-    2.1.306 writes it, the message inside words of its own, and apart as the origin's body."""
+    writes it, the message inside words of its own, and apart as the origin's body."""
     content = (
         'Another Claude session sent a message while you were working:\n<agent-message from="a2">'
         f'\n{text}\n</agent-message>\n\nThat "other Claude session" is an agent working inside'
@@ -233,8 +233,8 @@ def from_subagent(text: str) -> dict[str, Any]:
 
 
 def replied(text: str) -> dict[str, Any]:
-    """The entry of the subagent's reply that ends its turn, as Claude Code 2.1.306 writes it into
-    its record: an assistant entry of text whose message stopped at the turn's end."""
+    """The entry of the subagent's reply that ends its turn, as Claude Code writes it into its
+    record: an assistant entry of text whose message stopped at the turn's end."""
     message = {
         "role": "assistant",
         "stop_reason": "end_turn",
@@ -244,9 +244,9 @@ def replied(text: str) -> dict[str, Any]:
 
 
 def recorded(cwd: str, calls: list, prompt: str = PROMPT) -> str:
-    """A subagent's record as Claude Code 2.1.306 writes it, cut to what lane reads and what lies
-    beside it: the prompt first, PROMPT where none is given, and an attachment; then each item of
-    the calls, in order:
+    """A subagent's record as Claude Code writes it, of the version record.py names, cut to what
+    lane reads and what lies beside it: the prompt first, PROMPT where none is given, and an
+    attachment; then each item of the calls, in order:
     - a tool, its input and what it gave back, None for a call not yet back, a Failed for an
       error: an assistant's tool use and a user's tool result, each followed by the request as
       sent, its text unlike theirs;
@@ -315,7 +315,7 @@ def writing(path: str, result: str = "") -> tuple[str, dict[str, Any], str]:
 
 
 def told(cwd: str, said: str) -> list[dict[str, Any]]:
-    """The subagent's reply and what a stop hook told it, as Claude Code 2.1.306 writes them."""
+    """The subagent's reply and what a stop hook told it, as Claude Code writes them."""
     content = (
         f'Stop hook feedback:\n[python3 "/p/hooks/lane/subagentstop.py"]: {said}\n\n'
         "This hook comes from the notes@inline plugin."
