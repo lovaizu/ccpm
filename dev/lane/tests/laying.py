@@ -34,6 +34,26 @@ END_ENTRY = {
     "matcher": "notes:changelog-writer",
     "hooks": [{"type": "command", "timeout": 10, "command": END_COMMAND}],
 }
+# The entries of the events a call is kept on, PostToolUse and PostToolUseFailure, for the subagent
+# lanes are laid in, each matching every tool, exiting 0 where Python is missing, and running its
+# event's entry with the subagent alone.
+KEPT = {
+    event: [
+        {
+            "matcher": ".*",
+            "hooks": [
+                {
+                    "type": "command",
+                    "timeout": 10,
+                    "command": COMMAND.replace("exit 2;", "exit 0;")
+                    .replace("pretooluse.py", f"{event.lower()}.py")
+                    .replace(" '3:hands_off:git commit,git push'", ""),
+                }
+            ],
+        }
+    ]
+    for event in ("PostToolUse", "PostToolUseFailure")
+}
 # What `print` shows the building AI for it.
 PRINTED = """Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
   run: Do not run `git commit` or `git push`.  hook hands_off

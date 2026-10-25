@@ -20,11 +20,15 @@ import lanes
 NAME = r"[A-Za-z0-9._-]+"
 AGENT = re.compile(rf"{NAME}:{NAME}")
 LANE = re.compile(r"(?P<step>[0-9]+):(?P<lane>[a-z_]+):(?P<takes>.*)")
-# The events lanes are held on, each with its own script in lane's code, named after it, and what
-# its hook exits with where lane's code cannot run: on a tool call STOPPED, which stops the call; at
-# the subagent's end UNREAD, which tells the user and lets the subagent end, as it cannot install
-# Python and kept going it would only be asked again.
-EVENTS = {"PreToolUse": hook.STOPPED, "SubagentStop": hook.UNREAD}
+# The events a call is kept on as it comes back, for every subagent lanes are laid in, as called.py
+# says.
+KEPT = ("PostToolUse", "PostToolUseFailure")
+# The events lanes are held on, and those a call is kept on, each with its own script in lane's
+# code, named after it, and what its hook exits with where lane's code cannot run: on a tool call
+# STOPPED, which stops the call; at the subagent's end UNREAD, which tells the user and lets the
+# subagent end, as it cannot install Python and kept going it would only be asked again; as a call
+# comes back 0, as the call has run and the hook on the next call says what to install.
+EVENTS = {"PreToolUse": hook.STOPPED, "SubagentStop": hook.UNREAD, **dict.fromkeys(KEPT, 0)}
 # Each hook's command first checks that lane's code can run, and where it cannot, on an event of
 # its subagent, read from the event's text by the shell alone, as Claude Code writes it, with or
 # without a blank after the colon, says what to install and exits with its event's code; it lets

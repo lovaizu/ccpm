@@ -7,7 +7,7 @@ import unittest
 
 import helpers
 from helpers import entries
-from laying import COMMAND, END_ENTRY, ENTRY, LANES, TESTED, LayTest
+from laying import COMMAND, END_ENTRY, ENTRY, KEPT, LANES, TESTED, LayTest
 
 
 class TestWriteHooks(LayTest):
@@ -15,8 +15,8 @@ class TestWriteHooks(LayTest):
         # Given: a plugin with no hooks.json
         # When: the proposal is written
         self.lay("write", self.proposal_file)
-        # Then: hooks.json holds the subagent's entry alone
-        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY]}})
+        # Then: hooks.json holds the subagent's entry, and those its calls are kept by
+        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], **KEPT}})
 
     def test_hand_on_and_wait_lanes_watch_their_tools_and_keep_all_they_take(self):
         # Given: as_printed and wait_for on step 3, wait_for holding back a command
@@ -45,6 +45,7 @@ class TestWriteHooks(LayTest):
         self.lay("write", self.proposal_file)
         # Then: they stay as they were, the subagent's entry after them
         hooks["hooks"]["PreToolUse"].append(ENTRY)
+        hooks["hooks"].update(KEPT)
         self.assertEqual(self.hooks(), hooks)
 
     def test_the_subagents_entry_written_before_is_replaced_in_its_place(self):
@@ -78,7 +79,7 @@ class TestWriteHooks(LayTest):
         # When: the proposal is written
         _, said = self.lay("write", self.proposal_file)
         # Then: they are taken out and said, the other entries as they were
-        kept = {"PreToolUse": [own, other, ENTRY], "SubagentStop": []}
+        kept = {"PreToolUse": [own, other, ENTRY], "SubagentStop": [], **KEPT}
         self.assertEqual(self.hooks(), {"hooks": kept})
         self.assertIn("Took out the hooks of summarizer, which agents/ no longer has.", said)
 
@@ -89,7 +90,7 @@ class TestWriteHooks(LayTest):
         # When: the proposal is written
         self.lay("write", self.proposal_file)
         # Then: the file is the hooks indented by two, the description as it was written
-        hooks["hooks"]["PreToolUse"] = [ENTRY]
+        hooks["hooks"].update({"PreToolUse": [ENTRY], **KEPT})
         self.assertEqual(
             self.read(os.path.join(self.plugin, "hooks", "hooks.json")),
             json.dumps(hooks, indent=2, ensure_ascii=False) + "\n",
@@ -127,8 +128,8 @@ class TestWriteEndHooks(LayTest):
         # When: the proposal is written
         self.lay("write", self.proposal_file)
         # Then: hooks.json holds a SubagentStop entry matching the subagent, running its entry
-        # with the lane, and no PreToolUse entry
-        self.assertEqual(self.hooks(), {"hooks": {"SubagentStop": [END_ENTRY]}})
+        # with the lane, and no PreToolUse entry, beside those its calls are kept by
+        self.assertEqual(self.hooks(), {"hooks": {"SubagentStop": [END_ENTRY], **KEPT}})
 
     def test_lanes_of_both_events_get_an_entry_each(self):
         # Given: hands_off and test_after on step 3
@@ -137,7 +138,8 @@ class TestWriteEndHooks(LayTest):
         self.lay("write", self.proposal_file)
         # Then: each event's entry gives its lanes alone
         self.assertEqual(
-            self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [END_ENTRY]}}
+            self.hooks(),
+            {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [END_ENTRY], **KEPT}},
         )
 
     def test_a_lane_held_on_both_events_goes_into_each_entry(self):
@@ -167,7 +169,9 @@ class TestWriteEndHooks(LayTest):
         # When: a proposal of hands_off alone is written
         self.lay("write", self.proposal_file)
         # Then: the SubagentStop entry lane:up wrote is gone, the building AI's kept
-        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own]}})
+        self.assertEqual(
+            self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own], **KEPT}}
+        )
 
     def test_subagentstop_entries_not_in_claude_codes_shape_stop(self):
         for text in ('{"hooks": {"SubagentStop": {}}}', '{"hooks": {"SubagentStop": [1]}}'):

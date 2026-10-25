@@ -14,10 +14,13 @@ STOPPED = 2
 UNREAD = 1
 # The fields each event of these hooks holds beside hook_event_name and cwd, and the types of each:
 # at SubagentStop the agent's last reply, which Claude Code gives as null after the agent hands its
-# reply back with SubagentHandback.
+# reply back with SubagentHandback; as a call comes back, its ID, and of a failed one its error.
+CALLED = {"tool_name": (str,), "tool_input": (dict,)}
 FIELDS = {
-    "PreToolUse": {"tool_name": (str,), "tool_input": (dict,)},
+    "PreToolUse": CALLED,
     "SubagentStop": {"last_assistant_message": (str, type(None))},
+    "PostToolUse": {**CALLED, "tool_use_id": (str,)},
+    "PostToolUseFailure": {**CALLED, "tool_use_id": (str,), "error": (str,)},
 }
 
 

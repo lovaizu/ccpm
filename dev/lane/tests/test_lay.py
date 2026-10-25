@@ -19,6 +19,7 @@ from helpers import lay, placed
 from laying import (
     COMMAND,
     ENTRY,
+    KEPT,
     PRINTED,
     TESTED,
     LayTest,
@@ -137,7 +138,7 @@ class TestUp(LayTest):
         # Then: the hook is in the current form in its place, the building AI's entries and the step
         # as they were, the copy lane's code with lane's version, and what was done is said
         self.assertEqual(code, 0)
-        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [own, ENTRY, own]}})
+        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [own, ENTRY, own], **KEPT}})
         self.assertEqual(self.read(self.agent_file), helpers.LAID)
         self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.10.0\n")
         self.assertFalse(os.path.exists(os.path.join(self.code, "old.py")))
@@ -235,7 +236,7 @@ class TestUp(LayTest):
         # Then: the hooks lay the lanes this version lays, the other subagent's hook taken out, and
         # each lane left out is said, for lane:up to put to the building AI
         self.assertEqual(code, 0)
-        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY]}})
+        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], **KEPT}})
         for agent, word in (
             ("changelog-writer", "2:gone:x"),
             ("changelog-writer", "3:in_form:entry.json"),

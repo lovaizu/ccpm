@@ -7,7 +7,9 @@ from __future__ import annotations
 import json
 import os
 import sys
+import tempfile
 from typing import Any
+from unittest import mock
 
 LANE = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "lane")
@@ -18,6 +20,7 @@ sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "dev", "lane")]
 
 # lane's modules, taken by each test from here, so they are found whichever test runs first.
 import call
+import called  # noqa: F401
 import entries  # noqa: F401
 import forms  # noqa: F401
 import guard  # noqa: F401
@@ -84,10 +87,15 @@ LAID = STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {SENTENCE}\n")
 
 class PluginTest(testing.FolderTest):
     """A test with the building AI's plugin `notes` in `base/notes`, its subagent in
-    `agents/writer.md`."""
+    `agents/writer.md`, and the system's temporary folder, where the guard keeps the calls, in
+    `base/tmp`."""
 
     def setUp(self) -> None:
         super().setUp()
+        self.tmp = os.path.join(self.base, "tmp")
+        patched = mock.patch.object(tempfile, "tempdir", self.tmp)
+        patched.start()
+        self.addCleanup(patched.stop)
         self.plugin = os.path.join(self.base, "notes")
         self.write_json(
             os.path.join(self.plugin, ".claude-plugin", "plugin.json"), {"name": "notes"}
@@ -102,13 +110,14 @@ class PluginTest(testing.FolderTest):
 
     def called(self, tool: str, given: dict, agent_type: str | None = AGENT) -> dict:
         """A PreToolUse event in Claude Code's shape for a call of the tool with the input, in the
-        session whose record is `session.jsonl`, in the subagent a1 of the type, or in the main
+        session s1, whose record is `session.jsonl`, in the subagent a1 of the type, or in the main
         conversation where it is None."""
         event = {
             "hook_event_name": "PreToolUse",
             "cwd": self.base,
             "tool_name": tool,
             "tool_input": given,
+            "session_id": "s1",
             "transcript_path": os.path.join(self.base, "session.jsonl"),
         }
         if agent_type:
@@ -124,11 +133,12 @@ class PluginTest(testing.FolderTest):
 
     def stopped(self, reply: str = "", active: bool = False, agent_type: str = AGENT) -> dict:
         """A SubagentStop event in Claude Code's shape for the subagent a1 of the type about to end
-        with the reply, in the session whose record is `session.jsonl`, kept going by a stop hook
-        before where it is active."""
+        with the reply, in the session s1, whose record is `session.jsonl`, kept going by a stop
+        hook before where it is active."""
         return {
             "hook_event_name": "SubagentStop",
             "cwd": self.base,
+            "session_id": "s1",
             "transcript_path": os.path.join(self.base, "session.jsonl"),
             "agent_id": "a1",
             "agent_type": agent_type,
@@ -138,6 +148,20 @@ class PluginTest(testing.FolderTest):
             "stop_hook_active": active,
             "last_assistant_message": reply,
         }
+
+    def came_back(self, tool: str, given: dict, back: Any = None, error: str | None = None) -> dict:
+        """The event in Claude Code's shape, of Claude Code 2.1.309, of a call of the tool with the
+        input coming back in the subagent a1 of the session s1, as the event above: PostToolUse with
+        what it gave back, or, given an error, PostToolUseFailure with that error; its ID
+        `toolu_k<n>`, n counting the calls come back in the test."""
+        self.calls_back = getattr(self, "calls_back", 0) + 1
+        event = {
+            **self.called(tool, given),
+            "hook_event_name": "PostToolUse" if error is None else "PostToolUseFailure",
+            "tool_use_id": f"toolu_k{self.calls_back}",
+        }
+        event.update({"tool_response": back} if error is None else {"error": error})
+        return event
 
     def stream(self, command: str, agent_type: str | None = AGENT) -> str:
         """The event as Claude Code hands it on stdin."""

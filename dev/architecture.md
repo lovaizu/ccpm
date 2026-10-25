@@ -132,9 +132,23 @@ may not.
 A course fixed in code that the run's findings keep changing has no move for what it did not
 foresee.
 
-A run's state is kept in a file in its work folder, each plugin's own, so a run stopped anywhere
+A run's state is kept in a file in its work folder, placed as
+[Where a plugin writes its files](#where-a-plugin-writes-its-files) says, so a run stopped anywhere
 goes on from its last move in a new conversation; a conversation ends, is cleared or is compacted,
 and what lives only in it is lost.
+
+### Where a plugin writes its files
+
+Besides the work and the files its caller names, a plugin writes what may be kept in
+`.<plugin>/<yyyymmdd>-<name>/` at the root of the repository, as rn keeps `.rn/<yyyymmdd>-<slug>/`,
+and what is used only while it runs, its tests' and trials' too, in `<plugin>/<yyyymmdd>-<name>/`
+in the system's temporary folder, the one Python's `tempfile.gettempdir()` gives.
+
+In one folder of the plugin's name, what may be kept goes into git or stays out as the user
+chooses, by one line of `.gitignore`, and the date at the front sorts the runs and shows the old
+ones. What is used only while running needs no step to remove it, which a run stopped partway
+would miss, as the system clears its temporary folder itself; that folder is the one TMPDIR names
+where it is set, as macOS and sandboxes set it to a folder of their own, not always `/tmp`.
 
 ### The purpose before performance
 

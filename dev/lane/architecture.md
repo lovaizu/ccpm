@@ -79,6 +79,12 @@ flowchart TB
 
   A hook is told which subagent it runs in, and not which skill runs
   ([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)).
+- The guard keeps each call of a subagent lanes are laid in as it comes back, and reads a call kept
+  after the subagent's record until the record holds it, the record holding where they differ.
+
+  Claude Code writes the calls of one reply into the record only once the whole reply has ended,
+  and runs each call's PostToolUse, or PostToolUseFailure, before the next call's PreToolUse; read
+  from the record alone, a call made earlier in the same reply is not seen.
 - A thing a lane takes is fixed in the step, or given for each run and read from the JSON the
   subagent starts from.
 
@@ -109,6 +115,8 @@ lane/                          the plugin, installed by Claude Code
 │   └── lane/                  lane's code, the guard, put in each plugin <Python 3>
 │       ├── pretooluse.py      the event script for lanes on a tool call
 │       ├── subagentstop.py    the event script for lanes on how the subagent ends
+│       ├── posttooluse.py     the event script keeping each call as it comes back
+│       ├── posttoolusefailure.py  the same, for a call that comes back failed
 │       ├── guard.py           the lanes a hook's command lays, run on the event
 │       ├── hook.py            what the guard runs on: the event read, each check run
 │       ├── hooks_file.py      a hook's command, written and read, and hooks.json read
@@ -119,6 +127,7 @@ lane/                          the plugin, installed by Claude Code
 │       ├── template.py        a Markdown template, and a file held to it
 │       ├── step.py            a subagent's step, read from its file
 │       ├── record.py          where Claude Code keeps records, and what a subagent did before
+│       ├── called.py          each call of a subagent kept until its record holds it
 │       ├── started.py         what the subagent started from, for a thing given for each run
 │       ├── lanes/__init__.py  the lanes, and each lane's sentence made from its wording
 │       └── lanes/<lane>.py    one check per lane of the lanes, with its wording
@@ -128,6 +137,9 @@ lane/                          the plugin, installed by Claude Code
 
 ${CLAUDE_PLUGIN_DATA}/
 └── <plugin>.json              the proposal <JSON>, kept by lane:up until the layer writes it
+
+<the system's temporary folder>/lane/<yyyymmdd>-<session>/
+└── <agent>.jsonl              each call of a subagent lanes are laid in, kept by the guard <JSONL>
 
 <plugin>/                      the building AI's plugin, as the layer writes it
 ├── agents/                    the subagents' steps
@@ -148,6 +160,8 @@ ${CLAUDE_PLUGIN_DATA}/
   subagent alike.
 - The proposal is kept in lane's data folder, which Claude Code keeps for the plugin's own files
   across its updates (plugins-reference, Environment variables).
+- The calls the guard keeps are in `lane/<yyyymmdd>-<session>/` in the system's temporary folder,
+  as [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) has it.
 - lane's code goes into `<plugin>/hooks/lane/`: in a plugin of the ccpm marketplace a relative link
   to lane's, as [Code kept once](../architecture.md#code-kept-once) has it; anywhere else a copy
   holding a `VERSION` file, read from lane's `plugin.json`, by which the next run of `lane:up` tells

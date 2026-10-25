@@ -6,7 +6,7 @@ subagent's ID, by which Claude Code keeps it. Claude Code does not document the 
 read as Claude Code 2.1.306 writes it, which the tests hold, and a line not in that shape is left
 out. The calls of one reply of the AI are written there once their hooks have run, a call a hook
 stopped among them, so the record holds every call of the replies before, and none of the reply
-being handed. Where Claude Code keeps the records, a conversation's beside each subagent's of it,
+being handed, whose calls called.py keeps. Where Claude Code keeps the records, a conversation's beside each subagent's of it,
 and the agent type of each, are read here too, for every plugin that reads a record, kept as
 Claude Code 2.1.306 keeps them."""
 
@@ -31,6 +31,8 @@ FROM_MAIN = re.compile(
 # What a call's result begins with where a PreToolUse hook stopped it, as Claude Code 2.1.306
 # writes it, the call never run.
 HOOK_STOPPED = re.compile(r"\APreToolUse:\S+ hook error: ")
+# What a Bash call's result is where its command printed nothing, as Claude Code 2.1.306 writes it.
+SILENT = "(Bash completed with no output)"
 # A reply that ended the subagent's turn, read among the tools it used as one of no tool, the reply
 # its input's `text`, as it hands its text on to whoever started or resumed the subagent, as a call
 # of the Agent tool or SendMessage hands on theirs.

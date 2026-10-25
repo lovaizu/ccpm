@@ -13,7 +13,9 @@ from helpers import hook, testing
 UNREAD = (
     "p: the hook was handed no event as Claude Code hands it, a JSON object with hook_event_name"
     " and cwd, and for PreToolUse tool_name and tool_input, for SubagentStop"
-    " last_assistant_message, so it lets this through unchecked;"
+    " last_assistant_message, for PostToolUse tool_name and tool_input and tool_use_id, for"
+    " PostToolUseFailure tool_name and tool_input and tool_use_id and error, so it lets this"
+    " through unchecked;"
     " update Claude Code with `claude update`, and where it goes on, report it at"
     " https://github.com/lovaizu/ccpm/issues\n"
 )
@@ -109,6 +111,8 @@ class TestRun(testing.FolderTest):
     def test_an_event_not_in_claude_codes_shape_goes_on_unchecked(self):
         event = self.event()
         stop = {"hook_event_name": "SubagentStop", "cwd": self.base, "agent_type": "p:a"}
+        back = dict(event, hook_event_name="PostToolUse", tool_use_id="t1")
+        failed = dict(back, hook_event_name="PostToolUseFailure", error="Exit code 1")
         wrong = {
             "a list": [event],
             "no hook_event_name": {k: v for k, v in event.items() if k != "hook_event_name"},
@@ -123,6 +127,9 @@ class TestRun(testing.FolderTest):
             "a SubagentStop whose last reply is neither text nor null": dict(
                 stop, last_assistant_message=1
             ),
+            "a PostToolUse of no call ID": {k: v for k, v in back.items() if k != "tool_use_id"},
+            "a PostToolUse whose call ID is no text": dict(back, tool_use_id=1),
+            "a PostToolUseFailure of no error": {k: v for k, v in failed.items() if k != "error"},
         }
         for what, value in wrong.items():
             with self.subTest(what=what):

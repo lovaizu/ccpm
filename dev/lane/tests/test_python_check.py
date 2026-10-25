@@ -87,6 +87,18 @@ class TestPythonCheck(helpers.PluginTest):
         none = os.path.join(self.base, "none")
         self.assertEqual(self.run_hook(none, command=command), (1, INSTALL))
 
+    def test_without_python3_a_call_coming_back_goes_on(self):
+        for event in hooks_file.KEPT:
+            with self.subTest(event=event):
+                # Given: the hook's command keeping the subagent's calls, and a PATH holding no
+                # python3
+                command = hooks_file.command("notes", helpers.AGENT, [], event)
+                # When: it is run as a call comes back
+                code, _ = self.run_hook(os.path.join(self.base, "none"), command=command)
+                # Then: it exits 0, as the call has run, and the hook of the next call stops it,
+                # saying what to install
+                self.assertEqual(code, 0)
+
     def test_with_the_python3_in_use_the_guard_runs(self):
         # Given: a PATH whose python3 is the one in use
         # When: the hook's command is run for a call the lane stops

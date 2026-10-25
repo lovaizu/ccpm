@@ -1,7 +1,7 @@
 """The guard: the lanes a hook's command lays in one subagent, run on the event Claude Code hands
-the command's script, each telling the subagent its sentence where a call drifts from it. A thing
-a lane takes written `{<name>}` is given for each run, and put in before the lane's check, as
-started.py reads it."""
+the command's script, each telling the subagent its sentence where a call drifts from it, and each
+call of the subagent kept as it comes back, as called.py says. A thing a lane takes written
+`{<name>}` is given for each run, and put in before the lane's check, as started.py reads it."""
 
 from __future__ import annotations
 
@@ -10,9 +10,9 @@ import sys
 from typing import Any, NamedTuple
 
 import call
+import called
 import hook
 import hooks_file
-import record
 import started
 import step
 from lanes import LANES, alone, sentence
@@ -20,8 +20,8 @@ from lanes import LANES, alone, sentence
 
 class Seen(NamedTuple):
     """What an event shows, read once for every lane checked on it: the entries of its subagent's
-    record, None where it is not found, and what each lane's check takes, the call, or how the
-    subagent ends."""
+    record with its calls kept that the record does not hold yet, None where the record is not
+    found, and what each lane's check takes, the call, or how the subagent ends."""
 
     found: list[dict[str, Any]] | None
     acted: call.Call | call.End
@@ -34,8 +34,9 @@ class Lanes:
         self.laid = laid
 
     def check(self, event: dict[str, Any]) -> list[str]:
-        """What each lane says on the event, its subagent's record read once for all of them."""
-        found = record.entries(event)
+        """What each lane says on the event, its subagent's record and kept calls read once for all
+        of them."""
+        found = called.entries(event)
         ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
         seen = Seen(found, call.ended(event, found) if ending else call.read(event, found))
         return [s for lane in self.laid for s in lane.check(event, seen)]
@@ -100,9 +101,10 @@ class Laid:
 
 def main(held: str, words: list[str]) -> int:
     """Runs the lanes a hook's command lays, held on the event, on the event Claude Code hands on
-    stdin, for the plugin found where Claude Code gives its folder, CLAUDE_PLUGIN_ROOT; what the
-    event script exits with. A command not in the form lane:up writes lets the subagent go on,
-    telling the user, as no subagent or lane can be told from it."""
+    stdin, for the plugin found where Claude Code gives its folder, CLAUDE_PLUGIN_ROOT, or, on an
+    event a call is kept on, keeps the call; what the event script exits with. A command not in the
+    form lane:up writes lets the subagent go on, telling the user, as no subagent or lane can be
+    told from it."""
     root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
     try:
         agent, given = hooks_file.parsed(words, held)
@@ -114,4 +116,5 @@ def main(held: str, words: list[str]) -> int:
         return hook.UNREAD
     laid = [(lane, takes) for _, lane, takes in given]
     found = [Laid(root, agent, g, laid) for g in given]
-    return hook.run(agent.split(":")[0], [Lanes(found)], sys.stdin, sys.stderr, agent)
+    check = called.Kept() if held in hooks_file.KEPT else Lanes(found)
+    return hook.run(agent.split(":")[0], [check], sys.stdin, sys.stderr, agent)

@@ -9,13 +9,12 @@ from __future__ import annotations
 
 import template
 from call import HANDS, Call, End, handed, runs
+from record import SILENT
 
 ACTION = "hand on"
 WORDING = "Hand on `<command>` as it is."
 TOOLS = tuple(HANDS)
 EVENTS = ("PreToolUse", "SubagentStop")
-# What the Bash tool gives back for a command that printed nothing.
-SILENT = "(Bash completed with no output)"
 
 
 def drifts(given: Call | End, takes: list[str], root: str) -> bool:

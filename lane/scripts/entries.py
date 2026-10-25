@@ -1,5 +1,5 @@
 """The entries lane:up writes in a plugin's hooks/hooks.json, one for each subagent and each event
-its lanes are held on, every other entry left as it was."""
+its lanes are held on, and each event a call is kept on, every other entry left as it was."""
 
 from __future__ import annotations
 
@@ -17,15 +17,18 @@ from proposal import Stop
 def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | None:
     """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
     it: its matcher the tools its lanes watch, or for SubagentStop the subagent, as its matcher
-    tells agents apart, and its command giving each lane laid."""
+    tells agents apart, and its command giving each lane laid; for an event a call is kept on, where
+    it has any lane, an entry matching every tool, its command giving the subagent alone."""
     every = [(s["step"], g) for s in agent["steps"] for g in s["lanes"]]
+    kept = event in hooks_file.KEPT
     on_it = [(n, g) for n, g in every if event in lanes.held_on(g["lane"])]
-    if not on_it:
+    if not (every if kept else on_it):
         return None
     name = f"{plugin}:{agent['name']}"
     laid = [hooks_file.word(n, g["lane"], g["takes"]) for n, g in on_it]
     each = [t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ())]
-    tools = [name] if event == "SubagentStop" else each  # pragma: no mutate
+    ending = event == "SubagentStop"  # pragma: no mutate
+    tools = [name] if ending else [".*"] if kept else each
     run_it = hooks_file.command(plugin, name, laid, event)
     return {
         "matcher": "|".join(dict.fromkeys(tools)),
