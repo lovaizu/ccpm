@@ -680,6 +680,9 @@
   },
   {
    "fact": "2026-10-25: the user: lane:up omitted for now, the aim being lane used by turn and rn inside ccpm; lanes laid through the layer from proposals written by hand; T20's lane:up trial not redone; lane:up stays unchanged and untrue to the new layer until lane is released, when it is fixed or removed (to ask then). The guard validates each lane's IN by one JSON Schema per lane at its entry, the same schema shown in lanes.md and used by the layer; what cannot be checked is an error stopped and told (8717a97)"
+  },
+  {
+   "fact": "2026-10-25: the user: lane:up is deleted, not kept unchanged (left, it is noise); lane's README and UX rewritten to the use without it (the building AI writes the proposal JSON, `lay.py print` to check, `lay.py write`), not shown to the user as it follows from the deletion; report only what was removed. A subagent rebuilding lane to the brief (scratchpad lane-ports-brief.md) was still running at /clear, commits d247485..19cd4ba made (lanes.json, JSON out, IN validation and errors, ports, adapters run, adapters in the proposal); told: hold the empty value, then validation at entry with errors stopped; one schema per lane used by lanes.md, the layer and the guard; skip up.md and list its untrue lines. It writes logs into this session's scratchpad (mutate*.log), to remove after"
   }
  ],
  "semantic_gist": [
@@ -784,7 +787,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on the lane subagent's report: check its commits by hand against the brief (scratchpad lane-ports-brief.md) and the messages sent (hold the empty value; validation at entry, errors stop; one schema in docs, layer, guard; skip up.md); run check.sh, properties, mutate for lane, turn, rn; push; then lay turn's every_item on generator and first-user with an items adapter for `### <ID>:` headings through the layer; then ask the user where turn's roles get the test command for test_after, a value never empty now; then the earlier steps: turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check"
+   "next": "on resume: the lane subagent's report arrives as a notification (it survives /clear); if none, find whether it still runs (pgrep -af cosmic-ray, git log 683cd5f..HEAD, git status). Then check its commits by hand against the brief and the messages above; check.sh, properties, mutate for lane, turn, rn; then delete lane:up: lane/agents/up.md, the lanes on lane:up in lane/hooks/hooks.json and lanes.json, its trials in dev/lane/trials/, its parts in CHANGELOG, dev/lane/architecture.md, dev/lane/ux.md, lane/README.md and the decisions file, keeping lay.py; README and UX to the use by the proposal and lay.py; push; remove scratchpad logs; then lay turn's every_item on generator and first-user with an items adapter for `### <ID>:` headings through the layer; then ask the user where turn's roles get the test command for test_after, a value never empty now; then the earlier steps: turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check"
   }
  ],
  "uncertainty_signal": [
