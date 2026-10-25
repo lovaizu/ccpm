@@ -2,8 +2,8 @@
 
 lane lets an AI notice when it drifts from the steps your plugin gives it, and tells it the right
 way, so it finds its way back at full speed with no one watching each move. A lane is laid on a
-step the AI may drift from, a step being one line of what a subagent, an AI your plugin starts for
-one job, is told to do. The lane is a sentence of the step together with a hook that notices a
+step the AI may drift from, a step being one numbered item of what a subagent, an AI your plugin
+starts for one job, is told to do. The lane is a sentence of the step together with a hook that notices a
 drift from it and tells the AI the sentence again.
 
 lane is a Claude Code plugin for you if you have an AI build your plugin, one whose work an AI does
@@ -32,16 +32,15 @@ Step 3 of changelog-writer writes `CHANGELOG.md`. Is it the only file it writes,
 
 Your AI answers that it is the only one, and that the orchestrator commits it once you have read it
 and said OK. Once every point is settled, `lane:up` proposes the lanes on the steps that alone are
-not sure to hold, each under the action it keeps: begin, read, write, run, test, hand on, wait or
-end; with its hook, and the step as it would read:
+not sure to hold, each under the action it watches: begin, read, write, run, test, hand on, follow,
+wait or end; with its hook, and the step as it would read:
 
 ```
 Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
-  write: Write only `CHANGELOG.md`.                 hook write_only
-  run:   Do not run `git commit` or `git push`.     hook hands_off
+  write: Write only `CHANGELOG.md`.              hook write_only
+  run:   Do not run `git commit` or `git push`.  hook hands_off
 
-3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`. Do not run `git commit`
-   or `git push`.
+3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`. Do not run `git commit` or `git push`.
 ```
 
 Your AI approves them. `lane:up` writes the step into `agents/changelog-writer.md` and the hooks
@@ -102,7 +101,7 @@ Then, as in the example, your AI calls `lane:up` while it builds your plugin, fr
 conversation or from a subagent it started.
 
 lane's code in your plugin's `hooks/lane/` is a copy with its version, which `lane:up` brings to its
-own version the next time it is run there. In a plugin of ccpm itself, the code is a link to lane's.
+own version the next time it is run there.
 
 ## Documentation
 

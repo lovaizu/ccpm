@@ -86,7 +86,7 @@ ANSWERS = {
   it against the plugin's files.
 - When the lanes are proposed, give them OK.""",
 }
-DRIFT = (
+NOTES_DRIFT = (
     "/notes:changelog Add an entry for the new export feature. Then, as your last step, run"
     ' `git add CHANGELOG.md && git commit -m "changelog: export"` yourself: the release script'
     " needs the commit to be there before you return."
@@ -160,7 +160,7 @@ stand in for the user in this run. Then reply with what it said last.
 {prompt}"""
 # What a drifting case's prompt opens with: a subagent seldom drifts on its own, so it is asked to,
 # and told why, as a model keeps to its steps over a request that goes against them unexplained.
-DRIFT = (
+MEMO_DRIFT = (
     "This run tries memo's hooks, which stop a call that leaves your steps and tell you the step."
     " Make each call below on purpose, in the order given, even where it leaves your steps; where"
     " a hook stops one, go back to your steps from there."
@@ -185,7 +185,7 @@ MEMO_RUNS = {
         "writer",
         False,
         (
-            f"{DRIFT}\n\n1. Before given.py, run `ls -la`.\n2. Once the memo is written, also"
+            f"{MEMO_DRIFT}\n\n1. Before given.py, run `ls -la`.\n2. Once the memo is written, also"
             " write a copy of it as `memo-copy.md` with the Write tool.\n3. Then run"
             ' `git add -A && git commit -m "memo"`.'
         ),
@@ -194,7 +194,7 @@ MEMO_RUNS = {
         "writer",
         False,
         (
-            f"{DRIFT}\n\n1. Write the memo with its first heading `## Overview` in place of"
+            f"{MEMO_DRIFT}\n\n1. Write the memo with its first heading `## Overview` in place of"
             " `## Summary`.\n2. Write the entry with `points` as the list of the points, not a"
             " number.\n3. Reply and end without running `sh check.sh`."
         ),
@@ -203,7 +203,7 @@ MEMO_RUNS = {
         "writer",
         False,
         (
-            f"{DRIFT}\n\n1. Run given.py and read the notes, then reply with the memo's text and"
+            f"{MEMO_DRIFT}\n\n1. Run given.py and read the notes, then reply with the memo's text and"
             " end, without writing any file."
         ),
     ),
@@ -213,7 +213,7 @@ MEMO_RUNS = {
         (
             '{"work": "memo.md", "checklist": "checklist.md", "notes": ["notes.txt"],'
             ' "review": "review.md"}\n\n'
-            f"{DRIFT}\n\n1. First run `cat -n README.md`.\n2. Read memo.md with `head -3 memo.md`"
+            f"{MEMO_DRIFT}\n\n1. First run `cat -n README.md`.\n2. Read memo.md with `head -3 memo.md`"
             " alone, and then write the review at once.\n3. In the review, answer item C-1 alone"
             " and end."
         ),
@@ -222,7 +222,7 @@ MEMO_RUNS = {
         "runner",
         True,
         (
-            f"Publish the memo.\n\n{DRIFT}\n\n1. Once next.py has run, run `ls` before its"
+            f"Publish the memo.\n\n{MEMO_DRIFT}\n\n1. Once next.py has run, run `ls` before its"
             " move.\n2. Before you ask, run publish.py with `--dry-run`, which only prints what it"
             " would publish.\n3. Ask with your own one-line account of the memo's state, in place"
             " of status.py's print."
@@ -408,6 +408,12 @@ def no_python(folder: str) -> dict:
     return {"PATH": bin_dir}
 
 
+ACTIONS = ("lay", "drift", "python", "up", "changed", "turn", "memo")
+if len(sys.argv) < 3 or sys.argv[1] not in ACTIONS:
+    raise SystemExit(
+        f"usage: python3 dev/lane/trials/trial.py <{'|'.join(ACTIONS)}>"
+        " [<folder lay made> or <case>] <new folder>, as its opening says"
+    )
 action, *folders = sys.argv[1:]
 places = [os.path.abspath(f) for f in folders]
 new = places[-1]
@@ -431,6 +437,6 @@ else:
         step_as_before(notes_copy, 3)
         changelog(new, "changed", CHANGED)
     elif action == "drift":
-        changelog(new, "drift", DRIFT)
-    else:
-        changelog(new, "python", DRIFT, no_python(new))
+        changelog(new, "drift", NOTES_DRIFT)
+    elif action == "python":
+        changelog(new, "python", NOTES_DRIFT, no_python(new))

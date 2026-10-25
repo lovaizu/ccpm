@@ -1,15 +1,8 @@
-"""A tool call read as one action of a subagent's steps, the one a lane watches: begin, read, write,
-run, test, hand on, wait or end. A Bash call is a run, of each command it runs, reading what they
-print of what they read and writing what they write; a call of the Read or Grep tool is a read of
-what it reads; a call of a tool that writes a file is a write of it; a call of the Agent tool or of
-SendMessage is a hand-on of its text to another agent, as a reply that ended the subagent's turn
-is, read from its record; a call of a tool no lane of this version reads is no action. A call that
-writes a file by the Write or Edit tool is read with the text the file holds once it is written,
-for a lane on what is written. A call is read with the tool and the input the AI gave it, with each
-call its subagent made before it, with what each gave back, and with each message that reached the
-subagent since it last asked, by SendMessage or by a reply that ended its turn, for a lane on the
-order of steps; and the calls a subagent made, with its last reply, as it is about to end, for a
-lane held at its end."""
+"""A tool call read as the action of a subagent's steps a lane watches, so every lane judges a call
+the same way whatever tool makes it: a Bash call is a run of each command it runs, reading and
+writing what they read and write; a Read or Grep call a read; a Write, Edit or NotebookEdit call a
+write; an Agent or SendMessage call a hand-on of its text, as a reply that ended the subagent's
+turn is; a call of any other tool no action."""
 
 from __future__ import annotations
 

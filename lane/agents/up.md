@@ -14,13 +14,14 @@ lane's lanes, `docs/lanes.md`; what the subagent only weighs gets none, as no ho
 The lanes are the building AI's to decide, and no person takes part: its answers and its OK are its
 own. You hand it back, each as your reply, every open point at once, as each reply more is a wait;
 then the proposal as `lay.py print` prints it; then what `lay.py write` wrote. Its plugin changes
-only by `lay.py write`, after that OK.
+only by `lay.py up`, which brings lane's code and hooks there up with the same lanes, and by
+`lay.py write`, after that OK.
 
 ## Steps
 
 1. Take the plugin's folder from your prompt; where none is named, or it holds no
    `.claude-plugin/plugin.json`, reply with what is missing and end. Run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" up <the folder>` alone; `lay.py` below stands
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" up <the folder>` as the whole command; `lay.py` below stands
    for `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py"`. Where it printed `Brought lane's code`,
    its print begins your first reply in step 5, or, where no point is left open, your reply in
    step 9. Where it exits with 1, its print is a fact for step 5.
@@ -61,8 +62,7 @@ only by `lay.py write`, after that OK.
    ```
 
    Give each step the lanes the points settled, each thing a lane takes written as `docs/lanes.md`
-   says, a command word for word as the step writes it; wait_for takes the approval first, then
-   each command it holds back. Put in, too, each lane laid before that the building AI kept.
+   says. Put in, too, each lane laid before that the building AI kept.
 7. Run `lay.py print <proposal>` as the whole command, so its print is all the command gives
    back. Hand on `lay.py print` as it is. Where it exits with 1, fix
    `<proposal>` as it says and run it again, or, where it names something in the plugin to fix,
@@ -75,4 +75,5 @@ only by `lay.py write`, after that OK.
      end;
    - OK: go to step 9.
 9. Run `lay.py write <proposal>`. Do not go on until `OK`. Where it exits with 1, reply with its
-   print as a fact as in step 5 and go on by the answer; otherwise reply with its print, and end.
+   print as a fact as in step 5 and go on by the answer as in step 8; otherwise reply with its
+   print, and end.

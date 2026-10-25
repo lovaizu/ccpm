@@ -9,8 +9,8 @@ says.
 
 What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
 `{<name>}`: the value under that name in the JSON the subagent starts from, its prompt or what the
-script it first runs prints. Write only `{work}`. holds a subagent to the files its run's `work`
-names, whichever they are.
+script it first runs prints. The sentence `Write only {work}.` holds a subagent to the files its
+run's `work` names, whichever they are.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -20,12 +20,16 @@ names, whichever they are.
 | write | write_only | Write only `<output>`. | writes anything else |
 | write | in_form | Write `<output>` in the form of `<form>`. | writes it out of that form |
 | run | hands_off | Do not run `<commands>`. | runs one of them |
-| test | test_after | After changing `<output>`, pass `<test>`. | goes on with a change not yet passed |
-| hand on | as_printed | Hand on `<input>` as it is. | hands on something else |
-| hand on | follow_next | Take the next move `<script>` printed. | takes another move |
-| wait | wait_for | Do not go on until `<approval>`. | goes on without it |
+| test | test_after | After changing `<output>`, pass `<test>`. | ends with a change not yet passed |
+| hand on | as_printed | Hand on `<command>` as it is. | hands on something else |
+| follow | follow_next | Take the next move `<script>` printed. | takes another move |
+| wait | wait_for | Do not go on until `<approval>`. | runs a command it holds back without it |
 | end | end_when | End only once `<output>` is made. | ends before |
 | end | every_item | Answer every item of `<input>`. | leaves an item unanswered |
+
+wait_for takes, after the approval, each command it holds back, as the step writes it; its sentence
+shows the approval alone. in_form takes the form as `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`,
+the path the subagent reads it by.
 
 read_only lets the subagent read, beside its inputs, the form each of its in_form lanes names: its
 step tells it to write in that form, and the form, a file of your plugin, holds nothing of the

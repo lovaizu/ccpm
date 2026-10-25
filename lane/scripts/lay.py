@@ -124,7 +124,7 @@ def plugin_name(root: str) -> str:
     except OSError:
         raise wrong(f"names {root} as the plugin, which has no {manifest}") from None
     except ValueError:
-        given = None
+        raise Stop(f"lay.py: {manifest} holds no JSON; fix it and run again.") from None
     name = given.get("name") if isinstance(given, dict) else None
     if not isinstance(name, str) or not re.fullmatch(lanes.NAME, name):
         raise Stop(

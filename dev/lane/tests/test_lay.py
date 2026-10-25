@@ -673,7 +673,7 @@ class TestProposal(LayTest):
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
 
     def test_a_plugin_whose_name_cannot_head_a_hook_stops(self):
-        for text in ('{"name": ""}', '{"name": "no\\"tes"}', "{}", "[]", "{"):
+        for text in ('{"name": ""}', '{"name": "no\\"tes"}', "{}", "[]"):
             with self.subTest(manifest=text):
                 # Given: a plugin whose manifest names it so a hook's command cannot carry it, or
                 # names it not at all
@@ -683,6 +683,15 @@ class TestProposal(LayTest):
                 # Then: it exits 1 naming the manifest
                 self.assertEqual(code, 1)
                 self.assertIn("plugin.json", said)
+
+    def test_a_manifest_holding_no_json_stops_saying_so(self):
+        # Given: a plugin whose manifest holds no JSON
+        self.write(os.path.join(self.plugin, ".claude-plugin", "plugin.json"), "{")
+        # When: the proposal is printed
+        code, said = self.lay("print", self.proposal_file)
+        # Then: it exits 1 saying the manifest holds no JSON
+        self.assertEqual(code, 1)
+        self.assertIn("plugin.json holds no JSON", said)
 
 
 class TestRunValue(LayTest):

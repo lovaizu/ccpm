@@ -12,7 +12,7 @@ from call import HANDS, Call, End, handed
 from lanes.start_with import runs
 
 ACTION = "hand on"
-WORDING = "Hand on `<input>` as it is."
+WORDING = "Hand on `<command>` as it is."
 TOOLS = tuple(HANDS)
 EVENTS = ("PreToolUse", "SubagentStop")
 # What the Bash tool gives back for a command that printed nothing.

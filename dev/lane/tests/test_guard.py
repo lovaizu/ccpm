@@ -11,7 +11,6 @@ import sys
 from unittest import mock
 
 import helpers
-from helpers import hook, lanes
 
 # The lane the README lays on step 3, as the hook's command gives it.
 WORDS = ["3:hands_off:git commit,git push"]
@@ -362,25 +361,3 @@ class TestCommandLine(GuardTest):
                 self.assertEqual(code, 1)
                 self.assertIn(named, said)
                 self.assertTrue(said.startswith("lane: ") and "run lane:up again" in said, said)
-
-
-class TestRun(helpers.PluginTest):
-    """hook.run given the subagent its checks act in."""
-
-    def ran(self, agent_type):
-        checks = [lanes.Laid(self.plugin, helpers.AGENT, 1, "hands_off", ["x"])]
-        err = io.StringIO()
-        stream = io.StringIO(self.stream("x", agent_type))
-        return hook.run("notes", checks, stream, err, helpers.AGENT), err.getvalue()
-
-    def test_checks_run_on_an_event_of_the_subagent_named(self):
-        # Given: a check whose step does not say its sentence, which stops every call
-        # When: the entry runs it on an event of the subagent named
-        # Then: it stops the call
-        self.assertEqual(self.ran(helpers.AGENT)[0], hook.STOPPED)
-
-    def test_checks_do_not_run_on_an_event_of_another_agent(self):
-        # Given: the same check
-        # When: the entry runs it on an event of another agent
-        # Then: it lets the call go on, nothing said
-        self.assertEqual(self.ran("notes:other"), (0, ""))

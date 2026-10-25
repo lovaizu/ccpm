@@ -14,7 +14,7 @@ from call import Call
 
 from lanes.start_with import runs
 
-ACTION = "hand on"
+ACTION = "follow"
 WORDING = "Take the next move `<script>` printed."
 # Any call may be the move printed, so every tool is watched, as a matcher's pattern.
 TOOLS = (".*",)

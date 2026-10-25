@@ -39,17 +39,21 @@ class TestRun(testing.FolderTest):
             "cwd": self.base,
             "tool_name": "Bash",
             "tool_input": {},
+            "agent_type": "p:a",
         }
         return {**event, **fields}
 
     def handed(self, stream, *checks):
         err = io.StringIO()
         os.chdir("/")
-        code = hook.run("p", checks, io.StringIO(stream), err)
+        code = hook.run("p", checks, io.StringIO(stream), err, "p:a")
         return code, err.getvalue()
 
     def ran(self, *checks):
         return self.handed(json.dumps(self.event()), *checks)
+
+    def ran_on(self, check, **fields):
+        return self.handed(json.dumps(self.event(**fields)), check)
 
     def test_checks_saying_something_stop_with_what_each_says(self):
         # Given: two checks, each saying something
@@ -69,13 +73,18 @@ class TestRun(testing.FolderTest):
 
     def test_an_event_of_another_hook_needs_no_tool(self):
         # Given: a SubagentStop event, which names no tool and holds the subagent's last reply
-        event = {"hook_event_name": "SubagentStop", "cwd": self.base, "last_assistant_message": ""}
+        event = {
+            "hook_event_name": "SubagentStop",
+            "cwd": self.base,
+            "agent_type": "p:a",
+            "last_assistant_message": "",
+        }
         # When: the entry runs a check on it
         # Then: the check runs and says what it says
         self.assertEqual(self.handed(json.dumps(event), Says("a")), (2, "p: a\n"))
 
     def test_a_subagentstop_of_no_last_reply_is_read(self):
-        stop = {"hook_event_name": "SubagentStop", "cwd": self.base}
+        stop = {"hook_event_name": "SubagentStop", "cwd": self.base, "agent_type": "p:a"}
         for event in (stop, dict(stop, last_assistant_message=None)):
             with self.subTest(event=event):
                 # Given: a SubagentStop event of no last reply, as after the agent handed its reply
@@ -95,7 +104,7 @@ class TestRun(testing.FolderTest):
 
     def test_an_event_not_in_claude_codes_shape_goes_on_unchecked(self):
         event = self.event()
-        stop = {"hook_event_name": "SubagentStop", "cwd": self.base}
+        stop = {"hook_event_name": "SubagentStop", "cwd": self.base, "agent_type": "p:a"}
         wrong = {
             "a list": [event],
             "no hook_event_name": {k: v for k, v in event.items() if k != "hook_event_name"},
@@ -119,6 +128,14 @@ class TestRun(testing.FolderTest):
                 # Then: it gives 1, saying it was handed no event, and runs no check
                 self.assertEqual(self.handed(json.dumps(value), check), (1, UNREAD))
                 self.assertIsNone(check.ran_in)
+
+    def test_checks_do_not_run_on_an_event_of_another_agent(self):
+        # Given: a check saying something
+        # When: the entry runs it on an event of another agent than the one named
+        # Then: it lets the use go on, the check not run and nothing said
+        says = Says("a")
+        self.assertEqual(self.ran_on(says, agent_type="p:other"), (0, ""))
+        self.assertIsNone(says.ran_in)
 
 
 if __name__ == "__main__":

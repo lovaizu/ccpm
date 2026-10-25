@@ -16,8 +16,8 @@ TOOLS = (*WRITERS, "Bash")
 def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call writes a file that is none of the outputs taken, each named from the folder
     the call is made in, where the guard stands; a command's write out of that folder is left out,
-    as a command throws its output away in /dev/null or keeps it in a folder of its own to run what
-    the work gives, as turn's generator does."""
+    as a command throws its output away in /dev/null or keeps it in a folder of its own, such as one
+    it makes to run what the work gives."""
     outputs = {os.path.realpath(t) for t in takes}
     here = os.getcwd()
     # Told by membership rather than `==`, as an order comparison such as `<=` would tell this

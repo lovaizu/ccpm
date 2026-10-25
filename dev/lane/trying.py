@@ -20,7 +20,7 @@ def claude(
 ) -> dict:
     """Runs Claude Code on prompt with the copies of plugins in place of the installed ones, as
     their user runs it, and gives what it printed last; wait is the minutes it waits for an agent
-    started in the background, which it stops waiting for after 10 by default. Given record, it
+    started in the background, which Claude Code stops waiting for after 10 by default. Given record, it
     writes there each line Claude Code printed, kept before a failed run stops the trial; env is
     set over the environment Claude Code runs in. Given resume, a session ID, the prompt goes on
     that conversation, as the user types it where they read the reply before; without it, in a
@@ -49,7 +49,10 @@ def claude(
             f.write(done.stdout)
     if done.returncode:
         raise SystemExit(f"claude exited {done.returncode}: {done.stderr}")
-    return json.loads(done.stdout.strip().splitlines()[-1])
+    printed = done.stdout.strip().splitlines()
+    if not printed:
+        raise SystemExit(f"claude printed nothing: {done.stderr}")
+    return json.loads(printed[-1])
 
 
 def agents(session: str) -> list:

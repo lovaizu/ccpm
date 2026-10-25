@@ -1,5 +1,5 @@
 """start_with: the subagent runs the script its step names before anything else, such as turn's
-`scripts/turn.py given`, which gives it what it works from."""
+`scripts/turn.py start`, which gives it what it works from."""
 
 from __future__ import annotations
 
