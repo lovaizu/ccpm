@@ -1,7 +1,7 @@
-"""Tries the orchestrator's flow: the real orchestrator, flow and lanes, with the three roles stood in
-for by agents of this folder that write the replies replies.py sets for the way named, so the run
-takes that way. A stand-in for the calling AI calls turn on a task of two items, B-1 answered at its part and
-B-2 in each part, in a repository made for the run:
+"""Tries the orchestrator's flow: the real orchestrator, flow and lanes, with the three roles stood
+in for by agents of this folder that write the replies replies.py sets for the way named, so the run
+takes that way. A stand-in for the calling AI calls turn on a task of two items, B-1 answered at its
+part and B-2 in each part, in a repository made for the run:
 
 - `plain`: every item Good at the first reading, the learner with no lesson.
 - `given`: the first user stopping at B-1 in a README that names no license, sent back to the

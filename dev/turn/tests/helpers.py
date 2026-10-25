@@ -128,7 +128,8 @@ def stopped(item):
 
 STOPPED_F1 = stopped(ITEM_F1)
 STOPPED_B1 = stopped(ITEM_B1)
-# A first user's reading of every item: the Good it found for one, and where it stopped at the other.
+# A first user's reading of every item: the Good it found for one, and where it stopped at the
+# other.
 FIRST_READ = [FOUND, STOPPED_B1]
 # A checklist item asked of each part of the work, added to a run's checklist where a test needs
 # one; the work's parts, as the script splits a README of a title, an opening and one section;

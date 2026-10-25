@@ -15,8 +15,9 @@ LICENSE = "\n\n## License\n\nMIT.\n"
 LICENSED = f"# demo\n\ndemo prints a greeting.\n\n{USE}{LICENSE}"
 SAID = f"# demo\n\ndemo prints a greeting.\n\n{USE} It prints `Hello`.{LICENSE}"
 # What running demo as its Use says gives the reader, as the README says it or not.
-RUN = "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does."
-RUN_SAID = "Running `sh demo.sh` as this part says, the reader sees demo print Hello, as the part says it does."
+RAN = "Running `sh demo.sh` as this part says, the reader sees demo print Hello"
+RUN = f"{RAN}, so learns what demo does."
+RUN_SAID = f"{RAN}, as the part says it does."
 MIT = {
     "checklist": CHECKLIST,
     "item": "B-1",

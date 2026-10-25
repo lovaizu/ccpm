@@ -1,5 +1,5 @@
-"""Tries each of turn's three roles on its own: the real role and its lanes, started by a stand-in for
-the orchestrator with the prompt the flow gives it, on the flow trial's task of two items, one
+"""Tries each of turn's three roles on its own: the real role and its lanes, started by a stand-in
+for the orchestrator with the prompt the flow gives it, on the flow trial's task of two items, one
 answered at its part and one in each part. Between the roles the run is set as a trial means: the
 orchestrator's check finds each item's Good in the decisions, the generator's work is replaced by a
 set README that names no license, and the learner is given the records of the two roles before it.

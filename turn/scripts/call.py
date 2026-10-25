@@ -1,5 +1,5 @@
-"""The call checked and each kind it names taken from the CCS, so that no AI copies a value and a run
-starts only on what it can make the work from."""
+"""The call checked and each kind it names taken from the CCS, so that no AI copies a value and a
+run starts only on what it can make the work from."""
 
 from __future__ import annotations
 

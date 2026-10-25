@@ -8,7 +8,9 @@ started and before it replies, and calls it again with the same call. Prints the
 session, from whose JSONL and its agents' the trial is judged, the minutes from the call to the
 work coming back, read from turn's records, and the work and the result.
 
-    python3 dev/turn/trials/trial.py <task folder, such as dev/turn/trials/one> <new folder> [stopped]
+    python3 dev/turn/trials/trial.py <task folder> <new folder> [stopped]
+
+The task folder is one of this folder's, such as dev/turn/trials/one.
 
 The repository and the copy of turn are removed when the run ends; what the run gave back is kept
 in `<new folder>.work/` for the judge, and the records in Claude Code's own folder of the session.
@@ -40,10 +42,10 @@ quoted words in the record each ground names by its path, one JSON entry to a li
 quote in the entries' text, as JSON escapes some of its characters. End with a list of each item
 of the result, saying whether its Good holds at its lines and why, and of each lesson, whether its
 quoted words are in the records it names."""
-STOP = """Once a line says `turn:first-user will`, the first time alone, wait until the first user has
-started, with `until grep -qs '"agentType":"turn:first-user"' {}/*.meta.json; do sleep 2; done`
-in a command of its own, then stop the agent with TaskStop, loaded with ToolSearch, and start the
-`turn:up` agent in the background again with the same call.
+STOP = """Once a line says `turn:first-user will`, the first time alone, wait until the first user
+has started, with `until grep -qs '"agentType":"turn:first-user"' {}/*.meta.json; do sleep 2;
+done` in a command of its own, then stop the agent with TaskStop, loaded with ToolSearch, and
+start the `turn:up` agent in the background again with the same call.
 """
 
 task, place, more = shared.arguments(USAGE, ("stopped",))

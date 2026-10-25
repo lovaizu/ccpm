@@ -1,6 +1,6 @@
-"""What the flow gives the orchestrator and each role to read: whole paths in the folder the call was
-made from, wherever the session's working folder moves, and none of the run's own files, kept beside
-the result, as a role's lane lets it read anything under a folder it is given."""
+"""What the flow gives the orchestrator and each role to read: whole paths in the folder the call
+was made from, wherever the session's working folder moves, and none of the run's own files, kept
+beside the result, as a role's lane lets it read anything under a folder it is given."""
 
 import json
 import os
