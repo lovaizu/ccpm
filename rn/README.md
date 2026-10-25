@@ -237,9 +237,9 @@ that:
   rn works on a branch of its own and never needs to push to the default branch, and the protection
   keeps any command, whatever form it takes, from changing it before you merge.
 
-- Python 3.9 or later, run as `python3`, and jq, the command-line JSON tool.
+- Python 3.9 or later, run as `python3`.
 
-  The scripts of rn run on them, and so do those of turn, a plugin installed with rn that rn uses to
+  The scripts of rn run on it, and so do those of turn, a plugin installed with rn that rn uses to
   make the plan, each document and the finished work, and to have an AI that did not make each use
   it.
 

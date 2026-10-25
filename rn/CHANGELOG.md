@@ -1,10 +1,5 @@
 # Changelog
 
-All notable, user-facing changes to the `rn` plugin are documented here.
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-A version goes up by what changes for you: the middle number for anything you would notice, the
-last for fixes that change nothing you do.
-
 ## [Unreleased]
 
 ### Added
@@ -12,7 +7,7 @@ last for fixes that change nothing you do.
 - Every piece of work, the plan, each document, each task's result and the finished work, is made by turn and used in your place by an AI that did not make it, and made again until it finds nothing lacking — what reaches you at a sign-off has already been used as you would use it.
 - Before the deliverable sign-off, an AI that did not make the finished work uses it as you would for each acceptance criterion — a criterion that is not done when used is found before you are asked, not after.
 - Each sign-off shows the link to each work and its core decisions, each with what it is for, in at most five short lines, and after `/rn:gm` what changed — you judge the decisions, not the text, and a work whose core does not fit is made simpler before it reaches you.
-- At each sign-off you answer, rn's own learner reads what led there; once you approve the finished work, rn puts each learning to you, one per message, for your `.rn/checklists/<kind>.md`, for rn's makers as an issue opened only on your yes, both or neither — what a piece of work taught makes your later work, and rn, better.
+- At each sign-off you answer, an AI that took no part in the work reads what led there, through turn; once you approve the finished work, rn puts each learning to you, one per message, for your `.rn/checklists/<kind>.md`, for rn's makers as an issue opened only on your yes, both or neither — what a piece of work taught makes your later work, and rn, better.
 - While the tasks are carried out, rn says before each step what it will do, how far and how, and after it what is done and what comes next — you can stop a step going a way you do not want, without watching.
 
 ### Changed
@@ -21,12 +16,15 @@ last for fixes that change nothing you do.
 - `/rn:ty` goes straight on to what comes after the sign-off, and `/rn:gm` keeps your feedback and stops — after an approval nothing more is typed, and after feedback you can clear the conversation and lose nothing.
 - Each point to decide is confirmed with you one per message, even one rn could look up, with what it looked up and the answer it recommends — a point decided in your place is made again when it is wrong.
 - The documents the purpose needs are settled with you after the plan sign-off instead of a fixed README, design and verification document — you get only the documents your purpose needs.
+- There is a design sign-off only where your purpose needs a document, and the tasks are planned stage by stage as each is reached — a small change that needs no document goes on without a stop that gives you nothing to decide.
+- An issue to rn's makers is written by turn and used by an AI that did not write it before you are asked to send it — what leaves your project holds the need alone, in the form rn's makers read.
 - Each kind of work, such as a README or code, is made with rn's one checklist for it and your addition at `.rn/checklists/<kind>.md` — what your project needs beyond rn's goes into every later work of that kind.
 - rn needs turn, which installing rn installs, and no longer writ — the making and the reading in your place are done one way for every piece of work.
 - rn has no hooks of its own and asks you to protect the default branch on GitHub — the protection keeps any command from changing it before you merge, whatever form the command takes.
 
 ### Removed
 
+- jq from what rn needs — none of rn's scripts runs it.
 - The reviewers' reports and the reach of each finding in the proposal — the AI that used the work in your place has settled them before the sign-off, and what is left for you is a point to decide.
 
 ## [0.9.0] - 2026-10-06

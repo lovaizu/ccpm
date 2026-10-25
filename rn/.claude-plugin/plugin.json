@@ -1,6 +1,6 @@
 {
   "name": "rn",
-  "description": "Say what you want, roughly: rn hears what you really want one point at a time, has turn make every piece of work and read it in its receiver's place before you see it, calls you only at the plan, design and deliverable sign-offs and for what is yours to decide, and resumes from git in any conversation.",
+  "description": "Say what you want, roughly: rn hears what you really want one point at a time, has turn make every piece of work and read it in its receiver's place before you see it, calls you only at the plan sign-off, the design sign-off where your purpose needs a document, and the deliverable sign-off, and for what is yours to decide, and resumes from git in any conversation.",
   "version": "0.9.0",
   "author": {
     "name": "lovaizu"

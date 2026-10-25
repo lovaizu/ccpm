@@ -193,7 +193,7 @@ What the user gains with rn, each with why it holds; these are why the user choo
   only the core decisions and their intent.
 - A piece of work that takes days neither swells nor drifts, and goes on from wherever the user
   stopped: only a short record of where it stands is carried from move to move.
-- What was decided, and why, stays, in the README and the design in the user's repository and in
+- What was decided, and why, stays, in the documents rn writes into the user's repository and in
   rn's commit messages, so the next piece of work, or a teammate, starts from it.
 - What a piece of work taught is confirmed with the user one learning at a time: what they add to
   their checklists makes their later work better, and what they send rn's makers makes rn better
