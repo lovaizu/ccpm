@@ -75,7 +75,7 @@ class TestResumed(RepoTest):
         self.turn("start", json.dumps(CALL))
         # Then: the generator is started anew with the message due among those since
         prompt = json.loads(self.due(self.next())["input"]["prompt"])
-        sent_back = {"sent_back": [STOPPED_B1], "reply": self.here(RESULT + ".generator.json")}
+        sent_back = {"sent_back": [STOPPED_B1], "reply": self.kept("generator.json")}
         self.assertEqual(prompt["since"], [sent_back])
 
     def test_a_run_waiting_on_an_answer_asks_again_on_a_call_again(self):

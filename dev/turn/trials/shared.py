@@ -154,9 +154,10 @@ def keep(task: str, place: str, result: str) -> None:
     """Keeps for the judge, beside place, what the run in it gave back: place as it ended but its
     git, which holds the task as the run left it, and the work, with the task's CCS at
     `.tasks/ccs.json`, where turn's call names it, whatever form of it the run was given; the result
-    and what the run kept beside it are left out, as the judge reads the whole work alone."""
+    and turn's folder, holding a run stopped before it returned, are left out, as the judge reads
+    the whole work alone."""
     name = os.path.basename(result)
-    shutil.copytree(place, kept(place), ignore=shutil.ignore_patterns(".git", name, name + ".*"))
+    shutil.copytree(place, kept(place), ignore=shutil.ignore_patterns(".git", ".turn", name))
     os.makedirs(os.path.join(kept(place), ".tasks"), exist_ok=True)
     shutil.copyfile(os.path.join(task, "ccs.json"), os.path.join(kept(place), ".tasks", "ccs.json"))
 

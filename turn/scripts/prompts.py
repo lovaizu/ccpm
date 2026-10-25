@@ -6,9 +6,11 @@ folder it is given."""
 from __future__ import annotations
 
 import os
+import tempfile
 from typing import Any
 
 import forms
+import state
 
 GENERATOR = "turn:generator"
 FIRST_USER = "turn:first-user"
@@ -16,13 +18,19 @@ LEARNER = "turn:learner"
 
 
 def reply_path(result: str, agent: str) -> str:
-    """Where the role writes its reply, read by the flow alone, as a whole path."""
-    return os.path.abspath(f"{result}.{agent.partition(':')[2]}.json")
+    """Where the role writes its reply, read by the flow alone: in the run's folder, as a whole
+    path."""
+    return os.path.join(state.folder(result), f"{agent.partition(':')[2]}.json")
 
 
 def records_folder(result: str) -> str:
-    """Where the records the learner reads are shown as text, as a whole path."""
-    return os.path.abspath(result + ".records")
+    """A new folder the records the learner reads are shown in as text, as a whole path:
+    `turn/<the run's folder's name>-<random>/` in the system's temporary folder, as they are made
+    again whenever the learner is started; the random end keeps apart the runs of two repositories
+    whose results have the same path."""
+    top = os.path.join(tempfile.gettempdir(), "turn")
+    os.makedirs(top, exist_ok=True)
+    return tempfile.mkdtemp(prefix=os.path.basename(state.folder(result)) + "-", dir=top)
 
 
 def absolute(paths: list[str]) -> list[str]:
@@ -31,24 +39,21 @@ def absolute(paths: list[str]) -> list[str]:
 
 
 def without_run_files(paths: list[str], result: str, apart: tuple[str, ...] = ()) -> list[str]:
-    """The paths, in their order, without the run's own files: the result, and each file beside it
-    whose name begins with the result's name and a dot, as every file the run keeps is named; and
-    without each file kept `apart`, as the CCS is from the first user. A path that is one of them
-    is left out, and a folder holding the result's folder or a file kept apart is given as its
-    entries, sorted, the one on the way opened the same way: a role's lane lets it read anything
-    under a folder it is given, and the first user is not to read the generator's reply nor the
-    CCS. A path inside one of them, such as a record shown to the learner, is left out too; a path
-    met again, as a checklist the CCS also names, is given once."""
-    folder = os.path.realpath(os.path.dirname(result) or ".")
-    name = os.path.basename(result)
-    kept_apart = {os.path.realpath(p) for p in apart}
+    """The paths, in their order, without the run's own files: the result, and turn's folder at
+    the root, which holds each run's state and replies; and without each file kept `apart`, as the
+    CCS is from the first user. A path that is one of them, or inside one, is left out, and a
+    folder holding one is given as its entries, sorted, the one on the way opened the same way: a
+    role's lane lets it read anything under a folder it is given, and the first user is not to read
+    the generator's reply nor the CCS. A path met again, as a checklist the CCS also names, is
+    given once."""
+    left_out = {os.path.realpath(p) for p in (result, *apart)}
+    left_out.add(os.path.join(state.root(result), ".turn"))
     # The folders a folder given is opened on the way to.
-    inside = {folder} | {os.path.dirname(p) for p in kept_apart}
+    inside = {os.path.dirname(p) for p in left_out}
 
     def ours(path: str) -> bool:
-        # The entry of the result's folder the path is at or in; `..` for a path outside it.
-        entry = os.path.relpath(os.path.realpath(path), folder).split(os.sep)[0]
-        return entry == name or entry.startswith(name + ".") or os.path.realpath(path) in kept_apart
+        real = os.path.realpath(path)
+        return any(real == p or real.startswith(p + os.sep) for p in left_out)
 
     def opened(path: str) -> list[str]:
         real = os.path.realpath(path)

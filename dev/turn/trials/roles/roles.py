@@ -75,5 +75,7 @@ with shared.removed(place, plugin):
     ids.append(role(prompts.FIRST_USER, prompts.reader(kept)))
     kept["agent_ids"] = [i for i in ids if i]
     run.learn(kept, [forms.named(i) for i in kept["items"]])
+    # The move starting the learner shows it the records, as the flow makes it.
+    run.moved(kept)
     role(prompts.LEARNER, kept["next"]["prompt"])
     os.chdir(shared.ROOT)

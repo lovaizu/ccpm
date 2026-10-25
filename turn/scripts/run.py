@@ -19,7 +19,6 @@ import state
 from prompts import FIRST_USER, GENERATOR, LEARNER
 
 UP = "turn:up"
-ROLES = (GENERATOR, FIRST_USER, LEARNER)
 # The roles kept started through their round, each sent what comes next by message, so each works
 # on with what it has already read.
 KEPT_STARTED = (GENERATOR, FIRST_USER)
@@ -229,15 +228,14 @@ def asking_now(run: dict[str, Any], text: str) -> dict[str, Any]:
 
 
 def returning(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """At the result written, once told: what the run kept beside the result is removed, and the
-    run returns."""
+    """At the result written, once told: the run's folder and the records shown to the learner are
+    removed, the result alone staying, and the run returns."""
     if not run["told"] and not text.strip():
         return tell(run)
     result = run["call"]["result"]
-    os.remove(state.state_path(result))
-    for agent in ROLES:
-        os.remove(prompts.reply_path(result, agent))
-    shutil.rmtree(prompts.records_folder(result))
+    shutil.rmtree(state.folder(result))
+    # The system may have cleared its temporary folder since.
+    shutil.rmtree(run["records"], ignore_errors=True)
     return {"returned": result}
 
 
@@ -253,12 +251,15 @@ def role(run: dict[str, Any], text: str) -> dict[str, Any]:
 
 def moved(run: dict[str, Any]) -> dict[str, Any]:
     """The move starting the role due, or sending it what is sent, the message kept among those sent
-    to it since it started; its reply is written anew."""
+    to it since it started; its reply is written anew, and the records the learner is given are
+    shown as text again, as the system may clear its temporary folder while a run waits."""
     step = run["next"]
     agent = step["agent"]
     reply = step["prompt"]["reply"]
     if os.path.exists(reply):
         os.remove(reply)
+    if agent == LEARNER:
+        shown(run, step["prompt"]["given"])
     step["moved"] = True
     if "to" in step:
         run.setdefault("since", {}).setdefault(agent, []).append(step["message"])
@@ -506,15 +507,20 @@ def learn(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
     roles = [p for p in (records.find(i) for i in run["agent_ids"]) if p]
     orchestrator = records.orchestrator(roles, result)
     run["record_paths"] = roles + ([orchestrator] if orchestrator else [])
-    folder = prompts.records_folder(result)
-    shutil.rmtree(folder, ignore_errors=True)
-    os.makedirs(folder)
-    texts = []
-    for n, path in enumerate(run["record_paths"], 1):
-        texts.append(os.path.join(folder, f"{n}.txt"))
-        with open(texts[-1], "w", encoding="utf-8") as f:
-            f.write(records.wrapped(records.as_text(path)))
+    run["records"] = prompts.records_folder(result)
+    texts = [
+        os.path.join(run["records"], f"{n}.txt") for n in range(1, len(run["record_paths"]) + 1)
+    ]
     return due(run, LEARNER, prompts.learner(run, texts))
+
+
+def shown(run: dict[str, Any], texts: list[str]) -> None:
+    """Writes each record of the run as the learner reads it, as text, at its path among the
+    texts, making their folder where it is gone."""
+    os.makedirs(run["records"], exist_ok=True)
+    for path, text in zip(run["record_paths"], texts):
+        with open(text, "w", encoding="utf-8") as f:
+            f.write(records.wrapped(records.as_text(path)))
 
 
 def taught(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:

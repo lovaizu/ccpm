@@ -1,8 +1,10 @@
 """Once every item has its Good, the learner learns from every record of the run, and the result is
 written with its lessons."""
 
+import glob
 import json
 import os
+import shutil
 import unittest
 from unittest import mock
 
@@ -14,6 +16,7 @@ from helpers import (
     IDS,
     LESSON,
     RESULT,
+    TODAY,
     ReadTest,
     run,
 )
@@ -31,13 +34,19 @@ class TestLearner(ReadTest):
         # Given: a run whose every item has its Good
         # When: the first user's reading is taken
         # Then: the learner is to be started with the record of every role that replied and the
-        # orchestrator's, each shown as text beside the result, and where it replies
+        # orchestrator's, each shown as text, numbered from 1, in a folder of its own in turn's
+        # folder in the system's temporary folder, named by the run's day and the result's path
+        # and ending in what tells it from another repository's of the same name; and where it
+        # replies, in the run's folder
         move = self.due(self.learner)
         self.assertEqual(move["input"]["subagent_type"], "turn:learner")
-        texts = [self.here(f"{RESULT}.records/{n}.txt") for n in (1, 2, 3)]
+        [folder] = glob.glob(
+            os.path.join(self.tmp, "turn", f"{TODAY}-.tasks%2Freadme-result.json-*")
+        )
+        texts = [os.path.join(folder, f"{n}.txt") for n in (1, 2, 3)]
         self.assertEqual(
             json.loads(move["input"]["prompt"]),
-            {"given": texts, "reply": self.here(RESULT + ".learner.json")},
+            {"given": texts, "reply": self.kept("learner.json")},
         )
         self.assertIn("[user] {}", self.read(texts[0]))
         self.assertIn('"result": ".tasks/readme-result.json"', self.read(texts[2]))
@@ -71,12 +80,29 @@ class TestLearner(ReadTest):
         )
         self.assertEqual(self.heard(out), {"returned": RESULT})
 
-    def test_once_returned_what_the_run_kept_beside_the_result_is_removed(self):
+    def test_once_returned_the_result_alone_stays_of_the_run(self):
         # Given: a run whose learner replied
         # When: the run returns
-        # Then: the result and the CCS alone stay beside it
+        # Then: the run's folder and the records shown to the learner are removed, and the result
+        # stays beside the CCS
         self.learnt(self.learner)
         self.assertEqual(sorted(os.listdir(".tasks")), ["readme-result.json", "readme.json"])
+        self.assertEqual(
+            (os.listdir(".turn"), os.listdir(os.path.join(self.tmp, "turn"))), ([], [])
+        )
+
+    def test_the_records_are_shown_again_when_the_learner_is_started_anew(self):
+        # Given: a run whose learner was started, and the records shown to it cleared by the system
+        # since
+        self.due(self.learner)
+        given = self.prompt()["given"]
+        shutil.rmtree(os.path.dirname(given[0]))
+        # When: the same call is made again, and the learner is started anew
+        self.turn("start", json.dumps(CALL))
+        move = self.due(self.next())
+        # Then: it is given the same texts, each shown again
+        self.assertEqual(json.loads(move["input"]["prompt"])["given"], given)
+        self.assertIn("[user] {}", self.read(given[0]))
 
     def test_the_result_is_written_one_key_or_value_to_a_line(self):
         # Given: a run that returns

@@ -19,7 +19,9 @@ from helpers import (
     EACH,
     EACH_ITEM,
     ITEMS,
+    RUN,
     SCRIPTS,
+    TODAY,
     RepoTest,
 )
 
@@ -124,7 +126,7 @@ class TestUsage(RepoTest):
         code, out = self.turn("start", json.dumps(call))
         self.assertEqual(code, 0, out)
         self.assertIn("結果.json", out)
-        with open(result + ".run.json", encoding="utf-8") as kept:
+        with open(f".turn/{TODAY}-.tasks%2F結果.json/run.json", encoding="utf-8") as kept:
             self.assertIn("checklists/読む.md", kept.read())
         code, out = self.turn("next", result)
         self.assertEqual(code, 0, out)
@@ -259,7 +261,7 @@ class TestStart(RepoTest):
                 self.started(dict(CALL, test=test))
                 # Then: the generator is to start from the call's test as it was given
                 self.assertEqual(self.prompt()["test"], test)
-                os.remove(CALL["result"] + ".run.json")
+                os.remove(f"{RUN}/run.json")
 
     def test_a_call_again_with_another_test_is_another_call(self):
         # Given: a run started on a call whose test is a command
@@ -270,19 +272,14 @@ class TestStart(RepoTest):
         self.assertEqual(code, 1)
         self.assertIn("a run of another call is kept", out)
 
-    def test_a_result_at_the_top_of_the_folder_is_kept_beside_it(self):
-        # Given: a call whose result goes at the top of the folder it is made from
-        # When: the run is started
-        # Then: the run is kept beside it
-        self.turn("start", json.dumps(call_with(result="result.json")))
-        self.assertTrue(os.path.exists("result.json.run.json"))
-
-    def test_a_result_in_a_new_folder_is_written(self):
+    def test_a_result_in_a_folder_not_yet_there_starts_its_run(self):
         # Given: a call whose result goes in a folder not yet there
-        # When: the run is started
-        # Then: the folder is made and the run kept there
-        self.started(call_with(result="out/new/result.json"))
-        self.assertTrue(os.path.exists("out/new/result.json.run.json"))
+        # When: the run is started and checked
+        # Then: the run is kept in turn's folder at the root, named by the result's path from it,
+        # and the generator is due
+        move = self.started(call_with(result="out/new/result.json"))
+        self.assertTrue(os.path.exists(f".turn/{TODAY}-out%2Fnew%2Fresult.json/run.json"))
+        self.assertEqual(move["input"]["subagent_type"], "turn:generator")
 
 
 class TestStartStops(RepoTest):
@@ -294,7 +291,7 @@ class TestStartStops(RepoTest):
             self.assertIn(words, out)
         # No run is started: neither the result nor the state is written.
         self.assertFalse(os.path.exists(CALL["result"]))
-        self.assertFalse(os.path.exists(CALL["result"] + ".run.json"))
+        self.assertFalse(os.path.exists(".turn"))
 
     def test_a_call_that_is_not_json_stops(self):
         # Given: a call that is not JSON

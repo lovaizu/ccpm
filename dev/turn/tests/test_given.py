@@ -1,6 +1,7 @@
 """What the flow gives the orchestrator and each role to read: whole paths in the folder the call
-was made from, wherever the session's working folder moves, and none of the run's own files, kept
-beside the result, as a role's lane lets it read anything under a folder it is given."""
+was made from, wherever the session's working folder moves, and none of the run's own files, the
+result and turn's folder at the root, as a role's lane lets it read anything under a folder it is
+given."""
 
 import json
 import os
@@ -21,81 +22,100 @@ class GivenTest(RepoTest):
 class TestWithoutRunFiles(GivenTest):
     def setUp(self):
         super().setUp()
-        # A folder holding only the files each test lays.
-        os.makedirs("place")
+        # A repository holding only the files each test lays.
+        os.makedirs("place/.git")
         os.chdir("place")
 
     def test_a_folder_holding_the_result_two_levels_down_is_given_as_its_entries(self):
-        # Given: the result two folders down from `.`, with the run's files beside it and files
-        # whose names only begin like the result's, at each level
+        # Given: the result two folders down from `.`, with files beside it, one named as the
+        # result with more after it, at each level
         # When: `.` is given
         # Then: every entry is given but the folder on the way to the result, which is opened the
-        # same way level by level, and in the result's folder every entry but the result and the
-        # files whose names begin with the result's name and a dot, sorted
+        # same way level by level, and in the result's folder every entry but the result, sorted
         self.lay(
             "b.md",
             "a/x.md",
             "a/run/result.json",
             "a/run/result.json.run.json",
-            "a/run/result.json.generator.json",
             "a/run/result.jsonx",
             "a/run/notes.md",
-            "a/run/result.json.records/1.txt",
         )
         self.assertEqual(
             prompts.without_run_files(["."], "a/run/result.json"),
-            ["a/run/notes.md", "a/run/result.jsonx", "a/x.md", "b.md"],
+            [
+                ".git",
+                "a/run/notes.md",
+                "a/run/result.json.run.json",
+                "a/run/result.jsonx",
+                "a/x.md",
+                "b.md",
+            ],
         )
 
     def test_a_folder_not_holding_the_result_is_given_as_it_is(self):
         # Given: the result in `.tasks`, and folders beside it, one named as `.tasks` cut short
         # When: each of them is given
         # Then: each is given as it is
-        self.lay(".tasks/result.json", ".tasks/result.json.run.json", ".task/a.md", "docs/a.md")
+        self.lay(".tasks/result.json", ".task/a.md", "docs/a.md")
         self.assertEqual(
             prompts.without_run_files([".task", "docs"], ".tasks/result.json"), [".task", "docs"]
         )
 
-    def test_the_result_s_own_folder_is_given_as_its_entries_but_the_run_s_files(self):
-        # Given: the result in `.tasks`, with the run's files and the CCS beside it
+    def test_the_result_s_own_folder_is_given_as_its_entries_but_the_result(self):
+        # Given: the result in `.tasks`, with the CCS beside it
         # When: `.tasks` is given
-        # Then: every entry of `.tasks` is given but the result and the run's files
-        self.lay(".tasks/ccs.json", ".tasks/result.json", ".tasks/result.json.run.json")
+        # Then: every entry of `.tasks` is given but the result
+        self.lay(".tasks/ccs.json", ".tasks/result.json")
         self.assertEqual(
             prompts.without_run_files([".tasks"], ".tasks/result.json"), [".tasks/ccs.json"]
         )
 
-    def test_a_path_that_is_one_of_the_run_s_files_is_left_out(self):
-        # Given: the result in `.tasks`, with the run's files beside it, and a file elsewhere named
-        # as one of them
-        # When: the result, each run's file, a file inside one, and the file elsewhere are given
-        # Then: the result, the run's files and what is in them are left out, the file elsewhere
-        # given
+    def test_turn_s_folder_at_the_root_is_left_out_of_the_root_s_entries(self):
+        # Given: the result in `.tasks`, and turn's folder at the root holding this run's folder
+        # and another's
         self.lay(
             ".tasks/result.json",
-            ".tasks/result.json.run.json",
-            ".tasks/result.json.first-user.json",
-            ".tasks/result.json.records/1.txt",
-            "docs/result.json.run.json",
+            ".turn/20261025-.tasks%2Fresult.json/run.json",
+            ".turn/20261024-other.json/generator.json",
+            "README.md",
+        )
+        # When: `.` is given
+        # Then: every entry of `.` is given but turn's folder, `.tasks` opened to leave out the
+        # result
+        self.assertEqual(
+            prompts.without_run_files(["."], ".tasks/result.json"), [".git", "README.md"]
+        )
+
+    def test_a_path_in_turn_s_folder_or_the_result_is_left_out(self):
+        # Given: the result in `.tasks`, turn's folder at the root, and a folder named as turn's
+        # elsewhere
+        self.lay(
+            ".tasks/result.json",
+            ".turn/20261025-.tasks%2Fresult.json/run.json",
+            "docs/.turn/a.md",
         )
         paths = [
             ".tasks/result.json",
-            ".tasks/result.json.run.json",
-            ".tasks/result.json.first-user.json",
-            ".tasks/result.json.records",
-            ".tasks/result.json.records/1.txt",
-            "docs/result.json.run.json",
+            ".turn",
+            ".turn/20261025-.tasks%2Fresult.json",
+            ".turn/20261025-.tasks%2Fresult.json/run.json",
+            "docs/.turn/a.md",
         ]
+        # When: the result, turn's folder, a run's folder and a file in it, and the file in the
+        # folder elsewhere are given
+        # Then: the file elsewhere alone is given
         self.assertEqual(
-            prompts.without_run_files(paths, ".tasks/result.json"), ["docs/result.json.run.json"]
+            prompts.without_run_files(paths, ".tasks/result.json"), ["docs/.turn/a.md"]
         )
 
-    def test_a_result_at_the_top_leaves_out_its_files_from_the_top_s_entries(self):
-        # Given: the result at the top of `.`, with the run's files beside it
+    def test_a_result_at_the_top_is_left_out_of_the_top_s_entries(self):
+        # Given: the result at the top of `.`
         # When: `.` is given
-        # Then: every entry of `.` is given but the result and the run's files
-        self.lay("result.json", "result.json.run.json", "README.md", "docs/a.md")
-        self.assertEqual(prompts.without_run_files(["."], "result.json"), ["README.md", "docs"])
+        # Then: every entry of `.` is given but the result
+        self.lay("result.json", "README.md", "docs/a.md")
+        self.assertEqual(
+            prompts.without_run_files(["."], "result.json"), [".git", "README.md", "docs"]
+        )
 
     def test_a_path_met_again_is_given_once_where_it_is_first_met(self):
         # Given: the result in `.tasks`, and a file given by itself and again as an entry of `.`
@@ -103,7 +123,7 @@ class TestWithoutRunFiles(GivenTest):
         # When: the file and `.` are given
         # Then: the file is given once, where it is first met
         self.assertEqual(
-            prompts.without_run_files(["b.md", "."], ".tasks/result.json"), ["b.md", "a.md"]
+            prompts.without_run_files(["b.md", "."], ".tasks/result.json"), ["b.md", ".git", "a.md"]
         )
 
     def test_a_path_kept_apart_is_left_out_and_the_folders_on_its_way_opened(self):
@@ -114,7 +134,7 @@ class TestWithoutRunFiles(GivenTest):
         # to the result or the CCS given as it is
         self.assertEqual(
             prompts.without_run_files([".", "ccs.json"], ".tasks/result.json", apart=("ccs.json",)),
-            ["README.md", "docs"],
+            [".git", "README.md", "docs"],
         )
 
     def test_a_path_kept_apart_inside_a_folder_leaves_its_folder_s_other_entries(self):
@@ -164,7 +184,8 @@ class TestRolesGiven(GivenTest):
         super().setUp()
         artifacts = [a for a in CCS["retrieved_artifacts"] if "page" not in a] + [{"page": "."}]
         self.write_json(CALL["ccs"], dict(CCS, retrieved_artifacts=artifacts))
-        # Every entry of `.`, `.tasks` opened, as the run's files are written by the start.
+        # Every entry of `.` but `.git`, `.tasks` opened, as the result goes there, and turn's
+        # folder left out, as the start writes the run's files there.
         self.entries = [
             self.here(p) for p in (".tasks/readme.json", "README.md", "checklists", "docs", "notes")
         ]
@@ -180,6 +201,7 @@ class TestRolesGiven(GivenTest):
             self.here(".tasks/readme.json"),
             self.here("checklists/readme.md"),
             self.here("notes/readme.decisions.md"),
+            self.here(".git"),
         ] + self.entries[1:]
         self.assertEqual(json.loads(out)["given"], given)
 
@@ -196,6 +218,7 @@ class TestRolesGiven(GivenTest):
                 self.here("README.md"),
                 self.here("checklists/readme.md"),
                 self.here("notes/readme.decisions.md"),
+                self.here(".git"),
             ]
             + self.entries[2:],
         )
@@ -208,10 +231,12 @@ class TestRolesGiven(GivenTest):
         # and the checklists, each path once
         self.started()
         move = self.due(self.made())
-        self.assertTrue(os.path.exists(RESULT + ".generator.json"))
+        self.assertTrue(os.path.exists(self.kept("generator.json")))
         self.assertEqual(
             json.loads(move["input"]["prompt"])["given"],
-            [self.here("README.md")] + self.entries[2:] + [self.here("checklists/readme.md")],
+            [self.here("README.md"), self.here(".git")]
+            + self.entries[2:]
+            + [self.here("checklists/readme.md")],
         )
 
 
@@ -230,7 +255,7 @@ class TestFolderMoved(RepoTest):
         move = json.loads(self.due(self.next({"items": CAN, "questions": []}))["input"]["prompt"])
         self.assertEqual(move["work"], [self.here("README.md")])
         self.assertEqual(move["checklists"], [self.here("checklists/readme.md")])
-        self.assertEqual(move["reply"], self.here(RESULT + ".generator.json"))
+        self.assertEqual(move["reply"], self.kept("generator.json"))
         self.assertIn(self.here(CALL["ccs"]), move["given"])
 
     def test_a_round_goes_on_from_another_folder_with_lines_named_by_whole_paths(self):

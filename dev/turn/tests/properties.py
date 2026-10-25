@@ -206,9 +206,28 @@ class TestAnswer(RepoTest):
             self.assertEqual((code, kept["stage"]), (1, "asked"))
 
 
-# Names a layout is made of: folders and files, some named as the result or as one of its run's
-# files, and some only beginning like them.
-NAMES = st.sampled_from(["a", "b", "r.json", "r.json.run.json", "r.json.x", "r.jsonx"])
+# Names of a result's folders and of the result, some holding what the name of a run's folder
+# writes `/` and `%` as, or a pattern of file names reads as a set of letters.
+PARTS = st.sampled_from(["a", "b", "%", "2F", "%2F", "%25", "-", "a-b", "[a]"])
+
+
+class TestRunFolders(RepoTest):
+    @given(st.lists(PARTS, min_size=1, max_size=3), st.lists(PARTS, min_size=1, max_size=3))
+    def test_two_results_share_a_run_s_folder_only_where_they_are_one(self, one, other):
+        # Given: any two results in the repository, each by its folders and its name
+        # When: the folder of each one's run is asked for, the first given from the root, the
+        # second as a whole path
+        # Then: the two are one folder where the results are one path, and two otherwise, each in
+        # turn's folder at the root
+        first = state.folder(os.path.join(*one))
+        second = state.folder(self.here(os.path.join(*other)))
+        self.assertEqual(first == second, one == other)
+        self.assertEqual({os.path.dirname(first), os.path.dirname(second)}, {self.here(".turn")})
+
+
+# Names a layout is made of: folders and files, some named as the result or as turn's folder, and
+# some only beginning like the result.
+NAMES = st.sampled_from(["a", "b", "r.json", ".turn", "r.json.x", "r.jsonx"])
 
 
 def reached(paths):
@@ -228,18 +247,19 @@ class TestGiven(RepoTest):
         st.lists(st.lists(NAMES, max_size=3), min_size=1, max_size=3),
     )
     def test_the_paths_given_reach_all_they_reached_but_the_run_s_files(self, files, down, paths):
-        # Given: any layout of files and folders, the result at any depth with its state and a
-        # record beside it, and any paths that are there in it
+        # Given: any layout of files and folders in a repository, the result at any depth, a run's
+        # state in turn's folder at the root, and any paths that are there in it
         # When: the paths are given without the run's files
-        # Then: they reach every file and folder the paths reached but the run's files and what is
-        # in them, and the folders opened on the way to the result's folder; and none of them is
-        # such a folder. What the paths reach is found here by walking the layout, apart from how
-        # without_run_files opens folders, so the two cannot share a slip.
+        # Then: they reach every file and folder the paths reached but the result, turn's folder
+        # at the root and what is in it, and the folders opened on the way to the result's folder;
+        # and none of them is such a folder. What the paths reach is found here by walking the
+        # layout, apart from how without_run_files opens folders, so the two cannot share a slip.
         place = tempfile.mkdtemp(dir=self.base)
         os.chdir(place)
         try:
+            os.mkdir(".git")
             result = os.path.join(*down, "r.json")
-            for path in (result, result + ".run.json", result + ".records/1.txt"):
+            for path in (result, ".turn/20261025-r.json/run.json"):
                 self.write(path, "")
             for names in files:
                 try:
@@ -248,11 +268,7 @@ class TestGiven(RepoTest):
                     pass
             asked = [os.path.join(".", *p) for p in paths if os.path.exists(os.path.join(".", *p))]
             folder = os.path.realpath(os.path.dirname(result) or ".")
-            ours = {
-                os.path.join(folder, n)
-                for n in os.listdir(folder)
-                if n == "r.json" or n.startswith("r.json.")
-            }
+            ours = {os.path.realpath(result), os.path.realpath(".turn")}
             on_way = {p for p in reached(asked) if folder == p or folder.startswith(p + os.sep)}
             kept = {
                 p

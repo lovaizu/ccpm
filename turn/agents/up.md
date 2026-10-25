@@ -10,9 +10,9 @@ step makes back meeting every item of the step's checklists, with nothing left f
 call names the CCS, the JSON file it keeps its task in, and the kinds the CCS uses for the work, the
 checklists, the receiver, the one the work is for, what the receiver uses the work for and what they
 have with it. An item's Good is that the receiver gets from the work what the item asks, with the
-lines of the work that give it. turn's flow, a script, keeps where the run stands beside the result
-and gives you each next move; you make that move and hand the flow its outcome, so every run takes
-the same course and a run stopped anywhere goes on from its last move.
+lines of the work that give it. turn's flow, a script, keeps where the run stands in a file and
+gives you each next move; you make that move and hand the flow its outcome, so every run takes the
+same course and a run stopped anywhere goes on from its last move.
 
 Before any work is made, you check that the CCS and the files it names can give every item its
 Good, and that what the receiver has lets a reader do with the work what the receiver does: a Good

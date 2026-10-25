@@ -59,9 +59,9 @@ class TestGeneratorKept(RoundTest):
         self.assertEqual(move["tool"], "SendMessage")
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
         message = json.loads(move["input"]["message"])
-        reply = self.here(RESULT + ".generator.json")
+        reply = self.kept("generator.json")
         self.assertEqual(message, {"sent_back": [STOPPED_B1], "reply": reply})
-        self.assertFalse(os.path.exists(RESULT + ".generator.json"))
+        self.assertFalse(os.path.exists(self.kept("generator.json")))
 
     def test_a_message_keeps_letters_beyond_ascii_as_they_are(self):
         # Given: a first user that says in Japanese what it did where it stopped
@@ -92,7 +92,7 @@ class TestGeneratorKept(RoundTest):
         expected = {
             "remade": [self.here("README.md")],
             "parts": [self.here("README.md:1-4"), self.here("README.md:5-7")],
-            "reply": self.here(RESULT + ".first-user.json"),
+            "reply": self.kept("first-user.json"),
         }
         self.assertEqual(json.loads(move["input"]["message"]), expected)
 

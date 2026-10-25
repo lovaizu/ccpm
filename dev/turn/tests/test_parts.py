@@ -64,7 +64,7 @@ class TestEachPart(RepoTest):
         self.assertEqual(out["move"]["tool"], "SendMessage")
         self.assertEqual(out["move"]["input"]["to"], IDS["turn:generator"])
         self.assertIn("in your form, filled:", out["move"]["input"]["message"])
-        self.assertFalse(os.path.exists(RESULT + ".generator.json"))
+        self.assertFalse(os.path.exists(self.kept("generator.json")))
         move = self.due(self.made(GOOD, dict(GOOD, item="B-1"), EACH_GOOD))
         self.assertEqual(move["tool"], "Agent")
 

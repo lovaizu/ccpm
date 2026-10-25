@@ -163,11 +163,19 @@ turn/                      the plugin, installed by Claude Code
     │                      lay.py <Python 3>
     └── lane/              lane's code, the guard, a link to lane's <Python 3>
 
-<where the call puts the result, in the calling AI's work folder>/
-├── <result>               the result <JSON>
-├── <result>.run.json      the state <JSON>, read and written by the flow alone
-├── <result>.<role>.json   each role's reply <JSON>, read by the flow alone
-└── <result>.records/      each record shown to the learner as text, gone once the run returns
+<where the call puts the result>
+└── <result>               the result <JSON>
+
+<the root of the repository holding the result>/
+└── .turn/
+    └── <yyyymmdd>-<name>/ one run, gone once it returns
+        ├── run.json       the state <JSON>, read and written by the flow alone
+        └── <role>.json    each role's reply <JSON>, read by the flow alone
+
+<the system's temporary folder>/
+└── turn/
+    └── <yyyymmdd>-<name>-<random>/
+                           each record shown to the learner as text, gone once the run returns
 ```
 
 - turn runs on Claude Code and python3 3.9 or later.
@@ -177,8 +185,18 @@ turn/                      the plugin, installed by Claude Code
   [a plugin that uses another](../architecture.md#a-plugin-that-uses-another) has.
 
   The calling AI can still take the user's pause while it waits; the user sees the run's agents in
-  the panel below the prompt input. Each run's state is beside its own result, so several runs go at
-  once without meeting.
+  the panel below the prompt input.
+- A run's files are placed as
+  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) says:
+  `<name>` is the result's path from the root, each `%` written `%25` and each `/` `%2F`, the
+  root the nearest folder above the result holding `.git`, or the result's folder where none does,
+  and `<yyyymmdd>` the day the run began, its folder found by the name on any later day; the
+  records' folder ends in a random part.
+
+  A call again with the same result finds the run however long after and from whichever folder of
+  the repository it is made, and two runs with other results do not meet; the records are made
+  again each time the learner is started, and the random part keeps apart two repositories'
+  runs of results at the same path, as the temporary folder is the machine's.
 - The orchestrator reaches each role and the main conversation with Claude Code's Agent and
   SendMessage, and its question is its reply, which the calling AI answers by SendMessage to it.
 - Each role writes its reply to a file its prompt names, in a JSON form of its own, read by the flow

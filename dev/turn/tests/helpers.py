@@ -7,7 +7,10 @@ import io
 import json
 import os
 import re
+import shutil
 import sys
+import tempfile
+import time
 from unittest import mock
 
 TURN = os.path.normpath(
@@ -161,15 +164,30 @@ EACH_GOOD = {
 # The agent ID the Agent call gives back for each role, as the orchestrator hands it on.
 IDS = {"turn:generator": "agen", "turn:first-user": "afirst", "turn:learner": "alearn"}
 RESULT = CALL["result"]
+# The day a run is started on, as the clock gives it, and the folder the run of the result is kept
+# in, in turn's folder at the root of the repository, named by that day and the result's path from
+# the root, each `/` written `%2F`.
+TODAY = "20261025"
+RUN = f".turn/{TODAY}-.tasks%2Freadme-result.json"
 
 
 class RepoTest(testing.FolderTest):
-    """Each test runs turn from a temporary folder standing for the user's repository, `base`,
-    holding a task's CCS, its checklist, its decisions and a work already written; Claude Code's
-    records are kept in a folder of its own inside it."""
+    """Each test runs turn from a temporary folder standing for the user's repository, `base`, its
+    root, holding a task's CCS, its checklist, its decisions and a work already written, on the
+    day TODAY; Claude Code's records are kept in a folder of its own inside it, and the system's
+    temporary folder is `tmp`, a folder of the run's beside it."""
 
     def setUp(self):
         super().setUp()
+        os.mkdir(".git")
+        today = mock.patch.object(time, "strftime", return_value=TODAY)
+        today.start()
+        self.addCleanup(today.stop)
+        self.tmp = os.path.realpath(tempfile.mkdtemp(dir=self.run_folder))
+        self.addCleanup(shutil.rmtree, self.tmp)
+        temporary = mock.patch.object(tempfile, "tempdir", self.tmp)
+        temporary.start()
+        self.addCleanup(temporary.stop)
         self.write_json(CALL["ccs"], CCS)
         self.write("checklists/readme.md", CHECKLIST)
         self.write("notes/readme.decisions.md", "# Decisions\n")
@@ -259,6 +277,10 @@ class RepoTest(testing.FolderTest):
     def here(self, path):
         """The path as a whole path in the folder the call was made from, as a role is given it."""
         return os.path.join(self.base, path)
+
+    def kept(self, name):
+        """The whole path of the file of the name in the folder the run of RESULT is kept in."""
+        return self.here(f"{RUN}/{name}")
 
     def prompt(self):
         """What the role due is given, as its prompt holds it."""

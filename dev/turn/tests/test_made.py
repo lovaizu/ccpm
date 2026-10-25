@@ -38,7 +38,7 @@ class TestMade(ReadTest):
                 "sent_back": [],
                 "answers": [],
                 "result": self.here(RESULT),
-                "reply": self.here(RESULT + ".generator.json"),
+                "reply": self.kept("generator.json"),
             },
         )
 
@@ -63,7 +63,7 @@ class TestMade(ReadTest):
                 "receiver": ["a developer new to it"],
                 "use": ["to try it on their own files"],
                 "parts": [self.here("README.md:1-3")],
-                "reply": self.here(RESULT + ".first-user.json"),
+                "reply": self.kept("first-user.json"),
             },
         )
         self.assertNotIn(GOOD["good"], move["input"]["prompt"])
@@ -112,7 +112,7 @@ class TestMade(ReadTest):
         # Then: the generator, kept started, is sent the question and the answer as it came
         move = self.due(self.asked_first())
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
-        reply = self.here(RESULT + ".generator.json")
+        reply = self.kept("generator.json")
         self.assertEqual(
             json.loads(move["input"]["message"]), {"answers": [ANSWER], "reply": reply}
         )

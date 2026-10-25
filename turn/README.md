@@ -98,7 +98,7 @@ turn gives your plugin's AI what it does not get by making the work and checking
 - A run stopped anywhere, by you or by a conversation that ended, goes on from where it stopped
   when the step calls turn again with the same call.
 
-  turn keeps where the run stands in a file beside the result, not in a conversation.
+  turn keeps where the run stands in `.turn/` at the top of your repository, not in a conversation.
 
 ## Requirements
 
