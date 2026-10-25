@@ -24,9 +24,9 @@ class TestMade(ReadTest):
     def test_the_generator_is_given_what_it_makes_the_work_from_and_where_it_replies(self):
         # Given: a run checked to give every item its Good
         # When: the generator is to be started
-        # Then: its prompt names the work, the checklists, the call's test, nothing sent back yet, no
-        # answers, the result, and its reply file beside it, beside the files it makes the work
-        # from, which the start's tests hold
+        # Then: its prompt names the work, the checklists, the call's test, nothing sent back
+        # yet, no answers, the result, and its reply file beside it, beside the files it makes the
+        # work from, which the start's tests hold
         prompt = self.prompt()
         del prompt["given"]
         self.assertEqual(
