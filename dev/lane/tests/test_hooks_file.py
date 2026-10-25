@@ -41,6 +41,16 @@ class LanesTest(helpers.PluginTest):
             self.write(os.path.join(self.plugin, "hooks", "lanes.json"), text)
 
 
+class TestShape(unittest.TestCase):
+    def test_the_shapes_of_the_lanes_laid_and_the_proposal_are_schemas_lane_reads(self):
+        # Given: the shape hooks/lanes.json holds and the shape of a proposal
+        # When: each is read as a schema of the keywords lane holds a plugin's forms to
+        # Then: each is read whole, as structured outputs would take it
+        for shape in (hooks_file.LAID, helpers.proposal.PROPOSAL):
+            with self.subTest(shape=shape["required"]):
+                helpers.schema.checked(shape)
+
+
 class TestLaidIn(LanesTest):
     def test_the_lanes_of_the_subagent_are_read_each_take_as_written(self):
         # Given: hooks/lanes.json laying lanes in changelog-writer and another subagent, a thing
