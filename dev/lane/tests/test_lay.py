@@ -74,12 +74,18 @@ class TestWriteEnd(LayTest):
 
 class TestUp(LayTest):
     """`lay.py up <plugin>`: an older copy of lane's code brought up, with the hooks lane:up wrote
-    in the current form and the same lanes."""
+    in the current form and the same lanes; and each lane laid before said, for lane:up to put to
+    the building AI."""
 
     # The hook's command for hands_off as an older version of lane wrote it, with no Python check.
     OLDER = (
         'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
         " '3:hands_off:git commit,git push'"
+    )
+    # What `up` says of hands_off laid before on step 3, as the proposal gives the lane.
+    LAID = (
+        "Laid before on step 3 of changelog-writer:"
+        ' {"lane": "hands_off", "takes": ["git commit", "git push"]}\n'
     )
 
     def setUp(self) -> None:
@@ -124,7 +130,8 @@ class TestUp(LayTest):
         self.assertEqual(
             said,
             "Brought lane's code in hooks/lane/ up from 0.1.0 to 0.10.0.\n"
-            "Wrote the hook of changelog-writer into hooks/hooks.json with the lanes it held.\n",
+            "Wrote the hook of changelog-writer into hooks/hooks.json with the lanes it held.\n"
+            + self.LAID,
         )
 
     def test_hooks_of_both_events_are_brought_up_each_lane_once(self):
@@ -176,9 +183,10 @@ class TestUp(LayTest):
                 # When: it is brought up
                 with own:
                     code, said = self.up()
-                # Then: nothing is brought up, and it says so
+                # Then: nothing is brought up, and it says so, and the lane laid before
                 self.assertEqual(code, 0)
-                self.assertEqual(said, "hooks/lane/ holds no older copy of lane's code.\n")
+                no_copy = "hooks/lane/ holds no older copy of lane's code.\n"
+                self.assertEqual(said, no_copy + self.LAID)
                 self.assertEqual(
                     self.hooks()["hooks"]["PreToolUse"][0]["hooks"][0]["command"], self.OLDER
                 )
@@ -233,6 +241,23 @@ class TestUp(LayTest):
         # Then: those are left as they were, and the hook of changelog-writer is brought up
         commands = [e["hooks"][0]["command"] for e in self.hooks()["hooks"]["PreToolUse"]]
         self.assertEqual(commands, [*others, COMMAND])
+
+    def test_a_lane_whose_step_no_longer_says_its_sentence_is_said_so(self):
+        # Given: hands_off laid before on step 3, which no longer says its sentence
+        self.write(self.agent_file, helpers.STEPS)
+        self.hooks_of(self.OLDER)
+        # When: the plugin is brought up
+        said = self.up()[1]
+        # Then: the lane is said with the sentence its step no longer says
+        gone = ', whose step no longer says "Do not run `git commit` or `git push`.":'
+        self.assertIn(self.LAID.replace(":", gone, 1), said)
+
+    def test_a_plugin_with_no_hooks_has_no_lanes_laid_before(self):
+        # Given: a plugin with no hooks.json and no copy of lane's code
+        shutil.rmtree(self.code)
+        # When: it is brought up
+        # Then: it says there is no older copy, and nothing else
+        self.assertEqual(self.up(), (0, "hooks/lane/ holds no older copy of lane's code.\n"))
 
     def test_hooks_not_in_claude_codes_shape_stop(self):
         # Given: hooks.json holding no JSON

@@ -4,6 +4,7 @@ rest of the step as it was; and the print of each step for the building AI's OK.
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import entries
@@ -71,3 +72,21 @@ def held(lane: dict[str, Any]) -> str:
     shown = lanes.shown(lane["lane"])
     rest = [f"`{t}`" for t in lane["takes"][shown:]] if shown is not None else []
     return f", holding back {', '.join(rest)}" if rest else ""
+
+
+def said(root: str, agents: dict[str, list[dict[str, Any]]]) -> list[str]:
+    """Each lane the hooks laid before in each subagent of the plugin at root, as `<plugin>:<name>`,
+    each on a step of a proposal, said for lane:up to put to the building AI: its step, whether the
+    step still says its sentence, and the lane as the proposal gives it."""
+    found = []
+    for agent, laid in agents.items():
+        name = agent.split(":")[1]
+        for s in laid:
+            for lane in s["lanes"]:
+                sentence = lanes.sentence(lane["lane"], lane["takes"])
+                held = step.holds(root, name, s["step"], sentence)
+                gone = "" if held else f', whose step no longer says "{sentence}"'
+                found.append(
+                    f"Laid before on step {s['step']} of {name}{gone}: {json.dumps(lane)}\n"
+                )
+    return found

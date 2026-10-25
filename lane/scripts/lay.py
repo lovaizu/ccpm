@@ -91,12 +91,15 @@ def written(path: str) -> str:
 def brought_up(root: str) -> str:
     """Brings up the plugin's copy of lane's code where it is older than lane, with each hook
     lane:up wrote in it in the current form, laying the same lanes, every other entry and each step
-    as it was; gives what was done, and each lane left out, as lane does not lay it now."""
-    was = placed.older(root)
-    if was is None:
-        return "hooks/lane/ holds no older copy of lane's code.\n"
+    as it was; gives what was done, each lane left out, as lane does not lay it now, and each lane
+    the hooks laid before, for lane:up to put to the building AI."""
     hooks = entries.hooks_read(root)
     agents, left = entries.laid_before(hooks)
+    was = placed.older(root)
+    if was is None:
+        return "".join(
+            ["hooks/lane/ holds no older copy of lane's code.\n", *steps.said(root, agents)]
+        )
     said = [f"Brought lane's code in hooks/lane/ up from {was} to {placed.lane_version()}.\n"]
     for agent, laid in agents.items():
         plugin, name = agent.split(":")
@@ -104,7 +107,7 @@ def brought_up(root: str) -> str:
         said.append(f"Wrote the hook of {name} into hooks/hooks.json with the lanes it held.\n")
     entries.hooks_written(root, hooks)
     placed.code_put(root)
-    return "".join([*said, *left])
+    return "".join([*said, *left, *steps.said(root, agents)])
 
 
 # Run as the command, and not when the tests import it under the name lay.

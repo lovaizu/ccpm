@@ -1,6 +1,6 @@
 ---
 name: up
-description: Lays lanes on the subagents of a Claude Code plugin, each a sentence of a step with a hook that stops a tool call drifting from it and tells the subagent the sentence again. Reads the plugin's manifest, skills, agents and hooks, settles with the building AI in one reply every point the files leave open and every fact the lanes rest on, proposes the lanes as lane's lay.py prints them, and on the building AI's OK has lay.py write the steps, the hooks and lane's code into the plugin. Used when an AI building a plugin wants lanes laid on its subagents, or laid again after changing their steps; the prompt names the plugin's folder.
+description: Lays lanes on the subagents of a Claude Code plugin, each a sentence of a step with a hook that stops a tool call drifting from it and tells the subagent the sentence again. Reads the plugin's manifest, skills and agents and the lanes laid in it before, settles with the building AI in one reply every point the files leave open and every fact the lanes rest on, proposes the lanes as lane's lay.py prints them, and on the building AI's OK has lay.py write the steps, the hooks and lane's code into the plugin. Used when an AI building a plugin wants lanes laid on its subagents, or laid again after changing their steps; the prompt names the plugin's folder.
 ---
 
 ## Role
@@ -21,26 +21,24 @@ only by `lay.py up`, which brings lane's code and hooks there up with the same l
 
 1. Take the plugin's folder from your prompt; where none is named, or it holds no
    `.claude-plugin/plugin.json`, reply with what is missing and end. Run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" up <the folder>` as the whole command; `lay.py` below stands
-   for `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py"`. Where it printed `Brought lane's code`,
-   its print begins your first reply in step 5, or, where no point is left open, your reply in
-   step 9. Where it exits with 1, its print is a fact for step 5.
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" up <the folder>` as the whole command; `lay.py`
+   below stands for `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py"`. Its print gives each lane laid
+   before in the plugin's hooks, with its step and its subagent, as `<proposal>` gives a lane in
+   step 6. Where it printed `Brought lane's code`, its print begins your first reply in step 5, or,
+   where no point is left open, your reply in step 9. Where it exits with 1, its print is a fact for
+   step 5.
 2. Read lane's lanes with `cat -n "${CLAUDE_PLUGIN_ROOT}/docs/lanes.md"`.
 3. Read, as the whole of what you read of the plugin, each file with `cat -n <path>` in a command of
-   its own: `.claude-plugin/plugin.json`, each file
-   `find <the folder>/skills <the folder>/agents -name '*.md'` lists, and `hooks/hooks.json` where
-   it is. In a `hooks/hooks.json` command running `hooks/lane/pretooluse.py` or
-   `hooks/lane/subagentstop.py`, the word after it is the subagent as `<plugin>:<subagent>`, and
-   each word after that a lane laid before as `<step>:<lane>:<what it takes, joined by commas>`;
-   one in both entries is one lane.
+   its own: `.claude-plugin/plugin.json`, and each file
+   `find <the folder>/skills <the folder>/agents -name '*.md'` lists.
 4. List your points for each subagent in `agents/`, in the order of its Steps, with what the skills
    say of how it is started and what is done with its work:
    - each fact a lane rests on, such as a file a step reads or writes, a command it runs, who
      commits its work, or a skill's step that a lane would hold only in a subagent;
    - each question the files leave open that decides a lane, such as whether a file is the only one
      a step writes, with the answer you recommend and why;
-   - each lane laid before whose step no longer says its sentence: lay it again, its sentence put
-     back at the end of the step, or leave it out;
+   - each lane `lay.py up` printed as laid before on a step that no longer says its sentence: lay
+     it again, its sentence put back at the end of the step, or leave it out;
    - each lane `lay.py up` printed as left out: lay the lane of `docs/lanes.md` that keeps its
      step, or leave it out.
 5. Reply with every point still open, numbered from 1 in the order of step 4, each fact checked
@@ -62,11 +60,13 @@ only by `lay.py up`, which brings lane's code and hooks there up with the same l
    ```
 
    Give each step the lanes the points settled, each thing a lane takes written as `docs/lanes.md`
-   says. Put in, too, each lane laid before that the building AI kept.
+   says. Put in, too, each lane `lay.py up` printed as laid before that the building AI kept, as it
+   printed the lane.
 7. Run `lay.py print <proposal>` as the whole command, so its print is all the command gives
    back. Hand on `lay.py print` as it is. Where it exits with 1, fix
    `<proposal>` as it says and run it again, or, where it names something in the plugin to fix,
-   reply with that as a fact as in step 5 and go on by the answer. Reply with the line
+   reply with that as a fact as in step 5, and on the answer do this step again, `<proposal>`
+   changed as it asks. Reply with the line
    `lane:up proposes these lanes; send OK or what to change.` and under it the print, ending with
    its last line, and end your turn.
 8. Go on by the answer:
