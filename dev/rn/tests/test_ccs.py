@@ -225,6 +225,7 @@ class CcsTest(RepoTest):
             ("t1.2", "T1.2, make part 2 of T1, `src/t1-2.py` as a code work"),
             ("plan", "the plan"),
             ("checklist-code", "your checklist for code"),
+            ("issue-1", "the issue 1 to rn's makers"),
         ):
             with self.subTest(work=work):
                 # Given: a session.
@@ -462,6 +463,12 @@ class CcsTest(RepoTest):
             ),
             "deliverable": (["src/app.py"], "deliverable", "the user at the deliverable", "."),
             "checklist-api": ([".rn/checklists/api.md"], "checklist", "whoever makes an api", "."),
+            "checklist-code": (
+                [".rn/checklists/code.md"],
+                "checklist",
+                "whoever makes a code",
+                ".",
+            ),
             "issue-1": ([f"{FOLDER}/issue-1.md"], "issue", "rn's makers", root),
         }
         self.write("src/app.py", "x\n")

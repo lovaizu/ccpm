@@ -55,6 +55,12 @@ class FormTest(unittest.TestCase):
             "an action over two lines": steered(
                 part=plan(tasks=task().replace("Make part 1 of T1,", "Make part 1\n    of T1,"))
             ),
+            "a completion criterion over two lines": steered(
+                part=plan(tasks=task().replace("serves, tried", "serves,\n    tried"))
+            ),
+            "a later action over two lines": steered(
+                part=plan(tasks=task().replace("Make part 3 of T1,", "Make part 3\n    of T1,"))
+            ),
             "an action of the orchestrator's": steered(
                 part=plan(tasks=task().replace(ORCHESTRATED[0], ORCHESTRATED[1]))
             ),
@@ -252,6 +258,9 @@ class FormTest(unittest.TestCase):
             task(test="a").replace("  Test: `a`", "  Test: `a`\n\n  Test: `b`"): (
                 "line 29: expected the one command that runs T1's check once, found `  Test: `b``"
             ),
+            task().replace("Make part 1 of T1, ", "Make part 1 of T1,\n\n    "): f"line 27:"
+            f" expected action 1 of T1 {actions.format(1)}, found `  - [ ] 1. Make part 1 of"
+            " T1,`",
             task(ticks="xxxx"): "line 23: expected only tasks with an action not ticked, as a"
             " task leaves the steering once all its actions are, found T1 with every action"
             " ticked",

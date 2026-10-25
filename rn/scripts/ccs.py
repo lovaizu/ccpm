@@ -78,10 +78,10 @@ def made_as(work: str, steered: steering.Steering, folder: str, root: str) -> Ma
     learnings' receiver has the records shown then."""
     if work in OWN:
         kind, receiver, use = OWN[work]
-        return Made(kind, receiver, use, [], [] if work == steering.LEARNINGS else ["."])
+        return Made(kind, receiver, use, [], ["."])
     if session.CHECKLIST_WORK.fullmatch(work):
         made = work.partition("-")[2]
-        a = "an" if made[0] in "aeiou" else "a"
+        a = "an" if made.startswith(tuple("aeiou")) else "a"
         return Made(
             CHECKLIST,
             f"whoever makes {a} {made} work in this repository and whoever judges it",
@@ -183,7 +183,7 @@ def served(steered: steering.Steering, work: str) -> dict[str, str]:
     if not session.TASK_WORK.fullmatch(work):
         return {}
     session.made_by(steered, work)
-    task = next(t for t in steering.tasks_of(steered.plan) if t.id == session.task_of(work))
+    task = {t.id: t for t in steering.tasks_of(steered.plan)}[session.task_of(work)]
     return {key: text for key, text in said.items() if key in (task.serves or [])}
 
 
@@ -192,11 +192,13 @@ def test_of(steered: steering.Steering, work: str) -> str | None:
     criterion of the work's task names, where it is one, for the task's last action of turn's, which
     makes its result, the actions of turn's before it making the check and seeing it fail; None for
     any other work."""
-    task = next((t for t in steering.tasks_of(steered.plan) if t.id == session.task_of(work)), None)
+    task = {t.id: t for t in steering.tasks_of(steered.plan)}.get(session.task_of(work))
     if task is None or not task.tests:
         return None
-    last = [action.number for _, _, action in task.actions if action and action.path][-1]
-    return task.tests[0][2] if f"{task.id.lower()}.{last}" == work else None
+    # The form holds one command at most, and the work, of an action of turn's, one action at least.
+    [(_, _, command)] = task.tests
+    *_, last = [a.number for _, _, a in task.actions if a is not None and a.path is not None]
+    return {f"{task.id.lower()}.{last}": command}.get(work)
 
 
 def done_made(folder: str, found: list[session.Call], plan: list[str]) -> list[str]:
@@ -264,7 +266,7 @@ def written(
         "goal_orientation": [{ENTRIES["use"]: made.use or ""}]
         + [{SERVES: f"{key}: {text}"} for key, text in serving.items()],
         "retrieved_artifacts": [{ENTRIES["checklist"]: p} for p in checklists]
-        + ([{"source": usability}] if made.kind == CHECKLIST else []),
+        + ([{"source": usability}] if session.CHECKLIST_WORK.fullmatch(work) else []),
         "constraints": [{session.DECISION: d} for d in decisions]
         + [{key: languages[key]} for key in steering.LANGUAGES]
         + [{"fix": os.path.join(root, "checklists", "fix.md")}],

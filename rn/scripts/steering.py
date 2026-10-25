@@ -232,15 +232,14 @@ def command_in(line: str) -> str | None:
 def actions_of(lines: list[tuple[int, str]]) -> list[tuple[int, str, Action | None]]:
     """Each action of the lines under a task's line, by the number of its first line and that line,
     with the action it is, its lines read as one, None where it is in neither form."""
-    found: list[tuple[int, str, list[str]]] = []
-    for n, line in lines:
+    found: list[tuple[int, str, Action | None]] = []
+    for k, (n, line) in enumerate(lines):
         if line.startswith("  - "):
-            found.append((n, line, [line]))
-        elif found and line.startswith("    ") and found[-1][2][-1].strip():
-            found[-1][2].append(line.strip())
-        elif found:
-            found[-1][2].append("")
-    return [(n, line, action_in(" ".join(filter(None, words)))) for n, line, words in found]
+            more = itertools.takewhile(
+                lambda x: x[1].startswith("    ") and bool(x[1].strip()), lines[k + 1 :]
+            )
+            found.append((n, line, action_in(" ".join([line, *(m.strip() for _, m in more)]))))
+    return found
 
 
 def action_in(text: str) -> Action | None:
@@ -494,22 +493,20 @@ def told_done(plan: list[str], done: list[str]) -> str:
     the last of them, or, where it was its task's last, the task weighed; "" where none is done."""
     if not done:
         return ""
-    actions = {
-        f"{task.id}.{action.number}": (task.id, action)
+    tasks = {
+        task.id: {action.number: action for _, _, action in task.actions if action is not None}
         for task in tasks_of(plan)
-        for _, _, action in task.actions
-        if action is not None
     }
-    task_id, last = actions[done[-1]]
-    after = [
-        a for key, (t, a) in actions.items() if t == task_id and int(a.number) > int(last.number)
-    ]
+    task_id, _, number = done[-1].partition(".")
+    after = [a for k, a in tasks[task_id].items() if int(k) > int(number)]
     following = (
         f"{task_id}.{after[0].number}, {lowered(after[0].what)}"
         if after
         else f"what {task_id} brought is weighed against the plan"
     )
-    said = "; ".join(f"{one}, {lowered(actions[one][1].what)}" for one in done)
+    said = "; ".join(
+        f"{one}, {lowered(tasks[t][k].what)}" for one in done for t, _, k in [one.partition(".")]
+    )
     return f"Done: {said}. Next: {following}."
 
 

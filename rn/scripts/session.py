@@ -72,22 +72,24 @@ def worked(work: str) -> str:
 def made_by(steered: steering.Steering, work: str) -> steering.Action:
     """The action of turn's that makes the task's work; stops where the steering holds no such
     action of turn's."""
-    named = TASK_WORK.fullmatch(work)
-    number = named["action"] if named else ""
-    found = [
-        action
-        for task in steering.tasks_of(steered.plan)
-        if task.id == task_of(work)
-        for _, _, action in task.actions
-        if action is not None and action.number == number and action.path is not None
-    ]
-    if not found:
+    found = turns_actions(steered).get(work)
+    if found is None:
         raise stop.Stop(
             f"rn: the steering holds no action {work.upper()} of turn's, which the work {work} is;"
             " give the work of an action turn makes as t<n>.<action>, such as t1.2, or have turn"
             " make the plan again with it, keep it, then run this again"
         )
-    return found[0]
+    return found
+
+
+def turns_actions(steered: steering.Steering) -> dict[str, steering.Action]:
+    """Each action of turn's the steering's tasks hold, by the work it makes, `t<n>.<k>`."""
+    return {
+        f"{task.id.lower()}.{action.number}": action
+        for task in steering.tasks_of(steered.plan)
+        for _, _, action in task.actions
+        if action is not None and action.path is not None
+    }
 
 
 def task_of(work: str) -> str:

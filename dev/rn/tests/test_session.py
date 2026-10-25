@@ -650,11 +650,24 @@ class StateTest(RepoTest):
             " is weighed against the plan.",
         )
 
-    def test_a_move_with_no_action_done_tells_nothing(self):
+    def test_a_move_with_no_action_done_tells_nothing_and_marks_nothing_ready(self):
         # Given: a session.
-        # When: the orchestrator keeps a move with no action done.
-        # Then: rn gives no line to tell.
-        self.assertEqual(self.ran(*self.state()), {"kept": self.head()})
+        # When: the orchestrator keeps a move with no action done, and no stage moved.
+        # Then: rn gives no line to tell, and asks gh nothing.
+        self.assertEqual((self.ran(*self.state()), self.asked()), ({"kept": self.head()}, []))
+
+    def test_what_comes_next_is_of_the_task_whose_action_is_done(self):
+        for done, told in (
+            ("T1.4", "Next: what T1 brought is weighed against the plan."),
+            ("T2.1", "Next: T2.2, make part 2 of T2, `src/t2-2.py` as a code work."),
+        ):
+            with self.subTest(done=done):
+                # Given: a session holding T1, its first three actions ticked, and T2.
+                tasks = f"{task(ticks='xxx ')}\n\n{task('T2')}"
+                self.session(steered(part=plan(tasks=tasks)))
+                # When: the orchestrator keeps an action of one of them done.
+                # Then: what comes next is of that task alone.
+                self.assertTrue(self.ran(*self.state("--done", done))["tell"].endswith(told))
 
     def test_the_stage_moves_to_finished_from_learnings_and_ends_the_session(self):
         # Given: a session at the learnings stage, no task left.

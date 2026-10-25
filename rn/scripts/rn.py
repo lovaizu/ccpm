@@ -256,21 +256,18 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     made, kept = ccs.made_as(work, steered, folder, root), ccs.kept_as(last)
     receiver = ccs.needed(receiver or made.receiver or kept.receiver, "receiver", work)
     use = ccs.needed(use or made.use or kept.use, "use", work)
-    has = has or made.has or kept.has
-    if work != steering.LEARNINGS:
-        ccs.needed(has, "has", work)
+    has = ccs.needed(has or made.has or kept.has, "has", work)
     kind = made.kind or ""
     checklists = ccs.checklists(kind, root)
-    if work in session.PARTS:
-        paths = [session.call_path(folder, number, session.PART[work])]
-    paths = paths or made.paths or ccs.finished_work()
+    part = session.call_path(folder, number, session.PART[work]) if work in session.PARTS else ""
+    paths = ([part] if part else paths) or made.paths or ccs.finished_work()
     if work == steering.PLAN:
         has += ccs.done_made(folder, found, steered.plan)
     # Every check is made above, so a stop leaves nothing written.
     if work == steering.LEARNINGS:
         has = stretch.show(folder)
-    if work in session.PARTS:
-        repo.write_text(paths[0], ccs.cut(work, steered))
+    if part:
+        repo.write_text(part, ccs.cut(work, steered))
     written = ccs.written(
         work,
         steered,
