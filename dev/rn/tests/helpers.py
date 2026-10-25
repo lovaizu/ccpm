@@ -16,20 +16,27 @@ REPO = "repo"
 # When each commit a test makes is made, unless the test says another time: before every entry of
 # Claude Code's records the tests write.
 DATE = "2000-01-01T00:00:00Z"
+# A time before the commits a test makes, and one after them, for what Claude Code's records hold.
+EARLIER = "1999-12-31T23:59:59Z"
+LATER = "2000-01-01T00:00:01Z"
 
 
 class MainAndWork(testing.GitTest):
     """A test in a git repository whose remote's default branch is `main`, with `work` checked
-    out, both pushed to the remote, a bare repository beside it."""
+    out, both pushed to the remote, a bare repository beside it; each commit it makes is dated, so
+    no test reads the clock through them."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        dated = mock.patch.dict(os.environ, {"GIT_AUTHOR_DATE": DATE, "GIT_COMMITTER_DATE": DATE})
+        dated.start()
+        self.addCleanup(dated.stop)
 
     def main_and_work(self) -> None:
         """Makes where the test stands `origin.git`, a bare repository standing for the remote, and
         the repository `repo`: `main` with a README and `work` checked out from it, each pushed and
         tracking the remote's. The remote is named by a path from the repository, so a copy pushes
-        to its own. Its commits are dated, so no test reads the clock through them."""
-        dated = mock.patch.dict(os.environ, {"GIT_AUTHOR_DATE": DATE, "GIT_COMMITTER_DATE": DATE})
-        dated.start()
-        self.addCleanup(dated.stop)
+        to its own."""
         self.git("init", "-q", "--bare", "origin.git")
         os.makedirs(REPO)
         os.chdir(REPO)
