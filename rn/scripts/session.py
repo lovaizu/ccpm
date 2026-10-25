@@ -26,13 +26,18 @@ STEERING = "steering.md"
 LEARNT = "learnings.md"
 TURN = "turn"
 # The works rn has turn make: the plan, the part of the steering from the title through the tasks,
-# as a task of the plan stage makes the plan; its learnings; what task T<n> makes outside the
-# steering; the finished work; and a checklist of a kind.
-TASK_WORK = re.compile(r"t[0-9]+")
+# as a task of the plan stage makes the plan; its learnings; the finished work; what each action
+# of turn's makes, `t<n>.<k>` for action k of task T<n>, one work for each output, such as a
+# research result, a document or a task's result; and a checklist of a kind.
+TASK_WORK = re.compile(r"t(?P<task>[0-9]+)\.(?P<action>[0-9]+)")
 CHECKLIST_WORK = re.compile(r"checklist-[a-z0-9-]+")
-# The works the design stage makes for its sign-off: each task's result and each checklist.
+WORKS = (
+    f"{steering.PLAN}, {steering.LEARNINGS}, {steering.DELIVERABLE}, t<n>.<k> for action k of"
+    " task T<n>, or checklist-<kind>"
+)
+# The works the design stage makes for its sign-off: what each action of its tasks makes, and each
+# checklist.
 DESIGNED = re.compile(rf"{TASK_WORK.pattern}|{CHECKLIST_WORK.pattern}")
-WORKS = "plan, learnings, deliverable, t<n> for task T<n>, or checklist-<kind>"
 # The works whose call makes a part, cut into a file of its own, each with what its file is named:
 # the plan's a part of the steering, the learnings' those it adds to the session's.
 PART = {steering.PLAN: STEERING, steering.LEARNINGS: LEARNT}
@@ -59,8 +64,35 @@ def worked(work: str) -> str:
     if work not in PARTS + (steering.DELIVERABLE,) and not (
         TASK_WORK.fullmatch(work) or CHECKLIST_WORK.fullmatch(work)
     ):
-        raise stop.Stop(f"rn: the work {work!r} is none rn makes; give {WORKS}, such as t1")
+        raise stop.Stop(f"rn: the work {work!r} is none rn makes; give {WORKS}, such as t1.2")
     return work
+
+
+def made_by(steered: steering.Steering, work: str) -> steering.Action:
+    """The action of turn's that makes the task's work; stops where the steering holds no such
+    action of turn's."""
+    named = TASK_WORK.fullmatch(work)
+    number = named["action"] if named else ""
+    found = [
+        action
+        for task in steering.tasks_of(steered.plan)
+        if task.id == task_of(work)
+        for _, _, action in task.actions
+        if action is not None and action.number == number and action.path is not None
+    ]
+    if not found:
+        raise stop.Stop(
+            f"rn: the steering holds no action {work.upper()} of turn's, which the work {work} is;"
+            " give the work of an action turn makes as t<n>.<action>, such as t1.2, or have turn"
+            " make the plan again with it, keep it, then run this again"
+        )
+    return found[0]
+
+
+def task_of(work: str) -> str:
+    """The ID of the task whose action makes the work, "" where the work is no task's."""
+    named = TASK_WORK.fullmatch(work)
+    return f"T{named['task']}" if named else ""
 
 
 def steering_path(folder: str) -> str:

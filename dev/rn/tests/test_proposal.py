@@ -210,7 +210,7 @@ class ProposalTest(ShownTest):
         )
 
 
-UX_LINK = f"T1: {REPOSITORY}/blob/work/docs/ux.md, {REPOSITORY}/blob/work/docs/flow.md"
+UX_LINK = f"T1.1: {REPOSITORY}/blob/work/docs/ux.md, {REPOSITORY}/blob/work/docs/flow.md"
 
 
 class DesignTest(ShownTest):
@@ -220,20 +220,20 @@ class DesignTest(ShownTest):
         self.call("0001", "plan", result={})
         self.call(
             "0002",
-            "t1",
+            "t1.1",
             "design",
             ("Users: people who shop", "Flow: sign in first"),
             ("docs/ux.md", "docs/flow.md"),
             {},
         )
         self.call("0003", "checklist-code", "design", (), (".rn/checklists/code.md",), {})
-        self.call("0004", "t2", "build", ("Form: a page",), ("src/app.py",), {})
+        self.call("0004", "t2.1", "build", ("Form: a page",), ("src/app.py",), {})
         self.kept()
 
     def test_the_design_proposal_shows_each_works_links_and_decisions(self):
-        # Given: calls on t1 and a checklist in the design stage, and on t2 in the build stage.
+        # Given: calls on t1.1 and a checklist in the design stage, and on t2.1 in the build stage.
         # When: the orchestrator asks for the design's proposal.
-        # Then: rn shows t1 and the checklist, each with its links and decisions, and not t2.
+        # Then: rn shows t1.1 and the checklist, each with its links and decisions, and not t2.
         self.assertEqual(
             self.proposal("design"),
             "Design sign-off\n"
@@ -256,20 +256,20 @@ class DesignTest(ShownTest):
         self.assertEqual(self.head(), before)
 
     def test_the_design_made_again_shows_each_decision_changed_and_the_latest_calls_links(self):
-        # Given: the design's proposal shown, feedback, and t1 made again by a new call with a
+        # Given: the design's proposal shown, feedback, and t1.1 made again by a new call with a
         # decision changed and one added, naming one document.
         self.proposal("design")
         self.keep(steered(stage="design"), "feedback")
         decided = ("Users: people who shop", "Flow: ask first", "Look: plain")
-        self.call("0005", "t1", "design", decided, ("docs/ux.md",), {})
+        self.call("0005", "t1.1", "design", decided, ("docs/ux.md",), {})
         self.kept()
         # When: the orchestrator asks for the design's proposal again.
-        # Then: t1 shows its link now, each decision changed or added, and the rest as before; the
+        # Then: t1.1 shows its link now, each decision changed or added, and the rest as before; the
         # checklist its link and nothing changed.
         self.assertEqual(
             self.proposal("design").splitlines()[2:-1],
             [
-                f"T1: {REPOSITORY}/blob/work/docs/ux.md",
+                f"T1.1: {REPOSITORY}/blob/work/docs/ux.md",
                 "- Changed: Flow: ask first",
                 "- Changed: Look: plain",
                 "(Users as before)",
@@ -278,48 +278,48 @@ class DesignTest(ShownTest):
         )
 
     def test_a_work_called_again_and_not_returned_stops(self):
-        # Given: t1 called again, not returned.
-        self.call("0005", "t1", "design")
+        # Given: t1.1 called again, not returned.
+        self.call("0005", "t1.1", "design")
         self.kept()
         # When: the orchestrator asks for the design's proposal.
         # Then: rn says turn has not returned it.
         self.assertIn(
-            f"rn: turn has not returned the work t1: {call_at('0005', 'result.json')} is not there;"
-            " have turn:up make it with the call `rn.py ccs t1 ...` printed, keep it, then run this"
+            f"rn: turn has not returned the work t1.1: {call_at('0005', 'result.json')} is not there;"
+            " have turn:up make it with the call `rn.py ccs t1.1 ...` printed, keep it, then run this"
             " again",
             self.stopped("proposal", "design"),
         )
 
     def test_five_decisions_of_200_characters_are_shown(self):
-        # Given: t1 made again with five decisions of 200 characters each.
+        # Given: t1.1 made again with five decisions of 200 characters each.
         decided = tuple(f"D{n}: " + "x" * 196 for n in range(5))
-        self.call("0005", "t1", "design", decided, ("docs/ux.md",), {})
+        self.call("0005", "t1.1", "design", decided, ("docs/ux.md",), {})
         self.kept()
         # When: the orchestrator asks for the design's proposal.
         # Then: each is shown.
         self.assertEqual(self.proposal("design").count("- D"), 5)
 
     def test_more_than_five_decisions_stop_as_not_yet_simple(self):
-        # Given: t1 made again with six decisions.
-        self.call("0005", "t1", "design", tuple(f"D{n}: x" for n in range(6)), (), {})
+        # Given: t1.1 made again with six decisions.
+        self.call("0005", "t1.1", "design", tuple(f"D{n}: x" for n in range(6)), (), {})
         self.kept()
         # When: the orchestrator asks for the design's proposal.
         # Then: rn says it is not yet simple.
         self.assertIn(
-            "rn: the work t1 holds 6 decisions, more than the 5 a sign-off shows of a work; the"
+            "rn: the work t1.1 holds 6 decisions, more than the 5 a sign-off shows of a work; the"
             " work is not yet simple: settle its points again more simply with the user, have turn"
             " make it again, then run this again",
             self.stopped("proposal", "design"),
         )
 
     def test_a_decision_over_200_characters_stops_as_not_yet_simple(self):
-        # Given: t1 made again with a decision of 201 characters.
-        self.call("0005", "t1", "design", ("D: " + "x" * 198,), (), {})
+        # Given: t1.1 made again with a decision of 201 characters.
+        self.call("0005", "t1.1", "design", ("D: " + "x" * 198,), (), {})
         self.kept()
         # When: the orchestrator asks for the design's proposal.
         # Then: rn says it is not yet simple.
         self.assertIn(
-            'rn: the decision "D" of the work t1 is 201 characters long, more than the 200 a line'
+            'rn: the decision "D" of the work t1.1 is 201 characters long, more than the 200 a line'
             " of a sign-off holds; the work is not yet simple",
             self.stopped("proposal", "design"),
         )
@@ -340,25 +340,25 @@ class DeliverableTest(ShownTest):
     def setUp(self) -> None:
         super().setUp()
         self.session(steered(part=plan(tasks=""), stage="deliverable"))
-        self.call("0001", "t1", "build", ("Form: a page",), ("src/app.py",), {})
-        self.call("0002", "t2", "build", (), ("src/cart.py",), {})
+        self.call("0001", "t1.1", "build", ("Form: a page",), ("src/app.py",), {})
+        self.call("0002", "t2.1", "build", (), ("src/cart.py",), {})
         self.call("0003", "deliverable", "deliverable", (), ("src/app.py",), {})
         self.kept()
 
     def test_the_deliverable_proposal_shows_each_criterion_and_each_tasks_decisions(self):
-        # Given: t1 with a decision and t2 with none, made in the build stage, t3 with a decision,
+        # Given: t1.1 with a decision and t2.1 with none, made in the build stage, t3.1 with a decision,
         # made in the design stage, and the finished work returned.
-        self.call("0004", "t3", "design", ("Flow: one page",), ("docs/flow.md",), {})
+        self.call("0004", "t3.1", "design", ("Flow: one page",), ("docs/flow.md",), {})
         self.kept()
         # When: the orchestrator asks for the deliverable's proposal.
-        # Then: rn shows each criterion, then t1 and its decision, and not t2 nor t3.
+        # Then: rn shows each criterion, then t1.1 and its decision, and not t2.1 nor t3.
         self.assertEqual(
             self.proposal("deliverable"),
             "Deliverable sign-off\n"
             f"The finished work is on the pull request: {PR}\n"
             "AC1: A user signs in with their email.\n"
             "AC2: A signed-in user sees only their cart, on every page.\n"
-            "T1\n"
+            "T1.1\n"
             "- Form: a page\n"
             f"{HOW}\n",
         )
@@ -384,10 +384,10 @@ class DeliverableTest(ShownTest):
 class ComparedTest(unittest.TestCase):
     def test_a_work_shown_before_and_not_now_is_named_as_removed(self):
         # Given: a work shown before with a decision, and none now.
-        then = {"t1": ("T1", {"A": "A: B"})}
+        then = {"t1.1": ("T1.1", {"A": "A: B"})}
         # When: what changed is said.
         # Then: it is named as removed.
-        self.assertEqual(proposal.compared(then, {}), ["Removed: t1"])
+        self.assertEqual(proposal.compared(then, {}), ["Removed: t1.1"])
 
 
 class AnswerTest(RepoTest):

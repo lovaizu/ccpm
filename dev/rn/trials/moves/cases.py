@@ -806,7 +806,7 @@ def ticked(action: str) -> Check:
         s = steered(seen)
         task, _, number = action.partition(".")
         return s is not None and any(
-            t.id == task and a is not None and (a["number"], a["tick"]) == (number, "x")
+            t.id == task and a is not None and (a.number, a.ticked) == (number, True)
             for t in steering.tasks_of(s.plan)
             for _, _, a in t.actions
         )

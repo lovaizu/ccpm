@@ -116,15 +116,22 @@ esac
 
 
 def task(name: str = "T1", serves: str = "AC1", ticks: str = "    ") -> str:
-    """A task in the form of F-1 serving the IDs given, with an action for each character of the
-    ticks, ticked where it is `x`."""
+    """A task in the form of F-1 serving the IDs given, with an action of turn's for each character
+    of the ticks, ticked where it is `x`, each making a work of the kind KIND at a path of its own,
+    which `work_path` gives."""
     actions = "\n".join(
-        f"  - [{t}] {n}. Action {n} of {name}. turn." for n, t in enumerate(ticks, 1)
+        f"  - [{t}] {n}. Make part {n} of {name}, `{work_path(name, n)}` as a {KIND} work. turn."
+        for n, t in enumerate(ticks, 1)
     )
     return (
         f"- {name}: Make the part {name}. Serves {serves}.\n\n"
         f"  Completion criterion: it does what it serves, tried by hand.\n\n{actions}"
     )
+
+
+def work_path(task_id: str, number: int) -> str:
+    """The path the fixture's action of the number of the task makes its work at."""
+    return f"src/{task_id.lower()}-{number}.py"
 
 
 def plan(goal: str = GOAL, criteria: str = CRITERIA, tasks: str = task()) -> str:

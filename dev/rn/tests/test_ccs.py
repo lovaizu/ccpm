@@ -29,9 +29,9 @@ class DecideTest(RepoTest):
         super().setUp()
         self.session(steered(stage="design"))
 
-    def decide(self, work: str = "t1", title: str = "License", says: str = "MIT") -> Any:
+    def decide(self, work: str = "t1.1", title: str = "License", says: str = "MIT") -> Any:
         """Keeps the decision of the work, with its title and what it says."""
-        return self.ran("decide", work, "--title", title, "--says", says, "--message", "t1: MIT")
+        return self.ran("decide", work, "--title", title, "--says", says, "--message", "t1.1: MIT")
 
     def test_a_first_decision_makes_the_works_first_call_and_keeps_it(self):
         # Given: a session with no call.
@@ -40,7 +40,7 @@ class DecideTest(RepoTest):
         # Then: the first call holds the work, the stage, and the decision, kept on the remote
         # with the message.
         want = {
-            "focal_entities": [{"work": "t1"}, {"stage": "design"}],
+            "focal_entities": [{"work": "t1.1"}, {"stage": "design"}],
             "constraints": [{"decision": "License: MIT"}],
         }
         kept = (
@@ -49,25 +49,25 @@ class DecideTest(RepoTest):
             self.out("log", "-1", "--format=%B", "origin/work"),
         )
         self.assertEqual(
-            (out, kept), ({"call": "0001", "kept": self.head()}, (want, want, "t1: MIT\n\n"))
+            (out, kept), ({"call": "0001", "kept": self.head()}, (want, want, "t1.1: MIT\n\n"))
         )
 
     def test_a_decision_goes_into_the_works_latest_call_not_returned(self):
-        # Given: a call on t1 and one on t2, neither returned, kept.
-        self.call("0001", "t1", decisions=("Form: a page",))
-        self.call("0002", "t2")
+        # Given: a call on t1.1 and one on t2.1, neither returned, kept.
+        self.call("0001", "t1.1", decisions=("Form: a page",))
+        self.call("0002", "t2.1")
         self.kept()
         # When: the orchestrator keeps a decision of t1.
         out = self.decide()
-        # Then: it is added to t1's call.
+        # Then: it is added to t1.1's call.
         self.assertEqual(
             (out["call"], self.read_json(call_at("0001"))["constraints"]),
             ("0001", [{"decision": "Form: a page"}, {"decision": "License: MIT"}]),
         )
 
     def test_a_decision_of_the_same_title_is_replaced_where_it_stands(self):
-        # Given: a call on t1 with two decisions.
-        self.call("0001", "t1", decisions=("License: Apache-2.0", "Form: a page"))
+        # Given: a call on t1.1 with two decisions.
+        self.call("0001", "t1.1", decisions=("License: Apache-2.0", "Form: a page"))
         self.kept()
         # When: the orchestrator keeps a decision of the first's title.
         self.decide()
@@ -78,17 +78,17 @@ class DecideTest(RepoTest):
         )
 
     def test_a_decision_after_turn_returned_makes_a_new_call_carrying_the_decisions(self):
-        # Given: a call on t1 returned, with its decisions, the languages and the fix.
-        self.call("0001", "t1", decisions=("License: Apache-2.0", "Form: a page"), result={})
+        # Given: a call on t1.1 returned, with its decisions, the languages and the fix.
+        self.call("0001", "t1.1", decisions=("License: Apache-2.0", "Form: a page"), result={})
         ccs = self.read_json(call_at("0001"))
         ccs["constraints"] += [{"artifact-language": "English"}, {"fix": "fix.md"}]
         self.write_json(call_at("0001"), ccs)
         self.kept()
         # When: the orchestrator keeps a decision of t1.
         out = self.decide()
-        # Then: a new call on t1 carries its decisions alone, the one of the same title replaced.
+        # Then: a new call on t1.1 carries its decisions alone, the one of the same title replaced.
         want = {
-            "focal_entities": [{"work": "t1"}, {"stage": "design"}],
+            "focal_entities": [{"work": "t1.1"}, {"stage": "design"}],
             "constraints": [{"decision": "License: MIT"}, {"decision": "Form: a page"}],
         }
         self.assertEqual((out["call"], self.read_json(call_at("0002"))), ("0002", want))
@@ -96,7 +96,7 @@ class DecideTest(RepoTest):
     def test_a_title_holding_a_colon_and_a_blank_stops(self):
         # Given: a session.
         # When: the orchestrator keeps a decision whose title holds `: `.
-        out = self.stopped("decide", "t1", "--title", "A: B", "--says", "x", "--message", "m")
+        out = self.stopped("decide", "t1.1", "--title", "A: B", "--says", "x", "--message", "m")
         # Then: rn says why, and to give the title without it.
         self.assertIn(
             "rn: the title 'A: B' holds `: `, which parts a decision's title from what it says;"
@@ -117,11 +117,11 @@ class DecideTest(RepoTest):
                 # Then: rn says it is empty.
                 self.assertIn(
                     f"rn: the {words} is empty; give it in words",
-                    self.stopped("decide", "t1", *options(values)),
+                    self.stopped("decide", "t1.1", *options(values)),
                 )
 
     def test_a_work_rn_does_not_make_stops(self):
-        for work in ("readme", "t", "tx", "checklist-", "plans", "T1"):
+        for work in ("readme", "t", "tx", "t1", "t1.", "T1.1", "checklist-", "plans"):
             with self.subTest(work=work):
                 # Given: a session.
                 # When: the orchestrator keeps a decision of a work rn does not make.
@@ -129,12 +129,12 @@ class DecideTest(RepoTest):
                 # Then: rn names the works it makes.
                 self.assertIn(
                     f"rn: the work {work!r} is none rn makes; give plan, learnings, deliverable,"
-                    " t<n> for task T<n>, or checklist-<kind>, such as t1",
+                    " t<n>.<k> for action k of task T<n>, or checklist-<kind>, such as t1.2",
                     out,
                 )
 
     def test_each_work_rn_makes_is_taken(self):
-        for work in ("plan", "learnings", "deliverable", "t12", "checklist-code"):
+        for work in ("plan", "learnings", "deliverable", "t1.4", "checklist-code"):
             with self.subTest(work=work):
                 # Given: a session.
                 # When: the orchestrator keeps a decision of a work rn makes.
@@ -143,6 +143,15 @@ class DecideTest(RepoTest):
                 self.assertEqual(
                     self.read_json(call_at(number))["focal_entities"][0], {"work": work}
                 )
+
+    def test_a_decision_of_an_action_the_steering_does_not_hold_stops(self):
+        for work in ("t3.1", "t1.5"):
+            with self.subTest(work=work):
+                # Given: a session whose T1 has four actions.
+                # When: the orchestrator keeps a decision of an action it does not hold.
+                out = self.stopped("decide", work, "--title", "A", "--says", "B", "--message", "m")
+                # Then: rn names it, and says how a task's work is given.
+                self.assertIn(f"rn: the steering holds no action {work.upper()} of turn's", out)
 
     def test_a_ccs_that_is_no_json_object_stops(self):
         for text in ("{", "[]"):
@@ -155,7 +164,7 @@ class DecideTest(RepoTest):
                     f"rn: {call_at('0001')} is no CCS, a JSON object; restore it with `git checkout"
                     f" HEAD -- {call_at('0001')}`, as rn's scripts alone write it, then run this"
                     " again",
-                    self.stopped("decide", "t1", "--title", "A", "--says", "B", "--message", "m"),
+                    self.stopped("decide", "t1.1", "--title", "A", "--says", "B", "--message", "m"),
                 )
 
     def test_a_decision_without_a_session_stops(self):
@@ -165,7 +174,7 @@ class DecideTest(RepoTest):
         # Then: rn says there is none.
         self.assertIn(
             "holds no session",
-            self.stopped("decide", "t1", "--title", "A", "--says", "B", "--message", "m"),
+            self.stopped("decide", "t1.1", "--title", "A", "--says", "B", "--message", "m"),
         )
 
 
@@ -177,7 +186,7 @@ class CcsTest(RepoTest):
         tasks = f"{task()}\n\n{task('T2', 'G1 and AC2')}"
         self.session(steered(part=plan(tasks=tasks), stage="design"))
 
-    def ccs(self, work: str = "t1", *paths: str, **more: str) -> Any:
+    def ccs(self, work: str = "t1.1", *paths: str, **more: str) -> Any:
         """The CCS of the work written, with the paths given, README.md where none is, and the
         options needed; gives the call."""
         given = paths or (
@@ -187,7 +196,7 @@ class CcsTest(RepoTest):
 
     def test_ccs_gives_the_call_to_hand_turn(self):
         # Given: a session.
-        # When: the orchestrator has the CCS of t1 written.
+        # When: the orchestrator has the CCS of t1.1 written.
         # Then: rn gives the call to turn:up: the CCS, the key of each role turn reads from it,
         # where the result goes, of the first call, and no test, given as null.
         # The keys are written out as turn is to read them, not taken from rn.py, so a change to
@@ -230,7 +239,7 @@ class CcsTest(RepoTest):
         self.assertEqual(kept, want)
 
     def test_ccs_made_again_the_same_keeps_nothing_more(self):
-        # Given: the call on t1 kept, turn not yet returned.
+        # Given: the call on t1.1 kept, turn not yet returned.
         self.ccs()
         before = self.head()
         # When: the orchestrator has the same CCS written again, as a fresh conversation does.
@@ -239,12 +248,12 @@ class CcsTest(RepoTest):
         self.assertEqual((out["ccs"], self.head()), (call_at("0001"), before))
 
     def test_turns_files_at_the_root_are_kept_with_the_move(self):
-        # Given: the call on t1 kept, and the state turn keeps in its folder at the root while it
+        # Given: the call on t1.1 kept, and the state turn keeps in its folder at the root while it
         # runs
         self.ccs()
         self.write(".turn/20261025-result.json/run.json", "x\n")
         # When: the orchestrator keeps a decision while turn asks
-        self.ran("decide", "t1", "--title", "Login", "--says", "email", "--message", "Login")
+        self.ran("decide", "t1.1", "--title", "Login", "--says", "email", "--message", "Login")
         # Then: the decision's commit holds the CCS and turn's state, as git keeps what the user's
         # .gitignore does not name, and nothing is left
         changed = self.out("show", "--name-only", "--format=", "HEAD").split()
@@ -254,7 +263,7 @@ class CcsTest(RepoTest):
         )
 
     def test_turns_files_named_by_gitignore_are_no_change_to_keep(self):
-        # Given: a .gitignore naming turn's folder, kept, the call on t1 kept, and the state turn
+        # Given: a .gitignore naming turn's folder, kept, the call on t1.1 kept, and the state turn
         # keeps there while it runs
         self.write(".gitignore", ".turn/\n")
         self.commit_with("ignore turn's folder")
@@ -268,13 +277,13 @@ class CcsTest(RepoTest):
 
     def test_the_ccs_of_a_task_holds_what_its_task_serves(self):
         # Given: a session whose T1 serves AC1.
-        # When: the orchestrator has the CCS of t1 written, with a path the receiver has.
-        self.ran("ccs", "t1", "README.md", *options(NEEDED), "--has", ".")
+        # When: the orchestrator has the CCS of t1.1 written, with a path the receiver has.
+        self.ran("ccs", "t1.1", "README.md", *options(NEEDED), "--has", ".")
         # Then: it holds the work, the stage, the path, the receiver and what they have; the use
         # and the criterion T1 serves as text; the checklists; and the languages and the fix.
         want = {
             "focal_entities": [
-                {"work": "t1"},
+                {"work": "t1.1"},
                 {"stage": "design"},
                 {"deliverable": "README.md"},
                 {"audience": "a new user"},
@@ -295,8 +304,8 @@ class CcsTest(RepoTest):
 
     def test_the_ccs_of_a_task_serving_the_goal_holds_the_goal(self):
         # Given: a session whose T2 serves G1 and AC2.
-        # When: the orchestrator has the CCS of t2 written.
-        self.ccs("t2")
+        # When: the orchestrator has the CCS of t2.1 written.
+        self.ccs("t2.1")
         # Then: it holds the goal and AC2, each as one line.
         self.assertEqual(
             self.read_json(call_at("0001"))["goal_orientation"][1:],
@@ -309,10 +318,10 @@ class CcsTest(RepoTest):
     def test_the_ccs_of_the_plan_serves_nothing_and_has_what_each_task_done_made(self):
         # Given: a session holding T1 and T2, with calls on T3, done, not returned, on T1, on T4,
         # done, not returned, and on T3 again, returned.
-        self.call("0001", "t3")
-        self.call("0002", "t1", result={})
-        self.call("0003", "t4")
-        self.call("0004", "t3", result={})
+        self.call("0001", "t3.1")
+        self.call("0002", "t1.1", result={})
+        self.call("0003", "t4.1")
+        self.call("0004", "t3.1", result={})
         self.kept()
         # When: the orchestrator has the CCS of the plan written, with a path the receiver has.
         self.ccs("plan", **{"--kind": "plan", "--has": "README.md"})
@@ -329,10 +338,10 @@ class CcsTest(RepoTest):
 
     def test_the_ccs_of_the_finished_work_and_of_a_task_has_nothing_of_the_tasks_done(self):
         # Given: a session holding T1 and T2, with a call on T3, done, returned.
-        self.call("0001", "t3", result={})
+        self.call("0001", "t3.1", result={})
         self.kept()
         # When: the orchestrator has the CCS of the finished work written, then of t1.
-        made = [self.ccs(work, "README.md")["ccs"] for work in ("deliverable", "t1")]
+        made = [self.ccs(work, "README.md")["ccs"] for work in ("deliverable", "t1.1")]
         # Then: neither has anything.
         has = [[e for e in self.read_json(p)["focal_entities"] if "has" in e] for p in made]
         self.assertEqual(has, [[], []])
@@ -363,17 +372,54 @@ class CcsTest(RepoTest):
             ],
         )
 
-    def test_the_ccs_of_a_task_the_steering_does_not_hold_stops(self):
-        for work in ("t0", "t3"):
+    def test_the_ccs_of_an_action_the_steering_does_not_hold_stops(self):
+        for work in ("t0.1", "t3.1", "t1.5"):
             with self.subTest(work=work):
-                # Given: a session with T1 and T2.
-                # When: the orchestrator has the CCS of a task not held written.
-                # Then: rn says there is no such task.
+                # Given: a session with T1 and T2, each of four actions.
+                # When: the orchestrator has the CCS of an action not held written.
+                # Then: rn says there is no such action of turn's, and how a task's work is given.
                 self.assertIn(
-                    f"rn: the steering holds no task {work.upper()}, which the work {work} is of;"
-                    " have turn make the tasks, keep them, then run this again",
+                    f"rn: the steering holds no action {work.upper()} of turn's, which the work"
+                    f" {work} is; give the work of an action turn makes as t<n>.<action>, such as"
+                    " t1.2, or have turn make the plan again with it, keep it, then run this again",
                     self.stopped("ccs", work, "README.md", *options(NEEDED)),
                 )
+
+    def test_the_ccs_of_an_action_of_the_orchestrators_stops(self):
+        # Given: a session whose T1's first action is the orchestrator's.
+        orchestrators = "Settle part 1 of T1. The orchestrator, with the user."
+        tasks = task().replace(
+            "Make part 1 of T1, `src/t1-1.py` as a code work. turn.", orchestrators
+        )
+        self.session(steered(part=plan(tasks=tasks), stage="design"))
+        # When: the orchestrator has the CCS of that action written.
+        # Then: rn says the steering holds no such action of turn's.
+        self.assertIn(
+            "rn: the steering holds no action T1.1 of turn's, which the work t1.1 is",
+            self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)),
+        )
+
+    def test_the_ccs_of_an_action_names_the_path_and_the_kind_it_names(self):
+        # Given: a session whose T1's second action makes `src/t1-2.py` as a code work.
+        # When: the orchestrator has its CCS written with no path and no kind.
+        self.ran("ccs", "t1.2", "--receiver", "a new user", "--use", "to try it")
+        # Then: it holds that path, and the checklists of that kind.
+        ccs = self.read_json(call_at("0001"))
+        self.assertEqual(
+            (ccs["focal_entities"][2], ccs["retrieved_artifacts"]),
+            ({"deliverable": "src/t1-2.py"}, [{"checklist": self.checklist}]),
+        )
+
+    def test_a_work_not_a_tasks_with_no_kind_stops(self):
+        # Given: a session.
+        # When: the orchestrator has the CCS of the finished work written with no kind.
+        out = self.stopped("ccs", "deliverable", "README.md", "--receiver", "r", "--use", "u")
+        # Then: rn says to give its kind.
+        self.assertIn(
+            "rn: no kind of the work deliverable is given, which a task's work takes from its"
+            " action; give it with --kind",
+            out,
+        )
 
     def test_the_plan_is_cut_into_its_part_and_handed_as_the_work(self):
         # Given: a session.
@@ -433,15 +479,15 @@ class CcsTest(RepoTest):
                 # Given: rn's checklist of the kind.
                 checklist = os.path.join(self.plugin, "checklists", "product", f"{kind}.md")
                 self.write(checklist, "# A kind\n")
-                # When: the orchestrator has the CCS of t1 written, of the kind.
-                made = self.ccs("t1", **{"--kind": kind})["ccs"]
+                # When: the orchestrator has the CCS of t1.1 written, of the kind.
+                made = self.ccs("t1.1", **{"--kind": kind})["ccs"]
                 # Then: it names the kind's checklist alone.
                 found = self.read_json(made)["retrieved_artifacts"]
                 self.assertEqual(found, [{"checklist": checklist}])
 
     def test_the_decisions_of_the_latest_call_not_returned_are_kept(self):
-        # Given: a call on t1 holding a decision, not returned.
-        self.call("0001", "t1", decisions=("License: MIT",))
+        # Given: a call on t1.1 holding a decision, not returned.
+        self.call("0001", "t1.1", decisions=("License: MIT",))
         self.kept()
         # When: the orchestrator has its CCS written.
         out = self.ccs()
@@ -452,11 +498,11 @@ class CcsTest(RepoTest):
         )
 
     def test_a_call_returned_is_made_again_as_a_new_call_carrying_its_decisions(self):
-        # Given: a call on t1 holding a decision, returned, and a call on t2.
-        self.call("0001", "t1", decisions=("License: MIT",), result={})
-        self.call("0002", "t2")
+        # Given: a call on t1.1 holding a decision, returned, and a call on t2.
+        self.call("0001", "t1.1", decisions=("License: MIT",), result={})
+        self.call("0002", "t2.1")
         self.kept()
-        # When: the orchestrator has t1's CCS written.
+        # When: the orchestrator has t1.1's CCS written.
         out = self.ccs()
         # Then: a new call is filled, carrying the decision.
         self.assertEqual(
@@ -497,11 +543,12 @@ class CcsTest(RepoTest):
 
     def test_a_work_with_no_path_stops(self):
         # Given: a session.
-        # When: the orchestrator has t1's CCS written with no path.
+        # When: the orchestrator has a checklist's CCS written with no path.
         # Then: rn says to give the path of each file of it.
         self.assertIn(
-            "rn: no path of the work t1 is given; give the path of each file or folder of it",
-            self.stopped("ccs", "t1", *options(NEEDED)),
+            "rn: no path of the work checklist-code is given; give the path of each file or folder"
+            " of it",
+            self.stopped("ccs", "checklist-code", *options(NEEDED)),
         )
 
     def test_ccs_is_written_one_key_to_a_line_with_text_beyond_ascii_as_it_is(self):
@@ -512,7 +559,7 @@ class CcsTest(RepoTest):
         text = self.read(call_at("0001"))
         self.assertEqual(
             (
-                text.startswith('{\n "focal_entities": [\n  {\n   "work": "t1"'),
+                text.startswith('{\n "focal_entities": [\n  {\n   "work": "t1.1"'),
                 "新しい利用者" in text,
             ),
             (True, True),
@@ -528,7 +575,7 @@ class CcsTest(RepoTest):
             "rn: the record has changes not kept, README.md, notes.md; rn goes on only from what is"
             " pushed, so keep the move with `rn.py state --next <n> --message <what it brought>`"
             " first",
-            self.stopped("ccs", "t1", "README.md", *options(NEEDED)),
+            self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)),
         )
 
     def test_ccs_with_commits_not_pushed_stops(self):
@@ -538,7 +585,7 @@ class CcsTest(RepoTest):
         # Then: rn says to push first.
         self.assertIn(
             "rn: the branch has 1 commit(s) not pushed; push with `git push`",
-            self.stopped("ccs", "t1", "README.md", *options(NEEDED)),
+            self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)),
         )
 
     def test_ccs_on_a_branch_never_pushed_stops(self):
@@ -548,7 +595,7 @@ class CcsTest(RepoTest):
         # Then: rn says to push the branch.
         self.assertIn(
             "push the branch with `git push -u origin HEAD`",
-            self.stopped("ccs", "t1", "README.md", *options(NEEDED)),
+            self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)),
         )
 
     def test_ccs_with_what_the_receiver_has_not_there_stops(self):
@@ -559,16 +606,16 @@ class CcsTest(RepoTest):
         # Then: rn says it is not there.
         self.assertIn(
             "rn: what the receiver has, none.md, is not there",
-            self.stopped("ccs", "t1", "README.md", *options(NEEDED), "--has", "none.md"),
+            self.stopped("ccs", "t1.1", "README.md", *options(NEEDED), "--has", "none.md"),
         )
 
     def test_an_empty_or_wrong_value_stops(self):
         self.kept()
         for argv, said in (
-            (["t1", "README.md", "--receiver", " "], "rn: the receiver is empty"),
-            (["t1", "README.md", "--use", " "], "rn: the use is empty"),
-            (["t1", " "], "rn: the path of the work is empty"),
-            (["t1", "README.md", "--kind", "A"], "rn: the kind 'A' is not"),
+            (["t1.1", "README.md", "--receiver", " "], "rn: the receiver is empty"),
+            (["t1.1", "README.md", "--use", " "], "rn: the use is empty"),
+            (["t1.1", " "], "rn: the path of the work is empty"),
+            (["t1.1", "README.md", "--kind", "A"], "rn: the kind 'A' is not"),
             (["readme", "README.md"], "rn: the work 'readme' is none rn makes"),
         ):
             with self.subTest(said=said):
@@ -584,7 +631,7 @@ class CcsTest(RepoTest):
         # Then: rn says it is required.
         self.assertIn(
             "rn: the following arguments are required: --use; give it as rn.py ccs",
-            self.stopped("ccs", "t1", "README.md", "--kind", KIND, "--receiver", "r"),
+            self.stopped("ccs", "t1.1", "README.md", "--kind", KIND, "--receiver", "r"),
         )
 
     def test_a_ccs_that_cannot_be_written_writes_nothing(self):
@@ -606,7 +653,7 @@ class CcsTest(RepoTest):
         os.chdir("src")
         # When: the orchestrator has a CCS written.
         # Then: rn says to run it from the top.
-        self.assertIn("below the top", self.stopped("ccs", "t1", "README.md", *options(NEEDED)))
+        self.assertIn("below the top", self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)))
 
 
 class ChecklistsTest(RepoTest):

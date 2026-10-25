@@ -18,6 +18,12 @@ from helpers import (
     template,
 )
 
+# An action of turn's of the fixture, and the same as one of the orchestrator's.
+ORCHESTRATED = (
+    "Make part 1 of T1, `src/t1-1.py` as a code work. turn.",
+    "Settle part 1 of T1. The orchestrator, with the user.",
+)
+
 
 class FormTest(unittest.TestCase):
     """What a steering is held to at every keep: rn's plan checklist's F-1, front matter, headings,
@@ -47,7 +53,13 @@ class FormTest(unittest.TestCase):
             ),
             "two tasks": steered(part=plan(tasks=f"{task()}\n\n{task('T2', ticks='x ')}")),
             "an action over two lines": steered(
-                part=plan(tasks=task().replace("Action 1 of T1.", "Action 1\n    of T1."))
+                part=plan(tasks=task().replace("Make part 1 of T1,", "Make part 1\n    of T1,"))
+            ),
+            "an action of the orchestrator's": steered(
+                part=plan(tasks=task().replace(ORCHESTRATED[0], ORCHESTRATED[1]))
+            ),
+            "a kind after an": steered(
+                part=plan(tasks=task().replace("as a code work", "as an architecture work"))
             ),
         }
         for name, text in cases.items():
@@ -194,7 +206,12 @@ class FormTest(unittest.TestCase):
                 self.assert_out(text, point)
 
     def test_tasks_out_of_form_are_named(self):
-        actions = "`  - [ ] {0}. <what is done>. <who does it>`"
+        actions = (
+            "in one of the forms of rn's plan checklist's F-1, `  - [ ] {0}. <what is found out or"
+            " settled>. The orchestrator, with the user.` or `  - [ ] {0}. <what is made, from which"
+            " works before it>, `<its path>` as a <kind> work. turn.`"
+        )
+        line = "  - [ ] {0}. Make part {1} of T1, `src/t1-{1}.py` as a code work. turn."
         form = "a task as `- T<n>: <the result it makes>. Serves <G1, or the criteria by ID>.`"
         cases = {
             task().replace("- T1", "- Task 1"): f"line 23: expected {form}, found `- Task 1: Make"
@@ -213,12 +230,17 @@ class FormTest(unittest.TestCase):
             " criterion: <what its result must do for what it serves, and the check that shows"
             " it>` under T1, found none",
             task(ticks=""): "line 23: expected the actions of T1, found none",
-            task().replace("[ ] 1.", "[ ] 2.", 1): f"line 27: expected action 1 of T1 as"
-            f" {actions.format(1)}, found `  - [ ] 2. Action 1 of T1. turn.`",
-            task().replace("[ ] 2.", "[ ] 1.", 1): f"line 28: expected action 2 of T1 as"
-            f" {actions.format(2)}, found `  - [ ] 1. Action 2 of T1. turn.`",
-            task().replace("[ ] 3.", "[ ] three."): f"line 29: expected action 3 of T1 as"
-            f" {actions.format(3)}, found `  - [ ] three. Action 3 of T1. turn.`",
+            task().replace("[ ] 1.", "[ ] 2.", 1): f"line 27: expected action 1 of T1"
+            f" {actions.format(1)}, found `{line.format(2, 1)}`",
+            task().replace("[ ] 2.", "[ ] 1.", 1): f"line 28: expected action 2 of T1"
+            f" {actions.format(2)}, found `{line.format(1, 2)}`",
+            task().replace("[ ] 3.", "[ ] three."): f"line 29: expected action 3 of T1"
+            f" {actions.format(3)}, found `{line.format('three', 3)}`",
+            task().replace(" as a code work. turn.", ". turn.", 1): f"line 27: expected action 1"
+            f" of T1 {actions.format(1)}, found `  - [ ] 1. Make part 1 of T1, `src/t1-1.py`. turn.`",
+            task().replace("as a code work. turn.", "as a code work.", 1): f"line 27: expected"
+            f" action 1 of T1 {actions.format(1)}, found `  - [ ] 1. Make part 1 of T1,"
+            " `src/t1-1.py` as a code work.`",
             task(ticks="xxxx"): "line 23: expected only tasks with an action not ticked, as a"
             " task leaves the steering once all its actions are, found T1 with every action"
             " ticked",

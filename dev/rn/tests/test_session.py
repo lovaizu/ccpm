@@ -462,7 +462,7 @@ class StateTest(RepoTest):
             text = text.replace(f"\n\n## {heading}", f"\n## {heading}")
         self.session(text)
         # When: the orchestrator keeps a decision, a move that leaves the steering as it is.
-        self.ran("decide", "t1", "--title", "A", "--says", "B", "--message", "m")
+        self.ran("decide", "t1.1", "--title", "A", "--says", "B", "--message", "m")
         # Then: the steering holds every line, a blank line before each of those headings.
         self.assertEqual(self.read(STEERING), STEERED)
 
@@ -568,9 +568,9 @@ class StateTest(RepoTest):
 
     def test_the_stage_moves_to_build_from_design_where_no_document_was_made(self):
         # Given: a session at the design stage, whose calls in it are on the plan and on the
-        # learnings of the plan sign-off, and a call on t1 made in the plan stage.
+        # learnings of the plan sign-off, and a call on t1.1 made in the plan stage.
         self.session(steered(stage="design"))
-        self.call("0001", "t1", "plan", result={})
+        self.call("0001", "t1.1", "plan", result={})
         self.call("0002", "learnings", "design", result={})
         self.call("0003", "plan", "design", result={})
         self.kept()
@@ -581,28 +581,28 @@ class StateTest(RepoTest):
         self.assertEqual(self.read(STEERING), want)
 
     def test_the_stage_moving_to_build_after_a_document_was_made_stops(self):
-        # Given: a session at the design stage with a call on t1 and on a checklist made in it.
+        # Given: a session at the design stage with a call on t1.1 and on a checklist made in it.
         self.session(steered(stage="design"))
         self.call("0001", "plan", "design", result={})
-        self.call("0002", "t1", "design")
+        self.call("0002", "t1.1", "design")
         self.call("0003", "checklist-code", "design", result={})
-        self.call("0004", "t1", "design", result={})
+        self.call("0004", "t1.1", "design", result={})
         self.kept()
         # When: the orchestrator moves the stage to build.
         out = self.stopped(*self.state("--stage", "build"))
         # Then: rn names each work made, says they go to the design sign-off, and keeps nothing.
         said = (
-            "rn: the design stage made t1 and checklist-code, which go to the design sign-off;"
+            "rn: the design stage made t1.1 and checklist-code, which go to the design sign-off;"
             " show it with `rn.py proposal design`, and the user's approval there moves the"
             " session to build"
         )
         self.assertEqual((said in out, self.read(STEERING)), (True, steered(stage="design")))
 
     def test_the_stage_moves_to_deliverable_after_a_document_made_in_the_design_stage(self):
-        # Given: a session at the build stage, no task left, with a call on t1 made in the design
+        # Given: a session at the build stage, no task left, with a call on t1.1 made in the design
         # stage.
         self.session(steered(part=plan(tasks=""), stage="build"))
-        self.call("0001", "t1", "design", result={})
+        self.call("0001", "t1.1", "design", result={})
         self.kept()
         # When: the orchestrator moves the stage to deliverable.
         self.ran(*self.state("--stage", "deliverable"))
@@ -981,7 +981,7 @@ class PutTest(RepoTest):
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
         # Then: rn names the action, and keeps nothing.
-        said = "F-1: line 29: expected action 3 of T1 as" in out
+        said = "F-1: line 29: expected action 3 of T1 in one of the forms" in out
         self.assertEqual((said, self.read(STEERING)), (True, STEERED))
 
     def test_a_call_not_there_stops(self):
@@ -1001,11 +1001,11 @@ class PutTest(RepoTest):
     def test_a_call_on_another_work_stops(self):
         # Given: a call on a task's work.
         self.session()
-        self.call("0001", "t1", result={})
+        self.call("0001", "t1.1", result={})
         # When: the orchestrator puts back its part.
         # Then: rn says it makes no part rn puts back.
         self.assertIn(
-            "rn: the call 0001 is on t1, which makes no part rn puts back; give --put a call on"
+            "rn: the call 0001 is on t1.1, which makes no part rn puts back; give --put a call on"
             " plan or learnings",
             self.stopped(*self.put()),
         )

@@ -187,6 +187,8 @@ def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any
     message = stop.given(args.message, "message")
     folder = session.current()
     steered = session.kept_steering(folder)
+    if session.task_of(work):
+        session.made_by(steered, work)
     found = session.calls(folder)
     last = session.latest(found, work)
     if last is not None and not last.result:
@@ -237,7 +239,6 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     what the last keep left, the steering holds no task of a task's work, or the finished work is
     not there."""
     work = session.worked(args.work)
-    kind = stop.named(args.kind, "kind")
     receiver = stop.given(args.receiver, "receiver")
     use = stop.given(args.use, "use")
     paths = [stop.given(p, "path of the work") for p in args.path]
@@ -246,11 +247,6 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
             f"rn: the work {work} is a part rn cuts for turn from the session's record; give no"
             " path of it"
         )
-    if not paths and work not in session.PARTS + (steering.DELIVERABLE,):
-        raise stop.Stop(
-            f"rn: no path of the work {work} is given; give the path of each file or folder of it,"
-            " from the top"
-        )
     # The session is found first, which stops below the top of the repository, since each path
     # given is read from the top.
     folder = session.current()
@@ -258,6 +254,21 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     has = [ccs.has_path(p) for p in args.has]
     steered = session.kept_steering(folder)
     serving = ccs.served(steered, work)
+    # A task's work is made at the path, and of the kind, its action names.
+    action = session.made_by(steered, work) if session.task_of(work) else None
+    paths = paths or ([action.path] if action and action.path else [])
+    given_kind = args.kind or (action.kind if action else None)
+    if given_kind is None:
+        raise stop.Stop(
+            f"rn: no kind of the work {work} is given, which a task's work takes from its action;"
+            " give it with --kind"
+        )
+    kind = stop.named(given_kind, "kind")
+    if not paths and work not in session.PARTS + (steering.DELIVERABLE,):
+        raise stop.Stop(
+            f"rn: no path of the work {work} is given; give the path of each file or folder of it,"
+            " from the top"
+        )
     found = session.calls(folder)
     last = session.latest(found, work)
     number = last.number if last is not None and not last.result else session.next_number(found)
@@ -467,7 +478,8 @@ def parser() -> Parser:
     hand.set_defaults(run=run_ccs)
     hand.add_argument("work")
     hand.add_argument("path", nargs="*")
-    for option in ("--kind", "--receiver", "--use"):
+    hand.add_argument("--kind")
+    for option in ("--receiver", "--use"):
         hand.add_argument(option, required=True)
     hand.add_argument("--has", action="append", default=[])
     shown_text = sub.add_parser("proposal")

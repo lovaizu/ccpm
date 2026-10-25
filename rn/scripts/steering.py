@@ -69,7 +69,19 @@ COMPLETION_FORM = (
     "`  Completion criterion: <what its result must do for what it serves, and the check that"
     " shows it>`"
 )
+# Each action opens a line of its own under its task's completion criterion, ticked or not and
+# numbered, and runs on in lines indented under it, in one of two forms: the orchestrator's, with
+# the user, or turn's, making one work of a kind at a path, which turn's call is made on.
 ACTION = re.compile(r"  - \[(?P<tick>[ x])\] (?P<number>[0-9]+)\. \S.*")
+BY_THE_ORCHESTRATOR = re.compile(r"  - \[[ x]\] [0-9]+\. \S.*\. The orchestrator, with the user\.")
+BY_TURN = re.compile(
+    r"  - \[[ x]\] [0-9]+\. \S.*, `(?P<path>[^`]+)` as an? (?P<kind>[a-z0-9-]+) work\. turn\."
+)
+ACTION_FORMS = (
+    "in one of the forms of rn's plan checklist's F-1, `  - [ ] {0}. <what is found out or"
+    " settled>. The orchestrator, with the user.` or `  - [ ] {0}. <what is made, from which works"
+    " before it>, `<its path>` as a <kind> work. turn.`"
+)
 
 
 OPENED = re.compile(r"- (?P<id>\S.*)")
@@ -149,6 +161,16 @@ def items_of(
     return found, ""
 
 
+class Action(NamedTuple):
+    """An action of a task, in one of its forms: its number, whether it is ticked, and the path and
+    the kind of the work turn makes in it, None for each where it is the orchestrator's."""
+
+    number: str
+    ticked: bool
+    path: str | None
+    kind: str | None
+
+
 class Task(NamedTuple):
     """A task of the steering: its ID, the number of its line, its line with those it runs on to as
     one, the IDs it serves, None where its line names none, whether it has its completion
@@ -160,7 +182,7 @@ class Task(NamedTuple):
     text: str
     serves: list[str] | None
     completion: bool
-    actions: list[tuple[int, str, re.Match[str] | None]]
+    actions: list[tuple[int, str, Action | None]]
 
 
 def said(lines: list[tuple[int, str]]) -> str:
@@ -182,7 +204,35 @@ def task_of(item: Item) -> Task:
         text,
         None if served is None else ID.findall(served["ids"]),
         any(COMPLETION.fullmatch(said) for _, said in rest),
-        [(k, said, ACTION.fullmatch(said)) for k, said in rest if said.startswith("  - ")],
+        actions_of(rest),
+    )
+
+
+def actions_of(lines: list[tuple[int, str]]) -> list[tuple[int, str, Action | None]]:
+    """Each action of the lines under a task's line, by the number of its first line and that line,
+    with the action it is, its lines read as one, None where it is in neither form."""
+    found: list[tuple[int, str, list[str]]] = []
+    for n, line in lines:
+        if line.startswith("  - "):
+            found.append((n, line, [line]))
+        elif found and line.startswith("    ") and found[-1][2][-1].strip():
+            found[-1][2].append(line.strip())
+        elif found:
+            found[-1][2].append("")
+    return [(n, line, action_in(" ".join(filter(None, words)))) for n, line, words in found]
+
+
+def action_in(text: str) -> Action | None:
+    """The action the text of its lines is, None where it is in neither form."""
+    head = ACTION.fullmatch(text)
+    turns = BY_TURN.fullmatch(text)
+    if head is None or not (turns or BY_THE_ORCHESTRATOR.fullmatch(text)):
+        return None
+    return Action(
+        head["number"],
+        is_ticked(head),
+        turns["path"] if turns else None,
+        turns["kind"] if turns else None,
     )
 
 
@@ -198,14 +248,14 @@ def tasks_of(lines: list[str]) -> list[Task]:
     return [task_of(i) for i in task_items(lines)]
 
 
-def is_ticked(action: re.Match[str]) -> bool:
-    """Whether the action, read in its form, is ticked."""
-    return action["tick"] == "x"  # pragma: no mutate
+def is_ticked(head: re.Match[str]) -> bool:
+    """Whether the action whose first line is read in its form is ticked."""
+    return head["tick"] == "x"  # pragma: no mutate
 
 
 def all_ticked(task: Task) -> bool:
     """Whether every action of the task is ticked."""
-    return all(action is not None and is_ticked(action) for _, _, action in task.actions)
+    return all(action is not None and action.ticked for _, _, action in task.actions)
 
 
 def out_of_form(text: str) -> str:
@@ -328,10 +378,10 @@ def task_out(task: Task, held: set[str]) -> str:
     if not task.actions:
         return f"line {task.n}: expected the actions of {task.id}, found none"
     for number, (n, line, action) in enumerate(task.actions, 1):
-        if action is None or action["number"] != str(number):
+        if action is None or action.number != str(number):
             return (
-                f"line {n}: expected action {number} of {task.id} as `  - [ ] {number}. <what is"
-                f" done>. <who does it>`, found `{line}`"
+                f"line {n}: expected action {number} of {task.id} {ACTION_FORMS.format(number)},"
+                f" found `{line}`"
             )
     if all_ticked(task):
         return (
@@ -415,7 +465,7 @@ def ticked(plan: list[str], done: list[str]) -> list[str]:
     such action."""
     lines = list(plan)
     actions = {
-        f"{task.id}.{action['number']}": n
+        f"{task.id}.{action.number}": n
         for task in tasks_of(lines)
         for n, _, action in task.actions
         if action is not None
@@ -447,16 +497,16 @@ def put_plan(plan: list[str], part: list[str]) -> list[str]:
     """The part turn made, as the steering's plan: each action ticked as it was in the plan before,
     by its task's ID and its number, the rest not, as the ticks are rn's to write."""
     was = {
-        (task.id, action["number"])
+        (task.id, action.number)
         for task in tasks_of(plan)
         for _, _, action in task.actions
-        if action is not None and is_ticked(action)
+        if action is not None and action.ticked
     }
     lines = list(part)
     for task in tasks_of(lines):
         for n, _, action in task.actions:
             if action is not None:
-                lines[n - 1] = tick(lines[n - 1], (task.id, action["number"]) in was)
+                lines[n - 1] = tick(lines[n - 1], (task.id, action.number) in was)
     return lines
 
 

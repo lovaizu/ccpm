@@ -95,12 +95,8 @@ def served(steered: steering.Steering, work: str) -> dict[str, str]:
         return said
     if not session.TASK_WORK.fullmatch(work):
         return {}
-    task = next((t for t in steering.tasks_of(steered.plan) if t.id == work.upper()), None)
-    if task is None:
-        raise stop.Stop(
-            f"rn: the steering holds no task {work.upper()}, which the work {work} is of; have turn"
-            " make the tasks, keep them, then run this again"
-        )
+    session.made_by(steered, work)
+    task = next(t for t in steering.tasks_of(steered.plan) if t.id == session.task_of(work))
     return {key: text for key, text in said.items() if key in (task.serves or [])}
 
 
@@ -114,5 +110,5 @@ def done_made(folder: str, found: list[session.Call], plan: list[str]) -> list[s
     return [
         session.call_path(folder, number, session.CCS)
         for work, number in sorted(last.items(), key=lambda item: item[1])
-        if session.TASK_WORK.fullmatch(work) and work.upper() not in left
+        if session.task_of(work) and session.task_of(work) not in left
     ]

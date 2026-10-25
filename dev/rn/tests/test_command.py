@@ -22,7 +22,7 @@ class UsageTest(RepoTest):
     def test_each_option_needed_left_out_stops_with_the_usage(self):
         given = {
             "state": ["state", "--next", "n", "--message", "m"],
-            "decide": ["decide", "t1", "--title", "t", "--says", "s", "--message", "m"],
+            "decide": ["decide", "t1.1", "--title", "t", "--says", "s", "--message", "m"],
             "answer": ["answer", "approved", "--next", "n", "--message", "m"],
         }
         for name, argv in given.items():
