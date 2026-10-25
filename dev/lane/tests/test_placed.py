@@ -97,9 +97,13 @@ class TestWriteCode(LayTest):
                 self.assertTrue(os.path.exists(os.path.join(self.code(), "VERSION")))
 
     def test_only_lanes_code_itself_is_lanes_own(self):
-        for place, own in ((helpers.CODE, True), (os.path.dirname(helpers.CODE), False)):
+        for place, own in (
+            (helpers.CODE, True),
+            (os.path.dirname(helpers.CODE), False),
+            (os.path.join(helpers.CODE, "lanes"), False),
+        ):
             with self.subTest(place=place):
-                # Given: lane's code, or the folder it is in
+                # Given: lane's code, the folder it is in, or a folder in it
                 # When: whether it is lane's own code is read
                 # Then: it is for lane's code alone
                 self.assertEqual(placed.lanes_own(place), own)
