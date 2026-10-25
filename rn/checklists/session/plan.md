@@ -32,7 +32,9 @@ kind at a named path, one call to turn for each work. Where the result rests on 
 session yet knows, an action before the making finds it out: research into current practice, best
 practice and official information, or a small trial of a way before it is built on, each a work turn
 makes in the session's folder and hands, by name, to the later works that rest on it; what it finds
-may add tasks or drop them when the plan is made again. The plan holds only what is left of the
+may add tasks or drop them when the plan is made again. The check a completion criterion names is
+made by the task's first action, before its result, and seen to fail on what is there, so the
+result is made to the check and not the check to the result. The plan holds only what is left of the
 work, what is done or learnt kept elsewhere. turn makes the plan, from the title to the tasks, in a
 file of its own, and these items judge it.
 
@@ -190,6 +192,26 @@ Look for:
 Why: a task begun on a gap fills it with a guess, which the user sends back once the whole is built;
 a fact checked or a way tried before anything is built on it shows a wrong guess while it is small;
 and a finding not handed on is guessed again by the maker who needed it.
+
+### B-9: Each result made to a check made first
+
+Scope: its part
+
+Does each task's first action make the check its completion criterion names, such as the test
+cases and their data for code, the scenes and the behavior expected for a prompt, or what a
+document's reader must get from it as the cases a first user reads it on, and see it fail on what
+is there, before the action that makes the result?
+
+Look for:
+- an action making the check after the action making the result, or within it;
+- a check named with no action making it, such as tests left to whoever writes the code;
+- no action seeing the check fail before the result is made, so a check that passes on anything is
+  not told from one that holds the criterion;
+- the check made as a task of its own, apart from the result it checks.
+
+Why: a check made after the result is fitted to what the result does, not to what it must do, and
+passes whatever was made; one seen failing first is shown to tell the result apart, and made in
+the same task it is accepted with the result it holds.
 
 ### B-5: The tasks give what their stage needs
 
