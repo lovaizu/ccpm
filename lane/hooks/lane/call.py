@@ -167,10 +167,10 @@ def commands(command: str, cwd: str) -> list[list[str]]:
     and env before the program are left out, and git's own options before its command too, so
     `GIT_EDITOR=true git -C notes commit` runs `git commit`."""
     found = []
-    for here, said, _ in shell.statements(command, cwd):
+    for _, said, _ in shell.statements(command, cwd):
         words = shell.after_env(shell.without_redirects(said))
         if words[:1] == ["git"]:
-            words = ["git", *shell.git_statement(here, words)[1]]
+            words = ["git", *shell.git_command(words)]
         found.append(words)
     return found
 

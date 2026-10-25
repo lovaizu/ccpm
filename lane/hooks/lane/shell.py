@@ -157,15 +157,12 @@ def statements(command: str, cwd: str) -> Iterator[tuple[str | None, list[str], 
         statement = []
 
 
-def git_statement(here: str | None, said: list[str]) -> tuple[str | None, list[str]]:
-    """The folder a git statement run from here acts in, each `-C` moving it, and its words after
-    git's options, the git command first."""
+def git_command(said: list[str]) -> list[str]:
+    """A git statement's words after git's options, the git command first."""
     rest = said[1:]
     while rest and rest[0].startswith("-"):
-        if rest[0] == "-C" and rest[1:]:
-            here = path(here, rest[1])
         rest = rest[2:] if rest[0] in GIT_VALUED else rest[1:]
-    return here, rest
+    return rest
 
 
 def after_env(said: list[str]) -> list[str]:

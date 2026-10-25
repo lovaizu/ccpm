@@ -9,6 +9,7 @@ import unittest
 
 import helpers
 from helpers import HERE, NO_PLUGIN, shell, start_with, testing
+from test_shell_reads import WHOLE
 
 hypothesis = testing.hypothesis()
 assume = hypothesis.assume
@@ -75,7 +76,7 @@ class TestPaths(unittest.TestCase):
         # When: a command prints them with cat
         # Then: each is taken as read whole
         found = shell.reads("cat " + " ".join(names), HERE)
-        whole = [(os.path.realpath(os.path.join(HERE, n)), shell.WHOLE) for n in names]
+        whole = [(os.path.realpath(os.path.join(HERE, n)), WHOLE) for n in names]
         self.assertEqual(found, whole)
 
 

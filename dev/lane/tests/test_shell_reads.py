@@ -10,9 +10,19 @@ from helpers import HERE, shell
 WHOLE = (1, None)
 
 
-def reads(command):
+def reads(command: str) -> list[tuple]:
     """Each file the command reads, by its name in HERE, with the lines it reads."""
     return [(os.path.relpath(p, HERE), lines) for p, lines in shell.reads(command, HERE)]
+
+
+def at(*names: str) -> list[str]:
+    """The whole path of each name in the folder the commands run in."""
+    return [os.path.join(HERE, n) for n in names]
+
+
+def files_read(command: str) -> list[str]:
+    """Each file the command reads, as its whole path."""
+    return [p for p, _ in shell.reads(command, HERE)]
 
 
 class TestCat(unittest.TestCase):
@@ -155,6 +165,68 @@ class TestStatements(unittest.TestCase):
         for command in ("awk 1 a", "wc -l a", "> a"):
             with self.subTest(command=command):
                 self.assertEqual(reads(command), [])
+
+
+class TestPaths(unittest.TestCase):
+    def test_what_follows_a_here_string_or_a_file_descriptor_is_no_path(self):
+        # Given: a command with a here-string's text, or a file descriptor after `>&` or `<&`,
+        # before and after the files it reads
+        # When: the files it reads are read
+        # Then: the files alone are taken
+        for command in ("cat a <<< text b", "cat a 2>&1 b", "cat a 0<&3 b"):
+            with self.subTest(command=command):
+                self.assertEqual(files_read(command), at("a", "b"))
+
+    def test_a_here_string_s_text_begun_with_a_dash_is_no_path(self):
+        # Given: a command with a here-string's text right after `<<<`, begun with `-`
+        # When: the files it reads are read
+        # Then: the files alone are taken
+        self.assertEqual(files_read("cat a <<<-text b"), at("a", "b"))
+
+    def test_a_word_the_shell_makes_by_running_a_command_is_no_path(self):
+        # Given: a command reading a path made by a backquoted command, read word by word as its
+        # quoting does not close
+        # When: the files it reads are read
+        # Then: that path is not taken, as the words do not settle it
+        self.assertEqual(files_read("cat `pwd`/a 'x"), at("'x"))
+
+    def test_a_path_after_a_redirect_s_target_is_still_read(self):
+        # Given: a command naming a file after a redirect to a file
+        # When: the files it reads are read
+        # Then: each file but the redirect's target is taken, the file after it too
+        self.assertEqual(files_read("cat a 2> err b"), at("a", "b"))
+
+    def test_a_quoted_path_is_read_as_the_shell_takes_it(self):
+        # Given: a command reading a path in single or double quotes, with a space in it
+        # When: the files it reads are read
+        # Then: the path is taken whole, without its quotes
+        for command in ("cat 'a b'", 'cat "a b"'):
+            with self.subTest(command=command):
+                self.assertEqual(files_read(command), at("a b"))
+
+    def test_a_word_the_shell_makes_from_a_variable_is_no_path(self):
+        # Given: a command reading a path made from a variable
+        # When: the files it reads are read
+        # Then: that path is not taken, as the words do not settle it
+        self.assertEqual(files_read("cat $HOME/a"), [])
+
+    def test_each_line_s_statement_is_read(self):
+        # Given: a command of two lines, neither a heredoc
+        # When: the files it reads are read
+        # Then: the files of both lines are taken
+        self.assertEqual(files_read("cat a\ncat b"), at("a", "b"))
+
+    def test_a_comment_reads_no_file(self):
+        # Given: a command with a comment after its words, and a `#` inside a word
+        # When: the files it reads are read
+        # Then: the files before the comment are taken, the word with `#` among them
+        self.assertEqual(files_read("cat a#b # c d\ncat e"), at("a#b", "e"))
+
+    def test_a_comment_holding_a_tab_runs_to_the_commands_end(self):
+        # Given: a command whose comment, holding a tab, runs to the command's end
+        # When: the files it reads are read
+        # Then: the file before the comment alone is taken
+        self.assertEqual(files_read("cat a #\tc"), at("a"))
 
 
 if __name__ == "__main__":
