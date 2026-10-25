@@ -364,8 +364,10 @@ def learnt(text: str, kept: list[str]) -> list[str]:
 def ground_problems(name: str, grounds: Any, kept: list[str]) -> list[str]:
     """What is wrong with a lesson's grounds, each the number of a record kept and words found in
     it as the learner was shown it."""
-    if not isinstance(grounds, list) or not grounds:
+    if not isinstance(grounds, list):
         return [f'{name} gives its grounds as no list; give [{{"record": ..., "quote": ...}}, ...]']
+    if not grounds:
+        return [f'{name} names no ground; give at least one, {{"record": ..., "quote": ...}}']
     said: list[str] = []
     for k, ground in enumerate(grounds, 1):
         number = ground.get("record") if isinstance(ground, dict) else None

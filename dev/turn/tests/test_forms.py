@@ -558,7 +558,7 @@ class TestLessons(FormTest):
             (dict(LESSON, why="x"), 'lesson 1 must hold "lesson" in words, "whose"'),
             ({"whose": "own", "lesson": "x"}, 'lesson 1 must hold "lesson" in words, "whose"'),
             ("read it", 'lesson 1 must hold "lesson" in words, "whose"'),
-            (dict(LESSON, grounds=[]), "lesson 1 gives its grounds as no list"),
+            (dict(LESSON, grounds=[]), "lesson 1 names no ground; give at least one"),
             (dict(LESSON, grounds={"record": 1}), "lesson 1 gives its grounds as no list"),
             (dict(LESSON, grounds=[{"record": 3, "quote": "I"}]), "ground 1 must hold"),
             (dict(LESSON, grounds=[{"record": 0, "quote": "I"}]), "ground 1 must hold"),
