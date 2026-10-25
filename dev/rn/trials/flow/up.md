@@ -1,6 +1,6 @@
 ---
 name: up
-description: Stands in for turn's turn:up in rn's flow trial, making the work a call asks for from its CCS alone, quickly, and giving back the result as turn does, with the line turn sends the main conversation, so a trial runs rn's whole flow without turn's rounds. Use when rn's orchestrator hands turn a call as JSON, {"ccs", "kind", "result"}.
+description: Stands in for turn's turn:up in rn's flow trial, making the work a call asks for from its CCS alone, quickly, and giving back the result as turn does, with the line turn sends the main conversation, so a trial runs rn's whole flow without turn's rounds. Use when rn's orchestrator hands turn a call as JSON, {"ccs", "kind", "result", "test"}.
 ---
 
 ## Role

@@ -149,10 +149,10 @@ repository is in its `artifact-language`.
    - Run `rn.py ccs <work> [<path>...] --kind <kind> --receiver "<receiver>" --use "<use>" [--has
      <path>]...`, no path for `plan`, `learnings` or `deliverable`, which the script cuts or finds.
      It writes the CCS, keeps it and prints one line, the call to turn,
-     `{"ccs": "<session>/turn/<nnnn>-ccs.json", "kind": {...}, "result": "..."}`; `<nnnn>` is the
-     call's number. Where it stops for a kind with
-     no checklist, make the checklist first: step 3 on work `checklist-<kind>`, then this step on it,
-     path `.rn/checklists/<kind>.md`, kind `checklist`, receiver `whoever makes a <kind> work in this
+     `{"ccs": "<session>/turn/<nnnn>-ccs.json", "kind": {...}, "result": "...", "test": null}`;
+     `<nnnn>` is the call's number. Where it stops for a kind with no checklist, make the
+     checklist first: step 3 on work `checklist-<kind>`, then this step on it, path
+     `.rn/checklists/<kind>.md`, kind `checklist`, receiver `whoever makes a <kind> work in this
      repository and whoever judges it`, use `making and judging each <kind> work`, `--has .`; then
      run `rn.py ccs` for this work again.
    - Start the agent `turn:up` with the Agent tool, the printed line as its whole prompt and

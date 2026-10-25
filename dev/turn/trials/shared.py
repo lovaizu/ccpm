@@ -46,10 +46,12 @@ UNLICENSED = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n
 
 
 def call(has: str) -> dict:
-    """The call turn is given, with the CCS key of what the work's receiver has."""
+    """The call turn is given, with the CCS key of what the work's receiver has, and no test, as
+    the trials' works are READMEs, which no command checks."""
     return {
         "ccs": ".tasks/ccs.json",
         "result": ".tasks/result.json",
+        "test": None,
         "kind": {
             "work": "deliverable",
             "checklist": "checklist",

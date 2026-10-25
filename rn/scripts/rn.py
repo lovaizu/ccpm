@@ -1330,8 +1330,10 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     write_json(path, ccs)
     keep(folder, steering, f"Call {number} on {work}: handed to turn")
     # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
-    # of work.
-    return {"ccs": path, "kind": ENTRIES, "result": call_path(folder, number, RESULT)}
+    # of work; and the command that checks the work under "test", null for none for now, as rn's
+    # tasks name no such command yet, which they will give once rn is rebuilt.
+    result = call_path(folder, number, RESULT)
+    return {"ccs": path, "kind": ENTRIES, "result": result, "test": None}
 
 
 def item(lines: list[tuple[int, str]], at_: int) -> str:

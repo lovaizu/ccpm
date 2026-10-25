@@ -1645,7 +1645,7 @@ class CcsTest(RepoTest):
         # Given: a session.
         # When: the orchestrator has the CCS of t1 written.
         # Then: rn gives the call to turn:up: the CCS, the key of each role turn reads from it,
-        # and where the result goes, of the first call.
+        # where the result goes, of the first call, and no test, given as null.
         # The keys are written out as turn is to read them, not taken from rn.py, so a change to
         # them in rn.py by mistake fails the test; the duplicate-code check leaves them out, as the
         # user chose.
@@ -1660,6 +1660,7 @@ class CcsTest(RepoTest):
                 "has": "has",
             },
             "result": call_at("0001", "result.json"),
+            "test": None,
         }
         # pylint: enable=duplicate-code
         self.assertEqual(self.ccs(), want)
