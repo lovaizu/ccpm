@@ -166,7 +166,8 @@ def shaped(entry: Any) -> bool:
 def laid(root: str) -> dict[str, Any]:
     """The lanes laid in the plugin at root, as its hooks/lanes.json holds them; stops with
     ValueError saying what is wrong where it is not there, holds no JSON, is not in the shape LAID
-    gives, or lays a lane taking an empty thing, or another count of things than the lane holds."""
+    gives, lays a lane taking an empty thing, or another count of things than the lane holds, or
+    names an adapter that cannot be its port's, as `adapter_wrong` says."""
     path = os.path.join(root, "hooks", "lanes.json")
     try:
         with open(path, encoding="utf-8") as f:

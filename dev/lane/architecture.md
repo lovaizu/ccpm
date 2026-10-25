@@ -161,7 +161,8 @@ lane/                          the plugin, installed by Claude Code
 │       ├── started.py         what the subagent started from, for a thing given for each run
 │       ├── lanes/__init__.py  the lanes, and each lane's sentence made from its wording
 │       └── lanes/<lane>.py    one check per lane of the lanes, with its wording
-├── docs/lanes.md              each lane, its action and what its hook notices, and the proposal <Markdown>
+├── docs/lanes.md              each lane, its action, what its hook notices and its IN, the proposal
+│                              and the ports <Markdown>
 ├── README.md                  what lane gives, its example and installation <Markdown>
 └── CHANGELOG.md               what changed for its users in each version <Markdown>
 

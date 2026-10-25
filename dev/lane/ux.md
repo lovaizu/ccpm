@@ -96,7 +96,7 @@ sequenceDiagram
 - A hook acts only in the subagent its lane is laid in; what must hold whatever the AI does, such as
   a merge, is held by GitHub's branch protection or Claude Code's permission rules, not by lane.
 - On a machine without Python 3.9 or later, the hooks stop the calls they watch, each asking for
-  Python to be installed.
+  Python to be installed, and at a subagent's end tell the user so and let it end.
 
 ## Benefits
 

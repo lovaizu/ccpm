@@ -81,7 +81,8 @@ lane gives a plugin's run what steps and hooks written on their own do not.
 - Claude Code, where your plugin runs and lane is installed.
 - Python 3.9 or later, run as `python3`, on the machines the plugin runs on.
 
-  Without it, the hooks stop the tool calls they watch, each asking for Python to be installed.
+  Without it, the hooks stop the tool calls they watch, each asking for Python to be installed,
+  and at a subagent's end tell you so and let it end.
 
 ## Installation
 
