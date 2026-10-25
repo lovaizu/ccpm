@@ -264,3 +264,24 @@ def written(
         + [{key: steered.keys[key]} for key in steering.LANGUAGES]
         + [{"fix": os.path.join(root, "checklists", "fix.md")}],
     }
+
+
+def told(work: str, steered: steering.Steering) -> str:
+    """The line telling the user what turn makes, and that it is used in their place before it
+    comes back, which they can stop."""
+    if work in OWN:
+        words = {
+            steering.PLAN: "the plan",
+            steering.LEARNINGS: "the learnings of the stretch just answered",
+            steering.DELIVERABLE: "the use of the finished work for each acceptance criterion",
+        }[work]
+    elif session.CHECKLIST_WORK.fullmatch(work):
+        words = f"your checklist for {work.partition('-')[2]}"
+    elif session.ISSUE_WORK.fullmatch(work):
+        words = f"the issue {work.partition('-')[2]} to rn's makers"
+    else:
+        words = f"{work.upper()}, {steering.lowered(session.made_by(steered, work).what)}"
+    return (
+        f"turn makes {words}, and an AI that did not make it uses it in your place before it comes"
+        " back; say stop to stop it."
+    )

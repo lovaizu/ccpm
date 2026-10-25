@@ -152,6 +152,7 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         else:
             learnt = session.put_learnings(session.learnings_of(folder), part)
     plan = steering.ticked(steered.plan, args.done)
+    tell = steering.told_done(steered.plan, args.done)
     keys = (
         steered.keys
         if args.stage is None
@@ -160,12 +161,17 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     steered = steering.Steering(keys, plan, next_step, steering.opened(args.open))
     # The steering is held to its form before the learnings are written, so a stop leaves neither.
     steering.held_form(steering.render(steered))
+    if args.stage == steering.FINISHED:
+        # The pull request is marked ready before the session is kept finished, so a gh that
+        # fails leaves the session to go on from here.
+        again = "run `rn.py state --stage finished` again"
+        repo.gh(["pr", "ready", steered.keys[steering.PR]], again)
     if learnt:
         session.write_learnings(folder, learnt)
     commit = session.keep(folder, steered, message)
     if work == steering.LEARNINGS:
         shutil.rmtree(stretch.records_folder(), ignore_errors=True)
-    return {"kept": commit}
+    return {"kept": commit, "tell": tell} if tell else {"kept": commit}
 
 
 def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
@@ -291,12 +297,13 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
     # of work; and the command that checks the work under "test", null where there is none.
     result = session.call_path(folder, number, session.RESULT)
-    return {
+    handed = {
         "ccs": path,
         "kind": ccs.ENTRIES,
         "result": result,
         "test": ccs.test_of(steered, work),
     }
+    return f"{repo.dumped(handed)}\n{ccs.told(work, steered)}"
 
 
 def run_decisions(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
@@ -392,7 +399,9 @@ def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any
     keys = {**steered.keys, steering.SIGNOFF: steering.NONE}
     if args.answer == "approved":  # pragma: no mutate
         keys[steering.STAGE] = steering.APPROVED[waiting]
-    answered = steered._replace(keys=keys, next=next_step, open=steering.opened(args.open))
+    # The points open stay, as the answer settles none of them, each one given added after them.
+    still = [line[2:] for line in steered.open if line.startswith("- ")]
+    answered = steered._replace(keys=keys, next=next_step, open=steering.opened(still + args.open))
     return {"kept": session.keep(folder, answered, message)}
 
 

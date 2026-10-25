@@ -242,8 +242,9 @@ class RepoTest(MainAndWork):
         return out
 
     def ran(self, *argv: str) -> Any:
-        """What rn printed as JSON, having run to its end."""
-        return json.loads(self.printed(*argv))
+        """What rn printed as JSON, having run to its end: its first line, the call to turn where
+        rn also prints the line to tell the user after it."""
+        return json.loads(self.printed(*argv).splitlines()[0])
 
     def stopped(self, *argv: str) -> str:
         """What rn printed, having stopped."""

@@ -608,6 +608,57 @@ class StateTest(RepoTest):
         # Then: the stage is finished.
         self.assertIn("stage: finished\n", self.read(STEERING))
 
+    def test_the_stage_moved_to_finished_marks_the_pull_request_ready_first(self):
+        # Given: a session at the learnings stage.
+        self.session(steered(stage="learnings"))
+        # When: the orchestrator moves the stage to finished.
+        self.ran(*self.state("--stage", "finished"))
+        # Then: gh marks the pull request ready.
+        self.assertEqual(self.asked(), [["pr", "ready", PR]])
+
+    def test_the_pull_request_not_marked_ready_keeps_nothing(self):
+        # Given: a session at the learnings stage, and gh failing as it does when not logged in.
+        self.session(steered(stage="learnings"))
+        with mock.patch.dict(os.environ, {"GH_FAIL": "To get started, run: gh auth login"}):
+            # When: the orchestrator moves the stage to finished.
+            out = self.stopped(*self.state("--stage", "finished"))
+        # Then: rn says what gh said and to run it again, and the session stays at learnings.
+        said = (
+            "failed: To get started, run: gh auth login; fix it as gh says, such as with"
+            " `gh auth login`, then run `rn.py state --stage finished` again"
+        )
+        self.assertEqual((said in out, self.read(STEERING)), (True, steered(stage="learnings")))
+
+    def test_the_actions_done_are_told_with_what_comes_next(self):
+        # Given: a session whose T1 has four actions, none ticked.
+        # When: the orchestrator keeps the first two done.
+        out = self.ran(*self.state("--done", "T1.1", "--done", "T1.2"))
+        # Then: rn gives the line telling the user what is done, and what comes next.
+        self.assertEqual(
+            out["tell"],
+            "Done: T1.1, make part 1 of T1, `src/t1-1.py` as a code work; T1.2, make part 2 of T1,"
+            " `src/t1-2.py` as a code work. Next: T1.3, make part 3 of T1, `src/t1-3.py` as a code"
+            " work.",
+        )
+
+    def test_the_last_action_done_is_told_with_the_task_weighed_next(self):
+        # Given: a session whose T1 has its first three actions ticked.
+        self.session(steered(part=plan(tasks=task(ticks="xxx "))))
+        # When: the orchestrator keeps the last done.
+        out = self.ran(*self.state("--done", "T1.4"))
+        # Then: rn tells it done, and that what T1 brought is weighed next.
+        self.assertEqual(
+            out["tell"],
+            "Done: T1.4, make part 4 of T1, `src/t1-4.py` as a code work. Next: what T1 brought"
+            " is weighed against the plan.",
+        )
+
+    def test_a_move_with_no_action_done_tells_nothing(self):
+        # Given: a session.
+        # When: the orchestrator keeps a move with no action done.
+        # Then: rn gives no line to tell.
+        self.assertEqual(self.ran(*self.state()), {"kept": self.head()})
+
     def test_the_stage_moves_to_finished_from_learnings_and_ends_the_session(self):
         # Given: a session at the learnings stage, no task left.
         self.session(steered(part=plan(tasks=""), stage="learnings"))

@@ -220,6 +220,27 @@ class CcsTest(RepoTest):
         # pylint: enable=duplicate-code
         self.assertEqual(self.ccs(), want)
 
+    def test_ccs_tells_what_turn_makes_on_a_line_after_the_call(self):
+        for work, words in (
+            ("t1.2", "T1.2, make part 2 of T1, `src/t1-2.py` as a code work"),
+            ("plan", "the plan"),
+            ("checklist-code", "your checklist for code"),
+        ):
+            with self.subTest(work=work):
+                # Given: a session.
+                # When: the orchestrator has the work's CCS written.
+                code, out = self.rn("ccs", work, *options(NEEDED))
+                # Then: rn prints the call, then the line telling the user what turn makes.
+                lines = out.splitlines()
+                tell = (
+                    f"turn makes {words}, and an AI that did not make it uses it in your place"
+                    " before it comes back; say stop to stop it."
+                )
+                self.assertEqual(
+                    (code, json.loads(lines[0])["ccs"].endswith("-ccs.json"), lines[1:]),
+                    (0, True, [tell]),
+                )
+
     def test_ccs_keeps_the_call_before_turn_is_handed_it(self):
         # Given: a session.
         # When: the orchestrator has the CCS of the plan written.

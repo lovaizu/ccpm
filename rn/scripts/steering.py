@@ -77,9 +77,12 @@ TEST_FORM = "`  Test: `<the command>``"
 # numbered, and runs on in lines indented under it, in one of two forms: the orchestrator's, with
 # the user, or turn's, making one work of a kind at a path, which turn's call is made on.
 ACTION = re.compile(r"  - \[(?P<tick>[ x])\] (?P<number>[0-9]+)\. \S.*")
-BY_THE_ORCHESTRATOR = re.compile(r"  - \[[ x]\] [0-9]+\. \S.*\. The orchestrator, with the user\.")
+BY_THE_ORCHESTRATOR = re.compile(
+    r"  - \[[ x]\] [0-9]+\. (?P<what>\S.*)\. The orchestrator, with the user\."
+)
 BY_TURN = re.compile(
-    r"  - \[[ x]\] [0-9]+\. \S.*, `(?P<path>[^`]+)` as an? (?P<kind>[a-z0-9-]+) work\. turn\."
+    r"  - \[[ x]\] [0-9]+\. (?P<what>\S.*, `(?P<path>[^`]+)` as an? (?P<kind>[a-z0-9-]+) work)"
+    r"\. turn\."
 )
 ACTION_FORMS = (
     "in one of the forms of rn's plan checklist's F-1, `  - [ ] {0}. <what is found out or"
@@ -166,11 +169,13 @@ def items_of(
 
 
 class Action(NamedTuple):
-    """An action of a task, in one of its forms: its number, whether it is ticked, and the path and
-    the kind of the work turn makes in it, None for each where it is the orchestrator's."""
+    """An action of a task, in one of its forms: its number, whether it is ticked, what is done in
+    it, and the path and the kind of the work turn makes in it, None for each where it is the
+    orchestrator's."""
 
     number: str
     ticked: bool
+    what: str
     path: str | None
     kind: str | None
 
@@ -240,11 +245,13 @@ def action_in(text: str) -> Action | None:
     """The action the text of its lines is, None where it is in neither form."""
     head = ACTION.fullmatch(text)
     turns = BY_TURN.fullmatch(text)
-    if head is None or not (turns or BY_THE_ORCHESTRATOR.fullmatch(text)):
+    done = turns or BY_THE_ORCHESTRATOR.fullmatch(text)
+    if head is None or done is None:
         return None
     return Action(
         head["number"],
         is_ticked(head),
+        done["what"],
         turns["path"] if turns else None,
         turns["kind"] if turns else None,
     )
@@ -477,6 +484,35 @@ def held_form(text: str) -> None:
 def opened(points: list[str]) -> list[str]:
     """The lines under Open for the points open: each an item, or `None.` where none is."""
     return [f"- {point}" for point in points] or [NOTHING_OPEN]
+
+
+def told_done(plan: list[str], done: list[str]) -> str:
+    """The line telling the user what the actions done are and what comes next: the action after
+    the last of them, or, where it was its task's last, the task weighed; "" where none is done."""
+    if not done:
+        return ""
+    actions = {
+        f"{task.id}.{action.number}": (task.id, action)
+        for task in tasks_of(plan)
+        for _, _, action in task.actions
+        if action is not None
+    }
+    task_id, last = actions[done[-1]]
+    after = [
+        a for key, (t, a) in actions.items() if t == task_id and int(a.number) > int(last.number)
+    ]
+    following = (
+        f"{task_id}.{after[0].number}, {lowered(after[0].what)}"
+        if after
+        else f"what {task_id} brought is weighed against the plan"
+    )
+    said = "; ".join(f"{one}, {lowered(actions[one][1].what)}" for one in done)
+    return f"Done: {said}. Next: {following}."
+
+
+def lowered(text: str) -> str:
+    """The text with its first letter in lower case, as it goes on a sentence."""
+    return text[:1].lower() + text[1:]
 
 
 def tick(line: str, on: bool) -> str:

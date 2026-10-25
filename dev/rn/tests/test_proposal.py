@@ -409,6 +409,15 @@ class AnswerTest(RepoTest):
             "plan: approved",
         ]
 
+    def test_the_points_open_stay_open_beside_those_added(self):
+        # Given: a session waiting at the plan sign-off, with a point open.
+        self.session(steered(signoff="plan", opened="- Which login?"))
+        self.typed("/rn:gm the page")
+        # When: the orchestrator keeps the user's feedback, adding it as a point open.
+        self.ran("answer", "feedback", "--next", "n", "--open", "The page.", "--message", "m")
+        # Then: the point open before stays, the feedback after it.
+        self.assertIn("## Open\n\n- Which login?\n- The page.\n", self.read(STEERING))
+
     def test_an_approval_moves_the_stage_and_ends_the_signoff(self):
         for signoff, stage in (
             ("plan", "design"),
