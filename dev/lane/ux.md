@@ -4,8 +4,8 @@ lane lets a plugin's subagents notice when they drift from the steps the buildin
 them the right way, with lanes. Build and change every part of lane so that the building AI gets
 what this UX says, and judge each change by its key result.
 
-A lane is laid on one step of a subagent, one line of its Steps. It is a sentence of that step with
-a hook that notices when the subagent drifts from it and tells it the sentence again.
+A lane is laid on one step of a subagent, one numbered item of its Steps. It is a sentence of that
+step with a hook that notices when the subagent drifts from it and tells it the sentence again.
 
 ## Users and goals
 

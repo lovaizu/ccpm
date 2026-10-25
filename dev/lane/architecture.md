@@ -4,15 +4,15 @@ lane is built on [how a plugin works](../architecture.md), and is itself a plugi
 `lane:up`, the orchestrator the building AI starts, settles with that AI each point its plugin's
 files leave open, and has the layer, a script, write the lanes the building AI approves; the guard,
 lane's code put in that plugin, notices a subagent's drift from its lanes and tells it the step
-again. The building AI, the goal and the key result are in [lane's UX](ux.md).
+again. A lane is a sentence of a step together with the hook that notices a drift from it. The
+building AI, the goal and the key result are in [lane's UX](ux.md).
 
 lane holds the [principles every plugin holds](../architecture.md#principles), named below
-Principle 1 to 8, and its own:
+Principle 1 to 8, and its own, named below lane's Principle 1 and 2:
 
-1. The AI is made to notice its drift from a step and is told the step again, so it finds its way
-   back itself.
-2. A lane is a sentence of a step together with the hook that notices a drift from it.
-3. Each lane is general and reusable: it holds one kind of check, the same in every plugin it is
+1. A drift is answered by telling the AI its step again, and the AI finds its way back to it
+   itself.
+2. Each lane is general and reusable: it holds one kind of check, the same in every plugin it is
    laid in, and takes what differs from plugin to plugin from what its hook gives it.
 
 ## User stories
@@ -33,16 +33,17 @@ Principle 1 to 8, and its own:
 
 ```mermaid
 flowchart TB
-  caller["building AI"]
-  up["lane:up"]
-  layer["layer"]
-  plugin["building AI's plugin"]
-  guard["guard"]
-  sub["subagent"]
+  caller["building AI<br/>#lt;AI#gt;"]
+  up["lane:up<br/>#lt;subagent#gt;"]
+  layer["layer<br/>#lt;script#gt;"]
+  plugin["building AI's plugin<br/>#lt;files#gt;"]
+  guard["guard<br/>#lt;hook#gt;"]
+  sub["subagent<br/>#lt;AI#gt;"]
   caller <-->|starts with the plugin, answers, approves / sends the points, the proposal, what was written| up
-  up -->|reads the skills, agents and hooks of| plugin
-  up -->|has the proposal printed, and written once approved, by| layer
-  layer -->|writes the steps, the hooks and lane's code into| plugin
+  up -->|reads the skills and agents of| plugin
+  up -->|has the lanes laid before told, the proposal printed, and written once approved, by| layer
+  layer -->|reads the hooks of, writes the steps, the hooks and lane's code into| plugin
+  guard -->|reads the steps and the hooks of| plugin
   guard -.->|notices a drift, tells the sentence again| sub
 ```
 
@@ -50,11 +51,10 @@ flowchart TB
   and approves the proposal itself, and no person takes part; its answer is the caller's own action
   that an approval counts from
   ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
-- The arrows run in this order: `lane:up` reads the plugin, sends the building AI every point open
-  at once, and any an answer opens, until none is left open, then the proposal, and only once the
-  building AI approves it does the layer write it.
+- The arrows run in the order of the UX's [Laying lanes](ux.md#laying-lanes), the layer writing the
+  proposal only once the building AI approves it.
 
-  The lanes are the caller's to decide, so nothing is written into the plugin before the approval
+  The lanes are the caller's to decide, so no lane is written into the plugin before the approval
   (Principle 2). The points go at once since an AI, unlike a person, weighs each as well in one
   reply, and each reply more is a wait.
 - Run where an older copy of lane's code is, the layer first brings the copy and its hooks to the
@@ -96,14 +96,22 @@ flowchart TB
 
 ```
 lane/                          the plugin, installed by Claude Code
+├── .claude-plugin/plugin.json lane's manifest, holding its version <JSON>
 ├── agents/up.md               lane:up, the orchestrator <agent>
-├── scripts/lay.py             the layer <Python 3>
+├── scripts/                   the layer <Python 3>
+│   ├── lay.py                 what lane:up runs: print, write and up
+│   ├── proposal.py            the proposal read and checked
+│   ├── steps.py               each step as written and as printed
+│   ├── entries.py             the entries of the plugin's hooks.json
+│   └── placed.py              lane's code placed in the plugin, with its version
 ├── hooks/
-│   ├── hooks.json             the lanes on lane:up, laid by the layer
+│   ├── hooks.json             the lanes on lane:up, laid by the layer <JSON>
 │   └── lane/                  lane's code, the guard, put in each plugin <Python 3>
 │       ├── pretooluse.py      the event script for lanes on a tool call
 │       ├── subagentstop.py    the event script for lanes on how the subagent ends
-│       ├── hook.py            what the event scripts run on: the event read, each check run
+│       ├── guard.py           the lanes a hook's command lays, run on the event
+│       ├── hook.py            what the guard runs on: the event read, each check run
+│       ├── hooks_file.py      a hook's command, written and read, and hooks.json read
 │       ├── call.py            a tool call read as one action
 │       ├── shell.py           what a shell command reads and writes
 │       ├── forms.py           the forms in_form holds an output to
@@ -112,9 +120,11 @@ lane/                          the plugin, installed by Claude Code
 │       ├── step.py            a subagent's step, read from its file
 │       ├── record.py          what the subagent did before, from its record
 │       ├── started.py         what the subagent started from, for a thing given for each run
+│       ├── lanes/__init__.py  the lanes, and each lane's sentence made from its wording
 │       └── lanes/<lane>.py    one check per lane of the lanes, with its wording
-├── docs/lanes.md              each lane, its action and what its hook notices
-└── README.md                  what lane gives, its example and installation
+├── docs/lanes.md              each lane, its action and what its hook notices <Markdown>
+├── README.md                  what lane gives, its example and installation <Markdown>
+└── CHANGELOG.md               what changed for its users in each version <Markdown>
 
 ${CLAUDE_PLUGIN_DATA}/
 └── <plugin>.json              the proposal <JSON>, kept by lane:up until the layer writes it
@@ -126,7 +136,7 @@ ${CLAUDE_PLUGIN_DATA}/
     └── lane/                  lane's code
 ```
 
-- lane runs on Claude Code, python3 3.9 or later, git and jq; the layer checks the plugin with
+- lane runs on Claude Code and python3 3.9 or later; the layer checks the plugin with
   `claude plugin validate`.
 - The building AI starts `lane:up` as a subagent with the plugin's folder in its prompt, from the
   main conversation or from a subagent; `lane:up` gives the points as its reply and ends its turn,
@@ -135,7 +145,7 @@ ${CLAUDE_PLUGIN_DATA}/
 
   The Agent tool gives a subagent no name to be messaged by, and a subagent does not know its own
   ID, so it is reached by the ID its reply comes with, from the main conversation and from a
-  subagent alike, as tried on Claude Code 2.1.306.
+  subagent alike.
 - The proposal is kept in lane's data folder, which Claude Code keeps for the plugin's own files
   across its updates (plugins-reference, Environment variables).
 - lane's code goes into `<plugin>/hooks/lane/`: in a plugin of the ccpm marketplace a relative link
@@ -149,12 +159,9 @@ ${CLAUDE_PLUGIN_DATA}/
   command gives the guard the subagent and, for each lane, its step, the lane and what it takes; the
   guard acts only where the event's `agent_type` is that subagent.
 
-  Claude Code reads no hooks from a plugin subagent's own file, and a tool event's matcher filters
-  by tool, not by agent.
-- A subagent's record is the JSONL file Claude Code writes at
-  `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`, the place the hooks
-  reference gives as `agent_transcript_path`; its shape is not documented, so the guard's tests
-  hold it as Claude Code 2.1.306 writes it.
+  A plugin's hooks are read from its `hooks/hooks.json` alone
+  ([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)),
+  and a tool event's matcher filters by tool, not by agent.
 - Each hook command first checks for Python in the shell, before the guard runs.
 
   With no Python the guard cannot read the event, and the machine may have nothing else.
@@ -167,3 +174,11 @@ ${CLAUDE_PLUGIN_DATA}/
 ## Test
 
 lane is tested as [Test](../architecture.md#test) says.
+
+- lane keeps what every plugin's tests and trials stand on: `dev/lane/testing.py`, as
+  [Code kept once](../architecture.md#code-kept-once) has it, and `dev/lane/trials/trying.py`,
+  which starts Claude Code on copies of plugins and reads the records of the agents it starts.
+- The guard's tests hold a subagent's record in the shape the version of Claude Code `record.py`
+  names writes it.
+
+  Claude Code does not document the record, so the tests are the one account of its shape.
