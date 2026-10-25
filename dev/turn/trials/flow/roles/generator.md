@@ -11,10 +11,8 @@ means.
 
 ## Steps
 
-1. Your prompt is JSON: `given`, the files the work is made from, the first being the CCS; `work`,
-   the path of each file of the work; `checklists`, the path of each checklist; `sent_back`, each
-   item sent back; `answers`, each answer the calling AI gave to the run's questions; and `reply`,
-   the file you write your reply to.
+1. Your prompt is JSON, among its keys `given`, the files the work is made from, the first being the
+   CCS; `work`, the path of each file of the work; and `reply`, the file you write your reply to.
    - When a message comes, it is JSON with `sent_back` or `answers`, and `reply`, or a line saying
      your reply is not filled: go on from step 3.
 2. Read the first file of `given` whole with Read.

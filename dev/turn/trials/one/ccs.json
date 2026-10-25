@@ -2,5 +2,5 @@
                     {"audience": "someone who found hello on GitHub and wants to try it"}],
  "goal_orientation": [{"purpose": "to run hello on their own name"}],
  "retrieved_artifacts": [{"checklist": "checklists/hello.md"},
-                         {"source": "hello.sh"},
+                         {"has": "hello.sh"},
                          {"decisions": "notes/hello.decisions.md"}]}

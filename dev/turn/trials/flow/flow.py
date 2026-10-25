@@ -1,6 +1,6 @@
 """Tries the orchestrator's flow: the real orchestrator, flow and lanes, with the three roles stood in
-for by agents of this folder that write replies set in replies/<way>.json, so the run takes the way
-named. A stand-in for the calling AI calls turn on a task of two items, B-1 answered at its part and
+for by agents of this folder that write the replies replies.py sets for the way named, so the run
+takes that way. A stand-in for the calling AI calls turn on a task of two items, B-1 answered at its part and
 B-2 in each part, in a repository made for the run:
 
 - `plain`: every item Good at the first reading, the learner with no lesson.
@@ -24,11 +24,13 @@ the task's decisions and sends it.
 
     python3 dev/turn/trials/flow/flow.py <way> <new folder>
 
-Prints the session, from whose records the trial is judged, the order the agents were started in,
-the minutes, the cost and the result. The repository and the copy of turn are removed when the run
-ends; what Claude Code printed is kept as `<new folder>.jsonl`, and the records stay in Claude
-Code's own folder of the session.
+The replies each way sets are in replies.py. Prints the session, from whose records the trial is
+judged, the order the agents were started in, the minutes, the cost and the result. The repository
+and the copy of turn are removed when the run ends, however it ends; what Claude Code printed is
+kept as `<new folder>.jsonl`, and the records stay in Claude Code's own folder of the session.
 """
+
+from __future__ import annotations
 
 import glob
 import json
@@ -39,10 +41,13 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
+import replies
 import shared
+import testing
 
 CALL = shared.call("has")
-START = f"Start the `turn:up` agent in the background with\n{json.dumps(CALL)}\n"
+START = shared.start(CALL)
+USAGE = "usage: flow.py <way> <new folder>"
 ASKS = (
     START
     + "If it returns with questions, take each question's recommended answer as the user's, write"
@@ -69,45 +74,46 @@ STEPS = {
 REPLIES = dict({w: w for w in STEPS}, asked="plain", stopped="plain")
 ROLES = ("turn:generator", "turn:first-user", "turn:learner")
 
+if len(sys.argv) != 3 or sys.argv[1] not in STEPS:
+    sys.exit(f"{USAGE}, the way one of {', '.join(STEPS)}")
 way, place = sys.argv[1], os.path.abspath(sys.argv[2])
-if way not in STEPS:
-    sys.exit(f"flow.py: {way} is not a way; give one of {', '.join(STEPS)}")
-shared.task(place, CALL, "" if way == "asked" else None)
 plugin = shared.turn(place)
-for agent in glob.glob(os.path.join(HERE, "roles", "*.md")):
-    shutil.copyfile(agent, os.path.join(plugin, "agents", os.path.basename(agent)))
-# The stand-in roles keep no steps of the roles, so the roles' lanes are left out; the
-# orchestrator's are the ones tried.
-hooks_file = os.path.join(plugin, "hooks", "hooks.json")
-with open(hooks_file, encoding="utf-8") as f:
-    hooks = json.load(f)
-for event, entries in hooks["hooks"].items():
-    hooks["hooks"][event] = [
-        e for e in entries if not any(f" {r} " in h["command"] for r in ROLES for h in e["hooks"])
-    ]
-with open(hooks_file, "w", encoding="utf-8") as f:
-    json.dump(hooks, f, indent=2)
-os.makedirs(os.path.join(plugin, "stand"))
-shutil.copyfile(os.path.join(HERE, "stand.py"), os.path.join(plugin, "stand", "stand.py"))
-shutil.copyfile(
-    os.path.join(HERE, "replies", f"{REPLIES[way]}.json"),
-    os.path.join(plugin, "stand", "replies.json"),
-)
-start = time.time()
-end = shared.claude(STEPS[way], [plugin], cwd=place, wait=60, record=place + ".jsonl")
-session = end["session_id"]
-print(end.get("result"))
-print("session:", session, "cost:", end.get("total_cost_usd"))
-print("minutes:", round((time.time() - start) / 60, 1))
-# Each agent's record by when it began, its first entry's time.
-for begun, path in sorted(
-    (next((e["timestamp"] for e in shared.record.read(p) or [] if "timestamp" in e), ""), p)
-    for p in shared.agents(session)
-):
-    print(begun[11:19], shared.record.agent_type(path), path)
-path = os.path.join(place, CALL["result"])
-if os.path.exists(path):
-    with open(path, encoding="utf-8") as f:
-        print(f"--- {CALL['result']}\n{f.read()}")
-shutil.rmtree(place)
-shutil.rmtree(plugin)
+with shared.removed(place, plugin):
+    shared.task(place, CALL, "" if way == "asked" else None)
+    for agent in glob.glob(os.path.join(HERE, "roles", "*.md")):
+        shutil.copyfile(agent, os.path.join(plugin, "agents", os.path.basename(agent)))
+    # The stand-in roles keep no steps of the roles, so the roles' lanes are left out, each entry
+    # read as lane's guard reads it; the orchestrator's are the ones tried.
+    (hooks_file,) = testing.lane_code(plugin, "hooks_file")
+    hooks = hooks_file.read(plugin)
+    for event in hooks_file.EVENTS:
+        hooks["hooks"][event] = [
+            e
+            for e in hooks["hooks"][event]
+            if not any(
+                hooks_file.parsed(hooks_file.words(h["command"], event), event)[0] in ROLES
+                for h in e["hooks"]
+            )
+        ]
+    with open(os.path.join(plugin, "hooks", "hooks.json"), "w", encoding="utf-8") as f:
+        json.dump(hooks, f, indent=2)
+    os.makedirs(os.path.join(plugin, "stand"))
+    shutil.copyfile(os.path.join(HERE, "stand.py"), os.path.join(plugin, "stand", "stand.py"))
+    with open(os.path.join(plugin, "stand", "replies.json"), "w", encoding="utf-8") as f:
+        json.dump(replies.WAYS[REPLIES[way]], f, indent=2, ensure_ascii=False)
+    start = time.time()
+    end = shared.claude(STEPS[way], [plugin], cwd=place, wait=60, record=place + ".jsonl")
+    session = end["session_id"]
+    print(end.get("result"))
+    print("session:", session, "cost:", end.get("total_cost_usd"))
+    print("minutes:", round((time.time() - start) / 60, 1))
+    # Each agent's record by when it began, its first entry's time.
+    for begun, path in sorted(
+        (next((e["timestamp"] for e in shared.record.read(p) or [] if "timestamp" in e), ""), p)
+        for p in shared.agents(session)
+    ):
+        print(begun[11:19], shared.record.agent_type(path), path)
+    path = os.path.join(place, CALL["result"])
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            print(f"--- {CALL['result']}\n{f.read()}")

@@ -1,27 +1,30 @@
-"""Judges KR1.1 for the acceptance trials: for each work folder trial.py kept, a
-Claude Code run of its own, all at once and on one prompt, an AI that took no part in any of the
-runs, judges by one bar each item of the task's checklists, whether the receiver the CCS names gets
-from that work what the item asks, with what it read and ran for it. Writes each folder's judgment
-to `<folder>.judged.json` beside it, and prints each folder's count and its session; one run for
-all the folders judged them in a few calls, and passed a link to a file that is not there.
+"""Judges the work each acceptance trial gave back by one bar, a measure beside KR1.1, which is the
+calling AI's own check of each Good: for each work folder trial.py kept, an AI that took no part in
+any of the runs judges each item of the task's checklists afresh, whether the receiver the CCS
+names gets from that work what the item asks, with what it read and ran for it, on one prompt and
+each folder in a Claude Code run of its own, all at once, so no folder's reading cuts another's
+short. Writes each folder's judgment to `<folder>.judged.json` beside it, and prints each folder's
+count and its session.
 
     python3 dev/turn/trials/judge.py <work folder> [<work folder> ...]
 """
 
+from __future__ import annotations
+
 import json
 import os
-import shutil
 import sys
 import tempfile
 import threading
 
 import shared
 
+KIND = shared.call("has")["kind"]
 PROMPT = """You judge work that was made for a task, in the folder {folder}.
 
 The folder holds the task at `.tasks/ccs.json`, a CCS: the work is what it names as
-`deliverable`, the receiver its `audience`, what they use the work for its `purpose`, the
-checklists its `checklist`, and what the receiver has with the work its `source`; its other
+`{work}`, the receiver its `{receiver}`, what they use the work for its `{use}`, the
+checklists its `{checklist}`, and what the receiver has with the work its `{has}`; its other
 entries, such as the decisions, are what the work was made from. Read the CCS, its decisions, each
 checklist and the whole work, each file whole with `cat -n`. Each item of a checklist is a heading
 such as `### B-1: <title>`, with a `Scope` line saying where it is answered.
@@ -40,6 +43,7 @@ checklist. Then reply `Written.`"""
 
 
 def judged(folder: str) -> str:
+    """Where the judgment of the folder is written, beside it."""
     return folder.rstrip("/") + ".judged.json"
 
 
@@ -47,8 +51,9 @@ def judge(folder: str, ends: dict) -> None:
     """Runs the judge on the folder, in a folder of its own, so it starts from none of the runs'
     folders."""
     place = tempfile.mkdtemp()
-    ends[folder] = shared.claude(PROMPT.format(folder=folder, out=judged(folder)), [], cwd=place)
-    shutil.rmtree(place)
+    with shared.removed(place):
+        prompt = PROMPT.format(folder=folder, out=judged(folder), **KIND)
+        ends[folder] = shared.claude(prompt, [], cwd=place)
 
 
 folders = [os.path.abspath(p) for p in sys.argv[1:]]

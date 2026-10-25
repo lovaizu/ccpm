@@ -1,20 +1,25 @@
-"""What turn's trials share: the call, the flow trial's task made a repository, with its check and a
-README that falls short, the acceptance trials' arguments, their clone of the playground and the
-copy kept of what a run gave back, and the copy of turn a run uses; with Claude Code started on it
-as its user starts it, and what a record shows of a role's work, which every plugin's trials
-share."""
+"""What turn's trials share: the call and the line starting turn with it, the flow trial's task made
+a repository, with the roles trials' check of it and their README that falls short, the acceptance
+trials' arguments, their repository and the copy kept of what a run gave back, and the copy of turn
+a run uses, removed however the trial ends; with Claude Code started on it as its user starts it,
+and what a record shows of a role's work, which every plugin's trials share."""
 
+from __future__ import annotations
+
+import contextlib
 import glob
 import json
 import os
 import shutil
 import subprocess
 import sys
-import time
+from collections.abc import Generator
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-# Starting Claude Code and reading its records are what every plugin's trials share, kept in lane's;
-# how a CCS and a checklist are read is turn's own.
+# Starting Claude Code and reading a plugin's hooks are what every plugin's trials and tests share,
+# kept in lane's; how a CCS, a checklist and Claude Code's records are read is what turn's scripts
+# read them by.
+sys.path.insert(0, os.path.join(ROOT, "dev", "lane"))
 sys.path.insert(0, os.path.join(ROOT, "dev", "lane", "trials"))
 sys.path.insert(0, os.path.join(ROOT, "turn", "scripts"))
 
@@ -22,7 +27,8 @@ import record
 from call import entries, items  # noqa: F401
 from trying import agents, claude, show  # noqa: F401
 
-# The orchestrator's check of the flow trial's task: each item's Good found in the decisions.
+# The orchestrator's check of the flow trial's task, as the roles trials set it: each item's Good
+# found in the decisions.
 CHECK = {
     "items": [
         {"checklist": "checklist.md", "item": "B-1", "can": "notes/decisions.md:2 names MIT."},
@@ -34,7 +40,8 @@ CHECK = {
     ],
     "questions": [],
 }
-# A README for the flow trial's task that names no license, so the first user stops at B-1.
+# A README for the flow trial's task that names no license, which the roles trials set in place of
+# the generator's work, so the first user stops at B-1.
 UNLICENSED = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
 
 
@@ -53,7 +60,12 @@ def call(has: str) -> dict:
     }
 
 
-def task(place: str, given: dict, decisions: "str | None" = None) -> None:
+def start(given: dict) -> str:
+    """The line a step's text starts turn with, as turn's README gives it, on the call."""
+    return f"Start the `turn:up` agent in the background with\n{json.dumps(given)}\n"
+
+
+def task(place: str, given: dict, decisions: str | None = None) -> None:
     """Makes the flow trial's task a repository at place, its CCS where the call names it, and its
     decisions, when given, replaced with decisions."""
     shutil.copytree(os.path.join(os.path.dirname(__file__), "flow", "task"), place)
@@ -62,6 +74,11 @@ def task(place: str, given: dict, decisions: "str | None" = None) -> None:
             f.write(decisions)
     os.makedirs(os.path.join(place, ".tasks"))
     shutil.move(os.path.join(place, "ccs.json"), os.path.join(place, given["ccs"]))
+    committed(place)
+
+
+def committed(place: str) -> None:
+    """Makes place a repository holding what is in it, committed."""
     # A machine with no git identity of its own still commits the task.
     who = ["-c", "user.name=trial", "-c", "user.email=trial@example.invalid"]
     for args in (["init", "-q"], ["add", "-A"], [*who, "commit", "-q", "-m", "task"]):
@@ -89,15 +106,12 @@ def ccs(task: str) -> dict:
         return json.load(f)
 
 
-def playground(task: str, place: str, trial: str) -> None:
-    """Clones lovaizu/playground to place, on a branch of its own named for the trial and pushed
-    nowhere, the playground's own README gone, so the work is made from nothing; with what the task
-    folder holds but its CCS and the trial's results, and each checklist the CCS names that the
-    folder does not hold taken from rn's, by its name, so the trial reads rn's as they now are."""
-    subprocess.run(["gh", "repo", "clone", "lovaizu/playground", place, "--", "-q"], check=True)
-    branch = f"turn-{trial}-{int(time.time())}"
-    subprocess.run(["git", "-C", place, "switch", "-q", "-c", branch], check=True)
-    os.remove(os.path.join(place, "README.md"))
+def repository(task: str, place: str, given: dict) -> None:
+    """Makes a repository at place with what the task folder holds but its CCS and the trial's
+    results, the CCS where the call names it, and each checklist the CCS names that the folder does
+    not hold taken from rn's, by its name, so the trial reads rn's as they now are; it holds no
+    README, so the work is made from nothing."""
+    os.makedirs(place)
     for name in os.listdir(task):
         if name in ("ccs.json", "results.json"):
             continue
@@ -115,6 +129,9 @@ def playground(task: str, place: str, trial: str) -> None:
             )
         os.makedirs(os.path.dirname(os.path.join(place, checklist)), exist_ok=True)
         shutil.copyfile(found[0], os.path.join(place, checklist))
+    os.makedirs(os.path.join(place, os.path.dirname(given["ccs"])), exist_ok=True)
+    shutil.copyfile(os.path.join(task, "ccs.json"), os.path.join(place, given["ccs"]))
+    committed(place)
 
 
 def folder(place: str) -> str:
@@ -137,9 +154,7 @@ def keep(task: str, place: str, result: str) -> None:
     `.tasks/ccs.json`, where turn's call names it, whatever form of it the run was given; the result
     and what the run kept beside it are left out, as the judge reads the whole work alone."""
     name = os.path.basename(result)
-    shutil.copytree(
-        place, kept(place), ignore=shutil.ignore_patterns(".git", ".turn", name, name + ".*")
-    )
+    shutil.copytree(place, kept(place), ignore=shutil.ignore_patterns(".git", name, name + ".*"))
     os.makedirs(os.path.join(kept(place), ".tasks"), exist_ok=True)
     shutil.copyfile(os.path.join(task, "ccs.json"), os.path.join(kept(place), ".tasks", "ccs.json"))
 
@@ -161,6 +176,36 @@ def use(plugin: str) -> None:
     sys.path.insert(0, scripts)
     for name in os.listdir(scripts):
         sys.modules.pop(os.path.splitext(name)[0], None)
+
+
+@contextlib.contextmanager
+def removed(*paths: str) -> Generator[None, None, None]:
+    """Removes each path once the trial ends, however it ends, a failed run of Claude Code
+    included."""
+    try:
+        yield
+    finally:
+        for path in paths:
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+            elif os.path.exists(path):
+                os.remove(path)
+
+
+def begun(plugin: str, place: str, given: dict) -> None:
+    """Starts a run of the copy of turn at plugin on the call in place, its check given as the roles
+    trials set it, as the orchestrator would."""
+    script = os.path.join(plugin, "scripts", "turn.py")
+    check = json.dumps(CHECK)
+    for args, text in ((["start", json.dumps(given)], ""), (["next", given["result"]], check)):
+        subprocess.run(
+            [sys.executable, script, *args],
+            input=text,
+            cwd=place,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
 
 
 def turn(place: str) -> str:

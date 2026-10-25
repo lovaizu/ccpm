@@ -11,9 +11,7 @@ means.
 
 ## Steps
 
-1. Your prompt is JSON: `given`, what the receiver has with the work; `work`, the path of each file
-   of the work; `checklists`, the path of each checklist; `receiver` and `use`, who the receiver is
-   and what they use the work for; `parts`, each part of the work as its lines; and `reply`, the
+1. Your prompt is JSON, among its keys `work`, the path of each file of the work, and `reply`, the
    file you write your reply to.
    - When a message comes, it is JSON with `remade`, `parts` and `reply`, or a line saying your
      reply is not filled: go on from step 2.

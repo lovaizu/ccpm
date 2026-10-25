@@ -8,14 +8,14 @@ its reply is in its form.
 
     python3 dev/turn/trials/roles/roles.py <new folder>
 
-The repository and the copy of turn are removed when the run ends; the records stay in Claude
-Code's own folder of each session.
+The repository and the copy of turn are removed when the run ends, however it ends; the records
+stay in Claude Code's own folder of each session.
 """
+
+from __future__ import annotations
 
 import json
 import os
-import shutil
-import subprocess
 import sys
 import time
 
@@ -25,11 +25,11 @@ import shared
 
 CALL = shared.call("has")
 
+if len(sys.argv) != 2:
+    sys.exit("usage: roles.py <new folder>")
 place = os.path.abspath(sys.argv[1])
-shared.task(place, CALL)
 plugin = shared.turn(place)
 shared.use(plugin)
-os.chdir(place)
 
 # The copy of turn's scripts, on the path only once it is made.
 import forms
@@ -38,19 +38,9 @@ import run
 import state
 
 
-def turn(*args: str, given: str = "") -> str:
-    done = subprocess.run(
-        ["python3", os.path.join(plugin, "scripts", "turn.py"), *args],
-        input=given,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    return done.stdout
-
-
 def role(agent: str, prompt: dict) -> str:
-    """Starts the role with the prompt, as the orchestrator would, and gives its agent ID."""
+    """Starts the role with the prompt, as the orchestrator would, prints what it did and whether
+    its reply is in its form, and gives its agent ID."""
     ask = f"""Start the `{agent}` agent with the JSON on the line below as its whole prompt, exactly
 as it is, and wait for its reply. Then reply with its reply as it is.
 {json.dumps(prompt, ensure_ascii=False)}"""
@@ -74,16 +64,16 @@ as it is, and wait for its reply. Then reply with its reply as it is.
     return os.path.basename(found[0])[len("agent-") : -len(".jsonl")] if found else ""
 
 
-turn("start", json.dumps(CALL))
-turn("next", CALL["result"], given=json.dumps(shared.CHECK))
-kept = state.going(CALL["result"])
-ids = [role(prompts.GENERATOR, kept["next"]["prompt"])]
-with open("README.md", "w", encoding="utf-8") as f:
-    f.write(shared.UNLICENSED)
-ids.append(role(prompts.FIRST_USER, prompts.reader(kept)))
-kept["agent_ids"] = [i for i in ids if i]
-run.learn(kept, [forms.named(i) for i in kept["items"]])
-role(prompts.LEARNER, kept["next"]["prompt"])
-os.chdir(shared.ROOT)
-shutil.rmtree(place)
-shutil.rmtree(plugin)
+with shared.removed(place, plugin):
+    shared.task(place, CALL)
+    os.chdir(place)
+    shared.begun(plugin, place, CALL)
+    kept = state.going(CALL["result"])
+    ids = [role(prompts.GENERATOR, kept["next"]["prompt"])]
+    with open("README.md", "w", encoding="utf-8") as f:
+        f.write(shared.UNLICENSED)
+    ids.append(role(prompts.FIRST_USER, prompts.reader(kept)))
+    kept["agent_ids"] = [i for i in ids if i]
+    run.learn(kept, [forms.named(i) for i in kept["items"]])
+    role(prompts.LEARNER, kept["next"]["prompt"])
+    os.chdir(shared.ROOT)

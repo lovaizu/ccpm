@@ -9,13 +9,15 @@ import sys
 here = os.path.dirname(os.path.abspath(__file__))
 role = sys.argv[1]
 count = os.path.join(here, f"{role}.count")
-n = 0
-if os.path.exists(count):
-    with open(count) as f:
+try:
+    with open(count, encoding="utf-8") as f:
         n = int(f.read())
-with open(count, "w") as f:
+except FileNotFoundError:
+    # The role's first call.
+    n = 0
+with open(count, "w", encoding="utf-8") as f:
     f.write(str(n + 1))
-with open(os.path.join(here, "replies.json")) as f:
+with open(os.path.join(here, "replies.json"), encoding="utf-8") as f:
     replies = json.load(f)[role]
 given = replies[min(n, len(replies) - 1)]
 # The generator writes the work as well; every other role only replies.
