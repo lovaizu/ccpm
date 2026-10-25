@@ -524,9 +524,8 @@ def tick(line: str, on: bool) -> str:
 
 
 def ticked(plan: list[str], done: list[str]) -> list[str]:
-    """The plan's lines with each action done ticked, and each task of them whose actions are then
-    all ticked gone, as the steering holds only what is left; stops where the steering holds no
-    such action."""
+    """The plan's lines with each action done ticked; stops where the steering holds no such
+    action."""
     lines = list(plan)
     actions = {
         f"{task.id}.{action.number}": n
@@ -541,12 +540,13 @@ def ticked(plan: list[str], done: list[str]) -> list[str]:
                 " of a task and an action it holds, such as T1.2"
             )
         lines[actions[one] - 1] = tick(lines[actions[one] - 1], True)
-    return pruned(lines, {one.partition(".")[0] for one in done})
+    return lines
 
 
 def pruned(plan: list[str], ids: set[str]) -> list[str]:
     """The plan's lines without each task of the IDs whose actions are all ticked, its lines and the
-    blank ones after it, and without the tasks' heading where no task is left."""
+    blank ones after it, and without the tasks' heading where no task is left, as the steering holds
+    only what is left."""
     items = task_items(plan)
     gone = [i for i in items if i.id in ids and all_ticked(task_of(i))]
     out = {n for i in gone for n, _ in i.lines}

@@ -181,6 +181,20 @@ def proposed(signoff: str, folder: str) -> list[str]:
     ]
 
 
+def text(signoff: str, pr: str, then: Shows | None, now: Shows) -> str:
+    """The proposal's text at the sign-off: its name, where the work is, with the pull request,
+    what it shows and what changed since the proposal shown before, none for the first, and how to
+    answer."""
+    return "\n".join(
+        [
+            f"{signoff.capitalize()} sign-off",
+            f"{WHERE[signoff]}: {pr}",
+            *compared(then, now),
+            ANSWER,
+        ]
+    )
+
+
 def ready(signoff: str, folder: str, steered: steering.Steering) -> None:
     """Returns when the session has what the sign-off shows: at the plan's, the goal, a criterion
     and no task left; at the deliverable's, the finished work returned; stops otherwise. The

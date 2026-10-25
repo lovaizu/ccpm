@@ -4,6 +4,7 @@ the works rn has turn make, the stage moved at a stage's end, and the learnings 
 
 from __future__ import annotations
 
+import datetime
 import functools
 import json
 import os
@@ -355,3 +356,50 @@ def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dic
             " again"
         )
     return {**keys, steering.STAGE: stage}
+
+
+def put_part(
+    folder: str, steered: steering.Steering, number: str | None
+) -> tuple[str | None, steering.Steering, list[str]]:
+    """The work of the call of the number, with the steering and the session's learnings once its
+    part is put back, the plan's into the steering and the learnings' after those kept, none of the
+    learnings for the plan's; the steering as it is, no work and none, where no number is given.
+    Stops where the part cannot be taken, or a task of the plan's part is numbered as one done."""
+    if number is None:
+        return None, steered, []
+    work, part = part_of(folder, number)
+    if work == steering.PLAN:  # pragma: no mutate
+        numbered_on(folder, steered.plan, part, number)
+        return work, steered._replace(plan=steering.put_plan(steered.plan, part)), []
+    return work, steered, put_learnings(learnings_of(folder), part)
+
+
+def started(slug: str, today: datetime.date, steered: steering.Steering, message: str) -> str:
+    """The session started on a branch of its own named by the slug, made from the remote's default
+    branch as it is now, its folder named by the day and the slug, and the steering kept in it with
+    the message; gives the folder. Stops, leaving the checked-out branch as it is, where the
+    steering is out of its form, the folder is on the default branch already, or the branch is
+    there; and where git fails."""
+    repo.git(["fetch", "-q", "origin"], repo.AS_GIT_SAYS)
+    branch = repo.default_branch()
+    folder = os.path.join(RECORD, f"{today:%Y%m%d}-{slug}")
+    if repo.git(["ls-tree", "--name-only", branch, "--", folder], repo.AS_GIT_SAYS):
+        raise stop.Stop(f"rn: {folder} is on {branch} already; give another slug")
+    steering.held_form(steering.render(steered))
+    repo.git(["checkout", "-q", "--no-track", "-b", slug, branch], "give another slug")
+    keep(folder, steered, message)
+    return folder
+
+
+def opened_pr(folder: str, slug: str, steered: steering.Steering, title: str) -> str:
+    """The draft pull request of the session's branch opened into the default branch, with the
+    title and a body linking the steering, and its URL kept as the steering's pr; gives it. Stops
+    where gh or git fails, saying to run `rn.py start` again."""
+    again = "run `rn.py start` again with the same arguments on this branch"
+    repository = repo.gh(["repo", "view", "--json", "url", "--jq", ".url"], again)
+    link = f"[{STEERING}]({repository}/blob/{slug}/{steering_path(folder)})"
+    into = repo.default_branch().partition("/")[2]
+    asked = ["pr", "create", "--draft", "--base", into, "--head", slug, "--title", title]
+    pr = repo.gh([*asked, "--body", link], again)
+    keep(folder, steered._replace(keys={**steered.keys, steering.PR: pr}), f"pr: {pr}")
+    return pr

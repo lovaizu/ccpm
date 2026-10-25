@@ -107,11 +107,6 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
                 f" {steered.keys[steering.PR]}; go on with it with /rn:up"
             )
     else:
-        repo.git(["fetch", "-q", "origin"], repo.AS_GIT_SAYS)
-        branch = repo.default_branch()
-        folder = os.path.join(session.RECORD, f"{today:%Y%m%d}-{slug}")
-        if repo.git(["ls-tree", "--name-only", branch, "--", folder], repo.AS_GIT_SAYS):
-            raise stop.Stop(f"rn: {folder} is on {branch} already; give another slug")
         keys = {
             steering.RN: version(root),
             steering.PR: steering.NONE,
@@ -120,30 +115,8 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
             **languages,
         }
         steered = steering.Steering(keys, [f"# {title}"], STARTED, [steering.NOTHING_OPEN])
-        steering.held_form(steering.render(steered))
-        repo.git(["checkout", "-q", "--no-track", "-b", slug, branch], "give another slug")
-        session.keep(folder, steered, message)
-    again = "run `rn.py start` again with the same arguments on this branch"
-    repository = repo.gh(["repo", "view", "--json", "url", "--jq", ".url"], again)
-    link = f"[{session.STEERING}]({repository}/blob/{slug}/{session.steering_path(folder)})"
-    into = repo.default_branch().partition("/")[2]
-    pr = repo.gh(
-        [
-            "pr",
-            "create",
-            "--draft",
-            "--base",
-            into,
-            "--head",
-            slug,
-            "--title",
-            title,
-            "--body",
-            link,
-        ],
-        again,
-    )
-    session.keep(folder, steered._replace(keys={**steered.keys, steering.PR: pr}), f"pr: {pr}")
+        folder = session.started(slug, today, steered, message)
+    pr = session.opened_pr(folder, slug, steered, title)
     return {"session": folder, "branch": slug, "pr": pr}
 
 
@@ -165,16 +138,9 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         next_step = STAGED[args.stage]
     else:
         next_step = steered.next
-    work = None
-    learnt: list[str] = []
-    if args.put is not None:
-        work, part = session.part_of(folder, args.put)
-        if work == steering.PLAN:  # pragma: no mutate
-            session.numbered_on(folder, steered.plan, part, args.put)
-            steered = steered._replace(plan=steering.put_plan(steered.plan, part))
-        else:
-            learnt = session.put_learnings(session.learnings_of(folder), part)
-    plan = steering.ticked(steered.plan, args.done)
+    work, steered, learnt = session.put_part(folder, steered, args.put)
+    done = {one.partition(".")[0] for one in args.done}
+    plan = steering.pruned(steering.ticked(steered.plan, args.done), done)
     tell = steering.told_done(steered.plan, args.done)
     keys = (
         steered.keys
@@ -373,14 +339,7 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
     before = proposals[:-1] if waiting == signoff else proposals
     now = proposal.shown_at("HEAD", signoff, folder)
     then = proposal.shown_at(before[-1], signoff, folder) if before else None
-    shown_text = "\n".join(
-        [
-            f"{signoff.capitalize()} sign-off",
-            f"{proposal.WHERE[signoff]}: {steered.keys[steering.PR]}",
-            *proposal.compared(then, now),
-            proposal.ANSWER,
-        ]
-    )
+    shown_text = proposal.text(signoff, steered.keys[steering.PR], then, now)
     if waiting == steering.NONE:
         waits = WAITING.format(signoff)
         session.keep(
