@@ -147,9 +147,11 @@ class TestStartWith(unittest.TestCase):
     def test_the_script_run_first_from_any_folder_is_no_drift(self, folder, interpreter, words):
         # Given: a subagent that has made no call, and the script taken run from any folder,
         # quoted as a shell quotes it, by python3, by sh or by its path, with any words after it;
-        # by its path, not a word the shell reads as an assignment, as a folder `A=` makes it
-        script = shlex.quote(os.path.join(folder, "scripts", "turn.py"))
-        assume(interpreter or not shell.ASSIGNMENT.fullmatch(script))
+        # by its path, not a path like an assignment, as a folder `A=` makes it, which lane reads
+        # as one, quoted or not, as no step names such a script
+        path = os.path.join(folder, "scripts", "turn.py")
+        script = shlex.quote(path)
+        assume(interpreter or not shell.ASSIGNMENT.fullmatch(path))
         command = f"{interpreter}{script} {said(words)}"
         made = helpers.acted("Bash", {"command": command})
         # When: start_with reads it as the subagent's first call
