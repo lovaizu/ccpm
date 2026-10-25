@@ -650,6 +650,12 @@
   },
   {
    "fact": "2026-10-25, the user decided: what the calling AI does with turn's result is not turn's to say, so turn's README example drops 'When it returns, check each Good against its lines.'; rn's orchestrator does check the work turn returns (rn up step 4 stays), and dev/rn/architecture.md:151-153 'it judges none of turn's lines' is rewritten to agree"
+  },
+  {
+   "fact": "2026-10-25: done by hand: dev/changed.sh from the links (2d558df), cr-filter-pragma in mutate.sh, check.sh says when pylint is missing; lane's documents and prompt made true to the code (7ba1176); the membership idiom made == in lane, turn, rn (4068e9e), leaving 39 lane survivors; prompt.md B-2 looks for a role of two jobs (27d1d97). Baseline before any change: check.sh all 100%, properties pass, mutate 0 survivors (lane 2351, rn 1214, turn 1197 jobs, 7m29s); turn readme acceptance r10-s12: 5 items the calling AI judged unmet in 6 runs"
+  },
+  {
+   "fact": "2026-10-25, the user approved: rn/skills/up/SKILL.md split by stage, SKILL.md keeping the Role and the steps every stage uses (resume, hearing, turn call, task, sign-off, feedback), plan.md, design.md, build.md, learnings.md read when Next names that stage, as prompt.md B-4 and the skill authoring best practice say"
   }
  ],
  "semantic_gist": [
@@ -716,7 +722,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T31: lane, turn and rn brought to what they should be, from the three audits"
+   "task": "T31: lane, turn and rn brought to what the whole audit (.rn/20261013-writ-rebuild/audits/*.md, 534 findings) says they should be, keeping every line's intent"
   }
  ],
  "relational_map": [
@@ -754,7 +760,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "merge the seven audit reports into .rn/20261013-writ-rebuild/audits/, each finding checked at its source by hand; draw the whole refactor (one place for each piece of knowledge, the four decisions in); bring the points that are the user's one at a time; build with the checklists open; check.sh, properties.sh, mutate.sh, move and flow trials, and turn's readme acceptance set beside r10-s12 (5 unmet in 6 runs) so nothing gets worse"
+   "next": "after /clear: read steering.md, this state and the audits; a subagent (general-purpose, background) is building lane from /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/4a0ea0ef-dce4-4e14-943e-f0341e0a4a05/scratchpad/build-brief.md, first killing the 39 survivors (/tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/4a0ea0ef-dce4-4e14-943e-f0341e0a4a05/scratchpad/mutate-lane.txt), then lane-product.md and lane-tests.md with the rulings given it; check its commits with `git log`, read its report when it notifies, or, if the notice was lost after /clear, check pgrep/git log and the working tree; check every commit by hand against the audit, the checklists and each removed line's intent (git log -L), then run check.sh lane turn rn, properties, mutate lane at 0 and push (pre-push fails until the survivors are 0). Then, one at a time with a subagent per plugin from the same brief: turn (D1 Good check gone; README example line 'When it returns, check each Good against its lines.' dropped; turn-product.md, turn-tests.md; then the first user's misses investigated), then rn (work per output, the plan CCS minimal, up kept checking turn's result with architecture :151-153 rewritten, the stage split, rn-product.md, rn-tests.md), then shared.md (dev, rules: ask the user before changing .claude/rules or dev/architecture.md's shape). After all: move and flow trials and turn's readme acceptance set beside the baseline; final check by .claude/rules/final-check.md; report to the user"
   }
  ],
  "uncertainty_signal": [
@@ -781,6 +787,12 @@
   },
   {
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
+  },
+  {
+   "open": "to ask the user after the stage split: rn up step 11 has the orchestrator write an issue's text itself, against its Role 'you write no line of what turn makes'; recommended: the issue text a work turn makes"
+  },
+  {
+   "open": "turn's 5 items the calling AI judged unmet (whole-work repetition, contradiction, an unfollowable pointer): investigate from the records whether the first user's miss lies in the checklist, its steps or a hook, after the Good check goes, as the user asked"
   }
  ],
  "retrieved_artifacts": [
