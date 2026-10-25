@@ -20,6 +20,22 @@ Findings, B-1 first.
 """
 
 
+# An input of four keyed items, one in each marker and each ID set off as the AI writes it, among
+# lines that are no keyed item, and the four IDs.
+KEYED = """1. R33 (lane's as_printed) holds.
+2) KR1.1: defects.
+* `T18` brought forward.
++ [G-1] the builder.
+- B2B sales, no ID followed by a mark.
+- Flow: no number.
+ - X-1 not at the line's start.
+Prose naming Y-1.
+- z-1 in small letters.
+-Q-1 with no blank after the marker.
+"""
+IDS = ("R33", "KR1.1", "T18", "G-1")
+
+
 class EveryItemTest(testing.FolderTest):
     def setUp(self) -> None:
         super().setUp()
@@ -83,38 +99,36 @@ class TestWritten(EveryItemTest):
         # Then: it is a drift, as the input holds its keys whether answered or not
         self.assertTrue(self.drifts("B-1 fixed", writing("review.md")))
 
-    def test_a_written_file_not_there_answers_nothing(self):
+    def test_a_written_file_gone_is_read_as_answering_nothing(self):
         # Given: an answer file written in this run and then gone
         # When: the subagent ends with a reply answering B-1
-        # Then: it is a drift
+        # Then: it is a drift, the file read as holding no answer rather than stopping the check
         self.assertTrue(self.drifts("B-1 fixed", writing("answers.md")))
 
 
-class TestItems(EveryItemTest):
+class TestKeys(EveryItemTest):
+    def setUp(self) -> None:
+        super().setUp()
+        # An input of top-level items in each marker, each ID set off as the AI writes it, and
+        # lines that are no keyed item.
+        self.write(os.path.join(self.base, "review.md"), KEYED)
+
     def test_the_items_a_check_can_tell_are_keyed_by_their_ids(self):
-        # Given: an input of top-level items in each marker, each ID set off as the AI writes it,
-        # and lines that are no keyed item
-        text = """1. R33 (lane's as_printed) holds.
-2) KR1.1: defects.
-* `T18` brought forward.
-+ [G-1] the builder.
-- B2B sales, no ID followed by a mark.
-- Flow: no number.
- - X-1 not at the line's start.
-Prose naming Y-1.
-- z-1 in small letters.
--Q-1 with no blank after the marker.
-"""
-        self.write(os.path.join(self.base, "review.md"), text)
+        # Given: the input of four keyed items among lines that are none
         # When: the subagent ends with a reply naming the four IDs
         # Then: it is no drift, the other lines being no items to answer
-        self.assertFalse(self.drifts("R33 KR1.1 T18 G-1"))
-        # And: leaving any of the four out is a drift
-        for left in ("R33", "KR1.1", "T18", "G-1"):
-            with self.subTest(left=left):
-                reply = " ".join(k for k in ("R33", "KR1.1", "T18", "G-1") if k != left)
-                self.assertTrue(self.drifts(reply))
+        self.assertFalse(self.drifts(" ".join(IDS)))
 
+    def test_each_keyed_item_left_out_drifts(self):
+        for left in IDS:
+            with self.subTest(left=left):
+                # Given: the input of four keyed items among lines that are none
+                # When: the subagent ends with a reply naming all but one of the IDs
+                # Then: it is a drift
+                self.assertTrue(self.drifts(" ".join(k for k in IDS if k != left)))
+
+
+class TestItems(EveryItemTest):
     def test_an_input_of_no_keyed_items_or_none_tells_nothing(self):
         for takes in (["plain.md"], ["missing.md"], ["$IN"]):
             with self.subTest(takes=takes):

@@ -5,6 +5,7 @@ subagent let end; with the one in use, the guard runs."""
 import os
 import subprocess
 import sys
+import unittest
 
 import helpers
 from helpers import hooks_file
@@ -94,3 +95,7 @@ class TestPythonCheck(helpers.PluginTest):
             self.run_hook(os.path.dirname(sys.executable)),
             (2, "notes: " + helpers.SENTENCE + "\n"),
         )
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -13,8 +13,6 @@ class TestProposal(LayTest):
     def test_a_proposal_not_as_lane_up_writes_it_stops_naming_what_is_wrong(self):
         plugin = self.proposal()
         wrong = {
-            "no proposal file": (None, "no file"),
-            "no JSON": ("{", "no JSON"),
             "no object": ([], "plugin"),
             "a plugin of no folder": (dict(plugin, plugin=os.path.join(self.base, "x")), "plugin"),
             "no subagents": (dict(plugin, subagents=[]), "subagents"),
@@ -63,12 +61,7 @@ class TestProposal(LayTest):
         for what, (proposal, named) in wrong.items():
             with self.subTest(what=what):
                 # Given: a proposal in another shape
-                if proposal is None:
-                    os.remove(self.proposal_file)
-                elif isinstance(proposal, str):
-                    self.write(self.proposal_file, proposal)
-                else:
-                    self.propose(proposal)
+                self.propose(proposal)
                 # When: it is printed or written
                 for action in ("print", "write"):
                     code, said = self.lay(action, self.proposal_file)
@@ -78,6 +71,21 @@ class TestProposal(LayTest):
                     self.assertIn(named, said)
                     self.assertIn("write the proposal again", said)
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
+
+    def test_a_proposal_not_there_or_holding_no_json_stops_saying_so(self):
+        for what, made, named in (
+            ("none", lambda: os.remove(self.proposal_file), "no file"),
+            ("no JSON", lambda: self.write(self.proposal_file, "{"), "no JSON"),
+        ):
+            with self.subTest(what=what):
+                # Given: no proposal file, or one holding no JSON
+                made()
+                # When: it is printed
+                code, said = self.lay("print", self.proposal_file)
+                # Then: it exits 1 saying so and to write it again
+                self.assertEqual(code, 1)
+                self.assertIn(named, said)
+                self.assertIn("write the proposal again", said)
 
     def test_a_plugin_whose_name_cannot_head_a_hook_stops(self):
         for text in ('{"name": ""}', '{"name": "no\\"tes"}', "{}", "[]"):

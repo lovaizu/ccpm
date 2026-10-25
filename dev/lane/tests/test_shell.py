@@ -3,6 +3,7 @@ as the shell takes it."""
 
 import os
 import unittest
+from unittest import mock
 
 from helpers import HERE, shell
 
@@ -118,8 +119,8 @@ class TestCd(unittest.TestCase):
         # Given: a command going with a bare cd, then naming a file
         # When: the files it reads are read
         # Then: the file is taken from the home folder
-        home = os.path.realpath(os.path.expanduser("~"))
-        self.assertEqual(files_read("cd && cat a"), [os.path.join(home, "a")])
+        with mock.patch.dict(os.environ, {"HOME": "/home/u"}):
+            self.assertEqual(files_read("cd && cat a"), ["/home/u/a"])
 
     def test_cd_back_leaves_the_folder_unsettled(self):
         # Given: a command going back with `cd -`, then naming a file
@@ -419,3 +420,7 @@ class TestGit(unittest.TestCase):
             with self.subTest(folder=folder):
                 self.assertEqual(shell.inside(shell.path(HERE, folder), HERE), found)
         self.assertFalse(shell.inside(None, HERE))
+
+
+if __name__ == "__main__":
+    unittest.main()

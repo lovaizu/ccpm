@@ -187,8 +187,11 @@ class TestHeld(unittest.TestCase):
                 # When: an object without both, or with both and two keys more, is held to it
                 # Then: the first key missing is given, and keys more pass where none are barred
                 self.assertEqual(held(value, given), told)
-        # Given: a schema barring every key but two
-        barred = {**given, "additionalProperties": False}
+
+    def test_of_several_keys_barred_the_first_is_given(self):
+        # Given: a schema requiring two keys and barring every other
+        properties: dict = {"a": {}, "b": {}}
+        barred = {"properties": properties, "required": ["a", "b"], "additionalProperties": False}
         # When: an object with two keys more is held to it
         # Then: the first of them is given
         self.assertEqual(

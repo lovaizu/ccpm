@@ -150,15 +150,20 @@ class TestLetThrough(ReadWholeTest):
                 # Then: it is no drift
                 self.assertFalse(self.drifts(tool, given))
 
-    def test_an_input_not_there_or_empty_is_no_drift(self):
-        # Given: the input read in part, then removed; and the input empty, read
+    def test_an_input_not_there_is_no_drift(self):
+        # Given: the input read in part, then removed
         self.record([("Read", {"file_path": "in.md"}, shown(1, 50))])
         os.remove(self.input)
         # When: the subagent writes
         # Then: it is no drift, as nothing is there to read
         self.assertFalse(self.drifts())
+
+    def test_an_input_empty_is_no_drift(self):
+        # Given: the input empty, read
         self.write(self.input, "")
         self.record([("Read", {"file_path": "in.md"}, "Warning: the file exists but is empty.")])
+        # When: the subagent writes
+        # Then: it is no drift, as nothing is left to read
         self.assertFalse(self.drifts())
 
     def test_an_input_the_words_do_not_settle_is_no_drift(self):

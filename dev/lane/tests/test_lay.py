@@ -2,6 +2,8 @@
 an older copy of lane's code brought up with the hooks lane:up wrote before; any other arguments
 answered with how to run it."""
 
+from __future__ import annotations
+
 import contextlib
 import io
 import os
@@ -167,22 +169,38 @@ class TestUp(LayTest):
                 )
                 self.assertEqual(self.read(path), "0.10.0\n")
 
+    def code_gone(self) -> None:
+        """Takes out of the plugin's hooks/lane/ whatever is there, a copy or a link."""
+        if os.path.islink(self.code):
+            os.remove(self.code)
+        shutil.rmtree(self.code, ignore_errors=True)
+
+    def code_as(self, version: str | None) -> None:
+        """Puts in the plugin's hooks/lane/, in place of what is there, a copy holding the version
+        as its VERSION, or nothing where it is None."""
+        self.code_gone()
+        if version is not None:
+            self.write(os.path.join(self.code, "VERSION"), version)
+
+    def code_linked(self) -> None:
+        """Puts a link to lane's code in the plugin's hooks/lane/, in place of what is there."""
+        self.code_gone()
+        os.symlink(helpers.CODE, self.code)
+
     def test_code_not_an_older_copy_is_left_as_it_is(self):
-        for what in ("the same version", "a newer version", "a link", "no code", "lane's own"):
+        for what, made, own in (
+            ("the same version", lambda: self.code_as("0.10.0\n"), "x"),
+            ("a newer version", lambda: self.code_as("0.11.0\n"), "x"),
+            ("a link", self.code_linked, "x"),
+            ("no code", lambda: self.code_as(None), "x"),
+            ("lane's own", lambda: None, self.code),
+        ):
             with self.subTest(what=what):
                 # Given: a copy of lane's version or a newer, a link, no code, or lane itself
                 self.hooks_of(self.OLDER)
-                own = mock.patch.object(placed, "CODE", self.code if what == "lane's own" else "x")
-                if os.path.islink(self.code):
-                    os.remove(self.code)
-                shutil.rmtree(self.code, ignore_errors=True)
-                version = {"the same version": "0.10.0\n", "a newer version": "0.11.0\n"}
-                if what == "a link":
-                    os.symlink(helpers.CODE, self.code)
-                elif what != "no code":
-                    self.write(os.path.join(self.code, "VERSION"), version.get(what, "0.1.0\n"))
+                made()
                 # When: it is brought up
-                with own:
+                with mock.patch.object(placed, "CODE", own):
                     code, said = self.up()
                 # Then: nothing is brought up, and it says so, and the lane laid before
                 self.assertEqual(code, 0)

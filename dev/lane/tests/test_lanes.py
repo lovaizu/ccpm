@@ -14,7 +14,7 @@ from helpers import lanes
 ROW = re.compile(r"^\| (?P<action>[a-z ]+) \| (?P<lane>[a-z_]+) \| (?P<sentence>.+?) \| .+ \|$")
 
 
-def readme_rows() -> dict:
+def lanes_rows() -> dict:
     """Each lane of the lanes' table, by its name: its action and its sentence."""
     with open(os.path.join(helpers.LANE, "docs", "lanes.md"), encoding="utf-8") as f:
         found = [ROW.match(line) for line in f.read().splitlines()]
@@ -22,9 +22,9 @@ def readme_rows() -> dict:
 
 
 class TestWording(unittest.TestCase):
-    def test_each_lane_has_the_action_and_wording_of_its_row_in_the_readme(self):
+    def test_each_lane_has_the_action_and_wording_of_its_row_in_docs_lanes_md(self):
         # Given: the lanes' table
-        rows = readme_rows()
+        rows = lanes_rows()
         for name, lane in lanes.LANES.items():
             with self.subTest(lane=name):
                 # When: the lane in lanes/ is read

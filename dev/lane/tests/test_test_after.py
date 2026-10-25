@@ -13,13 +13,13 @@ TAKES = ["app.py", "python3 -m unittest"]
 CHANGE, PASS = writing("app.py"), bash("python3 -m unittest discover -s tests")
 
 
-class TestAfter(testing.FolderTest):
+class TestAfterTest(testing.FolderTest):
     def drifts(self, *calls, takes=TAKES):
         """Whether the subagent drifts, about to end having made the calls in the test's folder."""
         return test_after.drifts(helpers.ended(self.base, list(calls)), takes, helpers.NO_PLUGIN)
 
 
-class TestChanged(TestAfter):
+class TestChanged(TestAfterTest):
     def test_a_change_with_a_passing_run_after_it_is_no_drift(self):
         # Given: the output changed, then the test run with no error
         # When: the subagent is about to end
@@ -110,7 +110,7 @@ class TestChanged(TestAfter):
         self.assertTrue(self.drifts(failing("sed -i s/a/b/ app.py && python3 -m unittest")))
 
 
-class TestUnchanged(TestAfter):
+class TestUnchanged(TestAfterTest):
     def test_no_change_to_the_output_is_no_drift(self):
         for calls in ([], [writing("other.py")], [bash("cat app.py")]):
             with self.subTest(calls=calls):

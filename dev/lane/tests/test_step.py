@@ -61,7 +61,7 @@ class TestAgentFile(helpers.PluginTest):
         self.assertIsNone(step.agent_file(self.plugin, "x"))
 
 
-class TestSpan(helpers.PluginTest):
+class TestSpan(unittest.TestCase):
     def lines(self, text: str = helpers.STEPS) -> list[str]:
         """The lines of the subagent's file of the text."""
         return text.splitlines()
@@ -157,3 +157,7 @@ class TestExpanded(unittest.TestCase):
         # When: it is given as Claude Code gives the subagent its step
         # Then: the plugin's folder stands in each place, as the subagent reads it
         self.assertEqual(step.expanded(said, "/p"), "Read `/p/a.md` and `/p/b.md`.")
+
+
+if __name__ == "__main__":
+    unittest.main()

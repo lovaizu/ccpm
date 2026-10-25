@@ -157,3 +157,7 @@ class TestStartWith(unittest.TestCase):
         self.assertFalse(
             start_with.drifts(made._replace(before=[]), ["scripts/turn.py"], NO_PLUGIN)
         )
+
+
+if __name__ == "__main__":
+    unittest.main()
