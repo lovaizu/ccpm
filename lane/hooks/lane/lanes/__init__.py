@@ -8,7 +8,10 @@ root)`, is given the call, or how the subagent ends, what the lane takes and the
 where a lane finds a file of the plugin it takes, such as in_form's form; it gives whether the call
 drifts, or, where it says more than the sentence, the point it drifts by, "" for none. A lane's
 module may name, beside its action, wording and check, the events it is held on, how many of the
-things it takes its sentence shows, and the most things it takes."""
+things it takes its sentence shows, and the most things it takes; and give `beside(laid, root)`,
+what it takes beside what its step names, from every lane laid in the subagent, as the guard calls it,
+and `refused(takes, root)`, why it cannot be laid taking these, "" where it can, as the layer calls
+it."""
 
 from __future__ import annotations
 

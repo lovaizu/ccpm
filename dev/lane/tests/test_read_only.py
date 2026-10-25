@@ -89,8 +89,10 @@ class TestLetThrough(ReadOnlyTest):
 
 
 class TestLaid(GuardTest):
-    """read_only and in_form laid on changelog-writer, as the plugin's hooks.json lays them, beside
-    another subagent's in_form naming a form of its own, run by the guard as Claude Code runs it."""
+    """read_only and in_form laid on changelog-writer, with write_only and hands_off beside them on
+    the step of in_form, run by the guard as Claude Code runs it."""
+
+    WORDS = (helpers.AGENT, *LAID, "3:write_only:entry.json", "3:hands_off:git push")
 
     def setUp(self) -> None:
         super().setUp()
@@ -99,27 +101,15 @@ class TestLaid(GuardTest):
         ).replace(
             "`CHANGELOG.md`.\n",
             "`CHANGELOG.md`. Write `entry.json` in the form of"
-            " `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`. Write only `entry.json`.\n",
+            " `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`. Write only `entry.json`."
+            " Do not run `git push`.\n",
         )
         self.write(self.agent_file, steps)
-        own = ["notes:changelog-writer", *LAID]
-        other = ["notes:other", LAID[1].replace("entry.json", "other.json")]
-        commands = [
-            'exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" '
-            + " ".join(f"'{w}'" for w in words)
-            for words in (other, own)
-        ]
-        entries = [
-            {"matcher": ".*", "hooks": [{"type": "command", "command": c}]} for c in commands
-        ]
-        self.write_json(
-            os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": {"PreToolUse": entries}}
-        )
 
     def reading(self, name):
         """The guard on changelog-writer reading the file of the plugin with Read."""
         event = self.called("Read", {"file_path": os.path.join(self.plugin, name)})
-        return self.guard(json.dumps(event), (helpers.AGENT, *LAID))
+        return self.guard(json.dumps(event), self.WORDS)
 
     def test_a_read_of_the_form_its_in_form_names_is_let_through(self):
         # Given: read_only and in_form laid on changelog-writer
@@ -129,27 +119,23 @@ class TestLaid(GuardTest):
 
     def test_a_read_of_another_file_of_the_plugin_is_stopped(self):
         # Given: read_only and in_form laid on changelog-writer
-        # When: it reads a file of the plugin no lane of its names
-        # Then: the call is stopped with read_only's sentence
-        self.assertEqual(self.reading("agents/writer.md"), (2, "notes: Read only `in.md`.\n"))
-
-    def test_a_read_of_a_form_another_subagents_in_form_names_is_stopped(self):
-        # Given: read_only and in_form laid on changelog-writer, and another subagent's in_form
-        # naming forms/other.json
-        # When: changelog-writer reads forms/other.json
-        # Then: the call is stopped with read_only's sentence
-        self.assertEqual(self.reading("forms/other.json"), (2, "notes: Read only `in.md`.\n"))
+        # When: it reads a file of the plugin no lane of its names, such as a form another
+        # subagent's in_form names
+        for name in ("agents/writer.md", "forms/other.json"):
+            with self.subTest(name=name):
+                # Then: the call is stopped with read_only's sentence
+                expected = (2, "notes: Read only `in.md`.\n")
+                self.assertEqual(self.reading(name), expected)
 
     def test_the_form_is_let_through_to_read_only_alone(self):
         # Given: read_only and in_form laid on changelog-writer, and write_only on the step of
         # in_form
         form = os.path.join(self.plugin, "forms", "entry.json")
         event = self.called("Write", {"file_path": form, "content": "{}"})
-        words = (helpers.AGENT, *LAID, "3:write_only:entry.json")
         # When: it writes the form its in_form names
         # Then: the call is stopped with write_only's sentence, as the form is no output of it
         expected = (2, "notes: Write only `entry.json`.\n")
-        self.assertEqual(self.guard(json.dumps(event), words), expected)
+        self.assertEqual(self.guard(json.dumps(event), self.WORDS), expected)
 
 
 if __name__ == "__main__":

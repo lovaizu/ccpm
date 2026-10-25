@@ -42,7 +42,6 @@ sys.path.insert(0, CODE)
 import hooks_file
 import lanes
 import step
-from lanes import in_form
 
 USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>\n       lay.py up <plugin>"
 # The marketplace whose plugins take lane's code through a link to lane beside them, as installing
@@ -150,7 +149,8 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
 
 def lane_check(lane: Any, on: str, root: str) -> None:
     """Stops where the lane is not one lane lays, taking a text with no comma for each thing it
-    shows; or, for in_form, where its form is no form lane reads in the plugin at root."""
+    shows; or where its module refuses what it takes in the plugin at root, as in_form a form lane
+    does not read."""
     known = lane.get("lane") if isinstance(lane, dict) else None
     if known not in lanes.LANES:
         raise wrong(f"gives {known}, which is no lane, on {on}")
@@ -163,14 +163,10 @@ def lane_check(lane: Any, on: str, root: str) -> None:
         raise wrong(
             f"gives {known} on {on} takes of another count than its wording and its hook hold"
         )
-    if known == "in_form":
-        try:
-            in_form.form(root, takes[1])
-        except ValueError as why:
-            raise Stop(
-                f"lay.py: the form {takes[1]} of in_form on {on} {why}; fix the form or the"
-                " proposal and run again."
-            ) from None
+    refused = getattr(lanes.LANES[known], "refused", None)
+    why = refused(takes, root) if refused is not None else ""
+    if why:
+        raise Stop(f"lay.py: {known} on {on} {why}; fix it or the proposal and run again.")
 
 
 def sentences(step_given: dict[str, Any]) -> list[str]:

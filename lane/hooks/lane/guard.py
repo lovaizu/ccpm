@@ -18,12 +18,20 @@ from lanes import LANES, alone, sentence, start_with
 
 
 class Laid:
-    """A lane laid on a step of a subagent of the plugin at root."""
+    """A lane laid on a step of a subagent of the plugin at root, with every lane the hook's command
+    lays in the subagent, each with what it takes."""
 
-    def __init__(self, root: str, agent: str, number: int, lane: str, takes: list[str]) -> None:
+    def __init__(
+        self,
+        root: str,
+        agent: str,
+        given: tuple[int, str, list[str]],
+        laid: list[tuple[str, list[str]]],
+    ) -> None:
         self.root, self.agent = root, agent
         self.plugin, self.name = agent.split(":")
-        self.number, self.lane, self.takes = number, lane, takes
+        self.number, self.lane, self.takes = given
+        self.laid = laid
 
     def check(self, event: dict[str, Any]) -> list[str]:
         """The lane's sentence where the call drifts from it, as the subagent reads its step, with
@@ -50,8 +58,10 @@ class Laid:
         lane: Any = LANES[self.lane]
         acted = call.read(event) if end is None else end
         each = started.resolved(self.takes, run, alone(self.lane))
-        if self.lane == "read_only":
-            each = [[*inputs, *self.forms()] for inputs in each]
+        # A lane may take more beside what its step names, from the lanes laid in the subagent.
+        more = getattr(lane, "beside", None)
+        if more is not None:
+            each = [[*inputs, *more(self.laid, self.root)] for inputs in each]
         drift = next(filter(None, (lane.drifts(acted, t, self.root) for t in each)), "")
         if not drift:
             return []
@@ -64,13 +74,6 @@ class Laid:
         scripts = [s for t in hooks_file.taken(self.root, self.agent, "start_with") for s in t]
         found = started.texts(event, lambda c: start_with.runs(c, scripts))
         return {} if found is None else started.values(found)
-
-    def forms(self) -> list[str]:
-        """The form each in_form lane of the subagent names, by the plugin's folder, which read_only
-        lets it read beside its inputs: its step tells it to write in the form, and the form, a
-        file of the plugin, holds nothing of the project's work the lane keeps it to."""
-        laid_in = hooks_file.taken(self.root, self.agent, "in_form")
-        return [step.expanded(named, self.root) for _, named in laid_in]
 
 
 def main(held: str, words: list[str]) -> int:
@@ -87,5 +90,6 @@ def main(held: str, words: list[str]) -> int:
             " unchecked; run lane:up again on the plugin to write its hooks anew\n"
         )
         return hook.UNREAD
-    found = [Laid(root, agent, *g) for g in given]
+    laid = [(lane, takes) for _, lane, takes in given]
+    found = [Laid(root, agent, g, laid) for g in given]
     return hook.run(agent.split(":")[0], found, sys.stdin, sys.stderr, agent)

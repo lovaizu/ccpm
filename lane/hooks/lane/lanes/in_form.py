@@ -38,6 +38,16 @@ def form(root: str, named: str) -> forms.Form:
     return forms.read(path)
 
 
+def refused(takes: list[str], root: str) -> str:
+    """Why the lane cannot be laid taking these in the plugin at root, where its form is no form lane
+    reads there; "" where it can."""
+    try:
+        form(root, takes[1])
+    except ValueError as why:
+        return f"names the form {takes[1]}, which {why}"
+    return ""
+
+
 def drifts(call: Call, takes: list[str], root: str) -> str:
     """The point the call's write of the output taken is out of the form taken by, the output named
     from the folder the call is made in, where the guard stands, and the form from the plugin's;

@@ -783,9 +783,10 @@ class TestInForm(LayTest):
                     # Then: it exits 1 naming the form and why, and saying to fix it, nothing
                     # written
                     self.assertEqual(code, 1)
-                    self.assertIn(f"the form {form} of in_form on step 3 of changelog-writer", said)
+                    on = "in_form on step 3 of changelog-writer"
+                    self.assertIn(f"{on} names the form {form}, which", said)
                     self.assertIn(named, said)
-                    self.assertIn("fix the form or the proposal", said)
+                    self.assertIn("fix it or the proposal", said)
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
 
 
