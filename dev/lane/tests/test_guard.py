@@ -10,6 +10,7 @@ import json
 import os
 import runpy
 import sys
+import time
 import unittest
 from collections.abc import Sequence
 from unittest import mock
@@ -41,17 +42,23 @@ class GuardTest(helpers.PluginTest):
         super().setUp()
         self.lay(*self.LAID)
 
-    def lay(self, *laid: tuple) -> None:
-        """Lays the lanes on changelog-writer: each lane's sentence put after its step's numbered
-        line, and the lanes written into the plugin's hooks/lanes.json, each on its own step; and
-        `words`, the words a hook's command gives the guard, the subagent alone."""
+    def lay(self, *laid: tuple, values: str = "") -> None:
+        """Lays the lanes on changelog-writer, each its step, the lane, what it takes and, where a
+        fourth is given, the adapter of the port it reads: each lane's sentence put after its
+        step's numbered line, and the lanes written into the plugin's hooks/lanes.json, each on its
+        own step, with the values adapter where one is given; and `words`, the words a hook's
+        command gives the guard, the subagent alone."""
         text = helpers.STEPS
-        for number, lane, takes in laid:
+        for number, lane, takes, *_ in laid:
             line = next(s for s in text.splitlines() if s.startswith(f"{number}. "))
             text = text.replace(line, f"{line} {lanes.sentence(lane, takes)}", 1)
         self.write(self.agent_file, text)
-        steps = [{"step": n, "lanes": [{"lane": lane, "takes": t}]} for n, lane, t in laid]
-        subagents = [{"name": "changelog-writer", "steps": steps}]
+        steps = []
+        for n, lane, t, *adapter in laid:
+            named = {"adapter": adapter[0]} if adapter else {}
+            steps.append({"step": n, "lanes": [{"lane": lane, "takes": t, **named}]})
+        subagent = {"name": "changelog-writer", **({"adapter": values} if values else {})}
+        subagents = [{**subagent, "steps": steps}]
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": subagents})
         self.words = (helpers.AGENT,)
 
@@ -380,6 +387,120 @@ class TestRunValues(GuardTest):
         said = self.guard(stream, entry="subagentstop.py")
         # Then: it is kept going, told the sentence and the value
         self.assertEqual(said, ("told", f"notes: {ended}\n`{{work}}` is `a.md`, `b.md`."))
+
+
+# An adapter of the items port reading a checklist's items as its headings, `### <ID>: <title>`, and
+# one of the values port giving the work as the prompt names it in words, `work: <file>`.
+HEADINGS = """import json, re, sys
+given = json.load(sys.stdin)
+print(json.dumps({"items": re.findall(r"^### ([A-Z]+-[0-9]+):", given["text"], re.M)}))
+"""
+WORDS = """import json, re, sys
+given = json.load(sys.stdin)
+found = [m for t in given["texts"] for m in re.findall(r"^work: (\\S+)$", t, re.M)]
+print(json.dumps({"values": {"work": found} if found else {}}))
+"""
+
+
+class TestAdapters(GuardTest):
+    """Lanes reading a plugin's text at a port by the plugin's adapter, named in hooks/lanes.json,
+    the hook's time counted from the test's start, as from the guard's in a hook."""
+
+    LAID = ()
+
+    def setUp(self) -> None:
+        super().setUp()
+        start = mock.patch.object(helpers.ports, "START", time.monotonic())
+        start.start()
+        self.addCleanup(start.stop)
+
+    def adapter(self, name: str, text: str) -> str:
+        """Writes the adapter of the name into the plugin's hooks/adapters/; its path in the
+        plugin."""
+        path = f"hooks/adapters/{name}"
+        self.write(os.path.join(self.plugin, path), text)
+        return path
+
+    def ending(self) -> tuple:
+        """The guard as changelog-writer is about to end, having made no call."""
+        self.record([])
+        return self.guard(json.dumps(self.stopped("Done.")), entry="subagentstop.py")
+
+    def test_every_item_reads_the_items_by_the_plugins_adapter(self):
+        # Given: every_item on step 1 taking a checklist of headings, read by an adapter
+        path = self.adapter("items-headings.py", HEADINGS)
+        self.lay((1, "every_item", ["list.md"], path))
+        self.write(os.path.join(self.base, "list.md"), "### B-1: the step\n### B-2: the hook\n")
+        # When: changelog-writer is about to end with a reply naming B-1 alone
+        self.record([])
+        stream = json.dumps(self.stopped("B-1 is done."))
+        # Then: it is told the sentence, as B-2 is unanswered
+        expected = ("told", "notes: Answer every item of `list.md`.")
+        self.assertEqual(self.guard(stream, entry="subagentstop.py"), expected)
+
+    def test_the_runs_values_are_read_by_the_subagents_adapter(self):
+        # Given: write_only taking `{work}`, the values read by an adapter, the prompt naming the
+        # work in words
+        path = self.adapter("values-words.py", WORDS)
+        self.lay((3, "write_only", ["{work}"]), values=path)
+        self.record([], "Do your steps.\nwork: a.md\n")
+        # When: changelog-writer writes another file
+        event = self.called("Write", {"file_path": "c.md", "content": "x"})
+        # Then: it is told the sentence with the work the adapter gave
+        told = "notes: Write only `{work}`.\n`{work}` is `a.md`."
+        self.assertEqual(self.guard(json.dumps(event)), ("told", told))
+
+    def test_an_adapter_failing_or_answering_out_of_its_port_is_an_error(self):
+        for what, text, named in (
+            ("exits 1", "import sys\nsys.exit('broken')\n", "exited 1: broken"),
+            ("prints no JSON", "print('items')\n", "printed no JSON"),
+            ("answers out", "print('{\"items\": 1}')\n", "out of the items port at $.items:"),
+            ("is not there", None, "exited 2"),
+        ):
+            with self.subTest(what=what):
+                # Given: every_item read by an adapter that fails, or is not there
+                path = "hooks/adapters/items-broken.py"
+                if text is not None:
+                    self.adapter("items-broken.py", text)
+                elif os.path.exists(os.path.join(self.plugin, path)):
+                    os.remove(os.path.join(self.plugin, path))
+                self.lay((1, "every_item", ["list.md"], path))
+                self.write(os.path.join(self.base, "list.md"), "- B-1: x\n")
+                # When: changelog-writer is about to end
+                whom, said = self.ending()
+                # Then: it is an error naming the adapter and what it did, which the plugin's
+                # maker must fix
+                self.assertEqual(whom, "error")
+                expected = (
+                    "notes: lane cannot check every_item on step 1 of changelog-writer: the"
+                    f" adapter {path} "
+                )
+                self.assertTrue(said.startswith(expected), said)
+                self.assertIn(named, said)
+                self.assertIn("the maker of notes must fix the adapter", said)
+
+    def test_an_adapter_answering_after_the_hooks_time_is_an_error(self):
+        # Given: every_item read by an adapter that takes longer than the hook leaves it
+        path = self.adapter("items-slow.py", "import time\ntime.sleep(5)\n")
+        self.lay((1, "every_item", ["list.md"], path))
+        self.write(os.path.join(self.base, "list.md"), "- B-1: x\n")
+        # When: changelog-writer is about to end, the hook leaving the adapters a tenth of a second
+        with mock.patch.object(helpers.ports, "TIME", 0.1):
+            whom, said = self.ending()
+        # Then: it is an error saying the adapter gave no answer in time
+        self.assertEqual(whom, "error")
+        self.assertIn("gave no answer within the 0.1 seconds the hook leaves it", said)
+
+    def test_an_adapter_of_a_port_its_lane_does_not_read_is_an_error(self):
+        for given in ((1, "hands_off", ["git push"], "hooks/adapters/items-x.py"),):
+            with self.subTest(given=given):
+                # Given: hooks/lanes.json naming an adapter for a lane that reads no port
+                self.lay(given)
+                # When: changelog-writer makes a call
+                whom, said = self.guard(self.stream("git status"))
+                # Then: it is an error, saying so and to have lane:up run again
+                self.assertEqual(whom, "error")
+                self.assertIn("names an adapter for hands_off on step 1 of changelog-writer", said)
 
 
 class TestOtherAgents(GuardTest):

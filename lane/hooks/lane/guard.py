@@ -33,6 +33,7 @@ class Seen(NamedTuple):
 # Who must fix an error in what the plugin gives a lane, as the subagent replies it.
 LANE_UP = "lane:up must be run again on {plugin}, so its lanes match its steps"
 MAKER = "the maker of {plugin} must fix it"
+ADAPTER = "the maker of {plugin} must fix the adapter and run lane:up again"
 # What a lane resting on its subagent's record meets where the record is not there.
 NOT_FOUND = "its record is not found where Claude Code keeps it"
 
@@ -51,14 +52,19 @@ class Lanes:
         plugin, name = self.agent.split(":")
         try:
             given = hooks_file.laid_in(self.root, name)
+            values = hooks_file.subagent(self.root, name).get("adapter")
         except ValueError as wrong:
             fix = LANE_UP.format(plugin=plugin)
             unread = (
                 f"lane cannot check the lanes of {name}: {wrong}. Stop here and reply that {fix}."
             )
             return [hook.Said(unread, True)]
-        laid = [(lane, takes) for _, lane, takes in given]
-        on = [Laid(self.root, self.agent, g, laid) for g in given if self.held in held_on(g[1])]
+        laid = [(lane, takes) for _, lane, takes, _ in given]
+        on = [
+            Laid(self.root, self.agent, g, laid, values)
+            for g in given
+            if self.held in held_on(g[1])
+        ]
         found = called.entries(event)
         ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
         seen = Seen(found, call.ended(event, found) if ending else call.read(event, found))
@@ -66,26 +72,28 @@ class Lanes:
 
 
 class Laid:
-    """A lane laid on a step of a subagent of the plugin at root, with every lane laid in the
-    subagent, each with what it takes."""
+    """A lane laid on a step of a subagent of the plugin at root, with the adapter of the port it
+    reads, None for none, every lane laid in the subagent, each with what it takes, and the
+    subagent's adapter of the values port, None for none."""
 
     def __init__(
         self,
         root: str,
         agent: str,
-        given: tuple[int, str, list[str]],
+        given: tuple[int, str, list[str], str | None],
         laid: list[tuple[str, list[str]]],
+        values: str | None,
     ) -> None:
         self.root, self.agent = root, agent
         self.plugin, self.name = agent.split(":")
-        self.number, self.lane, self.takes = given
-        self.laid = laid
+        self.number, self.lane, self.takes, self.adapter = given
+        self.laid, self.values = laid, values
 
     def check(self, event: dict[str, Any], seen: Seen) -> list[hook.Said]:
         """The lane's sentence where what the event shows drifts from it, as the subagent reads its
         step, with the point it drifts by on the next line where its check gives one; an error where
-        what the lane is given is not as its IN says, or its step no longer says its sentence;
-        nothing otherwise."""
+        what the lane is given is not as its IN says, an adapter it reads by is not as its port
+        says, or its step no longer says its sentence; nothing otherwise."""
         # Told before as it ends, a subagent that has answered with words alone is let end, so it
         # is told and never held for good.
         acted = seen.acted
@@ -102,6 +110,19 @@ class Laid:
             return [self.error(NOT_FOUND, "")]
         if named and not self.started(seen):
             return []
+        # What an adapter does that is not as its port says is an error, as each lane meets it.
+        try:
+            return self.checked(event, seen, said, named)
+        except ports.Failed as failed:
+            return [self.error(f"the adapter {failed.args[1]} {failed.args[0]}", ADAPTER)]
+
+    def checked(
+        self, event: dict[str, Any], seen: Seen, said: str, named: list[str]
+    ) -> list[hook.Said]:
+        """The lane's sentence where what the event shows drifts from it, the run's values read and
+        held to its IN, as `check` says; stops with ports.Failed, holding what the adapter did and
+        its path, where an adapter it reads by is not as its port says."""
+        acted = seen.acted
         run = self.run_values(event["cwd"], seen.found) if named else {}
         texts = started.put(placed(self.lane, self.takes), run)
         given = {"takes": dict(zip(places(self.lane), texts))}
@@ -115,12 +136,23 @@ class Laid:
         if more is not None:
             each = [[*inputs, *more(self.laid, self.root)] for inputs in each]
         port = getattr(lane, "PORT", None)
-        read = [] if port is None else [lambda given: ports.read(port, given)]
+        read = [] if port is None else [lambda given: self.read(port, given, self.adapter)]
         drift = next(filter(None, (lane.drifts(acted, t, self.root, *read) for t in each)), "")
         if not drift:
             return []
         told = [step.expanded(said, self.root), *(started.told(n, run[n]) for n in named)]
         return [hook.Said("\n".join([*told, *([drift] if isinstance(drift, str) else [])]))]
+
+    def read(self, port: str, given: dict[str, Any], adapter: str | None) -> dict[str, Any]:
+        """What the port gives back, given its JSON, by the plugin's adapter of the path, or by
+        lane's reading where none is named; stops with ports.Failed, holding what the adapter did
+        and its path, where it is not as its port says."""
+        if adapter is None:
+            return ports.read(port, given)
+        try:
+            return ports.run(os.path.join(self.root, adapter), port, given)
+        except ports.Failed as failed:
+            raise ports.Failed(str(failed), adapter) from None
 
     def record(self, seen: Seen) -> dict[str, Any]:
         """The record the lane's check may rest on, as its IN names it, where it is found."""
@@ -157,7 +189,7 @@ class Laid:
         in it printed; none where its record is not found."""
         scripts = [s for t in hooks_file.taken(self.root, self.name, "start_with") for s in t]
         texts = started.texts(found, cwd, lambda c: call.runs(c, scripts))
-        return {} if texts is None else ports.read("values", {"texts": texts})["values"]
+        return {} if texts is None else self.read("values", {"texts": texts}, self.values)["values"]
 
 
 def main(held: str, words: list[str]) -> None:

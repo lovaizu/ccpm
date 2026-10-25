@@ -183,6 +183,6 @@ def laid(plugin: str) -> list[tuple[str, int, str, list[str]]]:
         name = json.load(f)["name"]
     found = []
     for agent in hooks_file.laid(plugin)["subagents"]:
-        for number, lane, takes in hooks_file.laid_in(plugin, agent["name"]):
+        for number, lane, takes, _ in hooks_file.laid_in(plugin, agent["name"]):
             found.append((f"{name}:{agent['name']}", number, lane, takes))
     return found

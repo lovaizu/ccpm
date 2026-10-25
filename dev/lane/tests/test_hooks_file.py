@@ -50,8 +50,30 @@ class TestLaidIn(LanesTest):
         # Then: they are its own, each its step, the lane and what it takes, the comma kept
         self.assertEqual(
             hooks_file.laid_in(self.plugin, "changelog-writer"),
-            [(1, "start_with", ["scripts/given.py"]), (3, "hands_off", ["git commit, -a", "x"])],
+            [
+                (1, "start_with", ["scripts/given.py"], None),
+                (3, "hands_off", ["git commit, -a", "x"], None),
+            ],
         )
+
+    def test_the_adapters_named_are_read(self):
+        # Given: hooks/lanes.json naming the values adapter of changelog-writer and the items
+        # adapter of its every_item
+        lane = {"lane": "every_item", "takes": ["r.md"], "adapter": "hooks/adapters/items-h.py"}
+        steps = [{"step": 3, "lanes": [lane]}]
+        agent = {
+            "name": "changelog-writer",
+            "adapter": "hooks/adapters/values-w.py",
+            "steps": steps,
+        }
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": [agent]})
+        # When: the lanes laid in it are read
+        # Then: each lane gives its adapter, and the subagent its own
+        self.assertEqual(
+            hooks_file.laid_in(self.plugin, "changelog-writer"),
+            [(3, "every_item", ["r.md"], "hooks/adapters/items-h.py")],
+        )
+        self.assertEqual(hooks_file.subagent(self.plugin, "changelog-writer"), agent)
 
     def test_lanes_json_not_as_lane_up_writes_it_stops_saying_what_is_wrong(self):
         lane = {"lane": "hands_off", "takes": ["git"]}
@@ -81,6 +103,27 @@ class TestLaidIn(LanesTest):
             ("a thing taken empty", laying({"lane": "hands_off", "takes": [""]}), "hands_off on"),
             ("takes too few", laying({"lane": "in_form", "takes": ["a.json"]}), "in_form on"),
             ("no lanes in it", laying(lane, name="other"), "lays no lanes in changelog-writer"),
+            (
+                "an adapter of a lane reading no port",
+                laying({**lane, "adapter": "hooks/adapters/items-x.py"}),
+                "names an adapter for hands_off on step 3 of changelog-writer `hooks/adapters/",
+            ),
+            (
+                "an adapter of another port",
+                laying({"lane": "every_item", "takes": ["r.md"], "adapter": "x/move-x.py"}),
+                "`x/move-x.py`, not hooks/adapters/items-<name>.py",
+            ),
+            (
+                "a values adapter of another port",
+                json.dumps(
+                    {
+                        "subagents": [
+                            {"name": "a", "adapter": "hooks/adapters/items-x.py", "steps": []}
+                        ]
+                    }
+                ),
+                "names an adapter for a `hooks/adapters/items-x.py`, not hooks/adapters/values-",
+            ),
         ):
             with self.subTest(what=what):
                 # Given: hooks/lanes.json in another shape, or laying no lanes in the subagent

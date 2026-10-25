@@ -11,13 +11,21 @@ of it; so each lane checks only what lanes.md defines it to take, and knows no p
   ID each top-level item of a Markdown list in the text begins with.
 - `move`: given `{"output": "<what the script printed>"}`, gives
   `{"move": {"tool": "...", "input": {...}}}` or `{"move": null}`: the last JSON object the output
-  holds that names a tool and an input object, the tool call itself."""
+  holds that names a tool and an input object, the tool call itself.
+
+A plugin whose text is in another form has an adapter of the port, a Python 3 script given the
+port's JSON on stdin and giving its JSON on stdout, which `run` runs in place of lane's reading,
+within the hook's time, holding what it gives to the port."""
 
 from __future__ import annotations
 
 import json
 import re
+import subprocess
+import time
 from typing import Any, Callable
+
+import schema
 
 # What reads a port for a lane, given the port's JSON, giving back the port's.
 Port = Callable[[dict[str, Any]], dict[str, Any]]
@@ -133,3 +141,43 @@ OWN: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
 def read(port: str, given: dict[str, Any]) -> dict[str, Any]:
     """What the port gives back, given its JSON, by lane's reading of it."""
     return OWN[port](given)
+
+
+# The seconds the hook leaves its adapters, of the 10 Claude Code gives it, counted from when lane's
+# code was loaded, the rest for Python to start and the subagent's record to be read.
+TIME = 8.0
+START = time.monotonic()
+
+
+class Failed(Exception):
+    """What an adapter did that is not as its port says."""
+
+
+def run(path: str, port: str, given: dict[str, Any]) -> dict[str, Any]:
+    """What the port gives back, given its JSON, by the adapter at the path, run with python3 on the
+    port's JSON within what is left of TIME; stops with Failed saying what the adapter did where it
+    exits other than 0, gives no answer in that time, prints no JSON, or answers out of the
+    port."""
+    left = max(TIME - (time.monotonic() - START), 0)
+    try:
+        done = subprocess.run(
+            ["python3", path],
+            input=json.dumps(given),
+            capture_output=True,
+            text=True,
+            timeout=left,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        raise Failed(f"gave no answer within the {TIME:g} seconds the hook leaves it") from None
+    if done.returncode:
+        last = (done.stderr.strip().splitlines() or [""])[-1]
+        raise Failed(f"exited {done.returncode}: {last}")
+    try:
+        found = json.loads(done.stdout)
+    except ValueError:
+        raise Failed(f"printed no JSON: {schema.shown(done.stdout)}") from None
+    out = schema.held(PORTS[port]["out"], found)
+    if out is not None:
+        raise Failed(f"answered out of the {port} port at {out.told()}")
+    return found

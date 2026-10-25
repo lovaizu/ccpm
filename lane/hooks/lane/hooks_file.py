@@ -23,7 +23,9 @@ import schema
 NAME = r"[A-Za-z0-9._-]+"
 AGENT = re.compile(rf"{NAME}:{NAME}")
 # The lanes laid in a plugin, as hooks/lanes.json holds them: each subagent by its name, with each
-# step its lanes are laid on, by its number, and each lane, its name and what it takes.
+# step its lanes are laid on, by its number, and each lane, its name and what it takes; a lane that
+# reads a port may name the plugin's adapter of it, and a subagent its adapter of the values port,
+# as every lane of the subagent reads them, each by its path in the plugin.
 LANE = {
     "type": "object",
     "required": ["lane", "takes"],
@@ -31,6 +33,7 @@ LANE = {
     "properties": {
         "lane": {"enum": list(lanes.LANES)},
         "takes": {"type": "array", "items": {"type": "string"}},
+        "adapter": {"type": "string"},
     },
 }
 STEP = {
@@ -43,7 +46,11 @@ SUBAGENT = {
     "type": "object",
     "required": ["name", "steps"],
     "additionalProperties": False,
-    "properties": {"name": {"type": "string"}, "steps": {"type": "array", "items": STEP}},
+    "properties": {
+        "name": {"type": "string"},
+        "adapter": {"type": "string"},
+        "steps": {"type": "array", "items": STEP},
+    },
 }
 LAID = {
     "type": "object",
@@ -158,24 +165,55 @@ def laid(root: str) -> dict[str, Any]:
     if out is not None:
         raise ValueError(f"hooks/lanes.json is out of its shape at {out.told()}")
     for agent in given["subagents"]:
+        wrong = adapter_wrong(agent.get("adapter"), "values")
+        if wrong:
+            raise ValueError(f"hooks/lanes.json names an adapter for {agent['name']} {wrong}")
         for s in agent["steps"]:
             for lane in s["lanes"]:
+                on = f"{lane['lane']} on step {s['step']} of {agent['name']}"
                 if not all(lane["takes"]) or not lanes.fits(lane["lane"], lane["takes"]):
                     raise ValueError(
-                        f"hooks/lanes.json gives {lane['lane']} on step {s['step']} of"
-                        f" {agent['name']} takes of another count than it holds, or one empty"
+                        f"hooks/lanes.json gives {on} takes of another count than it holds, or"
+                        " one empty"
                     )
+                port = getattr(lanes.LANES[lane["lane"]], "PORT", None)
+                wrong = adapter_wrong(lane.get("adapter"), port)
+                if wrong:
+                    raise ValueError(f"hooks/lanes.json names an adapter for {on} {wrong}")
     return given
 
 
-def laid_in(root: str, name: str) -> list[tuple[int, str, list[str]]]:
-    """Each lane laid in the subagent of the name, its step, the lane and what it takes, as the
-    plugin at root's hooks/lanes.json holds them; stops with ValueError, as `laid` does, or where
-    the file lays no lanes in the subagent."""
+def adapter_wrong(path: str | None, port: str | None) -> str:
+    """Why the adapter of the path, None for none named, cannot be the port's, the port a lane reads,
+    None for none; "" where none is named or it can, being `hooks/adapters/<port>-<name>.py` in the
+    plugin."""
+    if path is None:
+        return ""
+    if port is None:
+        return f"`{path}`, which reads no port"
+    if not re.fullmatch(rf"hooks/adapters/{port}-{NAME}\.py", path):
+        return f"`{path}`, not hooks/adapters/{port}-<name>.py"
+    return ""
+
+
+def subagent(root: str, name: str) -> dict[str, Any]:
+    """The lanes laid in the subagent of the name, as the plugin at root's hooks/lanes.json holds
+    them; stops with ValueError, as `laid` does, or where the file lays no lanes in the subagent."""
     found = next((a for a in laid(root)["subagents"] if a["name"] == name), None)
     if found is None:
         raise ValueError(f"hooks/lanes.json lays no lanes in {name}")
-    return [(int(s["step"]), g["lane"], g["takes"]) for s in found["steps"] for g in s["lanes"]]
+    return found
+
+
+def laid_in(root: str, name: str) -> list[tuple[int, str, list[str], str | None]]:
+    """Each lane laid in the subagent of the name, its step, the lane, what it takes and the
+    adapter it names, None for none, as `subagent` reads them."""
+    found = subagent(root, name)
+    return [
+        (int(s["step"]), g["lane"], g["takes"], g.get("adapter"))
+        for s in found["steps"]
+        for g in s["lanes"]
+    ]
 
 
 def taken(root: str, name: str, lane: str) -> list[list[str]]:
@@ -187,4 +225,4 @@ def taken(root: str, name: str, lane: str) -> list[list[str]]:
         each = laid_in(root, name)
     except ValueError:
         return []
-    return [takes for _, kind, takes in each if kind == lane]
+    return [takes for _, kind, takes, _ in each if kind == lane]
