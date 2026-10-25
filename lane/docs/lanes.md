@@ -21,7 +21,7 @@ run's `work` names, whichever they are.
 | write | in_form | Write `<output>` in the form of `<form>`. | writes it out of that form |
 | run | hands_off | Do not run `<commands>`. | runs one of them |
 | test | test_after | After changing `<output>`, pass `<test>`. | ends with a change not yet passed |
-| hand on | as_printed | Hand on `<command>` as it is. | hands on something else |
+| hand on | as_printed | Hand on `<command>` as it is. | does anything else first |
 | follow | follow_next | Take the next move `<script>` printed. | takes another move |
 | wait | wait_for | Do not go on until `<approval>`. | runs a command it holds back without it |
 | end | end_when | End only once `<output>` is made. | ends before |

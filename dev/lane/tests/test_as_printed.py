@@ -1,7 +1,7 @@
-"""as_printed: once a command the lane takes has run and printed, a hand-on, an Agent call's prompt,
-a SendMessage's message or the subagent's last reply, is a drift until one holds what it printed
-word for word, a heading line beside it allowed; held from the subagent's record, on a tool call and
-as the subagent is about to end. Every other call is not."""
+"""as_printed: once a command the lane takes has run and printed, every call, and the subagent's
+last reply, is a drift until a hand-on, an Agent call's prompt, a SendMessage's message or the last
+reply, holds what it printed word for word, a heading line beside it allowed; held from the calls
+the subagent made before, on a tool call and as the subagent is about to end."""
 
 import json
 import os
@@ -101,6 +101,20 @@ class TestDrift(AsPrintedTest):
         # When: the subagent, resumed, hands on something else
         # Then: it is a drift, as the print is due still
         self.assertTrue(self.drifts(calls, "lane:up found: x"))
+
+    def test_any_other_call_before_the_print_is_handed_on_drifts(self):
+        for tool, given in (
+            ("Bash", 'turn.py next r.json \'{"answer": "yes"}\''),
+            ("Bash", PRINT),
+            ("AskUserQuestion", "Is it so?"),
+        ):
+            with self.subTest(tool=tool, given=given):
+                # Given: the command run, having printed
+                # When: the subagent makes another call before handing the print on, such as
+                # running a command with an answer it took, the command again, or a tool of no
+                # action
+                # Then: it is a drift, as the hand-on is to come next
+                self.assertTrue(self.drifts([printed()], given, tool))
 
     def test_a_message_of_no_text_drifts(self):
         # Given: the command run, having printed
@@ -209,13 +223,14 @@ class TestLetThrough(AsPrintedTest):
         # Then: it is no drift
         self.assertFalse(self.drifts([printed()], OUTPUT, takes=takes))
 
-    def test_a_call_that_hands_nothing_on_is_no_drift(self):
+    def test_a_call_that_hands_nothing_on_with_nothing_due_is_no_drift(self):
         for tool in ("Bash", "AskUserQuestion"):
             with self.subTest(tool=tool):
-                # Given: the command run, having printed
-                # When: the subagent runs a command, or calls a tool of no action
-                # Then: it is no drift
-                self.assertFalse(self.drifts([printed()], "ls", tool))
+                # Given: the command not run, or its print handed on
+                for calls in ([helpers.bash("ls")], [printed(), send(OUTPUT)]):
+                    # When: the subagent runs a command, or calls a tool of no action
+                    # Then: it is no drift
+                    self.assertFalse(self.drifts(calls, "ls", tool))
 
     def test_with_no_record_found_any_hand_on_is_no_drift(self):
         # Given: no record of the subagent where Claude Code keeps it
@@ -275,6 +290,13 @@ class TestGuard(GuardTest):
         """What the guard does on a SendMessage of the message after the print."""
         event = self.called("SendMessage", {"to": "main", "message": message})
         return self.guard(json.dumps(event))
+
+    def test_a_command_run_before_the_print_is_handed_on_is_stopped_with_the_sentence(self):
+        # Given: changelog-writer's record of the command run, having printed
+        # When: it runs another command
+        # Then: the call is stopped, and the subagent told the sentence headed by the plugin
+        expected = (2, "notes: Hand on `lay.py print` as it is.\n")
+        self.assertEqual(self.guard(self.stream("turn.py next r.json")), expected)
 
     def test_a_hand_on_of_something_else_is_stopped_with_the_sentence(self):
         # Given: changelog-writer's record of the command run, having printed

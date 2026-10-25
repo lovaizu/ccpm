@@ -2,7 +2,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": ".*|Read|Grep|Bash|Agent|SendMessage",
+        "matcher": ".*|Read|Grep|Bash",
         "hooks": [
           {
             "type": "command",

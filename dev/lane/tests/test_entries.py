@@ -27,10 +27,10 @@ class TestWriteHooks(LayTest):
         self.propose(self.proposal(laid))
         # When: the proposal is written
         self.lay("write", self.proposal_file)
-        # Then: the hook watches the tools that hand on and Bash, and gives each lane with all it
-        # takes, the command held back among them
+        # Then: the hook watches every tool, and gives each lane with all it takes, the command
+        # held back among them
         entry = self.hooks()["hooks"]["PreToolUse"][0]
-        self.assertEqual(entry["matcher"], "Agent|SendMessage|Bash")
+        self.assertEqual(entry["matcher"], ".*|Bash")
         words = "notes:changelog-writer '3:as_printed:lay.py print' '3:wait_for:OK,lay.py write'"
         self.assertTrue(entry["hooks"][0]["command"].endswith(words))
 
@@ -147,12 +147,12 @@ class TestWriteEndHooks(LayTest):
         self.propose(self.proposal([{"lane": "as_printed", "takes": ["lay.py print"]}]))
         # When: the proposal is written
         self.lay("write", self.proposal_file)
-        # Then: each event's entry gives the lane, PreToolUse's matching the tools that hand on,
-        # SubagentStop's the subagent
+        # Then: each event's entry gives the lane, PreToolUse's matching every tool, SubagentStop's
+        # the subagent
         events = self.hooks()["hooks"]
         word = "notes:changelog-writer '3:as_printed:lay.py print'"
         for event, matcher in (
-            ("PreToolUse", "Agent|SendMessage"),
+            ("PreToolUse", ".*"),
             ("SubagentStop", "notes:changelog-writer"),
         ):
             with self.subTest(event=event):

@@ -1,32 +1,33 @@
-"""as_printed: the subagent hands on what a command its step names printed, word for word, such as
-lane:up giving the building AI the proposal `lay.py print` printed. A hand-on is an Agent call's
-prompt, a SendMessage's message or the subagent's last reply, so the lane is held both on a tool
-call and as the subagent is about to end. It is held from the calls the subagent made before and
-the replies that ended its turn: once the command has run and printed, each hand-on is a drift
-until one holds what it printed, a heading line beside it allowed."""
+"""as_printed: the subagent hands on what a command its step names printed, word for word, as the
+next thing it does, such as lane:up giving the building AI the proposal `lay.py print` printed. A
+hand-on is an Agent call's prompt, a SendMessage's message or the subagent's last reply, so the lane
+is held both on a tool call and as the subagent is about to end. It is held from the calls the
+subagent made before and the replies that ended its turn: once the command has run and printed,
+each call, and the last reply, is a drift until a hand-on holds what it printed, a heading line
+beside it allowed, as a call made first, such as one taking an answer that came meanwhile, acts
+before the print has reached whoever it is for."""
 
 from __future__ import annotations
 
 import template
-from call import HANDS, Call, End, handed, runs
+from call import Call, End, handed, runs
 from record import SILENT
 
 ACTION = "hand on"
 WORDING = "Hand on `<command>` as it is."
-TOOLS = tuple(HANDS)
+# Any call may come before the hand-on, so every tool is watched, as a matcher's pattern.
+TOOLS = (".*",)
 EVENTS = ("PreToolUse", "SubagentStop")
 
 
 def drifts(given: Call | End, takes: list[str], root: str) -> bool:
-    """Whether the call hands on, or the subagent ends with its last reply, while what a command
-    taken last printed is due, and holds none of it: a command whose last run printed and did not
-    fail, with no hand-on since holding it."""
+    """Whether the call is made, or the subagent ends with its last reply, while what a command
+    taken last printed is due, and is no hand-on holding it: a command whose last run printed and
+    did not fail, with no hand-on since holding it."""
     if isinstance(given, End):
         before, text = given.made or [], given.reply
-    elif given.action == ACTION:
-        before, text = given.before or [], handed(given)
     else:
-        return False
+        before, text = given.before or [], handed(given)
     due = [o for o in (due_output(before, t) for t in takes) if o]
     return bool(due) and not any(holds(text, o) for o in due)
 
