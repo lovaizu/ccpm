@@ -104,16 +104,6 @@ STOPPED = {
 }
 # A first user's reading of every item: the Good it found for one, and where it stopped at the other.
 FIRST_READ = [FOUND, STOPPED]
-# The orchestrator's check of a Good the first user gave: it holds, or the receiver does not get
-# what the item asks, with where, what the orchestrator did there and what was not got.
-HOLDS = {"checklist": "checklists/readme.md", "item": "F-1", "holds": True}
-UNTRUE = {
-    "checklist": "checklists/readme.md",
-    "item": "F-1",
-    "places": ["README.md:1-1"],
-    "did": "ran the command the opening gives",
-    "lacking": "the command it gives fails",
-}
 # A checklist item asked of each part of the work, added to a run's checklist where a test needs
 # one; the work's parts, as the script splits a README of a title, an opening and one section;
 # and a Good for each.
@@ -281,20 +271,10 @@ class RepoTest(testing.FolderTest):
 
     def first_read(self, *found, claim=()):
         """The round taken through the generator's claim and the first user's reading giving the
-        Goods found, the round having sent the work back as often as it may; and what the script
-        prints then."""
+        Goods found, the round sending the work back no more; and what the script prints then."""
         self.assertEqual(self.due(self.made(*claim))["input"]["subagent_type"], "turn:first-user")
-        kept = self.state()
-        kept["sent"] = run.SENDS
-        self.write_json(run.state_path(self.result), kept)
-        return self.replied({"items": self.reading(*found)})
-
-    def held(self, *checked):
-        """The orchestrator's check of the Goods shown once the line telling it is sent, by default
-        every Good holding; and what the script prints then."""
-        goods = self.next()["goods"]
-        given = list(checked) or [dict(named(g), holds=True) for g in goods]
-        return self.next({"items": given})
+        with mock.patch.object(run, "SENDS", 0):
+            return self.replied({"items": self.reading(*found)})
 
     def learnt(self, out, reply=None):
         """The learner told and started as the script printed, replying with what it found, by
@@ -317,8 +297,3 @@ class RepoTest(testing.FolderTest):
             os.path.join(folder, f"agent-{agent_id}.meta.json"), {"agentType": agent_type}
         )
         return path
-
-
-def named(item):
-    """The checklist and ID that name an item."""
-    return {"checklist": item["checklist"], "item": item["item"]}

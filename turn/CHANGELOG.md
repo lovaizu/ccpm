@@ -13,7 +13,7 @@
 - A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
 - A work already at its paths is changed from what is there, not written again from nothing — what already serves its reader stays as it is.
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
-- turn tells the main conversation, before each move of the run, its own check, decisions and return among them, what was done and what the move will do, how far and how — a run going a slow or wrong way shows while it can still be stopped, not after its time is spent.
+- turn tells the main conversation, before each move of the run, its own moves among them, what was done and what the move will do, how far and how — a run going a slow or wrong way shows while it can still be stopped, not after its time is spent.
 - A run stopped anywhere, by you or by a conversation that ended, goes on from its last move when your step calls turn again with the same call — no work already done is done again.
 
 ### Changed

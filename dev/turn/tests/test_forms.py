@@ -6,14 +6,12 @@ from helpers import (
     EACH_GOOD,
     FOUND,
     GOOD,
-    HOLDS,
     LESSON,
     PARTS,
     QUESTION,
     SECTIONED,
     STOPPED,
     TURN,
-    UNTRUE,
     WAITS,
     RepoTest,
     forms,
@@ -281,44 +279,6 @@ class TestClaim(FormTest):
         self.assertEqual(
             said, ["checklists/readme.md F-1 is left out; give every item judged here"]
         )
-
-
-class TestHeld(FormTest):
-    """The orchestrator's check of each Good the first user gave: it holds, or what the receiver
-    does not get and where."""
-
-    def test_a_good_that_holds_and_one_that_does_not_pass(self):
-        # Given: a check saying one Good holds and the other does not, with where, what it did
-        # and what the receiver does not get
-        # When: it is checked
-        # Then: it passes
-        said = self.said({"items": [HOLDS, dict(UNTRUE, item="B-1")]}, forms.HELD)
-        self.assertEqual(said, [])
-
-    def test_a_holds_that_is_not_true_stops(self):
-        # Given: a check whose "holds" is false, or words
-        # When: it is checked
-        # Then: it is told to give true, or what the receiver does not get
-        for holds in (False, "yes", 1):
-            with self.subTest(holds=holds):
-                said = self.said({"items": [dict(HOLDS, holds=holds), UNTRUE]}, forms.HELD)
-                self.assertTrue(said)
-                self.assertIn('checklists/readme.md F-1\'s "holds" is not true;', said[0])
-
-    def test_a_good_untrue_without_where_or_what_stops(self):
-        # Given: a check saying a Good does not hold, with no places, or empty words of what it
-        # did or of what is lacking
-        # When: it is checked
-        # Then: it is named with what to give
-        for item, words in (
-            ({k: v for k, v in UNTRUE.items() if k != "did"}, "must hold"),
-            (dict(UNTRUE, lacking=""), 'empty "lacking"'),
-            (dict(UNTRUE, places=[]), "names no lines"),
-        ):
-            with self.subTest(words=words):
-                said = self.said({"items": [item, dict(HOLDS, item="B-1")]}, forms.HELD)
-                self.assertEqual(len(said), 1, said)
-                self.assertIn(words, said[0])
 
 
 class TestLeft(FormTest):

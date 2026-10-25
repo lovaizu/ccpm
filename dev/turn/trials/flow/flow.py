@@ -1,28 +1,23 @@
 """Tries the orchestrator's flow: the real orchestrator, flow and lanes, with the three roles stood in
 for by agents of this folder that write replies set in replies/<way>.json, so the run takes the way
 named. A stand-in for the calling AI calls turn on a task of two items, B-1 answered at its part and
-B-2 in each part, in a repository made for the run; where a set README must pass or fail the
-orchestrator's own check of a Good, it is written so that a careful check decides it that way:
+B-2 in each part, in a repository made for the run:
 
-- `plain`: every item Good at the first reading, each Good held at the check, the learner with no
-  lesson.
+- `plain`: every item Good at the first reading, the learner with no lesson.
 - `given`: the first user stopping at B-1 in a README that names no license, sent back to the
-  generator by message, which adds it; the first user, sent the work made again, finds every Good,
-  each held.
-- `sent`: the first user stopping at B-1 four times, sent back three times, the fourth stop going on
-  without Good past the check of B-2's Good; B-1 made again in the second round and given; the
-  learner with a lesson.
-- `untrue`: the first user giving B-1 a Good at a line that names no license, which the check finds
-  does not hold; B-1 made again in the second round and given; a lesson.
-- `left`: as `untrue` in two rounds, so B-1 waits on a question the orchestrator words; the calling
+  generator by message, which adds it; the first user, sent the work made again, finds every Good.
+- `sent`: the first user stopping at B-1 four times, sent back three times, the fourth stop ending
+  the round with B-1 without Good; B-1 made again in the second round and given; the learner with a
+  lesson.
+- `left`: as `sent` in two rounds, so B-1 waits on a question the orchestrator words; the calling
   AI answers it, and a third round gives B-1; a lesson of the project's own.
 - `generator`: the generator asking before making anything, and again while making; each answer
   sent to it, it makes the work, and the run goes on as `plain`.
 - `asked`: the task with its decision taken out, so the check asks the calling AI; the run goes on
   as `plain`.
 - `stopped`: as `plain`, the calling AI stopping the orchestrator once it is told, after the first
-  user's reading, that the orchestrator will check each Good, and calling turn again with the same
-  call, which goes on from that move.
+  user's reading, that the learner will learn, and calling turn again with the same call, which
+  goes on from that move.
 
 Where turn asks, the calling AI takes each question's recommended answer as the user's, keeps it in
 the task's decisions and sends it.
@@ -61,13 +56,12 @@ STEPS = {
     "plain": PLAIN,
     "given": PLAIN,
     "sent": PLAIN,
-    "untrue": PLAIN,
     "left": ASKS,
     "generator": ASKS,
     "asked": ASKS,
     "stopped": START
-    + "turn sends you a line before each move. Once a line says `turn:up will check that each"
-    " Good`, the first time alone, stop the agent with TaskStop at once, loaded with ToolSearch,"
+    + "turn sends you a line before each move. Once a line says `turn:learner will`, the first"
+    " time alone, stop the agent with TaskStop at once, loaded with ToolSearch,"
     " then start the `turn:up` agent in the background again with the same call. When it returns,"
     " reply with the line it returned.",
 }

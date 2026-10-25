@@ -28,7 +28,7 @@ SENDS = 3
 # keeps how many more rounds may run.
 MORE = 1
 # What the orchestrator judges, shown again whenever it asks.
-SHOWN = ("check", "goods", "left")
+SHOWN = ("check", "left")
 # A messaged role's reply is waited for a second at a time, within the shell's two minutes.
 WAIT = 100
 # Where SendMessage reaches the main conversation, which alone talks with the user.
@@ -45,7 +45,6 @@ DOES = {
 JUDGES = {
     "check": "check that the CCS gives every item its Good",
     "ask": "ask what only the user can decide",
-    "goods": "check that each Good the first user found holds, running what it says",
     "left": "word a question for each item two rounds left without Good",
     "returned": "return the result",
 }
@@ -337,8 +336,8 @@ def parts(result: str) -> dict[str, list[str]]:
 
 
 def view(result: str) -> dict[str, Any]:
-    """What the orchestrator is to judge now: the items to check, the Goods to check, or the items
-    left without Good to word a question for."""
+    """What the orchestrator is to judge now: the items to check, or the items left without Good to
+    word a question for."""
     run = going(result)
     for step in SHOWN:
         if step in run:
@@ -418,8 +417,6 @@ def next_step(result: str, text: str) -> dict[str, Any]:
         return answered(run, text)
     if "returned" in run:
         return returned(run)
-    if "goods" in run:
-        return goods_checked(run, text) if text.strip() else judged(run, "goods")
     if "left" in run:
         return left_asked(run, text) if text.strip() else judged(run, "left")
     step = run["next"]
@@ -583,36 +580,16 @@ def made(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
 
 
 def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    """Keeps the first user's reading; sends the generator each item it stopped at, as the first
-    user gave it, while the round may send them back; otherwise the orchestrator checks each Good
-    the first user gave, or, with none given, the round ends."""
-    run["read"] = reply["items"]
+    """Takes the first user's reading: an item has its Good where the first user gave one; the
+    generator is sent each item it stopped at, as the first user gave it, while the round may send
+    them back; otherwise the round ends."""
     goods = [i for i in reply["items"] if good(i)]
     stops = [i for i in reply["items"] if not good(i)]
     run["done"] = f"{FIRST_USER} found the Good of {len(goods)} of {len(run['items'])} items."
     if stops and sending(run):
         back = {"sent_back": stops, "reply": reply_path(run["call"]["result"], GENERATOR)}
         return generate(run, stops, back)
-    if goods:
-        run["goods"] = goods
-        return judge(run, "goods")
-    return ended(run, [], run.pop("read"))
-
-
-def goods_checked(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Records the orchestrator's check of each Good the first user gave: an item has its Good
-    only where the first user gave one and the check says it holds; every other item is without
-    Good, with the stop the first user gave or the check found."""
-    goods = run["goods"]
-    said = forms.check(text, [named(g) for g in goods], run["work"], forms.HELD)
-    if said:
-        raise call.Stop("turn: the check of the Goods is not filled:\n" + "\n".join(said))
-    found = {forms.key_of(i): i for i in json.loads(forms.unfenced(text))["items"]}
-    del run["goods"]
-    kept = [g for g in goods if "holds" in found[forms.key_of(g)]]
-    lacking = [found.get(forms.key_of(i), i) for i in run.pop("read") if i not in kept]
-    run["done"] = f"{UP} found {len(kept)} of {len(goods)} Goods hold."
-    return ended(run, kept, lacking)
+    return ended(run, goods, stops)
 
 
 def ended(run: dict[str, Any], goods: list, lacking: list) -> dict[str, Any]:

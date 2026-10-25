@@ -20,11 +20,11 @@ call = run.call
 
 testing.load_hypothesis_profile()
 
-FORMS = (forms.CHECK, forms.CLAIM, forms.FIRST_READING, forms.HELD, forms.LEFT, forms.LEARNT)
+FORMS = (forms.CHECK, forms.CLAIM, forms.FIRST_READING, forms.LEFT, forms.LEARNT)
 ITEMS = [{"checklist": "checklists/readme.md", "item": "F-1"}]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
-    ["items", "questions", "checklist", "item", "good", "lines", "question", "can", "holds"]
+    ["items", "questions", "checklist", "item", "good", "lines", "question", "can"]
     + ["lessons", "whose", "lesson", "grounds", "record", "quote", "checked", "recommended"]
     + ["parts", "part", "places", "did", "lacking"]
 ) | st.text(max_size=5)

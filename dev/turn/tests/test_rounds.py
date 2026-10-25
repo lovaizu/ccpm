@@ -9,12 +9,10 @@ from helpers import (
     FIRST_READ,
     FOUND,
     GOOD,
-    HOLDS,
     IDS,
     QUESTION,
     RESULT,
     STOPPED,
-    UNTRUE,
     WAITS,
     RepoTest,
     run,
@@ -118,35 +116,32 @@ class TestGeneratorKept(RoundTest):
 
 
 class TestFirstUserKept(RoundTest):
-    def test_a_first_user_finding_every_good_has_the_orchestrator_check_them(self):
+    def test_a_first_user_finding_every_good_has_the_learner_started(self):
         # Given: a first user finding every item's Good
         # When: the orchestrator goes on
-        # Then: no role is started; the orchestrator is shown the Goods to check
+        # Then: the learner is started, no role of the round kept
         out = self.replied({"items": [FOUND, dict(FOUND, item="B-1")]})
-        self.assertNotIn("next", self.state())
-        self.assertEqual(self.heard(out), {"goods": [FOUND, dict(FOUND, item="B-1")]})
+        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
 
     def test_the_first_user_sends_back_three_times_a_round_at_most(self):
         # Given: a first user that stops at an item each time it reads
         # When: the round goes on
-        # Then: the generator is sent it three times, and the fourth stop goes to the check of the
-        # Good the first user found
+        # Then: the generator is sent it three times, and the fourth stop ends the round, the
+        # item made again in the next
         for _ in range(3):
             self.assertEqual(self.stopped()["input"]["to"], IDS["turn:generator"])
             self.due(self.later(CLAIM))
         out = self.replied({"items": FIRST_READ})
-        self.assertEqual(self.heard(out), {"goods": [FOUND]})
+        self.assertIn("round 2", out["line"])
 
     def test_the_round_s_sending_back_counts_anew_in_the_next_round(self):
-        # Given: a first round whose sending back was spent, and its Good checked to hold
+        # Given: a first round whose sending back was spent
         # When: the second round's first user stops at an item
         # Then: the generator is sent it again by message
         for _ in range(3):
             self.stopped()
             self.due(self.later(CLAIM))
-        self.replied({"items": FIRST_READ})
-        self.next()
-        self.due(self.next({"items": [HOLDS]}))
+        self.due(self.replied({"items": FIRST_READ}))
         self.assertEqual(self.due(self.made())["tool"], "Agent")
         self.assertEqual(self.stopped()["input"]["to"], IDS["turn:generator"])
 
@@ -241,29 +236,13 @@ class TestTold(RepoTest):
         )
         self.assertEqual(self.next()["check"][1]["item"], "B-1")
 
-    def test_the_good_check_s_outcome_is_told_before_the_next_round(self):
-        # Given: a first user finding one item's Good, with the round's sending back spent
-        # When: the orchestrator's check says the Good does not hold
-        # Then: a line says how many Goods hold and that the second round's generator makes the
-        # work next
-        self.started()
-        self.first_read(FOUND)
-        out = self.held(UNTRUE)
-        self.assertEqual(
-            out["line"],
-            "turn: turn:up found 0 of 1 Goods hold. Next, turn:generator will make the work to give"
-            " every item its Good, and run what it gives as the receiver would, of README.md, for"
-            " 2 items, round 2.",
-        )
-
     def test_a_learner_giving_no_lesson_is_told_before_the_run_returns(self):
-        # Given: every item's Good found and held, and a learner giving no lesson
+        # Given: every item's Good found, and a learner giving no lesson
         # When: the orchestrator goes on
         # Then: a line says the learner gave none before the run returns, with the result
         # written by then
         self.started()
-        self.first_read(FOUND, dict(FOUND, item="B-1"))
-        self.due(self.held())
+        self.due(self.first_read(FOUND, dict(FOUND, item="B-1")))
         out = self.replied({"lessons": [], "checked": CHECKED})
         self.assertEqual(
             out["line"],
@@ -368,15 +347,16 @@ class TestResumed(RepoTest):
         prompt = json.loads(move["input"]["prompt"])
         self.assertEqual((prompt["sent_back"], len(prompt["answers"])), ([], 1))
 
-    def test_a_run_stopped_after_the_first_user_s_reading_goes_on_from_the_check(self):
-        # Given: a run whose first user's reading ended, the Goods waiting on the check
+    def test_a_run_stopped_after_the_first_user_s_reading_goes_on_from_the_next_round(self):
+        # Given: a run whose first user's reading ended, the second round's generator due
         # When: the same call is made again
-        # Then: the check is told again and the same Goods are shown, with no role started anew
+        # Then: the generator is told again and started anew with the items without Good
         self.started()
         self.first_read(FOUND)
         self.turn("start", json.dumps(CALL))
-        self.assertEqual(self.heard(self.next()), {"goods": [FOUND]})
-        self.assertNotIn("next", self.state())
+        move = self.due(self.next())
+        self.assertEqual(move["tool"], "Agent")
+        self.assertEqual(json.loads(move["input"]["prompt"])["sent_back"], self.reading(FOUND)[1:])
 
     def test_a_call_again_with_another_call_on_the_same_result_stops(self):
         # Given: a run kept for a result

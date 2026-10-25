@@ -6,8 +6,7 @@ to give it, and what a machine can judge, such as whether
 a reply has its form or an input was read whole, is checked by turn's scripts, not by an agent. It
 is a Claude Code plugin for anyone who has AI make documents, code and the like in the steps of
 their own plugin. What a step has turn make comes back meeting the step's checklists, read first by
-an AI that did not make it, in the place of its reader, and each Good it finds checked against what
-the work does.
+an AI that did not make it, in the place of its reader.
 
 ## Example
 
@@ -40,8 +39,7 @@ Start the `turn:up` agent in the background with
 {"ccs": ".tasks/readme.json", "result": ".tasks/readme-result.json",
  "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
           "use": "purpose", "has": "has"}}
-Put each question it sends to the user and send it the answer. When it returns, check each Good
-against its lines.
+Put each question it sends to the user and send it the answer.
 ```
 
 turn first checks that the CCS holds everything the run needs: that what it and its files say can
@@ -66,10 +64,8 @@ usage commands as a developer would
 
 This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
 the developer meeting the project would, running what they would run. Each item is judged from that
-use, and gets its Good, with the lines that give it, only where `turn:up`, running what the Good
-says, also finds it holds. Where an item gets none,
-README.md is made again and read again, and an item that still gets none comes to the step's AI as
-a question for the user.
+use, and gets its Good with the lines that give it. Where an item gets none, README.md is made again
+and read again, and an item that still gets none comes to the step's AI as a question for the user.
 
 When turn returns, README.md is in place, and the result gives each item's Good with the lines it
 rests on:
@@ -90,7 +86,7 @@ once you say yes.
 turn gives your plugin's AI what it does not get by making the work and checking it itself.
 
 - The AI that reads the work did not make it, has only what the work's reader has, and uses the
-  work as they do; each Good it finds is then run against what the work does.
+  work as they do, running what they would run.
 
   The AI that made a work finds the Good it meant; an AI meeting it for the first time finds only
   the Good its lines give, which is what the work's reader gets.

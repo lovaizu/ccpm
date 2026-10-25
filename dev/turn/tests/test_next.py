@@ -1,5 +1,6 @@
 import json
 import os
+from unittest import mock
 
 from helpers import (
     CALL,
@@ -11,7 +12,6 @@ from helpers import (
     EACH_GOOD,
     FOUND,
     GOOD,
-    HOLDS,
     IDS,
     LACKING,
     LESSON,
@@ -19,7 +19,6 @@ from helpers import (
     RESULT,
     SECTIONED,
     STOPPED,
-    UNTRUE,
     WAITS,
     RepoTest,
     run,
@@ -345,142 +344,45 @@ class TestMade(ReadTest):
                 self.assertIn("no run is going with its result at none.json", out)
 
 
-class TestGoodCheck(ReadTest):
-    """Once the first user's reading ends, the orchestrator checks each Good it gave, and an item
-    has its Good only where the first user gave one and the check says it holds."""
+class TestRoundEnd(ReadTest):
+    """Once the first user's reading ends, an item has its Good where the first user gave one."""
 
-    def test_only_the_goods_the_first_user_gave_are_shown_to_check_after_a_line(self):
-        # Given: a first user giving one item's Good and stopping at the other, with the round's
-        # sending back spent
-        # When: the orchestrator goes on, and once more
-        # Then: a line says what the first user found and that the orchestrator checks next, and
-        # then the first user's Good alone is shown to check
-        out = self.first_read(FOUND)
-        self.assertEqual(
-            out["line"],
-            "turn: turn:first-user found the Good of 1 of 2 items. Next, turn:up will check that"
-            " each Good the first user found holds, running what it says, of README.md, for 2"
-            " items, round 1.",
-        )
-        self.assertEqual(self.next(), {"goods": [FOUND]})
-        self.assertEqual(self.next(), {"goods": [FOUND]})
-
-    def test_every_good_found_and_held_has_the_learner_start(self):
+    def test_every_good_found_has_the_learner_start(self):
         # Given: a first user finding every item's Good
-        # When: the orchestrator's check says each holds
-        # Then: a line says how many hold, and the learner is to start, with no second round
-        self.first_read(FOUND, FOUND_B1)
-        out = self.held()
-        self.assertTrue(str(out["line"]).startswith("turn: turn:up found 2 of 2 Goods hold. Next,"))
-        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
-
-    def test_a_good_the_check_finds_untrue_is_made_again_with_what_it_found(self):
-        # Given: a first user finding every item's Good
-        # When: the orchestrator's check finds the first untrue, with where and what is lacking
-        # Then: the second round's generator is started anew with that item alone, as the check
-        # gave it
-        self.first_read(FOUND, FOUND_B1)
-        move = self.due(self.held(UNTRUE, dict(HOLDS, item="B-1")))
-        self.assertEqual(move["tool"], "Agent")
-        self.assertEqual(json.loads(move["input"]["prompt"])["sent_back"], [UNTRUE])
-
-    def test_an_item_the_first_user_found_no_good_for_is_made_again_as_it_gave_it(self):
-        # Given: a first user giving one item's Good and stopping at the other
-        # When: the orchestrator's check says the Good holds
-        # Then: the second round's generator is given the stop as the first user gave it
-        self.first_read(FOUND)
-        self.due(self.held())
-        self.assertEqual(self.prompt()["sent_back"], [STOPPED_B1])
-
-    def test_a_reading_with_no_good_goes_to_the_next_round_with_no_check(self):
-        # Given: a first user finding no item's Good
         # When: the orchestrator goes on
-        # Then: a line says so, and the second round's generator is due, with nothing to check
-        out = self.first_read()
+        # Then: a line says what the first user found and that the learner learns next, with no
+        # second round
+        out = self.first_read(FOUND, FOUND_B1)
         self.assertTrue(
             str(out["line"]).startswith(
-                "turn: turn:first-user found the Good of 0 of 2 items. Next, turn:generator will"
+                "turn: turn:first-user found the Good of 2 of 2 items. Next, turn:learner will"
             ),
             out,
         )
+        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
+
+    def test_an_item_the_first_user_found_no_good_for_is_made_again_as_it_gave_it(self):
+        # Given: a first user giving one item's Good and stopping at the other
+        # When: the orchestrator goes on
+        # Then: a line says what the first user found and that the second round's generator makes
+        # the work, which is given the stop as the first user gave it
+        out = self.first_read(FOUND)
+        self.assertEqual(
+            out["line"],
+            "turn: turn:first-user found the Good of 1 of 2 items. Next, turn:generator will make"
+            " the work to give every item its Good, and run what it gives as the receiver would,"
+            " of README.md, for 2 items, round 2.",
+        )
+        self.due(out)
+        self.assertEqual(self.prompt()["sent_back"], [STOPPED_B1])
+
+    def test_a_reading_with_no_good_goes_to_the_next_round_with_every_item(self):
+        # Given: a first user finding no item's Good
+        # When: the orchestrator goes on
+        # Then: the second round's generator is due, given every item as the first user stopped
+        out = self.first_read()
         self.assertIn("round 2", out["line"])
         self.assertEqual(self.prompt()["sent_back"], [STOPPED_F1, STOPPED_B1])
-
-    def test_a_check_out_of_its_form_stops_and_the_goods_wait(self):
-        # Given: a first user giving one item's Good
-        # When: the check leaves it out, gives an item not shown, or says it holds as false
-        # Then: it stops, naming what is wrong, and the Goods still wait on the check
-        self.first_read(FOUND)
-        self.next()
-        for items, said in (
-            ([], "F-1 is left out"),
-            ([HOLDS, dict(HOLDS, item="B-1")], "B-1 is not an item judged here"),
-            ([dict(HOLDS, holds=False)], '"holds" is not true'),
-        ):
-            with self.subTest(said=said):
-                out = self.refused({"items": items})
-                self.assertIn("the check of the Goods is not filled", out)
-                self.assertIn(said, out)
-        self.assertEqual(self.next(), {"goods": [FOUND]})
-
-    def test_a_check_in_a_json_fence_is_recorded(self):
-        # Given: a first user giving one item's Good
-        # When: the check is given inside a ```json fence
-        # Then: it is taken as the check itself
-        self.first_read(FOUND)
-        self.next()
-        code, out = self.turn(
-            "next", RESULT, stdin=f"```json\n{json.dumps({'items': [HOLDS]})}\n```"
-        )
-        self.assertEqual(code, 0, out)
-        self.assertEqual(self.state()["next"]["agent"], "turn:generator")
-
-    def test_goods_too_long_for_one_read_are_shown_page_by_page(self):
-        # Given: a run waiting on the check of a Good whose words run past two pages
-        # When: the orchestrator runs the script with no input, then asks for each page after
-        # Then: each page is headed by its number among all and how to see the others, the pages
-        # together are the Goods to check, and a page past the last stops
-        self.first_read(dict(FOUND, good="x" * 45000))
-        self.next()
-        goods = self.state()["goods"]
-        pages = []
-        for asked in ((), ("2",), ("3",)):
-            code, out = self.turn("next", RESULT, *asked)
-            self.assertEqual(code, 0, out)
-            head, page = out.split("\n", 1)
-            self.assertTrue(head.startswith(f"goods, page {len(pages) + 1} of 3: "), head)
-            self.assertIn(f"turn.py next {RESULT} <page>", head)
-            pages.append(page[:-1])
-        self.assertEqual(json.loads("".join(pages)), {"goods": goods})
-        self.assertEqual([len(p) for p in pages[:2]], [20000, 20000])
-        for page in ("0", "4", "a"):
-            self.assertIn(f"page {page} is not one of 1 to 3", self.turn("next", RESULT, page)[1])
-
-    def test_goods_of_two_pages_are_shown_page_by_page(self):
-        # Given: a run waiting on the check of Goods that run to two pages
-        # When: the orchestrator runs the script with no input
-        # Then: the first page is headed by its number of two
-        self.first_read(dict(FOUND, good="x" * 25000))
-        self.next()
-        out = self.turn("next", RESULT)[1]
-        self.assertTrue(out.startswith("goods, page 1 of 2: "), out[:80])
-
-    def test_goods_short_enough_for_one_read_are_printed_as_they_are(self):
-        # Given: a run waiting on the check of Goods that fit in one page
-        # When: the orchestrator asks for the first page
-        # Then: the Goods are printed with no head, as with no page asked
-        self.first_read(FOUND)
-        self.next()
-        code, out = self.turn("next", RESULT, "1")
-        self.assertEqual((code, json.loads(out)), (0, self.next()))
-
-    def test_a_page_asked_while_the_run_waits_on_a_role_stops(self):
-        # Given: a run waiting on the generator's reply
-        # When: the orchestrator asks for a page
-        # Then: it stops, saying to go on with no page
-        code, out = self.turn("next", RESULT, "2")
-        self.assertEqual(code, 1, out)
-        self.assertIn(f"run `turn.py next {RESULT}`", out)
 
 
 class TestRounds(ReadTest):
@@ -488,20 +390,20 @@ class TestRounds(ReadTest):
     without Good becomes a question."""
 
     def second(self):
-        """The first round taken to its end with F-1 held and B-1 without Good; the move starting
+        """The first round taken to its end with F-1 Good and B-1 without Good; the move starting
         the second round's generator."""
-        self.first_read(FOUND)
-        return self.due(self.held())
+        return self.due(self.first_read(FOUND))
 
-    def left(self):
-        """Both rounds taken to their end with B-1 without Good, the check told; what is shown."""
+    def left(self, *stops):
+        """Both rounds taken to their end with B-1 without Good, the second's reading giving the
+        stops, the question to word told; what is shown."""
         self.second()
-        self.first_read(FOUND)
-        out = self.held()
+        out = self.first_read(FOUND, *stops)
         self.assertEqual(
             out["line"],
-            "turn: turn:up found 1 of 1 Goods hold. Next, turn:up will word a question for each"
-            " item two rounds left without Good, of README.md, for 2 items, round 2.",
+            "turn: turn:first-user found the Good of 1 of 2 items. Next, turn:up will word a"
+            " question for each item two rounds left without Good, of README.md, for 2 items,"
+            " round 2.",
         )
         return self.next()
 
@@ -510,8 +412,7 @@ class TestRounds(ReadTest):
         # When: the orchestrator goes on after the line
         # Then: a line says the second round's generator makes the work, and it is started anew,
         # not sent a message
-        self.first_read(FOUND)
-        out = self.held()
+        out = self.first_read(FOUND)
         self.assertIn("round 2", out["line"])
         move = self.due(out)
         self.assertEqual(
@@ -539,11 +440,10 @@ class TestRounds(ReadTest):
 
     def test_a_second_round_giving_every_good_returns_its_goods(self):
         # Given: a first round leaving B-1 without Good
-        # When: the second round's first user finds both Goods and the check says they hold
+        # When: the second round's first user finds both Goods
         # Then: the run returns with both Goods of the second round
         self.second()
-        self.first_read(FOUND, FOUND_B1)
-        self.assertEqual(self.learnt(self.held()), {"returned": RESULT})
+        self.assertEqual(self.learnt(self.first_read(FOUND, FOUND_B1)), {"returned": RESULT})
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1])
 
     def test_an_item_two_rounds_leave_without_good_is_shown_for_a_question(self):
@@ -593,30 +493,26 @@ class TestRounds(ReadTest):
         # When: the third and the fourth round leave it without Good too
         # Then: the third goes on to the fourth, and the fourth's end shows it for a question
         self.due(self.answered_left())
-        self.first_read(FOUND)
-        self.assertIn("round 4", self.held()["line"])
-        self.next()
-        self.first_read(FOUND)
-        self.assertEqual(self.heard(self.held()), {"left": [STOPPED_B1]})
+        out = self.first_read(FOUND)
+        self.assertIn("round 4", out["line"])
+        self.due(out)
+        self.assertEqual(self.heard(self.first_read(FOUND)), {"left": [STOPPED_B1]})
 
     def test_each_answer_lets_two_rounds_more_run(self):
         # Given: an item left without Good after the fourth round, once answered after the second
         # When: it is answered again, and the fifth and the sixth round leave it without Good
         # Then: the fifth goes on to the sixth, and the sixth's end shows it for a question
         self.due(self.answered_left())
-        self.first_read(FOUND)
-        self.due(self.held())
-        self.first_read(FOUND)
-        self.heard(self.held())
+        self.due(self.first_read(FOUND))
+        self.heard(self.first_read(FOUND))
         self.heard(self.next({"items": [WAITS], "questions": [QUESTION]}))
         out = self.answered()
         self.assertIn("round 5", out["line"])
         self.due(out)
-        self.first_read(FOUND)
-        self.assertIn("round 6", self.held()["line"])
-        self.next()
-        self.first_read(FOUND)
-        self.assertEqual(self.heard(self.held()), {"left": [STOPPED_B1]})
+        out = self.first_read(FOUND)
+        self.assertIn("round 6", out["line"])
+        self.due(out)
+        self.assertEqual(self.heard(self.first_read(FOUND)), {"left": [STOPPED_B1]})
 
     def test_questions_for_the_items_left_out_of_their_form_stop(self):
         # Given: an item two rounds left without Good
@@ -632,6 +528,50 @@ class TestRounds(ReadTest):
                 self.assertIn("the questions are not filled", out)
                 self.assertIn(said, out)
         self.assertEqual(self.next(), {"left": [STOPPED_B1]})
+
+    def test_items_left_too_long_for_one_read_are_shown_page_by_page(self):
+        # Given: a run waiting on the question for an item left whose stop runs past two pages
+        # When: the orchestrator runs the script with no input, then asks for each page after
+        # Then: each page is headed by its number among all and how to see the others, the pages
+        # together are the items left, and a page past the last stops
+        self.left(dict(STOPPED_B1, lacking="x" * 45000))
+        left = self.state()["left"]
+        pages = []
+        for asked in ((), ("2",), ("3",)):
+            code, out = self.turn("next", RESULT, *asked)
+            self.assertEqual(code, 0, out)
+            head, page = out.split("\n", 1)
+            self.assertTrue(head.startswith(f"left, page {len(pages) + 1} of 3: "), head)
+            self.assertIn(f"turn.py next {RESULT} <page>", head)
+            pages.append(page[:-1])
+        self.assertEqual(json.loads("".join(pages)), {"left": left})
+        self.assertEqual([len(p) for p in pages[:2]], [20000, 20000])
+        for page in ("0", "4", "a"):
+            self.assertIn(f"page {page} is not one of 1 to 3", self.turn("next", RESULT, page)[1])
+
+    def test_items_left_of_two_pages_are_shown_page_by_page(self):
+        # Given: a run waiting on the question for an item left whose stop runs to two pages
+        # When: the orchestrator runs the script with no input
+        # Then: the first page is headed by its number of two
+        self.left(dict(STOPPED_B1, lacking="x" * 25000))
+        out = self.turn("next", RESULT)[1]
+        self.assertTrue(out.startswith("left, page 1 of 2: "), out[:80])
+
+    def test_items_left_short_enough_for_one_read_are_printed_as_they_are(self):
+        # Given: a run waiting on the question for an item left that fits in one page
+        # When: the orchestrator asks for the first page
+        # Then: the items left are printed with no head, as with no page asked
+        self.left()
+        code, out = self.turn("next", RESULT, "1")
+        self.assertEqual((code, json.loads(out)), (0, self.next()))
+
+    def test_a_page_asked_while_the_run_waits_on_a_role_stops(self):
+        # Given: a run waiting on the generator's reply
+        # When: the orchestrator asks for a page
+        # Then: it stops, saying to go on with no page
+        code, out = self.turn("next", RESULT, "2")
+        self.assertEqual(code, 1, out)
+        self.assertIn(f"run `turn.py next {RESULT}`", out)
 
 
 class TestEachPart(RepoTest):
@@ -658,13 +598,12 @@ class TestEachPart(RepoTest):
         self.assertEqual(json.loads(move["input"]["message"])["sent_back"], [back])
 
     def test_an_item_given_a_good_for_every_part_is_good_in_the_result(self):
-        # Given: a first user giving an item asked of each part a Good for every part, and a check
-        # saying it holds
+        # Given: a first user giving an item asked of each part a Good for every part
         # When: the run returns
         # Then: the result holds the item with its Good for every part
         claim = (GOOD, dict(GOOD, item="B-1"), EACH_GOOD)
-        self.first_read(FOUND, FOUND_B1, EACH_GOOD, claim=claim)
-        self.assertEqual(self.learnt(self.held()), {"returned": RESULT})
+        out = self.first_read(FOUND, FOUND_B1, EACH_GOOD, claim=claim)
+        self.assertEqual(self.learnt(out), {"returned": RESULT})
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1, EACH_GOOD])
 
     def test_a_reply_giving_an_each_part_item_without_every_part_is_sent_back_to_its_role(self):
@@ -687,13 +626,12 @@ class TestLearner(ReadTest):
         super().setUp()
         for agent, agent_id in IDS.items():
             self.given_record(agent_id, "{}", agent)
-        self.orchestrator = self.given_record("aup", json.dumps(CALL), "turn:up")
-        self.first_read(FOUND, FOUND_B1)
-        self.learner = self.held()
+        self.given_record("aup", json.dumps(CALL), "turn:up")
+        self.learner = self.first_read(FOUND, FOUND_B1)
 
     def test_the_learner_starts_once_on_every_record_of_the_run_shown_as_text(self):
         # Given: a run whose every item has its Good
-        # When: the check is recorded
+        # When: the first user's reading is taken
         # Then: the learner is to be started with the record of every role that replied and the
         # orchestrator's, each shown as text beside the result, and where it replies
         move = self.due(self.learner)
@@ -712,8 +650,7 @@ class TestLearner(ReadTest):
         # Then: it is given none
         RepoTest.setUp(self)
         self.started()
-        self.first_read(FOUND, FOUND_B1)
-        self.due(self.held())
+        self.due(self.first_read(FOUND, FOUND_B1))
         self.assertEqual(self.prompt()["given"], [])
 
     def test_the_lessons_go_into_the_result_with_every_good_and_the_run_returns(self):
@@ -778,9 +715,8 @@ class TestLearner(ReadTest):
         RepoTest.setUp(self)
         self.started()
         self.due(self.made())
-        self.write_json(run.state_path(RESULT), dict(self.state(), sent=run.SENDS))
-        self.replied({"items": [FOUND_B1, FOUND]})
-        self.learnt(self.held())
+        with mock.patch.object(run, "SENDS", 0):
+            self.learnt(self.replied({"items": [FOUND_B1, FOUND]}))
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1])
 
 
@@ -793,8 +729,7 @@ class TestRecordsShown(ReadTest):
 
     def shown(self):
         """The generator's record as the learner is shown it after the run."""
-        self.first_read(FOUND, FOUND_B1)
-        self.due(self.held())
+        self.due(self.first_read(FOUND, FOUND_B1))
         return self.read(self.prompt()["given"][0])
 
     def test_a_record_shows_each_part_by_its_type_and_the_files_shown_whole(self):

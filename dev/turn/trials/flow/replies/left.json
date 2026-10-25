@@ -79,6 +79,240 @@
       }
     },
     {
+      "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n",
+      "run": [
+        "sh demo.sh"
+      ],
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns the terms of use.",
+            "lines": [
+              "README.md:1-7"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ],
+        "questions": []
+      }
+    },
+    {
+      "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n",
+      "run": [
+        "sh demo.sh"
+      ],
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns the terms of use.",
+            "lines": [
+              "README.md:1-7"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ],
+        "questions": []
+      }
+    },
+    {
+      "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n",
+      "run": [
+        "sh demo.sh"
+      ],
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns the terms of use.",
+            "lines": [
+              "README.md:1-7"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ],
+        "questions": []
+      }
+    },
+    {
+      "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n",
+      "run": [
+        "sh demo.sh"
+      ],
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns the terms of use.",
+            "lines": [
+              "README.md:1-7"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ],
+        "questions": []
+      }
+    },
+    {
+      "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n",
+      "run": [
+        "sh demo.sh"
+      ],
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns the terms of use.",
+            "lines": [
+              "README.md:1-7"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ],
+        "questions": []
+      }
+    },
+    {
+      "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n",
+      "run": [
+        "sh demo.sh"
+      ],
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "good": "The reader learns the terms of use.",
+            "lines": [
+              "README.md:1-7"
+            ]
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ],
+        "questions": []
+      }
+    },
+    {
       "write": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n\n## License\n\nMIT.\n",
       "run": [
         "sh demo.sh"
@@ -132,10 +366,11 @@
           {
             "checklist": "checklist.md",
             "item": "B-1",
-            "good": "The reader learns demo is under MIT.",
-            "lines": [
-              "README.md:3-3"
-            ]
+            "places": [
+              "README.md:1-7"
+            ],
+            "did": "read the whole README for the terms on which I may use demo",
+            "lacking": "under which license I may use it"
           },
           {
             "checklist": "checklist.md",
@@ -166,10 +401,221 @@
           {
             "checklist": "checklist.md",
             "item": "B-1",
-            "good": "The reader learns demo is under MIT.",
-            "lines": [
-              "README.md:3-3"
+            "places": [
+              "README.md:1-7"
+            ],
+            "did": "read the whole README for the terms on which I may use demo",
+            "lacking": "under which license I may use it"
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "places": [
+              "README.md:1-7"
+            ],
+            "did": "read the whole README for the terms on which I may use demo",
+            "lacking": "under which license I may use it"
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "places": [
+              "README.md:1-7"
+            ],
+            "did": "read the whole README for the terms on which I may use demo",
+            "lacking": "under which license I may use it"
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "places": [
+              "README.md:1-7"
+            ],
+            "did": "read the whole README for the terms on which I may use demo",
+            "lacking": "under which license I may use it"
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "places": [
+              "README.md:1-7"
+            ],
+            "did": "read the whole README for the terms on which I may use demo",
+            "lacking": "under which license I may use it"
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "places": [
+              "README.md:1-7"
+            ],
+            "did": "read the whole README for the terms on which I may use demo",
+            "lacking": "under which license I may use it"
+          },
+          {
+            "checklist": "checklist.md",
+            "item": "B-2",
+            "parts": [
+              {
+                "part": "README.md:1-4",
+                "good": "The reader learns what demo does.",
+                "lines": [
+                  "README.md:3-3"
+                ]
+              },
+              {
+                "part": "README.md:5-7",
+                "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
+                "lines": [
+                  "README.md:7-7"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "reply": {
+        "items": [
+          {
+            "checklist": "checklist.md",
+            "item": "B-1",
+            "places": [
+              "README.md:1-7"
+            ],
+            "did": "read the whole README for the terms on which I may use demo",
+            "lacking": "under which license I may use it"
           },
           {
             "checklist": "checklist.md",
@@ -246,7 +692,7 @@
             "grounds": [
               {
                 "record": 2,
-                "quote": "The reader learns demo is under MIT."
+                "quote": "under which license I may use it"
               }
             ]
           }

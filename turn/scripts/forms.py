@@ -54,9 +54,6 @@ STOP = ("places", "did", "lacking")
 CHECK = Form((("can",), ("question",)), asks=True)
 # The first user gives every item the Good it found, or where it stopped.
 FIRST_READING = Form((ONE, EACH, STOP))
-# The orchestrator's check of each Good the first user gave: it holds, or where the receiver does
-# not get what the item asks, as a stop.
-HELD = Form((("holds",), STOP))
 # Each item two rounds leave without Good waits on a question the orchestrator words.
 LEFT = Form((("question",),), asks=True)
 
@@ -274,11 +271,6 @@ def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str
         isinstance(item["question"], int) and not isinstance(item["question"], bool)
     ):
         said.append(f"{name}'s \"question\" is not a number; give the question's, from 1")
-    if "holds" in item and item["holds"] is not True:
-        said.append(
-            f'{name}\'s "holds" is not true; give true where the Good holds, or "places", "did"'
-            ' and "lacking" where it does not'
-        )
     if "lines" in item:
         said += lines_problems(name, item["lines"], work, "lines of the work")
     if "places" in item:

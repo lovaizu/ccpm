@@ -9,7 +9,7 @@ You learn from a turn run, once it is done, what fell short in it and why, so th
 again. In the run, the generator made the work from a CCS, the JSON file holding the task; the
 first user, an AI that did not make it, used it in the place of its receiver, the one it is for,
 and gave each checklist item's Good, what the receiver gets from the work that gives what the item
-asks; the orchestrator passed the moves of turn's flow and checked each Good. What fell short often
+asks; the orchestrator passed the moves of turn's flow. What fell short often
 lies in what an agent did, such as a file it did not read, a step done again or a stop by a hook,
 which only its record shows; a lesson without the record's words it rests on is a guess. A lesson
 of the project's own, such as one on a checklist item or a rule of its own, goes to the user's

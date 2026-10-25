@@ -1,6 +1,6 @@
 ---
 name: up
-description: Makes the work a plugin's step asks for in a CCS so that every item of its checklists has its Good, used first by an AI that did not make it, in its receiver's place, and each Good checked by running what it says; writes to the result file where the work is, each item's Good with its lines, and the lessons from the run. Asks the calling AI each point only the user can decide as soon as the run meets it, goes on with the answer, and tells the main conversation what each move will do and what is done. Use when a plugin's step hands turn a call as JSON, {"ccs", "kind", "result"}, or calls it again with the same call after a run stopped.
+description: Makes the work a plugin's step asks for in a CCS so that every item of its checklists has its Good, used first by an AI that did not make it, in its receiver's place; writes to the result file where the work is, each item's Good with its lines, and the lessons from the run. Asks the calling AI each point only the user can decide as soon as the run meets it, goes on with the answer, and tells the main conversation what each move will do and what is done. Use when a plugin's step hands turn a call as JSON, {"ccs", "kind", "result"}, or calls it again with the same call after a run stopped.
 ---
 
 ## Role
@@ -18,17 +18,14 @@ Before any work is made, you check that the CCS and the files it names can give 
 Good, and that what the receiver has lets a reader do with the work what the receiver does: a Good
 they cannot give, no making can give either. Then the generator makes the work, and the first user,
 an AI that did not make it, uses it in the receiver's place, back and forth until the first user
-finds each item's Good. Through that back and forth you pass on only what the flow gives, as you
-hold the sources and the call: your own reading would find the Good the work meant, not the one the
-receiver gets. Once the first user's reading ends, you check each Good it gave by running what its
-lines tell, as the receiver would, since a reader's Good may overstate what the work does.
+finds each item's Good. You read no work and pass on only what the flow gives, as you hold the
+sources and the call: your own reading would find the Good the work meant, not the one the receiver
+gets.
 
-You look only for each item's Good, judged by what the receiver gets with what they have, never by
-whether the work matches its sources: an AI that looks for what more a work needs finds more without
-end. Each item is answered where its checklist's `Scope` line says: `its part`, at the lines that
-give it; `each part`, in every part of the work on its own, a part being a document's section under
-a top heading, with the title and opening as one, or a file of another kind; `whole`, of the work at
-once.
+In your check you look only for what gives each item's Good, as an AI that looks for what more a
+work needs finds more without end. Each item is answered where its checklist's `Scope` line says:
+`its part`, at the lines that give it; `each part`, in every part of the work on its own; `whole`,
+of the work at once.
 
 What only the user can decide you send the calling AI as a question, with the answer you recommend,
 as soon as the run meets it; the calling AI asks the user, and the run goes on with the answer.
@@ -52,9 +49,8 @@ as soon as the run meets it; the calling AI asks the user, and the run goes on w
      `{"agent_id": "<the agent ID the call gave back>"}`; after a SendMessage, with nothing.
    - `{"waiting": "<agent>"}`: run `turn.py next <result>` with nothing again.
    - `{"check": [...], "given": [...]}`: go to step 4.
-   - `{"goods": [...]}`: go to step 5.
-   - `{"left": [...]}`: go to step 6.
-   - `{"asked": "<result>"}`: go to step 7.
+   - `{"left": [...]}`: go to step 5.
+   - `{"asked": "<result>"}`: go to step 6.
    - `{"returned": "<result>"}`: reply with that line, and end.
 4. Check the CCS. Read each file of the `given` that came with `check` whole, each with
    `cat -n <path>` in a command of its own, or with Read and no offset or limit; of a folder, list
@@ -72,30 +68,13 @@ as soon as the run meets it; the calling AI asks the user, and the run goes on w
    - `"question"`: the number of the question it waits on, counted from 1, items one answer settles
      naming the same one; the question says what the user is to decide and what is lacking without
      it, and `recommended` the answer you would choose and why, in one sentence.
-5. Check each Good of `goods`. Read the work whole, each file the CCS names under the call's `work`
-   kind, as in step 4. Then read each Good at its lines as the receiver the CCS names, for the use
-   it names, and check each thing those lines tell the receiver, not the Good's words alone: run
-   each command they give and compare what it prints with what they say, try each thing they say
-   the code does on an input it is about, and look up each file and link they point to; each in a
-   Bash command of its own, with any input it needs made inside the command, in a folder from
-   `mktemp -d` that the command removes at its end. For an item asked of each part, check each
-   part's Good at its lines. Run `turn.py next <result>` with your check of the Goods, and go to
-   step 3: `{"items": [<one per item of goods>]}`, each item
-   `{"checklist": "<as in goods>", "item": "<as in goods>"}` with one of:
-   - `"holds": true`, where the receiver gets at those lines what the item asks and each thing they
-     tell is so, for an item asked of each part in every part;
-   - `"places"`: the lines of the work where the receiver does not get it, each
-     `"<path of the work>:<from>-<to>"`, for an item asked of each part each part that does not
-     give it; `"did"`: what you did there as the receiver, such as a command you ran; and
-     `"lacking"`: what the receiver does not get, said of the item, leaving how the work gives it
-     to the generator.
-6. Word a question for each item of `left`, the items two rounds left without Good: from its
+5. Word a question for each item of `left`, the items two rounds left without Good: from its
    `places`, `did` and `lacking`, what the user is to decide for the receiver to get what the item
    asks. Run `turn.py next <result>` with your questions, and go to step 3:
    `{"items": [<one per item of left>], "questions": [{"question": "...", "recommended": "..."}]}`,
    each item `{"checklist": "<as in left>", "item": "<as in left>", "question": <the number of the
    question it waits on, counted from 1>}`, items one answer settles naming the same one, and
    `recommended` as in step 4.
-7. Run `turn.py questions <result>`, in a command of its own with nothing after it. Hand on `turn.py questions` as it is.
+6. Run `turn.py questions <result>`, in a command of its own with nothing after it. Hand on `turn.py questions` as it is.
    Then end your turn. When the answer comes, as a message from the calling AI, run
    `turn.py next <result>` with the answer as it came, and go to step 3.

@@ -5,8 +5,8 @@ comes back meeting every item of the checklists it gave, with nothing left for i
 calling AI, the goal, the key results, and what a checklist, a CCS and its kinds, the receiver and a
 Good are, are in [turn's UX](ux.md). The calling AI deals only with the orchestrator, through which
 the generator and the first user go back and forth until the first user finds each item's Good;
-each time that reading ends, the orchestrator checks each Good holds, and only the items that do not
-are made again in the next round, so a run can end in one round.
+only the items that reading ends without Good are made again in the next round, so a run can end in
+one round.
 
 turn holds the [principles every plugin holds](../architecture.md#principles), named below
 Principle 1 to 8, and its own:
@@ -80,7 +80,9 @@ flowchart TB
   each item that lacks it waits on a question.
 
   A Good the CCS cannot give, the generator cannot give either, and the making and the readings
-  after it would be spent for nothing.
+  after it would be spent for nothing. This check, and the wording of a question, judge what
+  running the flow needs, not the work, so they are the orchestrator's own, as it holds the whole
+  run and decides each move (Principle 1), and no role's job (Principle 3).
 - A question goes to the calling AI as its reply as soon as it is met, from the CCS check, from the
   generator or from an item the rounds leave without Good, and the run waits for the answer.
 
@@ -101,19 +103,12 @@ flowchart TB
   The generator holds the sources and the Good it meant at each line, so it changes only what is
   sent back, and how the work gives the Good is its to decide, since an edit told per item broke
   other items.
-- Through that back and forth the orchestrator reads no work, and the first user is not given the
-  generator's reply.
+- The orchestrator reads no work, and the first user is not given the generator's reply; an item
+  gets its Good where the first user gives one, and the result gives that Good and its lines.
 
-  The orchestrator holds the sources and the call, so its own reading there finds the Good the work
+  The orchestrator holds the sources and the call, so its own reading finds the Good the work
   meant, not the one the receiver gets, and pulls the remake toward its view; a reader shown the
   maker's claim finds the Good it was told to find (Principle 4).
-- Once the first user's reading ends, the orchestrator checks that each Good the first user gave
-  holds, running what the Good says the receiver gets, and an item gets its Good only where the first user gave one and
-  the orchestrator said yes; the result gives the first user's Good and its lines.
-
-  Whether a found Good is true is a second question, and a reader asked both narrows the item to
-  the Good it found; the orchestrator holds the whole run and decides (Principle 1). A Good only the
-  orchestrator found would be judged by one that knew what the work meant.
 - Only the items without Good are made again in the next round, with what was found lacking, and an
   item the rounds leave without Good becomes a question.
 

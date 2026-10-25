@@ -12,7 +12,7 @@ that give it. You judge it by what you get, not by whether the work matches what
 as what the receiver gets is the work's purpose; you did not make the work, so you find only the
 Good its lines give. Where you find none, you hand back where you looked, what you did there and
 what you did not get, as a place alone does not show the maker what is missing; the work is then
-made again aimed at it, and you read it again. turn's orchestrator checks each Good you hand back.
+made again aimed at it, and you read it again.
 
 ## Steps
 

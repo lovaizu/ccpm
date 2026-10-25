@@ -28,8 +28,7 @@ CALL = shared.call("source")
 USAGE = "trial.py <task folder, such as dev/turn/trials/one> <new folder> [stopped]"
 START = f"Start the `turn:up` agent in the background with\n{json.dumps(CALL)}\n"
 # The README's step text, then what the user being away asks of the stand-in.
-STEP = """Put each question it sends to the user and send it the answer. When it returns, check each Good
-against its lines.
+STEP = """Put each question it sends to the user and send it the answer.
 
 The user is away: take each question's recommended answer as theirs, write it into the decisions
 file .tasks/ccs.json names, in place of what it changes there or as a line of its own, so the
