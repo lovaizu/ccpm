@@ -50,12 +50,18 @@
 - [test: flow] The flow finds each role's record by the agent ID the orchestrator gives it, as `<conversation>/subagents/agent-<ID>.jsonl`, the place the hooks reference gives, and the orchestrator's own as the `turn:up` record beside them whose call names the result; the orchestrator is told no ID of its own, and lane hands a script nothing from a hook's event, so the flow finds them itself (2026-10-23).
 - [step: orchestrator] It replies with a question and ends its turn; the calling AI's SendMessage to its agent ID resumes it, as `lane:up` is reached.
 - [step: orchestrator] The lines go by SendMessage to `main`, loaded with ToolSearch: called from the main conversation, the calling AI is told them; called from an agent, they reach the main conversation above it, as that agent cannot be messaged by a name; tried with an agent started by an agent started in the background, its message to `main` reached the conversation while the agent that started it was still running.
-- [test: lanes] The lanes run values taken from what each agent starts from: on each role, read_only and read_whole on `{given}`, write_only on `{work}` and `{reply}`, in_form on `{reply}` and its form, end_when on `{reply}`, and hands_off on `git commit` and `git push` on each role that runs commands; on the orchestrator, start_with on `turn.py start`, read_whole on the `{given}` that `turn.py start` prints, the CCS, the files it names but the work, and the checklists, follow_next on `turn.py next`, which holds the lines it prints as moves, as_printed on a generator's question it hands on, and hands_off as on the roles.
+- [test: lanes] The lanes run values taken from what each agent starts from: on each role, read_only and read_whole on `{given}`, write_only on `{work}` and `{reply}`, in_form on `{reply}` and its form, end_when on `{reply}`, and hands_off on `git commit` and `git push` on each role that runs commands; on the orchestrator, start_with on `turn.py start`, read_only and read_whole on the `{given}` that `turn.py start` prints, the CCS, the files it names but the work, and the checklists, follow_next on `turn.py next`, which holds the lines it prints as moves, as_printed on a generator's question it hands on, and hands_off as on the roles.
 - [step: generator, first user, orchestrator] The generator's running what it wrote, and the first user's and the orchestrator's running what the receiver runs, are held by their steps alone: what is run is found in the work and in what the receiver does with it, and the CCS names no kind for a command, so turn has none to give test_after.
 - [test: lanes] No lane on every item answered or on the result made: the flow reads the result and every reply itself, and lane sees a write only in the call that makes it, where the flow writes the result inside its own run.
 - [test: lanes] Each lane acts in its own agent alone, by `agent_type`, and reads that agent's own record and what it started from, so runs at once are told apart without turn tracing them; turn keeps no hooks of its own.
 - [test: flow] The flow's unit cases: the call's check stops what it must; an item gets its Good only where the first user gave one and the orchestrator said yes; a reply giving a Good at lines the work does not hold is stopped; a question is sent at the move it is found; an item two rounds leave without Good becomes a question; a stopped run goes on from its last move; the result and each reply are held to their forms.
 - [test: orchestrator] The orchestrator unit's sets of replies, by the counts: an item sent back three times going on without Good; an item two rounds leave without Good sent as a question and the run going on with the answer; a question the generator replies with before making anything sent at once and its answer sent to the generator, which then makes the work; each with the learner once after the run.
+
+- The user decided (2026-10-25, D1): only the first user looks for Good; the orchestrator's check
+  of each Good goes and no checker takes its place, as that is what turn should be. Settled from
+  base Principle 3: the orchestrator still judges what the run needs, the CCS's check and the items
+  left. In the readme trials r10 to s12 the check stopped three Goods of the first
+  user and passed the five the calling AI judged unmet.
 
 ## turn's code against the architecture (2026-10-23)
 
@@ -63,20 +69,16 @@
   paging; the three roles' core steps; the tests of start, forms, properties, kept rounds and resume;
   the trials' `kept.py`, `baseline.py`, `shared.py`, `stand.py`.
 - Rebuilt: `run.py`'s round middle and end (`first_read`, `compare`, `decide`, `settle`, `offer`,
-  `taking`, `took`, `remade`) to the Good check; questions sent as met, not kept in the result;
-  `up.md` steps 5-6 to the check of each Good, running what it says; the generator asking before
-  making; the learner once after the run, its lessons in the result, own or general; the decision
+  `taking`, `took`, `remade`); questions sent as met, not kept in the result; the generator asking
+  before making; the learner once after the run, its lessons in the result, own or general; the decision
   tests and the flow trial's reply sets; the KR1.1 judge kept in `dev/turn/trials/`.
 - Removed: `agents/evaluator.md`, `forms/goods.json`, the evaluator's hooks, the take step, lessons
   fed to the roles.
 - The trials' false Goods (`dev/turn/trials/readme/results.json`, 89142d1 to 8c78852) came from the
   decision and the evaluator arguing the first user's stops away; the flow and roles trials held.
-- Settled from the purpose, no user decision: a round's first user and the Good check read every
-  item again, as a remake may break one that held; the rounds' bound is two; the records found by
-  the flow from the agent IDs (`records.find`, `records.orchestrator` kept); the orchestrator's
-  reading no work in a round held by its step alone, with no read_only on the orchestrator, until a
-  trial shows it drift, as lane reads a run's values only from the prompt and the start_with
-  script (`lane/README.md:91-93`) and build only what a trial shows is needed (2026-10-23).
+- Settled from the purpose, no user decision: a round's first user reads every item again, as a
+  remake may break one that held; the rounds' bound is two; the records found by the flow from the
+  agent IDs (2026-10-23).
 - Settled in the flow's code, where the documents leave it open (2026-10-23): the calling AI's
   answer reaches the flow as `turn.py next <result>` with the answer as it came on standard input,
   kept in the state with its questions; after the answer to an item the rounds left, its items are
@@ -84,11 +86,14 @@
   "checked"}`, so a run with no lesson still says what the learner checked; a lesson's `whose` is
   `own` or `general`; `dev/turn/cosmic-ray.toml` type-checks `turn/scripts` alone, as checking
   `turn` followed the link to lane's code, failed, and so caught every mutant.
-- The orchestrator's reading no work in a round stays held by its step and by follow_next, no
-  read_only added (2026-10-23): in the flow trial's eight ways at 4afc6a8 it twice ran `cat` of
-  README.md or the roles' replies in a round, and follow_next stopped each before it ran, as a
-  move was printed and not yet taken (`dev/turn/trials/flow/results.json`, ways `sent` and
-  `left`).
+- The orchestrator reads only the `{given}` `turn.py start` prints, held by read_only, and an answer
+  that changes what the CCS names makes the flow print `{"anew": ...}`, the orchestrator running
+  `turn.py start` again so the lane takes the files the CCS now names (2026-10-25): in the flow
+  trial's eight ways at 4afc6a8 it twice ran `cat` of README.md or the roles' replies in a round,
+  stopped only because a move was printed and not yet taken (`dev/turn/trials/flow/results.json`,
+  ways `sent` and `left`), and in the readme trials r10 and r12 it read README.md and LICENSE; with
+  the Good check gone (D1) it has no work to read, and a bound its tool calls show is a hook's to
+  hold (prompt.md B-3).
 - The flow gives no role the run's own files beside the result, a folder holding them given as its
   other entries (2026-10-23): in the roles trial the first user, under `has` `.`, read the
   generator's reply and the state, as its read_only lane lets it read anything under a folder it is
