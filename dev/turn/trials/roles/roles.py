@@ -6,10 +6,11 @@ set README that names no license, and the learner is given the records of the tw
 Prints, for each role, its session, the minutes and cost, each tool it used, each stop, and whether
 its reply is in its form.
 
-    python3 dev/turn/trials/roles/roles.py <new folder>
+    python3 dev/turn/trials/roles/roles.py
 
-The repository and the copy of turn are removed when the run ends, however it ends; the records
-stay in Claude Code's own folder of each session.
+Each run makes a folder of its own, `turn/<yyyymmdd>-roles-<random>/` in the system's temporary
+folder, and prints its path. It holds the repository and the copy of turn, and is removed when the
+run ends, however it ends; the records stay in Claude Code's own folder of each session.
 """
 
 from __future__ import annotations
@@ -25,10 +26,11 @@ import shared
 
 CALL = shared.call("has")
 
-if len(sys.argv) != 2:
-    sys.exit("usage: roles.py <new folder>")
-place = os.path.abspath(sys.argv[1])
-plugin = shared.turn(place)
+if len(sys.argv) != 1:
+    sys.exit("usage: roles.py")
+trial = shared.Run.made("roles")
+place = trial.repo
+plugin = shared.turn(trial)
 shared.use(plugin)
 
 # The copy of turn's scripts, on the path only once it is made.
@@ -64,7 +66,7 @@ as it is, and wait for its reply. Then reply with its reply as it is.
     return os.path.basename(found[0])[len("agent-") : -len(".jsonl")] if found else ""
 
 
-with shared.removed(place, plugin):
+with shared.removed(trial.top):
     shared.task(place, CALL)
     os.chdir(place)
     shared.begun(plugin, place, CALL)

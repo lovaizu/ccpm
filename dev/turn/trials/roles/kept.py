@@ -8,10 +8,12 @@ reads again, with no reading between. Prints the stand-in's session, from whose 
 agents' the trial is judged, the minutes, each tool every agent used, each hook stop, and what the
 script printed last.
 
-    python3 dev/turn/trials/roles/kept.py <new folder>
+    python3 dev/turn/trials/roles/kept.py
 
-The repository and the copy of turn are removed when the run ends, however it ends; the records
-stay in Claude Code's own folder of the session.
+Each run makes a folder of its own, `turn/<yyyymmdd>-kept-<random>/` in the system's temporary
+folder, and prints its path. It holds the repository, the copy of turn and the set README, and is
+removed when the run ends, however it ends; the records stay in Claude Code's own folder of the
+session.
 """
 
 from __future__ import annotations
@@ -43,12 +45,13 @@ if sys.argv[1:2] == ["swap"]:
     state.save(kept)
     sys.exit()
 
-if len(sys.argv) != 2:
-    sys.exit("usage: kept.py <new folder>")
-place = os.path.abspath(sys.argv[1])
-plugin = shared.turn(place)
-# The set README stands beside the repository, where no role reads it.
-unlicensed = place.rstrip("/") + "-unlicensed.md"
+if len(sys.argv) != 1:
+    sys.exit("usage: kept.py")
+run = shared.Run.made("kept")
+place = run.repo
+plugin = shared.turn(run)
+# The set README stands in the run's folder beside the repository, where no role reads it.
+unlicensed = os.path.join(run.top, "unlicensed.md")
 script = f'python3 "{os.path.join(plugin, "scripts", "turn.py")}"'
 swap = f'python3 "{os.path.abspath(__file__)}" swap "{unlicensed}" "{plugin}"'
 result = CALL["result"]
@@ -65,7 +68,7 @@ SendMessage with ToolSearch (`select:SendMessage`) first.
 2. Where what turn.py printed last begins `turn: turn:first-user found` for the second time, reply
    with that line, and end. Otherwise do step 1 again."""
 
-with shared.removed(place, plugin, unlicensed):
+with shared.removed(run.top):
     shared.task(place, CALL)
     with open(unlicensed, "w", encoding="utf-8") as f:
         f.write(shared.UNLICENSED)

@@ -1,14 +1,15 @@
 """Tries every lane on memo, kept in memo/ here, a plugin whose subagents' steps call for each of
 them: MEMO_LANES laid on it by `lay.py write`, it is run as its case of RUNS says, `kept` the whole
-of `/memo:make`, each other one subagent prompted to drift from its steps. Each run makes a new
-folder outside any ccpm clone and copies into it this working tree's lane as it is when the run
+of `/memo:make`, each other one subagent prompted to drift from its steps. Each run makes a folder
+of its own, `lane/<yyyymmdd>-memo-<case>-<random>/` in the system's temporary folder, outside any
+ccpm clone, prints its path, and copies into it this working tree's lane as it is when the run
 starts, memo and the project:
 
-    python3 dev/lane/trials/memo_trial.py <case> <new folder>
+    python3 dev/lane/trials/memo_trial.py <case>
 
 It prints the session, from whose records the trial is judged, the minutes, and what the run left in
-the project. Nothing is removed: the folder holds what Claude Code printed, `<case>.jsonl`, beside
-the plugins and the project.
+the project. The trial removes nothing: the folder holds what Claude Code printed, `<case>.jsonl`,
+beside the plugins and the project.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ import json
 import os
 import sys
 
+import trying
 from lane_trials import HERE, laid, made, run, shown
 
 MEMO = os.path.join(HERE, "memo")
@@ -153,7 +155,7 @@ RUNS = {
         ),
     ),
 }
-USAGE = f"usage: python3 dev/lane/trials/memo_trial.py <{'|'.join(RUNS)}> <new folder>"
+USAGE = f"usage: python3 dev/lane/trials/memo_trial.py <{'|'.join(RUNS)}>"
 
 
 def memo(folder: str, case: str) -> None:
@@ -171,13 +173,11 @@ def memo(folder: str, case: str) -> None:
 
 
 def main(argv: list[str]) -> int:
-    """Runs the case the arguments name in a new folder; gives 0, or 1 with how to run it."""
-    if len(argv) != 2 or argv[0] not in RUNS:
+    """Runs the case the argument names in a folder of its own; gives 0, or 1 with how to run it."""
+    if len(argv) != 1 or argv[0] not in RUNS:
         print(USAGE)
         return 1
-    folder = os.path.abspath(argv[1])
-    os.makedirs(folder)
-    memo(folder, argv[0])
+    memo(trying.folder("lane", f"memo-{argv[0]}"), argv[0])
     return 0
 
 

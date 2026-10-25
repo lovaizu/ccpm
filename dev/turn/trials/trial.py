@@ -8,13 +8,15 @@ started and before it replies, and calls it again with the same call. Prints the
 session, from whose JSONL and its agents' the trial is judged, the minutes from the call to the
 work coming back, read from turn's records, and the work and the result.
 
-    python3 dev/turn/trials/trial.py <task folder> <new folder> [stopped]
+    python3 dev/turn/trials/trial.py <task folder> [stopped]
 
 The task folder is one of this folder's, such as dev/turn/trials/one.
 
-The repository and the copy of turn are removed when the run ends; what the run gave back is kept
-in `<new folder>.work/` for the judge, and the records in Claude Code's own folder of the session.
-The turn of this working tree is used as it is when the run starts.
+Each run makes a folder of its own, `turn/<yyyymmdd>-trial-<random>/` in the system's temporary
+folder, and prints its path. It holds the repository and the copy of turn, removed when the run
+ends; what the run gave back is kept in `work/` in it for the judge, and the records in Claude
+Code's own folder of the session. The turn of this working tree is used as it is when the run
+starts.
 """
 
 from __future__ import annotations
@@ -25,7 +27,7 @@ import time
 import shared
 
 CALL = shared.call("has")
-USAGE = "trial.py <task folder, such as dev/turn/trials/one> <new folder> [stopped]"
+USAGE = "trial.py <task folder, such as dev/turn/trials/one> [stopped]"
 # The README's step text after the call, as its Example writes it, then what the user being away
 # asks of the stand-in.
 STEP = """Put each question it sends to the user and send it the answer.
@@ -48,12 +50,14 @@ done` in a command of its own, then stop the agent with TaskStop, loaded with To
 start the `turn:up` agent in the background again with the same call.
 """
 
-task, place, more = shared.arguments(USAGE, ("stopped",))
+task, more = shared.arguments(USAGE, ("stopped",))
+run = shared.Run.made("trial")
+place = run.repo
 # The folder of each agent's record of a session run in place, where an agent's meta file names its
 # type once it has started.
 project = shared.folder(place)
 records = os.path.dirname(shared.record.subagent(shared.record.conversation("*", project), "*"))
-plugin = shared.turn(place)
+plugin = shared.turn(run)
 with shared.removed(place, plugin):
     shared.repository(task, place, CALL)
     start = time.time()
@@ -72,5 +76,5 @@ with shared.removed(place, plugin):
     if times:
         print("call to return:", times[0], times[-1])
     shared.shown(task, place, CALL["result"])
-    shared.keep(task, place, CALL["result"])
-    print("kept:", shared.kept(place))
+    shared.keep(task, run, CALL["result"])
+    print("kept:", run.work)

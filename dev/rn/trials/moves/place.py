@@ -101,9 +101,10 @@ class Place:
         self.default = ""
 
     def make(self, replies: dict) -> None:
-        """Makes the folder: the copies, the stand-in gh with no pull request, the origin and the
+        """Makes the folder, or fills it where it is made already and empty, as the flow trial's
+        own folder is: the copies, the stand-in gh with no pull request, the origin and the
         repository at the seed, and the stand-in turn's replies, set by the case."""
-        os.makedirs(self.folder)
+        os.makedirs(self.folder, exist_ok=True)
         ignored = shutil.ignore_patterns("__pycache__")
         for name, copy in zip(("turn", "rn"), self.plugins):
             shutil.copytree(os.path.join(ROOT, name), copy, ignore=ignored)

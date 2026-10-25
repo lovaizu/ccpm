@@ -1,8 +1,9 @@
-"""What turn's trials share: the call and the line starting turn with it, the flow trial's task made
-a repository, with the roles trials' check of it and their README that falls short, the acceptance
-trials' arguments, their repository and the copy kept of what a run gave back, and the copy of turn
-a run uses, removed however the trial ends; with Claude Code started on it as its user starts it,
-and what a record shows of a role's work, which every plugin's trials share."""
+"""What turn's trials share: the folder a run writes in, the call and the line starting turn with
+it, the flow trial's task made a repository, with the roles trials' check of it and their README
+that falls short, the acceptance trials' arguments, their repository and the copy kept of what a run
+gave back, and the copy of turn a run uses, removed however the trial ends; with Claude Code started
+on it as its user starts it, and what a record shows of a role's work, which every plugin's trials
+share."""
 
 from __future__ import annotations
 
@@ -26,6 +27,7 @@ sys.path.insert(0, os.path.join(ROOT, "turn", "scripts"))
 import record
 from call import entries, items  # noqa: F401
 from trying import agents, claude, show  # noqa: F401
+from trying import folder as made_folder
 
 # The orchestrator's check of the flow trial's task, as the roles trials set it: each item's Good
 # found in the decisions.
@@ -43,6 +45,24 @@ CHECK = {
 # A README for the flow trial's task that names no license, which the roles trials set in place of
 # the generator's work, so the first user stops at B-1.
 UNLICENSED = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
+
+
+class Run:
+    """The folder of a run of a trial, and where the run writes in it: `repo`, the repository the
+    run works in, `turn`, the copy of turn it uses, and `work`, what an acceptance trial's run gave
+    back, kept for the judge once the repository is removed."""
+
+    def __init__(self, top: str) -> None:
+        self.top = top
+        self.repo = os.path.join(top, "repo")
+        self.turn = os.path.join(top, "turn")
+        self.work = os.path.join(top, "work")
+
+    @classmethod
+    def made(cls, name: str) -> Run:
+        """A run in a new folder for the trial of the name, `turn/<yyyymmdd>-<name>-<random>/` in
+        the system's temporary folder, its path printed."""
+        return cls(made_folder("turn", name))
 
 
 def call(has: str) -> dict:
@@ -88,18 +108,15 @@ def committed(place: str) -> None:
 
 
 def arguments(usage: str, more: tuple = ()) -> tuple:
-    """The task folder and the new folder an acceptance trial is given, each absolute, and what
-    follows them, one of more where more is given; stops with the usage on any other."""
+    """The task folder an acceptance trial is given, absolute, and what follows it, one of more
+    where more is given; stops with the usage on any other."""
     given = sys.argv[1:]
-    if len(given) < 2 or given[2:] not in ([], *([m] for m in more)):
+    if not given or given[1:] not in ([], *([m] for m in more)):
         sys.exit(f"usage: {usage}")
-    task, place = (os.path.abspath(p) for p in given[:2])
+    task = os.path.abspath(given[0])
     if not os.path.isfile(os.path.join(task, "ccs.json")):
         sys.exit(f"{task} holds no ccs.json; give a task folder, such as dev/turn/trials/readme")
-    for taken in (place, kept(place)):
-        if os.path.exists(taken):
-            sys.exit(f"{taken} is there already; give a new folder")
-    return task, place, given[2:]
+    return task, given[1:]
 
 
 def ccs(task: str) -> dict:
@@ -141,25 +158,20 @@ def folder(place: str) -> str:
     so long a path that Claude Code names the folder with a hash, not made before the run."""
     found = record.folders(place)
     if not found:
-        sys.exit(f"{place} is too long a path; give a shorter new folder")
+        sys.exit(f"{place} is too long a path; set TMPDIR to a shorter folder")
     return found[0]
 
 
-def kept(place: str) -> str:
-    """Where what a run in place gave back is kept once place is removed."""
-    return place.rstrip("/") + ".work"
-
-
-def keep(task: str, place: str, result: str) -> None:
-    """Keeps for the judge, beside place, what the run in it gave back: place as it ended but its
-    git, which holds the task as the run left it, and the work, with the task's CCS at
+def keep(task: str, run: Run, result: str) -> None:
+    """Keeps for the judge, as the run's work, what the run gave back: its repository as it ended
+    but its git, which holds the task as the run left it, and the work, with the task's CCS at
     `.tasks/ccs.json`, where turn's call names it, whatever form of it the run was given; the result
     and turn's folder, holding a run stopped before it returned, are left out, as the judge reads
     the whole work alone."""
-    name = os.path.basename(result)
-    shutil.copytree(place, kept(place), ignore=shutil.ignore_patterns(".git", ".turn", name))
-    os.makedirs(os.path.join(kept(place), ".tasks"), exist_ok=True)
-    shutil.copyfile(os.path.join(task, "ccs.json"), os.path.join(kept(place), ".tasks", "ccs.json"))
+    name, work = os.path.basename(result), run.work
+    shutil.copytree(run.repo, work, ignore=shutil.ignore_patterns(".git", ".turn", name))
+    os.makedirs(os.path.join(work, ".tasks"), exist_ok=True)
+    shutil.copyfile(os.path.join(task, "ccs.json"), os.path.join(work, ".tasks", "ccs.json"))
 
 
 def shown(task: str, place: str, result: str) -> None:
@@ -211,9 +223,8 @@ def begun(plugin: str, place: str, given: dict) -> None:
         )
 
 
-def turn(place: str) -> str:
-    """Copies the turn of this working tree beside place, so the run uses it as it is when the run
-    starts, and gives the copy's folder."""
-    plugin = place.rstrip("/") + "-turn"
-    shutil.copytree(os.path.join(ROOT, "turn"), plugin)
-    return plugin
+def turn(run: Run) -> str:
+    """Copies the turn of this working tree into the run's folder, so the run uses it as it is when
+    the run starts, and gives the copy's folder."""
+    shutil.copytree(os.path.join(ROOT, "turn"), run.turn)
+    return run.turn

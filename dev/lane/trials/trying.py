@@ -1,5 +1,6 @@
-"""What every plugin's trials stand on: Claude Code started on copies of plugins as their user
-starts it, its record kept, and what the records of the agents it started show."""
+"""What every plugin's trials stand on: the folder of its own each run of a trial writes in, Claude
+Code started on copies of plugins as their user starts it, its record kept, and what the records of
+the agents it started show."""
 
 from __future__ import annotations
 
@@ -8,18 +9,34 @@ import importlib.util
 import json
 import os
 import subprocess
+import sys
 from typing import Any
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# The folder a trial writes in is made as a test's is, by testing.py, kept in the folder above.
+sys.path.insert(0, os.path.dirname(HERE))
+import testing
 
 # How Claude Code keeps its records is read by lane's record.py, loaded from its file, so a
 # plugin's trials standing on this module meet their own modules of the names lane's code has, such
 # as call.
-RECORD = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "../../../lane/hooks/lane/record.py"
-)
+RECORD = os.path.join(HERE, "../../../lane/hooks/lane/record.py")
 FOUND = importlib.util.spec_from_file_location("record", os.path.normpath(RECORD))
 assert FOUND and FOUND.loader
 record = importlib.util.module_from_spec(FOUND)
 FOUND.loader.exec_module(record)
+
+
+def folder(plugin: str, name: str) -> str:
+    """A new folder of the plugin's for a run of the trial of the name, in the system's temporary
+    folder as dev/architecture.md's Where a plugin writes its files has it, outside any ccpm clone,
+    so the conversations started in it load none of its instructions; its path is printed first,
+    for whoever runs the trial to find what the run writes there. The path is given with every link
+    in it followed, as Claude Code names the folder of a conversation's records by it, and macOS's
+    temporary folder is reached through a link."""
+    made = os.path.realpath(testing.temporary(plugin, name))
+    print("folder:", made, flush=True)
+    return made
 
 
 def claude(

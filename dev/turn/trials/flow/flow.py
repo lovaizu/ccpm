@@ -22,12 +22,14 @@ part and B-2 in each part, in a repository made for the run:
 Where turn asks, the calling AI takes each question's recommended answer as the user's, keeps it in
 the task's decisions and sends it.
 
-    python3 dev/turn/trials/flow/flow.py <way> <new folder>
+    python3 dev/turn/trials/flow/flow.py <way>
 
 The replies each way sets are in replies.py. Prints the session, from whose records the trial is
-judged, the order the agents were started in, the minutes, the cost and the result. The repository
-and the copy of turn are removed when the run ends, however it ends; what Claude Code printed is
-kept as `<new folder>.jsonl`, and the records stay in Claude Code's own folder of the session.
+judged, the order the agents were started in, the minutes, the cost and the result. Each run makes
+a folder of its own, `turn/<yyyymmdd>-flow-<way>-<random>/` in the system's temporary folder, and
+prints its path. The repository and the copy of turn in it are removed when the run ends, however
+it ends; what Claude Code printed is kept in it as `<way>.jsonl`, and the records stay in Claude
+Code's own folder of the session.
 """
 
 from __future__ import annotations
@@ -47,7 +49,7 @@ import testing
 
 CALL = shared.call("has")
 START = shared.start(CALL)
-USAGE = "usage: flow.py <way> <new folder>"
+USAGE = "usage: flow.py <way>"
 ASKS = (
     START
     + "If it returns with questions, take each question's recommended answer as the user's, write"
@@ -74,10 +76,12 @@ STEPS = {
 REPLIES = dict({w: w for w in STEPS}, asked="plain", stopped="plain")
 ROLES = ("turn:generator", "turn:first-user", "turn:learner")
 
-if len(sys.argv) != 3 or sys.argv[1] not in STEPS:
+if len(sys.argv) != 2 or sys.argv[1] not in STEPS:
     sys.exit(f"{USAGE}, the way one of {', '.join(STEPS)}")
-way, place = sys.argv[1], os.path.abspath(sys.argv[2])
-plugin = shared.turn(place)
+way = sys.argv[1]
+run = shared.Run.made(f"flow-{way}")
+place = run.repo
+plugin = shared.turn(run)
 with shared.removed(place, plugin):
     shared.task(place, CALL, "" if way == "asked" else None)
     for agent in glob.glob(os.path.join(HERE, "roles", "*.md")):
@@ -102,7 +106,8 @@ with shared.removed(place, plugin):
     with open(os.path.join(plugin, "stand", "replies.json"), "w", encoding="utf-8") as f:
         json.dump(replies.WAYS[REPLIES[way]], f, indent=2, ensure_ascii=False)
     start = time.time()
-    end = shared.claude(STEPS[way], [plugin], cwd=place, wait=60, record=place + ".jsonl")
+    record = os.path.join(run.top, f"{way}.jsonl")
+    end = shared.claude(STEPS[way], [plugin], cwd=place, wait=60, record=record)
     session = end["session_id"]
     print(end.get("result"))
     print("session:", session, "cost:", end.get("total_cost_usd"))

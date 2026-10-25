@@ -5,13 +5,14 @@ the move must leave. The real skills and scripts run, on Claude Code's default m
 everything but them stood in for: turn's turn:up by an agent giving back what the case set, `gh` by
 a script keeping the pull request and the issues in a file, and the user by the case's messages.
 
-    python3 dev/rn/trials/moves/moves.py <new folder> <case>... | all [--dry]
+    python3 dev/rn/trials/moves/moves.py <case>... | all [--dry]
 
-Give a new folder outside any ccpm clone, so the conversations load none of its instructions.
-Each case runs in a folder of its own in the new folder, side by side with the others: `repo`, a
+Each run makes a folder of its own, `rn/<yyyymmdd>-moves-<random>/` in the system's temporary
+folder, outside any ccpm clone, so the conversations load none of its instructions, and prints its
+path. Each case runs in a folder of its own in it, side by side with the others: `repo`, a
 fresh repository whose origin is the bare repository `origin.git`; `rn` and `turn`, the copies of
 this working tree's as installing makes them; `bin/gh` and `gh.json`, the stand-in gh and what it
-kept; and `<n>.jsonl`, what Claude Code printed for message n. Nothing is removed.
+kept; and `<n>.jsonl`, what Claude Code printed for message n. The trial removes nothing.
 
 Prints, for each case, whether its starting state is what its step expects, each message sent with
 the reply and each check of what its move left, whether all passed, the minutes, the cost, and the
@@ -39,7 +40,7 @@ import trying
 from cases import CASES, Case, Check
 from place import Place, Seen, Stop
 
-USAGE = "usage: python3 dev/rn/trials/moves/moves.py <new folder> <case>... | all [--dry]"
+USAGE = "usage: python3 dev/rn/trials/moves/moves.py <case>... | all [--dry]"
 # The minutes a message waits for the stand-in turn, started in the background.
 WAIT = 30
 # Every move leaves the default branch as it was, as rn pushes to the session's branch alone.
@@ -106,21 +107,20 @@ def tried(name: str, case: Case, folder: str, dry: bool) -> tuple:
 
 
 def main(argv: list[str]) -> int:
-    """Runs the cases argv names in the new folder it names; prints the usage and gives 1 on any
-    other arguments, where the folder is there already, or a case is not one of CASES."""
+    """Runs the cases argv names in a folder of its own; prints the usage and gives 1 where argv
+    names no case or a case not one of CASES."""
     if argv in (["-h"], ["--help"]):
         listed = "\n".join(f"  {n}: {c.move}; {c.covers}" for n, c in CASES.items())
         print(f"{__doc__}{listed}\n\n{USAGE}")
         return 0
     dry = "--dry" in argv
     given = [a for a in argv if a != "--dry"]
-    names = list(CASES) if given[1:] == ["all"] else given[1:]
+    names = list(CASES) if given == ["all"] else given
     unknown = [n for n in names if n not in CASES]
-    if len(given) < 2 or unknown or os.path.exists(given[0]):
-        print(f"{USAGE}\nthe folder must be new, and each case one of: {', '.join(CASES)}")
+    if not given or unknown:
+        print(f"{USAGE}\neach case one of: {', '.join(CASES)}")
         return 1
-    place = os.path.abspath(given[0])
-    os.makedirs(place)
+    place = trying.folder("rn", "moves")
     with concurrent.futures.ThreadPoolExecutor(len(names)) as pool:
         runs = {n: pool.submit(tried, n, CASES[n], os.path.join(place, n), dry) for n in names}
         results = {n: run.result() for n, run in runs.items()}

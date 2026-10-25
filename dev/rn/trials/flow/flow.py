@@ -14,16 +14,17 @@ deliverable sign-off (KR1.1) and what the user had to do (AC2). What it leaves o
 decision: the quality of what turn makes, as the stand-in turn makes each work once, without turn's
 rounds or first user, keeping only the decisions the CCS holds.
 
-    python3 dev/rn/trials/flow/flow.py <new folder> [--dry]
+    python3 dev/rn/trials/flow/flow.py [--dry]
 
-Give a new folder outside any ccpm clone, so the conversations load none of its instructions. It
-is made as each move trial's case folder is (dev/rn/trials/moves/place.py): `repo`, the small
-project with its bare origin `origin.git`; `rn` and `turn`, the copies, turn's turn:up the
+Each run makes a folder of its own, `rn/<yyyymmdd>-flow-<random>/` in the system's temporary
+folder, outside any ccpm clone, so the conversations load none of its instructions, and prints its
+path. It is made as each move trial's case folder is (dev/rn/trials/moves/place.py): `repo`, the
+small project with its bare origin `origin.git`; `rn` and `turn`, the copies, turn's turn:up the
 stand-in, the agent of up.md with write.py, which makes each work from its CCS; `bin/gh` and
 `gh.json`, the stand-in gh and the pull request and issues it keeps. Beside them, `user`, the empty
 folder the stand-in user runs in; `rn-<n>.jsonl` and `user-<n>.jsonl`, what Claude Code printed for
 message n to rn and for the stand-in's answer to it; `transcript.json`, rewritten after each
-message; and `summary.json`. Nothing is removed.
+message; and `summary.json`. The trial removes nothing.
 
 The trial ends when the session is finished with its pull request ready, when the stand-in says
 stop or cannot end its reply as asked, after 120 messages to rn, when a run of Claude Code fails,
@@ -58,10 +59,7 @@ import cases
 import trying
 from place import Place, Seen
 
-USAGE = (
-    "usage: python3 dev/rn/trials/flow/flow.py <new folder> [--dry]\n"
-    "the folder must not exist, and must be outside any ccpm clone"
-)
+USAGE = "usage: python3 dev/rn/trials/flow/flow.py [--dry]"
 # The minutes a message to rn waits for the stand-in turn, started in the background.
 WAIT = 30
 LIMIT = 120
@@ -129,7 +127,7 @@ def costed(costs: dict[str, float]) -> float:
 
 
 class Trial:
-    """A run of the trial in its new folder, and what it has seen so far."""
+    """A run of the trial in its folder, and what it has seen so far."""
 
     def __init__(self, place: str) -> None:
         self.place = place
@@ -340,16 +338,16 @@ class Trial:
 
 
 def main(argv: list[str]) -> int:
-    """Runs the trial in the new folder argv names; prints the usage and gives 1 on any other
-    arguments, or where the folder is there already."""
+    """Runs the trial in a folder of its own; prints the usage and gives 1 on any other
+    arguments."""
     if argv in (["-h"], ["--help"]):
         print(f"{__doc__}\n{USAGE}")
         return 0
-    dry = argv[1:] == ["--dry"]
-    if len(argv) not in (1, 2) or (len(argv) == 2 and not dry) or os.path.exists(argv[0]):
+    dry = argv == ["--dry"]
+    if argv and not dry:
         print(USAGE)
         return 1
-    place = os.path.abspath(argv[0])
+    place = trying.folder("rn", "flow")
     trial = Trial(place)
     trial.make()
     if dry:

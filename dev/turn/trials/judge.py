@@ -1,12 +1,12 @@
 """Judges the work each acceptance trial gave back by one bar, a measure beside KR1.1, which is the
-calling AI's own check of each Good: for each work folder trial.py kept, an AI that took no part in
-any of the runs judges each item of the task's checklists afresh, whether the receiver the CCS
-names gets from that work what the item asks, with what it read and ran for it, on one prompt and
-each folder in a Claude Code run of its own, all at once, so no folder's reading cuts another's
-short. Writes each folder's judgment to `<folder>.judged.json` beside it, and prints each folder's
-count and its session.
+calling AI's own check of each Good: for each run of trial.py, the folder it printed given, an AI
+that took no part in any of the runs judges each item of the task's checklists afresh in the work
+the run kept, whether the receiver the CCS names gets from that work what the item asks, with what
+it read and ran for it, on one prompt and each run in a Claude Code run of its own, all at once, so
+no run's reading cuts another's short. Writes each run's judgment to `judged.json` in its folder,
+beside its work, and prints each run's count and its session.
 
-    python3 dev/turn/trials/judge.py <work folder> [<work folder> ...]
+    python3 dev/turn/trials/judge.py <run folder> [<run folder> ...]
 """
 
 from __future__ import annotations
@@ -43,25 +43,26 @@ checklist. Then reply `Written.`"""
 
 
 def judged(folder: str) -> str:
-    """Where the judgment of the folder is written, beside it."""
-    return folder.rstrip("/") + ".judged.json"
+    """Where the judgment of the run of the folder is written, in its folder."""
+    return os.path.join(folder, "judged.json")
 
 
 def judge(folder: str, ends: dict) -> None:
-    """Runs the judge on the folder, in a folder of its own, so it starts from none of the runs'
-    folders."""
+    """Runs the judge on the work of the run of the folder, in a folder of its own, so it starts
+    from none of the runs' folders."""
     place = testing.temporary("turn", "judge")
     with shared.removed(place):
-        prompt = PROMPT.format(folder=folder, out=judged(folder), **KIND)
+        work = shared.Run(folder).work
+        prompt = PROMPT.format(folder=work, out=judged(folder), **KIND)
         ends[folder] = shared.claude(prompt, [], cwd=place)
 
 
 folders = [os.path.abspath(p) for p in sys.argv[1:]]
 if not folders:
-    sys.exit("usage: judge.py <work folder> [<work folder> ...]")
+    sys.exit("usage: judge.py <run folder, as trial.py printed it> [<run folder> ...]")
 for folder in folders:
-    if not os.path.isfile(os.path.join(folder, ".tasks", "ccs.json")):
-        sys.exit(f"{folder} holds no .tasks/ccs.json; give a folder trial.py kept")
+    if not os.path.isfile(os.path.join(shared.Run(folder).work, ".tasks", "ccs.json")):
+        sys.exit(f"{folder} holds no work/.tasks/ccs.json; give a folder trial.py printed")
     if os.path.exists(judged(folder)):
         sys.exit(f"{judged(folder)} is there already; move it away to judge again")
 ends: dict = {}
@@ -71,10 +72,11 @@ for run in runs:
 for run in runs:
     run.join()
 for folder in folders:
-    with open(os.path.join(folder, ".tasks", "ccs.json"), encoding="utf-8") as f:
+    work = shared.Run(folder).work
+    with open(os.path.join(work, ".tasks", "ccs.json"), encoding="utf-8") as f:
         checklists = shared.entries(json.load(f), "checklist")
-    # The folder's items, from the checklists its CCS names, to find any the judge left out.
-    asked = {(c, i["item"]) for c in checklists for i in shared.items(os.path.join(folder, c))}
+    # The work's items, from the checklists its CCS names, to find any the judge left out.
+    asked = {(c, i["item"]) for c in checklists for i in shared.items(os.path.join(work, c))}
     with open(judged(folder), encoding="utf-8") as f:
         given = json.load(f)
     met = asked & {(g.get("checklist"), g.get("item")) for g in given if g.get("met") is True}
