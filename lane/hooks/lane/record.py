@@ -6,9 +6,9 @@ subagent's ID, by which Claude Code keeps it. Claude Code does not document the 
 read as Claude Code 2.1.306 writes it, which the tests hold, and a line not in that shape is left
 out. The calls of one reply of the AI are written there once their hooks have run, a call a hook
 stopped among them, so the record holds every call of the replies before, and none of the reply
-being handed, whose calls called.py keeps. Where Claude Code keeps the records, a conversation's beside each subagent's of it,
-and the agent type of each, are read here too, for every plugin that reads a record, kept as
-Claude Code 2.1.306 keeps them."""
+being handed, whose calls called.py keeps. Where Claude Code keeps the records, a conversation's
+beside each subagent's of it, and the agent type of each, are read here too, for every plugin that
+reads a record, kept as Claude Code 2.1.306 keeps them."""
 
 from __future__ import annotations
 
