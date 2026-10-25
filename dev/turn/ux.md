@@ -6,8 +6,8 @@ it gets that on every run.
 
 ## Users and goals
 
-- G1: The calling AI, the AI that runs a step of a plugin and calls turn from it, wants the work that
-  step makes to come back meeting the step's checklists on every run.
+- G1: The calling AI, the AI that runs a step of a plugin and calls turn from it, wants the work
+  that step makes to come back meeting the step's checklists on every run.
 
   A checklist lists what the receiver, the one the work is for, should get from the work, one item
   each, asked as a question. An item's Good is the judgment that the receiver gets from the work
