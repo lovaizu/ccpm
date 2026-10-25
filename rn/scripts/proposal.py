@@ -21,12 +21,14 @@ WHERE = dict(
         ),
     )
 )
-# The works whose decisions a sign-off shows, by the stage they were called in and their names: at
-# the design's, each task's and checklist's called in the design stage; at the deliverable's, each
-# task's called in the build stage.
+# The works a sign-off shows, by the stage they were called in and their names, and whether one
+# with no decision is shown: at the design's, each task's and checklist's called in the design
+# stage, each shown, as the user approves the documents themselves; at the deliverable's, each
+# task's called in the build stage, shown only with a decision, as the finished work is what the
+# user approves there.
 WORKS_SHOWN = {
-    steering.DESIGN: (steering.DESIGN, session.DESIGNED),
-    steering.DELIVERABLE: (steering.BUILD, session.TASK_WORK),
+    steering.DESIGN: (steering.DESIGN, session.DESIGNED, True),
+    steering.DELIVERABLE: (steering.BUILD, session.TASK_WORK, False),
 }
 # Each answer the user gives a sign-off, with the command they type for it, which the AI cannot
 # call, and the line every proposal ends with, saying how to answer.
@@ -87,7 +89,7 @@ def shown_works(made: list[session.Call], signoff: str) -> list[str]:
     """The works whose decisions the sign-off shows, in the order first called."""
     if signoff not in WORKS_SHOWN:
         return []
-    stage, form = WORKS_SHOWN[signoff]
+    stage, form, _ = WORKS_SHOWN[signoff]
     found: list[str] = []
     for call in made:
         if call.stage == stage and form.fullmatch(call.work) and call.work not in found:
@@ -121,7 +123,7 @@ def shown_at(commit: str, signoff: str, folder: str) -> Shows:
                 " again"
             )
         said = simple(work, session.decisions_of(last))
-        if signoff == steering.DESIGN or said:
+        if WORKS_SHOWN[signoff][2] or said:
             focal = last.ccs.get("focal_entities", [])
             kind = next((e[ccs.KIND] for e in focal if ccs.KIND in e), "")
             link = blob(steered.keys[steering.PR])
