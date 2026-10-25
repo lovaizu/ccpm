@@ -689,6 +689,9 @@
   },
   {
    "fact": "2026-10-25: pushed up to 6b50879: lane:up deleted (544755b..66ac56c; lay.py reached by claude plugin list --json's installPath, the proposal in lane/<yyyymmdd>-<plugin>/ in the temporary folder); lane's null run value rests a lane, empty text an error (cbc7631); the proposal held to one JSON Schema made from hooks/lanes.json's (f5c9342, 927a065); turn's call takes `test`, one command or null, passed to the generator (e1f9396), rn and turn's trials pass null (9b3bc44); test_after on generator step 4 ({work}, {test}), every_item on first-user step 4 ({checklists}) with turn/hooks/adapters/items-checklist.py, not on the generator, whose claim before making holds only the items that wait (1969f46); the item rule in the adapter alone, call.py loading it by runpy, the adapter mutated (7b56c7f, 6b50879); rn's plan.md B-9: a check made in the session is made first and seen failing (990cc03, 9f05db9). The user: mutation left to pre-push and CI; tests designed first (cases and data by ISTQB) then failing then code, in every brief; build up lane, turn, rn in order, never jump"
+  },
+  {
+   "fact": "2026-10-25: pushed to 5dbf3f6: turn's state and replies in .turn/<yyyymmdd>-<name>/ at the root holding the result, the learner's records in records/ there, removed on return (075f53f, 14da4bc); rn keeps .turn/ as any file, the user's .gitignore deciding (56ec7c6); dev/architecture.md: a file an agent reads goes in the kept folder, as Claude Code reads without asking only in the working folder (8442e42, the user's choice); survivors fixed (5dbf3f6). The user: .gitignore of .turn/ is the user's, nothing for rn or turn to do"
   }
  ],
  "semantic_gist": [
@@ -793,7 +796,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: a subagent runs scratchpad turn-folders-brief.md (turn's state and replies in .turn/<yyyymmdd>-<name>/ at the root, the learner's records in turn/<yyyymmdd>-<name>/ in the temporary folder; rn.py's commits and refusals meeting .turn/); its report arrives as a notification, survives /clear; if none, check git log 6b50879..HEAD and git status. Check it by hand from its test design, check.sh lane turn rn, push (pre-push mutates). Then: lane read whole against fix.md B-4 (dev/lane/architecture.md:77-78 on the record), roles trial, rn from build-brief.md (rn's code tasks: a check made first per plan.md B-9; feedback back by rn's learnings), shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Remove the scratchpad brief after"
+   "next": "a read-only subagent audits lane whole (scratchpad lane-audit-brief.md) against fix.md B-4 and the product checklists; on its report check each finding at its source, fix what the purpose settles, bring the rest; push; then turn read whole the same way, roles trial, rn from build-brief.md (plan.md B-9; feedback back by rn's learnings), shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Remove the scratchpad brief after"
   }
  ],
  "uncertainty_signal": [
