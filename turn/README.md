@@ -122,6 +122,8 @@ that calls it, and Claude Code starts agents down to three layers below the main
 
 ## Documentation
 
+- [Calling turn](docs/calling.md) gives the checklist's form, the CCS, the call, the questions and
+  the result in full.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development

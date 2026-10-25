@@ -25,8 +25,8 @@ Principle 1 to 8, and two of its own, named turn's Principle 1 and 2:
 ## User stories
 
 - As the calling AI, I want to start turn with the path of a CCS, its kinds, where the result
-  goes and the command that checks the work, and get the work back where it goes, with each item's Good and its lines, and the lessons
-  from the run to put to the user.
+  goes and the command that checks the work, and get the work back where it goes, with each item's
+  Good and its lines, and the lessons from the run to put to the user.
 - As the calling AI, I want the user told, as the run goes, what it will do and what is done, in
   the main conversation, which alone talks with them.
 - As the calling AI, I want to be sent each point only the user can decide as soon as the run meets
@@ -108,9 +108,9 @@ flowchart TB
   The generator holds the sources and the Good it meant at each line, so it changes only what is
   sent back, and how the work gives the Good is its to decide, as an edit told per item breaks other
   items.
-- The orchestrator reads no work, held to what `turn.py start` gives it by a lane, and the first
-  user is not given the generator's reply; an item gets its Good where the first user gives one,
-  and the result gives that Good and its lines.
+- The orchestrator reads no work, held to what `turn.py start` gives it by a lane, a hook laid by
+  [lane](../../lane/README.md), and the first user is not given the generator's reply; an item
+  gets its Good where the first user gives one, and the result gives that Good and its lines.
 
   The orchestrator holds the sources and the call, so its own reading finds the Good the work
   meant, not the one the receiver gets, and pulls the remake toward its view; a reader shown the
@@ -143,6 +143,8 @@ turn/                      the plugin, installed by Claude Code
 │   ├── generator.md       <agent>
 │   ├── first-user.md      <agent>
 │   └── learner.md         <agent>
+├── docs/
+│   └── calling.md         what a step gives turn and gets back <Markdown>
 ├── forms/
 │   └── *.json             each role's reply form <JSON Schema>
 ├── scripts/
@@ -154,7 +156,7 @@ turn/                      the plugin, installed by Claude Code
 │   ├── forms.py           each reply checked, and the parts of the work <Python 3>
 │   ├── records.py         each record as the learner reads it <Python 3>
 │   └── record.py,         links to lane's, Claude Code's records and Markdown read
-│       template.py
+│       template.py        <Python 3>
 └── hooks/
     ├── hooks.json         the hook of each agent and event, written by lane's lay.py <JSON>
     ├── lanes.json         the lanes on every agent, laid by lane's lay.py <JSON>
@@ -171,7 +173,7 @@ turn/                      the plugin, installed by Claude Code
     └── <yyyymmdd>-<name>/ one run, gone once it returns
         ├── run.json       the state <JSON>, read and written by the flow alone
         ├── <role>.json    each role's reply <JSON>, read by the flow alone
-        └── records/       each record shown to the learner as text, written when it is started
+        └── records/       each record shown to the learner, written when it is started <text>
 ```
 
 - turn runs on Claude Code and python3 3.9 or later.
@@ -198,7 +200,8 @@ turn/                      the plugin, installed by Claude Code
 
   No AI copies a reply, and the first user's lane on what it reads keeps it from the generator's.
 - The flow gives no role the run's own files but the learner the records shown to it, nor the
-  first user the CCS, a folder holding them given as its other entries, as a lane lets a role read anything under a folder it is given.
+  first user the CCS, a folder holding them given as its other entries, as a lane lets a role read
+  anything under a folder it is given.
 
 ## Test
 

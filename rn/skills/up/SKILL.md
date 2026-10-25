@@ -172,7 +172,8 @@ repository is in its `artifact-language`.
        call made again, as turn goes on from its last move when called again with the same result.
        Ask the user, as a point, which way the work goes now.
    - When it ends with `{"returned": "<result>"}`: read the result whole, then each item's `good` at
-     its `lines` in the work. A Good its lines fall short of, or an item without one, is a point
+     its `lines` in the work, or, for an item with `parts`, each part's `good` at its `lines`. A
+     Good its lines fall short of, or an item without one, is a point
      behind it: first keep the move with `rn.py state`, Next step 3 on the work and then this step
      again, Open each shortfall at its lines, each time a result falls short, a work made again
      included, so the result read is kept before anything is asked; then confirm the point with the

@@ -16,6 +16,7 @@
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
 - turn tells the main conversation, before each move of the run, its own moves among them, what was done and what the move will do, how far and how — a run going a slow or wrong way shows while it can still be stopped, not after its time is spent.
 - A run stopped anywhere, by you or by a conversation that ended, goes on from its last move when your step calls turn again with the same call — no work already done is done again.
+- [Calling turn](docs/calling.md) gives the checklist's form, the CCS, the call, the questions and the result in full — your step's text can be written from it without reading turn's code.
 
 ### Changed
 
