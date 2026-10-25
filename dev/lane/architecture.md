@@ -99,10 +99,16 @@ flowchart TB
   A subagent's inputs and outputs are most often known only once its run starts, and the JSON it
   starts from is the one place a plugin hands them over, so a lane reads them there, the same way in
   every plugin.
-- A thing given for each run whose value is empty lays nothing on that run.
+- The guard checks what each lane is given against that lane's IN, a JSON Schema lanes.md defines,
+  before any lane's check runs: the event, the lanes laid, the run's values, an adapter's answer and
+  the record the lane rests on. What is not as its IN says, such as a value not given or empty, is
+  an error, not a drift: the call is stopped, or the end kept going once, with
+  `<plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>.` and who must fix
+  it, and the user is told the same; a lane's check then meets only what it can check.
 
-  The step has nothing to hold the subagent to there, and a lane that stopped it would leave it no
-  way back to its step.
+  A drift is the subagent's to put right by its step; an error is the plugin's, which the subagent
+  can only report, and a call let through unchecked would hide it. Checked once at the entry, as an
+  application validates its input, each lane's check holds no guard of its own.
 - Each lane checks only what [the lanes](../../lane/docs/lanes.md) define it to take, and knows no
   plugin's forms. Where a check reads a plugin's text, it reads it at a port, a point lanes.md
   defines with the JSON it is given and gives back: the values a subagent started from, the items of
@@ -210,12 +216,10 @@ ${CLAUDE_PLUGIN_DATA}/
   and a tool event's matcher filters by tool, not by agent.
 - An adapter is a Python 3 script run by python3 with its port's JSON on stdin, giving its JSON on
   stdout, within the hook's time; the layer runs it on each of its cases before writing, and the
-  guard holds what it gives to its port, a failure or a wrong answer let through and told to whoever
-  runs the plugin.
+  guard holds what it gives to its port, a failure or a wrong answer being an error as above.
 
   Python is what lane already needs on the machine; a case is how its port's JSON is checked
-  without a run of the plugin, and an adapter that fails is the plugin's fault, which the subagent
-  cannot put right.
+  without a run of the plugin.
 - Each hook command first checks for Python in the shell, before the guard runs.
 
   With no Python the guard cannot read the event, and the machine may have nothing else.
