@@ -76,13 +76,16 @@ class TestCases(AdapterTest):
             "an empty list": (HEADINGS, [], "gives the adapter no cases"),
             "a case out of the port": (
                 HEADINGS,
-                [{"given": {"input": "c.md"}, "gives": {"items": []}}],
-                "case 1 of",
+                [CASES[0], {"given": {"input": "c.md"}, "gives": {"items": []}}],
+                ' is out of the items port at $.given: expected the key "text"',
             ),
             "a case it does not give": (
                 HEADINGS,
-                [{"given": {"input": "c.md", "text": "### B-1: x\n"}, "gives": {"items": []}}],
-                'gave {"items": ["B-1"]}, where the case gives {"items": []}',
+                [
+                    CASES[0],
+                    {"given": {"input": "c.md", "text": "### B-1: x\n"}, "gives": {"items": []}},
+                ],
+                "given case 2 of",
             ),
             "an adapter failing": (
                 "import sys\nsys.exit('broken')\n",
@@ -105,6 +108,11 @@ class TestCases(AdapterTest):
                     self.assertEqual(code, 1)
                     self.assertIn(named, said)
                     self.assertIn("run again", said)
+                    if what == "a case out of the port":
+                        self.assertIn("case 2 of", said)
+                    if what == "a case it does not give":
+                        expected = 'gave {"items": ["B-1"]}, where the case gives {"items": []}'
+                        self.assertIn(expected, said)
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
 
     def test_an_adapter_named_out_of_its_lanes_port_stops(self):

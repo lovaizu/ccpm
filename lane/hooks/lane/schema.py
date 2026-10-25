@@ -253,7 +253,8 @@ def additional_out(
     if isinstance(each, dict):
         found = (out(each, root, value[k], (*path, k)) for k in extra)
         return next(filter(None, found), None)
-    if not extra:
+    # Beside a schema, additionalProperties is true or false, as `checked` or lane's own give it.
+    if each or not extra:
         return None
     keys = ", ".join(map(shown, known)) or "none"
     return Out(path, f"only the keys {keys}", f"the key {shown(extra[0])}")

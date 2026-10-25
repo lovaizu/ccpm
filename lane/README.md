@@ -43,8 +43,9 @@ Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`. Do not run `git commit` or `git push`.
 ```
 
-Your AI approves them. `lane:up` writes the step into `agents/changelog-writer.md` and the hooks
-into `hooks/hooks.json`, and puts lane's code, which runs the hooks, in `hooks/lane/`.
+Your AI approves them. `lane:up` writes the step into `agents/changelog-writer.md`, the lanes into
+`hooks/lanes.json` and the hooks into `hooks/hooks.json`, and puts lane's code, which runs the
+hooks, in `hooks/lane/`.
 
 Then you run `/notes:changelog`. When `changelog-writer` runs `git commit -m notes`, Claude Code
 does not run it, and the subagent reads:

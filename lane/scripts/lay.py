@@ -96,7 +96,7 @@ def written(path: str) -> str:
     entries.hooks_written(root, hooks)
     entries.lanes_written(root, kept, values)
     said += [*left, "Wrote the lanes laid into hooks/lanes.json.\n"]
-    copies = [a for a in given["adapters"] if a["source"] != os.path.join(root, a["path"])]
+    copies = [a for a in given["adapters"] if a["beside"]]
     for adapter in copies:
         os.makedirs(os.path.dirname(os.path.join(root, adapter["path"])), exist_ok=True)
         for source in (adapter["source"], os.path.splitext(adapter["source"])[0] + ".json"):

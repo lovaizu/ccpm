@@ -8,9 +8,10 @@ takes put in where it shows `<...>`; the hook tells it when the subagent does wh
 says.
 
 What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
-`{<name>}`: the value under that name in the JSON the subagent starts from, its prompt or what the
-script it first runs prints. The sentence `Write only {work}.` holds a subagent to the files its
-run's `work` names, whichever they are.
+`{<name>}`: the value under that name the values port reads in what the subagent starts from, its
+prompt and what the script it first runs prints. The sentence `Write only {work}.` holds a subagent
+to the files its run's `work` names, whichever they are. A thing taken holds any text, a comma among
+the rest.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -37,9 +38,58 @@ read_only lets the subagent read, beside its inputs, the form each of its in_for
 step tells it to write in that form, and the form, a file of your plugin, holds nothing of the
 project's work.
 
-follow_next reads the next move your script prints as the tool call itself, one JSON line
-`{"tool": ..., "input": {...}}` last in its output; a script printing its move in a form of its own
-gets no follow_next.
+every_item reads its input's items at the items port, and follow_next the move your script printed
+at the move port, as the ports below say.
+
+## The ports
+
+Where a lane reads your plugin's text, it reads it at a port: given JSON, the port gives back JSON,
+each held to the JSON Schema below. lane reads one form at each port; where your text is in another,
+your plugin has an adapter for it, a Python 3 script given the port's JSON on stdin and printing the
+port's JSON on stdout, with the cases it must give, `<port>-<name>.json`, a list of
+`{"given": <the port's JSON in>, "gives": <the port's JSON out>}`, at least one for each form the
+text takes and one that gives nothing. An adapter is part of the proposal: kept beside it, in
+`${CLAUDE_PLUGIN_DATA}/<plugin>/adapters/<port>-<name>.py`, it is named by its path in your plugin,
+`hooks/adapters/<port>-<name>.py`, on the lane reading the port, or, for the values port, on the
+subagent, as every lane of the subagent reads its values; it is run on each of its cases before the
+proposal is printed, shown in the print, and written into your plugin's `hooks/adapters/` with its
+cases once approved. On a run the guard runs it within the hook's time, and an adapter failing,
+giving no answer in time or answering out of its port is an error, as below.
+
+| Port | Given | Gives | lane's form |
+|---|---|---|---|
+| values | `{"texts": ["<the prompt>", "<each print of a start_with script>"]}` | `{"values": {"<name>": ["<text>", ...]}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself |
+| items | `{"input": "<path>", "text": "<its text>"}` | `{"items": ["<ID>", ...]}` | each top-level item of a Markdown list beginning with an ID, such as `B-1`, `R33` or `KR1.1`, in bold, code or brackets or not |
+| move | `{"output": "<what the script printed>"}` | `{"move": {"tool": "...", "input": {...}}}` or `{"move": null}` | the tool call itself, one JSON line `{"tool": ..., "input": {...}}` last in the output |
+
+The ports' JSON Schemas:
+
+```json
+{
+  "values": {
+    "in": {"type": "object", "required": ["texts"], "additionalProperties": false,
+           "properties": {"texts": {"type": "array", "items": {"type": "string"}}}},
+    "out": {"type": "object", "required": ["values"], "additionalProperties": false,
+            "properties": {"values": {"type": "object",
+                                      "additionalProperties": {"type": "array", "items": {"type": "string"}}}}}
+  },
+  "items": {
+    "in": {"type": "object", "required": ["input", "text"], "additionalProperties": false,
+           "properties": {"input": {"type": "string"}, "text": {"type": "string"}}},
+    "out": {"type": "object", "required": ["items"], "additionalProperties": false,
+            "properties": {"items": {"type": "array", "items": {"type": "string"}}}}
+  },
+  "move": {
+    "in": {"type": "object", "required": ["output"], "additionalProperties": false,
+           "properties": {"output": {"type": "string"}}},
+    "out": {"type": "object", "required": ["move"], "additionalProperties": false,
+            "properties": {"move": {"anyOf": [
+              {"type": "null"},
+              {"type": "object", "required": ["tool", "input"], "additionalProperties": false,
+               "properties": {"tool": {"type": "string"}, "input": {"type": "object"}}}]}}}
+  }
+}
+```
 
 ## What each lane is given
 
@@ -47,9 +97,10 @@ Before any lane's check, the guard holds what each lane is given to the lane's I
 the texts put in each place of its sentence, with each `{<name>}` given for the run put in, one or
 more in each place; and, where its check rests on what the subagent did before, its record. The
 layer holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid, not on
-a run. Anything not as its IN says, a value not given or given empty, the record not found, the
-event or `hooks/lanes.json` not as Claude Code and `lane:up` write them, or a step no longer saying
-its lane's sentence, is an error, not a drift: the call is stopped, or the subagent kept going once
+a run. Anything not as its IN says, a value not given or given empty, an adapter failing, giving no
+answer in time or answering out of its port, the record not found, the event or `hooks/lanes.json`
+not as Claude Code and `lane:up` write them, or a step no longer saying its lane's sentence, is an
+error, not a drift: the call is stopped, or the subagent kept going once
 as it ends, and it and you are told
 
 ```

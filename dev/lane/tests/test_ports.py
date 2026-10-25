@@ -2,9 +2,15 @@
 lane's one reading of it: the values a subagent started from, the items of an input and the move a
 script printed."""
 
-import json
-import unittest
+from __future__ import annotations
 
+import json
+import os
+import subprocess
+import unittest
+from unittest import mock
+
+import helpers
 from helpers import ports, schema
 
 # A run's JSON as a prompt or a script gives it, naming the work and a checklist.
@@ -63,6 +69,15 @@ class TestValues(unittest.TestCase):
 
 
 class TestSchemas(unittest.TestCase):
+    def test_each_ports_json_is_the_one_docs_lanes_md_gives(self):
+        # Given: the ports' JSON Schemas docs/lanes.md gives under The ports
+        with open(os.path.join(helpers.LANE, "docs", "lanes.md"), encoding="utf-8") as f:
+            text = f.read().split("## The ports")[1].split("\n## ")[0]
+        shown = json.loads(text.split("```json\n")[1].split("```")[0])
+        # When: the ports' are read in lane's code
+        # Then: they are the same
+        self.assertEqual(shown, ports.PORTS)
+
     def test_lanes_reading_of_each_port_gives_what_its_out_holds(self):
         for port, given in (
             ("values", {"texts": [json.dumps(RUN), "x"]}),
@@ -93,6 +108,43 @@ class TestSchemas(unittest.TestCase):
                 out = schema.held(ports.PORTS[port]["out"], found)
                 # Then: the point it is out by is found
                 self.assertIn(point, out.told() if out else "")
+
+
+class TestRun(unittest.TestCase):
+    def ran(self, now: float, left: float | None = None, err: str = "") -> object:
+        """The seconds an adapter is given by run, lane's code loaded at 40 and the clock at now,
+        the seconds left given or not; or, where it exits 1 printing err, what it is told it did."""
+        done = subprocess.CompletedProcess([], 1 if err else 0, '{"items": []}', err)
+        clock = mock.patch.object(ports.time, "monotonic", return_value=now)
+        start = mock.patch.object(ports, "START", 40.0)
+        with clock, start, mock.patch.object(ports.subprocess, "run", return_value=done) as run:
+            try:
+                ports.run("a.py", "items", {"input": "a", "text": ""}, left)
+            except ports.Failed as failed:
+                return str(failed)
+        return run.call_args.kwargs["timeout"]
+
+    def test_an_adapter_is_given_what_is_left_of_the_hooks_time(self):
+        for now, left in ((40.0, 8.0), (43.0, 5.0), (85.0, 0)):
+            with self.subTest(now=now):
+                # Given: lane's code loaded at 40, the clock at now
+                # When: an adapter is run
+                # Then: it is given what is left of the 8 seconds since, none once they are spent
+                self.assertEqual(self.ran(now), left)
+
+    def test_an_adapter_given_seconds_is_given_them(self):
+        # Given: the seconds left given, as the layer gives them
+        # When: an adapter is run
+        # Then: it is given them, whatever the clock says
+        self.assertEqual(self.ran(103.0, 8.0), 8.0)
+
+    def test_an_adapter_exiting_other_than_0_is_told_its_last_line_of_errors(self):
+        # Given: an adapter exiting 1, printing two lines of errors
+        # When: it is run
+        # Then: what it did is told by its exit and its last line
+        self.assertEqual(
+            self.ran(40.0, err="Traceback\nKeyError: 'text'\n"), "exited 1: KeyError: 'text'"
+        )
 
 
 class TestMove(unittest.TestCase):

@@ -37,7 +37,8 @@ class TestIn(unittest.TestCase):
         # Given: the IN docs/lanes.md gives, each place standing as `<place>`, and the table of
         # each lane's places and whether it rests on its record
         text = lanes_md()
-        shown = json.loads(text.split("```json\n")[1].split("```")[0])
+        given = text.split("## What each lane is given")[1]
+        shown = json.loads(given.split("```json\n")[1].split("```")[0])
         rows = {m["lane"]: m for m in map(GIVEN.match, text.splitlines()) if m}
         self.assertEqual(set(rows), set(lanes.LANES))
         for name, row in rows.items():

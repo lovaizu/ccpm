@@ -133,6 +133,26 @@ class TestRead(unittest.TestCase):
 
 
 class TestHeld(unittest.TestCase):
+    def test_keys_beside_the_properties_are_held_as_additional_properties_says(self):
+        for additional, value, found in (
+            (False, {"a": 1, "b": 2}, '$: expected only the keys "a", found the key "b"'),
+            (True, {"a": 1, "b": 2}, None),
+            ({"type": "string"}, {"a": 1, "b": 2}, "$.b: expected a string, found 2"),
+            ({"type": "string"}, {"a": 1, "b": "x"}, None),
+        ):
+            with self.subTest(additional=additional, value=value):
+                # Given: a schema of one key, its additionalProperties false, true or a schema, as
+                # lane's own schemas may give it
+                given = {
+                    "type": "object",
+                    "properties": {"a": {}},
+                    "additionalProperties": additional,
+                }
+                # When: an object of another key is held to it
+                out = schema.held(given, value)
+                # Then: the key is refused, let through, or held to the schema
+                self.assertEqual(out.told() if out else None, found)
+
     def test_a_value_of_the_form_holds(self):
         for value in (
             {"version": "1.0", "kind": "Added"},

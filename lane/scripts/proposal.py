@@ -91,13 +91,14 @@ def adapters_named(agents: list[dict[str, Any]]) -> dict[str, tuple[str, str]]:
 def adapter_found(root: str, data: str, path: str, port: str, by: str) -> dict[str, Any]:
     """The adapter of the path in the plugin, of the port, named by what is said, found beside the
     proposal in the data folder, or laid before in the plugin, and checked on each of its cases:
-    its path, its port, what names it, the file it is read from and is written from, its text, and
-    its cases. Stops where it is in neither, where its cases are not a list of at least one
+    its path, its port, what names it, the file it is read from and is written from, its text, its
+    cases, and whether it is beside the proposal, to be written into the plugin. Stops where it is in neither, where its cases are not a list of at least one
     `{"given": ..., "gives": ...}` whose given holds to its port's JSON in, or where it gives on
     any case other than the case gives, saying the case and what it gave."""
     base = os.path.basename(path)
     beside = os.path.join(data, base)
-    source = beside if os.path.isfile(beside) else os.path.join(root, path)
+    kept_beside = os.path.isfile(beside)
+    source = beside if kept_beside else os.path.join(root, path)
     if not os.path.isfile(source):
         raise Stop(
             f"lay.py: the proposal names the adapter {path}, for {by}, which is neither {beside}"
@@ -119,7 +120,8 @@ def adapter_found(root: str, data: str, path: str, port: str, by: str) -> dict[s
             )
     with open(source, encoding="utf-8") as f:
         text = f.read()
-    return {"path": path, "port": port, "by": by, "source": source, "text": text, "cases": cases}
+    found = {"path": path, "port": port, "by": by, "source": source, "text": text, "cases": cases}
+    return {**found, "beside": kept_beside}
 
 
 def adapter_cases(path: str, port: str) -> list[dict[str, Any]]:
