@@ -1,5 +1,5 @@
-"""write_only: a write of anything but the outputs the lane takes is a drift, by a tool that writes a
-file or by a command in the forms the steps tell and the AI writes; every other call is not."""
+"""write_only: a write of anything but the outputs the lane takes is a drift, by a tool that writes
+a file or by a command in the forms the steps tell and the AI writes; every other call is not."""
 
 import json
 import os

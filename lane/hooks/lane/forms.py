@@ -1,7 +1,8 @@
 """The forms in_form holds an output to, each a file of the plugin: a `.json` file is a JSON Schema
 of the keywords `schema` reads, held to by the output as JSON, or by each of its lines where the
-output is named `.jsonl`; a `.md` file is a Markdown template, held to as `template` reads it. A form
-is read whole before any output is held to it, and a file that is no form lane reads is refused."""
+output is named `.jsonl`; a `.md` file is a Markdown template, held to as `template` reads it. A
+form is read whole before any output is held to it, and a file that is no form lane reads is
+refused."""
 
 from __future__ import annotations
 

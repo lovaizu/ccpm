@@ -1,12 +1,12 @@
 """A JSON Schema, of the keywords Anthropic's structured outputs accept, in draft-07's wording: the
 basic types, properties, required, additionalProperties false, items, enum, const, anyOf, allOf of
-schemas with no $ref, a $ref within the schema to it or its $defs or definitions, and minItems 0 or 1; with title,
-description, default and $schema, which say what a value is and check nothing. A schema is read
-whole before any value is held to it, and one using any other keyword, or a keyword in another
-shape, is refused, so no value is let through by a keyword left unread; a $ref coming back to
-itself is refused too, as structured outputs refuse a recursive schema. A value held to it gives
-the one point it is out by: its place, what was expected and what was found, as check-jsonschema
-gives jsonschema's best match, the point highest in the value first."""
+schemas with no $ref, a $ref within the schema to it or its $defs or definitions, and minItems 0 or
+1; with title, description, default and $schema, which say what a value is and check nothing. A
+schema is read whole before any value is held to it, and one using any other keyword, or a keyword
+in another shape, is refused, so no value is let through by a keyword left unread; a $ref coming
+back to itself is refused too, as structured outputs refuse a recursive schema. A value held to it
+gives the one point it is out by: its place, what was expected and what was found, as
+check-jsonschema gives jsonschema's best match, the point highest in the value first."""
 
 from __future__ import annotations
 
@@ -19,7 +19,8 @@ TYPES: dict[str, tuple[Callable[[Any], bool], str]] = {
     "object": (lambda v: isinstance(v, dict), "an object"),
     "array": (lambda v: isinstance(v, list), "an array"),
     "string": (lambda v: isinstance(v, str), "a string"),
-    # JSON tells no integer from a number with no fraction, so 1.0 is an integer, as draft-07 has it.
+    # JSON tells no integer from a number with no fraction, so 1.0 is an integer, as draft-07 has
+    # it.
     "integer": (
         lambda v: (
             not isinstance(v, bool)

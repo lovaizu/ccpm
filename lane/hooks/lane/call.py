@@ -21,8 +21,9 @@ WRITERS = {"Write": "file_path", "Edit": "file_path", "NotebookEdit": "notebook_
 # The tools that read a file or folder, each with the field of its input that names it, and what it
 # reads where the field names none: the Grep tool searches the folder it runs in.
 READ_TOOLS = {"Read": ("file_path", None), "Grep": ("path", ".")}
-# The tools that hand text on to another agent, each with the field of its input that holds the text:
-# the Agent tool its prompt to the agent it starts, SendMessage its message to the agent it names.
+# The tools that hand text on to another agent, each with the field of its input that holds the
+# text: the Agent tool its prompt to the agent it starts, SendMessage its message to the agent it
+# names.
 HANDS = {"Agent": "prompt", "SendMessage": "message"}
 # What hands text on, each with the field of its input that holds it: those tools, and a reply that
 # ended the subagent's turn, as its record is read.
@@ -219,7 +220,7 @@ def reads(tool: str, given: dict[str, Any], cwd: str) -> list[tuple[str, shell.L
 
 
 def shown(result: str) -> shell.Lines | None:
-    """The lines from the first to the last numbered in what a call gave back; None where none is."""
+    """The lines from the first to the last numbered in what a call gave back; None for none."""
     numbers = [int(n) for n in NUMBERED.findall(result)]
     return (min(numbers), max(numbers)) if numbers else None
 

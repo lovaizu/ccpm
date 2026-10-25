@@ -1,5 +1,5 @@
-"""A JSON Schema of the keywords structured outputs accept: read whole, any other keyword refused, and
-a value held to it giving the one point it is out by, its place, what was expected and what was
+"""A JSON Schema of the keywords structured outputs accept: read whole, any other keyword refused,
+and a value held to it giving the one point it is out by, its place, what was expected and what was
 found."""
 
 import unittest
@@ -81,7 +81,10 @@ class TestRead(unittest.TestCase):
             ({"anyOf": [{}, 2]}, "$.anyOf[1]: expected a schema object"),
             (
                 {"allOf": [{}, {"$ref": "#/$defs/a"}], "$defs": {"a": {}}},
-                "$.allOf[1]: expected a schema without $ref, as structured outputs take none in allOf",
+                (
+                    "$.allOf[1]: expected a schema without $ref, as structured outputs take none in"
+                    " allOf"
+                ),
             ),
             ({"items": [{}]}, "$.items: expected a schema object"),
             ({"required": "a"}, "$.required: expected a list of keys"),

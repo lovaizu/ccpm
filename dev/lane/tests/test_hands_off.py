@@ -1,5 +1,5 @@
-"""hands_off: a run of one of the commands the lane takes is a drift, in the forms the steps tell and
-the AI writes; every other call is not."""
+"""hands_off: a run of one of the commands the lane takes is a drift, in the forms the steps tell
+and the AI writes; every other call is not."""
 
 import unittest
 

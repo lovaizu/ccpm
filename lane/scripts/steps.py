@@ -1,6 +1,6 @@
-"""Each step of a subagent as the layer writes it: the sentence of each lane its hook held before that
-the proposal no longer lays there taken out, each lane's sentence put at the end of the step, the
-rest of the step as it was; and the print of each step for the building AI's OK."""
+"""Each step of a subagent as the layer writes it: the sentence of each lane its hook held before
+that the proposal no longer lays there taken out, each lane's sentence put at the end of the step,
+the rest of the step as it was; and the print of each step for the building AI's OK."""
 
 from __future__ import annotations
 
@@ -67,8 +67,8 @@ def listed(name: str, step_given: dict[str, Any]) -> list[str]:
 
 
 def held(lane: dict[str, Any]) -> str:
-    """What the lane's hook holds beyond what its sentence shows, as the building AI reads it after the
-    hook, such as the commands wait_for holds back; "" for a lane whose sentence shows all."""
+    """What the lane's hook holds beyond what its sentence shows, as the building AI reads it after
+    the hook, such as the commands wait_for holds back; "" for a lane whose sentence shows all."""
     shown = lanes.shown(lane["lane"])
     rest = [f"`{t}`" for t in lane["takes"][shown:]] if shown is not None else []
     return f", holding back {', '.join(rest)}" if rest else ""

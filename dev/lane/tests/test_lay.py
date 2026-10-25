@@ -117,8 +117,8 @@ class TestUp(LayTest):
         return self.lay("up", self.plugin)
 
     def test_an_older_copy_and_its_hooks_are_brought_up_with_the_same_lanes(self):
-        # Given: the copy of 0.1.0, its hook in the older form between two entries of the building AI's
-        # own
+        # Given: the copy of 0.1.0, its hook in the older form between two entries of the building
+        # AI's own
         own = {"matcher": "Write", "hooks": [{"type": "command", "command": "own.sh"}]}
         self.hooks_of(own, self.OLDER, own)
         # When: it is brought up

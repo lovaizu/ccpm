@@ -1,10 +1,10 @@
 """in_form: the subagent writes the output its step names in the form the step names, a file of the
 plugin named as `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`, which Claude Code gives the subagent
-as a path it can read, such as a changelog entry as JSON of a schema, or a report as Markdown with a template's
-headings. A write of the output is held to the form before it is made: a Write by its content, an
-Edit by the file's text with the edit made; a command writing the output is a drift whatever it
-writes, as its text cannot be read before it runs, so the subagent writes it by Write or Edit. A
-drift is told with the point the text is out of the form by."""
+as a path it can read, such as a changelog entry as JSON of a schema, or a report as Markdown with a
+template's headings. A write of the output is held to the form before it is made: a Write by its
+content, an Edit by the file's text with the edit made; a command writing the output is a drift
+whatever it writes, as its text cannot be read before it runs, so the subagent writes it by Write or
+Edit. A drift is told with the point the text is out of the form by."""
 
 from __future__ import annotations
 
@@ -39,8 +39,8 @@ def form(root: str, named: str) -> forms.Form:
 
 
 def refused(takes: list[str], root: str) -> str:
-    """Why the lane cannot be laid taking these in the plugin at root, where its form is no form lane
-    reads there; "" where it can."""
+    """Why the lane cannot be laid taking these in the plugin at root, where its form is no form
+    lane reads there; "" where it can."""
     try:
         form(root, takes[1])
     except ValueError as why:
@@ -66,7 +66,7 @@ def drifts(call: Call, takes: list[str], root: str) -> str:
         asked = form(root, named)
     except ValueError as why:
         return (
-            f"the form `{step.expanded(named, root)}` {why}. Stop here and reply that the form must be fixed in the"
-            " plugin, and lane:up run again on it."
+            f"the form `{step.expanded(named, root)}` {why}. Stop here and reply that the form"
+            " must be fixed in the plugin, and lane:up run again on it."
         )
     return forms.held(asked, output, call.text)

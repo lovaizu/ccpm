@@ -1,6 +1,6 @@
-"""follow_next: once a script the lane takes has printed a move, one JSON line of a tool and its input,
-each call is a drift until one is that tool with each field printed equal; held from the subagent's
-record. Every other call is not."""
+"""follow_next: once a script the lane takes has printed a move, one JSON line of a tool and its
+input, each call is a drift until one is that tool with each field printed equal; held from the
+subagent's record. Every other call is not."""
 
 import json
 import unittest

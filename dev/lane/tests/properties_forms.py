@@ -1,7 +1,7 @@
-"""Property-based tests of the forms: any value of a schema's shape holds to it and any value put out
-of it is named at its place; frontmatter written as `key: value` lines reads back as written; and a
-file of a template's headings holds to it whatever text lies between them; on many inputs Hypothesis
-makes, new on every run, CI included."""
+"""Property-based tests of the forms: any value of a schema's shape holds to it and any value put
+out of it is named at its place; frontmatter written as `key: value` lines reads back as written;
+and a file of a template's headings holds to it whatever text lies between them; on many inputs
+Hypothesis makes, new on every run, CI included."""
 
 import string
 import unittest

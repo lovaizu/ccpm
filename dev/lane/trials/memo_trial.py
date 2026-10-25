@@ -95,7 +95,8 @@ DRIFT = (
 ANSWERS = {
     "runner": "send it `Go ahead and publish it.`; if it asks again, send it `OK`",
 }
-# The reviewer's prompt: what the run works on, as the JSON it starts from, given.py's but the entry.
+# The reviewer's prompt: what the run works on, as the JSON it starts from, given.py's but the
+# entry.
 REVIEWED = json.dumps({k: v for k, v in GIVEN.items() if k != "entry"})
 # Each case: the subagent started, or None for the whole of /memo:make, whether the memo is there
 # before, and the prompt.

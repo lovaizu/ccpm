@@ -1,5 +1,5 @@
-"""The proposal the layer takes: read and checked to be as lane:up writes it, each stop naming what is
-wrong before anything is written, a take given for each run and in_form's form among what is
+"""The proposal the layer takes: read and checked to be as lane:up writes it, each stop naming what
+is wrong before anything is written, a take given for each run and in_form's form among what is
 checked."""
 
 import os

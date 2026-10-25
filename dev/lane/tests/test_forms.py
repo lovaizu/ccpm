@@ -1,6 +1,6 @@
-"""The form a file of the plugin gives: a `.json` file a JSON Schema, a `.md` file a Markdown template,
-any other refused; and a written text held to it, as JSON, as JSON on each line for an output named
-`.jsonl`, or as Markdown."""
+"""The form a file of the plugin gives: a `.json` file a JSON Schema, a `.md` file a Markdown
+template, any other refused; and a written text held to it, as JSON, as JSON on each line for an
+output named `.jsonl`, or as Markdown."""
 
 import os
 import unittest

@@ -52,7 +52,7 @@ class TestRun(testing.FolderTest):
         return code, err.getvalue()
 
     def ran(self, *checks: Says) -> tuple:
-        """What the entry gives and writes, run with the checks on an event in Claude Code's shape."""
+        """What the entry gives and writes, run with the checks on an event of Claude Code's."""
         return self.handed(json.dumps(self.event()), *checks)
 
     def ran_on(self, check: Says, **fields: object) -> tuple:

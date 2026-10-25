@@ -1,5 +1,5 @@
-"""Each lane's wording, held to lane's docs/lanes.md, and the sentence made from it with what the lane
-takes, the one the step says and the subagent is told."""
+"""Each lane's wording, held to lane's docs/lanes.md, and the sentence made from it with what the
+lane takes, the one the step says and the subagent is told."""
 
 import os
 import re

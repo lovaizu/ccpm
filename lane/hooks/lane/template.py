@@ -1,5 +1,5 @@
-"""A Markdown template, and a written file held to it: the keys the template's frontmatter names must
-be in the file's, each with its value, and the template's headings must be among the file's, in
+"""A Markdown template, and a written file held to it: the keys the template's frontmatter names
+must be in the file's, each with its value, and the template's headings must be among the file's, in
 order and at their level, other headings and body text free between them; text in `<...>`, in a
 value or a heading, is free, any text but none, and the rest is taken as written. A heading is an
 ATX heading, `#` to `######` and a space, outside a code fence; frontmatter is read as lines of

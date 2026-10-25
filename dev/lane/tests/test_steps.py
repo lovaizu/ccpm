@@ -1,6 +1,6 @@
 """The steps the layer writes: the proposal printed for the building AI's OK, each step as it would
-read; each lane's sentence put at the end of its step, and the sentences of lanes no longer laid there
-taken out, the rest of the step as it was."""
+read; each lane's sentence put at the end of its step, and the sentences of lanes no longer laid
+there taken out, the rest of the step as it was."""
 
 import json
 import os

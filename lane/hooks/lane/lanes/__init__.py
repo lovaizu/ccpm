@@ -1,6 +1,6 @@
-"""The lanes lane lays, one module each holding its action, its wording as lane's docs/lanes.md writes
-it, the tools it watches and its check; and the sentence of each, made from its wording with what it
-takes, which a subagent's step says and the guard tells it.
+"""The lanes lane lays, one module each holding its action, its wording as lane's docs/lanes.md
+writes it, the tools it watches and its check; and the sentence of each, made from its wording with
+what it takes, which a subagent's step says and the guard tells it.
 
 A lane is held on a tool call, the PreToolUse event, or, where its module names the events, on the
 subagent about to end, the SubagentStop event, or on both. A lane's check, `drifts(call, takes,
@@ -9,9 +9,9 @@ where a lane finds a file of the plugin it takes, such as in_form's form; it giv
 drifts, or, where it says more than the sentence, the point it drifts by, "" for none. A lane's
 module may name, beside its action, wording and check, the events it is held on, how many of the
 things it takes its sentence shows, and the most things it takes; and give `beside(laid, root)`,
-what it takes beside what its step names, from every lane laid in the subagent, as the guard calls it,
-and `refused(takes, root)`, why it cannot be laid taking these, "" where it can, as the layer calls
-it."""
+what it takes beside what its step names, from every lane laid in the subagent, as the guard calls
+it, and `refused(takes, root)`, why it cannot be laid taking these, "" where it can, as the layer
+calls it."""
 
 from __future__ import annotations
 

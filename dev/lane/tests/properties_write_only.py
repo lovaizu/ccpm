@@ -1,5 +1,6 @@
-"""Property-based tests of write_only: on any path in the folder the call is made in, written by a tool
-or by a command's redirect, checked on many paths Hypothesis makes, new on every run, CI included."""
+"""Property-based tests of write_only: on any path in the folder the call is made in, written by a
+tool or by a command's redirect, checked on many paths Hypothesis makes, new on every run, CI
+included."""
 
 import shlex
 import string

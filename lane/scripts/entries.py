@@ -110,9 +110,10 @@ def laid_before(hooks: dict[str, Any]) -> tuple[dict[str, list[dict[str, Any]]],
                     lane = hooks_file.lane_of(w)
                     if lane is None:
                         name = given[0].split(":")[1]
+                        version = placed.lane_version()
                         left.append(
-                            f"Left out `{w}` from the hook of {name}, as lane {placed.lane_version()} lays"
-                            " no such lane; ask the building AI whether to lay it again or leave it"
+                            f"Left out `{w}` from the hook of {name}, as lane {version} lays no"
+                            " such lane; ask the building AI whether to lay it again or leave it"
                             " out.\n"
                         )
                         continue

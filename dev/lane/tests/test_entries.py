@@ -35,8 +35,8 @@ class TestWriteHooks(LayTest):
         self.assertTrue(entry["hooks"][0]["command"].endswith(words))
 
     def test_every_other_entry_stays_as_it_was(self):
-        # Given: hooks.json with a description, an entry of the building AI's own, and one of another
-        # event
+        # Given: hooks.json with a description, an entry of the building AI's own, and one of
+        # another event
         own = {"matcher": "Write", "hooks": [{"type": "command", "command": "own.sh"}]}
         stop = {"hooks": [{"type": "command", "command": "stop.sh"}]}
         hooks: dict = {"description": "d", "hooks": {"PreToolUse": [own], "Stop": [stop]}}

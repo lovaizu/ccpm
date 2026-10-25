@@ -1,5 +1,5 @@
-"""start_with: until the subagent has run the script the lane takes, any call that does not run it is
-a drift, in the forms the steps tell and the AI writes; once it has run it, no call is."""
+"""start_with: until the subagent has run the script the lane takes, any call that does not run it
+is a drift, in the forms the steps tell and the AI writes; once it has run it, no call is."""
 
 import unittest
 

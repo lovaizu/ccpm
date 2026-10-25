@@ -1,6 +1,6 @@
-"""A Markdown template: the keys its frontmatter names and the headings it holds, in order and level,
-checked in a written file, text in `<...>` and body text free; frontmatter read as `key: value`
-lines alone, anything else refused rather than guessed."""
+"""A Markdown template: the keys its frontmatter names and the headings it holds, in order and
+level, checked in a written file, text in `<...>` and body text free; frontmatter read as `key:
+value` lines alone, anything else refused rather than guessed."""
 
 import unittest
 

@@ -1,9 +1,9 @@
 """wait_for: the subagent runs a command its step holds back only once its caller has approved, such
-as lane:up writing the proposal into the building AI's plugin only on the building AI's OK. The lane takes
-the approval, such as `OK`, then each command it holds back, such as `lay.py write`; its sentence
-shows the approval alone. It is held from the subagent's record: a held command is a drift unless a
-message holding the approval has reached the subagent since it last asked, by SendMessage or by a
-reply that ended its turn, or since it began where it has not asked."""
+as lane:up writing the proposal into the building AI's plugin only on the building AI's OK. The lane
+takes the approval, such as `OK`, then each command it holds back, such as `lay.py write`; its
+sentence shows the approval alone. It is held from the subagent's record: a held command is a drift
+unless a message holding the approval has reached the subagent since it last asked, by SendMessage
+or by a reply that ended its turn, or since it began where it has not asked."""
 
 from __future__ import annotations
 
@@ -14,7 +14,8 @@ from call import Call, runs
 ACTION = "wait"
 WORDING = "Do not go on until `<approval>`."
 TOOLS = ("Bash",)
-# The sentence shows the first thing taken, the approval; the commands after it the hook alone holds.
+# The sentence shows the first thing taken, the approval; the commands after it the hook alone
+# holds.
 SHOWN = 1
 
 
