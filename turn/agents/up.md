@@ -37,8 +37,8 @@ before it has given back, as each `turn.py` command takes the outcome of the one
 
 ## Steps
 
-1. Run `turn.py start '<your prompt>'`, your prompt, the call, as it is. First run `turn.py start`.
-   It prints `{"result": ..., "given": [...]}`: `<result>` below is its `result`. Where it exits
+1. First run `turn.py start`. Give it your prompt, the call, as it is:
+   `turn.py start '<your prompt>'`. It prints `{"result": ..., "given": [...]}`: `<result>` below is its `result`. Where it exits
    with 1, reply with what it printed, and end.
 2. Load SendMessage with ToolSearch (`select:SendMessage`), then run `turn.py next <result>` with
    nothing.
