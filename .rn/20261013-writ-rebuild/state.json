@@ -641,6 +641,12 @@
   },
   {
    "fact": "2026-10-25, the user decided (decision 1): only the first user looks for Good; the orchestrator's Good check (up.md step 5) goes and no checker is added, as that is what turn should be. Records of r10-r12, s10-s12: the check stopped 3 first-user Goods (r10 B-6, B-3; r12 B-3) and passed the 5 the calling AI judged unmet; where the first user's misses come from (checklist, its steps, or a hook) is investigated and fixed"
+  },
+  {
+   "fact": "2026-10-25, decisions settled: the orchestrator judges what the run needs, steps 4 and 6 stay, only the Good check goes, turn's architecture wrong to read Principle 3 as against it; rn's work is one output, its own call (architecture :124-126), the code naming every call t<n> a bug; the plan's CCS holds per done task only what it served, decided and made (architecture :130-131), the code passing every call a bug; `in (x,)` becomes ==, a test kills each mutant it can, `# pragma: no mutate` with cr-filter-pragma only where none can, the reason once in cosmic-ray.toml"
+  },
+  {
+   "fact": "2026-10-25: the three audits were partial (prompts not read against prompt.md item by item); a whole audit begun, every file of lane, turn, rn, dev and the checklists read against its checklists, by seven read-only subagents, reports in the scratchpad, each finding to be checked by hand before the refactor is drawn"
   }
  ],
  "semantic_gist": [
@@ -745,13 +751,10 @@
  ],
  "predictive_cue": [
   {
-   "next": "after /clear: read steering.md, this state and audits/*.md whole; put the four open decisions below to the user one at a time (recommendation first); then draw the whole refactor from the audits (one place for each piece of knowledge across lane, turn, rn), build it with the checklists open, judge every fix by rn/checklists/fix.md, run check.sh, properties.sh, mutate.sh, the move trials and the flow trial; then T9-T14 rewrite and T15 on the user's word"
+   "next": "merge the seven audit reports into .rn/20261013-writ-rebuild/audits/, each finding checked at its source by hand; draw the whole refactor (one place for each piece of knowledge, the four decisions in); bring the points that are the user's one at a time; build with the checklists open; check.sh, properties.sh, mutate.sh, move and flow trials, and turn's readme acceptance set beside r10-s12 (5 unmet in 6 runs) so nothing gets worse"
   }
  ],
  "uncertainty_signal": [
-  {
-   "open": "decision 1 scope: whether the orchestrator's CCS check (up.md step 4) and question wording (step 6) go too, leaving it only passing moves on"
-  },
   {
    "open": "AC1"
   },
@@ -775,15 +778,6 @@
   },
   {
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
-  },
-  {
-   "open": "decision 2 (rn audit 4.1): a task's several outputs (research, trial, document) are all calls on work t<n>, so decisions carry between them and the proposal shows the latest only; each output its own work name, or change plan.md's sign"
-  },
-  {
-   "open": "decision 3 (rn audit 4.5): the plan's CCS has every returned call of each done task (code, architecture :130) or only the latest (redesign.md)"
-  },
-  {
-   "open": "decision 4 (lane audit 2.1): drop the `in (x,)` membership idiom (lane 38, rn 35) for plain ==, excluding the equivalent mutants once in each cosmic-ray.toml with the reason written there"
   }
  ],
  "retrieved_artifacts": [
