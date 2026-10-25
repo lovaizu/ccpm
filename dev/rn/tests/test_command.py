@@ -8,7 +8,10 @@ import io
 import os
 import re
 import runpy
+import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
 from unittest import mock
 
@@ -90,3 +93,21 @@ class CommandTest(RepoTest):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InstalledTest(unittest.TestCase):
+    def test_rn_copied_as_installing_copies_it_runs(self):
+        # Given: rn copied as installing copies it, each link given the file it points to, so the
+        # code rn takes from turn and lane through a link finds only what rn carries.
+        with tempfile.TemporaryDirectory() as folder:
+            copy = os.path.join(folder, "rn")
+            shutil.copytree(os.path.dirname(SCRIPTS), copy)
+            # When: the orchestrator runs rn.
+            ran = subprocess.run(
+                [sys.executable, os.path.join(copy, "scripts", "rn.py"), "--help"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        # Then: it runs.
+        self.assertEqual((ran.returncode, ran.stderr), (0, ""))
