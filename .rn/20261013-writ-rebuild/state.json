@@ -659,6 +659,9 @@
   },
   {
    "fact": "2026-10-25: lane built by a subagent to its audit (c6d8713..a88c6b1) and checked by hand commit by commit: pragmas against the values each comparison meets, every removed line traced to where its intent lives, removed tests to the tests that hold them; nothing to fix by hand; check.sh lane turn rn 100%, properties pass, mutate lane 0 of 2614 in 2m30s; the push stopped at pre-push: 4068e9e left 58 rn survivors (turn's not yet counted), given to a subagent to do as c6d8713 did"
+  },
+  {
+   "fact": "2026-10-25: rn's 58 and turn's 5 survivors from 4068e9e caught or marked (4469a02, 7a5618b), checked by hand; lane:up's read bound (up.md:31, held by no lane against prompt.md B-3; trials t20b and lay-turn read lane's scripts) now held by start_with on step 1 and read_only {reads} on step 3, `lay.py up <plugin> <data>` printing reads last (18acea1, 9bd9f64), lay.py up's exit 1 now replying and ending, as a malformed hooks.json leaves nothing to bring up; notes lay trial clean (1.8 min, $0.57, no stop, 3 lanes laid), drift run did not drift (subagent kept its steps); pushed 9bd9f64; turn given to a subagent from build-brief.md with rulings D1, README line dropped, S96/S98 one record reader in lane, testing.hypothesis(), E501, prompts read against prompt.md"
   }
  ],
  "semantic_gist": [
@@ -763,7 +766,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "when the survivors subagent reports: check its two commits as lane's were checked, push (pre-push must pass), then turn from build-brief.md (D1 Good check gone; README line 'When it returns, check each Good against its lines.' dropped; turn-product.md, turn-tests.md; also lane's left items for turn: E501 lines, testing.hypothesis() for its property files, the record read in several places S96/S98, a cross-plugin decision), then rn the same way, then shared.md; after all: lane's notes trial (up.md step 1/3/7 changed in 8fabd0b), move and flow trials and turn's readme acceptance beside the baseline; final check; report"
+   "next": "when turn's subagent reports: check every commit by hand as lane's were (pragmas against values, removed lines' intent, removed tests, prompts whole against prompt.md), run check.sh lane turn rn, properties, mutate turn (and lane if touched), push; then turn's trials (roles, flow) on the changed prompts; then rn the same way (work per output, the plan CCS minimal, up kept checking turn's result with dev/rn/architecture.md:151-153 rewritten, the stage split approved, rn-product.md, rn-tests.md, ask the user about up step 11 issue text), then shared.md (ask before changing .claude/rules or dev/architecture.md's shape; S36 wording); after all: move and flow trials, turn readme acceptance beside the baseline; final check; report"
   }
  ],
  "uncertainty_signal": [
