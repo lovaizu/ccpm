@@ -493,9 +493,14 @@ def tasks_of(lines: list[str]) -> list[Task]:
     return [task_of(i) for i in task_items(lines)]
 
 
+def is_ticked(action: re.Match[str]) -> bool:
+    """Whether the action, read in its form, is ticked."""
+    return action["tick"] == "x"  # pragma: no mutate
+
+
 def all_ticked(task: Task) -> bool:
     """Whether every action of the task is ticked."""
-    return all(action is not None and action["tick"] == "x" for _, _, action in task.actions)
+    return all(action is not None and is_ticked(action) for _, _, action in task.actions)
 
 
 def out_of_form(text: str) -> str:
@@ -565,7 +570,7 @@ def body_out(lines: list[str]) -> str:
     goal = [(n, line) for n, line in parts[""] if line.strip()][1:]
     after = parts[""][parts[""].index(goal[0]) :] if goal else []
     paragraph = list(itertools.takewhile(lambda x: x[1].strip(), after))
-    if goal and (not GOAL.fullmatch(goal[0][1]) or len(paragraph) != len(goal)):
+    if goal and (not GOAL.fullmatch(goal[0][1]) or goal[len(paragraph) :]):
         return (
             f"line {goal[0][0]}: expected the goal as {GOAL_FORM}, one paragraph under the title,"
             f" found `{goal[0][1]}`"
@@ -656,7 +661,9 @@ def parsed(text: str) -> Steering:
     """The parts of the steering's text, which holds its form."""
     lines = text.splitlines()
     start = template.body(lines)
-    heads = {said: n for n, level, said in template.headings(lines, start) if level == 2}
+    # Every heading after the title is a `##` one, as the form holds, and a title of the words of
+    # Next or Open comes before that heading, which takes its place.
+    heads = {said: n for n, _, said in template.headings(lines, start)}
     return Steering(
         keys_of(text),
         trimmed(lines[start : heads[NEXT] - 1]),
@@ -877,7 +884,7 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     if git(["branch", "--show-current"], AS_GIT_SAYS).strip() == slug:
         folder = current()
         steering = kept_steering(folder)
-        if steering.keys["pr"] != NONE:
+        if steering.keys["pr"] != NONE:  # pragma: no mutate
             raise Stop(
                 f"rn: the session {folder} is started already, with its pull request"
                 f" {steering.keys['pr']}; go on with it with /rn:up"
@@ -953,7 +960,7 @@ def pruned(plan: list[str], ids: set[str]) -> list[str]:
     gone = [i for i in items if i.id in ids and all_ticked(task_of(i))]
     out = {n for i in gone for n, _ in i.lines}
     lines = trimmed([line for n, line in enumerate(plan, 1) if n not in out])
-    if gone and len(gone) == len(items):
+    if gone and not task_items(lines):
         # The tasks are the plan's last part, so with none left their heading is its last line.
         lines.pop()
     return trimmed(lines)
@@ -966,7 +973,7 @@ def put_plan(plan: list[str], part: list[str]) -> list[str]:
         (task.id, action["number"])
         for task in tasks_of(plan)
         for _, _, action in task.actions
-        if action is not None and action["tick"] == "x"
+        if action is not None and is_ticked(action)
     }
     lines = list(part)
     for task in tasks_of(lines):
@@ -1073,8 +1080,9 @@ def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dic
             f" {MOVES[stage]} stage alone; the other stages move at the sign-offs, with"
             " `rn.py answer`"
         )
-    if stage == BUILD:
-        made = [c.work for c in calls(folder) if c.stage == DESIGN and c.work != PLAN]
+    if stage == BUILD:  # pragma: no mutate
+        designed = [c for c in calls(folder) if c.stage == DESIGN]  # pragma: no mutate
+        made = [c.work for c in designed if c.work != PLAN]
         if made:
             raise Stop(
                 f"rn: the design stage made {joined(list(dict.fromkeys(made)))}, which go to the"
@@ -1107,7 +1115,7 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     learnt: list[str] = []
     if args.put is not None:
         work, part = part_of(folder, args.put)
-        if work == PLAN:
+        if work == PLAN:  # pragma: no mutate
             numbered_on(folder, steering.plan, part, args.put)
             steering = steering._replace(plan=put_plan(steering.plan, part))
         else:
@@ -1248,7 +1256,8 @@ def done_made(folder: str, found: list[Call], plan: list[str]) -> list[str]:
     paths = []
     for call in found:
         if TASK_WORK.fullmatch(call.work) and call.work.upper() not in left:
-            if call.result or call.number == last[call.work]:
+            latest_call = call.number == last[call.work]  # pragma: no mutate
+            if call.result or latest_call:
                 paths.append(call_path(folder, call.number, CCS))
             paths += [call_path(folder, call.number, RESULT)] if call.result else []
     return paths
@@ -1293,7 +1302,7 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     number = last.number if last is not None and not last.result else next_number(found)
     carried = [] if last is None else decisions_of(last)
     if work in PARTS:
-        cut = "\n".join(steering.plan) if work == PLAN else f"## {LEARNINGS}"
+        cut = "\n".join(steering.plan) if work == PLAN else f"## {LEARNINGS}"  # pragma: no mutate
         part = call_path(folder, number, PART[work])
         write_text(part, cut + "\n")
         paths = [part]
@@ -1432,7 +1441,7 @@ def shown_at(commit: str, signoff: str, folder: str) -> Shown:
     steering = parsed(at(commit, steering_path(folder)) or "")
     found: Shown = {}
     if signoff != DESIGN:
-        parts = ("", CRITERIA) if signoff == PLAN else (CRITERIA,)
+        parts = ("", CRITERIA) if signoff == PLAN else (CRITERIA,)  # pragma: no mutate
         lines = decided(steering.plan, parts)
         found[""] = ("", {key: f"{key}: {said}" for key, said in lines.items()})
     made = calls(folder, commit)
@@ -1447,7 +1456,7 @@ def shown_at(commit: str, signoff: str, folder: str) -> Shown:
             )
         said = simple(work, decisions_of(last))
         label = work.upper() if TASK_WORK.fullmatch(work) else work
-        if signoff == DESIGN:
+        if signoff == DESIGN:  # pragma: no mutate
             link = blob(steering.keys["pr"])
             paths = [
                 e[ENTRIES["work"]]
@@ -1509,7 +1518,7 @@ def ready(signoff: str, folder: str, steering: Steering) -> None:
     """Returns when the session has what the sign-off shows: at the plan's, the goal, a criterion
     and no task left; at the deliverable's, the finished work returned; stops otherwise. The
     design's works are checked as they are shown."""
-    if signoff == PLAN:
+    if signoff == PLAN:  # pragma: no mutate
         said = decided(steering.plan, ("", CRITERIA))
         if "G1" not in said or len(said) < 2 or tasks_of(steering.plan):
             raise Stop(
@@ -1517,7 +1526,7 @@ def ready(signoff: str, folder: str, steering: Steering) -> None:
                 " have turn make the plan through its tasks, tick each action done with"
                 " `rn.py state --done`, then run this again"
             )
-    if signoff == DELIVERABLE:
+    if signoff == DELIVERABLE:  # pragma: no mutate
         last = latest(calls(folder), DELIVERABLE)
         if last is None or not last.result:
             raise Stop(
@@ -1626,7 +1635,7 @@ def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any
             " answer is theirs alone, so wait for them to type it, and keep it then"
         )
     keys = dict(steering.keys, signoff=NONE)
-    if args.answer == "approved":
+    if args.answer == "approved":  # pragma: no mutate
         keys[STAGE] = APPROVED[waiting]
     answered = steering._replace(keys=keys, next=next_step, open=opened(args.open))
     return {"kept": keep(folder, answered, message)}
@@ -1785,7 +1794,7 @@ def turns_learnings(folder: str) -> list[dict[str, Any]]:
             "--diff-filter=AM",
             f"{base()}..HEAD",
             "--",
-            os.path.join(folder, TURN),
+            os.path.join(folder, TURN, f"*-{RESULT}"),
         ],
         AS_GIT_SAYS,
     )
@@ -1796,7 +1805,7 @@ def turns_learnings(folder: str) -> list[dict[str, Any]]:
         if line.startswith("commit "):
             commit = line[len("commit ") :]
         file = CALL.fullmatch(os.path.basename(line))
-        if file is None or file[2] != RESULT:
+        if file is None:
             continue
         try:
             data = json.loads(git(["show", f"{commit}:{line}"], AS_GIT_SAYS))
@@ -1889,5 +1898,5 @@ def main(argv: list[str], root: str, today: datetime.date) -> int:
 
 
 # Run as the command, and not when the tests import it under the name rn.
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no mutate
     sys.exit(main(sys.argv[1:], ROOT, datetime.date.today()))

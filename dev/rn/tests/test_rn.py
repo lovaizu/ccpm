@@ -167,10 +167,12 @@ class RepoTest(helpers.MainAndWork):
         return path
 
     def rn(self, *argv: str) -> tuple[int, str]:
-        """The exit code and what rn printed for the arguments."""
+        """The exit code and what rn printed for the arguments, each a text of its own, as the
+        command line gives them, not the one copy CPython keeps of a literal like a name, such as
+        `build`, which rn's own literals share."""
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
-            code = rn.main(list(argv), self.plugin, TODAY)
+            code = rn.main([a.encode().decode() for a in argv], self.plugin, TODAY)
         return code, out.getvalue()
 
     def printed(self, *argv: str) -> str:
@@ -439,6 +441,14 @@ class StartTest(RepoTest):
         # Then: the branch named by the slug is checked out, made from origin's main alone.
         here = (self.out("branch", "--show-current"), os.path.exists("work.md"))
         self.assertEqual(here, (f"{SLUG}\n", False))
+
+    def test_start_from_a_branch_of_another_name_makes_the_sessions_branch(self):
+        # Given: the branch `a` checked out, holding no session.
+        self.git("checkout", "-q", "-b", "a")
+        # When: the orchestrator starts a session.
+        self.ran(*self.start())
+        # Then: the branch named by the slug is checked out.
+        self.assertEqual(self.out("branch", "--show-current"), f"{SLUG}\n")
 
     def test_start_writes_the_steering_with_the_title_next_and_the_pull_request(self):
         # Given: a branch with no session.
@@ -733,6 +743,8 @@ class FormTest(unittest.TestCase):
             " deliverable, found build",
             steering(pr="https://github.com/o/r"): "line 3: expected pr to be the pull"
             " request's URL, or none before it is opened, found https://github.com/o/r",
+            steering(pr="pending"): "line 3: expected pr to be the pull request's URL, or none"
+            " before it is opened, found pending",
         }
         for text, point in cases.items():
             with self.subTest(point=point):
@@ -836,6 +848,8 @@ class FormTest(unittest.TestCase):
             task(ticks=""): "line 23: expected the actions of T1, found none",
             task().replace("[ ] 1.", "[ ] 2.", 1): f"line 27: expected action 1 of T1 as"
             f" {actions.format(1)}, found `  - [ ] 2. Action 1 of T1. turn.`",
+            task().replace("[ ] 2.", "[ ] 1.", 1): f"line 28: expected action 2 of T1 as"
+            f" {actions.format(2)}, found `  - [ ] 1. Action 2 of T1. turn.`",
             task().replace("[ ] 3.", "[ ] three."): f"line 29: expected action 3 of T1 as"
             f" {actions.format(3)}, found `  - [ ] three. Action 3 of T1. turn.`",
             task(ticks="xxxx"): "line 23: expected only tasks with an action not ticked, as a"
@@ -1027,6 +1041,25 @@ class StateTest(RepoTest):
             " session to build"
         )
         self.assertEqual((said in out, self.read(STEERING)), (True, steering(stage="design")))
+
+    def test_the_stage_moves_to_deliverable_after_a_document_made_in_the_design_stage(self):
+        # Given: a session at the build stage, no task left, with a call on t1 made in the design
+        # stage.
+        self.session(steering(part=plan(tasks=""), stage="build"))
+        self.call("0001", "t1", "design", result={})
+        self.kept()
+        # When: the orchestrator moves the stage to deliverable.
+        self.ran(*self.state("--stage", "deliverable"))
+        # Then: the stage is deliverable.
+        self.assertIn("stage: deliverable\n", self.read(STEERING))
+
+    def test_the_stage_moves_to_finished_with_a_task_left(self):
+        # Given: a session at the learnings stage, holding T1.
+        self.session(steering(stage="learnings"))
+        # When: the orchestrator moves the stage to finished.
+        self.ran(*self.state("--stage", "finished"))
+        # Then: the stage is finished.
+        self.assertIn("stage: finished\n", self.read(STEERING))
 
     def test_the_stage_moves_to_finished_from_learnings_and_ends_the_session(self):
         # Given: a session at the learnings stage, no task left.
@@ -1221,6 +1254,20 @@ class PutTest(RepoTest):
         said = "each new task numbered from T1, then run this again" in out
         self.assertEqual((said, self.read(STEERING)), (True, before))
 
+    def test_a_task_numbered_0_after_a_lower_heading_indented_under_a_task_stops(self):
+        # Given: a steering that never held a task, and a call on the plan whose part holds T1,
+        # a heading `### Later` indented under it, and T0.
+        before = steering(part=plan(tasks=""))
+        self.session(before)
+        tasks = f"{task()}\n  ### Later\n\n{task('T0')}"
+        self.call("0001", "plan", result={}, part=plan(tasks=tasks))
+        # When: the orchestrator puts it back.
+        out = self.stopped(*self.put())
+        # Then: rn says to number each new task from T1, as the heading is a line of T1 and T0 a
+        # task of the part, and keeps nothing.
+        said = "each new task numbered from T1, then run this again" in out
+        self.assertEqual((said, self.read(STEERING)), (True, before))
+
     def test_a_part_may_hold_the_tasks_held_and_any_above_every_task_held_before(self):
         # Given: a steering that held T1, T2 and T3, and now holds T2 alone, the others done, and a
         # call on the plan whose part holds T2 and T4.
@@ -1329,6 +1376,18 @@ class PutTest(RepoTest):
         kept = (os.path.exists(LEARNINGS), self.head(), os.path.exists(".git/rn"))
         self.assertEqual((said in out, kept), (True, (False, before, True)))
 
+    def test_learnings_under_a_heading_of_another_level_stop(self):
+        # Given: a call on the learnings whose part holds one under `# Learnings`.
+        self.session()
+        self.call("0001", "learnings", result={}, part="# Learnings\n- L1: First.\n")
+        # When: the orchestrator puts it back.
+        out = self.stopped(*self.put())
+        # Then: rn names the heading as out of the learnings' form, and writes none.
+        said = f"rn: {LEARNINGS} would be out of its form: line 1: expected a learning" in out
+        self.assertEqual(
+            (said, "found `# Learnings`" in out, os.path.exists(LEARNINGS)), (True, True, False)
+        )
+
     def test_the_plan_put_back_leaves_the_records(self):
         # Given: records shown in the git folder, and a call on the plan.
         self.session()
@@ -1366,16 +1425,18 @@ class PutTest(RepoTest):
         self.assertEqual((said, self.read(STEERING)), (True, STEERED))
 
     def test_a_call_not_there_stops(self):
-        # Given: a session with one call.
-        self.session()
-        self.call("0001", "plan", result={}, part=plan())
-        # When: the orchestrator puts back the part of a call not there.
-        # Then: rn says there is none, and what to give.
-        self.assertIn(
-            f"rn: {TURN} holds no call 0002; give --put the number of a call on plan or learnings,"
-            " such as 0001",
-            self.stopped(*self.put("0002")),
-        )
+        for number in ("0000", "0002"):
+            with self.subTest(number=number):
+                # Given: a session with the call 0001.
+                self.session()
+                self.call("0001", "plan", result={}, part=plan())
+                # When: the orchestrator puts back the part of a call not there.
+                # Then: rn says there is none, and what to give.
+                self.assertIn(
+                    f"rn: {TURN} holds no call {number}; give --put the number of a call on plan"
+                    " or learnings, such as 0001",
+                    self.stopped(*self.put(number)),
+                )
 
     def test_a_call_on_another_work_stops(self):
         # Given: a call on a task's work.
@@ -1717,6 +1778,16 @@ class CcsTest(RepoTest):
         )
         self.assertEqual((ccs["goal_orientation"], has), want)
 
+    def test_the_ccs_of_the_finished_work_and_of_a_task_has_nothing_of_the_tasks_done(self):
+        # Given: a session holding T1 and T2, with a call on T3, done, returned.
+        self.call("0001", "t3", result={})
+        self.kept()
+        # When: the orchestrator has the CCS of the finished work written, then of t1.
+        made = [self.ccs(work, "README.md")["ccs"] for work in ("deliverable", "t1")]
+        # Then: neither has anything.
+        has = [[e for e in self.read_json(p)["focal_entities"] if "has" in e] for p in made]
+        self.assertEqual(has, [[], []])
+
     def test_the_ccs_of_any_other_work_holds_the_goal_and_every_criterion(self):
         # Given: a session.
         # When: the orchestrator has the CCS of a checklist written.
@@ -1733,14 +1804,16 @@ class CcsTest(RepoTest):
         )
 
     def test_the_ccs_of_a_task_the_steering_does_not_hold_stops(self):
-        # Given: a session with T1 and T2.
-        # When: the orchestrator has the CCS of t3 written.
-        # Then: rn says there is no T3.
-        self.assertIn(
-            "rn: the steering holds no task T3, which the work t3 is of; have turn make the tasks,"
-            " keep them, then run this again",
-            self.stopped("ccs", "t3", "README.md", *options(NEEDED)),
-        )
+        for work in ("t0", "t3"):
+            with self.subTest(work=work):
+                # Given: a session with T1 and T2.
+                # When: the orchestrator has the CCS of a task not held written.
+                # Then: rn says there is no such task.
+                self.assertIn(
+                    f"rn: the steering holds no task {work.upper()}, which the work {work} is of;"
+                    " have turn make the tasks, keep them, then run this again",
+                    self.stopped("ccs", work, "README.md", *options(NEEDED)),
+                )
 
     def test_the_plan_is_cut_into_its_part_and_handed_as_the_work(self):
         # Given: a session.
@@ -1792,6 +1865,18 @@ class CcsTest(RepoTest):
             self.read_json(call_at("0001"))["retrieved_artifacts"],
             [{"checklist": checklist}, {"source": self.usability}],
         )
+
+    def test_the_ccs_of_another_kind_names_its_checklists_alone(self):
+        for kind in ("architecture", KIND):
+            with self.subTest(kind=kind):
+                # Given: rn's checklist of the kind.
+                checklist = os.path.join(self.plugin, "checklists", "product", f"{kind}.md")
+                self.write(checklist, "# A kind\n")
+                # When: the orchestrator has the CCS of t1 written, of the kind.
+                made = self.ccs("t1", **{"--kind": kind})["ccs"]
+                # Then: it names the kind's checklist alone.
+                found = self.read_json(made)["retrieved_artifacts"]
+                self.assertEqual(found, [{"checklist": checklist}])
 
     def test_the_decisions_of_the_latest_call_not_returned_are_kept(self):
         # Given: a call on t1 holding a decision, not returned.
@@ -2005,8 +2090,9 @@ class ProposalTest(ShownTest):
         self.assertEqual(kept, (want, FIRST + "\n\n"))
 
     def test_the_proposal_asked_again_while_it_waits_is_the_same_and_keeps_nothing(self):
-        # Given: the plan's proposal shown.
+        # Given: the plan's proposal shown, then a move kept with another Next.
         self.proposal()
+        self.ran("state", "--next", "3. Answer the question.", "--message", "a question")
         before = self.head()
         # When: the orchestrator asks for it again.
         again = self.proposal()
@@ -2065,14 +2151,17 @@ class ProposalTest(ShownTest):
         self.assertIn("(G1, AC1 and AC2 as before)\n", self.proposal())
 
     def test_a_proposal_at_another_stage_stops(self):
-        # Given: a session at the plan stage.
-        # When: the orchestrator asks for the design's proposal.
-        # Then: rn says the design sign-off comes at the design stage.
-        self.assertIn(
-            "rn: the session is at the plan stage, and the design sign-off comes at the design"
-            " stage; take the steps of /rn:up that reach it first",
-            self.stopped("proposal", "design"),
-        )
+        for stage in ("plan", "build"):
+            with self.subTest(stage=stage):
+                # Given: a session at a stage other than design.
+                self.keep(steering(part=plan(tasks=""), stage=stage))
+                # When: the orchestrator asks for the design's proposal.
+                # Then: rn says the design sign-off comes at the design stage.
+                self.assertIn(
+                    f"rn: the session is at the {stage} stage, and the design sign-off comes at"
+                    " the design stage; take the steps of /rn:up that reach it first",
+                    self.stopped("proposal", "design"),
+                )
 
     def test_a_proposal_while_another_signoff_waits_stops(self):
         # Given: a session at the plan stage waiting at the design sign-off, as by a hand commit.
@@ -2163,6 +2252,16 @@ class DesignTest(ShownTest):
             f"checklist-code: {REPOSITORY}/blob/work/.rn/checklists/code.md\n"
             f"{HOW}\n",
         )
+
+    def test_the_design_proposal_asked_again_while_it_waits_keeps_nothing(self):
+        # Given: the design's proposal shown, then a move kept with another Next.
+        self.proposal("design")
+        self.ran("state", "--next", "3. Answer the question.", "--message", "a question")
+        before = self.head()
+        # When: the orchestrator asks for it again.
+        self.proposal("design")
+        # Then: nothing is kept.
+        self.assertEqual(self.head(), before)
 
     def test_the_design_made_again_shows_each_decision_changed_and_the_latest_calls_links(self):
         # Given: the design's proposal shown, feedback, and t1 made again by a new call with a
@@ -2255,10 +2354,12 @@ class DeliverableTest(ShownTest):
         self.kept()
 
     def test_the_deliverable_proposal_shows_each_criterion_and_each_tasks_decisions(self):
-        # Given: t1 with a decision and t2 with none, made in the build stage, and the finished
-        # work returned.
+        # Given: t1 with a decision and t2 with none, made in the build stage, t3 with a decision,
+        # made in the design stage, and the finished work returned.
+        self.call("0004", "t3", "design", ("Flow: one page",), ("docs/flow.md",), {})
+        self.kept()
         # When: the orchestrator asks for the deliverable's proposal.
-        # Then: rn shows each criterion, then t1 and its decision, and not t2.
+        # Then: rn shows each criterion, then t1 and its decision, and not t2 nor t3.
         self.assertEqual(
             self.proposal("deliverable"),
             "Deliverable sign-off\n"
@@ -2669,6 +2770,15 @@ class RecordsTest(LearningTest):
             ),
             (True, False, True),
         )
+
+    def test_the_stretch_starts_where_the_branch_left_with_no_learnings_call_returned(self):
+        # Given: a call on the finished work returned and kept.
+        self.call("0001", "deliverable", "deliverable", result={})
+        self.kept()
+        # When: the orchestrator has the records shown.
+        self.ran("records")
+        # Then: the history runs from the commit the branch left the default branch at.
+        self.assertIn(f"$ git log --reverse --stat {self.start()}..HEAD\n", self.read(HISTORY))
 
     def test_the_stretch_starts_after_the_later_of_two_learnings_calls(self):
         # Given: two learnings calls returned, a move between them.
