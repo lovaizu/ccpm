@@ -76,13 +76,15 @@ esac
 """
 
 
-def task(name: str = "T1", serves: str = "AC1", ticks: str = "    ", tick: str = " ") -> str:
-    """A task in the form of F-1 serving the IDs given, with a step for each character of the ticks,
-    ticked where it is `x`, and the task's own tick."""
-    steps = "\n".join(f"  - [{t}] {n}. Step {n} of {name}. turn." for n, t in enumerate(ticks, 1))
+def task(name: str = "T1", serves: str = "AC1", ticks: str = "    ") -> str:
+    """A task in the form of F-1 serving the IDs given, with an action for each character of the
+    ticks, ticked where it is `x`."""
+    actions = "\n".join(
+        f"  - [{t}] {n}. Action {n} of {name}. turn." for n, t in enumerate(ticks, 1)
+    )
     return (
-        f"- [{tick}] {name}: Make the part {name}. Serves {serves}.\n\n"
-        f"  Completion criterion: it does what it serves, tried by hand.\n\n{steps}"
+        f"- {name}: Make the part {name}. Serves {serves}.\n\n"
+        f"  Completion criterion: it does what it serves, tried by hand.\n\n{actions}"
     )
 
 
@@ -100,7 +102,6 @@ def steering(
     stage: str = "plan",
     signoff: str = "none",
     pr: str = PR,
-    learnings: str = "",
     next_step: str = NEXT,
     opened: str = "None.",
 ) -> str:
@@ -109,11 +110,13 @@ def steering(
         f"---\nrn: {VERSION}\npr: {pr}\nstage: {stage}\nsignoff: {signoff}\n"
         "artifact-language: English\nconversation-language: Japanese\n---\n\n"
     )
-    learnt = f"## Learnings\n\n{learnings}\n\n" if learnings else ""
-    return f"{front}{part}\n\n{learnt}## Next\n\n{next_step}\n\n## Open\n\n{opened}\n"
+    return f"{front}{part}\n\n## Next\n\n{next_step}\n\n## Open\n\n{opened}\n"
 
 
 STEERED = steering()
+
+
+LEARNINGS = f"{FOLDER}/learnings.md"
 
 
 def call_at(number: str, what: str = "ccs.json") -> str:
@@ -226,8 +229,9 @@ class RepoTest(helpers.MainAndWork):
         part: str | None = None,
     ) -> None:
         """Writes a call to turn on the work, made in the stage, with the decisions and the works
-        its CCS names, turn's result where one is given, and the part of the steering where one is
-        given; commits nothing."""
+        its CCS names, turn's result where one is given, and its part where one is given, the
+        learnings' in a file of their name, the plan's in one of the steering's; commits
+        nothing."""
         ccs = {
             "focal_entities": [{"work": work}, {"stage": stage}]
             + [{"deliverable": p} for p in works],
@@ -237,7 +241,8 @@ class RepoTest(helpers.MainAndWork):
         if result is not None:
             self.write_json(call_at(number, "result.json"), result)
         if part is not None:
-            self.write(call_at(number, "steering.md"), part)
+            name = "learnings.md" if work in ("learnings",) else "steering.md"
+            self.write(call_at(number, name), part)
 
     def asked(self) -> list[list[str]]:
         """The arguments of each call to the stand-in for gh, in order."""
@@ -647,13 +652,13 @@ class FormTest(unittest.TestCase):
 
     def test_a_steering_in_form_holds(self):
         cases = {
-            "the whole": steering(learnings="- L1: A slip.\n  It shows."),
+            "the whole": STEERED,
             "the title alone": steering(part="# Add login"),
             "the goal alone": steering(part=plan(criteria="", tasks="")),
             "no goal": steering(part=plan(goal="", tasks="")),
             "a pull request not opened": steering(pr="none"),
             "points open": steering(opened="- One.\n  Still open.\n- Two."),
-            "ticks": steering(part=plan(tasks=task(ticks="xxxx", tick="x"))),
+            "ticks": steering(part=plan(tasks=task(ticks="xxx "))),
             "a task serving the goal": steering(part=plan(tasks=task(serves="G1"))),
             "a task serving two": steering(part=plan(tasks=task(serves="AC1 and AC2"))),
             "a task serving three": steering(part=plan(tasks=task(serves="G1, AC1 and AC2"))),
@@ -663,11 +668,9 @@ class FormTest(unittest.TestCase):
             "a task's line over two lines": steering(
                 part=plan(tasks=task().replace("T1. Serves", "T1.\n  Serves"))
             ),
-            "two tasks": steering(
-                part=plan(tasks=f"{task()}\n\n{task('T2', ticks='x', tick='x')}")
-            ),
-            "a step over two lines": steering(
-                part=plan(tasks=task().replace("Step 1 of T1.", "Step 1\n    of T1."))
+            "two tasks": steering(part=plan(tasks=f"{task()}\n\n{task('T2', ticks='x ')}")),
+            "an action over two lines": steering(
+                part=plan(tasks=task().replace("Action 1 of T1.", "Action 1\n    of T1."))
             ),
         }
         for name, text in cases.items():
@@ -694,8 +697,8 @@ class FormTest(unittest.TestCase):
         self.assertEqual(rn.decided(text.splitlines(), (rn.CRITERIA,)), want)
 
     def test_a_steering_rn_writes_holds_rns_plan_checklists_template(self):
-        # Given: a steering rn writes with every part, and rn's plan checklist's F-1 template, the
-        # first fence under it.
+        # Given: a steering rn writes with every part, a task's action ticked, and rn's plan
+        # checklist's F-1 template, the first fence under it.
         with open(PLAN_CHECKLIST, encoding="utf-8") as f:
             lines = f.read().splitlines()
         heading = lines.index("### F-1: Shape")
@@ -703,7 +706,8 @@ class FormTest(unittest.TestCase):
         asked = template.read("\n".join(lines[fences[0] + 1 : fences[1]]))
         # When: it is held to the template.
         # Then: it holds.
-        self.assertEqual(template.held(asked, steering(learnings="- L1: A slip.")), "")
+        text = steering(part=plan(tasks=task(ticks="x   ")))
+        self.assertEqual(template.held(asked, text), "")
 
     def test_a_front_matter_out_of_form_is_named(self):
         cases = {
@@ -739,8 +743,8 @@ class FormTest(unittest.TestCase):
 
     def test_headings_out_of_form_are_named(self):
         only = (
-            "expected only the headings `## Acceptance criteria`, `## Tasks`, `## Learnings`,"
-            " `## Next` and `## Open`, each once and in that order, found"
+            "expected only the headings `## Acceptance criteria`, `## Tasks`, `## Next` and"
+            " `## Open`, each once and in that order, found"
         )
         cases = {
             STEERED.replace("# Add login\n", ""): "expected the title as `# <the piece of work, in"
@@ -757,8 +761,8 @@ class FormTest(unittest.TestCase):
             STEERED.replace("## Tasks", "# Tasks"): f"line 21: {only} `# Tasks`",
             STEERED.replace("## Next", "## Tasks\n\n## Next"): f"line 32: {only} `## Tasks`",
             STEERED.replace("## Acceptance criteria", "## Next"): f"line 15: {only} `## Next`",
-            steering(learnings="- L1: x").replace("## Learnings", "## Open"): (
-                f"line 32: {only} `## Open`"
+            STEERED.replace("## Next", "## Learnings\n\n- L1: x\n\n## Next"): (
+                f"line 32: {only} `## Learnings`"
             ),
             STEERED.replace("## Next\n\n", ""): "expected the heading `## Next`, found none",
             STEERED.replace("## Open\n\n", ""): "expected the heading `## Open`, found none",
@@ -774,10 +778,6 @@ class FormTest(unittest.TestCase):
         criterion = (
             "an acceptance criterion as `- AC<n>: <one thing the finished work must do for the"
             " goal>`"
-        )
-        learning = (
-            "a learning as `- L<n>: <what happened, with the words it rests on, and where it would"
-            " make later work better>`"
         )
         cases = {
             STEERED.replace("G1: ", "Goal: "): "line 12: expected the goal as `G1: <the user's"
@@ -796,9 +796,6 @@ class FormTest(unittest.TestCase):
             steering(part=plan(criteria="None.", tasks="")).replace("None.", ""): (
                 f"expected {criterion} under `## Acceptance criteria`, found none"
             ),
-            steering(learnings="- L1: x\n- L1: y"): "line 35: expected each ID once, found L1"
-            " again",
-            steering(learnings="- A slip."): f"line 34: expected {learning}, found `- A slip.`",
             STEERED.replace(NEXT, ""): "expected the step of /rn:up to take next under `## Next`,"
             " found none",
             STEERED.replace("None.", ""): "expected `None.`, or each point open as `- <what is"
@@ -818,15 +815,17 @@ class FormTest(unittest.TestCase):
                 self.assert_out(text, point)
 
     def test_tasks_out_of_form_are_named(self):
-        steps = "`  - [ ] {0}. <what is done>. <who does it>`"
+        actions = "`  - [ ] {0}. <what is done>. <who does it>`"
+        form = "a task as `- T<n>: <the result it makes>. Serves <G1, or the criteria by ID>.`"
         cases = {
-            task().replace("- [ ] T1", "- [ ] Task 1"): "line 23: expected a task as `- [ ] T<n>:"
-            " <the part of the piece of work>. Serves <G1, or the criteria by ID>.`, found `- [ ]"
-            " Task 1: Make the part T1. Serves AC1.`",
+            task().replace("- T1", "- Task 1"): f"line 23: expected {form}, found `- Task 1: Make"
+            " the part T1. Serves AC1.`",
+            task().replace("- T1", "- [ ] T1"): f"line 23: expected {form}, found `- [ ] T1: Make"
+            " the part T1. Serves AC1.`",
             task().replace(" Serves AC1.", ""): "line 23: expected T1 to end `Serves <G1, or the"
-            " criteria by ID>.`, found `- [ ] T1: Make the part T1.`",
+            " criteria by ID>.`, found `- T1: Make the part T1.`",
             task(serves="AC1 or AC2"): "line 23: expected T1 to end `Serves <G1, or the criteria"
-            " by ID>.`, found `- [ ] T1: Make the part T1. Serves AC1 or AC2.`",
+            " by ID>.`, found `- T1: Make the part T1. Serves AC1 or AC2.`",
             task(
                 serves="AC3 and AC4"
             ): "line 23: expected T1 to serve only the goal and the criteria the"
@@ -834,14 +833,14 @@ class FormTest(unittest.TestCase):
             task().replace("  Completion", "  The completion"): "line 23: expected `  Completion"
             " criterion: <what its result must do for what it serves, and the check that shows"
             " it>` under T1, found none",
-            task(ticks=""): "line 23: expected the steps of T1, found none",
-            task().replace("[ ] 1.", "[ ] 2.", 1): f"line 27: expected step 1 of T1 as"
-            f" {steps.format(1)}, found `  - [ ] 2. Step 1 of T1. turn.`",
-            task().replace("[ ] 3.", "[ ] three."): f"line 29: expected step 3 of T1 as"
-            f" {steps.format(3)}, found `  - [ ] three. Step 3 of T1. turn.`",
-            task(ticks="xxx ", tick="x"): "line 23: expected T1 ticked once all its steps are,"
-            " and only then",
-            task(ticks="xxxx"): "line 23: expected T1 ticked once all its steps are, and only then",
+            task(ticks=""): "line 23: expected the actions of T1, found none",
+            task().replace("[ ] 1.", "[ ] 2.", 1): f"line 27: expected action 1 of T1 as"
+            f" {actions.format(1)}, found `  - [ ] 2. Action 1 of T1. turn.`",
+            task().replace("[ ] 3.", "[ ] three."): f"line 29: expected action 3 of T1 as"
+            f" {actions.format(3)}, found `  - [ ] three. Action 3 of T1. turn.`",
+            task(ticks="xxxx"): "line 23: expected only tasks with an action not ticked, as a"
+            " task leaves the steering once all its actions are, found T1 with every action"
+            " ticked",
         }
         for tasks, point in cases.items():
             with self.subTest(point=point):
@@ -887,16 +886,16 @@ class StateTest(RepoTest):
         self.assertEqual(kept, (want, want, "plan: the first point asked\n\n"))
 
     def test_a_steering_without_blank_lines_before_headings_is_rewritten_in_rns_layout(self):
-        # Given: a steering in form, with learnings, whose headings of the learnings, Next and Open
-        # follow a line of words, as a commit by hand left it.
-        text = steering(learnings="- L1: A slip.")
-        for heading in ("Learnings", "Next", "Open"):
+        # Given: a steering in form whose headings of Next and Open follow a line of words, as a
+        # commit by hand left it.
+        text = STEERED
+        for heading in ("Next", "Open"):
             text = text.replace(f"\n\n## {heading}", f"\n## {heading}")
         self.session(text)
         # When: the orchestrator keeps a decision, a move that leaves the steering as it is.
         self.ran("decide", "t1", "--title", "A", "--says", "B", "--message", "m")
         # Then: the steering holds every line, a blank line before each of those headings.
-        self.assertEqual(self.read(STEERING), steering(learnings="- L1: A slip."))
+        self.assertEqual(self.read(STEERING), STEERED)
 
     def test_no_point_open_is_kept_as_none(self):
         # Given: a session with a point open.
@@ -927,68 +926,111 @@ class StateTest(RepoTest):
         # Then: no commit is made, and the branch is pushed.
         self.assertEqual((out["kept"], self.head("origin/work")), (before, before))
 
-    def test_a_step_done_is_ticked(self):
-        # Given: a task of four steps, none ticked.
-        # When: the orchestrator keeps the first step done.
+    def test_an_action_done_is_ticked(self):
+        # Given: a task of four actions, none ticked.
+        # When: the orchestrator keeps the first action done.
         self.ran(*self.state("--done", "T1.1"))
-        # Then: that step alone is ticked.
+        # Then: that action alone is ticked.
         want = steering(part=plan(tasks=task(ticks="x   ")), next_step="3. Make the plan.")
         self.assertEqual(self.read(STEERING), want)
 
-    def test_a_task_is_ticked_once_all_its_steps_are(self):
-        # Given: a task whose first two steps are ticked.
+    def test_a_task_leaves_the_steering_once_all_its_actions_are_ticked(self):
+        two = f"{task()}\n\n{task('T2', ticks='xxx ')}\n\n{task('T3', 'AC2')}"
+        for done, left in (
+            ("T1", f"{task('T2', ticks='xxx ')}\n\n{task('T3', 'AC2')}"),
+            ("T2", f"{task()}\n\n{task('T3', 'AC2')}"),
+            ("T3", f"{task()}\n\n{task('T2', ticks='xxx ')}"),
+        ):
+            with self.subTest(done=done):
+                # Given: three tasks, T2 with three of its four actions ticked.
+                self.session(steering(part=plan(tasks=two)))
+                # When: the orchestrator keeps every action of one of them done, one again.
+                argv = [a for k in (1, 2, 3, 4, 1) for a in ("--done", f"{done}.{k}")]
+                self.ran(*self.state(*argv))
+                # Then: that task is gone with the blank lines that parted it, the others as
+                # they were.
+                want = steering(part=plan(tasks=left), next_step="3. Make the plan.")
+                self.assertEqual(self.read(STEERING), want)
+
+    def test_the_last_task_done_takes_the_tasks_heading_with_it(self):
+        # Given: a task whose first two actions are ticked.
         self.ran(*self.state("--done", "T1.1", "--done", "T1.2"))
-        # When: the orchestrator keeps the last two done, and the first again.
-        self.ran(*self.state("--done", "T1.3", "--done", "T1.4", "--done", "T1.1"))
-        # Then: every step and the task are ticked.
-        want = steering(
-            part=plan(tasks=task(ticks="xxxx", tick="x")), next_step="3. Make the plan."
-        )
+        # When: the orchestrator keeps the last two done.
+        self.ran(*self.state("--done", "T1.3", "--done", "T1.4"))
+        # Then: the steering holds no task and no heading of the tasks.
+        want = steering(part=plan(tasks=""), next_step="3. Make the plan.")
         self.assertEqual(self.read(STEERING), want)
 
-    def test_a_step_the_steering_does_not_hold_stops_and_keeps_nothing(self):
+    def test_an_action_the_steering_does_not_hold_stops_and_keeps_nothing(self):
         for done in ("T2.1", "T1.5", "T1.0", "T1", "1.1"):
             with self.subTest(done=done):
-                # Given: a session whose one task has four steps.
-                # When: the orchestrator keeps a step done that it does not hold.
+                # Given: a session whose one task has four actions.
+                # When: the orchestrator keeps an action done that it does not hold.
                 out = self.stopped(*self.state("--done", done))
-                # Then: rn names it and says how a step is given, and keeps nothing.
+                # Then: rn names it and says how an action is given, and keeps nothing.
                 said = (
-                    f"rn: the steering holds no step {done}; give each step done as T<n>.<step>,"
-                    " of a task and a step it holds, such as T1.2"
+                    f"rn: the steering holds no action {done}; give each action done as"
+                    " T<n>.<action>, of a task and an action it holds, such as T1.2"
                 )
                 self.assertEqual((said in out, self.read(STEERING)), (True, STEERED))
 
-    def test_the_stage_moves_to_deliverable_once_every_task_is_ticked(self):
-        # Given: a session at the build stage whose task has one step left.
+    def test_the_stage_moves_to_deliverable_once_no_task_is_left(self):
+        # Given: a session at the build stage whose task has one action left.
         self.session(steering(part=plan(tasks=task(ticks="xxx ")), stage="build"))
-        # When: the orchestrator keeps the last step done, moving the stage to deliverable.
+        # When: the orchestrator keeps the last action done, moving the stage to deliverable.
         self.ran(*self.state("--done", "T1.4", "--stage", "deliverable"))
-        # Then: the task is ticked and the stage is deliverable.
-        want = steering(
-            part=plan(tasks=task(ticks="xxxx", tick="x")),
-            stage="deliverable",
-            next_step="3. Make the plan.",
-        )
+        # Then: the task is gone and the stage is deliverable.
+        want = steering(part=plan(tasks=""), stage="deliverable", next_step="3. Make the plan.")
         self.assertEqual(self.read(STEERING), want)
 
-    def test_the_stage_moving_to_deliverable_with_a_task_not_ticked_stops(self):
-        # Given: a session at the build stage, with T1 ticked and T2 not.
-        tasks = f"{task(ticks='x', tick='x')}\n\n{task('T2', ticks='x ')}"
+    def test_the_stage_moving_to_deliverable_with_a_task_left_stops(self):
+        # Given: a session at the build stage, with T2 left.
+        tasks = task("T2", ticks="x ")
         self.session(steering(part=plan(tasks=tasks), stage="build"))
         # When: the orchestrator moves the stage to deliverable.
         out = self.stopped(*self.state("--stage", "deliverable"))
-        # Then: rn names the task not ticked, and keeps nothing.
+        # Then: rn names the task left, and keeps nothing.
         said = (
-            "rn: T2 is not ticked yet, and the finished work is checked once every task is;"
-            " tick each step done with --done T<n>.<step>, then run this again"
+            "rn: T2 is still in the steering, and the finished work is checked once no task is;"
+            " tick each action done with --done T<n>.<action>, then run this again"
         )
         want = steering(part=plan(tasks=tasks), stage="build")
         self.assertEqual((said in out, self.read(STEERING)), (True, want))
 
+    def test_the_stage_moves_to_build_from_design_where_no_document_was_made(self):
+        # Given: a session at the design stage, whose calls in it are on the plan alone, and a
+        # call on t1 made in the plan stage.
+        self.session(steering(stage="design"))
+        self.call("0001", "t1", "plan", result={})
+        self.call("0002", "plan", "design", result={})
+        self.kept()
+        # When: the orchestrator moves the stage to build.
+        self.ran(*self.state("--stage", "build"))
+        # Then: the stage is build, with no sign-off.
+        want = steering(stage="build", next_step="3. Make the plan.")
+        self.assertEqual(self.read(STEERING), want)
+
+    def test_the_stage_moving_to_build_after_a_document_was_made_stops(self):
+        # Given: a session at the design stage with a call on t1 and on a checklist made in it.
+        self.session(steering(stage="design"))
+        self.call("0001", "plan", "design", result={})
+        self.call("0002", "t1", "design")
+        self.call("0003", "checklist-code", "design", result={})
+        self.call("0004", "t1", "design", result={})
+        self.kept()
+        # When: the orchestrator moves the stage to build.
+        out = self.stopped(*self.state("--stage", "build"))
+        # Then: rn names each work made, says they go to the design sign-off, and keeps nothing.
+        said = (
+            "rn: the design stage made t1 and checklist-code, which go to the design sign-off;"
+            " show it with `rn.py proposal design`, and the user's approval there moves the"
+            " session to build"
+        )
+        self.assertEqual((said in out, self.read(STEERING)), (True, steering(stage="design")))
+
     def test_the_stage_moves_to_finished_from_learnings_and_ends_the_session(self):
-        # Given: a session at the learnings stage.
-        self.session(steering(stage="learnings"))
+        # Given: a session at the learnings stage, no task left.
+        self.session(steering(part=plan(tasks=""), stage="learnings"))
         # When: the orchestrator moves the stage to finished.
         self.ran(*self.state("--stage", "finished"))
         # Then: the stage is finished, and no session is found after it.
@@ -1001,6 +1043,7 @@ class StateTest(RepoTest):
         for stage, to, start in (
             ("plan", "deliverable", "build"),
             ("build", "finished", "learnings"),
+            ("plan", "build", "design"),
         ):
             with self.subTest(to=to):
                 # Given: a session at a stage the move does not start from.
@@ -1133,51 +1176,118 @@ class PutTest(RepoTest):
         """The arguments that put back the part of the call of the number."""
         return ["state", "--next", NEXT, "--put", number, "--message", "plan: made"]
 
-    def test_the_plan_turn_made_is_put_back_with_its_steps_ticked_as_they_were(self):
-        # Given: a steering whose T1 has two steps ticked, and a call on the plan whose part, as
-        # turn returned it, changed T1's line, added a step, ticked the third, and added T2.
+    def test_the_plan_turn_made_is_put_back_with_its_actions_ticked_as_they_were(self):
+        # Given: a steering whose T1 has two actions ticked, and a call on the plan whose part, as
+        # turn returned it, changed T1's line, added an action, ticked the third, and added T2.
         self.session(steering(part=plan(tasks=task(ticks="xx  "))))
         made = f"{task(ticks='  x  ').replace('part T1', 'page T1')}\n\n{task('T2', 'AC2')}"
         self.call("0001", "plan", result={"items": []}, part=plan(tasks=made) + "\n\n")
         # When: the orchestrator puts it back.
         self.ran(*self.put())
-        # Then: the steering holds the part turn made, T1's first two steps ticked as they were
+        # Then: the steering holds the part turn made, T1's first two actions ticked as they were
         # and the rest not.
         want = f"{task(ticks='xx   ').replace('part T1', 'page T1')}\n\n{task('T2', 'AC2')}"
         self.assertEqual(self.read(STEERING), steering(part=plan(tasks=want)))
 
-    def test_a_task_ticked_before_and_given_a_step_since_is_not_ticked(self):
-        # Given: a steering whose T1 is ticked, and a part adding a fifth step to it.
-        self.session(steering(part=plan(tasks=task(ticks="xxxx", tick="x"))))
-        self.call("0001", "plan", result={}, part=plan(tasks=task(ticks="xxxxx", tick="x")))
+    def test_a_part_whose_task_has_every_action_ticked_stops_and_keeps_nothing(self):
+        # Given: a steering whose T1 has three of its four actions ticked, and a part leaving the
+        # fourth out.
+        before = steering(part=plan(tasks=task(ticks="xxx ")))
+        self.session(before)
+        self.call("0001", "plan", result={}, part=plan(tasks=task(ticks="   ")))
+        # When: the orchestrator puts it back.
+        out = self.stopped(*self.put())
+        # Then: rn says a done task is in no steering, and keeps nothing.
+        said = "F-1: line 23: expected only tasks with an action not ticked" in out
+        self.assertEqual((said, self.read(STEERING)), (True, before))
+
+    def test_the_first_tasks_are_taken_from_t1(self):
+        # Given: a steering that never held a task, and a call on the plan whose part holds T1.
+        self.session(steering(part=plan(tasks="")))
+        self.call("0001", "plan", result={}, part=plan())
         # When: the orchestrator puts it back.
         self.ran(*self.put())
-        # Then: T1 is not ticked, as its fifth step is not.
-        want = steering(part=plan(tasks=task(ticks="xxxx ")))
-        self.assertEqual(self.read(STEERING), want)
+        # Then: the steering holds it.
+        self.assertEqual(self.read(STEERING), STEERED)
+
+    def test_a_first_task_numbered_0_stops(self):
+        # Given: a steering that never held a task, and a call on the plan whose part holds T0.
+        before = steering(part=plan(tasks=""))
+        self.session(before)
+        self.call("0001", "plan", result={}, part=plan(tasks=task("T0")))
+        # When: the orchestrator puts it back.
+        out = self.stopped(*self.put())
+        # Then: rn says to number each new task from T1, and keeps nothing.
+        said = "each new task numbered from T1, then run this again" in out
+        self.assertEqual((said, self.read(STEERING)), (True, before))
+
+    def test_a_part_may_hold_the_tasks_held_and_any_above_every_task_held_before(self):
+        # Given: a steering that held T1, T2 and T3, and now holds T2 alone, the others done, and a
+        # call on the plan whose part holds T2 and T4.
+        self.session(steering(part=plan(tasks="\n\n".join(task(t) for t in ("T1", "T2", "T3")))))
+        self.session(steering(part=plan(tasks=task("T2"))))
+        made = f"{task('T2')}\n\n{task('T4')}"
+        self.call("0001", "plan", result={}, part=plan(tasks=made))
+        # When: the orchestrator puts it back.
+        self.ran(*self.put())
+        # Then: the steering holds the part.
+        self.assertEqual(self.read(STEERING), steering(part=plan(tasks=made)))
+
+    def test_a_part_reusing_the_id_of_a_task_done_stops_and_keeps_nothing(self):
+        for reused in ("T1", "T3"):
+            with self.subTest(reused=reused):
+                # Given: a steering that held T1, T2 and T3, and now holds T2 alone, the others
+                # done, and a call on the plan whose part holds T2 and one of the IDs done.
+                tasks = "\n\n".join(task(t) for t in ("T1", "T2", "T3"))
+                self.session(steering(part=plan(tasks=tasks)))
+                before = steering(part=plan(tasks=task("T2")))
+                self.session(before)
+                made = f"{task('T2')}\n\n{task(reused)}"
+                self.call("0001", "plan", result={}, part=plan(tasks=made))
+                self.kept()
+                # When: the orchestrator puts it back.
+                out = self.stopped(*self.put())
+                # Then: rn names the ID, says to number each new task above those used, and
+                # keeps nothing.
+                said = (
+                    f"rn: the part of the call 0001 holds {reused}, neither a task the steering"
+                    " holds nor numbered above every task it has held, and an ID names one task"
+                    " alone; nothing is kept: have turn make the part again, each new task"
+                    " numbered from T4, then run this again"
+                )
+                self.assertEqual((said in out, self.read(STEERING)), (True, before))
 
     def test_the_learnings_turn_made_follow_those_kept_and_the_records_go(self):
-        # Given: a steering with a learning kept, records shown in the git folder, and a call on
-        # the learnings whose part holds two learnings.
-        self.session(steering(learnings="- L1: Kept."))
+        # Given: a learning kept, records shown in the git folder, and a call on the learnings
+        # whose part holds two learnings.
+        self.session()
+        self.write(LEARNINGS, "- L1: Kept.\n")
         self.write(".git/rn/record/history.txt", "x")
         made = "## Learnings\n- L1: First.\n  Its words.\n- L2: Second.\n"
         self.call("0001", "learnings", result={}, part=made)
+        self.kept()
         # When: the orchestrator puts it back.
         self.ran(*self.put())
-        # Then: they follow the one kept, numbered on from it, and the records are removed.
-        want = steering(learnings="- L1: Kept.\n- L2: First.\n  Its words.\n- L3: Second.")
-        self.assertEqual((self.read(STEERING), os.path.exists(".git/rn")), (want, False))
+        # Then: they follow the one kept in the session's learnings, numbered on from it, kept on
+        # the remote; the steering holds none of them, and the records are removed.
+        want = "- L1: Kept.\n- L2: First.\n  Its words.\n- L3: Second.\n"
+        kept = (
+            self.read(LEARNINGS),
+            self.out("show", f"origin/work:{LEARNINGS}"),
+            self.read(STEERING),
+            os.path.exists(".git/rn"),
+        )
+        self.assertEqual(kept, (want, want, STEERED, False))
 
     def test_the_first_learnings_are_numbered_from_one_with_no_heading_given(self):
-        # Given: a steering with no learnings, and a call on the learnings whose part holds one
+        # Given: a session with no learnings, and a call on the learnings whose part holds one
         # without its heading.
         self.session()
         self.call("0001", "learnings", result={}, part="- L4: First.\n")
         # When: the orchestrator puts it back.
         self.ran(*self.put())
-        # Then: it is L1.
-        self.assertEqual(self.read(STEERING), steering(learnings="- L1: First."))
+        # Then: the session's learnings are made, holding it as L1.
+        self.assertEqual(self.read(LEARNINGS), "- L1: First.\n")
 
     def test_no_learning_made_leaves_no_learnings(self):
         # Given: a call on the learnings whose part holds its heading alone.
@@ -1185,8 +1295,39 @@ class PutTest(RepoTest):
         self.call("0001", "learnings", result={}, part="## Learnings\n")
         # When: the orchestrator puts it back.
         self.ran(*self.put())
-        # Then: the steering has no learnings.
-        self.assertEqual(self.read(STEERING), STEERED)
+        # Then: the session has no learnings, and the steering is as it was.
+        self.assertEqual((os.path.exists(LEARNINGS), self.read(STEERING)), (False, STEERED))
+
+    def test_learnings_put_with_a_move_the_steering_cannot_hold_stop_and_keep_nothing(self):
+        # Given: a call on the learnings whose part holds one.
+        self.session()
+        self.call("0001", "learnings", result={}, part="- L1: First.\n")
+        # When: the orchestrator puts it back with Next holding a heading.
+        out = self.stopped("state", "--next", "## Notes", "--put", "0001", "--message", "m")
+        # Then: rn names the point, and writes no learnings.
+        said = "rn: the steering would be out of the form of rn's plan checklist's F-1" in out
+        self.assertEqual((said, os.path.exists(LEARNINGS)), (True, False))
+
+    def test_learnings_out_of_form_stop_and_keep_nothing(self):
+        # Given: records shown in the git folder, and a call on the learnings whose part holds one
+        # with no ID.
+        self.session()
+        self.write(".git/rn/record/history.txt", "x")
+        self.call("0001", "learnings", result={}, part="## Learnings\n- A slip.\n")
+        self.kept()
+        before = self.head()
+        # When: the orchestrator puts it back.
+        out = self.stopped(*self.put())
+        # Then: rn names the point and says to have turn make it again, keeping nothing and the
+        # records left.
+        said = (
+            f"rn: {LEARNINGS} would be out of its form: line 1: expected a learning as `- L<n>:"
+            " <what happened, with the words it rests on, and where it would make later work"
+            " better>`, found `- A slip.`; nothing is kept: have turn make the part it puts back"
+            " again"
+        )
+        kept = (os.path.exists(LEARNINGS), self.head(), os.path.exists(".git/rn"))
+        self.assertEqual((said in out, kept), (True, (False, before, True)))
 
     def test_the_plan_put_back_leaves_the_records(self):
         # Given: records shown in the git folder, and a call on the plan.
@@ -1212,16 +1353,16 @@ class PutTest(RepoTest):
         kept = "nothing is kept: give what this move writes again so it holds, or have turn make the part it puts back again"
         self.assertEqual((said in out, kept in out, self.read(STEERING)), (True, True, STEERED))
 
-    def test_a_part_with_a_step_out_of_form_stops_and_keeps_nothing(self):
-        # Given: a call on the plan whose part holds a step out of its form.
+    def test_a_part_with_an_action_out_of_form_stops_and_keeps_nothing(self):
+        # Given: a call on the plan whose part holds an action out of its form.
         self.session()
         self.call(
             "0001", "plan", result={}, part=plan(tasks=task().replace("[ ] 3.", "[ ] three."))
         )
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
-        # Then: rn names the step, and keeps nothing.
-        said = "F-1: line 29: expected step 3 of T1 as" in out
+        # Then: rn names the action, and keeps nothing.
+        said = "F-1: line 29: expected action 3 of T1 as" in out
         self.assertEqual((said, self.read(STEERING)), (True, STEERED))
 
     def test_a_call_not_there_stops(self):
@@ -1241,9 +1382,9 @@ class PutTest(RepoTest):
         self.session()
         self.call("0001", "t1", result={})
         # When: the orchestrator puts back its part.
-        # Then: rn says it makes no part of the steering.
+        # Then: rn says it makes no part rn puts back.
         self.assertIn(
-            "rn: the call 0001 is on t1, which makes no part of the steering; give --put a call on"
+            "rn: the call 0001 is on t1, which makes no part rn puts back; give --put a call on"
             " plan or learnings",
             self.stopped(*self.put()),
         )
@@ -1261,16 +1402,19 @@ class PutTest(RepoTest):
         )
 
     def test_a_part_not_there_stops(self):
-        # Given: a call on the plan returned, its part removed.
-        self.session()
-        self.call("0001", "plan", result={})
-        # When: the orchestrator puts back its part.
-        # Then: rn says it is not there and how to have it made again.
-        self.assertIn(
-            f"rn: {call_at('0001', 'steering.md')}, the part the call 0001 makes, is not there;"
-            " cut it again with `rn.py ccs plan ...`, have turn make it, then run this again",
-            self.stopped(*self.put()),
-        )
+        for work, name in (("plan", "steering.md"), ("learnings", "learnings.md")):
+            with self.subTest(work=work):
+                # Given: a call on the work returned, its part removed.
+                self.session()
+                self.call("0001", work, result={})
+                # When: the orchestrator puts back its part.
+                # Then: rn says it is not there and how to have it made again.
+                self.assertIn(
+                    f"rn: {call_at('0001', name)}, the part the call 0001 makes, is not there;"
+                    f" cut it again with `rn.py ccs {work} ...`, have turn make it, then run this"
+                    " again",
+                    self.stopped(*self.put()),
+                )
 
 
 class DecideTest(RepoTest):
@@ -1547,6 +1691,32 @@ class CcsTest(RepoTest):
             ],
         )
 
+    def test_the_ccs_of_the_plan_serves_nothing_and_has_what_each_task_done_made(self):
+        # Given: a session holding T1 and T2, with calls on T3, done, not returned, on T1, on T4,
+        # done, not returned, and on T3 again, returned.
+        self.call("0001", "t3")
+        self.call("0002", "t1", result={})
+        self.call("0003", "t4")
+        self.call("0004", "t3", result={})
+        self.kept()
+        # When: the orchestrator has the CCS of the plan written, with a path the receiver has.
+        self.ccs("plan", **{"--kind": "plan", "--has": "README.md"})
+        # Then: it serves nothing, and has the path given, then, in the order made, the CCS and the
+        # result of each call of a task done turn returned, and the CCS of a task's latest call it
+        # has not, an earlier one it has not left out.
+        ccs = self.read_json(call_at("0005"))
+        has = [e for e in ccs["focal_entities"] if "has" in e]
+        want = (
+            [{"purpose": "to try it"}],
+            [
+                {"has": "README.md"},
+                {"has": call_at("0003")},
+                {"has": call_at("0004")},
+                {"has": call_at("0004", "result.json")},
+            ],
+        )
+        self.assertEqual((ccs["goal_orientation"], has), want)
+
     def test_the_ccs_of_any_other_work_holds_the_goal_and_every_criterion(self):
         # Given: a session.
         # When: the orchestrator has the CCS of a checklist written.
@@ -1585,23 +1755,31 @@ class CcsTest(RepoTest):
             (plan(tasks=tasks) + "\n", {"deliverable": part}),
         )
 
-    def test_the_learnings_are_cut_with_none_of_those_kept(self):
+    def test_the_learnings_are_cut_into_a_part_of_their_name_with_none_of_those_kept(self):
         # Given: a session with a learning kept.
-        self.session(steering(learnings="- L1: Kept."))
+        self.write(LEARNINGS, "- L1: Kept.\n")
+        self.kept()
         # When: the orchestrator has the CCS of the learnings written.
         self.ccs("learnings")
-        # Then: the part holds the heading alone.
-        self.assertEqual(self.read(call_at("0001", "steering.md")), "## Learnings\n")
-
-    def test_a_path_given_for_a_part_of_the_steering_stops(self):
-        # Given: a session.
-        # When: the orchestrator has the CCS of the plan written with a path.
-        # Then: rn says the plan is its part of the steering.
-        self.assertIn(
-            "rn: the work plan is its part of the steering, which rn cuts for turn; give no path"
-            " of it",
-            self.stopped("ccs", "plan", "README.md", *options(NEEDED)),
+        # Then: the part holds the heading alone, the work the CCS names.
+        part = call_at("0001", "learnings.md")
+        self.assertEqual(
+            (self.read(part), self.read_json(call_at("0001"))["focal_entities"][2]),
+            ("## Learnings\n", {"deliverable": part}),
         )
+
+    def test_a_path_given_for_a_part_rn_cuts_stops(self):
+        for work in ("plan", "learnings"):
+            with self.subTest(work=work):
+                # Given: a session.
+                # When: the orchestrator has the CCS of the plan or the learnings written with a
+                # path.
+                # Then: rn says it is a part rn cuts.
+                self.assertIn(
+                    f"rn: the work {work} is a part rn cuts for turn from the session's record;"
+                    " give no path of it",
+                    self.stopped("ccs", work, "README.md", *options(NEEDED)),
+                )
 
     def test_the_ccs_of_a_checklist_names_rns_usability_after_its_checklists(self):
         # Given: rn's checklist for checklists.
@@ -1789,8 +1967,8 @@ class ShownTest(RepoTest):
         self.keep(text, "feedback")
 
 
-# The first proposal at the plan sign-off on STEERED with its task ticked.
-DONE = steering(part=plan(tasks=task(ticks="xxxx", tick="x")))
+# The first proposal at the plan sign-off on STEERED with its task done.
+DONE = steering(part=plan(tasks=""))
 FIRST = (
     "Plan sign-off\n"
     f"The plan is on the draft pull request: {PR}\n"
@@ -1839,7 +2017,7 @@ class ProposalTest(ShownTest):
         # Given: the plan's proposal shown, the user's feedback, and AC2 changed and AC3 added.
         self.proposal()
         criteria = CRITERIA.replace("cart,\n  on every page.", "cart.") + "\n- AC3: Sign out."
-        self.answered(steering(part=plan(criteria=criteria, tasks=task(ticks="xxxx", tick="x"))))
+        self.answered(steering(part=plan(criteria=criteria, tasks="")))
         # When: the orchestrator asks for the plan's proposal again.
         # Then: rn shows each changed or added, and names the rest as before.
         self.assertEqual(
@@ -1856,7 +2034,7 @@ class ProposalTest(ShownTest):
         # Given: the plan's proposal shown, feedback, AC1 removed, and the proposal shown again.
         self.proposal()
         criteria = "- AC2: A signed-in user sees only their cart."
-        self.answered(steering(part=plan(criteria=criteria, tasks=task("T1", "AC2", "xxxx", "x"))))
+        self.answered(steering(part=plan(criteria=criteria, tasks="")))
         shown = self.proposal()
         # When: the orchestrator asks for it again while it waits.
         # Then: it is the same, against the first.
@@ -1868,7 +2046,7 @@ class ProposalTest(ShownTest):
         # Given: the plan's proposal shown, then AC2 changed and shown, then AC2 changed back.
         self.proposal()
         changed = CRITERIA.replace("cart,\n  on every page.", "cart.")
-        self.answered(steering(part=plan(criteria=changed, tasks=task(ticks="xxxx", tick="x"))))
+        self.answered(steering(part=plan(criteria=changed, tasks="")))
         self.proposal()
         self.answered(DONE)
         # When: the orchestrator asks for the plan's proposal again.
@@ -1881,7 +2059,7 @@ class ProposalTest(ShownTest):
         # Given: the plan's proposal shown, feedback, and AC3 added.
         self.proposal()
         criteria = CRITERIA + "\n- AC3: Sign out."
-        self.answered(steering(part=plan(criteria=criteria, tasks=task(ticks="xxxx", tick="x"))))
+        self.answered(steering(part=plan(criteria=criteria, tasks="")))
         # When: the orchestrator asks for the plan's proposal again.
         # Then: the three as before are named in a list.
         self.assertIn("(G1, AC1 and AC2 as before)\n", self.proposal())
@@ -1909,19 +2087,19 @@ class ProposalTest(ShownTest):
 
     def test_a_plan_not_made_stops(self):
         cases = {
-            "no goal": steering(part=plan(goal="", tasks=task("T1", "AC1", "xxxx", "x"))),
-            "no criterion": steering(part=plan(criteria="", tasks=task("T1", "G1", "xxxx", "x"))),
-            "a task not ticked": steering(part=plan(tasks=task(ticks="xxx "))),
+            "no goal": steering(part=plan(goal="", tasks="")),
+            "no criterion": steering(part=plan(criteria="", tasks="")),
+            "a task left": steering(part=plan(tasks=task(ticks="xxx "))),
         }
         for name, text in cases.items():
             with self.subTest(name=name):
-                # Given: a plan without its goal, without a criterion, or with a task not ticked.
+                # Given: a plan without its goal, without a criterion, or with a task left.
                 self.keep(text)
                 # When: the orchestrator asks for the plan's proposal.
                 # Then: rn says what the plan sign-off needs.
                 self.assertIn(
-                    "rn: the plan sign-off needs the goal G1, a criterion and every task ticked in"
-                    " the steering; have turn make the plan through its tasks, tick each step done"
+                    "rn: the plan sign-off needs the goal G1, a criterion and no task in the"
+                    " steering; have turn make the plan through its tasks, tick each action done"
                     " with `rn.py state --done`, then run this again",
                     self.stopped("proposal", "plan"),
                 )
@@ -2070,8 +2248,7 @@ class DesignTest(ShownTest):
 class DeliverableTest(ShownTest):
     def setUp(self) -> None:
         super().setUp()
-        tasks = f"{task(ticks='xxxx', tick='x')}\n\n{task('T2', 'AC2', 'xxxx', 'x')}"
-        self.session(steering(part=plan(tasks=tasks), stage="deliverable"))
+        self.session(steering(part=plan(tasks=""), stage="deliverable"))
         self.call("0001", "t1", "build", ("Form: a page",), ("src/app.py",), {})
         self.call("0002", "t2", "build", (), ("src/cart.py",), {})
         self.call("0003", "deliverable", "deliverable", (), ("src/app.py",), {})
@@ -2402,19 +2579,21 @@ class LearningTest(RepoTest):
 
 class RecordsTest(LearningTest):
     def test_records_gives_the_history_the_sessions_files_and_the_conversations(self):
-        # Given: a session kept with its steering and a call, and a conversation of the
-        # orchestrator.
+        # Given: a session kept with its steering, its learnings and a call, and a conversation of
+        # the orchestrator.
+        self.write(LEARNINGS, "- L1: Kept.\n")
         self.call("0001", "plan", result={"items": []}, part="# Add login\n")
         self.kept()
         self.conversation("c1", said("/rn:up add login", "2026-10-20T09:00:00Z", self.top))
         # When: the orchestrator has the records shown.
-        # Then: rn gives the history, the steering and each file of the calls, then the
-        # conversation, each a text in the git folder.
+        # Then: rn gives the history, the steering, the learnings and each file of the calls, then
+        # the conversation, each a text in the git folder.
         self.assertEqual(
             self.records(),
             [
                 "record/history.txt",
                 f"record/{STEERING}",
+                f"record/{LEARNINGS}",
                 f"record/{call_at('0001')}",
                 f"record/{call_at('0001', 'result.json')}",
                 f"record/{call_at('0001', 'steering.md')}",
@@ -2682,10 +2861,11 @@ class ProjectFoldersTest(LearningTest):
 
 
 class LearningsTest(RepoTest):
-    def test_learnings_gives_the_steerings_and_turns_of_every_version_once(self):
-        # Given: a steering with a learning, a call on t1 whose result held a learning, then was
-        # made again holding it and another, and a call on t2 whose result holds none.
-        self.session(steering(learnings="- L1: A slip.\n  Its words."))
+    def test_learnings_gives_the_sessions_and_turns_of_every_version_once(self):
+        # Given: the session's learnings, a call on t1 whose result held a learning, then was made
+        # again holding it and another, and a call on t2 whose result holds none.
+        self.session()
+        self.write(LEARNINGS, "- L1: A slip.\n  Its words.\n- L2: Another.\n")
         first = {"lesson": "The page was slow.", "whose": "project's own"}
         second = {"lesson": "The form was long.", "whose": "general"}
         self.call("0001", "t1", result={"items": [], "lessons": [first]})
@@ -2695,12 +2875,12 @@ class LearningsTest(RepoTest):
         self.call("0002", "t2", result={"items": []})
         self.kept()
         # When: the orchestrator asks for the learnings.
-        # Then: rn gives the steering's by ID, and turn's in the order kept, each once, with the
-        # work, the call and the commit that first held it.
+        # Then: rn gives the session's by ID, each as one line, and turn's in the order kept, each
+        # once, with the work, the call and the commit that first held it.
         self.assertEqual(
             self.ran("learnings"),
             {
-                "steering": {"L1": "A slip. Its words."},
+                "learnings": {"L1": "A slip. Its words.", "L2": "Another."},
                 "turn": [
                     dict(first, work="t1", call="0001", commit=kept),
                     dict(second, work="t1", call="0001", commit=self.head()),
@@ -2721,11 +2901,13 @@ class LearningsTest(RepoTest):
         # When: the orchestrator asks for the learnings.
         # Then: the last one's alone is given.
         want = [{"lesson": "Slow.", "work": "t4", "call": "0004", "commit": self.head()}]
-        self.assertEqual(self.ran("learnings"), {"steering": {}, "turn": want})
+        self.assertEqual(self.ran("learnings"), {"learnings": {}, "turn": want})
 
     def test_learnings_are_printed_with_text_beyond_ascii_as_it_is(self):
-        # Given: a steering with a learning in Japanese.
-        self.session(steering(learnings="- L1: 遅い。"))
+        # Given: the session's learnings, one in Japanese.
+        self.session()
+        self.write(LEARNINGS, "- L1: 遅い。\n")
+        self.kept()
         # When: the orchestrator asks for the learnings.
         # Then: rn prints it as it is, for the orchestrator to read.
         self.assertIn('"L1": "遅い。"', self.printed("learnings"))

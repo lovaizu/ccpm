@@ -73,7 +73,8 @@ class Seen(NamedTuple):
     made since the move began, whether the branch is pushed and every change committed, whether the
     default branch on the origin is as it was; the steering's path and text as the last commit
     holds them, each call to turn as `(number, work, returned, decisions)`, and the text of each
-    other file it holds by its path; and what the stand-in gh keeps."""
+    other file it holds by its path, the session's learnings and research among them, the calls'
+    files left out; and what the stand-in gh keeps."""
 
     reply: str
     said: list
@@ -205,7 +206,7 @@ class Place:
                 result = path.replace("-ccs.json", "-result.json")
                 decided = len([e for e in kept if "decision" in e])
                 calls.append((number[1], work, result in files, decided))
-            elif not (session and path.startswith(session)):
+            elif path != steering and not (session and path.startswith(f"{session}turn/")):
                 texts[path] = self.git("show", f"HEAD:{path}")
         said = []
         if record:
@@ -213,7 +214,10 @@ class Place:
                 for line in f:
                     entry = json.loads(line)
                     content = entry.get("message", {}).get("content")
-                    if entry.get("type") == "assistant" and isinstance(content, list):
+                    # The main conversation's words alone, as a subagent's, such as the stand-in
+                    # turn's, carry the tool call they answer.
+                    main = entry.get("parent_tool_use_id") is None
+                    if entry.get("type") == "assistant" and main and isinstance(content, list):
                         said += [c["text"] for c in content if c.get("type") == "text"]
         with open(os.path.join(self.folder, "gh.json"), encoding="utf-8") as f:
             gh: dict[str, Any] = json.load(f)

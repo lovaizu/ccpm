@@ -8,12 +8,11 @@ made_from:
 
 # Learnings
 
-The learnings, the `## Learnings` part of `steering.md` in the session's record, the folder where rn
-keeps one piece of work, are used by the user once they approve the finished work, as rn puts each
-to them one per message, to decide where it goes: into their checklists, `.rn/checklists/<kind>.md`
-in their repository, which their later work is made with; to rn's makers as an issue, which makes rn
-better for everyone; both; or neither. They decide from each learning alone, without opening the
-records it was found in.
+The learnings, `learnings.md` in the session's record, the folder where rn keeps one piece of work,
+are used by the user once they approve the finished work, as rn puts each to them one per message,
+to decide where it goes: into their checklists, `.rn/checklists/<kind>.md` in their repository,
+which their later work is made with; to rn's makers as an issue, which makes rn better for everyone;
+both; or neither. They decide from each learning alone, without opening the records it was found in.
 
 A learning serves them by resting on the session's own words, so the user decides on what happened
 rather than on a guess. It is found in one stretch of the session, from one sign-off to the next the
@@ -34,14 +33,12 @@ Scope: whole
 Do the learnings follow this template?
 
 ```markdown
-## Learnings
-
 - L1: <what happened, quoting the words of the records it rests on>; <where it would make later work better: for the user's repository alone, the kind of work and what its checklist would ask, or for everyone's work, what of rn would change>.
 ```
 
 A stretch where nothing fell short adds none, the list left empty. The learnings of one stretch are
 numbered from `L1`, and rn's scripts number them on from those kept from the stretches before as
-they put the part back into the steering.
+they add them to `learnings.md`.
 
 Why: rn's scripts read each learning by its ID and put it to the user one per message, and the user
 reads what happened before where it goes, the order in which they judge it.

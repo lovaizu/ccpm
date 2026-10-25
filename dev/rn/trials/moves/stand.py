@@ -11,7 +11,7 @@ call and reads the CCS and the checklists' items as turn does:
                                         for the call's work, in ../stand/replies.json, counted
     python3 stand.py '<call>' '<made>'  the trial's, making a case's state: the made given as JSON
 
-A made is `{"part": <the part of the steering, for plan and learnings>, "files": {<path>: <text>},
+A made is `{"part": <the part the call makes, for plan and learnings>, "files": {<path>: <text>},
 "goods": {<checklist's file name>: {<item>: {"good": ..., "at": ...}}}, "lessons": [...]}`, an item
 left out of goods having no Good; or `{"questions": [...]}`. `at` is "whole", or a list of the
 lines' marks, each the words a line holds, or `<from>..<to>` for the lines from one holding the
@@ -110,6 +110,16 @@ def next_made(work: str) -> dict[str, Any]:
     return replies[min(n, len(replies) - 1)]
 
 
+def told(run: dict[str, Any], reply: dict[str, Any]) -> str:
+    """What the stand-in agent is given for the run: the line turn sends the main conversation and
+    the reply turn ends with, as one line of JSON."""
+    line = (
+        f"turn: Next, turn:up will make {', '.join(run['work'])} and give each of its"
+        f" {len(run['items'])} items its Good, round 1."
+    )
+    return json.dumps({"line": line, "reply": reply}, ensure_ascii=False)
+
+
 def main(argv: list[str]) -> int:
     """Gives the reply to the call, from the made given or set; prints the usage and gives 1 on any
     other arguments."""
@@ -124,11 +134,7 @@ def main(argv: list[str]) -> int:
     except call.Stop as stop:
         print(stop)
         return 1
-    line = (
-        f"turn: Next, turn:up will make {', '.join(run['work'])} and give each of its"
-        f" {len(run['items'])} items its Good, round 1."
-    )
-    print(json.dumps({"line": line, "reply": reply}, ensure_ascii=False))
+    print(told(run, reply))
     return 0
 
 

@@ -83,7 +83,8 @@ def answer(state: dict, args: list) -> str:
     words, options = parsed(args)
     command = " ".join(words[:2])
     if command == "repo view":
-        return shown({"url": REPOSITORY}, options)
+        # The trial's repository takes issues, as rn asks before a work tells a reader to open one.
+        return shown({"url": REPOSITORY, "hasIssuesEnabled": True}, options)
     if command == "pr create":
         number = len(state["prs"]) + 1
         state["prs"].append(

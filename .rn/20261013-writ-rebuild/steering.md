@@ -148,3 +148,15 @@ branch protection rather than a check of commands.
   sign-off, the design's and the deliverable's included, shows the link to each work and its core
   decisions with their intent in a few short lines, read from where the hearing keeps them, the
   scripts and the skills designed together. Serves AC1, AC2.
+
+rn's steering made the map kept current, and the plugins brought to what they should be, before the
+acceptance, as the user chose (2026-10-25).
+
+- [ ] T30: rn's steering holds only what is left and where it stands, its tasks laid backward from
+  the criteria with one turn call per output, research and trials made as works of their own, and
+  the design sign-off held only where a document is needed; the flow trial passing on it. Serves
+  AC1, AC2.
+- [ ] T31: lane, turn and rn read whole hold their checklists: no module or prompt taking on two
+  things, nothing said twice or against another part, nothing no reader needs; rn.py split by what
+  each part takes on; check.sh 100%, mutate.sh 0 survivors, the move trials and the flow trial
+  passing. Serves AC1, AC2.

@@ -632,6 +632,9 @@
   },
   {
    "fact": "2026-10-24: T25 made: root pyproject.toml (dev and test-quality groups, test-quality on Python >=3.11, uv >=0.13.5, package = false) and uv.lock, each tool at the newest that runs on each Python (coverage 7.10.7 on 3.9, 7.17.0 on 3.11+); CI on checkout v7.0.1, setup-python v7.1.0, setup-uv v10.3.2, setup-node v7.1.0 with Node 24, uv sync --locked and uv run --no-sync; pre-push needs uv only; Claude Code 2.1.310; dev/requirements* removed; dev/mutate.sh copies the tree without .venv, as cp -R took half-written .pyc; check.sh passed on 3.9 and 3.14 at 100%, properties.sh with CI=true, mutate.sh every plugin 0 survivors (6m44s)"
+  },
+  {
+   "fact": "2026-10-25: rn redesigned as the user agreed: the steering is the map kept current, holding only what is left (done tasks and learnings out; learnings in <session>/learnings.md); tasks laid backward from the criteria, one result each, actions only what it needs, one turn call per output; research and trial results new kinds with checklists, handed by name as has; the plan CCS serves nothing and has each done task's calls; the design sign-off only where a document is needed (README/UX wording approved); faults of flow run 2 fixed by fix.md (language of one-line reports, --says in the user's words, learnings not acted on mid-session, a point kept on the work it settles). check.sh 100%, mutate rn 0 survivors (1214), move trials 25/25 (4 re-run after fixture and skill fixes). Flow trial run 2 had PASSED before the redesign (35 min, $12)."
   }
  ],
  "semantic_gist": [
@@ -698,7 +701,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T9-T13: rn's acceptance, tried as its user from start to end on lovaizu/playground"
+   "task": "T31: lane, turn and rn brought to what they should be: no module or prompt taking on two things, no noise, duplication or inconsistency; rn.py split by what each part takes on"
   }
  ],
  "relational_map": [
@@ -736,7 +739,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "read CI's whole result for the T25 push; then T9-T13, rn's acceptance tried as its user from start to end on lovaizu/playground"
+   "next": "read the three audits (lane, turn, rn), draw the whole refactor, build it with the checklists open, run check.sh, mutate.sh, the move trials and the flow trial; then rewrite steering T9-T14 as agreed and ask for T15"
   }
  ],
  "uncertainty_signal": [

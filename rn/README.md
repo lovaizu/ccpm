@@ -57,8 +57,8 @@ From your answers rn writes the plan. It holds the goal, which is your purpose a
 and the acceptance criteria, each one thing the finished work must do for that purpose; the goal
 and every criterion get an ID that later messages refer to. Before showing it to you, another AI
 that did not write it reads and uses it in your place, and rn makes it again until that AI finds
-nothing lacking. Then rn stops at the plan sign-off, the first of three
-stops where it shows you a proposal and waits for your answer:
+nothing lacking. Then rn stops at the plan sign-off, the first of up to
+three stops where it shows you a proposal and waits for your answer:
 
 ```console
 ● Plan sign-off
@@ -131,6 +131,7 @@ an AI that did not write them use them, and stops at the design sign-off:
 > /rn:ty
 ```
 
+A small change that needs no document, such as a line in a README, goes on without this stop.
 Then rn divides the work into tasks, such as moving the cart, each checked against the acceptance
 criteria it serves, and carries them out in the conversation without you watching. Before each step,
 rn tells you in a line what it will do, how far and how, and after it, what is done and what comes

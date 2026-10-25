@@ -14,11 +14,11 @@ only what is theirs to decide. Build and change every part of rn so that its use
 ## Key results
 
 The key results count what happens at the sign-offs. A sign-off is a stop where rn shows the user a
-proposal and waits for their answer. There are three, in this order: the plan sign-off, on the
-plan, which holds the user's purpose as rn wrote it down and the acceptance criteria, each one
+proposal and waits for their answer. There are up to three, in this order: the plan sign-off, on
+the plan, which holds the user's purpose as rn wrote it down and the acceptance criteria, each one
 thing the finished work must do for that purpose; the design sign-off, on all the documents the
-purpose needs, such as a UX, a README and a design for what the user is building; and the
-deliverable sign-off, on the finished work.
+purpose needs, such as a UX, a README and a design for what the user is building, left out where
+the purpose needs none; and the deliverable sign-off, on the finished work.
 
 The key results stand from the highest priority: the changes sent back at the end come before the
 user's time. Time saved on a finished work that misses the purpose is lost, since what is sent back
@@ -46,7 +46,7 @@ the user to G1.
 ## Scenes
 
 The user and rn take part. `/rn:ty` approves a proposal and `/rn:gm <feedback>` asks for a change. A
-task is one part of the piece of work, such as the plan, a document or a part of the finished work;
+task is one part of the piece of work, such as research, a document or a part of the finished work;
 rn divides each stage into tasks as it reaches it, and changes them as each task brings its facts.
 A learning is what the piece of work taught that would make later work better.
 
@@ -60,8 +60,10 @@ sequenceDiagram
   R->>U: the points to decide, one per message
   R->>U: the plan, at the plan sign-off
   U->>R: /rn:ty
-  R->>U: the documents the purpose needs, at the design sign-off
-  U->>R: /rn:ty
+  opt the purpose needs documents
+    R->>U: the documents the purpose needs, at the design sign-off
+    U->>R: /rn:ty
+  end
   Note over R: carries out the tasks
   R->>U: the finished work, at the deliverable sign-off
   U->>R: /rn:ty

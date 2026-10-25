@@ -8,22 +8,24 @@ learnings the session's learnings are made from.
 The orchestrator is the AI that runs rn's commands `/rn:up`, `/rn:ty` and `/rn:gm` with the user. A
 session is one piece of work from `/rn:up` to the merge, on a branch of its own; its record is the
 folder `.rn/<yyyymmdd>-<slug>/` on that branch, the slug a short name for the piece of work, holding
-the steering `steering.md`, the plan and where the session stands, and `turn/`, each call to turn as
-the files of one number, four digits from 0001 in the order made: the CCS `<nnnn>-ccs.json`, turn's
-result `<nnnn>-result.json` once it returned, and, for a call on the plan or the learnings,
-`<nnnn>-steering.md`, the part of the steering the call makes. A CCS is the shape ACC gives an AI's
-state: a JSON object of parts, each a list of entries, each entry a kind and its value as text. A
-work, such as the plan, a task's result or the finished work, is made by turn, a plugin rn depends
-on, from such a CCS, which names the work and the stage it was made in; a work's latest call is the
-highest number naming it. A kind, such as readme or code, has rn's own checklist, and may have the
-user's addition `.rn/checklists/<kind>.md`. At a sign-off, plan, design or deliverable, the
-orchestrator shows the user a proposal and waits for `/rn:ty` or `/rn:gm`, whose answer it keeps.
+the steering `steering.md`, the plan and where the session stands, holding only what is left to do;
+the learnings `learnings.md`, once some are made; and `turn/`, each call to turn as the files of one
+number, four digits from 0001 in the order made: the CCS `<nnnn>-ccs.json`, turn's result
+`<nnnn>-result.json` once it returned, and the part the call makes, for a call on the plan
+`<nnnn>-steering.md`, the part of the steering, and for one on the learnings `<nnnn>-learnings.md`,
+the learnings it adds. A CCS is the shape ACC gives an AI's state: a JSON object of parts, each a
+list of entries, each entry a kind and its value as text. A work, such as the plan, a task's result
+or the finished work, is made by turn, a plugin rn depends on, from such a CCS, which names the work
+and the stage it was made in; a work's latest call is the highest number naming it. A kind, such as
+readme or code, has rn's own checklist, and may have the user's addition `.rn/checklists/<kind>.md`.
+At a sign-off, plan, design or deliverable, the orchestrator shows the user a proposal and waits for
+`/rn:ty` or `/rn:gm`, whose answer it keeps.
 
-The steering is written by these scripts alone, in the form of rn's plan checklist's F-1: every keep
-refuses a steering that differs from what the last keep left, and one the move would leave out of
-that form. Keeping a move is a commit of every change on the session's branch and a push of it, so a
-fresh conversation, or another machine, goes on from it; a work is handed to turn only once
-everything is pushed.
+The steering and the learnings are written by these scripts alone, the steering in the form of rn's
+plan checklist's F-1: every keep refuses a steering that differs from what the last keep left, and
+one the move would leave out of that form. Keeping a move is a commit of every change on the
+session's branch and a push of it, so a fresh conversation, or another machine, goes on from it; a
+work is handed to turn only once everything is pushed.
 
 Run from the top of the user's repository as `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/rn.py"
 <subcommand> ...`, with Python 3.9 or later and the standard library alone. It prints JSON, or the
@@ -61,15 +63,16 @@ RECORD = ".rn"
 # it is meant for.
 NAME = re.compile(r"[a-z0-9-]+")
 SESSION_NAME = re.compile(r"[0-9]{8}-[a-z0-9-]+")
-# The session's steering, and the folder of its calls to turn, in the session's folder.
+# The session's steering, its learnings, and the folder of its calls to turn, in the session's
+# folder.
 STEERING = "steering.md"
+LEARNT = "learnings.md"
 TURN = "turn"
-# A file of a call to turn, by its number and what it is: the CCS, turn's result, or the part of the
-# steering the call makes.
-CALL = re.compile(r"([0-9]{4})-(ccs\.json|result\.json|steering\.md)")
+# A file of a call to turn, by its number and what it is: the CCS, turn's result, or the part the
+# call makes.
+CALL = re.compile(r"([0-9]{4})-(ccs\.json|result\.json|steering\.md|learnings\.md)")
 CCS = "ccs.json"
 RESULT = "result.json"
-PART = "steering.md"
 # The works rn has turn make: the plan, the part of the steering from the title through the tasks,
 # as a task of the plan stage makes the plan; its learnings; what task T<n> makes outside the
 # steering; the finished work; and a checklist of a kind.
@@ -79,8 +82,10 @@ DELIVERABLE = "deliverable"
 TASK_WORK = re.compile(r"t[0-9]+")
 CHECKLIST_WORK = re.compile(r"checklist-[a-z0-9-]+")
 WORKS = "plan, learnings, deliverable, t<n> for task T<n>, or checklist-<kind>"
-# The works whose call makes a part of the steering, cut into a file of its own.
-PARTS = (PLAN, LEARNINGS_WORK)
+# The works whose call makes a part, cut into a file of its own, each with what its file is named:
+# the plan's a part of the steering, the learnings' those it adds to the session's.
+PART = {PLAN: "steering.md", LEARNINGS_WORK: "learnings.md"}
+PARTS = tuple(PART)
 # For each role turn reads from a CCS, the key of the CCS entries that hold it; the call to turn:up
 # hands this table to turn.
 ENTRIES = {
@@ -114,19 +119,22 @@ VALUES = {"stage": STAGES, "signoff": (NONE, PLAN, DESIGN, DELIVERABLE)}
 # The stage the user's approval at each sign-off moves the session to.
 APPROVED = {PLAN: DESIGN, DESIGN: BUILD, DELIVERABLE: LEARNINGS_WORK}
 # The stages `state --stage` moves the session to, each from the one it moves from, as the others
-# move at the sign-offs.
-MOVES = {DELIVERABLE: BUILD, FINISHED: LEARNINGS_WORK}
-# The steering's `##` headings, in their order: the criteria, the tasks and the learnings once made,
-# Next and Open always.
+# move at the sign-offs: build from the design stage where it made no document, so the design
+# sign-off has nothing to show.
+MOVES = {BUILD: DESIGN, DELIVERABLE: BUILD, FINISHED: LEARNINGS_WORK}
+# The steering's `##` headings, in their order: the criteria and the tasks once made, while some
+# are, Next and Open always.
 CRITERIA = "Acceptance criteria"
 TASKS = "Tasks"
-LEARNINGS = "Learnings"
 NEXT = "Next"
 OPEN = "Open"
-HEADINGS = (CRITERIA, TASKS, LEARNINGS, NEXT, OPEN)
+HEADINGS = (CRITERIA, TASKS, NEXT, OPEN)
+# The heading a part of the learnings opens with, which rn cuts for turn and leaves out when it
+# adds the learnings to the session's.
+LEARNINGS = "Learnings"
 # The forms of rn's plan checklist's F-1: the title, the goal on a line of its own under it, and
-# each criterion, task, learning and point open an item of its section's list, the lines indented
-# under an item its own; with each in words, as a stop names it.
+# each criterion, task and point open an item of its section's list, as each learning is of the
+# learnings, the lines indented under an item its own; with each in words, as a stop names it.
 TITLE = re.compile(r"# \S.*")
 TITLE_FORM = "`# <the piece of work, in a few words>`"
 GOAL = re.compile(r"G1: \S.*")
@@ -135,10 +143,8 @@ CRITERION = re.compile(r"- (?P<id>AC[0-9]+): \S.*")
 CRITERION_FORM = (
     "an acceptance criterion as `- AC<n>: <one thing the finished work must do for the goal>`"
 )
-TASK = re.compile(r"- \[(?P<tick>[ x])\] (?P<id>T[0-9]+): \S.*")
-TASK_FORM = (
-    "a task as `- [ ] T<n>: <the part of the piece of work>. Serves <G1, or the criteria by ID>.`"
-)
+TASK = re.compile(r"- (?P<id>T[0-9]+): \S.*")
+TASK_FORM = "a task as `- T<n>: <the result it makes>. Serves <G1, or the criteria by ID>.`"
 # What a task's line ends with: the goal or the criteria it serves, by their IDs, as a list in words.
 SERVED = re.compile(r".* Serves (?P<ids>(?:G1|AC[0-9]+)(?:(?:,? and |, )(?:G1|AC[0-9]+))*)\.")
 ID = re.compile(r"G1|AC[0-9]+")
@@ -147,7 +153,7 @@ COMPLETION_FORM = (
     "`  Completion criterion: <what its result must do for what it serves, and the check that"
     " shows it>`"
 )
-STEP = re.compile(r"  - \[(?P<tick>[ x])\] (?P<number>[0-9]+)\. \S.*")
+ACTION = re.compile(r"  - \[(?P<tick>[ x])\] (?P<number>[0-9]+)\. \S.*")
 LEARNING = re.compile(r"- (?P<id>L[0-9]+): \S.*")
 LEARNING_FORM = (
     "a learning as `- L<n>: <what happened, with the words it rests on, and where it would make"
@@ -157,14 +163,13 @@ NUMBERED = re.compile(r"- L[0-9]+: ")
 OPENED = re.compile(r"- (?P<id>\S.*)")
 OPEN_FORM = "each point open as `- <what is open>`"
 NOTHING_OPEN = "None."
-# A step done, as `state --done` takes it: its task's ID and its number.
+# An action done, as `state --done` takes it: its task's ID and its number.
 DONE = re.compile(r"(T[0-9]+)\.([0-9]+)")
-# Where the tick stands on a task's line and on a step's.
-TASK_TICK = 3
-STEP_TICK = 5
+# Where the tick stands on an action's line.
+TICK = 5
 # The parts of the steering a proposal shows, by the heading each is under, "" for the part above
 # the first, with how each line holding an ID in it begins.
-SHOWS = {"": "G1: ", CRITERIA: "- ", LEARNINGS: "- "}
+SHOWS = {"": "G1: ", CRITERIA: "- "}
 # The sign-offs, each with the words naming where the work is.
 SIGNOFFS = {
     PLAN: "The plan is on the draft pull request",
@@ -318,6 +323,11 @@ def steering_path(folder: str) -> str:
     return os.path.join(folder, STEERING)
 
 
+def learnings_path(folder: str) -> str:
+    """The path of the session's learnings."""
+    return os.path.join(folder, LEARNT)
+
+
 def call_path(folder: str, number: str, what: str) -> str:
     """The path of a file of the session's call of the number: its CCS, its result or its part."""
     return os.path.join(folder, TURN, f"{number}-{what}")
@@ -442,22 +452,21 @@ def items_of(
 
 class Task(NamedTuple):
     """A task of the steering: its ID, the number of its line, its line with those it runs on to as
-    one, whether it is ticked, the IDs it serves, None where its line names none, whether it has its
-    completion criterion, and each line opening a step under it with its number, as the step it is,
-    None where it is out of a step's form."""
+    one, the IDs it serves, None where its line names none, whether it has its completion
+    criterion, and each line opening an action under it with its number, as the action it is, None
+    where it is out of an action's form."""
 
     id: str
     n: int
     text: str
-    ticked: bool
     serves: list[str] | None
     completion: bool
-    steps: list[tuple[int, str, re.Match[str] | None]]
+    actions: list[tuple[int, str, re.Match[str] | None]]
 
 
 def task_of(item: Item) -> Task:
     """The task the item of the tasks is."""
-    n, line = item.lines[0]
+    n = item.lines[0][0]
     blank = next((k for k, (_, said) in enumerate(item.lines) if not said.strip()), len(item.lines))
     text = " ".join(said.strip() for _, said in item.lines[:blank])
     served = SERVED.fullmatch(text)
@@ -466,22 +475,27 @@ def task_of(item: Item) -> Task:
         item.id,
         n,
         text,
-        line[TASK_TICK] in ("x",),
         None if served is None else ID.findall(served["ids"]),
         any(COMPLETION.fullmatch(said) for _, said in rest),
-        [(k, said, STEP.fullmatch(said)) for k, said in rest if said.startswith("  - ")],
+        [(k, said, ACTION.fullmatch(said)) for k, said in rest if said.startswith("  - ")],
     )
+
+
+def task_items(lines: list[str]) -> list[Item]:
+    """Each item of the tasks of the lines, from a steering's title through its tasks, as far as
+    they hold their form."""
+    return items_of(sections(lines).get(TASKS, []), TASK, TASK_FORM)[0]
 
 
 def tasks_of(lines: list[str]) -> list[Task]:
     """Each task of the lines, from a steering's title through its tasks, as far as they hold their
     form."""
-    return [task_of(i) for i in items_of(sections(lines).get(TASKS, []), TASK, TASK_FORM)[0]]
+    return [task_of(i) for i in task_items(lines)]
 
 
 def all_ticked(task: Task) -> bool:
-    """Whether every step of the task is ticked."""
-    return all(step is not None and step["tick"] in ("x",) for _, _, step in task.steps)
+    """Whether every action of the task is ticked."""
+    return all(action is not None and action["tick"] in ("x",) for _, _, action in task.actions)
 
 
 def out_of_form(text: str) -> str:
@@ -564,7 +578,6 @@ def body_out(lines: list[str]) -> str:
     tasks, point = listed(parts, TASKS, TASK, TASK_FORM)
     for task in map(task_of, tasks):
         point = point or task_out(task, held)
-    point = point or listed(parts, LEARNINGS, LEARNING, LEARNING_FORM)[1]
     if point:
         return point
     if not any(line.strip() for _, line in parts[NEXT]):
@@ -587,8 +600,8 @@ def listed(
 
 def task_out(task: Task, held: set[str]) -> str:
     """The point the task is out of its form by: its line ending with the goal or the criteria it
-    serves, each of them the steering holds, its completion criterion, its steps numbered from 1,
-    and its tick set where all its steps are and only then; "" where it holds."""
+    serves, each of them the steering holds, its completion criterion, and its actions numbered
+    from 1, some not ticked, as a task done leaves the steering; "" where it holds."""
     if task.serves is None:
         return (
             f"line {task.n}: expected {task.id} to end `Serves <G1, or the criteria by ID>.`, found"
@@ -602,16 +615,19 @@ def task_out(task: Task, held: set[str]) -> str:
         )
     if not task.completion:
         return f"line {task.n}: expected {COMPLETION_FORM} under {task.id}, found none"
-    if not task.steps:
-        return f"line {task.n}: expected the steps of {task.id}, found none"
-    for number, (n, line, step) in enumerate(task.steps, 1):
-        if step is None or step["number"] not in (str(number),):
+    if not task.actions:
+        return f"line {task.n}: expected the actions of {task.id}, found none"
+    for number, (n, line, action) in enumerate(task.actions, 1):
+        if action is None or action["number"] not in (str(number),):
             return (
-                f"line {n}: expected step {number} of {task.id} as `  - [ ] {number}. <what is"
+                f"line {n}: expected action {number} of {task.id} as `  - [ ] {number}. <what is"
                 f" done>. <who does it>`, found `{line}`"
             )
-    if task.ticked not in (all_ticked(task),):
-        return f"line {task.n}: expected {task.id} ticked once all its steps are, and only then"
+    if all_ticked(task):
+        return (
+            f"line {task.n}: expected only tasks with an action not ticked, as a task leaves the"
+            f" steering once all its actions are, found {task.id} with every action ticked"
+        )
     return ""
 
 
@@ -628,12 +644,10 @@ def open_out(part: list[tuple[int, str]]) -> str:
 
 class Steering(NamedTuple):
     """The steering's parts as rn writes them: the front matter's keys, the lines from the title
-    through the tasks, the lines under its learnings, none before they are made, Next, and the
-    lines under Open."""
+    through the tasks, Next, and the lines under Open."""
 
     keys: dict[str, str]
     plan: list[str]
-    learnings: list[str]
     next: str
     open: list[str]
 
@@ -643,11 +657,9 @@ def parsed(text: str) -> Steering:
     lines = text.splitlines()
     start = template.body(lines)
     heads = {said: n for n, level, said in template.headings(lines, start) if level in (2,)}
-    learnt = heads.get(LEARNINGS, heads[NEXT])
     return Steering(
         keys_of(text),
-        trimmed(lines[start : learnt - 1]),
-        trimmed(lines[learnt : heads[NEXT] - 1]),
+        trimmed(lines[start : heads[NEXT] - 1]),
         "\n".join(trimmed(lines[heads[NEXT] : heads[OPEN] - 1])),
         trimmed(lines[heads[OPEN] :]),
     )
@@ -656,9 +668,11 @@ def parsed(text: str) -> Steering:
 def render(steering: Steering) -> str:
     """The steering's text, its parts as F-1 lays them out, a blank line between each."""
     front = "".join(f"{key}: {value}\n" for key, value in steering.keys.items())
-    parts = ["\n".join(steering.plan)]
-    parts += [f"## {LEARNINGS}\n\n" + "\n".join(steering.learnings)] if steering.learnings else []
-    parts += [f"## {NEXT}\n\n{steering.next}", f"## {OPEN}\n\n" + "\n".join(steering.open)]
+    parts = [
+        "\n".join(steering.plan),
+        f"## {NEXT}\n\n{steering.next}",
+        f"## {OPEN}\n\n" + "\n".join(steering.open),
+    ]
     return f"---\n{front}---\n\n" + "\n\n".join(parts) + "\n"
 
 
@@ -875,7 +889,7 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         if git(["ls-tree", "--name-only", branch, "--", folder], AS_GIT_SAYS):
             raise Stop(f"rn: {folder} is on {branch} already; give another slug")
         keys = {"rn": version(root), "pr": NONE, STAGE: PLAN, "signoff": NONE, **languages}
-        steering = Steering(keys, [f"# {title}"], [], next_step, [NOTHING_OPEN])
+        steering = Steering(keys, [f"# {title}"], next_step, [NOTHING_OPEN])
         held_form(render(steering))
         git(["checkout", "-q", "--no-track", "-b", slug, branch], "give another slug")
         keep(folder, steering, message)
@@ -906,60 +920,94 @@ def opened(points: list[str]) -> list[str]:
     return [f"- {point}" for point in points] or [NOTHING_OPEN]
 
 
-def tick(line: str, where: int, on: bool) -> str:
-    """The line of a task or a step with its tick, at where it stands, set or not."""
-    return f"{line[:where]}{'x' if on else ' '}{line[where + 1 :]}"
-
-
-def reticked(plan: list[str]) -> list[str]:
-    """The plan's lines with each task ticked where all its steps are, and not otherwise."""
-    lines = list(plan)
-    for task in tasks_of(lines):
-        lines[task.n - 1] = tick(lines[task.n - 1], TASK_TICK, all_ticked(task))
-    return lines
+def tick(line: str, on: bool) -> str:
+    """The action's line with its tick set or not."""
+    return f"{line[:TICK]}{'x' if on else ' '}{line[TICK + 1 :]}"
 
 
 def ticked(plan: list[str], done: list[str]) -> list[str]:
-    """The plan's lines with each step done ticked, and each task once all its steps are; stops
-    where the steering holds no such step."""
+    """The plan's lines with each action done ticked, and each task of them whose actions are then
+    all ticked gone, as the steering holds only what is left; stops where the steering holds no
+    such action."""
     lines = list(plan)
-    steps = {
-        f"{task.id}.{step['number']}": n
+    actions = {
+        f"{task.id}.{action['number']}": n
         for task in tasks_of(lines)
-        for n, _, step in task.steps
-        if step is not None
+        for n, _, action in task.actions
+        if action is not None
     }
     for one in done:
-        if not DONE.fullmatch(one) or one not in steps:
+        if not DONE.fullmatch(one) or one not in actions:
             raise Stop(
-                f"rn: the steering holds no step {one}; give each step done as T<n>.<step>, of a"
-                " task and a step it holds, such as T1.2"
+                f"rn: the steering holds no action {one}; give each action done as T<n>.<action>,"
+                " of a task and an action it holds, such as T1.2"
             )
-        lines[steps[one] - 1] = tick(lines[steps[one] - 1], STEP_TICK, True)
-    return reticked(lines)
+        lines[actions[one] - 1] = tick(lines[actions[one] - 1], True)
+    return pruned(lines, {one.partition(".")[0] for one in done})
+
+
+def pruned(plan: list[str], ids: set[str]) -> list[str]:
+    """The plan's lines without each task of the IDs whose actions are all ticked, its lines and the
+    blank ones after it, and without the tasks' heading where no task is left."""
+    items = task_items(plan)
+    gone = [i for i in items if i.id in ids and all_ticked(task_of(i))]
+    out = {n for i in gone for n, _ in i.lines}
+    lines = trimmed([line for n, line in enumerate(plan, 1) if n not in out])
+    if gone and len(gone) in (len(items),):
+        # The tasks are the plan's last part, so with none left their heading is its last line.
+        lines.pop()
+    return trimmed(lines)
 
 
 def put_plan(plan: list[str], part: list[str]) -> list[str]:
-    """The part turn made, as the steering's plan: each step ticked as it was in the plan before,
-    by its task's ID and its number, the rest not, and each task where all its steps are, as the
-    ticks are rn's to write."""
+    """The part turn made, as the steering's plan: each action ticked as it was in the plan before,
+    by its task's ID and its number, the rest not, as the ticks are rn's to write."""
     was = {
-        (task.id, step["number"])
+        (task.id, action["number"])
         for task in tasks_of(plan)
-        for _, _, step in task.steps
-        if step is not None and step["tick"] in ("x",)
+        for _, _, action in task.actions
+        if action is not None and action["tick"] in ("x",)
     }
     lines = list(part)
     for task in tasks_of(lines):
-        for n, _, step in task.steps:
-            if step is not None:
-                lines[n - 1] = tick(lines[n - 1], STEP_TICK, (task.id, step["number"]) in was)
-    return reticked(lines)
+        for n, _, action in task.actions:
+            if action is not None:
+                lines[n - 1] = tick(lines[n - 1], (task.id, action["number"]) in was)
+    return lines
+
+
+# A task's line as a change to the steering shows it, added or removed, with the task's number.
+CHANGED_TASK = re.compile(r"^[+-]- T([0-9]+): ", re.MULTILINE)
+
+
+def numbered_on(folder: str, plan: list[str], part: list[str], number: str) -> None:
+    """Returns when each task of the part is one the plan holds, or numbered above every task any
+    version of the steering held on the branch since it left the default branch, so an ID never
+    names two tasks; stops otherwise, keeping nothing."""
+    changes = git(
+        ["log", "-p", "--format=", f"{base()}..HEAD", "--", steering_path(folder)], AS_GIT_SAYS
+    )
+    most = max((int(n) for n in CHANGED_TASK.findall(changes)), default=0)
+    left = [task.id for task in tasks_of(plan)]
+    stray = [t.id for t in tasks_of(part) if t.id not in left and int(t.id[1:]) <= most]
+    if stray:
+        raise Stop(
+            f"rn: the part of the call {number} holds {joined(stray)}, neither a task the steering"
+            " holds nor numbered above every task it has held, and an ID names one task alone;"
+            " nothing is kept: have turn make the part again, each new task numbered from"
+            f" T{most + 1}, then run this again"
+        )
+
+
+def learnings_of(folder: str) -> list[str]:
+    """The lines of the session's learnings; none before any is made."""
+    path = learnings_path(folder)
+    return trimmed(read_text(path).splitlines()) if os.path.isfile(path) else []
 
 
 def put_learnings(learnings: list[str], part: list[str]) -> list[str]:
-    """The steering's learnings with those of the part turn made after them, the part's own
-    heading left out, each numbered on from those kept."""
+    """The session's learnings with those of the part turn made after them, the part's own heading
+    left out, each numbered on from those kept."""
     count = len([line for line in learnings if LEARNING.fullmatch(line)])
     lines = trimmed(part[1:]) if part[:1] in ([f"## {LEARNINGS}"],) else part
     put = []
@@ -972,10 +1020,23 @@ def put_learnings(learnings: list[str], part: list[str]) -> list[str]:
     return learnings + put
 
 
+def write_learnings(folder: str, lines: list[str]) -> None:
+    """Writes the session's learnings, once each is an item in the form of a learning, the lines
+    indented under it its own; stops otherwise, writing nothing."""
+    path = learnings_path(folder)
+    point = items_of(list(enumerate(lines, 1)), LEARNING, LEARNING_FORM)[1]
+    if point:
+        raise Stop(
+            f"rn: {path} would be out of its form: {point}; nothing is kept: have turn make the"
+            " part it puts back again"
+        )
+    write_text(path, "\n".join(lines) + "\n")
+
+
 def part_of(folder: str, number: str) -> tuple[str, list[str]]:
-    """The work of the call of the number and the part of the steering turn made for it; stops
-    where the session holds no such call, the call makes no part, turn has not returned it, or its
-    part is not there."""
+    """The work of the call of the number and the part turn made for it; stops where the session
+    holds no such call, the call makes no part, turn has not returned it, or its part is not
+    there."""
     call = next((c for c in calls(folder) if c.number in (number,)), None)
     if call is None:
         raise Stop(
@@ -984,15 +1045,15 @@ def part_of(folder: str, number: str) -> tuple[str, list[str]]:
         )
     if call.work not in PARTS:
         raise Stop(
-            f"rn: the call {number} is on {call.work}, which makes no part of the steering; give"
-            " --put a call on plan or learnings"
+            f"rn: the call {number} is on {call.work}, which makes no part rn puts back; give --put"
+            " a call on plan or learnings"
         )
     if not call.result:
         raise Stop(
             f"rn: turn has not returned the call {number}: {call_path(folder, number, RESULT)} is"
             " not there; wait for turn to return it, then run this again"
         )
-    path = call_path(folder, number, PART)
+    path = call_path(folder, number, PART[call.work])
     if not os.path.isfile(path):
         raise Stop(
             f"rn: {path}, the part the call {number} makes, is not there; cut it again with"
@@ -1001,48 +1062,64 @@ def part_of(folder: str, number: str) -> tuple[str, list[str]]:
     return call.work, trimmed(read_text(path).splitlines())
 
 
-def moved(keys: dict[str, str], stage: str, plan: list[str]) -> dict[str, str]:
+def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dict[str, str]:
     """The front matter's keys with the stage moved to the one given; stops where the session is
-    not at the stage it moves from, or, to the deliverable stage, a task is not ticked."""
+    not at the stage it moves from; to the build stage, where a call made in the design stage is on
+    a work other than the plan, a document made, which goes to the design sign-off; and to the
+    deliverable stage, where a task is left."""
     if keys[STAGE] != MOVES[stage]:
         raise Stop(
             f"rn: the session is at the {keys[STAGE]} stage, and moves to {stage} from the"
             f" {MOVES[stage]} stage alone; the other stages move at the sign-offs, with"
             " `rn.py answer`"
         )
-    left = [task.id for task in tasks_of(plan) if not task.ticked]
+    if stage in (BUILD,):
+        made = [c.work for c in calls(folder) if c.stage in (DESIGN,) and c.work not in (PLAN,)]
+        if made:
+            raise Stop(
+                f"rn: the design stage made {joined(list(dict.fromkeys(made)))}, which go to the"
+                " design sign-off; show it with `rn.py proposal design`, and the user's approval"
+                " there moves the session to build"
+            )
+    left = [task.id for task in tasks_of(plan)]
     if stage in (DELIVERABLE,) and left:
         raise Stop(
-            f"rn: {joined(left)} is not ticked yet, and the finished work is checked once every"
-            " task is; tick each step done with --done T<n>.<step>, then run this again"
+            f"rn: {joined(left)} is still in the steering, and the finished work is checked once no"
+            " task is; tick each action done with --done T<n>.<action>, then run this again"
         )
     return dict(keys, stage=stage)
 
 
 def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Keeps the move: the part of the call `--put` names put back into the steering; each step
-    done ticked, and each task once all its steps are; the stage moved where given; Next and Open
-    replaced whole; then every change committed with the message and pushed; gives the commit. The
-    records shown for the learnings are removed once their part is put back. Stops, keeping
-    nothing, where a value is empty, the branch holds no session, the steering differs from what
-    the last keep left, a part, a step or a stage cannot be taken, or the steering would be out of
-    its form; and where git fails."""
+    """Keeps the move: the part of the call `--put` names put back, the plan's into the steering,
+    the learnings' added to the session's learnings; each action done ticked, and each task removed
+    once all its actions are; the stage moved where given; Next and Open replaced whole; then
+    every change committed with the message and pushed; gives the commit. The records shown for the
+    learnings are removed once their part is put back. Stops, keeping nothing, where a value is
+    empty, the branch holds no session, the steering differs from what the last keep left, a part,
+    an ID, an action or a stage cannot be taken, or the steering or the learnings would be out of
+    their form; and where git fails."""
     next_step = given(args.next, "next step")
     message = given(args.message, "message")
     folder = current()
     steering = kept_steering(folder)
     work = None
+    learnt: list[str] = []
     if args.put is not None:
         work, part = part_of(folder, args.put)
         if work in (PLAN,):
+            numbered_on(folder, steering.plan, part, args.put)
             steering = steering._replace(plan=put_plan(steering.plan, part))
         else:
-            steering = steering._replace(learnings=put_learnings(steering.learnings, part))
+            learnt = put_learnings(learnings_of(folder), part)
     plan = ticked(steering.plan, args.done)
-    keys = steering.keys if args.stage is None else moved(steering.keys, args.stage, plan)
-    kept = keep(
-        folder, Steering(keys, plan, steering.learnings, next_step, opened(args.open)), message
-    )
+    keys = steering.keys if args.stage is None else moved(steering.keys, args.stage, plan, folder)
+    steering = Steering(keys, plan, next_step, opened(args.open))
+    # The steering is held to its form before the learnings are written, so a stop leaves neither.
+    held_form(render(steering))
+    if learnt:
+        write_learnings(folder, learnt)
+    kept = keep(folder, steering, message)
     if work in (LEARNINGS_WORK,):
         shutil.rmtree(learning(), ignore_errors=True)
     return {"kept": kept}
@@ -1145,9 +1222,11 @@ def finished_work() -> list[str]:
 
 def served(steering: Steering, work: str) -> dict[str, str]:
     """The goal and each criterion the work serves, by ID, as the steering says each on one line:
-    those its task's line names for a task's work, the goal and every criterion for any other;
-    stops where the steering holds no task of a task's work."""
+    none for the plan, which makes them; those its task's line names for a task's work; the goal
+    and every criterion for any other. Stops where the steering holds no task of a task's work."""
     said = decided(steering.plan, ("", CRITERIA))
+    if work in (PLAN,):
+        return {}
     if not TASK_WORK.fullmatch(work):
         return said
     task = next((t for t in tasks_of(steering.plan) if t.id in (work.upper(),)), None)
@@ -1159,17 +1238,34 @@ def served(steering: Steering, work: str) -> dict[str, str]:
     return {key: text for key, text in said.items() if key in (task.serves or [])}
 
 
+def done_made(folder: str, found: list[Call], plan: list[str]) -> list[str]:
+    """For each call on a task's work whose task the plan no longer holds, done, in the order made,
+    its CCS and its result where turn returned it, and the CCS of the work's latest call where turn
+    has not, as it holds the decisions kept last: what the task served, decided and made, a research
+    result made before a decision among them."""
+    left = [task.id for task in tasks_of(plan)]
+    last = {c.work: c.number for c in found}
+    paths = []
+    for call in found:
+        if TASK_WORK.fullmatch(call.work) and call.work.upper() not in left:
+            if call.result or call.number in (last[call.work],):
+                paths.append(call_path(folder, call.number, CCS))
+            paths += [call_path(folder, call.number, RESULT)] if call.result else []
+    return paths
+
+
 def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Writes the work's CCS into the session, keeps it, and gives the call that hands it to
     turn:up, once every change is pushed, so the work is made from decisions a fresh conversation
-    also has, and a conversation cut while turn runs goes on from the call: in the
-    work's latest call where turn has not returned it, else in a new one carrying that call's
-    decisions. The work is each path given; for the plan or the learnings, their part of the
-    steering, cut into the call's part, the learnings with none of those kept; for the finished
-    work given none, every file it is. Stops where a name, a text or a path given is wrong, the
-    branch holds no session, a change is not kept or pushed, the steering differs from what the
-    last keep left, the steering holds no task of a task's work, or the finished work is not
-    there."""
+    also has, and a conversation cut while turn runs goes on from the call: in the work's latest
+    call where turn has not returned it, else in a new one carrying that call's decisions. The work
+    is each path given; for the plan, its part of the steering, cut into the call's part, with what
+    each task done served and made as what the receiver has, after those given; for the learnings,
+    a part of their heading alone, cut into the call's part, as those kept are not made again; for
+    the finished work given none, every file it is. Stops where a name, a text or a path given is
+    wrong, the branch holds no session, a change is not kept or pushed, the steering differs from
+    what the last keep left, the steering holds no task of a task's work, or the finished work is
+    not there."""
     work = worked(args.work)
     kind = named(args.kind, "kind")
     receiver = given(args.receiver, "receiver")
@@ -1177,8 +1273,8 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     paths = [given(p, "path of the work") for p in args.path]
     if work in PARTS and paths:
         raise Stop(
-            f"rn: the work {work} is its part of the steering, which rn cuts for turn; give no path"
-            " of it"
+            f"rn: the work {work} is a part rn cuts for turn from the session's record; give no"
+            " path of it"
         )
     if not paths and work not in PARTS + (DELIVERABLE,):
         raise Stop(
@@ -1198,9 +1294,11 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     carried = [] if last is None else decisions_of(last)
     if work in PARTS:
         cut = "\n".join(steering.plan) if work in (PLAN,) else f"## {LEARNINGS}"
-        part = call_path(folder, number, PART)
+        part = call_path(folder, number, PART[work])
         write_text(part, cut + "\n")
         paths = [part]
+    if work in (PLAN,):
+        has += done_made(folder, found, steering.plan)
     # A CCS holds its entries in four parts, the shape turn takes: focal_entities, what the work is
     # about, the work by its name, the stage it is made in, its paths, its receiver and what they
     # have with it; goal_orientation, what the work is for, its use and what it serves as text, as
@@ -1242,6 +1340,17 @@ def item(lines: list[tuple[int, str]], at_: int) -> str:
     return " ".join(words)
 
 
+def by_id(lines: list[tuple[int, str]], begins: str) -> dict[str, str]:
+    """What the lines say under each ID, each line beginning as given opening one, by its ID, in
+    their order, each as one line; read from lines that hold their form."""
+    found: dict[str, str] = {}
+    for k, (_, line) in enumerate(lines):
+        if line.startswith(begins):
+            key, _, rest = item(lines, k).removeprefix("- ").partition(": ")
+            found[key] = rest
+    return found
+
+
 def decided(lines: list[str], shown: tuple[str, ...]) -> dict[str, str]:
     """What the steering says under each ID in the parts shown, such as the goal and each
     acceptance criterion, by its ID, in the order of the steering, each as one line; read from a
@@ -1249,12 +1358,7 @@ def decided(lines: list[str], shown: tuple[str, ...]) -> dict[str, str]:
     parts = sections(lines)
     found: dict[str, str] = {}
     for part in shown:
-        under = parts.get(part, [])
-        for k, (_, line) in enumerate(under):
-            if line.startswith(SHOWS[part]):
-                said = item(under, k).removeprefix("- ")
-                key, _, rest = said.partition(": ")
-                found[key] = rest
+        found.update(by_id(parts.get(part, []), SHOWS[part]))
     return found
 
 
@@ -1403,15 +1507,14 @@ def proposed(signoff: str, folder: str) -> list[str]:
 
 def ready(signoff: str, folder: str, steering: Steering) -> None:
     """Returns when the session has what the sign-off shows: at the plan's, the goal, a criterion
-    and every task ticked; at the deliverable's, the finished work returned; stops otherwise. The
+    and no task left; at the deliverable's, the finished work returned; stops otherwise. The
     design's works are checked as they are shown."""
     if signoff in (PLAN,):
         said = decided(steering.plan, ("", CRITERIA))
-        left = [task.id for task in tasks_of(steering.plan) if not task.ticked]
-        if "G1" not in said or len(said) < 2 or left:
+        if "G1" not in said or len(said) < 2 or tasks_of(steering.plan):
             raise Stop(
-                "rn: the plan sign-off needs the goal G1, a criterion and every task ticked in the"
-                " steering; have turn make the plan through its tasks, tick each step done with"
+                "rn: the plan sign-off needs the goal G1, a criterion and no task in the steering;"
+                " have turn make the plan through its tasks, tick each action done with"
                 " `rn.py state --done`, then run this again"
             )
     if signoff in (DELIVERABLE,):
@@ -1602,8 +1705,9 @@ def history(folder: str, start: str) -> str:
 
 
 def session_files(folder: str) -> list[str]:
-    """The session's files as they are now: the steering, and each file of its calls to turn."""
-    found = [steering_path(folder)]
+    """The session's files as they are now: the steering, the learnings, and each file of its calls
+    to turn."""
+    found = [steering_path(folder), learnings_path(folder)]
     found += sorted(glob.glob(os.path.join(glob.escape(folder), TURN, "*")))
     return [p for p in found if os.path.isfile(p)]
 
@@ -1707,13 +1811,12 @@ def turns_learnings(folder: str) -> list[dict[str, Any]]:
 
 def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Every learning of the session, for the orchestrator to put to the user one per message once
-    the finished work is approved: the steering's, by ID, each as one line; and turn's, each as
+    the finished work is approved: the session's, by ID, each as one line; and turn's, each as
     turn's result gives it, with the work, the call and the commit that kept it. Stops where the
-    branch holds no session, or the steering differs from what the last keep left."""
+    branch holds no session."""
     folder = current()
-    steering = kept_steering(folder)
-    said = decided([f"## {LEARNINGS}", *steering.learnings], (LEARNINGS,))
-    return {"steering": said, "turn": turns_learnings(folder)}
+    said = by_id(list(enumerate(learnings_of(folder))), "- ")
+    return {"learnings": said, "turn": turns_learnings(folder)}
 
 
 class Parser(argparse.ArgumentParser):

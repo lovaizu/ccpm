@@ -57,7 +57,8 @@ flowchart TB
   orchestrator and the pull request.
 - The work is kept from drifting from the purpose in two ways: each task names the goal or the
   acceptance criteria it serves and its result is checked against them (rn's Principle 1), and after
-  every move the orchestrator replans from the facts that move brought (rn's Principle 2).
+  each task the orchestrator weighs the facts it brought and has the plan made again where they
+  change it (rn's Principle 2).
 
   A task that serves no criterion is work the purpose did not ask for, and a plan kept from what
   was expected drifts from the purpose while every move looks done.
@@ -70,50 +71,71 @@ flowchart TB
 
   A conversation that carries the whole of a long piece of work swells, and a fresh one starts
   from nothing; a rule written only in words is followed by chance.
-- The steering is one file that steers the work to its purpose and always shows the latest: the
-  stage, the sign-off waiting and the two languages, as `dev/architecture.md`'s Languages has them;
-  the goal, the acceptance criteria, the tasks with their steps ticked; the next move and what is
-  open. rn's scripts alone write it, and hold it to the form of rn's plan checklist at every keep,
-  as they take their data from it.
+- The steering is one file, the map to the purpose kept current, from which and from what each
+  move found the orchestrator decides the next move; it holds only what is left and where it
+  stands: the stage, the sign-off waiting and the two languages, as `dev/architecture.md`'s
+  Languages has them; the goal, the acceptance criteria, the tasks not yet done with their actions
+  ticked; the next move and what is open. rn's scripts alone write it, and hold it to the form of
+  rn's plan checklist at every keep, as they take their data from it.
 
   The user reads it at each sign-off and on the pull request, and a fresh conversation goes on
   from it alone (rn's Principle 2); one file holding both the plan and where it stands cannot say
-  two things, where a state kept beside the plan comes to differ from it.
+  two things, where a state kept beside the plan comes to differ from it; and what is no longer
+  left, such as a done task, is kept where it was made, in the calls to turn, the repository and
+  the history, so each reading of the map holds only what the next move uses.
 - At every move the orchestrator gives rn's scripts where the session stands, from the facts that
   move brought, each checked, such as the user's answer, turn's result and the output of what was
   run: the step it takes next and what is open, replacing what the steering said; the stage and the
-  sign-off waiting move with the sign-offs alone.
+  sign-off waiting move with the sign-offs, and at a stage's end only as rn's scripts allow it.
 
   A fact taken unchecked carries a slip into every move after it, and a record added to rather than
   replaced swells as the conversation would.
 - The goal, the criteria and the tasks are made by turn, as every work is, each passing rn's plan
-  checklist and its checklist for a fix: rn's scripts cut the part a call makes, the goal and the
-  criteria, the tasks or the learnings, into a file of its own, turn makes it there, and rn's
-  scripts put it back into the steering once turn returns it.
+  checklist and its checklist for a fix: rn's scripts cut the part a call makes, the goal, the
+  criteria and the tasks, into a file of its own, turn makes it there, and rn's scripts put it back
+  into the steering once turn returns it.
 
   turn sees of the steering only the part it makes, so it cannot change the goal while making a
   task, and each part is read by an AI that did not make it before the user approves it
   (Principle 4).
-- The tasks are made a few at a time, for the stage at hand: those that reach the plan, then one for
-  each document the purpose needs, then those that build the finished work. Each names what it
-  serves, the goal while the criteria are made, and each has four steps: the context read, with
-  what it needs found out, and what is lacking confirmed with the user; the part and its checks
-  designed by turn; that design traced on paper, or tried, by turn's first reader; and the part
-  made. After each task the orchestrator has turn make the tasks again from the facts it brought.
+- The tasks are laid backward from the acceptance criteria, as the criteria are from the goal: every
+  criterion passed reaches the goal, and every task's completion criterion passed passes the
+  criteria. They are made a few at a time, for the stage at hand: in the plan stage only the
+  research or trials a gap calls for, none where none is needed; then one for each document the
+  purpose needs; then those that build the finished work. Each names what it serves, the goal while
+  the criteria are made, and is one result accepted by its completion criterion; its actions are
+  what that result needs, such as research into current practice and official information, a small
+  trial, or the making, each naming who does it, the orchestrator with the user or turn.
 
   A stage's tasks rest on what the stage before it settled, so tasks made at once for the whole
-  rest on guesses; a task begun on a gap fills it with a guess, and checks designed and traced
-  before the making show its slips while they are small.
-- Each work, a part of the steering, each document, each task's result, each checklist made and the
-  finished work, goes to turn as a CCS, the shape [ACC](https://arxiv.org/abs/2601.11653) gives an
-  AI's state, holding the work, its receiver, what they use it for and have with it, its
-  checklists, its decisions, the goal and the criteria it serves, copied by rn's scripts from the
-  steering, the two languages, and rn's checklist for a fix; turn's first user uses it in the
-  receiver's place before it comes back (Principle 4).
+  rest on guesses; a task begun on a gap fills it with a guess, and each stage meets unknowns that
+  research or a small trial finds out while they are small, its result adding or dropping tasks.
+- After each task the orchestrator weighs whether the facts it brought change the remaining tasks or
+  the criteria, and only then has turn make the plan again; a change to the goal or a criterion is
+  first a point to decide.
+
+  A plan made again with nothing changed costs a call and risks moving what was approved, while
+  one kept past a fact that changes it drifts from the purpose.
+- The design sign-off is held only where the purpose needs a document: where the user decides it
+  needs none, the session moves from the design stage to build without it.
+
+  A sign-off with nothing to approve is a stop that costs the user time and gives them nothing to
+  decide (KR1.2).
+- Each work, a part of the steering, each research result and trial's result, each document, each
+  task's result, each checklist made and the finished work, goes to turn as a CCS, one call for
+  each, the shape [ACC](https://arxiv.org/abs/2601.11653) gives an AI's state, holding the work,
+  its receiver, what they use it for and have with it, the outputs before it that it uses, each
+  named and passed as it is, its checklists, its decisions, the goal and the criteria it serves,
+  copied by rn's scripts from the steering, the two languages, and rn's checklist for a fix; a
+  plan's CCS holds, in place of what it serves, the calls of each done task, what it served,
+  decided and made; turn's first user uses it in the receiver's place before it comes back
+  (Principle 4).
 
   turn takes its task as a CCS and makes the work from it and the files it names alone, so the work
   does not stray from what was decided; what turn only reads goes in the CCS and what it makes is a
-  file, so it changes nothing it was not asked to make.
+  file, so it changes nothing it was not asked to make; an output passed as it is, not summarised,
+  reaches the next maker as it was accepted, and one call for each output has each read by its
+  first user before anything is made on it.
 - Each point the user decides is kept as a decision of the work it settles, in the CCS of that
   work's next call, before the move after it; a work made again is a new call, its decisions
   carried over and rewritten where an answer changed them.
@@ -147,17 +169,19 @@ flowchart TB
 
   So it says nothing turn's first user did not read.
 - At each sign-off, once the user answers it, the learnings of
-  [Principle 8](../architecture.md#learning-from-each-run) are made through turn as a part of the
-  steering: its maker reads the stretch since the sign-off before whole, its history on the branch
-  and the files as they are now, and searches the orchestrator's conversations of that stretch for
-  what only they show, such as the form of each message to the user; once the user approves the
-  finished work, they and those turn returned with each call are the learnings the orchestrator
-  puts to the user.
+  [Principle 8](../architecture.md#learning-from-each-run) are made through turn and kept by rn's
+  scripts in a file of their own, which the orchestrator reads only at the step that puts them to
+  the user: their maker reads the stretch since the sign-off before whole, its history on the
+  branch and the files as they are now, and searches the orchestrator's conversations of that
+  stretch for what only they show, such as the form of each message to the user; once the user
+  approves the finished work, they and those turn returned with each call are the learnings the
+  orchestrator puts to the user.
 
   turn's own learner reads turn's runs alone, so a slip of rn's own steps shows only to a maker
   that reads the orchestrator's; a stretch ends where the user sent the work back or approved it,
   so what led there is near, and is small enough to read whole, where a whole piece of work is not;
-  the learnings wait for the end, as each put to the user mid-way is a stop in the work.
+  the learnings wait for the end, as each put to the user mid-way is a stop in the work, and kept
+  out of the steering they are not acted on before the user chooses where each goes.
 
 ### Physical view
 
@@ -174,10 +198,13 @@ rn/                                  the plugin, installed by Claude Code with t
 └── .rn/
     ├── checklists/<kind>.md         the user's addition for a kind <Markdown>
     └── <yyyymmdd>-<slug>/           the record of one piece of work
-        ├── steering.md              the plan and where the session stands <Markdown>
+        ├── steering.md              what is left to reach the goal and where the session stands <Markdown>
+        ├── learnings.md             the learnings, for the user once the finished work is approved <Markdown>
+        ├── <path>                   each research result and trial's result, at the path its action names <Markdown>
         └── turn/
             ├── <nnnn>-ccs.json      each call to turn, numbered from 0001 in the order made <JSON>
-            ├── <nnnn>-steering.md   the part of the steering the call makes <Markdown>
+            ├── <nnnn>-steering.md   the plan a call on the plan makes <Markdown>
+            ├── <nnnn>-learnings.md  the learnings a call on the learnings makes <Markdown>
             └── <nnnn>-result.json   what turn returned for it <JSON>
 ```
 
@@ -188,7 +215,8 @@ rn/                                  the plugin, installed by Claude Code with t
   result goes, answers turn's points by SendMessage, and stops a run with TaskStop, as
   [turn](../../turn/README.md) is called.
 - Each call is the files of one number, the work named in its CCS; a work made again takes the next
-  number, and `<nnnn>-steering.md` is there only for a call that makes a part of the steering.
+  number, and `<nnnn>-steering.md` or `<nnnn>-learnings.md` is there only for a call on the plan
+  or the learnings.
 - The record is kept by a commit and a push to the piece of work's branch, made by the orchestrator
   alone, through rn's scripts; the steering's states before the current one are in its history, and
   the options weighed with their reasons and each feedback with its answer in the commit messages.

@@ -65,8 +65,8 @@ write to the repository in its `artifact-language`.
      to rn's makers, both, or neither`, a `--has` for each path `rn.py records` printed, and as the
      step that comes after, the Next step 2 set, so the call is kept with `--put`, that Next, and
      an `--open` for each point the steering's Open holds, as Open is replaced whole.
-   - Out: the stretch's learnings in the steering, kept; they are put to the user once the finished
-     work is approved, not now.
+   - Out: the stretch's learnings in `<session>/learnings.md`, kept; they are put to the user once
+     the finished work is approved, not now.
 
 4. Go on with the work.
    - In: the learnings kept, the steering's Next the step after this sign-off.
