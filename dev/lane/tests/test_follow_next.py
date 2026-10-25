@@ -34,8 +34,8 @@ class TestDrift(FollowNextTest):
     def test_a_call_other_than_the_move_printed_drifts(self):
         for what, (tool, given) in {
             "another command": ("Bash", {"command": "git diff"}),
-            "another tool, sorting after": ("Read", {"command": "git status"}),
-            "another tool, sorting before": ("Agent", {"command": "git status"}),
+            "another tool": ("Read", {"command": "git status"}),
+            "yet another tool": ("Agent", {"command": "git status"}),
             "a field printed left out": ("Bash", {"description": "status"}),
         }.items():
             with self.subTest(what=what):

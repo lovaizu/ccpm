@@ -99,7 +99,7 @@ class TestLaid(GuardTest):
         ).replace(
             "`CHANGELOG.md`.\n",
             "`CHANGELOG.md`. Write `entry.json` in the form of"
-            " `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`.\n",
+            " `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`. Write only `entry.json`.\n",
         )
         self.write(self.agent_file, steps)
         own = ["notes:changelog-writer", *LAID]
@@ -139,6 +139,17 @@ class TestLaid(GuardTest):
         # When: changelog-writer reads forms/other.json
         # Then: the call is stopped with read_only's sentence
         self.assertEqual(self.reading("forms/other.json"), (2, "notes: Read only `in.md`.\n"))
+
+    def test_the_form_is_let_through_to_read_only_alone(self):
+        # Given: read_only and in_form laid on changelog-writer, and write_only on the step of
+        # in_form
+        form = os.path.join(self.plugin, "forms", "entry.json")
+        event = self.called("Write", {"file_path": form, "content": "{}"})
+        words = (helpers.AGENT, *LAID, "3:write_only:entry.json")
+        # When: it writes the form its in_form names
+        # Then: the call is stopped with write_only's sentence, as the form is no output of it
+        expected = (2, "notes: Write only `entry.json`.\n")
+        self.assertEqual(self.guard(json.dumps(event), words), expected)
 
 
 if __name__ == "__main__":

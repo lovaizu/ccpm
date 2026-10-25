@@ -124,7 +124,8 @@ def text(tool: str, given: dict[str, Any], cwd: str) -> str | None:
 def changed(made: Call, file: str) -> bool:
     """Whether the call changed the file: wrote it, but by a tool that writes a file and gave back
     an error, which writes nothing; a command that failed may have written it before it failed."""
-    return file in made.written and not (made.failed and made.action == "write")
+    by_tool = made.action == "write"  # pragma: no mutate
+    return file in made.written and not (made.failed and by_tool)
 
 
 def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:

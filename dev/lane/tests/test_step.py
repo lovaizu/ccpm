@@ -32,8 +32,7 @@ class TestAgentFile(helpers.PluginTest):
         self.write(os.path.join(self.plugin, "agents", "other.txt"), "---\nname: other\n---\n")
         for name in ("other", "a", "z"):
             with self.subTest(name=name):
-                # When: a file is looked for by a name none has, one sorting before every name
-                # there and one after
+                # When: a file is looked for by a name none has
                 # Then: none is found
                 self.assertIsNone(step.agent_file(self.plugin, name))
 

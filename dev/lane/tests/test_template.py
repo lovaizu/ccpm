@@ -271,6 +271,13 @@ class TestHeld(unittest.TestCase):
                 ),
             ),
             (
+                "---\nname: n\nstatus: draft\n---\n# T\n# What it should be\n## Why\n",
+                (
+                    'from line 6: expected the heading "## What it should be",'
+                    ' found "# What it should be" at line 6'
+                ),
+            ),
+            (
                 "---\nname: n\nstatus: draft\n---\n# T\n## Why\n## What it should be\n",
                 'from line 8: expected the heading "## Why", found none',
             ),

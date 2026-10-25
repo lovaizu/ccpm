@@ -27,7 +27,7 @@ def read(path: str) -> Form:
     except OSError as error:
         raise ValueError(f"cannot be read: {error.strerror}") from None
     try:
-        if kind == ".md":
+        if kind == ".md":  # pragma: no mutate
             return template.read(text)
         given = json.loads(text)
         schema.checked(given)

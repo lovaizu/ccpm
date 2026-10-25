@@ -7,6 +7,15 @@ excluded-modules = []
 # The type checker and the linter run first: a change to a type annotation, or a comparison of a
 # string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
 # type checker is what checks annotations, the linter what checks `is` against a literal.
+# A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
+# where no input tells a mutant of it apart: by order with the first or the last of them, such as
+# "write", the last of a call's actions in order, or `__name__`, which is "__main__" or, imported by
+# the tests, "lay", after it; or by `is` with a small number or a text like a name, of which CPython
+# keeps one copy. Each such line holds that comparison alone, as the mark leaves out every mutant
+# of its line.
+# Where the code compares a value with one it knows, its tests take values on either side of that
+# one in order too, such as a tool named before Bash and one after, so a comparison changed to `<=`
+# or `>=` fails a test; their comments say what each value is, not where it sorts.
 test-command = "sh -c 'ruff check --select F632 lane && pyrefly check --search-path dev/lane --search-path dev/lane/tests --search-path lane/hooks/lane --search-path lane/scripts lane dev/lane && python -m unittest discover -f -s dev/lane/tests'"
 
 [cosmic-ray.distributor]

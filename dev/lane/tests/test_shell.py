@@ -407,11 +407,10 @@ class TestGit(unittest.TestCase):
                 self.assertEqual([shell.git_statement(h, w) for h, w in said], found)
 
     def test_a_folder_is_inside_the_top_alone_or_in_it(self):
-        # Given: the top, a folder in it, one beside it whose name starts the same or sorts before or after,
-        # and one the words do not settle
+        # Given: the top, a folder in it, others beside it, one whose name starts the same, and one
+        # the words do not settle
         # When: each is asked whether it is inside the top
         # Then: the first two are
-        # Each folder as a cd or -C makes it, a path of its own.
         for folder, found in (
             ("/r", True),
             ("/r/a", True),

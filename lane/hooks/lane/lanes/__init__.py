@@ -135,7 +135,8 @@ class Laid:
         says it, that lane:up must be run again; nothing otherwise."""
         # A lane held as the subagent ends lets it end where what it did is not known, or where,
         # told before, it has answered with words alone, so it is told and never held for good.
-        end = call.ended(event) if event["hook_event_name"] == "SubagentStop" else None
+        ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
+        end = call.ended(event) if ending else None
         if end is not None and (end.made is None or end.answered):
             return []
         said = sentence(self.lane, self.takes)

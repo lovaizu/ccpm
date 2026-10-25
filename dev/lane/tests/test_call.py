@@ -135,8 +135,7 @@ class TestOtherTools(unittest.TestCase):
     def test_a_call_of_a_tool_no_lane_watches_is_no_action(self):
         for tool in ("AskUserQuestion", "TodoWrite"):
             with self.subTest(tool=tool):
-                # Given: a call of a tool no lane of this version reads, its name sorting before
-                # Bash or after
+                # Given: a call of a tool no lane of this version reads, its input holding a command
                 event = {"cwd": HERE, "tool_name": tool, "tool_input": {"command": "git commit"}}
                 # When: it is read
                 # Then: it is no action, and runs nothing
@@ -170,7 +169,7 @@ class TestReads(unittest.TestCase):
 
     def test_a_call_naming_no_file_it_reads_reads_nothing(self):
         # Given: a Read call naming no path, or one the words do not settle; a Bash call with no
-        # command; and calls of tools that read no file, sorting before and after the readers
+        # command; and calls of tools that read no file, one with a command in its input
         # When: what each reads is read
         # Then: it reads nothing
         for tool, given in (
@@ -178,6 +177,7 @@ class TestReads(unittest.TestCase):
             ("Read", {"file_path": "$HOME/a"}),
             ("Bash", {}),
             ("Agent", {"file_path": "a"}),
+            ("AskUserQuestion", {"command": "cat a"}),
             ("Write", {"file_path": "a"}),
         ):
             with self.subTest(tool=tool, given=given):
@@ -327,11 +327,15 @@ class TestHandOn(unittest.TestCase):
                 self.assertEqual(call.handed(call.read(event)), "")
 
     def test_a_call_that_is_no_hand_on_hands_on_nothing(self):
-        # Given: a Bash call whose input holds a field named as a hand-on's
-        event = {"cwd": HERE, "tool_name": "Bash", "tool_input": {"command": "ls", "prompt": "x"}}
-        # When: what it hands on is read
-        # Then: it is nothing
-        self.assertEqual(call.handed(call.read(event)), "")
+        for tool in ("Bash", "AskUserQuestion"):
+            with self.subTest(tool=tool):
+                # Given: a run, or a call of no action, whose input holds a field named as a
+                # hand-on's
+                given = {"command": "ls", "prompt": "x"}
+                event = {"cwd": HERE, "tool_name": tool, "tool_input": given}
+                # When: what it hands on is read
+                # Then: it is nothing
+                self.assertEqual(call.handed(call.read(event)), "")
 
 
 class TestText(testing.FolderTest):
@@ -380,15 +384,20 @@ class TestText(testing.FolderTest):
         self.assertEqual(self.text("Edit", given), "x")
 
     def test_a_call_whose_text_is_not_given_writes_none_known(self):
+        self.write("a.md", "x\n")
+        edit = {"file_path": "a.md", "old_string": "x", "new_string": "y", "content": "z"}
         for tool, given in (
             ("Write", {"file_path": "a.md"}),
             ("Edit", {"file_path": "a.md", "old_string": "x"}),
             ("Edit", {"file_path": "a.md", "new_string": "x"}),
             ("Bash", {"command": "echo x > a.md"}),
             ("Read", {"file_path": "a.md"}),
+            ("AskUserQuestion", edit),
+            ("mcp__files__edit", edit),
         ):
             with self.subTest(tool=tool, given=given):
-                # Given: a call whose input gives no text, or that writes by a command
+                # Given: a call whose input gives no text, or that writes by a command, or of
+                # another tool whose input holds what Write's and Edit's do
                 # When: it is read
                 # Then: its text is not known
                 self.assertIsNone(self.text(tool, given))

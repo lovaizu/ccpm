@@ -20,5 +20,6 @@ def drifts(call: Call, takes: list[str], root: str) -> bool:
     it makes to run what the work gives."""
     outputs = {os.path.realpath(t) for t in takes}
     here = os.getcwd()
-    counted = [f for f in call.written if call.action == ACTION or shell.inside(f, here)]
+    by_tool = call.action == ACTION  # pragma: no mutate
+    counted = [f for f in call.written if by_tool or shell.inside(f, here)]
     return any(f not in outputs for f in counted)

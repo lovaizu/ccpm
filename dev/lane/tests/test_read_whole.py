@@ -82,9 +82,12 @@ class TestDrift(ReadWholeTest):
             ("Edit", {"file_path": "out.md", "old_string": "a", "new_string": "b"}),
             ("NotebookEdit", {"notebook_path": "out.ipynb", "new_source": "x"}),
             ("Bash", {"command": "echo x > out.md"}),
+            ("Bash", {"command": "echo x > /data/out.md"}),
+            ("Write", {"file_path": os.devnull, "content": "x"}),
         ):
-            with self.subTest(tool=tool):
-                # When: the subagent writes by the tool or a command
+            with self.subTest(tool=tool, given=given):
+                # When: the subagent writes by the tool or a command, by a command out of the
+                # folder, or by a tool writing even the null device
                 # Then: it is a drift
                 self.assertTrue(self.drifts(tool, given))
 
@@ -121,12 +124,14 @@ class TestLetThrough(ReadWholeTest):
                 self.assertFalse(self.drifts())
 
     def test_a_write_before_the_input_is_begun_is_no_drift(self):
-        # Given: a record of another file read in part, and none of the input
-        self.write(os.path.join(self.base, "other.md"), TEXT)
-        self.record([("Read", {"file_path": "other.md"}, shown(1, 50))])
-        # When: the subagent writes
-        # Then: it is no drift, as the lane tells only an input begun and left
-        self.assertFalse(self.drifts())
+        for other in ("a.md", "other.md"):
+            with self.subTest(other=other):
+                # Given: a record of another file read in part, and none of the input
+                self.write(os.path.join(self.base, other), TEXT)
+                self.record([("Read", {"file_path": other}, shown(1, 50))])
+                # When: the subagent writes
+                # Then: it is no drift, as the lane tells only an input begun and left
+                self.assertFalse(self.drifts())
 
     def test_a_call_that_writes_nothing_is_no_drift(self):
         # Given: a record of the input read in part

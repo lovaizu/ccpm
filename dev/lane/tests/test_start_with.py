@@ -54,8 +54,8 @@ class TestFirstCall(unittest.TestCase):
         ):
             with self.subTest(command=command):
                 # Given: no call made before
-                # When: the subagent's first call runs something else, a command sorting before
-                # the script's name or after it, the script only read, a script of another name
+                # When: the subagent's first call runs something else, another command, the
+                # script only read, a script of another name
                 # or folder, or the script's path as an assignment's value, as the shell reads a
                 # path whose folder is a name and `=` before the command it runs
                 # Then: it is a drift

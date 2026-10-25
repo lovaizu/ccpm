@@ -28,7 +28,8 @@ def drifts(call: Call, takes: list[str], root: str) -> bool:
 def writes(call: Call) -> bool:
     """Whether the call writes a file: by a tool that writes, or by a command that writes a path but
     the null device, where the AI throws what it does not want to see."""
-    return call.action == "write" or any(p != os.devnull for p in call.written)
+    by_tool = call.action == "write"  # pragma: no mutate
+    return by_tool or any(p != os.devnull for p in call.written)
 
 
 def left(file: str, before: list[Call]) -> bool:

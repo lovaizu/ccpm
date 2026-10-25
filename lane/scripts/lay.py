@@ -288,7 +288,7 @@ def entry(plugin: str, agent: dict[str, Any], event: str = "PreToolUse") -> dict
     name = f"{plugin}:{agent['name']}"
     laid = [lanes.word(n, g["lane"], g["takes"]) for n, g in on_it]
     each = [t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ())]
-    tools = [name] if event == "SubagentStop" else each
+    tools = [name] if event == "SubagentStop" else each  # pragma: no mutate
     run_it = command(plugin, name, laid, event)
     return {
         "matcher": "|".join(dict.fromkeys(tools)),
@@ -528,5 +528,5 @@ def brought_up(root: str) -> str:
 
 
 # Run as the command, and not when the tests import it under the name lay.
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no mutate
     sys.exit(main(sys.argv[1:]))

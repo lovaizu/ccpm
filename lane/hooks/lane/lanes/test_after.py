@@ -33,8 +33,7 @@ def drifts(end: End, takes: list[str], root: str) -> bool:
 def passes(made: Call, tests: list[list[str]]) -> bool:
     """Whether the call ran one of the tests, each command after it joined by `&&`, and gave
     back no error."""
-    ran = made.action == "run" and not made.failed
-    return ran and any(
+    return not made.failed and any(
         words[: len(t)] == t and all(e == "&&" for e in made.ends[at:-1])
         for at, words in enumerate(made.what)
         for t in tests

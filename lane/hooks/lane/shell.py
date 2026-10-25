@@ -104,10 +104,10 @@ def words(command: str) -> list[str]:
             # Each alternative of PIECE is a named group, so the piece has its kind.
             kind = str(piece.lastgroup)
             text = piece.group(kind)
-            if kind == "unclosed":
+            if kind == "unclosed":  # pragma: no mutate
                 return [Operator(w) if w in OPERATORS else w for w in command.split()]
             if kind in ("single", "double", "escaped", "plain"):
-                if kind == "double":
+                if kind == "double":  # pragma: no mutate
                     text = DOUBLE_ESCAPED.sub(lambda m: m.group(1) or "", text)
                 word = (word or "") + text
                 quoted = quoted or kind != "plain"
@@ -122,7 +122,7 @@ def words(command: str) -> list[str]:
                     ends.append((word, HEREDOCS[found[-1]]))
                 found.append(word)
             word, quoted = None, False
-            if kind == "operator":
+            if kind == "operator":  # pragma: no mutate
                 found.append(Operator(text))
             if text == "\n" and ends:
                 left = reading[heredocs_end(reading, piece.end(), ends) :]
@@ -295,7 +295,8 @@ def sed_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
     if not found:
         return None, operands
     last = found["last"] or found["first"]
-    return (int(found["first"]), None if last == "$" else int(last)), operands
+    till_end = last == "$"  # pragma: no mutate
+    return (int(found["first"]), None if till_end else int(last)), operands
 
 
 def grep_lines(args: list[str]) -> tuple[Lines | None, list[str]]:

@@ -527,9 +527,8 @@ class TestWriteCode(LayTest):
             ("{", True),
         ):
             with self.subTest(marketplace=name, lane_beside=beside):
-                # Given: the plugin in ccpm without lane beside it, or in another marketplace,
-                # its name sorting before ccpm or after, or in one whose manifest names none,
-                # with lane beside it
+                # Given: the plugin in ccpm without lane beside it, or in another marketplace, or
+                # in one whose manifest names none, with lane beside it
                 self.write(os.path.join(self.base, ".claude-plugin", "marketplace.json"), name)
                 if beside:
                     os.makedirs(os.path.join(self.base, "lane", "hooks", "lane"), exist_ok=True)
@@ -539,6 +538,14 @@ class TestWriteCode(LayTest):
                 # Then: lane's code is copied
                 self.assertFalse(os.path.islink(self.code()))
                 self.assertTrue(os.path.exists(os.path.join(self.code(), "VERSION")))
+
+    def test_only_lanes_code_itself_is_lanes_own(self):
+        for place, own in ((helpers.CODE, True), (os.path.dirname(helpers.CODE), False)):
+            with self.subTest(place=place):
+                # Given: lane's code, or the folder it is in
+                # When: whether it is lane's own code is read
+                # Then: it is for lane's code alone
+                self.assertEqual(lay.lanes_own(place), own)
 
     def test_lanes_own_code_is_left_as_it_is_on_lane_itself(self):
         # Given: the plugin is lane itself, its hooks/lane/ the code the layer runs on

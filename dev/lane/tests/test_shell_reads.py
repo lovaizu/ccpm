@@ -77,8 +77,8 @@ class TestHeadAndTail(unittest.TestCase):
 
 class TestSed(unittest.TestCase):
     def test_sed_printing_lines_reads_them(self):
-        # Given: sed -n printing a span of lines, a span to the end, one line, and its script
-        # given by -e
+        # Given: sed -n printing a span of lines, a span to the end, one line, its script given
+        # by -e, and with another option before -n
         # When: what it reads is read
         # Then: it reads those lines
         for command, lines in (
@@ -86,6 +86,7 @@ class TestSed(unittest.TestCase):
             ("sed -n '5,$p' a", (5, None)),
             ("sed -n 3p a", (3, 3)),
             ("sed -n -e '1,9p' a", (1, 9)),
+            ("sed -E -n 2,4p a", (2, 4)),
         ):
             with self.subTest(command=command):
                 self.assertEqual(reads(command), [("a", lines)])
@@ -150,8 +151,7 @@ class TestStatements(unittest.TestCase):
                 self.assertEqual(reads(command), [])
 
     def test_other_commands_read_no_file(self):
-        # Given: commands that print no file they read, sorting before and after the readers, and
-        # a statement of a redirect alone
+        # Given: commands that print no file they read, and a statement of a redirect alone
         # When: what each reads is read
         # Then: none is taken
         for command in ("awk 1 a", "wc -l a", "> a"):

@@ -121,6 +121,15 @@ class TestTakes(unittest.TestCase):
                 # Then: it takes the two it shows and one or more after them
                 self.assertEqual(lanes.fits("two", takes), fits)
 
+    def test_a_lane_naming_a_most_takes_no_more(self):
+        # Given: a lane of one place that names the most things it takes, three
+        three = types.SimpleNamespace(WORDING="Put `<a>`.", MOST=3)
+        for takes, fits in ((["a", "b"], True), (["a", "b", "c"], True), (["a"] * 4, False)):
+            with self.subTest(takes=takes), mock.patch.dict(lanes.LANES, {"three": three}):
+                # When: it is given so many things
+                # Then: it takes one or more, up to three
+                self.assertEqual(lanes.fits("three", takes), fits)
+
 
 class TestSlots(unittest.TestCase):
     def test_each_place_takes_one_thing_in_order(self):
@@ -209,7 +218,7 @@ class TestTaken(helpers.PluginTest):
 
     def test_what_each_lane_of_the_kind_takes_in_the_subagent_is_read_from_its_hooks(self):
         # Given: the subagent's hook laying start_with and hands_off, beside the hooks of
-        # subagents whose names sort before its and after it, and one lane does not read
+        # other subagents, and one lane does not read
         others = [self.COMMAND.replace("changelog-writer", n) for n in ("a", "z")]
         wrong = self.COMMAND.replace("3:hands_off:git", "3:no_lane:git")
         entries = [self.entry(c) for c in (*others, wrong, self.COMMAND)]

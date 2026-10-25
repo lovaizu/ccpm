@@ -49,8 +49,8 @@ class TestChanged(TestAfter):
     def test_a_run_of_another_command_does_not_pass_it(self):
         for command in ("python3 -m pytest", "python3 -m", "ls", "app.py", "ruff check"):
             with self.subTest(command=command):
-                # Given: the output changed, then another command run with no error, sorting
-                # before the test or after it, the test's first words alone, or the output itself
+                # Given: the output changed, then another command run with no error, the test's
+                # first words alone, or the output itself
                 # When: the subagent is about to end
                 # Then: it is a drift
                 self.assertTrue(self.drifts(CHANGE, bash(command)))

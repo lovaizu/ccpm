@@ -66,6 +66,12 @@ class TestDrift(AsPrintedTest):
                 # Then: it is a drift
                 self.assertTrue(self.drifts([printed()], message))
 
+    def test_a_print_opening_with_any_text_is_due(self):
+        # Given: the command run, having printed text opening with a heading
+        # When: the subagent hands on something else
+        # Then: it is a drift
+        self.assertTrue(self.drifts([printed(f"# Lanes\n{OUTPUT}")], "lane:up proposes hands_off."))
+
     def test_a_hand_on_after_one_stopped_drifts_still(self):
         # Given: the command run, then a hand-on of something else, stopped
         calls = [printed(), send("lane:up proposes hands_off.")]
@@ -201,10 +207,12 @@ class TestLetThrough(AsPrintedTest):
         self.assertFalse(self.drifts([printed()], OUTPUT, takes=takes))
 
     def test_a_call_that_hands_nothing_on_is_no_drift(self):
-        # Given: the command run, having printed
-        # When: the subagent runs a command
-        # Then: it is no drift
-        self.assertFalse(self.drifts([printed()], "ls", "Bash"))
+        for tool in ("Bash", "AskUserQuestion"):
+            with self.subTest(tool=tool):
+                # Given: the command run, having printed
+                # When: the subagent runs a command, or calls a tool of no action
+                # Then: it is no drift
+                self.assertFalse(self.drifts([printed()], "ls", tool))
 
     def test_with_no_record_found_any_hand_on_is_no_drift(self):
         # Given: no record of the subagent where Claude Code keeps it
