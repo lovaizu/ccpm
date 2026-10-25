@@ -2,33 +2,53 @@
 and read; for a test that reads git, a repository made once a run and copied into each test's
 folder, git reading no setting of the machine it runs on, since a repository made by git commands
 for every test spends most of the tests' time; and, for a plugin whose lanes lane laid, lane's code
-as the plugin takes it through a link, and each lane its hooks/hooks.json lays."""
+as the plugin takes it through a link, and each lane its hooks/hooks.json lays. What a run of a
+plugin's tests writes is in one folder of its own, `<plugin>/<yyyymmdd>-tests-<random>/` in the
+system's temporary folder, as dev/architecture.md's Where a plugin writes its files has it, the
+plugin's tests being in dev/<plugin>/tests/."""
 
 from __future__ import annotations
 
 import atexit
 import importlib
+import inspect
 import json
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from typing import Any, Callable
 from unittest import mock
 
 # Each repository made this run, by the name it was made under, kept until the run ends.
 MADE: dict[str, str] = {}
-KEPT = os.path.realpath(tempfile.mkdtemp())
-atexit.register(shutil.rmtree, KEPT, True)
+# The folder of this run of each plugin's tests, by the plugin's name.
+RUNS: dict[str, str] = {}
+
+
+def run_folder(file: str) -> str:
+    """The folder of this run of the tests of the plugin the file is a test of, made the first time
+    it is asked for and removed when the run ends."""
+    plugin = os.path.basename(os.path.dirname(os.path.dirname(os.path.abspath(file))))
+    if plugin not in RUNS:
+        top = os.path.join(tempfile.gettempdir(), plugin)
+        os.makedirs(top, exist_ok=True)
+        made = tempfile.mkdtemp(prefix=time.strftime("%Y%m%d-tests-"), dir=top)
+        RUNS[plugin] = os.path.realpath(made)
+        atexit.register(shutil.rmtree, made, True)
+    return RUNS[plugin]
 
 
 class FolderTest(unittest.TestCase):
-    """Each test runs in a temporary folder of its own, `base`, removed after it."""
+    """Each test runs in a temporary folder of its own, `base`, in the run's folder, removed after
+    it."""
 
     def setUp(self) -> None:
-        self.base = os.path.realpath(tempfile.mkdtemp())
+        self.run_folder = run_folder(inspect.getfile(type(self)))
+        self.base = os.path.realpath(tempfile.mkdtemp(dir=self.run_folder))
         self.addCleanup(shutil.rmtree, self.base)
         self.addCleanup(os.chdir, os.getcwd())
         os.chdir(self.base)
@@ -88,7 +108,7 @@ class GitTest(FolderTest):
         """The repository `make` builds where it stands, made the first time a test asks for it by
         this name and copied into `base/<name>` for each test, which then stands in it."""
         if name not in MADE:
-            made = tempfile.mkdtemp(dir=KEPT)
+            made = tempfile.mkdtemp(dir=self.run_folder)
             os.chdir(made)
             make()
             MADE[name] = made
@@ -100,13 +120,15 @@ class GitTest(FolderTest):
 
 def load_hypothesis_profile() -> None:
     """Loads Hypothesis's settings, once a property test has imported it: new inputs on every run,
-    CI included, a failure printing how to reproduce it, nothing kept after the run, and no
-    deadline, as an example's time varies from machine to machine; few inputs while a change is
-    made and many in CI, the dev and ci profiles of Hypothesis's settings guide."""
+    CI included, a failure printing how to reproduce it, nothing kept after the run, its folder in
+    the run's folder of the plugin whose module of property tests loads them, and no deadline, as an
+    example's time varies from machine to machine; few inputs while a change is made and many in
+    CI, the dev and ci profiles of Hypothesis's settings guide."""
     import hypothesis  # pyrefly: ignore[missing-import]
     import hypothesis.configuration  # pyrefly: ignore[missing-import]
 
-    hypothesis.configuration.set_hypothesis_home_dir(tempfile.mkdtemp(dir=KEPT))
+    loading = next(f.filename for f in inspect.stack() if f.filename != __file__)
+    hypothesis.configuration.set_hypothesis_home_dir(tempfile.mkdtemp(dir=run_folder(loading)))
     kept = {"derandomize": False, "database": None, "print_blob": True, "deadline": None}
     hypothesis.settings.register_profile("dev", max_examples=10, **kept)
     hypothesis.settings.register_profile("ci", max_examples=1000, **kept)
