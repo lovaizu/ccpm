@@ -68,12 +68,20 @@ flowchart TB
   subagent ends.
 
   What shows in neither, such as what the subagent weighs, no hook can see.
-- A hook holds, for each of its lanes, the step, the lane and what the lane takes; the lane's
-  sentence is made from them by the lane's wording in [the lanes](../../lane/docs/lanes.md). The layer
-  writes that sentence into the step, and the guard makes the same one when it stops a call.
+- The lanes laid in a plugin are kept in one JSON file of it, `hooks/lanes.json`, in the shape of
+  the proposal, each with its step, the lane and what the lane takes; a hook names only its
+  subagent. The lane's sentence is made from them by the lane's wording in
+  [the lanes](../../lane/docs/lanes.md). The layer writes that sentence into the step, and the guard
+  makes the same one when it tells the subagent.
 
   So the sentence the subagent is told and the one its step says cannot differ, and no sentence is
-  written twice.
+  written twice; the file the building AI approved is the one the guard reads, and a thing taken
+  holds any text, a comma among the rest.
+- Each boundary lane defines is JSON: the lanes a plugin lays, what an adapter is given and gives
+  back, and what the guard answers Claude Code, a decision in Claude Code's JSON output on exit 0.
+
+  Claude Code hands a hook JSON and reads JSON from it, so one form runs through each boundary,
+  read and checked one way.
 - Lanes are laid on subagents alone, and the guard holds each subagent to its own lanes, reading
   what it did before from its own record where a lane rests on it.
 
@@ -91,6 +99,22 @@ flowchart TB
   A subagent's inputs and outputs are most often known only once its run starts, and the JSON it
   starts from is the one place a plugin hands them over, so a lane reads them there, the same way in
   every plugin.
+- A thing given for each run whose value is empty lays nothing on that run.
+
+  The step has nothing to hold the subagent to there, and a lane that stopped it would leave it no
+  way back to its step.
+- Each lane checks only what [the lanes](../../lane/docs/lanes.md) define it to take, and knows no
+  plugin's forms. Where a check reads a plugin's text, it reads it at a port, a point lanes.md
+  defines with the JSON it is given and gives back: the values a subagent started from, the items of
+  an input, the move a script printed. At each port lane reads one form, the one lanes.md gives;
+  a plugin whose text is in another form has an adapter, a command of its own that `lane:up` writes
+  with the cases it must give, which the guard runs at that port in place of lane's reading.
+
+  So lane holds one check per lane however many forms plugins write in, and a new form is a
+  plugin's adapter, never a new version of lane (ports and adapters; a command handed JSON as git's
+  textconv is handed a file). A command, not a module lane imports, keeps lane's code free of the
+  plugin's and the adapter free of lane's code, so `lay.py up` brings lane's copy up without
+  touching it.
 - The guard reads a call in the forms the steps tell and the AI writes, not in every form the shell
   allows.
 
@@ -119,7 +143,8 @@ lane/                          the plugin, installed by Claude Code
 │       ├── posttoolusefailure.py  the same, for a call that comes back failed
 │       ├── guard.py           the lanes a hook's command lays, run on the event
 │       ├── hook.py            what the guard runs on: the event read, each check run
-│       ├── hooks_file.py      a hook's command, written and read, and hooks.json read
+│       ├── hooks_file.py      a hook's command written, hooks.json and lanes.json read
+│       ├── ports.py           each port, read in lane's form or by the plugin's adapter
 │       ├── call.py            a tool call read as one action
 │       ├── shell.py           what a shell command reads and writes
 │       ├── forms.py           the forms in_form holds an output to
@@ -145,6 +170,10 @@ ${CLAUDE_PLUGIN_DATA}/
 ├── agents/                    the subagents' steps
 └── hooks/
     ├── hooks.json             one entry per subagent and event
+    ├── lanes.json             the lanes laid, as approved <JSON>
+    ├── adapters/              the plugin's adapters, written by lane:up
+    │   ├── <port>-<name>.py   one adapter <Python 3>
+    │   └── <port>-<name>.json the cases it must give <JSON>
     └── lane/                  lane's code
 ```
 
@@ -170,12 +199,20 @@ ${CLAUDE_PLUGIN_DATA}/
   The version stays in one place, as [The version](../architecture.md#the-version) has it, and the
   copy's `VERSION` is written from it.
 - A lane's hook is one entry of the plugin's `hooks/hooks.json` for one subagent and event, whose
-  command gives the guard the subagent and, for each lane, its step, the lane and what it takes; the
+  command gives the guard the subagent, whose lanes the guard reads from `hooks/lanes.json`; the
   guard acts only where the event's `agent_type` is that subagent.
 
   A plugin's hooks are read from its `hooks/hooks.json` alone
   ([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)),
   and a tool event's matcher filters by tool, not by agent.
+- An adapter is a Python 3 script run by python3 with its port's JSON on stdin, giving its JSON on
+  stdout, within the hook's time; the layer runs it on each of its cases before writing, and the
+  guard holds what it gives to its port, a failure or a wrong answer let through and told to whoever
+  runs the plugin.
+
+  Python is what lane already needs on the machine; a case is how its port's JSON is checked
+  without a run of the plugin, and an adapter that fails is the plugin's fault, which the subagent
+  cannot put right.
 - Each hook command first checks for Python in the shell, before the guard runs.
 
   With no Python the guard cannot read the event, and the machine may have nothing else.
