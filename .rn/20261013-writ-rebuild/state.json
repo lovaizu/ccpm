@@ -704,6 +704,9 @@
   },
   {
    "fact": "2026-10-25: old sessions' temporary folders removed by name; roles trial run on f87008c in /tmp/turn/20261026-roles-f647oun3 (removed by the trial): generator, first user and learner each in form but one learner ground, a quote of a Write shown as escaped JSON; records.as_text now shows each tool value under its name, text as written (496199a), the learner's three lessons then pass; results.json kept"
+  },
+  {
+   "fact": "2026-10-25: rn given to a background subagent with .rn/20261013-writ-rebuild/build-brief.md (recovered from session 4a0ea0ef's record after its scratchpad was removed) and rulings: rn.py split as audits/rn-product.md's Structure; skills' shared conventions once, read against prompt.md, bounds laid by lay.py; the issue text a work turn makes (Role); `test` from the task's completion criterion; E501 wrapped and selected repo-wide; README/UX only where untrue. Commits made locally, not pushed, at the user's /clear: 58c838f, 7c24cd6, 368ff51, b264b9b, cf17681, 53fcb2b, 883aac2, 24352a7; skills against prompt.md and E501 were still to do"
   }
  ],
  "semantic_gist": [
@@ -808,7 +811,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "rn from build-brief.md (plan.md B-9; rn's 28 lines past 100 columns, then E501 in ruff.toml), shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Decide from the decisions, agreed docs and rules before asking; never change agreed principles, UX or README intent unasked"
+   "next": "on resume: check with `git log origin/writ-rebuild..HEAD` and `git status` what the rn subagent left (it may have been stopped by /clear); read every commit against the audits and rulings (episodic_trace's last fact), finish what is left (skills read against prompt.md, E501 in rn and dev/rn then selected in ruff.toml), run check.sh lane turn rn, properties rn, then push (pre-push runs mutate); then the move trials and the flow trial of rn, shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Decide from the decisions, agreed docs and rules before asking"
   }
  ],
  "uncertainty_signal": [
