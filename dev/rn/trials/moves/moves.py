@@ -1,7 +1,8 @@
 """Tries rn's prompts one move at a time, as a unit test of them: each case, one move the steps of
 rn's skills take, starts from a session state made beforehand by rn's own commands, sends one
 message, or more on the same conversation where the move takes more, and checks by script what
-the move must leave. The real skills and scripts run, on Claude Code's default model, with
+the move must leave. The real skills and scripts run, on Opus, named in each run as trying.claude
+runs Claude Code, with
 everything but them stood in for: turn's turn:up by an agent giving back what the case set, `gh` by
 a script keeping the pull request and the issues in a file, and the user by the case's messages.
 
@@ -38,18 +39,18 @@ sys.path.insert(
 
 import trying
 from cases import CASES, Case, Check
-from place import Place, Seen, Stop
+from place import DEFAULT_KEPT, RULES, Place, Seen, Stop, costed
 
 USAGE = "usage: python3 dev/rn/trials/moves/moves.py <case>... | all [--dry]"
 # The minutes a message waits for the stand-in turn, started in the background.
 WAIT = 30
 # Every move leaves the default branch as it was, as rn pushes to the session's branch alone.
-DEFAULT_KEPT = Check("nothing pushed to the default branch", lambda s: s.default_kept)
+DEFAULT_CHECK = Check(DEFAULT_KEPT, RULES[DEFAULT_KEPT])
 
 
 def checked(seen: Seen, checks: list) -> tuple:
     """Each check's line, `ok` or `FAIL` before what it checks, and whether all held."""
-    held = [(c.holds(seen), c.what) for c in [*checks, DEFAULT_KEPT]]
+    held = [(c.holds(seen), c.what) for c in [*checks, DEFAULT_CHECK]]
     return [f"  {'ok' if h else 'FAIL'} {what}" for h, what in held], all(h for h, _ in held)
 
 
@@ -92,16 +93,13 @@ def tried(name: str, case: Case, folder: str, dry: bool) -> tuple:
         else ("PASSED" if passed else "FAILED")
     )
     report.append(
-        f"{verdict}, minutes {round((time.time() - start) / 60, 1)},"
-        f" cost {round(sum(costs.values()), 2)}"
+        f"{verdict}, minutes {round((time.time() - start) / 60, 1)}, cost {costed(costs)}"
     )
     for k in range(1, len(case.messages) + 1):
         if os.path.exists(os.path.join(folder, f"{k}.jsonl")):
             report.append(f"record: {os.path.join(folder, f'{k}.jsonl')}")
     for s in costs:
-        report += [
-            f"record: {r}" for r in glob.glob(os.path.expanduser(f"~/.claude/projects/*/{s}.jsonl"))
-        ]
+        report += [f"record: {r}" for r in glob.glob(trying.record.conversation(s))]
         report += [f"record: {r}" for r in sorted(trying.agents(s))]
     return report, passed
 

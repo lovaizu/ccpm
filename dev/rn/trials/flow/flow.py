@@ -10,7 +10,7 @@ would, since rn's points come in an order and a number no fixed script can answe
 
 What it shows: whether rn takes the user from asking to the pull request ready, keeping every move
 on its branch and nothing on the default branch, with the changes the user sends back at the
-deliverable sign-off (KR1.1) and what the user had to do (AC2). What it leaves out, on the user's
+deliverable sign-off (KR1.1) and what the user had to do, beside the minutes it took (KR1.2). What it leaves out, on the user's
 decision: the quality of what turn makes, as the stand-in turn makes each work once, without turn's
 rounds or first user, keeping only the decisions the CCS holds.
 
@@ -29,7 +29,8 @@ message; and `summary.json`. The trial removes nothing.
 The trial ends when the session is finished with its pull request ready, when the stand-in says
 stop or cannot end its reply as asked, after 120 messages to rn, when a run of Claude Code fails,
 or on Ctrl-C. It then prints and writes the summary: how it ended; each answer at each sign-off;
-KR1.1, the changes sent back at the deliverable sign-off; AC2, what the stand-in did; the issues
+KR1.1, the changes sent back at the deliverable sign-off; KR1.2, what the stand-in did and its
+minutes; the issues
 kept; whether each message's move kept the rules every move keeps; whether each move of the story
 was reached; the minutes, the costs of rn and of the stand-in user apart; the records to judge the
 run by; and the verdict, PASSED or FAILED.
@@ -57,14 +58,15 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(TRIALS)), "lane"
 
 import cases
 import trying
-from place import Place, Seen
+from place import RULES, Place, Seen, costed, kept_learnings, steered
 
 USAGE = "usage: python3 dev/rn/trials/flow/flow.py [--dry]"
 # The minutes a message to rn waits for the stand-in turn, started in the background.
 WAIT = 30
+# The messages sent to rn at most, past which a run is taken to go round rather than on.
 LIMIT = 120
 KINDS = ("answer", "approve", "feedback", "stop")
-SIGNOFFS = ("plan", "design", "deliverable")
+SIGNOFFS = cases.steering.SIGNOFFS
 AGAIN = (
     "Your last reply does not end as asked: {}. Reply again, ending with the one line of JSON in"
     " exactly the form given, with nothing after it."
@@ -102,28 +104,19 @@ def stood(seen: Seen) -> dict[str, Any]:
     """Where the session stands after a move: the steering's stage and sign-off waiting, the
     session's learnings counted, and the pull request the stand-in gh keeps, none before rn opens
     it."""
-    steering = cases.steered(seen)
+    steering = steered(seen)
     keys = steering.keys if steering else {}
     return {
         "stage": keys.get("stage"),
         "signoff": keys.get("signoff"),
-        "learnings": len(cases.kept_learnings(seen)) if steering else 0,
+        "learnings": len(kept_learnings(seen)) if steering else 0,
         "pr": (seen.gh["prs"] or [None])[0],
     }
 
 
 def rules(seen: Seen) -> dict[str, bool]:
     """Whether the move kept what every move keeps, as the move trials check after each."""
-    return {
-        "nothing pushed to the default branch": seen.default_kept,
-        "every change committed and the branch pushed": seen.clean and seen.pushed,
-    }
-
-
-def costed(costs: dict[str, float]) -> float:
-    """The cost of the conversations, each by the last cost it reported, as a conversation gone on
-    with reports the cost of the whole of it so far."""
-    return round(sum(costs.values()), 2)
+    return {rule: holds(seen) for rule, holds in RULES.items()}
 
 
 class Trial:
@@ -146,7 +139,7 @@ class Trial:
         """Makes the place as a move trial's case folder, with no replies set, turn:up the agent
         that makes each work itself, and the stand-in's empty folder."""
         self.p.make({})
-        turn = self.p.plugins[0]
+        turn = self.p.turn
         shutil.copyfile(os.path.join(HERE, "up.md"), os.path.join(turn, "agents", "up.md"))
         shutil.copyfile(os.path.join(HERE, "write.py"), os.path.join(turn, "scripts", "write.py"))
         os.makedirs(self.user)
@@ -311,27 +304,29 @@ class Trial:
         sessions = [*self.costs["rn"], *self.costs["user"]]
         records = sorted(glob.glob(os.path.join(self.place, "*.jsonl")))
         for s in sessions:
-            records += glob.glob(os.path.expanduser(f"~/.claude/projects/*/{s}.jsonl"))
+            records += glob.glob(trying.record.conversation(s))
             records += sorted(trying.agents(s))
         return {
             "verdict": "PASSED" if passed else "FAILED",
             "ended": ended,
             "signoffs": signoffs,
             "KR1.1": {"changes at the deliverable sign-off": len(late), "changes": late},
-            "AC2": {
+            # What the user spends from asking to the purpose achieved, counted by what the
+            # stand-in did, as an AI's minutes are not a person's, beside the minutes themselves.
+            "KR1.2": {
                 "points answered": len([a for a in self.answers if a["kind"] == "answer"]),
                 "proposals read": len(given),
                 "changes sent": {s: sum(len(a["changes"]) for a in signoffs[s]) for s in SIGNOFFS},
                 "fresh conversations": len([a for a in self.answers if a["fresh"]]),
+                "minutes": {
+                    "whole": round((time.time() - self.start) / 60, 1),
+                    "rn": round(sum(e.get("minutes", 0) for e in sent), 1),
+                    "stand-in": round(sum(e["minutes"] for e in self.transcript["user"]), 1),
+                },
             },
             "issues": issues,
             "rules broken": broken,
             "reached": reached,
-            "minutes": {
-                "whole": round((time.time() - self.start) / 60, 1),
-                "rn": round(sum(e.get("minutes", 0) for e in sent), 1),
-                "stand-in": round(sum(e["minutes"] for e in self.transcript["user"]), 1),
-            },
             "cost": {"rn": costed(self.costs["rn"]), "stand-in": costed(self.costs["user"])},
             "records": records,
         }

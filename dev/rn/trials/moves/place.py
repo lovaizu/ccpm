@@ -10,10 +10,16 @@ import os
 import re
 import shutil
 import subprocess
-from typing import Any, NamedTuple
+import sys
+from typing import Any, Callable, NamedTuple
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
+# rn's own names of the session's record, read from its scripts, which the trial runs.
+sys.path.insert(0, os.path.join(ROOT, "rn", "scripts"))
+import session
+import steering
+
 # The repository the session runs in, on its default branch before any session: a small project
 # and the user's own checklist for a note, a kind of work of its own.
 DEFAULT = "main"
@@ -60,21 +66,40 @@ Why: a line that says what to do with nothing to do it with leaves the contribut
 """,
 }
 # The steering of a session, among the files of the repository's record.
-STEERING = re.compile(r"\.rn/[0-9]{8}-[a-z0-9-]+/steering\.md")
-CALL = re.compile(r"([0-9]{4})-ccs\.json")
+STEERING = re.compile(
+    rf"{re.escape(session.RECORD)}/{session.SESSION_NAME.pattern}/{re.escape(session.STEERING)}"
+)
+# What every move keeps, which the move trials check after each move and the flow trial after each
+# message.
+DEFAULT_KEPT = "nothing pushed to the default branch"
+ALL_KEPT = "every change committed and the branch pushed"
+RULES: dict[str, Callable[[Any], bool]] = {
+    DEFAULT_KEPT: lambda seen: seen.default_kept,
+    ALL_KEPT: lambda seen: seen.clean and seen.pushed,
+}
 
 
 class Stop(Exception):
     """A command of the case's state-making that failed, with what it printed."""
 
 
+class Called(NamedTuple):
+    """A call to turn as the last commit holds it: its number, the work it is on, whether turn
+    returned it, and how many decisions its CCS holds."""
+
+    number: str
+    work: str
+    returned: bool
+    decisions: int
+
+
 class Seen(NamedTuple):
     """What a move left: the reply, and each text the orchestrator said on the way; the commits
     made since the move began, whether the branch is pushed and every change committed, whether the
     default branch on the origin is as it was; the steering's path and text as the last commit
-    holds them, each call to turn as `(number, work, returned, decisions)`, and the text of each
-    other file it holds by its path, the session's learnings and research among them, the calls'
-    files left out; and what the stand-in gh keeps."""
+    holds them, each call to turn, and the text of each other file it holds by its path, the
+    session's learnings and research among them, the calls' files left out; and what the stand-in
+    gh keeps."""
 
     reply: str
     said: list
@@ -82,11 +107,37 @@ class Seen(NamedTuple):
     pushed: bool
     clean: bool
     default_kept: bool
-    steering: str
-    text: str
-    calls: list
+    steering_path: str
+    steering_text: str
+    calls: list[Called]
     texts: dict
     gh: dict
+
+
+def steered(seen: Seen) -> steering.Steering | None:
+    """The steering as the last commit holds it, where it holds its form."""
+    if not seen.steering_text or steering.out_of_form(seen.steering_text):
+        return None
+    return steering.parsed(seen.steering_text)
+
+
+def kept_learnings(seen: Seen) -> list:
+    """Each learning of the session's learnings as the last commit holds them, none before any is
+    made."""
+    path = session.learnings_path(os.path.dirname(seen.steering_path))
+    return [x for x in seen.texts.get(path, "").splitlines() if session.LEARNING.fullmatch(x)]
+
+
+def costed(costs: dict[str, float]) -> float:
+    """The cost of the conversations, each by the last cost it reported, as a conversation gone on
+    with reports the cost of the whole of it so far."""
+    return round(sum(costs.values()), 2)
+
+
+def session_call(path: str) -> str | None:
+    """The number of the call to turn whose CCS the path is, None where it is no CCS of a call."""
+    named = session.CALL.fullmatch(os.path.basename(path))
+    return named[1] if named and named[2] == session.CCS else None
 
 
 class Place:
@@ -95,7 +146,9 @@ class Place:
     def __init__(self, folder: str) -> None:
         self.folder = folder
         self.repo = os.path.join(folder, "repo")
-        self.plugins = [os.path.join(folder, "turn"), os.path.join(folder, "rn")]
+        self.turn = os.path.join(folder, "turn")
+        self.rn_copy = os.path.join(folder, "rn")
+        self.plugins = [self.turn, self.rn_copy]
         path = f"{os.path.join(folder, 'bin')}{os.pathsep}{os.environ['PATH']}"
         self.env = {"PATH": path}
         self.default = ""
@@ -106,9 +159,9 @@ class Place:
         repository at the seed, and the stand-in turn's replies, set by the case."""
         os.makedirs(self.folder, exist_ok=True)
         ignored = shutil.ignore_patterns("__pycache__")
-        for name, copy in zip(("turn", "rn"), self.plugins):
+        for name, copy in (("turn", self.turn), ("rn", self.rn_copy)):
             shutil.copytree(os.path.join(ROOT, name), copy, ignore=ignored)
-        turn = self.plugins[0]
+        turn = self.turn
         shutil.copyfile(os.path.join(HERE, "up.md"), os.path.join(turn, "agents", "up.md"))
         shutil.copyfile(os.path.join(HERE, "stand.py"), os.path.join(turn, "scripts", "stand.py"))
         os.makedirs(os.path.join(turn, "stand"))
@@ -177,11 +230,12 @@ class Place:
 
     def rn(self, *args: str) -> str:
         """What the copy of rn.py printed for the subcommand."""
-        return self.run("python3", os.path.join(self.plugins[1], "scripts", "rn.py"), *args)
+        return self.run("python3", os.path.join(self.rn_copy, "scripts", "rn.py"), *args)
 
     def turned(self, called: str, made: dict) -> None:
-        """Has the stand-in turn return the call rn.py ccs printed with the made given."""
-        stand = os.path.join(self.plugins[0], "scripts", "stand.py")
+        """Has the stand-in turn return the call, the first line rn.py ccs printed, with the made
+        given."""
+        stand = os.path.join(self.turn, "scripts", "stand.py")
         self.run("python3", stand, called, json.dumps(made))
 
     def head(self) -> str:
@@ -194,20 +248,22 @@ class Place:
         branch = self.git("branch", "--show-current")
         remote = self.git("ls-remote", "origin", f"refs/heads/{branch}").split("\t")[0]
         files = self.git("ls-tree", "-r", "--name-only", "HEAD").splitlines()
-        steering = next((p for p in files if STEERING.fullmatch(p)), "")
-        text = self.git("show", f"HEAD:{steering}") + "\n" if steering else ""
-        session = os.path.dirname(steering) + "/" if steering else None
+        steering_path = next((p for p in files if STEERING.fullmatch(p)), "")
+        text = self.git("show", f"HEAD:{steering_path}") + "\n" if steering_path else ""
+        folder = os.path.dirname(steering_path) + "/" if steering_path else None
         calls, texts = [], {}
         for path in files:
-            number = CALL.fullmatch(os.path.basename(path))
-            if session and number and path.startswith(session):
+            number = session_call(path)
+            if folder and number and path.startswith(folder):
                 ccs = json.loads(self.git("show", f"HEAD:{path}"))
                 kept = [e for part in ccs.values() for e in part]
-                work = next((e["work"] for e in kept if "work" in e), "")
-                result = path.replace("-ccs.json", "-result.json")
-                decided = len([e for e in kept if "decision" in e])
-                calls.append((number[1], work, result in files, decided))
-            elif path != steering and not (session and path.startswith(f"{session}turn/")):
+                work = next((e[session.WORK] for e in kept if session.WORK in e), "")
+                result = session.call_path(os.path.dirname(steering_path), number, session.RESULT)
+                decided = len([e for e in kept if session.DECISION in e])
+                calls.append(Called(number, work, result in files, decided))
+            elif path != steering_path and not (
+                folder and path.startswith(f"{folder}{session.TURN}/")
+            ):
                 texts[path] = self.git("show", f"HEAD:{path}")
         said = []
         if record:
@@ -229,7 +285,7 @@ class Place:
             remote == self.head(),
             not self.git("status", "--porcelain"),
             self.git("ls-remote", "origin", f"refs/heads/{DEFAULT}").split("\t")[0] == self.default,
-            steering,
+            steering_path,
             text,
             calls,
             texts,

@@ -32,7 +32,8 @@ import call
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPLIES = os.path.join(os.path.dirname(HERE), "stand", "replies.json")
-CHECKED = "Read the work at each Good's lines against its item."
+# What turn's learner says it checked of the run, as its result gives it.
+CHECKED = "Read the record of every agent of the run, each move against its role's steps."
 USAGE = "usage: stand.py '<call>' ['<made>']"
 
 
@@ -113,9 +114,10 @@ def next_made(work: str) -> dict[str, Any]:
 def told(run: dict[str, Any], reply: dict[str, Any]) -> str:
     """What the stand-in agent is given for the run: the line turn sends the main conversation and
     the reply turn ends with, as one line of JSON."""
+    count = len(run["items"])
     line = (
-        f"turn: Next, turn:up will make {', '.join(run['work'])} and give each of its"
-        f" {len(run['items'])} items its Good, round 1."
+        "turn: Next, turn:first-user will use the work in the receiver's place and give each item's"
+        f" Good, of {', '.join(run['work'])}, for {count} item{'' if count == 1 else 's'}, round 1."
     )
     return json.dumps({"line": line, "reply": reply}, ensure_ascii=False)
 

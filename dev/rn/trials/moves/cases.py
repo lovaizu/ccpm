@@ -18,12 +18,14 @@ import sys
 import uuid
 from typing import Callable, NamedTuple
 
-from place import ROOT, SEED, Place, Seen
+from place import ALL_KEPT, ROOT, RULES, SEED, Place, Seen, kept_learnings, steered
 
 sys.path.insert(0, os.path.join(ROOT, "rn", "scripts"))
 import record
 import session
 import steering
+
+import rn
 
 # The user's words, in the conversation language their instructions set.
 REQUEST = "/rn:up README に新しいコントリビューター向けの挨拶を一行足して"
@@ -45,30 +47,15 @@ PR = "https://github.com/trial/demo/pull/1"
 SESSION = f"{session.RECORD}/{datetime.date.today():%Y%m%d}-{SLUG}"
 RESEARCH = f"{SESSION}/place.md"
 
-# What rn.py ccs is given for each work, as the steps of /rn:up give it.
-PLAN_CCS = [
-    "ccs",
-    "plan",
-    "--kind",
-    "plan",
-    "--receiver",
-    (
-        "the user at the plan sign-off, approving what the finished work will do and why, and rn's"
-        " orchestrator in any later conversation, carrying the work on without asking them again"
-    ),
-    "--use",
-    "approving the goal and the acceptance criteria, then carrying each later work to them",
-    "--has",
-    ".",
-]
-
-
+# What rn.py ccs is given for each work, as the steps of /rn:up give it: nothing more for the works
+# rn makes itself, the plan, the learnings and the finished work; for a task's work, the receiver,
+# their use and what they have, as rn.py takes the path and the kind from the action.
+PLAN_CCS = ["ccs", "plan"]
+LEARNINGS_CCS = ["ccs", "learnings"]
+DELIVERABLE_CCS = ["ccs", "deliverable"]
 RESEARCH_CCS = [
     "ccs",
-    "t1",
-    RESEARCH,
-    "--kind",
-    "research",
+    "t1.1",
     "--receiver",
     "the user deciding where the greeting goes, and the maker of each later work it is handed to",
     "--use",
@@ -79,14 +66,11 @@ RESEARCH_CCS = [
 
 
 def note_ccs(work: str, path: str, has: str) -> list:
-    """What rn.py ccs is given for a task's work of the kind note, its reader as the note
+    """What rn.py ccs is given for a task's work of the kind note at the path, its reader as the note
     checklist's opening names them, with the earlier output it is made from."""
     return [
         "ccs",
         work,
-        path,
-        "--kind",
-        "note",
         "--receiver",
         f"a contributor who opens {path}",
         "--use",
@@ -96,57 +80,19 @@ def note_ccs(work: str, path: str, has: str) -> list:
     ]
 
 
-DELIVERABLE_CCS = [
-    "ccs",
-    "deliverable",
-    "--kind",
-    "deliverable",
-    "--receiver",
-    "the user at the deliverable sign-off",
-    "--use",
-    "checking that the finished work does each acceptance criterion",
-    "--has",
-    ".",
-]
-
-
-def learnings_ccs(records: list) -> list:
-    """What rn.py ccs is given for the learnings, as /rn:ty's step 3 gives it."""
-    has = [arg for path in records for arg in ("--has", path)]
-    return [
-        "ccs",
-        "learnings",
-        "--kind",
-        "learnings",
-        "--receiver",
-        "the user deciding each learning once the finished work is approved",
-        "--use",
-        (
-            "deciding where each learning goes: their checklists, an issue to rn's makers, both, or"
-            " neither"
-        ),
-        *has,
-    ]
-
-
-# Each Next the moves before a case keep, as the steps of /rn:up word it.
-NEXT_PURPOSE = "Step 6 of /rn:up on plan: hear the purpose and what shows it done"
-NEXT_CALL = "Step 6 of /rn:up on plan: have the plan made, step 4, as no point is left to hear"
-NEXT_T1 = "Step 5 of /rn:up on t1: action 1, have turn research where the greeting goes"
-NEXT_T1_2 = "Step 5 of /rn:up on t1: action 2, confirm the greeting's place with the user"
-NEXT_T1_WEIGH = "Step 5 of /rn:up on t1: weigh what it brought"
-NEXT_PLAN_SIGNOFF = "Step 9 of /rn:up on plan: stop at the plan sign-off"
-NEXT_FEEDBACK = "Step 10 of /rn:up on plan: find the point behind the feedback"
-NEXT_DOCUMENTS = "Step 7 of /rn:up on plan: hear which documents the purpose needs"
-NEXT_T2 = "Step 5 of /rn:up on t2: action 1, confirm the greeting's words with the user"
-NEXT_T2_2 = "Step 5 of /rn:up on t2: action 2, have turn make docs/greeting.md"
-NEXT_DESIGN_SIGNOFF = "Step 9 of /rn:up on design: stop at the design sign-off"
-NEXT_BUILD = "Step 8 of /rn:up on plan: make the tasks that build the finished work"
-NEXT_T3 = "Step 5 of /rn:up on t3: action 1, confirm the line docs/greeting.md gives"
-NEXT_T3_2 = "Step 5 of /rn:up on t3: action 2, have turn make the change to README.md"
-NEXT_FINISHED = "Step 8 of /rn:up on deliverable: have the finished work used"
-NEXT_DELIVERABLE_SIGNOFF = "Step 9 of /rn:up on deliverable: stop at the deliverable sign-off"
-NEXT_LEARNINGS = "Step 11 of /rn:up: put each learning to the user"
+# Each Next the moves before a case keep, as the steps of /rn:up word it, those rn sets itself
+# taken from rn.py.
+NEXT_CALL = "Step 8 of /rn:up on plan: have the plan made, step 3, as no point is left to hear"
+NEXT_T1 = "Step 4 of /rn:up on T1: action 1, have turn research where the greeting goes"
+NEXT_T1_2 = "Step 4 of /rn:up on T1: action 2, confirm the greeting's place with the user"
+NEXT_T1_WEIGH = "Step 4 of /rn:up on T1: weigh what it brought"
+NEXT_PLAN_SIGNOFF = "Step 5 of /rn:up on plan: stop at the plan sign-off"
+NEXT_T2 = "Step 4 of /rn:up on T2: action 1, confirm the greeting's words with the user"
+NEXT_T2_2 = "Step 4 of /rn:up on T2: action 2, have turn make docs/greeting.md"
+NEXT_DESIGN_SIGNOFF = "Step 5 of /rn:up on design: stop at the design sign-off"
+NEXT_T3 = "Step 4 of /rn:up on T3: action 1, confirm the line docs/greeting.md gives"
+NEXT_T3_2 = "Step 4 of /rn:up on T3: action 2, have turn make the change to README.md"
+NEXT_DELIVERABLE_SIGNOFF = "Step 5 of /rn:up on deliverable: stop at the deliverable sign-off"
 NEXT_L2 = "Step 11 of /rn:up on L2: put it to the user"
 
 # The plan, as turn makes it at each stage: the goal, the criteria and the tasks.
@@ -184,7 +130,8 @@ T3 = """- T3: README.md greeting new contributors. Serves AC1 and AC2.
 
   - [ ] 1. Confirm with the user the line docs/greeting.md gives and its place. The orchestrator, with the user.
   - [ ] 2. Make the change from docs/greeting.md, `README.md` as a note work. turn."""
-TASKS = "## Tasks.."
+# The lines from `## Tasks` to the part's end, as a Good's lines name them in stand.py's marks.
+TASKS_LINES = "## Tasks.."
 # What the items of the tasks say of a plan with none, as the stage needs none.
 NO_TASK = "No task is left: the criteria rest on nothing the session has yet to find out"
 
@@ -196,7 +143,7 @@ def plan(goal: str, criteria: list, tasks: list, said: dict) -> dict:
     listed = ["## Tasks", *tasks] if tasks else []
     part = "\n\n".join([f"# {TITLE}", goal, "## Acceptance criteria", "\n".join(criteria), *listed])
     whole = "whole"
-    at = [TASKS] if tasks else whole
+    at = [TASKS_LINES] if tasks else whole
     ids = [c.split(":")[0][2:] for c in criteria]
     goods = {
         "F-1": (
@@ -222,16 +169,23 @@ def plan(goal: str, criteria: list, tasks: list, said: dict) -> dict:
             else NO_TASK,
             at,
         ),
-        "B-8": (said["ground"] if tasks else NO_TASK, at),
-        "B-5": (said["stage"], at),
+        "B-5": (said["ground"] if tasks else NO_TASK, at),
         "B-6": (
+            "No task's check is made in the session, each being a choice or a reading, so none is"
+            " made first"
+            if tasks
+            else NO_TASK,
+            at,
+        ),
+        "B-7": (said["stage"], at),
+        "B-8": (
             (
                 "Each line is the goal, a criterion or a task, used by the user at the sign-off or by"
                 " the orchestrator later; how each point was reached is left to the commit messages"
             ),
             whole,
         ),
-        "B-7": (
+        "B-9": (
             (
                 "The goal is G1, each criterion and task keeps one ID, and each task serves only IDs"
                 " the plan holds"
@@ -347,8 +301,8 @@ def learnt(lines: list, whole: str) -> dict:
     goods = {
         "F-1": (
             (
-                "Under the heading rn cut, each learning is `- L<n>:` saying what happened with"
-                " the words it rests on, then where it would make later work better"
+                "Each learning is `- L<n>:` saying what happened with the words it rests on, then"
+                " where it would make later work better, under no heading, as rn cut none"
             ),
             "whole",
         ),
@@ -362,7 +316,7 @@ def learnt(lines: list, whole: str) -> dict:
             i: ("Nothing in the stretch fell short, so no learning is given", "whole")
             for i in goods
         }
-    part = "\n\n".join(["## Learnings", "\n".join(lines)]).strip() + "\n"
+    part = "".join(f"{line}\n" for line in lines)
     return {
         "part": part,
         "goods": {"learnings.md": {i: {"good": g, "at": at} for i, (g, at) in goods.items()}},
@@ -447,6 +401,48 @@ RESEARCH_PLACE = {
         }
     },
 }
+# The issue turn makes of L1 once the user takes it for rn's makers, in the form of rn's issue
+# checklist.
+ISSUE = f"{SESSION}/issue-1.md"
+ISSUE_TEXT = f"""# rn: a line's words are settled twice for two files
+
+## What happened
+
+The greeting's words were settled for docs/greeting.md and then again for README.md, kept as
+"{LINE_QUOTE}" in the commit of T3.1.
+
+## Why it matters
+
+A user answers the same point twice, once for each file the line goes into.
+
+## What it should be
+
+rn's plan checklist asks, of a task that copies lines a document settled, that its action names
+the document they are taken from, so their words are not asked again.
+
+## Seen in
+
+rn 0.9.0
+"""
+ISSUE_MADE = {
+    "files": {ISSUE: ISSUE_TEXT},
+    "goods": {
+        "issue.md": {
+            "F-1": {"good": "The issue follows the template, its title first", "at": "whole"},
+            "B-1": {
+                "good": "The title and What it should be name the change to rn's plan checklist,"
+                " and Why it matters what a user loses",
+                "at": ["# rn:", "## What it should be..## Seen in"],
+            },
+            "B-2": {
+                "good": "What happened quotes the learning's words and holds nothing more of the"
+                " user's work",
+                "at": ["## What happened..## Why it matters"],
+            },
+            "B-3": {"good": "It holds one need, met by one change of rn's", "at": "whole"},
+        }
+    },
+}
 FINISHED = {
     "goods": {
         "deliverable.md": {
@@ -502,24 +498,24 @@ NOTE_CHECKLIST = {
 }
 
 
-# The moves before a case, each kept by rn's commands as the steps of rn's skills keep them, each
-# building on the one before; the stand-in turn returning each call.
 def number(called: str) -> str:
     """The number of the call rn.py ccs printed."""
     return os.path.basename(json.loads(called)["ccs"])[:4]
 
 
 def made(p: Place, args: list, given: dict) -> str:
-    """The work's CCS written and the call returned by the stand-in turn with what is given; gives
-    the call's number."""
-    called = p.rn(*args)
+    """The work's CCS written and the call, the first line rn.py ccs printed, returned by the
+    stand-in turn with what is given; gives the call's number."""
+    called = p.rn(*args).splitlines()[0]
     p.turned(called, given)
     return number(called)
 
 
-def state(p: Place, next_step: str, message: str, *more: str) -> None:
-    """rn.py state, keeping the move with Next and the options given."""
-    p.rn("state", "--next", next_step, *more, "--message", message)
+def state(p: Place, next_step: str | None, message: str, *more: str) -> None:
+    """rn.py state, keeping the move with the options given, and with Next where one is given, as
+    rn keeps Next, or sets it at a stage's end, where none is."""
+    given = [] if next_step is None else ["--next", next_step]
+    p.rn("state", *given, *more, "--message", message)
 
 
 def decide(p: Place, work: str, title: str, says: str, message: str) -> None:
@@ -527,6 +523,8 @@ def decide(p: Place, work: str, title: str, says: str, message: str) -> None:
     p.rn("decide", work, "--title", title, "--says", says, "--message", message)
 
 
+# The moves before a case, each kept by rn's commands as the steps of rn's skills keep them, each
+# building on the one before; the stand-in turn returning each call.
 def nothing(p: Place) -> None:
     """No session: the repository as it is on its default branch."""
 
@@ -543,8 +541,6 @@ def started(p: Place) -> None:
         "English",
         "--conversation-language",
         "Japanese",
-        "--next",
-        NEXT_PURPOSE,
         "--message",
         "Start the session: the user asked to add a line greeting new contributors to the README;"
         " English for the repository, Japanese for the conversation, as their instructions set",
@@ -658,9 +654,9 @@ def typed(p: Place, words: str) -> None:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
-def answered(p: Place, answer: str, next_step: str, opened: list, given: dict) -> None:
-    """The user's answer at the sign-off typed and kept, and the stretch's learnings made and put
-    back."""
+def answered(p: Place, answer: str, opened: list, given: dict) -> None:
+    """The user's answer at the sign-off typed and kept, Next as rn sets it, and the stretch's
+    learnings made and put back."""
     more = [arg for point in opened for arg in ("--open", point)]
     if answer == "approved":
         message = "The user approved the sign-off with /rn:ty"
@@ -668,23 +664,23 @@ def answered(p: Place, answer: str, next_step: str, opened: list, given: dict) -
     else:
         message = f"The user sent the sign-off back with /rn:gm: {opened[0]}"
         typed(p, f"/rn:gm {opened[0]}")
-    p.rn("answer", answer, "--next", next_step, *more, "--message", message)
-    put = made(p, learnings_ccs(json.loads(p.rn("records"))), given)
-    state(p, next_step, "The stretch's learnings kept", "--put", put, *more)
+    p.rn("answer", answer, *more, "--message", message)
+    put = made(p, LEARNINGS_CCS, given)
+    state(p, None, "The stretch's learnings kept", "--put", put, *more)
 
 
 def fed_back(p: Place) -> None:
     """The plan sign-off answered with the feedback, kept in Open, and the stretch's learnings
     put back, Next step 10."""
     plan_signoff(p)
-    answered(p, "feedback", NEXT_FEEDBACK, [FEEDBACK], LEARNT_FEEDBACK)
+    answered(p, "feedback", [FEEDBACK], LEARNT_FEEDBACK)
 
 
 def plan_approved(p: Place) -> None:
     """The plan approved, the design stage begun, and the stretch's learning put back, Next
     step 7."""
     plan_signoff(p)
-    answered(p, "approved", NEXT_DOCUMENTS, [], LEARNT_PLACE)
+    answered(p, "approved", [], LEARNT_PLACE)
 
 
 def t2_worded(p: Place) -> None:
@@ -700,7 +696,7 @@ def t2_worded(p: Place) -> None:
     )
     put = made(p, PLAN_CCS, PLAN_DESIGN)
     state(p, NEXT_T2, "The plan made again: T2 writes docs/greeting.md", "--put", put)
-    decide(p, "t2", "Words", LINE, "T2.1: the user chose the greeting's words")
+    decide(p, "t2.2", "Words", LINE, "T2.1: the user chose the greeting's words")
     state(p, NEXT_T2_2, "T2.1 done: the words settled", "--done", "T2.1")
 
 
@@ -708,16 +704,16 @@ def design_approved(p: Place) -> None:
     """T2 done and out of the steering, changing nothing of the plan, the design approved with no
     learning, the plan made again with T3, and T3's action 1 done, Next T3's action 2."""
     t2_worded(p)
-    made(p, note_ccs("t2", "docs/greeting.md", "README.md"), NOTE_GREETING)
+    made(p, note_ccs("t2.2", "docs/greeting.md", "README.md"), NOTE_GREETING)
     message = "T2.2 done: docs/greeting.md made, changing nothing of the plan"
     state(p, NEXT_DESIGN_SIGNOFF, message, "--done", "T2.2")
     p.rn("proposal", "design")
-    answered(p, "approved", NEXT_BUILD, [], LEARNT_NONE)
+    answered(p, "approved", [], LEARNT_NONE)
     put = made(p, PLAN_CCS, PLAN_BUILD)
     state(p, NEXT_T3, "The plan made again: T3 adds the line to README.md", "--put", put)
     decide(
         p,
-        "t3",
+        "t3.2",
         "Line",
         "the greeting line as docs/greeting.md gives it, right under the README's title",
         f'T3.1: the user confirmed "{LINE_QUOTE}"',
@@ -729,9 +725,9 @@ def deliverable_signoff(p: Place) -> None:
     """T3 done and out of the steering, changing nothing of the plan, no task left, the finished
     work used, and the deliverable sign-off waiting."""
     design_approved(p)
-    made(p, note_ccs("t3", "README.md", "docs/greeting.md"), NOTE_README)
+    made(p, note_ccs("t3.2", "README.md", "docs/greeting.md"), NOTE_README)
     message = "T3.2 done: README.md greets new contributors; no task is left"
-    state(p, NEXT_FINISHED, message, "--done", "T3.2", "--stage", "deliverable")
+    state(p, None, message, "--done", "T3.2", "--stage", "deliverable")
     made(p, DELIVERABLE_CCS, FINISHED)
     state(p, NEXT_DELIVERABLE_SIGNOFF, "The finished work used: AC1 and AC2 done")
     p.rn("proposal", "deliverable")
@@ -741,12 +737,14 @@ def learnings_due(p: Place) -> None:
     """The finished work approved and the stretch's learning put back, the two learnings
     to put to the user, Next step 11."""
     deliverable_signoff(p)
-    answered(p, "approved", NEXT_LEARNINGS, [], LEARNT_TWICE)
+    answered(p, "approved", [], LEARNT_TWICE)
 
 
 def l1_answered(p: Place) -> None:
-    """L1 answered, taken for an issue not yet sent, kept in Open, Next L2."""
+    """L1 answered, taken for an issue not yet sent, kept as the decision of the issue's work and in
+    Open, Next L2."""
     learnings_due(p)
+    decide(p, "issue-1", "Learning", L_TWICE[len("- L1: ") :], "L1: for an issue to rn's makers")
     state(p, NEXT_L2, "L1: the user chose an issue to lovaizu/ccpm alone", "--open", L1_OPEN)
 
 
@@ -758,14 +756,9 @@ class Check(NamedTuple):
     holds: Callable[[Seen], bool]
 
 
-def steered(seen: Seen) -> steering.Steering | None:
-    """The steering as the last commit holds it, where it holds its form."""
-    if not seen.text or steering.out_of_form(seen.text):
-        return None
-    return steering.parsed(seen.text)
-
-
 def front(stage: str, signoff: str) -> Check:
+    """The check that the steering is at the stage, waiting at the sign-off."""
+
     def holds(seen: Seen) -> bool:
         s = steered(seen)
         return s is not None and (s.keys["stage"], s.keys["signoff"]) == (stage, signoff)
@@ -774,10 +767,14 @@ def front(stage: str, signoff: str) -> Check:
 
 
 def next_has(words: str) -> Check:
+    """The check that the steering's Next holds the words."""
+
     return Check(f"Next holds `{words}`", lambda s: words in getattr(steered(s), "next", ""))
 
 
 def open_has(words: str, held: bool = True) -> Check:
+    """The check that the steering's Open holds the words, or no longer does."""
+
     def holds(seen: Seen) -> bool:
         s = steered(seen)
         return s is not None and (words in "\n".join(s.open)) == held
@@ -786,6 +783,8 @@ def open_has(words: str, held: bool = True) -> Check:
 
 
 def open_none(nothing: bool = True) -> Check:
+    """The check that the steering's Open is `None.`, or holds a point."""
+
     def holds(seen: Seen) -> bool:
         s = steered(seen)
         return s is not None and (s.open == [steering.NOTHING_OPEN]) == nothing
@@ -794,6 +793,8 @@ def open_none(nothing: bool = True) -> Check:
 
 
 def plan_has(words: str, held: bool = True) -> Check:
+    """The check that the steering's plan holds the words, or does not."""
+
     def holds(seen: Seen) -> bool:
         s = steered(seen)
         return s is not None and (words in "\n".join(s.plan)) == held
@@ -802,6 +803,8 @@ def plan_has(words: str, held: bool = True) -> Check:
 
 
 def ticked(action: str) -> Check:
+    """The check that the action, `T<n>.<k>`, is ticked."""
+
     def holds(seen: Seen) -> bool:
         s = steered(seen)
         task, _, number = action.partition(".")
@@ -815,6 +818,8 @@ def ticked(action: str) -> Check:
 
 
 def done(task: str) -> Check:
+    """The check that the task is done, out of the steering."""
+
     def holds(seen: Seen) -> bool:
         s = steered(seen)
         return s is not None and all(t.id != task for t in steering.tasks_of(s.plan))
@@ -822,36 +827,37 @@ def done(task: str) -> Check:
     return Check(f"{task} done, out of the steering", holds)
 
 
-def kept_learnings(seen: Seen) -> list:
-    """Each learning of the session's learnings as the last commit holds them, none before any is
-    made."""
-    path = session.learnings_path(os.path.dirname(seen.steering))
-    return [x for x in seen.texts.get(path, "").splitlines() if session.LEARNING.fullmatch(x)]
-
-
 def learnings(n: int) -> Check:
+    """The check that the session's learnings hold n."""
+
     return Check(
         f"the session's learnings hold {n}",
-        lambda s: bool(s.steering) and len(kept_learnings(s)) == n,
+        lambda s: bool(s.steering_path) and len(kept_learnings(s)) == n,
     )
 
 
 def returned(work: str, n: int) -> Check:
+    """The check that n calls on the work were returned and kept."""
+
     def holds(seen: Seen) -> bool:
-        return len([c for c in seen.calls if c[1] == work and c[2]]) == n
+        return len([c for c in seen.calls if c.work == work and c.returned]) == n
 
     return Check(f"{n} calls on {work} returned and kept", holds)
 
 
 def decisions(work: str, n: int) -> Check:
+    """The check that the work's latest call holds n decisions or more."""
+
     def holds(seen: Seen) -> bool:
-        last = [c for c in seen.calls if c[1] == work][-1:]
-        return bool(last) and last[0][3] >= n
+        last = [c for c in seen.calls if c.work == work][-1:]
+        return bool(last) and last[0].decisions >= n
 
     return Check(f"the latest call on {work} holds {n} decisions or more", holds)
 
 
 def pr(draft: bool) -> Check:
+    """The check that one pull request into main is there, a draft or marked ready."""
+
     def holds(seen: Seen) -> bool:
         prs = seen.gh["prs"]
         return len(prs) == 1 and prs[0]["isDraft"] == draft and prs[0]["baseRefName"] == "main"
@@ -860,6 +866,8 @@ def pr(draft: bool) -> Check:
 
 
 def issues(n: int) -> Check:
+    """The check that n issues were opened, each on lovaizu/ccpm."""
+
     def holds(seen: Seen) -> bool:
         return len(seen.gh["issues"]) == n and all(
             i["repo"] == "lovaizu/ccpm" for i in seen.gh["issues"]
@@ -869,18 +877,22 @@ def issues(n: int) -> Check:
 
 
 def file_has(path: str, words: str) -> Check:
+    """The check that the file at the path, as the last commit holds it, holds the words."""
+
     return Check(f"{path} holds `{words}`", lambda s: words in s.texts.get(path, ""))
 
 
 def says(words: str) -> Check:
+    """The check that the reply holds the words."""
+
     return Check(f"the reply holds `{words}`", lambda s: words in s.reply)
 
 
-NO_SESSION = Check("no session on the branch", lambda s: not s.steering)
+NO_SESSION = Check("no session on the branch", lambda s: not s.steering_path)
 NO_PR = Check("no pull request opened", lambda s: not s.gh["prs"])
 STAYS = Check("no commit made", lambda s: s.commits == 0)
 MOVED = Check("a commit made", lambda s: s.commits > 0)
-KEPT = Check("every change committed and the branch pushed", lambda s: s.clean and s.pushed)
+KEPT = Check(ALL_KEPT, RULES[ALL_KEPT])
 JAPANESE = Check("the reply in Japanese", lambda s: bool(re.search(r"[぀-ヿ一-鿿]", s.reply)))
 ONE_POINT = Check(
     "the reply asks one point, `▶` once, with options `a.` and `b.`",
@@ -911,8 +923,8 @@ LANGUAGES = Check(
 def proposal(signoff: str) -> list:
     """The checks of a move that stops at the sign-off: kept waiting, the proposal shown whole."""
     return [
-        front({"plan": "plan", "design": "design"}.get(signoff, "deliverable"), signoff),
-        next_has(f"Wait at the {signoff} sign-off"),
+        front(signoff, signoff),
+        next_has(rn.WAITING.format(signoff)),
         says(PR),
         says("/rn:ty"),
         says("/rn:gm"),
@@ -960,7 +972,7 @@ CASES = {
     ),
     "request": Case(
         "/rn:up <request> with no session: the languages asked first",
-        "up 1 (no session, words), 2 (the first point), 3 (the point's form)",
+        "up 1 (no session, words), 7 (the first point), 2 (the point's form)",
         nothing,
         [NO_SESSION],
         [(REQUEST, [NO_SESSION, STAYS, NO_PR, ONE_POINT, JAPANESE])],
@@ -968,7 +980,7 @@ CASES = {
     ),
     "languages": Case(
         "the languages answered: the session started, the first point of the plan asked",
-        "up 2 (start), 6 (hear the purpose), 3 (ask)",
+        "up 7 (start), 8 (hear the purpose), 2 (ask)",
         nothing,
         [NO_SESSION],
         [
@@ -980,7 +992,7 @@ CASES = {
                     KEPT,
                     front("plan", "none"),
                     LANGUAGES,
-                    next_has("Step 6"),
+                    next_has("Step 8"),
                     pr(draft=True),
                     ONE_POINT,
                     JAPANESE,
@@ -1000,17 +1012,17 @@ CASES = {
     ),
     "fresh-answer": Case(
         "/rn:up <a letter> in a fresh conversation while a point is asked: the point asked again",
-        "up 1 (Next, words answering a point this conversation has not shown), 3",
+        "up 1 (Next, words answering a point this conversation has not shown), 2",
         purposed,
-        [front("plan", "none"), next_has("Step 6"), decisions("plan", 1)],
+        [front("plan", "none"), next_has("Step 8"), decisions("plan", 1)],
         [("/rn:up a", [STAYS, decisions("plan", 1), ONE_POINT, JAPANESE])],
         {},
     ),
     "point": Case(
         "/rn:up in a fresh conversation while a point is asked, then the point answered",
-        "up 1 (Next), 6, 3 (the next point, nothing settled asked again; the answer kept)",
+        "up 1 (Next), 8, 2 (the next point, nothing settled asked again; the answer kept)",
         purposed,
-        [front("plan", "none"), next_has("Step 6"), decisions("plan", 1)],
+        [front("plan", "none"), next_has("Step 8"), decisions("plan", 1)],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
             (DONE_ANSWER, [MOVED, KEPT, decisions("plan", 2), ONE_POINT]),
@@ -1020,9 +1032,9 @@ CASES = {
     "good": Case(
         "turn's result with every Good holding: checked at its lines and put back; with no task"
         " in it, the plan sign-off",
-        "up 1, 6, 4 (the call, turn's line, every Good holding, --put), 9 (no task left)",
+        "up 1, 8, 3 (the call, turn's line, every Good holding, --put), 5 (no task left)",
         at_call,
-        [next_has("Step 6"), decisions("plan", 2), returned("plan", 0)],
+        [next_has("Step 8"), decisions("plan", 2), returned("plan", 0)],
         [
             (
                 "/rn:up",
@@ -1042,9 +1054,9 @@ CASES = {
     ),
     "short": Case(
         "a result with a Good its lines fall short of: the point behind it, the plan made again",
-        "up 4 (a Good falling short, Open, Next step 3), 3, 4 again (--put)",
+        "up 3 (a Good falling short, Open, Next step 2), 2, 3 again (--put)",
         unreasoned_at_call,
-        [next_has("Step 6"), returned("plan", 0)],
+        [next_has("Step 8"), returned("plan", 0)],
         [
             (
                 "/rn:up",
@@ -1053,7 +1065,7 @@ CASES = {
                     KEPT,
                     returned("plan", 1),
                     plan_has("G1:", held=False),
-                    next_has("Step 3"),
+                    next_has("Step 2"),
                     open_none(nothing=False),
                     ONE_POINT,
                 ],
@@ -1067,9 +1079,9 @@ CASES = {
     ),
     "asks": Case(
         "turn asks a question: asked as a point, the answer kept and sent to turn",
-        "up 4 (turn's questions, SendMessage), 3",
+        "up 3 (turn's questions, SendMessage), 2",
         at_call,
-        [next_has("Step 6"), returned("plan", 0)],
+        [next_has("Step 8"), returned("plan", 0)],
         [
             ("/rn:up", [returned("plan", 0), ONE_POINT, JAPANESE]),
             (
@@ -1082,33 +1094,33 @@ CASES = {
     "task": Case(
         "a task's action of turn's, a research made in the session's folder, then one of the"
         " orchestrator's, each with a line before and after",
-        "up 1, 5 (both kinds of action), 4 (a research work), 3",
+        "up 1, 4 (both kinds of action), 3 (a research work), 2",
         planned,
-        [next_has("Step 5 of /rn:up on t1: action 1"), returned("t1", 0)],
+        [next_has("Step 4 of /rn:up on T1: action 1"), returned("t1.1", 0)],
         [
             (
                 "/rn:up",
                 [
                     MOVED,
                     KEPT,
-                    returned("t1", 1),
+                    returned("t1.1", 1),
                     file_has(RESEARCH, "Answer:"),
                     ticked("T1.1"),
-                    next_has("on t1"),
+                    next_has("Step 4"),
                     TURN_LINE,
                     ONE_POINT,
                     JAPANESE,
                 ],
             )
         ],
-        {"t1": [RESEARCH_PLACE]},
+        {"t1.1": [RESEARCH_PLACE]},
     ),
     "plan-signoff": Case(
         "a task's last action, the orchestrator's, the task done and what it brought weighed, the"
         " plan made again from it, then the plan sign-off",
-        "up 1, 5 (the last action, what the task brought weighed), 3, 4 (the plan made again), 6, 9",
+        "up 1, 4 (the last action, what the task brought weighed), 2, 3 (the plan made again), 8, 5",
         t1_researched,
-        [next_has("Step 5 of /rn:up on t1: action 2"), ticked("T1.1"), returned("plan", 1)],
+        [next_has("Step 4 of /rn:up on T1: action 2"), ticked("T1.1"), returned("plan", 1)],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
             (
@@ -1128,7 +1140,7 @@ CASES = {
     ),
     "resume-signoff": Case(
         "/rn:up in a fresh conversation while the plan sign-off waits",
-        "up 1 (a sign-off waiting), 9 (the same proposal, nothing kept)",
+        "up 1 (a sign-off waiting), 5 (the same proposal, nothing kept)",
         plan_signoff,
         [front("plan", "plan")],
         [("/rn:up", [STAYS, *proposal("plan")])],
@@ -1160,7 +1172,7 @@ CASES = {
     ),
     "ty-plan": Case(
         "/rn:ty at the plan sign-off: approved, the learnings made, going on",
-        "ty 1, 2, 3 (up 4 on learnings), 4 (up 7, 3)",
+        "ty 1, 2, 3 (up 3 on learnings), 4 (up 9, 2)",
         plan_signoff,
         [front("plan", "plan"), learnings(0)],
         [
@@ -1172,7 +1184,7 @@ CASES = {
                     front("design", "none"),
                     returned("learnings", 1),
                     learnings(1),
-                    next_has("Step 7"),
+                    next_has("Step 9"),
                     ONE_POINT,
                 ],
             )
@@ -1181,7 +1193,7 @@ CASES = {
     ),
     "gm-plan": Case(
         "/rn:gm <feedback> at the plan sign-off: kept whole in Open, the learnings made, stop",
-        "gm 1, 2, 3 (ty 3, up 4 on learnings), 4",
+        "gm 1, 2, 3 (ty 3, up 3 on learnings), 4",
         plan_signoff,
         [front("plan", "plan"), learnings(0)],
         [
@@ -1191,7 +1203,7 @@ CASES = {
                     MOVED,
                     KEPT,
                     front("plan", "none"),
-                    next_has("Step 10"),
+                    next_has("Step 6"),
                     open_has(FEEDBACK),
                     returned("learnings", 1),
                     returned("plan", 2),
@@ -1206,9 +1218,9 @@ CASES = {
     "after-feedback": Case(
         "/rn:up in a fresh conversation after feedback: the point behind it, the plan made again,"
         " the same sign-off",
-        "up 1, 10, 3, 4, 9 (what changed)",
+        "up 1, 6, 2, 3, 5 (what changed)",
         fed_back,
-        [front("plan", "none"), next_has("Step 10"), open_has(FEEDBACK)],
+        [front("plan", "none"), next_has("Step 6"), open_has(FEEDBACK)],
         [
             ("/rn:up", [STAYS, ONE_POINT, open_has(FEEDBACK)]),
             (
@@ -1227,32 +1239,36 @@ CASES = {
     ),
     "design-signoff": Case(
         "a document's last action, made by turn in one call, then the design sign-off",
-        "up 1, 5, 4 (a task's work), 7, 9",
+        "up 1, 4, 3 (a task's work), 9, 5",
         t2_worded,
-        [front("design", "none"), next_has("Step 5 of /rn:up on t2: action 2"), returned("t2", 0)],
+        [
+            front("design", "none"),
+            next_has("Step 4 of /rn:up on T2: action 2"),
+            returned("t2.2", 0),
+        ],
         [
             (
                 "/rn:up",
                 [
                     MOVED,
                     KEPT,
-                    returned("t2", 1),
+                    returned("t2.2", 1),
                     done("T2"),
                     *proposal("design"),
                     says("docs/greeting.md"),
                 ],
             )
         ],
-        {"t2": [NOTE_GREETING]},
+        {"t2.2": [NOTE_GREETING]},
     ),
     "deliverable-signoff": Case(
         "the build's last action, the task weighed and the plan not made again as it changed"
         " nothing, the finished work used, the deliverable sign-off",
-        "up 1, 5, 4, 8, 9",
+        "up 1, 4, 3, 10, 5",
         design_approved,
         [
             front("build", "none"),
-            next_has("Step 5 of /rn:up on t3: action 2"),
+            next_has("Step 4 of /rn:up on T3: action 2"),
             returned("plan", 4),
         ],
         [
@@ -1269,7 +1285,7 @@ CASES = {
                 ],
             )
         ],
-        {"t3": [NOTE_README], "deliverable": [FINISHED]},
+        {"t3.2": [NOTE_README], "deliverable": [FINISHED]},
     ),
     "ty-deliverable": Case(
         "/rn:ty at the deliverable sign-off: approved, the learnings made, the first learning put",
@@ -1293,14 +1309,22 @@ CASES = {
     ),
     "learning": Case(
         "the learnings put one per message, the first taken for an issue",
-        "up 1, 11 (one learning per message, each answer kept)",
+        "up 1, 11 (one learning per message, each answer kept, an issue's as its decision)",
         learnings_due,
         [front("learnings", "none"), learnings(2), next_has("Step 11")],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
             (
                 "issue だけに送ってください",
-                [MOVED, KEPT, next_has("L2"), open_has("L1"), issues(0), ONE_POINT],
+                [
+                    MOVED,
+                    KEPT,
+                    next_has("L2"),
+                    decisions("issue-1", 1),
+                    open_none(nothing=False),
+                    issues(0),
+                    ONE_POINT,
+                ],
             ),
         ],
         {},
@@ -1308,12 +1332,22 @@ CASES = {
     "last": Case(
         "the last learning taken for the checklist, the issue shown and sent, the pull request"
         " marked ready",
-        "up 1, 11 (the checklist made, up 4; the issue; gh pr ready; finished)",
+        "up 1, 11 (the issue made, up 3, shown and sent; the checklist made, up 3; finished)",
         l1_answered,
         [front("learnings", "none"), next_has("L2")],
         [
             ("/rn:up", [STAYS, ONE_POINT]),
-            ("チェックリストだけに足してください", [MOVED, KEPT, decisions("checklist-note", 1)]),
+            (
+                "チェックリストだけに足してください",
+                [
+                    MOVED,
+                    KEPT,
+                    decisions("checklist-note", 1),
+                    returned("issue-1", 1),
+                    file_has(ISSUE, "## What it should be"),
+                    issues(0),
+                ],
+            ),
             (
                 "はい",
                 [
@@ -1327,6 +1361,6 @@ CASES = {
                 ],
             ),
         ],
-        {"checklist-note": [NOTE_CHECKLIST]},
+        {"issue-1": [ISSUE_MADE], "checklist-note": [NOTE_CHECKLIST]},
     ),
 }
