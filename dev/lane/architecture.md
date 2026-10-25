@@ -97,12 +97,13 @@ flowchart TB
   A subagent's inputs and outputs are most often known only once its run starts, and the JSON it
   starts from is the one place a plugin hands them over, so a lane reads them there, the same way in
   every plugin.
-- The guard checks what each lane is given against that lane's IN, a JSON Schema lanes.md defines,
-  before any lane's check runs: the event, the lanes laid, the run's values, an adapter's answer and
-  the record the lane rests on. What is not as its IN says, such as a value not given or empty, is
-  an error, not a drift: the call is stopped, or the end kept going once, with
-  `<plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>.` and who must fix
-  it, and the user is told the same; a lane's check then meets only what it can check.
+- The guard checks the event against the form Claude Code hands it and `hooks/lanes.json` against
+  the form `lay.py write` writes, then what each lane is given against that lane's IN, a JSON
+  Schema lanes.md defines, before any lane's check runs: the texts of its places, the run's values
+  put in, and the record where the lane rests on it. What is not as these say, such as a value not
+  given or empty, is an error, not a drift: the call is stopped, or the end kept going once, told
+  in the forms lanes.md gives with what is wrong and who must fix it, and the user is told the same;
+  a lane's check then meets only what it can check.
 
   A drift is the subagent's to put right by its step; an error is the plugin's, which the subagent
   can only report, and a call let through unchecked would hide it. Checked once at the entry, as an

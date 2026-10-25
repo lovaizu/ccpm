@@ -143,19 +143,29 @@ The ports' JSON Schemas:
 
 ## What each lane is given
 
-Before any lane's check, the guard holds what each lane is given to the lane's IN, a JSON Schema:
-the texts put in each place of its sentence, with each `{<name>}` given for the run put in, its
-empty texts left out, one or more in each place; and, where its check rests on what the subagent did before, its record. The
-layer holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid, not on
-a run. Anything not as its IN says, a value not given or given empty, an adapter failing, giving no
-answer in time or answering out of its port, the record not found, the event or `hooks/lanes.json`
-not as Claude Code and `lay.py write` write them, or a step no longer saying its lane's sentence,
-is an error, not a drift: the call is stopped, or the subagent kept going once as it ends, and it
-and you are told
+The guard first holds the event to the form Claude Code hands it and `hooks/lanes.json` to the
+form `lay.py write` writes it in; then, before any lane's check, what each lane is given to the
+lane's IN, a JSON Schema: the texts put in each place of its sentence, with each `{<name>}` given
+for the run put in, its empty texts left out, one or more in each place; and, where its check rests
+on what the subagent did before, its record. The layer holds a proposal's takes to the same IN, so
+a wrong take shows when the lanes are laid, not on a run. Anything not as these say, a value not
+given or given empty, an adapter failing, giving no answer in time or answering out of its port,
+the record not found, the event or `hooks/lanes.json` not as Claude Code and `lay.py write` write
+them, or a step no longer saying its lane's sentence, is an error, not a drift: the call is
+stopped, or the subagent kept going once as it ends, and it and you are told
 
 ```
 <plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Stop here and reply that <who must fix it>.
 ```
+
+or, where the event or `hooks/lanes.json` is what is wrong, so no lane of the subagent is known,
+
+```
+<plugin>: lane cannot check the lanes of <subagent>: <what is wrong>. Stop here and reply that <who must fix it>.
+```
+
+and, where the hook's command does not name the subagent as `lay.py write` writes it, so neither
+your plugin nor the subagent is known, the same headed `lane:` and naming `the lanes of this hook`.
 
 A lane taking a value given for the run is held once the script start_with runs first has run, as
 the value comes with what it prints; until then start_with holds the subagent.
