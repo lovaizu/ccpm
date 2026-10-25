@@ -8,6 +8,7 @@ plugin, where turn's scripts are not beside it."""
 
 from __future__ import annotations
 
+import contextlib
 import json
 import re
 import sys
@@ -29,7 +30,12 @@ def items(text: str) -> list[tuple[int, str]]:
     """Each item heading of the text outside the frontmatter and any code fence, in order, as the
     line it stands on, counted from 1, and its ID."""
     lines = text.splitlines()
-    start = lines.index(MARK, 1) + 1 if lines[:1] == [MARK] and MARK in lines[1:] else 0
+    # Where the reading begins: the frontmatter's closing mark, a line that is no heading and no
+    # fence, or the top where the text opens with no frontmatter closed.
+    start = 0
+    if lines[:1] == [MARK]:
+        with contextlib.suppress(ValueError):
+            start = lines.index(MARK, 1)
     found: list[tuple[int, str]] = []
     # The marks of the fence open, None where none is.
     opened = None
@@ -49,11 +55,12 @@ def items(text: str) -> list[tuple[int, str]]:
 
 
 def closes(fence: re.Match[str], opened: str) -> bool:
-    """Whether the fence line closes the fence opened by the marks: the same mark, at least as many,
-    and blanks alone after."""
-    marks = fence["marks"]
-    return marks[0] == opened[0] and len(marks) >= len(opened) and not fence["rest"].strip()
+    """Whether the fence line closes the fence opened by the marks: its marks begin with those, so
+    are the same mark, at least as many, and blanks alone come after."""
+    return fence["marks"].startswith(opened) and not fence["rest"].strip()
 
 
-if __name__ == "__main__":
+if (
+    __name__ == "__main__"  # pragma: no mutate
+):
     print(json.dumps({"items": [i for _, i in items(json.load(sys.stdin)["text"])]}))

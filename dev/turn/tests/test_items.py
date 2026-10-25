@@ -69,6 +69,24 @@ class TestItems(unittest.TestCase):
         # Then: it gives the item, as turn reads a checklist whose frontmatter is not closed
         self.assertEqual(items(text), ["B-1"])
 
+    def test_frontmatter_closed_on_its_second_line_ends_there(self):
+        # Given: frontmatter of no key, closed on the line after it opens, an item, and a rule of
+        # the frontmatter's mark after the item
+        text = "---\n---\n### B-1: After\n---\n"
+        # When: the adapter reads it
+        # Then: it gives the item, the frontmatter ending at its own close
+        self.assertEqual(items(text), ["B-1"])
+
+    def test_a_mark_after_the_first_line_opens_no_frontmatter(self):
+        for first in ("# Plan", "Plan"):
+            with self.subTest(first=first):
+                # Given: a text opening with a title, or with a word, an item, and a rule of the
+                # frontmatter's mark after it
+                text = f"{first}\n### B-1: Before\n---\n"
+                # When: the adapter reads it
+                # Then: it gives the item, as the text opens with no frontmatter
+                self.assertEqual(items(text), ["B-1"])
+
     def test_a_heading_of_another_level_is_not_an_item(self):
         # Given: headings written as items are, at the level above an item's and the level below
         text = "## B-8: Above\n\n#### B-9: Below\n"
@@ -87,12 +105,20 @@ class TestItems(unittest.TestCase):
                 self.assertEqual(items(text), ["B-1"])
 
     def test_a_fence_closes_only_on_its_own_mark_at_its_length_or_more(self):
-        # Given: a fence of four backticks with a line of three inside it and one of tildes, an
-        # item heading between them, and the fence closed after
-        text = "````\n```\n~~~~\n### B-7: Inside\n````\n### B-1: After\n"
-        # When: the adapter reads it
-        # Then: the fence holds until its own close, and only the item after it is given
-        self.assertEqual(items(text), ["B-1"])
+        for text in (
+            "````\n```\n~~~~\n### B-7: Inside\n````\n### B-1: After\n",
+            "~~~\n```\n### B-7: Inside\n~~~\n### B-1: After\n",
+            "```\n~~~\n### B-7: Inside\n```\n### B-1: After\n",
+            "```\n### B-7: Inside\n`````\n### B-1: After\n",
+        ):
+            with self.subTest(text=text):
+                # Given: a fence of four backticks with a line of three inside it and one of
+                # tildes, a fence of tildes with a line of backticks inside it, one of backticks
+                # with a line of tildes, or one of three backticks closed by five; an item heading
+                # inside, and one after the fence closes
+                # When: the adapter reads it
+                # Then: the fence holds until its own close, and only the item after it is given
+                self.assertEqual(items(text), ["B-1"])
 
     def test_a_heading_with_no_id_is_not_an_item(self):
         # Given: headings of an item's level with no ID, an ID in small letters, an ID with no

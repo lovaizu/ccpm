@@ -1,8 +1,8 @@
-# Mutation testing of turn's scripts, run from the top of the repository on a copy that may be
-# changed. What turn takes from lane through a link, its hooks and the modules linked into its
-# scripts' folder, is mutated there, with lane's tests.
+# Mutation testing of turn's scripts and its adapters of lane's ports, run from the top of the
+# repository on a copy that may be changed. What turn takes from lane through a link, its hooks and
+# the modules linked into its scripts' folder, is mutated there, with lane's tests.
 [cosmic-ray]
-module-path = "turn/scripts"
+module-path = ["turn/scripts", "turn/hooks/adapters"]
 timeout = 30.0
 excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
 # The type checker and the linter run first: a change to a type annotation, or a comparison of a
@@ -14,14 +14,15 @@ excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
 # A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
 # where no input tells a mutant of it apart: by order with the first or the last of them, such as
 # "each part", the first of the scopes in order, or `__name__`, which is "__main__" or, imported by
-# the tests, "turn", after it; or by `is` with a small number, of which CPython keeps one copy, such
-# as a heading's level. Each such line holds that comparison alone, as the mark leaves out every
-# mutant of its line.
+# the tests, "turn", after it, or, read from its file as call.py and the tests read turn's adapter,
+# "<run_path>", before it; or by `is` with a small number, of which CPython keeps one copy, such as
+# a heading's level. Each such line holds that comparison alone, as the mark leaves out every mutant
+# of its line.
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a heading of the level below and one of the level above, so a
 # comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not
 # where it sorts.
-test-command = "sh -c 'ruff check --select F632 turn && pyrefly check --search-path dev/lane --search-path dev/lane/trials --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn/scripts dev/turn && python -m unittest discover -f -s dev/turn/tests'"
+test-command = "sh -c 'ruff check --select F632 turn && pyrefly check --search-path dev/lane --search-path dev/lane/trials --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn/scripts turn/hooks/adapters dev/turn && python -m unittest discover -f -s dev/turn/tests'"
 
 [cosmic-ray.distributor]
 name = "local"
