@@ -26,8 +26,6 @@ import record
 # A session's or a subagent's ID as Claude Code gives it, letters, digits and hyphens, so a folder
 # or a file named by it stays in the folder of the kept calls.
 ID = re.compile(r"[A-Za-z0-9-]+")
-# The event a failed call comes back on, with the text the AI is shown as its error.
-FAILED = "PostToolUseFailure"
 
 
 def place(event: dict[str, Any]) -> str | None:
@@ -50,7 +48,7 @@ def given_back(event: dict[str, Any]) -> str:
     errors, or the words Claude Code shows for none, record.SILENT; of a Read call each line it
     read, numbered from the first, a tab before its text; "" of any other tool, whose text no lane
     reads."""
-    if event["hook_event_name"] == FAILED:
+    if failed(event):
         return event["error"]
     back = event.get("tool_response")
     back = back if isinstance(back, dict) else {}
@@ -65,6 +63,12 @@ def given_back(event: dict[str, Any]) -> str:
     if not isinstance(content, str) or not isinstance(first, int):
         return ""
     return "\n".join(f"{first + at}\t{line}" for at, line in enumerate(content.split("\n")))
+
+
+def failed(event: dict[str, Any]) -> bool:
+    """Whether the event's call failed: it comes back on PostToolUseFailure, the one event of the
+    two that gives an error, the text the AI is shown."""
+    return "error" in event
 
 
 class Kept:
@@ -83,11 +87,11 @@ class Kept:
             "input": event["tool_input"],
             "cwd": event["cwd"],
             "result": given_back(event),
-            "failed": event["hook_event_name"] == FAILED,
+            "failed": failed(event),
         }
         os.makedirs(os.path.dirname(file), exist_ok=True)
         with open(file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(kept, ensure_ascii=False) + "\n")
+            f.write(json.dumps(kept) + "\n")
         return []
 
 

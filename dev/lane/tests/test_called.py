@@ -76,14 +76,15 @@ class TestKept(CallsTest):
         self.assertEqual([k["input"]["command"] for k in self.kept()], ["ls", "pwd"])
 
     def test_a_session_kept_from_an_earlier_day_keeps_its_folder(self):
-        # Given: a call of the session kept the day before, and that day's folder of another
-        # session
-        earlier = os.path.join(self.tmp, "lane", "20261024-s1", "a1.jsonl")
+        # Given: a call of the session kept two days before, its folder of the day before too,
+        # and a folder of another session
+        earlier = os.path.join(self.tmp, "lane", "20261023-s1", "a1.jsonl")
         self.write(earlier, "")
-        os.makedirs(os.path.join(self.tmp, "lane", "20261024-s2"))
+        for folder in ("20261024-s1", "20261024-s2"):
+            os.makedirs(os.path.join(self.tmp, "lane", folder))
         # When: a call of the session is kept today
         self.keep(self.came_back("Bash", {"command": "ls"}, OUTPUT))
-        # Then: it is kept in the session's folder of the day before, and none is made today
+        # Then: it is kept in the session's first folder, and none is made today
         self.assertEqual(len(self.kept(earlier)), 1)
         self.assertFalse(os.path.exists(os.path.dirname(self.file)))
 
@@ -166,10 +167,16 @@ class TestGivenBack(CallsTest):
                 self.assertEqual(self.given_back("Read", back), "")
 
     def test_a_call_of_another_tool_gives_nothing(self):
-        # Given: a SendMessage call, whose text no lane reads
-        # When: what it gave back is read
-        # Then: it is nothing
-        self.assertEqual(self.given_back("SendMessage", {"success": True}), "")
+        # What a Bash call and a Read call give back, which a call of another tool is read by
+        # neither as.
+        back = {**OUTPUT, "file": {"content": "one", "startLine": 1}}
+        for tool in ("Agent", "Grep", "SendMessage"):
+            with self.subTest(tool=tool):
+                # Given: a call of the Agent tool, the Grep tool or SendMessage, whose text no lane
+                # reads, giving back what a Bash or Read call would
+                # When: what it gave back is read
+                # Then: it is nothing
+                self.assertEqual(self.given_back(tool, back), "")
 
     def test_a_failed_call_gives_its_error(self):
         # Given: a call coming back failed
@@ -286,9 +293,9 @@ class TestGuard(GuardTest):
         # Given: the script run and come back failed
         self.back("Bash", self.run_next, entry="posttoolusefailure.py")
         # When: what the subagent did is read
-        # Then: it holds the call, failed
+        # Then: it holds the call, failed, with its error
         [done] = record.done(called.entries(self.event("ls")) or [], self.base)
-        self.assertEqual((done.given, done.failed), (self.run_next, True))
+        self.assertEqual((done.given, done.result, done.failed), (self.run_next, "x", True))
 
     def test_a_call_of_another_agent_is_not_kept(self):
         # Given: a call coming back in another subagent
