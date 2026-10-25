@@ -25,9 +25,12 @@ PATHS = ("work", "checklist", "has")
 KINDS = ("work", "checklist", "receiver", "use", "has")
 # An item of a checklist is a heading of the form `### B-1: <title>`, with the line under it saying
 # where in the work it is answered; the headings are read by turn's adapter of lane's items port,
-# where what an item is is kept once, loaded from its file, as its name is no module's.
+# where what an item is is kept once, loaded from its file, as its name is no module's; found from
+# this file as it is, as rn takes it through a link.
 READ_ITEMS = runpy.run_path(
-    os.path.join(os.path.dirname(__file__), "..", "hooks", "adapters", "items-checklist.py")
+    os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), "..", "hooks", "adapters", "items-checklist.py"
+    )
 )["items"]
 SCOPES = ("its part", "each part", "whole")
 
