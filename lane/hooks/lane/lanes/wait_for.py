@@ -9,9 +9,7 @@ from __future__ import annotations
 
 import re
 
-from call import Call
-
-from lanes.start_with import runs
+from call import Call, runs
 
 ACTION = "wait"
 WORDING = "Do not go on until `<approval>`."

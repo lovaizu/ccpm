@@ -12,7 +12,7 @@ from __future__ import annotations
 import os
 
 import shell
-from call import Call, End, changed
+from call import Call, End, changed, starts
 
 ACTION = "test"
 WORDING = "After changing `<output>`, pass `<test>`."
@@ -22,19 +22,18 @@ EVENTS = ("SubagentStop",)
 def drifts(end: End, takes: list[str], root: str) -> bool:
     """Whether the subagent changed the output taken first, named from the folder it ends in, where
     the guard stands, and ran none of the tests taken after it with no error since its last change;
-    a test is run by a command whose words begin with the test's words."""
+    a test is run by a command that `starts` holds to run it."""
     output = shell.path(os.getcwd(), takes[0])
     made = end.made or []
     changes = [at for at, c in enumerate(made) if output and changed(c, output)]
-    tests = [t.split() for t in takes[1:]]
-    return bool(changes) and not any(passes(c, tests) for c in made[changes[-1] :])
+    return bool(changes) and not any(passes(c, takes[1:]) for c in made[changes[-1] :])
 
 
-def passes(made: Call, tests: list[list[str]]) -> bool:
+def passes(made: Call, tests: list[str]) -> bool:
     """Whether the call ran one of the tests, each command after it joined by `&&`, and gave
     back no error."""
     return not made.failed and any(
-        words[: len(t)] == t and all(e == "&&" for e in made.ends[at:-1])
+        starts(words, t) and all(e == "&&" for e in made.ends[at:-1])
         for at, words in enumerate(made.what)
         for t in tests
     )

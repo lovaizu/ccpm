@@ -7,9 +7,7 @@ until one holds what it printed, a heading line beside it allowed."""
 
 from __future__ import annotations
 
-from call import HANDS, Call, End, handed
-
-from lanes.start_with import runs
+from call import HANDS, Call, End, handed, runs
 
 ACTION = "hand on"
 WORDING = "Hand on `<command>` as it is."

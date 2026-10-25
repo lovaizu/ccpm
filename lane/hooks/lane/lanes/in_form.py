@@ -53,7 +53,7 @@ def drifts(call: Call, takes: list[str], root: str) -> str:
     from the folder the call is made in, where the guard stands, and the form from the plugin's;
     "" where the call keeps the form or writes no output, or an Edit would write nothing."""
     output, named = takes
-    if os.path.realpath(output) not in call.written:
+    if shell.path(os.getcwd(), output) not in call.written:
         return ""
     if call.action != ACTION:  # pragma: no mutate
         return (

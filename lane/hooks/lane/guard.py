@@ -14,7 +14,7 @@ import hook
 import hooks_file
 import started
 import step
-from lanes import LANES, alone, sentence, start_with
+from lanes import LANES, alone, sentence
 
 
 class Laid:
@@ -72,7 +72,7 @@ class Laid:
         """The run's value of each name the JSON the subagent started from gives: its prompt and
         what each script start_with takes in it printed; none where its record is not found."""
         scripts = [s for t in hooks_file.taken(self.root, self.agent, "start_with") for s in t]
-        found = started.texts(event, lambda c: start_with.runs(c, scripts))
+        found = started.texts(event, lambda c: call.runs(c, scripts))
         return {} if found is None else started.values(found)
 
 

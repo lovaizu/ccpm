@@ -4,6 +4,7 @@ file or by a command in the forms the steps tell and the AI writes; every other 
 import json
 import os
 import unittest
+from unittest import mock
 
 import helpers
 from helpers import NO_PLUGIN, call, lay, testing
@@ -93,6 +94,15 @@ class TestLetThrough(WriteOnlyTest):
         # When: Write names it from the folder
         # Then: it is no drift
         self.assertFalse(self.drifts("Write", {"file_path": "CHANGELOG.md"}, takes))
+
+    def test_an_output_taken_from_the_home_folder_is_the_one_there(self):
+        # Given: write_only taking an output named from the home folder, `base` here
+        with mock.patch.dict(os.environ, {"HOME": self.base}):
+            # When: a tool writes that file
+            # Then: it is no drift
+            self.assertFalse(
+                self.drifts("Write", {"file_path": "CHANGELOG.md"}, ["~/CHANGELOG.md"])
+            )
 
     def test_any_of_the_outputs_taken_is_no_drift(self):
         # Given: write_only taking two outputs

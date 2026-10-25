@@ -14,6 +14,7 @@ from typing import Any, NamedTuple
 
 import record
 import shell
+import step
 
 # The tools that write a file, each with the field of its input that names it.
 WRITERS = {"Write": "file_path", "Edit": "file_path", "NotebookEdit": "notebook_path"}
@@ -26,6 +27,10 @@ HANDS = {"Agent": "prompt", "SendMessage": "message"}
 # What hands text on, each with the field of its input that holds it: those tools, and a reply that
 # ended the subagent's turn, as its record is read.
 HANDED = {**HANDS, record.REPLY: record.SAID}
+# What runs a script named after it, as the steps tell; a script may also be run by its path.
+INTERPRETERS = (["python3"], ["sh"])
+# How a step names a script of its plugin, by the plugin's folder Claude Code puts in.
+PLUGIN = step.ROOT + "/"
 # A line of what the Read tool gives back: the line's number in the file, a tab, and its text.
 NUMBERED = re.compile(r"^([0-9]+)\t", re.MULTILINE)
 
@@ -148,10 +153,10 @@ def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:
         return Call("", [])
     command = str(given.get("command", ""))
     written = tuple(shell.written(command, cwd))
-    return Call("run", list(runs(command, cwd)), written, told)
+    return Call("run", commands(command, cwd), written, told)
 
 
-def runs(command: str, cwd: str) -> list[list[str]]:
+def commands(command: str, cwd: str) -> list[list[str]]:
     """Each command the shell command runs, in order, as its words, in the forms the steps tell and
     the AI writes: a cd is no command, a redirect and its target are no words, the assignments
     and env before the program are left out, and git's own options before its command too, so
@@ -163,6 +168,34 @@ def runs(command: str, cwd: str) -> list[list[str]]:
             words = ["git", *shell.git_statement(here, words)[1]]
         found.append(words)
     return found
+
+
+def runs(call: Call, takes: list[str]) -> bool:
+    """Whether the call runs a command taken: a command of its run that `starts` holds to run one
+    of them."""
+    return any(starts(words, t) for words in call.what for t in takes)
+
+
+def starts(words: list[str], take: str) -> bool:
+    """Whether a command, as its words, runs the command taken, as a step writes it: the take read
+    by the shell's words as a call's are, python3 or sh before each program left out, the program
+    the take's by its path or a path ending in it, such as the plugin's folder put in for
+    `${CLAUDE_PLUGIN_ROOT}` where the take begins with `${CLAUDE_PLUGIN_ROOT}/`, and the words after
+    it beginning with the take's, so `git commit` runs in `git commit -m m` and not in
+    `git commit-tree`; a take naming no program runs in no command."""
+    taken = program(shell.words(take))
+    if not taken:
+        return False
+    ran = program(words)
+    path = ran[0] if ran else ""
+    name, *after = taken
+    name = name.removeprefix(PLUGIN)
+    return (path == name or path.endswith("/" + name)) and ran[1:][: len(after)] == after
+
+
+def program(words: list[str]) -> list[str]:
+    """A command's words from its program on, python3 or sh before it left out."""
+    return words[1:] if words[:1] in INTERPRETERS else words
 
 
 def reads(tool: str, given: dict[str, Any], cwd: str) -> list[tuple[str, shell.Lines | None]]:

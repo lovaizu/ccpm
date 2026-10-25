@@ -24,6 +24,7 @@ class TestDrift(unittest.TestCase):
             "env git commit -m notes",
             "env -u GIT_DIR GIT_EDITOR=true git commit",
             "git --git-dir .git commit -m notes",
+            "/usr/bin/git commit -m notes",
         ):
             with self.subTest(command=command):
                 # Given: a run of a command the lane takes, in a form the AI writes
@@ -36,6 +37,12 @@ class TestDrift(unittest.TestCase):
         # When: that command is run with arguments
         # Then: it is a drift
         self.assertTrue(drifts("rm -rf build", ["rm"]))
+
+    def test_a_command_taken_is_read_by_the_shells_words(self):
+        # Given: a lane taking a command with words in quotes
+        # When: that command is run
+        # Then: it is a drift, the take read as the shell reads the run
+        self.assertTrue(drifts("git tag -m 'v 1'", ["git tag -m 'v 1'"]))
 
 
 class TestLetThrough(unittest.TestCase):

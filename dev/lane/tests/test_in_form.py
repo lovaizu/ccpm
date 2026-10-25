@@ -6,6 +6,7 @@ sentence, with the point it is out by on the next line."""
 import json
 import os
 import unittest
+from unittest import mock
 
 import helpers
 from helpers import call, in_form, lay
@@ -72,6 +73,16 @@ class TestWrite(InFormTest):
 
 
 class TestEdit(InFormTest):
+    def test_an_output_taken_from_the_home_folder_is_the_one_there(self):
+        # Given: in_form taking an output named from the home folder, `base` here
+        takes = ["~/entry.json", TAKES[1]]
+        with mock.patch.dict(os.environ, {"HOME": self.base}):
+            # When: a Write gives that file text out of its form
+            given = {"file_path": "entry.json", "content": "{}"}
+            # Then: it drifts by the point it is out by
+            told = '$: expected the key "version", found an object without it'
+            self.assertEqual(self.drifts("Write", given, takes), told)
+
     def test_an_edit_leaving_the_output_in_its_form_is_no_drift(self):
         # Given: the output in its form
         self.write("entry.json", '{"version": "1.0"}')

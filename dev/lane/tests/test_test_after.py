@@ -55,6 +55,13 @@ class TestChanged(TestAfter):
                 # Then: it is a drift
                 self.assertTrue(self.drifts(CHANGE, bash(command)))
 
+    def test_a_run_of_the_test_by_its_path_passes_it(self):
+        # Given: the output changed, then the test's program run by its path with no error
+        # When: the subagent is about to end
+        # Then: it is no drift
+        takes = ["app.py", "make test"]
+        self.assertFalse(self.drifts(CHANGE, bash("/usr/bin/make test"), takes=takes))
+
     def test_a_run_of_the_test_after_a_cd_passes_it(self):
         # Given: the output changed, then the test run after a cd with no error
         # When: the subagent is about to end

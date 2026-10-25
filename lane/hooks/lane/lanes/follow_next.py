@@ -10,9 +10,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from call import Call
-
-from lanes.start_with import runs
+from call import Call, runs
 
 ACTION = "follow"
 WORDING = "Take the next move `<script>` printed."
