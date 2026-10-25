@@ -25,7 +25,7 @@ def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call runs a command held back with no message holding the approval since the
     subagent last asked."""
     approval, held = takes[0], takes[SHOWN:]
-    return runs(call, held) and not any(approves(m, approval) for m in call.heard or [])
+    return runs(call, held) and not any(approves(m, approval) for m in call.heard)
 
 
 def approves(message: str, approval: str) -> bool:

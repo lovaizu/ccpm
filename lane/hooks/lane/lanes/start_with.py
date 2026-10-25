@@ -15,4 +15,4 @@ RECORD = True
 
 def drifts(call: Call, takes: list[str], root: str) -> bool:
     """Whether the call is made before the subagent has run a script taken, and runs none itself."""
-    return not any(runs(c, takes) for c in [*(call.before or []), call])
+    return not any(runs(c, takes) for c in [*call.before, call])

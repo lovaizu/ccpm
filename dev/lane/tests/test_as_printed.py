@@ -232,13 +232,6 @@ class TestLetThrough(AsPrintedTest):
                     # Then: it is no drift
                     self.assertFalse(self.drifts(calls, "ls", tool))
 
-    def test_with_no_record_found_any_hand_on_is_no_drift(self):
-        # Given: no record of the subagent where Claude Code keeps it
-        event = self.called("SendMessage", {"to": "main", "message": "x"})
-        # When: it hands on
-        # Then: it is no drift, as what it printed before is not known
-        self.assertFalse(as_printed.drifts(helpers.call_of(event), TAKES, helpers.NO_PLUGIN))
-
 
 class TestEnd(AsPrintedTest):
     """as_printed as the subagent is about to end, its last reply a hand-on."""

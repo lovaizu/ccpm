@@ -130,12 +130,13 @@ class Laid:
         if run is None:
             return []
         texts = started.put(placed(self.lane, self.takes), run)
-        given = {"takes": dict(zip(places(self.lane), texts))}
+        given: dict[str, Any] = {"takes": dict(zip(places(self.lane), texts))}
         out = schema.held(given_in(self.lane), {**given, **self.record(seen)})
         if out is not None:
             return [self.error(NOT_FOUND, "") if seen.found is None else self.wrong(out, run)]
         lane: Any = LANES[self.lane]
-        each = started.resolved([t or [] for t in texts], alone(self.lane))
+        # Held to its IN, each place holds its texts, as the check then reads them.
+        each = started.resolved(list(given["takes"].values()), alone(self.lane))
         # A lane may take more beside what its step names, from the lanes laid in the subagent.
         more = getattr(lane, "beside", None)
         if more is not None:
@@ -168,7 +169,7 @@ class Laid:
         end the event shows, or start_with is laid in it on none."""
         scripts = [s for t in hooks_file.taken(self.root, self.name, "start_with") for s in t]
         acted = seen.acted
-        before = (acted.made if isinstance(acted, call.End) else acted.before) or []
+        before = acted.made if isinstance(acted, call.End) else acted.before
         return not scripts or any(call.runs(c, scripts) for c in before)
 
     def wrong(self, out: schema.Out, run: dict[str, list[str]]) -> hook.Said:

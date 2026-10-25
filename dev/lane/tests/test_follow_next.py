@@ -136,13 +136,6 @@ class TestLetThrough(FollowNextTest):
                 # Then: it is no drift
                 self.assertFalse(self.drifts(calls, given={"command": "ls"}))
 
-    def test_with_no_record_found_any_call_is_no_drift(self):
-        # Given: no record of the subagent where Claude Code keeps it
-        # When: it makes a call
-        # Then: it is no drift, as the move printed before is not known
-        made = helpers.call_of(self.called("Bash", {"command": "ls"}))
-        self.assertFalse(follow_next.drifts(made, TAKES, helpers.NO_PLUGIN, helpers.ports.move))
-
 
 class TestEnd(FollowNextTest):
     """follow_next as the subagent is about to end."""

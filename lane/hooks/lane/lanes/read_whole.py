@@ -7,6 +7,7 @@ the subagent to finish what it began, not when to begin."""
 from __future__ import annotations
 
 import os
+from collections.abc import Sequence
 
 import shell
 from call import WRITERS, Call, file_text
@@ -24,7 +25,7 @@ def drifts(call: Call, takes: list[str], root: str) -> bool:
     if not writes(call):
         return False
     inputs = [i for i in (shell.path(os.getcwd(), t) for t in takes) if i]
-    return any(left(i, call.before or []) for i in inputs)
+    return any(left(i, call.before) for i in inputs)
 
 
 def writes(call: Call) -> bool:
@@ -34,7 +35,7 @@ def writes(call: Call) -> bool:
     return by_tool or any(p != os.devnull for p in call.written)
 
 
-def left(file: str, before: list[Call]) -> bool:
+def left(file: str, before: Sequence[Call]) -> bool:
     """Whether the calls before began reading the file and left a line of it unread; a file not
     there has none."""
     text = file_text(file)

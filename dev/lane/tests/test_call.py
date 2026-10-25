@@ -242,7 +242,7 @@ class TestMade(helpers.PluginTest):
                 "run", [["git", "status"]], tool="Bash", given={"command": status}, ends=("\n",)
             ),
         ]
-        self.assertEqual(made.before, before)
+        self.assertEqual(made.before, tuple(before))
 
     def test_a_call_before_is_read_with_what_it_gave_back(self):
         # Given: a subagent's record of a Read call that gave back the first two lines
@@ -253,29 +253,29 @@ class TestMade(helpers.PluginTest):
         read = call.Call("read", [], (), ((f"{self.base}/a", (1, 2)),))
         given = {"file_path": "a"}
         made_before = read._replace(tool="Read", given=given, result="1\tx\n2\ty\n")
-        self.assertEqual(made.before, [made_before])
+        self.assertEqual(made.before, (made_before,))
 
-    def test_a_call_whose_record_is_not_found_has_nothing_known_before_it(self):
+    def test_a_call_whose_record_is_not_found_has_nothing_before_it(self):
         # Given: no record of the subagent where Claude Code keeps it
         # When: its call is read
         made = helpers.call_of(self.event("ls"))
-        # Then: what came before and what reached the subagent are not known, told apart from
-        # nothing before and nothing heard
-        self.assertEqual((made.before, made.heard), (None, None))
+        # Then: no call is read before it and no message as reaching the subagent, as a lane
+        # resting on the record is stopped by its IN first, the record not found
+        self.assertEqual((made.before, made.heard), ((), ()))
 
     def test_a_call_read_alone_knows_nothing_before_it(self):
         # Given: a subagent's record of a call
         self.record([helpers.bash("ls")])
         # When: its next call is read alone
         # Then: what came before is not read
-        self.assertIsNone(call.alone("Bash", {"command": "pwd"}, self.base).before)
+        self.assertEqual(call.alone("Bash", {"command": "pwd"}, self.base).before, ())
 
     def test_a_call_before_is_read_with_whether_it_failed(self):
         # Given: a subagent's record of a command that failed
         self.record([helpers.failing("false")])
         # When: its next call is read
         # Then: the call before failed
-        self.assertEqual([c.failed for c in helpers.call_of(self.event("ls")).before or []], [True])
+        self.assertEqual([c.failed for c in helpers.call_of(self.event("ls")).before], [True])
 
     def test_a_call_is_read_with_the_messages_that_reached_its_subagent(self):
         # Given: a subagent's record of its asking, and a message from main since
@@ -284,8 +284,8 @@ class TestMade(helpers.PluginTest):
         # When: its next call is read
         # Then: it holds the message, the call before it none
         made = helpers.call_of(self.event("ls"))
-        heard = [made.heard, *(c.heard for c in made.before or [])]
-        self.assertEqual(heard, [["OK"], None])
+        heard = [made.heard, *(c.heard for c in made.before)]
+        self.assertEqual(heard, [("OK",), ()])
 
 
 class TestHandOn(unittest.TestCase):
@@ -447,8 +447,9 @@ class TestEnded(helpers.PluginTest):
                 # or not
                 # When: how the subagent is about to end is read
                 end = helpers.end_of(self.stopped(active=active))
-                # Then: what it made is not known, nor is it read as having answered
-                self.assertEqual((end.made, end.answered), (None, False))
+                # Then: no call is read as made, nor is it read as having answered, as a lane
+                # held at the end rests on the record and is stopped by its IN first
+                self.assertEqual((end.made, end.answered), ((), False))
 
     def test_answered_only_where_kept_going_by_a_stop_hook_and_no_call_since(self):
         rules = {

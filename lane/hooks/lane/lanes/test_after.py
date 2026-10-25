@@ -24,7 +24,7 @@ def drifts(end: End, takes: list[str], root: str) -> bool:
     the guard stands, and ran none of the tests taken after it with no error since its last change;
     a test is run by a command that `starts` holds to run it."""
     output = shell.path(os.getcwd(), takes[0])
-    made = end.made or []
+    made = end.made
     changes = [at for at, c in enumerate(made) if output and changed(c, output)]
     return bool(changes) and not any(passes(c, takes[1:]) for c in made[changes[-1] :])
 

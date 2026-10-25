@@ -9,6 +9,8 @@ before the print has reached whoever it is for."""
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import template
 from call import Call, End, handed, runs
 from record import SILENT
@@ -25,14 +27,14 @@ def drifts(given: Call | End, takes: list[str], root: str) -> bool:
     taken last printed is due, and is no hand-on holding it: a command whose last run printed and
     did not fail, with no hand-on since holding it."""
     if isinstance(given, End):
-        before, text = given.made or [], given.reply
+        before, text = given.made, given.reply
     else:
-        before, text = given.before or [], handed(given)
+        before, text = given.before, handed(given)
     due = [o for o in (due_output(before, t) for t in takes) if o]
     return bool(due) and not any(holds(text, o) for o in due)
 
 
-def due_output(before: list[Call], command: str) -> str:
+def due_output(before: Sequence[Call], command: str) -> str:
     """What the command's last run among the calls before printed, where it is yet to be handed on;
     "" where it has not run, failed, printed nothing, or a hand-on since holds it."""
     due = ""

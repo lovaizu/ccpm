@@ -138,6 +138,31 @@ class TestStop(GuardTest):
         # told the same
         self.assertEqual(self.guard(self.stream("git status")), ("error", GONE))
 
+    def test_with_no_record_found_a_lane_resting_on_it_is_an_error_before_its_check(self):
+        for lane, takes, entry in (
+            ("start_with", ["scripts/log.py"], "pretooluse.py"),
+            ("read_whole", ["notes.md"], "pretooluse.py"),
+            ("as_printed", ["scripts/log.py"], "pretooluse.py"),
+            ("follow_next", ["scripts/log.py"], "pretooluse.py"),
+            ("wait_for", ["OK", "git push"], "pretooluse.py"),
+            ("as_printed", ["scripts/log.py"], "subagentstop.py"),
+            ("follow_next", ["scripts/log.py"], "subagentstop.py"),
+            ("end_when", ["CHANGELOG.md"], "subagentstop.py"),
+            ("every_item", ["notes.md"], "subagentstop.py"),
+        ):
+            with self.subTest(lane=lane, entry=entry):
+                # Given: the lane laid on step 3, and no record of changelog-writer
+                self.lay((3, lane, takes))
+                # When: changelog-writer writes and pushes, or is about to end
+                pre = self.called("Bash", {"command": "echo x > notes.md && git push"})
+                event = pre if entry == "pretooluse.py" else self.stopped("Done.")
+                # Then: it is an error, saying the record is not found, its check never run
+                with mock.patch.object(lanes.LANES[lane], "drifts") as drifts:
+                    whom, said = self.guard(json.dumps(event), entry=entry)
+                self.assertEqual(whom, "error")
+                self.assertIn(f"{lane} on step 3 of changelog-writer: its record is not", said)
+                drifts.assert_not_called()
+
     def test_the_subagents_record_is_read_once_for_every_lane(self):
         # Given: hands_off and start_with laid on changelog-writer, and its record
         self.record([helpers.bash("ls")])

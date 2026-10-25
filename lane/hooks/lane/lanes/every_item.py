@@ -26,7 +26,7 @@ def drifts(end: End, takes: list[str], root: str, read: Port) -> bool:
     the guard stands, read at the items port by read, has an ID that stands in none of what answers
     it."""
     inputs = shell.paths(os.getcwd(), takes)
-    written = {f for c in end.made or [] for f in c.written if changed(c, f)}
+    written = {f for c in end.made for f in c.written if changed(c, f)}
     answers = [end.reply, *(file_text(f) or "" for f in sorted(written - set(inputs)))]
     return any(
         not any(stands(key, a) for a in answers)

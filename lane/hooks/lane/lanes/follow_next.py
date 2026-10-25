@@ -27,9 +27,9 @@ def drifts(given: Call | End, takes: list[str], root: str, read: Port) -> bool:
     """Whether the call is made, or the subagent ends, while the move a script taken last printed,
     read at the move port by read, is due, and is not that move: a move no call since took."""
     if isinstance(given, End):
-        before, now = given.made or [], None
+        before, now = given.made, None
     else:
-        before, now = given.before or [], given
+        before, now = given.before, given
     move = None
     for c in before:
         if runs(c, takes):

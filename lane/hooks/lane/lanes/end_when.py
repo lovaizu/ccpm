@@ -21,7 +21,6 @@ def drifts(end: End, takes: list[str], root: str) -> bool:
     guard stands, is there and was written by a call the subagent made, as the sentence lists them
     with `or`."""
     outputs = shell.paths(os.getcwd(), takes)
-    made = end.made or []
     return bool(outputs) and not any(
-        os.path.exists(o) and any(changed(c, o) for c in made) for o in outputs
+        os.path.exists(o) and any(changed(c, o) for c in end.made) for o in outputs
     )

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import os
 import re
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 from typing import Any, NamedTuple
 
@@ -40,34 +40,37 @@ class Call(NamedTuple):
     """The action a call is, "" for none a lane watches, and what it acts on: for a run, each
     command, as its words; each file it writes, as its whole path; each file or folder it reads, as
     its whole path with the lines it reads of it, None where they are not known; each call its
-    subagent made before it, read the same way, None where its record is not found; and the text
+    subagent made before it, read the same way, none where its record is not found, as a lane
+    resting on the record is stopped by its IN first, the guard telling the record not found by
+    its entries; and the text
     the file it writes holds once written, None where the call does not tell it. Read with its
     subagent's record, it holds too the tool and the input the AI gave it; of a call made before,
     what it gave back, whether it gave back an error and, for a run, what ends each command, the
     operator after it, such as `&&` or `|`, or a line's end after the last; of the call itself,
-    each message that reached the subagent since it last asked, None where the record is not
+    each message that reached the subagent since it last asked, none where the record is not
     found."""
 
     action: str
     what: list[list[str]]
     written: tuple[str, ...] = ()
     reads: tuple[tuple[str, shell.Lines | None], ...] = ()
-    before: list[Call] | None = None
+    before: Sequence[Call] = ()
     text: str | None = None
     tool: str = ""
     given: Mapping[str, Any] = MappingProxyType({})
     result: str = ""
     failed: bool = False
     ends: tuple[str, ...] = ()
-    heard: list[str] | None = None
+    heard: Sequence[str] = ()
 
 
 class End(NamedTuple):
     """How the subagent is about to end, from the SubagentStop event: each call it made, in order,
-    read as its action, None where its record is not found; its last reply; and whether a stop
-    hook told it something and it answered with words alone, making no call since."""
+    read as its action, none where its record is not found, as Call's before; its last reply; and
+    whether a stop hook told it something and it answered with words alone, making no call
+    since."""
 
-    made: list[Call] | None
+    made: Sequence[Call]
     reply: str
     answered: bool
 
@@ -76,22 +79,24 @@ def read(event: dict[str, Any], found: list[dict[str, Any]] | None) -> Call:
     """The call of the PreToolUse event, read as its action, with the tool and the input the AI
     gave it, the text it writes, and, from the entries found of its subagent's record, None where
     it is not found, each call made before it and each message that reached the subagent since it
-    last asked."""
+    last asked, none where it is not found."""
     tool, given, cwd = event["tool_name"], event["tool_input"], event["cwd"]
+    entries = found or []
     return alone(tool, given, cwd)._replace(
-        before=None if found is None else [made(d) for d in record.done(found, cwd)],
+        before=tuple(made(d) for d in record.done(entries, cwd)),
         text=text(tool, given, cwd),
         tool=tool,
         given=given,
-        heard=None if found is None else record.heard(found),
+        heard=tuple(record.heard(entries)),
     )
 
 
 def ended(event: dict[str, Any], found: list[dict[str, Any]] | None) -> End:
     """How the subagent of the SubagentStop event is about to end, from the event and the entries
-    found of its record, None where it is not found."""
-    calls = None if found is None else [made(d) for d in record.done(found, event["cwd"])]
-    told = bool(event.get("stop_hook_active")) and record.answered(found or [])
+    found of its record, None where it is not found, read then as of no entries."""
+    entries = found or []
+    calls = tuple(made(d) for d in record.done(entries, event["cwd"]))
+    told = bool(event.get("stop_hook_active")) and record.answered(entries)
     return End(calls, event.get("last_assistant_message") or "", told)
 
 
