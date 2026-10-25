@@ -50,7 +50,7 @@ sequenceDiagram
   C->>U: asks what the checklists' items need
   U->>C: answers
   Note over C: writes a CCS
-  C->>T: calls it with the CCS's path, its kinds, and where to write the result
+  C->>T: calls it with the CCS's path, its kinds, where to write the result, and the command that checks the work or none
   T-->>C: the work where it goes, and the result
   Note over C: checks each Good against its lines, ends its step
 ```
