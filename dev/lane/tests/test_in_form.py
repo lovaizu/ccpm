@@ -9,7 +9,7 @@ import unittest
 from unittest import mock
 
 import helpers
-from helpers import in_form, lay
+from helpers import in_form
 from test_guard import GuardTest
 
 # The form of the output, a file of the plugin: a changelog entry as JSON.
@@ -218,19 +218,6 @@ class TestLaid(GuardTest):
         # When: changelog-writer writes entry.json in its form
         # Then: the call goes on, nothing said
         self.assertEqual(self.written('{"version": "1.0"}'), (0, ""))
-
-
-class TestHook(unittest.TestCase):
-    def test_the_hook_watches_the_tools_that_write_text_and_bash(self):
-        # Given: in_form laid on a step
-        lanes = [{"lane": "in_form", "takes": TAKES}]
-        # When: the layer makes the subagent's hook
-        entry = lay.entry(
-            "notes", {"name": "writer", "steps": [{"step": 3, "lanes": lanes}]}, "PreToolUse"
-        )
-        assert entry is not None, "no entry was made"
-        # Then: its matcher names Write, Edit and Bash
-        self.assertEqual(entry["matcher"], "Write|Edit|Bash")
 
 
 if __name__ == "__main__":

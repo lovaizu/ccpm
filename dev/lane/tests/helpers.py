@@ -18,17 +18,21 @@ sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "dev", "lane")]
 
 # lane's modules, taken by each test from here, so they are found whichever test runs first.
 import call
+import entries  # noqa: F401
 import forms  # noqa: F401
 import guard  # noqa: F401
 import hook  # noqa: F401
 import hooks_file  # noqa: F401
 import lanes  # noqa: F401
 import lay  # noqa: F401
+import placed  # noqa: F401
+import proposal  # noqa: F401
 import record
 import schema  # noqa: F401
 import shell  # noqa: F401
 import started  # noqa: F401
 import step  # noqa: F401
+import steps  # noqa: F401
 import template  # noqa: F401
 import testing
 from lanes import (  # noqa: F401

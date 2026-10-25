@@ -7,7 +7,7 @@ import unittest
 from unittest import mock
 
 import helpers
-from helpers import NO_PLUGIN, lay, testing
+from helpers import NO_PLUGIN, testing
 from lanes import write_only
 from test_guard import GuardTest
 
@@ -158,22 +158,6 @@ class TestLaid(GuardTest):
         # When: changelog-writer writes CHANGELOG.md
         # Then: the call goes on, nothing said
         self.assertEqual(self.written("CHANGELOG.md"), (0, ""))
-
-
-class TestHook(unittest.TestCase):
-    def test_the_hook_watches_each_tool_that_writes_once_beside_another_lanes(self):
-        # Given: write_only and hands_off laid on one step, both watching Bash
-        lanes = [
-            {"lane": "hands_off", "takes": ["git commit"]},
-            {"lane": "write_only", "takes": TAKES},
-        ]
-        # When: the layer makes the subagent's hook
-        entry = lay.entry(
-            "notes", {"name": "writer", "steps": [{"step": 3, "lanes": lanes}]}, "PreToolUse"
-        )
-        # Then: its matcher names each tool the two watch, once
-        assert entry is not None, "no entry was made"
-        self.assertEqual(entry["matcher"], "Bash|Write|Edit|NotebookEdit")
 
 
 if __name__ == "__main__":
