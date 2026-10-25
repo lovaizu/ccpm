@@ -790,7 +790,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "mutate lane, turn, rn on 37c5531 running (scratchpad mutate-*.log); on its end, start a subagent on scratchpad lane-up-delete-brief.md (lane:up deleted, README and UX to the proposal and lay.py), check it by hand, push; then lane's null run value (tests first) and turn's `test` in its call, passed to the generator, test_after laid on {work} and {test}, with every_item on generator and first-user and an items adapter for `### <ID>:` headings, through the layer; then the earlier steps: turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check"
+   "next": "a subagent runs scratchpad lane-up-delete-brief.md (lane:up deleted, README and UX to the proposal and lay.py), check it by hand from its test design first, push (mutation left to pre-push and CI, as the user said); then lane's null run value (tests first) and turn's `test` in its call, passed to the generator, test_after laid on {work} and {test}, with every_item on generator and first-user and an items adapter for `### <ID>:` headings, through the layer; then the earlier steps: turn's .turn/ folders, rn.py's excludes, lane read whole against fix.md B-4, roles trial, rn from build-brief.md, shared.md, final check"
   }
  ],
  "uncertainty_signal": [
@@ -823,6 +823,9 @@
   },
   {
    "open": "turn's 5 items the calling AI judged unmet (whole-work repetition, contradiction, an unfollowable pointer): investigate from the records whether the first user's miss lies in the checklist, its steps or a hook, after the Good check goes, as the user asked"
+  },
+  {
+   "open": "for rn's step (the user, 2026-10-25): a task making code runs as two actions in order, tests first (cases and data designed by code.md's ISTQB techniques, read by a first user, seen failing), then the code holding the tests fixed; the order is the flow's, as a checklist judges only the deliverable. Also: the user's repeated feedback must flow back into rules and checklists by rn, as now it is noted and lost"
   }
  ],
  "retrieved_artifacts": [
