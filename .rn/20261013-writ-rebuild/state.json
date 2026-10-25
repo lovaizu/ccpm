@@ -656,6 +656,9 @@
   },
   {
    "fact": "2026-10-25, the user approved: rn/skills/up/SKILL.md split by stage, SKILL.md keeping the Role and the steps every stage uses (resume, hearing, turn call, task, sign-off, feedback), plan.md, design.md, build.md, learnings.md read when Next names that stage, as prompt.md B-4 and the skill authoring best practice say"
+  },
+  {
+   "fact": "2026-10-25: lane built by a subagent to its audit (c6d8713..a88c6b1) and checked by hand commit by commit: pragmas against the values each comparison meets, every removed line traced to where its intent lives, removed tests to the tests that hold them; nothing to fix by hand; check.sh lane turn rn 100%, properties pass, mutate lane 0 of 2614 in 2m30s; the push stopped at pre-push: 4068e9e left 58 rn survivors (turn's not yet counted), given to a subagent to do as c6d8713 did"
   }
  ],
  "semantic_gist": [
@@ -760,7 +763,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "after /clear: read steering.md, this state and the audits; a subagent (general-purpose, background) is building lane from /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/4a0ea0ef-dce4-4e14-943e-f0341e0a4a05/scratchpad/build-brief.md, first killing the 39 survivors (/tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/4a0ea0ef-dce4-4e14-943e-f0341e0a4a05/scratchpad/mutate-lane.txt), then lane-product.md and lane-tests.md with the rulings given it; check its commits with `git log`, read its report when it notifies, or, if the notice was lost after /clear, check pgrep/git log and the working tree; check every commit by hand against the audit, the checklists and each removed line's intent (git log -L), then run check.sh lane turn rn, properties, mutate lane at 0 and push (pre-push fails until the survivors are 0). Then, one at a time with a subagent per plugin from the same brief: turn (D1 Good check gone; README example line 'When it returns, check each Good against its lines.' dropped; turn-product.md, turn-tests.md; then the first user's misses investigated), then rn (work per output, the plan CCS minimal, up kept checking turn's result with architecture :151-153 rewritten, the stage split, rn-product.md, rn-tests.md), then shared.md (dev, rules: ask the user before changing .claude/rules or dev/architecture.md's shape). After all: move and flow trials and turn's readme acceptance set beside the baseline; final check by .claude/rules/final-check.md; report to the user"
+   "next": "when the survivors subagent reports: check its two commits as lane's were checked, push (pre-push must pass), then turn from build-brief.md (D1 Good check gone; README line 'When it returns, check each Good against its lines.' dropped; turn-product.md, turn-tests.md; also lane's left items for turn: E501 lines, testing.hypothesis() for its property files, the record read in several places S96/S98, a cross-plugin decision), then rn the same way, then shared.md; after all: lane's notes trial (up.md step 1/3/7 changed in 8fabd0b), move and flow trials and turn's readme acceptance beside the baseline; final check; report"
   }
  ],
  "uncertainty_signal": [
