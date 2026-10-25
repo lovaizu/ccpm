@@ -257,7 +257,7 @@ def moved(run: dict[str, Any]) -> dict[str, Any]:
     reply = step["prompt"]["reply"]
     if os.path.exists(reply):
         os.remove(reply)
-    if agent == LEARNER:
+    if agent == LEARNER:  # pragma: no mutate
         shown(run, step["prompt"]["given"])
     step["moved"] = True
     if "to" in step:

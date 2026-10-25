@@ -24,7 +24,7 @@ def root(result: str) -> str:
     folder = os.path.realpath(os.path.dirname(os.path.abspath(result)))
     up = folder
     while not os.path.exists(os.path.join(up, REPOSITORY)):
-        if os.path.dirname(up) == up:
+        if os.path.dirname(up) == up:  # pragma: no mutate
             return folder
         up = os.path.dirname(up)
     return up

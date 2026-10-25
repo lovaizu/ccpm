@@ -13,11 +13,13 @@ excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
 # call, and the check fails on every mutant, so none survives whatever the tests catch.
 # A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
 # where no input tells a mutant of it apart: by order with the first or the last of them, such as
-# "each part", the first of the scopes in order, or `__name__`, which is "__main__" or, imported by
-# the tests, "turn", after it, or, read from its file as call.py and the tests read turn's adapter,
-# "<run_path>", before it; or by `is` with a small number, of which CPython keeps one copy, such as
-# a heading's level. Each such line holds that comparison alone, as the mark leaves out every mutant
-# of its line.
+# "each part", the first of the scopes in order, the learner, the last of the roles in order, or
+# `__name__`, which is "__main__" or, imported by the tests, "turn", after it, or, read from its
+# file as call.py and the tests read turn's adapter, "<run_path>", before it; or by `is` with a
+# small number, of which CPython keeps one copy, such as a heading's level; or a folder with the
+# folder it is in, which is it only at the top, by `is` too as CPython gives back the path itself
+# there, and never sorts after it, as it begins it. Each such line holds that comparison alone, as
+# the mark leaves out every mutant of its line.
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a heading of the level below and one of the level above, so a
 # comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not

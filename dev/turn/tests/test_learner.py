@@ -94,6 +94,18 @@ class TestLearner(ReadTest):
         self.assertEqual(json.loads(move["input"]["prompt"])["given"], given)
         self.assertIn("[user] {}", self.read(given[0]))
 
+    def test_the_records_shown_before_are_written_over_when_the_learner_is_started_anew(self):
+        # Given: a run whose learner was started, the records shown to it still there, one of them
+        # changed since
+        self.due(self.learner)
+        given = self.prompt()["given"]
+        self.write(given[0], "changed\n")
+        # When: the same call is made again, and the learner is started anew
+        self.turn("start", json.dumps(CALL))
+        self.due(self.next())
+        # Then: each is shown again as its record holds it
+        self.assertIn("[user] {}", self.read(given[0]))
+
     def test_the_result_is_written_one_key_or_value_to_a_line(self):
         # Given: a run that returns
         # When: its result is written

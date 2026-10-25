@@ -25,8 +25,9 @@ from helpers import (
     state,
 )
 
-# The day before TODAY, a run begun on it gone on with on TODAY.
+# The day before TODAY, a run begun on it gone on with on TODAY, and the day before that.
 YESTERDAY = "20261024"
+EARLIER = "20261023"
 
 
 class TestRunFolder(RepoTest):
@@ -145,6 +146,17 @@ class TestRunFolder(RepoTest):
         self.assertEqual(
             self.read_json(f".turn/{TODAY}-r.json/run.json")["call"]["result"], "r.json"
         )
+
+    def test_of_two_folders_kept_for_a_result_the_earliest_day_s_is_gone_on_with(self):
+        # Given: folders of the call's result kept from two days, the day before and the day
+        # before that
+        for day in (EARLIER, YESTERDAY):
+            os.makedirs(f".turn/{day}-.tasks%2Freadme-result.json")
+        # When: the run is started today
+        self.start()
+        # Then: it is kept in the folder of the earliest day, and no folder of today is made
+        self.assertTrue(os.path.isfile(f".turn/{EARLIER}-.tasks%2Freadme-result.json/run.json"))
+        self.assertEqual(len(self.runs()), 2)
 
     def test_a_run_begun_on_an_earlier_day_shows_its_records_in_its_folder(self):
         # Given: a run begun the day before, every item given its Good today
