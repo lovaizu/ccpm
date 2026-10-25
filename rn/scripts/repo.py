@@ -1,6 +1,6 @@
-"""What rn runs and keeps in the user's repository: git and GitHub's command, each failure a stop with
-what they said; the files it writes; and each move committed and pushed, as a fresh conversation,
-or another machine, goes on from what is pushed alone."""
+"""What rn runs and keeps in the user's repository: git and GitHub's command, each failure a stop
+with what they said; the files it writes; and each move committed and pushed, as a fresh
+conversation, or another machine, goes on from what is pushed alone."""
 
 from __future__ import annotations
 

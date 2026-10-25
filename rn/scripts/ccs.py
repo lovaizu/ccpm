@@ -164,9 +164,9 @@ def finished_work() -> list[str]:
     ).splitlines()
     if not paths:
         raise stop.Stop(
-            f"rn: the branch changed no file outside {session.RECORD}/ since it left {repo.default_branch()}, so"
-            " there is no finished work to name; have each task made and kept, or give the work's"
-            " paths, then run this again"
+            f"rn: the branch changed no file outside {session.RECORD}/ since it left"
+            f" {repo.default_branch()}, so there is no finished work to name; have each task made"
+            " and kept, or give the work's paths, then run this again"
         )
     return paths
 

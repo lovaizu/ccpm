@@ -1,7 +1,7 @@
-"""Stands in for turn's turn:up in rn's flow trial with the stand-in agent, an AI that makes each work
-itself from the CCS rn hands turn, as the flow trial's user answers in words no fixture can foresee:
-gives the agent what the call asks it to make, then writes the result as turn's flow leaves it once
-a run returns, by the move trials' stand.py, which the trial copies beside it.
+"""Stands in for turn's turn:up in rn's flow trial with the stand-in agent, an AI that makes each
+work itself from the CCS rn hands turn, as the flow trial's user answers in words no fixture can
+foresee: gives the agent what the call asks it to make, then writes the result as turn's flow leaves
+it once a run returns, by the move trials' stand.py, which the trial copies beside it.
 
     python3 write.py '<call>'      the work, the files the CCS gives, and each item to give its
                                    Good, by its checklist's file name, ID and title

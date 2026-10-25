@@ -1,8 +1,8 @@
-"""Stands in for GitHub's `gh` in rn's move trials, for the commands rn and its orchestrator run: the
-repository's URL, the pull request created, viewed, edited and marked ready, and the issues created
-on lovaizu/ccpm. It keeps the pull request, the issues and every command it was given
-in `gh.json`, in the case's folder above its own, and prints what gh would; a command it does not
-stand in for it names, exiting 1, as gh does on a failure.
+"""Stands in for GitHub's `gh` in rn's move trials, for the commands rn and its orchestrator run:
+the repository's URL, the pull request created, viewed, edited and marked ready, and the issues
+created on lovaizu/ccpm. It keeps the pull request, the issues and every command it was given in
+`gh.json`, in the case's folder above its own, and prints what gh would; a command it does not stand
+in for it names, exiting 1, as gh does on a failure.
 
 The trial copies it into `<case>/bin/`, beside a `gh` that runs it, first on the PATH Claude Code
 runs with."""

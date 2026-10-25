@@ -33,7 +33,10 @@ FEEDBACK = "挨拶には、質問があるときは issue を開けばよいこ�
 # Each answer in the user's own words, so the decision kept is the one the stand-in turn's reply
 # was made from, whichever order rn puts its options in.
 LANGUAGES_ANSWER = "会話は日本語、リポジトリは英語でお願いします"
-DONE_ANSWER = "README に、新しいコントリビューターを迎えて `sh demo.sh` を実行するよう伝える一行があることです"
+DONE_ANSWER = (
+    "README に、新しいコントリビューターを迎えて `sh demo.sh` を"
+    "実行するよう伝える一行があることです"
+)
 WHY_ANSWER = "歓迎されていると感じて、早く最初の変更を出してもらうためです"
 USE_ANSWER = "いいえ、Use の節は指さなくていいです"
 PLACE_ANSWER = "タイトルのすぐ下に置いてください"
@@ -66,8 +69,8 @@ RESEARCH_CCS = [
 
 
 def note_ccs(work: str, path: str, has: str) -> list:
-    """What rn.py ccs is given for a task's work of the kind note at the path, its reader as the note
-    checklist's opening names them, with the earlier output it is made from."""
+    """What rn.py ccs is given for a task's work of the kind note at the path, its reader as the
+    note checklist's opening names them, with the earlier output it is made from."""
     return [
         "ccs",
         work,
@@ -114,21 +117,29 @@ AC3 = (
 )
 T1 = f"""- T1: The greeting's place, chosen by the user from checked facts. Serves AC1.
 
-  Completion criterion: the user has chosen where in README.md the greeting goes, from what the README holds and what GitHub shows of it first; checked by the choice kept as a decision of the plan resting on the research.
+  Completion criterion: the user has chosen where in README.md the greeting goes, from what the
+  README holds and what GitHub shows of it first; checked by the choice kept as a decision of the
+  plan resting on the research.
 
-  - [ ] 1. Research what README.md holds above its first section and what GitHub shows of a README first, `{RESEARCH}` as a research work. turn.
-  - [ ] 2. Confirm the greeting's place with the user, from that research. The orchestrator, with the user."""
+  - [ ] 1. Research what README.md holds above its first section and what GitHub shows of a README
+    first, `{RESEARCH}` as a research work. turn.
+  - [ ] 2. Confirm the greeting's place with the user, from that research. The orchestrator, with
+    the user."""
 T2 = """- T2: docs/greeting.md, giving the greeting's words and its place. Serves AC1 and AC2.
 
-  Completion criterion: docs/greeting.md gives the greeting line and where in the README it goes; checked by a contributor finding both on its first screen.
+  Completion criterion: docs/greeting.md gives the greeting line and where in the README it goes;
+  checked by a contributor finding both on its first screen.
 
-  - [ ] 1. Confirm the greeting's words with the user, in the tone README.md is written in. The orchestrator, with the user.
+  - [ ] 1. Confirm the greeting's words with the user, in the tone README.md is written in. The
+    orchestrator, with the user.
   - [ ] 2. Make the note from the words settled, `docs/greeting.md` as a note work. turn."""
 T3 = """- T3: README.md greeting new contributors. Serves AC1 and AC2.
 
-  Completion criterion: README.md holds the line docs/greeting.md gives, right under its title; checked by reading README.md and running `sh demo.sh` as the line says.
+  Completion criterion: README.md holds the line docs/greeting.md gives, right under its title;
+  checked by reading README.md and running `sh demo.sh` as the line says.
 
-  - [ ] 1. Confirm with the user the line docs/greeting.md gives and its place. The orchestrator, with the user.
+  - [ ] 1. Confirm with the user the line docs/greeting.md gives and its place. The orchestrator,
+    with the user.
   - [ ] 2. Make the change from docs/greeting.md, `README.md` as a note work. turn."""
 # The lines from `## Tasks` to the part's end, as a Good's lines name them in stand.py's marks.
 TASKS_LINES = "## Tasks.."
@@ -148,8 +159,8 @@ def plan(goal: str, criteria: list, tasks: list, said: dict) -> dict:
     goods = {
         "F-1": (
             (
-                "From the title to the tasks the part follows F-1's template: the title, G1 under it,"
-                " each criterion as `- AC<n>:`, and "
+                "From the title to the tasks the part follows F-1's template: the title, G1 under"
+                " it, each criterion as `- AC<n>:`, and "
                 + (
                     "each task's line ending with what it serves, its completion criterion and its"
                     " numbered actions, each saying who does it"
@@ -180,15 +191,16 @@ def plan(goal: str, criteria: list, tasks: list, said: dict) -> dict:
         "B-7": (said["stage"], at),
         "B-8": (
             (
-                "Each line is the goal, a criterion or a task, used by the user at the sign-off or by"
-                " the orchestrator later; how each point was reached is left to the commit messages"
+                "Each line is the goal, a criterion or a task, used by the user at the sign-off or"
+                " by the orchestrator later; how each point was reached is left to the commit"
+                " messages"
             ),
             whole,
         ),
         "B-9": (
             (
-                "The goal is G1, each criterion and task keeps one ID, and each task serves only IDs"
-                " the plan holds"
+                "The goal is G1, each criterion and task keeps one ID, and each task serves only"
+                " IDs the plan holds"
             ),
             whole,
         ),
@@ -255,8 +267,8 @@ PLAN_ASKED = plan(
         goal=WHY.replace("where to start,", "where to start and where to ask,"),
         criteria="Each criterion is answered yes or no by reading the README: AC1 the greeting"
         " line there, AC2 its telling to run `sh demo.sh`, AC3 its telling to open an issue to"
-        " ask, with no link; together they give G1's greeting, where to start and where to ask, and with them"
-        " its reason",
+        " ask, with no link; together they give G1's greeting, where to start and where to ask,"
+        " and with them its reason",
     ),
 )
 PLAN_DESIGN = plan(G1, [AC1, AC2], [T2], DESIGN_STAGE)
@@ -447,9 +459,9 @@ FINISHED = {
     "goods": {
         "deliverable.md": {
             "B-1": {
-                "good": "Used as the user would: README.md greets new contributors right under its"
-                " title (AC1) and tells them to start by running `sh demo.sh`, which runs and prints"
-                " hello (AC2)",
+                "good": "Used as the user would: README.md greets new contributors right under"
+                " its title (AC1) and tells them to start by running `sh demo.sh`, which runs and"
+                " prints hello (AC2)",
                 "at": ["Welcome"],
                 "in": "README.md",
             }
@@ -488,8 +500,8 @@ CHECKLIST_GOODS = {
     "B-2": "Each thing the opening names has an item: finding the lines B-1, doing what they say"
     " B-2, copying them into the file they go into B-3",
     "B-3": "Each item asks one thing of the purpose that no other asks",
-    "B-4": "Each item is answered by pointing at the note's lines: the lines, the command they give,"
-    " the file they name",
+    "B-4": "Each item is answered by pointing at the note's lines: the lines, the command they"
+    " give, the file they name",
     "B-5": "Each item asks one thing, with a sign of what is looked at",
 }
 NOTE_CHECKLIST = {
@@ -624,7 +636,8 @@ def plan_signoff(p: Place) -> None:
         "plan",
         "Place",
         "the greeting goes right under the README's title, the first line a contributor reads",
-        f'T1.2: the user chose where the greeting goes: "{PLACE_QUOTE}", over the end of the README',
+        f'T1.2: the user chose where the greeting goes: "{PLACE_QUOTE}", over the end of the'
+        " README",
     )
     state(p, NEXT_T1_WEIGH, "T1.2 done: the greeting's place settled", "--done", "T1.2")
     put = made(p, PLAN_CCS, PLAN_PLACED)
@@ -1118,7 +1131,8 @@ CASES = {
     "plan-signoff": Case(
         "a task's last action, the orchestrator's, the task done and what it brought weighed, the"
         " plan made again from it, then the plan sign-off",
-        "up 1, 4 (the last action, what the task brought weighed), 2, 3 (the plan made again), 8, 5",
+        "up 1, 4 (the last action, what the task brought weighed), 2, 3 (the plan made again), 8,"
+        " 5",
         t1_researched,
         [next_has("Step 4 of /rn:up on T1: action 2"), ticked("T1.1"), returned("plan", 1)],
         [

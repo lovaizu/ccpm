@@ -62,7 +62,8 @@ CRITERION_FORM = (
 )
 TASK = re.compile(r"- (?P<id>T[0-9]+): \S.*")
 TASK_FORM = "a task as `- T<n>: <the result it makes>. Serves <G1, or the criteria by ID>.`"
-# What a task's line ends with: the goal or the criteria it serves, by their IDs, as a list in words.
+# What a task's line ends with: the goal or the criteria it serves, by their IDs, as a list in
+# words.
 SERVED = re.compile(r".* Serves (?P<ids>(?:G1|AC[0-9]+)(?:(?:,? and |, )(?:G1|AC[0-9]+))*)\.")
 ID = re.compile(r"G1|AC[0-9]+")
 COMPLETION = re.compile(r"  Completion criterion: \S.*")

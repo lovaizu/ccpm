@@ -285,9 +285,9 @@ class DesignTest(ShownTest):
         # When: the orchestrator asks for the design's proposal.
         # Then: rn says turn has not returned it.
         self.assertIn(
-            f"rn: turn has not returned the work t1.1: {call_at('0005', 'result.json')} is not there;"
-            " have turn:up make it with the call `rn.py ccs t1.1 ...` printed, keep it, then run this"
-            " again",
+            f"rn: turn has not returned the work t1.1: {call_at('0005', 'result.json')} is not"
+            " there; have turn:up make it with the call `rn.py ccs t1.1 ...` printed, keep it, then"
+            " run this again",
             self.stopped("proposal", "design"),
         )
 
@@ -347,8 +347,8 @@ class DeliverableTest(ShownTest):
         self.kept()
 
     def test_the_deliverable_proposal_shows_each_criterion_and_each_tasks_decisions(self):
-        # Given: t1.1 with a decision and t2.1 with none, made in the build stage, t3.1 with a decision,
-        # made in the design stage, and the finished work returned.
+        # Given: t1.1 with a decision and t2.1 with none, made in the build stage, t3.1 with a
+        # decision, made in the design stage, and the finished work returned.
         self.call("0004", "t3.1", "design", ("Flow: one page",), ("docs/flow.md",), {})
         self.kept()
         # When: the orchestrator asks for the deliverable's proposal.

@@ -112,9 +112,10 @@ def shown_at(commit: str, signoff: str, folder: str) -> Shows:
         if last is None or not last.result:
             number = "" if last is None else last.number
             raise stop.Stop(
-                f"rn: turn has not returned the work {work}: {session.call_path(folder, number, session.RESULT)} is"
-                f" not there; have turn:up make it with the call `rn.py ccs {work} ...` printed,"
-                " keep it, then run this again"
+                f"rn: turn has not returned the work {work}:"
+                f" {session.call_path(folder, number, session.RESULT)} is not there; have turn:up"
+                f" make it with the call `rn.py ccs {work} ...` printed, keep it, then run this"
+                " again"
             )
         said = simple(work, session.decisions_of(last))
         label = work.upper() if session.TASK_WORK.fullmatch(work) else work

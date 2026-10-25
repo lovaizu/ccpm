@@ -722,9 +722,10 @@ class StateTest(RepoTest):
         # When: the orchestrator keeps a move.
         # Then: rn names the point and says to restore one rn kept from its history.
         self.assertIn(
-            f"rn: {STEERING} as the last commit holds it is out of its form: line 4: expected stage to be plan, design, build, deliverable,"
-            " learnings or finished, found done; rn keeps none so, so restore the last one rn"
-            f" kept from `git log -p -- {STEERING}`, commit it, then run this again",
+            f"rn: {STEERING} as the last commit holds it is out of its form: line 4: expected stage"
+            " to be plan, design, build, deliverable, learnings or finished, found done; rn keeps"
+            f" none so, so restore the last one rn kept from `git log -p -- {STEERING}`, commit"
+            " it, then run this again",
             self.stopped(*self.state()),
         )
 
@@ -1015,7 +1016,10 @@ class PutTest(RepoTest):
         out = self.stopped(*self.put())
         # Then: rn names the point, says to have turn make it again, and keeps nothing.
         said = "rn: the steering would be out of its form: line 32: expected only the headings"
-        kept = "nothing is kept: give what this move writes again so it holds, or have turn make the part it puts back again"
+        kept = (
+            "nothing is kept: give what this move writes again so it holds, or have turn make the"
+            " part it puts back again"
+        )
         self.assertEqual((said in out, kept in out, self.read(STEERING)), (True, True, STEERED))
 
     def test_a_part_with_an_action_out_of_form_stops_and_keeps_nothing(self):

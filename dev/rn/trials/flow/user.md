@@ -28,8 +28,8 @@ it then with `/rn:gm`.
 - When rn says the conversation can be cleared and to type `/rn:up`, send `/rn:up` with `fresh`
   true.
 - When rn says it is making the work and waits, nothing is asked of you, so add nothing new: say
-  only that it may go on, such as `続けてください`. Say `stop` only where rn is stuck: it asks the
-  same question three times, or asks you to do its work by hand.
+  only that it may go on, such as `続けてください`. Say `stop` only where rn is stuck: it asks the same
+  question three times, or asks you to do its work by hand.
 - When rn shows you an issue to send to its makers, decide as that person would.
 
 End every reply with one line of JSON, and nothing after it, in exactly this form:

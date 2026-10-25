@@ -9,10 +9,11 @@ made_from:
 # Learnings
 
 The learnings, `learnings.md` in the session's folder `.rn/<yyyymmdd>-<slug>/`, where rn keeps one
-piece of work, are used by the user once they approve the finished work, as rn puts each to them one per message,
-to decide where it goes: into their checklists, `.rn/checklists/<kind>.md` in their repository,
-which their later work is made with; to rn's makers as an issue, which makes rn better for everyone;
-both; or neither. They decide from each learning alone, without opening the records it was found in.
+piece of work, are used by the user once they approve the finished work, as rn puts each to them one
+per message, to decide where it goes: into their checklists, `.rn/checklists/<kind>.md` in their
+repository, which their later work is made with; to rn's makers as an issue, which makes rn better
+for everyone; both; or neither. They decide from each learning alone, without opening the records it
+was found in.
 
 A learning serves them by resting on the session's own words, so the user decides on what happened
 rather than on a guess. It is found in one stretch of the session, from one sign-off to the next the

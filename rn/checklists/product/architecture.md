@@ -25,8 +25,8 @@ few user stories, each one way the user uses the product at its edge, such as a 
 the stories are taken on by logical components, each of which may serve several; and each component
 is realized by a technology, chosen at this layer alone, so the stories and the components follow
 from what the UX needs. What to check of each kind of part and of the stories, and how far, is the
-project's rule, not the architecture's: the architecture links it. An architecture built on a base architecture writes only what is
-its own, and links the base for the rest.
+project's rule, not the architecture's: the architecture links it. An architecture built on a base
+architecture writes only what is its own, and links the base for the rest.
 
 ## Format
 

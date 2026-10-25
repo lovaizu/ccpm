@@ -1,5 +1,5 @@
-"""What rn's tests stand on beside what every plugin's tests do: the repository a session is kept in,
-with the remote it is pushed to, made once a run and copied into each test's folder; a plugin
+"""What rn's tests stand on beside what every plugin's tests do: the repository a session is kept
+in, with the remote it is pushed to, made once a run and copied into each test's folder; a plugin
 folder of its own and a stand-in for GitHub's command `gh`; the session's steering, its calls to
 turn and Claude Code's records, as rn writes or reads them."""
 

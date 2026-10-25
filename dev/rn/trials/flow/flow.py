@@ -10,9 +10,10 @@ would, since rn's points come in an order and a number no fixed script can answe
 
 What it shows: whether rn takes the user from asking to the pull request ready, keeping every move
 on its branch and nothing on the default branch, with the changes the user sends back at the
-deliverable sign-off (KR1.1) and what the user had to do, beside the minutes it took (KR1.2). What it leaves out, on the user's
-decision: the quality of what turn makes, as the stand-in turn makes each work once, without turn's
-rounds or first user, keeping only the decisions the CCS holds.
+deliverable sign-off (KR1.1) and what the user had to do, beside the minutes it took (KR1.2).
+What it leaves out, on the user's decision: the quality of what turn makes, as the stand-in turn
+makes each work once, without turn's rounds or first user, keeping only the decisions the CCS
+holds.
 
     python3 dev/rn/trials/flow/flow.py [--dry]
 
@@ -150,7 +151,8 @@ class Trial:
         pr = now["pr"]["url"] if now["pr"] else "not opened yet"
         return (
             "rn said:\n\n" + "\n\n".join(words) + "\n\n"
-            f"stage: {now['stage'] or 'no session yet'}, sign-off waiting: {now['signoff'] or 'none'}"
+            f"stage: {now['stage'] or 'no session yet'},"
+            f" sign-off waiting: {now['signoff'] or 'none'}"
             f"\npull request: {pr}\nEnd your reply with the one line of JSON."
         )
 
@@ -269,7 +271,9 @@ class Trial:
         designed = bool(shown["design"]) or any(e.get("stage_after") == "build" for e in sent)
         return {
             "the plan sign-off shown": bool(shown["plan"]),
-            "the design sign-off shown, or build reached without it as no document was made": designed,
+            (
+                "the design sign-off shown, or build reached without it as no document was made"
+            ): designed,
             "the deliverable sign-off shown": bool(shown["deliverable"]),
             "a feedback at the plan sign-off kept, gone on from in a fresh conversation, and the"
             " plan sign-off shown again": bool(fresh) and any(k >= fresh[0] for k in shown["plan"]),

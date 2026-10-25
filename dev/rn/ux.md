@@ -30,10 +30,10 @@ the user to G1.
   G1 is reached.
 
   Each thing the user's feedback there asks to be different counts as one change. Every one counts,
-  since the user agreed the purpose at the plan and design sign-offs, so a change asked at the end is
-  where the finished work misses it; changes asked at those two earlier sign-offs do not count, as
-  there the user is still deciding what the finished work should be. Each change is effort the user
-  spent beyond answering, so fewer shows them closer to G1.
+  since the user agreed the purpose at the plan and design sign-offs, so a change asked at the end
+  is where the finished work misses it; changes asked at those two earlier sign-offs do not count,
+  as there the user is still deciding what the finished work should be. Each change is effort the
+  user spent beyond answering, so fewer shows them closer to G1.
 
 - KR1.2: The time the user spends from asking to their purpose achieved; shorter is better, and once
   G1 is reached only the time spent answering the points to decide is left.

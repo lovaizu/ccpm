@@ -210,9 +210,9 @@ class FormTest(unittest.TestCase):
 
     def test_tasks_out_of_form_are_named(self):
         actions = (
-            "in one of the forms of rn's plan checklist's F-1, `  - [ ] {0}. <what is found out or"
-            " settled>. The orchestrator, with the user.` or `  - [ ] {0}. <what is made, from which"
-            " works before it>, `<its path>` as a <kind> work. turn.`"
+            "in one of the forms of rn's plan checklist's F-1, `  - [ ] {0}. <what is found out"
+            " or settled>. The orchestrator, with the user.` or `  - [ ] {0}. <what is made, from"
+            " which works before it>, `<its path>` as a <kind> work. turn.`"
         )
         line = "  - [ ] {0}. Make part {1} of T1, `src/t1-{1}.py` as a code work. turn."
         form = "a task as `- T<n>: <the result it makes>. Serves <G1, or the criteria by ID>.`"
@@ -240,7 +240,8 @@ class FormTest(unittest.TestCase):
             task().replace("[ ] 3.", "[ ] three."): f"line 29: expected action 3 of T1"
             f" {actions.format(3)}, found `{line.format('three', 3)}`",
             task().replace(" as a code work. turn.", ". turn.", 1): f"line 27: expected action 1"
-            f" of T1 {actions.format(1)}, found `  - [ ] 1. Make part 1 of T1, `src/t1-1.py`. turn.`",
+            f" of T1 {actions.format(1)}, found `  - [ ] 1. Make part 1 of T1, `src/t1-1.py`."
+            " turn.`",
             task().replace("as a code work. turn.", "as a code work.", 1): f"line 27: expected"
             f" action 1 of T1 {actions.format(1)}, found `  - [ ] 1. Make part 1 of T1,"
             " `src/t1-1.py` as a code work.`",

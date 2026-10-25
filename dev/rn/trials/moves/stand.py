@@ -1,8 +1,8 @@
-"""Stands in for turn's turn:up in rn's move trials: from the call rn's orchestrator hands turn, writes
-what the case set for the call's work as turn's flow leaves it once a run returns, the work's files
-and the result, each item's Good at the lines of the work that give it, and gives the reply turn:up
-ends with: `{"returned": "<result>"}`, or the questions it asks the calling AI. Nothing is made: the
-work is the case's, so the move judged is the orchestrator's alone.
+"""Stands in for turn's turn:up in rn's move trials: from the call rn's orchestrator hands turn,
+writes what the case set for the call's work as turn's flow leaves it once a run returns, the work's
+files and the result, each item's Good at the lines of the work that give it, and gives the reply
+turn:up ends with: `{"returned": "<result>"}`, or the questions it asks the calling AI. Nothing is
+made: the work is the case's, so the move judged is the orchestrator's alone.
 
 The trial copies it into the copy of turn's `scripts/`, beside turn's `call.py`, which checks the
 call and reads the CCS and the checklists' items as turn does:

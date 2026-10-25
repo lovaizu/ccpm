@@ -72,12 +72,12 @@ flowchart TB
 
   A conversation that carries the whole of a long piece of work swells, and a fresh one starts
   from nothing; a rule written only in words is followed by chance.
-- The steering is one file, the map to the purpose kept current, from which and from what each
-  move found the orchestrator decides the next move; it holds only what is left and where it
-  stands: the plan in the form of [rn's plan checklist](../../rn/checklists/session/plan.md)'s F-1,
-  under the front matter, which holds the stage, the sign-off waiting and the two languages, as
-  `dev/architecture.md`'s Languages has them, and above the next move and what is open. rn's scripts alone write it, and hold it
-  to that form at every keep, as they take their data from it.
+- The steering is one file, the map to the purpose kept current, from which and from what each move
+  found the orchestrator decides the next move; it holds only what is left and where it stands: the
+  plan in the form of [rn's plan checklist](../../rn/checklists/session/plan.md)'s F-1, under the
+  front matter, which holds the stage, the sign-off waiting and the two languages, as
+  `dev/architecture.md`'s Languages has them, and above the next move and what is open. rn's scripts
+  alone write it, and hold it to that form at every keep, as they take their data from it.
 
   The user reads it at each sign-off and on the pull request, and a fresh conversation goes on
   from it alone (rn's Principle 2); one file holding both the plan and where it stands cannot say

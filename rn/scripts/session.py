@@ -258,9 +258,9 @@ def numbered_on(folder: str, plan: list[str], part: list[str], number: str) -> N
     stray = [t.id for t in steering.tasks_of(part) if t.id not in left and int(t.id[1:]) <= most]
     if stray:
         raise stop.Stop(
-            f"rn: the part of the call {number} holds {stop.joined(stray)}, neither a task the steering"
-            " holds nor numbered above every task it has held, and an ID names one task alone;"
-            " nothing is kept: have turn make the part again, each new task numbered from"
+            f"rn: the part of the call {number} holds {stop.joined(stray)}, neither a task the"
+            " steering holds nor numbered above every task it has held, and an ID names one task"
+            " alone; nothing is kept: have turn make the part again, each new task numbered from"
             f" T{most + 1}, then run this again"
         )
 
@@ -343,14 +343,15 @@ def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dic
         made = [c.work for c in designed if DESIGNED.fullmatch(c.work)]
         if made:
             raise stop.Stop(
-                f"rn: the design stage made {stop.joined(list(dict.fromkeys(made)))}, which go to the"
-                " design sign-off; show it with `rn.py proposal design`, and the user's approval"
-                " there moves the session to build"
+                f"rn: the design stage made {stop.joined(list(dict.fromkeys(made)))}, which go to"
+                " the design sign-off; show it with `rn.py proposal design`, and the user's"
+                " approval there moves the session to build"
             )
     left = [task.id for task in steering.tasks_of(plan)]
     if stage == steering.DELIVERABLE and left:
         raise stop.Stop(
-            f"rn: {stop.joined(left)} is still in the steering, and the finished work is checked once no"
-            " task is; tick each action done with --done T<n>.<action>, then run this again"
+            f"rn: {stop.joined(left)} is still in the steering, and the finished work is checked"
+            " once no task is; tick each action done with --done T<n>.<action>, then run this"
+            " again"
         )
     return {**keys, steering.STAGE: stage}

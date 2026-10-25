@@ -19,10 +19,11 @@ SKILL.md says.
       answer.
     - For each issue: have it made, step 3 on work `issue-<n>`, giving nothing more, which turn
       makes at `<session>/issue-<n>.md`; read it whole, show it to the user whole, put into the
-      conversation language, adding nothing and leaving nothing out, and ask whether to send it; on their yes alone, run `gh issue create --repo
-      lovaizu/ccpm --title "$(sed -n '1s/^# //p' <session>/issue-<n>.md)" --body "$(tail -n +3
-      <session>/issue-<n>.md)"`, which prints the issue's URL; keep it with `rn.py state`, Next this
-      step, Open without it, the message holding the URL, and tell them `Issue sent: <url>`.
+      conversation language, adding nothing and leaving nothing out, and ask whether to send it; on
+      their yes alone, run `gh issue create --repo lovaizu/ccpm --title "$(sed -n '1s/^# //p'
+      <session>/issue-<n>.md)" --body "$(tail -n +3 <session>/issue-<n>.md)"`, which prints the
+      issue's URL; keep it with `rn.py state`, Next this step, Open without it, the message holding
+      the URL, and tell them `Issue sent: <url>`.
     - For each kind with a learning taken for a checklist: have it made, step 3 on work
       `checklist-<kind>`, giving nothing more.
     - Run `rn.py state --stage finished --message <m>`, which marks the pull request ready, sets
