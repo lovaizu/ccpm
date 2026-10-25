@@ -120,3 +120,11 @@
 - [step: generator] Where an item's Good needs a file the work does not hold, the item waits on a
   question whether to add it to the work, recommending it be added under the CCS's kind for the
   work (2026-10-23): an answer kept in the decisions alone left the run unable to write LICENSE.
+- [test: flow] A run's state and each role's reply are kept in `.turn/<yyyymmdd>-<name>/` at the
+  root of the repository, the name made from the result's path, so a run started again with the
+  same call finds them and runs at once do not meet; the records shown to the learner, made again
+  when needed and gone once the run returns, are in `turn/<yyyymmdd>-<name>/` in the system's
+  temporary folder; the result alone is where the call puts it (2026-10-25, the user's choice over
+  keeping them beside the result): dev/architecture.md's Where a plugin writes its files places a
+  plugin's files in two places, and a run may go on days later, past what the temporary folder
+  keeps.
