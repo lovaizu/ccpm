@@ -36,7 +36,8 @@
 - The time from calling turn to the work coming back, for a work the size of one README; shorter is
   better, since the calling AI, and the person, wait that long.
 - In that order: time is never saved by leaving the calling AI more to fix.
-- Each version is judged against the version in use on the same task, with no target value.
+- Each version is judged by how close it brings the user, with what could be improved, the user
+  judging; no target value and no comparison with an earlier version (report.decisions.md, R57).
 
 ### B-6: The benefits
 - The AI gets the work already read through the eyes of a reader who did not make it, in the

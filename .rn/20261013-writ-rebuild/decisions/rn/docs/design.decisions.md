@@ -106,6 +106,7 @@ has make and read every work, is described in `turn/README.md` and `dev/turn/des
   from `/rn:up` to the pull request marked ready with stand-ins; each story by a stand-in user
   playing it; KR1.1, the changes a stand-in user holding the purpose sends back at the deliverable
   sign-off, and KR1.2, the user's time read from the records in its parts (answering, checking,
-  sending back, by hand), each compared with the version in use, rn 0.9.0, on the same request.
+  sending back, by hand), each judged by how close it brings the user, not against rn 0.9.0
+  (report.decisions.md, R57).
 - Every AI part is checked on the model it names (Opus) and judged from the JSONL of every
   conversation and agent it started.

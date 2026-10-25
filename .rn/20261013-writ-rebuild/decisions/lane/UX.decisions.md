@@ -19,7 +19,8 @@ a line here changes it.
   sentence in the forms the steps tell, or tells the AI of a call the sentence allows; a flow
   definition, step, setting or copy lane writes that must be changed or worked around; fewer is
   better, and none once the goal is reached. Each defect is work the builder does in lane's place.
-- Judged against the version in use on the same plugins, with no target value.
+- Judged by how close the version brings the builder, with what could be improved, the user
+  judging; no target value and no comparison with an earlier version (report.decisions.md, R57).
 
 ### B-5: The scenes
 1. The builder asks Claude to lay lanes on their plugin; Claude starts `lane:up`.
