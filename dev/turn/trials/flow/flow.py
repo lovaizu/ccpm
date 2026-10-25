@@ -99,13 +99,12 @@ session = end["session_id"]
 print(end.get("result"))
 print("session:", session, "cost:", end.get("total_cost_usd"))
 print("minutes:", round((time.time() - start) / 60, 1))
-for record in sorted(
-    shared.agents(session), key=lambda r: os.path.getmtime(r.replace(".jsonl", ".meta.json"))
+# Each agent's record by when it began, its first entry's time.
+for begun, path in sorted(
+    (next((e["timestamp"] for e in shared.record.read(p) or [] if "timestamp" in e), ""), p)
+    for p in shared.agents(session)
 ):
-    with open(record, encoding="utf-8") as f:
-        first = json.loads(f.readline()).get("timestamp", "")
-    with open(record.replace(".jsonl", ".meta.json"), encoding="utf-8") as f:
-        print(first[11:19], json.load(f).get("agentType"), record)
+    print(begun[11:19], shared.record.agent_type(path), path)
 path = os.path.join(place, CALL["result"])
 if os.path.exists(path):
     with open(path, encoding="utf-8") as f:

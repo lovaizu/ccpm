@@ -4,9 +4,10 @@ session's, in the shape Claude Code 2.1.306 writes it."""
 import json
 import os
 import unittest
+from unittest import mock
 
 import helpers
-from helpers import record
+from helpers import record, testing
 
 
 class RecordTest(helpers.PluginTest):
@@ -24,6 +25,112 @@ class RecordTest(helpers.PluginTest):
         """What the subagent did, read from the record the test has written, in the event's
         folder."""
         return record.done(self.entries(), self.base)
+
+
+class KeptTest(testing.FolderTest):
+    """Claude Code's records kept in a folder of the test's own, as CLAUDE_CONFIG_DIR names it."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.config = os.path.join(self.base, "config")
+        patched = mock.patch.dict(os.environ, {"CLAUDE_CONFIG_DIR": self.config})
+        patched.start()
+        self.addCleanup(patched.stop)
+        self.projects = os.path.join(self.config, "projects")
+
+
+class TestProjects(KeptTest):
+    def test_the_records_are_kept_in_the_folder_claude_config_dir_names(self):
+        # Given: CLAUDE_CONFIG_DIR naming a folder
+        # When: where Claude Code keeps each project's records is read
+        # Then: it is projects/ in that folder
+        self.assertEqual(record.projects(), self.projects)
+
+    def test_the_records_are_kept_in_the_home_folder_where_no_folder_is_named(self):
+        for named in ({}, {"CLAUDE_CONFIG_DIR": ""}):
+            env = {k: v for k, v in os.environ.items() if k != "CLAUDE_CONFIG_DIR"}
+            with (
+                self.subTest(named=named),
+                mock.patch.dict(os.environ, {**env, "HOME": self.base, **named}, clear=True),
+            ):
+                # Given: CLAUDE_CONFIG_DIR not set, or set to nothing
+                # When: where Claude Code keeps each project's records is read
+                # Then: it is ~/.claude/projects
+                self.assertEqual(record.projects(), os.path.join(self.base, ".claude", "projects"))
+
+
+class TestFolders(KeptTest):
+    """Where Claude Code keeps the records of a project, by the project's path."""
+
+    def test_a_path_of_200_characters_names_its_folder_whole(self):
+        # Given: a path of 200 characters
+        top = "/" + "a" * 199
+        # When: its folder is looked for
+        # Then: it is named by the path, each character not a letter or digit as `-`
+        self.assertEqual(record.folders(top), [os.path.join(self.projects, "-" + "a" * 199)])
+
+    def test_a_longer_path_is_found_by_its_first_200_characters(self):
+        # Given: a path of 201 characters, with the folder Claude Code made for it, its first 200
+        # characters and a hash, beside one for another path of the same beginning
+        top = "/" + "a" * 200
+        for name in ("-" + "a" * 199 + "-h1", "-" + "a" * 200):
+            os.makedirs(os.path.join(self.projects, name))
+        # When: its folder is looked for
+        # Then: the one of its first 200 characters and a hash is found
+        self.assertEqual(
+            record.folders(top), [os.path.join(self.projects, "-" + "a" * 199 + "-h1")]
+        )
+
+    def test_a_character_beyond_the_basic_plane_is_two(self):
+        # Given: a path holding a character JavaScript counts as two
+        # When: its folder is looked for
+        # Then: it stands as two `-`, as Claude Code replaces each half
+        self.assertEqual(record.folders("/a\U0001f600b"), [os.path.join(self.projects, "-a--b")])
+
+
+class TestConversation(KeptTest):
+    def test_a_conversation_is_kept_in_any_projects_folder_by_its_session(self):
+        # Given: a session's ID, and none
+        # When: where its conversation's record is kept is read
+        # Then: it is the session's file in any project's folder, any session's where none is given
+        self.assertEqual(record.conversation("s1"), os.path.join(self.projects, "*", "s1.jsonl"))
+        self.assertEqual(record.conversation(), os.path.join(self.projects, "*", "*.jsonl"))
+
+    def test_a_conversation_is_kept_in_the_folder_given(self):
+        # Given: a session's ID and a project's folder
+        # When: where its conversation's record is kept is read
+        # Then: it is the session's file in that folder
+        self.assertEqual(record.conversation("s1", "/p"), "/p/s1.jsonl")
+
+    def test_a_subagent_is_kept_beside_its_conversation(self):
+        # Given: the record of a conversation, and a pattern of any
+        # When: where a subagent's record of it is kept is read
+        # Then: it is subagents/agent-<id>.jsonl in the folder named as the conversation's record
+        self.assertEqual(record.subagent("/p/s1.jsonl", "a1"), "/p/s1/subagents/agent-a1.jsonl")
+        pattern = record.subagent(record.conversation(), "*")
+        self.assertEqual(
+            pattern, os.path.join(self.projects, "*", "*", "subagents", "agent-*.jsonl")
+        )
+
+
+class TestAgentType(KeptTest):
+    def test_the_agent_type_is_the_one_its_meta_file_names(self):
+        # Given: a record and its meta file naming its agent type
+        self.write("agent-a1.meta.json", '{"agentType": "turn:up"}')
+        # When: its agent type is read
+        # Then: it is the one named
+        self.assertEqual(record.agent_type("agent-a1.jsonl"), "turn:up")
+
+    def test_a_meta_file_not_there_or_naming_no_type_gives_none(self):
+        for meta in (None, "x", "[]", "{}", '{"agentType": 1}'):
+            with self.subTest(meta=meta):
+                # Given: a record whose meta file is not there, not JSON, no object, or names no
+                # agent type as text
+                if meta is not None:
+                    self.write("agent-a1.meta.json", meta)
+                # When: its agent type is read
+                # Then: it is none
+                self.assertEqual(record.agent_type("agent-a1.jsonl"), "")
 
 
 class TestPath(RecordTest):

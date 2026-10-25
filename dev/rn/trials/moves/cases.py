@@ -21,6 +21,8 @@ from typing import Callable, NamedTuple
 from place import ROOT, SEED, Place, Seen
 
 sys.path.insert(0, os.path.join(ROOT, "rn", "scripts"))
+import record
+
 import rn
 
 # The user's words, in the conversation language their instructions set.
@@ -650,7 +652,7 @@ def typed(p: Place, words: str) -> None:
             f"{command}</command-name>\n<command-args>{args}</command-args>",
         },
     }
-    folder = rn.project_folders(top)[0]
+    folder = record.folders(top)[0]
     os.makedirs(folder, exist_ok=True)
     with open(os.path.join(folder, f"{uuid.uuid4()}.jsonl"), "w", encoding="utf-8") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")

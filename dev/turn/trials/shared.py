@@ -18,6 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.a
 sys.path.insert(0, os.path.join(ROOT, "dev", "lane", "trials"))
 sys.path.insert(0, os.path.join(ROOT, "turn", "scripts"))
 
+import record
 from call import entries, items  # noqa: F401
 from trying import agents, claude, show  # noqa: F401
 
@@ -114,6 +115,15 @@ def playground(task: str, place: str, trial: str) -> None:
             )
         os.makedirs(os.path.dirname(os.path.join(place, checklist)), exist_ok=True)
         shutil.copyfile(found[0], os.path.join(place, checklist))
+
+
+def folder(place: str) -> str:
+    """The folder Claude Code keeps the records of a session run in place in; stops where place is
+    so long a path that Claude Code names the folder with a hash, not made before the run."""
+    found = record.folders(place)
+    if not found:
+        sys.exit(f"{place} is too long a path; give a shorter new folder")
+    return found[0]
 
 
 def kept(place: str) -> str:

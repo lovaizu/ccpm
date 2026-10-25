@@ -18,7 +18,6 @@ session. The turn of this working tree is used as it is when the run starts.
 
 import json
 import os
-import re
 import shutil
 import time
 
@@ -48,9 +47,11 @@ command of its own, then stop the agent with TaskStop, loaded with ToolSearch, a
 """
 
 task, place, more = shared.arguments(USAGE, ("stopped",))
-# Claude Code keeps a session's records in a folder named for the folder it runs in, each character
-# but a letter or a digit made `-`, and an agent's meta file names its type once it has started.
-records = os.path.expanduser(f"~/.claude/projects/{re.sub('[^A-Za-z0-9]', '-', place)}/*/subagents")
+# The folder of each agent's record of a session run in place, where an agent's meta file names its
+# type once it has started.
+records = os.path.dirname(
+    shared.record.subagent(shared.record.conversation("*", shared.folder(place)), "*")
+)
 shared.playground(task, place, "trial")
 os.makedirs(os.path.join(place, ".tasks"))
 shutil.copyfile(os.path.join(task, "ccs.json"), os.path.join(place, CALL["ccs"]))
@@ -64,12 +65,9 @@ print("minutes:", round((time.time() - start) / 60, 1))
 # From the call to the work coming back: the first orchestrator's first entry to the last one's
 # last, as a call again starts another.
 times = []
-for record in shared.agents(end["session_id"]):
-    with open(record.replace(".jsonl", ".meta.json"), encoding="utf-8") as f:
-        if json.load(f).get("agentType") != "turn:up":
-            continue
-    with open(record, encoding="utf-8") as f:
-        times += [json.loads(line).get("timestamp") for line in f]
+for path in shared.agents(end["session_id"]):
+    if shared.record.agent_type(path) == "turn:up":
+        times += [e.get("timestamp") for e in shared.record.read(path) or []]
 times = sorted(t for t in times if t)
 if times:
     print("call to return:", times[0], times[-1])

@@ -7,6 +7,7 @@ timeout = 60.0
 excluded-modules = [
     "rn/scripts/call.py",
     "rn/scripts/forms.py",
+    "rn/scripts/record.py",
     "rn/scripts/records.py",
     "rn/scripts/template.py",
 ]

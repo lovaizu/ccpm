@@ -6,10 +6,13 @@ subagent's ID, by which Claude Code keeps it. Claude Code does not document the 
 read as Claude Code 2.1.306 writes it, which the tests hold, and a line not in that shape is left
 out. The calls of one reply of the AI are written there once their hooks have run, a call a hook
 stopped among them, so the record holds every call of the replies before, and none of the reply
-being handed."""
+being handed. Where Claude Code keeps the records, a conversation's beside each subagent's of it,
+and the agent type of each, are read here too, for every plugin that reads a record, kept as
+Claude Code 2.1.306 keeps them."""
 
 from __future__ import annotations
 
+import glob
 import json
 import os
 import re
@@ -32,6 +35,11 @@ HOOK_STOPPED = re.compile(r"\APreToolUse:\S+ hook error: ")
 # its input's `text`, as it hands its text on to whoever started or resumed the subagent, as a call
 # of the Agent tool or SendMessage hands on theirs.
 REPLY, SAID = "", "text"
+# Claude Code names the folder of a project's records by the project's path, each character that is
+# not a letter or digit as `-`, counted as JavaScript counts, a character beyond the basic plane as
+# two; a name longer than this is cut to it and a hash of the path put after, which is not made
+# again here, so that folder is found by what goes before the hash.
+NAME_LENGTH = 200
 
 
 class Done(NamedTuple):
@@ -47,23 +55,74 @@ class Done(NamedTuple):
     failed: bool = False
 
 
+def projects() -> str:
+    """The folder Claude Code keeps each project's records in: `projects/` in the folder
+    CLAUDE_CONFIG_DIR names, or in ~/.claude where it names none."""
+    return os.path.join(
+        os.environ.get("CLAUDE_CONFIG_DIR") or os.path.expanduser("~/.claude"), "projects"
+    )
+
+
+def folders(top: str) -> list[str]:
+    """The folders where Claude Code keeps the records of conversations run at the path: the one
+    named by it, or, where the name is longer than Claude Code keeps, each there named by its
+    beginning and a hash."""
+    name = "".join(
+        c if c.isascii() and c.isalnum() else "-" * (len(c.encode("utf-16-le")) // 2) for c in top
+    )
+    if len(name) <= NAME_LENGTH:
+        return [os.path.join(projects(), name)]
+    found = glob.escape(name[:NAME_LENGTH]) + "-*"
+    return sorted(glob.glob(os.path.join(glob.escape(projects()), found)))
+
+
+def conversation(session: str = "*", folder: str = "") -> str:
+    """Where the record of the conversation of the session's ID is kept, `<session>.jsonl` in its
+    project's folder, any project's where no folder is given; a pattern of glob where `*` is
+    given."""
+    return os.path.join(folder or os.path.join(projects(), "*"), f"{session}.jsonl")
+
+
+def subagent(session: str, agent: str) -> str:
+    """Where the record of the subagent of the ID is kept, `<session>/subagents/agent-<id>.jsonl`
+    beside the record of its conversation, `<session>.jsonl`; a pattern of glob where either is
+    one."""
+    return os.path.join(os.path.splitext(session)[0], "subagents", f"agent-{agent}.jsonl")
+
+
+def agent_type(file: str) -> str:
+    """The agent type of the record at the path, as its meta file beside it, `<record>.meta.json`,
+    names it; "" where that file is not there or names none."""
+    try:
+        with open(os.path.splitext(file)[0] + ".meta.json", encoding="utf-8") as f:
+            meta = json.load(f)
+    except (OSError, ValueError):
+        return ""
+    named = meta.get("agentType") if isinstance(meta, dict) else None
+    return named if isinstance(named, str) else ""
+
+
 def path(event: dict[str, Any]) -> str | None:
-    """Where the record of the event's subagent is: `<session>/subagents/agent-<id>.jsonl` beside
-    the session's `<session>.jsonl`, the event's transcript_path; None where the event names no
-    session or no subagent, as in the main conversation."""
+    """Where the record of the event's subagent is, beside the session's record, the event's
+    transcript_path; None where the event names no session or no subagent, as in the main
+    conversation."""
     session, agent = event.get("transcript_path"), event.get("agent_id")
     if not isinstance(session, str) or not isinstance(agent, str):
         return None
-    return os.path.join(os.path.splitext(session)[0], "subagents", f"agent-{agent}.jsonl")
+    return subagent(session, agent)
 
 
 def entries(event: dict[str, Any]) -> list[dict[str, Any]] | None:
     """Each entry of the record of the event's subagent, in order, read from the file once for
-    every reading of it below, a line that is no JSON object left out; None where no record is
-    found, told apart from a record of no entries."""
+    every reading of it below, as `read` reads it; None where no record is found, told apart from a
+    record of no entries."""
     file = path(event)
-    if file is None:
-        return None
+    return None if file is None else read(file)
+
+
+def read(file: str) -> list[dict[str, Any]] | None:
+    """Each entry of the record at the path, in order, a line that is no JSON object left out, as
+    one Claude Code is still writing; None where it is not there."""
     try:
         with open(file, encoding="utf-8") as f:
             lines = f.read().splitlines()

@@ -4,10 +4,22 @@ starts it, its record kept, and what the records of the agents it started show."
 from __future__ import annotations
 
 import glob
+import importlib.util
 import json
 import os
 import subprocess
 from typing import Any
+
+# How Claude Code keeps its records is read by lane's record.py, loaded from its file, so a
+# plugin's trials standing on this module meet their own modules of the names lane's code has, such
+# as call.
+RECORD = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "../../../lane/hooks/lane/record.py"
+)
+FOUND = importlib.util.spec_from_file_location("record", os.path.normpath(RECORD))
+assert FOUND and FOUND.loader
+record = importlib.util.module_from_spec(FOUND)
+FOUND.loader.exec_module(record)
 
 
 def claude(
@@ -59,26 +71,23 @@ def claude(
 
 def agents(session: str) -> list[str]:
     """The path of the record of each agent the session started."""
-    return glob.glob(os.path.expanduser(f"~/.claude/projects/*/{session}/subagents/*.jsonl"))
+    return glob.glob(record.subagent(record.conversation(session), "*"))
 
 
 def show(path: str) -> None:
     """Prints a record's path and, of what it holds, each message sent, each tool used and each
     hook stop."""
     print("record:", path)
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            entry = json.loads(line)
-            # Claude Code's copy of each request says again what the agent did.
-            if entry.get("type") == "api-request-blob":
-                continue
-            if isinstance(entry.get("origin"), dict):
-                print("  message:", entry["origin"].get("body"))
-            content = entry.get("message", {}).get("content")
-            if isinstance(content, str) and content.startswith("Stop hook feedback"):
-                print("  stop:", content)
-            for part in content if isinstance(content, list) else []:
-                if part.get("type") == "tool_use":
-                    print("  use:", part["name"], json.dumps(part["input"], ensure_ascii=False))
-                elif part.get("type") == "tool_result" and part.get("is_error"):
-                    print("  stop:", part.get("content"))
+    for entry in record.read(path) or []:
+        # Claude Code's copy of each request says again what the agent did.
+        if entry.get("type") == "api-request-blob":
+            continue
+        if isinstance(entry.get("origin"), dict):
+            print("  message:", entry["origin"].get("body"))
+        if record.told(entry):
+            print("  stop:", record.text(entry))
+        for part in record.blocks(entry):
+            if part.get("type") == "tool_use":
+                print("  use:", part["name"], json.dumps(part["input"], ensure_ascii=False))
+            elif part.get("type") == "tool_result" and part.get("is_error"):
+                print("  stop:", part.get("content"))

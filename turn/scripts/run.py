@@ -29,6 +29,8 @@ SENDS = 3
 MORE = 1
 # What the orchestrator judges, shown again whenever it asks.
 SHOWN = ("check", "left")
+# A page of what turn.py prints is short enough for one read of the shell's output to show it whole.
+PAGE = 20000
 # A messaged role's reply is waited for a second at a time, within the shell's two minutes.
 WAIT = 100
 # Where SendMessage reaches the main conversation, which alone talks with the user.
@@ -369,7 +371,8 @@ def paged(result: str, out: dict[str, Any], page: str) -> str:
     """A page of what turn.py prints, headed by its number among all where there is more than one,
     so the orchestrator sees whole what it judges however long it is, as the shell cuts a long
     print short."""
-    split = records.split(json.dumps(out, ensure_ascii=False))
+    text = json.dumps(out, ensure_ascii=False)
+    split = [text[i : i + PAGE] for i in range(0, len(text), PAGE)]
     if not page.isdigit() or not 1 <= int(page) <= len(split):
         raise call.Stop(f"turn: page {page} is not one of 1 to {len(split)}")
     shown = split[int(page) - 1]
@@ -641,7 +644,7 @@ def learn(run: dict[str, Any], goods: list) -> dict[str, Any]:
     for n, path in enumerate(run["learnt"], 1):
         texts.append(os.path.join(folder, f"{n}.txt"))
         with open(texts[-1], "w", encoding="utf-8") as f:
-            f.write(records.wrapped(records.shown(path)))
+            f.write(records.wrapped(records.as_text(path)))
     return ask(run, LEARNER, {"given": texts, "reply": reply_path(result, LEARNER)})
 
 

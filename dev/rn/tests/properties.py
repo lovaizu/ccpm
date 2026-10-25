@@ -161,18 +161,6 @@ class LearningPropertyTest(LearningTest):
         begun = sorted(range(len(times)), key=lambda n: times[n])
         self.assertEqual(self.shown(), [f"[user] {n}\n" for n in begun])
 
-    @hypothesis.given(st.text(st.characters(blacklist_categories=("Cs",)), max_size=100))
-    def test_any_path_names_its_folder_by_letters_digits_and_hyphens(self, top):
-        # Given: any path short enough to name its folder whole.
-        # When: its folder is looked for.
-        # Then: each ASCII letter and digit stands as it is, and each UTF-16 unit of any other
-        # character as `-`, as JavaScript counts them.
-        want = "".join(
-            c if c.isascii() and c.isalnum() else "-" * (len(c.encode("utf-16-le")) // 2)
-            for c in top
-        )
-        self.assertEqual(rn.project_folders(top), [os.path.join(self.config, "projects", want)])
-
 
 if __name__ == "__main__":
     unittest.main()

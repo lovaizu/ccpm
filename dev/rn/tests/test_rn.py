@@ -2932,44 +2932,6 @@ class RecordsTest(LearningTest):
         self.assertIn("holds no session", self.stopped("records"))
 
 
-class ProjectFoldersTest(LearningTest):
-    """Where Claude Code keeps the records of a project, by the project's path."""
-
-    def projects(self, *names: str) -> None:
-        """Makes a folder of each name in Claude Code's projects folder."""
-        for name in names:
-            os.makedirs(os.path.join(self.config, "projects", name))
-
-    def test_a_path_of_200_characters_names_its_folder_whole(self):
-        # Given: a path of 200 characters.
-        top = "/" + "a" * 199
-        # When: its folder is looked for.
-        # Then: it is named by the path, each character not a letter or digit as `-`.
-        self.assertEqual(
-            rn.project_folders(top), [os.path.join(self.config, "projects", "-" + "a" * 199)]
-        )
-
-    def test_a_longer_path_is_found_by_its_first_200_characters(self):
-        # Given: a path of 201 characters, with the folder Claude Code made for it, its first 200
-        # characters and a hash, beside one for another path of the same beginning.
-        top = "/" + "a" * 200
-        self.projects("-" + "a" * 199 + "-h1", "-" + "a" * 200)
-        # When: its folder is looked for.
-        # Then: the one of its first 200 characters and a hash is found.
-        self.assertEqual(
-            rn.project_folders(top),
-            [os.path.join(self.config, "projects", "-" + "a" * 199 + "-h1")],
-        )
-
-    def test_a_character_beyond_the_basic_plane_is_two(self):
-        # Given: a path holding a character JavaScript counts as two.
-        # When: its folder is looked for.
-        # Then: it stands as two `-`, as Claude Code replaces each half.
-        self.assertEqual(
-            rn.project_folders("/a\U0001f600b"), [os.path.join(self.config, "projects", "-a--b")]
-        )
-
-
 class LearningsTest(RepoTest):
     def test_learnings_gives_the_sessions_and_turns_of_every_version_once(self):
         # Given: the session's learnings, a call on t1 whose result held a learning, then was made

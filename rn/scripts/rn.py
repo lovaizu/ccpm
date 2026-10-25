@@ -52,6 +52,7 @@ from typing import Any, NamedTuple, NoReturn
 
 # turn's reader of Claude Code's records, and lane's of a Markdown file's front matter and headings,
 # each taken through a link.
+import record
 import records
 import template
 
@@ -194,11 +195,6 @@ PULL = re.compile(r"(\S+)/pull/[0-9]+")
 # The folder in the repository's git folder where the records the learnings are made from are shown,
 # so nothing of it shows as a change to keep.
 LEARNING_PLACE = "rn"
-# Claude Code names the folder of a project's records by the project's path, each character that is
-# not a letter or digit as `-`, counted as JavaScript counts, a character beyond the basic plane as
-# two; a name longer than this is cut to it and a hash of the path put after, which rn does not make
-# again, so it finds that folder by what goes before the hash.
-NAME_LENGTH = 200
 # What a stop whose git command failed says to do where only git's own words tell what is wrong.
 AS_GIT_SAYS = "fix it as git says, then run this again"
 
@@ -1649,21 +1645,6 @@ def learning() -> str:
     )
 
 
-def project_folders(top: str) -> list[str]:
-    """The folders where Claude Code keeps the records of conversations run at the path: the one
-    named by it, or, where the name is longer than Claude Code keeps, each there named by its
-    beginning and a hash."""
-    name = "".join(
-        c if c.isascii() and c.isalnum() else "-" * (len(c.encode("utf-16-le")) // 2) for c in top
-    )
-    kept = records.kept()
-    if len(name) <= NAME_LENGTH:
-        return [os.path.join(kept, name)]
-    return sorted(
-        glob.glob(os.path.join(glob.escape(kept), glob.escape(name[:NAME_LENGTH]) + "-*"))
-    )
-
-
 def lines_of(path: str) -> list[dict[str, Any]]:
     """Each entry of a record, as Claude Code keeps it, one JSON object to a line."""
     with open(path, encoding="utf-8") as f:
@@ -1682,7 +1663,7 @@ def conversations(top: str, branch: str) -> list[str]:
     some entry, in the order they began."""
     found = [
         path
-        for folder in project_folders(top)
+        for folder in record.folders(top)
         for path in glob.glob(os.path.join(glob.escape(folder), "*.jsonl"))
         if any(e.get("cwd") == top and e.get("gitBranch") == branch for e in lines_of(path))
     ]

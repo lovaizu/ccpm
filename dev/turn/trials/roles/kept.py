@@ -85,7 +85,7 @@ session = end["session_id"]
 print("session:", session, "minutes:", round((time.time() - start) / 60, 1))
 print("cost:", end.get("total_cost_usd"))
 print("last:", end.get("result"))
-main = glob.glob(os.path.expanduser(f"~/.claude/projects/*/{session}.jsonl"))
+main = glob.glob(shared.record.conversation(session))
 for path in main + sorted(shared.agents(session)):
     shared.show(path)
 shutil.rmtree(place)

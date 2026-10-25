@@ -118,7 +118,7 @@ lane/                          the plugin, installed by Claude Code
 │       ├── schema.py          a JSON Schema, and a value held to it
 │       ├── template.py        a Markdown template, and a file held to it
 │       ├── step.py            a subagent's step, read from its file
-│       ├── record.py          what the subagent did before, from its record
+│       ├── record.py          where Claude Code keeps records, and what a subagent did before
 │       ├── started.py         what the subagent started from, for a thing given for each run
 │       ├── lanes/__init__.py  the lanes, and each lane's sentence made from its wording
 │       └── lanes/<lane>.py    one check per lane of the lanes, with its wording

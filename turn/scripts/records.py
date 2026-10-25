@@ -1,4 +1,5 @@
-"""What Claude Code keeps of an agent's conversation, read as the learner is shown it."""
+"""Each record of a run as the learner is shown it: what Claude Code keeps of an agent's
+conversation, found and read by lane's record.py, as text the learner reads whole."""
 
 from __future__ import annotations
 
@@ -8,30 +9,28 @@ import os
 import textwrap
 from typing import Any
 
-# A page of a record is short enough for one read to show it whole.
-PAGE = 20000
+import record
+
+# A line of a record as the learner is shown it, short enough for one read to show it whole.
+WIDTH = 1000
 
 
 def entries(path: str) -> list[dict[str, Any]]:
-    """The agent's own entries: Claude Code also keeps a copy of each request it sends, which says
-    again what the agent was shown."""
-    with open(path, encoding="utf-8") as f:
-        kept = [json.loads(line) for line in f]
+    """The agent's own entries of the record at the path: Claude Code also keeps a copy of each
+    request it sends, which says again what the agent was shown."""
+    kept = record.read(path) or []
     return [e for e in kept if e.get("type") in ("user", "assistant", "attachment")]
 
 
-def split(text: str) -> list[str]:
-    """A text cut into pages, each short enough for one read to show it whole."""
-    return [text[i : i + PAGE] for i in range(0, len(text), PAGE)] or [""]
-
-
-def shown(path: str) -> str:
+def as_text(path: str) -> str:
+    """The record at the path as the learner reads it: each message by its type, each file Claude
+    Code showed the agent whole by its name, a line each."""
     lines: list[str] = []
     for entry in entries(path):
         attachment = entry.get("attachment")
         if isinstance(attachment, dict) and attachment.get("type") == "edited_text_file":
             lines.append(f"[shown {attachment.get('filename')}] {attachment.get('snippet')}")
-        content = entry.get("message", {}).get("content")
+        content = record.content(entry)
         if isinstance(content, str):
             lines.append(f"[{entry.get('type')}] {content}")
         for part in content if isinstance(content, list) else []:
@@ -56,10 +55,6 @@ def result(part: dict[str, Any]) -> str:
     return str(content)
 
 
-# A line of a record as the learner is shown it, short enough for one read to show it whole.
-WIDTH = 1000
-
-
 def wrapped(text: str) -> str:
     """The text with each line longer than a read shows cut at its blanks, so the learner reads
     every word; a quote across a cut is found, as the cut is a blank."""
@@ -71,48 +66,28 @@ def wrapped(text: str) -> str:
     )
 
 
-def kept() -> str:
-    """Where Claude Code keeps each conversation's records."""
-    return os.path.join(
-        os.environ.get("CLAUDE_CONFIG_DIR") or os.path.expanduser("~/.claude"), "projects"
-    )
-
-
 def find(agent_id: str) -> str | None:
-    """The record of the agent of the ID, kept beside its conversation's as
-    `<conversation>/subagents/agent-<ID>.jsonl`; None where none is."""
-    found = glob.iglob(os.path.join(kept(), "*", "*", "subagents", f"agent-{agent_id}.jsonl"))
-    return next(found, None)
+    """The record of the agent of the ID, in any conversation Claude Code keeps; None where none
+    is."""
+    return next(glob.iglob(record.subagent(record.conversation(), agent_id)), None)
 
 
 def orchestrator(roles: list[str], result: str) -> str | None:
     """The record of the orchestrator of the run: beside its roles' records, a `turn:up` agent's
     whose prompt, the call, names the result; the latest where several do; None where none is."""
-    found = []
-    for folder in sorted({os.path.dirname(r) for r in roles}):
-        for meta in glob.glob(os.path.join(folder, "agent-*.meta.json")):
-            path = meta[: -len(".meta.json")] + ".jsonl"
-            if kind(meta) == "turn:up" and os.path.exists(path) and names(path, result):
-                found.append(path)
+    found = [
+        path
+        for folder in sorted({os.path.dirname(r) for r in roles})
+        for path in glob.glob(os.path.join(glob.escape(folder), "agent-*.jsonl"))
+        if record.agent_type(path) == "turn:up" and names(path, result)
+    ]
     return max(found, key=os.path.getmtime) if found else None
 
 
-def kind(meta: str) -> str:
-    """The agent type a record's meta file names."""
-    try:
-        with open(meta, encoding="utf-8") as f:
-            given = json.load(f)
-    except (OSError, ValueError):
-        return ""
-    return str(given.get("agentType", "")) if isinstance(given, dict) else ""
-
-
 def names(path: str, result: str) -> bool:
-    """Whether the record's first prompt is a call naming the result."""
-    found = entries(path)
-    content = found[0].get("message", {}).get("content") if found else None
+    """Whether the record's prompt is a call naming the result."""
     try:
-        given = json.loads(content) if isinstance(content, str) else None
+        given = json.loads(record.prompt(record.read(path) or []))
     except ValueError:
         return False
     return isinstance(given, dict) and given.get("result") == result

@@ -175,7 +175,7 @@ def check(
     each: Iterable[tuple[str, str]] = (),
     # The default is taken when the function is made, from the module, before the parameter of the
     # same name stands for the records.
-    read: Callable[[str], str] = records.shown,
+    read: Callable[[str], str] = records.as_text,
 ) -> list[str]:
     """What is wrong with the form, each said with what to give instead; empty when it is filled.
     The items are those the form judges; `records` are the records its quotes of a record are found
