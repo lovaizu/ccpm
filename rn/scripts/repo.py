@@ -136,11 +136,19 @@ def pushed() -> None:
         )
 
 
-def gh(args: list[str]) -> str:
-    """What GitHub's command prints for the arguments; stops with what it said, and how to go on
-    once it is fixed."""
+def gh(args: list[str], again: str) -> str:
+    """What GitHub's command prints for the arguments; stops with what it said, to fix it as it
+    says, and what to run again once it is fixed."""
     return ran(
-        ["gh"] + args,
-        "fix it as gh says, such as with `gh auth login`, then run `rn.py start` again with the"
-        " same arguments on this branch",
+        ["gh"] + args, f"fix it as gh says, such as with `gh auth login`, then {again}"
     ).strip()
+
+
+def top() -> str:
+    """The top of the repository rn runs in, as a whole path."""
+    return git(["rev-parse", "--show-toplevel"], AS_GIT_SAYS).strip()
+
+
+def branch() -> str:
+    """The branch checked out."""
+    return git(["branch", "--show-current"], AS_GIT_SAYS).strip()

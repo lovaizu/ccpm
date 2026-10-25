@@ -27,7 +27,8 @@ WORDS = st.text(
     ),
     min_size=1,
 ).filter(lambda t: t.strip() == t and t)
-# Any of those but a Markdown heading, which Next cannot hold, as an unit test has it.
+# Any of those but a Markdown heading, which Next cannot hold, as
+# StateTest.test_a_move_the_steering_cannot_hold_stops_and_keeps_nothing has it.
 SENTENCES = WORDS.filter(lambda t: not template.HEADING.fullmatch(t))
 IDS = st.dictionaries(st.sampled_from(["G1", "AC1", "AC2", "AC3"]), st.text(max_size=3))
 
@@ -66,7 +67,7 @@ class PropertyTest(RepoTest):
             self.write(path, "")
         # When: it is checked as what the receiver has.
         # Then: it is taken as it is.
-        self.assertEqual(ccs.held(path), path)
+        self.assertEqual(ccs.has_path(path), path)
 
     @hypothesis.given(st.text(alphabet=ALLOWED, min_size=1))
     def test_any_path_with_nothing_there_stops(self, name):
@@ -75,7 +76,7 @@ class PropertyTest(RepoTest):
         # When: it is checked as what the receiver has.
         # Then: rn stops, naming it.
         with self.assertRaises(stop.Stop) as stopped:
-            ccs.held(path)
+            ccs.has_path(path)
         self.assertIn(f"what the receiver has, {path}, is not there", str(stopped.exception))
 
     @hypothesis.given(st.text().filter(lambda t: t.strip()))
@@ -102,9 +103,7 @@ class PropertyTest(RepoTest):
         held = steering.out_of_form(text)
         # Then: it holds, and gives back each as written, by its ID.
         want = {"G1": goal, **{f"AC{n}": c for n, c in enumerate(criteria, 1)}}
-        self.assertEqual(
-            (held, steering.decided(text.splitlines(), ("", steering.CRITERIA))), ("", want)
-        )
+        self.assertEqual((held, steering.decided(text.splitlines())), ("", want))
 
     @hypothesis.given(SENTENCES, st.lists(WORDS, max_size=4))
     def test_the_steering_rn_writes_holds_its_form_and_reads_back(self, next_step, opened):

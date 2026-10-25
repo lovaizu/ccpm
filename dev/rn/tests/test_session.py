@@ -10,12 +10,14 @@ from unittest import mock
 
 from helpers import (
     FOLDER,
+    HISTORY,
     KIND,
     LEARNINGS,
     NEXT,
     PR,
     RECORD,
     REPOSITORY,
+    SHOWN,
     SLUG,
     STEERED,
     STEERING,
@@ -502,7 +504,7 @@ class StateTest(RepoTest):
         self.assertEqual(self.read(STEERING), want)
 
     def test_a_task_leaves_the_steering_once_all_its_actions_are_ticked(self):
-        two = f"{task()}\n\n{task('T2', ticks='xxx ')}\n\n{task('T3', 'AC2')}"
+        tasks = f"{task()}\n\n{task('T2', ticks='xxx ')}\n\n{task('T3', 'AC2')}"
         for done, left in (
             ("T1", f"{task('T2', ticks='xxx ')}\n\n{task('T3', 'AC2')}"),
             ("T2", f"{task()}\n\n{task('T3', 'AC2')}"),
@@ -510,7 +512,7 @@ class StateTest(RepoTest):
         ):
             with self.subTest(done=done):
                 # Given: three tasks, T2 with three of its four actions ticked.
-                self.session(steered(part=plan(tasks=two)))
+                self.session(steered(part=plan(tasks=tasks)))
                 # When: the orchestrator keeps every action of one of them done, one again.
                 argv = [a for k in (1, 2, 3, 4, 1) for a in ("--done", f"{done}.{k}")]
                 self.ran(*self.state(*argv))
@@ -862,7 +864,7 @@ class PutTest(RepoTest):
         # whose part holds two learnings.
         self.session()
         self.write(LEARNINGS, "- L1: Kept.\n")
-        self.write(".git/rn/record/history.txt", "x")
+        self.write(HISTORY, "x")
         made = "## Learnings\n- L1: First.\n  Its words.\n- L2: Second.\n"
         self.call("0001", "learnings", result={}, part=made)
         self.kept()
@@ -875,7 +877,7 @@ class PutTest(RepoTest):
             self.read(LEARNINGS),
             self.out("show", f"origin/work:{LEARNINGS}"),
             self.read(STEERING),
-            os.path.exists(".git/rn"),
+            os.path.exists(SHOWN),
         )
         self.assertEqual(kept, (want, want, STEERED, False))
 
@@ -912,7 +914,7 @@ class PutTest(RepoTest):
         # Given: records shown in the git folder, and a call on the learnings whose part holds one
         # with no ID.
         self.session()
-        self.write(".git/rn/record/history.txt", "x")
+        self.write(HISTORY, "x")
         self.call("0001", "learnings", result={}, part="## Learnings\n- A slip.\n")
         self.kept()
         before = self.head()
@@ -926,7 +928,7 @@ class PutTest(RepoTest):
             " better>`, found `- A slip.`; nothing is kept: have turn make the part it puts back"
             " again"
         )
-        kept = (os.path.exists(LEARNINGS), self.head(), os.path.exists(".git/rn"))
+        kept = (os.path.exists(LEARNINGS), self.head(), os.path.exists(SHOWN))
         self.assertEqual((said in out, kept), (True, (False, before, True)))
 
     def test_learnings_under_a_heading_of_another_level_stop(self):
@@ -944,12 +946,12 @@ class PutTest(RepoTest):
     def test_the_plan_put_back_leaves_the_records(self):
         # Given: records shown in the git folder, and a call on the plan.
         self.session()
-        self.write(".git/rn/record/history.txt", "x")
+        self.write(HISTORY, "x")
         self.call("0001", "plan", result={}, part=plan())
         # When: the orchestrator puts it back.
         self.ran(*self.put())
         # Then: the records are there.
-        self.assertTrue(os.path.exists(".git/rn/record/history.txt"))
+        self.assertTrue(os.path.exists(HISTORY))
 
     def test_a_part_out_of_form_stops_and_keeps_nothing(self):
         # Given: a call on the plan whose part holds a heading of its own.

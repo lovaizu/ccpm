@@ -37,13 +37,13 @@ def run_session(args: argparse.Namespace, root: str, today: datetime.date) -> An
     one session not finished."""
     found = session.session()
     if found is None:
-        return {"session": None, "stage": None, "signoff": None}
+        return {"session": None, steering.STAGE: None, steering.SIGNOFF: None}
     keys = steering.keys_of(repo.at("HEAD", session.steering_path(found)) or "")
-    signoff = keys.get("signoff")
+    signoff = keys.get(steering.SIGNOFF)
     return {
         "session": found,
-        "stage": keys.get(steering.STAGE),
-        "signoff": None if signoff in (None, steering.NONE) else signoff,
+        steering.STAGE: keys.get(steering.STAGE),
+        steering.SIGNOFF: None if signoff in (None, steering.NONE) else signoff,
     }
 
 
@@ -81,13 +81,13 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
             " they are, and starts from the default branch: commit or stash them, then run this"
             " again"
         )
-    if repo.git(["branch", "--show-current"], repo.AS_GIT_SAYS).strip() == slug:
+    if repo.branch() == slug:
         folder = session.current()
         steered = session.kept_steering(folder)
-        if steered.keys["pr"] != steering.NONE:  # pragma: no mutate
+        if steered.keys[steering.PR] != steering.NONE:  # pragma: no mutate
             raise stop.Stop(
                 f"rn: the session {folder} is started already, with its pull request"
-                f" {steered.keys['pr']}; go on with it with /rn:up"
+                f" {steered.keys[steering.PR]}; go on with it with /rn:up"
             )
     else:
         repo.git(["fetch", "-q", "origin"], repo.AS_GIT_SAYS)
@@ -96,17 +96,18 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         if repo.git(["ls-tree", "--name-only", branch, "--", folder], repo.AS_GIT_SAYS):
             raise stop.Stop(f"rn: {folder} is on {branch} already; give another slug")
         keys = {
-            "rn": version(root),
-            "pr": steering.NONE,
+            steering.RN: version(root),
+            steering.PR: steering.NONE,
             steering.STAGE: steering.PLAN,
-            "signoff": steering.NONE,
+            steering.SIGNOFF: steering.NONE,
             **languages,
         }
         steered = steering.Steering(keys, [f"# {title}"], next_step, [steering.NOTHING_OPEN])
         steering.held_form(steering.render(steered))
         repo.git(["checkout", "-q", "--no-track", "-b", slug, branch], "give another slug")
         session.keep(folder, steered, message)
-    repository = repo.gh(["repo", "view", "--json", "url", "--jq", ".url"])
+    again = "run `rn.py start` again with the same arguments on this branch"
+    repository = repo.gh(["repo", "view", "--json", "url", "--jq", ".url"], again)
     link = f"[{session.STEERING}]({repository}/blob/{slug}/{session.steering_path(folder)})"
     into = repo.default_branch().partition("/")[2]
     pr = repo.gh(
@@ -122,9 +123,10 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
             title,
             "--body",
             link,
-        ]
+        ],
+        again,
     )
-    session.keep(folder, steered._replace(keys=dict(steered.keys, pr=pr)), f"pr: {pr}")
+    session.keep(folder, steered._replace(keys={**steered.keys, steering.PR: pr}), f"pr: {pr}")
     return {"session": folder, "branch": slug, "pr": pr}
 
 
@@ -161,10 +163,10 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     steering.held_form(steering.render(steered))
     if learnt:
         session.write_learnings(folder, learnt)
-    kept = session.keep(folder, steered, message)
-    if work == steering.LEARNINGS_WORK:
-        shutil.rmtree(stretch.learning(), ignore_errors=True)
-    return {"kept": kept}
+    commit = session.keep(folder, steered, message)
+    if work == steering.LEARNINGS:
+        shutil.rmtree(stretch.records_folder(), ignore_errors=True)
+    return {"kept": commit}
 
 
 def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
@@ -253,7 +255,7 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     # given is read from the top.
     folder = session.current()
     repo.pushed()
-    has = [ccs.held(p) for p in args.has]
+    has = [ccs.has_path(p) for p in args.has]
     steered = session.kept_steering(folder)
     serving = ccs.served(steered, work)
     found = session.calls(folder)
@@ -316,7 +318,7 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
     folder = session.current()
     repo.pushed()
     steered = session.kept_steering(folder)
-    stage, waiting = steered.keys[steering.STAGE], steered.keys["signoff"]
+    stage, waiting = steered.keys[steering.STAGE], steered.keys[steering.SIGNOFF]
     if stage != signoff:
         raise stop.Stop(
             f"rn: the session is at the {stage} stage, and the {signoff} sign-off comes at the"
@@ -328,14 +330,14 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
             " first"
         )
     proposal.ready(signoff, folder, steered)
-    shown = proposal.proposed(signoff, folder)
-    before = shown[:-1] if waiting == signoff else shown
+    proposals = proposal.proposed(signoff, folder)
+    before = proposals[:-1] if waiting == signoff else proposals
     now = proposal.shown_at("HEAD", signoff, folder)
     then = proposal.shown_at(before[-1], signoff, folder) if before else None
     shown_text = "\n".join(
         [
             f"{signoff.capitalize()} sign-off",
-            f"{proposal.SIGNOFFS[signoff]}: {steered.keys['pr']}",
+            f"{proposal.WHERE[signoff]}: {steered.keys[steering.PR]}",
             *proposal.compared(then, now),
             proposal.ANSWER,
         ]
@@ -344,7 +346,7 @@ def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> s
         waits = f"Wait at the {signoff} sign-off for the user's answer: {proposal.ANSWER}"
         session.keep(
             folder,
-            steered._replace(keys=dict(steered.keys, signoff=signoff), next=waits),
+            steered._replace(keys={**steered.keys, steering.SIGNOFF: signoff}, next=waits),
             shown_text,
         )
     return shown_text
@@ -361,24 +363,24 @@ def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any
     message = stop.given(args.message, "message")
     folder = session.current()
     steered = session.kept_steering(folder)
-    waiting = steered.keys["signoff"]
+    waiting = steered.keys[steering.SIGNOFF]
     if waiting == steering.NONE:
         raise stop.Stop(
             "rn: no sign-off waits for the user's answer; show the proposal with `rn.py proposal"
             " <plan|design|deliverable>` first, and keep the answer the user gives it"
         )
     command = proposal.COMMANDS[args.answer]
-    shown = float(
+    shown_at = float(
         repo.git(
             ["log", "-1", "--format=%ct", proposal.proposed(waiting, folder)[-1]], repo.AS_GIT_SAYS
         )
     )
-    if not conversations.typed(command, shown):
+    if not conversations.typed(command, shown_at):
         raise stop.Stop(
             f"rn: the user has not typed {command} since the {waiting} sign-off was shown; the"
             " answer is theirs alone, so wait for them to type it, and keep it then"
         )
-    keys = dict(steered.keys, signoff=steering.NONE)
+    keys = {**steered.keys, steering.SIGNOFF: steering.NONE}
     if args.answer == "approved":  # pragma: no mutate
         keys[steering.STAGE] = steering.APPROVED[waiting]
     answered = steered._replace(keys=keys, next=next_step, open=steering.opened(args.open))
@@ -398,21 +400,19 @@ def run_records(args: argparse.Namespace, root: str, today: datetime.date) -> An
     repo.pushed()
     start = stretch.stretch(folder)
     began = float(repo.git(["log", "-1", "--format=%ct", start], repo.AS_GIT_SAYS))
-    top = repo.git(["rev-parse", "--show-toplevel"], repo.AS_GIT_SAYS).strip()
-    branch = repo.git(["branch", "--show-current"], repo.AS_GIT_SAYS).strip()
-    place = stretch.learning()
+    place = stretch.records_folder()
     shutil.rmtree(place, ignore_errors=True)
     # Each text shown, by where it is written, with its text.
-    shown = [(os.path.join("record", "history.txt"), stretch.history(folder, start))]
-    shown += [(os.path.join("record", p), repo.read_text(p)) for p in stretch.session_files(folder)]
-    for path in conversations.conversations(top, branch):
+    texts = [(os.path.join("record", "history.txt"), stretch.history(folder, start))]
+    texts += [(os.path.join("record", p), repo.read_text(p)) for p in stretch.session_files(folder)]
+    for path in conversations.conversations(repo.top(), repo.branch()):
         name = os.path.basename(path)[: -len(".jsonl")] + ".txt"
         text = conversations.told(path, began)
         if text:
-            shown.append((os.path.join("conversations", name), text))
-    for name, text in shown:
+            texts.append((os.path.join("conversations", name), text))
+    for name, text in texts:
         repo.write_text(os.path.join(place, name), records.wrapped(text))
-    return [os.path.join(place, name) for name, _ in shown]
+    return [os.path.join(place, name) for name, _ in texts]
 
 
 def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
@@ -421,7 +421,10 @@ def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> 
     turn's result gives it, with the work, the call and the commit that kept it. Stops where the
     branch holds no session."""
     folder = session.current()
-    said = steering.by_id(list(enumerate(session.learnings_of(folder))), "- ")
+    listed = steering.items_of(
+        list(enumerate(session.learnings_of(folder), 1)), session.LEARNING, session.LEARNING_FORM
+    )[0]
+    said = {i.id: steering.said(i.lines).partition(": ")[2] for i in listed}
     return {"learnings": said, "turn": stretch.turns_learnings(folder)}
 
 
@@ -466,10 +469,10 @@ def parser() -> Parser:
     hand.add_argument("--has", action="append", default=[])
     shown_text = sub.add_parser("proposal")
     shown_text.set_defaults(run=run_proposal)
-    shown_text.add_argument("signoff", choices=list(proposal.SIGNOFFS))
+    shown_text.add_argument("signoff", choices=steering.SIGNOFFS)
     answer = sub.add_parser("answer")
     answer.set_defaults(run=run_answer)
-    answer.add_argument("answer", choices=proposal.ANSWERS)
+    answer.add_argument("answer", choices=list(proposal.COMMANDS))
     answer.add_argument("--next", required=True)
     answer.add_argument("--open", action="append", default=[])
     answer.add_argument("--message", required=True)

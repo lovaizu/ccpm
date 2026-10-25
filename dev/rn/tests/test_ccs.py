@@ -590,7 +590,7 @@ class CcsTest(RepoTest):
 
 
 class ChecklistsTest(RepoTest):
-    def test_rns_own_checklist_is_found_in_any_folder(self):
+    def test_rns_own_checklist_is_found_in_a_folder_of_rns_checklists(self):
         # Given: rn's checklist for the kind, in a folder of rn's checklists.
         # When: the orchestrator asks for the kind's checklists.
         # Then: rn gives it.

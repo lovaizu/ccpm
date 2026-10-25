@@ -11,6 +11,7 @@ import re
 from collections.abc import Callable
 from typing import NamedTuple
 
+import call
 import repo
 import steering
 import stop
@@ -24,11 +25,6 @@ SESSION_NAME = re.compile(r"[0-9]{8}-[a-z0-9-]+")
 STEERING = "steering.md"
 LEARNT = "learnings.md"
 TURN = "turn"
-# A file of a call to turn, by its number and what it is: the CCS, turn's result, or the part the
-# call makes.
-CALL = re.compile(r"([0-9]{4})-(ccs\.json|result\.json|steering\.md|learnings\.md)")
-CCS = "ccs.json"
-RESULT = "result.json"
 # The works rn has turn make: the plan, the part of the steering from the title through the tasks,
 # as a task of the plan stage makes the plan; its learnings; what task T<n> makes outside the
 # steering; the finished work; and a checklist of a kind.
@@ -37,8 +33,13 @@ CHECKLIST_WORK = re.compile(r"checklist-[a-z0-9-]+")
 WORKS = "plan, learnings, deliverable, t<n> for task T<n>, or checklist-<kind>"
 # The works whose call makes a part, cut into a file of its own, each with what its file is named:
 # the plan's a part of the steering, the learnings' those it adds to the session's.
-PART = {steering.PLAN: "steering.md", steering.LEARNINGS_WORK: "learnings.md"}
+PART = {steering.PLAN: STEERING, steering.LEARNINGS: LEARNT}
 PARTS = tuple(PART)
+# A file of a call to turn, by its number and what it is: the CCS, turn's result, or the part the
+# call makes.
+CCS = "ccs.json"
+RESULT = "result.json"
+CALL = re.compile(rf"([0-9]{{4}})-({'|'.join(map(re.escape, (CCS, RESULT, *PART.values())))})")
 # The keys of the CCS entries rn reads back: the work's name, and each decision of the work as
 # `<title>: <what it says>`; the stage it was made in is under the front matter's key of the stage.
 WORK = "work"
@@ -46,12 +47,11 @@ DECISION = "decision"
 # The heading a part of the learnings opens with, which rn cuts for turn and leaves out when it
 # adds the learnings to the session's; and each learning, in the form of rn's learnings checklist.
 LEARNINGS = "Learnings"
-LEARNING = re.compile(r"- (?P<id>L[0-9]+): \S.*")
+LEARNING = re.compile(r"- (?P<id>L[0-9]+): (?P<said>\S.*)")
 LEARNING_FORM = (
     "a learning as `- L<n>: <what happened, with the words it rests on, and where it would make"
     " later work better>`"
 )
-NUMBERED = re.compile(r"- L[0-9]+: ")
 
 
 def worked(work: str) -> str:
@@ -162,11 +162,6 @@ class Call(NamedTuple):
     result: bool
 
 
-def entry(ccs: dict[str, list[dict[str, str]]], key: str) -> str:
-    """The first value of the key in the CCS; "" where none is."""
-    return next((e[key] for part in ccs.values() for e in part if key in e), "")
-
-
 def calls(folder: str, commit: str | None = None) -> list[Call]:
     """Each call to turn of the session, in the order made, as the working tree holds them, or the
     commit given; stops where a CCS is no JSON object, saying how to restore it."""
@@ -194,9 +189,8 @@ def calls(folder: str, commit: str | None = None) -> list[Call]:
                 f"rn: {path} is no CCS, a JSON object; restore it with `git checkout HEAD --"
                 f" {path}`, as rn's scripts alone write it, then run this again"
             )
-        found.append(
-            Call(number, entry(ccs, WORK), entry(ccs, steering.STAGE), ccs, RESULT in files[number])
-        )
+        work, stage = (next(iter(call.entries(ccs, key)), "") for key in (WORK, steering.STAGE))
+        found.append(Call(number, work, stage, ccs, RESULT in files[number]))
     return found
 
 
@@ -205,9 +199,9 @@ def latest(found: list[Call], work: str) -> Call | None:
     return next((c for c in reversed(found) if c.work == work), None)
 
 
-def decisions_of(call: Call) -> list[str]:
+def decisions_of(made: Call) -> list[str]:
     """Each decision of the call, in the order kept."""
-    return [e[DECISION] for e in call.ccs.get("constraints", []) if DECISION in e]
+    return call.entries(made.ccs, DECISION)
 
 
 def next_number(found: list[Call]) -> str:
@@ -252,10 +246,10 @@ def put_learnings(learnings: list[str], part: list[str]) -> list[str]:
     lines = steering.trimmed(part[1:]) if part[:1] == [f"## {LEARNINGS}"] else part
     put = []
     for line in lines:
-        number = NUMBERED.match(line)
-        if number:
+        learnt = LEARNING.fullmatch(line)
+        if learnt:
             count += 1
-            line = f"- L{count}: {line[number.end() :]}"
+            line = f"- L{count}: {learnt['said']}"
         put.append(line)
     return learnings + put
 
@@ -328,4 +322,4 @@ def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dic
             f"rn: {stop.joined(left)} is still in the steering, and the finished work is checked once no"
             " task is; tick each action done with --done T<n>.<action>, then run this again"
         )
-    return dict(keys, stage=stage)
+    return {**keys, steering.STAGE: stage}

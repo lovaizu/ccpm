@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import datetime
 import glob
-import json
 import os
 from typing import Any
 
@@ -20,33 +19,19 @@ def typed(command: str, start: float) -> bool:
     conversation run at the top of the repository on the checked-out branch: an entry of the
     user's that is a command, as Claude Code keeps one typed, and names it; never an agent's
     message nor what a tool gave back, which are kept otherwise."""
-    top = repo.git(["rev-parse", "--show-toplevel"], repo.AS_GIT_SAYS).strip()
-    branch = repo.git(["branch", "--show-current"], repo.AS_GIT_SAYS).strip()
     name = f"<command-name>{command}</command-name>"
-    for path in conversations(top, branch):
-        for e in lines_of(path):
-            content = e.get("message", {}).get("content")
-            if (
-                e.get("type") == "user"
-                and isinstance(content, str)
-                and content.startswith("<command-")
-                and name in content
-                and since(e, start)
-            ):
+    for path in conversations(repo.top(), repo.branch()):
+        for entry in records.entries(path):
+            text = record.text(entry) or ""
+            if text.startswith("<command-") and name in text and since(entry, start):
                 return True
     return False
-
-
-def lines_of(path: str) -> list[dict[str, Any]]:
-    """Each entry of a record, as Claude Code keeps it, one JSON object to a line."""
-    with open(path, encoding="utf-8") as f:
-        return [json.loads(line) for line in f]
 
 
 def begun(path: str) -> tuple[str, str]:
     """When the record began, its earliest entry's time, Claude Code writing each in one form; and
     its path, so records begun at once come in one order."""
-    times = [e["timestamp"] for e in lines_of(path) if "timestamp" in e]
+    times = [e["timestamp"] for e in records.entries(path) if "timestamp" in e]
     return min(times, default=""), path
 
 
@@ -57,19 +42,19 @@ def conversations(top: str, branch: str) -> list[str]:
         path
         for folder in record.folders(top)
         for path in glob.glob(os.path.join(glob.escape(folder), "*.jsonl"))
-        if any(e.get("cwd") == top and e.get("gitBranch") == branch for e in lines_of(path))
+        if any(e.get("cwd") == top and e.get("gitBranch") == branch for e in records.entries(path))
     ]
     return sorted(found, key=begun)
 
 
-def since(entry_: dict[str, Any], start: float) -> bool:
+def since(entry: dict[str, Any], start: float) -> bool:
     """Whether the entry was kept at or after the time, in seconds since 1970; not where it has no
     time."""
-    kept = entry_.get("timestamp")
+    at = entry.get("timestamp")
     # Python 3.9 reads no `Z` for UTC, which Claude Code writes.
     return (
-        kept is not None
-        and datetime.datetime.fromisoformat(kept.replace("Z", "+00:00")).timestamp() >= start
+        at is not None
+        and datetime.datetime.fromisoformat(at.replace("Z", "+00:00")).timestamp() >= start
     )
 
 
@@ -79,11 +64,11 @@ def told(path: str, start: float) -> str:
     tool gave back is left out, as the record shows what was kept, and it is most of the
     conversation; "" where it holds none of them from the time."""
     said: list[str] = []
-    for e in (e for e in records.entries(path) if since(e, start)):
-        content = e.get("message", {}).get("content")
+    for entry in (e for e in records.entries(path) if since(e, start)):
+        content = record.content(entry)
         if isinstance(content, str):
-            said.append(f"[{e.get('type')}] {content}")
-        for part in content if isinstance(content, list) else []:
-            if part.get("type") in ("text", "tool_use"):
-                said.append(records.said(part))
+            said.append(f"[{entry.get('type')}] {content}")
+        said += [
+            records.said(b) for b in record.blocks(entry) if b.get("type") in ("text", "tool_use")
+        ]
     return "".join(f"{line}\n" for line in said)

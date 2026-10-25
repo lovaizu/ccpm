@@ -17,14 +17,14 @@ import steering
 
 # The folder in the repository's git folder where the records the learnings are made from are shown,
 # so nothing of it shows as a change to keep.
-LEARNING_PLACE = "rn"
+RECORDS = "rn"
 
 
-def learning() -> str:
+def records_folder() -> str:
     """The folder where the records the learnings are made from are shown, in the repository's git
     folder, as a whole path."""
     return os.path.join(
-        repo.git(["rev-parse", "--absolute-git-dir"], repo.AS_GIT_SAYS).strip(), LEARNING_PLACE
+        repo.git(["rev-parse", "--absolute-git-dir"], repo.AS_GIT_SAYS).strip(), RECORDS
     )
 
 
@@ -32,7 +32,7 @@ def stretch(folder: str) -> str:
     """The commit the stretch the learnings are made from starts after: the one that kept the
     result of the last call on the learnings turn returned, or, where none is, the one the branch
     left the default branch at."""
-    done = [c for c in session.calls(folder) if c.work == steering.LEARNINGS_WORK and c.result]
+    done = [c for c in session.calls(folder) if c.work == steering.LEARNINGS and c.result]
     if not done:
         return repo.base()
     result = session.call_path(folder, done[-1].number, session.RESULT)

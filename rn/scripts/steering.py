@@ -12,31 +12,33 @@ from typing import NamedTuple
 import stop
 import template
 
-# The stages that are named as the work made at them: the plan, the finished work and the
-# learnings.
-PLAN = "plan"
-LEARNINGS_WORK = "learnings"
-DELIVERABLE = "deliverable"
-# The front matter's key of the stage, by which a CCS names the stage it was made in too.
-STAGE = "stage"
 # The steering's front matter keys, in the order rn writes them; those of the languages go into
-# every CCS.
-KEYS = ("rn", "pr", "stage", "signoff", "artifact-language", "conversation-language")
+# every CCS, and a CCS names the stage it was made in under the stage's key too.
+RN = "rn"
+PR = "pr"
+STAGE = "stage"
+SIGNOFF = "signoff"
 LANGUAGES = ("artifact-language", "conversation-language")
-# The stages, in their order, and the sign-offs, each a stage of its name too; `none` where no
-# sign-off waits, and as the pull request before `start` opened it.
+KEYS = (RN, PR, STAGE, SIGNOFF, *LANGUAGES)
+# The stages, in their order, three of them named as the work made at them: the plan, the finished
+# work and the learnings.
+PLAN = "plan"
 DESIGN = "design"
 BUILD = "build"
+DELIVERABLE = "deliverable"
+LEARNINGS = "learnings"
 FINISHED = "finished"
-STAGES = (PLAN, DESIGN, BUILD, DELIVERABLE, LEARNINGS_WORK, FINISHED)
+STAGES = (PLAN, DESIGN, BUILD, DELIVERABLE, LEARNINGS, FINISHED)
+# The sign-offs, each at the stage of its name, with the stage the user's approval there moves the
+# session to; `none` where no sign-off waits, and as the pull request before `start` opened it.
+APPROVED = {PLAN: DESIGN, DESIGN: BUILD, DELIVERABLE: LEARNINGS}
+SIGNOFFS = tuple(APPROVED)
 NONE = "none"
-VALUES = {"stage": STAGES, "signoff": (NONE, PLAN, DESIGN, DELIVERABLE)}
-# The stage the user's approval at each sign-off moves the session to.
-APPROVED = {PLAN: DESIGN, DESIGN: BUILD, DELIVERABLE: LEARNINGS_WORK}
+VALUES = {STAGE: STAGES, SIGNOFF: (NONE, *SIGNOFFS)}
 # The stages `state --stage` moves the session to, each from the one it moves from, as the others
 # move at the sign-offs: build from the design stage where it made no document, so the design
 # sign-off has nothing to show.
-MOVES = {BUILD: DESIGN, DELIVERABLE: BUILD, FINISHED: LEARNINGS_WORK}
+MOVES = {BUILD: DESIGN, DELIVERABLE: BUILD, FINISHED: LEARNINGS}
 # The steering's `##` headings, in their order: the criteria and the tasks once made, while some
 # are, Next and Open always.
 CRITERIA = "Acceptance criteria"
@@ -77,11 +79,6 @@ NOTHING_OPEN = "None."
 DONE = re.compile(r"(T[0-9]+)\.([0-9]+)")
 # Where the tick stands on an action's line.
 TICK = 5
-# The parts of the steering a proposal shows, by the heading each is under, "" for the part above
-# the first, with how each line holding an ID in it begins.
-SHOWS = {"": "G1: ", CRITERIA: "- "}
-
-
 # A pull request's URL, after the repository's.
 PULL = re.compile(r"(\S+)/pull/[0-9]+")
 
@@ -166,13 +163,19 @@ class Task(NamedTuple):
     actions: list[tuple[int, str, re.Match[str] | None]]
 
 
+def said(lines: list[tuple[int, str]]) -> str:
+    """The first of the lines and those it runs on to, until a blank line, as one line, without the
+    indent of each."""
+    return " ".join(itertools.takewhile(bool, (line.strip() for _, line in lines)))
+
+
 def task_of(item: Item) -> Task:
     """The task the item of the tasks is."""
     n = item.lines[0][0]
-    blank = next((k for k, (_, said) in enumerate(item.lines) if not said.strip()), len(item.lines))
-    text = " ".join(said.strip() for _, said in item.lines[:blank])
+    first = list(itertools.takewhile(lambda line: line[1].strip(), item.lines))
+    text = said(first)
     served = SERVED.fullmatch(text)
-    rest = item.lines[blank:]
+    rest = item.lines[len(first) :]
     return Task(
         item.id,
         n,
@@ -234,7 +237,7 @@ def keys_out(found: dict[str, tuple[int, str]] | None) -> str:
         n, value = found[key]
         if value not in taken:
             return f"line {n}: expected {key} to be {stop.joined(list(taken), 'or')}, found {value}"
-    n, pr = found["pr"]
+    n, pr = found[PR]
     if pr != NONE and not PULL.fullmatch(pr):
         return (
             f"line {n}: expected pr to be the pull request's URL, or none before it is opened,"
@@ -457,34 +460,16 @@ def put_plan(plan: list[str], part: list[str]) -> list[str]:
     return lines
 
 
-def item(lines: list[tuple[int, str]], at_: int) -> str:
-    """The text of the line at the index and the lines it runs on to, until a blank line or the
-    next item of a list, as one line."""
-    words = [lines[at_][1]]
-    for _, line in lines[at_ + 1 :]:
-        if not line.strip() or line.startswith("- "):
-            break
-        words.append(line.strip())
-    return " ".join(words)
-
-
-def by_id(lines: list[tuple[int, str]], begins: str) -> dict[str, str]:
-    """What the lines say under each ID, each line beginning as given opening one, by its ID, in
-    their order, each as one line; read from lines that hold their form."""
-    found: dict[str, str] = {}
-    for k, (_, line) in enumerate(lines):
-        if line.startswith(begins):
-            key, _, rest = item(lines, k).removeprefix("- ").partition(": ")
-            found[key] = rest
-    return found
-
-
-def decided(lines: list[str], shown: tuple[str, ...]) -> dict[str, str]:
-    """What the steering says under each ID in the parts shown, such as the goal and each
-    acceptance criterion, by its ID, in the order of the steering, each as one line; read from a
-    steering that holds its form."""
+def decided(lines: list[str], goal: bool = True) -> dict[str, str]:
+    """What the steering says under the goal, where asked, and under each acceptance criterion, by
+    its ID, in the order of the steering, each as one line; read from a steering that holds its
+    form."""
     parts = sections(lines)
     found: dict[str, str] = {}
-    for part in shown:
-        found.update(by_id(parts.get(part, []), SHOWS[part]))
+    above = parts[""]
+    start = next((k for k, (_, line) in enumerate(above) if GOAL.fullmatch(line)), None)
+    if goal and start is not None:
+        found["G1"] = said(above[start:]).partition(": ")[2]
+    criteria = items_of(parts.get(CRITERIA, []), CRITERION, CRITERION_FORM)[0]
+    found.update((i.id, said(i.lines).partition(": ")[2]) for i in criteria)
     return found

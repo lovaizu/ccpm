@@ -163,7 +163,8 @@ def options(needed: dict[str, str]) -> list[str]:
 class RepoTest(MainAndWork):
     """A git repository whose default branch is `main` and whose checked-out branch is `work`, both
     pushed to the remote beside it, with git reading no setting of the machine it runs on; a plugin
-    folder with its manifest and rn's checklists; the stand-in for gh first on PATH; and Claude
+    folder with its manifest and stand-ins for rn's checklists of code and of plans, rn's own plan
+    checklist being read through PLAN_CHECKLIST; the stand-in for gh first on PATH; and Claude
     Code's records in a folder of their own, as CLAUDE_CONFIG_DIR names it."""
 
     def setUp(self) -> None:
@@ -285,9 +286,9 @@ class RepoTest(MainAndWork):
 
 
 # Where rn shows the records the learnings are made from, in the repository's git folder.
-LEARNING = ".git/rn"
-HISTORY = f"{LEARNING}/record/history.txt"
-CONVERSATIONS = f"{LEARNING}/conversations"
+SHOWN = ".git/rn"
+HISTORY = f"{SHOWN}/record/history.txt"
+CONVERSATIONS = f"{SHOWN}/conversations"
 # When the learnings' call of the stretch before was returned, between the entries of the
 # conversations the tests write.
 KEPT_AT = "2026-10-20T09:30:00Z"
@@ -306,7 +307,8 @@ def said(text: str, at: str, cwd: str, branch: str = BRANCH) -> dict[str, Any]:
 
 
 class LearningTest(RepoTest):
-    """A session kept."""
+    """A session kept, and the records rn shows of it: the texts it shows, the conversations among
+    them, an agent's record beside a conversation, and calls on the learnings kept at a time."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -322,13 +324,13 @@ class LearningTest(RepoTest):
 
     def records(self) -> list[str]:
         """The paths of the texts rn showed, relative to where it shows them."""
-        return [os.path.relpath(p, os.path.join(self.top, LEARNING)) for p in self.ran("records")]
+        return [os.path.relpath(p, os.path.join(self.top, SHOWN)) for p in self.ran("records")]
 
     def shown(self) -> list[str]:
         """The text of each conversation rn showed, in order."""
         return [self.read(p) for p in self.ran("records") if f"{os.sep}conversations{os.sep}" in p]
 
-    def start(self) -> str:
+    def left_at(self) -> str:
         """The commit the branch left the default branch at."""
         return self.out("merge-base", "origin/main", "HEAD").strip()
 

@@ -48,7 +48,7 @@ def checklists(kind: str, root: str) -> list[str]:
     return found
 
 
-def held(path: str) -> str:
+def has_path(path: str) -> str:
     """The path of what the receiver has with the work, when a file or folder is there; stops
     otherwise, as turn stops a call naming one that is not."""
     if not os.path.exists(path):
@@ -88,7 +88,7 @@ def served(steered: steering.Steering, work: str) -> dict[str, str]:
     """The goal and each criterion the work serves, by ID, as the steering says each on one line:
     none for the plan, which makes them; those its task's line names for a task's work; the goal
     and every criterion for any other. Stops where the steering holds no task of a task's work."""
-    said = steering.decided(steered.plan, ("", steering.CRITERIA))
+    said = steering.decided(steered.plan)
     if work == steering.PLAN:
         return {}
     if not session.TASK_WORK.fullmatch(work):

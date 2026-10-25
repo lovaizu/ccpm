@@ -54,7 +54,7 @@ class RecordsTest(LearningTest):
         history = self.read(HISTORY)
         self.assertEqual(
             (
-                history.startswith(f"$ git log --reverse --stat {self.start()}..HEAD\n"),
+                history.startswith(f"$ git log --reverse --stat {self.left_at()}..HEAD\n"),
                 "    README: say MIT" in history,
                 "README.md | 2 ++" in history,
                 "+MIT" in history,
@@ -119,7 +119,7 @@ class RecordsTest(LearningTest):
         # When: the orchestrator has the records shown.
         self.ran("records")
         # Then: the history runs from the commit the branch left the default branch at.
-        self.assertIn(f"$ git log --reverse --stat {self.start()}..HEAD\n", self.read(HISTORY))
+        self.assertIn(f"$ git log --reverse --stat {self.left_at()}..HEAD\n", self.read(HISTORY))
 
     def test_the_stretch_starts_after_the_later_of_two_learnings_calls(self):
         # Given: two learnings calls returned, a move between them.
@@ -272,11 +272,22 @@ class RecordsTest(LearningTest):
 
 
 class LearningsTest(RepoTest):
-    def test_learnings_gives_the_sessions_and_turns_of_every_version_once(self):
-        # Given: the session's learnings, a call on t1 whose result held a learning, then was made
-        # again holding it and another, and a call on t2 whose result holds none.
+    def test_learnings_gives_the_sessions_by_id_each_as_one_line(self):
+        # Given: the session's learnings, the first over two lines.
         self.session()
         self.write(LEARNINGS, "- L1: A slip.\n  Its words.\n- L2: Another.\n")
+        self.kept()
+        # When: the orchestrator asks for the learnings.
+        # Then: rn gives the session's by ID, each as one line, and none of turn's.
+        self.assertEqual(
+            self.ran("learnings"),
+            {"learnings": {"L1": "A slip. Its words.", "L2": "Another."}, "turn": []},
+        )
+
+    def test_learnings_gives_turns_of_every_version_once_with_where_each_was_kept(self):
+        # Given: a call on t1 whose result held a learning, then was made again holding it and
+        # another, and a call on t2 whose result holds none.
+        self.session()
         first = {"lesson": "The page was slow.", "whose": "project's own"}
         second = {"lesson": "The form was long.", "whose": "general"}
         self.call("0001", "t1", result={"items": [], "lessons": [first]})
@@ -286,17 +297,14 @@ class LearningsTest(RepoTest):
         self.call("0002", "t2", result={"items": []})
         self.kept()
         # When: the orchestrator asks for the learnings.
-        # Then: rn gives the session's by ID, each as one line, and turn's in the order kept, each
-        # once, with the work, the call and the commit that first held it.
+        # Then: rn gives turn's in the order kept, each once, with the work, the call and the
+        # commit that first held it.
         self.assertEqual(
-            self.ran("learnings"),
-            {
-                "learnings": {"L1": "A slip. Its words.", "L2": "Another."},
-                "turn": [
-                    dict(first, work="t1", call="0001", commit=kept),
-                    dict(second, work="t1", call="0001", commit=self.head()),
-                ],
-            },
+            self.ran("learnings")["turn"],
+            [
+                dict(first, work="t1", call="0001", commit=kept),
+                dict(second, work="t1", call="0001", commit=self.head()),
+            ],
         )
 
     def test_a_result_that_is_no_json_object_with_learnings_is_passed_over(self):

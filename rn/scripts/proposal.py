@@ -12,12 +12,17 @@ import session
 import steering
 import stop
 
-# The sign-offs, each with the words naming where the work is.
-SIGNOFFS = {
-    steering.PLAN: "The plan is on the draft pull request",
-    steering.DESIGN: "The design is on the draft pull request",
-    steering.DELIVERABLE: "The finished work is on the pull request",
-}
+# Each sign-off, with the words naming where the work is.
+WHERE = dict(
+    zip(
+        steering.SIGNOFFS,
+        (
+            "The plan is on the draft pull request",
+            "The design is on the draft pull request",
+            "The finished work is on the pull request",
+        ),
+    )
+)
 # The works whose decisions a sign-off shows, by the stage they were called in and their names: at
 # the design's, each task's and checklist's called in the design stage; at the deliverable's, each
 # task's called in the build stage.
@@ -28,8 +33,12 @@ WORKS_SHOWN = {
     ),
     steering.DELIVERABLE: (steering.BUILD, session.TASK_WORK),
 }
-ANSWERS = ("approved", "feedback")
-ANSWER = "/rn:ty to approve, /rn:gm <feedback> to ask for a change."
+# Each answer the user gives a sign-off, with the command they type for it, which the AI cannot
+# call, and the line every proposal ends with, saying how to answer.
+COMMANDS = {"approved": "/rn:ty", "feedback": "/rn:gm"}
+ANSWER = (
+    f"{COMMANDS['approved']} to approve, {COMMANDS['feedback']} <feedback> to ask for a change."
+)
 # The most decisions of a work a sign-off shows, and the most characters of each, as five short
 # lines are what a glance at the proposal takes in; a work past them is not yet simple.
 MOST = 5
@@ -68,14 +77,13 @@ def blob(pr: str) -> str:
             f"rn: the steering's pr, {pr!r}, is no pull request's URL; run `rn.py start` again on"
             " the session's branch, so it opens the pull request, then run this again"
         )
-    branch = repo.git(["branch", "--show-current"], repo.AS_GIT_SAYS).strip()
-    return f"{found.group(1)}/blob/{branch}"
+    return f"{found.group(1)}/blob/{repo.branch()}"
 
 
 # What a proposal shows, by the work each part is of, "" for the steering's own: the line naming the
 # work, none for the steering's, and the part's lines by what each is of, an ID or a decision's
 # title.
-Shown = dict[str, tuple[str, dict[str, str]]]
+Shows = dict[str, tuple[str, dict[str, str]]]
 
 
 def shown_works(made: list[session.Call], signoff: str) -> list[str]:
@@ -90,7 +98,7 @@ def shown_works(made: list[session.Call], signoff: str) -> list[str]:
     return found
 
 
-def shown_at(commit: str, signoff: str, folder: str) -> Shown:
+def shown_at(commit: str, signoff: str, folder: str) -> Shows:
     """What the proposal at the sign-off shows of the session as the commit holds it: at the plan's,
     the goal and each criterion by its ID, and at the deliverable's each criterion; then each work
     the sign-off shows by its name: at the design's, its paths as links, from its latest call, with
@@ -98,12 +106,10 @@ def shown_at(commit: str, signoff: str, folder: str) -> Shown:
     returned a work's latest call, a work's decisions are not simple, or the pull request was not
     opened."""
     steered = steering.parsed(repo.at(commit, session.steering_path(folder)) or "")
-    found: Shown = {}
+    found: Shows = {}
     if signoff != steering.DESIGN:
-        parts = (
-            ("", steering.CRITERIA) if signoff == steering.PLAN else (steering.CRITERIA,)
-        )  # pragma: no mutate
-        lines = steering.decided(steered.plan, parts)
+        goal = signoff == steering.PLAN  # pragma: no mutate
+        lines = steering.decided(steered.plan, goal)
         found[""] = ("", {key: f"{key}: {said}" for key, said in lines.items()})
     made = session.calls(folder, commit)
     for work in shown_works(made, signoff):
@@ -118,7 +124,7 @@ def shown_at(commit: str, signoff: str, folder: str) -> Shown:
         said = simple(work, session.decisions_of(last))
         label = work.upper() if session.TASK_WORK.fullmatch(work) else work
         if signoff == steering.DESIGN:  # pragma: no mutate
-            link = blob(steered.keys["pr"])
+            link = blob(steered.keys[steering.PR])
             paths = [
                 e[ccs.ENTRIES["work"]]
                 for e in last.ccs.get("focal_entities", [])
@@ -144,7 +150,7 @@ def changes(before: dict[str, str] | None, now: dict[str, str], bullet: str) -> 
     )
 
 
-def compared(then: Shown | None, now: Shown) -> list[str]:
+def compared(then: Shows | None, now: Shows) -> list[str]:
     """The lines the proposal shows: each work's line and what changed of its part since the
     proposal shown before, none for the first, the steering's lines on their own and each decision
     after a bullet; then each work shown before and no longer, named as removed."""
@@ -175,7 +181,7 @@ def proposed(signoff: str, folder: str) -> list[str]:
     return [
         c
         for c in listed.split()
-        if steering.keys_of(repo.at(c, path) or "").get("signoff") == signoff
+        if steering.keys_of(repo.at(c, path) or "").get(steering.SIGNOFF) == signoff
     ]
 
 
@@ -184,7 +190,7 @@ def ready(signoff: str, folder: str, steered: steering.Steering) -> None:
     and no task left; at the deliverable's, the finished work returned; stops otherwise. The
     design's works are checked as they are shown."""
     if signoff == steering.PLAN:  # pragma: no mutate
-        said = steering.decided(steered.plan, ("", steering.CRITERIA))
+        said = steering.decided(steered.plan)
         if "G1" not in said or len(said) < 2 or steering.tasks_of(steered.plan):
             raise stop.Stop(
                 "rn: the plan sign-off needs the goal G1, a criterion and no task in the steering;"
@@ -198,7 +204,3 @@ def ready(signoff: str, folder: str, steered: steering.Steering) -> None:
                 "rn: turn has not returned the finished work; have turn:up make it with the call"
                 " `rn.py ccs deliverable ...` prints, keep it, then run this again"
             )
-
-
-# The command the user types for each answer, which the AI cannot call.
-COMMANDS = {"approved": "/rn:ty", "feedback": "/rn:gm"}

@@ -41,10 +41,6 @@ class ShownTest(RepoTest):
         self.write(STEERING, text)
         self.commit_with(message)
 
-    def answered(self, text: str) -> None:
-        """The sign-off answered, the steering then kept as given."""
-        self.keep(text, "feedback")
-
 
 # The first proposal at the plan sign-off on STEERED with its task done.
 DONE = steered(part=plan(tasks=""))
@@ -99,7 +95,7 @@ class ProposalTest(ShownTest):
         # Given: the plan's proposal shown, the user's feedback, and AC2 changed and AC3 added.
         self.proposal()
         criteria = CRITERIA.replace("cart,\n  on every page.", "cart.") + "\n- AC3: Sign out."
-        self.answered(steered(part=plan(criteria=criteria, tasks="")))
+        self.keep(steered(part=plan(criteria=criteria, tasks="")), "feedback")
         # When: the orchestrator asks for the plan's proposal again.
         # Then: rn shows each changed or added, and names the rest as before.
         self.assertEqual(
@@ -116,7 +112,7 @@ class ProposalTest(ShownTest):
         # Given: the plan's proposal shown, feedback, AC1 removed, and the proposal shown again.
         self.proposal()
         criteria = "- AC2: A signed-in user sees only their cart."
-        self.answered(steered(part=plan(criteria=criteria, tasks="")))
+        self.keep(steered(part=plan(criteria=criteria, tasks="")), "feedback")
         shown = self.proposal()
         # When: the orchestrator asks for it again while it waits.
         # Then: it is the same, against the first.
@@ -128,9 +124,9 @@ class ProposalTest(ShownTest):
         # Given: the plan's proposal shown, then AC2 changed and shown, then AC2 changed back.
         self.proposal()
         changed = CRITERIA.replace("cart,\n  on every page.", "cart.")
-        self.answered(steered(part=plan(criteria=changed, tasks="")))
+        self.keep(steered(part=plan(criteria=changed, tasks="")), "feedback")
         self.proposal()
-        self.answered(DONE)
+        self.keep(DONE, "feedback")
         # When: the orchestrator asks for the plan's proposal again.
         # Then: AC2 shows as changed against the second.
         self.assertIn(
@@ -141,7 +137,7 @@ class ProposalTest(ShownTest):
         # Given: the plan's proposal shown, feedback, and AC3 added.
         self.proposal()
         criteria = CRITERIA + "\n- AC3: Sign out."
-        self.answered(steered(part=plan(criteria=criteria, tasks="")))
+        self.keep(steered(part=plan(criteria=criteria, tasks="")), "feedback")
         # When: the orchestrator asks for the plan's proposal again.
         # Then: the three as before are named in a list.
         self.assertIn("(G1, AC1 and AC2 as before)\n", self.proposal())
@@ -263,7 +259,7 @@ class DesignTest(ShownTest):
         # Given: the design's proposal shown, feedback, and t1 made again by a new call with a
         # decision changed and one added, naming one document.
         self.proposal("design")
-        self.answered(steered(stage="design"))
+        self.keep(steered(stage="design"), "feedback")
         decided = ("Users: people who shop", "Flow: ask first", "Look: plain")
         self.call("0005", "t1", "design", decided, ("docs/ux.md",), {})
         self.kept()

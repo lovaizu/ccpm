@@ -12,6 +12,7 @@ from helpers import (
     NEXT,
     PLAN_CHECKLIST,
     STEERED,
+    VERSION,
     plan,
     steered,
     task,
@@ -59,7 +60,7 @@ class FormTest(unittest.TestCase):
     def test_a_front_matter_with_a_comment_holds(self):
         # Given: a steering whose front matter holds a comment, as lane reads it, so its body opens
         # a line later.
-        text = STEERED.replace("rn: 0.10.0\n", "rn: 0.10.0\n# kept by rn\n")
+        text = STEERED.replace(f"rn: {VERSION}\n", f"rn: {VERSION}\n# kept by rn\n")
         # When: it is held to its form.
         # Then: it holds.
         self.assert_out(text, "")
@@ -70,7 +71,7 @@ class FormTest(unittest.TestCase):
         # When: its criteria are read.
         # Then: each is given back whole, as one line.
         want = {"AC1": "Sign in by email.", "AC2": "Sign out."}
-        self.assertEqual(steering.decided(text.splitlines(), (steering.CRITERIA,)), want)
+        self.assertEqual(steering.decided(text.splitlines(), goal=False), want)
 
     def test_a_steering_rn_writes_holds_rns_plan_checklists_template(self):
         # Given: a steering rn writes with every part, a task's action ticked, and rn's plan
@@ -92,7 +93,7 @@ class FormTest(unittest.TestCase):
             STEERED.replace("stage: plan\n", ""): "expected the front matter's keys rn, pr,"
             " stage, signoff, artifact-language, conversation-language in that order, found rn,"
             " pr, signoff, artifact-language, conversation-language",
-            STEERED.replace("rn: 0.10.0\npr: ", "pr: ").replace("stage:", "rn: 1\nstage:"): (
+            STEERED.replace(f"rn: {VERSION}\npr: ", "pr: ").replace("stage:", "rn: 1\nstage:"): (
                 "expected the front matter's keys rn, pr, stage, signoff, artifact-language,"
                 " conversation-language in that order, found pr, rn, stage, signoff,"
                 " artifact-language, conversation-language"
@@ -102,7 +103,7 @@ class FormTest(unittest.TestCase):
             " found rn, pr, stage, signoff, artifact-language, conversation-language, status",
             "---\n---\n# A\n": "expected the front matter's keys rn, pr, stage, signoff,"
             " artifact-language, conversation-language in that order, found none",
-            STEERED.replace("rn: 0.10.0", "rn:"): "line 2: expected a value for rn, found none",
+            STEERED.replace(f"rn: {VERSION}", "rn:"): "line 2: expected a value for rn, found none",
             steered(stage="done"): "line 4: expected stage to be plan, design, build,"
             " deliverable, learnings or finished, found done",
             steered(signoff="build"): "line 5: expected signoff to be none, plan, design or"
