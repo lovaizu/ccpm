@@ -10,6 +10,7 @@ import os
 import re
 from typing import Any
 
+import hook
 import hooks_file
 import lanes
 import placed
@@ -38,7 +39,7 @@ def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | No
     run_it = hooks_file.command(plugin, name, event)
     return {
         "matcher": "|".join(dict.fromkeys(tools)),
-        "hooks": [{"type": "command", "timeout": 10, "command": run_it}],
+        "hooks": [{"type": "command", "timeout": hook.TIMEOUT, "command": run_it}],
     }
 
 

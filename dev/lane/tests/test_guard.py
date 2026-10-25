@@ -414,6 +414,23 @@ class TestRunValues(GuardTest):
         told = "notes: Write only `{work}`.\n`{work}` is `c.md`."
         self.assertEqual(self.wrote("a.md"), ("told", told))
 
+    def test_lanes_json_is_read_once_on_an_event(self):
+        # Given: start_with laid on step 1, run, and write_only taking `{work}`, read with the
+        # values the script printed by the subagent's adapter
+        given = 'print(\'{"values": {"work": ["c.md"]}}\')\n'
+        self.write(os.path.join(self.plugin, "hooks", "adapters", "values-run.py"), given)
+        start = (1, "start_with", ["scripts/given.py"])
+        self.lay(start, *self.LAID, values="hooks/adapters/values-run.py")
+        run = ("Bash", {"command": f"python3 {self.plugin}/scripts/given.py"}, "{}")
+        self.record([run], self.RUN)
+        laid = mock.patch.object(helpers.hooks_file, "laid", wraps=helpers.hooks_file.laid)
+        # When: changelog-writer writes a file
+        with laid as read:
+            found = self.wrote("a.md")
+        # Then: hooks/lanes.json is read once for every lane, the values and the scripts run first
+        self.assertEqual(found, ("told", "notes: Write only `{work}`.\n`{work}` is `c.md`."))
+        self.assertEqual(read.call_count, 1)
+
     def test_an_output_of_a_list_is_held_to_its_form_one_by_one_the_point_told_last(self):
         # Given: in_form taking `{work}` and a form, the prompt naming two JSON outputs
         form = "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"

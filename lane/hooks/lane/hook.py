@@ -13,6 +13,9 @@ from typing import IO, Any, NamedTuple
 
 import schema
 
+# The seconds Claude Code gives each hook lane lays before it stops it, as the layer writes it in
+# the hook's entry.
+TIMEOUT = 10
 # Who must fix an error lane meets in what Claude Code hands it, as the subagent replies it.
 CLAUDE_CODE = (
     "Claude Code must be updated with `claude update`, and where this goes on, it must be reported"

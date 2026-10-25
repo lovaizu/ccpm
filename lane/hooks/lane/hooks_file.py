@@ -219,24 +219,11 @@ def subagent(root: str, name: str) -> dict[str, Any]:
     return found
 
 
-def laid_in(root: str, name: str) -> list[tuple[int, str, list[str], str | None]]:
-    """Each lane laid in the subagent of the name, its step, the lane, what it takes and the
-    adapter it names, None for none, as `subagent` reads them."""
-    found = subagent(root, name)
+def lanes_of(agent: dict[str, Any]) -> list[tuple[int, str, list[str], str | None]]:
+    """Each lane laid in the subagent, as `subagent` reads it: its step, the lane, what it takes
+    and the adapter it names, None for none."""
     return [
         (int(s["step"]), g["lane"], g["takes"], g.get("adapter"))
-        for s in found["steps"]
+        for s in agent["steps"]
         for g in s["lanes"]
     ]
-
-
-def taken(root: str, name: str, lane: str) -> list[list[str]]:
-    """What each lane of the kind laid in the subagent of the name takes, read from the lanes the
-    plugin at root lays; none where its hooks/lanes.json cannot be read so. Read there, as a lane
-    may be held on an event apart from the one asking, such as one held at the subagent's end apart
-    from start_with's."""
-    try:
-        each = laid_in(root, name)
-    except ValueError:
-        return []
-    return [takes for _, kind, takes, _ in each if kind == lane]

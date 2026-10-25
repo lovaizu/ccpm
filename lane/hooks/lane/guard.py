@@ -54,23 +54,23 @@ class Lanes:
         read so, an error, as no lane can be checked from it."""
         plugin, name = self.agent.split(":")
         try:
-            given = hooks_file.laid_in(self.root, name)
-            values = hooks_file.subagent(self.root, name).get("adapter")
+            found = hooks_file.subagent(self.root, name)
         except ValueError as wrong:
             fix = LAY_AGAIN.format(plugin=plugin)
             unread = (
                 f"lane cannot check the lanes of {name}: {wrong}. Stop here and reply that {fix}."
             )
             return [hook.Said(unread, True)]
+        given, values = hooks_file.lanes_of(found), found.get("adapter")
         laid = [(lane, takes) for _, lane, takes, _ in given]
         on = [
             Laid(self.root, self.agent, g, laid, values)
             for g in given
             if self.held in held_on(g[1])
         ]
-        found = called.entries(event)
+        entries = called.entries(event)
         ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
-        seen = Seen(found, call.ended(event, found) if ending else call.read(event, found))
+        seen = Seen(entries, call.ended(event, entries) if ending else call.read(event, entries))
         return [s for lane in on for s in lane.check(event, seen)]
 
 
@@ -91,6 +91,9 @@ class Laid:
         self.plugin, self.name = agent.split(":")
         self.number, self.lane, self.takes, self.adapter = given
         self.laid, self.values = laid, values
+        # The scripts start_with takes in the subagent, which give the run's values with what they
+        # print, and which a lane taking one waits on.
+        self.scripts = [s for lane, takes in laid if lane == "start_with" for s in takes]
 
     def check(self, event: dict[str, Any], seen: Seen) -> list[hook.Said]:
         """The lane's sentence where what the event shows drifts from it, as the subagent reads its
@@ -175,10 +178,9 @@ class Laid:
     def started(self, seen: Seen) -> bool:
         """Whether the subagent has run each script start_with takes in it, before the call or the
         end the event shows, or start_with is laid in it on none."""
-        scripts = [s for t in hooks_file.taken(self.root, self.name, "start_with") for s in t]
         acted = seen.acted
         before = acted.made if isinstance(acted, call.End) else acted.before
-        return not scripts or any(call.runs(c, scripts) for c in before)
+        return not self.scripts or any(call.runs(c, self.scripts) for c in before)
 
     def wrong(self, out: schema.Out, run: dict[str, list[str]]) -> hook.Said:
         """The error of what the lane is given out of its IN by the point, its record found: a take
@@ -203,8 +205,7 @@ class Laid:
         """The run's value of each name the JSON the subagent started from gives, from the entries
         found of its record, made in the folder: its prompt and what each script start_with takes
         in it printed; none where its record is not found."""
-        scripts = [s for t in hooks_file.taken(self.root, self.name, "start_with") for s in t]
-        texts = started.texts(found, cwd, lambda c: call.runs(c, scripts))
+        texts = started.texts(found, cwd, lambda c: call.runs(c, self.scripts))
         return {} if texts is None else self.read("values", {"texts": texts}, self.values)["values"]
 
 

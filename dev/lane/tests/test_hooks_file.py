@@ -59,7 +59,7 @@ class TestLaidIn(LanesTest):
         # When: the lanes laid in changelog-writer are read
         # Then: they are its own, each its step, the lane and what it takes, the comma kept
         self.assertEqual(
-            hooks_file.laid_in(self.plugin, "changelog-writer"),
+            hooks_file.lanes_of(hooks_file.subagent(self.plugin, "changelog-writer")),
             [
                 (1, "start_with", ["scripts/given.py"], None),
                 (3, "hands_off", ["git commit, -a", "x"], None),
@@ -80,7 +80,7 @@ class TestLaidIn(LanesTest):
         # When: the lanes laid in it are read
         # Then: each lane gives its adapter, and the subagent its own
         self.assertEqual(
-            hooks_file.laid_in(self.plugin, "changelog-writer"),
+            hooks_file.lanes_of(hooks_file.subagent(self.plugin, "changelog-writer")),
             [(3, "every_item", ["r.md"], "hooks/adapters/items-h.py")],
         )
         self.assertEqual(hooks_file.subagent(self.plugin, "changelog-writer"), agent)
@@ -145,33 +145,8 @@ class TestLaidIn(LanesTest):
                 # When: the lanes laid in changelog-writer are read
                 # Then: it stops, saying what is wrong
                 with self.assertRaises(ValueError) as stop:
-                    hooks_file.laid_in(self.plugin, "changelog-writer")
+                    hooks_file.lanes_of(hooks_file.subagent(self.plugin, "changelog-writer"))
                 self.assertIn(named, str(stop.exception))
-
-
-class TestTaken(LanesTest):
-    def test_what_each_lane_of_the_kind_takes_in_the_subagent_is_read_from_its_lanes(self):
-        # Given: hooks/lanes.json laying start_with and hands_off in changelog-writer
-        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), LAID)
-        for lane, takes in (
-            ("start_with", [["scripts/given.py"]]),
-            ("hands_off", [["git commit, -a", "x"]]),
-        ):
-            with self.subTest(lane=lane):
-                # When: what its lanes of the kind take is read
-                # Then: it is what its lane of the kind takes
-                self.assertEqual(hooks_file.taken(self.plugin, "changelog-writer", lane), takes)
-
-    def test_lanes_json_not_there_or_not_json_give_none(self):
-        for text in (None, "{"):
-            with self.subTest(text=text):
-                # Given: no hooks/lanes.json, or one holding no JSON
-                self.lanes(text)
-                # When: what start_with takes is read
-                # Then: there is nothing
-                self.assertEqual(
-                    hooks_file.taken(self.plugin, "changelog-writer", "start_with"), []
-                )
 
 
 class TestWords(unittest.TestCase):

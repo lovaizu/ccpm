@@ -25,6 +25,7 @@ import subprocess
 import time
 from typing import Any, Callable
 
+import hook
 import schema
 
 # What reads a port for a lane, given the port's JSON, giving back the port's.
@@ -146,9 +147,9 @@ def read(port: str, given: dict[str, Any]) -> dict[str, Any]:
     return OWN[port](given)
 
 
-# The seconds the hook leaves its adapters, of the 10 Claude Code gives it, counted from when lane's
+# The seconds the hook leaves its adapters, of those Claude Code gives it, counted from when lane's
 # code was loaded, the rest for Python to start and the subagent's record to be read.
-TIME = 8.0
+TIME = hook.TIMEOUT - 2.0
 START = time.monotonic()
 
 
