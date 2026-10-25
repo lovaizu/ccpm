@@ -129,7 +129,8 @@ class TestRunValue(LayTest):
 class TestInForm(LayTest):
     """A proposal of in_form, taking an output and its form, a file of the plugin."""
 
-    def in_form(self, form):
+    def in_form(self, form: str) -> dict:
+        """A proposal of in_form on step 3, holding entry.json to the form."""
         return self.proposal([{"lane": "in_form", "takes": ["entry.json", form]}])
 
     def test_a_form_lane_reads_is_laid(self):

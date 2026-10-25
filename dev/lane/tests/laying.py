@@ -10,7 +10,7 @@ from unittest import mock
 import helpers
 from helpers import lay
 
-# The proposal of lane's README: hands_off on step 3 of changelog-writer.
+# hands_off of the README's proposal, on step 3 of changelog-writer.
 LANES = [{"lane": "hands_off", "takes": ["git commit", "git push"]}]
 # The hook's command lane:up writes for it.
 COMMAND = (

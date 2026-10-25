@@ -131,6 +131,7 @@ class TestStarted(helpers.PluginTest):
         """What the subagent started from, the calls that run `start.py` taken as its script."""
 
         def runs(made: call.Call) -> bool:
+            # Whether the call runs `python3 start.py`, as the script start_with takes.
             return made.what[:1] == [["python3", "start.py"]]
 
         event = self.event("ls")

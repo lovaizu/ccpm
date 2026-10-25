@@ -113,6 +113,19 @@ def load_hypothesis_profile() -> None:
     hypothesis.settings.load_profile("ci" if os.environ.get("CI") else "dev")
 
 
+def hypothesis() -> Any:
+    """Hypothesis, its settings loaded as load_hypothesis_profile says, for a module of property
+    tests to take given, assume and strategies from; stops the module, its tests skipped, where it
+    is not installed, as it is installed on the newest Python alone, so the type check on 3.9
+    finds it missing."""
+    try:
+        import hypothesis  # pyrefly: ignore[missing-import]
+    except ImportError:
+        raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
+    load_hypothesis_profile()
+    return hypothesis
+
+
 def lane_code(plugin: str, *names: str) -> list[Any]:
     """lane's modules of the names, imported from the link in the plugin's hooks: lane's code and
     the plugin's scripts share module names, such as call, so lane's are imported apart and the

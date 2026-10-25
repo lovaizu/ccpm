@@ -17,8 +17,8 @@ class RecordTest(helpers.PluginTest):
     def entries(self):
         """The entries of the record the test has written."""
         found = record.entries(self.event("ls"))
-        assert found is not None, "the record written was not found"
-        return found
+        self.assertIsNotNone(found, "the record written was not found")
+        return found or []
 
     def done(self):
         """What the subagent did, read from the record the test has written, in the event's

@@ -17,7 +17,7 @@ WRITTEN = ['python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given']
 
 def read(command, tool="Bash"):
     """A call of the tool with the command, as the guard reads it."""
-    return helpers.call_of({"cwd": "/r", "tool_name": tool, "tool_input": {"command": command}})
+    return helpers.acted(tool, {"command": command})
 
 
 def drifts(command, before=(), takes=TAKES, tool="Bash"):

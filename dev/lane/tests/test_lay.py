@@ -110,7 +110,8 @@ class TestUp(LayTest):
         ]
         self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": {event: given}})
 
-    def up(self):
+    def up(self) -> tuple:
+        """What `lay.py up` on the plugin exits with and prints."""
         return self.lay("up", self.plugin)
 
     def test_an_older_copy_and_its_hooks_are_brought_up_with_the_same_lanes(self):

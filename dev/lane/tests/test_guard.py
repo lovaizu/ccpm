@@ -2,18 +2,23 @@
 stopped and the subagent told `<plugin>: <sentence>`; a lane whose step no longer says its sentence
 stops the call and says to have lane:up run again."""
 
+from __future__ import annotations
+
 import contextlib
 import io
 import json
 import os
 import runpy
 import sys
+import unittest
+from collections.abc import Sequence
 from unittest import mock
 
 import helpers
+from helpers import hooks_file, lanes
 
-# The lane the README lays on step 3, as the hook's command gives it.
-WORDS = ["3:hands_off:git commit,git push"]
+# hands_off of the README's proposal, on step 3: its step, the lane and what it takes.
+HANDS_OFF = (3, "hands_off", ["git commit", "git push"])
 # The sentence of start_with laid on step 1, taking the script it runs.
 BEGIN = "First run `scripts/log.py`."
 # The changelog written by the Write tool, as the record holds it.
@@ -26,15 +31,34 @@ GONE = (
 
 
 class GuardTest(helpers.PluginTest):
+    """A test of the guard on the lanes LAID, each its step, the lane and what it takes, laid on
+    changelog-writer as lane:up lays them."""
+
+    LAID: tuple = (HANDS_OFF,)
+
     def setUp(self) -> None:
         super().setUp()
-        # Step 3 as lane:up writes it.
-        self.write(self.agent_file, helpers.LAID)
+        self.lay(*self.LAID)
 
-    def guard(self, stream, words=(helpers.AGENT, *WORDS), entry="pretooluse.py"):
+    def lay(self, *laid: tuple) -> None:
+        """Lays the lanes on changelog-writer: each lane's sentence put after its step's numbered
+        line, and `words`, the words a hook's command gives the guard, the subagent first, each
+        lane as the command gives it."""
+        text = helpers.STEPS
+        for number, lane, takes in laid:
+            line = next(s for s in text.splitlines() if s.startswith(f"{number}. "))
+            text = text.replace(line, f"{line} {lanes.sentence(lane, takes)}", 1)
+        self.write(self.agent_file, text)
+        self.words = (helpers.AGENT, *(hooks_file.word(n, lane, t) for n, lane, t in laid))
+
+    def guard(
+        self, stream: str, words: Sequence[str] | None = None, entry: str = "pretooluse.py"
+    ) -> tuple:
         """The event's entry, PreToolUse's where none is named, run as Claude Code runs it, on the
-        stream, for the plugin, in this process so that the coverage of the test run counts it;
-        what it exits with and what it writes on stderr."""
+        stream, for the plugin, with the words given, or those of the lanes laid, in this process
+        so that the coverage of the test run counts it; what it exits with and what it writes on
+        stderr."""
+        words = self.words if words is None else words
         script = os.path.join(helpers.CODE, entry)
         argv = mock.patch.object(sys, "argv", [script, *words])
         stdin = mock.patch.object(sys, "stdin", io.StringIO(stream))
@@ -77,26 +101,21 @@ class TestStop(GuardTest):
     def test_the_subagents_record_is_read_once_for_every_lane(self):
         # Given: hands_off and start_with laid on changelog-writer, and its record
         self.record([helpers.bash("ls")])
-        steps = helpers.LAID.replace("release.\n", "release. First run `ls`.\n")
-        self.write(self.agent_file, steps)
-        words = (helpers.AGENT, *WORDS, "1:start_with:ls")
+        self.lay(HANDS_OFF, (1, "start_with", ["ls"]))
         entries = mock.patch.object(helpers.record, "entries", wraps=helpers.record.entries)
         # When: changelog-writer makes a call
         with entries as read:
-            self.guard(self.stream("git status"), words)
+            self.guard(self.stream("git status"))
         # Then: its record is read once
         self.assertEqual(read.call_count, 1)
 
 
 class TestStartWith(GuardTest):
-    def setUp(self) -> None:
-        super().setUp()
-        # Step 1 with start_with laid on it, taking the script it runs.
-        laid = helpers.LAID.replace("since the last release.", "since the last release. " + BEGIN)
-        self.write(self.agent_file, laid)
+    LAID = ((1, "start_with", ["scripts/log.py"]),)
 
-    def started(self, command):
-        return self.guard(self.stream(command), (helpers.AGENT, "1:start_with:scripts/log.py"))
+    def started(self, command: str) -> tuple:
+        """What the guard does on a Bash call of the command, start_with laid on step 1."""
+        return self.guard(self.stream(command))
 
     def test_a_first_call_running_anything_but_the_script_is_stopped_with_its_sentence(self):
         # Given: start_with on step 1 of changelog-writer, its record holding no call yet
@@ -125,13 +144,13 @@ class TestEnd(GuardTest):
 
     TESTED = "After changing `CHANGELOG.md`, pass `python3 check.py`."
     ENDED = "End only once `CHANGELOG.md` is made."
-    LAID = ("3:test_after:CHANGELOG.md,python3 check.py", "4:end_when:CHANGELOG.md")
+    LAID = (
+        (3, "test_after", ["CHANGELOG.md", "python3 check.py"]),
+        (4, "end_when", ["CHANGELOG.md"]),
+    )
 
     def setUp(self) -> None:
         super().setUp()
-        laid = helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {self.TESTED}\n")
-        laid = laid.replace("what you wrote.\n", f"what you wrote. {self.ENDED}\n")
-        self.write(self.agent_file, laid)
         # The changelog there, as a write of it in the record leaves it.
         self.write(os.path.join(self.base, "CHANGELOG.md"), "- Added: lanes\n")
 
@@ -140,7 +159,7 @@ class TestEnd(GuardTest):
         if calls is not None:
             self.record(calls)
         stream = json.dumps(self.stopped("Done.", active, agent_type))
-        return self.guard(stream, (helpers.AGENT, *self.LAID), "subagentstop.py")
+        return self.guard(stream, entry="subagentstop.py")
 
     def test_ending_with_a_change_not_passed_keeps_it_going_with_the_sentence(self):
         # Given: the changelog written and the check never run
@@ -193,67 +212,47 @@ class TestEnd(GuardTest):
         # Then: it ends, nothing said
         self.assertEqual(self.ended([CHANGE], agent_type="notes:other"), (0, ""))
 
-    def test_a_step_no_longer_saying_the_sentence_is_told_once(self):
+    def test_a_step_no_longer_saying_the_sentence_is_told_so(self):
         # Given: step 3 changed by the building AI since the lane was laid
         self.write(self.agent_file, helpers.STEPS)
-        # When: changelog-writer is about to end, then again after answering in words alone
-        # Then: it is told to reply that lane:up must be run again, then ends
+        # When: changelog-writer is about to end
         code, said = self.ended([CHANGE])
+        # Then: it is told to reply that lane:up must be run again
         self.assertEqual(code, 2)
         self.assertIn("lane:up must be run again on notes", said)
+
+    def test_a_step_no_longer_saying_the_sentence_answered_in_words_alone_ends(self):
+        # Given: step 3 changed since the lane was laid, told so, and answered with words alone
+        self.write(self.agent_file, helpers.STEPS)
+        # When: changelog-writer, kept going by the stop hook, is about to end again
+        # Then: it ends, nothing said, as it is told and never held for good
         self.assertEqual(self.ended([CHANGE, "told"], active=True), (0, ""))
 
     def test_every_item_is_told_on_an_item_unanswered(self):
         # Given: every_item on step 1, taking a review of the item B-1, and a reply not naming it
-        sentence = "Answer every item of `review.md`."
-        laid = helpers.STEPS.replace(
-            "since the last release.", f"since the last release. {sentence}"
-        )
-        self.write(self.agent_file, laid)
+        self.lay((1, "every_item", ["review.md"]))
         self.write(os.path.join(self.base, "review.md"), "- B-1: fix it\n")
         self.record([])
         # When: changelog-writer is about to end
         stream = json.dumps(self.stopped("Done."))
-        words = (helpers.AGENT, "1:every_item:review.md")
         # Then: it is kept going and told the sentence
-        self.assertEqual(self.guard(stream, words, "subagentstop.py"), (2, f"notes: {sentence}\n"))
-
-    def test_lanes_given_to_the_entry_of_another_event_let_it_through_saying_so(self):
-        wrong = {
-            "a lane held on a tool call": ("subagentstop.py", "3:hands_off:git push"),
-            "a lane held at the end": ("pretooluse.py", "3:test_after:CHANGELOG.md,make"),
-            "fewer things than places": ("subagentstop.py", "3:test_after:CHANGELOG.md"),
-        }
-        for what, (entry, word) in wrong.items():
-            with self.subTest(what=what):
-                # Given: a hook's command giving its event's entry a lane not held on that event,
-                # or taking fewer things than its wording has places
-                # When: the entry is run by it
-                code, said = self.guard(self.stream("ls"), (helpers.AGENT, word), entry)
-                # Then: it exits 1, naming the lane and to have lane:up write the hooks again
-                self.assertEqual(code, 1)
-                self.assertIn(word, said)
-                self.assertIn("run lane:up again", said)
+        expected = (2, "notes: Answer every item of `review.md`.\n")
+        self.assertEqual(self.guard(stream, entry="subagentstop.py"), expected)
 
 
 class TestRunValues(GuardTest):
     """Lanes taking a value given for each run, `{work}`, from the JSON the subagent starts from."""
 
-    WRITE = "Write only `{work}`."
     # The run's JSON, as the subagent's prompt or a script's print gives it, naming the work and a
     # file the lane does not take.
     RUN = '{"work": ["a.md", "b.md"], "has": "h.md"}'
     TOLD = "notes: Write only `{work}`.\n`{work}` is `a.md`, `b.md`.\n"
+    LAID = ((3, "write_only", ["{work}"]),)
 
-    def setUp(self) -> None:
-        super().setUp()
-        laid = helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {self.WRITE}\n")
-        self.write(self.agent_file, laid)
-
-    def wrote(self, path, words=(helpers.AGENT, "3:write_only:{work}")):
+    def wrote(self, path: str) -> tuple:
         """The guard on a Write of the path."""
         event = self.called("Write", {"file_path": path, "content": "x"})
-        return self.guard(json.dumps(event), words)
+        return self.guard(json.dumps(event))
 
     def test_a_write_of_a_file_the_runs_value_does_not_name_is_told_with_the_value(self):
         # Given: write_only taking `{work}`, the prompt naming the work
@@ -287,38 +286,28 @@ class TestRunValues(GuardTest):
     def test_a_script_start_with_takes_gives_the_value_over_the_prompt(self):
         # Given: start_with laid on step 1, taking `scripts/given.py`, which printed the work
         # after the prompt named another
-        laid = self.read(self.agent_file).replace(
-            "release.", "release. " + BEGIN.replace("log", "given")
-        )
-        self.write(self.agent_file, laid)
-        command = (
-            'exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
-            " 1:start_with:scripts/given.py 3:write_only:{work}"
-        )
+        self.lay((1, "start_with", ["scripts/given.py"]), *self.LAID)
+        command = hooks_file.command("notes", helpers.AGENT, list(self.words[1:]), "PreToolUse")
         hooks = {"hooks": {"PreToolUse": [{"hooks": [{"command": command}]}]}}
         self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
         run = ("Bash", {"command": f"python3 {self.plugin}/scripts/given.py"}, '{"work": "c.md"}')
         self.record([run], self.RUN)
         # When: changelog-writer writes the file the script named, then one the prompt named
-        words = (helpers.AGENT, "1:start_with:scripts/given.py", "3:write_only:{work}")
         # Then: the first goes on, and the second is told with the script's value
-        self.assertEqual(self.wrote("c.md", words), (0, ""))
+        self.assertEqual(self.wrote("c.md"), (0, ""))
         told = "notes: Write only `{work}`.\n`{work}` is `c.md`.\n"
-        self.assertEqual(self.wrote("a.md", words), (2, told))
+        self.assertEqual(self.wrote("a.md"), (2, told))
 
     def test_an_output_of_a_list_is_held_to_its_form_one_by_one_the_point_told_last(self):
         # Given: in_form taking `{work}` and a form, the prompt naming two JSON outputs
         form = "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"
         self.write_json(os.path.join(self.plugin, "forms", "entry.json"), {"type": "object"})
         sentence = f"Write `{{work}}` in the form of `{form}`."
-        self.write(
-            self.agent_file,
-            helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {sentence}\n"),
-        )
+        self.lay((3, "in_form", ["{work}", form]))
         self.record([], '{"work": ["a.json", "b.json"]}')
         # When: changelog-writer writes the second output out of the form
         event = self.called("Write", {"file_path": "b.json", "content": "[]"})
-        said = self.guard(json.dumps(event), (helpers.AGENT, f"3:in_form:{{work}},{form}"))
+        said = self.guard(json.dumps(event))
         # Then: it is told the sentence, the value, then the point it is out by
         expanded = sentence.replace("${CLAUDE_PLUGIN_ROOT}", self.plugin)
         value = "`{work}` is `a.json`, `b.json`."
@@ -329,14 +318,11 @@ class TestRunValues(GuardTest):
     def test_a_lane_held_at_the_end_takes_the_value_too(self):
         # Given: end_when taking `{work}` on step 4, the prompt naming the work, none made
         ended = "End only once `{work}` is made."
-        self.write(
-            self.agent_file,
-            helpers.STEPS.replace("what you wrote.\n", f"what you wrote. {ended}\n"),
-        )
+        self.lay((4, "end_when", ["{work}"]))
         self.record([], self.RUN)
         # When: changelog-writer is about to end
         stream = json.dumps(self.stopped("Done."))
-        said = self.guard(stream, (helpers.AGENT, "4:end_when:{work}"), "subagentstop.py")
+        said = self.guard(stream, entry="subagentstop.py")
         # Then: it is kept going, told the sentence and the value
         self.assertEqual(said, (2, f"notes: {ended}\n`{{work}}` is `a.md`, `b.md`.\n"))
 
@@ -356,7 +342,7 @@ class TestCommandLine(GuardTest):
     def test_a_command_line_not_as_lane_up_writes_it_lets_the_call_through_saying_so(self):
         wrong = {
             "no subagent": ([], "gives no subagent"),
-            "a subagent of no plugin": (["changelog-writer", *WORDS], "gives no subagent"),
+            "a subagent of no plugin": (["changelog-writer", *self.words[1:]], "gives no subagent"),
             "a lane of no step": ([helpers.AGENT, "x:hands_off:git push"], "x:hands_off:git push"),
             "a lane lane has not": ([helpers.AGENT, "3:no_lane:git push"], "3:no_lane:git push"),
             "a lane taking nothing": ([helpers.AGENT, "3:hands_off:"], "3:hands_off:"),
@@ -374,3 +360,24 @@ class TestCommandLine(GuardTest):
                 self.assertEqual(code, 1)
                 self.assertIn(named, said)
                 self.assertTrue(said.startswith("lane: ") and "run lane:up again" in said, said)
+
+    def test_lanes_given_to_the_entry_of_another_event_let_it_through_saying_so(self):
+        wrong = {
+            "a lane held on a tool call": ("subagentstop.py", "3:hands_off:git push"),
+            "a lane held at the end": ("pretooluse.py", "3:test_after:CHANGELOG.md,make"),
+            "fewer things than places": ("subagentstop.py", "3:test_after:CHANGELOG.md"),
+        }
+        for what, (entry, word) in wrong.items():
+            with self.subTest(what=what):
+                # Given: a hook's command giving its event's entry a lane not held on that event,
+                # or taking fewer things than its wording has places
+                # When: the entry is run by it
+                code, said = self.guard(self.stream("ls"), (helpers.AGENT, word), entry)
+                # Then: it exits 1, naming the lane and to have lane:up write the hooks again
+                self.assertEqual(code, 1)
+                self.assertIn(word, said)
+                self.assertIn("run lane:up again", said)
+
+
+if __name__ == "__main__":
+    unittest.main()

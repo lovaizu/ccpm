@@ -6,16 +6,11 @@ makes, new on every run, CI included."""
 import string
 import unittest
 
-# Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
-try:
-    from hypothesis import given  # pyrefly: ignore[missing-import]
-    from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
-except ImportError:
-    raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
-
 from helpers import schema, template, testing
 
-testing.load_hypothesis_profile()
+hypothesis = testing.hypothesis()
+given = hypothesis.given
+st = hypothesis.strategies
 
 # A changelog entry: a version, and lines each a kind and a text.
 ENTRY = {

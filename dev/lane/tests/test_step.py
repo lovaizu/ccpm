@@ -62,7 +62,8 @@ class TestAgentFile(helpers.PluginTest):
 
 
 class TestSpan(helpers.PluginTest):
-    def lines(self, text=helpers.STEPS):
+    def lines(self, text: str = helpers.STEPS) -> list[str]:
+        """The lines of the subagent's file of the text."""
         return text.splitlines()
 
     def test_a_step_is_its_numbered_line_in_the_steps(self):

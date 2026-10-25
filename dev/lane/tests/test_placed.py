@@ -11,7 +11,8 @@ from laying import LayTest
 
 
 class TestWriteCode(LayTest):
-    def code(self):
+    def code(self) -> str:
+        """The plugin's hooks/lane/, where lane's code is put."""
         return os.path.join(self.plugin, "hooks", "lane")
 
     def test_lanes_code_is_copied_with_its_version(self):

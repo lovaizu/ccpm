@@ -140,24 +140,24 @@ class TestLetThrough(FollowNextTest):
 class TestGuard(GuardTest):
     """follow_next laid on step 2 of changelog-writer, run as Claude Code runs the hook."""
 
-    SENTENCE = "Take the next move `scripts/turn.py next` printed."
+    FOLLOW = "Take the next move `scripts/turn.py next` printed."
+
+    LAID = ((2, "follow_next", TAKES),)
 
     def setUp(self) -> None:
         super().setUp()
-        laid = helpers.LAID.replace("Fixed.\n", f"Fixed. {self.SENTENCE}\n")
-        self.write(self.agent_file, laid)
         self.record([ran()])
 
     def moved(self, command):
         """What the guard does on a Bash call of the command after the move printed."""
         event = self.called("Bash", {"command": command})
-        return self.guard(json.dumps(event), (helpers.AGENT, "2:follow_next:scripts/turn.py next"))
+        return self.guard(json.dumps(event))
 
     def test_another_move_is_stopped_with_the_sentence(self):
         # Given: changelog-writer's record of the script run, having printed the move
         # When: it runs another command
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
-        self.assertEqual(self.moved("git diff"), (2, f"notes: {self.SENTENCE}\n"))
+        self.assertEqual(self.moved("git diff"), (2, f"notes: {self.FOLLOW}\n"))
 
     def test_the_move_printed_goes_on(self):
         # Given: changelog-writer's record of the script run, having printed the move

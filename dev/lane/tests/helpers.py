@@ -1,6 +1,6 @@
 """What lane's tests stand on beside what every plugin's tests do: lane's folders on sys.path, and a
-plugin `notes` made in a test's folder, its subagent `changelog-writer` with the steps of
-lane's README."""
+plugin `notes` made in a test's folder, its subagent `changelog-writer` with steps of the tests'
+own, its step 3 the README's."""
 
 from __future__ import annotations
 
@@ -47,9 +47,12 @@ from lanes import (  # noqa: F401
     start_with,
     test_after,
     wait_for,
+    write_only,
 )
 
 AGENT = "notes:changelog-writer"
+# The folder a call read alone is made in, where no file it names is read.
+HERE = "/r"
 # The plugin's folder given to a lane that reads no file of the plugin.
 NO_PLUGIN = ""
 SENTENCE = "Do not run `git commit` or `git push`."
@@ -141,6 +144,12 @@ class PluginTest(testing.FolderTest):
         return json.dumps(self.event(command, agent_type))
 
 
+def acted(tool: str, given: dict[str, Any], cwd: str = HERE) -> call.Call:
+    """A call of the tool with the input, made in the folder, read as the guard reads a call whose
+    subagent's record is not found."""
+    return call_of({"cwd": cwd, "tool_name": tool, "tool_input": given})
+
+
 def call_of(event: dict[str, Any]) -> call.Call:
     """The call of a PreToolUse event, read as the guard reads it, with its subagent's record."""
     return call.read(event, record.entries(event))
@@ -205,12 +214,13 @@ def replied(text: str) -> dict[str, Any]:
 
 def recorded(cwd: str, calls: list, prompt: str = PROMPT) -> str:
     """A subagent's record as Claude Code 2.1.306 writes it, cut to what lane reads and what lies
-    beside it, for each call a tool, its input and what it gave back, None for a call not yet
-    back, a Failed for an error: the prompt first, PROMPT where none is given, an attachment, and
-    each call as an assistant's tool use and a user's tool result, each with the request as sent
-    after it, here given text apart from them; for each text among the calls, the subagent's reply, and the text told it by a
-    stop hook that kept it going; and an entry among the calls, such as a message `from_main`
-    makes, written as it is, in its place."""
+    beside it: the prompt first, PROMPT where none is given, and an attachment; then each item of
+    the calls, in order:
+    - a tool, its input and what it gave back, None for a call not yet back, a Failed for an
+      error: an assistant's tool use and a user's tool result, each followed by the request as
+      sent, its text unlike theirs;
+    - a text: the subagent's reply, and that text told it by a stop hook that kept it going;
+    - an entry, such as a message `from_main` makes: written as it is."""
     lines: list[dict[str, Any]] = [
         {"type": "user", "cwd": cwd, "message": {"role": "user", "content": prompt}},
         {"type": "attachment", "cwd": cwd, "attachment": {"type": "date", "date": "2026-10-22"}},
@@ -255,6 +265,12 @@ def made(cwd: str, calls: list) -> list[call.Call]:
         call.made(record.Done(tool, given, cwd, result or "", isinstance(result, Failed)))
         for tool, given, result in calls
     ]
+
+
+def ended(cwd: str, calls: list, reply: str = "") -> call.End:
+    """How a subagent is about to end with the reply, having made the calls, as `recorded` takes
+    them, in the folder, read as the guard reads them from its record, told nothing before."""
+    return call.End(made(cwd, calls), reply, False)
 
 
 def failing(command: str) -> tuple[str, dict[str, Any], str]:

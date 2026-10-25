@@ -5,7 +5,7 @@ import os
 import unittest
 
 import helpers
-from helpers import bash, call, failing, test_after, testing, writing
+from helpers import bash, failing, test_after, testing, writing
 
 # The output and the test the lane takes, as a step names them.
 TAKES = ["app.py", "python3 -m unittest"]
@@ -16,9 +16,7 @@ CHANGE, PASS = writing("app.py"), bash("python3 -m unittest discover -s tests")
 class TestAfter(testing.FolderTest):
     def drifts(self, *calls, takes=TAKES):
         """Whether the subagent drifts, about to end having made the calls in the test's folder."""
-        return test_after.drifts(
-            call.End(helpers.made(self.base, list(calls)), "", False), takes, helpers.NO_PLUGIN
-        )
+        return test_after.drifts(helpers.ended(self.base, list(calls)), takes, helpers.NO_PLUGIN)
 
 
 class TestChanged(TestAfter):

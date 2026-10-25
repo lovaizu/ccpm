@@ -30,14 +30,15 @@ class TestPythonCheck(helpers.PluginTest):
         laid = [hooks_file.word(3, "hands_off", ["git commit", "git push"])]
         self.command = hooks_file.command("notes", helpers.AGENT, laid, "PreToolUse")
 
-    def run_hook(self, *folders, command=None):
+    def run_hook(self, *folders, command=None, agent_type=helpers.AGENT):
         """The hook's command, or the one given, run by sh with PATH holding the folders, handed a
-        commit's event in the subagent; what it exits with and what it writes on stderr."""
+        commit's event in the subagent of the type, or in the main conversation where it is None;
+        what it exits with and what it writes on stderr."""
         env = dict(os.environ, PATH=os.pathsep.join(folders), CLAUDE_PLUGIN_ROOT=self.plugin)
         env.pop("PYTHONPATH", None)
         done = subprocess.run(
             ["/bin/sh", "-c", command or self.command],
-            input=self.stream("git commit -m notes"),
+            input=self.stream("git commit -m notes", agent_type),
             capture_output=True,
             text=True,
             env=env,
@@ -71,18 +72,9 @@ class TestPythonCheck(helpers.PluginTest):
         none = os.path.join(self.base, "none")
         for agent_type in (None, "notes:other"):
             with self.subTest(agent_type=agent_type):
-                env = dict(os.environ, PATH=none, CLAUDE_PLUGIN_ROOT=self.plugin)
                 # When: the hook's command is run on it
-                done = subprocess.run(
-                    ["/bin/sh", "-c", self.command],
-                    input=self.stream("git commit -m notes", agent_type),
-                    capture_output=True,
-                    text=True,
-                    env=env,
-                    check=False,
-                )
                 # Then: it lets the call through, as the lane acts in its subagent alone
-                self.assertEqual((done.returncode, done.stderr), (0, ""))
+                self.assertEqual(self.run_hook(none, agent_type=agent_type), (0, ""))
 
     def test_without_python3_at_the_subagents_end_the_user_is_told_and_it_ends(self):
         # Given: the hook's command for a lane held as the subagent ends, and a PATH holding no

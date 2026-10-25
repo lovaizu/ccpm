@@ -5,7 +5,7 @@ import os
 import unittest
 
 import helpers
-from helpers import bash, call, end_when, failing, testing, writing
+from helpers import bash, end_when, failing, testing, writing
 
 TAKES = ["report.md"]
 
@@ -13,9 +13,7 @@ TAKES = ["report.md"]
 class EndWhenTest(testing.FolderTest):
     def drifts(self, *calls, takes=TAKES):
         """Whether the subagent drifts, about to end having made the calls in the test's folder."""
-        return end_when.drifts(
-            call.End(helpers.made(self.base, list(calls)), "", False), takes, helpers.NO_PLUGIN
-        )
+        return end_when.drifts(helpers.ended(self.base, list(calls)), takes, helpers.NO_PLUGIN)
 
     def there(self, name="report.md"):
         """Puts the file in the test's folder, as the subagent's write leaves it."""

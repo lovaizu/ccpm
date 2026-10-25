@@ -7,17 +7,13 @@ import shlex
 import string
 import unittest
 
-# Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
-try:
-    from hypothesis import assume, given  # pyrefly: ignore[missing-import]
-    from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
-except ImportError:
-    raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
-
 import helpers
-from helpers import NO_PLUGIN, shell, start_with, testing
+from helpers import HERE, NO_PLUGIN, shell, start_with, testing
 
-testing.load_hypothesis_profile()
+hypothesis = testing.hypothesis()
+assume = hypothesis.assume
+given = hypothesis.given
+st = hypothesis.strategies
 
 WORDS = st.lists(st.text(min_size=1), min_size=1, max_size=5)
 NAMES = st.text(string.ascii_letters + string.digits + "._/", min_size=1, max_size=12).filter(
@@ -28,7 +24,8 @@ VARIABLES = st.from_regex(r"[A-Za-z_][A-Za-z0-9_]*", fullmatch=True)
 SEPARATORS = st.sampled_from([";", "&&", "||", "|", "&", "\n"])
 
 
-def said(words):
+def said(words: list[str]) -> str:
+    """The words as a command, each quoted as a shell quotes it."""
     return " ".join(shlex.quote(w) for w in words)
 
 
@@ -50,7 +47,7 @@ class TestWords(unittest.TestCase):
         for words in statements[1:]:
             ends.append(data.draw(SEPARATORS))
             command += f" {ends[-1]} " + said(["echo", *words])
-        found = [(words, end) for _, words, end in shell.statements(command, "/r")]
+        found = [(words, end) for _, words, end in shell.statements(command, HERE)]
         self.assertEqual(found, [(["echo", *w], e) for w, e in zip(statements, ends + ["\n"])])
 
     @given(st.lists(st.text(st.characters(blacklist_characters="\n"))))
@@ -60,7 +57,7 @@ class TestWords(unittest.TestCase):
         # Then: the heredoc's statement and the one after it are read, the text none
         text = "".join(f"{line}\n" for line in lines if line != "EOF")
         command = f"cat <<'EOF'\n{text}EOF\necho x"
-        found = [words for _, words, _ in shell.statements(command, "/r")]
+        found = [words for _, words, _ in shell.statements(command, HERE)]
         self.assertEqual(found, [["cat", "<<", "EOF"], ["echo", "x"]])
 
 
@@ -70,15 +67,15 @@ class TestPaths(unittest.TestCase):
         # Given: any command
         # When: the paths it writes are read
         # Then: they are read without breaking, each path whole
-        self.assertTrue(all(os.path.isabs(p) for p in shell.written(command, "/r")))
+        self.assertTrue(all(os.path.isabs(p) for p in shell.written(command, HERE)))
 
     @given(st.lists(NAMES, min_size=1, max_size=5))
     def test_cat_reads_each_file_it_names(self, names):
         # Given: files of any plain names
         # When: a command prints them with cat
         # Then: each is taken as read whole
-        found = shell.reads("cat " + " ".join(names), "/r")
-        whole = [(os.path.realpath(os.path.join("/r", n)), shell.WHOLE) for n in names]
+        found = shell.reads("cat " + " ".join(names), HERE)
+        whole = [(os.path.realpath(os.path.join(HERE, n)), shell.WHOLE) for n in names]
         self.assertEqual(found, whole)
 
 
@@ -88,7 +85,7 @@ class TestReads(unittest.TestCase):
         # Given: any command
         # When: what it reads is read
         # Then: it is read without breaking, each file's path whole, its lines two ends or none told
-        for file, lines in shell.reads(command, "/r"):
+        for file, lines in shell.reads(command, HERE):
             self.assertTrue(os.path.isabs(file) and (lines is None or len(lines) == 2))
 
     @given(st.integers(1, 10**6), st.integers(0, 10**6), NAMES)
@@ -96,9 +93,9 @@ class TestReads(unittest.TestCase):
         # Given: sed -n printing the lines of any span, from any line on, of a file of any name
         # When: what it reads is read
         # Then: it reads those lines of the file
-        found = shell.reads(f"sed -n '{first},{first + more}p' {name}", "/r")
+        found = shell.reads(f"sed -n '{first},{first + more}p' {name}", HERE)
         self.assertEqual(
-            found, [(os.path.realpath(os.path.join("/r", name)), (first, first + more))]
+            found, [(os.path.realpath(os.path.join(HERE, name)), (first, first + more))]
         )
 
 
@@ -112,9 +109,7 @@ class TestRuns(unittest.TestCase):
         command = " ".join(f"{said(words)} {data.draw(SEPARATORS)}" for words in runs)
         # When: the call is read
         # Then: it runs each command with its words as they were written
-        found = helpers.call_of(
-            {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
-        )
+        found = helpers.acted("Bash", {"command": command})
         self.assertEqual((found.action, found.what), ("run", runs))
 
     @given(WORDS, st.text(min_size=1))
@@ -126,9 +121,7 @@ class TestRuns(unittest.TestCase):
         # Then: it runs git's command with its arguments
         command = f"git -C {shlex.quote(folder)} {said(words)}"
         self.assertEqual(
-            helpers.call_of(
-                {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
-            ).what,
+            helpers.acted("Bash", {"command": command}).what,
             [["git", *words]],
         )
 
@@ -144,9 +137,7 @@ class TestRuns(unittest.TestCase):
         # Then: it runs the command with its words, as they were written
         command = " ".join([*before, said(words)])
         self.assertEqual(
-            helpers.call_of(
-                {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
-            ).what,
+            helpers.acted("Bash", {"command": command}).what,
             [words],
         )
 
@@ -160,9 +151,7 @@ class TestStartWith(unittest.TestCase):
         script = shlex.quote(os.path.join(folder, "scripts", "turn.py"))
         assume(interpreter or not shell.ASSIGNMENT.fullmatch(script))
         command = f"{interpreter}{script} {said(words)}"
-        made = helpers.call_of(
-            {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
-        )
+        made = helpers.acted("Bash", {"command": command})
         # When: start_with reads it as the subagent's first call
         # Then: it is no drift
         self.assertFalse(

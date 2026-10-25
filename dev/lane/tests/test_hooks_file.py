@@ -2,6 +2,8 @@
 written for the command and read back from it, the words a command gives its event's script, and
 what each lane of a kind takes in a subagent, read from the file."""
 
+from __future__ import annotations
+
 import json
 import os
 import unittest
@@ -12,18 +14,21 @@ from helpers import hooks_file
 
 class TestTaken(helpers.PluginTest):
     # A hook's command laying start_with on step 1 and hands_off on step 3 of the subagent.
-    COMMAND = (
-        'exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
-        " '1:start_with:python3 scripts/given.py' 3:hands_off:git"
+    COMMAND = hooks_file.command(
+        "notes",
+        helpers.AGENT,
+        ["1:start_with:python3 scripts/given.py", "3:hands_off:git"],
+        "PreToolUse",
     )
 
-    def taken(self, hooks, lane="start_with"):
+    def taken(self, hooks: str | None, lane: str = "start_with") -> list:
         """What each lane of the kind takes in changelog-writer, read from the hooks written."""
         if hooks is not None:
             self.write(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
         return hooks_file.taken(self.plugin, helpers.AGENT, lane)
 
-    def entry(self, command):
+    def entry(self, command: str) -> dict:
+        """An entry of hooks.json running the command on every tool."""
         return {"matcher": ".*", "hooks": [{"type": "command", "command": command}]}
 
     def test_what_each_lane_of_the_kind_takes_in_the_subagent_is_read_from_its_hooks(self):
@@ -52,9 +57,8 @@ class TestTaken(helpers.PluginTest):
 
 
 class TestWords(unittest.TestCase):
-    COMMAND = (
-        'check || exit 2; exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py"'
-        " notes:changelog-writer '3:hands_off:git commit,git push'"
+    COMMAND = hooks_file.command(
+        "notes", helpers.AGENT, ["3:hands_off:git commit,git push"], "PreToolUse"
     )
 
     def test_the_words_a_hooks_command_gives_its_event_script_are_read(self):

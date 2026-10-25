@@ -4,10 +4,8 @@ commands the steps tell and the AI writes, with the lines it reads of it."""
 import os
 import unittest
 
-from helpers import shell
+from helpers import HERE, shell
 
-# The folder each command runs in.
-HERE = "/r"
 # The lines from the first to the end.
 WHOLE = (1, None)
 

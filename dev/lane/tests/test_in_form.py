@@ -32,8 +32,8 @@ class InFormTest(helpers.PluginTest):
 
     def drifts(self, tool, given, takes=TAKES):
         """What the call of the tool with the input drifts from in_form by."""
-        event = {"cwd": self.base, "tool_name": tool, "tool_input": given}
-        return in_form.drifts(helpers.call_of(event), takes, self.plugin)
+        made = helpers.acted(tool, given, self.base)
+        return in_form.drifts(made, takes, self.plugin)
 
     def wrote(self, content, path="entry.json"):
         """What a Write of the content to the path drifts by."""
@@ -181,19 +181,19 @@ class TestForm(InFormTest):
         self.assertIn("Stop here and reply that the form must be fixed", told)
 
 
-class TestLaid(GuardTest):
+class TestGuard(GuardTest):
     """in_form laid on step 3 of changelog-writer, run by the guard as Claude Code runs it."""
+
+    LAID = ((3, "in_form", TAKES),)
 
     def setUp(self) -> None:
         super().setUp()
-        laid = helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {SENTENCE}\n")
-        self.write(self.agent_file, laid)
         self.write_json(os.path.join(self.plugin, "forms", "entry.json"), FORM)
 
     def written(self, content):
         """The guard on changelog-writer writing entry.json with the content."""
         event = self.called("Write", {"file_path": "entry.json", "content": content})
-        return self.guard(json.dumps(event), (helpers.AGENT, "3:in_form:" + ",".join(TAKES)))
+        return self.guard(json.dumps(event))
 
     def test_a_step_still_saying_the_sentence_as_written_holds(self):
         # Given: in_form on step 3, the step saying ${CLAUDE_PLUGIN_ROOT} as lane:up writes it

@@ -109,15 +109,12 @@ class TestLetThrough(WaitForTest):
 class TestGuard(GuardTest):
     """wait_for laid on step 4 of changelog-writer, run as Claude Code runs the hook."""
 
-    def setUp(self) -> None:
-        super().setUp()
-        laid = helpers.LAID.replace("wrote.\n", "wrote. Do not go on until `OK`.\n")
-        self.write(self.agent_file, laid)
+    LAID = ((4, "wait_for", ["OK", "lay.py write"]),)
 
     def written_after(self, calls):
         """What the guard does on a run of the command held back after the calls."""
         self.record(calls)
-        return self.guard(self.stream(WRITE), (helpers.AGENT, "4:wait_for:OK,lay.py write"))
+        return self.guard(self.stream(WRITE))
 
     def test_the_held_command_without_the_approval_is_stopped_with_the_sentence(self):
         # Given: changelog-writer's record of asking, and no answer since

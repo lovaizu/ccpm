@@ -4,13 +4,11 @@ as the shell takes it."""
 import os
 import unittest
 
-from helpers import shell
-
-# The folder each command runs in.
-HERE = "/r"
+from helpers import HERE, shell
 
 
-def at(*names):
+def at(*names: str) -> list[str]:
+    """The whole path of each name in the folder the commands run in."""
     return [os.path.join(HERE, n) for n in names]
 
 

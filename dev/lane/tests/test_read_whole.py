@@ -1,6 +1,8 @@
 """read_whole: once the subagent has begun reading an input the lane takes, a call that writes while
 lines of it are left unread is a drift, held from the subagent's record; every other call is not."""
 
+from __future__ import annotations
+
 import json
 import os
 import unittest
@@ -25,7 +27,9 @@ class ReadWholeTest(helpers.PluginTest):
         self.input = os.path.join(self.base, "in.md")
         self.write(self.input, TEXT)
 
-    def drifts(self, tool="Write", given=None):
+    def drifts(self, tool: str = "Write", given: dict | None = None) -> bool:
+        """Whether a call of the tool with the input, a Write where none is given, drifts from
+        read_whole taking `in.md`."""
         given = {"file_path": "out.md", "content": "x"} if given is None else given
         return read_whole.drifts(helpers.call_of(self.called(tool, given)), ["in.md"], NO_PLUGIN)
 
@@ -170,10 +174,10 @@ class TestLetThrough(ReadWholeTest):
 class TestGuard(GuardTest):
     """read_whole laid on step 1 of changelog-writer, run as Claude Code runs the hook."""
 
+    LAID = ((1, "read_whole", ["in.md"]),)
+
     def setUp(self) -> None:
         super().setUp()
-        steps = helpers.STEPS.replace("release.\n", "release. Read `in.md` to its end.\n")
-        self.write(self.agent_file, steps)
         self.write(os.path.join(self.base, "in.md"), TEXT)
         self.part = [("Read", {"file_path": "in.md", "limit": 50}, shown(1, 50))]
 
@@ -181,7 +185,7 @@ class TestGuard(GuardTest):
         """What the guard does on a write after the calls in the subagent's record."""
         self.record(calls)
         event = self.called("Write", {"file_path": "out.md", "content": "x"})
-        return self.guard(json.dumps(event), (helpers.AGENT, "1:read_whole:in.md"))
+        return self.guard(json.dumps(event))
 
     def test_a_write_after_reading_a_part_is_stopped_with_the_sentence(self):
         # Given: changelog-writer's record of the first 50 lines of in.md read

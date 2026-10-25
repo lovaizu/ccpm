@@ -6,7 +6,7 @@ import os
 import unittest
 
 import helpers
-from helpers import call, every_item, testing, writing
+from helpers import every_item, testing, writing
 
 TAKES = ["review.md"]
 # A review of two findings, each keyed by its ID, with a nested item and prose beside them.
@@ -28,8 +28,8 @@ class EveryItemTest(testing.FolderTest):
     def drifts(self, reply, *calls, takes=TAKES):
         """Whether the subagent drifts, about to end with the reply, having made the calls in the
         test's folder."""
-        made = helpers.made(self.base, list(calls))
-        return every_item.drifts(call.End(made, reply, False), takes, helpers.NO_PLUGIN)
+        end = helpers.ended(self.base, list(calls), reply)
+        return every_item.drifts(end, takes, helpers.NO_PLUGIN)
 
 
 class TestReply(EveryItemTest):

@@ -8,7 +8,7 @@ import os
 import unittest
 
 import helpers
-from helpers import as_printed, call
+from helpers import as_printed
 from test_guard import GuardTest
 
 # The command the lane takes, as lane:up's step names it, run as the AI writes it once Claude Code
@@ -34,8 +34,8 @@ class AsPrintedTest(helpers.PluginTest):
     def drifts(self, calls, message, tool="SendMessage", takes=TAKES):
         """Whether a hand-on of the message, after the calls in the subagent's record, drifts."""
         self.record(calls)
-        field = call.HANDS.get(tool, "command")
-        given = {"to": "main", "message": message} if tool == "SendMessage" else {field: message}
+        field = {"Agent": "prompt", "SendMessage": "message"}.get(tool, "command")
+        given = {"to": "main", field: message} if tool == "SendMessage" else {field: message}
         return as_printed.drifts(
             helpers.call_of(self.called(tool, given)), takes, helpers.NO_PLUGIN
         )
@@ -265,16 +265,16 @@ class TestEnd(AsPrintedTest):
 class TestGuard(GuardTest):
     """as_printed laid on step 4 of changelog-writer, run as Claude Code runs the hook."""
 
+    LAID = ((4, "as_printed", TAKES),)
+
     def setUp(self) -> None:
         super().setUp()
-        laid = helpers.LAID.replace("wrote.\n", "wrote. Hand on `lay.py print` as it is.\n")
-        self.write(self.agent_file, laid)
         self.record([printed()])
 
     def sent(self, message):
         """What the guard does on a SendMessage of the message after the print."""
         event = self.called("SendMessage", {"to": "main", "message": message})
-        return self.guard(json.dumps(event), (helpers.AGENT, "4:as_printed:lay.py print"))
+        return self.guard(json.dumps(event))
 
     def test_a_hand_on_of_something_else_is_stopped_with_the_sentence(self):
         # Given: changelog-writer's record of the command run, having printed
@@ -291,9 +291,7 @@ class TestGuard(GuardTest):
 
     def ended(self, reply, active=False):
         """What the guard does as the subagent is about to end with the reply after the print."""
-        stream = json.dumps(self.stopped(reply, active))
-        words = (helpers.AGENT, "4:as_printed:lay.py print")
-        return self.guard(stream, words, "subagentstop.py")
+        return self.guard(json.dumps(self.stopped(reply, active)), entry="subagentstop.py")
 
     def test_ending_with_a_reply_of_something_else_is_kept_going_with_the_sentence(self):
         # Given: changelog-writer's record of the command run, having printed

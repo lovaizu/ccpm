@@ -6,16 +6,11 @@ import json
 import string
 import unittest
 
-# Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
-try:
-    from hypothesis import given  # pyrefly: ignore[missing-import]
-    from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
-except ImportError:
-    raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
-
 from helpers import as_printed, follow_next, testing, wait_for
 
-testing.load_hypothesis_profile()
+hypothesis = testing.hypothesis()
+given = hypothesis.given
+st = hypothesis.strategies
 
 # What a command prints, as the lane holds it, blanks around it left out, and a line of text.
 OUTPUTS = st.text(min_size=1).map(str.strip).filter(bool)

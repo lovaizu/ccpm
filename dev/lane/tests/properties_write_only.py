@@ -5,18 +5,12 @@ import shlex
 import string
 import unittest
 
-# Hypothesis is installed on the newest Python alone, so the type check on 3.9 finds it missing.
-try:
-    from hypothesis import given  # pyrefly: ignore[missing-import]
-    from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
-except ImportError:
-    raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
-
 import helpers
-from helpers import NO_PLUGIN, testing
-from lanes import write_only
+from helpers import NO_PLUGIN, testing, write_only
 
-testing.load_hypothesis_profile()
+hypothesis = testing.hypothesis()
+given = hypothesis.given
+st = hypothesis.strategies
 
 # A path in the folder, named from it: one that neither begins at the top nor climbs out of it.
 PATHS = st.text(string.ascii_letters + string.digits + "._/", min_size=1, max_size=12).filter(

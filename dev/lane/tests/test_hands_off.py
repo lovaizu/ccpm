@@ -9,9 +9,10 @@ from helpers import NO_PLUGIN, hands_off
 TAKES = ["git commit", "git push"]
 
 
-def drifts(command, takes=TAKES):
-    event = {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
-    return hands_off.drifts(helpers.call_of(event), takes, NO_PLUGIN)
+def drifts(command: str, takes: list[str] = TAKES) -> bool:
+    """Whether a Bash call of the command drifts from hands_off taking the commands."""
+    made = helpers.acted("Bash", {"command": command})
+    return hands_off.drifts(made, takes, NO_PLUGIN)
 
 
 class TestDrift(unittest.TestCase):
@@ -66,10 +67,10 @@ class TestLetThrough(unittest.TestCase):
 
     def test_a_call_that_runs_nothing_is_no_drift(self):
         # Given: a call of a tool that runs no command
-        event = {"cwd": "/r", "tool_name": "Write", "tool_input": {"file_path": "git"}}
+        made = helpers.acted("Write", {"file_path": "git"})
         # When: hands_off reads it
         # Then: it is no drift
-        self.assertFalse(hands_off.drifts(helpers.call_of(event), TAKES, NO_PLUGIN))
+        self.assertFalse(hands_off.drifts(made, TAKES, NO_PLUGIN))
 
 
 if __name__ == "__main__":

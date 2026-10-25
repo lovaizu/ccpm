@@ -11,8 +11,6 @@ from helpers import NO_PLUGIN, read_only, testing
 from test_guard import GuardTest
 
 TAKES = ["in.md"]
-# read_only laid on step 1 and in_form on step 3, as a hook's command gives them.
-LAID = ["1:read_only:in.md", "3:in_form:entry.json,${CLAUDE_PLUGIN_ROOT}/forms/entry.json"]
 
 
 class ReadOnlyTest(testing.FolderTest):
@@ -20,8 +18,8 @@ class ReadOnlyTest(testing.FolderTest):
 
     def drifts(self, tool, given, takes=TAKES):
         """Whether the call of the tool with the input drifts from read_only taking the inputs."""
-        event = {"cwd": self.base, "tool_name": tool, "tool_input": given}
-        return read_only.drifts(helpers.call_of(event), takes, NO_PLUGIN)
+        made = helpers.acted(tool, given, self.base)
+        return read_only.drifts(made, takes, NO_PLUGIN)
 
     def at(self, name):
         """The whole path of the name in `base`."""
@@ -88,28 +86,21 @@ class TestLetThrough(ReadOnlyTest):
                 self.assertFalse(self.drifts(tool, given))
 
 
-class TestLaid(GuardTest):
+class TestGuard(GuardTest):
     """read_only and in_form laid on changelog-writer, with write_only and hands_off beside them on
     the step of in_form, run by the guard as Claude Code runs it."""
 
-    WORDS = (helpers.AGENT, *LAID, "3:write_only:entry.json", "3:hands_off:git push")
-
-    def setUp(self) -> None:
-        super().setUp()
-        steps = helpers.STEPS.replace(
-            "since the last release.", "since the last release. Read only `in.md`."
-        ).replace(
-            "`CHANGELOG.md`.\n",
-            "`CHANGELOG.md`. Write `entry.json` in the form of"
-            " `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`. Write only `entry.json`."
-            " Do not run `git push`.\n",
-        )
-        self.write(self.agent_file, steps)
+    LAID = (
+        (1, "read_only", TAKES),
+        (3, "in_form", ["entry.json", "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"]),
+        (3, "write_only", ["entry.json"]),
+        (3, "hands_off", ["git push"]),
+    )
 
     def reading(self, name):
         """The guard on changelog-writer reading the file of the plugin with Read."""
         event = self.called("Read", {"file_path": os.path.join(self.plugin, name)})
-        return self.guard(json.dumps(event), self.WORDS)
+        return self.guard(json.dumps(event))
 
     def test_a_read_of_the_form_its_in_form_names_is_let_through(self):
         # Given: read_only and in_form laid on changelog-writer
@@ -135,7 +126,7 @@ class TestLaid(GuardTest):
         # When: it writes the form its in_form names
         # Then: the call is stopped with write_only's sentence, as the form is no output of it
         expected = (2, "notes: Write only `entry.json`.\n")
-        self.assertEqual(self.guard(json.dumps(event), self.WORDS), expected)
+        self.assertEqual(self.guard(json.dumps(event)), expected)
 
 
 if __name__ == "__main__":

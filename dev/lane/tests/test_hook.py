@@ -22,11 +22,12 @@ UNREAD = (
 class Says:
     """A check that says what it is given, recording where it ran."""
 
-    def __init__(self, *said):
+    def __init__(self, *said: str) -> None:
         self.said = list(said)
         self.ran_in = None
 
-    def check(self, event):
+    def check(self, event: dict) -> list[str]:
+        """What the check says, the folder it runs from kept."""
         self.ran_in = os.getcwd()
         return self.said
 
@@ -43,16 +44,19 @@ class TestRun(testing.FolderTest):
         }
         return {**event, **fields}
 
-    def handed(self, stream, *checks):
+    def handed(self, stream: str, *checks: Says) -> tuple:
+        """What the entry gives and writes, run from `/` on the stream with the checks."""
         err = io.StringIO()
         os.chdir("/")
         code = hook.run("p", checks, io.StringIO(stream), err, "p:a")
         return code, err.getvalue()
 
-    def ran(self, *checks):
+    def ran(self, *checks: Says) -> tuple:
+        """What the entry gives and writes, run with the checks on an event in Claude Code's shape."""
         return self.handed(json.dumps(self.event()), *checks)
 
-    def ran_on(self, check, **fields):
+    def ran_on(self, check: Says, **fields: object) -> tuple:
+        """What the entry gives and writes, run with the check on an event of the fields."""
         return self.handed(json.dumps(self.event(**fields)), check)
 
     def test_checks_saying_something_stop_with_what_each_says(self):

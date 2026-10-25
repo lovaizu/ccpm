@@ -7,8 +7,7 @@ import unittest
 from unittest import mock
 
 import helpers
-from helpers import NO_PLUGIN, testing
-from lanes import write_only
+from helpers import NO_PLUGIN, testing, write_only
 from test_guard import GuardTest
 
 TAKES = ["CHANGELOG.md"]
@@ -20,8 +19,8 @@ class WriteOnlyTest(testing.FolderTest):
 
     def drifts(self, tool, given, takes=TAKES):
         """Whether the call of the tool with the input drifts from write_only taking the outputs."""
-        event = {"cwd": self.base, "tool_name": tool, "tool_input": given}
-        return write_only.drifts(helpers.call_of(event), takes, NO_PLUGIN)
+        made = helpers.acted(tool, given, self.base)
+        return write_only.drifts(made, takes, NO_PLUGIN)
 
     def bash(self, command, takes=TAKES):
         """Whether a Bash call of the command drifts from write_only taking the outputs."""
@@ -133,19 +132,15 @@ class TestLetThrough(WriteOnlyTest):
                 self.assertFalse(self.drifts(tool, given))
 
 
-class TestLaid(GuardTest):
+class TestGuard(GuardTest):
     """write_only laid on step 3 of changelog-writer, run by the guard as Claude Code runs it."""
 
-    def setUp(self) -> None:
-        super().setUp()
-        laid = helpers.STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {SENTENCE}\n")
-        self.write(self.agent_file, laid)
+    LAID = ((3, "write_only", TAKES),)
 
     def written(self, path):
         """The guard on changelog-writer writing the path with Write."""
-        event = self.event("", tool="Write")
-        event["tool_input"] = {"file_path": path}
-        return self.guard(json.dumps(event), (helpers.AGENT, "3:write_only:CHANGELOG.md"))
+        event = self.called("Write", {"file_path": path})
+        return self.guard(json.dumps(event))
 
     def test_a_write_of_another_file_is_stopped_with_the_sentence(self):
         # Given: write_only on step 3 of changelog-writer
