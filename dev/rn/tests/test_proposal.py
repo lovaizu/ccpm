@@ -29,6 +29,20 @@ from helpers import (
     task,
 )
 
+# A steering at the plan stage with its task done, and the first proposal at the plan sign-off on
+# it.
+DONE = steered(part=plan(tasks=""))
+FIRST = (
+    "Plan sign-off\n"
+    f"The plan is on the draft pull request: {PR}\n"
+    "G1: Users sign in, so their carts stay theirs.\n"
+    "AC1: A user signs in with their email.\n"
+    "AC2: A signed-in user sees only their cart, on every page.\n"
+    f"{HOW}"
+)
+# The links of the design stage's work t1.1, as the design proposal shows them.
+UX_LINK = f"T1.1: {REPOSITORY}/blob/work/docs/ux.md, {REPOSITORY}/blob/work/docs/flow.md"
+
 
 class ShownTest(RepoTest):
     """A session whose steering is kept, for the proposals."""
@@ -41,20 +55,6 @@ class ShownTest(RepoTest):
         """The steering kept as given, as a move rn keeps."""
         self.write(STEERING, text)
         self.commit_with(message)
-
-
-# The first proposal at the plan sign-off on STEERED with its task done.
-DONE = steered(part=plan(tasks=""))
-
-
-FIRST = (
-    "Plan sign-off\n"
-    f"The plan is on the draft pull request: {PR}\n"
-    "G1: Users sign in, so their carts stay theirs.\n"
-    "AC1: A user signs in with their email.\n"
-    "AC2: A signed-in user sees only their cart, on every page.\n"
-    f"{HOW}"
-)
 
 
 class ProposalTest(ShownTest):
@@ -209,9 +209,6 @@ class ProposalTest(ShownTest):
         self.assertIn(
             "argument signoff: invalid choice: 'build'", self.stopped("proposal", "build")
         )
-
-
-UX_LINK = f"T1.1: {REPOSITORY}/blob/work/docs/ux.md, {REPOSITORY}/blob/work/docs/flow.md"
 
 
 class DesignTest(ShownTest):
