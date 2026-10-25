@@ -127,7 +127,7 @@ class TestWriteEndHooks(LayTest):
         # When: the proposal is written
         self.lay("write", self.proposal_file)
         # Then: hooks.json holds a SubagentStop entry matching the subagent, running its entry
-        # with the lane, and no PreToolUse entry, beside those its calls are kept by
+        # with the subagent alone, and no PreToolUse entry, beside those its calls are kept by
         self.assertEqual(self.hooks(), {"hooks": {"SubagentStop": [END_ENTRY], **KEPT}})
 
     def test_lanes_of_both_events_get_an_entry_each(self):

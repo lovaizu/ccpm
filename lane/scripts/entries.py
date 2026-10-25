@@ -25,8 +25,9 @@ WORD = re.compile(r"(?P<step>[0-9]+):(?P<lane>[a-z_]+):(?P<takes>.*)")
 def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | None:
     """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
     it: its matcher the tools its lanes watch, or for SubagentStop the subagent, as its matcher
-    tells agents apart, and its command giving each lane laid; for an event a call is kept on, where
-    it has any lane, an entry matching every tool, its command giving the subagent alone."""
+    tells agents apart; for an event a call is kept on, where it has any lane, an entry matching
+    every tool; each command giving the subagent alone, whose lanes the guard reads from
+    hooks/lanes.json."""
     every = [(s["step"], g) for s in agent["steps"] for g in s["lanes"]]
     kept = event in hooks_file.KEPT
     on_it = [(n, g) for n, g in every if event in lanes.held_on(g["lane"])]

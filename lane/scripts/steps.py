@@ -1,4 +1,4 @@
-"""Each step of a subagent as the layer writes it: the sentence of each lane its hook held before
+"""Each step of a subagent as the layer writes it: the sentence of each lane laid there before
 that the proposal no longer lays there taken out, each lane's sentence put at the end of the step,
 the rest of the step as it was; and the print of each step for the building AI's OK."""
 
@@ -77,7 +77,7 @@ def held(lane: dict[str, Any]) -> str:
 
 
 def said(root: str, agents: dict[str, list[dict[str, Any]]]) -> list[str]:
-    """Each lane the hooks laid before in each subagent of the plugin at root, as `<plugin>:<name>`,
+    """Each lane laid before in each subagent of the plugin at root, as `<plugin>:<name>`,
     each on a step of a proposal, said for the building AI to keep in its proposal or leave out: its
     step, whether the step still says its sentence, and the lane as the proposal gives it."""
     found = []

@@ -115,8 +115,8 @@ class TestWriteStep(LayTest):
 
 
 class TestLayAgain(LayTest):
-    """Laying again: the sentence of each lane the subagent's hook held before and the proposal no
-    longer lays on its step taken out of the step, the rest of it as it was."""
+    """Laying again: the sentence of each lane laid before on a step of the subagent that the
+    proposal no longer lays there taken out of the step, the rest of it as it was."""
 
     def lay_again(self, proposal):
         """Writes the proposal of lane's README, then proposes the one given."""
