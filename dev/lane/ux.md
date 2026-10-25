@@ -98,6 +98,22 @@ sequenceDiagram
 - On a machine without Python 3.9 or later, the hooks stop the calls they watch, each asking for
   Python to be installed, and at a subagent's end tell the user so and let it end.
 
+### A lane lane cannot check
+
+```mermaid
+sequenceDiagram
+  participant S as subagent<br/>#lt;AI#gt;
+  participant H as hook<br/>#lt;lane's#gt;
+  participant A as building AI<br/>#lt;AI, the plugin's maker#gt;
+  S->>H: a call a lane holds, where what the lane is given is not as laid
+  H-->>S: stopped, the user told the same, with #lt;plugin#gt;: lane cannot check ...: #lt;what is wrong#gt;. Stop here and reply that #lt;who must fix it#gt;.
+  S->>A: replies it
+  Note over A: fixes the plugin and lays its lanes again with lay.py write
+```
+
+- What lane cannot check is never let through: the subagent can only report it, and the plugin's
+  maker, or Claude Code where the event is what is wrong, puts it right.
+
 ## Benefits
 
 - The building AI proposes and approves lanes instead of writing checks; noticing a drift and
