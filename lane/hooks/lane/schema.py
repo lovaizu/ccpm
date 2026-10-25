@@ -105,10 +105,10 @@ def node(schema: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
         raise Unread(f"{at}: expected $ref alone, as draft-07 reads no keyword beside it")
     for key, value in schema.items():
         if key not in KEYWORDS and key not in NOTES:
+            *each, last = KEYWORDS
             raise Unread(
-                f"{at}: `{key}` is no keyword lane reads; it reads type, properties, required,"
-                " additionalProperties false, items, enum, const, anyOf, allOf, $ref, $defs,"
-                " definitions and minItems 0 or 1, as Anthropic's structured outputs accept"
+                f"{at}: `{key}` is no keyword lane reads; it reads {', '.join(each)} and {last},"
+                " as Anthropic's structured outputs accept"
             )
         if key in KEYWORDS:
             KEYWORDS[key][0](value, root, f"{at}.{key}", refs)
@@ -302,7 +302,9 @@ def any_of_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, .
 
 
 # Each keyword lane reads, in the order a value is held to them, so the point highest in the value
-# is found first: how it is read in a schema, and the point a value is out by under it.
+# is found first: how it is read in a schema, `<keyword>_read(value, root, at, refs)`, which stops
+# with Unread naming the place where the keyword's value is not one lane reads, and the point a
+# value is out by under it, `<keyword>_out(schema, root, value, path)`, None where it holds.
 KEYWORDS: dict[str, tuple[Callable[..., None], Callable[..., Out | None]]] = {
     "$ref": (ref_read, ref_out),
     "type": (type_read, type_out),

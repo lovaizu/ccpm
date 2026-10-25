@@ -29,7 +29,9 @@ run's `work` names, whichever they are.
 
 wait_for takes, after the approval, each command it holds back, as the step writes it; its sentence
 shows the approval alone. in_form takes the form as `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`,
-the path the subagent reads it by.
+the path the subagent reads it by: a `.json` JSON Schema of the keywords Anthropic's structured
+outputs accept, which a JSON output, or each line of a `.jsonl` one, is held to, or a `.md`
+Markdown template, whose headings and frontmatter keys a Markdown output is held to.
 
 read_only lets the subagent read, beside its inputs, the form each of its in_form lanes names: its
 step tells it to write in that form, and the form, a file of your plugin, holds nothing of the

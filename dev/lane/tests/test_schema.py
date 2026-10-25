@@ -52,6 +52,20 @@ class TestRead(unittest.TestCase):
                 # Then: it is read whole, nothing refused
                 self.assertIsNone(schema.checked(given))
 
+    def test_a_keyword_lane_does_not_read_is_told_with_those_it_reads(self):
+        # Given: a schema of a keyword lane does not read
+        # When: it is read
+        # Then: it is refused, naming each keyword lane reads, so the building AI can write the form
+        # in them; a keyword's own refusal names the values it takes
+        with self.assertRaises(schema.Unread) as refused:
+            schema.checked({"format": "date"})
+        self.assertEqual(
+            str(refused.exception),
+            "$: `format` is no keyword lane reads; it reads $ref, type, enum, const, required,"
+            " additionalProperties, minItems, properties, items, allOf, anyOf, $defs and"
+            " definitions, as Anthropic's structured outputs accept",
+        )
+
     def test_a_schema_lane_cannot_read_whole_is_refused_naming_the_place(self):
         for given, named in (
             ([], "$: expected a schema object, found []"),
@@ -113,16 +127,6 @@ class TestRead(unittest.TestCase):
         # When: it is read
         # Then: it is read whole, as no reference comes back to itself
         self.assertIsNone(schema.checked(given))
-
-    def test_a_refusal_names_the_keywords_lane_reads(self):
-        # Given: a schema of a keyword lane does not read
-        # When: it is read
-        with self.assertRaises(ValueError) as refused:
-            schema.checked({"pattern": "x"})
-        # Then: the refusal names what lane reads, so the building AI can write the form in them
-        self.assertIn(
-            "minItems 0 or 1, as Anthropic's structured outputs accept", str(refused.exception)
-        )
 
 
 class TestHeld(unittest.TestCase):

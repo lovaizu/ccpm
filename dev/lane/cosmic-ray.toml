@@ -3,7 +3,6 @@
 [cosmic-ray]
 module-path = ["lane/hooks/lane", "lane/scripts"]
 timeout = 30.0
-excluded-modules = []
 # The type checker and the linter run first: a change to a type annotation, or a comparison of a
 # string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
 # type checker is what checks annotations, the linter what checks `is` against a literal.
