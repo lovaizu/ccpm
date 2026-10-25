@@ -7,6 +7,6 @@ plugin found where Claude Code gives its folder, CLAUDE_PLUGIN_ROOT.
 
 import sys
 
-import lanes
+import guard
 
-sys.exit(lanes.main("PreToolUse", sys.argv[1:]))
+sys.exit(guard.main("PreToolUse", sys.argv[1:]))

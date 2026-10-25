@@ -10,7 +10,6 @@ import atexit
 import importlib
 import json
 import os
-import shlex
 import shutil
 import subprocess
 import sys
@@ -134,16 +133,13 @@ def lane_code(plugin: str, *names: str) -> list[Any]:
 
 
 def laid(plugin: str) -> list[tuple[str, int, str, list[str]]]:
-    """Each lane the plugin's hooks/hooks.json lays, as (agent, step, lane, takes), read from the
-    words after the command's last `; exec `, as lane writes them."""
-    with open(os.path.join(plugin, "hooks", "hooks.json"), encoding="utf-8") as f:
-        hooks = json.load(f)["hooks"]
+    """Each lane the plugin's hooks/hooks.json lays, as (agent, step, lane, takes), read by lane's
+    code as the plugin takes it, as the guard reads them."""
+    (hooks_file,) = lane_code(plugin, "hooks_file")
+    hooks = hooks_file.read(plugin)
     found = []
-    for entries in hooks.values():
-        for entry in entries:
-            words = shlex.split(entry["hooks"][0]["command"].rpartition("; exec ")[2])
-            agent, *held = words[2:]
-            for one in held:
-                number, lane, takes = one.split(":", 2)
-                found.append((agent, int(number), lane, takes.split(",")))
+    for event in hooks_file.EVENTS:
+        for command in hooks_file.commands(hooks, event):
+            agent, held = hooks_file.parsed(hooks_file.words(command, event), event)
+            found += [(agent, number, lane, takes) for number, lane, takes in held]
     return found

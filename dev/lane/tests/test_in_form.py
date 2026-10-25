@@ -214,7 +214,9 @@ class TestHook(unittest.TestCase):
         # Given: in_form laid on a step
         lanes = [{"lane": "in_form", "takes": TAKES}]
         # When: the layer makes the subagent's hook
-        entry = lay.entry("notes", {"name": "writer", "steps": [{"step": 3, "lanes": lanes}]})
+        entry = lay.entry(
+            "notes", {"name": "writer", "steps": [{"step": 3, "lanes": lanes}]}, "PreToolUse"
+        )
         assert entry is not None, "no entry was made"
         # Then: its matcher names Write, Edit and Bash
         self.assertEqual(entry["matcher"], "Write|Edit|Bash")

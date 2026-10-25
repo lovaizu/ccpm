@@ -8,6 +8,6 @@ plugin found where Claude Code gives its folder, CLAUDE_PLUGIN_ROOT.
 
 import sys
 
-import lanes
+import guard
 
-sys.exit(lanes.main("SubagentStop", sys.argv[1:]))
+sys.exit(guard.main("SubagentStop", sys.argv[1:]))

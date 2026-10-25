@@ -29,7 +29,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import shlex
 import shutil
 import subprocess
 import sys
@@ -40,27 +39,12 @@ CODE = os.path.join(LANE, "hooks", "lane")
 # The lanes and the reading of a step are lane's code's, which the guard reads them by too.
 sys.path.insert(0, CODE)
 
+import hooks_file
 import lanes
 import step
 from lanes import in_form
 
 USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>\n       lay.py up <plugin>"
-# Each hook's command first checks that lane's code can run, and where it cannot, on an event of
-# its subagent, read from the event's text by the shell alone, as Claude Code writes it, with or without a blank after
-# the colon, says what to install and exits with its event's code; it lets any other event through,
-# as its lanes act in their subagent alone.
-CHECK = (
-    'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
-    ' || {{ e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done;'
-    """ case "$e" in *'"agent_type":"{agent}"'*|*'"agent_type": "{agent}"'*)"""
-    ' echo "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run" >&2;'
-    " exit {code};; esac; exit 0; }}"
-)
-# The events lanes are held on, each with its own script in lane's code, named after it, and what
-# its hook exits with where lane's code cannot run: on a tool call 2, which stops the call; at the
-# subagent's end 1, which tells the user and lets the subagent end, as it cannot install Python and
-# kept going it would only be asked again.
-EVENTS = {"PreToolUse": 2, "SubagentStop": 1}
 # The marketplace whose plugins take lane's code through a link to lane beside them, as installing
 # copies what a link within the marketplace points to.
 MARKETPLACE = "ccpm"
@@ -126,7 +110,7 @@ def plugin_name(root: str) -> str:
     except ValueError:
         raise Stop(f"lay.py: {manifest} holds no JSON; fix it and run again.") from None
     name = given.get("name") if isinstance(given, dict) else None
-    if not isinstance(name, str) or not re.fullmatch(lanes.NAME, name):
+    if not isinstance(name, str) or not re.fullmatch(hooks_file.NAME, name):
         raise Stop(
             f"lay.py: {manifest} names the plugin by no name of letters, digits and -._; fix it"
             " and run again."
@@ -138,7 +122,7 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
     """A subagent of the proposal, checked, with its file and its lines, and each step with where
     it is among them."""
     name = given.get("name") if isinstance(given, dict) else None
-    if not isinstance(name, str) or not re.fullmatch(lanes.NAME, name):
+    if not isinstance(name, str) or not re.fullmatch(hooks_file.NAME, name):
         raise wrong("gives a subagent no name")
     file = step.agent_file(root, name)
     if file is None:
@@ -265,19 +249,7 @@ def held(lane: dict[str, Any]) -> str:
     return f", holding back {', '.join(rest)}" if rest else ""
 
 
-def run(event: str) -> str:
-    """What a hook's command runs for the event: its script in lane's code."""
-    return f'exec python3 "${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/{event.lower()}.py"'
-
-
-def command(plugin: str, agent: str, laid: list[str], event: str = "PreToolUse") -> str:
-    """The hook's command running lane's code on the lanes laid in the subagent, held on the
-    event."""
-    words = " ".join(shlex.quote(w) for w in [agent, *laid])
-    return f"{CHECK.format(plugin=plugin, agent=agent, code=EVENTS[event])}; {run(event)} {words}"
-
-
-def entry(plugin: str, agent: dict[str, Any], event: str = "PreToolUse") -> dict[str, Any] | None:
+def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | None:
     """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
     it: its matcher the tools its lanes watch, or for SubagentStop the subagent, as its matcher
     tells agents apart, and its command giving each lane laid."""
@@ -286,10 +258,10 @@ def entry(plugin: str, agent: dict[str, Any], event: str = "PreToolUse") -> dict
     if not on_it:
         return None
     name = f"{plugin}:{agent['name']}"
-    laid = [lanes.word(n, g["lane"], g["takes"]) for n, g in on_it]
+    laid = [hooks_file.word(n, g["lane"], g["takes"]) for n, g in on_it]
     each = [t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ())]
     tools = [name] if event == "SubagentStop" else each  # pragma: no mutate
-    run_it = command(plugin, name, laid, event)
+    run_it = hooks_file.command(plugin, name, laid, event)
     return {
         "matcher": "|".join(dict.fromkeys(tools)),
         "hooks": [{"type": "command", "timeout": 10, "command": run_it}],
@@ -299,29 +271,11 @@ def entry(plugin: str, agent: dict[str, Any], event: str = "PreToolUse") -> dict
 def hooks_read(root: str) -> dict[str, Any]:
     """The plugin's hooks.json, an empty one where there is none; stops where it is not in Claude
     Code's shape."""
-    path = os.path.join(root, "hooks", "hooks.json")
-    if not os.path.exists(path):
-        return {"hooks": {}}
-    unshaped = Stop(f"lay.py: {path} is not in the shape Claude Code reads; fix it and run again.")
     try:
-        with open(path, encoding="utf-8") as f:
-            hooks = json.load(f)
-    except ValueError:
-        raise unshaped from None
-    events = hooks.get("hooks", {}) if isinstance(hooks, dict) else None
-    if not isinstance(events, dict):
-        raise unshaped
-    for event in EVENTS:
-        entries = events.get(event, [])
-        if not isinstance(entries, list) or not all(map(entry_shaped, entries)):
-            raise unshaped
-    return hooks
-
-
-def entry_shaped(entry: Any) -> bool:
-    """Whether an entry of hooks.json is an object whose hooks are a list of objects."""
-    each = entry.get("hooks", []) if isinstance(entry, dict) else None
-    return isinstance(each, list) and all(isinstance(h, dict) for h in each)
+        return hooks_file.read(root)
+    except ValueError as why:
+        path = os.path.join(root, "hooks", "hooks.json")
+        raise Stop(f"lay.py: {path} {why}; fix it and run again.") from None
 
 
 def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> None:
@@ -329,11 +283,11 @@ def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> Non
     wrote one for it before, in the place of the first, after every other entry otherwise; and
     takes out those lane:up wrote for it before on an event none of its lanes is held on now."""
     events = hooks.setdefault("hooks", {})
-    for event in EVENTS:
+    for event in hooks_file.EVENTS:
         entries = events.get(event, [])
         mark = [f"{plugin}:{agent['name']}"]
         ours = [
-            any(lanes.hook_words(h.get("command"), event)[:1] == mark for h in e.get("hooks", []))
+            any(hooks_file.words(h.get("command"), event)[:1] == mark for h in e.get("hooks", []))
             for e in entries
         ]
         place = ours.index(True) if True in ours else len(entries)
@@ -396,11 +350,11 @@ def gone_out(hooks: dict[str, Any], plugin: str, root: str) -> list[str]:
     out, said."""
     ours = f"{plugin}:"
     gone = []
-    for event in EVENTS:
+    for event in hooks_file.EVENTS:
         entries = hooks["hooks"].get(event, [])
         kept = []
         for e in entries:
-            firsts = [lanes.hook_words(h.get("command"), event)[:1] for h in e.get("hooks", [])]
+            firsts = [hooks_file.words(h.get("command"), event)[:1] for h in e.get("hooks", [])]
             names = [w[len(ours) :] for [w] in filter(None, firsts) if w.startswith(ours)]
             lost = [n for n in names if step.agent_file(root, n) is None]
             gone += lost
@@ -486,13 +440,13 @@ def laid_before(hooks: dict[str, Any]) -> tuple[dict[str, list[dict[str, Any]]],
     now, as said for lane:up to put to the building AI."""
     agents: dict[str, list[dict[str, Any]]] = {}
     left = []
-    for event in EVENTS:
+    for event in hooks_file.EVENTS:
         for e in hooks.get("hooks", {}).get(event, []):
             for h in e.get("hooks", []):
-                given = lanes.hook_words(h.get("command"), event)
+                given = hooks_file.words(h.get("command"), event)
                 steps = agents.setdefault(given[0], []) if given else []
                 for w in given[1:]:
-                    lane = lanes.read(w)
+                    lane = hooks_file.lane_of(w)
                     if lane is None:
                         name = given[0].split(":")[1]
                         left.append(

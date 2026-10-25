@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 import helpers
-from helpers import lanes, lay
+from helpers import hooks_file
 
 # What the subagent is told where the check stops the call.
 INSTALL = "notes: install Python 3.9 or later, run as python3, for its hooks to run\n"
@@ -27,8 +27,8 @@ class TestPythonCheck(helpers.PluginTest):
         os.makedirs(os.path.join(self.plugin, "hooks"))
         os.symlink(helpers.CODE, os.path.join(self.plugin, "hooks", "lane"))
         self.write(self.agent_file, helpers.LAID)
-        laid = [lanes.word(3, "hands_off", ["git commit", "git push"])]
-        self.command = lay.command("notes", helpers.AGENT, laid)
+        laid = [hooks_file.word(3, "hands_off", ["git commit", "git push"])]
+        self.command = hooks_file.command("notes", helpers.AGENT, laid, "PreToolUse")
 
     def run_hook(self, *folders, command=None):
         """The hook's command, or the one given, run by sh with PATH holding the folders, handed a
@@ -87,8 +87,8 @@ class TestPythonCheck(helpers.PluginTest):
     def test_without_python3_at_the_subagents_end_the_user_is_told_and_it_ends(self):
         # Given: the hook's command for a lane held as the subagent ends, and a PATH holding no
         # python3
-        laid = [lanes.word(3, "test_after", ["CHANGELOG.md", "python3 check.py"])]
-        command = lay.command("notes", helpers.AGENT, laid, "SubagentStop")
+        laid = [hooks_file.word(3, "test_after", ["CHANGELOG.md", "python3 check.py"])]
+        command = hooks_file.command("notes", helpers.AGENT, laid, "SubagentStop")
         # When: it is run
         # Then: it exits 1, telling the user to install Python and letting the subagent end
         none = os.path.join(self.base, "none")
