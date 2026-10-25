@@ -57,9 +57,9 @@ def proposal(path: str) -> dict[str, Any]:
         if agent["name"] in [a["name"] for a in checked]:
             raise wrong(f"gives {agent['name']} twice, where each subagent comes once")
         checked.append(agent)
-    data = os.path.join(os.path.dirname(os.path.abspath(path)), name, "adapters")
+    folder = os.path.join(os.path.dirname(os.path.abspath(path)), name, "adapters")
     named = adapters_named(checked)
-    found = [adapter_found(root, data, a, port, by) for a, (port, by) in named.items()]
+    found = [adapter_found(root, folder, a, port, by) for a, (port, by) in named.items()]
     return {"plugin": root, "name": name, "subagents": checked, "adapters": found}
 
 
@@ -80,15 +80,16 @@ def adapters_named(agents: list[dict[str, Any]]) -> dict[str, tuple[str, str]]:
     return named
 
 
-def adapter_found(root: str, data: str, path: str, port: str, by: str) -> dict[str, Any]:
+def adapter_found(root: str, folder: str, path: str, port: str, by: str) -> dict[str, Any]:
     """The adapter of the path in the plugin, of the port, named by what is said, found beside the
-    proposal in the data folder, or laid before in the plugin, and checked on each of its cases:
-    its path, its port, what names it, the file it is read from and is written from, its text, its
-    cases, and whether it is beside the proposal, to be written into the plugin. Stops where it is in neither, where its cases are not a list of at least one
+    proposal in the adapters' folder given, or laid before in the plugin, and checked on each of its
+    cases: its path, its port, what names it, the file it is read from and is written from, its
+    text, its cases, and whether it is beside the proposal, to be written into the plugin. Stops
+    where it is in neither, where its cases are not a list of at least one
     `{"given": ..., "gives": ...}` whose given holds to its port's JSON in, or where it gives on
     any case other than the case gives, saying the case and what it gave."""
     base = os.path.basename(path)
-    beside = os.path.join(data, base)
+    beside = os.path.join(folder, base)
     kept_beside = os.path.isfile(beside)
     source = beside if kept_beside else os.path.join(root, path)
     if not os.path.isfile(source):
