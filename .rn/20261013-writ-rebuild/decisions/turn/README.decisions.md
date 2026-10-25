@@ -34,8 +34,9 @@ calling turn.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
 - A run stopped anywhere, by the user or by a conversation that ended, goes on from its last step
-  when the step calls turn again with the same result, as turn keeps where it stands in a file
-  beside the result (dev/architecture.md, Going on from the state).
+  when the step calls turn again with the same result, as turn keeps where it stands in `.turn/`
+  at the top of the repository (dev/architecture.md, Where the course is kept and Where a plugin
+  writes its files; the user's choice, 2026-10-25).
 
 ### Installation
 - turn is called from the main conversation or from an agent the main conversation starts, as its

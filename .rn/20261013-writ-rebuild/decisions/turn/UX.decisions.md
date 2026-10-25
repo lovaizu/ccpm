@@ -28,7 +28,7 @@
    item still without Good, with what the receiver gets once it is Good.
 6. It checks each Good against its lines, fixes each item without Good itself, and ends.
 7. A run stopped anywhere goes on from its last step when it calls turn again with the same result
-   (dev/architecture.md, Going on from the state).
+   (dev/architecture.md, Where the course is kept).
 
 ### B-2: Results measured, B-4: why each, B-7: the order of priority
 - The items of the checklists the calling AI fixes in the work after it comes back; fewer is better.
