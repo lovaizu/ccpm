@@ -45,6 +45,9 @@ class Form(NamedTuple):
     asks_first: bool = False
 
 
+# The orchestrator's two forms are set in its steps, not in form files as the roles' are: it hands
+# them on standard input, which no lane holds, and its lane on what it reads keeps it from any file
+# but those it checks the CCS by.
 # Before the work is made, the orchestrator says for every item what in the CCS and its files gives
 # its Good, or the question it waits on.
 CHECK = Form((("can",), ("question",)), asks=True)

@@ -205,16 +205,16 @@ def due(
 
 def checking(run: dict[str, Any], text: str) -> dict[str, Any]:
     """At the check: the orchestrator's check taken, or what it checks shown, once told."""
-    return checked(run, text) if text.strip() else shown(run)
+    return checked(run, text) if text.strip() else to_judge(run)
 
 
 def leaving(run: dict[str, Any], text: str) -> dict[str, Any]:
     """At the items left: the orchestrator's questions for them taken, or the items shown, once
     told."""
-    return left_asked(run, text) if text.strip() else shown(run)
+    return left_asked(run, text) if text.strip() else to_judge(run)
 
 
-def shown(run: dict[str, Any]) -> dict[str, Any]:
+def to_judge(run: dict[str, Any]) -> dict[str, Any]:
     """What the orchestrator is to judge at the stage, told first."""
     return VIEWS[run["stage"]](run) if run["told"] else tell(run)
 
