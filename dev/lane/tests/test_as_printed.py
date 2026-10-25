@@ -36,13 +36,15 @@ class AsPrintedTest(helpers.PluginTest):
         self.record(calls)
         field = call.HANDS.get(tool, "command")
         given = {"to": "main", "message": message} if tool == "SendMessage" else {field: message}
-        return as_printed.drifts(call.read(self.called(tool, given)), takes, helpers.NO_PLUGIN)
+        return as_printed.drifts(
+            helpers.call_of(self.called(tool, given)), takes, helpers.NO_PLUGIN
+        )
 
     def ends(self, calls, reply):
         """Whether the subagent drifts, about to end with the reply after the calls in its
         record."""
         self.record(calls)
-        return as_printed.drifts(call.ended(self.stopped(reply)), TAKES, helpers.NO_PLUGIN)
+        return as_printed.drifts(helpers.end_of(self.stopped(reply)), TAKES, helpers.NO_PLUGIN)
 
 
 class TestDrift(AsPrintedTest):
@@ -106,7 +108,7 @@ class TestDrift(AsPrintedTest):
         event = self.called("SendMessage", {"to": "main", "message": {"type": "shutdown"}})
         # When: the subagent sends a message of no text
         # Then: it is a drift
-        self.assertTrue(as_printed.drifts(call.read(event), TAKES, helpers.NO_PLUGIN))
+        self.assertTrue(as_printed.drifts(helpers.call_of(event), TAKES, helpers.NO_PLUGIN))
 
 
 class TestLetThrough(AsPrintedTest):
@@ -119,6 +121,7 @@ class TestLetThrough(AsPrintedTest):
             "above a line": f"{OUTPUT}\nSend OK or what to change.",
             "in a code fence": f"```\n{OUTPUT}```",
             "in a code fence under a heading": f"{HEADING}\n\n```text\n{OUTPUT}```\n",
+            "in a code fence of tildes, indented": f"  ~~~\n{OUTPUT}  ~~~",
         }.items():
             with self.subTest(what=what):
                 # Given: the command run, having printed
@@ -219,7 +222,7 @@ class TestLetThrough(AsPrintedTest):
         event = self.called("SendMessage", {"to": "main", "message": "x"})
         # When: it hands on
         # Then: it is no drift, as what it printed before is not known
-        self.assertFalse(as_printed.drifts(call.read(event), TAKES, helpers.NO_PLUGIN))
+        self.assertFalse(as_printed.drifts(helpers.call_of(event), TAKES, helpers.NO_PLUGIN))
 
 
 class TestEnd(AsPrintedTest):

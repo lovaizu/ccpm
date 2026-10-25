@@ -9,7 +9,7 @@ import unittest
 from unittest import mock
 
 import helpers
-from helpers import call, in_form, lay
+from helpers import in_form, lay
 from test_guard import GuardTest
 
 # The form of the output, a file of the plugin: a changelog entry as JSON.
@@ -33,7 +33,7 @@ class InFormTest(helpers.PluginTest):
     def drifts(self, tool, given, takes=TAKES):
         """What the call of the tool with the input drifts from in_form by."""
         event = {"cwd": self.base, "tool_name": tool, "tool_input": given}
-        return in_form.drifts(call.read(event), takes, self.plugin)
+        return in_form.drifts(helpers.call_of(event), takes, self.plugin)
 
     def wrote(self, content, path="entry.json"):
         """What a Write of the content to the path drifts by."""

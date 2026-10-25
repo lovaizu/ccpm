@@ -7,7 +7,7 @@ import os
 import unittest
 
 import helpers
-from helpers import NO_PLUGIN, call, read_only, testing
+from helpers import NO_PLUGIN, read_only, testing
 from test_guard import GuardTest
 
 TAKES = ["in.md"]
@@ -21,7 +21,7 @@ class ReadOnlyTest(testing.FolderTest):
     def drifts(self, tool, given, takes=TAKES):
         """Whether the call of the tool with the input drifts from read_only taking the inputs."""
         event = {"cwd": self.base, "tool_name": tool, "tool_input": given}
-        return read_only.drifts(call.read(event), takes, NO_PLUGIN)
+        return read_only.drifts(helpers.call_of(event), takes, NO_PLUGIN)
 
     def at(self, name):
         """The whole path of the name in `base`."""

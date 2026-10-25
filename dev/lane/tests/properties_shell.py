@@ -14,7 +14,8 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import NO_PLUGIN, call, shell, start_with, testing
+import helpers
+from helpers import NO_PLUGIN, shell, start_with, testing
 
 testing.load_hypothesis_profile()
 
@@ -111,7 +112,9 @@ class TestRuns(unittest.TestCase):
         command = " ".join(f"{said(words)} {data.draw(SEPARATORS)}" for words in runs)
         # When: the call is read
         # Then: it runs each command with its words as they were written
-        found = call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}})
+        found = helpers.call_of(
+            {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
+        )
         self.assertEqual((found.action, found.what), ("run", runs))
 
     @given(WORDS, st.text(min_size=1))
@@ -123,7 +126,9 @@ class TestRuns(unittest.TestCase):
         # Then: it runs git's command with its arguments
         command = f"git -C {shlex.quote(folder)} {said(words)}"
         self.assertEqual(
-            call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}).what,
+            helpers.call_of(
+                {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
+            ).what,
             [["git", *words]],
         )
 
@@ -139,7 +144,9 @@ class TestRuns(unittest.TestCase):
         # Then: it runs the command with its words, as they were written
         command = " ".join([*before, said(words)])
         self.assertEqual(
-            call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}).what,
+            helpers.call_of(
+                {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
+            ).what,
             [words],
         )
 
@@ -153,7 +160,9 @@ class TestStartWith(unittest.TestCase):
         script = shlex.quote(os.path.join(folder, "scripts", "turn.py"))
         assume(interpreter or not shell.ASSIGNMENT.fullmatch(script))
         command = f"{interpreter}{script} {said(words)}"
-        made = call.read({"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}})
+        made = helpers.call_of(
+            {"cwd": "/r", "tool_name": "Bash", "tool_input": {"command": command}}
+        )
         # When: start_with reads it as the subagent's first call
         # Then: it is no drift
         self.assertFalse(

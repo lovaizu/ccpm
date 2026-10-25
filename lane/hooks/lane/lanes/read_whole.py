@@ -9,7 +9,7 @@ from __future__ import annotations
 import os
 
 import shell
-from call import WRITERS, Call
+from call import WRITERS, Call, file_text
 
 ACTION = "read"
 WORDING = "Read `<input>` to its end."
@@ -35,11 +35,10 @@ def writes(call: Call) -> bool:
 def left(file: str, before: list[Call]) -> bool:
     """Whether the calls before began reading the file and left a line of it unread; a file not
     there has none."""
-    try:
-        with open(file, encoding="utf-8", errors="replace") as f:
-            count = len(f.read().splitlines())
-    except OSError:
+    text = file_text(file)
+    if text is None:
         return False
+    count = len(text.splitlines())
     reads = [numbers(lines, count) for c in before for p, lines in c.reads if p == file]
     return bool(reads) and not set(range(1, count + 1)) <= set().union(*reads)
 

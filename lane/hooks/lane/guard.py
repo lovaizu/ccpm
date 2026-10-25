@@ -7,14 +7,38 @@ from __future__ import annotations
 
 import os
 import sys
-from typing import Any
+from typing import Any, NamedTuple
 
 import call
 import hook
 import hooks_file
+import record
 import started
 import step
 from lanes import LANES, alone, sentence
+
+
+class Seen(NamedTuple):
+    """What an event shows, read once for every lane checked on it: the entries of its subagent's
+    record, None where it is not found, and what each lane's check takes, the call, or how the
+    subagent ends."""
+
+    found: list[dict[str, Any]] | None
+    acted: call.Call | call.End
+
+
+class Lanes:
+    """The lanes a hook's command lays in one subagent, checked on an event together."""
+
+    def __init__(self, laid: list[Laid]) -> None:
+        self.laid = laid
+
+    def check(self, event: dict[str, Any]) -> list[str]:
+        """What each lane says on the event, its subagent's record read once for all of them."""
+        found = record.entries(event)
+        ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
+        seen = Seen(found, call.ended(event, found) if ending else call.read(event, found))
+        return [s for lane in self.laid for s in lane.check(event, seen)]
 
 
 class Laid:
@@ -33,15 +57,14 @@ class Laid:
         self.number, self.lane, self.takes = given
         self.laid = laid
 
-    def check(self, event: dict[str, Any]) -> list[str]:
-        """The lane's sentence where the call drifts from it, as the subagent reads its step, with
-        the point it drifts by on the next line where its check gives one; where the step no longer
-        says it, that lane:up must be run again; nothing otherwise."""
+    def check(self, event: dict[str, Any], seen: Seen) -> list[str]:
+        """The lane's sentence where what the event shows drifts from it, as the subagent reads its
+        step, with the point it drifts by on the next line where its check gives one; where the step
+        no longer says it, that lane:up must be run again; nothing otherwise."""
         # A lane held as the subagent ends lets it end where what it did is not known, or where,
         # told before, it has answered with words alone, so it is told and never held for good.
-        ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
-        end = call.ended(event) if ending else None
-        if end is not None and (end.made is None or end.answered):
+        acted = seen.acted
+        if isinstance(acted, call.End) and (acted.made is None or acted.answered):
             return []
         said = sentence(self.lane, self.takes)
         if not step.holds(self.root, self.name, self.number, said):
@@ -51,12 +74,10 @@ class Laid:
         # A lane taking a thing given for each run lets every call through until the subagent
         # has been given it.
         named = started.names(self.takes)
-        run = self.run_values(event) if named else {}
+        run = self.run_values(event["cwd"], seen.found) if named else {}
         if not set(named) <= set(run):
             return []
-        # Each lane's check takes what its event gives: the call, or how the subagent ends.
         lane: Any = LANES[self.lane]
-        acted = call.read(event) if end is None else end
         each = started.resolved(self.takes, run, alone(self.lane))
         # A lane may take more beside what its step names, from the lanes laid in the subagent.
         more = getattr(lane, "beside", None)
@@ -68,12 +89,13 @@ class Laid:
         told = [step.expanded(said, self.root), *(started.told(n, run[n]) for n in named)]
         return ["\n".join([*told, *([drift] if isinstance(drift, str) else [])])]
 
-    def run_values(self, event: dict[str, Any]) -> dict[str, list[str]]:
-        """The run's value of each name the JSON the subagent started from gives: its prompt and
-        what each script start_with takes in it printed; none where its record is not found."""
+    def run_values(self, cwd: str, found: list[dict[str, Any]] | None) -> dict[str, list[str]]:
+        """The run's value of each name the JSON the subagent started from gives, from the entries
+        found of its record, made in the folder: its prompt and what each script start_with takes
+        in it printed; none where its record is not found."""
         scripts = [s for t in hooks_file.taken(self.root, self.agent, "start_with") for s in t]
-        found = started.texts(event, lambda c: call.runs(c, scripts))
-        return {} if found is None else started.values(found)
+        texts = started.texts(found, cwd, lambda c: call.runs(c, scripts))
+        return {} if texts is None else started.values(texts)
 
 
 def main(held: str, words: list[str]) -> int:
@@ -92,4 +114,4 @@ def main(held: str, words: list[str]) -> int:
         return hook.UNREAD
     laid = [(lane, takes) for _, lane, takes in given]
     found = [Laid(root, agent, g, laid) for g in given]
-    return hook.run(agent.split(":")[0], found, sys.stdin, sys.stderr, agent)
+    return hook.run(agent.split(":")[0], [Lanes(found)], sys.stdin, sys.stderr, agent)

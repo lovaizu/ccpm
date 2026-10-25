@@ -7,9 +7,9 @@ printed are free."""
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
+import started
 from call import Call, runs
 
 ACTION = "follow"
@@ -30,15 +30,10 @@ def drifts(call: Call, takes: list[str], root: str) -> bool:
 
 
 def printed(output: str) -> tuple[str, dict[str, Any]] | None:
-    """The move in what the script printed: its last line that is a JSON object of a tool's name and
-    an input object; None where no line is."""
-    for line in reversed(output.splitlines()):
-        try:
-            move = json.loads(line)
-        except ValueError:
-            continue
-        tool = move.get("tool") if isinstance(move, dict) else None
-        given = move.get("input") if isinstance(move, dict) else None
+    """The move in what the script printed: the last JSON object it printed, as started.py finds
+    them, that holds a tool's name and an input object; None where none does."""
+    for move in reversed(started.objects(output)):
+        tool, given = move.get("tool"), move.get("input")
         if isinstance(tool, str) and isinstance(given, dict):
             return tool, given
     return None

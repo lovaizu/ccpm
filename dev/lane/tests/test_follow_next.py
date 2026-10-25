@@ -6,7 +6,7 @@ import json
 import unittest
 
 import helpers
-from helpers import call, follow_next
+from helpers import follow_next
 from test_guard import GuardTest
 
 # The script the lane takes, as a step names it, and a run of it as the AI writes it.
@@ -27,7 +27,9 @@ class FollowNextTest(helpers.PluginTest):
         """Whether a call of the tool with the input, after the calls in the record, drifts."""
         self.record(calls)
         given = {"command": "git status"} if given is None else given
-        return follow_next.drifts(call.read(self.called(tool, given)), TAKES, helpers.NO_PLUGIN)
+        return follow_next.drifts(
+            helpers.call_of(self.called(tool, given)), TAKES, helpers.NO_PLUGIN
+        )
 
 
 class TestDrift(FollowNextTest):
@@ -64,6 +66,12 @@ class TestDrift(FollowNextTest):
         # When: the subagent makes another call
         # Then: it is a drift, as the move taken before was of the run before
         self.assertTrue(self.drifts(calls, given={"command": "ls"}))
+
+    def test_a_move_printed_alone_over_lines_is_held(self):
+        # Given: the script run, having printed the move alone, over several lines
+        # When: the subagent's next call is not that move
+        # Then: it is a drift, the print read as JSON as the run's values are
+        self.assertTrue(self.drifts([ran(json.dumps(MOVE, indent=2))], given={"command": "ls"}))
 
     def test_the_last_move_printed_is_held(self):
         # Given: the script run, having printed two moves among other lines
@@ -125,7 +133,7 @@ class TestLetThrough(FollowNextTest):
         # Given: no record of the subagent where Claude Code keeps it
         # When: it makes a call
         # Then: it is no drift, as the move printed before is not known
-        made = call.read(self.called("Bash", {"command": "ls"}))
+        made = helpers.call_of(self.called("Bash", {"command": "ls"}))
         self.assertFalse(follow_next.drifts(made, TAKES, helpers.NO_PLUGIN))
 
 

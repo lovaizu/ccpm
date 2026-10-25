@@ -71,11 +71,11 @@ class End(NamedTuple):
     answered: bool
 
 
-def read(event: dict[str, Any]) -> Call:
+def read(event: dict[str, Any], found: list[dict[str, Any]] | None) -> Call:
     """The call of the PreToolUse event, read as its action, with the tool and the input the AI
-    gave it, the text it writes, and, from its subagent's record, each call made before it and each
-    message that reached the subagent since it last asked."""
-    found = record.entries(event)
+    gave it, the text it writes, and, from the entries found of its subagent's record, None where
+    it is not found, each call made before it and each message that reached the subagent since it
+    last asked."""
     tool, given, cwd = event["tool_name"], event["tool_input"], event["cwd"]
     return alone(tool, given, cwd)._replace(
         before=None if found is None else [made(d) for d in record.done(found, cwd)],
@@ -86,9 +86,9 @@ def read(event: dict[str, Any]) -> Call:
     )
 
 
-def ended(event: dict[str, Any]) -> End:
-    """How the subagent of the SubagentStop event is about to end, from its record and the event."""
-    found = record.entries(event)
+def ended(event: dict[str, Any], found: list[dict[str, Any]] | None) -> End:
+    """How the subagent of the SubagentStop event is about to end, from the event and the entries
+    found of its record, None where it is not found."""
     calls = None if found is None else [made(d) for d in record.done(found, event["cwd"])]
     told = bool(event.get("stop_hook_active")) and record.answered(found or [])
     return End(calls, event.get("last_assistant_message") or "", told)
@@ -115,15 +115,20 @@ def text(tool: str, given: dict[str, Any], cwd: str) -> str | None:
     old, new = given.get("old_string"), given.get("new_string")
     if tool != "Edit" or not isinstance(old, str) or not isinstance(new, str):
         return None
-    try:
-        named = os.path.join(cwd, str(given.get("file_path", "")))
-        with open(named, encoding="utf-8", errors="replace") as f:
-            before = f.read()
-    except OSError:
-        before = ""
+    before = file_text(os.path.join(cwd, str(given.get("file_path", "")))) or ""
     if old not in before:
         return None
     return before.replace(old, new) if given.get("replace_all") else before.replace(old, new, 1)
+
+
+def file_text(path: str) -> str | None:
+    """The text of the file at the path, a byte that is no UTF-8 read as a mark of its own, as a
+    lane reads what the subagent reads or writes; None where it cannot be read."""
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            return f.read()
+    except OSError:
+        return None
 
 
 def changed(made: Call, file: str) -> bool:

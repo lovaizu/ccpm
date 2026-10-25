@@ -24,6 +24,17 @@ class TestAgentFile(helpers.PluginTest):
             step.agent_file(self.plugin, "quoted"), os.path.join(self.plugin, "agents", "q.md")
         )
 
+    def test_a_name_is_read_as_claude_code_reads_its_frontmatter(self):
+        # Given: a subagent whose name has a comment after it, after a key of several lines and
+        # another key
+        text = "---\ndescription: >\n  Writes.\ntools: Read\nname: commented # the writer\n---\n"
+        self.write(os.path.join(self.plugin, "agents", "c.md"), text)
+        # When: its file is looked for by its name
+        # Then: it is found, the comment no part of the name
+        self.assertEqual(
+            step.agent_file(self.plugin, "commented"), os.path.join(self.plugin, "agents", "c.md")
+        )
+
     def test_no_file_is_found_for_a_name_no_subagent_has(self):
         # Given: files of other subagents, one of no frontmatter, one whose frontmatter does not
         # close, and a file that is no Markdown

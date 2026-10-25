@@ -25,14 +25,16 @@ def names(takes: list[str]) -> list[str]:
     return list(dict.fromkeys(m["name"] for m in found if m))
 
 
-def texts(event: dict[str, Any], runs: Callable[[call.Call], bool]) -> list[str] | None:
-    """The texts the subagent of the event started from, in order: its prompt, then what each call
-    the runs function holds to run a script laid by start_with gave back; None where its record is
-    not found, as what it was given is then not known."""
-    found = record.entries(event)
+def texts(
+    found: list[dict[str, Any]] | None, cwd: str, runs: Callable[[call.Call], bool]
+) -> list[str] | None:
+    """The texts a subagent started from, in order, read from the entries found of its record, made
+    in the folder: its prompt, then what each call the runs function holds to run a script laid by
+    start_with gave back; None where its record is not found, as what it was given is then not
+    known."""
     if found is None:
         return None
-    made = [d for d in record.done(found, event["cwd"]) if runs(call.made(d))]
+    made = [d for d in record.done(found, cwd) if runs(call.made(d))]
     return [record.prompt(found), *(d.result for d in made)]
 
 

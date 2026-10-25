@@ -74,6 +74,19 @@ class TestStop(GuardTest):
         # Then: the call is stopped, saying to have lane:up run again
         self.assertEqual(self.guard(self.stream("git status")), (2, GONE))
 
+    def test_the_subagents_record_is_read_once_for_every_lane(self):
+        # Given: hands_off and start_with laid on changelog-writer, and its record
+        self.record([helpers.bash("ls")])
+        steps = helpers.LAID.replace("release.\n", "release. First run `ls`.\n")
+        self.write(self.agent_file, steps)
+        words = (helpers.AGENT, *WORDS, "1:start_with:ls")
+        entries = mock.patch.object(helpers.record, "entries", wraps=helpers.record.entries)
+        # When: changelog-writer makes a call
+        with entries as read:
+            self.guard(self.stream("git status"), words)
+        # Then: its record is read once
+        self.assertEqual(read.call_count, 1)
+
 
 class TestStartWith(GuardTest):
     def setUp(self) -> None:

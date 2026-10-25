@@ -12,7 +12,8 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import NO_PLUGIN, call, testing
+import helpers
+from helpers import NO_PLUGIN, testing
 from lanes import write_only
 
 testing.load_hypothesis_profile()
@@ -32,7 +33,8 @@ class TestAnyPath(testing.FolderTest):
             {"tool_name": "Bash", "tool_input": {"command": f"echo x > {shlex.quote(path)}"}},
         ]
         return [
-            write_only.drifts(call.read({"cwd": self.base, **e}), takes, NO_PLUGIN) for e in events
+            write_only.drifts(helpers.call_of({"cwd": self.base, **e}), takes, NO_PLUGIN)
+            for e in events
         ]
 
     @given(PATHS)

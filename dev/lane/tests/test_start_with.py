@@ -3,7 +3,8 @@ a drift, in the forms the steps tell and the AI writes; once it has run it, no c
 
 import unittest
 
-from helpers import NO_PLUGIN, call, start_with
+import helpers
+from helpers import NO_PLUGIN, start_with
 
 # The script the lane takes, as a step names it, and its path as the AI writes it once Claude Code
 # has put the plugin's folder in for `${CLAUDE_PLUGIN_ROOT}`.
@@ -16,7 +17,7 @@ WRITTEN = ['python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given']
 
 def read(command, tool="Bash"):
     """A call of the tool with the command, as the guard reads it."""
-    return call.read({"cwd": "/r", "tool_name": tool, "tool_input": {"command": command}})
+    return helpers.call_of({"cwd": "/r", "tool_name": tool, "tool_input": {"command": command}})
 
 
 def drifts(command, before=(), takes=TAKES, tool="Bash"):

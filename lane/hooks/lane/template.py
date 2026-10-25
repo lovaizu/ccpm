@@ -93,6 +93,23 @@ def keys(lines: list[str]) -> dict[str, tuple[int, str]] | None:
     return found
 
 
+def value(lines: list[str], key: str) -> str | None:
+    """The value of the key in the frontmatter the lines open with, as text, its line read as `keys`
+    reads one and every other line left unread, as Claude Code reads a subagent's name beside keys
+    the reader does not read; None where the lines open with no frontmatter closed, or none of its
+    lines gives the key a value the reader reads."""
+    try:
+        end = closing(lines)
+    except ValueError:
+        return None
+    # The mark opening the frontmatter, first among its lines, is no key's line.
+    for line in lines[:end] if end else []:
+        m = KEY_LINE.fullmatch(line)
+        if m and m["key"] == key:
+            return text_of((m["value"] or "").strip())
+    return None
+
+
 def text_of(value: str) -> str | None:
     """The text of a value as written on its line: quotes and a comment taken off; None where it
     is what the reader does not read."""

@@ -8,10 +8,8 @@ import itertools
 import os
 import re
 
-# The frontmatter, between the lines `---` that open the file and close it.
-FRONT = re.compile(r"(?sm)\A---\n(?P<front>.*?)\n---$")
-# The frontmatter's name, quoted or not.
-NAME = re.compile(r"""^name:[ \t]*["']?(?P<name>.*?)["']?[ \t]*$""", re.MULTILINE)
+import template
+
 # A line that goes on a step's text: indented, and beginning no list item.
 GOES_ON = re.compile(r"^[ \t]+(?![-*+] |\d+\. )\S")
 # A line break, with the blanks around it, as a step's text reads it.
@@ -27,9 +25,8 @@ def agent_file(root: str, name: str) -> str | None:
     names = sorted(os.listdir(folder)) if os.path.isdir(folder) else []
     for file in (os.path.join(folder, n) for n in names if n.endswith(".md")):
         with open(file, encoding="utf-8") as f:
-            front = FRONT.match(f.read())
-        found = NAME.search(front["front"]) if front else None
-        if found and found["name"] == name:
+            lines = f.read().splitlines()
+        if template.value(lines, "name") == name:
             return file
     return None
 

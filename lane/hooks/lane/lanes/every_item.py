@@ -11,7 +11,7 @@ import os
 import re
 
 import shell
-from call import End, changed
+from call import End, changed, file_text
 
 ACTION = "end"
 WORDING = "Answer every item of `<input>`."
@@ -31,9 +31,11 @@ def drifts(end: End, takes: list[str], root: str) -> bool:
     the guard stands, has a key that stands in none of what answers it."""
     inputs = shell.paths(os.getcwd(), takes)
     written = {f for c in end.made or [] for f in c.written if changed(c, f)}
-    answers = [end.reply, *(text(f) for f in sorted(written - set(inputs)))]
+    answers = [end.reply, *(file_text(f) or "" for f in sorted(written - set(inputs)))]
     return any(
-        not any(stands(key, a) for a in answers) for i in inputs for key in ITEM.findall(text(i))
+        not any(stands(key, a) for a in answers)
+        for i in inputs
+        for key in ITEM.findall(file_text(i) or "")
     )
 
 
@@ -44,12 +46,3 @@ def stands(key: str, answer: str) -> bool:
         re.search(rf"(?<![A-Za-z0-9-]){re.escape(key)}(?![A-Za-z0-9]|[.-][0-9])", answer)
         is not None
     )
-
-
-def text(file: str) -> str:
-    """The file's text; none where it cannot be read."""
-    try:
-        with open(file, encoding="utf-8", errors="replace") as f:
-            return f.read()
-    except OSError:
-        return ""

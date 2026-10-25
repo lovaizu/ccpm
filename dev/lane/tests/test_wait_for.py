@@ -5,7 +5,7 @@ from its record; every other call is not."""
 import unittest
 
 import helpers
-from helpers import call, wait_for
+from helpers import wait_for
 from test_guard import GuardTest
 
 # The approval and the command held back, as lane:up's step 9 takes them, and a run of the command
@@ -22,7 +22,7 @@ class WaitForTest(helpers.PluginTest):
     def drifts(self, calls, command=WRITE, takes=TAKES):
         """Whether a run of the command, after the calls and messages in the record, drifts."""
         self.record(calls)
-        return wait_for.drifts(call.read(self.event(command)), takes, helpers.NO_PLUGIN)
+        return wait_for.drifts(helpers.call_of(self.event(command)), takes, helpers.NO_PLUGIN)
 
 
 class TestDrift(WaitForTest):
@@ -101,7 +101,9 @@ class TestLetThrough(WaitForTest):
         # Given: no record of the subagent where Claude Code keeps it
         # When: it runs the command held back
         # Then: it is no drift, as the messages that reached it are not known
-        self.assertFalse(wait_for.drifts(call.read(self.event(WRITE)), TAKES, helpers.NO_PLUGIN))
+        self.assertFalse(
+            wait_for.drifts(helpers.call_of(self.event(WRITE)), TAKES, helpers.NO_PLUGIN)
+        )
 
 
 class TestGuard(GuardTest):

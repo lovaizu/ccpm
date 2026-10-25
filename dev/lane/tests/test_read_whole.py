@@ -6,7 +6,7 @@ import os
 import unittest
 
 import helpers
-from helpers import NO_PLUGIN, call, read_whole
+from helpers import NO_PLUGIN, read_whole
 from test_guard import GuardTest
 
 # The input of 100 lines, as the Read tool gives back the lines from the first to the last, each
@@ -27,7 +27,7 @@ class ReadWholeTest(helpers.PluginTest):
 
     def drifts(self, tool="Write", given=None):
         given = {"file_path": "out.md", "content": "x"} if given is None else given
-        return read_whole.drifts(call.read(self.called(tool, given)), ["in.md"], NO_PLUGIN)
+        return read_whole.drifts(helpers.call_of(self.called(tool, given)), ["in.md"], NO_PLUGIN)
 
 
 class TestDrift(ReadWholeTest):
@@ -162,7 +162,9 @@ class TestLetThrough(ReadWholeTest):
         self.record([("Read", {"file_path": "in.md"}, shown(1, 50))])
         # When: the subagent writes
         # Then: it is no drift
-        self.assertFalse(read_whole.drifts(call.read(self.called("Write", {})), ["$IN"], NO_PLUGIN))
+        self.assertFalse(
+            read_whole.drifts(helpers.call_of(self.called("Write", {})), ["$IN"], NO_PLUGIN)
+        )
 
 
 class TestGuard(GuardTest):

@@ -137,6 +137,16 @@ class PluginTest(testing.FolderTest):
         return json.dumps(self.event(command, agent_type))
 
 
+def call_of(event: dict[str, Any]) -> call.Call:
+    """The call of a PreToolUse event, read as the guard reads it, with its subagent's record."""
+    return call.read(event, record.entries(event))
+
+
+def end_of(event: dict[str, Any]) -> call.End:
+    """How the subagent of a SubagentStop event is about to end, read as the guard reads it."""
+    return call.ended(event, record.entries(event))
+
+
 def bash(command: str) -> tuple[str, dict[str, Any], str]:
     """A Bash call of the command, as `recorded` takes it, giving back nothing lane reads."""
     return ("Bash", {"command": command}, "")

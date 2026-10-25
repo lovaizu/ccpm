@@ -133,7 +133,8 @@ class TestStarted(helpers.PluginTest):
         def runs(made: call.Call) -> bool:
             return made.what[:1] == [["python3", "start.py"]]
 
-        return started.texts(self.event("ls"), runs)
+        event = self.event("ls")
+        return started.texts(helpers.record.entries(event), event["cwd"], runs)
 
     def test_the_prompt_and_the_print_of_each_script_run_are_read_in_order(self):
         # Given: a record begun by a prompt of JSON, then a call of another command, the script
