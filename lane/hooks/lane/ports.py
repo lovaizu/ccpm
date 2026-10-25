@@ -153,12 +153,13 @@ class Failed(Exception):
     """What an adapter did that is not as its port says."""
 
 
-def run(path: str, port: str, given: dict[str, Any]) -> dict[str, Any]:
+def run(path: str, port: str, given: dict[str, Any], left: float | None = None) -> dict[str, Any]:
     """What the port gives back, given its JSON, by the adapter at the path, run with python3 on the
-    port's JSON within what is left of TIME; stops with Failed saying what the adapter did where it
-    exits other than 0, gives no answer in that time, prints no JSON, or answers out of the
-    port."""
-    left = max(TIME - (time.monotonic() - START), 0)
+    port's JSON within the seconds left, or what is left of TIME where none are given; stops with
+    Failed saying what the adapter did where it exits other than 0, gives no answer in that time,
+    prints no JSON, or answers out of the port."""
+    if left is None:
+        left = max(TIME - (time.monotonic() - START), 0)
     try:
         done = subprocess.run(
             ["python3", path],

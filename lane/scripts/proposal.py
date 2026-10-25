@@ -3,9 +3,16 @@ JSON file lane:up keeps in lane's data folder, `${CLAUDE_PLUGIN_DATA}/<plugin>.j
 
     {"plugin": "<the plugin's folder>",
      "subagents": [{"name": "<subagent>",
+                    "adapter": "hooks/adapters/values-<name>.py",
                     "steps": [{"step": <number>,
-                               "lanes": [{"lane": "<lane>", "takes": ["<thing>", ...]}]}]}]}
-"""
+                               "lanes": [{"lane": "<lane>", "takes": ["<thing>", ...],
+                                          "adapter": "hooks/adapters/<port>-<name>.py"}]}]}]}
+
+each adapter named by the path it has in the plugin, where none is needed none named. An adapter is
+part of the proposal: kept beside it in lane's data folder, `<plugin>/adapters/<port>-<name>.py`,
+with the cases it must give, `<port>-<name>.json`, a list of `{"given": <the port's JSON in>,
+"gives": <the port's JSON out>}`, or, laid before, in the plugin's hooks/adapters/; it is run on
+each of its cases before the proposal is printed or written."""
 
 from __future__ import annotations
 
@@ -16,6 +23,8 @@ from typing import Any
 
 import hooks_file
 import lanes
+import ports
+import schema
 import step
 
 # What the proposal is told to be, when it is not.
@@ -33,8 +42,8 @@ def wrong(what: str) -> Stop:
 
 def proposal(path: str) -> dict[str, Any]:
     """The proposal at the path, checked to be as lane:up writes it, each subagent given once, with
-    the plugin's name, and each subagent with its file and its lines, and each step with where it is
-    among them."""
+    the plugin's name, each subagent with its file and its lines, each step with where it is among
+    them, and each adapter it names found and checked on its cases, as `adapter_found` gives it."""
     try:
         with open(path, encoding="utf-8") as f:
             given = json.load(f)
@@ -56,7 +65,85 @@ def proposal(path: str) -> dict[str, Any]:
         if agent["name"] in [a["name"] for a in checked]:
             raise wrong(f"gives {agent['name']} twice, where each subagent comes once")
         checked.append(agent)
-    return {"plugin": root, "name": name, "subagents": checked}
+    data = os.path.join(os.path.dirname(os.path.abspath(path)), name, "adapters")
+    named = adapters_named(checked)
+    found = [adapter_found(root, data, a, port, by) for a, (port, by) in named.items()]
+    return {"plugin": root, "name": name, "subagents": checked, "adapters": found}
+
+
+def adapters_named(agents: list[dict[str, Any]]) -> dict[str, tuple[str, str]]:
+    """Each adapter the subagents name, by its path in the plugin, with the port it is of and what
+    names it, the first of those that do."""
+    named: dict[str, tuple[str, str]] = {}
+    for agent in agents:
+        if "adapter" in agent:
+            named.setdefault(agent["adapter"], ("values", f"the values of {agent['name']}"))
+        for s in agent["steps"]:
+            for lane in s["lanes"]:
+                if "adapter" in lane:
+                    on = f"{lane['lane']} on step {s['step']} of {agent['name']}"
+                    # A lane naming an adapter reads a port, as the lane's check before has it.
+                    kind: Any = lanes.LANES[lane["lane"]]
+                    named.setdefault(lane["adapter"], (kind.PORT, on))
+    return named
+
+
+def adapter_found(root: str, data: str, path: str, port: str, by: str) -> dict[str, Any]:
+    """The adapter of the path in the plugin, of the port, named by what is said, found beside the
+    proposal in the data folder, or laid before in the plugin, and checked on each of its cases:
+    its path, its port, what names it, the file it is read from and is written from, its text, and
+    its cases. Stops where it is in neither, where its cases are not a list of at least one
+    `{"given": ..., "gives": ...}` whose given holds to its port's JSON in, or where it gives on
+    any case other than the case gives, saying the case and what it gave."""
+    base = os.path.basename(path)
+    beside = os.path.join(data, base)
+    source = beside if os.path.isfile(beside) else os.path.join(root, path)
+    if not os.path.isfile(source):
+        raise Stop(
+            f"lay.py: the proposal names the adapter {path}, for {by}, which is neither {beside}"
+            f" nor in {root}; write it there with its cases, and run again."
+        )
+    cases_file = os.path.splitext(source)[0] + ".json"
+    cases = adapter_cases(cases_file, port)
+    for number, case in enumerate(cases, 1):
+        try:
+            gave: Any = ports.run(source, port, case["given"], ports.TIME)
+        except ports.Failed as failed:
+            gave = str(failed)
+        if gave != case["gives"]:
+            shown = gave if isinstance(gave, str) else f"gave {json.dumps(gave)}"
+            raise Stop(
+                f"lay.py: the adapter {path}, for {by}, given case {number} of {cases_file},"
+                f" {json.dumps(case['given'])}, {shown}, where the case gives"
+                f" {json.dumps(case['gives'])}; fix the adapter or its case, and run again."
+            )
+    with open(source, encoding="utf-8") as f:
+        text = f.read()
+    return {"path": path, "port": port, "by": by, "source": source, "text": text, "cases": cases}
+
+
+def adapter_cases(path: str, port: str) -> list[dict[str, Any]]:
+    """The cases at the path an adapter of the port must give; stops where they are not a list of
+    at least one case, each `{"given": <the port's JSON in>, "gives": <the port's JSON out>}`."""
+    case = ports.shape(given=ports.PORTS[port]["in"], gives=ports.PORTS[port]["out"])
+    try:
+        with open(path, encoding="utf-8") as f:
+            given = json.load(f)
+    except (OSError, ValueError):
+        given = None
+    if not isinstance(given, list) or not given:
+        raise Stop(
+            f"lay.py: {path} gives the adapter no cases; write there a list of at least one"
+            ' `{"given": ..., "gives": ...}` of the port, and run again.'
+        )
+    for number, each in enumerate(given, 1):
+        out = schema.held(case, each)
+        if out is not None:
+            raise Stop(
+                f"lay.py: case {number} of {path} is out of the {port} port at {out.told()};"
+                " fix it, and run again."
+            )
+    return given
 
 
 def plugin_name(root: str) -> str:
@@ -84,6 +171,9 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
     name = given.get("name") if isinstance(given, dict) else None
     if not isinstance(name, str) or not re.fullmatch(hooks_file.NAME, name):
         raise wrong("gives a subagent no name")
+    why = hooks_file.adapter_wrong(given.get("adapter"), "values")
+    if why:
+        raise wrong(f"names an adapter for the values of {name} {why}")
     file = step.agent_file(root, name)
     if file is None:
         raise wrong(f"gives {name}, which no file in agents/ names")
@@ -111,7 +201,8 @@ def subagent(root: str, given: Any) -> dict[str, Any]:
         for lane in laid:
             lane_check(lane, f"step {number} of {name}", root)
         s["span"] = where
-    return {"name": name, "file": file, "lines": lines, "steps": steps}
+    named = {"adapter": given["adapter"]} if "adapter" in given else {}
+    return {"name": name, **named, "file": file, "lines": lines, "steps": steps}
 
 
 def lane_check(lane: Any, on: str, root: str) -> None:
@@ -129,6 +220,10 @@ def lane_check(lane: Any, on: str, root: str) -> None:
         raise wrong(
             f"gives {known} on {on} takes of another count than its wording and its hook hold"
         )
+    port = getattr(lanes.LANES[known], "PORT", None)
+    why = hooks_file.adapter_wrong(lane.get("adapter"), port)
+    if why:
+        raise wrong(f"names an adapter for {known} on {on} {why}")
     refused = getattr(lanes.LANES[known], "refused", None)
     why = refused(takes, root) if refused is not None else ""
     if why:

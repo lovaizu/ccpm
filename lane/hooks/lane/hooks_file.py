@@ -183,15 +183,15 @@ def laid(root: str) -> dict[str, Any]:
     return given
 
 
-def adapter_wrong(path: str | None, port: str | None) -> str:
-    """Why the adapter of the path, None for none named, cannot be the port's, the port a lane reads,
-    None for none; "" where none is named or it can, being `hooks/adapters/<port>-<name>.py` in the
-    plugin."""
+def adapter_wrong(path: Any, port: str | None) -> str:
+    """Why the adapter named by the path, None for none, cannot be the port's, the port a lane
+    reads, None for none; "" where none is named or it can, being `hooks/adapters/<port>-<name>.py`
+    in the plugin."""
     if path is None:
         return ""
     if port is None:
         return f"`{path}`, which reads no port"
-    if not re.fullmatch(rf"hooks/adapters/{port}-{NAME}\.py", path):
+    if not isinstance(path, str) or not re.fullmatch(rf"hooks/adapters/{port}-{NAME}\.py", path):
         return f"`{path}`, not hooks/adapters/{port}-<name>.py"
     return ""
 

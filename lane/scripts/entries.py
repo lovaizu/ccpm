@@ -104,13 +104,30 @@ def hooks_written(root: str, hooks: dict[str, Any]) -> None:
         f.write(json.dumps(hooks, indent=2, ensure_ascii=False) + "\n")
 
 
-def lanes_written(root: str, agents: dict[str, list[dict[str, Any]]]) -> None:
-    """Writes the lanes laid in each subagent, by `<plugin>:<name>`, as steps of a proposal, into
-    the plugin's hooks/lanes.json, in the shape of the proposal, indented by two."""
-    subagents = [{"name": a.split(":")[1], "steps": laid} for a, laid in agents.items()]
+def lanes_written(
+    root: str, agents: dict[str, list[dict[str, Any]]], values: dict[str, str | None]
+) -> None:
+    """Writes the lanes laid in each subagent, by `<plugin>:<name>`, as steps of a proposal, with
+    the adapter of the values port values names for it, where it names one, into the plugin's
+    hooks/lanes.json, in the shape of the proposal, indented by two."""
+    subagents = [
+        {"name": a.split(":")[1], **({"adapter": values[a]} if values.get(a) else {}), "steps": s}
+        for a, s in agents.items()
+    ]
     os.makedirs(os.path.join(root, "hooks"), exist_ok=True)
     with open(os.path.join(root, "hooks", "lanes.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps({"subagents": subagents}, indent=2, ensure_ascii=False) + "\n")
+
+
+def values_before(root: str, plugin: str) -> dict[str, str | None]:
+    """The adapter of the values port each subagent of the plugin at root names, by
+    `<plugin>:<name>`, as its hooks/lanes.json holds it; none where it is not there or cannot be
+    read, as laid_before then stops."""
+    try:
+        found = hooks_file.laid(root)["subagents"]
+    except ValueError:
+        return {}
+    return {f"{plugin}:{a['name']}": a.get("adapter") for a in found}
 
 
 def word_of(w: str) -> tuple[int, str, list[str]] | None:

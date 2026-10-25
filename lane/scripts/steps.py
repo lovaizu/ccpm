@@ -62,7 +62,8 @@ def listed(name: str, step_given: dict[str, Any]) -> list[str]:
     actions = [lanes.LANES[lane["lane"]].ACTION + ":" for lane in step_given["lanes"]]
     wide, long = max(map(len, actions)), max(map(len, said))
     for action, sentence, lane in zip(actions, said, step_given["lanes"]):
-        hook = f"hook {lane['lane']}{held(lane)}"
+        adapter = f", adapter {lane['adapter']}" if "adapter" in lane else ""
+        hook = f"hook {lane['lane']}{held(lane)}{adapter}"
         out.append(f"  {action:<{wide}} {sentence:<{long}}  {hook}\n")
     return out
 
@@ -91,3 +92,16 @@ def said(root: str, agents: dict[str, list[dict[str, Any]]]) -> list[str]:
                     f"Laid before on step {s['step']} of {name}{gone}: {json.dumps(lane)}\n"
                 )
     return found
+
+
+def adapter_shown(adapter: dict[str, Any]) -> str:
+    """The adapter as the print shows it for the building AI's OK: its path, its port and what
+    names it, its text, indented, and each case it gives."""
+    head = f"Adapter {adapter['path']} of the {adapter['port']} port, for {adapter['by']}"
+    lines = adapter["text"].splitlines(True)
+    out = [f"{head}, giving each case below:\n"]
+    out += [f"    {line}" if line.strip() else "\n" for line in lines]
+    for number, case in enumerate(adapter["cases"], 1):
+        given, gives = json.dumps(case["given"]), json.dumps(case["gives"])
+        out.append(f"  case {number}: given {given}\n    gives {gives}\n")
+    return "".join(out)

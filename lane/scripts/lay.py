@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 import json
 import os
+import shutil
 import subprocess
 import sys
 
@@ -60,6 +61,7 @@ def printed(path: str) -> str:
         for s in steps.steps_laid(before, given["name"], agent):
             out = [*steps.listed(agent["name"], s), "\n", *steps.read_as_laid(agent["lines"], s)]
             blocks.append("".join(out))
+    blocks += [steps.adapter_shown(a) for a in given["adapters"]]
     return "\n".join(blocks)
 
 
@@ -71,7 +73,7 @@ def written(path: str) -> str:
     root, plugin = given["plugin"], given["name"]
     hooks = entries.hooks_read(root)
     before, left = entries.laid_before(root, plugin, hooks)
-    laid = dict(before)
+    laid, values = dict(before), entries.values_before(root, plugin)
     said = []
     for agent in given["subagents"]:
         lines = agent["lines"]
@@ -85,14 +87,23 @@ def written(path: str) -> str:
         laid[f"{plugin}:{agent['name']}"] = [
             {"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]
         ]
+        values[f"{plugin}:{agent['name']}"] = agent.get("adapter")
         said.append(f"Wrote the hook of {agent['name']} into hooks/hooks.json.\n")
     said += entries.gone_out(hooks, plugin, root)
     kept = {a: s for a, s in laid.items() if step.agent_file(root, a.split(":")[1]) is not None}
     for agent, on in kept.items():
         entries.hooks_with(hooks, plugin, {"name": agent.split(":")[1], "steps": on})
     entries.hooks_written(root, hooks)
-    entries.lanes_written(root, kept)
+    entries.lanes_written(root, kept, values)
     said += [*left, "Wrote the lanes laid into hooks/lanes.json.\n"]
+    copies = [a for a in given["adapters"] if a["source"] != os.path.join(root, a["path"])]
+    for adapter in copies:
+        os.makedirs(os.path.dirname(os.path.join(root, adapter["path"])), exist_ok=True)
+        for source in (adapter["source"], os.path.splitext(adapter["source"])[0] + ".json"):
+            shutil.copyfile(
+                source, os.path.join(root, "hooks", "adapters", os.path.basename(source))
+            )
+        said.append(f"Wrote the adapter {adapter['path']} with its cases.\n")
     placed.code_put(root)
     said.append("Put lane's code in hooks/lane/.\n")
     try:
@@ -107,7 +118,16 @@ def written(path: str) -> str:
             f"fix what it names, then run `lay.py write {path}` again."
         )
     os.remove(path)
-    return "".join(said) + f"claude plugin validate passed.\nRemoved the proposal {path}.\n"
+    said += ["claude plugin validate passed.\n", f"Removed the proposal {path}.\n"]
+    for adapter in copies:
+        for source in (adapter["source"], os.path.splitext(adapter["source"])[0] + ".json"):
+            os.remove(source)
+        said.append(f"Removed the adapter {adapter['source']} and its cases from beside it.\n")
+    folder = os.path.join(os.path.dirname(os.path.abspath(path)), plugin, "adapters")
+    for place in (folder, os.path.dirname(folder)):
+        if os.path.isdir(place) and not os.listdir(place):
+            os.rmdir(place)
+    return "".join(said)
 
 
 def brought_up(root: str, data: str) -> str:
@@ -141,14 +161,19 @@ def brought_up(root: str, data: str) -> str:
         entries.hooks_with(hooks, plugin, {"name": sub, "steps": laid})
     if hooks != before:
         entries.hooks_written(root, hooks)
-        entries.lanes_written(root, agents)
+        entries.lanes_written(root, agents, entries.values_before(root, name))
         said += [
             f"Wrote the hook of {a.split(':')[1]} into hooks/hooks.json with the lanes it held.\n"
             for a in agents
         ]
     if not said:
         said.append("hooks/lane/ holds no older copy of lane's code.\n")
-    return "".join([*said, *left, *steps.said(root, agents), read])
+    values = [
+        f"Laid before in {a.split(':')[1]}, its values read by: {json.dumps({'adapter': path})}\n"
+        for a, path in entries.values_before(root, name).items()
+        if path
+    ]
+    return "".join([*said, *left, *steps.said(root, agents), *values, read])
 
 
 def reads(root: str, data: str, name: str) -> str:
