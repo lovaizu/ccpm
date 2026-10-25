@@ -31,9 +31,11 @@ class Seen(NamedTuple):
 
 
 # Who must fix an error in what the plugin gives a lane, as the subagent replies it.
-LANE_UP = "lane:up must be run again on {plugin}, so its lanes match its steps"
+LAY_AGAIN = (
+    "the maker of {plugin} must lay its lanes again with `lay.py write`, so they match its steps"
+)
 MAKER = "the maker of {plugin} must fix it"
-ADAPTER = "the maker of {plugin} must fix the adapter and run lane:up again"
+ADAPTER = "the maker of {plugin} must fix the adapter and lay its lanes again with `lay.py write`"
 # What a lane resting on its subagent's record meets where the record is not there.
 NOT_FOUND = "its record is not found where Claude Code keeps it"
 
@@ -54,7 +56,7 @@ class Lanes:
             given = hooks_file.laid_in(self.root, name)
             values = hooks_file.subagent(self.root, name).get("adapter")
         except ValueError as wrong:
-            fix = LANE_UP.format(plugin=plugin)
+            fix = LAY_AGAIN.format(plugin=plugin)
             unread = (
                 f"lane cannot check the lanes of {name}: {wrong}. Stop here and reply that {fix}."
             )
@@ -101,7 +103,7 @@ class Laid:
             return []
         said = sentence(self.lane, self.takes)
         if not step.holds(self.root, self.name, self.number, said):
-            return [self.error(f"step {self.number} no longer says: {said}", LANE_UP)]
+            return [self.error(f"step {self.number} no longer says: {said}", LAY_AGAIN)]
         named = started.names(self.takes)
         # The run's values are read from the record, given by its prompt and by the script
         # start_with runs first, so a lane taking one is held once that script has run, start_with
@@ -196,16 +198,16 @@ def main(held: str, words: list[str]) -> None:
     """Runs the lanes laid in the subagent a hook's command names, held on the event, on the event
     Claude Code hands on stdin, for the plugin found where Claude Code gives its folder,
     CLAUDE_PLUGIN_ROOT, or, on an event a call is kept on, keeps the call, answering Claude Code on
-    stdout. A command not in the form lane:up writes is an error, as no subagent can be told from
-    it."""
+    stdout. A command not in the form `lay.py write` writes is an error, as no subagent can be told
+    from it."""
     root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
     agent = " ".join(words)
     if not hooks_file.AGENT.fullmatch(agent):
         unread = (
             f"lane: lane cannot check the lanes of this hook: its command gives"
-            f" `{agent}`, not the subagent alone as <plugin>:<name>, as lane:up writes"
-            " it. Stop here and reply that lane:up must be run again on the plugin, to write its"
-            " hooks anew."
+            f" `{agent}`, not the subagent alone as <plugin>:<name>, as `lay.py write` writes"
+            " it. Stop here and reply that the plugin's maker must lay its lanes again with"
+            " `lay.py write`, to write its hooks anew."
         )
         hook.failed(held, unread, sys.stdin, sys.stdout)
         return

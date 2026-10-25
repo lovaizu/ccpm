@@ -91,7 +91,7 @@ with shared.removed(place, plugin):
             e
             for e in hooks["hooks"][event]
             if not any(
-                hooks_file.parsed(hooks_file.words(h["command"], event), event)[0] in ROLES
+                hooks_file.words(h["command"], event)[:1] in [[role] for role in ROLES]
                 for h in e["hooks"]
             )
         ]

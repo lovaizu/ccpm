@@ -1,8 +1,7 @@
-"""The layer: what lane:up runs to have the lanes it proposes printed for the building AI's OK,
-and, once the building AI has given it, written word for word into its plugin from the same file,
-so no AI copies what the building AI approved; and, first on each run of lane:up, to bring the
-plugin's copy of lane's code up where it is older, with the hooks lane:up wrote before, and to give
-what lane:up reads, which its read_only lane holds it to."""
+"""The layer: what the building AI runs to have the lanes it proposes printed for its approval, and,
+once approved, written word for word into its plugin from the same file, so no AI copies what was
+approved; and, before it proposes lanes on a plugin laid before, to bring the plugin's copy of
+lane's code up where it is older, with the hooks the layer wrote before, and say the lanes laid."""
 
 from __future__ import annotations
 
@@ -24,25 +23,18 @@ import step
 import steps
 from proposal import Stop, plugin_name, proposal
 
-USAGE = (
-    "usage: lay.py print <proposal>\n       lay.py write <proposal>\n"
-    "       lay.py up <plugin> <lane's data folder>"
-)
+USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>\n       lay.py up <plugin>"
 
 
 def main(argv: list[str]) -> int:
     """Prints the proposal at the path, or writes it into the plugin, or brings up the plugin at the
-    path, given lane's data folder, and gives 0; prints what was wrong and gives 1."""
+    path, and gives 0; prints what was wrong and gives 1."""
     actions = {"print": printed, "write": written, "up": brought_up}
-    # How many arguments each action takes after its name.
-    count = {"print": 1, "write": 1, "up": 2}
-    given, takes = len(argv) - 1, count.get(argv[0]) if argv else None
-    wrong = given != takes  # pragma: no mutate
-    if wrong:
+    if len(argv) != 2 or argv[0] not in actions:
         print(USAGE)
         return 1
     try:
-        print(actions[argv[0]](*argv[1:]), end="")
+        print(actions[argv[0]](argv[1]), end="")
     except Stop as stop:
         print(stop)
         return 1
@@ -130,19 +122,19 @@ def written(path: str) -> str:
     return "".join(said)
 
 
-def brought_up(root: str, data: str) -> str:
-    """Brings up the plugin's copy of lane's code where it is older than lane, and each hook lane:up
-    wrote in it to the current form wherever it is in another, laying the same lanes, kept in
-    hooks/lanes.json, every other entry and each step as it was; gives what was done, each lane left out, as lane does not lay it now, and each lane
-    the hooks laid before, for lane:up to put to the building AI, and last what lane:up reads, by
-    lane's data folder. Stops, bringing nothing up, where the folder holds no plugin's manifest."""
+def brought_up(root: str) -> str:
+    """Brings up the plugin's copy of lane's code where it is older than lane, and each hook the
+    layer wrote in it to the current form wherever it is in another, laying the same lanes, kept in
+    hooks/lanes.json, every other entry and each step as it was; gives what was done, each lane left
+    out, as lane does not lay it now, and each lane laid before, for the building AI to keep in its
+    proposal or leave out. Stops, bringing nothing up, where the folder holds no plugin's
+    manifest."""
     if not os.path.isfile(os.path.join(root, ".claude-plugin", "plugin.json")):
         raise Stop(
             f"lay.py: {root} holds no .claude-plugin/plugin.json, so it is no plugin's folder;"
             " name the folder of the plugin to lay lanes on."
         )
     name = plugin_name(root)
-    read = reads(root, data, name)
     hooks = entries.hooks_read(root)
     agents, left = entries.laid_before(root, name, hooks)
     was = placed.older(root)
@@ -153,7 +145,7 @@ def brought_up(root: str, data: str) -> str:
         )
         placed.code_put(root)
     # The hooks are written in the current form wherever they are in another, as a link to lane's
-    # code, in a plugin of the ccpm marketplace, is always lane's version while the hooks lane:up
+    # code, in a plugin of the ccpm marketplace, is always lane's version while the hooks the layer
     # wrote with an older one are not.
     before = copy.deepcopy(hooks)
     for agent, laid in agents.items():
@@ -173,23 +165,7 @@ def brought_up(root: str, data: str) -> str:
         for a, path in entries.values_before(root, name).items()
         if path
     ]
-    return "".join([*said, *left, *steps.said(root, agents), *values, read])
-
-
-def reads(root: str, data: str, name: str) -> str:
-    """What lane:up reads, by whole paths, as one JSON line of `reads`, the value its read_only lane
-    takes: the plugin's manifest, skills and agents, which its lanes rest on and nothing else;
-    lane's docs/lanes.md, the lanes it proposes; and the proposal, kept in lane's data folder by
-    the plugin's name, which a run before may have left, and Claude Code's Write overwrites only
-    once read."""
-    files = [
-        os.path.join(root, ".claude-plugin", "plugin.json"),
-        os.path.join(root, "skills"),
-        os.path.join(root, "agents"),
-        os.path.join(placed.LANE, "docs", "lanes.md"),
-        os.path.join(data, f"{name}.json"),
-    ]
-    return json.dumps({"reads": [os.path.abspath(f) for f in files]}) + "\n"
+    return "".join([*said, *left, *steps.said(root, agents), *values])
 
 
 # Run as the command, and not when the tests import it under the name lay.

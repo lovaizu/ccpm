@@ -11,13 +11,13 @@ import helpers
 from helpers import as_printed
 from test_guard import GuardTest
 
-# The command the lane takes, as lane:up's step names it, run as the AI writes it once Claude Code
+# The command the lane takes, as a step names it, run as the AI writes it once Claude Code
 # has put lane's folder in for `${CLAUDE_PLUGIN_ROOT}`.
 TAKES = ["lay.py print"]
 PRINT = "python3 /home/u/.claude/plugins/lane/scripts/lay.py print /home/u/data/notes.json"
-# What it printed, as the Bash tool gives it back, and a heading lane:up puts above it.
+# What it printed, as the Bash tool gives it back, and a heading the subagent puts above it.
 OUTPUT = "Lanes on step 3 of changelog-writer:\n  run: Do not run `git push`.  hook hands_off\n"
-HEADING = "lane:up proposes these lanes; send OK or what to change."
+HEADING = "These lanes are proposed; send OK or what to change."
 
 
 def printed(output=OUTPUT, command=PRINT, failed=False):
@@ -54,7 +54,7 @@ class TestDrift(AsPrintedTest):
                 # Given: the command run, having printed
                 # When: the subagent hands on, by SendMessage or the Agent tool, something else
                 # Then: it is a drift
-                self.assertTrue(self.drifts([printed()], "lane:up proposes hands_off.", tool))
+                self.assertTrue(self.drifts([printed()], "I propose hands_off.", tool))
 
     def test_the_print_changed_or_with_more_than_one_line_beside_it_drifts(self):
         for what, message in {
@@ -72,14 +72,14 @@ class TestDrift(AsPrintedTest):
         # Given: the command run, having printed text opening with a heading
         # When: the subagent hands on something else
         # Then: it is a drift
-        self.assertTrue(self.drifts([printed(f"# Lanes\n{OUTPUT}")], "lane:up proposes hands_off."))
+        self.assertTrue(self.drifts([printed(f"# Lanes\n{OUTPUT}")], "I propose hands_off."))
 
     def test_a_hand_on_after_one_stopped_drifts_still(self):
         # Given: the command run, then a hand-on of something else, stopped
-        calls = [printed(), send("lane:up proposes hands_off.")]
+        calls = [printed(), send("I propose hands_off.")]
         # When: the subagent hands on something else again
         # Then: it is a drift still
-        self.assertTrue(self.drifts(calls, "lane:up proposes hands_off on step 3."))
+        self.assertTrue(self.drifts(calls, "I propose hands_off on step 3."))
 
     def test_a_run_after_the_print_was_handed_on_is_due_again(self):
         # Given: the command run and its print handed on, then run again, printing anew
@@ -93,14 +93,14 @@ class TestDrift(AsPrintedTest):
         calls = [printed(), send(OUTPUT), printed()]
         # When: the subagent hands on something else
         # Then: it is a drift, as the hand-on before was of the run before
-        self.assertTrue(self.drifts(calls, "lane:up asks: is that all?"))
+        self.assertTrue(self.drifts(calls, "I ask: is that all?"))
 
     def test_a_reply_ending_the_turn_that_holds_no_print_leaves_it_due(self):
         # Given: the command run, having printed, then a reply ending the turn of something else
-        calls = [printed(), helpers.replied("lane:up asks: is that all?")]
+        calls = [printed(), helpers.replied("I ask: is that all?")]
         # When: the subagent, resumed, hands on something else
         # Then: it is a drift, as the print is due still
-        self.assertTrue(self.drifts(calls, "lane:up found: x"))
+        self.assertTrue(self.drifts(calls, "I found: x"))
 
     def test_any_other_call_before_the_print_is_handed_on_drifts(self):
         for tool, given in (
@@ -144,7 +144,7 @@ class TestLetThrough(AsPrintedTest):
                 self.assertFalse(self.drifts([printed()], message))
 
     def test_the_print_of_a_command_taken_as_the_step_writes_it_is_held(self):
-        # Given: the command taken as lane:up's step writes it, run with lane's folder put in
+        # Given: the command taken as the step writes it, run with lane's folder put in
         takes = ['python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" print']
         # When: the subagent hands on something else, or the print as it is
         # Then: the first drifts and the second does not
@@ -182,7 +182,7 @@ class TestLetThrough(AsPrintedTest):
         calls = [printed(), send(f"{HEADING}\n{OUTPUT}")]
         # When: the subagent hands on something else, such as a point to ask
         # Then: it is no drift
-        self.assertFalse(self.drifts(calls, "lane:up asks: is CHANGELOG.md the only file?"))
+        self.assertFalse(self.drifts(calls, "I ask: is CHANGELOG.md the only file?"))
 
     def test_with_nothing_printed_to_hand_on_any_hand_on_is_no_drift(self):
         for what, calls in {
@@ -200,21 +200,21 @@ class TestLetThrough(AsPrintedTest):
                 # Given: no print of the command left to hand on
                 # When: the subagent hands on something else
                 # Then: it is no drift
-                self.assertFalse(self.drifts(calls, "lane:up found: the plugin names no agents."))
+                self.assertFalse(self.drifts(calls, "I found: the plugin names no agents."))
 
     def test_a_failed_run_after_a_print_handed_on_leaves_nothing_due(self):
         # Given: the command's print handed on, then the command run again, failing
         failed = printed("Exit code 1\nlay.py: there is no file", failed=True)
         # When: the subagent hands on something else
         # Then: it is no drift
-        self.assertFalse(self.drifts([printed(), send(OUTPUT), failed], "lane:up found: x"))
+        self.assertFalse(self.drifts([printed(), send(OUTPUT), failed], "I found: x"))
 
     def test_any_hand_on_once_the_print_was_a_reply_ending_the_turn_is_no_drift(self):
         # Given: the command run and its print given as the reply that ended the turn
         calls = [printed(), helpers.replied(f"{HEADING}\n{OUTPUT}")]
         # When: the subagent, resumed, hands on something else
         # Then: it is no drift
-        self.assertFalse(self.drifts(calls, "lane:up asks: is CHANGELOG.md the only file?"))
+        self.assertFalse(self.drifts(calls, "I ask: is CHANGELOG.md the only file?"))
 
     def test_the_print_of_any_command_taken_may_be_handed_on(self):
         # Given: a lane taking two commands, the second run, having printed
@@ -303,7 +303,7 @@ class TestGuard(GuardTest):
         # When: it sends something else
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
         expected = ("told", "notes: Hand on `lay.py print` as it is.")
-        self.assertEqual(self.sent("lane:up proposes hands_off."), expected)
+        self.assertEqual(self.sent("I propose hands_off."), expected)
 
     def test_the_print_handed_on_under_a_heading_goes_on(self):
         # Given: changelog-writer's record of the command run, having printed

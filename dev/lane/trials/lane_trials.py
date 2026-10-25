@@ -1,12 +1,15 @@
 """What lane's trials share: lane's code and the plugins they lay lanes on copied as installing
-copies them, a project made a git repository, and Claude Code run on them, what it printed kept."""
+copies them, the lanes laid on a plugin by `lay.py write`, a project made a git repository, and
+Claude Code run on them, what it printed kept."""
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
 import time
+from typing import Any
 
 import trying
 
@@ -20,6 +23,33 @@ def copied(source: str, folder: str, name: str) -> str:
     place = os.path.join(folder, name)
     shutil.copytree(source, place, ignore=shutil.ignore_patterns("__pycache__"))
     return place
+
+
+def laid(folder: str, source: str, name: str, lanes: dict[str, dict[int, list[Any]]]) -> str:
+    """Copies lane and the plugin at source into the folder, the plugin as name, and lays the lanes
+    on it, each subagent's steps by number, each lane with what it takes, by the copied lane's
+    `lay.py write` from a proposal written in the folder, as the building AI lays them; gives the
+    plugin's path."""
+    copy = copied(os.path.join(ROOT, "lane"), folder, "lane")
+    plugin = copied(source, folder, name)
+    proposal = {
+        "plugin": plugin,
+        "subagents": [
+            {
+                "name": agent,
+                "steps": [
+                    {"step": n, "lanes": [{"lane": lane, "takes": takes} for lane, takes in on]}
+                    for n, on in steps.items()
+                ],
+            }
+            for agent, steps in lanes.items()
+        ],
+    }
+    path = os.path.join(folder, "proposal.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(proposal, f)
+    subprocess.run(["python3", os.path.join(copy, "scripts", "lay.py"), "write", path], check=True)
+    return plugin
 
 
 def made(place: str, history: list[tuple[str, dict[str, str]]]) -> None:

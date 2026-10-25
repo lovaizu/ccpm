@@ -1,18 +1,7 @@
-"""The proposal lane:up writes for the layer, read and checked to be as lane:up's steps give it, a
-JSON file lane:up keeps in lane's data folder, `${CLAUDE_PLUGIN_DATA}/<plugin>.json`:
-
-    {"plugin": "<the plugin's folder>",
-     "subagents": [{"name": "<subagent>",
-                    "adapter": "hooks/adapters/values-<name>.py",
-                    "steps": [{"step": <number>,
-                               "lanes": [{"lane": "<lane>", "takes": ["<thing>", ...],
-                                          "adapter": "hooks/adapters/<port>-<name>.py"}]}]}]}
-
-each adapter named by the path it has in the plugin, where none is needed none named. An adapter is
-part of the proposal: kept beside it in lane's data folder, `<plugin>/adapters/<port>-<name>.py`,
-with the cases it must give, `<port>-<name>.json`, a list of `{"given": <the port's JSON in>,
-"gives": <the port's JSON out>}`, or, laid before, in the plugin's hooks/adapters/; it is run on
-each of its cases before the proposal is printed or written."""
+"""The proposal the building AI writes for the layer, a JSON file at a path it gives lay.py, read and
+checked to be in the shape lane's docs/lanes.md gives, each adapter it names found beside it, in
+`<plugin>/adapters/` of the folder it is in, or laid before in the plugin's hooks/adapters/, and run
+on each of its cases before the proposal is printed or written."""
 
 from __future__ import annotations
 
@@ -23,12 +12,15 @@ from typing import Any
 
 import hooks_file
 import lanes
+import placed
 import ports
 import schema
 import step
 
-# What the proposal is told to be, when it is not.
-AGAIN = "write the proposal again as lane:up's steps give it"
+# What the proposal is told to be, when it is not: in the shape lane's docs/lanes.md gives, named by
+# its whole path, as the building AI may run lay.py from any folder.
+LANES_MD = os.path.join(placed.LANE, "docs", "lanes.md")
+AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
 
 
 class Stop(Exception):
@@ -41,7 +33,7 @@ def wrong(what: str) -> Stop:
 
 
 def proposal(path: str) -> dict[str, Any]:
-    """The proposal at the path, checked to be as lane:up writes it, each subagent given once, with
+    """The proposal at the path, checked to be in its shape, each subagent given once, with
     the plugin's name, each subagent with its file and its lines, each step with where it is among
     them, and each adapter it names found and checked on its cases, as `adapter_found` gives it."""
     try:

@@ -1,6 +1,6 @@
-"""The layer as lane:up runs it: the plugin written checked by Claude Code and the proposal removed;
-an older copy of lane's code brought up with the hooks lane:up wrote before; any other arguments
-answered with how to run it."""
+"""The layer as the building AI runs it: the plugin written checked by Claude Code and the proposal
+removed; an older copy of lane's code brought up with the hooks the layer wrote before; any other
+arguments answered with how to run it."""
 
 from __future__ import annotations
 
@@ -106,9 +106,9 @@ class TestWriteLanes(LayTest):
 
 
 class TestUp(LayTest):
-    """`lay.py up <plugin> <data folder>`: an older copy of lane's code brought up, with the hooks
-    lane:up wrote in the current form and the same lanes; each lane laid before said, for lane:up to
-    put to the building AI; and last what lane:up reads, as one JSON line."""
+    """`lay.py up <plugin>`: an older copy of lane's code brought up, with the hooks the layer wrote
+    in the current form and the same lanes; and each lane laid before said, for the building AI to
+    keep in its proposal or leave out."""
 
     # The hook's command for hands_off as an older version of lane wrote it, with no Python check.
     OLDER = (
@@ -123,7 +123,7 @@ class TestUp(LayTest):
 
     def setUp(self) -> None:
         super().setUp()
-        # Step 3 as lane:up wrote it, and lane's code as a copy of the version 0.1.0, with lane at
+        # Step 3 as the layer wrote it, and lane's code as a copy of the version 0.1.0, with lane at
         # 0.10.0, so a comparison of the versions as text would take the copy for the newer.
         self.write(self.agent_file, helpers.LAID)
         self.code = os.path.join(self.plugin, "hooks", "lane")
@@ -132,16 +132,6 @@ class TestUp(LayTest):
         current = mock.patch.object(placed, "lane_version", return_value="0.10.0")
         current.start()
         self.addCleanup(current.stop)
-        # What lane:up reads, as `up` prints it last: the plugin's manifest, skills and agents,
-        # lane's docs/lanes.md, and the proposal, kept in the data folder by the plugin's name.
-        reads = [
-            os.path.join(self.plugin, ".claude-plugin", "plugin.json"),
-            os.path.join(self.plugin, "skills"),
-            os.path.join(self.plugin, "agents"),
-            os.path.join(helpers.LANE, "docs", "lanes.md"),
-            self.proposal_file,
-        ]
-        self.reads = json.dumps({"reads": reads}) + "\n"
 
     def hooks_of(self, *entries, event="PreToolUse"):
         """Writes hooks.json holding the entries of the event, each a command or an entry."""
@@ -154,8 +144,8 @@ class TestUp(LayTest):
         self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": {event: given}})
 
     def up(self) -> tuple:
-        """What `lay.py up` on the plugin and lane's data folder exits with and prints."""
-        return self.lay("up", self.plugin, os.path.dirname(self.proposal_file))
+        """What `lay.py up` on the plugin exits with and prints."""
+        return self.lay("up", self.plugin)
 
     def test_an_older_copy_and_its_hooks_are_brought_up_with_the_same_lanes(self):
         # Given: the copy of 0.1.0, its hook in the older form between two entries of the building
@@ -176,8 +166,7 @@ class TestUp(LayTest):
             said,
             "Brought lane's code in hooks/lane/ up from 0.1.0 to 0.10.0.\n"
             "Wrote the hook of changelog-writer into hooks/hooks.json with the lanes it held.\n"
-            + self.LAID
-            + self.reads,
+            + self.LAID,
         )
 
     def test_hooks_of_both_events_are_brought_up_each_lane_once(self):
@@ -256,7 +245,7 @@ class TestUp(LayTest):
                 self.assertEqual(code, 0)
                 self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], **KEPT}})
                 wrote = "Wrote the hook of changelog-writer into hooks/hooks.json with the lanes"
-                self.assertEqual(said, f"{wrote} it held.\n" + self.LAID + self.reads)
+                self.assertEqual(said, f"{wrote} it held.\n" + self.LAID)
 
     def test_hooks_in_the_current_form_and_code_no_older_copy_are_left_as_they_are(self):
         for what, made, own in self.code_kinds():
@@ -273,7 +262,7 @@ class TestUp(LayTest):
                 # Then: nothing is written, and it says so, and the lane laid before
                 self.assertEqual(code, 0)
                 no_copy = "hooks/lane/ holds no older copy of lane's code.\n"
-                self.assertEqual(said, no_copy + self.LAID + self.reads)
+                self.assertEqual(said, no_copy + self.LAID)
                 self.assertEqual(self.hooks(), written)
 
     def test_a_lane_this_version_does_not_lay_is_left_out_and_said(self):
@@ -287,7 +276,7 @@ class TestUp(LayTest):
         # When: it is brought up
         code, said = self.up()
         # Then: the hooks lay the lanes this version lays, the other subagent's hook taken out, and
-        # each lane left out is said, for lane:up to put to the building AI
+        # each lane left out is said, for the building AI to weigh
         self.assertEqual(code, 0)
         self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], **KEPT}})
         for agent, word in (
@@ -298,7 +287,7 @@ class TestUp(LayTest):
             with self.subTest(word=word):
                 self.assertIn(
                     f"Left out `{word}` from the hook of {agent}, as lane 0.10.0 lays no such lane;"
-                    " ask the building AI whether to lay it again or leave it out.\n",
+                    " propose a lane of docs/lanes.md that keeps its step, or leave it out.\n",
                     said,
                 )
 
@@ -341,17 +330,9 @@ class TestUp(LayTest):
         # Given: a plugin with no hooks.json and no copy of lane's code
         shutil.rmtree(self.code)
         # When: it is brought up
-        # Then: it says there is no older copy, and what lane:up reads
+        # Then: it says there is no older copy, and nothing more
         no_copy = "hooks/lane/ holds no older copy of lane's code.\n"
-        self.assertEqual(self.up(), (0, no_copy + self.reads))
-
-    def test_what_lane_up_reads_is_given_by_whole_paths(self):
-        # Given: the plugin's folder and lane's data folder named from the folder lay.py runs in
-        # When: it is brought up
-        code, said = self.lay("up", "notes", "data")
-        # Then: what lane:up reads is given by whole paths, as the last line
-        self.assertEqual(code, 0)
-        self.assertTrue(said.endswith(self.reads))
+        self.assertEqual(self.up(), (0, no_copy))
 
     def test_a_folder_with_no_manifest_stops_with_nothing_brought_up(self):
         # Given: the older copy and its hook, in a folder with no .claude-plugin/plugin.json
@@ -442,8 +423,7 @@ class TestMain(LayTest):
             [],
             ["print"],
             ["up"],
-            ["up", self.plugin],
-            ["up", self.plugin, "data", "x"],
+            ["up", self.plugin, "data"],
             ["lay", self.proposal_file],
             ["print", "a", "b"],
         ):

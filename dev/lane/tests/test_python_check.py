@@ -25,7 +25,7 @@ $1"
 class TestPythonCheck(helpers.PluginTest):
     def setUp(self) -> None:
         super().setUp()
-        # The plugin with lane's code linked in, as in the ccpm marketplace, and step 3 as lane:up
+        # The plugin with lane's code linked in, as in the ccpm marketplace, and step 3 as the layer
         # writes it.
         os.makedirs(os.path.join(self.plugin, "hooks"))
         os.symlink(helpers.CODE, os.path.join(self.plugin, "hooks", "lane"))

@@ -8,14 +8,14 @@ import helpers
 from helpers import wait_for
 from test_guard import GuardTest
 
-# The approval and the command held back, as lane:up's step 9 takes them, and a run of the command
+# The approval and the command held back, as a step takes them, and a run of the command
 # as the AI writes it.
 TAKES = ["OK", "lay.py write"]
 WRITE = "python3 /home/u/.claude/plugins/lane/scripts/lay.py write /home/u/data/notes.json"
 # The subagent asking its caller, by SendMessage.
-ASK = ("SendMessage", {"to": "main", "message": "lane:up proposes: ..."}, '{"success":true}')
-# The subagent asking by a reply that ends its turn, as lane:up asks.
-REPLY = helpers.replied("lane:up proposes these lanes; send OK or what to change.")
+ASK = ("SendMessage", {"to": "main", "message": "I propose: ..."}, '{"success":true}')
+# The subagent asking by a reply that ends its turn.
+REPLY = helpers.replied("These lanes are proposed; send OK or what to change.")
 
 
 class WaitForTest(helpers.PluginTest):
@@ -41,7 +41,7 @@ class TestDrift(WaitForTest):
                 self.assertTrue(self.drifts(calls))
 
     def test_a_command_held_back_as_the_step_writes_it_is_held(self):
-        # Given: the command held back as lane:up's step writes it, with no approval since asking
+        # Given: the command held back as the step writes it, with no approval since asking
         takes = ["OK", 'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/lay.py" write']
         # When: the subagent runs it with lane's folder put in
         # Then: it is a drift

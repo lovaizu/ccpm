@@ -178,7 +178,13 @@ class TestForm(InFormTest):
         # Then: it drifts, saying the form cannot be read and to stop for the plugin to be fixed
         named = os.path.join(self.plugin, "forms", "entry.json")
         self.assertTrue(told.startswith(f"the form `{named}` cannot be read: "), told)
-        self.assertIn("Stop here and reply that the form must be fixed", told)
+        self.assertTrue(
+            told.endswith(
+                ". Stop here and reply that the plugin's maker must fix the form and lay its lanes"
+                " again with `lay.py write`."
+            ),
+            told,
+        )
 
 
 class TestGuard(GuardTest):
@@ -196,7 +202,7 @@ class TestGuard(GuardTest):
         return self.guard(json.dumps(event))
 
     def test_a_step_still_saying_the_sentence_as_written_holds(self):
-        # Given: in_form on step 3, the step saying ${CLAUDE_PLUGIN_ROOT} as lane:up writes it
+        # Given: in_form on step 3, the step saying ${CLAUDE_PLUGIN_ROOT} as `lay.py write` writes it
         # When: changelog-writer writes entry.json in its form
         # Then: the step is read as holding the sentence, not as changed
         self.assertNotIn("no longer says", self.written('{"version": "1.0"}')[1])

@@ -1,5 +1,5 @@
 """as_printed: the subagent hands on what a command its step names printed, word for word, as the
-next thing it does, such as lane:up giving the building AI the proposal `lay.py print` printed. A
+next thing it does, such as turn:up handing on the questions `turn.py questions` printed. A
 hand-on is an Agent call's prompt, a SendMessage's message or the subagent's last reply, so the lane
 is held both on a tool call and as the subagent is about to end. It is held from the calls the
 subagent made before and the replies that ended its turn: once the command has run and printed,

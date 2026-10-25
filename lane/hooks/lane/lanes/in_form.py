@@ -66,7 +66,7 @@ def drifts(call: Call, takes: list[str], root: str) -> str:
         asked = form(root, named)
     except ValueError as why:
         return (
-            f"the form `{step.expanded(named, root)}` {why}. Stop here and reply that the form"
-            " must be fixed in the plugin, and lane:up run again on it."
+            f"the form `{step.expanded(named, root)}` {why}. Stop here and reply that the plugin's"
+            " maker must fix the form and lay its lanes again with `lay.py write`."
         )
     return forms.held(asked, output, call.text)

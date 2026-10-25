@@ -15,16 +15,14 @@ from __future__ import annotations
 
 import json
 import os
-import subprocess
 import sys
-from typing import Any
 
-from lane_trials import HERE, ROOT, copied, made, run, shown
+from lane_trials import HERE, laid, made, run, shown
 
 MEMO = os.path.join(HERE, "memo")
-# memo's lanes, each subagent's steps by number, as lane:up would propose them: what the run gives
-# is taken from the JSON its subagent starts from, writer's from given.py, reviewer's from its
-# prompt.
+# memo's lanes, each subagent's steps by number, as the building AI would propose them: what the
+# run gives is taken from the JSON its subagent starts from, writer's from given.py, reviewer's from
+# its prompt.
 FORMS = "${CLAUDE_PLUGIN_ROOT}/forms/"
 SCRIPTS = "${CLAUDE_PLUGIN_ROOT}/scripts/"
 MEMO_LANES = {
@@ -158,32 +156,10 @@ RUNS = {
 USAGE = f"usage: python3 dev/lane/trials/memo_trial.py <{'|'.join(RUNS)}> <new folder>"
 
 
-def proposal(plugin: str) -> dict[str, Any]:
-    """The proposal of MEMO_LANES on memo at plugin, in the shape lay.py reads."""
-    return {
-        "plugin": plugin,
-        "subagents": [
-            {
-                "name": name,
-                "steps": [
-                    {"step": n, "lanes": [{"lane": lane, "takes": takes} for lane, takes in laid]}
-                    for n, laid in steps.items()
-                ],
-            }
-            for name, steps in MEMO_LANES.items()
-        ],
-    }
-
-
 def memo(folder: str, case: str) -> None:
     """Lays MEMO_LANES on a copy of memo in the folder by lay.py write, makes the project, and runs
     the case on it; then the project's state and history, and what the run wrote."""
-    lane = copied(os.path.join(ROOT, "lane"), folder, "lane")
-    plugin = copied(MEMO, folder, "memo")
-    laid = os.path.join(folder, "proposal.json")
-    with open(laid, "w", encoding="utf-8") as f:
-        json.dump(proposal(plugin), f)
-    subprocess.run(["python3", os.path.join(lane, "scripts", "lay.py"), "write", laid], check=True)
+    plugin = laid(folder, MEMO, "memo", MEMO_LANES)
     agent, before, prompt = RUNS[case]
     files = {**PROJECT, **({"memo.md": SUMMARY} if before else {})}
     place = os.path.join(folder, "project")

@@ -1,4 +1,4 @@
-"""The entries lane:up writes in a plugin's hooks/hooks.json, one for each subagent and each event
+"""The entries the layer writes in a plugin's hooks/hooks.json, one for each subagent and each event
 its lanes are held on, and each event a call is kept on, every other entry left as it was; and the
 lanes laid, written into its hooks/lanes.json, and read back, from there or, where an older lane
 laid them, from the words of its hooks' commands."""
@@ -53,9 +53,9 @@ def hooks_read(root: str) -> dict[str, Any]:
 
 
 def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> None:
-    """Puts the subagent's entry of each event its lanes are held on into the hooks: where lane:up
+    """Puts the subagent's entry of each event its lanes are held on into the hooks: where the layer
     wrote one for it before, in the place of the first, after every other entry otherwise; and
-    takes out those lane:up wrote for it before on an event none of its lanes is held on now."""
+    takes out those the layer wrote for it before on an event none of its lanes is held on now."""
     events = hooks.setdefault("hooks", {})
     for event in hooks_file.EVENTS:
         entries = events.get(event, [])
@@ -74,7 +74,7 @@ def hooks_with(hooks: dict[str, Any], plugin: str, agent: dict[str, Any]) -> Non
 
 
 def gone_out(hooks: dict[str, Any], plugin: str, root: str) -> list[str]:
-    """Takes out of the hooks the entries lane:up wrote for a subagent the plugin's agents/ no
+    """Takes out of the hooks the entries the layer wrote for a subagent the plugin's agents/ no
     longer has, as there is no subagent left for its lanes to act in; gives each subagent taken
     out, said."""
     ours = f"{plugin}:"
@@ -144,9 +144,9 @@ def laid_before(
     root: str, plugin: str, hooks: dict[str, Any]
 ) -> tuple[dict[str, list[dict[str, Any]]], list[str]]:
     """Each subagent the plugin at root lays lanes in, as `<plugin>:<subagent>`, with its lanes as
-    steps of a proposal, each step and each lane once: those its hooks/lanes.json holds, and those an older lane
-    gave in the words of its hooks' commands, though held on both events; and each lane laid so
-    that lane does not lay now, as said for lane:up to put to the building AI. Stops where
+    steps of a proposal, each step and each lane once: those its hooks/lanes.json holds, and those
+    an older lane gave in the words of its hooks' commands, though held on both events; and each
+    lane laid so that lane does not lay now, as said for the building AI to weigh. Stops where
     hooks/lanes.json is there and cannot be read, as the lanes approved would be lost."""
     agents: dict[str, list[dict[str, Any]]] = {}
     if os.path.exists(os.path.join(root, "hooks", "lanes.json")):
@@ -169,8 +169,8 @@ def laid_before(
                         version = placed.lane_version()
                         left.append(
                             f"Left out `{w}` from the hook of {name}, as lane {version} lays no"
-                            " such lane; ask the building AI whether to lay it again or leave it"
-                            " out.\n"
+                            " such lane; propose a lane of docs/lanes.md that keeps its step, or"
+                            " leave it out.\n"
                         )
                         continue
                     number, kind, takes = lane

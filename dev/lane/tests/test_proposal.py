@@ -1,16 +1,16 @@
-"""The proposal the layer takes: read and checked to be as lane:up writes it, each stop naming what
-is wrong before anything is written, a take given for each run and in_form's form among what is
-checked."""
+"""The proposal the layer takes: read and checked to be in the shape docs/lanes.md gives, each stop
+naming what is wrong before anything is written, a take given for each run and in_form's form among
+what is checked."""
 
 import os
 import unittest
 
 import helpers
-from laying import LANES, PUSH, LayTest
+from laying import AGAIN, LANES, PUSH, LayTest
 
 
 class TestProposal(LayTest):
-    def test_a_proposal_not_as_lane_up_writes_it_stops_naming_what_is_wrong(self):
+    def test_a_proposal_not_in_its_shape_stops_naming_what_is_wrong(self):
         plugin = self.proposal()
         wrong = {
             "no object": ([], "plugin"),
@@ -81,7 +81,7 @@ class TestProposal(LayTest):
                     # written
                     self.assertEqual(code, 1)
                     self.assertIn(named, said)
-                    self.assertIn("write the proposal again", said)
+                    self.assertTrue(said.endswith(f"; {AGAIN}.\n"), said)
                 self.assertEqual(self.read(self.agent_file), helpers.STEPS)
 
     def test_each_subagent_and_each_step_given_once_is_taken(self):
@@ -117,7 +117,7 @@ class TestProposal(LayTest):
                 # Then: it exits 1 saying so and to write it again
                 self.assertEqual(code, 1)
                 self.assertIn(named, said)
-                self.assertIn("write the proposal again", said)
+                self.assertTrue(said.endswith(f"; {AGAIN}.\n"), said)
 
     def test_a_plugin_whose_name_cannot_head_a_hook_stops(self):
         for text in ('{"name": ""}', '{"name": "no\\"tes"}', "{}", "[]"):

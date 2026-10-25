@@ -1,6 +1,6 @@
 """The guard: in the subagent its command names, and there alone, a call that drifts from a lane is
 stopped and the subagent told `<plugin>: <sentence>`; a lane whose step no longer says its sentence
-stops the call and says to have lane:up run again."""
+stops the call and says to have the plugin's lanes laid again with `lay.py write`."""
 
 from __future__ import annotations
 
@@ -24,17 +24,22 @@ HANDS_OFF = (3, "hands_off", ["git commit", "git push"])
 BEGIN = "First run `scripts/log.py`."
 # The changelog written by the Write tool, as the record holds it.
 CHANGE = helpers.writing("CHANGELOG.md")
+# Who must fix what the plugin gives its lanes, laying them again, as the subagent is told to reply.
+LAY_AGAIN = (
+    "Stop here and reply that the maker of notes must lay its lanes again with `lay.py write`, so"
+    " they match its steps."
+)
 # What the subagent and the user are told where step 3 no longer says the lane's sentence.
 GONE = (
     "notes: lane cannot check hands_off on step 3 of changelog-writer: step 3 no longer says: Do"
-    " not run `git commit` or `git push`. Stop here and reply that lane:up must be run again on"
-    " notes, so its lanes match its steps."
+    " not run `git commit` or `git push`. Stop here and reply that the maker of notes must lay its"
+    " lanes again with `lay.py write`, so they match its steps."
 )
 
 
 class GuardTest(helpers.PluginTest):
     """A test of the guard on the lanes LAID, each its step, the lane and what it takes, laid on
-    changelog-writer as lane:up lays them."""
+    changelog-writer as `lay.py write` lays them."""
 
     LAID: tuple = (HANDS_OFF,)
 
@@ -129,7 +134,7 @@ class TestStop(GuardTest):
         # Given: step 3 changed by the building AI since the lane was laid
         self.write(self.agent_file, helpers.STEPS)
         # When: changelog-writer makes a call the hook watches, even one the lane allows
-        # Then: it is an error: the call is stopped, saying to have lane:up run again, and the user
+        # Then: it is an error: the call is stopped, saying to have the lanes laid again, and the user
         # told the same
         self.assertEqual(self.guard(self.stream("git status")), ("error", GONE))
 
@@ -259,9 +264,9 @@ class TestEnd(GuardTest):
         self.write(self.agent_file, helpers.STEPS)
         # When: changelog-writer is about to end
         whom, said = self.ended([CHANGE])
-        # Then: it is an error, telling it to reply that lane:up must be run again
+        # Then: it is an error, telling it to reply that the lanes must be laid again
         self.assertEqual(whom, "error")
-        self.assertIn("lane:up must be run again on notes", said)
+        self.assertTrue(said.endswith(LAY_AGAIN), said)
 
     def test_a_step_no_longer_saying_the_sentence_answered_in_words_alone_ends(self):
         # Given: step 3 changed since the lane was laid, told so, and answered with words alone
@@ -477,7 +482,13 @@ class TestAdapters(GuardTest):
                 )
                 self.assertTrue(said.startswith(expected), said)
                 self.assertIn(named, said)
-                self.assertIn("the maker of notes must fix the adapter", said)
+                self.assertTrue(
+                    said.endswith(
+                        "Stop here and reply that the maker of notes must fix the adapter and lay"
+                        " its lanes again with `lay.py write`."
+                    ),
+                    said,
+                )
 
     def test_an_adapter_answering_after_the_hooks_time_is_an_error(self):
         # Given: every_item read by an adapter that takes longer than the hook leaves it
@@ -498,9 +509,10 @@ class TestAdapters(GuardTest):
                 self.lay(given)
                 # When: changelog-writer makes a call
                 whom, said = self.guard(self.stream("git status"))
-                # Then: it is an error, saying so and to have lane:up run again
+                # Then: it is an error, saying so and to have the lanes laid again
                 self.assertEqual(whom, "error")
                 self.assertIn("names an adapter for hands_off on step 1 of changelog-writer", said)
+                self.assertTrue(said.endswith(LAY_AGAIN), said)
 
 
 class TestOtherAgents(GuardTest):
@@ -518,16 +530,22 @@ class TestCommandLine(GuardTest):
     def test_a_command_line_not_naming_the_subagent_alone_is_an_error(self):
         for words in ([], ["changelog-writer"], [helpers.AGENT, "3:hands_off:git push"]):
             with self.subTest(words=words):
-                # Given: a hook's command edited out of the form lane:up writes, or as an older
-                # lane wrote it
+                # Given: a hook's command edited out of the form `lay.py write` writes, or as an
+                # older lane wrote it
                 # When: the guard is run by it
                 whom, said = self.guard(self.stream("git commit"), words)
-                # Then: it is an error, naming the words, and to have lane:up write the hooks again
+                # Then: it is an error, naming the words, and to have the lanes laid again, so the
+                # hooks are written anew
                 self.assertEqual(whom, "error")
-                self.assertIn(f"gives `{' '.join(words)}`", said)
-                self.assertTrue(said.startswith("lane: ") and "lane:up must be run again" in said)
+                expected = (
+                    f"lane: lane cannot check the lanes of this hook: its command gives"
+                    f" `{' '.join(words)}`, not the subagent alone as <plugin>:<name>, as"
+                    " `lay.py write` writes it. Stop here and reply that the plugin's maker must"
+                    " lay its lanes again with `lay.py write`, to write its hooks anew."
+                )
+                self.assertEqual(said, expected)
 
-    def test_lanes_json_not_as_lane_up_writes_it_is_an_error(self):
+    def test_lanes_json_not_as_lay_py_write_writes_it_is_an_error(self):
         path = os.path.join(self.plugin, "hooks", "lanes.json")
         for text, named in (("{", "holds no JSON"), ('{"subagents": []}', "lays no lanes in")):
             with self.subTest(text=text):
@@ -536,14 +554,14 @@ class TestCommandLine(GuardTest):
                 # When: the guard is run on a call of the subagent
                 whom, said = self.guard(self.stream("git commit"))
                 # Then: it is an error, headed by the plugin, saying what is wrong and to have
-                # lane:up run again
+                # the lanes laid again
                 self.assertEqual(whom, "error")
                 expected = (
                     "notes: lane cannot check the lanes of changelog-writer: hooks/lanes.json"
                 )
                 self.assertTrue(said.startswith(expected), said)
                 self.assertIn(named, said)
-                self.assertIn("lane:up must be run again on notes", said)
+                self.assertTrue(said.endswith(LAY_AGAIN), said)
 
     def test_lanes_json_is_read_only_on_an_event_of_its_subagent(self):
         # Given: hooks/lanes.json holding no JSON

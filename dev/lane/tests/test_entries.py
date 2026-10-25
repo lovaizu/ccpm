@@ -48,8 +48,8 @@ class TestWriteHooks(LayTest):
         self.assertEqual(self.hooks(), hooks)
 
     def test_the_subagents_entry_written_before_is_replaced_in_its_place(self):
-        # Given: hooks.json with two entries lane:up wrote for the subagent among others, one of
-        # them written by lane:up for another subagent of the plugin whose name begins with this
+        # Given: hooks.json with two entries the layer wrote for the subagent among others, one of
+        # them written by the layer for another subagent of the plugin whose name begins with this
         # one's
         second = helpers.STEPS.replace("name: changelog-writer", "name: changelog-writer-2")
         self.write(os.path.join(self.plugin, "agents", "writer-2.md"), second)
@@ -66,8 +66,8 @@ class TestWriteHooks(LayTest):
         self.assertEqual(self.hooks()["hooks"]["PreToolUse"], [own, ENTRY, other])
 
     def test_the_entries_of_a_subagent_the_plugin_no_longer_has_are_taken_out(self):
-        # Given: hooks.json with an entry of the building AI's own, one lane:up wrote for a
-        # subagent of another plugin, and the entries lane:up wrote for a subagent agents/ no
+        # Given: hooks.json with an entry of the building AI's own, one the layer wrote for a
+        # subagent of another plugin, and the entries the layer wrote for a subagent agents/ no
         # longer has, on both events
         own = {"matcher": "Write", "hooks": [{"type": "command", "command": "own.sh"}]}
         other = json.loads(json.dumps(ENTRY).replace("notes:changelog-writer", "memo:summarizer"))
@@ -166,7 +166,7 @@ class TestWriteEndHooks(LayTest):
         self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), hooks)
         # When: a proposal of hands_off alone is written
         self.lay("write", self.proposal_file)
-        # Then: the SubagentStop entry lane:up wrote is gone, the building AI's kept
+        # Then: the SubagentStop entry the layer wrote is gone, the building AI's kept
         self.assertEqual(
             self.hooks(), {"hooks": {"PreToolUse": [ENTRY], "SubagentStop": [own], **KEPT}}
         )

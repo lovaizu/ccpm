@@ -1,6 +1,6 @@
 """How lanes are laid in a plugin, the layer writing it and the guard and the layer reading it: the
-command of each entry lane:up writes in the plugin's hooks/hooks.json, and that file read; and the
-lanes laid, kept in its hooks/lanes.json in the shape of the proposal, read.
+command of each entry `lay.py write` writes in the plugin's hooks/hooks.json, and that file read;
+and the lanes laid, kept in its hooks/lanes.json in the shape of the proposal, read.
 
 A command first checks that lane's code can run, then runs its event's script in lane's code with
 the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's agent_type; the guard
@@ -142,11 +142,6 @@ def shaped(entry: Any) -> bool:
     """Whether an entry of hooks.json is an object whose hooks are a list of objects."""
     each = entry.get("hooks", []) if isinstance(entry, dict) else None
     return isinstance(each, list) and all(isinstance(h, dict) for h in each)
-
-
-def commands(hooks: dict[str, Any], event: str) -> list[Any]:
-    """The command of each hook of the event's entries, as the hooks read hold it."""
-    return [h.get("command") for e in hooks["hooks"].get(event, []) for h in e.get("hooks", [])]
 
 
 def laid(root: str) -> dict[str, Any]:

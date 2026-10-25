@@ -1,6 +1,6 @@
-"""The hook commands lane:up writes in a plugin's hooks/hooks.json and the file read, and the lanes
-laid read from its hooks/lanes.json: the words a command gives its event's script, the lanes laid in
-a subagent, and what each lane of a kind takes in it."""
+"""The hook commands `lay.py write` writes in a plugin's hooks/hooks.json and the file read, and the
+lanes laid read from its hooks/lanes.json: the words a command gives its event's script, the lanes
+laid in a subagent, and what each lane of a kind takes in it."""
 
 from __future__ import annotations
 
@@ -75,7 +75,7 @@ class TestLaidIn(LanesTest):
         )
         self.assertEqual(hooks_file.subagent(self.plugin, "changelog-writer"), agent)
 
-    def test_lanes_json_not_as_lane_up_writes_it_stops_saying_what_is_wrong(self):
+    def test_lanes_json_not_as_lay_py_write_writes_it_stops_saying_what_is_wrong(self):
         lane = {"lane": "hands_off", "takes": ["git"]}
 
         def laying(*lanes: object, name: str = "changelog-writer") -> str:
@@ -178,7 +178,7 @@ class TestWords(unittest.TestCase):
             (self.OLDER, ["notes:changelog-writer", "3:hands_off:git commit,git push"]),
         ):
             with self.subTest(command=command):
-                # Given: a hook's command as lane:up writes it, or as an older lane wrote it
+                # Given: a hook's command as `lay.py write` writes it, or as an older lane wrote it
                 # When: its words for PreToolUse are read
                 # Then: they are the subagent, then each lane an older lane gave
                 self.assertEqual(hooks_file.words(command, "PreToolUse"), words)

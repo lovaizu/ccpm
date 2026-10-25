@@ -1,6 +1,7 @@
 """What the tests of the layer stand on: the plugin `notes` with a proposal of lanes on step 3 of
-changelog-writer, kept where lane:up keeps it, the hook lane:up writes for it and the lanes it
-writes into hooks/lanes.json, and a stand-in for Claude Code's command."""
+changelog-writer, the hook `lay.py write` writes for it and the lanes it writes into
+hooks/lanes.json, what the layer says of a proposal not in its shape, and a stand-in for Claude
+Code's command."""
 
 import contextlib
 import io
@@ -12,7 +13,7 @@ from helpers import lay
 
 # hands_off of the README's proposal, on step 3 of changelog-writer.
 LANES = [{"lane": "hands_off", "takes": ["git commit", "git push"]}]
-# The hook's command lane:up writes for it, naming the subagent alone.
+# The hook's command `lay.py write` writes for it, naming the subagent alone.
 COMMAND = (
     'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
     ' || { e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done; case "$e" in'
@@ -23,7 +24,7 @@ COMMAND = (
     ' exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
 )
 ENTRY = {"matcher": "Bash", "hooks": [{"type": "command", "timeout": 10, "command": COMMAND}]}
-# hooks/lanes.json laying hands_off on step 3, as lane:up writes it for the proposal.
+# hooks/lanes.json laying hands_off on step 3, as `lay.py write` writes it for the proposal.
 LAID = {"subagents": [{"name": "changelog-writer", "steps": [{"step": 3, "lanes": LANES}]}]}
 # test_after on step 3, held as the subagent is about to end, and its entry of SubagentStop, which
 # matches the subagent, tells the user where Python is missing, and runs that event's entry.
@@ -68,6 +69,10 @@ PRINTED = """Lanes on step 3 of changelog-writer, each hook acting in changelog-
 # hands_off on step 3 taking `git push` alone, and its sentence.
 PUSH = [{"lane": "hands_off", "takes": ["git push"]}]
 PUSHED = "Do not run `git push`."
+# What a stop on a proposal not in its shape tells to do, naming lane's docs/lanes.md by its whole
+# path, which gives the shape.
+LANES_MD = os.path.join(helpers.LANE, "docs", "lanes.md")
+AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
 # A stand-in for Claude Code's command, which keeps what it was asked and exits as the test sets.
 CLAUDE = """#!/bin/sh
 echo "$@" > "$(dirname "$0")/asked"
@@ -99,7 +104,7 @@ class LayTest(helpers.PluginTest):
         }
 
     def propose(self, proposal) -> None:
-        """Writes the proposal where lane:up keeps it."""
+        """Writes the proposal at the test's proposal file."""
         self.write_json(self.proposal_file, proposal)
 
     def lay(self, *argv) -> tuple:

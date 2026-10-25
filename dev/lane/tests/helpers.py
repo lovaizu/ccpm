@@ -82,7 +82,7 @@ You write the changelog.
 """
 # The prompt a subagent's record begins with.
 PROMPT = "Do your steps."
-# The subagent's file with hands_off laid on step 3, as lane:up writes it.
+# The subagent's file with hands_off laid on step 3, as the layer writes it.
 LAID = STEPS.replace("`CHANGELOG.md`.\n", f"`CHANGELOG.md`. {SENTENCE}\n")
 
 

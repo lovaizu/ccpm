@@ -78,8 +78,8 @@ def held(lane: dict[str, Any]) -> str:
 
 def said(root: str, agents: dict[str, list[dict[str, Any]]]) -> list[str]:
     """Each lane the hooks laid before in each subagent of the plugin at root, as `<plugin>:<name>`,
-    each on a step of a proposal, said for lane:up to put to the building AI: its step, whether the
-    step still says its sentence, and the lane as the proposal gives it."""
+    each on a step of a proposal, said for the building AI to keep in its proposal or leave out: its
+    step, whether the step still says its sentence, and the lane as the proposal gives it."""
     found = []
     for agent, laid in agents.items():
         name = agent.split(":")[1]

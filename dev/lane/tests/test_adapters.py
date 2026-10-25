@@ -1,5 +1,5 @@
-"""The adapters a proposal names, as the layer takes them: each found beside the proposal in lane's
-data folder, or laid before in the plugin, run on each of its cases before anything is printed or
+"""The adapters a proposal names, as the layer takes them: each found beside the proposal, in the
+folder it is in, or laid before in the plugin, run on each of its cases before anything is printed or
 written, shown in the print, and written into the plugin with the lanes once approved, its copies
 beside the proposal then removed."""
 
@@ -9,7 +9,7 @@ import json
 import os
 
 import helpers
-from laying import LayTest
+from laying import AGAIN, LayTest
 
 # An adapter of the items port reading a checklist's items as its headings, `### <ID>: <title>`,
 # its path in the plugin, and the cases it must give: one of each form and one that gives nothing.
@@ -31,7 +31,7 @@ EVERY = {"lane": "every_item", "takes": ["checklist.md"], "adapter": PATH}
 
 class AdapterTest(LayTest):
     """A proposal of every_item on step 3 of changelog-writer, read by the adapter beside the
-    proposal in lane's data folder, with its cases."""
+    proposal, in `<plugin>/adapters/` of the folder it is in, with its cases."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -132,7 +132,7 @@ class TestCases(AdapterTest):
                 # Then: it exits 1 saying so and to write it again
                 self.assertEqual(code, 1)
                 self.assertIn(named, said)
-                self.assertIn("write the proposal again", said)
+                self.assertTrue(said.endswith(f"; {AGAIN}.\n"), said)
 
     def test_a_values_adapter_named_out_of_its_port_stops(self):
         # Given: a subagent naming an adapter of another port for its values
@@ -176,8 +176,8 @@ class TestWrite(AdapterTest):
         self.lay("write", self.proposal_file)
         self.assertTrue(os.path.isfile(os.path.join(self.plugin, PATH)))
 
-    def test_the_data_folder_holding_more_is_kept(self):
-        # Given: another file beside the adapter in lane's data folder
+    def test_the_adapters_folder_holding_more_is_kept(self):
+        # Given: another file beside the adapter, in the adapters' folder beside the proposal
         self.write(os.path.join(self.beside, "other.txt"), "x")
         # When: the proposal is written
         self.lay("write", self.proposal_file)
@@ -196,7 +196,7 @@ class TestWrite(AdapterTest):
         self.lay("write", self.proposal_file)
         laid = self.laid()
         # When: the plugin is brought up
-        code, said = self.lay("up", self.plugin, os.path.join(self.base, "data"))
+        code, said = self.lay("up", self.plugin)
         # Then: the lanes laid and the adapters are kept, and the values adapter is said
         self.assertEqual(code, 0)
         self.assertEqual(self.laid(), laid)
