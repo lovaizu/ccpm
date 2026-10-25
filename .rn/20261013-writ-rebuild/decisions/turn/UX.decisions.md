@@ -24,15 +24,15 @@
    sends it the question by message before the work resting on it is made; it puts the question to
    the user and sends the answer, and turn goes on from there (dev/architecture.md, Messages; A
    plugin that uses another).
-5. It gets back the work where it goes, and the result: each item's Good with its lines, and each
-   item still without Good, with what the receiver gets once it is Good.
-6. It checks each Good against its lines, fixes each item without Good itself, and ends.
+5. It gets back the work where it goes, and the result: each item's Good with its lines, and the
+   lessons from the run; an item still without Good has come to it as a question before.
+6. It checks each Good against its lines, puts each lesson to the user, and ends.
 7. A run stopped anywhere goes on from its last step when it calls turn again with the same result
    (dev/architecture.md, Where the course is kept).
 
 ### B-2: Results measured, B-4: why each, B-7: the order of priority
-- The items of the checklists the calling AI fixes in the work after it comes back; fewer is better.
-  Counted from the calling AI's own check, not from turn's judgment of itself.
+- The items of the checklists the calling AI judges the work, when it comes back, to meet; more is
+  better. Counted from the calling AI's own check, not from turn's judgment of itself.
 - The time from calling turn to the work coming back, for a work the size of one README; shorter is
   better, since the calling AI, and the person, wait that long.
 - In that order: time is never saved by leaving the calling AI more to fix.
