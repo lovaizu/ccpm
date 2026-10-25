@@ -76,14 +76,6 @@ class TestPlaced(unittest.TestCase):
                 # Then: each place before the last holds one, and the last the rest
                 self.assertEqual(lanes.placed(lane, takes), placed)
 
-    def test_a_lane_showing_more_than_its_places_names_each_shown_by_its_number(self):
-        # Given: a lane of one place whose sentence shows the first two things it takes
-        two = types.SimpleNamespace(WORDING="Put `<a>`.", SHOWN=2)
-        with mock.patch.dict(lanes.LANES, {"two": two}):
-            # When: its places are named
-            # Then: the first is the place's name, the second numbered, and the rest held
-            self.assertEqual(lanes.places("two"), ["a", "a-2", "held"])
-
 
 class TestWording(unittest.TestCase):
     def test_each_lane_has_the_action_and_wording_of_its_row_in_docs_lanes_md(self):
@@ -174,15 +166,6 @@ class TestTakes(unittest.TestCase):
                 # When: it is given so many things
                 # Then: it takes the approval and one or more commands its hook holds back
                 self.assertEqual(lanes.fits("wait_for", takes), fits)
-
-    def test_a_lane_showing_two_of_one_place_takes_one_or_more_after_them(self):
-        # Given: a lane of one place whose sentence shows the first two things it takes
-        two = types.SimpleNamespace(WORDING="Put `<a>`.", SHOWN=2)
-        for takes, fits in ((["a", "b"], False), (["a", "b", "c"], True)):
-            with self.subTest(takes=takes), mock.patch.dict(lanes.LANES, {"two": two}):
-                # When: it is given so many things
-                # Then: it takes the two it shows and one or more after them
-                self.assertEqual(lanes.fits("two", takes), fits)
 
     def test_a_lane_naming_a_most_takes_no_more(self):
         # Given: a lane of one place that names the most things it takes, three

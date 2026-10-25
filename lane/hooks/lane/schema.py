@@ -6,7 +6,9 @@ schema is read whole before any value is held to it, and one using any other key
 in another shape, is refused, so no value is let through by a keyword left unread; a $ref coming
 back to itself is refused too, as structured outputs refuse a recursive schema. A value held to it
 gives the one point it is out by: its place, what was expected and what was found, as
-check-jsonschema gives jsonschema's best match, the point highest in the value first."""
+check-jsonschema gives jsonschema's best match, the point highest in the value first. lane's own
+schemas, such as a port's in ports.py, which `checked` never reads, may give additionalProperties a
+schema each key beside the properties is held to, for an object of keys known only on a run."""
 
 from __future__ import annotations
 
@@ -247,6 +249,10 @@ def additional_out(
 ) -> Out | None:
     known = schema.get("properties", {})
     extra = [k for k in value if k not in known] if isinstance(value, dict) else []
+    each = schema["additionalProperties"]
+    if isinstance(each, dict):
+        found = (out(each, root, value[k], (*path, k)) for k in extra)
+        return next(filter(None, found), None)
     if not extra:
         return None
     keys = ", ".join(map(shown, known)) or "none"

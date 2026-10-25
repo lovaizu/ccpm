@@ -73,10 +73,11 @@ def answer(event: str, told: str, user: str) -> dict[str, Any]:
     where there is anything, as the systemMessage Claude Code shows them. Nothing told answers
     nothing, which lets it go on."""
     found: dict[str, Any] = {"systemMessage": user} if user else {}
+    ending = event == "SubagentStop"  # pragma: no mutate
     if told and event == "PreToolUse":
         denied = {"hookEventName": event, "permissionDecision": "deny"}
         found["hookSpecificOutput"] = {**denied, "permissionDecisionReason": told}
-    elif told and event == "SubagentStop":
+    elif told and ending:
         found.update(decision="block", reason=told)
     return found
 
@@ -93,7 +94,8 @@ def said_on(event: dict[str, Any] | None, held: str, said: list[Said]) -> dict[s
     was said: each drift and each error told the subagent, each error the user too; at the
     subagent's end, once a stop hook has kept it going, as the event says, an error told the user
     alone, letting it end, so an error is told it once and it is never held for good."""
-    again = held == "SubagentStop" and bool((event or {}).get("stop_hook_active"))
+    ending = held == "SubagentStop"  # pragma: no mutate
+    again = ending and bool((event or {}).get("stop_hook_active"))
     told = "\n".join(s.text for s in said if not (again and s.error))
     return answer(held, told, "\n".join(s.text for s in said if s.error))
 

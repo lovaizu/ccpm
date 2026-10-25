@@ -45,7 +45,7 @@ class EveryItemTest(testing.FolderTest):
         """Whether the subagent drifts, about to end with the reply, having made the calls in the
         test's folder."""
         end = helpers.ended(self.base, list(calls), reply)
-        return every_item.drifts(end, takes, helpers.NO_PLUGIN)
+        return every_item.drifts(end, takes, helpers.NO_PLUGIN, helpers.ports.items)
 
 
 class TestReply(EveryItemTest):

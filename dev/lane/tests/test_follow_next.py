@@ -29,13 +29,14 @@ class FollowNextTest(helpers.PluginTest):
         self.record(calls)
         given = {"command": "git status"} if given is None else given
         return follow_next.drifts(
-            helpers.call_of(self.called(tool, given)), TAKES, helpers.NO_PLUGIN
+            helpers.call_of(self.called(tool, given)), TAKES, helpers.NO_PLUGIN, helpers.ports.move
         )
 
     def ends(self, calls):
         """Whether the subagent drifts, about to end after the calls in its record."""
         self.record(calls)
-        return follow_next.drifts(helpers.end_of(self.stopped("Done.")), TAKES, helpers.NO_PLUGIN)
+        end = helpers.end_of(self.stopped("Done."))
+        return follow_next.drifts(end, TAKES, helpers.NO_PLUGIN, helpers.ports.move)
 
 
 class TestDrift(FollowNextTest):
@@ -140,7 +141,7 @@ class TestLetThrough(FollowNextTest):
         # When: it makes a call
         # Then: it is no drift, as the move printed before is not known
         made = helpers.call_of(self.called("Bash", {"command": "ls"}))
-        self.assertFalse(follow_next.drifts(made, TAKES, helpers.NO_PLUGIN))
+        self.assertFalse(follow_next.drifts(made, TAKES, helpers.NO_PLUGIN, helpers.ports.move))
 
 
 class TestEnd(FollowNextTest):

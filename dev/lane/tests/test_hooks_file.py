@@ -12,9 +12,13 @@ import helpers
 from helpers import hooks_file
 
 # hooks/lanes.json laying start_with on step 1 and hands_off on step 3 of changelog-writer, and
-# hands_off on step 2 of another subagent.
+# hands_off on step 2 of a subagent named before it in order and one after.
 LAID = {
     "subagents": [
+        {
+            "name": "a-first",
+            "steps": [{"step": 2, "lanes": [{"lane": "hands_off", "takes": ["git"]}]}],
+        },
         {
             "name": "other",
             "steps": [{"step": 2, "lanes": [{"lane": "hands_off", "takes": ["git"]}]}],
@@ -61,6 +65,17 @@ class TestLaidIn(LanesTest):
             ("no JSON", "{", "hooks/lanes.json holds no JSON"),
             ("no subagents", "{}", '$: expected the key "subagents"'),
             ("a key beside them", '{"subagents": [], "x": 1}', 'found the key "x"'),
+            (
+                "a key beside a subagent's",
+                '{"subagents": [{"name": "a", "steps": [], "x": 1}]}',
+                "$.subagents[0]: expected only",
+            ),
+            (
+                "a key beside a step's",
+                '{"subagents": [{"name": "a", "steps": [{"step": 1, "lanes": [], "x": 1}]}]}',
+                "$.subagents[0].steps[0]: expected only",
+            ),
+            ("a key beside a lane's", laying({**lane, "x": 1}), ".lanes[0]: expected only"),
             ("a lane lane has not", laying({"lane": "x", "takes": ["a"]}), "$.subagents[0]"),
             ("takes that are no list", laying({"lane": "hands_off", "takes": "a"}), "takes"),
             ("a thing taken empty", laying({"lane": "hands_off", "takes": [""]}), "hands_off on"),

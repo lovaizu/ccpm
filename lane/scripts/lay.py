@@ -6,6 +6,7 @@ what lane:up reads, which its read_only lane holds it to."""
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import subprocess
@@ -134,11 +135,11 @@ def brought_up(root: str, data: str) -> str:
     # The hooks are written in the current form wherever they are in another, as a link to lane's
     # code, in a plugin of the ccpm marketplace, is always lane's version while the hooks lane:up
     # wrote with an older one are not.
-    before = json.dumps(hooks)
+    before = copy.deepcopy(hooks)
     for agent, laid in agents.items():
         plugin, sub = agent.split(":")
         entries.hooks_with(hooks, plugin, {"name": sub, "steps": laid})
-    if json.dumps(hooks) != before:
+    if hooks != before:
         entries.hooks_written(root, hooks)
         entries.lanes_written(root, agents)
         said += [

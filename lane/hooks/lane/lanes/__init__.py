@@ -11,8 +11,9 @@ module may name, beside its action, wording and check, the events it is held on,
 things it takes its sentence shows, and the most things it takes; and give `beside(laid, root)`,
 what it takes beside what its step names, from every lane laid in the subagent, as the guard calls
 it, and `refused(takes, root)`, why it cannot be laid taking these, "" where it can, as the layer
-calls it; and RECORD, where its check rests on what the subagent did before, read from its record,
-as every lane held at the subagent's end does.
+calls it; RECORD, where its check rests on what the subagent did before, read from its record,
+as every lane held at the subagent's end does; and PORT, the port it reads a plugin's text at, as
+ports.py defines them, its check then given, fourth, what reads that port.
 
 What a lane's check is given is held first to the lane's IN, a JSON Schema `given_in` makes: the
 texts put in each place of its sentence, and its subagent's record where its check rests on it; the
@@ -113,14 +114,11 @@ def fits(lane: str, takes: list[str]) -> bool:
 
 def places(lane: str) -> list[str]:
     """The name of each place the things the lane takes are put in, as its wording names them, such
-    as `output` and `form`; of a lane that holds more than it shows, such as wait_for, one for each
-    thing it shows, named by its place in the sentence and, after the first in the last place, by
-    its number too, and `held` for the rest."""
+    as `output` and `form`; of a lane that holds more than it shows, such as wait_for, those of the
+    things it shows, and `held` for the rest."""
     named = TAKEN.findall(LANES[lane].WORDING)
-    if shown(lane) is None:
-        return named
-    each = [named[i] if i < len(named) else f"{named[-1]}-{i + 1}" for i in range(alone(lane))]
-    return [*each, "held"]
+    showing = shown(lane)
+    return named if showing is None else [*named[:showing], "held"]
 
 
 def placed(lane: str, takes: list[str]) -> list[list[str]]:

@@ -1,15 +1,12 @@
-"""What a subagent started from: a take written `{<name>}` stands for the value under that name in
-the JSON the subagent starts from, its prompt and what a script start_with takes prints, the later
-over the earlier; a list for each of its texts, a text for itself."""
+"""What a subagent started from, for a take written `{<name>}`: the texts it started from, its prompt
+and what a script start_with takes prints, whose values the values port reads; those values put in
+the places of a lane's sentence, and told."""
 
-import json
 import unittest
 
 import helpers
 from helpers import call, started
 
-# A run's JSON as a prompt or a script gives it, naming the work and a checklist.
-RUN = {"work": ["a.md", "b.md"], "checklist": "c.md"}
 # A run's values as they are put in: the work of two files, an empty list and a test.
 VALUES = {"work": ["a.md", "b.md"], "none": [], "test": ["make"]}
 
@@ -29,52 +26,6 @@ class TestNames(unittest.TestCase):
                 # When: the names are read
                 # Then: it names nothing, being fixed
                 self.assertEqual(started.names([take]), [])
-
-
-class TestValues(unittest.TestCase):
-    def test_a_json_object_gives_each_text_and_each_list_of_texts_under_its_name(self):
-        # Given: a prompt that is a JSON object of a list and a text
-        # When: the values are read
-        # Then: the list stands for its texts, the text for itself
-        self.assertEqual(
-            started.values([json.dumps(RUN)]), {"work": ["a.md", "b.md"], "checklist": ["c.md"]}
-        )
-
-    def test_the_later_json_gives_a_name_over_the_earlier(self):
-        # Given: a prompt naming the work, then a script's print naming it again and more
-        texts = ['{"work": "a.md"}', '{"work": "b.md", "has": "h.md"}']
-        # When: the values are read
-        # Then: the later gives the work, the earlier what the later leaves
-        self.assertEqual(started.values(texts), {"work": ["b.md"], "has": ["h.md"]})
-
-    def test_json_printed_over_several_lines_is_read_whole(self):
-        # Given: a print of one JSON object indented over lines, with an object of its own inside
-        text = json.dumps({"work": "a.md", "item": {"x": "y"}}, indent=2)
-        # When: the values are read
-        # Then: the object's names alone are read
-        self.assertEqual(started.values([text]), {"work": ["a.md"]})
-
-    def test_a_print_of_lines_gives_each_line_that_is_a_json_object(self):
-        # Given: a print of a line of words, a line of a JSON list and a line of a JSON object
-        text = 'Started.\n["x"]\n{"work": "a.md"}'
-        # When: the values are read
-        # Then: the line that is an object gives its names
-        self.assertEqual(started.values([text]), {"work": ["a.md"]})
-
-    def test_a_value_neither_a_text_nor_a_list_gives_nothing(self):
-        # Given: names of a number, an object and null, and a list of texts and a number
-        text = '{"n": 1, "o": {}, "z": null, "l": ["a.md", 2]}'
-        # When: the values are read
-        # Then: the list gives its texts alone, and the others nothing
-        self.assertEqual(started.values([text]), {"l": ["a.md"]})
-
-    def test_text_that_holds_no_json_object_gives_nothing(self):
-        for text in ("Do your steps.", "", '["a.md"]', "1"):
-            with self.subTest(text=text):
-                # Given: a prompt of words, of nothing, of a JSON list or a number
-                # When: the values are read
-                # Then: none is given
-                self.assertEqual(started.values([text]), {})
 
 
 class TestPut(unittest.TestCase):

@@ -195,6 +195,21 @@ class TestRun(testing.FolderTest):
         self.assertIsNone(self.handed(json.dumps(self.event(agent_type="p:other")), says))
         self.assertIsNone(says.ran_in)
 
+    def test_at_the_end_an_event_out_of_its_in_keeps_the_subagent_going_once(self):
+        for event, expected in (
+            ([], {"decision": "block"}),
+            ({"hook_event_name": "SubagentStop", "stop_hook_active": True}, {}),
+        ):
+            with self.subTest(event=event):
+                # Given: a SubagentStop event that is no object, or one out of its IN of a
+                # subagent a stop hook kept going before
+                # When: the entry is handed it
+                found = self.handed(json.dumps(event), Says("a"), held="SubagentStop") or {}
+                # Then: the first is kept going with the error, the second let end, the user told
+                said = found.pop("systemMessage")
+                self.assertTrue(said.startswith(UNREAD), said)
+                self.assertEqual({k: v for k, v in found.items() if k != "reason"}, expected)
+
 
 class TestFailed(unittest.TestCase):
     def test_an_error_no_subagent_can_be_told_from_is_answered_on_the_event(self):

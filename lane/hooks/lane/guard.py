@@ -14,6 +14,7 @@ import call
 import called
 import hook
 import hooks_file
+import ports
 import schema
 import started
 import step
@@ -106,14 +107,16 @@ class Laid:
         given = {"takes": dict(zip(places(self.lane), texts))}
         out = schema.held(given_in(self.lane), {**given, **self.record(seen)})
         if out is not None:
-            return [self.wrong(out, run)]
+            return [self.error(NOT_FOUND, "") if seen.found is None else self.wrong(out, run)]
         lane: Any = LANES[self.lane]
         each = started.resolved([t or [] for t in texts], alone(self.lane))
         # A lane may take more beside what its step names, from the lanes laid in the subagent.
         more = getattr(lane, "beside", None)
         if more is not None:
             each = [[*inputs, *more(self.laid, self.root)] for inputs in each]
-        drift = next(filter(None, (lane.drifts(acted, t, self.root) for t in each)), "")
+        port = getattr(lane, "PORT", None)
+        read = [] if port is None else [lambda given: ports.read(port, given)]
+        drift = next(filter(None, (lane.drifts(acted, t, self.root, *read) for t in each)), "")
         if not drift:
             return []
         told = [step.expanded(said, self.root), *(started.told(n, run[n]) for n in named)]
@@ -132,11 +135,9 @@ class Laid:
         return not scripts or any(call.runs(c, scripts) for c in before)
 
     def wrong(self, out: schema.Out, run: dict[str, list[str]]) -> hook.Said:
-        """The error of what the lane is given out of its IN by the point: its record not found,
-        which Claude Code must fix; or a take given for each run, in the place of its sentence the
-        point names, not given, or given empty, which the plugin's maker must."""
-        if out.path[:1] != ("takes",):
-            return self.error(NOT_FOUND, "")
+        """The error of what the lane is given out of its IN by the point, its record found: a take
+        given for each run, in the place of its sentence the point names, not given, or given
+        empty, which the plugin's maker must fix."""
         takes = placed(self.lane, self.takes)[places(self.lane).index(out.path[1])]
         name = next(n for n in started.names(takes) if not run.get(n))
         how = "not given" if name not in run else "given empty"
@@ -156,7 +157,7 @@ class Laid:
         in it printed; none where its record is not found."""
         scripts = [s for t in hooks_file.taken(self.root, self.name, "start_with") for s in t]
         texts = started.texts(found, cwd, lambda c: call.runs(c, scripts))
-        return {} if texts is None else started.values(texts)
+        return {} if texts is None else ports.read("values", {"texts": texts})["values"]
 
 
 def main(held: str, words: list[str]) -> None:
@@ -166,15 +167,15 @@ def main(held: str, words: list[str]) -> None:
     stdout. A command not in the form lane:up writes is an error, as no subagent can be told from
     it."""
     root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
-    if len(words) != 1 or not hooks_file.AGENT.fullmatch(words[0]):
+    agent = " ".join(words)
+    if not hooks_file.AGENT.fullmatch(agent):
         unread = (
             f"lane: lane cannot check the lanes of this hook: its command gives"
-            f" `{' '.join(words)}`, not the subagent alone as <plugin>:<name>, as lane:up writes"
+            f" `{agent}`, not the subagent alone as <plugin>:<name>, as lane:up writes"
             " it. Stop here and reply that lane:up must be run again on the plugin, to write its"
             " hooks anew."
         )
         hook.failed(held, unread, sys.stdin, sys.stdout)
         return
-    agent = words[0]
     check = called.Kept() if held in hooks_file.KEPT else Lanes(root, agent, held)
     hook.run(agent.split(":")[0], held, [check], sys.stdin, sys.stdout, agent)

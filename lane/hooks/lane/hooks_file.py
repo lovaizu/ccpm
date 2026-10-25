@@ -172,10 +172,10 @@ def laid_in(root: str, name: str) -> list[tuple[int, str, list[str]]]:
     """Each lane laid in the subagent of the name, its step, the lane and what it takes, as the
     plugin at root's hooks/lanes.json holds them; stops with ValueError, as `laid` does, or where
     the file lays no lanes in the subagent."""
-    found = [a for a in laid(root)["subagents"] if a["name"] == name]
-    if not found:
+    found = next((a for a in laid(root)["subagents"] if a["name"] == name), None)
+    if found is None:
         raise ValueError(f"hooks/lanes.json lays no lanes in {name}")
-    return [(int(s["step"]), g["lane"], g["takes"]) for s in found[0]["steps"] for g in s["lanes"]]
+    return [(int(s["step"]), g["lane"], g["takes"]) for s in found["steps"] for g in s["lanes"]]
 
 
 def taken(root: str, name: str, lane: str) -> list[list[str]]:

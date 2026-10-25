@@ -1,12 +1,12 @@
 """Property-based tests of the lanes on handing on and waiting: as_printed on any print and heading,
-follow_next on any move printed, wait_for on any approval; checked on many inputs Hypothesis makes,
+the move port on any move printed, wait_for on any approval; checked on many inputs Hypothesis makes,
 new on every run, CI included."""
 
 import json
 import string
 import unittest
 
-from helpers import as_printed, follow_next, testing, wait_for
+from helpers import as_printed, ports, testing, wait_for
 
 hypothesis = testing.hypothesis()
 given = hypothesis.given
@@ -38,9 +38,10 @@ class TestFollowNext(unittest.TestCase):
         # Given: any move, printed as one JSON line after any lines of text
         tool, given_input = move
         line = json.dumps({"tool": tool, "input": given_input})
-        # When: the move is read from what was printed
+        # When: the move is read from what was printed, at the move port
         # Then: it is the move printed
-        self.assertEqual(follow_next.printed("\n".join([*before, line])), (tool, given_input))
+        found = ports.read("move", {"output": "\n".join([*before, line])})
+        self.assertEqual(found, {"move": {"tool": tool, "input": given_input}})
 
 
 class TestWaitFor(unittest.TestCase):

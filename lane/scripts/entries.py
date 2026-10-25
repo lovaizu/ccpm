@@ -164,8 +164,8 @@ def laid_before(
 def put(steps: list[dict[str, Any]], number: int, lane: dict[str, Any]) -> None:
     """Puts the lane on the step of the number among the steps, once, the step put after the others
     where it is not among them."""
-    found = [s for s in steps if s["step"] == number]
-    if not found:
+    by_number = {s["step"]: s for s in steps}
+    if number not in by_number:
         steps.append({"step": number, "lanes": [lane]})
-    elif lane not in found[0]["lanes"]:
-        found[0]["lanes"].append(lane)
+    elif lane not in by_number[number]["lanes"]:
+        by_number[number]["lanes"].append(lane)

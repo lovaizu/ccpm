@@ -1,9 +1,9 @@
 """every_item: the subagent answers every item of an input its step names, such as each finding of a
-review, before it ends. It is held as the subagent is about to end, on the items a check can tell
-apart: an item is a top-level item of a Markdown list in the input, keyed by the ID it begins with,
-such as `B-1`, `R33` or `KR1.1`; it is answered where its key stands in the subagent's last reply
-or in a file it wrote in this run, the input left out, as rewriting the input keeps every key in it.
-An item that begins with no ID is not counted, as no text tells an answer to it from any other."""
+review, before it ends. It is held as the subagent is about to end, on the items of the input as the
+items port reads them, each its ID, such as `B-1`, `R33` or `KR1.1`; an item is answered where its
+ID stands in the subagent's last reply or in a file it wrote in this run, the input left out, as
+rewriting the input keeps every ID in it. An item with no ID is not counted, as no text tells an
+answer to it from any other."""
 
 from __future__ import annotations
 
@@ -12,30 +12,26 @@ import re
 
 import shell
 from call import End, changed, file_text
+from ports import Port
 
 ACTION = "end"
 WORDING = "Answer every item of `<input>`."
 EVENTS = ("SubagentStop",)
-# A top-level list item, its marker at the line's start, and the ID it begins with: capitals, a
-# hyphen or not, a number, and numbers after a point, set in Markdown's bold, code or brackets or
-# not, and followed by a colon, a point, a bracket, a blank or the line's end.
-ITEM = re.compile(
-    r"^(?:[-*+]|[0-9]+[.)])[ \t]+[*_`\[]*(?P<key>[A-Z][A-Za-z]*-?[0-9]+(?:\.[0-9]+)*)"
-    r"[*_`\]]*(?=[:.)\s]|$)",
-    re.MULTILINE,
-)
+# It reads the items of its input at the items port.
+PORT = "items"
 
 
-def drifts(end: End, takes: list[str], root: str) -> bool:
+def drifts(end: End, takes: list[str], root: str, read: Port) -> bool:
     """Whether an item of an input taken, each named from the folder the subagent ends in, where
-    the guard stands, has a key that stands in none of what answers it."""
+    the guard stands, read at the items port by read, has an ID that stands in none of what answers
+    it."""
     inputs = shell.paths(os.getcwd(), takes)
     written = {f for c in end.made or [] for f in c.written if changed(c, f)}
     answers = [end.reply, *(file_text(f) or "" for f in sorted(written - set(inputs)))]
     return any(
         not any(stands(key, a) for a in answers)
         for i in inputs
-        for key in ITEM.findall(file_text(i) or "")
+        for key in read({"input": i, "text": file_text(i) or ""})["items"]
     )
 
 

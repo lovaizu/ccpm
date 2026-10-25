@@ -29,6 +29,7 @@ import hooks_file  # noqa: F401
 import lanes  # noqa: F401
 import lay  # noqa: F401
 import placed  # noqa: F401
+import ports  # noqa: F401
 import proposal  # noqa: F401
 import record
 import schema  # noqa: F401

@@ -390,6 +390,31 @@ class TestUp(LayTest):
         steps = [{"step": 3, "lanes": [*LANES, write]}]
         self.assertEqual(self.laid(), {"subagents": [{"name": "changelog-writer", "steps": steps}]})
 
+    def test_the_lanes_an_older_lane_gave_are_kept_on_each_step_by_its_number(self):
+        # Given: the hook in the older form giving lanes on step 3, then step 1, then step 3 again
+        self.hooks_of(f"{self.OLDER} '1:hands_off:git tag' '3:write_only:CHANGELOG.md'")
+        # When: it is brought up
+        self.up()
+        # Then: hooks/lanes.json gives step 3 with both its lanes, and step 1 with its own
+        write = {"lane": "write_only", "takes": ["CHANGELOG.md"]}
+        tag = {"lane": "hands_off", "takes": ["git tag"]}
+        steps = [{"step": 3, "lanes": [*LANES, write]}, {"step": 1, "lanes": [tag]}]
+        self.assertEqual(self.laid(), {"subagents": [{"name": "changelog-writer", "steps": steps}]})
+
+    def test_lanes_json_is_written_indented_by_two_its_text_as_written(self):
+        # Given: the hook in the older form giving a command that is not ASCII
+        self.hooks_of(f"{self.OLDER} '1:hands_off:echo 変更'")
+        # When: it is brought up
+        self.up()
+        # Then: hooks/lanes.json is the lanes indented by two, the command as it was written
+        tag = {"lane": "hands_off", "takes": ["echo 変更"]}
+        steps = [{"step": 3, "lanes": LANES}, {"step": 1, "lanes": [tag]}]
+        laid = {"subagents": [{"name": "changelog-writer", "steps": steps}]}
+        self.assertEqual(
+            self.read(os.path.join(self.plugin, "hooks", "lanes.json")),
+            json.dumps(laid, indent=2, ensure_ascii=False) + "\n",
+        )
+
     def test_lanes_json_that_cannot_be_read_stops(self):
         # Given: hooks/lanes.json holding no JSON
         self.write(os.path.join(self.plugin, "hooks", "lanes.json"), "{")

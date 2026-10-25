@@ -1,14 +1,12 @@
 """What a subagent started from, for a lane taking a thing given for each run, written
-`{<name>}` in its step, such as `{work}`: the value under that name in the JSON the subagent starts
-from, its prompt where it is a JSON object and each JSON object a script laid by start_with prints,
-the later over the earlier. A list stands for each of its texts, a text for itself; a value of
-another kind gives nothing. The JSON a subagent starts from is the one place a plugin hands it the
+`{<name>}` in its step, such as `{work}`: the texts the subagent started from, its prompt and what
+each script laid by start_with printed, whose values the values port reads, as ports.py says; those
+values put in the places of a lane's sentence, and told. The JSON a subagent starts from is the one place a plugin hands it the
 files of its run, so a lane reads them there, the same way in every plugin."""
 
 from __future__ import annotations
 
 import itertools
-import json
 import re
 from typing import Any, Callable
 
@@ -38,46 +36,6 @@ def texts(
     return [record.prompt(found), *(d.result for d in made)]
 
 
-def values(texts: list[str]) -> dict[str, list[str]]:
-    """The run's value of each name the JSON objects in the texts give, the later over the earlier,
-    as the texts it stands for."""
-    merged: dict[str, Any] = {}
-    for text in texts:
-        for given in objects(text):
-            merged.update(given)
-    found = {name: texts_of(value) for name, value in merged.items()}
-    return {name: value for name, value in found.items() if value is not None}
-
-
-def objects(text: str) -> list[dict[str, Any]]:
-    """The JSON objects the text holds: the text itself where it is one JSON value, however many
-    lines it is printed over; otherwise each line that is one, as a script may print lines of its
-    own before it."""
-    try:
-        each = [json.loads(text)]
-    except ValueError:
-        each = [loaded(line) for line in text.splitlines()]
-    return [o for o in each if isinstance(o, dict)]
-
-
-def loaded(line: str) -> Any:
-    """The JSON value the line is; None where it is none."""
-    try:
-        return json.loads(line)
-    except ValueError:
-        return None
-
-
-def texts_of(value: Any) -> list[str] | None:
-    """The texts a value stands for: a text itself, a list its texts; None for a value of another
-    kind, which gives a lane nothing to hold to."""
-    if isinstance(value, str):
-        return [value]
-    if isinstance(value, list):
-        return [v for v in value if isinstance(v, str)]
-    return None
-
-
 def put(places: list[list[str]], run: dict[str, list[str]]) -> list[list[str] | None]:
     """The texts in each place of a lane's sentence, the run's texts put in for each take given for
     each run, beside the takes fixed in the step, in the order taken; None for a place where a take
@@ -96,7 +54,7 @@ def resolved(places: list[list[str]], alone: int) -> list[list[str]]:
     `alone` places, each of which takes one thing, the lane is checked once for each text, so an
     output given as a list is held one by one; in a place taking the rest, the texts stand side by
     side."""
-    each = [[[t] for t in p] if at < alone else [p] for at, p in enumerate(places)]
+    each = [*([[t] for t in p] for p in places[:alone]), *([p] for p in places[alone:])]
     return [list(itertools.chain(*e)) for e in itertools.product(*each)]
 
 
