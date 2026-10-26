@@ -731,6 +731,9 @@
   },
   {
    "fact": "2026-10-26: the user: find the learnings well and turn them into improvements, judged from rn's purpose and ideal. The user asked whether rn's caller pictures each checklist item's Good before calling turn: it does not (SKILL.md step 2 finds points without the work's checklists), so turn asks back. The user approved the fix: step 2 reads the work's checklists and asks each item's unmade choice before turn; rn.py decisions <work> also prints the checklists; given to a background subagent with scratchpad hearing-brief.md (session babbef4f), not touching trials/acceptance"
+  },
+  {
+   "fact": "2026-10-26: the hearing-with-checklists fix done and pushed (7999f80 by the subagent, read by hand; 8ba0269 by hand): the move trials' plan reason made one its criteria show and the user's plan addition asked per action, as the hearing now raised B-2 of rn's plan checklist and checklist.md B-4 against the fixtures; move trials 27/27 on the third run, check.sh rn 100%, pre-push mutate 0 of 1706. The user (2026-10-26) asked why the whole mutate ran locally: my brief asked for it against dev/architecture.md:333-338 (lines changed alone; the whole only before a release); briefs name `mutate.sh --since`."
   }
  ],
  "semantic_gist": [
@@ -797,7 +800,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T34/T14: rn's acceptance test run to design; learnings from it; the hearing-with-checklists fix"
+   "task": "T34/T14: rn's acceptance test run to design still going; learnings from it"
   }
  ],
  "relational_map": [
@@ -835,7 +838,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: pgrep -af acceptance.py (the design run) and ListAgents (the hearing subagent); when the run ends read its summary and transcript.json: count turn's questions back and whether the work's checklist would have raised each at the hearing; judge the design-stage points rn asked (6 README points, some maybe settled by the purpose) and every other shortfall by rn's purpose and ideal, fix each at its cause; read the subagent's commits by hand, run check.sh rn, the move trials it lists, push; remove the run folder and its ~/.claude/projects records by literal path; then the whole run (T14), T30, T31 (names by Test's kinds), shared.md findings to the user, final check, report"
+   "next": "on resume: pgrep -af acceptance.py (the design run, folder /tmp/rn/20261026-acceptance-7vc7gbjm); when it ends read its summary and transcript.json: count turn's questions back and whether the work's checklist would have raised each at the hearing; the first user at the design stage tried the README's curl and links of a tool not built yet, a round each (README call 0006 round 3), judge at its cause; judge the design-stage points rn asked and every other shortfall by rn's purpose and ideal, fix each at its cause; remove the run folder and its ~/.claude/projects records by literal path; /tmp/rn/20261026-moves-w0vw83yi of unknown origin left; then the whole run (T14), T30, T31, shared.md findings to the user, final check, report"
   }
  ],
  "uncertainty_signal": [
