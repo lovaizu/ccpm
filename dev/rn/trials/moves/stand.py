@@ -11,12 +11,12 @@ call and reads the CCS and the checklists' items as turn does:
                                         for the call's work, in ../stand/replies.json, counted
     python3 stand.py '<call>' '<made>'  the trial's, making a case's state: the made given as JSON
 
-A made is `{"part": <the part the call makes, for plan and learnings>, "files": {<path>: <text>},
-"goods": {<checklist's file name>: {<item>: {"good": ..., "at": ...}}}}`, an item left out of
-goods having no Good; or `{"questions": [...]}`. `at` is "whole", or a list of the lines' marks,
-each the words a line holds, or `<from>..<to>` for the lines from one holding the first to one
-holding the second, to the end where it is empty; `in` names the file, the work's first by
-default.
+A made is `{"files": {<path>: <text>}, "goods": {<checklist's file name>: {<item>: {"good": ...,
+"at": ...}}}}`, the path "" standing for the call's first work, wherever the orchestrator's plan
+put it, and an item left out of goods having no Good; or `{"questions": [...]}`. `at` is "whole",
+or a list of the lines' marks, each the words a line holds, or `<from>..<to>` for the lines from
+one holding the first to one holding the second, to the end where it is empty; `in` names the
+file, the work's first by default.
 
 Prints `{"line": <the line for the main conversation>, "reply": <the reply>}` and gives 0, or
 prints what was wrong and gives 1."""
@@ -61,12 +61,10 @@ def numbered(path: str, at: Any) -> list[str]:
 
 
 def returned(run: dict[str, Any], made: dict[str, Any]) -> dict[str, str]:
-    """Writes the made's part over the work's file, its files, and the result, in the form turn's
+    """Writes the made's files, "" at the call's first work, and the result, in the form turn's
     flow writes it; gives the reply of a run returned."""
     work = run["work"]
-    texts = dict(made.get("files", {}))
-    if "part" in made:
-        texts[work[0]] = made["part"]
+    texts = {path or work[0]: text for path, text in made.get("files", {}).items()}
     for path, text in texts.items():
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
