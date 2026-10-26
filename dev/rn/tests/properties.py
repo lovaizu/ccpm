@@ -8,12 +8,10 @@ import unittest
 
 from helpers import (
     STEERED,
-    LearningTest,
     RepoTest,
     ccs,
     plan,
     proposal,
-    records,
     said,
     session,
     steered,
@@ -206,7 +204,11 @@ class PropertyTest(RepoTest):
         self.assertEqual(proposal.simple("t1", [decision]), {title: says})
 
 
-class LearningPropertyTest(LearningTest):
+class SearchPropertyTest(RepoTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.session()
+
     @hypothesis.given(
         st.lists(
             st.datetimes(datetime.datetime(2000, 1, 1), datetime.datetime(2099, 12, 31)).map(
@@ -219,27 +221,27 @@ class LearningPropertyTest(LearningTest):
     )
     def test_conversations_come_in_the_order_they_began(self, times):
         # Given: conversations begun at any times, as Claude Code writes them, named in another
-        # order.
+        # order, each holding the words searched for.
         shutil.rmtree(self.project, ignore_errors=True)
         for n, at in enumerate(times):
-            self.conversation(f"c{n}", said(str(n), at, self.top))
-        # When: the orchestrator has the records shown.
+            self.conversation(f"c{n}", said(f"cart {n}", at, self.top))
+        # When: the orchestrator searches the session's conversations for the words.
         # Then: each comes in the order it began.
         begun = sorted(range(len(times)), key=lambda n: times[n])
-        self.assertEqual(self.shown(), [f"[user] {n}\n" for n in begun])
+        found = [f["said"] for f in self.ran("search", "cart")["found"]]
+        self.assertEqual(found, [f"[user] cart {n}" for n in begun])
 
-
-class WrappedPropertyTest(unittest.TestCase):
-    @hypothesis.given(st.text(max_size=5000))
-    def test_any_text_wrapped_keeps_every_word_on_lines_a_read_shows(self, text: str) -> None:
-        # Given: any text shown.
-        # When: it is wrapped.
-        # Then: its words are the same, in order, and a line is longer than a read shows only
-        # where it is one word.
-        wrapped = records.wrapped(text)
-        self.assertEqual(wrapped.split(), text.split())
-        for line in wrapped.splitlines():
-            self.assertTrue(len(line) <= records.WIDTH or len(line.split()) <= 1, line)
+    @hypothesis.given(WORDS, WORDS)
+    def test_any_words_said_are_found_where_they_are_said_alone(self, said_words, other):
+        # Given: a conversation holding any words, and one holding any other.
+        hypothesis.assume(said_words not in other)
+        shutil.rmtree(self.project, ignore_errors=True)
+        self.conversation("a", said(other, "2026-10-20T09:00:00Z", self.top))
+        self.conversation("b", said(said_words, "2026-10-20T09:05:00Z", self.top))
+        # When: the orchestrator searches for the first.
+        # Then: rn finds them where they are said, and only there.
+        found = self.ran("search", said_words)["found"]
+        self.assertEqual([f["said"] for f in found], [f"[user] {said_words}"])
 
 
 if __name__ == "__main__":

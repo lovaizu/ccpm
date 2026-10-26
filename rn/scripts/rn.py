@@ -11,7 +11,6 @@ import argparse
 import datetime
 import json
 import os
-import shutil
 import sys
 from collections.abc import Callable
 from typing import Any, NoReturn
@@ -23,7 +22,6 @@ import repo
 import session
 import steering
 import stop
-import stretch
 
 # The plugin's own folder, which holds rn's checklists and its manifest.
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -123,12 +121,11 @@ def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
 def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Keeps the move: the part of the call `--put` names put back, the plan's into the steering,
     the learnings' added to the session's learnings; each action done ticked, and each task removed
-    once all its actions are; the stage moved where given; Next and Open replaced whole; then
-    every change committed with the message and pushed; gives the commit. The records shown for the
-    learnings are removed once their part is put back. Stops, keeping nothing, where a value is
-    empty, the branch holds no session, the steering differs from what the last keep left, a part,
-    an ID, an action or a stage cannot be taken, or the steering or the learnings would be out of
-    their form; and where git fails."""
+    once all its actions are; the stage moved where given; Next and Open replaced whole; then every
+    change committed with the message and pushed; gives the commit. Stops, keeping nothing, where a
+    value is empty, the branch holds no session, the steering differs from what the last keep left,
+    a part, an ID, an action or a stage cannot be taken, or the steering or the learnings would be
+    out of their form; and where git fails."""
     message = stop.given(args.message, "message")
     folder = session.current()
     steered = session.kept_steering(folder)
@@ -138,7 +135,7 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         next_step = STAGED[args.stage]
     else:
         next_step = steered.next
-    work, steered, learnt = session.put_part(folder, steered, args.put)
+    steered, learnt = session.put_part(folder, steered, args.put)
     done = {one.partition(".")[0] for one in args.done}
     plan = steering.pruned(steering.ticked(steered.plan, args.done), done)
     tell = steering.told_done(steered.plan, args.done)
@@ -158,8 +155,6 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     if learnt:
         session.write_learnings(folder, learnt)
     commit = session.keep(folder, steered, message)
-    if work == steering.LEARNINGS:
-        shutil.rmtree(stretch.records_folder(), ignore_errors=True)
     return {"kept": commit, "tell": tell} if tell else {"kept": commit}
 
 
@@ -229,13 +224,13 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     call that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the
     line telling the user what turn makes. What is given makes the work; what is not, rn's own way
     of making it, or what the work's latest call named, as ccs.made_as and ccs.kept_as say: for the
-    plan, its part of the steering, with what each task done served and made after what the
-    receiver has; for the learnings, an empty part, as those kept are not made again, the receiver
-    having the records of the session; for the finished work given none, every file it is. Stops,
-    writing nothing, where a name, a text or a path given is wrong, the branch holds no session, a
-    change is not kept or pushed, the steering differs from what the last keep left, the steering
-    holds no action of turn's of a task's work, the receiver, their use or what they have is
-    neither given nor kept, the kind has no checklist, or the finished work is not there."""
+    plan, its part of the steering, with what each task done served and made after what the receiver
+    has; for the learnings, an empty part, as those kept are not made again; for the finished work
+    given none, every file it is. Stops, writing nothing, where a name, a text or a path given is
+    wrong, the branch holds no session, a change is not kept or pushed, the steering differs from
+    what the last keep left, the steering holds no action of turn's of a task's work, the receiver,
+    their use or what they have is neither given nor kept, the kind has no checklist, or the
+    finished work is not there."""
     work = session.worked(args.work)
     paths = [stop.given(p, "path of the work") for p in args.path]
     receiver = None if args.receiver is None else stop.given(args.receiver, "receiver")
@@ -265,8 +260,6 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     if work == steering.PLAN:
         has += ccs.done_made(folder, found, steered.plan)
     # Every check is made above, so a stop leaves nothing written.
-    if work == steering.LEARNINGS:
-        has = stretch.show(folder)
     if part:
         repo.write_text(part, ccs.cut(work, steered))
     written = ccs.written(
@@ -407,6 +400,17 @@ def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> 
     return {"learnings": said}
 
 
+def run_search(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
+    """Each part the user or the orchestrator said or did that holds the words, in the
+    orchestrator's conversations of the session, with its conversation and time, as
+    conversations.search gives them, for the orchestrator to check a cause of a learning it doubts;
+    none where Claude Code keeps none here, as when the session ran on another machine. Stops where
+    the words are empty, or the branch holds no session."""
+    words = stop.given(args.words, "text to search for")
+    session.current()
+    return {"found": conversations.search(words)}
+
+
 class Parser(argparse.ArgumentParser):
     """argparse, stopping as rn stops rather than exiting with its own code."""
 
@@ -464,6 +468,9 @@ def parser() -> Parser:
     decisions.set_defaults(run=run_decisions)
     decisions.add_argument("work")
     sub.add_parser("learnings").set_defaults(run=run_learnings)
+    search = sub.add_parser("search")
+    search.set_defaults(run=run_search)
+    search.add_argument("words")
     return top
 
 

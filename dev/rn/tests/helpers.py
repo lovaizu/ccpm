@@ -1,7 +1,7 @@
 """What rn's tests stand on beside what every plugin's tests do: the repository a session is kept
 in, with the remote it is pushed to, made once a run and copied into each test's folder; a plugin
-folder of its own and a stand-in for GitHub's command `gh`; the session's steering, its calls to
-turn and Claude Code's records, as rn writes or reads them."""
+folder of its own and a stand-in for GitHub's command `gh`; the session's steering, its calls and
+Claude Code's records, as rn writes or reads them."""
 
 from __future__ import annotations
 
@@ -22,9 +22,9 @@ sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "lane"))
 
 import ccs  # noqa: F401  (each of rn's modules, for its own tests)
+import conversations  # noqa: F401
 import proposal  # noqa: F401
 import record
-import records  # noqa: F401
 import session  # noqa: F401
 import steering  # noqa: F401
 import stop  # noqa: F401
@@ -317,15 +317,6 @@ class RepoTest(MainAndWork):
         return [call.splitlines() for call in said.split("--\n")[1:]]
 
 
-# Where rn shows the records the learnings are made from, in the repository's git folder.
-SHOWN = ".git/rn"
-HISTORY = f"{SHOWN}/record/history.txt"
-CONVERSATIONS = f"{SHOWN}/conversations"
-# When the learnings' call of the stretch before was returned, between the entries of the
-# conversations the tests write.
-KEPT_AT = "2026-10-20T09:30:00Z"
-
-
 def said(text: str, at: str, cwd: str, branch: str = BRANCH) -> dict[str, Any]:
     """An entry of a record, as Claude Code keeps it: the user's words at the time, where the
     conversation ran and on what branch."""
@@ -336,47 +327,3 @@ def said(text: str, at: str, cwd: str, branch: str = BRANCH) -> dict[str, Any]:
         "gitBranch": branch,
         "message": {"role": "user", "content": text},
     }
-
-
-class LearningTest(RepoTest):
-    """A session kept, and the records rn shows of it: the texts it shows, the conversations among
-    them, an agent's record beside a conversation, and calls on the learnings kept at a time."""
-
-    def setUp(self) -> None:
-        super().setUp()
-        self.session()
-
-    def agent(self, conversation: str, name: str, at: str, meta: dict[str, Any]) -> str:
-        """Writes the record of an agent the conversation started, saying its name at the time,
-        with its meta file; gives its path."""
-        path = os.path.join(conversation[: -len(".jsonl")], "subagents", f"agent-{name}.jsonl")
-        self.write(path, json.dumps(said(name, at, self.top)) + "\n")
-        self.write_json(path[: -len(".jsonl")] + ".meta.json", meta)
-        return path
-
-    def show(self) -> list[str]:
-        """The paths of the texts rn showed for the learnings' call, as the CCS it wrote names them
-        as what its receiver has."""
-        written = self.read_json(self.ran("ccs", "learnings")["ccs"])
-        return [e["has"] for e in written["focal_entities"] if "has" in e]
-
-    def records(self) -> list[str]:
-        """The paths of the texts rn showed, relative to where it shows them."""
-        return [os.path.relpath(p, os.path.join(self.top, SHOWN)) for p in self.show()]
-
-    def shown(self) -> list[str]:
-        """The text of each conversation rn showed, in order."""
-        return [self.read(p) for p in self.show() if f"{os.sep}conversations{os.sep}" in p]
-
-    def left_at(self) -> str:
-        """The commit the branch left the default branch at."""
-        return self.out("merge-base", "origin/main", "HEAD").strip()
-
-    def learnt(self, number: str, at: str = KEPT_AT) -> str:
-        """A call on the learnings returned and kept at the time; gives the commit."""
-        self.call(number, "learnings", "learnings", result={})
-        self.git("add", "-A")
-        with mock.patch.dict(os.environ, {"GIT_COMMITTER_DATE": at}):
-            self.git("commit", "-q", "-m", f"learnings {number}")
-        self.git("push", "-q")
-        return self.head()

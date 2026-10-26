@@ -11,14 +11,12 @@ from unittest import mock
 from helpers import (
     CALLS,
     FOLDER,
-    HISTORY,
     KIND,
     LEARNINGS,
     NEXT,
     PR,
     RECORD,
     REPOSITORY,
-    SHOWN,
     SLUG,
     STEERED,
     STEERING,
@@ -925,27 +923,24 @@ class PutTest(RepoTest):
                 )
                 self.assertEqual((said in out, self.read(STEERING)), (True, before))
 
-    def test_the_learnings_written_follow_those_kept_and_the_records_go(self):
-        # Given: a learning kept, records shown in the git folder, and a call on the learnings
-        # whose part holds two learnings.
+    def test_the_learnings_written_follow_those_kept(self):
+        # Given: a learning kept, and a call on the learnings whose part holds two learnings.
         self.session()
         self.write(LEARNINGS, "- L1: Kept.\n")
-        self.write(HISTORY, "x")
         made = "- L1: First.\n  Its words.\n- L2: Second.\n"
         self.call("0001", "learnings", part=made)
         self.kept()
         # When: the orchestrator puts it back.
         self.ran(*self.put())
         # Then: they follow the one kept in the session's learnings, numbered on from it, kept on
-        # the remote; the steering holds none of them, and the records are removed.
+        # the remote; the steering holds none of them.
         want = "- L1: Kept.\n- L2: First.\n  Its words.\n- L3: Second.\n"
         kept = (
             self.read(LEARNINGS),
             self.out("show", f"origin/work:{LEARNINGS}"),
             self.read(STEERING),
-            os.path.exists(SHOWN),
         )
-        self.assertEqual(kept, (want, want, STEERED, False))
+        self.assertEqual(kept, (want, want, STEERED))
 
     def test_the_first_learnings_are_numbered_from_one(self):
         # Given: a session with no learnings, and a call on the learnings whose part holds one
@@ -977,24 +972,21 @@ class PutTest(RepoTest):
         self.assertEqual((said, os.path.exists(LEARNINGS)), (True, False))
 
     def test_learnings_out_of_form_stop_and_keep_nothing(self):
-        # Given: records shown in the git folder, and a call on the learnings whose part holds one
-        # with no ID.
+        # Given: a call on the learnings whose part holds one with no ID.
         self.session()
-        self.write(HISTORY, "x")
         self.call("0001", "learnings", part="- A slip.\n")
         self.kept()
         before = self.head()
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
-        # Then: rn names the point and says to write it again, keeping nothing and the records
-        # left.
+        # Then: rn names the point and says to write it again, keeping nothing.
         said = (
             f"rn: {LEARNINGS} would be out of its form: line 1: expected a learning as `- L<n>:"
             " <what happened, with the words it rests on, and where it would make later work"
             " better>`, found `- A slip.`; nothing is kept: write the part it puts back again"
         )
-        kept = (os.path.exists(LEARNINGS), self.head(), os.path.exists(SHOWN))
-        self.assertEqual((said in out, kept), (True, (False, before, True)))
+        kept = (os.path.exists(LEARNINGS), self.head())
+        self.assertEqual((said in out, kept), (True, (False, before)))
 
     def test_learnings_under_a_heading_stop(self):
         for heading in ("## Learnings", "# Learnings"):
@@ -1011,16 +1003,6 @@ class PutTest(RepoTest):
                     (said in out, f"found `{heading}`" in out, os.path.exists(LEARNINGS)),
                     (True, True, False),
                 )
-
-    def test_the_plan_put_back_leaves_the_records(self):
-        # Given: records shown in the git folder, and a call on the plan.
-        self.session()
-        self.write(HISTORY, "x")
-        self.call("0001", "plan", part=plan())
-        # When: the orchestrator puts it back.
-        self.ran(*self.put())
-        # Then: the records are there.
-        self.assertTrue(os.path.exists(HISTORY))
 
     def test_a_part_out_of_form_stops_and_keeps_nothing(self):
         # Given: a call on the plan whose part holds a heading of its own.
@@ -1171,6 +1153,34 @@ class CheckTest(RepoTest):
             " again",
             out,
         )
+
+
+class LearningsTest(RepoTest):
+    def test_learnings_gives_the_sessions_by_id_each_as_one_line(self):
+        # Given: the session's learnings, the first over two lines.
+        self.session()
+        self.write(LEARNINGS, "- L1: A slip.\n  Its words.\n- L2: Another.\n")
+        self.kept()
+        # When: the orchestrator asks for the learnings.
+        # Then: rn gives the session's by ID, each as one line, and nothing else.
+        self.assertEqual(
+            self.ran("learnings"), {"learnings": {"L1": "A slip. Its words.", "L2": "Another."}}
+        )
+
+    def test_learnings_are_printed_with_text_beyond_ascii_as_it_is(self):
+        # Given: the session's learnings, one in Japanese.
+        self.session()
+        self.write(LEARNINGS, "- L1: 遅い。\n")
+        self.kept()
+        # When: the orchestrator asks for the learnings.
+        # Then: rn prints it as it is, for the orchestrator to read.
+        self.assertIn('"L1": "遅い。"', self.printed("learnings"))
+
+    def test_learnings_without_a_session_stop(self):
+        # Given: a branch holding no session.
+        # When: the orchestrator asks for the learnings.
+        # Then: rn says there is none.
+        self.assertIn("holds no session", self.stopped("learnings"))
 
 
 if __name__ == "__main__":

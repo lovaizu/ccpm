@@ -76,8 +76,7 @@ def made_as(work: str, steered: steering.Steering, folder: str, root: str) -> Ma
     """How rn makes the work every time: one of its own as OWN, `checklist-<kind>` and `issue-<n>`
     have it, what the receiver has the whole repository, rn's own folder for an issue to its makers;
     a task's work of the kind, at the path, its action names, the rest given or kept; the paths of
-    the plan, the learnings and the finished work are found as their CCS is written, and the
-    learnings' receiver has the records shown then."""
+    the plan, the learnings and the finished work are found as their CCS is written."""
     if work in OWN:
         kind, receiver, use = OWN[work]
         return Made(kind, receiver, use, [], ["."])

@@ -368,15 +368,14 @@ def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dic
 
 def put_part(
     folder: str, steered: steering.Steering, number: str | None
-) -> tuple[str | None, steering.Steering, list[str]]:
-    """The work of the call of the number, with the steering and the session's learnings once its
-    part is put back, the plan's into the steering and the learnings' after those kept, none of the
-    learnings for the plan's; the steering as it is, no work and none, where no number is given.
-    Stops where the part cannot be taken, or a task of the plan's part is numbered as one done."""
+) -> tuple[steering.Steering, list[str]]:
+    """The steering and the session's learnings once the part of the call of the number is put
+    back, the plan's into the steering and the learnings' after those kept, none of the learnings
+    for the plan's; the steering as it is and none where no number is given. Stops where the part
+    cannot be taken, or a task of the plan's part is numbered as one done."""
     if number is None:
-        return None, steered, []
-    made, part = part_of(folder, number)
-    return (made.work, *put(folder, steered, made, part))
+        return steered, []
+    return put(folder, steered, *part_of(folder, number))
 
 
 def put(

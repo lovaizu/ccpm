@@ -516,6 +516,12 @@ class CcsTest(RepoTest):
                 "the user at the plan sign-off",
                 ".",
             ),
+            "learnings": (
+                [call_at("0002", "learnings.md")],
+                "learnings",
+                "the user deciding each learning",
+                ".",
+            ),
             "deliverable": (["src/app.py"], "deliverable", "the user at the deliverable", "."),
             "checklist-api": ([".rn/checklists/api.md"], "checklist", "whoever makes an api", "."),
             "checklist-code": (
