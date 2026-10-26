@@ -6,13 +6,7 @@
 # plugins' alone; given none, every plugin's.
 set -e
 
-plugins="$*"
-if [ -z "$plugins" ]; then
-  for tests in dev/*/tests; do
-    plugin="${tests#dev/}"
-    plugins="$plugins ${plugin%/tests}"
-  done
-fi
+plugins=${*:-$(sh dev/plugins.sh)}
 for plugin in $plugins; do
   python -m unittest discover -s "dev/$plugin/tests" -p 'properties*.py'
 done

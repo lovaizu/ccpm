@@ -42,7 +42,7 @@ jobs:
           if [ -n "$base" ]; then
             plugins=$(sh dev/changed.sh "$base" HEAD)
           else
-            plugins=$(ls -d dev/*/tests | cut -d/ -f2)
+            plugins=$(sh dev/plugins.sh)
           fi
           matrix=$(for plugin in $plugins; do
             since=$base

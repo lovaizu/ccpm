@@ -5,13 +5,7 @@
 # before a push that changes them; CI gives none and checks every plugin.
 set -e
 
-plugins="$*"
-if [ -z "$plugins" ]; then
-  for tests in dev/*/tests; do
-    plugin="${tests#dev/}"
-    plugins="$plugins ${plugin%/tests}"
-  done
-fi
+plugins=${*:-$(sh dev/plugins.sh)}
 
 ruff check .
 ruff format --check .

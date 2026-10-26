@@ -25,9 +25,8 @@ fi
 
 plugins="$*"
 if [ -z "$plugins" ]; then
-  for config in dev/*/cosmic-ray.toml; do
-    plugin="${config#dev/}"
-    plugins="$plugins ${plugin%/cosmic-ray.toml}"
+  for plugin in $(sh dev/plugins.sh); do
+    [ ! -f "dev/$plugin/cosmic-ray.toml" ] || plugins="$plugins $plugin"
   done
 fi
 tmp=$(python3 -c 'import tempfile; print(tempfile.gettempdir())')

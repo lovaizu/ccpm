@@ -7,11 +7,7 @@
 # and of each dev/<plugin>/, and the root's README and licence.
 set -e
 
-all=""
-for tests in dev/*/tests; do
-  plugin="${tests#dev/}"
-  all="$all ${plugin%/tests}"
-done
+all=$(sh dev/plugins.sh)
 changed=$(git diff --name-only "$1" "$2" | grep -vE '^(\.rn/|\.claude/rules/|dev/([^/]+/)?[^/]+\.md$|README\.md$|LICENSE$)' || true)
 [ -n "$changed" ] || exit 0
 if printf '%s\n' "$changed" | grep -qvE "^(dev/)?($(echo $all | tr ' ' '|'))/" \
