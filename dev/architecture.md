@@ -322,7 +322,7 @@ newest, Cosmic Ray and Hypothesis on the newest alone. Before each push, `dev/gi
 runs the checks on what the push changes, the unit tests of each plugin it changes, the property
 tests on few inputs and the mutants on the lines it changes, and stops the push on a failure. CI's
 `tests` job runs on every push, and skips the checks on a push that changes only what no check
-reads, such as the session records and the decisions, where the commit before it passed.
+reads, such as the session records and the documents of `dev/`, where the commit before it passed.
 
 The code must run on 3.9, and the two tools need newer versions only to test, not to run; a check
 left to be run by hand is forgotten and found only by CI after the push, and checking what a change

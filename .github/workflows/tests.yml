@@ -13,8 +13,8 @@ jobs:
   # it where that passed, else since the branch left main, for each plugin `sh dev/changed.sh`
   # names, each in a job of its own, all at once; whole on main after a commit not passed, and for a
   # plugin whose version the push changes, as before a release. A push that changes only what no
-  # check reads, such as the session records and the decisions, is not checked, and `tests` still
-  # passes, as main takes a pull request only when `tests` has passed.
+  # check reads, such as the session records and the documents of dev/, is not checked, and `tests`
+  # still passes, as main takes a pull request only when `tests` has passed.
   changed:
     runs-on: ubuntu-latest
     outputs:

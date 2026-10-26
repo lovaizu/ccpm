@@ -3,8 +3,8 @@
 # dev/githooks/pre-push and CI: each plugin whose files or dev/<plugin>/ files it changes, each
 # plugin with a link to a file it changes, or every plugin where it changes what they all stand on,
 # a file of no plugin or dev/lane/testing.py, what their tests stand on. Nothing where it changes
-# only what no check reads: the session records, the rules for the assistant, and the root's README
-# and licence.
+# only what no check reads: the session records, the rules for the assistant, the documents of dev/
+# and of each dev/<plugin>/, and the root's README and licence.
 set -e
 
 all=""
@@ -12,7 +12,7 @@ for tests in dev/*/tests; do
   plugin="${tests#dev/}"
   all="$all ${plugin%/tests}"
 done
-changed=$(git diff --name-only "$1" "$2" | grep -vE '^(\.rn/|\.claude/rules/|README\.md$|LICENSE$)' || true)
+changed=$(git diff --name-only "$1" "$2" | grep -vE '^(\.rn/|\.claude/rules/|dev/([^/]+/)?[^/]+\.md$|README\.md$|LICENSE$)' || true)
 [ -n "$changed" ] || exit 0
 if printf '%s\n' "$changed" | grep -qvE "^(dev/)?($(echo $all | tr ' ' '|'))/" \
   || printf '%s\n' "$changed" | grep -qxF 'dev/lane/testing.py'; then
