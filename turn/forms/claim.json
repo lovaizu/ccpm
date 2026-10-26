@@ -1,9 +1,10 @@
 {
-  "title": "The generator's claim: each item's Good with its lines, or the question it waits on; asking before it makes anything, the items waiting alone.",
+  "title": "The generator's claim: each item's Good with its lines, or the question it waits on; asking before it makes anything, the items waiting alone; and each choice the work rests on that the CCS leaves open, with why.",
   "type": "object",
   "required": [
     "items",
-    "questions"
+    "questions",
+    "chosen"
   ],
   "additionalProperties": false,
   "properties": {
@@ -19,6 +20,13 @@
       "description": "numbered from 1 in their order, [] where none",
       "items": {
         "$ref": "#/$defs/question"
+      }
+    },
+    "chosen": {
+      "type": "array",
+      "description": "each choice the work rests on that neither the CCS nor the files it names gave, [] where none",
+      "items": {
+        "$ref": "#/$defs/choice"
       }
     }
   },
@@ -164,6 +172,25 @@
         "recommended": {
           "type": "string",
           "description": "the answer you would choose, and why, in one sentence"
+        }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "description": "a choice you made that no one gave you",
+      "required": [
+        "chosen",
+        "why"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "chosen": {
+          "type": "string",
+          "description": "what you chose"
+        },
+        "why": {
+          "type": "string",
+          "description": "why you chose it"
         }
       }
     }

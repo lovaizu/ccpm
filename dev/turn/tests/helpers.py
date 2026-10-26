@@ -86,8 +86,10 @@ GOOD = {
     "good": "the reader finds each part where a README keeps it",
     "lines": ["README.md:1-3"],
 }
-# The generator's claim of every item's Good.
-CLAIM = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": []}
+# The generator's claim of every item's Good, naming no choice of its own.
+CLAIM = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": [], "chosen": []}
+# A choice the work rests on that the CCS leaves open, as the generator names it.
+CHOSEN = {"chosen": "the example tidies people.csv", "why": "no decision names a file"}
 WAITS = {"checklist": "checklists/readme.md", "item": "B-1", "question": 1}
 QUESTION = {"question": "Under which license may people use it?", "recommended": "MIT"}
 # The question an item waits on, as the calling AI is sent it, and the answer kept for it.
@@ -281,12 +283,12 @@ class RepoTest(testing.FolderTest):
         given = None if "to" in step or "id" in step else {"agent_id": IDS[step["agent"]]}
         return self.next(given)
 
-    def made(self, *claim):
-        """The generator due replies with its claim, by default every item Good; and what the
-        script prints then."""
+    def made(self, *claim, chosen=()):
+        """The generator due replies with its claim, by default every item Good, naming the choices
+        given; and what the script prints then."""
         claim = claim or tuple(CLAIM["items"])
         asks = [QUESTION] if any("question" in i for i in claim) else []
-        return self.replied({"items": list(claim), "questions": asks})
+        return self.replied({"items": list(claim), "questions": asks, "chosen": list(chosen)})
 
     def reading(self, *found):
         """A first user's reading giving the Goods found, and every other item the places it looked
@@ -296,10 +298,12 @@ class RepoTest(testing.FolderTest):
             stopped(i) for i in self.state()["items"] if (i["checklist"], i["item"]) not in given
         ]
 
-    def first_read(self, *found, claim=()):
-        """The round taken through the generator's claim and the first user's reading giving the
-        Goods found, the round sending the work back no more; and what the script prints then."""
-        self.assertEqual(self.due(self.made(*claim))["input"]["subagent_type"], "turn:first-user")
+    def first_read(self, *found, claim=(), claim_chosen=()):
+        """The round taken through the generator's claim, naming the choices given, and the first
+        user's reading giving the Goods found, the round sending the work back no more; and what
+        the script prints then."""
+        made = self.made(*claim, chosen=claim_chosen)
+        self.assertEqual(self.due(made)["input"]["subagent_type"], "turn:first-user")
         with mock.patch.object(run, "SENDS", 0):
             return self.replied({"items": self.reading(*found)})
 

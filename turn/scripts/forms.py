@@ -42,12 +42,14 @@ def shapes(path: str) -> tuple[tuple[str, ...], ...]:
 
 class Form(NamedTuple):
     """What an item may hold besides its checklist and ID, one shape of keys each, every item judged
-    given; whether questions are asked; and whether a reply asking questions gives only the items
-    waiting on them, as one asked before the work is made has no Good to give yet."""
+    given; whether questions are asked; whether a reply asking questions gives only the items
+    waiting on them, as one asked before the work is made has no Good to give yet; and whether the
+    choices the work rests on are named, as its maker settles points no one gave it."""
 
     shapes: tuple[tuple[str, ...], ...]
     asks: bool = False
     asks_first: bool = False
+    chooses: bool = False
 
 
 # The orchestrator's two forms are set in its steps, not in form files as the roles' are: it hands
@@ -57,8 +59,10 @@ class Form(NamedTuple):
 # its Good, or the question it waits on.
 CHECK = Form((("can",), ("question",)), asks=True)
 # The generator claims the Good it set for every item, or the question it waits on; asking before
-# it makes anything, it gives only the items waiting.
-CLAIM = Form(shapes(os.path.join(FORM_FILES, "claim.json")), asks=True, asks_first=True)
+# it makes anything, it gives only the items waiting; and it names each choice the work rests on.
+CLAIM = Form(
+    shapes(os.path.join(FORM_FILES, "claim.json")), asks=True, asks_first=True, chooses=True
+)
 # The first user gives every item the Good it found, or where it stopped.
 FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")))
 # Each item two rounds leave without Good waits on a question the orchestrator words.
@@ -118,7 +122,7 @@ def check(
     """What is wrong with a reply of items in the form, each said with what to give instead; empty
     when it is filled. The items are those the form judges, those of them asked of each part of the
     work in `each`."""
-    lists = ("items", "questions") if form.asks else ("items",)
+    lists = ("items",) + ("questions",) * form.asks + ("chosen",) * form.chooses
     data = parsed(text, lists)
     if data is None:
         return ["give it as JSON: {" + ", ".join(f'"{k}": [...]' for k in lists) + "}"]
@@ -126,7 +130,20 @@ def check(
     said = item_problems(data["items"], items, work, form, each, every)
     if form.asks:
         said += question_problems(data)
+    if form.chooses:
+        said += choice_problems(data["chosen"])
     return said
+
+
+def choice_problems(chosen: list[Any]) -> list[str]:
+    """What is wrong with the choices named, each to hold what was chosen and why, in words."""
+    return [
+        f'choice {n} must hold "chosen" and "why", what was chosen and why, in words'
+        for n, choice in enumerate(chosen, 1)
+        if not isinstance(choice, dict)
+        or set(choice) != {"chosen", "why"}
+        or not all(worded(v) for v in choice.values())
+    ]
 
 
 def item_problems(

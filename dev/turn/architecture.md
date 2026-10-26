@@ -124,6 +124,12 @@ flowchart TB
 
   A Good found where one part gives it passes a part that does not, and what lies between the parts
   is found only in the whole.
+- The generator names in its claim each choice the work rests on that the CCS and its files leave
+  open, with why, and the result carries those the finished work rests on.
+
+  How the work gives each Good is the generator's to decide, so it settles points no one gave it;
+  named with why, they reach the calling AI, which shows its user what was chosen without asking
+  them, where a choice said only in the generator's words reaches no one.
 - The result holds each item's Good and its lines, and finding what fell short in the run is the
   calling AI's, as [Principle 8](../architecture.md#learning-from-each-run) leaves it to the caller.
 

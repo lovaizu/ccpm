@@ -37,7 +37,8 @@ A CCS is the JSON file in which the calling AI keeps its task, in the shape
 [ACC](https://arxiv.org/abs/2601.11653) gives it: parts, each a list of entries, each entry a kind
 and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
 checklists, the receiver, what they use the work for and what they have with it; the call names the
-kinds the calling AI uses in it for each of these. The result holds each item's Good with its lines.
+kinds the calling AI uses in it for each of these. The result holds each item's Good with its lines,
+and each choice the work rests on that the CCS and its files leave open, with why.
 
 ### From a step that needs a work to the step's end
 
@@ -107,5 +108,7 @@ sequenceDiagram
   place, and made again where that reading found no Good, so it does not judge an item on its own
   assumption.
 - Each Good comes with the lines it rests on, so the calling AI checks it by reading those lines.
+- Each choice the work rests on that the CCS left open comes back with why, so the calling AI shows
+  the user what was decided without asking them.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.

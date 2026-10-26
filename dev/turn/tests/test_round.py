@@ -152,7 +152,7 @@ class TestFirstUserKept(RoundTest):
         # Then: the run asks at once; the generator is sent the answer by message, and its claim
         # sends the first user the work made again
         self.stopped()
-        out = self.later({"items": [GOOD, WAITS], "questions": [QUESTION]})
+        out = self.later({"items": [GOOD, WAITS], "questions": [QUESTION], "chosen": []})
         self.assertEqual(self.heard(out), {"asked": RESULT})
         move = self.due(self.answered())
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])

@@ -428,9 +428,11 @@ def generate(
 
 def made(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     """Has the run ask the generator's questions at once, before any reading rests on them;
-    otherwise has the first user use the work made, with no reading between."""
+    otherwise keeps the choices the work as made rests on, as the claim names them, and has the
+    first user use the work made, with no reading between."""
     if reply["questions"]:
         return asking(run, GENERATOR, GENERATOR, reply)
+    run["chosen"] = reply["chosen"]
     run["done"] = f"{GENERATOR} made {', '.join(run['work'])}."
     return due(run, FIRST_USER, prompts.reader(run), prompts.remade(run))
 
@@ -497,10 +499,12 @@ def left_asked(run: dict[str, Any], text: str) -> dict[str, Any]:
 
 def finished(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
     """Once every item has its Good, writes the result and has the run return: where the work is,
-    and each item's Good as the first user gave it, in the checklists' order."""
+    each item's Good as the first user gave it, in the checklists' order, and each choice the work
+    rests on, as the generator's last claim named it."""
     found = {forms.key_of(g): g for g in goods}
     items = [found[forms.key_of(i)] for i in run["items"]]
-    state.write(run["call"]["result"], {"work": run["work"], "items": items})
+    made = {"work": run["work"], "items": items, "chosen": run["chosen"]}
+    state.write(run["call"]["result"], made)
     return judge(run, "returned")
 
 

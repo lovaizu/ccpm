@@ -5,18 +5,24 @@ import os
 import unittest
 from unittest import mock
 
-from helpers import FOUND, FOUND_B1, RESULT, ReadTest, run
+from helpers import CHOSEN, FOUND, FOUND_B1, RESULT, ReadTest, run
 
 
 class TestResult(ReadTest):
-    def test_the_result_holds_the_work_and_every_good_alone(self):
-        # Given: a first user finding every item's Good
+    def test_the_result_holds_the_work_every_good_and_the_choices_alone(self):
+        # Given: a generator whose claim names a choice of its own, and a first user finding every
+        # item's Good
         # When: the orchestrator goes on
-        # Then: the result holds where the work is and each item's Good as the first user gave
-        # it, and nothing else, and the run then returns
-        out = self.first_read(FOUND, FOUND_B1)
+        # Then: the result holds where the work is, each item's Good as the first user gave it and
+        # the choice as the generator named it, and nothing else, and the run then returns
         self.assertEqual(
-            self.read_json(RESULT), {"work": ["README.md"], "items": [FOUND, FOUND_B1]}
+            self.due(self.made(chosen=[CHOSEN]))["input"]["subagent_type"], "turn:first-user"
+        )
+        with mock.patch.object(run, "SENDS", 0):
+            out = self.replied({"items": [FOUND, FOUND_B1]})
+        self.assertEqual(
+            self.read_json(RESULT),
+            {"work": ["README.md"], "items": [FOUND, FOUND_B1], "chosen": [CHOSEN]},
         )
         self.assertEqual(self.returned(out), {"returned": RESULT})
 

@@ -69,15 +69,19 @@ use, and gets its Good with the lines that give it. Where an item gets none, REA
 and read again, and an item that still gets none comes to the step's AI as a question for the user.
 
 When turn returns, README.md is in place, and the result gives each item's Good with the lines it
-rests on:
+rests on, and each choice the AI that made it took on its own, one the CCS and its files leave
+open, with why:
 
 ```json
 {"work": ["README.md"],
  "items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
-            "lines": ["README.md:3-4"]}, ...]}
+            "lines": ["README.md:3-4"]}, ...],
+ "chosen": [{"chosen": "the example tidies a file named people.csv",
+             "why": "no decision names one, and a list of people shows each column tidied"}]}
 ```
 
-The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends.
+The step's AI reads lines 3 and 4 and the others it is pointed to, shows the user the choice made
+without asking them, and the step ends.
 
 ## Why turn
 
@@ -89,6 +93,8 @@ turn gives your plugin's AI what it does not get by making the work and checking
   The AI that made a work finds the Good it meant; an AI meeting it for the first time finds only
   the Good its lines give, which is what the work's reader gets.
 - Each Good comes with the lines it rests on, so it is checked by reading them, not taken on trust.
+- Each choice the work rests on that no one gave its maker comes back with why, so nothing is
+  decided where no one sees it.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
 - A run stopped anywhere, by you or by a conversation that ended, goes on from where it stopped

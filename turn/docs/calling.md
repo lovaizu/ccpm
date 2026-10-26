@@ -76,9 +76,12 @@ the answer to turn in plain words; the run goes on with it.
             "good": "...", "lines": ["<path>:<from>-<to>"]},
            {"checklist": "checklists/readme.md", "item": "B-3",
             "parts": [{"part": "<path>:<from>-<to>", "good": "...",
-                       "lines": ["<path>:<from>-<to>"]}]}]}
+                       "lines": ["<path>:<from>-<to>"]}]}],
+ "chosen": [{"chosen": "...", "why": "..."}]}
 ```
 
 - `items`: each item's Good with the lines of the work that give it; an item whose Scope is
   `each part` gives them under `parts`, one for every part of the work, its lines inside that
   part.
+- `chosen`: each choice the work rests on that the CCS and the files it names leave open, made by
+  the AI that made it, with why; `[]` where none. Show them to the user, as no one asked them.

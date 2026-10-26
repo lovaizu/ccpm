@@ -25,8 +25,8 @@ class TestMade(ReadTest):
         # Given: a run checked to give every item its Good
         # When: the generator is to be started
         # Then: its prompt names the work, the checklists, the call's test, nothing sent back
-        # yet, no answers, the result, and its reply file beside it, beside the files it makes the
-        # work from, which the start's tests hold
+        # yet, no answers, no choice of an earlier claim, the result, and its reply file beside
+        # it, beside the files it makes the work from, which the start's tests hold
         prompt = self.prompt()
         del prompt["given"]
         self.assertEqual(
@@ -37,6 +37,7 @@ class TestMade(ReadTest):
                 "test": "sh tests/readme.sh",
                 "sent_back": [],
                 "answers": [],
+                "chosen": [],
                 "result": self.here(RESULT),
                 "reply": self.kept("generator.json"),
             },
@@ -74,7 +75,7 @@ class TestMade(ReadTest):
         # When: the orchestrator goes on
         # Then: a line says the generator found the item waiting, the run asks at once, with no
         # first user started, and the question is printed with the item it settles
-        out = self.replied({"items": [WAITS], "questions": [QUESTION]})
+        out = self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
         self.assertTrue(
             str(out["line"]).startswith(
                 "turn: turn:generator found 1 of 2 items waiting on the user's answer. Next,"
@@ -89,7 +90,7 @@ class TestMade(ReadTest):
     def asked_first(self):
         """The generator asks before making anything, the run asks the calling AI, and its answer
         is handed on; what the script prints then."""
-        self.replied({"items": [WAITS], "questions": [QUESTION]})
+        self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
         self.next()
         return self.answered()
 
@@ -120,7 +121,7 @@ class TestMade(ReadTest):
     def test_an_answer_that_lays_the_work_out_anew_has_the_ccs_checked_again(self):
         # Given: a generator that asked before making anything, and a CCS the calling AI added a
         # file of the work to with the answer
-        self.replied({"items": [WAITS], "questions": [QUESTION]})
+        self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
         self.next()
         self.laid_out_anew()
         # When: the answer is handed on, and the run started again
@@ -138,7 +139,7 @@ class TestMade(ReadTest):
         # Then: the generator is sent the second answer alone, as it holds the first already
         self.due(self.asked_first())
         second = dict(QUESTION, question="Which name?")
-        self.heard(self.replied({"items": [WAITS], "questions": [second]}))
+        self.heard(self.replied({"items": [WAITS], "questions": [second], "chosen": []}))
         move = self.due(self.answered("csvtidy"))
         sent = json.loads(move["input"]["message"])["answers"]
         self.assertEqual(
@@ -181,8 +182,9 @@ class TestMade(ReadTest):
         # When: the orchestrator goes on
         # Then: the generator is sent what is wrong, to write its reply again
         for claim, said in (
-            ({"items": [GOOD], "questions": []}, "B-1 is left out"),
-            ({"items": [GOOD, dict(GOOD, item="B-1")]}, '"questions": [...]'),
+            ({"items": [GOOD], "questions": [], "chosen": []}, "B-1 is left out"),
+            ({"items": [GOOD, dict(GOOD, item="B-1")], "chosen": []}, '"questions": [...]'),
+            ({"items": [GOOD, dict(GOOD, item="B-1")], "questions": []}, '"chosen": [...]'),
         ):
             with self.subTest(said=said):
                 out = self.replied(claim)

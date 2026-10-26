@@ -6,6 +6,7 @@ import os
 import unittest
 
 from helpers import (
+    CHOSEN,
     EACH_GOOD,
     EACH_ITEM,
     FOUND,
@@ -51,7 +52,9 @@ class TestItems(FormTest):
         for text in ("good", "[]", '{"items": []}'):
             with self.subTest(text=text):
                 said = forms.check(text, ITEMS, WORK, forms.CLAIM, [])
-                self.assertEqual(said, ['give it as JSON: {"items": [...], "questions": [...]}'])
+                self.assertEqual(
+                    said, ['give it as JSON: {"items": [...], "questions": [...], "chosen": [...]}']
+                )
         said = forms.check("good", ITEMS, WORK, forms.FIRST_READING, [])
         self.assertEqual(said, ['give it as JSON: {"items": [...]}'])
 
@@ -72,6 +75,7 @@ class TestItems(FormTest):
                     bare,
                 ],
                 "questions": [],
+                "chosen": [],
             },
             forms.CLAIM,
         )
@@ -88,7 +92,8 @@ class TestItems(FormTest):
         # Then: it is filled
         whole = os.path.abspath("checklists/readme.md")
         items = [dict(GOOD, checklist=whole), dict(EACH_GOOD, checklist=whole)]
-        said = self.each_said({"items": items, "questions": []}, forms.CLAIM, (ITEMS[0], EACH_ITEM))
+        claim = {"items": items, "questions": [], "chosen": []}
+        said = self.each_said(claim, forms.CLAIM, (ITEMS[0], EACH_ITEM))
         self.assertEqual(said, [])
 
     def test_an_item_naming_no_checklist_is_told_to_name_it(self):
@@ -96,7 +101,8 @@ class TestItems(FormTest):
         # When: it is checked
         # Then: each is shown as it was given and told to name its checklist
         bare = {"item": "F-1", "good": "it", "lines": ["README.md:1-3"]}
-        said = self.said({"items": [bare, dict(bare, checklist=1)], "questions": []}, forms.CLAIM)
+        claim = {"items": [bare, dict(bare, checklist=1)], "questions": [], "chosen": []}
+        said = self.said(claim, forms.CLAIM)
         for item in (bare, dict(bare, checklist=1)):
             with self.subTest(item=item):
                 self.assertIn(f"{json.dumps(item)} is not an item judged here", "\n".join(said))
@@ -143,7 +149,11 @@ class TestItems(FormTest):
         for number in (0, 2):
             with self.subTest(number=number):
                 said = self.said(
-                    {"items": [GOOD, dict(WAITS, question=number)], "questions": [QUESTION]},
+                    {
+                        "items": [GOOD, dict(WAITS, question=number)],
+                        "questions": [QUESTION],
+                        "chosen": [],
+                    },
                     forms.CLAIM,
                 )
                 self.assertIn(
@@ -155,7 +165,7 @@ class TestItems(FormTest):
         # When: it is checked
         # Then: it passes, each number from 1 to the count of the questions given
         second = dict(QUESTION, question="Which name?")
-        both = {"items": [dict(WAITS, item="F-1"), dict(WAITS, question=2)]}
+        both = {"items": [dict(WAITS, item="F-1"), dict(WAITS, question=2)], "chosen": []}
         said = self.said(dict(both, questions=[QUESTION, second]), forms.CLAIM)
         self.assertEqual(said, [])
 
@@ -183,7 +193,7 @@ class TestItems(FormTest):
             ),
         ):
             with self.subTest(words=words):
-                said = self.said(data, forms.CLAIM)
+                said = self.said(dict(data, chosen=[]), forms.CLAIM)
                 self.assertIn(words, "\n".join(said))
 
 
@@ -246,8 +256,32 @@ class TestClaim(FormTest):
         # Given: the generator's claim, one item Good and the other waiting on a question
         # When: it is checked
         # Then: it passes, as nothing beside the items and questions is asked of it
-        said = self.said({"items": [GOOD, WAITS], "questions": [QUESTION]}, forms.CLAIM)
-        self.assertEqual(said, [])
+        claim = {"items": [GOOD, WAITS], "questions": [QUESTION], "chosen": [CHOSEN]}
+        self.assertEqual(self.said(claim, forms.CLAIM), [])
+
+    def test_a_claim_names_each_choice_it_made_with_why_in_words(self):
+        # Given: claims whose choices are not a list, or hold one that is no object, without its
+        # why, with empty words, or with a key of its own
+        # When: each is checked
+        # Then: the first is told the shape to give, and each other the choice with what to give
+        claim = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": []}
+        said = self.said(dict(claim, chosen={}), forms.CLAIM)
+        self.assertEqual(
+            said, ['give it as JSON: {"items": [...], "questions": [...], "chosen": [...]}']
+        )
+        for choice in (
+            "people.csv",
+            {"chosen": "people.csv"},
+            dict(CHOSEN, why=" "),
+            dict(CHOSEN, chosen=1),
+            dict(CHOSEN, seen="x"),
+        ):
+            with self.subTest(choice=choice):
+                said = self.said(dict(claim, chosen=[CHOSEN, choice]), forms.CLAIM)
+                self.assertEqual(
+                    said,
+                    ['choice 2 must hold "chosen" and "why", what was chosen and why, in words'],
+                )
 
     def test_a_claim_asking_before_any_work_is_made_gives_the_items_waiting_alone(self):
         # Given: a generator's reply asking a question before making anything, naming only the
@@ -255,8 +289,9 @@ class TestClaim(FormTest):
         # When: each is checked
         # Then: the first passes, as no Good is set before the work is made, and the second is
         # told the item left out
-        self.assertEqual(self.said({"items": [WAITS], "questions": [QUESTION]}, forms.CLAIM), [])
-        said = self.said({"items": [GOOD], "questions": []}, forms.CLAIM)
+        asked = {"items": [WAITS], "questions": [QUESTION], "chosen": []}
+        self.assertEqual(self.said(asked, forms.CLAIM), [])
+        said = self.said({"items": [GOOD], "questions": [], "chosen": []}, forms.CLAIM)
         self.assertEqual(
             said, ["checklists/readme.md B-1 is left out; give every item judged here"]
         )
@@ -374,7 +409,11 @@ class TestParts(FormTest):
         # Then: it passes
         for form in (forms.CLAIM, forms.FIRST_READING):
             with self.subTest(form=form):
-                data = {"items": [GOOD, dict(GOOD, item="B-1"), EACH_GOOD], "questions": []}
+                data = {
+                    "items": [GOOD, dict(GOOD, item="B-1"), EACH_GOOD],
+                    "questions": [],
+                    "chosen": [],
+                }
                 self.assertEqual(self.each_said(data, form, ITEMS + [EACH_ITEM]), [])
 
     def test_an_item_given_at_the_wrong_scope_stops(self):
@@ -541,8 +580,11 @@ class TestSchemas(FormTest):
         # When: each is held to its role's schema
         # Then: each holds
         for name, value in (
-            ("claim.json", {"items": [GOOD, WAITS, EACH_GOOD], "questions": [QUESTION]}),
-            ("claim.json", {"items": [WAITS], "questions": [QUESTION]}),
+            (
+                "claim.json",
+                {"items": [GOOD, WAITS, EACH_GOOD], "questions": [QUESTION], "chosen": [CHOSEN]},
+            ),
+            ("claim.json", {"items": [WAITS], "questions": [QUESTION], "chosen": []}),
             ("reading.json", {"items": [FOUND, STOPPED_B1, EACH_GOOD]}),
         ):
             with self.subTest(name=name, value=value):

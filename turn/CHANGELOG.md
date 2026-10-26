@@ -10,6 +10,7 @@
 - The AI that makes the work runs what it gives as the receiver would, such as the commands it tells and its tests — a work that fails on first use is made again before it reaches you.
 - Your call names `test`, the one command that checks the work, such as `make check`, or `null` where it has none, and the AI that makes the work passes it after its last change before it ends — a work that fails your own check does not come back to you.
 - The result names every item's Good with the lines that give it — you check each Good by reading its lines.
+- The result names each choice the AI that made the work took on its own, one your CCS and its files leave open, with why — your step can show its user what was decided without asking them.
 - Each AI of a run is held to its step by lane's hooks: it reads only what it is given, a role writes only the work or its reply, the AI reading in the receiver's place answers every item of your checklists, and the AIs that make, read and pass on the work run no `git commit` or `git push`; one that drifts is told its step again and goes back to it — the work rests on what you decided, and the rest of your repository stays as you left it.
 - A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
 - A work already at its paths is changed from what is there, not written again from nothing — what already serves its reader stays as it is.

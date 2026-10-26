@@ -7,6 +7,7 @@ import unittest
 from helpers import (
     ANSWER,
     ASKED,
+    CHOSEN,
     FOUND,
     FOUND_B1,
     QUESTION,
@@ -59,6 +60,14 @@ class TestRoundEnd(ReadTest):
         self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:first-user")
         out = self.replied({"items": self.reading(FOUND, FOUND_B1)})
         self.assertTrue(str(out["line"]).endswith("of README.md, for 2 items, round 2."), out)
+
+    def test_the_next_round_s_generator_is_given_the_choices_the_last_claim_named(self):
+        # Given: a first round whose generator named a choice of its own, and a first user
+        # stopping at an item
+        # When: the second round's generator is due, started anew
+        # Then: it is given the choice, as the work it makes again still rests on it
+        self.due(self.first_read(FOUND, claim_chosen=[CHOSEN]))
+        self.assertEqual(self.prompt()["chosen"], [CHOSEN])
 
     def test_a_reading_with_no_good_goes_to_the_next_round_with_every_item(self):
         # Given: a first user finding no item's Good
