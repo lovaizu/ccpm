@@ -29,7 +29,12 @@ import rn
 
 # The user's words, in the conversation language their instructions set.
 REQUEST = "/rn:up README に新しいコントリビューター向けの挨拶を一行足して"
-FEEDBACK = "挨拶には、質問があるときは issue を開けばよいことも書いてほしい"
+# The feedback at the plan sign-off, which settles the point behind it with the goal's change, as
+# the plan made again says where to ask in G1 too.
+FEEDBACK = (
+    "挨拶の行に、質問があれば issue を開くよう書いてください。リンクはいりません。目的にも、質問の"
+    "窓口を伝えることを入れてください"
+)
 # Each answer in the user's own words, so the decision kept is the one the stand-in turn's reply
 # was made from, whichever order rn puts its options in.
 LANGUAGES_ANSWER = "会話は日本語、リポジトリは英語でお願いします"
@@ -40,12 +45,6 @@ DONE_ANSWER = (
 WHY_ANSWER = "歓迎されていると感じて、早く最初の変更を出してもらうためです"
 USE_ANSWER = "いいえ、Use の節は指さなくていいです"
 PLACE_ANSWER = "タイトルのすぐ下に置いてください"
-# The answer to the point behind the feedback, which settles the goal's change with it, as the
-# plan made again says where to ask in G1 too.
-ASK_ANSWER = (
-    "挨拶の行に、質問があれば issue を開くよう書いてください。リンクはいりません。目的にも、質問の"
-    "窓口を伝えることを入れてください"
-)
 L1_OPEN = "L1: an issue to lovaizu/ccpm alone, not yet sent"
 SLUG = "greet-contributors"
 TITLE = "Greet new contributors"
@@ -1256,15 +1255,14 @@ CASES = {
         {"learnings": [LEARNT_FEEDBACK]},
     ),
     "after-feedback": Case(
-        "/rn:up in a fresh conversation after feedback: the point behind it, the plan made again,"
-        " the same sign-off",
-        "up 1, 6, 2, 3, 5 (what changed)",
+        "/rn:up in a fresh conversation after feedback that settles the point behind it: the"
+        " feedback kept as its answer, nothing asked again, the plan made again, the same sign-off",
+        "up 1, 6, 2 (the feedback the answer), 3, 5 (what changed)",
         fed_back,
         [front("plan", "none"), next_has("Step 6"), open_has(FEEDBACK)],
         [
-            ("/rn:up", [STAYS, ONE_POINT, open_has(FEEDBACK)]),
             (
-                ASK_ANSWER,
+                "/rn:up",
                 [
                     MOVED,
                     KEPT,

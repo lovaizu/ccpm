@@ -200,9 +200,9 @@ conversation.
    the sign of it.
    - In: the feedback whole in the steering's Open, kept by `/rn:gm`; the sign-off it answered, the
      steering's stage.
-   - Find the point behind it, one rn decided wrong or did not ask, and confirm it with the user as
-     in step 2, on the work it touches, keeping the feedback in Open until the works are made
-     again.
+   - Find the point behind it, one rn decided wrong or did not ask, on the work it touches, and
+     take the feedback as the user's answer to it in step 2, kept where it settles the point,
+     keeping the feedback in Open until the works are made again.
    - Have each work it touches made again, step 3 on it, giving nothing more, as rn.py makes it as
      its last call did.
    - Then step 5 on the same sign-off, whose proposal shows what changed.
