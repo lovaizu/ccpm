@@ -722,6 +722,9 @@
   },
   {
    "fact": "2026-10-26: the user decided: the flow trial is placed by dev/architecture.md's Test, not its own docstring: moves by the move trials (mocks), the whole and the KRs by an acceptance test with the real turn on lovaizu/playground, on a ~1 hour request with documents and code: a Downloads-tidying CLI with README, design and tests (11d5c6d: rn architecture Test, steering T34 added, T14 one request, T30/T31 pass on the move trials)"
+  },
+  {
+   "fact": "2026-10-26: T33 done and pushed (4cf232c..200ce6f by a subagent, read by hand): calls/, rn.py ccs plan|learnings cut the part for the orchestrator, rn.py history and search, skills ty/gm without learnings, checklists; check.sh lane/turn/rn 100%, mutate rn 0, move trials passing. Step 4 settled from the purpose (8db852f): what an answer settled is written into a criterion in the plan's words, only a choice no answer made asked first; plan-signoff passed so. T31 also names folders, files and trials by dev/architecture.md's Test kinds (331cd37), the user chose a"
   }
  ],
  "semantic_gist": [
@@ -788,7 +791,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T33: rn's skills, scripts, checklists, tests and move trials brought to e4c002a's docs"
+   "task": "T34: rn's acceptance test, trials/flow/ made into trials/acceptance/ with the real turn on lovaizu/playground"
   }
  ],
  "relational_map": [
@@ -826,7 +829,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: find the T33 subagent's work (git log since 11d5c6d; pgrep -af claude for a live run; its brief in this session's scratchpad may be gone, the brief's content is in e4c002a's docs); read its commits by hand against the docs, run check.sh rn/turn/lane, mutate rn, push; then T34 (flow trial made into the acceptance test: real turn, lovaizu/playground, wants for the Downloads CLI, dev/rn/README's flow line, flow.py's docstring), tried once small first; then T14, T30/T31's ends, the shared.md findings left listed to the user, final check, report"
+   "next": "T34: design the acceptance test first (wants for the Downloads CLI, real turn installed, lovaizu/playground branch made and removed, rn's README Trials line, the script's docstring), desk-trace it, run once small, then T14 runs it whole; then T30, T31 (names by Test's kinds), the shared.md findings left listed to the user, final check, report"
   }
  ],
  "uncertainty_signal": [

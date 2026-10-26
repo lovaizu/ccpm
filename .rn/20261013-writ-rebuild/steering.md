@@ -159,10 +159,10 @@ turn made to make and have read alone, and rn to make what it can itself, as the
 lesson made at each sign-off weighed down every session and named causes its records did not
 show.
 
-- [ ] T32: turn has no learner: its README, UX and architecture, the learner role and the call's
+- [x] T32: turn has no learner: its README, UX and architecture, the learner role and the call's
   `lessons` removed, so turn makes a work and has its first user read it, and finding what fell
   short is the caller's. Serves AC2.
-- [ ] T33: rn's orchestrator makes the plan from the hearing with rn's plan checklist open and
+- [x] T33: rn's orchestrator makes the plan from the hearing with rn's plan checklist open and
   checks it against the same checklist, with no call to turn, rn's scripts holding its form; the
   documents of the design are made through turn; no learnings are made at a sign-off: once the
   user approves the finished work, the orchestrator looks once for the learnings in the branch's
