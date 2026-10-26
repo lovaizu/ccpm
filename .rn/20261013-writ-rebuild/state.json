@@ -761,6 +761,12 @@
   },
   {
    "fact": "2026-10-27: acceptance --until design (7t59k26j) FAILED at message 23, 130 min, $38: the plan sign-off reached with one feedback; in design the README's B-4/B-5/B-8 judged by turn's first user on a tool not built (curl of the download address), never returned; turn:up ended waiting on roles resumed by SendMessage, whose task notifications reached rn's main conversation, three restarts. Fixed at the causes: turn's flow reads a role's end from its record via lane's record.py (7035404, orchestrator trial given and sent passed); a checklist item marked `Judged on: the built product` (readme B-4, B-5, B-8) is cut from the copy turn gets before the build, and plan.md B-7 asks the document made again at build (39bd6c9; move trials design-signoff, task, checklist-point passed). check.sh 100%, mutate 0 for both"
+  },
+  {
+   "fact": "2026-10-27: whole acceptance run 2 (x2mk_zvm) reached and passed the design sign-off, then the trial crashed in build on tests/__pycache__/*.pyc that rn committed into the user's repository: code.md B-5 asks by-products kept out by the ignore file, trials read non-text bytes replaced, an error summed up as itself (8a0b0b7..HEAD). Run 3 started ~04:10 JST: folder /tmp/rn/20261027-acceptance-5180ibfe, log scratchpad acceptance-whole.log of session 413d3062 (the background command was started there; after /clear find it with pgrep -af acceptance.py); at 06:00 message 41 in build, turn made .gitignore with the tests"
+  },
+  {
+   "fact": "2026-10-27: the user found a regression: rn 0.9.0's /rn:gm with no words took the user's PR comments (rn/skills/gm/SKILL.md at fb95639^ step 4); the rebuild asks for words (rn/prompts/feedback.md). Added as section 'Feedback on the pull request' of issue #54, as the user settled: points open asked first, all comments on a work made in one turn call held to fix.md, not added onto, one commit (commit per intent given up), each comment answered on the PR with what was done, why and the lines changed, or the question. Open: fix.md only named in the CCS (rn/scripts/ccs.py:333), no one judges a remake against it. To design whole after the acceptance pass"
   }
  ],
  "semantic_gist": [
@@ -868,7 +874,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: the whole acceptance run (no --until) started 2026-10-27 in the background, its log scratchpad acceptance-whole.log of session 413d3062; read summary.json and the records when it ends, fix at the cause, run again until PASSED; the user asked to go on to the acceptance pass judging by purpose and ideal and to hear the judgments made at the end"
+   "next": "on resume: (1) wait for acceptance run 3 (pgrep -af acceptance.py; folder /tmp/rn/20261027-acceptance-5180ibfe); read summary.json and records; check whether rn's main still relays role ends to turn after 7035404 and whether it hurts; fix at the cause and run again until PASSED. (2) then report to the user, in Japanese, every judgment made on my own since they asked (2026-10-27) to go to the acceptance pass: step 6 feedback-as-answer only where it says what the work must be (76bc687); turn reads a role's end from its record (7035404); `Judged on: the built product` items cut before the build, README B-4/B-5/B-8, plan.md B-7 asks the remake at build (39bd6c9); code.md B-5 by-products kept out by the ignore file; trial tool fixes. (3) then design the PR feedback of #54 whole before building"
   }
  ],
  "uncertainty_signal": [
