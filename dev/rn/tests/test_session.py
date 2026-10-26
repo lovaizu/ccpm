@@ -1170,17 +1170,17 @@ class CheckTest(RepoTest):
         )
 
     def test_learnings_out_of_form_stop_at_the_parts_own_line(self):
-        # Given: a learning kept, and a call on the learnings whose part holds one, then a line
-        # with no ID on its line 2.
+        # Given: three learnings kept, and a call on the learnings whose part holds one with a
+        # line under it, then a line with no ID on its line 3.
         self.session()
-        self.write(LEARNINGS, "- L1: Kept.\n")
-        self.call("0001", "learnings", part="- L1: First.\n- A slip.\n")
+        self.write(LEARNINGS, "- L1: Kept.\n- L2: Kept too.\n- L3: Kept last.\n")
+        self.call("0001", "learnings", part="- L1: First.\n  Its words.\n- A slip.\n")
         self.kept()
         # When: turn's maker runs the check on it.
         out = self.stopped("check", "0001")
         # Then: rn names the part and the point at that line.
         self.assertIn(
-            f"rn: {call_at('0001', 'learnings.md')} would be out of its form: line 2: expected a"
+            f"rn: {call_at('0001', 'learnings.md')} would be out of its form: line 3: expected a"
             " learning as `- L<n>: <what happened, with the words it rests on, and where it would"
             " make later work better>`, found `- A slip.`; change it so it holds, then run this"
             " again",
