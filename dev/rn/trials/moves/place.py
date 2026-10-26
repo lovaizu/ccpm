@@ -167,12 +167,15 @@ class Place:
         os.makedirs(os.path.join(turn, "stand"))
         with open(os.path.join(turn, "stand", "replies.json"), "w", encoding="utf-8") as f:
             json.dump(replies, f, ensure_ascii=False, indent=1)
-        # The stand-in keeps none of the real turn:up's steps, so its lanes are left out.
+        # The stand-in keeps none of the real turn:up's steps, so its lanes are left out: each
+        # hook whose command ends with the subagent it holds, turn:up.
         hooks = os.path.join(turn, "hooks", "hooks.json")
         with open(hooks, encoding="utf-8") as f:
             laid = json.load(f)
         laid["hooks"] = {
-            event: [e for e in lanes if not any(" turn:up " in h["command"] for h in e["hooks"])]
+            event: [
+                e for e in lanes if not any(h["command"].endswith(" turn:up") for h in e["hooks"])
+            ]
             for event, lanes in laid["hooks"].items()
         }
         with open(hooks, "w", encoding="utf-8") as f:
