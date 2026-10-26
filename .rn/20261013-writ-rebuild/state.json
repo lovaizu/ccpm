@@ -716,6 +716,12 @@
   },
   {
    "fact": "2026-10-26: the subagent's fixes read and pushed: trying.py one live stream-json run per conversation, --resume gone (9fec1d0); rn.py check <nnnn> given to turn as the test of plan and learnings (4888f5b); step 6 takes the feedback as step 2's answer (92e2ab8), both paths in the move trials (39bcca0, after-feedback and settled-feedback passed); rn's README feedback example made one that leaves its point open (a7fd455); the flow stand-in turn runs the call's test (95a2c25). Flow trial PASSED: 18.2 min, $5.3, 9 turn calls (was 16), 8 answers (was 20), no remake for form, no synthetic reply; its one learner issue again blamed rn for the stand-in user's held wish. The user: a one-line README request says nothing of rn's worth; rn is for work of days. The user decided (2026-10-26): the plan made and checked by the orchestrator with the checklist, no turn; the design through turn; learnings out of turn whole (learner, lessons, README/UX/architecture: option 1), rn looking once at the end, doubts checked in JSONL; written as T32, T33"
+  },
+  {
+   "fact": "2026-10-26: T32 done and pushed (0f6e217 docs, d8d6c6e..5a9eb76 code by a subagent, read by hand, a docstring rewrapped): turn has no learner, its result {work, items}; records.py is rn's own; check.sh 100% in lane/turn/rn, mutate 0 in turn and rn. dev/architecture.md Principle 8: the orchestrator looks once after the finished work is approved; a plugin an AI calls leaves it to its caller. Principle 4: a work the caller reads to approve at once (a plan) is checked by its maker against its checklist and read first by the caller. T33's docs committed (e4c002a: rn README/UX/architecture/CHANGELOG: plan and learnings written by the orchestrator, learnings once at the end from history: send-backs, remakes, replaced decisions; doubts searched in conversations by rn's scripts; <session>/turn/ becomes calls/; stretch.py becomes history.py). T33's code given to a background subagent with scratchpad t33-brief.md (skills, scripts, checklists, tests, move trials; no flow trial), still running at /clear"
+  },
+  {
+   "fact": "2026-10-26: the user decided: the flow trial is placed by dev/architecture.md's Test, not its own docstring: moves by the move trials (mocks), the whole and the KRs by an acceptance test with the real turn on lovaizu/playground, on a ~1 hour request with documents and code: a Downloads-tidying CLI with README, design and tests (11d5c6d: rn architecture Test, steering T34 added, T14 one request, T30/T31 pass on the move trials)"
   }
  ],
  "semantic_gist": [
@@ -782,7 +788,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T31: lane, turn and rn brought to what the whole audit (.rn/20261013-writ-rebuild/audits/*.md, 534 findings) says they should be, keeping every line's intent"
+   "task": "T33: rn's skills, scripts, checklists, tests and move trials brought to e4c002a's docs"
   }
  ],
  "relational_map": [
@@ -820,7 +826,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: T32 then T33 (stack up: turn before rn): design each from the purpose first (fix.md, keep intent of every removed line, no patch on patch), turn's and rn's README/UX/architecture brought to the decision (report old/new), built by a subagent with the brief, read by hand, check.sh 100%, mutate 0, the move trials whose moves change rerun, then the flow trial as a wiring check; then T30/T31's ends, the shared.md findings left (style of agreed docs) listed to the user, final check, report. Measure where a trial's minutes go from commit times before claiming a cause"
+   "next": "on resume: find the T33 subagent's work (git log since 11d5c6d; pgrep -af claude for a live run; its brief in this session's scratchpad may be gone, the brief's content is in e4c002a's docs); read its commits by hand against the docs, run check.sh rn/turn/lane, mutate rn, push; then T34 (flow trial made into the acceptance test: real turn, lovaizu/playground, wants for the Downloads CLI, dev/rn/README's flow line, flow.py's docstring), tried once small first; then T14, T30/T31's ends, the shared.md findings left listed to the user, final check, report"
   }
  ],
  "uncertainty_signal": [
@@ -843,22 +849,13 @@
    "open": "wait_for reads 'not OK' as the approval; left until it shows in a run (the user, 2026-10-22)"
   },
   {
-   "open": "the learner may read a conversation whole rather than search it; no lane holds Grep-only; judge on rn's whole trials with real sizes"
-  },
-  {
    "open": "a session rn 0.9.0 left is not gone on with (R25); CHANGELOG says nothing of it until decided"
-  },
-  {
-   "open": "to ask the user after the stage split: rn up step 11 has the orchestrator write an issue's text itself, against its Role 'you write no line of what turn makes'; recommended: the issue text a work turn makes"
   },
   {
    "open": "turn's 5 items the calling AI judged unmet (whole-work repetition, contradiction, an unfollowable pointer): investigate from the records whether the first user's miss lies in the checklist, its steps or a hook, after the Good check goes, as the user asked"
   },
   {
    "open": "for rn's step (the user, 2026-10-25): rn makes work of any kind, not a plugin's alone; a check made first is asked in plan.md B-9 (9f05db9) only where the check is itself made in the session; the user's repeated feedback, kept now as memories, goes back by rn's learnings (Principle 8), sorted by checklist.md's path into the repository's .rn/checklists/ or rn's own checklists, once rn runs; lane, turn, rn built up in that order meanwhile"
-  },
-  {
-   "open": "asked, not answered: take the flow trial as a wiring check only, its minutes and changes read as no key result, and judge rn's worth on T14's real requests, the requests' size to be raised toward work of days (the user, 2026-10-26: 'README に1行足すだけ ... rn使うわけないよね')"
   }
  ],
  "retrieved_artifacts": [
