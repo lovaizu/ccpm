@@ -279,8 +279,10 @@ so each plugin carries the shared code while it is written, tested and fixed in 
 
 ### No lines copied
 
-`dev/check.sh` fails on lines copied between any two files, but a test's expected value written
-out again.
+No lines are copied between files, but a test's expected value, written out again. `dev/check.sh`
+fails on four lines or more of Python alike in two files, comments, docstrings and imports aside,
+as pylint's `duplicate-code` finds them, wherever pyproject.toml's `test-quality` group is
+installed; it does not tell a test's expected value apart.
 
 A copy is fixed in one file and left wrong in the other; a test that takes its expected value from
 the code checks the code against itself.
@@ -289,7 +291,9 @@ the code checks the code against itself.
 
 A check on what an AI does is a lane of [lane](../lane/README.md), laid in each plugin by lane's
 `lay.py`; one no lane holds is added to lane as a lane of its own, in its own named file, with one
-entry file per hook event, as the official `hookify` plugin does.
+entry file per hook event, as the official
+[`hookify`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/hookify) plugin
+does.
 
 Each check is then written and tested once, in lane, and each plugin takes lane's code through a
 link; a check kept in a plugin of its own reads the AI's calls apart from lane's and drifts from
@@ -337,8 +341,9 @@ Mutation testing runs the tests once for each mutant, so a slow test run makes e
 ### Unit tests: prompts
 
 Each role, a skill or an agent, is tried on its own, with everything but it stood in for by mocks,
-on Opus, the model the maintainer uses, named in each run, and judged from its input, its output
-and the records of the run against its Role and Steps.
+on Opus, named in each run, the model used by the maintainer, the person who has the plugins built
+and decides what reaches their users, and judged from its input, its output and the records of
+the run against its Role and Steps.
 
 A prompt is known by what the AI does with it, and only the records show where a run went wrong;
 a role tried together with what lies around it does not show which of them went wrong; a smaller
@@ -348,9 +353,8 @@ whoever runs the trial.
 ### Acceptance tests: user stories
 
 The whole plugin is tried as its user uses it, its results are checked, and it is shown to the
-maintainer, the person who has the plugins built and decides what reaches their users, with how
-close it came to the goal and to each key result of the UX and what could be improved; the
-maintainer judges.
+maintainer with how close it came to the goal and to each key result of the UX and what could be
+improved; the maintainer judges.
 
 Each part can pass while a story is missed; and what reaches users is the maintainer's to decide.
 
