@@ -24,6 +24,8 @@ fi
 for plugin in $plugins; do
   sh dev/typecheck.sh "$plugin"
 done
+# The checks' own Python, beside the plugins'.
+pyrefly check --search-path dev/lane dev/*.py
 
 # The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
 # tests, whose inputs change from run to run, are run apart by dev/properties.sh.

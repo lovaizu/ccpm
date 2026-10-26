@@ -16,6 +16,3 @@ timeout = 30.0
 # one in order too, such as a tool named before Bash and one after, so a comparison changed to `<=`
 # or `>=` fails a test; their comments say what each value is, not where it sorts.
 test-command = "sh -c 'ruff check --select F632 lane && sh dev/typecheck.sh lane && python -m unittest discover -f -s dev/lane/tests'"
-
-[cosmic-ray.distributor]
-name = "local"

@@ -1,10 +1,9 @@
 # Mutation testing of turn's scripts and its adapters of lane's ports, run from the top of the
-# repository on a copy that may be changed. What turn takes from lane through a link, its hooks and
-# the modules linked into its scripts' folder, is mutated there, with lane's tests.
+# repository on a copy that may be changed. What turn takes from lane through a link, its hooks'
+# lane/ among it, is mutated there, with lane's tests.
 [cosmic-ray]
 module-path = ["turn/scripts", "turn/hooks/adapters"]
 timeout = 30.0
-excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
 # The type checker and the linter run first: a change to a type annotation, or a comparison of a
 # string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
 # type checker is what checks annotations, the linter what checks `is` against a literal; the type
@@ -24,6 +23,3 @@ excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
 # comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not
 # where it sorts.
 test-command = "sh -c 'ruff check --select F632 turn && sh dev/typecheck.sh turn && python -m unittest discover -f -s dev/turn/tests'"
-
-[cosmic-ray.distributor]
-name = "local"

@@ -3,14 +3,6 @@
 [cosmic-ray]
 module-path = ["rn/scripts"]
 timeout = 60.0
-# What rn takes from turn and lane through a link is mutated there, with their tests.
-excluded-modules = [
-    "rn/scripts/call.py",
-    "rn/scripts/forms.py",
-    "rn/scripts/record.py",
-    "rn/scripts/records.py",
-    "rn/scripts/template.py",
-]
 # The type checker and the linter run first: a change to a type annotation changes no behavior a
 # test could see, and the type checker is what checks annotations, the linter what checks `is`
 # against a literal.
@@ -25,6 +17,3 @@ excluded-modules = [
 # one in order too, such as a stage before the sign-off asked and one after, so a comparison changed
 # to `<=` or `>=` fails a test; their comments say what each value is, not where it sorts.
 test-command = "sh -c 'ruff check --select F632 rn && sh dev/typecheck.sh rn && python -m unittest discover -f -s dev/rn/tests'"
-
-[cosmic-ray.distributor]
-name = "local"
