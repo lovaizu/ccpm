@@ -149,6 +149,21 @@ branch protection rather than a check of commands.
   decisions with their intent in a few short lines, read from where the hearing keeps them, the
   scripts and the skills designed together. Serves AC1, AC2.
 
+turn made to make and have read alone, and rn to make what it can itself, as the user chose
+(2026-10-26), before T30 and T31 are finished on them: the plan is read by the user at once, a
+lesson made at each sign-off weighed down every session and named causes its records did not
+show.
+
+- [ ] T32: turn has no learner: its README, UX and architecture, the learner role and the call's
+  `lessons` removed, so turn makes a work and has its first user read it, and finding what fell
+  short is the caller's. Serves AC2.
+- [ ] T33: rn's orchestrator makes the plan from the hearing with rn's plan checklist open and
+  checks it against the same checklist, with no call to turn, rn's scripts holding its form; the
+  documents of the design are made through turn; no learnings are made at a sign-off: once the
+  user approves the finished work, the orchestrator looks once for the learnings in the branch's
+  history, each send-back, remake and point asked again, and checks each it doubts in the
+  conversations' JSONL before putting it to the user. Serves AC1, AC2.
+
 rn's steering made the map kept current, and the plugins brought to what they should be, before the
 acceptance, as the user chose (2026-10-25).
 
