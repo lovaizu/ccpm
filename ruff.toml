@@ -1,7 +1,0 @@
-target-version = "py39"
-# The width this repository's documents wrap at.
-line-length = 100
-
-[lint]
-# The rules ruff checks by default, and lines past that width.
-extend-select = ["E501"]

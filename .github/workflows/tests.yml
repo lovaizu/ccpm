@@ -59,7 +59,7 @@ jobs:
             echo "check=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # Users run 3.9; Cosmic Ray and Hypothesis need a newer Python only to test, not to run.
+  # The oldest Python users run and the newest (dev/architecture.md, Unit tests: code).
   check:
     needs: changed
     if: needs.changed.outputs.check == 'true'

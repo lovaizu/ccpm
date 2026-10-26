@@ -3,7 +3,8 @@
 [project]
 name = "ccpm"
 version = "0"
-# Users run Python 3.9.
+# The oldest Python users run (dev/architecture.md, Python 3.9 and the standard library), which ruff
+# takes as the version it checks for.
 requires-python = ">=3.9"
 
 [dependency-groups]
@@ -28,3 +29,16 @@ package = false
 
 [tool.uv.dependency-groups]
 test-quality = { requires-python = ">=3.11" }
+
+[tool.ruff]
+# The widest a line may be: of the Python, which E501 below checks, and of the documents, which no
+# check reads.
+line-length = 100
+
+[tool.ruff.lint]
+# The rules ruff checks by default, and lines past that width.
+extend-select = ["E501"]
+
+[tool.pyrefly]
+# requires-python's oldest, as pyrefly does not read it there.
+python-version = "3.9"
