@@ -10,8 +10,9 @@ commands, in `dev/rn/trials/moves/`; how to run it is in `dev/rn/README.md`, the
 - Each case runs in a fresh repository whose origin is a bare repository beside it, not on
   `lovaizu/playground`, as a move needs no real GitHub; the cases run side by side, each in a folder
   of its own, and nothing is removed, so each record can be read after.
-- Each message is a `claude -p` call by lane's `dev/lane/trying.py` `claude`, on Opus, a second
-  message of the same conversation with `--resume`, a fresh conversation without it.
+- Each message is sent by lane's `dev/lane/trials/trying.py` `Conversation`, on Opus, the messages
+  of one conversation to one live run of Claude Code, a fresh conversation a new run, as
+  `claude -p --resume` dropped the last reply on Claude Code 2.1.309.
 - What each move must leave is checked by script, and the records are read against the skills'
   steps, as only they show where a move went wrong.
 - Code in `dev/rn/trials/` is out of the line count, mutation testing and property tests, its run
