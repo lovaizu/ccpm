@@ -755,6 +755,9 @@
   },
   {
    "fact": "2026-10-26: the user's open asks done and pushed: lane's, turn's and rn's logical views show by box shape whether an AI or code does the work (AI round ends, code square, other slightly rounded) with a legend, turn drawn as an AI in rn's, rn's architecture checklist template asking it (ca53aa5); B-7 pass over rn's Logical view (7572c1d): restatements of the figure, the UX, plan.md B-7/F-1 cut, how the parts do it kept. Rendered for checking with resvg_py and matplotlib's DejaVu fonts via uv run --no-project --with, as the sandbox has no system fonts or Chromium libs"
+  },
+  {
+   "fact": "2026-10-26: the four subagent commits eaa84f0 5597d47 c29568e 85ffe12 read by hand: consistent with rn/prompts/orchestrator.md and proposal.py, turn's `chosen` form (turn/docs/calling.md:80) matching. The two patches redone at the cause (76bc687): step 6 takes feedback as the answer only where it says what the work must be, else asks the point, as after-feedback's records showed the purpose widened and kept unasked; after-feedback checks no decision holds `question` before the answer (keeping the state before asking is a move), good checks `run first`. Move trials 27/27 (29 min, $10), check.sh rn 100%, mutate 0. Trial folders and records of these runs and the acceptance-7vc7gbjm and roles-f647oun3 ones removed by literal path"
   }
  ],
  "semantic_gist": [
@@ -862,7 +865,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: (1) read the four subagent commits eaa84f0 5597d47 c29568e 85ffe12 by hand; redo the two patches at the cause (after-feedback: step 6 widening the purpose from feedback; good's check); clean /tmp/rn/20261026-acceptance-7vc7gbjm and ~/.claude/projects/-tmp-rn-20261026-acceptance-7vc7gbjm-repo and -user by literal path; acceptance --until design, then whole (T14). (2) ~/.claude/projects/-tmp-turn-20261026-roles-f647oun3-repo left by an earlier trial: remove by literal path."
+   "next": "on resume: the acceptance run --until design started 2026-10-26 ~23:10 JST in the background, its log scratchpad acceptance-design.log of session 413d3062; read its summary and records when it ends; then the whole (T14)."
   }
  ],
  "uncertainty_signal": [
