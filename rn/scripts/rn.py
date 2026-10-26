@@ -33,7 +33,9 @@ STARTED = "Step 8 of /rn:up on plan: hear the purpose and what shows it done"
 APPROVED_NEXT = {
     steering.PLAN: "Step 9 of /rn:up on plan: hear which documents the purpose needs",
     steering.DESIGN: "Step 10 of /rn:up on plan: make the tasks that build the finished work",
-    steering.DELIVERABLE: "Step 11 of /rn:up: put each learning to the user",
+    steering.DELIVERABLE: (
+        "Step 11 of /rn:up: find where the work fell short, then put each learning to the user"
+    ),
 }
 FEEDBACK = "Step 6 of /rn:up on {}: find the point behind the feedback"
 WAITING = "Step 5 of /rn:up on {}: wait for the user's answer, " + proposal.ANSWER

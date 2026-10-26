@@ -3,13 +3,25 @@
 Step 11 of `/rn:up`, from the finished work approved to the pull request marked ready, taken as its
 SKILL.md says.
 
-11. Put each learning to the user and mark the pull request ready, so what this work taught makes
-    later work better where the user chooses.
+11. Find what this piece of work fell short in, put each learning to the user and mark the pull
+    request ready, so what it taught makes later work better where the user chooses.
     - In: the finished work approved, the stage learnings.
-    - Run `rn.py learnings`, which prints `{"learnings": {"L<n>": "<the learning>", ...}, "turn":
-      [...]}`, the learnings in `<session>/learnings.md` and those turn returned with every call,
-      each of turn's with its `whose`, `own` for the user's repository and `general` otherwise, and
-      the work, call and commit that kept it.
+    - Run `rn.py history`, which prints `{"feedback": [{"commit", "signoff", "message", "answer":
+      {"commit", "message"} or null}, ...], "remade": [{"commit", "work", "call", "message"}, ...],
+      "replaced": [{"commit", "work", "was", "now", "message"}, ...]}`, from the session's branch:
+      each feedback the user sent back with the proposal that answered it, each work made again and
+      each decision an answer replaced, each with its commit and message. Read what led to each in
+      the history, with `git show <commit>` and `git log --format='%h %B' <commit>` as far back as
+      the move it rests on.
+    - Where a cause you doubt is in no commit, such as how a point was asked or what a message to
+      the user held, check it with `rn.py search "<words>"`, which prints `{"found":
+      [{"conversation", "time", "said"}, ...]}`, each part the user or you said or did that holds
+      the words, in the session's conversations; a cause neither shows is no learning.
+    - Write the learnings: step 3 on work `learnings`, giving nothing more, the part holding a
+      learning for each place the work fell short, none where nothing did; as the step that comes
+      after, this step on putting the first learning to the user.
+    - Run `rn.py learnings`, which prints `{"learnings": {"L<n>": "<the learning>", ...}}`, the
+      learnings in `<session>/learnings.md`.
     - Put each learning to the user, one per message, in the form "Learnings to decide" of
       `messages.md`, with where it is recommended to go. Keep each answer before the next: one
       taken for a checklist with `rn.py decide checklist-<kind>`, one taken for an issue with

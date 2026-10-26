@@ -21,7 +21,7 @@ Steps 7 and 8 of `/rn:up`, from the request to the plan sign-off, taken as its S
    before anything is built on them.
    - In: the session started, at the plan stage.
    - Hear the purpose, with why the user wants it, and what shows it done: step 2 on work `plan`.
-   - Have the plan made: step 3 on work `plan`, giving nothing more; turn makes the goal, the
+   - Write the plan: step 3 on work `plan`, giving nothing more, the part holding the goal, the
      criteria and only such tasks as the plan stage needs, the research or trials a gap in them
      calls for, none where none is needed.
    - Carry out each task in order, step 4; once the steering holds no task, step 5 on the plan
