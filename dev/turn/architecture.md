@@ -146,7 +146,8 @@ turn/                      the plugin, installed by Claude Code
 │   ├── forms.py           each reply checked <Python 3>
 │   ├── parts.py           the parts of the work <Python 3>
 │   ├── items.py           a checklist's items, as turn's are headings <Python 3>
-│   └── template.py        a link to lane's, Markdown read <Python 3>
+│   ├── template.py        a link to lane's, Markdown read <Python 3>
+│   └── record.py          a link to lane's, Claude Code's records read <Python 3>
 └── hooks/
     ├── hooks.json         the hook of each agent and event, written by lane's lay.py <JSON>
     ├── lanes.json         the lanes on every agent, laid by lane's lay.py <JSON>
@@ -187,12 +188,15 @@ turn/                      the plugin, installed by Claude Code
 
   No AI copies a reply, and the first user's lane on what it reads keeps it from the generator's.
 - The flow takes a role's reply only once the role has ended: a role started returns from the Agent
-  call at its end, and a role sent a message goes on in the background, whose end Claude Code tells
-  the orchestrator by a task notification of its agent ID, which the orchestrator hands the flow.
+  call at its end, and a role sent a message goes on in the background, whose end the flow reads in
+  the record Claude Code writes of the role's agent, a reply ending its turn after the message, read
+  with lane's `record.py`.
 
   A reply is written before its role ends, which may still check it or write it again; taken as
   soon as it is there, the run moves on, and returns, removing the run's folder, while the role
-  still runs, which then writes into the user's repository a file of a run that is gone.
+  still runs, which then writes into the user's repository a file of a run that is gone. Claude
+  Code tells a role's end by a task notification, which reaches the main conversation alone where
+  `turn:up` is a subagent, as rn starts it, while it writes the role's record whoever started it.
 - The flow gives no role the run's own files, nor the first user the CCS, a folder holding them
   given as its other entries, as a lane lets a role read anything under a folder it is given.
 

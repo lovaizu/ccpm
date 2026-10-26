@@ -5,6 +5,7 @@ reads."""
 
 from __future__ import annotations
 
+import glob
 import json
 import os
 import shutil
@@ -14,6 +15,7 @@ from typing import Any
 import call
 import forms
 import prompts
+import record
 import state
 from prompts import FIRST_USER, GENERATOR
 
@@ -24,7 +26,7 @@ SENDS = 3
 # rounds leave without Good becomes a question, and the rounds count anew from its answer; the run
 # keeps how many more rounds may run.
 MORE = 1
-# A messaged role's reply is waited for a second at a time, within the shell's two minutes.
+# A messaged role's end is waited for a second at a time, within the shell's two minutes.
 WAIT = 100
 # Where SendMessage reaches the main conversation, which alone talks with the user.
 MAIN = "main"
@@ -261,42 +263,44 @@ def moved(run: dict[str, Any]) -> dict[str, Any]:
     step["moved"] = True
     if "to" in step:
         run.setdefault("since", {}).setdefault(agent, []).append(step["message"])
-        state.save(run)
-        message = json.dumps(step["message"], ensure_ascii=False)
-        return {"move": {"tool": "SendMessage", "input": {"to": step["to"], "message": message}}}
+        return sent(run, step, step["to"], json.dumps(step["message"], ensure_ascii=False))
     state.save(run)
     prompt = json.dumps(step["prompt"], ensure_ascii=False)
     started = {"subagent_type": agent, "description": f"turn {agent}", "prompt": prompt}
     return {"move": {"tool": "Agent", "input": started}}
 
 
+def sent(run: dict[str, Any], step: dict[str, Any], to: str, message: str) -> dict[str, Any]:
+    """The move sending the role's agent the message, kept with how many messages its record holds
+    before it, so the role's end is read after it."""
+    step["heard"] = len(messages(entries(to)))
+    state.save(run)
+    return {"move": {"tool": "SendMessage", "input": {"to": to, "message": message}}}
+
+
 def replied(run: dict[str, Any], step: dict[str, Any], text: str) -> dict[str, Any]:
     """Takes the role's reply once the role has ended, as a role may change its reply until it ends:
     a role started has ended once its Agent call gave back its agent ID, and one sent a message
-    once the orchestrator hands its end; until then the run waits on it. One ended with no reply is
-    told to write it; one out of its form is sent back with what is wrong; one filled goes on to
-    what the run does after it."""
+    once its record shows it; until then the run waits on it. One ended with no reply is told to
+    write it; one out of its form is sent back with what is wrong; one filled goes on to what the
+    run does after it."""
     agent = step["agent"]
     path = step["prompt"]["reply"]
     if "to" not in step and "id" not in step:
         step["id"] = agent_id(agent, text)
         state.save(run)
-    elif not text.strip():
-        awaited(path)
+    elif not awaited(run, step, text):
         return {"waiting": agent}
-    else:
-        role_ended(run, agent, step.get("to") or step["id"], text)
     to = step.get("to") or step["id"]
     if not os.path.exists(path):
-        told = f"Write your reply to {path} in your form; it is not there"
-        return {"move": {"tool": "SendMessage", "input": {"to": to, "message": told}}}
+        return sent(run, step, to, f"Write your reply to {path} in your form; it is not there")
     with open(path, encoding="utf-8") as f:
         reply = f.read()
     said = PROBLEMS[agent](run, reply)
     if said:
         os.remove(path)
         fix = f"Write your reply to {path} again in your form, filled:\n" + "\n".join(said)
-        return {"move": {"tool": "SendMessage", "input": {"to": to, "message": fix}}}
+        return sent(run, step, to, fix)
     # Each role is kept started through its round, sent what comes next by message, so it works on
     # with what it has already read.
     run.setdefault("started", {})[agent] = to
@@ -304,28 +308,50 @@ def replied(run: dict[str, Any], step: dict[str, Any], text: str) -> dict[str, A
     return REPLIED[agent](run, json.loads(forms.unfenced(reply)))
 
 
-def awaited(path: str) -> None:
-    """Waits, a second at a time within the shell's two minutes, until the reply is written, as a
-    role sent a message writes it while it runs and ends soon after; the orchestrator, called
-    again, hands on the role's end once it comes."""
-    for _ in range(WAIT):
-        if os.path.exists(path):
-            return
-        time.sleep(1)
-
-
-def role_ended(run: dict[str, Any], agent: str, to: str, text: str) -> None:
-    """Returns where the orchestrator hands on the end of the role's agent, as Claude Code tells it
-    the agent ended; stops otherwise, saying what the run waits on."""
-    try:
-        found = json.loads(forms.unfenced(text))
-    except ValueError:
-        found = None
-    if not isinstance(found, dict) or found.get("ended") != to:
+def awaited(run: dict[str, Any], step: dict[str, Any], text: str) -> bool:
+    """Whether the role sent a message has ended since, waiting on it a second at a time within the
+    shell's two minutes. The flow reads the end in the record Claude Code writes of the role's
+    agent, as Claude Code tells it by a task notification to the main conversation alone where
+    turn:up is a subagent; stops where the orchestrator hands on anything, saying to hand on
+    nothing."""
+    agent, to = step["agent"], step.get("to") or step["id"]
+    if text.strip():
         raise call.Stop(
-            f"turn: the run waits on the end of {agent}, agent {to}; once a message says it ended,"
-            f' run `turn.py next {run["call"]["result"]}` with {{"ended": "{to}"}}'
+            f"turn: the run waits on the end of {agent}, agent {to}, which it reads in the agent's"
+            f" record; run `turn.py next {run['call']['result']}` with nothing"
         )
+    for _ in range(WAIT):
+        if role_ended(to, step["heard"]):
+            return True
+        time.sleep(1)
+    return role_ended(to, step["heard"])
+
+
+def role_ended(to: str, heard: int) -> bool:
+    """Whether the agent of the ID has ended since the message sent to it last: its record holds
+    more messages than the number it held before that one, and a reply ending its turn after the
+    last of them."""
+    found = entries(to)
+    replies = record.replies(found)
+    told = messages(found)
+    last = max(told + replies, default=None)
+    return bool(told[heard:]) and last in replies
+
+
+def entries(to: str) -> list[dict[str, Any]]:
+    """The entries of the record Claude Code keeps of the agent of the ID, beside the record of the
+    conversation it runs under, in whichever project; none where it is not there yet. An agent ID
+    names one agent, so one record."""
+    session = record.conversation("*", os.path.join(glob.escape(record.projects()), "*"))
+    for file in glob.glob(record.subagent(session, glob.escape(to))):
+        return record.read(file) or []
+    return []
+
+
+def messages(found: list[dict[str, Any]]) -> list[int]:
+    """Where each message that reached an agent, its prompt first, stands among the entries of its
+    record."""
+    return [n for n, entry in enumerate(found) if record.message(entry)]
 
 
 def agent_id(agent: str, text: str) -> str:

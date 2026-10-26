@@ -157,6 +157,22 @@ EACH_GOOD = {
 # The agent ID the Agent call gives back for each role, as the orchestrator hands it on.
 IDS = {"turn:generator": "agen", "turn:first-user": "afirst"}
 RESULT = CALL["result"]
+# The entries of a role's record, as Claude Code writes them: a message another session sent it,
+# turn:up's; its reply ending its turn; and a stop hook keeping it going.
+MESSAGE = {
+    "type": "user",
+    "message": {"role": "user", "content": "Another Claude session sent a message"},
+    "origin": {"kind": "peer", "body": "{}"},
+}
+END = {
+    "type": "assistant",
+    "message": {
+        "role": "assistant",
+        "content": [{"type": "text", "text": "Written."}],
+        "stop_reason": "end_turn",
+    },
+}
+HOOK = {"type": "user", "message": {"role": "user", "content": "Stop hook feedback: go on"}}
 # The day a run is started on, as the clock gives it, and the folder the run of the result is kept
 # in, in turn's folder at the root of the repository, named by that day and the result's path from
 # the root, each `/` written `%2F`.
@@ -181,6 +197,11 @@ class RepoTest(testing.FolderTest):
         self.write("docs/start.md", "# Start\n")
         self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
         self.result = RESULT
+        # Claude Code's records, each role's among them, in a folder of their own.
+        self.config = os.path.join(self.base, "config")
+        config = mock.patch.dict(os.environ, {"CLAUDE_CONFIG_DIR": self.config})
+        config.start()
+        self.addCleanup(config.stop)
         # A role's reply is written by the time the flow reads it, unless a test says otherwise.
         self.waiting = mock.patch.object(flow, "WAIT", 0)
         self.waiting.start()
@@ -279,19 +300,23 @@ class RepoTest(testing.FolderTest):
 
     def replied(self, reply):
         """The role due writes its reply and ends, and the orchestrator goes on with the agent ID
-        the Agent call gave back where it started the role, or with the role's end, as Claude
-        Code's notification of its ID tells it, where the role was sent a message; what the script
-        prints then."""
+        the Agent call gave back where it started the role, or with nothing where the role was
+        sent a message, its record then holding the message and the reply ending its turn; what the
+        script prints then."""
         step = self.state()["next"]
         self.write(step["prompt"]["reply"], reply if isinstance(reply, str) else json.dumps(reply))
-        return self.next(self.ended(step))
-
-    def ended(self, step):
-        """What the orchestrator hands on once the role due ends: the agent ID the Agent call
-        starting it gave back, or, for a role sent a message, its end by its ID."""
         if "to" in step or "id" in step:
-            return {"ended": step.get("to") or step["id"]}
-        return {"agent_id": IDS[step["agent"]]}
+            self.recorded(step.get("to") or step["id"], MESSAGE, END)
+            return self.next()
+        return self.next({"agent_id": IDS[step["agent"]]})
+
+    def recorded(self, agent, *entries):
+        """Adds the entries to the record Claude Code keeps of the agent of the ID, beside the
+        record of the conversation that started turn:up."""
+        path = os.path.join(self.config, "projects", "-repo", "session", "subagents")
+        os.makedirs(path, exist_ok=True)
+        with open(os.path.join(path, f"agent-{agent}.jsonl"), "a", encoding="utf-8") as f:
+            f.write("".join(json.dumps(e) + "\n" for e in entries))
 
     def made(self, *claim, chosen=()):
         """The generator due replies with its claim, by default every item Good, naming the choices

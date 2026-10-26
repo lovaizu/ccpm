@@ -8,10 +8,13 @@ from unittest import mock
 
 from helpers import (
     CLAIM,
+    END,
     FIRST_READ,
     FOUND,
     GOOD,
+    HOOK,
     IDS,
+    MESSAGE,
     QUESTION,
     RESULT,
     STOPPED_B1,
@@ -38,16 +41,17 @@ class RoundTest(RepoTest):
 
     def later(self, reply):
         """What the script prints asked with nothing, while the first pause of its wait has the
-        role sent a message write its reply, then handed the role's end."""
-        path = self.prompt()["reply"]
+        role sent a message write its reply and end, its record holding the message and the reply
+        ending its turn."""
+        step = self.state()["next"]
 
         def pause(seconds):
-            """The role writes its reply while the flow waits."""
-            self.write(path, json.dumps(reply))
+            """The role writes its reply and ends while the flow waits."""
+            self.write(step["prompt"]["reply"], json.dumps(reply))
+            self.recorded(step["to"], MESSAGE, END)
 
         with mock.patch.object(flow, "WAIT", 3), mock.patch.object(flow.time, "sleep", pause):
-            self.assertEqual(self.next(), {"waiting": self.state()["next"]["agent"]})
-        return self.next(self.ended(self.state()["next"]))
+            return self.next()
 
 
 class TestGeneratorKept(RoundTest):
@@ -110,42 +114,70 @@ class TestGeneratorKept(RoundTest):
         self.assertEqual(sleep.call_count, 2)
         self.assertEqual(self.due(self.later(CLAIM))["tool"], "SendMessage")
 
-    def test_a_reading_before_the_messaged_generator_replied_stops(self):
+    def test_anything_handed_on_while_a_messaged_role_runs_stops(self):
         # Given: a generator sent a message, not ended yet
         # When: the orchestrator gives a reading of its own, words that are no JSON, or the end
-        # of another agent
-        # Then: it stops, saying the run waits on the generator's end, by its ID
+        # of the generator's agent
+        # Then: it stops, saying the run reads the generator's end itself, by its ID, and is to be
+        # gone on with with nothing
         self.stopped()
-        for given in (CLAIM, "ended", {"ended": "aother"}, {"ended": " "}):
+        for given in (CLAIM, "ended", {"ended": "agen"}):
             with self.subTest(given=given):
                 self.assertIn(
-                    "turn: the run waits on the end of turn:generator, agent agen; once a message"
-                    " says it ended, run `turn.py next",
+                    "turn: the run waits on the end of turn:generator, agent agen, which it reads"
+                    " in the agent's record; run `turn.py next .tasks/readme-result.json` with"
+                    " nothing",
                     self.refused(given),
                 )
 
     def test_a_reply_written_is_taken_only_once_its_role_has_ended(self):
-        # Given: a generator sent the first user's stop, which writes its reply and runs on
-        # When: the orchestrator goes on with nothing, then with the generator's end
-        # Then: the script waits no more once the reply is there, still waiting on the generator,
-        # as a role may still change its reply, and takes the reply once it has ended
+        # Given: a generator sent the first user's stop, which writes its reply and runs on, its
+        # record holding the message and no reply after it
+        # When: the orchestrator goes on with nothing, then again once the record holds the reply
+        # ending its turn
+        # Then: the script waits the whole wait, as a role may still change its reply, and takes
+        # the reply once the role has ended
         self.stopped()
         self.write(self.prompt()["reply"], json.dumps(CLAIM))
+        self.recorded(IDS["turn:generator"], MESSAGE)
         with (
             mock.patch.object(flow, "WAIT", WAITED),
             mock.patch.object(flow.time, "sleep") as sleep,
         ):
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
-        self.assertEqual(sleep.call_count, 0)
-        move = self.due(self.next({"ended": IDS["turn:generator"]}))
+        self.assertEqual(sleep.call_count, 100)
+        self.recorded(IDS["turn:generator"], END)
+        move = self.due(self.next())
         self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
+
+    def test_a_reply_ending_an_earlier_turn_is_not_the_end_of_the_message_sent(self):
+        # Given: a generator whose record ends with the reply ending its first turn, sent the first
+        # user's stop that has not reached its record yet
+        # When: the orchestrator goes on with nothing
+        # Then: the script still waits on the generator, not telling it to write a reply
+        self.recorded(IDS["turn:generator"], MESSAGE, END)
+        self.stopped()
+        self.assertEqual(self.next(), {"waiting": "turn:generator"})
+
+    def test_a_reply_a_stop_hook_kept_going_is_not_the_end(self):
+        # Given: a generator sent the first user's stop, which wrote its reply and ended its turn,
+        # a stop hook then keeping it going
+        # When: the orchestrator goes on with nothing, then again once it ends its turn again
+        # Then: the script waits on the generator, then takes its reply
+        self.stopped()
+        self.write(self.prompt()["reply"], json.dumps(CLAIM))
+        self.recorded(IDS["turn:generator"], MESSAGE, END, HOOK)
+        self.assertEqual(self.next(), {"waiting": "turn:generator"})
+        self.recorded(IDS["turn:generator"], END)
+        self.assertEqual(self.due(self.next())["input"]["to"], IDS["turn:first-user"])
 
     def test_a_role_ended_without_its_reply_is_told_to_write_it(self):
         # Given: a generator sent the first user's stop, which ends without writing its reply
-        # When: the orchestrator goes on with its end
+        # When: the orchestrator goes on with nothing
         # Then: the generator is sent where to write its reply, and the run waits on its end again
         self.stopped()
-        out = self.next({"ended": IDS["turn:generator"]})
+        self.recorded(IDS["turn:generator"], MESSAGE, END)
+        out = self.next()
         reply = self.kept("generator.json")
         self.assertEqual(
             out["move"]["input"],

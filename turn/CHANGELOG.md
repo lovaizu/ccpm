@@ -31,6 +31,7 @@
 ### Fixed
 
 - A run moves on from each of its AIs, and returns, only once that AI has ended — no AI still finishing its reply leaves a file of a run already gone in your repository.
+- A run started by an agent, as rn starts turn, goes on once each AI it sent more work has ended — it no longer waits on a notice Claude Code gives the main conversation alone, ending without its result.
 - Each AI of a run writes its reply to a file turn reads, and a reply out of its form is sent back to it with what to fill — no reply passes unchecked, however Claude Code ends an agent.
 - A `cd` in your conversation while a run goes no longer stalls it: each path of the call keeps meaning the folder the call was made from, and each AI of the run is given its files as whole paths — the run reads and writes where you called it, wherever your conversation moves.
 - A folder your CCS names with a trailing slash, such as `docs/`, is taken as the folder — the AIs of a run can read the files inside it instead of being stopped at each.

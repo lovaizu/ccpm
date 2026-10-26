@@ -223,5 +223,23 @@
   "way": "asked: the check asked the license, the calling AI's answer kept in the decisions, the check made again with what to read as the CCS now names it, the CCS and the decisions read again; returned, every move in order",
   "hooks": "none",
   "read": "Every orchestrator record read."
+ },
+ {
+  "commit": "after the flow reads a messaged role's end in its record, given",
+  "session": "fe700216-e529-459c-9d68-57e9160b38d1",
+  "minutes_to_return": 3.7,
+  "cost_usd": 0.92,
+  "way": "given: B-1 sent back to the generator by message, the first user sent the work made again by message; each `turn.py next` with nothing after a message gave the next move once the role's record held its reply after the message (generator ended 16:22:36, moved on 16:22:37); returned, every move in order",
+  "hooks": "none",
+  "read": "Every orchestrator record read, and each role's for its messages and ends; no {\"waiting\"} printed, no {\"ended\"} handed on."
+ },
+ {
+  "commit": "after the flow reads a messaged role's end in its record, sent",
+  "session": "faead250-381b-4d9d-a4d9-d04d035599d0",
+  "minutes_to_return": 8.4,
+  "cost_usd": 1.79,
+  "way": "sent: B-1 sent back three times in round 1, each message to the generator and the first user taken only after the role's record held its reply after it, round 2 started anew, returned: every move in order",
+  "hooks": "none",
+  "read": "Every orchestrator record read, and each role's for its messages and ends."
  }
 ]
