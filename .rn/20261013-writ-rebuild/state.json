@@ -752,6 +752,9 @@
   },
   {
    "fact": "2026-10-26: Principle 9 carried through lane, turn and rn and pushed (to d4b6ce0): entries point to parts in prompts/ and scripts/, each entry binding the names its part uses as \"`<name>` below is `<text>`\", which lane's step.bindings reads (1ad5789), as ${CLAUDE_PLUGIN_ROOT} is put in only in an entry's own body (a part naming it ran /scripts/turn.py); turn's trials plain, asked and roles passed as before with no hook stop; rn.py the command line alone with learnings.py; rn's move trials 25/26, after-feedback failing the same at 88820d5 (the known open patch); check.sh 100%, mutate 0. rn's entries repeat the same seven bindings, as each entry's body alone is substituted."
+  },
+  {
+   "fact": "2026-10-26: the user's open asks done and pushed: lane's, turn's and rn's logical views show by box shape whether an AI or code does the work (AI round ends, code square, other slightly rounded) with a legend, turn drawn as an AI in rn's, rn's architecture checklist template asking it (ca53aa5); B-7 pass over rn's Logical view (7572c1d): restatements of the figure, the UX, plan.md B-7/F-1 cut, how the parts do it kept. Rendered for checking with resvg_py and matplotlib's DejaVu fonts via uv run --no-project --with, as the sandbox has no system fonts or Chromium libs"
   }
  ],
  "semantic_gist": [
@@ -859,7 +862,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: (1) the user's open asks: the logical view showing AI vs code (box shapes with a legend), B-7 pass over rn's Logical view lines. (2) read the four subagent commits eaa84f0 5597d47 c29568e 85ffe12 by hand; redo the two patches at the cause (after-feedback: step 6 widening the purpose from feedback; good's check); clean /tmp/rn/20261026-acceptance-7vc7gbjm and ~/.claude/projects/-tmp-rn-20261026-acceptance-7vc7gbjm-repo and -user by literal path; acceptance --until design, then whole (T14). (3) ~/.claude/projects/-tmp-turn-20261026-roles-f647oun3-repo left by an earlier trial: remove by literal path."
+   "next": "on resume: (1) read the four subagent commits eaa84f0 5597d47 c29568e 85ffe12 by hand; redo the two patches at the cause (after-feedback: step 6 widening the purpose from feedback; good's check); clean /tmp/rn/20261026-acceptance-7vc7gbjm and ~/.claude/projects/-tmp-rn-20261026-acceptance-7vc7gbjm-repo and -user by literal path; acceptance --until design, then whole (T14). (2) ~/.claude/projects/-tmp-turn-20261026-roles-f647oun3-repo left by an earlier trial: remove by literal path."
   }
  ],
  "uncertainty_signal": [
