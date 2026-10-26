@@ -29,9 +29,13 @@ import rn
 
 # The user's words, in the conversation language their instructions set.
 REQUEST = "/rn:up README に新しいコントリビューター向けの挨拶を一行足して"
-# The feedback at the plan sign-off, which settles the point behind it with the goal's change, as
-# the plan made again says where to ask in G1 too.
+# The feedback at the plan sign-off, a sign of the point behind it, where a new contributor asks,
+# which it leaves open; and one that settles it with the goal's change, as the plan made again says
+# where to ask in G1 too, which is also the answer to that point where FEEDBACK leaves it open.
 FEEDBACK = (
+    "挨拶を読んだ新しいコントリビューターは、質問したいときにどうすればいいか分からないと思います"
+)
+SETTLED = (
     "挨拶の行に、質問があれば issue を開くよう書いてください。リンクはいりません。目的にも、質問の"
     "窓口を伝えることを入れてください"
 )
@@ -345,6 +349,10 @@ def learnt(lines: list, whole: str) -> dict:
 LEARNT_PLACE = learnt([L_PLACE], "The stretch's one shortfall, the place asked late, is L1")
 LEARNT_FEEDBACK = learnt(
     [L_PLACE, L_FEEDBACK],
+    "The stretch's shortfalls are the place asked late, L1, and the plan sent back, L2",
+)
+LEARNT_SETTLED = learnt(
+    [L_PLACE, L_FEEDBACK.replace(FEEDBACK, SETTLED)],
     "The stretch's shortfalls are the place asked late, L1, and the plan sent back, L2",
 )
 LEARNT_NONE = learnt([], "")
@@ -711,6 +719,13 @@ def fed_back(p: Place) -> None:
     put back, Next step 10."""
     plan_signoff(p)
     answered(p, "feedback", [FEEDBACK], LEARNT_FEEDBACK)
+
+
+def settled_back(p: Place) -> None:
+    """The plan sign-off answered with the feedback that settles its point, kept in Open, and the
+    stretch's learnings put back, Next step 10."""
+    plan_signoff(p)
+    answered(p, "feedback", [SETTLED], LEARNT_SETTLED)
 
 
 def plan_approved(p: Place) -> None:
@@ -1255,11 +1270,33 @@ CASES = {
         {"learnings": [LEARNT_FEEDBACK]},
     ),
     "after-feedback": Case(
+        "/rn:up in a fresh conversation after feedback that leaves the point behind it open: that"
+        " point asked, the plan made again, the same sign-off",
+        "up 1, 6, 2, 3, 5 (what changed)",
+        fed_back,
+        [front("plan", "none"), next_has("Step 6"), open_has(FEEDBACK)],
+        [
+            ("/rn:up", [STAYS, ONE_POINT, open_has(FEEDBACK)]),
+            (
+                SETTLED,
+                [
+                    MOVED,
+                    KEPT,
+                    returned("plan", 3),
+                    plan_has("- AC3:"),
+                    open_has(FEEDBACK, held=False),
+                    *proposal("plan"),
+                ],
+            ),
+        ],
+        {"plan": [PLAN_ASKED]},
+    ),
+    "settled-feedback": Case(
         "/rn:up in a fresh conversation after feedback that settles the point behind it: the"
         " feedback kept as its answer, nothing asked again, the plan made again, the same sign-off",
         "up 1, 6, 2 (the feedback the answer), 3, 5 (what changed)",
-        fed_back,
-        [front("plan", "none"), next_has("Step 6"), open_has(FEEDBACK)],
+        settled_back,
+        [front("plan", "none"), next_has("Step 6"), open_has(SETTLED)],
         [
             (
                 "/rn:up",
@@ -1268,7 +1305,7 @@ CASES = {
                     KEPT,
                     returned("plan", 3),
                     plan_has("- AC3:"),
-                    open_has(FEEDBACK, held=False),
+                    open_has(SETTLED, held=False),
                     *proposal("plan"),
                 ],
             ),
