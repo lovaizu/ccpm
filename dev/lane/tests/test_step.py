@@ -122,6 +122,16 @@ class TestSpan(unittest.TestCase):
         # Then: it is the one in the Steps, not the one in the fence
         self.assertEqual(step.span(self.lines(text), 1), (7, 8))
 
+    def test_the_steps_are_under_their_own_heading_alone(self):
+        # Given: a numbered list under a heading of a level below, and under one named Tools, which
+        # sorts after Steps, both before the Steps
+        for heading in ("### Notes", "## Tools"):
+            with self.subTest(heading=heading):
+                text = f"{heading}\n\n1. Not a step\n\n## Steps\n\n1. One\n"
+                # When: step 1 is looked for
+                # Then: it is the one in the Steps
+                self.assertEqual(step.span(self.lines(text), 1), (6, 7))
+
     def test_a_step_no_line_numbers_is_not_found(self):
         # Given: the subagent's four steps
         # When: step 5 is looked for, and step 13, whose number begins no line though 1 and 3 do
