@@ -21,14 +21,14 @@ part and B-2 in each part, in a repository made for the run:
 Where turn asks, the calling AI takes each question's recommended answer as the user's, keeps it in
 the task's decisions and sends it.
 
-    python3 dev/turn/trials/flow/flow.py <way>
+    python3 dev/turn/trials/orchestrator/orchestrator.py <way>
 
 The replies each way sets are in replies.py. Prints the session, from whose records the trial is
-judged, the order the agents were started in, the minutes, the cost and the result. Each run makes
-a folder of its own, `turn/<yyyymmdd>-flow-<way>-<random>/` in the system's temporary folder, and
-prints its path. The repository and the copy of turn in it are removed when the run ends, however
-it ends; what Claude Code printed is kept in it as `<way>.jsonl`, and the records stay in Claude
-Code's own folder of the session.
+judged, the order the agents were started in, the minutes, the cost and the result. Each run makes a
+folder of its own, `turn/<yyyymmdd>-orchestrator-<way>-<random>/` in the system's temporary folder,
+and prints its path. The repository and the copy of turn in it are removed when the run ends,
+however it ends; what Claude Code printed is kept in it as `<way>.jsonl`, and the records stay in
+Claude Code's own folder of the session.
 """
 
 from __future__ import annotations
@@ -48,7 +48,7 @@ import testing
 
 CALL = shared.call("has")
 START = shared.start(CALL)
-USAGE = "usage: flow.py <way>"
+USAGE = "usage: orchestrator.py <way>"
 ASKS = (
     START
     + "If it returns with questions, take each question's recommended answer as the user's, write"
@@ -78,7 +78,7 @@ ROLES = ("turn:generator", "turn:first-user")
 if len(sys.argv) != 2 or sys.argv[1] not in STEPS:
     sys.exit(f"{USAGE}, the way one of {', '.join(STEPS)}")
 way = sys.argv[1]
-run = shared.Run.made(f"flow-{way}")
+run = shared.Run.made(f"orchestrator-{way}")
 place = run.repo
 plugin = shared.turn(run)
 with shared.removed(place, plugin):

@@ -10,7 +10,7 @@ import sys
 from typing import IO, Any
 
 import call
-import run
+import flow
 
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
@@ -31,15 +31,15 @@ def main(argv: list[str], stdin: IO[str]) -> int:
     was wrong and gives 1."""
     try:
         if argv[:1] == ["start"] and len(argv) == 2:
-            print(json.dumps(run.start(argv[1]), ensure_ascii=False))
+            print(json.dumps(flow.start(argv[1]), ensure_ascii=False))
         elif argv[:1] == ["next"] and len(argv) == 2:
-            print(printed(argv[1], run.next_step(argv[1], stdin.read()), "1"))
+            print(printed(argv[1], flow.next_step(argv[1], stdin.read()), "1"))
         elif argv[:1] == ["next"] and len(argv) == 3:
-            print(printed(argv[1], run.view(argv[1]), argv[2]))
+            print(printed(argv[1], flow.view(argv[1]), argv[2]))
         elif argv[:1] == ["questions"] and len(argv) == 2:
-            print(json.dumps(run.questions(argv[1]), ensure_ascii=False))
+            print(json.dumps(flow.questions(argv[1]), ensure_ascii=False))
         elif argv[:1] == ["parts"] and len(argv) == 2:
-            print(json.dumps(run.parts(argv[1]), ensure_ascii=False))
+            print(json.dumps(flow.parts(argv[1]), ensure_ascii=False))
         else:
             print(USAGE)
             return 1

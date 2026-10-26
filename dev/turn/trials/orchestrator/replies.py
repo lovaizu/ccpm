@@ -1,6 +1,6 @@
-"""The replies the stand-in roles of the flow trial give, by the way the run takes, each built from
-the pieces the ways share: the README the generator writes, with or without its license, its claim
-and the first user's reading of it."""
+"""The replies the stand-in roles of the orchestrator trial give, by the way the run takes, each
+built from the pieces the ways share: the README the generator writes, with or without its license,
+its claim and the first user's reading of it."""
 
 from __future__ import annotations
 
@@ -82,8 +82,8 @@ ASKED_WHILE = {
     "recommended": "Yes, say it prints `Hello`, so the reader knows what to expect before running"
     " it.",
 }
-# Each way's replies, by role, in the order the docstring of flow.py lists them; a role asked more
-# often than its replies are set gives its last again.
+# Each way's replies, by role, in the order the docstring of orchestrator.py lists them; a role
+# asked more often than its replies are set gives its last again.
 WAYS = {
     "plain": {"generator": [WHOLE], "first-user": [GOOD]},
     "given": {"generator": [SHORT, WHOLE], "first-user": [STOPPED, GOOD]},

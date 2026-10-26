@@ -19,16 +19,16 @@ sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, os.path.join(TURN, "..", "dev", "lane"))
 
 import call  # noqa: F401  (each of turn's modules, for its own tests)
+import flow
 import forms  # noqa: F401
 import prompts  # noqa: F401
-import run
 import state
 import testing
 
 import turn
 
 # The wait for a messaged role's reply as turn has it, before each test sets its own.
-WAITED = run.WAIT
+WAITED = flow.WAIT
 
 # The items of the run's checklist, by its path and ID.
 ITEM_F1 = {"checklist": "checklists/readme.md", "item": "F-1"}
@@ -180,7 +180,7 @@ class RepoTest(testing.FolderTest):
         self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
         self.result = RESULT
         # A role's reply is written by the time the flow reads it, unless a test says otherwise.
-        self.waiting = mock.patch.object(run, "WAIT", 0)
+        self.waiting = mock.patch.object(flow, "WAIT", 0)
         self.waiting.start()
         self.addCleanup(self.waiting.stop)
 
@@ -312,7 +312,7 @@ class RepoTest(testing.FolderTest):
         the script prints then."""
         made = self.made(*claim, chosen=claim_chosen)
         self.assertEqual(self.due(made)["input"]["subagent_type"], "turn:first-user")
-        with mock.patch.object(run, "SENDS", 0):
+        with mock.patch.object(flow, "SENDS", 0):
             return self.replied({"items": self.reading(*found)})
 
     def returned(self, out):

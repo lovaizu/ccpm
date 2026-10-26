@@ -1,9 +1,9 @@
 """What turn's trials share: the folder a run writes in, the call and the line starting turn with
-it, the flow trial's task made a repository, with the roles trials' check of it and their README
-that falls short, the acceptance trials' arguments, their repository and the copy kept of what a run
-gave back, and the copy of turn a run uses, removed however the trial ends; with Claude Code started
-on it as its user starts it, and what a record shows of a role's work, which every plugin's trials
-share."""
+it, the orchestrator trial's task made a repository, with the roles trials' check of it and their
+README that falls short, the acceptance trials' arguments, their repository and the copy kept of
+what a run gave back, and the copy of turn a run uses, removed however the trial ends; with Claude
+Code started on it as its user starts it, and what a record shows of a role's work, which every
+plugin's trials share."""
 
 from __future__ import annotations
 
@@ -28,8 +28,8 @@ from call import entries, items  # noqa: F401
 from trying import agents, claude, record, show  # noqa: F401
 from trying import folder as made_folder
 
-# The orchestrator's check of the flow trial's task, as the roles trials set it: each item's Good
-# found in the decisions.
+# The orchestrator's check of the orchestrator trial's task, as the roles trials set it: each item's
+# Good found in the decisions.
 CHECK = {
     "items": [
         {"checklist": "checklist.md", "item": "B-1", "can": "notes/decisions.md:2 names MIT."},
@@ -41,8 +41,8 @@ CHECK = {
     ],
     "questions": [],
 }
-# A README for the flow trial's task that names no license, which the roles trials set in place of
-# the generator's work, so the first user stops at B-1.
+# A README for the orchestrator trial's task that names no license, which the roles trials set in
+# place of the generator's work, so the first user stops at B-1.
 UNLICENSED = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
 
 
@@ -87,9 +87,9 @@ def start(given: dict) -> str:
 
 
 def task(place: str, given: dict, decisions: str | None = None) -> None:
-    """Makes the flow trial's task a repository at place, its CCS where the call names it, and its
-    decisions, when given, replaced with decisions."""
-    shutil.copytree(os.path.join(os.path.dirname(__file__), "flow", "task"), place)
+    """Makes the orchestrator trial's task a repository at place, its CCS where the call names it,
+    and its decisions, when given, replaced with decisions."""
+    shutil.copytree(os.path.join(os.path.dirname(__file__), "orchestrator", "task"), place)
     if decisions is not None:
         with open(os.path.join(place, "notes", "decisions.md"), "w", encoding="utf-8") as f:
             f.write(decisions)

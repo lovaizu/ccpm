@@ -1,9 +1,9 @@
-"""Tries each of turn's two roles on its own: the real role and its lanes, started by a stand-in
-for the orchestrator with the prompt the flow gives it, on the flow trial's task of two items, one
-answered at its part and one in each part. Between the roles the run is set as a trial means: the
-orchestrator's check finds each item's Good in the decisions, and the generator's work is replaced
-by a set README that names no license. Prints, for each role, its session, the minutes and cost,
-each tool it used, each stop, and whether its reply is in its form.
+"""Tries each of turn's two roles on its own: the real role and its lanes, started by a stand-in for
+the orchestrator with the prompt the flow gives it, on the orchestrator trial's task of two items,
+one answered at its part and one in each part. Between the roles the run is set as a trial means:
+the orchestrator's check finds each item's Good in the decisions, and the generator's work is
+replaced by a set README that names no license. Prints, for each role, its session, the minutes and
+cost, each tool it used, each stop, and whether its reply is in its form.
 
     python3 dev/turn/trials/roles/roles.py
 
@@ -33,8 +33,8 @@ plugin = shared.turn(trial)
 shared.use(plugin)
 
 # The copy of turn's scripts, on the path only once it is made.
+import flow
 import prompts
-import run
 import state
 
 
@@ -55,7 +55,7 @@ as it is, and wait for its reply. Then reply with its reply as it is.
     if os.path.exists(reply):
         with open(reply, encoding="utf-8") as f:
             text = f.read()
-        said = run.PROBLEMS[agent](state.going(CALL["result"]), text)
+        said = flow.PROBLEMS[agent](state.going(CALL["result"]), text)
         print("reply:", text.strip())
         print("form:", "filled" if not said else said)
     else:

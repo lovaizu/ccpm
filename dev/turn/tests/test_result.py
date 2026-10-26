@@ -5,7 +5,7 @@ import os
 import unittest
 from unittest import mock
 
-from helpers import CHOSEN, FOUND, FOUND_B1, RESULT, ReadTest, run
+from helpers import CHOSEN, FOUND, FOUND_B1, RESULT, ReadTest, flow
 
 
 class TestResult(ReadTest):
@@ -18,7 +18,7 @@ class TestResult(ReadTest):
         self.assertEqual(
             self.due(self.made(chosen=[CHOSEN]))["input"]["subagent_type"], "turn:first-user"
         )
-        with mock.patch.object(run, "SENDS", 0):
+        with mock.patch.object(flow, "SENDS", 0):
             out = self.replied({"items": [FOUND, FOUND_B1]})
         self.assertEqual(
             self.read_json(RESULT),
@@ -48,7 +48,7 @@ class TestResult(ReadTest):
         # When: the run returns
         # Then: the result holds them in the checklist's order
         self.due(self.made())
-        with mock.patch.object(run, "SENDS", 0):
+        with mock.patch.object(flow, "SENDS", 0):
             self.returned(self.replied({"items": [FOUND_B1, FOUND]}))
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1])
 

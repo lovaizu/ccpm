@@ -135,7 +135,7 @@ turn/                      the plugin, installed by Claude Code
 │   └── *.json             each role's reply form <JSON Schema>
 ├── scripts/
 │   ├── turn.py            what the orchestrator and the roles run <Python 3>
-│   ├── run.py             the flow: the move at each stage of the run <Python 3>
+│   ├── flow.py            the flow: the move at each stage of the run <Python 3>
 │   ├── state.py           where the run stands <Python 3>
 │   ├── call.py            the call checked, and the run laid out of the CCS <Python 3>
 │   ├── prompts.py         what each role is given <Python 3>

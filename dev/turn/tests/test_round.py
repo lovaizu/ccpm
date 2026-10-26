@@ -18,7 +18,7 @@ from helpers import (
     WAITED,
     WAITS,
     RepoTest,
-    run,
+    flow,
 )
 
 
@@ -45,7 +45,7 @@ class RoundTest(RepoTest):
             """The role writes its reply while the flow waits."""
             self.write(path, json.dumps(reply))
 
-        with mock.patch.object(run, "WAIT", 3), mock.patch.object(run.time, "sleep", pause):
+        with mock.patch.object(flow, "WAIT", 3), mock.patch.object(flow.time, "sleep", pause):
             self.assertEqual(self.next(), {"waiting": self.state()["next"]["agent"]})
         return self.next(self.ended(self.state()["next"]))
 
@@ -77,7 +77,10 @@ class TestGeneratorKept(RoundTest):
         # When: the orchestrator goes on, with the wait as turn has it
         # Then: the script waits a second at a time, a hundred times, then says it is waiting
         self.stopped()
-        with mock.patch.object(run, "WAIT", WAITED), mock.patch.object(run.time, "sleep") as sleep:
+        with (
+            mock.patch.object(flow, "WAIT", WAITED),
+            mock.patch.object(flow.time, "sleep") as sleep,
+        ):
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
         self.assertEqual(sleep.call_args_list, [mock.call(1)] * 100)
 
@@ -102,7 +105,7 @@ class TestGeneratorKept(RoundTest):
         # When: the orchestrator goes on and no reply comes within the wait
         # Then: the script says it is still waiting on the generator, and goes on once it comes
         self.stopped()
-        with mock.patch.object(run, "WAIT", 2), mock.patch.object(run.time, "sleep") as sleep:
+        with mock.patch.object(flow, "WAIT", 2), mock.patch.object(flow.time, "sleep") as sleep:
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
         self.assertEqual(sleep.call_count, 2)
         self.assertEqual(self.due(self.later(CLAIM))["tool"], "SendMessage")
@@ -128,7 +131,10 @@ class TestGeneratorKept(RoundTest):
         # as a role may still change its reply, and takes the reply once it has ended
         self.stopped()
         self.write(self.prompt()["reply"], json.dumps(CLAIM))
-        with mock.patch.object(run, "WAIT", WAITED), mock.patch.object(run.time, "sleep") as sleep:
+        with (
+            mock.patch.object(flow, "WAIT", WAITED),
+            mock.patch.object(flow.time, "sleep") as sleep,
+        ):
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
         self.assertEqual(sleep.call_count, 0)
         move = self.due(self.next({"ended": IDS["turn:generator"]}))
