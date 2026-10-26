@@ -758,6 +758,9 @@
   },
   {
    "fact": "2026-10-26: the four subagent commits eaa84f0 5597d47 c29568e 85ffe12 read by hand: consistent with rn/prompts/orchestrator.md and proposal.py, turn's `chosen` form (turn/docs/calling.md:80) matching. The two patches redone at the cause (76bc687): step 6 takes feedback as the answer only where it says what the work must be, else asks the point, as after-feedback's records showed the purpose widened and kept unasked; after-feedback checks no decision holds `question` before the answer (keeping the state before asking is a move), good checks `run first`. Move trials 27/27 (29 min, $10), check.sh rn 100%, mutate 0. Trial folders and records of these runs and the acceptance-7vc7gbjm and roles-f647oun3 ones removed by literal path"
+  },
+  {
+   "fact": "2026-10-27: acceptance --until design (7t59k26j) FAILED at message 23, 130 min, $38: the plan sign-off reached with one feedback; in design the README's B-4/B-5/B-8 judged by turn's first user on a tool not built (curl of the download address), never returned; turn:up ended waiting on roles resumed by SendMessage, whose task notifications reached rn's main conversation, three restarts. Fixed at the causes: turn's flow reads a role's end from its record via lane's record.py (7035404, orchestrator trial given and sent passed); a checklist item marked `Judged on: the built product` (readme B-4, B-5, B-8) is cut from the copy turn gets before the build, and plan.md B-7 asks the document made again at build (39bd6c9; move trials design-signoff, task, checklist-point passed). check.sh 100%, mutate 0 for both"
   }
  ],
  "semantic_gist": [
@@ -865,7 +868,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: the acceptance run --until design started 2026-10-26 ~23:10 JST in the background, its log scratchpad acceptance-design.log of session 413d3062; read its summary and records when it ends; then the whole (T14)."
+   "next": "on resume: the whole acceptance run (no --until) started 2026-10-27 in the background, its log scratchpad acceptance-whole.log of session 413d3062; read summary.json and the records when it ends, fix at the cause, run again until PASSED; the user asked to go on to the acceptance pass judging by purpose and ideal and to hear the judgments made at the end"
   }
  ],
  "uncertainty_signal": [
