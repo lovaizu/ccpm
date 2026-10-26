@@ -341,8 +341,8 @@ made_from:
 
 # Plan, this repository's addition
 
-What this repository adds to rn's checklist for a plan, read by turn making a plan and by the user
-approving it.
+What this repository adds to rn's checklist for a plan, read by rn's orchestrator writing a plan
+and by the user approving it.
 
 A plan serves the user by taking what a sign-off approved as settled, asking only what no one has
 decided yet.
@@ -367,8 +367,8 @@ CHECKLIST_GOODS = {
     "F-2": "Its version is 1, as no release has numbered it",
     "F-3": "made_from names checklist 1 and usability 1, the versions that stand now",
     "F-4": "Its item is B-1, counted up in Benefit",
-    "B-1": "The opening says who reads it, turn making a plan and the user approving it, and what"
-    " it adds to rn's plan checklist",
+    "B-1": "The opening says who reads it, rn's orchestrator writing a plan and the user approving"
+    " it, and what it adds to rn's plan checklist",
     "B-2": "What the opening names, a plan that asks nothing approved again, has its item, B-1",
     "B-3": "Its one item asks one thing of the purpose, which rn's plan checklist does not ask",
     "B-4": "B-1 is answered by pointing at a plan's actions",
@@ -750,6 +750,20 @@ def returned(work: str, n: int) -> Check:
     return Check(f"{n} calls on {work} returned and kept", holds)
 
 
+def either(first: Check, second: Check) -> Check:
+    """The check that one of two checks holds, where the steps let the move go either way."""
+
+    return Check(
+        f"either {first.what}, or {second.what}", lambda s: first.holds(s) or second.holds(s)
+    )
+
+
+def all_of(*checks: Check) -> Check:
+    """The check that every check given holds."""
+
+    return Check(" and ".join(c.what for c in checks), lambda s: all(c.holds(s) for c in checks))
+
+
 def called(work: str, n: int, least: bool = False) -> Check:
     """The check that n calls on the work were kept, or n or more."""
 
@@ -959,7 +973,7 @@ CASES = {
         [front("plan", "none"), next_has("Step 8"), decisions("plan", 1)],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
-            (DONE_ANSWER, [MOVED, KEPT, decisions("plan", 2), ONE_POINT]),
+            (DONE_ANSWER, [MOVED, KEPT, decisions("plan", 2)]),
         ],
         {"t1.1": [RESEARCH_PLACE]},
     ),
@@ -1055,7 +1069,8 @@ CASES = {
     ),
     "plan-signoff": Case(
         "a task's last action, the orchestrator's, the task done and what it brought weighed, the"
-        " plan written again from it, then the plan sign-off",
+        " plan written again from it, then the plan sign-off, or first a point on the criterion"
+        " it changes",
         "up 1, 4 (the last action, what the task brought weighed), 2, 3 (the plan written again),"
         " 8, 5",
         t1_researched,
@@ -1069,10 +1084,8 @@ CASES = {
                     KEPT,
                     decisions("plan", 3),
                     done("T1"),
-                    called("plan", 2, least=True),
                     no_result("plan"),
-                    plan_has("title"),
-                    *proposal("plan"),
+                    either(ONE_POINT, all_of(plan_has("title"), *proposal("plan"))),
                 ],
             ),
         ],
