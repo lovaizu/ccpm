@@ -710,6 +710,9 @@
   },
   {
    "fact": "2026-10-26: the rn subagent finished (18 commits to c58bdf1, check.sh lane/turn/rn 100%, properties, mutate rn 0); read by hand: skills, README/UX/CHANGELOG diffs. Fixed and pushed to a5c5474: /rn:gm names ty's file (9a91491); a sign-off shows each work as `<kind>: <links>` and decisions by what they say, after feedback every decision with Changed/Removed by words (f7af382, e2175c9), judged from the purpose as the user said (#36, no ask); rn's Principle 2 replans from the steering and what each done task served, decided and made (6b4ebf5, #44); rn carries turn's forms/claim.json, reading.json and hooks/adapters/items-checklist.py by links, as installed rn failed at import, a test runs rn copied as installing copies it (637d050); the trials drop the stand-in turn:up's lanes by commands ending ` turn:up` (7eff20e); ty/gm say the conversation language when no sign-off waits (4582865); trial data fixed so each Good is true at its lines (db1f07e, 9671830, a5c5474). Move trials: 24/25 on a5c5474 (cost 9.7), ty-deliverable failed as the data's learning blamed the note; data rewritten (next commit): ty-deliverable 2/2, last failed once on the plan addition lacking its idea sentence, now added, not yet rerun"
+  },
+  {
+   "fact": "2026-10-26: move trials 25/25 (21.6 min, $9.46); shared.md audit sorted (106: 52 done, 5 false, 49 open), its 8 mechanical groups fixed by a subagent (d5d931c..72564d5), read by hand and pushed with mutate 0 in lane, turn, rn; S4 (77a3dc0) and S48 (cf2cf7b) fixed by hand; the rest of the open ones touch agreed docs by style only (dev/README and root README wording, principles' layout, rules' form, wrapping), left and to be listed to the user. Flow trial reached every move (PR ready, no rule broken, 0 changes at the deliverable, 31 min, $10.1) but failed on flow.py's check waiting for a message to end in build, fixed (1a208e9). Its five learner issues traced: #1 stand-in user's held wish, #5 a rule already there, #4 Claude Code 2.1.309's -p --resume dropping the last reply for a <synthetic> 'No response requested.' (the user sent it to Anthropic); #3 rn's plan form judged only at put, #2 step 6 asking again a point the feedback settled: given to a subagent with fix.md: trying.py one live stream-json process in place of --resume (probe passed), rn's machine checks at put given to turn as the work's test, step 6 taking the feedback as step 2's answer"
   }
  ],
  "semantic_gist": [
@@ -814,7 +817,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: push (pre-push runs mutate, ~8 min); rerun moves.py last, then all 25 once (about 25 min, cost about 10), reading each failure's reply and record: so far every failure was trial data the orchestrator rightly caught, or a prompt gap (fixed at the prompt); then the flow trial (dev/rn/trials/flow/flow.py --help), shared.md audit, final check (.claude/rules/final-check.md), report the decisions to the user; remove trial folders /tmp/rn/<yyyymmdd>-moves-* and ~/.claude/projects/-tmp-rn-<yyyymmdd>-moves-* by literal path after each run. Judge every point from the purpose and agreed docs before asking (the user, 2026-10-26: '目的とあるべき姿から判断できないの？')"
+   "next": "read the subagent's commits on trying.py, rn's test and step 6 by hand against fix.md; push; rerun the flow trial; list to the user the shared.md findings left (style of agreed docs); final check (.claude/rules/final-check.md); report the decisions. Judge each point from the purpose and what it should be, fix.md for every change, no patch on patch (the user, 2026-10-26)"
   }
  ],
  "uncertainty_signal": [
