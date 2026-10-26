@@ -8,9 +8,12 @@ import io
 import json
 import os
 import runpy
+import sys
+import tempfile
 import unittest
+from unittest import mock
 
-from helpers import CHECKLIST, TURN, testing
+from helpers import CHECKLIST, TURN, checklist_items, testing
 
 (ports,) = testing.lane_code(TURN, "ports")
 
@@ -34,7 +37,7 @@ class TestItems(unittest.TestCase):
         text = "---\nname: readme\n---\n```\n### B-7: x\n```\n### F-1: Shape\n\n### B-1: Who\n"
         # When: the adapter's reading is given it
         # Then: it gives each item by the line of its heading, counted from 1, and its ID
-        self.assertEqual(runpy.run_path(ADAPTER)["items"](text), [(7, "F-1"), (9, "B-1")])
+        self.assertEqual(checklist_items.items(text), [(7, "F-1"), (9, "B-1")])
 
     def test_the_items_under_format_and_benefit_are_given_in_order(self):
         # Given: a checklist with frontmatter, an item under Format and one under Benefit
@@ -139,6 +142,24 @@ class TestItems(unittest.TestCase):
             read = runpy.run_path(ADAPTER)
         # Then: it gives its reading and prints nothing, waiting on no input
         self.assertEqual((read["items"]("### B-1: x\n"), out.getvalue()), ([(1, "B-1")], ""))
+
+    def test_the_adapter_reads_by_turns_items_before_a_module_of_the_same_name(self):
+        # Given: a module named items, found first on sys.path, none yet imported, and the adapter
+        # run as a script in this process, given a checklist of one item on stdin
+        out = io.StringIO()
+        with tempfile.TemporaryDirectory() as shadow:
+            with open(os.path.join(shadow, "items.py"), "w", encoding="utf-8") as f:
+                f.write("raise ImportError('not turn')\n")
+            given = io.StringIO(json.dumps({"input": "c.md", "text": "### B-1: x\n"}))
+            path = mock.patch.object(sys, "path", [shadow, *sys.path])
+            modules = mock.patch.dict(sys.modules)
+            with path, modules, mock.patch.object(sys, "stdin", given):
+                sys.modules.pop("items", None)
+                with contextlib.redirect_stdout(out):
+                    # When: the adapter is run
+                    runpy.run_path(ADAPTER, run_name="__main__")
+        # Then: it reads the checklist by turn's items.py, printing its item
+        self.assertEqual(json.loads(out.getvalue()), {"items": ["B-1"]})
 
     def test_the_adapter_gives_each_of_its_cases(self):
         # Given: the cases kept beside the adapter, which lane's layer runs it on

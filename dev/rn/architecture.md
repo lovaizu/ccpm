@@ -242,9 +242,10 @@ rn/                                  the plugin, installed by Claude Code with t
 │   ├── repo.py                      git and gh run, and the files written
 │   ├── stop.py                      each stop, and each value given checked
 │   ├── record.py, template.py       lane's readers of Claude Code's records and of Markdown, by links
-│   └── call.py, forms.py, parts.py  turn's readers of a CCS, a checklist's items and the work's parts, by links
+│   ├── call.py, items.py            turn's readers of a CCS and a checklist's items, by links
+│   └── forms.py, parts.py           turn's checks of a reply and the parts of the work, by links
 ├── forms/claim.json, reading.json   turn's forms, which forms.py reads beside it, by links <JSON>
-├── hooks/adapters/items-checklist.py  turn's reader of a checklist's items, which call.py loads beside it, by a link
+├── hooks/adapters/items-checklist.py  turn's adapter of lane's items port, which hands to items.py, by a link
 └── checklists/                      rn's own, one for each kind, and checklist.md, usability.md and fix.md, which each is made from or held to <Markdown>
 
 <the user's repository>, on the piece of work's own branch

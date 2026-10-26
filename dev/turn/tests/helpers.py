@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.join(TURN, "..", "dev", "lane"))
 import call  # noqa: F401  (each of turn's modules, for its own tests)
 import flow
 import forms  # noqa: F401
+import items as checklist_items  # noqa: F401
 import parts as work_parts  # noqa: F401
 import prompts  # noqa: F401
 import state

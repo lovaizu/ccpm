@@ -145,13 +145,13 @@ turn/                      the plugin, installed by Claude Code
 │   ├── prompts.py         what each role is given <Python 3>
 │   ├── forms.py           each reply checked <Python 3>
 │   ├── parts.py           the parts of the work <Python 3>
+│   ├── items.py           a checklist's items, as turn's are headings <Python 3>
 │   └── template.py        a link to lane's, Markdown read <Python 3>
 └── hooks/
     ├── hooks.json         the hook of each agent and event, written by lane's lay.py <JSON>
     ├── lanes.json         the lanes on every agent, laid by lane's lay.py <JSON>
-    ├── adapters/          items-checklist.py, a checklist's items, as turn's are headings, read
-    │                      at lane's items port and by call.py, with its cases, laid by lane's
-    │                      lay.py <Python 3>
+    ├── adapters/          items-checklist.py, lane's items port handed to items.py, with its
+    │                      cases, laid by lane's lay.py <Python 3>
     └── lane/              lane's code, the guard, a link to lane's <Python 3>
 
 <where the call puts the result>

@@ -5,10 +5,10 @@ from __future__ import annotations
 
 import json
 import os
-import runpy
 from typing import Any
 
 import forms
+import items as checklist_items
 
 SHAPE = (
     '{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "receiver": "<kind>",'
@@ -23,15 +23,8 @@ PLACES = ("ccs", "result")
 # folder named `docs/` is found within `docs`.
 PATHS = ("work", "checklist", "has")
 KINDS = ("work", "checklist", "receiver", "use", "has")
-# An item of a checklist is a heading of the form `### B-1: <title>`, with the line under it saying
-# where in the work it is answered; the headings are read by turn's adapter of lane's items port,
-# where what an item is is kept once, loaded from its file, as its name is no module's; found from
-# this file as it is, as rn takes it through a link.
-READ_ITEMS = runpy.run_path(
-    os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), "..", "hooks", "adapters", "items-checklist.py"
-    )
-)["items"]
+# The line under an item's heading, after a blank line, says where in the work it is answered:
+# `Scope: <one of these>`.
 SCOPES = ("its part", "each part", "whole")
 
 
@@ -164,7 +157,7 @@ def items(path: str) -> list[dict[str, str]]:
         text = f.read()
     lines = text.splitlines()
     found: list[dict[str, str]] = []
-    for number, item in READ_ITEMS(text):
+    for number, item in checklist_items.items(text):
         below = lines[number : number + 2]
         scope = next((s for s in SCOPES if below == ["", f"Scope: {s}"]), None)
         if scope is None:
