@@ -8,7 +8,7 @@ from __future__ import annotations
 import os
 from typing import Any
 
-import forms
+import parts as work_parts
 import state
 
 GENERATOR = "turn:generator"
@@ -110,4 +110,4 @@ def remade(run: dict[str, Any]) -> dict[str, Any]:
 def parts(run: dict[str, Any]) -> list[str]:
     """The parts of the run's work as it stands, each as its lines in a file named by its whole
     path."""
-    return forms.parts(absolute(run["work"]))
+    return work_parts.parts(absolute(run["work"]))

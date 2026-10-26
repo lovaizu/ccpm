@@ -13,6 +13,7 @@ from helpers import (
     ITEM_F1,
     QUESTION,
     RESULT,
+    TURN,
     WAITS,
     RepoTest,
     call,
@@ -20,8 +21,10 @@ from helpers import (
     prompts,
     state,
     testing,
+    work_parts,
 )
 
+(template,) = testing.lane_code(TURN, "template")
 hypothesis = testing.hypothesis()
 given = hypothesis.given
 st = hypothesis.strategies
@@ -58,7 +61,7 @@ class TestForms(RepoTest):
         # Then: the parts run from its first line to its last, each starting where the one before
         # ends, and each but the first opens at a top heading
         self.write("README.md", "".join(line + "\n" for line in lines))
-        spans = [s[1:] for s in map(forms.span, forms.parts(["README.md"])) if s]
+        spans = [s[1:] for s in map(forms.span, work_parts.parts(["README.md"])) if s]
         starts = [a for a, _ in spans]
         self.assertEqual(
             [n for a, b in spans for n in range(a, b + 1)], list(range(1, len(lines) + 1))
@@ -118,7 +121,7 @@ class TestItems(RepoTest):
             # outside a fence, as lane's template reads them, with the scope its line says
             self.assertIn("turn: checklist.md", str(stop))
             return
-        outside = {n for n, level, _ in forms.template.headings(lines, 0) if level == 3}
+        outside = {n for n, level, _ in template.headings(lines, 0) if level == 3}
         self.assertEqual(len(found), len([n for n in outside if lines[n - 1][4:6] == "B-"]))
         self.assertTrue(all(i["scope"] in call.SCOPES for i in found))
 

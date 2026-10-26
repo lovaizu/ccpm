@@ -143,7 +143,8 @@ turn/                      the plugin, installed by Claude Code
 │   ├── state.py           where the run stands <Python 3>
 │   ├── call.py            the call checked, and the run laid out of the CCS <Python 3>
 │   ├── prompts.py         what each role is given <Python 3>
-│   ├── forms.py           each reply checked, and the parts of the work <Python 3>
+│   ├── forms.py           each reply checked <Python 3>
+│   ├── parts.py           the parts of the work <Python 3>
 │   └── template.py        a link to lane's, Markdown read <Python 3>
 └── hooks/
     ├── hooks.json         the hook of each agent and event, written by lane's lay.py <JSON>

@@ -22,6 +22,7 @@ from helpers import (
     RepoTest,
     forms,
     testing,
+    work_parts,
 )
 
 (schema,) = testing.lane_code(TURN, "schema")
@@ -359,7 +360,7 @@ class TestParts(FormTest):
             "# x\n\nopening\n## A\n\n### a\n\n```\n## not one\n```\n## B\nb\n",
         )
         self.assertEqual(
-            forms.parts(["README.md"]), ["README.md:1-3", "README.md:4-10", "README.md:11-12"]
+            work_parts.parts(["README.md"]), ["README.md:1-3", "README.md:4-10", "README.md:11-12"]
         )
 
     def test_a_heading_in_a_fence_of_tildes_or_an_indented_one_opens_no_part(self):
@@ -370,7 +371,9 @@ class TestParts(FormTest):
                 self.write("README.md", f"# x\n\n{fence}\n## not one\n{fence}\n## B\nb\n")
                 # When: it is split
                 # Then: the fence lies in the opening's part
-                self.assertEqual(forms.parts(["README.md"]), ["README.md:1-5", "README.md:6-7"])
+                self.assertEqual(
+                    work_parts.parts(["README.md"]), ["README.md:1-5", "README.md:6-7"]
+                )
 
     def test_a_heading_of_another_level_or_in_the_frontmatter_opens_no_part(self):
         # Given: a README with a heading of the level above a top one and one below it after its
@@ -378,7 +381,7 @@ class TestParts(FormTest):
         self.write("README.md", "---\nname: x\n## not one\n---\n# x\n\n# y\n### z\n## B\nb\n")
         # When: it is split
         # Then: its one top heading alone opens a part
-        self.assertEqual(forms.parts(["README.md"]), ["README.md:1-8", "README.md:9-10"])
+        self.assertEqual(work_parts.parts(["README.md"]), ["README.md:1-8", "README.md:9-10"])
 
     def test_a_document_opening_with_a_section_has_no_opening_part(self):
         # Given: a document whose first line is a top heading, and one with none
@@ -386,7 +389,7 @@ class TestParts(FormTest):
         # Then: the first is its sections alone, and the second is one part
         self.write("a.md", "## A\na\n## B\n")
         self.write("b.md", "# b\n\nonly\n")
-        self.assertEqual(forms.parts(["a.md", "b.md"]), ["a.md:1-2", "a.md:3-3", "b.md:1-3"])
+        self.assertEqual(work_parts.parts(["a.md", "b.md"]), ["a.md:1-2", "a.md:3-3", "b.md:1-3"])
 
     def test_any_other_file_is_one_part_and_an_empty_file_none(self):
         # Given: a script of three lines holding a line that opens like a heading, and an empty
@@ -395,13 +398,13 @@ class TestParts(FormTest):
         # Then: the script is one part, and the empty file gives none
         self.write("x.py", "a = 1\n## b\nc = 2\n")
         self.write("e.md", "")
-        self.assertEqual(forms.parts(["x.py", "e.md"]), ["x.py:1-3"])
+        self.assertEqual(work_parts.parts(["x.py", "e.md"]), ["x.py:1-3"])
 
     def test_a_file_of_the_work_not_written_yet_has_no_part(self):
         # Given: a work of two files, one not written yet
         # When: it is split
         # Then: the file written gives its part alone
-        self.assertEqual(forms.parts(["new.md", "README.md"]), ["README.md:1-3"])
+        self.assertEqual(work_parts.parts(["new.md", "README.md"]), ["README.md:1-3"])
 
     def test_an_item_asked_of_each_part_with_a_good_for_every_part_passes(self):
         # Given: an item asked of each part, given a Good for each part at lines inside it

@@ -1,6 +1,5 @@
 """The forms the orchestrator and each role give their judgments in, each checked against the run's
-items and the work, so a slip is named where it is made; and the parts of the work, which an item
-asked of each part is judged in."""
+items and the work, so a slip is named where it is made."""
 
 from __future__ import annotations
 
@@ -9,13 +8,10 @@ import os
 import re
 from typing import Any, NamedTuple
 
-import template
+import parts as work_parts
 
 # Lines of a file, as every form names them: `<path>:<from>-<to>`, or `<path>:<line>` for one.
 LINES = re.compile(r"^(.+):(\d+)(?:-(\d+))?$")
-# A document's parts open at its top headings, of this level; any other file is one part.
-DOCUMENT = ".md"
-TOP = 2
 # A form given inside a ```json fence, as a model often writes JSON, is the form itself.
 FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 # The roles' form files, each holding the shapes of an item, one choice each, beside the plugin's
@@ -233,7 +229,7 @@ def parts_problems(name: str, given: Any, work: list[str]) -> list[str]:
     lines inside it."""
     if not isinstance(given, list):
         return [f'{name} gives its parts as no list; give [{{"part", "good", "lines"}}, ...]']
-    whole = parts(work)
+    whole = work_parts.parts(work)
     spans = [span(p) for p in whole]
     said: list[str] = []
     seen: list[Any] = []
@@ -273,29 +269,6 @@ def parts_problems(name: str, given: Any, work: list[str]) -> list[str]:
 def within(lines: Any, part: Any) -> bool:
     """Whether the lines, as span gives them, lie inside the part, in its own file."""
     return lines[0] == part[0] and part[1] <= lines[1] and lines[2] <= part[2]
-
-
-def parts(work: list[str]) -> list[str]:
-    """The parts of the work, each as its lines: a document's sections under its top headings,
-    with the title and opening as one, and each other file whole; an empty file, or one not written
-    yet, has none."""
-    found: list[str] = []
-    for path in work:
-        if not os.path.isfile(path):
-            continue
-        with open(path, encoding="utf-8") as f:
-            lines = f.read().splitlines()
-        starts = [1] if lines else []
-        if path.endswith(DOCUMENT):
-            tops = [
-                n
-                for n, level, _ in template.headings(lines, template.body(lines))
-                if level == TOP  # pragma: no mutate
-            ]
-            starts += [n for n in tops if n not in starts]
-        ends = [n - 1 for n in starts[1:]] + [len(lines)]
-        found += [f"{path}:{a}-{b}" for a, b in zip(starts, ends)]
-    return found
 
 
 def in_files(line: Any, paths: list[str]) -> bool:
