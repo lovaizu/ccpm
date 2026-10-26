@@ -23,7 +23,9 @@ not make it before it reaches the user.
 - A point to decide is a choice that changes what is made. You confirm each with the user, one per
   message, even one you could look up, with what you looked up and the answer you recommend: a
   point decided unasked is made again when it is wrong, and one per message lets the user weigh
-  each on its own.
+  each on its own. How rn or turn goes on after a stop of their own, and what turn's CCS hands its
+  reader, change nothing of what is made: you settle them as the steps say and put none to the
+  user, as they could not weigh it and it costs them time.
 - A session is one piece of work on a branch of its own; its record is the folder `<session>`
   (`.rn/<yyyymmdd>-<slug>/`), whose `steering.md` holds what is left to reach the goal and where
   the session stands. A work is named `plan`, `learnings`, `deliverable`, `t<n>.<k>` for what
@@ -32,9 +34,10 @@ not make it before it reaches the user.
   `/rn:gm <feedback>`, a change they ask for: the plan's, the design's and the deliverable's, in
   that order. Only the user can type these; you never answer a sign-off for them.
 
-You hand back to the user each point to decide, each question turn asks, each sign-off, each
-learning before anything acts on it, as where it goes is theirs to choose; each issue before it is
-sent, and the merge.
+You hand back to the user each point to decide, each question turn asks about what is made, each
+sign-off, each learning before anything acts on it, as where it goes is theirs to choose; each
+issue before it is sent, and the merge. An issue to rn's makers comes only from a learning, in step
+11, once the finished work is approved; what falls short in rn or turn before then shows there.
 
 You carry nothing from move to move but the steering: a conversation ends or is cleared, and a fresh
 one knows only what is pushed. rn's scripts alone write the steering and keep each move; you never
@@ -166,11 +169,21 @@ conversation.
    - While it runs:
      - A message from one of its agents, a line beginning `turn:`: reply with that line alone, put
        into the conversation language, judging none of it; end your reply.
-     - turn ends with `{"questions": [...]}`: ask each as a point, as in step 2, its `recommended`
-       the recommended option, one per message, each answer kept with `rn.py decide <work>`; where
-       the work's decisions already hold its answer, as when a fresh conversation called turn
-       again, take that. Then load SendMessage with ToolSearch (`select:SendMessage`) and send the
-       agent the answers by its ID.
+     - turn ends with `{"questions": [...]}`: first keep the move with `rn.py state`, Next this
+       step on the same work, Open each question, so turn's run waiting on them is pushed before
+       anything is asked. A question about the CCS itself, such as what the receiver has or whether
+       a file is added to it, answer yourself: run `rn.py ccs` for the work again with what it
+       needs and a `--chose` saying it and why, starting no new run, as the one waiting reads the
+       CCS anew. Ask each other as a point, as in step 2, its
+       `recommended` the recommended option, one per message, each answer kept with `rn.py decide
+       <work>`; where the work's decisions already hold its answer, as when a fresh conversation
+       called turn again, take that. Then load SendMessage with ToolSearch (`select:SendMessage`)
+       and send the agent the answers by its ID, saying for each CCS question that the CCS now
+       holds it.
+     - turn ends with anything else, such as a stop of its own: start `turn:up` again with the
+       same call, as it goes on from its last move. Where it stops the same way again, keep the
+       move with `rn.py state`, Next this step on the same work, Open what it printed; tell the
+       user what it printed and that `/rn:up` goes on from here; end.
      - The user says stop: load TaskStop with ToolSearch (`select:TaskStop`), run it with the ID as
        `task_id`, and keep the move with `rn.py state`, Next this step on the same work, the same
        call made again, as turn goes on from its last move when called again with the same result.

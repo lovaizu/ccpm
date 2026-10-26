@@ -15,6 +15,7 @@
 
 - `/rn:on` and `/rn:dn` are folded into `/rn:up`: `/rn:up <what you want>` starts a session, and `/rn:up` alone, in this conversation or a fresh one, goes on from wherever you stopped — every decision is pushed before the work after it, so there is nothing to pause.
 - `/rn:ty` goes straight on to what comes after the sign-off, and `/rn:gm` keeps your feedback and stops — after an approval nothing more is typed, and after feedback you can clear the conversation and lose nothing.
+- rn asks you only what changes the work: how it or turn goes on after a stop of their own, and what turn's reader is given, it settles itself, and what it would tell rn's makers waits for the learnings — your time goes to your work, not to rn's.
 - Each point to decide is confirmed with you one per message, even one rn could look up, with what it looked up and the answer it recommends — a point decided in your place is made again when it is wrong.
 - Before a work is made, rn reads the checklists it will be made with and asks you each choice an item needs that you have not made — the questions come before the work, not while it is being made.
 - The documents the purpose needs are settled with you after the plan sign-off instead of a fixed README, design and verification document — you get only the documents your purpose needs.

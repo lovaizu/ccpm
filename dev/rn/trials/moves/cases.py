@@ -1064,13 +1064,13 @@ CASES = {
         {"t1.1": [RESEARCH_PLACE]},
     ),
     "asks": Case(
-        "turn asks a question while it makes a task's work: asked as a point, the answer kept and"
-        " sent to turn",
-        "up 4, 3 (turn's questions, SendMessage), 2",
+        "turn asks a question while it makes a task's work: kept in Open and pushed, asked as a"
+        " point, the answer kept and sent to turn",
+        "up 4, 3 (turn's questions kept, then asked, SendMessage), 2",
         planned,
         [next_has("Step 4 of /rn:up on T1: action 1"), returned("t1.1", 0)],
         [
-            ("/rn:up", [returned("t1.1", 0), ONE_POINT, JAPANESE]),
+            ("/rn:up", [KEPT, open_has("mobile"), returned("t1.1", 0), ONE_POINT, JAPANESE]),
             (
                 MOBILE_ANSWER,
                 [

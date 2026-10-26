@@ -184,13 +184,26 @@ flowchart TB
 
   A fix of the orchestrator's own would be work no guard keeps and no first user reads, read by the
   user only in what the sign-off shows of it.
-- While turn runs, the orchestrator passes each line turn tells on to the user and each point turn
-  asks to the user as a point to decide, keeps the answer in the decisions, and sends it back; it
-  judges none of the lines turn tells, and stops the run when the user stops a step.
+- While turn runs, the orchestrator passes each line turn tells on to the user, judging none of
+  them, and stops the run when the user stops a step; when turn asks, it keeps the questions in the
+  steering before it asks the first, puts each about what is made to the user as a point to decide,
+  keeps the answer in the decisions, and sends it back.
 
   Only the main conversation talks with the user
   ([Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs)); an orchestrator
-  that judged each way turn takes would ask the user more than what is theirs (Principle 2).
+  that judged each way turn takes would ask the user more than what is theirs (Principle 2); and a
+  run waiting on an answer is kept in turn's folder of the user's repository, so it is pushed with
+  the questions before the user is asked, as every move is.
+- Only a point to decide is put to the user: a question turn asks about its CCS, such as what the
+  receiver has, the orchestrator answers by writing the CCS again, its choice kept for the
+  sign-off; a stop of rn's scripts or of turn's run is gone on from by the step that meets it,
+  such as calling turn again with the same call, and what it taught comes to the user among the
+  learnings once the finished work is approved.
+
+  A point to decide is a choice that changes what is made; how rn or turn goes on, or what turn's
+  reader is handed, is none the user can weigh, and asking it spends their time on rn's own working
+  (KR1.2); an issue sent from the middle of the session is decided before the rest shows what the
+  whole fell short in.
 - Every decision, answer, feedback and approval is pushed before the move after it, so any stop is
   a place to go on from, and rn has no command to pause (Principle 6).
 - An approval is the user's `/rn:ty`, and feedback their `/rn:gm`, both skills the AI cannot call
