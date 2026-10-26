@@ -12,7 +12,7 @@
         ]
       },
       {
-        "matcher": "Read|Grep|Bash|Write|Edit|NotebookEdit",
+        "matcher": ".*|Read|Grep|Bash|Write|Edit|NotebookEdit",
         "hooks": [
           {
             "type": "command",
@@ -22,7 +22,7 @@
         ]
       },
       {
-        "matcher": "Read|Grep|Bash|Write|Edit|NotebookEdit",
+        "matcher": ".*|Read|Grep|Bash|Write|Edit|NotebookEdit",
         "hooks": [
           {
             "type": "command",

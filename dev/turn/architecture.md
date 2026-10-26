@@ -126,9 +126,13 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
 ```
 turn/                      the plugin, installed by Claude Code
 ├── agents/
-│   ├── up.md              the orchestrator <agent>
-│   ├── generator.md       <agent>
-│   └── first-user.md      <agent>
+│   ├── up.md              the orchestrator's entry, turn:up <agent>
+│   ├── generator.md       the generator's entry <agent>
+│   └── first-user.md      the first user's entry <agent>
+├── prompts/
+│   ├── orchestrator.md    the orchestrator, its steps <Markdown>
+│   ├── generator.md       the generator, its steps <Markdown>
+│   └── first-user.md      the first user, its steps <Markdown>
 ├── docs/
 │   └── calling.md         what a step gives turn and gets back <Markdown>
 ├── forms/
