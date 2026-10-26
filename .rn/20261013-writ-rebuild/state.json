@@ -707,6 +707,9 @@
   },
   {
    "fact": "2026-10-25: rn given to a background subagent with .rn/20261013-writ-rebuild/build-brief.md (recovered from session 4a0ea0ef's record after its scratchpad was removed) and rulings: rn.py split as audits/rn-product.md's Structure; skills' shared conventions once, read against prompt.md, bounds laid by lay.py; the issue text a work turn makes (Role); `test` from the task's completion criterion; E501 wrapped and selected repo-wide; README/UX only where untrue. Commits made locally, not pushed, at the user's /clear: 58c838f, 7c24cd6, 368ff51, b264b9b, cf17681, 53fcb2b, 883aac2, 24352a7; skills against prompt.md and E501 were still to do"
+  },
+  {
+   "fact": "2026-10-26: the rn subagent finished (18 commits to c58bdf1, check.sh lane/turn/rn 100%, properties, mutate rn 0); read by hand: skills, README/UX/CHANGELOG diffs. Fixed and pushed to a5c5474: /rn:gm names ty's file (9a91491); a sign-off shows each work as `<kind>: <links>` and decisions by what they say, after feedback every decision with Changed/Removed by words (f7af382, e2175c9), judged from the purpose as the user said (#36, no ask); rn's Principle 2 replans from the steering and what each done task served, decided and made (6b4ebf5, #44); rn carries turn's forms/claim.json, reading.json and hooks/adapters/items-checklist.py by links, as installed rn failed at import, a test runs rn copied as installing copies it (637d050); the trials drop the stand-in turn:up's lanes by commands ending ` turn:up` (7eff20e); ty/gm say the conversation language when no sign-off waits (4582865); trial data fixed so each Good is true at its lines (db1f07e, 9671830, a5c5474). Move trials: 24/25 on a5c5474 (cost 9.7), ty-deliverable failed as the data's learning blamed the note; data rewritten (next commit): ty-deliverable 2/2, last failed once on the plan addition lacking its idea sentence, now added, not yet rerun"
   }
  ],
  "semantic_gist": [
@@ -811,7 +814,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: check with `git log origin/writ-rebuild..HEAD` and `git status` what the rn subagent left (it may have been stopped by /clear); read every commit against the audits and rulings (episodic_trace's last fact), finish what is left (skills read against prompt.md, E501 in rn and dev/rn then selected in ruff.toml), run check.sh lane turn rn, properties rn, then push (pre-push runs mutate); then the move trials and the flow trial of rn, shared.md, final check; at release: lane into .claude-plugin/marketplace.json. Decide from the decisions, agreed docs and rules before asking"
+   "next": "on resume: push (pre-push runs mutate, ~8 min); rerun moves.py last, then all 25 once (about 25 min, cost about 10), reading each failure's reply and record: so far every failure was trial data the orchestrator rightly caught, or a prompt gap (fixed at the prompt); then the flow trial (dev/rn/trials/flow/flow.py --help), shared.md audit, final check (.claude/rules/final-check.md), report the decisions to the user; remove trial folders /tmp/rn/<yyyymmdd>-moves-* and ~/.claude/projects/-tmp-rn-<yyyymmdd>-moves-* by literal path after each run. Judge every point from the purpose and agreed docs before asking (the user, 2026-10-26: '目的とあるべき姿から判断できないの？')"
   }
  ],
  "uncertainty_signal": [
