@@ -131,8 +131,10 @@ class Trial:
         self.transcript: dict[str, list] = {"rn": [], "user": []}
         self.answers: list[dict[str, Any]] = []
         self.costs: dict[str, dict[str, float]] = {"rn": {}, "user": {}}
-        # The stand-in's conversation, one for the whole run, as the user is the same person.
-        self.standin: str | None = None
+        # The stand-in's conversation, one for the whole run, as the user is the same person;
+        # rn's, made again for each fresh conversation the stand-in asks for.
+        self.standin = trying.Conversation([], cwd=self.user)
+        self.rn = self.fresh()
         self.last: dict[str, Any] = {}
         self.start = time.time()
 
@@ -183,8 +185,8 @@ class Trial:
             started = time.time()
             name = f"user-{n}.jsonl" if attempt == 1 else f"user-{n}-again.jsonl"
             record = os.path.join(self.place, name)
-            end = trying.claude(prompt, [], cwd=self.user, record=record, resume=self.standin)
-            session = self.standin = end["session_id"]
+            end = self.standin.send(prompt, record)
+            session = end["session_id"]
             sessions[session] = end.get("total_cost_usd") or 0
             answer, wrong = judged(end.get("result") or "")
             self.transcript["user"].append(
@@ -210,23 +212,18 @@ class Trial:
         """Sends rn each message, the first the request, each after it what the stand-in says,
         until the trial ends; gives how it ended."""
         message, fresh, answer = cases.REQUEST, True, None
-        session, before = None, stood(self.p.seen(self.p.head(), ""))
+        before = stood(self.p.seen(self.p.head(), ""))
         for n in range(1, LIMIT + 1):
             started, head = time.time(), self.p.head()
             record = os.path.join(self.place, f"rn-{n}.jsonl")
             entry = {"n": n, "fresh": fresh, "says": message, "user": answer}
             entry.update(stage_before=before["stage"], signoff_before=before["signoff"])
             self.transcript["rn"].append(entry)
+            if fresh:
+                self.rn.close()
+                self.rn = self.fresh()
             try:
-                end = trying.claude(
-                    message,
-                    self.p.plugins,
-                    cwd=self.p.repo,
-                    wait=WAIT,
-                    record=record,
-                    env=self.p.env,
-                    resume=None if fresh else session,
-                )
+                end = self.rn.send(message, record)
             except (SystemExit, OSError, ValueError) as failed:
                 entry["failed"] = str(failed)
                 self.write()
@@ -257,6 +254,15 @@ class Trial:
                 return f"the stand-in stopped at message {n}: {answer['says']}"
             message, fresh, before = answer["says"], answer["fresh"], now
         return f"{LIMIT} messages sent to rn"
+
+    def fresh(self) -> trying.Conversation:
+        """A fresh conversation with rn, as the user starts one in the repository."""
+        return trying.Conversation(self.p.plugins, self.p.repo, WAIT, self.p.env)
+
+    def close(self) -> None:
+        """Ends rn's conversation and the stand-in's."""
+        self.rn.close()
+        self.standin.close()
 
     def reached(self) -> dict[str, bool]:
         """Whether the run reached each move of the story."""
@@ -367,6 +373,7 @@ def main(argv: list[str]) -> int:
     except KeyboardInterrupt:
         pass
     finally:
+        trial.close()
         summary = trial.summary(ended)
         with open(os.path.join(place, "summary.json"), "w", encoding="utf-8") as f:
             json.dump(summary, f, ensure_ascii=False, indent=1)

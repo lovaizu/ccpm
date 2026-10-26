@@ -27,6 +27,7 @@ The cases, each with the steps of rn's skills it covers:
 from __future__ import annotations
 
 import concurrent.futures
+import contextlib
 import glob
 import os
 import sys
@@ -67,26 +68,27 @@ def tried(name: str, case: Case, folder: str, dry: bool) -> tuple:
     lines, passed = checked(p.seen(p.head(), ""), case.expects)
     report += ["the starting state:", *lines]
     session, costs = None, {}
-    for n, (message, checks) in enumerate(case.messages, 1):
-        report.append(f"--- message {n}{', on ' + session if session else ''}: {message}")
-        before, record, reply = p.head(), os.path.join(folder, f"{n}.jsonl"), ""
-        if dry:
-            report.append("  (dry: not sent; the checks below run on the starting state)")
-        else:
-            try:
-                end = trying.claude(message, p.plugins, p.repo, WAIT, record, p.env, resume=session)
-            except (SystemExit, OSError, ValueError) as stopped:
-                report.append(f"  stopped: {stopped}")
-                passed = False
-                break
-            session = end["session_id"]
-            # A conversation gone on with gives the cost of the whole conversation so far.
-            costs[session] = end.get("total_cost_usd") or 0
-            reply = end.get("result") or ""
-            report += ["reply:", *(f"  | {line}" for line in reply.splitlines())]
-        lines, held = checked(p.seen(before, reply, "" if dry else record), checks)
-        report += lines
-        passed = passed and (held or dry)
+    with contextlib.closing(trying.Conversation(p.plugins, p.repo, WAIT, p.env)) as conversation:
+        for n, (message, checks) in enumerate(case.messages, 1):
+            report.append(f"--- message {n}{', on ' + session if session else ''}: {message}")
+            before, record, reply = p.head(), os.path.join(folder, f"{n}.jsonl"), ""
+            if dry:
+                report.append("  (dry: not sent; the checks below run on the starting state)")
+            else:
+                try:
+                    end = conversation.send(message, record)
+                except (SystemExit, OSError, ValueError) as stopped:
+                    report.append(f"  stopped: {stopped}")
+                    passed = False
+                    break
+                session = end["session_id"]
+                # A conversation gone on with gives the cost of the whole conversation so far.
+                costs[session] = end.get("total_cost_usd") or 0
+                reply = end.get("result") or ""
+                report += ["reply:", *(f"  | {line}" for line in reply.splitlines())]
+            lines, held = checked(p.seen(before, reply, "" if dry else record), checks)
+            report += lines
+            passed = passed and (held or dry)
     verdict = (
         ("the starting state holds" if passed else "the starting state FAILS")
         if dry
