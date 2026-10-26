@@ -1,7 +1,7 @@
 """The session the checked-out branch is in and its record, the folder `.rn/<yyyymmdd>-<slug>/`: the
-steering as the last keep left it, each move kept, each call as the files of one number, the works
-rn makes, each part the orchestrator writes put back, the stage moved at a stage's end, and the
-learnings kept."""
+session started with its pull request, the steering as the last keep left it, each move kept, each
+call as the files of one number, the works rn makes, each part the orchestrator writes cut and put
+back, and the stage moved at a stage's end."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from collections.abc import Callable
 from typing import NamedTuple
 
 import call
+import learnings
 import repo
 import steering
 import stop
@@ -22,9 +23,8 @@ import stop
 # a session's folder in it, by the date it began and its slug.
 RECORD = ".rn"
 SESSION_NAME = re.compile(r"[0-9]{8}-[a-z0-9-]+")
-# The session's steering, its learnings, and the folder of its calls, in the session's folder.
+# The session's steering and the folder of its calls, in the session's folder.
 STEERING = "steering.md"
-LEARNT = "learnings.md"
 CALLS = "calls"
 # The works rn makes: the plan, the part of the steering from the title through the tasks, and the
 # learnings, both written by the orchestrator; and, made by turn, the finished work; what each
@@ -44,7 +44,7 @@ DESIGNED = re.compile(rf"{TASK_WORK.pattern}|{CHECKLIST_WORK.pattern}")
 # The works whose call makes a part the orchestrator writes, cut into a file of its own, each with
 # what its file is named: the plan's a part of the steering, the learnings' those it adds to the
 # session's.
-PART = {steering.PLAN: STEERING, steering.LEARNINGS: LEARNT}
+PART = {steering.PLAN: STEERING, steering.LEARNINGS: learnings.FILE}
 PARTS = tuple(PART)
 # A file of a call, by its number and what it is: the CCS, turn's result for a call to turn, or the
 # part the orchestrator writes for a call on a part.
@@ -58,12 +58,18 @@ CALL = re.compile(rf"([0-9]{{4}})-({'|'.join(map(re.escape, (CCS, RESULT, *PART.
 WORK = "work"
 DECISION = "decision"
 CHOSEN = "chosen"
-# Each learning, in the form of rn's learnings checklist's F-1, which holds no heading.
-LEARNING = re.compile(r"- (?P<id>L[0-9]+): (?P<said>\S.*)")
-LEARNING_FORM = (
-    "a learning as `- L<n>: <what happened, with the words it rests on, and where it would make"
-    " later work better>`"
-)
+# The step of /rn:up each move whose next step is always the same leads to, as Next, by the number
+# orchestrator.md and the files of its stages give it: a session started, and a stage moved at its
+# end.
+STARTED = "Step 8 of /rn:up on plan: hear the purpose and what shows it done"
+STAGED = {
+    steering.BUILD: "Step 10 of /rn:up on plan: make the tasks that build the finished work",
+    steering.DELIVERABLE: (
+        "Step 10 of /rn:up on deliverable: have the finished work used for each acceptance"
+        " criterion"
+    ),
+    steering.FINISHED: "Nothing is left: the pull request waits for the user's merge",
+}
 
 
 def worked(work: str) -> str:
@@ -108,11 +114,6 @@ def steering_path(folder: str) -> str:
     return os.path.join(folder, STEERING)
 
 
-def learnings_path(folder: str) -> str:
-    """The path of the session's learnings."""
-    return os.path.join(folder, LEARNT)
-
-
 def call_path(folder: str, number: str, what: str) -> str:
     """The path of a file of the session's call of the number: its CCS, its result or its part."""
     return os.path.join(folder, CALLS, f"{number}-{what}")
@@ -155,6 +156,23 @@ def current() -> str:
             "rn: the checked-out branch holds no session; start one with `rn.py start <slug>`"
         )
     return found
+
+
+def where() -> dict[str, str | None]:
+    """The session the checked-out branch is in, with its stage and the sign-off waiting, as its
+    steering's last commit holds them; None for each where there is none. Stops where rn is not at
+    the top of a repository, git cannot tell the branch's changes, or the branch changed more than
+    one session not finished."""
+    found = session()
+    if found is None:
+        return {"session": None, steering.STAGE: None, steering.SIGNOFF: None}
+    keys = steering.keys_of(repo.at("HEAD", steering_path(found)) or "")
+    signoff = keys.get(steering.SIGNOFF)
+    return {
+        "session": found,
+        steering.STAGE: keys.get(steering.STAGE),
+        steering.SIGNOFF: None if signoff in (None, steering.NONE) else signoff,
+    }
 
 
 def kept_steering(folder: str) -> steering.Steering:
@@ -282,46 +300,6 @@ def numbered_on(folder: str, plan: list[str], part: list[str], number: str) -> N
         )
 
 
-def learnings_of(folder: str) -> list[str]:
-    """The lines of the session's learnings; none before any is made."""
-    path = learnings_path(folder)
-    return steering.trimmed(repo.read_text(path).splitlines()) if os.path.isfile(path) else []
-
-
-def put_learnings(learnings: list[str], part: list[str]) -> list[str]:
-    """The session's learnings with those of the part written after them, each numbered on from
-    those kept."""
-    count = len([line for line in learnings if LEARNING.fullmatch(line)])
-    put = []
-    for line in part:
-        learnt = LEARNING.fullmatch(line)
-        if learnt:
-            count += 1
-            line = f"- L{count}: {learnt['said']}"
-        put.append(line)
-    return learnings + put
-
-
-def write_learnings(folder: str, lines: list[str]) -> None:
-    """Writes the session's learnings, once each is an item in the form of a learning, the lines
-    indented under it its own; stops otherwise, writing nothing."""
-    path = learnings_path(folder)
-    point = learnings_out(lines)
-    if point:
-        raise stop.Stop(
-            f"rn: {path} would be out of its form: {point}; nothing is kept: write the part it puts"
-            " back again"
-        )
-    repo.write_text(path, "\n".join(lines) + "\n")
-
-
-def learnings_out(lines: list[str], first: int = 1) -> str:
-    """The point the session's learnings are out of their form by, each an item in the form of a
-    learning, the lines indented under it its own, at its line, the lines counted from first; ""
-    where they hold."""
-    return steering.items_of(list(enumerate(lines, first)), LEARNING, LEARNING_FORM)[1]
-
-
 def part_of(folder: str, number: str) -> tuple[Call, list[str]]:
     """The call of the number and the part the orchestrator writes for it; stops where the session
     holds no such call, the call makes no part, or its part is not cut."""
@@ -375,6 +353,13 @@ def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dic
     return {**keys, steering.STAGE: stage}
 
 
+def cut(work: str, steered: steering.Steering) -> str:
+    """The part a call on the plan or the learnings makes, as it is cut for the orchestrator to
+    write: the plan from the title through the tasks, the learnings none, as those kept are not
+    made again."""
+    return {steering.PLAN: "\n".join(steered.plan) + "\n", steering.LEARNINGS: ""}[work]
+
+
 def put_part(
     folder: str, steered: steering.Steering, number: str | None
 ) -> tuple[steering.Steering, list[str]]:
@@ -396,7 +381,7 @@ def put(
     if made.work == steering.PLAN:  # pragma: no mutate
         numbered_on(folder, steered.plan, part, made.number)
         return steered._replace(plan=steering.put_plan(steered.plan, part)), []
-    return steered, put_learnings(learnings_of(folder), part)
+    return steered, learnings.put(learnings.kept(folder), part)
 
 
 def held_part(folder: str, number: str) -> None:
@@ -413,13 +398,56 @@ def held_part(folder: str, number: str) -> None:
     point = (
         steering.plan_out(put_steering)
         if made.work == steering.PLAN  # pragma: no mutate
-        else learnings_out(learnt, 1 + len(part) - len(learnt))
+        else learnings.out(learnt, 1 + len(part) - len(learnt))
     )
     if point:
         raise stop.Stop(
             f"rn: {call_path(folder, number, PART[made.work])} would be out of its form: {point};"
             " change it so it holds, then run this again"
         )
+
+
+def state(
+    given_next: str | None,
+    opened: list[str],
+    done: list[str],
+    number: str | None,
+    stage: str | None,
+    message: str,
+) -> dict[str, str]:
+    """Keeps the move: the part of the call of the number put back, the plan's into the steering,
+    the learnings' added to the session's learnings; each action done ticked, and each task removed
+    once all its actions are; the stage moved where given; Next and Open replaced whole, Next as the
+    stage moved leads where none is given; then every change committed with the message and
+    pushed; gives the commit, and the line told where an action is done. Stops, keeping nothing,
+    where Next is empty, the branch holds no session, the steering differs from what the last keep
+    left, a part, an ID, an action or a stage cannot be taken, or the steering or the learnings
+    would be out of their form; and where git fails."""
+    folder = current()
+    steered = kept_steering(folder)
+    if given_next is not None:
+        next_step = stop.given(given_next, "next step")
+    elif stage is not None:
+        next_step = STAGED[stage]
+    else:
+        next_step = steered.next
+    steered, learnt = put_part(folder, steered, number)
+    tasks_done = {one.partition(".")[0] for one in done}
+    plan = steering.pruned(steering.ticked(steered.plan, done), tasks_done)
+    tell = steering.told_done(steered.plan, done)
+    keys = steered.keys if stage is None else moved(steered.keys, stage, plan, folder)
+    steered = steering.Steering(keys, plan, next_step, steering.opened(opened))
+    # The steering is held to its form before the learnings are written, so a stop leaves neither.
+    steering.held_form(steering.render(steered))
+    if stage == steering.FINISHED:
+        # The pull request is marked ready before the session is kept finished, so a gh that
+        # fails leaves the session to go on from here.
+        again = "run `rn.py state --stage finished` again"
+        repo.gh(["pr", "ready", steered.keys[steering.PR]], again)
+    if learnt:
+        learnings.write(folder, learnt)
+    commit = keep(folder, steered, message)
+    return {"kept": commit, "tell": tell} if tell else {"kept": commit}
 
 
 def started(slug: str, today: datetime.date, steered: steering.Steering, message: str) -> str:
@@ -451,3 +479,59 @@ def opened_pr(folder: str, slug: str, steered: steering.Steering, title: str) ->
     pr = repo.gh([*asked, "--body", link], again)
     keep(folder, steered._replace(keys={**steered.keys, steering.PR: pr}), f"pr: {pr}")
     return pr
+
+
+def version(root: str) -> str:
+    """rn's version, as its manifest at root gives it; stops where it gives none."""
+    path = os.path.join(root, ".claude-plugin", "plugin.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return str(json.load(f)["version"])
+    except (OSError, ValueError, KeyError):
+        raise stop.Stop(f"rn: {path} gives no version of rn; install rn again") from None
+
+
+def start(
+    slug: str,
+    title: str,
+    languages: dict[str, str],
+    message: str,
+    root: str,
+    today: datetime.date,
+) -> dict[str, str]:
+    """Starts a session on a branch of its own named by the slug, made from the remote's default
+    branch as it is now: its steering at the plan stage, with the version of rn installed at root,
+    the languages, the title, Next and nothing open, kept with the message; then the draft pull
+    request opened, its body linking the steering, and its URL kept as the steering's pr. Run again
+    on that branch where the pull request was not opened, it opens it. Gives the folder, the branch
+    and the pull request. Stops, leaving the checked-out branch as it is, where rn is not at the top
+    of a repository, the working tree has changes not committed, the folder or the branch is there
+    already, or rn's version is not there; and where git or gh fails."""
+    repo.at_top()
+    paths = repo.changed()
+    if paths:
+        raise stop.Stop(
+            f"rn: the working tree has changes not committed: {', '.join(paths)}; rn leaves them as"
+            " they are, and starts from the default branch: commit or stash them, then run this"
+            " again"
+        )
+    if repo.branch() == slug:
+        folder = current()
+        steered = kept_steering(folder)
+        if steered.keys[steering.PR] != steering.NONE:  # pragma: no mutate
+            raise stop.Stop(
+                f"rn: the session {folder} is started already, with its pull request"
+                f" {steered.keys[steering.PR]}; go on with it with /rn:up"
+            )
+    else:
+        keys = {
+            steering.RN: version(root),
+            steering.PR: steering.NONE,
+            steering.STAGE: steering.PLAN,
+            steering.SIGNOFF: steering.NONE,
+            **languages,
+        }
+        steered = steering.Steering(keys, [f"# {title}"], STARTED, [steering.NOTHING_OPEN])
+        folder = started(slug, today, steered, message)
+    pr = opened_pr(folder, slug, steered, title)
+    return {"session": folder, "branch": slug, "pr": pr}

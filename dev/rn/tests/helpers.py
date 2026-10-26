@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 
 import ccs  # noqa: F401  (each of rn's modules, for its own tests)
 import conversations  # noqa: F401
+import learnings  # noqa: F401
 import proposal  # noqa: F401
 import record
 import session  # noqa: F401

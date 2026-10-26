@@ -10,10 +10,10 @@ from helpers import (
     STEERED,
     RepoTest,
     ccs,
+    learnings,
     plan,
     proposal,
     said,
-    session,
     steered,
     steering,
     stop,
@@ -175,7 +175,7 @@ class PropertyTest(RepoTest):
         # Then: those kept stay, and each of the part follows, numbered on from them, its text as
         # written.
         want = before + [f"- L{kept + k}: {text}" for k, (_, text) in enumerate(made, 1)]
-        self.assertEqual(session.put_learnings(before, part), want)
+        self.assertEqual(learnings.put(before, part), want)
 
     @hypothesis.given(
         st.text(alphabet=" x", min_size=1, max_size=5),

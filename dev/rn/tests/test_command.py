@@ -18,7 +18,8 @@ from unittest import mock
 from helpers import (
     SCRIPTS,
     RepoTest,
-    rn,
+    proposal,
+    session,
     steered,
 )
 
@@ -55,14 +56,14 @@ class StepsTest(unittest.TestCase):
         for name in os.listdir(folder):
             with open(os.path.join(folder, name), encoding="utf-8") as f:
                 steps.update(re.findall(r"^ ?([0-9]+)\. ", f.read(), re.MULTILINE))
-        nexts = [rn.STARTED, rn.FEEDBACK, rn.WAITING]
-        nexts += list(rn.APPROVED_NEXT.values()) + list(rn.STAGED.values())
+        nexts = [session.STARTED, proposal.FEEDBACK, proposal.WAITING]
+        nexts += list(proposal.APPROVED_NEXT.values()) + list(session.STAGED.values())
         # When: the step each names is read.
         named = [re.match(r"Step ([0-9]+) of /rn:up", n) for n in nexts]
         # Then: each but the session finished names a step of /rn:up that is there.
         self.assertEqual(
             [m[1] in steps if m else n for m, n in zip(named, nexts)],
-            [True] * 8 + [rn.STAGED["finished"]],
+            [True] * 8 + [session.STAGED["finished"]],
         )
 
 

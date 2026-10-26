@@ -23,7 +23,6 @@ from helpers import (
     call_at,
     plan,
     proposal,
-    rn,
     said,
     steered,
     task,
@@ -486,7 +485,7 @@ class AnswerTest(RepoTest):
                 # Then: the stage moves on, no sign-off waits, and Next and Open are replaced,
                 # kept on the remote with the message.
                 want = steered(
-                    stage=stage, next_step=rn.APPROVED_NEXT[signoff], opened="- Which page?"
+                    stage=stage, next_step=proposal.APPROVED_NEXT[signoff], opened="- Which page?"
                 )
                 kept = (
                     out,

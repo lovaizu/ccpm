@@ -19,6 +19,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
 # rn's own names of the session's record, read from its scripts, which the trial runs.
 sys.path.insert(0, os.path.join(ROOT, "rn", "scripts"))
+import learnings
 import session
 import steering
 
@@ -126,8 +127,8 @@ def steered(seen: Seen) -> steering.Steering | None:
 def kept_learnings(seen: Seen) -> list:
     """Each learning of the session's learnings as the last commit holds them, none before any is
     made."""
-    path = session.learnings_path(os.path.dirname(seen.steering_path))
-    return [x for x in seen.texts.get(path, "").splitlines() if session.LEARNING.fullmatch(x)]
+    path = learnings.path(os.path.dirname(seen.steering_path))
+    return [x for x in seen.texts.get(path, "").splitlines() if learnings.LEARNING.fullmatch(x)]
 
 
 def costed(costs: dict[str, float]) -> float:

@@ -1,7 +1,8 @@
-"""What a work's CCS holds beside its decisions, so the work is made from the session's record
-alone, by turn or, for the plan and the learnings, by the orchestrator: the checklists of its kind,
-what its receiver has, the goal and the criteria it serves, the finished work's files, and for the
-plan what each task done served, decided and made."""
+"""What a work's CCS holds, its decisions with the rest, so the work is made from the session's
+record alone, by turn or, for the plan and the learnings, by the orchestrator: each decision kept,
+the checklists of its kind, what its receiver has, the goal and the criteria it serves, the
+finished work's files, and for the plan what each task done served, decided and made; and the CCS
+written and handed to its maker."""
 
 from __future__ import annotations
 
@@ -250,13 +251,6 @@ def needed(value: Any, what: str, work: str) -> Any:
     return value
 
 
-def cut(work: str, steered: steering.Steering) -> str:
-    """The part a call on the plan or the learnings makes, as it is cut for the orchestrator to
-    write: the plan from the title through the tasks, the learnings none, as those kept are not
-    made again."""
-    return {steering.PLAN: "\n".join(steered.plan) + "\n", steering.LEARNINGS: ""}[work]
-
-
 def written(
     work: str,
     steered: steering.Steering,
@@ -316,3 +310,138 @@ def told(work: str, steered: steering.Steering) -> str:
         f"turn makes {words}, and an AI that did not make it uses it in your place before it comes"
         " back; say stop to stop it."
     )
+
+
+def decide(work: str, title: str, says: str, message: str) -> dict[str, str]:
+    """Keeps a decision of the work, `<title>: <what it says>`, in the constraints of its latest
+    call where that call takes more, else of a new call carrying its decisions, one of the same
+    title replaced where it stands, as session.Call says; kept with the message and pushed. Gives
+    the call's number and the commit. Stops where the branch holds no session, the steering differs
+    from what the last keep left, the steering holds no action of turn's of a task's work, or a CCS
+    is no JSON object; and where git fails."""
+    folder = session.current()
+    steered = session.kept_steering(folder)
+    if session.task_of(work):
+        session.made_by(steered, work)
+    found = session.calls(folder)
+    last = session.latest(found, work)
+    if last is not None and not last.closed:
+        number, ccs = last.number, last.ccs
+    else:
+        number = session.next_number(found)
+        carried = [] if last is None else session.decisions_of(last)
+        ccs = {
+            "focal_entities": [
+                {session.WORK: work},
+                {steering.STAGE: steered.keys[steering.STAGE]},
+            ],
+            "constraints": [{session.DECISION: d} for d in carried]
+            + [{session.CHOSEN: c} for c in session.choices_of(last)],
+        }
+    constraints = ccs.setdefault("constraints", [])
+    decision = {session.DECISION: f"{title}: {says}"}
+    same = next(
+        (
+            k
+            for k, e in enumerate(constraints)
+            if e.get(session.DECISION, "").startswith(f"{title}: ")
+        ),
+        None,
+    )
+    if same is None:
+        constraints.append(decision)
+    else:
+        constraints[same] = decision
+    repo.write_json(session.call_path(folder, number, session.CCS), ccs)
+    return {"call": number, "kept": session.keep(folder, steered, message)}
+
+
+def handed(
+    work: str,
+    paths: list[str],
+    receiver: str | None,
+    use: str | None,
+    given_has: list[str],
+    chosen: list[str],
+    root: str,
+) -> dict[str, Any] | str:
+    """Writes the work's CCS into the session and keeps it, once every change is pushed, so the work
+    is made from decisions a fresh conversation also has: in the work's latest call where that call
+    takes more, else in a new one carrying its decisions, as session.Call says. For the plan and the
+    learnings, which the orchestrator writes, the part is cut into the call, and gives the part, the
+    CCS, the kind's checklists and the command that checks the part; for every other work, the call
+    that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the line
+    telling the user what turn makes. What is given makes the work, each choice of the
+    orchestrator's given kept with those of the latest call, one of the same what replaced; what is
+    not, rn's own way of making it, or what the work's latest call named, as made_as and kept_as
+    say: for the plan, its part of the steering, with what each task done served and made after
+    what the receiver has; for the learnings, an empty part, as those kept are not made again; for
+    the finished work given none, every file it is. rn is installed at root. Stops, writing
+    nothing, where a path of what the receiver has is not there, the branch holds no session, a
+    change is not kept or pushed, the steering differs from what the last keep left, the steering
+    holds no action of turn's of a task's work, the receiver, their use or what they have is
+    neither given nor kept, the kind has no checklist, or the finished work is not there."""
+    # The session is found first, which stops below the top of the repository, since each path
+    # given is read from the top.
+    folder = session.current()
+    repo.pushed()
+    has = [has_path(p) for p in given_has]
+    steered = session.kept_steering(folder)
+    serving = served(steered, work)
+    found = session.calls(folder)
+    last = session.latest(found, work)
+    number = last.number if last is not None and not last.closed else session.next_number(found)
+    made, kept = made_as(work, steered, folder, root), kept_as(last)
+    receiver = needed(receiver or made.receiver or kept.receiver, "receiver", work)
+    use = needed(use or made.use or kept.use, "use", work)
+    has = needed(has or made.has or kept.has, "has", work)
+    kind = made.kind or ""
+    lists = checklists(kind, root)
+    part = session.call_path(folder, number, session.PART[work]) if work in session.PARTS else ""
+    paths = ([part] if part else paths) or made.paths or finished_work()
+    if work == steering.PLAN:
+        has += done_made(folder, found, steered.plan)
+    # Every check is made above, so a stop leaves nothing written.
+    if part:
+        repo.write_text(part, session.cut(work, steered))
+    ccs = written(
+        work,
+        steered,
+        Made(kind, receiver, use, paths, has),
+        serving,
+        lists,
+        [] if last is None else session.decisions_of(last),
+        chosen_with(session.choices_of(last), chosen),
+        root,
+    )
+    path = session.call_path(folder, number, session.CCS)
+    repo.write_json(path, ccs)
+    test = test_of(steered, work, number, root)
+    if part:
+        session.keep(
+            folder, steered, f"Call {number} on {work}: its part cut for the orchestrator to write"
+        )
+        return {"part": part, "ccs": path, "checklists": lists, "check": test}
+    session.keep(folder, steered, f"Call {number} on {work}: handed to turn")
+    # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
+    # of work; and the command that checks the work under "test", null where there is none.
+    result = session.call_path(folder, number, session.RESULT)
+    call_line = {"ccs": path, "kind": ENTRIES, "result": result, "test": test}
+    return f"{repo.dumped(call_line)}\n{told(work, steered)}"
+
+
+def decisions(work: str, root: str) -> dict[str, Any]:
+    """Each decision of the work, as its latest call keeps it, with that call's number; none, and
+    no call, where it has none; and the checklists of its kind, as its CCS names them, so the
+    hearing reads each item before the work is made; rn is installed at root. Stops where the
+    branch holds no session, the steering differs from what the last keep left, the steering holds
+    no action of turn's of a task's work, or the kind has no checklist."""
+    folder = session.current()
+    steered = session.kept_steering(folder)
+    last = session.latest(session.calls(folder), work)
+    return {
+        "work": work,
+        "call": None if last is None else last.number,
+        "decisions": [] if last is None else session.decisions_of(last),
+        "checklists": checklists(made_as(work, steered, folder, root).kind or "", root),
+    }

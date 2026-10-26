@@ -1,15 +1,15 @@
 """rn's command line, the subcommands rn's orchestrator runs for each move a machine can judge, so
-that what must come out the same does on every run and a rule holds at the moment of the move. Run
-from the top of the user's repository as `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/rn.py"
-<subcommand> ...`, with Python 3.9 or later and the standard library alone; it prints JSON, or the
-proposal as text for the orchestrator to show, and on a stop exits 1 with what went wrong and what
-to do."""
+that what must come out the same does on every run and a rule holds at the moment of the move: each
+reads its arguments, checks each where it comes in, and calls the module of the part that makes
+the move. Run from the top of the user's repository as
+`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/rn.py" <subcommand> ...`, with Python 3.9 or later and the
+standard library alone; it prints JSON, or the proposal as text for the orchestrator to show, and on
+a stop exits 1 with what went wrong and what to do."""
 
 from __future__ import annotations
 
 import argparse
 import datetime
-import json
 import os
 import sys
 from collections.abc import Callable
@@ -18,6 +18,7 @@ from typing import Any, NoReturn
 import ccs
 import conversations
 import history
+import learnings
 import proposal
 import repo
 import session
@@ -26,148 +27,36 @@ import stop
 
 # The plugin's own folder, which holds rn's checklists and its manifest.
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# The step of /rn:up each move whose next step is always the same leads to, as Next, by the number
-# up's SKILL.md and the files of its stages give it: a session started, a sign-off approved, a
-# sign-off sent back, a sign-off waiting, and a stage moved at its end.
-STARTED = "Step 8 of /rn:up on plan: hear the purpose and what shows it done"
-APPROVED_NEXT = {
-    steering.PLAN: "Step 9 of /rn:up on plan: hear which documents the purpose needs",
-    steering.DESIGN: "Step 10 of /rn:up on plan: make the tasks that build the finished work",
-    steering.DELIVERABLE: (
-        "Step 11 of /rn:up: find where the work fell short, then put each learning to the user"
-    ),
-}
-FEEDBACK = "Step 6 of /rn:up on {}: find the point behind the feedback"
-WAITING = "Step 5 of /rn:up on {}: wait for the user's answer, " + proposal.ANSWER
-STAGED = {
-    steering.BUILD: APPROVED_NEXT[steering.DESIGN],
-    steering.DELIVERABLE: (
-        "Step 10 of /rn:up on deliverable: have the finished work used for each acceptance"
-        " criterion"
-    ),
-    steering.FINISHED: "Nothing is left: the pull request waits for the user's merge",
-}
 
 
 def run_session(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """The session the checked-out branch is in, with its stage and the sign-off waiting, as its
-    steering's last commit holds them; None for each where there is none. Stops where rn is not at
-    the top of a repository, git cannot tell the branch's changes, or the branch changed more than
-    one session not finished."""
-    found = session.session()
-    if found is None:
-        return {"session": None, steering.STAGE: None, steering.SIGNOFF: None}
-    keys = steering.keys_of(repo.at("HEAD", session.steering_path(found)) or "")
-    signoff = keys.get(steering.SIGNOFF)
-    return {
-        "session": found,
-        steering.STAGE: keys.get(steering.STAGE),
-        steering.SIGNOFF: None if signoff in (None, steering.NONE) else signoff,
-    }
-
-
-def version(root: str) -> str:
-    """rn's version, as its manifest gives it; stops where it gives none."""
-    path = os.path.join(root, ".claude-plugin", "plugin.json")
-    try:
-        with open(path, encoding="utf-8") as f:
-            return str(json.load(f)["version"])
-    except (OSError, ValueError, KeyError):
-        raise stop.Stop(f"rn: {path} gives no version of rn; install rn again") from None
+    """The session the checked-out branch is in, with its stage and the sign-off waiting, as
+    session.where gives them."""
+    return session.where()
 
 
 def run_start(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Starts a session on a branch of its own named by the slug, made from the remote's default
-    branch as it is now: its steering at the plan stage, with rn's version, the languages, the
-    title, Next and nothing open, kept with the message; then the draft pull request opened, its
-    body linking the steering, and its URL kept as the steering's pr. Run again on that branch where
-    the pull request was not opened, it opens it. Gives the folder, the branch and the pull request.
-    Stops, leaving the checked-out branch as it is, where a value is not given in its form, rn is
-    not at the top of a repository, the working tree has changes not committed, the folder or the
-    branch is there already, or rn's version is not there; and where git or gh fails."""
+    """Starts a session named by the slug, as session.start does; stops where a value is not given
+    in its form."""
     slug = stop.named(args.slug, "slug")
     title = stop.given(args.title, "title")
     languages = {
         key: stop.given(getattr(args, key.replace("-", "_")), key) for key in steering.LANGUAGES
     }
     message = stop.given(args.message, "message")
-    repo.at_top()
-    paths = repo.changed()
-    if paths:
-        raise stop.Stop(
-            f"rn: the working tree has changes not committed: {', '.join(paths)}; rn leaves them as"
-            " they are, and starts from the default branch: commit or stash them, then run this"
-            " again"
-        )
-    if repo.branch() == slug:
-        folder = session.current()
-        steered = session.kept_steering(folder)
-        if steered.keys[steering.PR] != steering.NONE:  # pragma: no mutate
-            raise stop.Stop(
-                f"rn: the session {folder} is started already, with its pull request"
-                f" {steered.keys[steering.PR]}; go on with it with /rn:up"
-            )
-    else:
-        keys = {
-            steering.RN: version(root),
-            steering.PR: steering.NONE,
-            steering.STAGE: steering.PLAN,
-            steering.SIGNOFF: steering.NONE,
-            **languages,
-        }
-        steered = steering.Steering(keys, [f"# {title}"], STARTED, [steering.NOTHING_OPEN])
-        folder = session.started(slug, today, steered, message)
-    pr = session.opened_pr(folder, slug, steered, title)
-    return {"session": folder, "branch": slug, "pr": pr}
+    return session.start(slug, title, languages, message, root, today)
 
 
 def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Keeps the move: the part of the call `--put` names put back, the plan's into the steering,
-    the learnings' added to the session's learnings; each action done ticked, and each task removed
-    once all its actions are; the stage moved where given; Next and Open replaced whole; then every
-    change committed with the message and pushed; gives the commit. Stops, keeping nothing, where a
-    value is empty, the branch holds no session, the steering differs from what the last keep left,
-    a part, an ID, an action or a stage cannot be taken, or the steering or the learnings would be
-    out of their form; and where git fails."""
+    """Keeps the move where the session stands, as session.state does; stops where the message is
+    empty."""
     message = stop.given(args.message, "message")
-    folder = session.current()
-    steered = session.kept_steering(folder)
-    if args.next is not None:
-        next_step = stop.given(args.next, "next step")
-    elif args.stage is not None:
-        next_step = STAGED[args.stage]
-    else:
-        next_step = steered.next
-    steered, learnt = session.put_part(folder, steered, args.put)
-    done = {one.partition(".")[0] for one in args.done}
-    plan = steering.pruned(steering.ticked(steered.plan, args.done), done)
-    tell = steering.told_done(steered.plan, args.done)
-    keys = (
-        steered.keys
-        if args.stage is None
-        else session.moved(steered.keys, args.stage, plan, folder)
-    )
-    steered = steering.Steering(keys, plan, next_step, steering.opened(args.open))
-    # The steering is held to its form before the learnings are written, so a stop leaves neither.
-    steering.held_form(steering.render(steered))
-    if args.stage == steering.FINISHED:
-        # The pull request is marked ready before the session is kept finished, so a gh that
-        # fails leaves the session to go on from here.
-        again = "run `rn.py state --stage finished` again"
-        repo.gh(["pr", "ready", steered.keys[steering.PR]], again)
-    if learnt:
-        session.write_learnings(folder, learnt)
-    commit = session.keep(folder, steered, message)
-    return {"kept": commit, "tell": tell} if tell else {"kept": commit}
+    return session.state(args.next, args.open, args.done, args.put, args.stage, message)
 
 
 def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Keeps a decision of the work, `<title>: <what it says>`, in the constraints of its latest
-    call where that call takes more, else of a new call carrying its decisions, one of the same
-    title replaced where it stands, as session.Call says; kept with the message and pushed. Gives
-    the call's number and the commit. Stops where a value is empty or wrong, the branch holds no
-    session, the steering differs from what the last keep left, or a CCS is no JSON object; and
-    where git fails."""
+    """Keeps a decision of the work, as ccs.decide does; stops where the work is none rn makes, a
+    value is empty, or the title holds `: `."""
     work = session.worked(args.work)
     title = stop.given(args.title, "title")
     if ": " in title:
@@ -177,41 +66,7 @@ def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any
         )
     says = stop.given(args.says, "decision")
     message = stop.given(args.message, "message")
-    folder = session.current()
-    steered = session.kept_steering(folder)
-    if session.task_of(work):
-        session.made_by(steered, work)
-    found = session.calls(folder)
-    last = session.latest(found, work)
-    if last is not None and not last.closed:
-        number, written = last.number, last.ccs
-    else:
-        number = session.next_number(found)
-        carried = [] if last is None else session.decisions_of(last)
-        written = {
-            "focal_entities": [
-                {session.WORK: work},
-                {steering.STAGE: steered.keys[steering.STAGE]},
-            ],
-            "constraints": [{session.DECISION: d} for d in carried]
-            + [{session.CHOSEN: c} for c in session.choices_of(last)],
-        }
-    constraints = written.setdefault("constraints", [])
-    decision = {session.DECISION: f"{title}: {says}"}
-    same = next(
-        (
-            k
-            for k, e in enumerate(constraints)
-            if e.get(session.DECISION, "").startswith(f"{title}: ")
-        ),
-        None,
-    )
-    if same is None:
-        constraints.append(decision)
-    else:
-        constraints[same] = decision
-    repo.write_json(session.call_path(folder, number, session.CCS), written)
-    return {"call": number, "kept": session.keep(folder, steered, message)}
+    return ccs.decide(work, title, says, message)
 
 
 def run_checklists(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
@@ -220,24 +75,9 @@ def run_checklists(args: argparse.Namespace, root: str, today: datetime.date) ->
 
 
 def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Writes the work's CCS into the session and keeps it, once every change is pushed, so the work
-    is made from decisions a fresh conversation also has: in the work's latest call where that call
-    takes more, else in a new one carrying its decisions, as session.Call says. For the plan and the
-    learnings, which the orchestrator writes, the part is cut into the call, and rn gives the part,
-    the CCS, the kind's checklists and the command that checks the part; for every other work, the
-    call that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the
-    line telling the user what turn makes. What is given makes the work, each choice of the
-    orchestrator's given kept with those of the latest call, one of the same what replaced; what is
-    not, rn's own way of making it, or what the work's latest call named, as ccs.made_as and
-    ccs.kept_as say: for the
-    plan, its part of the steering, with what each task done served and made after what the receiver
-    has; for the learnings, an empty part, as those kept are not made again; for the finished work
-    given none, every file it is. Stops, writing nothing, where a name, a text or a path given is
-    wrong, a choice gives no why, the branch holds no session, a change is not kept or pushed, the
-    steering differs from
-    what the last keep left, the steering holds no action of turn's of a task's work, the receiver,
-    their use or what they have is neither given nor kept, the kind has no checklist, or the
-    finished work is not there."""
+    """Writes the work's CCS and keeps it, as ccs.handed does; stops, writing nothing, where the
+    work is none rn makes, a text or a path given is empty, a choice gives no why, or a path is
+    given of a part rn cuts."""
     work = session.worked(args.work)
     paths = [stop.given(p, "path of the work") for p in args.path]
     receiver = None if args.receiver is None else stop.given(args.receiver, "receiver")
@@ -247,53 +87,7 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         raise stop.Stop(
             f"rn: the work {work} is a part rn cuts from the session's record; give no path of it"
         )
-    # The session is found first, which stops below the top of the repository, since each path
-    # given is read from the top.
-    folder = session.current()
-    repo.pushed()
-    has = [ccs.has_path(p) for p in args.has]
-    steered = session.kept_steering(folder)
-    serving = ccs.served(steered, work)
-    found = session.calls(folder)
-    last = session.latest(found, work)
-    number = last.number if last is not None and not last.closed else session.next_number(found)
-    made, kept = ccs.made_as(work, steered, folder, root), ccs.kept_as(last)
-    receiver = ccs.needed(receiver or made.receiver or kept.receiver, "receiver", work)
-    use = ccs.needed(use or made.use or kept.use, "use", work)
-    has = ccs.needed(has or made.has or kept.has, "has", work)
-    kind = made.kind or ""
-    checklists = ccs.checklists(kind, root)
-    part = session.call_path(folder, number, session.PART[work]) if work in session.PARTS else ""
-    paths = ([part] if part else paths) or made.paths or ccs.finished_work()
-    if work == steering.PLAN:
-        has += ccs.done_made(folder, found, steered.plan)
-    # Every check is made above, so a stop leaves nothing written.
-    if part:
-        repo.write_text(part, ccs.cut(work, steered))
-    written = ccs.written(
-        work,
-        steered,
-        ccs.Made(kind, receiver, use, paths, has),
-        serving,
-        checklists,
-        [] if last is None else session.decisions_of(last),
-        ccs.chosen_with(session.choices_of(last), chosen),
-        root,
-    )
-    path = session.call_path(folder, number, session.CCS)
-    repo.write_json(path, written)
-    test = ccs.test_of(steered, work, number, root)
-    if part:
-        session.keep(
-            folder, steered, f"Call {number} on {work}: its part cut for the orchestrator to write"
-        )
-        return {"part": part, "ccs": path, "checklists": checklists, "check": test}
-    session.keep(folder, steered, f"Call {number} on {work}: handed to turn")
-    # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
-    # of work; and the command that checks the work under "test", null where there is none.
-    result = session.call_path(folder, number, session.RESULT)
-    handed = {"ccs": path, "kind": ccs.ENTRIES, "result": result, "test": test}
-    return f"{repo.dumped(handed)}\n{ccs.told(work, steered)}"
+    return ccs.handed(work, paths, receiver, use, args.has, chosen, root)
 
 
 def run_check(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
@@ -305,114 +99,27 @@ def run_check(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
 
 
 def run_decisions(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Each decision of the work, as its latest call keeps it, with that call's number; none, and
-    no call, where it has none; and the checklists of its kind, as its CCS names them, so the
-    hearing reads each item before the work is made. Stops where the work is none rn makes, the
-    branch holds no session, the steering differs from what the last keep left, the steering holds
-    no action of turn's of a task's work, or the kind has no checklist."""
-    work = session.worked(args.work)
-    folder = session.current()
-    steered = session.kept_steering(folder)
-    last = session.latest(session.calls(folder), work)
-    return {
-        "work": work,
-        "call": None if last is None else last.number,
-        "decisions": [] if last is None else session.decisions_of(last),
-        "checklists": ccs.checklists(ccs.made_as(work, steered, folder, root).kind or "", root),
-    }
+    """Each decision of the work and the checklists of its kind, as ccs.decisions gives them; stops
+    where the work is none rn makes."""
+    return ccs.decisions(session.worked(args.work), root)
 
 
 def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> str:
-    """The proposal at the sign-off, made from what is pushed alone: the pull request's link, then
-    the goal and the acceptance criteria at the plan sign-off, each work made in the design stage
-    with its links and each choice made in it unasked at the design's, and the finished work with
-    its links and each choice made unasked in building and using it at the deliverable's, as
-    proposal.shown_at says, with what changed since the last proposal at the same sign-off; the
-    steering set waiting at the sign-off, Next saying so, and kept with the proposal as its message.
-    The same proposal again, keeping nothing, where it waits at that sign-off already. Stops where
-    the branch holds no session, a change is not kept or pushed, the steering differs from what the
-    last keep left, the session is at another stage, another sign-off waits, the session lacks what
-    the sign-off shows, a result of turn's is no JSON object, or the pull request was not
-    opened."""
-    signoff = args.signoff
-    folder = session.current()
-    repo.pushed()
-    steered = session.kept_steering(folder)
-    stage, waiting = steered.keys[steering.STAGE], steered.keys[steering.SIGNOFF]
-    if stage != signoff:
-        raise stop.Stop(
-            f"rn: the session is at the {stage} stage, and the {signoff} sign-off comes at the"
-            f" {signoff} stage; take the steps of /rn:up that reach it first"
-        )
-    if waiting not in (steering.NONE, signoff):
-        raise stop.Stop(
-            f"rn: the {waiting} sign-off waits for the user's answer; keep it with `rn.py answer`"
-            " first"
-        )
-    proposal.ready(signoff, folder, steered)
-    proposals = proposal.proposed(signoff, folder)
-    before = proposals[:-1] if waiting == signoff else proposals
-    now = proposal.shown_at("HEAD", signoff, folder)
-    then = proposal.shown_at(before[-1], signoff, folder) if before else None
-    shown_text = proposal.text(signoff, steered.keys[steering.PR], then, now)
-    if waiting == steering.NONE:
-        waits = WAITING.format(signoff)
-        session.keep(
-            folder,
-            steered._replace(keys={**steered.keys, steering.SIGNOFF: signoff}, next=waits),
-            shown_text,
-        )
-    return shown_text
+    """The proposal at the sign-off, the steering set waiting at it, as proposal.shown does."""
+    return proposal.shown(args.signoff)
 
 
 def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Keeps the user's answer to the sign-off waiting: on approval the stage moved on, plan to
-    design, design to build, deliverable to learnings; on either no sign-off waiting, and Next and
-    Open replaced whole; kept with the message and pushed; gives the commit. Stops where a value is
-    empty, the branch holds no session, the steering differs from what the last keep left, no
-    sign-off waits, or the user has not typed the answer's command since the sign-off was shown, as
-    an approval counts only from the user's own action; and where git fails."""
+    """Keeps the user's answer to the sign-off waiting, as proposal.answered does; stops where the
+    message is empty."""
     message = stop.given(args.message, "message")
-    folder = session.current()
-    steered = session.kept_steering(folder)
-    waiting = steered.keys[steering.SIGNOFF]
-    if waiting == steering.NONE:
-        raise stop.Stop(
-            "rn: no sign-off waits for the user's answer; show the proposal with `rn.py proposal"
-            " <plan|design|deliverable>` first, and keep the answer the user gives it"
-        )
-    command = proposal.COMMANDS[args.answer]
-    shown_at = float(
-        repo.git(
-            ["log", "-1", "--format=%ct", proposal.proposed(waiting, folder)[-1]], repo.AS_GIT_SAYS
-        )
-    )
-    if not conversations.typed(command, shown_at):
-        raise stop.Stop(
-            f"rn: the user has not typed {command} since the {waiting} sign-off was shown; the"
-            " answer is theirs alone, so wait for them to type it, and keep it then"
-        )
-    keys = {**steered.keys, steering.SIGNOFF: steering.NONE}
-    next_step = FEEDBACK.format(waiting)
-    if args.answer == "approved":  # pragma: no mutate
-        keys[steering.STAGE] = steering.APPROVED[waiting]
-        next_step = APPROVED_NEXT[waiting]
-    # The points open stay, as the answer settles none of them, each one given added after them.
-    still = [line[2:] for line in steered.open if line.startswith("- ")]
-    answered = steered._replace(keys=keys, next=next_step, open=steering.opened(still + args.open))
-    return {"kept": session.keep(folder, answered, message)}
+    return proposal.answered(args.answer, args.open, message)
 
 
 def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Every learning of the session, for the orchestrator to put to the user one per message once
-    the finished work is approved, by ID, each as one line. Stops where the branch holds no
-    session."""
-    folder = session.current()
-    listed = steering.items_of(
-        list(enumerate(session.learnings_of(folder))), session.LEARNING, session.LEARNING_FORM
-    )[0]
-    said = {i.id: steering.said(i.lines).partition(": ")[2] for i in listed}
-    return {"learnings": said}
+    """Every learning of the session by ID, as learnings.listed gives them. Stops where the branch
+    holds no session."""
+    return {"learnings": learnings.listed(session.current())}
 
 
 def run_history(args: argparse.Namespace, root: str, today: datetime.date) -> Any:

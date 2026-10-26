@@ -26,8 +26,7 @@ sys.path.insert(0, os.path.join(ROOT, "rn", "scripts"))
 import record
 import session
 import steering
-
-import rn
+from proposal import WAITING
 
 # The user's words, in the conversation language their instructions set.
 REQUEST = "/rn:up README に新しいコントリビューター向けの挨拶を一行足して"
@@ -913,7 +912,7 @@ def proposal(signoff: str) -> list:
     """The checks of a move that stops at the sign-off: kept waiting, the proposal shown whole."""
     return [
         front(signoff, signoff),
-        next_has(rn.WAITING.format(signoff)),
+        next_has(WAITING.format(signoff)),
         says(PR),
         says("/rn:ty"),
         says("/rn:gm"),

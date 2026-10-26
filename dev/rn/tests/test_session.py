@@ -24,7 +24,7 @@ from helpers import (
     call_at,
     options,
     plan,
-    rn,
+    session,
     steered,
     task,
 )
@@ -233,7 +233,7 @@ class StartTest(RepoTest):
         # Then: the steering holds rn's version, the pull request, the plan stage, no sign-off,
         # the languages, the title, Next the step that makes the plan and nothing open, as kept
         # on the remote.
-        want = steered(part="# Add login", next_step=rn.STARTED)
+        want = steered(part="# Add login", next_step=session.STARTED)
         self.assertEqual(
             (self.read(STEERING), self.out("show", f"origin/{SLUG}:{STEERING}")), (want, want)
         )
@@ -294,7 +294,7 @@ class StartTest(RepoTest):
                 True,
                 True,
                 {"session": FOLDER, "branch": SLUG, "pr": PR},
-                steered(part="# Add login", next_step=rn.STARTED),
+                steered(part="# Add login", next_step=session.STARTED),
             ),
         )
 
@@ -784,7 +784,7 @@ class StateTest(RepoTest):
                 # When: the orchestrator moves the stage, giving no Next.
                 self.ran("state", "--stage", to, "--message", "m")
                 # Then: Next is the step of /rn:up the stage leads to.
-                self.assertIn(f"## Next\n\n{rn.STAGED[to]}\n", self.read(STEERING))
+                self.assertIn(f"## Next\n\n{session.STAGED[to]}\n", self.read(STEERING))
 
     def test_an_empty_value_stops(self):
         for argv, words in (

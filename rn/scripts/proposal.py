@@ -1,12 +1,14 @@
 """The proposal at a sign-off, made from what is pushed alone, so it says nothing turn's first user
 did not read: what the sign-off shows of the steering and of each work, and what changed since the
-proposal at the same sign-off before; with the answers the user gives it."""
+proposal at the same sign-off before; the sign-off set waiting with it, and the answers the user
+gives it kept."""
 
 from __future__ import annotations
 
 import json
 
 import ccs
+import conversations
 import repo
 import session
 import steering
@@ -37,6 +39,18 @@ COMMANDS = {"approved": "/rn:ty", "feedback": "/rn:gm"}
 ANSWER = (
     f"{COMMANDS['approved']} to approve, {COMMANDS['feedback']} <feedback> to ask for a change."
 )
+# The step of /rn:up each answer and each sign-off set waiting leads to, as Next, by the number
+# orchestrator.md and the files of its stages give it: a sign-off approved, a sign-off sent back,
+# and a sign-off waiting.
+APPROVED_NEXT = {
+    steering.PLAN: "Step 9 of /rn:up on plan: hear which documents the purpose needs",
+    steering.DESIGN: session.STAGED[steering.BUILD],
+    steering.DELIVERABLE: (
+        "Step 11 of /rn:up: find where the work fell short, then put each learning to the user"
+    ),
+}
+FEEDBACK = "Step 6 of /rn:up on {}: find the point behind the feedback"
+WAITING = "Step 5 of /rn:up on {}: wait for the user's answer, " + ANSWER
 
 
 def blob(pr: str) -> str:
@@ -226,3 +240,81 @@ def ready(signoff: str, folder: str, steered: steering.Steering) -> None:
                 "rn: turn has not returned the finished work; have turn:up make it with the call"
                 " `rn.py ccs deliverable ...` prints, keep it, then run this again"
             )
+
+
+def shown(signoff: str) -> str:
+    """The proposal at the sign-off, made from what is pushed alone: the pull request's link, then
+    the goal and the acceptance criteria at the plan sign-off, each work made in the design stage
+    with its links and each choice made in it unasked at the design's, and the finished work with
+    its links and each choice made unasked in building and using it at the deliverable's, as
+    shown_at says, with what changed since the last proposal at the same sign-off; the steering
+    set waiting at the sign-off, Next saying so, and kept with the proposal as its message. The
+    same proposal again, keeping nothing, where it waits at that sign-off already. Stops where the
+    branch holds no session, a change is not kept or pushed, the steering differs from what the
+    last keep left, the session is at another stage, another sign-off waits, the session lacks what
+    the sign-off shows, a result of turn's is no JSON object, or the pull request was not
+    opened."""
+    folder = session.current()
+    repo.pushed()
+    steered = session.kept_steering(folder)
+    stage, waiting = steered.keys[steering.STAGE], steered.keys[steering.SIGNOFF]
+    if stage != signoff:
+        raise stop.Stop(
+            f"rn: the session is at the {stage} stage, and the {signoff} sign-off comes at the"
+            f" {signoff} stage; take the steps of /rn:up that reach it first"
+        )
+    if waiting not in (steering.NONE, signoff):
+        raise stop.Stop(
+            f"rn: the {waiting} sign-off waits for the user's answer; keep it with `rn.py answer`"
+            " first"
+        )
+    ready(signoff, folder, steered)
+    proposals = proposed(signoff, folder)
+    before = proposals[:-1] if waiting == signoff else proposals
+    now = shown_at("HEAD", signoff, folder)
+    then = shown_at(before[-1], signoff, folder) if before else None
+    shown_text = text(signoff, steered.keys[steering.PR], then, now)
+    if waiting == steering.NONE:
+        waits = WAITING.format(signoff)
+        session.keep(
+            folder,
+            steered._replace(keys={**steered.keys, steering.SIGNOFF: signoff}, next=waits),
+            shown_text,
+        )
+    return shown_text
+
+
+def answered(answer: str, opened: list[str], message: str) -> dict[str, str]:
+    """Keeps the user's answer to the sign-off waiting, approved or feedback: on approval the stage
+    moved on, plan to design, design to build, deliverable to learnings; on either no sign-off
+    waiting, Next replaced, and each point opened added after those open; kept with the message and
+    pushed; gives the commit. Stops where the branch holds no session, the steering differs from
+    what the last keep left, no sign-off waits, or the user has not typed the answer's command
+    since the sign-off was shown, as an approval counts only from the user's own action; and where
+    git fails."""
+    folder = session.current()
+    steered = session.kept_steering(folder)
+    waiting = steered.keys[steering.SIGNOFF]
+    if waiting == steering.NONE:
+        raise stop.Stop(
+            "rn: no sign-off waits for the user's answer; show the proposal with `rn.py proposal"
+            " <plan|design|deliverable>` first, and keep the answer the user gives it"
+        )
+    command = COMMANDS[answer]
+    shown_since = float(
+        repo.git(["log", "-1", "--format=%ct", proposed(waiting, folder)[-1]], repo.AS_GIT_SAYS)
+    )
+    if not conversations.typed(command, shown_since):
+        raise stop.Stop(
+            f"rn: the user has not typed {command} since the {waiting} sign-off was shown; the"
+            " answer is theirs alone, so wait for them to type it, and keep it then"
+        )
+    keys = {**steered.keys, steering.SIGNOFF: steering.NONE}
+    next_step = FEEDBACK.format(waiting)
+    if answer == "approved":  # pragma: no mutate
+        keys[steering.STAGE] = steering.APPROVED[waiting]
+        next_step = APPROVED_NEXT[waiting]
+    # The points open stay, as the answer settles none of them, each one given added after them.
+    still = [line[2:] for line in steered.open if line.startswith("- ")]
+    kept = steered._replace(keys=keys, next=next_step, open=steering.opened(still + opened))
+    return {"kept": session.keep(folder, kept, message)}
