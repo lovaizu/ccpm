@@ -67,6 +67,7 @@ sequenceDiagram
   Note over R: carries out the tasks
   R->>U: the finished work, at the deliverable sign-off
   U->>R: /rn:ty
+  Note over R: looks back once for what fell short
   R->>U: the learnings to decide, one per message
   R-->>U: the pull request marked ready
   Note over U: merges
@@ -77,12 +78,13 @@ sequenceDiagram
   user, the proposals included, is in the first, adding nothing and leaving nothing out.
 - The plan: rn gives the goal and each acceptance criterion an ID and puts the plan on a draft pull
   request of its own branch.
-- Sign-offs: before each, an AI that did not make the proposal reads and uses it in the user's
-  place, the finished work for each acceptance criterion, and rn makes it again until that AI finds
-  nothing lacking. At the sign-off rn shows the link to each work and its core decisions, each with
-  its intent, in a few short lines, and nothing else: no summary of the text, no diff. The user
-  glances at the work for its size and diagrams and judges the decisions and intents; the text is
-  for that AI and rn to check.
+- Sign-offs: before the design and the deliverable sign-off, an AI that did not make the work reads
+  and uses it in the user's place, the finished work for each acceptance criterion, and rn makes it
+  again until that AI finds nothing lacking; the plan, which the user reads at its sign-off as it
+  stands, rn checks against its checklist itself. At the sign-off rn shows the link to each work and
+  its core decisions, each with its intent, in a few short lines, and nothing else: no summary of
+  the text, no diff. The user glances at the work for its size and diagrams and judges the decisions
+  and intents; the text is for that AI and rn to check.
 
   Where the core decisions do not fit in a few short lines, rn takes it as a sign the work is not
   yet simple, and makes it again before it stops.
@@ -174,6 +176,9 @@ sequenceDiagram
   R-->>U: each issue sent, and the pull request marked ready with the additions taken
 ```
 
+- Once the user approves the finished work, rn looks back over the whole piece of work, once, for
+  each change the user sent back, each work made again and each point asked again, and what each
+  taught is a learning; one put to the user mid-way would be a stop in the work.
 - A learning for the user's repository alone goes into the user's checklists; one that would help
   everyone's work, such as a question rn's own checklist does not ask or a slip of rn's own steps,
   goes to rn's makers as an issue, since rn is open source and gets better for all its users from
@@ -188,9 +193,9 @@ What the user gains with rn, each with why it holds; these are why the user choo
 - The user's purpose is achieved by answering alone: each point is confirmed, each task traced to
   the acceptance criteria, and the plan remade from the facts each move brings, so the work does
   not drift from the purpose and making a finished work again becomes rare.
-- At each sign-off the user decides from the proposal alone: what they are shown has been read and
-  used in their place by an AI that did not make it, so they need not read it all again; they judge
-  only the core decisions and their intent.
+- At each sign-off the user decides from the proposal alone: the plan is the proposal itself, and
+  each document and the finished work has been read and used in their place by an AI that did not
+  make it, so they need not read it all again; they judge only the core decisions and their intent.
 - A piece of work that takes days neither swells nor drifts, and goes on from wherever the user
   stopped: only a short record of where it stands is carried from move to move.
 - What was decided, and why, stays, in the documents rn writes into the user's repository and in

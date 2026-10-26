@@ -27,7 +27,9 @@ adds only what that plugin gives on top of them.
    does the writing.
 3. Each job has a role of its own, given only what the job needs.
 4. Each work is first used by AIs that did not make it, in its receiver's place and with what the
-   receiver has, each reading it on its own.
+   receiver has, each reading it on its own; a work the caller reads whole to approve as soon as it
+   is made, such as a plan, is checked by its maker against its checklist and read first by the
+   caller.
 5. What a machine can judge is checked by a script or a hook at the moment it happens, which tells
    the role its step again or stops what would break a rule.
 6. A fixed course is kept in a script, and the state and each decision are kept before the next
@@ -115,6 +117,11 @@ receiver has and doing what they do with it, and each gives its verdict from its
 The maker finds the Good it meant; a reader that did not make it finds the Good its lines give,
 which is what the receiver gets. A reader shown another's verdict finds what it was told, so two
 readings add a check only when each is made on its own.
+
+A work whose receiver is the caller, read whole by them to approve it as soon as it is made, such as
+a plan, is read first by its receiver itself: a reader in their place adds a reading the caller
+makes next anyway, and costs its time at every remake. Its maker checks it against its checklist,
+and a script holds what a machine can judge of it (Principle 5).
 
 ### Where the course is kept
 

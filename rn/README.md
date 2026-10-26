@@ -55,10 +55,9 @@ up and the answer it recommends:
 
 From your answers rn writes the plan. It holds the goal, which is your purpose as rn wrote it down,
 and the acceptance criteria, each one thing the finished work must do for that purpose; the goal
-and every criterion get an ID that later messages refer to. Before showing it to you, another AI
-that did not write it reads and uses it in your place, and rn makes it again until that AI finds
-nothing lacking. Then rn stops at the plan sign-off, the first of up to
-three stops where it shows you a proposal and waits for your answer:
+and every criterion get an ID that later messages refer to. rn writes it with its checklist for
+plans open and checks it against the same checklist. Then rn stops at the plan sign-off, the first
+of up to three stops where it shows you a proposal and waits for your answer:
 
 ```console
 ● Plan sign-off
@@ -150,24 +149,26 @@ uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
 > /rn:ty
 ```
 
-rn makes each document and the finished work with its checklist for that kind, which says what that
-kind, such as a README or code, must give its reader. What this piece of work taught, rn offers
-you as learnings, one per message, each with what happened and where it would make later work
-better: your own checklists, for your repository alone, or rn itself, as an issue to rn's makers,
-for everyone's work; you decide each:
+rn makes the plan, each document and the finished work with its checklist for that kind, which says
+what that kind, such as a README or code, must give its reader. Once you approve the finished work,
+rn looks back over the piece of work for each change you sent back, each work made again and each
+point asked again, and offers you what they taught as learnings, one per message, each with what
+happened and where it would make later work better: your own checklists, for your repository
+alone, or rn itself, as an issue to rn's makers, for everyone's work; you decide each:
 
 ```console
 ● Learnings to decide
-  ▶ 1. Values typed any
+  ▶ 1. How much moves at once
 
-  1. Values typed any
-  A file of src/checkout was first moved with its values typed any, which would let a wrong
-  type through; the AI that used it caught it. rn's checklist for code does not ask for it, so
-  anyone moving code to typed code could meet the same slip.
-  a. Add "No value is typed any" to .rn/checklists/code.md, and send rn's makers an issue
-     (recommended). Your later code is made to it, and rn can ask it of everyone's.
-  b. Add it to .rn/checklists/code.md alone. Your later code is made to it.
-  c. Add nothing. Later work may repeat the slip.
+  1. How much moves at once
+  The plan was sent back at its sign-off for moving every file at once, and only then did rn
+  ask which parts move now. rn's checklist for plans does not ask how much of the work is done
+  at once, so anyone handing rn a large piece of work could meet the same send-back.
+  a. Add "Is it settled how much of the work is done at once?" to .rn/checklists/plan.md, and
+     send rn's makers an issue (recommended). Your later plans ask it first, and rn can ask it
+     of everyone's.
+  b. Add it to .rn/checklists/plan.md alone. Your later plans ask it first.
+  c. Add nothing. A later plan may be sent back the same way.
   Where does it go? Answer with a letter or in your own words.
 
 > a
@@ -197,8 +198,8 @@ that:
 
 - At each sign-off you decide from the proposal alone.
 
-  An AI that did not make it has read and used it in your place, so you need not read all of it
-  again.
+  The plan is the proposal itself; each document and the finished work has been read and used in
+  your place by an AI that did not make it, so you need not read all of it again.
 
 - Work that takes days neither swells nor drifts, and goes on from wherever you stopped.
 
@@ -239,8 +240,7 @@ that:
 - Python 3.9 or later, run as `python3`.
 
   The scripts of rn run on it, and so do those of turn, a plugin installed with rn that rn uses to
-  make the plan, each document and the finished work, and to have an AI that did not make each use
-  it.
+  make each document and the finished work, and to have an AI that did not make each use it.
 
 - Recommended: Claude Code run in a [Docker Sandbox](https://docs.docker.com/ai/sandboxes/), with
   the permission mode `bypassPermissions`.

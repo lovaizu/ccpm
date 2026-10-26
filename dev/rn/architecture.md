@@ -4,10 +4,9 @@ rn is built on [how a plugin works](../architecture.md) so that a piece of work 
 words reaches the user's purpose while they only answer, against two drifts: the work drifting from
 the purpose, and the AI itself drifting as the work goes on. The orchestrator, the one AI that talks
 with the user, decides every move from the steering, which holds the plan and where the session
-stands and which rn's scripts rewrite at each move, and has each work made through turn; the user,
-the goal, the key
-results, and what a point to decide, a sign-off, a task and a learning are, are in
-[rn's UX](ux.md).
+stands and which rn's scripts rewrite at each move, writes the plan and the learnings itself, and
+has every other work made through turn; the user, the goal, the key results, and what a point to
+decide, a sign-off, a task and a learning are, are in [rn's UX](ux.md).
 
 rn holds the [principles every plugin holds](../architecture.md#principles), named below
 Principle 1 to 8, and its own, named below rn's Principle 1 and 2:
@@ -46,9 +45,9 @@ flowchart TB
   orch <-->|keeps each move and decision, has each call written, asks each proposal / gives where the session stands, each call, each proposal, each line to tell| scripts
   scripts <-->|rewrites the steering, writes each call, cuts and puts back each part, commits and pushes / gives the steering and the calls| record
   scripts -->|reads each command the user typed, and the orchestrator's conversations, from| claude
-  orch <-->|hands each work as a call, sends each answer / returns the work, tells each step, asks each point| turn
+  orch <-->|hands each work but the plan and the learnings as a call, sends each answer / returns the work, tells each step, asks each point| turn
   turn <-->|reads the CCS, the checklists and what the receiver has / writes the work and the result| record
-  orch -->|reads the steering and each result turn returns in| record
+  orch <-->|writes the plan and the learnings in / reads the steering, each result turn returns and the history in| record
   scripts -->|opens with the steering, marks ready| pr
   orch -->|sends each the user says yes to| issue
   user -->|merges| pr
@@ -67,7 +66,7 @@ flowchart TB
   move to move, and each rule a machine can judge is held where the AI acts, as
   [The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)
   says: the orchestrator, in the main conversation, by rn's scripts that keep the steering and the
-  calls to turn, an approval by `/rn:ty`, and the default branch by GitHub's branch protection; each
+  calls, an approval by `/rn:ty`, and the default branch by GitHub's branch protection; each
   of turn's subagents by the guard, laid with lane.
 
   A conversation that carries the whole of a long piece of work swells, and a fresh one starts
@@ -82,7 +81,7 @@ flowchart TB
   The user reads it at each sign-off and on the pull request, and a fresh conversation goes on
   from it alone (rn's Principle 2); one file holding both the plan and where it stands cannot say
   two things, where a state kept beside the plan comes to differ from it; and what is no longer
-  left, such as a done task, is kept where it was made, in the calls to turn, the repository and
+  left, such as a done task, is kept where it was made, in the calls, the repository and
   the history, so each reading of the map holds only what the next move uses.
 - At every move the orchestrator gives rn's scripts where the session stands, from the facts that
   move brought, each checked, such as the user's answer, turn's result and the output of what was
@@ -91,13 +90,15 @@ flowchart TB
 
   A fact taken unchecked carries a slip into every move after it, and a record added to rather than
   replaced swells as the conversation would.
-- The goal, the criteria and the tasks are made by turn, as every work is, to rn's plan checklist:
-  rn's scripts cut the part a call makes, the goal, the criteria and the tasks, into a file of its
-  own, turn makes it there, and rn's scripts put it back into the steering once turn returns it.
+- The goal, the criteria and the tasks are written by the orchestrator with rn's plan checklist
+  open, and checked by it against the same checklist: rn's scripts cut the part, the goal, the
+  criteria and the tasks, into a file of its own with the CCS it is written from, the orchestrator
+  writes it there, and rn's scripts put it back into the steering once the checks they hold it to
+  pass.
 
-  turn sees of the steering only the part it makes, so it cannot change the goal while making a
-  task, and each part is read by an AI that did not make it before the user approves it
-  (Principle 4).
+  The user reads the plan whole at the plan sign-off as soon as it is made, so a reader in their
+  place would add a reading the user makes next, and its time at every remake (Principle 4); the
+  orchestrator writes only the part cut out, so it cannot change the goal while writing a task.
 - The tasks are laid backward from the acceptance criteria, as the criteria are from the goal: every
   criterion passed reaches the goal, and every task's completion criterion passed passes the
   criteria. They are made a few at a time, for the stage at hand: in the plan stage only those a
@@ -112,8 +113,8 @@ flowchart TB
   rest on guesses; a task begun on a gap fills it with a guess, and each stage meets unknowns that
   research or a small trial finds out while they are small, its result adding or dropping tasks.
 - After each task the orchestrator weighs whether the facts it brought change the remaining tasks or
-  the criteria, and only then has turn make the plan again; a change to the goal or a criterion is
-  first a point to decide.
+  the criteria, and only then writes the plan again; a change to the goal or a criterion is first a
+  point to decide.
 
   A plan made again with nothing changed costs a call and risks moving what was approved, while
   one kept past a fact that changes it drifts from the purpose.
@@ -122,14 +123,15 @@ flowchart TB
 
   A sign-off with nothing to approve is a stop that costs the user time and gives them nothing to
   decide (KR1.2).
-- Each work, a part of the steering, each research result and trial's result, each document, each
-  task's result, each checklist made, each issue to rn's makers and the finished work, goes to turn
-  as a CCS, one call for each, the shape [ACC](https://arxiv.org/abs/2601.11653) gives an AI's
-  state, holding what the work is made from: the outputs before it that it uses, each named and
-  passed as it is, its decisions, and what it serves, copied by rn's scripts from the steering; a
-  plan's CCS holds, in place of what it serves, the latest call of each work of each done task, what
-  it served, decided and made; turn's first user uses it in the receiver's place before it comes
-  back (Principle 4).
+- Each work is made from a CCS, one call for each, the shape
+  [ACC](https://arxiv.org/abs/2601.11653) gives an AI's state, holding what the work is made from:
+  the outputs before it that it uses, each named and passed as it is, its decisions, and what it
+  serves, copied by rn's scripts from the steering; a plan's CCS holds, in place of what it serves,
+  the latest call of each work of each done task, what it served, decided and made. The plan and the
+  learnings are written from theirs by the orchestrator; every other work, each research result and
+  trial's result, each document, each task's result, each checklist made, each issue to rn's makers
+  and the finished work, goes to turn, whose first user uses it in the receiver's place before it
+  comes back (Principle 4).
 
   turn takes its task as a CCS and makes the work from it and the files it names alone, so the work
   does not stray from what was decided; what turn only reads goes in the CCS and what it makes is a
@@ -138,12 +140,12 @@ flowchart TB
   first user before anything is made on it.
 - The call that makes a task's result gives turn the one command that runs the check its
   completion criterion names, where that check is one command, and the calls before it give none;
-  the call that makes a part rn's scripts put back, the plan or the learnings, gives the command of
-  rn's scripts that runs on it the checks they hold it to when they keep it.
+  a part rn's scripts put back, the plan or the learnings, the orchestrator passes through the
+  command of rn's scripts that runs on it the checks they hold it to when they keep it.
 
   turn's maker passes that command each time it changes the work, so the result is made to the
-  check, while the actions before it make the check and see it fail; a part held to its form only
-  when it is kept comes back out of it, and is made again in a call of its own.
+  check, while the actions before it make the check and see it fail; a part checked as it is written
+  is kept in its form at the first put.
 - Each point the user decides is kept as a decision of the work it settles, in the CCS of that
   work's next call, before the move after it; a work made again is a new call, its decisions
   carried over and rewritten where an answer changed them.
@@ -154,8 +156,8 @@ flowchart TB
   lines, and a Good its lines fall short of is a point settled before turn makes the work again, as
   a decision, as a change the user asks at a sign-off is.
 
-  The orchestrator only talks and decides (Principle 1); a fix of its own would be work no guard
-  keeps and no first user reads.
+  A fix of the orchestrator's own would be work no guard keeps and no first user reads, read by the
+  user only in what the sign-off shows of it.
 - While turn runs, the orchestrator passes each line turn tells on to the user and each point turn
   asks to the user as a point to decide, keeps the answer in the decisions, and sends it back; it
   judges none of the lines turn tells, and stops the run when the user stops a step.
@@ -173,24 +175,26 @@ flowchart TB
   The orchestrator runs rn's scripts itself, so a script that took an answer on its word would
   take an approval the user never gave.
 - At a sign-off, the orchestrator shows the proposal the UX's Sign-offs gives, made by rn's scripts
-  from the steering and the calls to turn alone.
+  from the steering and the calls alone.
 
-  So it says only what the steering holds and what turn made each work from, nothing written for
-  the proposal alone.
-- At each sign-off, once the user answers it, the learnings of
-  [Principle 8](../architecture.md#learning-from-each-run) are made through turn and kept by rn's
-  scripts in a file of their own, which the orchestrator reads only at the step that puts them to
-  the user: their maker reads the stretch since the sign-off before whole, as rn's scripts show it,
-  and searches the orchestrator's conversations of that stretch for what only they show, such as
-  the form of each message to the user; once the user approves the finished work, they and those
-  turn returned with each call are the learnings the orchestrator puts to the user, an issue to
-  rn's makers among their places made through turn as every work is.
+  So it says only what the steering holds and what each work was made from, nothing written for the
+  proposal alone.
+- Once the user approves the finished work, the orchestrator looks once for the learnings of
+  [Principle 8](../architecture.md#learning-from-each-run): rn's scripts give, from the branch's
+  history, each feedback the user sent back with its answer, each work made again and each decision
+  an answer replaced, each with its commit, and search the orchestrator's conversations of the
+  session for the words it gives; the orchestrator reads around each in the history, checks each
+  cause it doubts by such a search, and writes the learnings with rn's learnings checklist open,
+  kept by rn's scripts in a file of their own and put to the user one per message, an issue to rn's
+  makers among their places made through turn as every work is.
 
-  turn's own learner reads turn's runs alone, so a slip of rn's own steps shows only to a maker
-  that reads the orchestrator's; a stretch ends where the user sent the work back or approved it,
-  so what led there is near, and is small enough to read whole, where a whole piece of work is not;
-  the learnings wait for the end, as each put to the user mid-way is a stop in the work, and kept
-  out of the steering they are not acted on before the user chooses where each goes.
+  Each send-back, remake and point asked again is kept as a commit before the next move, so the
+  history holds every place the work fell short however long the session ran, where the
+  orchestrator of a fresh conversation remembers none of it; a cause the history does not show,
+  such as the form of a message to the user, is in the conversations alone, which Claude Code keeps
+  outside the repository, where an agent's own reading stops to ask. Looked for once at the end,
+  the learnings cost the user one reading, where learnings at each sign-off are weighed again in
+  every session.
 
 ### Physical view
 
@@ -205,15 +209,15 @@ rn/                                  the plugin, installed by Claude Code with t
 ├── scripts/                         what the orchestrator runs for each move a machine can judge <Python 3>
 │   ├── rn.py                        the command line, a subcommand for each move
 │   ├── steering.py                  the steering's form, read, held at every keep and changed
-│   ├── session.py                   the session's record: each move kept, each call to turn
+│   ├── session.py                   the session's record: each move kept, each call
 │   ├── ccs.py                       what each work's CCS holds beside its decisions
 │   ├── proposal.py                  the proposal at each sign-off, and the answers to it
-│   ├── conversations.py             the orchestrator's conversations, as Claude Code keeps them
-│   ├── stretch.py                   the stretch the learnings are made from
+│   ├── conversations.py             the orchestrator's conversations, as Claude Code keeps them, searched
+│   ├── history.py                   each send-back, remake and replaced decision in the branch's history
 │   ├── repo.py                      git and gh run, and the files written
 │   ├── stop.py                      each stop, and each value given checked
 │   ├── record.py, template.py       lane's readers of Claude Code's records and of Markdown, by links
-│   └── call.py, forms.py, records.py  turn's readers of a CCS, a checklist's items and a record, by links
+│   └── call.py, forms.py            turn's readers of a CCS and a checklist's items, by links
 ├── forms/claim.json, reading.json   turn's forms, which forms.py reads beside it, by links <JSON>
 ├── hooks/adapters/items-checklist.py  turn's reader of a checklist's items, which call.py loads beside it, by a link
 └── checklists/                      rn's own, one for each kind, and checklist.md, usability.md and fix.md, which each is made from or held to <Markdown>
@@ -226,11 +230,11 @@ rn/                                  the plugin, installed by Claude Code with t
         ├── learnings.md             the learnings, for the user once the finished work is approved <Markdown>
         ├── issue-<n>.md             each issue to rn's makers, made before the user is asked to send it <Markdown>
         ├── <path>                   each research result and trial's result, at the path its action names <Markdown>
-        └── turn/
-            ├── <nnnn>-ccs.json      each call to turn, numbered from 0001 in the order made <JSON>
-            ├── <nnnn>-steering.md   the plan a call on the plan makes <Markdown>
-            ├── <nnnn>-learnings.md  the learnings a call on the learnings makes <Markdown>
-            └── <nnnn>-result.json   what turn returned for it <JSON>
+        └── calls/
+            ├── <nnnn>-ccs.json      each call, numbered from 0001 in the order made <JSON>
+            ├── <nnnn>-steering.md   the plan the orchestrator writes on a call on the plan <Markdown>
+            ├── <nnnn>-learnings.md  the learnings it writes on a call on the learnings <Markdown>
+            └── <nnnn>-result.json   what turn returned for a call to it <JSON>
 ```
 
 - rn runs on Claude Code, python3 3.9 or later, git and `gh` logged in to an account that can push
@@ -244,8 +248,6 @@ rn/                                  the plugin, installed by Claude Code with t
   the options weighed with their reasons and each feedback with its answer in the commit messages.
 
   A push is what a fresh conversation, or another machine, reads from.
-- The texts the learnings are made from are written in the repository's git folder, where nothing
-  is committed, and removed once the learnings are put back.
 - The pull request is a draft pull request on GitHub of that branch, opened and marked ready with
   `gh`; a learning's issue is opened with it on `lovaizu/ccpm`, on the user's yes.
 - rn's checklists are read-only in the plugin; the user's additions are in their repository and go
