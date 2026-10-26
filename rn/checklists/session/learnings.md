@@ -16,14 +16,15 @@ for everyone; both; or neither. They decide from each learning alone, without op
 was found in.
 
 A learning serves them by resting on the session's own words, so the user decides on what happened
-rather than on a guess. It is found in one stretch of the session, from one sign-off to the next the
-user answered, in the stretch's history on the branch, the session's files and the orchestrator's
-conversations with the user: the record shows where rn fell short, such as a change the user sent
-back or a question turn asked late, and a conversation what was said and done that led there, such
-as a message to the user out of the form rn gives it. A learning of the user's repository alone,
-such as a question their own work needs asked, goes into their checklist for the kind of work it
-concerns; a general one, met in anyone's work, such as a question rn's own checklist does not ask or
-a slip of rn's own steps, goes to rn's makers.
+rather than on a guess. rn's orchestrator writes the learnings once the finished work is approved,
+looking once over the whole session: its history on the branch shows where rn fell short, each
+change the user sent back with the proposal that answered it, each work made again and each
+decision an answer replaced, with the commits and their messages around each; and the
+orchestrator's conversations with the user show what was said and done that led there, such as a
+message to the user out of the form rn gives it. A learning of the user's repository alone, such as
+a question their own work needs asked, goes into their checklist for the kind of work it concerns;
+a general one, met in anyone's work, such as a question rn's own checklist does not ask or a slip
+of rn's own steps, goes to rn's makers.
 
 ## Format
 
@@ -34,12 +35,11 @@ Scope: whole
 Do the learnings follow this template?
 
 ```markdown
-- L1: <what happened, quoting the words of the records it rests on>; <where it would make later work better: for the user's repository alone, the kind of work and what its checklist would ask, or for everyone's work, what of rn would change>.
+- L1: <what happened, quoting the words of a commit or a conversation it rests on>; <where it would make later work better: for the user's repository alone, the kind of work and what its checklist would ask, or for everyone's work, what of rn would change>.
 ```
 
-A stretch where nothing fell short adds none, the list left empty. The learnings of one stretch are
-numbered from `L1`, and rn's scripts number them on from those kept from the stretches before as
-they add them to `learnings.md`.
+A session where nothing fell short has none, the list left empty. The learnings are numbered from
+`L1`.
 
 Why: rn's scripts read each learning by its ID and put it to the user one per message, and the user
 reads what happened before where it goes, the order in which they judge it.
@@ -51,12 +51,13 @@ reads what happened before where it goes, the order in which they judge it.
 Scope: its part
 
 Can the user tell from each learning what happened in the session, and see it in the quoted words of
-the records it rests on, each quote saying whose words they are and at which move, each thing rn's
-orchestrator did in turn, such as a point asked or a work handed to turn?
+a commit or a conversation it rests on, each quote saying whose words they are and at which move,
+each thing rn's orchestrator did in turn, such as a point asked or a work handed to turn?
 
 Look for:
-- a learning with no quote, or a quote not as the record shows it;
-- a cause the quoted words do not show;
+- a learning with no quote, or a quote not as the commit or the conversation holds it;
+- a cause the quoted words do not show, such as one named from a commit's change where only a
+  conversation shows why;
 - a quote with nothing saying whose words they are and where, such as the user's feedback at the
   plan sign-off, a commit message or a message the orchestrator sent;
 - how the learning was found, which the user's decision does not use.
@@ -88,35 +89,37 @@ or keeps to one repository what would help everyone.
 
 Scope: whole
 
-Is each learning one thing for the user to decide, apart from the others and from those learnt in
-the stretches before?
+Is each learning one thing for the user to decide, apart from the others?
 
 Look for:
 - a learning holding two things that could go to different places;
-- two learnings of one cause, or one that rests on another;
-- a learning of what happened before the stretch, which a stretch before learnt from.
+- two learnings of one cause, such as a feedback and the work it made again, or one that rests on
+  another.
 
 Why: each learning comes to the user in a message of its own and takes one answer, so two things in
 one get one answer where each needed its own, and a learning said twice is decided twice.
 
-### B-4: Every shortfall of the stretch learnt
+### B-4: Every shortfall of the session learnt
 
 Scope: whole
 
-Does each place where the stretch's records show rn fell short come to the user as a learning?
+Does each place where the session's history shows rn fell short come to the user as a learning,
+with its cause where the history or a conversation shows one?
 
 Look for:
 - a change the user sent back at a sign-off, which the feedback in a commit message shows, that no
   learning takes up;
+- a work made again, or a decision an answer replaced, as a point asked again leaves, that no
+  learning takes up, but the plan written again at a stage's start or after a task, as rn's steps
+  have it;
 - a question turn asked while it ran that the points put to the user could have settled, an answer
   added to a work's decisions during the run, that no learning takes up;
 - a move that does not rest on the facts of the move before it, that no learning takes up;
-- a change to the work that no result of turn's names, that no learning takes up;
 - a message to the user out of the form rn gives it, such as one holding more than one point, or the
   recommended option not first, that no learning takes up.
 
 Why: a shortfall not learnt is met again in later work, and the user, who saw only what came to
-them, cannot add what the records alone show.
+them, cannot add what the history and the conversations alone show.
 
 ### B-5: Each word known to the user
 

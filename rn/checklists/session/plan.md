@@ -14,7 +14,8 @@ where rn waits for their answer, to approve what the finished work will do and w
 and on the pull request, to see what is left of the work. In every later conversation the
 orchestrator, the AI of rn that talks with the user and decides each move, reads it as the map to
 the user's purpose: from it and what each move found, it decides what to do next and leads the user
-and turn, the plugin that makes each work for rn, there without asking the user again.
+and turn, the plugin that makes each work for rn but the plan and the learnings, there without
+asking the user again.
 
 A plan serves them by tying each thing made to the user's purpose in links of one kind, each checked
 against the one above it. The goal holds that purpose, with why the user wants it; the acceptance
@@ -24,9 +25,9 @@ every criterion reaches the goal; and each task's completion criterion says what
 for the criteria it serves, so that results passing every completion criterion pass the criteria
 they serve. The tasks are laid backward from the criteria, from what each criterion needs back to
 what can be made now; a task is one result, accepted by its completion criterion, and its actions
-are only what that result needs. turn makes the plan in a file of its own, and these items judge
-it; rn's scripts put it back into the steering, under the front matter they write and above what
-comes next and what is open.
+are only what that result needs. The orchestrator writes the plan in a file of its own with these
+items open and checks it against them; rn's scripts put it back into the steering, under the front
+matter they write and above what comes next and what is open.
 
 ## Format
 
@@ -257,6 +258,6 @@ Look for:
   criterion it serves.
 
 Why: a line read another way than meant is approved by the user, or built by turn, the other way;
-later messages, commit messages, each call to turn and what rn shows at each sign-off name the goal,
-the criteria and the tasks by their IDs, so an ID given to a second thing points to two, and one
-that names nothing points nowhere.
+later messages, commit messages, each call and what rn shows at each sign-off name the goal, the
+criteria and the tasks by their IDs, so an ID given to a second thing points to two, and one that
+names nothing points nowhere.
