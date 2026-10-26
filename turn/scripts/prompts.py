@@ -27,13 +27,13 @@ def absolute(paths: list[str]) -> list[str]:
 
 
 def without_run_files(paths: list[str], result: str, apart: tuple[str, ...] = ()) -> list[str]:
-    """The paths, in their order, without the run's own files: the result, and turn's folder at
-    the root, which holds each run's state and replies; and without
-    each file kept `apart`, as the CCS is from the first user. A path that is one of them, or
-    inside one, is left out, and a folder holding one is given as its entries, sorted, the one on
-    the way opened the same way: a role's lane lets it read anything under a folder it is given,
-    and the first user is not to read the generator's reply nor the CCS. A path met again, as a
-    checklist the CCS also names, is given once."""
+    """The paths, in their order, without the run's own files: the result, and turn's folder at the
+    root, which holds each run's state and replies; and without each file kept `apart`, as the CCS
+    is from the first user. A path that is one of them, or inside one, is left out, and a folder
+    holding one is given as its entries, sorted, the one on the way opened the same way: a role's
+    lane lets it read anything under a folder it is given, and the first user is not to read the
+    generator's reply nor the CCS. A path met again, as a checklist the CCS also names, is given
+    once."""
     left_out = {os.path.realpath(p) for p in (result, *apart)}
     left_out.add(os.path.join(state.root(result), ".turn"))
     # The folders a folder given is opened on the way to.
