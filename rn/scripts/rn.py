@@ -17,6 +17,7 @@ from typing import Any, NoReturn
 
 import ccs
 import conversations
+import history
 import proposal
 import repo
 import session
@@ -400,6 +401,14 @@ def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> 
     return {"learnings": said}
 
 
+def run_history(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
+    """The session's history on its branch, where the orchestrator looks for the learnings once the
+    finished work is approved: each feedback with its answer, each work made again and each
+    decision an answer replaced, each with its commit, as history.history gives them. Stops where
+    the branch holds no session, or git fails."""
+    return history.history(session.current())
+
+
 def run_search(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Each part the user or the orchestrator said or did that holds the words, in the
     orchestrator's conversations of the session, with its conversation and time, as
@@ -468,6 +477,7 @@ def parser() -> Parser:
     decisions.set_defaults(run=run_decisions)
     decisions.add_argument("work")
     sub.add_parser("learnings").set_defaults(run=run_learnings)
+    sub.add_parser("history").set_defaults(run=run_history)
     search = sub.add_parser("search")
     search.set_defaults(run=run_search)
     search.add_argument("words")

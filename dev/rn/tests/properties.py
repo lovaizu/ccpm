@@ -182,7 +182,7 @@ class PropertyTest(RepoTest):
         st.text(alphabet=" x", min_size=1, max_size=5),
     )
     def test_the_ticks_of_a_plan_put_back_are_those_kept(self, was, made):
-        # Given: a task's actions ticked as any ticks, and a part turn made of the same task, its
+        # Given: a task's actions ticked as any ticks, and a part written of the same task, its
         # actions ticked as any ticks, of any count.
         # When: the part is put back.
         lines = steering.put_plan(
@@ -240,8 +240,23 @@ class SearchPropertyTest(RepoTest):
         self.conversation("b", said(said_words, "2026-10-20T09:05:00Z", self.top))
         # When: the orchestrator searches for the first.
         # Then: rn finds them where they are said, and only there.
-        found = self.ran("search", said_words)["found"]
+        found = self.ran("search", "--", said_words)["found"]
         self.assertEqual([f["said"] for f in found], [f"[user] {said_words}"])
+
+
+class HistoryPropertyTest(RepoTest):
+    @hypothesis.given(WORDS.filter(lambda t: ": " not in t), WORDS, WORDS)
+    def test_a_decision_replaced_is_given_with_what_it_was_and_is(self, title, was, now):
+        # Given: a decision of any title without `: ` kept as anything it says, then replaced
+        # with anything else, each by rn.py decide, on the session the examples before kept.
+        hypothesis.assume(was != now)
+        self.session(steered(stage="design"))
+        for says in (was, now):
+            self.ran("decide", "t1.1", f"--title={title}", f"--says={says}", "--message=m")
+        # When: the orchestrator asks for the history.
+        # Then: rn gives it replaced last, with what it was and what it is now.
+        found = [(r["was"], r["now"]) for r in self.ran("history")["replaced"]]
+        self.assertEqual(found[-1:], [(f"{title}: {was}", f"{title}: {now}")])
 
 
 if __name__ == "__main__":
