@@ -393,8 +393,8 @@ repository's visitors; where it goes is the user's to choose.
   repository visitors." ({ABOUT_READMES}, read {datetime.date.today():%Y-%m-%d}).
 
 Not known: what part of the README a visitor's screen shows first, which GitHub's page does not
-say; and whether this project's visitors reach the README from GitHub's page or from a clone,
-which the user knows.
+say and opening the repository's page on GitHub would show; and whether this project's visitors
+reach the README from GitHub's page or from a clone, which the user knows.
 """
 RESEARCH_PLACE = {
     "files": {RESEARCH: PLACE},
@@ -412,7 +412,7 @@ RESEARCH_PLACE = {
             },
             "B-3": {
                 "good": "What the research did not settle, what GitHub shows of a README first and"
-                " where visitors read it, is said as unknown",
+                " where visitors read it, is said as unknown, with what would settle each",
                 "at": ["Not known:..which the user knows"],
             },
             "B-4": {
