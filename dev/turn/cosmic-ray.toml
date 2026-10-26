@@ -7,10 +7,9 @@ timeout = 30.0
 excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
 # The type checker and the linter run first: a change to a type annotation, or a comparison of a
 # string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
-# type checker is what checks annotations, the linter what checks `is` against a literal. The type
-# checker checks turn's scripts and their tests, not the link to lane's code in turn's hooks, which
-# is checked in lane: read through that link, lane's modules meet turn's of the same names, such as
-# call, and the check fails on every mutant, so none survives whatever the tests catch.
+# type checker is what checks annotations, the linter what checks `is` against a literal; the type
+# check leaves out the link to lane's code in turn's hooks, as dev/typecheck.sh says, which would
+# fail on every mutant, so none would survive whatever the tests catch.
 # A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
 # where no input tells a mutant of it apart: by order with the first or the last of them, such as
 # "each part", the first of the scopes in order, the learner, the last of the roles in order, or
@@ -24,7 +23,7 @@ excluded-modules = ["turn/scripts/record.py", "turn/scripts/template.py"]
 # one in order too, such as a heading of the level below and one of the level above, so a
 # comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not
 # where it sorts.
-test-command = "sh -c 'ruff check --select F632 turn && pyrefly check --search-path dev/lane --search-path dev/lane/trials --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/scripts turn/scripts turn/hooks/adapters dev/turn && python -m unittest discover -f -s dev/turn/tests'"
+test-command = "sh -c 'ruff check --select F632 turn && sh dev/typecheck.sh turn && python -m unittest discover -f -s dev/turn/tests'"
 
 [cosmic-ray.distributor]
 name = "local"

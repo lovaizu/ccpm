@@ -24,7 +24,7 @@ excluded-modules = [
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a stage before the sign-off asked and one after, so a comparison changed
 # to `<=` or `>=` fails a test; their comments say what each value is, not where it sorts.
-test-command = "sh -c 'ruff check --select F632 rn && pyrefly check --search-path dev/lane --search-path dev/rn/tests --search-path rn/scripts rn/scripts dev/rn/tests && python -m unittest discover -f -s dev/rn/tests'"
+test-command = "sh -c 'ruff check --select F632 rn && sh dev/typecheck.sh rn && python -m unittest discover -f -s dev/rn/tests'"
 
 [cosmic-ray.distributor]
 name = "local"
