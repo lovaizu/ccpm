@@ -734,6 +734,9 @@
   },
   {
    "fact": "2026-10-26: the hearing-with-checklists fix done and pushed (7999f80 by the subagent, read by hand; 8ba0269 by hand): the move trials' plan reason made one its criteria show and the user's plan addition asked per action, as the hearing now raised B-2 of rn's plan checklist and checklist.md B-4 against the fixtures; move trials 27/27 on the third run, check.sh rn 100%, pre-push mutate 0 of 1706. The user (2026-10-26) asked why the whole mutate ran locally: my brief asked for it against dev/architecture.md:333-338 (lines changed alone; the whole only before a release); briefs name `mutate.sh --since`."
+  },
+  {
+   "fact": "2026-10-26: the acceptance run to design stopped by the user's choice at 132 min, $33.9, the design sign-off never shown, the playground cleaned by the trial (PR #10, branch, issues #11 #12). Causes read from the records and checked by hand: proposal.py's 5 decisions / 200 characters checked only after the task left the steering, with no way back; lane's record.done counting a call not yet come back as made, so turn:up's first start was refused; step 3 asking turn's questions with nothing kept and turn removing a run folder while its role still ran; rn writing turn's receiver from the checklist's reader, so the first user tried the README's curl of a tool not built; points of rn's own mechanics put to the user. The user decided (2026-10-26): a sign-off shows each work's link and what rn and turn chose without asking, with why, not the user's answers, which the work holds as a matter of course; the 5 limit, which had no ground, goes; rn writes the request to turn to the situation the work is used in at that stage. Given to two background subagents: scratchpad lane-before-brief.md (lane) and signoff-brief.md (turn and rn) of session 123f41ca"
   }
  ],
  "semantic_gist": [
@@ -800,7 +803,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T34/T14: rn's acceptance test run to design still going; learnings from it"
+   "task": "the acceptance run's faults fixed at their causes in lane, turn and rn, then the acceptance run again"
   }
  ],
  "relational_map": [
@@ -838,7 +841,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: pgrep -af acceptance.py (the design run, folder /tmp/rn/20261026-acceptance-7vc7gbjm); when it ends read its summary and transcript.json: count turn's questions back and whether the work's checklist would have raised each at the hearing; the first user at the design stage tried the README's curl and links of a tool not built yet, a round each (README call 0006 round 3), judge at its cause; judge the design-stage points rn asked and every other shortfall by rn's purpose and ideal, fix each at its cause; remove the run folder and its ~/.claude/projects records by literal path; /tmp/rn/20261026-moves-w0vw83yi of unknown origin left; then the whole run (T14), T30, T31, shared.md findings to the user, final check, report"
+   "next": "on resume: ListAgents for the two subagents; read their commits by hand against the briefs and the user's ruling; check.sh lane turn rn, the move trials they list (or all), push; remove /tmp/rn/20261026-acceptance-7vc7gbjm and ~/.claude/projects/-tmp-rn-20261026-acceptance-7vc7gbjm-repo and -user by literal path once nothing more is read from them; run the acceptance test --until design again, then whole (T14); T30, T31, shared.md findings to the user, final check, report"
   }
  ],
  "uncertainty_signal": [
