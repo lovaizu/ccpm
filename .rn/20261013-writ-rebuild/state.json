@@ -737,6 +737,9 @@
   },
   {
    "fact": "2026-10-26: the acceptance run to design stopped by the user's choice at 132 min, $33.9, the design sign-off never shown, the playground cleaned by the trial (PR #10, branch, issues #11 #12). Causes read from the records and checked by hand: proposal.py's 5 decisions / 200 characters checked only after the task left the steering, with no way back; lane's record.done counting a call not yet come back as made, so turn:up's first start was refused; step 3 asking turn's questions with nothing kept and turn removing a run folder while its role still ran; rn writing turn's receiver from the checklist's reader, so the first user tried the README's curl of a tool not built; points of rn's own mechanics put to the user. The user decided (2026-10-26): a sign-off shows each work's link and what rn and turn chose without asking, with why, not the user's answers, which the work holds as a matter of course; the 5 limit, which had no ground, goes; rn writes the request to turn to the situation the work is used in at that stage. Given to two background subagents: scratchpad lane-before-brief.md (lane) and signoff-brief.md (turn and rn) of session 123f41ca"
+  },
+  {
+   "fact": "2026-10-26: lane's fix e817384 by the subagent read by hand: record.done counts a call once its result is in the record, a reply as come back, a hook-stopped call left out; called.py keeps a call until the record holds its result; check.sh lane/turn/rn 100%, mutate --since 1147f84 lane 0 of 3347; not pushed yet. The user asked whether I judge from the purpose and the ideal, not patching: two patches of mine admitted, to redo at the cause: (1) 8ba0269 changed the move trials' reason to dodge after-feedback, where rn widened the purpose from feedback without confirming (step 6 behaviour, rn's fault); (2) good's check weakened from `- AC2:` to `- AC1:`: decide what good must check"
   }
  ],
  "semantic_gist": [
@@ -841,7 +844,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: ListAgents for the two subagents; read their commits by hand against the briefs and the user's ruling; check.sh lane turn rn, the move trials they list (or all), push; remove /tmp/rn/20261026-acceptance-7vc7gbjm and ~/.claude/projects/-tmp-rn-20261026-acceptance-7vc7gbjm-repo and -user by literal path once nothing more is read from them; run the acceptance test --until design again, then whole (T14); T30, T31, shared.md findings to the user, final check, report"
+   "next": "on resume: ListAgents for the turn+rn subagent (scratchpad signoff-brief.md of session 123f41ca); read its commits by hand for each line fixing a cause, no added exception or 'do not' note, what it replaces removed; check.sh lane turn rn, the move trials (all), push with e817384; then redo the two patches at the cause (after-feedback: read its record, fix step 6; good: what it must check); remove /tmp/rn/20261026-acceptance-7vc7gbjm and ~/.claude/projects/-tmp-rn-20261026-acceptance-7vc7gbjm-repo and -user by literal path; run the acceptance test --until design again, then whole (T14); T30, T31, shared.md findings to the user, final check, report"
   }
  ],
  "uncertainty_signal": [
