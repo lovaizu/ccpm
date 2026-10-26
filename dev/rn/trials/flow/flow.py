@@ -267,8 +267,11 @@ class Trial:
         put = [a for a in self.answers if a["kind"] == "answer" and a["stage"] == "learnings"]
         pr = self.last.get("pr")
         # rn moves from design to build without the design sign-off only where the design stage
-        # made no document, so build reached without it is the design stage gone through.
-        designed = bool(shown["design"]) or any(e.get("stage_after") == "build" for e in sent)
+        # made no document, so a stage after design reached without it is the design stage gone
+        # through; one message can carry the session past build, as it does where the build's
+        # last action leads straight to the deliverable sign-off.
+        later = cases.steering.STAGES[cases.steering.STAGES.index(cases.steering.DESIGN) + 1 :]
+        designed = bool(shown["design"]) or any(e.get("stage_after") in later for e in sent)
         return {
             "the plan sign-off shown": bool(shown["plan"]),
             (
