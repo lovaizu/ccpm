@@ -48,7 +48,7 @@ DONE_ANSWER = (
     "README に、新しいコントリビューターを迎えて `sh demo.sh` を"
     "実行するよう伝える一行があることです"
 )
-WHY_ANSWER = "歓迎されていると感じて、早く最初の変更を出してもらうためです"
+WHY_ANSWER = "最初に何を実行すればいいか分かるようにするためです"
 MOBILE_ANSWER = "いいえ、モバイルは調べなくていいです"
 PLACE_ANSWER = "タイトルのすぐ下に置いてください"
 L1_OPEN = "L1: an issue to lovaizu/ccpm alone, not yet sent"
@@ -112,8 +112,8 @@ NEXT_L2 = "Step 11 of /rn:up on L2: put it to the user"
 
 # The plan, as the orchestrator writes it at each stage: the goal, the criteria and the tasks.
 G1 = (
-    "G1: New contributors are greeted in the README and told where to start, so they feel welcome"
-    " and open their first change sooner."
+    "G1: New contributors are greeted in the README and told where to start, so they know what to"
+    " run first."
 )
 AC1_FIRST = "- AC1: The README holds a line greeting new contributors."
 AC1 = "- AC1: The README holds a line greeting new contributors, right under its title."
@@ -349,14 +349,13 @@ decided yet.
 
 ## Benefit
 
-### B-1: Nothing approved asked again
+### B-1: Only what is open asked
 
-Scope: whole
+Scope: its part
 
-Can the user tell that no action of the plan asks them again what a sign-off approved, such as the
-lines of a document?
+Does each action that asks the user a point ask one no sign-off has approved?
 
-Look for: an action confirming with the user what an approved document gives.
+Look for: an action confirming with the user what an approved document gives, such as its lines.
 
 Why: a point asked again spends the user's time on what they already decided.
 """
@@ -461,8 +460,8 @@ def purposed(p: Place) -> None:
         p,
         "plan",
         "Purpose",
-        "new contributors are greeted in the README and told where to start, so they feel welcome"
-        " and open their first change sooner",
+        "new contributors are greeted in the README and told where to start, so they know what to"
+        " run first",
         "Purpose: the user chose a welcome that tells where to start, over a greeting alone",
     )
 
@@ -1007,7 +1006,7 @@ CASES = {
                     called("plan", 1, least=True),
                     no_result("plan"),
                     plan_has("G1:"),
-                    plan_has("- AC2:"),
+                    plan_has("- AC1:"),
                     plan_has("sh demo.sh"),
                     JAPANESE,
                 ],
