@@ -1,7 +1,6 @@
 """The entries the layer writes in a plugin's hooks/hooks.json, one for each subagent and each event
 its lanes are held on, and each event a call is kept on, every other entry left as it was, and that
-file read; and the lanes laid, read back from hooks/lanes.json or, where an older lane laid them,
-from the words of its hooks' commands.
+file read.
 
 A command first checks that lane's code can run, then runs its event's script in lane's code with
 the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's agent_type; the guard
@@ -17,8 +16,6 @@ from typing import Any
 
 import hook
 import lanes
-import lanes_json
-import placed
 import step
 from proposal import Stop
 
@@ -108,11 +105,6 @@ def shaped(entry: Any) -> bool:
     return isinstance(each, list) and all(isinstance(h, dict) for h in each)
 
 
-# A lane as an older lane's hook command gave it, `<step>:<lane>:<what it takes>`, the things taken
-# joined by commas; read here alone, as lane's hooks give the guard the subagent alone now.
-WORD = re.compile(r"(?P<step>[0-9]+):(?P<lane>[a-z_]+):(?P<takes>.*)")
-
-
 def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | None:
     """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
     it: its matcher the tools its lanes watch, or for SubagentStop the subagent, as its matcher
@@ -195,72 +187,3 @@ def hooks_written(root: str, hooks: dict[str, Any]) -> None:
     os.makedirs(os.path.join(root, "hooks"), exist_ok=True)
     with open(os.path.join(root, "hooks", "hooks.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(hooks, indent=2, ensure_ascii=False) + "\n")
-
-
-def values_before(root: str, plugin: str) -> dict[str, str | None]:
-    """The adapter of the values port each subagent of the plugin at root names, by
-    `<plugin>:<name>`, as its hooks/lanes.json holds it; none where it is not there or cannot be
-    read, as laid_before then stops."""
-    try:
-        found = lanes_json.laid(root)["subagents"]
-    except ValueError:
-        return {}
-    return {f"{plugin}:{a['name']}": a.get("adapter") for a in found}
-
-
-def word_of(w: str) -> tuple[int, str, list[str]] | None:
-    """The step, the lane and what it takes, of a lane as an older lane's hook command gave it;
-    None where it is no lane of these as lane lays them now."""
-    m = WORD.fullmatch(w)
-    takes = m["takes"].split(",") if m else []
-    if not m or m["lane"] not in lanes.LANES or not all(takes) or not lanes.fits(m["lane"], takes):
-        return None
-    return int(m["step"]), m["lane"], takes
-
-
-def laid_before(
-    root: str, plugin: str, hooks: dict[str, Any]
-) -> tuple[dict[str, list[dict[str, Any]]], list[str]]:
-    """Each subagent the plugin at root lays lanes in, as `<plugin>:<subagent>`, with its lanes as
-    steps of a proposal, each step and each lane once: those its hooks/lanes.json holds, and those
-    an older lane gave in the words of its hooks' commands, though held on both events; and each
-    lane laid so that lane does not lay now, as said for the building AI to weigh. Stops where
-    hooks/lanes.json is there and cannot be read, as the lanes approved would be lost."""
-    agents: dict[str, list[dict[str, Any]]] = {}
-    if os.path.exists(os.path.join(root, "hooks", "lanes.json")):
-        try:
-            found = lanes_json.laid(root)
-        except ValueError as why:
-            raise Stop(f"lay.py: {root}/{why}; fix it and run again.") from None
-        for a in found["subagents"]:
-            agents[f"{plugin}:{a['name']}"] = a["steps"]
-    left = []
-    for event in EVENTS:
-        for e in hooks.get("hooks", {}).get(event, []):
-            for h in e.get("hooks", []):
-                given = words(h.get("command"), event)
-                steps = agents.setdefault(given[0], []) if given[1:] else []
-                for w in given[1:]:
-                    lane = word_of(w)
-                    if lane is None:
-                        name = given[0].split(":")[1]
-                        version = placed.lane_version()
-                        left.append(
-                            f"Left out `{w}` from the hook of {name}, as lane {version} lays no"
-                            " such lane; propose a lane of docs/lanes.md that keeps its step, or"
-                            " leave it out.\n"
-                        )
-                        continue
-                    number, kind, takes = lane
-                    put(steps, number, {"lane": kind, "takes": takes})
-    return agents, list(dict.fromkeys(left))
-
-
-def put(steps: list[dict[str, Any]], number: int, lane: dict[str, Any]) -> None:
-    """Puts the lane on the step of the number among the steps, once, the step put after the others
-    where it is not among them."""
-    by_number = {s["step"]: s for s in steps}
-    if number not in by_number:
-        steps.append({"step": number, "lanes": [lane]})
-    elif lane not in by_number[number]["lanes"]:
-        by_number[number]["lanes"].append(lane)

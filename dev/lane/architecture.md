@@ -129,6 +129,7 @@ lane/                          the plugin, installed by Claude Code
 ├── .claude-plugin/plugin.json lane's manifest, holding its version <JSON>
 ├── scripts/                   the layer <Python 3>
 │   ├── lay.py                 what the building AI runs: print, write and up
+│   ├── layer.py               each of them run, with the lanes laid before read and said
 │   ├── proposal.py            the proposal read and checked
 │   ├── steps.py               each step as written and as printed
 │   ├── entries.py             the plugin's hooks.json: each entry and its command written, read

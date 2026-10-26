@@ -28,6 +28,7 @@ import hook  # noqa: F401
 import lanes  # noqa: F401
 import lanes_json  # noqa: F401
 import lay  # noqa: F401
+import layer  # noqa: F401
 import placed  # noqa: F401
 import ports  # noqa: F401
 import proposal  # noqa: F401

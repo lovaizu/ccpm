@@ -4,7 +4,6 @@ the rest of the step as it was; and the print of each step for the building AI's
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
 import lanes
@@ -36,7 +35,7 @@ def steps_laid(
 ) -> list[dict[str, Any]]:
     """Each step the layer writes in the subagent, with its lanes, where it is and the sentences
     gone from it: the sentence of each lane laid before on the step, of the lanes laid before in
-    each subagent as entries.laid_before gives them, that the proposal no longer lays there. They
+    each subagent as layer.laid_before gives them, that the proposal no longer lays there. They
     are the proposal's steps, then each other step any sentence is gone from, with no lanes, in
     order, where the Steps still have it."""
     laid = before.get(f"{plugin}:{agent['name']}", [])
@@ -75,34 +74,3 @@ def held(lane: dict[str, Any]) -> str:
     shown = lanes.shown(lane["lane"])
     rest = [f"`{t}`" for t in lane["takes"][shown:]] if shown is not None else []
     return f", holding back {', '.join(rest)}" if rest else ""
-
-
-def said(root: str, agents: dict[str, list[dict[str, Any]]]) -> list[str]:
-    """Each lane laid before in each subagent of the plugin at root, as `<plugin>:<name>`,
-    each on a step of a proposal, said for the building AI to keep in its proposal or leave out: its
-    step, whether the step still says its sentence, and the lane as the proposal gives it."""
-    found = []
-    for agent, laid in agents.items():
-        name = agent.split(":")[1]
-        for s in laid:
-            for lane in s["lanes"]:
-                sentence = lanes.sentence(lane["lane"], lane["takes"])
-                held = step.holds(root, name, s["step"], sentence)
-                gone = "" if held else f', whose step no longer says "{sentence}"'
-                found.append(
-                    f"Laid before on step {s['step']} of {name}{gone}: {json.dumps(lane)}\n"
-                )
-    return found
-
-
-def adapter_shown(adapter: dict[str, Any]) -> str:
-    """The adapter as the print shows it for the building AI's OK: its path, its port and what
-    names it, its text, indented, and each case it gives."""
-    head = f"Adapter {adapter['path']} of the {adapter['port']} port, for {adapter['by']}"
-    lines = adapter["text"].splitlines(True)
-    out = [f"{head}, giving each case below:\n"]
-    out += [f"    {line}" if line.strip() else "\n" for line in lines]
-    for number, case in enumerate(adapter["cases"], 1):
-        given, gives = json.dumps(case["given"]), json.dumps(case["gives"])
-        out.append(f"  case {number}: given {given}\n    gives {gives}\n")
-    return "".join(out)
