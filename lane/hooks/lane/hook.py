@@ -8,11 +8,16 @@ from __future__ import annotations
 
 import json
 import os
-from collections.abc import Sequence
+import re
+import sys
+from collections.abc import Callable, Sequence
 from typing import IO, Any, NamedTuple
 
 import schema
 
+# A plugin's or a subagent's name, as a hook's command carries it unquoted.
+NAME = r"[A-Za-z0-9._-]+"
+AGENT = re.compile(rf"{NAME}:{NAME}")
 # The seconds Claude Code gives each hook lane lays before it stops it, as the layer writes it in
 # the hook's entry.
 TIMEOUT = 10
@@ -136,3 +141,22 @@ def run(
     os.chdir(event["cwd"])
     said = [Said(f"{plugin}: {s.text}", s.error) for c in checks for s in c.check(event)]
     answered(out, said_on(event, held, said))
+
+
+def main(held: str, words: list[str], part: Callable[[str, str, str], Any]) -> None:
+    """Runs the check the part makes, given the plugin found where Claude Code gives its folder,
+    CLAUDE_PLUGIN_ROOT, the subagent a hook's command names and the event held, on the event Claude
+    Code hands on stdin, answering Claude Code on stdout. A command not in the form `lay.py write`
+    writes is an error, as no subagent can be told from it."""
+    root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
+    agent = " ".join(words)
+    if not AGENT.fullmatch(agent):
+        unread = (
+            f"lane: lane cannot check the lanes of this hook: its command gives"
+            f" `{agent}`, not the subagent alone as <plugin>:<name>, as `lay.py write` writes"
+            " it. Stop here and reply that the plugin's maker must lay its lanes again with"
+            " `lay.py write`, to write its hooks anew."
+        )
+        failed(held, unread, sys.stdin, sys.stdout)
+        return
+    run(agent.split(":")[0], held, [part(root, agent, held)], sys.stdin, sys.stdout, agent)

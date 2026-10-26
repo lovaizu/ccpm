@@ -7,6 +7,8 @@ its folder, CLAUDE_PLUGIN_ROOT.
 
 import sys
 
-import guard
+import called
+import hook
 
-guard.main("PostToolUse", sys.argv[1:])
+# Keeping a call takes nothing of the plugin, the subagent or the event held.
+hook.main("PostToolUse", sys.argv[1:], lambda root, agent, held: called.Kept())

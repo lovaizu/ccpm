@@ -9,5 +9,6 @@ gives its folder, CLAUDE_PLUGIN_ROOT, and the subagent's lanes in its hooks/lane
 import sys
 
 import guard
+import hook
 
-guard.main("SubagentStop", sys.argv[1:])
+hook.main("SubagentStop", sys.argv[1:], guard.Lanes)

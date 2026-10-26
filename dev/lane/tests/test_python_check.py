@@ -10,7 +10,7 @@ import sys
 import unittest
 
 import helpers
-from helpers import hooks_file
+from helpers import entries
 
 # What the subagent, or the user, is told where python3 cannot run the hooks.
 INSTALL = "notes: install Python 3.9 or later, run as python3, for its hooks to run"
@@ -33,7 +33,7 @@ class TestPythonCheck(helpers.PluginTest):
         lanes = [{"lane": "hands_off", "takes": ["git commit", "git push"]}]
         laid = {"subagents": [{"name": "changelog-writer", "steps": [{"step": 3, "lanes": lanes}]}]}
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
-        self.command = hooks_file.command("notes", helpers.AGENT, "PreToolUse")
+        self.command = entries.command("notes", helpers.AGENT, "PreToolUse")
 
     def run_hook(self, *folders, command=None, agent_type=helpers.AGENT):
         """The hook's command, or the one given, run by sh with PATH holding the folders, handed a
@@ -85,7 +85,7 @@ class TestPythonCheck(helpers.PluginTest):
 
     def test_without_python3_at_the_subagents_end_the_user_is_told_and_it_ends(self):
         # Given: the hook's command of the subagent's end, and a PATH holding no python3
-        command = hooks_file.command("notes", helpers.AGENT, "SubagentStop")
+        command = entries.command("notes", helpers.AGENT, "SubagentStop")
         # When: it is run
         # Then: it tells the user to install Python, letting the subagent end
         none = os.path.join(self.base, "none")
@@ -93,11 +93,11 @@ class TestPythonCheck(helpers.PluginTest):
         self.assertEqual(self.run_hook(none, command=command), told)
 
     def test_without_python3_a_call_coming_back_goes_on(self):
-        for event in hooks_file.KEPT:
+        for event in entries.KEPT:
             with self.subTest(event=event):
                 # Given: the hook's command keeping the subagent's calls, and a PATH holding no
                 # python3
-                command = hooks_file.command("notes", helpers.AGENT, event)
+                command = entries.command("notes", helpers.AGENT, event)
                 # When: it is run as a call comes back
                 found = self.run_hook(os.path.join(self.base, "none"), command=command)
                 # Then: it answers nothing, as the call has run, and the hook of the next call

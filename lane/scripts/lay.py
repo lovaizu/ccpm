@@ -19,6 +19,7 @@ import placed
 sys.path.insert(0, placed.CODE)
 
 import entries
+import lanes_json
 import step
 import steps
 from proposal import Stop, plugin_name, proposal
@@ -87,7 +88,7 @@ def written(path: str) -> str:
     for agent, on in kept.items():
         entries.hooks_with(hooks, plugin, {"name": agent.split(":")[1], "steps": on})
     entries.hooks_written(root, hooks)
-    entries.lanes_written(root, kept, values)
+    lanes_json.lanes_written(root, kept, values)
     said += [*left, "Wrote the lanes laid into hooks/lanes.json.\n"]
     copies = [a for a in given["adapters"] if a["beside"]]
     for adapter in copies:
@@ -160,7 +161,7 @@ def brought_up(root: str) -> str:
         entries.hooks_with(hooks, plugin, {"name": sub, "steps": laid})
     if hooks != before:
         entries.hooks_written(root, hooks)
-        entries.lanes_written(root, agents, entries.values_before(root, name))
+        lanes_json.lanes_written(root, agents, entries.values_before(root, name))
         said += [
             f"Wrote the hook of {a.split(':')[1]} into hooks/hooks.json with the lanes it held.\n"
             for a in agents

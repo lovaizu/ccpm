@@ -157,19 +157,21 @@ def hypothesis() -> Any:
 
 
 def lane_code(plugin: str, *names: str) -> list[Any]:
-    """lane's modules of the names, imported from the link in the plugin's hooks: lane's code and
-    the plugin's scripts share module names, such as call, so lane's are imported apart and the
+    """lane's modules of the names, imported from the link in the plugin's hooks, or from lane's
+    layer, lane/scripts/, which reads the plugin's hooks.json as `lay.py` does: lane's code and the
+    plugin's scripts share module names, such as call, so lane's are imported apart and the
     plugin's put back after."""
     code = os.path.join(plugin, "hooks", "lane")
-    shared = {os.path.splitext(n)[0] for n in os.listdir(code)} & {
+    layer = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "lane", "scripts")
+    shared = {os.path.splitext(n)[0] for f in (code, layer) for n in os.listdir(f)} & {
         os.path.splitext(n)[0] for n in os.listdir(os.path.join(plugin, "scripts"))
     }
     own = {n: sys.modules.pop(n) for n in shared if n in sys.modules}
-    sys.path.insert(0, code)
+    sys.path[:0] = [code, layer]
     try:
         return [importlib.import_module(n) for n in names]
     finally:
-        sys.path.pop(0)
+        del sys.path[:2]
         for n in shared:
             sys.modules.pop(n, None)
         sys.modules.update(own)
@@ -178,11 +180,11 @@ def lane_code(plugin: str, *names: str) -> list[Any]:
 def laid(plugin: str) -> list[tuple[str, int, str, list[str]]]:
     """Each lane the plugin's hooks/lanes.json lays, as (agent, step, lane, takes), the agent as
     `<plugin>:<name>`, read by lane's code as the plugin takes it, as the guard reads them."""
-    (hooks_file,) = lane_code(plugin, "hooks_file")
+    (lanes_json,) = lane_code(plugin, "lanes_json")
     with open(os.path.join(plugin, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
         name = json.load(f)["name"]
     found = []
-    for agent in hooks_file.laid(plugin)["subagents"]:
-        for number, lane, takes, _ in hooks_file.lanes_of(agent):
+    for agent in lanes_json.laid(plugin)["subagents"]:
+        for number, lane, takes, _ in lanes_json.lanes_of(agent):
             found.append((f"{name}:{agent['name']}", number, lane, takes))
     return found

@@ -131,7 +131,7 @@ lane/                          the plugin, installed by Claude Code
 │   ├── lay.py                 what the building AI runs: print, write and up
 │   ├── proposal.py            the proposal read and checked
 │   ├── steps.py               each step as written and as printed
-│   ├── entries.py             the entries of the plugin's hooks.json
+│   ├── entries.py             the plugin's hooks.json: each entry and its command written, read
 │   └── placed.py              lane's code placed in the plugin, with its version
 ├── hooks/
 │   └── lane/                  lane's code, the guard, put in each plugin <Python 3>
@@ -140,8 +140,8 @@ lane/                          the plugin, installed by Claude Code
 │       ├── posttooluse.py     the event script keeping each call as it comes back
 │       ├── posttoolusefailure.py  the same, for a call that comes back failed
 │       ├── guard.py           the lanes a hook's command lays, run on the event
-│       ├── hook.py            what the guard runs on: the event read, each check run
-│       ├── hooks_file.py      a hook's command written, hooks.json and lanes.json read
+│       ├── hook.py            what each event script hands its part to: the event read, answered
+│       ├── lanes_json.py      hooks/lanes.json, written and read
 │       ├── ports.py           each port, read in lane's form or by the plugin's adapter
 │       ├── call.py            a tool call read as one action
 │       ├── shell.py           what a shell command reads and writes

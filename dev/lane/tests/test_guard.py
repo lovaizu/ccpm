@@ -435,7 +435,7 @@ class TestRunValues(GuardTest):
         self.lay(start, *self.LAID, values="hooks/adapters/values-run.py")
         run = ("Bash", {"command": f"python3 {self.plugin}/scripts/given.py"}, "{}")
         self.record([run], self.RUN)
-        laid = mock.patch.object(helpers.hooks_file, "laid", wraps=helpers.hooks_file.laid)
+        laid = mock.patch.object(helpers.lanes_json, "laid", wraps=helpers.lanes_json.laid)
         # When: changelog-writer writes a file
         with laid as read:
             found = self.wrote("a.md")

@@ -86,15 +86,15 @@ with shared.removed(place, plugin):
     for agent in glob.glob(os.path.join(HERE, "roles", "*.md")):
         shutil.copyfile(agent, os.path.join(plugin, "agents", os.path.basename(agent)))
     # The stand-in roles keep no steps of the roles, so the roles' lanes are left out, each entry
-    # read as lane's guard reads it; the orchestrator's are the ones tried.
-    (hooks_file,) = testing.lane_code(plugin, "hooks_file")
-    hooks = hooks_file.read(plugin)
-    for event in hooks_file.EVENTS:
+    # read as lane's layer reads it; the orchestrator's are the ones tried.
+    (entries,) = testing.lane_code(plugin, "entries")
+    hooks = entries.read(plugin)
+    for event in entries.EVENTS:
         hooks["hooks"][event] = [
             e
             for e in hooks["hooks"][event]
             if not any(
-                hooks_file.words(h["command"], event)[:1] in [[role] for role in ROLES]
+                entries.words(h["command"], event)[:1] in [[role] for role in ROLES]
                 for h in e["hooks"]
             )
         ]

@@ -8,5 +8,6 @@ its folder, CLAUDE_PLUGIN_ROOT, and the subagent's lanes in its hooks/lanes.json
 import sys
 
 import guard
+import hook
 
-guard.main("PreToolUse", sys.argv[1:])
+hook.main("PreToolUse", sys.argv[1:], guard.Lanes)

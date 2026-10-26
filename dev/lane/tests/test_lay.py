@@ -460,7 +460,7 @@ class TestMain(LayTest):
         out = io.StringIO()
         with path, modules, argv, contextlib.redirect_stdout(out):
             # The layer's own modules too, as each imports lane's code as it is first imported.
-            layer = ("entries", "placed", "proposal", "steps", "hooks_file", "hook", "template")
+            layer = ("entries", "placed", "proposal", "steps", "lanes_json", "hook", "template")
             for name in ("lanes", "lanes.hands_off", "step", "call", *layer):
                 sys.modules.pop(name, None)
             # When: lay.py is run

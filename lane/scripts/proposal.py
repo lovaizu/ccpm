@@ -13,8 +13,9 @@ import os
 import re
 from typing import Any
 
-import hooks_file
+import hook
 import lanes
+import lanes_json
 import placed
 import ports
 import schema
@@ -26,7 +27,7 @@ LANES_MD = os.path.join(placed.LANE, "docs", "lanes.md")
 AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
 # The proposal's JSON Schema: the lanes laid, as hooks/lanes.json holds them, with the plugin's
 # folder, and at least one subagent, one step in each and one lane on each, as a proposal lays them.
-SHAPE = hooks_file.lanes_shape(1)
+SHAPE = lanes_json.lanes_shape(1)
 PROPOSAL = {
     **SHAPE,
     "required": ["plugin", *SHAPE["required"]],
@@ -164,7 +165,7 @@ def plugin_name(root: str) -> str:
     except ValueError:
         raise Stop(f"lay.py: {manifest} holds no JSON; fix it and run again.") from None
     name = given.get("name") if isinstance(given, dict) else None
-    if not isinstance(name, str) or not re.fullmatch(hooks_file.NAME, name):
+    if not isinstance(name, str) or not re.fullmatch(hook.NAME, name):
         raise Stop(
             f"lay.py: {manifest} names the plugin by no name of letters, digits and -._; fix it"
             " and run again."
@@ -176,9 +177,9 @@ def subagent(root: str, given: dict[str, Any]) -> dict[str, Any]:
     """A subagent of the proposal, held to its schema, checked, each of its steps given once, with
     its file and its lines, and each step with where it is among them."""
     name = given["name"]
-    if not re.fullmatch(hooks_file.NAME, name):
+    if not re.fullmatch(hook.NAME, name):
         raise wrong("gives a subagent no name")
-    why = hooks_file.adapter_wrong(given.get("adapter"), "values")
+    why = lanes_json.adapter_wrong(given.get("adapter"), "values")
     if why:
         raise wrong(f"names an adapter for the values of {name} {why}")
     file = step.agent_file(root, name)
@@ -217,7 +218,7 @@ def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
             f"gives {known} on {on} takes of another count than its wording and its hook hold"
         )
     port = getattr(lanes.LANES[known], "PORT", None)
-    why = hooks_file.adapter_wrong(lane.get("adapter"), port)
+    why = lanes_json.adapter_wrong(lane.get("adapter"), port)
     if why:
         raise wrong(f"names an adapter for {known} on {on} {why}")
     refused = getattr(lanes.LANES[known], "refused", None)

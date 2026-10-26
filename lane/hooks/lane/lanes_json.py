@@ -1,10 +1,5 @@
-"""How lanes are laid in a plugin, the layer writing it and the guard and the layer reading it: the
-command of each entry `lay.py write` writes in the plugin's hooks/hooks.json, and that file read;
-and the lanes laid, kept in its hooks/lanes.json in the shape of the proposal, read.
-
-A command first checks that lane's code can run, then runs its event's script in lane's code with
-the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's agent_type; the guard
-reads that subagent's lanes from hooks/lanes.json, so what was approved is what is read, and a thing
+"""The lanes laid in a plugin, kept in its hooks/lanes.json in the shape of the proposal: written
+by the layer, and read by the guard and the layer, so what was approved is what is read, and a thing
 taken holds any text, a comma among the rest."""
 
 from __future__ import annotations
@@ -12,16 +7,11 @@ from __future__ import annotations
 import json
 import os
 import re
-import shlex
 from typing import Any
 
 import hook
 import lanes
 import schema
-
-# A plugin's or a subagent's name, as a hook's command carries it unquoted.
-NAME = r"[A-Za-z0-9._-]+"
-AGENT = re.compile(rf"{NAME}:{NAME}")
 
 
 def lanes_shape(least: int) -> dict[str, Any]:
@@ -77,90 +67,6 @@ def lanes_shape(least: int) -> dict[str, Any]:
 
 
 LAID = lanes_shape(0)
-# The events a call is kept on as it comes back, for every subagent lanes are laid in, as called.py
-# says.
-KEPT = ("PostToolUse", "PostToolUseFailure")
-# The events lanes are held on, and those a call is kept on, each with its own script in lane's
-# code, named after it.
-EVENTS = ("PreToolUse", "SubagentStop", *KEPT)
-# What a hook says where lane's code cannot run.
-INSTALL = "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run"
-# Each hook's command first checks that lane's code can run. Where it cannot, a hook of an event
-# lanes are held on, on an event of its subagent, read from the event's text by the shell alone, as
-# Claude Code writes it, with or without a blank after the colon, answers as `missing` gives it; it
-# lets any other event through, as its lanes act in their subagent alone. A hook of an event a call
-# is kept on lets every event through.
-PYTHON = 'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
-CHECK = (
-    PYTHON + ' || {{ e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done;'
-    """ case "$e" in *'"agent_type":"{agent}"'*|*'"agent_type": "{agent}"'*)"""
-    " echo {answer};; esac; exit 0; }}"
-)
-
-
-def missing(plugin: str, event: str) -> dict[str, Any]:
-    """What a hook of the event answers where lane's code cannot run: on a tool call the call
-    denied, telling the subagent what to install, as letting it through would leave it unkept with
-    no one told; at the subagent's end the user told so, letting it end, as it cannot install
-    Python and kept going it would only be asked again; as a call comes back nothing, as the call
-    has run and the hook on the next call says what to install."""
-    said = INSTALL.format(plugin=plugin)
-    if event in KEPT:
-        return {}
-    on_call = event == "PreToolUse"  # pragma: no mutate
-    return hook.answer(event, said if on_call else "", "" if on_call else said)
-
-
-def script(event: str) -> str:
-    """What a hook's command runs for the event: its script in lane's code."""
-    return f'exec python3 "${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/{event.lower()}.py"'
-
-
-def command(plugin: str, agent: str, event: str) -> str:
-    """The hook's command running lane's code on the lanes laid in the subagent, held on the
-    event."""
-    answer = shlex.quote(json.dumps(missing(plugin, event)))
-    check = f"{PYTHON} || exit 0" if event in KEPT else CHECK.format(agent=agent, answer=answer)
-    return f"{check}; {script(event)} {agent}"
-
-
-def words(command: Any, event: str) -> list[str]:
-    """The words a hook's command gives the event's script in lane's code, the first the subagent
-    as `<plugin>:<subagent>`, each after it a lane laid, where an older lane wrote them; none for a
-    command that runs no script of lane's, names no subagent so, or gives words the shell cannot
-    read."""
-    found = re.search(rf'/hooks/lane/{event.lower()}\.py"?(.*)', str(command))
-    try:
-        given = shlex.split(found[1]) if found else []
-    except ValueError:
-        return []
-    return given if given and AGENT.fullmatch(given[0]) else []
-
-
-def read(root: str) -> dict[str, Any]:
-    """The hooks.json of the plugin at root, an empty one where there is none; stops with
-    ValueError saying so where it holds no JSON or is not in Claude Code's shape, an object whose
-    hooks hold, for each event lanes are held on, a list of entries whose hooks are a list of
-    objects."""
-    path = os.path.join(root, "hooks", "hooks.json")
-    if not os.path.exists(path):
-        return {"hooks": {}}
-    try:
-        with open(path, encoding="utf-8") as f:
-            hooks = json.load(f)
-    except ValueError:
-        raise ValueError("is not in the shape Claude Code reads") from None
-    events = hooks.get("hooks", {}) if isinstance(hooks, dict) else None
-    each = [events.get(e, []) for e in EVENTS] if isinstance(events, dict) else None
-    if each is None or not all(isinstance(e, list) and all(map(shaped, e)) for e in each):
-        raise ValueError("is not in the shape Claude Code reads")
-    return hooks
-
-
-def shaped(entry: Any) -> bool:
-    """Whether an entry of hooks.json is an object whose hooks are a list of objects."""
-    each = entry.get("hooks", []) if isinstance(entry, dict) else None
-    return isinstance(each, list) and all(isinstance(h, dict) for h in each)
 
 
 def laid(root: str) -> dict[str, Any]:
@@ -206,7 +112,7 @@ def adapter_wrong(path: str | None, port: str | None) -> str:
         return ""
     if port is None:
         return f"`{path}`, which reads no port"
-    if not re.fullmatch(rf"hooks/adapters/{port}-{NAME}\.py", path):
+    if not re.fullmatch(rf"hooks/adapters/{port}-{hook.NAME}\.py", path):
         return f"`{path}`, not hooks/adapters/{port}-<name>.py"
     return ""
 
@@ -228,3 +134,18 @@ def lanes_of(agent: dict[str, Any]) -> list[tuple[int, str, list[str], str | Non
         for s in agent["steps"]
         for g in s["lanes"]
     ]
+
+
+def lanes_written(
+    root: str, agents: dict[str, list[dict[str, Any]]], values: dict[str, str | None]
+) -> None:
+    """Writes the lanes laid in each subagent, by `<plugin>:<name>`, as steps of a proposal, with
+    the adapter of the values port values names for it, where it names one, into the plugin's
+    hooks/lanes.json, in the shape of the proposal, indented by two."""
+    subagents = [
+        {"name": a.split(":")[1], **({"adapter": values[a]} if values.get(a) else {}), "steps": s}
+        for a, s in agents.items()
+    ]
+    os.makedirs(os.path.join(root, "hooks"), exist_ok=True)
+    with open(os.path.join(root, "hooks", "lanes.json"), "w", encoding="utf-8") as f:
+        f.write(json.dumps({"subagents": subagents}, indent=2, ensure_ascii=False) + "\n")

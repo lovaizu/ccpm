@@ -1,6 +1,5 @@
-"""The hook commands `lay.py write` writes in a plugin's hooks/hooks.json and the file read, and the
-lanes laid read from its hooks/lanes.json: the words a command gives its event's script, the lanes
-laid in a subagent, and what each lane of a kind takes in it."""
+"""The lanes laid read from a plugin's hooks/lanes.json: the lanes laid in a subagent, and what each
+lane of a kind takes in it."""
 
 from __future__ import annotations
 
@@ -9,7 +8,7 @@ import os
 import unittest
 
 import helpers
-from helpers import hooks_file
+from helpers import lanes_json
 
 # hooks/lanes.json laying start_with on step 1 and hands_off on step 3 of changelog-writer, and
 # hands_off on step 2 of a subagent named before it in order and one after.
@@ -46,7 +45,7 @@ class TestShape(unittest.TestCase):
         # Given: the shape hooks/lanes.json holds and the shape of a proposal
         # When: each is read as a schema of the keywords lane holds a plugin's forms to
         # Then: each is read whole, as structured outputs would take it
-        for shape in (hooks_file.LAID, helpers.proposal.PROPOSAL):
+        for shape in (lanes_json.LAID, helpers.proposal.PROPOSAL):
             with self.subTest(shape=shape["required"]):
                 helpers.schema.checked(shape)
 
@@ -59,7 +58,7 @@ class TestLaidIn(LanesTest):
         # When: the lanes laid in changelog-writer are read
         # Then: they are its own, each its step, the lane and what it takes, the comma kept
         self.assertEqual(
-            hooks_file.lanes_of(hooks_file.subagent(self.plugin, "changelog-writer")),
+            lanes_json.lanes_of(lanes_json.subagent(self.plugin, "changelog-writer")),
             [
                 (1, "start_with", ["scripts/given.py"], None),
                 (3, "hands_off", ["git commit, -a", "x"], None),
@@ -80,10 +79,10 @@ class TestLaidIn(LanesTest):
         # When: the lanes laid in it are read
         # Then: each lane gives its adapter, and the subagent its own
         self.assertEqual(
-            hooks_file.lanes_of(hooks_file.subagent(self.plugin, "changelog-writer")),
+            lanes_json.lanes_of(lanes_json.subagent(self.plugin, "changelog-writer")),
             [(3, "every_item", ["r.md"], "hooks/adapters/items-h.py")],
         )
-        self.assertEqual(hooks_file.subagent(self.plugin, "changelog-writer"), agent)
+        self.assertEqual(lanes_json.subagent(self.plugin, "changelog-writer"), agent)
 
     def test_lanes_json_not_as_lay_py_write_writes_it_stops_saying_what_is_wrong(self):
         lane = {"lane": "hands_off", "takes": ["git"]}
@@ -145,42 +144,8 @@ class TestLaidIn(LanesTest):
                 # When: the lanes laid in changelog-writer are read
                 # Then: it stops, saying what is wrong
                 with self.assertRaises(ValueError) as stop:
-                    hooks_file.lanes_of(hooks_file.subagent(self.plugin, "changelog-writer"))
+                    lanes_json.lanes_of(lanes_json.subagent(self.plugin, "changelog-writer"))
                 self.assertIn(named, str(stop.exception))
-
-
-class TestWords(unittest.TestCase):
-    COMMAND = hooks_file.command("notes", helpers.AGENT, "PreToolUse")
-    # A hook's command as an older lane wrote it, giving each lane laid after the subagent.
-    OLDER = (
-        'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
-        " '3:hands_off:git commit,git push'"
-    )
-
-    def test_the_words_a_hooks_command_gives_its_event_script_are_read(self):
-        for command, words in (
-            (self.COMMAND, ["notes:changelog-writer"]),
-            (self.OLDER, ["notes:changelog-writer", "3:hands_off:git commit,git push"]),
-        ):
-            with self.subTest(command=command):
-                # Given: a hook's command as `lay.py write` writes it, or as an older lane wrote it
-                # When: its words for PreToolUse are read
-                # Then: they are the subagent, then each lane an older lane gave
-                self.assertEqual(hooks_file.words(command, "PreToolUse"), words)
-
-    def test_a_command_of_another_event_no_subagent_or_unread_words_gives_none(self):
-        for command, event in (
-            (self.COMMAND, "SubagentStop"),
-            (self.COMMAND.replace("notes:changelog-writer", "writer"), "PreToolUse"),
-            (self.COMMAND + " 'open", "PreToolUse"),
-            (None, "PreToolUse"),
-        ):
-            with self.subTest(command=command, event=event):
-                # Given: a command running another event's script, naming no subagent as
-                # <plugin>:<name>, giving words the shell cannot read, or none at all
-                # When: its words are read
-                # Then: there are none
-                self.assertEqual(hooks_file.words(command, event), [])
 
 
 if __name__ == "__main__":

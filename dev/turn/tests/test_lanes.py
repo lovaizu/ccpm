@@ -5,7 +5,7 @@ import unittest
 
 from helpers import TURN, testing
 
-lanes, step, hooks_file = testing.lane_code(TURN, "lanes", "step", "hooks_file")
+lanes, step, lanes_json = testing.lane_code(TURN, "lanes", "step", "lanes_json")
 
 # The lanes each agent's steps call for, taking its run's values as the flow gives them in the
 # agent's prompt, or as turn.py start prints them.

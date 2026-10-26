@@ -1,5 +1,6 @@
 """The entries the layer writes in the plugin's hooks.json: one for each subagent and each event its
-lanes are held on, matching the tools they watch, every other entry as it was."""
+lanes are held on, matching the tools they watch, every other entry as it was; and the words a
+hook's command gives its event's script."""
 
 import json
 import os
@@ -201,6 +202,40 @@ class TestMatcher(unittest.TestCase):
                 entry = entries.entry("notes", agent, "PreToolUse")
                 # Then: its matcher names each tool they watch, once, in the order laid
                 self.assertEqual((entry or {}).get("matcher"), matcher)
+
+
+class TestWords(unittest.TestCase):
+    COMMAND = entries.command("notes", helpers.AGENT, "PreToolUse")
+    # A hook's command as an older lane wrote it, giving each lane laid after the subagent.
+    OLDER = (
+        'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
+        " '3:hands_off:git commit,git push'"
+    )
+
+    def test_the_words_a_hooks_command_gives_its_event_script_are_read(self):
+        for command, words in (
+            (self.COMMAND, ["notes:changelog-writer"]),
+            (self.OLDER, ["notes:changelog-writer", "3:hands_off:git commit,git push"]),
+        ):
+            with self.subTest(command=command):
+                # Given: a hook's command as `lay.py write` writes it, or as an older lane wrote it
+                # When: its words for PreToolUse are read
+                # Then: they are the subagent, then each lane an older lane gave
+                self.assertEqual(entries.words(command, "PreToolUse"), words)
+
+    def test_a_command_of_another_event_no_subagent_or_unread_words_gives_none(self):
+        for command, event in (
+            (self.COMMAND, "SubagentStop"),
+            (self.COMMAND.replace("notes:changelog-writer", "writer"), "PreToolUse"),
+            (self.COMMAND + " 'open", "PreToolUse"),
+            (None, "PreToolUse"),
+        ):
+            with self.subTest(command=command, event=event):
+                # Given: a command running another event's script, naming no subagent as
+                # <plugin>:<name>, giving words the shell cannot read, or none at all
+                # When: its words are read
+                # Then: there are none
+                self.assertEqual(entries.words(command, event), [])
 
 
 if __name__ == "__main__":
