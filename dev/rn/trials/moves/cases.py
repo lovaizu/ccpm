@@ -40,7 +40,12 @@ DONE_ANSWER = (
 WHY_ANSWER = "歓迎されていると感じて、早く最初の変更を出してもらうためです"
 USE_ANSWER = "いいえ、Use の節は指さなくていいです"
 PLACE_ANSWER = "タイトルのすぐ下に置いてください"
-ASK_ANSWER = "挨拶の行に、質問があれば issue を開くよう書いてください。リンクはいりません"
+# The answer to the point behind the feedback, which settles the goal's change with it, as the
+# plan made again says where to ask in G1 too.
+ASK_ANSWER = (
+    "挨拶の行に、質問があれば issue を開くよう書いてください。リンクはいりません。目的にも、質問の"
+    "窓口を伝えることを入れてください"
+)
 L1_OPEN = "L1: an issue to lovaizu/ccpm alone, not yet sent"
 SLUG = "greet-contributors"
 TITLE = "Greet new contributors"
@@ -398,7 +403,7 @@ RESEARCH_PLACE = {
             "B-1": {
                 "good": "The opening says what was asked, for T1, and its answer: right under the"
                 " title `# demo`, the README's first line after it, the choice left to the user",
-                "at": ["Asked for T1", "Answer:"],
+                "at": ["Asked for T1", "Answer:..the user's to choose"],
             },
             "B-2": {
                 "good": "Each fact names a source the reader can open: the README's own lines, and"
@@ -408,7 +413,7 @@ RESEARCH_PLACE = {
             "B-3": {
                 "good": "What the research did not settle, what GitHub shows of a README first and"
                 " where visitors read it, is said as unknown",
-                "at": ["Not known:"],
+                "at": ["Not known:..which the user knows"],
             },
             "B-4": {
                 "good": "Each line gives the user choosing the place something they use",
