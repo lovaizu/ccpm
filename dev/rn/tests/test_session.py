@@ -1,5 +1,5 @@
 """The tests of the session: found from the branch, started with its draft pull request, each move
-kept with `state`, and each part turn made put back into the record."""
+kept with `state`, and each part the orchestrator wrote put back into the record."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ import unittest
 from unittest import mock
 
 from helpers import (
+    CALLS,
     FOLDER,
     HISTORY,
     KIND,
@@ -21,7 +22,6 @@ from helpers import (
     SLUG,
     STEERED,
     STEERING,
-    CALLS,
     RepoTest,
     call_at,
     options,
@@ -822,21 +822,23 @@ class StateTest(RepoTest):
 
 
 class PutTest(RepoTest):
-    """A part of the steering turn made, put back into it by `state --put`."""
+    """A part the orchestrator wrote, put back by `state --put`: the plan's into the steering, the
+    learnings' after those kept."""
 
     def put(self, number: str = "0001") -> list[str]:
         """The arguments that put back the part of the call of the number."""
         return ["state", "--next", NEXT, "--put", number, "--message", "plan: made"]
 
-    def test_the_plan_turn_made_is_put_back_with_its_actions_ticked_as_they_were(self):
+    def test_the_plan_written_is_put_back_with_its_actions_ticked_as_they_were(self):
         # Given: a steering whose T1 has two actions ticked, and a call on the plan whose part, as
-        # turn returned it, changed T1's line, added an action, ticked the third, and added T2.
+        # the orchestrator wrote it, changed T1's line, added an action, ticked the third, and
+        # added T2.
         self.session(steered(part=plan(tasks=task(ticks="xx  "))))
         made = f"{task(ticks='  x  ').replace('part T1', 'page T1')}\n\n{task('T2', 'AC2')}"
-        self.call("0001", "plan", result={"items": []}, part=plan(tasks=made) + "\n\n")
+        self.call("0001", "plan", part=plan(tasks=made) + "\n\n")
         # When: the orchestrator puts it back.
         self.ran(*self.put())
-        # Then: the steering holds the part turn made, T1's first two actions ticked as they were
+        # Then: the steering holds the part written, T1's first two actions ticked as they were
         # and the rest not.
         want = f"{task(ticks='xx   ').replace('part T1', 'page T1')}\n\n{task('T2', 'AC2')}"
         self.assertEqual(self.read(STEERING), steered(part=plan(tasks=want)))
@@ -846,7 +848,7 @@ class PutTest(RepoTest):
         # fourth out.
         before = steered(part=plan(tasks=task(ticks="xxx ")))
         self.session(before)
-        self.call("0001", "plan", result={}, part=plan(tasks=task(ticks="   ")))
+        self.call("0001", "plan", part=plan(tasks=task(ticks="   ")))
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
         # Then: rn says a done task is in no steering, and keeps nothing.
@@ -856,7 +858,7 @@ class PutTest(RepoTest):
     def test_the_first_tasks_are_taken_from_t1(self):
         # Given: a steering that never held a task, and a call on the plan whose part holds T1.
         self.session(steered(part=plan(tasks="")))
-        self.call("0001", "plan", result={}, part=plan())
+        self.call("0001", "plan", part=plan())
         # When: the orchestrator puts it back.
         self.ran(*self.put())
         # Then: the steering holds it.
@@ -866,7 +868,7 @@ class PutTest(RepoTest):
         # Given: a steering that never held a task, and a call on the plan whose part holds T0.
         before = steered(part=plan(tasks=""))
         self.session(before)
-        self.call("0001", "plan", result={}, part=plan(tasks=task("T0")))
+        self.call("0001", "plan", part=plan(tasks=task("T0")))
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
         # Then: rn says to number each new task from T1, and keeps nothing.
@@ -879,7 +881,7 @@ class PutTest(RepoTest):
         before = steered(part=plan(tasks=""))
         self.session(before)
         tasks = f"{task()}\n  ### Later\n\n{task('T0')}"
-        self.call("0001", "plan", result={}, part=plan(tasks=tasks))
+        self.call("0001", "plan", part=plan(tasks=tasks))
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
         # Then: rn says to number each new task from T1, as the heading is a line of T1 and T0 a
@@ -893,7 +895,7 @@ class PutTest(RepoTest):
         self.session(steered(part=plan(tasks="\n\n".join(task(t) for t in ("T1", "T2", "T3")))))
         self.session(steered(part=plan(tasks=task("T2"))))
         made = f"{task('T2')}\n\n{task('T4')}"
-        self.call("0001", "plan", result={}, part=plan(tasks=made))
+        self.call("0001", "plan", part=plan(tasks=made))
         # When: the orchestrator puts it back.
         self.ran(*self.put())
         # Then: the steering holds the part.
@@ -909,7 +911,7 @@ class PutTest(RepoTest):
                 before = steered(part=plan(tasks=task("T2")))
                 self.session(before)
                 made = f"{task('T2')}\n\n{task(reused)}"
-                self.call("0001", "plan", result={}, part=plan(tasks=made))
+                self.call("0001", "plan", part=plan(tasks=made))
                 self.kept()
                 # When: the orchestrator puts it back.
                 out = self.stopped(*self.put())
@@ -918,19 +920,19 @@ class PutTest(RepoTest):
                 said = (
                     f"rn: the part of the call 0001 holds {reused}, neither a task the steering"
                     " holds nor numbered above every task it has held, and an ID names one task"
-                    " alone; nothing is kept: have turn make the part again, each new task"
+                    " alone; nothing is kept: write the part again, each new task"
                     " numbered from T4, then run this again"
                 )
                 self.assertEqual((said in out, self.read(STEERING)), (True, before))
 
-    def test_the_learnings_turn_made_follow_those_kept_and_the_records_go(self):
+    def test_the_learnings_written_follow_those_kept_and_the_records_go(self):
         # Given: a learning kept, records shown in the git folder, and a call on the learnings
         # whose part holds two learnings.
         self.session()
         self.write(LEARNINGS, "- L1: Kept.\n")
         self.write(HISTORY, "x")
         made = "- L1: First.\n  Its words.\n- L2: Second.\n"
-        self.call("0001", "learnings", result={}, part=made)
+        self.call("0001", "learnings", part=made)
         self.kept()
         # When: the orchestrator puts it back.
         self.ran(*self.put())
@@ -949,16 +951,16 @@ class PutTest(RepoTest):
         # Given: a session with no learnings, and a call on the learnings whose part holds one
         # numbered otherwise.
         self.session()
-        self.call("0001", "learnings", result={}, part="- L4: First.\n")
+        self.call("0001", "learnings", part="- L4: First.\n")
         # When: the orchestrator puts it back.
         self.ran(*self.put())
         # Then: the session's learnings are made, holding it as L1.
         self.assertEqual(self.read(LEARNINGS), "- L1: First.\n")
 
     def test_no_learning_made_leaves_no_learnings(self):
-        # Given: a call on the learnings whose part turn left empty.
+        # Given: a call on the learnings whose part the orchestrator left empty.
         self.session()
-        self.call("0001", "learnings", result={}, part="")
+        self.call("0001", "learnings", part="")
         # When: the orchestrator puts it back.
         self.ran(*self.put())
         # Then: the session has no learnings, and the steering is as it was.
@@ -967,7 +969,7 @@ class PutTest(RepoTest):
     def test_learnings_put_with_a_move_the_steering_cannot_hold_stop_and_keep_nothing(self):
         # Given: a call on the learnings whose part holds one.
         self.session()
-        self.call("0001", "learnings", result={}, part="- L1: First.\n")
+        self.call("0001", "learnings", part="- L1: First.\n")
         # When: the orchestrator puts it back with Next holding a heading.
         out = self.stopped("state", "--next", "## Notes", "--put", "0001", "--message", "m")
         # Then: rn names the point, and writes no learnings.
@@ -979,18 +981,17 @@ class PutTest(RepoTest):
         # with no ID.
         self.session()
         self.write(HISTORY, "x")
-        self.call("0001", "learnings", result={}, part="- A slip.\n")
+        self.call("0001", "learnings", part="- A slip.\n")
         self.kept()
         before = self.head()
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
-        # Then: rn names the point and says to have turn make it again, keeping nothing and the
-        # records left.
+        # Then: rn names the point and says to write it again, keeping nothing and the records
+        # left.
         said = (
             f"rn: {LEARNINGS} would be out of its form: line 1: expected a learning as `- L<n>:"
             " <what happened, with the words it rests on, and where it would make later work"
-            " better>`, found `- A slip.`; nothing is kept: have turn make the part it puts back"
-            " again"
+            " better>`, found `- A slip.`; nothing is kept: write the part it puts back again"
         )
         kept = (os.path.exists(LEARNINGS), self.head(), os.path.exists(SHOWN))
         self.assertEqual((said in out, kept), (True, (False, before, True)))
@@ -1001,7 +1002,7 @@ class PutTest(RepoTest):
                 # Given: a call on the learnings whose part holds one under a heading, which the
                 # form of rn's learnings checklist has none of.
                 self.session()
-                self.call("0001", "learnings", result={}, part=f"{heading}\n- L1: First.\n")
+                self.call("0001", "learnings", part=f"{heading}\n- L1: First.\n")
                 # When: the orchestrator puts it back.
                 out = self.stopped(*self.put())
                 # Then: rn names the heading as out of the learnings' form, and writes none.
@@ -1015,7 +1016,7 @@ class PutTest(RepoTest):
         # Given: records shown in the git folder, and a call on the plan.
         self.session()
         self.write(HISTORY, "x")
-        self.call("0001", "plan", result={}, part=plan())
+        self.call("0001", "plan", part=plan())
         # When: the orchestrator puts it back.
         self.ran(*self.put())
         # Then: the records are there.
@@ -1024,23 +1025,21 @@ class PutTest(RepoTest):
     def test_a_part_out_of_form_stops_and_keeps_nothing(self):
         # Given: a call on the plan whose part holds a heading of its own.
         self.session()
-        self.call("0001", "plan", result={}, part=plan() + "\n\n## Notes\n")
+        self.call("0001", "plan", part=plan() + "\n\n## Notes\n")
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
-        # Then: rn names the point, says to have turn make it again, and keeps nothing.
+        # Then: rn names the point, says to write it again, and keeps nothing.
         said = "rn: the steering would be out of its form: line 32: expected only the headings"
         kept = (
-            "nothing is kept: give what this move writes again so it holds, or have turn make the"
-            " part it puts back again"
+            "nothing is kept: give what this move writes again so it holds, or write the part it"
+            " puts back again"
         )
         self.assertEqual((said in out, kept in out, self.read(STEERING)), (True, True, STEERED))
 
     def test_a_part_with_an_action_out_of_form_stops_and_keeps_nothing(self):
         # Given: a call on the plan whose part holds an action out of its form.
         self.session()
-        self.call(
-            "0001", "plan", result={}, part=plan(tasks=task().replace("[ ] 3.", "[ ] three."))
-        )
+        self.call("0001", "plan", part=plan(tasks=task().replace("[ ] 3.", "[ ] three.")))
         # When: the orchestrator puts it back.
         out = self.stopped(*self.put())
         # Then: rn names the action, and keeps nothing.
@@ -1052,7 +1051,7 @@ class PutTest(RepoTest):
             with self.subTest(number=number):
                 # Given: a session with the call 0001.
                 self.session()
-                self.call("0001", "plan", result={}, part=plan())
+                self.call("0001", "plan", part=plan())
                 # When: the orchestrator puts back the part of a call not there.
                 # Then: rn says there is none, and what to give.
                 self.assertIn(
@@ -1073,47 +1072,34 @@ class PutTest(RepoTest):
             self.stopped(*self.put()),
         )
 
-    def test_a_call_turn_has_not_returned_stops(self):
-        # Given: a call on the plan with no result.
-        self.session()
-        self.call("0001", "plan", part=plan())
-        # When: the orchestrator puts back its part.
-        # Then: rn says turn has not returned it.
-        self.assertIn(
-            f"rn: turn has not returned the call 0001: {call_at('0001', 'result.json')} is not"
-            " there; wait for turn to return it, then run this again",
-            self.stopped(*self.put()),
-        )
-
     def test_a_part_not_there_stops(self):
         for work, name in (("plan", "steering.md"), ("learnings", "learnings.md")):
             with self.subTest(work=work):
-                # Given: a call on the work returned, its part removed.
+                # Given: a call on the work holding its decisions alone, its part not cut.
                 self.session()
-                self.call("0001", work, result={})
+                self.call("0001", work, decisions=("Scope: the cart",))
                 # When: the orchestrator puts back its part.
                 # Then: rn says it is not there and how to have it made again.
                 self.assertIn(
                     f"rn: {call_at('0001', name)}, the part the call 0001 makes, is not there;"
-                    f" cut it again with `rn.py ccs {work} ...`, have turn make it, then run this"
-                    " again",
+                    f" cut it with `rn.py ccs {work}`, write it, then run this again",
                     self.stopped(*self.put()),
                 )
 
 
 class CheckTest(RepoTest):
-    """A part of the steering turn makes, checked by `check` as `state --put` holds it, before
-    turn returns it."""
+    """A part the orchestrator writes, checked by `check` as `state --put` holds it, before it is
+    put back."""
 
     def test_a_part_in_form_holds_and_nothing_is_kept(self):
         for work, part in (("plan", plan()), ("learnings", "- L1: First.\n")):
             with self.subTest(work=work):
-                # Given: a call on the work turn has not returned, its part in its form.
+                # Given: a call on the work, its part in its form.
                 self.session()
                 self.call("0001", work, part=part)
                 self.kept()
                 before = self.head()
-                # When: turn's maker runs the check on it.
+                # When: the orchestrator runs the check on it.
                 held = self.ran("check", "0001")
                 # Then: rn says it holds, and keeps nothing.
                 self.assertEqual(
@@ -1121,13 +1107,12 @@ class CheckTest(RepoTest):
                 )
 
     def test_a_plan_out_of_form_stops_at_the_parts_own_line(self):
-        # Given: a call on the plan turn has not returned, whose part holds an action out of its
-        # form on its line 20.
+        # Given: a call on the plan whose part holds an action out of its form on its line 20.
         self.session()
         made = plan(tasks=task().replace("[ ] 3.", "[ ] three."))
         self.call("0001", "plan", part=made)
         self.kept()
-        # When: turn's maker runs the check on it.
+        # When: the orchestrator runs the check on it.
         out = self.stopped("check", "0001")
         # Then: rn names the part, the point at that line, and what to do.
         said = (
@@ -1144,13 +1129,13 @@ class CheckTest(RepoTest):
             (True, True, True),
         )
 
-    def test_a_plan_whose_task_turn_ticked_holds_as_put_keeps_the_ticks(self):
+    def test_a_plan_whose_task_is_written_ticked_holds_as_put_keeps_the_ticks(self):
         # Given: a call on the plan whose part has every action of T1 ticked, as put keeps each
         # action ticked as the steering had it, none.
         self.session()
         self.call("0001", "plan", part=plan(tasks=task(ticks="xxxx")))
         self.kept()
-        # When: turn's maker runs the check on it.
+        # When: the orchestrator runs the check on it.
         # Then: it holds.
         self.assertEqual(self.ran("check", "0001"), {"held": "0001"})
 
@@ -1161,7 +1146,7 @@ class CheckTest(RepoTest):
         self.session(steered(part=plan(tasks=task("T2"))))
         self.call("0001", "plan", part=plan(tasks=task("T1")))
         self.kept()
-        # When: turn's maker runs the check on it.
+        # When: the orchestrator runs the check on it.
         # Then: rn names the ID, as put does.
         self.assertIn(
             "rn: the part of the call 0001 holds T1, neither a task the steering holds nor"
@@ -1176,7 +1161,7 @@ class CheckTest(RepoTest):
         self.write(LEARNINGS, "- L1: Kept.\n- L2: Kept too.\n- L3: Kept last.\n")
         self.call("0001", "learnings", part="- L1: First.\n  Its words.\n- A slip.\n")
         self.kept()
-        # When: turn's maker runs the check on it.
+        # When: the orchestrator runs the check on it.
         out = self.stopped("check", "0001")
         # Then: rn names the part and the point at that line.
         self.assertIn(

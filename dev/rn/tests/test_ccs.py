@@ -1,5 +1,5 @@
-"""The tests of each work handed to turn: each decision kept in the work's call, the CCS written for
-it, and the checklists of a kind."""
+"""The tests of each work's call: each decision kept in it, the CCS written for it, handed to turn
+or cut for the orchestrator to write, and the checklists of a kind."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from helpers import (
 
 
 class DecideTest(RepoTest):
-    """Each answer kept as a decision of the work it settles, in that work's call to turn."""
+    """Each answer kept as a decision of the work it settles, in that work's call."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -94,6 +94,22 @@ class DecideTest(RepoTest):
             "constraints": [{"decision": "License: MIT"}, {"decision": "Form: a page"}],
         }
         self.assertEqual((out["call"], self.read_json(call_at("0002"))), ("0002", want))
+
+    def test_a_decision_of_a_part_after_it_is_cut_makes_a_new_call_carrying_the_decisions(self):
+        for work, number, new in (("plan", "0001", "0002"), ("learnings", "0003", "0004")):
+            with self.subTest(work=work):
+                # Given: a call on the plan or the learnings with a decision, its part cut for the
+                # orchestrator to write, with no result of turn's.
+                self.call(number, work, decisions=("License: Apache-2.0",), part="")
+                self.kept()
+                # When: the orchestrator keeps a decision of it.
+                out = self.decide(work)
+                # Then: a new call on it carries the decisions, the one of the same title replaced,
+                # as the orchestrator writes the part from its CCS as it stood when cut.
+                self.assertEqual(
+                    (out["call"], self.read_json(call_at(new))["constraints"]),
+                    (new, [{"decision": "License: MIT"}]),
+                )
 
     def test_a_title_holding_a_colon_and_a_blank_stops(self):
         # Given: a session.
@@ -182,7 +198,8 @@ class DecideTest(RepoTest):
 
 
 class CcsTest(RepoTest):
-    """Each work handed to turn as a CCS."""
+    """Each work's CCS written, handed to turn, or cut for the orchestrator to write where the work
+    is the plan or the learnings."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -224,7 +241,6 @@ class CcsTest(RepoTest):
     def test_ccs_tells_what_turn_makes_on_a_line_after_the_call(self):
         for work, words in (
             ("t1.2", "T1.2, make part 2 of T1, `src/t1-2.py` as a code work"),
-            ("plan", "the plan"),
             ("checklist-code", "your checklist for code"),
             ("issue-1", "the issue 1 to rn's makers"),
         ):
@@ -243,25 +259,32 @@ class CcsTest(RepoTest):
                     (0, True, [tell]),
                 )
 
-    def test_ccs_keeps_the_call_before_turn_is_handed_it(self):
-        # Given: a session.
-        # When: the orchestrator has the CCS of the plan written.
-        self.ccs("plan")
-        # Then: the CCS and the part are committed and pushed with a message naming the call, and
-        # nothing is left to keep, so a conversation cut while turn runs goes on from them.
-        kept = (
-            sorted(self.out("show", "--name-only", "--format=", "origin/work").split()),
-            self.out("log", "-1", "--format=%s", "origin/work").strip(),
-            self.head(),
-            self.out("status", "--porcelain"),
-        )
-        want = (
-            [call_at("0001"), call_at("0001", "steering.md")],
-            "Call 0001 on plan: handed to turn",
-            self.head("origin/work"),
-            "",
-        )
-        self.assertEqual(kept, want)
+    def test_ccs_keeps_the_call_before_its_maker_takes_it(self):
+        for work, files, said in (
+            ("t1.1", [call_at("0001")], "Call 0001 on t1.1: handed to turn"),
+            (
+                "plan",
+                [call_at("0001"), call_at("0001", "steering.md")],
+                "Call 0001 on plan: its part cut for the orchestrator to write",
+            ),
+        ):
+            with self.subTest(work=work):
+                # Given: a session.
+                self.session(steered(part=plan(tasks=task()), stage="design"))
+                # When: the orchestrator has the work's CCS written.
+                self.ccs(work)
+                # Then: the CCS, and the part where the work has one, are committed and pushed
+                # with a message naming the call, and nothing is left to keep, so a conversation
+                # cut while the work is made goes on from them.
+                kept = (
+                    sorted(self.out("show", "--name-only", "--format=", "origin/work").split()),
+                    self.out("log", "-1", "--format=%s", "origin/work").strip(),
+                    self.head(),
+                    self.out("status", "--porcelain"),
+                )
+                self.assertEqual(kept, (files, said, self.head("origin/work"), ""))
+                shutil.rmtree(FOLDER)
+                self.kept()
 
     def test_ccs_made_again_the_same_keeps_nothing_more(self):
         # Given: the call on t1.1 kept, turn not yet returned.
@@ -407,7 +430,7 @@ class CcsTest(RepoTest):
                 self.assertIn(
                     f"rn: the steering holds no action {work.upper()} of turn's, which the work"
                     f" {work} is; give the work of an action turn makes as t<n>.<action>, such as"
-                    " t1.2, or have turn make the plan again with it, keep it, then run this again",
+                    " t1.2, or write the plan again with it, keep it, then run this again",
                     self.stopped("ccs", work, "README.md", *options(NEEDED)),
                 )
 
@@ -453,16 +476,26 @@ class CcsTest(RepoTest):
         # Then: neither gives turn a command.
         self.assertEqual(tests, [None, None])
 
-    def test_the_call_of_a_part_rn_puts_back_tests_it_by_rns_check(self):
-        # Given: a session.
-        # When: the orchestrator has the CCS of each part rn puts back written, the plan's call
-        # 0001 and the learnings' 0002.
-        tests = [self.ccs(work)["test"] for work in ("plan", "learnings")]
-        # Then: each call gives turn the command that runs rn's check of its part, as `state
-        # --put` holds it, by rn.py where it is installed.
+    def test_ccs_of_a_part_gives_what_the_orchestrator_writes_it_from(self):
         script = os.path.join(self.plugin, "scripts", "rn.py")
-        want = [f"python3 {script} check 0001", f"python3 {script} check 0002"]
-        self.assertEqual(tests, want)
+        for work, number, name in (
+            ("plan", "0001", "steering.md"),
+            ("learnings", "0002", "learnings.md"),
+        ):
+            with self.subTest(work=work):
+                # Given: a session, the plan's call 0001 and the learnings' 0002.
+                # When: the orchestrator has the CCS of the plan or of the learnings written.
+                out = self.printed("ccs", work)
+                # Then: rn prints, on one line and nothing after it, the part to write, the CCS,
+                # the kind's checklists and the command that runs rn's check of the part, as
+                # `state --put` holds it, by rn.py where it is installed; no call to turn.
+                want = {
+                    "part": call_at(number, name),
+                    "ccs": call_at(number),
+                    "checklists": [self.own[work]],
+                    "check": f"python3 {script} check {number}",
+                }
+                self.assertEqual(out.splitlines(), [json.dumps(want)])
 
     def test_the_command_names_rn_where_its_path_holds_a_space(self):
         # Given: rn installed in a folder whose path holds a space.
@@ -472,7 +505,7 @@ class CcsTest(RepoTest):
         # When: the orchestrator has the CCS of the plan written.
         # Then: the command quotes the path, so the shell runs rn.py.
         script = os.path.join(spaced, "scripts", "rn.py")
-        self.assertEqual(self.ccs("plan")["test"], f"python3 '{script}' check 0001")
+        self.assertEqual(self.ccs("plan")["check"], f"python3 '{script}' check 0001")
 
     def test_each_work_rn_makes_itself_is_made_with_its_own_kind_receiver_use_and_had(self):
         root = os.path.realpath(self.plugin)
@@ -586,7 +619,7 @@ class CcsTest(RepoTest):
                 # path.
                 # Then: rn says it is a part rn cuts.
                 self.assertIn(
-                    f"rn: the work {work} is a part rn cuts for turn from the session's record;"
+                    f"rn: the work {work} is a part rn cuts from the session's record;"
                     " give no path of it",
                     self.stopped("ccs", work, "README.md", *options(NEEDED)),
                 )
@@ -639,6 +672,22 @@ class CcsTest(RepoTest):
         self.assertEqual(
             (out["ccs"], self.read_json(call_at("0003"))["constraints"][0]),
             (call_at("0003"), {"decision": "License: MIT"}),
+        )
+
+    def test_a_part_cut_is_written_again_in_a_new_call_carrying_its_decisions(self):
+        # Given: a call on the plan holding a decision, its part cut.
+        self.call("0001", "plan", decisions=("Scope: the cart",), part=plan() + "\n")
+        self.kept()
+        # When: the orchestrator has the plan's CCS written again, as it writes the plan again.
+        out = self.ccs("plan")
+        # Then: a new call is filled, carrying the decision, and the first is left as it was.
+        self.assertEqual(
+            (
+                out["ccs"],
+                self.read_json(call_at("0002"))["constraints"][0],
+                self.read(call_at("0001", "steering.md")),
+            ),
+            (call_at("0002"), {"decision": "Scope: the cart"}, plan() + "\n"),
         )
 
     def test_the_finished_work_is_every_file_the_branch_changed_outside_rn(self):

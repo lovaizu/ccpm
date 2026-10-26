@@ -1,6 +1,7 @@
-"""What a work's CCS holds beside its decisions, so turn makes the work from the session's record
-alone: the checklists of its kind, what its receiver has, the goal and the criteria it serves, the
-finished work's files, and for the plan what each task done served, decided and made."""
+"""What a work's CCS holds beside its decisions, so the work is made from the session's record
+alone, by turn or, for the plan and the learnings, by the orchestrator: the checklists of its kind,
+what its receiver has, the goal and the criteria it serves, the finished work's files, and for the
+plan what each task done served, decided and made."""
 
 from __future__ import annotations
 
@@ -189,12 +190,12 @@ def served(steered: steering.Steering, work: str) -> dict[str, str]:
 
 
 def test_of(steered: steering.Steering, work: str, number: str, root: str) -> str | None:
-    """The command that checks the work, for the call of the number that makes it: for a part rn
-    puts back, the plan or the learnings, rn.py's check of it as `state --put` holds it, run by rn
-    where it is installed at root, as no task's command is for those; the one the completion
-    criterion of the work's task names, where it is one, for the task's last action of turn's, which
-    makes its result, the actions of turn's before it making the check and seeing it fail; None for
-    any other work."""
+    """The command that checks the work, for the call of the number that makes it: for a part the
+    orchestrator writes, the plan or the learnings, rn.py's check of it as `state --put` holds it,
+    run by rn where it is installed at root, as no task's command is for those; the one the
+    completion criterion of the work's task names, where it is one, for the task's last action of
+    turn's, which makes its result, the actions of turn's before it making the check and seeing it
+    fail; None for any other work."""
     if work in session.PARTS:
         return f"python3 {shlex.quote(os.path.join(root, 'scripts', 'rn.py'))} check {number}"
     task = {t.id: t for t in steering.tasks_of(steered.plan)}.get(session.task_of(work))
@@ -231,8 +232,9 @@ def needed(value: Any, what: str, work: str) -> Any:
 
 
 def cut(work: str, steered: steering.Steering) -> str:
-    """The part a call on the plan or the learnings makes, as it is cut for turn: the plan from the
-    title through the tasks, the learnings none, as those kept are not made again."""
+    """The part a call on the plan or the learnings makes, as it is cut for the orchestrator to
+    write: the plan from the title through the tasks, the learnings none, as those kept are not
+    made again."""
     return {steering.PLAN: "\n".join(steered.plan) + "\n", steering.LEARNINGS: ""}[work]
 
 
@@ -247,13 +249,12 @@ def written(
 ) -> dict[str, list[dict[str, str]]]:
     """The work's CCS, in four parts, the shape turn takes: focal_entities, what the work is about,
     the work by its name, the stage it is made in, its kind, its paths, its receiver and what they
-    have with it; goal_orientation, what the work is for, its use and what it serves as text, as
-    turn makes the work from the CCS and the files it names alone; retrieved_artifacts, the kind's
-    checklists and rn's `usability.md` where the work is a checklist; and constraints, the bounds
-    it is made in: its decisions, the languages, English for an issue to rn's makers, and rn's
-    checklist for a fix, which turn's roles
-    are given to read, as each file a CCS names is, for a work made again. turn finds each entry by
-    its key, whichever part holds it."""
+    have with it; goal_orientation, what the work is for, its use and what it serves as text, as its
+    maker makes the work from the CCS and the files it names alone; retrieved_artifacts, the kind's
+    checklists and rn's `usability.md` where the work is a checklist; and constraints, the bounds it
+    is made in: its decisions, the languages, English for an issue to rn's makers, and rn's
+    checklist for a fix, which its maker is given to read, as each file a CCS names is, for a work
+    made again. turn finds each entry by its key, whichever part holds it."""
     usability = os.path.join(root, "checklists", "usability.md")
     # An issue is written in English, the language of rn's makers' repository, whatever the
     # language of the user's.
@@ -280,13 +281,10 @@ def written(
 
 def told(work: str, steered: steering.Steering) -> str:
     """The line telling the user what turn makes, and that it is used in their place before it
-    comes back, which they can stop."""
-    if work in OWN:
-        words = {
-            steering.PLAN: "the plan",
-            steering.LEARNINGS: "the learnings of the stretch just answered",
-            steering.DELIVERABLE: "the use of the finished work for each acceptance criterion",
-        }[work]
+    comes back, which they can stop: every work but the plan and the learnings, which the
+    orchestrator writes."""
+    if work == steering.DELIVERABLE:
+        words = "the use of the finished work for each acceptance criterion"
     elif session.CHECKLIST_WORK.fullmatch(work):
         words = f"your checklist for {work.partition('-')[2]}"
     elif session.ISSUE_WORK.fullmatch(work):

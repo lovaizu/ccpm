@@ -165,11 +165,11 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
 
 def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Keeps a decision of the work, `<title>: <what it says>`, in the constraints of its latest
-    call where turn has not returned it, else of a new call carrying that call's decisions, one of
-    the same title replaced where it stands; kept with the message and pushed. Gives the call's
-    number and the commit. Stops where a value is empty or wrong, the branch holds no session, the
-    steering differs from what the last keep left, or a CCS is no JSON object; and where git
-    fails."""
+    call where that call takes more, else of a new call carrying its decisions, one of the same
+    title replaced where it stands, as session.Call says; kept with the message and pushed. Gives
+    the call's number and the commit. Stops where a value is empty or wrong, the branch holds no
+    session, the steering differs from what the last keep left, or a CCS is no JSON object; and
+    where git fails."""
     work = session.worked(args.work)
     title = stop.given(args.title, "title")
     if ": " in title:
@@ -185,7 +185,7 @@ def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any
         session.made_by(steered, work)
     found = session.calls(folder)
     last = session.latest(found, work)
-    if last is not None and not last.result:
+    if last is not None and not last.closed:
         number, written = last.number, last.ccs
     else:
         number = session.next_number(found)
@@ -221,27 +221,28 @@ def run_checklists(args: argparse.Namespace, root: str, today: datetime.date) ->
 
 
 def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Writes the work's CCS into the session, keeps it, and gives the call that hands it to
-    turn:up, once every change is pushed, so the work is made from decisions a fresh conversation
-    also has, and a conversation cut while turn runs goes on from the call: in the work's latest
-    call where turn has not returned it, else in a new one carrying that call's decisions. What is
-    given makes the work; what is not, rn's own way of making it, or what the work's latest call
-    named, as ccs.made_as and ccs.kept_as say: for the plan, its part of the steering, cut into the
-    call's part, with what each task done served and made after what the receiver has; for the
-    learnings, an empty part, as those kept are not made again, the receiver having the records of
-    the stretch, shown afresh; for the finished work given none, every file it is. Stops, writing
-    nothing, where a name, a text or a path given is wrong, the branch holds no session, a change
-    is not kept or pushed, the steering differs from what the last keep left, the steering holds
-    no action of turn's of a task's work, the receiver, their use or what they have is neither
-    given nor kept, the kind has no checklist, or the finished work is not there."""
+    """Writes the work's CCS into the session and keeps it, once every change is pushed, so the work
+    is made from decisions a fresh conversation also has: in the work's latest call where that call
+    takes more, else in a new one carrying its decisions, as session.Call says. For the plan and the
+    learnings, which the orchestrator writes, the part is cut into the call, and rn gives the part,
+    the CCS, the kind's checklists and the command that checks the part; for every other work, the
+    call that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the
+    line telling the user what turn makes. What is given makes the work; what is not, rn's own way
+    of making it, or what the work's latest call named, as ccs.made_as and ccs.kept_as say: for the
+    plan, its part of the steering, with what each task done served and made after what the
+    receiver has; for the learnings, an empty part, as those kept are not made again, the receiver
+    having the records of the session; for the finished work given none, every file it is. Stops,
+    writing nothing, where a name, a text or a path given is wrong, the branch holds no session, a
+    change is not kept or pushed, the steering differs from what the last keep left, the steering
+    holds no action of turn's of a task's work, the receiver, their use or what they have is
+    neither given nor kept, the kind has no checklist, or the finished work is not there."""
     work = session.worked(args.work)
     paths = [stop.given(p, "path of the work") for p in args.path]
     receiver = None if args.receiver is None else stop.given(args.receiver, "receiver")
     use = None if args.use is None else stop.given(args.use, "use")
     if work in session.PARTS and paths:
         raise stop.Stop(
-            f"rn: the work {work} is a part rn cuts for turn from the session's record; give no"
-            " path of it"
+            f"rn: the work {work} is a part rn cuts from the session's record; give no path of it"
         )
     # The session is found first, which stops below the top of the repository, since each path
     # given is read from the top.
@@ -252,7 +253,7 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     serving = ccs.served(steered, work)
     found = session.calls(folder)
     last = session.latest(found, work)
-    number = last.number if last is not None and not last.result else session.next_number(found)
+    number = last.number if last is not None and not last.closed else session.next_number(found)
     made, kept = ccs.made_as(work, steered, folder, root), ccs.kept_as(last)
     receiver = ccs.needed(receiver or made.receiver or kept.receiver, "receiver", work)
     use = ccs.needed(use or made.use or kept.use, "use", work)
@@ -279,23 +280,24 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     )
     path = session.call_path(folder, number, session.CCS)
     repo.write_json(path, written)
+    test = ccs.test_of(steered, work, number, root)
+    if part:
+        session.keep(
+            folder, steered, f"Call {number} on {work}: its part cut for the orchestrator to write"
+        )
+        return {"part": part, "ccs": path, "checklists": checklists, "check": test}
     session.keep(folder, steered, f"Call {number} on {work}: handed to turn")
     # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
     # of work; and the command that checks the work under "test", null where there is none.
     result = session.call_path(folder, number, session.RESULT)
-    handed = {
-        "ccs": path,
-        "kind": ccs.ENTRIES,
-        "result": result,
-        "test": ccs.test_of(steered, work, number, root),
-    }
+    handed = {"ccs": path, "kind": ccs.ENTRIES, "result": result, "test": test}
     return f"{repo.dumped(handed)}\n{ccs.told(work, steered)}"
 
 
 def run_check(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Checks the part turn makes for the call of the number as `state --put` holds it, keeping
-    nothing, as session.held_part says; gives the number where it holds. Stops where it does not,
-    the branch holds no session, or the part cannot be taken."""
+    """Checks the part the orchestrator writes for the call of the number as `state --put` holds it,
+    keeping nothing, as session.held_part says; gives the number where it holds. Stops where it does
+    not, the branch holds no session, or the part cannot be taken."""
     session.held_part(session.current(), args.number)
     return {"held": args.number}
 

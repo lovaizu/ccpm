@@ -32,7 +32,7 @@ def stretch(folder: str) -> str:
     """The commit the stretch the learnings are made from starts after: the one that kept the
     result of the last call on the learnings turn returned, or, where none is, the one the branch
     left the default branch at."""
-    done = [c for c in session.calls(folder) if c.work == steering.LEARNINGS and c.result]
+    done = [c for c in session.calls(folder) if c.work == steering.LEARNINGS and c.closed]
     if not done:
         return repo.base()
     result = session.call_path(folder, done[-1].number, session.RESULT)

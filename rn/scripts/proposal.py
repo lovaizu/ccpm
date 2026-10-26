@@ -114,7 +114,7 @@ def shown_at(commit: str, signoff: str, folder: str) -> Shows:
     made = session.calls(folder, commit)
     for work in shown_works(made, signoff):
         last = session.latest(made, work)
-        if last is None or not last.result:
+        if last is None or not last.closed:
             number = "" if last is None else last.number
             raise stop.Stop(
                 f"rn: turn has not returned the work {work}:"
@@ -214,12 +214,12 @@ def ready(signoff: str, folder: str, steered: steering.Steering) -> None:
         if "G1" not in said or len(said) < 2 or steering.tasks_of(steered.plan):
             raise stop.Stop(
                 "rn: the plan sign-off needs the goal G1, a criterion and no task in the steering;"
-                " have turn make the plan through its tasks, tick each action done with"
+                " write the plan and carry out its tasks, tick each action done with"
                 " `rn.py state --done`, then run this again"
             )
     if signoff == steering.DELIVERABLE:  # pragma: no mutate
         last = session.latest(session.calls(folder), steering.DELIVERABLE)
-        if last is None or not last.result:
+        if last is None or not last.closed:
             raise stop.Stop(
                 "rn: turn has not returned the finished work; have turn:up make it with the call"
                 " `rn.py ccs deliverable ...` prints, keep it, then run this again"

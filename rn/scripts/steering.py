@@ -2,7 +2,7 @@
 plan checklist's F-1 under the front matter and above Next and Open, which rn's scripts write, read
 and held at every keep, as rn's scripts read their data from it and the user reads the same file at
 each sign-off; written back in that form's layout; and changed only as a move changes it, each
-action done ticked, each task done taken out and each part turn made put back."""
+action done ticked, each task done taken out and each part the orchestrator wrote put back."""
 
 from __future__ import annotations
 
@@ -491,8 +491,8 @@ def held_form(text: str) -> None:
     if point:
         raise stop.Stop(
             f"rn: the steering would be out of its form: {point};"
-            " nothing is kept: give what this move writes again so it holds, or have turn make the"
-            " part it puts back again"
+            " nothing is kept: give what this move writes again so it holds, or write the part it"
+            " puts back again"
         )
 
 
@@ -568,7 +568,7 @@ def pruned(plan: list[str], ids: set[str]) -> list[str]:
 
 
 def put_plan(plan: list[str], part: list[str]) -> list[str]:
-    """The part turn made, as the steering's plan: each action ticked as it was in the plan before,
+    """The part written, as the steering's plan: each action ticked as it was in the plan before,
     by its task's ID and its number, the rest not, as the ticks are rn's to write."""
     was = {
         (task.id, action.number)

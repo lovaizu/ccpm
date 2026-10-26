@@ -12,13 +12,13 @@ from unittest import mock
 import helpers
 from helpers import (
     BRANCH,
+    CALLS,
     CRITERIA,
     HOW,
     NEXT,
     PR,
     REPOSITORY,
     STEERING,
-    CALLS,
     RepoTest,
     call_at,
     plan,
@@ -181,7 +181,7 @@ class ProposalTest(ShownTest):
                 # Then: rn says what the plan sign-off needs.
                 self.assertIn(
                     "rn: the plan sign-off needs the goal G1, a criterion and no task in the"
-                    " steering; have turn make the plan through its tasks, tick each action done"
+                    " steering; write the plan and carry out its tasks, tick each action done"
                     " with `rn.py state --done`, then run this again",
                     self.stopped("proposal", "plan"),
                 )
