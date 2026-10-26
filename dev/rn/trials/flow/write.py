@@ -5,8 +5,8 @@ it once a run returns, by the move trials' stand.py, which the trial copies besi
 
     python3 write.py '<call>'      the work, the files the CCS gives, and each item to give its
                                    Good, by its checklist's file name, ID and title
-    python3 write.py '<call>' -    the made on standard input, `{"goods": ..., "lessons": [...]}`
-                                   as stand.py takes it, its files written by the agent already
+    python3 write.py '<call>' -    the made on standard input, `{"goods": ...}` as stand.py
+                                   takes it, its files written by the agent already
 
 Prints JSON and gives 0, or prints what was wrong and gives 1."""
 
@@ -63,7 +63,7 @@ def main(argv: list[str]) -> int:
             print(json.dumps(shown(run), ensure_ascii=False))
             return 0
         made = json.loads(sys.stdin.read())
-        reply = stand.returned(run, {k: made[k] for k in ("goods", "lessons") if k in made})
+        reply = stand.returned(run, {k: made[k] for k in ("goods",) if k in made})
     except call.Stop as stop:
         print(stop)
         return 1

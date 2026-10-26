@@ -12,11 +12,11 @@ call and reads the CCS and the checklists' items as turn does:
     python3 stand.py '<call>' '<made>'  the trial's, making a case's state: the made given as JSON
 
 A made is `{"part": <the part the call makes, for plan and learnings>, "files": {<path>: <text>},
-"goods": {<checklist's file name>: {<item>: {"good": ..., "at": ...}}}, "lessons": [...]}`, an item
-left out of goods having no Good; or `{"questions": [...]}`. `at` is "whole", or a list of the
-lines' marks, each the words a line holds, or `<from>..<to>` for the lines from one holding the
-first to one holding the second, to the end where it is empty; `in` names the file, the work's first
-by default.
+"goods": {<checklist's file name>: {<item>: {"good": ..., "at": ...}}}}`, an item left out of
+goods having no Good; or `{"questions": [...]}`. `at` is "whole", or a list of the lines' marks,
+each the words a line holds, or `<from>..<to>` for the lines from one holding the first to one
+holding the second, to the end where it is empty; `in` names the file, the work's first by
+default.
 
 Prints `{"line": <the line for the main conversation>, "reply": <the reply>}` and gives 0, or
 prints what was wrong and gives 1."""
@@ -32,8 +32,6 @@ import call
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPLIES = os.path.join(os.path.dirname(HERE), "stand", "replies.json")
-# What turn's learner says it checked of the run, as its result gives it.
-CHECKED = "Read the record of every agent of the run, each move against its role's steps."
 USAGE = "usage: stand.py '<call>' ['<made>']"
 
 
@@ -81,13 +79,7 @@ def returned(run: dict[str, Any], made: dict[str, Any]) -> dict[str, str]:
             items.append(dict(item, good=good["good"], lines=lines))
     result = run["call"]["result"]
     with open(result, "w", encoding="utf-8") as f:
-        kept = {
-            "work": work,
-            "items": items,
-            "lessons": made.get("lessons", []),
-            "checked": CHECKED,
-        }
-        json.dump(kept, f, ensure_ascii=False, indent=1)
+        json.dump({"work": work, "items": items}, f, ensure_ascii=False, indent=1)
         f.write("\n")
     return {"returned": result}
 

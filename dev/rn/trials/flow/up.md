@@ -23,10 +23,9 @@ rounds, a first user or questions.
 4. Give the made on the standard input of `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/write.py" '<the
    call>' - <<'EOF'`, then the made, then `EOF`. The made is
    `{"goods": {"<checklist>": {"<item>": {"good": "<how the work answers it, one sentence>", "at":
-   ["<words a line holds>", ...]}}}, "lessons": []}`, one entry for each of `items`; `at` names
-   each line that gives the Good by words it holds, `<from>..<to>` for the lines from one to
-   another, or is `"whole"`; add `"in": "<path>"` where the lines are in a file other than the
-   work's first. Where it prints no JSON, fix what it says and give the made again.
+   ["<words a line holds>", ...]}}}}`, one entry for each of `items`; `at` names each line that
+   gives the Good by words it holds, `<from>..<to>` for the lines from one to another, or is
+   `"whole"`; add `"in": "<path>"` where the lines are in a file other than the work's first. Where it prints no JSON, fix what it says and give the made again.
 5. Load SendMessage with ToolSearch (`select:SendMessage`), and send its `line` as it is to `main`.
 6. Reply with its `reply` as one line of JSON, alone, and end.
 7. When a message comes to you after your reply, reply with your last reply again, and end.
