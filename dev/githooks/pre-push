@@ -7,12 +7,17 @@
 set -e
 
 if ! command -v uv >/dev/null 2>&1; then
-  echo "pre-push: uv is not on PATH; install it as dev/README.md says" >&2
+  echo "pre-push: uv is not on PATH; install it" \
+    "(https://docs.astral.sh/uv/getting-started/installation/), with which pre-push sets up the" \
+    "check tools by \`uv sync --locked\`" >&2
   exit 1
 fi
 zero=0000000000000000000000000000000000000000
 while read -r _ local _ remote; do
   [ "$local" = "$zero" ] && continue
+  # Counted from the commit the branch is at on the remote, checked when it was pushed, or from
+  # where a branch new there left main; CI counts from the commit before where its `tests` passed,
+  # which only CI knows, else from where the branch left main too.
   if [ "$remote" = "$zero" ]; then
     base=$(git merge-base "$local" origin/main)
   else
