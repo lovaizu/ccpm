@@ -66,10 +66,13 @@ Principle 1 to 8, and its own, named below rn's Principle 1 and 2:
 - At every move the orchestrator gives rn's scripts where the session stands, from the facts that
   move brought, each checked, such as the user's answer, turn's result and the output of what was
   run: the step it takes next and what is open, replacing what the steering said; the stage and the
-  sign-off waiting move with the sign-offs, and at a stage's end only as rn's scripts allow it.
+  sign-off waiting move with the sign-offs, and at a stage's end only as rn's scripts allow it. rn's
+  scripts give back the line the orchestrator tells the user: what is done and what comes next, and
+  before turn is called, what turn makes.
 
   A fact taken unchecked carries a slip into every move after it, and a record added to rather than
-  replaced swells as the conversation would.
+  replaced swells as the conversation would; a line made from what was kept tells the user what the
+  steering holds, not what the orchestrator recalls.
 - The goal, the criteria and the tasks are written by the orchestrator with rn's plan checklist
   open, and checked by it against the same checklist: rn's scripts cut the part, the goal, the
   criteria and the tasks, into a file of its own with the CCS it is written from, the orchestrator
