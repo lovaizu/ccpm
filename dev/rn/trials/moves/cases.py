@@ -378,6 +378,21 @@ PLAN_CHECKLIST = {
     "files": {PLAN_ADDITION: PLAN_ADDED},
     "goods": {"checklist.md": {i: {"good": g, "at": "whole"} for i, g in CHECKLIST_GOODS.items()}},
 }
+# The user's note checklist with an item added while the session runs, whose choice, where a
+# contributor asks when stuck, no answer of the user's made.
+NOTE_CHECKLIST = ".rn/checklists/note.md"
+NOTE_ASKING = (
+    SEED[NOTE_CHECKLIST]
+    + """
+### B-3: Where to ask, told
+
+Scope: whole
+
+Can the contributor who opens the note tell where to ask when they are stuck?
+
+Why: a contributor who does not know where to ask gives up at the first question.
+"""
+)
 
 
 def number(ccs: str) -> str:
@@ -577,10 +592,8 @@ def plan_approved(p: Place) -> None:
     answered(p, "approved", [])
 
 
-def t2_worded(p: Place) -> None:
-    """The documents heard, the plan written again with T2, and T2's action 1 done, the greeting's
-    words kept as a decision of T2 and then replaced, as the user answered them again, Next T2's
-    action 2."""
+def t2_planned(p: Place) -> None:
+    """The documents heard and the plan written again with T2, Next T2's action 1."""
     plan_approved(p)
     decide(
         p,
@@ -591,6 +604,22 @@ def t2_worded(p: Place) -> None:
     )
     put = written(p, PLAN_CCS, PLAN_DESIGN)
     state(p, NEXT_T2, "The plan written again: T2 writes docs/greeting.md", "--put", put)
+
+
+def t2_unasked(p: Place) -> None:
+    """As t2_planned, with an item added to the user's note checklist that no decision answers,
+    and the greeting's words kept as a decision of T2 while its action 1 is still taken, Next T2's
+    action 1."""
+    t2_planned(p)
+    p.write(NOTE_CHECKLIST, NOTE_ASKING)
+    state(p, NEXT_T2, "The user's note checklist asks where a contributor asks when stuck")
+    decide(p, "t2.2", "Words", LINE, "T2.1: the user chose the greeting's words")
+
+
+def t2_worded(p: Place) -> None:
+    """As t2_planned, and T2's action 1 done, the greeting's words kept as a decision of T2 and
+    then replaced, as the user answered them again, Next T2's action 2."""
+    t2_planned(p)
     decide(p, "t2.2", "Words", FIRST_LINE, "T2.1: the user chose the greeting's words")
     decide(
         p,
@@ -1200,6 +1229,21 @@ CASES = {
             ),
         ],
         {},
+    ),
+    "checklist-point": Case(
+        "a work's hearing finding a point its checklist raises that no answer made, where a"
+        " contributor asks when stuck: asked before turn is called",
+        "up 1, 4 (an action of the orchestrator's), 2 (the checklists read, an item's choice"
+        " asked)",
+        t2_unasked,
+        [
+            front("design", "none"),
+            next_has("Step 4 of /rn:up on T2: action 1"),
+            decisions("t2.2", 1),
+            file_has(NOTE_CHECKLIST, "### B-3:"),
+        ],
+        [("/rn:up", [STAYS, returned("t2.2", 0), ONE_POINT, JAPANESE])],
+        {"t2.2": [NOTE_GREETING]},
     ),
     "design-signoff": Case(
         "a document's last action, made by turn in one call, then the design sign-off",

@@ -147,6 +147,14 @@ flowchart TB
   turn's maker passes that command each time it changes the work, so the result is made to the
   check, while the actions before it make the check and see it fail; a part checked as it is written
   is kept in its form at the first put.
+- The hearing of a work reads the checklists it will be made with, rn's for its kind and the
+  user's addition, and pictures how the work meets each item from what is decided; an item it
+  meets only by a choice no answer of the user's made is a point to decide, settled before turn is
+  called.
+
+  A choice an item needs and no one settled is met by turn while it makes the work, asked back
+  mid-run or guessed, and one settled before the work is not met as rework after it
+  ([Hearing until nothing is left to decide](../architecture.md#hearing-until-nothing-is-left-to-decide)).
 - Each point the user decides is kept as a decision of the work it settles, in the CCS of that
   work's next call, before the move after it; a work made again is a new call, its decisions
   carried over and rewritten where an answer changed them.

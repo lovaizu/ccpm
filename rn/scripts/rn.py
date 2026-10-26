@@ -300,14 +300,19 @@ def run_check(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
 
 def run_decisions(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Each decision of the work, as its latest call keeps it, with that call's number; none, and
-    no call, where it has none. Stops where the work is none rn makes, or the branch holds no
-    session."""
+    no call, where it has none; and the checklists of its kind, as its CCS names them, so the
+    hearing reads each item before the work is made. Stops where the work is none rn makes, the
+    branch holds no session, the steering differs from what the last keep left, the steering holds
+    no action of turn's of a task's work, or the kind has no checklist."""
     work = session.worked(args.work)
-    last = session.latest(session.calls(session.current()), work)
+    folder = session.current()
+    steered = session.kept_steering(folder)
+    last = session.latest(session.calls(folder), work)
     return {
         "work": work,
         "call": None if last is None else last.number,
         "decisions": [] if last is None else session.decisions_of(last),
+        "checklists": ccs.checklists(ccs.made_as(work, steered, folder, root).kind or "", root),
     }
 
 

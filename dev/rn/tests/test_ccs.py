@@ -823,7 +823,7 @@ class CcsTest(RepoTest):
 
 
 class DecisionsTest(RepoTest):
-    """Each decision of a work, as its latest call keeps it."""
+    """Each decision of a work, as its latest call keeps it, and the checklists of its kind."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -835,18 +835,70 @@ class DecisionsTest(RepoTest):
         self.call("0002", "t1.1", decisions=("A: C", "D: E"))
         self.kept()
         # When: the orchestrator asks for t1.1's decisions.
-        # Then: rn gives those of the latest call, with its number.
+        # Then: rn gives those of the latest call, with its number, and the checklists of the
+        # kind its action names.
         self.assertEqual(
             self.ran("decisions", "t1.1"),
-            {"work": "t1.1", "call": "0002", "decisions": ["A: C", "D: E"]},
+            {
+                "work": "t1.1",
+                "call": "0002",
+                "decisions": ["A: C", "D: E"],
+                "checklists": [self.checklist],
+            },
         )
 
     def test_a_work_never_called_has_no_decisions(self):
         # Given: a session with no call on t1.2.
         # When: the orchestrator asks for its decisions.
-        # Then: rn gives no call and no decision.
+        # Then: rn gives no call and no decision, and the checklists of its kind.
         self.assertEqual(
-            self.ran("decisions", "t1.2"), {"work": "t1.2", "call": None, "decisions": []}
+            self.ran("decisions", "t1.2"),
+            {"work": "t1.2", "call": None, "decisions": [], "checklists": [self.checklist]},
+        )
+
+    def test_the_checklists_of_a_work_rn_makes_its_own_way_are_those_of_its_kind(self):
+        for work, kind in (
+            ("plan", "plan"),
+            ("learnings", "learnings"),
+            ("deliverable", "deliverable"),
+            ("issue-1", "issue"),
+            ("checklist-api", "checklist"),
+        ):
+            with self.subTest(work=work):
+                # Given: rn's checklist of each kind of the works rn makes its own way.
+                # When: the orchestrator asks for the decisions of one of those works.
+                # Then: rn gives the checklist of its kind, as its CCS would name it.
+                self.assertEqual(self.ran("decisions", work)["checklists"], [self.own[kind]])
+
+    def test_the_users_addition_comes_after_rns_own_checklist(self):
+        # Given: the user's addition for the kind of t1.1.
+        self.write(f"{RECORD}/checklists/{KIND}.md", "# Ours\n")
+        self.kept()
+        # When: the orchestrator asks for t1.1's decisions.
+        # Then: rn gives its own checklist, then the user's.
+        self.assertEqual(
+            self.ran("decisions", "t1.1")["checklists"],
+            [self.checklist, f"{RECORD}/checklists/{KIND}.md"],
+        )
+
+    def test_the_decisions_of_a_work_whose_kind_has_no_checklist_stop(self):
+        # Given: a task whose first action makes a work of a kind with no checklist.
+        made = task().replace(f"as a {KIND} work", "as an api work", 1)
+        self.session(steered(part=plan(tasks=made), stage="design"))
+        # When: the orchestrator asks for that work's decisions.
+        # Then: rn says there is no checklist for the kind and how to make one.
+        self.assertIn(
+            "rn: there is no checklist for the kind api, neither rn's nor .rn/checklists/api.md;"
+            " make .rn/checklists/api.md first",
+            self.stopped("decisions", "t1.1"),
+        )
+
+    def test_the_decisions_of_a_tasks_work_the_steering_holds_no_action_of_stop(self):
+        # Given: a session whose task T1 has four actions.
+        # When: the orchestrator asks for the decisions of a fifth.
+        # Then: rn says the steering holds no such action of turn's.
+        self.assertIn(
+            "rn: the steering holds no action T1.5 of turn's", self.stopped("decisions", "t1.5")
         )
 
     def test_the_decisions_of_a_work_rn_does_not_make_stop(self):

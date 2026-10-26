@@ -104,13 +104,16 @@ conversation.
 2. Hear the points of a work until none is left to decide, so the work is made from what the user
    decided rather than from a guess.
    - In: the work, and the step that comes after.
-   - Find the points from the user's words; the steering; the work's decisions, which `rn.py
-     decisions <work>` prints as `{"work": "<work>", "call": <its latest call, or null>,
-     "decisions": ["<title>: <what it says>", ...]}`, each a point settled; the repository's README
+   - Find the points from the user's words; the steering; the work's decisions and checklists,
+     which `rn.py decisions <work>` prints as `{"work": "<work>", "call": <its latest call, or
+     null>, "decisions": ["<title>: <what it says>", ...], "checklists": ["<path>", ...]}`, each
+     decision a point settled, each checklist one the work is made with; the repository's README
      and the documentation it points to; and each file the request's words name or touch, found
-     with `git ls-files` or `git grep -l <word>`; each read whole. What a task's action of yours
-     says to find out, find out by reading. A word of the user's read wider or narrower than they
-     said it is a point of its own.
+     with `git ls-files` or `git grep -l <word>`; each read whole. Where it stops for a kind with
+     no checklist, make the checklist first, as step 3 says, then run it again. What a task's
+     action of yours says to find out, find out by reading. A word of the user's read wider or
+     narrower than they said it is a point of its own; so is each item of the checklists that the
+     work, pictured from what is decided, meets only by a choice no answer of the user's made.
    - Ask the first point not settled, the only point in your reply, in the form "Points to decide"
      of `messages.md`. End your reply after its question.
    - When the answer settles the point, keep it with `rn.py decide <work> --title <t> --says <s>
