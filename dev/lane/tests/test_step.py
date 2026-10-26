@@ -108,6 +108,20 @@ class TestSpan(unittest.TestCase):
         # Then: none is found
         self.assertIsNone(step.span(self.lines(text), 2))
 
+    def test_a_line_opening_with_a_mark_in_a_code_fence_does_not_end_the_steps(self):
+        # Given: Steps holding a code fence with a comment line opening with `#`, a step after it
+        text = "## Steps\n\n1. One\n\n```sh\n# a comment\n```\n\n2. Two\n"
+        # When: the step after the fence is looked for
+        # Then: it is found on its line
+        self.assertEqual(step.span(self.lines(text), 2), (8, 9))
+
+    def test_a_steps_heading_in_a_code_fence_is_not_the_steps(self):
+        # Given: a code fence showing a Steps heading and a step, before the Steps themselves
+        text = "```\n## Steps\n1. Shown\n```\n\n## Steps\n\n1. One\n"
+        # When: step 1 is looked for
+        # Then: it is the one in the Steps, not the one in the fence
+        self.assertEqual(step.span(self.lines(text), 1), (7, 8))
+
     def test_a_step_no_line_numbers_is_not_found(self):
         # Given: the subagent's four steps
         # When: step 5 is looked for, and step 13, whose number begins no line though 1 and 3 do

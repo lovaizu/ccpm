@@ -87,8 +87,8 @@ def orchestrator(roles: list[str], result: str) -> str | None:
     whose prompt, the call, names the result; the latest where several do; None where none is."""
     found = [
         path
-        for folder in sorted({os.path.dirname(r) for r in roles})
-        for path in glob.glob(os.path.join(glob.escape(folder), "agent-*.jsonl"))
+        for conversation in sorted({os.path.dirname(os.path.dirname(r)) + ".jsonl" for r in roles})
+        for path in glob.glob(record.subagent(glob.escape(conversation), "*"))
         if record.agent_type(path) == "turn:up" and names(path, result)
     ]
     return max(found, key=os.path.getmtime) if found else None

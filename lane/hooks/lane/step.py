@@ -32,12 +32,15 @@ def agent_file(root: str, name: str) -> str | None:
 
 
 def span(lines: list[str], number: int) -> tuple[int, int] | None:
-    """Where the step of the number is among the file's lines, from its numbered line in the Steps
-    to the line after the last its text goes on in; None where the Steps have no such step."""
-    start = lines.index("## Steps") if "## Steps" in lines else len(lines)
-    for at in range(start + 1, len(lines)):
-        if lines[at].startswith("#"):
-            break
+    """Where the step of the number is among the file's lines, from its numbered line in the Steps,
+    the lines under the `## Steps` heading up to the next heading, as template reads headings, to
+    the line after the last its text goes on in; None where the Steps have no such step."""
+    found = template.headings(lines, template.body(lines))
+    # A heading's line in the file counts from 1, so it is the index of the line after it, and the
+    # next heading's line, the last the steps are looked for in, is no step's.
+    start = next((at for at, level, said in found if (level, said) == (2, "Steps")), len(lines))
+    end = next((at for at, _, _ in found if at > start), len(lines))
+    for at in range(start, end):
         if lines[at].startswith(f"{number}. "):
             goes_on = itertools.takewhile(GOES_ON.match, lines[at + 1 :])
             return at, at + 1 + len(list(goes_on))

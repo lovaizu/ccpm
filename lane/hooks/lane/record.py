@@ -42,6 +42,8 @@ REPLY, SAID = "", "text"
 # two; a name longer than this is cut to it and a hash of the path put after, which is not made
 # again here, so that folder is found by what goes before the hash.
 NAME_LENGTH = 200
+# The name of the record of a subagent, by its ID, as Claude Code names it.
+SUBAGENT = "agent-{}.jsonl"
 
 
 class Done(NamedTuple):
@@ -89,7 +91,13 @@ def subagent(session: str, agent: str) -> str:
     """Where the record of the subagent of the ID is kept, `<session>/subagents/agent-<id>.jsonl`
     beside the record of its conversation, `<session>.jsonl`; a pattern of glob where either is
     one."""
-    return os.path.join(os.path.splitext(session)[0], "subagents", f"agent-{agent}.jsonl")
+    return os.path.join(os.path.splitext(session)[0], "subagents", SUBAGENT.format(agent))
+
+
+def agent_id(file: str) -> str:
+    """The ID of the subagent whose record is kept at the path, as `subagent` names it."""
+    before, _, after = SUBAGENT.partition("{}")
+    return os.path.basename(file)[len(before) : -len(after)]
 
 
 def agent_type(file: str) -> str:

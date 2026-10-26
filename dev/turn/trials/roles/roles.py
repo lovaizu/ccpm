@@ -63,7 +63,7 @@ as it is, and wait for its reply. Then reply with its reply as it is.
         print("form:", "filled" if not said else said)
     else:
         print("reply: none written")
-    return os.path.basename(found[0])[len("agent-") : -len(".jsonl")] if found else ""
+    return shared.record.agent_id(found[0]) if found else ""
 
 
 with shared.removed(trial.top):

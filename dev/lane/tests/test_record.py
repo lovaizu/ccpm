@@ -112,6 +112,12 @@ class TestConversation(KeptTest):
             pattern, os.path.join(self.projects, "*", "*", "subagents", "agent-*.jsonl")
         )
 
+    def test_a_subagents_id_is_read_from_where_its_record_is_kept(self):
+        # Given: where the record of the subagent a1b2 is kept
+        # When: the subagent's ID is read from it
+        # Then: it is a1b2
+        self.assertEqual(record.agent_id("/p/s1/subagents/agent-a1b2.jsonl"), "a1b2")
+
 
 class TestAgentType(KeptTest):
     def test_the_agent_type_is_the_one_its_meta_file_names(self):
