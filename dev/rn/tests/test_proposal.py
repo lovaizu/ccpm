@@ -279,24 +279,24 @@ class DesignTest(ShownTest):
 
     def test_the_design_made_again_shows_each_choice_changed_and_the_latest_calls_links(self):
         # Given: the design's proposal shown, feedback, and t1.1 made again by a new call naming
-        # one document, with the orchestrator's choice and its maker's each given another why, and
-        # one of each added.
+        # one document, with the orchestrator's choice given another why, its maker's kept as it
+        # was, and one of each added.
         self.proposal("design")
         self.keep(steered(stage="design"), "feedback")
-        turns = [dict(TURNS, why="the user signs in first"), {"chosen": "Plain", "why": "no look"}]
+        turns = [TURNS, {"chosen": "Plain", "why": "no look"}]
         self.call("0005", "t1.1", "design", (), ("docs/ux.md",), {"chosen": turns}, kind="ux")
         self.chose("0005", "Has docs/brand.md: its colours", "Has .: the tests")
         self.kept()
         # When: the orchestrator asks for the design's proposal again.
-        # Then: t1.1 shows its link now and each choice, those changed or added marked so, none
-        # removed; the checklist its link and nothing changed.
+        # Then: t1.1 shows its link now and each choice, those changed or added marked so and the
+        # one kept not, none removed; the checklist its link and nothing changed.
         self.assertEqual(
             self.proposal("design").splitlines()[2:-1],
             [
                 f"ux: {REPOSITORY}/blob/work/docs/ux.md",
                 "- Changed: Has docs/brand.md: its colours",
                 "- Changed: Has .: the tests",
-                "- Changed: The flow opens on sign-in: the user signs in first",
+                "- The flow opens on sign-in: no decision names the first page",
                 "- Changed: Plain: no look",
                 f"checklist: {REPOSITORY}/blob/work/.rn/checklists/code.md",
             ],
