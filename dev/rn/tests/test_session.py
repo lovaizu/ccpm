@@ -1056,8 +1056,8 @@ class PutTest(RepoTest):
                 # When: the orchestrator puts back the part of a call not there.
                 # Then: rn says there is none, and what to give.
                 self.assertIn(
-                    f"rn: {TURN} holds no call {number}; give --put the number of a call on plan"
-                    " or learnings, such as 0001",
+                    f"rn: {TURN} holds no call {number}; give the number of a call on plan or"
+                    " learnings, such as 0001",
                     self.stopped(*self.put(number)),
                 )
 
@@ -1068,8 +1068,8 @@ class PutTest(RepoTest):
         # When: the orchestrator puts back its part.
         # Then: rn says it makes no part rn puts back.
         self.assertIn(
-            "rn: the call 0001 is on t1.1, which makes no part rn puts back; give --put a call on"
-            " plan or learnings",
+            "rn: the call 0001 is on t1.1, which makes no part rn puts back; give a call on plan or"
+            " learnings",
             self.stopped(*self.put()),
         )
 
@@ -1099,6 +1099,93 @@ class PutTest(RepoTest):
                     " again",
                     self.stopped(*self.put()),
                 )
+
+
+class CheckTest(RepoTest):
+    """A part of the steering turn makes, checked by `check` as `state --put` holds it, before
+    turn returns it."""
+
+    def test_a_part_in_form_holds_and_nothing_is_kept(self):
+        for work, part in (("plan", plan()), ("learnings", "- L1: First.\n")):
+            with self.subTest(work=work):
+                # Given: a call on the work turn has not returned, its part in its form.
+                self.session()
+                self.call("0001", work, part=part)
+                self.kept()
+                before = self.head()
+                # When: turn's maker runs the check on it.
+                held = self.ran("check", "0001")
+                # Then: rn says it holds, and keeps nothing.
+                self.assertEqual(
+                    (held, self.head(), self.read(STEERING)), ({"held": "0001"}, before, STEERED)
+                )
+
+    def test_a_plan_out_of_form_stops_at_the_parts_own_line(self):
+        # Given: a call on the plan turn has not returned, whose part holds an action out of its
+        # form on its line 20.
+        self.session()
+        made = plan(tasks=task().replace("[ ] 3.", "[ ] three."))
+        self.call("0001", "plan", part=made)
+        self.kept()
+        # When: turn's maker runs the check on it.
+        out = self.stopped("check", "0001")
+        # Then: rn names the part, the point at that line, and what to do.
+        said = (
+            f"rn: {call_at('0001', 'steering.md')} would be out of its form: line 20: expected"
+            " action 3 of T1 in one of the forms of rn's plan checklist's F-1"
+        )
+        found = "found `  - [ ] three. Make part 3 of T1"
+        self.assertEqual(
+            (
+                said in out,
+                found in out,
+                out.rstrip().endswith("change it so it holds, then run this again"),
+            ),
+            (True, True, True),
+        )
+
+    def test_a_plan_whose_task_turn_ticked_holds_as_put_keeps_the_ticks(self):
+        # Given: a call on the plan whose part has every action of T1 ticked, as put keeps each
+        # action ticked as the steering had it, none.
+        self.session()
+        self.call("0001", "plan", part=plan(tasks=task(ticks="xxxx")))
+        self.kept()
+        # When: turn's maker runs the check on it.
+        # Then: it holds.
+        self.assertEqual(self.ran("check", "0001"), {"held": "0001"})
+
+    def test_a_plan_reusing_the_id_of_a_task_done_stops(self):
+        # Given: a steering that held T1 and T2, and now holds T2 alone, and a call on the plan
+        # whose part holds T1.
+        self.session(steered(part=plan(tasks=f"{task('T1')}\n\n{task('T2')}")))
+        self.session(steered(part=plan(tasks=task("T2"))))
+        self.call("0001", "plan", part=plan(tasks=task("T1")))
+        self.kept()
+        # When: turn's maker runs the check on it.
+        # Then: rn names the ID, as put does.
+        self.assertIn(
+            "rn: the part of the call 0001 holds T1, neither a task the steering holds nor"
+            " numbered above every task it has held",
+            self.stopped("check", "0001"),
+        )
+
+    def test_learnings_out_of_form_stop_at_the_parts_own_line(self):
+        # Given: a learning kept, and a call on the learnings whose part holds one, then a line
+        # with no ID on its line 2.
+        self.session()
+        self.write(LEARNINGS, "- L1: Kept.\n")
+        self.call("0001", "learnings", part="- L1: First.\n- A slip.\n")
+        self.kept()
+        # When: turn's maker runs the check on it.
+        out = self.stopped("check", "0001")
+        # Then: rn names the part and the point at that line.
+        self.assertIn(
+            f"rn: {call_at('0001', 'learnings.md')} would be out of its form: line 2: expected a"
+            " learning as `- L<n>: <what happened, with the words it rests on, and where it would"
+            " make later work better>`, found `- A slip.`; change it so it holds, then run this"
+            " again",
+            out,
+        )
 
 
 if __name__ == "__main__":

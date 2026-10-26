@@ -137,10 +137,13 @@ flowchart TB
   reaches the next maker as it was accepted, and one call for each output has each read by its
   first user before anything is made on it.
 - The call that makes a task's result gives turn the one command that runs the check its
-  completion criterion names, where that check is one command, and the calls before it give none.
+  completion criterion names, where that check is one command, and the calls before it give none;
+  the call that makes a part rn's scripts put back, the plan or the learnings, gives the command of
+  rn's scripts that runs on it the checks they hold it to when they keep it.
 
   turn's maker passes that command each time it changes the work, so the result is made to the
-  check, while the actions before it make the check and see it fail.
+  check, while the actions before it make the check and see it fail; a part held to its form only
+  when it is kept comes back out of it, and is made again in a call of its own.
 - Each point the user decides is kept as a decision of the work it settles, in the CCS of that
   work's next call, before the move after it; a work made again is a new call, its decisions
   carried over and rewritten where an answer changed them.

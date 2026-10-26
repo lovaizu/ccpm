@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import unittest
 from typing import Any
 
@@ -451,6 +452,27 @@ class CcsTest(RepoTest):
         tests = [self.ccs(work, "README.md")["test"] for work in ("t1.4", "deliverable")]
         # Then: neither gives turn a command.
         self.assertEqual(tests, [None, None])
+
+    def test_the_call_of_a_part_rn_puts_back_tests_it_by_rns_check(self):
+        # Given: a session.
+        # When: the orchestrator has the CCS of each part rn puts back written, the plan's call
+        # 0001 and the learnings' 0002.
+        tests = [self.ccs(work)["test"] for work in ("plan", "learnings")]
+        # Then: each call gives turn the command that runs rn's check of its part, as `state
+        # --put` holds it, by rn.py where it is installed.
+        script = os.path.join(self.plugin, "scripts", "rn.py")
+        want = [f"python3 {script} check 0001", f"python3 {script} check 0002"]
+        self.assertEqual(tests, want)
+
+    def test_the_command_names_rn_where_its_path_holds_a_space(self):
+        # Given: rn installed in a folder whose path holds a space.
+        spaced = os.path.join(self.base, "my plugin")
+        shutil.copytree(self.plugin, spaced)
+        self.plugin = spaced
+        # When: the orchestrator has the CCS of the plan written.
+        # Then: the command quotes the path, so the shell runs rn.py.
+        script = os.path.join(spaced, "scripts", "rn.py")
+        self.assertEqual(self.ccs("plan")["test"], f"python3 '{script}' check 0001")
 
     def test_each_work_rn_makes_itself_is_made_with_its_own_kind_receiver_use_and_had(self):
         root = os.path.realpath(self.plugin)

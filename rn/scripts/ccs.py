@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import glob
 import os
+import shlex
 from typing import Any, NamedTuple
 
 import call
@@ -187,11 +188,15 @@ def served(steered: steering.Steering, work: str) -> dict[str, str]:
     return {key: text for key, text in said.items() if key in (task.serves or [])}
 
 
-def test_of(steered: steering.Steering, work: str) -> str | None:
-    """The command that checks the work, for the call that makes it: the one the completion
+def test_of(steered: steering.Steering, work: str, number: str, root: str) -> str | None:
+    """The command that checks the work, for the call of the number that makes it: for a part rn
+    puts back, the plan or the learnings, rn.py's check of it as `state --put` holds it, run by rn
+    where it is installed at root, as no task's command is for those; the one the completion
     criterion of the work's task names, where it is one, for the task's last action of turn's, which
     makes its result, the actions of turn's before it making the check and seeing it fail; None for
     any other work."""
+    if work in session.PARTS:
+        return f"python3 {shlex.quote(os.path.join(root, 'scripts', 'rn.py'))} check {number}"
     task = {t.id: t for t in steering.tasks_of(steered.plan)}.get(session.task_of(work))
     if task is None or not task.tests:
         return None

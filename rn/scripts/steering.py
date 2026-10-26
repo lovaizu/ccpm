@@ -462,14 +462,27 @@ def parsed(text: str) -> Steering:
 
 
 def render(steered: Steering) -> str:
-    """The steering's text, its parts as F-1 lays them out, a blank line between each."""
+    """The steering's text, the front matter above its body."""
     front = "".join(f"{key}: {value}\n" for key, value in steered.keys.items())
+    return f"---\n{front}---\n\n{laid(steered)}"
+
+
+def laid(steered: Steering) -> str:
+    """The steering's body, the plan, Next and Open as F-1 lays them out, a blank line between
+    each."""
     parts = [
         "\n".join(steered.plan),
         f"## {NEXT}\n\n{steered.next}",
         f"## {OPEN}\n\n" + "\n".join(steered.open),
     ]
-    return f"---\n{front}---\n\n" + "\n\n".join(parts) + "\n"
+    return "\n\n".join(parts) + "\n"
+
+
+def plan_out(steered: Steering) -> str:
+    """The point the steering's body is out of its form by, as held_form finds it, at the line of
+    the plan it is on, counted from the plan's first, so the maker of a plan finds it in theirs;
+    "" where it holds."""
+    return body_out(laid(steered).splitlines())
 
 
 def held_form(text: str) -> None:

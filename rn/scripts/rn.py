@@ -287,9 +287,17 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         "ccs": path,
         "kind": ccs.ENTRIES,
         "result": result,
-        "test": ccs.test_of(steered, work),
+        "test": ccs.test_of(steered, work, number, root),
     }
     return f"{repo.dumped(handed)}\n{ccs.told(work, steered)}"
+
+
+def run_check(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
+    """Checks the part turn makes for the call of the number as `state --put` holds it, keeping
+    nothing, as session.held_part says; gives the number where it holds. Stops where it does not,
+    the branch holds no session, or the part cannot be taken."""
+    session.held_part(session.current(), args.number)
+    return {"held": args.number}
 
 
 def run_decisions(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
@@ -437,6 +445,9 @@ def parser() -> Parser:
     hand.add_argument("--receiver")
     hand.add_argument("--use")
     hand.add_argument("--has", action="append", default=[])
+    check = sub.add_parser("check")
+    check.set_defaults(run=run_check)
+    check.add_argument("number")
     shown_text = sub.add_parser("proposal")
     shown_text.set_defaults(run=run_proposal)
     shown_text.add_argument("signoff", choices=steering.SIGNOFFS)

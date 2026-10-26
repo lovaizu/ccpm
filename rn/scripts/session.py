@@ -292,7 +292,7 @@ def write_learnings(folder: str, lines: list[str]) -> None:
     """Writes the session's learnings, once each is an item in the form of a learning, the lines
     indented under it its own; stops otherwise, writing nothing."""
     path = learnings_path(folder)
-    point = steering.items_of(list(enumerate(lines, 1)), LEARNING, LEARNING_FORM)[1]
+    point = learnings_out(lines)
     if point:
         raise stop.Stop(
             f"rn: {path} would be out of its form: {point}; nothing is kept: have turn make the"
@@ -301,25 +301,26 @@ def write_learnings(folder: str, lines: list[str]) -> None:
     repo.write_text(path, "\n".join(lines) + "\n")
 
 
-def part_of(folder: str, number: str) -> tuple[str, list[str]]:
-    """The work of the call of the number and the part turn made for it; stops where the session
-    holds no such call, the call makes no part, turn has not returned it, or its part is not
-    there."""
+def learnings_out(lines: list[str], first: int = 1) -> str:
+    """The point the session's learnings are out of their form by, each an item in the form of a
+    learning, the lines indented under it its own, at its line, the lines counted from first; ""
+    where they hold."""
+    return steering.items_of(list(enumerate(lines, first)), LEARNING, LEARNING_FORM)[1]
+
+
+def part_of(folder: str, number: str) -> tuple[Call, list[str]]:
+    """The call of the number and the part turn makes for it; stops where the session holds no
+    such call, the call makes no part, or its part is not there."""
     call = next((c for c in calls(folder) if c.number == number), None)
     if call is None:
         raise stop.Stop(
-            f"rn: {os.path.join(folder, TURN)} holds no call {number}; give --put the number of a"
-            " call on plan or learnings, such as 0001"
+            f"rn: {os.path.join(folder, TURN)} holds no call {number}; give the number of a call on"
+            " plan or learnings, such as 0001"
         )
     if call.work not in PARTS:
         raise stop.Stop(
-            f"rn: the call {number} is on {call.work}, which makes no part rn puts back; give --put"
-            " a call on plan or learnings"
-        )
-    if not call.result:
-        raise stop.Stop(
-            f"rn: turn has not returned the call {number}: {call_path(folder, number, RESULT)} is"
-            " not there; wait for turn to return it, then run this again"
+            f"rn: the call {number} is on {call.work}, which makes no part rn puts back; give a"
+            " call on plan or learnings"
         )
     path = call_path(folder, number, PART[call.work])
     if not os.path.isfile(path):
@@ -327,7 +328,7 @@ def part_of(folder: str, number: str) -> tuple[str, list[str]]:
             f"rn: {path}, the part the call {number} makes, is not there; cut it again with"
             f" `rn.py ccs {call.work} ...`, have turn make it, then run this again"
         )
-    return call.work, steering.trimmed(repo.read_text(path).splitlines())
+    return call, steering.trimmed(repo.read_text(path).splitlines())
 
 
 def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dict[str, str]:
@@ -369,11 +370,48 @@ def put_part(
     Stops where the part cannot be taken, or a task of the plan's part is numbered as one done."""
     if number is None:
         return None, steered, []
-    work, part = part_of(folder, number)
-    if work == steering.PLAN:  # pragma: no mutate
-        numbered_on(folder, steered.plan, part, number)
-        return work, steered._replace(plan=steering.put_plan(steered.plan, part)), []
-    return work, steered, put_learnings(learnings_of(folder), part)
+    made, part = part_of(folder, number)
+    if not made.result:
+        raise stop.Stop(
+            f"rn: turn has not returned the call {number}: {call_path(folder, number, RESULT)} is"
+            " not there; wait for turn to return it, then run this again"
+        )
+    return (made.work, *put(folder, steered, made, part))
+
+
+def put(
+    folder: str, steered: steering.Steering, made: Call, part: list[str]
+) -> tuple[steering.Steering, list[str]]:
+    """The steering and the session's learnings with the part turn makes for the call put back,
+    the plan's into the steering and the learnings' after those kept, none of the learnings for the
+    plan's. Stops where a task of the plan's part is numbered as one done."""
+    if made.work == steering.PLAN:  # pragma: no mutate
+        numbered_on(folder, steered.plan, part, made.number)
+        return steered._replace(plan=steering.put_plan(steered.plan, part)), []
+    return steered, put_learnings(learnings_of(folder), part)
+
+
+def held_part(folder: str, number: str) -> None:
+    """Returns when the part turn makes for the call of the number, put back as `state --put` puts
+    it, holds what `state` holds it to at the keep: the plan's in the steering in its form, each
+    new task numbered above those held, and the learnings' after those kept in theirs; keeps
+    nothing, so turn's maker checks the part while making it. Stops otherwise, the point at the
+    part's own line, as its maker reads it; and where the steering differs from what the last keep
+    left, or the part cannot be taken."""
+    steered = kept_steering(folder)
+    made, part = part_of(folder, number)
+    put_steering, learnt = put(folder, steered, made, part)
+    # The learnings kept come before the part, counted up to its first line.
+    point = (
+        steering.plan_out(put_steering)
+        if made.work == steering.PLAN  # pragma: no mutate
+        else learnings_out(learnt, 1 + len(part) - len(learnt))
+    )
+    if point:
+        raise stop.Stop(
+            f"rn: {call_path(folder, number, PART[made.work])} would be out of its form: {point};"
+            " change it so it holds, then run this again"
+        )
 
 
 def started(slug: str, today: datetime.date, steered: steering.Steering, message: str) -> str:

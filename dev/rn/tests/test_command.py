@@ -86,7 +86,8 @@ class CommandTest(RepoTest):
         # Then: it says a subcommand is required, and names them.
         self.assertIn(
             "required: subcommand; give it as rn.py [-h]"
-            " {session,start,state,decide,ccs,proposal,answer,checklists,decisions,learnings}",
+            " {session,start,state,decide,ccs,check,proposal,answer,checklists,decisions,"
+            "learnings}",
             self.stopped(),
         )
 
