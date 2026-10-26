@@ -725,6 +725,12 @@
   },
   {
    "fact": "2026-10-26: T33 done and pushed (4cf232c..200ce6f by a subagent, read by hand): calls/, rn.py ccs plan|learnings cut the part for the orchestrator, rn.py history and search, skills ty/gm without learnings, checklists; check.sh lane/turn/rn 100%, mutate rn 0, move trials passing. Step 4 settled from the purpose (8db852f): what an answer settled is written into a criterion in the plan's words, only a choice no answer made asked first; plan-signoff passed so. T31 also names folders, files and trials by dev/architecture.md's Test kinds (331cd37), the user chose a"
+  },
+  {
+   "fact": "2026-10-26: T34 built (d52799d by a subagent, read by hand; 212f426 gh refuses anything still naming lovaizu/ccpm): dev/rn/trials/acceptance/acceptance.py, real turn and gh on a clone of lovaizu/playground, --until <signoff>. Run --until plan REACHED (5.6 min, $1.0, PR #9 closed, branch deleted); the held-back want (name taken) was asked by rn itself, so the late want became undo of the last run (wants.json). Run --until design started 14:15 JST in the background, its log scratchpad acceptance-design.log of session babbef4f, folder /tmp/rn/20261026-acceptance-7vc7gbjm; at 14:55 message 22, in design, plan feedback and fresh conversation passed, turn made ux (0005) and was making README (0006), turn asked one point back (the tool's file name and place)"
+  },
+  {
+   "fact": "2026-10-26: the user: find the learnings well and turn them into improvements, judged from rn's purpose and ideal. The user asked whether rn's caller pictures each checklist item's Good before calling turn: it does not (SKILL.md step 2 finds points without the work's checklists), so turn asks back. The user approved the fix: step 2 reads the work's checklists and asks each item's unmade choice before turn; rn.py decisions <work> also prints the checklists; given to a background subagent with scratchpad hearing-brief.md (session babbef4f), not touching trials/acceptance"
   }
  ],
  "semantic_gist": [
@@ -791,7 +797,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T34: rn's acceptance test, trials/flow/ made into trials/acceptance/ with the real turn on lovaizu/playground"
+   "task": "T34/T14: rn's acceptance test run to design; learnings from it; the hearing-with-checklists fix"
   }
  ],
  "relational_map": [
@@ -829,7 +835,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T34: design the acceptance test first (wants for the Downloads CLI, real turn installed, lovaizu/playground branch made and removed, rn's README Trials line, the script's docstring), desk-trace it, run once small, then T14 runs it whole; then T30, T31 (names by Test's kinds), the shared.md findings left listed to the user, final check, report"
+   "next": "on resume: pgrep -af acceptance.py (the design run) and ListAgents (the hearing subagent); when the run ends read its summary and transcript.json: count turn's questions back and whether the work's checklist would have raised each at the hearing; judge the design-stage points rn asked (6 README points, some maybe settled by the purpose) and every other shortfall by rn's purpose and ideal, fix each at its cause; read the subagent's commits by hand, run check.sh rn, the move trials it lists, push; remove the run folder and its ~/.claude/projects records by literal path; then the whole run (T14), T30, T31 (names by Test's kinds), shared.md findings to the user, final check, report"
   }
  ],
  "uncertainty_signal": [
