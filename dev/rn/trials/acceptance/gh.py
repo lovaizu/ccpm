@@ -1,6 +1,7 @@
 """The `gh` rn's acceptance test puts first on the PATH Claude Code runs with: runs the real gh for
 every command, with the repository `--repo lovaizu/ccpm` names changed to lovaizu/playground, so the
-issue rn's learnings stage sends reaches the playground rather than a repository people use. It
+issue rn's learnings stage sends reaches the playground rather than a repository people use; any
+other command that still names lovaizu/ccpm it refuses, exiting 1, run by no gh. It
 keeps each command, as given and as run, with its exit code and what it printed, as a line of
 `gh.jsonl` in the run's folder, above its own, from which the trial finds each issue the run
 opened; what gh prints on its standard error passes through, kept by no line.
@@ -40,7 +41,11 @@ def main() -> int:
     code."""
     real, given = sys.argv[1], sys.argv[2:]
     ran = changed(given)
-    done = subprocess.run([real, *ran], stdout=subprocess.PIPE, text=True, check=False)
+    if any(PEOPLE in arg for arg in ran):
+        print(f"gh: the trial keeps {PEOPLE} out of reach; nothing was run", file=sys.stderr)
+        done = subprocess.CompletedProcess(ran, 1, "")
+    else:
+        done = subprocess.run([real, *ran], stdout=subprocess.PIPE, text=True, check=False)
     with open(LOG, "a", encoding="utf-8") as f:
         kept = {"given": given, "ran": ran, "code": done.returncode, "printed": done.stdout}
         f.write(json.dumps(kept, ensure_ascii=False) + "\n")
