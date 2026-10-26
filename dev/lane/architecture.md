@@ -115,6 +115,14 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
   textconv is handed a file). A command, not a module lane imports, keeps lane's code free of the
   plugin's and the adapter free of lane's code, so `lay.py up` brings lane's copy up without
   touching it.
+- A subagent's steps are those of the part its file has it read first, where its file is its entry
+  as [Entries hand to the parts](../architecture.md#entries-hand-to-the-parts) has it, and else
+  those of its file; the guard holds a subagent lanes are laid in whose entry names a part to read
+  the part whole before anything else, telling it the entry's sentence, with nothing in the
+  proposal.
+
+  The entry's sentence is the one the subagent reads first, as a lane's is its step's; held on
+  every subagent so made, the reading asks the building AI nothing.
 - The guard reads a call in the forms the steps tell and the AI writes, not in every form the shell
   allows.
 
@@ -149,7 +157,7 @@ lane/                          the plugin, installed by Claude Code
 │       ├── forms.py           the forms in_form holds an output to
 │       ├── schema.py          a JSON Schema, and a value held to it
 │       ├── template.py        a Markdown template, and a file held to it
-│       ├── step.py            a subagent's step, read from its file
+│       ├── step.py            a subagent's step, read from its part or its file
 │       ├── record.py          where Claude Code keeps records, and what a subagent did before
 │       ├── called.py          each call of a subagent kept until its record holds it
 │       ├── started.py         what the subagent started from, for a thing given for each run
@@ -170,7 +178,8 @@ lane/                          the plugin, installed by Claude Code
     └── <agent>.jsonl          each call of a subagent lanes are laid in, kept by the guard <JSONL>
 
 <plugin>/                      the building AI's plugin, as the layer writes it
-├── agents/                    the subagents' steps
+├── agents/                    the subagents' entries, or their steps
+├── prompts/                   the parts the entries name, each with its subagent's steps
 └── hooks/
     ├── hooks.json             one entry per subagent and event
     ├── lanes.json             the lanes laid, as approved <JSON>

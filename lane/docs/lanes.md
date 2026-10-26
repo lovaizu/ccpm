@@ -211,3 +211,25 @@ it rests on the record:
 | every_item | `input` | yes |
 
 `held` is the commands wait_for holds back.
+
+## A subagent's part
+
+Where your subagent's file is its entry, its frontmatter and a body having it read its part first,
+such as
+
+```markdown
+Read `${CLAUDE_PLUGIN_ROOT}/prompts/writer.md` whole first, and take its steps on what you are given.
+```
+
+its steps are those of the part, the one file under your plugin's `prompts/` the body names in
+backticks: `lay.py print` shows the part's steps, `lay.py write` writes each lane's sentence into
+them, and the guard reads them there. A body naming no such file, or more than one, has its steps
+read from the file itself.
+
+Once lanes are laid in the subagent, the guard holds it to read the part whole before anything
+else, with nothing in the proposal for it, as the sentence is the entry's and not a step's: a Read
+of the part goes on, its lanes not held on it, and any other call made before the part is read to
+its end is stopped, the subagent told the entry's sentence, headed by your plugin's name, as
+start_with and read_whole tell theirs. The part not there, or the subagent's record not found, is
+an error, told in the form `<plugin>: lane cannot check the lanes of <subagent>: <what is wrong>.`
+above.

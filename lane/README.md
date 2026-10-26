@@ -109,6 +109,11 @@ python3 <lane's folder>/scripts/lay.py write <proposal>
   version with its hooks and the same lanes.
 - `print` shows the proposal, written as [the lanes](docs/lanes.md#the-proposal) gives it, as in the
   example, and `write` lays it once your AI has approved it.
+- A subagent whose file has it read its part in your plugin's `prompts/` first has its lanes laid
+  in the part's steps.
+
+  The guard then holds it to read the part whole before anything else, as
+  [the lanes](docs/lanes.md#a-subagents-part) says.
 
 ## Documentation
 
