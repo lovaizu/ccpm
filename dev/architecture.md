@@ -105,13 +105,14 @@ astray.
 
 ### Entries hand to the parts
 
-An entry holds only what Claude Code fixes of it and hands the job to its part: a command line
-reads its arguments and calls the part's module, a hook's script reads the event and calls the part
-that answers it, and a skill or an agent is its frontmatter and a body pointing to its part. The
-entries lie where Claude Code looks for them, in `agents/`, `skills/` and `hooks/`; a plugin's own
-parts lie in `prompts/`, those written as a prompt, and in `scripts/`, those written as code, each
-in a file named for the part the logical view draws, and lane's guard, which each plugin takes in,
-in `hooks/lane/`, where lane lays it.
+An entry holds only what Claude Code fixes of it and hands the job to its part: a command line reads
+its arguments and calls the part's module, a hook's script reads the event and calls the part that
+answers it, and a skill or an agent is its frontmatter and a body that points to its part and says
+where each script, file or folder the part names lies, the part naming each by its name alone, as
+`turn.py`, never by where it is installed. The entries lie where Claude Code looks for them, in
+`agents/`, `skills/` and `hooks/`; a plugin's own parts lie in `prompts/`, those written as a
+prompt, and in `scripts/`, those written as code, each in a file named for the part the logical view
+draws, and lane's guard, which each plugin takes in, in `hooks/lane/`, where lane lays it.
 
 The form of an entry is Claude Code's, where a skill's folder is named by its command and an agent
 is called by the name in its frontmatter, while the job is the plugin's; a job held in its entry is
@@ -128,6 +129,15 @@ Claude Code has a skill "reference supporting files from `SKILL.md`"
 ([skills](https://code.claude.com/docs/en/skills)). Tried on 2026-10-26 with a plugin of its own,
 each of twenty runs read its part first and followed it; after `/compact`, the part a skill links
 came back attached whole, where a skill's own body was left only as the summary retold it.
+Claude Code puts the plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in what it gives from an entry's
+own body, not in what the Bash tool runs ([plugins
+reference](https://code.claude.com/docs/en/plugins-reference#environment-variables)), nor, in a
+trial of turn on 2026-10-26, in a part read with Read: a part naming
+`${CLAUDE_PLUGIN_ROOT}/scripts/turn.py` ran `/scripts/turn.py`, where a part naming `probe.py`,
+which its entry said where it lies, ran it in each of twelve runs, an agent's and a skill's, and
+after `/compact` in each of three, the summary keeping where it lies. Where the plugin is installed
+is Claude Code's, which the entry adapts as ports and adapters has it, and the part, the job, holds
+none of it.
 
 ### Read by those who did not make it
 
