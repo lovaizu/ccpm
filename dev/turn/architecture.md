@@ -26,7 +26,7 @@ Principle 1 to 8, and two of its own, named turn's Principle 1 and 2:
 
 - As the calling AI, I want to start turn with the path of a CCS, its kinds, where the result
   goes and the command that checks the work, and get the work back where it goes, with each item's
-  Good and its lines, and the lessons from the run to put to the user.
+  Good and its lines.
 - As the calling AI, I want the user told, as the run goes, what it will do and what is done, in
   the main conversation, which alone talks with them.
 - As the calling AI, I want to be sent each point only the user can decide as soon as the run meets
@@ -47,7 +47,6 @@ flowchart TB
   state["state"]
   gen["generator"]
   fu["first user"]
-  le["learner"]
   guard["guard"]
   caller <-->|calls, answers / asks, returns| orch
   orch -->|tells progress| main
@@ -55,7 +54,6 @@ flowchart TB
   flow <-->|keeps / reads where the run stands| state
   orch <-->|starts, sends what is sent back / replies| gen
   orch <-->|starts, sends the work made again / replies| fu
-  orch <-->|starts / replies| le
   guard -.->|notices a drift, tells the step again| orch
   guard -.->|notices a drift, tells the step again| gen
 ```
@@ -126,10 +124,11 @@ flowchart TB
 
   A Good found where one part gives it passes a part that does not, and what lies between the parts
   is found only in the whole.
-- Once the run is done, the learner of
-  [Principle 8](../architecture.md#learning-from-each-run) reads the records of every agent of the
-  run, not the work, and the flow puts its lessons into the result for the calling AI to put to the
-  user.
+- The result holds each item's Good and its lines, and finding what fell short in the run is the
+  calling AI's, as [Principle 8](../architecture.md#learning-from-each-run) leaves it to the caller.
+
+  A turn run is one move of the calling AI's run, so what fell short in it shows beside the rest in
+  what that run kept, and a lesson found by each call apart is weighed again by the user at each.
 - The flow writes the result where the call says, and the orchestrator ends only once it is there.
 
   A reply would be copied into a file by the calling AI, where a slip goes unseen.
@@ -141,8 +140,7 @@ turn/                      the plugin, installed by Claude Code
 ├── agents/
 │   ├── up.md              the orchestrator <agent>
 │   ├── generator.md       <agent>
-│   ├── first-user.md      <agent>
-│   └── learner.md         <agent>
+│   └── first-user.md      <agent>
 ├── docs/
 │   └── calling.md         what a step gives turn and gets back <Markdown>
 ├── forms/
@@ -154,9 +152,7 @@ turn/                      the plugin, installed by Claude Code
 │   ├── call.py            the call checked, and the run laid out of the CCS <Python 3>
 │   ├── prompts.py         what each role is given <Python 3>
 │   ├── forms.py           each reply checked, and the parts of the work <Python 3>
-│   ├── records.py         each record as the learner reads it <Python 3>
-│   └── record.py,         links to lane's, Claude Code's records and Markdown read
-│       template.py        <Python 3>
+│   └── template.py        a link to lane's, Markdown read <Python 3>
 └── hooks/
     ├── hooks.json         the hook of each agent and event, written by lane's lay.py <JSON>
     ├── lanes.json         the lanes on every agent, laid by lane's lay.py <JSON>
@@ -172,8 +168,7 @@ turn/                      the plugin, installed by Claude Code
 └── .turn/
     └── <yyyymmdd>-<name>/ one run, gone once it returns
         ├── run.json       the state <JSON>, read and written by the flow alone
-        ├── <role>.json    each role's reply <JSON>, read by the flow alone
-        └── records/       each record shown to the learner, written when it is started <text>
+        └── <role>.json    each role's reply <JSON>, read by the flow alone
 ```
 
 - turn runs on Claude Code and python3 3.9 or later.
@@ -191,17 +186,15 @@ turn/                      the plugin, installed by Claude Code
   and `<yyyymmdd>` the day the run began, its folder found by the name on any later day.
 
   A call again with the same result finds the run however long after and from whichever folder of
-  the repository it is made, and two runs with other results do not meet; the records are made
-  again each time the learner is started, so a learner started anew reads them as they are then.
+  the repository it is made, and two runs with other results do not meet.
 - The orchestrator reaches each role and the main conversation with Claude Code's Agent and
   SendMessage, and its question is its reply, which the calling AI answers by SendMessage to it.
 - Each role writes its reply to a file its prompt names, in a JSON form of its own, read by the flow
   alone.
 
   No AI copies a reply, and the first user's lane on what it reads keeps it from the generator's.
-- The flow gives no role the run's own files but the learner the records shown to it, nor the
-  first user the CCS, a folder holding them given as its other entries, as a lane lets a role read
-  anything under a folder it is given.
+- The flow gives no role the run's own files, nor the first user the CCS, a folder holding them
+  given as its other entries, as a lane lets a role read anything under a folder it is given.
 
 ## Test
 

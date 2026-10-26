@@ -74,14 +74,10 @@ rests on:
 ```json
 {"work": ["README.md"],
  "items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
-            "lines": ["README.md:3-4"]}, ...],
- "lessons": [...], "checked": "..."}
+            "lines": ["README.md:3-4"]}, ...]}
 ```
 
-The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends. The
-lessons are what fell short in turn's run and why, which the step's AI puts to you: one of your
-project's own for your checklists or rules, a general one for turn's makers as an issue, opened
-once you say yes.
+The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends.
 
 ## Why turn
 

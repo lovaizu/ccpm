@@ -76,15 +76,9 @@ the answer to turn in plain words; the run goes on with it.
             "good": "...", "lines": ["<path>:<from>-<to>"]},
            {"checklist": "checklists/readme.md", "item": "B-3",
             "parts": [{"part": "<path>:<from>-<to>", "good": "...",
-                       "lines": ["<path>:<from>-<to>"]}]}],
- "lessons": [{"lesson": "...", "whose": "own",
-              "grounds": [{"record": "<path of the record>", "quote": "..."}]}],
- "checked": "..."}
+                       "lines": ["<path>:<from>-<to>"]}]}]}
 ```
 
 - `items`: each item's Good with the lines of the work that give it; an item whose Scope is
   `each part` gives them under `parts`, one for every part of the work, its lines inside that
   part.
-- `lessons`: what fell short in the run and why, `own` for your project's checklists or rules,
-  `general` for turn's makers, each resting on words quoted from a record of the run.
-- `checked`: what the learner checked of the run.

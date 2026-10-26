@@ -34,10 +34,10 @@ adds only what that plugin gives on top of them.
    move, so a run stopped anywhere goes on from there.
 7. The purpose comes first and performance after: time is never saved by leaving the caller more
    to fix.
-8. After each run, a learner that did no part of the work reads the run's records and gives, from
-   the facts, what fell short and why; each lesson goes to the user's own checklists or rules where
-   it is their project's own, and to the plugin's makers as an issue where it is general, opened
-   only on the user's yes.
+8. Once the caller approves the finished work, the orchestrator looks once for what fell short and
+   why, in what the run kept and in the records; each lesson goes to the user's own checklists or
+   rules where it is their project's own, and to the plugin's makers as an issue where it is
+   general, opened only on the user's yes. A plugin an AI calls leaves this to its caller.
 
 ## Why it is so
 
@@ -164,18 +164,22 @@ leaving them more to fix is spent again by them.
 ### Learning from each run
 
 A plugin takes in what is general and leaves to the user's project only what is the project's own,
-and what a user meets that it lacks comes back to it as a lesson. After each run, a learner that
-did no part of the work reads the records of every agent of the run and gives each lesson with the
-words it rests on quoted. The orchestrator puts each to the user: a lesson of their project's own
-goes into their checklists or rules; a general one goes to the plugin's makers as an issue,
-holding the need and its points alone, never the user's source, shown to the user whole and opened
-only on their own yes, an approval as The caller approves what is theirs says, since an issue on a
-public repository is not undone.
+and what a user meets that it lacks comes back to it as a lesson. Once the caller approves the
+finished work, the orchestrator looks once through what the run kept for each work sent back, made
+again or point asked again, and checks each cause it doubts in the records of the run, so each
+lesson comes with the words it rests on quoted. It puts each to the user: a lesson of their
+project's own goes into their checklists or rules; a general one goes to the plugin's makers as an
+issue, holding the need and its points alone, never the user's source, shown to the user whole and
+opened only on their own yes, an approval as The caller approves what is theirs says, since an issue
+on a public repository is not undone.
 
-What fell short often lies in what a role did, which only its record shows, and a lesson without
-the facts it rests on is a guess. A lesson of the project's own improves that project's later work;
-the plugins are open source, so a general one, met once, improves the plugin for every user. The
-work and its source are the user's, so they choose what leaves their project.
+Looked for once, the lessons cost the user one reading, where lessons at each approval are weighed
+in every session; what the run kept holds every send-back and remake, as each move is kept before
+the next (Principle 6), and a cause named without its record is a guess. A plugin an AI calls is
+one move of its caller's run, so what fell short in it shows in what that run kept, beside the rest.
+A lesson of the project's own improves that project's later work; the plugins are open source, so a
+general one, met once, improves the plugin for every user. The work and its source are the user's,
+so they choose what leaves their project.
 
 ### JSON between agents
 

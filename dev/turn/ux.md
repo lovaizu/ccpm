@@ -37,8 +37,7 @@ A CCS is the JSON file in which the calling AI keeps its task, in the shape
 [ACC](https://arxiv.org/abs/2601.11653) gives it: parts, each a list of entries, each entry a kind
 and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
 checklists, the receiver, what they use the work for and what they have with it; the call names the
-kinds the calling AI uses in it for each of these. The result holds each item's Good with its lines,
-and the lessons from the run, what fell short in it and why, for the calling AI to put to the user.
+kinds the calling AI uses in it for each of these. The result holds each item's Good with its lines.
 
 ### From a step that needs a work to the step's end
 
