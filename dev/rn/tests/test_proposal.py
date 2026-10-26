@@ -495,6 +495,15 @@ class AnswerTest(RepoTest):
                 )
                 self.assertEqual(self.head(), before)
 
+    def test_a_command_typed_in_the_very_second_the_signoff_was_shown_is_taken(self):
+        # Given: a session waiting at the plan sign-off, shown at DATE, and /rn:ty typed at that
+        # very time.
+        self.session(steered(signoff="plan"))
+        self.typed("/rn:ty", helpers.DATE)
+        # When: the orchestrator keeps the approval.
+        # Then: rn keeps it, as the user typed it once the proposal was there.
+        self.assertEqual(self.ran(*self.answer()), {"kept": self.head()})
+
     def test_a_command_typed_at_an_earlier_proposal_is_not_typed_at_the_last(self):
         # Given: the plan sign-off shown in 2000, answered, and shown again in 2001, the user
         # having typed /rn:ty between the two.
