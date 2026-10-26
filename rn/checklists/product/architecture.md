@@ -53,9 +53,10 @@ line>
 ### Logical view
 
 <One figure, an SVG file beside the document shown as an image: a box for each logical component,
-holding its name alone, and a frame round the boxes that run in one place or make one product; an
-arrow from each to the component it acts on, labelled in a few words with what it does; the boxes
-placed so the arrows run in the order they act and cross none, readable in light and dark>
+holding its name alone, its shape saying whether an AI or code does its work, with a legend, and a
+frame round the boxes that run in one place or make one product; an arrow from each to the
+component it acts on, labelled in a few words with what it does; the boxes placed so the arrows run
+in the order they act and cross none, readable in light and dark>
 
 - <What the figure cannot show, such as the order the arrows run in or a choice the reader would
   question, with why>
@@ -80,7 +81,8 @@ Why: the builder and the approver read the principles, then what the product giv
 that give it and where they are, then how each is checked, each the ground of the next; they
 skim the lines and read a why only where they question one. The logical view is the one figure
 whose placing and frames carry what the reader takes in at a glance, so it is drawn by hand, where
-a tool's layout sets them by its own rules.
+a tool's layout sets them by its own rules; a box's shape shows at a glance which parts an AI does,
+whose work varies from run to run, and which code does the same each time.
 
 ## Benefit
 
