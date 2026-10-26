@@ -23,6 +23,93 @@ from helpers import (
     task,
 )
 
+# A checklist holding items judged on the built product: F-1, whose template holds a fence with a
+# heading in it and which a lower heading follows, B-2 between two others, and B-4, the last, its
+# heading right under the line before it; and B-1 and B-3, judged before it is built, B-3 on a line
+# of the same form.
+BUILT_ITEMS = """---
+name: code
+version: 1
+---
+
+# Code
+
+The opening.
+
+## Format
+
+### F-1: Shape
+
+Scope: whole
+
+Judged on: the built product
+
+```markdown
+## Not a heading
+```
+
+#### More of it
+
+Why: a shape.
+
+## Benefit
+
+### B-1: Read
+
+Scope: its part
+
+Why: read.
+
+### B-2: Run
+
+Scope: whole
+
+Judged on: the built product
+
+Why: run.
+
+### B-3: Said
+
+Scope: whole
+
+Judged on: a draft
+
+Why: said.
+### B-4: Run again
+
+Scope: whole
+
+Judged on: the built product
+"""
+# The checklist above as a call before the build names it: every line but those items.
+WITHOUT_BUILT = """---
+name: code
+version: 1
+---
+
+# Code
+
+The opening.
+
+## Format
+
+## Benefit
+
+### B-1: Read
+
+Scope: its part
+
+Why: read.
+
+### B-3: Said
+
+Scope: whole
+
+Judged on: a draft
+
+Why: said.
+"""
+
 
 class DecideTest(RepoTest):
     """Each answer kept as a decision of the work it settles, in that work's call."""
@@ -673,6 +760,74 @@ class CcsTest(RepoTest):
                 # Then: it names the kind's checklist alone.
                 found = self.read_json(written)["retrieved_artifacts"]
                 self.assertEqual(found, [{"checklist": checklist}])
+
+    def test_before_the_build_a_checklist_is_named_by_a_copy_without_the_items_on_the_built(self):
+        for stage in ("plan", "design"):
+            with self.subTest(stage=stage):
+                # Given: the kind's checklist holding items judged on the built product, in a
+                # session at a stage before the build.
+                self.write(self.checklist, BUILT_ITEMS)
+                self.session(steered(part=plan(tasks=task()), stage=stage))
+                # When: the orchestrator has the CCS of t1.1 written.
+                self.ccs("t1.1")
+                # Then: the CCS names, in the checklist's place, a copy beside it holding every
+                # line but those items, kept with it.
+                copy = call_at("0001", "checklist-1.md")
+                named = self.read_json(call_at("0001"))["retrieved_artifacts"]
+                kept = self.out("show", "--name-only", "--format=", "origin/work").split()
+                self.assertEqual(
+                    (named, self.read(copy), sorted(kept)),
+                    ([{"checklist": copy}], WITHOUT_BUILT, sorted([call_at("0001"), copy])),
+                )
+                shutil.rmtree(FOLDER)
+                self.kept()
+
+    def test_before_the_build_the_users_addition_is_cut_too_its_copy_numbered_by_its_place(self):
+        # Given: rn's own checklist of the kind holding no item judged on the built product, and
+        # the user's addition holding them, in the design stage.
+        addition = f"{RECORD}/checklists/{KIND}.md"
+        self.write(addition, BUILT_ITEMS)
+        self.kept()
+        # When: the orchestrator has the CCS of t1.1 written.
+        self.ccs("t1.1")
+        # Then: rn's own is named as it is, and the addition by a copy, second as it stands second.
+        copy = call_at("0001", "checklist-2.md")
+        self.assertEqual(
+            (self.read_json(call_at("0001"))["retrieved_artifacts"], self.read(copy)),
+            ([{"checklist": self.checklist}, {"checklist": copy}], WITHOUT_BUILT),
+        )
+
+    def test_from_the_build_on_each_checklist_is_named_whole(self):
+        for stage in ("build", "deliverable"):
+            with self.subTest(stage=stage):
+                # Given: the kind's checklist holding items judged on the built product, in a
+                # session at the build stage or after.
+                self.write(self.checklist, BUILT_ITEMS)
+                self.session(steered(part=plan(tasks=task()), stage=stage))
+                # When: the orchestrator has the CCS of t1.1 written.
+                self.ccs("t1.1")
+                # Then: the CCS names the checklist itself, and no copy is written.
+                self.assertEqual(
+                    (
+                        self.read_json(call_at("0001"))["retrieved_artifacts"],
+                        os.listdir(f"{FOLDER}/calls"),
+                    ),
+                    ([{"checklist": self.checklist}], ["0001-ccs.json"]),
+                )
+                shutil.rmtree(FOLDER)
+                self.kept()
+
+    def test_a_part_before_the_build_is_written_with_a_copy_without_the_items_on_the_built(self):
+        # Given: rn's plan checklist holding an item judged on the built product, in the plan
+        # stage.
+        self.write(self.own["plan"], BUILT_ITEMS)
+        self.session(steered(part=plan(tasks=task())))
+        # When: the orchestrator has the CCS of the plan written.
+        # Then: the checklists it is given to write the part with are the copy.
+        copy = call_at("0001", "checklist-1.md")
+        self.assertEqual(
+            (self.ran("ccs", "plan")["checklists"], self.read(copy)), ([copy], WITHOUT_BUILT)
+        )
 
     def test_each_choice_of_the_orchestrators_is_kept_with_why_after_the_decisions(self):
         # Given: a call on t1.1 holding a decision, not returned.

@@ -1,8 +1,8 @@
 """What a work's CCS holds, its decisions with the rest, so the work is made from the session's
 record alone, by turn or, for the plan and the learnings, by the orchestrator: each decision kept,
-the checklists of its kind, what its receiver has, the goal and the criteria it serves, the
-finished work's files, and for the plan what each task done served, decided and made; and the CCS
-written and handed to its maker."""
+the checklists of its kind, before the build without the items judged on the built product, what
+its receiver has, the goal and the criteria it serves, the finished work's files, and for the plan
+what each task done served, decided and made; and the CCS written and handed to its maker."""
 
 from __future__ import annotations
 
@@ -12,10 +12,12 @@ import shlex
 from typing import Any, NamedTuple
 
 import call
+import items
 import repo
 import session
 import steering
 import stop
+import template
 
 # For each role turn reads from a CCS, the key of the CCS entries that hold it; the call to turn:up
 # hands this table to turn.
@@ -30,6 +32,14 @@ ENTRIES = {
 SERVES = "serves"
 # The key of the CCS entry naming the kind of the work, whose checklists it is made with.
 KIND = "kind"
+# The line under an item's Scope, after a blank line, saying it can be judged only on the built
+# product, as rn's checklist for checklists gives it; the stages before the build, whose works are
+# made before the product is there to judge them on; the headings that end an item, those of its
+# level and above; and the name of a call's copy of the k-th checklist of its kind.
+BUILT = "Judged on: the built product"
+BEFORE_BUILD = (steering.PLAN, steering.DESIGN)
+ITEM = 3
+COPY = "checklist-{}.md"
 # The kind of a checklist, which rn's checklist for checklists makes from rn's `usability.md`, what
 # any reader needs, as well.
 CHECKLIST = "checklist"
@@ -134,6 +144,36 @@ def checklists(kind: str, root: str) -> list[str]:
             f"rn: there is no checklist for the kind {kind}, neither rn's nor {added}; make"
             f" {added} first, as a work of its own to rn's checklist for checklists"
         )
+    return found
+
+
+def unbuilt(text: str) -> str | None:
+    """The checklist's text without each item judged on the built product, from its heading to the
+    next heading of its level or above outside a code fence, or the end; None where it holds none
+    such."""
+    lines = text.splitlines()
+    built = {n for n, _ in items.items(text) if lines[n + 2 : n + 4] == ["", BUILT]}
+    if not built:
+        return None
+    heads = {n for n, level, _ in template.headings(lines, template.body(lines)) if level <= ITEM}
+    kept, cutting = [], False
+    for number, line in enumerate(lines, 1):
+        cutting = number in built if number in heads else cutting
+        if not cutting:
+            kept.append(line)
+    return "\n".join(kept).rstrip() + "\n"
+
+
+def judged(lists: list[str], stage: str, folder: str, number: str) -> list[tuple[str, str | None]]:
+    """Each checklist the call of the number names, made at the stage, with the text to write
+    there: before the build, a copy of each holding an item judged on the built product, without
+    those items, beside the call's CCS, as COPY names it by its place among the kind's checklists;
+    each other checklist, and every one from the build on, as it is, with no text."""
+    found: list[tuple[str, str | None]] = []
+    for place, path in enumerate(lists, 1):
+        cut = unbuilt(repo.read_text(path)) if stage in BEFORE_BUILD else None
+        copy = session.call_path(folder, number, COPY.format(place))
+        found.append((path, None) if cut is None else (copy, cut))
     return found
 
 
@@ -369,18 +409,20 @@ def handed(
     is made from decisions a fresh conversation also has: in the work's latest call where that call
     takes more, else in a new one carrying its decisions, as session.Call says. For the plan and the
     learnings, which the orchestrator writes, the part is cut into the call, and gives the part, the
-    CCS, the kind's checklists and the command that checks the part; for every other work, the call
-    that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the line
-    telling the user what turn makes. What is given makes the work, each choice of the
-    orchestrator's given kept with those of the latest call, one of the same what replaced; what is
-    not, rn's own way of making it, or what the work's latest call named, as made_as and kept_as
-    say: for the plan, its part of the steering, with what each task done served and made after
-    what the receiver has; for the learnings, an empty part, as those kept are not made again; for
-    the finished work given none, every file it is. rn is installed at root. Stops, writing
-    nothing, where a path of what the receiver has is not there, the branch holds no session, a
-    change is not kept or pushed, the steering differs from what the last keep left, the steering
-    holds no action of turn's of a task's work, the receiver, their use or what they have is
-    neither given nor kept, the kind has no checklist, or the finished work is not there."""
+    CCS, the checklists it names and the command that checks the part; for every other work, the
+    call that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the
+    line telling the user what turn makes. The CCS names the kind's checklists as judged gives them,
+    before the build each holding an item judged on the built product by a copy written beside it.
+    What is given makes the work, each choice of the orchestrator's given kept with those of the
+    latest call, one of the same what replaced; what is not, rn's own way of making it, or what the
+    work's latest call named, as made_as and kept_as say: for the plan, its part of the steering,
+    with what each task done served and made after what the receiver has; for the learnings, an
+    empty part, as those kept are not made again; for the finished work given none, every file it
+    is. rn is installed at root. Stops, writing nothing, where a path of what the receiver has is
+    not there, the branch holds no session, a change is not kept or pushed, the steering differs
+    from what the last keep left, the steering holds no action of turn's of a task's work, the
+    receiver, their use or what they have is neither given nor kept, the kind has no checklist, or
+    the finished work is not there."""
     # The session is found first, which stops below the top of the repository, since each path
     # given is read from the top.
     folder = session.current()
@@ -396,7 +438,8 @@ def handed(
     use = needed(use or made.use or kept.use, "use", work)
     has = needed(has or made.has or kept.has, "has", work)
     kind = made.kind or ""
-    lists = checklists(kind, root)
+    named = judged(checklists(kind, root), steered.keys[steering.STAGE], folder, number)
+    lists = [path for path, _ in named]
     part = session.call_path(folder, number, session.PART[work]) if work in session.PARTS else ""
     paths = ([part] if part else paths) or made.paths or finished_work()
     if work == steering.PLAN:
@@ -404,6 +447,9 @@ def handed(
     # Every check is made above, so a stop leaves nothing written.
     if part:
         repo.write_text(part, session.cut(work, steered))
+    for path, text in named:
+        if text is not None:
+            repo.write_text(path, text)
     ccs = written(
         work,
         steered,
@@ -432,10 +478,10 @@ def handed(
 
 def decisions(work: str, root: str) -> dict[str, Any]:
     """Each decision of the work, as its latest call keeps it, with that call's number; none, and
-    no call, where it has none; and the checklists of its kind, as its CCS names them, so the
-    hearing reads each item before the work is made; rn is installed at root. Stops where the
-    branch holds no session, the steering differs from what the last keep left, the steering holds
-    no action of turn's of a task's work, or the kind has no checklist."""
+    no call, where it has none; and the checklists of its kind whole, as its CCS names them from
+    the build on, so the hearing reads each item before the work is made; rn is installed at root.
+    Stops where the branch holds no session, the steering differs from what the last keep left, the
+    steering holds no action of turn's of a task's work, or the kind has no checklist."""
     folder = session.current()
     steered = session.kept_steering(folder)
     last = session.latest(session.calls(folder), work)

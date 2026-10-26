@@ -57,6 +57,8 @@ Scope: whole
 
 Scope: <its part, each part or whole>
 
+<`Judged on: the built product`, where only the built product answers the question>
+
 <Question answered yes or no, asking what the user gets>
 
 Look for: <the signs a deliverable falls short of it, each a thing to be found in the deliverable;
@@ -71,10 +73,15 @@ heading of a document, with the title and opening as one, or a file of code; `wh
 deliverable at once, for what lies between its parts, such as one name for each thing. The items
 answered at one part stand in the order of the template's parts, and those answered at each part
 or over the whole after them. A kind that adds no part to a document's shape has no Format section.
+An item whose question only the built product answers, such as whether a README's commands run as
+written, says so in the line `Judged on: the built product`; a work made before the product is
+built is judged without such items, and on every item once it is built.
 
 Why: every checklist in the same shape lets a tool read any of them and gives the maker the purpose,
 then the idea, then the shape, before the items, so each item is met inside what those already set;
-an item met where its part comes is met as the deliverable is written.
+an item met where its part comes is met as the deliverable is written; and an item only the built
+product answers, judged on a work made before it, such as a README written to design it, sends the
+work back for what is not there yet.
 
 ### F-2: Version
 

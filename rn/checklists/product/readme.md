@@ -129,6 +129,8 @@ the choice, and placed first it hides what does.
 
 Scope: its part
 
+Judged on: the built product
+
 Can a reader who has decided, with only what a newcomer has, get ready what must be in place,
 install the product and get the example's result themselves, following the README alone?
 
@@ -146,6 +148,8 @@ wrote the README has the product at hand and never meets it.
 ### B-5: Each way on reached
 
 Scope: its part
+
+Judged on: the built product
 
 From Documentation, Development and License, can the reader reach each place the README sends them
 on to?
@@ -203,6 +207,8 @@ buries those the reader needs.
 ### B-8: Every statement holds
 
 Scope: whole
+
+Judged on: the built product
 
 Can the reader rely on every statement of the README at once, each true of the product as they find
 it when they run it?

@@ -119,6 +119,15 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   ([turn's architecture](../turn/architecture.md#physical-view)); a document's reader named as a
   checklist's opening names the finished product's, such as a newcomer installing it, has the first
   user run a product not yet built and send the document back for what is not there.
+- A call made before the build gives turn each of the work's checklists without the items marked as
+  judged on the built product, in a copy written for the call beside its CCS; the build stage makes
+  again, once the product is built, each document made before it whose checklists hold such items,
+  judged on every item by the product's users with the built work, as rn's plan checklist's B-7
+  asks.
+
+  An item asking what the built product does is answered only by running it, so judged before the
+  build it sends the document back for what is not there, whoever the receiver is; and a document
+  judged without it promises what no one has checked against the product until it is made again.
 - The call that makes a task's result gives turn the one command that runs the check its
   completion criterion names, where that check is one command, and the calls before it give none;
   a part rn's scripts put back, the plan or the learnings, the orchestrator passes through the
@@ -245,6 +254,7 @@ rn/                                  the plugin, installed by Claude Code with t
             ├── <nnnn>-ccs.json      each call, numbered from 0001 in the order made <JSON>
             ├── <nnnn>-steering.md   the plan the orchestrator writes on a call on the plan <Markdown>
             ├── <nnnn>-learnings.md  the learnings it writes on a call on the learnings <Markdown>
+            ├── <nnnn>-checklist-<k>.md  the k-th checklist of a call before the build, without the items judged on the built product <Markdown>
             └── <nnnn>-result.json   what turn returned for a call to it <JSON>
 ```
 

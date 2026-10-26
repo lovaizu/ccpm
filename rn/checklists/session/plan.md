@@ -204,6 +204,9 @@ passed?
 
 Look for:
 - in the build stage, a criterion, or a case it names, that no completion criterion gives;
+- in the build stage, a document made before it whose checklists hold an item judged on the built
+  product, with no task making it again once the product is built, its receiver the product's
+  users with the built work;
 - in the design stage, a document the purpose needs with no task, or a task for a document it does
   not need;
 - an ID named by a task whose completion criterion, passed, would leave it exactly as unmet as
@@ -217,8 +220,10 @@ Look for:
 Why: turn makes each task's result for what it names, and the orchestrator accepts it by its
 completion criterion, so an ID named by a task that does nothing for it is counted as served while
 nothing builds it, one no task gives is never built, and the finished work misses what the user
-approved; a task made for a later stage rests on guesses about what the stages before it settle,
-and one kept after a finding showed it needless is made for nothing.
+approved; a document made before the build was judged without the items only the built product
+answers, so one not made again promises what no one checked against the product; a task made for a
+later stage rests on guesses about what the stages before it settle, and one kept after a finding
+showed it needless is made for nothing.
 
 ### B-8: Each line used by its readers
 
