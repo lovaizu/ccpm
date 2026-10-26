@@ -306,9 +306,10 @@ L_FEEDBACK = (
     " stuck."
 )
 L_TWICE = (
-    "- L1: The greeting's words were settled for docs/greeting.md and then again for README.md,"
-    f' kept as "{LINE_QUOTE}" in the commit keeping the words for README.md; in this repository,'
-    " the note checklist could ask that a note names the file its lines go into."
+    "- L1: The plan made again after the design sign-off asked the user once more for the greeting"
+    " line docs/greeting.md gave, which that sign-off had approved, kept as"
+    f" \"{LINE_QUOTE}\" in the commit of the line's confirmation; for everyone's work, rn's plan"
+    " checklist could ask that no action asks the user again what a sign-off approved."
 )
 
 
@@ -348,7 +349,7 @@ LEARNT_FEEDBACK = learnt(
     "The stretch's shortfalls are the place asked late, L1, and the plan sent back, L2",
 )
 LEARNT_NONE = learnt([], "")
-LEARNT_TWICE = learnt([L_TWICE], "The stretch's one shortfall, the words settled twice, is L1")
+LEARNT_TWICE = learnt([L_TWICE], "The stretch's one shortfall, the line asked again, is L1")
 
 # The works the tasks make, and the finished work used.
 LINE = "Welcome, new contributor! Start by running `sh demo.sh`, then open a pull request."
@@ -482,44 +483,54 @@ FINISHED = {
         }
     }
 }
-NOTE_ADDED = (
-    SEED[".rn/checklists/note.md"]
-    .replace(
-        "do what they say.",
-        "do what they say, and by whoever copies them into another file.",
-    )
-    .rstrip("\n")
-    + """
+# The user's addition to rn's plan checklist, made once they take the learning of the line asked
+# again for their own checklist.
+PLAN_ADDITION = ".rn/checklists/plan.md"
+PLAN_ADDED = """---
+name: plan
+version: 1
+made_from:
+  checklist: 1
+  usability: 1
+---
 
-### B-3: Where the lines go, named
+# Plan, this repository's addition
 
-Scope: its part
+What this repository adds to rn's checklist for a plan, read by turn making a plan and by the user
+approving it.
 
-Can whoever copies the decided lines tell from the note which file they go into?
+A plan serves the user by taking what a sign-off approved as settled, asking only what no one has
+decided yet.
 
-Look for: lines with no file named.
+## Benefit
 
-Why: lines copied into the wrong file are read by no one they were for.
+### B-1: Nothing approved asked again
+
+Scope: whole
+
+Can the user tell that no action of the plan asks them again what a sign-off approved, such as the
+lines of a document?
+
+Look for: an action confirming with the user what an approved document gives.
+
+Why: a point asked again spends the user's time on what they already decided.
 """
-)
 CHECKLIST_GOODS = {
-    "F-1": "note.md follows the template: the front matter, the title, the purpose, the idea, and"
-    " `## Benefit` with B-1 to B-3, each with its Scope, its question and its Why; a note adds no"
-    " part to a document's shape, so it has no Format section",
+    "F-1": "plan.md follows the template: the front matter, the title, the purpose, the idea, and"
+    " `## Benefit` with B-1, with its Scope, its question and its Why; an addition holds only what"
+    " it adds, so it has no Format section",
     "F-2": "Its version is 1, as no release has numbered it",
     "F-3": "made_from names checklist 1 and usability 1, the versions that stand now",
-    "F-4": "Its items are B-1, B-2 and B-3, counted up in Benefit",
-    "B-1": "The opening says who uses a note, a contributor and whoever copies its lines, what"
-    " they then do, and the idea: the decided lines where the reader looks first",
-    "B-2": "Each thing the opening names has an item: finding the lines B-1, doing what they say"
-    " B-2, copying them into the file they go into B-3",
-    "B-3": "Each item asks one thing of the purpose that no other asks",
-    "B-4": "Each item is answered by pointing at the note's lines: the lines, the command they"
-    " give, the file they name",
-    "B-5": "Each item asks one thing, with a sign of what is looked at",
+    "F-4": "Its item is B-1, counted up in Benefit",
+    "B-1": "The opening says who reads it, turn making a plan and the user approving it, and what"
+    " it adds to rn's plan checklist",
+    "B-2": "What the opening names, a plan that asks nothing approved again, has its item, B-1",
+    "B-3": "Its one item asks one thing of the purpose, which rn's plan checklist does not ask",
+    "B-4": "B-1 is answered by pointing at a plan's actions",
+    "B-5": "B-1 asks one thing, with a sign of what is looked at",
 }
-NOTE_CHECKLIST = {
-    "files": {".rn/checklists/note.md": NOTE_ADDED},
+PLAN_CHECKLIST = {
+    "files": {PLAN_ADDITION: PLAN_ADDED},
     "goods": {"checklist.md": {i: {"good": g, "at": "whole"} for i, g in CHECKLIST_GOODS.items()}},
 }
 
@@ -1367,11 +1378,11 @@ CASES = {
         [
             ("/rn:up", [STAYS, ONE_POINT]),
             (
-                "チェックリストだけに足してください",
+                "このリポジトリの plan のチェックリストだけに足してください",
                 [
                     MOVED,
                     KEPT,
-                    decisions("checklist-note", 1),
+                    decisions("checklist-plan", 1),
                     returned("issue-1", 1),
                     file_has(ISSUE, "## What it should be"),
                     issues(0),
@@ -1382,14 +1393,14 @@ CASES = {
                 [
                     KEPT,
                     issues(1),
-                    returned("checklist-note", 1),
-                    file_has(".rn/checklists/note.md", "### B-3:"),
+                    returned("checklist-plan", 1),
+                    file_has(PLAN_ADDITION, "### B-1:"),
                     pr(draft=False),
                     front("finished", "none"),
                     says(PR),
                 ],
             ),
         ],
-        {"issue-1": [ISSUE_MADE], "checklist-note": [NOTE_CHECKLIST]},
+        {"issue-1": [ISSUE_MADE], "checklist-plan": [PLAN_CHECKLIST]},
     ),
 }
