@@ -81,11 +81,12 @@ sequenceDiagram
 - Sign-offs: before the design and the deliverable sign-off, an AI that did not make the work reads
   and uses it in the user's place, the finished work for each acceptance criterion, and rn makes it
   again until that AI finds nothing lacking; the plan, which the user reads at its sign-off as it
-  stands, rn checks against its checklist itself. At the design and the deliverable sign-off rn
-  shows the link to each work and each choice made in it that the user was not asked, by rn or by
-  the AI that made it, each with why, and nothing else: nothing of the user's own answers, which
-  the work holds and that AI has checked, no summary of the text, no diff. The user glances at the
-  work for its size and diagrams and judges those choices; the text is for that AI and rn to check.
+  stands, rn checks against its checklist itself. At the design sign-off rn shows the link to each
+  document, and at the deliverable sign-off the links to the finished work, with each choice made
+  in it that the user was not asked, by rn or by the AI that made it, each with why, and nothing
+  else: nothing of the user's own answers, which the work holds and that AI has checked, no summary
+  of the text, no diff. The user glances at the work for its size and diagrams and judges those
+  choices; the text is for that AI and rn to check.
 - Records: rn writes in its commit messages what the documents do not keep: the options weighed
   with their reasons, and each feedback with its answer.
 - Checklists: each document and the finished work is made with rn's checklist for its kind, which

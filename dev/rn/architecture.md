@@ -214,8 +214,9 @@ flowchart TB
   The orchestrator runs rn's scripts itself, so a script that took an answer on its word would
   take an approval the user never gave.
 - At a sign-off, the orchestrator shows the proposal the UX's Sign-offs gives, made by rn's scripts
-  from the steering and the calls alone: at the design's and the deliverable's, each work's link
-  with the choices its latest call and turn's result for it keep.
+  from the steering and the calls alone: at the design's, each document's link with the choices
+  its latest call and turn's result for it keep; at the deliverable's, the finished work's links
+  with those of every work of the build and of its use.
 
   So it says only what the steering holds and what each work was made from and came back with,
   nothing written for the proposal alone; the user's own answers are in the work, checked by the

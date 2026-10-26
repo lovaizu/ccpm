@@ -136,16 +136,18 @@ rn tells you in a line what it will do, how far and how, and after it, what is d
 next, so you can stop a step going a way you do not want. If a point to decide comes up, rn asks it
 there and waits for your answer; if you close Claude Code meanwhile, `/rn:up` in a fresh
 conversation goes on from where it stopped. When the work is finished, an AI that did not make it
-uses it for each acceptance criterion, and rn stops at the deliverable sign-off, showing in the same
-way the link to each part of the work and each choice made without asking you:
+uses it for each acceptance criterion, and rn stops at the deliverable sign-off, showing the links
+to the finished work and each choice made without asking you in building and using it:
 
 ```console
 ● Deliverable sign-off
   The finished work is on the pull request: https://github.com/you/app/pull/42
-  code: https://github.com/you/app/blob/typescript/src/cart/cart.ts
+  deliverable: https://github.com/you/app/blob/typescript/docs/design.md,
+    https://github.com/you/app/blob/typescript/src/cart/bugs.test.ts,
+    https://github.com/you/app/blob/typescript/src/cart/cart.ts,
+    https://github.com/you/app/blob/typescript/src/checkout/checkout.ts
   - The three bugs are kept as tests in src/cart/bugs.test.ts that must fail to type-check:
     the build already runs the tests, so AC1 is checked on every build.
-  code: https://github.com/you/app/blob/typescript/src/checkout/checkout.ts
   /rn:ty to approve, /rn:gm <feedback> to ask for a change.
 
 > /rn:ty
