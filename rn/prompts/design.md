@@ -1,6 +1,6 @@
 # The design stage of /rn:up
 
-Step 9 of `/rn:up`, from the plan approved to the design sign-off, taken as its SKILL.md says.
+Step 9 of `/rn:up`, from the plan approved to the design sign-off, taken as `orchestrator.md` says.
 
 9. Make the documents the purpose needs and stop at the design sign-off, so the user approves how
    the work will meet the goal before it is built.

@@ -1,7 +1,7 @@
 # The learnings stage of /rn:up
 
-Step 11 of `/rn:up`, from the finished work approved to the pull request marked ready, taken as its
-SKILL.md says.
+Step 11 of `/rn:up`, from the finished work approved to the pull request marked ready, taken as
+`orchestrator.md` says.
 
 11. Find what this piece of work fell short in, put each learning to the user and mark the pull
     request ready, so what it taught makes later work better where the user chooses.

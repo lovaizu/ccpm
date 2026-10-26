@@ -1,7 +1,7 @@
 # The build stage of /rn:up
 
-Step 10 of `/rn:up`, from the design approved to the deliverable sign-off, taken as its SKILL.md
-says.
+Step 10 of `/rn:up`, from the design approved to the deliverable sign-off, taken as
+`orchestrator.md` says.
 
 10. Build the finished work, task by task, and stop at the deliverable sign-off, so the user
     decides from the proposal alone.

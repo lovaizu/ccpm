@@ -1,6 +1,6 @@
 # The plan stage of /rn:up
 
-Steps 7 and 8 of `/rn:up`, from the request to the plan sign-off, taken as its SKILL.md says.
+Steps 7 and 8 of `/rn:up`, from the request to the plan sign-off, taken as `orchestrator.md` says.
 
 7. Start the session, so every move from here has a place to be kept and shown.
    - In: the user's words; the repository's README, `cat -n README.md`, and `git log -10

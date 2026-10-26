@@ -48,9 +48,9 @@ class UsageTest(RepoTest):
 
 class StepsTest(unittest.TestCase):
     def test_each_next_rn_sets_names_a_step_of_rn_up(self):
-        # Given: each Next rn sets itself, and the steps of /rn:up, in its SKILL.md and the files
+        # Given: each Next rn sets itself, and the steps of /rn:up, in orchestrator.md and the files
         # of its stages.
-        folder = os.path.join(SCRIPTS, "..", "skills", "up")
+        folder = os.path.join(SCRIPTS, "..", "prompts")
         steps = set()
         for name in os.listdir(folder):
             with open(os.path.join(folder, name), encoding="utf-8") as f:
