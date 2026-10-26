@@ -193,7 +193,8 @@ def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any
                 {session.WORK: work},
                 {steering.STAGE: steered.keys[steering.STAGE]},
             ],
-            "constraints": [{session.DECISION: d} for d in carried],
+            "constraints": [{session.DECISION: d} for d in carried]
+            + [{session.CHOSEN: c} for c in session.choices_of(last)],
         }
     constraints = written.setdefault("constraints", [])
     decision = {session.DECISION: f"{title}: {says}"}
@@ -225,12 +226,15 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     learnings, which the orchestrator writes, the part is cut into the call, and rn gives the part,
     the CCS, the kind's checklists and the command that checks the part; for every other work, the
     call that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the
-    line telling the user what turn makes. What is given makes the work; what is not, rn's own way
-    of making it, or what the work's latest call named, as ccs.made_as and ccs.kept_as say: for the
+    line telling the user what turn makes. What is given makes the work, each choice of the
+    orchestrator's given kept with those of the latest call, one of the same what replaced; what is
+    not, rn's own way of making it, or what the work's latest call named, as ccs.made_as and
+    ccs.kept_as say: for the
     plan, its part of the steering, with what each task done served and made after what the receiver
     has; for the learnings, an empty part, as those kept are not made again; for the finished work
     given none, every file it is. Stops, writing nothing, where a name, a text or a path given is
-    wrong, the branch holds no session, a change is not kept or pushed, the steering differs from
+    wrong, a choice gives no why, the branch holds no session, a change is not kept or pushed, the
+    steering differs from
     what the last keep left, the steering holds no action of turn's of a task's work, the receiver,
     their use or what they have is neither given nor kept, the kind has no checklist, or the
     finished work is not there."""
@@ -238,6 +242,7 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     paths = [stop.given(p, "path of the work") for p in args.path]
     receiver = None if args.receiver is None else stop.given(args.receiver, "receiver")
     use = None if args.use is None else stop.given(args.use, "use")
+    chosen = [ccs.choice(c) for c in args.chose]
     if work in session.PARTS and paths:
         raise stop.Stop(
             f"rn: the work {work} is a part rn cuts from the session's record; give no path of it"
@@ -272,6 +277,7 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         serving,
         checklists,
         [] if last is None else session.decisions_of(last),
+        ccs.chosen_with(session.choices_of(last), chosen),
         root,
     )
     path = session.call_path(folder, number, session.CCS)
@@ -319,14 +325,15 @@ def run_decisions(args: argparse.Namespace, root: str, today: datetime.date) -> 
 def run_proposal(args: argparse.Namespace, root: str, today: datetime.date) -> str:
     """The proposal at the sign-off, made from what is pushed alone: the pull request's link, then
     the goal and the acceptance criteria at the plan sign-off, each work made in the design stage
-    with its links and its decisions at the design's, and the criteria and each task's decisions
-    of the build stage at the deliverable's, with what changed since the last proposal at the same
-    sign-off; the steering set waiting at the sign-off, Next saying so, and kept with the proposal
-    as its message.
+    with its links and each choice made in it unasked at the design's, and the finished work with
+    its links and each choice made unasked in building and using it at the deliverable's, as
+    proposal.shown_at says, with what changed since the last proposal at the same sign-off; the
+    steering set waiting at the sign-off, Next saying so, and kept with the proposal as its message.
     The same proposal again, keeping nothing, where it waits at that sign-off already. Stops where
     the branch holds no session, a change is not kept or pushed, the steering differs from what the
     last keep left, the session is at another stage, another sign-off waits, the session lacks what
-    the sign-off shows, a work's decisions are not simple, or the pull request was not opened."""
+    the sign-off shows, a result of turn's is no JSON object, or the pull request was not
+    opened."""
     signoff = args.signoff
     folder = session.current()
     repo.pushed()
@@ -466,6 +473,7 @@ def parser() -> Parser:
     hand.add_argument("--receiver")
     hand.add_argument("--use")
     hand.add_argument("--has", action="append", default=[])
+    hand.add_argument("--chose", action="append", default=[])
     check = sub.add_parser("check")
     check.set_defaults(run=run_check)
     check.add_argument("number")

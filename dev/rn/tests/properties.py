@@ -150,10 +150,10 @@ class PropertyTest(RepoTest):
         )
 
     @hypothesis.given(IDS, IDS)
-    def test_what_changed_shows_each_decision_once_and_each_gone_by_its_words(self, before, now):
-        # Given: any decisions shown before and any now, by their titles.
+    def test_what_changed_shows_each_choice_once_and_each_gone_by_its_words(self, before, now):
+        # Given: any choices shown before and any now, by what was chosen.
         # When: what changed is said.
-        told = proposal.decisions_changed(before, now)
+        told = proposal.choices_changed(before, now)
         # Then: each now is shown once, in order, marked where it is changed or added, then each
         # gone by what it said.
         self.assertEqual(
@@ -193,15 +193,14 @@ class PropertyTest(RepoTest):
         actions = steering.tasks_of(lines)[0].actions
         self.assertEqual([line[steering.TICK] for _, line, _ in actions], want)
 
-    @hypothesis.given(WORDS.filter(lambda t: ": " not in t), WORDS)
-    def test_a_decision_is_shown_under_its_title(self, title, says):
-        # Given: a decision of any title without `: `, which parts it from what it says, and of
-        # anything it says, as rn.py decide keeps it, short enough for a sign-off to show.
-        decision = f"{title}: {says}"
-        hypothesis.assume(len(decision) <= proposal.LONGEST)
-        # When: a sign-off shows it.
-        # Then: what it says is shown whole, under its title.
-        self.assertEqual(proposal.simple("t1", [decision]), {title: says})
+    @hypothesis.given(WORDS.filter(lambda t: ": " not in t), WORDS, WORDS)
+    def test_a_choice_given_again_replaces_the_one_of_the_same_what(self, what, why, other):
+        # Given: a choice of anything chosen without `: `, which parts it from why, kept, and
+        # given again with any other why.
+        kept, again = f"{what}: {why}", f"{what}: {other}"
+        # When: the choices of the call are made.
+        # Then: the one given stands alone, whole.
+        self.assertEqual(ccs.chosen_with([kept], [again]), [again])
 
 
 class SearchPropertyTest(RepoTest):

@@ -220,6 +220,26 @@ def done_made(folder: str, found: list[session.Call], plan: list[str]) -> list[s
     ]
 
 
+def choice(given: str) -> str:
+    """The choice the orchestrator gives, `<what it chose>: <why>`; stops where either is
+    missing."""
+    what, colon, why = given.partition(": ")
+    if not (colon and what.strip() and why.strip()):
+        raise stop.Stop(
+            f'rn: the choice {given!r} is not "<what you chose>: <why>"; give what you chose, then'
+            " `: `, then why"
+        )
+    return given
+
+
+def chosen_with(kept: list[str], given: list[str]) -> list[str]:
+    """The choices a call keeps: those its work's latest call kept, each one given of the same what
+    replacing it where it stands, then the others given."""
+    found = {c.partition(": ")[0]: c for c in kept}
+    found.update({c.partition(": ")[0]: c for c in given})
+    return list(found.values())
+
+
 def needed(value: Any, what: str, work: str) -> Any:
     """The value, when the work has it; stops where it has none, saying how to give it."""
     if not value:
@@ -244,6 +264,7 @@ def written(
     serving: dict[str, str],
     checklists: list[str],
     decisions: list[str],
+    chosen: list[str],
     root: str,
 ) -> dict[str, list[dict[str, str]]]:
     """The work's CCS, in four parts, the shape turn takes: focal_entities, what the work is about,
@@ -251,9 +272,9 @@ def written(
     have with it; goal_orientation, what the work is for, its use and what it serves as text, as its
     maker makes the work from the CCS and the files it names alone; retrieved_artifacts, the kind's
     checklists and rn's `usability.md` where the work is a checklist; and constraints, the bounds it
-    is made in: its decisions, the languages, English for an issue to rn's makers, and rn's
-    checklist for a fix, which its maker is given to read, as each file a CCS names is, for a work
-    made again. turn finds each entry by its key, whichever part holds it."""
+    is made in: its decisions, the orchestrator's choices, the languages, English for an issue to
+    rn's makers, and rn's checklist for a fix, which its maker is given to read, as each file a CCS
+    names is, for a work made again. turn finds each entry by its key, whichever part holds it."""
     usability = os.path.join(root, "checklists", "usability.md")
     # An issue is written in English, the language of rn's makers' repository, whatever the
     # language of the user's.
@@ -273,6 +294,7 @@ def written(
         "retrieved_artifacts": [{ENTRIES["checklist"]: p} for p in checklists]
         + ([{"source": usability}] if session.CHECKLIST_WORK.fullmatch(work) else []),
         "constraints": [{session.DECISION: d} for d in decisions]
+        + [{session.CHOSEN: c} for c in chosen]
         + [{key: languages[key]} for key in steering.LANGUAGES]
         + [{"fix": os.path.join(root, "checklists", "fix.md")}],
     }

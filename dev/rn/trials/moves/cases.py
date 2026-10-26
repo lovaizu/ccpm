@@ -204,9 +204,9 @@ GREETING = (
 README = SEED["README.md"].replace("\n\n", f"\n\n{LINE}\n\n", 1)
 
 
-def noted(path: str, text: str, mark: str) -> dict:
-    """The made of a call on a note: the file, and both items of the note checklist with their
-    Goods at the line holding the mark."""
+def noted(path: str, text: str, mark: str, chosen: dict) -> dict:
+    """The made of a call on a note: the file, both items of the note checklist with their Goods at
+    the line holding the mark, and the choice its maker made that the CCS left open."""
     goods = {
         "B-1": "The decided line stands on the note's first screen, the first a contributor reads",
         "B-2": "It tells the contributor to run `sh demo.sh`, which the repository holds and which"
@@ -215,11 +215,22 @@ def noted(path: str, text: str, mark: str) -> dict:
     return {
         "files": {path: text},
         "goods": {"note.md": {i: {"good": g, "at": [mark]} for i, g in goods.items()}},
+        "chosen": [chosen],
     }
 
 
-NOTE_GREETING = noted("docs/greeting.md", GREETING, "> Welcome")
-NOTE_README = noted("README.md", README, "Welcome")
+# The choice each note's maker made that no decision gave, each naming a mark the proposal keeps
+# in whatever language it is shown: the note's heading, and the README's title.
+QUOTED = {
+    "chosen": "The note quotes the line under the heading `# Greeting`",
+    "why": "no decision names how the note shows it, and a quote shows it as the README holds it",
+}
+OWN_LINE = {
+    "chosen": "The line stands alone between `# demo` and the README's first line",
+    "why": "a line of its own is read before the README's first line",
+}
+NOTE_GREETING = noted("docs/greeting.md", GREETING, "> Welcome", QUOTED)
+NOTE_README = noted("README.md", README, "Welcome", OWN_LINE)
 ABOUT_READMES = (
     "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features"
     "/customizing-your-repository/about-readmes"
@@ -1263,6 +1274,7 @@ CASES = {
                     done("T2"),
                     *proposal("design"),
                     says("docs/greeting.md"),
+                    says("# Greeting"),
                 ],
             )
         ],
@@ -1289,6 +1301,7 @@ CASES = {
                     returned("deliverable", 1),
                     file_has("README.md", "Welcome, new contributor!"),
                     *proposal("deliverable"),
+                    says("# demo"),
                 ],
             )
         ],

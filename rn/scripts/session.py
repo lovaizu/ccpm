@@ -51,10 +51,13 @@ PARTS = tuple(PART)
 CCS = "ccs.json"
 RESULT = "result.json"
 CALL = re.compile(rf"([0-9]{{4}})-({'|'.join(map(re.escape, (CCS, RESULT, *PART.values())))})")
-# The keys of the CCS entries rn reads back: the work's name, and each decision of the work as
-# `<title>: <what it says>`; the stage it was made in is under the front matter's key of the stage.
+# The keys of the CCS entries rn reads back: the work's name, each decision of the work as
+# `<title>: <what it says>`, and each choice the orchestrator made for it that no answer of the
+# user's gave, as `<what it chose>: <why>`; the stage it was made in is under the front matter's key
+# of the stage.
 WORK = "work"
 DECISION = "decision"
+CHOSEN = "chosen"
 # Each learning, in the form of rn's learnings checklist's F-1, which holds no heading.
 LEARNING = re.compile(r"- (?P<id>L[0-9]+): (?P<said>\S.*)")
 LEARNING_FORM = (
@@ -242,6 +245,12 @@ def latest(found: list[Call], work: str) -> Call | None:
 def decisions_of(made: Call) -> list[str]:
     """Each decision of the call, in the order kept."""
     return call.entries(made.ccs, DECISION)
+
+
+def choices_of(made: Call | None) -> list[str]:
+    """Each choice of the orchestrator's the call keeps, in the order kept; none where there is no
+    call."""
+    return [] if made is None else call.entries(made.ccs, CHOSEN)
 
 
 def next_number(found: list[Call]) -> str:

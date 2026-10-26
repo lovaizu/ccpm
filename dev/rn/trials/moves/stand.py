@@ -1,6 +1,7 @@
 """Stands in for turn's turn:up in rn's move trials: from the call rn's orchestrator hands turn,
 writes what the case set for the call's work as turn's flow leaves it once a run returns, the work's
-files and the result, each item's Good at the lines of the work that give it, and gives the reply
+files and the result, each item's Good at the lines of the work that give it and each choice its
+maker made that the CCS left open, and gives the reply
 turn:up ends with: `{"returned": "<result>"}`, or the questions it asks the calling AI. Nothing is
 made: the work is the case's, so the move judged is the orchestrator's alone.
 
@@ -12,8 +13,9 @@ call and reads the CCS and the checklists' items as turn does:
     python3 stand.py '<call>' '<made>'  the trial's, making a case's state: the made given as JSON
 
 A made is `{"files": {<path>: <text>}, "goods": {<checklist's file name>: {<item>: {"good": ...,
-"at": ...}}}}`, the path "" standing for the call's first work, wherever the orchestrator's plan
-put it, and an item left out of goods having no Good; or `{"questions": [...]}`. `at` is "whole",
+"at": ...}}}, "chosen": [{"chosen": ..., "why": ...}]}`, the path "" standing for the call's first
+work, wherever the orchestrator's plan put it, an item left out of goods having no Good, and no
+choice where chosen is left out; or `{"questions": [...]}`. `at` is "whole",
 or a list of the lines' marks, each the words a line holds, or `<from>..<to>` for the lines from
 one holding the first to one holding the second, to the end where it is empty; `in` names the
 file, the work's first by default.
@@ -77,7 +79,8 @@ def returned(run: dict[str, Any], made: dict[str, Any]) -> dict[str, str]:
             items.append(dict(item, good=good["good"], lines=lines))
     result = run["call"]["result"]
     with open(result, "w", encoding="utf-8") as f:
-        json.dump({"work": work, "items": items}, f, ensure_ascii=False, indent=1)
+        made_as = {"work": work, "items": items, "chosen": made.get("chosen", [])}
+        json.dump(made_as, f, ensure_ascii=False, indent=1)
         f.write("\n")
     return {"returned": result}
 

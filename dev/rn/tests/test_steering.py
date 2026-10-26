@@ -92,7 +92,8 @@ class FormTest(unittest.TestCase):
         # When: its criteria are read.
         # Then: each is given back whole, as one line.
         want = {"AC1": "Sign in by email.", "AC2": "Sign out."}
-        self.assertEqual(steering.decided(text.splitlines(), goal=False), want)
+        found = steering.decided(text.splitlines())
+        self.assertEqual({k: v for k, v in found.items() if k != "G1"}, want)
 
     def test_a_steering_rn_writes_holds_rns_plan_checklists_template(self):
         # Given: a steering rn writes with every part, a task's action ticked, and rn's plan

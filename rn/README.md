@@ -113,17 +113,17 @@ feedback, one rn did not ask:
 The same goes for the documents the purpose needs, such as a README or a design for what you are
 building, which rn writes into your repository on the pull request; here it is a design for the
 move. rn asks their points one at a time, such as how the types are made strict file by file, has
-an AI that did not write them use them, and stops at the design sign-off:
+an AI that did not write them use them, and stops at the design sign-off. It shows the link to each
+document and each choice made in it without asking you, with why; what you answered is in the
+documents already, and that AI has checked it there:
 
 ```console
 ● Design sign-off
   The design is on the draft pull request: https://github.com/you/app/pull/42
   design: https://github.com/you/app/blob/typescript/docs/design.md
-  - Each file moves with strict type checks on, so a moved file lets no wrong type through.
-  - Values from the account pages are checked where they enter the cart and the checkout,
-    so the JavaScript left there cannot pass a wrong type in.
-  - Each of the three bugs is kept as code that must fail the build, so AC1 is checked on
-    every build.
+  - Values from the account pages are checked where they enter the cart and the checkout:
+    the JavaScript left there could otherwise pass a wrong type in, and those are the only
+    places it meets the moved code.
   /rn:ty to approve, /rn:gm <feedback> to ask for a change.
 
 > /rn:ty
@@ -136,14 +136,16 @@ rn tells you in a line what it will do, how far and how, and after it, what is d
 next, so you can stop a step going a way you do not want. If a point to decide comes up, rn asks it
 there and waits for your answer; if you close Claude Code meanwhile, `/rn:up` in a fresh
 conversation goes on from where it stopped. When the work is finished, an AI that did not make it
-uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
+uses it for each acceptance criterion, and rn stops at the deliverable sign-off, showing in the same
+way the link to each part of the work and each choice made without asking you:
 
 ```console
 ● Deliverable sign-off
   The finished work is on the pull request: https://github.com/you/app/pull/42
-  AC1: Code that repeats each of the three bugs fails the build.
-  AC2: The app builds and runs as before.
-  AC3: Every file of src/cart and src/checkout is TypeScript.
+  code: https://github.com/you/app/blob/typescript/src/cart/cart.ts
+  - The three bugs are kept as tests in src/cart/bugs.test.ts that must fail to type-check:
+    the build already runs the tests, so AC1 is checked on every build.
+  code: https://github.com/you/app/blob/typescript/src/checkout/checkout.ts
   /rn:ty to approve, /rn:gm <feedback> to ask for a change.
 
 > /rn:ty
@@ -199,7 +201,8 @@ that:
 - At each sign-off you decide from the proposal alone.
 
   The plan is the proposal itself; each document and the finished work has been read and used in
-  your place by an AI that did not make it, so you need not read all of it again.
+  your place by an AI that did not make it, so you need not read all of it again, and you judge
+  only what was chosen without asking you, each shown with why.
 
 - Work that takes days neither swells nor drifts, and goes on from wherever you stopped.
 

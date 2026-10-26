@@ -4,6 +4,8 @@ proposal at the same sign-off before; with the answers the user gives it."""
 
 from __future__ import annotations
 
+import json
+
 import ccs
 import repo
 import session
@@ -21,14 +23,13 @@ WHERE = dict(
         ),
     )
 )
-# The works a sign-off shows, by the stage they were called in and their names, and whether one
-# with no decision is shown: at the design's, each task's and checklist's called in the design
-# stage, each shown, as the user approves the documents themselves; at the deliverable's, each
-# task's called in the build stage, shown only with a decision, as the finished work is what the
-# user approves there.
+# The works whose choices a sign-off shows, by the stage they were called in and their names: at the
+# design's, each task's and checklist's called in the design stage, as the user approves the
+# documents themselves; at the deliverable's, each task's called in the build stage, shown in the
+# finished work, as the finished work is what the user approves there.
 WORKS_SHOWN = {
-    steering.DESIGN: (steering.DESIGN, session.DESIGNED, True),
-    steering.DELIVERABLE: (steering.BUILD, session.TASK_WORK, False),
+    steering.DESIGN: (steering.DESIGN, session.DESIGNED),
+    steering.DELIVERABLE: (steering.BUILD, session.TASK_WORK),
 }
 # Each answer the user gives a sign-off, with the command they type for it, which the AI cannot
 # call, and the line every proposal ends with, saying how to answer.
@@ -36,35 +37,6 @@ COMMANDS = {"approved": "/rn:ty", "feedback": "/rn:gm"}
 ANSWER = (
     f"{COMMANDS['approved']} to approve, {COMMANDS['feedback']} <feedback> to ask for a change."
 )
-# The most decisions of a work a sign-off shows, and the most characters of each, as five short
-# lines are what a glance at the proposal takes in; a work past them is not yet simple.
-MOST = 5
-LONGEST = 200
-
-
-def simple(work: str, decisions: list[str]) -> dict[str, str]:
-    """What each of the work's decisions says, by its title, when a sign-off can show them, as the
-    user judges what the work must be, not the names of the points; stops where they are
-    more than it shows of a work, or one is longer than a line of it holds, as the work is then not
-    yet simple."""
-    again = (
-        "the work is not yet simple: settle its points again more simply with the user, have turn"
-        " make it again, then run this again"
-    )
-    found = {title: said for title, _, said in (d.partition(": ") for d in decisions)}
-    if len(found) > MOST:
-        raise stop.Stop(
-            f"rn: the work {work} holds {len(found)} decisions, more than the {MOST} a sign-off"
-            f" shows of a work; {again}"
-        )
-    for title, said in found.items():
-        long = len(f"{title}: {said}")
-        if long > LONGEST:
-            raise stop.Stop(
-                f'rn: the decision "{title}" of the work {work} is {long} characters long,'
-                f" more than the {LONGEST} a line of a sign-off holds; {again}"
-            )
-    return found
 
 
 def blob(pr: str) -> str:
@@ -80,16 +52,15 @@ def blob(pr: str) -> str:
 
 
 # What a proposal shows, by the work each part is of, "" for the steering's own: the line naming the
-# work, none for the steering's, and the part's lines by what each is of, an ID or a decision's
-# title.
+# work, none for the steering's, and the part's lines by what each is of, an ID or what was
+# chosen.
 Shows = dict[str, tuple[str, dict[str, str]]]
 
 
 def shown_works(made: list[session.Call], signoff: str) -> list[str]:
-    """The works whose decisions the sign-off shows, in the order first called."""
-    if signoff not in WORKS_SHOWN:
-        return []
-    stage, form, _ = WORKS_SHOWN[signoff]
+    """The works whose choices the design's or the deliverable's sign-off shows, in the order first
+    called."""
+    stage, form = WORKS_SHOWN[signoff]
     found: list[str] = []
     for call in made:
         if call.stage == stage and form.fullmatch(call.work) and call.work not in found:
@@ -97,39 +68,70 @@ def shown_works(made: list[session.Call], signoff: str) -> list[str]:
     return found
 
 
+def returned(made: list[session.Call], work: str, folder: str) -> session.Call:
+    """The work's latest call; stops where turn has not returned it."""
+    last = session.latest(made, work)
+    if last is None or not last.closed:
+        number = "" if last is None else last.number
+        raise stop.Stop(
+            f"rn: turn has not returned the work {work}:"
+            f" {session.call_path(folder, number, session.RESULT)} is not there; have turn:up"
+            f" make it with the call `rn.py ccs {work} ...` printed, keep it, then run this"
+            " again"
+        )
+    return last
+
+
+def chosen(last: session.Call, folder: str, commit: str) -> dict[str, str]:
+    """Each choice made in the user's place that the call's work rests on, by what was chosen, as
+    the line showing it with why: the orchestrator's, as its CCS keeps them, then those turn's
+    maker named in its result. Stops where the result is no JSON object."""
+    path = session.call_path(folder, last.number, session.RESULT)
+    try:
+        result = json.loads(repo.at(commit, path) or "")
+    except ValueError:
+        result = None
+    if not isinstance(result, dict):
+        raise stop.Stop(
+            f"rn: {path} is no result of turn's, a JSON object; have turn:up make the work"
+            f" {last.work} again with the call `rn.py ccs {last.work}` prints, keep it, then run"
+            " this again"
+        )
+    found = {c.partition(": ")[0]: c for c in session.choices_of(last)}
+    for made in result.get("chosen", []):
+        found[made["chosen"]] = f"{made['chosen']}: {made['why']}"
+    return found
+
+
+def shown_line(last: session.Call, pr: str) -> str:
+    """The line naming a work as the user knows it, by its kind and its paths as links, not by rn's
+    name for it."""
+    focal = last.ccs.get("focal_entities", [])
+    kind = next((e[ccs.KIND] for e in focal if ccs.KIND in e), "")
+    link = blob(pr)
+    paths = [e[ccs.ENTRIES["work"]] for e in focal if ccs.ENTRIES["work"] in e]
+    return f"{kind}: {', '.join(f'{link}/{p}' for p in paths)}"
+
+
 def shown_at(commit: str, signoff: str, folder: str) -> Shows:
     """What the proposal at the sign-off shows of the session as the commit holds it: at the plan's,
-    the goal and each criterion by its ID, and at the deliverable's each criterion; then each work
-    the sign-off shows by its kind and its paths as links, from its latest call, as the user knows a
-    work by what it is and where, not by rn's name for it, with what its decisions say: at the
-    design's each, at the deliverable's each with a decision. Stops where turn has not
-    returned a work's latest call, a work's decisions are not simple, or the pull request was not
-    opened."""
+    the goal and each criterion by its ID; at the design's, each work the sign-off shows by its
+    line, from its latest call, with each choice made in the user's place; at the deliverable's,
+    the finished work by its line, with each choice made in building it and in using it. Nothing of
+    the user's own answers, which the work holds and the AI that used it in their place has checked.
+    Stops where turn has not returned a work's latest call, its result is no JSON object, or the
+    pull request was not opened."""
     steered = steering.parsed(repo.at(commit, session.steering_path(folder)) or "")
-    found: Shows = {}
-    if signoff != steering.DESIGN:
-        goal = signoff == steering.PLAN  # pragma: no mutate
-        lines = steering.decided(steered.plan, goal)
-        found[""] = ("", {key: f"{key}: {said}" for key, said in lines.items()})
+    if signoff == steering.PLAN:  # pragma: no mutate
+        return {"": ("", {k: f"{k}: {said}" for k, said in steering.decided(steered.plan).items()})}
     made = session.calls(folder, commit)
-    for work in shown_works(made, signoff):
-        last = session.latest(made, work)
-        if last is None or not last.closed:
-            number = "" if last is None else last.number
-            raise stop.Stop(
-                f"rn: turn has not returned the work {work}:"
-                f" {session.call_path(folder, number, session.RESULT)} is not there; have turn:up"
-                f" make it with the call `rn.py ccs {work} ...` printed, keep it, then run this"
-                " again"
-            )
-        said = simple(work, session.decisions_of(last))
-        if WORKS_SHOWN[signoff][2] or said:
-            focal = last.ccs.get("focal_entities", [])
-            kind = next((e[ccs.KIND] for e in focal if ccs.KIND in e), "")
-            link = blob(steered.keys[steering.PR])
-            paths = [e[ccs.ENTRIES["work"]] for e in focal if ccs.ENTRIES["work"] in e]
-            found[work] = (f"{kind}: {', '.join(f'{link}/{p}' for p in paths)}", said)
-    return found
+    pr = steered.keys[steering.PR]
+    lasts = [returned(made, work, folder) for work in shown_works(made, signoff)]
+    if signoff == steering.DESIGN:  # pragma: no mutate
+        return {last.work: (shown_line(last, pr), chosen(last, folder, commit)) for last in lasts}
+    built = {k: v for last in lasts for k, v in chosen(last, folder, commit).items()}
+    used = returned(made, steering.DELIVERABLE, folder)
+    return {used.work: (shown_line(used, pr), {**built, **chosen(used, folder, commit)})}
 
 
 def changes(before: dict[str, str] | None, now: dict[str, str]) -> list[str]:
@@ -145,10 +147,10 @@ def changes(before: dict[str, str] | None, now: dict[str, str]) -> list[str]:
     )
 
 
-def decisions_changed(before: dict[str, str] | None, now: dict[str, str]) -> list[str]:
-    """The lines the proposal shows of a work's decisions, each after a bullet: each as it says,
+def choices_changed(before: dict[str, str] | None, now: dict[str, str]) -> list[str]:
+    """The lines the proposal shows of a work's choices, each after a bullet: each as it says,
     marked where it changed or was added since the proposal before, then each gone, by what it said,
-    as the user knows a decision by its words alone."""
+    as the user knows a choice by its words alone."""
     if before is None:
         before = now
     return [
@@ -163,7 +165,7 @@ def compared(then: Shows | None, now: Shows) -> list[str]:
     lines: list[str] = []
     for work, (line, said) in now.items():
         before = None if then is None else then.get(work, ("", {}))[1]
-        lines += [line] + decisions_changed(before, said) if work else changes(before, said)
+        lines += [line] + choices_changed(before, said) if work else changes(before, said)
     gone = [shown for work, (shown, _) in (then or {}).items() if work not in now]
     return lines + [f"Removed: {shown}" for shown in gone]
 

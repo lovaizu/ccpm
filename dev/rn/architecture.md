@@ -161,6 +161,13 @@ flowchart TB
 
   A decision kept with the call that is made from it is read by turn as it was answered, and the
   call before it still shows what that work was made from.
+- What the orchestrator puts in a call that no answer of the user's gave, such as a file the
+  receiver has beyond the outputs the action names, it keeps in the CCS as a choice with why,
+  carried over as the decisions are; what turn's maker chose that the CCS left open comes back in
+  turn's result, each with why.
+
+  Each is a choice made in the user's place, which the work holds and the user did not see; kept
+  where the work is made from and returned, it reaches the sign-off from the record alone.
 - No work turn returns is fixed by the orchestrator: it reads each item's Good turn returns at its
   lines, and a Good its lines fall short of is a point settled before turn makes the work again, as
   a decision, as a change the user asks at a sign-off is.
@@ -184,10 +191,12 @@ flowchart TB
   The orchestrator runs rn's scripts itself, so a script that took an answer on its word would
   take an approval the user never gave.
 - At a sign-off, the orchestrator shows the proposal the UX's Sign-offs gives, made by rn's scripts
-  from the steering and the calls alone.
+  from the steering and the calls alone: at the design's and the deliverable's, each work's link
+  with the choices its latest call and turn's result for it keep.
 
-  So it says only what the steering holds and what each work was made from, nothing written for the
-  proposal alone.
+  So it says only what the steering holds and what each work was made from and came back with,
+  nothing written for the proposal alone; the user's own answers are in the work, checked by the
+  AI that used it in their place, so shown again they give the user nothing to judge.
 - Once the user approves the finished work, the orchestrator looks once for the learnings of
   [Principle 8](../architecture.md#learning-from-each-run): rn's scripts give, from the branch's
   history, each feedback the user sent back with its answer, each work made again and each decision

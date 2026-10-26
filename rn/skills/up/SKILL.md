@@ -119,10 +119,9 @@ conversation.
    - When the answer settles the point, keep it with `rn.py decide <work> --title <t> --says <s>
      --message <m>`: the title names the point; `--says` what the work must be on that point, in the
      words of the option or answer the user gave, as strong and as wide as they are, what it leaves
-     to be done said as still to be done, with what it is for, short enough for the proposal to show
-     as one line, never how it was reached, which the message keeps. A decision of the same title is
-     replaced, so an answer that changes a settled point is kept the same way. Then ask the next
-     point; an answer may show a new one.
+     to be done said as still to be done, with what it is for, never how it was reached, which the
+     message keeps. A decision of the same title is replaced, so an answer that changes a settled
+     point is kept the same way. Then ask the next point; an answer may show a new one.
    - When the answer is a question, or leaves the point open, answer it and ask the same point
      again.
    - Out: no point left; go to the step that comes after.
@@ -132,9 +131,10 @@ conversation.
    an AI that did not make it.
    - In: the work, the paths, receiver, use and what they have that the step that sent you gives,
      the actions it ticks and the step that comes after.
-   - Run `rn.py ccs <work> [<path>...] [--receiver "<receiver>"] [--use "<use>"] [--has <path>]...`
-     with only what that step gives; rn.py makes its own works and a task's work at the path and of
-     the kind its action names, and a work made again as its last call did. It writes the CCS and
+   - Run `rn.py ccs <work> [<path>...] [--receiver "<receiver>"] [--use "<use>"] [--has <path>]...
+     [--chose "<what you chose>: <why>"]...` with only what that step gives; rn.py makes its own
+     works and a task's work at the path and of the kind its action names, and a work made again as
+     its last call did, its choices carried, one of the same what replaced. It writes the CCS and
      keeps it. Where it stops for a kind with no checklist, make the checklist first: step 2 on work
      `checklist-<kind>`, then this step on it, giving nothing more; then run `rn.py ccs` for this
      work again.
@@ -200,7 +200,9 @@ conversation.
        checklist names its reader, from `rn.py checklists <kind>`, which prints the paths of the
        kind's checklists, for the task's completion criterion; and a `--has` for each earlier
        output the action uses, named, such as the research result a document rests on, and for what
-       the receiver has with it, `--has .` only where that is the whole repository.
+       the receiver has with it, `--has .` only where that is the whole repository, each of these
+       that neither the action nor an answer of the user's names with a `--chose` saying it and
+       why.
    - The user stops an action: what they then say is a point, as in step 2, and the action goes that
      way.
    - Once every action is ticked, the task leaves the steering. Weigh whether what it brought
@@ -215,9 +217,6 @@ conversation.
      it was not waiting, and prints the proposal, with what changed since the last at the same
      sign-off and its answer line. Reply with what it printed put into the conversation language,
      adding nothing and leaving nothing out, its links and commands as they are; end.
-   - Where it stops saying a work's core decisions do not fit, the work is not yet simple: settle
-     its points again more simply with the user, step 2 on that work, have it made again, step 3,
-     and come back here.
    - Out: the proposal in your reply, whole.
 
 6. Go on from the user's feedback, so the work is made again on the point behind it, not patched at

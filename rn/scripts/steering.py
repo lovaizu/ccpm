@@ -584,15 +584,14 @@ def put_plan(plan: list[str], part: list[str]) -> list[str]:
     return lines
 
 
-def decided(lines: list[str], goal: bool = True) -> dict[str, str]:
-    """What the steering says under the goal, where asked, and under each acceptance criterion, by
-    its ID, in the order of the steering, each as one line; read from a steering that holds its
-    form."""
+def decided(lines: list[str]) -> dict[str, str]:
+    """What the steering says under the goal and under each acceptance criterion, by its ID, in the
+    order of the steering, each as one line; read from a steering that holds its form."""
     parts = sections(lines)
     found: dict[str, str] = {}
     above = parts[""]
     start = next((k for k, (_, line) in enumerate(above) if GOAL.fullmatch(line)), None)
-    if goal and start is not None:
+    if start is not None:
         found["G1"] = said(above[start:]).partition(": ")[2]
     criteria = items_of(parts.get(CRITERIA, []), CRITERION, CRITERION_FORM)[0]
     found.update((i.id, said(i.lines).partition(": ")[2]) for i in criteria)

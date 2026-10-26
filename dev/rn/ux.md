@@ -81,13 +81,11 @@ sequenceDiagram
 - Sign-offs: before the design and the deliverable sign-off, an AI that did not make the work reads
   and uses it in the user's place, the finished work for each acceptance criterion, and rn makes it
   again until that AI finds nothing lacking; the plan, which the user reads at its sign-off as it
-  stands, rn checks against its checklist itself. At the sign-off rn shows the link to each work and
-  its core decisions, each with its intent, in a few short lines, and nothing else: no summary of
-  the text, no diff. The user glances at the work for its size and diagrams and judges the decisions
-  and intents; the text is for that AI and rn to check.
-
-  Where the core decisions do not fit in a few short lines, rn takes it as a sign the work is not
-  yet simple, and makes it again before it stops.
+  stands, rn checks against its checklist itself. At the design and the deliverable sign-off rn
+  shows the link to each work and each choice made in it that the user was not asked, by rn or by
+  the AI that made it, each with why, and nothing else: nothing of the user's own answers, which
+  the work holds and that AI has checked, no summary of the text, no diff. The user glances at the
+  work for its size and diagrams and judges those choices; the text is for that AI and rn to check.
 - Records: rn writes in its commit messages what the documents do not keep: the options weighed
   with their reasons, and each feedback with its answer.
 - Checklists: each document and the finished work is made with rn's checklist for its kind, which
@@ -195,7 +193,8 @@ What the user gains with rn, each with why it holds; these are why the user choo
   not drift from the purpose and making a finished work again becomes rare.
 - At each sign-off the user decides from the proposal alone: the plan is the proposal itself, and
   each document and the finished work has been read and used in their place by an AI that did not
-  make it, so they need not read it all again; they judge only the core decisions and their intent.
+  make it, so they need not read it all again; they judge only what was chosen without asking them,
+  each with why.
 - A piece of work that takes days neither swells nor drifts, and goes on from wherever the user
   stopped: only a short record of where it stands is carried from move to move.
 - What was decided, and why, stays, in the documents rn writes into the user's repository and in

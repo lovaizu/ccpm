@@ -95,6 +95,25 @@ class DecideTest(RepoTest):
         }
         self.assertEqual((out["call"], self.read_json(call_at("0002"))), ("0002", want))
 
+    def test_a_decision_after_turn_returned_carries_the_choices_of_the_call_before(self):
+        # Given: a call on t1.1 returned, holding a decision and a choice of the orchestrator's.
+        self.call("0001", "t1.1", decisions=("Form: a page",), result={})
+        ccs = self.read_json(call_at("0001"))
+        ccs["constraints"].append({"chosen": "Has docs/brand.md: the flow names the brand"})
+        self.write_json(call_at("0001"), ccs)
+        self.kept()
+        # When: the orchestrator keeps a decision of t1.
+        self.decide()
+        # Then: the new call carries the decision and the choice, then the new decision.
+        self.assertEqual(
+            self.read_json(call_at("0002"))["constraints"],
+            [
+                {"decision": "Form: a page"},
+                {"chosen": "Has docs/brand.md: the flow names the brand"},
+                {"decision": "License: MIT"},
+            ],
+        )
+
     def test_a_decision_of_a_part_after_it_is_cut_makes_a_new_call_carrying_the_decisions(self):
         for work, number, new in (("plan", "0001", "0002"), ("learnings", "0003", "0004")):
             with self.subTest(work=work):
@@ -654,6 +673,71 @@ class CcsTest(RepoTest):
                 # Then: it names the kind's checklist alone.
                 found = self.read_json(written)["retrieved_artifacts"]
                 self.assertEqual(found, [{"checklist": checklist}])
+
+    def test_each_choice_of_the_orchestrators_is_kept_with_why_after_the_decisions(self):
+        # Given: a call on t1.1 holding a decision, not returned.
+        self.call("0001", "t1.1", decisions=("License: MIT",))
+        self.kept()
+        # When: the orchestrator has its CCS written, giving two choices of its own.
+        self.ran(
+            "ccs",
+            "t1.1",
+            "README.md",
+            *options(NEEDED),
+            "--chose",
+            "Has docs/brand.md: the flow names the brand",
+            "--chose",
+            "Has .: the reader runs the tests",
+        )
+        # Then: each is kept as it was given, after the decision.
+        self.assertEqual(
+            self.read_json(call_at("0001"))["constraints"][:3],
+            [
+                {"decision": "License: MIT"},
+                {"chosen": "Has docs/brand.md: the flow names the brand"},
+                {"chosen": "Has .: the reader runs the tests"},
+            ],
+        )
+
+    def test_a_work_made_again_carries_its_choices_one_of_the_same_choice_replaced(self):
+        # Given: a call on t1.1 with two choices, returned.
+        self.ran(
+            "ccs",
+            "t1.1",
+            "README.md",
+            *options(NEEDED),
+            "--chose",
+            "Has docs/brand.md: the flow names the brand",
+            "--chose",
+            "Has .: the reader runs the tests",
+        )
+        self.write_json(call_at("0001", "result.json"), {})
+        self.kept()
+        # When: the orchestrator has it made again, giving the first choice with another why.
+        self.ran("ccs", "t1.1", "--chose", "Has docs/brand.md: the colours come from it")
+        # Then: the new call carries both, the first replaced where it stood.
+        found = [e for e in self.read_json(call_at("0002"))["constraints"] if "chosen" in e]
+        self.assertEqual(
+            found,
+            [
+                {"chosen": "Has docs/brand.md: the colours come from it"},
+                {"chosen": "Has .: the reader runs the tests"},
+            ],
+        )
+
+    def test_a_choice_without_its_why_stops(self):
+        for given in ("Has docs/brand.md", "Has docs/brand.md:  ", ": the flow names it"):
+            with self.subTest(given=given):
+                # Given: a session.
+                self.kept()
+                # When: the orchestrator gives a choice with no why after `: `, or nothing before.
+                out = self.stopped("ccs", "t1.1", "README.md", *options(NEEDED), "--chose", given)
+                # Then: rn says to give it as what was chosen and why.
+                self.assertIn(
+                    f'rn: the choice {given!r} is not "<what you chose>: <why>"; give what you'
+                    " chose, then `: `, then why",
+                    out,
+                )
 
     def test_the_decisions_of_the_latest_call_not_returned_are_kept(self):
         # Given: a call on t1.1 holding a decision, not returned.
