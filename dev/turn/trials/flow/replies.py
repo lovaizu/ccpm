@@ -51,7 +51,7 @@ def parts(run: str, licensed: bool) -> dict[str, Any]:
 
 def made(write: str, *items: dict[str, Any], questions: tuple = ()) -> dict[str, Any]:
     """The generator writing the README and running demo, then claiming the items."""
-    reply = {"items": list(items), "questions": list(questions)}
+    reply = {"items": list(items), "questions": list(questions), "chosen": []}
     return {"write": write, "run": ["sh demo.sh"], "reply": reply}
 
 
@@ -95,6 +95,7 @@ WAYS = {
                 "reply": {
                     "items": [{"checklist": CHECKLIST, "item": "B-1", "question": 1}],
                     "questions": [ASKED_FIRST],
+                    "chosen": [],
                 }
             },
             made(
