@@ -48,7 +48,9 @@ before it has given back, as each `turn.py` command takes the outcome of the one
    - A move, a line for the user and then the tool call as one JSON line,
      `{"tool": ..., "input": {...}}`: after an Agent call, run `turn.py next <result>` with
      `{"agent_id": "<the agent ID the call gave back>"}`; after a SendMessage, with nothing.
-   - `{"waiting": "<agent>"}`: run `turn.py next <result>` with nothing again.
+   - `{"waiting": "<agent>"}`: the role sent a message has not ended. Once a task notification
+     with its agent ID says it completed, run `turn.py next <result>` with `{"ended": "<that
+     ID>"}`; until then, run `turn.py next <result>` with nothing again.
    - `{"anew": "<result>"}`: the CCS now lays the run out anew; go to step 1.
    - `{"check": [...], "given": [...]}`: go to step 4.
    - `{"left": [...]}`: go to step 5.

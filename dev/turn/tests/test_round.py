@@ -38,7 +38,7 @@ class RoundTest(RepoTest):
 
     def later(self, reply):
         """What the script prints asked with nothing, while the first pause of its wait has the
-        role sent a message write its reply."""
+        role sent a message write its reply, then handed the role's end."""
         path = self.prompt()["reply"]
 
         def pause(seconds):
@@ -46,7 +46,8 @@ class RoundTest(RepoTest):
             self.write(path, json.dumps(reply))
 
         with mock.patch.object(run, "WAIT", 3), mock.patch.object(run.time, "sleep", pause):
-            return self.next()
+            self.assertEqual(self.next(), {"waiting": self.state()["next"]["agent"]})
+        return self.next(self.ended(self.state()["next"]))
 
 
 class TestGeneratorKept(RoundTest):
@@ -107,11 +108,47 @@ class TestGeneratorKept(RoundTest):
         self.assertEqual(self.due(self.later(CLAIM))["tool"], "SendMessage")
 
     def test_a_reading_before_the_messaged_generator_replied_stops(self):
-        # Given: a generator sent a message, not replied yet
-        # When: the orchestrator gives a reading of its own
-        # Then: it stops, saying the run waits on the generator
+        # Given: a generator sent a message, not ended yet
+        # When: the orchestrator gives a reading of its own, words that are no JSON, or the end
+        # of another agent
+        # Then: it stops, saying the run waits on the generator's end, by its ID
         self.stopped()
-        self.assertIn("waits on turn:generator's reply", self.refused(CLAIM))
+        for given in (CLAIM, "ended", {"ended": "aother"}, {"ended": " "}):
+            with self.subTest(given=given):
+                self.assertIn(
+                    "turn: the run waits on the end of turn:generator, agent agen; once a message"
+                    " says it ended, run `turn.py next",
+                    self.refused(given),
+                )
+
+    def test_a_reply_written_is_taken_only_once_its_role_has_ended(self):
+        # Given: a generator sent the first user's stop, which writes its reply and runs on
+        # When: the orchestrator goes on with nothing, then with the generator's end
+        # Then: the script waits no more once the reply is there, still waiting on the generator,
+        # as a role may still change its reply, and takes the reply once it has ended
+        self.stopped()
+        self.write(self.prompt()["reply"], json.dumps(CLAIM))
+        with mock.patch.object(run, "WAIT", WAITED), mock.patch.object(run.time, "sleep") as sleep:
+            self.assertEqual(self.next(), {"waiting": "turn:generator"})
+        self.assertEqual(sleep.call_count, 0)
+        move = self.due(self.next({"ended": IDS["turn:generator"]}))
+        self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
+
+    def test_a_role_ended_without_its_reply_is_told_to_write_it(self):
+        # Given: a generator sent the first user's stop, which ends without writing its reply
+        # When: the orchestrator goes on with its end
+        # Then: the generator is sent where to write its reply, and the run waits on its end again
+        self.stopped()
+        out = self.next({"ended": IDS["turn:generator"]})
+        reply = self.kept("generator.json")
+        self.assertEqual(
+            out["move"]["input"],
+            {
+                "to": IDS["turn:generator"],
+                "message": f"Write your reply to {reply} in your form; it is not there",
+            },
+        )
+        self.assertEqual(self.next(), {"waiting": "turn:generator"})
 
 
 class TestFirstUserKept(RoundTest):

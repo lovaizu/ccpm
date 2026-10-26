@@ -276,12 +276,20 @@ class RepoTest(testing.FolderTest):
         return self.due(self.next({"items": CAN, "questions": []}))
 
     def replied(self, reply):
-        """The role due writes its reply, and the orchestrator goes on with the agent ID the Agent
-        call gave back where it started the role; what the script prints then."""
+        """The role due writes its reply and ends, and the orchestrator goes on with the agent ID
+        the Agent call gave back where it started the role, or with the role's end, as Claude
+        Code's notification of its ID tells it, where the role was sent a message; what the script
+        prints then."""
         step = self.state()["next"]
         self.write(step["prompt"]["reply"], reply if isinstance(reply, str) else json.dumps(reply))
-        given = None if "to" in step or "id" in step else {"agent_id": IDS[step["agent"]]}
-        return self.next(given)
+        return self.next(self.ended(step))
+
+    def ended(self, step):
+        """What the orchestrator hands on once the role due ends: the agent ID the Agent call
+        starting it gave back, or, for a role sent a message, its end by its ID."""
+        if "to" in step or "id" in step:
+            return {"ended": step.get("to") or step["id"]}
+        return {"agent_id": IDS[step["agent"]]}
 
     def made(self, *claim, chosen=()):
         """The generator due replies with its claim, by default every item Good, naming the choices

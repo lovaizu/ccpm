@@ -271,21 +271,25 @@ def moved(run: dict[str, Any]) -> dict[str, Any]:
 
 
 def replied(run: dict[str, Any], step: dict[str, Any], text: str) -> dict[str, Any]:
-    """Takes the role's reply once it is written: one out of its form is sent back to the role with
-    what is wrong; one filled goes on to what the run does after it."""
+    """Takes the role's reply once the role has ended, as a role may change its reply until it ends:
+    a role started has ended once its Agent call gave back its agent ID, and one sent a message
+    once the orchestrator hands its end; until then the run waits on it. One ended with no reply is
+    told to write it; one out of its form is sent back with what is wrong; one filled goes on to
+    what the run does after it."""
     agent = step["agent"]
+    path = step["prompt"]["reply"]
     if "to" not in step and "id" not in step:
         step["id"] = agent_id(agent, text)
         state.save(run)
-    elif text.strip():
-        raise call.Stop(
-            f"turn: the run waits on {agent}'s reply, not on yours; run `turn.py next"
-            f" {run['call']['result']}` with nothing"
-        )
-    to = step.get("to") or step["id"]
-    path = step["prompt"]["reply"]
-    if not awaited(path):
+    elif not text.strip():
+        awaited(path)
         return {"waiting": agent}
+    else:
+        role_ended(run, agent, step.get("to") or step["id"], text)
+    to = step.get("to") or step["id"]
+    if not os.path.exists(path):
+        told = f"Write your reply to {path} in your form; it is not there"
+        return {"move": {"tool": "SendMessage", "input": {"to": to, "message": told}}}
     with open(path, encoding="utf-8") as f:
         reply = f.read()
     said = PROBLEMS[agent](run, reply)
@@ -300,14 +304,28 @@ def replied(run: dict[str, Any], step: dict[str, Any], text: str) -> dict[str, A
     return REPLIED[agent](run, json.loads(forms.unfenced(reply)))
 
 
-def awaited(path: str) -> bool:
-    """Whether the reply is written, waited for where it comes later, as a role sent a message
-    replies after the send."""
+def awaited(path: str) -> None:
+    """Waits, a second at a time within the shell's two minutes, until the reply is written, as a
+    role sent a message writes it while it runs and ends soon after; the orchestrator, called
+    again, hands on the role's end once it comes."""
     for _ in range(WAIT):
         if os.path.exists(path):
-            return True
+            return
         time.sleep(1)
-    return os.path.exists(path)
+
+
+def role_ended(run: dict[str, Any], agent: str, to: str, text: str) -> None:
+    """Returns where the orchestrator hands on the end of the role's agent, as Claude Code tells it
+    the agent ended; stops otherwise, saying what the run waits on."""
+    try:
+        found = json.loads(forms.unfenced(text))
+    except ValueError:
+        found = None
+    if not isinstance(found, dict) or found.get("ended") != to:
+        raise call.Stop(
+            f"turn: the run waits on the end of {agent}, agent {to}; once a message says it ended,"
+            f' run `turn.py next {run["call"]["result"]}` with {{"ended": "{to}"}}'
+        )
 
 
 def agent_id(agent: str, text: str) -> str:

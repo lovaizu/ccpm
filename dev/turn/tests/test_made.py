@@ -160,13 +160,22 @@ class TestMade(ReadTest):
         self.assertEqual(self.heard(self.made(GOOD, WAITS)), {"asked": RESULT})
         self.assertEqual(json.loads(self.turn("questions", RESULT)[1]), ASKED)
 
-    def test_a_reading_of_the_orchestrator_while_the_generator_s_reply_is_awaited_stops(self):
-        # Given: a run waiting on the generator's reply, kept started
-        # When: the orchestrator gives a reading of its own once the agent ID is given
-        # Then: it stops, saying the run waits on the role's reply, and the run goes on
+    def test_a_generator_started_that_ended_without_its_reply_is_told_to_write_it(self):
+        # Given: a generator started, whose Agent call returned with no reply written
+        # When: the orchestrator goes on with the agent ID, then gives a reading of its own
+        # Then: the generator is sent where to write its reply, and the reading stops, the run
+        # waiting on the generator's end and going on
+        reply = self.kept("generator.json")
+        out = self.next({"agent_id": IDS["turn:generator"]})
+        self.assertEqual(
+            out["move"]["input"],
+            {
+                "to": IDS["turn:generator"],
+                "message": f"Write your reply to {reply} in your form; it is not there",
+            },
+        )
         reading = json.dumps({"items": [GOOD, WAITS], "questions": [QUESTION]})
-        self.next({"agent_id": IDS["turn:generator"]})
-        self.assertIn("waits on turn:generator's reply, not on yours", self.refused(reading))
+        self.assertIn("waits on the end of turn:generator", self.refused(reading))
         self.assertTrue(os.path.exists(state.state_path(RESULT)))
 
     def test_going_on_without_the_agent_id_of_a_role_started_stops(self):

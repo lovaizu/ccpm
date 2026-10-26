@@ -199,6 +199,13 @@ turn/                      the plugin, installed by Claude Code
   alone.
 
   No AI copies a reply, and the first user's lane on what it reads keeps it from the generator's.
+- The flow takes a role's reply only once the role has ended: a role started returns from the Agent
+  call at its end, and a role sent a message goes on in the background, whose end Claude Code tells
+  the orchestrator by a task notification of its agent ID, which the orchestrator hands the flow.
+
+  A reply is written before its role ends, which may still check it or write it again; taken as
+  soon as it is there, the run moves on, and returns, removing the run's folder, while the role
+  still runs, which then writes into the user's repository a file of a run that is gone.
 - The flow gives no role the run's own files, nor the first user the CCS, a folder holding them
   given as its other entries, as a lane lets a role read anything under a folder it is given.
 
