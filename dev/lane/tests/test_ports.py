@@ -137,9 +137,10 @@ class TestRun(unittest.TestCase):
         start = mock.patch.object(ports, "START", 40.0)
         with clock, start, mock.patch.object(ports.subprocess, "run", return_value=done) as run:
             try:
-                ports.run("a.py", "items", {"input": "a", "text": ""}, left)
+                ports.run("a.py", "items", {"input": "a", "text": ""}, "/p", left)
             except ports.Failed as failed:
                 return str(failed)
+        self.given = run.call_args.kwargs
         return run.call_args.kwargs["timeout"]
 
     def test_an_adapter_is_given_what_is_left_of_the_hooks_time(self):
@@ -155,6 +156,16 @@ class TestRun(unittest.TestCase):
         # When: an adapter is run
         # Then: it is given them, whatever the clock says
         self.assertEqual(self.ran(103.0, 8.0), 8.0)
+
+    def test_an_adapter_is_given_the_plugins_folder_as_claude_code_gives_a_hook(self):
+        # Given: the plugin's folder /p
+        # When: an adapter is run
+        self.ran(40.0)
+        # Then: it is run with CLAUDE_PLUGIN_ROOT set to it, the rest of the environment kept, so
+        # it finds the plugin's files wherever it is run from
+        env = self.given["env"]
+        self.assertEqual(env["CLAUDE_PLUGIN_ROOT"], "/p")
+        self.assertEqual(env["PATH"], os.environ["PATH"])
 
     def test_an_adapter_exiting_other_than_0_is_told_its_last_line_of_errors(self):
         # Given: an adapter exiting 1, printing two lines of errors

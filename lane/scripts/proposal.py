@@ -114,7 +114,7 @@ def adapter_found(root: str, folder: str, path: str, port: str, by: str) -> dict
     cases = adapter_cases(cases_file, port)
     for number, case in enumerate(cases, 1):
         try:
-            gave: Any = ports.run(source, port, case["given"], ports.TIME)
+            gave: Any = ports.run(source, port, case["given"], root, ports.TIME)
         except ports.Failed as failed:
             gave = str(failed)
         if gave != case["gives"]:
@@ -195,6 +195,8 @@ def subagent(root: str, given: dict[str, Any]) -> dict[str, Any]:
     with open(file, encoding="utf-8") as f:
         lines = f.read().splitlines(keepends=True)
     steps = given["steps"]
+    # A name the subagent's part uses is read as its entry says it stands for.
+    bindings = step.bindings(root, name)
     numbers = []
     for s in steps:
         number = s["step"]
@@ -207,16 +209,17 @@ def subagent(root: str, given: dict[str, Any]) -> dict[str, Any]:
         if where is None:
             raise wrong(f"gives step {number}, which the Steps of {name} do not have")
         for lane in s["lanes"]:
-            lane_check(lane, f"step {number} of {name}", root)
+            lane_check(lane, f"step {number} of {name}", root, bindings)
         s["span"] = where
     named = {"adapter": given["adapter"]} if "adapter" in given else {}
     return {"name": name, **named, "file": file, "lines": lines, "steps": steps}
 
 
-def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
+def lane_check(lane: dict[str, Any], on: str, root: str, bindings: dict[str, str]) -> None:
     """Stops where the lane, held to its schema, takes an empty thing, or another count of things
     than its wording and its hook hold, or names an adapter that cannot be its port's; or where its
-    module refuses what it takes in the plugin at root, as in_form a form lane does not read."""
+    module refuses what it takes in the plugin at root, read through the bindings of its
+    subagent's entry, as in_form a form lane does not read."""
     known, takes = lane["lane"], lane["takes"]
     if not all(takes):
         raise wrong(f"gives {known} on {on} a take that is empty")
@@ -229,6 +232,6 @@ def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
     if why:
         raise wrong(f"names an adapter for {known} on {on} {why}")
     refused = getattr(lanes.LANES[known], "refused", None)
-    why = refused(takes, root) if refused is not None else ""
+    why = refused(step.bound(takes, bindings), root) if refused is not None else ""
     if why:
         raise Stop(f"lay.py: {known} on {on} {why}; fix it or the proposal and run again.")

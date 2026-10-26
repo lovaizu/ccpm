@@ -67,6 +67,27 @@ class TestPrint(AdapterTest):
         self.assertTrue(said.endswith('    gives {"items": []}\n'), said)
 
 
+class TestPlugin(AdapterTest):
+    def test_an_adapter_beside_the_proposal_finds_the_plugins_files(self):
+        # Given: an adapter beside the proposal that reads by a module of the plugin's scripts/,
+        # found from the plugin's folder it is given
+        self.write(
+            os.path.join(self.plugin, "scripts", "heads.py"),
+            "import re\nHEADS = re.compile(r'^### ([A-Z]+-[0-9]+):', re.M)\n",
+        )
+        self.adapter(
+            "import json, os, sys\n"
+            "sys.path.insert(0, os.path.join(os.environ['CLAUDE_PLUGIN_ROOT'], 'scripts'))\n"
+            "from heads import HEADS\n"
+            "print(json.dumps({'items': HEADS.findall(json.load(sys.stdin)['text'])}))\n",
+            CASES,
+        )
+        # When: the proposal is printed
+        code, said = self.lay("print", self.proposal_file)
+        # Then: the adapter gives each of its cases, run as it is run in the plugin
+        self.assertEqual(code, 0, said)
+
+
 class TestCases(AdapterTest):
     def test_an_adapter_or_its_cases_not_as_lane_reads_them_stop_before_anything(self):
         wrong = {

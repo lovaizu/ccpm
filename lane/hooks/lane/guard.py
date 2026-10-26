@@ -59,9 +59,11 @@ class Lanes:
         except ValueError as wrong:
             return [self.unchecked(str(wrong), LAY_AGAIN.format(plugin=plugin))]
         given, values = lanes_json.lanes_of(found), found.get("adapter")
-        laid = [(lane, takes) for _, lane, takes, _ in given]
+        # A name the subagent's part uses is read as its entry says it stands for.
+        bindings = step.bindings(self.root, name)
+        laid = [(lane, step.bound(takes, bindings)) for _, lane, takes, _ in given]
         on = [
-            Laid(self.root, self.agent, g, laid, values)
+            Laid(self.root, self.agent, g, laid, values, bindings)
             for g in given
             if self.held in held_on(g[1])
         ]
@@ -116,8 +118,9 @@ class Lanes:
 
 class Laid:
     """A lane laid on a step of a subagent of the plugin at root, with the adapter of the port it
-    reads, None for none, every lane laid in the subagent, each with what it takes, and the
-    subagent's adapter of the values port, None for none."""
+    reads, None for none, every lane laid in the subagent, each with what it takes read through the
+    bindings, the subagent's adapter of the values port, None for none, and the bindings of its
+    entry, what each name its part uses stands for."""
 
     def __init__(
         self,
@@ -126,10 +129,14 @@ class Laid:
         given: tuple[int, str, list[str], str | None],
         laid: list[tuple[str, list[str]]],
         values: str | None,
+        bindings: dict[str, str],
     ) -> None:
         self.root, self.agent = root, agent
         self.plugin, self.name = agent.split(":")
         self.number, self.lane, self.takes, self.adapter = given
+        # What it takes, as its step names it in its sentence, and read through the bindings as
+        # it is checked.
+        self.bound = step.bound(self.takes, bindings)
         self.laid, self.values = laid, values
         # The scripts start_with takes in the subagent, which give the run's values with what they
         # print, and which a lane taking one waits on.
@@ -152,7 +159,7 @@ class Laid:
         # What the layer refuses to lay is held again on each run, as the plugin may have changed
         # since, such as in_form's form gone.
         refused = getattr(LANES[self.lane], "refused", None)
-        why = refused(self.takes, self.root) if refused is not None else ""
+        why = refused(self.bound, self.root) if refused is not None else ""
         if why:
             return [self.error(f"it {why}", REFUSED)]
         named = started.names(self.takes)
@@ -180,7 +187,7 @@ class Laid:
         run = started.held(named, self.run_values(event["cwd"], seen.found)) if named else {}
         if run is None:
             return []
-        texts = started.put(placed(self.lane, self.takes), run)
+        texts = started.put(placed(self.lane, self.bound), run)
         given: dict[str, Any] = {"takes": dict(zip(places(self.lane), texts))}
         out = schema.held(given_in(self.lane), {**given, **self.record(seen)})
         if out is not None:
@@ -207,7 +214,7 @@ class Laid:
         if adapter is None:
             return ports.read(port, given)
         try:
-            return ports.run(os.path.join(self.root, adapter), port, given)
+            return ports.run(os.path.join(self.root, adapter), port, given, self.root)
         except ports.Failed as failed:
             raise ports.Failed(str(failed), adapter) from None
 

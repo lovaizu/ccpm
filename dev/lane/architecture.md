@@ -123,6 +123,16 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
 
   The entry's sentence is the one the subagent reads first, as a lane's is its step's; held on
   every subagent so made, the reading asks the building AI nothing.
+- A lane takes a script, file or folder by the name the part uses, as its step says it, and the
+  guard and the layer read the name as the entry says it stands for.
+
+  Claude Code puts the plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in the entry's body alone, so
+  where a thing lies is the entry's, and the sentence the subagent is told stays the step's.
+- An adapter is run with `CLAUDE_PLUGIN_ROOT` set to the plugin's folder, by the layer as by the
+  guard.
+
+  An adapter that hands its port's text to a part of the plugin, as Principle 9 has it, finds it
+  from there, beside the proposal as in the plugin.
 - The guard reads a call in the forms the steps tell and the AI writes, not in every form the shell
   allows.
 
@@ -157,7 +167,7 @@ lane/                          the plugin, installed by Claude Code
 │       ├── forms.py           the forms in_form holds an output to
 │       ├── schema.py          a JSON Schema, and a value held to it
 │       ├── template.py        a Markdown template, and a file held to it
-│       ├── step.py            a subagent's step, read from its part or its file
+│       ├── step.py            a subagent's step, read from its part or its file, and the names its entry binds
 │       ├── record.py          where Claude Code keeps records, and what a subagent did before
 │       ├── called.py          each call of a subagent kept until its record holds it
 │       ├── started.py         what the subagent started from, for a thing given for each run

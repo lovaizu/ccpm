@@ -1,7 +1,9 @@
 """A subagent's step, read from the file its steps are in: its entry, the file in the plugin's
 agents/ Claude Code takes the subagent from, by the name in its frontmatter, or the part the entry's
 body has it read first, where it names one; and the step's text, its numbered line in the Steps and
-the lines its text goes on in, the list under it, such as its In and Out, left out."""
+the lines its text goes on in, the list under it, such as its In and Out, left out. An entry's body
+also says where each script, file or folder its part names by name lies, which a lane taking the
+name reads it by."""
 
 from __future__ import annotations
 
@@ -27,6 +29,8 @@ QUOTED = re.compile(r"`[^`]*`")
 END = re.compile(r"[.?!](?=\s|$)")
 # A blank line, which ends a paragraph.
 BLANK = re.compile(r"\n[ \t]*\n")
+# Where an entry's body says what a name its part uses stands for: "`<name>` below is `<text>`".
+BINDS = re.compile(r"`(?P<name>[^`\s]+)` below is `(?P<text>[^`]+)`")
 
 
 class Part(NamedTuple):
@@ -54,13 +58,7 @@ def part(root: str, name: str) -> Part | None:
     """The part the subagent's entry names in its body, the one file under the plugin's prompts/ it
     names in backticks, with the sentence naming it; None where its body names no such file, or
     more than one, or no entry names the subagent."""
-    entry = agent_file(root, name)
-    if entry is None:
-        return None
-    with open(entry, encoding="utf-8") as f:
-        lines = f.read().splitlines()
-    body = "\n".join(lines[template.body(lines) :])
-    paragraphs = [BREAK.sub(" ", p) for p in BLANK.split(body)]
+    paragraphs = body(root, name)
     found = [(p, m) for p in paragraphs for m in NAMED.finditer(p)]
     prompts = os.path.realpath(os.path.join(root, "prompts"))
     files = {os.path.realpath(os.path.join(prompts, m["path"])) for _, m in found}
@@ -73,6 +71,36 @@ def part(root: str, name: str) -> Part | None:
     start = max((e.end() for e in END.finditer(plain[: m.start()])), default=0)
     end = next((e.end() for e in END.finditer(plain, m.end())), len(paragraph))
     return Part(file, paragraph[start:end].strip())
+
+
+def body(root: str, name: str) -> list[str]:
+    """The paragraphs of the body of the subagent's entry, after its frontmatter, each line break
+    read as a space; none where no entry names the subagent."""
+    entry = agent_file(root, name)
+    if entry is None:
+        return []
+    with open(entry, encoding="utf-8") as f:
+        lines = f.read().splitlines()
+    text = "\n".join(lines[template.body(lines) :])
+    return [BREAK.sub(" ", p) for p in BLANK.split(text)]
+
+
+def bindings(root: str, name: str) -> dict[str, str]:
+    """What each name the subagent's part uses stands for, as its entry's body says it, such as
+    `turn.py` for `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py"`; none where it says none, or no
+    entry names the subagent."""
+    return {m["name"]: m["text"] for p in body(root, name) for m in BINDS.finditer(p)}
+
+
+def bound(takes: list[str], bindings: dict[str, str]) -> list[str]:
+    """The takes as the entry's bindings give them: a take whose first word is a name bound, the
+    name put in as it stands for, so a lane matches what the subagent runs or reads; every other
+    take as it is."""
+    found = []
+    for take in takes:
+        first, blank, rest = take.partition(" ")
+        found.append(bindings[first] + blank + rest if first in bindings else take)
+    return found
 
 
 def steps_file(root: str, name: str) -> str | None:
@@ -116,6 +144,7 @@ def holds(root: str, name: str, number: int, sentence: str) -> bool:
 
 
 def expanded(said: str, root: str) -> str:
-    """The text as the subagent reads it: the plugin's folder put in where it names ROOT, as Claude
-    Code gives a plugin subagent its file."""
+    """The text as the subagent reads it from its entry, and as a lane finds the file it names: the
+    plugin's folder put in where it names ROOT, as Claude Code gives a plugin subagent its entry's
+    body, and nothing it reads or runs after."""
     return said.replace(ROOT, root)

@@ -32,6 +32,7 @@ nothing told. A thing taken holds any text, a comma among the rest.
 
 wait_for takes, after the approval, each command it holds back, as the step writes it; its sentence
 shows the approval alone. in_form takes the form as `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`,
+or by a name the subagent's entry says lies there, as [a subagent's part](#a-subagents-part) says,
 the path the subagent reads it by: a `.json` JSON Schema of the keywords Anthropic's structured
 outputs accept, which a JSON output, or each line of a `.jsonl` one, is held to, or a `.md`
 Markdown template, whose headings and frontmatter keys a Markdown output is held to.
@@ -103,7 +104,9 @@ text takes and one that gives nothing. An adapter is part of the proposal: kept 
 your plugin, `hooks/adapters/<port>-<name>.py`, on the lane reading the port, or, for the values
 port, on the subagent, as every lane of the subagent reads its values; it is run on each of its
 cases before the proposal is printed, shown in the print, and written into your plugin's
-`hooks/adapters/` with its cases once approved. On a run the guard runs it within the hook's time,
+`hooks/adapters/` with its cases once approved. It is run with `CLAUDE_PLUGIN_ROOT` set to your
+plugin's folder, beside the proposal as in your plugin, so it finds your plugin's other files from
+there. On a run the guard runs it within the hook's time,
 and an adapter failing, giving no answer in time or answering out of its port is an error, as below.
 
 | Port | Given | Gives | lane's form |
@@ -225,6 +228,21 @@ its steps are those of the part, the one file under your plugin's `prompts/` the
 backticks: `lay.py print` shows the part's steps, `lay.py write` writes each lane's sentence into
 them, and the guard reads them there. A body naming no such file, or more than one, has its steps
 read from the file itself.
+
+Claude Code puts your plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in the entry's body alone, not
+in the part the subagent reads, so the part names each script, file or folder by its name alone,
+and the body says where each lies, before the sentence naming the part, as
+`` `<name>` below is `<what it stands for>` ``, such as
+
+```markdown
+`writer.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/writer.py"`, run from where you start.
+`entry.json` below is `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`.
+```
+
+A lane takes the name as the step says it, as in `` First run `writer.py start`. ``, and its
+sentence shows it so; where a thing it takes begins with a name the body binds, the guard and the layer read the
+name as the body says it stands for, so start_with holds the subagent to run the script where the
+body says it lies, and in_form reads the form there.
 
 Once lanes are laid in the subagent, the guard holds it to read the part whole before anything
 else, with nothing in the proposal for it, as the sentence is the entry's and not a step's: a Read

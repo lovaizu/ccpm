@@ -20,6 +20,7 @@ within the hook's time, holding what it gives to the port."""
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import time
@@ -157,9 +158,13 @@ class Failed(Exception):
     """What an adapter did that is not as its port says."""
 
 
-def run(path: str, port: str, given: dict[str, Any], left: float | None = None) -> dict[str, Any]:
+def run(
+    path: str, port: str, given: dict[str, Any], root: str, left: float | None = None
+) -> dict[str, Any]:
     """What the port gives back, given its JSON, by the adapter at the path, run with python3 on the
-    port's JSON within the seconds left, or what is left of TIME where none are given; stops with
+    port's JSON within the seconds left, or what is left of TIME where none are given, with
+    CLAUDE_PLUGIN_ROOT the folder of the plugin at root, as Claude Code gives it a hook, so the
+    adapter finds the plugin's files wherever it is, beside a proposal or in the plugin; stops with
     Failed saying what the adapter did where it exits other than 0, gives no answer in that time,
     prints no JSON, or answers out of the port."""
     if left is None:
@@ -168,6 +173,7 @@ def run(path: str, port: str, given: dict[str, Any], left: float | None = None) 
         done = subprocess.run(
             ["python3", path],
             input=json.dumps(given),
+            env={**os.environ, "CLAUDE_PLUGIN_ROOT": root},
             capture_output=True,
             text=True,
             timeout=left,

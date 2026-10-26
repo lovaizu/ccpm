@@ -32,6 +32,27 @@ steps on what you are given. Reply in `notes.md`.
 """
 # The part: the subagent's file without its frontmatter, its Role and its Steps.
 PART = helpers.STEPS.split("---\n", 2)[2]
+# changelog-writer's entry saying where the script and the form its part names by name lie, before
+# the sentence naming its part.
+BOUND_ENTRY = (
+    """---
+name: changelog-writer
+---
+
+`log.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/log.py"`, run from where you start.
+`entry.json` below is `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`.
+
+"""
+    + FIRST.replace(" its steps", "\nits steps")
+    + "\n"
+)
+# What BOUND_ENTRY binds each name to.
+BOUND = {
+    "log.py": 'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/log.py"',
+    "entry.json": "${CLAUDE_PLUGIN_ROOT}/forms/entry.json",
+}
+# in_form on step 3, its form named by the name BOUND_ENTRY binds.
+FORMED = {"lane": "in_form", "takes": ["CHANGELOG.json", "entry.json"]}
 
 
 class PartTest(helpers.PluginTest):
@@ -142,6 +163,61 @@ class TestStepsFile(PartTest):
         self.assertFalse(step.holds(self.plugin, "changelog-writer", 3, "Write the new"))
 
 
+class TestBindings(PartTest):
+    """The entry says where each script, file or folder its part names by name lies, and a lane
+    taking the name reads it so."""
+
+    def test_each_binding_of_the_entry_is_its_name_and_what_it_stands_for(self):
+        # Given: changelog-writer's entry binding log.py and entry.json, before its part's sentence
+        self.write(self.agent_file, BOUND_ENTRY)
+        # When: its bindings are read
+        # Then: each name is what the entry says it stands for, and its part is as before
+        self.assertEqual(step.bindings(self.plugin, "changelog-writer"), BOUND)
+        self.assertEqual(step.part(self.plugin, "changelog-writer"), step.Part(self.part, FIRST))
+
+    def test_a_binding_over_a_line_break_is_read_whole(self):
+        # Given: an entry binding a name over a line break
+        self.entry("`log.py` below is\n`python3 log.py`, run from where you start.\n")
+        # When: its bindings are read
+        # Then: the line break is read as a space
+        self.assertEqual(
+            step.bindings(self.plugin, "changelog-writer"), {"log.py": "python3 log.py"}
+        )
+
+    def test_an_entry_binding_nothing_has_no_bindings(self):
+        for what, name, text in (
+            ("an entry naming its part alone", "changelog-writer", ENTRY),
+            (
+                "a binding in the frontmatter alone",
+                "changelog-writer",
+                "---\nname: changelog-writer\ndescription: `log.py` below is `x`.\n---\n\nWrite.\n",
+            ),
+            ("no entry naming the subagent", "other", ENTRY),
+        ):
+            with self.subTest(what=what):
+                # Given: an entry binding no name in its body, or none naming the subagent
+                self.write(self.agent_file, text)
+                # When: its bindings are read
+                # Then: there are none
+                self.assertEqual(step.bindings(self.plugin, name), {})
+
+    def test_a_take_beginning_with_a_bound_name_is_read_as_the_entry_binds_it(self):
+        # Given: the takes of lanes, some beginning with a name BOUND binds
+        takes = ["log.py --since v1", "entry.json", "git commit", "{work}", "cat log.py"]
+        # When: they are read through the bindings
+        # Then: a bound name beginning a take is put in as it stands for, every other take left
+        self.assertEqual(
+            step.bound(takes, BOUND),
+            [
+                'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/log.py" --since v1',
+                "${CLAUDE_PLUGIN_ROOT}/forms/entry.json",
+                "git commit",
+                "{work}",
+                "cat log.py",
+            ],
+        )
+
+
 class TestLaid(PartTest, LayTest):
     def test_the_print_shows_the_parts_step(self):
         # Given: the README's proposal on step 3 of changelog-writer, its steps in its part
@@ -230,6 +306,27 @@ class TestLaid(PartTest, LayTest):
         self.lay("write", self.proposal_file)
         # Then: its hook on a tool call matches Bash alone, as before
         self.assertEqual(self.hooks()["hooks"]["PreToolUse"][0]["matcher"], "Bash")
+
+    def test_a_form_named_by_a_bound_name_is_laid(self):
+        # Given: in_form on step 3 taking its form by the name the entry binds, the form there
+        self.write(self.agent_file, BOUND_ENTRY)
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), {"type": "object"})
+        self.propose(self.proposal([FORMED]))
+        # When: it is printed
+        code, said = self.lay("print", self.proposal_file)
+        # Then: it is shown with the step, as the form is read where the entry says it lies
+        self.assertEqual(code, 0, said)
+        self.assertIn("Write `CHANGELOG.json` in the form of `entry.json`.", said)
+
+    def test_a_form_named_by_a_name_no_entry_binds_is_refused(self):
+        # Given: in_form on step 3 taking its form by a name the entry does not bind
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), {"type": "object"})
+        self.propose(self.proposal([FORMED]))
+        # When: it is printed
+        code, said = self.lay("print", self.proposal_file)
+        # Then: it stops, as no path is known for the form
+        self.assertEqual(code, 1)
+        self.assertIn("names the form entry.json, which is not named as", said)
 
 
 class TestReadFirst(GuardTest):
@@ -337,6 +434,61 @@ class TestReadFirst(GuardTest):
         self.assertIn(
             "notes: lane cannot check the lanes of changelog-writer: its record is not found", said
         )
+
+
+class TestBoundGuard(TestReadFirst):
+    """The guard on changelog-writer, its entry BOUND_ENTRY, binding the names its part uses."""
+
+    def lay(self, *laid: tuple, values: str = "") -> None:
+        """Lays the lanes as TestReadFirst does, the entry binding the names of BOUND."""
+        super().lay(*laid, values=values)
+        self.write(self.agent_file, BOUND_ENTRY)
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), {"type": "object"})
+
+    def test_a_script_named_by_a_bound_name_is_the_one_the_entry_says(self):
+        # Given: start_with on step 1 taking log.py, which the entry binds, the part read whole
+        self.lay((1, "start_with", ["log.py"]))
+        self.record([self.whole()])
+        for what, command, said in (
+            (
+                "the script where the entry says",
+                f'python3 "{self.plugin}/scripts/log.py"',
+                ("", ""),
+            ),
+            (
+                "a script of that name elsewhere",
+                f"python3 {self.base}/log.py",
+                ("told", "notes: First run `log.py`."),
+            ),
+        ):
+            with self.subTest(what=what):
+                # When: changelog-writer runs it first
+                # Then: the entry's script goes on, and another of the name is told the sentence
+                self.assertEqual(self.guard(self.stream(command)), said)
+
+    def test_a_form_named_by_a_bound_name_holds_the_write(self):
+        # Given: in_form on step 3 taking its form by the name the entry binds, the part read
+        self.lay((3, "in_form", FORMED["takes"]))
+        self.record([self.whole()])
+        # When: changelog-writer writes the output out of the form
+        event = self.called("Write", {"file_path": "CHANGELOG.json", "content": "[]"})
+        # Then: it is told the sentence as its step says it, with the point
+        whom, said = self.guard(json.dumps(event))
+        self.assertEqual(whom, "told")
+        self.assertTrue(
+            said.startswith("notes: Write `CHANGELOG.json` in the form of `entry.json`.\n")
+        )
+
+    def test_the_form_named_by_a_bound_name_may_be_read(self):
+        # Given: read_only on step 1 and in_form on step 3 taking its form by a bound name, the
+        # part read whole
+        self.lay((1, "read_only", ["notes.md"]), (3, "in_form", FORMED["takes"]))
+        self.record([self.whole()])
+        # When: changelog-writer reads the form where the entry says it lies
+        form = os.path.join(self.plugin, "forms", "entry.json")
+        event = self.called("Read", {"file_path": form})
+        # Then: it goes on, as read_only lets it read the form of its in_form lane
+        self.assertEqual(self.guard(json.dumps(event)), ("", ""))
 
 
 if __name__ == "__main__":
