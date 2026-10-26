@@ -1,15 +1,15 @@
 """Each call a subagent with lanes made, kept by lane's hooks as it comes back, so the guard holds
-the subagent to every call it made before, those of the reply being handed among them, which the
-record holds only once the whole reply has ended, as record.py says: Claude Code runs each call's
-PostToolUse, or PostToolUseFailure where it failed, before the next call's PreToolUse. A call a
-hook stopped gets neither, as it never ran, and record.done leaves it out too.
+the subagent to every call it made before, those of the reply being handed among them, whose
+results the record may not hold yet, as record.py says: Claude Code runs each call's PostToolUse,
+or PostToolUseFailure where it failed, before the next call's PreToolUse. A call a hook stopped
+gets neither, as it never ran, and record.done leaves it out too.
 
 The calls are kept one JSON line each, in the order they came back, in
 `lane/<yyyymmdd>-<session>/<agent>.jsonl` in the system's temporary folder, used only while the
 subagent runs, as dev/architecture.md's Where a plugin writes its files has it. What a call gave
 back is kept as the text the AI is shown, in the form the record's tool result has for the same
 call, as the version of Claude Code record.py names gives both; where the record and a kept call
-differ, the record holds, so a kept call is read only until the record holds it."""
+differ, the record holds, so a kept call is read only until the record holds its result."""
 
 from __future__ import annotations
 
@@ -97,13 +97,13 @@ class Kept:
 
 def entries(event: dict[str, Any]) -> list[dict[str, Any]] | None:
     """Each entry of the record of the event's subagent, as record.entries reads it, then each call
-    kept of it that the record does not hold yet, by its ID, in the order kept, as the two entries
-    the record would hold of it; None where no record is found."""
+    kept of it whose result the record does not hold yet, by its ID, in the order kept, as the two
+    entries the record would hold of it; None where no record is found."""
     found = record.entries(event)
     file = place(event)
     if found is None or file is None:
         return found
-    held = {b.get("id") for e in found for b in record.uses(e)}
+    held = {b.get("tool_use_id") for e in found for b in record.of(e, "user", "tool_result")}
     kept = [k for k in record.read(file) or [] if k.get("id") not in held]
     return [*found, *(e for k in kept for e in as_entries(k))]
 

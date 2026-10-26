@@ -95,6 +95,15 @@ class TestDrift(AsPrintedTest):
         # Then: it is a drift, as the hand-on before was of the run before
         self.assertTrue(self.drifts(calls, "I ask: is that all?"))
 
+    def test_the_command_run_again_not_yet_back_leaves_the_print_due(self):
+        # Given: the command run, having printed, then run again, the record holding that run and
+        # not yet what it gave back, as Claude Code may write the call being checked before its
+        # PreToolUse hook runs
+        calls = [printed(), printed(None)]
+        # When: that run is checked
+        # Then: it is a drift, as the print is due and the run hands nothing on
+        self.assertTrue(self.drifts(calls, PRINT, "Bash"))
+
     def test_a_reply_ending_the_turn_that_holds_no_print_leaves_it_due(self):
         # Given: the command run, having printed, then a reply ending the turn of something else
         calls = [printed(), helpers.replied("I ask: is that all?")]
@@ -194,7 +203,7 @@ class TestLetThrough(AsPrintedTest):
                 printed("Exit code 1\nlay.py: the proposal names no plugin", failed=True)
             ],
             "the command printed nothing": [printed("(Bash completed with no output)")],
-            "the command not back yet": [printed("")],
+            "the command gave back no text": [printed("")],
         }.items():
             with self.subTest(what=what):
                 # Given: no print of the command left to hand on

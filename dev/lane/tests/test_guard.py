@@ -402,6 +402,18 @@ class TestRunValues(GuardTest):
         # Then: it goes on, write_only not yet held, as the value comes with what the script prints
         self.assertEqual(self.guard(json.dumps(event)), ("", ""))
 
+    def test_the_script_start_with_takes_not_yet_back_is_not_run_before(self):
+        # Given: start_with laid on step 1, taking `scripts/given.py`, which gives the work, the
+        # prompt naming no work, and the record holding the script's run and not yet what it
+        # gave back, as Claude Code may write the call being checked before its PreToolUse hook
+        # runs
+        self.lay((1, "start_with", ["scripts/given.py"]), *self.LAID)
+        command = f"python3 {self.plugin}/scripts/given.py"
+        self.record([("Bash", {"command": command}, None)])
+        # When: that run is checked
+        # Then: it goes on, nothing said, write_only not yet held, as the script has not run
+        self.assertEqual(self.guard(json.dumps(self.event(command))), ("", ""))
+
     def test_a_script_start_with_takes_gives_the_value_over_the_prompt(self):
         # Given: start_with laid on step 1, taking `scripts/given.py`, which printed the work
         # after the prompt named another

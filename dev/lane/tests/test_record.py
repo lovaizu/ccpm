@@ -182,20 +182,30 @@ class TestEntries(RecordTest):
 
 class TestDone(RecordTest):
     def test_each_call_is_read_in_order_with_its_input_folder_and_result(self):
-        # Given: a record of a Read given back, and a Bash call not yet back, each request as sent
-        # repeating its call after it
-        calls = [("Read", {"file_path": "a"}, "1\tx"), ("Bash", {"command": "ls"}, None)]
+        # Given: a record of a Read and a Bash call given back, each request as sent repeating its
+        # call after it
+        calls = [("Read", {"file_path": "a"}, "1\tx"), ("Bash", {"command": "ls"}, "a.md")]
         self.write(self.file, helpers.recorded("/w", calls))
         # When: what the subagent did is read
-        # Then: each call comes once, in order, with what the AI gave it and the folder it ran in,
-        # and what it gave back, nothing for the call not back, the request as sent left out
+        # Then: each call comes once, in order, with what the AI gave it, the folder it ran in and
+        # what it gave back, the request as sent left out
         self.assertEqual(
             self.done(),
             [
                 record.Done("Read", {"file_path": "a"}, "/w", "1\tx"),
-                record.Done("Bash", {"command": "ls"}, "/w", ""),
+                record.Done("Bash", {"command": "ls"}, "/w", "a.md"),
             ],
         )
+
+    def test_a_call_not_yet_back_is_left_out_as_none_made_before(self):
+        # Given: a record of a Bash call given back, then one whose tool use Claude Code has
+        # written and whose result it has not, as the call being checked may be when its
+        # PreToolUse hook runs
+        calls = [helpers.bash("ls"), ("Bash", {"command": "python3 start.py"}, None)]
+        self.write(self.file, helpers.recorded("/w", calls))
+        # When: what the subagent did is read
+        # Then: the call given back alone is there, as the other has not been made yet
+        self.assertEqual(self.done(), [record.Done("Bash", {"command": "ls"}, "/w", "")])
 
     def test_a_record_of_the_prompt_alone_holds_no_call(self):
         # Given: the record of a subagent that has made no call yet, its prompt alone
@@ -205,9 +215,14 @@ class TestDone(RecordTest):
         self.assertEqual(self.done(), [])
 
     def test_a_call_whose_entry_names_no_folder_ran_in_the_events(self):
-        # Given: a tool use whose entry names no folder
+        # Given: a tool use whose entry names no folder, given back
         use = {"type": "tool_use", "id": "t", "name": "Read", "input": {"file_path": "a"}}
-        self.write(self.file, json.dumps({"type": "assistant", "message": {"content": [use]}}))
+        back = {"type": "tool_result", "tool_use_id": "t", "content": ""}
+        entries = [
+            {"type": "assistant", "message": {"content": [use]}},
+            {"type": "user", "message": {"content": [back]}},
+        ]
+        self.write(self.file, "".join(json.dumps(e) + "\n" for e in entries))
         # When: what the subagent did is read
         # Then: the call ran in the event's folder
         self.assertEqual(self.done(), [record.Done("Read", {"file_path": "a"}, self.base, "")])
@@ -287,13 +302,12 @@ class TestDone(RecordTest):
         self.assertEqual(self.done(), [])
 
     def test_a_result_given_back_as_an_error_is_read_as_failed(self):
-        # Given: a record of a Bash call given back as an error, one given back with none, and one
-        # not yet back
-        calls = [helpers.failing("false"), helpers.bash("true"), ("Bash", {}, None)]
+        # Given: a record of a Bash call given back as an error, and one given back with none
+        calls = [helpers.failing("false"), helpers.bash("true")]
         self.write(self.file, helpers.recorded("/w", calls))
         # When: what the subagent did is read
-        # Then: the first failed, the others did not
-        self.assertEqual([d.failed for d in self.done()], [True, False, False])
+        # Then: the first failed, the other did not
+        self.assertEqual([d.failed for d in self.done()], [True, False])
 
     def test_a_call_a_hook_stopped_is_left_out_as_it_did_nothing(self):
         # Given: a record of a Bash call a PreToolUse hook stopped, then one failing of itself

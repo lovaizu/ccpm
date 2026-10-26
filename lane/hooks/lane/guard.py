@@ -23,8 +23,8 @@ from lanes import LANES, alone, given_in, held_on, placed, places, sentence
 
 class Seen(NamedTuple):
     """What an event shows, read once for every lane checked on it: the entries of its subagent's
-    record with its calls kept that the record does not hold yet, None where the record is not
-    found, and what each lane's check takes, the call, or how the subagent ends."""
+    record with its calls kept whose results the record does not hold yet, None where the record is
+    not found, and what each lane's check takes, the call, or how the subagent ends."""
 
     found: list[dict[str, Any]] | None
     acted: call.Call | call.End

@@ -147,7 +147,8 @@ The guard first holds the event to the form Claude Code hands it and `hooks/lane
 `lay.py write` writes it in; then, before any lane's check, what each lane is given to the lane's
 IN, a JSON Schema: the texts put in each place of its sentence, with each `{<name>}` given for the
 run put in, its empty texts left out, one or more in each place; and, where its check rests on what
-the subagent did before, its record. The layer holds a proposal's takes to the same IN, so a wrong
+the subagent did before, its record, where a call counts once it has come back, a call a hook
+stopped left out. The layer holds a proposal's takes to the same IN, so a wrong
 take shows when the lanes are laid, not on a run. Anything not as these say, a value not given or
 given empty, an adapter failing, giving no answer in time or answering out of its port, the record
 not found, the event or `hooks/lanes.json` not as Claude Code and `lay.py write` write them, a step
@@ -168,8 +169,9 @@ or, where the event or `hooks/lanes.json` is what is wrong, so no lane of the su
 and, where the hook's command does not name the subagent as `lay.py write` writes it, so neither
 your plugin nor the subagent is known, the same headed `lane:` and naming `the lanes of this hook`.
 
-A lane taking a value given for the run is held once the script start_with runs first has run, as
-the value comes with what it prints; until then start_with holds the subagent.
+A lane taking a value given for the run is held once the script start_with runs first has run and
+come back, as the value comes with what it prints; until then start_with holds the subagent, the
+call that runs the script let through.
 
 The IN of a lane, `<place>` standing for each of its places below, and `record` required only where
 it rests on the record:

@@ -74,6 +74,14 @@ class TestDrift(FollowNextTest):
         # Then: it is a drift, as the move taken before was of the run before
         self.assertTrue(self.drifts(calls, given={"command": "ls"}))
 
+    def test_the_script_run_again_not_yet_back_leaves_the_move_due(self):
+        # Given: the script run, having printed the move, then run again, the record holding that
+        # run and not yet what it gave back, as Claude Code may write the call being checked
+        # before its PreToolUse hook runs
+        # When: that run is checked
+        # Then: it is a drift, as the move printed is due and the run is not it
+        self.assertTrue(self.drifts([ran(), ran(None)], given={"command": NEXT}))
+
     def test_a_move_printed_alone_over_lines_is_held(self):
         # Given: the script run, having printed the move alone, over several lines
         # When: the subagent's next call is not that move

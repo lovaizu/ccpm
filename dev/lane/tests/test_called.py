@@ -1,7 +1,7 @@
 """Each call of a subagent with lanes, kept as it comes back in a file of its session in the
 system's temporary folder, so the guard holds the subagent to the calls of the reply being handed,
-which Claude Code's record does not hold yet; read after the record's entries, each until the
-record holds it."""
+whose results Claude Code's record may not hold yet; read after the record's entries, each until
+the record holds its result."""
 
 from __future__ import annotations
 
@@ -207,8 +207,7 @@ class TestEntries(CallsTest):
         )
 
     def test_a_kept_call_the_record_holds_is_read_from_the_record_alone(self):
-        # Given: a call kept, and the record holding it once its reply ended, giving back other
-        # text
+        # Given: a call kept, and the record holding it with its result, giving back other text
         self.keep(self.came_back("Bash", {"command": "ls"}, OUTPUT))
         self.write(
             os.path.join(self.base, "session", "subagents", "agent-a1.jsonl"),
@@ -223,6 +222,18 @@ class TestEntries(CallsTest):
         # When: what the subagent did is read
         # Then: the call is read once, as the record holds it
         self.assertEqual([d.result for d in self.done()], ["rec"])
+
+    def test_a_kept_call_whose_result_the_record_does_not_hold_yet_is_read_as_kept(self):
+        # Given: a call kept, and the record holding its tool use and not yet its result
+        self.keep(self.came_back("Bash", {"command": "ls"}, OUTPUT))
+        [use, _] = called.as_entries({"id": "toolu_k1", "tool": "Bash", "input": {"command": "ls"}})
+        self.write(
+            os.path.join(self.base, "session", "subagents", "agent-a1.jsonl"),
+            helpers.recorded(self.base, []) + json.dumps(use) + "\n",
+        )
+        # When: what the subagent did is read
+        # Then: the call is read once, with what it gave back as kept
+        self.assertEqual([(d.given, d.result) for d in self.done()], [({"command": "ls"}, "out")])
 
     def test_a_kept_call_is_read_as_the_record_would_hold_it(self):
         # Given: a failed Write and a Read kept, made in another folder

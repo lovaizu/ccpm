@@ -86,12 +86,15 @@ flowchart TB
 
   A hook is told which subagent it runs in, and not which skill runs
   ([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)).
-- The guard keeps each call of a subagent lanes are laid in as it comes back, and reads a call kept
-  after the subagent's record until the record holds it, the record holding where they differ.
+- The guard reads a call as made before once it has come back, and keeps each call of a subagent
+  lanes are laid in as it comes back, reading a call kept after the subagent's record until the
+  record holds its result, the record holding where they differ.
 
-  Claude Code writes the calls of one reply into the record only once the whole reply has ended,
-  and runs each call's PostToolUse, or PostToolUseFailure, before the next call's PreToolUse; read
-  from the record alone, a call made earlier in the same reply is not seen.
+  Claude Code writes a call into the record as its tool use, at times before the call's PreToolUse
+  hook runs, and then its result, for a call of the reply being handed at times only after the
+  next call's hooks have run; it runs each call's PostToolUse, or PostToolUseFailure, before the
+  next call's PreToolUse. Read from the record alone, the call being checked would count as made
+  before it, and a call made earlier in the same reply would be missed.
 - A thing a lane takes is fixed in the step, or given for each run and read from the JSON the
   subagent starts from.
 

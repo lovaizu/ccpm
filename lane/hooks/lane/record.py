@@ -4,12 +4,14 @@ what the tool gave back, each reply that ended its turn, and each message that r
 subagent, its prompt first. A tool event carries no path to it, but the session's record and the
 subagent's ID, by which Claude Code keeps it. Claude Code does not document the record, so it is
 read as Claude Code 2.1.309 writes it, the one version lane's code and tests name for it, and a
-line not in that shape is left out. The calls of one reply of the AI are written
-there only once the whole reply has ended, their hooks run, a call a PreToolUse hook stopped among
-them with the hook's error, which `done` leaves out, as it never ran; so the record holds every
-call of the replies before, and none of the reply being handed, whose calls called.py keeps. Where
-Claude Code keeps the records, a conversation's beside each subagent's of it, and the agent type of
-each, are read here too, for every plugin that reads a record, kept as that version keeps them."""
+line not in that shape is left out. A call is written there as two entries, its tool use and then
+its result: the tool use at times before the call's PreToolUse hook runs, so the call being checked
+may be there already, and the result of a call of the reply being handed at times only after the
+next call's hooks have run, which is why called.py keeps each call as it comes back. So `done`
+reads a call as made only once its result is there, and leaves out a call a PreToolUse hook
+stopped, its result the hook's error, as it never ran. Where Claude Code keeps the records, a
+conversation's beside each subagent's of it, and the agent type of each, are read here too, for
+every plugin that reads a record, kept as that version keeps them."""
 
 from __future__ import annotations
 
@@ -48,8 +50,8 @@ SUBAGENT = "agent-{}.jsonl"
 
 class Done(NamedTuple):
     """A tool the subagent used, or a reply that ended its turn: the tool, its input as the AI gave
-    it, the folder it ran in, the text it gave back, "" where none has come back, or none of text,
-    and whether it gave back an error, as a command that exits other than 0 does, or a call Claude
+    it, the folder it ran in, the text it gave back, "" for a reply or a result of no text, and
+    whether it gave back an error, as a command that exits other than 0 does, or a call Claude
     Code refused."""
 
     tool: str
@@ -216,9 +218,9 @@ def replies(found: list[dict[str, Any]]) -> list[int]:
 def done(found: list[dict[str, Any]], cwd: str) -> list[Done]:
     """Each tool the subagent used, in order, from the entries of its record: an assistant entry's
     tool use, with what a user entry's tool result of the same id gave back, made in the folder its
-    entry names, or the one given where it names none, a call a hook stopped left out, as it did
-    nothing; and each reply that ended its turn, as a use of no tool, REPLY, its texts, a line
-    each, as its input's SAID."""
+    entry names, or the one given where it names none, a call whose result is not there left out,
+    as it has not come back, and a call a hook stopped too, as it did nothing; and each reply that
+    ended its turn, as a use of no tool, REPLY, its texts, a line each, as its input's SAID."""
     used: dict[Any, tuple[Any, Any, Any]] = {}
     results: dict[Any, tuple[str, bool]] = {}
     ended = replies(found)
@@ -227,6 +229,8 @@ def done(found: list[dict[str, Any]], cwd: str) -> list[Done]:
             texts = [b.get("text") for b in of(entry, "assistant", "text")]
             said = "\n".join(t for t in texts if isinstance(t, str))
             used[number] = (REPLY, {SAID: said}, entry.get("cwd") or cwd)
+            # A reply that ended the turn is made once it is written, giving back nothing.
+            results[number] = ("", False)
         for b in uses(entry):
             used[b.get("id")] = (b.get("name"), b.get("input"), entry.get("cwd") or cwd)
         for b in of(entry, "user", "tool_result"):
@@ -234,9 +238,9 @@ def done(found: list[dict[str, Any]], cwd: str) -> list[Done]:
             said = given if isinstance(given, str) else ""
             results[b.get("tool_use_id")] = (said, b.get("is_error") is True)
     each = [
-        Done(tool, given, where, *results.get(key, ("", False)))
+        Done(tool, given, where, *results[key])
         for key, (tool, given, where) in used.items()
-        if isinstance(tool, str) and isinstance(given, dict)
+        if isinstance(tool, str) and isinstance(given, dict) and key in results
     ]
     return [d for d in each if not (d.failed and HOOK_STOPPED.match(d.result))]
 

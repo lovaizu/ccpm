@@ -95,6 +95,16 @@ class TestDrift(ReadWholeTest):
                 # Then: it is a drift
                 self.assertTrue(self.drifts(tool, given))
 
+    def test_a_command_reading_the_rest_as_it_writes_not_yet_back_drifts(self):
+        # Given: a record of the input read in part, then a command reading the rest and writing,
+        # the record holding it and not yet what it gave back, as Claude Code may write the call
+        # being checked before its PreToolUse hook runs
+        command = {"command": "cat in.md > out.md"}
+        self.record([("Read", {"file_path": "in.md"}, shown(1, 50)), ("Bash", command, None)])
+        # When: that command is checked
+        # Then: it is a drift, as the rest is unread before it
+        self.assertTrue(self.drifts("Bash", command))
+
 
 class TestLetThrough(ReadWholeTest):
     def test_a_write_after_reading_the_input_to_its_end_is_no_drift(self):
