@@ -33,8 +33,7 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
 
 ![rn's logical view](logical-view.svg)
 
-- The arrows run in the order of the UX's From asking to the merge; the user meets only the
-  orchestrator and the pull request.
+- The arrows run in the order of the UX's From asking to the merge.
 - The work is kept from drifting from the purpose in two ways: each task names the goal or the
   acceptance criteria it serves and its result is checked against them (rn's Principle 1), and after
   each task the orchestrator weighs the facts it brought and has the plan made again where they
@@ -84,13 +83,8 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   orchestrator writes only the part cut out, so it cannot change the goal while writing a task.
 - The tasks are laid backward from the acceptance criteria, as the criteria are from the goal: every
   criterion passed reaches the goal, and every task's completion criterion passed passes the
-  criteria. They are made a few at a time, for the stage at hand: in the plan stage only those a
-  gap in the criteria calls for, none where none is needed; then one for each document the purpose
-  needs; then those that build the finished work. Each names what it serves, the goal while the
-  criteria are made, and is one result accepted by its completion criterion; its actions are what
-  that result needs, each a point the orchestrator settles with the user or one work turn makes,
-  such as research into current practice and official information, a small trial, or the result
-  itself.
+  criteria. They are made a few at a time, for the stage at hand, as rn's plan checklist's B-7
+  asks, each in the form of its F-1.
 
   A stage's tasks rest on what the stage before it settled, so tasks made at once for the whole
   rest on guesses; a task begun on a gap fills it with a guess, and each stage meets unknowns that
@@ -102,20 +96,13 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
 
   A plan made again with nothing changed costs a call and risks moving what was approved, while
   one kept past a fact that changes it drifts from the purpose.
-- The design sign-off is held only where the purpose needs a document: where the user decides it
-  needs none, the session moves from the design stage to build without it.
-
-  A sign-off with nothing to approve is a stop that costs the user time and gives them nothing to
-  decide (KR1.2).
 - Each work is made from a CCS, one call for each, the shape
   [ACC](https://arxiv.org/abs/2601.11653) gives an AI's state, holding what the work is made from:
   the outputs before it that it uses, each named and passed as it is, its decisions, and what it
   serves, copied by rn's scripts from the steering; a plan's CCS holds, in place of what it serves,
   the latest call of each work of each done task, what it served, decided and made. The plan and the
-  learnings are written from theirs by the orchestrator; every other work, each research result and
-  trial's result, each document, each task's result, each checklist made, each issue to rn's makers
-  and the finished work, goes to turn, whose first user uses it in the receiver's place before it
-  comes back (Principle 4).
+  learnings are written from theirs by the orchestrator; every other work goes to turn, whose first
+  user uses it in the receiver's place before it comes back (Principle 4).
 
   turn takes its task as a CCS and makes the work from it and the files it names alone, so the work
   does not stray from what was decided; what turn only reads goes in the CCS and what it makes is a
@@ -197,29 +184,23 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   The orchestrator runs rn's scripts itself, so a script that took an answer on its word would
   take an approval the user never gave.
 - At a sign-off, the orchestrator shows the proposal the UX's Sign-offs gives, made by rn's scripts
-  from the steering and the calls alone: at the design's, each document's link with the choices
-  its latest call and turn's result for it keep; at the deliverable's, the finished work's links
-  with those of every work of the build and of its use.
+  from the steering and the calls alone, the choices of each work taken from its latest call and
+  turn's result for it.
 
   So it says only what the steering holds and what each work was made from and came back with,
-  nothing written for the proposal alone; the user's own answers are in the work, checked by the
-  AI that used it in their place, so shown again they give the user nothing to judge.
-- Once the user approves the finished work, the orchestrator looks once for the learnings of
-  [Principle 8](../architecture.md#learning-from-each-run): rn's scripts give, from the branch's
-  history, each feedback the user sent back with its answer, each work made again and each decision
-  an answer replaced, each with its commit, and search the orchestrator's conversations of the
-  session for the words it gives; the orchestrator reads around each in the history, checks each
-  cause it doubts by such a search, and writes the learnings with rn's learnings checklist open,
-  kept by rn's scripts in a file of their own and put to the user one per message, an issue to rn's
-  makers among their places made through turn as every work is.
+  nothing written for the proposal alone.
+- The orchestrator finds the learnings of
+  [Principle 8](../architecture.md#learning-from-each-run) in the branch's history, where rn's
+  scripts give each feedback with its answer, each work made again and each decision an answer
+  replaced, each with its commit, and checks each cause it doubts by rn's scripts' search of its
+  conversations of the session; it writes them with rn's learnings checklist open, kept by rn's
+  scripts in a file of their own, an issue to rn's makers made through turn as every work is.
 
   Each send-back, remake and point asked again is kept as a commit before the next move, so the
   history holds every place the work fell short however long the session ran, where the
   orchestrator of a fresh conversation remembers none of it; a cause the history does not show,
   such as the form of a message to the user, is in the conversations alone, which Claude Code keeps
-  outside the repository, where an agent's own reading stops to ask. Looked for once at the end,
-  the learnings cost the user one reading, where learnings at each sign-off are weighed again in
-  every session.
+  outside the repository, where an agent's own reading stops to ask.
 
 ### Physical view
 
