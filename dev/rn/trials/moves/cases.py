@@ -289,9 +289,10 @@ QUESTIONS = {
 PLACE_QUOTE = "the greeting goes right under the title"
 LINE_QUOTE = "the greeting line as docs/greeting.md gives it"
 L_PLACE = (
-    "- L1: The hearing named no place for the greeting, so the plan took a task of research and a"
-    f' question to find it, kept as "{PLACE_QUOTE}" in the commit of T1.2; for everyone\'s work,'
-    " rn's hearing could ask, of a work that changes a file, where in the file the change goes."
+    "- L1: rn's first questions named no place for the greeting, so the plan took a task of"
+    f' research and a question to find it, kept as "{PLACE_QUOTE}" in the commit keeping the'
+    " user's choice of place; for everyone's work, rn could ask first, of a work that changes a"
+    " file, where in the file the change goes."
 )
 L_FEEDBACK = (
     f'- L2: At the plan sign-off the user sent the plan back with "{FEEDBACK}" (the commit keeping'
@@ -301,8 +302,8 @@ L_FEEDBACK = (
 )
 L_TWICE = (
     "- L1: The greeting's words were settled for docs/greeting.md and then again for README.md,"
-    f' kept as "{LINE_QUOTE}" in the commit of T3.1; in this repository, the note checklist could'
-    " ask that a note names the file its lines go into."
+    f' kept as "{LINE_QUOTE}" in the commit keeping the words for README.md; in this repository,'
+    " the note checklist could ask that a note names the file its lines go into."
 )
 
 
@@ -322,6 +323,7 @@ def learnt(lines: list, whole: str) -> dict:
         "B-2": ("Each says what would change, and whether for everyone's work or this one", marks),
         "B-3": ("Each learning is one thing, apart from the others", "whole"),
         "B-4": (whole, "whole"),
+        "B-5": ("Each word is the user's own or plain, naming none of rn's insides", "whole"),
     }
     if not lines:
         goods = {
@@ -376,16 +378,18 @@ PLACE = f"""# Where the greeting goes
 
 Asked for T1: where in README.md a line greeting new contributors goes.
 
-Answer: right under the title `# demo`, above the README's one line and its `## Use`, puts the
-greeting first in the README GitHub shows a visitor; where it goes is the user's to choose.
+Answer: right under the title `# demo`, above the README's one line and its `## Use`, makes the
+greeting the README's first line after its title, the README being what GitHub shows a
+repository's visitors; where it goes is the user's to choose.
 
 - README.md holds `# demo`, then `demo prints a greeting.`, then `## Use` (README.md, lines 1-5).
 - GitHub's page on READMEs says: "If you put your README file in your repository's hidden .github,
   root, or docs directory, GitHub will recognize and automatically surface your README to
   repository visitors." ({ABOUT_READMES}, read {datetime.date.today():%Y-%m-%d}).
 
-Not known: whether this project's visitors reach the README from GitHub's page or from a clone;
-the user knows.
+Not known: what part of the README a visitor's screen shows first, which GitHub's page does not
+say; and whether this project's visitors reach the README from GitHub's page or from a clone,
+which the user knows.
 """
 RESEARCH_PLACE = {
     "files": {RESEARCH: PLACE},
@@ -393,7 +397,7 @@ RESEARCH_PLACE = {
         "research.md": {
             "B-1": {
                 "good": "The opening says what was asked, for T1, and its answer: right under the"
-                " title `# demo`, first in what GitHub shows, the choice left to the user",
+                " title `# demo`, the README's first line after it, the choice left to the user",
                 "at": ["Asked for T1", "Answer:"],
             },
             "B-2": {
@@ -402,12 +406,17 @@ RESEARCH_PLACE = {
                 "at": ["- README.md holds..repository visitors"],
             },
             "B-3": {
-                "good": "What the research did not settle, where visitors read the README, is said"
-                " as unknown, for the user",
+                "good": "What the research did not settle, what GitHub shows of a README first and"
+                " where visitors read it, is said as unknown",
                 "at": ["Not known:"],
             },
             "B-4": {
                 "good": "Each line gives the user choosing the place something they use",
+                "at": "whole",
+            },
+            "B-5": {
+                "good": "Each term is plain or quoted as the README holds it, `# demo` and"
+                " `## Use`",
                 "at": "whole",
             },
         }
@@ -416,21 +425,21 @@ RESEARCH_PLACE = {
 # The issue turn makes of L1 once the user takes it for rn's makers, in the form of rn's issue
 # checklist.
 ISSUE = f"{SESSION}/issue-1.md"
-ISSUE_TEXT = f"""# rn: a line's words are settled twice for two files
+ISSUE_TEXT = f"""# rn: the first questions leave where in a file a change goes
 
 ## What happened
 
-The greeting's words were settled for docs/greeting.md and then again for README.md, kept as
-"{LINE_QUOTE}" in the commit of T3.1.
+rn's first questions named no place for the greeting in the file it changes, so the plan took a
+task of research and a question to find it, kept as "{PLACE_QUOTE}".
 
 ## Why it matters
 
-A user answers the same point twice, once for each file the line goes into.
+A user waits for a research task, and answers a later question, for a point rn could ask first.
 
 ## What it should be
 
-rn's plan checklist asks, of a task that copies lines a document settled, that its action names
-the document they are taken from, so their words are not asked again.
+/rn:up's first questions, in step 8 where it hears the purpose, ask, of a work that changes a
+file, where in the file the change goes.
 
 ## Seen in
 
@@ -442,9 +451,9 @@ ISSUE_MADE = {
         "issue.md": {
             "F-1": {"good": "The issue follows the template, its title first", "at": "whole"},
             "B-1": {
-                "good": "The title and What it should be name the change to rn's plan checklist,"
-                " and Why it matters what a user loses",
-                "at": ["# rn:", "## What it should be..## Seen in"],
+                "good": "The title and What it should be name the change to /rn:up's first"
+                " questions, and Why it matters what a user loses",
+                "at": ["# rn:", "## Why it matters..## Seen in"],
             },
             "B-2": {
                 "good": "What happened quotes the learning's words and holds nothing more of the"
@@ -757,7 +766,7 @@ def l1_answered(p: Place) -> None:
     """L1 answered, taken for an issue not yet sent, kept as the decision of the issue's work and in
     Open, Next L2."""
     learnings_due(p)
-    decide(p, "issue-1", "Learning", L_TWICE[len("- L1: ") :], "L1: for an issue to rn's makers")
+    decide(p, "issue-1", "Learning", L_PLACE[len("- L1: ") :], "L1: for an issue to rn's makers")
     state(p, NEXT_L2, "L1: the user chose an issue to lovaizu/ccpm alone", "--open", L1_OPEN)
 
 
@@ -911,9 +920,10 @@ ONE_POINT = Check(
     "the reply asks one point, `▶` once, with options `a.` and `b.`",
     lambda s: s.reply.count("▶") == 1 and all(re.search(rf"(?m)^\W*{x}\. ", s.reply) for x in "ab"),
 )
+# A line of turn's, put into the conversation language, may take that language's colon.
 TURN_LINE = Check(
     "a line of turn's passed on to the user",
-    lambda s: any(t.strip().startswith("turn:") for t in s.said),
+    lambda s: any(t.strip().startswith(("turn:", "turn：")) for t in s.said),
 )
 
 
