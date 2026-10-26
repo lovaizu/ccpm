@@ -32,18 +32,7 @@ Principle 1 to 8, and its own, named below lane's Principle 1 and 2:
 
 ### Logical view
 
-```mermaid
-flowchart TB
-  caller["building AI<br/>#lt;AI#gt;"]
-  layer["layer<br/>#lt;script#gt;"]
-  plugin["building AI's plugin<br/>#lt;files#gt;"]
-  guard["guard<br/>#lt;hook#gt;"]
-  sub["subagent<br/>#lt;AI#gt;"]
-  caller <-->|has the lanes laid before told, the proposal printed, and written once approved / tells, prints, writes| layer
-  layer -->|reads the hooks of, writes the steps, the hooks and lane's code into| plugin
-  guard -->|reads the steps and the hooks of| plugin
-  guard -.->|notices a drift, tells the sentence again| sub
-```
+![lane's logical view](logical-view.svg)
 
 - The building AI is the caller of [how a plugin works](../architecture.md): it writes and approves
   the proposal itself, and no person takes part; its running `lay.py write` on the print it has

@@ -1,10 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 610" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>rn's logical view</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
     .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
     .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .drift { stroke-dasharray: 5 4; }
     .head { fill: #59636e; }
     .label { fill: #1f2328; font-size: 13px; }
     .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
@@ -25,78 +26,66 @@
     </marker>
   </defs>
 
-  <!-- rn's own parts -->
+
+  <!-- rn's own parts, and the user's repository -->
   <rect class="frame" x="250" y="172" width="290" height="268" rx="10"/>
-  <text class="frame-name" x="262" y="190">rn</text>
+  <text class="frame-name" x="262" y="191">rn</text>
+  <rect class="frame" x="630" y="345" width="315" height="255" rx="10"/>
+  <text class="frame-name" x="642" y="589">the user's repository</text>
 
   <!-- components -->
-  <rect class="box" x="315" y="32" width="170" height="56" rx="8"/>
-  <text class="name" x="400" y="56">user</text>
-  <text class="kind" x="400" y="74">person</text>
-
-  <rect class="box" x="315" y="200" width="170" height="56" rx="8"/>
-  <text class="name" x="400" y="224">orchestrator</text>
-  <text class="kind" x="400" y="242">main conversation</text>
-
-  <rect class="box" x="315" y="372" width="170" height="56" rx="8"/>
-  <text class="name" x="400" y="396">rn's scripts</text>
-  <text class="kind" x="400" y="414">script</text>
-
-  <rect class="box" x="755" y="200" width="170" height="56" rx="8"/>
-  <text class="name" x="840" y="224">turn</text>
-  <text class="kind" x="840" y="242">plugin</text>
-
-  <rect class="box" x="640" y="372" width="285" height="56" rx="8"/>
-  <text class="name" x="782" y="396">record</text>
-  <text class="kind" x="782" y="414">files on the branch</text>
-
-  <rect class="box" x="755" y="532" width="170" height="56" rx="8"/>
-  <text class="name" x="840" y="556">pull request</text>
-  <text class="kind" x="840" y="574">GitHub</text>
-
-  <rect class="box" x="15" y="200" width="185" height="56" rx="8"/>
-  <text class="name" x="107" y="224">issue to rn's makers</text>
-  <text class="kind" x="107" y="242">GitHub</text>
-
-  <rect class="box" x="15" y="372" width="185" height="56" rx="8"/>
-  <text class="name" x="107" y="396">conversation records</text>
-  <text class="kind" x="107" y="414">Claude Code</text>
+  <rect class="box" x="315" y="32" width="170" height="48" rx="8"/>
+  <text class="name" x="400" y="61">user</text>
+  <rect class="box" x="315" y="200" width="170" height="48" rx="8"/>
+  <text class="name" x="400" y="229">orchestrator</text>
+  <rect class="box" x="315" y="372" width="170" height="48" rx="8"/>
+  <text class="name" x="400" y="401">rn's scripts</text>
+  <rect class="box" x="755" y="200" width="170" height="48" rx="8"/>
+  <text class="name" x="840" y="229">turn</text>
+  <rect class="box" x="640" y="372" width="285" height="48" rx="8"/>
+  <text class="name" x="782" y="401">record</text>
+  <rect class="box" x="755" y="532" width="170" height="48" rx="8"/>
+  <text class="name" x="840" y="561">pull request</text>
+  <rect class="box" x="15" y="200" width="185" height="48" rx="8"/>
+  <text class="name" x="107" y="229">issue to rn's makers</text>
+  <rect class="box" x="15" y="372" width="185" height="48" rx="8"/>
+  <text class="name" x="107" y="401">conversation records</text>
 
   <!-- user and orchestrator -->
-  <path class="line" d="M388,88 V200" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="378" y="140">asks, answers,<tspan x="378" dy="17">approves</tspan></text>
-  <path class="line" d="M412,200 V88" marker-end="url(#arrow)"/>
-  <text class="label" x="422" y="140">asks, shows,<tspan x="422" dy="17">tells each step</tspan></text>
+  <path class="line" d="M388,80 V200" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="378" y="136">asks, answers,<tspan x="378" dy="17">approves</tspan></text>
+  <path class="line" d="M412,200 V80" marker-end="url(#arrow)"/>
+  <text class="label" x="422" y="136">asks, shows,<tspan x="422" dy="17">tells each step</tspan></text>
 
   <!-- orchestrator and turn -->
-  <path class="line" d="M485,218 H755" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="620" y="208">hands a call</text>
-  <path class="line" d="M755,238 H485" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="620" y="258">returns the work, asks</text>
+  <path class="line" d="M485,216 H755" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="620" y="206">hands a call</text>
+  <path class="line" d="M755,232 H485" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="620" y="252">returns the work, asks</text>
 
   <!-- orchestrator and rn's scripts -->
-  <path class="line" d="M388,256 V372" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="378" y="310">keeps each move</text>
-  <path class="line" d="M412,372 V256" marker-end="url(#arrow)"/>
-  <text class="label" x="422" y="310">gives where<tspan x="422" dy="17">it stands</tspan></text>
+  <path class="line" d="M388,248 V372" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="378" y="306">keeps each move</text>
+  <path class="line" d="M412,372 V248" marker-end="url(#arrow)"/>
+  <text class="label" x="422" y="306">gives where<tspan x="422" dy="17">it stands</tspan></text>
 
   <!-- the record -->
-  <path class="line" d="M485,400 H640" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="592" y="422">writes the<tspan x="592" dy="17">steering,</tspan><tspan x="592" dy="17">commits</tspan></text>
-  <path class="line" d="M470,256 L680,372" marker-end="url(#arrow)"/>
+  <path class="line" d="M485,396 H640" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="585" y="418">writes the<tspan x="585" dy="17">steering,</tspan><tspan x="585" dy="17">commits</tspan></text>
+  <path class="line" d="M470,248 L680,372" marker-end="url(#arrow)"/>
   <text class="label" x="600" y="300">writes the plan,<tspan x="600" dy="17">reads each result</tspan></text>
-  <path class="line" d="M840,256 V372" marker-end="url(#arrow)"/>
-  <text class="label" x="852" y="310">reads the CCS,<tspan x="852" dy="17">writes the work</tspan></text>
+  <path class="line" d="M840,248 V372" marker-end="url(#arrow)"/>
+  <text class="label" x="852" y="306">reads the CCS,<tspan x="852" dy="17">writes the work</tspan></text>
 
   <!-- learnings -->
-  <path class="line" d="M315,228 H200" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="225" y="218">sends</text>
-  <path class="line" d="M315,400 H200" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="225" y="390">reads</text>
+  <path class="line" d="M315,224 H200" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="225" y="214">sends</text>
+  <path class="line" d="M315,396 H200" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="225" y="386">reads</text>
 
   <!-- the pull request -->
-  <path class="line" d="M400,428 V560 H755" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="600" y="580">opens, marks ready</text>
-  <path class="line" d="M485,60 H975 V560 H925" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="730" y="50">merges</text>
+  <path class="line" d="M400,420 V556 H755" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="520" y="576">opens, marks ready</text>
+  <path class="line" d="M485,56 H975 V556 H925" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="730" y="46">merges</text>
 </svg>

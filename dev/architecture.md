@@ -6,16 +6,7 @@ files are placed, how its code is written, and how it is tested and released.
 
 ## Who does what
 
-```mermaid
-flowchart TB
-  caller["caller<br/>#lt;person or AI#gt;"]
-  orch["orchestrator<br/>#lt;main conversation or subagent#gt;"]
-  role["role<br/>#lt;subagent#gt;"]
-  guard["guard<br/>#lt;hook#gt;"]
-  caller <-->|calls, answers, approves / asks, shows the work| orch
-  orch <-->|starts with its prompt, sends more work / replies| role
-  guard -.->|notices a drift, tells the step again| role
-```
+![Who does what](who-does-what.svg)
 
 ## Principles
 

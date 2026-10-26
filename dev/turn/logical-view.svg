@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>turn's logical view</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .drift { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+
+
+  <!-- turn's own parts -->
+  <rect class="frame" x="20" y="150" width="870" height="305" rx="10"/>
+  <text class="frame-name" x="32" y="169">turn</text>
+
+  <!-- components -->
+  <rect class="box" x="355" y="30" width="190" height="48" rx="8"/>
+  <text class="name" x="450" y="59">calling AI</text>
+  <rect class="box" x="690" y="30" width="190" height="48" rx="8"/>
+  <text class="name" x="785" y="59">main conversation</text>
+  <rect class="box" x="355" y="190" width="190" height="48" rx="8"/>
+  <text class="name" x="450" y="219">orchestrator</text>
+  <rect class="box" x="60" y="190" width="150" height="48" rx="8"/>
+  <text class="name" x="135" y="219">flow</text>
+  <rect class="box" x="60" y="380" width="150" height="48" rx="8"/>
+  <text class="name" x="135" y="409">state</text>
+  <rect class="box" x="690" y="190" width="190" height="48" rx="8"/>
+  <text class="name" x="785" y="219">generator</text>
+  <rect class="box" x="355" y="380" width="190" height="48" rx="8"/>
+  <text class="name" x="450" y="409">first user</text>
+  <rect class="box" x="690" y="380" width="190" height="48" rx="8"/>
+  <text class="name" x="785" y="409">guard</text>
+
+  <!-- calling AI, orchestrator and main conversation -->
+  <path class="line" d="M438,78 V190" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="428" y="118">calls, answers</text>
+  <path class="line" d="M462,190 V78" marker-end="url(#arrow)"/>
+  <text class="label" x="472" y="118">asks, returns</text>
+  <path class="line" d="M545,190 L690,78" marker-end="url(#arrow)"/>
+  <text class="label" x="662" y="112">tells progress</text>
+
+  <!-- orchestrator and flow -->
+  <path class="line" d="M355,206 H210" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="282" y="196">hands each outcome</text>
+  <path class="line" d="M210,226 H355" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="282" y="252">gives the next move</text>
+  <path class="line" d="M135,238 V380" marker-end="url(#arrow)"/>
+  <text class="label" x="147" y="300">keeps and reads<tspan x="147" dy="17">where the run stands</tspan></text>
+
+  <!-- orchestrator and roles -->
+  <path class="line" d="M545,206 H690" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="617" y="179">starts, sends<tspan x="617" dy="17">what is sent back</tspan></text>
+  <path class="line" d="M690,226 H545" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="617" y="252">replies</text>
+  <path class="line" d="M438,238 V380" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="428" y="300">starts, sends<tspan x="428" dy="17">the work made again</tspan></text>
+  <path class="line" d="M462,380 V238" marker-end="url(#arrow)"/>
+  <text class="label" x="472" y="300">replies</text>
+
+  <!-- guard -->
+  <path class="line drift" d="M785,380 V238" marker-end="url(#arrow)"/>
+  <path class="line drift" d="M690,385 L545,238" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="775" y="300">notices a drift,<tspan x="775" dy="17">tells the step again</tspan></text>
+</svg>

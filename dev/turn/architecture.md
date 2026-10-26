@@ -38,25 +38,7 @@ Principle 1 to 8, and two of its own, named turn's Principle 1 and 2:
 
 ### Logical view
 
-```mermaid
-flowchart TB
-  caller["calling AI"]
-  main["main conversation"]
-  orch["orchestrator"]
-  flow["flow"]
-  state["state"]
-  gen["generator"]
-  fu["first user"]
-  guard["guard"]
-  caller <-->|calls, answers / asks, returns| orch
-  orch -->|tells progress| main
-  orch <-->|takes each step's outcome / gives the next move| flow
-  flow <-->|keeps / reads where the run stands| state
-  orch <-->|starts, sends what is sent back / replies| gen
-  orch <-->|starts, sends the work made again / replies| fu
-  guard -.->|notices a drift, tells the step again| orch
-  guard -.->|notices a drift, tells the step again| gen
-```
+![turn's logical view](logical-view.svg)
 
 - The calling AI is the main conversation, or an agent the main conversation started; the guard acts
   in every role as it does in the generator, and the figure draws it for the orchestrator and the
