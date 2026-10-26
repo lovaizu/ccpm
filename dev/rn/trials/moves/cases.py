@@ -842,6 +842,16 @@ def decisions(work: str, n: int) -> Check:
     return Check(f"the latest call on {work} holds {n} decisions or more", holds)
 
 
+def decided(work: str, words: str, held: bool = True) -> Check:
+    """The check that a decision of the work's latest call holds the words, or none does."""
+
+    def holds(seen: Seen) -> bool:
+        last = [c for c in seen.calls if c.work == work][-1:]
+        return any(words in d for c in last for d in c.said) == held
+
+    return Check(f"a decision on {work} {'holds' if held else 'holds no'} `{words}`", holds)
+
+
 def pr(draft: bool) -> Check:
     """The check that one pull request into main is there, a draft or marked ready."""
 
@@ -1032,6 +1042,7 @@ CASES = {
                     called("plan", 1, least=True),
                     no_result("plan"),
                     plan_has("G1:"),
+                    plan_has("run first"),
                     plan_has("- AC1:"),
                     plan_has("sh demo.sh"),
                     JAPANESE,
@@ -1216,7 +1227,7 @@ CASES = {
         fed_back,
         [front("plan", "none"), next_has("Step 6"), open_has(FEEDBACK)],
         [
-            ("/rn:up", [STAYS, ONE_POINT, open_has(FEEDBACK)]),
+            ("/rn:up", [ONE_POINT, decided("plan", "question", held=False), open_has(FEEDBACK)]),
             (
                 SETTLED,
                 [

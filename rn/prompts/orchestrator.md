@@ -235,8 +235,10 @@ Read the file whole before you take a step of it in a conversation.
    - In: the feedback whole in the steering's Open, kept by `/rn:gm`; the sign-off it answered, the
      steering's stage.
    - Find the point behind it, one rn decided wrong or did not ask, on the work it touches, and
-     take the feedback as the user's answer to it in step 2, kept where it settles the point,
-     keeping the feedback in Open until the works are made again.
+     go to step 2 on it, keeping the feedback in Open until the works are made again. Where the
+     feedback says what the work must be on that point, it is the user's answer, kept as it is
+     said; where it says only what falls short, it settles nothing: ask the point, its options each
+     meeting what the feedback says.
    - Have each work it touches made again, the plan written again by you, step 3 on it, giving
      nothing more, as rn.py makes it as its last call did.
    - Then step 5 on the same sign-off, whose proposal shows what changed.

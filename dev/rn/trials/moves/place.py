@@ -88,12 +88,13 @@ class Stop(Exception):
 
 class Called(NamedTuple):
     """A call to turn as the last commit holds it: its number, the work it is on, whether turn
-    returned it, and how many decisions its CCS holds."""
+    returned it, and how many decisions its CCS holds, and what they say."""
 
     number: str
     work: str
     returned: bool
     decisions: int
+    said: tuple[str, ...]
 
 
 class Seen(NamedTuple):
@@ -285,8 +286,8 @@ class Place:
                 kept = [e for part in ccs.values() for e in part]
                 work = next((e[session.WORK] for e in kept if session.WORK in e), "")
                 result = session.call_path(os.path.dirname(steering_path), number, session.RESULT)
-                decided = len([e for e in kept if session.DECISION in e])
-                calls.append(Called(number, work, result in files, decided))
+                decided = tuple(e[session.DECISION] for e in kept if session.DECISION in e)
+                calls.append(Called(number, work, result in files, len(decided), decided))
             elif path != steering_path and not (
                 folder and path.startswith(f"{folder}{session.CALLS}/")
             ):
