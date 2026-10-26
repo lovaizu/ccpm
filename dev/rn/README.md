@@ -7,7 +7,7 @@ in [architecture.md](architecture.md).
 - Trials: `trials/moves/` tries rn's prompts one move at a time, each case from a session state
   made beforehand in a repository of its own, with turn, gh and the user stood in for:
   `python3 dev/rn/trials/moves/moves.py --help` says what it takes and lists the cases.
-- Flow trial: `trials/flow/` tries rn's flow whole, from `/rn:up` to the pull request marked
-  ready, with turn and gh stood in for as in `trials/moves/` and the user by an AI holding what
-  `trials/flow/wants.json` says they want: `python3 dev/rn/trials/flow/flow.py --help` says what
-  it takes.
+- Acceptance test: `trials/acceptance/` tries rn whole with the real turn on `lovaizu/playground`,
+  from `/rn:up` to the pull request marked ready, the user stood in for by an AI holding what
+  `trials/acceptance/wants.json` says they want: `python3 dev/rn/trials/acceptance/acceptance.py
+  --help` says what it takes.

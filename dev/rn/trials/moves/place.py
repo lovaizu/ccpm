@@ -1,7 +1,9 @@
 """A case's folder in rn's move trials: a fresh repository with a bare repository as its origin, the
 copies of rn and turn as installing makes them, turn's turn:up replaced by the stand-in, and the
 stand-in for `gh` first on the PATH; with rn's commands and the stand-in turn run in it to make the
-case's state, and what the repository, its origin and the stand-in gh hold after a move."""
+case's state, and what the repository, its origin and the stand-in gh hold after a move. rn's
+acceptance test lays its run's folder out by it too, with the real turn and gh, and reads GitHub
+by its own Place.github."""
 
 from __future__ import annotations
 
@@ -69,8 +71,8 @@ Why: a line that says what to do with nothing to do it with leaves the contribut
 STEERING = re.compile(
     rf"{re.escape(session.RECORD)}/{session.SESSION_NAME.pattern}/{re.escape(session.STEERING)}"
 )
-# What every move keeps, which the move trials check after each move and the flow trial after each
-# message.
+# What every move keeps, which the move trials check after each move and the acceptance test after
+# each message.
 DEFAULT_KEPT = "nothing pushed to the default branch"
 ALL_KEPT = "every change committed and the branch pushed"
 RULES: dict[str, Callable[[Any], bool]] = {
@@ -98,8 +100,8 @@ class Seen(NamedTuple):
     made since the move began, whether the branch is pushed and every change committed, whether the
     default branch on the origin is as it was; the steering's path and text as the last commit
     holds them, each call to turn, and the text of each other file it holds by its path, the
-    session's learnings and research among them, the calls' files left out; and what the stand-in
-    gh keeps."""
+    session's learnings and research among them, the calls' files left out; and what GitHub holds
+    of the session, the pull requests and the issues, as Place.github reads it."""
 
     reply: str
     said: list
@@ -154,13 +156,11 @@ class Place:
         self.default = ""
 
     def make(self, replies: dict) -> None:
-        """Makes the folder, or fills it where it is made already and empty, as the flow trial's
-        own folder is: the copies, the stand-in gh with no pull request, the origin and the
-        repository at the seed, and the stand-in turn's replies, set by the case."""
-        os.makedirs(self.folder, exist_ok=True)
-        ignored = shutil.ignore_patterns("__pycache__")
-        for name, copy in (("turn", self.turn), ("rn", self.rn_copy)):
-            shutil.copytree(os.path.join(ROOT, name), copy, ignore=ignored)
+        """Makes the folder: the copies, turn's turn:up the stand-in giving the replies the case
+        set, the stand-in gh with no pull request, and the origin and the repository at the
+        seed."""
+        os.makedirs(self.folder)
+        self.copy()
         turn = self.turn
         shutil.copyfile(os.path.join(HERE, "up.md"), os.path.join(turn, "agents", "up.md"))
         shutil.copyfile(os.path.join(HERE, "stand.py"), os.path.join(turn, "scripts", "stand.py"))
@@ -180,13 +180,7 @@ class Place:
         }
         with open(hooks, "w", encoding="utf-8") as f:
             json.dump(laid, f, indent=2)
-        os.makedirs(os.path.join(self.folder, "bin"))
-        stand = os.path.join(self.folder, "bin", "gh.py")
-        shutil.copyfile(os.path.join(HERE, "gh.py"), stand)
-        gh = os.path.join(self.folder, "bin", "gh")
-        with open(gh, "w", encoding="utf-8") as f:
-            f.write(f"#!/bin/sh\nexec python3 '{stand}' \"$@\"\n")
-        os.chmod(gh, 0o755)
+        self.put_gh(os.path.join(HERE, "gh.py"))
         with open(os.path.join(self.folder, "gh.json"), "w", encoding="utf-8") as f:
             json.dump({"prs": [], "issues": [], "calls": []}, f)
         origin = os.path.join(self.folder, "origin.git")
@@ -194,15 +188,43 @@ class Place:
         self.run("git", "init", "-q", "-b", DEFAULT, self.repo, cwd=self.folder)
         for path, text in SEED.items():
             self.write(path, text)
-        # rn's commits are made by rn.py's git, which needs a name on a machine with none.
-        self.git("config", "user.name", "trial")
-        self.git("config", "user.email", "trial@example.invalid")
+        self.name()
         self.git("add", "-A")
         self.git("commit", "-q", "-m", "demo prints a greeting")
         self.git("remote", "add", "origin", origin)
         self.git("push", "-q", "-u", "origin", DEFAULT)
         self.git("remote", "set-head", "origin", DEFAULT)
         self.default = self.git("rev-parse", DEFAULT)
+
+    def copy(self) -> None:
+        """Copies rn and turn of this working tree into the folder, as installing makes them."""
+        ignored = shutil.ignore_patterns("__pycache__")
+        for name, copy in (("turn", self.turn), ("rn", self.rn_copy)):
+            shutil.copytree(os.path.join(ROOT, name), copy, ignore=ignored)
+
+    def put_gh(self, script: str, *given: str) -> None:
+        """Puts the script in the folder's `bin/`, beside a `gh` that runs it with the words given
+        before the command's own, first on the PATH the commands run with."""
+        os.makedirs(os.path.join(self.folder, "bin"))
+        put = os.path.join(self.folder, "bin", "gh.py")
+        shutil.copyfile(script, put)
+        words = "".join(f" '{w}'" for w in (put, *given))
+        gh = os.path.join(self.folder, "bin", "gh")
+        with open(gh, "w", encoding="utf-8") as f:
+            f.write(f'#!/bin/sh\nexec python3{words} "$@"\n')
+        os.chmod(gh, 0o755)
+
+    def name(self) -> None:
+        """Gives the repository's commits a name, as rn's commits are made by rn.py's git, which
+        needs one on a machine with none."""
+        self.git("config", "user.name", "trial")
+        self.git("config", "user.email", "trial@example.invalid")
+
+    def github(self) -> dict[str, Any]:
+        """What GitHub holds of the session, here what the stand-in gh keeps: the pull requests,
+        the issues and every command given."""
+        with open(os.path.join(self.folder, "gh.json"), encoding="utf-8") as f:
+            return json.load(f)
 
     def run(self, *command: str, cwd: str | None = None) -> str:
         """What the command printed, run in the repository with the case's PATH; stops with what
@@ -246,8 +268,8 @@ class Place:
         return self.git("rev-parse", "HEAD")
 
     def seen(self, before: str, reply: str, record: str = "") -> Seen:
-        """What the repository, its origin and the stand-in gh hold after the move begun at the
-        commit before, with the reply and what Claude Code printed in the record, where given."""
+        """What the repository, its origin and GitHub hold after the move begun at the commit
+        before, with the reply and what Claude Code printed in the record, where given."""
         branch = self.git("branch", "--show-current")
         remote = self.git("ls-remote", "origin", f"refs/heads/{branch}").split("\t")[0]
         files = self.git("ls-tree", "-r", "--name-only", "HEAD").splitlines()
@@ -279,8 +301,7 @@ class Place:
                     main = entry.get("parent_tool_use_id") is None
                     if entry.get("type") == "assistant" and main and isinstance(content, list):
                         said += [c["text"] for c in content if c.get("type") == "text"]
-        with open(os.path.join(self.folder, "gh.json"), encoding="utf-8") as f:
-            gh: dict[str, Any] = json.load(f)
+        gh = self.github()
         return Seen(
             reply,
             said,

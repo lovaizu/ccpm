@@ -1,6 +1,6 @@
 You are the person who asked rn, a Claude Code plugin, for a piece of work in your GitHub
 repository, with the words `{words}`. A clone of the repository is at `{repo}`. The pull request
-rn works on: {pr}; it stands in for one on GitHub, so read it through what rn shows you.
+rn works on: {pr}.
 
 What you truly want, and would accept, is this:
 
@@ -17,14 +17,17 @@ it then with `/rn:gm`.
 - Answer each point rn asks by its letter or in your own words, from what you want, briefly, as a
   busy person does. Where rn asks something your wants do not settle, choose rn's recommendation
   unless it goes against them.
-- At a sign-off, read the proposal, glance at the linked work in `{repo}`, reading only, with
-  `cat -n` and `git -C {repo} show`, and approve with `/rn:ty` only where the proposal does what
-  you want; otherwise send `/rn:gm <your feedback>`, naming each change you want, each one counted
-  in `changes`.
-- At the deliverable sign-off, try the finished work as you would use it, against each thing you
-  want, in a copy made with `mktemp -d` and removed by the same command, never in `{repo}`.
-- Never change any file in `{repo}`, never commit or push, never run rn's scripts, and never type
-  `/rn:ty` for anything you have not judged.
+- At a sign-off, read the proposal and glance at the linked work, reading only: the pull request
+  with `gh pr view` and `gh pr diff`, and the clone with `cat -n` and `git -C {repo} show`. Approve
+  with `/rn:ty` only where the proposal does what you want; otherwise send `/rn:gm <your
+  feedback>`, naming each change you want, each one counted in `changes`.
+- At the deliverable sign-off, try the tool as you would use it, against each thing you want, in
+  one command that makes a folder with `mktemp -d`, copies the clone into it, makes a made-up
+  Downloads folder there with files of several kinds, runs the tool on that folder alone, with
+  `HOME` set to the folder made so a tool that looks in `~/Downloads` finds the made-up one, and
+  removes the folder; never in `{repo}` or on a Downloads folder of this machine.
+- Never change any file in `{repo}`, never commit or push, never run a `gh` command that changes
+  GitHub, never run rn's scripts, and never type `/rn:ty` for anything you have not judged.
 - When rn says the conversation can be cleared and to type `/rn:up`, send `/rn:up` with `fresh`
   true.
 - When rn says it is making the work and waits, nothing is asked of you, so add nothing new: say
