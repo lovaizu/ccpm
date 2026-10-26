@@ -127,11 +127,14 @@ Look for:
 - a piece of knowledge, such as a rule, a value or a way of reading an input, written in two places
   across the repository;
 - one thing under two names across the code and its tests, so a search for one name misses the
-  places of the other, or one name for two things.
+  places of the other, or one name for two things;
+- a file that running the code or its tests makes, such as Python's `__pycache__/`, not kept out of
+  the repository by its ignore file.
 
 Why: a part that takes on two things is changed for one and breaks the other; knowledge written
-twice is fixed in one place and left wrong in the other; and a place a search for the name misses
-is left as it was.
+twice is fixed in one place and left wrong in the other; a place a search for the name misses
+is left as it was; and a file a run makes is a copy of the code, committed with it and stale after
+the next change.
 
 ### B-6: Every behavior held by a test
 

@@ -237,6 +237,8 @@ class Place:
             env={**os.environ, **self.env},
             capture_output=True,
             text=True,
+            # A file the work holds may be no text, such as a cache a test run made.
+            errors="replace",
             check=False,
         )
         if done.returncode:

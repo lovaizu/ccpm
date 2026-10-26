@@ -468,6 +468,9 @@ def run(trial: Trial) -> int:
         pass
     except Stop as failed:
         ended = f"reading GitHub failed: {failed}"
+    except Exception as failed:
+        ended = f"the test failed: {failed!r}"
+        raise
     finally:
         try:
             trial.close()
