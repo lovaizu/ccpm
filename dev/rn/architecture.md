@@ -31,27 +31,7 @@ Principle 1 to 8, and its own, named below rn's Principle 1 and 2:
 
 ### Logical view
 
-```mermaid
-flowchart TB
-  user["user<br/>#lt;person#gt;"]
-  orch["orchestrator<br/>#lt;main conversation#gt;"]
-  scripts["rn's scripts<br/>#lt;script#gt;"]
-  record["record<br/>#lt;files on the branch#gt;"]
-  claude["conversation records<br/>#lt;Claude Code#gt;"]
-  turn["turn<br/>#lt;plugin#gt;"]
-  pr["pull request<br/>#lt;GitHub#gt;"]
-  issue["issue to rn's makers<br/>#lt;GitHub#gt;"]
-  user <-->|asks, answers, approves or sends back, stops a step / asks each point, shows each proposal, tells each step| orch
-  orch <-->|keeps each move and decision, has each call written, asks each proposal / gives where the session stands, each call, each proposal, each line to tell| scripts
-  scripts <-->|rewrites the steering, writes each call, cuts and puts back each part, commits and pushes / gives the steering and the calls| record
-  scripts -->|reads each command the user typed, and the orchestrator's conversations, from| claude
-  orch <-->|hands each work but the plan and the learnings as a call, sends each answer / returns the work, tells each step, asks each point| turn
-  turn <-->|reads the CCS, the checklists and what the receiver has / writes the work and the result| record
-  orch <-->|writes the plan and the learnings in / reads the steering, each result turn returns and the history in| record
-  scripts -->|opens with the steering, marks ready| pr
-  orch -->|sends each the user says yes to| issue
-  user -->|merges| pr
-```
+![rn's logical view](logical-view.svg)
 
 - The arrows run in the order of the UX's From asking to the merge; the user meets only the
   orchestrator and the pull request.
