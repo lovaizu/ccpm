@@ -105,10 +105,13 @@ astray.
 
 ### Entries hand to the parts
 
-An entry holds what Claude Code fixes of it, and the job is a part of its own the entry hands to: a
-command line reads its arguments and calls the module of the part, a hook's script reads the event
-and calls the part that checks it, and a skill or an agent is its frontmatter, the part being its
-body or a file the body points to.
+An entry holds only what Claude Code fixes of it and hands the job to its part: a command line
+reads its arguments and calls the part's module, a hook's script reads the event and calls the part
+that answers it, and a skill or an agent is its frontmatter and a body pointing to its part. The
+entries lie where Claude Code looks for them, in `agents/`, `skills/` and `hooks/`; a plugin's own
+parts lie in `prompts/`, those written as a prompt, and in `scripts/`, those written as code, each
+in a file named for the part the logical view draws, and lane's guard, which each plugin takes in,
+in `hooks/lane/`, where lane lays it.
 
 The form of an entry is Claude Code's, where a skill's folder is named by its command and an agent
 is called by the name in its frontmatter, while the job is the plugin's; a job held in its entry is
@@ -118,12 +121,13 @@ the same job, as `/rn:ty` beside `/rn:up`, reads into the first. In Cockburn's
 the outside world at a port, a technology-specific adapter converts it into a usable procedure call
 or message and passes it to the application".
 
-An agent's frontmatter and its part share one file, as Claude Code makes the body of an agent's
-file its system prompt and takes in no other file
-([subagents](https://code.claude.com/docs/en/sub-agents)); the file is named for its part, since
-an agent is called by its frontmatter's `name`, which "the filename doesn't have to match". A part
-several skills take is a file of its own that each points to, as Claude Code has a skill
-"reference supporting files from `SKILL.md`" ([skills](https://code.claude.com/docs/en/skills)).
+An agent's body has it read its part whole before anything else, held by a lane, as Claude Code
+makes the body its system prompt and takes in no other file
+([subagents](https://code.claude.com/docs/en/sub-agents)); a skill's body links its part, as
+Claude Code has a skill "reference supporting files from `SKILL.md`"
+([skills](https://code.claude.com/docs/en/skills)). Tried on 2026-10-26 with a plugin of its own,
+each of twenty runs read its part first and followed it; after `/compact`, the part a skill links
+came back attached whole, where a skill's own body was left only as the summary retold it.
 
 ### Read by those who did not make it
 
