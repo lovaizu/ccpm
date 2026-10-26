@@ -740,6 +740,9 @@
   },
   {
    "fact": "2026-10-26: lane's fix e817384 by the subagent read by hand: record.done counts a call once its result is in the record, a reply as come back, a hook-stopped call left out; called.py keeps a call until the record holds its result; check.sh lane/turn/rn 100%, mutate --since 1147f84 lane 0 of 3347; not pushed yet. The user asked whether I judge from the purpose and the ideal, not patching: two patches of mine admitted, to redo at the cause: (1) 8ba0269 changed the move trials' reason to dodge after-feedback, where rn widened the purpose from feedback without confirming (step 6 behaviour, rn's fault); (2) good's check weakened from `- AC2:` to `- AC1:`: decide what good must check"
+  },
+  {
+   "fact": "2026-10-26: the turn+rn subagent's commits eaa84f0, 5597d47, c29568e, 85ffe12 pushed unread (with the SVG work); its two points: no ACs at the deliverable sign-off, kept by me from the user's ruling; one link line for the finished work, not one per task, the user chose A (keep). Static figures are SVGs drawn by hand, sequences stay Mermaid (the user, 2026-10-26): rn's architecture checklist template says so (688104d); dev/who-does-what.svg and dev/{lane,turn,rn}/logical-view.svg replace the four flowcharts, rn's framing rn's parts and the user's repository (record, pull request); boxes hold names alone (B-3)"
   }
  ],
  "semantic_gist": [
@@ -802,6 +805,9 @@
   },
   {
    "gist": "lane is specified and tried on its own, a mock plugin of its own exercising every lane; turn and rn are only the reference for reusable IN/OUT; lane's documents name neither (the user, 2026-10-22)"
+  },
+  {
+   "gist": "a logical component's physical file carries its name wherever no interface outside fixes it, so the reader traces the logical view to the code (the user, 2026-10-26: best practice; architecturally evident code)"
   }
  ],
  "focal_entities": [
@@ -844,7 +850,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: ListAgents for the turn+rn subagent (scratchpad signoff-brief.md of session 123f41ca); read its commits by hand for each line fixing a cause, no added exception or 'do not' note, what it replaces removed; check.sh lane turn rn, the move trials (all), push with e817384; then redo the two patches at the cause (after-feedback: read its record, fix step 6; good: what it must check); remove /tmp/rn/20261026-acceptance-7vc7gbjm and ~/.claude/projects/-tmp-rn-20261026-acceptance-7vc7gbjm-repo and -user by literal path; run the acceptance test --until design again, then whole (T14); T30, T31, shared.md findings to the user, final check, report"
+   "next": "on resume: (1) finish turn/scripts/run.py -> flow.py, uncommitted in the tree (turn.py, tests/helpers.py, test_round.py, trials/roles/roles.py, dev/turn/architecture.md done): `uv run --no-sync bash dev/check.sh turn` fails at pyrefly, as dev/typecheck.sh puts dev/turn/trials on the search path and its folder flow/ (the flow trial) shadows the module flow; settle the clash at its cause, then check.sh lane turn rn, commit, push. (2) add to rn/checklists/product/architecture.md B-4 a sign: a place not named as its component where no interface outside fixes the name; audit lane, turn, rn trees: lane's layer is scripts/, the guard hooks/lane/ (written into every plugin, so renaming moves laid plugins: the user's to decide). (3) the user asked: turn's agents/up.md, bound to /turn:up, could only point to an orchestrator.md: check whether a plugin agent's id comes from its file name or its frontmatter name, and that lane's step.py reads steps from the agent file, before answering. (4) the user asked about the logical view showing AI vs code: proposed box shapes with a legend (A), unanswered. (5) B-7 pass over rn's Logical view lines: the user chose A earlier? no: still unasked after frames; list lines to drop and where they move, show before fixing. (6) read the four subagent commits by hand; then redo the two patches at the cause, clean /tmp/rn/20261026-acceptance-7vc7gbjm and ~/.claude/projects/-tmp-rn-20261026-acceptance-7vc7gbjm-repo and -user by literal path, acceptance --until design, then whole (T14)"
   }
  ],
  "uncertainty_signal": [
