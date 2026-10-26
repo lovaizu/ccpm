@@ -71,12 +71,11 @@ three stops where it shows you a proposal and waits for your answer:
   /rn:ty to approve, /rn:gm <feedback> to ask for a change.
 ```
 
-The account pages had none of the three bugs, and you would rather leave them for later, so you ask
-for a change. rn keeps your feedback and stops, so you can clear the conversation, or come back
-tomorrow:
+Moving every file at once is more than you want now, so you ask for a change. rn keeps your
+feedback and stops, so you can clear the conversation, or come back tomorrow:
 
 ```console
-> /rn:gm leave the account pages in JavaScript for now
+> /rn:gm moving every file at once is too much for now
 
 ● Your feedback is kept. Clear the conversation if you like, then type /rn:up to go on.
 ```
@@ -97,8 +96,8 @@ feedback, one rn did not ask:
   touch only src/cart and src/checkout).
   a. The cart and the checkout now, the account pages later (recommended). The account
      pages can still let a wrong type through. Can be changed later.
-  b. Every part now. The account pages are covered too, but the move takes longer. Can be
-     changed later.
+  b. Only the cart now, the rest later. The move is smaller still, but the checkout can
+     still let a wrong type through. Can be changed later.
   Which parts move now? Answer with a letter or in your own words.
 
 > a
