@@ -259,3 +259,13 @@ rn is tested as [Test](../architecture.md#test) says.
 
 - rn's roles are tried with `bypassPermissions` in a Docker Sandbox, as rn's README has its users
   run it.
+- Each move of the orchestrator is tried alone, from a session state made beforehand, with turn, gh
+  and the user stood in for; how the moves follow one another is checked there, each move's state
+  the one the move before it leaves.
+- rn's acceptance test runs rn whole with the real turn on `lovaizu/playground`, on a request of
+  about an hour with documents and code, the user stood in for by an AI holding what they truly
+  want, written beforehand and never shown to rn.
+
+  A request someone would bring rn passes every stage, the design's and the build's included, so
+  its send-backs and the stand-in's time are rn's key results; a run on stand-in parts or a tiny
+  request shows neither.

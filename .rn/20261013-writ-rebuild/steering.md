@@ -75,10 +75,15 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
   criterion. Serves AC1.
 - [ ] T13: Each lesson the user confirms goes where it makes later work better, and the pull request
   is ready to merge. Serves AC1, AC2.
-- [ ] T14: AC1 and AC2 shown to the user on real requests: a script that tidies a Downloads folder
-  (truly wanted: moves only, a dry run first, a folder for each kind, macOS and Linux) and making
-  issues easy to open (truly wanted: a bug and a request form, required fields, no blank issue),
-  each run once with this rn; then the user tries this rn once. Serves AC1, AC2.
+- [ ] T34: rn's acceptance test runs rn whole as its user does, with the real turn, on
+  `lovaizu/playground`, the user stood in for as AC1's Check says, and shows AC1 and AC2 from its
+  records; the stand-in flow trial made into it, as dev/architecture.md's Test has the whole tried
+  by acceptance tests and each move is tried alone in the move trials, as the user chose
+  (2026-10-26). Serves AC1, AC2.
+- [ ] T14: AC1 and AC2 shown to the user on a real request of about an hour with documents and
+  code, so every stage is passed: a command-line tool that tidies a Downloads folder, with its
+  README, design and tests (truly wanted: moves only, a dry run first, a folder for each kind, macOS
+  and Linux), run once by T34's test; then the user tries this rn once. Serves AC1, AC2.
 - [ ] T15: Users who update get rn 0.10.0 and turn 0.2.0, on the user's instruction. Serves AC1,
   AC2.
 
@@ -169,9 +174,8 @@ acceptance, as the user chose (2026-10-25).
 
 - [ ] T30: rn's steering holds only what is left and where it stands, its tasks laid backward from
   the criteria with one turn call per output, research and trials made as works of their own, and
-  the design sign-off held only where a document is needed; the flow trial passing on it. Serves
+  the design sign-off held only where a document is needed; the move trials passing on it. Serves
   AC1, AC2.
 - [ ] T31: lane, turn and rn read whole hold their checklists: no module or prompt taking on two
   things, nothing said twice or against another part, nothing no reader needs; rn.py split by what
-  each part takes on; check.sh 100%, mutate.sh 0 survivors, the move trials and the flow trial
-  passing. Serves AC1, AC2.
+  each part takes on; check.sh 100%, mutate.sh 0 survivors, the move trials passing. Serves AC1, AC2.
