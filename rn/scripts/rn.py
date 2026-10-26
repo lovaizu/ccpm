@@ -395,15 +395,14 @@ def run_answer(args: argparse.Namespace, root: str, today: datetime.date) -> Any
 
 def run_learnings(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Every learning of the session, for the orchestrator to put to the user one per message once
-    the finished work is approved: the session's, by ID, each as one line; and turn's, each as
-    turn's result gives it, with the work, the call and the commit that kept it. Stops where the
-    branch holds no session."""
+    the finished work is approved, by ID, each as one line. Stops where the branch holds no
+    session."""
     folder = session.current()
     listed = steering.items_of(
         list(enumerate(session.learnings_of(folder))), session.LEARNING, session.LEARNING_FORM
     )[0]
     said = {i.id: steering.said(i.lines).partition(": ")[2] for i in listed}
-    return {"learnings": said, "turn": stretch.turns_learnings(folder)}
+    return {"learnings": said}
 
 
 class Parser(argparse.ArgumentParser):

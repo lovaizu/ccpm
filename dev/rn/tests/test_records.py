@@ -376,49 +376,10 @@ class LearningsTest(RepoTest):
         self.write(LEARNINGS, "- L1: A slip.\n  Its words.\n- L2: Another.\n")
         self.kept()
         # When: the orchestrator asks for the learnings.
-        # Then: rn gives the session's by ID, each as one line, and none of turn's.
+        # Then: rn gives the session's by ID, each as one line, and nothing else.
         self.assertEqual(
-            self.ran("learnings"),
-            {"learnings": {"L1": "A slip. Its words.", "L2": "Another."}, "turn": []},
+            self.ran("learnings"), {"learnings": {"L1": "A slip. Its words.", "L2": "Another."}}
         )
-
-    def test_learnings_gives_turns_of_every_version_once_with_where_each_was_kept(self):
-        # Given: a call on t1.1 whose result held a learning, then was made again holding it and
-        # another, and a call on t2.1 whose result holds none.
-        self.session()
-        first = {"lesson": "The page was slow.", "whose": "project's own"}
-        second = {"lesson": "The form was long.", "whose": "general"}
-        self.call("0001", "t1.1", result={"items": [], "lessons": [first]})
-        self.kept()
-        kept = self.head()
-        self.write_json(call_at("0001", "result.json"), {"lessons": [first, second]})
-        self.call("0002", "t2.1", result={"items": []})
-        self.kept()
-        # When: the orchestrator asks for the learnings.
-        # Then: rn gives turn's in the order kept, each once, with the work, the call and the
-        # commit that first held it.
-        self.assertEqual(
-            self.ran("learnings")["turn"],
-            [
-                dict(first, work="t1.1", call="0001", commit=kept),
-                dict(second, work="t1.1", call="0001", commit=self.head()),
-            ],
-        )
-
-    def test_a_result_that_is_no_json_object_with_learnings_is_passed_over(self):
-        # Given: results that are no JSON, a list, and an object of no learnings, then one with a
-        # learning.
-        self.session()
-        self.call("0001", "t1.1")
-        self.write(call_at("0001", "result.json"), "{")
-        self.call("0002", "t2.1", result=[])
-        self.call("0003", "t3.1", result={"items": []})
-        self.call("0004", "t4.1", result={"lessons": [{"lesson": "Slow."}]})
-        self.kept()
-        # When: the orchestrator asks for the learnings.
-        # Then: the last one's alone is given.
-        want = [{"lesson": "Slow.", "work": "t4.1", "call": "0004", "commit": self.head()}]
-        self.assertEqual(self.ran("learnings"), {"learnings": {}, "turn": want})
 
     def test_learnings_are_printed_with_text_beyond_ascii_as_it_is(self):
         # Given: the session's learnings, one in Japanese.

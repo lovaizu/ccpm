@@ -1,16 +1,13 @@
 """The stretch of the session the learnings are made from: from the last call on the learnings turn
 returned, or from where the branch left the default branch; its history on the branch and the
-session's files as they are now; and the learnings turn returned with each call, from every
-version of every result."""
+session's files as they are now."""
 
 from __future__ import annotations
 
 import glob
-import json
 import os
 import shlex
 import shutil
-from typing import Any
 
 import conversations
 import records
@@ -92,43 +89,3 @@ def show(folder: str) -> list[str]:
     for name, text in texts:
         repo.write_text(os.path.join(place, name), records.wrapped(text))
     return [os.path.join(place, name) for name, _ in texts]
-
-
-def turns_learnings(folder: str) -> list[dict[str, Any]]:
-    """Each learning turn returned for a work of the session, from every version of every result
-    committed on the branch since it left the default branch, as a work made again leaves the one
-    before in the history alone; oldest first, each once, with the work, the call and the commit
-    that first held it. A version that is no JSON object is passed over, as no result of turn's;
-    turn's result names its learnings `lessons`."""
-    works = {c.number: c.work for c in session.calls(folder)}
-    listed = repo.git(
-        [
-            "log",
-            "--reverse",
-            "--format=commit %H",
-            "--name-only",
-            "--diff-filter=AM",
-            f"{repo.base()}..HEAD",
-            "--",
-            os.path.join(folder, session.TURN, f"*-{session.RESULT}"),
-        ],
-        repo.AS_GIT_SAYS,
-    )
-    found: list[dict[str, Any]] = []
-    seen: list[dict[str, Any]] = []
-    commit = ""
-    for line in listed.splitlines():
-        if line.startswith("commit "):
-            commit = line[len("commit ") :]
-        file = session.CALL.fullmatch(os.path.basename(line))
-        if file is None:
-            continue
-        try:
-            data = json.loads(repo.git(["show", f"{commit}:{line}"], repo.AS_GIT_SAYS))
-        except ValueError:
-            continue
-        for learnt in data.get("lessons", []) if isinstance(data, dict) else []:
-            if learnt not in seen:
-                seen.append(learnt)
-                found.append(dict(learnt, work=works.get(file[1], ""), call=file[1], commit=commit))
-    return found
