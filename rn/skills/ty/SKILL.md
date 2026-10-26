@@ -24,8 +24,8 @@ Read `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` whole first: its Role says what 
    - Take `/rn:up`'s step 1 as far as the steering read.
    - Where `session` is null: tell the user, in their language, that no session is on this branch
      and that `/rn:up <what you want>` starts one; end.
-   - Where `signoff` is null: tell the user where the session stands, from the steering's stage and
-     Next, and that `/rn:up` goes on with it; end.
+   - Where `signoff` is null: tell the user, in the steering's conversation language, where the
+     session stands, from its stage and Next, and that `/rn:up` goes on with it; end.
    - Out: the sign-off waiting, as printed.
 
 2. Keep the approval, so the next move stands on it.
