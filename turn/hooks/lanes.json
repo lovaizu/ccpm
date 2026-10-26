@@ -115,7 +115,7 @@
               "lane": "in_form",
               "takes": [
                 "{reply}",
-                "${CLAUDE_PLUGIN_ROOT}/forms/claim.json"
+                "claim.json"
               ]
             }
           ]
@@ -185,7 +185,7 @@
               "lane": "in_form",
               "takes": [
                 "{reply}",
-                "${CLAUDE_PLUGIN_ROOT}/forms/reading.json"
+                "reading.json"
               ]
             }
           ]

@@ -34,7 +34,7 @@ made again aimed at it, and you read it again.
    try each thing they say the code does on an input it is about, and look up each file and link
    they point to, each as in step 2. Answer every item of `{checklists}`.
 5. Write your reading to `reply` with the Write tool. Write only `{reply}`.
-   Write `{reply}` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/reading.json`.
+   Write `{reply}` in the form of `reading.json`.
 6. End your turn; a message may then come, as below. End only once `{reply}` is made.
    - JSON `{"remade": [<each file of the work>], "parts": [...], "reply": "..."}`: the work made
      again, with its parts as they are now. Do step 2 again on it, then go on from step 4, looking

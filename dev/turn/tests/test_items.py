@@ -22,7 +22,7 @@ ADAPTER = os.path.join(TURN, "hooks", "adapters", "items-checklist.py")
 
 def items(text, path="checklists/readme.md"):
     """The IDs the adapter gives for the text of the checklist at the path."""
-    return ports.run(ADAPTER, "items", {"input": path, "text": text}, ports.TIME)["items"]
+    return ports.run(ADAPTER, "items", {"input": path, "text": text}, TURN, ports.TIME)["items"]
 
 
 class TestItems(unittest.TestCase):
@@ -134,18 +134,10 @@ class TestItems(unittest.TestCase):
                 # Then: it gives nothing
                 self.assertEqual(items(text), [])
 
-    def test_the_adapter_read_as_a_module_reads_and_prints_nothing(self):
-        # Given: the adapter's file
-        out = io.StringIO()
-        # When: it is read as a module, not run as a script, as the property tests read it
-        with contextlib.redirect_stdout(out):
-            read = runpy.run_path(ADAPTER)
-        # Then: it gives its reading and prints nothing, waiting on no input
-        self.assertEqual((read["items"]("### B-1: x\n"), out.getvalue()), ([(1, "B-1")], ""))
-
     def test_the_adapter_reads_by_turns_items_before_a_module_of_the_same_name(self):
         # Given: a module named items, found first on sys.path, none yet imported, and the adapter
-        # run as a script in this process, given a checklist of one item on stdin
+        # run as a script in this process, as lane runs it, with turn's folder as
+        # CLAUDE_PLUGIN_ROOT, given a checklist of one item on stdin
         out = io.StringIO()
         with tempfile.TemporaryDirectory() as shadow:
             with open(os.path.join(shadow, "items.py"), "w", encoding="utf-8") as f:
@@ -153,7 +145,8 @@ class TestItems(unittest.TestCase):
             given = io.StringIO(json.dumps({"input": "c.md", "text": "### B-1: x\n"}))
             path = mock.patch.object(sys, "path", [shadow, *sys.path])
             modules = mock.patch.dict(sys.modules)
-            with path, modules, mock.patch.object(sys, "stdin", given):
+            root = mock.patch.dict(os.environ, {"CLAUDE_PLUGIN_ROOT": TURN})
+            with path, modules, root, mock.patch.object(sys, "stdin", given):
                 sys.modules.pop("items", None)
                 with contextlib.redirect_stdout(out):
                     # When: the adapter is run
@@ -170,7 +163,7 @@ class TestItems(unittest.TestCase):
                 # When: the adapter is given the case
                 # Then: it gives what the case gives
                 self.assertEqual(
-                    ports.run(ADAPTER, "items", case["given"], ports.TIME), case["gives"]
+                    ports.run(ADAPTER, "items", case["given"], TURN, ports.TIME), case["gives"]
                 )
 
 

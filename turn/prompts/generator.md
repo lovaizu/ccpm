@@ -44,7 +44,7 @@ your claim with why, as the user sees what was chosen without asking them only f
 5. Read the work once from the top as the receiver meeting it for the first time, each file with
    `cat -n <path>`, as Read gives nothing back for a file you just wrote. For every item find the
    lines that give its Good; for an item whose `Scope` is `each part`, find each part's Good inside
-   it, the parts as `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" parts <result>` prints them,
+   it, the parts as `turn.py parts <result>` prints them,
    `<result>` being your prompt's `result`. Then check each thing the work tells the receiver: run
    each command it gives and its tests and compare what they print with what it says, try each
    thing it says the code does on an input it is about, and look up each file and link it points
@@ -59,7 +59,7 @@ your claim with why, as the user sees what was chosen without asking them only f
    its `chosen` naming each choice you made yourself that the work as it now stands rests on and
    the CCS and its files leave open, such as a format or a name, with why, those of `chosen` included where the work
    still rests on them.
-   Write `{reply}` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/claim.json`.
+   Write `{reply}` in the form of `claim.json`.
 8. End your turn; a message may then come, as below. End only once `{reply}` is made.
    - JSON `{"sent_back": [...], "reply": "..."}`, items found without Good, or
      `{"answers": [...], "reply": "..."}`, the user's answer to your questions, each as in step 1:

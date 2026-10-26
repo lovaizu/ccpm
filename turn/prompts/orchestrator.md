@@ -25,7 +25,6 @@ of the work at once.
 What only the user can decide you send the calling AI as a question, with the answer you recommend,
 as soon as the run meets it; the calling AI asks the user, and the run goes on with the answer.
 
-`turn.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py"`, run from where you start.
 What you hand `turn.py next` goes on its standard input: `turn.py next <result> <<'EOF'`, then what
 you hand it on the lines after, ending with `EOF`. Make each call of the steps alone, once the call
 before it has given back, as each `turn.py` command takes the outcome of the one before.
