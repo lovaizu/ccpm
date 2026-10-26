@@ -202,8 +202,8 @@ conversation.
      way.
    - Once every action is ticked, the task leaves the steering. Weigh whether what it brought
      changes the remaining tasks or the criteria; only where it does, write the plan again, step 3
-     on work `plan`, a change to the goal or a criterion first a point to decide, step 2 on work
-     `plan`.
+     on work `plan`, what an answer settled written into the goal or a criterion in the plan's
+     words, and a choice of theirs no answer made first a point to decide, step 2 on work `plan`.
    - Out: the task done and the plan current; go on with the step of the stage, 8, 9 or 10.
 
 5. Stop at a sign-off, so the user answers it with their own command.

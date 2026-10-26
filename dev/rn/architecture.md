@@ -113,8 +113,9 @@ flowchart TB
   rest on guesses; a task begun on a gap fills it with a guess, and each stage meets unknowns that
   research or a small trial finds out while they are small, its result adding or dropping tasks.
 - After each task the orchestrator weighs whether the facts it brought change the remaining tasks or
-  the criteria, and only then writes the plan again; a change to the goal or a criterion is first a
-  point to decide.
+  the criteria, and only then writes the plan again; a choice the goal or a criterion would take
+  that no answer of the user's made is first a point to decide, and what an answer settled is
+  written into them in the plan's words.
 
   A plan made again with nothing changed costs a call and risks moving what was approved, while
   one kept past a fact that changes it drifts from the purpose.

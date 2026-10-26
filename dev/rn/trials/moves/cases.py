@@ -750,20 +750,6 @@ def returned(work: str, n: int) -> Check:
     return Check(f"{n} calls on {work} returned and kept", holds)
 
 
-def either(first: Check, second: Check) -> Check:
-    """The check that one of two checks holds, where the steps let the move go either way."""
-
-    return Check(
-        f"either {first.what}, or {second.what}", lambda s: first.holds(s) or second.holds(s)
-    )
-
-
-def all_of(*checks: Check) -> Check:
-    """The check that every check given holds."""
-
-    return Check(" and ".join(c.what for c in checks), lambda s: all(c.holds(s) for c in checks))
-
-
 def called(work: str, n: int, least: bool = False) -> Check:
     """The check that n calls on the work were kept, or n or more."""
 
@@ -1069,8 +1055,8 @@ CASES = {
     ),
     "plan-signoff": Case(
         "a task's last action, the orchestrator's, the task done and what it brought weighed, the"
-        " plan written again from it, then the plan sign-off, or first a point on the criterion"
-        " it changes",
+        " plan written again from it, the place the user answered written into a criterion in the"
+        " plan's words with nothing asked, then the plan sign-off",
         "up 1, 4 (the last action, what the task brought weighed), 2, 3 (the plan written again),"
         " 8, 5",
         t1_researched,
@@ -1084,8 +1070,10 @@ CASES = {
                     KEPT,
                     decisions("plan", 3),
                     done("T1"),
+                    called("plan", 2, least=True),
                     no_result("plan"),
-                    either(ONE_POINT, all_of(plan_has("title"), *proposal("plan"))),
+                    plan_has("title"),
+                    *proposal("plan"),
                 ],
             ),
         ],
