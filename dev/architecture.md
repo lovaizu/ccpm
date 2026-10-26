@@ -243,7 +243,8 @@ Installing a plugin copies its folder alone, so what only builders need stays of
 
 `<plugin>/README.md` is for the plugin's users; `dev/<plugin>/README.md` links the plugin's
 architecture and says how to run its tests and trials once they exist; `dev/README.md` lists each
-plugin's folder and links [the order the work goes in](../.claude/rules/dev.md); and the root
+plugin's folder, says how to run the checks every plugin shares, and links
+[the order the work goes in](../.claude/rules/dev.md); and the root
 `README.md` leads users to each plugin's README and builders to `dev/`. No README is put deeper.
 
 GitHub shows a folder's README when it is opened, so a visitor finds the way by opening folders,
