@@ -202,57 +202,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "learner",
-      "steps": [
-        {
-          "step": 2,
-          "lanes": [
-            {
-              "lane": "read_only",
-              "takes": [
-                "{given}"
-              ]
-            },
-            {
-              "lane": "read_whole",
-              "takes": [
-                "{given}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 4,
-          "lanes": [
-            {
-              "lane": "write_only",
-              "takes": [
-                "{reply}"
-              ]
-            },
-            {
-              "lane": "in_form",
-              "takes": [
-                "{reply}",
-                "${CLAUDE_PLUGIN_ROOT}/forms/learnt.json"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 5,
-          "lanes": [
-            {
-              "lane": "end_when",
-              "takes": [
-                "{reply}"
-              ]
-            }
-          ]
-        }
-      ]
     }
   ]
 }

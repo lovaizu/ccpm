@@ -7,7 +7,6 @@ import unittest
 from helpers import (
     CALL,
     CAN,
-    CHECKED,
     CHECKLIST,
     CLAIM,
     FOUND,
@@ -102,19 +101,13 @@ class TestTold(RepoTest):
         )
         self.assertEqual(self.next()["check"][1]["item"], "B-1")
 
-    def test_a_learner_giving_no_lesson_is_told_before_the_run_returns(self):
-        # Given: every item's Good found, and a learner giving no lesson
+    def test_the_return_is_told_with_the_result_written_by_then(self):
+        # Given: every item's Good found
         # When: the orchestrator goes on
-        # Then: a line says the learner gave none before the run returns, with the result
-        # written by then
+        # Then: the line telling the return comes with the result written by then, and the run's
+        # state is gone once it returns
         self.started()
-        self.due(self.first_read(FOUND, dict(FOUND, item="B-1")))
-        out = self.replied({"lessons": [], "checked": CHECKED})
-        self.assertEqual(
-            out["line"],
-            "turn: turn:learner gave 0 lessons from the run. Next, turn:up will return the result,"
-            " of README.md, for 2 items, round 1.",
-        )
+        self.first_read(FOUND, dict(FOUND, item="B-1"))
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, dict(FOUND, item="B-1")])
         self.assertEqual(self.next(), {"returned": RESULT})
         self.assertFalse(os.path.exists(state.state_path(RESULT)))

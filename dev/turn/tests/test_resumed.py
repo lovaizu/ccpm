@@ -6,7 +6,6 @@ import unittest
 
 from helpers import (
     CALL,
-    CHECKED,
     CLAIM,
     FIRST_READ,
     FOUND,
@@ -105,10 +104,9 @@ class TestResumed(RepoTest):
         self.assertEqual(json.loads(move["input"]["prompt"])["sent_back"], self.reading(FOUND)[1:])
 
     def test_a_run_stopped_once_its_result_is_written_returns_on_a_call_again(self):
-        # Given: a run whose learner replied, the result written, not yet returned
+        # Given: a run whose every item has its Good, the result written, not yet returned
         self.started()
-        self.due(self.first_read(FOUND, dict(FOUND, item="B-1")))
-        self.replied({"lessons": [], "checked": CHECKED})
+        self.first_read(FOUND, dict(FOUND, item="B-1"))
         # When: the same call is made again
         self.turn("start", json.dumps(CALL))
         # Then: the return is told again, and the run then returns

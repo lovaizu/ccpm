@@ -18,7 +18,6 @@ from helpers import (
     call,
     forms,
     prompts,
-    records,
     state,
     testing,
 )
@@ -31,8 +30,7 @@ FORMS = (forms.CHECK, forms.CLAIM, forms.FIRST_READING, forms.LEFT)
 ITEMS = [ITEM_F1]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
-    ["items", "questions", "checklist", "item", "good", "lines", "question", "can"]
-    + ["lessons", "whose", "lesson", "grounds", "record", "quote", "checked", "recommended"]
+    ["items", "questions", "checklist", "item", "good", "lines", "question", "can", "recommended"]
     + ["parts", "part", "places", "did", "lacking"]
 ) | st.text(max_size=5)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)
@@ -51,14 +49,6 @@ class TestForms(RepoTest):
         # Then: what is wrong is said in words, and nothing else happens
         said = forms.check(json.dumps(value), ITEMS, ["README.md"], form, ITEMS if each else [])
         self.assertIsInstance(said, list)
-        self.assertTrue(all(isinstance(s, str) and s for s in said))
-
-    @given(VALUES)
-    def test_any_reply_of_the_learner_is_told_what_is_wrong(self, value):
-        # Given: a learner's reply of any shape, as JSON, on a record kept
-        # When: it is checked
-        # Then: what is wrong is said in words, and nothing else happens
-        said = forms.learnt(json.dumps(value), [self.given_record("a1", "{}")])
         self.assertTrue(all(isinstance(s, str) and s for s in said))
 
     @given(st.lists(st.sampled_from(["# t", "## h", "### s", "```", "x", ""]), max_size=30))
@@ -131,42 +121,6 @@ class TestItems(RepoTest):
         outside = {n for n, level, _ in forms.template.headings(lines, 0) if level == 3}
         self.assertEqual(len(found), len([n for n in outside if lines[n - 1][4:6] == "B-"]))
         self.assertTrue(all(i["scope"] in call.SCOPES for i in found))
-
-
-# Entries a record holds: messages of text and of parts, attachments, Claude Code's copies, and
-# values of no shape.
-ENTRIES = st.lists(
-    st.dictionaries(
-        st.sampled_from(["type", "message", "attachment"]),
-        st.sampled_from(["user", "assistant", "attachment", "api-request-blob"])
-        | st.dictionaries(st.sampled_from(["content", "type", "filename", "snippet"]), VALUES),
-        max_size=3,
-    ),
-    max_size=8,
-)
-
-
-class TestRecords(RepoTest):
-    @given(ENTRIES)
-    def test_any_record_is_shown_as_text_of_its_own_entries(self, entries):
-        # Given: a record of any entries, as Claude Code might write them
-        self.write("agent.jsonl", "".join(json.dumps(e) + "\n" for e in entries))
-        # When: it is shown as text for the learner
-        shown = records.as_text("agent.jsonl")
-        # Then: it is text, a line for each message or part shown, ending a line
-        self.assertIsInstance(shown, str)
-        self.assertTrue(shown.endswith("\n"))
-
-    @given(st.text(max_size=5000))
-    def test_a_record_wrapped_keeps_every_word_on_lines_a_read_shows(self, text):
-        # Given: a record shown as any text
-        # When: it is wrapped for the learner to read
-        # Then: its words are the same, in order, and a line is longer than a read shows only
-        # where it is one word
-        wrapped = records.wrapped(text)
-        self.assertEqual(forms.spaced(wrapped), forms.spaced(text))
-        for line in wrapped.splitlines():
-            self.assertTrue(len(line) <= records.WIDTH or len(line.split()) <= 1, line)
 
 
 class TestCallTest(unittest.TestCase):

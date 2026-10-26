@@ -1,10 +1,9 @@
-"""Tries each of turn's three roles on its own: the real role and its lanes, started by a stand-in
+"""Tries each of turn's two roles on its own: the real role and its lanes, started by a stand-in
 for the orchestrator with the prompt the flow gives it, on the flow trial's task of two items, one
 answered at its part and one in each part. Between the roles the run is set as a trial means: the
-orchestrator's check finds each item's Good in the decisions, the generator's work is replaced by a
-set README that names no license, and the learner is given the records of the two roles before it.
-Prints, for each role, its session, the minutes and cost, each tool it used, each stop, and whether
-its reply is in its form.
+orchestrator's check finds each item's Good in the decisions, and the generator's work is replaced
+by a set README that names no license. Prints, for each role, its session, the minutes and cost,
+each tool it used, each stop, and whether its reply is in its form.
 
     python3 dev/turn/trials/roles/roles.py
 
@@ -34,15 +33,14 @@ plugin = shared.turn(trial)
 shared.use(plugin)
 
 # The copy of turn's scripts, on the path only once it is made.
-import forms
 import prompts
 import run
 import state
 
 
-def role(agent: str, prompt: dict) -> str:
-    """Starts the role with the prompt, as the orchestrator would, prints what it did and whether
-    its reply is in its form, and gives its agent ID."""
+def role(agent: str, prompt: dict) -> None:
+    """Starts the role with the prompt, as the orchestrator would, and prints what it did and
+    whether its reply is in its form."""
     ask = f"""Start the `{agent}` agent with the JSON on the line below as its whole prompt, exactly
 as it is, and wait for its reply. Then reply with its reply as it is.
 {json.dumps(prompt, ensure_ascii=False)}"""
@@ -51,8 +49,7 @@ as it is, and wait for its reply. Then reply with its reply as it is.
     session = end["session_id"]
     print(f"=== {agent}  minutes: {round((time.time() - start) / 60, 1)}")
     print("session:", session, "cost:", end.get("total_cost_usd"))
-    found = shared.agents(session)
-    for path in found:
+    for path in shared.agents(session):
         shared.show(path)
     reply = prompt["reply"]
     if os.path.exists(reply):
@@ -63,7 +60,6 @@ as it is, and wait for its reply. Then reply with its reply as it is.
         print("form:", "filled" if not said else said)
     else:
         print("reply: none written")
-    return shared.record.agent_id(found[0]) if found else ""
 
 
 with shared.removed(trial.top):
@@ -71,13 +67,8 @@ with shared.removed(trial.top):
     os.chdir(place)
     shared.begun(plugin, place, CALL)
     kept = state.going(CALL["result"])
-    ids = [role(prompts.GENERATOR, kept["next"]["prompt"])]
+    role(prompts.GENERATOR, kept["next"]["prompt"])
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(shared.UNLICENSED)
-    ids.append(role(prompts.FIRST_USER, prompts.reader(kept)))
-    kept["agent_ids"] = [i for i in ids if i]
-    run.learn(kept, [forms.named(i) for i in kept["items"]])
-    # The move starting the learner shows it the records, as the flow makes it.
-    run.moved(kept)
-    role(prompts.LEARNER, kept["next"]["prompt"])
+    role(prompts.FIRST_USER, prompts.reader(kept))
     os.chdir(shared.ROOT)

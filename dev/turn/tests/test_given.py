@@ -92,7 +92,7 @@ class TestWithoutRunFiles(GivenTest):
         self.lay(
             ".tasks/result.json",
             ".turn/20261025-.tasks%2Fresult.json/run.json",
-            ".turn/20261025-.tasks%2Fresult.json/records/1.txt",
+            ".turn/20261025-.tasks%2Fresult.json/generator.json",
             "docs/.turn/a.md",
         )
         paths = [
@@ -100,12 +100,11 @@ class TestWithoutRunFiles(GivenTest):
             ".turn",
             ".turn/20261025-.tasks%2Fresult.json",
             ".turn/20261025-.tasks%2Fresult.json/run.json",
-            ".turn/20261025-.tasks%2Fresult.json/records",
-            ".turn/20261025-.tasks%2Fresult.json/records/1.txt",
+            ".turn/20261025-.tasks%2Fresult.json/generator.json",
             "docs/.turn/a.md",
         ]
-        # When: the result, turn's folder, a run's folder, a file in it, the records shown to the
-        # learner and one of them, and the file in the folder elsewhere are given
+        # When: the result, turn's folder, a run's folder, its state and a role's reply in it, and
+        # the file in the folder elsewhere are given
         # Then: the file elsewhere alone is given
         self.assertEqual(
             prompts.without_run_files(paths, ".tasks/result.json"), ["docs/.turn/a.md"]

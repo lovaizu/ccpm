@@ -115,12 +115,12 @@ class TestGeneratorKept(RoundTest):
 
 
 class TestFirstUserKept(RoundTest):
-    def test_a_first_user_finding_every_good_has_the_learner_started(self):
+    def test_a_first_user_finding_every_good_has_the_run_return(self):
         # Given: a first user finding every item's Good
         # When: the orchestrator goes on
-        # Then: the learner is started, no role of the round kept
+        # Then: the run returns, no role of the round sent more
         out = self.replied({"items": [FOUND, dict(FOUND, item="B-1")]})
-        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
+        self.assertEqual(self.returned(out), {"returned": RESULT})
 
     def test_the_first_user_sends_back_three_times_a_round_at_most(self):
         # Given: a first user that stops at an item each time it reads

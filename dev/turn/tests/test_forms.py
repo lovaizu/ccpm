@@ -6,7 +6,6 @@ import os
 import unittest
 
 from helpers import (
-    CHECKED,
     EACH_GOOD,
     EACH_ITEM,
     FOUND,
@@ -14,7 +13,6 @@ from helpers import (
     ITEM_B1,
     ITEM_F1,
     ITEMS,
-    LESSON,
     QUESTION,
     SECTIONED,
     STOPPED_B1,
@@ -521,97 +519,6 @@ class TestLines(FormTest):
                 self.assertIn("<path>:<from>-<to>", said[0])
 
 
-class TestLessons(FormTest):
-    """The learner gives what fell short in the run and why, each lesson the project's own or
-    general and resting on the words of a record it was shown."""
-
-    def setUp(self):
-        super().setUp()
-        self.records = [self.given_record("first-user", "{}"), self.given_record("generator", "{}")]
-
-    def lessons(self, **reply):
-        """What is wrong with the learner's reply, by default one general lesson, the records
-        those the test has written."""
-        reply = dict({"lessons": [LESSON], "checked": CHECKED}, **reply)
-        return forms.learnt(json.dumps(reply), self.records)
-
-    def test_lessons_resting_on_words_of_the_records_pass(self):
-        # Given: a lesson of the project's own and a general one, each quoting a record, and a
-        # reply with no lesson but what it checked
-        # When: it is checked
-        # Then: it passes
-        lessons = [
-            dict(LESSON, whose=w, grounds=[{"record": 2, "quote": "{}"}])
-            for w in ("own", "general")
-        ]
-        self.assertEqual(self.lessons(lessons=lessons), [])
-        self.assertEqual(self.lessons(lessons=[]), [])
-
-    def test_a_lesson_out_of_its_form_stops(self):
-        # Given: a lesson neither own nor general, one with empty words, one with other keys, one
-        # quoting no record, a record not given, or words the record does not hold
-        # When: it is checked
-        # Then: each is named with what to give
-        for lesson, said in (
-            (dict(LESSON, whose="caller"), 'lesson 1 must hold "lesson" in words, "whose"'),
-            (dict(LESSON, lesson=" "), 'lesson 1 must hold "lesson" in words, "whose"'),
-            (dict(LESSON, why="x"), 'lesson 1 must hold "lesson" in words, "whose"'),
-            ({"whose": "own", "lesson": "x"}, 'lesson 1 must hold "lesson" in words, "whose"'),
-            ("read it", 'lesson 1 must hold "lesson" in words, "whose"'),
-            (dict(LESSON, grounds=[]), "lesson 1 names no ground; give at least one"),
-            (dict(LESSON, grounds={"record": 1}), "lesson 1 gives its grounds as no list"),
-            (dict(LESSON, grounds=[{"record": 3, "quote": "I"}]), "ground 1 must hold"),
-            (dict(LESSON, grounds=[{"record": 0, "quote": "I"}]), "ground 1 must hold"),
-            (dict(LESSON, grounds=[{"record": True, "quote": "I"}]), "ground 1 must hold"),
-            (dict(LESSON, grounds=[{"record": 1, "quote": ""}]), "ground 1 must hold"),
-            (dict(LESSON, grounds=[{"record": 1}]), "ground 1 must hold"),
-            (dict(LESSON, grounds=[{"record": 1, "quote": "{}", "x": 1}]), "ground 1 must hold"),
-            (dict(LESSON, grounds=["I"]), "ground 1 must hold"),
-            (dict(LESSON, grounds=[{"record": 1, "quote": "I closed it."}]), "is not in record 1"),
-        ):
-            with self.subTest(lesson=lesson):
-                said_now = self.lessons(lessons=[lesson])
-                self.assertEqual(len(said_now), 1, said_now)
-                self.assertIn(said, said_now[0])
-
-    def test_every_lesson_out_of_its_form_is_named(self):
-        # Given: two lessons neither own nor general
-        # When: they are checked
-        # Then: both are named
-        said = self.lessons(lessons=[dict(LESSON, whose="caller")] * 2)
-        self.assertEqual([s[:8] for s in said], ["lesson 1", "lesson 2"])
-
-    def test_a_ground_is_found_in_the_record_it_numbers(self):
-        # Given: three records, each with words of its own
-        # When: a lesson quotes each record's words by its number, or the third's words by
-        # another number
-        # Then: each found where it numbers passes, and the other is named
-        self.records = [self.given_record(f"r{n}", f"words of {n}") for n in (1, 2, 3)]
-        for n in (1, 2, 3):
-            with self.subTest(n=n):
-                ground = {"record": n, "quote": f"words of {n}"}
-                self.assertEqual(self.lessons(lessons=[dict(LESSON, grounds=[ground])]), [])
-        ground = {"record": 2, "quote": "words of 3"}
-        said = self.lessons(lessons=[dict(LESSON, grounds=[ground])])
-        self.assertIn("is not in record 2", said[0])
-
-    def test_no_lessons_or_no_scope_checked_stops(self):
-        # Given: a reply with no lessons, lessons that are no list, or no scope checked
-        # When: it is checked
-        # Then: each is named
-        for reply, said in (
-            ({"checked": CHECKED}, 'give "lessons"'),
-            ({"lessons": LESSON, "checked": CHECKED}, 'give "lessons"'),
-            ({"lessons": []}, 'give "checked"'),
-            ({"lessons": [], "checked": " "}, 'give "checked"'),
-            ([], 'give it as JSON: {"lessons": [...], "checked": "..."}'),
-        ):
-            with self.subTest(reply=reply):
-                said_now = forms.learnt(json.dumps(reply), self.records)
-                self.assertEqual(len(said_now), 1, said_now)
-                self.assertIn(said, said_now[0])
-
-
 class TestSchemas(FormTest):
     """Each role's reply is held, as it is written, to its JSON Schema by lane's in_form, and then
     by the flow; a reply the flow takes is one the schema takes."""
@@ -626,22 +533,17 @@ class TestSchemas(FormTest):
     def test_there_is_a_form_for_each_role_that_replies(self):
         # Given: turn's forms
         # When: they are listed
-        # Then: there is one for the generator, the first user and the learner, and none else
-        self.assertEqual(
-            sorted(os.listdir(FORM_FILES)), ["claim.json", "learnt.json", "reading.json"]
-        )
+        # Then: there is one for the generator and the first user, and none else
+        self.assertEqual(sorted(os.listdir(FORM_FILES)), ["claim.json", "reading.json"])
 
     def test_each_reply_the_flow_takes_is_one_its_schema_takes(self):
-        # Given: a claim, a claim asking before making, a reading and the learner's lessons, each
-        # taken by the flow
+        # Given: a claim, a claim asking before making and a reading, each taken by the flow
         # When: each is held to its role's schema
         # Then: each holds
         for name, value in (
             ("claim.json", {"items": [GOOD, WAITS, EACH_GOOD], "questions": [QUESTION]}),
             ("claim.json", {"items": [WAITS], "questions": [QUESTION]}),
             ("reading.json", {"items": [FOUND, STOPPED_B1, EACH_GOOD]}),
-            ("learnt.json", {"lessons": [LESSON, dict(LESSON, whose="own")], "checked": CHECKED}),
-            ("learnt.json", {"lessons": [], "checked": CHECKED}),
         ):
             with self.subTest(name=name, value=value):
                 self.assertIsNone(self.out_of(name, value))
@@ -665,14 +567,6 @@ class TestSchemas(FormTest):
                 # Then: it is out at the item
                 out = self.out_of("reading.json", {"items": [item]})
                 self.assertEqual(out.told()[: len("$.items[0]")], "$.items[0]")
-
-    def test_a_lesson_neither_own_nor_general_is_out_of_its_schema(self):
-        # Given: the learner's lesson said to be for a role
-        # When: it is held to the learner's schema
-        # Then: it is out at the lesson's whose
-        reply = {"lessons": [dict(LESSON, whose="generator")], "checked": CHECKED}
-        out = self.out_of("learnt.json", reply)
-        self.assertEqual(out.told()[: len("$.lessons[0].whose")], "$.lessons[0].whose")
 
 
 if __name__ == "__main__":

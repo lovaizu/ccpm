@@ -30,16 +30,6 @@
             "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:first-user\"'*|*'\"agent_type\": \"turn:first-user\"'*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:first-user"
           }
         ]
-      },
-      {
-        "matcher": "Read|Grep|Bash|Write|Edit|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:learner\"'*|*'\"agent_type\": \"turn:learner\"'*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:learner"
-          }
-        ]
       }
     ],
     "SubagentStop": [
@@ -70,16 +60,6 @@
             "type": "command",
             "timeout": 10,
             "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:first-user\"'*|*'\"agent_type\": \"turn:first-user\"'*) echo '{\"systemMessage\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" turn:first-user"
-          }
-        ]
-      },
-      {
-        "matcher": "turn:learner",
-        "hooks": [
-          {
-            "type": "command",
-            "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:learner\"'*|*'\"agent_type\": \"turn:learner\"'*) echo '{\"systemMessage\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" turn:learner"
           }
         ]
       }
@@ -114,16 +94,6 @@
             "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/posttooluse.py\" turn:first-user"
           }
         ]
-      },
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/posttooluse.py\" turn:learner"
-          }
-        ]
       }
     ],
     "PostToolUseFailure": [
@@ -154,16 +124,6 @@
             "type": "command",
             "timeout": 10,
             "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/posttoolusefailure.py\" turn:first-user"
-          }
-        ]
-      },
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/posttoolusefailure.py\" turn:learner"
           }
         ]
       }

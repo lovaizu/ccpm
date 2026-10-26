@@ -21,19 +21,18 @@ from helpers import (
 class TestRoundEnd(ReadTest):
     """Once the first user's reading ends, an item has its Good where the first user gave one."""
 
-    def test_every_good_found_has_the_learner_start(self):
+    def test_every_good_found_has_the_run_return(self):
         # Given: a first user finding every item's Good
         # When: the orchestrator goes on
-        # Then: a line says what the first user found and that the learner learns next, with no
-        # second round
+        # Then: a line says what the first user found and that the result is returned next, with
+        # no second round
         out = self.first_read(FOUND, FOUND_B1)
-        self.assertTrue(
-            str(out["line"]).startswith(
-                "turn: turn:first-user found the Good of 2 of 2 items. Next, turn:learner will"
-            ),
-            out,
+        self.assertEqual(
+            out["line"],
+            "turn: turn:first-user found the Good of 2 of 2 items. Next, turn:up will return the"
+            " result, of README.md, for 2 items, round 1.",
         )
-        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
+        self.assertEqual(self.heard(out), {"returned": RESULT})
 
     def test_an_item_the_first_user_found_no_good_for_is_made_again_as_it_gave_it(self):
         # Given: a first user giving one item's Good and stopping at the other
@@ -50,9 +49,9 @@ class TestRoundEnd(ReadTest):
         self.due(out)
         self.assertEqual(self.prompt()["sent_back"], [STOPPED_B1])
 
-    def test_after_an_item_made_again_the_first_user_and_the_learner_take_every_item(self):
+    def test_after_an_item_made_again_the_first_user_and_the_return_take_every_item(self):
         # Given: a round ended with one item without Good, made again by the generator
-        # When: the first user reads the work again, finding every Good, and the learner is due
+        # When: the first user reads the work again, finding every Good, and the result is due
         # Then: the line for each counts every item, not the one made again
         self.due(self.first_read(FOUND))
         out = self.made()
@@ -128,13 +127,13 @@ class TestRounds(ReadTest):
         # When: the second round's first user finds both Goods
         # Then: the run returns with both Goods of the second round
         self.second()
-        self.assertEqual(self.learnt(self.first_read(FOUND, FOUND_B1)), {"returned": RESULT})
+        self.assertEqual(self.returned(self.first_read(FOUND, FOUND_B1)), {"returned": RESULT})
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1])
 
     def test_an_item_two_rounds_leave_without_good_is_shown_for_a_question(self):
         # Given: two rounds leaving B-1 without Good
         # When: the orchestrator goes on after the line
-        # Then: B-1 is shown as the first user last gave it, with no learner started
+        # Then: B-1 is shown as the first user last gave it, with no role started
         self.assertEqual(self.left(), {"left": [STOPPED_B1]})
         self.assertNotIn("next", self.state())
         self.assertEqual(self.next(), {"left": [STOPPED_B1]})

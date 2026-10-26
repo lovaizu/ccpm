@@ -17,16 +17,15 @@ import sys
 from collections.abc import Generator
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-# Starting Claude Code and reading a plugin's hooks are what every plugin's trials and tests share,
-# kept in lane's; how a CCS, a checklist and Claude Code's records are read is what turn's scripts
-# read them by.
+# Starting Claude Code, reading a plugin's hooks and how Claude Code's records are read are what
+# every plugin's trials and tests share, kept in lane's; how a CCS and a checklist are read is what
+# turn's scripts read them by.
 sys.path.insert(0, os.path.join(ROOT, "dev", "lane"))
 sys.path.insert(0, os.path.join(ROOT, "dev", "lane", "trials"))
 sys.path.insert(0, os.path.join(ROOT, "turn", "scripts"))
 
-import record
 from call import entries, items  # noqa: F401
-from trying import agents, claude, show  # noqa: F401
+from trying import agents, claude, record, show  # noqa: F401
 from trying import folder as made_folder
 
 # The orchestrator's check of the flow trial's task, as the roles trials set it: each item's Good

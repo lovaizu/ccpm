@@ -1,6 +1,6 @@
 """What turn's tests share: a temporary folder standing for the user's repository, holding a task's
 CCS, its checklist, its decisions and a work already written, turn run on it as the orchestrator
-runs it, and the replies, checks and records of a run, each written once here."""
+runs it, and the replies and checks of a run, each written once here."""
 
 import contextlib
 import io
@@ -21,7 +21,6 @@ sys.path.insert(0, os.path.join(TURN, "..", "dev", "lane"))
 import call  # noqa: F401  (each of turn's modules, for its own tests)
 import forms  # noqa: F401
 import prompts  # noqa: F401
-import records  # noqa: F401
 import run
 import state
 import testing
@@ -108,14 +107,6 @@ CAN = [
     {"checklist": "checklists/readme.md", "item": "F-1", "can": "the template the checklist gives"},
     {"checklist": "checklists/readme.md", "item": "B-1", "can": "the receiver the CCS names"},
 ]
-# A lesson on what fell short in the run, general, for turn's makers, resting on words of the first
-# record, which every role's record holds.
-LESSON = {
-    "lesson": "it opened each file before it wrote",
-    "whose": "general",
-    "grounds": [{"record": 1, "quote": "I open it."}],
-}
-CHECKED = "every page of every record"
 # An item the first user finds no Good for, with the places of the work where it looked for it, what
 # it did there and what it did not get.
 DID = "read the opening for whom it is"
@@ -160,7 +151,7 @@ EACH_GOOD = {
 
 
 # The agent ID the Agent call gives back for each role, as the orchestrator hands it on.
-IDS = {"turn:generator": "agen", "turn:first-user": "afirst", "turn:learner": "alearn"}
+IDS = {"turn:generator": "agen", "turn:first-user": "afirst"}
 RESULT = CALL["result"]
 # The day a run is started on, as the clock gives it, and the folder the run of the result is kept
 # in, in turn's folder at the root of the repository, named by that day and the result's path from
@@ -172,7 +163,7 @@ RUN = f".turn/{TODAY}-.tasks%2Freadme-result.json"
 class RepoTest(testing.FolderTest):
     """Each test runs turn from a temporary folder standing for the user's repository, `base`, its
     root, holding a task's CCS, its checklist, its decisions and a work already written, on the
-    day TODAY; Claude Code's records are kept in a folder of its own inside it."""
+    day TODAY."""
 
     def setUp(self):
         super().setUp()
@@ -186,11 +177,6 @@ class RepoTest(testing.FolderTest):
         self.write("docs/start.md", "# Start\n")
         self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
         self.result = RESULT
-        self.claude = os.path.join(self.base, ".claude-home")
-        self.session = os.path.join(self.claude, "projects", "repo", "s1", "subagents")
-        patched = mock.patch.dict(os.environ, {"CLAUDE_CONFIG_DIR": self.claude})
-        patched.start()
-        self.addCleanup(patched.stop)
         # A role's reply is written by the time the flow reads it, unless a test says otherwise.
         self.waiting = mock.patch.object(run, "WAIT", 0)
         self.waiting.start()
@@ -317,26 +303,11 @@ class RepoTest(testing.FolderTest):
         with mock.patch.object(run, "SENDS", 0):
             return self.replied({"items": self.reading(*found)})
 
-    def learnt(self, out, reply=None):
-        """The learner told and started as the script printed, replying with what it found, by
-        default no lesson; and what the script prints after the line telling the run returns."""
-        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:learner")
-        return self.heard(self.replied(reply or {"lessons": [], "checked": CHECKED}))
-
-    def given_record(self, agent_id, prompt, agent_type=""):
-        """Writes what Claude Code keeps of an agent's conversation: its prompt as the first
-        record, then what it said, kept twice as Claude Code keeps it, and its meta file."""
-        path = os.path.join(self.session, f"agent-{agent_id}.jsonl")
-        said = {
-            "type": "assistant",
-            "message": {"content": [{"type": "text", "text": "I open it."}]},
-        }
-        entries = [{"type": "user", "message": {"role": "user", "content": prompt}}, said, said]
-        self.write(path, "".join(json.dumps(r) + "\n" for r in entries))
-        self.write_json(
-            os.path.join(self.session, f"agent-{agent_id}.meta.json"), {"agentType": agent_type}
-        )
-        return path
+    def returned(self, out):
+        """The return of the result told as the script printed it, once every item has its Good;
+        and what the script prints after the line."""
+        self.assertIn("Next, turn:up will return the result", out["line"])
+        return self.heard(out)
 
 
 class ReadTest(RepoTest):

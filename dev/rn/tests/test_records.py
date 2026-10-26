@@ -1,8 +1,9 @@
-"""The tests of what the learnings are made from: the stretch's records shown, and every learning
-given to be put to the user."""
+"""The tests of what the learnings are made from: what Claude Code keeps of a conversation as rn
+reads it, the stretch's records shown, and every learning given to be put to the user."""
 
 from __future__ import annotations
 
+import json
 import os
 import unittest
 
@@ -15,9 +16,92 @@ from helpers import (
     LearningTest,
     RepoTest,
     call_at,
+    records,
     said,
     steered,
+    testing,
 )
+
+
+class EntriesTest(testing.FolderTest):
+    def test_the_conversation_s_own_entries_are_read_without_copies_or_a_line_half_written(self):
+        # Given: a record of the user's words, the assistant's, an attachment, the copy of a
+        # request Claude Code keeps beside them, and a last line half written, as one Claude Code
+        # is still writing.
+        kept = [
+            {"type": "user", "message": {"content": "go"}},
+            {"type": "assistant", "message": {"content": "gone"}},
+            {"type": "attachment", "attachment": {"type": "date"}},
+            {"type": "api-request-blob", "message": {"content": "copied request"}},
+        ]
+        late = json.dumps({"type": "assistant", "message": {"content": "late"}})[:20]
+        self.write("c.jsonl", "".join(json.dumps(e) + "\n" for e in kept) + late)
+        # When: its entries are read.
+        # Then: they are the conversation's own, whole, without the copy.
+        self.assertEqual(records.entries("c.jsonl"), kept[:3])
+
+    def test_a_record_not_there_has_no_entries(self):
+        # Given: no record at the path.
+        # When: its entries are read.
+        # Then: there are none.
+        self.assertEqual(records.entries("gone.jsonl"), [])
+
+
+class SaidTest(unittest.TestCase):
+    def test_a_tool_s_words_are_shown_as_they_were_written(self):
+        # Given: a tool given a file with quotes and lines, one given a value that is no text, and
+        # one given no object, each with words beyond ASCII.
+        write = {"file_path": "R.md", "content": '{\n  "questions": []\n}\n'}
+        # When: each is shown as a line.
+        # Then: each value given is shown under its name, text as it is, so a quote of it is found
+        # as it was written, any other value as JSON.
+        self.assertEqual(
+            [
+                records.said({"type": "tool_use", "name": "Write", "input": write}),
+                records.said(
+                    {"type": "tool_use", "name": "Bash", "input": {"command": "ls", "p": ["読む"]}}
+                ),
+                records.said({"type": "tool_use", "name": "Odd", "input": ["読む"]}),
+            ],
+            [
+                '[tool_use Write] file_path: R.md\ncontent: {\n  "questions": []\n}\n',
+                '[tool_use Bash] command: ls\np: ["読む"]',
+                '[tool_use Odd] ["読む"]',
+            ],
+        )
+
+    def test_a_part_of_words_is_shown_by_its_type(self):
+        # Given: a part of words, and a part of a type of its own with no words.
+        # When: each is shown as a line.
+        # Then: each is shown by its type, the one with no words with none.
+        self.assertEqual(
+            [
+                records.said({"type": "text", "text": "I keep the move."}),
+                records.said({"type": "thinking"}),
+            ],
+            ["[text] I keep the move.", "[thinking] "],
+        )
+
+
+class WrappedTest(unittest.TestCase):
+    def test_a_line_longer_than_a_read_shows_is_cut_at_its_blanks(self):
+        # Given: a line of many words, longer than a read shows, and a word longer than that.
+        text = " ".join(["word"] * 400) + "\n" + "x" * 2500
+        # When: it is wrapped.
+        wrapped = records.wrapped(text)
+        # Then: the line is cut at its blanks, every word kept, and the long word stands alone.
+        self.assertTrue(all(len(line) <= 1000 for line in wrapped.splitlines()[:-1]))
+        self.assertEqual(wrapped.count("word"), 400)
+        self.assertTrue(wrapped.endswith("\n" + "x" * 2500 + "\n"))
+
+    def test_a_line_as_long_as_a_read_shows_is_kept_as_it_is(self):
+        # Given: a short line holding a tab and ending in a blank, a line of a thousand characters,
+        # the last a blank, and one a character longer.
+        # When: they are wrapped.
+        # Then: the first two are kept as they are, and the third cut at its blank.
+        self.assertEqual(records.wrapped("a\tb "), "a\tb \n")
+        self.assertEqual(records.wrapped("a" * 999 + " "), "a" * 999 + " \n")
+        self.assertEqual(records.wrapped("a" * 999 + " b"), "a" * 999 + "\nb\n")
 
 
 class RecordsTest(LearningTest):

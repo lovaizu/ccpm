@@ -1,7 +1,7 @@
 """What each role of a run is given as its prompt, and where it writes its reply: every path whole,
 as a role's commands and hooks run from the session's working folder, which the calling AI may
-move with `cd`, and none of the run's own files but the records shown to the learner, as a role's
-lane lets it read anything under a folder it is given."""
+move with `cd`, and none of the run's own files, as a role's lane lets it read anything under a
+folder it is given."""
 
 from __future__ import annotations
 
@@ -13,20 +13,12 @@ import state
 
 GENERATOR = "turn:generator"
 FIRST_USER = "turn:first-user"
-LEARNER = "turn:learner"
 
 
 def reply_path(result: str, agent: str) -> str:
     """Where the role writes its reply, read by the flow alone: in the run's folder, as a whole
     path."""
     return os.path.join(state.folder(result), f"{agent.partition(':')[2]}.json")
-
-
-def records_folder(result: str) -> str:
-    """Where the records the learner reads are shown as text: `records/` in the run's folder, as a
-    whole path, as the learner reads them with its tools and Claude Code lets an agent read without
-    asking only inside the working folder and those added to it."""
-    return os.path.join(state.folder(result), "records")
 
 
 def absolute(paths: list[str]) -> list[str]:
@@ -36,7 +28,7 @@ def absolute(paths: list[str]) -> list[str]:
 
 def without_run_files(paths: list[str], result: str, apart: tuple[str, ...] = ()) -> list[str]:
     """The paths, in their order, without the run's own files: the result, and turn's folder at
-    the root, which holds each run's state, replies and records shown to the learner; and without
+    the root, which holds each run's state and replies; and without
     each file kept `apart`, as the CCS is from the first user. A path that is one of them, or
     inside one, is left out, and a folder holding one is given as its entries, sorted, the one on
     the way opened the same way: a role's lane lets it read anything under a folder it is given,
@@ -116,9 +108,3 @@ def parts(run: dict[str, Any]) -> list[str]:
     """The parts of the run's work as it stands, each as its lines in a file named by its whole
     path."""
     return forms.parts(absolute(run["work"]))
-
-
-def learner(run: dict[str, Any], texts: list[str]) -> dict[str, Any]:
-    """What the learner is given: the record of every agent of the run shown as text, and where it
-    replies."""
-    return {"given": texts, "reply": reply_path(run["call"]["result"], LEARNER)}

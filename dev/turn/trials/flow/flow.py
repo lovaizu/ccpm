@@ -1,22 +1,21 @@
-"""Tries the orchestrator's flow: the real orchestrator, flow and lanes, with the three roles stood
+"""Tries the orchestrator's flow: the real orchestrator, flow and lanes, with the two roles stood
 in for by agents of this folder that write the replies replies.py sets for the way named, so the run
 takes that way. A stand-in for the calling AI calls turn on a task of two items, B-1 answered at its
 part and B-2 in each part, in a repository made for the run:
 
-- `plain`: every item Good at the first reading, the learner with no lesson.
+- `plain`: every item Good at the first reading.
 - `given`: the first user stopping at B-1 in a README that names no license, sent back to the
   generator by message, which adds it; the first user, sent the work made again, finds every Good.
 - `sent`: the first user stopping at B-1 four times, sent back three times, the fourth stop ending
-  the round with B-1 without Good; B-1 made again in the second round and given; the learner with a
-  lesson.
+  the round with B-1 without Good; B-1 made again in the second round and given.
 - `left`: as `sent` in two rounds, so B-1 waits on a question the orchestrator words; the calling
-  AI answers it, and a third round gives B-1; a lesson of the project's own.
+  AI answers it, and a third round gives B-1.
 - `generator`: the generator asking before making anything, and again while making; each answer
   sent to it, it makes the work, and the run goes on as `plain`.
 - `asked`: the task with its decision taken out, so the check asks the calling AI; the run goes on
   as `plain`.
 - `stopped`: as `plain`, the calling AI stopping the orchestrator once it is told, after the first
-  user's reading, that the learner will learn, and calling turn again with the same call, which
+  user's reading, that it will return the result, and calling turn again with the same call, which
   goes on from that move.
 
 Where turn asks, the calling AI takes each question's recommended answer as the user's, keeps it in
@@ -67,14 +66,14 @@ STEPS = {
     "generator": ASKS,
     "asked": ASKS,
     "stopped": START
-    + "turn sends you a line before each move. Once a line says `turn:learner will`, the first"
+    + "turn sends you a line before each move. Once a line says `turn:up will return`, the first"
     " time alone, stop the agent with TaskStop at once, loaded with ToolSearch,"
     " then start the `turn:up` agent in the background again with the same call. When it returns,"
     " reply with the line it returned.",
 }
 # Each way's replies, by name; asked and stopped take plain's, as the calling AI's steps make them.
 REPLIES = dict({w: w for w in STEPS}, asked="plain", stopped="plain")
-ROLES = ("turn:generator", "turn:first-user", "turn:learner")
+ROLES = ("turn:generator", "turn:first-user")
 
 if len(sys.argv) != 2 or sys.argv[1] not in STEPS:
     sys.exit(f"{USAGE}, the way one of {', '.join(STEPS)}")

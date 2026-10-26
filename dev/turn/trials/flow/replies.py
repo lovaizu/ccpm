@@ -1,6 +1,6 @@
 """The replies the stand-in roles of the flow trial give, by the way the run takes, each built from
 the pieces the ways share: the README the generator writes, with or without its license, its claim
-and the first user's reading of it, and the learner's lessons."""
+and the first user's reading of it."""
 
 from __future__ import annotations
 
@@ -31,7 +31,6 @@ STOP = {
     "did": "read the whole README for the terms on which I may use demo",
     "lacking": "under which license I may use it",
 }
-CHECKED = "every page of every record"
 
 
 def parts(run: str, licensed: bool) -> dict[str, Any]:
@@ -61,16 +60,6 @@ def read(*items: dict[str, Any]) -> dict[str, Any]:
     return {"reply": {"items": list(items)}}
 
 
-def learnt(*lessons: dict[str, Any]) -> dict[str, Any]:
-    """The learner's lessons."""
-    return {"reply": {"lessons": list(lessons), "checked": CHECKED}}
-
-
-def lesson(said: str, whose: str) -> dict[str, Any]:
-    """A lesson resting on the first user's stop, in the record of the second agent of the run."""
-    return {"lesson": said, "whose": whose, "grounds": [{"record": 2, "quote": STOP["lacking"]}]}
-
-
 # The generator's claims and the first user's readings, of the README with no license and with one.
 SHORT = made(
     UNLICENSED,
@@ -96,38 +85,10 @@ ASKED_WHILE = {
 # Each way's replies, by role, in the order the docstring of flow.py lists them; a role asked more
 # often than its replies are set gives its last again.
 WAYS = {
-    "plain": {"generator": [WHOLE], "first-user": [GOOD], "learner": [learnt()]},
-    "given": {
-        "generator": [SHORT, WHOLE],
-        "first-user": [STOPPED, GOOD],
-        "learner": [learnt()],
-    },
-    "sent": {
-        "generator": [SHORT] * 4 + [WHOLE],
-        "first-user": [STOPPED] * 4 + [GOOD],
-        "learner": [
-            learnt(
-                lesson(
-                    "The generator, sent B-1 back three times with the license lacking, made the"
-                    " README again without it each time, so the round ended with B-1 without Good.",
-                    "general",
-                )
-            )
-        ],
-    },
-    "left": {
-        "generator": [SHORT] * 8 + [WHOLE],
-        "first-user": [STOPPED] * 8 + [GOOD],
-        "learner": [
-            learnt(
-                lesson(
-                    "The checklist's B-1 does not say where the README names the license, and two"
-                    " rounds left it out though the decisions name MIT.",
-                    "own",
-                )
-            )
-        ],
-    },
+    "plain": {"generator": [WHOLE], "first-user": [GOOD]},
+    "given": {"generator": [SHORT, WHOLE], "first-user": [STOPPED, GOOD]},
+    "sent": {"generator": [SHORT] * 4 + [WHOLE], "first-user": [STOPPED] * 4 + [GOOD]},
+    "left": {"generator": [SHORT] * 8 + [WHOLE], "first-user": [STOPPED] * 8 + [GOOD]},
     "generator": {
         "generator": [
             {
@@ -145,6 +106,5 @@ WAYS = {
             made(SAID, MIT, parts(RUN_SAID, True)),
         ],
         "first-user": [read(MIT, parts(RUN_SAID, True))],
-        "learner": [learnt()],
     },
 }

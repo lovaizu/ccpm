@@ -51,7 +51,7 @@ class TestEachPart(RepoTest):
         # Then: the result holds the item with its Good for every part
         claim = (GOOD, dict(GOOD, item="B-1"), EACH_GOOD)
         out = self.first_read(FOUND, FOUND_B1, EACH_GOOD, claim=claim)
-        self.assertEqual(self.learnt(out), {"returned": RESULT})
+        self.assertEqual(self.returned(out), {"returned": RESULT})
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1, EACH_GOOD])
 
     def test_a_reply_giving_an_each_part_item_without_every_part_is_sent_back_to_its_role(self):

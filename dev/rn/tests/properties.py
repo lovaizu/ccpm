@@ -13,6 +13,7 @@ from helpers import (
     ccs,
     plan,
     proposal,
+    records,
     said,
     session,
     steered,
@@ -226,6 +227,19 @@ class LearningPropertyTest(LearningTest):
         # Then: each comes in the order it began.
         begun = sorted(range(len(times)), key=lambda n: times[n])
         self.assertEqual(self.shown(), [f"[user] {n}\n" for n in begun])
+
+
+class WrappedPropertyTest(unittest.TestCase):
+    @hypothesis.given(st.text(max_size=5000))
+    def test_any_text_wrapped_keeps_every_word_on_lines_a_read_shows(self, text: str) -> None:
+        # Given: any text shown.
+        # When: it is wrapped.
+        # Then: its words are the same, in order, and a line is longer than a read shows only
+        # where it is one word.
+        wrapped = records.wrapped(text)
+        self.assertEqual(wrapped.split(), text.split())
+        for line in wrapped.splitlines():
+            self.assertTrue(len(line) <= records.WIDTH or len(line.split()) <= 1, line)
 
 
 if __name__ == "__main__":

@@ -14,14 +14,10 @@ from typing import Any
 import call
 import forms
 import prompts
-import records
 import state
-from prompts import FIRST_USER, GENERATOR, LEARNER
+from prompts import FIRST_USER, GENERATOR
 
 UP = "turn:up"
-# The roles kept started through their round, each sent what comes next by message, so each works
-# on with what it has already read.
-KEPT_STARTED = (GENERATOR, FIRST_USER)
 # A reading that does not settle is bounded: the first user sends back three times a round.
 SENDS = 3
 # Rounds that do not settle are bounded too: one more round may run after the first, so an item two
@@ -37,7 +33,6 @@ DOES = {
     GENERATOR: "make the work to give every item its Good, and run what it gives as the receiver"
     " would",
     FIRST_USER: "use the work in the receiver's place and give each item's Good",
-    LEARNER: "learn from every agent's record what fell short in the run and why",
 }
 # What the orchestrator does itself at each stage it is told of, as the line the calling AI is told.
 OWN = {
@@ -118,10 +113,9 @@ def laid_out_anew(run: dict[str, Any]) -> bool:
 
 def again(run: dict[str, Any]) -> dict[str, Any]:
     """The run begun again on the CCS as it is now, at the check, with every answer the calling AI
-    gave, the agent of every role started so far, and what was done last, for the line telling the
-    check."""
+    gave, and what was done last, for the line telling the check."""
     anew = begun(run["call"], run["root"])
-    anew.update({k: run[k] for k in ("answers", "agent_ids", "done") if k in run})
+    anew.update({k: run[k] for k in ("answers", "done") if k in run})
     return anew
 
 
@@ -237,8 +231,8 @@ def asking_now(run: dict[str, Any], text: str) -> dict[str, Any]:
 
 
 def returning(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """At the result written, once told: the run's folder, with the records shown to the learner, is
-    removed, the result alone staying, and the run returns."""
+    """At the result written, once told: the run's folder is removed, the result alone staying, and
+    the run returns."""
     if not run["told"] and not text.strip():
         return tell(run)
     result = run["call"]["result"]
@@ -258,16 +252,12 @@ def role(run: dict[str, Any], text: str) -> dict[str, Any]:
 
 def moved(run: dict[str, Any]) -> dict[str, Any]:
     """The move starting the role due, or sending it what is sent, the message kept among those sent
-    to it since it started; its reply is written anew, and the records the learner is given are
-    shown as text again, so a learner started anew, as on a run gone on with, reads them as they
-    are then."""
+    to it since it started; its reply is written anew."""
     step = run["next"]
     agent = step["agent"]
     reply = step["prompt"]["reply"]
     if os.path.exists(reply):
         os.remove(reply)
-    if agent == LEARNER:  # pragma: no mutate
-        shown(run, step["prompt"]["given"])
     step["moved"] = True
     if "to" in step:
         run.setdefault("since", {}).setdefault(agent, []).append(step["message"])
@@ -303,12 +293,9 @@ def replied(run: dict[str, Any], step: dict[str, Any], text: str) -> dict[str, A
         os.remove(path)
         fix = f"Write your reply to {path} again in your form, filled:\n" + "\n".join(said)
         return {"move": {"tool": "SendMessage", "input": {"to": to, "message": fix}}}
-    # Each role's record is kept for the learner, which looks for what fell short in what the roles
-    # did.
-    if to not in run.setdefault("agent_ids", []):
-        run["agent_ids"].append(to)
-    if agent in KEPT_STARTED:
-        run.setdefault("started", {})[agent] = to
+    # Each role is kept started through its round, sent what comes next by message, so it works on
+    # with what it has already read.
+    run.setdefault("started", {})[agent] = to
     del run["next"]
     return REPLIED[agent](run, json.loads(forms.unfenced(reply)))
 
@@ -347,11 +334,6 @@ def reading_problems(run: dict[str, Any], reply: str) -> list[str]:
     """What is wrong with the first user's reading."""
     work = prompts.absolute(run["work"])
     return forms.check(reply, run["items"], work, forms.FIRST_READING, run["each"])
-
-
-def lesson_problems(run: dict[str, Any], reply: str) -> list[str]:
-    """What is wrong with the learner's lessons, each ground found in the records it was shown."""
-    return forms.learnt(reply, run["record_paths"])
 
 
 def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
@@ -477,11 +459,11 @@ def sending(run: dict[str, Any]) -> bool:
 def ended(
     run: dict[str, Any], goods: list[dict[str, Any]], lacking: list[dict[str, Any]]
 ) -> dict[str, Any]:
-    """The round ended: with every item's Good, the learner learns from the run; otherwise the
-    items without Good are made again in the next round, or, once the rounds are spent, wait on a
-    question the orchestrator words."""
+    """The round ended: with every item's Good, the result is written; otherwise the items without
+    Good are made again in the next round, or, once the rounds are spent, wait on a question the
+    orchestrator words."""
     if not lacking:
-        return learn(run, goods)
+        return finished(run, goods)
     if run["more"]:
         run["more"] -= 1
         return next_round(run, lacking)
@@ -513,44 +495,12 @@ def left_asked(run: dict[str, Any], text: str) -> dict[str, Any]:
     return asking(run, "left", UP, json.loads(forms.unfenced(text)))
 
 
-def learn(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
-    """Once every item has its Good, the learner learns from every record of the run what fell
-    short and why, each record shown as text it reads whole; every item's Good is kept for the
-    result, in the checklists' order."""
+def finished(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
+    """Once every item has its Good, writes the result and has the run return: where the work is,
+    and each item's Good as the first user gave it, in the checklists' order."""
     found = {forms.key_of(g): g for g in goods}
-    run["held"] = [found[forms.key_of(i)] for i in run["items"]]
-    result = run["call"]["result"]
-    roles = [p for p in (records.find(i) for i in run["agent_ids"]) if p]
-    orchestrator = records.orchestrator(roles, result)
-    run["record_paths"] = roles + ([orchestrator] if orchestrator else [])
-    folder = prompts.records_folder(result)
-    texts = [os.path.join(folder, f"{n}.txt") for n in range(1, len(run["record_paths"]) + 1)]
-    return due(run, LEARNER, prompts.learner(run, texts))
-
-
-def shown(run: dict[str, Any], texts: list[str]) -> None:
-    """Writes each record of the run as the learner reads it, as text, at its path among the
-    texts, making their folder where it is gone."""
-    os.makedirs(prompts.records_folder(run["call"]["result"]), exist_ok=True)
-    for path, text in zip(run["record_paths"], texts):
-        with open(text, "w", encoding="utf-8") as f:
-            f.write(records.wrapped(records.as_text(path)))
-
-
-def taught(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    """Writes the result and has the run return: where the work is, each item's Good as the first
-    user gave it, and the learner's lessons with what it checked, for the calling AI to put to the
-    user; each ground names its record by its path, as the texts the learner read by number are
-    removed once the run returns."""
-    lessons = [
-        dict(
-            n, grounds=[dict(g, record=run["record_paths"][g["record"] - 1]) for g in n["grounds"]]
-        )
-        for n in reply["lessons"]
-    ]
-    result = {"work": run["work"], "items": run["held"], "lessons": lessons}
-    state.write(run["call"]["result"], dict(result, checked=reply["checked"]))
-    run["done"] = f"{LEARNER} gave {counted(len(reply['lessons']), 'lesson')} from the run."
+    items = [found[forms.key_of(i)] for i in run["items"]]
+    state.write(run["call"]["result"], {"work": run["work"], "items": items})
     return judge(run, "returned")
 
 
@@ -591,8 +541,8 @@ STAGES = {
 # What the orchestrator is shown at each stage that waits on its judgment.
 VIEWS = {"check": checked_view, "left": left_view}
 # What is wrong with each role's reply.
-PROBLEMS = {GENERATOR: claim_problems, FIRST_USER: reading_problems, LEARNER: lesson_problems}
+PROBLEMS = {GENERATOR: claim_problems, FIRST_USER: reading_problems}
 # What the run does after each role's reply.
-REPLIED = {GENERATOR: made, FIRST_USER: first_read, LEARNER: taught}
+REPLIED = {GENERATOR: made, FIRST_USER: first_read}
 # Where the run goes on once the calling AI answers, by where the questions were asked.
 GOES_ON = {"check": checked_again, GENERATOR: sent_answer, "left": left_answered}

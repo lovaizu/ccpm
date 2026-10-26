@@ -1,8 +1,7 @@
 """Where a run keeps its files, as dev/architecture.md's Where a plugin writes its files places
 them: its state and each role's reply in `.turn/<yyyymmdd>-<name>/` at the root of the repository,
 the name made from the result's path, so a call again finds them on any day and runs at once do not
-meet, and the records shown to the learner in `records/` of that folder; and the result alone where
-the call puts it."""
+meet; and the result alone where the call puts it."""
 
 import json
 import os
@@ -17,7 +16,6 @@ from helpers import (
     CHECKLIST,
     FOUND,
     FOUND_B1,
-    IDS,
     RESULT,
     RUN,
     TODAY,
@@ -60,8 +58,8 @@ class TestRunFolder(RepoTest):
     def test_a_result_at_the_root_is_written_there_alone_once_the_run_returns(self):
         # Given: a run whose result goes at the root, every item given its Good
         self.started(dict(CALL, result="result.json"))
-        # When: the learner replies, and the run returns
-        self.learnt(self.first_read(FOUND, FOUND_B1))
+        # When: the run returns
+        self.returned(self.first_read(FOUND, FOUND_B1))
         # Then: the result is at the root, and its run's folder is gone
         self.assertEqual(self.read_json("result.json")["work"], ["README.md"])
         self.assertEqual(self.runs(), [])
@@ -157,21 +155,6 @@ class TestRunFolder(RepoTest):
         # Then: it is kept in the folder of the earliest day, and no folder of today is made
         self.assertTrue(os.path.isfile(f".turn/{EARLIER}-.tasks%2Freadme-result.json/run.json"))
         self.assertEqual(len(self.runs()), 2)
-
-    def test_a_run_begun_on_an_earlier_day_shows_its_records_in_its_folder(self):
-        # Given: a run begun the day before, every item given its Good today
-        for agent, agent_id in IDS.items():
-            self.given_record(agent_id, "{}", agent)
-        with mock.patch.object(time, "strftime", return_value=YESTERDAY):
-            self.started()
-        out = self.first_read(FOUND, FOUND_B1)
-        # When: the learner is started
-        given = json.loads(self.due(out)["input"]["prompt"])["given"]
-        # Then: the records are shown in `records/` of the folder of the day the run began, and
-        # no folder of today is made
-        folder = f".turn/{YESTERDAY}-.tasks%2Freadme-result.json"
-        self.assertEqual(given, [self.here(f"{folder}/records/{n}.txt") for n in (1, 2)])
-        self.assertEqual(self.runs(), [os.path.basename(folder)])
 
     def test_two_runs_at_once_with_other_results_keep_folders_of_their_own(self):
         # Given: a run started on the call's result

@@ -9,7 +9,6 @@ import os
 import re
 from typing import Any, NamedTuple
 
-import records
 import template
 
 # Lines of a file, as every form names them: `<path>:<from>-<to>`, or `<path>:<line>` for one.
@@ -30,11 +29,6 @@ ONE_GOOD = "lines"
 EACH_GOOD = "parts"
 # The keys whose value is words, wherever an item holds them.
 WORDED = ("can", "good", "did", "lacking")
-# The keys of a lesson and of each of its grounds, and where a lesson goes: into the user's own
-# checklists or rules, or to turn's makers.
-LESSON = {"lesson", "whose", "grounds"}
-GROUND = {"record", "quote"}
-WHOSE = ("own", "general")
 
 
 def shapes(path: str) -> tuple[tuple[str, ...], ...]:
@@ -85,12 +79,6 @@ def key_of(item: dict[str, Any]) -> tuple[str, Any]:
 def worded(value: Any) -> bool:
     """Whether the value is words, not empty."""
     return isinstance(value, str) and bool(value.strip())
-
-
-def spaced(words: str) -> str:
-    """The words with every run of space, tab or line end as one space, so a quote across a line
-    break is found as written."""
-    return " ".join(words.split())
 
 
 def span(line: Any) -> tuple[str, int, int] | None:
@@ -323,69 +311,4 @@ def question_problems(data: dict[str, Any]) -> list[str]:
         for n in waiting
         if isinstance(n, int) and not 1 <= n <= len(questions)
     ]
-    return said
-
-
-def learnt(text: str, kept: list[str]) -> list[str]:
-    """What is wrong with the learner's reply, each said with what to give instead; empty when it
-    is filled: what fell short in the run and why, each lesson the project's own or general and
-    resting on words of a record kept, numbered in the order the learner was given them, and what
-    it checked, so that a reply of no lesson says its scope."""
-    data = parsed(text, ())
-    if data is None:
-        return ['give it as JSON: {"lessons": [...], "checked": "..."}']
-    said: list[str] = []
-    given = data.get("lessons")
-    if not isinstance(given, list):
-        said.append(
-            'give "lessons": [{"lesson", "whose", "grounds"}, ...], each lesson on what fell short'
-            " in the run and why, or [] when you found none"
-        )
-        given = []
-    if not worded(data.get("checked")):
-        said.append('give "checked": what you checked of the run, in words')
-    for n, lesson in enumerate(given, 1):
-        name = f"lesson {n}"
-        if (
-            not isinstance(lesson, dict)
-            or set(lesson) != LESSON
-            or lesson["whose"] not in WHOSE
-            or not worded(lesson["lesson"])
-        ):
-            said.append(
-                f'{name} must hold "lesson" in words, "whose", "own" for the project\'s own or'
-                ' "general" for turn\'s makers, and "grounds"'
-            )
-            continue
-        said += ground_problems(name, lesson["grounds"], kept)
-    return said
-
-
-def ground_problems(name: str, grounds: Any, kept: list[str]) -> list[str]:
-    """What is wrong with a lesson's grounds, each the number of a record kept and words found in
-    it as the learner was shown it."""
-    if not isinstance(grounds, list):
-        return [f'{name} gives its grounds as no list; give [{{"record": ..., "quote": ...}}, ...]']
-    if not grounds:
-        return [f'{name} names no ground; give at least one, {{"record": ..., "quote": ...}}']
-    said: list[str] = []
-    for k, ground in enumerate(grounds, 1):
-        number = ground.get("record") if isinstance(ground, dict) else None
-        if (
-            not isinstance(ground, dict)
-            or set(ground) != GROUND
-            or not isinstance(number, int)
-            or isinstance(number, bool)
-            or not 1 <= number <= len(kept)
-            or not worded(ground["quote"])
-        ):
-            said.append(
-                f'{name}: ground {k} must hold "record", its number from 1 to {len(kept)}, and'
-                ' "quote", its words'
-            )
-        elif spaced(ground["quote"]) not in spaced(records.as_text(kept[number - 1])):
-            said.append(
-                f"{name}: ground {k} is not in record {number} as written; quote its words as they"
-                " are"
-            )
     return said

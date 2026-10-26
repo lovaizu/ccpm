@@ -29,7 +29,6 @@ LAID = {
         "end_when",
         "every_item",
     },
-    "turn:learner": {"read_only", "read_whole", "write_only", "in_form", "end_when"},
 }
 
 
