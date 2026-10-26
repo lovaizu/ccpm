@@ -139,6 +139,16 @@ flowchart TB
   file, so it changes nothing it was not asked to make; an output passed as it is, not summarised,
   reaches the next maker as it was accepted, and one call for each output has each read by its
   first user before anything is made on it.
+- A task's call names the receiver, their use and what they have as the situation the work is used
+  in at its stage: before anything is built, a document's receiver is the user approving it and
+  whoever builds to it, having the plan and the documents made before it; once it is built, the
+  product's users, with the built product.
+
+  turn's first user does what the receiver does with what they have, and what it lacks reaches it
+  only through these, as the decisions go to turn's maker alone
+  ([turn's architecture](../turn/architecture.md#physical-view)); a document's reader named as a
+  checklist's opening names the finished product's, such as a newcomer installing it, has the first
+  user run a product not yet built and send the document back for what is not there.
 - The call that makes a task's result gives turn the one command that runs the check its
   completion criterion names, where that check is one command, and the calls before it give none;
   a part rn's scripts put back, the plan or the learnings, the orchestrator passes through the

@@ -79,19 +79,35 @@ RESEARCH_CCS = [
 ]
 
 
-def note_ccs(work: str, path: str, has: str) -> list:
-    """What rn.py ccs is given for a task's work of the kind note at the path, its reader as the
-    note checklist's opening names them, with the earlier output it is made from."""
-    return [
-        "ccs",
-        work,
-        "--receiver",
-        f"a contributor who opens {path}",
-        "--use",
-        "taking in the greeting line and doing what it says",
-        "--has",
-        has,
-    ]
+# What rn.py ccs is given for T3's change to README.md, made in the build stage: its reader as the
+# note checklist's opening names them, with the note it is made from.
+README_CCS = [
+    "ccs",
+    "t3.2",
+    "--receiver",
+    "a contributor who opens README.md",
+    "--use",
+    "taking in the greeting line and doing what it says",
+    "--has",
+    "docs/greeting.md",
+]
+
+
+# What rn.py ccs is given for T2's note, made in the design stage before anything is built: its
+# reader the user approving it and whoever makes README.md's change to it, with the plan and the
+# README it is made for.
+GREETING_CCS = [
+    "ccs",
+    "t2.2",
+    "--receiver",
+    "the user approving docs/greeting.md, and whoever makes README.md greet contributors to it",
+    "--use",
+    "approving the greeting's words and place, then changing README.md to give them",
+    "--has",
+    "README.md",
+    "--has",
+    f"{SESSION}/steering.md",
+]
 
 
 # Each Next the moves before a case keep, as the steps of /rn:up word it, those rn sets itself
@@ -646,7 +662,7 @@ def design_approved(p: Place) -> None:
     """T2 done and out of the steering, changing nothing of the plan, the design approved, the plan
     written again with T3, and T3's action 1 done, Next T3's action 2."""
     t2_worded(p)
-    made(p, note_ccs("t2.2", "docs/greeting.md", "README.md"), NOTE_GREETING)
+    made(p, GREETING_CCS, NOTE_GREETING)
     message = "T2.2 done: docs/greeting.md made, changing nothing of the plan"
     state(p, NEXT_DESIGN_SIGNOFF, message, "--done", "T2.2")
     p.rn("proposal", "design")
@@ -667,7 +683,7 @@ def deliverable_signoff(p: Place) -> None:
     """T3 done and out of the steering, changing nothing of the plan, no task left, the finished
     work used, and the deliverable sign-off waiting."""
     design_approved(p)
-    made(p, note_ccs("t3.2", "README.md", "docs/greeting.md"), NOTE_README)
+    made(p, README_CCS, NOTE_README)
     message = "T3.2 done: README.md greets new contributors; no task is left"
     state(p, None, message, "--done", "T3.2", "--stage", "deliverable")
     made(p, DELIVERABLE_CCS, FINISHED)

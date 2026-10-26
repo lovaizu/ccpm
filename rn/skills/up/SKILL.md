@@ -196,9 +196,12 @@ conversation.
        for the goal or a criterion, otherwise the work of the task's action of turn's it is for,
        `t<n>.<k>`; then `rn.py state --done T<n>.<action>`, replying with the line it tells.
      - An action of turn's: step 3 on its work, `t<n>.<k>`, which rn.py makes at the path and of
-       the kind the action names. Give `--receiver` and `--use` as the opening of the kind's
-       checklist names its reader, from `rn.py checklists <kind>`, which prints the paths of the
-       kind's checklists, for the task's completion criterion; and a `--has` for each earlier
+       the kind the action names. Give `--receiver` and `--use` for the task's completion
+       criterion as the work is used at the session's stage: before the build stage, as nothing is
+       built yet, the user approving it and whoever makes the later works to it, with
+       `--has <session>/steering.md` for the plan; at the build stage, the reader the opening of
+       the kind's checklist names, from `rn.py checklists <kind>`, which prints the paths of the
+       kind's checklists, with what of the built work they use. Give a `--has` for each earlier
        output the action uses, named, such as the research result a document rests on, and for what
        the receiver has with it, `--has .` only where that is the whole repository, each of these
        that neither the action nor an answer of the user's names with a `--chose` saying it and
