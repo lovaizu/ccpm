@@ -225,18 +225,22 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
 
 ```
 rn/                                  the plugin, installed by Claude Code with turn
-├── skills/
-│   ├── up/SKILL.md                  the orchestrator for /rn:up, the steps every stage takes <skill>
-│   ├── up/<stage>.md                the steps of the plan, design, build and learnings stages <Markdown>
-│   ├── up/messages.md               the forms of the messages asking a point or a learning <Markdown>
-│   ├── ty/SKILL.md                  the orchestrator for /rn:ty, which the AI cannot call <skill>
-│   └── gm/SKILL.md                  the orchestrator for /rn:gm, which the AI cannot call <skill>
+├── skills/                          the entries, each saying where what the orchestrator names lies <skill>
+│   ├── up/SKILL.md                  /rn:up, handing to the orchestrator
+│   ├── ty/SKILL.md                  /rn:ty, which the AI cannot call, handing to the orchestrator's approval
+│   └── gm/SKILL.md                  /rn:gm, which the AI cannot call, handing to the orchestrator on feedback
+├── prompts/                         the orchestrator <Markdown>
+│   ├── orchestrator.md              its Role and the steps every stage takes, which each entry has read first
+│   ├── <stage>.md                   the steps of the plan, design, build and learnings stages
+│   ├── approval.md, feedback.md     the steps on an approval and on feedback
+│   └── messages.md                  the forms of the messages asking a point or a learning
 ├── scripts/                         what the orchestrator runs for each move a machine can judge <Python 3>
-│   ├── rn.py                        the command line, a subcommand for each move
+│   ├── rn.py                        the command line, a subcommand for each move, calling the part's module
 │   ├── steering.py                  the steering's form, read, held at every keep and changed
-│   ├── session.py                   the session's record: each move kept, each call
-│   ├── ccs.py                       what each work's CCS holds beside its decisions
+│   ├── session.py                   the session's record: started, each move kept, each call, each part cut and put back
+│   ├── ccs.py                       what each work's CCS holds, its decisions with the rest, written and handed on
 │   ├── proposal.py                  the proposal at each sign-off, and the answers to it
+│   ├── learnings.py                 the learnings, kept in a file of their own
 │   ├── conversations.py             the orchestrator's conversations, as Claude Code keeps them, searched
 │   ├── history.py                   each send-back, remake and replaced decision in the branch's history
 │   ├── repo.py                      git and gh run, and the files written
@@ -265,7 +269,8 @@ rn/                                  the plugin, installed by Claude Code with t
 
 - rn runs on Claude Code, python3 3.9 or later, git and `gh` logged in to an account that can push
   to the repository; turn is installed with rn as its dependency.
-- The orchestrator is rn's skills, run in the user's main conversation on the model they run it on.
+- The orchestrator is `prompts/orchestrator.md`, which each of rn's skills hands to, run in the
+  user's main conversation on the model they run it on.
 - The orchestrator starts `turn:up` in the background with the CCS's path, its kinds and where the
   result goes, answers turn's points by SendMessage, and stops a run with TaskStop, as
   [turn](../../turn/README.md) is called.

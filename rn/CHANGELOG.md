@@ -13,6 +13,7 @@
 
 ### Changed
 
+- `/rn:up`, `/rn:ty` and `/rn:gm` each read rn's steps whole from one file under `prompts/` before anything else, the skill saying where each script and file the steps name lies — every command takes the same steps, wherever Claude Code installs rn.
 - `/rn:on` and `/rn:dn` are folded into `/rn:up`: `/rn:up <what you want>` starts a session, and `/rn:up` alone, in this conversation or a fresh one, goes on from wherever you stopped — every decision is pushed before the work after it, so there is nothing to pause.
 - `/rn:ty` goes straight on to what comes after the sign-off, and `/rn:gm` keeps your feedback and stops — after an approval nothing more is typed, and after feedback you can clear the conversation and lose nothing.
 - rn asks you only what changes the work: how it or turn goes on after a stop of their own, and what turn's reader is given, it settles itself, and what it would tell rn's makers waits for the learnings — your time goes to your work, not to rn's.
