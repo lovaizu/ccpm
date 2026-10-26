@@ -21,11 +21,10 @@ import stop
 # a session's folder in it, by the date it began and its slug.
 RECORD = ".rn"
 SESSION_NAME = re.compile(r"[0-9]{8}-[a-z0-9-]+")
-# The session's steering, its learnings, and the folder of its calls to turn, in the session's
-# folder.
+# The session's steering, its learnings, and the folder of its calls, in the session's folder.
 STEERING = "steering.md"
 LEARNT = "learnings.md"
-TURN = "turn"
+CALLS = "calls"
 # The works rn has turn make: the plan, the part of the steering from the title through the tasks,
 # as a task of the plan stage makes the plan; its learnings; the finished work; what each action
 # of turn's makes, `t<n>.<k>` for action k of task T<n>, one work for each output, such as a
@@ -110,7 +109,7 @@ def learnings_path(folder: str) -> str:
 
 def call_path(folder: str, number: str, what: str) -> str:
     """The path of a file of the session's call of the number: its CCS, its result or its part."""
-    return os.path.join(folder, TURN, f"{number}-{what}")
+    return os.path.join(folder, CALLS, f"{number}-{what}")
 
 
 def session() -> str | None:
@@ -200,7 +199,7 @@ class Call(NamedTuple):
 def calls(folder: str, commit: str | None = None) -> list[Call]:
     """Each call to turn of the session, in the order made, as the working tree holds them, or the
     commit given; stops where a CCS is no JSON object, saying how to restore it."""
-    place = os.path.join(folder, TURN)
+    place = os.path.join(folder, CALLS)
     read: Callable[[str], str | None] = repo.read_text
     if commit is None:
         names = os.listdir(place) if os.path.isdir(place) else []
@@ -314,7 +313,7 @@ def part_of(folder: str, number: str) -> tuple[Call, list[str]]:
     call = next((c for c in calls(folder) if c.number == number), None)
     if call is None:
         raise stop.Stop(
-            f"rn: {os.path.join(folder, TURN)} holds no call {number}; give the number of a call on"
+            f"rn: {os.path.join(folder, CALLS)} holds no call {number}; give the number of a call on"
             " plan or learnings, such as 0001"
         )
     if call.work not in PARTS:

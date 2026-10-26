@@ -120,12 +120,12 @@ class RecordsTest(LearningTest):
             self.records(),
             [
                 "record/history.txt",
-                f"record/{LEARNINGS}",
-                f"record/{FOLDER}/research/login.md",
-                f"record/{STEERING}",
                 f"record/{call_at('0001')}",
                 f"record/{call_at('0001', 'result.json')}",
                 f"record/{call_at('0001', 'steering.md')}",
+                f"record/{LEARNINGS}",
+                f"record/{FOLDER}/research/login.md",
+                f"record/{STEERING}",
                 "conversations/c1.txt",
             ],
         )

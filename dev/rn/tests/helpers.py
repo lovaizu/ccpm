@@ -77,13 +77,14 @@ class MainAndWork(testing.GitTest):
 TODAY = datetime.date(2026, 10, 20)
 # The folder in the repository holding the sessions and the user's checklists.
 RECORD = ".rn"
-# The slug of the session each test starts on TODAY, its folder, its steering and its calls to turn.
+# The slug of the session each test starts on TODAY, its folder, its steering and the folder of its
+# calls.
 SLUG = "add-login"
 FOLDER = f"{RECORD}/{TODAY:%Y%m%d}-{SLUG}"
 STEERING = f"{FOLDER}/steering.md"
+CALLS = f"{FOLDER}/calls"
 # The branch the tests' sessions run on.
 BRANCH = "work"
-TURN = f"{FOLDER}/turn"
 # The kind of the checklist the plugin folder holds.
 KIND = "code"
 # The version the plugin folder's manifest gives.
@@ -169,7 +170,7 @@ LEARNINGS = f"{FOLDER}/learnings.md"
 
 def call_at(number: str, what: str = "ccs.json") -> str:
     """The path of a file of the session's call of the number: its CCS, its result or its part."""
-    return f"{TURN}/{number}-{what}"
+    return f"{CALLS}/{number}-{what}"
 
 
 def options(needed: dict[str, str]) -> list[str]:
@@ -268,7 +269,7 @@ class RepoTest(MainAndWork):
         if text is not None:
             self.write(f"{folder}/steering.md", text)
         else:
-            self.write(f"{folder}/turn/.keep", "")
+            self.write(f"{folder}/calls/.keep", "")
         self.kept()
 
     def kept(self) -> None:

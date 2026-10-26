@@ -265,7 +265,7 @@ class Place:
                 decided = len([e for e in kept if session.DECISION in e])
                 calls.append(Called(number, work, result in files, decided))
             elif path != steering_path and not (
-                folder and path.startswith(f"{folder}{session.TURN}/")
+                folder and path.startswith(f"{folder}{session.CALLS}/")
             ):
                 texts[path] = self.git("show", f"HEAD:{path}")
         said = []

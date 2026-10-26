@@ -21,7 +21,7 @@ from helpers import (
     SLUG,
     STEERED,
     STEERING,
-    TURN,
+    CALLS,
     RepoTest,
     call_at,
     options,
@@ -1056,7 +1056,7 @@ class PutTest(RepoTest):
                 # When: the orchestrator puts back the part of a call not there.
                 # Then: rn says there is none, and what to give.
                 self.assertIn(
-                    f"rn: {TURN} holds no call {number}; give the number of a call on plan or"
+                    f"rn: {CALLS} holds no call {number}; give the number of a call on plan or"
                     " learnings, such as 0001",
                     self.stopped(*self.put(number)),
                 )

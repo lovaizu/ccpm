@@ -18,7 +18,7 @@ from helpers import (
     PR,
     REPOSITORY,
     STEERING,
-    TURN,
+    CALLS,
     RepoTest,
     call_at,
     plan,
@@ -377,7 +377,7 @@ class DeliverableTest(ShownTest):
                 if given == "not returned":
                     self.call("0004", "deliverable", "deliverable")
                 else:
-                    shutil.rmtree(TURN)
+                    shutil.rmtree(CALLS)
                 self.kept()
                 # When: the orchestrator asks for the deliverable's proposal.
                 # Then: rn says turn has not returned the finished work.
