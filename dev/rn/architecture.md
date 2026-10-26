@@ -9,7 +9,7 @@ has every other work made through turn; the user, the goal, the key results, and
 decide, a sign-off, a task and a learning are, are in [rn's UX](ux.md).
 
 rn holds the [principles every plugin holds](../architecture.md#principles), named below
-Principle 1 to 8, and its own, named below rn's Principle 1 and 2:
+Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
 
 1. Every task traces back to the purpose, through the goal or the acceptance criteria it serves.
 2. At every move the orchestrator sets where the session stands from the checked facts alone, and

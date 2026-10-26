@@ -31,6 +31,9 @@ adds only what that plugin gives on top of them.
    why, in what the run kept and in the records; each lesson goes to the user's own checklists or
    rules where it is their project's own, and to the plugin's makers as an issue where it is
    general, opened only on the user's yes. A plugin an AI calls leaves this to its caller.
+9. Each entry Claude Code gives the form of, a skill, an agent, a hook or a command line, takes the
+   call and hands it to the part that does the job, kept in a file of its own named for that part,
+   so the files show the parts the logical view draws.
 
 ## Why it is so
 
@@ -99,6 +102,28 @@ Each job is done by a role made for it, given only what the job needs.
 A role starts in a fresh context with its own prompt and tools
 ([subagents](https://code.claude.com/docs/en/sub-agents)), so nothing from other work leads it
 astray.
+
+### Entries hand to the parts
+
+An entry holds what Claude Code fixes of it, and the job is a part of its own the entry hands to: a
+command line reads its arguments and calls the module of the part, a hook's script reads the event
+and calls the part that checks it, and a skill or an agent is its frontmatter, the part being its
+body or a file the body points to.
+
+The form of an entry is Claude Code's, where a skill's folder is named by its command and an agent
+is called by the name in its frontmatter, while the job is the plugin's; a job held in its entry is
+found by the command it is called with, not where the logical view puts it, and a second entry to
+the same job, as `/rn:ty` beside `/rn:up`, reads into the first. In Cockburn's
+[ports and adapters](https://alistair.cockburn.us/hexagonal-architecture/), "as events arrive from
+the outside world at a port, a technology-specific adapter converts it into a usable procedure call
+or message and passes it to the application".
+
+An agent's frontmatter and its part share one file, as Claude Code makes the body of an agent's
+file its system prompt and takes in no other file
+([subagents](https://code.claude.com/docs/en/sub-agents)); the file is named for its part, since
+an agent is called by its frontmatter's `name`, which "the filename doesn't have to match". A part
+several skills take is a file of its own that each points to, as Claude Code has a skill
+"reference supporting files from `SKILL.md`" ([skills](https://code.claude.com/docs/en/skills)).
 
 ### Read by those who did not make it
 

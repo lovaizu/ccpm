@@ -9,7 +9,7 @@ only the items that reading ends without Good are made again in the next round, 
 one round.
 
 turn holds the [principles every plugin holds](../architecture.md#principles), named below
-Principle 1 to 8, and two of its own, named turn's Principle 1 and 2:
+Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
 
 1. Every role that makes or reads the work looks only for each item's Good and works only to give
    it.

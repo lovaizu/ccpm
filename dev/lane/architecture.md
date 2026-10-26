@@ -10,7 +10,7 @@ subagent's drift from its lanes and tells it the step again. The building AI, th
 result are in [lane's UX](ux.md).
 
 lane holds the [principles every plugin holds](../architecture.md#principles), named below
-Principle 1 to 8, and its own, named below lane's Principle 1 and 2:
+Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
 
 1. The AI is made to notice its drift from a step and is told the step again, so it finds its way
    back itself.
