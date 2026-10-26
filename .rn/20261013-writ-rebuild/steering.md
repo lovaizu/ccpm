@@ -178,4 +178,8 @@ acceptance, as the user chose (2026-10-25).
   AC1, AC2.
 - [ ] T31: lane, turn and rn read whole hold their checklists: no module or prompt taking on two
   things, nothing said twice or against another part, nothing no reader needs; rn.py split by what
-  each part takes on; check.sh 100%, mutate.sh 0 survivors, the move trials passing. Serves AC1, AC2.
+  each part takes on; each folder, file and name in the code saying what it is, the trials of
+  lane, turn and rn named by the kind dev/architecture.md's Test gives them, unit tests of prompts
+  or acceptance tests, as the user chose (2026-10-26), since turn's `trials/flow/` tries its
+  orchestrator alone where rn's tried rn whole; check.sh 100%, mutate.sh 0 survivors, the move
+  trials passing. Serves AC1, AC2.
