@@ -70,7 +70,7 @@ def written(path: str) -> str:
     said += entries.gone_out(hooks, plugin, root)
     kept = {a: s for a, s in laid.items() if step.agent_file(root, a.split(":")[1]) is not None}
     for agent, on in kept.items():
-        entries.hooks_with(hooks, plugin, {"name": agent.split(":")[1], "steps": on})
+        entries.hooks_with(hooks, plugin, hooked(root, agent.split(":")[1], on))
     entries.hooks_written(root, hooks)
     lanes_json.lanes_written(root, kept, values)
     said += [*left, "Wrote the lanes laid into hooks/lanes.json.\n"]
@@ -142,7 +142,7 @@ def brought_up(root: str) -> str:
     before = copy.deepcopy(hooks)
     for agent, laid in agents.items():
         plugin, sub = agent.split(":")
-        entries.hooks_with(hooks, plugin, {"name": sub, "steps": laid})
+        entries.hooks_with(hooks, plugin, hooked(root, sub, laid))
     if hooks != before:
         entries.hooks_written(root, hooks)
         lanes_json.lanes_written(root, agents, values_before(root, name))
@@ -158,6 +158,13 @@ def brought_up(root: str) -> str:
         if path
     ]
     return "".join([*said, *left, *said_before(root, agents), *values])
+
+
+def hooked(root: str, name: str, laid: list[dict[str, Any]]) -> dict[str, Any]:
+    """The subagent of the name in the plugin at root, as its hooks are written from it: its name,
+    the lanes laid in it as steps of a proposal, and whether its entry has it read its part first,
+    as step.part finds it."""
+    return {"name": name, "steps": laid, "part": step.part(root, name) is not None}
 
 
 def values_before(root: str, plugin: str) -> dict[str, str | None]:

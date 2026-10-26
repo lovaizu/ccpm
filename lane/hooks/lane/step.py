@@ -1,12 +1,14 @@
-"""A subagent's step, read from its file in the plugin's agents/: the file Claude Code takes the
-subagent from, by the name in its frontmatter, and the step's text, its numbered line in the Steps
-and the lines its text goes on in, the list under it, such as its In and Out, left out."""
+"""A subagent's step, read from the file its steps are in: its entry, the file in the plugin's
+agents/ Claude Code takes the subagent from, by the name in its frontmatter, or the part the entry's
+body has it read first, where it names one; and the step's text, its numbered line in the Steps and
+the lines its text goes on in, the list under it, such as its In and Out, left out."""
 
 from __future__ import annotations
 
 import itertools
 import os
 import re
+from typing import NamedTuple
 
 import template
 
@@ -16,6 +18,23 @@ GOES_ON = re.compile(r"^[ \t]+(?![-*+] |\d+\. )\S")
 BREAK = re.compile(r"[ \t]*\n[ \t]*")
 # What Claude Code puts the plugin's folder in for, where a subagent's file names it.
 ROOT = "${CLAUDE_PLUGIN_ROOT}"
+# Where an entry's body names a part, a file under the plugin's prompts/ by the plugin's folder, in
+# backticks.
+NAMED = re.compile(r"`" + re.escape(ROOT) + r"/prompts/(?P<path>[^`]+)`")
+# Text in backticks, where a full stop, as in a file's name, ends no sentence.
+QUOTED = re.compile(r"`[^`]*`")
+# A sentence's end: a full stop, a question or an exclamation mark, before a blank or the end.
+END = re.compile(r"[.?!](?=\s|$)")
+# A blank line, which ends a paragraph.
+BLANK = re.compile(r"\n[ \t]*\n")
+
+
+class Part(NamedTuple):
+    """The part an entry has its subagent read first: its file in the plugin, and the entry's
+    sentence naming it, as its body says it, a line break read as a space."""
+
+    file: str
+    said: str
 
 
 def agent_file(root: str, name: str) -> str | None:
@@ -29,6 +48,39 @@ def agent_file(root: str, name: str) -> str | None:
         if template.value(lines, "name") == name:
             return file
     return None
+
+
+def part(root: str, name: str) -> Part | None:
+    """The part the subagent's entry names in its body, the one file under the plugin's prompts/ it
+    names in backticks, with the sentence naming it; None where its body names no such file, or
+    more than one, or no entry names the subagent."""
+    entry = agent_file(root, name)
+    if entry is None:
+        return None
+    with open(entry, encoding="utf-8") as f:
+        lines = f.read().splitlines()
+    body = "\n".join(lines[template.body(lines) :])
+    paragraphs = [BREAK.sub(" ", p) for p in BLANK.split(body)]
+    found = [(p, m) for p in paragraphs for m in NAMED.finditer(p)]
+    prompts = os.path.realpath(os.path.join(root, "prompts"))
+    files = {os.path.realpath(os.path.join(prompts, m["path"])) for _, m in found}
+    file = files.pop() if len(files) == 1 else ""
+    if not file.startswith(prompts + os.sep):
+        return None
+    paragraph, m = found[0]
+    # A full stop in backticks ends no sentence, so they are read blank.
+    plain = QUOTED.sub(lambda q: "`" * len(q[0]), paragraph)
+    start = max((e.end() for e in END.finditer(plain[: m.start()])), default=0)
+    end = next((e.end() for e in END.finditer(plain, m.end())), len(paragraph))
+    return Part(file, paragraph[start:end].strip())
+
+
+def steps_file(root: str, name: str) -> str | None:
+    """The file the subagent's steps are read from, and the layer writes them into: the part its
+    entry names, as `part` finds it, or the entry itself where it names none; None where no entry
+    names the subagent."""
+    named = part(root, name)
+    return agent_file(root, name) if named is None else named.file
 
 
 def span(lines: list[str], number: int) -> tuple[int, int] | None:
@@ -54,8 +106,8 @@ def says(lines: list[str], where: tuple[int, int]) -> str:
 
 def holds(root: str, name: str, number: int, sentence: str) -> bool:
     """Whether the subagent's step of the number still says the sentence, word for word."""
-    file = agent_file(root, name)
-    if file is None:
+    file = steps_file(root, name)
+    if file is None or not os.path.isfile(file):
         return False
     with open(file, encoding="utf-8") as f:
         lines = f.read().splitlines()

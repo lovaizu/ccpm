@@ -175,16 +175,23 @@ def plugin_name(root: str) -> str:
 
 def subagent(root: str, given: dict[str, Any]) -> dict[str, Any]:
     """A subagent of the proposal, held to its schema, checked, each of its steps given once, with
-    its file and its lines, and each step with where it is among them."""
+    the file its steps are in, as step.steps_file finds it, and its lines, and each step with where
+    it is among them."""
     name = given["name"]
     if not re.fullmatch(hook.NAME, name):
         raise wrong("gives a subagent no name")
     why = lanes_json.adapter_wrong(given.get("adapter"), "values")
     if why:
         raise wrong(f"names an adapter for the values of {name} {why}")
-    file = step.agent_file(root, name)
-    if file is None:
+    entry = step.agent_file(root, name)
+    if entry is None:
         raise wrong(f"gives {name}, which no file in agents/ names")
+    file = step.steps_file(root, name) or entry
+    if not os.path.isfile(file):
+        raise Stop(
+            f"lay.py: the entry of {name}, {entry}, names its part {file}, which is not there;"
+            " write it, or name the part there is, and run again."
+        )
     with open(file, encoding="utf-8") as f:
         lines = f.read().splitlines(keepends=True)
     steps = given["steps"]
