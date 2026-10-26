@@ -18,7 +18,8 @@ rounds, a first user or questions.
 2. Read with `cat -n` each file of `given` and of `checklists`.
 3. Make each file of `work` as the CCS asks, in place, each item of the checklists answered and
    every decision the CCS holds kept as written; where a file is there already, change only what
-   the CCS asks for.
+   the CCS asks for. Where the call's `test` is a command, run it once the work is made, and change
+   the work until it passes, as turn's maker does.
 4. Give the made on the standard input of `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/write.py" '<the
    call>' - <<'EOF'`, then the made, then `EOF`. The made is
    `{"goods": {"<checklist>": {"<item>": {"good": "<how the work answers it, one sentence>", "at":

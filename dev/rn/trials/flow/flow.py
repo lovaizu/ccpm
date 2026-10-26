@@ -13,7 +13,7 @@ on its branch and nothing on the default branch, with the changes the user sends
 deliverable sign-off (KR1.1) and what the user had to do, beside the minutes it took (KR1.2).
 What it leaves out, on the user's decision: the quality of what turn makes, as the stand-in turn
 makes each work once, without turn's rounds or first user, keeping only the decisions the CCS
-holds.
+holds and passing the call's test, as turn's maker does.
 
     python3 dev/rn/trials/flow/flow.py [--dry]
 
