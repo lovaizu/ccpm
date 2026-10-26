@@ -21,6 +21,7 @@
 
 ### Changed
 
+- Each of turn's agents reads its steps whole, from its own file under `prompts/`, before it does anything else, held there by lane's hooks, its entry saying where each script and form its steps name lies — every run of an agent works from all of its steps, wherever Claude Code installs turn.
 - turn is called from your plugin's step: started in the background with `{"ccs", "kind", "result", "test"}`, the CCS your step's own JSON file and every name in it yours, turn taking what it needs by the kinds you name — your step keeps its task in its own shape, and its context holds only what comes back.
 - The call names, besides where the work goes, the checklists and the receiver, what the receiver uses the work for and what they have with it, such as the whole repository, and turn first checks that what they have lets its reader do what they do with the work, returning the questions alone where something is lacking — the AI reading in the receiver's place stands where they stand, and a Good it finds holds for them.
 - The work is made where it goes, and a run cut off leaves its writing as changes git shows — you see what it wrote before you call again.
