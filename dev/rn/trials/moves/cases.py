@@ -1285,11 +1285,13 @@ CASES = {
         [front("architecture", "none"), next_has("Step 10")],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
+            # The move goes on into the build's first task, which other cases try: where that is an
+            # action of turn's, the stand-in sets no reply for it, so turn ends without a result and
+            # rn keeps the stop as a move the step goes on after, written and not committed.
             (
                 "アーキテクチャの文書はいりません",
                 [
                     MOVED,
-                    KEPT,
                     front("build", "none"),
                     called("plan", 4, least=True),
                     plan_has("- T3:"),
@@ -1382,8 +1384,7 @@ CASES = {
             (
                 "このリポジトリの plan のチェックリストだけに足してください",
                 [
-                    MOVED,
-                    KEPT,
+                    STAYS,
                     decisions("checklist-plan", 1),
                     called("issue-1", 0),
                     file_has(ISSUE, "## What it should be"),
