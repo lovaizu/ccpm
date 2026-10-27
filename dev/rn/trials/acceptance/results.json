@@ -4,11 +4,62 @@
   "folder": "/tmp/rn/20261027-acceptance-5180ibfe",
   "verdict": "FAILED",
   "ended": "stopped by the user at T4.2, 3½ of 6 tasks made; written from transcript.json by hand, as the run was stopped before its summary, the message running then not counted: about 230 minutes and $76 whole, as read from the records then",
-  "minutes": {"rn": 162.2, "stand-in": 7.1},
-  "tokens": {
-   "rn": {"input_tokens": 2824, "cache_creation_input_tokens": 5943918, "cache_read_input_tokens": 140233901, "output_tokens": 1215879},
-   "stand-in": {"input_tokens": 92, "cache_creation_input_tokens": 75980, "cache_read_input_tokens": 2231230, "output_tokens": 4104}
+  "minutes": {
+   "rn": 162.2,
+   "stand-in": 7.1
   },
-  "cost": {"rn": 49.5, "stand-in": 1.14}
+  "tokens": {
+   "rn": {
+    "input_tokens": 2824,
+    "cache_creation_input_tokens": 5943918,
+    "cache_read_input_tokens": 140233901,
+    "output_tokens": 1215879
+   },
+   "stand-in": {
+    "input_tokens": 92,
+    "cache_creation_input_tokens": 75980,
+    "cache_read_input_tokens": 2231230,
+    "output_tokens": 4104
+   }
+  },
+  "cost": {
+   "rn": 49.5,
+   "stand-in": 1.14
+  }
+ },
+ {
+  "commit": "eb65366",
+  "folder": "/tmp/rn/20261027-acceptance-f4dxd0ky",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 18 failed: agents in the background still running 90 minutes after the reply; give a longer wait; at T5 action 3 of T3 to T9, the build's message running 100 minutes then not counted in the cost, which its tokens put at about $31 more, about $43 for rn whole",
+  "minutes": {
+   "whole": 161.3,
+   "rn": 47.4,
+   "stand-in": 3.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 1734,
+    "cache_creation_input_tokens": 2700105,
+    "cache_read_input_tokens": 58489779,
+    "output_tokens": 765307
+   },
+   "stand-in": {
+    "input_tokens": 40,
+    "cache_creation_input_tokens": 53177,
+    "cache_read_input_tokens": 677494,
+    "output_tokens": 3033
+   }
+  },
+  "cost": {
+   "rn": 11.39,
+   "stand-in": 0.62
+  },
+  "changes sent": {
+   "plan": 1,
+   "design": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
  }
 ]
