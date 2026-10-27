@@ -436,7 +436,7 @@ def state(
     number: str | None,
     stage: str | None,
     message: str,
-    goes_on: bool = False,
+    goes_on: bool,
 ) -> dict[str, str]:
     """Keeps the move: the part of the call of the number put back, the plan's into the steering,
     the learnings' added to the session's learnings; each action done ticked, and each task removed
