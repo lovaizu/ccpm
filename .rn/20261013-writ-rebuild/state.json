@@ -779,6 +779,9 @@
   },
   {
    "fact": "2026-10-27: rn's code to its architecture by a subagent (f132388..11d880d), read by hand; mutation and property tests to CI alone, the user choosing it (ab3d55e), whole before a release kept; acceptance.py counts tokens and keeps each run in dev/rn/trials/acceptance/results.json, run 3 written in (ed5565b); move trials 27/28 then ty-deliverable fixed at its cause, history reading replaced.jsonl as one step's commit hid a decision replaced within it (63cce08), rn's slow property test from >17 min to 47 s (da2829d); 28/28; playground PR #15 and branch of run 3 removed"
+  },
+  {
+   "fact": "2026-10-27: acceptance run 4 at bf48043 (/tmp/rn/20261027-acceptance-f4dxd0ky) FAILED in the build at T5 action 3, its one build message past the trial's 90 minutes (WAIT now 360, 27898be; results.json keeps the commit read at start, bfd32d7): to the design sign-off 50 min, $11.39, 14 points, 1 change at the plan sign-off, against run 3's 68 min, $14.62; build 110 min to T5.3, about $43 whole from tokens. Read by me: research and README good, but the README says 'tools we tried' where none was run and states python 3.9 from Apple's tools where the research left it unsettled; the architecture names no means for a move that fails on a taken name (the build used os.link). The user chose: stages goal, ux, architecture, build, deliverable, learnings, finished, each document heard as kept, changed, in .rn/ alone or not made (issue #54 section, T35); how heavily work is checked weighed by what a failure costs, proposed at the architecture sign-off (T36); UX and README rewritten (eb65366)"
   }
  ],
  "semantic_gist": [
@@ -848,7 +851,7 @@
  ],
  "focal_entities": [
   {
-   "task": "acceptance run 4, whole, at bf48043, compared with run 3 in results.json"
+   "task": "T35: rn's architecture, prompts, scripts and trials to the stages of eb65366"
   }
  ],
  "relational_map": [
@@ -886,7 +889,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: find the acceptance run with pgrep -af acceptance.py; its folder /tmp/rn/20261027-acceptance-*; when it ends read summary.json and results.json, compare with run 3 on minutes, tokens, cost, changes sent back, read the records for causes, report to the user in Japanese with R62-R65 and the decisions after"
+   "next": "T35: dev/rn/architecture.md, then plugins/rn/prompts plan.md and design.md into goal, ux and architecture stages, steering.py's STAGES and sign-offs, proposal.py's headings, tests, move trials; then T36 code.md B-6; then acceptance run 5 as the user decides"
   }
  ],
  "uncertainty_signal": [
@@ -916,6 +919,9 @@
   },
   {
    "open": "for rn's step (the user, 2026-10-25): rn makes work of any kind, not a plugin's alone; a check made first is asked in plan.md B-9 (9f05db9) only where the check is itself made in the session; the user's repeated feedback, kept now as memories, goes back by rn's learnings (Principle 8), sorted by checklist.md's path into the repository's .rn/checklists/ or rn's own checklists, once rn runs; lane, turn, rn built up in that order meanwhile"
+  },
+  {
+   "open": "the README overclaim and unsourced python version (run 4): whether the cause lies in readme.md's checklist, the first user's reading or the stand-in reading only at a glance; and the move's means left out of the architecture: to settle with the user one at a time"
   }
  ],
  "retrieved_artifacts": [
