@@ -910,7 +910,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T39: dev/turn/architecture.md written anew (no state, no flow; roles started in the foreground; each role first runs turn.py <role> <result> and runs it again after an answer, as lane's values port reads each print of a start_with script; each reply checked by turn.py before the role ends, held by test_after; turn.py end writes the result; scripts: flow.py, state.py, record.py go, folder.py and result.py come); next README, docs/calling.md, CHANGELOG, prompts, scripts, lanes and trials; rn's orchestrator.md:165-207 to the new call; then audit finding 6 to the user; then T35, T36"
+   "next": "T39: a subagent (started 2026-10-27 ~22:30 JST, background) rebuilds turn's scripts, prompts, forms, lanes, tests, trials, README, calling.md, CHANGELOG and rn's orchestrator.md call to dev/turn/architecture.md (7dfc0cc), uncommitted in the worktree; then I read it against the checklists, fix by hand, run check.sh and mutate.sh turn rn, try the roles once small, commit, and check CI; lane and rn survivors fixed at 56c69e0, turn's 4 go with T39; then audit finding 6 to the user; then T35, T36"
   }
  ],
  "uncertainty_signal": [
