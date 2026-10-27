@@ -35,11 +35,13 @@ reading of GitHub fails, with --until once that sign-off is shown, or on Ctrl-C.
 and writes the summary: how it ended; each answer at each sign-off; KR1.1, the changes sent back at
 the deliverable sign-off; KR1.2, what the stand-in did and its minutes; the issues opened; whether
 each message's move kept the rules every move keeps; whether each move of the story was reached;
-the minutes, the costs of rn and of the stand-in user apart; the records to judge the run by; and
-the verdict, PASSED or FAILED, or, with --until, REACHED where the sign-off was shown with every
-rule kept. However it ends, it then removes what it made on the playground, printing each: each
-open pull request closed, each branch but `main` deleted, and each issue it opened closed, as an
-account that can write cannot delete one. The folder, the clone with it, stays for the maintainer.
+the minutes, the costs and the tokens of rn and of the stand-in user apart; the records to judge
+the run by; and the verdict, PASSED or FAILED, or, with --until, REACHED where the sign-off was
+shown with every rule kept. However it ends, it then removes what it made on the playground,
+printing each: each open pull request closed, each branch but `main` deleted, and each issue it
+opened closed, as an account that can write cannot delete one. The folder, the clone with it,
+stays for the maintainer, and the run's minutes, tokens, cost and changes sent back are added to
+`results.json` beside this script, to be compared with the runs before.
 
 With --dry, the folder is made and the playground cloned, the first message and the stand-in's
 first prompt printed, the rules checked on the starting state, and nothing is sent.
@@ -87,6 +89,9 @@ AGAIN = (
     " exactly the form given, with nothing after it."
 )
 UNTIL = "the {} sign-off shown, as --until asked"
+# Each run's time, tokens, cost and changes sent back, kept in the repository so runs can be
+# compared as they gather, judged by the maintainer against the size of the work.
+RESULTS = os.path.join(HERE, "results.json")
 
 
 def gh(real: str, *args: str) -> str:
@@ -95,6 +100,59 @@ def gh(real: str, *args: str) -> str:
     if done.returncode:
         raise Stop(f"gh {' '.join(args[:3])} ... failed: {(done.stdout + done.stderr).strip()}")
     return done.stdout.strip()
+
+
+def tokens(sessions: list[str]) -> dict[str, int]:
+    """The tokens the conversations of the sessions and every agent they started spent, by kind, as
+    Claude Code's records give each reply's usage, a reply written over several entries counted
+    once."""
+    spent: dict[str, int] = {}
+    for session in sessions:
+        for path in glob.glob(trying.record.conversation(session)) + trying.agents(session):
+            seen = set()
+            with open(path, encoding="utf-8") as f:
+                for line in f:
+                    entry = json.loads(line)
+                    message = entry.get("message") or {}
+                    if entry.get("type") != "assistant" or message.get("id") in seen:
+                        continue
+                    seen.add(message.get("id"))
+                    for kind, count in (message.get("usage") or {}).items():
+                        if isinstance(count, int):
+                            spent[kind] = spent.get(kind, 0) + count
+    return spent
+
+
+def kept(summary: dict[str, Any], place: str) -> None:
+    """Adds the run's time, tokens, cost and changes sent back to RESULTS, with the commit tried."""
+    commit = subprocess.run(
+        ["git", "-C", HERE, "rev-parse", "--short", "HEAD"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+    runs = []
+    if os.path.isfile(RESULTS):
+        with open(RESULTS, encoding="utf-8") as f:
+            runs = json.load(f)
+    runs.append(
+        {
+            "commit": commit,
+            "folder": place,
+            "verdict": summary["verdict"],
+            "ended": summary["ended"],
+            "minutes": summary["KR1.2"]["minutes"],
+            "tokens": summary["tokens"],
+            "cost": summary["cost"],
+            "changes sent": summary["KR1.2"]["changes sent"],
+            "changes at the deliverable sign-off": summary["KR1.1"][
+                "changes at the deliverable sign-off"
+            ],
+        }
+    )
+    with open(RESULTS, "w", encoding="utf-8") as f:
+        json.dump(runs, f, ensure_ascii=False, indent=1)
+        f.write("\n")
 
 
 def left(real: str) -> tuple[list[str], list[str]]:
@@ -441,6 +499,10 @@ class Trial:
             "rules broken": broken,
             "reached": reached,
             "cost": {"rn": costed(self.costs["rn"]), "stand-in": costed(self.costs["user"])},
+            "tokens": {
+                "rn": tokens([*self.costs["rn"]]),
+                "stand-in": tokens([*self.costs["user"]]),
+            },
             "records": records,
         }
 
@@ -479,6 +541,7 @@ def run(trial: Trial) -> int:
             with open(os.path.join(trial.place, "summary.json"), "w", encoding="utf-8") as f:
                 json.dump(summary, f, ensure_ascii=False, indent=1)
             print(json.dumps(summary, ensure_ascii=False, indent=1))
+            kept(summary, trial.place)
         finally:
             print("\n".join(trial.p.removed()))
             print(f"kept: {trial.place}, holding the clone {trial.p.repo} with the work")

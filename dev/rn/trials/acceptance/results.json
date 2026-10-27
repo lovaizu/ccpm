@@ -1,0 +1,14 @@
+[
+ {
+  "commit": "702c1b0",
+  "folder": "/tmp/rn/20261027-acceptance-5180ibfe",
+  "verdict": "FAILED",
+  "ended": "stopped by the user at T4.2, 3½ of 6 tasks made; written from transcript.json by hand, as the run was stopped before its summary, the message running then not counted: about 230 minutes and $76 whole, as read from the records then",
+  "minutes": {"rn": 162.2, "stand-in": 7.1},
+  "tokens": {
+   "rn": {"input_tokens": 2824, "cache_creation_input_tokens": 5943918, "cache_read_input_tokens": 140233901, "output_tokens": 1215879},
+   "stand-in": {"input_tokens": 92, "cache_creation_input_tokens": 75980, "cache_read_input_tokens": 2231230, "output_tokens": 4104}
+  },
+  "cost": {"rn": 49.5, "stand-in": 1.14}
+ }
+]
