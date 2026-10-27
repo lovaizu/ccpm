@@ -11,6 +11,9 @@ call and reads the CCS and the checklists' items as turn does:
     python3 stand.py '<call>'           the stand-in agent's: the next of the replies the case set
                                         for the call's work, in ../stand/replies.json, counted
     python3 stand.py '<call>' '<made>'  the trial's, making a case's state: the made given as JSON
+    python3 stand.py wait '<call>'      the stand-in agent's, waiting for an answer as turn's
+                                        generator does, on the CCS and each file it names, which
+                                        the orchestrator keeps the answer in before sending it
 
 A made is `{"files": {<path>: <text>}, "goods": {<checklist's file name>: {<item>: {"good": ...,
 "at": ...}}}, "chosen": [{"chosen": ..., "why": ...}]}`, the path "" standing for the call's first
@@ -21,8 +24,8 @@ with a need, and no choice where chosen is left out; or `{"questions": [{"questi
 words a line holds, or `<from>..<to>` for the lines from one holding the first to one holding the
 second, to the end where it is empty; `in` names the file, the work's first by default.
 
-Prints `{"ask": [<each question, as the message sent>]}` or `{"reply": <the reply>}` and gives 0,
-or prints what was wrong and gives 1."""
+Prints `{"ask": [<each question, as the message sent>]}` or `{"reply": <the reply>}`, or what the
+wait gives, and gives 0, or prints what was wrong and gives 1."""
 
 from __future__ import annotations
 
@@ -33,9 +36,13 @@ from typing import Any
 
 import call
 
+# turn's wait, beside this file once the trial copies it into turn's scripts/, where no type check
+# of rn looks.
+import wait  # pyrefly: ignore[missing-import]
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPLIES = os.path.join(os.path.dirname(HERE), "stand", "replies.json")
-USAGE = "usage: stand.py '<call>' ['<made>']"
+USAGE = "usage: stand.py '<call>' ['<made>'] | stand.py wait '<call>'"
 
 
 def numbered(path: str, at: Any) -> list[str]:
@@ -108,12 +115,15 @@ def next_made(work: str) -> dict[str, Any]:
 
 
 def main(argv: list[str]) -> int:
-    """Gives the reply to the call, from the made given or set; prints the usage and gives 1 on any
-    other arguments."""
+    """Gives the reply to the call, from the made given or set, or waits for an answer to it; prints
+    the usage and gives 1 on any other arguments."""
     if len(argv) not in (1, 2):
         print(USAGE)
         return 1
     try:
+        if argv[0] == "wait" and len(argv) == 2:
+            print(json.dumps(wait.waited(call.laid_out(call.parse(argv[1]))["given"])))
+            return 0
         run = call.laid_out(call.parse(argv[0]))
         work = (call.entries(call.read_ccs(run["call"]["ccs"]), "work") or [""])[0]
         made = json.loads(argv[1]) if len(argv) == 2 else next_made(work)

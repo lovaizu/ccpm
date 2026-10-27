@@ -25,6 +25,7 @@ import parts as work_parts  # noqa: F401
 import prompts  # noqa: F401
 import testing
 import turn
+import wait  # noqa: F401
 
 # The items of the run's checklist, by its path and ID.
 ITEM_F1 = {"checklist": "checklists/readme.md", "item": "F-1"}

@@ -16,6 +16,7 @@ or the reply turn ends with; you pass on each as it is, judging none of it.
    reply with what it printed, and end.
 2. Where it printed `ask`: load SendMessage with ToolSearch (`select:SendMessage`), and send each
    question to `main` as one line of JSON, as it is, one SendMessage each, in order. Then wait for
-   the answer with `sleep 30` in a Bash command of its own, again until a message comes; do not end
-   your turn meanwhile. Once it comes, take step 1 again.
+   the answer by running `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/stand.py" wait '<the call>'` in a
+   Bash command of its own, again until a message comes; do not end your turn meanwhile. Once it
+   comes, take step 1 again.
 3. Where it printed `reply`: reply with `reply` as one line of JSON, alone, and end.

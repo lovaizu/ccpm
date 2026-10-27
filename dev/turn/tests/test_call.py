@@ -35,6 +35,7 @@ USAGE = (
     "       turn.py parts <result>\n"
     "       turn.py claim <result>\n"
     "       turn.py reading <result>\n"
+    "       turn.py wait <result> generator|first-user\n"
     "       turn.py end <result>"
 )
 # pylint: enable=duplicate-code
@@ -59,7 +60,7 @@ def call_with(**change):
 class TestUsage(RepoTest):
     def test_an_unknown_command_or_a_wrong_count_of_arguments_prints_the_usage(self):
         # Given: turn's script run with no command, an unknown one, or a command short of its
-        # argument or with one too many
+        # argument or with one too many, the wait short of its role or with one too many
         # When: it is run
         # Then: it prints the usage, which names every command with its argument, and stops
         # Words sorting before and after every command are among the unknown ones.
@@ -71,6 +72,11 @@ class TestUsage(RepoTest):
             ["zzz", "r"],
             *([c] for c in commands),
             *([c, "r", "x"] for c in commands),
+            ["wait"],
+            ["wait", "r"],
+            ["wait", "r", "generator", "x"],
+            ["aaa", "r", "x"],
+            ["zzz", "r", "x"],
         ]:
             with self.subTest(argv=argv):
                 self.assertEqual(self.turn(*argv), (1, USAGE + "\n"))

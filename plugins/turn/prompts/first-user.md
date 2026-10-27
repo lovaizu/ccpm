@@ -49,9 +49,9 @@ to decide. It mends the work for the receiver, and you read it again.
    before, or you have sent the generator six times, end your turn. End only once `{reply}` is made.
 7. Otherwise, send the generator the items without Good: load SendMessage with ToolSearch
    (`select:SendMessage`) once, then send the generator's agent ID the JSON `{"needs": [<each item
-   of your reading that gives a need, as you wrote it>]}`. Wait for its reply with `sleep 30` in a
-   Bash command of its own, again until it comes; do not end your turn meanwhile, as a message
-   reaches you at your next tool call.
+   of your reading that gives a need, as you wrote it>]}`. Wait for its reply by running
+   `turn.py wait <result> first-user` in a Bash command of its own, again until the reply comes as
+   a message; do not end your turn meanwhile, as a message reaches you at your next tool call.
    - The work mended: run `turn.py first-user <result>` again, which gives the parts as the work now
      stands, and go on from step 2, reading the whole work again and answering every item.
    - A question back: answer it as the receiver would, in plain words, by SendMessage to the same

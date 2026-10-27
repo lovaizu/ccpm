@@ -13,6 +13,7 @@ import call
 import folder
 import prompts
 import result
+import wait
 from prompts import FIRST_USER, GENERATOR
 
 USAGE = (
@@ -22,6 +23,7 @@ USAGE = (
     "       turn.py parts <result>\n"
     "       turn.py claim <result>\n"
     "       turn.py reading <result>\n"
+    "       turn.py wait <result> generator|first-user\n"
     "       turn.py end <result>"
 )
 
@@ -70,8 +72,29 @@ def checked(role: str) -> Callable[[dict[str, Any]], dict[str, str]]:
     return check
 
 
-# What each command but start gives, from the run of the result it names, laid out from its CCS as
-# it is now.
+# What each role's wait looks at, by the role: the generator's given, where the main conversation
+# keeps an answer before sending it, and the first user's work, which the generator mends before it
+# replies.
+WATCHED: dict[str, Callable[[dict[str, Any]], list[str]]] = {
+    GENERATOR: lambda run: prompts.generator(run)["given"],
+    FIRST_USER: lambda run: prompts.absolute(run["work"]),
+}
+
+
+def waited(result_path: str, role: str) -> dict[str, object]:
+    """Waits in the foreground until a file the role's message follows changes, or the wait's bound
+    passes, and says which; stops where the role is not one turn has or no run is going."""
+    if role not in WATCHED:
+        raise call.Stop(
+            f"turn: turn.py wait takes the role `{GENERATOR}` or `{FIRST_USER}`, not `{role}`;"
+            f" run `turn.py wait {result_path} {GENERATOR}` or"
+            f" `turn.py wait {result_path} {FIRST_USER}`"
+        )
+    return wait.waited(WATCHED[role](prompts.laid_out(result_path)))
+
+
+# What each command but start and wait gives, from the run of the result it names, laid out from its
+# CCS as it is now.
 COMMANDS: dict[str, Callable[[dict[str, Any]], Any]] = {
     "generator": prompts.generator,
     "first-user": prompts.first_user,
@@ -88,6 +111,8 @@ def main(argv: list[str]) -> int:
     try:
         if argv[:1] == ["start"] and len(argv) == 2:
             out = start(argv[1])
+        elif argv[:1] == ["wait"] and len(argv) == 3:
+            out = waited(argv[1], argv[2])
         elif len(argv) == 2 and argv[0] in COMMANDS:
             out = COMMANDS[argv[0]](prompts.laid_out(argv[1]))
         else:

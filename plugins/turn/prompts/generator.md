@@ -47,11 +47,12 @@ the work gives each Good is yours to decide.
    once, then send `main` the JSON `{"question": "<what to ask the user>", "recommended": "<the
    answer you would choose, and why, in one sentence>", "items": [{"checklist": "<path>", "item":
    "<ID>"}]}`, the items naming each item that waits on it. Make the items that do not wait
-   meanwhile, as steps 5 and 6 say, and then wait for each answer with `sleep 30` in a Bash command
-   of its own, again until it comes; do not end your turn while a question waits, as a message
-   reaches you at your next tool call. Once an answer comes, run `turn.py generator <result>`
-   again, which gives the files the CCS names now, read each file of `given` you have not read, as
-   step 2 says, and make what waited on it.
+   meanwhile, as steps 5 and 6 say, and then wait for each answer by running
+   `turn.py wait <result> generator` in a Bash command of its own, again until the answer comes as a
+   message; do not end your turn while a question waits, as a message reaches you at your next tool
+   call. Once an answer comes, run `turn.py generator <result>` again, which gives the files the CCS
+   names now, read each file of `given` you have not read, as step 2 says, and make what waited on
+   it.
 5. Make the work at the paths in `work` to give every Good you set: change a file already at its
    path, read whole, keeping what already gives its Good, and write one from nothing only where no
    file is there. With items in `needs`, change only what gives their Goods.

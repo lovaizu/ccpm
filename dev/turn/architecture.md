@@ -67,14 +67,17 @@ Principle 1 to 9. It adds two of its own, named turn's Principle 1 and 2:
   point costs no making. A point that the purpose and the project's practice settle is the
   generator's to decide, as how the work gives each Good is (Principle 2).
 - Every question is the generator's, asked before or while it makes the work. It sends the question
-  to `main` with SendMessage and waits for the answer in short sleeps of the shell, without ending
-  its turn.
+  to `main` with SendMessage and waits for the answer without ending its turn, in a script that
+  watches the files of its `given` in the foreground until one changes or a minute passes, and
+  runs it again until the answer comes.
 
   Only the main conversation can ask the user
   ([Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs)). A subagent
   cannot know its own agent ID, so a question sent to a calling agent could not be answered back.
-  A message reaches a subagent at its next tool call, so a role that sleeps in the shell receives
-  it without ending.
+  A message reaches a subagent at its next tool call, so a role that waits in a tool call receives
+  it without ending. The main conversation keeps the answer where the CCS names it before sending
+  it, so the wait ends near the time the answer is sent. Claude Code refuses a bare `sleep` in the
+  shell, and a wait in the background would end the role's turn.
 - The main conversation keeps the answer where the CCS names it, adding to the CCS any file the
   answer brings, and sends the answer to the generator. The generator then runs its first script
   again, which gives it the files the CCS names now.
@@ -92,7 +95,8 @@ Principle 1 to 9. It adds two of its own, named turn's Principle 1 and 2:
   A reader shown the maker's claim before its own reading finds the Good it was told to find
   (Principle 5). So the first user is never given the generator's claim.
 - The first user sends the generator what the receiver would need for each item it found no Good
-  for, and waits for the reply in short sleeps of the shell. The generator mends the work for the
+  for, and waits for the reply as the generator waits for an answer, watching the files of the
+  work, which the generator mends before it replies. The generator mends the work for the
   receiver's use, or asks back, and replies. The first user reads the mended work again and writes
   its reading again.
 
@@ -161,6 +165,7 @@ plugins/turn/                the plugin, installed by Claude Code
 │   ├── forms.py             each reply checked <Python 3>
 │   ├── result.py            the result written from the replies <Python 3>
 │   ├── parts.py             the parts of the work <Python 3>
+│   ├── wait.py              a role's wait for a message, on the files it follows <Python 3>
 │   ├── items.py             a checklist's items, which are its headings <Python 3>
 │   └── template.py          a link to lane's, Markdown read <Python 3>
 └── hooks/
