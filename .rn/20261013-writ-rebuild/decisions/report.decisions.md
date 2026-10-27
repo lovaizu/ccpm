@@ -218,3 +218,18 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   refusing what is not pushed and keeping the call, so neither needs more. /rn:up step 4 keeps the
   move each time a result falls short, a work made again included, as twice in the trials the
   orchestrator asked after a second shortfall with the result not kept.
+- R62 (T31, intent 2): a role's start line stays a move of its own, a SendMessage to `main` before
+  the Agent call, as the foreground Agent call returns only at the role's end and lane's
+  follow_next stops any call made before the move printed; about eleven moves for two rounds where
+  intent 2 says about eight, the three more costing a short orchestrator turn each, while starting
+  roles in the background sends their task notifications to the main conversation, which brought
+  three restarts in acceptance run 1 of 2026-10-27, and a move of several calls needs lane to hold
+  calls Claude Code may run at once.
+- R63 (T31): turn.py locks a run with msvcrt on Windows and fcntl elsewhere (f287a78), as
+  `import fcntl` alone stopped turn.py on a machine its README does not exclude, code.md B-1.
+- R64 (T31): dev/turn/ux.md says turn also asks where its rounds end with an item without its
+  Good (f287a78), as the architecture and the flow do and an item returned without Good breaks
+  Principle 7; old words: "turn asks where making the work meets a point only the user can decide,
+  or where turn's maker and its reader still differ on a gap after each has given its reason".
+- R65: lane added to the marketplace and the root README (db09353), as lane/README.md had it
+  installed as lane@ccpm, which the marketplace did not hold.
