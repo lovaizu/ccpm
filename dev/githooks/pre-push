@@ -1,7 +1,7 @@
 #!/bin/sh
-# Before a push, the checks of what the push changes, on the commits pushed: `sh dev/check.sh`, the
-# property tests on few inputs and the mutation testing of the lines changed, for each plugin
-# `sh dev/changed.sh` names; CI checks again. Turned on in a clone by
+# Before a push, the checks of what the push changes, on the commits pushed: `sh dev/check.sh`, for
+# each plugin `sh dev/changed.sh` names; the property tests and the mutation testing, which check
+# that the tests are enough, are CI's. Turned on in a clone by
 # `git config core.hooksPath dev/githooks`, with uv on PATH, which sets up the check tools in the
 # commits pushed from their uv.lock.
 set -e
@@ -25,8 +25,7 @@ while read -r _ local _ remote; do
   fi
   plugins=$(sh dev/changed.sh "$base" "$local")
   [ -n "$plugins" ] || continue
-  # The commits pushed, not what the working tree holds beside them, in a worktree, as the mutation
-  # testing reads the lines changed from git.
+  # The commits pushed, not what the working tree holds beside them, in a worktree.
   copy=$(mktemp -d)
   trap 'git worktree remove --force "$copy" 2>/dev/null; rm -rf "$copy"' EXIT
   git worktree add -q --detach "$copy" "$local"
@@ -34,9 +33,7 @@ while read -r _ local _ remote; do
   # tests make would take as theirs.
   (cd "$copy" && unset $(git rev-parse --local-env-vars) \
     && uv sync --locked --group test-quality --quiet \
-    && uv run --no-sync sh dev/check.sh $plugins \
-    && uv run --no-sync sh dev/properties.sh $plugins \
-    && uv run --no-sync sh dev/mutate.sh --since "$base" $plugins)
+    && uv run --no-sync sh dev/check.sh $plugins)
   git worktree remove --force "$copy"
   # Removed, so the cleanup on exit, which stops the push where it fails, has nothing left to do.
   trap - EXIT

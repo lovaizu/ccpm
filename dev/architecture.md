@@ -470,15 +470,20 @@ on any not run; it runs the mutation testing and the property tests on what the 
 property tests on many inputs, each plugin's in a job of its own, all at once, and both whole for a
 plugin whose version the push changes, before it is released. Each check runs on Python 3.9 and the
 newest, Cosmic Ray and Hypothesis on the newest alone. Before each push, `dev/githooks/pre-push`
-runs the checks on what the push changes, the unit tests of each plugin it changes, the property
-tests on few inputs and the mutants on the lines it changes, and stops the push on a failure. CI's
+runs the unit tests of each plugin the push changes, with their lines and branches counted, and the
+linter, the formatter, the type checker and the manifests' check, and stops the push on a failure;
+the property tests and the mutation testing are CI's. CI's
 `tests` job runs on every push, and skips the checks on a push that changes only what no check
 reads, such as the session records and the documents of `dev/`, where the commit before it passed.
 
 The code must run on 3.9, and the two tools need newer versions only to test, not to run; a check
-left to be run by hand is forgotten and found only by CI after the push, and checking what a change
-touches takes seconds to a minute where checking the whole takes long, so the whole is checked when
-it reaches users; `main` takes a pull request only when `tests` has passed, so it always runs, and
+left to be run by hand is forgotten and found only by CI after the push; the tests are designed
+before the code and the coverage shows each line and branch run, so the property tests and the
+mutation testing only confirm that design, and run before a push, on many inputs or once per
+mutant, they hold every change waiting, a survivor CI finds going back to the test design that
+missed it; checking what a change touches takes minutes where checking the whole takes long, so
+the whole is checked when it reaches users, a test weakened with no line of code changed among what
+only the whole finds; `main` takes a pull request only when `tests` has passed, so it always runs, and
 passes on only what was checked.
 
 A plugin's whole test run takes seconds, and the time each check takes is read on every run.

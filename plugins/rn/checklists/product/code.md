@@ -154,9 +154,10 @@ Scope: whole
 
 When a behavior the requirements ask is broken in the code, does some test fail?
 
-Tried by: the tests read beside the requirements; the unit tests run with the lines and branches
-they run counted, without the property tests; the property tests run; and mutation testing run on
-the code the work made or changed, each with the settings kept in the repository.
+Tried by: the tests read beside the requirements, each sign below; the unit tests run with the lines
+and branches they run counted, without the property tests, with the settings kept in the
+repository; the property tests and the mutation testing, which confirm that the tests are enough,
+left to the project's CI, on what the change touches.
 
 Signs:
 - each equivalence partition of an input or an output, the values a function treats alike, the

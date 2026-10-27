@@ -35,11 +35,9 @@ away in the clean-up: checks and tests only see behaviour, not intent.
    Pure moves and renames keep the tests passing as they are.
 5. After each group of changes run, from the top of the repository:
    `uv run --no-sync sh dev/check.sh <plugin>` (100% line and branch coverage, ruff, pyrefly,
-   manifests); `CI=true uv run --no-sync sh dev/properties.sh <plugin>`; at the end
-   `uv run --no-sync sh dev/mutate.sh <plugin>`, which must end with 0 survivors. A mutant no input
-   the code takes can tell apart gets `# pragma: no mutate` on its line, and the reason is written
-   once in `dev/<plugin>/cosmic-ray.toml`; every other survivor gets a test. Also run the checks of
-   each other plugin that uses what you changed (`sh dev/changed.sh HEAD~1 HEAD` names them).
+   manifests), and the same for each other plugin that uses what you changed
+   (`sh dev/changed.sh HEAD~1 HEAD` names them). Design the tests from the requirements as
+   `code.md` B-6 says; the property tests and the mutation testing run in CI only, not here.
 6. One commit per group of changes, each passing the checks, so one can be undone alone.
 7. The plugin's README and UX (`<plugin>/README.md`, `dev/<plugin>/ux.md`) were agreed with the
    user. Change them only where they say what is untrue, and list each such change, old and new
@@ -53,4 +51,4 @@ away in the clean-up: checks and tests only see behaviour, not intent.
 - Each line or rule removed whose intent moved elsewhere: where it lives now.
 - Lines kept for want of a reason found.
 - README/UX changes, old and new words.
-- The checks' final results: tests, coverage, mutation survivors (count and time), properties.
+- The checks' final results: tests and coverage, with the time they took.
