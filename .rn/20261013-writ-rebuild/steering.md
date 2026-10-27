@@ -102,6 +102,8 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
   claim.json, forms.py, flow.py, the roles' prompts, turn's UX and architecture, and rn's
   orchestrator.md:200-207, which checks each `good` at its `lines`, changed together as one,
   held to fix.md whole. Serves AC2.
+- [ ] T38: Every part of lane, turn and rn no purpose needs is gone, each judged by the user one
+  at a time from `audit-purpose.md`, as the user asked (2026-10-27). Serves AC1, AC2.
 - [ ] T15: Users who update get rn 0.10.0 and turn 0.2.0, on the user's instruction. Serves AC1,
   AC2.
 

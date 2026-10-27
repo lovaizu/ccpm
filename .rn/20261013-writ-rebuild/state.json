@@ -791,6 +791,9 @@
   },
   {
    "fact": "2026-10-27: T37 built (9b05062): claim.json made {lines} or waits, reading.json good {lines} or need {one sentence}; an each-part item gives plain lines, one range in every part; gap, outside, differ and evidence gone from turn's forms, flow, prompts, docs, dev/architecture.md Principle 4, rn's orchestrator and checklist.md; check.sh turn and rn 100%. Trials on 9b05062: roles.py filled both forms (generator 1.2 min $0.38, first user 1.1 min $0.29), kept.py need sent and remade, returned (3.6 min $0.85), orchestrator left worded the question from the need and returned (9.9 min $2.51). Seen once: the first user's need carries a clause on what the work lacks; left until another run shows it"
+  },
+  {
+   "fact": "2026-10-27: a readme trial on 9b05062 stopped as the generator gave `blocked` over the copyright holder's name; the user: a role has no reason to stop, the orchestrator decides moves, turn's purpose is the work back; the stop was widened unasked from the user's question about hooks. The user asked for every part judged from the purpose: three readers audited lane, turn, rn whole; 22 findings checked by hand, kept in audit-purpose.md. The second readme run returned in 9.5 min, $2.47, 9 items, 7 met by the stand-in"
   }
  ],
  "semantic_gist": [
@@ -863,7 +866,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T35: rn's architecture, prompts, scripts and trials to the stages of eb65366"
+   "task": "T38: put audit-purpose.md's findings to the user one at a time, from 1"
   }
  ],
  "relational_map": [
@@ -901,7 +904,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T35: dev/rn/architecture.md, then plugins/rn/prompts plan.md and design.md into goal, ux and architecture stages, steering.py's STAGES and sign-offs, proposal.py's headings, tests, move trials; then T36 code.md B-6; then acceptance run 5 as the user decides"
+   "next": "on resume: read audit-purpose.md; tell the user finding 1 alone in plain Japanese (what it is, where, why no purpose needs it, what would stay instead) and wait for their judgment; then 2, and so on; fix none before the user judges it; then T35, T36"
   }
  ],
  "uncertainty_signal": [
