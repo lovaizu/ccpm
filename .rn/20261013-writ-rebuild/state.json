@@ -797,6 +797,9 @@
   },
   {
    "fact": "2026-10-27: audit 1-5 judged with the user; three small claude -p runs: subagents message each other by agent ID only (not name); a subagent waits for a message in Bash sleeps without ending its turn; a nested generator's question to `main` reached it and its answer came back; a subagent cannot know its own ID, so questions go to main"
+  },
+  {
+   "fact": "2026-10-27: dev/architecture.md rewritten in plain sentences with the user (715e0f4, 7f43cac): nine principles about how roles work together, in the order of a run (nobody relays; a role asks the main conversation; no progress lines; no stop), a Words used here list; the entries' and the checks' rules moved to their chapters. The user: plain writing is the baseline, not a checklist item; the checklist item added for it was reverted"
   }
  ],
  "semantic_gist": [
@@ -907,7 +910,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T39: design turn's docs to audit-purpose.md 4 first (README, UX, architecture), check them myself, then build prompts, scripts, lanes and trials; then put audit finding 6 to the user, one at a time; then T35, T36"
+   "next": "T39: dev/turn/ux.md and logical-view.svg are made to the new turn (committed with this state); next write dev/turn/architecture.md anew on dev/architecture.md as it now stands (7f43cac) and audit-purpose.md 4, in plain sentences (memory plain-prose-baseline), with how roles reach each other (SendMessage by agent ID, waiting in Bash sleeps, questions to `main`) kept in turn's architecture alone; then README, docs/calling.md, CHANGELOG, prompts, scripts (flow.py, state.py and record.py go), lanes and trials; rn's orchestrator.md:165-207 to the new call; then put audit finding 6 to the user, one at a time; then T35, T36"
   }
  ],
  "uncertainty_signal": [

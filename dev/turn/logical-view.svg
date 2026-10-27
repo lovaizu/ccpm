@@ -39,9 +39,9 @@
   <rect class="box" x="355" y="190" width="190" height="48" rx="24"/>
   <text class="name" x="450" y="219">orchestrator</text>
   <rect class="box" x="60" y="190" width="150" height="48" rx="0"/>
-  <text class="name" x="135" y="219">flow</text>
+  <text class="name" x="135" y="219">result</text>
   <rect class="box" x="60" y="380" width="150" height="48" rx="8"/>
-  <text class="name" x="135" y="409">state</text>
+  <text class="name" x="135" y="409">replies</text>
   <rect class="box" x="690" y="190" width="190" height="48" rx="24"/>
   <text class="name" x="785" y="219">generator</text>
   <rect class="box" x="355" y="380" width="190" height="48" rx="24"/>
@@ -49,36 +49,44 @@
   <rect class="box" x="690" y="380" width="190" height="48" rx="0"/>
   <text class="name" x="785" y="409">guard</text>
 
-  <!-- calling AI, orchestrator and main conversation -->
+  <!-- calling AI and orchestrator -->
   <path class="line" d="M438,78 V190" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="428" y="118">calls, answers</text>
+  <text class="label" text-anchor="end" x="428" y="118">calls</text>
   <path class="line" d="M462,190 V78" marker-end="url(#arrow)"/>
-  <text class="label" x="472" y="118">asks, returns</text>
-  <path class="line" d="M545,190 L690,78" marker-end="url(#arrow)"/>
-  <text class="label" x="662" y="112">tells progress</text>
+  <text class="label" x="472" y="118">returns the result</text>
 
-  <!-- orchestrator and flow -->
-  <path class="line" d="M355,206 H210" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="282" y="196">hands each outcome</text>
-  <path class="line" d="M210,226 H355" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="282" y="252">gives the next move</text>
-  <path class="line" d="M135,238 V380" marker-end="url(#arrow)"/>
-  <text class="label" x="147" y="300">keeps and reads<tspan x="147" dy="17">where the run stands</tspan></text>
+  <!-- generator and main conversation -->
+  <path class="line" d="M773,190 V78" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="763" y="118">asks</text>
+  <path class="line" d="M797,78 V190" marker-end="url(#arrow)"/>
+  <text class="label" x="807" y="118">answers</text>
+
+  <!-- orchestrator and the result script -->
+  <path class="line" d="M355,214 H210" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="282" y="204">runs at the end</text>
+  <path class="line" d="M135,380 V238" marker-end="url(#arrow)"/>
+  <text class="label" x="147" y="300">reads, checks<tspan x="147" dy="17">the lines</tspan></text>
 
   <!-- orchestrator and roles -->
-  <path class="line" d="M545,206 H690" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="617" y="179">starts, sends<tspan x="617" dy="17">what is sent back</tspan></text>
-  <path class="line" d="M690,226 H545" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="617" y="252">replies</text>
-  <path class="line" d="M438,238 V380" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="428" y="300">starts, sends<tspan x="428" dy="17">the work made again</tspan></text>
-  <path class="line" d="M462,380 V238" marker-end="url(#arrow)"/>
-  <text class="label" x="472" y="300">replies</text>
+  <path class="line" d="M545,214 H690" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="617" y="204">starts</text>
+  <path class="line" d="M450,238 V380" marker-end="url(#arrow)"/>
+  <text class="label" x="460" y="300">starts, with the<tspan x="460" dy="17">generator's ID</tspan></text>
+  <path class="line" d="M355,404 H210" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="282" y="394">writes its reading</text>
+
+  <!-- the two roles directly -->
+  <path class="line" d="M545,390 L700,238" marker-end="url(#arrow)"/>
+  <path class="line" d="M710,238 L555,400" marker-end="url(#arrow)"/>
+  <text class="label" x="672" y="292">what would make</text>
+  <text class="label" x="672" y="309">an item Good;</text>
+  <text class="label" x="672" y="326">mended, asked back</text>
 
   <!-- guard -->
-  <path class="line drift" d="M785,380 V238" marker-end="url(#arrow)"/>
-  <path class="line drift" d="M690,385 L545,238" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="775" y="300">notices a drift,<tspan x="775" dy="17">tells the step again</tspan></text>
+  <path class="line drift" d="M840,380 V238" marker-end="url(#arrow)"/>
+  <text class="label" x="848" y="300">tells</text>
+  <text class="label" x="848" y="317">the step</text>
+  <text class="label" x="848" y="334">again</text>
 
   <!-- legend -->
   <rect class="box" x="570" y="480" width="40" height="22" rx="11"/>

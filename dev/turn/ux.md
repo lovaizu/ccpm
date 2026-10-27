@@ -38,7 +38,8 @@ A CCS is the JSON file in which the calling AI keeps its task, in the shape
 and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
 checklists, the receiver, what they use the work for and what they have with it; the call names the
 kinds the calling AI uses in it for each of these. The result holds the lines of each item's Good,
-and each choice the work rests on that the CCS and its files leave open, with why.
+each item left without it with what the receiver would need, and each choice the work rests on that
+the CCS and its files leave open, with why.
 
 ### From a step that needs a work to the step's end
 
@@ -52,8 +53,12 @@ sequenceDiagram
   Note over C: writes a CCS
   C->>T: calls it with the CCS's path, its kinds, where to write the result, and the command that checks the work or none
   T-->>C: the work where it goes, and the result
-  Note over C: checks each item at its lines, ends its step
+  Note over C: checks each item at its lines, makes each item left, ends its step
 ```
+
+- An item turn's making and reading leave without its Good comes back with what the receiver would
+  need to get it, and the calling AI makes it: the work is mostly made by then, and the calling AI,
+  holding the step, makes the rest sooner than another round would.
 
 ### While turn runs
 
@@ -62,35 +67,33 @@ sequenceDiagram
   participant U as user<br/>#lt;person#gt;
   participant C as calling AI<br/>#lt;AI#gt;
   participant T as turn<br/>#lt;plugin#gt;
-  loop each of turn's agents
-    T-->>U: in the main conversation, as it starts what it will do, and as it ends what is done
-  end
+  Note over U,T: turn's agents shown in Claude Code's panel of agents as they run
   opt a run going a slow or wrong way
     U->>C: stops it
   end
 ```
 
 - A run going a slow or wrong way shows before its time is spent, not after the work comes back.
-- Where the calling AI is an agent, the lines reach the main conversation above it, which alone
-  talks with the user.
 
 ### A point only the user can decide
 
 ```mermaid
 sequenceDiagram
   participant U as user<br/>#lt;person#gt;
-  participant C as calling AI<br/>#lt;AI#gt;
+  participant M as main conversation<br/>#lt;AI#gt;
   participant T as turn<br/>#lt;plugin#gt;
-  T->>C: the question, before the work that rests on it is made
-  C->>U: puts it to the user
-  U->>C: answer
-  C->>T: the answer
-  Note over T: goes on from there
+  T->>M: the question, before the work that rests on it is made
+  M->>U: puts it to the user
+  U->>M: answer
+  Note over M: keeps it where the CCS names it
+  M->>T: the answer
+  Note over T: makes what rests on it, the rest made meanwhile
 ```
 
-- turn asks where making the work meets a point only the user can decide, or where its rounds end
-  with an item still without its Good; a choice the purpose settles, turn makes and names in the
-  result.
+- turn asks as soon as making the work meets a point only the user can decide; a choice the purpose
+  settles, turn makes and names in the result.
+- The question goes to the main conversation, which alone talks with the user, whether the calling
+  AI is the main conversation or an agent below it.
 
 ### Stopped, and gone on
 
