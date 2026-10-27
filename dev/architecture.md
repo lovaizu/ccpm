@@ -371,7 +371,8 @@ as `/rn:ty` beside `/rn:up`, would come to repeat the first. Cockburn's
 arrive from the outside world at a port, a technology-specific adapter converts it into a usable
 procedure call or message and passes it to the application".
 
-An agent's body has the agent read its part in full before anything else. Claude Code makes the body the agent's system prompt and takes in no other file
+An agent's body has the agent read its part in full before anything else, and a lane holds it to
+this. Claude Code makes the body the agent's system prompt and takes in no other file
 ([subagents](https://code.claude.com/docs/en/sub-agents)). A skill's body links its part, as Claude
 Code has a skill "reference supporting files from `SKILL.md`"
 ([skills](https://code.claude.com/docs/en/skills)). In a trial on 2026-10-26 with a plugin made for

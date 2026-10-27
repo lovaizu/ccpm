@@ -51,6 +51,9 @@ and the user's earlier decisions. Put to the user one at a time, in this order; 
 6. lane's read-the-part-whole-first guard laid on every subagent with a part, with no line in the
    proposal (guard.py, entries.py), where lanes go only where a step alone does not hold and twenty
    runs held it. 2a181e0.
+   **Kept (2026-10-27):** removed at 79d65e7 and brought back, as it is what lets a role read its
+   own part while its other lanes would refuse it; turn's readme trial without it had every role
+   refused its prompt.
 7. lane's layer reads an old hook-command form no released lane wrote (layer.py:219-263). d247485.
 8. lane's record.py functions nothing but tests uses: agent_id, prompt (record.py:99, 173).
 9. lane's two conditions for one rule, a told subagent never held for good (hook.py:156-164,

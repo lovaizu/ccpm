@@ -17,7 +17,7 @@ import ports
 import schema
 import started
 import step
-from lanes import LANES, alone, given_in, held_on, placed, places, sentence
+from lanes import LANES, alone, given_in, held_on, placed, places, read_whole, sentence, start_with
 
 
 class Seen(NamedTuple):
@@ -50,7 +50,9 @@ class Lanes:
     def check(self, event: dict[str, Any]) -> list[hook.Said]:
         """What each lane held on the event says on it, read from the plugin's hooks/lanes.json,
         its subagent's record and kept calls read once for all of them; where the file cannot be
-        read so, an error, as no lane can be checked from it."""
+        read so, an error, as no lane can be checked from it. On a tool call of a subagent whose
+        entry has it read its part first, what `read_first` says, where it says anything, in place
+        of the lanes."""
         plugin, name = self.agent.split(":")
         try:
             found = lanes_json.subagent(self.root, name)
@@ -67,8 +69,44 @@ class Lanes:
         ]
         entries = called.entries(event)
         ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
-        seen = Seen(entries, call.ended(event, entries) if ending else call.read(event, entries))
-        return [s for lane in on for s in lane.check(event, seen)]
+        acted = call.ended(event, entries) if ending else call.read(event, entries)
+        if isinstance(acted, call.Call):
+            first = self.read_first(acted, entries)
+            if first is not None:
+                return first
+        return [s for lane in on for s in lane.check(event, Seen(entries, acted))]
+
+    def read_first(
+        self, acted: call.Call, found: list[dict[str, Any]] | None
+    ) -> list[hook.Said] | None:
+        """What the subagent is told of the call, where its entry has it read its part whole
+        first, read with the entries found of its record, None where it is not found: nothing for a
+        read of the part alone, as the entry tells it, its lanes not held on it; the entry's
+        sentence naming the part for a call that does anything else before the part is read to its
+        end, as start_with and read_whole read what was done before; an error where the part or the
+        record is not found; None where the entry names no part or the part is read whole, so the
+        lanes are held on the call."""
+        plugin, name = self.agent.split(":")
+        part = step.part(self.root, name)
+        if part is None:
+            return None
+        file = part.file
+        if not os.path.isfile(file):
+            where = os.path.relpath(file, self.root)
+            wrong = f"its entry names its part `{where}`, which is not there"
+            return [self.unchecked(wrong, MAKER.format(plugin=plugin))]
+        if found is None:
+            return [self.unchecked(NOT_FOUND, hook.CLAUDE_CODE)]
+        if acted.tool in call.READ_TOOLS and [p for p, _ in acted.reads] == [file]:
+            return []
+
+        def reading(made: call.Call) -> bool:
+            return any(p == file for p, _ in made.reads)
+
+        whole = start_with.begun(acted, reading) and not read_whole.left(file, acted.before)
+        if reading(acted) or whole:
+            return None
+        return [hook.Said(step.expanded(part.said, self.root))]
 
     def unchecked(self, wrong: str, fix: str) -> hook.Said:
         """The error where no lane of the subagent can be checked, told with what is wrong and who

@@ -108,16 +108,20 @@ def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | No
     """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
     it: its matcher the tools its lanes watch, or for SubagentStop the subagent, as its matcher
     tells agents apart; for an event a call is kept on, where it has any lane, an entry matching
-    every tool; each command giving the subagent alone, whose lanes the guard reads from
-    hooks/lanes.json, and the hook of a tool call blocking the call where the hook fails."""
+    every tool; for a tool call, where it has any lane and its entry has it read its part first,
+    as the agent's `part` says, every tool too; each command giving the subagent alone, whose lanes
+    the guard reads from hooks/lanes.json, and the hook of a tool call blocking the call where the
+    hook fails."""
     every = [(s["step"], g) for s in agent["steps"] for g in s["lanes"]]
     kept = event in KEPT
     on_it = [(n, g) for n, g in every if event in lanes.held_on(g["lane"])]
-    if not (every if kept else on_it):
+    ending = event == "SubagentStop"  # pragma: no mutate
+    # The part is held to be read first on any call, as start_with holds its script run first.
+    first = lanes.LANES["start_with"].TOOLS if agent.get("part") and every and not ending else ()
+    if not (every if kept else on_it or first):
         return None
     name = f"{plugin}:{agent['name']}"
-    each = [t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ())]
-    ending = event == "SubagentStop"  # pragma: no mutate
+    each = [*first, *(t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ()))]
     tools = [name] if ending else [".*"] if kept else each
     run_it = command(plugin, name, event)
     command_hook: dict[str, Any] = {"type": "command", "timeout": hook.TIMEOUT, "command": run_it}
