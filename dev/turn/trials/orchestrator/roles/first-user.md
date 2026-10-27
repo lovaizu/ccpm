@@ -13,8 +13,8 @@ means.
 
 1. Your prompt is JSON, among its keys `work`, the path of each file of the work, and `reply`, the
    file you write your reply to.
-   - When a message comes, it is JSON with `remade`, `gaps`, `parts` and `reply`, or a line saying
-     your reply is not filled: go on from step 2.
+   - When a message comes, it is JSON with `remade` among its keys, or a line saying your reply is
+     not filled: go on from step 2.
 2. Read each file of `work` whole with `cat -n <path>`, each in a command of its own.
 3. Run `python3 "${CLAUDE_PLUGIN_ROOT}/stand/stand.py" first-user`. It prints your reply.
 4. Write what it printed, as it was printed, to the file your prompt's `reply` names, with Write.

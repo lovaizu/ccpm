@@ -44,7 +44,6 @@ command takes the outcome of the calls before it.
      run it with nothing.
    - `{"waiting": "<agent>"}`: the role sent a message has not ended; run `turn.py next <result>`
      with nothing again.
-   - `{"anew": "<result>"}`: the CCS now lays the run out anew; go to step 1.
    - `{"left": [...]}`: go to step 4.
    - `{"asked": "<result>"}`: go to step 5.
    - `{"returned": "<result>"}`: reply with that line, and end.

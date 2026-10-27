@@ -71,8 +71,9 @@ holds:
                 "items": [{"checklist": "...", "item": "B-5"}]}]}
 ```
 
-Put each to the user, keep the answer where the CCS names it, such as its decisions file, and send
-the answer to turn in plain words; the run goes on with it.
+Put each to the user, keep the answer where the CCS names it, such as its decisions file, adding to
+the CCS any file the answer brings, and send the answer to turn in plain words; the run goes on
+with it from where it stood, taking in the files the CCS names then.
 
 ## The result
 

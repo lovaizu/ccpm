@@ -43,11 +43,11 @@ that answer, holding the gap or letting it go.
 5. Write your reading to `reply` with the Write tool. Write only `{reply}`.
    Write `{reply}` in the form of `reading.json`.
 6. End your turn; a message may then come, as below. End only once `{reply}` is made.
-   - JSON `{"remade": [<each file of the work>], "gaps": [...], "parts": [...], "reply": "..."}`:
-     the work made again, with the maker's answer to each gap you sent back, mended with its
-     `evidence` or with `outside`, why the gap lies outside the purpose, and its parts as they are
-     now. Do step 2 again on it, then go on from step 4, looking first at the places you stopped
-     at: a gap mended you look at again; a gap held outside the purpose you let go, giving the item
+   - JSON `{"remade": [<each file of the work>], "gaps": [...], "parts": [...], ...}`: the work
+     made again, with the maker's answer to each gap you sent back, mended with its `evidence` or
+     with `outside`, why the gap lies outside the purpose, its parts as they are now, and `given`,
+     `checklists` and `reply` as the CCS names them now. Do step 2 again on it, then go on from
+     step 4, looking first at the places you stopped at: a gap mended you look at again; a gap held outside the purpose you let go, giving the item
      its Good, where its reason shows the receiver can use the work for the use without it, and
      hold where it does not, stopping at it again with how it still keeps them from that use.
    - Plain words beginning `Write your reply to`: write your reading to `reply` again as they say,

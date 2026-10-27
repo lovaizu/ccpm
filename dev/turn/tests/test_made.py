@@ -9,6 +9,7 @@ from helpers import (
     ANSWER,
     ASKED,
     CALL,
+    CHECKLIST,
     GOOD,
     IDS,
     ITEM_B1,
@@ -120,28 +121,49 @@ class TestMade(ReadTest):
     def test_the_answer_is_sent_by_message_to_the_generator_that_asked(self):
         # Given: a generator that asked before making anything
         # When: the calling AI's answer is handed on
-        # Then: the generator, kept started, is sent the question and the answer as it came
+        # Then: the generator, kept started, is sent the question and the answer as it came, with
+        # its files as the CCS names them now
         move = self.due(self.asked_first())
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
-        reply = self.kept("generator.json")
         self.assertEqual(
-            json.loads(move["input"]["message"]), {"answers": [ANSWER], "reply": reply}
+            json.loads(move["input"]["message"]),
+            dict(self.files("turn:generator"), answers=[ANSWER]),
         )
 
-    def test_an_answer_that_lays_the_work_out_anew_has_the_run_started_again(self):
+    def test_an_answer_adding_a_file_to_the_ccs_is_taken_in_where_the_run_stands(self):
         # Given: a generator that asked before making anything, and a CCS the calling AI added a
         # file of the work to with the answer
         self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
         self.laid_out_anew()
-        # When: the answer is handed on, with nothing again, and the run started again
-        # Then: the run is to be started again, and is to be till it is; then the generator is
-        # started anew on the work of both files, given the answer
-        self.assertEqual(self.answered(), {"anew": RESULT})
-        self.assertEqual(self.next(), {"anew": RESULT})
-        self.turn("start", json.dumps(CALL))
-        prompt = json.loads(self.due(self.next())["input"]["prompt"])
-        self.assertEqual(prompt["work"], [self.here("README.md"), self.here("LICENSE")])
-        self.assertEqual(prompt["answers"][0]["answer"], "MIT")
+        # When: the answer is handed on
+        move = self.due(self.answered())
+        # Then: the generator, kept started, is sent the answer with the files the CCS names now,
+        # LICENSE among the work, which its lanes take from the message, and the run lays out
+        # LICENSE as work, the run not started again
+        self.assertEqual(move["input"]["to"], IDS["turn:generator"])
+        self.assertEqual(
+            json.loads(move["input"]["message"]),
+            dict(self.files("turn:generator", "LICENSE"), answers=[ANSWER]),
+        )
+        self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
+
+    def test_an_answer_adding_a_checklist_has_its_items_judged(self):
+        # Given: a generator that asked before making anything, and a CCS the calling AI added a
+        # checklist to with the answer
+        self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
+        ccs = self.read_json(CALL["ccs"])
+        ccs["retrieved_artifacts"].append({"checklist": "checklists/more.md"})
+        self.write_json(CALL["ccs"], ccs)
+        self.write("checklists/more.md", CHECKLIST.replace("B-1", "B-3"))
+        # When: the answer is handed on, and the generator claims the items of the first
+        # checklist alone
+        self.due(self.answered())
+        out = self.made(PASSED, dict(PASSED, item="B-1"))
+        # Then: it is sent the items of the checklist added, left out, as the run judges them now
+        self.assertIn(
+            "checklists/more.md B-3 is left out; give every item judged here",
+            out["move"]["input"]["message"],
+        )
 
     def test_a_generator_asking_again_is_sent_the_new_answer_alone(self):
         # Given: a generator sent the answer to its question, which asks another

@@ -53,53 +53,72 @@ def without_run_files(paths: list[str], result: str, apart: tuple[str, ...] = ()
     return list(dict.fromkeys(p for path in paths if not ours(path) for p in opened(path)))
 
 
-def generator(run: dict[str, Any], sent_back: list[dict[str, Any]]) -> dict[str, Any]:
-    """What the generator is given: the files it makes the work from, the work, the checklists,
-    the call's test, the command it passes after changing the work, or None for none, each item
-    sent back with what was found lacking, every answer the calling AI gave, the choices the last
-    claim of the run named, which a generator started anew keeps where the work still rests on
-    them, the run's result, by which it has turn.py print the parts of the work it makes, and where
-    it replies."""
-    result = run["call"]["result"]
+def made_from(run: dict[str, Any]) -> list[str]:
+    """What the generator reads: the CCS and each file it names, the work among them."""
+    return without_run_files(run["given"], run["call"]["result"])
+
+
+def readable(run: dict[str, Any]) -> list[str]:
+    """What the first user reads: the work, what the receiver has with it and the checklists; not
+    the CCS nor the generator's reply, as a reader shown the maker's claim finds the Good it was
+    told to find."""
+    return without_run_files(run["readable"], run["call"]["result"], apart=(run["call"]["ccs"],))
+
+
+def files(run: dict[str, Any], agent: str) -> dict[str, Any]:
+    """The files of the run the role works on, as the CCS names them now, which its lanes hold it
+    to: what it reads, the work, the checklists and where it replies. A role kept started is sent
+    them with each message, so an answer that adds a file to the CCS is taken in where the run
+    stands."""
     return {
-        "given": absolute(without_run_files(run["given"], result)),
+        "given": absolute(READS[agent](run)),
         "work": absolute(run["work"]),
         "checklists": absolute(run["checklist"]),
-        "test": run["call"]["test"],
-        "sent_back": sent_back,
-        "answers": run.get("answers", []),
-        "chosen": run.get("chosen", []),
-        "result": os.path.abspath(result),
-        "reply": reply_path(result, GENERATOR),
+        "reply": reply_path(run["call"]["result"], agent),
     }
+
+
+def generator(run: dict[str, Any], sent_back: list[dict[str, Any]]) -> dict[str, Any]:
+    """What the generator is given: its files, the call's test, the command it passes after
+    changing the work, or None for none, each item sent back with what was found lacking, every
+    answer the calling AI gave, the choices the last claim of the run named, which a generator
+    started anew keeps where the work still rests on them, and the run's result, by which it has
+    turn.py print the parts of the work it makes."""
+    return dict(
+        files(run, GENERATOR),
+        test=run["call"]["test"],
+        sent_back=sent_back,
+        answers=run.get("answers", []),
+        chosen=run.get("chosen", []),
+        result=os.path.abspath(run["call"]["result"]),
+    )
+
+
+def message(run: dict[str, Any], what: dict[str, Any]) -> dict[str, Any]:
+    """What the generator, kept started, is sent: what it is to take in, items sent back or the
+    calling AI's answer, first, with its files as the CCS names them now."""
+    return dict(what, **files(run, GENERATOR))
 
 
 def reader(run: dict[str, Any]) -> dict[str, Any]:
-    """What the first user is given: what the receiver has with the work, the checklists, the
-    receiver and their use, the parts of the work, and where it replies; not the CCS nor the
-    generator's reply, as a reader shown the maker's claim finds the Good it was told to find."""
-    result = run["call"]["result"]
-    return {
-        "given": absolute(without_run_files(run["readable"], result, apart=(run["call"]["ccs"],))),
-        "work": absolute(run["work"]),
-        "checklists": absolute(run["checklist"]),
-        "receiver": run["receiver"],
-        "use": run["use"],
-        "parts": parts(run),
-        "reply": reply_path(result, FIRST_USER),
-    }
+    """What the first user is given: its files, the receiver and their use, and the parts of the
+    work."""
+    return dict(files(run, FIRST_USER), receiver=run["receiver"], use=run["use"], parts=parts(run))
 
 
 def remade(run: dict[str, Any]) -> dict[str, Any]:
     """What the first user, kept started, is sent once the work is made again: the work, the
     generator's answer to each gap, mended with its evidence or lying outside the purpose with why,
     which the first user, its own reading given, holds or lets go, the parts given anew, as a remake
-    may add or take away a section, and where it replies."""
+    may add or take away a section, and its other files as the CCS names them now."""
+    own = files(run, FIRST_USER)
     return {
-        "remade": absolute(run["work"]),
+        "remade": own["work"],
         "gaps": run.get("gaps", []),
         "parts": parts(run),
-        "reply": reply_path(run["call"]["result"], FIRST_USER),
+        "given": own["given"],
+        "checklists": own["checklists"],
+        "reply": own["reply"],
     }
 
 
@@ -107,3 +126,7 @@ def parts(run: dict[str, Any]) -> list[str]:
     """The parts of the run's work as it stands, each as its lines in a file named by its whole
     path."""
     return work_parts.parts(absolute(run["work"]))
+
+
+# What each role reads.
+READS = {GENERATOR: made_from, FIRST_USER: readable}

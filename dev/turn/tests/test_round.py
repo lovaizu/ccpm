@@ -66,14 +66,13 @@ class TestGeneratorKept(RoundTest):
     def test_a_generator_that_replied_is_sent_the_first_users_stop_by_message(self):
         # Given: a generator that replied, and a first user stopping at an item
         # When: the orchestrator goes on
-        # Then: the generator is sent, by its agent ID, the item as the first user gave it and
-        # where it replies, and its old reply is removed
+        # Then: the generator is sent, by its agent ID, the item as the first user gave it, with
+        # its files as the CCS names them now, and its old reply is removed
         move = self.stopped()
         self.assertEqual(move["tool"], "SendMessage")
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
         message = json.loads(move["input"]["message"])
-        reply = self.kept("generator.json")
-        self.assertEqual(message, {"sent_back": [STOPPED_B1], "reply": reply})
+        self.assertEqual(message, dict(self.files("turn:generator"), sent_back=[STOPPED_B1]))
         self.assertFalse(os.path.exists(self.kept("generator.json")))
 
     def test_a_message_keeps_letters_beyond_ascii_as_they_are(self):
@@ -106,11 +105,12 @@ class TestGeneratorKept(RoundTest):
         self.write("README.md", "# x\n\nx does y.\n\n## Use\n\nRun x.\n")
         move = self.due(self.later(MENDED))
         self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
+        files = self.files("turn:first-user")
         expected = {
-            "remade": [self.here("README.md")],
+            "remade": files.pop("work"),
             "gaps": MENDED["items"],
             "parts": [self.here("README.md:1-4"), self.here("README.md:5-7")],
-            "reply": self.kept("first-user.json"),
+            **files,
         }
         self.assertEqual(json.loads(move["input"]["message"]), expected)
 
@@ -339,9 +339,10 @@ class TestGaps(RoundTest):
         # Then: the generator, kept started, is sent the stop with the answer, in the same round,
         # the round's sending back not spent on it
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
+        files = self.files("turn:generator")
         self.assertEqual(
             json.loads(move["input"]["message"]),
-            {"sent_back": [STOPPED_B1], "answers": [ANSWER], "reply": self.kept("generator.json")},
+            dict(files, sent_back=[STOPPED_B1], answers=[dict(ANSWER, answer="MIT")]),
         )
         self.assertEqual((self.state()["round"], self.state()["sent"]), (1, 1))
 

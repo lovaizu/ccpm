@@ -79,9 +79,10 @@ only what is theirs.
    included where the work still rests on them.
    Write `{reply}` in the form of `claim.json`.
 8. End your turn; a message may then come, as below. End only once `{reply}` is made.
-   - JSON `{"sent_back": [...], "reply": "..."}`, items found without Good, with `answers` too
-     where the user settled a gap you held outside the purpose, or
-     `{"answers": [...], "reply": "..."}`, the user's answer to your questions, each as in step 1:
-     go on from step 3 with the files of `given` as you read them in step 2.
+   - JSON `{"sent_back": [...], ...}`, items found without Good, with `answers` too where the
+     user settled a gap you held outside the purpose, or `{"answers": [...], ...}`, the user's
+     answer to your questions, each as in step 1, with `given`, `work`, `checklists` and `reply` as
+     the CCS names them now: read each file of `given` you have not read, as step 2 says, and go
+     on from step 3.
    - Plain words beginning `Write your reply to`: write your claim to `reply` again as they say,
      and do this step again.

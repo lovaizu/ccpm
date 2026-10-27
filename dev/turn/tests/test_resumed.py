@@ -30,7 +30,7 @@ class TestResumed(RepoTest):
         self.assertEqual((code, json.loads(out)["result"]), (0, self.here(RESULT)))
         self.assertEqual(self.due(self.next())["input"]["subagent_type"], "turn:first-user")
 
-    def test_a_call_again_on_a_ccs_laid_out_anew_begins_the_run_again(self):
+    def test_a_call_again_on_a_ccs_that_names_another_file_goes_on_where_it_stood(self):
         # Given: a run whose first user is due, and a CCS that now names another file of the work
         self.started()
         self.due(self.replied(CLAIM))
@@ -38,11 +38,11 @@ class TestResumed(RepoTest):
         # When: the same call is made again
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
-        # Then: the generator is due again on the CCS as it is now, in the first round
-        move = self.due(self.next())
-        self.assertEqual(move["input"]["subagent_type"], "turn:generator")
-        self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
-        self.assertEqual(self.state()["round"], 1)
+        # Then: the first user is still due, started with the files the CCS names now, LICENSE
+        # among the work
+        prompt = json.loads(self.due(self.next())["input"]["prompt"])
+        files = self.files("turn:first-user", "LICENSE")
+        self.assertEqual({k: prompt[k] for k in files}, files)
 
     def test_a_kept_role_sent_a_message_is_started_anew_with_what_was_sent_to_it_since(self):
         # Given: a run whose generator, kept started, was sent an item back
@@ -69,7 +69,7 @@ class TestResumed(RepoTest):
         self.turn("start", json.dumps(CALL))
         # Then: the generator is started anew with the message due among those since
         prompt = json.loads(self.due(self.next())["input"]["prompt"])
-        sent_back = {"sent_back": [STOPPED_B1], "reply": self.kept("generator.json")}
+        sent_back = dict(self.files("turn:generator"), sent_back=[STOPPED_B1])
         self.assertEqual(prompt["since"], [sent_back])
 
     def test_a_run_waiting_on_an_answer_asks_again_on_a_call_again(self):

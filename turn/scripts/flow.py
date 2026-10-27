@@ -58,8 +58,8 @@ LOCK = "next.lock"
 
 def start(text: str) -> dict[str, Any]:
     """Starts the run the call asks for, or goes on with the run its result names from the move it
-    was last at, begun again where the CCS now lays the run out anew; gives where the result goes,
-    as a whole path, which each later command names."""
+    was last at, on the CCS as it is now; gives where the result goes, as a whole path, which each
+    later command names."""
     asked = call.checked(call.parse(text))
     kept = state.running(asked["result"])
     if kept is None:
@@ -70,32 +70,29 @@ def start(text: str) -> dict[str, Any]:
             f"turn: a run of another call is kept at {state.state_path(asked['result'])}; call turn"
             " with that call to go on with it, or with another result"
         )
-    elif laid_out_anew(kept):
-        run = again(kept)
     else:
-        run = resumed(kept)
+        run = resumed(relaid(kept))
     state.save(run)
     return {"result": os.path.abspath(asked["result"])}
 
 
-def begun(asked: dict[str, Any], root: str, kept: dict[str, Any] | None = None) -> dict[str, Any]:
-    """The run the call asks for, from the folder it is made from, in its first round, with what is
-    kept of a run before it, its answers and what it did last; its generator due, which asks first
-    what only the user can decide."""
+def begun(asked: dict[str, Any], root: str) -> dict[str, Any]:
+    """The run the call asks for, from the folder it is made from, in its first round; its
+    generator due, which asks first what only the user can decide."""
     run = call.laid_out(asked)
     run.update(root=root, round=1, more=MORE, back=[])
-    run.update({k: v for k, v in (kept or {}).items() if k in ("answers", "done")})
     due(run, GENERATOR, prompts.generator(run, []))
     return run
 
 
 def resumed(run: dict[str, Any]) -> dict[str, Any]:
     """The run gone on with by an orchestrator started anew: the agents of the run before are gone
-    with it, so the role due is started anew, told again, with what it was given and what was sent
-    to it since; and a question asked is asked again."""
+    with it, so the role due is started anew, told again, with what it was given, its files as the
+    CCS names them now, and what was sent to it since; and a question asked is asked again."""
     step = run.get("next")
     if step:
         prompt = dict(run.get("prompts", {}).get(step["agent"], step["prompt"]))
+        prompt.update(prompts.files(run, step["agent"]))
         since = run.get("since", {}).get(step["agent"], [])
         if "to" in step:
             # A message moved is among those sent since; one due is not yet.
@@ -107,17 +104,12 @@ def resumed(run: dict[str, Any]) -> dict[str, Any]:
     return run
 
 
-def laid_out_anew(run: dict[str, Any]) -> bool:
-    """Whether the CCS now lays the run out other than it was begun with: other files of the work,
-    checklists, items, receiver, use or what the receiver has."""
-    anew = call.laid_out(run["call"])
-    return any(anew[k] != run[k] for k in anew)
-
-
-def again(run: dict[str, Any]) -> dict[str, Any]:
-    """The run begun again on the CCS as it is now, with every answer the calling AI gave, and what
-    was done last, for the line telling the generator's start."""
-    return begun(run["call"], run["root"], run)
+def relaid(run: dict[str, Any]) -> dict[str, Any]:
+    """The run laid out on the CCS as it is now, where it stands: the files of the work, the
+    checklists and their items, the receiver, their use and what they have, as an answer kept in
+    the CCS may add a file; stops where turn cannot take the CCS."""
+    run.update(call.laid_out(run["call"]))
+    return run
 
 
 def next_step(result: str, text: str) -> dict[str, Any]:
@@ -392,8 +384,8 @@ def asking(run: dict[str, Any], source: str, who: str, found: dict[str, Any]) ->
 
 def answered(run: dict[str, Any], text: str) -> dict[str, Any]:
     """Keeps the calling AI's answer, as it came, with the questions it answers, and goes on where
-    they were asked; where the CCS the calling AI kept the answer in now lays the run out anew,
-    such as with a file added to it, the run is to be started again."""
+    they were asked, on the CCS the calling AI kept the answer in, as it now names the run's files,
+    such as a file added to the work."""
     if not text.strip():
         raise call.Stop(
             "turn: the run waits on the calling AI's answer; run `turn.py next"
@@ -402,26 +394,12 @@ def answered(run: dict[str, Any], text: str) -> dict[str, Any]:
     asked = run["questions"]["questions"]
     run.setdefault("answers", []).append({"questions": asked, "answer": text.strip()})
     run["done"] = "The calling AI answered."
-    run["stage"] = "anew"
-    return anew(run, "")
-
-
-def anew(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Once answered: where the CCS lays the run out anew, the orchestrator starts it again, so the
-    run, and the lanes on what the orchestrator reads, take the files the CCS now names; otherwise
-    the run goes on where the questions were asked."""
-    if laid_out_anew(run):
-        state.save(run)
-        return {"anew": run["call"]["result"]}
-    return GOES_ON[run.pop("questions")["from"]](run)
+    return GOES_ON[relaid(run).pop("questions")["from"]](run)
 
 
 def sent_answer(run: dict[str, Any]) -> dict[str, Any]:
     """The generator that asked is sent the answer, and goes on making the work."""
-    message = {
-        "answers": [run["answers"][-1]],
-        "reply": prompts.reply_path(run["call"]["result"], GENERATOR),
-    }
+    message = prompts.message(run, {"answers": [run["answers"][-1]]})
     return generate(run, run["back"], message)
 
 
@@ -436,11 +414,7 @@ def settled(run: dict[str, Any]) -> dict[str, Any]:
     """A gap the generator and the first user differed on, settled by the answer: the generator is
     sent each item the first user stopped at with the answer, in the round where they differed, as
     no making was spent on the gap."""
-    message = {
-        "sent_back": run["back"],
-        "answers": [run["answers"][-1]],
-        "reply": prompts.reply_path(run["call"]["result"], GENERATOR),
-    }
+    message = prompts.message(run, {"sent_back": run["back"], "answers": [run["answers"][-1]]})
     return generate(run, run["back"], message)
 
 
@@ -490,8 +464,7 @@ def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     if differ:
         return to_word(run, differ, stops, "differ")
     if stops and sending(run):
-        back = {"sent_back": stops, "reply": prompts.reply_path(run["call"]["result"], GENERATOR)}
-        return generate(run, stops, back)
+        return generate(run, stops, prompts.message(run, {"sent_back": stops}))
     return ended(run, goods, stops)
 
 
@@ -588,7 +561,6 @@ def left_view(run: dict[str, Any]) -> dict[str, Any]:
 STAGES = {
     "ask": asking_now,
     "asked": answered,
-    "anew": anew,
     "left": leaving,
     "role": role,
     "returned": returning,

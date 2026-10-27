@@ -295,6 +295,21 @@ class RepoTest(testing.FolderTest):
         """The path as a whole path in the folder the call was made from, as a role is given it."""
         return os.path.join(self.base, path)
 
+    def files(self, agent, *more):
+        """The files of the run a role is given, as the CCS of the tests names them, each a whole
+        path, with each file of the work given more: what it reads, the generator the CCS and every
+        file it names, the first user what the receiver has with the work; the work, the checklists,
+        and where it replies."""
+        work = [self.here(p) for p in ("README.md", *more)]
+        checklist = [self.here("checklists/readme.md")]
+        if agent == "turn:generator":
+            named = ["notes/readme.decisions.md", "docs/start.md"]
+            read = [self.here(CALL["ccs"]), *work, *checklist, *(self.here(p) for p in named)]
+        else:
+            read = [*work, self.here("docs/start.md"), *checklist]
+        reply = self.kept(f"{agent.partition(':')[2]}.json")
+        return {"given": read, "work": work, "checklists": checklist, "reply": reply}
+
     def kept(self, name):
         """The whole path of the file of the name in the folder the run of RESULT is kept in."""
         return self.here(f"{RUN}/{name}")

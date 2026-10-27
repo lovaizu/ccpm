@@ -13,8 +13,8 @@ means.
 
 1. Your prompt is JSON, among its keys `given`, the files the work is made from, the first being the
    CCS; `work`, the path of each file of the work; and `reply`, the file you write your reply to.
-   - When a message comes, it is JSON with `sent_back`, `answers` or both, and `reply`, or a line
-     saying your reply is not filled: go on from step 3.
+   - When a message comes, it is JSON with `sent_back`, `answers` or both, among its keys, or a
+     line saying your reply is not filled: go on from step 3.
 2. Read the first file of `given` whole with Read.
 3. Run `python3 "${CLAUDE_PLUGIN_ROOT}/stand/stand.py" generator`. It prints JSON with `reply`, and,
    where the work is made this time, `write`, the work's text, and `run`, the commands the receiver

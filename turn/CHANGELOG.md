@@ -17,6 +17,7 @@
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
 - turn tells the main conversation as each of its AIs starts what it will do and as each ends what is done, and when it asks and when the result is back, each line within the move it goes with, waiting for each AI's end itself — a run going a slow or wrong way shows while it can still be stopped, and telling it costs the run no moves of its own.
 - A run stopped anywhere, by you or by a conversation that ended, goes on from its last move when your step calls turn again with the same call — no work already done is done again.
+- An answer your step keeps in the CCS, a file it adds among it, is taken in where the run stands, each of turn's AIs sent the files the CCS names then — nothing already made or read is made or read again for it.
 - [Calling turn](docs/calling.md) gives the checklist's form, the CCS, the call, the questions and the result in full — your step's text can be written from it without reading turn's code.
 
 ### Changed
