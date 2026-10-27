@@ -7,11 +7,11 @@ AI reads."""
 from __future__ import annotations
 
 import contextlib
-import fcntl
 import glob
 import json
 import os
 import shutil
+import sys
 import time
 from typing import Any
 
@@ -130,13 +130,27 @@ def held(result: str) -> Any:
     stops where another process holds it."""
     with open(os.path.join(state.folder(result), LOCK), "w", encoding="utf-8") as lock:
         try:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)  # pragma: no mutate
+            locked(lock.fileno())
         except OSError:
             raise call.Stop(
                 f"turn: another `turn.py next {result}` still runs, waiting on a role's end; wait"
                 " for it to end and take the move it prints"
             ) from None
         yield
+
+
+def locked(fd: int) -> None:
+    """Locks the open file without waiting, the lock let go as its process ends however it ends;
+    raises OSError where another holds it. msvcrt's lock on the file's first byte on Windows, which
+    has no fcntl, fcntl's elsewhere."""
+    if sys.platform == "win32":
+        import msvcrt
+
+        msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+    else:
+        import fcntl
+
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)  # pragma: no mutate
 
 
 def view(result: str) -> dict[str, Any]:

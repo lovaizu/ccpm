@@ -88,9 +88,10 @@ sequenceDiagram
   Note over T: goes on from there
 ```
 
-- turn asks where making the work meets a point only the user can decide, or where turn's maker
-  and its reader still differ on a gap after each has given its reason; a choice the purpose
-  settles, turn makes and names in the result.
+- turn asks where making the work meets a point only the user can decide, where turn's maker
+  and its reader still differ on a gap after each has given its reason, or where its rounds end
+  with an item still without its Good; a choice the purpose settles, turn makes and names in the
+  result.
 
 ### Stopped, and gone on
 

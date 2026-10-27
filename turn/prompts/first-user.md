@@ -50,8 +50,9 @@ that answer, holding the gap or letting it go.
      made again, with the maker's answer to each gap you sent back, mended with its `evidence` or
      with `outside`, why the gap lies outside the purpose, its parts as they are now, and `given`,
      `checklists` and `reply` as the CCS names them now. Do step 2 again on it, then go on from
-     step 4, looking first at the places you stopped at: a gap mended you look at again; a gap held outside the purpose you let go, giving the item
-     its Good, where its reason shows the receiver can use the work for the use without it, and
-     hold where it does not, stopping at it again with how it still keeps them from that use.
+     step 4, looking first at the places you stopped at: a gap mended you look at again; a gap
+     held outside the purpose you let go, giving the item its Good, where its reason shows the
+     receiver can use the work for the use without it, and hold where it does not, stopping at it
+     again with how it still keeps them from that use.
    - Plain words beginning `Write your reply to`: write your reading to `reply` again as they say,
      and do this step again.

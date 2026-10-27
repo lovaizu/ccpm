@@ -5,6 +5,7 @@ import fcntl
 import json
 import os
 import shutil
+import sys
 import unittest
 from unittest import mock
 
@@ -134,7 +135,10 @@ class TestGeneratorKept(RoundTest):
         self.recorded(IDS["turn:generator"], MESSAGE)
         with open(self.kept("next.lock"), "w", encoding="utf-8") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            # When: the orchestrator runs `turn.py next` again
+            # When: the orchestrator runs `turn.py next` again, on z/OS too, a machine with fcntl
+            # whose name is "zos"
+            with mock.patch.object(flow.sys, "platform", "zos"):
+                self.assertIn("another `turn.py next", self.refused())
             out = self.refused()
         # Then: it stops, saying the other still runs and to take the move it prints, and takes no
         # move of the run; once the other has ended, the run goes on
@@ -144,6 +148,23 @@ class TestGeneratorKept(RoundTest):
             out,
         )
         self.assertEqual(self.next(), {"waiting": "turn:generator"})
+
+    def test_a_machine_without_fcntl_holds_the_run_by_msvcrt(self):
+        # Given: a generator sent the first user's stop, which has it, on a machine with no fcntl,
+        # Windows, whose msvcrt locks the file's first byte, already locked by another
+        self.stopped()
+        self.recorded(IDS["turn:generator"], MESSAGE)
+        msvcrt = mock.Mock(LK_NBLCK=2, **{"locking.side_effect": OSError})
+        with (
+            mock.patch.object(flow.sys, "platform", "win32"),
+            mock.patch.dict(sys.modules, {"msvcrt": msvcrt}),
+        ):
+            # When: the orchestrator runs `turn.py next`
+            out = self.refused()
+        # Then: it stops as another still runs, having asked msvcrt for the byte without waiting
+        self.assertIn(f"turn: another `turn.py next {RESULT}` still runs", out)
+        (fd, mode, size), _ = msvcrt.locking.call_args
+        self.assertEqual((type(fd), mode, size), (int, 2, 1))
 
     def test_anything_handed_on_while_a_messaged_role_runs_stops(self):
         # Given: a generator sent a message, not ended yet

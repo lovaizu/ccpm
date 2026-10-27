@@ -174,6 +174,7 @@ turn/                      the plugin, installed by Claude Code
 └── .turn/
     └── <yyyymmdd>-<name>/ one run, gone once it returns
         ├── run.json       the state <JSON>, read and written by the flow alone
+        ├── next.lock      held by the `turn.py next` running, so no second one takes its move
         └── <role>.json    each role's reply <JSON>, read by the flow alone
 ```
 
