@@ -1,6 +1,7 @@
 """What rn runs and keeps in the user's repository: git and GitHub's command, each failure a stop
-with what they said; the files it writes; and each move committed and pushed, as a fresh
-conversation, or another machine, goes on from what is pushed alone."""
+with what they said; the files it writes, which a fresh conversation goes on from; the message of
+each move written within a step, held for the commit the step ends with; and what is committed,
+pushed, as another machine goes on from what is pushed alone."""
 
 from __future__ import annotations
 
@@ -13,6 +14,10 @@ import stop
 
 # What a stop whose git command failed says to do where only git's own words tell what is wrong.
 AS_GIT_SAYS = "fix it as git says, then run this again"
+# The file in git's own folder for the repository that holds the message of each move written
+# since the last commit, each ended by a NUL, which no message holds: git keeps it beside the
+# working tree, out of what is committed, for the commit the step ends with.
+HELD = "rn-messages"
 
 
 def ran(command: list[str], failed: str, fed: str | None = None) -> str:
@@ -81,6 +86,41 @@ def at(commit: str, path: str) -> str | None:
     return git(["show", f"{commit}:{path}"], AS_GIT_SAYS)
 
 
+def staged(path: str) -> str | None:
+    """The text of the file at the path as git's index holds it, which each keep writes it to;
+    None where it holds none."""
+    if not git(["ls-files", "--", path], AS_GIT_SAYS):
+        return None
+    return git(["show", f":{path}"], AS_GIT_SAYS)
+
+
+def held_path() -> str:
+    """The path of the file holding the messages of the moves written since the last commit."""
+    return git(["rev-parse", "--git-path", HELD], AS_GIT_SAYS).strip()
+
+
+def held() -> list[str]:
+    """The message of each move written since the last commit, in the order written; none where
+    none is."""
+    path = held_path()
+    return read_text(path).split("\0")[:-1] if os.path.isfile(path) else []
+
+
+def hold(message: str) -> None:
+    """Holds the message of a move written for the commit its step ends with, once, as a move
+    written again, such as by a fresh conversation, is the same move."""
+    if message not in held():
+        with open(held_path(), "a", encoding="utf-8") as f:
+            f.write(message + "\0")
+
+
+def let_go() -> None:
+    """Lets go of the messages held, once a commit holds them."""
+    path = held_path()
+    if os.path.isfile(path):
+        os.remove(path)
+
+
 def read_text(path: str) -> str:
     """The text at the path."""
     with open(path, encoding="utf-8") as f:
@@ -108,22 +148,23 @@ def dumped(data: Any) -> str:
 
 def push() -> None:
     """Pushes the checked-out branch to the remote's branch of its name, tracking it; stops with
-    what git said and how to push once it is fixed."""
+    what git said, that what is committed is not pushed, and that running the move again pushes it
+    once it is fixed."""
     git(
         ["push", "-q", "-u", "origin", "HEAD"],
-        "fix it as git says, then push with `git push -u origin HEAD`",
+        "what is committed is not pushed: fix it as git says, then run this again, which pushes it",
     )
 
 
 def pushed() -> None:
-    """Returns when every change is committed and pushed, so what rn goes on from is what a fresh
-    conversation would find; stops otherwise, saying how to keep or push it."""
+    """Returns when every change is committed and pushed, so a proposal shows what the user reads
+    on the pull request; stops otherwise, saying how to keep or push it."""
     paths = changed()
     if paths:
         raise stop.Stop(
-            f"rn: the record has changes not kept, {', '.join(paths)}; rn goes on only from what is"
-            " pushed, so keep the move with `rn.py state --next <n> --message <what it brought>`"
-            " first, then run this again"
+            f"rn: the record has changes not kept, {', '.join(paths)}; a proposal shows what is"
+            " pushed alone, as the user reads it on the pull request, so keep the move with"
+            " `rn.py state --next <n> --message <what it brought>` first, then run this again"
         )
     ahead = git(
         ["rev-list", "--count", "@{upstream}..HEAD"],

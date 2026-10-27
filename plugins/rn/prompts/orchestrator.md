@@ -33,19 +33,24 @@ issue before it is sent, and the merge. An issue to rn's makers comes only from 
 11, once the finished work is approved; what falls short in rn or turn before then shows there.
 
 You carry nothing from move to move but the steering: a conversation ends or is cleared, and a fresh
-one knows only what is pushed. rn's scripts alone write the steering and keep each move; you never
-edit the steering, and never run `git commit` or `git push`. Use what `rn.py` prints as printed.
-Where it stops, it prints what went wrong and what to do: do that, then run it again; where what it
-says to do is the user's to do, such as their own changes not committed, tell the user and end.
+one knows only what rn's scripts wrote. rn's scripts alone write the steering and keep each move;
+you never edit the steering, and never run `git commit` or `git push`. Use what `rn.py` prints as
+printed. Where it stops, it prints what went wrong and what to do: do that, then run it again; where
+what it says to do is the user's to do, such as their own changes not committed, tell the user and
+end.
 
-You keep a move with one of these, each committing every change with `--message` and pushing it:
+You keep a move with one of these, each writing it to the session's files before the next move, so
+a fresh conversation goes on from it, and the move a step ends with committing every change of the
+step with the messages of its moves and pushing it:
 
 - `rn.py decide <work> --title <t> --says <s> --message <m>`, one decision of the work, which
-  prints `{"call": "<nnnn>", "kept": "<commit>"}`.
+  prints `{"call": "<nnnn>"}`.
 - `rn.py state [--next <n>] [--open <o>]... [--done T<n>.<action>]... [--put <nnnn>] [--stage
-  build|deliverable|finished] --message <m>`, where the session stands, which prints `{"kept":
-  "<commit>"}`, and `"tell"` beside it where an action is done: reply with that line, put into the
-  conversation language.
+  build|deliverable|finished] [--goes-on] --message <m>`, where the session stands, which commits
+  and pushes and prints `{"kept": "<commit>"}`, and `"tell"` beside it where an action is done:
+  reply with that line, put into the conversation language. With `--goes-on`, given where a step
+  below gives it, as the step goes on after the move, it writes the move alone and prints
+  `{"written": "<session>/steering.md"}`: a push at each answer holds the run the answer goes to.
 
 `--next` is the step to take next, by its number and on what, as
 `Step <n> of /rn:up on <work>: <what is left of it>`, so a fresh conversation takes it from the
@@ -132,8 +137,8 @@ Read the file whole before you take a step of it in a conversation.
    - Run `rn.py ccs <work> [<path>...] [--receiver "<receiver>"] [--use "<use>"] [--has <path>]...
      [--chose "<what you chose>: <why>"]...` with only what that step gives; rn.py makes its own
      works and a task's work at the path and of the kind its action names, and a work made again as
-     its last call did, its choices carried, one of the same what replaced. It writes the CCS and
-     keeps it. Where it stops for a kind with no checklist, make the checklist first: step 2 on work
+     its last call did, its choices carried, one of the same what replaced. It writes the CCS.
+     Where it stops for a kind with no checklist, make the checklist first: step 2 on work
      `checklist-<kind>`, then this step on it, giving nothing more; then run `rn.py ccs` for this
      work again.
    - For `plan` and `learnings`, it prints `{"part": "<session>/calls/<nnnn>-<plan's steering.md or
@@ -146,10 +151,10 @@ Read the file whole before you take a step of it in a conversation.
        of the checklists at the lines of the part that give it, and change each line that falls
        short of one; then run `check` and change the part until it passes.
      - An item no line can give without a point that is the user's, such as the reason behind the
-       goal where no decision gives it: keep the move with `rn.py state`, Next step 2 on the work
-       and then this step again, Open the point, so it is kept before it is asked; confirm it with
-       the user as in step 2, kept with `rn.py decide`, and write the part again from the top of
-       this step.
+       goal where no decision gives it: keep the move with `rn.py state --goes-on`, Next step 2 on
+       the work and then this step again, Open the point, so it is kept before it is asked; confirm
+       it with the user as in step 2, kept with `rn.py decide`, and write the part again from the
+       top of this step.
      - Once every item is given by its lines and the check passes, keep the move with `rn.py state
        --next <the step that comes after> --put <nnnn>`, with `--done` for each action it ticks;
        reply with the line it tells, where it prints one. A plan's ticks are not read in the part,
@@ -164,25 +169,25 @@ Read the file whole before you take a step of it in a conversation.
    - While it runs:
      - A message from one of its agents, a line beginning `turn:`: reply with that line alone, put
        into the conversation language, judging none of it; end your reply.
-     - turn ends with `{"questions": [...]}`: first keep the move with `rn.py state`, Next this
-       step on the same work, Open each question, so turn's run waiting on them is pushed before
-       anything is asked. A question about the CCS itself, such as what the receiver has or whether
-       a file is added to it, answer yourself: run `rn.py ccs` for the work again with what it
-       needs and a `--chose` saying it and why, starting no new run, as the one waiting reads the
-       CCS anew. Ask each other as a point, as in step 2, its
-       `recommended` the recommended option, one per message, each answer kept with `rn.py decide
-       <work>`; where the work's decisions already hold its answer, as when a fresh conversation
-       called turn again, take that. Then load SendMessage with ToolSearch (`select:SendMessage`)
-       and send the agent the answers by its ID, saying for each CCS question that the CCS now
-       holds it.
+     - turn ends with `{"questions": [...]}`: first keep the move with `rn.py state --goes-on`,
+       Next this step on the same work, Open each question, so they are written before anything is
+       asked, as turn's run waiting on them is in its own folder. A question about the CCS itself,
+       such as what the receiver has or whether a file is added to it, answer yourself: run
+       `rn.py ccs` for the work again with what it needs and a `--chose` saying it and why,
+       starting no new run, as the one waiting reads the CCS anew. Ask each other as a point, as in
+       step 2, its `recommended` the recommended option, one per message, each answer kept with
+       `rn.py decide <work>`; where the work's decisions already hold its answer, as when a fresh
+       conversation called turn again, take that. Then load SendMessage with ToolSearch
+       (`select:SendMessage`) and send the agent the answers by its ID, saying for each CCS
+       question that the CCS now holds it.
      - turn ends with anything else, such as a stop of its own: start `turn:up` again with the
        same call, as it goes on from its last move. Where it stops the same way again, keep the
-       move with `rn.py state`, Next this step on the same work, Open what it printed; tell the
-       user what it printed and that `/rn:up` goes on from here; end.
+       move with `rn.py state --goes-on`, Next this step on the same work, Open what it printed;
+       tell the user what it printed and that `/rn:up` goes on from here; end.
      - The user says stop: load TaskStop with ToolSearch (`select:TaskStop`), run it with the ID as
-       `task_id`, and keep the move with `rn.py state`, Next this step on the same work, the same
-       call made again, as turn goes on from its last move when called again with the same result.
-       Ask the user, as a point, which way the work goes now.
+       `task_id`, and keep the move with `rn.py state --goes-on`, Next this step on the same work,
+       the same call made again, as turn goes on from its last move when called again with the
+       same result. Ask the user, as a point, which way the work goes now.
    - When it ends with `{"returned": "<result>"}`: read the result whole, then each item's `good` at
      its `lines` in the work, or, for an item with `parts`, each part's `good` at its `lines`. A
      Good its lines fall short of, or an item without one, is a point behind it: first keep the

@@ -51,11 +51,12 @@ def run_state(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Keeps the move where the session stands, as session.state does; stops where the message is
     empty."""
     message = stop.given(args.message, "message")
-    return session.state(args.next, args.open, args.done, args.put, args.stage, message)
+    given = (args.next, args.open, args.done, args.put, args.stage, message)
+    return session.state(*given, args.goes_on)
 
 
 def run_decide(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Keeps a decision of the work, as ccs.decide does; stops where the work is none rn makes, a
+    """Writes a decision of the work, as ccs.decide does; stops where the work is none rn makes, a
     value is empty, or the title holds `: `."""
     work = session.worked(args.work)
     title = stop.given(args.title, "title")
@@ -75,7 +76,7 @@ def run_checklists(args: argparse.Namespace, root: str, today: datetime.date) ->
 
 
 def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
-    """Writes the work's CCS and keeps it, as ccs.handed does; stops, writing nothing, where the
+    """Writes the work's CCS, as ccs.handed does; stops, writing nothing, where the
     work is none rn makes, a text or a path given is empty, a choice gives no why, or a path is
     given of a part rn cuts."""
     work = session.worked(args.work)
@@ -167,6 +168,7 @@ def parser() -> Parser:
     state.add_argument("--done", action="append", default=[])
     state.add_argument("--put")
     state.add_argument("--stage", choices=list(steering.MOVES))
+    state.add_argument("--goes-on", action="store_true")
     state.add_argument("--message", required=True)
     decide = sub.add_parser("decide")
     decide.set_defaults(run=run_decide)

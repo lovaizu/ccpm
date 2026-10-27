@@ -274,7 +274,8 @@ plugins/rn/                          the plugin, installed by Claude Code with t
   alone, through rn's scripts; the steering's states before the current one are in its history, and
   the options weighed with their reasons and each feedback with its answer in the commit messages.
 
-  A push is what a fresh conversation, or another machine, reads from.
+  A fresh conversation goes on from the files rn's scripts wrote; a push is what another machine
+  reads from.
 - The pull request is a draft pull request on GitHub of that branch, opened and marked ready with
   `gh`; a learning's issue is opened with it on `lovaizu/ccpm`, on the user's yes.
 - rn's checklists are read-only in the plugin; the user's additions are in their repository and go

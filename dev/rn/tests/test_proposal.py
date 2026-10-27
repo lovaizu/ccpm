@@ -199,7 +199,31 @@ class ProposalTest(ShownTest):
         self.write("notes.md", "x\n")
         # When: the orchestrator asks for a proposal.
         # Then: rn says to keep the move first.
-        self.assertIn("rn: the record has changes not kept", self.stopped("proposal", "plan"))
+        self.assertIn(
+            "rn: the record has changes not kept, notes.md; a proposal shows what is pushed alone,"
+            " as the user reads it on the pull request, so keep the move with `rn.py state --next"
+            " <n> --message <what it brought>` first",
+            self.stopped("proposal", "plan"),
+        )
+
+    def test_a_proposal_with_commits_not_pushed_stops(self):
+        # Given: a commit not pushed.
+        self.git("commit", "-q", "--allow-empty", "-m", "c")
+        # When: the orchestrator asks for a proposal.
+        # Then: rn says to push first.
+        self.assertIn(
+            "rn: the branch has 1 commit(s) not pushed; push with `git push`",
+            self.stopped("proposal", "plan"),
+        )
+
+    def test_a_proposal_on_a_branch_never_pushed_stops(self):
+        # Given: a branch never pushed.
+        self.git("checkout", "-q", "-b", "lone")
+        # When: the orchestrator asks for a proposal.
+        # Then: rn says to push the branch.
+        self.assertIn(
+            "push the branch with `git push -u origin HEAD`", self.stopped("proposal", "plan")
+        )
 
     def test_a_signoff_rn_does_not_have_stops(self):
         # Given: a session.

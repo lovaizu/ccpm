@@ -440,6 +440,49 @@ class StateTest(RepoTest):
         )
         self.assertEqual(kept, (want, want, "plan: the first point asked\n\n"))
 
+    def test_a_move_within_a_step_is_written_and_committed_as_the_step_ends(self):
+        # Given: a session kept, and a decision written.
+        self.ran("decide", "t1.1", "--title", "A", "--says", "B", "--message", "The decision")
+        before = self.head()
+        # When: the orchestrator keeps a move the step goes on after, then the move the step ends
+        # with.
+        out = self.ran(*self.state("--goes-on", "--open", "Which login?", message="Asked"))
+        written = (out, self.read(STEERING), self.head())
+        self.ran(*self.state(message="The step ends"))
+        # Then: the first writes the steering and commits nothing, and the last commits the
+        # step's every change on the remote, its message first, then each move's in the order
+        # written.
+        want = steered(next_step="3. Make the plan.", opened="- Which login?")
+        self.assertEqual(
+            (written, self.out("log", "-1", "--format=%B", "origin/work")),
+            (
+                ({"written": STEERING}, want, before),
+                "The step ends\n\nThe decision\n\nAsked\n\n",
+            ),
+        )
+
+    def test_a_steering_written_within_a_step_is_the_one_the_next_move_goes_on_from(self):
+        # Given: a move within a step written, not committed.
+        self.ran(*self.state("--goes-on", "--open", "Which login?"))
+        # When: the orchestrator keeps the next move, giving no Next.
+        self.ran("state", "--goes-on", "--message", "m")
+        # Then: it goes on from the steering written, Next as it was written.
+        self.assertIn("## Next\n\n3. Make the plan.\n", self.read(STEERING))
+
+    def test_a_move_within_a_step_putting_ticking_or_moving_the_stage_stops(self):
+        for more in (["--put", "0001"], ["--done", "T1.1"], ["--stage", "build"]):
+            with self.subTest(more=more):
+                # Given: a session kept.
+                # When: the orchestrator keeps a move within a step that puts a part back, ticks
+                # an action or moves the stage.
+                out = self.stopped(*self.state("--goes-on", *more))
+                # Then: rn says such a move ends its step, and writes nothing.
+                said = (
+                    "rn: a move within a step puts no part back, ticks no action and moves no"
+                    " stage, as each ends the step; keep it without --goes-on"
+                )
+                self.assertEqual((said in out, self.read(STEERING)), (True, STEERED))
+
     def test_a_steering_without_blank_lines_before_headings_is_rewritten_in_rns_layout(self):
         # Given: a steering in form whose headings of Next and Open follow a line of words, as a
         # commit by hand left it.
@@ -714,7 +757,7 @@ class StateTest(RepoTest):
         # nothing.
         said = (
             f"rn: {STEERING} differs from what the last keep left, and rn's scripts alone write"
-            f" it; restore it with `git checkout HEAD -- {STEERING}`, then run this again"
+            f" it; restore it with `git checkout -- {STEERING}`, then run this again"
         )
         self.assertEqual(
             (said in out, self.out("status", "--porcelain")), (True, f" M {STEERING}\n")
@@ -733,7 +776,7 @@ class StateTest(RepoTest):
         # When: the orchestrator keeps a move.
         # Then: rn names the point and says to restore one rn kept from its history.
         self.assertIn(
-            f"rn: {STEERING} as the last commit holds it is out of its form: line 4: expected stage"
+            f"rn: {STEERING} as the last keep left it is out of its form: line 4: expected stage"
             " to be plan, design, build, deliverable, learnings or finished, found done; rn keeps"
             f" none so, so restore the last one rn kept from `git log -p -- {STEERING}`, commit"
             " it, then run this again",
@@ -814,8 +857,8 @@ class StateTest(RepoTest):
         # Then: rn says what git said and how to push once it is fixed.
         self.assertRegex(
             self.stopped(*self.state()),
-            r"(?s)rn: git push -q -u origin HEAD failed: .*; fix it as git says, then push with"
-            r" `git push -u origin HEAD`",
+            r"(?s)rn: git push -q -u origin HEAD failed: .*; what is committed is not pushed:"
+            r" fix it as git says, then run this again, which pushes it",
         )
 
 

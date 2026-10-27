@@ -73,12 +73,14 @@ STEERING = re.compile(
     rf"{re.escape(session.RECORD)}/{session.SESSION_NAME.pattern}/{re.escape(session.STEERING)}"
 )
 # What every move keeps, which the move trials check after each move and the acceptance test after
-# each message.
+# each message, a commit made with its push as a step ends; and what a move that ends a step keeps,
+# which the move trials check where a step ends.
 DEFAULT_KEPT = "nothing pushed to the default branch"
+PUSHED = "every commit pushed"
 ALL_KEPT = "every change committed and the branch pushed"
 RULES: dict[str, Callable[[Any], bool]] = {
     DEFAULT_KEPT: lambda seen: seen.default_kept,
-    ALL_KEPT: lambda seen: seen.clean and seen.pushed,
+    PUSHED: lambda seen: seen.pushed,
 }
 
 
@@ -100,8 +102,9 @@ class Called(NamedTuple):
 class Seen(NamedTuple):
     """What a move left: the reply, and each text the orchestrator said on the way; the commits
     made since the move began, whether the branch is pushed and every change committed, whether the
-    default branch on the origin is as it was; the steering's path and text as the last commit
-    holds them, each call to turn, and the text of each other file it holds by its path, the
+    default branch on the origin is as it was; the steering's path and text as rn's scripts wrote
+    them to the working tree, each call to turn, and the text of each other file there by its
+    path, ignored files left out, the
     session's learnings and research among them, the calls' files left out; and what GitHub holds
     of the session, the pull requests and the issues, as Place.github reads it."""
 
@@ -119,15 +122,14 @@ class Seen(NamedTuple):
 
 
 def steered(seen: Seen) -> steering.Steering | None:
-    """The steering as the last commit holds it, where it holds its form."""
+    """The steering as rn's scripts wrote it, where it holds its form."""
     if not seen.steering_text or steering.out_of_form(seen.steering_text):
         return None
     return steering.parsed(seen.steering_text)
 
 
 def kept_learnings(seen: Seen) -> list:
-    """Each learning of the session's learnings as the last commit holds them, none before any is
-    made."""
+    """Each learning of the session's learnings as written, none before any is made."""
     path = learnings.path(os.path.dirname(seen.steering_path))
     return [x for x in seen.texts.get(path, "").splitlines() if learnings.LEARNING.fullmatch(x)]
 
@@ -257,6 +259,13 @@ class Place:
         with open(full, "w", encoding="utf-8") as f:
             f.write(text)
 
+    def read(self, path: str) -> str:
+        """The text of the file at the path, from the top of the repository, as written; a file
+        that is no text, such as a cache a test run made, read with what it cannot hold
+        replaced."""
+        with open(os.path.join(self.repo, path), encoding="utf-8", errors="replace") as f:
+            return f.read()
+
     def rn(self, *args: str) -> str:
         """What the copy of rn.py printed for the subcommand."""
         return self.run("python3", os.path.join(self.rn_copy, "scripts", "rn.py"), *args)
@@ -276,15 +285,16 @@ class Place:
         before, with the reply and what Claude Code printed in the record, where given."""
         branch = self.git("branch", "--show-current")
         remote = self.git("ls-remote", "origin", f"refs/heads/{branch}").split("\t")[0]
-        files = self.git("ls-tree", "-r", "--name-only", "HEAD").splitlines()
+        listed = self.git("ls-files", "--cached", "--others", "--exclude-standard").splitlines()
+        files = [p for p in dict.fromkeys(listed) if os.path.isfile(os.path.join(self.repo, p))]
         steering_path = next((p for p in files if STEERING.fullmatch(p)), "")
-        text = self.git("show", f"HEAD:{steering_path}") + "\n" if steering_path else ""
+        text = self.read(steering_path) if steering_path else ""
         folder = os.path.dirname(steering_path) + "/" if steering_path else None
         calls, texts = [], {}
         for path in files:
             number = session_call(path)
             if folder and number and path.startswith(folder):
-                ccs = json.loads(self.git("show", f"HEAD:{path}"))
+                ccs = json.loads(self.read(path))
                 kept = [e for part in ccs.values() for e in part]
                 work = next((e[session.WORK] for e in kept if session.WORK in e), "")
                 result = session.call_path(os.path.dirname(steering_path), number, session.RESULT)
@@ -293,7 +303,7 @@ class Place:
             elif path != steering_path and not (
                 folder and path.startswith(f"{folder}{session.CALLS}/")
             ):
-                texts[path] = self.git("show", f"HEAD:{path}")
+                texts[path] = self.read(path)
         said = []
         if record:
             with open(record, encoding="utf-8") as f:

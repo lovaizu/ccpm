@@ -1,7 +1,7 @@
 """The session's history on its branch since it left the default branch, where the learnings are
 looked for once the finished work is approved: each feedback the user sent back with the proposal
 that answered it, each work made again and each decision an answer replaced, each with the commit
-that kept it and that commit's message, as each move is kept as a commit before the next."""
+that kept it and that commit's message, as each move is kept in the commit of its step."""
 
 from __future__ import annotations
 

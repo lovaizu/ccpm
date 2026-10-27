@@ -353,10 +353,11 @@ def told(work: str, steered: steering.Steering) -> str:
 
 
 def decide(work: str, title: str, says: str, message: str) -> dict[str, str]:
-    """Keeps a decision of the work, `<title>: <what it says>`, in the constraints of its latest
+    """Writes a decision of the work, `<title>: <what it says>`, in the constraints of its latest
     call where that call takes more, else of a new call carrying its decisions, one of the same
-    title replaced where it stands, as session.Call says; kept with the message and pushed. Gives
-    the call's number and the commit. Stops where the branch holds no session, the steering differs
+    title replaced where it stands, as session.Call says; kept as a move its step goes on after,
+    as session.written says, the step's commit taking it. Gives the call's number. Stops where the
+    branch holds no session, the steering differs
     from what the last keep left, the steering holds no action of turn's of a task's work, or a CCS
     is no JSON object; and where git fails."""
     folder = session.current()
@@ -393,7 +394,8 @@ def decide(work: str, title: str, says: str, message: str) -> dict[str, str]:
     else:
         constraints[same] = decision
     repo.write_json(session.call_path(folder, number, session.CCS), ccs)
-    return {"call": number, "kept": session.keep(folder, steered, message)}
+    session.written(folder, steered, message)
+    return {"call": number}
 
 
 def handed(
@@ -405,9 +407,10 @@ def handed(
     chosen: list[str],
     root: str,
 ) -> dict[str, Any] | str:
-    """Writes the work's CCS into the session and keeps it, once every change is pushed, so the work
-    is made from decisions a fresh conversation also has: in the work's latest call where that call
-    takes more, else in a new one carrying its decisions, as session.Call says. For the plan and the
+    """Writes the work's CCS into the session, kept as a move its step goes on after, as
+    session.written says, so the work is made from decisions a fresh conversation also has: in the
+    work's latest call where that call takes more, else in a new one carrying its decisions, as
+    session.Call says. For the plan and the
     learnings, which the orchestrator writes, the part is cut into the call, and gives the part, the
     CCS, the checklists it names and the command that checks the part; for every other work, the
     call that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the
@@ -419,14 +422,13 @@ def handed(
     with what each task done served and made after what the receiver has; for the learnings, an
     empty part, as those kept are not made again; for the finished work given none, every file it
     is. rn is installed at root. Stops, writing nothing, where a path of what the receiver has is
-    not there, the branch holds no session, a change is not kept or pushed, the steering differs
+    not there, the branch holds no session, the steering differs
     from what the last keep left, the steering holds no action of turn's of a task's work, the
     receiver, their use or what they have is neither given nor kept, the kind has no checklist, or
     the finished work is not there."""
     # The session is found first, which stops below the top of the repository, since each path
     # given is read from the top.
     folder = session.current()
-    repo.pushed()
     has = [has_path(p) for p in given_has]
     steered = session.kept_steering(folder)
     serving = served(steered, work)
@@ -464,11 +466,10 @@ def handed(
     repo.write_json(path, ccs)
     test = test_of(steered, work, number, root)
     if part:
-        session.keep(
-            folder, steered, f"Call {number} on {work}: its part cut for the orchestrator to write"
-        )
+        said = f"Call {number} on {work}: its part cut for the orchestrator to write"
+        session.written(folder, steered, said)
         return {"part": part, "ccs": path, "checklists": lists, "check": test}
-    session.keep(folder, steered, f"Call {number} on {work}: handed to turn")
+    session.written(folder, steered, f"Call {number} on {work}: handed to turn")
     # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
     # of work; and the command that checks the work under "test", null where there is none.
     result = session.call_path(folder, number, session.RESULT)

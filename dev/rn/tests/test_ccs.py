@@ -122,23 +122,27 @@ class DecideTest(RepoTest):
         """Keeps the decision of the work, with its title and what it says."""
         return self.ran("decide", work, "--title", title, "--says", says, "--message", "t1.1: MIT")
 
-    def test_a_first_decision_makes_the_works_first_call_and_keeps_it(self):
+    def test_a_first_decision_is_written_into_the_works_first_call_committing_nothing(self):
         # Given: a session with no call.
+        before = self.head()
         # When: the orchestrator keeps a decision of the work t1.
         out = self.decide()
-        # Then: the first call holds the work, the stage, and the decision, kept on the remote
-        # with the message.
+        # Then: the first call holds the work, the stage, and the decision, written and not
+        # committed, as the step it belongs to commits it as it ends; the step's commit then holds
+        # the call, with the decision's message after its own.
         want = {
             "focal_entities": [{"work": "t1.1"}, {"stage": "design"}],
             "constraints": [{"decision": "License: MIT"}],
         }
+        written = (out, self.read_json(call_at("0001")), self.head())
+        self.ran("state", "--message", "The step ends")
         kept = (
-            self.read_json(call_at("0001")),
             json.loads(self.out("show", f"origin/work:{call_at('0001')}")),
             self.out("log", "-1", "--format=%B", "origin/work"),
         )
         self.assertEqual(
-            (out, kept), ({"call": "0001", "kept": self.head()}, (want, want, "t1.1: MIT\n\n"))
+            (written, kept),
+            (({"call": "0001"}, want, before), (want, "The step ends\n\nt1.1: MIT\n\n")),
         )
 
     def test_a_decision_goes_into_the_works_latest_call_not_returned(self):
@@ -365,7 +369,7 @@ class CcsTest(RepoTest):
                     (0, True, [tell]),
                 )
 
-    def test_ccs_keeps_the_call_before_its_maker_takes_it(self):
+    def test_ccs_writes_the_call_before_its_maker_takes_it(self):
         for work, files, said in (
             ("t1.1", [call_at("0001")], "Call 0001 on t1.1: handed to turn"),
             (
@@ -377,57 +381,49 @@ class CcsTest(RepoTest):
             with self.subTest(work=work):
                 # Given: a session.
                 self.session(steered(part=plan(tasks=task()), stage="design"))
+                before = self.head()
                 # When: the orchestrator has the work's CCS written.
                 self.ccs(work)
-                # Then: the CCS, and the part where the work has one, are committed and pushed
-                # with a message naming the call, and nothing is left to keep, so a conversation
-                # cut while the work is made goes on from them.
+                # Then: the CCS, and the part where the work has one, are written and not
+                # committed, so a conversation cut while the work is made goes on from them; the
+                # step's commit then holds them, with a message naming the call after its own.
+                written = (sorted(self.out("ls-files", "-o", FOLDER).split()), self.head())
+                self.ran("state", "--message", "The step ends")
                 kept = (
                     sorted(self.out("show", "--name-only", "--format=", "origin/work").split()),
-                    self.out("log", "-1", "--format=%s", "origin/work").strip(),
-                    self.head(),
-                    self.out("status", "--porcelain"),
+                    self.out("log", "-1", "--format=%B", "origin/work"),
                 )
-                self.assertEqual(kept, (files, said, self.head("origin/work"), ""))
+                self.assertEqual(
+                    (written, kept), ((files, before), (files, f"The step ends\n\n{said}\n\n"))
+                )
                 shutil.rmtree(FOLDER)
                 self.kept()
 
-    def test_ccs_made_again_the_same_keeps_nothing_more(self):
-        # Given: the call on t1.1 kept, turn not yet returned.
+    def test_ccs_made_again_the_same_writes_nothing_more(self):
+        # Given: the call on t1.1 written, turn not yet returned.
         self.ccs()
-        before = self.head()
         # When: the orchestrator has the same CCS written again, as a fresh conversation does.
         out = self.ccs()
-        # Then: the same call is given, and no commit is made.
-        self.assertEqual((out["ccs"], self.head()), (call_at("0001"), before))
-
-    def test_turns_files_at_the_root_are_kept_with_the_move(self):
-        # Given: the call on t1.1 kept, and the state turn keeps in its folder at the root while it
-        # runs
-        self.ccs()
-        self.write(".turn/20261025-result.json/run.json", "x\n")
-        # When: the orchestrator keeps a decision while turn asks
-        self.ran("decide", "t1.1", "--title", "Login", "--says", "email", "--message", "Login")
-        # Then: the decision's commit holds the CCS and turn's state, as git keeps what the user's
-        # .gitignore does not name, and nothing is left
-        changed = self.out("show", "--name-only", "--format=", "HEAD").split()
-        left = self.out("status", "--porcelain", "-uall")
+        # Then: the same call is given, and the step's commit names it once.
+        self.ran("state", "--message", "The step ends")
+        said = self.out("log", "-1", "--format=%B")
         self.assertEqual(
-            (changed, left), ([call_at("0001"), ".turn/20261025-result.json/run.json"], "")
+            (out["ccs"], said),
+            (call_at("0001"), "The step ends\n\nCall 0001 on t1.1: handed to turn\n\n"),
         )
 
-    def test_turns_files_named_by_gitignore_are_no_change_to_keep(self):
-        # Given: a .gitignore naming turn's folder, kept, the call on t1.1 kept, and the state turn
-        # keeps there while it runs
-        self.write(".gitignore", ".turn/\n")
-        self.commit_with("ignore turn's folder")
+    def test_a_decision_while_turn_asks_commits_nothing(self):
+        # Given: the call on t1.1 written, and the state turn keeps in its folder at the root while
+        # it runs
         self.ccs()
         self.write(".turn/20261025-result.json/run.json", "x\n")
         before = self.head()
-        # When: the orchestrator has the CCS written again, as a fresh conversation does
-        out = self.ccs()
-        # Then: it does not stop, gives the same call, and keeps nothing
-        self.assertEqual((out["ccs"], self.head()), (call_at("0001"), before))
+        # When: the orchestrator keeps a decision while turn asks
+        self.ran("decide", "t1.1", "--title", "Login", "--says", "email", "--message", "Login")
+        # Then: the decision is in the call, and nothing is committed, the run waiting on the
+        # answer and its state left as they are
+        decided = {"decision": "Login: email"} in self.read_json(call_at("0001"))["constraints"]
+        self.assertEqual((decided, self.head()), (True, before))
 
     def test_the_ccs_of_a_task_holds_what_its_task_serves(self):
         # Given: a session whose T1 serves AC1.
@@ -771,10 +767,10 @@ class CcsTest(RepoTest):
                 # When: the orchestrator has the CCS of t1.1 written.
                 self.ccs("t1.1")
                 # Then: the CCS names, in the checklist's place, a copy beside it holding every
-                # line but those items, kept with it.
+                # line but those items, written with it.
                 copy = call_at("0001", "checklist-1.md")
                 named = self.read_json(call_at("0001"))["retrieved_artifacts"]
-                kept = self.out("show", "--name-only", "--format=", "origin/work").split()
+                kept = self.out("ls-files", "-o", FOLDER).split()
                 self.assertEqual(
                     (named, self.read(copy), sorted(kept)),
                     ([{"checklist": copy}], WITHOUT_BUILT, sorted([call_at("0001"), copy])),
@@ -980,38 +976,15 @@ class CcsTest(RepoTest):
             (True, True),
         )
 
-    def test_ccs_with_the_record_not_kept_stops(self):
-        # Given: a change not kept.
-        self.write("notes.md", "x\n")
+    def test_ccs_with_moves_written_and_not_committed_writes_the_call_on_them(self):
+        # Given: a decision of t1.1 written, and a file of the user's changed, neither committed.
+        self.ran("decide", "t1.1", "--title", "Login", "--says", "email", "--message", "Login")
         self.write("README.md", "# app, changed\n")
-        # When: the orchestrator has a CCS written.
-        # Then: rn names the changes and says to keep the move first.
-        self.assertIn(
-            "rn: the record has changes not kept, README.md, notes.md; rn goes on only from what is"
-            " pushed, so keep the move with `rn.py state --next <n> --message <what it brought>`"
-            " first",
-            self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)),
-        )
-
-    def test_ccs_with_commits_not_pushed_stops(self):
-        # Given: a commit not pushed.
-        self.git("commit", "-q", "--allow-empty", "-m", "c")
-        # When: the orchestrator has a CCS written.
-        # Then: rn says to push first.
-        self.assertIn(
-            "rn: the branch has 1 commit(s) not pushed; push with `git push`",
-            self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)),
-        )
-
-    def test_ccs_on_a_branch_never_pushed_stops(self):
-        # Given: a branch never pushed.
-        self.git("checkout", "-q", "-b", "lone")
-        # When: the orchestrator has a CCS written.
-        # Then: rn says to push the branch.
-        self.assertIn(
-            "push the branch with `git push -u origin HEAD`",
-            self.stopped("ccs", "t1.1", "README.md", *options(NEEDED)),
-        )
+        # When: the orchestrator has the CCS of t1.1 written.
+        out = self.ccs()
+        # Then: the call holds the decision, as the step's moves are committed as it ends.
+        decided = {"decision": "Login: email"} in self.read_json(out["ccs"])["constraints"]
+        self.assertEqual((out["ccs"], decided), (call_at("0001"), True))
 
     def test_ccs_with_what_the_receiver_has_not_there_stops(self):
         # Given: a session.

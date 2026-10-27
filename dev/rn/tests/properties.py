@@ -270,11 +270,13 @@ class HistoryPropertyTest(RepoTest):
     @hypothesis.given(WORDS.filter(lambda t: ": " not in t), WORDS, WORDS)
     def test_a_decision_replaced_is_given_with_what_it_was_and_is(self, title, was, now):
         # Given: a decision of any title without `: ` kept as anything it says, then replaced
-        # with anything else, each by rn.py decide, on the session the examples before kept.
+        # with anything else, each by rn.py decide in a step of its own, on the session the
+        # examples before kept.
         hypothesis.assume(was != now)
         self.session(steered(stage="design"))
         for says in (was, now):
             self.ran("decide", "t1.1", f"--title={title}", f"--says={says}", "--message=m")
+            self.ran("state", "--message=m")
         # When: the orchestrator asks for the history.
         # Then: rn gives it replaced last, with what it was and what it is now.
         found = [(r["was"], r["now"]) for r in self.ran("history")["replaced"]]

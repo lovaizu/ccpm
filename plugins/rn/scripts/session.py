@@ -1,7 +1,7 @@
 """The session the checked-out branch is in and its record, the folder `.rn/<yyyymmdd>-<slug>/`: the
-session started with its pull request, the steering as the last keep left it, each move kept, each
-call as the files of one number, the works rn makes, each part the orchestrator writes cut and put
-back, and the stage moved at a stage's end."""
+session started with its pull request, the steering as the last keep left it, each move written,
+and committed and pushed as its step ends, each call as the files of one number, the works rn
+makes, each part the orchestrator writes cut and put back, and the stage moved at a stage's end."""
 
 from __future__ import annotations
 
@@ -176,35 +176,57 @@ def where() -> dict[str, str | None]:
 
 
 def kept_steering(folder: str) -> steering.Steering:
-    """The steering as the last keep left it; stops where the working tree's differs from it, with
-    how to restore it, or where it is out of its form, as only a commit made by hand leaves it."""
+    """The steering as the last keep left it in git's index, as each keep, committing or not,
+    writes it there; stops where the working tree's differs from it, with how to restore it, or
+    where it is out of its form, as only a commit made by hand leaves it."""
     path = steering_path(folder)
-    last = repo.at("HEAD", path)
+    last = repo.staged(path)
     if (repo.read_text(path) if os.path.isfile(path) else None) != last:
         raise stop.Stop(
             f"rn: {path} differs from what the last keep left, and rn's scripts alone write it;"
-            f" restore it with `git checkout HEAD -- {path}`, then run this again"
+            f" restore it with `git checkout -- {path}`, then run this again"
         )
     point = steering.out_of_form(last or "")
     if point:
         raise stop.Stop(
-            f"rn: {path} as the last commit holds it is out of its form: {point}; rn keeps none so,"
+            f"rn: {path} as the last keep left it is out of its form: {point}; rn keeps none so,"
             " so restore the last one rn kept from"
             f" `git log -p -- {path}`, commit it, then run this again"
         )
     return steering.parsed(last or "")
 
 
-def keep(folder: str, steered: steering.Steering, message: str) -> str:
-    """Keeps the move: the steering written, once it holds its form, and every change of the move
-    committed with the message, then pushed; gives the commit. Stops, writing nothing, where the
-    steering is out of its form; and where git fails."""
+def write(folder: str, steered: steering.Steering) -> None:
+    """Writes the steering, once it holds its form, into the working tree and git's index, where
+    kept_steering reads what the last keep left. Stops, writing nothing, where it is out of its
+    form; and where git fails."""
     text = steering.render(steered)
     steering.held_form(text)
-    repo.write_text(steering_path(folder), text)
+    path = steering_path(folder)
+    repo.write_text(path, text)
+    repo.git(["add", "--", path], repo.AS_GIT_SAYS)
+
+
+def written(folder: str, steered: steering.Steering, message: str) -> None:
+    """Keeps a move its step goes on after, such as one kept before a point is asked: the steering
+    written, and the message held for the commit the step ends with, as going on from a stop needs
+    the files, not the push, and a push at each answer holds the run it answers. Stops, writing
+    nothing, where the steering is out of its form; and where git fails."""
+    write(folder, steered)
+    repo.hold(message)
+
+
+def keep(folder: str, steered: steering.Steering, message: str) -> str:
+    """Keeps the move a step ends with: the steering written, and every change of the step
+    committed with the message, then the message of each move written since the last commit, in
+    the order written, then pushed; gives the commit. Stops, writing nothing, where the steering is
+    out of its form; and where git fails."""
+    write(folder, steered)
     if repo.changed():
         repo.git(["add", "-A"], repo.AS_GIT_SAYS)
-        repo.git(["commit", "-q", "-F", "-"], repo.AS_GIT_SAYS, message)
+        said = "\n\n".join([message, *repo.held()])
+        repo.git(["commit", "-q", "-F", "-"], repo.AS_GIT_SAYS, said)
+    repo.let_go()
     repo.push()
     return repo.git(["rev-parse", "HEAD"], repo.AS_GIT_SAYS).strip()
 
@@ -414,15 +436,23 @@ def state(
     number: str | None,
     stage: str | None,
     message: str,
+    goes_on: bool = False,
 ) -> dict[str, str]:
     """Keeps the move: the part of the call of the number put back, the plan's into the steering,
     the learnings' added to the session's learnings; each action done ticked, and each task removed
     once all its actions are; the stage moved where given; Next and Open replaced whole, Next as the
-    stage moved leads where none is given; then every change committed with the message and
-    pushed; gives the commit, and the line told where an action is done. Stops, keeping nothing,
-    where Next is empty, the branch holds no session, the steering differs from what the last keep
-    left, a part, an ID, an action or a stage cannot be taken, or the steering or the learnings
-    would be out of their form; and where git fails."""
+    stage moved leads where none is given; then, as the step ends, every change committed and
+    pushed as keep says, giving the commit, and the line told where an action is done; or, where
+    the step goes on after it, the move written as written says, giving the steering's path.
+    Stops, keeping nothing, where a move the step goes on after puts a part back, ticks an action
+    or moves the stage, each of which ends a step, Next is empty, the branch holds no session, the
+    steering differs from what the last keep left, a part, an ID, an action or a stage cannot be
+    taken, or the steering or the learnings would be out of their form; and where git fails."""
+    if goes_on and (number or done or stage):
+        raise stop.Stop(
+            "rn: a move within a step puts no part back, ticks no action and moves no stage, as"
+            " each ends the step; keep it without --goes-on"
+        )
     folder = current()
     steered = kept_steering(folder)
     if given_next is not None:
@@ -444,6 +474,9 @@ def state(
         # fails leaves the session to go on from here.
         again = "run `rn.py state --stage finished` again"
         repo.gh(["pr", "ready", steered.keys[steering.PR]], again)
+    if goes_on:
+        written(folder, steered, message)
+        return {"written": steering_path(folder)}
     if learnt:
         learnings.write(folder, learnt)
     commit = keep(folder, steered, message)

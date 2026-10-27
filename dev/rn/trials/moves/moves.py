@@ -40,18 +40,19 @@ sys.path.insert(
 
 import trying
 from cases import CASES, Case, Check
-from place import DEFAULT_KEPT, RULES, Place, Seen, Stop, costed
+from place import RULES, Place, Seen, Stop, costed
 
 USAGE = "usage: python3 dev/rn/trials/moves/moves.py <case>... | all [--dry]"
 # The minutes a message waits for the stand-in turn, started in the background.
 WAIT = 30
-# Every move leaves the default branch as it was, as rn pushes to the session's branch alone.
-DEFAULT_CHECK = Check(DEFAULT_KEPT, RULES[DEFAULT_KEPT])
+# Every move leaves the default branch as it was, as rn pushes to the session's branch alone, and
+# every commit pushed, as rn commits only as a step ends, pushing it then.
+EVERY_MOVE = [Check(rule, holds) for rule, holds in RULES.items()]
 
 
 def checked(seen: Seen, checks: list) -> tuple:
     """Each check's line, `ok` or `FAIL` before what it checks, and whether all held."""
-    held = [(c.holds(seen), c.what) for c in [*checks, DEFAULT_CHECK]]
+    held = [(c.holds(seen), c.what) for c in [*checks, *EVERY_MOVE]]
     return [f"  {'ok' if h else 'FAIL'} {what}" for h, what in held], all(h for h, _ in held)
 
 

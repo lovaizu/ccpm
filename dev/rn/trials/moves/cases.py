@@ -20,7 +20,7 @@ import sys
 import uuid
 from typing import Callable, NamedTuple
 
-from place import ALL_KEPT, ROOT, RULES, SEED, Place, Seen, kept_learnings, steered
+from place import ALL_KEPT, ROOT, SEED, Place, Seen, kept_learnings, steered
 
 sys.path.insert(0, os.path.join(ROOT, "plugins", "rn", "scripts"))
 import record
@@ -704,7 +704,8 @@ def l1_answered(p: Place) -> None:
     Open, Next L2."""
     learnings_due(p)
     decide(p, "issue-1", "Learning", L_PLACE[len("- L1: ") :], "L1: for an issue to rn's makers")
-    state(p, NEXT_L2, "L1: the user chose an issue to lovaizu/ccpm alone", "--open", L1_OPEN)
+    said = "L1: the user chose an issue to lovaizu/ccpm alone"
+    state(p, NEXT_L2, said, "--open", L1_OPEN, "--goes-on")
 
 
 # What a move must leave, each check with what it checks in words.
@@ -874,7 +875,7 @@ def issues(n: int) -> Check:
 
 
 def file_has(path: str, words: str) -> Check:
-    """The check that the file at the path, as the last commit holds it, holds the words."""
+    """The check that the file at the path, as written, holds the words."""
 
     return Check(f"{path} holds `{words}`", lambda s: words in s.texts.get(path, ""))
 
@@ -889,7 +890,8 @@ NO_SESSION = Check("no session on the branch", lambda s: not s.steering_path)
 NO_PR = Check("no pull request opened", lambda s: not s.gh["prs"])
 STAYS = Check("no commit made", lambda s: s.commits == 0)
 MOVED = Check("a commit made", lambda s: s.commits > 0)
-KEPT = Check(ALL_KEPT, RULES[ALL_KEPT])
+# A move that ends a step commits every change of it and pushes it.
+KEPT = Check(ALL_KEPT, lambda s: s.clean and s.pushed)
 JAPANESE = Check("the reply in Japanese", lambda s: bool(re.search(r"[぀-ヿ一-鿿]", s.reply)))
 ONE_POINT = Check(
     "the reply asks one point, `▶` once, with options `a.` and `b.`",
@@ -1023,7 +1025,7 @@ CASES = {
         [front("plan", "none"), next_has("Step 8"), decisions("plan", 1)],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
-            (DONE_ANSWER, [MOVED, KEPT, decisions("plan", 2)]),
+            (DONE_ANSWER, [decisions("plan", 2)]),
         ],
         {"t1.1": [RESEARCH_PLACE]},
     ),
@@ -1074,13 +1076,14 @@ CASES = {
         {"t1.1": [RESEARCH_PLACE]},
     ),
     "asks": Case(
-        "turn asks a question while it makes a task's work: kept in Open and pushed, asked as a"
-        " point, the answer kept and sent to turn",
+        "turn asks a question while it makes a task's work: written in Open, nothing committed"
+        " while turn waits, asked as a point, the answer kept and sent to turn, the step's moves"
+        " committed as turn returns",
         "up 4, 3 (turn's questions kept, then asked, SendMessage), 2",
         planned,
         [next_has("Step 4 of /rn:up on T1: action 1"), returned("t1.1", 0)],
         [
-            ("/rn:up", [KEPT, open_has("mobile"), returned("t1.1", 0), ONE_POINT, JAPANESE]),
+            ("/rn:up", [STAYS, open_has("mobile"), returned("t1.1", 0), ONE_POINT, JAPANESE]),
             (
                 MOBILE_ANSWER,
                 [
@@ -1358,7 +1361,8 @@ CASES = {
     ),
     "learning": Case(
         "the learnings put one per message, the first taken for an issue",
-        "up 1, 11 (one learning per message, each answer kept, an issue's as its decision)",
+        "up 1, 11 (one learning per message, each answer written, an issue's as its decision,"
+        " nothing committed at an answer)",
         learnings_due,
         [front("learnings", "none"), learnings(2), next_has("Step 11")],
         [
@@ -1366,8 +1370,7 @@ CASES = {
             (
                 "issue だけに送ってください",
                 [
-                    MOVED,
-                    KEPT,
+                    STAYS,
                     next_has("L2"),
                     decisions("issue-1", 1),
                     open_none(nothing=False),
