@@ -588,5 +588,25 @@
  {
   "commit": "T23 summary",
   "read": "Read every README and run its claims for s10 and r12 by hand; the stand-in ran each README's claims in every run. Set beside r7-s9 (9d39849): items the calling AI judged unmet 5 in six runs (r7-s9: 4), of the same kind: a whole-work item, repetition (usability B-7) or a contradiction (B-21), and a pointer to a commit history no reader can follow (readme B-6); no untrue example, every example run byte for byte. Orchestrator hook stops 5 in six runs (r7-s9: 23, 11 before turn.py start); the roles' stops each followed by the step kept. 22-37 minutes, $5.9-7.4 (r7-s9: 17-36, $5.7-11.5)."
+ },
+ {
+  "commit": "9b05062",
+  "run": "t37-1",
+  "session": "d09bb8eb-bb01-434e-a3ce-bfd3fb61a845",
+  "stopped": "False",
+  "minutes_to_return": null,
+  "cost_usd": 1.93,
+  "read": "Not returned: the generator asked the license and the address, the stand-in added LICENSE to the work, then asked the copyright holder; the stand-in answered 'the repository owner, not known', and the generator gave `blocked`, which the flow takes before questions, so the run stopped. The stop path is under audit (no purpose needs it)."
+ },
+ {
+  "commit": "9b05062",
+  "run": "t37-2",
+  "session": "d7736bb4-36be-4d1a-8553-91d933cab747",
+  "stopped": "False",
+  "minutes_to_return": 9.5,
+  "cost_usd": 2.47,
+  "items_total": 9,
+  "items_met_as_returned": "7 by the stand-in; B-5 could not be checked (no published repository for ../../commits), B-7 judged in part (README.md:74 speaks of the README itself)",
+  "read": "Two questions first (license MIT, address: relative links), generator made 9 items by lines, first user gave B-7 a need, generator remade B-7, first user gave all 9 by lines. Reply sizes: generator 2,746 chars for 9 items, first user 3,113, mostly the whole paths of the lines. Not comparable to T23's runs, which used 23 items."
  }
 ]
