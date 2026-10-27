@@ -29,13 +29,13 @@ Scope: whole
 Used as the user would use it, with what they have, does the finished work do what each acceptance
 criterion of the plan says?
 
-Look for:
-- a criterion answered by reading the files rather than using them, such as running the code or
-  doing what a document says;
-- a criterion done for some of the cases it names and not the rest;
-- a step the user would have to take that no file of the finished work tells them, such as a
-  command, a setting or a tool to install;
-- two files that lead the user two ways, such as a README naming a command the code does not take.
+Tried by: for each acceptance criterion, doing what it asks with the finished work as the user
+would once it is merged, with only what they have and the way the finished work's own files lead
+them, such as running the code or doing what a document says, for every case the criterion names.
+
+Signs: the user does each case a criterion names and gets what it says; each step the user takes,
+such as a command, a setting or a tool to install, is told them by a file of the finished work; the
+files lead the user one way, such as a README naming only commands the code takes.
 
 Why: the user approves the finished work from the proposal, what rn shows them at the sign-off,
 which shows the criteria, so a

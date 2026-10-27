@@ -85,12 +85,12 @@ Scope: its part
 
 From the opening, can the reader tell whether the product is for them?
 
-Look for:
-- a first sentence that says what the product does, but not the idea by which it gives what other
-  ways of doing the same work do not;
-- what the reader gains said without the kind of thing that gives it, such as a tool run from their
-  editor, or replaced by how the product works;
-- whom it is for left for the reader to work out.
+Signs:
+- the first sentence gives the idea by which the product gives what other ways of doing the same
+  work do not, beyond what it does;
+- what the reader gains is said with the kind of thing that gives it, such as a tool run from their
+  editor, in place of how the product works;
+- whom it is for is said, so the reader can place themselves without working it out.
 
 Why: the reader decides from the opening whether to read on; one shown only what the product does
 takes it for any tool that does the same, and one who cannot place themselves leaves a product that
@@ -103,11 +103,11 @@ Scope: its part
 From the example, can the reader picture using the product on their own work, from starting to the
 result, with what they do and what they get back?
 
-Look for:
-- work of another kind than the reader's, or an example that stops before the result;
-- what the product gives back described instead of shown;
+Signs:
+- the example is on work of the reader's kind, and runs to the result;
+- what the product gives back is shown as the reader gets it, not described;
 - where several act in turn, such as the reader, the product and its agents, who does what and what
-  passes between them not told in the order it happens.
+  passes between them is told in the order it happens.
 
 Why: a reader who can picture it decides on what they will actually get; an example on work of
 another kind, or one without what the product gives back, is read as someone else's story.
@@ -119,8 +119,8 @@ Scope: its part
 From Why, can the reader tell what the product gives them that doing the work by hand, or with
 another tool, does not?
 
-Look for: a benefit every way of doing the work gives, such as not losing work, set among or before
-those only this product gives.
+Signs: the benefits only this product gives come first, and one every way of doing the work gives,
+such as not losing work, comes, if at all, after them.
 
 Why: what only this product gives is the reason to choose it; what every way gives does not decide
 the choice, and placed first it hides what does.
@@ -134,13 +134,17 @@ Judged on: the built product
 Can a reader who has decided, with only what a newcomer has, get ready what must be in place,
 install the product and get the example's result themselves, following the README alone?
 
-Look for:
-- a thing that must be in place given only as one way of getting it ready, so a reader who already
-  has it, or would get it ready another way, cannot tell;
-- a step, a file or a fact the reader must find elsewhere or guess;
-- a command, a link or an address that fails when the reader uses it as written, such as a download
-  address that gives 404, or one that works only from a copy the newcomer does not have yet;
-- the example, run as written, giving other output than the README shows.
+Tried by: with only what a newcomer has, every step of Requirements and Installation followed as
+written, each command, link and address used as written, and the example run as written to its
+result, its output set beside what the README shows.
+
+Signs:
+- each thing that must be in place is said as what it is, so a reader who already has it, or would
+  get it ready another way, can tell;
+- each step, file and fact the reader needs is in the README;
+- each command, link and address works as written from where the newcomer stands, such as a
+  download address that gives the file, before they have any copy of the product;
+- the example, run as written, gives the output the README shows.
 
 Why: each place the reader must look elsewhere, or a step fails, is a place they may stop; whoever
 wrote the README has the product at hand and never meets it.
@@ -154,12 +158,15 @@ Judged on: the built product
 From Documentation, Development and License, can the reader reach each place the README sends them
 on to?
 
-Look for:
-- fuller use or what changed in each version with no place named;
-- no entrance for those who build the product, or one set among Documentation's links;
-- the license not named in the README itself;
-- a place named that the reader cannot reach, with no link, or a link to what is not there for them,
-  such as "the commit history" with no address, or of a repository with nothing yet committed.
+Tried by: with only what a newcomer has, every link and address of Documentation, Development and
+License followed to what it opens.
+
+Signs:
+- fuller use and what changed in each version each have a place named;
+- those who build the product have an entrance of their own, apart from Documentation's links;
+- the license is named in the README itself;
+- each place named is reached by a link that opens what the reader is sent to, such as the commit
+  history at its address, in a repository that holds it.
 
 Why: a README that holds only what a newcomer needs stays short only when the rest is somewhere the
 reader can reach; one who cannot find the architecture changes the product without the decisions
@@ -172,14 +179,14 @@ Scope: each part
 Can the reader take in each part reading it once from the top, without going back or ahead and
 without guessing?
 
-Look for:
-- a term the reader may not know, such as a plain word used in a sense of its own or a name taken
-  from another product, that no sentence, example or figure shows where it is first used;
-- a sentence resting on a word, a reason or a step that comes later, or on a link the reader must
-  follow first;
-- an idea given in part, such as a case named without what happens in it;
-- a thing in a form that does not fit it, such as a command set in a sentence rather than in a block
-  to copy, or values side by side not in a table.
+Signs:
+- each term the reader may not know, such as a plain word used in a sense of its own or a name taken
+  from another product, is shown by a sentence, an example or a figure where it is first used;
+- each sentence rests on words, reasons and steps that come before it, and on no link the reader
+  must follow first;
+- each idea is given whole, such as a case named with what happens in it;
+- each thing is in the form that fits it, such as a command in a block to copy, and values side by
+  side in a table.
 
 Why: a reader stopped goes back or ahead, or reads on with a guess, and acts on a picture of the
 product that differs from the product where the guess is wrong.
@@ -191,35 +198,40 @@ Scope: whole
 Does each sentence give the reader something toward deciding or their first result that no other
 sentence of the README gives them?
 
-Look for:
-- a thing said again in other words in another part, such as the opening's gain again in Why, the
-  example's steps again in Installation, or a figure telling what the example tells;
-- a part meant for someone other than the reader, such as a reviewer, or one telling what the README
-  is or does in place of the product;
-- the history of how a decision was reached;
-- fuller use, which belongs in the page Documentation reaches;
-- a comparison or an example for an idea the reader already holds, or words that give nothing.
+Signs:
+- each thing is said in one part, such as the gain in the opening alone and not again in Why, the
+  example's steps in Example alone and not again in Installation, and a figure only for what the
+  example does not tell;
+- each part is meant for the reader, not for someone else such as a reviewer, and tells of the
+  product, not of what the README is or does;
+- each sentence says what holds, not the history of how a decision was reached;
+- fuller use is left to the page Documentation reaches;
+- a comparison or an example is given only for an idea the reader does not already hold, and each
+  word gives something.
 
 Why: a reader who has skimmed a run of repeats skims the one new point among them too, and two
 places that say one thing come to disagree as one of them changes; each part beyond the subject
 buries those the reader needs.
 
-### B-8: Every statement holds
+### B-8: The statements relied on together
 
 Scope: whole
 
 Judged on: the built product
 
-Can the reader rely on every statement of the README at once, each true of the product as they find
-it when they run it?
+Can the reader rely on the statements of the README together, each one they find true of the
+product when they run it?
 
-Look for:
-- two statements that cannot both hold, found by setting each promise of the opening and Why beside
-  the later lines and what the product does, such as an opening promising nothing else changes and
-  a later line naming a change it makes to every input;
-- a promise wider or narrower than what the product does when the reader runs it;
-- one thing under two names, or one name for two things;
-- a statement that turns untrue as the work goes on, such as "not yet" or "for now".
+Tried by: each promise of the opening and Why set beside the later lines, and the product run as
+the README's example runs it, set beside what each promise says it does.
+
+Signs:
+- each promise of the opening and Why holds with the later lines and with what the product does,
+  such as an opening's promise that nothing else changes, kept by later lines that name no change
+  the product makes to every input;
+- each promise is as wide as what the product does when the reader runs it;
+- each thing has one name, and each name is of one thing;
+- each statement stays true as the work goes on, with no "not yet" or "for now".
 
 Why: the reader cannot tell which of two statements holds, and following one breaks the other; a
 README that has turned wrong is worse than none, since it is believed.

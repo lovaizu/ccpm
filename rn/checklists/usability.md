@@ -63,11 +63,12 @@ Where the document tells of several that act in turn, can the reader see who doe
 between them and in what order at a glance, instead of piecing it together from sentences spread
 through the document? A document that tells of no such thing passes.
 
-Look for:
-- for a reader who is a person, no one figure of it, or text beside the figure saying again what
-  the figure shows; for an AI reading a prompt, no steps of it;
-- in a figure whose boxes are of different kinds, a box without its name, or without its kind
-  beside it as one short word in angle brackets, such as `turn:up <agent>`.
+Signs:
+- a reader who is a person sees it in one figure, with no text beside it saying again what the
+  figure shows; an AI reading a prompt follows it as steps;
+- in a figure whose boxes are of different kinds, the reader finds each box by the name the text
+  calls it by, with its kind beside it as one short word in angle brackets, such as
+  `turn:up <agent>`.
 
 Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
 what rows of a table make them assemble, while an AI reads a figure as text, in order; a box that
@@ -81,9 +82,10 @@ Can the reader tell what each term, any word the document uses for a thing of it
 code or not, means where they meet it, because they already know it or the place where it is first
 used, a sentence, an example or a figure, shows what it means?
 
-Look for: a plain word used in a sense of its own, such as a word for a part of the subject or for
-someone who acts in it, that no sentence explains; a name or an example taken from another product
-beside it, such as another plugin of the same marketplace, which the reader may not know.
+Signs: the reader learns each plain word used in a sense of its own, such as a word for a part of
+the subject or for someone who acts in it, from a sentence that explains it; each name and example
+the reader meets is of the subject itself or one they know, not taken from another product beside
+it, such as another plugin of the same marketplace.
 
 Why: a term never explained is read with a guess at its meaning, and the reader's picture differs
 from the writer's where the guess is wrong.
@@ -111,8 +113,8 @@ Scope: each part
 Can the reader read each sentence without going back or ahead, because each reason and step it
 rests on comes before it?
 
-Look for: a decision whose reason comes later or elsewhere; a link or a pointer that sends the
-reader ahead for what a sentence rests on.
+Signs: the reader meets the reason for each decision before it or with it; what a sentence rests
+on is already in front of the reader, not behind a link or a pointer that sends them ahead.
 
 Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
 guess, so the picture is not taken in by one reading from the top.
@@ -135,10 +137,10 @@ Does the reader use each part toward the purpose they came for, without skipping
 again what they already took in, each word of it giving them something they would lose without
 it?
 
-Look for: a part meant for someone other than the reader, such as a reviewer; an opening or a
-section that tells what the document is or does in place of telling the subject; terms gathered
-ahead of the content; a comparison or an example for an idea the reader already holds; a word the
-sentence says as well without.
+Signs: every part is for the reader, not for someone else, such as a reviewer; the opening and
+each section tell the subject, not what the document is or does; each term is met with the content
+it serves, not gathered ahead of it; each comparison or example carries an idea the reader does not
+already hold; each word, taken out, leaves its sentence saying less.
 
 Why: a part the reader skips or reads twice, and every word beyond what the subject asks, costs
 effort spent on how the document is written instead of on the subject, and buries the parts they
@@ -160,8 +162,9 @@ Scope: each part
 Can the reader rely on what the document says for as long as the subject's purpose and decisions
 stand?
 
-Look for: steps, status, or how the work went or a decision was reached, which change with each
-piece of work where the purpose, the decisions and their reasons stay.
+Signs: what the reader reads is the purpose, the decisions and their reasons, which stay, not
+steps, status, or how the work went or a decision was reached, which change with each piece of
+work.
 
 Why: a document that has turned wrong is worse than none, since it is believed.
 
@@ -173,7 +176,8 @@ Can the reader take each thing the document says as the one account of it, becau
 one place, with every case where it does not hold beside it, and not also in another place of the
 document?
 
-Look for: a part that says again, in other words or in a figure, what another part says.
+Signs: each thing is said in one part, and every other part that needs it points there, not
+saying it again in other words or in a figure.
 
 Why: two places that say one thing come to disagree as one of them changes, and the reader cannot
 tell which holds; once the reader skims a run of repeats, they skim the one new point among them
@@ -186,8 +190,8 @@ Scope: whole
 Can the reader take every statement of the document as true at once, no two of them saying what
 cannot both hold?
 
-Look for: two parts, each right on its own, that ask or give opposite things, such as one keeping a
-reader from what another hands to it.
+Signs: the parts that speak of one thing ask or give the same, so what one part hands to a reader
+no other part keeps from it.
 
 Why: the reader cannot tell which of the two holds, and whoever follows the document follows one
 and breaks the other.

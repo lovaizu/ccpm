@@ -24,9 +24,13 @@ Scope: its part
 
 Is the cause of each fault the change answers gone, in every case the rule the fault breaks names?
 
-Look for: a change fitted to the one case a run or a reading showed while another case of the same
-rule stays; a fault the same source, such as the checklist or the step that made it, will make
-again.
+Tried by: each case the rule the fault breaks names, the one a run or a reading showed among
+them, run or read again on the changed work as the fault was found, and the source that made the
+fault read as changed.
+
+Signs: each case of the rule the fault breaks gets what the rule asks, not only the one a run or a
+reading showed; the source that made the fault, such as the checklist or the step that made it, now
+makes what the rule asks.
 
 Why: a fault that is only covered comes back in the next case, and each cover makes the work longer
 while the cause stays.
@@ -37,8 +41,9 @@ Scope: its part
 
 Does each change bring the work closer to what its receiver uses it for?
 
-Look for: a change made to the letter of an item, a count or a run passing, while the receiver gets
-nothing more; a change guarding against a fault that something else already guards.
+Signs: each change gives the receiver more of what they use the work for, beyond meeting the
+letter of an item, a count or a run passing; each guard a change adds stops a fault that nothing
+else already stops.
 
 Why: a change that meets the form and not the purpose passes its check and leaves the receiver no
 better off, and the next reading finds the purpose still unmet.
@@ -50,10 +55,11 @@ Scope: its part
 Does each changed line say a thing this work holds, in the one place of the work that holds it, with
 nothing left that only the removed cause needed?
 
-Look for: a line added beside the one that should change; a rule or part added that the cause
-gives no need for; a line naming the one failure seen where a line beside it already says the rule;
-a detail that belongs to another work, such as a test, a
-script or the work it is drawn from; a part kept that the change made needless.
+Signs: each change is made in the line that held the old thing, not in a line added beside it;
+each rule or part added is one the cause needs; where a line already says the rule, the rule alone
+covers the failure seen, with no line beside it naming that one failure; each detail is one this
+work holds, a detail of another work, such as a test, a script or the work it is drawn from, left to
+that work; each part the change made needless is gone.
 
 Why: each line added for one fault competes with the rest for the reader's attention, and a thing
 said in two places comes to say two things.
@@ -65,9 +71,13 @@ Scope: whole
 Do every part of the work, and each work it names, that says the same thing or acts on the same
 thing as a changed line still agree with it?
 
-Look for: a fact changed in one document and left as it was in another, such as a README and the
-code or a design and a prompt; a new action that another rule on the same step stops; a part moved
-that lost what it said on the way; a promise of the work wider or narrower than what it now does.
+Tried by: for each changed line, every part of the work and each work it names that says or acts
+on the same thing found by searching them for the thing's name, and each read beside the line.
+
+Signs: a changed fact reads the same in every document that states it, such as a README and the
+code or a design and a prompt; each new action is one every other rule on the same step lets be
+taken; a part moved says in its new place all it said before; what the work promises is what it
+now does.
 
 Why: each part was right where it was checked alone, and what the change broke between parts shows
 only to a reader of the whole, often a run later.

@@ -54,8 +54,11 @@ Scope: whole
 Does whoever runs the code get the behavior the requirements ask, on any machine with only what the
 development rules name?
 
-Look for: an import, a tool or a feature of the language beyond what the development rules name, or
-newer than the oldest version of the runtime they name.
+Tried by: the code's tests run on the oldest version of the runtime the development rules name,
+with only the libraries and tools they name installed.
+
+Signs: the code runs, and its tests pass, on the oldest version of the runtime the development rules
+name, with only what they name installed.
 
 Why: what the code uses beyond the development rules is missing on some user's machine, and the code
 fails there for a reason the user was never told.
@@ -66,13 +69,17 @@ Scope: whole
 
 When the code stops, can whoever runs it go on by doing what the stop says?
 
-Look for:
-- something taken in from outside, such as a file, an argument or what another program hands it,
-  used before a check stops what the requirements say it must not be;
-- a stop that does not name the input or the condition that was wrong;
-- a stop that names no action, such as a value to give instead or how to install a missing tool;
-- an action whoever is stopped cannot take with what they have, such as a read another check stops,
-  or one after which the same check still stops.
+Tried by: each stop the code has, run with an input that makes it, the action it names taken with
+only what whoever runs the code has, and the run made again.
+
+Signs:
+- each thing taken in from outside, such as a file, an argument or what another program hands it,
+  is checked where it comes in, before it is used, against what the requirements say it must not
+  be;
+- each stop names the input or the condition that was wrong;
+- each stop names an action, such as a value to give instead or how to install a missing tool;
+- whoever is stopped can take that action with what they have, without a read another check stops,
+  and once it is taken the same check lets the run go on.
 
 Why: a wrong input used fails far from where it came in, or does harm, such as writing outside the
 folder it was meant for; a stop that says only that something failed leaves the user to read the
@@ -85,16 +92,17 @@ Scope: each part
 Can the maintainer tell what each module, function and test does, and what each name in it stands
 for, from its opening, its signature and its names, without reading its body or its callers?
 
-Look for:
-- a name of a module, function, variable or test that says less than its thing, or something else;
-- an opening, a signature or a comment that leaves out part of what it tells, such as when a
-  function stops, or that says what the code does not do;
-- a word used in a sense of the code's own, or a name taken from another product, that no opening or
-  comment explains;
-- the reason behind a decision, or what a regular expression or an algorithm does, left unsaid;
-- a comment telling how the work went or where it stands, such as the task a line was added for;
-- an idiom, a way of handling errors or a layout unlike the code around it, where the development
-  rules settle no choice.
+Signs:
+- each name of a module, function, variable or test says its thing, all of it and nothing else;
+- each opening, signature and comment tells all of what it tells, such as when a function stops,
+  and only what the code does;
+- each word used in a sense of the code's own, and each name taken from another product, is
+  explained by an opening or a comment;
+- the reason behind each decision, and what each regular expression or algorithm does, is said;
+- each comment tells the code, not how the work went or where it stands, such as the task a line
+  was added for;
+- errors are handled as the code around them handles them, where the development rules settle no
+  choice.
 
 Why: a part not told by its own lines sends the maintainer into its body and its callers at every
 use; a name or a comment that says something else is believed; a comment about the work turns wrong
@@ -107,10 +115,11 @@ Scope: each part
 Does each function, parameter, branch, option and comment give the maintainer something a behavior
 the requirements ask now needs?
 
-Look for:
-- code more general than its callers use, such as a parameter every caller gives the same value;
-- a case for a future the requirements do not name;
-- a comment that says again what the line under it does.
+Signs:
+- each part is as general as its callers use it, each parameter one its callers give different
+  values;
+- each case serves a behavior the requirements name now;
+- each comment says what the line under it does not already say.
 
 Why: each part is read, tested and kept true by every maintainer on every change, and when a
 guessed need comes, it seldom has the shape that was guessed.
@@ -122,14 +131,17 @@ Scope: whole
 Can the maintainer change one thing the code takes on in one place, with no other place left that
 still holds the old one?
 
-Look for:
-- a function or module that takes on two things;
-- a piece of knowledge, such as a rule, a value or a way of reading an input, written in two places
-  across the repository;
-- one thing under two names across the code and its tests, so a search for one name misses the
-  places of the other, or one name for two things;
-- a file that running the code or its tests makes, such as Python's `__pycache__/`, not kept out of
-  the repository by its ignore file.
+Tried by: the whole read, then the code's tests run once and `git status` read for each file the
+run made.
+
+Signs:
+- each function and module takes on one thing;
+- each piece of knowledge, such as a rule, a value or a way of reading an input, is written in one
+  place across the repository, and every other place that needs it takes it from there;
+- each thing has one name across the code and its tests, so a search for the name finds every place
+  of it, and each name stands for one thing;
+- each file that running the code or its tests makes, such as Python's `__pycache__/`, is kept out
+  of the repository by its ignore file.
 
 Why: a part that takes on two things is changed for one and breaks the other; knowledge written
 twice is fixed in one place and left wrong in the other; a place a search for the name misses
@@ -142,26 +154,31 @@ Scope: whole
 
 When a behavior the requirements ask is broken in the code, does some test fail?
 
-Look for:
-- an equivalence partition of an input or an output, the values a function treats alike, the
-  invalid ones among them, that no test takes a value from;
-- a boundary of a partition whose values stand in order, such as numbers or lengths, or the value
-  on either side of it, that no test takes;
-- a feasible rule of a decision table, a combination of the conditions' values that can happen,
-  that no test takes;
-- a transition between states, an invalid one included, an event given in a state that does not
-  take it, that no test takes;
-- a behavior over inputs of a kind, such as any text, path or list, with no property test making
+Tried by: the tests read beside the requirements; the unit tests run with the lines and branches
+they run counted, without the property tests; the property tests run; and mutation testing run on
+the code the work made or changed, each with the settings kept in the repository.
+
+Signs:
+- each equivalence partition of an input or an output, the values a function treats alike, the
+  invalid ones among them, gives some test a value;
+- each boundary of a partition whose values stand in order, such as numbers or lengths, and the
+  value on either side of it, is taken by some test;
+- each feasible rule of a decision table, a combination of the conditions' values that can happen,
+  is taken by some test;
+- each transition between states, an invalid one included, an event given in a state that does not
+  take it, is taken by some test;
+- each behavior over inputs of a kind, such as any text, path or list, has a property test making
   many inputs of the kind on each run and checking what every one must give, such as a parse giving
   back what was written, with each input that once failed kept as an example;
-- a statement or a branch that no unit test runs, counted without the property tests, whose
+- every statement and branch is run by the unit tests, counted without the property tests, whose
   inputs change from run to run;
-- a small change a fault could make, such as a comparison, an operator or a value replaced, that no
-  test fails on: a survivor of mutation testing;
-- a test whose expected value is taken from the code it checks;
-- a line, branch, input or mutant left out of the coverage, the property tests or the mutation
-  testing, with nothing beside it or in the check's settings saying that the user decided it and
-  why, such as an environment the tests cannot make, or a line no behavior changes with.
+- each small change a fault could make, such as a comparison, an operator or a value replaced,
+  fails some test, so no mutant survives but one kept out as the last sign says;
+- each test's expected value is written from the requirements, not taken from the code it checks;
+- each line, branch, input or mutant left out of the coverage, the property tests or the mutation
+  testing, a survivor of mutation testing among them, is the maker's choice, named beside it or in
+  the check's settings with why, such as an environment the tests cannot make, or a line no
+  behavior changes with, and settled by the maker, not put to the user.
 
 Why: tests passing give trust only in the behaviors they would fail on; a gap looks the same as a
 test that works and lets a fault pass, faults gather at boundaries, such as `<` written for `<=`,
@@ -175,12 +192,15 @@ Scope: whole
 When a check fails after a change, can the maintainer take it as a fault of that change, in the one
 behavior the failing test names?
 
-Look for:
-- a test that would fail on a fault of two behaviors;
-- a test that reads the clock, the network or the machine it runs on, that leaves files or state
-  behind for the next, or that needs another to run first;
-- a check the development rules name, such as the tests, the formatter, the linter or the type
-  checker, run with the settings kept in the repository, already failing on the code.
+Tried by: every check the development rules name run once, with the settings kept in the
+repository.
+
+Signs:
+- each test fails on a fault of one behavior, the one its name says;
+- each test gives the same result on every run, reading no clock, network or machine it runs on,
+  leaving no files or state behind for the next, and needing no other to run first;
+- every check the development rules name, such as the tests, the formatter, the linter or the type
+  checker, run with the settings kept in the repository, passes on the code.
 
 Why: a test that holds several behaviors leaves the maintainer to read its code to learn which
 broke; a test that fails on some runs and not on others teaches them to rerun it rather than read
@@ -194,8 +214,10 @@ Scope: whole
 Can the maintainer run the whole test run in seconds, so that the checks run on every change and
 mutation testing, which runs the tests once for each mutant, ends in minutes?
 
-Look for: a test that sets up by running other programs, such as a repository made by git commands
-for every test, where it could be made once and copied.
+Tried by: the whole test run run once, and the time it took read.
+
+Signs: the whole test run ends in seconds; a set-up made by running other programs, such as a
+repository made by git commands, is made once and copied for each test that needs it.
 
 Why: a test run that takes minutes is run less often, and mutation testing multiplies its time by
 the number of mutants, so the maintainer waits on every change, or stops running the checks.
@@ -207,8 +229,26 @@ Scope: whole
 Does whoever runs the code get the behavior the requirements ask while another run of it goes on at
 the same time?
 
-Look for: a file, port, folder or other place a run writes or holds that another run at the same
-time, such as a second session or a second test worker, could write or hold too.
+Signs: each file, port, folder or other place a run writes or holds is one that no other run at
+the same time, such as a second session or a second test worker, writes or holds too.
 
 Why: runs that share a place they write overwrite each other's work, and the fault shows only when
 they happen to meet, so a test seldom finds it.
+
+### B-10: What a machine can see, shown on every change
+
+Scope: whole
+
+Does the command that checks the work run a formatter, a linter and a type checker, so that the
+maintainer is shown on every change what they find?
+
+Tried by: the command that checks the work, as the development rules name it, run once, and what it
+printed read for each of the three.
+
+Signs: the development rules name a formatter, a linter and a type checker, each set up with its
+settings kept in the repository; the command that checks the work runs all three and fails on what
+they find.
+
+Why: a tool finds the same thing every time and at once, where a maintainer reading for it finds
+some of it and spends a change on each, and what no tool is set to show is left to be found on some
+changes only.

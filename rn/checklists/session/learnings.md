@@ -54,13 +54,16 @@ Can the user tell from each learning what happened in the session, and see it in
 a commit or a conversation it rests on, each quote saying whose words they are and at which move,
 each thing rn's orchestrator did in turn, such as a point asked or a work handed to turn?
 
-Look for:
-- a learning with no quote, or a quote not as the commit or the conversation holds it;
-- a cause the quoted words do not show, such as one named from a commit's change where only a
-  conversation shows why;
-- a quote with nothing saying whose words they are and where, such as the user's feedback at the
-  plan sign-off, a commit message or a message the orchestrator sent;
-- how the learning was found, which the user's decision does not use.
+Tried by: each quote found, as the learning gives it, in the commit it names, with `git show
+<commit>`, or in the conversation it names, with `rn.py search "<words>"`.
+
+Signs: the user reads in each learning the words it rests on, as the commit or the conversation
+holds them; each cause it names is one the quoted words show, such as a conversation's words
+where only a conversation shows why, rather than a cause read from a commit's change; each quote
+says whose
+words they are and where, such as the user's feedback at the plan sign-off, a commit message or a
+message the orchestrator sent; each line is one the user's decision uses, what happened and where
+it goes, rather than how the learning was found.
 
 Why: the user decides from the learning alone, so one resting on a guess sends a wrong rule to their
 checklists or to rn's makers, which every later work then follows.
@@ -72,14 +75,11 @@ Scope: its part
 Can the user tell from each learning what would change so that later work goes better, and whether
 that change is for their repository alone or for everyone's work?
 
-Look for:
-- a learning that says what went wrong and no change that would have kept it from happening;
-- a learning of the repository alone with no kind of work named, or with no question its checklist
-  would ask;
-- a question for a checklist that asks for a step of the work rather than what the work gives its
-  user;
-- a learning called the repository's alone that anyone's work would meet, or one called general that
-  rests on what only this repository has.
+Signs: the user reads in each learning, beside what went wrong, the change that would have kept
+it from happening; in a learning of the repository alone, the kind of work and the question its
+checklist would ask; in each question for a checklist, what the work gives its user rather than a
+step of the work; a learning called the repository's alone is one only this repository would meet,
+and one called general one that anyone's work would meet.
 
 Why: rn recommends where each learning goes and the user decides; a learning with no change leaves
 later work as it was, and one sent to the wrong place either hands rn's makers one repository's need
@@ -91,32 +91,32 @@ Scope: whole
 
 Is each learning one thing for the user to decide, apart from the others?
 
-Look for:
-- a learning holding two things that could go to different places;
-- two learnings of one cause, such as a feedback and the work it made again, or one that rests on
-  another.
+Signs: the user gives each learning one answer, as it holds one thing, which goes to one place;
+each cause comes in one learning, a feedback and the work it made again in the same one, and each
+learning stands without another.
 
 Why: each learning comes to the user in a message of its own and takes one answer, so two things in
 one get one answer where each needed its own, and a learning said twice is decided twice.
 
-### B-4: Every shortfall of the session learnt
+### B-4: What the session's history shows, put to the user
 
 Scope: whole
 
-Does each place where the session's history shows rn fell short come to the user as a learning,
-with its cause where the history or a conversation shows one?
+Can the user make later work better at each place where the session's history shows rn fell short,
+as each comes to them as a learning, with its cause where the history or a conversation shows one?
 
-Look for:
-- a change the user sent back at a sign-off, which the feedback in a commit message shows, that no
-  learning takes up;
-- a work made again, or a decision an answer replaced, as a point asked again leaves, that no
-  learning takes up, but the plan written again at a stage's start or after a task, as rn's steps
-  have it;
-- a question turn asked while it ran that the points put to the user could have settled, an answer
-  added to a work's decisions during the run, that no learning takes up;
-- a move that does not rest on the facts of the move before it, that no learning takes up;
-- a message to the user out of the form rn gives it, such as one holding more than one point, or the
-  recommended option not first, that no learning takes up.
+Tried by: `rn.py history` run, and for each feedback, work made again and decision replaced it
+prints, the commits read with `git show <commit>` back to the move it rests on; each commit message
+of the branch since it left the default branch read; and a cause no commit shows looked for with
+`rn.py search "<words>"`.
+
+Signs: the user meets in a learning each change they sent back at a sign-off, which the feedback in
+a commit message shows; each work made again, and each decision an answer replaced, as a point asked
+again leaves, but the plan written again at a stage's start or after a task, as rn's steps have it;
+each question turn asked while it ran that the points put to the user could have settled, an answer
+added to a work's decisions during the run; each move that does not rest on the facts of the move
+before it; each message to them out of the form rn gives it, such as one holding more than one
+point, or the recommended option not first.
 
 Why: a shortfall not learnt is met again in later work, and the user, who saw only what came to
 them, cannot add what the history and the conversations alone show.
@@ -127,6 +127,7 @@ Scope: whole
 
 Can the user tell what each word of a learning means, without knowing rn's insides?
 
-Look for: a term of rn's insides, such as a script's subcommand, that no line shows the meaning of.
+Signs: the user reads the meaning of each term of rn's insides, such as a script's subcommand, in
+a line that shows it.
 
 Why: the user decides from the learning alone, and a word they cannot read is decided with a guess.

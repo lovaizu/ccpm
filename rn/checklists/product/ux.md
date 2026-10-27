@@ -91,9 +91,9 @@ Scope: its part
 From the main point and the users and goals, can the reader tell whom the product is for and the
 goal each of them wants to achieve?
 
-Look for: a main point that says what the document is in place of what the product gives; a user
-named so loosely the builder cannot tell whether someone is one; a goal said as what the product
-does rather than what the user achieves.
+Signs: the main point says what the product gives whom, not what the document is; each user is
+named so the builder can tell whether someone is one; each goal is said as what the user achieves,
+not what the product does.
 
 Why: everything else in the UX is the experience of these users reaching these goals; without them,
 the user cannot tell what they agree to, and the builder cannot tell whom the product is for or when
@@ -105,14 +105,13 @@ Scope: its part
 
 From the key results, can the builder tell how close a version brings the users to their goals?
 
-Look for:
-- no order of priority, or an order given without why;
-- a key result with no word on what counts as one, how each case is judged, which way is better or
-  how it stands once the goal is reached;
-- work done or a thing made in place of a result the user sees, or a measure taken because it is
-  easy to count;
-- a key result with no reason why a better value shows the user closer to its goal;
-- a target value.
+Signs:
+- the key results stand in an order of priority, with why;
+- each key result says what counts as one, how each case is judged, which way is better and how it
+  stands once the goal is reached;
+- each measures a result the user sees, not work done, a thing made or what is easy to count;
+- each gives the reason why a better value shows the user closer to its goal;
+- each is judged by how close it comes, with no target value.
 
 Why: a measure taken because it is easy to count, or with no why, moves while the user comes no
 closer; without an order, the builder trades the result that matters more for one easier to move;
@@ -126,12 +125,15 @@ Scope: its part
 From the scenes, can the reader tell what the user does and gets back, in order, from asking to
 achieving the goal?
 
-Look for:
-- the whole way, or a scene the user should see, with no sequence diagram of its own;
-- a step between two scenes that the whole way does not show;
-- a box that holds a description instead of its name, or whose kind is not beside its name as one
-  short word in angle brackets, such as `turn:up <agent>`;
-- a rule that holds throughout the scenes, which no figure shows, given by no text beside them.
+Tried by: the whole way followed from asking to the goal, and each scene found at its place in it.
+
+Signs:
+- the whole way, and each scene the user should see, has a sequence diagram of its own;
+- each step between two scenes shows in the whole way;
+- each box holds its name, not a description, with its kind beside it as one short word in angle
+  brackets, such as `turn:up <agent>`;
+- each rule that holds throughout the scenes, which no figure shows, is given by the text beside
+  them.
 
 Why: the builder builds what the scenes show the user doing and getting, and the user agrees to
 that; a step no scene shows is built by guess, or not at all. A sequence diagram shows at a glance
@@ -146,8 +148,8 @@ Scope: its part
 From the benefits, can the reader tell what the user gains by achieving the goal with this
 product?
 
-Look for: a gain said as what the product does or holds rather than what the user gets; a gain with
-nothing saying why this product gives it.
+Signs: each gain is said as what the user gets, not what the product does or holds; each gain says
+why this product gives it.
 
 Why: the benefits are why the user chooses the product and what its README promises; a builder who
 does not know them can build every scene and still give the user nothing worth choosing.
@@ -158,12 +160,14 @@ Scope: each part
 
 Does each line give the reader something of the experience they would lose without it?
 
-Look for:
-- what the product does inside, out of the user's sight, such as a part the user never deals with;
-- a line meant for someone other than the reader, such as a reviewer;
-- how the work went, its status or the history of how a decision was reached;
-- a comparison or an example for an idea the reader already holds;
-- a word that adds nothing to what its sentence says.
+Signs:
+- each line tells of what the user deals with, and what the product does inside, out of the user's
+  sight, is left to the architecture;
+- each line is meant for the reader, not for someone else such as a reviewer;
+- each line says what holds, not how the work went, its status or the history of how a decision
+  was reached;
+- a comparison or an example is given only for an idea the reader does not already hold;
+- each word adds to what its sentence says.
 
 Why: what the product does inside is the architecture's, and said here it is decided twice and
 drifts; what changes with each piece of work turns the UX wrong while it is still believed; and
@@ -175,15 +179,15 @@ Scope: whole
 
 Does the reader take each line as the UX means it, reading it once from the top?
 
-Look for:
-- a term, such as a word for someone who acts or a thing they pass, that the reader does not
-  already know and the place it is first used does not show, or a name taken from another product;
-- one thing under two names, or one name for two things;
-- a line that rests on a word, reason or step coming later or elsewhere;
-- an idea given in part, leaving the rest to a guess;
-- one thing said in two places, in other words or in a figure and its text, or a rule set apart
-  from the case where it does not hold;
-- two lines that cannot both hold.
+Signs:
+- each term the reader does not already know, such as a word for someone who acts, a thing they
+  pass or a name taken from another product, is shown where it is first used;
+- each thing has one name, and each name is of one thing;
+- each line rests on words, reasons and steps that come before it in the UX;
+- each idea is given whole, leaving nothing to a guess;
+- each thing is said in one place, in a figure or in its text, and each rule stands beside the case
+  where it does not hold;
+- the lines hold together, each with every other.
 
 Why: a line read another way than meant is agreed or built the other way; the reader completes a
 guess where a term or an idea is missing, takes a second name for a second thing, and cannot tell

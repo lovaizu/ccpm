@@ -78,8 +78,7 @@ Scope: its part
 From the goal alone, can whoever reads the plan tell what the user wants the piece of work to
 achieve, and why they want it?
 
-Look for: no reason, or a reason that says again what the goal says instead of what the user wants
-it for.
+Signs: the reader reads the reason, what the user wants the goal for, beyond what the goal says.
 
 Why: the user approves at the plan sign-off a reason they recognize as theirs, and every later
 decision, in any conversation, is judged by it; without it later decisions aim at the user's first
@@ -92,11 +91,10 @@ Scope: its part
 Does a finished work that passes every acceptance criterion, each answered yes or no by using it,
 achieve the whole goal, its reason included?
 
-Look for:
-- a word whose bar depends on who checks, such as fast or easy;
-- a criterion about how the piece of work went rather than what the finished work does;
-- a criterion naming a library, a file layout or a way of building that the goal does not ask for;
-- a part of the goal, or of its reason, that no criterion gives.
+Signs: each criterion is answered the same by whoever checks, its bar said by what is looked at
+rather than by a word such as fast or easy; each says what the finished work does, rather than how
+the piece of work went; each library, file layout or way of building a criterion names is one the
+goal asks for; each part of the goal, and of its reason, is given by a criterion.
 
 Why: the finished work is made and checked by the criteria alone; a criterion that cannot be checked
 on it passes a finished work that misses it, one of how it is built fixes a way before the
@@ -111,16 +109,14 @@ Can each task's result, once made, be used as its own user would use it, such as
 the criteria at the plan sign-off, the reader of a document or a user of the finished work trying a
 part of it, and accepted by its completion criterion, with nothing it needs left to a later task?
 
-Look for:
-- a task that makes one layer for later tasks, such as all the tests or a part shared by several
-  features, with nothing to use until another task is done;
-- a task holding several results that could be accepted apart, such as two documents, or two things
-  a user could try apart;
-- a completion criterion that names no check, or a check made on something other than the task's
-  result, such as how the task went;
-- a check that is one command, such as the tests, with no `Test:` line giving it, or a `Test:` line
-  whose command runs another check than the one the completion criterion names;
-- a task placed before one it builds on.
+Signs: each task's result is used once that task is done, rather than one layer for later tasks,
+such as all the tests or a part shared by several features; each task holds one result, rather than
+several that could be accepted apart, such as two documents, or two things a user could try apart;
+each completion criterion names a check made on the task's result, rather than on how the task
+went; a check that is one command, such as the tests, is given by a `Test:` line whose command runs
+the check the completion criterion names; where the result is code, that command runs the
+project's formatter, linter and type checker with the check, set up by an action before the one
+that makes the result where the project has none yet; each task stands after those it builds on.
 
 Why: each task's result is made and accepted before the next task starts, so a slip shows while only
 that slice is made; a task that makes much at once, or builds on what is not there yet, is made
@@ -133,17 +129,13 @@ Scope: its part
 Can whoever does each of a task's actions tell from it who does it and what to do toward that
 task's completion criterion?
 
-Look for:
-- an action that holds only the template's words, the same in every task;
-- an action that names no one to do it, or one of turn's that names no path or kind of the work it
-  makes, which turn's call is made on;
-- two actions of turn's on the same work, such as one designing a part and one making it;
-- an action the result does not need, such as one set in every task alike or research whose
-  finding would change nothing the task makes, or one whose content does nothing toward the
-  completion criterion;
-- a work an action says to make that only its maker uses on the way, such as a survey or a map to
-  reach the result, rather than one the user or the maker of a later work uses, as they use a
-  research or trial result handed to them.
+Signs: whoever does each action reads in it what that task needs done, beyond the template's
+words, the same in every task; each work has one action of turn's, rather than one designing a part
+and one making it; each action is one the result needs, its content toward the completion
+criterion, rather than one set in every task alike or research whose finding would change nothing
+the task makes; each work an action says to make is one the user or the maker of a later work
+uses, as they use a research or trial result handed to them, rather than one only its maker uses on
+the way, such as a survey or a map to reach the result.
 
 Why: each action is done and ticked by what it says, and the task's result waits until the actions
 before it are ticked; one that says only the template's words is ticked unseen, one with no doer is
@@ -159,12 +151,11 @@ Does each task settle what its result rests on before the action that makes it: 
 to decide confirmed with them, and what no one in the session yet knows found out by research or by
 a small trial, its result handed to each action that rests on it?
 
-Look for:
-- an action of turn's left to choose what is the user's to decide;
-- a fact, a library or a way the result rests on that the session has not checked, with no
-  research or trial before the making, such as a tool's current version or whether two parts work
-  together;
-- a research or trial result that no later action names as what it makes its work from.
+Signs: each point that is the user's to decide is confirmed with them in an action of the
+orchestrator's, rather than left to an action of turn's to choose; each fact, library or way the
+result rests on, such as a tool's current version or whether two parts work together, is checked
+in the session or found out by research or a trial before the making; each research or trial result
+is named by a later action as what it makes its work from.
 
 Why: a task begun on a gap fills it with a guess, which the user sends back once the whole is built;
 a fact checked or a way tried before anything is built on it shows a wrong guess while it is small;
@@ -178,13 +169,11 @@ Where the check a task's completion criterion names is made in the session, such
 of cases with the answers they must give, does an action before the one making the result make it
 and see it fail on what is there?
 
-Look for:
-- the check made in the same action as the result, or after it;
-- a check named that no action makes, left to whoever makes the result;
-- no action seeing the check fail before the result is made;
-- the check made as a task of its own, apart from the result it checks;
-- an action of turn's after the one that makes the result, which the command that runs the check
-  would be given to in its place.
+Signs: the check is made by an action before the one that makes the result, rather than in the
+same action or after it; each check named is made by an action, rather than left to whoever makes
+the result; an action sees the check fail before the result is made; the check is made in the same
+task as the result it checks; the action that makes the result is the task's last of turn's, the
+command that runs the check given in place of any after it.
 
 Why: a check made with or after the result is fitted to what the result does, not to what it must
 do, and passes whatever was made; one seen failing first is shown to tell a result that meets the
@@ -202,20 +191,14 @@ acceptance criteria all passed reach the goal: in the plan stage, criteria for t
 the design stage, each document the purpose needs; in the build stage, every acceptance criterion
 passed?
 
-Look for:
-- in the build stage, a criterion, or a case it names, that no completion criterion gives;
-- in the build stage, a document made before it whose checklists hold an item judged on the built
-  product, with no task making it again once the product is built, its receiver the product's
-  users with the built work;
-- in the design stage, a document the purpose needs with no task, or a task for a document it does
-  not need;
-- an ID named by a task whose completion criterion, passed, would leave it exactly as unmet as
-  before;
-- a task whose result neither a criterion nor a later task needs;
-- a task for a stage the session has not reached, such as one that builds the finished work while
-  the criteria are made;
-- what a done task found, such as a research or trial result handed to the plan, showing a need
-  that no task meets, or a task no longer needed that is still there.
+Signs: in the build stage, each criterion, and each case it names, is given by a completion
+criterion, and each document made before it whose checklists hold an item judged on the built
+product is made again by a task once the product is built, its receiver the product's users with
+the built work; in the design stage, each document the purpose needs has a task, and each task is
+for a document it needs; each ID a task names is brought nearer to met by its completion criterion
+passed; each task's result is needed by a criterion or a later task; each task is for a stage the
+session has reached, the finished work built only once the criteria are made; each need a done
+task found, such as a research or trial result handed to the plan, is met by a task, and each task it showed no longer needed is gone.
 
 Why: turn makes each task's result for what it names, and the orchestrator accepts it by its
 completion criterion, so an ID named by a task that does nothing for it is counted as served while
@@ -232,15 +215,12 @@ Scope: whole
 Does each line give the user at a sign-off or on the pull request, or the orchestrator in a later
 conversation, something they would lose without it?
 
-Look for:
-- how a point was reached or confirmed, which the commit messages keep;
-- a decision of one work, such as a library a task's result uses, which the call to turn that makes
-  that work keeps;
-- a task whose actions are all done, whose result the repository and its call to turn keep;
-- a learning, which `learnings.md` in the session's folder keeps;
-- where the session stands, such as what is next or open, written in the goal, a criterion or a
-  task, which the ticks, Next and Open hold;
-- one thing said in two places, such as a task saying again what a criterion it serves says.
+Signs: each line is one its readers use, with what is kept elsewhere left there: how a point was
+reached or confirmed in the commit messages; a decision of one work, such as a library a task's
+result uses, in the call to turn that makes that work; a learning in `learnings.md` in the
+session's folder; where the session stands, such as what is next or open, in the ticks, Next and
+Open, rather than in the goal, a criterion or a task; each thing is said in one place, a task
+naming the criterion it serves rather than saying again what it says.
 
 Why: the plan is read in every conversation, so each line beyond what its readers use costs them a
 reading each time, and a thing said in two places comes to say two things as one of them changes.
@@ -251,16 +231,15 @@ Scope: whole
 
 Does each reader take each line as the plan means it, the same in every conversation?
 
-Look for:
-- a term of the subject, or a plain word in a sense of its own, that the user may not know and no
-  line shows the meaning of;
-- one thing under two names, or one name for two things;
-- an ID naming another thing than in the plan's earlier versions on the session's branch: the goal
-  other than `G1`, a changed criterion or task under a new ID, a removed one's ID given to another,
-  or a new task under a number no higher than every task ID the plan has held;
-- a task serving an ID the plan does not hold;
-- two lines that cannot both hold, such as a task's completion criterion asking otherwise than a
-  criterion it serves.
+Tried by: the plan read, and its criteria and tasks set beside those of each earlier version of
+`steering.md` on the session's branch, as `git log -p` of it since the branch left the default
+branch shows them.
+
+Signs: the user reads the meaning of each term of the subject, or plain word in a sense of its own,
+that they may not know, in a line that shows it; each thing has one name, and each name one thing;
+each ID names the thing it named in the plan's earlier versions on the session's branch, a changed
+criterion or task under the ID it had, and a removed criterion's ID given to no other; every two
+lines hold together, such as a task's completion criterion asking as a criterion it serves asks.
 
 Why: a line read another way than meant is approved by the user, or built by turn, the other way;
 later messages, commit messages, each call and what rn shows at each sign-off name the goal, the

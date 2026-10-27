@@ -61,10 +61,9 @@ Scope: its part
 From the title and `## What it should be`, can rn's makers tell what rn should do, at which of its
 steps or checklists, and from `## Why it matters` what a user of rn loses while it does not?
 
-Look for:
-- a title that names a slip of the session rather than what rn does;
-- a change that names no step or checklist of rn's;
-- a cost to the user not said, or said as a cost to the session alone.
+Signs: the makers read in the title what rn does, beyond a slip of the session; they find the step
+or checklist of rn's the change is made at; they weigh the cost as one a user of rn bears, beyond
+this session.
 
 Why: the makers decide from the need and its cost; a need tied to one session is read as that
 session's, and one with no cost is weighed below every other.
@@ -76,10 +75,12 @@ Scope: its part
 Can the makers see what happened in the words the learning quotes, with nothing of the user's work
 beyond them?
 
-Look for:
-- a fact the learning does not quote, or a quote not as the learning gives it;
-- a path, a name, a line of code or words of the user's project beyond what the learning quotes;
-- what the user decided about their own work, which holds nothing of rn's need.
+Tried by: each fact and quote of `## What happened` set beside the learning it rests on.
+
+Signs: the makers check each fact against a quote of the learning, each quote as the learning gives
+it; the only paths, names, lines of code or words of the user's project they meet are those the
+learning quotes; each line holds rn's need, rather than what the user decided about their own
+work.
 
 Why: an issue resting on what the learning does not say is a guess the makers cannot check, and one
 holding the user's work makes public what they never chose to send.
@@ -90,7 +91,8 @@ Scope: whole
 
 Does the issue hold one need, that one change of rn's would meet?
 
-Look for: two changes that could be made apart, or two learnings told as one.
+Signs: the makers meet the need with one change, not two that could be made apart; the issue rests
+on one learning.
 
 Why: each need is decided and closed on its own; two in one issue are decided together or one is
 left behind when the issue is closed.

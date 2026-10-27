@@ -94,9 +94,10 @@ From the opening, can the reader tell the ground every decision of the architect
 the product is put together, and the principles, its own each in a line and those of what it is
 built on by a link?
 
-Look for: an opening that says what the document holds in place of how the product is put together;
-a principle of what it is built on written again rather than linked; a means, such as a tool, a
-format or a paper's method, given as a principle.
+Signs: the opening says how the product is put together, not what the document holds; each
+principle of what it is built on is reached by its link, not written again; each principle is a
+rule the decisions are held to, and a means, such as a tool, a format or a paper's method, is
+left to the part that uses it.
 
 Why: each decision's why can hold on its own while the decisions together break a principle no one
 wrote down; principles said once are what every decision, and every change, is held to.
@@ -108,8 +109,11 @@ Scope: its part
 Does every scene of the UX rest on a user story, each one way the user uses the product at its
 edge?
 
-Look for: a scene no story holds up; a story for a step inside the product; a story that says again
-what another does; a story named by the technology that realizes it.
+Tried by: every scene of the UX the opening links, each set beside the story it rests on.
+
+Signs: each scene leads to a story that holds it up; each story is a thing the user does at the
+product's edge, such as a command they run, not a step inside the product; each story says what no
+other does; each story is named by what the user does, so it holds when the technology changes.
 
 Why: the components are decided from the stories; a scene no story holds up is built by guess, a
 story for each step inside multiplies the components without the user doing more, and a story
@@ -122,14 +126,17 @@ Scope: its part
 Can the reader see, from the figure and the lines beside it, how the logical components achieve
 every user story, in the order they act?
 
-Look for:
-- a component a story needs missing from the figure;
-- a story no run of arrows achieves, or a step of one left for the reader to guess, such as what a
-  component does with what it is handed;
-- the order the arrows run in, or a choice the reader would question, left out of the lines;
-- a box holding a description or a technology rather than the component's name;
-- a path or a component that serves one case alone, where another component already takes it or a
-  check already stops it.
+Tried by: every user story followed through the figure's arrows and the lines beside it, from the
+first component it reaches to its end.
+
+Signs:
+- each component a story needs has its box in the figure;
+- each story is achieved by a run of arrows, each step of it told by an arrow's label or a line,
+  such as what a component does with what it is handed;
+- the lines give the order the arrows run in, and the why of each choice the reader would question;
+- each box holds the component's name, not a description or a technology;
+- each case is taken by a component that already takes others or stopped by a check already there,
+  so each path and component serves more than one case.
 
 Why: components that each do their part achieve no story unless their interactions do; a component
 found missing only when a story it serves is built changes the architecture then; a component
@@ -143,8 +150,10 @@ Scope: its part
 Can the reader tell, from the tree and the lines beside it, where each component is placed and what
 it is made of, what the product depends on outside itself and how it is started?
 
-Look for: a component of the figure with no place in the tree; a place with no kind beside it, such
-as `<Python 3>`; files drawn as boxes rather than as a tree.
+Tried by: every box of the figure looked up in the tree.
+
+Signs: each component of the figure is found at its place in the tree; each place has its kind
+beside it, such as `<Python 3>`; the files are shown as a tree, not drawn as boxes.
 
 Why: the builder makes each component as it is realized; where it is placed decides who owns it,
 where it runs and when a change to it reaches the user; and what the product depends on is where it
@@ -157,26 +166,32 @@ Scope: its part
 Can the reader tell, for each kind of part in the tree and for the user stories, the project's rule
 that says how it is checked, from a link to it?
 
-Look for:
-- a kind of part, such as code or a prompt, or the user stories, that no rule of the project
-  checks;
-- a check written here that the project's rule already gives, or that differs from it;
-- a case's inputs, stand-ins or bar to pass, which belong to the tests.
+Tried by: the link followed, and each kind of part in the tree and the user stories found in the
+rule it reaches.
+
+Signs:
+- each kind of part, such as code or a prompt, and the user stories are checked by a rule of the
+  project the link reaches;
+- a check written here is one the project's rule does not give, and agrees with it;
+- a case's inputs, stand-ins and bar to pass are left to the tests.
 
 Why: what to check and how far is decided once for the project, so every product is held to the
 same bar; written again in each architecture, the bars drift from the rule and from one another,
 and a case's detail changes with every test while the approval rests on the architecture.
 
-### B-6: Every decision true together with the principles
+### B-6: The decisions followed together with the principles
 
 Scope: whole
 
-Can the reader take each arrow, each line and each check as holding together with every principle
-the opening names and with every other line?
+Can the builder follow each arrow, each line and each check together with the principles the
+opening names and with the other lines, each giving what the others ask?
 
-Look for: an arrow that hands a part what a principle says it must not see; a check a principle
-gives to some part that no part makes; two lines, each right on its own, that ask or give opposite
-things, such as one keeping a part from what another hands it.
+Tried by: each principle the opening names set beside every arrow, line and check it bears on, and
+the lines that bear on one part set beside one another.
+
+Signs: each arrow hands a part only what the principles let it see; each check a principle gives to
+some part is made by a part; the lines that bear on one thing ask and give the same, such as what
+one hands a part and what another lets that part have.
 
 Why: a decision read alone looks right by its own why; one that breaks a principle undoes what the
 principle was there to bring about, and shows only when the product fails at it; of two lines that
@@ -189,14 +204,14 @@ Scope: whole
 Is each line of the architecture one whose change would change what was approved, said in one place
 alone?
 
-Look for:
+Signs:
 - how a part behaves in a case, a count, a bound, a value, or a list of what a part does step by
-  step, which belongs to the part's tests, as a Given, a When and a Then, or to its steps;
-- a line that says again, in other words, what the figure, the tree, another line, the UX or the
-  architecture it is built on says, which is linked instead;
-- how a decision was reached, or where the work stands;
-- terms gathered ahead of the lines that use them, or a comparison or an example for an idea the
-  reader already holds.
+  step, is left to the part's tests, as a Given, a When and a Then, or to its steps;
+- what the figure, the tree, another line, the UX or the architecture it is built on says is said
+  there alone, and reached here by a link;
+- each line says what holds now, not how a decision was reached or where the work stands;
+- each term is given at the line that first uses it, and a comparison or an example is given only
+  for an idea the reader does not already hold.
 
 Why: the reader grasps how the product is put together only where nothing else stands among it; a
 behavior written here is decided twice and drifts from where it is built, and every finding made
@@ -210,13 +225,13 @@ Scope: whole
 
 Can the reader understand each line where they meet it, reading once from the top?
 
-Look for:
-- a term of the UX used where the opening does not link to where it is defined, or a plain word used
-  in a sense of its own that no line explains;
-- a name of another product, such as a plugin the product uses, with no link or line saying what it
-  is;
-- one component or thing under two names, or one name for two things;
-- a line resting on a reason or a part that comes only after it.
+Signs:
+- each term of the UX is reached through the opening's link to where it is defined, and each plain
+  word used in a sense of its own is explained by a line;
+- each name of another product, such as a plugin the product uses, has a link or a line saying what
+  it is;
+- each component or thing has one name, and each name is of one thing;
+- each line rests on reasons and parts that come before it.
 
 Why: a term never explained is read with a guess at its meaning, a second name is taken for a
 second thing, and a reader sent ahead or back loses the picture one reading from the top would

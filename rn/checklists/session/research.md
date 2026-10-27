@@ -29,10 +29,9 @@ From the opening, can the reader tell what the research was asked, for which poi
 answer in the terms of that point or work, such as which option it favours and why, or what a later
 work must build on?
 
-Look for:
-- a question not said, or said wider or narrower than the gap it fills;
-- an answer left for the reader to piece together from the findings;
-- findings with no answer drawn from them, or an answer they do not bear out.
+Signs: the reader reads the question, as wide as the gap it fills; they read the answer as said,
+without piecing it together from the findings; the answer is drawn from the findings, which bear it
+out.
 
 Why: the user decides from the answer and the maker builds on it; one left to be drawn by the reader
 is drawn by each reader their own way, and one wider than the findings is acted on where nothing
@@ -45,14 +44,13 @@ Scope: each part
 Can the reader open, for each fact the answer rests on, the source it comes from, and find there the
 fact as said, current and from the official source where there is one?
 
-Look for:
-- a fact with no source, or a source the reader cannot open, such as a page behind a sign-in;
-- a fact said beyond what its source says;
-- a source written by others about a thing whose own documents say it, such as a blog post on a
-  tool's options beside the tool's manual;
-- a fact that changes with a version or a date, such as a library's current release or a practice
-  now in favour, with no version or date beside it, or one an older version or date than the
-  latest gives.
+Tried by: the source of each fact the answer rests on opened, and the fact found there as said.
+
+Signs: the reader opens the source of each fact, such as a page with no sign-in; each fact says
+what its source says, and no more; each fact a thing's own documents say comes from them, such as
+the tool's manual on its options rather than a blog post beside it; each fact that changes with a
+version or a date, such as a library's current release or a practice now in favour, has the
+version or the date beside it, the latest.
 
 Why: a decision or a work resting on a fact that is stale, second-hand or never said is made again
 once the fact shows wrong, and a reader who cannot check a fact either does the research again or
@@ -65,10 +63,9 @@ Scope: whole
 Can the reader tell what the research did not settle, and what would settle it, such as a point for
 the user or a trial?
 
-Look for:
-- a guess, or a fact of one case, said as true of all;
-- sources that disagree, with one side given alone;
-- a part of the question no finding answers, covered by a sentence that reads as an answer.
+Signs: the reader tells a guess as a guess, and a fact of one case as of that case; where sources
+disagree, they read each side; each part of the question no finding answers is said as not settled,
+with what would settle it.
 
 Why: an unknown read as known is built on without anyone checking it, and shows only once the work
 that rests on it fails.
@@ -80,11 +77,9 @@ Scope: whole
 Does each line give the user deciding the point, or the maker of a later work, something they use
 toward it?
 
-Look for:
-- how the research went, such as what was searched for or sources read that gave nothing;
-- a finding the question does not need;
-- one fact said in two places;
-- options set side by side in sentences where a table would show them at once.
+Signs: each line is a finding the question needs or the answer, rather than how the research
+went, such as what was searched for or sources read that gave nothing; each fact is said in one
+place; options set side by side are in a table, which shows them at once.
 
 Why: the reader reads the result to decide or to build, so each line beyond that costs them a
 reading and buries the facts they came for.
@@ -96,6 +91,7 @@ Scope: whole
 Can the reader tell what each term means where they meet it, because they know it or a line shows
 its meaning?
 
-Look for: a term from a source that the reader may not know, with no line showing its meaning.
+Signs: the reader reads the meaning of each term from a source they may not know in a line that
+shows it.
 
 Why: a term read with a guess is acted on the wrong way.
