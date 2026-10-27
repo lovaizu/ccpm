@@ -84,6 +84,14 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
   code, so every stage is passed: a command-line tool that tidies a Downloads folder, with its
   README, design and tests (truly wanted: moves only, a dry run first, a folder for each kind, macOS
   and Linux), run once by T34's test; then the user tries this rn once. Serves AC1, AC2.
+- [ ] T35: rn's stages are goal, ux, architecture, build, deliverable, learnings and finished, the
+  ux and the architecture stage each signed off on its own and passed where it needs no document,
+  and each document heard as kept, changed, kept in `.rn/` alone or not made, as issue #54's
+  "Stages named by what each settles" says, the user choosing it (2026-10-27): UX and README first,
+  shown to the user, then the architecture, the code and the trials. Serves AC1, AC2.
+- [ ] T36: How heavily the work is checked is the architecture's decision on what a failure would
+  cost, as issue #54's "Checks weighed by what a failure would cost" says, rn's code checklist
+  changed so. Serves AC2.
 - [ ] T15: Users who update get rn 0.10.0 and turn 0.2.0, on the user's instruction. Serves AC1,
   AC2.
 
