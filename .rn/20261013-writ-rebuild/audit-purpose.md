@@ -17,8 +17,14 @@ and the user's earlier decisions. Put to the user one at a time, in this order; 
 2. turn's generator asks the user to add a file the work needs to the CCS
    (plugins/turn/prompts/generator.md step 6), against the UX "a choice the purpose settles, turn
    makes and names in the result". 40c6cc2.
+   **Judged (2026-10-27): kept.** The CCS is the work's bounds, the caller's to set; the question
+   goes to the caller, who adds the file to the CCS and answers (plugins/turn/docs/calling.md:75-77).
 3. turn's orchestrator words the questions for items left without Good, a second question path
    with its own stage and pages (orchestrator.md step 4, flow.py left, turn.py pages). cfea4d8.
+   **Judged (2026-10-27): remove.** Items two rounds leave without Good come back in the result with
+   the first user's last reading of them, the run ended; the caller fixes them, as the work is mostly
+   made by then and that is faster, asking the user only what the user alone decides. turn's UX
+   (dev/turn/ux.md:91-92) changed to match; the generator's questions while making stay.
 4. turn's two nested bounds, three send-backs a round in two rounds, the second starting both roles
    anew (flow.py SENDS, MORE); no ground given, the time to a question doubled. fd270d7.
 5. turn's three guards for `turn.py next` going to the background: WAIT, next.lock, unsent.
