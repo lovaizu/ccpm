@@ -368,5 +368,28 @@
   },
   "read": "Every JSONL read. The run made and removed /tmp/turn/20261026-roles-f647oun3, writing nothing beside it. The generator read the CCS and its files whole, wrote the README with its license, read it with cat -n, ran demo.sh in a folder from mktemp -d and claimed both items in its form. The first user, given the set README, read it, the checklist, demo.sh and the notes, ran demo.sh and stopped at B-1, its form filled. The learner read both records whole and found the set README as the first user's file differing from the generator's, rightly, as it cannot know the trial set it; its third lesson quoted the generator's Write of its claim, shown as JSON with every quote escaped, with the quotes unescaped, and the form sent it back.",
   "cause": "records.as_text showed a tool's input as JSON, so a file an agent wrote was shown with its quotes and lines escaped and a quote of it as written was not found; each value is now shown under its name, text as it is, and the learner's three lessons pass the check on this run's records."
+ },
+ {
+  "commit": "9b05062, each item by its lines, a need for each item without Good, by roles.py",
+  "sessions": {
+   "generator": "2e5164d4-cde2-4cee-a81d-ba09e832b98b",
+   "first-user": "16bfc661-e47d-4ea7-a276-f421d8a85d0b"
+  },
+  "minutes": {
+   "generator": 1.2,
+   "first-user": 1.1
+  },
+  "cost_usd": {
+   "generator": 0.38,
+   "first-user": 0.29
+  },
+  "read": "Both replies filled their form. The generator gave each item by its lines alone, B-2 at a range in each of the three parts. The first user, given the set README with no license, gave B-1 and B-2 each one sentence of what the reader would need, each with a clause on what the README lacks beside it."
+ },
+ {
+  "commit": "9b05062, by kept.py",
+  "session": "b653307b-781a-4fa5-ab6d-1f15f5b7c2b7",
+  "minutes": 3.6,
+  "cost_usd": 0.85,
+  "read": "The first user's need for B-1 and B-2 sent to the generator kept started as {\"needs\": [...]}; it made the README again with the license and claimed both by their lines; the first user, sent the work made again, gave both by their lines; returned."
  }
 ]

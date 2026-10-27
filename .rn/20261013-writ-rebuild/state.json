@@ -788,6 +788,9 @@
   },
   {
    "fact": "2026-10-27: the user: the Subagent rows went once Claude Code restarted; once rn is done the rules that repeat it are removed, so fix.md is not added to .claude/rules/dev.md"
+  },
+  {
+   "fact": "2026-10-27: T37 built (9b05062): claim.json made {lines} or waits, reading.json good {lines} or need {one sentence}; an each-part item gives plain lines, one range in every part; gap, outside, differ and evidence gone from turn's forms, flow, prompts, docs, dev/architecture.md Principle 4, rn's orchestrator and checklist.md; check.sh turn and rn 100%. Trials on 9b05062: roles.py filled both forms (generator 1.2 min $0.38, first user 1.1 min $0.29), kept.py need sent and remade, returned (3.6 min $0.85), orchestrator left worded the question from the need and returned (9.9 min $2.51). Seen once: the first user's need carries a clause on what the work lacks; left until another run shows it"
   }
  ],
  "semantic_gist": [
@@ -860,7 +863,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T37: turn's claim and reading by lines alone, one proposal over every part, held to fix.md whole"
+   "task": "T35: rn's architecture, prompts, scripts and trials to the stages of eb65366"
   }
  ],
  "relational_map": [
@@ -898,7 +901,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T37 being built by a subagent from the brief drawn after reading reading.json, claim.json, turn/scripts/forms.py and flow.py, turn's generator.md and first-user.md, dev/turn/ux.md and architecture.md, rn's orchestrator.md:195-210 whole; list every place the per-item words are asked or used; draw one change over all, held to plugins/rn/checklists/fix.md B-1 to B-4; build it with the tests (check.sh 100%, mutate 0), try turn's trials; then T35's architecture and code, T36."
+   "next": "T35: dev/rn/architecture.md, then plugins/rn/prompts plan.md and design.md into goal, ux and architecture stages, steering.py's STAGES and sign-offs, proposal.py's headings, tests, move trials; then T36 code.md B-6; then acceptance run 5 as the user decides"
   }
  ],
  "uncertainty_signal": [

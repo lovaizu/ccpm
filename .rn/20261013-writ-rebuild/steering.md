@@ -92,7 +92,7 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 - [ ] T36: How heavily the work is checked is the architecture's decision on what a failure would
   cost, as issue #54's "Checks weighed by what a failure would cost" says, rn's code checklist
   changed so. Serves AC2.
-- [ ] T37: turn's roles write only what a role or the caller uses, as the user agreed (2026-10-27):
+- [x] T37: turn's roles write only what a role or the caller uses, as the user agreed (2026-10-27):
   the generator self-checks every item at the end of making and gives each by its lines alone,
   `<path>:<from>-<to>`, no words; the first user gives each item it found the Good of by its lines
   alone, and each it did not by one sentence of what the receiver would need to get for its Good,

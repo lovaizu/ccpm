@@ -241,5 +241,14 @@
   "way": "sent: B-1 sent back three times in round 1, each message to the generator and the first user taken only after the role's record held its reply after it, round 2 started anew, returned: every move in order",
   "hooks": "none",
   "read": "Every orchestrator record read, and each role's for its messages and ends."
+ },
+ {
+  "commit": "9b05062, left",
+  "session": "cc2a68b4-ae35-4e92-bdac-f6fcb7dad021",
+  "minutes_to_return": 9.9,
+  "cost_usd": 2.51,
+  "way": "left: B-1 without Good in two rounds, the orchestrator worded the question from B-1's need with a recommended answer, the calling AI answered, round 3 gave B-1 by its lines, returned: every move in order",
+  "hooks": "none",
+  "read": "The orchestrator's record read; its entries without a timestamp repeat tool uses of the same ID and are no moves of their own."
  }
 ]
