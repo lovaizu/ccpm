@@ -118,7 +118,7 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
   plugin's and the adapter free of lane's code, so `lay.py up` brings lane's copy up without
   touching it.
 - A subagent's steps are those of the part its file has it read first, where its file is its entry
-  as [Entries hand to the parts](../architecture.md#entries-hand-to-the-parts) has it, and else
+  as [Entries pass the job to their parts](../architecture.md#entries-pass-the-job-to-their-parts) has it, and else
   those of its file; the guard holds a subagent lanes are laid in whose entry names a part to read
   the part whole before anything else, telling it the entry's sentence, with nothing in the
   proposal.
@@ -134,7 +134,7 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
   guard.
 
   An adapter that hands its port's text to a part of the plugin, as
-  [Entries hand to the parts](../architecture.md#entries-hand-to-the-parts) has it, finds it from
+  [Entries pass the job to their parts](../architecture.md#entries-pass-the-job-to-their-parts) has it, finds it from
   there, beside the proposal as in the plugin.
 - The guard reads a call in the forms the steps tell and the AI writes, not in every form the shell
   allows. A file a command names by words the guard cannot settle, such as `"$f"` or a path after a

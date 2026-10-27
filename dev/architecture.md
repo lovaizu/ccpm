@@ -8,6 +8,27 @@ says where a plugin's files go, how its code is written, and how it is tested an
 
 ![Who does what](who-does-what.svg)
 
+## Words used here
+
+- **caller**: the person or the AI that calls the plugin.
+- **main conversation**: the Claude Code conversation the person talks in. Only it can ask the
+  person.
+- **orchestrator**: the AI that runs the plugin's work from the call to the result.
+- **role**: a subagent the orchestrator starts for one job.
+- **run**: one use of the plugin, from the call to the result.
+- **move**: one thing the orchestrator does, such as starting a role.
+- **work**: what a role makes, such as a document or code.
+- **maker**: the role that makes a work.
+- **receiver**: the one a work is for.
+- **reader**: a role that uses a work in the receiver's place.
+- **checklist**: a list of items. Each item asks what the receiver should get from the work.
+- **Good**: an item's Good is that the receiver gets what the item asks, at given lines of the
+  work.
+- **hook**: a script Claude Code runs on a tool call.
+- **lane**: a step of a role held by a hook, which tells the role the step again when it drifts.
+  The ccpm plugin [lane](../plugins/lane/README.md) lays them, and its code that runs in the hooks
+  is the **guard**.
+
 ## Principles
 
 Every plugin follows these. The reason for each is under Why it is so. A plugin's own design adds
@@ -19,11 +40,10 @@ only what that plugin gives beyond them.
 3. Each job has its own role. The role gets only what the job needs.
 4. Nobody relays messages. Whoever needs something asks whoever has it, and goes on with the
    answer.
-5. An AI that did not make the work uses it first, in place of the receiver, the one the work is
-   for. For each item of the checklist, it gives the lines that give the item its Good, or says what
-   the receiver would still need. It tells the maker directly. A work that the caller reads in full
-   to approve, such as a plan, is read first by the caller. Before anyone reads it, the maker checks
-   its own work item by item.
+5. A work is first used by a reader, an AI that did not make it. For each item of the checklist,
+   the reader gives the lines that give the item its Good, or says what the receiver would still
+   need, and tells the maker directly. Before that, the maker checks its own work item by item. A
+   work that the caller reads in full to approve, such as a plan, is read first by the caller.
 6. What a machine can check is checked by a script, a hook or the project's own tools. They tell the
    role its step again, or stop what would break a rule. An AI reads only for what needs a reader.
 7. A run that keeps a state has its course in a script. The script writes the state to a file
@@ -76,7 +96,7 @@ The person decides from what they read, so a translation that adds or leaves out
 what they approve. People who were not in the conversation read the repository later, and English
 reaches most of them.
 
-### Hearing until nothing is left to decide
+### Asking until nothing is left to decide
 
 The orchestrator asks the caller every point that only they can decide, one at a time, each with a
 recommendation. It finds facts itself. It shows the caller each fact the work depends on, one at a
@@ -327,7 +347,7 @@ The plugins' folders are kept together in `plugins/`, as the official marketplac
 [anthropics/claude-code](https://github.com/anthropics/claude-code) keep theirs. The root then holds
 only what the whole repository needs.
 
-### Entries hand to the parts
+### Entries pass the job to their parts
 
 An entry is a skill, an agent, a hook or a command line: something whose form Claude Code fixes. An
 entry holds only what Claude Code fixes, and hands the job to its part, kept in a file of its own

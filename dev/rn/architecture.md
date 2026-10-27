@@ -143,7 +143,7 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
 
   A choice an item needs and no one settled is met by turn while it makes the work, asked back
   mid-run or guessed, and one settled before the work is not met as rework after it
-  ([Hearing until nothing is left to decide](../architecture.md#hearing-until-nothing-is-left-to-decide)).
+  ([Asking until nothing is left to decide](../architecture.md#asking-until-nothing-is-left-to-decide)).
 - Each point the user decides is kept as a decision of the work it settles, in the CCS of that
   work's next call, before the move after it; a work made again is a new call, its decisions
   carried over and rewritten where an answer changed them.
