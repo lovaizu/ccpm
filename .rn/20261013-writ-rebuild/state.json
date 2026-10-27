@@ -776,6 +776,9 @@
   },
   {
    "fact": "2026-10-27: turn's code to its architecture by a subagent (1bb493f..ecf9076), read by hand; fixed by hand f287a78 (msvcrt lock on Windows, next.lock in the tree, UX's third source of a question, wrapping); R62-R65 in report.decisions.md; plugins moved to plugins/<name> (599b0df), lane's placed.py looking for the marketplace above plugins/; all pushed; CI of a1fa33c passed"
+  },
+  {
+   "fact": "2026-10-27: rn's code to its architecture by a subagent (f132388..11d880d), read by hand; mutation and property tests to CI alone, the user choosing it (ab3d55e), whole before a release kept; acceptance.py counts tokens and keeps each run in dev/rn/trials/acceptance/results.json, run 3 written in (ed5565b); move trials 27/28 then ty-deliverable fixed at its cause, history reading replaced.jsonl as one step's commit hid a decision replaced within it (63cce08), rn's slow property test from >17 min to 47 s (da2829d); 28/28; playground PR #15 and branch of run 3 removed"
   }
  ],
  "semantic_gist": [
@@ -845,7 +848,7 @@
  ],
  "focal_entities": [
   {
-   "task": "rn's prompts, scripts and tests to dev/rn/architecture.md (7d581f2) and turn's new calling.md, by a subagent from 599b0df; then the trials (acceptance.py to record tokens), then the acceptance run"
+   "task": "acceptance run 4, whole, at bf48043, compared with run 3 in results.json"
   }
  ],
  "relational_map": [
@@ -883,7 +886,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: read the rn subagent's commits after 599b0df by hand against fix.md item by item, run check.sh rn 100%, mutate --since 599b0df rn 0, push; then the trials (move trials pass; acceptance.py records time and tokens, intent 8); then the acceptance run compared with run 3 (3 h 50 min, ~$76, 3½ of 6 tasks, 25 sends-back) on time, tokens, cost, sends-back; report to the user in Japanese with R62-R65 and later decisions"
+   "next": "on resume: find the acceptance run with pgrep -af acceptance.py; its folder /tmp/rn/20261027-acceptance-*; when it ends read summary.json and results.json, compare with run 3 on minutes, tokens, cost, changes sent back, read the records for causes, report to the user in Japanese with R62-R65 and the decisions after"
   }
  ],
  "uncertainty_signal": [
