@@ -7,7 +7,8 @@
           {
             "type": "command",
             "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:up\"'*|*'\"agent_type\": \"turn:up\"'*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:up"
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:up\"'*|*'\"agent_type\": \"turn:up\"'*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:up",
+            "onFailure": "block"
           }
         ]
       },
@@ -17,7 +18,8 @@
           {
             "type": "command",
             "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:generator\"'*|*'\"agent_type\": \"turn:generator\"'*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:generator"
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:generator\"'*|*'\"agent_type\": \"turn:generator\"'*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:generator",
+            "onFailure": "block"
           }
         ]
       },
@@ -27,7 +29,8 @@
           {
             "type": "command",
             "timeout": 10,
-            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:first-user\"'*|*'\"agent_type\": \"turn:first-user\"'*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:first-user"
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:first-user\"'*|*'\"agent_type\": \"turn:first-user\"'*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn:first-user",
+            "onFailure": "block"
           }
         ]
       }

@@ -85,11 +85,13 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
   next call's PreToolUse. Read from the record alone, the call being checked would count as made
   before it, and a call made earlier in the same reply would be missed.
 - A thing a lane takes is fixed in the step, or given for each run and read from the JSON the
-  subagent starts from.
+  subagent starts from and each message sent to it after, the later over the earlier.
 
-  A subagent's inputs and outputs are most often known only once its run starts, and the JSON it
-  starts from is the one place a plugin hands them over, so a lane reads them there, the same way in
-  every plugin.
+  A subagent's inputs and outputs are most often known only once its run starts, and a plugin hands
+  them over in what the subagent starts from, so a lane reads them there, the same way in every
+  plugin; a run's files may grow while the subagent works, as when an answer adds a file, and a
+  subagent started again for that spends again what it had read, so a message sent to it counts
+  too.
 - The guard checks the event against the form Claude Code hands it and `hooks/lanes.json` against
   the form `lay.py write` writes, then what each lane is given against that lane's IN, a JSON
   Schema lanes.md defines, before any lane's check runs: the texts of its places, the run's values
@@ -134,11 +136,16 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
   An adapter that hands its port's text to a part of the plugin, as Principle 9 has it, finds it
   from there, beside the proposal as in the plugin.
 - The guard reads a call in the forms the steps tell and the AI writes, not in every form the shell
-  allows.
+  allows. A file a command names by words the guard cannot settle, such as `"$f"` or a path after a
+  `cd` it cannot follow, is told to the subagent as not checked, with how to name it, where a lane
+  holds the files read or written; and a hook on a tool call that fails or times out blocks the
+  call.
 
   What must hold whatever the AI writes is held by GitHub's branch protection, Claude Code's
   sandbox or its permission rules, as a check on a command's text is no security boundary; so the
-  guard stays small.
+  guard stays small. A check that cannot tell lets through what it was there to stop unseen
+  (Principle 10), and the subagent can put it right by naming the file by its path, so it is told
+  with the lane's sentence as a drift is.
 
 ### Physical view
 

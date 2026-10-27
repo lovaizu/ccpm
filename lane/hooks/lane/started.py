@@ -1,8 +1,11 @@
-"""What a subagent started from, for a lane taking a thing given for each run, written `{<name>}` in
-its step, such as `{work}`: the texts the subagent started from, its prompt and what each script
-laid by start_with printed, whose values the values port reads, as ports.py says; those values put
-in the places of a lane's sentence, and told. The JSON a subagent starts from is the one place a
-plugin hands it the files of its run, so a lane reads them there, the same way in every plugin."""
+"""What a subagent is given, for a lane taking a thing given for each run, written `{<name>}` in its
+step, such as `{work}`: the texts it started from, its prompt and what each script laid by
+start_with printed, and each message sent to it after its start, whose values the values port
+reads, as ports.py says; those values put in the places of a lane's sentence, and told. A plugin
+hands a subagent the files of its run in the JSON it starts from, and in a message sent to it
+after where they grow while it works, as when an answer adds a file; so a lane reads them there,
+the same way in every plugin, and the subagent goes on rather than being started again, spending
+again what it had read."""
 
 from __future__ import annotations
 
@@ -26,14 +29,18 @@ def names(takes: list[str]) -> list[str]:
 def texts(
     found: list[dict[str, Any]] | None, cwd: str, runs: Callable[[call.Call], bool]
 ) -> list[str] | None:
-    """The texts a subagent started from, in order, read from the entries found of its record, made
-    in the folder: its prompt, then what each call the runs function holds to run a script laid by
-    start_with gave back; None where its record is not found, as what it was given is then not
-    known."""
+    """The texts a subagent was given, read from the entries found of its record, made in the
+    folder, in the order the record holds them: its prompt and each message sent to it after, as
+    record.message reads them, and what each call the runs function holds to run a script laid by
+    start_with gave back, at the entry it was used in; None where its record is not found, as what
+    it was given is then not known."""
     if found is None:
         return None
-    made = [d for d in record.done(found, cwd) if runs(call.made(d))]
-    return [record.prompt(found), *(d.result for d in made)]
+    sent = [(n, m) for n, entry in enumerate(found) for m in record.message(entry)]
+    printed = [(n, d.result) for n, d in record.done_at(found, cwd) if runs(call.made(d))]
+    # Sorted by the entry alone, so the prints of tools used in one entry keep their order; no entry
+    # both brings a message, a user entry of text, and uses a tool, an assistant entry.
+    return [t for _, t in sorted([*sent, *printed], key=lambda placed: placed[0])]
 
 
 def held(named: list[str], run: dict[str, list[str] | None]) -> dict[str, list[str]] | None:

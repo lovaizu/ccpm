@@ -23,7 +23,12 @@ COMMAND = (
     """ for its hooks to run"}}';; esac; exit 0; };"""
     ' exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
 )
-ENTRY = {"matcher": "Bash", "hooks": [{"type": "command", "timeout": 10, "command": COMMAND}]}
+# Its entry of PreToolUse, matching the tool hands_off watches, blocking the call where the hook
+# fails.
+ENTRY = {
+    "matcher": "Bash",
+    "hooks": [{"type": "command", "timeout": 10, "command": COMMAND, "onFailure": "block"}],
+}
 # hooks/lanes.json laying hands_off on step 3, as `lay.py write` writes it for the proposal.
 LAID = {"subagents": [{"name": "changelog-writer", "steps": [{"step": 3, "lanes": LANES}]}]}
 # test_after on step 3, held as the subagent is about to end, and its entry of SubagentStop, which

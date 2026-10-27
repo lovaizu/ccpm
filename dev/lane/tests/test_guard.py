@@ -426,6 +426,16 @@ class TestRunValues(GuardTest):
         told = "notes: Write only `{work}`.\n`{work}` is `c.md`."
         self.assertEqual(self.wrote("a.md"), ("told", told))
 
+    def test_a_file_a_later_message_adds_to_the_work_goes_on(self):
+        # Given: write_only taking `{work}`, the prompt naming the work, and a message from the
+        # main conversation since, naming a file more
+        self.record([helpers.from_main('{"work": ["a.md", "b.md", "c.md"]}')], self.RUN)
+        # When: changelog-writer writes the file added, then one no text names
+        # Then: the first goes on, and the second is told with the value the message gave
+        self.assertEqual(self.wrote("c.md"), ("", ""))
+        told = "notes: Write only `{work}`.\n`{work}` is `a.md`, `b.md`, `c.md`."
+        self.assertEqual(self.wrote("d.md"), ("told", told))
+
     def test_lanes_json_is_read_once_on_an_event(self):
         # Given: start_with laid on step 1, run, and write_only taking `{work}`, read with the
         # values the script printed by the subagent's adapter

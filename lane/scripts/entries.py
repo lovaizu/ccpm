@@ -111,7 +111,8 @@ def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | No
     tells agents apart; for an event a call is kept on, where it has any lane, an entry matching
     every tool; for a tool call, where it has any lane and its entry has it read its part first,
     as the agent's `part` says, every tool too; each command giving the subagent alone, whose lanes
-    the guard reads from hooks/lanes.json."""
+    the guard reads from hooks/lanes.json, and the hook of a tool call blocking the call where the
+    hook fails."""
     every = [(s["step"], g) for s in agent["steps"] for g in s["lanes"]]
     kept = event in KEPT
     on_it = [(n, g) for n, g in every if event in lanes.held_on(g["lane"])]
@@ -124,10 +125,15 @@ def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | No
     each = [*first, *(t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ()))]
     tools = [name] if ending else [".*"] if kept else each
     run_it = command(plugin, name, event)
-    return {
-        "matcher": "|".join(dict.fromkeys(tools)),
-        "hooks": [{"type": "command", "timeout": hook.TIMEOUT, "command": run_it}],
-    }
+    command_hook: dict[str, Any] = {"type": "command", "timeout": hook.TIMEOUT, "command": run_it}
+    # A hook on a tool call that fails to start, exits other than 0 or 2, times out or prints no
+    # JSON Claude Code reads blocks the call, as Claude Code 2.1.295 and later do with onFailure
+    # block, so a lane that could not check stops the call rather than let it through. At the
+    # subagent's end it does nothing, and as a call comes back the call has run, so a block there
+    # would only hand the AI an error it cannot put right; those hooks are left as they are.
+    if event == "PreToolUse":
+        command_hook["onFailure"] = "block"
+    return {"matcher": "|".join(dict.fromkeys(tools)), "hooks": [command_hook]}
 
 
 def hooks_read(root: str) -> dict[str, Any]:

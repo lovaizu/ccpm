@@ -12,6 +12,11 @@ from test_guard import GuardTest
 
 TAKES = ["CHANGELOG.md"]
 SENTENCE = "Write only `CHANGELOG.md`."
+# The point a write of `$f` and `$g`, files the words do not settle, is told by.
+UNSETTLED = (
+    "`$f`, `$g`: lane cannot tell which file is named here, so this lane could not be checked;"
+    " name each file by its path, without `$`, a backquote or a `cd` lane cannot follow"
+)
 
 
 class WriteOnlyTest(testing.FolderTest):
@@ -58,6 +63,22 @@ class TestDrift(WriteOnlyTest):
                 # the AI writes
                 # Then: it is a drift
                 self.assertTrue(self.bash(command))
+
+
+class TestCouldNotCheck(WriteOnlyTest):
+    def test_a_command_writing_a_file_the_words_do_not_settle_is_told_so(self):
+        for command in (
+            'echo x > "$f"; cp CHANGELOG.md "$g"',
+            'cd "$d" && touch "$f" && rm "$g"',
+            'echo x > CHANGELOG.md > "$f" > /tmp/a > "$g"',
+        ):
+            with self.subTest(command=command):
+                # Given: write_only taking `CHANGELOG.md`
+                # When: a command writes files named by variables, or from a folder a cd the words
+                # do not settle went to, beside the output or a file out of the folder
+                # Then: it drifts by the point that lane cannot tell which files they are, as
+                # each may be in the folder and none of the outputs
+                self.assertEqual(self.bash(command), UNSETTLED)
 
 
 class TestLetThrough(WriteOnlyTest):
@@ -147,6 +168,14 @@ class TestGuard(GuardTest):
         # When: changelog-writer writes README.md
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
         self.assertEqual(self.written("README.md"), ("told", f"notes: {SENTENCE}"))
+
+    def test_a_write_the_words_do_not_settle_is_stopped_with_the_sentence_and_the_point(self):
+        # Given: write_only on step 3 of changelog-writer
+        event = self.called("Bash", {"command": 'echo x > "$f" > "$g"'})
+        # When: changelog-writer writes files named by variables
+        # Then: the call is stopped with the sentence and, on the next line, the point
+        expected = ("told", f"notes: {SENTENCE}\n{UNSETTLED}")
+        self.assertEqual(self.guard(json.dumps(event)), expected)
 
     def test_a_write_of_the_output_is_let_through(self):
         # Given: write_only on step 3 of changelog-writer

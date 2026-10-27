@@ -1,6 +1,7 @@
 """What a shell command reads and writes: the paths its words name, each taken from where the
 command's cd has gone by then, as the shell takes it, and a heredoc's text left out, as it is input,
-not paths."""
+not paths; and the words naming a file it reads or writes that do not settle which, so a lane can
+tell it could not check them."""
 
 from __future__ import annotations
 
@@ -198,38 +199,70 @@ def paths(here: str, words: list[str]) -> list[str]:
     return [p for p in (path(here, w) for w in words) if p]
 
 
-def written(command: str, cwd: str) -> list[str]:
-    """Each path the command writes: by a redirect, by a command that writes the paths it names, or
-    in place by sed."""
+def unsettled(named: list[tuple[str | None, str]]) -> list[str]:
+    """Each word, of those named from their folders, whose path the words do not settle, as it is
+    written; an empty word names no path, so it is none of them."""
+    return [w for here, w in named if w and path(here, w) is None]
+
+
+def writes(command: str, cwd: str) -> list[tuple[str | None, str]]:
+    """Each word naming a path the command writes, with the folder it is named from, None where the
+    words do not settle it: by a redirect, by a command that writes the paths it names, or in place
+    by sed."""
     found = []
     for here, said, _ in statements(command, cwd):
         # Each word with the one before it.
-        found += [path(here, w) for before, w in zip([""] + said, said) if sign(before, WRITES)]
+        found += [(here, w) for before, w in zip([""] + said, said) if sign(before, WRITES)]
         # A redirect's target is not an argument of the command.
         plain = without_redirects(said)
         # An empty word, such as the backup suffix of `sed -i ''`, names no path.
         args = [w for w in plain[1:] if w and not w.startswith("-")]
         head = plain[0] if plain else ""
         if head in WRITE_EACH:
-            found += [path(here, w) for w in args]
+            found += [(here, w) for w in args]
         elif head in WRITE_LAST:
-            found += [path(here, w) for w in args[-1:]]
+            found += [(here, w) for w in args[-1:]]
         elif head == "sed" and any(w.startswith(("-i", "--in-place")) for w in plain):
-            found += [path(here, w) for w in args[1:]]
-    return [p for p in found if p]
+            found += [(here, w) for w in sed_files(plain[1:])]
+    return found
 
 
-def reads(command: str, cwd: str) -> list[tuple[str, Lines | None]]:
-    """Each file the command prints what it reads of, by cat, head, tail, sed or grep, with the
-    lines it reads of each, None where the command does not tell them, such as those grep finds; a
-    file the words do not settle left out."""
+def written(command: str, cwd: str) -> list[str]:
+    """Each path the command writes, as `writes` names it; a path the words do not settle left
+    out, as `unsettled_written` gives its word."""
+    return [p for p in (path(here, w) for here, w in writes(command, cwd)) if p]
+
+
+def unsettled_written(command: str, cwd: str) -> list[str]:
+    """Each word naming a path the command writes, as `writes` names it, that the words do not
+    settle, such as `"$out"`, or a relative path after a cd they do not settle."""
+    return unsettled(writes(command, cwd))
+
+
+def read_by(command: str, cwd: str) -> list[tuple[str | None, str, Lines | None]]:
+    """Each word naming a file the command prints what it reads of, by cat, head, tail, sed or
+    grep, with the folder it is named from, None where the words do not settle it, and the lines
+    it reads of the file, None where the command does not tell them, such as those grep finds."""
     found = []
     for here, said, _ in statements(command, cwd):
         plain = without_redirects(said)
         if plain and plain[0] in READERS:
             lines, files = READERS[plain[0]](plain[1:])
-            found += [(p, lines) for p in (path(here, f) for f in files) if p]
+            found += [(here, f, lines) for f in files]
     return found
+
+
+def reads(command: str, cwd: str) -> list[tuple[str, Lines | None]]:
+    """Each file the command reads, as `read_by` names it, with the lines it reads of it; a file the
+    words do not settle left out, as `unsettled_reads` gives its word."""
+    found = ((path(here, f), lines) for here, f, lines in read_by(command, cwd))
+    return [(p, lines) for p, lines in found if p]
+
+
+def unsettled_reads(command: str, cwd: str) -> list[str]:
+    """Each word naming a file the command reads, as `read_by` names it, that the words do not
+    settle, such as `"$f"`, or a relative path after a cd they do not settle."""
+    return unsettled([(here, f) for here, f, _ in read_by(command, cwd)])
 
 
 def split(args: list[str], valued: set[str]) -> tuple[list[tuple[str, str]], list[str]]:
@@ -279,13 +312,23 @@ def tail_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
     return ((count, None) if found["on"] else (-count, None)), operands
 
 
+def sed_files(args: list[str]) -> list[str]:
+    """The files sed is given, its words after its program: the operands after its script, which -e
+    or -f gives, or else its first operand; an empty word, such as the backup suffix of `sed -i ''`,
+    names no file."""
+    options, operands = split([a for a in args if a], {"-e", "-f"})
+    given = any(option in ("-e", "-f") for option, _ in options)
+    return operands if given else operands[1:]
+
+
 def sed_lines(args: list[str]) -> tuple[Lines | None, list[str]]:
     """The lines sed prints, every line but with -n, then those its script prints by number, and
     the files; its script is what -e gives, one line each, or else its first operand."""
     options, operands = split(args, {"-e", "-f"})
     scripts = [value for option, value in options if option == "-e"]
     if not scripts:
-        scripts, operands = operands[:1], operands[1:]
+        scripts = operands[:1]
+    operands = sed_files(args)
     if ("-n", "") not in options:
         return WHOLE, operands
     found = SED_LINES.fullmatch("\n".join(scripts))

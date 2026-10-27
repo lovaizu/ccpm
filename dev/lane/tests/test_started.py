@@ -1,6 +1,6 @@
-"""What a subagent started from, for a take written `{<name>}`: the texts it started from, its
-prompt and what a script start_with takes prints, whose values the values port reads; those values
-put in the places of a lane's sentence, and told."""
+"""What a subagent is given, for a take written `{<name>}`: the texts it started from, its prompt
+and what a script start_with takes prints, and each message sent to it after, whose values the
+values port reads; those values put in the places of a lane's sentence, and told."""
 
 import unittest
 
@@ -117,6 +117,24 @@ class TestStarted(helpers.PluginTest):
         # When: what the subagent started from is read
         # Then: it is the prompt, then what the script printed
         self.assertEqual(self.texts(), ['{"run": "/r"}', '{"work": "a.md"}'])
+
+    def test_each_message_sent_after_the_start_is_read_in_the_order_of_the_record(self):
+        # Given: a record begun by a prompt, then a message from the main conversation, the script
+        # run, a reply a stop hook kept going, and a message from another subagent
+        calls = [
+            helpers.from_main('{"work": "m.md"}'),
+            ("Bash", {"command": "python3 start.py"}, '{"work": "s.md"}'),
+            '{"work": "told.md"}',
+            helpers.from_subagent('{"work": "p.md"}'),
+        ]
+        self.record(calls, '{"run": "/r"}')
+        # When: what the subagent is given is read
+        # Then: it is the prompt, each message and what the script printed, in the order the
+        # record holds them, the reply and what the stop hook told it none of them
+        self.assertEqual(
+            self.texts(),
+            ['{"run": "/r"}', '{"work": "m.md"}', '{"work": "s.md"}', '{"work": "p.md"}'],
+        )
 
     def test_no_record_found_is_not_known(self):
         # Given: no record of the subagent

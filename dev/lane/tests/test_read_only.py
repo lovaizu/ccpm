@@ -11,6 +11,11 @@ from helpers import NO_PLUGIN, read_only, testing
 from test_guard import GuardTest
 
 TAKES = ["in.md"]
+# The point a read of `$f` and `$g`, files the words do not settle, is told by.
+UNSETTLED = (
+    "`$f`, `$g`: lane cannot tell which file is named here, so this lane could not be checked;"
+    " name each file by its path, without `$`, a backquote or a `cd` lane cannot follow"
+)
 
 
 class ReadOnlyTest(testing.FolderTest):
@@ -47,6 +52,18 @@ class TestDrift(ReadOnlyTest):
         self.assertTrue(self.drifts("Grep", {"pattern": "x"}))
 
 
+class TestCouldNotCheck(ReadOnlyTest):
+    def test_a_command_reading_a_file_the_words_do_not_settle_is_told_so(self):
+        for command in ('cat "$f" in.md && head "$g"', 'cat notes.md "$f" "$g" "$f"'):
+            with self.subTest(command=command):
+                # Given: a command reading files named by variables, with the input or with
+                # another file
+                # When: read_only reads it
+                # Then: it drifts by the point that lane cannot tell which files they are, each
+                # word once, so the subagent names them by their paths
+                self.assertEqual(self.drifts("Bash", {"command": command}), UNSETTLED)
+
+
 class TestLetThrough(ReadOnlyTest):
     def test_a_read_of_the_input_is_no_drift(self):
         for tool, given in (
@@ -76,11 +93,11 @@ class TestLetThrough(ReadOnlyTest):
     def test_a_call_reading_no_file_is_no_drift(self):
         for tool, given in (
             ("Bash", {"command": "ls && git status"}),
-            ("Bash", {"command": 'cat "$f"'}),
+            ("Bash", {"command": 'echo "$f" > out.md'}),
             ("Write", {"file_path": self.at("notes.md"), "content": "x"}),
         ):
             with self.subTest(tool=tool, given=given):
-                # Given: a call that reads no file, or none the words settle
+                # Given: a call that reads no file, a word made from a variable read by none
                 # When: read_only reads it
                 # Then: it is no drift
                 self.assertFalse(self.drifts(tool, given))
@@ -122,6 +139,14 @@ class TestGuard(GuardTest):
                 # Then: the call is stopped with read_only's sentence
                 expected = ("told", "notes: Read only `in.md`.")
                 self.assertEqual(self.reading(name), expected)
+
+    def test_a_read_the_words_do_not_settle_is_stopped_with_the_sentence_and_the_point(self):
+        # Given: read_only laid on changelog-writer
+        event = self.called("Bash", {"command": 'cat "$f" "$g"'})
+        # When: it reads files named by variables
+        # Then: the call is stopped with read_only's sentence and, on the next line, the point
+        expected = ("told", f"notes: Read only `in.md`.\n{UNSETTLED}")
+        self.assertEqual(self.guard(json.dumps(event)), expected)
 
     def test_the_form_is_let_through_to_read_only_alone(self):
         # Given: read_only and in_form laid on changelog-writer, and write_only on the step of

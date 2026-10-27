@@ -9,16 +9,21 @@ import os
 
 import shell
 import step
-from call import READ_TOOLS, Call
+from call import READ_TOOLS, Call, unsettled_point
 
 ACTION = "read"
 WORDING = "Read only `<input>`."
 TOOLS = (*READ_TOOLS, "Bash")
 
 
-def drifts(call: Call, takes: list[str], root: str) -> bool:
+def drifts(call: Call, takes: list[str], root: str) -> bool | str:
     """Whether the call reads a file or folder that is none of the inputs taken and in none of
-    them, each input named from the folder the call is made in, where the guard stands."""
+    them, each input named from the folder the call is made in, where the guard stands; where a
+    command names a file it reads by words that do not settle which, the point that the lane could
+    not check it by, as `unsettled_point` gives it, as the file may be none of the inputs and the
+    subagent can name it so lane can tell."""
+    if call.unsettled_reads:
+        return unsettled_point(call.unsettled_reads)
     inputs = [i for i in (shell.path(os.getcwd(), t) for t in takes) if i]
     return any(not any(shell.inside(p, i) for i in inputs) for p, _ in call.reads)
 

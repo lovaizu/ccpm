@@ -1,12 +1,14 @@
-"""Each port lane reads a plugin's text at: the values a subagent started from, the items of an
-input and the move a script printed. Each is defined once, here, by the JSON it is given and the
+"""Each port lane reads a plugin's text at: the values a subagent is given, the items of an input
+and the move a script printed. Each is defined once, here, by the JSON it is given and the
 JSON it gives back, a JSON Schema each, as docs/lanes.md shows them, and read by lane's one reading
 of it; so each lane checks only what lanes.md defines it to take, and knows no plugin's form.
 
-- `values`: given `{"texts": [<the prompt>, <each print of a start_with script>]}`, gives
-  `{"values": {"<name>": ["<text>", ...] or null}}`: the value under each name in the JSON objects
-  the texts hold, the later over the earlier, a list standing for each of its texts, a text for
-  itself, null for null, the caller saying there is none; a value of another kind gives nothing.
+- `values`: given `{"texts": [<the prompt>, <each print of a start_with script and each message
+  sent to the subagent after>]}`, in the order its record holds them, as started.py reads them,
+  gives `{"values": {"<name>": ["<text>", ...] or null}}`: the value under each name in the JSON
+  objects the texts hold, the later over the earlier, a list standing for each of its texts, a
+  text for itself, null for null, the caller saying there is none; a value of another kind gives
+  nothing.
 - `items`: given `{"input": "<path>", "text": "<its text>"}`, gives `{"items": ["<ID>", ...]}`: the
   ID each top-level item of a Markdown list in the text begins with.
 - `move`: given `{"output": "<what the script printed>"}`, gives

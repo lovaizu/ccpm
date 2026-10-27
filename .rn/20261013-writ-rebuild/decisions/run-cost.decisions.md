@@ -53,8 +53,10 @@ Decided by the assistant from these and turn's purpose:
 - The hunting form is fixed at its root, the template of rn/checklists/checklist.md, then each
   checklist; code.md B-6 has the generator decide and name a survivor kept, not ask the user.
 - rn's own step lines follow the same rule as turn's: a step's start and end, a question, a result.
-- Hooks: lay.py writes `"onFailure": "block"` on every command hook it lays (Claude Code v2.1.295+),
-  so a hook that fails or times out stops the call; a command lane cannot parse is told as could not
+- Hooks: lay.py writes `"onFailure": "block"` on each PreToolUse hook it lays (Claude Code
+  v2.1.295+), so a hook that fails or times out stops the call; the field does nothing on
+  SubagentStop and on PostToolUse would only hand the AI an error it cannot fix, so it is left off
+  there; a command lane cannot parse is told as could not
   check, not let through.
 
 Where each intent lands, as found before any fix: audits/run-cost-impact.md.

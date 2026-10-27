@@ -216,33 +216,40 @@ def replies(found: list[dict[str, Any]]) -> list[int]:
 
 
 def done(found: list[dict[str, Any]], cwd: str) -> list[Done]:
-    """Each tool the subagent used, in order, from the entries of its record: an assistant entry's
-    tool use, with what a user entry's tool result of the same id gave back, made in the folder its
-    entry names, or the one given where it names none, a call whose result is not there left out,
-    as it has not come back, and a call a hook stopped too, as it did nothing; and each reply that
-    ended its turn, as a use of no tool, REPLY, its texts, a line each, as its input's SAID."""
-    used: dict[Any, tuple[Any, Any, Any]] = {}
+    """Each tool the subagent used, in order, from the entries of its record, as `done_at` gives
+    them."""
+    return [d for _, d in done_at(found, cwd)]
+
+
+def done_at(found: list[dict[str, Any]], cwd: str) -> list[tuple[int, Done]]:
+    """Each tool the subagent used, in order, from the entries of its record, with the number of
+    the entry it was used in among them: an assistant entry's tool use, with what a user entry's
+    tool result of the same id gave back, made in the folder its entry names, or the one given
+    where it names none, a call whose result is not there left out, as it has not come back, and a
+    call a hook stopped too, as it did nothing; and each reply that ended its turn, as a use of no
+    tool, REPLY, its texts, a line each, as its input's SAID."""
+    used: dict[Any, tuple[int, Any, Any, Any]] = {}
     results: dict[Any, tuple[str, bool]] = {}
     ended = replies(found)
     for number, entry in enumerate(found):
         if number in ended:
             texts = [b.get("text") for b in of(entry, "assistant", "text")]
             said = "\n".join(t for t in texts if isinstance(t, str))
-            used[number] = (REPLY, {SAID: said}, entry.get("cwd") or cwd)
+            used[number] = (number, REPLY, {SAID: said}, entry.get("cwd") or cwd)
             # A reply that ended the turn is made once it is written, giving back nothing.
             results[number] = ("", False)
         for b in uses(entry):
-            used[b.get("id")] = (b.get("name"), b.get("input"), entry.get("cwd") or cwd)
+            used[b.get("id")] = (number, b.get("name"), b.get("input"), entry.get("cwd") or cwd)
         for b in of(entry, "user", "tool_result"):
             given = b.get("content")
             said = given if isinstance(given, str) else ""
             results[b.get("tool_use_id")] = (said, b.get("is_error") is True)
     each = [
-        Done(tool, given, where, *results[key])
-        for key, (tool, given, where) in used.items()
+        (number, Done(tool, given, where, *results[key]))
+        for key, (number, tool, given, where) in used.items()
         if isinstance(tool, str) and isinstance(given, dict) and key in results
     ]
-    return [d for d in each if not (d.failed and HOOK_STOPPED.match(d.result))]
+    return [(n, d) for n, d in each if not (d.failed and HOOK_STOPPED.match(d.result))]
 
 
 def answered(found: list[dict[str, Any]]) -> bool:

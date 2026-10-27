@@ -158,6 +158,28 @@ class TestStatements(unittest.TestCase):
             with self.subTest(command=command):
                 self.assertEqual(reads(command), [])
 
+    def test_a_file_the_words_do_not_settle_is_given_by_its_word(self):
+        for command, unsettled in (
+            ('cat "$f" a', ["$f"]),
+            ('head -n 5 "`ls`"', ["`ls`"]),
+            ('cd "$d" && cat a', ["a"]),
+        ):
+            with self.subTest(command=command):
+                # Given: a command reading a file named by a variable or a command's output, or
+                # named from a folder a cd the words do not settle went to
+                # When: the words it reads that the words do not settle are read
+                # Then: each is given as it is written
+                self.assertEqual(shell.unsettled_reads(command, HERE), unsettled)
+
+    def test_a_settled_file_or_an_empty_word_gives_no_word_unsettled(self):
+        for command in ("cat a /b", "cat '' a", "grep 'x$' a", "sed -n '5,$p' a", 'echo "$f"'):
+            with self.subTest(command=command):
+                # Given: commands reading settled files, with an empty word or a `$` in a script
+                # or a pattern, which names no file, or reading nothing
+                # When: the words it reads that the words do not settle are read
+                # Then: there are none
+                self.assertEqual(shell.unsettled_reads(command, HERE), [])
+
     def test_other_commands_read_no_file(self):
         # Given: commands that print no file they read, and a statement of a redirect alone
         # When: what each reads is read

@@ -48,7 +48,9 @@ class Call(NamedTuple):
     what it gave back, whether it gave back an error and, for a run, what ends each command, the
     operator after it, such as `&&` or `|`, or a line's end after the last; of the call itself,
     each message that reached the subagent since it last asked, none where the record is not
-    found."""
+    found. A run holds too each word naming a file it reads, and each naming one it writes, that
+    the words do not settle, such as `"$f"`, as it is written, so a lane holding the files read or
+    written tells it could not check them rather than let them through."""
 
     action: str
     what: list[list[str]]
@@ -62,6 +64,8 @@ class Call(NamedTuple):
     failed: bool = False
     ends: tuple[str, ...] = ()
     heard: Sequence[str] = ()
+    unsettled_reads: tuple[str, ...] = ()
+    unsettled_written: tuple[str, ...] = ()
 
 
 class End(NamedTuple):
@@ -164,7 +168,10 @@ def alone(tool: str, given: dict[str, Any], cwd: str, result: str = "") -> Call:
         return Call("", [])
     command = str(given.get("command", ""))
     written = tuple(shell.written(command, cwd))
-    return Call("run", commands(command, cwd), written, told)
+    return Call("run", commands(command, cwd), written, told)._replace(
+        unsettled_reads=tuple(shell.unsettled_reads(command, cwd)),
+        unsettled_written=tuple(shell.unsettled_written(command, cwd)),
+    )
 
 
 def commands(command: str, cwd: str) -> list[list[str]]:
@@ -222,6 +229,18 @@ def reads(tool: str, given: dict[str, Any], cwd: str) -> list[tuple[str, shell.L
     named = given.get(field) or unnamed
     found = shell.path(cwd, named) if isinstance(named, str) else None
     return [(found, None)] if found else []
+
+
+def unsettled_point(words: Sequence[str]) -> str:
+    """The point a lane holding the files a run reads or writes tells where words naming some of
+    them do not settle which, given one word or more: each word once, in order, that lane cannot
+    tell the file, so the lane could not be checked, and how the subagent names the file so it
+    can."""
+    listed = ", ".join(f"`{w}`" for w in dict.fromkeys(words))
+    return (
+        f"{listed}: lane cannot tell which file is named here, so this lane could not be checked;"
+        " name each file by its path, without `$`, a backquote or a `cd` lane cannot follow"
+    )
 
 
 def shown(result: str) -> shell.Lines | None:

@@ -204,6 +204,24 @@ class TestMatcher(unittest.TestCase):
                 self.assertEqual((entry or {}).get("matcher"), matcher)
 
 
+class TestOnFailure(unittest.TestCase):
+    def test_only_a_hook_on_a_tool_call_blocks_the_call_where_it_fails(self):
+        # Given: hands_off and test_after laid on a step, held on a tool call and at the end
+        agent = {"name": "writer", "steps": [{"step": 3, "lanes": [*LANES, TESTED]}]}
+        for event, blocks in (
+            ("PreToolUse", True),
+            ("SubagentStop", False),
+            ("PostToolUse", False),
+            ("PostToolUseFailure", False),
+        ):
+            with self.subTest(event=event):
+                # When: the layer makes the subagent's entry of the event
+                hook = (entries.entry("notes", agent, event) or {"hooks": [{}]})["hooks"][0]
+                # Then: the hook of a tool call blocks it where the hook fails, and no other hook
+                # says what follows its failure
+                self.assertEqual(hook.get("onFailure"), "block" if blocks else None)
+
+
 class TestWords(unittest.TestCase):
     COMMAND = entries.command("notes", helpers.AGENT, "PreToolUse")
     # A hook's command as an older lane wrote it, giving each lane laid after the subagent.

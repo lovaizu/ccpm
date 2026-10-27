@@ -9,11 +9,13 @@ takes put in where it shows `<...>`; the hook tells it when the subagent does wh
 says.
 
 What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
-`{<name>}`: the value under that name the values port reads in what the subagent starts from, its
-prompt and what the script it first runs prints. The sentence `Write only {work}.` holds a subagent
-to the files its run's `work` names, whichever they are. A value given as `null` is the caller
-saying there is none: each lane taking that name lets the call or the end through on that run, with
-nothing told. A thing taken holds any text, a comma among the rest.
+`{<name>}`: the value under that name the values port reads in what the subagent is given, its
+prompt, what the script it first runs prints and each message sent to it after, the later over the
+earlier, so a file added to the run while it works, as by an answer, is held from then on. The
+sentence `Write only {work}.` holds a subagent to the files its run's `work` names, whichever they
+are. A value given as `null` is the caller saying there is none: each lane taking that name lets
+the call or the end through on that run, with nothing told. A thing taken holds any text, a comma
+among the rest.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -40,6 +42,14 @@ Markdown template, whose headings and frontmatter keys a Markdown output is held
 read_only lets the subagent read, beside its inputs, the form each of its in_form lanes names: its
 step tells it to write in that form, and the form, a file of your plugin, holds nothing of the
 project's work.
+
+read_only and write_only tell a file a command reads or writes by the words naming it. A word that
+does not settle which file, one holding `$` or a backquote, or a relative path after a `cd` whose
+folder the words do not settle, cannot be told to be an input or an output, so the call is stopped
+as one lane could not check: the subagent is told the sentence and, on the next line, that lane
+cannot tell which file is named there, and to name each file by its path, without `$`, a backquote
+or a `cd` lane cannot follow. write_only lets a command write out of the folder the subagent works
+in, as one throwing its output away in `/dev/null`, only where the words settle that it is out.
 
 every_item reads its input's items at the items port, and follow_next the move your script printed
 at the move port, as the ports below say.
@@ -111,7 +121,7 @@ and an adapter failing, giving no answer in time or answering out of its port is
 
 | Port | Given | Gives | lane's form |
 |---|---|---|---|
-| values | `{"texts": ["<the prompt>", "<each print of a start_with script>"]}` | `{"values": {"<name>": ["<text>", ...]}}` or `{"values": {"<name>": null}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself, `null` for itself |
+| values | `{"texts": ["<the prompt>", "<each print of a start_with script or message sent after>", ...]}`, in the order the subagent's record holds them | `{"values": {"<name>": ["<text>", ...]}}` or `{"values": {"<name>": null}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself, `null` for itself |
 | items | `{"input": "<path>", "text": "<its text>"}` | `{"items": ["<ID>", ...]}` | each top-level item of a Markdown list beginning with an ID, such as `B-1`, `R33` or `KR1.1`, in bold, code or brackets or not |
 | move | `{"output": "<what the script printed>"}` | `{"move": {"tool": "...", "input": {...}}}` or `{"move": null}` | the tool call itself, one JSON line `{"tool": ..., "input": {...}}` last in the output |
 

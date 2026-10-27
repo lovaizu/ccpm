@@ -203,6 +203,28 @@ class TestReadCall(unittest.TestCase):
         # Then: it is a run reading those lines of the file
         self.assertEqual(runs("head -n 5 a").reads, (("/r/a", (1, 5)),))
 
+    def test_a_bash_call_holds_the_words_naming_a_file_it_does_not_settle(self):
+        # Given: a Bash call reading a file named by a variable, and writing one named so
+        # When: it is read
+        made = runs('cat a "$f" > "$g"')
+        # Then: it holds each word naming a file it reads or writes that the words do not settle,
+        # apart, and the settled file read
+        self.assertEqual(made.unsettled_reads, ("$f",))
+        self.assertEqual(made.unsettled_written, ("$g",))
+        self.assertEqual(made.reads, (("/r/a", (1, None)),))
+
+    def test_a_call_of_another_tool_holds_no_word_unsettled(self):
+        for tool, given in (
+            ("Read", {"file_path": "$HOME/a"}),
+            ("Write", {"file_path": "$a", "content": "x"}),
+        ):
+            with self.subTest(tool=tool):
+                # Given: a call of a tool naming its file by its input, not by the shell's words
+                # When: it is read
+                made = helpers.acted(tool, given)
+                # Then: it holds no word unsettled, as the tool takes no variable
+                self.assertEqual((made.unsettled_reads, made.unsettled_written), ((), ()))
+
     def test_lines_not_told_are_those_numbered_in_what_the_call_gave_back(self):
         # Given: a Read call that gave back lines 3 and 4, each after its number and a tab, as the
         # Read tool gives them
