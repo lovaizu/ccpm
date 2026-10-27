@@ -62,9 +62,9 @@ class TestRunFolder(RepoTest):
         self.write_json(f"{here}/first-user.json", ALL_GOOD)
         # When: the run returns
         self.printed("end", result)
-        # Then: the result is at the root, and its run's folder is gone
+        # Then: the result is at the root, and its run's folder is gone with turn's folder
         self.assertEqual(self.read_json("result.json")["work"], ["README.md"])
-        self.assertEqual(self.runs(), [])
+        self.assertFalse(os.path.exists(".turn"))
 
     def test_a_result_given_whole_names_its_run_by_its_path_from_the_root(self):
         # Given: a call whose result is given as a whole path

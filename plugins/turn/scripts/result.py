@@ -61,5 +61,9 @@ def ended(run: dict[str, Any]) -> dict[str, str]:
             "chosen": choices,
         },
     )
-    shutil.rmtree(folder.folder(run["result"]))
+    kept = folder.folder(run["result"])
+    shutil.rmtree(kept)
+    # turn's folder goes once it holds no other run, so no empty folder is left in the repository.
+    if not os.listdir(os.path.dirname(kept)):
+        os.rmdir(os.path.dirname(kept))
     return {"returned": run["call"]["result"]}

@@ -100,9 +100,18 @@ class TestResult(StartedTest):
         # Given: a run with its claim and its reading
         # When: it ends
         self.ended()
-        # Then: the run's folder is removed, and the result stays beside the CCS
+        # Then: the run's folder is removed, and turn's folder with it, as it holds no other run;
+        # the result stays beside the CCS
         self.assertEqual(sorted(os.listdir(".tasks")), ["readme-result.json", "readme.json"])
-        self.assertEqual(os.listdir(".turn"), [])
+        self.assertFalse(os.path.exists(".turn"))
+
+    def test_turn_s_folder_holding_another_run_stays_once_returned(self):
+        # Given: a run with its claim and its reading, beside the folder of another run
+        os.makedirs(".turn/20261027-other")
+        # When: it ends
+        self.ended()
+        # Then: turn's folder stays with the other run alone
+        self.assertEqual(os.listdir(".turn"), ["20261027-other"])
 
     def test_the_result_is_written_one_key_or_value_to_a_line(self):
         # Given: a run that ends
