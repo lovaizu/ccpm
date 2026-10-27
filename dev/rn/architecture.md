@@ -79,7 +79,7 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   pass.
 
   The user reads the plan whole at the plan sign-off as soon as it is made, so a reader in their
-  place would add a reading the user makes next, and its time at every remake (Principle 4); the
+  place would add a reading the user makes next, and its time at every remake (Principle 5); the
   orchestrator writes only the part cut out, so it cannot change the goal while writing a task.
 - The tasks are laid backward from the acceptance criteria, as the criteria are from the goal: every
   criterion passed reaches the goal, and every task's completion criterion passed passes the
@@ -102,7 +102,7 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   serves, copied by rn's scripts from the steering; a plan's CCS holds, in place of what it serves,
   the latest call of each work of each done task, what it served, decided and made. The plan and the
   learnings are written from theirs by the orchestrator; every other work goes to turn, whose first
-  user uses it in the receiver's place before it comes back (Principle 4).
+  user uses it in the receiver's place before it comes back (Principle 5).
 
   turn takes its task as a CCS and makes the work from it and the files it names alone, so the work
   does not stray from what was decided; what turn only reads goes in the CCS and what it makes is a
@@ -186,7 +186,7 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
 - Every decision, answer, feedback and approval is written to the session's files before the move
   after it, and committed and pushed as the step it belongs to ends, such as a call of turn
   returning or a sign-off, so any stop is a place to go on from, and rn has no command to pause
-  (Principle 6).
+  (Principle 7).
 
   Going on from a stop needs the files, not the push; a commit and a push at each answer spend a
   move of the orchestrator each and hold the run they answer.
@@ -204,7 +204,7 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   So it says only what the steering holds and what each work was made from and came back with,
   nothing written for the proposal alone.
 - The orchestrator finds the learnings of
-  [Principle 8](../architecture.md#learning-from-each-run) in the branch's history, where rn's
+  [Principle 9](../architecture.md#learning-from-each-run) in the branch's history, where rn's
   scripts give each feedback with its answer, each work made again and each decision an answer
   replaced, each with its commit, and checks each cause it doubts by rn's scripts' search of its
   conversations of the session; it writes them with rn's learnings checklist open, kept by rn's

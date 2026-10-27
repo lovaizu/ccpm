@@ -204,5 +204,6 @@ acceptance, as the user chose (2026-10-25).
   each part takes on; each folder, file and name in the code saying what it is, the trials of
   lane, turn and rn named by the kind dev/architecture.md's Test gives them, unit tests of prompts
   or acceptance tests, as the user chose (2026-10-26), since turn's `trials/flow/` tries its
-  orchestrator alone where rn's tried rn whole; check.sh 100%, mutate.sh 0 survivors, the move
-  trials passing. Serves AC1, AC2.
+  orchestrator alone where rn's tried rn whole; every document and prompt rewritten in plain
+  sentences, one point each, as dev/architecture.md was (2026-10-27); check.sh 100%, mutate.sh 0
+  survivors, the move trials passing. Serves AC1, AC2.

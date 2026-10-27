@@ -133,8 +133,9 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
 - An adapter is run with `CLAUDE_PLUGIN_ROOT` set to the plugin's folder, by the layer as by the
   guard.
 
-  An adapter that hands its port's text to a part of the plugin, as Principle 9 has it, finds it
-  from there, beside the proposal as in the plugin.
+  An adapter that hands its port's text to a part of the plugin, as
+  [Entries hand to the parts](../architecture.md#entries-hand-to-the-parts) has it, finds it from
+  there, beside the proposal as in the plugin.
 - The guard reads a call in the forms the steps tell and the AI writes, not in every form the shell
   allows. A file a command names by words the guard cannot settle, such as `"$f"` or a path after a
   `cd` it cannot follow, is told to the subagent as not checked, with how to name it, where a lane
@@ -144,8 +145,9 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
   What must hold whatever the AI writes is held by GitHub's branch protection, Claude Code's
   sandbox or its permission rules, as a check on a command's text is no security boundary; so the
   guard stays small. A check that cannot tell lets through what it was there to stop unseen
-  (Principle 10), and the subagent can put it right by naming the file by its path, so it is told
-  with the lane's sentence as a drift is.
+  ([No check passes what it did not check](../architecture.md#no-check-passes-what-it-did-not-check)),
+  and the subagent can put it right by naming the file by its path, so it is told with the lane's
+  sentence as a drift is.
 
 ### Physical view
 
