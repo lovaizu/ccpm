@@ -30,6 +30,7 @@ STOP = {
     "places": ["README.md:1-7"],
     "did": "read the whole README for the terms on which I may use demo",
     "lacking": "under which license I may use it",
+    "hinders": "I cannot tell whether I may use demo in my own work",
 }
 
 
@@ -49,6 +50,11 @@ def parts(run: str, licensed: bool) -> dict[str, Any]:
     return {"checklist": CHECKLIST, "item": "B-2", "parts": found}
 
 
+def passed(item: str, evidence: str) -> dict[str, Any]:
+    """The generator's claim that the item passes, with its evidence."""
+    return {"checklist": CHECKLIST, "item": item, "evidence": evidence}
+
+
 def made(write: str, *items: dict[str, Any], questions: tuple = ()) -> dict[str, Any]:
     """The generator writing the README and running demo, then claiming the items."""
     reply = {"items": list(items), "questions": list(questions), "chosen": []}
@@ -60,35 +66,41 @@ def read(*items: dict[str, Any]) -> dict[str, Any]:
     return {"reply": {"items": list(items)}}
 
 
-# The generator's claims and the first user's readings, of the README with no license and with one.
-SHORT = made(
-    UNLICENSED,
-    dict(MIT, good="The reader learns the terms of use.", lines=["README.md:1-7"]),
-    parts(RUN, False),
-)
-WHOLE = made(LICENSED, MIT, parts(RUN, True))
+# The evidence of each item, as the generator gives it, the README with no license or with one.
+TERMS = passed("B-1", "cat -n README.md: the README tells what demo does")
+LICENSED_TERMS = passed("B-1", "cat -n README.md: line 11 names MIT")
+RAN_DEMO = passed("B-2", "sh demo.sh printed Hello, as the Use part says")
+# The generator's claims and the first user's readings, of the README with no license and with one:
+# every item, then on a remake B-1 alone.
+SHORT = made(UNLICENSED, TERMS, RAN_DEMO)
+SHORT_AGAIN = made(UNLICENSED, TERMS)
+WHOLE = made(LICENSED, LICENSED_TERMS)
 STOPPED = read(STOP, parts(RUN, False))
 GOOD = read(MIT, parts(RUN, True))
-# The questions the generator asks in the `generator` way, before making anything and while making.
+# The questions the generator asks in the `generator` way, before making anything and while making,
+# each a point only the user decides.
 ASKED_FIRST = {
-    "question": "The decisions name MIT, and the repository has no LICENSE file: should the README"
-    " name MIT in its own text, or link a LICENSE file to be added?",
-    "recommended": "Name MIT in the README's own text, as no LICENSE file is there for the reader"
-    " to open.",
+    "question": "Is demo to be used by people outside the team, who need to know the terms it is"
+    " under?",
+    "recommended": "Yes, as the decisions name MIT, a license for others to use it under.",
 }
 ASKED_WHILE = {
-    "question": "demo.sh takes no arguments and prints `Hello`: should the Use section say what it"
-    " prints?",
-    "recommended": "Yes, say it prints `Hello`, so the reader knows what to expect before running"
-    " it.",
+    "question": "demo.sh prints `Hello` alone: is that what demo is to greet its users with?",
+    "recommended": "Yes, as no decision names another greeting.",
 }
 # Each way's replies, by role, in the order the docstring of orchestrator.py lists them; a role
 # asked more often than its replies are set gives its last again.
 WAYS = {
-    "plain": {"generator": [WHOLE], "first-user": [GOOD]},
+    "plain": {"generator": [made(LICENSED, LICENSED_TERMS, RAN_DEMO)], "first-user": [GOOD]},
     "given": {"generator": [SHORT, WHOLE], "first-user": [STOPPED, GOOD]},
-    "sent": {"generator": [SHORT] * 4 + [WHOLE], "first-user": [STOPPED] * 4 + [GOOD]},
-    "left": {"generator": [SHORT] * 8 + [WHOLE], "first-user": [STOPPED] * 8 + [GOOD]},
+    "sent": {
+        "generator": [SHORT] + [SHORT_AGAIN] * 3 + [WHOLE],
+        "first-user": [STOPPED] * 4 + [GOOD],
+    },
+    "left": {
+        "generator": [SHORT] + [SHORT_AGAIN] * 7 + [WHOLE],
+        "first-user": [STOPPED] * 8 + [GOOD],
+    },
     "generator": {
         "generator": [
             {
@@ -100,11 +112,11 @@ WAYS = {
             },
             made(
                 LICENSED,
-                MIT,
+                LICENSED_TERMS,
                 {"checklist": CHECKLIST, "item": "B-2", "question": 1},
                 questions=(ASKED_WHILE,),
             ),
-            made(SAID, MIT, parts(RUN_SAID, True)),
+            made(SAID, LICENSED_TERMS, RAN_DEMO),
         ],
         "first-user": [read(MIT, parts(RUN_SAID, True))],
     },

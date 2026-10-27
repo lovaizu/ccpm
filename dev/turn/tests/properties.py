@@ -27,12 +27,12 @@ hypothesis = testing.hypothesis()
 given = hypothesis.given
 st = hypothesis.strategies
 
-FORMS = (forms.CLAIM, forms.FIRST_READING, forms.LEFT)
+FORMS = (forms.CLAIM, forms.REMADE, forms.FIRST_READING, forms.LEFT)
 ITEMS = [ITEM_F1]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
     ["items", "questions", "checklist", "item", "good", "lines", "question", "recommended"]
-    + ["parts", "part", "places", "did", "lacking"]
+    + ["parts", "part", "places", "did", "lacking", "hinders", "evidence", "outside", "chosen"]
 ) | st.text(max_size=5)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)
 VALUES = st.recursive(

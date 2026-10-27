@@ -23,6 +23,10 @@ On opening it, can the reader tell whether the project is for them?
   file whole.
 - `Scope: whole`: answered of the work at once.
 
+An item may say, on a line beginning `Tried by:`, what is run for it and how far; the AI that makes
+the work and the AI that reads it each run that, so a gap one finds is not a difference in what each
+chose to run.
+
 Headings in the frontmatter or in a code fence are not items. A checklist with no item, or an item
 without its `Scope` line, stops the run with what to fix.
 
@@ -58,7 +62,9 @@ TaskStop.
 ## Questions and answers
 
 What only the user can decide comes to the calling AI as a message, each question with the answer
-turn recommends and the items it settles:
+turn recommends and the items it settles: a point the CCS leaves open, met before or while the work
+is made, or a gap the AI that made the work holds outside the purpose and the AI that reads it still
+holds:
 
 ```json
 {"questions": [{"question": "...", "recommended": "...",

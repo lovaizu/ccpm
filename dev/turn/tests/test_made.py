@@ -12,6 +12,7 @@ from helpers import (
     GOOD,
     IDS,
     ITEM_B1,
+    PASSED,
     QUESTION,
     RESULT,
     WAITS,
@@ -166,7 +167,7 @@ class TestMade(ReadTest):
         # Given: a generator whose claim gives one item's Good and has the other wait on a question
         # When: the orchestrator goes on
         # Then: the run asks at once, before the first user reads
-        self.assertEqual(self.heard(self.made(GOOD, WAITS)), {"asked": RESULT})
+        self.assertEqual(self.heard(self.made(PASSED, WAITS)), {"asked": RESULT})
         self.assertEqual(json.loads(self.turn("questions", RESULT)[1]), ASKED)
 
     def test_a_generator_started_that_ended_without_its_reply_is_told_to_write_it(self):

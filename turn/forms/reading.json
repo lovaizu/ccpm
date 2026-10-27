@@ -1,5 +1,5 @@
 {
-  "title": "The first user's reading: each item's Good with its lines, or where it stopped, what it did there and what it did not get.",
+  "title": "The first user's reading: each item's Good with its lines, or where it stopped, what it did there, what it did not get and how that keeps the receiver from using the work.",
   "type": "object",
   "required": [
     "items"
@@ -118,13 +118,14 @@
     },
     "stop": {
       "type": "object",
-      "description": "an item you found no Good for",
+      "description": "an item you found no Good for, its gap keeping the receiver from using the work for the use",
       "required": [
         "checklist",
         "item",
         "places",
         "did",
-        "lacking"
+        "lacking",
+        "hinders"
       ],
       "additionalProperties": false,
       "properties": {
@@ -151,6 +152,10 @@
         "lacking": {
           "type": "string",
           "description": "what you did not get"
+        },
+        "hinders": {
+          "type": "string",
+          "description": "how what you did not get keeps the receiver from using the work for the use"
         }
       }
     }

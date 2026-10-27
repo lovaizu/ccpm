@@ -91,10 +91,13 @@ def reader(run: dict[str, Any]) -> dict[str, Any]:
 
 
 def remade(run: dict[str, Any]) -> dict[str, Any]:
-    """What the first user, kept started, is sent once the work is made again: the work, its parts
-    given anew, as a remake may add or take away a section, and where it replies."""
+    """What the first user, kept started, is sent once the work is made again: the work, the
+    generator's answer to each gap, mended with its evidence or lying outside the purpose with why,
+    which the first user, its own reading given, holds or lets go, the parts given anew, as a remake
+    may add or take away a section, and where it replies."""
     return {
         "remade": absolute(run["work"]),
+        "gaps": run.get("gaps", []),
         "parts": parts(run),
         "reply": reply_path(run["call"]["result"], FIRST_USER),
     }

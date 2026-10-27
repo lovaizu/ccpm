@@ -228,20 +228,23 @@ class TestFolderMoved(RepoTest):
 
     def test_a_round_goes_on_from_another_folder_with_lines_named_by_whole_paths(self):
         # Given: a run started, and the session's working folder moved to notes/
-        # When: the generator replies at the whole path it was given, with lines named by whole
-        # paths, and the first user is due
-        # Then: the reply is taken, and the first user is given the work's parts as the run names
-        # them and whole paths for its files
+        # When: the generator replies at the whole path it was given, and the first user, given
+        # the work's parts and its files, replies with lines named by whole paths
+        # Then: the first user is given the work's parts as the run names them and whole paths for
+        # its files, and its reading is taken
         self.started()
         os.chdir("notes")
         self.result = self.here(RESULT)
-        lines = [self.here("README.md:1-3")]
-        out = self.made(dict(GOOD, lines=lines), dict(GOOD, item="B-1", lines=lines))
-        prompt = json.loads(self.due(out)["input"]["prompt"])
+        prompt = json.loads(self.due(self.made())["input"]["prompt"])
         self.assertEqual(prompt["parts"], [self.here("README.md:1-3")])
         self.assertEqual(prompt["given"][0], self.here("README.md"))
         code, out = self.turn("parts", self.result)
         self.assertEqual((code, json.loads(out)), (0, {"parts": [self.here("README.md:1-3")]}))
+        lines = [self.here("README.md:1-3")]
+        out = self.replied(
+            {"items": [dict(GOOD, lines=lines), dict(GOOD, item="B-1", lines=lines)]}
+        )
+        self.assertEqual(out["returned"], RESULT)
 
 
 if __name__ == "__main__":

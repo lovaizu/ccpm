@@ -8,14 +8,18 @@ import unittest
 from unittest import mock
 
 from helpers import (
+    ANSWER,
     CLAIM,
     END,
     FIRST_READ,
     FOUND,
-    GOOD,
+    FOUND_B1,
     HOOK,
     IDS,
+    ITEM_B1,
     MESSAGE,
+    OUTSIDE,
+    PASSED,
     QUESTION,
     RESULT,
     STOPPED_B1,
@@ -24,6 +28,9 @@ from helpers import (
     RepoTest,
     flow,
 )
+
+# The generator's claim once the first user's stop at B-1 is sent back: B-1 alone, mended.
+MENDED = {"items": [dict(PASSED, item="B-1")], "questions": [], "chosen": []}
 
 
 class RoundTest(RepoTest):
@@ -97,10 +104,11 @@ class TestGeneratorKept(RoundTest):
         # parts as the remake left them, as a remake may add a section
         self.stopped()
         self.write("README.md", "# x\n\nx does y.\n\n## Use\n\nRun x.\n")
-        move = self.due(self.later(CLAIM))
+        move = self.due(self.later(MENDED))
         self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
         expected = {
             "remade": [self.here("README.md")],
+            "gaps": MENDED["items"],
             "parts": [self.here("README.md:1-4"), self.here("README.md:5-7")],
             "reply": self.kept("first-user.json"),
         }
@@ -114,7 +122,7 @@ class TestGeneratorKept(RoundTest):
         with mock.patch.object(flow, "WAIT", 2), mock.patch.object(flow.time, "sleep") as sleep:
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
         self.assertEqual(sleep.call_count, 2)
-        self.assertEqual(self.due(self.later(CLAIM))["tool"], "SendMessage")
+        self.assertEqual(self.due(self.later(MENDED))["tool"], "SendMessage")
 
     def test_a_second_next_while_the_first_still_waits_stops(self):
         # Given: a generator sent the first user's stop, and a `turn.py next` of the run still
@@ -157,7 +165,7 @@ class TestGeneratorKept(RoundTest):
         # Then: the script waits the whole wait, as a role may still change its reply, and takes
         # the reply once the role has ended
         self.stopped()
-        self.write(self.prompt()["reply"], json.dumps(CLAIM))
+        self.write(self.prompt()["reply"], json.dumps(MENDED))
         self.recorded(IDS["turn:generator"], MESSAGE)
         with (
             mock.patch.object(flow, "WAIT", WAITED),
@@ -184,7 +192,7 @@ class TestGeneratorKept(RoundTest):
         # When: the orchestrator goes on with nothing, then again once it ends its turn again
         # Then: the script waits on the generator, then takes its reply
         self.stopped()
-        self.write(self.prompt()["reply"], json.dumps(CLAIM))
+        self.write(self.prompt()["reply"], json.dumps(MENDED))
         self.recorded(IDS["turn:generator"], MESSAGE, END, HOOK)
         self.assertEqual(self.next(), {"waiting": "turn:generator"})
         self.recorded(IDS["turn:generator"], END)
@@ -223,7 +231,7 @@ class TestFirstUserKept(RoundTest):
         # item made again in the next
         for _ in range(3):
             self.assertEqual(self.stopped()["input"]["to"], IDS["turn:generator"])
-            self.due(self.later(CLAIM))
+            self.due(self.later(MENDED))
         out = self.replied({"items": FIRST_READ})
         self.assertIn("round 2", self.line_of(out))
 
@@ -233,7 +241,7 @@ class TestFirstUserKept(RoundTest):
         # Then: the generator is sent it again by message
         for _ in range(3):
             self.stopped()
-            self.due(self.later(CLAIM))
+            self.due(self.later(MENDED))
         self.due(self.replied({"items": FIRST_READ}))
         self.assertEqual(self.due(self.made())["tool"], "Agent")
         self.assertEqual(self.stopped()["input"]["to"], IDS["turn:generator"])
@@ -246,12 +254,120 @@ class TestFirstUserKept(RoundTest):
         # Then: the run asks at once; the generator is sent the answer by message, and its claim
         # sends the first user the work made again
         self.stopped()
-        out = self.later({"items": [GOOD, WAITS], "questions": [QUESTION], "chosen": []})
+        out = self.later({"items": [WAITS], "questions": [QUESTION], "chosen": []})
         self.assertEqual(self.heard(out), {"asked": RESULT})
         move = self.due(self.answered())
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
         self.assertIn("answers", json.loads(move["input"]["message"]))
-        self.assertEqual(self.due(self.later(CLAIM))["input"]["to"], IDS["turn:first-user"])
+        self.assertEqual(self.due(self.later(MENDED))["input"]["to"], IDS["turn:first-user"])
+
+
+# The generator's claim once the first user's stop at B-1 is sent back: B-1 lying outside the
+# purpose, with why.
+HELD = {"items": [dict(ITEM_B1, outside=OUTSIDE)], "questions": [], "chosen": []}
+
+
+class TestGaps(RoundTest):
+    """A gap the first user sends back is settled by one exchange: the generator mends it or says
+    why it lies outside the purpose, and the first user, given that answer, holds it or lets it go;
+    a gap still held against the generator's reason is a question of the purpose."""
+
+    def test_a_remake_claims_the_items_sent_back_alone(self):
+        # Given: a generator sent the first user's stop at B-1
+        self.stopped()
+        # When: it claims every item again
+        out = self.later(CLAIM)
+        # Then: it is sent what is wrong, F-1 not judged in a remake, as an item not sent back
+        # stands as it was
+        self.assertEqual(out["move"]["input"]["to"], IDS["turn:generator"])
+        self.assertIn(
+            "checklists/readme.md F-1 is not an item judged here", out["move"]["input"]["message"]
+        )
+
+    def test_a_gap_held_outside_the_purpose_reaches_the_first_user_with_its_reason(self):
+        # Given: a generator sent the first user's stop at B-1
+        self.stopped()
+        # When: it says why the gap lies outside the purpose
+        out = self.later(HELD)
+        # Then: a line says it answered one gap, and the first user is sent the answer with the
+        # work, to hold the gap or let it go
+        self.assertIn("turn:generator answered 1 gap.", out["line"])
+        self.assertEqual(json.loads(out["move"]["input"]["message"])["gaps"], HELD["items"])
+
+    def test_a_gap_let_go_by_the_first_user_lets_the_run_return(self):
+        # Given: a generator that held B-1's gap outside the purpose, its answer sent to the
+        # first user
+        self.stopped()
+        self.due(self.later(HELD))
+        # When: the first user lets it go, giving B-1 its Good
+        out = self.replied({"items": [FOUND, FOUND_B1]})
+        # Then: the run returns
+        self.assertEqual(self.returned(out), {"returned": RESULT})
+
+    def test_a_gap_still_held_against_the_generator_s_reason_is_a_question_at_once(self):
+        # Given: a generator that held B-1's gap outside the purpose, its answer sent to the
+        # first user
+        self.stopped()
+        self.due(self.later(HELD))
+        # When: the first user still stops at B-1
+        out = self.replied({"items": FIRST_READ})
+        # Then: B-1 is shown at once, with the generator's reason, for a question of the purpose,
+        # though the round may still send back, as another making would not settle it
+        self.assertEqual(
+            out,
+            {
+                "line": "turn: turn:first-user found the Good of 1 of 2 items.",
+                "left": [dict(STOPPED_B1, outside=OUTSIDE)],
+            },
+        )
+        self.assertEqual(self.state()["sent"], 1)
+
+    def differed(self, answer):
+        """The generator, sent the first user's stop at B-1, holds its gap outside the purpose, the
+        first user still holds it, and the question the orchestrator words for it is answered; the
+        move then."""
+        self.due(self.later(HELD))
+        self.replied({"items": FIRST_READ})
+        self.next({"items": [WAITS], "questions": [QUESTION]})
+        return self.due(self.answered(answer))
+
+    def test_once_answered_the_gap_is_made_again_in_its_round(self):
+        # Given: a gap still held against the generator's reason, asked of the calling AI
+        self.stopped()
+        # When: the answer is handed on
+        move = self.differed("MIT")
+        # Then: the generator, kept started, is sent the stop with the answer, in the same round,
+        # the round's sending back not spent on it
+        self.assertEqual(move["input"]["to"], IDS["turn:generator"])
+        self.assertEqual(
+            json.loads(move["input"]["message"]),
+            {"sent_back": [STOPPED_B1], "answers": [ANSWER], "reply": self.kept("generator.json")},
+        )
+        self.assertEqual((self.state()["round"], self.state()["sent"]), (1, 1))
+
+    def test_a_gap_settled_again_is_sent_its_own_answer_alone(self):
+        # Given: a gap held against the generator's reason and answered, then held so again
+        self.stopped()
+        self.differed("first")
+        # When: the second answer is handed on
+        move = self.differed("second")
+        # Then: the generator is sent the second answer alone, as it holds the first already
+        sent = json.loads(move["input"]["message"])["answers"]
+        self.assertEqual([a["answer"] for a in sent], ["second"])
+
+    def test_a_first_user_started_anew_reads_the_work_on_its_own_first(self):
+        # Given: a round ending with B-1 without Good, and the next round's generator holding its
+        # gap outside the purpose
+        with mock.patch.object(flow, "SENDS", 0):
+            self.due(self.replied({"items": FIRST_READ}))
+        out = self.made(dict(ITEM_B1, outside=OUTSIDE))
+        # When: the next round's first user is started, and stops at B-1
+        move = self.due(out)
+        stop = self.replied({"items": FIRST_READ})
+        # Then: it is started without the generator's answer, as it reads the work on its own
+        # first, and its stop is sent back to the generator, not asked
+        self.assertNotIn(OUTSIDE, move["input"]["prompt"])
+        self.assertEqual(stop["move"]["input"]["to"], IDS["turn:generator"])
 
 
 if __name__ == "__main__":

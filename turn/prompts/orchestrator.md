@@ -48,9 +48,10 @@ command takes the outcome of the calls before it.
    - `{"left": [...]}`: go to step 4.
    - `{"asked": "<result>"}`: go to step 5.
    - `{"returned": "<result>"}`: reply with that line, and end.
-4. Word a question for each item of `left`, the items two rounds left without Good: from its
-   `places`, `did` and `lacking`, what the user is to decide for the receiver to get what the item
-   asks. Run `turn.py next <result>` with your questions, and go to step 3:
+4. Word a question for each item of `left`, the items two rounds left without Good, or a gap the
+   generator holds outside the purpose, its `outside` saying why, and the first user still holds:
+   from its `places`, `did`, `lacking`, `hinders` and `outside`, what the user is to decide for the
+   receiver to get what the item asks. Run `turn.py next <result>` with your questions, and go to step 3:
    `{"items": [<one per item of left>], "questions": [{"question": "...", "recommended": "..."}]}`,
    each item `{"checklist": "<as in left>", "item": "<as in left>", "question": <the number of the
    question it waits on, counted from 1>}`, items one answer settles naming the same one; the

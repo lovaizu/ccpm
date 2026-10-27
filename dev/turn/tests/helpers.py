@@ -88,8 +88,16 @@ GOOD = {
     "good": "the reader finds each part where a README keeps it",
     "lines": ["README.md:1-3"],
 }
-# The generator's claim of every item's Good, naming no choice of its own.
-CLAIM = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": [], "chosen": []}
+# An item the generator claims passes, with its evidence: the command it ran and what it printed.
+PASSED = {
+    "checklist": "checklists/readme.md",
+    "item": "F-1",
+    "evidence": "cat -n README.md: the name on line 1, then what it does on line 3",
+}
+# The generator's claim of every item passing, naming no choice of its own.
+CLAIM = {"items": [PASSED, dict(PASSED, item="B-1")], "questions": [], "chosen": []}
+# Why the generator holds a gap sent back lies outside the purpose.
+OUTSIDE = "the developer tries it on their own files whoever it is for"
 # A choice the work rests on that the CCS leaves open, as the generator names it.
 CHOSEN = {"chosen": "the example tidies people.csv", "why": "no decision names a file"}
 WAITS = {"checklist": "checklists/readme.md", "item": "B-1", "question": 1}
@@ -109,12 +117,13 @@ FOUND_B1 = dict(FOUND, item="B-1")
 # it did there and what it did not get.
 DID = "read the opening for whom it is"
 LACKING = "whether it is for a developer"
+HINDERS = "the developer cannot tell whether to try it"
 
 
 def stopped(item):
-    """The first user's stop at the item: where it looked for its Good, what it did there and what
-    it did not get."""
-    return dict(item, places=["README.md:1-1"], did=DID, lacking=LACKING)
+    """The first user's stop at the item: where it looked for its Good, what it did there, what it
+    did not get and how that keeps the receiver from using the work."""
+    return dict(item, places=["README.md:1-1"], did=DID, lacking=LACKING, hinders=HINDERS)
 
 
 STOPPED_F1 = stopped(ITEM_F1)
@@ -323,9 +332,14 @@ class RepoTest(testing.FolderTest):
             f.write("".join(json.dumps(e) + "\n" for e in entries))
 
     def made(self, *claim, chosen=()):
-        """The generator due replies with its claim, by default every item Good, naming the choices
-        given; and what the script prints then."""
-        claim = claim or tuple(CLAIM["items"])
+        """The generator due replies with its claim, by default each item it judges now passing,
+        every item or on a remake each item sent back, naming the choices given; and what the
+        script prints then."""
+        run = self.state()
+        claim = claim or tuple(
+            dict(PASSED, checklist=i["checklist"], item=i["item"])
+            for i in run["back"] or run["items"]
+        )
         asks = [QUESTION] if any("question" in i for i in claim) else []
         return self.replied({"items": list(claim), "questions": asks, "chosen": list(chosen)})
 

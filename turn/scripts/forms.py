@@ -24,7 +24,7 @@ NAMING = ("checklist", "item")
 ONE_GOOD = "lines"
 EACH_GOOD = "parts"
 # The keys whose value is words, wherever an item holds them.
-WORDED = ("good", "did", "lacking")
+WORDED = ("good", "evidence", "outside", "did", "lacking", "hinders")
 
 
 def shapes(path: str) -> tuple[tuple[str, ...], ...]:
@@ -48,11 +48,15 @@ class Form(NamedTuple):
     chooses: bool = False
 
 
-# The generator claims the Good it set for every item, or the question it waits on; asking before
-# it makes anything, it gives only the items waiting; and it names each choice the work rests on.
-CLAIM = Form(
+# On a remake the generator claims each item sent back, mended with its evidence or lying outside
+# the purpose with why, or the question it waits on; asking before it makes anything, it gives only
+# the items waiting; and it names each choice the work rests on.
+REMADE = Form(
     shapes(os.path.join(FORM_FILES, "claim.json")), asks=True, asks_first=True, chooses=True
 )
+# On its first making it claims every item, passing with its evidence or waiting on a question, as
+# no gap has been sent back that could lie outside the purpose.
+CLAIM = REMADE._replace(shapes=tuple(s for s in REMADE.shapes if "outside" not in s))
 # The first user gives every item the Good it found, or where it stopped.
 FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")))
 # Each item two rounds leave without Good waits on a question the orchestrator words, in a form set

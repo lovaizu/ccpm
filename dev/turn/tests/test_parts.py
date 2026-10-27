@@ -12,7 +12,6 @@ from helpers import (
     EACH_GOOD,
     FOUND,
     FOUND_B1,
-    GOOD,
     IDS,
     RESULT,
     SECTIONED,
@@ -37,7 +36,7 @@ class TestEachPart(RepoTest):
         # give it
         # When: the orchestrator goes on
         # Then: the generator is sent the item again, with the part where it stopped
-        self.due(self.made(GOOD, dict(GOOD, item="B-1"), EACH_GOOD))
+        self.due(self.made())
         back = dict(STOPPED_B1, item="B-2", places=["README.md:5-7"])
         move = self.due(self.replied({"items": [FOUND, FOUND_B1, back]}))
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
@@ -47,24 +46,24 @@ class TestEachPart(RepoTest):
         # Given: a first user giving an item asked of each part a Good for every part
         # When: the run returns
         # Then: the result holds the item with its Good for every part
-        claim = (GOOD, dict(GOOD, item="B-1"), EACH_GOOD)
-        out = self.first_read(FOUND, FOUND_B1, EACH_GOOD, claim=claim)
+        out = self.first_read(FOUND, FOUND_B1, EACH_GOOD)
         self.assertEqual(self.returned(out), {"returned": RESULT})
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1, EACH_GOOD])
 
     def test_a_reply_giving_an_each_part_item_without_every_part_is_sent_back_to_its_role(self):
-        # Given: a generator replying with an item asked of each part given one part alone
+        # Given: a first user replying with an item asked of each part given one part alone
         # When: the orchestrator goes on
-        # Then: the generator is sent what is wrong, to write its reply again, and the reply file
-        # is removed until it does
+        # Then: the first user is sent what is wrong, to write its reply again, and the reply file
+        # is removed until it does; once filled, the run returns
+        self.due(self.made())
         one = dict(EACH_GOOD, parts=EACH_GOOD["parts"][:1])
-        out = self.made(GOOD, dict(GOOD, item="B-1"), one)
+        out = self.replied({"items": [FOUND, FOUND_B1, one]})
         self.assertEqual(out["move"]["tool"], "SendMessage")
-        self.assertEqual(out["move"]["input"]["to"], IDS["turn:generator"])
+        self.assertEqual(out["move"]["input"]["to"], IDS["turn:first-user"])
         self.assertIn("in your form, filled:", out["move"]["input"]["message"])
-        self.assertFalse(os.path.exists(self.kept("generator.json")))
-        move = self.due(self.made(GOOD, dict(GOOD, item="B-1"), EACH_GOOD))
-        self.assertEqual(move["tool"], "Agent")
+        self.assertFalse(os.path.exists(self.kept("first-user.json")))
+        out = self.replied({"items": [FOUND, FOUND_B1, EACH_GOOD]})
+        self.assertEqual(self.returned(out), {"returned": RESULT})
 
 
 if __name__ == "__main__":

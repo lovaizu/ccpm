@@ -11,8 +11,8 @@ from helpers import (
     FIRST_READ,
     FOUND,
     FOUND_B1,
-    GOOD,
     IDS,
+    PASSED,
     RESULT,
     WAITS,
     RepoTest,
@@ -113,7 +113,7 @@ class TestTold(RepoTest):
         self.write("checklists/readme.md", CHECKLIST.split("## Benefit")[0])
         # When: the run goes through to its first user's reading
         self.started()
-        out = self.first_read(FOUND, claim=(GOOD,))
+        out = self.first_read(FOUND, claim=(PASSED,))
         # Then: the line counts it as one item
         self.assertIn("found the Good of 1 of 1 item.", out["line"])
 
