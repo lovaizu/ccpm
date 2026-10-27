@@ -28,7 +28,7 @@
   }
  },
  {
-  "commit": "eb65366",
+  "commit": "bf48043",
   "folder": "/tmp/rn/20261027-acceptance-f4dxd0ky",
   "verdict": "FAILED",
   "ended": "rn's run of message 18 failed: agents in the background still running 90 minutes after the reply; give a longer wait; at T5 action 3 of T3 to T9, the build's message running 100 minutes then not counted in the cost, which its tokens put at about $31 more, about $43 for rn whole",

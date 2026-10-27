@@ -123,14 +123,19 @@ def tokens(sessions: list[str]) -> dict[str, int]:
     return spent
 
 
-def kept(summary: dict[str, Any], place: str) -> None:
-    """Adds the run's time, tokens, cost and changes sent back to RESULTS, with the commit tried."""
-    commit = subprocess.run(
+def head() -> str:
+    """The commit the repository is at."""
+    return subprocess.run(
         ["git", "-C", HERE, "rev-parse", "--short", "HEAD"],
         capture_output=True,
         text=True,
         check=True,
     ).stdout.strip()
+
+
+def kept(summary: dict[str, Any], place: str, commit: str) -> None:
+    """Adds the run's time, tokens, cost and changes sent back to RESULTS, with the commit tried,
+    read as the run started, as the repository may move on during a run of hours."""
     runs = []
     if os.path.isfile(RESULTS):
         with open(RESULTS, encoding="utf-8") as f:
@@ -290,6 +295,7 @@ class Trial:
         self.rn = self.fresh()
         self.last: dict[str, Any] = {}
         self.start = time.time()
+        self.commit = head()
 
     def make(self) -> None:
         """Makes the place, the clone with the copies, and the stand-in's empty folder."""
@@ -541,7 +547,7 @@ def run(trial: Trial) -> int:
             with open(os.path.join(trial.place, "summary.json"), "w", encoding="utf-8") as f:
                 json.dump(summary, f, ensure_ascii=False, indent=1)
             print(json.dumps(summary, ensure_ascii=False, indent=1))
-            kept(summary, trial.place)
+            kept(summary, trial.place, trial.commit)
         finally:
             print("\n".join(trial.p.removed()))
             print(f"kept: {trial.place}, holding the clone {trial.p.repo} with the work")
