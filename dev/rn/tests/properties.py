@@ -1,6 +1,8 @@
 """Property-based tests of rn's scripts: each behavior over a kind of input, checked on many inputs
 Hypothesis makes, new on every run, CI included."""
 
+from __future__ import annotations
+
 import datetime
 import os
 import shutil
@@ -267,13 +269,21 @@ class SearchPropertyTest(RepoTest):
 
 
 class HistoryPropertyTest(RepoTest):
+    # The commit the session was first kept at, which each example starts from.
+    kept_at: str | None = None
+
     @hypothesis.given(WORDS.filter(lambda t: ": " not in t), WORDS, WORDS)
     def test_a_decision_replaced_is_given_with_what_it_was_and_is(self, title, was, now):
         # Given: a decision of any title without `: ` kept as anything it says, then replaced
-        # with anything else, each by rn.py decide in a step of its own, on the session the
-        # examples before kept.
+        # with anything else, each by rn.py decide in a step of its own, on a session as it was
+        # first kept, as one the examples before went on with would hold their history too, which
+        # each example would read again.
         hypothesis.assume(was != now)
-        self.session(steered(stage="design"))
+        if self.kept_at is None:
+            self.session(steered(stage="design"))
+            self.kept_at = self.head()
+        self.git("reset", "-q", "--hard", self.kept_at)
+        self.git("push", "-q", "--force")
         for says in (was, now):
             self.ran("decide", "t1.1", f"--title={title}", f"--says={says}", "--message=m")
             self.ran("state", "--message=m")
