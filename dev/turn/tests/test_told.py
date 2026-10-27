@@ -69,8 +69,9 @@ class TestTold(RepoTest):
         # first user found and what the generator does as it goes on
         self.assertEqual(
             out["line"],
-            "turn: turn:first-user found the Good of 1 of 2 items. turn:generator goes on: make"
-            " README.md again for each item the first user found no Good for, round 1.",
+            "turn: turn:first-user found the Good of 1 of 2 items. turn:generator goes on: mend"
+            " each gap the first user found in README.md, or say why it lies outside the purpose,"
+            " round 1.",
         )
         self.assertEqual(out["move"]["input"]["to"], IDS["turn:generator"])
 

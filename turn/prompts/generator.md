@@ -25,11 +25,10 @@ only what is theirs.
    command that checks the work, `null` where it has none; `sent_back`, the items found without
    Good, each with the `places` of the work looked at, what was `did` there, what was `lacking`
    and how that `hinders` the receiver's use, `[]` where none; `answers`, each answer the user
-   gave, with
-   the questions it answers; `chosen`, the choices the run's last claim named, `[]` where none;
-   `result`, the run's result; `reply`, the file you write your claim to;
-   and, on a run gone on after a stop, `since`, the messages sent to you before, each taken in turn
-   as step 8 says.
+   gave, with the questions it answers; `chosen`, the choices the run's last claim named, `[]`
+   where none; `result`, the run's result; `reply`, the file you write your claim to; and, on a
+   run gone on after a stop, `since`, the messages sent to you before, each taken in turn as step
+   8 says.
 2. Read each file of `given` with `cat -n <path>` in a command of its own, or with Read and no
    offset or limit. Read only `{given}`. Read `{given}` to its end.
    Each item of a checklist is a heading such as `### B-1: <title>`, its ID `B-1`, and its `Scope`
@@ -42,11 +41,11 @@ only what is theirs.
    answer in `answers` for the items its questions name. For an item in `sent_back`, judge its gap
    by the purpose: where it keeps the receiver from using the work for the use, aim its Good at
    what was `lacking`; where it does not, it lies outside the purpose, and you make nothing for it.
-   Before you make anything, find what the CCS and its files leave open: where
-   only the user's answer can give an item its Good, such as which license the work is under, the
-   item waits on a question; where any item waits, go to step 7, and make the work once the answer
-   comes. Each other point the work rests on, settle yourself as the purpose and the project's
-   practice say, to name in `chosen` at step 7.
+   Before you make anything, find what the CCS and its files leave open: where only the user's
+   answer can give an item its Good, such as which license the work is under, the item waits on a
+   question; where any item waits, go to step 7, and make the work once the answer comes. Each
+   other point the work rests on, settle yourself as the purpose and the project's practice say,
+   to name in `chosen` at step 7.
 4. Make the work at the paths in `work` to give every Good you set: write a path that holds no file
    from nothing, and change a file already there, read whole, keeping what already gives its Good.
    With items in `sent_back`, change only what gives their Goods.
@@ -59,11 +58,11 @@ only what is theirs.
    lines that give its Good; for an item whose `Scope` is `each part`, in each part, the parts as
    `turn.py parts <result>` prints them, `<result>` being your prompt's `result`. Keep, for each,
    the command you ran and what it printed, or those lines, in short: its evidence. A command that
-   did not run gives no evidence. Then check each thing the work tells the receiver: run
-   each command it gives and its tests and compare what they print with what it says, try each
-   thing it says the code does on an input it is about, and look up each file and link it points
-   to; each in a Bash command of its own, with any input it needs made inside that command, in a
-   folder from `mktemp -d` that the command removes at its end. Where a part gives no Good or a
+   did not run gives no evidence. Then check each thing the work tells the receiver: run each
+   command it gives and its tests and compare what they print with what it says, try each thing it
+   says the code does on an input it is about, and look up each file and link it points to; each
+   in a Bash command of its own, with any input it needs made inside that command, in a folder
+   from `mktemp -d` that the command removes at its end. Where a part gives no Good or a
    thing it tells is not so, go back to step 4. Where you cannot make or check an item for what
    lies outside the work, such as a tool missing, a permission not given or a network blocked,
    take no way round it: give `blocked` in your claim at step 7, what you tried, what you confirmed

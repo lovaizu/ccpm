@@ -63,8 +63,8 @@ TaskStop.
 
 What only the user can decide comes to the calling AI as a message, each question with the answer
 turn recommends and the items it settles: a point the CCS leaves open, met before or while the work
-is made, or a gap the AI that made the work holds outside the purpose and the AI that reads it still
-holds:
+is made, a gap the AI that made the work holds outside the purpose and the AI that reads it still
+holds, or an item two rounds leave without Good:
 
 ```json
 {"questions": [{"question": "...", "recommended": "...",

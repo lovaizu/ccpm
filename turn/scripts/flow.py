@@ -30,8 +30,8 @@ SENDS = 3
 # keeps how many more rounds may run.
 MORE = 1
 # A messaged role's end is waited for a second at a time, as one move of the orchestrator, within
-# the ten minutes its step gives the shell, the most Claude Code lets a command run before it moves
-# it to the background.
+# the ten minutes its step gives the shell, the longest a command may be given by default before
+# Claude Code moves it to the background.
 WAIT = 540
 # Where SendMessage reaches the main conversation, which alone talks with the user.
 MAIN = "main"
@@ -42,7 +42,8 @@ DOES = {
 }
 # What a role kept started does once it is sent more, by what the message holds first.
 AGAIN = {
-    "sent_back": "make {work} again for each item the first user found no Good for",
+    "sent_back": "mend each gap the first user found in {work}, or say why it lies outside the"
+    " purpose",
     "answers": "take in the user's answer",
     "remade": "read {work} made again",
 }
