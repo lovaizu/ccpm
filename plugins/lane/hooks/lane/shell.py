@@ -215,8 +215,7 @@ def writes(command: str, cwd: str) -> list[tuple[str | None, str]]:
         found += [(here, w) for before, w in zip([""] + said, said) if sign(before, WRITES)]
         # A redirect's target is not an argument of the command.
         plain = without_redirects(said)
-        # An empty word, such as the backup suffix of `sed -i ''`, names no path.
-        args = [w for w in plain[1:] if w and not w.startswith("-")]
+        args = [w for w in plain[1:] if not w.startswith("-")]
         head = plain[0] if plain else ""
         if head in WRITE_EACH:
             found += [(here, w) for w in args]

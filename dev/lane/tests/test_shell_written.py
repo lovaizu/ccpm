@@ -48,6 +48,12 @@ class TestWritten(unittest.TestCase):
         # Then: the file is taken, as `<>` makes it where it is not there
         self.assertEqual(shell.written("cat <> a", HERE), at("a"))
 
+    def test_a_copy_to_an_empty_word_writes_no_path(self):
+        # Given: cp given a file and an empty word as its target
+        # When: the paths it writes are read
+        # Then: none is taken, as the empty word names no path and the file is only read
+        self.assertEqual(shell.written("cp f ''", HERE), [])
+
     def test_sed_in_place_writes_the_file_after_its_script(self):
         # Given: sed editing a file in place, its backup suffix given
         # When: the paths it writes are read

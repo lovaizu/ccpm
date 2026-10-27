@@ -230,6 +230,45 @@ class HistoryTest(RepoTest):
             [(step, "License: MIT")],
         )
 
+    def test_every_decision_replaced_in_the_first_step_is_given(self):
+        # Given: two decisions of the plan each kept, then replaced, in the first step that keeps
+        # the record of decisions replaced.
+        self.decided("License", "MIT")
+        self.decided("License", "Apache-2.0")
+        self.decided("Colour", "blue")
+        self.decided("Colour", "red")
+        self.stepped("The step ends")
+        # When: the orchestrator asks for the history.
+        # Then: rn gives both, in the order they were replaced.
+        self.assertEqual(
+            [r["now"] for r in self.history()["replaced"]],
+            ["License: Apache-2.0", "Colour: red"],
+        )
+
+    def test_a_line_after_one_that_is_no_json_in_the_same_commit_is_read(self):
+        # Given: one commit holding a line of the record that is no JSON, then a decision replaced
+        # written on the line after it.
+        self.write(
+            REPLACED,
+            '{\n{"work": "plan", "was": "License: MIT", "now": "License: Apache-2.0"}\n',
+        )
+        self.commit_with("by hand")
+        commit = self.head()
+        # When: the orchestrator asks for the history.
+        # Then: rn gives the decision on the line after.
+        self.assertEqual(
+            [(r["commit"], r["now"]) for r in self.history()["replaced"]],
+            [(commit, "License: Apache-2.0")],
+        )
+
+    def test_a_decision_replaced_is_kept_in_its_own_letters(self):
+        # Given: a decision of the plan kept, then replaced by words in letters beyond ASCII.
+        self.decided("License", "MIT")
+        self.decided("License", "日本語のライセンス")
+        # When: the record of decisions replaced is read as text.
+        # Then: it holds the words as written, as the user reads it on the pull request.
+        self.assertIn("日本語のライセンス", self.read(REPLACED))
+
     def test_the_history_without_a_session_stops(self):
         # Given: a branch holding no session.
         self.git("checkout", "-q", "-b", "other", "main")
