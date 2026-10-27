@@ -839,7 +839,7 @@
  ],
  "focal_entities": [
   {
-   "task": "apply intents 1 to 8 of decisions/run-cost.decisions.md: done are dev/architecture.md's principles (Principles 1-6 recast, 10 and 11 added, acceptance tests show time and tokens; 9ea1f63, 79b4805) and the checklists (template 0c139e3, all 13 others 69cc954); left: lane, turn, rn, the trials (acceptance.py to record tokens), then the acceptance run to show it improved"
+   "task": "apply intents 1 to 8 of decisions/run-cost.decisions.md: done are dev/architecture.md (9ea1f63, 79b4805), the checklists (0c139e3, 69cc954), turn's architecture, UX and README (5285999) and rn's architecture (the commit after it); in progress: lane's three changes by a subagent, uncommitted in the working tree (PreToolUse hooks with \"onFailure\": \"block\" and turn's and rn's hooks laid again; read_only and write_only telling a Bash call whose file words do not settle as could not check; started.py taking values from each message after the start too); left: turn's code, prompts and tests to its new design, rn's prompts and scripts (no commit and push at each answer), the trials (acceptance.py to record tokens), then the acceptance run"
   }
  ],
  "relational_map": [
@@ -877,7 +877,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: (1) read decisions/run-cost.decisions.md and audits/run-cost-impact.md; (2) lane next: lay.py writes \"onFailure\": \"block\" on every command hook, a command not parsed told as could not check, and lane takes a run's files from later messages too (lane/hooks/lane/started.py, guard.py); then turn (claim per item with evidence, only items sent back, about eight moves, lines to main only at role start/end, question, result, no CCS check stage, gap exchange through the flow, go on where it stood), then rn (no commit and push at each answer, step lines), trials, acceptance run compared with run 3; (3) report to the user in Japanese, decisions made on my own included. Ask the user only about intent"
+   "next": "on resume: (1) if the lane change in the working tree is unfinished (git status, git diff), finish it test first with rn/checklists/product/code.md open: dev/check.sh lane 100%, mutation 0 survivors, turn and rn unit tests passing, lane/CHANGELOG.md, then commit; (2) turn's code to dev/turn/architecture.md as now written (flow: moves only that need the orchestrator, waits for a role's end itself, lines at role start/end, question, result; no CCS check stage; claim per item with evidence, remake gives the items sent back alone, chosen merged; the gap exchange; an answer taken in by sending roles the files, no start anew), with run-cost-impact.md's lists of places; (3) rn's prompts and scripts; (4) trials; (5) acceptance run compared with run 3; report to the user in Japanese, decisions made on my own included (PreToolUse alone given onFailure, as it has no effect on SubagentStop; trial.md B-2 tried on the steps the verdict rests on)"
   }
  ],
  "uncertainty_signal": [
