@@ -171,11 +171,11 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   Only the main conversation talks with the user
   ([Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs)); an orchestrator
   that judged each way turn takes would ask the user more than what is theirs (Principle 2); and a
-  run waiting on an answer is kept in turn's folder of the user's repository, so it is pushed with
-  the questions before the user is asked, as every move is.
-- Only a point to decide is put to the user: a question turn asks about its CCS, such as what the
-  receiver has, the orchestrator answers by writing the CCS again, its choice kept for the
-  sign-off; a stop of rn's scripts or of turn's run is gone on from by the step that meets it,
+  run waiting on an answer is kept in turn's folder of the user's repository, so it is written
+  there with the questions before the user is asked, as every move is.
+- Only a point to decide is put to the user: a question turn asks that changes nothing the user can
+  weigh, the orchestrator answers by adding to the CCS, its choice kept for the sign-off, and turn
+  goes on where it stood; a stop of rn's scripts or of turn's run is gone on from by the step that meets it,
   such as calling turn again with the same call, and what it taught comes to the user among the
   learnings once the finished work is approved.
 
@@ -183,8 +183,13 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   reader is handed, is none the user can weigh, and asking it spends their time on rn's own working
   (KR1.2); an issue sent from the middle of the session is decided before the rest shows what the
   whole fell short in.
-- Every decision, answer, feedback and approval is pushed before the move after it, so any stop is
-  a place to go on from, and rn has no command to pause (Principle 6).
+- Every decision, answer, feedback and approval is written to the session's files before the move
+  after it, and committed and pushed as the step it belongs to ends, such as a call of turn
+  returning or a sign-off, so any stop is a place to go on from, and rn has no command to pause
+  (Principle 6).
+
+  Going on from a stop needs the files, not the push; a commit and a push at each answer spend a
+  move of the orchestrator each and hold the run they answer.
 - An approval is the user's `/rn:ty`, and feedback their `/rn:gm`, both skills the AI cannot call
   ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs));
   rn's scripts keep either only where Claude Code's record of the conversation shows the user typed
@@ -205,7 +210,7 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   conversations of the session; it writes them with rn's learnings checklist open, kept by rn's
   scripts in a file of their own, an issue to rn's makers made through turn as every work is.
 
-  Each send-back, remake and point asked again is kept as a commit before the next move, so the
+  Each send-back, remake and point asked again is kept in the commit of its step, so the
   history holds every place the work fell short however long the session ran, where the
   orchestrator of a fresh conversation remembers none of it; a cause the history does not show,
   such as the form of a message to the user, is in the conversations alone, which Claude Code keeps
