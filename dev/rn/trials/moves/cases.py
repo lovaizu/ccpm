@@ -1387,6 +1387,7 @@ CASES = {
                     learnt_some(),
                     next_has("Step 11"),
                     ONE_POINT,
+                    JAPANESE,
                 ],
             )
         ],
