@@ -27,8 +27,27 @@ and the user's earlier decisions. Put to the user one at a time, in this order; 
    (dev/turn/ux.md:91-92) changed to match; the generator's questions while making stay.
 4. turn's two nested bounds, three send-backs a round in two rounds, the second starting both roles
    anew (flow.py SENDS, MORE); no ground given, the time to a question doubled. fd270d7.
+   **Judged (2026-10-27): the second round removed.** The user's roles, the intent the loop is
+   drawn anew from: the generator makes the work so the first user can find each item's Good from
+   the checklist, and where it cannot, works with the first user; the first user looks for each
+   item's Good from the checklist as the first user, and where it finds none, tells the generator
+   what would make it Good.
+   **turn as agreed (2026-10-27), tried in three small runs:** turn holds no state, so it has no
+   flow. The orchestrator starts the generator, then the first user with the generator's agent ID,
+   and once the first user ends checks the lines of each Good by a script and writes the result. The
+   first user reads alone first, then tells the generator directly what would make each item Good,
+   waiting for its reply in Bash sleeps without ending its turn; the generator mends or asks back.
+   The first user ends when every item has its Good, or when a mend brings no new Good, six sends
+   at most; items left come back in the result with their need (3). Every question is the
+   generator's, before making or while making, sent straight to `main`, as only the main
+   conversation talks with the user and a subagent cannot know its own ID; the generator goes on
+   with the other items meanwhile and makes the waiting ones from the answer; `main` keeps the
+   answer where the CCS names it. A call again goes on from the work, the first user's last reading
+   and `chosen`, each in a file. No `turn:` lines: Claude Code's agent panel shows the roles. Gone:
+   flow, the state, the orchestrator's questions, the second round, `blocked`/`stopped`.
 5. turn's three guards for `turn.py next` going to the background: WAIT, next.lock, unsent.
    1bb493f, 0c8d1ce.
+   **Judged (2026-10-27): gone with the flow (4).**
 6. lane's read-the-part-whole-first guard laid on every subagent with a part, with no line in the
    proposal (guard.py, entries.py), where lanes go only where a step alone does not hold and twenty
    runs held it. 2a181e0.

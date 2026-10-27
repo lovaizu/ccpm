@@ -104,6 +104,9 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
   held to fix.md whole. Serves AC2.
 - [ ] T38: Every part of lane, turn and rn no purpose needs is gone, each judged by the user one
   at a time from `audit-purpose.md`, as the user asked (2026-10-27). Serves AC1, AC2.
+- [ ] T39: turn is remade as `audit-purpose.md` 1 to 5 say, its README, UX, architecture,
+  prompts, scripts, lanes and trials together; check.sh turn 100%, mutate.sh turn 0 survivors, its
+  trials passing. Serves AC1, AC2.
 - [ ] T15: Users who update get rn 0.10.0 and turn 0.2.0, on the user's instruction. Serves AC1,
   AC2.
 
