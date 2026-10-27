@@ -803,6 +803,9 @@
   },
   {
    "fact": "2026-10-27: T39 done (77fb438, 1b11103, 8dc39c8): turn with no state and no flow; trial one 2.9 min $0.80 all Good; readme trial 10.1 min $2.65, 6 Good, 3 left for owner and copyright holder the user alone gives, the generator's 4 questions answered by main by SendMessage. T38 done (79d65e7), audit 6 (read-part-first guard) brought back as roles were refused their own prompts without it. T35, T36 done: stages goal, ux, architecture, build, deliverable, learnings, finished; check weight the architecture's. CI survivors in lane and rn killed (56c69e0)"
+  },
+  {
+   "fact": "2026-10-28: move trials 28/31 then 31/31 after trial fixes (391dda1); Claude Code 2.1.311 refuses a bare `sleep 30`, so turn's roles wait with turn.py wait on the files the message follows, at most 60 s (a62..); readme trial 9.3 min $2.59, 8 Good 1 left; a subagent removed one /tmp/tmp.* folder not its own by a wrong script"
   }
  ],
  "semantic_gist": [
@@ -913,7 +916,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "move trials running (all 28+, scratchpad moves.txt); fix what they show at its cause; then T34 acceptance on lovaizu/playground; report the result to the user, as they asked (2026-10-27: rnの受入完了まで進めて、結果教えて)"
+   "next": "T34 acceptance run 5 started 2026-10-28 ~01:30 JST in the background (scratchpad acceptance5.txt, folder /tmp/rn/20261028-acceptance-*); on its end read its summary and records, compare with results.json runs 3-4, and report to the user (they asked: rnの受入完了まで進めて、結果教えて); then T14"
   }
  ],
  "uncertainty_signal": [
