@@ -4,6 +4,7 @@ generator's last claim; then the run's folder removed, the result alone staying.
 
 from __future__ import annotations
 
+import os
 import shutil
 from typing import Any
 
@@ -16,6 +17,17 @@ from prompts import FIRST_USER, GENERATOR
 # What the calling AI does where a reply the result is written from is missing or out of its form:
 # a call again starts the role again, which writes it.
 AGAIN = "call turn again with the same call, which goes on from what the run's folder holds"
+
+
+def named(line: str, work: list[str]) -> str:
+    """The lines with their file named as the CCS names the work, as the first user is given the
+    work by whole paths and the calling AI reads the result by the CCS's names; the reading's check
+    has held each range to a file of the work."""
+    found = forms.LINES.match(line)
+    assert found
+    real = os.path.realpath(found.group(1))
+    path = next(w for w in work if os.path.realpath(w) == real)
+    return path + line[found.end(1) :]
 
 
 def ended(run: dict[str, Any]) -> dict[str, str]:
@@ -37,6 +49,9 @@ def ended(run: dict[str, Any]) -> dict[str, str]:
     given = {forms.key_of(i): i for i in reading}
     # Each item in the checklists' order, as the reading gave it, named as the CCS names it.
     answered = [dict(given[forms.key_of(i)], **i) for i in run["items"]]
+    for item in answered:
+        if "lines" in item:
+            item["lines"] = [named(line, run["work"]) for line in item["lines"]]
     folder.write(
         run["call"]["result"],
         {

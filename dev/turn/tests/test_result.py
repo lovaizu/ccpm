@@ -54,6 +54,28 @@ class TestResult(StartedTest):
                 found = self.read_json(RESULT)
                 self.assertEqual((found["items"], found["left"]), (items, left))
 
+    def test_lines_given_by_whole_paths_are_named_as_the_ccs_names_the_work(self):
+        # Given: a work of three files, its first named between the other two, and a last reading
+        # giving one Good at lines of each later file by its whole path, as the first user is
+        # given the work
+        work = ["README.md", "A.md", "Z.md"]
+        ccs = dict(
+            CCS, focal_entities=[*({"deliverable": w} for w in work), CCS["focal_entities"][1]]
+        )
+        self.write_json(CALL["ccs"], ccs)
+        for path in work[1:]:
+            self.write(path, "one line\n")
+        found = [
+            dict(FOUND, lines=[f"{os.path.abspath('A.md')}:1"]),
+            dict(FOUND_B1, lines=[f"{os.path.abspath('Z.md')}:1-1"]),
+        ]
+        # When: the run ends
+        self.ended(reading={"items": found})
+        # Then: the result names each range's file as the CCS names it, the range as it was given
+        self.assertEqual(
+            [i["lines"] for i in self.read_json(RESULT)["items"]], [["A.md:1"], ["Z.md:1-1"]]
+        )
+
     def test_the_work_is_named_in_the_result_as_a_path_of_its_own(self):
         # Given: a CCS naming the work as `./README.md`
         ccs = dict(CCS, focal_entities=[{"deliverable": "./README.md"}, CCS["focal_entities"][1]])
