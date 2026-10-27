@@ -13,18 +13,23 @@ files are placed, how its code is written, and how it is tested and released.
 Every plugin holds these; each is said with its reason under Why it is so, and a plugin's design
 adds only what that plugin gives on top of them.
 
-1. The orchestrator holds the whole run and decides each move.
+1. The orchestrator holds the whole run and decides each move, and tells its caller only when a
+   role starts or ends, when it asks and when it returns the result.
 2. The caller answers only what is theirs to decide and approves it by their own action; the plugin
-   does the writing.
+   does the writing, and settles and names as chosen each choice that is not the caller's.
 3. Each job has a role of its own, given only what the job needs.
 4. Each work is first used by AIs that did not make it, in its receiver's place and with what the
-   receiver has, each reading it on its own; a work the caller reads whole to approve as soon as it
-   is made, such as a plan, is checked by its maker against its checklist and read first by the
-   caller.
-5. What a machine can judge is checked by a script or a hook at the moment it happens, which tells
-   the role its step again or stops what would break a rule.
-6. A fixed course is kept in a script, and the state and each decision are kept before the next
-   move, so a run stopped anywhere goes on from there.
+   receiver has, each first reading it on its own, and sent back only for a gap that keeps the
+   receiver from using it; maker and reader settle a gap through the orchestrator. A work the caller
+   reads whole to approve as soon as it is made, such as a plan, is read first by the caller. Every
+   maker checks its work item by item, each with whether it passes and its evidence.
+5. What a machine can judge, of what an AI does or of the work it makes, is checked by a script, a
+   hook or the project's own tools, such as a formatter, a linter and a type checker, which tells
+   the role its step again or stops what would break a rule; an AI reads for what only a reader can
+   judge.
+6. A fixed course is kept in a script that gives the orchestrator only the moves the run needs, and
+   the state and each decision are written to a file before the next move, so a run stopped
+   anywhere, or given an answer, goes on from where it stood.
 7. The purpose comes first and performance after: time is never saved by leaving the caller more
    to fix.
 8. Once the caller approves the finished work, the orchestrator looks once for what fell short and
@@ -34,6 +39,9 @@ adds only what that plugin gives on top of them.
 9. Each entry Claude Code gives the form of, a skill, an agent, a hook or a command line, takes the
    call and hands it to the part that does the job, kept in a file of its own named for that part,
    so the files show the parts the logical view draws.
+10. Every check, a script's, a hook's, a test's, CI's or a reader's, ends in one of three: no
+    problem, a problem found, or could not check with why; what follows each way it can fail to
+    check is decided beforehand and tested.
 
 ## Why it is so
 
@@ -48,6 +56,13 @@ go-between that holds nothing cannot. Anthropic's
 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) has
 an orchestrator, where "a central LLM dynamically breaks down tasks, delegates them to worker
 LLMs", for "complex tasks where you can’t predict the subtasks needed".
+
+It tells its caller of the run when a role starts or ends, when it asks and when it returns the
+result, each line said within the move it goes with.
+
+These are where the caller can see the run going a slow or wrong way, or must act; a line before
+every move is one more move for each, read by no one, as in a trial of rn on 2026-10-27 where turn
+sent the main conversation 81 lines over 8 calls.
 
 ### Where the orchestrator runs
 
@@ -83,6 +98,14 @@ after it; a fact found and not shown is still assumed in the caller's place, and
 only once the caller confirms the understanding is shared
 ([grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md),
 [Let Claude interview you](https://code.claude.com/docs/en/best-practices#let-claude-interview-you)).
+
+A choice the purpose and the project's practice settle, such as where a test goes or what a file
+holds that the work needs, is not the caller's: the role that meets it settles it and names it as
+chosen with why, where the caller sees it and can change it.
+
+A question costs the caller a reading and an answer and holds the run until it comes; asked of what
+they do not care about, it spends their time on the plugin's job, as in that trial, where most of
+its 11 questions were of this kind.
 
 ### The caller approves what is theirs
 
@@ -142,16 +165,45 @@ none of it.
 ### Read by those who did not make it
 
 Each work is used first by AIs that did not make it, standing in for its receiver with what the
-receiver has and doing what they do with it, and each gives its verdict from its own reading alone.
+receiver has and doing what they do with it, and each gives its verdict from its own first reading
+alone.
 
 The maker finds the Good it meant; a reader that did not make it finds the Good its lines give,
 which is what the receiver gets. A reader shown another's verdict finds what it was told, so two
 readings add a check only when each is made on its own.
 
+A reader finds an item's Good by whether the receiver can use the work for what they use it for, and
+sends back only a gap that keeps them from it, saying how; what a machine can judge it leaves to the
+checks that judge it (Principle 5).
+
+A reader that hunts for defects finds one in every work it reads, and each is mended whether or not
+the receiver would ever meet it, so the rounds go on while the work does not get better for its
+receiver; in that trial, of about 25 works sent back, about 12 were for defects found by running the
+work, 8 for what a linter or a type checker would have shown, and 5 for wording.
+
+Once a gap is sent back, the maker mends it or says why it lies outside the purpose, and the
+reader, given that answer, holds the gap or lets it go; the answer goes through the orchestrator as
+one move, and a gap the two still differ on after one exchange is a question of the purpose, put to
+the caller.
+
+Maker and reader hold the same purpose, so a gap one of them saw wrong is settled by its reasons,
+not by another round of making; after the first reading the reader has given its own verdict, so
+the maker's answer can only move it by a reason, and a gap still open is one the purpose does not
+settle, which is the caller's.
+
 A work whose receiver is the caller, read whole by them to approve it as soon as it is made, such as
 a plan, is read first by its receiver itself: a reader in their place adds a reading the caller
-makes next anyway, and costs its time at every remake. Its maker checks it against its checklist,
-and a script holds what a machine can judge of it (Principle 5).
+makes next anyway, and costs its time at every remake.
+
+Every maker checks its work against its checklist item by item, giving each whether it passes and
+its evidence, the command run and what it printed, or the lines, in short; on a remake it gives
+again only the items sent back. Each item says what is run and how far, so maker and reader run the
+same.
+
+The evidence is what a reader or the caller can check, where a claim in prose is read by no one and
+costs its writing at every round; in that trial the generator rewrote such a claim of every item each
+round, 23,000 characters, which only a form check read. Two who run the same check see the same
+result, so a gap one of them finds is not a difference in what each chose to run.
 
 ### Where the course is kept
 
@@ -169,10 +221,23 @@ may not.
 A course fixed in code that the run's findings keep changing has no move for what it did not
 foresee.
 
+The script gives the orchestrator only the moves that need it, such as starting a role, sending it
+a message, asking and returning the result, and does itself what a script can, such as checking a
+reply's form or waiting for a role's end, each wait one move.
+
+Each move the orchestrator makes is a turn of the model read with the whole conversation, so a move
+the script could make costs time and grows what every later move reads; in that trial turn's
+orchestrator made 236 moves over 8 calls, where two rounds need about eight each.
+
 A run's state is kept in a file in its work folder, placed as
-[Where a plugin writes its files](#where-a-plugin-writes-its-files) says, so a run stopped anywhere
-goes on from its last move in a new conversation; a conversation ends, is cleared or is compacted,
-and what lives only in it is lost.
+[Where a plugin writes its files](#where-a-plugin-writes-its-files) says, and each decision and
+answer is written there before the next move, so a run stopped anywhere goes on from its last move in
+a new conversation, and an answer is taken in where the run stands; what is kept is committed and
+pushed at a step's end.
+
+A conversation ends, is cleared or is compacted, and what lives only in it is lost; going on from a
+stop needs the file, not the push, and a run started again for an answer spends again what it had
+already made.
 
 ### Where a plugin writes its files
 
@@ -246,7 +311,10 @@ A role is started with its prompt and replies at its end; more work for a role a
 by message ([SendMessage](https://code.claude.com/docs/en/sub-agents#resume-subagents)), and so does
 a question from an orchestrator that is a subagent. Roles do not message one another.
 
-What passes between roles goes through the orchestrator.
+What passes between roles goes through the orchestrator, a reader's gap and its maker's answer too.
+
+The orchestrator holds the whole run (Principle 1), so only it knows what each role has been given
+and where the run stands; an exchange it does not see leaves the run's state behind the work.
 
 ### A plugin that uses another
 
@@ -270,6 +338,26 @@ last the whole session once it has started
 ([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)); so an orchestrator in
 the main conversation is held by its steps, or the script that keeps its course, and what is hard
 to undo by GitHub's branch protection or Claude Code's permission rules.
+
+### What a machine can see of the work
+
+A project whose work is code has a formatter, a linter and a type checker set up and run in the
+command that checks the work; makers and readers do not look for what they show.
+
+A tool finds the same thing every time and at once, where an AI reading for it finds some and spends
+a round on each; in that trial the project had none, and 8 of the works sent back were for what
+they would have shown.
+
+### No check passes what it did not check
+
+Every check ends in no problem, a problem found, or could not check with why, and for each way it
+can fail to check, what then follows is decided beforehand and tested: a hook whose script fails or
+times out, or that cannot parse a command, stops the call and says so; a test skipped is not a test
+passed; a CI job that did not run does not pass; a reader whose command did not run gives no Good.
+
+A check that says nothing when it could not check is read as one that found nothing, so what it was
+there to stop goes through unseen; a case decided only when it is met is decided in a hurry, by
+whoever meets it.
 
 ## Repository structure
 
