@@ -102,8 +102,11 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
   claim.json, forms.py, flow.py, the roles' prompts, turn's UX and architecture, and rn's
   orchestrator.md:200-207, which checks each `good` at its `lines`, changed together as one,
   held to fix.md whole. Serves AC2.
-- [ ] T38: Every part of lane, turn and rn no purpose needs is gone, each judged by the user one
-  at a time from `audit-purpose.md`, as the user asked (2026-10-27). Serves AC1, AC2.
+- [ ] T38: Every part of lane, turn and rn no purpose needs is gone, as `audit-purpose.md` 6 to 22
+  are settled by the agreed principles and tasks, the user saying no further judgment of theirs is
+  needed (2026-10-27): 6 to 16 removed or brought to use, 17 a stop turned into asking `main`
+  (Principle 4), 18 kept (Test, No check passes what it did not check), 19 kept as the user's,
+  20 by T36, 21 and 22 by T35; reported to the user after. Serves AC1, AC2.
 - [ ] T39: turn is remade as `audit-purpose.md` 1 to 5 say, its README, UX, architecture,
   prompts, scripts, lanes and trials together; check.sh turn 100%, mutate.sh turn 0 survivors, its
   trials passing. Serves AC1, AC2.
