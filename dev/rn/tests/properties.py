@@ -12,7 +12,6 @@ from helpers import (
     STEERED,
     RepoTest,
     ccs,
-    learnings,
     plan,
     proposal,
     said,
@@ -186,21 +185,6 @@ class PropertyTest(RepoTest):
             [f"- {'' if before.get(t) == said else 'Changed: '}{said}" for t, said in now.items()]
             + [f"- Removed: {said}" for t, said in before.items() if t not in now],
         )
-
-    @hypothesis.given(
-        st.integers(0, 4),
-        st.lists(st.tuples(st.integers(0, 99), WORDS), max_size=4),
-    )
-    def test_learnings_put_back_are_numbered_on_from_those_kept(self, kept, made):
-        # Given: any count of learnings kept, and any learnings of a part, numbered as turn may
-        # number them, each of any text a line can hold.
-        before = [f"- L{n}: Kept {n}." for n in range(1, kept + 1)]
-        part = [f"- L{n}: {text}" for n, text in made]
-        # When: they are put back.
-        # Then: those kept stay, and each of the part follows, numbered on from them, its text as
-        # written.
-        want = before + [f"- L{kept + k}: {text}" for k, (_, text) in enumerate(made, 1)]
-        self.assertEqual(learnings.put(before, part), want)
 
     @hypothesis.given(
         st.text(alphabet=" x", min_size=1, max_size=5),

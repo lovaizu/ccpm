@@ -63,7 +63,8 @@ Scope: its part
 Can the contributor tell from the decided lines what to do next, such as a command to run, and do it
 with what the repository holds?
 
-Look for: a command or a file the repository does not have.
+Signs: the contributor runs each command the lines name, and finds each file they name in the
+repository.
 
 Why: a line that says what to do with nothing to do it with leaves the contributor stuck at once.
 """,

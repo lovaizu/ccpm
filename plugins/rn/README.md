@@ -181,6 +181,15 @@ alone, or rn itself, as an issue to rn's makers, for everyone's work; you decide
 
 > a
 
+● The issue to rn's makers, in full:
+  # rn: the plan checklist asks how much of the work is done at once
+  ## What it should be
+  rn's plan checklist asks whether it is settled how much of the work is done at once.
+  ...
+  Send it to lovaizu/ccpm? Answer yes, or say what to change.
+
+> yes
+
 ● Issue sent: https://github.com/lovaizu/ccpm/issues/120
 ● The pull request is ready to merge: https://github.com/you/app/pull/42
 ```

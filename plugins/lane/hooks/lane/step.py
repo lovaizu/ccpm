@@ -10,7 +10,6 @@ from __future__ import annotations
 import itertools
 import os
 import re
-from typing import NamedTuple
 
 import template
 
@@ -23,22 +22,10 @@ ROOT = "${CLAUDE_PLUGIN_ROOT}"
 # Where an entry's body names a part, a file under the plugin's prompts/ by the plugin's folder, in
 # backticks.
 NAMED = re.compile(r"`" + re.escape(ROOT) + r"/prompts/(?P<path>[^`]+)`")
-# Text in backticks, where a full stop, as in a file's name, ends no sentence.
-QUOTED = re.compile(r"`[^`]*`")
-# A sentence's end: a full stop, a question or an exclamation mark, before a blank or the end.
-END = re.compile(r"[.?!](?=\s|$)")
 # A blank line, which ends a paragraph.
 BLANK = re.compile(r"\n[ \t]*\n")
 # Where an entry's body says what a name its part uses stands for: "`<name>` below is `<text>`".
 BINDS = re.compile(r"`(?P<name>[^`\s]+)` below is `(?P<text>[^`]+)`")
-
-
-class Part(NamedTuple):
-    """The part an entry has its subagent read first: its file in the plugin, and the entry's
-    sentence naming it, as its body says it, a line break read as a space."""
-
-    file: str
-    said: str
 
 
 def agent_file(root: str, name: str) -> str | None:
@@ -54,23 +41,15 @@ def agent_file(root: str, name: str) -> str | None:
     return None
 
 
-def part(root: str, name: str) -> Part | None:
+def part(root: str, name: str) -> str | None:
     """The part the subagent's entry names in its body, the one file under the plugin's prompts/ it
-    names in backticks, with the sentence naming it; None where its body names no such file, or
-    more than one, or no entry names the subagent."""
-    paragraphs = body(root, name)
-    found = [(p, m) for p in paragraphs for m in NAMED.finditer(p)]
+    names in backticks; None where its body names no such file, or more than one, or no entry names
+    the subagent."""
     prompts = os.path.realpath(os.path.join(root, "prompts"))
-    files = {os.path.realpath(os.path.join(prompts, m["path"])) for _, m in found}
+    named = {m["path"] for p in body(root, name) for m in NAMED.finditer(p)}
+    files = {os.path.realpath(os.path.join(prompts, n)) for n in named}
     file = files.pop() if len(files) == 1 else ""
-    if not file.startswith(prompts + os.sep):
-        return None
-    paragraph, m = found[0]
-    # A full stop in backticks ends no sentence, so they are read blank.
-    plain = QUOTED.sub(lambda q: "`" * len(q[0]), paragraph)
-    start = max((e.end() for e in END.finditer(plain[: m.start()])), default=0)
-    end = next((e.end() for e in END.finditer(plain, m.end())), len(paragraph))
-    return Part(file, paragraph[start:end].strip())
+    return file if file.startswith(prompts + os.sep) else None
 
 
 def body(root: str, name: str) -> list[str]:
@@ -108,7 +87,7 @@ def steps_file(root: str, name: str) -> str | None:
     entry names, as `part` finds it, or the entry itself where it names none; None where no entry
     names the subagent."""
     named = part(root, name)
-    return agent_file(root, name) if named is None else named.file
+    return agent_file(root, name) if named is None else named
 
 
 def span(lines: list[str], number: int) -> tuple[int, int] | None:

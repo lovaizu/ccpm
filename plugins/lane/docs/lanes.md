@@ -170,13 +170,13 @@ such as in_form's form gone, is an error, not a drift: the call is stopped, or t
 going once as it ends, and it and you are told
 
 ```
-<plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Stop here and reply that <who must fix it>.
+<plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Ask the main conversation for the fix: <who must fix it>. Go on with the rest of your work meanwhile.
 ```
 
 or, where the event or `hooks/lanes.json` is what is wrong, so no lane of the subagent is known,
 
 ```
-<plugin>: lane cannot check the lanes of <subagent>: <what is wrong>. Stop here and reply that <who must fix it>.
+<plugin>: lane cannot check the lanes of <subagent>: <what is wrong>. Ask the main conversation for the fix: <who must fix it>. Go on with the rest of your work meanwhile.
 ```
 
 and, where the hook's command does not name the subagent as `lay.py write` writes it, so neither
@@ -253,11 +253,3 @@ A lane takes the name as the step says it, as in `` First run `writer.py start`.
 sentence shows it so; where a thing it takes begins with a name the body binds, the guard and the layer read the
 name as the body says it stands for, so start_with holds the subagent to run the script where the
 body says it lies, and in_form reads the form there.
-
-Once lanes are laid in the subagent, the guard holds it to read the part whole before anything
-else, with nothing in the proposal for it, as the sentence is the entry's and not a step's: a Read
-of the part goes on, its lanes not held on it, and any other call made before the part is read to
-its end is stopped, the subagent told the entry's sentence, headed by your plugin's name, as
-start_with and read_whole tell theirs. The part not there, or the subagent's record not found, is
-an error, told in the form `<plugin>: lane cannot check the lanes of <subagent>: <what is wrong>.`
-above.

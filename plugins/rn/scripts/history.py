@@ -53,17 +53,21 @@ def feedback(folder: str, start: str, said: dict[str, str]) -> list[dict[str, An
 
 
 def remade(folder: str, start: str, said: dict[str, str]) -> list[dict[str, Any]]:
-    """Each work made again, in the order made: each call on a work after its first, with the
-    commit that added its CCS and that commit's message."""
-    seen: set[str] = set()
+    """Each work made again, in the order made: each call on a work after one of its calls returned
+    turn's result, with the commit that added its CCS and that commit's message. A call on the plan
+    or the learnings is none, as the orchestrator writes them and turn returns nothing of them, and
+    the plan is written again by its own course, as each task's findings change it."""
+    returned: set[str] = set()
     found = []
     for made in session.calls(folder, "HEAD"):
-        if made.work in seen:
+        if made.work in returned:
             commit = added(session.call_path(folder, made.number, session.CCS), start)
             found.append(
                 {"commit": commit, "work": made.work, "call": made.number, "message": said[commit]}
             )
-        seen.add(made.work)
+        # A call on a work no part is made for is closed once turn has returned its result.
+        if made.closed and made.work not in session.PARTS:
+            returned.add(made.work)
     return found
 
 

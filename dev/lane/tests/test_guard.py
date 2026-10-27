@@ -24,16 +24,18 @@ HANDS_OFF = (3, "hands_off", ["git commit", "git push"])
 BEGIN = "First run `scripts/log.py`."
 # The changelog written by the Write tool, as the record holds it.
 CHANGE = helpers.writing("CHANGELOG.md")
-# Who must fix what the plugin gives its lanes, laying them again, as the subagent is told to reply.
+# Who must fix what the plugin gives its lanes, laying them again, as the subagent is told to ask
+# the main conversation for it.
 LAY_AGAIN = (
-    "Stop here and reply that the maker of notes must lay its lanes again with `lay.py write`, so"
-    " they match its steps."
+    "Ask the main conversation for the fix: the maker of notes must lay its lanes again with"
+    " `lay.py write`, so they match its steps. Go on with the rest of your work meanwhile."
 )
 # What the subagent and the user are told where step 3 no longer says the lane's sentence.
 GONE = (
     "notes: lane cannot check hands_off on step 3 of changelog-writer: step 3 no longer says: Do"
-    " not run `git commit` or `git push`. Stop here and reply that the maker of notes must lay its"
-    " lanes again with `lay.py write`, so they match its steps."
+    " not run `git commit` or `git push`. Ask the main conversation for the fix: the maker of notes"
+    " must lay its lanes again with `lay.py write`, so they match its steps. Go on with the rest of"
+    " your work meanwhile."
 )
 
 
@@ -356,8 +358,9 @@ class TestRunValues(GuardTest):
                 # Then: it is an error, saying so and that the plugin's maker must fix it
                 told = (
                     "notes: lane cannot check write_only on step 3 of changelog-writer: `{work}`"
-                    f" is {how} in what changelog-writer started from. Stop here and reply that"
-                    " the maker of notes must fix it."
+                    f" is {how} in what changelog-writer started from. Ask the main conversation"
+                    " for the fix: the maker of notes must fix it. Go on with the rest of your"
+                    " work meanwhile."
                 )
                 self.assertEqual(self.wrote("c.md"), ("error", told))
 
@@ -572,8 +575,9 @@ class TestAdapters(GuardTest):
                 self.assertIn(named, said)
                 self.assertTrue(
                     said.endswith(
-                        "Stop here and reply that the maker of notes must fix the adapter and lay"
-                        " its lanes again with `lay.py write`."
+                        "Ask the main conversation for the fix: the maker of notes must fix the"
+                        " adapter and lay its lanes again with `lay.py write`. Go on with the"
+                        " rest of your work meanwhile."
                     ),
                     said,
                 )
@@ -628,8 +632,9 @@ class TestCommandLine(GuardTest):
                 expected = (
                     f"lane: lane cannot check the lanes of this hook: its command gives"
                     f" `{' '.join(words)}`, not the subagent alone as <plugin>:<name>, as"
-                    " `lay.py write` writes it. Stop here and reply that the plugin's maker must"
-                    " lay its lanes again with `lay.py write`, to write its hooks anew."
+                    " `lay.py write` writes it. Ask the main conversation for the fix: the"
+                    " plugin's maker must lay its lanes again with `lay.py write`, to write its"
+                    " hooks anew. Go on with the rest of your work meanwhile."
                 )
                 self.assertEqual(said, expected)
 

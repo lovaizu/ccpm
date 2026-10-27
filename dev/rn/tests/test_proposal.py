@@ -210,9 +210,10 @@ class ProposalTest(ShownTest):
         # Given: a commit not pushed.
         self.git("commit", "-q", "--allow-empty", "-m", "c")
         # When: the orchestrator asks for a proposal.
-        # Then: rn says to push first.
+        # Then: rn says to keep the move, which pushes it.
         self.assertIn(
-            "rn: the branch has 1 commit(s) not pushed; push with `git push`",
+            "rn: the branch has 1 commit(s) not pushed; keep the move with `rn.py state --message"
+            " <what it brought>`, which pushes them, then run this again",
             self.stopped("proposal", "plan"),
         )
 
@@ -220,9 +221,10 @@ class ProposalTest(ShownTest):
         # Given: a branch never pushed.
         self.git("checkout", "-q", "-b", "lone")
         # When: the orchestrator asks for a proposal.
-        # Then: rn says to push the branch.
+        # Then: rn says to keep the move, which pushes the branch.
         self.assertIn(
-            "push the branch with `git push -u origin HEAD`", self.stopped("proposal", "plan")
+            "keep the move with `rn.py state --message <what it brought>`, which pushes the branch",
+            self.stopped("proposal", "plan"),
         )
 
     def test_a_signoff_rn_does_not_have_stops(self):

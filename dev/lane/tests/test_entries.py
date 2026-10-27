@@ -224,8 +224,8 @@ class TestOnFailure(unittest.TestCase):
 
 class TestWords(unittest.TestCase):
     COMMAND = entries.command("notes", helpers.AGENT, "PreToolUse")
-    # A hook's command as an older lane wrote it, giving each lane laid after the subagent.
-    OLDER = (
+    # A hook's command giving more words after the subagent, as the guard refuses it.
+    MORE = (
         'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
         " '3:hands_off:git commit,git push'"
     )
@@ -233,12 +233,12 @@ class TestWords(unittest.TestCase):
     def test_the_words_a_hooks_command_gives_its_event_script_are_read(self):
         for command, words in (
             (self.COMMAND, ["notes:changelog-writer"]),
-            (self.OLDER, ["notes:changelog-writer", "3:hands_off:git commit,git push"]),
+            (self.MORE, ["notes:changelog-writer", "3:hands_off:git commit,git push"]),
         ):
             with self.subTest(command=command):
-                # Given: a hook's command as `lay.py write` writes it, or as an older lane wrote it
+                # Given: a hook's command as `lay.py write` writes it, or giving more words
                 # When: its words for PreToolUse are read
-                # Then: they are the subagent, then each lane an older lane gave
+                # Then: they are the subagent, then each word after it
                 self.assertEqual(entries.words(command, "PreToolUse"), words)
 
     def test_a_command_of_another_event_no_subagent_or_unread_words_gives_none(self):

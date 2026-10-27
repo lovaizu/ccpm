@@ -299,48 +299,8 @@ RESEARCH_PLACE = {
         }
     },
 }
-# The issue turn makes of L1 once the user takes it for rn's makers, in the form of rn's issue
-# checklist.
+# Where the orchestrator writes the issue of L1 once the user takes it for rn's makers.
 ISSUE = f"{SESSION}/issue-1.md"
-ISSUE_TEXT = f"""# rn: the first questions leave where in a file a change goes
-
-## What happened
-
-rn's first questions named no place for the greeting in the file it changes, so the plan took a
-task of research and a question to find it, kept as "{PLACE_QUOTE}".
-
-## Why it matters
-
-A user waits for a research task, and answers a later question, for a point rn could ask first.
-
-## What it should be
-
-/rn:up's first questions, in step 8 where it hears the purpose, ask, of a work that changes a
-file, where in the file the change goes.
-
-## Seen in
-
-rn 0.9.0
-"""
-ISSUE_MADE = {
-    "files": {ISSUE: ISSUE_TEXT},
-    "goods": {
-        "issue.md": {
-            "F-1": {"good": "The issue follows the template, its title first", "at": "whole"},
-            "B-1": {
-                "good": "The title and What it should be name the change to /rn:up's first"
-                " questions, and Why it matters what a user loses",
-                "at": ["# rn:", "## Why it matters..## Seen in"],
-            },
-            "B-2": {
-                "good": "What happened quotes the learning's words and holds nothing more of the"
-                " user's work",
-                "at": ["## What happened..## Why it matters"],
-            },
-            "B-3": {"good": "It holds one need, met by one change of rn's", "at": "whole"},
-        }
-    },
-}
 FINISHED = {
     "goods": {
         "deliverable.md": {
@@ -381,14 +341,14 @@ Scope: its part
 
 Does each action that asks the user a point ask one no sign-off has approved?
 
-Look for: an action confirming with the user what an approved document gives, such as its lines.
+Signs: the user is asked only points the approved documents leave open, none their lines give.
 
 Why: a point asked again spends the user's time on what they already decided.
 """
 CHECKLIST_GOODS = {
     "F-1": "plan.md follows the template: the front matter, the title, the purpose, the idea, and"
-    " `## Benefit` with B-1, with its Scope, its question and its Why; an addition holds only what"
-    " it adds, so it has no Format section",
+    " `## Benefit` with B-1, with its Scope, its question, its Signs and its Why; an addition holds"
+    " only what it adds, so it has no Format section",
     "F-2": "Its version is 1, as no release has numbered it",
     "F-3": "made_from names checklist 1 and usability 1, the versions that stand now",
     "F-4": "Its item is B-1, counted up in Benefit",
@@ -700,10 +660,8 @@ def learnings_due(p: Place) -> None:
 
 
 def l1_answered(p: Place) -> None:
-    """L1 answered, taken for an issue not yet sent, kept as the decision of the issue's work and in
-    Open, Next L2."""
+    """L1 answered, taken for an issue not yet sent, kept in Open, Next L2."""
     learnings_due(p)
-    decide(p, "issue-1", "Learning", L_PLACE[len("- L1: ") :], "L1: for an issue to rn's makers")
     said = "L1: the user chose an issue to lovaizu/ccpm alone"
     state(p, NEXT_L2, said, "--open", L1_OPEN, "--goes-on")
 
@@ -742,14 +700,14 @@ def open_has(words: str, held: bool = True) -> Check:
     return Check(f"Open {'holds' if held else 'no longer holds'} `{words}`", holds)
 
 
-def open_none(nothing: bool = True) -> Check:
-    """The check that the steering's Open is `None.`, or holds a point."""
+def open_none() -> Check:
+    """The check that the steering's Open is `None.`."""
 
     def holds(seen: Seen) -> bool:
         s = steered(seen)
-        return s is not None and (s.open == [steering.NOTHING_OPEN]) == nothing
+        return s is not None and s.open == [steering.NOTHING_OPEN]
 
-    return Check("Open is `None.`" if nothing else "Open holds a point", holds)
+    return Check("Open is `None.`", holds)
 
 
 def plan_has(words: str, held: bool = True) -> Check:
@@ -1356,7 +1314,7 @@ CASES = {
     ),
     "learning": Case(
         "the learnings put one per message, the first taken for an issue",
-        "up 1, 11 (one learning per message, each answer written, an issue's as its decision,"
+        "up 1, 11 (one learning per message, each answer written, an issue's in Open,"
         " nothing committed at an answer)",
         learnings_due,
         [front("learnings", "none"), learnings(2), next_has("Step 11")],
@@ -1367,8 +1325,7 @@ CASES = {
                 [
                     STAYS,
                     next_has("L2"),
-                    decisions("issue-1", 1),
-                    open_none(nothing=False),
+                    open_has("issue"),
                     issues(0),
                     ONE_POINT,
                 ],
@@ -1379,7 +1336,8 @@ CASES = {
     "last": Case(
         "the last learning taken for the checklist, the issue shown and sent, the pull request"
         " marked ready",
-        "up 1, 11 (the issue made, up 3, shown and sent; the checklist made, up 3; finished)",
+        "up 1, 11 (the issue written by the orchestrator, shown and sent; the checklist made, up 3;"
+        " finished)",
         l1_answered,
         [front("learnings", "none"), next_has("L2")],
         [
@@ -1390,7 +1348,7 @@ CASES = {
                     MOVED,
                     KEPT,
                     decisions("checklist-plan", 1),
-                    returned("issue-1", 1),
+                    called("issue-1", 0),
                     file_has(ISSUE, "## What it should be"),
                     issues(0),
                 ],
@@ -1408,6 +1366,6 @@ CASES = {
                 ],
             ),
         ],
-        {"issue-1": [ISSUE_MADE], "checklist-plan": [PLAN_CHECKLIST]},
+        {"checklist-plan": [PLAN_CHECKLIST]},
     ),
 }

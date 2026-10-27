@@ -22,7 +22,7 @@
 - Before a work is made, rn reads the checklists it will be made with and asks you each choice an item needs that you have not made — the questions come before the work, not while it is being made.
 - The documents the purpose needs are settled with you after the plan sign-off instead of a fixed README, design and verification document — you get only the documents your purpose needs.
 - There is a design sign-off only where your purpose needs a document, and the tasks are planned stage by stage as each is reached — a small change that needs no document goes on without a stop that gives you nothing to decide.
-- An issue to rn's makers is written by turn and used by an AI that did not write it before you are asked to send it — what leaves your project holds the need alone, in the form rn's makers read.
+- An issue to rn's makers is written by rn with its issue checklist open and shown to you whole before you are asked to send it — what leaves your project holds the need alone, in the form rn's makers read, and you read it once.
 - Each kind of work, such as a README or code, is made with rn's one checklist for it and your addition at `.rn/checklists/<kind>.md` — what your project needs beyond rn's goes into every later work of that kind.
 - rn needs turn, which installing rn installs, and no longer writ — the making and the reading in your place are done one way for every piece of work.
 - rn has no hooks of its own and asks you to protect the default branch on GitHub — the protection keeps any command from changing it before you merge, whatever form the command takes.

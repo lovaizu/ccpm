@@ -112,12 +112,6 @@ class TestConversation(KeptTest):
             pattern, os.path.join(self.projects, "*", "*", "subagents", "agent-*.jsonl")
         )
 
-    def test_a_subagents_id_is_read_from_where_its_record_is_kept(self):
-        # Given: where the record of the subagent a1b2 is kept
-        # When: the subagent's ID is read from it
-        # Then: it is a1b2
-        self.assertEqual(record.agent_id("/p/s1/subagents/agent-a1b2.jsonl"), "a1b2")
-
 
 class TestAgentType(KeptTest):
     def test_the_agent_type_is_the_one_its_meta_file_names(self):
@@ -330,23 +324,6 @@ class TestDone(RecordTest):
         # When: what the subagent did is read
         # Then: neither failed
         self.assertEqual([d.failed for d in self.done()], [False, False])
-
-
-class TestPrompt(RecordTest):
-    def test_the_prompt_is_the_text_of_the_first_user_entry(self):
-        # Given: a record begun by the prompt, then a call and a message from the main conversation
-        calls = [helpers.bash("ls"), helpers.from_main("Go on.")]
-        self.write(self.file, helpers.recorded("/w", calls, '{"work": "a.md"}'))
-        # When: its prompt is read
-        # Then: it is the first entry's text
-        self.assertEqual(record.prompt(self.entries()), '{"work": "a.md"}')
-
-    def test_a_record_with_no_user_text_has_an_empty_prompt(self):
-        # Given: a record of a call alone, no user entry of text
-        self.write(self.file, helpers.recorded("/w", [helpers.bash("ls")]).split("\n", 1)[1])
-        # When: its prompt is read
-        # Then: it is empty
-        self.assertEqual(record.prompt(self.entries()), "")
 
 
 class TestHeard(RecordTest):

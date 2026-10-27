@@ -203,7 +203,6 @@ class RepoTest(MainAndWork):
                 ("plan", "session"),
                 ("learnings", "session"),
                 ("deliverable", "session"),
-                ("issue", "session"),
                 ("checklist", ""),
             )
         }

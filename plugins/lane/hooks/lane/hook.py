@@ -26,6 +26,10 @@ CLAUDE_CODE = (
     "Claude Code must be updated with `claude update`, and where this goes on, it must be reported"
     " at https://github.com/lovaizu/ccpm/issues"
 )
+# What a subagent is told to do where lane cannot check a lane, given who must fix it: a role asks
+# the main conversation for what lies outside its work and goes on with the rest, as
+# dev/architecture.md's Asking for what lies outside the work says.
+ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your work meanwhile."
 # The fields each event of these hooks holds beside hook_event_name and cwd, and the types of each:
 # at SubagentStop the agent's last reply, which Claude Code gives as null after the agent hands its
 # reply back with SubagentHandback; as a call comes back, its ID, and of a failed one its error.
@@ -132,7 +136,7 @@ def run(
         name = agent.split(":")[1]
         unread = (
             f"{plugin}: lane cannot check the lanes of {name}: the hook was handed no event as"
-            f" Claude Code hands it, {wrong}. Stop here and reply that {CLAUDE_CODE}."
+            f" Claude Code hands it, {wrong}. {ASK.format(fix=CLAUDE_CODE)}"
         )
         answered(out, said_on(event, held, [Said(unread, True)]))
         return
@@ -154,8 +158,11 @@ def main(held: str, words: list[str], part: Callable[[str, str, str], Any]) -> N
         unread = (
             f"lane: lane cannot check the lanes of this hook: its command gives"
             f" `{agent}`, not the subagent alone as <plugin>:<name>, as `lay.py write` writes"
-            " it. Stop here and reply that the plugin's maker must lay its lanes again with"
-            " `lay.py write`, to write its hooks anew."
+            " it. "
+            + ASK.format(
+                fix="the plugin's maker must lay its lanes again with `lay.py write`, to write its"
+                " hooks anew"
+            )
         )
         failed(held, unread, sys.stdin, sys.stdout)
         return

@@ -32,21 +32,19 @@ REPLACED = "replaced.jsonl"
 # The works rn makes: the plan, the part of the steering from the title through the tasks, and the
 # learnings, both written by the orchestrator; and, made by turn, the finished work; what each
 # action of turn's makes, `t<n>.<k>` for action k of task T<n>, one work for each output, such as a
-# research result, a document or a task's result; a checklist of a kind; and an issue to rn's
-# makers.
+# research result, a document or a task's result; and a checklist of a kind.
 TASK_WORK = re.compile(r"t(?P<task>[0-9]+)\.(?P<action>[0-9]+)")
 CHECKLIST_WORK = re.compile(r"checklist-[a-z0-9-]+")
-ISSUE_WORK = re.compile(r"issue-[0-9]+")
 WORKS = (
     f"{steering.PLAN}, {steering.LEARNINGS}, {steering.DELIVERABLE}, t<n>.<k> for action k of"
-    " task T<n>, checklist-<kind>, or issue-<n> for the issue n to rn's makers"
+    " task T<n>, or checklist-<kind>"
 )
 # The works the design stage makes for its sign-off: what each action of its tasks makes, and each
 # checklist.
 DESIGNED = re.compile(rf"{TASK_WORK.pattern}|{CHECKLIST_WORK.pattern}")
 # The works whose call makes a part the orchestrator writes, cut into a file of its own, each with
-# what its file is named: the plan's a part of the steering, the learnings' those it adds to the
-# session's.
+# what its file is named: the plan's a part of the steering, the learnings' the session's
+# learnings.
 PART = {steering.PLAN: STEERING, steering.LEARNINGS: learnings.FILE}
 PARTS = tuple(PART)
 # A file of a call, by its number and what it is: the CCS, turn's result for a call to turn, or the
@@ -77,7 +75,7 @@ STAGED = {
 
 def worked(work: str) -> str:
     """The work, when it names one rn makes; stops otherwise."""
-    named = (TASK_WORK, CHECKLIST_WORK, ISSUE_WORK)
+    named = (TASK_WORK, CHECKLIST_WORK)
     if work not in PARTS + (steering.DELIVERABLE,) and not any(n.fullmatch(work) for n in named):
         raise stop.Stop(f"rn: the work {work!r} is none rn makes; give {WORKS}, such as t1.2")
     return work
@@ -198,8 +196,8 @@ def kept_steering(folder: str) -> steering.Steering:
     if point:
         raise stop.Stop(
             f"rn: {path} as the last keep left it is out of its form: {point}; rn keeps none so,"
-            " so restore the last one rn kept from"
-            f" `git log -p -- {path}`, commit it, then run this again"
+            f" so restore the last one rn kept with `git checkout <commit> -- {path}`, the commit"
+            f" found with `git log -- {path}`, then run this again, which keeps it"
         )
     return steering.parsed(last or "")
 
@@ -385,8 +383,8 @@ def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dic
 
 def cut(work: str, steered: steering.Steering) -> str:
     """The part a call on the plan or the learnings makes, as it is cut for the orchestrator to
-    write: the plan from the title through the tasks, the learnings none, as those kept are not
-    made again."""
+    write: the plan from the title through the tasks, the learnings none, as they are written
+    once."""
     return {steering.PLAN: "\n".join(steered.plan) + "\n", steering.LEARNINGS: ""}[work]
 
 
@@ -394,9 +392,9 @@ def put_part(
     folder: str, steered: steering.Steering, number: str | None
 ) -> tuple[steering.Steering, list[str]]:
     """The steering and the session's learnings once the part of the call of the number is put
-    back, the plan's into the steering and the learnings' after those kept, none of the learnings
-    for the plan's; the steering as it is and none where no number is given. Stops where the part
-    cannot be taken, or a task of the plan's part is numbered as one done."""
+    back, the plan's into the steering and the learnings' as the session's learnings, none of the
+    learnings for the plan's; the steering as it is and none where no number is given. Stops where
+    the part cannot be taken, or a task of the plan's part is numbered as one done."""
     if number is None:
         return steered, []
     return put(folder, steered, *part_of(folder, number))
@@ -406,29 +404,28 @@ def put(
     folder: str, steered: steering.Steering, made: Call, part: list[str]
 ) -> tuple[steering.Steering, list[str]]:
     """The steering and the session's learnings with the part written for the call put back,
-    the plan's into the steering and the learnings' after those kept, none of the learnings for the
-    plan's. Stops where a task of the plan's part is numbered as one done."""
+    the plan's into the steering and the learnings' as the session's learnings, none of the
+    learnings for the plan's. Stops where a task of the plan's part is numbered as one done."""
     if made.work == steering.PLAN:  # pragma: no mutate
         numbered_on(folder, steered.plan, part, made.number)
         return steered._replace(plan=steering.put_plan(steered.plan, part)), []
-    return steered, learnings.put(learnings.kept(folder), part)
+    return steered, part
 
 
 def held_part(folder: str, number: str) -> None:
     """Returns when the part the orchestrator writes for the call of the number, put back as `state
     --put` puts it, holds what `state` holds it to at the keep: the plan's in the steering in its
-    form, each new task numbered above those held, and the learnings' after those kept in theirs;
-    keeps nothing, so the orchestrator checks the part as it writes it. Stops otherwise, the point
-    at the part's own line, as its writer reads it; and where the steering differs from what the
-    last keep left, or the part cannot be taken."""
+    form, each new task numbered above those held, and the learnings' in theirs; keeps nothing, so
+    the orchestrator checks the part as it writes it. Stops otherwise, the point at the part's own
+    line, as its writer reads it; and where the steering differs from what the last keep left, or
+    the part cannot be taken."""
     steered = kept_steering(folder)
     made, part = part_of(folder, number)
     put_steering, learnt = put(folder, steered, made, part)
-    # The learnings kept come before the part, counted up to its first line.
     point = (
         steering.plan_out(put_steering)
         if made.work == steering.PLAN  # pragma: no mutate
-        else learnings.out(learnt, 1 + len(part) - len(learnt))
+        else learnings.out(learnt)
     )
     if point:
         raise stop.Stop(
@@ -447,7 +444,7 @@ def state(
     goes_on: bool,
 ) -> dict[str, str]:
     """Keeps the move: the part of the call of the number put back, the plan's into the steering,
-    the learnings' added to the session's learnings; each action done ticked, and each task removed
+    the learnings' as the session's learnings; each action done ticked, and each task removed
     once all its actions are; the stage moved where given; Next and Open replaced whole, Next as the
     stage moved leads where none is given; then, as the step ends, every change committed and
     pushed as keep says, giving the commit, and the line told where an action is done; or, where

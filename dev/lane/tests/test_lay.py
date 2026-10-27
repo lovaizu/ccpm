@@ -124,11 +124,9 @@ class TestUp(LayTest):
     in the current form and the same lanes; and each lane laid before said, for the building AI to
     keep in its proposal or leave out."""
 
-    # The hook's command for hands_off as an older version of lane wrote it, with no Python check.
-    OLDER = (
-        'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
-        " '3:hands_off:git commit,git push'"
-    )
+    # The hook's command for changelog-writer as an older version of lane wrote it, with no
+    # Python check.
+    OLDER = 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
     # What `up` says of hands_off laid before on step 3, as the proposal gives the lane.
     LAID = (
         "Laid before on step 3 of changelog-writer:"
@@ -137,9 +135,11 @@ class TestUp(LayTest):
 
     def setUp(self) -> None:
         super().setUp()
-        # Step 3 as the layer wrote it, and lane's code as a copy of the version 0.1.0, with lane at
-        # 0.10.0, so a comparison of the versions as text would take the copy for the newer.
+        # Step 3 as the layer wrote it, with hands_off laid on it in hooks/lanes.json, and lane's
+        # code as a copy of the version 0.1.0, with lane at 0.10.0, so a comparison of the versions
+        # as text would take the copy for the newer.
         self.write(self.agent_file, helpers.LAID)
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), LAID)
         self.code = os.path.join(self.plugin, "hooks", "lane")
         self.write(os.path.join(self.code, "VERSION"), "0.1.0\n")
         self.write(os.path.join(self.code, "old.py"), "")
@@ -279,45 +279,6 @@ class TestUp(LayTest):
                 self.assertEqual(said, no_copy + self.LAID)
                 self.assertEqual(self.hooks(), written)
 
-    def test_a_lane_this_version_does_not_lay_is_left_out_and_said(self):
-        # Given: a hook laying hands_off beside a lane lane has not and in_form taking too few, and
-        # another subagent's hook laying only a lane lane has not
-        gone, short = "'2:gone:x'", "'3:in_form:entry.json'"
-        self.hooks_of(
-            f"{self.OLDER} {gone} {short}",
-            'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:other 1:gone:y',
-        )
-        # When: it is brought up
-        code, said = self.up()
-        # Then: the hooks lay the lanes this version lays, the other subagent's hook taken out, and
-        # each lane left out is said, for the building AI to weigh
-        self.assertEqual(code, 0)
-        self.assertEqual(self.hooks(), {"hooks": {"PreToolUse": [ENTRY], **KEPT}})
-        for agent, word in (
-            ("changelog-writer", "2:gone:x"),
-            ("changelog-writer", "3:in_form:entry.json"),
-            ("other", "1:gone:y"),
-        ):
-            with self.subTest(word=word):
-                self.assertIn(
-                    f"Left out `{word}` from the hook of {agent}, as lane 0.10.0 lays no such lane;"
-                    " propose a lane of docs/lanes.md that keeps its step, or leave it out.\n",
-                    said,
-                )
-
-    def test_a_lane_left_out_of_the_hooks_of_both_events_is_said_once(self):
-        # Given: a lane lane has not, in the hook of each event
-        hooks = {}
-        for event in ("PreToolUse", "SubagentStop"):
-            script = f'"${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/{event.lower()}.py"'
-            command = f"python3 {script} notes:changelog-writer 2:gone:x"
-            hooks[event] = [{"hooks": [{"type": "command", "command": command}]}]
-        self.write_json(os.path.join(self.plugin, "hooks", "hooks.json"), {"hooks": hooks})
-        # When: it is brought up
-        said = self.up()[1]
-        # Then: it is said once
-        self.assertEqual(said.count("Left out `2:gone:x`"), 1)
-
     def test_a_command_giving_no_subagent_lane_can_read_is_left_as_it_is(self):
         # Given: commands running lane's script with no words, a subagent with no plugin, or words
         # the shell cannot read, beside the hook of changelog-writer
@@ -341,8 +302,9 @@ class TestUp(LayTest):
         self.assertIn(self.LAID.replace(":", gone, 1), said)
 
     def test_a_plugin_with_no_hooks_has_no_lanes_laid_before(self):
-        # Given: a plugin with no hooks.json and no copy of lane's code
+        # Given: a plugin with no hooks.json, no hooks/lanes.json and no copy of lane's code
         shutil.rmtree(self.code)
+        os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
         # When: it is brought up
         # Then: it says there is no older copy, and nothing more
         no_copy = "hooks/lane/ holds no older copy of lane's code.\n"
@@ -375,36 +337,17 @@ class TestUp(LayTest):
         self.assertIn("plugin.json names the plugin by no name", said)
         self.assertEqual(self.read(os.path.join(self.code, "VERSION")), "0.1.0\n")
 
-    def test_the_lanes_an_older_lane_gave_on_one_step_are_kept_on_it_together(self):
-        # Given: the hook in the older form giving hands_off and write_only on step 3
-        self.hooks_of(f"{self.OLDER} '3:write_only:CHANGELOG.md'")
-        # When: it is brought up
-        self.up()
-        # Then: hooks/lanes.json gives step 3 once, with both lanes
-        write = {"lane": "write_only", "takes": ["CHANGELOG.md"]}
-        steps = [{"step": 3, "lanes": [*LANES, write]}]
-        self.assertEqual(self.laid(), {"subagents": [{"name": "changelog-writer", "steps": steps}]})
-
-    def test_the_lanes_an_older_lane_gave_are_kept_on_each_step_by_its_number(self):
-        # Given: the hook in the older form giving lanes on step 3, then step 1, then step 3 again
-        self.hooks_of(f"{self.OLDER} '1:hands_off:git tag' '3:write_only:CHANGELOG.md'")
-        # When: it is brought up
-        self.up()
-        # Then: hooks/lanes.json gives step 3 with both its lanes, and step 1 with its own
-        write = {"lane": "write_only", "takes": ["CHANGELOG.md"]}
-        tag = {"lane": "hands_off", "takes": ["git tag"]}
-        steps = [{"step": 3, "lanes": [*LANES, write]}, {"step": 1, "lanes": [tag]}]
-        self.assertEqual(self.laid(), {"subagents": [{"name": "changelog-writer", "steps": steps}]})
-
     def test_lanes_json_is_written_indented_by_two_its_text_as_written(self):
-        # Given: the hook in the older form giving a command that is not ASCII
-        self.hooks_of(f"{self.OLDER} '1:hands_off:echo 変更'")
-        # When: it is brought up
-        self.up()
-        # Then: hooks/lanes.json is the lanes indented by two, the command as it was written
+        # Given: the hook in the older form, and hooks/lanes.json on one line giving a command that
+        # is not ASCII
         tag = {"lane": "hands_off", "takes": ["echo 変更"]}
         steps = [{"step": 3, "lanes": LANES}, {"step": 1, "lanes": [tag]}]
         laid = {"subagents": [{"name": "changelog-writer", "steps": steps}]}
+        self.write(os.path.join(self.plugin, "hooks", "lanes.json"), json.dumps(laid))
+        self.hooks_of(self.OLDER)
+        # When: it is brought up
+        self.up()
+        # Then: hooks/lanes.json is the lanes indented by two, the command as it was written
         self.assertEqual(
             self.read(os.path.join(self.plugin, "hooks", "lanes.json")),
             json.dumps(laid, indent=2, ensure_ascii=False) + "\n",

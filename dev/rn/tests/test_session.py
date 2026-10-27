@@ -778,8 +778,8 @@ class StateTest(RepoTest):
         self.assertIn(
             f"rn: {STEERING} as the last keep left it is out of its form: line 4: expected stage"
             " to be plan, design, build, deliverable, learnings or finished, found done; rn keeps"
-            f" none so, so restore the last one rn kept from `git log -p -- {STEERING}`, commit"
-            " it, then run this again",
+            f" none so, so restore the last one rn kept with `git checkout <commit> -- {STEERING}`,"
+            f" the commit found with `git log -- {STEERING}`, then run this again, which keeps it",
             self.stopped(*self.state()),
         )
 
@@ -864,7 +864,7 @@ class StateTest(RepoTest):
 
 class PutTest(RepoTest):
     """A part the orchestrator wrote, put back by `state --put`: the plan's into the steering, the
-    learnings' after those kept."""
+    learnings' as the session's learnings."""
 
     def put(self, number: str = "0001") -> list[str]:
         """The arguments that put back the part of the call of the number."""
@@ -966,34 +966,22 @@ class PutTest(RepoTest):
                 )
                 self.assertEqual((said in out, self.read(STEERING)), (True, before))
 
-    def test_the_learnings_written_follow_those_kept(self):
-        # Given: a learning kept, and a call on the learnings whose part holds two learnings.
+    def test_the_learnings_written_are_the_sessions_learnings(self):
+        # Given: a call on the learnings whose part holds two learnings.
         self.session()
-        self.write(LEARNINGS, "- L1: Kept.\n")
         made = "- L1: First.\n  Its words.\n- L2: Second.\n"
         self.call("0001", "learnings", part=made)
         self.kept()
         # When: the orchestrator puts it back.
         self.ran(*self.put())
-        # Then: they follow the one kept in the session's learnings, numbered on from it, kept on
-        # the remote; the steering holds none of them.
-        want = "- L1: Kept.\n- L2: First.\n  Its words.\n- L3: Second.\n"
+        # Then: they are the session's learnings as written, kept on the remote; the steering
+        # holds none of them.
         kept = (
             self.read(LEARNINGS),
             self.out("show", f"origin/work:{LEARNINGS}"),
             self.read(STEERING),
         )
-        self.assertEqual(kept, (want, want, STEERED))
-
-    def test_the_first_learnings_are_numbered_from_one(self):
-        # Given: a session with no learnings, and a call on the learnings whose part holds one
-        # numbered otherwise.
-        self.session()
-        self.call("0001", "learnings", part="- L4: First.\n")
-        # When: the orchestrator puts it back.
-        self.ran(*self.put())
-        # Then: the session's learnings are made, holding it as L1.
-        self.assertEqual(self.read(LEARNINGS), "- L1: First.\n")
+        self.assertEqual(kept, (made, made, STEERED))
 
     def test_no_learning_made_leaves_no_learnings(self):
         # Given: a call on the learnings whose part the orchestrator left empty.
@@ -1180,10 +1168,9 @@ class CheckTest(RepoTest):
         )
 
     def test_learnings_out_of_form_stop_at_the_parts_own_line(self):
-        # Given: three learnings kept, and a call on the learnings whose part holds one with a
-        # line under it, then a line with no ID on its line 3.
+        # Given: a call on the learnings whose part holds one with a line under it, then a line
+        # with no ID on its line 3.
         self.session()
-        self.write(LEARNINGS, "- L1: Kept.\n- L2: Kept too.\n- L3: Kept last.\n")
         self.call("0001", "learnings", part="- L1: First.\n  Its words.\n- A slip.\n")
         self.kept()
         # When: the orchestrator runs the check on it.

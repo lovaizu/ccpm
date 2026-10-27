@@ -19,8 +19,9 @@ UNREAD = (
     "p: lane cannot check the lanes of a: the hook was handed no event as Claude Code hands it, "
 )
 FIX = (
-    ". Stop here and reply that Claude Code must be updated with `claude update`, and where this"
-    " goes on, it must be reported at https://github.com/lovaizu/ccpm/issues."
+    ". Ask the main conversation for the fix: Claude Code must be updated with `claude update`,"
+    " and where this goes on, it must be reported at https://github.com/lovaizu/ccpm/issues. Go on"
+    " with the rest of your work meanwhile."
 )
 
 

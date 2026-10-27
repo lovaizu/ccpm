@@ -30,10 +30,12 @@ class HistoryTest(RepoTest):
         self.commit_with(message)
         return self.head()
 
-    def called(self, number: str, work: str, *decisions: str, message: str = "a call") -> str:
-        """The call of the number on the work kept with its decisions and the message; gives the
-        commit."""
-        self.call(number, work, decisions=decisions)
+    def called(
+        self, number: str, work: str, *decisions: str, message: str = "a call", result: Any = None
+    ) -> str:
+        """The call of the number on the work kept with its decisions, turn's result where one is
+        given, and the message; gives the commit."""
+        self.call(number, work, decisions=decisions, result=result)
         self.commit_with(message)
         return self.head()
 
@@ -119,34 +121,39 @@ class HistoryTest(RepoTest):
         )
 
     def test_each_work_made_again_is_given_with_the_call_that_made_it_again(self):
-        # Given: a call on the plan, one on t1.1, the plan called again, and t1.1 called again
-        # twice.
-        self.called("0001", "plan")
-        self.called("0002", "t1.1")
-        plan_again = self.called("0003", "plan", message="Call 0003 on plan")
-        t1_again = self.called("0004", "t1.1", message="Call 0004 on t1.1")
-        t1_last = self.called("0005", "t1.1", message="Call 0005 on t1.1")
+        # Given: a call on t1.1 that turn returned, t1.1 called again and returned, and t1.1
+        # called again.
+        self.called("0001", "t1.1", result={})
+        again = self.called("0002", "t1.1", message="Call 0002 on t1.1", result={})
+        last = self.called("0003", "t1.1", message="Call 0003 on t1.1")
         # When: the orchestrator asks for the history.
-        # Then: rn gives each call after a work's first, in the order made, with the commit that
+        # Then: rn gives each call after one turn returned, in the order made, with the commit that
         # added it and its message.
         self.assertEqual(
             self.history()["remade"],
             [
-                {
-                    "commit": plan_again,
-                    "work": "plan",
-                    "call": "0003",
-                    "message": "Call 0003 on plan",
-                },
-                {
-                    "commit": t1_again,
-                    "work": "t1.1",
-                    "call": "0004",
-                    "message": "Call 0004 on t1.1",
-                },
-                {"commit": t1_last, "work": "t1.1", "call": "0005", "message": "Call 0005 on t1.1"},
+                {"commit": again, "work": "t1.1", "call": "0002", "message": "Call 0002 on t1.1"},
+                {"commit": last, "work": "t1.1", "call": "0003", "message": "Call 0003 on t1.1"},
             ],
         )
+
+    def test_a_call_after_none_turn_returned_is_not_a_work_made_again(self):
+        # Given: a call on t1.1 turn has not returned, then another on it.
+        self.called("0001", "t1.1")
+        self.called("0002", "t1.1")
+        # When: the orchestrator asks for the history.
+        # Then: rn gives no work made again, as nothing came back to be made again.
+        self.assertEqual(self.history()["remade"], [])
+
+    def test_the_plan_and_the_learnings_written_again_are_not_works_made_again(self):
+        # Given: the plan written, then written again by its course, and the learnings twice.
+        self.call("0001", "plan", part="# A plan\n")
+        self.called("0002", "plan", message="Call 0002 on plan")
+        self.call("0003", "learnings", part="")
+        self.called("0004", "learnings")
+        # When: the orchestrator asks for the history.
+        # Then: rn gives no work made again, as the orchestrator writes them and turn returns none.
+        self.assertEqual(self.history()["remade"], [])
 
     def test_a_call_written_again_is_not_a_work_made_again(self):
         # Given: a call on t1.1 kept, then its CCS written again in a later commit.

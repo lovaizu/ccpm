@@ -1,6 +1,6 @@
-"""The session's learnings, kept in a file of their own in its folder: their form, those kept, those
-of a part put back after them, and the learnings listed by ID for the orchestrator to put to the
-user once the finished work is approved."""
+"""The session's learnings, kept in a file of their own in its folder: their form, those kept, and
+the learnings listed by ID for the orchestrator to put to the user once the finished work is
+approved."""
 
 from __future__ import annotations
 
@@ -32,20 +32,6 @@ def kept(folder: str) -> list[str]:
     return steering.trimmed(repo.read_text(at).splitlines()) if os.path.isfile(at) else []
 
 
-def put(learnings: list[str], part: list[str]) -> list[str]:
-    """The session's learnings with those of the part written after them, each numbered on from
-    those kept."""
-    count = len([line for line in learnings if LEARNING.fullmatch(line)])
-    added = []
-    for line in part:
-        learnt = LEARNING.fullmatch(line)
-        if learnt:
-            count += 1
-            line = f"- L{count}: {learnt['said']}"
-        added.append(line)
-    return learnings + added
-
-
 def write(folder: str, lines: list[str]) -> None:
     """Writes the session's learnings, once each is an item in the form of a learning, the lines
     indented under it its own; stops otherwise, writing nothing."""
@@ -59,11 +45,11 @@ def write(folder: str, lines: list[str]) -> None:
     repo.write_text(at, "\n".join(lines) + "\n")
 
 
-def out(lines: list[str], first: int = 1) -> str:
+def out(lines: list[str]) -> str:
     """The point the session's learnings are out of their form by, each an item in the form of a
-    learning, the lines indented under it its own, at its line, the lines counted from first; ""
-    where they hold."""
-    return steering.items_of(list(enumerate(lines, first)), LEARNING, FORM)[1]
+    learning, the lines indented under it its own, at its line, counted from 1; "" where they
+    hold."""
+    return steering.items_of(list(enumerate(lines, 1)), LEARNING, FORM)[1]
 
 
 def listed(folder: str) -> dict[str, str]:

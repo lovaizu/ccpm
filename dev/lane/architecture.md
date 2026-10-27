@@ -119,12 +119,9 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
   touching it.
 - A subagent's steps are those of the part its file has it read first, where its file is its entry
   as [Entries pass the job to their parts](../architecture.md#entries-pass-the-job-to-their-parts) has it, and else
-  those of its file; the guard holds a subagent lanes are laid in whose entry names a part to read
-  the part whole before anything else, telling it the entry's sentence, with nothing in the
-  proposal.
+  those of its file.
 
-  The entry's sentence is the one the subagent reads first, as a lane's is its step's; held on
-  every subagent so made, the reading asks the building AI nothing.
+  The lanes are laid in the steps the subagent works from, so they are laid in the part.
 - A lane takes a script, file or folder by the name the part uses, as its step says it, and the
   guard and the layer read the name as the entry says it stands for.
 

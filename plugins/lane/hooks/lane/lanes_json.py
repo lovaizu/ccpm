@@ -20,7 +20,7 @@ def lanes_shape(least: int) -> dict[str, Any]:
     each lane, its name and what it takes; a lane that reads a port may name the plugin's adapter of
     it, and a subagent its adapter of the values port, as every lane of the subagent reads them,
     each by its path in the plugin. Each list of subagents, steps and lanes holds at least `least`:
-    0 in hooks/lanes.json, which keeps a subagent whose lanes `lay.py up` left out, 1 in a
+    0 in hooks/lanes.json, which holds none once every subagent laid in is gone, 1 in a
     proposal."""
 
     def listed(each: dict[str, Any]) -> dict[str, Any]:

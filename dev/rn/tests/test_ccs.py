@@ -249,7 +249,7 @@ class DecideTest(RepoTest):
                 )
 
     def test_a_work_rn_does_not_make_stops(self):
-        for work in ("readme", "t", "tx", "t1", "t1.", "T1.1", "checklist-", "plans"):
+        for work in ("readme", "t", "tx", "t1", "t1.", "T1.1", "checklist-", "plans", "issue-1"):
             with self.subTest(work=work):
                 # Given: a session.
                 # When: the orchestrator keeps a decision of a work rn does not make.
@@ -257,8 +257,7 @@ class DecideTest(RepoTest):
                 # Then: rn names the works it makes.
                 self.assertIn(
                     f"rn: the work {work!r} is none rn makes; give plan, learnings, deliverable,"
-                    " t<n>.<k> for action k of task T<n>, checklist-<kind>, or issue-<n> for the"
-                    " issue n to rn's makers, such as t1.2",
+                    " t<n>.<k> for action k of task T<n>, or checklist-<kind>, such as t1.2",
                     out,
                 )
 
@@ -352,7 +351,6 @@ class CcsTest(RepoTest):
         for work, words in (
             ("t1.2", "T1.2, make part 2 of T1, `src/t1-2.py` as a code work"),
             ("checklist-code", "your checklist for code"),
-            ("issue-1", "the issue 1 to rn's makers"),
         ):
             with self.subTest(work=work):
                 # Given: a session.
@@ -610,7 +608,6 @@ class CcsTest(RepoTest):
         self.assertEqual(self.ccs("plan")["check"], f"python3 '{script}' check 0001")
 
     def test_each_work_rn_makes_itself_is_made_with_its_own_kind_receiver_use_and_had(self):
-        root = os.path.realpath(self.plugin)
         cases = {
             "plan": (
                 [call_at("0001", "steering.md")],
@@ -632,7 +629,6 @@ class CcsTest(RepoTest):
                 "whoever makes a code",
                 ".",
             ),
-            "issue-1": ([f"{FOLDER}/issue-1.md"], "issue", "rn's makers", root),
         }
         self.write("src/app.py", "x\n")
         self.kept()
@@ -657,14 +653,6 @@ class CcsTest(RepoTest):
                     ),
                     (paths, kind, {"checklist": self.own[kind]}, True, True, [has]),
                 )
-
-    def test_an_issue_to_rns_makers_is_written_in_english(self):
-        # Given: a session whose artifact language is Japanese.
-        self.session(steered().replace("artifact-language: English", "artifact-language: 日本語"))
-        # When: the orchestrator has the CCS of an issue written.
-        written = self.read_json(self.ran("ccs", "issue-1")["ccs"])
-        # Then: it is to be written in English.
-        self.assertIn({"artifact-language": "English"}, written["constraints"])
 
     def test_a_work_made_again_takes_what_its_last_call_named(self):
         # Given: the call on t1.2 made with a receiver, a use and what they have, and returned.
@@ -1073,7 +1061,6 @@ class DecisionsTest(RepoTest):
             ("plan", "plan"),
             ("learnings", "learnings"),
             ("deliverable", "deliverable"),
-            ("issue-1", "issue"),
             ("checklist-api", "checklist"),
         ):
             with self.subTest(work=work):

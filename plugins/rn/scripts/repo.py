@@ -164,6 +164,10 @@ def push() -> None:
     )
 
 
+# The move that pushes what is committed, as the orchestrator runs no git push.
+KEEP = "keep the move with `rn.py state --message <what it brought>`"
+
+
 def pushed() -> None:
     """Returns when every change is committed and pushed, so a proposal shows what the user reads
     on the pull request; stops otherwise, saying how to keep or push it."""
@@ -176,12 +180,12 @@ def pushed() -> None:
         )
     ahead = git(
         ["rev-list", "--count", "@{upstream}..HEAD"],
-        "push the branch with `git push -u origin HEAD`, then run this again",
+        f"{KEEP}, which pushes the branch, then run this again",
     ).strip()
     if int(ahead):
         raise stop.Stop(
-            f"rn: the branch has {ahead} commit(s) not pushed; push with `git push`, then run this"
-            " again"
+            f"rn: the branch has {ahead} commit(s) not pushed; {KEEP}, which pushes them, then run"
+            " this again"
         )
 
 

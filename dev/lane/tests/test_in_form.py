@@ -224,8 +224,9 @@ class TestGuard(GuardTest):
                         (
                             "notes: lane cannot check in_form on step 3 of changelog-writer: it"
                             f" names the form {TAKES[1]}, which cannot be read: No such file or"
-                            " directory. Stop here and reply that the maker of notes must fix it"
-                            " and lay its lanes again with `lay.py write`."
+                            " directory. Ask the main conversation for the fix: the maker of notes"
+                            " must fix it and lay its lanes again with `lay.py write`. Go on with"
+                            " the rest of your work meanwhile."
                         ),
                     ),
                 )

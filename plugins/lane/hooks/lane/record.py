@@ -96,12 +96,6 @@ def subagent(session: str, agent: str) -> str:
     return os.path.join(os.path.splitext(session)[0], "subagents", SUBAGENT.format(agent))
 
 
-def agent_id(file: str) -> str:
-    """The ID of the subagent whose record is kept at the path, as `subagent` names it."""
-    before, _, after = SUBAGENT.partition("{}")
-    return os.path.basename(file)[len(before) : -len(after)]
-
-
 def agent_type(file: str) -> str:
     """The agent type of the record at the path, as its meta file beside it, `<record>.meta.json`,
     names it; "" where that file is not there or names none."""
@@ -168,12 +162,6 @@ def text(entry: dict[str, Any]) -> str | None:
     None for any other entry."""
     given = content(entry)
     return given if isinstance(given, str) and entry.get("type") == "user" else None
-
-
-def prompt(found: list[dict[str, Any]]) -> str:
-    """The prompt the subagent was started with, the text of the first user entry of text among
-    the entries of its record; "" where none is."""
-    return next((t for t in map(text, found) if t is not None), "")
 
 
 def of(entry: dict[str, Any], kind: str, block: str) -> list[dict[str, Any]]:

@@ -177,9 +177,8 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   move is, so a stop while it waits is gone on from.
 - Only a point to decide is put to the user: a question turn asks that changes nothing the user can
   weigh, the orchestrator answers by adding to the CCS, its choice kept for the sign-off, and turn
-  goes on where it stood; a stop of rn's scripts or of turn's run is gone on from by the step that meets it,
-  such as calling turn again with the same call, and what it taught comes to the user among the
-  learnings once the finished work is approved.
+  goes on where it stood; a stop of rn's scripts or of turn's run is gone on from by the step that
+  meets it, such as calling turn again with the same call.
 
   A point to decide is a choice that changes what is made; how rn or turn goes on, or what turn's
   reader is handed, is none the user can weigh, and asking it spends their time on rn's own working
@@ -210,13 +209,17 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   scripts give each feedback with its answer, each work made again and each decision an answer
   replaced, each with its commit, and checks each cause it doubts by rn's scripts' search of its
   conversations of the session; it writes them with rn's learnings checklist open, kept by rn's
-  scripts in a file of their own, an issue to rn's makers made through turn as every work is.
+  scripts in a file of their own. It writes each issue to rn's makers itself, with rn's issue
+  checklist open, shows it to the user whole, and opens it only on their yes, as
+  [Learning from each run](../architecture.md#learning-from-each-run) says.
 
   Each send-back, remake and point asked again is kept in the commit of its step, so the
   history holds every place the work fell short however long the session ran, where the
   orchestrator of a fresh conversation remembers none of it; a cause the history does not show,
   such as the form of a message to the user, is in the conversations alone, which Claude Code keeps
-  outside the repository, where an agent's own reading stops to ask.
+  outside the repository, where an agent's own reading stops to ask. The user reads each issue
+  whole before it is sent, so a reader in their place would add a reading they make anyway
+  (Principle 5).
 
 ### Physical view
 
@@ -256,7 +259,7 @@ plugins/rn/                          the plugin, installed by Claude Code with t
         ├── steering.md              what is left to reach the goal and where the session stands <Markdown>
         ├── learnings.md             the learnings, for the user once the finished work is approved <Markdown>
         ├── replaced.jsonl           each decision an answer replaced, a line each, as one step's commit keeps every move of it <JSON Lines>
-        ├── issue-<n>.md             each issue to rn's makers, made before the user is asked to send it <Markdown>
+        ├── issue-<n>.md             each issue to rn's makers, written before the user is asked to send it <Markdown>
         ├── <path>                   each research result and trial's result, at the path its action names <Markdown>
         └── calls/
             ├── <nnnn>-ccs.json      each call, numbered from 0001 in the order made <JSON>

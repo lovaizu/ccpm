@@ -83,11 +83,11 @@ class Made(NamedTuple):
     has: list[str]
 
 
-def made_as(work: str, steered: steering.Steering, folder: str, root: str) -> Made:
-    """How rn makes the work every time: one of its own as OWN, `checklist-<kind>` and `issue-<n>`
-    have it, what the receiver has the whole repository, rn's own folder for an issue to its makers;
-    a task's work of the kind, at the path, its action names, the rest given or kept; the paths of
-    the plan, the learnings and the finished work are found as their CCS is written."""
+def made_as(work: str, steered: steering.Steering) -> Made:
+    """How rn makes the work every time: one of its own as OWN and `checklist-<kind>` have it, what
+    the receiver has the whole repository; a task's work of the kind, at the path, its action
+    names, the rest given or kept; the paths of the plan, the learnings and the finished work are
+    found as their CCS is written."""
     if work in OWN:
         kind, receiver, use = OWN[work]
         return Made(kind, receiver, use, [], ["."])
@@ -100,14 +100,6 @@ def made_as(work: str, steered: steering.Steering, folder: str, root: str) -> Ma
             f"making and judging each {made} work",
             [os.path.join(session.RECORD, "checklists", f"{made}.md")],
             ["."],
-        )
-    if session.ISSUE_WORK.fullmatch(work):
-        return Made(
-            "issue",
-            "rn's makers, reading the issue on lovaizu/ccpm, who build rn for all its users",
-            "deciding how rn changes so that every user's later work meets the need",
-            [os.path.join(folder, f"{work}.md")],
-            [root],
         )
     action = session.made_by(steered, work)
     return Made(action.kind, None, None, [action.path or ""], [])
@@ -306,14 +298,10 @@ def written(
     have with it; goal_orientation, what the work is for, its use and what it serves as text, as its
     maker makes the work from the CCS and the files it names alone; retrieved_artifacts, the kind's
     checklists and rn's `usability.md` where the work is a checklist; and constraints, the bounds it
-    is made in: its decisions, the orchestrator's choices, the languages, English for an issue to
-    rn's makers, and rn's checklist for a fix, which its maker is given to read, as each file a CCS
+    is made in: its decisions, the orchestrator's choices, the languages, and rn's checklist for a
+    fix, which its maker is given to read, as each file a CCS
     names is, for a work made again. turn finds each entry by its key, whichever part holds it."""
     usability = os.path.join(root, "checklists", "usability.md")
-    # An issue is written in English, the language of rn's makers' repository, whatever the
-    # language of the user's.
-    english = {steering.LANGUAGES[0]: "English"} if session.ISSUE_WORK.fullmatch(work) else {}
-    languages = {**steered.keys, **english}
     return {
         "focal_entities": [
             {session.WORK: work},
@@ -329,7 +317,7 @@ def written(
         + ([{"source": usability}] if session.CHECKLIST_WORK.fullmatch(work) else []),
         "constraints": [{session.DECISION: d} for d in decisions]
         + [{session.CHOSEN: c} for c in chosen]
-        + [{key: languages[key]} for key in steering.LANGUAGES]
+        + [{key: steered.keys[key]} for key in steering.LANGUAGES]
         + [{"fix": os.path.join(root, "checklists", "fix.md")}],
     }
 
@@ -342,8 +330,6 @@ def told(work: str, steered: steering.Steering) -> str:
         words = "the use of the finished work for each acceptance criterion"
     elif session.CHECKLIST_WORK.fullmatch(work):
         words = f"your checklist for {work.partition('-')[2]}"
-    elif session.ISSUE_WORK.fullmatch(work):
-        words = f"the issue {work.partition('-')[2]} to rn's makers"
     else:
         words = f"{work.upper()}, {steering.lowered(session.made_by(steered, work).what)}"
     return (
@@ -440,7 +426,7 @@ def handed(
     found = session.calls(folder)
     last = session.latest(found, work)
     number = last.number if last is not None and not last.closed else session.next_number(found)
-    made, kept = made_as(work, steered, folder, root), kept_as(last)
+    made, kept = made_as(work, steered), kept_as(last)
     receiver = needed(receiver or made.receiver or kept.receiver, "receiver", work)
     use = needed(use or made.use or kept.use, "use", work)
     has = needed(has or made.has or kept.has, "has", work)
@@ -495,5 +481,5 @@ def decisions(work: str, root: str) -> dict[str, Any]:
         "work": work,
         "call": None if last is None else last.number,
         "decisions": [] if last is None else session.decisions_of(last),
-        "checklists": checklists(made_as(work, steered, folder, root).kind or "", root),
+        "checklists": checklists(made_as(work, steered).kind or "", root),
     }

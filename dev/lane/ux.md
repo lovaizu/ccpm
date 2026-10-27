@@ -106,13 +106,14 @@ sequenceDiagram
   participant H as hook<br/>#lt;lane's#gt;
   participant A as building AI<br/>#lt;AI, the plugin's maker#gt;
   S->>H: a call a lane holds, where what the lane is given is not as laid
-  H-->>S: stopped, the user told the same, with #lt;plugin#gt;: lane cannot check ...: #lt;what is wrong#gt;. Stop here and reply that #lt;who must fix it#gt;.
-  S->>A: replies it
+  H-->>S: stopped, the user told the same, with #lt;plugin#gt;: lane cannot check ...: #lt;what is wrong#gt;. Ask the main conversation for the fix: #lt;who must fix it#gt;. Go on with the rest of your work meanwhile.
+  S->>A: asks for the fix, and goes on with the rest of its work
   Note over A: fixes the plugin and lays its lanes again with lay.py write
 ```
 
-- What lane cannot check is never let through: the subagent can only report it, and the plugin's
-  maker, or Claude Code where the event is what is wrong, puts it right.
+- What lane cannot check is never let through: the subagent asks for the fix and goes on with the
+  rest of its work, and the plugin's maker, or Claude Code where the event is what is wrong, puts it
+  right.
 
 ## Benefits
 
