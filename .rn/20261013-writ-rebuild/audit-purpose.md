@@ -11,6 +11,9 @@ and the user's earlier decisions. Put to the user one at a time, in this order; 
    the run goes on from (dev/turn/ux.md, "A point only the user can decide"); a stop brings nothing
    back. Origin: widened from the user's question about hooks ("could not check" vs "no problem").
    0c8d1ce, 79b4805, 5dc063f.
+   **Judged (2026-10-27): remove.** A role does not stop; it says in its reply what it could not do,
+   what it tried and what it needs; the orchestrator makes a choice the purpose settles and names it
+   in the result, or asks the user a question the run goes on from. 12 goes with it.
 2. turn's generator asks the user to add a file the work needs to the CCS
    (plugins/turn/prompts/generator.md step 6), against the UX "a choice the purpose settles, turn
    makes and names in the result". 40c6cc2.
