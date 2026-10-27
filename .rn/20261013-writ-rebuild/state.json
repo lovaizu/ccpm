@@ -839,7 +839,7 @@
  ],
  "focal_entities": [
   {
-   "task": "apply intents 1 to 6 of decisions/run-cost.decisions.md: dev/architecture.md's principles first, then checklist.md's template, lane, turn, rn and its checklists, the trials, then the acceptance run to show it improved"
+   "task": "apply intents 1 to 8 of decisions/run-cost.decisions.md: done are dev/architecture.md's principles (Principles 1-6 recast, 10 and 11 added, acceptance tests show time and tokens; 9ea1f63, 79b4805) and the checklists (template 0c139e3, all 13 others 69cc954); left: lane, turn, rn, the trials (acceptance.py to record tokens), then the acceptance run to show it improved"
   }
  ],
  "relational_map": [
@@ -877,7 +877,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: (1) read decisions/run-cost.decisions.md (the agreed intents and my decisions) and audits/run-cost-impact.md (where each lands, lines at 66a0385); (2) check CI of a1fa33c with `gh run list --branch writ-rebuild`; (3) rewrite dev/architecture.md's principles and Why for intents 1-6, then go down the order in focal_entities, each change with its affected checks run; (4) the acceptance run again, compared on time, cost, sends-back and its criteria with run 3; report to the user in Japanese, decisions made on my own included. Ask the user only about intent (memory ask-intent-only)"
+   "next": "on resume: (1) read decisions/run-cost.decisions.md and audits/run-cost-impact.md; (2) lane next: lay.py writes \"onFailure\": \"block\" on every command hook, a command not parsed told as could not check, and lane takes a run's files from later messages too (lane/hooks/lane/started.py, guard.py); then turn (claim per item with evidence, only items sent back, about eight moves, lines to main only at role start/end, question, result, no CCS check stage, gap exchange through the flow, go on where it stood), then rn (no commit and push at each answer, step lines), trials, acceptance run compared with run 3; (3) report to the user in Japanese, decisions made on my own included. Ask the user only about intent"
   }
  ],
  "uncertainty_signal": [
