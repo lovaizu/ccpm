@@ -33,3 +33,21 @@ Decided by the assistant from these and turn's purpose:
 - turn's Principle 4 is kept for the first reading alone: the first user reads the work without the
   generator's claim, as the receiver it stands in for has none; after a gap is found, the two talk as
   intent 5 says.
+- Principle 6 is kept by writing each answer to a file before the next move; the push waits for the
+  step's end, as going on from a stop needs the file, not the push.
+- The exchange of intent 5 goes through the flow, the orchestrator holding the run (Principle 1),
+  one exchange counted as one move; the first user judges only by whether the receiver can use the
+  work, and a gap still disputed after one exchange is a question of the purpose, put to the user.
+- turn starts over on an added CCS only because lane fixes a run's files at the role's start; lane
+  takes a run's files from later messages too, so the run goes on.
+- `turn.py next` waits for a role's end itself, so a wait is one move, not repeated polls.
+- The orchestrator's check of the CCS before any work goes: the generator asks at its step 3, before
+  making, what only the user can decide.
+- The hunting form is fixed at its root, the template of rn/checklists/checklist.md, then each
+  checklist; code.md B-6 has the generator decide and name a survivor kept, not ask the user.
+- rn's own step lines follow the same rule as turn's: a step's start and end, a question, a result.
+- Hooks: lay.py writes `"onFailure": "block"` on every command hook it lays (Claude Code v2.1.295+),
+  so a hook that fails or times out stops the call; a command lane cannot parse is told as could not
+  check, not let through.
+
+Where each intent lands, as found before any fix: audits/run-cost-impact.md.

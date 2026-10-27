@@ -767,6 +767,9 @@
   },
   {
    "fact": "2026-10-27: the user found a regression: rn 0.9.0's /rn:gm with no words took the user's PR comments (rn/skills/gm/SKILL.md at fb95639^ step 4); the rebuild asks for words (rn/prompts/feedback.md). Added as section 'Feedback on the pull request' of issue #54, as the user settled: points open asked first, all comments on a work made in one turn call held to fix.md, not added onto, one commit (commit per intent given up), each comment answered on the PR with what was done, why and the lines changed, or the question. Open: fix.md only named in the CCS (rn/scripts/ccs.py:333), no one judges a remake against it. To design whole after the acceptance pass"
+  },
+  {
+   "fact": "2026-10-27: acceptance run 3 stopped by the user's word at T4.2 (folder /tmp/rn/20261027-acceptance-5180ibfe kept for its records): 3 h 50 min and about $76 for 3½ of 6 tasks of a 250-line tool, nearly all in turn: the generator's model time 113 min (a prose claim of every item rewritten each round, 23k chars, read by no one but a form check), the first user's 49, the orchestrator's own 46 (236 `turn.py next` over 8 calls where two rounds need about 8; 81 lines to main; 25 CCS checks; 18 waiting polls), 11 questions mostly technical, each answer re-running rn.py ccs so turn started anew; 25 sends-back, about 12 real defects found by running, 8 that a linter or type checker would see (the project had none), 5 wording. CI of ccpm had failed since 2026-10-26 on one surviving mutant of rn/scripts/proposal.py:171; fixed by a test (a1fa33c), CI of it not yet read"
   }
  ],
  "semantic_gist": [
@@ -836,7 +839,7 @@
  ],
  "focal_entities": [
   {
-   "task": "the acceptance run's faults fixed at their causes in lane, turn and rn, then the acceptance run again"
+   "task": "apply intents 1 to 6 of decisions/run-cost.decisions.md: dev/architecture.md's principles first, then checklist.md's template, lane, turn, rn and its checklists, the trials, then the acceptance run to show it improved"
   }
  ],
  "relational_map": [
@@ -874,7 +877,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: (1) wait for acceptance run 3 (pgrep -af acceptance.py; folder /tmp/rn/20261027-acceptance-5180ibfe); read summary.json and records; check whether rn's main still relays role ends to turn after 7035404 and whether it hurts; fix at the cause and run again until PASSED. (2) then report to the user, in Japanese, every judgment made on my own since they asked (2026-10-27) to go to the acceptance pass: step 6 feedback-as-answer only where it says what the work must be (76bc687); turn reads a role's end from its record (7035404); `Judged on: the built product` items cut before the build, README B-4/B-5/B-8, plan.md B-7 asks the remake at build (39bd6c9); code.md B-5 by-products kept out by the ignore file; trial tool fixes. (3) then design the PR feedback of #54 whole before building"
+   "next": "on resume: (1) read decisions/run-cost.decisions.md (the agreed intents and my decisions) and audits/run-cost-impact.md (where each lands, lines at 66a0385); (2) check CI of a1fa33c with `gh run list --branch writ-rebuild`; (3) rewrite dev/architecture.md's principles and Why for intents 1-6, then go down the order in focal_entities, each change with its affected checks run; (4) the acceptance run again, compared on time, cost, sends-back and its criteria with run 3; report to the user in Japanese, decisions made on my own included. Ask the user only about intent (memory ask-intent-only)"
   }
  ],
  "uncertainty_signal": [
