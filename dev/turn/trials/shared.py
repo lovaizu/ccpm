@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.a
 # turn's scripts read them by.
 sys.path.insert(0, os.path.join(ROOT, "dev", "lane"))
 sys.path.insert(0, os.path.join(ROOT, "dev", "lane", "trials"))
-sys.path.insert(0, os.path.join(ROOT, "turn", "scripts"))
+sys.path.insert(0, os.path.join(ROOT, "plugins", "turn", "scripts"))
 
 from call import entries, items  # noqa: F401
 from trying import agents, claude, record, show  # noqa: F401
@@ -124,7 +124,9 @@ def repository(task: str, place: str, given: dict) -> None:
         if os.path.exists(os.path.join(place, checklist)):
             continue
         name = os.path.basename(checklist)
-        found = glob.glob(os.path.join(ROOT, "rn", "checklists", "**", name), recursive=True)
+        found = glob.glob(
+            os.path.join(ROOT, "plugins", "rn", "checklists", "**", name), recursive=True
+        )
         if len(found) != 1:
             sys.exit(
                 f"{checklist}: put it in the task folder, as rn's checklists hold no one {name}"
@@ -206,5 +208,5 @@ def begun(plugin: str, place: str, given: dict) -> None:
 def turn(run: Run) -> str:
     """Copies the turn of this working tree into the run's folder, so the run uses it as it is when
     the run starts, and gives the copy's folder."""
-    shutil.copytree(os.path.join(ROOT, "turn"), run.turn)
+    shutil.copytree(os.path.join(ROOT, "plugins", "turn"), run.turn)
     return run.turn

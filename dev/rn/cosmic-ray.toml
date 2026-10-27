@@ -1,7 +1,7 @@
 # Mutation testing of rn's scripts, run from the top of the repository on a copy that may
 # be changed.
 [cosmic-ray]
-module-path = ["rn/scripts"]
+module-path = ["plugins/rn/scripts"]
 timeout = 60.0
 # The type checker and the linter run first: a change to a type annotation changes no behavior a
 # test could see, and the type checker is what checks annotations, the linter what checks `is`
@@ -16,4 +16,4 @@ timeout = 60.0
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a stage before the sign-off asked and one after, so a comparison changed
 # to `<=` or `>=` fails a test; their comments say what each value is, not where it sorts.
-test-command = "sh -c 'ruff check --select F632 rn && sh dev/typecheck.sh rn && python -m unittest discover -f -s dev/rn/tests'"
+test-command = "sh -c 'ruff check --select F632 plugins/rn && sh dev/typecheck.sh rn && python -m unittest discover -f -s dev/rn/tests'"

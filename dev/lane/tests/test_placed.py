@@ -2,6 +2,7 @@
 marketplace, a copy with lane's version anywhere else, lane's own left as it is."""
 
 import os
+import shutil
 import unittest
 from unittest import mock
 
@@ -14,6 +15,19 @@ class TestWriteCode(LayTest):
     def code(self) -> str:
         """The plugin's hooks/lane/, where lane's code is put."""
         return os.path.join(self.plugin, "hooks", "lane")
+
+    def in_marketplace(self, manifest: str, lane_beside: bool) -> None:
+        """The plugin moved into the plugins/ of a marketplace at `base`, whose marketplace.json
+        holds the text, with lane beside it there where asked, and proposed again from there."""
+        plugins = os.path.join(self.base, "plugins")
+        if not os.path.isdir(plugins):
+            os.makedirs(plugins)
+            shutil.move(self.plugin, os.path.join(plugins, "notes"))
+            self.plugin = os.path.join(plugins, "notes")
+        self.write(os.path.join(self.base, ".claude-plugin", "marketplace.json"), manifest)
+        if lane_beside:
+            os.makedirs(os.path.join(plugins, "lane", "hooks", "lane"), exist_ok=True)
+        self.propose(self.proposal())
 
     def test_lanes_code_is_copied_with_its_version(self):
         # Given: a plugin outside the ccpm marketplace
@@ -49,10 +63,7 @@ class TestWriteCode(LayTest):
 
     def test_a_plugin_of_the_ccpm_marketplace_links_to_lanes_code(self):
         # Given: the plugin in a clone of the ccpm marketplace, lane beside it
-        self.write_json(
-            os.path.join(self.base, ".claude-plugin", "marketplace.json"), {"name": "ccpm"}
-        )
-        os.makedirs(os.path.join(self.base, "lane", "hooks", "lane"))
+        self.in_marketplace('{"name": "ccpm"}', lane_beside=True)
         # When: the proposal is written
         self.lay("write", self.proposal_file)
         # Then: hooks/lane is a relative link to lane's code beside it, with no VERSION
@@ -62,10 +73,7 @@ class TestWriteCode(LayTest):
 
     def test_a_link_there_before_is_made_again(self):
         # Given: the plugin in a clone of the ccpm marketplace, its lanes written once
-        self.write_json(
-            os.path.join(self.base, ".claude-plugin", "marketplace.json"), {"name": "ccpm"}
-        )
-        os.makedirs(os.path.join(self.base, "lane", "hooks", "lane"))
+        self.in_marketplace('{"name": "ccpm"}', lane_beside=True)
         self.lay("write", self.proposal_file)
         self.propose(self.proposal())
         # When: the proposal is written again
@@ -86,10 +94,7 @@ class TestWriteCode(LayTest):
             with self.subTest(marketplace=name, lane_beside=beside):
                 # Given: the plugin in ccpm without lane beside it, or in another marketplace, or
                 # in one whose manifest names none, with lane beside it
-                self.write(os.path.join(self.base, ".claude-plugin", "marketplace.json"), name)
-                if beside:
-                    os.makedirs(os.path.join(self.base, "lane", "hooks", "lane"), exist_ok=True)
-                self.propose(self.proposal())
+                self.in_marketplace(name, beside)
                 # When: the proposal is written
                 self.lay("write", self.proposal_file)
                 # Then: lane's code is copied

@@ -59,8 +59,8 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
 - The lanes laid in a plugin are kept in one JSON file of it, `hooks/lanes.json`, in the shape of
   the proposal, each with its step, the lane and what the lane takes; a hook names only its
   subagent. The lane's sentence is made from them by the lane's wording in
-  [the lanes](../../lane/docs/lanes.md). The layer writes that sentence into the step, and the guard
-  makes the same one when it tells the subagent.
+  [the lanes](../../plugins/lane/docs/lanes.md). The layer writes that sentence into the step, and
+  the guard makes the same one when it tells the subagent.
 
   So the sentence the subagent is told and the one its step says cannot differ, and no sentence is
   written twice; the file the building AI approved is the one the guard reads, and a thing taken
@@ -103,8 +103,8 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
   A drift is the subagent's to put right by its step; an error is the plugin's, which the subagent
   can only report, and a call let through unchecked would hide it. Checked once at the entry, as an
   application validates its input, each lane's check holds no guard of its own.
-- Each lane checks only what [the lanes](../../lane/docs/lanes.md) define it to take, and knows no
-  plugin's forms. Where a check reads a plugin's text, it reads it at a port, a point lanes.md
+- Each lane checks only what [the lanes](../../plugins/lane/docs/lanes.md) define it to take, and
+  knows no plugin's forms. Where a check reads a plugin's text, it reads it at a port, a point lanes.md
   defines with the JSON it is given and gives back: the values a subagent started from, the items of
   an input, the move a script printed. At each port lane reads one form, the one lanes.md gives; a
   plugin whose text is in another form has an adapter, a command of its own that the building AI
@@ -150,7 +150,7 @@ Principle 1 to 9, and its own, named below lane's Principle 1 and 2:
 ### Physical view
 
 ```
-lane/                          the plugin, installed by Claude Code
+plugins/lane/                  the plugin, installed by Claude Code
 ├── .claude-plugin/plugin.json lane's manifest, holding its version <JSON>
 ├── scripts/                   the layer <Python 3>
 │   ├── lay.py                 what the building AI runs: print, write and up
@@ -209,7 +209,7 @@ lane/                          the plugin, installed by Claude Code
 - lane runs on Claude Code and python3 3.9 or later; the layer checks the plugin with
   `claude plugin validate`.
 - The building AI runs the layer as `python3 <lane>/scripts/lay.py`, `<lane>` being lane's folder:
-  the `installPath` that `claude plugin list --json` gives for lane, or `lane/` in the ccpm
+  the `installPath` that `claude plugin list --json` gives for lane, or `plugins/lane/` in the ccpm
   repository.
 
   Claude Code puts a plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in that plugin's own hooks,

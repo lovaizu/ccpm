@@ -30,7 +30,7 @@ pyrefly check --search-path dev/lane dev/*.py
 # The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
 # tests, whose inputs change from run to run, are run apart by dev/properties.sh.
 for plugin in $plugins; do
-  coverage run --source="$plugin" -m unittest discover -s "dev/$plugin/tests"
+  coverage run --source="plugins/$plugin" -m unittest discover -s "dev/$plugin/tests"
 done
 coverage combine
 coverage report
@@ -38,8 +38,8 @@ coverage report
 # A malformed manifest fails for every user at install, so each plugin and the marketplace pass
 # Claude Code's own check of them.
 for plugin in $plugins; do
-  if [ -f "$plugin/.claude-plugin/plugin.json" ]; then
-    claude plugin validate "$plugin" --strict
+  if [ -f "plugins/$plugin/.claude-plugin/plugin.json" ]; then
+    claude plugin validate "plugins/$plugin" --strict
   fi
 done
 claude plugin validate . --strict

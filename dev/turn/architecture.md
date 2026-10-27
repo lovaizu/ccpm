@@ -94,8 +94,8 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
   items; a gap seen wrong by either is settled by its reason, not by another round of making
   (Principle 4).
 - The orchestrator reads no work, held to what `turn.py start` gives it by a lane, a hook laid by
-  [lane](../../lane/README.md), and the first user is not given the generator's reply; an item
-  gets its Good where the first user gives one, and the result gives that Good and its lines.
+  [lane](../../plugins/lane/README.md), and the first user is not given the generator's reply; an
+  item gets its Good where the first user gives one, and the result gives that Good and its lines.
 
   The orchestrator holds the sources and the call, so its own reading finds the Good the work
   meant, not the one the receiver gets, and pulls the remake toward its view; a reader shown the
@@ -136,7 +136,7 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
 ### Physical view
 
 ```
-turn/                      the plugin, installed by Claude Code
+plugins/turn/              the plugin, installed by Claude Code
 ├── agents/
 │   ├── up.md              the orchestrator's entry, turn:up <agent>
 │   ├── generator.md       the generator's entry <agent>

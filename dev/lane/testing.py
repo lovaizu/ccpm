@@ -158,11 +158,12 @@ def hypothesis() -> Any:
 
 def lane_code(plugin: str, *names: str) -> list[Any]:
     """lane's modules of the names, imported from the link in the plugin's hooks, or from lane's
-    layer, lane/scripts/, which reads the plugin's hooks.json as `lay.py` does: lane's code and the
-    plugin's scripts share module names, such as call, so lane's are imported apart and the
+    layer, plugins/lane/scripts/, which reads the plugin's hooks.json as `lay.py` does: lane's code
+    and the plugin's scripts share module names, such as call, so lane's are imported apart and the
     plugin's put back after."""
     code = os.path.join(plugin, "hooks", "lane")
-    layer = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "lane", "scripts")
+    here = os.path.dirname(os.path.abspath(__file__))
+    layer = os.path.join(here, "..", "..", "plugins", "lane", "scripts")
     shared = {os.path.splitext(n)[0] for f in (code, layer) for n in os.listdir(f)} & {
         os.path.splitext(n)[0] for n in os.listdir(os.path.join(plugin, "scripts"))
     }

@@ -10,7 +10,7 @@ set -e
 all=$(sh dev/plugins.sh)
 changed=$(git diff --name-only "$1" "$2" | grep -vE '^(\.rn/|\.claude/rules/|dev/([^/]+/)?[^/]+\.md$|README\.md$|LICENSE$)' || true)
 [ -n "$changed" ] || exit 0
-if printf '%s\n' "$changed" | grep -qvE "^(dev/)?($(echo $all | tr ' ' '|'))/" \
+if printf '%s\n' "$changed" | grep -qvE "^(plugins|dev)/($(echo $all | tr ' ' '|'))/" \
   || printf '%s\n' "$changed" | grep -qxF 'dev/lane/testing.py'; then
   echo $all
   exit 0
@@ -18,7 +18,8 @@ fi
 # Each link of the commit, as the plugin it is in and the path it points to from the top, as a
 # plugin takes another's code through a link (dev/architecture.md, Code).
 links=$(git ls-tree -r "$2" | awk '$1 == "120000" {print $3, $4}' | while read -r blob link; do
-  echo "${link%%/*} $(dirname "$link")/$(git cat-file -p "$blob")"
+  plugin=${link#plugins/}
+  echo "${plugin%%/*} $(dirname "$link")/$(git cat-file -p "$blob")"
 done | awk '{
   n = split($2, part, "/"); k = 0
   for (i = 1; i <= n; i++) if (part[i] == "..") k--; else if (part[i] != ".") kept[++k] = part[i]
@@ -27,7 +28,7 @@ done | awk '{
 }')
 plugins=""
 for plugin in $all; do
-  if printf '%s\n' "$changed" | grep -qE "^(dev/)?$plugin/"; then
+  if printf '%s\n' "$changed" | grep -qE "^(plugins|dev)/$plugin/"; then
     plugins="$plugins $plugin"
     continue
   fi

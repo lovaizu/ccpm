@@ -376,16 +376,20 @@ caller cannot tell what of it holds unless the stop says what was and was not co
 
 ### The plugin's folder and dev/
 
-What runs on users' machines is in the plugin's folder, `<plugin>/`; what only its builders need,
-such as its UX, its architecture, its tests and its trials, is in `dev/<plugin>/`.
+What runs on users' machines is in the plugin's folder, `plugins/<plugin>/`; what only its
+builders need, such as its UX, its architecture, its tests and its trials, is in `dev/<plugin>/`.
 
 Installing a plugin copies its folder alone, so what only builders need stays off users' machines.
+The plugins' folders are kept together in `plugins/`, as the official marketplaces
+[anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) and
+[anthropics/claude-code](https://github.com/anthropics/claude-code) keep theirs, so the root holds
+only what the whole repository needs.
 
 ### The READMEs
 
-`<plugin>/README.md` is for the plugin's users; `dev/<plugin>/README.md` links the plugin's
-architecture and says how to run its tests and trials once they exist; `dev/README.md` lists each
-plugin's folder, says how to run the checks every plugin shares, and links
+`plugins/<plugin>/README.md` is for the plugin's users; `dev/<plugin>/README.md` links the
+plugin's architecture and says how to run its tests and trials once they exist; `dev/README.md`
+lists each plugin's folder, says how to run the checks every plugin shares, and links
 [the order the work goes in](../.claude/rules/dev.md); and the root
 `README.md` leads users to each plugin's README and builders to `dev/`. No README is put deeper.
 
@@ -394,8 +398,8 @@ and a README further down repeats its parent's and drifts from it.
 
 ### The CHANGELOG
 
-Each plugin keeps its `CHANGELOG.md` in its root, `<plugin>/CHANGELOG.md`, in the form Release
-gives.
+Each plugin keeps its `CHANGELOG.md` in its root, `plugins/<plugin>/CHANGELOG.md`, in the form
+Release gives.
 
 A user finds what changed for them in the same place for every plugin.
 
@@ -432,9 +436,9 @@ the code checks the code against itself.
 
 ### Checks kept in lane
 
-A check on what an AI does is a lane of [lane](../lane/README.md), laid in each plugin by lane's
-`lay.py`; one no lane holds is added to lane as a lane of its own, in its own named file, with one
-entry file per hook event, as the official
+A check on what an AI does is a lane of [lane](../plugins/lane/README.md), laid in each plugin by
+lane's `lay.py`; one no lane holds is added to lane as a lane of its own, in its own named file,
+with one entry file per hook event, as the official
 [`hookify`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/hookify) plugin
 does.
 

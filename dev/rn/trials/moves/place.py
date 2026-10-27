@@ -18,7 +18,7 @@ from typing import Any, Callable, NamedTuple
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
 # rn's own names of the session's record, read from its scripts, which the trial runs.
-sys.path.insert(0, os.path.join(ROOT, "rn", "scripts"))
+sys.path.insert(0, os.path.join(ROOT, "plugins", "rn", "scripts"))
 import learnings
 import session
 import steering
@@ -202,7 +202,7 @@ class Place:
         """Copies rn and turn of this working tree into the folder, as installing makes them."""
         ignored = shutil.ignore_patterns("__pycache__")
         for name, copy in (("turn", self.turn), ("rn", self.rn_copy)):
-            shutil.copytree(os.path.join(ROOT, name), copy, ignore=ignored)
+            shutil.copytree(os.path.join(ROOT, "plugins", name), copy, ignore=ignored)
 
     def put_gh(self, script: str, *given: str) -> None:
         """Puts the script in the folder's `bin/`, beside a `gh` that runs it with the words given

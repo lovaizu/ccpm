@@ -14,11 +14,11 @@ import time
 from unittest import mock
 
 TURN = os.path.normpath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "turn")
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "plugins", "turn")
 )
 SCRIPTS = os.path.join(TURN, "scripts")
 sys.path.insert(0, SCRIPTS)
-sys.path.insert(0, os.path.join(TURN, "..", "dev", "lane"))
+sys.path.insert(0, os.path.join(TURN, "..", "..", "dev", "lane"))
 
 import call  # noqa: F401  (each of turn's modules, for its own tests)
 import flow
@@ -28,7 +28,6 @@ import parts as work_parts  # noqa: F401
 import prompts  # noqa: F401
 import state
 import testing
-
 import turn
 
 # The wait for a messaged role's reply as turn has it, before each test sets its own.

@@ -22,7 +22,7 @@ from typing import Callable, NamedTuple
 
 from place import ALL_KEPT, ROOT, RULES, SEED, Place, Seen, kept_learnings, steered
 
-sys.path.insert(0, os.path.join(ROOT, "rn", "scripts"))
+sys.path.insert(0, os.path.join(ROOT, "plugins", "rn", "scripts"))
 import record
 import session
 import steering

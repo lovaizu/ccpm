@@ -123,9 +123,9 @@ python3 <lane's folder>/scripts/lay.py write <proposal>
 
 ## Development
 
-[lane's development folder](../dev/lane/README.md) leads to its UX, its design and how it is
+[lane's development folder](../../dev/lane/README.md) leads to its UX, its design and how it is
 checked.
 
 ## License
 
-[MIT License](../LICENSE)
+[MIT License](../../LICENSE)

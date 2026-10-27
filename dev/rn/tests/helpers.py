@@ -16,7 +16,9 @@ from typing import Any
 from unittest import mock
 
 SCRIPTS = os.path.normpath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn", "scripts")
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "plugins", "rn", "scripts"
+    )
 )
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "lane"))
@@ -26,13 +28,12 @@ import conversations  # noqa: F401
 import learnings  # noqa: F401
 import proposal  # noqa: F401
 import record
+import rn
 import session  # noqa: F401
 import steering  # noqa: F401
 import stop  # noqa: F401
 import template  # noqa: F401
 import testing
-
-import rn
 
 # The folder of the copy holding the user's repository, beside `origin.git`, its remote.
 REPO = "repo"

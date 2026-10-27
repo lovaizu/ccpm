@@ -30,7 +30,7 @@ def laid(folder: str, source: str, name: str, lanes: dict[str, dict[int, list[An
     on it, each subagent's steps by number, each lane with what it takes, by the copied lane's
     `lay.py write` from a proposal written in `.lane/<yyyymmdd>-<name>/` of the folder, where
     docs/lanes.md keeps it, as the building AI lays them; gives the plugin's path."""
-    copy = copied(os.path.join(ROOT, "lane"), folder, "lane")
+    copy = copied(os.path.join(ROOT, "plugins", "lane"), folder, "lane")
     plugin = copied(source, folder, name)
     proposal = {
         "plugin": plugin,

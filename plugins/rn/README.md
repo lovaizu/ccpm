@@ -271,8 +271,8 @@ Then, in your repository, type `/rn:up` with what you want, as in the example.
 
 ## Development
 
-- [rn's development](../dev/rn/README.md) is the entrance for those who build rn.
+- [rn's development](../../dev/rn/README.md) is the entrance for those who build rn.
 
 ## License
 
-[MIT License](../LICENSE)
+[MIT License](../../LICENSE)

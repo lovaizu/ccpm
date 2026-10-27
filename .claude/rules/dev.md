@@ -1,12 +1,8 @@
 ---
 paths:
-  - "lane/**"
-  - "turn/**"
-  - "rn/**"
+  - "plugins/**"
   - "dev/**"
   - ".claude-plugin/**"
-  - "*/README.md"
-  - "*/.claude-plugin/**"
 ---
 
 # Plugin development (ccpm)
@@ -14,8 +10,8 @@ paths:
 Read [how a plugin works](../../dev/architecture.md), the architecture every plugin is built on, and
 follow it.
 
-This file holds the order the work goes in. Each step names the checklists in `rn/checklists/` to
-open while doing it, which say what the work must be.
+This file holds the order the work goes in. Each step names the checklists in
+`plugins/rn/checklists/` to open while doing it, which say what the work must be.
 
 When a step's work needs something its checklist does not ask, add the question to that checklist,
 whichever plugin is being built, and make the work again against it.
@@ -35,8 +31,8 @@ best practices / skill authoring best practices) and the official plugins.
 
 ### 1. Write the README
 
-**Write `<plugin>/README.md` with `readme.md` open, and have the user agree to it before anything
-else is made.**
+**Write `plugins/<plugin>/README.md` with `readme.md` open, and have the user agree to it before
+anything else is made.**
 
 - Rationale: everything after is built to what the README promises the user; built first, it would
   stand on a measure no one has settled.
@@ -84,9 +80,10 @@ c. **Write each prompt, a skill or an agent, with `prompt.md` open, and try it a
    - Rationale: a trial on unchecked prompts finds the prompts' slips, not whether the plugin keeps
      its promises.
 
-d. **Lay the lanes the prompts' steps call for with `lane/scripts/lay.py`, with `prompt.md` open:**
-   write them in a proposal as [the lanes](../../lane/docs/lanes.md#the-proposal) gives it, read
-   what `lay.py print` prints of it, and lay it with `lay.py write`. A check no lane holds is added
+d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
+   `prompt.md` open:** write them in a proposal as
+   [the lanes](../../plugins/lane/docs/lanes.md#the-proposal) gives it, read what `lay.py print`
+   prints of it, and lay it with `lay.py write`. A check no lane holds is added
    to lane with `code.md` open, as
    [Checks kept in lane](../../dev/architecture.md#checks-kept-in-lane) says.
 

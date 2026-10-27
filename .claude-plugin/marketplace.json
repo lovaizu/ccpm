@@ -9,19 +9,19 @@
     {
       "name": "rn",
       "description": "Carries work that takes days from your rough words to a pull request ready to merge: rn hears what you really want one point at a time, turn makes every piece of work and reads it as the person it is for would, and you decide only at the plan, design and deliverable sign-offs and what is yours; the session lives in git, so it resumes across conversations.",
-      "source": "./rn",
+      "source": "./plugins/rn",
       "category": "development"
     },
     {
       "name": "turn",
       "description": "With turn, each step of your plugin has AI make its work, such as a document or code, until it passes the step's checklists: an AI that did not make it reads it first as the one it is for, and what does not pass yet is made again.",
-      "source": "./turn",
+      "source": "./plugins/turn",
       "category": "development"
     },
     {
       "name": "lane",
       "description": "lane lets an AI notice when it drifts from the steps your plugin gives it, and tells it the right way, so it finds its way back at full speed with no one watching each move.",
-      "source": "./lane",
+      "source": "./plugins/lane",
       "category": "development"
     }
   ]

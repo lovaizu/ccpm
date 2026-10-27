@@ -2,7 +2,7 @@
 # repository on a copy that may be changed. What turn takes from lane through a link, its hooks'
 # lane/ among it, is mutated there, with lane's tests.
 [cosmic-ray]
-module-path = ["turn/scripts", "turn/hooks/adapters"]
+module-path = ["plugins/turn/scripts", "plugins/turn/hooks/adapters"]
 timeout = 30.0
 # The type checker and the linter run first: a change to a type annotation, or a comparison of a
 # string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
@@ -22,4 +22,4 @@ timeout = 30.0
 # one in order too, such as a heading of the level below and one of the level above, so a
 # comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not
 # where it sorts.
-test-command = "sh -c 'ruff check --select F632 turn && sh dev/typecheck.sh turn && python -m unittest discover -f -s dev/turn/tests'"
+test-command = "sh -c 'ruff check --select F632 plugins/turn && sh dev/typecheck.sh turn && python -m unittest discover -f -s dev/turn/tests'"

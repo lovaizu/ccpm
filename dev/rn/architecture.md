@@ -52,8 +52,8 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   from nothing; a rule written only in words is followed by chance.
 - The steering is one file, the map to the purpose kept current, from which and from what each move
   found the orchestrator decides the next move; it holds only what is left and where it stands: the
-  plan in the form of [rn's plan checklist](../../rn/checklists/session/plan.md)'s F-1, under the
-  front matter, which holds the stage, the sign-off waiting and the two languages, as
+  plan in the form of [rn's plan checklist](../../plugins/rn/checklists/session/plan.md)'s F-1,
+  under the front matter, which holds the stage, the sign-off waiting and the two languages, as
   `dev/architecture.md`'s Languages has them, and above the next move and what is open. rn's scripts
   alone write it, and hold it to that form at every keep, as they take their data from it.
 
@@ -219,7 +219,7 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
 ### Physical view
 
 ```
-rn/                                  the plugin, installed by Claude Code with turn
+plugins/rn/                          the plugin, installed by Claude Code with turn
 ├── skills/                          the entries, each saying where what the orchestrator names lies <skill>
 │   ├── up/SKILL.md                  /rn:up, handing to the orchestrator
 │   ├── ty/SKILL.md                  /rn:ty, which the AI cannot call, handing to the orchestrator's approval
@@ -269,7 +269,7 @@ rn/                                  the plugin, installed by Claude Code with t
   user's main conversation on the model they run it on.
 - The orchestrator starts `turn:up` in the background with the CCS's path, its kinds and where the
   result goes, answers turn's points by SendMessage, and stops a run with TaskStop, as
-  [turn](../../turn/README.md) is called.
+  [turn](../../plugins/turn/README.md) is called.
 - The record is kept by a commit and a push to the piece of work's branch, made by the orchestrator
   alone, through rn's scripts; the steering's states before the current one are in its history, and
   the options weighed with their reasons and each feedback with its answer in the commit messages.

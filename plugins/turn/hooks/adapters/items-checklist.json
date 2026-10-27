@@ -24,7 +24,7 @@
   },
   {
     "given": {
-      "input": "rn/checklists/session/plan.md",
+      "input": "plugins/rn/checklists/session/plan.md",
       "text": "# Plan\n## Format\n### F-1: Shape\n```markdown\n# <The piece of work, in a few words>\n## Acceptance criteria\n## Tasks\n## Next\n## Open\n```\n## Benefit\n### B-1: The user's purpose, with why\n### B-2: The whole goal, checked on the finished work\n### B-3: Each task's result accepted in its turn\n### B-4: Each action done by what it says\n### B-8: Each task made on checked ground\n### B-9: Each result made to a check made first\n### B-5: The tasks give what their stage needs\n### B-6: Each line used by its readers\n### B-7: Each line taken as meant\n"
     },
     "gives": {

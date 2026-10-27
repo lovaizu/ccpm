@@ -46,7 +46,8 @@ jobs:
           fi
           matrix=$(for plugin in $plugins; do
             since=$base
-            if [ -n "$base" ] && git diff "$base" HEAD -- "$plugin/.claude-plugin/plugin.json" \
+            manifest="plugins/$plugin/.claude-plugin/plugin.json"
+            if [ -n "$base" ] && git diff "$base" HEAD -- "$manifest" \
               | grep -qE '^[-+][[:space:]]*"version"'; then
               since=""
             fi

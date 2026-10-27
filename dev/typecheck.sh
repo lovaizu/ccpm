@@ -12,7 +12,8 @@
 set -e
 
 plugin=$1
-paths=$({ find "$plugin" "dev/$plugin" -name '*.py' -exec dirname {} \; &&
+paths=$({ find "plugins/$plugin" "dev/$plugin" -name '*.py' -exec dirname {} \; &&
   echo dev/lane && echo dev/lane/trials; } | sort -u)
-files=$(git ls-files --cached --others --exclude-standard "$plugin" "dev/$plugin" | grep '\.py$')
+files=$(git ls-files --cached --others --exclude-standard "plugins/$plugin" "dev/$plugin" \
+  | grep '\.py$')
 pyrefly check $(printf -- '--search-path %s ' $paths) $files

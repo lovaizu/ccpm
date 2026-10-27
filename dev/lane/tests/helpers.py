@@ -12,11 +12,11 @@ from typing import Any
 from unittest import mock
 
 LANE = os.path.normpath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "lane")
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "plugins", "lane")
 )
 CODE = os.path.join(LANE, "hooks", "lane")
 SCRIPTS = os.path.join(LANE, "scripts")
-sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "dev", "lane")]
+sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "..", "dev", "lane")]
 
 # lane's modules, taken by each test from here, so they are found whichever test runs first.
 import call

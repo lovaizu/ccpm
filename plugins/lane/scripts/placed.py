@@ -12,7 +12,7 @@ LANE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CODE = os.path.join(LANE, "hooks", "lane")
 
 # The marketplace whose plugins take lane's code through a link to lane beside them, as installing
-# copies what a link within the marketplace points to.
+# copies what a link within the marketplace points to; it keeps its plugins in its plugins/.
 MARKETPLACE = "ccpm"
 
 
@@ -53,7 +53,7 @@ def code_put(root: str) -> None:
     os.makedirs(os.path.dirname(place), exist_ok=True)
     above = os.path.dirname(os.path.abspath(root))
     beside = os.path.join(above, "lane", "hooks", "lane")
-    if marketplace(above) == MARKETPLACE and os.path.isdir(beside):
+    if marketplace(os.path.dirname(above)) == MARKETPLACE and os.path.isdir(beside):
         os.symlink(os.path.join("..", "..", "lane", "hooks", "lane"), place)
         return
     shutil.copytree(CODE, place, ignore=shutil.ignore_patterns("__pycache__"))

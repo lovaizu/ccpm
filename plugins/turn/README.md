@@ -131,9 +131,9 @@ that calls it, and Claude Code starts agents down to three layers below the main
 
 ## Development
 
-[turn's development folder](../dev/turn/README.md) leads to its UX, its design and how it is
+[turn's development folder](../../dev/turn/README.md) leads to its UX, its design and how it is
 checked.
 
 ## License
 
-[MIT License](../LICENSE)
+[MIT License](../../LICENSE)
