@@ -1,7 +1,7 @@
 """Tries turn as its user does: a stand-in for the calling AI, in a repository made of a task of
 this folder, calls turn on it with the step text the README shows, the user away: it takes each
 question's recommended answer as the user's, keeps it in the task's decisions and sends it to the
-agent. When turn returns, it checks each Good against its lines in the work, and fixes nothing,
+agent. When turn returns, it checks each item against its lines in the work, and fixes nothing,
 as the work is judged as it came back. With `stopped`, it stops turn during the first user's
 reading, once the first user has started and before it replies, and calls it again with the same
 call. Prints the stand-in's session, from whose JSONL and its agents' the trial is judged, the
@@ -40,8 +40,8 @@ to the agent ID its start gave back. turn sends you a line as each of its agents
 as it asks and as the result is back; nothing need answer them. Fix nothing in the work: it is
 judged as it came back.
 
-When it returns, check each Good of the result against its lines in the work. End with a list of
-each item of the result, saying whether its Good holds at its lines and why."""
+When it returns, check each item of the result against its lines in the work. End with a list of
+each item of the result, saying whether its lines give what it asks and why."""
 STOP = """Once a line says `turn:first-user starts`, the first time alone, wait until the first user
 has started, with `until grep -qs '"agentType":"turn:first-user"' {}/*.meta.json; do sleep 2;
 done` in a command of its own, then stop the agent with TaskStop, loaded with ToolSearch, and

@@ -10,8 +10,8 @@ from helpers import (
     CLAIM,
     FIRST_READ,
     FOUND,
+    NEEDED_B1,
     RESULT,
-    STOPPED_B1,
     WAITS,
     RepoTest,
     flow,
@@ -45,7 +45,7 @@ class TestResumed(RepoTest):
         self.assertEqual({k: prompt[k] for k in files}, files)
 
     def test_a_kept_role_sent_a_message_is_started_anew_with_what_was_sent_to_it_since(self):
-        # Given: a run whose generator, kept started, was sent an item back
+        # Given: a run whose generator, kept started, was sent what the receiver would need
         self.started()
         self.due(self.replied(CLAIM))
         sent = self.due(self.replied({"items": FIRST_READ}))
@@ -58,10 +58,11 @@ class TestResumed(RepoTest):
         self.assertEqual(move["tool"], "Agent")
         prompt = json.loads(move["input"]["prompt"])
         self.assertEqual(prompt["since"], [json.loads(sent["input"]["message"])])
-        self.assertEqual(prompt["sent_back"], [])
+        self.assertEqual(prompt["needs"], [])
 
     def test_a_kept_role_due_a_message_not_sent_yet_is_started_anew_with_it(self):
-        # Given: a run whose generator, kept started, is due an item back not sent yet
+        # Given: a run whose generator, kept started, is due what the receiver would need, not sent
+        # yet
         self.started()
         self.due(self.replied(CLAIM))
         self.replied({"items": FIRST_READ})
@@ -69,8 +70,8 @@ class TestResumed(RepoTest):
         self.turn("start", json.dumps(CALL))
         # Then: the generator is started anew with the message due among those since
         prompt = json.loads(self.due(self.next())["input"]["prompt"])
-        sent_back = dict(self.files("turn:generator"), sent_back=[STOPPED_B1])
-        self.assertEqual(prompt["since"], [sent_back])
+        needs = dict(self.files("turn:generator"), needs=[NEEDED_B1])
+        self.assertEqual(prompt["since"], [needs])
 
     def test_a_run_waiting_on_an_answer_asks_again_on_a_call_again(self):
         # Given: a run whose generator asked before making anything, the question sent
@@ -88,7 +89,7 @@ class TestResumed(RepoTest):
         move = self.due(self.answered())
         self.assertEqual(move["tool"], "Agent")
         prompt = json.loads(move["input"]["prompt"])
-        self.assertEqual((prompt["sent_back"], len(prompt["answers"])), ([], 1))
+        self.assertEqual((prompt["needs"], len(prompt["answers"])), ([], 1))
 
     def test_a_run_stopped_after_the_first_user_s_reading_goes_on_from_the_next_round(self):
         # Given: a run whose first user's reading ended, the second round's generator due
@@ -99,7 +100,7 @@ class TestResumed(RepoTest):
         self.turn("start", json.dumps(CALL))
         move = self.due(self.next())
         self.assertEqual(move["tool"], "Agent")
-        self.assertEqual(json.loads(move["input"]["prompt"])["sent_back"], self.reading(FOUND)[1:])
+        self.assertEqual(json.loads(move["input"]["prompt"])["needs"], self.reading(FOUND)[1:])
 
     def test_a_run_stopped_once_its_result_is_written_returns_on_a_call_again(self):
         # Given: a run whose every item has its Good, the result written, stopped before its folder

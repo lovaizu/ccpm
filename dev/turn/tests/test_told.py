@@ -12,7 +12,7 @@ from helpers import (
     FOUND,
     FOUND_B1,
     IDS,
-    PASSED,
+    MADE,
     RESULT,
     WAITS,
     RepoTest,
@@ -50,7 +50,7 @@ class TestTold(RepoTest):
     def test_a_role_s_end_is_told_with_the_start_of_the_next(self):
         # Given: a run whose generator was started
         self.started()
-        # When: it replies with every item's Good
+        # When: it replies with every item at its lines
         out = self.made()
         # Then: one line says what it made and what the first user does as it starts
         line = (
@@ -63,15 +63,14 @@ class TestTold(RepoTest):
         # Given: a run whose first user is reading
         self.started()
         self.due(self.made())
-        # When: it finds one item's Good and stops at the other
+        # When: it finds one item's Good and what the receiver would need for the other
         out = self.replied({"items": FIRST_READ})
-        # Then: the move sending the generator the item back carries the line saying what the
-        # first user found and what the generator does as it goes on
+        # Then: the move sending the generator the item carries the line saying what the first
+        # user found and what the generator does as it goes on
         self.assertEqual(
             out["line"],
-            "turn: turn:first-user found the Good of 1 of 2 items. turn:generator goes on: mend"
-            " each gap the first user found in README.md, or say why it lies outside the purpose,"
-            " round 1.",
+            "turn: turn:first-user found the Good of 1 of 2 items. turn:generator goes on: make"
+            " README.md again for what the receiver needs, round 1.",
         )
         self.assertEqual(out["move"]["input"]["to"], IDS["turn:generator"])
 
@@ -114,7 +113,7 @@ class TestTold(RepoTest):
         self.write("checklists/readme.md", CHECKLIST.split("## Benefit")[0])
         # When: the run goes through to its first user's reading
         self.started()
-        out = self.first_read(FOUND, claim=(PASSED,))
+        out = self.first_read(FOUND, claim=(MADE,))
         # Then: the line counts it as one item
         self.assertIn("found the Good of 1 of 1 item.", out["line"])
 

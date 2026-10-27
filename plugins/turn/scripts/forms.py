@@ -19,15 +19,11 @@ FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 FORM_FILES = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "forms")
 # The keys every item holds beside its shape, which name it.
 NAMING = ("checklist", "item")
-# The key of a Good given at its lines, which an item asked of each part does not take, and of the
-# Goods given for each part, which no other item takes.
-ONE_GOOD = "lines"
-EACH_GOOD = "parts"
 # What a role that stops for what lies outside the work gives: what it tried, what it confirmed and
 # what not, and what it needs to go on.
 BLOCKED = ("tried", "confirmed", "not_confirmed", "needs")
 # The keys whose value is words, wherever an item holds them.
-WORDED = ("good", "evidence", "outside", "did", "lacking", "hinders")
+WORDED = ("need",)
 
 
 def shapes(path: str) -> tuple[tuple[str, ...], ...]:
@@ -53,20 +49,18 @@ class Form(NamedTuple):
     blocks: bool = False
 
 
-# On a remake the generator claims each item sent back, mended with its evidence or lying outside
-# the purpose with why, or the question it waits on; asking before it makes anything, it gives only
-# the items waiting; and it names each choice the work rests on.
-REMADE = Form(
+# The generator claims each item it judges, every item or on a remake each item sent to it, at the
+# lines that give its Good, or the question it waits on; asking before it makes anything, it gives
+# only the items waiting; and it names each choice the work rests on.
+CLAIM = Form(
     shapes(os.path.join(FORM_FILES, "claim.json")),
     asks=True,
     asks_first=True,
     chooses=True,
     blocks=True,
 )
-# On its first making it claims every item, passing with its evidence or waiting on a question, as
-# no gap has been sent back that could lie outside the purpose.
-CLAIM = REMADE._replace(shapes=tuple(s for s in REMADE.shapes if "outside" not in s))
-# The first user gives every item the Good it found, or where it stopped.
+# The first user gives every item the lines that give its Good, or what the receiver would need to
+# get it.
 FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")), blocks=True)
 # Each item two rounds leave without Good waits on a question the orchestrator words, in a form set
 # in its steps, not in a form file as the roles' are: it hands it on standard input, which no lane
@@ -191,17 +185,13 @@ def item_problems(
             said.append(f"{name} is given twice; give each item once")
             continue
         seen.append(key)
-        # An item asked of each part gives a Good for every part, and any other one Good.
-        barred = ONE_GOOD if key in of_each else EACH_GOOD
-        taken = [s for s in form.shapes if barred not in s]
-        held = [s for s in taken if all(k in item for k in s)]
+        held = [s for s in form.shapes if all(k in item for k in s)]
         shaped = [k for s in held for k in s]
         rest = [k for k in item if k not in NAMING and k not in shaped]
         if len(held) != 1 or rest:
-            asked = ", as it is asked of each part" if key in of_each else ""
-            said.append(f"{name} must hold {allowed(taken)}{asked}")
+            said.append(f"{name} must hold {allowed(form.shapes)}")
             continue
-        said += value_problems(name, item, work)
+        said += value_problems(name, item, work, key in of_each)
     if every:
         said += [
             f"{i['checklist']} {i['item']} is left out; give every item judged here"
@@ -211,15 +201,16 @@ def item_problems(
     return said
 
 
-def allowed(shapes: list[tuple[str, ...]]) -> str:
+def allowed(shapes: tuple[tuple[str, ...], ...]) -> str:
     """The shapes an item may take, in words."""
     each = [" with ".join(f'"{k}"' for k in shape) for shape in shapes]
     *others, last = each
     return f"one of {', '.join(others)} or {last}" if others else last
 
 
-def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str]:
-    """What is wrong with the values of an item of its shape."""
+def value_problems(name: str, item: dict[str, Any], work: list[str], each: bool) -> list[str]:
+    """What is wrong with the values of an item of its shape, the item asked of each part of the
+    work where `each` says."""
     said = [
         f'{name} has an empty "{key}"; say it in words'
         for key in WORDED
@@ -229,11 +220,9 @@ def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str
         isinstance(item["question"], int) and not isinstance(item["question"], bool)
     ):
         said.append(f"{name}'s \"question\" is not a number; give the question's, from 1")
-    for key in ("lines", "places"):
-        if key in item:
-            said += lines_problems(name, item[key], work)
-    if "parts" in item:
-        said += parts_problems(name, item["parts"], work)
+    if "lines" in item:
+        inside = lines_problems(name, item["lines"], work)
+        said += inside or (parts_problems(name, item["lines"], work) if each else [])
     return said
 
 
@@ -248,45 +237,24 @@ def lines_problems(name: str, lines: Any, work: list[str]) -> list[str]:
     ]
 
 
-def parts_problems(name: str, given: Any, work: list[str]) -> list[str]:
-    """An item asked of each part gives, for every part of the work, the Good the part gives, at
-    lines inside it."""
-    if not isinstance(given, list):
-        return [f'{name} gives its parts as no list; give [{{"part", "good", "lines"}}, ...]']
+def parts_problems(name: str, lines: list[str], work: list[str]) -> list[str]:
+    """An item asked of each part has its Good only where every part of the work holds one of its
+    lines, each range inside one part; the lines are already lines of the work."""
     whole = work_parts.parts(work)
     spans = [span(p) for p in whole]
-    said: list[str] = []
-    seen: list[Any] = []
-    for k, part in enumerate(given, 1):
-        if (
-            not isinstance(part, dict)
-            or set(part) != {"part", "good", "lines"}
-            or not worded(part["good"])
-        ):
-            said.append(f'{name}: part {k} must hold "part", "good" and "lines", the Good in words')
-            continue
-        at = span(part["part"])
-        if at not in spans:
-            said.append(
-                f"{name}: {part['part']} is not a part of the work; give each as one of"
-                f" {', '.join(f'`{p}`' for p in whole)}"
-            )
-        elif at in seen:
-            said.append(f"{name}: {part['part']} is given twice; give each part once")
-        else:
-            seen.append(at)
-            inside = lines_problems(name, part["lines"], work)
-            said += inside or [
-                f"{name}: {line} is not inside its part {part['part']}; name lines of the part"
-                for line in part["lines"]
-                if not within(span(line), at)
-            ]
-    # A part left out has no Good, said once the parts given are in their form.
+    held = [[at for at in spans if within(span(line), at)] for line in lines]
+    said = [
+        f"{name}: {line} is not inside one part of the work; give each range inside one of"
+        f" {', '.join(f'`{p}`' for p in whole)}"
+        for line, parts in zip(lines, held)
+        if not parts
+    ]
+    # A part holding none of the lines has no Good, said once each range lies inside a part.
     return said or [
-        f"{name}: {p} has no Good; give a Good for every part, as the item has its Good only where"
-        " every part gives it"
+        f"{name}: {p} holds none of its lines; give lines in every part, as the item has its Good"
+        " only where every part holds it"
         for p, at in zip(whole, spans)
-        if at not in seen
+        if not any(at in parts for parts in held)
     ]
 
 

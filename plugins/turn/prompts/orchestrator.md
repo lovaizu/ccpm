@@ -49,16 +49,14 @@ command takes the outcome of the calls before it.
    - `{"returned": "<result>"}`: reply with that line, and end.
    - `{"stopped": {...}}`: a role stopped for what lies outside the work; reply with that JSON as
      it is, and end.
-4. Word a question for each item of `left`, the items two rounds left without Good, or a gap the
-   generator holds outside the purpose, its `outside` saying why, and the first user still holds:
-   from its `places`, `did`, `lacking`, `hinders` and `outside`, what the user is to decide for the
-   receiver to get what the item asks. Run `turn.py next <result>` with your questions, and go to
-   step 3:
+4. Word a question for each item of `left`, the items two rounds left without Good: from its
+   `need`, what the receiver would need to get its Good, what the user is to decide for the
+   receiver to get it. Run `turn.py next <result>` with your questions, and go to step 3:
    `{"items": [<one per item of left>], "questions": [{"question": "...", "recommended": "..."}]}`,
    each item `{"checklist": "<as in left>", "item": "<as in left>", "question": <the number of the
    question it waits on, counted from 1>}`, items one answer settles naming the same one; the
-   question says what the user is to decide and what is lacking without it, and `recommended` the
-   answer you would choose and why, in one sentence.
+   question says what the user is to decide and what the receiver goes without until then, and
+   `recommended` the answer you would choose and why, in one sentence.
 5. Run `turn.py questions <result>`, in a command of its own with nothing after it.
    Hand on `turn.py questions` as it is. Then end your turn. When the answer comes, as a message
    from the calling AI, run `turn.py next <result>` with the answer as it came, and go to step 3.

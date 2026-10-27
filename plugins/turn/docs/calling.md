@@ -24,8 +24,8 @@ On opening it, can the reader tell whether the project is for them?
 - `Scope: whole`: answered of the work at once.
 
 An item may say, on a line beginning `Tried by:`, what is run for it and how far; the AI that makes
-the work and the AI that reads it each run that, so a gap one finds is not a difference in what each
-chose to run.
+the work and the AI that reads it each run that, so an item one finds without Good is not a
+difference in what each chose to run.
 
 Headings in the frontmatter or in a code fence are not items. A checklist with no item, or an item
 without its `Scope` line, stops the run with what to fix.
@@ -63,8 +63,8 @@ TaskStop.
 
 What only the user can decide comes to the calling AI as a message, each question with the answer
 turn recommends and the items it settles: a point the CCS leaves open, met before or while the work
-is made, a gap the AI that made the work holds outside the purpose and the AI that reads it still
-holds, or an item two rounds leave without Good:
+is made, or an item two rounds leave without Good, asked from what its receiver would need to get
+it:
 
 ```json
 {"questions": [{"question": "...", "recommended": "...",
@@ -92,15 +92,12 @@ goes on where it stopped.
 ```json
 {"work": ["README.md"],
  "items": [{"checklist": "checklists/readme.md", "item": "B-2",
-            "good": "...", "lines": ["<path>:<from>-<to>"]},
-           {"checklist": "checklists/readme.md", "item": "B-3",
-            "parts": [{"part": "<path>:<from>-<to>", "good": "...",
-                       "lines": ["<path>:<from>-<to>"]}]}],
+            "lines": ["<path>:<from>-<to>"]}],
  "chosen": [{"chosen": "...", "why": "..."}]}
 ```
 
-- `items`: each item's Good with the lines of the work that give it; an item whose Scope is
-  `each part` gives them under `parts`, one for every part of the work, its lines inside that
-  part.
+- `items`: each item with the lines of the work that give its Good, as the AI that read the work
+  in its receiver's place gave them; for an item whose Scope is `each part`, at least one range in
+  every part of the work, each inside one part.
 - `chosen`: each choice the work rests on that the CCS and the files it names leave open, made by
   the AI that made it, with why; `[]` where none. Show them to the user, as no one asked them.

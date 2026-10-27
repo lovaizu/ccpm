@@ -42,8 +42,7 @@ DOES = {
 }
 # What a role kept started does once it is sent more, by what the message holds first.
 AGAIN = {
-    "sent_back": "mend each gap the first user found in {work}, or say why it lies outside the"
-    " purpose",
+    "needs": "make {work} again for what the receiver needs",
     "answers": "take in the user's answer",
     "remade": "read {work} made again",
 }
@@ -440,11 +439,10 @@ def agent_id(agent: str, text: str) -> str:
 
 def claim_problems(run: dict[str, Any], reply: str) -> list[str]:
     """What is wrong with the generator's claim: of every item, or on a remake of each item sent
-    back alone, as an item not sent back stands as it was."""
+    alone, as an item not sent stands as it was."""
     back = [forms.named(i) for i in run["back"]]
-    form = forms.REMADE if back else forms.CLAIM
     work = prompts.absolute(run["work"])
-    return forms.check(reply, back or run["items"], work, form, run["each"])
+    return forms.check(reply, back or run["items"], work, forms.CLAIM, run["each"])
 
 
 def reading_problems(run: dict[str, Any], reply: str) -> list[str]:
@@ -490,36 +488,26 @@ def left_answered(run: dict[str, Any]) -> dict[str, Any]:
     return next_round(run, run["back"])
 
 
-def settled(run: dict[str, Any]) -> dict[str, Any]:
-    """A gap the generator and the first user differed on, settled by the answer: the generator is
-    sent each item the first user stopped at with the answer, in the round where they differed, as
-    no making was spent on the gap."""
-    message = prompts.message(run, {"sent_back": run["back"], "answers": [run["answers"][-1]]})
-    return generate(run, run["back"], message)
-
-
-def generate(
-    run: dict[str, Any], sent_back: list[dict[str, Any]], sent: Any = None
-) -> dict[str, Any]:
+def generate(run: dict[str, Any], needs: list[dict[str, Any]], sent: Any = None) -> dict[str, Any]:
     """Has the generator make the work, started with what it is given, or, kept started, sent what
-    is sent; the items sent back are kept, so a generator started anew is given them."""
-    run["back"] = sent_back
-    due(run, GENERATOR, prompts.generator(run, sent_back), sent)
+    is sent; the items sent with what the receiver would need are kept, so a generator started anew
+    is given them."""
+    run["back"] = needs
+    due(run, GENERATOR, prompts.generator(run, needs), sent)
     return role(run, "")
 
 
 def made(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     """Has the run ask the generator's questions at once, before any reading rests on them;
     otherwise keeps the choices the work as made rests on, as the claim names them, and has the
-    first user use the work made, with no reading between: one kept started, which found the gaps
-    sent back, is sent the generator's answer to each with the work made again; one started anew
-    reads it on its own first."""
+    first user use the work made, with no reading between: one kept started is sent the work made
+    again; one started anew reads it from its prompt."""
     if reply["questions"]:
         return asking(run, GENERATOR, GENERATOR, reply)
     run["chosen"] = reply["chosen"]
     if FIRST_USER in run.get("started", {}):
-        run["gaps"] = reply["items"]
-        run["done"] = f"{GENERATOR} answered {counted(len(run['back']), 'gap')}."
+        work = ", ".join(run["work"])
+        run["done"] = f"{GENERATOR} made {work} again for {counted(len(run['back']), 'item')}."
     else:
         run["done"] = f"{GENERATOR} made {', '.join(run['work'])}."
     due(run, FIRST_USER, prompts.reader(run), prompts.remade(run))
@@ -527,71 +515,61 @@ def made(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
 
 
 def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    """Takes the first user's reading: an item has its Good where the first user gave one; a gap
-    the generator held outside the purpose and the first user still stops at is a question of the
-    purpose at once, the items stopped at made again once it is answered; otherwise the generator
-    is sent each item stopped at, as the first user gave it, while the round may send them back;
-    otherwise the round ends."""
+    """Takes the first user's reading: an item has its Good where the first user gave its lines;
+    the generator is sent each other item with what the receiver would need, as the first user gave
+    it, while the round may send them; otherwise the round ends."""
     goods = [i for i in reply["items"] if good(i)]
-    stops = [i for i in reply["items"] if not good(i)]
+    needs = [i for i in reply["items"] if not good(i)]
     run["done"] = (
         f"{FIRST_USER} found the Good of {len(goods)} of {counted(len(run['items']), 'item')}."
     )
-    outside = {forms.key_of(g): g["outside"] for g in run.pop("gaps", []) if "outside" in g}
-    differ = [
-        dict(s, outside=outside[forms.key_of(s)]) for s in stops if forms.key_of(s) in outside
-    ]
-    if differ:
-        return to_word(run, differ, stops, "differ")
-    if stops and sending(run):
-        return generate(run, stops, prompts.message(run, {"sent_back": stops}))
-    return ended(run, goods, stops)
+    if needs and sending(run):
+        return generate(run, needs, prompts.message(run, {"needs": needs}))
+    return ended(run, goods, needs)
 
 
 def sending(run: dict[str, Any]) -> bool:
-    """Whether the round may send back once more, counting each time it is asked."""
+    """Whether the round may send the generator what the receiver would need once more, counting
+    each time it is asked."""
     run["sent"] = run.get("sent", 0) + 1
     return run["sent"] <= SENDS
 
 
 def ended(
-    run: dict[str, Any], goods: list[dict[str, Any]], lacking: list[dict[str, Any]]
+    run: dict[str, Any], goods: list[dict[str, Any]], needs: list[dict[str, Any]]
 ) -> dict[str, Any]:
     """The round ended: with every item's Good, the result is written; otherwise the items without
     Good are made again in the next round, or, once the rounds are spent, wait on a question the
     orchestrator words."""
-    if not lacking:
+    if not needs:
         return finished(run, goods)
     if run["more"]:
         run["more"] -= 1
-        return next_round(run, lacking)
-    return to_word(run, lacking, lacking, "left")
+        return next_round(run, needs)
+    return to_word(run, needs)
 
 
-def to_word(
-    run: dict[str, Any], asked: list[dict[str, Any]], back: list[dict[str, Any]], source: str
-) -> dict[str, Any]:
-    """The items to word a question for shown, told with the reading before; the items to make
-    again once answered kept, and the source, the rounds spent or the two roles differing, which
-    says where the run goes on."""
-    run.update(left=asked, back=back, left_from=source, stage="left")
+def to_word(run: dict[str, Any], left: list[dict[str, Any]]) -> dict[str, Any]:
+    """The items the rounds left without Good shown, to word a question for, told with the reading
+    before; kept, to be made again once answered."""
+    run.update(left=left, back=left, stage="left")
     line = said(run)
     state.save(run)
     return dict(left_view(run), line=line)
 
 
-def next_round(run: dict[str, Any], lacking: list[dict[str, Any]]) -> dict[str, Any]:
+def next_round(run: dict[str, Any], needs: list[dict[str, Any]]) -> dict[str, Any]:
     """The next round: the generator and the first user started anew, counting anew, the generator
-    given each item without Good with what was found lacking."""
+    given each item without Good with what the receiver would need."""
     run["round"] += 1
     for anew_count in ("started", "sent"):
         run.pop(anew_count, None)
-    return generate(run, lacking)
+    return generate(run, needs)
 
 
 def left_asked(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Takes the orchestrator's question for each item left, two rounds left without Good or a gap
-    the two roles differ on, and has the run ask them at once."""
+    """Takes the orchestrator's question for each item two rounds left without Good, and has the
+    run ask them at once."""
     left = [forms.named(i) for i in run["left"]]
     said = forms.check(text, left, prompts.absolute(run["work"]), forms.LEFT, run["each"])
     if said:
@@ -601,13 +579,13 @@ def left_asked(run: dict[str, Any], text: str) -> dict[str, Any]:
             + f"\nrun `turn.py next {run['call']['result']}` again with the questions filled"
         )
     run.pop("left")
-    return asking(run, run.pop("left_from"), UP, json.loads(forms.unfenced(text)))
+    return asking(run, "left", UP, json.loads(forms.unfenced(text)))
 
 
 def finished(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
     """Once every item has its Good, writes the result and has the run return: where the work is,
-    each item's Good as the first user gave it, in the checklists' order, and each choice the work
-    rests on, as the generator's last claim named it."""
+    each item at the lines of its Good as the first user gave them, in the checklists' order, and
+    each choice the work rests on, as the generator's last claim named it."""
     found = {forms.key_of(g): g for g in goods}
     items = [found[forms.key_of(i)] for i in run["items"]]
     made = {"work": run["work"], "items": items, "chosen": run["chosen"]}
@@ -627,13 +605,12 @@ def waited(items: list[dict[str, Any]], asked: list[dict[str, Any]]) -> list[dic
 
 
 def good(item: dict[str, Any]) -> bool:
-    """Whether the item is judged Good: with one Good, or with a Good for every part."""
-    return "good" in item or "parts" in item
+    """Whether the first user found the item's Good: given at its lines."""
+    return "lines" in item
 
 
 def left_view(run: dict[str, Any]) -> dict[str, Any]:
-    """The items left, as the first user last gave them, each the generator held outside the
-    purpose with its reason."""
+    """The items left, each with what the receiver would need, as the first user last gave it."""
     return {"left": run["left"]}
 
 
@@ -655,4 +632,4 @@ PROBLEMS = {GENERATOR: claim_problems, FIRST_USER: reading_problems}
 # What the run does after each role's reply.
 REPLIED = {GENERATOR: made, FIRST_USER: first_read}
 # Where the run goes on once the calling AI answers, by where the questions were asked.
-GOES_ON = {GENERATOR: sent_answer, "left": left_answered, "differ": settled}
+GOES_ON = {GENERATOR: sent_answer, "left": left_answered}

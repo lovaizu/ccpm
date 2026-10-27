@@ -1,6 +1,6 @@
 """Stands in for turn's turn:up in rn's move trials: from the call rn's orchestrator hands turn,
 writes what the case set for the call's work as turn's flow leaves it once a run returns, the work's
-files and the result, each item's Good at the lines of the work that give it and each choice its
+files and the result, each item at the lines of the work that give its Good and each choice its
 maker made that the CCS left open, and gives the reply
 turn:up ends with: `{"returned": "<result>"}`, the questions it asks the calling AI, or a stop for
 what lies outside the work; with the lines turn's flow sends the main conversation on the way, made
@@ -16,12 +16,13 @@ call and reads the CCS and the checklists' items as turn does:
 
 A made is `{"files": {<path>: <text>}, "goods": {<checklist's file name>: {<item>: {"good": ...,
 "at": ...}}}, "chosen": [{"chosen": ..., "why": ...}]}`, the path "" standing for the call's first
-work, wherever the orchestrator's plan put it, an item left out of goods having no Good, and no
+work, wherever the orchestrator's plan put it, `good` saying for whoever reads the case what the
+lines give, as the result holds only the lines, an item left out of goods having no Good, and no
 choice where chosen is left out; or `{"questions": [...]}`; or `{"stopped": {"tried": ...,
-"confirmed": ..., "not_confirmed": ..., "needs": ...}}`. `at` is "whole",
-or a list of the lines' marks, each the words a line holds, or `<from>..<to>` for the lines from
-one holding the first to one holding the second, to the end where it is empty; `in` names the
-file, the work's first by default.
+"confirmed": ..., "not_confirmed": ..., "needs": ...}}`. `at` is "whole", or a list of the lines'
+marks, each the words a line holds, or `<from>..<to>` for the lines from one holding the first to
+one holding the second, to the end where it is empty; `in` names the file, the work's first by
+default.
 
 Prints `{"lines": [<each line for the main conversation, in order>], "reply": <the reply>}` and
 gives 0, or prints what was wrong and gives 1."""
@@ -83,7 +84,7 @@ def returned(run: dict[str, Any], made: dict[str, Any]) -> dict[str, str]:
         good = made.get("goods", {}).get(os.path.basename(item["checklist"]), {}).get(item["item"])
         if good is not None:
             lines = numbered(good.get("in", work[0]), good["at"])
-            items.append(dict(item, good=good["good"], lines=lines))
+            items.append(dict(item, lines=lines))
     result = run["call"]["result"]
     with open(result, "w", encoding="utf-8") as f:
         made_as = {"work": work, "items": items, "chosen": made.get("chosen", [])}

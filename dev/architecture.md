@@ -19,10 +19,11 @@ adds only what that plugin gives on top of them.
    does the writing, and settles and names as chosen each choice that is not the caller's.
 3. Each job has a role of its own, given only what the job needs.
 4. Each work is first used by AIs that did not make it, in its receiver's place and with what the
-   receiver has, each first reading it on its own, and sent back only for a gap that keeps the
-   receiver from using it; maker and reader settle a gap through the orchestrator. A work the caller
-   reads whole to approve as soon as it is made, such as a plan, is read first by the caller. Every
-   maker checks its work item by item, each with whether it passes and its evidence.
+   receiver has, each first reading it on its own and giving each item the lines of its Good or,
+   where it finds none, what the receiver would need to get it, which goes to the maker through the
+   orchestrator. A work the caller reads whole to approve as soon as it is made, such as a plan, is
+   read first by the caller. Every maker checks its work item by item, giving each by the lines of
+   its Good.
 5. What a machine can judge, of what an AI does or of the work it makes, is checked by a script, a
    hook or the project's own tools, such as a formatter, a linter and a type checker, which tells
    the role its step again or stops what would break a rule; an AI reads for what only a reader can
@@ -176,37 +177,33 @@ which is what the receiver gets. A reader shown another's verdict finds what it 
 readings add a check only when each is made on its own.
 
 A reader finds an item's Good by whether the receiver can use the work for what they use it for, and
-sends back only a gap that keeps them from it, saying how; what a machine can judge it leaves to the
-checks that judge it (Principle 5).
+where it finds none, says in one sentence what the receiver would need to get it, not how to make
+it; what a machine can judge it leaves to the checks that judge it (Principle 5).
 
 A reader that hunts for defects finds one in every work it reads, and each is mended whether or not
 the receiver would ever meet it, so the rounds go on while the work does not get better for its
 receiver; in that trial, of about 25 works sent back, about 12 were for defects found by running the
 work, 8 for what a linter or a type checker would have shown, and 5 for wording.
 
-Once a gap is sent back, the maker mends it or says why it lies outside the purpose, and the
-reader, given that answer, holds the gap or lets it go; the answer goes through the orchestrator as
-one move, and a gap the two still differ on after one exchange is a question of the purpose, put to
-the caller.
-
-Maker and reader hold the same purpose, so a gap one of them saw wrong is settled by its reasons,
-not by another round of making; after the first reading the reader has given its own verdict, so
-the maker's answer can only move it by a reason, and a gap still open is one the purpose does not
-settle, which is the caller's.
+How the work gives each Good is its maker's, who holds the sources, so the reader says what the
+receiver would need, not how, and the maker mends the work for what the receiver uses it for; a
+fault named for the maker to answer sets the two weighing the fault, where the receiver's use is
+what both are there for.
 
 A work whose receiver is the caller, read whole by them to approve it as soon as it is made, such as
 a plan, is read first by its receiver itself: a reader in their place adds a reading the caller
 makes next anyway, and costs its time at every remake.
 
-Every maker checks its work against its checklist item by item, giving each whether it passes and
-its evidence, the command run and what it printed, or the lines, in short; on a remake it gives
-again only the items sent back. Each item says what is run and how far, so maker and reader run the
+Every maker checks its work against its checklist item by item once it is made, giving each by the
+lines of the work that give its Good, `<path>:<from>-<to>`, with no words; on a remake it gives
+again only the items sent. Each item says what is run and how far, so maker and reader run the
 same.
 
-The evidence is what a reader or the caller can check, where a claim in prose is read by no one and
-costs its writing at every round; in that trial the generator rewrote such a claim of every item each
-round, 23,000 characters, which only a form check read. Two who run the same check see the same
-result, so a gap one of them finds is not a difference in what each chose to run.
+Finding the lines has the maker look at the place, and lines are what a script, a reader or the
+caller can check, where a claim in words is read by no one and costs its writing at every round; in
+that trial the generator rewrote such a claim of every item each round, 23,000 characters, which
+only a form check read. Two who run the same check see the same result, so an item one of them finds
+without Good is not a difference in what each chose to run.
 
 ### Where the course is kept
 
@@ -314,7 +311,8 @@ A role is started with its prompt and replies at its end; more work for a role a
 by message ([SendMessage](https://code.claude.com/docs/en/sub-agents#resume-subagents)), and so does
 a question from an orchestrator that is a subagent. Roles do not message one another.
 
-What passes between roles goes through the orchestrator, a reader's gap and its maker's answer too.
+What passes between roles goes through the orchestrator, what a reader says the receiver would need
+too.
 
 The orchestrator holds the whole run (Principle 1), so only it knows what each role has been given
 and where the run stands; an exchange it does not see leaves the run's state behind the work.

@@ -78,16 +78,16 @@ def files(run: dict[str, Any], agent: str) -> dict[str, Any]:
     }
 
 
-def generator(run: dict[str, Any], sent_back: list[dict[str, Any]]) -> dict[str, Any]:
+def generator(run: dict[str, Any], needs: list[dict[str, Any]]) -> dict[str, Any]:
     """What the generator is given: its files, the call's test, the command it passes after
-    changing the work, or None for none, each item sent back with what was found lacking, every
-    answer the calling AI gave, the choices the last claim of the run named, which a generator
-    started anew keeps where the work still rests on them, and the run's result, by which it has
-    turn.py print the parts of the work it makes."""
+    changing the work, or None for none, each item sent to it with what the receiver would need to
+    get its Good, as the first user gave it, every answer the calling AI gave, the choices the last
+    claim of the run named, which a generator started anew keeps where the work still rests on
+    them, and the run's result, by which it has turn.py print the parts of the work it makes."""
     return dict(
         files(run, GENERATOR),
         test=run["call"]["test"],
-        sent_back=sent_back,
+        needs=needs,
         answers=run.get("answers", []),
         chosen=run.get("chosen", []),
         result=os.path.abspath(run["call"]["result"]),
@@ -95,8 +95,9 @@ def generator(run: dict[str, Any], sent_back: list[dict[str, Any]]) -> dict[str,
 
 
 def message(run: dict[str, Any], what: dict[str, Any]) -> dict[str, Any]:
-    """What the generator, kept started, is sent: what it is to take in, items sent back or the
-    calling AI's answer, first, with its files as the CCS names them now."""
+    """What the generator, kept started, is sent: what it is to take in, the items with what the
+    receiver would need or the calling AI's answer, first, with its files as the CCS names them
+    now."""
     return dict(what, **files(run, GENERATOR))
 
 
@@ -107,14 +108,13 @@ def reader(run: dict[str, Any]) -> dict[str, Any]:
 
 
 def remade(run: dict[str, Any]) -> dict[str, Any]:
-    """What the first user, kept started, is sent once the work is made again: the work, the
-    generator's answer to each gap, mended with its evidence or lying outside the purpose with why,
-    which the first user, its own reading given, holds or lets go, the parts given anew, as a remake
-    may add or take away a section, and its other files as the CCS names them now."""
+    """What the first user, kept started, is sent once the work is made again: the work, the parts
+    given anew, as a remake may add or take away a section, and its other files as the CCS names
+    them now; nothing of the generator's claim, as a reader shown it finds the Good it was told to
+    find."""
     own = files(run, FIRST_USER)
     return {
         "remade": own["work"],
-        "gaps": run.get("gaps", []),
         "parts": parts(run),
         "given": own["given"],
         "checklists": own["checklists"],

@@ -7,7 +7,7 @@ import json
 import os
 import unittest
 
-from helpers import CALL, CCS, GOOD, RESULT, RepoTest, prompts
+from helpers import CALL, CCS, FOUND, RESULT, RepoTest, prompts
 
 
 class GivenTest(RepoTest):
@@ -242,7 +242,7 @@ class TestFolderMoved(RepoTest):
         self.assertEqual((code, json.loads(out)), (0, {"parts": [self.here("README.md:1-3")]}))
         lines = [self.here("README.md:1-3")]
         out = self.replied(
-            {"items": [dict(GOOD, lines=lines), dict(GOOD, item="B-1", lines=lines)]}
+            {"items": [dict(FOUND, lines=lines), dict(FOUND, item="B-1", lines=lines)]}
         )
         self.assertEqual(out["returned"], RESULT)
 

@@ -22,8 +22,8 @@ of, the fixing as well as the wait.
 - KR1.1: The items of the step's checklists the calling AI judges the work, when it comes back,
   to meet; more is better, and every item once the goal is reached.
 
-  The calling AI judges each item from its own check of each Good at its lines, not from turn's
-  judgment of itself, so an item turn says it meets and does not is not counted.
+  The calling AI judges each item from its own check of the work at the item's lines, not from
+  turn's judgment of itself, so an item turn says it meets and does not is not counted.
 - KR1.2: The time from calling turn to the work coming back, for a work the size of one README;
   shorter is better.
 
@@ -37,7 +37,7 @@ A CCS is the JSON file in which the calling AI keeps its task, in the shape
 [ACC](https://arxiv.org/abs/2601.11653) gives it: parts, each a list of entries, each entry a kind
 and its value, every name the calling AI's own. It holds what is decided, where the work goes, the
 checklists, the receiver, what they use the work for and what they have with it; the call names the
-kinds the calling AI uses in it for each of these. The result holds each item's Good with its lines,
+kinds the calling AI uses in it for each of these. The result holds the lines of each item's Good,
 and each choice the work rests on that the CCS and its files leave open, with why.
 
 ### From a step that needs a work to the step's end
@@ -52,7 +52,7 @@ sequenceDiagram
   Note over C: writes a CCS
   C->>T: calls it with the CCS's path, its kinds, where to write the result, and the command that checks the work or none
   T-->>C: the work where it goes, and the result
-  Note over C: checks each Good against its lines, ends its step
+  Note over C: checks each item at its lines, ends its step
 ```
 
 ### While turn runs
@@ -88,8 +88,7 @@ sequenceDiagram
   Note over T: goes on from there
 ```
 
-- turn asks where making the work meets a point only the user can decide, where turn's maker
-  and its reader still differ on a gap after each has given its reason, or where its rounds end
+- turn asks where making the work meets a point only the user can decide, or where its rounds end
   with an item still without its Good; a choice the purpose settles, turn makes and names in the
   result.
 

@@ -10,10 +10,10 @@ from helpers import (
     CHOSEN,
     FOUND,
     FOUND_B1,
+    NEEDED_B1,
+    NEEDED_F1,
     QUESTION,
     RESULT,
-    STOPPED_B1,
-    STOPPED_F1,
     WAITS,
     ReadTest,
 )
@@ -30,10 +30,10 @@ class TestRoundEnd(ReadTest):
         self.assertEqual(self.returned(out), {"returned": RESULT})
 
     def test_an_item_the_first_user_found_no_good_for_is_made_again_as_it_gave_it(self):
-        # Given: a first user giving one item's Good and stopping at the other
+        # Given: a first user giving one item's Good and what the receiver would need for the other
         # When: the orchestrator goes on
         # Then: a line says what the first user found and that the second round's generator starts,
-        # which is given the stop as the first user gave it
+        # which is given the need as the first user gave it
         out = self.first_read(FOUND)
         self.assertEqual(
             self.line_of(out),
@@ -41,7 +41,7 @@ class TestRoundEnd(ReadTest):
             " README.md to give every item its Good, round 2.",
         )
         self.due(out)
-        self.assertEqual(self.prompt()["sent_back"], [STOPPED_B1])
+        self.assertEqual(self.prompt()["needs"], [NEEDED_B1])
 
     def test_after_an_item_made_again_the_first_user_and_the_return_take_every_item(self):
         # Given: a round ended with one item without Good, made again by the generator
@@ -54,8 +54,8 @@ class TestRoundEnd(ReadTest):
         self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1])
 
     def test_the_next_round_s_generator_is_given_the_choices_the_last_claim_named(self):
-        # Given: a first round whose generator named a choice of its own, and a first user
-        # stopping at an item
+        # Given: a first round whose generator named a choice of its own, and a first user finding
+        # no Good for an item
         # When: the second round's generator is due, started anew
         # Then: it is given the choice, as the work it makes again still rests on it
         self.due(self.first_read(FOUND, claim_chosen=[CHOSEN]))
@@ -64,10 +64,11 @@ class TestRoundEnd(ReadTest):
     def test_a_reading_with_no_good_goes_to_the_next_round_with_every_item(self):
         # Given: a first user finding no item's Good
         # When: the orchestrator goes on
-        # Then: the second round's generator is due, given every item as the first user stopped
+        # Then: the second round's generator is due, given every item with what the receiver would
+        # need
         out = self.first_read()
         self.assertIn("round 2", self.line_of(out))
-        self.assertEqual(self.prompt()["sent_back"], [STOPPED_F1, STOPPED_B1])
+        self.assertEqual(self.prompt()["needs"], [NEEDED_F1, NEEDED_B1])
 
 
 class TestRounds(ReadTest):
@@ -79,11 +80,11 @@ class TestRounds(ReadTest):
         the second round's generator."""
         return self.due(self.first_read(FOUND))
 
-    def left(self, *stops):
+    def left(self, *needs):
         """Both rounds taken to their end with B-1 without Good, the second's reading giving the
-        stops; what is shown, the line saying what the first user found."""
+        needs; what is shown, the line saying what the first user found."""
         self.second()
-        out = self.first_read(FOUND, *stops)
+        out = self.first_read(FOUND, *needs)
         self.assertEqual(out["line"], "turn: turn:first-user found the Good of 1 of 2 items.")
         return self.heard(out)
 
@@ -130,9 +131,9 @@ class TestRounds(ReadTest):
         # Given: two rounds leaving B-1 without Good
         # When: the orchestrator goes on after the line
         # Then: B-1 is shown as the first user last gave it, with no role started
-        self.assertEqual(self.left(), {"left": [STOPPED_B1]})
+        self.assertEqual(self.left(), {"left": [NEEDED_B1]})
         self.assertNotIn("next", self.state())
-        self.assertEqual(self.next(), {"left": [STOPPED_B1]})
+        self.assertEqual(self.next(), {"left": [NEEDED_B1]})
 
     def test_the_question_for_an_item_left_is_sent_at_once(self):
         # Given: an item two rounds left without Good
@@ -159,7 +160,7 @@ class TestRounds(ReadTest):
         self.assertIn("round 3", self.line_of(out))
         move = self.due(out)
         prompt = json.loads(move["input"]["prompt"])
-        self.assertEqual((move["tool"], prompt["sent_back"]), ("Agent", [STOPPED_B1]))
+        self.assertEqual((move["tool"], prompt["needs"]), ("Agent", [NEEDED_B1]))
         self.assertEqual(prompt["answers"], [ANSWER])
 
     def test_once_answered_two_rounds_more_run_before_the_item_is_asked_again(self):
@@ -170,7 +171,7 @@ class TestRounds(ReadTest):
         out = self.first_read(FOUND)
         self.assertIn("round 4", self.line_of(out))
         self.due(out)
-        self.assertEqual(self.heard(self.first_read(FOUND)), {"left": [STOPPED_B1]})
+        self.assertEqual(self.heard(self.first_read(FOUND)), {"left": [NEEDED_B1]})
 
     def test_each_answer_lets_two_rounds_more_run(self):
         # Given: an item left without Good after the fourth round, once answered after the second
@@ -186,7 +187,7 @@ class TestRounds(ReadTest):
         out = self.first_read(FOUND)
         self.assertIn("round 6", self.line_of(out))
         self.due(out)
-        self.assertEqual(self.heard(self.first_read(FOUND)), {"left": [STOPPED_B1]})
+        self.assertEqual(self.heard(self.first_read(FOUND)), {"left": [NEEDED_B1]})
 
     def test_questions_for_the_items_left_out_of_their_form_stop(self):
         # Given: an item two rounds left without Good
@@ -203,14 +204,14 @@ class TestRounds(ReadTest):
                 self.assertIn("the questions are not filled", out)
                 self.assertIn(said, out)
                 self.assertIn("again with the questions filled", out)
-        self.assertEqual(self.next(), {"left": [STOPPED_B1]})
+        self.assertEqual(self.next(), {"left": [NEEDED_B1]})
 
     def test_items_left_too_long_for_one_read_are_shown_page_by_page(self):
-        # Given: a run waiting on the question for an item left whose stop runs past two pages
+        # Given: a run waiting on the question for an item left whose need runs past two pages
         # When: the orchestrator runs the script with no input, then asks for each page after
         # Then: each page is headed by its number among all and how to see the others, the pages
         # together are the items left, and a page past the last stops
-        self.left(dict(STOPPED_B1, lacking="x" * 45000))
+        self.left(dict(NEEDED_B1, need="x" * 45000))
         left = self.state()["left"]
         pages = []
         for asked in ((), ("2",), ("3",)):
@@ -226,10 +227,10 @@ class TestRounds(ReadTest):
             self.assertIn(f"page {page} is not one of 1 to 3", self.turn("next", RESULT, page)[1])
 
     def test_items_left_of_two_pages_are_shown_page_by_page(self):
-        # Given: a run waiting on the question for an item left whose stop runs to two pages
+        # Given: a run waiting on the question for an item left whose need runs to two pages
         # When: the orchestrator runs the script with no input
         # Then: the first page is headed by its number of two
-        self.left(dict(STOPPED_B1, lacking="x" * 25000))
+        self.left(dict(NEEDED_B1, need="x" * 25000))
         out = self.turn("next", RESULT)[1]
         self.assertTrue(out.startswith("left, page 1 of 2: "), out[:80])
 

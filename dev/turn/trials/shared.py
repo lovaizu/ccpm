@@ -29,7 +29,7 @@ from trying import agents, claude, record, show  # noqa: F401
 from trying import folder as made_folder
 
 # A README for the orchestrator trial's task that names no license, which the roles trials set in
-# place of the generator's work, so the first user stops at B-1.
+# place of the generator's work, so the first user finds no Good for B-1.
 UNLICENSED = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
 
 

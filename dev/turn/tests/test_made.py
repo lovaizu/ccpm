@@ -11,10 +11,10 @@ from helpers import (
     BLOCKED,
     CALL,
     CHECKLIST,
-    GOOD,
+    FOUND,
     IDS,
     ITEM_B1,
-    PASSED,
+    MADE,
     QUESTION,
     RESULT,
     WAITS,
@@ -27,8 +27,8 @@ class TestMade(ReadTest):
     def test_the_generator_is_given_what_it_makes_the_work_from_and_where_it_replies(self):
         # Given: a run started
         # When: the generator is to be started
-        # Then: its prompt names the work, the checklists, the call's test, nothing sent back
-        # yet, no answers, no choice of an earlier claim, the result, and its reply file beside
+        # Then: its prompt names the work, the checklists, the call's test, no need sent yet, no
+        # answers, no choice of an earlier claim, the result, and its reply file beside
         # it, beside the files it makes the work from, which the start's tests hold
         prompt = self.prompt()
         del prompt["given"]
@@ -38,7 +38,7 @@ class TestMade(ReadTest):
                 "work": [self.here("README.md")],
                 "checklists": [self.here("checklists/readme.md")],
                 "test": "sh tests/readme.sh",
-                "sent_back": [],
+                "needs": [],
                 "answers": [],
                 "chosen": [],
                 "result": self.here(RESULT),
@@ -48,10 +48,10 @@ class TestMade(ReadTest):
 
     def test_the_generators_claim_starts_the_first_user_with_what_the_receiver_has(self):
         # Given: a call naming what the receiver reads the work for and what they have with it,
-        # and a generator that replied with every item's Good
+        # and a generator that replied with every item at its lines
         # When: the orchestrator goes on
         # Then: the first user is to be started with the work, what the receiver has, who the
-        # receiver is and what for, and the checklists, and not the CCS or the claim
+        # receiver is and what for, and the checklists, and nothing of the CCS or the claim
         move = self.due(self.made())
         self.assertEqual(move["input"]["subagent_type"], "turn:first-user")
         self.assertEqual(
@@ -70,7 +70,6 @@ class TestMade(ReadTest):
                 "reply": self.kept("first-user.json"),
             },
         )
-        self.assertNotIn(GOOD["good"], move["input"]["prompt"])
 
     def test_a_generator_asking_before_making_anything_has_the_question_sent_at_once(self):
         # Given: a generator replying, before making anything, with a question only the user can
@@ -159,7 +158,7 @@ class TestMade(ReadTest):
         # When: the answer is handed on, and the generator claims the items of the first
         # checklist alone
         self.due(self.answered())
-        out = self.made(PASSED, dict(PASSED, item="B-1"))
+        out = self.made(MADE, dict(MADE, item="B-1"))
         # Then: it is sent the items of the checklist added, left out, as the run judges them now
         self.assertIn(
             "checklists/more.md B-3 is left out; give every item judged here",
@@ -187,10 +186,11 @@ class TestMade(ReadTest):
         self.assertEqual(self.due(self.made())["input"]["subagent_type"], "turn:first-user")
 
     def test_a_question_found_while_making_is_sent_at_once(self):
-        # Given: a generator whose claim gives one item's Good and has the other wait on a question
+        # Given: a generator whose claim gives one item at its lines and has the other wait on a
+        # question
         # When: the orchestrator goes on
         # Then: the run asks at once, before the first user reads
-        self.assertEqual(self.heard(self.made(PASSED, WAITS)), {"asked": RESULT})
+        self.assertEqual(self.heard(self.made(MADE, WAITS)), {"asked": RESULT})
         self.assertEqual(json.loads(self.turn("questions", RESULT)[1]), ASKED)
 
     def test_a_generator_started_that_ended_without_its_reply_is_told_to_write_it(self):
@@ -209,7 +209,7 @@ class TestMade(ReadTest):
                 "message": f"Write your reply to {reply} in your form; it is not there",
             },
         )
-        reading = json.dumps({"items": [GOOD, WAITS], "questions": [QUESTION]})
+        reading = json.dumps({"items": [FOUND, WAITS], "questions": [QUESTION]})
         self.assertIn("waits on the end of turn:generator", self.refused(reading))
         self.assertTrue(os.path.exists(state.state_path(RESULT)))
 
@@ -226,9 +226,9 @@ class TestMade(ReadTest):
         # When: the orchestrator goes on
         # Then: the generator is sent what is wrong, to write its reply again
         for claim, said in (
-            ({"items": [GOOD], "questions": [], "chosen": []}, "B-1 is left out"),
-            ({"items": [GOOD, dict(GOOD, item="B-1")], "chosen": []}, '"questions": [...]'),
-            ({"items": [GOOD, dict(GOOD, item="B-1")], "questions": []}, '"chosen": [...]'),
+            ({"items": [MADE], "questions": [], "chosen": []}, "B-1 is left out"),
+            ({"items": [MADE, dict(MADE, item="B-1")], "chosen": []}, '"questions": [...]'),
+            ({"items": [MADE, dict(MADE, item="B-1")], "questions": []}, '"chosen": [...]'),
         ):
             with self.subTest(said=said):
                 out = self.replied(claim)

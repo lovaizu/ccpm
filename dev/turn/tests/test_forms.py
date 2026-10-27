@@ -11,16 +11,14 @@ from helpers import (
     EACH_GOOD,
     EACH_ITEM,
     FOUND,
-    GOOD,
-    HINDERS,
     ITEM_B1,
     ITEM_F1,
     ITEMS,
-    OUTSIDE,
-    PASSED,
+    MADE,
+    NEED,
+    NEEDED_B1,
     QUESTION,
     SECTIONED,
-    STOPPED_B1,
     TURN,
     WAITS,
     RepoTest,
@@ -72,10 +70,10 @@ class TestItems(FormTest):
         said = self.said(
             {
                 "items": [
-                    dict(PASSED, item="B-8"),
-                    dict(PASSED, item="B-9"),
-                    PASSED,
-                    PASSED,
+                    dict(MADE, item="B-8"),
+                    dict(MADE, item="B-9"),
+                    MADE,
+                    MADE,
                     bare,
                     bare,
                 ],
@@ -96,7 +94,7 @@ class TestItems(FormTest):
         # When: it is checked against the items as the CCS names them
         # Then: it is filled
         whole = os.path.abspath("checklists/readme.md")
-        items = [dict(GOOD, checklist=whole), dict(EACH_GOOD, checklist=whole)]
+        items = [dict(FOUND, checklist=whole), dict(EACH_GOOD, checklist=whole)]
         said = self.each_said({"items": items}, forms.FIRST_READING, (ITEMS[0], EACH_ITEM))
         self.assertEqual(said, [])
 
@@ -104,7 +102,7 @@ class TestItems(FormTest):
         # Given: a claim with an item that names no checklist, and one whose checklist is no path
         # When: it is checked
         # Then: each is shown as it was given and told to name its checklist
-        bare = {"item": "F-1", "good": "it", "lines": ["README.md:1-3"]}
+        bare = {"item": "F-1", "lines": ["README.md:1-3"]}
         claim = {"items": [bare, dict(bare, checklist=1)], "questions": [], "chosen": []}
         said = self.said(claim, forms.CLAIM)
         for item in (bare, dict(bare, checklist=1)):
@@ -118,33 +116,16 @@ class TestItems(FormTest):
         bare = ITEM_F1
         said = self.said({"items": [bare, WAITS], "questions": [QUESTION]}, forms.LEFT)
         self.assertEqual(said, ['checklists/readme.md F-1 must hold "question"'])
-        said = self.said({"items": [bare, STOPPED_B1]}, forms.FIRST_READING)
-        self.assertEqual(
-            said,
-            [
-                (
-                    'checklists/readme.md F-1 must hold one of "good" with "lines" or "places" with'
-                    ' "did" with "lacking" with "hinders"'
-                )
-            ],
-        )
+        said = self.said({"items": [bare, NEEDED_B1]}, forms.FIRST_READING)
+        self.assertEqual(said, ['checklists/readme.md F-1 must hold one of "lines" or "need"'])
 
     def test_an_item_of_two_shapes_is_told_the_shapes_it_takes(self):
-        # Given: a reading whose F-1 holds a Good with its lines and a stop as well
-        stop = {"places": ["README.md:1-3"], "did": "read it", "lacking": "x", "hinders": HINDERS}
-        both = dict(GOOD, **stop)
+        # Given: a reading whose F-1 holds its lines and what the receiver would need as well
+        both = dict(FOUND, need=NEED)
         # When: it is checked
         # Then: F-1 is told the shapes it takes, one of them
-        said = self.said({"items": [both, STOPPED_B1]}, forms.FIRST_READING)
-        self.assertEqual(
-            said,
-            [
-                (
-                    'checklists/readme.md F-1 must hold one of "good" with "lines" or "places" with'
-                    ' "did" with "lacking" with "hinders"'
-                )
-            ],
-        )
+        said = self.said({"items": [both, NEEDED_B1]}, forms.FIRST_READING)
+        self.assertEqual(said, ['checklists/readme.md F-1 must hold one of "lines" or "need"'])
 
     def test_an_item_waiting_on_a_question_not_given_is_named(self):
         # Given: an item waiting on question 0, where questions count from 1, and one waiting on
@@ -155,7 +136,7 @@ class TestItems(FormTest):
             with self.subTest(number=number):
                 said = self.said(
                     {
-                        "items": [PASSED, dict(WAITS, question=number)],
+                        "items": [MADE, dict(WAITS, question=number)],
                         "questions": [QUESTION],
                         "chosen": [],
                     },
@@ -181,19 +162,19 @@ class TestItems(FormTest):
         # Then: each is named with what to give
         for data, words in (
             (
-                {"items": [PASSED, dict(WAITS, question="Which?")], "questions": [QUESTION]},
+                {"items": [MADE, dict(WAITS, question="Which?")], "questions": [QUESTION]},
                 '"question" is not a number',
             ),
             (
-                {"items": [PASSED, WAITS], "questions": [{"question": "Which?"}]},
+                {"items": [MADE, WAITS], "questions": [{"question": "Which?"}]},
                 'question 1 must hold "question" and "recommended"',
             ),
             (
-                {"items": [PASSED, WAITS], "questions": [dict(QUESTION, question=" ")]},
+                {"items": [MADE, WAITS], "questions": [dict(QUESTION, question=" ")]},
                 'question 1 must hold "question" and "recommended"',
             ),
             (
-                {"items": [PASSED, dict(WAITS, question=True)], "questions": [QUESTION]},
+                {"items": [MADE, dict(WAITS, question=True)], "questions": [QUESTION]},
                 '"question" is not a number',
             ),
         ):
@@ -243,111 +224,68 @@ class TestBlocked(FormTest):
 
 
 class TestFirstReading(FormTest):
-    def test_a_first_user_gives_every_item_a_good_or_where_and_how_it_stopped(self):
-        # Given: a first user's reading giving one item a Good and the other the places it looked,
-        # what it did there and what it did not get; one leaving an item out; and one giving an
-        # item asked of each part where it stopped in place of its parts
+    def test_a_first_user_gives_every_item_its_lines_or_what_the_receiver_would_need(self):
+        # Given: a first user's reading giving one item its lines and the other what the receiver
+        # would need; one leaving an item out; and one giving an item asked of each part what the
+        # receiver would need
         # When: it is checked
         # Then: the first and the third pass, and the second is told the item left out
-        self.assertEqual(self.said({"items": [GOOD, STOPPED_B1]}, forms.FIRST_READING), [])
-        said = self.said({"items": [GOOD]}, forms.FIRST_READING)
+        self.assertEqual(self.said({"items": [FOUND, NEEDED_B1]}, forms.FIRST_READING), [])
+        said = self.said({"items": [FOUND]}, forms.FIRST_READING)
         self.assertEqual(
             said, ["checklists/readme.md B-1 is left out; give every item judged here"]
         )
-        each = dict(STOPPED_B1, item="B-2", places=["README.md:5-7"])
+        each = dict(NEEDED_B1, item="B-2")
         said = self.each_said(
-            {"items": [GOOD, STOPPED_B1, each]}, forms.FIRST_READING, ITEMS + [EACH_ITEM]
+            {"items": [FOUND, NEEDED_B1, each]}, forms.FIRST_READING, ITEMS + [EACH_ITEM]
         )
         self.assertEqual(said, [])
 
-    def test_a_stop_without_what_it_did_did_not_get_and_how_that_hinders_stops(self):
-        # Given: a stop giving the places alone, one without how what it did not get keeps the
-        # receiver from using the work, and stops whose words of what it did, did not get or how
-        # that hinders are empty
+    def test_what_the_receiver_would_need_is_said_in_words(self):
+        # Given: a reading whose need is blanks alone, and one whose need is no text
         # When: each is checked
-        # Then: the first two are told the shape a stop takes, and each other the key left empty
-        places = {k: v for k, v in STOPPED_B1.items() if k in ("checklist", "item", "places")}
-        unhindered = {k: v for k, v in STOPPED_B1.items() if k != "hinders"}
-        for stop in (places, unhindered):
-            with self.subTest(stop=stop):
-                said = self.said({"items": [GOOD, stop]}, forms.FIRST_READING)
-                self.assertEqual(len(said), 1, said)
-                self.assertIn('"places" with "did" with "lacking" with "hinders"', said[0])
-        for key in ("did", "lacking", "hinders"):
-            with self.subTest(key=key):
+        # Then: each is told to say it in words
+        for need in (" ", 1):
+            with self.subTest(need=need):
                 said = self.said(
-                    {"items": [GOOD, dict(STOPPED_B1, **{key: " "})]}, forms.FIRST_READING
+                    {"items": [FOUND, dict(NEEDED_B1, need=need)]}, forms.FIRST_READING
                 )
                 self.assertEqual(
-                    said, [f'checklists/readme.md B-1 has an empty "{key}"; say it in words']
+                    said, ['checklists/readme.md B-1 has an empty "need"; say it in words']
                 )
-
-    def test_a_stop_names_where_its_good_is_not_found(self):
-        # Given: a stop with the places its Good is not found, with none, with places no list, or
-        # with lines outside the work
-        # When: each is checked
-        # Then: the first passes, and each other is named
-        self.assertEqual(self.said({"items": [GOOD, STOPPED_B1]}, forms.FIRST_READING), [])
-        for places, said in (
-            ([], "names no lines"),
-            ("README.md:3", "names no lines"),
-            (["README.md:9"], "README.md:9 is not lines of the work"),
-        ):
-            with self.subTest(places=places):
-                item = dict(STOPPED_B1, places=places)
-                said_now = self.said({"items": [GOOD, item]}, forms.FIRST_READING)
-                self.assertEqual(len(said_now), 1, said_now)
-                self.assertIn(said, said_now[0])
 
 
 class TestClaim(FormTest):
-    def test_a_claim_of_every_item_passing_or_waiting_passes(self):
-        # Given: the generator's claim, one item passing with its evidence and the other waiting on
-        # a question
+    def test_a_claim_of_every_item_at_its_lines_or_waiting_passes(self):
+        # Given: the generator's claim, one item at the lines that give its Good and the other
+        # waiting on a question
         # When: it is checked
         # Then: it passes, as nothing beside the items and questions is asked of it
-        claim = {"items": [PASSED, WAITS], "questions": [QUESTION], "chosen": [CHOSEN]}
+        claim = {"items": [MADE, WAITS], "questions": [QUESTION], "chosen": [CHOSEN]}
         self.assertEqual(self.said(claim, forms.CLAIM), [])
 
-    def test_an_item_passing_gives_its_evidence_in_words_and_no_good(self):
-        # Given: claims whose passing item gives empty evidence, or a Good with its lines as a
-        # reading does
+    def test_an_item_claimed_gives_its_lines_alone(self):
+        # Given: claims whose item gives its lines with words beside them, an answer of the
+        # first user's form, or no lines
         # When: each is checked
-        # Then: the first is told the evidence is empty, the second the shapes a claimed item takes
+        # Then: the first two are told the shapes a claimed item takes, the third to give lines
         claim = {"questions": [QUESTION], "chosen": []}
-        said = self.said(dict(claim, items=[dict(PASSED, evidence=" "), WAITS]), forms.CLAIM)
-        self.assertEqual(
-            said, ['checklists/readme.md F-1 has an empty "evidence"; say it in words']
-        )
-        said = self.said(dict(claim, items=[GOOD, WAITS]), forms.CLAIM)
-        self.assertEqual(
-            said, ['checklists/readme.md F-1 must hold one of "evidence" or "question"']
-        )
-
-    def test_only_a_remake_holds_an_item_outside_the_purpose(self):
-        # Given: a claim holding an item whose gap lies outside the purpose, with why, and one with
-        # empty words of why
-        # When: each is checked as a first making, and as a remake
-        # Then: a first making is told the shapes it takes, as no gap was sent back; a remake
-        # passes, and the one of empty words is told it
-        held = {"items": [PASSED, dict(ITEM_B1, outside=OUTSIDE)], "questions": [], "chosen": []}
-        self.assertEqual(
-            self.said(held, forms.CLAIM),
-            ['checklists/readme.md B-1 must hold one of "evidence" or "question"'],
-        )
-        self.assertEqual(self.said(held, forms.REMADE), [])
-        empty = dict(held, items=[PASSED, dict(ITEM_B1, outside="")])
-        self.assertEqual(
-            self.said(empty, forms.REMADE),
-            ['checklists/readme.md B-1 has an empty "outside"; say it in words'],
-        )
+        for item in (dict(MADE, evidence="cat -n README.md"), dict(ITEM_F1, need=NEED)):
+            with self.subTest(item=item):
+                said = self.said(dict(claim, items=[item, WAITS]), forms.CLAIM)
+                self.assertEqual(
+                    said, ['checklists/readme.md F-1 must hold one of "lines" or "question"']
+                )
+        said = self.said(dict(claim, items=[dict(MADE, lines=[]), WAITS]), forms.CLAIM)
+        self.assertEqual(len(said), 1, said)
+        self.assertIn("F-1 names no lines", said[0])
 
     def test_a_claim_names_each_choice_it_made_with_why_in_words(self):
         # Given: claims whose choices are not a list, or hold one that is no object, without its
         # why, with empty words, or with a key of its own
         # When: each is checked
         # Then: the first is told the shape to give, and each other the choice with what to give
-        claim = {"items": [PASSED, dict(PASSED, item="B-1")], "questions": []}
+        claim = {"items": [MADE, dict(MADE, item="B-1")], "questions": []}
         said = self.said(dict(claim, chosen={}), forms.CLAIM)
         self.assertEqual(
             said, ['give it as JSON: {"items": [...], "questions": [...], "chosen": [...]}']
@@ -374,7 +312,7 @@ class TestClaim(FormTest):
         # told the item left out
         asked = {"items": [WAITS], "questions": [QUESTION], "chosen": []}
         self.assertEqual(self.said(asked, forms.CLAIM), [])
-        said = self.said({"items": [PASSED], "questions": [], "chosen": []}, forms.CLAIM)
+        said = self.said({"items": [MADE], "questions": [], "chosen": []}, forms.CLAIM)
         self.assertEqual(
             said, ["checklists/readme.md B-1 is left out; give every item judged here"]
         )
@@ -388,7 +326,7 @@ class TestLeft(FormTest):
         # Then: the first passes, and the second is told the item takes a question
         both = {"items": [dict(WAITS, item="F-1"), WAITS], "questions": [QUESTION]}
         self.assertEqual(self.said(both, forms.LEFT), [])
-        said = self.said({"items": [GOOD, WAITS], "questions": [QUESTION]}, forms.LEFT)
+        said = self.said({"items": [FOUND, WAITS], "questions": [QUESTION]}, forms.LEFT)
         self.assertEqual(said, ['checklists/readme.md F-1 must hold "question"'])
 
     def test_a_question_no_item_left_waits_on_is_named(self):
@@ -484,116 +422,103 @@ class TestParts(FormTest):
         # Then: the file written gives its part alone
         self.assertEqual(work_parts.parts(["new.md", "README.md"]), ["README.md:1-3"])
 
-    def test_an_item_asked_of_each_part_with_a_good_for_every_part_passes(self):
-        # Given: an item asked of each part, given a Good for each part at lines inside it
-        # When: it is checked by the forms that give Goods
+    def test_an_item_asked_of_each_part_with_lines_in_every_part_passes(self):
+        # Given: an item asked of each part, given lines in each part of the work
+        # When: it is checked by the forms that give lines
         # Then: it passes
-        data = {"items": [GOOD, dict(GOOD, item="B-1"), EACH_GOOD]}
-        self.assertEqual(self.each_said(data, forms.FIRST_READING, ITEMS + [EACH_ITEM]), [])
+        for form, items in (
+            (forms.FIRST_READING, [FOUND, NEEDED_B1]),
+            (forms.CLAIM, [MADE, WAITS]),
+        ):
+            with self.subTest(form=form):
+                data = {"items": [*items, EACH_GOOD], "questions": [QUESTION], "chosen": []}
+                self.assertEqual(self.each_said(data, form, ITEMS + [EACH_ITEM]), [])
 
-    def test_an_item_given_at_the_wrong_scope_stops(self):
-        # Given: an item asked of each part given one Good with its lines, and an item of its part
-        # given a Good for each part
-        # When: they are checked
-        # Then: each is told the shapes its scope takes
-        one = dict(EACH_ITEM, good="the reader uses it", lines=["README.md:1-7"])
+    def test_an_item_not_asked_of_each_part_takes_lines_in_one_part(self):
+        # Given: an item of its part given lines in the first part of a work of two
+        # When: it is checked
+        # Then: it passes, as only an item asked of each part is held to every part
         said = self.each_said(
-            {"items": [one, dict(EACH_GOOD, item="F-1")]},
-            forms.FIRST_READING,
-            [EACH_ITEM, ITEMS[0]],
+            {"items": [dict(FOUND, lines=["README.md:3"])]}, forms.FIRST_READING, [ITEMS[0]]
         )
-        self.assertEqual(
-            said,
-            [
-                (
-                    'checklists/readme.md B-2 must hold one of "parts" or "places" with "did" with'
-                    ' "lacking" with "hinders", as it is asked of each part'
-                ),
-                (
-                    'checklists/readme.md F-1 must hold one of "good" with "lines" or "places" with'
-                    ' "did" with "lacking" with "hinders"'
-                ),
-            ],
-        )
+        self.assertEqual(said, [])
 
-    def test_parts_out_of_their_form_stop(self):
-        # Given: an item asked of each part whose parts leave one out, name one not of the work,
-        # give one twice, name lines outside their part, give a part of no shape, empty words, or
-        # parts as no list
+    def test_lines_of_an_item_asked_of_each_part_out_of_their_parts_stop(self):
+        # Given: an item asked of each part whose lines leave a part without any, run across two
+        # parts, name lines not of the work, or are no list
         # When: each is checked
         # Then: each is named with what to give
-        first, second = EACH_GOOD["parts"]
-        for parts, said in (
-            ([first], "README.md:5-7 has no Good; give a Good for every part"),
+        for lines, said in (
             (
-                [first, dict(second, part="README.md:5-6")],
+                ["README.md:3"],
                 (
-                    "README.md:5-6 is not a part of the work; give each as one of"
-                    " `README.md:1-4`, `README.md:5-7`"
+                    "README.md:5-7 holds none of its lines; give lines in every part, as the item"
+                    " has its Good only where every part holds it"
                 ),
             ),
-            ([first, first, second], "README.md:1-4 is given twice"),
             (
-                [first, dict(second, lines=["README.md:4-5"])],
-                "README.md:4-5 is not inside its part",
+                ["README.md:3", "README.md:4-5"],
+                (
+                    "README.md:4-5 is not inside one part of the work; give each range inside one"
+                    " of `README.md:1-4`, `README.md:5-7`"
+                ),
             ),
-            ([first, dict(second, lines=["x.md:6"])], "x.md:6 is not lines of the work"),
-            ([first, {"part": "README.md:5-7", "good": "x"}], 'part 2 must hold "part", "good"'),
-            ([first, dict(second, why="x")], 'part 2 must hold "part", "good"'),
-            ([first, "README.md:5-7"], 'must hold "part", "good" and "lines"'),
-            ([first, dict(second, good=" ")], 'must hold "part", "good" and "lines"'),
-            ("README.md:1-4", "gives its parts as no list"),
+            (["README.md:3", "x.md:6"], "x.md:6 is not lines of the work"),
+            ("README.md:3", "names no lines"),
         ):
-            with self.subTest(parts=parts):
-                given = {"items": [dict(EACH_GOOD, parts=parts)]}
-                said_now = self.each_said(given, forms.FIRST_READING)
+            with self.subTest(lines=lines):
+                said_now = self.each_said(
+                    {"items": [dict(EACH_GOOD, lines=lines)]}, forms.FIRST_READING
+                )
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn(said, said_now[0])
                 self.assertTrue(said_now[0].startswith("checklists/readme.md B-2"), said_now)
 
     def test_lines_are_inside_their_part_in_its_own_file_alone(self):
         # Given: a work of three files, a script whose name sorts before a document of two parts
-        # and one whose name sorts after it, and an item asked of each part whose Goods name lines
-        # from each part's first line
-        # When: the document's second part names its own lines, or lines of the same numbers in
-        # either script
+        # and one whose name sorts after it, and an item asked of each part whose lines name
+        # each part's first line
+        # When: the document's second part is given by its own lines, or by lines of the same
+        # numbers in either script
         # Then: the first passes, and each other is named
         self.write("README.md", SECTIONED)
         self.write("0.py", "x\n" * 7)
         self.write("z.py", "x\n" * 7)
         work = ["README.md", "0.py", "z.py"]
-        rest = [{"part": f"{p}:1-7", "good": "x", "lines": [f"{p}:1"]} for p in ("0.py", "z.py")]
         for lines, said in (("README.md:5-7", 0), ("0.py:5-7", 1), ("z.py:5-7", 1)):
             with self.subTest(lines=lines):
-                second = dict(EACH_GOOD["parts"][1], lines=[lines])
-                item = dict(EACH_GOOD, parts=[EACH_GOOD["parts"][0], second, *rest])
+                item = dict(EACH_GOOD, lines=["README.md:3", lines, "0.py:1", "z.py:1"])
                 text = json.dumps({"items": [item]})
                 found = forms.check(text, [EACH_ITEM], work, forms.FIRST_READING, [EACH_ITEM])
                 self.assertEqual(len(found), said, found)
 
     def test_lines_named_by_a_whole_path_are_inside_their_part(self):
-        # Given: an item asked of each part whose Goods name their lines by whole paths, as a role
-        # given whole paths names them
+        # Given: an item asked of each part whose lines are named by whole paths, as a role given
+        # whole paths names them
         # When: it is checked
         # Then: it passes, as each line is inside its part however the path is written
-        parts = [dict(p, lines=[self.here(p["lines"][0])]) for p in EACH_GOOD["parts"]]
-        said = self.each_said({"items": [dict(EACH_GOOD, parts=parts)]}, forms.FIRST_READING)
+        lines = [self.here(line) for line in EACH_GOOD["lines"]]
+        said = self.each_said({"items": [dict(EACH_GOOD, lines=lines)]}, forms.FIRST_READING)
         self.assertEqual(said, [])
 
-    def test_every_part_of_no_shape_is_named(self):
-        # Given: an item asked of each part whose two parts both hold no Good
+    def test_every_part_holding_none_of_the_lines_is_named(self):
+        # Given: a work of three parts, and an item asked of each part whose lines lie in the first
+        # alone
+        self.write("README.md", "# x\n\na\n## A\nb\n## B\nc\n")
         # When: it is checked
-        # Then: both are named
-        parts = [{"part": p["part"]} for p in EACH_GOOD["parts"]]
-        said = self.each_said({"items": [dict(EACH_GOOD, parts=parts)]}, forms.FIRST_READING)
-        self.assertEqual([s.split(": ")[1][:6] for s in said], ["part 1", "part 2"])
+        # Then: both other parts are named
+        text = json.dumps({"items": [dict(EACH_GOOD, lines=["README.md:3"])]})
+        said = forms.check(text, [EACH_ITEM], WORK, forms.FIRST_READING, [EACH_ITEM])
+        self.assertEqual(
+            [s.split(": ")[1].split(" ")[0] for s in said], ["README.md:4-5", "README.md:6-7"]
+        )
 
-    def test_every_part_out_of_place_is_named(self):
-        # Given: an item asked of each part whose two parts both name lines outside them
+    def test_every_range_out_of_its_part_is_named(self):
+        # Given: an item asked of each part whose two ranges both run across the parts
         # When: it is checked
         # Then: both are named
-        parts = [dict(p, lines=["README.md:1-7"]) for p in EACH_GOOD["parts"]]
-        said = self.each_said({"items": [dict(EACH_GOOD, parts=parts)]}, forms.FIRST_READING)
+        lines = ["README.md:1-7", "README.md:4-5"]
+        said = self.each_said({"items": [dict(EACH_GOOD, lines=lines)]}, forms.FIRST_READING)
         self.assertEqual(len(said), 2, said)
 
 
@@ -606,7 +531,7 @@ class TestLines(FormTest):
         for lines in ("README.md:1-1", "README.md:2-3", "README.md:1-2", "README.md:3"):
             with self.subTest(lines=lines):
                 said = self.said(
-                    {"items": [dict(FOUND, lines=[lines]), STOPPED_B1]}, forms.FIRST_READING
+                    {"items": [dict(FOUND, lines=[lines]), NEEDED_B1]}, forms.FIRST_READING
                 )
                 self.assertEqual(said, [])
 
@@ -626,7 +551,7 @@ class TestLines(FormTest):
         ):
             with self.subTest(lines=lines):
                 said = self.said(
-                    {"items": [dict(FOUND, lines=[lines]), STOPPED_B1]}, forms.FIRST_READING
+                    {"items": [dict(FOUND, lines=[lines]), NEEDED_B1]}, forms.FIRST_READING
                 )
                 self.assertEqual(len(said), 1, said)
                 self.assertIn(f"{lines} is not lines of the work", said[0])
@@ -651,16 +576,14 @@ class TestSchemas(FormTest):
         self.assertEqual(sorted(os.listdir(FORM_FILES)), ["claim.json", "reading.json"])
 
     def test_each_reply_the_flow_takes_is_one_its_schema_takes(self):
-        # Given: a claim, a remake's claim, a claim asking before making and a reading, each taken
-        # by the flow
+        # Given: a claim, a claim asking before making and a reading, each taken by the flow, and a
+        # claim and a reading each stopped
         # When: each is held to its role's schema
         # Then: each holds
-        outside = dict(ITEM_B1, outside=OUTSIDE)
         for name, value in (
-            ("claim.json", {"items": [PASSED, WAITS], "questions": [QUESTION], "chosen": [CHOSEN]}),
-            ("claim.json", {"items": [outside], "questions": [], "chosen": []}),
+            ("claim.json", {"items": [MADE, WAITS], "questions": [QUESTION], "chosen": [CHOSEN]}),
             ("claim.json", {"items": [WAITS], "questions": [QUESTION], "chosen": []}),
-            ("reading.json", {"items": [FOUND, STOPPED_B1, EACH_GOOD]}),
+            ("reading.json", {"items": [FOUND, NEEDED_B1, EACH_GOOD]}),
             ("claim.json", {"items": [], "questions": [], "chosen": [], "blocked": BLOCKED}),
             ("reading.json", {"items": [], "blocked": BLOCKED}),
         ):
@@ -679,10 +602,9 @@ class TestSchemas(FormTest):
         self.assertEqual(forms.shapes("form.json"), (("a", "b"), ("c",)))
 
     def test_an_item_of_two_shapes_or_a_key_of_its_own_is_out_of_its_schema(self):
-        both = dict(GOOD, places=["README.md:1-3"], did="x", lacking="y", hinders="z")
-        for item in (both, dict(GOOD, x=1)):
+        for item in (dict(FOUND, need=NEED), dict(FOUND, x=1)):
             with self.subTest(item=item):
-                # Given: a reading whose item holds a Good and a stop, or a key no shape has
+                # Given: a reading whose item holds its lines and a need, or a key no shape has
                 # When: it is held to the first user's schema
                 # Then: it is out at the item
                 out = self.out_of("reading.json", {"items": [item]})

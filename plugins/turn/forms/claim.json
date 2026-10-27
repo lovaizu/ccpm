@@ -1,5 +1,5 @@
 {
-  "title": "The generator's claim: each item judged, passing with its evidence or waiting on a question; on a remake each item sent back alone, mended with its evidence or lying outside the purpose with why; asking before it makes anything, the items waiting alone; and each choice the work rests on that the CCS leaves open, with why.",
+  "title": "The generator's claim: each item at the lines of the work that give its Good, or waiting on a question; on a remake each item sent alone; asking before it makes anything, the items waiting alone; and each choice the work rests on that the CCS leaves open, with why.",
   "type": "object",
   "required": [
     "items",
@@ -10,7 +10,7 @@
   "properties": {
     "items": {
       "type": "array",
-      "description": "one for each item of every checklist; on a remake, one for each item sent back alone; before you have made anything, only the items that wait",
+      "description": "one for each item of every checklist; on a remake, one for each item sent to you alone; before you have made anything, only the items that wait",
       "items": {
         "$ref": "#/$defs/item"
       }
@@ -37,23 +37,20 @@
     "item": {
       "anyOf": [
         {
-          "$ref": "#/$defs/passes"
-        },
-        {
-          "$ref": "#/$defs/outside"
+          "$ref": "#/$defs/made"
         },
         {
           "$ref": "#/$defs/waits"
         }
       ]
     },
-    "passes": {
+    "made": {
       "type": "object",
-      "description": "an item that passes, with its evidence",
+      "description": "an item made, at the lines of the work that give its Good",
       "required": [
         "checklist",
         "item",
-        "evidence"
+        "lines"
       ],
       "additionalProperties": false,
       "properties": {
@@ -65,33 +62,13 @@
           "type": "string",
           "description": "the item's ID, such as B-1"
         },
-        "evidence": {
-          "type": "string",
-          "description": "the command you ran and what it printed, or the lines of the work that give its Good, in short"
-        }
-      }
-    },
-    "outside": {
-      "type": "object",
-      "description": "an item sent back whose gap lies outside the purpose, made nothing for",
-      "required": [
-        "checklist",
-        "item",
-        "outside"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "checklist": {
-          "type": "string",
-          "description": "the checklist's path, as you were given it"
-        },
-        "item": {
-          "type": "string",
-          "description": "the item's ID, such as B-1"
-        },
-        "outside": {
-          "type": "string",
-          "description": "why the gap does not keep the receiver from using the work for the use"
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "<path of the work>:<from>-<to>"
+          },
+          "description": "the lines of the work that give its Good, each range as `<path>:<from>-<to>`; for an item whose Scope is `each part`, at least one range in every part of the work, each inside one part"
         }
       }
     },

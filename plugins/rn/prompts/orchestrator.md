@@ -197,13 +197,13 @@ Read the file whole before you take a step of it in a conversation.
        `task_id`, and keep the move with `rn.py state --goes-on`, Next this step on the same work,
        the same call made again, as turn goes on from its last move when called again with the
        same result. Ask the user, as a point, which way the work goes now.
-   - When it ends with `{"returned": "<result>"}`: read the result whole, then each item's `good` at
-     its `lines` in the work, or, for an item with `parts`, each part's `good` at its `lines`. A
-     Good its lines fall short of, or an item without one, is a point behind it: first keep the
-     move with `rn.py state`, Next step 2 on the work and then this step again, Open each shortfall
-     at its lines, each time a result falls short, a work made again included, so the result read
-     is kept before anything is asked; then confirm the point with the user where it is theirs, as
-     in step 2, kept with `rn.py decide`; and have the work made again from the top of this step.
+   - When it ends with `{"returned": "<result>"}`: read the result whole, then the work at each
+     item's `lines`, against what the item asks. An item its lines fall short of, or an item
+     without them, is a point behind it: first keep the move with `rn.py state`, Next step 2 on the
+     work and then this step again, Open each shortfall at its lines, each time a result falls
+     short, a work made again included, so the result read is kept before anything is asked; then
+     confirm the point with the user where it is theirs, as in step 2, kept with `rn.py decide`;
+     and have the work made again from the top of this step.
    - Once every item's Good holds at its lines, keep the move with `rn.py state --next <the step
      that comes after>`, with `--done` for each action it ticks; reply with the line it tells, where
      it prints one.

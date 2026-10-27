@@ -2,10 +2,9 @@
 tried is each sent the other's outcome by message: the real roles and their lanes, on the flow
 trial's task, started and sent messages by a stand-in for the orchestrator making the moves turn's
 flow prints. The generator's work is replaced by a set README with no license, so the first user,
-given demo.sh as what the receiver has, stops at B-1; the generator, sent where the first user
-stopped, what it did there, what it did not get and how that hinders the use, mends it or says why
-it lies outside the purpose, and the first user reads again with that answer, with no reading
-between. Prints the stand-in's session, from whose JSONL and its
+given demo.sh as what the receiver has, finds no Good for B-1; the generator, sent what the receiver
+would need to get it, makes the work again for it, and the first user reads the work made again,
+with no reading between. Prints the stand-in's session, from whose JSONL and its
 agents' the trial is judged, the minutes, each tool every agent used, each hook stop, and what the
 script printed last.
 

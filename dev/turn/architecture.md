@@ -25,8 +25,8 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
 ## User stories
 
 - As the calling AI, I want to start turn with the path of a CCS, its kinds, where the result
-  goes and the command that checks the work, and get the work back where it goes, with each item's
-  Good and its lines.
+  goes and the command that checks the work, and get the work back where it goes, with the lines of
+  each item's Good.
 - As the calling AI, I want the user told when each of turn's agents starts and ends, when a point
   is asked and when the result is back, in the main conversation, which alone talks with them.
 - As the calling AI, I want to be sent each point only the user can decide as soon as the run meets
@@ -69,9 +69,8 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
   A Good resting on a point only the user can decide cannot be made before it is answered, and
   asked first it costs no making; a point the purpose and the project's practice settle is the
   generator's, as how the work gives each Good is (Principle 2).
-- A question goes to the calling AI as its reply as soon as it is met, from the generator or from a
-  gap the generator and the first user still differ on after their exchange, and the run waits for
-  the answer.
+- A question goes to the calling AI as its reply as soon as it is met, from the generator or for an
+  item the rounds leave without Good, and the run waits for the answer.
 
   The point is the user's to decide (Principle 2), and settled when it is met it is not met again
   as rework, nor left in the result for the calling AI to fix (Principle 7); a subagent cannot ask
@@ -82,20 +81,19 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
   Only the main conversation talks with the user, and these are where the run is seen going a slow
   or wrong way or the user must act (Principle 1); made from the move, the line says what the run
   does, not what an agent means to do.
-- In a round, the generator makes the work and runs it, and the first user uses it in the receiver's
-  place; the generator is sent back the items the first user found no Good for, each with the gap
-  and how it keeps the receiver from using the work, and answers each by mending it or by saying
-  why it lies outside the purpose; the first user is sent the work made again with those answers,
-  and holds or lets go each gap, until it finds every item's Good or the flow's bound ends its
-  reading.
+- In a round, the generator makes the work, runs it and checks every item, and the first user uses
+  it in the receiver's place; the generator is sent each item the first user found no Good for,
+  with what the receiver would need to get it, and makes the work again for it; the first user is
+  sent the work made again and answers every item, until it finds every item's Good or the flow's
+  bound ends its reading.
 
   The generator holds the sources and the Good it meant at each line, so it changes only what is
-  sent back, and how the work gives the Good is its to decide, as an edit told per item breaks other
-  items; a gap seen wrong by either is settled by its reason, not by another round of making
-  (Principle 4).
+  sent, and how the work gives the Good is its to decide, as an edit told per item breaks other
+  items; told what the receiver would need, not how, it mends the work for the receiver's use, not
+  toward the reader (Principle 4).
 - The orchestrator reads no work, held to what `turn.py start` gives it by a lane, a hook laid by
   [lane](../../plugins/lane/README.md), and the first user is not given the generator's reply; an
-  item gets its Good where the first user gives one, and the result gives that Good and its lines.
+  item gets its Good where the first user gives its lines, and the result gives those lines.
 
   The orchestrator holds the sources and the call, so its own reading finds the Good the work
   meant, not the one the receiver gets, and pulls the remake toward its view; a reader shown the
@@ -104,8 +102,8 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
   and lane takes them from that message.
 
   A run started again for an answer makes and reads again what it had already made and read.
-- Only the items without Good are made again in the next round, with what was found lacking, and an
-  item the rounds leave without Good becomes a question.
+- Only the items without Good are made again in the next round, each with what the receiver would
+  need, and an item the rounds leave without Good becomes a question, worded from that need.
 
   An item the rounds leave lacks what neither the CCS nor the readings give, so it comes back as a
   point for the user to decide, not as work for the calling AI to fix (Principle 7).
@@ -113,18 +111,19 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
 
   A Good found where one part gives it passes a part that does not, and what lies between the parts
   is found only in the whole.
-- The generator's claim gives each item whether it passes and its evidence, the command run and
-  what it printed or the lines, in short, and on a remake the items sent back alone.
+- The generator's claim gives each item by the lines of the work that give its Good, and on a remake
+  the items sent alone.
 
-  The evidence is what can be checked, and an item not sent back stands as it was; a claim in prose
-  of every item each round is read by no one and costs its writing every round.
+  Finding the lines has the generator look at the place, and the flow checks them against the
+  work's files and parts; an item not sent stands as it was, and a claim in words of every item each
+  round is read by no one and costs its writing every round.
 - The generator names in its claim each choice the work rests on that the CCS and its files leave
   open, with why, and the result carries those the finished work rests on.
 
   How the work gives each Good is the generator's to decide, so it settles points no one gave it;
   named with why, they reach the calling AI, which shows its user what was chosen without asking
   them, where a choice said only in the generator's words reaches no one.
-- The result holds each item's Good and its lines, and finding what fell short in the run is the
+- The result holds each item by the lines of its Good, and finding what fell short in the run is the
   calling AI's, as [Principle 8](../architecture.md#learning-from-each-run) leaves it to the caller.
 
   A turn run is one move of the calling AI's run, so what fell short in it shows beside the rest in

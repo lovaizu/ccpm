@@ -24,7 +24,7 @@ import call  # noqa: F401  (each of turn's modules, for its own tests)
 import flow
 import forms  # noqa: F401
 import items as checklist_items  # noqa: F401
-import parts as work_parts  # noqa: F401
+import parts as work_parts
 import prompts  # noqa: F401
 import state
 import testing
@@ -83,20 +83,13 @@ CALL = {
     "result": ".tasks/readme-result.json",
     "test": "sh tests/readme.sh",
 }
-GOOD = {
-    "checklist": "checklists/readme.md",
-    "item": "F-1",
-    "good": "the reader finds each part where a README keeps it",
-    "lines": ["README.md:1-3"],
-}
-# An item the generator claims passes, with its evidence: the command it ran and what it printed.
-PASSED = {
-    "checklist": "checklists/readme.md",
-    "item": "F-1",
-    "evidence": "cat -n README.md: the name on line 1, then what it does on line 3",
-}
-# The generator's claim of every item passing, naming no choice of its own.
-CLAIM = {"items": [PASSED, dict(PASSED, item="B-1")], "questions": [], "chosen": []}
+# The first user's Good for each item: the lines of the work that give it.
+FOUND = {"checklist": "checklists/readme.md", "item": "F-1", "lines": ["README.md:1-3"]}
+FOUND_B1 = dict(FOUND, item="B-1")
+# An item the generator claims, at the lines of the work that give its Good.
+MADE = dict(FOUND)
+# The generator's claim of every item at its lines, naming no choice of its own.
+CLAIM = {"items": [MADE, dict(MADE, item="B-1")], "questions": [], "chosen": []}
 # What a role that stops for what lies outside the work gives: what it tried, what it confirmed and
 # what not, and what it needs.
 BLOCKED = {
@@ -105,8 +98,6 @@ BLOCKED = {
     "not_confirmed": "whether its commands run, as sh tests/readme.sh printed `csvtidy: not found`",
     "needs": "csvtidy installed, as the README's commands run it",
 }
-# Why the generator holds a gap sent back lies outside the purpose.
-OUTSIDE = "the developer tries it on their own files whoever it is for"
 # A choice the work rests on that the CCS leaves open, as the generator names it.
 CHOSEN = {"chosen": "the example tidies people.csv", "why": "no decision names a file"}
 WAITS = {"checklist": "checklists/readme.md", "item": "B-1", "question": 1}
@@ -114,35 +105,25 @@ QUESTION = {"question": "Under which license may people use it?", "recommended":
 # The question an item waits on, as the calling AI is sent it, and the answer kept for it.
 ASKED = {"questions": [dict(QUESTION, items=[ITEM_B1])]}
 ANSWER = dict(ASKED, answer="MIT")
-# The first user's Good for each item.
-FOUND = {
-    "checklist": "checklists/readme.md",
-    "item": "F-1",
-    "good": "the name, then what it does, as READMEs open",
-    "lines": ["README.md:1-3"],
-}
-FOUND_B1 = dict(FOUND, item="B-1")
-# An item the first user finds no Good for, with the places of the work where it looked for it, what
-# it did there and what it did not get.
-DID = "read the opening for whom it is"
-LACKING = "whether it is for a developer"
-HINDERS = "the developer cannot tell whether to try it"
+# What the receiver would need to get an item's Good, as the first user gives it where it found
+# none.
+NEED = "Before trying it, the developer can tell whether it is for their own files."
 
 
-def stopped(item):
-    """The first user's stop at the item: where it looked for its Good, what it did there, what it
-    did not get and how that keeps the receiver from using the work."""
-    return dict(item, places=["README.md:1-1"], did=DID, lacking=LACKING, hinders=HINDERS)
+def needed(item):
+    """The first user's answer at an item it found no Good for: what the receiver would need to get
+    it."""
+    return dict(item, need=NEED)
 
 
-STOPPED_F1 = stopped(ITEM_F1)
-STOPPED_B1 = stopped(ITEM_B1)
-# A first user's reading of every item: the Good it found for one, and where it stopped at the
-# other.
-FIRST_READ = [FOUND, STOPPED_B1]
+NEEDED_F1 = needed(ITEM_F1)
+NEEDED_B1 = needed(ITEM_B1)
+# A first user's reading of every item: the Good it found for one, and what the receiver would need
+# for the other.
+FIRST_READ = [FOUND, NEEDED_B1]
 # A checklist item asked of each part of the work, added to a run's checklist where a test needs
 # one; the work's parts, as the script splits a README of a title, an opening and one section;
-# and a Good for each.
+# and its Good, at lines in each part.
 EACH = """
 ### B-2: Each part used
 
@@ -155,14 +136,7 @@ SECTIONED = "# csvtidy\n\nTidies CSV files.\n\n## Use\n\nRun it.\n"
 EACH_GOOD = {
     "checklist": "checklists/readme.md",
     "item": "B-2",
-    "parts": [
-        {"part": "README.md:1-4", "good": "the reader learns what it is", "lines": ["README.md:3"]},
-        {
-            "part": "README.md:5-7",
-            "good": "the reader learns how to run it",
-            "lines": ["README.md:7"],
-        },
-    ],
+    "lines": ["README.md:3", "README.md:7"],
 }
 
 
@@ -358,23 +332,24 @@ class RepoTest(testing.FolderTest):
             f.write("".join(json.dumps(e) + "\n" for e in entries))
 
     def made(self, *claim, chosen=()):
-        """The generator due replies with its claim, by default each item it judges now passing,
-        every item or on a remake each item sent back, naming the choices given; and what the
-        script prints then."""
+        """The generator due replies with its claim, by default each item it judges now at the
+        lines of every part of the work, every item or on a remake each item sent back, naming the
+        choices given; and what the script prints then."""
         run = self.state()
+        lines = work_parts.parts([self.here(p) for p in run["work"]])
         claim = claim or tuple(
-            dict(PASSED, checklist=i["checklist"], item=i["item"])
+            dict(MADE, checklist=i["checklist"], item=i["item"], lines=lines)
             for i in run["back"] or run["items"]
         )
         asks = [QUESTION] if any("question" in i for i in claim) else []
         return self.replied({"items": list(claim), "questions": asks, "chosen": list(chosen)})
 
     def reading(self, *found):
-        """A first user's reading giving the Goods found, and every other item the places it looked
-        for its Good, what it did there and what it did not get."""
+        """A first user's reading giving the Goods found, and every other item what the receiver
+        would need to get it."""
         given = {(i["checklist"], i["item"]) for i in found}
         return list(found) + [
-            stopped(i) for i in self.state()["items"] if (i["checklist"], i["item"]) not in given
+            needed(i) for i in self.state()["items"] if (i["checklist"], i["item"]) not in given
         ]
 
     def first_read(self, *found, claim=(), claim_chosen=()):

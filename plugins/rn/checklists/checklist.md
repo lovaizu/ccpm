@@ -16,7 +16,7 @@ A checklist is drawn from that purpose: who uses a deliverable of the kind and w
 with it. Its few items each ask one thing the purpose needs, as what the user gets, so
 each is answered by doing with the deliverable what its user does and showing what that gives them;
 the ways a deliverable meets that thing are the signs under the item, not items of their own, and a
-deliverable is sent back on an item only for a gap that keeps its user from what the item asks.
+deliverable is sent back on an item with what its user would need to get what the item asks.
 What a tool the project runs can judge, such as its formatter, its linter or its type checker, is
 left to the tool and asked by no item. It is made from this file and `usability.md`, what any
 reader needs: each point of `usability.md` the kind's user needs is put in the kind's own terms, as
@@ -84,17 +84,17 @@ written, says so in the line `Judged on: the built product`; a work made before 
 built is judged without such items, and on every item once it is built.
 
 An item is answered yes, no, or could not check with why, never yes for what was not tried: its
-maker and its reader each do what its `Tried by` line says, as far as it says, and give the command
-run and what it printed, or the lines, as its evidence; an item whose `Tried by` cannot be done, as
-when its command does not run, is answered could not check. A no names the gap and how it keeps
-the user from what the item asks.
+maker and its reader each do what its `Tried by` line says, as far as it says, and give the lines
+that answer it; an item whose `Tried by` cannot be done, as when its command does not run, is
+answered could not check. A no names what the user would need to get what the item asks, not how
+to make it.
 
 Why: every checklist in the same shape lets a tool read any of them and gives the maker the purpose,
 then the idea, then the shape, before the items, so each item is met inside what those already set;
 an item met where its part comes is met as the deliverable is written; and an item only the built
 product answers, judged on a work made before it, such as a README written to design it, sends the
 work back for what is not there yet. Maker and reader who do the same, as far, see the same, so a
-gap one of them finds is not a difference in what each chose to try; signs of what the user can do
+no one of them gives is not a difference in what each chose to try; signs of what the user can do
 keep the reader on whether the deliverable serves, where signs of what falls short set it hunting,
 and it finds something in every deliverable whether or not its user would meet it; and a check that
 passes what it could not try passes what it was there to stop.

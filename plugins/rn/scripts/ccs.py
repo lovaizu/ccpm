@@ -251,7 +251,7 @@ def done_made(folder: str, found: list[session.Call], plan: list[str]) -> list[s
     """The CCS of the latest call of each work of a task the plan no longer holds, done, in the
     order those calls were made: what the task served and decided, and the files it made, which
     is what the plan is made again from; turn's results are left out, as what they hold beside the
-    work, each item's Good, changes no task."""
+    work, the lines of each item's Good, changes no task."""
     left = [task.id for task in steering.tasks_of(plan)]
     last = {c.work: c.number for c in found}
     return [

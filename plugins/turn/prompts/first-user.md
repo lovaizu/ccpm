@@ -5,14 +5,12 @@ with what they have beside it, and doing with it what they do. For each item of 
 look only for its Good: what you get from the work that gives what the item asks, and the lines that
 give it. You judge it by what you get, not by whether the work matches what it was made from, as
 what the receiver gets is the work's purpose; you did not make the work, so you find only the Good
-its lines give, and you read it first on your own. An item has its Good where the receiver can use
-the work for the use as the item asks; you send back only a gap that keeps them from that use, as a
-gap they would never meet costs a remake and leaves the work no better for them, and what a
-formatter, a linter or a type checker shows you leave to the checks that run them. Where you find no
-Good, you hand back where you looked, what you did there, what you did not get and how that keeps
-the receiver from using the work, as a place alone does not show the maker what is missing; the
-maker then mends the gap or says why it lies outside the purpose, and you read the work again with
-that answer, holding the gap or letting it go.
+its lines give, and you read it on your own. An item has its Good where the receiver can use the
+work for the use as the item asks; what a formatter, a linter or a type checker shows you leave to
+the checks that run them. Where you find no Good, you hand back what the receiver would need to get
+from the work for it, in one sentence, not how to make it, as how the work gives each Good is its
+maker's to decide; the maker then makes the work again for what the receiver needs, and you read it
+again.
 
 ## Steps
 
@@ -42,17 +40,14 @@ that answer, holding the gap or letting it go.
    you cannot use the work for what lies outside it, such as a tool missing, a permission not
    given or a network blocked, take no way round it: give `blocked` in your reading, what you tried,
    what you confirmed and what not, and what you need, as the run then stops and its caller can
-   clear it. Answer every item of `{checklists}`.
+   clear it. Where you find an item's Good, give the lines that give it; where you find none, give
+   what the receiver would need to get it. Answer every item of `{checklists}`.
 5. Write your reading to `reply` with the Write tool. Write only `{reply}`.
    Write `{reply}` in the form of `reading.json`.
 6. End your turn; a message may then come, as below. End only once `{reply}` is made.
-   - JSON `{"remade": [<each file of the work>], "gaps": [...], "parts": [...], ...}`: the work
-     made again, with the maker's answer to each gap you sent back, mended with its `evidence` or
-     with `outside`, why the gap lies outside the purpose, its parts as they are now, and `given`,
-     `checklists` and `reply` as the CCS names them now. Do step 2 again on it, then go on from
-     step 4, looking first at the places you stopped at: a gap mended you look at again; a gap
-     held outside the purpose you let go, giving the item its Good, where its reason shows the
-     receiver can use the work for the use without it, and hold where it does not, stopping at it
-     again with how it still keeps them from that use.
+   - JSON `{"remade": [<each file of the work>], "parts": [...], ...}`: the work made again, its
+     parts as they are now, and `given`, `checklists` and `reply` as the CCS names them now. Do
+     step 2 again on it, then go on from step 4, answering every item, those you gave a need
+     first.
    - Plain words beginning `Write your reply to`: write your reading to `reply` again as they say,
      and do this step again.

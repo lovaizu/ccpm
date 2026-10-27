@@ -157,9 +157,9 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
 
   Each is a choice made in the user's place, which the work holds and the user did not see; kept
   where the work is made from and returned, it reaches the sign-off from the record alone.
-- No work turn returns is fixed by the orchestrator: it reads each item's Good turn returns at its
-  lines, and a Good its lines fall short of is a point settled before turn makes the work again, as
-  a decision, as a change the user asks at a sign-off is.
+- No work turn returns is fixed by the orchestrator: it reads the work at the lines turn returns for
+  each item, and an item its lines fall short of is a point settled before turn makes the work
+  again, as a decision, as a change the user asks at a sign-off is.
 
   A fix of the orchestrator's own would be work no guard keeps and no first user reads, read by the
   user only in what the sign-off shows of it.

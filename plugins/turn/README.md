@@ -64,19 +64,17 @@ turn: turn:generator starts: make README.md to give every item its Good, round 1
 
 This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
 the developer meeting the project would, running what they would run. Each item is judged from that
-use, and gets its Good with the lines that give it. Where an item gets none, the reader says what
-keeps the developer from using README.md; the AI that wrote it mends that or says why it lies
-outside the purpose, and README.md is read again with that answer. A gap the two still differ on
-comes to the step's AI as a question for the user.
+use, and gets its Good at the lines that give it. Where an item gets none, the reader says in one
+sentence what the developer would need to get it, the AI that wrote README.md makes it again for
+that, and README.md is read again.
 
-When turn returns, README.md is in place, and the result gives each item's Good with the lines it
-rests on, and each choice the AI that made it took on its own, one the CCS and its files leave
-open, with why:
+When turn returns, README.md is in place, and the result gives the lines each item's Good rests
+on, and each choice the AI that made it took on its own, one the CCS and its files leave open, with
+why:
 
 ```json
 {"work": ["README.md"],
- "items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
-            "lines": ["README.md:3-4"]}, ...],
+ "items": [{"item": "B-2", "lines": ["README.md:3-4"]}, ...],
  "chosen": [{"chosen": "the example tidies a file named people.csv",
              "why": "no decision names one, and a list of people shows each column tidied"}]}
 ```

@@ -4,10 +4,12 @@ takes that way. A stand-in for the calling AI calls turn on a task of two items,
 part and B-2 in each part, in a repository made for the run:
 
 - `plain`: every item Good at the first reading.
-- `given`: the first user stopping at B-1 in a README that names no license, sent back to the
-  generator by message, which adds it; the first user, sent the work made again, finds every Good.
-- `sent`: the first user stopping at B-1 four times, sent back three times, the fourth stop ending
-  the round with B-1 without Good; B-1 made again in the second round and given.
+- `given`: the first user finding no Good for B-1 in a README that names no license, what the
+  reader would need sent to the generator by message, which adds it; the first user, sent the work
+  made again, finds every Good.
+- `sent`: the first user finding no Good for B-1 four times, sent to the generator three times, the
+  fourth reading ending the round with B-1 without Good; B-1 made again in the second round and
+  given.
 - `left`: as `sent` in two rounds, so B-1 waits on a question the orchestrator words; the calling
   AI answers it, and a third round gives B-1.
 - `generator`: the generator asking before making anything, and again while making; each answer
