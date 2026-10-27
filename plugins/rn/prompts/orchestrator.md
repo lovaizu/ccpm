@@ -171,15 +171,24 @@ Read the file whole before you take a step of it in a conversation.
        into the conversation language, judging none of it; end your reply.
      - turn ends with `{"questions": [...]}`: first keep the move with `rn.py state --goes-on`,
        Next this step on the same work, Open each question, so they are written before anything is
-       asked, as turn's run waiting on them is in its own folder. A question about the CCS itself,
-       such as what the receiver has or whether a file is added to it, answer yourself: run
-       `rn.py ccs` for the work again with what it needs and a `--chose` saying it and why,
-       starting no new run, as the one waiting reads the CCS anew. Ask each other as a point, as in
-       step 2, its `recommended` the recommended option, one per message, each answer kept with
-       `rn.py decide <work>`; where the work's decisions already hold its answer, as when a fresh
-       conversation called turn again, take that. Then load SendMessage with ToolSearch
-       (`select:SendMessage`) and send the agent the answers by its ID, saying for each CCS
-       question that the CCS now holds it.
+       asked, as turn's run waiting on them is in its own folder. A question that changes nothing
+       the user can weigh, such as what the receiver has or whether a file is added to the CCS,
+       answer yourself: run `rn.py ccs` for the work again with what it needs, every `--has` its
+       CCS holds among it, and a `--chose` saying it and why; it writes the same call's CCS, which
+       the run takes in where it stands, so start no new run and tell the user nothing of it. Ask
+       each other as a point, as in step 2, its `recommended` the recommended option, one per
+       message, each answer kept with `rn.py decide <work>`, and `rn.py ccs` run again as above
+       where the answer brings a file; where the work's decisions already hold its answer, as when
+       a fresh conversation called turn again, take that. Then load SendMessage with ToolSearch
+       (`select:SendMessage`) and send the agent the answers by its ID in plain words, saying for
+       each question you answered by the CCS that the CCS now holds it; the run goes on with them
+       where it stood.
+     - turn ends with `{"stopped": {"tried": ..., "confirmed": ..., "not_confirmed": ...,
+       "needs": ...}}`, as what lies outside the work, such as a tool missing, a permission not
+       given or a network blocked, keeps it from going on: keep the move with `rn.py state
+       --goes-on`, Next this step on the same work, Open what it needs; tell the user what it
+       tried, what it confirmed and what it did not, and what it needs, and that `/rn:up` calls
+       turn again once that is there, the run going on where it stopped; end.
      - turn ends with anything else, such as a stop of its own: start `turn:up` again with the
        same call, as it goes on from its last move. Where it stops the same way again, keep the
        move with `rn.py state --goes-on`, Next this step on the same work, Open what it printed;

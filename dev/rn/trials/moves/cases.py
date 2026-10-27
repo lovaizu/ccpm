@@ -188,6 +188,17 @@ QUESTIONS = {
     ]
 }
 
+# What the stand-in turn gives back where the research cannot go on for what lies outside it: the
+# page it reads blocked by the network.
+STOPPED = {
+    "stopped": {
+        "tried": "reading GitHub's page on READMEs at docs.github.com, which the research quotes",
+        "confirmed": "README.md's own lines, read from the repository",
+        "not_confirmed": "what GitHub's page says a visitor sees first, as the request was blocked",
+        "needs": "docs.github.com allowed by the network",
+    }
+}
+
 # The learnings, as the orchestrator writes them once the finished work is approved, each quoting a
 # commit message the state-making below keeps.
 PLACE_QUOTE = "the greeting goes right under the title"
@@ -1096,6 +1107,28 @@ CASES = {
             ),
         ],
         {"t1.1": [QUESTIONS, RESEARCH_PLACE]},
+    ),
+    "blocked": Case(
+        "turn stops for what lies outside the work, a page the network blocks: written in Open,"
+        " nothing committed, the user told what was tried, confirmed and not, and what it needs",
+        "up 4, 3 (turn's stop for what lies outside the work)",
+        planned,
+        [next_has("Step 4 of /rn:up on T1: action 1"), returned("t1.1", 0)],
+        [
+            (
+                "/rn:up",
+                [
+                    STAYS,
+                    returned("t1.1", 0),
+                    next_has("Step 3"),
+                    open_has("docs.github.com"),
+                    says("docs.github.com"),
+                    TURN_LINE,
+                    JAPANESE,
+                ],
+            )
+        ],
+        {"t1.1": [STOPPED]},
     ),
     "task": Case(
         "a task's action of turn's, a research made in the session's folder, then one of the"
