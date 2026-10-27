@@ -27,8 +27,8 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
 - As the calling AI, I want to start turn with the path of a CCS, its kinds, where the result
   goes and the command that checks the work, and get the work back where it goes, with each item's
   Good and its lines.
-- As the calling AI, I want the user told, as the run goes, what it will do and what is done, in
-  the main conversation, which alone talks with them.
+- As the calling AI, I want the user told when each of turn's agents starts and ends, when a point
+  is asked and when the result is back, in the main conversation, which alone talks with them.
 - As the calling AI, I want to be sent each point only the user can decide as soon as the run meets
   it, and to send back the answer for the run to go on.
 - As the calling AI, I want to call turn again with the same call after a run stopped anywhere,
@@ -55,48 +55,55 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
   and nullable says "explicitly none" in structured outputs and OpenAPI 3.1, so a test left out
   by a slip is not taken for none.
 - The flow, a script, keeps where the run stands in the state and gives the orchestrator each next
-  move, and the orchestrator makes only that move and hands the flow its outcome.
+  move that needs it, starting a role, sending one a message, asking or returning the result, and
+  waits for a role's end itself; the orchestrator makes only that move and hands the flow its
+  outcome.
 
   The run is a fixed loop, so its course and its bounds are kept in code, which holds them the same
-  way each time where an AI counting may slip unseen (Principle 6). A call naming a result whose
-  state is there goes on from its last move, since what lives only in a conversation is lost when
-  it ends.
-- Before any work is made, the orchestrator checks that the CCS holds everything the run needs, and
-  each item that lacks it waits on a question.
+  way each time where an AI counting may slip unseen, and a move the flow can make itself is not
+  spent as a turn of the orchestrator (Principle 6). A call naming a result whose state is there
+  goes on from its last move, since what lives only in a conversation is lost when it ends.
+- The generator, before it makes anything, asks what the CCS leaves open that only the user can
+  decide, and settles each other point the work rests on itself, naming it as chosen with why.
 
-  A Good the CCS cannot give, the generator cannot give either, and the making and the readings
-  after it would be spent for nothing. This check, and the wording of a question, judge what
-  running the flow needs, not the work, so they are the orchestrator's own, as it holds the whole
-  run and decides each move (Principle 1), and no role's job (Principle 3).
-- A question goes to the calling AI as its reply as soon as it is met, from the CCS check, from the
-  generator or from an item the rounds leave without Good, and the run waits for the answer.
+  A Good resting on a point only the user can decide cannot be made before it is answered, and
+  asked first it costs no making; a point the purpose and the project's practice settle is the
+  generator's, as how the work gives each Good is (Principle 2).
+- A question goes to the calling AI as its reply as soon as it is met, from the generator or from a
+  gap the generator and the first user still differ on after their exchange, and the run waits for
+  the answer.
 
   The point is the user's to decide (Principle 2), and settled when it is met it is not met again
   as rework, nor left in the result for the calling AI to fix (Principle 7); a subagent cannot ask
   the person ([Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs)).
-- The flow makes a line for the user before each move and after each outcome, and the orchestrator
-  sends it to the main conversation.
+- The flow makes a line for the user when a role starts or ends, when a point is asked and when the
+  result is back, carried in that move, and the orchestrator sends it to the main conversation.
 
-  Only the main conversation talks with the user, and a run going a slow or wrong way shows before
-  its time is spent; made from the move, the line says what the run does, not what an agent means
-  to do.
+  Only the main conversation talks with the user, and these are where the run is seen going a slow
+  or wrong way or the user must act (Principle 1); made from the move, the line says what the run
+  does, not what an agent means to do.
 - In a round, the generator makes the work and runs it, and the first user uses it in the receiver's
-  place; the generator is sent back the items the first user found no Good for, as the first user
-  gave them, and the first user is sent the work made again, until it finds every item's Good or
-  the flow's bound ends its reading.
+  place; the generator is sent back the items the first user found no Good for, each with the gap
+  and how it keeps the receiver from using the work, and answers each by mending it or by saying
+  why it lies outside the purpose; the first user is sent the work made again with those answers,
+  and holds or lets go each gap, until it finds every item's Good or the flow's bound ends its
+  reading.
 
   The generator holds the sources and the Good it meant at each line, so it changes only what is
   sent back, and how the work gives the Good is its to decide, as an edit told per item breaks other
-  items.
+  items; a gap seen wrong by either is settled by its reason, not by another round of making
+  (Principle 4).
 - The orchestrator reads no work, held to what `turn.py start` gives it by a lane, a hook laid by
   [lane](../../lane/README.md), and the first user is not given the generator's reply; an item
   gets its Good where the first user gives one, and the result gives that Good and its lines.
 
   The orchestrator holds the sources and the call, so its own reading finds the Good the work
   meant, not the one the receiver gets, and pulls the remake toward its view; a reader shown the
-  maker's claim finds the Good it was told to find (Principle 4). A lane takes a run's files from
-  what its subagent starts from, so an answer whose CCS lays the run out anew has the orchestrator
-  start the run again, and the lane takes the files the CCS now names.
+  maker's claim before its own first reading finds the Good it was told to find (Principle 4).
+- An answer is taken in where the run stands: the flow sends each role the files the CCS names now,
+  and lane takes them from that message.
+
+  A run started again for an answer makes and reads again what it had already made and read.
 - Only the items without Good are made again in the next round, with what was found lacking, and an
   item the rounds leave without Good becomes a question.
 
@@ -106,6 +113,11 @@ Principle 1 to 9, and two of its own, named turn's Principle 1 and 2:
 
   A Good found where one part gives it passes a part that does not, and what lies between the parts
   is found only in the whole.
+- The generator's claim gives each item whether it passes and its evidence, the command run and
+  what it printed or the lines, in short, and on a remake the items sent back alone.
+
+  The evidence is what can be checked, and an item not sent back stands as it was; a claim in prose
+  of every item each round is read by no one and costs its writing every round.
 - The generator names in its claim each choice the work rests on that the CCS and its files leave
   open, with why, and the result carries those the finished work rests on.
 

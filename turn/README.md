@@ -44,10 +44,9 @@ Start the `turn:up` agent in the background with
 Put each question it sends to the user and send it the answer.
 ```
 
-turn first checks that the CCS holds everything the run needs: that what it and its files say can
-give every item its Good, and that the reader has what the developer has, so it can do what they do
-with the README. No one had chosen under which license people may use the project, so turn writes
-nothing yet and sends the step's AI that one question:
+Before it writes anything, turn asks what the CCS leaves open that only the user can decide, and
+settles the rest itself, naming each choice with why in the result. No one had chosen under which
+license people may use the project, so turn sends the step's AI that one question:
 
 ```json
 {"questions": [{"question": "Under which license may people use the project?",
@@ -55,18 +54,20 @@ nothing yet and sends the step's AI that one question:
 ```
 
 The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and sends it to turn,
-which goes on from there. turn tells the main conversation, the one you talk with, even where the
-step's AI is an agent below it, before each of its agents starts its work, what it will do, how far
-and how, and as each ends, what is done and what comes next:
+which goes on from where it stood. turn tells the main conversation, the one you talk with, even
+where the step's AI is an agent below it, as each of its agents starts what it will do, and as each
+ends what is done:
 
 ```
-turn: turn:up found in the CCS what gives the Good of 7 items. Next, turn:generator will make the work to give every item its Good, and run what it gives as the receiver would, of README.md, for 7 items, round 1.
+turn: turn:generator starts: make README.md to give every item its Good, round 1.
 ```
 
 This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
 the developer meeting the project would, running what they would run. Each item is judged from that
-use, and gets its Good with the lines that give it. Where an item gets none, README.md is made again
-and read again, and an item that still gets none comes to the step's AI as a question for the user.
+use, and gets its Good with the lines that give it. Where an item gets none, the reader says what
+keeps the developer from using README.md; the AI that wrote it mends that or says why it lies
+outside the purpose, and README.md is read again with that answer. A gap the two still differ on
+comes to the step's AI as a question for the user.
 
 When turn returns, README.md is in place, and the result gives each item's Good with the lines it
 rests on, and each choice the AI that made it took on its own, one the CCS and its files leave

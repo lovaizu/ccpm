@@ -63,7 +63,7 @@ sequenceDiagram
   participant C as calling AI<br/>#lt;AI#gt;
   participant T as turn<br/>#lt;plugin#gt;
   loop each of turn's agents
-    T-->>U: in the main conversation, what it will do, how far and how, then what is done and what comes next
+    T-->>U: in the main conversation, as it starts what it will do, and as it ends what is done
   end
   opt a run going a slow or wrong way
     U->>C: stops it
@@ -88,8 +88,9 @@ sequenceDiagram
   Note over T: goes on from there
 ```
 
-- turn asks where the CCS lacks what the run needs, making the work meets a point only the user
-  can decide, or an item is still without Good after the readings turn allows.
+- turn asks where making the work meets a point only the user can decide, or where turn's maker
+  and its reader still differ on a gap after each has given its reason; a choice the purpose
+  settles, turn makes and names in the result.
 
 ### Stopped, and gone on
 
