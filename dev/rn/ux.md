@@ -14,11 +14,13 @@ only what is theirs to decide. Build and change every part of rn so that its use
 ## Key results
 
 The key results count what happens at the sign-offs. A sign-off is a stop where rn shows the user a
-proposal and waits for their answer. There are up to three, in this order: the plan sign-off, on
-the plan, which holds the user's purpose as rn wrote it down and the acceptance criteria, each one
-thing the finished work must do for that purpose; the design sign-off, on all the documents the
-purpose needs, such as a UX, a README and a design for what the user is building, left out where
-the purpose needs none; and the deliverable sign-off, on the finished work.
+proposal and waits for their answer. There are up to four, in this order: the goal sign-off, on
+the user's purpose as rn wrote it down and the acceptance criteria, each one thing the finished
+work must do for that purpose; the ux sign-off, on the documents that say what the user gets and
+how they use it, such as a UX and a README; the architecture sign-off, on the documents that say
+how it is built and checked, such as an architecture and the research it rests on; and the
+deliverable sign-off, on the finished work. The ux and the architecture sign-off are left out
+where the purpose needs no such document.
 
 The key results stand from the highest priority: the changes sent back at the end come before the
 user's time. Time saved on a finished work that misses the purpose is lost, since what is sent back
@@ -30,8 +32,8 @@ the user to G1.
   G1 is reached.
 
   Each thing the user's feedback there asks to be different counts as one change. Every one counts,
-  since the user agreed the purpose at the plan and design sign-offs, so a change asked at the end
-  is where the finished work misses it; changes asked at those two earlier sign-offs do not count,
+  since the user agreed the purpose at the sign-offs before it, so a change asked at the end is
+  where the finished work misses it; changes asked at those earlier sign-offs do not count,
   as there the user is still deciding what the finished work should be. Each change is effort the
   user spent beyond answering, so fewer shows them closer to G1.
 
@@ -58,10 +60,14 @@ sequenceDiagram
   participant R as rn<br/>#lt;plugin#gt;
   U->>R: /rn:up #lt;what they want#gt;
   R->>U: the points to decide, one per message
-  R->>U: the plan, at the plan sign-off
+  R->>U: the goal and the acceptance criteria, at the goal sign-off
   U->>R: /rn:ty
-  opt the purpose needs documents
-    R->>U: the documents the purpose needs, at the design sign-off
+  opt the purpose needs documents of what the user gets
+    R->>U: those documents, at the ux sign-off
+    U->>R: /rn:ty
+  end
+  opt the purpose needs documents of how it is built
+    R->>U: those documents, at the architecture sign-off
     U->>R: /rn:ty
   end
   Note over R: carries out the tasks
@@ -78,15 +84,19 @@ sequenceDiagram
   user, the proposals included, is in the first, adding nothing and leaving nothing out.
 - The plan: rn gives the goal and each acceptance criterion an ID and puts the plan on a draft pull
   request of its own branch.
-- Sign-offs: before the design and the deliverable sign-off, an AI that did not make the work reads
-  and uses it in the user's place, the finished work for each acceptance criterion, and rn makes it
-  again until that AI finds nothing lacking; the plan, which the user reads at its sign-off as it
-  stands, rn checks against its checklist itself. At the design sign-off rn shows the link to each
-  document, and at the deliverable sign-off the links to the finished work, with each choice made
-  in it that the user was not asked, by rn or by the AI that made it, each with why, and nothing
-  else: nothing of the user's own answers, which the work holds and that AI has checked, no summary
-  of the text, no diff. The user glances at the work for its size and diagrams and judges those
-  choices; the text is for that AI and rn to check.
+- Documents: each document the ux or the architecture stage needs is a point to decide: kept in the
+  repository, or the one already there changed; kept in the session's folder alone, outside what
+  the work leaves; or not made. Which documents a piece of work needs depends on the repository
+  and the work, so rn proposes them from both.
+- Sign-offs: before the ux, the architecture and the deliverable sign-off, an AI that did not make
+  the work reads and uses it in the user's place, the finished work for each acceptance criterion,
+  and rn makes it again until that AI finds nothing lacking; the goal and the criteria, which the
+  user reads at their sign-off as they stand, rn checks against its checklist itself. At the ux and
+  the architecture sign-off rn shows the link to each document, and at the deliverable sign-off the
+  links to the finished work, with each choice made in it that the user was not asked, by rn or by
+  the AI that made it, each with why, and nothing else: nothing of the user's own answers, which the
+  work holds and that AI has checked, no summary of the text, no diff. The user glances at the work
+  for its size and diagrams and judges those choices; the text is for that AI and rn to check.
 - Records: rn writes in its commit messages what the documents do not keep: the options weighed
   with their reasons, and each feedback with its answer.
 - Checklists: each document and the finished work is made with rn's checklist for its kind, which
@@ -107,13 +117,13 @@ sequenceDiagram
     R->>U: one point to decide, with what rn looked up and the answer it recommends
     U->>R: a letter, or the user's own words
   end
-  R->>U: the plan, at the plan sign-off
+  R->>U: the goal and the acceptance criteria, at the goal sign-off
   U->>R: /rn:gm #lt;feedback#gt;
   R-->>U: feedback kept, rn stops
   U->>R: /rn:up
   R->>U: the point behind the feedback
   U->>R: answer
-  R->>U: the plan made again, at the same sign-off, with what changed
+  R->>U: the goal made again, at the same sign-off, with what changed
   U->>R: /rn:ty
 ```
 
@@ -192,7 +202,8 @@ What the user gains with rn, each with why it holds; these are why the user choo
 - The user's purpose is achieved by answering alone: each point is confirmed, each task traced to
   the acceptance criteria, and the plan remade from the facts each move brings, so the work does
   not drift from the purpose and making a finished work again becomes rare.
-- At each sign-off the user decides from the proposal alone: the plan is the proposal itself, and
+- At each sign-off the user decides from the proposal alone: the goal and the criteria are the
+  proposal itself, and
   each document and the finished work has been read and used in their place by an AI that did not
   make it, so they need not read it all again; they judge only what was chosen without asking them,
   each with why.

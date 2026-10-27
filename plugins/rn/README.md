@@ -56,12 +56,12 @@ up and the answer it recommends:
 From your answers rn writes the plan. It holds the goal, which is your purpose as rn wrote it down,
 and the acceptance criteria, each one thing the finished work must do for that purpose; the goal
 and every criterion get an ID that later messages refer to. rn writes it with its checklist for
-plans open and checks it against the same checklist. Then rn stops at the plan sign-off, the first
-of up to three stops where it shows you a proposal and waits for your answer:
+plans open and checks it against the same checklist. Then rn stops at the goal sign-off, the first
+of up to four stops where it shows you a proposal and waits for your answer:
 
 ```console
-● Plan sign-off
-  The plan is on the draft pull request: https://github.com/you/app/pull/42
+● Goal sign-off
+  The goal is on the draft pull request: https://github.com/you/app/pull/42
   G1: A value of the wrong type fails the build, so mistakes like last quarter's three bugs
       do not ship.
   AC1: Code that repeats each of the three bugs fails the build.
@@ -101,8 +101,8 @@ feedback, one rn did not ask:
 
 > a
 
-● Plan sign-off
-  The plan is on the draft pull request: https://github.com/you/app/pull/42
+● Goal sign-off
+  The goal is on the draft pull request: https://github.com/you/app/pull/42
   Changed: AC3: Every file of src/cart and src/checkout is TypeScript.
   (G1, AC1 and AC2 as before)
   /rn:ty to approve, /rn:gm <feedback> to ask for a change.
@@ -110,17 +110,21 @@ feedback, one rn did not ask:
 > /rn:ty
 ```
 
-The same goes for the documents the purpose needs, such as a README or a design for what you are
-building, which rn writes into your repository on the pull request; here it is a design for the
-move. rn asks their points one at a time, such as how the types are made strict file by file, has
-an AI that did not write them use them, and stops at the design sign-off. It shows the link to each
-document and each choice made in it without asking you, with why; what you answered is in the
-documents already, and that AI has checked it there:
+The same goes for the documents the purpose needs: first those that say what you get and how you
+use it, such as a UX or a README, at the ux sign-off; then those that say how it is built and
+checked, such as an architecture, at the architecture sign-off. rn asks which documents the work
+needs, and for each whether it is kept in your repository, the one already there changed, kept in
+rn's folder for the work alone, or not made. Here the move changes nothing you use, so there is no
+ux sign-off, and the one document is an architecture for the move, kept in the repository. rn asks
+its points one at a time, such as how the types are made strict file by file, has an AI that did
+not write it use it, and stops at the architecture sign-off. It shows the link to each document and
+each choice made in it without asking you, with why; what you answered is in the document already,
+and that AI has checked it there:
 
 ```console
-● Design sign-off
-  The design is on the draft pull request: https://github.com/you/app/pull/42
-  design: https://github.com/you/app/blob/typescript/docs/design.md
+● Architecture sign-off
+  The architecture is on the draft pull request: https://github.com/you/app/pull/42
+  architecture: https://github.com/you/app/blob/typescript/docs/architecture.md
   - Values from the account pages are checked where they enter the cart and the checkout:
     the JavaScript left there could otherwise pass a wrong type in, and those are the only
     places it meets the moved code.
@@ -129,7 +133,7 @@ documents already, and that AI has checked it there:
 > /rn:ty
 ```
 
-A small change that needs no document, such as a line in a README, goes on without this stop.
+A small change that needs no document, such as a line in a README, goes on without these stops.
 Then rn divides the work into tasks, such as moving the cart, each checked against the acceptance
 criteria it serves, and carries them out in the conversation without you watching. Before each step,
 rn tells you in a line what it will do, how far and how, and after it, what is done and what comes
@@ -142,7 +146,7 @@ to the finished work and each choice made without asking you in building and usi
 ```console
 ● Deliverable sign-off
   The finished work is on the pull request: https://github.com/you/app/pull/42
-  deliverable: https://github.com/you/app/blob/typescript/docs/design.md,
+  deliverable: https://github.com/you/app/blob/typescript/docs/architecture.md,
     https://github.com/you/app/blob/typescript/src/cart/bugs.test.ts,
     https://github.com/you/app/blob/typescript/src/cart/cart.ts,
     https://github.com/you/app/blob/typescript/src/checkout/checkout.ts
@@ -213,7 +217,7 @@ that:
 
 - What was decided, and why, stays with your repository.
 
-  It is kept in the documents rn writes into your repository, such as the design, and in rn's
+  It is kept in the documents rn writes into your repository, such as the architecture, and in rn's
   commit messages, with the options weighed and each feedback with its answer, so your next piece
   of work, or a teammate, starts from it.
 
