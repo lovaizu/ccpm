@@ -782,6 +782,9 @@
   },
   {
    "fact": "2026-10-27: acceptance run 4 at bf48043 (/tmp/rn/20261027-acceptance-f4dxd0ky) FAILED in the build at T5 action 3, its one build message past the trial's 90 minutes (WAIT now 360, 27898be; results.json keeps the commit read at start, bfd32d7): to the design sign-off 50 min, $11.39, 14 points, 1 change at the plan sign-off, against run 3's 68 min, $14.62; build 110 min to T5.3, about $43 whole from tokens. Read by me: research and README good, but the README says 'tools we tried' where none was run and states python 3.9 from Apple's tools where the research left it unsettled; the architecture names no means for a move that fails on a taken name (the build used os.link). The user chose: stages goal, ux, architecture, build, deliverable, learnings, finished, each document heard as kept, changed, in .rn/ alone or not made (issue #54 section, T35); how heavily work is checked weighed by what a failure costs, proposed at the architecture sign-off (T36); UX and README rewritten (eb65366)"
+  },
+  {
+   "fact": "2026-10-27: run 4's build read from its records: 110 min to T5.3, the roles' model time ~80 min, the tools ~3.5 min; 650 lines of code and 1,900 of tests for a 250-line tool; the roles' per-item claims ~370k chars, the generator's halved by 8d563a0 (1158 to 627 chars an item) and the first user's not (1352 to 1068); the 6-hour wait reverted (1672495) as it hid the slowness. I proposed twice without the whole and against the user's intent (cutting the generator's self-check, keeping fault-finding text); the user corrected: generator self-check is needed (feedback 2026-10-27 08:33-08:42 JST), the first user only finds Good; T37 agreed"
   }
  ],
  "semantic_gist": [
@@ -847,11 +850,14 @@
   },
   {
    "gist": "a name rule is not the fix: the plugins do not separate responsibilities; an entry Claude Code fixes (a skill, an agent such as turn's up.md, a hook, a command line) is the interface, and each logical component, such as the orchestrator, is domain logic of its own that the entry hands to, so the physical view shows the logical one; a design principle, not a checklist sign (the user, 2026-10-26)"
+  },
+  {
+   "gist": "before proposing a fix, read the user's earlier feedback on the same part and the whole of what it touches, held to fix.md; never cut what the user said is needed (the user, 2026-10-27: やばい、劣化する)"
   }
  ],
  "focal_entities": [
   {
-   "task": "T35: rn's architecture, prompts, scripts and trials to the stages of eb65366"
+   "task": "T37: turn's claim and reading by lines alone, one proposal over every part, held to fix.md whole"
   }
  ],
  "relational_map": [
@@ -889,7 +895,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T35: dev/rn/architecture.md, then plugins/rn/prompts plan.md and design.md into goal, ux and architecture stages, steering.py's STAGES and sign-offs, proposal.py's headings, tests, move trials; then T36 code.md B-6; then acceptance run 5 as the user decides"
+   "next": "on resume: T37 — read reading.json, claim.json, turn/scripts/forms.py and flow.py, turn's generator.md and first-user.md, dev/turn/ux.md and architecture.md, rn's orchestrator.md:195-210 whole; list every place the per-item words are asked or used; draw one change over all, held to plugins/rn/checklists/fix.md B-1 to B-4; build it with the tests (check.sh 100%, mutate 0), try turn's trials; then T35's architecture and code, T36. Ask the user later, one at a time: fix.md in .claude/rules/dev.md for changes after trials; whether the Subagent rows in Claude Code's panel can be cleared (unchecked)."
   }
  ],
  "uncertainty_signal": [

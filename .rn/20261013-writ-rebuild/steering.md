@@ -92,6 +92,16 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 - [ ] T36: How heavily the work is checked is the architecture's decision on what a failure would
   cost, as issue #54's "Checks weighed by what a failure would cost" says, rn's code checklist
   changed so. Serves AC2.
+- [ ] T37: turn's roles write only what a role or the caller uses, as the user agreed (2026-10-27):
+  the generator self-checks every item at the end of making and gives each by its lines alone,
+  `<path>:<from>-<to>`, no words; the first user gives each item it found the Good of by its lines
+  alone, and each it did not by one sentence of what the receiver would need to get for its Good,
+  not how to make it; that sentence handed to the generator as the receiver's need, mended for the
+  receiver, not to pass the first user (fix.md B-2); no gap, no `outside`, no argument back, as
+  8d563a0 made the first user find fault where its intent is to find Good; reading.json,
+  claim.json, forms.py, flow.py, the roles' prompts, turn's UX and architecture, and rn's
+  orchestrator.md:200-207, which checks each `good` at its `lines`, changed together as one,
+  held to fix.md whole. Serves AC2.
 - [ ] T15: Users who update get rn 0.10.0 and turn 0.2.0, on the user's instruction. Serves AC1,
   AC2.
 
