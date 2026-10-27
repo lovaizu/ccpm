@@ -7,7 +7,9 @@ from __future__ import annotations
 import unittest
 from typing import Any
 
-from helpers import STEERING, RepoTest, call_at, plan, steered
+from helpers import FOLDER, STEERING, RepoTest, plan, steered
+
+REPLACED = f"{FOLDER}/replaced.jsonl"
 
 
 class HistoryTest(RepoTest):
@@ -154,56 +156,79 @@ class HistoryTest(RepoTest):
         # Then: rn gives no work made again.
         self.assertEqual(self.history()["remade"], [])
 
-    def test_each_decision_an_answer_replaced_is_given_with_what_it_was(self):
-        # Given: a decision of t1.1 kept, then replaced in the same call, then a decision of
-        # another title added.
-        self.called("0001", "t1.1", "License: MIT", "Form: a page")
-        replaced = self.called(
-            "0001", "t1.1", "License: Apache-2.0", "Form: a page", message="License asked again"
-        )
-        self.called("0001", "t1.1", "License: Apache-2.0", "Form: a page", "Colour: blue")
+    def decided(self, title: str, says: str, message: str = "a decision") -> None:
+        """A decision of the plan kept by rn.py decide, as a move its step goes on after."""
+        self.ran("decide", "plan", f"--title={title}", f"--says={says}", f"--message={message}")
+
+    def stepped(self, message: str) -> str:
+        """The step ended by rn.py state, committing every move of it; gives the commit."""
+        self.ran("state", f"--message={message}")
+        return self.head()
+
+    def test_each_decision_an_answer_replaced_in_its_step_is_given_with_what_it_was(self):
+        # Given: a decision of the plan kept, then replaced, then one of another title added, all
+        # in one step, which one commit keeps.
+        self.decided("License", "MIT")
+        self.decided("License", "Apache-2.0", message="License asked again")
+        self.decided("Colour", "blue")
+        step = self.stepped("The step ends")
         # When: the orchestrator asks for the history.
         # Then: rn gives the decision replaced, what it was and what it is now, with the commit
-        # that replaced it and its message; not the one added.
+        # of its step and that commit's message; not the one added.
         self.assertEqual(
             self.history()["replaced"],
             [
                 {
-                    "commit": replaced,
-                    "work": "t1.1",
+                    "commit": step,
+                    "work": "plan",
                     "was": "License: MIT",
                     "now": "License: Apache-2.0",
-                    "message": "License asked again",
+                    "message": self.out("log", "-1", "--format=%B").strip(),
                 }
             ],
         )
 
-    def test_a_decision_carried_into_a_new_call_is_replaced_there_alone(self):
-        # Given: a call on the plan with two decisions, then a new call on it carrying both, and
-        # a call on t1.1 holding a decision of the same title as the plan's.
-        self.called("0001", "plan", "Scope: a cart", "Order: cart first")
-        self.called("0002", "t1.1", "Scope: the cart page")
-        replaced = self.called("0003", "plan", "Scope: every page", "Order: cart first")
+    def test_a_decision_replaced_in_a_later_step_and_a_new_call_is_given_there(self):
+        # Given: a call on the plan with two decisions, closed, a call on t1.1 holding a decision
+        # of the same title as the plan's, and in a later step the plan's decision replaced, which
+        # a new call carrying the plan's decisions takes.
+        self.call("0001", "plan", decisions=("Scope: a cart", "Order: cart first"), result={})
+        self.call("0002", "t1.1", decisions=("Scope: the cart page",))
+        self.commit_with("two calls")
+        self.decided("Scope", "every page", message="Scope asked again")
+        step = self.stepped("The step ends")
         # When: the orchestrator asks for the history.
-        # Then: rn gives the decision the new call replaced, as the work's decisions before it
-        # were its last call's, and nothing of t1.1's, which is another work.
+        # Then: rn gives the plan's decision replaced, with the commit of its step, and nothing
+        # of t1.1's, which is another work.
         self.assertEqual(
             [(r["commit"], r["work"], r["was"], r["now"]) for r in self.history()["replaced"]],
-            [(replaced, "plan", "Scope: a cart", "Scope: every page")],
+            [(step, "plan", "Scope: a cart", "Scope: every page")],
         )
 
-    def test_a_version_of_a_ccs_that_is_no_json_object_holds_no_decision(self):
-        for text in ("{", "[]"):
-            with self.subTest(text=text):
-                # Given: a call on t1.1 kept with a decision, a version of it kept that is no
-                # JSON object, then the call written again with the decision as it was.
-                self.called("0001", "t1.1", "License: MIT")
-                self.write(call_at("0001"), text)
-                self.commit_with("by hand")
-                self.called("0001", "t1.1", "License: MIT")
-                # When: the orchestrator asks for the history.
-                # Then: rn gives no decision replaced, the version in between holding none.
-                self.assertEqual(self.history()["replaced"], [])
+    def test_a_decision_kept_again_as_it_was_is_not_replaced(self):
+        # Given: a decision of the plan kept, then kept again with the same words, as a fresh
+        # conversation taking the step again does.
+        self.decided("License", "MIT")
+        self.decided("License", "MIT")
+        self.stepped("The step ends")
+        # When: the orchestrator asks for the history.
+        # Then: rn gives no decision replaced.
+        self.assertEqual(self.history()["replaced"], [])
+
+    def test_a_line_of_the_replaced_record_that_is_no_json_object_is_none(self):
+        # Given: lines of the record of decisions replaced written by hand, one no JSON and one a
+        # JSON list, then a decision replaced by rn.
+        self.write(REPLACED, "{\n[]\n")
+        self.commit_with("by hand")
+        self.decided("License", "MIT")
+        self.decided("License", "Apache-2.0")
+        step = self.stepped("The step ends")
+        # When: the orchestrator asks for the history.
+        # Then: rn gives the decision rn replaced alone.
+        self.assertEqual(
+            [(r["commit"], r["was"]) for r in self.history()["replaced"]],
+            [(step, "License: MIT")],
+        )
 
     def test_the_history_without_a_session_stops(self):
         # Given: a branch holding no session.

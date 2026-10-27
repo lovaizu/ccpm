@@ -26,6 +26,9 @@ SESSION_NAME = re.compile(r"[0-9]{8}-[a-z0-9-]+")
 # The session's steering and the folder of its calls, in the session's folder.
 STEERING = "steering.md"
 CALLS = "calls"
+# Each decision an answer replaced, a JSON object a line, in the session's folder: one step's commit
+# keeps every move of it, so a decision replaced within a step shows in no version of its CCS.
+REPLACED = "replaced.jsonl"
 # The works rn makes: the plan, the part of the steering from the title through the tasks, and the
 # learnings, both written by the orchestrator; and, made by turn, the finished work; what each
 # action of turn's makes, `t<n>.<k>` for action k of task T<n>, one work for each output, such as a
@@ -107,6 +110,11 @@ def task_of(work: str) -> str:
     """The ID of the task whose action makes the work, "" where the work is no task's."""
     named = TASK_WORK.fullmatch(work)
     return f"T{named['task']}" if named else ""
+
+
+def replaced_path(folder: str) -> str:
+    """The path of the session's record of the decisions an answer replaced."""
+    return os.path.join(folder, REPLACED)
 
 
 def steering_path(folder: str) -> str:

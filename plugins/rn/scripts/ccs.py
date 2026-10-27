@@ -355,8 +355,9 @@ def told(work: str, steered: steering.Steering) -> str:
 def decide(work: str, title: str, says: str, message: str) -> dict[str, str]:
     """Writes a decision of the work, `<title>: <what it says>`, in the constraints of its latest
     call where that call takes more, else of a new call carrying its decisions, one of the same
-    title replaced where it stands, as session.Call says; kept as a move its step goes on after,
-    as session.written says, the step's commit taking it. Gives the call's number. Stops where the
+    title replaced where it stands, as session.Call says, and, where its words change, added to the
+    session's record of decisions replaced; kept as a move its step goes on after, as
+    session.written says, the step's commit taking it. Gives the call's number. Stops where the
     branch holds no session, the steering differs
     from what the last keep left, the steering holds no action of turn's of a task's work, or a CCS
     is no JSON object; and where git fails."""
@@ -392,6 +393,10 @@ def decide(work: str, title: str, says: str, message: str) -> dict[str, str]:
     if same is None:
         constraints.append(decision)
     else:
+        was = constraints[same][session.DECISION]
+        if was != decision[session.DECISION]:
+            changed = {"work": work, "was": was, "now": decision[session.DECISION]}
+            repo.add_line(session.replaced_path(folder), changed)
         constraints[same] = decision
     repo.write_json(session.call_path(folder, number, session.CCS), ccs)
     session.written(folder, steered, message)

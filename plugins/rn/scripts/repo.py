@@ -134,6 +134,14 @@ def write_text(path: str, text: str) -> None:
         f.write(text)
 
 
+def add_line(path: str, data: Any) -> None:
+    """Adds the data as JSON on one line at the end of the file at the path, making it where it is
+    not there."""
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(data, ensure_ascii=False) + "\n")
+
+
 def write_json(path: str, data: Any) -> None:
     """Writes the data as JSON at the path, one key or value to a line, so the user can read it on
     the pull request."""

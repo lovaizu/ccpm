@@ -253,6 +253,7 @@ plugins/rn/                          the plugin, installed by Claude Code with t
     └── <yyyymmdd>-<slug>/           the record of one piece of work
         ├── steering.md              what is left to reach the goal and where the session stands <Markdown>
         ├── learnings.md             the learnings, for the user once the finished work is approved <Markdown>
+        ├── replaced.jsonl           each decision an answer replaced, a line each, as one step's commit keeps every move of it <JSON Lines>
         ├── issue-<n>.md             each issue to rn's makers, made before the user is asked to send it <Markdown>
         ├── <path>                   each research result and trial's result, at the path its action names <Markdown>
         └── calls/

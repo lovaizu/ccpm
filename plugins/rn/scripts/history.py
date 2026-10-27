@@ -8,7 +8,6 @@ from __future__ import annotations
 import json
 from typing import Any
 
-import call
 import repo
 import session
 import steering
@@ -75,47 +74,27 @@ def added(path: str, start: str) -> str:
     ).strip()
 
 
-def versions(path: str, start: str) -> list[tuple[str, list[str]]]:
-    """Each version of the CCS at the path kept on the branch since the start, oldest first, with
-    its decisions, `<title>: <what it says>`; none for a version that is no JSON object, as only a
-    commit made by hand leaves one."""
+def replaced(folder: str, start: str, said: dict[str, str]) -> list[dict[str, Any]]:
+    """Each decision an answer replaced, in the order kept, as rn.py decide adds it to the
+    session's record, with what it was and is now, and the commit of the step that kept it with
+    its message; none for a line that is no JSON object, as only a line written by hand is one."""
+    path = session.replaced_path(folder)
     listed = repo.git(
         ["log", "--reverse", "--format=%H", f"{start}..HEAD", "--", path], repo.AS_GIT_SAYS
     ).split()
     found = []
+    # The lines the record held before each commit, as each commit adds its own after them.
+    held = 0
     for commit in listed:
-        try:
-            ccs = json.loads(repo.at(commit, path) or "")
-        except ValueError:
-            ccs = None
-        decided = call.entries(ccs, session.DECISION) if isinstance(ccs, dict) else []
-        found.append((commit, decided))
-    return found
-
-
-def replaced(folder: str, start: str, said: dict[str, str]) -> list[dict[str, Any]]:
-    """Each decision an answer replaced, in the order kept: a decision of a work whose title the
-    work's decisions held before with other words, in its call or in the call before it, which a
-    new call carries, with what it was and is now, and the commit that replaced it with its
-    message."""
-    held: dict[str, dict[str, str]] = {}
-    found = []
-    for made in session.calls(folder, "HEAD"):
-        before = held.setdefault(made.work, {})
-        for commit, decided in versions(session.call_path(folder, made.number, session.CCS), start):
-            for decision in decided:
-                title, _, says = decision.partition(": ")
-                if title in before and before[title] != says:
-                    found.append(
-                        {
-                            "commit": commit,
-                            "work": made.work,
-                            "was": f"{title}: {before[title]}",
-                            "now": decision,
-                            "message": said[commit],
-                        }
-                    )
-                before[title] = says
+        lines = (repo.at(commit, path) or "").splitlines()
+        for line in lines[held:]:
+            try:
+                changed = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(changed, dict):
+                found.append({"commit": commit, **changed, "message": said[commit]})
+        held = len(lines)
     return found
 
 
