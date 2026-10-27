@@ -26,7 +26,7 @@ import testing
 # How Claude Code keeps its records is read by lane's record.py, loaded from its file, so a
 # plugin's trials standing on this module meet their own modules of the names lane's code has, such
 # as call.
-RECORD = os.path.join(HERE, "../../../lane/hooks/lane/record.py")
+RECORD = os.path.join(HERE, "../../../plugins/lane/hooks/lane/record.py")
 FOUND = importlib.util.spec_from_file_location("record", os.path.normpath(RECORD))
 assert FOUND and FOUND.loader
 record = importlib.util.module_from_spec(FOUND)
