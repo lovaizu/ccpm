@@ -83,9 +83,9 @@ def checked(given: dict[str, Any]) -> dict[str, Any]:
 
 def laid_out(given: dict[str, Any]) -> dict[str, Any]:
     """The run the call asks for, laid out from the CCS as it is now: the call, each kind's
-    entries, the checklists' items, those asked of each part, the files the orchestrator and the
-    generator are given, and those the first user may read, as the receiver has them; stops at the
-    first thing turn cannot take."""
+    entries, the checklists' items, those asked of each part, the files the generator is given, and
+    those the first user may read, as the receiver has them; stops at the first thing turn cannot
+    take."""
     asked = checked(given)
     ccs = read_ccs(asked["ccs"])
     run: dict[str, Any] = {"call": asked}

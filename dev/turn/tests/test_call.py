@@ -30,8 +30,8 @@ from helpers import (
 # pylint: disable=duplicate-code
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your check or questions as JSON, the answer as it came,"
-    " or the agent ID as JSON>]\n"
+    "       turn.py next <result> [< <the agent ID as JSON, your questions as JSON, or the answer"
+    " as it came>]\n"
     "       turn.py next <result> <page>\n"
     "       turn.py questions <result>\n"
     "       turn.py parts <result>"
@@ -115,7 +115,7 @@ class TestUsage(RepoTest):
 
     def test_what_is_printed_keeps_letters_beyond_ascii_as_they_are(self):
         # Given: a call whose checklist, work and result are named in Japanese
-        # When: the run is started, the generator's input asked for and the check given
+        # When: the run is started, its generator told and started
         # Then: each is printed with the names as they are written
         os.rename("checklists/readme.md", "checklists/読む.md")
         ccs = dict(CCS, retrieved_artifacts=[{"checklist": "checklists/読む.md"}, {"page": "docs"}])
@@ -134,11 +134,6 @@ class TestUsage(RepoTest):
         code, out = self.turn("next", result)
         self.assertEqual(code, 0, out)
         self.assertIn("checklists/読む.md", out)
-        items = [dict(i, can="the template") for i in json.loads(out)["check"]]
-        check = json.dumps({"items": items, "questions": []})
-        code, out = self.turn("next", result, stdin=check)
-        self.assertEqual(code, 0, out)
-        self.assertIn("はじめに.md", out)
         self.write("はじめに.md", "# 始め\n")
         code, out = self.turn("parts", result)
         self.assertEqual(code, 0, out)
@@ -150,18 +145,15 @@ class TestStart(RepoTest):
         # Given: a call naming the CCS, the kinds of the work, the checklist and the receiver, and
         # where the result goes
         # When: the run is started
-        # Then: it prints where the result goes, and the orchestrator is to check every item can
-        # get its Good, before any agent starts
+        # Then: it prints where the result goes alone, as a whole path, and the generator is due
+        # first, as it asks first what only the user can decide
         code, out = self.turn("start", json.dumps(CALL))
-        self.assertEqual((code, json.loads(out)["result"]), (0, self.here(CALL["result"])))
-        self.assertEqual(
-            self.heard(self.next())["check"],
-            ITEMS,
-        )
+        self.assertEqual((code, json.loads(out)), (0, {"result": self.here(CALL["result"])}))
+        self.assertEqual(self.state()["next"]["agent"], "turn:generator")
 
-    def test_a_run_checked_to_give_every_item_its_good_starts_the_generator(self):
+    def test_a_run_started_starts_the_generator(self):
         # Given: a run started
-        # When: the orchestrator's check finds what gives every item its Good
+        # When: the orchestrator goes on, and on once the line is sent
         # Then: the generator is to be started with its prompt as the flow keeps it
         move = self.started()
         self.assertEqual(move["input"]["subagent_type"], "turn:generator")

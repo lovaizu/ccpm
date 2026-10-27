@@ -298,29 +298,6 @@ class TestClaim(FormTest):
         )
 
 
-class TestCheck(FormTest):
-    """The orchestrator's check of the CCS, before any work is made."""
-
-    def test_a_check_asks_its_questions_of_an_item(self):
-        # Given: a check whose question no item waits on
-        # When: it is checked
-        # Then: the question is named
-        can = [dict(i, can="the decisions") for i in ITEMS]
-        said = self.said({"items": can, "questions": [QUESTION]}, forms.CHECK)
-        self.assertEqual(
-            said, ["question 1 has no item waiting on it; name it at the item it settles"]
-        )
-
-    def test_a_check_asking_a_question_still_gives_every_item(self):
-        # Given: the orchestrator's check of the CCS naming only the item waiting on its question
-        # When: it is checked
-        # Then: it is told the item left out, as the check finds for every item what gives its Good
-        said = self.said({"items": [WAITS], "questions": [QUESTION]}, forms.CHECK)
-        self.assertEqual(
-            said, ["checklists/readme.md F-1 is left out; give every item judged here"]
-        )
-
-
 class TestLeft(FormTest):
     def test_every_item_left_waits_on_a_question(self):
         # Given: the orchestrator's questions for the items two rounds left without Good, and one
@@ -331,6 +308,25 @@ class TestLeft(FormTest):
         self.assertEqual(self.said(both, forms.LEFT), [])
         said = self.said({"items": [GOOD, WAITS], "questions": [QUESTION]}, forms.LEFT)
         self.assertEqual(said, ['checklists/readme.md F-1 must hold "question"'])
+
+    def test_a_question_no_item_left_waits_on_is_named(self):
+        # Given: questions for the items left, the second of which no item waits on
+        # When: they are checked
+        # Then: the second question is named
+        items = [dict(WAITS, item="F-1"), WAITS]
+        said = self.said({"items": items, "questions": [QUESTION, QUESTION]}, forms.LEFT)
+        self.assertEqual(
+            said, ["question 2 has no item waiting on it; name it at the item it settles"]
+        )
+
+    def test_questions_for_the_items_left_give_every_item_left(self):
+        # Given: questions naming only one of the two items left
+        # When: they are checked
+        # Then: the item left out is named, as every item left waits on a question
+        said = self.said({"items": [WAITS], "questions": [QUESTION]}, forms.LEFT)
+        self.assertEqual(
+            said, ["checklists/readme.md F-1 is left out; give every item judged here"]
+        )
 
     def test_questions_for_the_items_left_are_held_to_their_form(self):
         # Given: the orchestrator's questions for the items left, one without the answer it

@@ -3,6 +3,7 @@
 import json
 import os
 import unittest
+from unittest import mock
 
 from helpers import (
     CALL,
@@ -13,6 +14,8 @@ from helpers import (
     STOPPED_B1,
     WAITS,
     RepoTest,
+    flow,
+    state,
 )
 
 
@@ -27,16 +30,7 @@ class TestResumed(RepoTest):
         self.assertEqual((code, json.loads(out)["result"]), (0, self.here(RESULT)))
         self.assertEqual(self.due(self.next())["input"]["subagent_type"], "turn:first-user")
 
-    def test_a_call_again_on_a_run_at_its_check_shows_the_check_again(self):
-        # Given: a run at the check, told
-        self.turn("start", json.dumps(CALL))
-        self.next()
-        # When: the same call is made again
-        self.turn("start", json.dumps(CALL))
-        # Then: the check is told again, then shown
-        self.assertEqual(self.heard(self.next())["check"][0]["item"], "F-1")
-
-    def test_a_call_again_on_a_ccs_laid_out_anew_checks_it_again(self):
+    def test_a_call_again_on_a_ccs_laid_out_anew_begins_the_run_again(self):
         # Given: a run whose first user is due, and a CCS that now names another file of the work
         self.started()
         self.due(self.replied(CLAIM))
@@ -44,10 +38,11 @@ class TestResumed(RepoTest):
         # When: the same call is made again
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
-        # Then: the items are checked again on the CCS as it is now, no role due
-        self.assertEqual(self.heard(self.next())["check"], self.state()["items"])
+        # Then: the generator is due again on the CCS as it is now, in the first round
+        move = self.due(self.next())
+        self.assertEqual(move["input"]["subagent_type"], "turn:generator")
         self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
-        self.assertNotIn("next", self.state())
+        self.assertEqual(self.state()["round"], 1)
 
     def test_a_kept_role_sent_a_message_is_started_anew_with_what_was_sent_to_it_since(self):
         # Given: a run whose generator, kept started, was sent an item back
@@ -83,9 +78,12 @@ class TestResumed(RepoTest):
         # Then: the question is told and asked again; the generator, its conversation gone, is
         # started anew with the answer in what it is given
         self.started()
-        self.heard(self.made(WAITS))
+        self.made(WAITS)
         self.turn("start", json.dumps(CALL))
-        self.assertEqual(self.heard(self.next()), {"asked": RESULT})
+        out = self.next()
+        self.assertEqual(
+            out, {"line": "turn: turn:generator asks the user 1 question.", "asked": RESULT}
+        )
         self.assertEqual(len(json.loads(self.turn("questions", RESULT)[1])["questions"]), 1)
         move = self.due(self.answered())
         self.assertEqual(move["tool"], "Agent")
@@ -104,14 +102,20 @@ class TestResumed(RepoTest):
         self.assertEqual(json.loads(move["input"]["prompt"])["sent_back"], self.reading(FOUND)[1:])
 
     def test_a_run_stopped_once_its_result_is_written_returns_on_a_call_again(self):
-        # Given: a run whose every item has its Good, the result written, not yet returned
+        # Given: a run whose every item has its Good, the result written, stopped before its folder
+        # was removed
         self.started()
-        self.first_read(FOUND, dict(FOUND, item="B-1"))
+        self.due(self.made())
+        with (
+            mock.patch.object(flow.shutil, "rmtree", side_effect=KeyboardInterrupt),
+            self.assertRaises(KeyboardInterrupt),
+        ):
+            self.replied({"items": [FOUND, dict(FOUND, item="B-1")]})
         # When: the same call is made again
         self.turn("start", json.dumps(CALL))
-        # Then: the return is told again, and the run then returns
-        self.assertIn("turn:up will return the result", self.next()["line"])
-        self.assertEqual(self.next(), {"returned": RESULT})
+        # Then: the run returns, told again
+        self.assertEqual(self.returned(self.next()), {"returned": RESULT})
+        self.assertFalse(os.path.exists(state.state_path(RESULT)))
 
     def test_a_call_again_with_another_call_on_the_same_result_stops(self):
         # Given: a run kept for a result

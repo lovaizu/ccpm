@@ -36,12 +36,13 @@ The user is away: take each question's recommended answer as theirs, write it in
 file .tasks/ccs.json names, in place of what it changes there or as a line of its own, so the
 decisions say one thing, and where the answer changes what the CCS names, such as a file added to
 the work, change the CCS too; then send it to the agent with SendMessage, loaded with ToolSearch,
-to the agent ID its start gave back. turn sends you a line before each move and after each
-outcome; nothing need answer them. Fix nothing in the work: it is judged as it came back.
+to the agent ID its start gave back. turn sends you a line as each of its agents starts and ends,
+as it asks and as the result is back; nothing need answer them. Fix nothing in the work: it is
+judged as it came back.
 
 When it returns, check each Good of the result against its lines in the work. End with a list of
 each item of the result, saying whether its Good holds at its lines and why."""
-STOP = """Once a line says `turn:first-user will`, the first time alone, wait until the first user
+STOP = """Once a line says `turn:first-user starts`, the first time alone, wait until the first user
 has started, with `until grep -qs '"agentType":"turn:first-user"' {}/*.meta.json; do sleep 2;
 done` in a command of its own, then stop the agent with TaskStop, loaded with ToolSearch, and
 start the `turn:up` agent in the background again with the same call.

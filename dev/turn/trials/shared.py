@@ -1,6 +1,6 @@
 """What turn's trials share: the folder a run writes in, the call and the line starting turn with
-it, the orchestrator trial's task made a repository, with the roles trials' check of it and their
-README that falls short, the acceptance trials' arguments, their repository and the copy kept of
+it, the orchestrator trial's task made a repository, with the roles trials' README that falls
+short, the acceptance trials' arguments, their repository and the copy kept of
 what a run gave back, and the copy of turn a run uses, removed however the trial ends; with Claude
 Code started on it as its user starts it, and what a record shows of a role's work, which every
 plugin's trials share."""
@@ -28,19 +28,6 @@ from call import entries, items  # noqa: F401
 from trying import agents, claude, record, show  # noqa: F401
 from trying import folder as made_folder
 
-# The orchestrator's check of the orchestrator trial's task, as the roles trials set it: each item's
-# Good found in the decisions.
-CHECK = {
-    "items": [
-        {"checklist": "checklist.md", "item": "B-1", "can": "notes/decisions.md:2 names MIT."},
-        {
-            "checklist": "checklist.md",
-            "item": "B-2",
-            "can": "the decisions on demo and its license",
-        },
-    ],
-    "questions": [],
-}
 # A README for the orchestrator trial's task that names no license, which the roles trials set in
 # place of the generator's work, so the first user stops at B-1.
 UNLICENSED = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
@@ -86,13 +73,10 @@ def start(given: dict) -> str:
     return f"Start the `turn:up` agent in the background with\n{json.dumps(given)}\n"
 
 
-def task(place: str, given: dict, decisions: str | None = None) -> None:
-    """Makes the orchestrator trial's task a repository at place, its CCS where the call names it,
-    and its decisions, when given, replaced with decisions."""
+def task(place: str, given: dict) -> None:
+    """Makes the orchestrator trial's task a repository at place, its CCS where the call names
+    it."""
     shutil.copytree(os.path.join(os.path.dirname(__file__), "orchestrator", "task"), place)
-    if decisions is not None:
-        with open(os.path.join(place, "notes", "decisions.md"), "w", encoding="utf-8") as f:
-            f.write(decisions)
     os.makedirs(os.path.join(place, ".tasks"))
     shutil.move(os.path.join(place, "ccs.json"), os.path.join(place, given["ccs"]))
     committed(place)
@@ -207,19 +191,16 @@ def removed(*paths: str) -> Generator[None, None, None]:
 
 
 def begun(plugin: str, place: str, given: dict) -> None:
-    """Starts a run of the copy of turn at plugin on the call in place, its check given as the roles
-    trials set it, as the orchestrator would."""
+    """Starts a run of the copy of turn at plugin on the call in place, as the orchestrator would,
+    its generator due."""
     script = os.path.join(plugin, "scripts", "turn.py")
-    check = json.dumps(CHECK)
-    for args, text in ((["start", json.dumps(given)], ""), (["next", given["result"]], check)):
-        subprocess.run(
-            [sys.executable, script, *args],
-            input=text,
-            cwd=place,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
+    subprocess.run(
+        [sys.executable, script, "start", json.dumps(given)],
+        cwd=place,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
 
 
 def turn(run: Run) -> str:

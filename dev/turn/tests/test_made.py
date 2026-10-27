@@ -22,7 +22,7 @@ from helpers import (
 
 class TestMade(ReadTest):
     def test_the_generator_is_given_what_it_makes_the_work_from_and_where_it_replies(self):
-        # Given: a run checked to give every item its Good
+        # Given: a run started
         # When: the generator is to be started
         # Then: its prompt names the work, the checklists, the call's test, nothing sent back
         # yet, no answers, no choice of an earlier claim, the result, and its reply file beside
@@ -73,43 +73,52 @@ class TestMade(ReadTest):
         # Given: a generator replying, before making anything, with a question only the user can
         # answer, naming the item that waits on it alone
         # When: the orchestrator goes on
-        # Then: a line says the generator found the item waiting, the run asks at once, with no
-        # first user started, and the question is printed with the item it settles
+        # Then: the run asks at once, with no first user started, the result not written, and
+        # the question is printed with the item it settles
         out = self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
-        self.assertTrue(
-            str(out["line"]).startswith(
-                "turn: turn:generator found 1 of 2 items waiting on the user's answer. Next,"
-                " turn:up will ask what only the user can decide"
-            ),
-            out,
-        )
-        self.assertEqual(self.next(), {"asked": RESULT})
+        self.assertEqual(self.heard(out), {"asked": RESULT})
         self.assertNotIn("next", self.state())
+        self.assertFalse(os.path.exists(RESULT))
         self.assertEqual(json.loads(self.turn("questions", RESULT)[1]), ASKED)
+
+    def test_questions_are_printed_with_letters_beyond_ascii_as_they_are(self):
+        # Given: a question asked in Japanese
+        # When: the questions are asked for
+        # Then: its words are printed as they are
+        asked = dict(QUESTION, question="どのライセンスで公開しますか")
+        self.replied({"items": [WAITS], "questions": [asked], "chosen": []})
+        self.assertIn("どのライセンスで公開しますか", self.turn("questions", RESULT)[1])
 
     def asked_first(self):
         """The generator asks before making anything, the run asks the calling AI, and its answer
         is handed on; what the script prints then."""
         self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
-        self.next()
         return self.answered()
 
-    def test_the_answer_handed_on_is_told_before_it_is_sent_to_the_generator(self):
-        # Given: a generator that asked before making anything
-        # When: the calling AI's answer is handed on
-        # Then: a line says the calling AI answered and that the generator goes on with it
-        out = self.asked_first()
-        self.assertTrue(
-            str(out["line"]).startswith(
-                "turn: The calling AI answered. Next, turn:generator will go on with the calling"
-                " AI's answer"
-            ),
-            out,
-        )
+    def test_going_on_with_no_answer_while_a_question_waits_stops(self):
+        # Given: a run whose generator asked a question
+        # When: the orchestrator goes on with nothing, or with blanks alone
+        # Then: it stops, saying the run waits on the calling AI's answer, and still waits
+        self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
+        for given in ("", " \n"):
+            with self.subTest(given=given):
+                out = self.refused(given) if given else self.refused()
+                self.assertIn("the run waits on the calling AI's answer", out)
+        self.assertEqual(self.state()["stage"], "asked")
+
+    def test_the_questions_when_none_is_asked_stop(self):
+        # Given: a run whose generator is due, and no run at all
+        # When: the questions are asked for
+        # Then: it stops, saying no question is asked now, or that no run is going
+        for result, said in ((RESULT, "asks no question now"), ("none.json", "no run is going")):
+            with self.subTest(result=result):
+                code, out = self.turn("questions", result)
+                self.assertEqual(code, 1)
+                self.assertIn(said, out)
 
     def test_the_answer_is_sent_by_message_to_the_generator_that_asked(self):
         # Given: a generator that asked before making anything
-        # When: the calling AI's answer is handed on, and the orchestrator goes on after the line
+        # When: the calling AI's answer is handed on
         # Then: the generator, kept started, is sent the question and the answer as it came
         move = self.due(self.asked_first())
         self.assertEqual(move["input"]["to"], IDS["turn:generator"])
@@ -118,20 +127,20 @@ class TestMade(ReadTest):
             json.loads(move["input"]["message"]), {"answers": [ANSWER], "reply": reply}
         )
 
-    def test_an_answer_that_lays_the_work_out_anew_has_the_ccs_checked_again(self):
+    def test_an_answer_that_lays_the_work_out_anew_has_the_run_started_again(self):
         # Given: a generator that asked before making anything, and a CCS the calling AI added a
         # file of the work to with the answer
         self.replied({"items": [WAITS], "questions": [QUESTION], "chosen": []})
-        self.next()
         self.laid_out_anew()
-        # When: the answer is handed on, and the run started again
+        # When: the answer is handed on, with nothing again, and the run started again
+        # Then: the run is to be started again, and is to be till it is; then the generator is
+        # started anew on the work of both files, given the answer
         self.assertEqual(self.answered(), {"anew": RESULT})
+        self.assertEqual(self.next(), {"anew": RESULT})
         self.turn("start", json.dumps(CALL))
-        # Then: the items are checked again on the CCS as it is now, the answer kept, and the
-        # work is made of both files
-        self.assertEqual(self.heard(self.next())["check"], self.state()["items"])
-        self.assertEqual(self.state()["work"], ["README.md", "LICENSE"])
-        self.assertEqual(self.state()["answers"][0]["answer"], "MIT")
+        prompt = json.loads(self.due(self.next())["input"]["prompt"])
+        self.assertEqual(prompt["work"], [self.here("README.md"), self.here("LICENSE")])
+        self.assertEqual(prompt["answers"][0]["answer"], "MIT")
 
     def test_a_generator_asking_again_is_sent_the_new_answer_alone(self):
         # Given: a generator sent the answer to its question, which asks another
@@ -139,7 +148,7 @@ class TestMade(ReadTest):
         # Then: the generator is sent the second answer alone, as it holds the first already
         self.due(self.asked_first())
         second = dict(QUESTION, question="Which name?")
-        self.heard(self.replied({"items": [WAITS], "questions": [second], "chosen": []}))
+        self.replied({"items": [WAITS], "questions": [second], "chosen": []})
         move = self.due(self.answered("csvtidy"))
         sent = json.loads(move["input"]["message"])["answers"]
         self.assertEqual(
@@ -163,10 +172,12 @@ class TestMade(ReadTest):
     def test_a_generator_started_that_ended_without_its_reply_is_told_to_write_it(self):
         # Given: a generator started, whose Agent call returned with no reply written
         # When: the orchestrator goes on with the agent ID, then gives a reading of its own
-        # Then: the generator is sent where to write its reply, and the reading stops, the run
-        # waiting on the generator's end and going on
+        # Then: the generator is sent where to write its reply, with no line for the user, as it
+        # neither starts nor ends a role, and the reading stops, the run waiting on the generator's
+        # end and going on
         reply = self.kept("generator.json")
         out = self.next({"agent_id": IDS["turn:generator"]})
+        self.assertNotIn("line", out)
         self.assertEqual(
             out["move"]["input"],
             {

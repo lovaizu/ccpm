@@ -53,13 +53,6 @@ def without_run_files(paths: list[str], result: str, apart: tuple[str, ...] = ()
     return list(dict.fromkeys(p for path in paths if not ours(path) for p in opened(path)))
 
 
-def checked(run: dict[str, Any]) -> list[str]:
-    """What the orchestrator reads for its check: the CCS and every file it names but the work,
-    as the CCS now names them."""
-    read = [p for p in run["given"] if p not in run["work"]]
-    return absolute(without_run_files(read, run["call"]["result"]))
-
-
 def generator(run: dict[str, Any], sent_back: list[dict[str, Any]]) -> dict[str, Any]:
     """What the generator is given: the files it makes the work from, the work, the checklists,
     the call's test, the command it passes after changing the work, or None for none, each item

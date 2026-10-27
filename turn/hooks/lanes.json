@@ -24,6 +24,12 @@
               ]
             },
             {
+              "lane": "read_only",
+              "takes": [
+                "{result}"
+              ]
+            },
+            {
               "lane": "hands_off",
               "takes": [
                 "git commit",
@@ -33,24 +39,7 @@
           ]
         },
         {
-          "step": 4,
-          "lanes": [
-            {
-              "lane": "read_only",
-              "takes": [
-                "{given}"
-              ]
-            },
-            {
-              "lane": "read_whole",
-              "takes": [
-                "{given}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 6,
+          "step": 5,
           "lanes": [
             {
               "lane": "as_printed",

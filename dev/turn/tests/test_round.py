@@ -1,6 +1,7 @@
 """Within a round, the generator and the first user, once they have replied, are sent what comes
 next by message, each working on with what it has read."""
 
+import fcntl
 import json
 import os
 import unittest
@@ -76,17 +77,18 @@ class TestGeneratorKept(RoundTest):
         move = self.due(self.replied({"items": [FOUND, stop]}))
         self.assertIn("冒頭を読んだ", move["input"]["message"])
 
-    def test_a_reply_is_waited_for_a_second_at_a_time_within_the_shell_s_two_minutes(self):
+    def test_a_reply_is_waited_for_a_second_at_a_time_within_the_shell_s_ten_minutes(self):
         # Given: a generator sent the first user's stop, which never replies
         # When: the orchestrator goes on, with the wait as turn has it
-        # Then: the script waits a second at a time, a hundred times, then says it is waiting
+        # Then: the script waits a second at a time, nine minutes in all, as one move within the
+        # ten minutes the orchestrator's step gives the shell, then says it is waiting
         self.stopped()
         with (
             mock.patch.object(flow, "WAIT", WAITED),
             mock.patch.object(flow.time, "sleep") as sleep,
         ):
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
-        self.assertEqual(sleep.call_args_list, [mock.call(1)] * 100)
+        self.assertEqual(sleep.call_args_list, [mock.call(1)] * 540)
 
     def test_the_messaged_generators_reply_is_waited_for_and_the_first_user_sent_it(self):
         # Given: a generator sent the first user's stop
@@ -113,6 +115,23 @@ class TestGeneratorKept(RoundTest):
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
         self.assertEqual(sleep.call_count, 2)
         self.assertEqual(self.due(self.later(CLAIM))["tool"], "SendMessage")
+
+    def test_a_second_next_while_the_first_still_waits_stops(self):
+        # Given: a generator sent the first user's stop, and a `turn.py next` of the run still
+        # waiting on its end, as one Claude Code moved to the background past its timeout
+        self.stopped()
+        with open(self.kept("next.lock"), "w", encoding="utf-8") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            # When: the orchestrator runs `turn.py next` again
+            out = self.refused()
+        # Then: it stops, saying the other still runs and to take the move it prints, and takes no
+        # move of the run; once the other has ended, the run goes on
+        self.assertIn(
+            f"turn: another `turn.py next {RESULT}` still runs, waiting on a role's end; wait for"
+            " it to end and take the move it prints",
+            out,
+        )
+        self.assertEqual(self.next(), {"waiting": "turn:generator"})
 
     def test_anything_handed_on_while_a_messaged_role_runs_stops(self):
         # Given: a generator sent a message, not ended yet
@@ -145,7 +164,7 @@ class TestGeneratorKept(RoundTest):
             mock.patch.object(flow.time, "sleep") as sleep,
         ):
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
-        self.assertEqual(sleep.call_count, 100)
+        self.assertEqual(sleep.call_count, 540)
         self.recorded(IDS["turn:generator"], END)
         move = self.due(self.next())
         self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
@@ -206,7 +225,7 @@ class TestFirstUserKept(RoundTest):
             self.assertEqual(self.stopped()["input"]["to"], IDS["turn:generator"])
             self.due(self.later(CLAIM))
         out = self.replied({"items": FIRST_READ})
-        self.assertIn("round 2", out["line"])
+        self.assertIn("round 2", self.line_of(out))
 
     def test_the_round_s_sending_back_counts_anew_in_the_next_round(self):
         # Given: a first round whose sending back was spent

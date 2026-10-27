@@ -14,8 +14,8 @@ import flow
 
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your check or questions as JSON, the answer as it came,"
-    " or the agent ID as JSON>]\n"
+    "       turn.py next <result> [< <the agent ID as JSON, your questions as JSON, or the answer"
+    " as it came>]\n"
     "       turn.py next <result> <page>\n"
     "       turn.py questions <result>\n"
     "       turn.py parts <result>"
@@ -50,12 +50,15 @@ def main(argv: list[str], stdin: IO[str]) -> int:
 
 
 def printed(result: str, out: dict[str, Any], page: str) -> str:
-    """What turn.py prints: a move as the line it tells and the tool call itself, last, as one JSON
-    line; anything else as JSON, in pages."""
-    if "move" in out:
-        move = json.dumps(out["move"], ensure_ascii=False)
-        return f"{out['line']}\n{move}" if "line" in out else move
-    return paged(result, out, page)
+    """What turn.py prints: the line for the user first, where one comes, then a move as the tool
+    call itself, last, as one JSON line, or anything else as JSON, in pages."""
+    rest = {k: v for k, v in out.items() if k != "line"}
+    text = (
+        json.dumps(rest["move"], ensure_ascii=False)
+        if "move" in rest
+        else paged(result, rest, page)
+    )
+    return f"{out['line']}\n{text}" if "line" in out else text
 
 
 def paged(result: str, out: dict[str, Any], page: str) -> str:

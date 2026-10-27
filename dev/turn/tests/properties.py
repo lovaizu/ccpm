@@ -9,9 +9,7 @@ import unittest
 
 from helpers import (
     CALL,
-    CAN,
     ITEM_F1,
-    QUESTION,
     RESULT,
     TURN,
     WAITS,
@@ -29,11 +27,11 @@ hypothesis = testing.hypothesis()
 given = hypothesis.given
 st = hypothesis.strategies
 
-FORMS = (forms.CHECK, forms.CLAIM, forms.FIRST_READING, forms.LEFT)
+FORMS = (forms.CLAIM, forms.FIRST_READING, forms.LEFT)
 ITEMS = [ITEM_F1]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
-    ["items", "questions", "checklist", "item", "good", "lines", "question", "can", "recommended"]
+    ["items", "questions", "checklist", "item", "good", "lines", "question", "recommended"]
     + ["parts", "part", "places", "did", "lacking"]
 ) | st.text(max_size=5)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)
@@ -145,16 +143,14 @@ class TestCallTest(unittest.TestCase):
 class TestAnswer(RepoTest):
     @given(st.text(max_size=200))
     def test_any_answer_of_words_is_kept_as_it_came(self, answer):
-        # Given: a run whose check asked a question, started anew for each answer
+        # Given: a run whose generator asked a question, started anew for each answer
         # When: the calling AI's answer, any text, is handed on
         # Then: an answer of words is kept as it came, the blanks at its ends aside; one of blanks
         # alone is asked for again, and the run still waits on it
         if os.path.exists(state.state_path(RESULT)):
             os.remove(state.state_path(RESULT))
-        self.turn("start", json.dumps(CALL))
-        self.next()
-        self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
-        self.next()
+        self.started()
+        self.made(WAITS)
         code, _ = self.turn("next", RESULT, stdin=answer)
         kept = self.state()
         if answer.strip():

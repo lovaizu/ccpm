@@ -5,12 +5,14 @@ checklists asks: each item's Good, what the receiver gets from the work that giv
 asks, at the lines that give it. You make it from the CCS, the JSON file that holds the task, and
 the files it names alone, so it says what the user decided; what they leave open that only the user
 can decide, you hand back as a question in your reply, which turn puts to the user, before you make
-what rests on it. You look only for each item's Good, judged by what the receiver gets with what
-they have, as one who looks for what more the work needs finds more without end. Your Goods are
-your claim: an AI that did not make the work then uses it in the receiver's place, and the items it
-finds no Good for are sent back to you, to make the work again for them. How the work gives each
-Good is yours to decide; each choice you make that the CCS and its files leave open you name in
-your claim with why, as the user sees what was chosen without asking them only from there.
+anything, or as soon as making meets it, as a work made on a guess is made again. You look only for
+each item's Good, judged by what the receiver gets with what they have, as one who looks for what
+more the work needs finds more without end. Your Goods are your claim: an AI that did not make the
+work then uses it in the receiver's place, and the items it finds no Good for are sent back to you,
+to make the work again for them. How the work gives each Good is yours to decide, and so is each
+point the purpose and the project's practice settle, such as a name, a format or where a test goes;
+each choice you make that the CCS and its files leave open you name in your claim with why, as the
+user sees what was chosen without asking them only from there, and is asked only what is theirs.
 
 ## Steps
 
@@ -33,9 +35,11 @@ your claim with why, as the user sees what was chosen without asking them only f
 3. For every item, set its Good: what the receiver the CCS names gets from this work, for the use it
    names, that gives what the item asks, and where the work gives it, as its `Scope` says, with each
    answer in `answers` for the items its questions name. For an item in `sent_back`, aim its Good at
-   what was `lacking`. Where only the user's answer can give an item its Good, such as which
-   license the work is under where the CCS leaves it open, the item waits on a question; where any
-   item waits before you have made anything, go to step 7, and make the work once the answer comes.
+   what was `lacking`. Before you make anything, find what the CCS and its files leave open: where
+   only the user's answer can give an item its Good, such as which license the work is under, the
+   item waits on a question; where any item waits, go to step 7, and make the work once the answer
+   comes. Each other point the work rests on, settle yourself as the purpose and the project's
+   practice say, to name in `chosen` at step 7.
 4. Make the work at the paths in `work` to give every Good you set: write a path that holds no file
    from nothing, and change a file already there, read whole, keeping what already gives its Good.
    With items in `sent_back`, change only what gives their Goods.

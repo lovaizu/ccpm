@@ -7,7 +7,7 @@ import json
 import os
 import unittest
 
-from helpers import CALL, CAN, CCS, GOOD, RESULT, RepoTest, prompts
+from helpers import CALL, CCS, GOOD, RESULT, RepoTest, prompts
 
 
 class GivenTest(RepoTest):
@@ -159,25 +159,6 @@ class TestWithoutRunFiles(GivenTest):
         )
 
 
-class TestStartGiven(RepoTest):
-    """What the start gives the orchestrator to read for its check."""
-
-    def test_the_start_gives_what_the_orchestrator_reads_before_any_work_is_made(self):
-        # Given: a CCS naming the work, the checklist, the decisions and a page the receiver has
-        # When: the run is started, and started again on the same call
-        # Then: each time it gives the CCS and every file it names but the work, which the
-        # orchestrator reads whole for its check
-        given = [
-            self.here(".tasks/readme.json"),
-            self.here("checklists/readme.md"),
-            self.here("notes/readme.decisions.md"),
-            self.here("docs/start.md"),
-        ]
-        for _ in range(2):
-            code, out = self.turn("start", json.dumps(CALL))
-            self.assertEqual((code, json.loads(out)["given"]), (0, given))
-
-
 class TestRolesGiven(GivenTest):
     """A run whose receiver has the whole repository, `.`, as a maintainer's repository is to its
     maintainer."""
@@ -192,23 +173,8 @@ class TestRolesGiven(GivenTest):
             self.here(p) for p in (".tasks/readme.json", "README.md", "checklists", "docs", "notes")
         ]
 
-    def test_start_prints_a_given_without_the_run_s_files(self):
-        # Given: a call whose receiver has `.`
-        # When: the run is started
-        # Then: the start's `given` holds the CCS and each file it names but the work, `.` as its
-        # entries without the run's state, each path once
-        code, out = self.turn("start", json.dumps(CALL))
-        self.assertEqual(code, 0, out)
-        given = [
-            self.here(".tasks/readme.json"),
-            self.here("checklists/readme.md"),
-            self.here("notes/readme.decisions.md"),
-            self.here(".git"),
-        ] + self.entries[1:]
-        self.assertEqual(json.loads(out)["given"], given)
-
     def test_the_generator_is_given_no_run_s_file(self):
-        # Given: a call whose receiver has `.`, checked to give every item its Good
+        # Given: a call whose receiver has `.`
         # When: the generator is to be started
         # Then: its `given` holds the CCS, the work and each file the CCS names, `.` as its entries
         # without the run's files, each path once
@@ -254,7 +220,7 @@ class TestFolderMoved(RepoTest):
         self.turn("start", json.dumps(CALL))
         os.chdir("notes")
         self.result = self.here(RESULT)
-        move = json.loads(self.due(self.next({"items": CAN, "questions": []}))["input"]["prompt"])
+        move = json.loads(self.due(self.next())["input"]["prompt"])
         self.assertEqual(move["work"], [self.here("README.md")])
         self.assertEqual(move["checklists"], [self.here("checklists/readme.md")])
         self.assertEqual(move["reply"], self.kept("generator.json"))

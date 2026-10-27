@@ -105,12 +105,6 @@ FOUND = {
     "lines": ["README.md:1-3"],
 }
 FOUND_B1 = dict(FOUND, item="B-1")
-# The orchestrator's check before the work is made: what in the CCS and its files gives each item's
-# Good.
-CAN = [
-    {"checklist": "checklists/readme.md", "item": "F-1", "can": "the template the checklist gives"},
-    {"checklist": "checklists/readme.md", "item": "B-1", "can": "the receiver the CCS names"},
-]
 # An item the first user finds no Good for, with the places of the work where it looked for it, what
 # it did there and what it did not get.
 DID = "read the opening for whom it is"
@@ -219,24 +213,27 @@ class RepoTest(testing.FolderTest):
         return self.read_json(state.state_path(self.result))
 
     def printed(self, out):
-        """What the script printed: a move as the line it tells, where it has one, and the tool
-        call itself; anything else as its JSON."""
-        lines = out.rstrip("\n").split("\n")
-        try:
-            move = json.loads(lines[-1])
-        except ValueError:
-            move = None
-        if isinstance(move, dict) and set(move) == {"tool", "input"}:
-            return {"line": lines[0], "move": move} if lines[1:] else {"move": move}
-        return json.loads(out)
+        """What the script printed: the line for the user, where it has one, then a move as the tool
+        call itself, or anything else as its JSON."""
+        line, rest = self.told(out)
+        found = json.loads(rest)
+        printed = {"move": found} if set(found) == {"tool", "input"} else found
+        return dict(printed, line=line) if line else printed
+
+    def told(self, out):
+        """The line for the user the script printed first, or "" where it printed none, and what it
+        printed after."""
+        head, _, rest = out.partition("\n")
+        return (head, rest) if head.startswith("turn: ") and rest else ("", out)
 
     def next(self, given=None):
-        """What the script prints next for the run, handed the orchestrator's check, its questions
-        or the agent ID, as JSON."""
+        """What the script prints next for the run, handed the orchestrator's questions or the
+        agent ID, as JSON."""
         stdin = json.dumps(given) if given is not None else ""
         code, out = self.turn("next", self.result, stdin=stdin)
         self.assertEqual(code, 0, out)
-        head, _, page = out.partition("\n")
+        line, rest = self.told(out)
+        head, _, page = rest.partition("\n")
         count = re.match(r"\w+, page 1 of (\d+): ", head)
         if count is None:
             return self.printed(out)
@@ -244,7 +241,8 @@ class RepoTest(testing.FolderTest):
         # print adds.
         for n in range(2, int(count.group(1)) + 1):
             page = page[:-1] + self.turn("next", self.result, str(n))[1].partition("\n")[2]
-        return json.loads(page)
+        found = json.loads(page)
+        return dict(found, line=line) if line else found
 
     def laid_out_anew(self):
         """The calling AI keeps in the CCS an answer that adds a file to the work, LICENSE."""
@@ -266,15 +264,22 @@ class RepoTest(testing.FolderTest):
         return out
 
     def heard(self, out):
-        """What the script prints after the line telling the calling AI, which the orchestrator
-        sends to `main` first."""
-        self.assertEqual(out["move"]["tool"], "SendMessage", out)
-        self.assertEqual(out["move"]["input"]["to"], "main")
-        return self.next()
+        """What the orchestrator takes once the line for the user is sent: where the line is a move
+        of its own, sent to `main` before a role is started, what the script prints next; otherwise
+        what came with the line."""
+        move = out.get("move", {})
+        if move.get("tool") == "SendMessage" and move["input"]["to"] == "main":
+            return self.next()
+        return {k: v for k, v in out.items() if k != "line"}
+
+    def line_of(self, out):
+        """The line for the user the script printed, with a move or as the message of a move of its
+        own sent to `main`."""
+        return out.get("line") or out["move"]["input"]["message"]
 
     def due(self, out):
-        """The role's move after the line telling the calling AI: the Agent call starting the role,
-        or the message sent to it."""
+        """The role's move once the line for the user is sent: the Agent call starting the role, or
+        the message sent to it."""
         return self.heard(out)["move"]
 
     def here(self, path):
@@ -290,13 +295,12 @@ class RepoTest(testing.FolderTest):
         return self.state()["next"]["prompt"]
 
     def started(self, asked=None):
-        """The run started on a call, by default the run's, and checked to give every item its
-        Good; and the move starting the generator."""
+        """The run started on a call, by default the run's; and the move starting the generator."""
         asked = asked or CALL
         self.result = str(asked["result"])
         code, out = self.turn("start", json.dumps(asked))
         self.assertEqual(code, 0, out)
-        return self.due(self.next({"items": CAN, "questions": []}))
+        return self.due(self.next())
 
     def replied(self, reply):
         """The role due writes its reply and ends, and the orchestrator goes on with the agent ID
@@ -343,14 +347,14 @@ class RepoTest(testing.FolderTest):
             return self.replied({"items": self.reading(*found)})
 
     def returned(self, out):
-        """The return of the result told as the script printed it, once every item has its Good;
-        and what the script prints after the line."""
-        self.assertIn("Next, turn:up will return the result", out["line"])
+        """The return of the result as the script printed it, once every item has its Good, told
+        where the result is; and what came with the line."""
+        self.assertIn(f"The result is at {self.result}.", out["line"])
         return self.heard(out)
 
 
 class ReadTest(RepoTest):
-    """A run started and checked to give every item its Good, its generator due."""
+    """A run started, its generator due."""
 
     def setUp(self):
         super().setUp()

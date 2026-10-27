@@ -11,7 +11,6 @@ from unittest import mock
 
 from helpers import (
     CALL,
-    CAN,
     CCS,
     CHECKLIST,
     FOUND,
@@ -99,22 +98,22 @@ class TestRunFolder(RepoTest):
         self.assertFalse(os.path.exists(".turn"))
 
     def test_a_run_called_again_the_same_day_is_found_in_its_folder(self):
-        # Given: a run started and told its check
+        # Given: a run started and told its generator's start
         self.start()
         self.next()
         # When: the same call is made again the same day
         self.start()
-        # Then: the run is gone on with from its folder, the one there is, told again
+        # Then: the run is gone on with from its folder, the one there is, the start to be told
+        # again
         self.assertEqual(self.runs(), [os.path.basename(RUN)])
-        self.assertEqual(self.state()["told"], False)
+        self.assertNotIn("told", self.state()["next"])
 
     def test_a_run_begun_on_an_earlier_day_is_gone_on_with_from_its_folder(self):
         # Given: a run started the day before
         with mock.patch.object(time, "strftime", return_value=YESTERDAY):
             self.start()
         # When: it is gone on with today, and the generator becomes due
-        self.next()
-        move = self.due(self.next({"items": CAN, "questions": []}))
+        move = self.due(self.next())
         # Then: the run is read from the folder of the day it began, its generator replying there,
         # and no folder of today is made
         prompt = json.loads(move["input"]["prompt"])

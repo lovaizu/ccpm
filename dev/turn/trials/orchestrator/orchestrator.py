@@ -12,11 +12,8 @@ part and B-2 in each part, in a repository made for the run:
   AI answers it, and a third round gives B-1.
 - `generator`: the generator asking before making anything, and again while making; each answer
   sent to it, it makes the work, and the run goes on as `plain`.
-- `asked`: the task with its decision taken out, so the check asks the calling AI; the run goes on
-  as `plain`.
-- `stopped`: as `plain`, the calling AI stopping the orchestrator once it is told, after the first
-  user's reading, that it will return the result, and calling turn again with the same call, which
-  goes on from that move.
+- `stopped`: as `plain`, the calling AI stopping the orchestrator once it is told the first user
+  starts, and calling turn again with the same call, which goes on from that move.
 
 Where turn asks, the calling AI takes each question's recommended answer as the user's, keeps it in
 the task's decisions and sends it.
@@ -64,15 +61,14 @@ STEPS = {
     "sent": PLAIN,
     "left": ASKS,
     "generator": ASKS,
-    "asked": ASKS,
     "stopped": START
-    + "turn sends you a line before each move. Once a line says `turn:up will return`, the first"
-    " time alone, stop the agent with TaskStop at once, loaded with ToolSearch,"
+    + "turn sends you a line as each of its agents starts. Once a line says `turn:first-user"
+    " starts`, the first time alone, stop the agent with TaskStop at once, loaded with ToolSearch,"
     " then start the `turn:up` agent in the background again with the same call. When it returns,"
     " reply with the line it returned.",
 }
-# Each way's replies, by name; asked and stopped take plain's, as the calling AI's steps make them.
-REPLIES = dict({w: w for w in STEPS}, asked="plain", stopped="plain")
+# Each way's replies, by name; stopped takes plain's, as the calling AI's steps make it.
+REPLIES = dict({w: w for w in STEPS}, stopped="plain")
 ROLES = ("turn:generator", "turn:first-user")
 
 if len(sys.argv) != 2 or sys.argv[1] not in STEPS:
@@ -82,7 +78,7 @@ run = shared.Run.made(f"orchestrator-{way}")
 place = run.repo
 plugin = shared.turn(run)
 with shared.removed(place, plugin):
-    shared.task(place, CALL, "" if way == "asked" else None)
+    shared.task(place, CALL)
     for agent in glob.glob(os.path.join(HERE, "roles", "*.md")):
         shutil.copyfile(agent, os.path.join(plugin, "agents", os.path.basename(agent)))
     # The stand-in roles keep no steps of the roles, so the roles' lanes are left out, each entry

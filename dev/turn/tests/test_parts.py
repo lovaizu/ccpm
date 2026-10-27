@@ -7,7 +7,6 @@ import unittest
 
 from helpers import (
     CALL,
-    CAN,
     CHECKLIST,
     EACH,
     EACH_GOOD,
@@ -31,8 +30,7 @@ class TestEachPart(RepoTest):
         self.write("README.md", SECTIONED)
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
-        can = CAN + [dict(CAN[0], item="B-2")]
-        self.due(self.next({"items": can, "questions": []}))
+        self.due(self.next())
 
     def test_an_item_asked_of_each_part_is_sent_back_with_the_parts_without_good(self):
         # Given: a first user giving an item asked of each part no Good where one part does not

@@ -24,7 +24,7 @@ NAMING = ("checklist", "item")
 ONE_GOOD = "lines"
 EACH_GOOD = "parts"
 # The keys whose value is words, wherever an item holds them.
-WORDED = ("can", "good", "did", "lacking")
+WORDED = ("good", "did", "lacking")
 
 
 def shapes(path: str) -> tuple[tuple[str, ...], ...]:
@@ -48,12 +48,6 @@ class Form(NamedTuple):
     chooses: bool = False
 
 
-# The orchestrator's two forms are set in its steps, not in form files as the roles' are: it hands
-# them on standard input, which no lane holds, and its lane on what it reads keeps it from any file
-# but those it checks the CCS by.
-# Before the work is made, the orchestrator says for every item what in the CCS and its files gives
-# its Good, or the question it waits on.
-CHECK = Form((("can",), ("question",)), asks=True)
 # The generator claims the Good it set for every item, or the question it waits on; asking before
 # it makes anything, it gives only the items waiting; and it names each choice the work rests on.
 CLAIM = Form(
@@ -61,7 +55,9 @@ CLAIM = Form(
 )
 # The first user gives every item the Good it found, or where it stopped.
 FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")))
-# Each item two rounds leave without Good waits on a question the orchestrator words.
+# Each item two rounds leave without Good waits on a question the orchestrator words, in a form set
+# in its steps, not in a form file as the roles' are: it hands it on standard input, which no lane
+# holds.
 LEFT = Form((("question",),), asks=True)
 
 

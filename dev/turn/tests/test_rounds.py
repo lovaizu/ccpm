@@ -25,41 +25,33 @@ class TestRoundEnd(ReadTest):
     def test_every_good_found_has_the_run_return(self):
         # Given: a first user finding every item's Good
         # When: the orchestrator goes on
-        # Then: a line says what the first user found and that the result is returned next, with
-        # no second round
+        # Then: the run returns, with no second round
         out = self.first_read(FOUND, FOUND_B1)
-        self.assertEqual(
-            out["line"],
-            "turn: turn:first-user found the Good of 2 of 2 items. Next, turn:up will return the"
-            " result, of README.md, for 2 items, round 1.",
-        )
-        self.assertEqual(self.heard(out), {"returned": RESULT})
+        self.assertEqual(self.returned(out), {"returned": RESULT})
 
     def test_an_item_the_first_user_found_no_good_for_is_made_again_as_it_gave_it(self):
         # Given: a first user giving one item's Good and stopping at the other
         # When: the orchestrator goes on
-        # Then: a line says what the first user found and that the second round's generator makes
-        # the work, which is given the stop as the first user gave it
+        # Then: a line says what the first user found and that the second round's generator starts,
+        # which is given the stop as the first user gave it
         out = self.first_read(FOUND)
         self.assertEqual(
-            out["line"],
-            "turn: turn:first-user found the Good of 1 of 2 items. Next, turn:generator will make"
-            " the work to give every item its Good, and run what it gives as the receiver would,"
-            " of README.md, for 1 item, round 2.",
+            self.line_of(out),
+            "turn: turn:first-user found the Good of 1 of 2 items. turn:generator starts: make"
+            " README.md to give every item its Good, round 2.",
         )
         self.due(out)
         self.assertEqual(self.prompt()["sent_back"], [STOPPED_B1])
 
     def test_after_an_item_made_again_the_first_user_and_the_return_take_every_item(self):
         # Given: a round ended with one item without Good, made again by the generator
-        # When: the first user reads the work again, finding every Good, and the result is due
-        # Then: the line for each counts every item, not the one made again
+        # When: the first user reads the work again, finding every Good
+        # Then: the line counts every item, not the one made again, and the result holds both
         self.due(self.first_read(FOUND))
-        out = self.made()
-        self.assertTrue(str(out["line"]).endswith("of README.md, for 2 items, round 2."), out)
-        self.assertEqual(self.due(out)["input"]["subagent_type"], "turn:first-user")
+        self.assertEqual(self.due(self.made())["input"]["subagent_type"], "turn:first-user")
         out = self.replied({"items": self.reading(FOUND, FOUND_B1)})
-        self.assertTrue(str(out["line"]).endswith("of README.md, for 2 items, round 2."), out)
+        self.assertIn("found the Good of 2 of 2 items.", out["line"])
+        self.assertEqual(self.read_json(RESULT)["items"], [FOUND, FOUND_B1])
 
     def test_the_next_round_s_generator_is_given_the_choices_the_last_claim_named(self):
         # Given: a first round whose generator named a choice of its own, and a first user
@@ -74,7 +66,7 @@ class TestRoundEnd(ReadTest):
         # When: the orchestrator goes on
         # Then: the second round's generator is due, given every item as the first user stopped
         out = self.first_read()
-        self.assertIn("round 2", out["line"])
+        self.assertIn("round 2", self.line_of(out))
         self.assertEqual(self.prompt()["sent_back"], [STOPPED_F1, STOPPED_B1])
 
 
@@ -89,16 +81,11 @@ class TestRounds(ReadTest):
 
     def left(self, *stops):
         """Both rounds taken to their end with B-1 without Good, the second's reading giving the
-        stops, the question to word told; what is shown."""
+        stops; what is shown, the line saying what the first user found."""
         self.second()
         out = self.first_read(FOUND, *stops)
-        self.assertEqual(
-            out["line"],
-            "turn: turn:first-user found the Good of 1 of 2 items. Next, turn:up will word a"
-            " question for each item two rounds left without Good, of README.md, for 1 item,"
-            " round 2.",
-        )
-        return self.next()
+        self.assertEqual(out["line"], "turn: turn:first-user found the Good of 1 of 2 items.")
+        return self.heard(out)
 
     def test_the_next_round_starts_its_generator_anew(self):
         # Given: a first round leaving B-1 without Good
@@ -106,7 +93,7 @@ class TestRounds(ReadTest):
         # Then: a line says the second round's generator makes the work, and it is started anew,
         # not sent a message
         out = self.first_read(FOUND)
-        self.assertIn("round 2", out["line"])
+        self.assertIn("round 2", self.line_of(out))
         move = self.due(out)
         self.assertEqual(
             (move["tool"], move["input"]["subagent_type"]), ("Agent", "turn:generator")
@@ -150,23 +137,17 @@ class TestRounds(ReadTest):
     def test_the_question_for_an_item_left_is_sent_at_once(self):
         # Given: an item two rounds left without Good
         # When: the orchestrator gives its question for it
-        # Then: a line says the item waits on the user's answer, and the run asks it
+        # Then: the run asks it, a line saying turn:up asks the user
         self.left()
         out = self.next({"items": [WAITS], "questions": [QUESTION]})
-        self.assertTrue(
-            str(out["line"]).startswith(
-                "turn: turn:up found 1 of 2 items waiting on the user's answer."
-            ),
-            out,
-        )
-        self.assertEqual(self.next(), {"asked": RESULT})
+        self.assertEqual(out, {"line": "turn: turn:up asks the user 1 question.", "asked": RESULT})
         self.assertEqual(json.loads(self.turn("questions", RESULT)[1]), ASKED)
 
     def answered_left(self):
         """Both rounds leaving B-1 without Good, its question asked, and the calling AI's answer
         handed on; what the script prints then."""
         self.left()
-        self.heard(self.next({"items": [WAITS], "questions": [QUESTION]}))
+        self.next({"items": [WAITS], "questions": [QUESTION]})
         return self.answered()
 
     def test_once_answered_the_item_left_is_made_again_with_the_answer(self):
@@ -175,7 +156,7 @@ class TestRounds(ReadTest):
         # Then: a third round starts its generator anew with the item as last found and the
         # answer
         out = self.answered_left()
-        self.assertIn("round 3", out["line"])
+        self.assertIn("round 3", self.line_of(out))
         move = self.due(out)
         prompt = json.loads(move["input"]["prompt"])
         self.assertEqual((move["tool"], prompt["sent_back"]), ("Agent", [STOPPED_B1]))
@@ -187,7 +168,7 @@ class TestRounds(ReadTest):
         # Then: the third goes on to the fourth, and the fourth's end shows it for a question
         self.due(self.answered_left())
         out = self.first_read(FOUND)
-        self.assertIn("round 4", out["line"])
+        self.assertIn("round 4", self.line_of(out))
         self.due(out)
         self.assertEqual(self.heard(self.first_read(FOUND)), {"left": [STOPPED_B1]})
 
@@ -197,13 +178,13 @@ class TestRounds(ReadTest):
         # Then: the fifth goes on to the sixth, and the sixth's end shows it for a question
         self.due(self.answered_left())
         self.due(self.first_read(FOUND))
-        self.heard(self.first_read(FOUND))
-        self.heard(self.next({"items": [WAITS], "questions": [QUESTION]}))
+        self.first_read(FOUND)
+        self.next({"items": [WAITS], "questions": [QUESTION]})
         out = self.answered()
-        self.assertIn("round 5", out["line"])
+        self.assertIn("round 5", self.line_of(out))
         self.due(out)
         out = self.first_read(FOUND)
-        self.assertIn("round 6", out["line"])
+        self.assertIn("round 6", self.line_of(out))
         self.due(out)
         self.assertEqual(self.heard(self.first_read(FOUND)), {"left": [STOPPED_B1]})
 
