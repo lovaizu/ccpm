@@ -19,6 +19,14 @@ shows whether it improved.
 5. The generator and the first user, holding the same purpose, settle a gap by messages: the first
    user says the gap and how it hinders the purpose, the generator mends it or says why it lies
    outside the purpose.
+6. Every check tells "could not check" apart from "no problem": it ends in no problem, a problem
+   found, or could not check with why; for each way it can fail to check, what should then happen
+   is decided beforehand and tested, so no case is met unconsidered. This holds for hooks (a
+   script that fails or times out, a command not parsed), tests (a skip is no pass), CI (a job
+   not run), a reader (a command that did not run gives no Good) and the trial tools.
+
+Intents 1 to 6 are general to every plugin and go into dev/architecture.md's principles; lane,
+turn and rn apply them.
 
 Decided by the assistant from these and turn's purpose:
 
