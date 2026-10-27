@@ -1,24 +1,14 @@
-"""Tries the orchestrator's flow: the real orchestrator, flow and lanes, with the two roles stood
-in for by agents of this folder that write the replies replies.py sets for the way named, so the run
-takes that way. A stand-in for the calling AI calls turn on a task of two items, B-1 answered at its
-part and B-2 in each part, in a repository made for the run:
+"""Tries turn's orchestrator: the real orchestrator and its lanes, with the two roles stood in for
+by agents of this folder that write the replies replies.py sets for the way named, so the run takes
+that way. A stand-in for the calling AI calls turn on a task of two items, B-1 answered at its part
+and B-2 in each part, in a repository made for the run:
 
-- `plain`: every item Good at the first reading.
-- `given`: the first user finding no Good for B-1 in a README that names no license, what the
-  reader would need sent to the generator by message, which adds it; the first user, sent the work
-  made again, finds every Good.
-- `sent`: the first user finding no Good for B-1 four times, sent to the generator three times, the
-  fourth reading ending the round with B-1 without Good; B-1 made again in the second round and
-  given.
-- `left`: as `sent` in two rounds, so B-1 waits on a question the orchestrator words; the calling
-  AI answers it, and a third round gives B-1.
-- `generator`: the generator asking before making anything, and again while making; each answer
-  sent to it, it makes the work, and the run goes on as `plain`.
-- `stopped`: as `plain`, the calling AI stopping the orchestrator once it is told the first user
-  starts, and calling turn again with the same call, which goes on from that move.
-
-Where turn asks, the calling AI takes each question's recommended answer as the user's, keeps it in
-the task's decisions and sends it.
+- `plain`: every item Good at the first reading, the result holding both at their lines.
+- `left`: the first user finding no Good for B-1 in a README that names no license, and ending
+  without sending, the result holding B-1 in `left` with what the reader would need.
+- `stopped`: as `plain`, the calling AI stopping the orchestrator once the first user has started,
+  and calling turn again with the same call, which starts the generator again on what the run's
+  folder holds.
 
     python3 dev/turn/trials/orchestrator/orchestrator.py <way>
 
@@ -48,26 +38,16 @@ import testing
 CALL = shared.call("has")
 START = shared.start(CALL)
 USAGE = "usage: orchestrator.py <way>"
-ASKS = (
-    START
-    + "If it returns with questions, take each question's recommended answer as the user's, write"
-    " it into notes/decisions.md as a line of its own, and send the answer to the same agent with"
-    " SendMessage, to the agent ID its start gave back. When it returns with no questions, reply"
-    " with the line it returned."
-)
 PLAIN = START + "When it returns, reply with the line it returned."
 # Each way's steps for the calling AI, in the order the docstring lists them.
 STEPS = {
     "plain": PLAIN,
-    "given": PLAIN,
-    "sent": PLAIN,
-    "left": ASKS,
-    "generator": ASKS,
-    "stopped": START
-    + "turn sends you a line as each of its agents starts. Once a line says `turn:first-user"
-    " starts`, the first time alone, stop the agent with TaskStop at once, loaded with ToolSearch,"
-    " then start the `turn:up` agent in the background again with the same call. When it returns,"
-    " reply with the line it returned.",
+    "left": PLAIN,
+    "stopped": START + "Wait until the first user has started, with `until grep -qs"
+    ' \'"agentType":"turn:first-user"\' {records}/*.meta.json; do sleep 2; done` in a command of'
+    " its own, then stop the agent with TaskStop at once, loaded with ToolSearch, and start the"
+    " `turn:up` agent in the background again with the same call. When it returns, reply with the"
+    " line it returned.",
 }
 # Each way's replies, by name; stopped takes plain's, as the calling AI's steps make it.
 REPLIES = dict({w: w for w in STEPS}, stopped="plain")
@@ -104,7 +84,13 @@ with shared.removed(place, plugin):
         json.dump(replies.WAYS[REPLIES[way]], f, indent=2, ensure_ascii=False)
     start = time.time()
     record = os.path.join(run.top, f"{way}.jsonl")
-    end = shared.claude(STEPS[way], [plugin], cwd=place, wait=60, record=record)
+    # The folder of each agent's record of the session, where an agent's meta file names its type
+    # once it has started.
+    records = os.path.dirname(
+        shared.record.subagent(shared.record.conversation("*", shared.folder(place)), "*")
+    )
+    steps = STEPS[way].replace("{records}", records)
+    end = shared.claude(steps, [plugin], cwd=place, wait=60, record=record)
     session = end["session_id"]
     print(end.get("result"))
     print("session:", session, "cost:", end.get("total_cost_usd"))

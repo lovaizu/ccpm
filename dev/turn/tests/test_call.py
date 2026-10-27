@@ -16,9 +16,9 @@ from helpers import (
     CALL,
     CCS,
     CHECKLIST,
-    EACH,
-    EACH_ITEM,
-    ITEMS,
+    CLAIM,
+    FIRST_READ,
+    RESULT,
     RUN,
     SCRIPTS,
     TODAY,
@@ -30,11 +30,12 @@ from helpers import (
 # pylint: disable=duplicate-code
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <the agent ID as JSON, your questions as JSON, or the answer"
-    " as it came>]\n"
-    "       turn.py next <result> <page>\n"
-    "       turn.py questions <result>\n"
-    "       turn.py parts <result>"
+    "       turn.py generator <result>\n"
+    "       turn.py first-user <result>\n"
+    "       turn.py parts <result>\n"
+    "       turn.py claim <result>\n"
+    "       turn.py reading <result>\n"
+    "       turn.py end <result>"
 )
 # pylint: enable=duplicate-code
 
@@ -58,27 +59,18 @@ def call_with(**change):
 class TestUsage(RepoTest):
     def test_an_unknown_command_or_a_wrong_count_of_arguments_prints_the_usage(self):
         # Given: turn's script run with no command, an unknown one, or a command short of its
-        # arguments
+        # argument or with one too many
         # When: it is run
-        # Then: it prints the usage, which names every command with its arguments, and stops
-        # Each command also with one argument too many, and words sorting before and after every
-        # command with as many arguments as a command takes.
+        # Then: it prints the usage, which names every command with its argument, and stops
+        # Words sorting before and after every command are among the unknown ones.
+        commands = ["start", "generator", "first-user", "parts", "claim", "reading", "end"]
         for argv in [
             [],
             ["go"],
             ["aaa", "r"],
             ["zzz", "r"],
-            ["aaa", "r", "1"],
-            ["aaa", "r", "1", "1"],
-            ["zzz", "r", "1", "1"],
-            ["start"],
-            ["start", "{}", "x"],
-            ["next"],
-            ["next", "r", "1", "x"],
-            ["questions"],
-            ["questions", "r", "x"],
-            ["parts"],
-            ["parts", "r", "x"],
+            *([c] for c in commands),
+            *([c, "r", "x"] for c in commands),
         ]:
             with self.subTest(argv=argv):
                 self.assertEqual(self.turn(*argv), (1, USAGE + "\n"))
@@ -86,9 +78,9 @@ class TestUsage(RepoTest):
     def test_the_script_finds_its_own_modules_before_any_of_the_same_name(self):
         # Given: a folder on PYTHONPATH holding a module named as one of turn's scripts, which
         # breaks when imported
-        # When: the orchestrator runs the script by its path from the shell, with no command
+        # When: a role runs the script by its path from the shell, with no command
         # Then: it prints the usage, as its own modules are found first
-        self.write("elsewhere/run.py", "raise SystemExit('not turn')\n")
+        self.write("elsewhere/folder.py", "raise SystemExit('not turn')\n")
         done = subprocess.run(
             [sys.executable, os.path.join(SCRIPTS, "turn.py")],
             check=False,
@@ -100,7 +92,7 @@ class TestUsage(RepoTest):
 
     def test_the_script_takes_the_arguments_after_its_own_path(self):
         # Given: no run going
-        # When: the orchestrator runs the script by its path with a command and its argument
+        # When: a role runs the script by its path with a command and its argument
         # Then: the command is run on that argument, and stops on the run not going
         out = io.StringIO()
         argv = ["turn.py", "parts", "none.json"]
@@ -115,26 +107,23 @@ class TestUsage(RepoTest):
 
     def test_what_is_printed_keeps_letters_beyond_ascii_as_they_are(self):
         # Given: a call whose checklist, work and result are named in Japanese
-        # When: the run is started, its generator told and started
+        # When: the run is started, and the generator and the first user are given their files
         # Then: each is printed with the names as they are written
         os.rename("checklists/readme.md", "checklists/読む.md")
         ccs = dict(CCS, retrieved_artifacts=[{"checklist": "checklists/読む.md"}, {"page": "docs"}])
         ccs["focal_entities"] = [{"deliverable": "はじめに.md"}, CCS["focal_entities"][1]]
         self.write_json(CALL["ccs"], ccs)
-        result = ".tasks/結果.json"
-        call = dict(CALL, result=result)
+        call = dict(CALL, result=".tasks/結果.json")
         code, out = self.turn("start", json.dumps(call))
         self.assertEqual(code, 0, out)
         self.assertIn("結果.json", out)
-        with open(f".turn/{TODAY}-.tasks%2F結果.json/run.json", encoding="utf-8") as kept:
-            self.assertIn("checklists/読む.md", kept.read())
-        code, out = self.turn("next", result)
-        self.assertEqual(code, 0, out)
-        self.assertIn("はじめに.md", out)
-        code, out = self.turn("next", result)
-        self.assertEqual(code, 0, out)
-        self.assertIn("checklists/読む.md", out)
+        result = json.loads(out)["result"]
         self.write("はじめに.md", "# 始め\n")
+        for command, name in (("generator", "はじめに.md"), ("first-user", "checklists/読む.md")):
+            with self.subTest(command=command):
+                code, out = self.turn(command, result)
+                self.assertEqual(code, 0, out)
+                self.assertIn(name, out)
         code, out = self.turn("parts", result)
         self.assertEqual(code, 0, out)
         self.assertIn("はじめに.md:1-1", out)
@@ -145,133 +134,65 @@ class TestStart(RepoTest):
         # Given: a call naming the CCS, the kinds of the work, the checklist and the receiver, and
         # where the result goes
         # When: the run is started
-        # Then: it prints where the result goes alone, as a whole path, and the generator is due
-        # first, as it asks first what only the user can decide
+        # Then: it prints where the result goes alone, as a whole path, and keeps the call and the
+        # folder it was made from in the run's folder, beside nothing else
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual((code, json.loads(out)), (0, {"result": self.here(CALL["result"])}))
-        self.assertEqual(self.state()["next"]["agent"], "turn:generator")
+        self.assertEqual(self.read_json(f"{RUN}/call.json"), {"call": CALL, "root": self.base})
+        self.assertEqual(os.listdir(RUN), ["call.json"])
 
-    def test_a_run_started_starts_the_generator(self):
-        # Given: a run started
-        # When: the orchestrator goes on, and on once the line is sent
-        # Then: the generator is to be started with its prompt as the flow keeps it
-        move = self.started()
-        self.assertEqual(move["input"]["subagent_type"], "turn:generator")
-        self.assertEqual(json.loads(move["input"]["prompt"]), self.prompt())
-
-    def test_the_run_keeps_every_item_of_every_checklist(self):
-        # Given: a checklist with an item under Format and one under Benefit
-        # When: the run is started
-        # Then: the run keeps both items, each by its checklist and its ID
+    def test_a_call_again_keeps_what_the_run_s_folder_holds(self):
+        # Given: a run started, its generator's claim and its first user's reading in its folder
         self.started()
-        running = self.state()
-        self.assertEqual(
-            running["items"],
-            ITEMS,
-        )
+        self.claimed(CLAIM)
+        self.read_as(FIRST_READ)
+        # When: turn is called again with the same call
+        result = self.started()
+        # Then: it prints the same result, and the claim and the reading are kept as they were
+        self.assertEqual(result, self.here(CALL["result"]))
+        self.assertEqual(self.read_json(self.kept("generator.json")), CLAIM)
+        self.assertEqual(self.read_json(self.kept("first-user.json")), FIRST_READ)
 
-    def test_the_run_keeps_the_items_asked_of_each_part(self):
-        # Given: a checklist with an item asked of each part, beside one of its part and one of
-        # the whole
-        # When: the run is started
-        # Then: the run keeps the item asked of each part, by its checklist and ID, and only it
-        self.write("checklists/readme.md", CHECKLIST + EACH)
-        self.turn("start", json.dumps(CALL))
-        running = self.state()
-        self.assertEqual(running["each"], [EACH_ITEM])
+    def test_a_call_again_from_another_folder_reads_the_call_from_where_it_was_first_made(self):
+        # Given: a run started from the root on a call naming its result by a whole path and its
+        # CCS from the root, and the session's working folder moved to notes/
+        asked = dict(CALL, result=self.here(RESULT))
+        self.started(asked)
+        os.chdir("notes")
+        # When: turn is called again with the same call
+        # Then: it goes on with the run, its CCS read from the root, and keeps the folder the call
+        # was first made from
+        self.assertEqual(self.started(asked), self.here(RESULT))
+        self.assertEqual(self.read_json(self.kept("call.json")), {"call": asked, "root": self.base})
 
-    def test_the_run_keeps_what_the_roles_may_read(self):
-        # Given: a CCS whose entries name existing files, and text that names none
-        # When: the run is started
-        # Then: the run keeps the CCS, each file its entries name and the work as what may be read
-        self.started()
-        running = self.state()
-        self.assertEqual(
-            running["given"],
-            [
-                ".tasks/readme.json",
-                "README.md",
-                "checklists/readme.md",
-                "notes/readme.decisions.md",
-                "docs/start.md",
-            ],
-        )
-
-    def test_the_run_keeps_what_the_readers_may_read(self):
-        # Given: a call naming the kind of what the receiver has
-        # When: the run is started
-        # Then: the run keeps the work, what the receiver has and the checklists as what the first
-        # user may read, and not the CCS or the decisions
-        self.turn("start", json.dumps(CALL))
-        running = self.state()
-        self.assertEqual(
-            running["readable"], ["README.md", "docs/start.md", "checklists/readme.md"]
-        )
-
-    def test_the_use_and_what_the_receiver_has_are_taken(self):
-        # Given: a call naming the kinds of the use and of what the receiver has
-        # When: the run is started
-        # Then: the run keeps each kind's entries
-        self.turn("start", json.dumps(CALL))
-        running = self.state()
-        self.assertEqual(running["use"], ["to try it on their own files"])
-        self.assertEqual(running["has"], ["docs/start.md"])
-
-    def test_a_folder_the_receiver_has_is_taken(self):
-        # Given: a CCS whose entry of what the receiver has names a folder, as the repository is
-        # for a maintainer
-        # When: the run is started
-        # Then: the run keeps the folder as what the readers may read
-        self.write_json(
-            CALL["ccs"], dict(CCS, goal_orientation=CCS["goal_orientation"] + [{"page": "docs"}])
-        )
-        self.turn("start", json.dumps(CALL))
-        running = self.state()
-        self.assertEqual(running["has"], ["docs", "docs/start.md"])
-        self.assertIn("docs", running["readable"])
-
-    def test_a_folder_named_with_a_trailing_slash_is_kept_as_the_folder(self):
-        # Given: a CCS naming a folder with a trailing slash, as a caller names a folder
-        # When: the run is started
-        # Then: the run keeps the folder without the slash, so the files inside it are found within
-        # it, as what the readers and the roles may read
-        self.write_json(
-            CALL["ccs"], dict(CCS, goal_orientation=CCS["goal_orientation"] + [{"page": "docs/"}])
-        )
-        self.turn("start", json.dumps(CALL))
-        running = self.state()
-        self.assertEqual(running["has"], ["docs", "docs/start.md"])
-        self.assertIn("docs", running["given"])
-        self.assertNotIn("docs/", running["given"])
-
-    def test_the_generator_is_given_the_calls_test_or_null(self):
-        for test in ("make check", None):
-            with self.subTest(test=test):
-                # Given: a call whose test is a command, or null, the caller saying the work has
-                # none
-                # When: the run is started and checked
-                self.started(dict(CALL, test=test))
-                # Then: the generator is to start from the call's test as it was given
-                self.assertEqual(self.prompt()["test"], test)
-                os.remove(f"{RUN}/run.json")
-
-    def test_a_call_again_with_another_test_is_another_call(self):
+    def test_a_call_again_with_another_call_on_the_same_result_stops(self):
         # Given: a run started on a call whose test is a command
-        self.turn("start", json.dumps(CALL))
-        # When: turn is called again with the same call but its test null
-        code, out = self.turn("start", json.dumps(dict(CALL, test=None)))
-        # Then: it stops, saying a run of another call is kept at the result
-        self.assertEqual(code, 1)
-        self.assertIn("a run of another call is kept", out)
+        self.started()
+        # When: turn is called again with the same result but another test, or another CCS
+        for changed in ({"test": None}, {"ccs": "notes/readme.decisions.md"}):
+            with self.subTest(changed=changed):
+                out = self.stopped("start", json.dumps(dict(CALL, **changed)))
+                # Then: it stops, saying a run of another call is kept for that result, and keeps
+                # the call it holds
+                self.assertIn("a run of another call is kept", out)
+                self.assertEqual(self.read_json(self.kept("call.json"))["call"], CALL)
+
+    def test_a_call_again_on_a_ccs_gone_wrong_stops(self):
+        # Given: a run started, and its CCS then naming a checklist that is not there
+        self.started()
+        ccs = copy.deepcopy(CCS)
+        ccs["retrieved_artifacts"][0] = {"checklist": "checklists/gone.md"}
+        self.write_json(CALL["ccs"], ccs)
+        # When: turn is called again with the same call
+        # Then: it stops, naming the checklist
+        self.assertIn("checklists/gone.md", self.stopped("start", json.dumps(CALL)))
 
     def test_a_result_in_a_folder_not_yet_there_starts_its_run(self):
         # Given: a call whose result goes in a folder not yet there
-        # When: the run is started and checked
-        # Then: the run is kept in turn's folder at the root, named by the result's path from it,
-        # and the generator is due
-        move = self.started(call_with(result="out/new/result.json"))
-        self.assertTrue(os.path.exists(f".turn/{TODAY}-out%2Fnew%2Fresult.json/run.json"))
-        self.assertEqual(move["input"]["subagent_type"], "turn:generator")
+        # When: the run is started
+        # Then: the run is kept in turn's folder at the root, named by the result's path from it
+        self.started(call_with(result="out/new/result.json"))
+        self.assertTrue(os.path.isfile(f".turn/{TODAY}-out%2Fnew%2Fresult.json/call.json"))
 
 
 class TestStartStops(RepoTest):
@@ -281,7 +202,7 @@ class TestStartStops(RepoTest):
         self.assertEqual(code, 1)
         for words in said:
             self.assertIn(words, out)
-        # No run is started: neither the result nor the state is written.
+        # No run is started: neither the result nor the run's folder is written.
         self.assertFalse(os.path.exists(CALL["result"]))
         self.assertFalse(os.path.exists(".turn"))
 

@@ -188,17 +188,6 @@ QUESTIONS = {
     ]
 }
 
-# What the stand-in turn gives back where the research cannot go on for what lies outside it: the
-# page it reads blocked by the network.
-STOPPED = {
-    "stopped": {
-        "tried": "reading GitHub's page on READMEs at docs.github.com, which the research quotes",
-        "confirmed": "README.md's own lines, read from the repository",
-        "not_confirmed": "what GitHub's page says a visitor sees first, as the request was blocked",
-        "needs": "docs.github.com allowed by the network",
-    }
-}
-
 # The learnings, as the orchestrator writes them once the finished work is approved, each quoting a
 # commit message the state-making below keeps.
 PLACE_QUOTE = "the greeting goes right under the title"
@@ -908,11 +897,6 @@ ONE_POINT = Check(
     "the reply asks one point, `▶` once, with options `a.` and `b.`",
     lambda s: s.reply.count("▶") == 1 and all(re.search(rf"(?m)^\W*{x}\. ", s.reply) for x in "ab"),
 )
-# A line of turn's, put into the conversation language, may take that language's colon.
-TURN_LINE = Check(
-    "a line of turn's passed on to the user",
-    lambda s: any(t.strip().startswith(("turn:", "turn：")) for t in s.said),
-)
 
 
 def languages(seen: Seen) -> bool:
@@ -1108,31 +1092,9 @@ CASES = {
         ],
         {"t1.1": [QUESTIONS, RESEARCH_PLACE]},
     ),
-    "blocked": Case(
-        "turn stops for what lies outside the work, a page the network blocks: written in Open,"
-        " nothing committed, the user told what was tried, confirmed and not, and what it needs",
-        "up 4, 3 (turn's stop for what lies outside the work)",
-        planned,
-        [next_has("Step 4 of /rn:up on T1: action 1"), returned("t1.1", 0)],
-        [
-            (
-                "/rn:up",
-                [
-                    STAYS,
-                    returned("t1.1", 0),
-                    next_has("Step 3"),
-                    open_has("docs.github.com"),
-                    says("docs.github.com"),
-                    TURN_LINE,
-                    JAPANESE,
-                ],
-            )
-        ],
-        {"t1.1": [STOPPED]},
-    ),
     "task": Case(
         "a task's action of turn's, a research made in the session's folder, then one of the"
-        " orchestrator's, each with a line before and after",
+        " orchestrator's",
         "up 1, 4 (both kinds of action), 3 (a research work), 2",
         planned,
         [next_has("Step 4 of /rn:up on T1: action 1"), returned("t1.1", 0)],
@@ -1146,7 +1108,6 @@ CASES = {
                     file_has(RESEARCH, "Answer:"),
                     ticked("T1.1"),
                     next_has("Step 4"),
-                    TURN_LINE,
                     ONE_POINT,
                     JAPANESE,
                 ],

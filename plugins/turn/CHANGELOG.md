@@ -4,7 +4,7 @@
 
 ### Added
 
-- Before the AI that makes the work writes anything, it sends your step what your CCS and its files leave open that only the user can decide, each question with the items it settles and the answer it recommends, settling every other point itself and naming it with why in the result, and goes on once your step has kept the answer in its CCS and sent it back — the user is asked once, and only what is theirs, instead of a work made on a guess.
+- As soon as the AI that makes the work meets a point your CCS and its files leave open that only the user can decide, or something outside the work it needs, such as a tool or a permission, it sends the main conversation that one question, with the items waiting on it and the answer it recommends, makes the rest of the work meanwhile, settles every other point itself and names it with why in the result, and makes what waited once the answer, kept in your CCS, is sent back to it — the user is asked only what is theirs, at once, wherever your step's AI runs, instead of a work made on a guess.
 - Each checklist item says where it is answered, `Scope: its part`, `each part` or `whole`, and an item asked of each part gets its Good only where every section or file gives it — a part that falls short is not passed because another part gives the item.
 - The AI reading in the receiver's place has what the CCS says the receiver has, such as the whole repository, and does what they do with the work, such as running its tests — a Good that holds only on paper, or one the receiver gets from what lies beside the work, is told apart.
 - The AI that makes the work runs what it gives as the receiver would, such as the commands it tells and its tests — a work that fails on first use is made again before it reaches you.
@@ -15,11 +15,10 @@
 - A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
 - A work already at its paths is changed from what is there, not written again from nothing — what already serves its reader stays as it is.
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
-- Where an AI of the run cannot go on for what lies outside the work, such as a tool missing, a permission not given or Claude Code's records not where turn reads them, turn stops with no way round it and returns what was tried, what was confirmed and what was not, and what it needs, and a call again once it is there goes on where it stopped — your step can clear such a cause at once, and no work comes back made under other terms than you set.
-- turn tells the main conversation as each of its AIs starts what it will do and as each ends what is done, and when it asks and when the result is back, each line within the move it goes with, waiting for each AI's end itself — a run going a slow or wrong way shows while it can still be stopped, and telling it costs the run no moves of its own.
-- A run stopped anywhere, by you or by a conversation that ended, goes on from its last move when your step calls turn again with the same call — no work already done is done again.
-- An answer your step keeps in the CCS, a file it adds among it, is taken in where the run stands, each of turn's AIs sent the files the CCS names then — nothing already made or read is made or read again for it.
-- [Calling turn](docs/calling.md) gives the checklist's form, the CCS, the call, the questions, a stop and the result in full — your step's text can be written from it without reading turn's code.
+- The result names each item still without Good with what its receiver would need to get it, in `left` — your step makes it, as the work is mostly made by then and your step, holding it, makes the rest sooner than another round would.
+- A run stopped anywhere, by you or by a conversation that ended, goes on from the work already made and its AIs' last replies when your step calls turn again with the same call — no work already done is done again.
+- An answer your step keeps in the CCS, a file it adds among it, is taken in by the AI making the work where it stands, given the files the CCS names then — nothing already made is made again for it.
+- [Calling turn](docs/calling.md) gives the checklist's form, the CCS, the call, the questions and the result in full — your step's text can be written from it without reading turn's code.
 
 ### Changed
 
@@ -27,15 +26,14 @@
 - turn is called from your plugin's step: started in the background with `{"ccs", "kind", "result", "test"}`, the CCS your step's own JSON file and every name in it yours, turn taking what it needs by the kinds you name — your step keeps its task in its own shape, and its context holds only what comes back.
 - The call names, besides where the work goes, the checklists and the receiver, what the receiver uses the work for and what they have with it, such as the whole repository — the AI reading in the receiver's place stands where they stand, and a Good it finds holds for them.
 - The work is made where it goes, and a run cut off leaves its writing as changes git shows — you see what it wrote before you call again.
-- While a run goes, where it stands and each AI's reply are kept in `.turn/<yyyymmdd>-<name>/` at the top of your repository, the day it began and the result's path, each removed once the run returns — the folder beside your result holds the result alone, a run stopped goes on however many days later, and one line of your `.gitignore` decides whether git keeps a run stopped partway.
-- Where the AI reading in the receiver's place finds no Good for an item, it says in one sentence what the receiver would need to get it, not how to make it, leaving what a formatter, a linter or a type checker shows to them; the AI that made the work makes it again for that, up to three times a round and two rounds, after which an item still without Good comes to your step as a question — each remake aims at what the receiver uses the work for, and no round is spent on the two AIs arguing over a fault.
+- While a run goes, its call and each AI's last reply are kept in `.turn/<yyyymmdd>-<name>/` at the top of your repository, the day it began and the result's path, each removed once the run returns — the folder beside your result holds the result alone, a run stopped goes on however many days later, and one line of your `.gitignore` decides whether git keeps a run stopped partway.
+- Where the AI reading in the receiver's place finds no Good for an item, it tells the AI that made the work directly, in one sentence, what the receiver would need to get it, not how to make it, leaving what a formatter, a linter or a type checker shows to them; that AI mends the work for it and the reader reads it again, up to six times, ending once every item has its Good or a mend brings no new one — each mend aims at what the receiver uses the work for, no round is spent on the two AIs arguing over a fault, and none passes through a go-between.
 - What an item's `Tried by` line says is run, where it has one, is run alike by the AI that makes the work and the AI that reads it, and the maker checks every item once the work is made, giving each by the lines that give its Good with no words beside them, and on a remake only the items sent — maker and reader see the same, and a run spends nothing on a claim no one reads.
 
 ### Fixed
 
 - A run moves on from each of its AIs, and returns, only once that AI has ended — no AI still finishing its reply leaves a file of a run already gone in your repository.
-- A run started by an agent, as rn starts turn, goes on once each AI it sent more work has ended — it no longer waits on a notice Claude Code gives the main conversation alone, ending without its result.
-- Each AI of a run writes its reply to a file turn reads, and a reply out of its form is sent back to it with what to fill — no reply passes unchecked, however Claude Code ends an agent.
+- Each AI of a run writes its reply to a file, and passes turn's check of it before it ends, mending what is out of its form — the result is written only from replies that hold.
 - A `cd` in your conversation while a run goes no longer stalls it: each path of the call keeps meaning the folder the call was made from, and each AI of the run is given its files as whole paths — the run reads and writes where you called it, wherever your conversation moves.
 - A folder your CCS names with a trailing slash, such as `docs/`, is taken as the folder — the AIs of a run can read the files inside it instead of being stopped at each.
 

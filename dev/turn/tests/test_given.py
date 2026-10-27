@@ -1,13 +1,10 @@
-"""What the flow gives the orchestrator and each role to read: whole paths in the folder the call
-was made from, wherever the session's working folder moves, and none of the run's own files, the
-result and turn's folder at the root, as a role's lane lets it read anything under a folder it is
-given."""
+"""What each role is given to read: none of the run's own files, the result and turn's folder at the
+root, as a role's lane lets it read anything under a folder it is given."""
 
-import json
 import os
 import unittest
 
-from helpers import CALL, CCS, FOUND, RESULT, RepoTest, prompts
+from helpers import RepoTest, prompts
 
 
 class GivenTest(RepoTest):
@@ -75,7 +72,7 @@ class TestWithoutRunFiles(GivenTest):
         # and another's
         self.lay(
             ".tasks/result.json",
-            ".turn/20261025-.tasks%2Fresult.json/run.json",
+            ".turn/20261025-.tasks%2Fresult.json/call.json",
             ".turn/20261024-other.json/generator.json",
             "README.md",
         )
@@ -91,7 +88,7 @@ class TestWithoutRunFiles(GivenTest):
         # elsewhere
         self.lay(
             ".tasks/result.json",
-            ".turn/20261025-.tasks%2Fresult.json/run.json",
+            ".turn/20261025-.tasks%2Fresult.json/call.json",
             ".turn/20261025-.tasks%2Fresult.json/generator.json",
             "docs/.turn/a.md",
         )
@@ -99,11 +96,11 @@ class TestWithoutRunFiles(GivenTest):
             ".tasks/result.json",
             ".turn",
             ".turn/20261025-.tasks%2Fresult.json",
-            ".turn/20261025-.tasks%2Fresult.json/run.json",
+            ".turn/20261025-.tasks%2Fresult.json/call.json",
             ".turn/20261025-.tasks%2Fresult.json/generator.json",
             "docs/.turn/a.md",
         ]
-        # When: the result, turn's folder, a run's folder, its state and a role's reply in it, and
+        # When: the result, turn's folder, a run's folder, its call and a role's reply in it, and
         # the file in the folder elsewhere are given
         # Then: the file elsewhere alone is given
         self.assertEqual(
@@ -157,94 +154,6 @@ class TestWithoutRunFiles(GivenTest):
         self.assertEqual(
             prompts.without_run_files(["z.md", "a.md"], ".tasks/result.json"), ["z.md", "a.md"]
         )
-
-
-class TestRolesGiven(GivenTest):
-    """A run whose receiver has the whole repository, `.`, as a maintainer's repository is to its
-    maintainer."""
-
-    def setUp(self):
-        super().setUp()
-        artifacts = [a for a in CCS["retrieved_artifacts"] if "page" not in a] + [{"page": "."}]
-        self.write_json(CALL["ccs"], dict(CCS, retrieved_artifacts=artifacts))
-        # Every entry of `.` but `.git`, `.tasks` opened, as the result goes there, and turn's
-        # folder left out, as the start writes the run's files there.
-        self.entries = [
-            self.here(p) for p in (".tasks/readme.json", "README.md", "checklists", "docs", "notes")
-        ]
-
-    def test_the_generator_is_given_no_run_s_file(self):
-        # Given: a call whose receiver has `.`
-        # When: the generator is to be started
-        # Then: its `given` holds the CCS, the work and each file the CCS names, `.` as its entries
-        # without the run's files, each path once
-        self.started()
-        self.assertEqual(
-            self.prompt()["given"],
-            [
-                self.here(".tasks/readme.json"),
-                self.here("README.md"),
-                self.here("checklists/readme.md"),
-                self.here("notes/readme.decisions.md"),
-                self.here(".git"),
-            ]
-            + self.entries[2:],
-        )
-
-    def test_the_first_user_is_given_neither_the_ccs_nor_the_generator_s_reply_nor_the_state(self):
-        # Given: a call whose receiver has `.`, the CCS beside the result, and a generator that
-        # replied with every item's Good, its reply beside the result
-        # When: the first user is to be started
-        # Then: its `given` holds the work, `.` as its entries without the CCS and the run's files,
-        # and the checklists, each path once
-        self.started()
-        move = self.due(self.made())
-        self.assertTrue(os.path.exists(self.kept("generator.json")))
-        self.assertEqual(
-            json.loads(move["input"]["prompt"])["given"],
-            [self.here("README.md"), self.here(".git")]
-            + self.entries[2:]
-            + [self.here("checklists/readme.md")],
-        )
-
-
-class TestFolderMoved(RepoTest):
-    """The session's working folder moves when the calling AI runs `cd`, and every agent's commands
-    and hooks then run from there; the run's paths still mean where the call was made."""
-
-    def test_each_role_is_given_whole_paths_of_where_the_call_was_made(self):
-        # Given: a run started, and the session's working folder moved to notes/
-        # When: the orchestrator goes on with the result the start gave
-        # Then: the generator's prompt names each file as a whole path in the folder the call was
-        # made from, as its hooks and its commands run from notes/
-        self.turn("start", json.dumps(CALL))
-        os.chdir("notes")
-        self.result = self.here(RESULT)
-        move = json.loads(self.due(self.next())["input"]["prompt"])
-        self.assertEqual(move["work"], [self.here("README.md")])
-        self.assertEqual(move["checklists"], [self.here("checklists/readme.md")])
-        self.assertEqual(move["reply"], self.kept("generator.json"))
-        self.assertIn(self.here(CALL["ccs"]), move["given"])
-
-    def test_a_round_goes_on_from_another_folder_with_lines_named_by_whole_paths(self):
-        # Given: a run started, and the session's working folder moved to notes/
-        # When: the generator replies at the whole path it was given, and the first user, given
-        # the work's parts and its files, replies with lines named by whole paths
-        # Then: the first user is given the work's parts as the run names them and whole paths for
-        # its files, and its reading is taken
-        self.started()
-        os.chdir("notes")
-        self.result = self.here(RESULT)
-        prompt = json.loads(self.due(self.made())["input"]["prompt"])
-        self.assertEqual(prompt["parts"], [self.here("README.md:1-3")])
-        self.assertEqual(prompt["given"][0], self.here("README.md"))
-        code, out = self.turn("parts", self.result)
-        self.assertEqual((code, json.loads(out)), (0, {"parts": [self.here("README.md:1-3")]}))
-        lines = [self.here("README.md:1-3")]
-        out = self.replied(
-            {"items": [dict(FOUND, lines=lines), dict(FOUND, item="B-1", lines=lines)]}
-        )
-        self.assertEqual(out["returned"], RESULT)
 
 
 if __name__ == "__main__":

@@ -1,25 +1,17 @@
 {
-  "title": "The generator's claim: each item at the lines of the work that give its Good, or waiting on a question; on a remake each item sent alone; asking before it makes anything, the items waiting alone; and each choice the work rests on that the CCS leaves open, with why.",
+  "title": "The generator's claim: each item at the lines of the work that give its Good, on a mend each item sent alone, and each choice the work rests on that the CCS leaves open, with why.",
   "type": "object",
   "required": [
     "items",
-    "questions",
     "chosen"
   ],
   "additionalProperties": false,
   "properties": {
     "items": {
       "type": "array",
-      "description": "one for each item of every checklist; on a remake, one for each item sent to you alone; before you have made anything, only the items that wait",
+      "description": "one for each item of every checklist; on a mend, one for each item sent to you alone",
       "items": {
         "$ref": "#/$defs/item"
-      }
-    },
-    "questions": {
-      "type": "array",
-      "description": "numbered from 1 in their order, [] where none",
-      "items": {
-        "$ref": "#/$defs/question"
       }
     },
     "chosen": {
@@ -28,9 +20,6 @@
       "items": {
         "$ref": "#/$defs/choice"
       }
-    },
-    "blocked": {
-      "$ref": "#/$defs/blocked"
     }
   },
   "$defs": {
@@ -38,9 +27,6 @@
       "anyOf": [
         {
           "$ref": "#/$defs/made"
-        },
-        {
-          "$ref": "#/$defs/waits"
         }
       ]
     },
@@ -72,49 +58,6 @@
         }
       }
     },
-    "waits": {
-      "type": "object",
-      "description": "an item only the user's answer can give its Good",
-      "required": [
-        "checklist",
-        "item",
-        "question"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "checklist": {
-          "type": "string",
-          "description": "the checklist's path, as you were given it"
-        },
-        "item": {
-          "type": "string",
-          "description": "the item's ID, such as B-1"
-        },
-        "question": {
-          "type": "integer",
-          "description": "the number of the question it waits on"
-        }
-      }
-    },
-    "question": {
-      "type": "object",
-      "description": "a question for the user",
-      "required": [
-        "question",
-        "recommended"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "question": {
-          "type": "string",
-          "description": "what to ask the user"
-        },
-        "recommended": {
-          "type": "string",
-          "description": "the answer you would choose, and why, in one sentence"
-        }
-      }
-    },
     "choice": {
       "type": "object",
       "description": "a choice you made that no one gave you",
@@ -131,35 +74,6 @@
         "why": {
           "type": "string",
           "description": "why you chose it"
-        }
-      }
-    },
-    "blocked": {
-      "type": "object",
-      "description": "only where what keeps you from going on lies outside the work, such as a tool missing, a permission not given or a network blocked: the run then stops and tells its caller",
-      "required": [
-        "tried",
-        "confirmed",
-        "not_confirmed",
-        "needs"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "tried": {
-          "type": "string",
-          "description": "what you tried"
-        },
-        "confirmed": {
-          "type": "string",
-          "description": "what you confirmed"
-        },
-        "not_confirmed": {
-          "type": "string",
-          "description": "what you could not confirm"
-        },
-        "needs": {
-          "type": "string",
-          "description": "what you need to go on"
         }
       }
     }

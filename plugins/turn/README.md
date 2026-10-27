@@ -41,46 +41,44 @@ Start the `turn:up` agent in the background with
  "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
           "use": "purpose", "has": "has"},
  "test": null}
-Put each question it sends to the user and send it the answer.
 ```
 
-Before it writes anything, turn asks what the CCS leaves open that only the user can decide, and
-settles the rest itself, naming each choice with why in the result. No one had chosen under which
-license people may use the project, so turn sends the step's AI that one question:
+As soon as the AI writing README.md meets a point the CCS leaves open that only the user can
+decide, it sends it to the main conversation, the one you talk with, even where the step's AI is an
+agent below it, and goes on with the rest. It settles every other point itself, naming each choice
+with why in the result. No one had chosen under which license people may use the project, so the
+main conversation gets that one question as a message:
 
 ```json
-{"questions": [{"question": "Under which license may people use the project?",
-                "recommended": "MIT", "items": [{"item": "B-5", ...}]}]}
+{"question": "Under which license may people use the project?",
+ "recommended": "MIT, as the decisions say the project is for anyone to use",
+ "items": [{"checklist": "checklists/readme.md", "item": "B-5"}]}
 ```
 
-The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and sends it to turn,
-which goes on from where it stood. turn tells the main conversation, the one you talk with, even
-where the step's AI is an agent below it, as each of its agents starts what it will do, and as each
-ends what is done:
+The main conversation asks you, adds your answer to `notes/readme.decisions.md`, and sends it back
+to the agent that asked with SendMessage. That AI writes the license section from it. You see each
+of turn's agents in Claude Code's panel of agents while it runs.
 
-```
-turn: turn:generator starts: make README.md to give every item its Good, round 1.
-```
+An AI that did not write README.md then uses it as the developer meeting the project would,
+running what they would run. Each item is judged from that use, and gets its Good at the lines that
+give it. Where an item gets none, the reader tells the AI that wrote README.md, in one sentence,
+what the developer would need to get it. That AI mends README.md for it, and README.md is read
+again.
 
-This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
-the developer meeting the project would, running what they would run. Each item is judged from that
-use, and gets its Good at the lines that give it. Where an item gets none, the reader says in one
-sentence what the developer would need to get it, the AI that wrote README.md makes it again for
-that, and README.md is read again.
-
-When turn returns, README.md is in place, and the result gives the lines each item's Good rests
-on, and each choice the AI that made it took on its own, one the CCS and its files leave open, with
-why:
+When turn returns, README.md is in place. The result gives the lines each item's Good rests on,
+each item still without Good with what the developer would need, and each choice the AI that made
+README.md took on its own, one the CCS and its files leave open, with why:
 
 ```json
 {"work": ["README.md"],
- "items": [{"item": "B-2", "lines": ["README.md:3-4"]}, ...],
+ "items": [{"checklist": "checklists/readme.md", "item": "B-2", "lines": ["README.md:3-4"]}, ...],
+ "left": [],
  "chosen": [{"chosen": "the example tidies a file named people.csv",
              "why": "no decision names one, and a list of people shows each column tidied"}]}
 ```
 
-The step's AI reads lines 3 and 4 and the others it is pointed to, shows the user the choice made
-without asking them, and the step ends.
+The step's AI reads lines 3 and 4 and the others it is pointed to, makes any item left itself,
+shows the user the choice made without asking them, and the step ends.
 
 ## Why turn
 
@@ -96,10 +94,11 @@ turn gives your plugin's AI what it does not get by making the work and checking
   decided where no one sees it.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
-- A run stopped anywhere, by you or by a conversation that ended, goes on from where it stopped
+- A run stopped anywhere, by you or by a conversation that ended, goes on from what it had made
   when the step calls turn again with the same call.
 
-  turn keeps where the run stands in `.turn/` at the top of your repository, not in a conversation.
+  turn keeps the work at its paths and its agents' last replies in `.turn/` at the top of your
+  repository, not in a conversation.
 
 ## Requirements
 

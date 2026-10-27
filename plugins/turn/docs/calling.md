@@ -1,7 +1,7 @@
 # Calling turn
 
 What a step of your plugin gives turn and what it gets back, so the step's text can be written to
-call it: the checklist, the CCS, the call, the questions, a stop and the result.
+call it: the checklist, the CCS, the call, the questions and the result.
 
 ## The checklist
 
@@ -56,36 +56,27 @@ from an agent it started:
 - `test`: the one command that checks the work, such as `sh dev/check.sh`, joining every check into
   one; `null` where the work has none.
 
-Called again with the same call, a run that stopped goes on from where it stopped. Stop a run with
-TaskStop.
+Stop a run with TaskStop. Called again with the same call, a run goes on from what it had made: the
+work at its paths, and its agents' last replies, kept in `.turn/` at the top of your repository.
 
 ## Questions and answers
 
-What only the user can decide comes to the calling AI as a message, each question with the answer
-turn recommends and the items it settles: a point the CCS leaves open, met before or while the work
-is made, or an item two rounds leave without Good, asked from what its receiver would need to get
-it:
+What only the user can decide comes to the main conversation as a message from turn's AI that makes
+the work, whether the calling AI is the main conversation or an agent below it. It comes as soon as
+that AI meets it, before or while the work is made: a point the CCS leaves open, a file the work
+needs that the CCS does not name, or something outside the work, such as a tool missing or a
+permission not given. Each message is one question, with the answer recommended and the items that
+wait on it:
 
 ```json
-{"questions": [{"question": "...", "recommended": "...",
-                "items": [{"checklist": "...", "item": "B-5"}]}]}
+{"question": "...", "recommended": "<the answer recommended, and why, in one sentence>",
+ "items": [{"checklist": "...", "item": "B-5"}]}
 ```
 
-Put each to the user, keep the answer where the CCS names it, such as its decisions file, adding to
-the CCS any file the answer brings, and send the answer to turn in plain words; the run goes on
-with it from where it stood, taking in the files the CCS names then.
-
-## A stop for what lies outside the work
-
-Where an AI of the run cannot go on for what lies outside the work, such as a tool missing, a
-permission not given or a network blocked, the run stops with no way round it and turn returns:
-
-```json
-{"stopped": {"tried": "...", "confirmed": "...", "not_confirmed": "...", "needs": "..."}}
-```
-
-Put what it needs to the user; once it is there, call turn again with the same call, and the run
-goes on where it stopped.
+Put it to the user, keep the answer where the CCS names it, such as its decisions file, adding to
+the CCS any file the answer brings, and send the answer in plain words with SendMessage to the
+agent that asked, by the ID shown with its message. It takes in the files the CCS names then, and
+makes what waited on the answer; the rest of the work is made meanwhile.
 
 ## The result
 
@@ -93,11 +84,15 @@ goes on where it stopped.
 {"work": ["README.md"],
  "items": [{"checklist": "checklists/readme.md", "item": "B-2",
             "lines": ["<path>:<from>-<to>"]}],
+ "left": [{"checklist": "checklists/readme.md", "item": "B-4", "need": "..."}],
  "chosen": [{"chosen": "...", "why": "..."}]}
 ```
 
 - `items`: each item with the lines of the work that give its Good, as the AI that read the work
   in its receiver's place gave them; for an item whose Scope is `each part`, at least one range in
   every part of the work, each inside one part.
+- `left`: each item that AI found no Good for once the work was mended as far as the two AIs
+  could, with what the receiver would need to get it, in one sentence; `[]` where none. The work
+  is mostly made by then, so make each yourself, asking the user only what is theirs to decide.
 - `chosen`: each choice the work rests on that the CCS and the files it names leave open, made by
   the AI that made it, with why; `[]` where none. Show them to the user, as no one asked them.

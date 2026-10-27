@@ -12,9 +12,6 @@
       "items": {
         "$ref": "#/$defs/item"
       }
-    },
-    "blocked": {
-      "$ref": "#/$defs/blocked"
     }
   },
   "$defs": {
@@ -77,35 +74,6 @@
         "need": {
           "type": "string",
           "description": "what the receiver would need to get from the work for its Good, in one sentence, not how to make it, such as \"Before running `--undo`, the receiver can tell which folders come back.\""
-        }
-      }
-    },
-    "blocked": {
-      "type": "object",
-      "description": "only where what keeps you from going on lies outside the work, such as a tool missing, a permission not given or a network blocked: the run then stops and tells its caller",
-      "required": [
-        "tried",
-        "confirmed",
-        "not_confirmed",
-        "needs"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "tried": {
-          "type": "string",
-          "description": "what you tried"
-        },
-        "confirmed": {
-          "type": "string",
-          "description": "what you confirmed"
-        },
-        "not_confirmed": {
-          "type": "string",
-          "description": "what you could not confirm"
-        },
-        "needs": {
-          "type": "string",
-          "description": "what you need to go on"
         }
       }
     }

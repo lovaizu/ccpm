@@ -1,5 +1,5 @@
-"""The forms the orchestrator and each role give their judgments in, each checked against the run's
-items and the work, so a slip is named where it is made."""
+"""The forms each role gives its judgments in, each checked against the run's items and the work, so
+a slip is named where it is made."""
 
 from __future__ import annotations
 
@@ -19,9 +19,6 @@ FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 FORM_FILES = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "forms")
 # The keys every item holds beside its shape, which name it.
 NAMING = ("checklist", "item")
-# What a role that stops for what lies outside the work gives: what it tried, what it confirmed and
-# what not, and what it needs to go on.
-BLOCKED = ("tried", "confirmed", "not_confirmed", "needs")
 # The keys whose value is words, wherever an item holds them.
 WORDED = ("need",)
 
@@ -37,35 +34,19 @@ def shapes(path: str) -> tuple[tuple[str, ...], ...]:
 
 class Form(NamedTuple):
     """What an item may hold besides its checklist and ID, one shape of keys each, every item judged
-    given; whether questions are asked; whether a reply asking questions gives only the items
-    waiting on them, as one asked before the work is made has no Good to give yet; whether the
-    choices the work rests on are named, as its maker settles points no one gave it; and whether a
-    role may stop for what lies outside the work, its items then left as they stood."""
+    given; and whether the choices the work rests on are named, as its maker settles points no one
+    gave it."""
 
     shapes: tuple[tuple[str, ...], ...]
-    asks: bool = False
-    asks_first: bool = False
     chooses: bool = False
-    blocks: bool = False
 
 
-# The generator claims each item it judges, every item or on a remake each item sent to it, at the
-# lines that give its Good, or the question it waits on; asking before it makes anything, it gives
-# only the items waiting; and it names each choice the work rests on.
-CLAIM = Form(
-    shapes(os.path.join(FORM_FILES, "claim.json")),
-    asks=True,
-    asks_first=True,
-    chooses=True,
-    blocks=True,
-)
+# The generator claims each item it judges, every item or on a mend each item sent to it, at the
+# lines that give its Good, and names each choice the work rests on.
+CLAIM = Form(shapes(os.path.join(FORM_FILES, "claim.json")), chooses=True)
 # The first user gives every item the lines that give its Good, or what the receiver would need to
 # get it.
-FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")), blocks=True)
-# Each item two rounds leave without Good waits on a question the orchestrator words, in a form set
-# in its steps, not in a form file as the roles' are: it hands it on standard input, which no lane
-# holds.
-LEFT = Form((("question",),), asks=True)
+FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")))
 
 
 def named(item: dict[str, Any]) -> dict[str, Any]:
@@ -121,32 +102,14 @@ def check(
     """What is wrong with a reply of items in the form, each said with what to give instead; empty
     when it is filled. The items are those the form judges, those of them asked of each part of the
     work in `each`."""
-    lists = ("items",) + ("questions",) * form.asks + ("chosen",) * form.chooses
+    lists = ("items",) + ("chosen",) * form.chooses
     data = parsed(text, lists)
     if data is None:
         return ["give it as JSON: {" + ", ".join(f'"{k}": [...]' for k in lists) + "}"]
-    if form.blocks and data.get("blocked") is not None:
-        return blocked_problems(data["blocked"])
-    every = not (form.asks_first and data["questions"])
-    said = item_problems(data["items"], items, work, form, each, every)
-    if form.asks:
-        said += question_problems(data)
+    said = item_problems(data["items"], items, work, form, each)
     if form.chooses:
         said += choice_problems(data["chosen"])
     return said
-
-
-def blocked_problems(blocked: Any) -> list[str]:
-    """What is wrong with a stop for what lies outside the work, to hold what was tried, what was
-    confirmed and what was not, and what is needed, in words."""
-    if (
-        isinstance(blocked, dict)
-        and set(blocked) == set(BLOCKED)
-        and all(worded(v) for v in blocked.values())
-    ):
-        return []
-    keys = ", ".join(f'"{k}"' for k in BLOCKED)
-    return [f'"blocked" must hold {keys}, what you tried, confirmed and not, and need, in words']
 
 
 def choice_problems(chosen: list[Any]) -> list[str]:
@@ -166,10 +129,9 @@ def item_problems(
     work: list[str],
     form: Form,
     each: list[dict[str, Any]],
-    every: bool,
 ) -> list[str]:
-    """What is wrong with the items given, against the items judged; every one of them is to be
-    given where `every` says."""
+    """What is wrong with the items given, against the items judged, every one of which is to be
+    given."""
     keys = [key_of(i) for i in items]
     of_each = [key_of(i) for i in each]
     said: list[str] = []
@@ -192,13 +154,11 @@ def item_problems(
             said.append(f"{name} must hold {allowed(form.shapes)}")
             continue
         said += value_problems(name, item, work, key in of_each)
-    if every:
-        said += [
-            f"{i['checklist']} {i['item']} is left out; give every item judged here"
-            for i in items
-            if key_of(i) not in seen
-        ]
-    return said
+    return said + [
+        f"{i['checklist']} {i['item']} is left out; give every item judged here"
+        for i in items
+        if key_of(i) not in seen
+    ]
 
 
 def allowed(shapes: tuple[tuple[str, ...], ...]) -> str:
@@ -216,10 +176,6 @@ def value_problems(name: str, item: dict[str, Any], work: list[str], each: bool)
         for key in WORDED
         if key in item and not worded(item[key])
     ]
-    if "question" in item and not (
-        isinstance(item["question"], int) and not isinstance(item["question"], bool)
-    ):
-        said.append(f"{name}'s \"question\" is not a number; give the question's, from 1")
     if "lines" in item:
         inside = lines_problems(name, item["lines"], work)
         said += inside or (parts_problems(name, item["lines"], work) if each else [])
@@ -271,26 +227,3 @@ def in_files(line: Any, paths: list[str]) -> bool:
     with open(at[0], encoding="utf-8") as f:
         count = len(f.read().splitlines())
     return 1 <= at[1] <= at[2] <= count
-
-
-def question_problems(data: dict[str, Any]) -> list[str]:
-    """What is wrong with the questions, each numbered from 1, against the items waiting on them."""
-    said: list[str] = []
-    questions = data["questions"]
-    waiting = [i.get("question") for i in data["items"] if isinstance(i, dict)]
-    for n, question in enumerate(questions, 1):
-        if not isinstance(question, dict) or not all(
-            worded(question.get(k)) for k in ("question", "recommended")
-        ):
-            said.append(
-                f'question {n} must hold "question" and "recommended", the answer you'
-                " recommend, each in words"
-            )
-        elif n not in waiting:
-            said.append(f"question {n} has no item waiting on it; name it at the item it settles")
-    said += [
-        f"question {n} is waited on but not given; add it to the questions"
-        for n in waiting
-        if isinstance(n, int) and not 1 <= n <= len(questions)
-    ]
-    return said

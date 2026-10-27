@@ -11,9 +11,9 @@ in [architecture.md](architecture.md).
   - `trials/trial.py` runs turn as its user does on a task folder, `one`, a small script's README,
     or `readme`, a CSV tool's, keeping what the run gave back in `work/` in its folder;
   - `trials/judge.py` judges each item of the work of the runs of `trial.py` afresh, by one bar;
-  - `trials/orchestrator/orchestrator.py` tries the orchestrator and its flow on each way a run can
-    take, the roles stood in for with the replies `trials/orchestrator/replies.py` sets;
+  - `trials/orchestrator/orchestrator.py` tries the orchestrator on each way a run can take, the
+    roles stood in for with the replies `trials/orchestrator/replies.py` sets;
   - `trials/roles/roles.py` tries each role on its own, and `trials/roles/kept.py` the generator and
-    the first user kept started within a round.
+    the first user settling the work between themselves by message.
 - `results.json` in `trials/orchestrator/`, `trials/roles/` and `trials/readme/` keeps what earlier
   runs of those trials found, as the session's decisions cite them.

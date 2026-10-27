@@ -1,7 +1,7 @@
-"""Where a run stands, kept in `.turn/<yyyymmdd>-<name>/` at the root of the repository, as
-dev/architecture.md's Where a plugin writes its files places what a plugin may keep, with each
-role's reply beside it, so a call again names the run by its result, on any day, and a run stopped
-anywhere goes on from its last move."""
+"""Where a run's files are: `.turn/<yyyymmdd>-<name>/` at the root of the repository, as
+dev/architecture.md's Where a plugin writes its files places what an agent reads with its tools, the
+call kept there with the folder it was made from and each role's last reply beside it, so a call
+again finds the run by its result, on any day, and goes on from what the folder holds."""
 
 from __future__ import annotations
 
@@ -16,16 +16,18 @@ import call
 # What marks the root of a repository: a folder, or in a worktree a file, as git and Claude Code's
 # plugin check take the nearest folder holding it.
 REPOSITORY = ".git"
+# The file in the run's folder that keeps the call and the folder it was made from.
+CALL = "call.json"
 
 
 def root(result: str) -> str:
     """The root of the repository the result is in: the nearest folder at or above the result's
     folder holding REPOSITORY, or the result's folder where none does, as a whole real path."""
-    folder = os.path.realpath(os.path.dirname(os.path.abspath(result)))
-    up = folder
+    found = os.path.realpath(os.path.dirname(os.path.abspath(result)))
+    up = found
     while not os.path.exists(os.path.join(up, REPOSITORY)):
         if os.path.dirname(up) == up:  # pragma: no mutate
-            return folder
+            return found
         up = os.path.dirname(up)
     return up
 
@@ -43,45 +45,44 @@ def folder(result: str) -> str:
     return made[0] if made else os.path.join(turn, f"{time.strftime('%Y%m%d')}-{name}")
 
 
-def state_path(result: str) -> str:
-    """Where the run is kept: in its folder."""
-    return os.path.join(folder(result), "run.json")
+def reply(result: str, role: str) -> str:
+    """Where the role of the name, `generator` or `first-user`, writes its last reply, in the run's
+    folder."""
+    return os.path.join(folder(result), f"{role}.json")
 
 
-def running(result: str) -> dict[str, Any] | None:
-    """The run kept for the result at the path, or None when none is."""
+def kept(result: str) -> dict[str, Any] | None:
+    """The call kept for the result at the path, with the folder it was made from, or None where no
+    run of it is kept."""
     try:
-        with open(state_path(result), encoding="utf-8") as f:
-            kept = json.load(f)
-    except (OSError, ValueError):
+        with open(os.path.join(folder(result), CALL), encoding="utf-8") as f:
+            return json.load(f)
+    except OSError:
         return None
-    return kept if isinstance(kept, dict) else None
 
 
 def going(result: str) -> dict[str, Any]:
-    """Goes to the folder the call was made from, where the run's paths mean what they say, and
-    gives the run going with its result at the path; stops where none is."""
-    run = running(result)
+    """Goes to the folder the call was made from, where the call's paths mean what they say, and
+    gives the call of the run going with its result at the path; stops where none is."""
+    run = kept(result)
     if run is None:
         raise call.Stop(
             f"turn: no run is going with its result at {result}; start one with"
             " `turn.py start '<call JSON>'`"
         )
     os.chdir(run["root"])
-    return run
+    return run["call"]
 
 
-def save(run: dict[str, Any]) -> None:
-    """Keeps where the run stands, in its folder."""
-    write(state_path(run["call"]["result"]), run)
+def keep(asked: dict[str, Any], made_in: str) -> None:
+    """Keeps the call in the run's folder of its result, with the folder it was made from."""
+    write(os.path.join(folder(asked["result"]), CALL), {"call": asked, "root": made_in})
 
 
 def write(path: str, data: dict[str, Any]) -> None:
     """Writes the data as JSON at the path, making its folder where it is not there, one key or
     value to a line, so the calling AI and the user can read it."""
-    folder = os.path.dirname(path)
-    if folder:
-        os.makedirs(folder, exist_ok=True)
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
         f.write("\n")

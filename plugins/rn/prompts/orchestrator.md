@@ -167,43 +167,37 @@ Read the file whole before you take a step of it in a conversation.
      waits, and stopping it takes the ID. Reply with the second line, put into the conversation
      language; end your reply.
    - While it runs:
-     - A message from one of its agents, a line beginning `turn:`: reply with that line alone, put
-       into the conversation language, judging none of it; end your reply.
-     - turn ends with `{"questions": [...]}`: first keep the move with `rn.py state --goes-on`,
-       Next this step on the same work, Open each question, so they are written before anything is
-       asked, as turn's run waiting on them is in its own folder. A question that changes nothing
-       the user can weigh, such as what the receiver has or whether a file is added to the CCS,
-       answer yourself: run `rn.py ccs` for the work again with what it needs, every `--has` its
-       CCS holds among it, and a `--chose` saying it and why; it writes the same call's CCS, which
-       the run takes in where it stands, so start no new run and tell the user nothing of it. Ask
-       each other as a point, as in step 2, its `recommended` the recommended option, one per
-       message, each answer kept with `rn.py decide <work>`, and `rn.py ccs` run again as above
-       where the answer brings a file; where the work's decisions already hold its answer, as when
-       a fresh conversation called turn again, take that. Then load SendMessage with ToolSearch
-       (`select:SendMessage`) and send the agent the answers by its ID in plain words, saying for
-       each question you answered by the CCS that the CCS now holds it; the run goes on with them
-       where it stood.
-     - turn ends with `{"stopped": {"tried": ..., "confirmed": ..., "not_confirmed": ...,
-       "needs": ...}}`, as what lies outside the work, such as a tool missing, a permission not
-       given or a network blocked, keeps it from going on: keep the move with `rn.py state
-       --goes-on`, Next this step on the same work, Open what it needs; tell the user what it
-       tried, what it confirmed and what it did not, and what it needs, and that `/rn:up` calls
-       turn again once that is there, the run going on where it stopped; end.
-     - turn ends with anything else, such as a stop of its own: start `turn:up` again with the
-       same call, as it goes on from its last move. Where it stops the same way again, keep the
-       move with `rn.py state --goes-on`, Next this step on the same work, Open what it printed;
-       tell the user what it printed and that `/rn:up` goes on from here; end.
+     - A message from turn's generator, JSON `{"question": ..., "recommended": ..., "items":
+       [...]}`, a point only the user can decide, which the generator waits on while it makes the
+       rest: first keep the move with `rn.py state --goes-on`, Next this step on the same work, Open
+       the question, so it is written before anything is asked. A question that changes nothing the
+       user can weigh, such as what the receiver has or whether a file is added to the CCS, answer
+       yourself: run `rn.py ccs` for the work again with what it needs, every `--has` its CCS holds
+       among it, and a `--chose` saying it and why; it writes the same call's CCS, so start no new
+       run and tell the user nothing of it. Ask any other as a point, as in step 2, its
+       `recommended` the recommended option, the answer kept with `rn.py decide <work>`, and
+       `rn.py ccs` run again as above where the answer brings a file; where the work's decisions
+       already hold its answer, as when a fresh conversation called turn again, take that. Then load
+       SendMessage with ToolSearch (`select:SendMessage`) and send the answer in plain words to the
+       agent that asked, by the ID shown with its message, saying where the CCS now holds it; it
+       goes on with it where it stands.
+     - turn ends with anything but `{"returned": ...}`, such as what its script printed where it
+       could not go on: start `turn:up` again with the same call, as it goes on from what its
+       folder holds. Where it ends the same way again, keep the move with `rn.py state --goes-on`,
+       Next this step on the same work, Open what it printed; tell the user what it printed and
+       that `/rn:up` goes on from here; end.
      - The user says stop: load TaskStop with ToolSearch (`select:TaskStop`), run it with the ID as
        `task_id`, and keep the move with `rn.py state --goes-on`, Next this step on the same work,
-       the same call made again, as turn goes on from its last move when called again with the
-       same result. Ask the user, as a point, which way the work goes now.
+       the same call made again, as turn goes on from what its folder holds when called again with
+       the same result. Ask the user, as a point, which way the work goes now.
    - When it ends with `{"returned": "<result>"}`: read the result whole, then the work at each
-     item's `lines`, against what the item asks. An item its lines fall short of, or an item
-     without them, is a point behind it: first keep the move with `rn.py state`, Next step 2 on the
-     work and then this step again, Open each shortfall at its lines, each time a result falls
-     short, a work made again included, so the result read is kept before anything is asked; then
-     confirm the point with the user where it is theirs, as in step 2, kept with `rn.py decide`;
-     and have the work made again from the top of this step.
+     item's `lines`, against what the item asks. Each item of `left`, with what its receiver would
+     need, each item its lines fall short of, and each item without them, is a point behind it:
+     first keep the move with `rn.py state`, Next step 2 on the work and then this step again, Open
+     each such item at its lines or with its need, each time a result falls short, a work made again
+     included, so the result read is kept before anything is asked; then confirm the point with the
+     user where it is theirs, as in step 2, kept with `rn.py decide`; and have the work made again
+     from the top of this step.
    - Once every item's Good holds at its lines, keep the move with `rn.py state --next <the step
      that comes after>`, with `--done` for each action it ticks; reply with the line it tells, where
      it prints one.

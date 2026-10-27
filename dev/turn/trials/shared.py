@@ -29,8 +29,10 @@ from trying import agents, claude, record, show  # noqa: F401
 from trying import folder as made_folder
 
 # A README for the orchestrator trial's task that names no license, which the roles trials set in
-# place of the generator's work, so the first user finds no Good for B-1.
+# place of the generator's work, so the first user finds no Good for B-1; and one that names it, so
+# the first user finds every Good.
 UNLICENSED = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
+LICENSED = f"{UNLICENSED}\n## License\n\nMIT.\n"
 
 
 class Run:
@@ -192,17 +194,18 @@ def removed(*paths: str) -> Generator[None, None, None]:
                 os.remove(path)
 
 
-def begun(plugin: str, place: str, given: dict) -> None:
-    """Starts a run of the copy of turn at plugin on the call in place, as the orchestrator would,
-    its generator due."""
+def begun(plugin: str, place: str, given: dict) -> str:
+    """Starts a run of the copy of turn at plugin on the call in place, as the orchestrator would;
+    gives its result as a whole path, as the start prints it."""
     script = os.path.join(plugin, "scripts", "turn.py")
-    subprocess.run(
+    done = subprocess.run(
         [sys.executable, script, "start", json.dumps(given)],
         cwd=place,
         check=True,
         capture_output=True,
         text=True,
     )
+    return json.loads(done.stdout)["result"]
 
 
 def turn(run: Run) -> str:

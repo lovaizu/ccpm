@@ -10,7 +10,7 @@
 - The design and the deliverable sign-off show the links to each document and to the finished work and each choice made in them without asking you, by rn or by the AI that made it, with why, and after `/rn:gm` what changed — you judge only what was decided in your place, as what you answered is in the work and has been checked there.
 - Once you approve the finished work, rn looks back once over the whole piece of work for each change you sent back, each work made again and each point asked again, checking each cause it doubts in its own conversations, and puts each learning to you, one per message, for your `.rn/checklists/<kind>.md`, for rn's makers as an issue opened only on your yes, both or neither — what a piece of work taught makes your later work, and rn, better.
 - While the tasks are carried out, rn says before each step what it will do, how far and how, and after it what is done and what comes next — you can stop a step going a way you do not want, without watching.
-- Where turn cannot go on for what lies outside the work, such as a tool missing, a permission not given or a network blocked, rn tells you what was tried, what was confirmed and what was not, and what it needs, and `/rn:up` goes on where it stopped once that is there — nothing is worked round in a way you cannot see.
+- Where turn needs what lies outside the work, such as a tool missing, a permission not given or a network blocked, rn puts its question to you with what it tried, what it confirmed and what not, and turn goes on with that work once your answer is sent back to it, making the rest meanwhile — nothing is worked round in a way you cannot see.
 
 ### Changed
 

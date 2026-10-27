@@ -10,14 +10,12 @@ import unittest
 from helpers import (
     CALL,
     ITEM_F1,
-    RESULT,
     TURN,
-    WAITS,
     RepoTest,
     call,
+    folder,
     forms,
     prompts,
-    state,
     testing,
     work_parts,
 )
@@ -27,13 +25,12 @@ hypothesis = testing.hypothesis()
 given = hypothesis.given
 st = hypothesis.strategies
 
-FORMS = (forms.CLAIM, forms.FIRST_READING, forms.LEFT)
+FORMS = (forms.CLAIM, forms.FIRST_READING)
 ITEMS = [ITEM_F1]
 # JSON values of any shape, with the keys the forms look for among others.
-KEYS = st.sampled_from(
-    ["items", "questions", "checklist", "item", "lines", "need", "question", "recommended"]
-    + ["chosen", "blocked"]
-) | st.text(max_size=5)
+KEYS = st.sampled_from(["items", "checklist", "item", "lines", "need", "chosen", "why"]) | st.text(
+    max_size=5
+)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)
 VALUES = st.recursive(
     LEAVES,
@@ -73,7 +70,7 @@ class TestForms(RepoTest):
         # Then: it is read as if given bare
         text = json.dumps(value)
         fenced = f"```json\n{text}\n```"
-        lists = ("items", "questions")
+        lists = ("items", "chosen")
         self.assertEqual(forms.parsed(fenced, lists), forms.parsed(text, lists))
 
     @given(st.integers(1, 30), st.integers(0, 40), st.integers(0, 40))
@@ -140,25 +137,6 @@ class TestCallTest(unittest.TestCase):
             self.assertIn('"test" is not a command', str(stop.exception))
 
 
-class TestAnswer(RepoTest):
-    @given(st.text(max_size=200))
-    def test_any_answer_of_words_is_kept_as_it_came(self, answer):
-        # Given: a run whose generator asked a question, started anew for each answer
-        # When: the calling AI's answer, any text, is handed on
-        # Then: an answer of words is kept as it came, the blanks at its ends aside; one of blanks
-        # alone is asked for again, and the run still waits on it
-        if os.path.exists(state.state_path(RESULT)):
-            os.remove(state.state_path(RESULT))
-        self.started()
-        self.made(WAITS)
-        code, _ = self.turn("next", RESULT, stdin=answer)
-        kept = self.state()
-        if answer.strip():
-            self.assertEqual((code, kept["answers"][-1]["answer"]), (0, answer.strip()))
-        else:
-            self.assertEqual((code, kept["stage"]), (1, "asked"))
-
-
 # Names of a result's folders and of the result, some holding what the name of a run's folder
 # writes `/` and `%` as, or a pattern of file names reads as a set of letters.
 PARTS = st.sampled_from(["a", "b", "%", "2F", "%2F", "%25", "-", "a-b", "[a]"])
@@ -172,8 +150,8 @@ class TestRunFolders(RepoTest):
         # second as a whole path
         # Then: the two are one folder where the results are one path, and two otherwise, each in
         # turn's folder at the root
-        first = state.folder(os.path.join(*one))
-        second = state.folder(self.here(os.path.join(*other)))
+        first = folder.folder(os.path.join(*one))
+        second = folder.folder(self.here(os.path.join(*other)))
         self.assertEqual(first == second, one == other)
         self.assertEqual({os.path.dirname(first), os.path.dirname(second)}, {self.here(".turn")})
 
@@ -188,8 +166,8 @@ def reached(paths):
     found = set()
     for path in paths:
         found.add(os.path.realpath(path))
-        for folder, folders, files in os.walk(path):
-            found.update(os.path.realpath(os.path.join(folder, n)) for n in folders + files)
+        for top, folders, files in os.walk(path):
+            found.update(os.path.realpath(os.path.join(top, n)) for n in folders + files)
     return found
 
 
@@ -201,7 +179,7 @@ class TestGiven(RepoTest):
     )
     def test_the_paths_given_reach_all_they_reached_but_the_run_s_files(self, files, down, paths):
         # Given: any layout of files and folders in a repository, the result at any depth, a run's
-        # state in turn's folder at the root, and any paths that are there in it
+        # call in turn's folder at the root, and any paths that are there in it
         # When: the paths are given without the run's files
         # Then: they reach every file and folder the paths reached but the result, turn's folder
         # at the root and what is in it, and the folders opened on the way to the result's folder;
@@ -212,7 +190,7 @@ class TestGiven(RepoTest):
         try:
             os.mkdir(".git")
             result = os.path.join(*down, "r.json")
-            for path in (result, ".turn/20261025-r.json/run.json"):
+            for path in (result, ".turn/20261025-r.json/call.json"):
                 self.write(path, "")
             for names in files:
                 try:

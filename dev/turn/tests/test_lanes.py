@@ -7,11 +7,12 @@ from helpers import TURN, testing
 
 lanes, step, lanes_json = testing.lane_code(TURN, "lanes", "step", "lanes_json")
 
-# The lanes each agent's steps call for, taking its run's values as the flow gives them in the
-# agent's prompt, or as turn.py start prints them.
+# The lanes each agent's steps call for, taking its run's values as the agent's prompt gives them,
+# or as the script it first runs prints them.
 LAID = {
-    "turn:up": {"start_with", "follow_next", "hands_off", "read_only", "as_printed"},
+    "turn:up": {"start_with", "read_only", "hands_off", "as_printed"},
     "turn:generator": {
+        "start_with",
         "read_only",
         "read_whole",
         "write_only",
@@ -21,10 +22,12 @@ LAID = {
         "end_when",
     },
     "turn:first-user": {
+        "start_with",
         "read_only",
         "read_whole",
         "write_only",
         "hands_off",
+        "test_after",
         "in_form",
         "end_when",
         "every_item",

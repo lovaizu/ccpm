@@ -15,9 +15,7 @@ timeout = 30.0
 # the tests, "turn", after it; or by `is` with a small number, of which CPython keeps one copy, such as
 # a heading's level; or a folder with the folder it is in, which is it only at the top, by `is` too
 # as CPython gives back the path itself there, and never sorts after it, as it begins it. Each such
-# line holds that comparison alone, as the mark leaves out every mutant of its line. A line marked so
-# may also join flags of bits of their own with `|`, as a lock's are, where `+` and `^` give the same
-# number.
+# line holds that comparison alone, as the mark leaves out every mutant of its line.
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a heading of the level below and one of the level above, so a
 # comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not

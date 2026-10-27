@@ -158,21 +158,23 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   Each is a choice made in the user's place, which the work holds and the user did not see; kept
   where the work is made from and returned, it reaches the sign-off from the record alone.
 - No work turn returns is fixed by the orchestrator: it reads the work at the lines turn returns for
-  each item, and an item its lines fall short of is a point settled before turn makes the work
-  again, as a decision, as a change the user asks at a sign-off is.
+  each item, and an item its lines fall short of, or one turn leaves without Good, is a point
+  settled before turn makes the work again, as a decision, as a change the user asks at a sign-off
+  is.
 
   A fix of the orchestrator's own would be work no guard keeps and no first user reads, read by the
   user only in what the sign-off shows of it.
-- While turn runs, the orchestrator passes each line turn tells on to the user, judging none of
-  them, and stops the run when the user stops a step; when turn asks, it keeps the questions in the
-  steering before it asks the first, puts each about what is made to the user as a point to decide,
-  keeps the answer in the decisions, and sends it back.
+- While turn runs, the orchestrator passes on nothing of it, and stops the run when the user stops
+  a step. When turn's generator asks, the orchestrator keeps the question in the steering before it
+  asks, puts it to the user as a point to decide where it is about what is made, keeps the answer in
+  the decisions, and sends it back to the generator.
 
-  Only the main conversation talks with the user
-  ([Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs)); an orchestrator
-  that judged each way turn takes would ask the user more than what is theirs (Principle 2); and a
-  run waiting on an answer is kept in turn's folder of the user's repository, so it is written
-  there with the questions before the user is asked, as every move is.
+  Claude Code shows turn's agents as they run, so a line repeating it is read by no one. Only the
+  main conversation talks with the user
+  ([Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs)), so the generator
+  asks it directly. An orchestrator that judged each way turn takes would ask the user more than
+  what is theirs (Principle 2). The question is written down before the user is asked, as every
+  move is, so a stop while it waits is gone on from.
 - Only a point to decide is put to the user: a question turn asks that changes nothing the user can
   weigh, the orchestrator answers by adding to the CCS, its choice kept for the sign-off, and turn
   goes on where it stood; a stop of rn's scripts or of turn's run is gone on from by the step that meets it,
