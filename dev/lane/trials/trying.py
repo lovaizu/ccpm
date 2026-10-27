@@ -45,20 +45,32 @@ def folder(plugin: str, name: str) -> str:
     return made
 
 
-def messaged(event: dict[str, Any]) -> int:
-    """What a line Claude Code printed as stream-json does to the messages waiting on the main
-    conversation: 1 for each an agent sends it with SendMessage, -1 for each the main conversation
-    sends an agent, its lines naming no agent's tool use, 0 for any other line."""
-    if event.get("type") != "assistant":
-        return 0
-    sent = [
-        part.get("input", {}).get("to")
-        for part in event.get("message", {}).get("content", [])
-        if part.get("type") == "tool_use" and part.get("name") == "SendMessage"
-    ]
-    if event.get("parent_tool_use_id"):
-        return sum(1 for to in sent if to == "main")
-    return -sum(1 for to in sent if to != "main")
+# What Claude Code writes in the main conversation's record where an agent's message reaches it.
+SENT_BY_AGENT = "<agent-message from="
+
+
+def unanswered(session: str) -> int:
+    """The messages agents sent the main conversation of the session that it has not answered with
+    one of its own, read from its record: each message that reached it, less each SendMessage it
+    sent an agent; read from the record, as Claude Code prints no SendMessage of an agent two
+    layers down, such as turn's generator under turn:up."""
+    found = glob.glob(record.conversation(session))
+    entries = (record.read(found[0]) or []) if found else []
+    reached = sum(
+        1
+        for e in entries
+        if e.get("type") == "user" and SENT_BY_AGENT in json.dumps(e.get("message", {}))
+    )
+    sent = sum(
+        1
+        for e in entries
+        if e.get("type") == "assistant"
+        for part in record.blocks(e)
+        if part.get("type") == "tool_use"
+        and part.get("name") == "SendMessage"
+        and part.get("input", {}).get("to") != "main"
+    )
+    return max(0, reached - sent)
 
 
 class Conversation:
@@ -80,8 +92,11 @@ class Conversation:
         self.wait = (wait or 10) * 60
         self.run: subprocess.Popen[str] | None = None
         # The messages agents sent the main conversation that it has not yet answered with one of
-        # its own, kept from message to message, as the next message may bring the answer.
+        # its own, as its record shows at its last result, as the next message may bring the answer.
         self.asked = 0
+        # Whether an agent it started in the background still runs, kept from message to message,
+        # as Claude Code lists the agents running only when the list changes.
+        self.running = False
         self.printed: queue.Queue[str | None] = queue.Queue()
         self.errors: list[str] = []
 
@@ -141,17 +156,17 @@ class Conversation:
         # a result after which nothing is running, or what runs waits on the main conversation, and
         # no turn opens in QUIET seconds.
         result: dict[str, Any] | None = None
-        running, until = False, None
+        until = None
         with open(record or os.devnull, "w", encoding="utf-8") as kept:
             while True:
-                if not running or self.asked:
+                if not self.running or self.asked:
                     left: float | None = QUIET if result else None
                 else:
                     left = None if until is None else max(0, until - time.monotonic())
                 try:
                     line = self.printed.get(timeout=left)
                 except queue.Empty:
-                    if result and (not running or self.asked):
+                    if result and (not self.running or self.asked):
                         return result
                     raise SystemExit(
                         f"agents in the background still running {self.wait // 60} minutes"
@@ -163,15 +178,15 @@ class Conversation:
                 kept.write(line)
                 kept.flush()
                 event = json.loads(line)
-                self.asked = max(0, self.asked + messaged(event))
                 if event.get("subtype") == "background_tasks_changed":
-                    running = bool(event.get("tasks"))
+                    self.running = bool(event.get("tasks"))
                 elif event.get("subtype") == "init":
                     result = None
                 elif event.get("type") == "result":
                     if event.get("is_error"):
                         raise SystemExit(f"claude gave an error: {event.get('result')}")
                     result, until = event, until or time.monotonic() + self.wait
+                    self.asked = unanswered(event["session_id"])
 
     def close(self) -> None:
         """Ends the conversation's run of Claude Code, where it started one."""
