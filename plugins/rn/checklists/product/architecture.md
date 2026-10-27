@@ -14,19 +14,23 @@ give, and how each part and the user stories are checked, and build, change or a
 by it.
 
 An architecture holds the principles the product rests on, the parts it is made of, how they act on
-one another and where each is placed; and how each is checked. These are what an approval rests
-on, as changing one changes what was approved. How each part behaves in each case is held where the
-part is built and checked: in the tests of a part made of code, each a Given, a When and a Then, and
-in the steps of a part run by an AI; in the architecture it would be decided twice and drift, and
-every finding made while building would change what was approved.
+one another and where each is placed; and how heavily each is checked, from what a failure of it
+would cost the user. These are what an approval rests on, as changing one changes what was approved.
+How each part behaves in each case is held where the part is built and checked: in the tests of a
+part made of code, each a Given, a When and a Then, and in the steps of a part run by an AI; in the
+architecture it would be decided twice and drift, and every finding made while building would change
+what was approved.
 
 The parts are drawn from the UX in layers, each fewer than the one before: the UX's scenes rest on a
 few user stories, each one way the user uses the product at its edge, such as a command they run;
 the stories are taken on by logical components, each of which may serve several; and each component
 is realized by a technology, chosen at this layer alone, so the stories and the components follow
-from what the UX needs. What to check of each kind of part and of the stories, and how far, is the
-project's rule, not the architecture's: the architecture links it. An architecture built on a base
-architecture writes only what is its own, and links the base for the rest.
+from what the UX needs. How each kind of part and the stories are checked is the project's rule
+where it has one, and the architecture links it; how heavily each part is checked beyond that, such
+as by property tests or mutation testing, is the architecture's, as what a failure of a part would
+cost differs from product to product, and the approver weighs it against their purpose. An
+architecture built on a base architecture writes only what is its own, and links the base for the
+rest.
 
 ## Format
 
@@ -69,9 +73,11 @@ in the order they act and cross none, readable in light and dark>
 
 ## Test
 
-<A link to the project's rules for how each kind of part and the user stories are checked>
+<A link to the project's rules for how each kind of part and the user stories are checked, where
+it has them>
 
-- <What this product's checks need that the project's rules do not give, if anything>
+- <How heavily a part is checked beyond those rules, such as by property tests or mutation testing,
+  or that it is checked by them alone, with what a failure of it would cost the user>
 ```
 
 Each line of a list is one sentence understood alone, its why, where it has one, after a blank line
@@ -159,25 +165,31 @@ Why: the builder makes each component as it is realized; where it is placed deci
 where it runs and when a change to it reaches the user; and what the product depends on is where it
 breaks for the user first.
 
-### B-5: Each part and the stories checked by the project's rules
+### B-5: Each part checked as heavily as a failure of it would cost
 
 Scope: its part
 
-Can the reader tell, for each kind of part in the tree and for the user stories, the project's rule
-that says how it is checked, from a link to it?
+Can the reader tell, for each part in the tree and for the user stories, how heavily it is checked
+and why, from what a failure of it would cost the user?
 
-Tried by: the link followed, and each kind of part in the tree and the user stories found in the
-rule it reaches.
+Tried by: the link followed, and each part in the tree and the user stories found in the rule it
+reaches or in a line of the Test section.
 
 Signs:
 - each kind of part, such as code or a prompt, and the user stories are checked by a rule of the
-  project the link reaches;
-- a check written here is one the project's rule does not give, and agrees with it;
+  project the link reaches, or, where the project has none, by a line here;
+- each part checked beyond the project's rule, such as by property tests or mutation testing, and
+  each checked by the rule alone, is named with what a failure of it would cost the user, such as
+  data lost, a wrong result used unseen or a step merely run again;
+- a check written here agrees with the project's rule;
 - a case's inputs, stand-ins and bar to pass are left to the tests.
 
-Why: what to check and how far is decided once for the project, so every product is held to the
-same bar; written again in each architecture, the bars drift from the rule and from one another,
-and a case's detail changes with every test while the approval rests on the architecture.
+Why: a check costs the user time to build and to keep on every change, and a failure costs them
+what the part breaks; a weight given every product alike buys a small tool the checks of a large
+one, or leaves a part whose failure costs much as lightly checked as the rest, and a ground such as
+a checklist asking it is one the approver cannot weigh against their purpose. What the project's
+rule settles is decided once for the project, so it is linked, not written again; and a case's
+detail changes with every test while the approval rests on the architecture.
 
 ### B-6: The decisions followed together with the principles
 

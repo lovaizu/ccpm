@@ -23,7 +23,7 @@ class HistoryTest(RepoTest):
         """What rn gives of the session's history."""
         return self.ran("history")
 
-    def kept_as(self, message: str, stage: str = "plan", signoff: str = "none") -> str:
+    def kept_as(self, message: str, stage: str = "goal", signoff: str = "none") -> str:
         """The steering kept at the stage and the sign-off waiting, with the message; gives the
         commit."""
         self.write(STEERING, steered(part=plan(tasks=""), stage=stage, signoff=signoff))
@@ -40,20 +40,20 @@ class HistoryTest(RepoTest):
         return self.head()
 
     def test_a_session_with_nothing_sent_back_made_again_or_replaced_gives_none(self):
-        # Given: a session whose plan was proposed and approved, with one call on each work.
+        # Given: a session whose goal was proposed and approved, with one call on each work.
         self.called("0001", "plan", "Scope: the cart")
-        self.kept_as("Plan sign-off", signoff="plan")
-        self.kept_as("The user approved the plan", stage="design")
+        self.kept_as("Goal sign-off", signoff="goal")
+        self.kept_as("The user approved the goal", stage="ux")
         self.called("0002", "t1.1", "License: MIT")
         # When: the orchestrator asks for the history.
         # Then: rn gives no feedback, no work made again and no decision replaced.
         self.assertEqual(self.history(), {"feedback": [], "remade": [], "replaced": []})
 
     def test_each_feedback_is_given_with_the_proposal_that_answered_it(self):
-        # Given: the plan proposed, sent back, and proposed again with what changed.
-        self.kept_as("Plan sign-off\nAC1: all files", signoff="plan")
+        # Given: the goal proposed, sent back, and proposed again with what changed.
+        self.kept_as("Goal sign-off\nAC1: all files", signoff="goal")
         fed = self.kept_as("The user sent the plan back with /rn:gm: too much at once")
-        answered = self.kept_as("Plan sign-off\nChanged: AC1: the cart", signoff="plan")
+        answered = self.kept_as("Goal sign-off\nChanged: AC1: the cart", signoff="goal")
         # When: the orchestrator asks for the history.
         # Then: rn gives the feedback, as the commit that kept it says it, with the proposal that
         # answered it at the same sign-off.
@@ -62,28 +62,30 @@ class HistoryTest(RepoTest):
             [
                 {
                     "commit": fed,
-                    "signoff": "plan",
+                    "signoff": "goal",
                     "message": "The user sent the plan back with /rn:gm: too much at once",
                     "answer": {
                         "commit": answered,
-                        "message": "Plan sign-off\nChanged: AC1: the cart",
+                        "message": "Goal sign-off\nChanged: AC1: the cart",
                     },
                 }
             ],
         )
 
     def test_an_approval_is_no_feedback(self):
-        # Given: the plan proposed and approved, the stage moved on.
-        self.kept_as("Plan sign-off", signoff="plan")
-        self.kept_as("The user approved the plan", stage="design")
+        # Given: the goal proposed and approved, the stage moved on.
+        self.kept_as("Goal sign-off", signoff="goal")
+        self.kept_as("The user approved the goal", stage="ux")
         # When: the orchestrator asks for the history.
         # Then: rn gives no feedback.
         self.assertEqual(self.history()["feedback"], [])
 
     def test_a_feedback_not_yet_answered_has_no_answer(self):
-        # Given: the design proposed and sent back, not yet proposed again.
-        self.kept_as("Design sign-off", stage="design", signoff="design")
-        fed = self.kept_as("The user sent the design back with /rn:gm: no diagram", stage="design")
+        # Given: the architecture proposed and sent back, not yet proposed again.
+        self.kept_as("Architecture sign-off", stage="architecture", signoff="architecture")
+        fed = self.kept_as(
+            "The architecture sent back with /rn:gm: no diagram", stage="architecture"
+        )
         # When: the orchestrator asks for the history.
         # Then: rn gives the feedback with no answer.
         self.assertEqual(
@@ -91,25 +93,25 @@ class HistoryTest(RepoTest):
             [
                 {
                     "commit": fed,
-                    "signoff": "design",
-                    "message": "The user sent the design back with /rn:gm: no diagram",
+                    "signoff": "architecture",
+                    "message": "The architecture sent back with /rn:gm: no diagram",
                     "answer": None,
                 }
             ],
         )
 
     def test_each_feedback_is_answered_by_the_next_proposal_at_its_own_signoff(self):
-        # Given: the plan sent back twice, each proposed again, then approved, and the design
-        # proposed and sent back, then proposed again.
-        self.kept_as("Plan 1", signoff="plan")
-        first = self.kept_as("plan back 1")
-        again = self.kept_as("Plan 2", signoff="plan")
-        second = self.kept_as("plan back 2")
-        last = self.kept_as("Plan 3", signoff="plan")
-        self.kept_as("approved", stage="design")
-        self.kept_as("Design 1", stage="design", signoff="design")
-        third = self.kept_as("design back", stage="design")
-        designed = self.kept_as("Design 2", stage="design", signoff="design")
+        # Given: the goal sent back twice, each proposed again, then approved, and the
+        # architecture proposed and sent back, then proposed again.
+        self.kept_as("Goal 1", signoff="goal")
+        first = self.kept_as("goal back 1")
+        again = self.kept_as("Goal 2", signoff="goal")
+        second = self.kept_as("goal back 2")
+        last = self.kept_as("Goal 3", signoff="goal")
+        self.kept_as("approved", stage="architecture")
+        self.kept_as("Architecture 1", stage="architecture", signoff="architecture")
+        third = self.kept_as("architecture back", stage="architecture")
+        drawn = self.kept_as("Architecture 2", stage="architecture", signoff="architecture")
         # When: the orchestrator asks for the history.
         # Then: each feedback is answered by the proposal after it at the same sign-off.
         self.assertEqual(
@@ -117,7 +119,7 @@ class HistoryTest(RepoTest):
                 (f["commit"], f["signoff"], f["answer"]["commit"])
                 for f in self.history()["feedback"]
             ],
-            [(first, "plan", again), (second, "plan", last), (third, "design", designed)],
+            [(first, "goal", again), (second, "goal", last), (third, "architecture", drawn)],
         )
 
     def test_each_work_made_again_is_given_with_the_call_that_made_it_again(self):

@@ -24,13 +24,21 @@ it reaches the user.
   the session stands. A work is named `plan`, `learnings`, `deliverable`, `t<n>.<k>` for what
   action k of task T<n> makes, or `checklist-<kind>`.
 - A sign-off is a stop where you show the user a proposal and wait for `/rn:ty`, their approval, or
-  `/rn:gm <feedback>`, a change they ask for: the plan's, the design's and the deliverable's, in
-  that order. Only the user can type these; you never answer a sign-off for them.
+  `/rn:gm <feedback>`, a change they ask for: the goal's, the ux's, the architecture's and the
+  deliverable's, in that order. Only the user can type these; you never answer a sign-off for them.
+- A stage settles one thing before the next is built on it: the goal, why the user wants the work
+  and what shows it done; the ux, what the user gets and how they use it; the architecture, how the
+  work is built and checked, with the research it rests on; then the build, the finished work used,
+  the learnings, and the session finished. Each document the ux or the architecture stage needs is
+  a point of its own, heard at the stage's start: kept in the repository, the one already there
+  changed where there is one, kept in `<session>` alone, outside what the work leaves, or not made,
+  proposed from what the repository holds and what the work changes. Its answer is a decision of
+  `plan` naming the document's path and its kind, or that it is not made.
 
 You hand back to the user each point to decide, each question turn asks about what is made, each
 sign-off, each learning before anything acts on it, as where it goes is theirs to choose; each
 issue before it is sent, and the merge. An issue to rn's makers comes only from a learning, in step
-11, once the finished work is approved; what falls short in rn or turn before then shows there.
+12, once the finished work is approved; what falls short in rn or turn before then shows there.
 
 You carry nothing from move to move but the steering: a conversation ends or is cleared, and a fresh
 one knows only what rn's scripts wrote. rn's scripts alone write the steering and keep each move;
@@ -46,11 +54,12 @@ step with the messages of its moves and pushing it:
 - `rn.py decide <work> --title <t> --says <s> --message <m>`, one decision of the work, which
   prints `{"call": "<nnnn>"}`.
 - `rn.py state [--next <n>] [--open <o>]... [--done T<n>.<action>]... [--put <nnnn>] [--stage
-  build|deliverable|finished] [--goes-on] --message <m>`, where the session stands, which commits
-  and pushes and prints `{"kept": "<commit>"}`, and `"tell"` beside it where an action is done:
-  reply with that line, put into the conversation language. With `--goes-on`, given where a step
-  below gives it, as the step goes on after the move, it writes the move alone and prints
-  `{"written": "<session>/steering.md"}`: a push at each answer holds the run the answer goes to.
+  architecture|build|deliverable|finished] [--goes-on] --message <m>`, where the session stands,
+  which commits and pushes and prints `{"kept": "<commit>"}`, and `"tell"` beside it where an
+  action is done: reply with that line, put into the conversation language. With `--goes-on`,
+  given where a step below gives it, as the step goes on after the move, it writes the move alone
+  and prints `{"written": "<session>/steering.md"}`: a push at each answer holds the run the
+  answer goes to.
 
 `--next` is the step to take next, by its number and on what, as
 `Step <n> of /rn:up on <work>: <what is left of it>`, so a fresh conversation takes it from the
@@ -75,7 +84,8 @@ learning are in `messages.md`: read it whole before the first such
 message in a conversation.
 
 Steps 1 to 6 below serve every stage; the steps of each stage are in a file of its own: steps 7
-and 8 in `plan.md`, step 9 in `design.md`, step 10 in `build.md` and step 11 in `learnings.md`.
+and 8 in `goal.md`, step 9 in `ux.md`, step 10 in `architecture.md`, step 11 in `build.md` and
+step 12 in `learnings.md`.
 Read the file whole before you take a step of it in a conversation.
 
 ## Steps
@@ -228,10 +238,10 @@ Read the file whole before you take a step of it in a conversation.
      changes the remaining tasks or the criteria; only where it does, write the plan again, step 3
      on work `plan`, what an answer settled written into the goal or a criterion in the plan's
      words, and a choice of theirs no answer made first a point to decide, step 2 on work `plan`.
-   - Out: the task done and the plan current; go on with the step of the stage, 8, 9 or 10.
+   - Out: the task done and the plan current; go on with the step of the stage, 8, 9, 10 or 11.
 
 5. Stop at a sign-off, so the user answers it with their own command.
-   - In: the sign-off, `plan`, `design` or `deliverable`.
+   - In: the sign-off, `goal`, `ux`, `architecture` or `deliverable`.
    - Run `rn.py proposal <sign-off>`, which sets the sign-off waiting and Next, keeps the move where
      it was not waiting, and prints the proposal, with what changed since the last at the same
      sign-off and its answer line. Reply with what it printed put into the conversation language,

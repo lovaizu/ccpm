@@ -61,7 +61,7 @@ Signs: the user reads in each learning the words it rests on, as the commit or t
 holds them; each cause it names is one the quoted words show, such as a conversation's words
 where only a conversation shows why, rather than a cause read from a commit's change; each quote
 says whose
-words they are and where, such as the user's feedback at the plan sign-off, a commit message or a
+words they are and where, such as the user's feedback at the goal sign-off, a commit message or a
 message the orchestrator sent; each line is one the user's decision uses, what happened and where
 it goes, rather than how the learning was found.
 

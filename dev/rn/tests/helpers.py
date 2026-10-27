@@ -152,7 +152,7 @@ def plan(goal: str = GOAL, criteria: str = CRITERIA, tasks: str = task()) -> str
 
 def steered(
     part: str = plan(),
-    stage: str = "plan",
+    stage: str = "goal",
     signoff: str = "none",
     pr: str = PR,
     next_step: str = NEXT,
@@ -288,7 +288,7 @@ class RepoTest(MainAndWork):
         self,
         number: str,
         work: str,
-        stage: str = "plan",
+        stage: str = "goal",
         decisions: tuple[str, ...] = (),
         works: tuple[str, ...] = (),
         result: Any = None,

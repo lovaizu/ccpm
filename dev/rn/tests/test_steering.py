@@ -112,7 +112,7 @@ class FormTest(unittest.TestCase):
         cases = {
             "x\n": "line 1: expected the front matter opened by `---`, found none",
             "---\nrn: 1\n": 'line 1: expected frontmatter closed by "---", found none',
-            STEERED.replace("stage: plan\n", ""): "expected the front matter's keys rn, pr,"
+            STEERED.replace("stage: goal\n", ""): "expected the front matter's keys rn, pr,"
             " stage, signoff, artifact-language, conversation-language in that order, found rn,"
             " pr, signoff, artifact-language, conversation-language",
             STEERED.replace(f"rn: {VERSION}\npr: ", "pr: ").replace("stage:", "rn: 1\nstage:"): (
@@ -126,10 +126,10 @@ class FormTest(unittest.TestCase):
             "---\n---\n# A\n": "expected the front matter's keys rn, pr, stage, signoff,"
             " artifact-language, conversation-language in that order, found none",
             STEERED.replace(f"rn: {VERSION}", "rn:"): "line 2: expected a value for rn, found none",
-            steered(stage="done"): "line 4: expected stage to be plan, design, build,"
+            steered(stage="done"): "line 4: expected stage to be goal, ux, architecture, build,"
             " deliverable, learnings or finished, found done",
-            steered(signoff="build"): "line 5: expected signoff to be none, plan, design or"
-            " deliverable, found build",
+            steered(signoff="build"): "line 5: expected signoff to be none, goal, ux, architecture"
+            " or deliverable, found build",
             steered(pr="https://github.com/o/r"): "line 3: expected pr to be the pull"
             " request's URL, or none before it is opened, found https://github.com/o/r",
             steered(pr="pending"): "line 3: expected pr to be the pull request's URL, or none"

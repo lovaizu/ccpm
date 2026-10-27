@@ -116,7 +116,7 @@ class DecideTest(RepoTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.session(steered(stage="design"))
+        self.session(steered(stage="architecture"))
 
     def decide(self, work: str = "t1.1", title: str = "License", says: str = "MIT") -> Any:
         """Keeps the decision of the work, with its title and what it says."""
@@ -131,7 +131,7 @@ class DecideTest(RepoTest):
         # committed, as the step it belongs to commits it as it ends; the step's commit then holds
         # the call, with the decision's message after its own.
         want = {
-            "focal_entities": [{"work": "t1.1"}, {"stage": "design"}],
+            "focal_entities": [{"work": "t1.1"}, {"stage": "architecture"}],
             "constraints": [{"decision": "License: MIT"}],
         }
         written = (out, self.read_json(call_at("0001")), self.head())
@@ -181,7 +181,7 @@ class DecideTest(RepoTest):
         out = self.decide()
         # Then: a new call on t1.1 carries its decisions alone, the one of the same title replaced.
         want = {
-            "focal_entities": [{"work": "t1.1"}, {"stage": "design"}],
+            "focal_entities": [{"work": "t1.1"}, {"stage": "architecture"}],
             "constraints": [{"decision": "License: MIT"}, {"decision": "Form: a page"}],
         }
         self.assertEqual((out["call"], self.read_json(call_at("0002"))), ("0002", want))
@@ -313,7 +313,7 @@ class CcsTest(RepoTest):
     def setUp(self) -> None:
         super().setUp()
         tasks = f"{task()}\n\n{task('T2', 'G1 and AC2')}"
-        self.session(steered(part=plan(tasks=tasks), stage="design"))
+        self.session(steered(part=plan(tasks=tasks), stage="architecture"))
 
     def ccs(self, work: str = "t1.1", *paths: str, **more: str) -> Any:
         """The CCS of the work written, with the paths given, README.md where none is, and the
@@ -378,7 +378,7 @@ class CcsTest(RepoTest):
         ):
             with self.subTest(work=work):
                 # Given: a session.
-                self.session(steered(part=plan(tasks=task()), stage="design"))
+                self.session(steered(part=plan(tasks=task()), stage="architecture"))
                 before = self.head()
                 # When: the orchestrator has the work's CCS written.
                 self.ccs(work)
@@ -432,7 +432,7 @@ class CcsTest(RepoTest):
         want = {
             "focal_entities": [
                 {"work": "t1.1"},
-                {"stage": "design"},
+                {"stage": "architecture"},
                 {"kind": "code"},
                 {"path": "README.md"},
                 {"audience": "a new user"},
@@ -540,7 +540,7 @@ class CcsTest(RepoTest):
         tasks = task().replace(
             "Make part 1 of T1, `src/t1-1.py` as a code work. turn.", orchestrators
         )
-        self.session(steered(part=plan(tasks=tasks), stage="design"))
+        self.session(steered(part=plan(tasks=tasks), stage="architecture"))
         # When: the orchestrator has the CCS of that action written.
         # Then: rn says the steering holds no such action of turn's.
         self.assertIn(
@@ -612,7 +612,7 @@ class CcsTest(RepoTest):
             "plan": (
                 [call_at("0001", "steering.md")],
                 "plan",
-                "the user at the plan sign-off",
+                "the user at the goal sign-off",
                 ".",
             ),
             "learnings": (
@@ -738,7 +738,7 @@ class CcsTest(RepoTest):
                 checklist = os.path.join(self.plugin, "checklists", "product", f"{kind}.md")
                 self.write(checklist, "# A kind\n")
                 made = task().replace("as a code work", f"as a {kind} work", 1)
-                self.session(steered(part=plan(tasks=made), stage="design"))
+                self.session(steered(part=plan(tasks=made), stage="architecture"))
                 # When: the orchestrator has the CCS of that action written.
                 written = self.ccs("t1.1")["ccs"]
                 # Then: it names the kind's checklist alone.
@@ -746,7 +746,7 @@ class CcsTest(RepoTest):
                 self.assertEqual(found, [{"checklist": checklist}])
 
     def test_before_the_build_a_checklist_is_named_by_a_copy_without_the_items_on_the_built(self):
-        for stage in ("plan", "design"):
+        for stage in ("goal", "ux", "architecture"):
             with self.subTest(stage=stage):
                 # Given: the kind's checklist holding items judged on the built product, in a
                 # session at a stage before the build.
@@ -768,7 +768,7 @@ class CcsTest(RepoTest):
 
     def test_before_the_build_the_users_addition_is_cut_too_its_copy_numbered_by_its_place(self):
         # Given: rn's own checklist of the kind holding no item judged on the built product, and
-        # the user's addition holding them, in the design stage.
+        # the user's addition holding them, in the goal stage.
         addition = f"{RECORD}/checklists/{KIND}.md"
         self.write(addition, BUILT_ITEMS)
         self.kept()
@@ -1027,7 +1027,7 @@ class DecisionsTest(RepoTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.session(steered(stage="design"))
+        self.session(steered(stage="architecture"))
 
     def test_the_decisions_of_a_works_latest_call_are_given(self):
         # Given: a call on t1.1 returned, and one made again with a decision changed and one added.
@@ -1083,7 +1083,7 @@ class DecisionsTest(RepoTest):
     def test_the_decisions_of_a_work_whose_kind_has_no_checklist_stop(self):
         # Given: a task whose first action makes a work of a kind with no checklist.
         made = task().replace(f"as a {KIND} work", "as an api work", 1)
-        self.session(steered(part=plan(tasks=made), stage="design"))
+        self.session(steered(part=plan(tasks=made), stage="architecture"))
         # When: the orchestrator asks for that work's decisions.
         # Then: rn says there is no checklist for the kind and how to make one.
         self.assertIn(

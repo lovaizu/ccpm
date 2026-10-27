@@ -6,8 +6,9 @@ argument-hint: "<feedback>"
 ---
 
 `rn.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/rn.py"`, run from the top of the repository.
-`plan.md` below is `${CLAUDE_PLUGIN_ROOT}/prompts/plan.md`.
-`design.md` below is `${CLAUDE_PLUGIN_ROOT}/prompts/design.md`.
+`goal.md` below is `${CLAUDE_PLUGIN_ROOT}/prompts/goal.md`.
+`ux.md` below is `${CLAUDE_PLUGIN_ROOT}/prompts/ux.md`.
+`architecture.md` below is `${CLAUDE_PLUGIN_ROOT}/prompts/architecture.md`.
 `build.md` below is `${CLAUDE_PLUGIN_ROOT}/prompts/build.md`.
 `learnings.md` below is `${CLAUDE_PLUGIN_ROOT}/prompts/learnings.md`.
 `messages.md` below is `${CLAUDE_PLUGIN_ROOT}/prompts/messages.md`.

@@ -38,20 +38,20 @@ class SessionTest(RepoTest):
         self.assertEqual(self.ran("session"), {"session": None, "stage": None, "signoff": None})
 
     def test_the_session_the_branch_changed_is_found_with_its_stage(self):
-        # Given: a session's folder committed on the branch, at the design stage, no sign-off
+        # Given: a session's folder committed on the branch, at the architecture stage, no sign-off
         # waiting.
-        self.session(steered(stage="design"))
+        self.session(steered(stage="architecture"))
         # When: the orchestrator asks for the session.
         # Then: rn gives its folder and its stage, and no sign-off waiting.
-        want = {"session": FOLDER, "stage": "design", "signoff": None}
+        want = {"session": FOLDER, "stage": "architecture", "signoff": None}
         self.assertEqual(self.ran("session"), want)
 
     def test_the_signoff_waiting_is_given(self):
-        # Given: a session whose steering waits at the plan sign-off.
-        self.session(steered(signoff="plan"))
+        # Given: a session whose steering waits at the goal sign-off.
+        self.session(steered(signoff="goal"))
         # When: the orchestrator asks for the session.
         # Then: rn gives the sign-off waiting.
-        self.assertEqual(self.ran("session")["signoff"], "plan")
+        self.assertEqual(self.ran("session")["signoff"], "goal")
 
     def test_a_finished_session_is_not_taken_up(self):
         # Given: a session on the branch whose steering is at the finished stage.
@@ -65,7 +65,7 @@ class SessionTest(RepoTest):
         self.session()
         self.write(STEERING, steered(stage="finished"))
         # When: the orchestrator asks for the session.
-        # Then: it is found, as the last commit holds it at the plan stage.
+        # Then: it is found, as the last commit holds it at the goal stage.
         self.assertEqual(self.ran("session")["session"], FOLDER)
 
     def test_a_session_on_the_default_branch_is_not_taken_up(self):
@@ -230,7 +230,7 @@ class StartTest(RepoTest):
         # Given: a branch with no session.
         # When: the orchestrator starts one.
         self.ran(*self.start())
-        # Then: the steering holds rn's version, the pull request, the plan stage, no sign-off,
+        # Then: the steering holds rn's version, the pull request, the goal stage, no sign-off,
         # the languages, the title, Next the step that makes the plan and nothing open, as kept
         # on the remote.
         want = steered(part="# Add login", next_step=session.STARTED)
@@ -595,43 +595,49 @@ class StateTest(RepoTest):
         want = steered(part=plan(tasks=tasks), stage="build")
         self.assertEqual((said in out, self.read(STEERING)), (True, want))
 
-    def test_the_stage_moves_to_build_from_design_where_no_document_was_made(self):
-        # Given: a session at the design stage, whose calls in it are on the plan and on the
-        # learnings of the plan sign-off, and a call on t1.1 made in the plan stage.
-        self.session(steered(stage="design"))
-        self.call("0001", "t1.1", "plan", result={})
-        self.call("0002", "learnings", "design", result={})
-        self.call("0003", "plan", "design", result={})
-        self.kept()
-        # When: the orchestrator moves the stage to build.
-        self.ran(*self.state("--stage", "build"))
-        # Then: the stage is build, with no sign-off.
-        want = steered(stage="build", next_step="3. Make the plan.")
-        self.assertEqual(self.read(STEERING), want)
+    def test_the_stage_moves_on_from_ux_or_architecture_where_it_made_no_document(self):
+        for stage, to, before in (("ux", "architecture", "goal"), ("architecture", "build", "ux")):
+            with self.subTest(to=to):
+                # Given: a session at the ux or the architecture stage, whose calls in it are on
+                # the plan and on the learnings, with a call on t1.1 made in the stage before it.
+                self.session(steered(stage=stage))
+                self.call("0001", "t1.1", before, result={})
+                self.call("0002", "learnings", stage, result={})
+                self.call("0003", "plan", stage, result={})
+                self.kept()
+                # When: the orchestrator moves the stage on.
+                self.ran(*self.state("--stage", to))
+                # Then: the stage is the next one, with no sign-off.
+                want = steered(stage=to, next_step="3. Make the plan.")
+                self.assertEqual(self.read(STEERING), want)
 
-    def test_the_stage_moving_to_build_after_a_document_was_made_stops(self):
-        # Given: a session at the design stage with a call on t1.1 and on a checklist made in it.
-        self.session(steered(stage="design"))
-        self.call("0001", "plan", "design", result={})
-        self.call("0002", "t1.1", "design")
-        self.call("0003", "checklist-code", "design", result={})
-        self.call("0004", "t1.1", "design", result={})
-        self.kept()
-        # When: the orchestrator moves the stage to build.
-        out = self.stopped(*self.state("--stage", "build"))
-        # Then: rn names each work made, says they go to the design sign-off, and keeps nothing.
-        said = (
-            "rn: the design stage made t1.1 and checklist-code, which go to the design sign-off;"
-            " show it with `rn.py proposal design`, and the user's approval there moves the"
-            " session to build"
-        )
-        self.assertEqual((said in out, self.read(STEERING)), (True, steered(stage="design")))
+    def test_the_stage_moving_on_after_a_document_was_made_in_it_stops(self):
+        for stage, to in (("ux", "architecture"), ("architecture", "build")):
+            with self.subTest(to=to):
+                # Given: a session at the ux or the architecture stage with a call on t1.1 and on
+                # a checklist made in it.
+                self.session(steered(stage=stage))
+                self.call("0001", "plan", stage, result={})
+                self.call("0002", "t1.1", stage)
+                self.call("0003", "checklist-code", stage, result={})
+                self.call("0004", "t1.1", stage, result={})
+                self.kept()
+                # When: the orchestrator moves the stage on.
+                out = self.stopped(*self.state("--stage", to))
+                # Then: rn names each work made, says they go to the stage's sign-off, and keeps
+                # nothing.
+                said = (
+                    f"rn: the {stage} stage made t1.1 and checklist-code, which go to the {stage}"
+                    f" sign-off; show it with `rn.py proposal {stage}`, and the user's approval"
+                    f" there moves the session to {to}"
+                )
+                self.assertEqual((said in out, self.read(STEERING)), (True, steered(stage=stage)))
 
-    def test_the_stage_moves_to_deliverable_after_a_document_made_in_the_design_stage(self):
-        # Given: a session at the build stage, no task left, with a call on t1.1 made in the design
-        # stage.
+    def test_the_stage_moves_to_deliverable_after_a_document_made_before_the_build(self):
+        # Given: a session at the build stage, no task left, with a call on t1.1 made in the
+        # architecture stage.
         self.session(steered(part=plan(tasks=""), stage="build"))
-        self.call("0001", "t1.1", "design", result={})
+        self.call("0001", "t1.1", "architecture", result={})
         self.kept()
         # When: the orchestrator moves the stage to deliverable.
         self.ran(*self.state("--stage", "deliverable"))
@@ -723,9 +729,10 @@ class StateTest(RepoTest):
 
     def test_the_stage_moving_from_another_stage_stops(self):
         for stage, to, start in (
-            ("plan", "deliverable", "build"),
+            ("goal", "deliverable", "build"),
             ("build", "finished", "learnings"),
-            ("plan", "build", "design"),
+            ("goal", "build", "architecture"),
+            ("goal", "architecture", "ux"),
         ):
             with self.subTest(to=to):
                 # Given: a session at a stage the move does not start from.
@@ -741,11 +748,11 @@ class StateTest(RepoTest):
 
     def test_a_stage_rn_does_not_move_to_stops(self):
         # Given: a session.
-        # When: the orchestrator moves the stage to design.
+        # When: the orchestrator moves the stage to ux, which the goal sign-off moves it to.
         # Then: rn names the stages it moves to.
         self.assertIn(
-            "argument --stage: invalid choice: 'design'",
-            self.stopped(*self.state("--stage", "design")),
+            "argument --stage: invalid choice: 'ux'",
+            self.stopped(*self.state("--stage", "ux")),
         )
 
     def test_a_steering_changed_by_hand_stops_and_keeps_nothing(self):
@@ -772,14 +779,15 @@ class StateTest(RepoTest):
 
     def test_a_steering_committed_out_of_form_stops(self):
         # Given: a steering out of form, committed by hand.
-        self.session(STEERED.replace("stage: plan", "stage: done"))
+        self.session(STEERED.replace("stage: goal", "stage: done"))
         # When: the orchestrator keeps a move.
         # Then: rn names the point and says to restore one rn kept from its history.
         self.assertIn(
             f"rn: {STEERING} as the last keep left it is out of its form: line 4: expected stage"
-            " to be plan, design, build, deliverable, learnings or finished, found done; rn keeps"
-            f" none so, so restore the last one rn kept with `git checkout <commit> -- {STEERING}`,"
-            f" the commit found with `git log -- {STEERING}`, then run this again, which keeps it",
+            " to be goal, ux, architecture, build, deliverable, learnings or finished, found done;"
+            " rn keeps none so, so restore the last one rn kept with `git checkout <commit> --"
+            f" {STEERING}`, the commit found with `git log -- {STEERING}`, then run this again,"
+            " which keeps it",
             self.stopped(*self.state()),
         )
 
@@ -817,7 +825,8 @@ class StateTest(RepoTest):
 
     def test_a_stage_moved_sets_next_to_the_step_it_leads_to(self):
         for stage, to, tasks in (
-            ("design", "build", plan()),
+            ("ux", "architecture", plan()),
+            ("architecture", "build", plan()),
             ("build", "deliverable", plan(tasks="")),
             ("learnings", "finished", plan()),
         ):

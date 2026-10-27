@@ -5,9 +5,10 @@ stand-in turn gives back for each work it is called on, and what each message's 
 checked by script.
 
 The session is the smallest piece of work that reaches every move: a line greeting new contributors
-added to the README of a small project, with one task in the plan stage, whose research settles a
-criterion with the user, one document, whose words the user answers again, one task building the
-finished work, and two learnings, one general and one of the project's own."""
+added to the README of a small project, with one task in the goal stage, whose research settles a
+criterion with the user, one document in the ux stage, whose words the user answers again, no
+document in the architecture stage, one task building the finished work, and two learnings, one
+general and one of the project's own."""
 
 from __future__ import annotations
 
@@ -30,7 +31,7 @@ from proposal import WAITING
 
 # The user's words, in the conversation language their instructions set.
 REQUEST = "/rn:up README に新しいコントリビューター向けの挨拶を一行足して"
-# The feedback at the plan sign-off, a sign of the point behind it, where a new contributor asks,
+# The feedback at the goal sign-off, a sign of the point behind it, where a new contributor asks,
 # which it leaves open; and one that settles it with the goal's change, as the plan written again
 # says where to ask in G1 too, which is also the answer to that point where FEEDBACK leaves it open.
 FEEDBACK = (
@@ -92,7 +93,7 @@ README_CCS = [
 ]
 
 
-# What rn.py ccs is given for T2's note, made in the design stage before anything is built: its
+# What rn.py ccs is given for T2's note, made in the ux stage before anything is built: its
 # reader the user approving it and whoever makes README.md's change to it, with the plan and the
 # README it is made for.
 GREETING_CCS = [
@@ -115,15 +116,15 @@ NEXT_CALL = "Step 8 of /rn:up on plan: write the plan, step 3, as no point is le
 NEXT_T1 = "Step 4 of /rn:up on T1: action 1, have turn research where the greeting goes"
 NEXT_T1_2 = "Step 4 of /rn:up on T1: action 2, confirm the greeting's place with the user"
 NEXT_T1_WEIGH = "Step 4 of /rn:up on T1: weigh what it brought"
-NEXT_PLAN_SIGNOFF = "Step 5 of /rn:up on plan: stop at the plan sign-off"
+NEXT_GOAL_SIGNOFF = "Step 5 of /rn:up on goal: stop at the goal sign-off"
 NEXT_T2 = "Step 4 of /rn:up on T2: action 1, confirm the greeting's words with the user"
 NEXT_T2_2 = "Step 4 of /rn:up on T2: action 2, have turn make docs/greeting.md"
-NEXT_DESIGN_SIGNOFF = "Step 5 of /rn:up on design: stop at the design sign-off"
+NEXT_UX_SIGNOFF = "Step 5 of /rn:up on ux: stop at the ux sign-off"
 NEXT_T3 = "Step 4 of /rn:up on T3: action 1, confirm the line docs/greeting.md gives"
 NEXT_T3_2 = "Step 4 of /rn:up on T3: action 2, have turn make the change to README.md"
 NEXT_DELIVERABLE_SIGNOFF = "Step 5 of /rn:up on deliverable: stop at the deliverable sign-off"
-NEXT_L1 = "Step 11 of /rn:up on L1: put it to the user"
-NEXT_L2 = "Step 11 of /rn:up on L2: put it to the user"
+NEXT_L1 = "Step 12 of /rn:up on L1: put it to the user"
+NEXT_L2 = "Step 12 of /rn:up on L2: put it to the user"
 
 # The plan, as the orchestrator writes it at each stage: the goal, the criteria and the tasks.
 G1 = (
@@ -172,7 +173,7 @@ def plan(goal: str, criteria: list, tasks: list) -> str:
 PLAN_FIRST = plan(G1, [AC1_FIRST, AC2], [T1])
 # The plan written again once T1 is done, AC1 naming the place the user chose.
 PLAN_PLACED = plan(G1, [AC1, AC2], [])
-PLAN_DESIGN = plan(G1, [AC1, AC2], [T2])
+PLAN_UX = plan(G1, [AC1, AC2], [T2])
 PLAN_BUILD = plan(G1, [AC1, AC2], [T3])
 # What the stand-in turn asks while it researches the greeting's place, which the points put to
 # the user did not settle.
@@ -199,7 +200,7 @@ L_PLACE = (
     " file, where in the file the change goes."
 )
 L_TWICE = (
-    "- L2: The plan written again after the design sign-off asked the user once more for the"
+    "- L2: The plan written again after the ux sign-off asked the user once more for the"
     " greeting line docs/greeting.md gave, which that sign-off had approved, kept as"
     f' "{LINE_QUOTE}" in the commit of the line\'s confirmation; for this repository, its plan'
     " checklist could ask that no action asks the user again what a sign-off approved."
@@ -505,9 +506,9 @@ def t1_researched(p: Place) -> None:
     state(p, NEXT_T1_2, "T1.1 done: where the greeting goes researched", "--done", "T1.1")
 
 
-def plan_signoff(p: Place) -> None:
+def goal_signoff(p: Place) -> None:
     """T1's action 2 done, the greeting's place kept as a decision of the plan, as it settles a
-    criterion, T1 done and out of the steering, the plan written again with the place, and the plan
+    criterion, T1 done and out of the steering, the plan written again with the place, and the goal
     sign-off waiting."""
     t1_researched(p)
     decide(
@@ -520,8 +521,8 @@ def plan_signoff(p: Place) -> None:
     )
     state(p, NEXT_T1_WEIGH, "T1.2 done: the greeting's place settled", "--done", "T1.2")
     put = written(p, PLAN_CCS, PLAN_PLACED)
-    state(p, NEXT_PLAN_SIGNOFF, "The plan written again from T1: AC1 names the place", "--put", put)
-    p.rn("proposal", "plan")
+    state(p, NEXT_GOAL_SIGNOFF, "The plan written again from T1: AC1 names the place", "--put", put)
+    p.rn("proposal", "goal")
 
 
 def typed(p: Place, words: str) -> None:
@@ -559,35 +560,36 @@ def answered(p: Place, answer: str, opened: list) -> None:
 
 
 def fed_back(p: Place) -> None:
-    """The plan sign-off answered with the feedback, kept in Open, Next step 6."""
-    plan_signoff(p)
+    """The goal sign-off answered with the feedback, kept in Open, Next step 6."""
+    goal_signoff(p)
     answered(p, "feedback", [FEEDBACK])
 
 
 def settled_back(p: Place) -> None:
-    """The plan sign-off answered with the feedback that settles its point, kept in Open, Next
+    """The goal sign-off answered with the feedback that settles its point, kept in Open, Next
     step 6."""
-    plan_signoff(p)
+    goal_signoff(p)
     answered(p, "feedback", [SETTLED])
 
 
-def plan_approved(p: Place) -> None:
-    """The plan approved, the design stage begun, Next step 9."""
-    plan_signoff(p)
+def goal_approved(p: Place) -> None:
+    """The goal approved, the ux stage begun, Next step 9."""
+    goal_signoff(p)
     answered(p, "approved", [])
 
 
 def t2_planned(p: Place) -> None:
-    """The documents heard and the plan written again with T2, Next T2's action 1."""
-    plan_approved(p)
+    """The documents of the ux heard and the plan written again with T2, Next T2's action 1."""
+    goal_approved(p)
     decide(
         p,
         "plan",
-        "Documents",
-        "docs/greeting.md, a note work, holding the greeting's words and its place in the README",
-        "Documents: the user chose one note for the greeting, over none",
+        "UX documents",
+        "docs/greeting.md, a note work kept in the repository, holding the greeting's words and its"
+        " place in the README",
+        "UX documents: the user chose one note for the greeting, kept in the repository, over none",
     )
-    put = written(p, PLAN_CCS, PLAN_DESIGN)
+    put = written(p, PLAN_CCS, PLAN_UX)
     state(p, NEXT_T2, "The plan written again: T2 writes docs/greeting.md", "--put", put)
 
 
@@ -617,15 +619,29 @@ def t2_worded(p: Place) -> None:
     state(p, NEXT_T2_2, "T2.1 done: the words settled", "--done", "T2.1")
 
 
-def design_approved(p: Place) -> None:
-    """T2 done and out of the steering, changing nothing of the plan, the design approved, the plan
-    written again with T3, and T3's action 1 done, Next T3's action 2."""
+def ux_approved(p: Place) -> None:
+    """T2 done and out of the steering, changing nothing of the plan, and the ux approved, the
+    architecture stage begun, Next step 10."""
     t2_worded(p)
     made(p, GREETING_CCS, NOTE_GREETING)
     message = "T2.2 done: docs/greeting.md made, changing nothing of the plan"
-    state(p, NEXT_DESIGN_SIGNOFF, message, "--done", "T2.2")
-    p.rn("proposal", "design")
+    state(p, NEXT_UX_SIGNOFF, message, "--done", "T2.2")
+    p.rn("proposal", "ux")
     answered(p, "approved", [])
+
+
+def built_planned(p: Place) -> None:
+    """The architecture stage passed, as the user decided the work needs no document of how it is
+    built, the plan written again with T3, and T3's action 1 done, Next T3's action 2."""
+    ux_approved(p)
+    decide(
+        p,
+        "plan",
+        "Architecture documents",
+        "none, as the greeting line changes nothing of how the project is built",
+        "Architecture documents: the user chose none, over an architecture of the README",
+    )
+    state(p, None, "No document of how the work is built is needed", "--stage", "build")
     put = written(p, PLAN_CCS, PLAN_BUILD)
     state(p, NEXT_T3, "The plan written again: T3 adds the line to README.md", "--put", put)
     decide(
@@ -641,7 +657,7 @@ def design_approved(p: Place) -> None:
 def deliverable_signoff(p: Place) -> None:
     """T3 done and out of the steering, changing nothing of the plan, no task left, the finished
     work used, and the deliverable sign-off waiting."""
-    design_approved(p)
+    built_planned(p)
     made(p, README_CCS, NOTE_README)
     message = "T3.2 done: README.md greets new contributors; no task is left"
     state(p, None, message, "--done", "T3.2", "--stage", "deliverable")
@@ -652,7 +668,7 @@ def deliverable_signoff(p: Place) -> None:
 
 def learnings_due(p: Place) -> None:
     """The finished work approved, and the learnings written from the history and put back, the
-    two to put to the user, Next step 11 on L1."""
+    two to put to the user, Next step 12 on L1."""
     deliverable_signoff(p)
     answered(p, "approved", [])
     put = written(p, LEARNINGS_CCS, LEARNT)
@@ -943,7 +959,7 @@ CASES = {
                 [
                     MOVED,
                     KEPT,
-                    front("plan", "none"),
+                    front("goal", "none"),
                     LANGUAGES,
                     next_has("Step 8"),
                     pr(draft=True),
@@ -967,7 +983,7 @@ CASES = {
         "/rn:up <a letter> in a fresh conversation while a point is asked: the point asked again",
         "up 1 (Next, words answering a point this conversation has not shown), 2",
         purposed,
-        [front("plan", "none"), next_has("Step 8"), decisions("plan", 1)],
+        [front("goal", "none"), next_has("Step 8"), decisions("plan", 1)],
         [("/rn:up a", [STAYS, decisions("plan", 1), ONE_POINT, JAPANESE])],
         {},
     ),
@@ -975,7 +991,7 @@ CASES = {
         "/rn:up in a fresh conversation while a point is asked, then the point answered",
         "up 1 (Next), 8, 2 (the next point, nothing settled asked again; the answer kept)",
         purposed,
-        [front("plan", "none"), next_has("Step 8"), decisions("plan", 1)],
+        [front("goal", "none"), next_has("Step 8"), decisions("plan", 1)],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
             (DONE_ANSWER, [decisions("plan", 2)]),
@@ -1073,10 +1089,10 @@ CASES = {
         ],
         {"t1.1": [RESEARCH_PLACE]},
     ),
-    "plan-signoff": Case(
+    "goal-signoff": Case(
         "a task's last action, the orchestrator's, the task done and what it brought weighed, the"
         " plan written again from it, the place the user answered written into a criterion in the"
-        " plan's words with nothing asked, then the plan sign-off",
+        " plan's words with nothing asked, then the goal sign-off",
         "up 1, 4 (the last action, what the task brought weighed), 2, 3 (the plan written again),"
         " 8, 5",
         t1_researched,
@@ -1093,56 +1109,56 @@ CASES = {
                     called("plan", 2, least=True),
                     no_result("plan"),
                     plan_has("title"),
-                    *proposal("plan"),
+                    *proposal("goal"),
                 ],
             ),
         ],
         {},
     ),
     "resume-signoff": Case(
-        "/rn:up in a fresh conversation while the plan sign-off waits",
+        "/rn:up in a fresh conversation while the goal sign-off waits",
         "up 1 (a sign-off waiting), 5 (the same proposal, nothing kept)",
-        plan_signoff,
-        [front("plan", "plan")],
-        [("/rn:up", [STAYS, *proposal("plan")])],
+        goal_signoff,
+        [front("goal", "goal")],
+        [("/rn:up", [STAYS, *proposal("goal")])],
         {},
     ),
     "nosignoff-ty": Case(
         "/rn:ty with no sign-off waiting",
         "ty 1 (no sign-off)",
         planned,
-        [front("plan", "none")],
-        [("/rn:ty", [STAYS, front("plan", "none"), JAPANESE, says("/rn:up")])],
+        [front("goal", "none")],
+        [("/rn:ty", [STAYS, front("goal", "none"), JAPANESE, says("/rn:up")])],
         {},
     ),
     "nosignoff-gm": Case(
         "/rn:gm <feedback> with no sign-off waiting",
         "gm 1 (no sign-off)",
         planned,
-        [front("plan", "none")],
-        [(f"/rn:gm {FEEDBACK}", [STAYS, front("plan", "none"), JAPANESE, says("/rn:up")])],
+        [front("goal", "none")],
+        [(f"/rn:gm {FEEDBACK}", [STAYS, front("goal", "none"), JAPANESE, says("/rn:up")])],
         {},
     ),
     "empty-gm": Case(
-        "/rn:gm with no feedback at the plan sign-off",
+        "/rn:gm with no feedback at the goal sign-off",
         "gm 1 (no feedback)",
-        plan_signoff,
-        [front("plan", "plan")],
-        [("/rn:gm", [STAYS, front("plan", "plan"), JAPANESE, says("/rn:gm")])],
+        goal_signoff,
+        [front("goal", "goal")],
+        [("/rn:gm", [STAYS, front("goal", "goal"), JAPANESE, says("/rn:gm")])],
         {},
     ),
-    "ty-plan": Case(
-        "/rn:ty at the plan sign-off: approved, going on with no learning made",
+    "ty-goal": Case(
+        "/rn:ty at the goal sign-off: approved, going on with no learning made",
         "ty 1, 2, 3 (up 9, 2)",
-        plan_signoff,
-        [front("plan", "plan"), learnings(0)],
+        goal_signoff,
+        [front("goal", "goal"), learnings(0)],
         [
             (
                 "/rn:ty",
                 [
                     MOVED,
                     KEPT,
-                    front("design", "none"),
+                    front("ux", "none"),
                     called("learnings", 0),
                     learnings(0),
                     next_has("Step 9"),
@@ -1152,18 +1168,18 @@ CASES = {
         ],
         {},
     ),
-    "gm-plan": Case(
-        "/rn:gm <feedback> at the plan sign-off: kept whole in Open, no learning made, stop",
+    "gm-goal": Case(
+        "/rn:gm <feedback> at the goal sign-off: kept whole in Open, no learning made, stop",
         "gm 1, 2, 3",
-        plan_signoff,
-        [front("plan", "plan"), learnings(0)],
+        goal_signoff,
+        [front("goal", "goal"), learnings(0)],
         [
             (
                 f"/rn:gm {FEEDBACK}",
                 [
                     MOVED,
                     KEPT,
-                    front("plan", "none"),
+                    front("goal", "none"),
                     next_has("Step 6"),
                     open_has(FEEDBACK),
                     called("learnings", 0),
@@ -1180,7 +1196,7 @@ CASES = {
         " point asked, the plan written again, the same sign-off",
         "up 1, 6, 2, 3, 5 (what changed)",
         fed_back,
-        [front("plan", "none"), next_has("Step 6"), open_has(FEEDBACK)],
+        [front("goal", "none"), next_has("Step 6"), open_has(FEEDBACK)],
         [
             ("/rn:up", [ONE_POINT, decided("plan", "question", held=False), open_has(FEEDBACK)]),
             (
@@ -1192,7 +1208,7 @@ CASES = {
                     no_result("plan"),
                     plan_has("issue"),
                     open_has(FEEDBACK, held=False),
-                    *proposal("plan"),
+                    *proposal("goal"),
                 ],
             ),
         ],
@@ -1204,7 +1220,7 @@ CASES = {
         " sign-off",
         "up 1, 6, 2 (the feedback the answer), 3, 5 (what changed)",
         settled_back,
-        [front("plan", "none"), next_has("Step 6"), open_has(SETTLED)],
+        [front("goal", "none"), next_has("Step 6"), open_has(SETTLED)],
         [
             (
                 "/rn:up",
@@ -1215,7 +1231,7 @@ CASES = {
                     no_result("plan"),
                     plan_has("issue"),
                     open_has(SETTLED, held=False),
-                    *proposal("plan"),
+                    *proposal("goal"),
                 ],
             ),
         ],
@@ -1228,7 +1244,7 @@ CASES = {
         " asked)",
         t2_unasked,
         [
-            front("design", "none"),
+            front("ux", "none"),
             next_has("Step 4 of /rn:up on T2: action 1"),
             decisions("t2.2", 1),
             file_has(NOTE_CHECKLIST, "### B-3:"),
@@ -1236,12 +1252,12 @@ CASES = {
         [("/rn:up", [STAYS, returned("t2.2", 0), ONE_POINT, JAPANESE])],
         {"t2.2": [NOTE_GREETING]},
     ),
-    "design-signoff": Case(
-        "a document's last action, made by turn in one call, then the design sign-off",
+    "ux-signoff": Case(
+        "a document's last action, made by turn in one call, then the ux sign-off",
         "up 1, 4, 3 (a task's work), 9, 5",
         t2_worded,
         [
-            front("design", "none"),
+            front("ux", "none"),
             next_has("Step 4 of /rn:up on T2: action 2"),
             returned("t2.2", 0),
         ],
@@ -1253,7 +1269,7 @@ CASES = {
                     KEPT,
                     returned("t2.2", 1),
                     done("T2"),
-                    *proposal("design"),
+                    *proposal("ux"),
                     says("docs/greeting.md"),
                     says("# Greeting"),
                 ],
@@ -1261,11 +1277,32 @@ CASES = {
         ],
         {"t2.2": [NOTE_GREETING]},
     ),
+    "no-architecture": Case(
+        "the architecture stage's documents heard, none needed: the stage passed with no sign-off,"
+        " and the plan written again with the build's tasks",
+        "up 1, 10 (the documents heard, none, the stage moved), 2, 11, 3",
+        ux_approved,
+        [front("architecture", "none"), next_has("Step 10")],
+        [
+            ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
+            (
+                "アーキテクチャの文書はいりません",
+                [
+                    MOVED,
+                    KEPT,
+                    front("build", "none"),
+                    called("plan", 4, least=True),
+                    plan_has("- T3:"),
+                ],
+            ),
+        ],
+        {},
+    ),
     "deliverable-signoff": Case(
         "the build's last action, the task weighed and the plan not written again as it changed"
         " nothing, the finished work used, the deliverable sign-off",
-        "up 1, 4, 3, 10, 5",
-        design_approved,
+        "up 1, 4, 3, 11, 5",
+        built_planned,
         [
             front("build", "none"),
             next_has("Step 4 of /rn:up on T3: action 2"),
@@ -1291,7 +1328,7 @@ CASES = {
     "ty-deliverable": Case(
         "/rn:ty at the deliverable sign-off: approved, the learnings looked for once in the"
         " history, written and put back, the first learning put",
-        "ty 1, 2, 3 (up 11: the history, the search, up 3 on learnings, the first learning put)",
+        "ty 1, 2, 3 (up 12: the history, the search, up 3 on learnings, the first learning put)",
         deliverable_signoff,
         [front("deliverable", "deliverable"), learnings(0)],
         [
@@ -1304,7 +1341,7 @@ CASES = {
                     called("learnings", 1, least=True),
                     no_result("learnings"),
                     learnt_some(),
-                    next_has("Step 11"),
+                    next_has("Step 12"),
                     ONE_POINT,
                     JAPANESE,
                 ],
@@ -1314,10 +1351,10 @@ CASES = {
     ),
     "learning": Case(
         "the learnings put one per message, the first taken for an issue",
-        "up 1, 11 (one learning per message, each answer written, an issue's in Open,"
+        "up 1, 12 (one learning per message, each answer written, an issue's in Open,"
         " nothing committed at an answer)",
         learnings_due,
-        [front("learnings", "none"), learnings(2), next_has("Step 11")],
+        [front("learnings", "none"), learnings(2), next_has("Step 12")],
         [
             ("/rn:up", [STAYS, ONE_POINT, JAPANESE]),
             (
@@ -1336,7 +1373,7 @@ CASES = {
     "last": Case(
         "the last learning taken for the checklist, the issue shown and sent, the pull request"
         " marked ready",
-        "up 1, 11 (the issue written by the orchestrator, shown and sent; the checklist made, up 3;"
+        "up 1, 12 (the issue written by the orchestrator, shown and sent; the checklist made, up 3;"
         " finished)",
         l1_answered,
         [front("learnings", "none"), next_has("L2")],

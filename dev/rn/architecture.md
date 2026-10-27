@@ -78,9 +78,22 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   writes it there, and rn's scripts put it back into the steering once the checks they hold it to
   pass.
 
-  The user reads the plan whole at the plan sign-off as soon as it is made, so a reader in their
+  The user reads the plan whole at the goal sign-off as soon as it is made, so a reader in their
   place would add a reading the user makes next, and its time at every remake (Principle 5); the
   orchestrator writes only the part cut out, so it cannot change the goal while writing a task.
+- The session goes through stages, each settling one thing before the next is built on it: the
+  goal, why the user wants the work and what shows it done; the ux, what the user gets and how they
+  use it; the architecture, how it is built and checked, with the research it rests on; then the
+  build, the finished work used, and the learnings. The goal is always signed off, and the ux and
+  the architecture each on its own, passed with no sign-off where the work needs no document of
+  theirs; each such document is a point heard at the stage's start, kept in the repository, the one
+  already there changed, kept in the session's folder alone, or not made.
+
+  A README changed at a sign-off it shares with the architecture remakes the architecture drawn on
+  it, so what the user gets is settled before how it is built; which documents a work needs
+  depends on the repository and the work, such as a change to a product that has them, or a work
+  with nothing the user uses; and the plan is no stage of its own, as it is made again at every
+  move.
 - The tasks are laid backward from the acceptance criteria, as the criteria are from the goal: every
   criterion passed reaches the goal, and every task's completion criterion passed passes the
   criteria. They are made a few at a time, for the stage at hand, as rn's plan checklist's B-7
@@ -144,6 +157,14 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   A choice an item needs and no one settled is met by turn while it makes the work, asked back
   mid-run or guessed, and one settled before the work is not met as rework after it
   ([Asking until nothing is left to decide](../architecture.md#asking-until-nothing-is-left-to-decide)).
+- How heavily the finished work is checked, such as by property tests or mutation testing, is
+  given by its architecture, part by part, from what a failure of each would cost the user, as
+  rn's architecture checklist asks, and approved with it at the architecture sign-off; rn's code
+  checklist asks of every work the tests designed from its requirements and the checks its
+  architecture gives.
+
+  A weight rn set for every work alike would give a small tool the checks of a large one, on a
+  ground the user cannot weigh against their purpose.
 - Each point the user decides is kept as a decision of the work it settles, in the CCS of that
   work's next call, before the move after it; a work made again is a new call, its decisions
   carried over and rewritten where an answer changed them.
@@ -231,7 +252,7 @@ plugins/rn/                          the plugin, installed by Claude Code with t
 │   └── gm/SKILL.md                  /rn:gm, which the AI cannot call, handing to the orchestrator on feedback
 ├── prompts/                         the orchestrator <Markdown>
 │   ├── orchestrator.md              its Role and the steps every stage takes, which each entry has read first
-│   ├── <stage>.md                   the steps of the plan, design, build and learnings stages
+│   ├── <stage>.md                   the steps of the goal, ux, architecture, build and learnings stages
 │   ├── approval.md, feedback.md     the steps on an approval and on feedback
 │   └── messages.md                  the forms of the messages asking a point or a learning
 ├── scripts/                         what the orchestrator runs for each move a machine can judge <Python 3>
@@ -260,7 +281,7 @@ plugins/rn/                          the plugin, installed by Claude Code with t
         ├── learnings.md             the learnings, for the user once the finished work is approved <Markdown>
         ├── replaced.jsonl           each decision an answer replaced, a line each, as one step's commit keeps every move of it <JSON Lines>
         ├── issue-<n>.md             each issue to rn's makers, written before the user is asked to send it <Markdown>
-        ├── <path>                   each research result and trial's result, at the path its action names <Markdown>
+        ├── <path>                   each research result, trial's result and document kept here alone, at the path its action names <Markdown>
         └── calls/
             ├── <nnnn>-ccs.json      each call, numbered from 0001 in the order made <JSON>
             ├── <nnnn>-steering.md   the plan the orchestrator writes on a call on the plan <Markdown>
@@ -300,6 +321,6 @@ rn is tested as [Test](../architecture.md#test) says.
   about an hour with documents and code, the user stood in for by an AI holding what they truly
   want, written beforehand and never shown to rn.
 
-  A request someone would bring rn passes every stage, the design's and the build's included, so
-  its send-backs and the stand-in's time are rn's key results; a run on stand-in parts or a tiny
-  request shows neither.
+  A request someone would bring rn passes every stage, the ux's, the architecture's and the build's
+  included, so its send-backs and the stand-in's time are rn's key results; a run on stand-in parts
+  or a tiny request shows neither.

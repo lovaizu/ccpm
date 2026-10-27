@@ -264,7 +264,7 @@ class HistoryPropertyTest(RepoTest):
         # each example would read again.
         hypothesis.assume(was != now)
         if self.kept_at is None:
-            self.session(steered(stage="design"))
+            self.session(steered(stage="architecture"))
             self.kept_at = self.head()
         self.git("reset", "-q", "--hard", self.kept_at)
         self.git("push", "-q", "--force")

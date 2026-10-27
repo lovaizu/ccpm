@@ -80,7 +80,7 @@ achieve, and why they want it?
 
 Signs: the reader reads the reason, what the user wants the goal for, beyond what the goal says.
 
-Why: the user approves at the plan sign-off a reason they recognize as theirs, and every later
+Why: the user approves at the goal sign-off a reason they recognize as theirs, and every later
 decision, in any conversation, is judged by it; without it later decisions aim at the user's first
 words, which can be met while what they want them for is missed.
 
@@ -106,7 +106,7 @@ it back at the end.
 Scope: its part
 
 Can each task's result, once made, be used as its own user would use it, such as the user reading
-the criteria at the plan sign-off, the reader of a document or a user of the finished work trying a
+the criteria at the goal sign-off, the reader of a document or a user of the finished work trying a
 part of it, and accepted by its completion criterion, with nothing it needs left to a later task?
 
 Signs: each task's result is used once that task is done, rather than one layer for later tasks,
@@ -187,18 +187,19 @@ user, is there before the result already.
 Scope: whole
 
 Do the completion criteria of the stage's tasks, all passed, give what that stage needs, as the
-acceptance criteria all passed reach the goal: in the plan stage, criteria for the whole goal; in
-the design stage, each document the purpose needs; in the build stage, every acceptance criterion
-passed?
+acceptance criteria all passed reach the goal: in the goal stage, criteria for the whole goal; in
+the ux and the architecture stage, each document of the stage the user decided to make; in the
+build stage, every acceptance criterion passed?
 
 Signs: in the build stage, each criterion, and each case it names, is given by a completion
 criterion, and each document made before it whose checklists hold an item judged on the built
-product is made again by a task once the product is built, its receiver the product's users with
-the built work; in the design stage, each document the purpose needs has a task, and each task is
-for a document it needs; each ID a task names is brought nearer to met by its completion criterion
-passed; each task's result is needed by a criterion or a later task; each task is for a stage the
-session has reached, the finished work built only once the criteria are made; each need a done
-task found, such as a research or trial result handed to the plan, is met by a task, and each task it showed no longer needed is gone.
+product is made again by a task once the product is built, its receiver the product's users with the
+built work; in the ux and the architecture stage, each document the user decided to make in that
+stage has a task, and each task is for one of them, or for research one rests on; each ID a task
+names is brought nearer to met by its completion criterion passed; each task's result is needed by a
+criterion or a later task; each task is for a stage the session has reached, the finished work built
+only once the criteria are made; each need a done task found, such as a research or trial result
+handed to the plan, is met by a task, and each task it showed no longer needed is gone.
 
 Why: turn makes each task's result for what it names, and the orchestrator accepts it by its
 completion criterion, so an ID named by a task that does nothing for it is counted as served while

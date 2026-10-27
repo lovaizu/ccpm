@@ -14,23 +14,21 @@ import session
 import steering
 import stop
 
-# Each sign-off, with the words naming where the work is.
-WHERE = dict(
-    zip(
-        steering.SIGNOFFS,
-        (
-            "The plan is on the draft pull request",
-            "The design is on the draft pull request",
-            "The finished work is on the pull request",
-        ),
-    )
-)
-# The works whose choices a sign-off shows, by the stage they were called in and their names: at the
-# design's, each task's and checklist's called in the design stage, as the user approves the
+# Each sign-off, with its name as the user reads it and the words naming where the work is.
+HEADS = {
+    steering.GOAL: ("Goal", "The goal is on the draft pull request"),
+    steering.UX: ("UX", "The UX is on the draft pull request"),
+    steering.ARCHITECTURE: ("Architecture", "The architecture is on the draft pull request"),
+    steering.DELIVERABLE: ("Deliverable", "The finished work is on the pull request"),
+}
+# The sign-offs that show the documents of their own stage, and the works whose choices each
+# sign-off shows, by the stage they were called in and their names: at the ux's and the
+# architecture's, each task's and checklist's called in that stage, as the user approves the
 # documents themselves; at the deliverable's, each task's called in the build stage, shown in the
 # finished work, as the finished work is what the user approves there.
+DOCUMENTS = (steering.UX, steering.ARCHITECTURE)
 WORKS_SHOWN = {
-    steering.DESIGN: (steering.DESIGN, session.DESIGNED),
+    **{signoff: (signoff, session.DOCUMENTED) for signoff in DOCUMENTS},
     steering.DELIVERABLE: (steering.BUILD, session.TASK_WORK),
 }
 # Each answer the user gives a sign-off, with the command they type for it, which the AI cannot
@@ -43,10 +41,14 @@ ANSWER = (
 # orchestrator.md and the files of its stages give it: a sign-off approved, a sign-off sent back,
 # and a sign-off waiting.
 APPROVED_NEXT = {
-    steering.PLAN: "Step 9 of /rn:up on plan: hear which documents the purpose needs",
-    steering.DESIGN: session.STAGED[steering.BUILD],
+    steering.GOAL: (
+        "Step 9 of /rn:up on plan: hear which documents of what the user gets and how they use it"
+        " the work needs"
+    ),
+    steering.UX: session.STAGED[steering.ARCHITECTURE],
+    steering.ARCHITECTURE: session.STAGED[steering.BUILD],
     steering.DELIVERABLE: (
-        "Step 11 of /rn:up: find where the work fell short, then put each learning to the user"
+        "Step 12 of /rn:up: find where the work fell short, then put each learning to the user"
     ),
 }
 FEEDBACK = "Step 6 of /rn:up on {}: find the point behind the feedback"
@@ -72,8 +74,8 @@ Shows = dict[str, tuple[str, dict[str, str]]]
 
 
 def shown_works(made: list[session.Call], signoff: str) -> list[str]:
-    """The works whose choices the design's or the deliverable's sign-off shows, in the order first
-    called."""
+    """The works whose choices the ux's, the architecture's or the deliverable's sign-off shows, in
+    the order first called."""
     stage, form = WORKS_SHOWN[signoff]
     found: list[str] = []
     for call in made:
@@ -128,20 +130,20 @@ def shown_line(last: session.Call, pr: str) -> str:
 
 
 def shown_at(commit: str, signoff: str, folder: str) -> Shows:
-    """What the proposal at the sign-off shows of the session as the commit holds it: at the plan's,
-    the goal and each criterion by its ID; at the design's, each work the sign-off shows by its
-    line, from its latest call, with each choice made in the user's place; at the deliverable's,
-    the finished work by its line, with each choice made in building it and in using it. Nothing of
-    the user's own answers, which the work holds and the AI that used it in their place has checked.
-    Stops where turn has not returned a work's latest call, its result is no JSON object, or the
-    pull request was not opened."""
+    """What the proposal at the sign-off shows of the session as the commit holds it: at the goal's,
+    the goal and each criterion by its ID; at the ux's and the architecture's, each work the
+    sign-off shows by its line, from its latest call, with each choice made in the user's place; at
+    the deliverable's, the finished work by its line, with each choice made in building it and in
+    using it. Nothing of the user's own answers, which the work holds and the AI that used it in
+    their place has checked. Stops where turn has not returned a work's latest call, its result is
+    no JSON object, or the pull request was not opened."""
     steered = steering.parsed(repo.at(commit, session.steering_path(folder)) or "")
-    if signoff == steering.PLAN:  # pragma: no mutate
+    if signoff == steering.GOAL:  # pragma: no mutate
         return {"": ("", {k: f"{k}: {said}" for k, said in steering.decided(steered.plan).items()})}
     made = session.calls(folder, commit)
     pr = steered.keys[steering.PR]
     lasts = [returned(made, work, folder) for work in shown_works(made, signoff)]
-    if signoff == steering.DESIGN:  # pragma: no mutate
+    if signoff in DOCUMENTS:
         return {last.work: (shown_line(last, pr), chosen(last, folder, commit)) for last in lasts}
     built = {k: v for last in lasts for k, v in chosen(last, folder, commit).items()}
     used = returned(made, steering.DELIVERABLE, folder)
@@ -213,8 +215,8 @@ def text(signoff: str, pr: str, then: Shows | None, now: Shows) -> str:
     answer."""
     return "\n".join(
         [
-            f"{signoff.capitalize()} sign-off",
-            f"{WHERE[signoff]}: {pr}",
+            f"{HEADS[signoff][0]} sign-off",
+            f"{HEADS[signoff][1]}: {pr}",
             *compared(then, now),
             ANSWER,
         ]
@@ -222,14 +224,14 @@ def text(signoff: str, pr: str, then: Shows | None, now: Shows) -> str:
 
 
 def ready(signoff: str, folder: str, steered: steering.Steering) -> None:
-    """Returns when the session has what the sign-off shows: at the plan's, the goal, a criterion
-    and no task left; at the deliverable's, the finished work returned; stops otherwise. The
-    design's works are checked as they are shown."""
-    if signoff == steering.PLAN:  # pragma: no mutate
+    """Returns when the session has what the sign-off shows: at the goal's, the goal, a criterion
+    and no task left; at the deliverable's, the finished work returned; stops otherwise. The ux's
+    and the architecture's works are checked as they are shown."""
+    if signoff == steering.GOAL:  # pragma: no mutate
         said = steering.decided(steered.plan)
         if "G1" not in said or len(said) < 2 or steering.tasks_of(steered.plan):
             raise stop.Stop(
-                "rn: the plan sign-off needs the goal G1, a criterion and no task in the steering;"
+                "rn: the goal sign-off needs the goal G1, a criterion and no task in the steering;"
                 " write the plan and carry out its tasks, tick each action done with"
                 " `rn.py state --done`, then run this again"
             )
@@ -244,16 +246,16 @@ def ready(signoff: str, folder: str, steered: steering.Steering) -> None:
 
 def shown(signoff: str) -> str:
     """The proposal at the sign-off, made from what is pushed alone: the pull request's link, then
-    the goal and the acceptance criteria at the plan sign-off, each work made in the design stage
-    with its links and each choice made in it unasked at the design's, and the finished work with
-    its links and each choice made unasked in building and using it at the deliverable's, as
-    shown_at says, with what changed since the last proposal at the same sign-off; the steering
-    set waiting at the sign-off, Next saying so, and kept with the proposal as its message. The
-    same proposal again, keeping nothing, where it waits at that sign-off already. Stops where the
-    branch holds no session, a change is not kept or pushed, the steering differs from what the
-    last keep left, the session is at another stage, another sign-off waits, the session lacks what
-    the sign-off shows, a result of turn's is no JSON object, or the pull request was not
-    opened."""
+    the goal and the acceptance criteria at the goal sign-off, each work made in the ux or the
+    architecture stage with its links and each choice made in it unasked at that stage's, and the
+    finished work with its links and each choice made unasked in building and using it at the
+    deliverable's, as shown_at says, with what changed since the last proposal at the same sign-off;
+    the steering set waiting at the sign-off, Next saying so, and kept with the proposal as its
+    message. The same proposal again, keeping nothing, where it waits at that sign-off already.
+    Stops where the branch holds no session, a change is not kept or pushed, the steering differs
+    from what the last keep left, the session is at another stage, another sign-off waits, the
+    session lacks what the sign-off shows, a result of turn's is no JSON object, or the pull request
+    was not opened."""
     folder = session.current()
     repo.pushed()
     steered = session.kept_steering(folder)
@@ -286,19 +288,19 @@ def shown(signoff: str) -> str:
 
 def answered(answer: str, opened: list[str], message: str) -> dict[str, str]:
     """Keeps the user's answer to the sign-off waiting, approved or feedback: on approval the stage
-    moved on, plan to design, design to build, deliverable to learnings; on either no sign-off
-    waiting, Next replaced, and each point opened added after those open; kept with the message and
-    pushed; gives the commit. Stops where the branch holds no session, the steering differs from
-    what the last keep left, no sign-off waits, the user has not typed the answer's command since
-    the sign-off was shown, as an approval counts only from the user's own action, or no record of
-    the conversation is kept to tell it by; and where git fails."""
+    moved on, goal to ux, ux to architecture, architecture to build, deliverable to learnings; on
+    either no sign-off waiting, Next replaced, and each point opened added after those open; kept
+    with the message and pushed; gives the commit. Stops where the branch holds no session, the
+    steering differs from what the last keep left, no sign-off waits, the user has not typed the
+    answer's command since the sign-off was shown, as an approval counts only from the user's own
+    action, or no record of the conversation is kept to tell it by; and where git fails."""
     folder = session.current()
     steered = session.kept_steering(folder)
     waiting = steered.keys[steering.SIGNOFF]
     if waiting == steering.NONE:
         raise stop.Stop(
             "rn: no sign-off waits for the user's answer; show the proposal with `rn.py proposal"
-            " <plan|design|deliverable>` first, and keep the answer the user gives it"
+            f" <{'|'.join(steering.SIGNOFFS)}>` first, and keep the answer the user gives it"
         )
     command = COMMANDS[answer]
     shown_since = float(

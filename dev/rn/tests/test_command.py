@@ -37,7 +37,7 @@ class UsageTest(RepoTest):
             for k in (k for k, arg in enumerate(argv) if arg.startswith("--")):
                 with self.subTest(argv=argv, left=argv[k]):
                     # Given: a branch with a session.
-                    self.session(steered(signoff="plan"))
+                    self.session(steered(signoff="goal"))
                     # When: the orchestrator runs the subcommand without the option.
                     # Then: rn says it is required.
                     self.assertIn(
@@ -63,7 +63,7 @@ class StepsTest(unittest.TestCase):
         # Then: each but the session finished names a step of /rn:up that is there.
         self.assertEqual(
             [m[1] in steps if m else n for m, n in zip(named, nexts)],
-            [True] * 8 + [session.STAGED["finished"]],
+            [True] * 10 + [session.STAGED["finished"]],
         )
 
 

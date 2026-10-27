@@ -17,12 +17,13 @@ Code serves them through two designs. The code is split into functions and modul
 takes on, one thing each; each says what it takes in and gives back, and what comes from outside is
 checked where it comes in. Its tests are designed from the requirements, what the code must do, by
 the technique that fits what each function takes in and decides, so they hold what the code must do
-rather than what it happens to do, and each fails when the behavior it holds breaks. The development
-rules are the project's own rules for its code: the runtime and its versions, the libraries and
-tools allowed, and the checks every change passes. The signs on the code are drawn from Google's
-"What to look for in a code review" (google/eng-practices, CC BY 3.0), and those on the tests'
-design from the techniques of the ISTQB Certified Tester Foundation Level syllabus v4.0.1,
-chapter 4.
+rather than what it happens to do, and each fails when the behavior it holds breaks; how heavily
+each part is checked beyond them, such as by property tests or mutation testing, is the
+architecture's, from what a failure of that part would cost the user. The development rules are the
+project's own rules for its code: the runtime and its versions, the libraries and tools allowed, and
+the checks every change passes. The signs on the code are drawn from Google's "What to look for in a
+code review" (google/eng-practices, CC BY 3.0), and those on the tests' design from the techniques
+of the ISTQB Certified Tester Foundation Level syllabus v4.0.1, chapter 4.
 
 ## Format
 
@@ -155,9 +156,8 @@ Scope: whole
 When a behavior the requirements ask is broken in the code, does some test fail?
 
 Tried by: the tests read beside the requirements, each sign below; the unit tests run with the lines
-and branches they run counted, without the property tests, with the settings kept in the
-repository; the property tests and the mutation testing, which confirm that the tests are enough,
-left to the project's CI, on what the change touches.
+and branches they run counted, with the settings kept in the repository; each further check the
+architecture gives a part run as it says, such as in the project's CI on what the change touches.
 
 Signs:
 - each equivalence partition of an input or an output, the values a function treats alike, the
@@ -168,23 +168,23 @@ Signs:
   is taken by some test;
 - each transition between states, an invalid one included, an event given in a state that does not
   take it, is taken by some test;
-- each behavior over inputs of a kind, such as any text, path or list, has a property test making
-  many inputs of the kind on each run and checking what every one must give, such as a parse giving
-  back what was written, with each input that once failed kept as an example;
-- every statement and branch is run by the unit tests, counted without the property tests, whose
-  inputs change from run to run;
-- each small change a fault could make, such as a comparison, an operator or a value replaced,
-  fails some test, so no mutant survives but one kept out as the last sign says;
+- every statement and branch is run by the unit tests, counted without any test whose inputs change
+  from run to run, such as a property test;
+- each further check the architecture gives a part, such as property tests making many inputs of
+  a kind on each run or mutation testing leaving no mutant alive, is made for that part as far as
+  the architecture says, and passes, each input that once failed a property test kept as an
+  example;
 - each test's expected value is written from the requirements, not taken from the code it checks;
-- each line, branch, input or mutant left out of the coverage, the property tests or the mutation
-  testing, a survivor of mutation testing among them, is the maker's choice, named beside it or in
-  the check's settings with why, such as an environment the tests cannot make, or a line no
-  behavior changes with, and settled by the maker, not put to the user.
+- each line, branch, input or mutant left out of the coverage or of a further check, a survivor of
+  mutation testing among them, is the maker's choice, named beside it or in the check's settings
+  with why, such as an environment the tests cannot make, or a line no behavior changes with, and
+  settled by the maker, not put to the user.
 
 Why: tests passing give trust only in the behaviors they would fail on; a gap looks the same as a
 test that works and lets a fault pass, faults gather at boundaries, such as `<` written for `<=`,
-and a check left out with no decision written beside it cannot be told from one left out to make
-the run pass, so the next maintainer keeps the gap.
+a check left out with no decision written beside it cannot be told from one left out to make the
+run pass, so the next maintainer keeps the gap; and a further check given every part alike costs
+the user, in time to build and keep it, more than a failure of a small part would.
 
 ### B-7: A failure taken as one fault
 
@@ -213,7 +213,7 @@ brings.
 Scope: whole
 
 Can the maintainer run the whole test run in seconds, so that the checks run on every change and
-mutation testing, which runs the tests once for each mutant, ends in minutes?
+mutation testing, which runs the tests once for each mutant, ends in minutes where a part has it?
 
 Tried by: the whole test run run once, and the time it took read.
 

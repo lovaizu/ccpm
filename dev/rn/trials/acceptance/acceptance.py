@@ -1,12 +1,12 @@
-"""Tries rn whole as its user goes through it, the acceptance test of its user stories: from
-`/rn:up <rough words>` to the pull request marked ready, on a request of about an hour with
-documents and code, through the sign-offs, the design's where the purpose needs a document, a
-feedback sent back and gone on from in a fresh conversation, and the learnings put one by one. The
-real rn and the real turn run, their skills, agents, scripts and hooks as installing makes them, in
-a fresh clone of lovaizu/playground, where rn opens its real pull request with the real gh; and the
-user is stood in for by a Claude Code conversation of its own that holds what the user truly wants,
-written beforehand in wants.json and never shown to rn, and answers each of rn's messages as that
-user would, since rn's points come in an order and a number no fixed script can answer.
+"""Tries rn whole as its user goes through it, the acceptance test of its user stories: from `/rn:up
+<rough words>` to the pull request marked ready, on a request of about an hour with documents and
+code, through the sign-offs, the ux's and the architecture's where the work needs a document of
+theirs, a feedback sent back and gone on from in a fresh conversation, and the learnings put one by
+one. The real rn and the real turn run, their skills, agents, scripts and hooks as installing makes
+them, in a fresh clone of lovaizu/playground, where rn opens its real pull request with the real gh;
+and the user is stood in for by a Claude Code conversation of its own that holds what the user truly
+wants, written beforehand in wants.json and never shown to rn, and answers each of rn's messages as
+that user would, since rn's points come in an order and a number no fixed script can answer.
 
 What it shows: whether rn takes the user from asking to the pull request ready, keeping every move
 on its branch and nothing on the default branch, with the changes the user sends back at the
@@ -16,7 +16,9 @@ What it leaves out: the user's own judgment of the work and of the minutes, as t
 AI holding wants written beforehand; the maintainer gives it on reading the run's records and the
 clone, which the test keeps.
 
-    python3 dev/rn/trials/acceptance/acceptance.py [--dry | --until plan|design|deliverable]
+    python3 dev/rn/trials/acceptance/acceptance.py [--dry | --until <sign-off>]
+
+`<sign-off>` is goal, ux, architecture or deliverable.
 
 It runs only where lovaizu/playground holds no open pull request and no branch but `main`, as the
 trials there run one at a time; otherwise it stops before anything is made, naming what it found.
@@ -72,7 +74,7 @@ from place import DEFAULT, RULES, Place, Seen, Stop, costed, kept_learnings, ste
 
 USAGE = (
     "usage: python3 dev/rn/trials/acceptance/acceptance.py"
-    " [--dry | --until plan|design|deliverable]"
+    " [--dry | --until goal|ux|architecture|deliverable]"
 )
 PLAYGROUND = "lovaizu/playground"
 # The user's words, in the conversation language their instructions set: a request of about an
@@ -427,24 +429,31 @@ class Trial:
         shown = {
             s: [e["n"] for e in sent if e.get("signoff_after") == s] for s in steering.SIGNOFFS
         }
-        fed = [a["n"] for a in self.answers if a["kind"] == "feedback" and a["signoff"] == "plan"]
+        fed = [a["n"] for a in self.answers if a["kind"] == "feedback" and a["signoff"] == "goal"]
         fresh = [e["n"] for e in sent if e["fresh"] and fed and e["n"] > fed[0] + 1]
         put = [a for a in self.answers if a["kind"] == "answer" and a["stage"] == "learnings"]
         pr = self.last.get("pr")
-        # rn moves from design to build without the design sign-off only where the design stage
-        # made no document, so a stage after design reached without it is the design stage gone
-        # through; one message can carry the session past build, as it does where the build's
-        # last action leads straight to the deliverable sign-off.
-        later = steering.STAGES[steering.STAGES.index(steering.DESIGN) + 1 :]
-        designed = bool(shown["design"]) or any(e.get("stage_after") in later for e in sent)
+
+        # rn moves on from the ux or the architecture stage without its sign-off only where that
+        # stage made no document, so a stage after it reached without the sign-off is that stage
+        # gone through; one message can carry the session past several stages, as it does where
+        # the build's last action leads straight to the deliverable sign-off.
+        def passed(stage: str) -> bool:
+            later = steering.STAGES[steering.STAGES.index(stage) + 1 :]
+            return bool(shown[stage]) or any(e.get("stage_after") in later for e in sent)
+
         return {
-            "the plan sign-off shown": bool(shown["plan"]),
+            "the goal sign-off shown": bool(shown["goal"]),
+            "the ux sign-off shown, or a later stage reached without it as no document was made": (
+                passed(steering.UX)
+            ),
             (
-                "the design sign-off shown, or build reached without it as no document was made"
-            ): designed,
+                "the architecture sign-off shown, or a later stage reached without it as no"
+                " document was made"
+            ): passed(steering.ARCHITECTURE),
             "the deliverable sign-off shown": bool(shown["deliverable"]),
-            "a feedback at the plan sign-off kept, gone on from in a fresh conversation, and the"
-            " plan sign-off shown again": bool(fresh) and any(k >= fresh[0] for k in shown["plan"]),
+            "a feedback at the goal sign-off kept, gone on from in a fresh conversation, and the"
+            " goal sign-off shown again": bool(fresh) and any(k >= fresh[0] for k in shown["goal"]),
             # Counted by the answers given at the learnings stage, as no record names which
             # learning a message put.
             "each learning put to the user": 0 < self.last.get("learnings", 0) <= len(put),

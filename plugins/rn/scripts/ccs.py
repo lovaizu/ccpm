@@ -37,7 +37,7 @@ KIND = "kind"
 # made before the product is there to judge them on; the headings that end an item, those of its
 # level and above; and the name of a call's copy of the k-th checklist of its kind.
 BUILT = "Judged on: the built product"
-BEFORE_BUILD = (steering.PLAN, steering.DESIGN)
+BEFORE_BUILD = (steering.GOAL, steering.UX, steering.ARCHITECTURE)
 ITEM = 3
 COPY = "checklist-{}.md"
 # The kind of a checklist, which rn's checklist for checklists makes from rn's `usability.md`, what
@@ -49,7 +49,7 @@ OWN = {
     steering.PLAN: (
         "plan",
         (
-            "the user at the plan sign-off, approving what the finished work will do and why, and"
+            "the user at the goal sign-off, approving what the finished work will do and why, and"
             " rn's orchestrator in any later conversation, carrying the work on without asking"
             " them again"
         ),

@@ -21,25 +21,31 @@ STAGE = "stage"
 SIGNOFF = "signoff"
 LANGUAGES = ("artifact-language", "conversation-language")
 KEYS = (RN, PR, STAGE, SIGNOFF, *LANGUAGES)
-# The stages, in their order, three of them named as the work made at them: the plan, the finished
-# work and the learnings.
-PLAN = "plan"
-DESIGN = "design"
+# The stages, in their order: the goal, settling why the user wants the work and what shows it
+# done; the ux, what the user gets and how they use it; the architecture, how it is built and
+# checked; then the build, the finished work used, the learnings and the session finished. Two are
+# named as the work made at them: the finished work and the learnings.
+GOAL = "goal"
+UX = "ux"
+ARCHITECTURE = "architecture"
 BUILD = "build"
 DELIVERABLE = "deliverable"
 LEARNINGS = "learnings"
 FINISHED = "finished"
-STAGES = (PLAN, DESIGN, BUILD, DELIVERABLE, LEARNINGS, FINISHED)
+STAGES = (GOAL, UX, ARCHITECTURE, BUILD, DELIVERABLE, LEARNINGS, FINISHED)
+# The work the orchestrator writes the plan in, the part of the steering from its title through its
+# tasks, made again at every stage as the facts change it, so named apart from any stage.
+PLAN = "plan"
 # The sign-offs, each at the stage of its name, with the stage the user's approval there moves the
 # session to; `none` where no sign-off waits, and as the pull request before `start` opened it.
-APPROVED = {PLAN: DESIGN, DESIGN: BUILD, DELIVERABLE: LEARNINGS}
+APPROVED = {GOAL: UX, UX: ARCHITECTURE, ARCHITECTURE: BUILD, DELIVERABLE: LEARNINGS}
 SIGNOFFS = tuple(APPROVED)
 NONE = "none"
 VALUES = {STAGE: STAGES, SIGNOFF: (NONE, *SIGNOFFS)}
 # The stages `state --stage` moves the session to, each from the one it moves from, as the others
-# move at the sign-offs: build from the design stage where it made no document, so the design
-# sign-off has nothing to show.
-MOVES = {BUILD: DESIGN, DELIVERABLE: BUILD, FINISHED: LEARNINGS}
+# move at the sign-offs: the architecture from the ux stage, and the build from the architecture
+# stage, where that stage made no document, so its sign-off has nothing to show.
+MOVES = {ARCHITECTURE: UX, BUILD: ARCHITECTURE, DELIVERABLE: BUILD, FINISHED: LEARNINGS}
 # The steering's `##` headings, in their order: the criteria and the tasks once made, while some
 # are, Next and Open always.
 CRITERIA = "Acceptance criteria"
@@ -54,7 +60,7 @@ HEADINGS = (CRITERIA, TASKS, NEXT, OPEN)
 # learnings, the lines indented under an item its own; with each in words, as a stop names it.
 TITLE = re.compile(r"# \S.*")
 TITLE_FORM = "`# <the piece of work, in a few words>`"
-GOAL = re.compile(r"G1: \S.*")
+GOAL_LINE = re.compile(r"G1: \S.*")
 GOAL_FORM = "`G1: <the user's purpose, with why they want it>`"
 CRITERION = re.compile(r"- (?P<id>AC[0-9]+): \S.*")
 CRITERION_FORM = (
@@ -348,7 +354,7 @@ def body_out(lines: list[str]) -> str:
     goal = [(n, line) for n, line in parts[""] if line.strip()][1:]
     after = parts[""][parts[""].index(goal[0]) :] if goal else []
     paragraph = list(itertools.takewhile(lambda x: x[1].strip(), after))
-    if goal and (not GOAL.fullmatch(goal[0][1]) or goal[len(paragraph) :]):
+    if goal and (not GOAL_LINE.fullmatch(goal[0][1]) or goal[len(paragraph) :]):
         return (
             f"line {goal[0][0]}: expected the goal as {GOAL_FORM}, one paragraph under the title,"
             f" found `{goal[0][1]}`"
@@ -590,7 +596,7 @@ def decided(lines: list[str]) -> dict[str, str]:
     parts = sections(lines)
     found: dict[str, str] = {}
     above = parts[""]
-    start = next((k for k, (_, line) in enumerate(above) if GOAL.fullmatch(line)), None)
+    start = next((k for k, (_, line) in enumerate(above) if GOAL_LINE.fullmatch(line)), None)
     if start is not None:
         found["G1"] = said(above[start:]).partition(": ")[2]
     criteria = items_of(parts.get(CRITERIA, []), CRITERION, CRITERION_FORM)[0]

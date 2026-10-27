@@ -39,9 +39,9 @@ WORKS = (
     f"{steering.PLAN}, {steering.LEARNINGS}, {steering.DELIVERABLE}, t<n>.<k> for action k of"
     " task T<n>, or checklist-<kind>"
 )
-# The works the design stage makes for its sign-off: what each action of its tasks makes, and each
-# checklist.
-DESIGNED = re.compile(rf"{TASK_WORK.pattern}|{CHECKLIST_WORK.pattern}")
+# The works the ux and the architecture stage each make for their sign-off: what each action of
+# their tasks makes, and each checklist.
+DOCUMENTED = re.compile(rf"{TASK_WORK.pattern}|{CHECKLIST_WORK.pattern}")
 # The works whose call makes a part the orchestrator writes, cut into a file of its own, each with
 # what its file is named: the plan's a part of the steering, the learnings' the session's
 # learnings.
@@ -64,9 +64,13 @@ CHOSEN = "chosen"
 # end.
 STARTED = "Step 8 of /rn:up on plan: hear the purpose and what shows it done"
 STAGED = {
-    steering.BUILD: "Step 10 of /rn:up on plan: make the tasks that build the finished work",
+    steering.ARCHITECTURE: (
+        "Step 10 of /rn:up on plan: hear which documents of how the work is built and checked it"
+        " needs"
+    ),
+    steering.BUILD: "Step 11 of /rn:up on plan: make the tasks that build the finished work",
     steering.DELIVERABLE: (
-        "Step 10 of /rn:up on deliverable: have the finished work used for each acceptance"
+        "Step 11 of /rn:up on deliverable: have the finished work used for each acceptance"
         " criterion"
     ),
     steering.FINISHED: "Nothing is left: the pull request waits for the user's merge",
@@ -353,23 +357,22 @@ def part_of(folder: str, number: str) -> tuple[Call, list[str]]:
 
 def moved(keys: dict[str, str], stage: str, plan: list[str], folder: str) -> dict[str, str]:
     """The front matter's keys with the stage moved to the one given; stops where the session is
-    not at the stage it moves from; to the build stage, where a call made in the design stage is on
-    a work its sign-off shows, a document or a checklist made, which goes to that sign-off; and to
-    the deliverable stage, where a task is left."""
-    if keys[steering.STAGE] != steering.MOVES[stage]:
+    not at the stage it moves from; from the ux or the architecture stage, where a call made in it
+    is on a work its sign-off shows, a document or a checklist made, which goes to that sign-off;
+    and to the deliverable stage, where a task is left."""
+    was = steering.MOVES[stage]
+    if keys[steering.STAGE] != was:
         raise stop.Stop(
             f"rn: the session is at the {keys[steering.STAGE]} stage, and moves to {stage} from the"
-            f" {steering.MOVES[stage]} stage alone; the other stages move at the sign-offs, with"
-            " `rn.py answer`"
+            f" {was} stage alone; the other stages move at the sign-offs, with `rn.py answer`"
         )
-    if stage == steering.BUILD:  # pragma: no mutate
-        designed = [c for c in calls(folder) if c.stage == steering.DESIGN]  # pragma: no mutate
-        made = [c.work for c in designed if DESIGNED.fullmatch(c.work)]
+    if was in steering.SIGNOFFS:
+        made = [c.work for c in calls(folder) if c.stage == was and DOCUMENTED.fullmatch(c.work)]
         if made:
             raise stop.Stop(
-                f"rn: the design stage made {stop.joined(list(dict.fromkeys(made)))}, which go to"
-                " the design sign-off; show it with `rn.py proposal design`, and the user's"
-                " approval there moves the session to build"
+                f"rn: the {was} stage made {stop.joined(list(dict.fromkeys(made)))}, which go to"
+                f" the {was} sign-off; show it with `rn.py proposal {was}`, and the user's"
+                f" approval there moves the session to {stage}"
             )
     left = [task.id for task in steering.tasks_of(plan)]
     if stage == steering.DELIVERABLE and left:
@@ -538,7 +541,7 @@ def start(
     today: datetime.date,
 ) -> dict[str, str]:
     """Starts a session on a branch of its own named by the slug, made from the remote's default
-    branch as it is now: its steering at the plan stage, with the version of rn installed at root,
+    branch as it is now: its steering at the goal stage, with the version of rn installed at root,
     the languages, the title, Next and nothing open, kept with the message; then the draft pull
     request opened, its body linking the steering, and its URL kept as the steering's pr. Run again
     on that branch where the pull request was not opened, it opens it. Gives the folder, the branch
@@ -565,7 +568,7 @@ def start(
         keys = {
             steering.RN: version(root),
             steering.PR: steering.NONE,
-            steering.STAGE: steering.PLAN,
+            steering.STAGE: steering.GOAL,
             steering.SIGNOFF: steering.NONE,
             **languages,
         }
