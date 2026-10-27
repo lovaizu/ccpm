@@ -79,9 +79,8 @@ PLAYGROUND = "lovaizu/playground"
 # hour, with documents and code, so every stage is passed.
 REQUEST = "/rn:up Downloads フォルダを整理するコマンドラインツールが欲しい"
 # The minutes a message to rn waits for turn's runs, started in the background, each taking its
-# rounds and its first user: the whole build, as rn carries every task of it in the one message
-# that approves what comes before, which in run 4 went past 100 minutes at its third task of seven.
-WAIT = 360
+# rounds and its first user.
+WAIT = 90
 # The messages sent to rn at most, past which a run is taken to go round rather than on.
 LIMIT = 120
 KINDS = ("answer", "approve", "feedback", "stop")
