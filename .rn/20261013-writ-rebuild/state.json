@@ -773,6 +773,9 @@
   },
   {
    "fact": "2026-10-27: the user chose (A) to move the plugins into plugins/<name>, as anthropics/claude-plugins-official and anthropics/claude-code keep them, dev/<plugin>/ staying outside; done as one move commit after turn's code is read and pushed. lane added to the marketplace and the root README, as lane/README.md:89-93 has it installed as lane@ccpm"
+  },
+  {
+   "fact": "2026-10-27: turn's code to its architecture by a subagent (1bb493f..ecf9076), read by hand; fixed by hand f287a78 (msvcrt lock on Windows, next.lock in the tree, UX's third source of a question, wrapping); R62-R65 in report.decisions.md; plugins moved to plugins/<name> (599b0df), lane's placed.py looking for the marketplace above plugins/; all pushed; CI of a1fa33c passed"
   }
  ],
  "semantic_gist": [
@@ -842,7 +845,7 @@
  ],
  "focal_entities": [
   {
-   "task": "apply intents 1 to 8 of decisions/run-cost.decisions.md: done are dev/architecture.md (9ea1f63, 79b4805), the checklists (0c139e3, 69cc954), turn's architecture, UX and README (5285999), rn's architecture, and lane (c01093d: PreToolUse onFailure block, could-not-check for unsettled file words, values from later messages); left: turn's code, prompts and tests to its new design, rn's prompts and scripts (no commit and push at each answer), the trials (acceptance.py to record tokens), then the acceptance run"
+   "task": "rn's prompts, scripts and tests to dev/rn/architecture.md (7d581f2) and turn's new calling.md, by a subagent from 599b0df; then the trials (acceptance.py to record tokens), then the acceptance run"
   }
  ],
  "relational_map": [
@@ -880,7 +883,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: (1) turn's code to dev/turn/architecture.md as now written (flow: moves only that need the orchestrator, waits for a role's end itself, lines at role start/end, question, result; no CCS check stage, the generator asking first; claim per item with evidence, remake gives the items sent back alone, chosen merged; the gap exchange; an answer taken in by sending roles the files, no start anew), made by a subagent with code.md and prompt.md open, then checked by hand, places listed in audits/run-cost-impact.md; dev/check.sh turn 100%, mutation 0; (1b) move lane, turn, rn into plugins/<name> in one commit, every path in dev/, CI, pyproject, marketplace and links updated, all checks passing; (2) rn's prompts and scripts; (3) trials; (4) acceptance run compared with run 3 on time, tokens, cost, sends-back; report to the user in Japanese, decisions made on my own included (PreToolUse alone given onFailure; trial.md B-2 tried on the steps the verdict rests on; lane's unsettled word told as a drift with the lane's sentence; sed -e scripts fixed)"
+   "next": "on resume: read the rn subagent's commits after 599b0df by hand against fix.md item by item, run check.sh rn 100%, mutate --since 599b0df rn 0, push; then the trials (move trials pass; acceptance.py records time and tokens, intent 8); then the acceptance run compared with run 3 (3 h 50 min, ~$76, 3½ of 6 tasks, 25 sends-back) on time, tokens, cost, sends-back; report to the user in Japanese with R62-R65 and later decisions"
   }
  ],
  "uncertainty_signal": [
