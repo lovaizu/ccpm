@@ -1,7 +1,8 @@
 """The orchestrator's conversations with the user as Claude Code keeps them, read by lane's
 record.py and found by the top of the repository and the branch: whether the user typed a command,
 as an approval counts only from the user's own action, and where words were said or given to a
-tool, as the learnings check each cause they doubt in them."""
+tool, as the learnings check each cause they doubt in them; where none is kept here, each says it
+could not look, apart from finding nothing."""
 
 from __future__ import annotations
 
@@ -13,6 +14,7 @@ from typing import Any
 
 import record
 import repo
+import stop
 
 
 def entries(path: str) -> list[dict[str, Any]]:
@@ -26,9 +28,15 @@ def typed(command: str, start: float) -> bool:
     """Whether the user typed the command, at or after the time in seconds since 1970, in a
     conversation run at the top of the repository on the checked-out branch: an entry of the
     user's that is a command, as Claude Code keeps one typed, and names it; never an agent's
-    message nor what a tool gave back, which are kept otherwise."""
+    message nor what a tool gave back, which are kept otherwise. Stops where no such conversation
+    is kept, as kept says."""
     name = f"<command-name>{command}</command-name>"
-    for path in conversations(repo.top(), repo.branch()):
+    unchecked = (
+        f"whether the user typed {command} could not be checked; it needs this conversation's"
+        " record there, where CLAUDE_CONFIG_DIR, or ~/.claude where it names none, says Claude"
+        " Code keeps it: tell the user so, and end"
+    )
+    for path in kept(unchecked):
         for entry in entries(path):
             text = record.text(entry) or ""
             if text.startswith("<command-") and name in text and since(entry, start):
@@ -54,6 +62,21 @@ def conversations(top: str, branch: str) -> list[str]:
         if any(e.get("cwd") == top and e.get("gitBranch") == branch for e in entries(path))
     ]
     return sorted(found, key=begun)
+
+
+def kept(unchecked: str) -> list[str]:
+    """The record of each conversation run at the top of the repository on the checked-out branch,
+    as conversations gives them; stops where there is none, saying where they were looked for and
+    what could not be checked, which the words given say with what to do, as a look at no record
+    finds nothing whatever was said."""
+    top, branch = repo.top(), repo.branch()
+    found = conversations(top, branch)
+    if not found:
+        raise stop.Stop(
+            f"rn: no record of a conversation run at the top of this repository on {branch} is"
+            f" under {record.projects()}, the folder Claude Code keeps them in, so {unchecked}"
+        )
+    return found
 
 
 def since(entry: dict[str, Any], start: float) -> bool:
@@ -100,10 +123,15 @@ def search(words: str) -> list[dict[str, Any]]:
     """Each part said or done, as `parts` gives them, whose words hold the words given, in the
     conversations of the orchestrator run at the top of the repository on the checked-out branch,
     in the order they began and each in its order: the conversation's record, the time its entry
-    was kept, None where Claude Code kept none, and the part as one text, its mark first."""
+    was kept, None where Claude Code kept none, and the part as one text, its mark first. Stops
+    where no such conversation is kept, as kept says."""
+    unchecked = (
+        "the session's conversations could not be searched, as when it ran on another machine;"
+        " tell the user a cause only they show is left unchecked, and go on without it"
+    )
     return [
         {"conversation": path, "time": entry.get("timestamp"), "said": f"{mark} {text}"}
-        for path in conversations(repo.top(), repo.branch())
+        for path in kept(unchecked)
         for entry in entries(path)
         for mark, text in parts(entry)
         if words in text

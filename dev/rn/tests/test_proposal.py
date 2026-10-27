@@ -541,9 +541,11 @@ class AnswerTest(RepoTest):
         }
         for case, typed in cases.items():
             with self.subTest(case=case):
-                # Given: a session waiting at the plan sign-off, and what the user typed.
+                # Given: a session waiting at the plan sign-off, a conversation on its branch, and
+                # what the user typed.
                 self.session(steered(signoff="plan"))
                 shutil.rmtree(self.config, ignore_errors=True)
+                self.conversation("talk", said("/rn:up", helpers.LATER, self.top))
                 for words, at, branch in typed:
                     self.typed(words, at, branch)
                 before = self.head()
@@ -555,6 +557,26 @@ class AnswerTest(RepoTest):
                     self.stopped(*self.answer()),
                 )
                 self.assertEqual(self.head(), before)
+
+    def test_no_conversation_kept_on_the_branch_stops_as_it_could_not_check(self):
+        # Given: a session waiting at the plan sign-off, and no record of a conversation on its
+        # branch, as when Claude Code keeps its records elsewhere.
+        self.session(steered(signoff="plan"))
+        shutil.rmtree(self.config, ignore_errors=True)
+        self.typed("/rn:ty", "", "other")
+        before = self.head()
+        # When: the orchestrator keeps an approval.
+        # Then: rn says it could not check whether the user typed it, where the records are
+        # looked for and what it needs, apart from an answer not typed, and keeps nothing.
+        self.assertIn(
+            "rn: no record of a conversation run at the top of this repository on work is under"
+            f" {os.path.dirname(self.project)}, the folder Claude Code keeps them in, so whether"
+            " the user typed /rn:ty could not be checked; it needs this conversation's record"
+            " there, where CLAUDE_CONFIG_DIR, or ~/.claude where it names none, says Claude Code"
+            " keeps it: tell the user so, and end",
+            self.stopped(*self.answer()),
+        )
+        self.assertEqual(self.head(), before)
 
     def test_a_command_typed_in_the_very_second_the_signoff_was_shown_is_taken(self):
         # Given: a session waiting at the plan sign-off, shown at DATE, and /rn:ty typed at that

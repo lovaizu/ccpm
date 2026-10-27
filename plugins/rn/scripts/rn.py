@@ -134,9 +134,9 @@ def run_history(args: argparse.Namespace, root: str, today: datetime.date) -> An
 def run_search(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Each part the user or the orchestrator said or did that holds the words, in the
     orchestrator's conversations of the session, with its conversation and time, as
-    conversations.search gives them, for the orchestrator to check a cause of a learning it doubts;
-    none where Claude Code keeps none here, as when the session ran on another machine. Stops where
-    the words are empty, or the branch holds no session."""
+    conversations.search gives them, for the orchestrator to check a cause of a learning it doubts.
+    Stops where the words are empty, the branch holds no session, or Claude Code keeps no
+    conversation of it here, as when the session ran on another machine."""
     words = stop.given(args.words, "text to search for")
     session.current()
     return {"found": conversations.search(words)}

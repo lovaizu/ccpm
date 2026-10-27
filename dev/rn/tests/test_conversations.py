@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import unittest
 from typing import Any
 
@@ -148,12 +149,25 @@ class SearchTest(RepoTest):
         # Then: rn finds none.
         self.assertEqual(self.found(), [])
 
-    def test_no_conversation_kept_here_gives_none(self):
-        # Given: no record of a conversation for the repository, as when the session ran on
-        # another machine.
-        # When: the orchestrator searches.
-        # Then: rn finds none.
-        self.assertEqual(self.found(), [])
+    def test_no_conversation_kept_here_stops_as_it_could_not_search(self):
+        for case, branches in (("none at all", []), ("one on another branch alone", ["other"])):
+            with self.subTest(case=case):
+                # Given: no record of a conversation run at the top on the branch, as when the
+                # session ran on another machine.
+                shutil.rmtree(self.project, ignore_errors=True)
+                for branch in branches:
+                    self.conversation("c", said("cart", "2026-10-20T09:00:00Z", self.top, branch))
+                # When: the orchestrator searches.
+                # Then: rn says it could not search, where the records are kept, and to go on
+                # with the cause unchecked, apart from a search that found nothing.
+                self.assertIn(
+                    "rn: no record of a conversation run at the top of this repository on work is"
+                    f" under {os.path.dirname(self.project)}, the folder Claude Code keeps them in,"
+                    " so the session's conversations could not be searched, as when it ran on"
+                    " another machine; tell the user a cause only they show is left unchecked,"
+                    " and go on without it",
+                    self.stopped("search", "cart"),
+                )
 
     def test_words_beyond_ascii_are_found_and_printed_as_they_are(self):
         # Given: a conversation in Japanese.

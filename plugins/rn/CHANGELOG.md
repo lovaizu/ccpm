@@ -26,6 +26,7 @@
 - Each kind of work, such as a README or code, is made with rn's one checklist for it and your addition at `.rn/checklists/<kind>.md` — what your project needs beyond rn's goes into every later work of that kind.
 - rn needs turn, which installing rn installs, and no longer writ — the making and the reading in your place are done one way for every piece of work.
 - rn has no hooks of its own and asks you to protect the default branch on GitHub — the protection keeps any command from changing it before you merge, whatever form the command takes.
+- Where Claude Code's record of the conversation is not found, rn says it could not check whether you typed `/rn:ty` or `/rn:gm`, or search the session's conversations for a learning's cause, and where it looked — a check it could not make is never taken for one that found nothing.
 
 ### Removed
 
@@ -64,6 +65,7 @@
 - `/rn:up` takes up the session on the branch you are on, instead of searching the history for a paused one; check out the session's branch first, so the session you resume is always the one you are looking at.
 - The findings on each piece of work are no longer kept as `checks/` files under `.rn/`: every report, with each finding and what became of it, is kept whole in the message of the commit that settles it, and every commit ends with a line saying what was decided and what comes next, instead of a `complete task #N` marker, so the pull request's history tells you why each finding was fixed or let go, and `.rn/` holds only `steering.md` and what is still open.
 - The pull request body links, beside `steering.md`, the issues the work closes or serves and the pull requests it replaces, so GitHub connects them for you.
+- Where Claude Code's record of the conversation is not found, rn says it could not check whether you typed `/rn:ty` or `/rn:gm`, or search the session's conversations for a learning's cause, and where it looked — a check it could not make is never taken for one that found nothing.
 
 ### Removed
 

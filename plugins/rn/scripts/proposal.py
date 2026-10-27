@@ -289,9 +289,9 @@ def answered(answer: str, opened: list[str], message: str) -> dict[str, str]:
     moved on, plan to design, design to build, deliverable to learnings; on either no sign-off
     waiting, Next replaced, and each point opened added after those open; kept with the message and
     pushed; gives the commit. Stops where the branch holds no session, the steering differs from
-    what the last keep left, no sign-off waits, or the user has not typed the answer's command
-    since the sign-off was shown, as an approval counts only from the user's own action; and where
-    git fails."""
+    what the last keep left, no sign-off waits, the user has not typed the answer's command since
+    the sign-off was shown, as an approval counts only from the user's own action, or no record of
+    the conversation is kept to tell it by; and where git fails."""
     folder = session.current()
     steered = session.kept_steering(folder)
     waiting = steered.keys[steering.SIGNOFF]
