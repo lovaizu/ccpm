@@ -6,6 +6,7 @@ import os
 import unittest
 
 from helpers import (
+    BLOCKED,
     CHOSEN,
     EACH_GOOD,
     EACH_ITEM,
@@ -199,6 +200,46 @@ class TestItems(FormTest):
             with self.subTest(words=words):
                 said = self.said(dict(data, chosen=[]), forms.CLAIM)
                 self.assertIn(words, "\n".join(said))
+
+
+class TestBlocked(FormTest):
+    """A role that stops for what lies outside the work gives what it tried, what it confirmed and
+    what not, and what it needs, its items left as they stood."""
+
+    def test_a_reply_stopped_by_what_lies_outside_the_work_holds_what_it_needs(self):
+        # Given: a claim and a reading each stopped for what lies outside the work, their items
+        # left out
+        # When: each is checked
+        # Then: each passes, as the run stops on it whatever its items hold
+        claim = {"items": [], "questions": [], "chosen": [], "blocked": BLOCKED}
+        self.assertEqual(self.said(claim, forms.CLAIM), [])
+        self.assertEqual(self.said({"items": [], "blocked": BLOCKED}, forms.FIRST_READING), [])
+
+    def test_a_stop_without_what_it_tried_confirmed_and_needs_in_words_is_told_it(self):
+        # Given: stops of no object, without what was not confirmed, with empty words, or with a
+        # key of their own
+        # When: each is checked
+        # Then: each is told what a stop holds
+        no_need = {k: v for k, v in BLOCKED.items() if k != "not_confirmed"}
+        for blocked in ("csvtidy", no_need, dict(BLOCKED, needs=" "), dict(BLOCKED, why="x")):
+            with self.subTest(blocked=blocked):
+                said = self.said({"items": [], "blocked": blocked}, forms.FIRST_READING)
+                self.assertEqual(
+                    said,
+                    [
+                        (
+                            '"blocked" must hold "tried", "confirmed", "not_confirmed", "needs",'
+                            " what you tried, confirmed and not, and need, in words"
+                        )
+                    ],
+                )
+
+    def test_the_orchestrator_s_questions_take_no_stop(self):
+        # Given: the orchestrator's questions for the items left, with a stop beside them
+        # When: they are checked
+        # Then: the items are checked as ever, as the orchestrator's form takes no stop
+        said = self.said({"items": [], "questions": [], "blocked": BLOCKED}, forms.LEFT)
+        self.assertIn("checklists/readme.md F-1 is left out; give every item judged here", said)
 
 
 class TestFirstReading(FormTest):
@@ -620,6 +661,8 @@ class TestSchemas(FormTest):
             ("claim.json", {"items": [outside], "questions": [], "chosen": []}),
             ("claim.json", {"items": [WAITS], "questions": [QUESTION], "chosen": []}),
             ("reading.json", {"items": [FOUND, STOPPED_B1, EACH_GOOD]}),
+            ("claim.json", {"items": [], "questions": [], "chosen": [], "blocked": BLOCKED}),
+            ("reading.json", {"items": [], "blocked": BLOCKED}),
         ):
             with self.subTest(name=name, value=value):
                 self.assertIsNone(self.out_of(name, value))

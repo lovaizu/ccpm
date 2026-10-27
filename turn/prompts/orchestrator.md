@@ -47,6 +47,8 @@ command takes the outcome of the calls before it.
    - `{"left": [...]}`: go to step 4.
    - `{"asked": "<result>"}`: go to step 5.
    - `{"returned": "<result>"}`: reply with that line, and end.
+   - `{"stopped": {...}}`: a role stopped for what lies outside the work; reply with that line,
+     and end.
 4. Word a question for each item of `left`, the items two rounds left without Good, or a gap the
    generator holds outside the purpose, its `outside` saying why, and the first user still holds:
    from its `places`, `did`, `lacking`, `hinders` and `outside`, what the user is to decide for the

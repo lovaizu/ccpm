@@ -64,7 +64,10 @@ only what is theirs.
    thing it says the code does on an input it is about, and look up each file and link it points
    to; each in a Bash command of its own, with any input it needs made inside that command, in a
    folder from `mktemp -d` that the command removes at its end. Where a part gives no Good or a
-   thing it tells is not so, go back to step 4.
+   thing it tells is not so, go back to step 4. Where you cannot make or check an item for what
+   lies outside the work, such as a tool missing, a permission not given or a network blocked,
+   take no way round it: give `blocked` in your claim at step 7, what you tried, what you confirmed
+   and what not, and what you need, as the run then stops and its caller can clear it.
 6. Where a Good needs a file the work does not hold, such as one its lines link to or a test,
    choose it yourself, its path and what it holds, as the project's practice says; as you write only
    the files of `work`, the item waits on a question to add it, naming the file and why, and

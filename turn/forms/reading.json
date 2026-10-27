@@ -12,6 +12,9 @@
       "items": {
         "$ref": "#/$defs/item"
       }
+    },
+    "blocked": {
+      "$ref": "#/$defs/blocked"
     }
   },
   "$defs": {
@@ -156,6 +159,35 @@
         "hinders": {
           "type": "string",
           "description": "how what you did not get keeps the receiver from using the work for the use"
+        }
+      }
+    },
+    "blocked": {
+      "type": "object",
+      "description": "only where what keeps you from going on lies outside the work, such as a tool missing, a permission not given or a network blocked: the run then stops and tells its caller",
+      "required": [
+        "tried",
+        "confirmed",
+        "not_confirmed",
+        "needs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tried": {
+          "type": "string",
+          "description": "what you tried"
+        },
+        "confirmed": {
+          "type": "string",
+          "description": "what you confirmed"
+        },
+        "not_confirmed": {
+          "type": "string",
+          "description": "what you could not confirm"
+        },
+        "needs": {
+          "type": "string",
+          "description": "what you need to go on"
         }
       }
     }

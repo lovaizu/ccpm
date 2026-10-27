@@ -7,7 +7,9 @@ import io
 import json
 import os
 import re
+import shutil
 import sys
+import tempfile
 import time
 from unittest import mock
 
@@ -96,6 +98,14 @@ PASSED = {
 }
 # The generator's claim of every item passing, naming no choice of its own.
 CLAIM = {"items": [PASSED, dict(PASSED, item="B-1")], "questions": [], "chosen": []}
+# What a role that stops for what lies outside the work gives: what it tried, what it confirmed and
+# what not, and what it needs.
+BLOCKED = {
+    "tried": "sh tests/readme.sh",
+    "confirmed": "README.md is written",
+    "not_confirmed": "whether its commands run, as sh tests/readme.sh printed `csvtidy: not found`",
+    "needs": "csvtidy installed, as the README's commands run it",
+}
 # Why the generator holds a gap sent back lies outside the purpose.
 OUTSIDE = "the developer tries it on their own files whoever it is for"
 # A choice the work rests on that the CCS leaves open, as the generator names it.
@@ -200,8 +210,10 @@ class RepoTest(testing.FolderTest):
         self.write("docs/start.md", "# Start\n")
         self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
         self.result = RESULT
-        # Claude Code's records, each role's among them, in a folder of their own.
-        self.config = os.path.join(self.base, "config")
+        # Claude Code's records, each role's among them, in a folder of their own beside the
+        # repository, as Claude Code keeps them out of it.
+        self.config = os.path.realpath(tempfile.mkdtemp(dir=self.run_folder))
+        self.addCleanup(shutil.rmtree, self.config)
         config = mock.patch.dict(os.environ, {"CLAUDE_CONFIG_DIR": self.config})
         config.start()
         self.addCleanup(config.stop)
@@ -327,14 +339,14 @@ class RepoTest(testing.FolderTest):
         return self.due(self.next())
 
     def replied(self, reply):
-        """The role due writes its reply and ends, and the orchestrator goes on with the agent ID
-        the Agent call gave back where it started the role, or with nothing where the role was
-        sent a message, its record then holding the message and the reply ending its turn; what the
-        script prints then."""
+        """The role due writes its reply and ends, its record then holding the message it was
+        started or sent and the reply ending its turn, and the orchestrator goes on with the agent
+        ID the Agent call gave back where it started the role, or with nothing where the role was
+        sent a message; what the script prints then."""
         step = self.state()["next"]
         self.write(step["prompt"]["reply"], reply if isinstance(reply, str) else json.dumps(reply))
+        self.recorded(step.get("to") or step.get("id") or IDS[step["agent"]], MESSAGE, END)
         if "to" in step or "id" in step:
-            self.recorded(step.get("to") or step["id"], MESSAGE, END)
             return self.next()
         return self.next({"agent_id": IDS[step["agent"]]})
 

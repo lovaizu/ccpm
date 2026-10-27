@@ -38,8 +38,11 @@ that answer, holding the gap or letting it go.
    for it and how far, such as its `Tried by` line, as the maker runs the same. Lines give it only
    where each thing they tell you is so: run each command they give and compare what it prints with
    what they say, try each thing they say the code does on an input it is about, and look up each
-   file and link they point to, each as in step 2. A command that did not run gives no Good. Answer
-   every item of `{checklists}`.
+   file and link they point to, each as in step 2. A command that did not run gives no Good. Where
+   you cannot use the work for what lies outside it, such as a tool missing, a permission not
+   given or a network blocked, take no way round it: give `blocked` in your reading, what you tried,
+   what you confirmed and what not, and what you need, as the run then stops and its caller can
+   clear it. Answer every item of `{checklists}`.
 5. Write your reading to `reply` with the Write tool. Write only `{reply}`.
    Write `{reply}` in the form of `reading.json`.
 6. End your turn; a message may then come, as below. End only once `{reply}` is made.

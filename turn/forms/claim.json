@@ -28,6 +28,9 @@
       "items": {
         "$ref": "#/$defs/choice"
       }
+    },
+    "blocked": {
+      "$ref": "#/$defs/blocked"
     }
   },
   "$defs": {
@@ -151,6 +154,35 @@
         "why": {
           "type": "string",
           "description": "why you chose it"
+        }
+      }
+    },
+    "blocked": {
+      "type": "object",
+      "description": "only where what keeps you from going on lies outside the work, such as a tool missing, a permission not given or a network blocked: the run then stops and tells its caller",
+      "required": [
+        "tried",
+        "confirmed",
+        "not_confirmed",
+        "needs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tried": {
+          "type": "string",
+          "description": "what you tried"
+        },
+        "confirmed": {
+          "type": "string",
+          "description": "what you confirmed"
+        },
+        "not_confirmed": {
+          "type": "string",
+          "description": "what you could not confirm"
+        },
+        "needs": {
+          "type": "string",
+          "description": "what you need to go on"
         }
       }
     }

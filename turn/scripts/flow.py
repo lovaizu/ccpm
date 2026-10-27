@@ -49,8 +49,9 @@ AGAIN = {
 # What a word a line counts by takes after it, by the count: none for one, an s for any other.
 PLURAL = {1: ""}
 # The stage a run gone on with by an orchestrator started anew is at, where the one before made a
-# move of its own that is gone with it: a question asked is asked again.
-AGAIN_AT = {"asked": "ask"}
+# move of its own that is gone with it: a question asked is asked again, and a role that stopped for
+# what lay outside the work is started again, once its caller has cleared it.
+AGAIN_AT = {"asked": "ask", "stopped": "role"}
 # The file in the run's folder a `turn.py next` holds while it runs, so no second one, started while
 # the first waits on a role and Claude Code has moved it to the background, takes the same move.
 LOCK = "next.lock"
@@ -99,7 +100,7 @@ def resumed(run: dict[str, Any]) -> dict[str, Any]:
             prompt["since"] = since + ([] if step.get("moved") else [step["message"]])
         run["next"] = {"agent": step["agent"], "prompt": prompt}
     run["stage"] = AGAIN_AT.get(run["stage"], run["stage"])
-    for gone in ("started", "since", "prompts"):
+    for gone in ("started", "since", "prompts", "blocked"):
         run.pop(gone, None)
     return run
 
@@ -263,6 +264,7 @@ def sent(run: dict[str, Any], step: dict[str, Any], to: str, message: str) -> di
     """The move sending the role's agent the message, kept with how many messages its record holds
     before it, so the role's end is read after it."""
     step["heard"] = len(messages(entries(to)))
+    step["said"] = message
     state.save(run)
     return {"move": {"tool": "SendMessage", "input": {"to": to, "message": message}}}
 
@@ -270,16 +272,19 @@ def sent(run: dict[str, Any], step: dict[str, Any], to: str, message: str) -> di
 def replied(run: dict[str, Any], step: dict[str, Any], text: str) -> dict[str, Any]:
     """Takes the role's reply once the role has ended, as a role may change its reply until it ends:
     a role started has ended once its Agent call gave back its agent ID, and one sent a message
-    once its record shows it; until then the run waits on it. One ended with no reply is told to
-    write it; one out of its form is sent back with what is wrong; one filled goes on to what the
-    run does after it."""
+    once its record shows it; until then the run waits on it, as AWAITING says for each way the
+    wait ends. One ended with no reply is told to write it; one out of its form is sent back with
+    what is wrong; one stopped by what lies outside the work stops the run; one filled goes on to
+    what the run does after it."""
     agent = step["agent"]
     path = step["prompt"]["reply"]
     if "to" not in step and "id" not in step:
         step["id"] = agent_id(agent, text)
         state.save(run)
-    elif not awaited(run, step, text):
-        return {"waiting": agent}
+    else:
+        now = awaited(run, step, text)
+        if now in AWAITING:
+            return AWAITING[now](run, step)
     to = step.get("to") or step["id"]
     if not os.path.exists(path):
         return sent(run, step, to, f"Write your reply to {path} in your form; it is not there")
@@ -290,16 +295,19 @@ def replied(run: dict[str, Any], step: dict[str, Any], text: str) -> dict[str, A
         os.remove(path)
         fix = f"Write your reply to {path} again in your form, filled:\n" + "\n".join(said)
         return sent(run, step, to, fix)
+    found = json.loads(forms.unfenced(reply))
+    if found.get("blocked") is not None:
+        return stopped(run, agent, found["blocked"])
     # Each role is kept started through its round, sent what comes next by message, so it works on
     # with what it has already read.
     run.setdefault("started", {})[agent] = to
     del run["next"]
-    return REPLIED[agent](run, json.loads(forms.unfenced(reply)))
+    return REPLIED[agent](run, found)
 
 
-def awaited(run: dict[str, Any], step: dict[str, Any], text: str) -> bool:
-    """Whether the role sent a message has ended since, waiting on it a second at a time up to
-    WAIT. The flow reads the end in the record Claude Code writes of the role's
+def awaited(run: dict[str, Any], step: dict[str, Any], text: str) -> str:
+    """How the role sent a message stands, waiting on its end a second at a time up to WAIT, as
+    `standing` tells it. The flow reads the end in the record Claude Code writes of the role's
     agent, as Claude Code tells it by a task notification to the main conversation alone where
     turn:up is a subagent; stops where the orchestrator hands on anything, saying to hand on
     nothing."""
@@ -310,21 +318,78 @@ def awaited(run: dict[str, Any], step: dict[str, Any], text: str) -> bool:
             f" record; run `turn.py next {run['call']['result']}` with nothing"
         )
     for _ in range(WAIT):
-        if role_ended(to, step["heard"]):
-            return True
+        now = standing(to, step["heard"])
+        if now not in AWAITING:
+            return now
         time.sleep(1)
-    return role_ended(to, step["heard"])
+    return standing(to, step["heard"])
 
 
-def role_ended(to: str, heard: int) -> bool:
-    """Whether the agent of the ID has ended since the message sent to it last: its record holds
-    more messages than the number it held before that one, and a reply ending its turn after the
-    last of them."""
+def standing(to: str, heard: int) -> str:
+    """How the agent of the ID stands since the message sent to it last, from its record:
+    "unread" where no record of it is found, as its end then cannot be told; "unsent" where the
+    record holds no more messages than the number it held before that one, as the message has not
+    reached it; "ended" where a reply ending its turn stands after the last message; otherwise
+    "running"."""
     found = entries(to)
+    if not found:
+        return "unread"
     replies = record.replies(found)
     told = messages(found)
-    last = max(told + replies, default=None)
-    return bool(told[heard:]) and last in replies
+    if not told[heard:]:
+        return "unsent"
+    return "ended" if max(told + replies) in replies else "running"
+
+
+def waiting(run: dict[str, Any], step: dict[str, Any]) -> dict[str, Any]:
+    """The role has the message and has not ended within the wait: the run waits on it again."""
+    return {"waiting": step["agent"]}
+
+
+def unsent(run: dict[str, Any], step: dict[str, Any]) -> dict[str, Any]:
+    """The message has not reached the role within the wait, as one printed by a `turn.py next`
+    that Claude Code moved to the background, which no one saw: the move sending it again."""
+    to = step.get("to") or step["id"]
+    return {"move": {"tool": "SendMessage", "input": {"to": to, "message": step["said"]}}}
+
+
+def unread(run: dict[str, Any], step: dict[str, Any]) -> dict[str, Any]:
+    """No record of the role is found, so its end cannot be told: the run stops, saying what it
+    needs, as the records lie outside the work."""
+    agent, to = step["agent"], step.get("to") or step["id"]
+    projects = record.projects()
+    return stopped(
+        run,
+        agent,
+        {
+            "tried": f"reading the record Claude Code keeps of {agent}, agent {to}, under"
+            f" {projects}, for {WAIT} seconds",
+            "confirmed": f"{agent} ran as agent {to}, and was sent a message",
+            "not_confirmed": f"whether {agent} has ended, as no record of agent {to} is there",
+            "needs": f"Claude Code's records under {projects}, the folder CLAUDE_CONFIG_DIR names"
+            " or ~/.claude where it names none, holding the record of each agent the run starts",
+        },
+    )
+
+
+def stopped(run: dict[str, Any], agent: str, blocked: dict[str, str]) -> dict[str, Any]:
+    """The run stopped by what lies outside the work, such as the environment, a permission or a
+    missing tool, which the role met: told to the caller with what was tried, what was confirmed
+    and what was not, and what is needed, and kept, so a call again once it is cleared starts the
+    role again where it stood."""
+    run.update(stage="stopped", blocked=dict(blocked, agent=agent))
+    line = said(run, f"{agent} stopped: it needs {blocked['needs']}.")
+    state.save(run)
+    return {"line": line, "stopped": blocked}
+
+
+def still_stopped(run: dict[str, Any], text: str) -> dict[str, Any]:
+    """The run stopped: it goes on only by a call again, once what it needs is there."""
+    blocked = run["blocked"]
+    raise call.Stop(
+        f"turn: the run stopped, as {blocked['agent']} needs {blocked['needs']}; once that is"
+        " there, call turn again with the same call"
+    )
 
 
 def entries(to: str) -> list[dict[str, Any]]:
@@ -564,7 +629,10 @@ STAGES = {
     "left": leaving,
     "role": role,
     "returned": returning,
+    "stopped": still_stopped,
 }
+# What the run does once a messaged role's wait ends with it not ended, by how it stands.
+AWAITING = {"running": waiting, "unsent": unsent, "unread": unread}
 # What the orchestrator is shown at each stage that waits on its judgment.
 VIEWS = {"left": left_view}
 # What is wrong with each role's reply.

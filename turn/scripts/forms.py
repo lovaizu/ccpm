@@ -23,6 +23,9 @@ NAMING = ("checklist", "item")
 # Goods given for each part, which no other item takes.
 ONE_GOOD = "lines"
 EACH_GOOD = "parts"
+# What a role that stops for what lies outside the work gives: what it tried, what it confirmed and
+# what not, and what it needs to go on.
+BLOCKED = ("tried", "confirmed", "not_confirmed", "needs")
 # The keys whose value is words, wherever an item holds them.
 WORDED = ("good", "evidence", "outside", "did", "lacking", "hinders")
 
@@ -39,26 +42,32 @@ def shapes(path: str) -> tuple[tuple[str, ...], ...]:
 class Form(NamedTuple):
     """What an item may hold besides its checklist and ID, one shape of keys each, every item judged
     given; whether questions are asked; whether a reply asking questions gives only the items
-    waiting on them, as one asked before the work is made has no Good to give yet; and whether the
-    choices the work rests on are named, as its maker settles points no one gave it."""
+    waiting on them, as one asked before the work is made has no Good to give yet; whether the
+    choices the work rests on are named, as its maker settles points no one gave it; and whether a
+    role may stop for what lies outside the work, its items then left as they stood."""
 
     shapes: tuple[tuple[str, ...], ...]
     asks: bool = False
     asks_first: bool = False
     chooses: bool = False
+    blocks: bool = False
 
 
 # On a remake the generator claims each item sent back, mended with its evidence or lying outside
 # the purpose with why, or the question it waits on; asking before it makes anything, it gives only
 # the items waiting; and it names each choice the work rests on.
 REMADE = Form(
-    shapes(os.path.join(FORM_FILES, "claim.json")), asks=True, asks_first=True, chooses=True
+    shapes(os.path.join(FORM_FILES, "claim.json")),
+    asks=True,
+    asks_first=True,
+    chooses=True,
+    blocks=True,
 )
 # On its first making it claims every item, passing with its evidence or waiting on a question, as
 # no gap has been sent back that could lie outside the purpose.
 CLAIM = REMADE._replace(shapes=tuple(s for s in REMADE.shapes if "outside" not in s))
 # The first user gives every item the Good it found, or where it stopped.
-FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")))
+FIRST_READING = Form(shapes(os.path.join(FORM_FILES, "reading.json")), blocks=True)
 # Each item two rounds leave without Good waits on a question the orchestrator words, in a form set
 # in its steps, not in a form file as the roles' are: it hands it on standard input, which no lane
 # holds.
@@ -122,6 +131,8 @@ def check(
     data = parsed(text, lists)
     if data is None:
         return ["give it as JSON: {" + ", ".join(f'"{k}": [...]' for k in lists) + "}"]
+    if form.blocks and data.get("blocked") is not None:
+        return blocked_problems(data["blocked"])
     every = not (form.asks_first and data["questions"])
     said = item_problems(data["items"], items, work, form, each, every)
     if form.asks:
@@ -129,6 +140,19 @@ def check(
     if form.chooses:
         said += choice_problems(data["chosen"])
     return said
+
+
+def blocked_problems(blocked: Any) -> list[str]:
+    """What is wrong with a stop for what lies outside the work, to hold what was tried, what was
+    confirmed and what was not, and what is needed, in words."""
+    if (
+        isinstance(blocked, dict)
+        and set(blocked) == set(BLOCKED)
+        and all(worded(v) for v in blocked.values())
+    ):
+        return []
+    keys = ", ".join(f'"{k}"' for k in BLOCKED)
+    return [f'"blocked" must hold {keys}, what you tried, confirmed and not, and need, in words']
 
 
 def choice_problems(chosen: list[Any]) -> list[str]:

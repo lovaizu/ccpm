@@ -8,6 +8,7 @@ import unittest
 from helpers import (
     ANSWER,
     ASKED,
+    BLOCKED,
     CALL,
     CHECKLIST,
     GOOD,
@@ -233,6 +234,36 @@ class TestMade(ReadTest):
                 out = self.replied(claim)
                 self.assertEqual(out["move"]["input"]["to"], IDS["turn:generator"])
                 self.assertIn(said, out["move"]["input"]["message"])
+
+    def test_a_generator_stopped_by_what_lies_outside_the_work_stops_the_run(self):
+        # Given: a generator that cannot check the work, as a tool its commands run is missing
+        # When: it replies with what it tried, confirmed and not, and needs
+        out = self.replied({"items": [], "questions": [], "chosen": [], "blocked": BLOCKED})
+        # Then: the run stops, telling the caller so, with no way round it, and goes on only by
+        # a call again
+        self.assertEqual(
+            out,
+            {
+                "line": "turn: turn:generator stopped: it needs csvtidy installed, as the README's"
+                " commands run it.",
+                "stopped": BLOCKED,
+            },
+        )
+        self.assertIn(
+            "turn: the run stopped, as turn:generator needs csvtidy installed, as the README's"
+            " commands run it; once that is there, call turn again with the same call",
+            self.refused(),
+        )
+
+    def test_a_run_stopped_so_starts_the_role_again_on_a_call_again(self):
+        # Given: a run stopped by its generator for what lies outside the work
+        self.replied({"items": [], "questions": [], "chosen": [], "blocked": BLOCKED})
+        # When: the same call is made again, once what it needs is there
+        self.turn("start", json.dumps(CALL))
+        # Then: the generator is started again, told, with what it was given
+        move = self.due(self.next())
+        self.assertEqual(move["input"]["subagent_type"], "turn:generator")
+        self.assertNotIn("blocked", self.state())
 
     def test_the_parts_of_the_work_are_printed_when_asked(self):
         # Given: a run going

@@ -4,6 +4,7 @@ next by message, each working on with what it has read."""
 import fcntl
 import json
 import os
+import shutil
 import unittest
 from unittest import mock
 
@@ -84,11 +85,12 @@ class TestGeneratorKept(RoundTest):
         self.assertIn("冒頭を読んだ", move["input"]["message"])
 
     def test_a_reply_is_waited_for_a_second_at_a_time_within_the_shell_s_ten_minutes(self):
-        # Given: a generator sent the first user's stop, which never replies
+        # Given: a generator sent the first user's stop, which has it and never replies
         # When: the orchestrator goes on, with the wait as turn has it
         # Then: the script waits a second at a time, nine minutes in all, as one move within the
         # ten minutes the orchestrator's step gives the shell, then says it is waiting
         self.stopped()
+        self.recorded(IDS["turn:generator"], MESSAGE)
         with (
             mock.patch.object(flow, "WAIT", WAITED),
             mock.patch.object(flow.time, "sleep") as sleep,
@@ -115,19 +117,21 @@ class TestGeneratorKept(RoundTest):
         self.assertEqual(json.loads(move["input"]["message"]), expected)
 
     def test_a_reply_not_come_within_the_wait_leaves_the_run_waiting(self):
-        # Given: a generator sent the first user's stop
+        # Given: a generator sent the first user's stop, which has it
         # When: the orchestrator goes on and no reply comes within the wait
         # Then: the script says it is still waiting on the generator, and goes on once it comes
         self.stopped()
+        self.recorded(IDS["turn:generator"], MESSAGE)
         with mock.patch.object(flow, "WAIT", 2), mock.patch.object(flow.time, "sleep") as sleep:
             self.assertEqual(self.next(), {"waiting": "turn:generator"})
         self.assertEqual(sleep.call_count, 2)
         self.assertEqual(self.due(self.later(MENDED))["tool"], "SendMessage")
 
     def test_a_second_next_while_the_first_still_waits_stops(self):
-        # Given: a generator sent the first user's stop, and a `turn.py next` of the run still
-        # waiting on its end, as one Claude Code moved to the background past its timeout
+        # Given: a generator sent the first user's stop, which has it, and a `turn.py next` of the
+        # run still waiting on its end, as one Claude Code moved to the background past its timeout
         self.stopped()
+        self.recorded(IDS["turn:generator"], MESSAGE)
         with open(self.kept("next.lock"), "w", encoding="utf-8") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             # When: the orchestrator runs `turn.py next` again
@@ -177,14 +181,43 @@ class TestGeneratorKept(RoundTest):
         move = self.due(self.next())
         self.assertEqual(move["input"]["to"], IDS["turn:first-user"])
 
-    def test_a_reply_ending_an_earlier_turn_is_not_the_end_of_the_message_sent(self):
+    def test_a_message_not_come_within_the_wait_is_sent_again(self):
         # Given: a generator whose record ends with the reply ending its first turn, sent the first
-        # user's stop that has not reached its record yet
+        # user's stop, which has not reached its record by the end of the wait, as a message
+        # printed by a `turn.py next` Claude Code moved to the background reaches no one
+        sent = self.stopped()
         # When: the orchestrator goes on with nothing
-        # Then: the script still waits on the generator, not telling it to write a reply
-        self.recorded(IDS["turn:generator"], MESSAGE, END)
+        out = self.next()
+        # Then: the reply ending the earlier turn is not taken as the end, and the move sending the
+        # message is printed again, with no line, as no role starts; once it comes and the
+        # generator ends, its reply is taken
+        self.assertEqual(out, {"move": sent})
+        self.assertEqual(self.due(self.later(MENDED))["input"]["to"], IDS["turn:first-user"])
+
+    def test_a_role_whose_record_is_not_found_stops_the_run_saying_what_it_needs(self):
+        # Given: a generator sent the first user's stop, and Claude Code's records not where turn
+        # reads them
         self.stopped()
-        self.assertEqual(self.next(), {"waiting": "turn:generator"})
+        shutil.rmtree(os.path.join(self.config, "projects"))
+        # When: the orchestrator goes on with nothing
+        out = self.next()
+        # Then: the run stops, as it cannot tell the generator's end, telling the caller what it
+        # tried, confirmed and not, and needs; it goes on only by a call again
+        projects = os.path.join(self.config, "projects")
+        self.assertEqual(
+            out["line"],
+            f"turn: turn:generator stopped: it needs Claude Code's records under {projects}, the"
+            " folder CLAUDE_CONFIG_DIR names or ~/.claude where it names none, holding the record"
+            " of each agent the run starts.",
+        )
+        self.assertEqual(
+            out["stopped"]["not_confirmed"],
+            "whether turn:generator has ended, as no record of agent agen is there",
+        )
+        self.assertIn("for 0 seconds", out["stopped"]["tried"])
+        self.assertIn(
+            "the run stopped, as turn:generator needs Claude Code's records", self.refused()
+        )
 
     def test_a_reply_a_stop_hook_kept_going_is_not_the_end(self):
         # Given: a generator sent the first user's stop, which wrote its reply and ended its turn,
@@ -201,7 +234,8 @@ class TestGeneratorKept(RoundTest):
     def test_a_role_ended_without_its_reply_is_told_to_write_it(self):
         # Given: a generator sent the first user's stop, which ends without writing its reply
         # When: the orchestrator goes on with nothing
-        # Then: the generator is sent where to write its reply, and the run waits on its end again
+        # Then: the generator is sent where to write its reply, and the run waits on its end again,
+        # once the message has reached it
         self.stopped()
         self.recorded(IDS["turn:generator"], MESSAGE, END)
         out = self.next()
@@ -213,6 +247,7 @@ class TestGeneratorKept(RoundTest):
                 "message": f"Write your reply to {reply} in your form; it is not there",
             },
         )
+        self.recorded(IDS["turn:generator"], MESSAGE)
         self.assertEqual(self.next(), {"waiting": "turn:generator"})
 
 

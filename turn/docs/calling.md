@@ -1,7 +1,7 @@
 # Calling turn
 
 What a step of your plugin gives turn and what it gets back, so the step's text can be written to
-call it: the checklist, the CCS, the call, the questions and the result.
+call it: the checklist, the CCS, the call, the questions, a stop and the result.
 
 ## The checklist
 
@@ -74,6 +74,18 @@ holds:
 Put each to the user, keep the answer where the CCS names it, such as its decisions file, adding to
 the CCS any file the answer brings, and send the answer to turn in plain words; the run goes on
 with it from where it stood, taking in the files the CCS names then.
+
+## A stop for what lies outside the work
+
+Where an AI of the run cannot go on for what lies outside the work, such as a tool missing, a
+permission not given or a network blocked, the run stops with no way round it and turn returns:
+
+```json
+{"stopped": {"tried": "...", "confirmed": "...", "not_confirmed": "...", "needs": "..."}}
+```
+
+Put what it needs to the user; once it is there, call turn again with the same call, and the run
+goes on where it stopped.
 
 ## The result
 
