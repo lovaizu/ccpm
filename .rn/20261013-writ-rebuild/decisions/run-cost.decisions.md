@@ -25,7 +25,14 @@ shows whether it improved.
    script that fails or times out, a command not parsed), tests (a skip is no pass), CI (a job
    not run), a reader (a command that did not run gives no Good) and the trial tools.
 
-Intents 1 to 6 are general to every plugin and go into dev/architecture.md's principles; lane,
+7. Where what keeps the work from going on lies outside it, such as the environment, a permission
+   or a missing tool, the run stops without a way round and tells its caller what was tried, what
+   was confirmed and what was not, and what it needs (agreed 2026-10-27).
+8. An acceptance test shows, beside how close the purpose came, the time and the tokens a run took,
+   which the maintainer judges by feel against the size of the work, kept so that runs can be
+   compared as they gather (the user's view, 2026-10-27).
+
+Intents 1 to 8 are general to every plugin and go into dev/architecture.md's principles; lane,
 turn and rn apply them.
 
 Decided by the assistant from these and turn's purpose:

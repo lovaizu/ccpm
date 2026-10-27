@@ -42,6 +42,9 @@ adds only what that plugin gives on top of them.
 10. Every check, a script's, a hook's, a test's, CI's or a reader's, ends in one of three: no
     problem, a problem found, or could not check with why; what follows each way it can fail to
     check is decided beforehand and tested.
+11. Where what keeps the work from going on lies outside it, such as the environment, a permission
+    or a missing tool, the run stops and tells its caller what was tried, what was confirmed and
+    what was not, and what it needs.
 
 ## Why it is so
 
@@ -359,6 +362,16 @@ A check that says nothing when it could not check is read as one that found noth
 there to stop goes through unseen; a case decided only when it is met is decided in a hurry, by
 whoever meets it.
 
+### A stop that says what it needs
+
+Where what keeps the work from going on lies outside it, such as a network blocked, a permission
+not given or a tool not installed, the run takes no way round it: it stops and tells its caller
+what it tried, what it confirmed and what it could not, and what it needs to go on.
+
+The caller can clear such a cause in a moment, where the run cannot; a way round spends the run's
+time and leaves a work whose checks were made under other terms than the purpose set, and the
+caller cannot tell what of it holds unless the stop says what was and was not confirmed.
+
 ## Repository structure
 
 ### The plugin's folder and dev/
@@ -483,10 +496,14 @@ whoever runs the trial.
 ### Acceptance tests: user stories
 
 The whole plugin is tried as its user uses it, its results are checked, and it is shown to the
-maintainer with how close it came to the goal and to each key result of the UX and what could be
-improved; the maintainer judges.
+maintainer with how close it came to the goal and to each key result of the UX, the time and the
+tokens it took beside the size of the work, and what could be improved; the maintainer judges.
+Each run's time and tokens are kept with the trial's records, so runs can be compared.
 
 Each part can pass while a story is missed; and what reaches users is the maintainer's to decide.
+Whether the time and tokens fit the work is judged by feel, as no bar is known before runs gather,
+and runs kept side by side show whether a change made it better or worse, the purpose met as
+fully (Principle 7).
 
 A trial that needs a real GitHub repository runs in `lovaizu/playground`, one at a time, on a
 branch of its own, and the branch, its pull requests and whatever else it made there are removed
