@@ -770,6 +770,9 @@
   },
   {
    "fact": "2026-10-27: acceptance run 3 stopped by the user's word at T4.2 (folder /tmp/rn/20261027-acceptance-5180ibfe kept for its records): 3 h 50 min and about $76 for 3½ of 6 tasks of a 250-line tool, nearly all in turn: the generator's model time 113 min (a prose claim of every item rewritten each round, 23k chars, read by no one but a form check), the first user's 49, the orchestrator's own 46 (236 `turn.py next` over 8 calls where two rounds need about 8; 81 lines to main; 25 CCS checks; 18 waiting polls), 11 questions mostly technical, each answer re-running rn.py ccs so turn started anew; 25 sends-back, about 12 real defects found by running, 8 that a linter or type checker would see (the project had none), 5 wording. CI of ccpm had failed since 2026-10-26 on one surviving mutant of rn/scripts/proposal.py:171; fixed by a test (a1fa33c), CI of it not yet read"
+  },
+  {
+   "fact": "2026-10-27: the user chose (A) to move the plugins into plugins/<name>, as anthropics/claude-plugins-official and anthropics/claude-code keep them, dev/<plugin>/ staying outside; done as one move commit after turn's code is read and pushed. lane added to the marketplace and the root README, as lane/README.md:89-93 has it installed as lane@ccpm"
   }
  ],
  "semantic_gist": [
@@ -877,7 +880,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "on resume: (1) turn's code to dev/turn/architecture.md as now written (flow: moves only that need the orchestrator, waits for a role's end itself, lines at role start/end, question, result; no CCS check stage, the generator asking first; claim per item with evidence, remake gives the items sent back alone, chosen merged; the gap exchange; an answer taken in by sending roles the files, no start anew), made by a subagent with code.md and prompt.md open, then checked by hand, places listed in audits/run-cost-impact.md; dev/check.sh turn 100%, mutation 0; (2) rn's prompts and scripts; (3) trials; (4) acceptance run compared with run 3 on time, tokens, cost, sends-back; report to the user in Japanese, decisions made on my own included (PreToolUse alone given onFailure; trial.md B-2 tried on the steps the verdict rests on; lane's unsettled word told as a drift with the lane's sentence; sed -e scripts fixed)"
+   "next": "on resume: (1) turn's code to dev/turn/architecture.md as now written (flow: moves only that need the orchestrator, waits for a role's end itself, lines at role start/end, question, result; no CCS check stage, the generator asking first; claim per item with evidence, remake gives the items sent back alone, chosen merged; the gap exchange; an answer taken in by sending roles the files, no start anew), made by a subagent with code.md and prompt.md open, then checked by hand, places listed in audits/run-cost-impact.md; dev/check.sh turn 100%, mutation 0; (1b) move lane, turn, rn into plugins/<name> in one commit, every path in dev/, CI, pyproject, marketplace and links updated, all checks passing; (2) rn's prompts and scripts; (3) trials; (4) acceptance run compared with run 3 on time, tokens, cost, sends-back; report to the user in Japanese, decisions made on my own included (PreToolUse alone given onFailure; trial.md B-2 tried on the steps the verdict rests on; lane's unsettled word told as a drift with the lane's sentence; sed -e scripts fixed)"
   }
  ],
  "uncertainty_signal": [
