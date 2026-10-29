@@ -806,6 +806,9 @@
   },
   {
    "fact": "2026-10-28: move trials 28/31 then 31/31 after trial fixes (391dda1); Claude Code 2.1.311 refuses a bare `sleep 30`, so turn's roles wait with turn.py wait on the files the message follows, at most 60 s (a62..); readme trial 9.3 min $2.59, 8 Good 1 left; a subagent removed one /tmp/tmp.* folder not its own by a wrong script"
+  },
+  {
+   "fact": "2026-10-28/29: acceptance run 5 (/tmp/rn/20261028-acceptance-zdax9pcp) FAILED at message 18: the trial waited 90 min on turn's generator asking main, as Claude Code prints no SendMessage of a depth-2 agent; rn itself kept and asked the question correctly; trying.py now counts unanswered messages from main's record and keeps running state across messages (move trial asks passed). Run 6 (/tmp/rn/20261028-acceptance-u96xr86w) FAILED at message 17 by the weekly usage limit (resets 2026-10-29 22:00 UTC); goal sign-off reached in both, 1-3 changes sent at it, $2.3 each to there"
   }
  ],
  "semantic_gist": [
@@ -878,7 +881,7 @@
  ],
  "focal_entities": [
   {
-   "task": "rn's move trials on the new stages and turn, then T30, T31 as far as the acceptance needs, then T34 rn's acceptance test, then T14"
+   "task": "T34: rn's acceptance run again once the weekly limit resets (2026-10-29 22:00 UTC), then report to the user"
   }
  ],
  "relational_map": [
@@ -916,7 +919,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "T34 acceptance run 5 started 2026-10-28 ~01:30 JST in the background (scratchpad acceptance5.txt, folder /tmp/rn/20261028-acceptance-*); on its end read its summary and records, compare with results.json runs 3-4, and report to the user (they asked: rnの受入完了まで進めて、結果教えて); then T14"
+   "next": "On resume: tell the user where things stand, then answer their question (2026-10-29): did the generator and the first user talking directly raise quality and performance? Compare from records: turn's readme trial on the old flow (9.5 min $2.47, 9 items, 7 met by the stand-in; dev/turn/trials/readme/results.json) vs the new turn (2026-10-27 run 10.1 min $2.65 6 Good 3 left; 2026-10-28 run 9.3 min $2.59 8 Good 1 left), and rn acceptance runs 3-4 (dev/rn/trials/acceptance/results.json) vs runs 5-6 (neither reached a document sign-off: run 5 stopped by the trial's wait bug, fixed b?; run 6 by the weekly usage limit at message 17); say plainly what the records can and cannot show yet. Then run acceptance.py again (playground clean after each run) and report"
   }
  ],
  "uncertainty_signal": [
