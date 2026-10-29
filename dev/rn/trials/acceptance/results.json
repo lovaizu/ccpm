@@ -61,5 +61,77 @@
    "deliverable": 0
   },
   "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "db291ce",
+  "folder": "/tmp/rn/20261028-acceptance-zdax9pcp",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 18 failed: agents in the background still running 90 minutes after the reply; give a longer wait",
+  "minutes": {
+   "whole": 114.9,
+   "rn": 9.5,
+   "stand-in": 4.6
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 338,
+    "cache_creation_input_tokens": 184502,
+    "cache_read_input_tokens": 8211446,
+    "output_tokens": 56485
+   },
+   "stand-in": {
+    "input_tokens": 38,
+    "cache_creation_input_tokens": 36851,
+    "cache_read_input_tokens": 598852,
+    "output_tokens": 2052
+   }
+  },
+  "cost": {
+   "rn": 1.9,
+   "stand-in": 0.46
+  },
+  "changes sent": {
+   "goal": 3,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "f672eba",
+  "folder": "/tmp/rn/20261028-acceptance-u96xr86w",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 17 failed: claude gave an error: You've hit your weekly limit · resets Oct 29, 10pm (UTC)",
+  "minutes": {
+   "whole": 16.2,
+   "rn": 6.6,
+   "stand-in": 1.8
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 246,
+    "cache_creation_input_tokens": 307931,
+    "cache_read_input_tokens": 5377174,
+    "output_tokens": 67422
+   },
+   "stand-in": {
+    "input_tokens": 36,
+    "cache_creation_input_tokens": 38937,
+    "cache_read_input_tokens": 560979,
+    "output_tokens": 2313
+   }
+  },
+  "cost": {
+   "rn": 1.87,
+   "stand-in": 0.47
+  },
+  "changes sent": {
+   "goal": 1,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
  }
 ]
