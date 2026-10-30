@@ -50,32 +50,26 @@ SENT_BY_AGENT = "<agent-message from="
 
 
 def unanswered(session: str) -> int:
-    """The messages agents sent the main conversation of the session that it has not answered with
-    one of its own, read from its record: each message queued for it, less each SendMessage it
-    sent an agent; read from the record, as Claude Code prints no SendMessage of an agent two
-    layers down, such as turn's generator under turn:up. Each message is counted where it is
-    queued, as Claude Code queues every one, and one that reaches the conversation while it works
-    comes in beside a tool's result, not as a message of its own, as three questions from turn's
-    generator in acceptance run 7 did, two of them so."""
+    """The agents whose messages to the main conversation of the session it has not answered: each
+    agent whose last message queued for it came after the last SendMessage it sent that agent, read
+    from its record, as Claude Code prints no SendMessage of an agent two layers down, such as
+    turn's generator under turn:up. Each message is read where it is queued, as Claude Code queues
+    every one, and one that reaches the conversation while it works comes in beside a tool's
+    result, not as a message of its own, as three questions from turn's generator in acceptance run
+    7 did, two of them so; and an agent is counted once, as one SendMessage may answer all it asked,
+    as the main conversation answered two questions of turn's generator in acceptance run 8."""
     found = glob.glob(record.conversation(session))
-    entries = (record.read(found[0]) or []) if found else []
-    reached = sum(
-        1
-        for e in entries
-        if e.get("type") == "queue-operation"
-        and e.get("operation") == "enqueue"
-        and SENT_BY_AGENT in str(e.get("content", ""))
-    )
-    sent = sum(
-        1
-        for e in entries
-        if e.get("type") == "assistant"
-        for part in record.blocks(e)
-        if part.get("type") == "tool_use"
-        and part.get("name") == "SendMessage"
-        and part.get("input", {}).get("to") != "main"
-    )
-    return max(0, reached - sent)
+    waiting: set[str] = set()
+    for e in (record.read(found[0]) or []) if found else []:
+        content = str(e.get("content", ""))
+        if e.get("type") == "queue-operation" and e.get("operation") == "enqueue":
+            if SENT_BY_AGENT in content:
+                waiting.add(content.split(SENT_BY_AGENT, 1)[1].split('"')[1])
+        elif e.get("type") == "assistant":
+            for part in record.blocks(e):
+                if part.get("type") == "tool_use" and part.get("name") == "SendMessage":
+                    waiting.discard(part.get("input", {}).get("to"))
+    return len(waiting)
 
 
 class Conversation:

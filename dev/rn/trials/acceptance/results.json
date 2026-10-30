@@ -169,5 +169,41 @@
    "deliverable": 0
   },
   "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "e92ae1b",
+  "folder": "/tmp/rn/20261030-acceptance-mmcr1r0h",
+  "verdict": "FAILED",
+  "ended": "120 messages sent to rn",
+  "minutes": {
+   "whole": 90.6,
+   "rn": 64.1,
+   "stand-in": 16.4
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 1434,
+    "cache_creation_input_tokens": 1409381,
+    "cache_read_input_tokens": 56869591,
+    "output_tokens": 345234
+   },
+   "stand-in": {
+    "input_tokens": 244,
+    "cache_creation_input_tokens": 74606,
+    "cache_read_input_tokens": 6781057,
+    "output_tokens": 6915
+   }
+  },
+  "cost": {
+   "rn": 23.59,
+   "stand-in": 2.09
+  },
+  "changes sent": {
+   "goal": 0,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
  }
 ]
