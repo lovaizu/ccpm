@@ -205,5 +205,41 @@
    "deliverable": 0
   },
   "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "58eac7a",
+  "folder": "/tmp/rn/20261030-acceptance-7dmnr09f",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 22 failed: claude exited 143: ",
+  "minutes": {
+   "whole": 89.4,
+   "rn": 19.2,
+   "stand-in": 3.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 426,
+    "cache_creation_input_tokens": 327446,
+    "cache_read_input_tokens": 10244289,
+    "output_tokens": 91661
+   },
+   "stand-in": {
+    "input_tokens": 48,
+    "cache_creation_input_tokens": 41586,
+    "cache_read_input_tokens": 798017,
+    "output_tokens": 2149
+   }
+  },
+  "cost": {
+   "rn": 4.62,
+   "stand-in": 0.54
+  },
+  "changes sent": {
+   "goal": 1,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
  }
 ]

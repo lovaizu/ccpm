@@ -4,7 +4,8 @@ message, or more on the same conversation where the move takes more, and checks 
 the move must leave. The real skills and scripts run, on Opus, which trying.claude names in each
 run, with everything but them stood in for: turn's turn:up by an agent giving back what the case
 set, `gh` by a script keeping the pull request and the issues in a file, and the user by the
-case's messages.
+case's messages, each sent once the move before has left what it must or no agent runs in the
+background.
 
     python3 dev/rn/trials/moves/moves.py <case>... | all [--dry]
 
@@ -43,7 +44,8 @@ from cases import CASES, Case, Check
 from place import RULES, Place, Seen, Stop, costed
 
 USAGE = "usage: python3 dev/rn/trials/moves/moves.py <case>... | all [--dry]"
-# The minutes a message waits for the stand-in turn, started in the background.
+# The minutes a wait for the next reply is given, while the stand-in turn, started in the
+# background, works.
 WAIT = 30
 # Every move leaves the default branch as it was, as rn pushes to the session's branch alone, and
 # every commit pushed, as rn commits only as a step ends, pushing it then.
@@ -78,6 +80,21 @@ def tried(name: str, case: Case, folder: str, dry: bool) -> tuple:
             else:
                 try:
                     end = conversation.send(message, record)
+                    reply = end.get("result") or ""
+                    report += ["reply:", *(f"  | {line}" for line in reply.splitlines())]
+                    # The case's user cannot read the reply, so it waits for the next while the
+                    # move has not left what it must and an agent in the background still runs,
+                    # as the user waits for turn's work to come back.
+                    while (
+                        conversation.running
+                        and not checked(p.seen(before, reply, record), checks)[1]
+                    ):
+                        end = conversation.reply(record)
+                        reply = end.get("result") or ""
+                        report += [
+                            "waited, reply:",
+                            *(f"  | {line}" for line in reply.splitlines()),
+                        ]
                 except (SystemExit, OSError, ValueError) as stopped:
                     report.append(f"  stopped: {stopped}")
                     passed = False
@@ -85,8 +102,6 @@ def tried(name: str, case: Case, folder: str, dry: bool) -> tuple:
                 session = end["session_id"]
                 # A conversation gone on with gives the cost of the whole conversation so far.
                 costs[session] = end.get("total_cost_usd") or 0
-                reply = end.get("result") or ""
-                report += ["reply:", *(f"  | {line}" for line in reply.splitlines())]
             lines, held = checked(p.seen(before, reply, "" if dry else record), checks)
             report += lines
             passed = passed and (held or dry)

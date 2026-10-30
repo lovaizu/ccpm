@@ -15,8 +15,9 @@ import threading
 import time
 from typing import Any
 
-# The seconds Claude Code is given, after a result with no agent running, to open a turn of its
-# own; it opens one at once, as its records show.
+# The seconds Claude Code is given, after a result, to open a turn of its own; it opens one at once
+# for what has already reached it, as its records show, such as an agent's message queued while
+# the main conversation worked.
 QUIET = 5
 HERE = os.path.dirname(os.path.abspath(__file__))
 # The folder a trial writes in is made as a test's is, by testing.py, kept in the folder above.
@@ -45,40 +46,15 @@ def folder(plugin: str, name: str) -> str:
     return made
 
 
-# What Claude Code writes in the main conversation's record where an agent's message reaches it.
-SENT_BY_AGENT = "<agent-message from="
-
-
-def unanswered(session: str) -> int:
-    """The agents whose messages to the main conversation of the session it has not answered: each
-    agent whose last message queued for it came after the last SendMessage it sent that agent, read
-    from its record, as Claude Code prints no SendMessage of an agent two layers down, such as
-    turn's generator under turn:up. Each message is read where it is queued, as Claude Code queues
-    every one, and one that reaches the conversation while it works comes in beside a tool's
-    result, not as a message of its own, as three questions from turn's generator in acceptance run
-    7 did, two of them so; and an agent is counted once, as one SendMessage may answer all it asked,
-    as the main conversation answered two questions of turn's generator in acceptance run 8."""
-    found = glob.glob(record.conversation(session))
-    waiting: set[str] = set()
-    for e in (record.read(found[0]) or []) if found else []:
-        content = str(e.get("content", ""))
-        if e.get("type") == "queue-operation" and e.get("operation") == "enqueue":
-            if SENT_BY_AGENT in content:
-                waiting.add(content.split(SENT_BY_AGENT, 1)[1].split('"')[1])
-        elif e.get("type") == "assistant":
-            for part in record.blocks(e):
-                if part.get("type") == "tool_use" and part.get("name") == "SendMessage":
-                    waiting.discard(part.get("input", {}).get("to"))
-    return len(waiting)
-
-
 class Conversation:
     """One conversation with Claude Code on the copies of plugins in place of the installed ones,
-    as their user has it, sent its messages one by one in one live run of Claude Code, as the user
-    types each where they read the reply before; a fresh conversation is another Conversation. The
-    run starts at the first message and ends on close. wait is the
-    minutes a message waits for the agents it started in the background, 10 where it is 0, as
-    Claude Code waits when given one prompt; env is set over the environment Claude Code runs in."""
+    as their user has it, in one live run of Claude Code: the caller reads each reply of the main
+    conversation and, as the user does, either sends the next message or waits for the next reply
+    without sending, as where the reply says an agent in the background is still at work; a fresh
+    conversation is another Conversation. The run starts at the first message and ends on close.
+    wait is the minutes a wait for a reply is given, and a wait for the agents in the background
+    where send waits for them, 10 where it is 0, as Claude Code waits when given one prompt; env
+    is set over the environment Claude Code runs in."""
 
     def __init__(
         self,
@@ -90,11 +66,9 @@ class Conversation:
         self.plugins, self.cwd, self.env = plugins, cwd, {**os.environ, **(env or {})}
         self.wait = (wait or 10) * 60
         self.run: subprocess.Popen[str] | None = None
-        # The messages agents sent the main conversation that it has not yet answered with one of
-        # its own, as its record shows at its last result, as the next message may bring the answer.
-        self.asked = 0
-        # Whether an agent it started in the background still runs, kept from message to message,
-        # as Claude Code lists the agents running only when the list changes.
+        # Whether an agent it started in the background still runs, kept from reply to reply, as
+        # Claude Code lists the agents running only when the list changes; a caller that cannot
+        # read a reply, as a script cannot, waits for the next while one runs.
         self.running = False
         self.printed: queue.Queue[str | None] = queue.Queue()
         self.errors: list[str] = []
@@ -136,40 +110,63 @@ class Conversation:
         threading.Thread(target=self.errors.extend, args=(run.stderr,), daemon=True).start()
         return run
 
-    def send(self, prompt: str, record: str | None = None) -> dict[str, Any]:
-        """Sends prompt and gives its result, the last line Claude Code printed for it as
-        stream-json, such as its session_id, once no agent it started in the background is running,
-        or once an agent waits on a message the main conversation has not answered, as turn's
-        generator waits on the user's answer, which only the next message can bring. Given record,
-        it writes there each line Claude Code printed for it as it comes, kept before a failed run
-        stops the trial. Stops where Claude Code ends, gives a result that is an error, or still has
-        an agent running after the wait, none waiting on the main conversation."""
+    def send(self, prompt: str, record: str | None = None, idle: bool = False) -> dict[str, Any]:
+        """Sends prompt and gives the main conversation's reply, as reply does, the turn for the
+        message being open at once; where idle, the reply after which no agent runs in the
+        background either, as Claude Code waits for them when given one prompt."""
         self.run = self.run or self.start()
         assert self.run.stdin
         message = {"type": "user", "message": {"role": "user", "content": prompt}}
         self.run.stdin.write(json.dumps(message) + "\n")
         self.run.stdin.flush()
-        # Claude Code gives a result at the end of each of its turns, and on its own opens a new
-        # turn, by an init, for the end of an agent in the background its last turn was not told
-        # of; it lists the agents running each time the list changes. The message is answered at
-        # a result after which nothing is running, or what runs waits on the main conversation, and
-        # no turn opens in QUIET seconds.
+        return self.read(record, True, idle)
+
+    def reply(self, record: str | None = None) -> dict[str, Any]:
+        """Sends nothing and gives the main conversation's next reply, as the user waits for it
+        where the last asked them nothing: Claude Code opens a turn of its own when an agent in the
+        background ends or sends it a message. Stops where no turn opens within the wait."""
+        return self.read(record, False, False)
+
+    def read(self, record: str | None, due: bool, idle: bool) -> dict[str, Any]:
+        """Reads what Claude Code prints until the main conversation has replied, and gives its
+        result, the last line Claude Code printed for it as stream-json, such as its session_id;
+        due is whether a turn is to open at once, as for a message sent, and idle is send's. Given
+        record, it adds there each line as it comes, kept before a failed run stops the trial.
+        Stops where Claude Code ends, gives a result that is an error, opens no turn within the
+        wait where none is due, or, where idle, still has an agent running the wait after the
+        reply."""
+        # Claude Code gives a result at the end of each of its turns, and opens a new turn, by an
+        # init, for a message sent and on its own for an agent in the background that ends or
+        # sends the main conversation a message; meanwhile it prints what those agents do, and
+        # lists the agents running each time the list changes. The main conversation has replied
+        # at a result after which no turn opens in QUIET seconds, whatever the agents print.
+        assert self.run
         result: dict[str, Any] | None = None
-        until = None
-        with open(record or os.devnull, "w", encoding="utf-8") as kept:
+        opened, since = due, time.monotonic()
+        # The end of the wait: for a reply where none is due, and where idle for the agents, from
+        # the first result.
+        until = None if due else since + self.wait
+        with open(record or os.devnull, "a", encoding="utf-8") as kept:
             while True:
-                if not self.running or self.asked:
-                    left: float | None = QUIET if result else None
+                if opened:
+                    left: float | None = None
+                elif result and not (idle and self.running):
+                    left = max(0, since + QUIET - time.monotonic())
                 else:
-                    left = None if until is None else max(0, until - time.monotonic())
+                    assert until is not None
+                    left = max(0, until - time.monotonic())
                 try:
                     line = self.printed.get(timeout=left)
                 except queue.Empty:
-                    if result and (not self.running or self.asked):
+                    if result and not (idle and self.running):
                         return result
+                    if result:
+                        raise SystemExit(
+                            f"agents in the background still running {self.wait // 60} minutes"
+                            " after the reply; give a longer wait"
+                        ) from None
                     raise SystemExit(
-                        f"agents in the background still running {self.wait // 60} minutes"
-                        " after the reply; give a longer wait"
+                        f"no reply in {self.wait // 60} minutes of waiting; give a longer wait"
                     ) from None
                 if line is None:
                     code = self.run.wait()
@@ -179,13 +176,14 @@ class Conversation:
                 event = json.loads(line)
                 if event.get("subtype") == "background_tasks_changed":
                     self.running = bool(event.get("tasks"))
+                    since = time.monotonic() if idle else since
                 elif event.get("subtype") == "init":
-                    result = None
+                    result, opened = None, True
                 elif event.get("type") == "result":
                     if event.get("is_error"):
                         raise SystemExit(f"claude gave an error: {event.get('result')}")
-                    result, until = event, until or time.monotonic() + self.wait
-                    self.asked = unanswered(event["session_id"])
+                    result, opened, since = event, False, time.monotonic()
+                    until = until or since + self.wait
 
     def close(self) -> None:
         """Ends the conversation's run of Claude Code, where it started one."""
@@ -205,10 +203,11 @@ def claude(
     env: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Runs a fresh conversation of the one message prompt, as Conversation and its send have it,
-    and gives its result."""
+    and gives its result once no agent runs in the background, as Claude Code given one prompt
+    does."""
     conversation = Conversation(plugins, cwd, wait, env)
     try:
-        return conversation.send(prompt, record)
+        return conversation.send(prompt, record, idle=True)
     finally:
         conversation.close()
 

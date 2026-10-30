@@ -30,9 +30,10 @@ it then with `/rn:gm`.
   GitHub, never run rn's scripts, and never type `/rn:ty` for anything you have not judged.
 - When rn says the conversation can be cleared and to type `/rn:up`, send `/rn:up` with `fresh`
   true.
-- When rn says it is making the work and waits, nothing is asked of you, so add nothing new: say
-  only that it may go on, such as `続けてください`. Say `stop` only where rn is stuck: it asks the same
-  question three times, or asks you to do its work by hand.
+- When rn's reply asks you nothing, as when it says turn is making the work and it will tell you
+  once turn is back, wait for its next reply as that person would, typing nothing: give `kind`
+  `wait` with `says` empty. Say `stop` only where rn is stuck: it asks the same question three
+  times, or asks you to do its work by hand.
 - When rn shows you an issue to send to its makers, decide as that person would.
 
 End every reply with one line of JSON, and nothing after it, in exactly this form:
@@ -42,6 +43,7 @@ End every reply with one line of JSON, and nothing after it, in exactly this for
 - `fresh`: true to send it in a fresh conversation, as after rn says the conversation can be
   cleared; false otherwise.
 - `kind`: `answer` for an answer to a point or anything else you say, `approve` for `/rn:ty`,
-  `feedback` for `/rn:gm <your feedback>`, `stop` to end the trial.
+  `feedback` for `/rn:gm <your feedback>`, `wait` to type nothing and wait for rn's next reply,
+  `stop` to end the trial.
 - `changes`: for `feedback`, each change you ask for, one string each; empty otherwise.
 - `read`: each file or URL you read, or command you ran, to judge this reply.

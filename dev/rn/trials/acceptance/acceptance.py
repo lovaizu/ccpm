@@ -5,8 +5,9 @@ theirs, a feedback sent back and gone on from in a fresh conversation, and the l
 one. The real rn and the real turn run, their skills, agents, scripts and hooks as installing makes
 them, in a fresh clone of lovaizu/playground, where rn opens its real pull request with the real gh;
 and the user is stood in for by a Claude Code conversation of its own that holds what the user truly
-wants, written beforehand in wants.json and never shown to rn, and answers each of rn's messages as
-that user would, since rn's points come in an order and a number no fixed script can answer.
+wants, written beforehand in wants.json and never shown to rn, and reads each of rn's replies as
+that user would, answering it or waiting for rn's next, since rn's points come in an order and a
+number no fixed script can answer.
 
 What it shows: whether rn takes the user from asking to the pull request ready, keeping every move
 on its branch and nothing on the default branch, with the changes the user sends back at the
@@ -28,11 +29,12 @@ path. In it: `repo`, the clone, its origin lovaizu/playground; `rn` and `turn`, 
 working tree's; `bin/gh`, first on the PATH rn runs with, which runs the real gh with the issue rn
 sends to lovaizu/ccpm sent to lovaizu/playground, and `gh.jsonl`, each command it ran; `user`, the
 empty folder the stand-in user runs in; `rn-<n>.jsonl` and `user-<n>.jsonl`, what Claude Code
-printed for message n to rn and for the stand-in's answer to it; `transcript.json`, rewritten after
-each message; and `summary.json`.
+printed for message n to rn, or for the wait n where the stand-in waited for rn's next reply, and
+for the stand-in's answer to it; `transcript.json`, rewritten after each message; and
+`summary.json`.
 
 The test ends when the session is finished with its pull request ready, when the stand-in says
-stop or cannot end its reply as asked, after 120 messages to rn, when a run of Claude Code or a
+stop or cannot end its reply as asked, after 120 replies of rn, when a run of Claude Code or a
 reading of GitHub fails, with --until once that sign-off is shown, or on Ctrl-C. It then prints
 and writes the summary: how it ended; each answer at each sign-off; KR1.1, the changes sent back at
 the deliverable sign-off; KR1.2, what the stand-in did and its minutes; the issues opened; whether
@@ -80,12 +82,13 @@ PLAYGROUND = "lovaizu/playground"
 # The user's words, in the conversation language their instructions set: a request of about an
 # hour, with documents and code, so every stage is passed.
 REQUEST = "/rn:up Downloads フォルダを整理するコマンドラインツールが欲しい"
-# The minutes a message to rn waits for turn's runs, started in the background, each taking its
-# rounds and its first user.
+# The minutes a wait for rn's next reply is given, as turn's runs, started in the background, each
+# take their rounds and their first user before rn says more.
 WAIT = 90
-# The messages sent to rn at most, past which a run is taken to go round rather than on.
+# The replies of rn read at most, to a message or a wait, past which a run is taken to go round
+# rather than on.
 LIMIT = 120
-KINDS = ("answer", "approve", "feedback", "stop")
+KINDS = ("answer", "approve", "feedback", "wait", "stop")
 AGAIN = (
     "Your last reply does not end as asked: {}. Reply again, ending with the one line of JSON in"
     " exactly the form given, with nothing after it."
@@ -251,7 +254,9 @@ def judged(reply: str) -> tuple[dict[str, Any] | None, str]:
     lists = (changes, read)
     if not all(isinstance(v, list) and all(isinstance(x, str) for x in v) for v in lists):
         return None, '"changes" and "read" must each be a list of texts'
-    if kind != "stop" and not says.strip():
+    if kind == "wait" and (says.strip() or answer["fresh"]):
+        return None, 'a "wait" says nothing and is not fresh'
+    if kind not in ("stop", "wait") and not says.strip():
         return None, '"says" is empty'
     if kind == "approve" and says.strip() != "/rn:ty":
         return None, 'an "approve" says `/rn:ty` alone'
@@ -367,7 +372,8 @@ class Trial:
 
     def loop(self) -> str:
         """Sends rn each message, the first the request, each after it what the stand-in says,
-        until the test ends; gives how it ended. Stops where reading GitHub fails."""
+        until the test ends, waiting for rn's next reply instead where the stand-in waits; gives how
+        it ended. Stops where reading GitHub fails."""
         message, fresh, answer = REQUEST, True, None
         before = stood(self.p.seen(self.p.head(), ""))
         for n in range(1, LIMIT + 1):
@@ -380,7 +386,8 @@ class Trial:
                 self.rn.close()
                 self.rn = self.fresh()
             try:
-                end = self.rn.send(message, record)
+                waits = answer is not None and answer["kind"] == "wait"
+                end = self.rn.reply(record) if waits else self.rn.send(message, record)
             except (SystemExit, OSError, ValueError) as failed:
                 entry["failed"] = str(failed)
                 self.write()
@@ -412,7 +419,7 @@ class Trial:
             if answer["kind"] == "stop":
                 return f"the stand-in stopped at message {n}: {answer['says']}"
             message, fresh, before = answer["says"], answer["fresh"], now
-        return f"{LIMIT} messages sent to rn"
+        return f"{LIMIT} replies of rn read"
 
     def fresh(self) -> trying.Conversation:
         """A fresh conversation with rn, as the user starts one in the repository."""
