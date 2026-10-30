@@ -824,6 +824,9 @@
   },
   {
    "fact": "2026-10-30: acceptance run 8 (/tmp/rn/20261030-acceptance-mmcr1r0h) FAILED at the limit of 120 messages, in the architecture stage after the goal and ux sign-offs approved with no change ($23.6, 90.6 min): main answered two questions of turn's generator in one SendMessage, the trial kept one as unanswered and cut each reply short; trying.py now counts agents waiting, not messages (58eac7a), checked on runs 5, 7 and 8's records; run 9 started in the background on 58eac7a"
+  },
+  {
+   "fact": "2026-10-30: agreed with the user and kept in issue #54 'A prompt written as a responsibility and the results that meet it': prompt.md's template and items to be changed (Role a responsibility in one sentence with its conditions and what lies outside; a split role names its part and constraint; steps headed by results, why and how seen in a sentence, a script's command alone, rules in the step with why, cross-step rules held by a lane; an item tracing Role conditions to steps); architecture.md B-3's sign to split components by responsibility, only for a constraint. Done together with the user's other feedback, as the user said"
   }
  ],
  "semantic_gist": [
@@ -900,6 +903,9 @@
   },
   {
    "task": "T40: settle with the user, one point at a time, what remains of the steering's model"
+  },
+  {
+   "task": "Feedback to make together, as the user asked: prompt.md and architecture.md B-3 as issue #54's newest section says; lane's, turn's and rn's architectures brought to the four views (18f1b9a); the user has more feedback to come"
   }
  ],
  "relational_map": [
