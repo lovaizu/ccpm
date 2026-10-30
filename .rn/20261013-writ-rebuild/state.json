@@ -821,6 +821,9 @@
   },
   {
    "fact": "2026-10-30: rn's architecture checklist asks four views, each a figure (18f1b9a): logical SVG, process as a Mermaid sequence for each story, development and physical SVG, as the user asked; lane's, turn's and rn's architectures are brought to it later with the user's other feedback, together, as the user said. The point of a task's kind and path dropped: the work's rules left unclear are asked by whoever meets them, as dev/architecture.md 'Asking until nothing is left to decide' and turn's generator.md:10-14 and docs/calling.md:63-68 already have it; nothing is added to the prompts"
+  },
+  {
+   "fact": "2026-10-30: acceptance run 8 (/tmp/rn/20261030-acceptance-mmcr1r0h) FAILED at the limit of 120 messages, in the architecture stage after the goal and ux sign-offs approved with no change ($23.6, 90.6 min): main answered two questions of turn's generator in one SendMessage, the trial kept one as unanswered and cut each reply short; trying.py now counts agents waiting, not messages (58eac7a), checked on runs 5, 7 and 8's records; run 9 started in the background on 58eac7a"
   }
  ],
  "semantic_gist": [
@@ -893,7 +896,7 @@
  ],
  "focal_entities": [
   {
-   "task": "T34: rn's acceptance run 8 running in the background (python3 dev/rn/trials/acceptance/acceptance.py, started 2026-10-30); report its end to the user"
+   "task": "T34: rn's acceptance run 9 running in the background (python3 dev/rn/trials/acceptance/acceptance.py, started 2026-10-30 on 58eac7a); report its end to the user"
   },
   {
    "task": "T40: settle with the user, one point at a time, what remains of the steering's model"
@@ -934,7 +937,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "On resume: find run 8 with pgrep -af acceptance.py and its folder in /tmp/rn (newest 20261030-acceptance-*); when it ends read summary.json and the records and report. Then ask the user what else T40's steering model leaves open, one point at a time; the user has more feedback, to be done together with bringing the three architectures to the four views. Held for later, each its own point: turn's generator writing item lines no one reads (plugins/turn/scripts/prompts.py:155 against CHANGELOG.md:31); turn's run-folder and file-hiding machinery (scripts/folder.py, prompts.py without_run_files); forms.py checking shapes JSON Schema already gives; the generator's mend repeating the same need (acceptance run 3 workflow B-5 twice, run 4 preview tool B-6 three times)."
+   "next": "On resume: find run 9 with pgrep -af acceptance.py and its folder in /tmp/rn (newest 20261030-acceptance-*); when it ends read summary.json and the records and report. Then ask the user what else T40's steering model leaves open, one point at a time; the user has more feedback, to be done together with bringing the three architectures to the four views. Held for later, each its own point: turn's generator writing item lines no one reads (plugins/turn/scripts/prompts.py:155 against CHANGELOG.md:31); turn's run-folder and file-hiding machinery (scripts/folder.py, prompts.py without_run_files); forms.py checking shapes JSON Schema already gives; the generator's mend repeating the same need (acceptance run 3 workflow B-5 twice, run 4 preview tool B-6 three times)."
   }
  ],
  "uncertainty_signal": [
