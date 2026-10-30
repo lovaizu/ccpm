@@ -9,6 +9,8 @@ plugins=${*:-$(sh dev/plugins.sh)}
 
 ruff check .
 ruff format --check .
+# The Markdown is read whole, whichever plugins are given, as a document can lie anywhere.
+sh dev/prose.sh
 
 # Code copied between files is fixed in one and left wrong in the other, so code more than one file
 # needs is kept once (dev/architecture.md, Code); every file is read at once, whichever plugins are

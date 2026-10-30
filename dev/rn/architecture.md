@@ -294,7 +294,7 @@ plugins/rn/                          the plugin, installed by Claude Code with t
   to the repository; turn is installed with rn as its dependency.
 - The orchestrator is `prompts/orchestrator.md`, which each of rn's skills hands to, run in the
   user's main conversation on the model they run it on.
-- The orchestrator starts `turn:up` in the background with the CCS's path, its kinds and where the
+- The orchestrator starts `turn:up` in the background with the path of the CCS, its kinds and where the
   result goes, answers turn's points by SendMessage, and stops a run with TaskStop, as
   [turn](../../plugins/turn/README.md) is called.
 - The record is kept by a commit and a push to the piece of work's branch, made by the orchestrator

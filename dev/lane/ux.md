@@ -98,7 +98,7 @@ sequenceDiagram
 - On a machine without Python 3.9 or later, the hooks stop the calls they watch, each asking for
   Python to be installed, and at a subagent's end tell the user so and let it end.
 
-### A lane lane cannot check
+### A lane that lane cannot check
 
 ```mermaid
 sequenceDiagram

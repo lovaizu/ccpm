@@ -27,14 +27,14 @@ How the assistant shapes its responses: conclusion-first, concrete, and free of 
 - **No abstract preambles** — state the finding, not the intention to find it. Cut openers like
   "詳細に分析", "包括的に", "総合的に" and their English equivalents ("let me thoroughly analyze",
   "comprehensively") — these are examples of the class, not the whole list.
-- **No sycophantic openers** — praise that adds nothing, e.g. "素晴らしい指摘です" / "great question".
+- **No sycophantic openers** — praise that adds nothing, for example "素晴らしい指摘です" / "great question".
 - **No reworded repetition** — do not restate the same content in different words.
 - **No defensive justification** — when something is wrong, correct it; do not litigate it.
   - Rationale: each of these spends the reader's attention without moving them forward.
 
 ## Plan output
 
-This is the plan you *present in a response* (e.g. plan mode), not a planning document like
+This is the plan you *present in a response* (for example, plan mode), not a planning document like
 `steering.md` — that follows its own template and is out of scope here.
 
 - **Cap a presented plan at 200 words.** Past that, split it or link to the detail — never just overflow.

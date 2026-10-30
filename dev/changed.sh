@@ -3,8 +3,9 @@
 # dev/githooks/pre-push and CI: each plugin whose files or dev/<plugin>/ files it changes, each
 # plugin with a link to a file it changes, or every plugin where it changes what they all stand on,
 # a file of no plugin or dev/lane/testing.py, what their tests stand on. Nothing where it changes
-# only what no check reads: the session records, the rules for the assistant, the documents of dev/
-# and of each dev/<plugin>/, and the root's README and licence.
+# only what no plugin's check reads: the session records, the rules for the assistant, the documents
+# of dev/ and of each dev/<plugin>/, and the root's README and licence; their Markdown is checked
+# for plain English by dev/prose.sh alone.
 set -e
 
 all=$(sh dev/plugins.sh)

@@ -1,0 +1,12 @@
+# Words ccpm's documents coined and used as if the reader knew them, each with the plain words to
+# use instead. A word a reader stops at is added here as it is met.
+extends: substitution
+message: "Use '%s' instead of '%s'."
+level: error
+swap:
+  "[Aa] work": a piece of work
+  "[Ee]ach work": each piece of work
+  "[Tt]he receiver": the person it is for
+  "[Ii]ts Good": what the item asks
+  "Signs": what shows the item is met
+  "[Tt]he hearing": the questions to the user

@@ -117,7 +117,7 @@ python3 <lane's folder>/scripts/lay.py write <proposal>
 
 ## Documentation
 
-- [The lanes](docs/lanes.md) lists each lane lane can lay, the sentence it writes into a step and
+- [The lanes](docs/lanes.md) lists each lane that lane can lay, the sentence it writes into a step and
   when its hook tells it, and gives the proposal your AI writes them in.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
