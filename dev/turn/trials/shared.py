@@ -66,6 +66,7 @@ def call(has: str) -> dict:
             "receiver": "audience",
             "use": "purpose",
             "has": has,
+            "each": "each",
         },
     }
 

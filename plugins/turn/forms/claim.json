@@ -54,7 +54,7 @@
             "type": "string",
             "description": "<path of the work>:<from>-<to>"
           },
-          "description": "the lines of the work that give its Good, each range as `<path>:<from>-<to>`; for an item whose Scope is `each part`, at least one range in every part of the work, each inside one part"
+          "description": "the lines of the work that give its Good, each range as `<path>:<from>-<to>`; for an item asked of each part, at least one range in every part of the work, each inside one part"
         }
       }
     },

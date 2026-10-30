@@ -12,9 +12,7 @@ its reader.
 
 Say your plugin has a step that writes a project's README to your checklist `checklists/readme.md`.
 A checklist lists what the README's reader should get from it, one item each, asked as a question,
-such as "On opening it, can the reader tell whether the project is for them?", and says under each
-item where it is answered: `Scope: its part`, as here; `each part`, every section on its own; or
-`whole`, the README at once.
+such as "On opening it, can the reader tell whether the project is for them?".
 
 The step's AI asks the user what the items need for this project, writes what is decided to
 `notes/readme.decisions.md`, and writes its task in a CCS, `.tasks/readme.json`. A CCS is a JSON
@@ -31,15 +29,15 @@ file of parts, each a list of entries, each entry a kind and its value, the shap
 ```
 
 The step's text then calls turn with the CCS, the kinds in it that hold the work, the checklist, its
-reader, what the reader uses it for and has with it, here the whole repository, where to write the
-result, and the one command that checks the work, such as `make check` for code, or `null`, as here,
-where the work has none:
+reader, what the reader uses it for and has with it, here the whole repository, the items asked of
+each part of the work, none here, where to write the result, and the one command that checks the
+work, such as `make check` for code, or `null`, as here, where the work has none:
 
 ```
 Start the `turn:up` agent in the background with
 {"ccs": ".tasks/readme.json", "result": ".tasks/readme-result.json",
  "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
-          "use": "purpose", "has": "has"},
+          "use": "purpose", "has": "has", "each": "each"},
  "test": null}
 ```
 
@@ -52,7 +50,7 @@ main conversation gets that one question as a message:
 ```json
 {"question": "Under which license may people use the project?",
  "recommended": "MIT, as the decisions say the project is for anyone to use",
- "items": [{"checklist": "checklists/readme.md", "item": "B-5"}]}
+ "items": [{"checklist": "checklists/readme.md", "item": "Q-5"}]}
 ```
 
 The main conversation asks you, adds your answer to `notes/readme.decisions.md`, and sends it back
@@ -71,7 +69,7 @@ README.md took on its own, one the CCS and its files leave open, with why:
 
 ```json
 {"work": ["README.md"],
- "items": [{"checklist": "checklists/readme.md", "item": "B-2", "lines": ["README.md:3-4"]}, ...],
+ "items": [{"checklist": "checklists/readme.md", "item": "Q-2", "lines": ["README.md:3-4"]}, ...],
  "left": [],
  "chosen": [{"chosen": "the example tidies a file named people.csv",
              "why": "no decision names one, and a list of people shows each column tidied"}]}

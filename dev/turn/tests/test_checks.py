@@ -7,10 +7,12 @@ import unittest
 
 from helpers import (
     ALL_GOOD,
+    CALL,
     CHECKLIST,
     CHOSEN,
     CLAIM,
     EACH,
+    EACH_CCS,
     EACH_GOOD,
     FIRST_READ,
     FOUND,
@@ -71,9 +73,10 @@ class TestClaim(StartedTest):
         self.assertIn("F-1 is left out", self.stopped("claim", self.result))
 
     def test_an_item_asked_of_each_part_is_claimed_in_every_part(self):
-        # Given: a checklist with an item asked of each part, a work of two parts, and a claim
-        # giving it lines in one part alone
+        # Given: a checklist with an item the CCS asks of each part, a work of two parts, and a
+        # claim giving it lines in one part alone
         self.write("checklists/readme.md", CHECKLIST + EACH)
+        self.write_json(CALL["ccs"], EACH_CCS)
         self.write("README.md", SECTIONED)
         one = dict(EACH_GOOD, lines=EACH_GOOD["lines"][:1])
         self.claimed({"items": [MADE, MADE_B1, one], "chosen": []})

@@ -30,7 +30,7 @@ class TestItems(unittest.TestCase):
         # Given: a checklist of one item, its heading `### B-1: <title>`
         # When: the adapter reads it
         # Then: it gives the item's ID
-        self.assertEqual(items("### B-1: Who it is for\n\nScope: its part\n"), ["B-1"])
+        self.assertEqual(items("### B-1: Who it is for\n\nCan the reader tell?\n"), ["B-1"])
 
     def test_each_item_is_read_with_the_line_its_heading_stands_on(self):
         # Given: a checklist with frontmatter, a fence holding a heading, and two items

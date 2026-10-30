@@ -8,41 +8,46 @@ import os
 import shutil
 import unittest
 from typing import Any
+from unittest import mock
 
 from helpers import (
     FOLDER,
     KIND,
     LEARNINGS,
     NEEDED,
+    PLAN_CHECKLIST,
     RECORD,
     RepoTest,
     call_at,
+    ccs,
+    items,
     options,
     plan,
     steered,
     task,
 )
 
-# A checklist holding items judged on the built product: F-1, whose template holds a fence with a
-# heading in it and which a lower heading follows, B-2 between two others, and B-4, the last, its
-# heading right under the line before it; and B-1 and B-3, judged before it is built, B-3 on a line
-# of the same form.
-BUILT_ITEMS = """---
-name: code
-version: 1
----
-
-# Code
+# A checklist of four questions, as rn's checklists are made: Q-2 and Q-4 the questions a test tells
+# rn are judged on the built product, Q-2 between two others, holding a fence with a heading in it
+# and a lower heading after it, and Q-4 the last, its heading right under the line before it; Q-1
+# and Q-3 judged before it is built; and a Format whose template holds a heading in its fence.
+BUILT_ITEMS = """# Code
 
 The opening.
 
 ## Format
 
-### F-1: Shape
+```markdown
+### Not a question
+```
 
-Scope: whole
+## Questions
 
-Judged on: the built product
+### Q-1: Read
+
+Why: read.
+
+### Q-2: Run
 
 ```markdown
 ## Not a heading
@@ -50,65 +55,41 @@ Judged on: the built product
 
 #### More of it
 
-Why: a shape.
-
-## Benefit
-
-### B-1: Read
-
-Scope: its part
-
-Why: read.
-
-### B-2: Run
-
-Scope: whole
-
-Judged on: the built product
-
 Why: run.
 
-### B-3: Said
-
-Scope: whole
-
-Judged on: a draft
+### Q-3: Said
 
 Why: said.
-### B-4: Run again
+### Q-4: Run again
 
-Scope: whole
-
-Judged on: the built product
+Why: run again.
 """
-# The checklist above as a call before the build names it: every line but those items.
-WITHOUT_BUILT = """---
-name: code
-version: 1
----
-
-# Code
+BUILT = ("Q-2", "Q-4")
+# The checklist above as a call before the build names it: every line but those questions.
+WITHOUT_BUILT = """# Code
 
 The opening.
 
 ## Format
 
-## Benefit
+```markdown
+### Not a question
+```
 
-### B-1: Read
+## Questions
 
-Scope: its part
+### Q-1: Read
 
 Why: read.
 
-### B-3: Said
-
-Scope: whole
-
-Judged on: a draft
+### Q-3: Said
 
 Why: said.
 """
+
+
+# rn's own checklists, which the tables of ccs.py tell of.
+CHECKLISTS = os.path.dirname(os.path.dirname(PLAN_CHECKLIST))
 
 
 class DecideTest(RepoTest):
@@ -340,6 +321,7 @@ class CcsTest(RepoTest):
                 "receiver": "audience",
                 "use": "purpose",
                 "has": "has",
+                "each": "each",
             },
             "result": call_at("0001", "result.json"),
             "test": None,
@@ -587,12 +569,15 @@ class CcsTest(RepoTest):
                 # When: the orchestrator has the CCS of the plan or of the learnings written.
                 out = self.printed("ccs", work)
                 # Then: rn prints, on one line and nothing after it, the part to write, the CCS,
-                # the kind's checklists and the command that runs rn's check of the part, as
-                # `state --put` holds it, by rn.py where it is installed; no call to turn.
+                # the kind's checklists, rn's checklist of every document among them for the
+                # learnings but not yet for the plan, whose checklist still asks it itself, and the
+                # command that runs rn's check of the part, as `state --put` holds it, by rn.py
+                # where it is installed; no call to turn.
+                doc = [] if work == "plan" else [self.doc]
                 want = {
                     "part": call_at(number, name),
                     "ccs": call_at(number),
-                    "checklists": [self.own[work]],
+                    "checklists": [self.own[work], *doc],
                     "check": f"python3 {script} check {number}",
                 }
                 self.assertEqual(out.splitlines(), [json.dumps(want)])
@@ -720,42 +705,70 @@ class CcsTest(RepoTest):
                     self.stopped("ccs", work, "README.md", *options(NEEDED)),
                 )
 
-    def test_the_ccs_of_a_checklist_names_rns_usability_after_its_checklists(self):
-        # Given: rn's checklist for checklists.
+    def test_the_ccs_of_a_checklist_names_rns_checklist_for_checklists_and_every_document(self):
+        # Given: rn's checklist for checklists and its checklist of every document.
         # When: the orchestrator has the CCS of a checklist written.
         self.ran("ccs", "checklist-code")
-        # Then: it names rn's usability.md after the checklists.
+        # Then: it names both, rn's checklist for checklists first.
         self.assertEqual(
             self.read_json(call_at("0001"))["retrieved_artifacts"],
-            [{"checklist": self.own["checklist"]}, {"source": self.usability}],
+            [{"checklist": self.own["checklist"]}, {"checklist": self.doc}],
         )
 
-    def test_the_ccs_of_another_kind_names_its_checklists_alone(self):
-        for kind in ("architecture", KIND):
+    def test_a_kind_of_document_is_named_with_rns_checklist_of_every_document(self):
+        for kind, named in (("architecture", True), (KIND, False)):
             with self.subTest(kind=kind):
-                # Given: rn's checklist of the kind, and a task whose first action makes a work of
-                # it.
+                # Given: rn's checklist of a kind of document, or of code, and a task whose first
+                # action makes a work of it.
                 checklist = os.path.join(self.plugin, "checklists", "product", f"{kind}.md")
                 self.write(checklist, "# A kind\n")
                 made = task().replace("as a code work", f"as a {kind} work", 1)
                 self.session(steered(part=plan(tasks=made), stage="architecture"))
                 # When: the orchestrator has the CCS of that action written.
                 written = self.ccs("t1.1")["ccs"]
-                # Then: it names the kind's checklist alone.
+                # Then: it names the kind's checklist, then rn's checklist of every document where
+                # the kind is a document, and nothing more for code.
                 found = self.read_json(written)["retrieved_artifacts"]
-                self.assertEqual(found, [{"checklist": checklist}])
+                doc = [{"checklist": self.doc}] if named else []
+                self.assertEqual(found, [{"checklist": checklist}, *doc])
+
+    def test_the_questions_asked_of_each_part_are_named_after_the_checklists(self):
+        # Given: rn telling questions of its checklist of the kind and of its checklist of every
+        # document asked of each part, and a task whose first action makes a work of a kind of
+        # document.
+        checklist = os.path.join(self.plugin, "checklists", "product", "ux.md")
+        self.write(checklist, "# UX\n")
+        made = task().replace("as a code work", "as a ux work", 1)
+        self.session(steered(part=plan(tasks=made), stage="build"))
+        each = {"product/ux.md": ("Q-6",), "doc.md": ("Q-3", "Q-8")}
+        with mock.patch.dict(ccs.EACH, each):
+            # When: the orchestrator has the CCS of that action written.
+            written = self.ccs("t1.1")["ccs"]
+        # Then: it names each of them after the checklists, by its checklist's path and its ID,
+        # in the order of the checklists.
+        self.assertEqual(
+            self.read_json(written)["retrieved_artifacts"],
+            [
+                {"checklist": checklist},
+                {"checklist": self.doc},
+                {"each": f"{checklist} Q-6"},
+                {"each": f"{self.doc} Q-3"},
+                {"each": f"{self.doc} Q-8"},
+            ],
+        )
 
     def test_before_the_build_a_checklist_is_named_by_a_copy_without_the_items_on_the_built(self):
         for stage in ("goal", "ux", "architecture"):
             with self.subTest(stage=stage):
-                # Given: the kind's checklist holding items judged on the built product, in a
-                # session at a stage before the build.
+                # Given: rn telling questions of the kind's checklist judged on the built product,
+                # in a session at a stage before the build.
                 self.write(self.checklist, BUILT_ITEMS)
                 self.session(steered(part=plan(tasks=task()), stage=stage))
                 # When: the orchestrator has the CCS of t1.1 written.
-                self.ccs("t1.1")
+                with mock.patch.dict(ccs.BUILT, {f"product/{KIND}.md": BUILT}):
+                    self.ccs("t1.1")
                 # Then: the CCS names, in the checklist's place, a copy beside it holding every
-                # line but those items, written with it.
+                # line but those questions, written with it.
                 copy = call_at("0001", "checklist-1.md")
                 named = self.read_json(call_at("0001"))["retrieved_artifacts"]
                 kept = self.out("ls-files", "-o", FOLDER).split()
@@ -766,30 +779,49 @@ class CcsTest(RepoTest):
                 shutil.rmtree(FOLDER)
                 self.kept()
 
-    def test_before_the_build_the_users_addition_is_cut_too_its_copy_numbered_by_its_place(self):
-        # Given: rn's own checklist of the kind holding no item judged on the built product, and
-        # the user's addition holding them, in the goal stage.
-        addition = f"{RECORD}/checklists/{KIND}.md"
+    def test_a_copy_before_the_build_is_numbered_by_its_place_and_asked_of_each_part(self):
+        # Given: rn telling questions of its checklist of every document judged on the built
+        # product and one asked of each part, the user's addition after it, and a task whose first
+        # action makes a work of a kind of document, in the goal stage.
+        checklist = os.path.join(self.plugin, "checklists", "product", "ux.md")
+        self.write(checklist, "# UX\n")
+        self.write(self.doc, BUILT_ITEMS)
+        addition = f"{RECORD}/checklists/ux.md"
         self.write(addition, BUILT_ITEMS)
-        self.kept()
+        self.session(steered(part=plan(tasks=task().replace("a code work", "a ux work", 1))))
         # When: the orchestrator has the CCS of t1.1 written.
-        self.ccs("t1.1")
-        # Then: rn's own is named as it is, and the addition by a copy, second as it stands second.
+        with (
+            mock.patch.dict(ccs.BUILT, {"doc.md": BUILT}),
+            mock.patch.dict(ccs.EACH, {"doc.md": ("Q-3",)}),
+        ):
+            self.ccs("t1.1")
+        # Then: rn's own and the user's addition are named as they are, and rn's checklist of
+        # every document by a copy, second as it stands second, the question asked of each part
+        # named in the copy.
         copy = call_at("0001", "checklist-2.md")
         self.assertEqual(
             (self.read_json(call_at("0001"))["retrieved_artifacts"], self.read(copy)),
-            ([{"checklist": self.checklist}, {"checklist": copy}], WITHOUT_BUILT),
+            (
+                [
+                    {"checklist": checklist},
+                    {"checklist": copy},
+                    {"checklist": addition},
+                    {"each": f"{copy} Q-3"},
+                ],
+                WITHOUT_BUILT,
+            ),
         )
 
     def test_from_the_build_on_each_checklist_is_named_whole(self):
         for stage in ("build", "deliverable"):
             with self.subTest(stage=stage):
-                # Given: the kind's checklist holding items judged on the built product, in a
-                # session at the build stage or after.
+                # Given: rn telling questions of the kind's checklist judged on the built product,
+                # in a session at the build stage or after.
                 self.write(self.checklist, BUILT_ITEMS)
                 self.session(steered(part=plan(tasks=task()), stage=stage))
                 # When: the orchestrator has the CCS of t1.1 written.
-                self.ccs("t1.1")
+                with mock.patch.dict(ccs.BUILT, {f"product/{KIND}.md": BUILT}):
+                    self.ccs("t1.1")
                 # Then: the CCS names the checklist itself, and no copy is written.
                 self.assertEqual(
                     (
@@ -802,16 +834,16 @@ class CcsTest(RepoTest):
                 self.kept()
 
     def test_a_part_before_the_build_is_written_with_a_copy_without_the_items_on_the_built(self):
-        # Given: rn's plan checklist holding an item judged on the built product, in the plan
-        # stage.
+        # Given: rn telling questions of its plan checklist judged on the built product, in the
+        # goal stage.
         self.write(self.own["plan"], BUILT_ITEMS)
         self.session(steered(part=plan(tasks=task())))
         # When: the orchestrator has the CCS of the plan written.
+        with mock.patch.dict(ccs.BUILT, {"session/plan.md": BUILT}):
+            given = self.ran("ccs", "plan")["checklists"]
         # Then: the checklists it is given to write the part with are the copy.
         copy = call_at("0001", "checklist-1.md")
-        self.assertEqual(
-            (self.ran("ccs", "plan")["checklists"], self.read(copy)), ([copy], WITHOUT_BUILT)
-        )
+        self.assertEqual((given, self.read(copy)), ([copy], WITHOUT_BUILT))
 
     def test_each_choice_of_the_orchestrators_is_kept_with_why_after_the_decisions(self):
         # Given: a call on t1.1 holding a decision, not returned.
@@ -1066,8 +1098,11 @@ class DecisionsTest(RepoTest):
             with self.subTest(work=work):
                 # Given: rn's checklist of each kind of the works rn makes its own way.
                 # When: the orchestrator asks for the decisions of one of those works.
-                # Then: rn gives the checklist of its kind, as its CCS would name it.
-                self.assertEqual(self.ran("decisions", work)["checklists"], [self.own[kind]])
+                # Then: rn gives the checklist of its kind, with rn's checklist of every document
+                # for a document, which the finished work is not, nor yet the plan, whose
+                # checklist still asks it itself, as its CCS would name them.
+                doc = [] if kind in ("deliverable", "plan") else [self.doc]
+                self.assertEqual(self.ran("decisions", work)["checklists"], [self.own[kind], *doc])
 
     def test_the_users_addition_comes_after_rns_own_checklist(self):
         # Given: the user's addition for the kind of t1.1.
@@ -1114,13 +1149,11 @@ class ChecklistsTest(RepoTest):
         # Then: rn gives it.
         self.assertEqual(self.ran("checklists", KIND), [self.checklist])
 
-    def test_rns_own_checklist_is_found_straight_in_its_folder(self):
-        # Given: rn's checklist for checklists, straight in rn's checklists.
-        checklist = os.path.join(self.plugin, "checklists", "checklist.md")
-        self.write(checklist, "# Checklist\n")
-        # When: the orchestrator asks for its checklists.
-        # Then: rn gives it.
-        self.assertEqual(self.ran("checklists", "checklist"), [checklist])
+    def test_rns_checklist_for_checklists_is_its_meta_checklist(self):
+        # Given: rn's checklist for checklists, meta.md straight in rn's checklists.
+        # When: the orchestrator asks for the checklists of a checklist.
+        # Then: rn gives it, then rn's checklist of every document.
+        self.assertEqual(self.ran("checklists", "checklist"), [self.own["checklist"], self.doc])
 
     def test_the_users_addition_comes_after_rns_own(self):
         # Given: the user's addition for the kind.
@@ -1153,6 +1186,30 @@ class ChecklistsTest(RepoTest):
         # When: the orchestrator asks for its checklists.
         # Then: rn says what a kind holds.
         self.assertIn("the kind '../x' is not", self.stopped("checklists", "../x"))
+
+
+class ToldTest(unittest.TestCase):
+    """What rn tells turn of its own checklists names what those checklists hold, so a checklist
+    changed without the tables fails here rather than in a user's run."""
+
+    def test_each_question_rn_tells_of_is_one_its_checklist_holds(self):
+        for name, table in (("BUILT", ccs.BUILT), ("EACH", ccs.EACH)):
+            for path, told in table.items():
+                with self.subTest(table=name, path=path):
+                    # Given: a checklist of rn's the table tells questions of.
+                    with open(os.path.join(CHECKLISTS, path), encoding="utf-8") as f:
+                        held = [i for _, i in items.items(f.read())]
+                    # When: its questions are read.
+                    # Then: each the table tells of is among them.
+                    self.assertEqual([q for q in told if q not in held], [])
+
+    def test_each_kind_of_document_has_rns_own_checklist(self):
+        for kind in ccs.DOCUMENTS:
+            with self.subTest(kind=kind):
+                # Given: a kind rn gives its checklist of every document beside.
+                # When: rn's own checklist of it is looked for.
+                # Then: one is there.
+                self.assertEqual(len(ccs.rns_own(kind, os.path.dirname(CHECKLISTS))), 1)
 
 
 if __name__ == "__main__":

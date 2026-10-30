@@ -29,11 +29,12 @@ Step 12 of `/rn:up`, from the finished work approved to the pull request marked 
       issue not yet sent, the message holding the answer.
     - For each learning taken for an issue: write the issue yourself at `<session>/issue-<n>.md`,
       `<n>` counting the issues of the session from 1, from the learning as `rn.py learnings` gave
-      it, with rn's issue checklist open, whose path `rn.py checklists issue` prints: read it whole
-      with `cat -n`, write the issue, then answer each of its items at the lines that give it and
-      change each line that falls short of one. Show the issue to the user whole, put into the
-      conversation language, adding nothing and leaving nothing out, and ask whether to send it; on
-      their yes alone, run `gh issue create --repo lovaizu/ccpm --title "$(sed -n '1s/^# //p'
+      it, with the checklists of an issue open, whose paths `rn.py checklists issue` prints: read
+      each whole with `cat -n`, write the issue, then answer each of their items at the lines that
+      give it and change each line that falls short of one. Show the issue to the user whole, put
+      into the conversation language, adding nothing and leaving nothing out, and ask whether to
+      send it; on their yes alone, run
+      `gh issue create --repo lovaizu/ccpm --title "$(sed -n '1s/^# //p'
       <session>/issue-<n>.md)" --body "$(tail -n +3 <session>/issue-<n>.md)"`, which prints the
       issue's URL; keep it with `rn.py state --goes-on`, Next this step, Open without it, the
       message holding the URL, and tell them `Issue sent: <url>`.

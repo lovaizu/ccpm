@@ -64,11 +64,13 @@ def without_run_files(paths: list[str], result: str, apart: tuple[str, ...] = ()
 
 def files(run: dict[str, Any], role: str, given: list[str]) -> dict[str, Any]:
     """The files of the run the role works on, which its lanes hold it to: what it reads, the work,
-    the checklists, where it replies, and the command that checks its reply."""
+    the checklists, the items the caller asks of each part of the work, each by its checklist's
+    whole path, where it replies, and the command that checks its reply."""
     return {
         "given": absolute(given),
         "work": absolute(run["work"]),
         "checklists": absolute(run["checklist"]),
+        "each": [dict(i, checklist=os.path.abspath(i["checklist"])) for i in run["each"]],
         "reply": folder.reply(run["result"], role),
         "check": f"turn.py {CHECKS[role]} {run['result']}",
     }

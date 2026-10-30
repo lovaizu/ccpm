@@ -1,83 +1,54 @@
----
-name: fix
-version: 1
-made_from:
-  checklist: 1
-  usability: 1
----
-
 # Fix
 
-A fix is a change to a work already there, made because a reading, a check or a run found it falls
-short. Whoever makes it, and whoever relies on the work after it, gets a work with the cause of each
-fault gone, closer to its purpose, with nothing else of it changed and every part of it still
-agreeing. A change is held to this checklist beside the work's own kind's.
+A fix is a change to a deliverable already made, because a reading, a check or a run found that it
+falls short. Whoever uses the deliverable after the fix gets it with the cause of each fault gone,
+closer to its purpose, with nothing else changed and every part still in agreement. A fix is held
+to this checklist beside the checklist of the deliverable's own kind.
 
-A fault is a sign of a cause: a fix made at the sign meets the next sign, and a fix made at the
-cause, in the one place that owns it and read with the whole, ends it.
+A fault is a sign of a cause. A fix made at the sign meets the next sign, and a fix made at the
+cause, in the one place that holds it, ends it. So the questions ask whether the cause is gone,
+whether each change serves the deliverable's purpose, and whether each change sits where the thing
+is held and leaves the rest in agreement.
 
-## Benefit
+## Questions
 
-### B-1: The cause gone
+### Q-1: The cause gone
 
-Scope: its part
+Does every case of the rule the fault breaks now get what the rule asks, not only the case that was
+found?
 
-Is the cause of each fault the change answers gone, in every case the rule the fault breaks names?
+Why: a fault covered only where it was seen comes back in the next case, and each cover makes the
+deliverable longer while the cause stays. The cause may lie in what made the deliverable, such as a
+checklist or a step of a prompt, and then that is what the fix changes.
 
-Tried by: each case the rule the fault breaks names, the one a run or a reading showed among
-them, run or read again on the changed work as the fault was found, and the source that made the
-fault read as changed.
+### Q-2: Closer to the purpose
 
-Signs: each case of the rule the fault breaks gets what the rule asks, not only the one a run or a
-reading showed; the source that made the fault, such as the checklist or the step that made it, now
-makes what the rule asks.
+Does each change leave the deliverable's user better able to do what they use it for?
 
-Why: a fault that is only covered comes back in the next case, and each cover makes the work longer
-while the cause stays.
-
-### B-2: Closer to the purpose
-
-Scope: its part
-
-Does each change bring the work closer to what its receiver uses it for?
-
-Signs: each change gives the receiver more of what they use the work for, beyond meeting the
-letter of an item, a count or a run passing; each guard a change adds stops a fault that nothing
-else already stops.
-
-Why: a change that meets the form and not the purpose passes its check and leaves the receiver no
+Why: a change made only to pass an item, a count or a run passes its check, leaves the user no
 better off, and the next reading finds the purpose still unmet.
 
-### B-3: One place, no more than the cause needs
+### Q-3: Changed where it is held
 
-Scope: its part
+Is each change made in the place that already holds the thing it changes?
 
-Does each changed line say a thing this work holds, in the one place of the work that holds it, with
-nothing left that only the removed cause needed?
+Why: a line added beside the one that holds a thing says it twice, and the two come to say two
+things. A line that names the one failure seen, where a rule already covers it, competes with the
+rest for the reader's attention. A detail of another deliverable, such as a test or the source a
+document is drawn from, is changed in that deliverable.
 
-Signs: each change is made in the line that held the old thing, not in a line added beside it;
-each rule or part added is one the cause needs; where a line already says the rule, the rule alone
-covers the failure seen, with no line beside it naming that one failure; each detail is one this
-work holds, a detail of another work, such as a test, a script or the work it is drawn from, left to
-that work; each part the change made needless is gone.
+### Q-4: Nothing left that only the cause needed
 
-Why: each line added for one fault competes with the rest for the reader's attention, and a thing
-said in two places comes to say two things.
+Is each part that the change made needless gone?
 
-### B-4: The whole still agreeing
+Why: a part kept after its reason is gone is read, kept true and followed on every later change, for
+nothing.
 
-Scope: whole
+### Q-5: The whole still in agreement
 
-Do every part of the work, and each work it names, that says the same thing or acts on the same
-thing as a changed line still agree with it?
+Does every other part of the deliverable, and each deliverable it names, still agree with each
+changed line?
 
-Tried by: for each changed line, every part of the work and each work it names that says or acts
-on the same thing found by searching them for the thing's name, and each read beside the line.
-
-Signs: a changed fact reads the same in every document that states it, such as a README and the
-code or a design and a prompt; each new action is one every other rule on the same step lets be
-taken; a part moved says in its new place all it said before; what the work promises is what it
-now does.
-
-Why: each part was right where it was checked alone, and what the change broke between parts shows
-only to a reader of the whole, often a run later.
+Why: each part was right when it was checked alone. What a change breaks between parts, such as a
+README and the code that now state a fact two ways, shows only to a reader of the whole, often a run
+later.

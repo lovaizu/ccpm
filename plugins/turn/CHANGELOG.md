@@ -5,7 +5,7 @@
 ### Added
 
 - As soon as the AI that makes the work meets a point your CCS and its files leave open that only the user can decide, or something outside the work it needs, such as a tool or a permission, it sends the main conversation that one question, with the items waiting on it and the answer it recommends, makes the rest of the work meanwhile, settles every other point itself and names it with why in the result, and makes what waited once the answer, kept in your CCS, is sent back to it — the user is asked only what is theirs, at once, wherever your step's AI runs, instead of a work made on a guess.
-- Each checklist item says where it is answered, `Scope: its part`, `each part` or `whole`, and an item asked of each part gets its Good only where every section or file gives it — a part that falls short is not passed because another part gives the item.
+- Your call can ask items of each part of the work, by the kind `each` of your CCS, and such an item gets its Good only where every section or file gives it — a part that falls short is not passed because another part gives the item.
 - The AI reading in the receiver's place has what the CCS says the receiver has, such as the whole repository, and does what they do with the work, such as running its tests — a Good that holds only on paper, or one the receiver gets from what lies beside the work, is told apart.
 - The AI that makes the work runs what it gives as the receiver would, such as the commands it tells and its tests — a work that fails on first use is made again before it reaches you.
 - Your call names `test`, the one command that checks the work, such as `make check`, or `null` where it has none, and the AI that makes the work passes it after its last change before it ends — a work that fails your own check does not come back to you.
@@ -28,7 +28,7 @@
 - The work is made where it goes, and a run cut off leaves its writing as changes git shows — you see what it wrote before you call again.
 - While a run goes, its call and each AI's last reply are kept in `.turn/<yyyymmdd>-<name>/` at the top of your repository, the day it began and the result's path, each removed once the run returns — the folder beside your result holds the result alone, a run stopped goes on however many days later, and one line of your `.gitignore` decides whether git keeps a run stopped partway.
 - Where the AI reading in the receiver's place finds no Good for an item, it tells the AI that made the work directly, in one sentence, what the receiver would need to get it, not how to make it, leaving what a formatter, a linter or a type checker shows to them; that AI mends the work for it and the reader reads it again, up to six times, ending once every item has its Good or a mend brings no new one — each mend aims at what the receiver uses the work for, no round is spent on the two AIs arguing over a fault, and none passes through a go-between.
-- What an item's `Tried by` line says is run, where it has one, is run alike by the AI that makes the work and the AI that reads it, and the maker checks every item once the work is made, giving each by the lines that give its Good with no words beside them, and on a remake only the items sent — maker and reader see the same, and a run spends nothing on a claim no one reads.
+- The maker checks every item once the work is made, giving each by the lines that give its Good with no words beside them, and on a remake only the items sent — a run spends nothing on a claim no one reads.
 
 ### Fixed
 

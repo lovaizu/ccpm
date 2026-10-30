@@ -1,44 +1,24 @@
----
-name: deliverable
-version: 1
-made_from:
-  checklist: 1
-  usability: 1
----
-
 # Deliverable
 
-The finished work is every file a piece of work's branch changed outside `.rn/`, where rn keeps the
-session's folder. The user uses it at the deliverable sign-off, where rn last waits for their
+The finished work is every file that a piece of work's branch changed outside `.rn/`, where rn keeps
+the session's folder. The user uses it at the deliverable sign-off, where rn last waits for their
 answer, to approve it or send it back. Using it as they would once it is merged, with what they
-have, they find that it does each acceptance criterion of the plan, the part of `steering.md` in
-the session's folder that says what the finished work must do for the user's purpose.
+have, they find that it does each acceptance criterion of the plan, the part of the steering in the
+session's folder that says what the finished work must do for the user's purpose.
 
-The finished work serves the user by what it does when used, not by what it holds: each task's
-result was made with its own kind's checklist and accepted on its own, so what is left to check is
-what shows only once the parts are used together, each criterion done by the whole. A criterion is
-done when one who has only what the user has does what it asks with the finished work, the way the
-finished work's own files lead them, and gets what it says.
+Each task's result was made with its own kind's checklist and accepted on its own, so what is left
+to judge is what shows only when the parts are used together: each criterion done by the whole. The
+finished work has no set shape of its own, so this checklist has no Format.
 
-## Benefit
+## Questions
 
-### B-1: Each acceptance criterion done
+### Q-1: Each acceptance criterion done
 
-Scope: whole
+Does the finished work do what each acceptance criterion says, in every case the criterion names,
+when the user uses it as they would once it is merged, with only what they have and what its own
+files tell them?
 
-Used as the user would use it, with what they have, does the finished work do what each acceptance
-criterion of the plan says?
-
-Tried by: for each acceptance criterion, doing what it asks with the finished work as the user
-would once it is merged, with only what they have and the way the finished work's own files lead
-them, such as running the code or doing what a document says, for every case the criterion names.
-
-Signs: the user does each case a criterion names and gets what it says; each step the user takes,
-such as a command, a setting or a tool to install, is told them by a file of the finished work; the
-files lead the user one way, such as a README naming only commands the code takes.
-
-Why: the user approves the finished work from the proposal, what rn shows them at the sign-off,
-which shows the criteria, so a
-criterion not done when used is a change they send back at the end, after all of the work is built;
-and one done only for whoever made the work, who knows the step no file tells, is not done for the
-user.
+Why: the user approves the finished work from what rn shows them at the sign-off, which shows the
+criteria, so a criterion not done when used is a change they send back at the end, after all of the
+work is built. A criterion done only for whoever made the work, who knows a step no file tells, such
+as a command to run or a tool to install, is not done for the user.

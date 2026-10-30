@@ -132,15 +132,24 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   ([turn's architecture](../turn/architecture.md#physical-view)); a document's reader named as a
   checklist's opening names the finished product's, such as a newcomer installing it, has the first
   user run a product not yet built and send the document back for what is not there.
-- A call made before the build gives turn each of the work's checklists without the items marked as
-  judged on the built product, in a copy written for the call beside its CCS; the build stage makes
-  again, once the product is built, each document made before it whose checklists hold such items,
-  judged on every item by the product's users with the built work, as rn's plan checklist's B-7
-  asks.
+- A call made before the build gives turn each of the work's checklists without the questions rn
+  tells, as their caller, are judged on the built product, in a copy written for the call beside
+  its CCS; the build stage makes again, once the product is built, each document made before it
+  whose checklists hold such questions, judged on every question by the product's users with the
+  built work, as rn's plan checklist's B-7 asks.
 
-  An item asking what the built product does is answered only by running it, so judged before the
-  build it sends the document back for what is not there, whoever the receiver is; and a document
-  judged without it promises what no one has checked against the product until it is made again.
+  A question asking what the built product does is answered only by running it, so judged before
+  the build it sends the document back for what is not there, whoever the receiver is; and a
+  document judged without it promises what no one has checked against the product until it is made
+  again. A checklist holds its questions alone (rn's checklist for checklists), so which of them
+  wait for the built product is the caller's to tell, and rn tells it of its own checklists.
+- Each call gives turn, beside the kind's checklists, rn's checklist of every document where the
+  kind is a document, and names the questions of rn's own checklists that are asked of each part of
+  the work, such as whether each term is known where it is met.
+
+  A document's own checklist holds only what its kind needs, and what every document needs is held
+  once; a question asked of each part is passed where one part gives it and another does not, unless
+  turn holds it to every part, which it does only for the questions its caller names.
 - The call that makes a task's result gives turn the one command that runs the check its
   completion criterion names, where that check is one command, and the calls before it give none;
   a part rn's scripts put back, the plan or the learnings, the orchestrator passes through the
@@ -149,10 +158,10 @@ Principle 1 to 9, and its own, named below rn's Principle 1 and 2:
   turn's maker passes that command each time it changes the work, so the result is made to the
   check, while the actions before it make the check and see it fail; a part checked as it is written
   is kept in its form at the first put.
-- The hearing of a work reads the checklists it will be made with, rn's for its kind and the
-  user's addition, and pictures how the work meets each item from what is decided; an item it
-  meets only by a choice no answer of the user's made is a point to decide, settled before turn is
-  called.
+- The hearing of a work reads the checklists it will be made with, rn's for its kind, rn's
+  checklist of every document for a document, and the user's addition, and pictures how the work
+  meets each item from what is decided; an item it meets only by a choice no answer of the user's
+  made is a point to decide, settled before turn is called.
 
   A choice an item needs and no one settled is met by turn while it makes the work, asked back
   mid-run or guessed, and one settled before the work is not met as rework after it
@@ -271,7 +280,7 @@ plugins/rn/                          the plugin, installed by Claude Code with t
 │   └── forms.py, parts.py           turn's checks of a reply and the parts of the work, by links
 ├── forms/claim.json, reading.json   turn's forms, which forms.py reads beside it, by links <JSON>
 ├── hooks/adapters/items-checklist.py  turn's adapter of lane's items port, which hands to items.py, by a link
-└── checklists/                      rn's own, one for each kind, and checklist.md, usability.md and fix.md, which each is made from or held to <Markdown>
+└── checklists/                      rn's own, one for each kind, meta.md for checklists, doc.md given beside each kind of document's, and fix.md beside any kind's for a fix <Markdown>
 
 <the user's repository>, on the piece of work's own branch
 └── .rn/
@@ -286,7 +295,7 @@ plugins/rn/                          the plugin, installed by Claude Code with t
             ├── <nnnn>-ccs.json      each call, numbered from 0001 in the order made <JSON>
             ├── <nnnn>-steering.md   the plan the orchestrator writes on a call on the plan <Markdown>
             ├── <nnnn>-learnings.md  the learnings it writes on a call on the learnings <Markdown>
-            ├── <nnnn>-checklist-<k>.md  the k-th checklist of a call before the build, without the items judged on the built product <Markdown>
+            ├── <nnnn>-checklist-<k>.md  the k-th checklist of a call before the build, without the questions judged on the built product <Markdown>
             └── <nnnn>-result.json   what turn returned for a call to it <JSON>
 ```
 

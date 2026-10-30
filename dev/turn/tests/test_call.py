@@ -15,14 +15,15 @@ from unittest import mock
 from helpers import (
     CALL,
     CCS,
-    CHECKLIST,
     CLAIM,
     FIRST_READ,
+    ITEM_B1,
     RESULT,
     RUN,
     SCRIPTS,
     TODAY,
     RepoTest,
+    call,
 )
 
 # The usage written out as the user is to read it, not taken from turn.py, so a change to it in
@@ -257,16 +258,16 @@ class TestStartStops(RepoTest):
         self.stops(dict(CALL, out="x.json", extra="y"), 'holds "extra"')
         call = copy.deepcopy(CALL)
         call["kind"]["reader"] = "audience"
-        self.stops(call, '"reader"', '"receiver"')
+        self.stops(call, '"reader"', '"receiver"', '"has" and "each"')
         call["kind"]["also"] = "audience"
         self.stops(call, 'the kind of "also"')
 
     def test_a_call_without_a_kind_stops(self):
         # Given: a call that leaves out the kind of the work, the checklist, the receiver, what the
-        # receiver uses the work for or what they have with it
+        # receiver uses the work for, what they have with it or the items asked of each part
         # When: the run is started
         # Then: it stops, naming the kind to give
-        for kind in ("work", "checklist", "receiver", "use", "has"):
+        for kind in ("work", "checklist", "receiver", "use", "has", "each"):
             with self.subTest(kind=kind):
                 self.stops(call_with(**{kind: None}), f'no kind for "{kind}"')
 
@@ -304,7 +305,7 @@ class TestStartStops(RepoTest):
         # Given: a CCS naming a checklist that is not there, or one with no items
         # When: the run is started
         # Then: it stops, naming the checklist, and for the one with no items, saying it holds none
-        empty = "---\nname: other\nversion: 0.1.0\n---\n\n# Nothing\n"
+        empty = "# Nothing\n"
         for text in (None, empty):
             with self.subTest(text=text):
                 ccs = copy.deepcopy(CCS)
@@ -314,24 +315,38 @@ class TestStartStops(RepoTest):
                 self.write_json(CALL["ccs"], ccs)
                 self.stops(CALL, "checklists/other.md", *(["holds no item"] if text else []))
 
-    def test_an_item_without_its_scope_stops(self):
-        # Given: a checklist item with no Scope line under its heading, or one of no scope turn
-        # takes, or the line further down
-        # When: the run is started
-        # Then: it stops, naming the checklist, the item and the scopes it takes
-        for text in (
-            CHECKLIST.replace("Scope: its part\n\n", ""),
-            CHECKLIST.replace("Scope: its part", "Scope: some part"),
-            CHECKLIST.replace(
-                "Scope: its part\n\nOn opening it,", "On opening it,\n\nScope: its part"
-            ),
+    def test_the_items_asked_of_each_part_are_those_the_ccs_names(self):
+        # Given: a call naming the kind of the items asked of each part, and a CCS naming one of
+        # them, its checklist's path written another way, or none
+        each = {"each": "./checklists/readme.md B-1"}
+        cases = {"one named": ([each], [ITEM_B1]), "none named": ([], [])}
+        for name, (named, asked) in cases.items():
+            with self.subTest(name=name):
+                ccs = copy.deepcopy(CCS)
+                ccs["retrieved_artifacts"] += named
+                self.write_json(CALL["ccs"], ccs)
+                # When: the run is laid out
+                # Then: those are the items asked of each part
+                self.assertEqual(call.laid_out(CALL)["each"], asked)
+
+    def test_an_item_asked_of_each_part_that_no_checklist_holds_stops(self):
+        # Given: a CCS asking of each part an item its checklist does not hold, one of a checklist
+        # the call does not name, and one with no ID
+        for value in (
+            "checklists/readme.md B-9",
+            "checklists/other.md B-1",
+            "checklists/readme.md",
         ):
-            with self.subTest(text=text):
-                self.write("checklists/readme.md", text)
+            with self.subTest(value=value):
+                ccs = copy.deepcopy(CCS)
+                ccs["retrieved_artifacts"].append({"each": value})
+                self.write_json(CALL["ccs"], ccs)
+                # When: the run is started
+                # Then: it stops, naming the CCS, the entry and the form to name an item in
                 self.stops(
                     CALL,
-                    "checklists/readme.md B-1 does not say where it is answered",
-                    "`Scope: its part`, `Scope: each part` or `Scope: whole`",
+                    f'{CALL["ccs"]} asks "{value}" of each part',
+                    "<checklist path> <ID>, such as `checklists/readme.md Q-3`",
                 )
 
     def test_a_file_the_receiver_has_that_is_missing_stops(self):

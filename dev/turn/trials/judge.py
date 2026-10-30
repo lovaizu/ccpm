@@ -24,17 +24,18 @@ PROMPT = """You judge work that was made for a task, in the folder {folder}.
 
 The folder holds the task at `.tasks/ccs.json`, a CCS: the work is what it names as
 `{work}`, the receiver its `{receiver}`, what they use the work for its `{use}`, the
-checklists its `{checklist}`, and what the receiver has with the work its `{has}`; its other
-entries, such as the decisions, are what the work was made from. Read the CCS, its decisions, each
-checklist and the whole work, each file whole with `cat -n`. Each item of a checklist is a heading
-such as `### B-1: <title>`, with a `Scope` line saying where it is answered.
+checklists its `{checklist}`, what the receiver has with the work its `{has}`, and the items asked
+of each part of the work its `{each}`, each as `<checklist path> <ID>`; its other entries, such as
+the decisions, are what the work was made from. Read the CCS, its decisions, each checklist and the
+whole work, each file whole with `cat -n`. Each item of a checklist is a heading such as
+`### Q-1: <title>`.
 
 For each item, judge whether the receiver, for that use, with what they have, gets from the work
-what the item asks, where its Scope says. Check what the work says rather than trust it: run each
-command it tells the receiver to run and compare what it prints with what the work says, try each
-claim of what the code does on an input it is about, and look up each file and link it points to;
-each in a copy of the folder in a folder from `mktemp -d` that the command removes at its end.
-Change nothing in the folder.
+what the item asks; for an item asked of each part, in every part of the work on its own. Check what
+the work says rather than trust it: run each command it tells the receiver to run and compare what
+it prints with what the work says, try each claim of what the code does on an input it is about, and
+look up each file and link it points to; each in a copy of the folder in a folder from `mktemp -d`
+that the command removes at its end. Change nothing in the folder.
 
 Write your judgment to {out} as JSON: [{{"checklist": "<path as the CCS names it>", "item":
 "<ID>", "met": true or false, "read": ["<file>:<from>-<to>", ...], "ran": ["<command>", ...],

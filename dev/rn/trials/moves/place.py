@@ -29,42 +29,27 @@ DEFAULT = "main"
 SEED = {
     "README.md": "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n",
     "demo.sh": "#!/bin/sh\necho hello\n",
-    ".rn/checklists/note.md": """---
-name: note
-version: 1
-made_from:
-  checklist: 1
-  usability: 1
----
+    ".rn/checklists/note.md": """# Note
 
-# Note
-
-A note is a file of this repository holding a few lines the user decided, such as a greeting, read
-by a contributor who opens it to take those lines in and do what they say.
+A note is a file of this repository holding a few lines the user decided, such as a greeting. A
+contributor opens it to take those lines in and do what they say.
 
 A note serves its reader by giving the decided lines where the reader looks first, with what to do
 next.
 
-## Benefit
+## Questions
 
-### B-1: The lines found at once
-
-Scope: whole
+### Q-1: The lines found at once
 
 Can the contributor who opens the note find the decided lines on its first screen, without reading
 past other text?
 
 Why: a contributor who must search for the lines may miss them and go on without them.
 
-### B-2: The thing to do, told
-
-Scope: its part
+### Q-2: The thing to do, told
 
 Can the contributor tell from the decided lines what to do next, such as a command to run, and do it
 with what the repository holds?
-
-Signs: the contributor runs each command the lines name, and finds each file they name in the
-repository.
 
 Why: a line that says what to do with nothing to do it with leaves the contributor stuck at once.
 """,

@@ -12,7 +12,8 @@ import items as checklist_items
 
 SHAPE = (
     '{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "receiver": "<kind>",'
-    ' "use": "<kind>", "has": "<kind>"}, "result": "<path>", "test": "<command> or null"}'
+    ' "use": "<kind>", "has": "<kind>", "each": "<kind>"}, "result": "<path>",'
+    ' "test": "<command> or null"}'
 )
 # The call's keys, each required, `test` given as null where the work has none
 # (dev/turn/architecture.md, Logical view).
@@ -22,10 +23,14 @@ PLACES = ("ccs", "result")
 # The kinds whose entries are paths, kept without a trailing slash or a `./`, so a file inside a
 # folder named `docs/` is found within `docs`.
 PATHS = ("work", "checklist", "has")
-KINDS = ("work", "checklist", "receiver", "use", "has")
-# The line under an item's heading, after a blank line, says where in the work it is answered:
-# `Scope: <one of these>`.
-SCOPES = ("its part", "each part", "whole")
+# The kinds the call names, each required; each but EACH needs at least one entry. EACH is the kind
+# of the entries naming each item asked of each part of the work, as `<checklist path> <ID>`, none
+# where no item is, as the caller tells how it uses each checklist and the checklist holds its
+# questions alone; the call names it all the same, so one left out by a slip is not taken for none.
+EACH = "each"
+FILLED = ("work", "checklist", "receiver", "use", "has")
+KINDS = (*FILLED, EACH)
+EACH_FORM = "<checklist path> <ID>, such as `checklists/readme.md Q-3`"
 
 
 class Stop(Exception):
@@ -70,7 +75,7 @@ def checked(given: dict[str, Any]) -> dict[str, Any]:
     if unknown:
         raise Stop(
             f'turn: the call names the kind of "{unknown[0]}", which turn does not take; it takes'
-            ' "work", "checklist", "receiver", "use" and "has"'
+            ' "work", "checklist", "receiver", "use", "has" and "each"'
         )
     for name in KINDS:
         if name not in kind:
@@ -89,7 +94,7 @@ def laid_out(given: dict[str, Any]) -> dict[str, Any]:
     asked = checked(given)
     ccs = read_ccs(asked["ccs"])
     run: dict[str, Any] = {"call": asked}
-    for name in KINDS:
+    for name in FILLED:
         values = entries(ccs, asked["kind"][name])
         if name in PATHS:
             values = [os.path.normpath(v) for v in values]
@@ -106,12 +111,8 @@ def laid_out(given: dict[str, Any]) -> dict[str, Any]:
         if not os.path.exists(path):
             raise Stop(f"turn: {path}, named in {asked['ccs']}, is not there; fix its entry")
     found = [item for path in run["checklist"] for item in items(path)]
-    run["items"] = [forms.named(i) for i in found]
-    run["each"] = [
-        forms.named(i)
-        for i in found
-        if i["scope"] == "each part"  # pragma: no mutate
-    ]
+    run["items"] = found
+    run["each"] = asked_of_each(asked, ccs, found)
     run["given"] = given_of(asked["ccs"], ccs, run["work"])
     run["readable"] = run["work"] + run["has"] + run["checklist"]
     return run
@@ -151,25 +152,31 @@ def entries(ccs: dict[str, list[dict[str, str]]], kind: str) -> list[str]:
 
 
 def items(path: str) -> list[dict[str, str]]:
-    """Every item of a checklist, by its path, ID and scope; stops when it holds none, or at an
-    item whose scope is not said."""
+    """Every item of a checklist, by its path and ID; stops when it holds none."""
     with open(path, encoding="utf-8") as f:
         text = f.read()
-    lines = text.splitlines()
-    found: list[dict[str, str]] = []
-    for number, item in checklist_items.items(text):
-        below = lines[number : number + 2]
-        scope = next((s for s in SCOPES if below == ["", f"Scope: {s}"]), None)
-        if scope is None:
-            raise Stop(
-                f"turn: {path} {item} does not say where it is answered; put the line"
-                " `Scope: its part`, `Scope: each part` or `Scope: whole` after a blank line"
-                " under its heading"
-            )
-        found.append({"checklist": path, "item": item, "scope": scope})
+    found = [{"checklist": path, "item": item} for _, item in checklist_items.items(text)]
     if not found:
-        raise Stop(f"turn: {path} holds no item, a heading such as `### B-1: <title>`")
+        raise Stop(f"turn: {path} holds no item, a heading such as `### Q-1: <title>`")
     return found
+
+
+def asked_of_each(
+    given: dict[str, Any], ccs: dict[str, list[dict[str, str]]], found: list[dict[str, str]]
+) -> list[dict[str, str]]:
+    """Each item the CCS asks of each part of the work, by the kind the call names for it, in the
+    order of the CCS. Stops at an entry that names no item of the call's checklists."""
+    asked: list[dict[str, str]] = []
+    for value in entries(ccs, given["kind"][EACH]):
+        path, _, item = value.rpartition(" ")
+        named = {"checklist": os.path.normpath(path), "item": item}
+        if named not in found:
+            raise Stop(
+                f'turn: {given["ccs"]} asks "{value}" of each part of the work, which names no item'
+                f" of the checklists the call names; name each as {EACH_FORM}"
+            )
+        asked.append(named)
+    return asked
 
 
 def given_of(ccs_path: str, ccs: dict[str, list[dict[str, str]]], work: list[str]) -> list[str]:

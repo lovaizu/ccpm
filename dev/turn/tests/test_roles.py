@@ -14,6 +14,9 @@ from helpers import (
     CHECKLIST,
     CHOSEN,
     CLAIM,
+    EACH,
+    EACH_CCS,
+    EACH_ITEM,
     FIRST_READ,
     NEEDED_B1,
     RESULT,
@@ -27,9 +30,9 @@ class TestGenerator(StartedTest):
     def test_the_generator_is_given_what_it_makes_the_work_from_and_where_it_replies(self):
         # Given: a run started, nothing in its folder but the call
         # When: the generator first runs turn.py
-        # Then: it is given the CCS and every file it names, the work, the checklists, the call's
-        # test, no need and no choice yet, where it replies, the result, and the check of its
-        # claim, each path whole
+        # Then: it is given the CCS and every file it names, the work, the checklists, no item
+        # asked of each part, the call's test, no need and no choice yet, where it replies, the
+        # result, and the check of its claim, each path whole
         self.assertEqual(
             self.printed("generator", self.result),
             {
@@ -42,6 +45,7 @@ class TestGenerator(StartedTest):
                 ],
                 "work": [self.here("README.md")],
                 "checklists": [self.here("checklists/readme.md")],
+                "each": [],
                 "test": "sh tests/readme.sh",
                 "needs": [],
                 "chosen": [],
@@ -151,9 +155,10 @@ class TestFirstUser(StartedTest):
     def test_the_first_user_is_given_what_the_receiver_has_and_where_it_replies(self):
         # Given: a run started
         # When: the first user first runs turn.py
-        # Then: it is given the work, what the receiver has and the checklists, the receiver,
-        # their use, the parts of the work, where it replies and the check of its reading, each
-        # path whole; and neither the CCS, the decisions, the call's test, nor any claim
+        # Then: it is given the work, what the receiver has and the checklists, no item asked of
+        # each part, the receiver, their use, the parts of the work, where it replies and the
+        # check of its reading, each path whole; and neither the CCS, the decisions, the call's
+        # test, nor any claim
         self.assertEqual(
             self.printed("first-user", self.result),
             {
@@ -164,6 +169,7 @@ class TestFirstUser(StartedTest):
                 ],
                 "work": [self.here("README.md")],
                 "checklists": [self.here("checklists/readme.md")],
+                "each": [],
                 "receiver": ["a developer new to it"],
                 "use": ["to try it on their own files"],
                 "parts": [self.here("README.md:1-3")],
@@ -191,6 +197,22 @@ class TestFirstUser(StartedTest):
             self.printed("parts", self.result),
             {"parts": [self.here("README.md:1-4"), self.here("README.md:5-7")]},
         )
+
+
+class TestEachPart(RepoTest):
+    def test_each_role_is_given_the_items_asked_of_each_part_by_whole_path(self):
+        # Given: a run whose CCS asks an item of each part of the work
+        self.write("checklists/readme.md", CHECKLIST + EACH)
+        self.write_json(CALL["ccs"], EACH_CCS)
+        result = self.started()
+        for role in ("generator", "first-user"):
+            with self.subTest(role=role):
+                # When: the role first runs turn.py
+                # Then: it is given that item, its checklist by whole path
+                self.assertEqual(
+                    self.printed(role, result)["each"],
+                    [dict(EACH_ITEM, checklist=self.here(EACH_ITEM["checklist"]))],
+                )
 
 
 class TestReceiverHasTheRepository(RepoTest):

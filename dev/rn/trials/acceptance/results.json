@@ -241,5 +241,41 @@
    "deliverable": 0
   },
   "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "ada8658",
+  "folder": "/tmp/rn/20261030-acceptance-xyatir05",
+  "verdict": "FAILED",
+  "ended": "the stand-in stopped at message 30: ",
+  "minutes": {
+   "whole": 38.5,
+   "rn": 33.9,
+   "stand-in": 4.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 454,
+    "cache_creation_input_tokens": 454216,
+    "cache_read_input_tokens": 12111689,
+    "output_tokens": 118752
+   },
+   "stand-in": {
+    "input_tokens": 66,
+    "cache_creation_input_tokens": 47005,
+    "cache_read_input_tokens": 1269355,
+    "output_tokens": 2726
+   }
+  },
+  "cost": {
+   "rn": 7.55,
+   "stand-in": 0.68
+  },
+  "changes sent": {
+   "goal": 1,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
  }
 ]

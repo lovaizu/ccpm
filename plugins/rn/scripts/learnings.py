@@ -13,7 +13,7 @@ import stop
 
 # The learnings' file, in the session's folder.
 FILE = "learnings.md"
-# Each learning, in the form of rn's learnings checklist's F-1, which holds no heading.
+# Each learning, in the form of rn's learnings checklist's Format, which holds no heading.
 LEARNING = re.compile(r"- (?P<id>L[0-9]+): (?P<said>\S.*)")
 FORM = (
     "a learning as `- L<n>: <what happened, with the words it rests on, and where it would make"

@@ -1,8 +1,9 @@
 """What a work's CCS holds, its decisions with the rest, so the work is made from the session's
 record alone, by turn or, for the plan and the learnings, by the orchestrator: each decision kept,
-the checklists of its kind, before the build without the items judged on the built product, what
-its receiver has, the goal and the criteria it serves, the finished work's files, and for the plan
-what each task done served, decided and made; and the CCS written and handed to its maker."""
+the checklists of its kind, before the build without the questions judged on the built product, and
+the questions asked of each part of the work, what its receiver has, the goal and the criteria it
+serves, the finished work's files, and for the plan what each task done served, decided and made;
+and the CCS written and handed to its maker."""
 
 from __future__ import annotations
 
@@ -27,22 +28,47 @@ ENTRIES = {
     "receiver": "audience",
     "use": "purpose",
     "has": "has",
+    "each": "each",
 }
 # The key of the CCS entries each holding a goal or a criterion the work serves.
 SERVES = "serves"
 # The key of the CCS entry naming the kind of the work, whose checklists it is made with.
 KIND = "kind"
-# The line under an item's Scope, after a blank line, saying it can be judged only on the built
-# product, as rn's checklist for checklists gives it; the stages before the build, whose works are
-# made before the product is there to judge them on; the headings that end an item, those of its
-# level and above; and the name of a call's copy of the k-th checklist of its kind.
-BUILT = "Judged on: the built product"
+# How rn uses each of its own checklists, which it tells turn as their caller, as a checklist holds
+# its questions alone (rn's checklist for checklists): rn's checklist of every document, given
+# beside the checklist of each kind of document, those kinds of rn's own checklists that are
+# documents, the plan's left out until its checklist is made again without what doc.md asks; the
+# questions of each checklist that can be judged only on the built product, and those asked of each
+# part of the work, by the checklist's path in rn's checklists.
+DOC = "doc.md"
+DOCUMENTS = (
+    "architecture",
+    "checklist",
+    "issue",
+    "learnings",
+    "prompt",
+    "readme",
+    "research",
+    "trial",
+    "ux",
+)
+BUILT: dict[str, tuple[str, ...]] = {"product/readme.md": ("Q-4", "Q-5", "Q-6")}
+EACH: dict[str, tuple[str, ...]] = {
+    DOC: ("Q-3", "Q-6", "Q-7", "Q-8", "Q-10"),
+    "product/code.md": ("Q-4", "Q-5"),
+    "product/prompt.md": ("Q-10",),
+    "product/ux.md": ("Q-6",),
+    "session/research.md": ("Q-3",),
+}
+# The stages before the build, whose works are made before the product is there to judge them on;
+# the headings that end an item, those of its level and above; and the name of a call's copy of the
+# k-th checklist of its kind.
 BEFORE_BUILD = (steering.GOAL, steering.UX, steering.ARCHITECTURE)
 ITEM = 3
 COPY = "checklist-{}.md"
-# The kind of a checklist, which rn's checklist for checklists makes from rn's `usability.md`, what
-# any reader needs, as well.
+# The kind of a checklist, and rn's own checklist for it, its checklist for checklists.
 CHECKLIST = "checklist"
+META = "meta.md"
 # The works rn makes the same way every time, each with its kind, its receiver and their use: the
 # plan, the learnings and the finished work.
 OWN = {
@@ -120,52 +146,63 @@ def kept_as(last: session.Call | None) -> Made:
 
 
 def rns_own(kind: str, root: str) -> list[str]:
-    """rn's own checklist for the kind, in any folder of rn's checklists; none where rn has none."""
-    return sorted(glob.glob(os.path.join(root, "checklists", "**", f"{kind}.md"), recursive=True))
+    """rn's own checklist for the kind, in any folder of rn's checklists, its checklist for
+    checklists for a checklist; none where rn has none."""
+    name = META if kind == CHECKLIST else f"{kind}.md"
+    return sorted(glob.glob(os.path.join(root, "checklists", "**", name), recursive=True))
 
 
 def checklists(kind: str, root: str) -> list[str]:
-    """The checklists for the kind: rn's own, then the user's addition; stops where neither is
-    there."""
-    found = rns_own(kind, root)
+    """The checklists for the kind: rn's own, then rn's checklist of every document where the kind
+    is one of rn's kinds of document, then the user's addition; stops where neither rn's own nor the
+    addition is there."""
+    own = rns_own(kind, root)
     added = os.path.join(session.RECORD, "checklists", f"{kind}.md")
-    if os.path.isfile(added):
-        found.append(added)
-    if not found:
+    addition = [added] if os.path.isfile(added) else []
+    if not own + addition:
         raise stop.Stop(
             f"rn: there is no checklist for the kind {kind}, neither rn's nor {added}; make"
             f" {added} first, as a work of its own to rn's checklist for checklists"
         )
-    return found
+    doc = [os.path.join(root, "checklists", DOC)] if kind in DOCUMENTS else []
+    return own + doc + addition
 
 
-def unbuilt(text: str) -> str | None:
-    """The checklist's text without each item judged on the built product, from its heading to the
-    next heading of its level or above outside a code fence, or the end; None where it holds none
-    such."""
+def asked(path: str, root: str, told: dict[str, tuple[str, ...]]) -> tuple[str, ...]:
+    """The questions the table tells of the checklist at the path, by its path in rn's checklists,
+    rn installed at root; none for any other checklist, such as the user's addition."""
+    return told.get(os.path.relpath(path, os.path.join(root, "checklists")), ())
+
+
+def unbuilt(text: str, built: tuple[str, ...]) -> str:
+    """The checklist's text without each question of the IDs, judged on the built product, from its
+    heading to the next heading of its level or above outside a code fence, or the end."""
     lines = text.splitlines()
-    built = {n for n, _ in items.items(text) if lines[n + 2 : n + 4] == ["", BUILT]}
-    if not built:
-        return None
+    cut = {n for n, found in items.items(text) if found in built}
     heads = {n for n, level, _ in template.headings(lines, template.body(lines)) if level <= ITEM}
     kept, cutting = [], False
     for number, line in enumerate(lines, 1):
-        cutting = number in built if number in heads else cutting
+        cutting = number in cut if number in heads else cutting
         if not cutting:
             kept.append(line)
     return "\n".join(kept).rstrip() + "\n"
 
 
-def judged(lists: list[str], stage: str, folder: str, number: str) -> list[tuple[str, str | None]]:
-    """Each checklist the call of the number names, made at the stage, with the text to write
-    there: before the build, a copy of each holding an item judged on the built product, without
-    those items, beside the call's CCS, as COPY names it by its place among the kind's checklists;
-    each other checklist, and every one from the build on, as it is, with no text."""
-    found: list[tuple[str, str | None]] = []
+def judged(
+    lists: list[str], stage: str, folder: str, number: str, root: str
+) -> list[tuple[str, str | None, list[str]]]:
+    """Each checklist the call of the number names, made at the stage, with the text to write there,
+    and the questions of it asked of each part of the work, each as `<path> <ID>`, the CCS entry
+    turn reads them by: before the build, a copy of each whose questions BUILT tells of, judged on
+    the built product, without those questions, beside the call's CCS, as COPY names it by its place
+    among the kind's checklists; each other checklist, and every one from the build on, as it is,
+    with no text. rn is installed at root."""
+    found: list[tuple[str, str | None, list[str]]] = []
     for place, path in enumerate(lists, 1):
-        cut = unbuilt(repo.read_text(path)) if stage in BEFORE_BUILD else None
-        copy = session.call_path(folder, number, COPY.format(place))
-        found.append((path, None) if cut is None else (copy, cut))
+        built = asked(path, root, BUILT) if stage in BEFORE_BUILD else ()
+        cut = unbuilt(repo.read_text(path), built) if built else None
+        named = path if cut is None else session.call_path(folder, number, COPY.format(place))
+        found.append((named, cut, [f"{named} {q}" for q in asked(path, root, EACH)]))
     return found
 
 
@@ -289,6 +326,7 @@ def written(
     made: Made,
     serving: dict[str, str],
     checklists: list[str],
+    each: list[str],
     decisions: list[str],
     chosen: list[str],
     root: str,
@@ -297,11 +335,10 @@ def written(
     the work by its name, the stage it is made in, its kind, its paths, its receiver and what they
     have with it; goal_orientation, what the work is for, its use and what it serves as text, as its
     maker makes the work from the CCS and the files it names alone; retrieved_artifacts, the kind's
-    checklists and rn's `usability.md` where the work is a checklist; and constraints, the bounds it
-    is made in: its decisions, the orchestrator's choices, the languages, and rn's checklist for a
-    fix, which its maker is given to read, as each file a CCS
-    names is, for a work made again. turn finds each entry by its key, whichever part holds it."""
-    usability = os.path.join(root, "checklists", "usability.md")
+    checklists and the questions of them asked of each part of the work; and constraints, the bounds
+    it is made in: its decisions, the orchestrator's choices, the languages, and rn's checklist for
+    a fix, which its maker is given to read, as each file a CCS names is, for a work made again.
+    turn finds each entry by its key, whichever part holds it."""
     return {
         "focal_entities": [
             {session.WORK: work},
@@ -314,7 +351,7 @@ def written(
         "goal_orientation": [{ENTRIES["use"]: made.use or ""}]
         + [{SERVES: f"{key}: {text}"} for key, text in serving.items()],
         "retrieved_artifacts": [{ENTRIES["checklist"]: p} for p in checklists]
-        + ([{"source": usability}] if session.CHECKLIST_WORK.fullmatch(work) else []),
+        + [{ENTRIES["each"]: e} for e in each],
         "constraints": [{session.DECISION: d} for d in decisions]
         + [{session.CHOSEN: c} for c in chosen]
         + [{key: steered.keys[key]} for key in steering.LANGUAGES]
@@ -406,7 +443,8 @@ def handed(
     CCS, the checklists it names and the command that checks the part; for every other work, the
     call that hands it to turn:up, so a conversation cut while turn runs goes on from it, and the
     line telling the user what turn makes. The CCS names the kind's checklists as judged gives them,
-    before the build each holding an item judged on the built product by a copy written beside it.
+    before the build each holding a question judged on the built product by a copy written beside
+    it, and the questions of them asked of each part of the work.
     What is given makes the work, each choice of the orchestrator's given kept with those of the
     latest call, one of the same what replaced; what is not, rn's own way of making it, or what the
     work's latest call named, as made_as and kept_as say: for the plan, its part of the steering,
@@ -431,8 +469,8 @@ def handed(
     use = needed(use or made.use or kept.use, "use", work)
     has = needed(has or made.has or kept.has, "has", work)
     kind = made.kind or ""
-    named = judged(checklists(kind, root), steered.keys[steering.STAGE], folder, number)
-    lists = [path for path, _ in named]
+    named = judged(checklists(kind, root), steered.keys[steering.STAGE], folder, number, root)
+    lists = [path for path, _, _ in named]
     part = session.call_path(folder, number, session.PART[work]) if work in session.PARTS else ""
     paths = ([part] if part else paths) or made.paths or finished_work()
     if work == steering.PLAN:
@@ -440,7 +478,7 @@ def handed(
     # Every check is made above, so a stop leaves nothing written.
     if part:
         repo.write_text(part, session.cut(work, steered))
-    for path, text in named:
+    for path, text, _ in named:
         if text is not None:
             repo.write_text(path, text)
     ccs = written(
@@ -449,6 +487,7 @@ def handed(
         Made(kind, receiver, use, paths, has),
         serving,
         lists,
+        [one for _, _, each in named for one in each],
         [] if last is None else session.decisions_of(last),
         chosen_with(session.choices_of(last), chosen),
         root,
@@ -469,9 +508,9 @@ def handed(
 
 
 def decisions(work: str, root: str) -> dict[str, Any]:
-    """Each decision of the work, as its latest call keeps it, with that call's number; none, and
-    no call, where it has none; and the checklists of its kind whole, as its CCS names them from
-    the build on, so the hearing reads each item before the work is made; rn is installed at root.
+    """Each decision of the work, as its latest call keeps it, with that call's number; none, and no
+    call, where it has none; and the checklists of its kind whole, as its CCS names them from the
+    build on, so the hearing reads each question before the work is made; rn is installed at root.
     Stops where the branch holds no session, the steering differs from what the last keep left, the
     steering holds no action of turn's of a task's work, or the kind has no checklist."""
     folder = session.current()

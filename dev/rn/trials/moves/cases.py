@@ -184,7 +184,7 @@ QUESTIONS = {
             " first?",
             "recommended": "No: the user chooses the place from what README.md holds and what"
             " GitHub's page shows, which the research gives",
-            "items": [{"checklist": "research.md", "item": "B-3"}],
+            "items": [{"checklist": "research.md", "item": "Q-5"}],
         }
     ]
 }
@@ -224,8 +224,8 @@ def noted(path: str, text: str, mark: str, chosen: dict) -> dict:
     """The made of a call on a note: the file, both items of the note checklist with their Goods at
     the line holding the mark, and the choice its maker made that the CCS left open."""
     goods = {
-        "B-1": "The decided line stands on the note's first screen, the first a contributor reads",
-        "B-2": "It tells the contributor to run `sh demo.sh`, which the repository holds and which"
+        "Q-1": "The decided line stands on the note's first screen, the first a contributor reads",
+        "Q-2": "It tells the contributor to run `sh demo.sh`, which the repository holds and which"
         " prints hello, then to open a pull request",
     }
     return {
@@ -268,36 +268,55 @@ Not known: what part of the README a visitor's screen shows first, which GitHub'
 say and opening the repository's page on GitHub would show; and whether this project's visitors
 reach the README from GitHub's page or from a clone, which the user knows.
 """
+# The Goods of rn's checklist of every document, which rn gives beside the checklist of each kind
+# of document, for a document whose every line serves its reader.
+DOC_GOODS = {
+    "Q-1": "The opening says what the document is for, so the reader tells at once it serves them",
+    "Q-2": "No several act in turn, so nothing is pieced together from spread sentences",
+    "Q-3": "Each term is plain, or quoted as the repository holds it",
+    "Q-4": "Each thing has one name throughout",
+    "Q-5": "Each name keeps one meaning throughout",
+    "Q-6": "Each sentence rests only on what comes before it",
+    "Q-7": "Each thing is in the form that fits it, a list for the facts and a quote for words",
+    "Q-8": "Each line gives the reader something toward their purpose",
+    "Q-9": "Each idea is given whole",
+    "Q-10": "Nothing says how the work went or where it stands",
+    "Q-11": "Each thing is said once",
+    "Q-12": "Every statement holds with every other",
+}
+DOC = {"doc.md": {i: {"good": g, "at": "whole"} for i, g in DOC_GOODS.items()}}
 # The research, at the path the plan's action names, RESEARCH in the plans the state-making writes.
 RESEARCH_PLACE = {
     "files": {"": PLACE},
     "goods": {
         "research.md": {
-            "B-1": {
+            "Q-1": {
                 "good": "The opening says what was asked, for T1, and its answer: right under the"
                 " title `# demo`, the README's first line after it, the choice left to the user",
                 "at": ["Asked for T1", "Answer:..the user's to choose"],
             },
-            "B-2": {
+            "Q-2": {
+                "good": "The README's lines and GitHub's page bear out the answer, which claims no"
+                " more than they show",
+                "at": ["- README.md holds..repository visitors"],
+            },
+            "Q-3": {
                 "good": "Each fact names a source the reader can open: the README's own lines, and"
                 " GitHub's page on READMEs, quoted, with the date it was read",
                 "at": ["- README.md holds..repository visitors"],
             },
-            "B-3": {
+            "Q-4": {
+                "good": "Each fact comes from its most direct source: the README itself, and"
+                " GitHub's own page, with the date it was read",
+                "at": ["- README.md holds..repository visitors"],
+            },
+            "Q-5": {
                 "good": "What the research did not settle, what GitHub shows of a README first and"
                 " where visitors read it, is said as unknown, with what would settle each",
                 "at": ["Not known:..which the user knows"],
             },
-            "B-4": {
-                "good": "Each line gives the user choosing the place something they use",
-                "at": "whole",
-            },
-            "B-5": {
-                "good": "Each term is plain or quoted as the README holds it, `# demo` and"
-                " `## Use`",
-                "at": "whole",
-            },
-        }
+        },
+        **DOC,
     },
 }
 # Where the orchestrator writes the issue of L1 once the user takes it for rn's makers.
@@ -305,7 +324,7 @@ ISSUE = f"{SESSION}/issue-1.md"
 FINISHED = {
     "goods": {
         "deliverable.md": {
-            "B-1": {
+            "Q-1": {
                 "good": "Used as the user would: README.md greets new contributors right under"
                 " its title (AC1) and tells them to start by running `sh demo.sh`, which runs and"
                 " prints hello (AC2)",
@@ -318,51 +337,37 @@ FINISHED = {
 # The user's addition to rn's plan checklist, made once they take the learning of the line asked
 # again for their own checklist.
 PLAN_ADDITION = ".rn/checklists/plan.md"
-PLAN_ADDED = """---
-name: plan
-version: 1
-made_from:
-  checklist: 1
-  usability: 1
----
+PLAN_ADDED = """# Plan, this repository's addition
 
-# Plan, this repository's addition
+What this repository adds to rn's checklist for a plan. rn's orchestrator reads it when it writes a
+plan, and the user reads it when they approve one.
 
-What this repository adds to rn's checklist for a plan, read by rn's orchestrator writing a plan
-and by the user approving it.
+A plan serves the user by taking what a sign-off approved as settled, so its one question asks
+whether the plan's actions ask the user only what no one has decided yet.
 
-A plan serves the user by taking what a sign-off approved as settled, asking only what no one has
-decided yet.
+## Questions
 
-## Benefit
-
-### B-1: Only what is open asked
-
-Scope: its part
+### Q-1: Only what is open asked
 
 Does each action that asks the user a point ask one no sign-off has approved?
-
-Signs: the user is asked only points the approved documents leave open, none their lines give.
 
 Why: a point asked again spends the user's time on what they already decided.
 """
 CHECKLIST_GOODS = {
-    "F-1": "plan.md follows the template: the front matter, the title, the purpose, the idea, and"
-    " `## Benefit` with B-1, with its Scope, its question, its Signs and its Why; an addition holds"
-    " only what it adds, so it has no Format section",
-    "F-2": "Its version is 1, as no release has numbered it",
-    "F-3": "made_from names checklist 1 and usability 1, the versions that stand now",
-    "F-4": "Its item is B-1, counted up in Benefit",
-    "B-1": "The opening says who reads it, rn's orchestrator writing a plan and the user approving"
-    " it, and what it adds to rn's plan checklist",
-    "B-2": "What the opening names, a plan that asks nothing approved again, has its item, B-1",
-    "B-3": "Its one item asks one thing of the purpose, which rn's plan checklist does not ask",
-    "B-4": "B-1 is answered by pointing at a plan's actions",
-    "B-5": "B-1 asks one thing, with a sign of what is looked at",
+    "Q-1": "The opening says who uses it, rn's orchestrator writing a plan and the user approving"
+    " one, and what it adds to rn's plan checklist",
+    "Q-2": "An addition holds only what it adds, so it has no Format section, the plan's format"
+    " being rn's plan checklist's",
+    "Q-3": "Its one question asks the one condition the opening names, which rn's plan checklist"
+    " does not ask",
+    "Q-4": "Q-1 asks one thing, answered yes or no by reading a plan's actions",
 }
 PLAN_CHECKLIST = {
     "files": {PLAN_ADDITION: PLAN_ADDED},
-    "goods": {"checklist.md": {i: {"good": g, "at": "whole"} for i, g in CHECKLIST_GOODS.items()}},
+    "goods": {
+        "meta.md": {i: {"good": g, "at": "whole"} for i, g in CHECKLIST_GOODS.items()},
+        **DOC,
+    },
 }
 # The user's note checklist with an item added while the session runs, whose choice, where a
 # contributor asks when stuck, no answer of the user's made.
@@ -370,9 +375,7 @@ NOTE_CHECKLIST = ".rn/checklists/note.md"
 NOTE_ASKING = (
     SEED[NOTE_CHECKLIST]
     + """
-### B-3: Where to ask, told
-
-Scope: whole
+### Q-3: Where to ask, told
 
 Can the contributor who opens the note tell where to ask when they are stuck?
 

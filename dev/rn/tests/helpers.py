@@ -23,8 +23,9 @@ SCRIPTS = os.path.normpath(
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "lane"))
 
-import ccs  # noqa: F401  (each of rn's modules, for its own tests)
+import ccs
 import conversations  # noqa: F401
+import items  # noqa: F401
 import learnings  # noqa: F401
 import proposal  # noqa: F401
 import record
@@ -203,13 +204,15 @@ class RepoTest(MainAndWork):
                 ("plan", "session"),
                 ("learnings", "session"),
                 ("deliverable", "session"),
-                ("checklist", ""),
             )
         }
+        self.own["checklist"] = os.path.join(self.plugin, "checklists", "meta.md")
         for kind, path in self.own.items():
             self.write(path, f"# {kind.capitalize()}\n")
         self.fix = os.path.join(self.plugin, "checklists", "fix.md")
-        self.usability = os.path.join(self.plugin, "checklists", "usability.md")
+        # A stand-in for rn's checklist of every document, given beside each kind of document's.
+        self.doc = os.path.join(self.plugin, "checklists", "doc.md")
+        self.write(self.doc, "# Doc\n")
         self.bin = os.path.join(self.base, "bin")
         self.write(os.path.join(self.bin, "gh"), GH)
         os.chmod(os.path.join(self.bin, "gh"), 0o755)
@@ -220,6 +223,12 @@ class RepoTest(MainAndWork):
         )
         path.start()
         self.addCleanup(path.stop)
+        # What rn tells turn of its own checklists' questions is told of none of the stand-ins, as
+        # each test that needs it says; rn's own checklists hold what the real tables name.
+        for table in ("BUILT", "EACH"):
+            told = mock.patch.object(ccs, table, {})
+            told.start()
+            self.addCleanup(told.stop)
         self.top = os.getcwd()
         self.project = record.folders(self.top)[0]
 

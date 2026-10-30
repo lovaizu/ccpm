@@ -39,9 +39,8 @@ WORDS = st.text(
 # Any of those but a Markdown heading, which Next cannot hold, as
 # StateTest.test_a_move_the_steering_cannot_hold_stops_and_keeps_nothing has it.
 SENTENCES = WORDS.filter(lambda t: not template.HEADING.fullmatch(t))
-# Any of those but a fence and the line saying an item is judged on the built product, as a line of
-# an item's body.
-BODY = SENTENCES.filter(lambda t: not t.startswith(("```", "~~~")) and t != ccs.BUILT)
+# Any of those but a fence, as a line of a question's body.
+BODY = SENTENCES.filter(lambda t: not t.startswith(("```", "~~~")))
 IDS = st.dictionaries(st.sampled_from(["G1", "AC1", "AC2", "AC3"]), st.text(max_size=3))
 
 
@@ -108,23 +107,15 @@ class PropertyTest(RepoTest):
 
     @hypothesis.given(st.lists(st.tuples(st.booleans(), st.lists(BODY, max_size=3)), max_size=5))
     def test_a_checklist_before_the_build_keeps_each_item_not_judged_on_the_built(self, made):
-        # Given: a checklist of any items, each judged on the built product or not, with any lines
-        # under its Scope but a heading or a fence.
-        blocks = [
-            [f"### B-{n}: T", "", "Scope: whole", "", *([ccs.BUILT] if built else []), *body, ""]
-            for n, (built, body) in enumerate(made, 1)
-        ]
+        # Given: a checklist of any questions, each told judged on the built product or not, with
+        # any lines under its heading but a heading or a fence.
+        blocks = [[f"### Q-{n}: T", "", *body, ""] for n, (_, body) in enumerate(made, 1)]
+        built = tuple(f"Q-{n}" for n, (cut, _) in enumerate(made, 1) if cut)
         text = "\n".join(["# C", "", *(line for b in blocks for line in b)])
         # When: rn cuts it for a call before the build.
-        # Then: it gives every line of the items not judged on the built product, or nothing to
-        # write where none is.
-        kept = [
-            "# C",
-            "",
-            *(line for b, (built, _) in zip(blocks, made) if not built for line in b),
-        ]
-        want = "\n".join(kept).rstrip() + "\n" if any(built for built, _ in made) else None
-        self.assertEqual(ccs.unbuilt(text), want)
+        # Then: it gives every line of the questions not judged on the built product.
+        kept = ["# C", "", *(line for b, (cut, _) in zip(blocks, made) if not cut for line in b)]
+        self.assertEqual(ccs.unbuilt(text, built), "\n".join(kept).rstrip() + "\n")
 
     @hypothesis.given(WORDS, st.lists(WORDS, min_size=1, max_size=5))
     def test_the_steering_gives_back_its_goal_and_each_criterion_as_written(self, goal, criteria):

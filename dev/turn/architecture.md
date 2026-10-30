@@ -40,13 +40,15 @@ Principle 1 to 9. It adds two of its own, named turn's Principle 1 and 2:
   guard acts in every role, and the figure draws it only for the generator.
 - The call gives the CCS's path, where the result goes, and `test`, the one command that checks the
   work. `test` is `null` where the work has none. The call also names the kinds the CCS uses for
-  the work, the checklists, the receiver, what the receiver uses the work for, and what they have
-  with it. turn defines nothing else of the CCS.
+  the work, the checklists, the receiver, what the receiver uses the work for, what they have
+  with it, and the items asked of each part of the work, of which there may be none. turn defines
+  nothing else of the CCS.
 
   The values stay in the CCS alone, so the call and the CCS cannot disagree. Without what the
   receiver uses the work for and has with it, no reader can stand in their place. `test` is
   required, and `null` means none, as a required field that may be null says "explicitly none" in
-  structured outputs and OpenAPI 3.1. So a test left out by a slip is not taken for none.
+  structured outputs and OpenAPI 3.1. So a test left out by a slip is not taken for none. The kind
+  of the items asked of each part is required for the same reason, though the CCS may hold none.
 - turn keeps no state and has no course in a script. The orchestrator makes the same few moves on
   every run: it starts the generator, then the first user, then has the result written.
 
@@ -109,15 +111,17 @@ Principle 1 to 9. It adds two of its own, named turn's Principle 1 and 2:
   A mend that brings no new Good shows the two cannot settle the item. The calling AI holds the
   step and makes such an item sooner than another exchange would.
 - Each role's reply is checked by turn's script before the role ends, and a lane holds the role to
-  that check: its form, and each range of lines inside the work and, for an item whose `Scope` is
-  `each part`, one range in every part.
+  that check: its form, and each range of lines inside the work and, for an item asked of each
+  part, one range in every part.
 
   What a machine can check is checked by a script (Principle 6). Checked before the role ends, a
   slip is mended by the role that made it, and the result is written only from replies that hold.
-- Each item is answered where its checklist's `Scope` line says, by every role on every run.
+- Each item the call's CCS asks of each part is answered in every part, by every role on every
+  run; every other item is answered at the lines that give it, wherever they are.
 
-  A Good found where one part gives it passes a part that does not. What lies between the parts is
-  found only in the whole.
+  A Good found where one part gives it passes a part that does not. Which items are asked of each
+  part is the caller's to tell, as a checklist holds its questions alone and the caller knows how it
+  uses each.
 - When the first user has ended, the orchestrator runs the script that writes the result where the
   call says. The result takes each item's lines and each need from the first user's last reading,
   and the choices from the generator's last claim that the finished work still rests on. Then the

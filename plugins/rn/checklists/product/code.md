@@ -1,255 +1,137 @@
----
-name: code
-version: 1
-made_from:
-  checklist: 1
-  usability: 1
----
-
 # Code
 
-Code is used by whoever runs it and whoever maintains it, a person or an AI. Whoever runs it gets
-the behavior they asked for, and from each stop how to go on; whoever maintains it reads what each
-part does where it is written, changes one thing in one place, and trusts, from its tests passing,
-that every behavior still holds.
+Code is used by whoever runs it and by whoever maintains it, a person or an AI. Whoever runs it gets
+the behavior the requirements ask, and learns from each stop how to go on. Whoever maintains it
+tells what each part does where it is written, changes one thing in one place, and trusts from its
+checks passing that every behavior still holds.
 
 Code serves them through two designs. The code is split into functions and modules by what each
-takes on, one thing each; each says what it takes in and gives back, and what comes from outside is
-checked where it comes in. Its tests are designed from the requirements, what the code must do, by
-the technique that fits what each function takes in and decides, so they hold what the code must do
-rather than what it happens to do, and each fails when the behavior it holds breaks; how heavily
-each part is checked beyond them, such as by property tests or mutation testing, is the
-architecture's, from what a failure of that part would cost the user. The development rules are the
-project's own rules for its code: the runtime and its versions, the libraries and tools allowed, and
-the checks every change passes. The signs on the code are drawn from Google's "What to look for in a
-code review" (google/eng-practices, CC BY 3.0), and those on the tests' design from the techniques
-of the ISTQB Certified Tester Foundation Level syllabus v4.0.1, chapter 4.
+takes on, and what comes from outside is checked where it comes in. Its tests are designed from the
+requirements, by the techniques of the ISTQB Certified Tester Foundation Level syllabus v4.0.1,
+chapter 4, so each fails when the behavior it holds breaks. How heavily each part is checked beyond
+its tests, such as by property tests or mutation testing, is set by the architecture. The
+development rules are the project's own rules for its code: the runtime and its versions, the
+libraries and tools allowed, and the checks every change passes. The questions on the code are drawn
+from Google's "What to look for in a code review" (google/eng-practices, CC BY 3.0). Code has no set
+shape beyond what its language and the development rules give, so this checklist has no Format.
 
-## Format
+## Questions
 
-### F-1: Shape
+### Q-1: The same behavior on any machine
 
-Scope: whole
-
-Does each file of the code follow this template, in the forms its language and the development
-rules set?
-
-```text
-<At the top of each module>  what the module does, and why it is there
-<For each function>          what it takes in, what it gives back, and when it stops,
-                             as types where the language has them, otherwise as a comment
-<For each test>              name: what must happen, as one sentence
-                             body: Given: <the situation>, When: <what is done>,
-                             Then: <what must be so>, each in plain words, as comments
-```
-
-Why: the maintainer finds what each module and function is for, and what each test checks, in the
-same place in every file, before reading any body.
-
-## Benefit
-
-### B-1: The same behavior on any machine
-
-Scope: whole
-
-Does whoever runs the code get the behavior the requirements ask, on any machine with only what the
-development rules name?
-
-Tried by: the code's tests run on the oldest version of the runtime the development rules name,
-with only the libraries and tools they name installed.
-
-Signs: the code runs, and its tests pass, on the oldest version of the runtime the development rules
-name, with only what they name installed.
+Does the code give the behavior the requirements ask on a machine with only what the development
+rules name, on the oldest runtime they name?
 
 Why: what the code uses beyond the development rules is missing on some user's machine, and the code
 fails there for a reason the user was never told.
 
-### B-2: A stop cleared by what it says
-
-Scope: whole
+### Q-2: A stop cleared by what it says
 
 When the code stops, can whoever runs it go on by doing what the stop says?
 
-Tried by: each stop the code has, run with an input that makes it, the action it names taken with
-only what whoever runs the code has, and the run made again.
+Why: a stop that says only that something failed leaves the user to read the code. Each stop names
+the input or condition that was wrong and an action the user can take with what they have, such as a
+value to give instead. A stop that its own action does not clear leaves the run stuck.
 
-Signs:
-- each thing taken in from outside, such as a file, an argument or what another program hands it,
-  is checked where it comes in, before it is used, against what the requirements say it must not
-  be;
-- each stop names the input or the condition that was wrong;
-- each stop names an action, such as a value to give instead or how to install a missing tool;
-- whoever is stopped can take that action with what they have, without a read another check stops,
-  and once it is taken the same check lets the run go on.
+### Q-3: Each input checked where it comes in
 
-Why: a wrong input used fails far from where it came in, or does harm, such as writing outside the
-folder it was meant for; a stop that says only that something failed leaves the user to read the
-code; and a stop its own action does not clear leaves the run stuck, going round or ended.
+Is each thing taken in from outside, such as a file, an argument or another program's output,
+checked where it comes in, before it is used?
 
-### B-3: What each part does, told where it is written
+Why: a wrong input that is used fails far from where it came in, or does harm, such as writing
+outside the folder it was meant for.
 
-Scope: each part
+### Q-4: What each part does, told where it is written
 
 Can the maintainer tell what each module, function and test does, and what each name in it stands
-for, from its opening, its signature and its names, without reading its body or its callers?
+for, without reading its body or its callers?
 
-Signs:
-- each name of a module, function, variable or test says its thing, all of it and nothing else;
-- each opening, signature and comment tells all of what it tells, such as when a function stops,
-  and only what the code does;
-- each word used in a sense of the code's own, and each name taken from another product, is
-  explained by an opening or a comment;
-- the reason behind each decision, and what each regular expression or algorithm does, is said;
-- each comment tells the code, not how the work went or where it stands, such as the task a line
-  was added for;
-- errors are handled as the code around them handles them, where the development rules settle no
-  choice.
+Why: a part its own lines do not tell sends the maintainer into its body and callers at every use. A
+name or comment that says something else is believed. The reason behind a decision, and what a
+regular expression or an algorithm does, is what the code alone does not show. A comment about how
+the work went turns wrong as the code changes.
 
-Why: a part not told by its own lines sends the maintainer into its body and its callers at every
-use; a name or a comment that says something else is believed; a comment about the work turns wrong
-as the code changes; and a difference from the code around it is read as meaning something.
+### Q-5: Only what a behavior needs now
 
-### B-4: Only what a behavior asked now needs
+Does each function, parameter, branch, option and comment serve a behavior the requirements ask now?
 
-Scope: each part
+Why: each part is read, tested and kept true on every change, and when a guessed need comes, it
+seldom has the shape that was guessed. A parameter its callers never vary, or a comment that says
+what the line under it says, serves nothing.
 
-Does each function, parameter, branch, option and comment give the maintainer something a behavior
-the requirements ask now needs?
-
-Signs:
-- each part is as general as its callers use it, each parameter one its callers give different
-  values;
-- each case serves a behavior the requirements name now;
-- each comment says what the line under it does not already say.
-
-Why: each part is read, tested and kept true by every maintainer on every change, and when a
-guessed need comes, it seldom has the shape that was guessed.
-
-### B-5: One change in one place
-
-Scope: whole
+### Q-6: One change in one place
 
 Can the maintainer change one thing the code takes on in one place, with no other place left that
 still holds the old one?
 
-Tried by: the whole read, then the code's tests run once and `git status` read for each file the
-run made.
+Why: a part that takes on two things is changed for one and breaks the other. Knowledge such as a
+rule or a value written twice is fixed in one place and left wrong in the other. A thing with two
+names is missed by a search for one of them. A file a run makes, such as Python's `__pycache__/`,
+kept in the repository is a stale copy after the next change.
 
-Signs:
-- each function and module takes on one thing;
-- each piece of knowledge, such as a rule, a value or a way of reading an input, is written in one
-  place across the repository, and every other place that needs it takes it from there;
-- each thing has one name across the code and its tests, so a search for the name finds every place
-  of it, and each name stands for one thing;
-- each file that running the code or its tests makes, such as Python's `__pycache__/`, is kept out
-  of the repository by its ignore file.
+### Q-7: Every case of the requirements tested
 
-Why: a part that takes on two things is changed for one and breaks the other; knowledge written
-twice is fixed in one place and left wrong in the other; a place a search for the name misses
-is left as it was; and a file a run makes is a copy of the code, committed with it and stale after
-the next change.
+Do the test cases cover the requirements: every case of each behavior they ask, each with its
+expected value taken from the requirements? The cases are each group of inputs the behavior treats
+alike, each edge between two groups, each combination of conditions and each change of state.
 
-### B-6: Every behavior held by a test
+Why: a behavior the code leaves out cannot be broken in the code, so only cases listed from the
+requirements show it missing. Faults gather at the edges, such as `<` written for `<=`, and in the
+combinations and the changes of state. A test whose expected value was taken from the code it checks
+passes whatever the code does.
 
-Scope: whole
+### Q-8: Every test able to fail
 
-When a behavior the requirements ask is broken in the code, does some test fail?
+With the cases covered, does every test fail when the behavior it checks is broken in the code?
 
-Tried by: the tests read beside the requirements, each sign below; the unit tests run with the lines
-and branches they run counted, with the settings kept in the repository; each further check the
-architecture gives a part run as it says, such as in the project's CI on what the change touches.
+Why: a test that cannot fail looks the same as one that works, and passing tests give trust only in
+the behaviors they would fail on.
 
-Signs:
-- each equivalence partition of an input or an output, the values a function treats alike, the
-  invalid ones among them, gives some test a value;
-- each boundary of a partition whose values stand in order, such as numbers or lengths, and the
-  value on either side of it, is taken by some test;
-- each feasible rule of a decision table, a combination of the conditions' values that can happen,
-  is taken by some test;
-- each transition between states, an invalid one included, an event given in a state that does not
-  take it, is taken by some test;
-- every statement and branch is run by the unit tests, counted without any test whose inputs change
-  from run to run, such as a property test;
-- each further check the architecture gives a part, such as property tests making many inputs of
-  a kind on each run or mutation testing leaving no mutant alive, is made for that part as far as
-  the architecture says, and passes, each input that once failed a property test kept as an
-  example;
-- each test's expected value is written from the requirements, not taken from the code it checks;
-- each line, branch, input or mutant left out of the coverage or of a further check, a survivor of
-  mutation testing among them, is the maker's choice, named beside it or in the check's settings
-  with why, such as an environment the tests cannot make, or a line no behavior changes with, and
-  settled by the maker, not put to the user.
+### Q-9: Each further check the architecture gives
 
-Why: tests passing give trust only in the behaviors they would fail on; a gap looks the same as a
-test that works and lets a fault pass, faults gather at boundaries, such as `<` written for `<=`,
-a check left out with no decision written beside it cannot be told from one left out to make the
-run pass, so the next maintainer keeps the gap; and a further check given every part alike costs
-the user, in time to build and keep it, more than a failure of a small part would.
+Does each part pass each further check the architecture gives it, such as property tests or
+mutation testing, as far as the architecture says?
 
-### B-7: A failure taken as one fault
+Why: the architecture weighed each such check against what a failure of the part would cost the
+user, so one left out leaves the part as lightly checked as the rest, against what was approved.
 
-Scope: whole
+### Q-10: Each gap in a check named
+
+Is each line, branch, input or surviving mutant left out of a check named beside it or in the
+check's settings, with why?
+
+Why: a gap with no reason beside it cannot be told from one left to make the run pass, so the next
+maintainer keeps it.
+
+### Q-11: A failure taken as one fault
 
 When a check fails after a change, can the maintainer take it as a fault of that change, in the one
 behavior the failing test names?
 
-Tried by: every check the development rules name run once, with the settings kept in the
-repository.
+Why: a test that holds several behaviors leaves the maintainer to read it to learn which broke. A
+test that fails on some runs and not others, such as one that reads the clock or needs another test
+to run first, teaches them to rerun it, and then a real failure is rerun too. A check already
+failing hides the failure a change brings.
 
-Signs:
-- each test fails on a fault of one behavior, the one its name says;
-- each test gives the same result on every run, reading no clock, network or machine it runs on,
-  leaving no files or state behind for the next, and needing no other to run first;
-- every check the development rules name, such as the tests, the formatter, the linter or the type
-  checker, run with the settings kept in the repository, passes on the code.
+### Q-12: Every check run on every change
 
-Why: a test that holds several behaviors leaves the maintainer to read its code to learn which
-broke; a test that fails on some runs and not on others teaches them to rerun it rather than read
-it, and then a real failure is rerun too; and a check already failing hides the failure a change
-brings.
+Can the maintainer run every check on every change without waiting on it?
 
-### B-8: Every check run on every change
+Why: a test run that takes minutes is run less often, and mutation testing runs the tests once for
+each mutant, so its time grows with theirs.
 
-Scope: whole
+### Q-13: The same behavior beside another run
 
-Can the maintainer run the whole test run in seconds, so that the checks run on every change and
-mutation testing, which runs the tests once for each mutant, ends in minutes where a part has it?
+Does the code give the behavior the requirements ask while another run of it goes on at the same
+time?
 
-Tried by: the whole test run run once, and the time it took read.
+Why: runs that write or hold one place, such as a file or a port, overwrite each other's work, and
+the fault shows only when they happen to meet, so a test seldom finds it.
 
-Signs: the whole test run ends in seconds; a set-up made by running other programs, such as a
-repository made by git commands, is made once and copied for each test that needs it.
+### Q-14: What a machine can see, shown on every change
 
-Why: a test run that takes minutes is run less often, and mutation testing multiplies its time by
-the number of mutants, so the maintainer waits on every change, or stops running the checks.
-
-### B-9: The same behavior beside another run
-
-Scope: whole
-
-Does whoever runs the code get the behavior the requirements ask while another run of it goes on at
-the same time?
-
-Signs: each file, port, folder or other place a run writes or holds is one that no other run at
-the same time, such as a second session or a second test worker, writes or holds too.
-
-Why: runs that share a place they write overwrite each other's work, and the fault shows only when
-they happen to meet, so a test seldom finds it.
-
-### B-10: What a machine can see, shown on every change
-
-Scope: whole
-
-Does the command that checks the work run a formatter, a linter and a type checker, so that the
-maintainer is shown on every change what they find?
-
-Tried by: the command that checks the work, as the development rules name it, run once, and what it
-printed read for each of the three.
-
-Signs: the development rules name a formatter, a linter and a type checker, each set up with its
-settings kept in the repository; the command that checks the work runs all three and fails on what
-they find.
+Does the command that checks the work run a formatter, a linter and a type checker, and fail on what
+they find?
 
 Why: a tool finds the same thing every time and at once, where a maintainer reading for it finds
-some of it and spends a change on each, and what no tool is set to show is left to be found on some
-changes only.
+some of it, and what no tool shows is found on some changes only.

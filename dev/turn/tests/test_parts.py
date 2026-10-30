@@ -1,12 +1,14 @@
-"""A run with an item asked of each part of the work, given lines in every part, and its Good only
-then."""
+"""A run with an item the CCS asks of each part of the work, given lines in every part, and its Good
+only then."""
 
 import unittest
 
 from helpers import (
+    CALL,
     CHECKLIST,
     CLAIM,
     EACH,
+    EACH_CCS,
     EACH_GOOD,
     FOUND,
     FOUND_B1,
@@ -23,6 +25,7 @@ class TestEachPart(RepoTest):
     def setUp(self):
         super().setUp()
         self.write("checklists/readme.md", CHECKLIST + EACH)
+        self.write_json(CALL["ccs"], EACH_CCS)
         self.write("README.md", SECTIONED)
         self.result = self.started()
 

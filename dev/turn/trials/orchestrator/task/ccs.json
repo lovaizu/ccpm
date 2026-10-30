@@ -1,4 +1,5 @@
 {"focal_entities": [{"deliverable": "README.md"}, {"audience": "a developer who found demo on GitHub"},
                     {"has": "."}],
  "goal_orientation": [{"purpose": "deciding whether to use demo, then running it"}],
- "retrieved_artifacts": [{"checklist": "checklist.md"}, {"decisions": "notes/decisions.md"}, {"code": "demo.sh"}]}
+ "retrieved_artifacts": [{"checklist": "checklist.md"}, {"decisions": "notes/decisions.md"}, {"code": "demo.sh"},
+                         {"each": "checklist.md B-2"}]}

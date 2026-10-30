@@ -1,98 +1,72 @@
----
-name: issue
-version: 1
-made_from:
-  checklist: 1
-  usability: 1
----
-
 # Issue
 
-An issue, a file in the session's folder `.rn/<yyyymmdd>-<slug>/` that rn sends to rn's makers on
-`lovaizu/ccpm` once the user says yes, is read by the makers, who build rn for all its users, to
-decide how rn changes so that the need it shows is met in every user's later work.
+An issue is a file in the session's folder `.rn/<yyyymmdd>-<slug>/` that rn opens on `lovaizu/ccpm`
+once the user says yes. It is read by rn's makers, who build rn for all its users, to decide how rn
+changes so that the need it shows is met in every user's later work.
 
-An issue serves them by one learning of the session, the user approved for rn's makers, told as a
-fault of rn's: what happened, in the words the learning quotes, why it matters to a user of rn, and
-what rn should do instead, in the terms of rn's own steps and checklists. It holds the need and its
-points alone, never the user's work: the user chose what leaves their project, and the issue is
-public.
+An issue tells one learning of the session, one the user approved for rn's makers, as a fault of
+rn's: what happened, in the words the learning quotes; why it matters to a user of rn; and what rn
+should do instead, in the terms of rn's own steps and checklists. It holds the need alone, never the
+user's work, as the user chose what leaves their project and the issue is public.
 
 ## Format
-
-### F-1: Shape
-
-Scope: whole
-
-Does the issue follow this template?
 
 ```markdown
 # rn: <what happens>
 
 ## What happened
 
-<what happened in the session, quoting the words of the learning it rests on>
+<What happened in the session, quoting the words of the learning it rests on>
 
 ## Why it matters
 
-<what it costs a user of rn, such as a change sent back or a question asked late>
+<What it costs a user of rn, such as a change sent back or a question asked late>
 
 ## What it should be
 
-<what rn should do instead, naming the step or the checklist of rn's it would change>
+<What rn should do instead, naming the step or the checklist of rn's it would change>
 
 ## Seen in
 
-rn <the version the steering's front matter names>
+rn <the version that made the session>, Claude Code <the version it ran on>
 ```
 
-The first line is the issue's title, and the rest its body, as rn sends them. It is written in
-English, the language of rn's makers' repository, whatever the language of the user's.
+The first line is the issue's title and the rest its body, as rn sends them apart. The issue is
+written in English, the language of rn's makers' repository, whatever the language of the user's.
 
-Why: the makers find the same thing under the same heading in every issue, rn sends the title and
-the body apart, and every issue of rn's is read by makers who read English.
+## Questions
 
-## Benefit
+### Q-1: What rn should do
 
-### B-1: What it should be, and why
+From the title and What it should be, can rn's makers tell what rn should do instead, and at which
+of its steps or checklists?
 
-Scope: its part
+Why: the makers decide from the need. One tied to a slip of one session is read as that session's,
+and one that names no place in rn leaves the makers to find where it is met.
 
-From the title and `## What it should be`, can rn's makers tell what rn should do, at which of its
-steps or checklists, and from `## Why it matters` what a user of rn loses while it does not?
+### Q-2: What it costs
 
-Signs: the makers read in the title what rn does, beyond a slip of the session; they find the step
-or checklist of rn's the change is made at; they weigh the cost as one a user of rn bears, beyond
-this session.
+From Why it matters, can the makers tell what a user of rn loses while rn does not do it?
 
-Why: the makers decide from the need and its cost; a need tied to one session is read as that
-session's, and one with no cost is weighed below every other.
+Why: the makers weigh each need against the others by its cost, and one with no cost is weighed
+below every other.
 
-### B-2: What happened, without the user's work
+### Q-3: What happened, as the learning quotes it
 
-Scope: its part
+Does each fact of What happened rest on words the learning quotes, as the learning gives them?
 
-Can the makers see what happened in the words the learning quotes, with nothing of the user's work
-beyond them?
+Why: an issue resting on what the learning does not say is a guess the makers cannot check.
 
-Tried by: each fact and quote of `## What happened` set beside the learning it rests on.
+### Q-4: Nothing of the user's work
 
-Signs: the makers check each fact against a quote of the learning, each quote as the learning gives
-it; the only paths, names, lines of code or words of the user's project they meet are those the
-learning quotes; each line holds rn's need, rather than what the user decided about their own
-work.
+Is each path, name, line of code or word of the user's project in the issue one the learning quotes?
 
-Why: an issue resting on what the learning does not say is a guess the makers cannot check, and one
-holding the user's work makes public what they never chose to send.
+Why: the issue is public, and what it holds of the user's work beyond the learning is made public
+without the user choosing to send it.
 
-### B-3: One need
+### Q-5: One need
 
-Scope: whole
+Would one change of rn's meet the issue's need?
 
-Does the issue hold one need, that one change of rn's would meet?
-
-Signs: the makers meet the need with one change, not two that could be made apart; the issue rests
-on one learning.
-
-Why: each need is decided and closed on its own; two in one issue are decided together or one is
+Why: each need is decided and closed on its own. Two in one issue are decided together, or one is
 left behind when the issue is closed.

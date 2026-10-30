@@ -25,20 +25,18 @@ the work gives each Good is yours to decide.
 1. First run `turn.py generator`. Give it your prompt's `result`: `turn.py generator <result>`,
    `<result>` below being that `result`. It prints JSON: `given`, all you read, being the CCS and
    each file it names, the checklists among them; `work`, the files of the work; `checklists`, the
-   checklists you answer; `test`, the command that checks the work, `null` where it has none;
-   `needs`, the items the first user's last reading found without Good, each with its `need`, what
-   the receiver would need to get its Good, `[]` where none; `chosen`, the choices your last claim
-   named, `[]` where none; `result`, the run's result; `reply`, the file you write your claim to;
-   and `check`, the command that checks your claim.
+   checklists you answer; `each`, the items asked of each part of the work; `test`, the command that
+   checks the work, `null` where it has none; `needs`, the items the first user's last reading found
+   without Good, each with its `need`, what the receiver would need to get its Good, `[]` where
+   none; `chosen`, the choices your last claim named, `[]` where none; `result`, the run's result;
+   `reply`, the file you write your claim to; and `check`, the command that checks your claim.
 2. Read each file of `given` with `cat -n <path>` in a command of its own, or with Read and no
    offset or limit. Read only `{given}`. Read `{given}` to its end.
-   Each item of a checklist is a heading such as `### B-1: <title>`, its ID `B-1`, and its `Scope`
-   line says where its Good is:
-   - `its part`: at the lines that give it;
-   - `each part`: in every part of the work on its own, at lines inside that part;
-   - `whole`: of the work at once, such as one name for each thing throughout.
+   Each item of a checklist is a heading such as `### Q-1: <title>`, its ID `Q-1`. Its Good is at
+   the lines that give it; for an item in `each`, in every part of the work on its own, at lines
+   inside that part.
 3. For every item, set its Good: what the receiver the CCS names gets from this work, for the use it
-   names, that gives what the item asks, and where the work gives it, as its `Scope` says. For an
+   names, that gives what the item asks, and where the work gives it, as step 2 says. For an
    item in `needs`, aim its Good at what its `need` says the receiver would get. Find what the CCS
    and its files leave open that only the user's answer can give, such as which license the work is
    under, and send each such question at once, as step 4 says. Settle each other point the work
@@ -64,17 +62,16 @@ the work gives each Good is yours to decide.
    be added to the CCS as an entry of the kind the work's files are under.
 7. Read the work once from the top as the receiver meeting it for the first time, each file with
    `cat -n <path>`, as Read gives nothing back for a file you just wrote. Check every item, or on a
-   mend each item you were sent: run what its checklist says is run for it and how far, such as its
-   `Tried by` line, as the first user runs the same, and find the lines of the work that give its
-   Good; for an item whose `Scope` is `each part`, lines in every part, the parts as
-   `turn.py parts <result>` prints them. A command that did not run gives no Good. Then check each
-   thing the work tells the receiver: run each command it gives and its tests and compare what they
-   print with what it says, try each thing it says the code does on an input it is about, and look
-   up each file and link it points to; each in a Bash command of its own, with any input it needs
-   made inside that command, in a folder from `mktemp -d` that the command removes at its end. Where
-   an item has no lines that give its Good or a thing the work tells is not so, go back to step 5.
-   Where something outside the work keeps you from making or checking an item, such as a tool
-   missing, a permission not given or a network blocked, take no way round it: ask the main
+   mend each item you were sent: use the work as the receiver would for what the item asks, and find
+   the lines of the work that give its Good; for an item in `each`, lines in every part, the parts
+   as `turn.py parts <result>` prints them. A command that did not run gives no Good. Then check
+   each thing the work tells the receiver: run each command it gives and its tests and compare what
+   they print with what it says, try each thing it says the code does on an input it is about, and
+   look up each file and link it points to; each in a Bash command of its own, with any input it
+   needs made inside that command, in a folder from `mktemp -d` that the command removes at its end.
+   Where an item has no lines that give its Good or a thing the work tells is not so, go back to
+   step 5. Where something outside the work keeps you from making or checking an item, such as a
+   tool missing, a permission not given or a network blocked, take no way round it: ask the main
    conversation for what you need, as step 4 says, saying what you tried, what you confirmed and
    what not.
 8. Write your claim to `reply` with the Write tool: every item at the `lines` that give its Good,

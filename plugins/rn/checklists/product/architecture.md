@@ -1,52 +1,34 @@
----
-name: architecture
-version: 1
-made_from:
-  checklist: 1
-  usability: 1
----
-
 # Architecture
 
-An architecture is read by whoever builds or changes the product and by whoever approves it. From
-it they grasp, in a short time, how the product is put together to give the UX the product must
-give, and how each part and the user stories are checked, and build, change or approve the product
-by it.
+An architecture is read by whoever builds or changes the product and by whoever approves it. From it
+they grasp how the product is put together to give the experience its UX sets, and how each part and
+each user story is checked. They build, change or approve the product by it.
 
-An architecture holds the principles the product rests on, the parts it is made of, how they act on
-one another, where the code of each is kept and where each runs; and how heavily each is checked,
-from what a failure of it would cost the user. These are what an approval rests on, as changing one
-changes what was approved. How each part behaves in each case is held where the part is built and
-checked: in the tests of a part made of code, each a Given, a When and a Then, and in the steps of a
-part run by an AI; in the architecture it would be decided twice and drift, and every finding made
-while building would change what was approved.
-
-The parts are drawn from the UX in layers, each fewer than the one before: the UX's scenes rest on a
-few user stories, each one way the user uses the product at its edge, such as a command they run;
-the stories are taken on by logical components, each of which may serve several; and each component
-is realized by a technology, chosen at this layer alone, so the stories and the components follow
-from what the UX needs. How each kind of part and the stories are checked is the project's rule
-where it has one, and the architecture links it; how heavily each part is checked beyond that, such
-as by property tests or mutation testing, is the architecture's, as what a failure of a part would
-cost differs from product to product, and the approver weighs it against their purpose. An
-architecture built on a base architecture writes only what is its own, and links the base for the
-rest.
+An approval rests on the decisions whose change would change what was approved: the principles, the
+parts, how they act on one another, where the code of each is kept, where each runs, and how heavily
+each is checked. So the architecture holds those alone. How a part behaves in each case is decided
+where the part is built: in its tests if it is code, and in its steps if an AI runs it. The parts
+are drawn from the UX in layers. Its scenes rest on a few user stories, each one way the user uses
+the product at its edge, such as a command they run. The stories are taken on by logical components,
+and each component is split from the others by its responsibility, or by a constraint that splits
+one responsibility. Each component is then made with a technology, chosen at this layer alone. Each
+view answers a concern of its own (Kruchten, "The 4+1 View Model of Architecture", 1995): the
+logical view what the product gives its users, the process view how it behaves as it runs, the
+development view where its code is kept, and the physical view where it runs. A structure is drawn
+by hand, as its placing and frames carry what the reader takes in at a glance; a sequence has one
+layout, its order down the page, so Mermaid draws it from text. How heavily a part is checked
+follows from what a failure of it would cost the user, which differs from product to product, so the
+approver weighs it here. An architecture built on another links that one and writes only what is its
+own.
 
 ## Format
-
-### F-1: Shape
-
-Scope: whole
-
-Does the architecture follow this template, headings included?
 
 ```markdown
 # <Product name> architecture
 
-<How the product is put together, in a sentence or two, with a link to where the UX is defined>
+<How the product is put together, in a sentence or two, with a link to its UX>
 
-<The principles it rests on: a link to those of what it is built on, and its own, each in a
-line>
+<The principles it rests on: a link to those of what it is built on, and its own, each in a line>
 
 ## User stories
 
@@ -56,10 +38,10 @@ line>
 
 ### Logical view
 
-<One SVG figure: a box for each logical component, holding its name alone, its shape saying
-whether an AI or code does its work, with a legend, and a frame round the boxes that run in one
-place or make one product; an arrow from each to the component it acts on, labelled in a few words
-with what it does; the boxes placed so the arrows run in the order they act and cross none>
+<One SVG figure: a box for each logical component, holding its name alone, its shape saying whether
+an AI or code does its work, with a legend, and a frame round the boxes that run in one place or
+make one product; an arrow from each to the component it acts on, labelled in a few words with
+what it does; the boxes placed so the arrows run in the order they act and cross none>
 
 - <A choice the figure shows that the reader would question, with why>
 
@@ -86,181 +68,89 @@ outside the product they depend on, with an arrow labelled with what is used>
 
 ## Test
 
-<A link to the project's rules for how each kind of part and the user stories are checked, where
-it has them>
+<A link to the project's rules for how each kind of part and the user stories are checked, where it
+has them>
 
 - <How heavily a part is checked beyond those rules, such as by property tests or mutation testing,
   or that it is checked by them alone, with what a failure of it would cost the user>
 ```
 
-Each SVG figure is a file beside the document shown as an image, readable in light and dark. Each
-line of a list is one sentence understood alone, its why, where it has one, after a blank line
-indented under it; nothing is set in bold.
+Each SVG figure is a file beside the document, shown as an image and readable in light and dark.
 
-Why: the builder and the approver read the principles, then what the product gives, then the parts
-that give it, how they act in turn, where their code is kept and where they run, then how each is
-checked, each the ground of the next; they skim the lines and read a why only where they question
-one. Each view answers a concern of its own (Kruchten, "The 4+1 View Model of Architecture", 1995):
-the logical view what the product gives its users, the process view how it behaves as it runs, the
-development view how its code is kept, for whoever builds it, and the physical view where it runs,
-for whoever runs it. A structure's placing and frames carry what the reader takes in at a glance, so
-it is drawn by hand, where a tool's layout sets them by its own rules; a sequence has one layout,
-its order down the page, so Mermaid draws it from text. A box's shape shows at a glance which parts
-an AI does, whose work varies from run to run, and which code does the same each time.
+## Questions
 
-## Benefit
+### Q-1: The ground of every decision
 
-### B-1: The ground every decision rests on
+From the opening, can the reader tell how the product is put together and the principles every
+decision is held to?
 
-Scope: its part
+Why: each decision can hold by its own reason while the decisions together break a principle no one
+wrote down. A principle is a rule the decisions are held to; a means such as a tool or a format
+belongs to the part that uses it.
 
-From the opening, can the reader tell the ground every decision of the architecture rests on: how
-the product is put together, and the principles, its own each in a line and those of what it is
-built on by a link?
+### Q-2: The stories the scenes rest on
 
-Signs: the opening says how the product is put together, not what the document holds; each
-principle of what it is built on is reached by its link, not written again; each principle is a
-rule the decisions are held to, and a means, such as a tool, a format or a paper's method, is
-left to the part that uses it.
+Does every scene of the UX rest on a user story, a thing the user does at the product's edge?
 
-Why: each decision's why can hold on its own while the decisions together break a principle no one
-wrote down; principles said once are what every decision, and every change, is held to.
+Why: the components are drawn from the stories, so a scene no story holds up is built by guess. A
+story for a step inside the product adds components without the user doing more, and a story named
+by a technology rather than by what the user does must be made again when the technology changes.
 
-### B-2: The stories the scenes rest on
+### Q-3: Each story followed through the components
 
-Scope: its part
+Can the reader follow each user story through the process view, from the first component it reaches
+to its end, along the arrows of the logical view?
 
-Does every scene of the UX rest on a user story, each one way the user uses the product at its
-edge?
+Why: components that each do their part achieve no story unless their interactions do. A component
+found missing only when its story is built changes the architecture then, after the approval.
 
-Tried by: every scene of the UX the opening links, each set beside the story it rests on.
+### Q-4: Each component split for a reason
 
-Signs: each scene leads to a story that holds it up; each story is a thing the user does at the
-product's edge, such as a command they run, not a step inside the product; each story says what no
-other does; each story is named by what the user does, so it holds when the technology changes.
+Does each component take a responsibility of its own, or a part of another's for a constraint the
+architecture names, such as work run in parallel, a context kept apart, a stance of its own or what
+the platform allows?
 
-Why: the components are decided from the stories; a scene no story holds up is built by guess, a
-story for each step inside multiplies the components without the user doing more, and a story
-shaped to a technology must be made again when the technology changes.
+Why: a split with no such reason adds a path for users to learn and builders to keep right, and
+leaves one responsibility decided in two places.
 
-### B-3: The stories achieved by the components
+### Q-5: Where the code of each component is kept
 
-Scope: its part
+Can the builder find, for each component, the one place its code is kept and what it is made of?
 
-Can the reader see, from the logical and the process view, how the logical components achieve every
-user story, in the order they act?
+Why: the builder makes and changes each component where its code is kept, and that place decides who
+owns it. A component kept in no place is put where the builder guesses, and one kept in two is made
+twice and drifts.
 
-Tried by: every user story followed through its sequence diagram, from the first component it
-reaches to its end, each message found as an arrow of the logical view.
+### Q-6: Where each component runs
 
-Signs:
-- each component a story needs has its box in the logical view and is a participant of the story's
-  sequence diagram;
-- each story is achieved by a run of messages, each told by its label, such as what a component
-  hands on, along an arrow of the logical view;
-- each choice the reader would question has its why in a line;
-- each box holds the component's name, not a description or a technology;
-- each case is taken by a component that already takes others or stopped by a check already there,
-  so each path and component serves more than one case.
+Can whoever runs the product set it up and start it from the physical view, knowing where each
+component runs and what outside the product it depends on?
 
-Why: components that each do their part achieve no story unless their interactions do; a component
-found missing only when a story it serves is built changes the architecture then; a component
-shaped to its technology must be remade with it; and every path of its own is one more thing for
-users to learn and builders to keep right.
+Why: where a component runs decides what it can reach and when a change to it reaches the user, and
+what the product depends on is where it breaks for the user first.
 
-### B-4: Where the code of each component is kept
+### Q-7: Each part checked as heavily as a failure would cost
 
-Scope: its part
+Can the approver tell, for each part and for the user stories, how heavily it is checked, and weigh
+that against what a failure of it would cost the user?
 
-Can the builder tell, from the development view, where the code of each component is kept and what
-it is made of?
+Why: a check costs the user time to build and to keep on every change, and a failure costs them what
+the part breaks, such as data lost or a wrong result used unseen. A weight given every product alike
+gives a small tool the checks of a large one. A ground such as "a checklist asks it" is one the
+approver cannot weigh against their purpose. What the project's rules settle is linked, as it is
+decided once for the project.
 
-Tried by: every box of the logical view looked up in the development view.
+### Q-8: The decisions kept to the principles
 
-Signs: each component is found in one place, named by its path; each component has what it is made
-of beside it, such as `Python 3`.
+Does each arrow, each line and each check keep the principles the opening names?
 
-Why: the builder makes and changes each component where its code is kept, and that place decides
-who owns it; a component kept in no place is put where the builder guesses, and one kept in two is
-made twice and drifts.
+Why: a decision read alone looks right by its own reason. One that breaks a principle undoes what
+the principle was there for, and shows only when the product fails at it.
 
-### B-5: Where each component runs
+### Q-9: Each line a decision the approval rests on
 
-Scope: its part
+Is each line of the architecture a decision whose change would change what was approved?
 
-Can the reader tell, from the physical view and the line beside it, where each component runs, what
-the product depends on outside itself and how it is started?
-
-Tried by: every box of the logical view looked up in the physical view.
-
-Signs: each component is found in one machine or runtime; each thing outside the product a
-component uses is a box with an arrow to it; the line says how the product is started.
-
-Why: where a component runs decides what it can reach and when a change to it reaches the user;
-and what the product depends on is where it breaks for the user first.
-
-### B-6: Each part checked as heavily as a failure of it would cost
-
-Scope: its part
-
-Can the reader tell, for each part in the development view and for the user stories, how heavily it
-is checked and why, from what a failure of it would cost the user?
-
-Tried by: the link followed, and each part in the development view and the user stories found in the
-rule it reaches or in a line of the Test section.
-
-Signs:
-- each kind of part, such as code or a prompt, and the user stories are checked by a rule of the
-  project the link reaches, or, where the project has none, by a line here;
-- each part checked beyond the project's rule, such as by property tests or mutation testing, and
-  each checked by the rule alone, is named with what a failure of it would cost the user, such as
-  data lost, a wrong result used unseen or a step merely run again;
-- a check written here agrees with the project's rule;
-- a case's inputs, stand-ins and bar to pass are left to the tests.
-
-Why: a check costs the user time to build and to keep on every change, and a failure costs them
-what the part breaks; a weight given every product alike buys a small tool the checks of a large
-one, or leaves a part whose failure costs much as lightly checked as the rest, and a ground such as
-a checklist asking it is one the approver cannot weigh against their purpose. What the project's
-rule settles is decided once for the project, so it is linked, not written again; and a case's
-detail changes with every test while the approval rests on the architecture.
-
-### B-7: The decisions followed together with the principles
-
-Scope: whole
-
-Can the builder follow each arrow, each line and each check together with the principles the
-opening names and with the other lines, each giving what the others ask?
-
-Tried by: each principle the opening names set beside every arrow, line and check it bears on, and
-the lines that bear on one part set beside one another.
-
-Signs: each arrow hands a part only what the principles let it see; each check a principle gives to
-some part is made by a part; the lines that bear on one thing ask and give the same, such as what
-one hands a part and what another lets that part have.
-
-Why: a decision read alone looks right by its own why; one that breaks a principle undoes what the
-principle was there to bring about, and shows only when the product fails at it; of two lines that
-cannot both hold, the builder follows one and breaks the other.
-
-### B-8: Each line a decision the approval rests on
-
-Scope: whole
-
-Is each line of the architecture one whose change would change what was approved, said in one place
-alone?
-
-Signs:
-- how a part behaves in a case, a count, a bound, a value, or a list of what a part does step by
-  step, is left to the part's tests, as a Given, a When and a Then, or to its steps;
-- what a view, another line, the UX or the architecture it is built on says is said
-  there alone, and reached here by a link;
-- each line says what holds now, not how a decision was reached or where the work stands;
-- each term is given at the line that first uses it, and a comparison or an example is given only
-  for an idea the reader does not already hold.
-
-Why: the reader grasps how the product is put together only where nothing else stands among it; a
-behavior written here is decided twice and drifts from where it is built, and every finding made
-while building changes what was approved and sends it back to be approved again; two places that
-say one thing come to disagree as one changes, and a history or a status read as a decision turns
-wrong while it is still believed.
+Why: a behavior in one case, a count, a value or a list of what a part does step by step is decided
+again where the part is built and drifts from it. Each finding made while building would then change
+what was approved and send it back to be approved again.

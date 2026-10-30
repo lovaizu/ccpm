@@ -31,28 +31,17 @@ import wait  # noqa: F401
 ITEM_F1 = {"checklist": "checklists/readme.md", "item": "F-1"}
 ITEM_B1 = {"checklist": "checklists/readme.md", "item": "B-1"}
 ITEMS = [ITEM_F1, ITEM_B1]
-CHECKLIST = """---
-name: readme
-version: 0.1.0
----
-
-# README
+CHECKLIST = """# README
 
 A README is read by whoever meets the project first.
 
-## Format
+## Questions
 
 ### F-1: Shape
 
-Scope: whole
-
 Does the README follow this template?
 
-## Benefit
-
 ### B-1: Who it is for
-
-Scope: its part
 
 On opening it, can the reader tell whether the project is for them?
 """
@@ -73,6 +62,7 @@ CALL = {
         "receiver": "audience",
         "use": "purpose",
         "has": "page",
+        "each": "each",
     },
     "result": ".tasks/readme-result.json",
     "test": "sh tests/readme.sh",
@@ -97,17 +87,18 @@ NEEDED_B1 = dict(ITEM_B1, need=NEED)
 # for the other; and one finding every Good.
 FIRST_READ = {"items": [FOUND, NEEDED_B1]}
 ALL_GOOD = {"items": [FOUND, FOUND_B1]}
-# A checklist item asked of each part of the work, added to a run's checklist where a test needs
-# one; the work's parts, as the script splits a README of a title, an opening and one section;
-# and its Good, at lines in each part.
+# A checklist item, added to a run's checklist where a test needs one asked of each part of the
+# work; the CCS asking it of each part, by the kind the call names; the work's parts, as the script
+# splits a README of a title, an opening and one section; and its Good, at lines in each part.
 EACH = """
 ### B-2: Each part used
-
-Scope: each part
 
 Does the reader use each part toward their purpose?
 """
 EACH_ITEM = {"checklist": "checklists/readme.md", "item": "B-2"}
+EACH_CCS = dict(
+    CCS, retrieved_artifacts=[*CCS["retrieved_artifacts"], {"each": "checklists/readme.md B-2"}]
+)
 SECTIONED = "# csvtidy\n\nTidies CSV files.\n\n## Use\n\nRun it.\n"
 EACH_GOOD = {
     "checklist": "checklists/readme.md",

@@ -95,30 +95,27 @@ class TestCall(unittest.TestCase):
             self.assertIn("give it as", str(stop))
 
 
-# Lines a checklist is made of: items of each scope, the line of a scope, headings of other levels,
-# fences of each mark, and text.
+# Lines a checklist is made of: items, headings of other levels, fences of each mark, and text.
 CHECKLIST_LINES = st.sampled_from(
-    ["### B-1: x", "### B-2: y", "## B-3: z", "#### B-4: w", "", "Scope: its part"]
-    + ["Scope: each part", "```", "~~~", "  ```", "x"]
+    ["### B-1: x", "### B-2: y", "## B-3: z", "#### B-4: w", "", "```", "~~~", "  ```", "x"]
 )
 
 
 class TestItems(RepoTest):
     @given(st.lists(CHECKLIST_LINES, max_size=30))
     def test_any_checklist_gives_its_items_outside_fences_or_stops_with_words(self, lines):
-        # Given: a checklist of any lines of items, scopes, other headings, fences and text
+        # Given: a checklist of any lines of items, other headings, fences and text
         self.write("checklist.md", "".join(line + "\n" for line in lines))
         # When: its items are read
         try:
             found = call.items("checklist.md")
         except call.Stop as stop:
-            # Then: it stops saying what to put, or each item is a heading of an item's level
-            # outside a fence, as lane's template reads them, with the scope its line says
-            self.assertIn("turn: checklist.md", str(stop))
+            # Then: it stops saying what to put where it holds none, or each item is a heading of
+            # an item's level outside a fence, as lane's template reads them
+            self.assertIn("turn: checklist.md holds no item", str(stop))
             return
         outside = {n for n, level, _ in template.headings(lines, 0) if level == 3}
         self.assertEqual(len(found), len([n for n in outside if lines[n - 1][4:6] == "B-"]))
-        self.assertTrue(all(i["scope"] in call.SCOPES for i in found))
 
 
 class TestCallTest(unittest.TestCase):
