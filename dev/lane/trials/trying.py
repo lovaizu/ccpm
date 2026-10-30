@@ -51,15 +51,20 @@ SENT_BY_AGENT = "<agent-message from="
 
 def unanswered(session: str) -> int:
     """The messages agents sent the main conversation of the session that it has not answered with
-    one of its own, read from its record: each message that reached it, less each SendMessage it
+    one of its own, read from its record: each message queued for it, less each SendMessage it
     sent an agent; read from the record, as Claude Code prints no SendMessage of an agent two
-    layers down, such as turn's generator under turn:up."""
+    layers down, such as turn's generator under turn:up. Each message is counted where it is
+    queued, as Claude Code queues every one, and one that reaches the conversation while it works
+    comes in beside a tool's result, not as a message of its own, as three questions from turn's
+    generator in acceptance run 7 did, two of them so."""
     found = glob.glob(record.conversation(session))
     entries = (record.read(found[0]) or []) if found else []
     reached = sum(
         1
         for e in entries
-        if e.get("type") == "user" and SENT_BY_AGENT in json.dumps(e.get("message", {}))
+        if e.get("type") == "queue-operation"
+        and e.get("operation") == "enqueue"
+        and SENT_BY_AGENT in str(e.get("content", ""))
     )
     sent = sum(
         1

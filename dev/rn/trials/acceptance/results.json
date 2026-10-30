@@ -133,5 +133,41 @@
    "deliverable": 0
   },
   "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "c13e619",
+  "folder": "/tmp/rn/20261030-acceptance-ge8mt11f",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 14 failed: agents in the background still running 90 minutes after the reply; give a longer wait",
+  "minutes": {
+   "whole": 118.1,
+   "rn": 15.7,
+   "stand-in": 2.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 458,
+    "cache_creation_input_tokens": 285199,
+    "cache_read_input_tokens": 11315966,
+    "output_tokens": 83468
+   },
+   "stand-in": {
+    "input_tokens": 30,
+    "cache_creation_input_tokens": 36471,
+    "cache_read_input_tokens": 442629,
+    "output_tokens": 1643
+   }
+  },
+  "cost": {
+   "rn": 3.98,
+   "stand-in": 0.41
+  },
+  "changes sent": {
+   "goal": 0,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
  }
 ]
