@@ -210,3 +210,8 @@ acceptance, as the user chose (2026-10-25).
   orchestrator alone where rn's tried rn whole; every document and prompt rewritten in plain
   sentences, one point each, as dev/architecture.md was (2026-10-27); check.sh 100%, mutate.sh 0
   survivors, the move trials passing. Serves AC1, AC2.
+- [ ] T40: Each work's CCS is made by a compressor apart from the conductor, from the steering, the
+  works made and each work's latest call alone; a task says what its result must do and how that is
+  checked, never the means or the inputs; the steering is JSON written by rn's scripts with its
+  Markdown in the same write; as issue #54's "Each work's CCS made apart from the conductor, from
+  the record alone" says, the user agreeing (2026-10-30). Serves AC1, AC2.
