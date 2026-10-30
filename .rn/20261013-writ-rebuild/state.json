@@ -818,6 +818,9 @@
   },
   {
    "fact": "2026-10-30: acceptance run 7 (/tmp/rn/20261030-acceptance-ge8mt11f) FAILED at message 14: the trial missed two of the generator's three questions to main, queued beside a tool result; rn and turn were right; trying.py now counts queue-operation enqueues (e92ae1b, checked on runs 5 and 7's records); run 8 started in the background on e92ae1b"
+  },
+  {
+   "fact": "2026-10-30: rn's architecture checklist asks four views, each a figure (18f1b9a): logical SVG, process as a Mermaid sequence for each story, development and physical SVG, as the user asked; lane's, turn's and rn's architectures are brought to it later with the user's other feedback, together, as the user said. The point of a task's kind and path dropped: the work's rules left unclear are asked by whoever meets them, as dev/architecture.md 'Asking until nothing is left to decide' and turn's generator.md:10-14 and docs/calling.md:63-68 already have it; nothing is added to the prompts"
   }
  ],
  "semantic_gist": [
@@ -931,7 +934,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "On resume: find run 8 with pgrep -af acceptance.py and its folder in /tmp/rn (newest 20261030-acceptance-*); when it ends read summary.json and the records and report. Then bring the user the next open point, one at a time: whether a task names its work's kind (which checklist judges it) and path, or the compressor decides them (path is a means; kind is how it is accepted). Held for later, each its own point: turn's generator writing item lines no one reads (plugins/turn/scripts/prompts.py:155 against CHANGELOG.md:31); turn's run-folder and file-hiding machinery (scripts/folder.py, prompts.py without_run_files); forms.py checking shapes JSON Schema already gives; the generator's mend repeating the same need (acceptance run 3 workflow B-5 twice, run 4 preview tool B-6 three times)."
+   "next": "On resume: find run 8 with pgrep -af acceptance.py and its folder in /tmp/rn (newest 20261030-acceptance-*); when it ends read summary.json and the records and report. Then ask the user what else T40's steering model leaves open, one point at a time; the user has more feedback, to be done together with bringing the three architectures to the four views. Held for later, each its own point: turn's generator writing item lines no one reads (plugins/turn/scripts/prompts.py:155 against CHANGELOG.md:31); turn's run-folder and file-hiding machinery (scripts/folder.py, prompts.py without_run_files); forms.py checking shapes JSON Schema already gives; the generator's mend repeating the same need (acceptance run 3 workflow B-5 twice, run 4 preview tool B-6 three times)."
   }
  ],
  "uncertainty_signal": [
