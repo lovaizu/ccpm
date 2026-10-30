@@ -13,13 +13,15 @@ jobs:
   # it where that passed, else since the branch left main, for each plugin `sh dev/changed.sh`
   # names, each in a job of its own, all at once; whole on main after a commit not passed, and for a
   # plugin whose version the push changes, as before a release. A push that changes only what no
-  # check reads, such as the session records and the documents of dev/, is not checked, and `tests`
-  # still passes, as main takes a pull request only when `tests` has passed.
+  # plugin's check reads, such as the session records and the documents of dev/, has its Markdown
+  # checked for plain English alone, by `prose`, and is otherwise not checked, and `tests` still
+  # passes, as main takes a pull request only when `tests` has passed.
   changed:
     runs-on: ubuntu-latest
     outputs:
       check: ${{ steps.changed.outputs.check }}
       plugins: ${{ steps.changed.outputs.plugins }}
+      prose: ${{ steps.changed.outputs.prose }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -58,6 +60,11 @@ jobs:
             echo "check=true" >> "$GITHUB_OUTPUT"
           else
             echo "check=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -z "$plugins" ] && git diff --name-only "$base" HEAD -- '*.md' | grep -q .; then
+            echo "prose=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prose=false" >> "$GITHUB_OUTPUT"
           fi
 
   # The oldest Python users run and the newest (dev/architecture.md, Unit tests: code).
@@ -115,9 +122,26 @@ jobs:
           SINCE: ${{ matrix.since }}
         run: uv run --no-sync sh dev/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
 
+  # The Markdown of a push that names no plugin, which `check` would otherwise read in check.sh.
+  prose:
+    needs: changed
+    if: needs.changed.outputs.prose == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.x"
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - env:
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: uv sync --locked
+      - run: uv run --no-sync sh dev/prose.sh
+
   # What main requires: every job passed, or the checks skipped as above.
   tests:
-    needs: [changed, check, test-quality]
+    needs: [changed, check, test-quality, prose]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -126,6 +150,9 @@ jobs:
           CHECK: ${{ needs.changed.outputs.check }}
           CHECKED: ${{ needs.check.result }}
           TESTED: ${{ needs.test-quality.result }}
+          PROSE: ${{ needs.changed.outputs.prose }}
+          PROSED: ${{ needs.prose.result }}
         run: |
           [ "$CHANGED" = success ] || exit 1
           [ "$CHECK" = false ] || { [ "$CHECKED" = success ] && [ "$TESTED" = success ]; }
+          [ "$PROSE" = false ] || [ "$PROSED" = success ]

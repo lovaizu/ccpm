@@ -38,7 +38,7 @@ Principle 1 to 9. It adds two of its own, named turn's Principle 1 and 2:
 
 - The calling AI is the main conversation, or an agent that the main conversation started. The
   guard acts in every role, and the figure draws it only for the generator.
-- The call gives the CCS's path, where the result goes, and `test`, the one command that checks the
+- The call gives the path of the CCS, where the result goes, and `test`, the one command that checks the
   work. `test` is `null` where the work has none. The call also names the kinds the CCS uses for
   the work, the checklists, the receiver, what the receiver uses the work for, and what they have
   with it. turn defines nothing else of the CCS.

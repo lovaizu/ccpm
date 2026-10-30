@@ -1,6 +1,6 @@
 # lane's lanes
 
-Each lane lane can lay, under the action it watches, so your AI can tell which lanes to propose for
+Each lane that lane can lay, under the action it watches, so your AI can tell which lanes to propose for
 your plugin's steps and you can tell what each hook tells your subagent; and the proposal your AI
 writes them in.
 
