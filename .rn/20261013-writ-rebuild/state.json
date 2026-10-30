@@ -809,6 +809,15 @@
   },
   {
    "fact": "2026-10-28/29: acceptance run 5 (/tmp/rn/20261028-acceptance-zdax9pcp) FAILED at message 18: the trial waited 90 min on turn's generator asking main, as Claude Code prints no SendMessage of a depth-2 agent; rn itself kept and asked the question correctly; trying.py now counts unanswered messages from main's record and keeps running state across messages (move trial asks passed). Run 6 (/tmp/rn/20261028-acceptance-u96xr86w) FAILED at message 17 by the weekly usage limit (resets 2026-10-29 22:00 UTC); goal sign-off reached in both, 1-3 changes sent at it, $2.3 each to there"
+  },
+  {
+   "fact": "2026-10-30: answered the user from records: the generator talking to main directly costs the same as before (readme trial 9.3-10.1 min, $2.6); turn read whole for simplicity: flow and state gone, orchestrator 4 moves, kept as Claude Code lets only an AI start agents ($0.1-0.2 a run); the first user found real faults in 14 of 18 turn runs of acceptance runs 3, 4, 6, most in code (stale build passing the stories, tests touching the real ~/Downloads, flaky property tests), kept in scratch needs.txt"
+  },
+  {
+   "fact": "2026-10-30: agreed with the user and kept in issue #54's 'Each work's CCS made apart from the conductor, from the record alone' and T40 (fae2d54, 4d9a06f): the conductor keeps plan and state; a compressor makes each work's CCS from the steering, the works made and each work's latest call; a task has no means, no inputs, no actions, one turn call; the steering JSON written by rn's scripts with its Markdown in the same write; its data model agreed and added to that section (goals many, acceptance_criteria, tasks with builds_on and completion_criteria contributing_to)"
+  },
+  {
+   "fact": "2026-10-30: acceptance run 7 (/tmp/rn/20261030-acceptance-ge8mt11f) FAILED at message 14: the trial missed two of the generator's three questions to main, queued beside a tool result; rn and turn were right; trying.py now counts queue-operation enqueues (e92ae1b, checked on runs 5 and 7's records); run 8 started in the background on e92ae1b"
   }
  ],
  "semantic_gist": [
@@ -881,7 +890,10 @@
  ],
  "focal_entities": [
   {
-   "task": "T34: rn's acceptance run again once the weekly limit resets (2026-10-29 22:00 UTC), then report to the user"
+   "task": "T34: rn's acceptance run 8 running in the background (python3 dev/rn/trials/acceptance/acceptance.py, started 2026-10-30); report its end to the user"
+  },
+  {
+   "task": "T40: settle with the user, one point at a time, what remains of the steering's model"
   }
  ],
  "relational_map": [
@@ -919,7 +931,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "On resume: tell the user where things stand, then answer their question (2026-10-29): did the generator and the first user talking directly raise quality and performance? Compare from records: turn's readme trial on the old flow (9.5 min $2.47, 9 items, 7 met by the stand-in; dev/turn/trials/readme/results.json) vs the new turn (2026-10-27 run 10.1 min $2.65 6 Good 3 left; 2026-10-28 run 9.3 min $2.59 8 Good 1 left), and rn acceptance runs 3-4 (dev/rn/trials/acceptance/results.json) vs runs 5-6 (neither reached a document sign-off: run 5 stopped by the trial's wait bug, fixed b?; run 6 by the weekly usage limit at message 17); say plainly what the records can and cannot show yet. Then run acceptance.py again (playground clean after each run) and report"
+   "next": "On resume: find run 8 with pgrep -af acceptance.py and its folder in /tmp/rn (newest 20261030-acceptance-*); when it ends read summary.json and the records and report. Then bring the user the next open point, one at a time: whether a task names its work's kind (which checklist judges it) and path, or the compressor decides them (path is a means; kind is how it is accepted). Held for later, each its own point: turn's generator writing item lines no one reads (plugins/turn/scripts/prompts.py:155 against CHANGELOG.md:31); turn's run-folder and file-hiding machinery (scripts/folder.py, prompts.py without_run_files); forms.py checking shapes JSON Schema already gives; the generator's mend repeating the same need (acceptance run 3 workflow B-5 twice, run 4 preview tool B-6 three times)."
   }
  ],
  "uncertainty_signal": [
