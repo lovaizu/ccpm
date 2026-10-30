@@ -836,6 +836,12 @@
   },
   {
    "fact": "2026-10-30: the user asked for plain wording in English and Japanese: lovaizu/dotfiles#45 (rules in home/dot_claude/CLAUDE.md) and lovaizu/ccpm#63 (Vale with the Google style and a ccpm vocabulary in dev/check.sh, so local, pre-push and CI) opened; the user set the work split: the main session discusses with the user, a subagent generates, the main session reviews and reports; other work goes to its own Claude Code session in its own worktree, instructed from here"
+  },
+  {
+   "fact": "2026-10-30: the trial's fix (the stand-in reads each reply of main and answers or waits) checked and committed (ada8658); acceptance run 10 started on ada8658 in the scratch worktree wt-run10, as the working tree holds the checklists' rewrite"
+  },
+  {
+   "fact": "2026-10-30: dotfiles#46 tried by claude -p on today's unclear replies, a commit title and a checklist opening in English and Japanese (46 runs; old CLAUDE.md, #46, #46 + layout-only form line, + a line on words the reader has not used): the lines shorten sentences and add subjects a little, one run defined 問い; the repository's own terms (CCS, each work, conductor) stay; a fresh short context writes far plainer than the long session did, under any CLAUDE.md. The user approved both added lines; the plain-sentences session adds them to #46"
   }
  ],
  "semantic_gist": [
@@ -904,20 +910,23 @@
   },
   {
    "gist": "before proposing a fix, read the user's earlier feedback on the same part and the whole of what it touches, held to fix.md; never cut what the user said is needed (the user, 2026-10-27: やばい、劣化する)"
+  },
+  {
+   "gist": "the user (2026-10-30): documents in plain English and Japanese come first; the conversation uses the documents' words and follows them"
   }
  ],
  "focal_entities": [
   {
-   "task": "Review the subagent's rewrite of rn's 12 checklists to meta.md (uncommitted changes in plugins/rn/checklists/ of this worktree; points 3 to 5 and issue #54 / T40 applied): read each whole against meta.md Q-1 to Q-4 and doc.md, fix by hand, report each checklist's purpose, format and questions to the user, then commit; then the ripple: turn's call.py:162 Scope, rn's ccs.py:39 Judged on and :304 usability.md (now doc.md, a checklist for document works), turn's generator.md:68 and first-user.md:38 Tried by, the files naming checklist.md, dev/rn/architecture.md:274"
+   "task": "Checklists' rewrite to meta.md (uncommitted in plugins/rn/checklists/, reviewed whole and fit to meta.md): bring rn's scripts and tests to it (test_steering reads plan.md's '### F-1: Shape'; plan.md now the T40 data model), and the ripple: turn's call.py Scope, rn's ccs.py Judged on and usability.md (now doc.md), turn's generator.md and first-user.md Tried by, files naming checklist.md, dev/rn/architecture.md; then report each checklist's purpose, format and questions with the subagent's six open points (code.md Format gone so Given/When/Then asked nowhere; plan.md's test-first item dropped; issue.md Seen in; prompt.md Q-9's lane example; plan.md form), one at a time; commit"
   },
   {
-   "task": "Review the subagent's fix of dev/lane/trials/trying.py and its callers (uncommitted): the trial returns each reply of main once its turn ends and lets the stand-in answer or wait, instead of counting agents waiting (run 9's deadlock); check its paper trace on runs 7 to 9, run check.sh, commit with dev/rn/trials/acceptance/results.json (run 9 kept), then start acceptance run 10 in the background"
+   "task": "Acceptance run 10 running in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/26ac2731-0fb3-44ee-9133-bc36aa0f1179/scratchpad/wt-run10 (log run10.log there); on its end copy its results.json entry into this worktree, commit, report; remove the worktree by that literal path"
   },
   {
-   "task": "Peer sessions to hear from: prose-lint (worktree /Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/prose-lint, branch prose-lint, issue ccpm#63) and plain-sentences (worktree /Users/kiyo/work/lovaizu/dotfiles/.claude/worktrees/plain-sentences, branch plain-sentences, issue dotfiles#45); each sends a report with its PR URL; review the PR and report to the user; merge is the user's"
+   "task": "Peer sessions: plain-sentences (dotfiles#46, adding the two approved lines; review, report; merge is the user's) and prose-lint (ccpm#63, no report yet)"
   },
   {
-   "task": "After those: T40 and prompt.md's rewrite (issue #54), the three architectures to the four views, with the user's other feedback"
+   "task": "After those: T40 and prompt.md's rewrite (issue #54), the three architectures to the four views, with the user's other feedback; rn's documents' own terms made plain, as the trial showed they carry into every reply"
   }
  ],
  "relational_map": [
@@ -955,7 +964,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "On resume: check which of the four in focal_entities have ended: `git status` in this worktree for the two subagents' changes (if a subagent stopped with the /clear, give the same work to a new subagent from focal_entities), ListAgents for the peer sessions prose-lint and plain-sentences and their PRs (gh pr list -R lovaizu/ccpm, -R lovaizu/dotfiles). Review each, report to the user in plain Japanese, one decision at a time."
+   "next": "On resume: pgrep for acceptance.py; ListAgents for plain-sentences and prose-lint; git status for the checklists. Trial files of the wording test in scratchpad/plain are removed once #46 is merged."
   }
  ],
  "uncertainty_signal": [
