@@ -14,12 +14,12 @@ give, and how each part and the user stories are checked, and build, change or a
 by it.
 
 An architecture holds the principles the product rests on, the parts it is made of, how they act on
-one another and where each is placed; and how heavily each is checked, from what a failure of it
-would cost the user. These are what an approval rests on, as changing one changes what was approved.
-How each part behaves in each case is held where the part is built and checked: in the tests of a
-part made of code, each a Given, a When and a Then, and in the steps of a part run by an AI; in the
-architecture it would be decided twice and drift, and every finding made while building would change
-what was approved.
+one another, where the code of each is kept and where each runs; and how heavily each is checked,
+from what a failure of it would cost the user. These are what an approval rests on, as changing one
+changes what was approved. How each part behaves in each case is held where the part is built and
+checked: in the tests of a part made of code, each a Given, a When and a Then, and in the steps of a
+part run by an AI; in the architecture it would be decided twice and drift, and every finding made
+while building would change what was approved.
 
 The parts are drawn from the UX in layers, each fewer than the one before: the UX's scenes rest on a
 few user stories, each one way the user uses the product at its edge, such as a command they run;
@@ -56,20 +56,33 @@ line>
 
 ### Logical view
 
-<One figure, an SVG file beside the document shown as an image: a box for each logical component,
-holding its name alone, its shape saying whether an AI or code does its work, with a legend, and a
-frame round the boxes that run in one place or make one product; an arrow from each to the
-component it acts on, labelled in a few words with what it does; the boxes placed so the arrows run
-in the order they act and cross none, readable in light and dark>
+<One SVG figure: a box for each logical component, holding its name alone, its shape saying
+whether an AI or code does its work, with a legend, and a frame round the boxes that run in one
+place or make one product; an arrow from each to the component it acts on, labelled in a few words
+with what it does; the boxes placed so the arrows run in the order they act and cross none>
 
-- <What the figure cannot show, such as the order the arrows run in or a choice the reader would
-  question, with why>
+- <A choice the figure shows that the reader would question, with why>
+
+### Process view
+
+<For each user story, a Mermaid sequence diagram: a participant for each logical component the story
+reaches, named as in the logical view, and a message for each step, labelled in a few words with
+what is handed on>
+
+- <A choice the diagrams show that the reader would question, with why>
+
+### Development view
+
+<One SVG figure: a box for each place code is kept, such as a folder, named by its path, holding the
+logical components kept there by their names, each with what it is made of, such as `Python 3`>
 
 ### Physical view
 
-<A tree of where each component is placed, each with what it is made of>
+<One SVG figure: a box for each machine or runtime the product runs in, such as the user's computer
+or Claude Code, holding the logical components that run there by their names; a box for each thing
+outside the product they depend on, with an arrow labelled with what is used>
 
-- <What the product depends on outside itself, and how it is started>
+- <How the product is started>
 
 ## Test
 
@@ -80,15 +93,20 @@ it has them>
   or that it is checked by them alone, with what a failure of it would cost the user>
 ```
 
-Each line of a list is one sentence understood alone, its why, where it has one, after a blank line
+Each SVG figure is a file beside the document shown as an image, readable in light and dark. Each
+line of a list is one sentence understood alone, its why, where it has one, after a blank line
 indented under it; nothing is set in bold.
 
 Why: the builder and the approver read the principles, then what the product gives, then the parts
-that give it and where they are, then how each is checked, each the ground of the next; they
-skim the lines and read a why only where they question one. The logical view is the one figure
-whose placing and frames carry what the reader takes in at a glance, so it is drawn by hand, where
-a tool's layout sets them by its own rules; a box's shape shows at a glance which parts an AI does,
-whose work varies from run to run, and which code does the same each time.
+that give it, how they act in turn, where their code is kept and where they run, then how each is
+checked, each the ground of the next; they skim the lines and read a why only where they question
+one. Each view answers a concern of its own (Kruchten, "The 4+1 View Model of Architecture", 1995):
+the logical view what the product gives its users, the process view how it behaves as it runs, the
+development view how its code is kept, for whoever builds it, and the physical view where it runs,
+for whoever runs it. A structure's placing and frames carry what the reader takes in at a glance, so
+it is drawn by hand, where a tool's layout sets them by its own rules; a sequence has one layout,
+its order down the page, so Mermaid draws it from text. A box's shape shows at a glance which parts
+an AI does, whose work varies from run to run, and which code does the same each time.
 
 ## Benefit
 
@@ -129,17 +147,18 @@ shaped to a technology must be made again when the technology changes.
 
 Scope: its part
 
-Can the reader see, from the figure and the lines beside it, how the logical components achieve
-every user story, in the order they act?
+Can the reader see, from the logical and the process view, how the logical components achieve every
+user story, in the order they act?
 
-Tried by: every user story followed through the figure's arrows and the lines beside it, from the
-first component it reaches to its end.
+Tried by: every user story followed through its sequence diagram, from the first component it
+reaches to its end, each message found as an arrow of the logical view.
 
 Signs:
-- each component a story needs has its box in the figure;
-- each story is achieved by a run of arrows, each step of it told by an arrow's label or a line,
-  such as what a component does with what it is handed;
-- the lines give the order the arrows run in, and the why of each choice the reader would question;
+- each component a story needs has its box in the logical view and is a participant of the story's
+  sequence diagram;
+- each story is achieved by a run of messages, each told by its label, such as what a component
+  hands on, along an arrow of the logical view;
+- each choice the reader would question has its why in a line;
 - each box holds the component's name, not a description or a technology;
 - each case is taken by a component that already takes others or stopped by a check already there,
   so each path and component serves more than one case.
@@ -149,31 +168,46 @@ found missing only when a story it serves is built changes the architecture then
 shaped to its technology must be remade with it; and every path of its own is one more thing for
 users to learn and builders to keep right.
 
-### B-4: Each component realized
+### B-4: Where the code of each component is kept
 
 Scope: its part
 
-Can the reader tell, from the tree and the lines beside it, where each component is placed and what
-it is made of, what the product depends on outside itself and how it is started?
+Can the builder tell, from the development view, where the code of each component is kept and what
+it is made of?
 
-Tried by: every box of the figure looked up in the tree.
+Tried by: every box of the logical view looked up in the development view.
 
-Signs: each component of the figure is found at its place in the tree; each place has its kind
-beside it, such as `<Python 3>`; the files are shown as a tree, not drawn as boxes.
+Signs: each component is found in one place, named by its path; each component has what it is made
+of beside it, such as `Python 3`.
 
-Why: the builder makes each component as it is realized; where it is placed decides who owns it,
-where it runs and when a change to it reaches the user; and what the product depends on is where it
-breaks for the user first.
+Why: the builder makes and changes each component where its code is kept, and that place decides
+who owns it; a component kept in no place is put where the builder guesses, and one kept in two is
+made twice and drifts.
 
-### B-5: Each part checked as heavily as a failure of it would cost
+### B-5: Where each component runs
 
 Scope: its part
 
-Can the reader tell, for each part in the tree and for the user stories, how heavily it is checked
-and why, from what a failure of it would cost the user?
+Can the reader tell, from the physical view and the line beside it, where each component runs, what
+the product depends on outside itself and how it is started?
 
-Tried by: the link followed, and each part in the tree and the user stories found in the rule it
-reaches or in a line of the Test section.
+Tried by: every box of the logical view looked up in the physical view.
+
+Signs: each component is found in one machine or runtime; each thing outside the product a
+component uses is a box with an arrow to it; the line says how the product is started.
+
+Why: where a component runs decides what it can reach and when a change to it reaches the user;
+and what the product depends on is where it breaks for the user first.
+
+### B-6: Each part checked as heavily as a failure of it would cost
+
+Scope: its part
+
+Can the reader tell, for each part in the development view and for the user stories, how heavily it
+is checked and why, from what a failure of it would cost the user?
+
+Tried by: the link followed, and each part in the development view and the user stories found in the
+rule it reaches or in a line of the Test section.
 
 Signs:
 - each kind of part, such as code or a prompt, and the user stories are checked by a rule of the
@@ -191,7 +225,7 @@ a checklist asking it is one the approver cannot weigh against their purpose. Wh
 rule settles is decided once for the project, so it is linked, not written again; and a case's
 detail changes with every test while the approval rests on the architecture.
 
-### B-6: The decisions followed together with the principles
+### B-7: The decisions followed together with the principles
 
 Scope: whole
 
@@ -209,7 +243,7 @@ Why: a decision read alone looks right by its own why; one that breaks a princip
 principle was there to bring about, and shows only when the product fails at it; of two lines that
 cannot both hold, the builder follows one and breaks the other.
 
-### B-7: Each line a decision the approval rests on
+### B-8: Each line a decision the approval rests on
 
 Scope: whole
 
@@ -219,7 +253,7 @@ alone?
 Signs:
 - how a part behaves in a case, a count, a bound, a value, or a list of what a part does step by
   step, is left to the part's tests, as a Given, a When and a Then, or to its steps;
-- what the figure, the tree, another line, the UX or the architecture it is built on says is said
+- what a view, another line, the UX or the architecture it is built on says is said
   there alone, and reached here by a link;
 - each line says what holds now, not how a decision was reached or where the work stands;
 - each term is given at the line that first uses it, and a comparison or an example is given only
@@ -231,7 +265,7 @@ while building changes what was approved and sends it back to be approved again;
 say one thing come to disagree as one changes, and a history or a status read as a decision turns
 wrong while it is still believed.
 
-### B-8: Each line understood where it is read
+### B-9: Each line understood where it is read
 
 Scope: whole
 
