@@ -264,21 +264,3 @@ behavior written here is decided twice and drifts from where it is built, and ev
 while building changes what was approved and sends it back to be approved again; two places that
 say one thing come to disagree as one changes, and a history or a status read as a decision turns
 wrong while it is still believed.
-
-### B-9: Each line understood where it is read
-
-Scope: whole
-
-Can the reader understand each line where they meet it, reading once from the top?
-
-Signs:
-- each term of the UX is reached through the opening's link to where it is defined, and each plain
-  word used in a sense of its own is explained by a line;
-- each name of another product, such as a plugin the product uses, has a link or a line saying what
-  it is;
-- each component or thing has one name, and each name is of one thing;
-- each line rests on reasons and parts that come before it.
-
-Why: a term never explained is read with a guess at its meaning, a second name is taken for a
-second thing, and a reader sent ahead or back loses the picture one reading from the top would
-give; where the guess is wrong, what they approve or build differs from what was meant.

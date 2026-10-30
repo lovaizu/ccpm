@@ -172,46 +172,7 @@ Why: a README that holds only what a newcomer needs stays short only when the re
 reader can reach; one who cannot find the architecture changes the product without the decisions
 behind it, and one who cannot tell the terms of use cannot decide to use it.
 
-### B-6: Each part taken in on one reading
 
-Scope: each part
-
-Can the reader take in each part reading it once from the top, without going back or ahead and
-without guessing?
-
-Signs:
-- each term the reader may not know, such as a plain word used in a sense of its own or a name taken
-  from another product, is shown by a sentence, an example or a figure where it is first used;
-- each sentence rests on words, reasons and steps that come before it, and on no link the reader
-  must follow first;
-- each idea is given whole, such as a case named with what happens in it;
-- each thing is in the form that fits it, such as a command in a block to copy, and values side by
-  side in a table.
-
-Why: a reader stopped goes back or ahead, or reads on with a guess, and acts on a picture of the
-product that differs from the product where the guess is wrong.
-
-### B-7: Each sentence needed, once
-
-Scope: whole
-
-Does each sentence give the reader something toward deciding or their first result that no other
-sentence of the README gives them?
-
-Signs:
-- each thing is said in one part, such as the gain in the opening alone and not again in Why, the
-  example's steps in Example alone and not again in Installation, and a figure only for what the
-  example does not tell;
-- each part is meant for the reader, not for someone else such as a reviewer, and tells of the
-  product, not of what the README is or does;
-- each sentence says what holds, not the history of how a decision was reached;
-- fuller use is left to the page Documentation reaches;
-- a comparison or an example is given only for an idea the reader does not already hold, and each
-  word gives something.
-
-Why: a reader who has skimmed a run of repeats skims the one new point among them too, and two
-places that say one thing come to disagree as one of them changes; each part beyond the subject
-buries those the reader needs.
 
 ### B-8: The statements relied on together
 

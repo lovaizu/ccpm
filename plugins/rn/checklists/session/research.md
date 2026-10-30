@@ -69,29 +69,3 @@ with what would settle it.
 
 Why: an unknown read as known is built on without anyone checking it, and shows only once the work
 that rests on it fails.
-
-### B-4: Each line used by its readers
-
-Scope: whole
-
-Does each line give the user deciding the point, or the maker of a later work, something they use
-toward it?
-
-Signs: each line is a finding the question needs or the answer, rather than how the research
-went, such as what was searched for or sources read that gave nothing; each fact is said in one
-place; options set side by side are in a table, which shows them at once.
-
-Why: the reader reads the result to decide or to build, so each line beyond that costs them a
-reading and buries the facts they came for.
-
-### B-5: Each term known
-
-Scope: whole
-
-Can the reader tell what each term means where they meet it, because they know it or a line shows
-its meaning?
-
-Signs: the reader reads the meaning of each term from a source they may not know in a line that
-shows it.
-
-Why: a term read with a guess is acted on the wrong way.

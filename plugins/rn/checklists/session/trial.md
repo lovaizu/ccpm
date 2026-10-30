@@ -65,29 +65,3 @@ such as a setting changed by hand; the result is said of the cases the try ran.
 
 Why: a way tried on less than it is built for fails where it was not tried, and a failure or a
 work-around left out is met again by the maker who builds on the way.
-
-### B-4: Each line used by its readers
-
-Scope: whole
-
-Does each line give the user deciding the point, or the maker of a later work, something they use
-toward it?
-
-Signs: how the trial was reached, such as tries that were dropped for another, is told only where
-what they showed bears on the verdict; output is given whole only where the verdict rests on it;
-each thing is said in one place.
-
-Why: the reader reads the result to decide or to build, so each line beyond that costs them a
-reading and buries what came out.
-
-### B-5: Each term known
-
-Scope: whole
-
-Can the reader tell what each term means where they meet it, because they know it or a line shows
-its meaning?
-
-Signs: the reader reads the meaning of each term of the tool tried that they may not know in a
-line that shows it.
-
-Why: a term read with a guess is acted on the wrong way.

@@ -827,6 +827,12 @@
   },
   {
    "fact": "2026-10-30: agreed with the user and kept in issue #54 'A prompt written as a responsibility and the results that meet it': prompt.md's template and items to be changed (Role a responsibility in one sentence with its conditions and what lies outside; a split role names its part and constraint; steps headed by results, why and how seen in a sentence, a script's command alone, rules in the step with why, cross-step rules held by a lane; an item tracing Role conditions to steps); architecture.md B-3's sign to split components by responsibility, only for a constraint. Done together with the user's other feedback, as the user said"
+  },
+  {
+   "fact": "2026-10-30: acceptance run 9 (/tmp/rn/20261030-acceptance-7dmnr09f) FAILED, stopped by me at message 22 after 65 minutes deadlocked: turn's generator sent three questions at once, main answered two and asked the user the third, and trying.py's count took the third as answered since main's SendMessage for the second came after it; goal sign-off approved after one change, UX accepted, $4.6, rn 19 min; rn and turn were right"
+  },
+  {
+   "fact": "2026-10-30: agreed with the user: checklist.md becomes meta.md, the meta-checklist: whoever makes a checklist decides the deliverable's format and conditions with which its user achieves their purpose and the essential questions that judge them; whoever judges a deliverable uses it as its user would and answers the questions; a checklist holds its purpose, idea, Format and Questions (Q-n, question, Why) only; version, made_from, name, Scope, Signs, Tried by, Judged on go, what a use needs told by the caller; usability.md becomes doc.md, used for every document beside its kind's checklist, the kinds' repeats of it removed"
   }
  ],
  "semantic_gist": [
@@ -899,13 +905,13 @@
  ],
  "focal_entities": [
   {
-   "task": "T34: rn's acceptance run 9 running in the background (python3 dev/rn/trials/acceptance/acceptance.py, started 2026-10-30 on 58eac7a); report its end to the user"
+   "task": "The checklists brought to meta.md: the points left, each asked one at a time: (3) a question asking several things under its Signs (prompt B-3, code B-5, plan B-3, B-4, B-7, learnings B-1, B-4, fix B-3); (4) means against agreements (architecture B-3 'each case taken by a component already there' against issue #54's split by responsibility; plan.md's actions and Test line against T40); (5) 'the same answer whoever checks' (plan B-2, trial B-1); then all 13 rewritten in meta.md's form, and the ripple: turn's call.py:162 Scope, rn's ccs.py:39 Judged on and :304 usability.md (now doc.md, a checklist for document works), turn's generator.md:68 and first-user.md:38 Tried by, the ten files naming checklist.md, dev/rn/architecture.md:274"
   },
   {
-   "task": "T40: settle with the user, one point at a time, what remains of the steering's model"
+   "task": "trying.py: the stand-in reads each reply of main as a real user does, answering when asked, instead of counting agents waiting (run 9's deadlock), then acceptance run 10"
   },
   {
-   "task": "Feedback to make together, as the user asked: prompt.md and architecture.md B-3 as issue #54's newest section says; lane's, turn's and rn's architectures brought to the four views (18f1b9a); the user has more feedback to come"
+   "task": "T40 and prompt.md's rewrite (issue #54), the three architectures to the four views, with the user's other feedback"
   }
  ],
  "relational_map": [
@@ -943,7 +949,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "On resume: find run 9 with pgrep -af acceptance.py and its folder in /tmp/rn (newest 20261030-acceptance-*); when it ends read summary.json and the records and report. Then ask the user, one point at a time from the first, the checklist points: (1) why checklist.md let two faults through: prompt.md's 'the role holds one job' with no bar (checklist.md B-5) and architecture.md's physical view fixed as a file tree (checklist.md B-3): not read against it, or written so it passes; (2) whether code.md, readme.md, ux.md and session/ also fix means or hold words with no bar, read whole against checklist.md; (3) the order lane's, turn's and rn's prompts are rewritten once prompt.md is changed; (4) the older opens whose cause may lie in a checklist: turn's 5 items its caller judged unmet, the README overclaim. After those, each its own point: whether issue #54 says the compressor asks main what the record leaves open; who takes turn's generator's questions the record settles (main or the compressor); then the held turn points: item lines no one reads (plugins/turn/scripts/prompts.py:155), the run-folder and file-hiding machinery (scripts/folder.py, prompts.py without_run_files), forms.py checking what JSON Schema gives, the generator's mend repeating the same need (acceptance runs 3 and 4)."
+   "next": "On resume: ask the user point (3) of the checklists first, one point at a time, then (4) and (5); meanwhile fix trying.py as the focal entity says. The held turn points stay held: item lines no one reads (plugins/turn/scripts/prompts.py:155), the run-folder and file-hiding machinery, forms.py checking what JSON Schema gives, the generator's mend repeating the same need."
   }
  ],
  "uncertainty_signal": [

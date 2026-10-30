@@ -120,14 +120,3 @@ point, or the recommended option not first.
 
 Why: a shortfall not learnt is met again in later work, and the user, who saw only what came to
 them, cannot add what the history and the conversations alone show.
-
-### B-5: Each word known to the user
-
-Scope: whole
-
-Can the user tell what each word of a learning means, without knowing rn's insides?
-
-Signs: the user reads the meaning of each term of rn's insides, such as a script's subcommand, in
-a line that shows it.
-
-Why: the user decides from the learning alone, and a word they cannot read is decided with a guess.

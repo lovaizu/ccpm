@@ -172,23 +172,3 @@ Signs:
 Why: what the product does inside is the architecture's, and said here it is decided twice and
 drifts; what changes with each piece of work turns the UX wrong while it is still believed; and
 every line beyond the experience is read in place of it.
-
-### B-6: Each line taken as meant
-
-Scope: whole
-
-Does the reader take each line as the UX means it, reading it once from the top?
-
-Signs:
-- each term the reader does not already know, such as a word for someone who acts, a thing they
-  pass or a name taken from another product, is shown where it is first used;
-- each thing has one name, and each name is of one thing;
-- each line rests on words, reasons and steps that come before it in the UX;
-- each idea is given whole, leaving nothing to a guess;
-- each thing is said in one place, in a figure or in its text, and each rule stands beside the case
-  where it does not hold;
-- the lines hold together, each with every other.
-
-Why: a line read another way than meant is agreed or built the other way; the reader completes a
-guess where a term or an idea is missing, takes a second name for a second thing, and cannot tell
-which of two accounts holds once one of them changes.
