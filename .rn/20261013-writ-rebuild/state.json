@@ -833,6 +833,9 @@
   },
   {
    "fact": "2026-10-30: agreed with the user: checklist.md becomes meta.md, the meta-checklist: whoever makes a checklist decides the deliverable's format and conditions with which its user achieves their purpose and the essential questions that judge them; whoever judges a deliverable uses it as its user would and answers the questions; a checklist holds its purpose, idea, Format and Questions (Q-n, question, Why) only; version, made_from, name, Scope, Signs, Tried by, Judged on go, what a use needs told by the caller; usability.md becomes doc.md, used for every document beside its kind's checklist, the kinds' repeats of it removed"
+  },
+  {
+   "fact": "2026-10-30: the user asked for plain wording in English and Japanese: lovaizu/dotfiles#45 (rules in home/dot_claude/CLAUDE.md) and lovaizu/ccpm#63 (Vale with the Google style and a ccpm vocabulary in dev/check.sh, so local, pre-push and CI) opened; the user set the work split: the main session discusses with the user, a subagent generates, the main session reviews and reports; other work goes to its own Claude Code session in its own worktree, instructed from here"
   }
  ],
  "semantic_gist": [
@@ -905,13 +908,16 @@
  ],
  "focal_entities": [
   {
-   "task": "The checklists brought to meta.md: the points left, each asked one at a time: (3) a question asking several things under its Signs (prompt B-3, code B-5, plan B-3, B-4, B-7, learnings B-1, B-4, fix B-3); (4) means against agreements (architecture B-3 'each case taken by a component already there' against issue #54's split by responsibility; plan.md's actions and Test line against T40); (5) 'the same answer whoever checks' (plan B-2, trial B-1); then all 13 rewritten in meta.md's form, and the ripple: turn's call.py:162 Scope, rn's ccs.py:39 Judged on and :304 usability.md (now doc.md, a checklist for document works), turn's generator.md:68 and first-user.md:38 Tried by, the ten files naming checklist.md, dev/rn/architecture.md:274"
+   "task": "Review the subagent's rewrite of rn's 12 checklists to meta.md (uncommitted changes in plugins/rn/checklists/ of this worktree; points 3 to 5 and issue #54 / T40 applied): read each whole against meta.md Q-1 to Q-4 and doc.md, fix by hand, report each checklist's purpose, format and questions to the user, then commit; then the ripple: turn's call.py:162 Scope, rn's ccs.py:39 Judged on and :304 usability.md (now doc.md, a checklist for document works), turn's generator.md:68 and first-user.md:38 Tried by, the files naming checklist.md, dev/rn/architecture.md:274"
   },
   {
-   "task": "trying.py: the stand-in reads each reply of main as a real user does, answering when asked, instead of counting agents waiting (run 9's deadlock), then acceptance run 10"
+   "task": "Review the subagent's fix of dev/lane/trials/trying.py and its callers (uncommitted): the trial returns each reply of main once its turn ends and lets the stand-in answer or wait, instead of counting agents waiting (run 9's deadlock); check its paper trace on runs 7 to 9, run check.sh, commit with dev/rn/trials/acceptance/results.json (run 9 kept), then start acceptance run 10 in the background"
   },
   {
-   "task": "T40 and prompt.md's rewrite (issue #54), the three architectures to the four views, with the user's other feedback"
+   "task": "Peer sessions to hear from: prose-lint (worktree /Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/prose-lint, branch prose-lint, issue ccpm#63) and plain-sentences (worktree /Users/kiyo/work/lovaizu/dotfiles/.claude/worktrees/plain-sentences, branch plain-sentences, issue dotfiles#45); each sends a report with its PR URL; review the PR and report to the user; merge is the user's"
+  },
+  {
+   "task": "After those: T40 and prompt.md's rewrite (issue #54), the three architectures to the four views, with the user's other feedback"
   }
  ],
  "relational_map": [
@@ -949,7 +955,7 @@
  ],
  "predictive_cue": [
   {
-   "next": "On resume: ask the user point (3) of the checklists first, one point at a time, then (4) and (5); meanwhile fix trying.py as the focal entity says. The held turn points stay held: item lines no one reads (plugins/turn/scripts/prompts.py:155), the run-folder and file-hiding machinery, forms.py checking what JSON Schema gives, the generator's mend repeating the same need."
+   "next": "On resume: check which of the four in focal_entities have ended: `git status` in this worktree for the two subagents' changes (if a subagent stopped with the /clear, give the same work to a new subagent from focal_entities), ListAgents for the peer sessions prose-lint and plain-sentences and their PRs (gh pr list -R lovaizu/ccpm, -R lovaizu/dotfiles). Review each, report to the user in plain Japanese, one decision at a time."
   }
  ],
  "uncertainty_signal": [
