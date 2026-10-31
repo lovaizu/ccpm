@@ -24,9 +24,11 @@
  "checklist": [
   {
    "id": "Q1",
-   "what": "Can developers tell from each objective why its users use the product?",
+   "what": "When a colleague asks \"Who uses this product, and for what?\", can the developer answer from the objectives?",
    "why": "Everything developers design and build serves these objectives. If each objective says what the user wants to achieve, developers know who the product is for and when it has done its job. An objective written as a product feature can be met while the user is no better off.",
-   "about": ["okrs"],
+   "about": [
+    "okrs"
+   ],
    "grounds": [
     "plugins/rn/checklists/product/ux.md:74-75: \"A goal said as what the product does, rather than what the user achieves, is met while the user is no better off.\"",
     "ISO 9241-11:2018: usability is defined by specified users achieving specified goals in a specified context of use.",
@@ -39,9 +41,11 @@
   },
   {
    "id": "Q2",
-   "what": "Can developers tell that the objective is closer when all its key results get better?",
+   "what": "When a colleague asks \"Did this change make things better for users?\", can the developer answer by the key results?",
    "why": "Developers improve the product by moving its key results. If all of them getting better means users are closer to the objective, that work helps users. A key result chosen because it is easy to count, such as tasks done or items produced, can improve while users get nothing more.",
-   "about": ["okrs"],
+   "about": [
+    "okrs"
+   ],
    "grounds": [
     "plugins/rn/checklists/product/ux.md:81-82: \"a measure taken because it is easy to count, such as work done or things made, moves while the user comes no closer.\"",
     "plugins/rn/checklists/product/ux.md:16-17: \"with no target value: a number the user's need does not set draws the work toward the number rather than toward the user.\"",
@@ -56,9 +60,12 @@
   },
   {
    "id": "Q3",
-   "what": "Can developers tell from each scenario how users reach the objective?",
+   "what": "When a colleague asks \"What does a user do first, and how do they reach the objective?\", can the developer answer by pointing to a scenario?",
    "why": "Developers build what the scenarios show. If a scenario shows each step from the user's first request to reaching the objective, and whether each participant is a person, an AI or a script, developers know which steps wait for a person and which run on their own. A step the scenario skips is built by guesswork or not at all.",
-   "about": ["participants", "scenarios"],
+   "about": [
+    "participants",
+    "scenarios"
+   ],
    "grounds": [
     "plugins/rn/checklists/product/ux.md:98-99: \"A step no scene shows is built by guess, or not at all.\"",
     "plugins/rn/checklists/product/ux.md:40: \"Who takes part, each with its kind, such as a person or a plugin\".",
@@ -71,9 +78,13 @@
   },
   {
    "id": "Q4",
-   "what": "Can developers choose how to build the product without being bound by this document?",
+   "what": "When the developer changes how the product is built, can they leave this document as it is?",
    "why": "How the product is built belongs in the architecture document. If this document describes only what users do, see and receive, developers can choose the best design and still deliver the UX. Internal design written here is decided twice, drifts from the architecture document, and crowds out the user experience.",
-   "about": ["okrs", "participants", "scenarios"],
+   "about": [
+    "okrs",
+    "participants",
+    "scenarios"
+   ],
    "grounds": [
     "plugins/rn/checklists/product/ux.md:114-115: \"what the product does inside, said here, is decided twice and drifts from the architecture\".",
     "ISO 9241-210:2019: user requirements are specified from the context of use before design solutions are produced.",
@@ -85,5 +96,7 @@
    }
   }
  ],
- "includes": ["refactor-doc"]
+ "includes": [
+  "refactor-doc"
+ ]
 }
