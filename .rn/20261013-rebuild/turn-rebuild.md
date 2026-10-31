@@ -138,7 +138,10 @@ rules: a name says its intent, a one-to-many join is nested, a many-to-many join
   question it is close to, with `good_when`, what the user gets once it is good, never how to make
   it. A script verifies every question stands in one of the two, and each line is there.
 
-Questions shared by several kinds, such as those of every document, are still to settle.
+Questions shared by several kinds, such as those of every document, are written once in a template
+of their own, and a kind's template names it in `includes`, as `readme.json` names `doc`; the work
+is then made and verified against both, each question named with its template, as `doc/Q3`. A
+question copied into each kind would be mended in one and left old in the rest.
 
 ## Sources
 
