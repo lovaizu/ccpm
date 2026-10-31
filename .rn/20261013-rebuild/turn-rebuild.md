@@ -94,14 +94,29 @@ The purpose of this one work is not planner's: designer asks it.
 4. Where a point the design leaves open bears on the work's quality, decide it from the purpose and
    the best practice where they settle it; otherwise ask the user, one at a time, with a
    recommendation. Add each decision to the design.
-5. Use the work as its user would, and write for each question of the Checklist good or more in
-   `self-check.json`; mend each more and write it again, until every question is good. No one reads
-   it: writing an answer for each question makes the builder look at every one.
+5. Use and answer, as below, into `self-check.json`; mend each more and answer again, until every
+   question is good. No one reads it: writing an answer for each question makes the builder look at
+   every one.
 6. Pass the work to evaluator.
+7. Take each more evaluator gives as what the user needs, and mend the work for the user, not to
+   pass evaluator. Where a mend changes a decision, decide it again as 4 says, asking the user what
+   only they decide, and write it into the design. Then pass the work to evaluator again.
 
 ### evaluator
 
-Its steps are still to agree.
+1. Take the work and the Checklist alone. The design is not given: the user never sees it, and an
+   evaluator who has it judges whether the work follows the design, not what its user gets.
+2. Use and answer, as below, into `verification.json`.
+3. Where every question is good, the work goes to the user. Otherwise give the answers to builder,
+   and verify the mended work again.
+
+### Use and answer
+
+Both builder and evaluator do this, in the same way.
+
+1. Read the work whole, and run what runs as its user would.
+2. Using it as its user would, write for each question of the Checklist good, with the lines that
+   meet its aim, or more, with what the user gets once it is good, never how to make it.
 
 ## Files
 
