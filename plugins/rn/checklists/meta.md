@@ -73,14 +73,16 @@ judges it gives the same answer?
 
 Why: a judge given a scene takes the user's place in it and tries whether the deliverable answers
 there. A question with no scene leaves each judge to choose the measure, so one deliverable passes
-for one judge and fails for another. A question about the text, such as whether a part is there or
-a word is used, is met by the words while the user gets nothing; a checkpoint names a criterion,
-not a mere indicator of it (Scriven, "The Logic and Methodology of Checklists", 2007). A question
-that opens by narrowing where it holds, such as "where the document tells of several that act in
-turn", passes whatever a judge calls outside it.
+for one judge and fails for another. The scene names what the user does with the deliverable and
+what that holds, so whether they succeed shows to anyone. A question about a state of mind, such as
+whether the user grasps or pictures something, leaves each judge their own measure. A question about
+the text, such as whether a part is there or a word is used, is met by the words while the user gets
+nothing; a checkpoint names a criterion, not a mere indicator of it (Scriven, "The Logic and
+Methodology of Checklists", 2007). A question that opens by narrowing where it holds, such as "where
+the document tells of several that act in turn", passes whatever a judge calls outside it.
 
-Fails: "Is each thing shown in the form its reader takes in most easily for that thing?", whose
-"most easily" each judge measures their own way.
+Fails: "Before reading any text, can the reader grasp the point of each section from a glance at its
+figure?", whose "grasp" no one sees, so each judge measures it their own way.
 
 Passes: "When a colleague asks 'What is it?', can the reader answer in one sentence?"
 

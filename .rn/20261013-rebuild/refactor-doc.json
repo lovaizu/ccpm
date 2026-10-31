@@ -61,8 +61,8 @@
   },
   {
    "id": "Q4",
-   "what": "Before reading any text, can the reader grasp the point of each section from a glance at its figure?",
-   "why": "If yes, the reader takes in the whole from the figure first, then reads the text for the details the figure cannot show. A figure suits who does what in what order, how things relate, and the shape of the whole; the reader can also show it to whoever asks. Not every section needs one: a section whose point is one sentence, such as a single rule, has that sentence in place of a figure. If no, the reader pieces the point together in their head from sentences spread through paragraphs; that costs effort and goes wrong, and they miss a step or give it to the wrong one.",
+   "what": "Shown only a section's figure, before reading its text, can the reader explain to a colleague what the section tells?",
+   "why": "If yes, the reader takes in the whole from the figure first, then reads the text for the details the figure cannot show. A figure suits who does what in what order, how things relate, and the shape of the whole; the reader can also show it to whoever asks. A box names one thing and a line tells what one does to another, so the reader sees the point without reading; a sentence in a box must be read. Not every section needs one: a section whose point is one sentence, such as a single rule, has that sentence in place of a figure. If no, the reader pieces the point together in their head from sentences spread through paragraphs; that costs effort and goes wrong, and they miss a step or give it to the wrong one.",
    "about": [],
    "grounds": [
     "plugins/rn/checklists/doc.md:44-45: \"can the reader see who does what, what passes between them and in what order at a glance?\"",
@@ -72,7 +72,7 @@
     "Google developer documentation style guide, \"Highlights\": \"Use numbered lists for sequences.\""
    ],
    "examples": {
-    "fails": "A section that tells the booking flow in a paragraph: when a worker books a room, RoomBook checks the office calendar, and if the room is free the booking goes through, though for a restricted room the calendar first asks its owner, and the worker then gets an email.",
+    "fails": "A section that tells the booking flow as a figure of five boxes, each holding two to six sentences, with arrows that only join them. (A figure is there, but the reader must read every box to get the point.)",
     "passes": "The same section opens with a figure of the flow: the worker picks a room and a time, RoomBook asks the calendar, the room's owner approves a restricted room, RoomBook books it and emails the worker. Under it one sentence gives what the figure cannot: a restricted room waits up to a day for its owner."
    }
   },
@@ -110,7 +110,7 @@
   },
   {
    "id": "Q7",
-   "what": "Whichever sentence the reader reads, does it give them something that helps them achieve their purpose?",
+   "what": "Whichever sentence the reader reads, would they lose something they need for their purpose if it were removed?",
    "why": "If yes, the reader's time goes to the subject, and the sentences they need stand out. Each fact is said once and pointed to from elsewhere, and what the work itself shows, such as what a figure draws or what code does, is not told again. A sentence that only restates the one before, a stock phrase, or a repeat of what a figure shows gives the reader nothing. If no, a sentence the reader skips or reads twice spends their time on how the document is written and buries what they need, and a fact said in two places comes to say two things once one of them changes.",
    "about": [],
    "grounds": [

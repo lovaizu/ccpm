@@ -1,29 +1,29 @@
 # turn
 
 turn is a Claude Code plugin that makes a piece of work you ask for, such as a document or code,
-until it meets your purpose.
+until it is what it should be.
 
-With turn, anyone who wants a piece of work made gets one that fully meets their purpose. They
-spend their own effort only on the points that only they can decide. turn decides every other
-point itself.
+With turn, anyone who wants a piece of work made gets it as it should be. They spend their own
+effort only on the points that only they can decide. turn decides every other point itself.
 
-For each kind of work, such as a press release, a README or a script, turn first works out what a
-good one is. turn reads how good ones are made, and shows you two things to approve. The format is
-the shape of the work, such as a headline, a lead and a body. The checklist is a set of questions
-that a work answers yes to when it serves its readers, such as "Can a reporter tell from the
-headline what is new?" turn then asks you what the work is for, and each point only you can
-decide, one at a time, with the answer it recommends. A second AI then uses the finished work as
-its reader would. This AI never sees how the work was planned, so it judges only what the reader
-gets. Where an answer is not yet yes, turn mends the work and has it read again. You see the work
-only once every answer is yes. When you ask Claude Code alone, the AI that wrote the work is the
-only one that checks it, and you find what it missed yourself.
+For each kind of work, such as a press release, a README or a script, turn first reads how good
+ones are made, and draws from them two things for you to approve. The format is the shape of the
+work, such as a headline, a lead and a body. The checklist is a set of questions that a work answers
+yes to when it serves its readers, such as "Can a reporter tell from the headline what is new?"
+turn then asks you what the work is for, and each point only you can decide, one at a time, with
+the answer it recommends. turn has a second AI check the work. That AI never sees the design of the
+work, so it judges only what the reader gets.
+
+![Claude Code alone and turn, side by side](idea.svg)
 
 **Non-goals**
 
 - turn does not choose what the work is for. It asks you, and builds every other decision on your
   answer.
-- turn does not publish or send the work. It gives the work to you, and what happens to it next is
-  yours.
+- turn does not check whether the work does what you want it for, such as whether the RoomBook
+  press release gets RoomBook into trade magazines. You check that once you have the work.
+- turn does not commit, push, publish or send the work. It gives the work to you, and what happens
+  to it next is yours.
 - turn is not for a quick draft. Reading how good works of a new kind are made, and having a second
   AI read the work, take longer than asking Claude Code alone. A kind turn has made before skips
   that reading.
@@ -118,8 +118,8 @@ below, `You:` is what you type, and `turn:` is what turn shows you.
    ```
 
 6. turn writes the release. The second AI reads it as a reporter would and answers each question
-   of the checklist. turn mends the release until every answer is yes, and only then gives it to
-   you:
+   of the checklist. Where an answer is not yet yes, turn remakes the decision behind it. Only when
+   every answer is yes does turn give you the release:
 
    ```text
    turn: Northwind's RoomBook offers only the meeting rooms that fit your meeting
@@ -144,9 +144,13 @@ turn skips step 3, the research and that approval.
 
 ![How turn works](how-it-works.svg)
 
-You spend effort only where an arrow meets you: you approve the format and the checklist once for
-each kind, and you answer the points only you can decide. turn does the rest. The work comes back
-to you only after the second AI answers yes to every question of the checklist.
+An AI asked to review a work lists many faults on its surface. Fixing each fault as it stands only
+adds patches. turn prevents this. The evaluator does not list what is missing. It looks only for
+what makes the work good. The designer then remakes the decision behind each part that is not yet
+good.
+
+After everything the work says is good, turn polishes how the work says it. The evaluator checks
+the polished work too.
 
 ## Documentation
 
