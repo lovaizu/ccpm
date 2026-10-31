@@ -54,6 +54,21 @@
     ]
    },
    {
+    "id": "T47",
+    "what": "lane's UX, README and architecture rewritten on the templates T41 makes",
+    "builds_on": [
+     "T41"
+    ],
+    "completion_criteria": [
+     {
+      "what": "dev/lane/ux.md, plugins/lane/README.md and dev/lane/architecture.md each pass their template's questions and are agreed by the user; code is changed only where the rewritten documents show it must be, added to this task then",
+      "contributes_to": [
+       "AC1"
+      ]
+     }
+    ]
+   },
+   {
     "id": "T42",
     "what": "rn's meta-checklist and every checklist remade as templates that turn's planner keeps",
     "builds_on": [
