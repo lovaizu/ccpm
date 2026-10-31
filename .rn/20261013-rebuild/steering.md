@@ -67,7 +67,7 @@
 
 Stage: build.
 
-Next: T41: remake the architecture template by planner's steps, as the ux and readme templates were (.rn/20261013-rebuild/ux.json and readme.json, approved 2026-10-31), show the user its purpose, format and questions in plain Japanese for approval, then rewrite dev/turn/architecture.md from turn-rebuild.md, dev/turn/ux.md and plugins/turn/README.md, which the user agreed on 2026-10-31; it settles how a user starts turn, where the work and the kept templates are saved, and plugins/turn/docs/calling.md, which still tells today's call. Then the code template the same way, just before turn's code.
+Next: T41: style-doc approved 2026-10-31 (.rn/20261013-rebuild/style-doc.json: figures first, then the least text). Next: settle where doc.md's Q-9, Q-12 and Q-13 go, which style-doc leaves to the content phase; check ux.json and readme.json against meta's revised Q-5 (a scene of use, the same answer from any judge); then finish plugins/turn/README.md (its two figures redrawn, uncommitted) against readme.json and style-doc and commit it; then the architecture template (.rn/20261013-rebuild/architecture.json, a draft built from the old sections, to be derived again from its purpose) and dev/turn/architecture.md, then the code template.
 
 Open:
 
