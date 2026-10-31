@@ -57,7 +57,7 @@
 
 Stage: build.
 
-Next: T41: review .rn/20261013-rebuild/ux.json, the ux template a subagent drafted by planner's steps 3 to 5, read whole against turn-rebuild.md's Files, plugins/rn/checklists/meta.md and the in-use plugins/rn/checklists/product/ux.md; fix it, then show the user its purpose and questions once for approval (step 6). Its points left open: scene renamed scenario, no check that goals and key results carry IDs, Q2 and Q9 new from best practice, Q5 against OKR's targets. Then write turn's UX from it; the readme and architecture templates follow the same way, each just before the document it is for (.claude/rules/dev.md: work made before a checklist changed is read against the new one).
+Next: T41: write turn's UX (dev/turn/ux.md) from .rn/20261013-rebuild/ux.json, the ux template the user approved on 2026-10-31: Goals with key results nested under each, and Scenarios with one main path per goal, checked by its four questions. Then remake the readme template the same way, just before turn's README, and the architecture template just before turn's architecture (.claude/rules/dev.md: work made before a checklist changed is read against the new one).
 
 Open:
 

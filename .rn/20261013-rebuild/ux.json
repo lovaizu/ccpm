@@ -1,246 +1,92 @@
 {
  "kind": "ux",
- "purpose": "A UX document specifies, for one product, its intended users, the goal each of them wants to achieve with it and the context in which they use it, the metrics that show how close a version brings them to each goal, the scenarios by which they reach it, and why they would choose this product. The owner, the person who wants the product, reads it before anything else is built and approves from it whom the product is for and what it must do for them. Whoever builds the product writes the README and the architecture to it, and judges each version against it in acceptance tests.",
+ "purpose": "A UX document describes why users use the product and how they reach that goal. Developers design and build a product that delivers this UX.",
  "format": {
-  "skeleton": "# <Product name> UX\n\n<Summary: what the product gives to whom, and that every part of the product is built to this document>\n\n## Users and goals\n\n- G1: <A user, and the goal they want to achieve with the product>\n\n  <The context of use: what this user has, knows and is given when they use the product, and where they use it>\n\n## Key results\n\n- KR1.1: <What is measured for G1, which value is better, and the value once G1 is reached>\n\n  <What counts and how each case is judged, and why a better value shows the user closer to G1>\n\n<That the key results stand from the highest priority, and why in that order>\n\n## Scenarios\n\n<Who takes part, each with its kind, such as a person, an AI or a script>\n\n### <The main scenario: from the user's first request to the goal>\n\n```mermaid\nsequenceDiagram\n  <Who acts, in the order they act>\n```\n\n- <What the diagram cannot show, such as a rule that holds throughout, and why>\n\n### <Another scenario the user meets, such as a stop, an error or a question put to them>\n\n```mermaid\nsequenceDiagram\n  <Who acts, in the order they act>\n```\n\n## Benefits\n\n- <What the user gains by reaching the goal with this product, and what in the product gives it>\n",
+  "skeleton": "# <Product name> UX\n\n## Goals\n\n- G1: <A user and why they use the product>\n  - KR1.1: <A metric of how close the user is to G1, and which direction is better>\n  - KR1.2: <The next metric, lower in priority>\n\n## Scenarios\n\n<Each participant and its kind: a person, an AI or a script>\n\n### G1: <A short name for how the user reaches G1>\n\n```mermaid\nsequenceDiagram\n  <Who does what, in order, from the first request to reaching G1>\n```\n",
   "parts": [
    {
-    "id": "summary",
-    "what": "The title and the opening paragraph under it: what the product gives to whom, and that every part of the product is built to this document.",
-    "why": "The owner sees at once what they are asked to approve, and whoever builds the product sees that the README, the architecture and the code all answer to this document."
-   },
-   {
     "id": "goals",
-    "what": "One line for each user and the goal they want to achieve with the product, with an ID: G1, G2 and so on.",
-    "why": "Everything below is how these users reach these goals, so they come first. The README, the architecture and each acceptance test report name a goal by its ID, so the ID stays when the line is reworded."
-   },
-   {
-    "id": "context_of_use",
-    "what": "The paragraph under each goal: what that user has, knows and is given when they use the product, and where they use it, such as the tools around them or whether a person takes part at all. This is the context of use of ISO 9241-11.",
-    "why": "A product serves a goal only in a given context, so the metrics and the scenarios rest on it."
+    "what": "One item per goal, with an ID (G1, G2, ...): a user and why they use the product.",
+    "why": "Everything else in the document serves these goals."
    },
    {
     "id": "key_results",
-    "what": "One entry for each key result, with an ID KR<goal>.<n>, such as KR1.1 for the first of G1. A key result is a metric of how close a version of the product brings a user to a goal, as in the key results of OKRs but with no target value. The entry says what is measured, which value is better, the value once the goal is reached, what counts and how each case is judged, and why a better value shows the user closer to the goal.",
-    "why": "Each version is judged by the key results in its acceptance tests, so they rest on the goals and come before the scenarios that move them. The acceptance test reports name each key result by its ID."
-   },
-   {
-    "id": "key_result_order",
-    "what": "The paragraph after the key results: that they stand from the highest priority, and why in that order.",
-    "why": "Whoever builds the product meets key results that move apart, and needs to know which one to keep."
+    "what": "Metrics nested under each goal, with IDs (KR1.1 is the first for G1), listed in priority order. Like OKR key results.",
+    "why": "Developers use them to tell whether the product delivers the UX."
    },
    {
     "id": "participants",
-    "what": "The paragraph at the head of Scenarios: who takes part in the scenarios, each with its kind, such as a person, an AI or a script.",
-    "why": "Every diagram below uses these names, so they are said once before the first diagram."
+    "what": "The paragraph at the start of Scenarios: each participant and whether it is a person, an AI or a script.",
+    "why": "Every diagram uses these names."
    },
    {
-    "id": "main_scenario",
-    "what": "A scenario is one way a user goes through the product, shown as a sequence diagram of who does what, in order. The main scenario goes from the user's first request to reaching the goal.",
-    "why": "The scenarios are the one place that tells who does what in which order. The README and the architecture point to them instead of telling it again, and the architecture draws its user stories from them."
-   },
-   {
-    "id": "other_scenarios",
-    "what": "One scenario for each case the user meets off the main scenario, such as a stop and a restart, an error, or a question put to them.",
-    "why": "The main scenario stays short enough to take in at once, and each other case is shown in a diagram of its own."
-   },
-   {
-    "id": "scenario_notes",
-    "what": "The items under a diagram: what the diagram cannot show, such as a rule that holds throughout or a choice the product makes at a step, each with why.",
-    "why": "A sequence diagram shows order, repeats and branches, but not a rule that holds at every step or the reason for a step."
-   },
-   {
-    "id": "benefits",
-    "what": "One item for each thing the user gains by reaching the goal with this product, each with what in the product gives it.",
-    "why": "The benefits are why the user chooses this product, and the README's promise is drawn from them, so they come last, resting on all the rest."
+    "id": "scenarios",
+    "what": "One section per goal, headed with its ID, holding a sequence diagram of the main path from the user's first request to reaching the goal.",
+    "why": "Shows how users reach each goal, in order."
    }
   ]
  },
  "checklist": [
   {
    "id": "Q1",
-   "what": "From the summary and the users and goals, can the reader tell whom the product is for and the goal each of them wants to achieve?",
-   "why": "Everything else in the document is how these users reach these goals. Where the reader can tell them, the owner knows what they approve, and whoever builds the product knows whom it is for and when it has done its work. A goal said as what the product does, rather than what the user achieves, is met while the user is no better off.",
-   "about": ["summary", "goals"],
+   "what": "Can developers tell from each goal why its users use the product?",
+   "why": "Everything developers design and build serves these goals. If each goal says what the user wants to achieve, developers know who the product is for and when it has done its job. A goal written as a product feature can be met while the user is no better off.",
+   "about": ["goals"],
    "grounds": [
-    "plugins/rn/checklists/product/ux.md:67-75, Q-1: \"A goal said as what the product does, rather than what the user achieves, is met while the user is no better off.\"",
-    "ISO 9241-11:2018, the definition of usability: the extent to which a system, product or service can be used by specified users to achieve specified goals with effectiveness, efficiency and satisfaction in a specified context of use.",
-    "Christensen, Hall, Dillon and Duncan, \"Know Your Customers' 'Jobs to Be Done'\", Harvard Business Review, 2016: a job is the progress a person is trying to make in a given circumstance, not a feature of the product.",
-    "Cohn, User Stories Applied, 2004: a user story names the user, what they want and why."
+    "plugins/rn/checklists/product/ux.md:74-75: \"A goal said as what the product does, rather than what the user achieves, is met while the user is no better off.\"",
+    "ISO 9241-11:2018: usability is defined by specified users achieving specified goals in a specified context of use.",
+    "Christensen, Hall, Dillon and Duncan, \"Know Your Customers' 'Jobs to Be Done'\", Harvard Business Review, 2016: a job is the progress a person is trying to make, not a feature of the product."
    ],
    "examples": {
-    "fails": "G1: turn runs a reader on each work and makes it again where the reader finds a gap.",
-    "passes": "G1: The calling AI, the AI that runs a step of a plugin and calls turn from it, wants the work that step makes to come back meeting the step's checklists on every run."
+    "fails": "G1: The app shows each room's free times and takes bookings.",
+    "passes": "G1: An office worker setting up a meeting wants a room that fits it, booked for the time they need, without asking anyone."
    }
   },
   {
    "id": "Q2",
-   "what": "For each user, can whoever builds the product tell what that user has, knows and is given when they use it, and where they use it?",
-   "why": "A product is usable only in the context it is used in. Where the context is said, the scenarios and the key results ask of the user only what they have. Where it is not, a builder assumes a context, such as a person at hand or a file prepared beforehand, and the product passes its tests while the real user cannot reach the goal.",
-   "about": ["context_of_use"],
+   "what": "Can developers tell from a better key result value that users are closer to the goal?",
+   "why": "Developers improve the product by moving its key results. If a better value means users are closer to the goal, that work helps users. A metric chosen because it is easy to count, such as tasks done or items produced, can improve while users get nothing more. A target value that the user's need does not set has the same effect: work aims at the number instead of the user, and improvement stops once the number is reached. The only fixed value is one the goal itself implies, such as every meeting held in the room booked.",
+   "about": ["key_results"],
    "grounds": [
-    "ISO 9241-11:2018, context of use: the combination of users, goals and tasks, resources, and environment; usability is defined only for a specified context of use.",
-    "ISO 9241-210:2019: the first human-centred design activity is to understand and specify the context of use, and the user requirements are specified from it.",
-    "dev/lane/ux.md:18-19: \"it approves them itself. No person takes part.\"",
-    "dev/rn/ux.md:8-9: \"they ask for it without preparing anything and only answer what they are asked\""
+    "plugins/rn/checklists/product/ux.md:81-82: \"a measure taken because it is easy to count, such as work done or things made, moves while the user comes no closer.\"",
+    "plugins/rn/checklists/product/ux.md:16-17: \"with no target value: a number the user's need does not set draws the work toward the number rather than toward the user.\"",
+    "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: each metric is derived from a goal through a signal of success toward it (Goals-Signals-Metrics).",
+    "Strathern, \"Improving ratings: audit in the British University system\", European Review, 1997, stating Goodhart's law: when a measure becomes a target, it ceases to be a good measure.",
+    "dev/architecture.md:628-629: \"Whether the time and the tokens fit the work is judged by feel, since no bar is known before runs gather.\""
    ],
    "examples": {
-    "fails": "G1: A developer wants their plugin's steps checked. (Whether a person is there to approve each check is left unsaid, and the builder adds an approval prompt no one answers.)",
-    "passes": "G1: The building AI ... wants each subagent ... to be told the right way, without writing the checks. The building AI calls lane by running lay.py, and it approves the lanes itself. No person takes part."
+    "fails": "KR1.1: Bookings made per week; more is better. (More bookings can mean more double bookings and rebookings.)",
+    "passes": "KR1.1: The share of meetings held in the room booked for them, without a double booking or a room change; higher is better."
    }
   },
   {
    "id": "Q3",
-   "what": "From each key result, can whoever builds the product tell which value is better and why a better value shows the user closer to the goal?",
-   "why": "A metric chosen because it is easy to count, such as work done or things made, moves while the user comes no closer. Where each key result says why a better value means the user is closer, the builder improves what the user gets and not the count.",
-   "about": ["key_results"],
+   "what": "Can developers tell from each scenario how users reach the goal?",
+   "why": "Developers build what the scenarios show. If a scenario shows each step from the user's first request to reaching the goal, and whether each participant is a person, an AI or a script, developers know which steps wait for a person and which run on their own. A step the scenario skips is built by guesswork or not at all.",
+   "about": ["participants", "scenarios"],
    "grounds": [
-    "plugins/rn/checklists/product/ux.md:77-83, Q-2: \"a measure taken because it is easy to count, such as work done or things made, moves while the user comes no closer.\"",
-    "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: each metric is derived from a goal through a signal that shows success toward it (Goals-Signals-Metrics).",
-    "ISO 9241-11:2018: the outcomes of use are effectiveness, the accuracy and completeness with which users achieve their goals; efficiency, the resources used for the results achieved; and satisfaction.",
-    "dev/turn/ux.md:21-22: \"not by turn's judgment of itself. So an item that turn says it meets and does not is not counted.\""
+    "plugins/rn/checklists/product/ux.md:98-99: \"A step no scene shows is built by guess, or not at all.\"",
+    "plugins/rn/checklists/product/ux.md:40: \"Who takes part, each with its kind, such as a person or a plugin\".",
+    "Cockburn, Writing Effective Use Cases, 2000: the main success scenario runs from the trigger to the goal delivered, and a use case names its actors first."
    ],
    "examples": {
-    "fails": "KR1.1: The number of checklist items turn marks good; more is better.",
-    "passes": "KR1.1: How many items of the step's checklists the work meets when it comes back, as the calling AI judges it; more is better. The calling AI judges each item by its own check of the work, so an item turn says it meets and does not is not counted."
+    "fails": "A scenario that starts when the app receives a booking, skipping how the worker finds a room that fits.",
+    "passes": "A scenario in which the worker, a person, enters the time and the number of attendees, sees the rooms that fit, books one, sees it in their calendar, and finds the room free at meeting time."
    }
   },
   {
    "id": "Q4",
-   "what": "From each key result, would two builders who run the same acceptance test take the same value?",
-   "why": "Each version is judged by comparing its key results with those of earlier runs. Where a key result says what counts and how each case is judged, every run is counted the same way and the comparison shows whether a change made the product better. Where it does not, each builder counts in their own way, and a version looks better or worse by who counted it.",
-   "about": ["key_results"],
+   "what": "Can developers choose how to build the product without being bound by this document?",
+   "why": "How the product is built belongs in the architecture document. If this document describes only what users do, see and receive, developers can choose the best design and still deliver the UX. Internal design written here is decided twice, drifts from the architecture document, and crowds out the user experience.",
+   "about": ["goals", "key_results", "participants", "scenarios"],
    "grounds": [
-    "dev/architecture.md:620: an acceptance test shows the maintainer \"how close it came to the goal and to each key result of the UX\".",
-    "dev/architecture.md:629-630: \"Runs kept side by side show whether a change made things better or worse\".",
-    "plugins/rn/checklists/product/ux.md:82-83: \"A key result says what counts as one ... or each builder counts it their own way.\"",
-    "Cohn, User Stories Applied, 2004: a story's acceptance criteria are written so that a test can confirm them."
-   ],
-   "examples": {
-    "fails": "KR1.1: How much the user has to fix in the result; less is better.",
-    "passes": "KR1.1: The changes the user sends back at the deliverable sign-off; fewer is better. Each thing the user's feedback there asks to be different counts as one change, and changes asked at earlier sign-offs do not count."
-   }
-  },
-  {
-   "id": "Q5",
-   "what": "Can whoever builds the product judge each version by how close it brings the user to the goal, with no target value beyond the one the goal itself sets?",
-   "why": "Most of what a product gives, such as the worth of a document or the time a task takes, is not met or missed but brought closer. A target that the user's need does not set draws the work toward the number instead of toward the user, and a version that passes it stops improving. The only fixed value is the one the goal sets, such as none left or every item met, which shows where the user stands once the goal is reached.",
-   "about": ["key_results"],
-   "grounds": [
-    "plugins/rn/checklists/product/ux.md:14-17: \"each version is judged by how close it brings the user, with no target value: a number the user's need does not set draws the work toward the number rather than toward the user.\"",
-    "dev/architecture.md:628-629: \"Whether the time and the tokens fit the work is judged by feel, since no bar is known before runs gather.\"",
-    "Strathern, \"Improving ratings: audit in the British University system\", European Review, 1997, stating Goodhart's law: when a measure becomes a target, it ceases to be a good measure.",
-    "Doerr, Measure What Matters, 2018: OKR key results are measurable and usually carry a target; this template keeps the measure and leaves out the target, for the reasons above."
-   ],
-   "examples": {
-    "fails": "KR1.2: The time from calling turn to the work coming back; under ten minutes.",
-    "passes": "KR1.2: The time from calling turn to the work coming back, for a work the size of one README; shorter is better."
-   }
-  },
-  {
-   "id": "Q6",
-   "what": "From the key results, can whoever builds the product tell which one to keep when two of them move apart?",
-   "why": "Without an order, the builder trades the key result that matters more for one that is easier to move. A version comes closer from the highest key result down, and a lower one is never improved by moving a higher one away. How fully the goal is reached usually comes before how fast, since time saved on a result that misses the goal is spent again on fixing it.",
-   "about": ["key_results", "key_result_order"],
-   "grounds": [
-    "plugins/rn/checklists/product/ux.md:85-91, Q-3: \"a lower one is never brought closer by moving a higher one away.\"",
-    "dev/architecture.md:383: \"A change is taken only if it still meets the requirements. Time or cost is cut only after that.\"",
-    "ISO 9241-11:2018: effectiveness, efficiency and satisfaction are separate outcomes, and one can improve while another worsens."
-   ],
-   "examples": {
-    "fails": "Two key results, the changes sent back and the user's time, with nothing saying which comes first.",
-    "passes": "The key results stand from the highest priority: the changes sent back at the end come before the user's time. Time saved on a finished work that misses the purpose is lost, since what is sent back then is made again."
-   }
-  },
-  {
-   "id": "Q7",
-   "what": "From the head of the scenarios, can the reader tell who takes part in them, and whether each is a person, an AI or a script?",
-   "why": "The owner sees where a person must act and where nothing waits on them. Whoever builds the product sees which steps a person is asked to do and which run unattended, and the architecture draws its components from those who take part. A participant whose kind is unsaid is built as the builder guesses, such as a step left to a person who is not there.",
-   "about": ["participants"],
-   "grounds": [
-    "plugins/rn/checklists/product/ux.md:40: \"Who takes part, each with its kind, such as a person or a plugin\".",
-    "git commit 8ec29e31: \"figures name each box with its kind\".",
-    "Cockburn, Writing Effective Use Cases, 2000: a use case names its actors before its scenario."
-   ],
-   "examples": {
-    "fails": "A diagram whose boxes read user, main and turn, with no word on whether main is a person or an AI.",
-    "passes": "These take part: the user, a person; the main conversation, an AI, the only one that can ask the user; the calling AI, an AI; turn, a plugin."
-   }
-  },
-  {
-   "id": "Q8",
-   "what": "From the main scenario, can the reader tell what the user does and gets back, in order, from their first request to reaching the goal?",
-   "why": "Whoever builds the product builds what the scenarios show the user doing and getting, and the owner approves that. Shown whole from the request to the goal, the main scenario leaves no gap between the other scenarios. A step it does not show is built by guess, or not at all.",
-   "about": ["main_scenario"],
-   "grounds": [
-    "plugins/rn/checklists/product/ux.md:93-100, Q-4: \"A step no scene shows is built by guess, or not at all. The whole way keeps the scenes from leaving a gap between them.\"",
-    "Cockburn, Writing Effective Use Cases, 2000: the main success scenario runs from the trigger to the goal delivered.",
-    "Carroll, Making Use: Scenario-Based Design of Human-Computer Interactions, 2000: a scenario describes what users do and experience as they use a system.",
-    "plugins/rn/checklists/product/architecture.md:113-115, Q-2: \"Does every scene of the UX rest on a user story\"."
-   ],
-   "examples": {
-    "fails": "A main scenario that starts when turn receives the call, leaving out how the calling AI gathers what the checklists need.",
-    "passes": "A main scenario in which the calling AI asks the user what the checklists' items need, writes its task file, calls turn, gets the work and the result back, checks each item and ends its step."
-   }
-  },
-  {
-   "id": "Q9",
-   "what": "Can the reader tell what the user does and gets back in each case they meet off the main scenario, such as a stop, an error or a question put to them?",
-   "why": "These cases are where a user is most often left stuck. Shown as scenarios, they are built and tested like the main one. Left out, each is built by guess or not at all, and the user meets it first in real use.",
-   "about": ["other_scenarios"],
-   "grounds": [
-    "plugins/rn/checklists/product/ux.md:49: \"A scene the user should see\".",
-    "Cockburn, Writing Effective Use Cases, 2000: the extensions of a use case give each condition off the main success scenario and how it is handled.",
-    "dev/turn/ux.md, \"Stopped, and gone on\" and \"A point only the user can decide\": scenarios off the main one."
-   ],
-   "examples": {
-    "fails": "A UX whose only scenario is the run that goes through, with nothing on what the user sees when the run stops halfway.",
-    "passes": "A scenario \"Stopped, and gone on\": the run stops anywhere, the calling AI calls turn again with the same call, and turn goes on from where it stopped."
-   }
-  },
-  {
-   "id": "Q10",
-   "what": "Where a scenario rests on what its diagram cannot show, such as a rule that holds at every step, can the reader tell it and why, beside that diagram?",
-   "why": "A sequence diagram shows order, repeats and branches, but not a rule that holds throughout or the reason for a step. Said beside the diagram it belongs to, the rule is built where the step is built. Left out, the builder sees the steps and builds them without the rule.",
-   "about": ["scenario_notes"],
-   "grounds": [
-    "plugins/rn/checklists/product/ux.md:56: \"What the figures cannot show, such as a rule that holds throughout, and why\".",
-    "git commit 7bff2e2d: \"the scenes are a sequence diagram of who acts in turn, with what it cannot show beside it\"."
-   ],
-   "examples": {
-    "fails": "A diagram in which turn sends a question to the main conversation, with nothing saying why it goes there rather than to the calling AI.",
-    "passes": "Beside it: turn sends the question to the main conversation, whether the calling AI is the main conversation or an agent below it, as only the main conversation can ask the user."
-   }
-  },
-  {
-   "id": "Q11",
-   "what": "From the benefits, can the reader tell what the user gains by reaching the goal with this product, and what in the product gives it?",
-   "why": "The benefits are why the user chooses this product, and the README's promise is drawn from them. Where each comes with what gives it, the owner can believe it and whoever builds the product keeps that part. A builder who does not know them can build every scenario and still give the user nothing worth choosing.",
-   "about": ["benefits"],
-   "grounds": [
-    "plugins/rn/checklists/product/ux.md:102-107, Q-5: \"A builder who does not know them can build every scene and still give the user nothing worth choosing.\"",
-    "plugins/rn/checklists/product/readme.md:10-11: the README's opening is \"drawn from the users, goals and benefits of the product's UX\".",
-    "Bryar and Carr, Working Backwards, 2021: the press release names the customer, their problem and the benefit the product gives them, before anything is built.",
-    "Christensen et al., HBR 2016: a customer hires the product that gets their job done better than what they use now."
-   ],
-   "examples": {
-    "fails": "Benefits: fast, reliable and easy to use.",
-    "passes": "Each Good comes with the lines it rests on, so the calling AI checks it by reading those lines."
-   }
-  },
-  {
-   "id": "Q12",
-   "what": "Does each line tell of what the user does, sees or gets, leaving how the product works inside to the architecture?",
-   "why": "How the product works inside, said here, is decided twice and drifts from the architecture, and it takes the place of the experience the owner approves. Kept to what the user deals with, the document can be approved before the inside is designed.",
-   "about": ["summary", "goals", "context_of_use", "key_results", "key_result_order", "participants", "main_scenario", "other_scenarios", "scenario_notes", "benefits"],
-   "grounds": [
-    "plugins/rn/checklists/product/ux.md:109-115, Q-6: \"what the product does inside, said here, is decided twice and drifts from the architecture\".",
+    "plugins/rn/checklists/product/ux.md:114-115: \"what the product does inside, said here, is decided twice and drifts from the architecture\".",
     "ISO 9241-210:2019: user requirements are specified from the context of use before design solutions are produced.",
     "dev/architecture.md:6-7: each plugin's architecture \"holds its own UX's user stories and what only that plugin adds\"."
    ],
    "examples": {
-    "fails": "A scenario in which turn starts a designer, a builder and an evaluator agent and passes JSON files between them.",
-    "passes": "The same scenario showing the calling AI calling turn and getting back the work and a result that names each item's lines, the agents inside turn left to the architecture."
+    "fails": "A scenario in which the app queries the database for free slots and caches the result.",
+    "passes": "The same scenario: the worker asks for rooms at a given time and sees which are free. How the app finds them is left to the architecture document."
    }
   }
  ],
