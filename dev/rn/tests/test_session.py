@@ -1017,6 +1017,26 @@ class PutTest(RepoTest):
                 )
                 self.assertEqual((said in out, self.read(STEERING)), (True, json_text(before)))
 
+    def test_a_part_holding_a_new_task_numbered_below_one_held_stops_and_keeps_nothing(self):
+        # Given: a steering that held T1 and T3 and never T2, and now holds T3 alone, T1 left with
+        # no call, and a call on the plan whose part holds T3 and T2.
+        self.session(steered(part=plan(tasks=[task("T1"), task("T3")])))
+        before = steered(part=plan(tasks=[task("T3")]))
+        self.session(before)
+        self.call("0001", "plan", part=plan(tasks=[task("T3"), task("T2")]))
+        self.kept()
+        # When: the orchestrator puts it back.
+        out = self.stopped(*self.put())
+        # Then: rn names T2, as it is numbered below T3, not above every task held, says to number
+        # each new task from T4, and keeps nothing.
+        said = (
+            "rn: the part of the call 0001 holds T2, neither a task the steering holds, nor one"
+            " done, nor numbered above every task it has held, and an ID names one task alone;"
+            " nothing is kept: write the part again, each new task numbered from T4, then run"
+            " this again"
+        )
+        self.assertEqual((said in out, self.read(STEERING)), (True, json_text(before)))
+
     def test_a_part_leaving_out_a_task_turn_has_not_returned_stops_and_keeps_nothing(self):
         # Given: T1, whose latest call turn has not returned, and a part on the plan leaving it
         # out.

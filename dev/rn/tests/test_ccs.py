@@ -963,6 +963,32 @@ class CcsTest(RepoTest):
             (ccs["goal_orientation"][1:], has), ([], [{"has": "."}, {"has": call_at("0004")}])
         )
 
+    def test_the_ccs_of_the_plan_has_what_the_tasks_done_made_in_the_order_made(self):
+        # Given: a session with T4 done on the first call and T3 done on the second.
+        self.call("0001", "t4", result={})
+        self.call("0002", "t3", result={})
+        self.kept()
+        # When: the orchestrator has the CCS of the plan written.
+        self.ran("ccs", "plan")
+        # Then: it has the repository, then T4's call, then T3's, in the order they were made.
+        has = [e for e in self.read_json(call_at("0003"))["focal_entities"] if "has" in e]
+        self.assertEqual(has, [{"has": "."}, {"has": call_at("0001")}, {"has": call_at("0002")}])
+
+    def test_the_ccs_of_a_checklist_or_the_learnings_has_nothing_the_tasks_done_made(self):
+        for work in ("checklist-code", "learnings"):
+            with self.subTest(work=work):
+                # Given: a session with T3 done.
+                self.call("0001", "t3", result={})
+                self.kept()
+                # When: the orchestrator has the CCS of a checklist, or of the learnings, written.
+                made = self.ran("ccs", work)["ccs"]
+                # Then: its receiver has no call of T3, as only the plan is made from what the
+                # tasks done made.
+                has = [e for e in self.read_json(made)["focal_entities"] if "has" in e]
+                self.assertNotIn({"has": call_at("0001")}, has)
+                shutil.rmtree(f"{FOLDER}/calls")
+                self.kept()
+
     def test_the_ccs_of_the_finished_work_holds_each_goal_and_every_criterion(self):
         # Given: a file the branch changed.
         self.write("src/app.py", "x\n")
@@ -1376,6 +1402,27 @@ class ChecklistsTest(RepoTest):
         # When: the orchestrator asks for its checklists.
         # Then: rn says what a kind holds.
         self.assertIn("the kind '../x' is not", self.stopped("checklists", "../x"))
+
+
+class UnbuiltTest(unittest.TestCase):
+    """A checklist cut for a call before the build: each question judged on the built product taken
+    out up to the next heading of its level or above, and every other line kept."""
+
+    def test_a_question_cut_ends_at_a_heading_above_its_level(self):
+        # Given: a checklist whose question judged on the built product is followed by a heading
+        # of the level above, with a line under it.
+        text = "# C\n\n### Q-1: Run\n\nWhy: run.\n\n## After\n\nKept.\n"
+        # When: rn cuts it for a call before the build.
+        # Then: the question is taken out, and the heading above its level and its line are kept.
+        self.assertEqual(ccs.unbuilt(text, ("Q-1",)), "# C\n\n## After\n\nKept.\n")
+
+    def test_the_lines_before_the_first_heading_are_kept(self):
+        # Given: a checklist opening with frontmatter before its title, and a question judged on
+        # the built product.
+        text = "---\nname: c\n---\n# C\n\n### Q-1: Run\n\nWhy: run.\n"
+        # When: rn cuts it for a call before the build.
+        # Then: the frontmatter and the title are kept, and the question is taken out.
+        self.assertEqual(ccs.unbuilt(text, ("Q-1",)), "---\nname: c\n---\n# C\n")
 
 
 class ToldTest(unittest.TestCase):

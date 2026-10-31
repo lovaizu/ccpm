@@ -2,6 +2,7 @@
 tool or by a command's redirect, checked on many paths Hypothesis makes, new on every run, CI
 included."""
 
+import os
 import shlex
 import string
 import unittest
@@ -10,6 +11,7 @@ import helpers
 from helpers import NO_PLUGIN, testing, write_only
 
 hypothesis = testing.hypothesis()
+assume = hypothesis.assume
 given = hypothesis.given
 st = hypothesis.strategies
 
@@ -41,8 +43,11 @@ class TestAnyPath(testing.FolderTest):
 
     @given(PATHS)
     def test_a_write_of_another_path_drifts(self, path):
-        # Given: write_only taking any path in the folder
-        # When: a tool or a command writes another file beside it
+        # Given: write_only taking any path in the folder but the folder itself
+        path = os.path.normpath(path)
+        assume(path != os.curdir)
+        # When: a tool or a command writes another file beside it, its name the path's and one
+        # letter more, so in no folder the path names
         # Then: both are drifts
         self.assertEqual(self.drifts(path + "x", [path]), [True, True])
 

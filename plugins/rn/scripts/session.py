@@ -342,20 +342,20 @@ def numbered_on(
         ["log", "-p", "--format=", f"{repo.base()}..HEAD", "--", steering_path(folder)],
         repo.AS_GIT_SAYS,
     )
-    most = max((int(n) for n in CHANGED_TASK.findall(changes)), default=0)
+    held = [int(n) for n in CHANGED_TASK.findall(changes)]
     left = [t["id"] for t in plan["tasks"]]
     done = done_tasks(folder, plan, found)
     stray = [
         t["id"]
         for t in part["tasks"]
-        if t["id"] not in left and t["id"] not in done and int(t["id"][1:]) <= most
+        if t["id"] not in left and t["id"] not in done and any(int(t["id"][1:]) <= n for n in held)
     ]
     if stray:
         raise stop.Stop(
             f"rn: the part of the call {number} holds {stop.joined(stray)}, neither a task the"
             " steering holds, nor one done, nor numbered above every task it has held, and an ID"
             " names one task alone; nothing is kept: write the part again, each new task numbered"
-            f" from T{most + 1}, then run this again"
+            f" from T{max(held) + 1}, then run this again"
         )
 
 

@@ -64,8 +64,9 @@ class TestItems(unittest.TestCase):
         # the frontmatter's mark after the item
         text = "---\n---\n### B-1: After\n---\n"
         # When: the adapter reads it
-        # Then: it gives the item, the frontmatter ending at its own close
-        self.assertEqual(items(text), ["B-1"])
+        # Then: it gives the item by the line of its heading, counted from 1, the frontmatter
+        # ending at its own close
+        self.assertEqual(checklist_items.items(text), [(3, "B-1")])
 
     def test_a_mark_after_the_first_line_opens_no_frontmatter(self):
         for first in ("# Plan", "Plan"):
