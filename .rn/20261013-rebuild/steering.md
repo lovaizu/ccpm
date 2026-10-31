@@ -57,7 +57,7 @@
 
 - T45: nothing left that no purpose needs. Builds on T14.
 
-  - The result's work lists no __pycache__/*.pyc, rn's README shows a Walkthrough output from a real run, and plugins/rn/hooks/adapters/items-checklist.py is used or gone. Serves AC1 and AC2.
+  - The result's work lists no __pycache__/*.pyc and rn's README shows a Walkthrough output from a real run. Serves AC1 and AC2.
 
 - T15: users who update get rn 0.10.0 and turn 0.2.0. Builds on T45.
 

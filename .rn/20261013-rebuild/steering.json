@@ -209,7 +209,7 @@
     ],
     "completion_criteria": [
      {
-      "what": "The result's work lists no __pycache__/*.pyc, rn's README shows a Walkthrough output from a real run, and plugins/rn/hooks/adapters/items-checklist.py is used or gone",
+      "what": "The result's work lists no __pycache__/*.pyc and rn's README shows a Walkthrough output from a real run",
       "contributes_to": [
        "AC1",
        "AC2"

@@ -570,7 +570,6 @@ plugins/rn/                          the plugin, installed by Claude Code with t
 │   ├── steering.json                the steering's form <JSON Schema>
 │   ├── compressor.json              the compressor's reply: its choices, or the point it returns <JSON Schema>
 │   └── claim.json, reading.json     turn's forms, which forms.py reads beside it, by links <JSON>
-├── hooks/adapters/items-checklist.py  turn's adapter of lane's items port, which hands to items.py, by a link
 └── checklists/                      rn's own, one for each kind, meta.md for checklists, doc.md given beside each kind of document's, and fix.md beside any kind's for a fix <Markdown>
 
 <the user's repository>, on the piece of work's own branch

@@ -1,0 +1,155 @@
+{
+ "document": "turn/README.md",
+ "items": [
+  {
+   "id": "doc B-1",
+   "lines": "3-8,17-18",
+   "met": true,
+   "note": "Covers documents and prompts made and read in the receiver's place; leaves out code (8) and the plugin route (17-18)."
+  },
+  {
+   "id": "doc B-2",
+   "lines": "1-104",
+   "met": true,
+   "note": "Read from the top as a newcomer: gain, why, the run in the console, what is needed, install."
+  },
+  {
+   "id": "doc B-3",
+   "lines": "24-70",
+   "met": true,
+   "note": "The task, Esc, the rounds, the marks and .turn/ are each given in full where they appear."
+  },
+  {
+   "id": "doc B-4",
+   "lines": "1-104",
+   "met": true,
+   "note": "Each part serves deciding or starting. Fixed: the design link served builders only and is removed."
+  },
+  {
+   "id": "doc B-5",
+   "lines": "10-13",
+   "met": true,
+   "note": "The ground of the second reader is stated as the assumption turn is built on."
+  },
+  {
+   "id": "doc B-6",
+   "lines": "1-104",
+   "met": true,
+   "note": "No versions or status; the console is an example."
+  },
+  {
+   "id": "doc B-7",
+   "lines": "17-18,97-100",
+   "met": true,
+   "note": "The plugin route and the CCS are only linked; nothing repeats the callers' page."
+  },
+  {
+   "id": "doc U-1",
+   "lines": "3-5",
+   "met": true,
+   "note": "The gain comes first, then who, then why."
+  },
+  {
+   "id": "doc U-2",
+   "lines": "10-15,57-70",
+   "met": true,
+   "note": "Words come before what rests on them; the console paths are explained right after the example that shows them."
+  },
+  {
+   "id": "doc U-3",
+   "lines": "1-104",
+   "met": true,
+   "note": "No part restates another."
+  },
+  {
+   "id": "doc U-4",
+   "lines": "17",
+   "met": true,
+   "note": "One use: getting a first result."
+  },
+  {
+   "id": "doc U-5",
+   "lines": "10-12",
+   "met": true,
+   "note": "Tied to how people miss slips in their own writing."
+  },
+  {
+   "id": "doc U-6",
+   "lines": "1-104",
+   "met": true,
+   "note": "work, reader, the person it is for, checklist, item each keep one meaning."
+  },
+  {
+   "id": "doc U-7",
+   "lines": "20,72,86,97,102",
+   "met": true,
+   "note": "The usual README headings."
+  },
+  {
+   "id": "doc U-8",
+   "lines": "32-55",
+   "met": true,
+   "note": "The console example shows who does what in order."
+  },
+  {
+   "id": "readme B-1",
+   "lines": "3-5",
+   "met": true,
+   "note": "Gain in the first lines."
+  },
+  {
+   "id": "readme B-2",
+   "lines": "7-8",
+   "met": true,
+   "note": "Who it is for, and that code is not."
+  },
+  {
+   "id": "readme B-3",
+   "lines": "10-15",
+   "met": true,
+   "note": "Why another reader, which checking one's own work does not give."
+  },
+  {
+   "id": "readme B-4",
+   "lines": "22-70",
+   "met": true,
+   "note": "A README made from notes, with what the user types and sees at each point."
+  },
+  {
+   "id": "readme B-5",
+   "lines": "72-95",
+   "met": true,
+   "note": "Requirements, installation, and a first use to repeat."
+  },
+  {
+   "id": "readme B-6",
+   "lines": "97-100",
+   "met": true,
+   "note": "Callers' page and changelog."
+  },
+  {
+   "id": "readme B-7",
+   "lines": "102-104",
+   "met": true,
+   "note": "MIT."
+  },
+  {
+   "id": "readme U-1",
+   "lines": "1-104",
+   "met": true,
+   "note": "No inner names; roles are not named."
+  },
+  {
+   "id": "readme U-2",
+   "lines": "74-84",
+   "met": true,
+   "note": "Each requirement says why it is needed."
+  },
+  {
+   "id": "readme F-1",
+   "lines": "1-104",
+   "met": true,
+   "note": "Template headings in order; opening without heading."
+  }
+ ]
+}

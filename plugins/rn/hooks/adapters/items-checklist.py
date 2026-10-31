@@ -1,1 +1,0 @@
-../../../turn/hooks/adapters/items-checklist.py
