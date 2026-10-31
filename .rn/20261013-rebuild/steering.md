@@ -17,11 +17,16 @@
 - T41: turn rebuilt on the concept and roles agreed in turn-rebuild.md. Builds on none.
 
   - turn's UX, README and architecture are rewritten from turn-rebuild.md and agreed by the user, each written after its kind's template, the Format and the Checklist, is remade by planner's steps and the user has approved the kind's purpose and conditions. Serves AC1 and AC2.
+  - turn's code, with its comments and docstrings, is written after the code template is remade the same way, and passes its questions. Serves AC1.
   - turn is built by .claude/rules/dev.md: check.sh turn 100%, mutate.sh turn 0 survivors, and its acceptance trials passing. Serves AC1.
 
-- T47: lane's UX, README and architecture rewritten on the templates T41 makes. Builds on T41.
+- T47: lane's UX, README, architecture and code comments rewritten on the templates T41 makes. Builds on T41.
 
-  - dev/lane/ux.md, plugins/lane/README.md and dev/lane/architecture.md each pass their template's questions and are agreed by the user; code is changed only where the rewritten documents show it must be, added to this task then. Serves AC1.
+  - dev/lane/ux.md, plugins/lane/README.md, dev/lane/architecture.md and the comments and docstrings of lane's code each pass their template's questions and are agreed by the user; code is changed only where the rewritten documents show it must be, added to this task then. Serves AC1.
+
+- T48: dev/architecture.md rewritten on the architecture template T41 makes. Builds on T41.
+
+  - It passes the architecture template's questions and is agreed by the user: it holds what every plugin follows and why, the rules of making, testing and releasing moved to .claude/rules/dev.md or to the scripts that check them, the history of how it was reached gone, and no term of its own where a common word serves. Serves AC1.
 
 - T42: rn's meta-checklist and every checklist remade as templates that turn's planner keeps. Builds on T41.
 
@@ -32,6 +37,7 @@
   - A request in rough words reaches the plan sign-off with the user asked only the points that are theirs, one per message. Serves AC1 and AC2.
   - The user approves each sign-off from the proposal alone, and meets at the deliverable sign-off a finished work that does every acceptance criterion. Serves AC1 and AC2.
   - The steering holds only what is left and where the session stands, replanned from each move's facts; check.sh rn 100%, mutate.sh rn 0 survivors. Serves AC1.
+  - rn's UX, README, architecture and the comments and docstrings of its code pass their templates' questions. Serves AC1.
 
 - T43: rn drops a stopped task. Builds on T46.
 

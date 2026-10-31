@@ -46,6 +46,12 @@
       ]
      },
      {
+      "what": "turn's code, with its comments and docstrings, is written after the code template is remade the same way, and passes its questions",
+      "contributes_to": [
+       "AC1"
+      ]
+     },
+     {
       "what": "turn is built by .claude/rules/dev.md: check.sh turn 100%, mutate.sh turn 0 survivors, and its acceptance trials passing",
       "contributes_to": [
        "AC1"
@@ -55,13 +61,28 @@
    },
    {
     "id": "T47",
-    "what": "lane's UX, README and architecture rewritten on the templates T41 makes",
+    "what": "lane's UX, README, architecture and code comments rewritten on the templates T41 makes",
     "builds_on": [
      "T41"
     ],
     "completion_criteria": [
      {
-      "what": "dev/lane/ux.md, plugins/lane/README.md and dev/lane/architecture.md each pass their template's questions and are agreed by the user; code is changed only where the rewritten documents show it must be, added to this task then",
+      "what": "dev/lane/ux.md, plugins/lane/README.md, dev/lane/architecture.md and the comments and docstrings of lane's code each pass their template's questions and are agreed by the user; code is changed only where the rewritten documents show it must be, added to this task then",
+      "contributes_to": [
+       "AC1"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T48",
+    "what": "dev/architecture.md rewritten on the architecture template T41 makes",
+    "builds_on": [
+     "T41"
+    ],
+    "completion_criteria": [
+     {
+      "what": "It passes the architecture template's questions and is agreed by the user: it holds what every plugin follows and why, the rules of making, testing and releasing moved to .claude/rules/dev.md or to the scripts that check them, the history of how it was reached gone, and no term of its own where a common word serves",
       "contributes_to": [
        "AC1"
       ]
@@ -106,6 +127,12 @@
      },
      {
       "what": "The steering holds only what is left and where the session stands, replanned from each move's facts; check.sh rn 100%, mutate.sh rn 0 survivors",
+      "contributes_to": [
+       "AC1"
+      ]
+     },
+     {
+      "what": "rn's UX, README, architecture and the comments and docstrings of its code pass their templates' questions",
       "contributes_to": [
        "AC1"
       ]
