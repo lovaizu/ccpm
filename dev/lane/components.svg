@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 540" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>lane's components</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .drift { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+
+  <!-- lane's own roles -->
+  <rect class="frame" x="345" y="14" width="250" height="486" rx="10"/>
+  <text class="frame-name" x="357" y="33">lane</text>
+
+  <!-- roles: a pill is an AI, a square is code -->
+  <rect class="box" x="20" y="40" width="220" height="92" rx="30"/>
+  <text class="name" x="130" y="66">building AI</text>
+  <text class="kind" x="130" y="86">proposes the lanes and approves</text>
+  <text class="kind" x="130" y="102">them; fixes what lane</text>
+  <text class="kind" x="130" y="118">cannot check</text>
+
+  <rect class="box" x="360" y="40" width="220" height="92" rx="0"/>
+  <text class="name" x="470" y="66">layer</text>
+  <text class="kind" x="470" y="86">checks and prints the proposal,</text>
+  <text class="kind" x="470" y="102">writes it into the plugin once</text>
+  <text class="kind" x="470" y="118">approved, brings up a plugin</text>
+
+  <rect class="box" x="690" y="224" width="210" height="92" rx="0"/>
+  <text class="name" x="795" y="250">adapter</text>
+  <text class="kind" x="795" y="270">the plugin's own; reads</text>
+  <text class="kind" x="795" y="286">the plugin's text at a port</text>
+  <text class="kind" x="795" y="302">in place of lane's reading</text>
+
+  <rect class="box" x="360" y="392" width="220" height="92" rx="0"/>
+  <text class="name" x="470" y="418">guard</text>
+  <text class="kind" x="470" y="438">holds a subagent to its lanes,</text>
+  <text class="kind" x="470" y="454">tells the sentence of each it</text>
+  <text class="kind" x="470" y="470">drifts from, keeps each call</text>
+
+  <rect class="box" x="20" y="392" width="220" height="92" rx="30"/>
+  <text class="name" x="130" y="418">subagent</text>
+  <text class="kind" x="130" y="438">takes its steps; asks for</text>
+  <text class="kind" x="130" y="454">the fix where lane</text>
+  <text class="kind" x="130" y="470">cannot check</text>
+
+  <!-- building AI and layer -->
+  <path class="line" d="M240,72 H360" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="300" y="64">proposal</text>
+  <path class="line" d="M360,108 H240" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="300" y="126">print</text>
+
+  <!-- layer to the subagent and the guard, through the plugin -->
+  <path class="line" d="M390,132 L215,392" marker-end="url(#arrow)"/>
+  <text class="label" x="312" y="270">step</text>
+  <path class="line" d="M470,132 V392" marker-end="url(#arrow)"/>
+  <text class="label" x="480" y="250">lanes laid,</text>
+  <text class="label" x="480" y="267">hook entry</text>
+
+  <!-- the adapter, run by the layer on its cases and by the guard on a run -->
+  <path class="line" d="M580,96 L716,224" marker-end="url(#arrow)"/>
+  <path class="line" d="M690,250 L568,132" marker-end="url(#arrow)"/>
+  <text class="label" x="648" y="150">port JSON</text>
+  <path class="line" d="M580,428 L716,316" marker-end="url(#arrow)"/>
+  <path class="line" d="M690,300 L568,392" marker-end="url(#arrow)"/>
+  <text class="label" x="652" y="390">port JSON</text>
+
+  <!-- subagent and guard -->
+  <path class="line" d="M240,420 H360" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="300" y="412">event</text>
+  <path class="line drift" d="M360,456 H240" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="300" y="474">answer</text>
+
+  <!-- subagent to the building AI -->
+  <path class="line" d="M110,392 V132" marker-end="url(#arrow)"/>
+  <text class="label" x="120" y="262">answer,</text>
+  <text class="label" x="120" y="279">where an error</text>
+
+  <!-- legend -->
+  <rect class="box" x="560" y="510" width="40" height="22" rx="11"/>
+  <text class="label" x="608" y="526">AI</text>
+  <rect class="box" x="650" y="510" width="40" height="22" rx="0"/>
+  <text class="label" x="698" y="526">code</text>
+  <line class="line drift" x1="750" y1="521" x2="790" y2="521"/>
+  <text class="label" x="798" y="526">told on a drift</text>
+</svg>

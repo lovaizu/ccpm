@@ -1,0 +1,221 @@
+{
+ "kind": "readme",
+ "purpose": "A README is read by someone who meets the product for the first time. From the README alone, they decide whether to use the product, and become able to explain it to a colleague or a manager and recommend it. Once they decide to use it, they start using it by the README's steps alone. When they get stuck later, they can tell from the README where to read next.",
+ "format": {
+  "skeleton": "# <Product name>\n\n<One sentence: \"<Name> is a <kind> that <does what>\">\n\n<Whom the product is for, and what they gain with it>\n\n<The idea that makes the gain possible>\n\n**Non-goals**\n\n- <What the product does not do>\n\n## Requirements\n\n- <Each thing that must be in place before installing>\n\n## Installation\n\n<The install steps>\n\n## Walkthrough\n\n<One run of one of the UX's scenarios, each step and what it shows, up to the result>\n\n## How it works\n\n<One SVG figure, with the few words it needs, of what the product does inside, step by step, and how each step keeps the opening's promises>\n\n## Documentation\n\n<A link to fuller use>\n\n## Development\n\n<A link to the development documents>\n\n## License\n\n<The license's name, linked to its file>\n",
+  "parts": [
+   {
+    "id": "summary",
+    "what": "The title, and the one sentence under it.",
+    "why": "The reader learns first what the product is, and has one sentence for a colleague who asks. The opening then answers, in order, what a colleague would ask next: what is good about it, how it differs from other ways, and what it does not do."
+   },
+   {
+    "id": "gain",
+    "what": "The paragraph after the summary: whom the product is for and what they gain with it.",
+    "why": "The reader tells from it whether the product is for them, and what is good about using it."
+   },
+   {
+    "id": "idea",
+    "what": "The paragraph after the gain: the idea that makes the gain possible.",
+    "why": "The reader tells from it how the product differs from other ways of doing the same work."
+   },
+   {
+    "id": "non-goals",
+    "what": "A bold label and a list that close the opening, which stands under no heading.",
+    "why": "The reader tells from it what the product does not do, before they install it."
+   },
+   {
+    "id": "requirements",
+    "what": "A list under its heading, one item for each thing.",
+    "why": "The reader checks from it whether they can start."
+   },
+   {
+    "id": "installation",
+    "what": "The steps under their heading.",
+    "why": "The reader gets from it a working product."
+   },
+   {
+    "id": "walkthrough",
+    "what": "One run of one of the UX's scenarios under its heading, step by step, up to the result.",
+    "why": "The reader sees from it what the product would do on their own work, and then gets that result themselves."
+   },
+   {
+    "id": "how-it-works",
+    "what": "One SVG figure under its heading, with the few words it needs.",
+    "why": "The reader shows a manager how the product does what the opening promises, and backs their recommendation with it."
+   },
+   {
+    "id": "links",
+    "what": "The sections Documentation and Development, each a link.",
+    "why": "The reader finds from them where to read next, so the README stays short."
+   },
+   {
+    "id": "license",
+    "what": "The last section: the license's name, linked to its file.",
+    "why": "The reader tells from it the terms on which they may use the product."
+   }
+  ]
+ },
+ "checklist": [
+  {
+   "id": "Q1",
+   "what": "When a colleague asks \"What is it?\", can the reader answer in a word or one sentence?",
+   "why": "If yes, the reader knows what the product is before reading on, and can pass it on to their team in one sentence. If no, the reader cannot say what the product is, so they cannot place it among the tools they know, and the colleague hears nothing they could act on.",
+   "about": [
+    "summary"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:30-31: \"One sentence, \\\"<Name> is a <kind> that <does what>\\\", that a user could give their manager or a colleague who asks what it is\".",
+    "plugins/rn/checklists/product/readme.md:8-9: \"A README follows the order in which its reader explains the product to their team or their manager: what it is\".",
+    "GitHub Docs, \"About the repository README file\": a README typically says \"What the project does\"."
+   ],
+   "examples": {
+    "fails": "RoomBook is a next-generation workspace platform that streamlines your office experience. (A sentence is there, but the reader still cannot say what RoomBook does.)",
+    "passes": "RoomBook is a web app that books a meeting room that fits your meeting."
+   }
+  },
+  {
+   "id": "Q2",
+   "what": "When a colleague asks \"What's good about using it?\", can the reader answer?",
+   "why": "If yes, the reader weighs the product by what it lets them do. The answer comes from the objectives in the UX's OKRs, said as what the reader gains, so a reader in another situation can still tell that they gain too. If no, because the gain is said as the reader's situation or as a burden reduced, it reads as any tool's promise, and the reader leaves a product that would have served them.",
+   "about": [
+    "gain"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:19-20: \"The README says an aim as what becomes possible, not as a burden reduced. It says whom the product is for as what they gain, not as their situation.\"",
+    "plugins/rn/checklists/product/readme.md:10-11: \"The opening carries all of these, drawn from the users, goals and benefits of the product's UX.\"",
+    "plugins/rn/checklists/product/readme.md:93-95: \"An aim said as a burden reduced reads as any tool's promise, and those it is for said by their situation leave a reader in another situation unable to tell that they gain too.\"",
+    "GitHub Docs, \"About the repository README file\": a README typically says \"Why the project is useful\"."
+   ],
+   "examples": {
+    "fails": "Office workers struggle to find a free room. RoomBook makes booking easier.",
+    "passes": "With RoomBook, an office worker books a room with the seats and equipment the meeting needs, for the time they need, without asking anyone."
+   }
+  },
+  {
+   "id": "Q3",
+   "what": "When a colleague asks \"How is it different from other ways?\", can the reader answer?",
+   "why": "If yes, the reader knows why to choose this product over a similar tool, because the idea is said concretely enough to repeat. If no, the reader takes it for any tool that does the same work, and has no reason to choose it.",
+   "about": [
+    "idea"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:84-85: \"One shown only what the product does takes it for any tool that does the same, so the opening gives the idea that sets it apart.\"",
+    "plugins/rn/checklists/product/readme.md:37: \"The idea that achieves the aim, said concretely\".",
+    "Make a README: \"Let people know what your project can do specifically.\""
+   ],
+   "examples": {
+    "fails": "RoomBook uses a smart matching engine to find the best room.",
+    "passes": "RoomBook matches each room's seats and equipment to the meeting you describe, so it offers only rooms that fit, where a shared calendar offers every free room."
+   }
+  },
+  {
+   "id": "Q4",
+   "what": "Among the things the reader would likely wonder \"can it do this too?\", can they tell from the opening what the product does not do?",
+   "why": "If yes, a reader the product does not serve finds out before installing it, and a non-goal that also answers the reader's likely concern settles that concern too. If no, the reader finds the limit only after installing, or never asks and leaves with the concern unanswered.",
+   "about": [
+    "non-goals"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:41: \"What the product does not do, or an answer to a concern the reader is likely to have\"."
+   ],
+   "examples": {
+    "fails": "Non-goals: it is not a calendar. (No reader expected it to be one; whether it books desks, or reads their calendar, is left unsaid.)",
+    "passes": "Non-goals: it does not book desks; it reads only whether rooms are free, not what is in your calendar."
+   }
+  },
+  {
+   "id": "Q5",
+   "what": "When the reader wonders \"What would it do on my own work?\", can they picture the answer from the walkthrough?",
+   "why": "If yes, the reader decides on what they would actually get, because the walkthrough runs on real work like theirs and shows the real output it gives. The run is one of the UX's scenarios, so the reader sees the use the product is built for. If no, a walkthrough on made-up work, or one without its output, is read as someone else's story, and the reader decides by guess.",
+   "about": [
+    "walkthrough"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:102-103: \"A Walkthrough on work of another kind, or one without the real output the reader gets, is read as someone else's story.\"",
+    "Make a README, Usage: \"Use examples liberally, and show the expected output if you can.\"",
+    "Diátaxis, \"Tutorials\": \"It's important to allow the learner to form an idea of what they will achieve right from the start.\""
+   ],
+   "examples": {
+    "fails": "The walkthrough books Room A at 10:00 for a made-up meeting and shows no screen.",
+    "passes": "The walkthrough books a six-person review that needs a screen, and shows the two rooms offered and the confirmation."
+   }
+  },
+  {
+   "id": "Q6",
+   "what": "When a manager asks \"Can it really do that?\", can the reader answer from How it works by showing what the product does inside to keep the opening's promises?",
+   "why": "If yes, the reader backs their recommendation with the reason each promise holds, not with the promise alone. Each promise of the opening is joined to what the product does inside that keeps it, in words and at a grain a manager follows; files and small parts are left to the architecture document. A figure of who hands what to whom shows the exchange, not why a promise holds. If no, a manager shown only the promise, or only the exchange, takes it on trust or turns it down, and the reader cannot back the product they want to recommend.",
+   "about": [
+    "how-it-works"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:116-117: \"From How it works, can the reader tell what the product is made of and how that keeps the opening's promise?\"",
+    "plugins/rn/checklists/product/readme.md:119-120: \"a reader shown only the promise takes it on trust, and cannot tell whether it holds for their own work. The reader explains the product to their team by what it is made of, too.\""
+   ],
+   "examples": {
+    "fails": "A figure with arrows between the worker and RoomBook labelled \"request\" and \"rooms\", and nothing on what RoomBook does between them.",
+    "passes": "A figure of what RoomBook does inside, in order: it matches the meeting's seats and equipment against each room, checks the office calendar for free times, and offers only the rooms that pass both. One line under it: this is how RoomBook keeps its promise to offer only rooms that fit."
+   }
+  },
+  {
+   "id": "Q7",
+   "what": "Can the reader get the walkthrough's result by the README's steps alone, without other documents?",
+   "why": "If yes, the reader starts using the product. They can tell before starting whether they have each requirement, since each is said as what it is, and they can see that the install worked before going on. If no, each place where they must look elsewhere, or where a step fails, is a place they may stop. The author already has the product set up, so the author never meets these gaps.",
+   "about": [
+    "requirements",
+    "installation",
+    "walkthrough"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:110-112: \"each place where the reader must look elsewhere, or where a step fails, is a place they may stop. Whoever wrote the README has the product at hand and never meets it. A requirement said as what it is lets a reader who already has it, or would get it another way, tell so.\"",
+    "plugins/rn/checklists/product/readme.md:46: \"Each thing that must be in place beforehand, said as what it is\".",
+    "plugins/rn/checklists/product/readme.md:52: \"How to install, and how the reader sees that it is installed\".",
+    "Make a README, Installation: \"Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible.\"",
+    "Standard Readme, spec: Install needs a code block, and a Dependencies subsection \"if there are unusual or manually installed dependencies\".",
+    "Diátaxis, \"Tutorials\": aspire to perfect reliability, so that it works \"for every user, every time.\""
+   ],
+   "examples": {
+    "fails": "Requirements: a calendar. Installation: `npm install roombook`. (RoomBook also needs an admin to give it read access to the calendar, which the README does not say, so the room list stays empty.)",
+    "passes": "Requirements: a Google Workspace calendar, and admin rights to give RoomBook read access to it. Installation: three commands, then open the app and see your office's rooms listed."
+   }
+  },
+  {
+   "id": "Q8",
+   "what": "When the reader is stuck after starting, for example wanting fuller use or wanting to change the product, can they tell from the README where to read next?",
+   "why": "If yes, the README stays short and the rest is one link away. If no, a user stops at the first result, and one who changes the product does so without the decisions behind it.",
+   "about": [
+    "links"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:14-15: \"What lies beyond the first result, such as fuller use, goes in a page that Documentation names.\"",
+    "plugins/rn/checklists/product/readme.md:126-127: \"One who cannot find the architecture changes the product without the decisions behind it\".",
+    "GitHub Docs, \"About the repository README file\": \"Longer documentation is best suited for wikis.\"",
+    "Write the Docs, \"A beginner's guide to writing documentation\": \"Show how to contribute\"."
+   ],
+   "examples": {
+    "fails": "## Development\n\nPull requests welcome.",
+    "passes": "## Documentation\n\nBooking rules and admin settings are in docs/README.md.\n\n## Development\n\nThe architecture and the development steps are in dev/README.md."
+   }
+  },
+  {
+   "id": "Q9",
+   "what": "When a colleague asks \"What's the license?\", can the reader answer from the README?",
+   "why": "If yes, the reader and their team can tell whether the terms allow their use, and decide. If no, a reader who cannot tell the terms of use cannot decide to use the product.",
+   "about": [
+    "license"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:128: \"one who cannot tell the terms of use cannot decide to use it.\"",
+    "Standard Readme, spec: License is required, and is the last section.",
+    "Write the Docs, \"A beginner's guide to writing documentation\": \"State your project's license.\""
+   ],
+   "examples": {
+    "fails": "## License\n\nSee the repository.",
+    "passes": "## License\n\n[MIT](LICENSE)"
+   }
+  }
+ ],
+ "includes": [
+  "refactor-doc"
+ ]
+}

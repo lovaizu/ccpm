@@ -1,0 +1,239 @@
+{
+  "title": "rn's steering: what the piece of work is, the plan, and where the session stands, written by rn's scripts alone",
+  "type": "object",
+  "required": [
+    "session",
+    "plan",
+    "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "session": {
+      "type": "object",
+      "description": "what the piece of work is, set at its start",
+      "required": [
+        "rn",
+        "pr",
+        "title",
+        "languages"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "rn": {
+          "type": "string",
+          "description": "the version of rn that made the steering, kept to migrate a steering of an older form"
+        },
+        "pr": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "the draft pull request's URL, null before it is opened"
+        },
+        "title": {
+          "type": "string",
+          "description": "the piece of work, in a few words, as the pull request's title gives it"
+        },
+        "languages": {
+          "type": "object",
+          "required": [
+            "artifact",
+            "conversation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "artifact": {
+              "type": "string",
+              "description": "the language of everything written to the repository"
+            },
+            "conversation": {
+              "type": "string",
+              "description": "the language of every line said to the user"
+            }
+          }
+        }
+      }
+    },
+    "plan": {
+      "$ref": "#/$defs/plan"
+    },
+    "status": {
+      "type": "object",
+      "description": "where the session stands, replaced at every move",
+      "required": [
+        "stage",
+        "awaiting_signoff",
+        "next_step",
+        "open_questions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "enum": [
+            "goal",
+            "ux",
+            "architecture",
+            "build",
+            "deliverable",
+            "learnings",
+            "finished"
+          ]
+        },
+        "awaiting_signoff": {
+          "type": "boolean",
+          "description": "whether the sign-off of the stage waits for the user's answer"
+        },
+        "next_step": {
+          "type": "string",
+          "description": "the step of /rn:up to take next"
+        },
+        "open_questions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "each point still open, [] where none is"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "plan": {
+      "type": "object",
+      "description": "the map to the goals, written by the orchestrator when it replans",
+      "required": [
+        "goals",
+        "acceptance_criteria",
+        "tasks"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "goals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/goal"
+          }
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/criterion"
+          }
+        },
+        "tasks": {
+          "type": "array",
+          "description": "each task left, as a task done leaves the plan",
+          "items": {
+            "$ref": "#/$defs/task"
+          }
+        }
+      }
+    },
+    "goal": {
+      "type": "object",
+      "required": [
+        "id",
+        "what",
+        "why"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "G<n>, from G1"
+        },
+        "what": {
+          "type": "string",
+          "description": "a purpose of the user's"
+        },
+        "why": {
+          "type": "string",
+          "description": "why they want it"
+        }
+      }
+    },
+    "criterion": {
+      "type": "object",
+      "required": [
+        "id",
+        "what",
+        "contributes_to"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "AC<n>, from AC1"
+        },
+        "what": {
+          "type": "string",
+          "description": "one thing the finished work must do"
+        },
+        "contributes_to": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "the goals it serves, by ID"
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "required": [
+        "id",
+        "what",
+        "builds_on",
+        "completion_criteria"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "T<n>, from T1, never given to another task on the session's branch"
+        },
+        "what": {
+          "type": "string",
+          "description": "the one result it makes, by one call to turn"
+        },
+        "builds_on": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "the tasks whose results it uses, by ID, [] where none"
+        },
+        "completion_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/completion"
+          }
+        }
+      }
+    },
+    "completion": {
+      "type": "object",
+      "required": [
+        "what",
+        "contributes_to"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "what": {
+          "type": "string",
+          "description": "what the result must do, as seen on the result itself"
+        },
+        "contributes_to": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "the acceptance criteria it serves, by ID"
+        }
+      }
+    }
+  }
+}

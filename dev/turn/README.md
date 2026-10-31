@@ -1,14 +1,14 @@
 # turn
 
-What turn must achieve, how each quality is checked, and how turn is built are in
-[turn design](./design.md).
+The experience turn must give is in [ux.md](ux.md), and how it is built to give it, and checked, is
+in [architecture.md](architecture.md).
 
-- Tests: `python3 -m unittest discover -s dev/turn/tests` from the top of the repository. To count
-  the lines they run as CI does, run them under `coverage` installed in a virtual environment, since
-  one installed for the user does not count the scripts the tests start as separate processes.
-- Trial: `python3 dev/turn/trials/run.py <new folder> <task> <out name> [<answer> ...]` runs turn on
-  a fresh clone of this repository, with the turn of this working tree, on a task such as
-  [dev-readme.json](./trials/dev-readme.json), and answers each question turn asks with the next
-  answer given. Commit first, since the clone holds only what is
-  committed. Judge the run from the records of its conversation and agents, which Claude Code keeps
-  under `~/.claude/projects/`.
+- Tests: `python3 -m unittest discover -s dev/turn/tests` from the repository root. The property
+  tests, `tests/properties.py`, run by `sh dev/properties.sh turn`, and the mutation testing, set
+  in `cosmic-ray.toml`, by `sh dev/mutate.sh turn`, as [dev/README.md](../README.md) says.
+- Trials, one at a time, each run in a folder of its own in the system's temporary folder, whose
+  path it prints, the top of each file saying what it takes:
+  - `trials/orchestrator/orchestrator.py` tries the orchestrator on each way a run can take, the
+    roles stood in for with the replies `trials/orchestrator/replies.py` sets;
+  - `trials/roles/roles.py` tries each role on its own, and `trials/roles/kept.py` the generator and
+    the first user settling the work between themselves by message.

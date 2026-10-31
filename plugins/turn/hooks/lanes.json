@@ -1,0 +1,228 @@
+{
+  "subagents": [
+    {
+      "name": "up",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "start_with",
+              "takes": [
+                "turn.py start"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{result}"
+              ]
+            },
+            {
+              "lane": "hands_off",
+              "takes": [
+                "git commit",
+                "git push"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "lanes": [
+            {
+              "lane": "as_printed",
+              "takes": [
+                "turn.py end"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "generator",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "start_with",
+              "takes": [
+                "turn.py generator"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{given}",
+                "{tries}"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{given}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{work}",
+                "{reply}"
+              ]
+            },
+            {
+              "lane": "hands_off",
+              "takes": [
+                "git commit",
+                "git push"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{work}",
+                "{test}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "lanes": [
+            {
+              "lane": "in_form",
+              "takes": [
+                "{reply}",
+                "claim.json"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{reply}",
+                "{check}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "lanes": [
+            {
+              "lane": "end_when",
+              "takes": [
+                "{reply}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "first-user",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "start_with",
+              "takes": [
+                "turn.py first-user"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{given}",
+                "{tries}"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{given}"
+              ]
+            },
+            {
+              "lane": "hands_off",
+              "takes": [
+                "git commit",
+                "git push"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "lanes": [
+            {
+              "lane": "every_item",
+              "takes": [
+                "{checklists}"
+              ],
+              "adapter": "hooks/adapters/items-checklist.py"
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{reply}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{reply}",
+                "reading.json"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{reply}",
+                "{check}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "lanes": [
+            {
+              "lane": "end_when",
+              "takes": [
+                "{reply}"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

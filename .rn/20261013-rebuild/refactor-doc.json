@@ -1,0 +1,170 @@
+{
+ "kind": "refactor-doc",
+ "purpose": "A document is read by a person or an AI who comes to it for a purpose, at any time after it is written. Reading it once from the top, they understand each sentence on first reading, and achieve their purpose in a short time.",
+ "format": {
+  "skeleton": "",
+  "parts": []
+ },
+ "checklist": [
+  {
+   "id": "Q1",
+   "what": "When the reader has read only the heading and the first sentence of the document, or of any section, can they say what they will get from reading on?",
+   "why": "If yes, the reader reads each part knowing what it serves, and can tell from the first sentences alone whether a part is one they need. If no, the reader holds details in mind without knowing what they are for, reads on to find out, or leaves a document that would have served them.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:37: \"On opening the document, can the reader tell whether it serves their purpose?\"",
+    "plugins/rn/checklists/doc.md:23: \"<The section's main point first>\".",
+    "plainlanguage.gov (GSA archive), \"Have a topic sentence\": \"Don't make readers hold a lot of information in their heads before getting to the point.\" and \"Readers should be able to get good general understanding of your document by skimming your topic sentences.\"",
+    "Microsoft Writing Style Guide, \"Top 10 tips for Microsoft style and voice\", Get to the point fast: \"Lead with what's most important.\""
+   ],
+   "examples": {
+    "fails": "## Booking rules\n\nRooms differ in many ways, and so do meetings.",
+    "passes": "## Booking rules\n\nThese rules decide which rooms RoomBook offers you, and how long you may hold one."
+   }
+  },
+  {
+   "id": "Q2",
+   "what": "After reading any sentence once, can the reader say in a few words who or what does what in it?",
+   "why": "If yes, the reader takes in each sentence on first reading, and can pass it on as it stands: who does what. If no, a sentence that makes two points needs more than a few words, and one whose actor is hidden behind a passive verb or a noun made from a verb leaves the reader to guess who acts; a wrong guess gives the work to the wrong one. In Japanese, a sentence that strings together several は, で or の, or many clauses joined by で or て, fails the same way.",
+   "about": [],
+   "grounds": [
+    "~/.claude/CLAUDE.md:12 (the user's writing rules): \"Give each sentence one point. Name its subject and verb, and keep them close.\"",
+    "~/.claude/CLAUDE.md:13: \"Write with a subject and an active verb, not with nouns made from verbs.\"",
+    "~/.claude/CLAUDE.md:14: \"In Japanese, keep sentences short. Do not string together several は, で or の, or many clauses joined by で or て.\"",
+    "plugins/rn/checklists/doc.md:138-139: \"A sentence whose subject is the action, or the thing acted on, leaves them to guess who acts, and a wrong guess gives the work to the wrong one.\"",
+    "plainlanguage.gov (GSA archive), \"Use active voice\": \"Active voice makes it clear who is supposed to do what.\"",
+    "plainlanguage.gov (GSA archive), \"Write short sentences\": \"Express only one idea in each sentence.\"",
+    "plainlanguage.gov (GSA archive), \"Avoid hidden verbs\": \"Use the strongest, most direct form of the verb possible.\"",
+    "Google developer documentation style guide, \"Highlights\": \"Use active voice: make clear who's performing the action.\""
+   ],
+   "examples": {
+    "fails": "Confirmation of the booking takes place after the room check, and a reminder is sent. (Who checks the room, who confirms, and who sends the reminder to whom?)",
+    "passes": "RoomBook confirms the booking once it finds the room free. It emails you a reminder the day before the meeting."
+   }
+  },
+  {
+   "id": "Q3",
+   "what": "When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?",
+   "why": "If yes, the reader reads on with the writer's meaning, because the word is said in everyday words or explained where it first appears. If no, the reader guesses the meaning, and their picture differs from the writer's wherever the guess is wrong. A word the writer and their team use every day is still new to a reader who has not used it, and a common word given a special meaning is read later with its common meaning.",
+   "about": [],
+   "grounds": [
+    "~/.claude/CLAUDE.md:10: \"Use the words and phrasings they already know. Define a term of your own where you first use it, or do not use it.\"",
+    "~/.claude/CLAUDE.md:11: \"A word the reader has not used themselves is new to them, even where the repository or earlier messages use it.\"",
+    "plugins/rn/checklists/doc.md:55-56: \"a term never explained is read with a guess at its meaning, and the reader's picture differs from the writer's where the guess is wrong.\"",
+    "plainlanguage.gov (GSA archive), \"Avoid jargon\": \"writers often fail to realize that terms they know well may be difficult or meaningless to their audience.\"",
+    "plainlanguage.gov (GSA archive), \"Minimize definitions\": \"readers are likely to forget that you'd assigned some common word a new meaning, and when they come upon the word later in your document they assign the common meaning, rather than your specialized one.\""
+   ],
+   "examples": {
+    "fails": "RoomBook offers only rooms that pass the fit check. (The fit check is never said.)",
+    "passes": "RoomBook offers only rooms that fit: rooms with a seat for each attendee and the equipment the meeting needs."
+   }
+  },
+  {
+   "id": "Q4",
+   "what": "Before reading any text, can the reader grasp the point of each section from a glance at its figure?",
+   "why": "If yes, the reader takes in the whole from the figure first, then reads the text for the details the figure cannot show. A figure suits who does what in what order, how things relate, and the shape of the whole; the reader can also show it to whoever asks. Not every section needs one: a section whose point is one sentence, such as a single rule, has that sentence in place of a figure. If no, the reader pieces the point together in their head from sentences spread through paragraphs; that costs effort and goes wrong, and they miss a step or give it to the wrong one.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:44-45: \"can the reader see who does what, what passes between them and in what order at a glance?\"",
+    "plugins/rn/checklists/doc.md:47-48: \"pieced together in the head from sentences spread through the document, it costs effort and goes wrong.\"",
+    "plainlanguage.gov (GSA archive), \"Use lists\": lists \"Help the reader understand the order in which things happen\".",
+    "plainlanguage.gov (GSA archive), \"Use tables to make complex material easier to understand\": \"Tables help your audience see relationships that are often times hidden in dense text.\"",
+    "Google developer documentation style guide, \"Highlights\": \"Use numbered lists for sequences.\""
+   ],
+   "examples": {
+    "fails": "A section that tells the booking flow in a paragraph: when a worker books a room, RoomBook checks the office calendar, and if the room is free the booking goes through, though for a restricted room the calendar first asks its owner, and the worker then gets an email.",
+    "passes": "The same section opens with a figure of the flow: the worker picks a room and a time, RoomBook asks the calendar, the room's owner approves a restricted room, RoomBook books it and emails the worker. Under it one sentence gives what the figure cannot: a restricted room waits up to a day for its owner."
+   }
+  },
+  {
+   "id": "Q5",
+   "what": "Reading from the top, can the reader understand each sentence without turning back to an earlier part or jumping ahead to a later one?",
+   "why": "If yes, each reason, word and step a sentence rests on comes before it, and a rule's exceptions stand right beside the rule, so one reading from the top gives the whole picture. A pointer to where a fact is said in full is fine when the sentence is understood without following it. If no, a reader sent back or ahead loses their place, one who reads on with a guess carries it into what follows, and a rule read apart from the case where it does not hold is followed there too.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:72-76: \"Can the reader read each sentence without going back or ahead, because each reason and step it rests on comes before it?\"",
+    "plugins/rn/checklists/doc.md:112-113: \"a rule read apart from the case where it does not hold is followed there too.\"",
+    "plainlanguage.gov (GSA archive), \"Place the main idea before exceptions and conditions\": \"The audience must absorb the exception, then the rule, and then usually has to go back to grasp the relationship between the two.\"",
+    "plainlanguage.gov (GSA archive), \"Minimize cross-references\": \"They may also overtax your users' short-term memory.\" and \"Be sure that the reference you insert clearly describes the referenced material.\"",
+    "Google developer documentation style guide, \"Highlights\": \"Put conditions before instructions, not after.\""
+   ],
+   "examples": {
+    "fails": "Select the room and press Book. Before this, you must connect your calendar, as Setup below explains.",
+    "passes": "First connect your calendar in Settings > Calendar. Then select the room and press Book."
+   }
+  },
+  {
+   "id": "Q6",
+   "what": "Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one?",
+   "why": "If yes, the reader keeps one picture of each thing from start to end. If no, a reader who meets a second name for one thing takes it for a second thing, and a name whose meaning shifts carries its first meaning into the place where it has changed. A synonym chosen to vary the writing costs the reader this.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:62: \"a reader takes a second name for a second thing.\"",
+    "plugins/rn/checklists/doc.md:68: \"a name whose meaning shifts carries its first meaning into the place where it has changed.\"",
+    "plainlanguage.gov (GSA archive), \"Use the same terms consistently\": \"Using a different term may cause the reader to wonder if you're referring to the same group.\" and \"You don't need to use synonyms to make your writing more interesting.\""
+   ],
+   "examples": {
+    "fails": "Pick a room from the list. RoomBook holds your space for 15 minutes. (Is a space a room, or a desk?)",
+    "passes": "Pick a room from the list. RoomBook holds the room for you for 15 minutes."
+   }
+  },
+  {
+   "id": "Q7",
+   "what": "Whichever sentence the reader reads, does it give them something that helps them achieve their purpose?",
+   "why": "If yes, the reader's time goes to the subject, and the sentences they need stand out. Each fact is said once and pointed to from elsewhere, and what the work itself shows, such as what a figure draws or what code does, is not told again. A sentence that only restates the one before, a stock phrase, or a repeat of what a figure shows gives the reader nothing. If no, a sentence the reader skips or reads twice spends their time on how the document is written and buries what they need, and a fact said in two places comes to say two things once one of them changes.",
+   "about": [],
+   "grounds": [
+    "~/.claude/CLAUDE.md:15: \"Write each fact in one place and point to it from elsewhere. So a document keeps only the \\\"why\\\": what the deliverable itself shows is not written again.\"",
+    "plugins/rn/checklists/doc.md:89-90: \"a part the reader skips or reads twice costs effort spent on how the document is written instead of on its subject, and buries the parts they need.\"",
+    "plugins/rn/checklists/doc.md:112: \"two places that say one thing come to disagree as one of them changes\".",
+    "plainlanguage.gov (GSA archive), \"Be concise\": \"Unnecessary words waste your audience's time.\" and \"Omit information that the audience doesn't need to know.\"",
+    "Microsoft Writing Style Guide, \"Top 10 tips for Microsoft style and voice\", Be brief: \"Give customers just enough information to make decisions confidently. Prune every excess word.\""
+   ],
+   "examples": {
+    "fails": "RoomBook is a powerful and easy-to-use tool. As noted above, it books rooms. In this section, we explain how booking works.",
+    "passes": "To book a room, enter the time and the number of attendees; RoomBook lists the rooms that fit."
+   }
+  },
+  {
+   "id": "Q8",
+   "what": "When the reader acts by the document, do they never meet two places that tell them to do different things?",
+   "why": "If yes, the reader follows the document as written, and every place they follow agrees with the rest. Two places usually disagree because one strayed from what was decided; mending it brings that place back to the decision, so what the document says stays. If no, whichever place the reader follows breaks the other, and most readers never notice: they follow the one they read first and go on wrong.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:119-120: \"of two statements that cannot both hold, whoever follows the document follows one and breaks the other.\""
+   ],
+   "examples": {
+    "fails": "Under Booking: \"RoomBook holds a room for 15 minutes while you confirm.\" Under Limits: \"A room you pick is held for 10 minutes.\"",
+    "passes": "Both places say 15 minutes, or Limits points to Booking for the hold."
+   }
+  },
+  {
+   "id": "Q9",
+   "what": "When the reader reads the document beside the documents it rests on and those that rest on it, can they tell which to believe on every point they share, without asking the writer?",
+   "why": "If yes, each shared point is said the same way in each, and a point still open is marked open where they mark it, each pointing to the one place where it is decided. If no, a point decided in one and open or different in another leaves the reader stopped until they ask, or acting on the wrong one. Only these documents are read beside it, so agreement with any other is not asked.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:128-129: \"a point decided in one document and open in another leaves the reader unable to tell which holds. Only these documents are read beside it, so agreement with any other is not asked.\""
+   ],
+   "examples": {
+    "fails": "RoomBook's README says a room is held for 15 minutes; its architecture document says the hold is not yet decided.",
+    "passes": "The architecture document says 15 minutes as the README does, or both say it is open and point to the issue where it is decided."
+   }
+  },
+  {
+   "id": "Q10",
+   "what": "When the reader reads the document a year after it was written, with nothing it decides changed since, does every sentence still hold for them?",
+   "why": "If yes, the reader relies on every sentence for as long as what the document decides stands, because the document says what holds, not how the work got there or where it stands today. If no, a sentence about the work's past or progress, or a word such as \"new\", \"now\" or \"soon\", turns wrong as the work goes on, and is still believed.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:104-105: \"a document that says how the work went or where it stands turns wrong as the work goes on, and is still believed.\"",
+    ".claude/rules/issue.md:29: \"Keep only what holds now; how it was reached stays in the edit history and in git.\"",
+    "Google developer documentation style guide, \"Timeless documentation\": \"In general, document the current version of a product or feature.\" and \"Words such as soon and latest quickly become irrelevant.\""
+   ],
+   "examples": {
+    "fails": "RoomBook now also checks equipment; we added this after users booked rooms without screens.",
+    "passes": "RoomBook offers only rooms with the equipment the meeting needs."
+   }
+  }
+ ]
+}

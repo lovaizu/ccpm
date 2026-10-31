@@ -1,0 +1,81 @@
+{
+  "title": "The first user's reading: each item at the lines of the work that give its Good, or, where you found none, what the receiver would need to get it, in one sentence.",
+  "type": "object",
+  "required": [
+    "items"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "items": {
+      "type": "array",
+      "description": "one for each item of every checklist",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    }
+  },
+  "$defs": {
+    "item": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/good"
+        },
+        {
+          "$ref": "#/$defs/need"
+        }
+      ]
+    },
+    "good": {
+      "type": "object",
+      "description": "an item whose Good you found, at the lines of the work that give it",
+      "required": [
+        "checklist",
+        "item",
+        "lines"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "checklist": {
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
+        },
+        "item": {
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "<path of the work>:<from>-<to>"
+          },
+          "description": "the lines of the work that give its Good, each range as `<path>:<from>-<to>`; for an item asked of each part, at least one range in every part of the work, each inside one part"
+        }
+      }
+    },
+    "need": {
+      "type": "object",
+      "description": "an item you found no Good for",
+      "required": [
+        "checklist",
+        "item",
+        "need"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "checklist": {
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
+        },
+        "item": {
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "need": {
+          "type": "string",
+          "description": "what the receiver would need to get from the work for its Good, in one sentence, not how to make it, such as \"Before running `--undo`, the receiver can tell which folders come back.\""
+        }
+      }
+    }
+  }
+}

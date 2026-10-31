@@ -1,0 +1,44 @@
+# The tools that build and check the plugins, set up by `uv sync --locked` from uv.lock, which holds
+# each at the version and hashes it was locked with. Nothing here is installed by the plugins' users.
+[project]
+name = "ccpm"
+version = "0"
+# The oldest Python users run (dev/architecture.md, Python 3.9 and the standard library), which ruff
+# takes as the version it checks for.
+requires-python = ">=3.9"
+
+[dependency-groups]
+# The checks of dev/check.sh, on every Python users run.
+dev = [
+  "coverage>=7.10",
+  "pyrefly>=1.4.0",
+  "ruff>=0.17.2",
+]
+# The check for copied code, the property tests and the mutation testing, which need a newer Python
+# only to check, not to run.
+test-quality = [
+  "cosmic-ray>=8.7.0",
+  "hypothesis>=6.170.9",
+  "pylint>=4.1.3",
+]
+
+[tool.uv]
+required-version = ">=0.13.5"
+# The repository is plugins, not a package to build.
+package = false
+
+[tool.uv.dependency-groups]
+test-quality = { requires-python = ">=3.11" }
+
+[tool.ruff]
+# The widest a line may be: of the Python, which E501 below checks, and of the documents, which no
+# check reads.
+line-length = 100
+
+[tool.ruff.lint]
+# The rules ruff checks by default, and lines past that width.
+extend-select = ["E501"]
+
+[tool.pyrefly]
+# requires-python's oldest, as pyrefly does not read it there.
+python-version = "3.9"

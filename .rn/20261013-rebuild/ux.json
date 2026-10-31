@@ -1,0 +1,102 @@
+{
+ "kind": "ux",
+ "purpose": "A UX document describes why users use the product and how they reach that goal. Developers design and build a product that delivers this UX.",
+ "format": {
+  "skeleton": "# <Product name> UX\n\n## OKRs\n\n- O1: <A user and why they use the product>\n  - KR1.1: <A result that shows O1 is closer, and which direction is better>\n  - KR1.2: <Another such result>\n\nKey results have no target values. When a measure becomes a target, it stops being a good measure (Goodhart's law). Use the key results to judge how close the objective is.\n\n## Scenarios\n\n<Each participant and its kind: a person, an AI or a script>\n\n### O1: <A short name for how the user reaches O1>\n\n```mermaid\nsequenceDiagram\n  <Who does what, in order, from the first request to reaching O1>\n```\n",
+  "parts": [
+   {
+    "id": "okrs",
+    "what": "Objectives with IDs (O1, O2, ...), each a user and why they use the product, and under each its key results with IDs (KR1.1 is the first for O1), as in OKRs, followed by the fixed paragraph on target values.",
+    "why": "Everything else in the document serves these objectives, and developers use the key results to judge how close each objective is."
+   },
+   {
+    "id": "participants",
+    "what": "The paragraph at the start of Scenarios: each participant and whether it is a person, an AI or a script.",
+    "why": "Every diagram uses these names."
+   },
+   {
+    "id": "scenarios",
+    "what": "One section per objective, headed with its ID, holding a sequence diagram of the main path from the user's first request to reaching the objective.",
+    "why": "Shows how users reach each objective, in order."
+   }
+  ]
+ },
+ "checklist": [
+  {
+   "id": "Q1",
+   "what": "When a colleague asks \"Who uses this product, and for what?\", can the developer answer from the objectives?",
+   "why": "Everything developers design and build serves these objectives. If each objective says what the user wants to achieve, developers know who the product is for and when it has done its job. An objective written as a product feature can be met while the user is no better off.",
+   "about": [
+    "okrs"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/ux.md:74-75: \"A goal said as what the product does, rather than what the user achieves, is met while the user is no better off.\"",
+    "ISO 9241-11:2018: usability is defined by specified users achieving specified goals in a specified context of use.",
+    "Christensen, Hall, Dillon and Duncan, \"Know Your Customers' 'Jobs to Be Done'\", Harvard Business Review, 2016: a job is the progress a person is trying to make, not a feature of the product."
+   ],
+   "examples": {
+    "fails": "O1: The app shows each room's free times and takes bookings.",
+    "passes": "O1: An office worker setting up a meeting wants a room that fits it, booked for the time they need, without asking anyone."
+   }
+  },
+  {
+   "id": "Q2",
+   "what": "When a colleague asks \"Did this change make things better for users?\", can the developer answer by the key results?",
+   "why": "Developers improve the product by moving its key results. If all of them getting better means users are closer to the objective, that work helps users. A key result chosen because it is easy to count, such as tasks done or items produced, can improve while users get nothing more.",
+   "about": [
+    "okrs"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/ux.md:81-82: \"a measure taken because it is easy to count, such as work done or things made, moves while the user comes no closer.\"",
+    "plugins/rn/checklists/product/ux.md:16-17: \"with no target value: a number the user's need does not set draws the work toward the number rather than toward the user.\"",
+    "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: each metric is derived from a goal through a signal of success toward it (Goals-Signals-Metrics).",
+    "Strathern, \"Improving ratings: audit in the British University system\", European Review, 1997, stating Goodhart's law: when a measure becomes a target, it ceases to be a good measure.",
+    "dev/architecture.md:628-629: \"Whether the time and the tokens fit the work is judged by feel, since no bar is known before runs gather.\""
+   ],
+   "examples": {
+    "fails": "KR1.1: Bookings made per week; more is better. (More bookings can mean more double bookings and rebookings.)",
+    "passes": "KR1.1: The share of meetings held in the room booked for them, without a double booking or a room change; higher is better. KR1.2: The time from opening the app to a confirmed booking; shorter is better."
+   }
+  },
+  {
+   "id": "Q3",
+   "what": "When a colleague asks \"What does a user do first, and how do they reach the objective?\", can the developer answer by pointing to a scenario?",
+   "why": "Developers build what the scenarios show. If a scenario shows each step from the user's first request to reaching the objective, and whether each participant is a person, an AI or a script, developers know which steps wait for a person and which run on their own. A step the scenario skips is built by guesswork or not at all.",
+   "about": [
+    "participants",
+    "scenarios"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/ux.md:98-99: \"A step no scene shows is built by guess, or not at all.\"",
+    "plugins/rn/checklists/product/ux.md:40: \"Who takes part, each with its kind, such as a person or a plugin\".",
+    "Cockburn, Writing Effective Use Cases, 2000: the main success scenario runs from the trigger to the goal delivered, and a use case names its actors first."
+   ],
+   "examples": {
+    "fails": "A scenario that starts when the app receives a booking, skipping how the worker finds a room that fits.",
+    "passes": "A scenario in which the worker, a person, enters the time and the number of attendees, sees the rooms that fit, books one, sees it in their calendar, and finds the room free at meeting time."
+   }
+  },
+  {
+   "id": "Q4",
+   "what": "When the developer changes how the product is built, can they leave this document as it is?",
+   "why": "How the product is built belongs in the architecture document. If this document describes only what users do, see and receive, developers can choose the best design and still deliver the UX. Internal design written here is decided twice, drifts from the architecture document, and crowds out the user experience.",
+   "about": [
+    "okrs",
+    "participants",
+    "scenarios"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/ux.md:114-115: \"what the product does inside, said here, is decided twice and drifts from the architecture\".",
+    "ISO 9241-210:2019: user requirements are specified from the context of use before design solutions are produced.",
+    "dev/architecture.md:6-7: each plugin's architecture \"holds its own UX's user stories and what only that plugin adds\"."
+   ],
+   "examples": {
+    "fails": "A scenario in which the app queries the database for free slots and caches the result.",
+    "passes": "The same scenario: the worker asks for rooms at a given time and sees which are free. How the app finds them is left to the architecture document."
+   }
+  }
+ ],
+ "includes": [
+  "refactor-doc"
+ ]
+}

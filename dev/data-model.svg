@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 610" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>A plugin's data model</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .label { fill: #1f2328; font-size: 13px; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label { fill: #f0f6fc; }
+      .line { stroke: #9198a1; }
+    }
+  </style>
+
+  <!-- data, each a name alone -->
+  <rect class="box" x="20" y="30" width="200" height="44" rx="4"/>
+  <text class="name" x="120" y="57">question</text>
+  <rect class="box" x="290" y="30" width="200" height="44" rx="4"/>
+  <text class="name" x="390" y="57">answer</text>
+  <rect class="box" x="560" y="30" width="200" height="44" rx="4"/>
+  <text class="name" x="660" y="57">state</text>
+  <rect class="box" x="830" y="30" width="200" height="44" rx="4"/>
+  <text class="name" x="930" y="57">approval</text>
+
+  <rect class="box" x="20" y="200" width="200" height="44" rx="4"/>
+  <text class="name" x="120" y="227">request</text>
+  <rect class="box" x="290" y="200" width="200" height="44" rx="4"/>
+  <text class="name" x="390" y="227">work</text>
+  <rect class="box" x="560" y="200" width="200" height="44" rx="4"/>
+  <text class="name" x="660" y="227">Good lines</text>
+  <rect class="box" x="830" y="200" width="200" height="44" rx="4"/>
+  <text class="name" x="930" y="227">reply</text>
+
+  <rect class="box" x="20" y="370" width="200" height="44" rx="4"/>
+  <text class="name" x="120" y="397">prompt</text>
+  <rect class="box" x="290" y="370" width="200" height="44" rx="4"/>
+  <text class="name" x="390" y="397">checklist</text>
+  <rect class="box" x="560" y="370" width="200" height="44" rx="4"/>
+  <text class="name" x="660" y="397">item</text>
+  <rect class="box" x="830" y="370" width="200" height="44" rx="4"/>
+  <text class="name" x="930" y="397">need</text>
+
+  <rect class="box" x="20" y="540" width="200" height="44" rx="4"/>
+  <text class="name" x="120" y="567">step</text>
+  <rect class="box" x="290" y="540" width="200" height="44" rx="4"/>
+  <text class="name" x="390" y="567">lesson</text>
+
+  <!-- relations -->
+  <path class="line" d="M220,52 H290"/>
+  <text class="label" text-anchor="middle" x="255" y="44">asks</text>
+  <path class="line" d="M490,52 H560"/>
+  <text class="label" text-anchor="middle" x="525" y="44">kept in</text>
+  <path class="line" d="M760,52 H830"/>
+  <text class="label" text-anchor="middle" x="795" y="44">holds</text>
+  <path class="line" d="M880,74 L450,200"/>
+  <text class="label" x="700" y="150">given to</text>
+
+  <path class="line" d="M220,222 H290"/>
+  <text class="label" text-anchor="middle" x="255" y="214">asks for</text>
+  <path class="line" d="M490,222 H560"/>
+  <text class="label" text-anchor="middle" x="525" y="214">lines of</text>
+  <path class="line" d="M760,222 H830"/>
+  <text class="label" text-anchor="middle" x="795" y="214">given in</text>
+
+  <path class="line" d="M220,392 H290"/>
+  <text class="label" text-anchor="middle" x="255" y="384">names</text>
+  <path class="line" d="M490,392 H560"/>
+  <text class="label" text-anchor="middle" x="525" y="384">lists</text>
+  <path class="line" d="M760,392 H830"/>
+  <text class="label" text-anchor="middle" x="795" y="366">its Good</text>
+  <text class="label" text-anchor="middle" x="795" y="382">missing</text>
+  <path class="line" d="M660,370 V244"/>
+  <text class="label" x="670" y="310">its Good at</text>
+  <path class="line" d="M930,370 V244"/>
+  <text class="label" x="940" y="310">given in</text>
+
+  <path class="line" d="M120,414 V540"/>
+  <text class="label" x="130" y="480">holds each</text>
+  <path class="line" d="M390,540 V414"/>
+  <text class="label" x="400" y="480">goes into</text>
+</svg>

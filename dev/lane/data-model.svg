@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 610" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>lane's data model</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .label { fill: #1f2328; font-size: 13px; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label { fill: #f0f6fc; }
+      .line { stroke: #9198a1; }
+    }
+  </style>
+
+  <!-- data, each a name alone -->
+  <rect class="box" x="20" y="30" width="200" height="44" rx="4"/>
+  <text class="name" x="120" y="57">adapter's cases</text>
+  <rect class="box" x="330" y="30" width="200" height="44" rx="4"/>
+  <text class="name" x="430" y="57">proposal</text>
+  <rect class="box" x="640" y="30" width="200" height="44" rx="4"/>
+  <text class="name" x="740" y="57">print</text>
+
+  <rect class="box" x="20" y="200" width="200" height="44" rx="4"/>
+  <text class="name" x="120" y="227">port JSON</text>
+  <rect class="box" x="330" y="200" width="200" height="44" rx="4"/>
+  <text class="name" x="430" y="227">lanes laid</text>
+  <rect class="box" x="640" y="200" width="200" height="44" rx="4"/>
+  <text class="name" x="740" y="227">hook entry</text>
+
+  <rect class="box" x="20" y="370" width="200" height="44" rx="4"/>
+  <text class="name" x="120" y="397">run values</text>
+  <rect class="box" x="330" y="370" width="200" height="44" rx="4"/>
+  <text class="name" x="430" y="397">step</text>
+  <rect class="box" x="640" y="370" width="200" height="44" rx="4"/>
+  <text class="name" x="740" y="397">answer</text>
+  <rect class="box" x="950" y="370" width="200" height="44" rx="4"/>
+  <text class="name" x="1050" y="397">event</text>
+
+  <rect class="box" x="20" y="540" width="200" height="44" rx="4"/>
+  <text class="name" x="120" y="567">record</text>
+  <rect class="box" x="330" y="540" width="200" height="44" rx="4"/>
+  <text class="name" x="430" y="567">calls kept</text>
+
+  <!-- relations -->
+  <path class="line" d="M220,52 H330"/>
+  <text class="label" text-anchor="middle" x="275" y="44">names</text>
+  <path class="line" d="M530,52 H640"/>
+  <text class="label" text-anchor="middle" x="585" y="44">shown in</text>
+  <path class="line" d="M120,74 V200"/>
+  <text class="label" x="130" y="134">each a pair of</text>
+  <path class="line" d="M430,74 V200"/>
+  <text class="label" x="440" y="134">written as</text>
+  <path class="line" d="M700,74 L490,200"/>
+  <text class="label" x="612" y="150">up shows</text>
+
+  <path class="line" d="M530,222 H640"/>
+  <text class="label" text-anchor="middle" x="585" y="198">its subagent</text>
+  <text class="label" text-anchor="middle" x="585" y="214">named by</text>
+  <path class="line" d="M120,244 V370"/>
+  <text class="label" x="130" y="304">values port</text>
+  <text class="label" x="130" y="321">gives</text>
+  <path class="line" d="M190,370 L380,244"/>
+  <text class="label" x="290" y="330">put in a lane's takes</text>
+  <path class="line" d="M430,244 V370"/>
+  <text class="label" x="440" y="304">each lane's</text>
+  <text class="label" x="440" y="321">sentence ends</text>
+  <path class="line" d="M840,222 L1010,370"/>
+  <text class="label" x="935" y="280">runs on</text>
+
+  <path class="line" d="M530,392 H640"/>
+  <text class="label" text-anchor="middle" x="585" y="368">sentence</text>
+  <text class="label" text-anchor="middle" x="585" y="384">told in</text>
+  <path class="line" d="M840,392 H950"/>
+  <text class="label" text-anchor="middle" x="895" y="384">answers</text>
+
+  <path class="line" d="M120,414 V540"/>
+  <text class="label" x="130" y="474">texts held in</text>
+  <path class="line" d="M220,562 H330"/>
+  <text class="label" text-anchor="middle" x="275" y="538">calls not</text>
+  <text class="label" text-anchor="middle" x="275" y="554">yet in</text>
+  <path class="line" d="M1000,414 L500,540"/>
+  <text class="label" x="760" y="500">each kept as it comes back</text>
+</svg>

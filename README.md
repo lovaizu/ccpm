@@ -4,9 +4,9 @@ Claude Code plugin marketplace for lovaizu projects.
 
 ## Plugins
 
-- **[rn](./rn/README.md)** — *Right Now.* Give a goal, roughly; it works out what you really want, carries the work through, and calls you back only for decisions that are yours.
-- **[writ](./writ/README.md)** — Documents that read as if a person wrote them for their reader, handed on without rereading.
-- **[turn](./turn/README.md)** — With turn, Claude Code can make any work, such as a document, a prompt or code, that passes your checklist: another AI reads it as the one it is for, and what does not pass yet is made again.
+- **[rn](./plugins/rn/README.md)** — Carries work that takes days from your rough words to a pull request ready to merge; you decide what you really want, how it is built and whether the result is it, and nothing else.
+- **[lane](./plugins/lane/README.md)** — lane lets an AI notice when it drifts from the steps your plugin gives it, and tells it the right way, so it finds its way back at full speed with no one watching each move.
+- **[turn](./plugins/turn/README.md)** — With turn, each step of your plugin has AI make its work, such as a document or code, until it passes the step's checklists: an AI that did not make it reads it first as the one it is for, and what does not pass yet is made again.
 
 ## Install
 
@@ -19,4 +19,4 @@ Add the marketplace once, then install any plugin from it:
 
 ## Building the plugins
 
-Each plugin's design, tests and trials are in [`dev/`](./dev/README.md), outside the folder that is installed.
+Each plugin's architecture, tests and trials are in [`dev/`](./dev/README.md), outside the folder that is installed.

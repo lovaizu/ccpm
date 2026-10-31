@@ -1,0 +1,82 @@
+{
+  "title": "The compressor's reply: what of a task's CCS needs judgment, each with why, read from the repository and the decisions; or the point no file or decision settles, returned to the orchestrator.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/given"
+    },
+    {
+      "$ref": "#/$defs/point"
+    }
+  ],
+  "$defs": {
+    "given": {
+      "type": "object",
+      "description": "every role the call printed under give, each with the file or decision it rests on",
+      "required": [
+        "given"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "given": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/choice"
+          }
+        }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "required": [
+        "role",
+        "value",
+        "why"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "work",
+            "kind",
+            "receiver",
+            "use",
+            "has",
+            "test"
+          ],
+          "description": "work: a file or folder the result is made at, one entry each; kind: the kind of work, whose checklists it is made with; receiver: who uses the result at the build stage; use: what they use it for; has: a file or folder the receiver has with it, one entry each; test: the one command that checks the result"
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "the path, the kind, the receiver, the use or the command, from the top of the repository; null for test alone, where the project has no command that checks it"
+        },
+        "why": {
+          "type": "string",
+          "description": "the file and its lines, or the decision, it is read from"
+        }
+      }
+    },
+    "point": {
+      "type": "object",
+      "description": "a point no file or decision settles, for the orchestrator to ask the user",
+      "required": [
+        "point",
+        "why"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "point": {
+          "type": "string",
+          "description": "the question to put to the user, on one choice"
+        },
+        "why": {
+          "type": "string",
+          "description": "what it rests on: the files and decisions read that settle none of it"
+        }
+      }
+    }
+  }
+}
