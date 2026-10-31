@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 560" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>turn's data model</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .label { fill: #1f2328; font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label { fill: #f0f6fc; }
+      .line { stroke: #9198a1; }
+    }
+  </style>
+
+  <!-- relations, drawn under the boxes -->
+  <path class="line" d="M185,120 H305"/>
+  <text class="label" text-anchor="middle" x="245" y="160">kept where</text>
+  <text class="label" text-anchor="middle" x="245" y="175">the CCS names</text>
+
+  <path class="line" d="M430,98 L500,58"/>
+  <text class="label" x="478" y="84">laid out from the CCS</text>
+
+  <path class="line" d="M635,36 H785"/>
+  <text class="label" text-anchor="middle" x="710" y="28">gives their values</text>
+
+  <path class="line" d="M455,120 H645"/>
+  <text class="label" text-anchor="middle" x="560" y="112">names the work</text>
+
+  <path class="line" d="M360,142 L300,278"/>
+  <text class="label" text-anchor="end" x="318" y="200">names the checklists</text>
+
+  <path class="line" d="M400,142 L440,268"/>
+  <text class="label" x="432" y="205">names the CCS</text>
+
+  <path class="line" d="M490,312 L690,428"/>
+  <text class="label" x="575" y="322">says where</text>
+  <text class="label" x="575" y="337">the result goes</text>
+
+  <path class="line" d="M420,428 L700,142"/>
+  <text class="label" x="626" y="236">gives lines in the work</text>
+
+  <path class="line" d="M150,234 L240,278"/>
+  <text class="label" x="212" y="232">names the items</text>
+  <text class="label" x="212" y="247">that wait on it</text>
+
+  <path class="line" d="M300,322 L360,428"/>
+  <text class="label" x="345" y="372">answers each item</text>
+
+  <path class="line" d="M455,450 H645"/>
+  <text class="label" text-anchor="middle" x="550" y="442">gives the result its choices</text>
+
+  <path class="line" d="M870,278 L750,142"/>
+  <text class="label" x="815" y="204">gives lines in the work</text>
+
+  <path class="line" d="M770,428 L860,322"/>
+  <text class="label" x="832" y="384">gives the result its items</text>
+
+  <path class="line" d="M240,322 V520 H880 V322"/>
+  <text class="label" text-anchor="middle" x="560" y="512">answers each item</text>
+
+  <path class="line" d="M955,300 H1125"/>
+  <text class="label" text-anchor="middle" x="1040" y="292">its items without Good</text>
+
+  <path class="line" d="M1200,322 V428"/>
+  <text class="label" text-anchor="end" x="1190" y="380">answers the needs</text>
+
+  <!-- data -->
+  <rect class="box" x="35" y="98" width="150" height="44" rx="4"/>
+  <text class="name" x="110" y="125">answer</text>
+  <rect class="box" x="305" y="98" width="150" height="44" rx="4"/>
+  <text class="name" x="380" y="125">CCS</text>
+  <rect class="box" x="485" y="14" width="150" height="44" rx="4"/>
+  <text class="name" x="560" y="41">role input</text>
+  <rect class="box" x="785" y="14" width="150" height="44" rx="4"/>
+  <text class="name" x="860" y="41">lanes</text>
+  <rect class="box" x="645" y="98" width="150" height="44" rx="4"/>
+  <text class="name" x="720" y="125">work</text>
+  <rect class="box" x="35" y="190" width="150" height="44" rx="4"/>
+  <text class="name" x="110" y="217">question</text>
+  <rect class="box" x="205" y="278" width="150" height="44" rx="4"/>
+  <text class="name" x="280" y="305">checklist</text>
+  <rect class="box" x="375" y="268" width="150" height="44" rx="4"/>
+  <text class="name" x="450" y="295">call</text>
+  <rect class="box" x="305" y="428" width="150" height="44" rx="4"/>
+  <text class="name" x="380" y="455">claim</text>
+  <rect class="box" x="645" y="428" width="150" height="44" rx="4"/>
+  <text class="name" x="720" y="455">result</text>
+  <rect class="box" x="805" y="278" width="150" height="44" rx="4"/>
+  <text class="name" x="880" y="305">reading</text>
+  <rect class="box" x="1125" y="278" width="150" height="44" rx="4"/>
+  <text class="name" x="1200" y="305">needs</text>
+  <rect class="box" x="1125" y="428" width="150" height="44" rx="4"/>
+  <text class="name" x="1200" y="455">reply</text>
+</svg>

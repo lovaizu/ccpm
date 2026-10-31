@@ -1,0 +1,395 @@
+[
+ {
+  "commit": "aaaaadf",
+  "sessions": {
+   "generator": "5ac32455-8da2-4246-8c65-4d7952798722",
+   "first-user": "32446247-cc7c-47f2-8ab2-3db255442fb1",
+   "evaluator": "9b209c49-f710-42a0-a32f-3d2a25b0825a",
+   "learner": "9bed9a7e-e14c-481c-97e2-8b0e48111b37"
+  },
+  "minutes": {
+   "generator": 0.4,
+   "first-user": 0.2,
+   "evaluator": 0.2,
+   "learner": 1.1
+  },
+  "read": "Every JSONL read. Each reply filled its form. The first user and the evaluator read the work and the checklist alone, whole. The generator read what it was not given and was not stopped: ls of the repository's top, .tasks and notes, the run's own file .tasks/result.json, and git log --stat; it replied before reading the work it wrote, and the hook kept it going until it did. The learner read README.md and ls, outside its records, unstopped.",
+  "cause": "read_in_given took a path joined to `;` as a word naming nothing, let every role read where the run is kept, and let git through."
+ },
+ {
+  "commit": "after the fix of read_in_given",
+  "sessions": {
+   "generator": "aba671d4-e2bd-4e8f-b164-dfd72496b903",
+   "first-user": "50fe4ae7-db3d-41f1-a98c-7f6b4382d08d",
+   "evaluator": "41a19010-d94a-4dba-96d5-879997a0780d",
+   "learner": "4bf584ce-b72f-4fcc-89e6-fe31c331ccb6"
+  },
+  "minutes": {
+   "generator": 0.5,
+   "first-user": 0.2,
+   "evaluator": 0.2,
+   "learner": 0.5
+  },
+  "read": "Every JSONL read. Each role read only what its step reads and whole, and each reply filled its form. The generator's first command, ls and git log, was stopped, and it went on with Read of what it was given; again it replied before reading the work it wrote, and the hook kept it going until it did. The learner went through the three records with one jq command and read nothing else. For the content trials: the generator wrote terms of MIT the decisions do not give, and the learner cut each part of a record at 1,500 characters."
+ },
+ {
+  "commit": "8d885f1 with step 1 saying the path alone",
+  "sessions": {
+   "generator": "33c72eb6-0d11-4fb2-91f5-7d76208276bf",
+   "first-user": "b31a5d73-615a-4f4a-812b-89897e342121",
+   "evaluator": "331e37e4-359b-4133-929a-ee7e95614b0a",
+   "learner": "00cff606-dc1d-4ba6-8fa7-d1e746468aa0"
+  },
+  "minutes": {
+   "generator": 0.5,
+   "first-user": 0.3,
+   "evaluator": 0.2,
+   "learner": 0.6
+  },
+  "read": "Every role ran turn.py given with the path at its first try and read only and whole what its step reads, each reply in its form. The generator's ls and git ls-files were stopped; it read the work it wrote with cat -n before replying. On 8d885f1 as pushed, each role first passed the prompt's whole JSON and was refused, and the learner then read turn's scripts for 1 minute."
+ },
+ {
+  "commit": "9e03fab, with the trial passing the orchestrator's check first (580dc63)",
+  "sessions": {
+   "generator": "1a39bea6-c083-418b-b171-eb3c385fab8e",
+   "first-user": "b8603e3f-0e40-42b7-b25b-371a6abdb245",
+   "evaluator": "3a1a4c89-1b49-42c7-a9c0-f11e62f258aa",
+   "learner": "4d270c28-151c-4b82-a699-9b51045c0fd5"
+  },
+  "minutes": {
+   "generator": 0.6,
+   "first-user": 0.3,
+   "evaluator": 0.3,
+   "learner": 1.2
+  },
+  "read": "Every JSONL read. Every role ran turn.py given with the path, the generator twice, and read only and whole what its step reads, each reply in its form; the generator named a source line for each of the two statements its work makes, and the learner was shown each record page by page and said B-1's Good wants the full sentence, the trial having replaced the work with a bare MIT. The generator's ls and git log were stopped; the evaluator called ReportFindings with no findings before replying."
+ },
+ {
+  "commit": "14dcc09",
+  "sessions": {
+   "generator": "0236dd6c-192f-44c6-a6b1-6a7bd7f56956",
+   "first-user": "a2875bb0-d78c-411d-ac66-c5759569f75d",
+   "evaluator": "e4025b2b-fc5d-410e-bee8-9bf8a118c10b",
+   "learner": "39a82024-b714-4d47-8cc5-38348e26ca22"
+  },
+  "minutes": {
+   "generator": 0.4,
+   "first-user": 0.4,
+   "evaluator": 0.3,
+   "learner": 0.4
+  },
+  "read": "Every JSONL read. Every role ran turn.py given with the path at its first try and read only and whole what its step reads, each reply in its form. The learner's three records came to one page each, six pages before, and it replied in 0.4 minutes, 1.2 before, with the same finding. The generator's ls and git ls-files were stopped."
+ },
+ {
+  "commit": "51971ff",
+  "sessions": {
+   "generator": "2851808e-120f-43e4-8ab1-ba56e5cd880f",
+   "first-user": "5465faf9-5ae0-4f22-80a2-59e9433296f3",
+   "evaluator": "6441ca86-6c9b-4149-b67c-68bb0fdc5bf1",
+   "learner": "39f7f9e1-37d4-47cd-8020-2f0b9060a8d1"
+  },
+  "minutes": {
+   "generator": 0.5,
+   "first-user": 0.3,
+   "evaluator": 0.3,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Every role read only and whole what its step reads, each reply in its form; the learner's lessons stood on the records' facts. The generator's ls was stopped; the learner made one call that did nothing, an ls ending in echo skip."
+ },
+ {
+  "commit": "dad59ec",
+  "sessions": {
+   "generator": "19391e72-6652-4f53-b393-525ab2afe9c3",
+   "first-user": "02152df0-2149-4764-9213-fa19c1c6dab3",
+   "evaluator": "363c5467-ae66-4894-965d-64e97897cd3a",
+   "learner": "6b0b26e7-8fb0-4df4-b1ef-bb0af1e2878b"
+  },
+  "minutes": {
+   "generator": 0.9,
+   "first-user": 0.3,
+   "evaluator": 0.6,
+   "learner": 0.7
+  },
+  "read": "Every JSONL read. Every role read only and whole what its step reads, each reply in its form, B-2 with a Good for every part and the learner's reply lessons on the run alone. The generator's ls and git ls-files were stopped, and it first gave turn.py parts the README's path, not the run's, which the step now says; the evaluator ran echo ok."
+ },
+ {
+  "commit": "the generator and the first user kept started, by kept.py",
+  "sessions": {
+   "stand-in": "046ceeff-f94a-4fbd-b225-740f0fd93942"
+  },
+  "minutes": {
+   "whole": 3.8
+  },
+  "read": "Every JSONL read. The generator, sent back twice by message, each time ran turn.py given and read the work alone, not the CCS or its files again, and made the work again; the second time it found the README replaced and put the license back at line 3. The first user stopped at B-1 with places README.md:1-4 and 5-7; sent the work made again, it ran turn.py given, read the work again whole, and gave B-1 its Good at line 3, inside a place it stopped at. Each role's ls or git was stopped by the hook, and it went on. A message from the conversation that started the agent is kept as origin kind coordinator, not peer, so the hook now counts both as a message."
+ },
+ {
+  "commit": "26c9ce8, by kept.py",
+  "sessions": {
+   "stand-in": "dc395aae-047a-4ba2-8d25-e609558b441f"
+  },
+  "minutes": {
+   "whole": 3.1
+  },
+  "read": "Every JSONL read. The generator, sent back twice by message, ran turn.py given and made the work again without reading the CCS or its files again. The first user read checklist.md alone, not accuracy.md, read demo.sh, which the receiver has, and ran `sh demo.sh` as the README says; it stopped at B-1 with places README.md:1-4 and 5-7, and, sent the work made again, gave B-1 its Good at line 3. Seen again: the first user put 'this part says nothing about the terms' inside a B-2 Good."
+ },
+ {
+  "commit": "0e49883, with roles.py's README of a bare-word license",
+  "sessions": {
+   "generator": "2ef4da59-9efb-49a4-8c86-5b65826c6cf9",
+   "first-user": "323b85c6-1ca9-432d-80bc-dbe253714fe9",
+   "evaluator": "d9de6f04-f6c4-44dc-b71c-4e42bcb69f3c",
+   "learner": "34a45ebf-ffb7-40f9-b775-415ea9b71834"
+  },
+  "minutes": {
+   "generator": 0.7,
+   "first-user": 0.3,
+   "evaluator": 0.3,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Each role read only and whole what its step reads, each reply in its form. The set README's bare 'MIT' answers B-1 as the checklist now asks, so both readers gave it a Good while the learner was given B-1 without Good: the set input, kept from when accuracy.md asked for no guessing, was off; roles.py's README now names no license."
+ },
+ {
+  "commit": "roles.py's README naming no license, without has",
+  "sessions": {
+   "generator": "9bc06779-18dc-492b-ae89-8c8f2f5b5418",
+   "first-user": "df6065ff-9c08-41b4-96b4-6888655bf77e",
+   "evaluator": "b87275f9-b241-4ee9-86ce-eba6ad96e091",
+   "learner": "35832aff-04f1-4db5-8f58-62cae0e59637"
+  },
+  "minutes": {
+   "generator": 0.9,
+   "first-user": 0.8,
+   "evaluator": 0.4,
+   "learner": 0.8
+  },
+  "read": "Every JSONL read. The first user stopped at B-1 and did not run demo.sh, as the call gave the receiver nothing beside the work; roles.py's call now gives the code as has, as kept.py's does. The first user's ls of the repository's top went through the hook."
+ },
+ {
+  "commit": "roles.py with has",
+  "sessions": {
+   "generator": "48e10826-bf6e-42e4-9be2-1930829b1211",
+   "first-user": "67d7160c-9410-4c75-b5bc-a7958fb15c93",
+   "evaluator": "4ad5952b-7515-4771-a68b-6cd6d22eaf08",
+   "learner": "5d31aeac-2e84-4e1e-8fd6-1ad63ce19937"
+  },
+  "minutes": {
+   "generator": 0.8,
+   "first-user": 0.5,
+   "evaluator": 0.8,
+   "learner": 0.8
+  },
+  "read": "Every JSONL read. The generator, the first user and the evaluator each ran demo.sh as the README says. The evaluator's `grep -ril licen .` read the whole repository through the hook, as a command naming the repository's top was let through; the read check now takes the top as a read, but where cd goes (9feb4dc)."
+ },
+ {
+  "commit": "9feb4dc",
+  "sessions": {
+   "generator": "5ecae8e5-7a24-4601-a4e2-a5464d141298",
+   "first-user": "465111d0-d6f6-498e-9d32-ebb841e7dca0",
+   "evaluator": "1489d3bd-fefc-4e63-97c1-88bc18c90c4f",
+   "learner": "65aa05dd-38ce-4076-8e6d-b62ddad63f6f"
+  },
+  "minutes": {
+   "generator": 0.7,
+   "first-user": 0.5,
+   "evaluator": 0.6,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Every role read only and whole what its step reads, each reply in its form; the generator, the first user and the evaluator ran demo.sh; the first user stopped at B-1 with its places; the learner's lessons stood on the records' words. The generator's ls with git log, and its git status, were stopped; the first user ran an echo that did nothing. The learner's orchestrator lesson rests on the README the trial replaced."
+ },
+ {
+  "commit": "0e49883, by kept.py",
+  "sessions": {
+   "stand-in": "2039bc5b-2db6-46b3-9379-177cb5576a2f"
+  },
+  "minutes": {
+   "whole": 4.8
+  },
+  "read": "Every JSONL read. The generator, sent back by message, ran turn.py given and read the work alone, not the CCS or its files again, found the README replaced and added the license. The first user ran demo.sh, stopped at B-1 with places README.md:1-4 and 5-7, and, sent the work made again, read it whole again, ran demo.sh and gave B-1 its Good at lines 9-13. Seen again: the first user put a caution inside B-1's Good."
+ },
+ {
+  "commit": "07153f5, by roles.py",
+  "sessions": {
+   "generator": "fcc2d486-c619-4ddf-a52c-21f4f96bbf37",
+   "first-user": "84a20c47-9967-45c7-8834-f7777331ab0d",
+   "evaluator": "7d4ec0ff-db80-4adc-aa33-2b8e6721f20b",
+   "learner": "a0c4fd55-9eba-4d5d-b356-7f37e8714333"
+  },
+  "minutes": {
+   "generator": 0.9,
+   "first-user": 1.0,
+   "evaluator": 0.5,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Each reply filled its form. Every role was stopped reading the form its step names, as read_only let through only its inputs.",
+  "cause": "lane's read_only stopped the form lane's in_form names, which lane's design means the subagent to read; fixed in 6da0587."
+ },
+ {
+  "commit": "8c78852, by roles.py",
+  "sessions": {
+   "generator": "1643b3b6-6183-4ecf-b8bc-5ec5c8ace305",
+   "first-user": "a87f5f39-354a-43a4-9018-ed43d96efe7b",
+   "evaluator": "82ae3ddb-3bc7-43b4-9b5e-99f2e025e358",
+   "learner": "bbe3bcc2-d17b-4fa0-935f-ba2daf5cf518"
+  },
+  "minutes": {
+   "generator": 0.9,
+   "first-user": 0.7,
+   "evaluator": 0.6,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Each role read only what it was given and its form, whole, and each reply filled its form; the generator ran demo.sh, the first user and the evaluator ran what the receiver runs, both finding no Good in the set README with no license."
+ },
+ {
+  "commit": "07153f5, by kept.py",
+  "sessions": {
+   "stand-in": "34dc4a30-68f3-41b5-a483-d4fe8366bbd6"
+  },
+  "minutes": {
+   "whole": 3.3
+  },
+  "read": "Every JSONL read. The first user, sent the work made again, was not given its new parts, gave the old, and was sent back twice for its form.",
+  "cause": "the flow's message with the work made again held no parts, and the form's message pointed to turn.py parts, which a role cannot run; fixed in 8c78852."
+ },
+ {
+  "commit": "8c78852, by kept.py",
+  "sessions": {
+   "stand-in": "1eabce35-c7fc-41c8-9b88-fa3bf8b55dc8"
+  },
+  "minutes": {
+   "whole": 3.3
+  },
+  "read": "Every JSONL read. The first user stopped at B-1 in the set README; the generator, sent back by message, read the work alone, not the CCS or its files again, and added the license; the first user, sent the work made again with its new parts, read it whole again, ran demo.sh and gave both items their Good, no form sent back."
+ },
+ {
+  "commit": "4afc6a8, by roles.py",
+  "sessions": {
+   "generator": "544d6ef5-c109-4249-bc56-f91a77022fbb",
+   "first-user": "d748dd49-904d-4520-be92-79b5f249354d",
+   "learner": "bbd77d80-d193-456f-8a59-32731738e7ba"
+  },
+  "minutes": {
+   "generator": 1.0,
+   "first-user": 0.9,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Each reply filled its form. The first user, given `.` as what the receiver has, read the generator's reply and the run's state beside the result.",
+  "cause": "the first user's given held `.`, under which the run keeps its files, so its read_only lane let it read them; fixed in 492ac76 by giving no role the run's own files"
+ },
+ {
+  "commit": "492ac76, by roles.py",
+  "sessions": {
+   "generator": "9c3cd835-7580-4bff-9281-d29fea35830a",
+   "first-user": "784ecf58-7a38-49e9-91fc-da0265660bf6",
+   "learner": "c935b446-4c6c-420b-b885-5d0c4883e8b3"
+  },
+  "minutes": {
+   "generator": 1.0,
+   "first-user": 1.0,
+   "learner": 1.1
+  },
+  "read": "Every JSONL read. Each reply filled its form. The generator read the CCS and its files whole, ran demo.sh in a folder from mktemp -d and gave each Good with its lines; the first user read none of the run's files, ran demo.sh, stopped at B-1 in the set README with places, did and lacking; the learner read both records whole and quoted them, once writing a script of its own in /tmp to check its quotes, whose sed -i its lanes stopped."
+ },
+ {
+  "commit": "492ac76, by kept.py",
+  "sessions": {
+   "stand-in": "2f758373-cbde-4a4f-b5c5-710a132b3d7a"
+  },
+  "minutes": {
+   "whole": 2.8
+  },
+  "read": "Every JSONL read. The first user stopped at B-1 in the set README; the generator, sent back by message, read the work alone, not the CCS or its files again, and added the license with Edit; the first user, sent the work made again with its parts, read it whole again, ran demo.sh and gave both items their Good, no form sent back."
+ },
+ {
+  "commit": "first-user remade to prompt.md, by roles.py",
+  "sessions": {
+   "generator": "617cf42e-c252-4bf6-b52b-40ebeda59f26",
+   "first-user": "3c3c0f4e-51c8-4ccc-8e3d-edf26ccaabd7",
+   "learner": "5378aedb-df8b-4d26-8878-e33a49d3fba5"
+  },
+  "minutes": {
+   "generator": 1.3,
+   "first-user": 1.0,
+   "learner": 1.2
+  },
+  "read": "The first user's JSONL read. It read the set README, the checklist, demo.sh and the notes whole, ran demo.sh, stopped at B-1 with places, did and lacking and gave B-2 a Good in each part; its reply filled its form. Its `git ls-files`, `git log` and `grep -r .` were stopped by read_only and it went on with its steps."
+ },
+ {
+  "commit": "first-user remade, by kept.py",
+  "sessions": {
+   "stand-in": "a52fb49d-dd31-45d0-91d4-c0d3b9429c4b"
+  },
+  "minutes": {
+   "whole": 3.7
+  },
+  "read": "Every JSONL read. The round went as at 492ac76, but the first user read `.tasks/ccs.json` with `cat -n`, unstopped: the flow gave it the CCS among the entries of `.tasks`, opened on the way to the result.",
+  "cause": "without_run_files left out the run's files alone, not the CCS, which reader_given says the first user is not given; fixed by leaving out the CCS too, the folder on the way to it opened"
+ },
+ {
+  "commit": "after the CCS left out, by kept.py",
+  "sessions": {
+   "stand-in": "d372655d-9043-4ccb-b11c-046b22f24fb0"
+  },
+  "minutes": {
+   "whole": 3.3
+  },
+  "read": "Every JSONL read. The first user read the README, the checklist, demo.sh and the notes, not the CCS, ran demo.sh and stopped at B-1; sent the work made again, read the README again, ran demo.sh and gave both items their Good; no hook stop, no form sent back."
+ },
+ {
+  "commit": "generator remade to prompt.md, by roles.py",
+  "sessions": {
+   "generator": "0b4cbcca-8f5d-4ec5-80c5-e27120fb4df3"
+  },
+  "minutes": {
+   "generator": 1.3
+  },
+  "read": "The generator's JSONL read. It read the CCS and its files whole, wrote the README, read it again with cat -n, ran turn.py parts, ran demo.sh in a clone in a folder from mktemp -d, compared its print, and wrote its claim with Write, in its form."
+ },
+ {
+  "commit": "generator remade, by kept.py",
+  "sessions": {
+   "stand-in": "e31e6035-59cd-4f9e-ba8d-3ede443f7daf"
+  },
+  "minutes": {
+   "whole": 3.4
+  },
+  "read": "Every JSONL read. Sent back B-1, the generator read the README again, changed only its license with Edit, read and ran it again and wrote its claim anew with Write, no Edit on the reply the flow had removed; the first user read the work again and gave both items their Good; no hook stop."
+ },
+ {
+  "commit": "f87008c, each trial in its own temporary folder, by roles.py",
+  "sessions": {
+   "generator": "8756b366-eefe-4493-a964-cf8ca1d8e041",
+   "first-user": "60c44311-6c70-4052-90c0-9f5965196403",
+   "learner": "c1b03e1a-b4cd-4f5d-9f8f-7368b2cbf04f"
+  },
+  "minutes": {
+   "generator": 1.0,
+   "first-user": 0.8,
+   "learner": 1.0
+  },
+  "read": "Every JSONL read. The run made and removed /tmp/turn/20261026-roles-f647oun3, writing nothing beside it. The generator read the CCS and its files whole, wrote the README with its license, read it with cat -n, ran demo.sh in a folder from mktemp -d and claimed both items in its form. The first user, given the set README, read it, the checklist, demo.sh and the notes, ran demo.sh and stopped at B-1, its form filled. The learner read both records whole and found the set README as the first user's file differing from the generator's, rightly, as it cannot know the trial set it; its third lesson quoted the generator's Write of its claim, shown as JSON with every quote escaped, with the quotes unescaped, and the form sent it back.",
+  "cause": "records.as_text showed a tool's input as JSON, so a file an agent wrote was shown with its quotes and lines escaped and a quote of it as written was not found; each value is now shown under its name, text as it is, and the learner's three lessons pass the check on this run's records."
+ },
+ {
+  "commit": "9b05062, each item by its lines, a need for each item without Good, by roles.py",
+  "sessions": {
+   "generator": "2e5164d4-cde2-4cee-a81d-ba09e832b98b",
+   "first-user": "16bfc661-e47d-4ea7-a276-f421d8a85d0b"
+  },
+  "minutes": {
+   "generator": 1.2,
+   "first-user": 1.1
+  },
+  "cost_usd": {
+   "generator": 0.38,
+   "first-user": 0.29
+  },
+  "read": "Both replies filled their form. The generator gave each item by its lines alone, B-2 at a range in each of the three parts. The first user, given the set README with no license, gave B-1 and B-2 each one sentence of what the reader would need, each with a clause on what the README lacks beside it."
+ },
+ {
+  "commit": "9b05062, by kept.py",
+  "session": "b653307b-781a-4fa5-ab6d-1f15f5b7c2b7",
+  "minutes": 3.6,
+  "cost_usd": 0.85,
+  "read": "The first user's need for B-1 and B-2 sent to the generator kept started as {\"needs\": [...]}; it made the README again with the license and claimed both by their lines; the first user, sent the work made again, gave both by their lines; returned."
+ }
+]

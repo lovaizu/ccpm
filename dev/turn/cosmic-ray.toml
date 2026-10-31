@@ -1,0 +1,23 @@
+# Mutation testing of turn's scripts and its adapters of lane's ports, run from the top of the
+# repository on a copy that may be changed. What turn takes from lane through a link, its hooks'
+# lane/ among it, is mutated there, with lane's tests.
+[cosmic-ray]
+module-path = ["plugins/turn/scripts", "plugins/turn/hooks/adapters"]
+timeout = 30.0
+# The type checker and the linter run first: a change to a type annotation, or a comparison of a
+# string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
+# type checker is what checks annotations, the linter what checks `is` against a literal; the type
+# check leaves out the link to lane's code in turn's hooks, as dev/typecheck.sh says, which would
+# fail on every mutant, so none would survive whatever the tests catch.
+# A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
+# where no input tells a mutant of it apart: by order with the first or the last of them, such as
+# "each part", the first of the scopes in order, or `__name__`, which is "__main__" or, imported by
+# the tests, "turn", after it; or by `is` with a small number, of which CPython keeps one copy, such as
+# a heading's level; or a folder with the folder it is in, which is it only at the top, by `is` too
+# as CPython gives back the path itself there, and never sorts after it, as it begins it. Each such
+# line holds that comparison alone, as the mark leaves out every mutant of its line.
+# Where the code compares a value with one it knows, its tests take values on either side of that
+# one in order too, such as a heading of the level below and one of the level above, so a
+# comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not
+# where it sorts.
+test-command = "sh -c 'ruff check --select F632 plugins/turn && sh dev/typecheck.sh turn && python -m unittest discover -f -s dev/turn/tests'"

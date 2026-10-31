@@ -1,0 +1,90 @@
+"""Judges the work each acceptance trial gave back by one bar, a measure beside KR1.1, which is the
+calling AI's own check of each Good: for each run of trial.py, the folder it printed given, an AI
+that took no part in any of the runs judges each item of the task's checklists afresh in the work
+the run kept, whether the receiver the CCS names gets from that work what the item asks, with what
+it read and ran for it, on one prompt and each run in a Claude Code run of its own, all at once, so
+no run's reading cuts another's short. Writes each run's judgment to `judged.json` in its folder,
+beside its work, and prints each run's count and its session.
+
+    python3 dev/turn/trials/judge.py <run folder> [<run folder> ...]
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+import threading
+
+import shared
+import testing
+
+KIND = shared.call("has")["kind"]
+PROMPT = """You judge work that was made for a task, in the folder {folder}.
+
+The folder holds the task at `.tasks/ccs.json`, a CCS: the work is what it names as
+`{work}`, the receiver its `{receiver}`, what they use the work for its `{use}`, the
+checklists its `{checklist}`, what the receiver has with the work its `{has}`, and the items asked
+of each part of the work its `{each}`, each as `<checklist path> <ID>`; its other entries, such as
+the decisions, are what the work was made from. Read the CCS, its decisions, each checklist and the
+whole work, each file whole with `cat -n`. Each item of a checklist is a heading such as
+`### Q-1: <title>`.
+
+For each item, judge whether the receiver, for that use, with what they have, gets from the work
+what the item asks; for an item asked of each part, in every part of the work on its own. Check what
+the work says rather than trust it: run each command it tells the receiver to run and compare what
+it prints with what the work says, try each claim of what the code does on an input it is about, and
+look up each file and link it points to; each in a copy of the folder in a folder from `mktemp -d`
+that the command removes at its end. Change nothing in the folder.
+
+Write your judgment to {out} as JSON: [{{"checklist": "<path as the CCS names it>", "item":
+"<ID>", "met": true or false, "read": ["<file>:<from>-<to>", ...], "ran": ["<command>", ...],
+"reason": "<what the receiver gets or lacks, and what showed it>"}}, ...], every item of every
+checklist. Then reply `Written.`"""
+
+
+def judged(folder: str) -> str:
+    """Where the judgment of the run of the folder is written, in its folder."""
+    return os.path.join(folder, "judged.json")
+
+
+def judge(folder: str, ends: dict) -> None:
+    """Runs the judge on the work of the run of the folder, in a folder of its own, so it starts
+    from none of the runs' folders."""
+    place = testing.temporary("turn", "judge")
+    with shared.removed(place):
+        work = shared.Run(folder).work
+        prompt = PROMPT.format(folder=work, out=judged(folder), **KIND)
+        ends[folder] = shared.claude(prompt, [], cwd=place)
+
+
+folders = [os.path.abspath(p) for p in sys.argv[1:]]
+if not folders:
+    sys.exit("usage: judge.py <run folder, as trial.py printed it> [<run folder> ...]")
+for folder in folders:
+    if not os.path.isfile(os.path.join(shared.Run(folder).work, ".tasks", "ccs.json")):
+        sys.exit(f"{folder} holds no work/.tasks/ccs.json; give a folder trial.py printed")
+    if os.path.exists(judged(folder)):
+        sys.exit(f"{judged(folder)} is there already; move it away to judge again")
+ends: dict = {}
+runs = [threading.Thread(target=judge, args=(f, ends)) for f in folders]
+for run in runs:
+    run.start()
+for run in runs:
+    run.join()
+for folder in folders:
+    work = shared.Run(folder).work
+    with open(os.path.join(work, ".tasks", "ccs.json"), encoding="utf-8") as f:
+        checklists = shared.entries(json.load(f), "checklist")
+    # The work's items, from the checklists its CCS names, to find any the judge left out.
+    asked = {(c, i["item"]) for c in checklists for i in shared.items(os.path.join(work, c))}
+    with open(judged(folder), encoding="utf-8") as f:
+        given = json.load(f)
+    met = asked & {(g.get("checklist"), g.get("item")) for g in given if g.get("met") is True}
+    left = sorted(asked - {(g.get("checklist"), g.get("item")) for g in given})
+    end = ends[folder]
+    print(
+        f"{folder}: {len(met)} of {len(asked)} met"
+        + (f"; not judged: {left}" if left else "")
+        + f"; session {end.get('session_id')}, cost {end.get('total_cost_usd')}"
+    )

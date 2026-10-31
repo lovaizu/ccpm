@@ -1,0 +1,81 @@
+{
+  "title": "The generator's claim: each item at the lines of the work that give its Good, on a mend each item sent alone, and each choice the work rests on that the CCS leaves open, with why.",
+  "type": "object",
+  "required": [
+    "items",
+    "chosen"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "items": {
+      "type": "array",
+      "description": "one for each item of every checklist; on a mend, one for each item sent to you alone",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    },
+    "chosen": {
+      "type": "array",
+      "description": "each choice the work rests on that neither the CCS nor the files it names gave, [] where none",
+      "items": {
+        "$ref": "#/$defs/choice"
+      }
+    }
+  },
+  "$defs": {
+    "item": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/made"
+        }
+      ]
+    },
+    "made": {
+      "type": "object",
+      "description": "an item made, at the lines of the work that give its Good",
+      "required": [
+        "checklist",
+        "item",
+        "lines"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "checklist": {
+          "type": "string",
+          "description": "the checklist's path, as you were given it"
+        },
+        "item": {
+          "type": "string",
+          "description": "the item's ID, such as B-1"
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "<path of the work>:<from>-<to>"
+          },
+          "description": "the lines of the work that give its Good, each range as `<path>:<from>-<to>`; for an item asked of each part, at least one range in every part of the work, each inside one part"
+        }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "description": "a choice you made that no one gave you",
+      "required": [
+        "chosen",
+        "why"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "chosen": {
+          "type": "string",
+          "description": "what you chose"
+        },
+        "why": {
+          "type": "string",
+          "description": "why you chose it"
+        }
+      }
+    }
+  }
+}
