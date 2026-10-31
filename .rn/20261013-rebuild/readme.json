@@ -2,7 +2,7 @@
  "kind": "readme",
  "purpose": "A README is read by someone who meets the product for the first time. From the README alone, they decide whether to use the product, and become able to explain it to a colleague or a manager and recommend it. Once they decide to use it, they start using it by the README's steps alone. When they get stuck later, they can tell from the README where to read next.",
  "format": {
-  "skeleton": "# <Product name>\n\n<One sentence: \"<Name> is a <kind> that <does what>\">\n\n<Whom the product is for, and what they gain with it>\n\n<The idea that makes the gain possible>\n\n**Non-goals**\n\n- <What the product does not do>\n\n## Requirements\n\n- <Each thing that must be in place before installing>\n\n## Installation\n\n<The install steps>\n\n## Walkthrough\n\n<One run of one of the UX's scenarios, each step and what it shows, up to the result>\n\n## How it works\n\n<One SVG figure, with the few words it needs, of what the product is made of and how that keeps the opening's promise>\n\n## Documentation\n\n<A link to fuller use>\n\n## Development\n\n<A link to the development documents>\n\n## License\n\n<The license's name, linked to its file>\n",
+  "skeleton": "# <Product name>\n\n<One sentence: \"<Name> is a <kind> that <does what>\">\n\n<Whom the product is for, and what they gain with it>\n\n<The idea that makes the gain possible>\n\n**Non-goals**\n\n- <What the product does not do>\n\n## Requirements\n\n- <Each thing that must be in place before installing>\n\n## Installation\n\n<The install steps>\n\n## Walkthrough\n\n<One run of one of the UX's scenarios, each step and what it shows, up to the result>\n\n## How it works\n\n<One SVG figure, with the few words it needs, of what the product does inside, step by step, and how each step keeps the opening's promises>\n\n## Documentation\n\n<A link to fuller use>\n\n## Development\n\n<A link to the development documents>\n\n## License\n\n<The license's name, linked to its file>\n",
   "parts": [
    {
     "id": "summary",
@@ -143,8 +143,8 @@
   },
   {
    "id": "Q6",
-   "what": "When a manager asks \"Can it really do that?\", can the reader answer by showing how it works?",
-   "why": "If yes, the reader backs their recommendation with the way the product keeps its promise, not with the promise alone. The figure shows what the product is made of and how that keeps the opening's promise, in words and at a grain a manager follows; files and small parts are left to the architecture document. If no, a manager shown only the promise takes it on trust or turns it down, and the reader cannot back the product they want to recommend.",
+   "what": "When a manager asks \"Can it really do that?\", can the reader answer from How it works by showing what the product does inside to keep the opening's promises?",
+   "why": "If yes, the reader backs their recommendation with the reason each promise holds, not with the promise alone. Each promise of the opening is joined to what the product does inside that keeps it, in words and at a grain a manager follows; files and small parts are left to the architecture document. A figure of who hands what to whom shows the exchange, not why a promise holds. If no, a manager shown only the promise, or only the exchange, takes it on trust or turns it down, and the reader cannot back the product they want to recommend.",
    "about": [
     "how-it-works"
    ],
@@ -153,8 +153,8 @@
     "plugins/rn/checklists/product/readme.md:119-120: \"a reader shown only the promise takes it on trust, and cannot tell whether it holds for their own work. The reader explains the product to their team by what it is made of, too.\""
    ],
    "examples": {
-    "fails": "How it works: \"RoomBook uses a matching engine and a calendar connector.\" No figure, and no word on how matching keeps the promise of offering only rooms that fit.",
-    "passes": "A figure of three boxes: the meeting you describe, RoomBook's matching of seats and equipment against each room, and the office calendar it reads for free times, with an arrow to the rooms offered. One line under it: only rooms that pass both checks are offered."
+    "fails": "A figure with arrows between the worker and RoomBook labelled \"request\" and \"rooms\", and nothing on what RoomBook does between them.",
+    "passes": "A figure of what RoomBook does inside, in order: it matches the meeting's seats and equipment against each room, checks the office calendar for free times, and offers only the rooms that pass both. One line under it: this is how RoomBook keeps its promise to offer only rooms that fit."
    }
   },
   {

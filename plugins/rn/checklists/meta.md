@@ -66,20 +66,23 @@ Does each question ask one thing, answered yes or no?
 
 Why: a question asking two things has no answer for a deliverable that meets one of them.
 
-### Q-5: What the user gets, found by using it
+### Q-5: A scene of use, the same answer from any judge
 
-Does each question ask what the deliverable's user gets from it, answered by using the deliverable
-as they would?
+Does each question put the user in a concrete scene of using the deliverable, so that whoever
+judges it gives the same answer?
 
-Why: a question about the text, such as whether a part is there or a word is used, is met by the
-words while the user gets nothing; a checkpoint names a criterion, not a mere indicator of it
-(Scriven, "The Logic and Methodology of Checklists", 2007).
+Why: a judge given a scene takes the user's place in it and tries whether the deliverable answers
+there. A question with no scene leaves each judge to choose the measure, so one deliverable passes
+for one judge and fails for another. A question about the text, such as whether a part is there or
+a word is used, is met by the words while the user gets nothing; a checkpoint names a criterion,
+not a mere indicator of it (Scriven, "The Logic and Methodology of Checklists", 2007). A question
+that opens by narrowing where it holds, such as "where the document tells of several that act in
+turn", passes whatever a judge calls outside it.
 
-Fails: "Is each line of the architecture a decision whose change would change what was approved?",
-met by a line saying which check a script runs.
+Fails: "Is each thing shown in the form its reader takes in most easily for that thing?", whose
+"most easily" each judge measures their own way.
 
-Passes: "Can the approver tell from each line what holds for the user and why, whichever way it is
-built?"
+Passes: "When a colleague asks 'What is it?', can the reader answer in one sentence?"
 
 ### Q-6: The aim, in each Why
 
