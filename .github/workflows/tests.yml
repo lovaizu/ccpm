@@ -1,21 +1,131 @@
-name: tests
+name: Tests
 
 on: push
 
+# The tests only read the repository, so the token they are given can change nothing.
+permissions:
+  contents: read
+  checks: read
+
 jobs:
-  tests:
+  # The unit tests of every plugin run on each push, and the property tests and the mutation
+  # testing, which check that the unit tests are enough, on what changed since the commit before
+  # it where that passed, else since the branch left main, for each plugin `sh dev/changed.sh`
+  # names, each in a job of its own, all at once; whole on main after a commit not passed, and for a
+  # plugin whose version the push changes, as before a release. A push that changes only what no
+  # check reads, such as the session records and the documents of dev/, is not checked, and `tests`
+  # still passes, as main takes a pull request only when `tests` has passed.
+  changed:
+    runs-on: ubuntu-latest
+    outputs:
+      check: ${{ steps.changed.outputs.check }}
+      plugins: ${{ steps.changed.outputs.plugins }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - id: changed
+        env:
+          BEFORE: ${{ github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          passed=$(gh api "repos/$GITHUB_REPOSITORY/commits/$BEFORE/check-runs" \
+            --jq '[.check_runs[] | select(.name == "tests") | select(.conclusion == "success")] | length' \
+            2>/dev/null || echo 0)
+          if [ "$passed" -gt 0 ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base=$BEFORE
+          elif [ "$GITHUB_REF" != refs/heads/main ]; then
+            base=$(git merge-base HEAD origin/main)
+          else
+            base=""
+          fi
+          if [ -n "$base" ]; then
+            plugins=$(sh dev/changed.sh "$base" HEAD)
+          else
+            plugins=$(sh dev/plugins.sh)
+          fi
+          matrix=$(for plugin in $plugins; do
+            since=$base
+            manifest="plugins/$plugin/.claude-plugin/plugin.json"
+            if [ -n "$base" ] && git diff "$base" HEAD -- "$manifest" \
+              | grep -qE '^[-+][[:space:]]*"version"'; then
+              since=""
+            fi
+            jq -nc --arg plugin "$plugin" --arg since "$since" '{plugin: $plugin, since: $since}'
+          done | jq -sc .)
+          echo "plugins=$matrix" >> "$GITHUB_OUTPUT"
+          if [ -n "$plugins" ]; then
+            echo "check=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "check=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # The oldest Python users run and the newest (dev/architecture.md, Unit tests: code).
+  check:
+    needs: changed
+    if: needs.changed.outputs.check == 'true'
+    strategy:
+      matrix:
+        python: ["3.9", "3.x"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.9"
-      - run: pip install "coverage>=7.10"
-      # Each plugin keeps its tests in dev/<plugin>/tests/ (.claude/rules/plugin.md).
-      - run: |
-          for tests in dev/*/tests; do
-            plugin="${tests#dev/}"
-            coverage run --source="${plugin%/tests}" -m unittest discover -s "$tests"
-          done
-      - run: coverage combine
-      - run: coverage report
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - env:
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: uv sync --locked ${{ matrix.python == '3.x' && '--group test-quality' || '' }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      # Claude Code is installed from its lock, scripts off but its own, which only links its binary.
+      - working-directory: dev
+        run: |
+          npm ci --ignore-scripts
+          node node_modules/@anthropic-ai/claude-code/install.cjs
+          echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: uv run --no-sync sh dev/check.sh
+
+  test-quality:
+    needs: changed
+    if: needs.changed.outputs.check == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.changed.outputs.plugins) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.x"
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - env:
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: uv sync --locked --group test-quality
+      - run: uv run --no-sync sh dev/properties.sh ${{ matrix.plugin }}
+      - if: hashFiles(format('dev/{0}/cosmic-ray.toml', matrix.plugin)) != ''
+        env:
+          SINCE: ${{ matrix.since }}
+        run: uv run --no-sync sh dev/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
+
+  # What main requires: every job passed, or the checks skipped as above.
+  tests:
+    needs: [changed, check, test-quality]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          CHANGED: ${{ needs.changed.result }}
+          CHECK: ${{ needs.changed.outputs.check }}
+          CHECKED: ${{ needs.check.result }}
+          TESTED: ${{ needs.test-quality.result }}
+        run: |
+          [ "$CHANGED" = success ] || exit 1
+          [ "$CHECK" = false ] || { [ "$CHECKED" = success ] && [ "$TESTED" = success ]; }
