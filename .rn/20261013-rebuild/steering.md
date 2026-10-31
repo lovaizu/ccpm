@@ -67,7 +67,7 @@
 
 Stage: build.
 
-Next: T41: write turn's UX (dev/turn/ux.md), its O1 and KR1.1 to KR1.4 agreed and its scenario next, from .rn/20261013-rebuild/ux.json, the ux template the user approved on 2026-10-31: OKRs with no target values, and Scenarios with one main path per objective, checked by its four questions. Then remake the readme template the same way, just before turn's README, and the architecture template just before turn's architecture (.claude/rules/dev.md: work made before a checklist changed is read against the new one).
+Next: T41: remake the readme template by planner's steps, as the ux template was (.rn/20261013-rebuild/ux.json, approved 2026-10-31: purpose by meta's opening, a format drawn from the purpose, few questions each asking one thing from the reader's side), show the user its purpose, format and questions in plain Japanese for approval, then rewrite plugins/turn/README.md from it and dev/turn/ux.md, which the user agreed on 2026-10-31. Then the architecture and code templates the same way, each just before turn's document or code it is for.
 
 Open:
 
