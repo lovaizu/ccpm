@@ -16,7 +16,7 @@
 
 - T41: turn rebuilt on the concept and roles agreed in turn-rebuild.md. Builds on none.
 
-  - The user agrees to builder's and evaluator's steps, then to turn's README and architecture rewritten from turn-rebuild.md. Serves AC1 and AC2.
+  - turn's UX, README and architecture are rewritten from turn-rebuild.md and agreed by the user, each written after its kind's template, the Format and the Checklist, is remade by planner's steps and the user has approved the kind's purpose and conditions. Serves AC1 and AC2.
   - turn is built by .claude/rules/dev.md: check.sh turn 100%, mutate.sh turn 0 survivors, and its acceptance trials passing. Serves AC1.
 
 - T42: rn's meta-checklist and every checklist remade as templates that turn's planner keeps. Builds on T41.
@@ -57,7 +57,7 @@
 
 Stage: build.
 
-Next: On resume, propose to the user how to go on with T41 from turn-rebuild.md, one decision at a time; the step open is planner's step 4 for the readme template, made from its root down, each level shown to the user: the root put to the user, README's kind purpose: whoever meets the product first decides whether it is for them, gets their first result if it is, and knows where to ask when stuck (GitHub Docs, About READMEs; Google's README guide).
+Next: T41: remake the ux template by planner's steps, from the kind's purpose at the root down, each level shown to the user; then write turn's UX from it. The readme and architecture templates follow the same way, each just before the document it is for, since a document written by a checklist about to change would be read again by the new one (.claude/rules/dev.md), and the README is drawn from the UX (plugins/rn/checklists/product/readme.md).
 
 Open:
 

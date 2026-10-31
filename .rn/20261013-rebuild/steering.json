@@ -39,7 +39,7 @@
     "builds_on": [],
     "completion_criteria": [
      {
-      "what": "The user agrees to builder's and evaluator's steps, then to turn's README and architecture rewritten from turn-rebuild.md",
+      "what": "turn's UX, README and architecture are rewritten from turn-rebuild.md and agreed by the user, each written after its kind's template, the Format and the Checklist, is remade by planner's steps and the user has approved the kind's purpose and conditions.",
       "contributes_to": [
        "AC1",
        "AC2"
@@ -196,7 +196,7 @@
  "status": {
   "stage": "build",
   "awaiting_signoff": false,
-  "next_step": "On resume, propose to the user how to go on with T41 from turn-rebuild.md, one decision at a time; the step open is planner's step 4 for the readme template, made from its root down, each level shown to the user: the root put to the user, README's kind purpose: whoever meets the product first decides whether it is for them, gets their first result if it is, and knows where to ask when stuck (GitHub Docs, About READMEs; Google's README guide).",
+  "next_step": "T41: remake the ux template by planner's steps, from the kind's purpose at the root down, each level shown to the user; then write turn's UX from it. The readme and architecture templates follow the same way, each just before the document it is for, since a document written by a checklist about to change would be read again by the new one (.claude/rules/dev.md), and the README is drawn from the UX (plugins/rn/checklists/product/readme.md).",
   "open_questions": [
    "Whether the design-tree way of thinking, wanted for every plan, task breakdown and way of going, is kept as a skill or a rule outside the plugins (the user, 2026-10-31: not a plugin matter).",
    "Whether turn's way of moving a work follows the plugin architecture as it stands (turn-rebuild.md, What turn takes and gives)."
