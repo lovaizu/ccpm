@@ -67,7 +67,7 @@
 
 Stage: build.
 
-Next: T41: refactor-doc approved 2026-10-31 (.rn/20261013-rebuild/refactor-doc.json: turn's second phase is refactoring, how the work says a thing bettered while what it says stays; figures first, the least text, and no disagreement inside the document, with the documents beside it or over time). Next: check ux.json and readme.json against meta's revised Q-5 (a scene of use, the same answer from any judge); then finish plugins/turn/README.md (its two figures redrawn, uncommitted) against readme.json and refactor-doc and commit it; then the architecture template (.rn/20261013-rebuild/architecture.json, a draft built from the old sections, to be derived again from its purpose) and dev/turn/architecture.md, then the code template.
+Next: T41: turn's README approved 2026-10-31 (plugins/turn/README.md: made until it is what it should be; How it works draws who acts on whom, each line its action; meta Q-5 asks that a scene name what the user does). Left to the architecture: a page for a user stuck mid-run (readme Q8) and plugins/turn/docs/calling.md, which describes today's turn (refactor-doc Q9). Next: the architecture template (.rn/20261013-rebuild/architecture.json, a draft built from the old sections, to be derived again from its purpose, its questions scenes by meta Q-5) and dev/turn/architecture.md, then the code template.
 
 Open:
 
