@@ -8,7 +8,7 @@ The user merges a change without reading it all again, sure that only what they 
   and whether any of its work does nothing toward that purpose.**
   - Rationale: each part was checked on its own as it was made; what lies between parts shows only
     when the whole is read at once, and the user should not have to read it all again to find it.
-- **Judge each finding by what the user approved, the purpose and the approved design, and make no
+- **Judge each finding by what the user approved, the purpose and the approved architecture, and make no
   fix that changes what was approved. Where what was approved is wrong, or does not settle the
   point, bring it to the user.**
   - Rationale: merging is the user standing behind what they approved. Bending the architecture to
