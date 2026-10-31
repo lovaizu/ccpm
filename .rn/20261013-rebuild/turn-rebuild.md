@@ -78,37 +78,39 @@ The purpose of this one work is not planner's: designer asks it.
 3. A script verifies that every question is served by a decision and every decision reaches the
    root.
 4. Decide in the order the decisions build on one another, the goal first: ask the user this work's
-   purpose. Research each fact. Decide what the
-   purpose and the best practice settle. Ask the user what only they decide, one at a time, with a
-   recommendation.
+   purpose. Research each fact. Decide what the purpose and the best practice settle. Ask the user
+   what only they decide, one at a time, with a recommendation.
 5. Show the user the design, the decisions in short lines, for approval; on a change, go back to
    that decision.
 6. Pass the design to builder.
+7. Take back what builder or evaluator returns, and trace it to the decisions that serve its
+   question. Where a decision is wrong, decide it again as 4 says, with the decisions that build on
+   it; where the decisions hold and the work strays from them, keep them. Either way, pass the
+   design to builder again.
+
+designer alone changes the design and alone asks the user about it, so the work is always made from
+one design.
 
 ### builder
 
 1. Take the design, the Format and the Checklist.
-2. Make each part of the Format as the design's decisions say.
-3. Decide the small points of making, such as a phrase or a function's name, from the design and
-   the best practice.
-4. Where a point the design leaves open bears on the work's quality, decide it from the purpose and
-   the best practice where they settle it; otherwise ask the user, one at a time, with a
-   recommendation. Add each decision to the design.
-5. Use and answer, as below, into `self-check.json`; mend each more and answer again, until every
-   question is good. No one reads it: writing an answer for each question makes the builder look at
-   every one.
-6. Pass the work to evaluator.
-7. Take each more evaluator gives as what the user needs, and mend the work for the user, not to
-   pass evaluator. Where a mend changes a decision, decide it again as 4 says, asking the user what
-   only they decide, and write it into the design. Then pass the work to evaluator again.
+2. Take the decisions in the order they build on one another, one at a time: make each into the
+   work along the Format, use and answer the questions it contributes to, as below, and mend each
+   more before the next. Decide the small points of making, such as a phrase or a function's name,
+   from the design and the best practice.
+3. Where a point the design leaves open bears on the work's quality, return it to designer
+   unanswered.
+4. With every decision made in, use and answer every question into `self-check.json`, mending each
+   more, until every question is good. No one reads it: writing an answer for each question makes
+   the builder look at every one.
+5. Pass the work to evaluator.
 
 ### evaluator
 
 1. Take the work and the Checklist alone. The design is not given: the user never sees it, and an
    evaluator who has it judges whether the work follows the design, not what its user gets.
 2. Use and answer, as below, into `verification.json`.
-3. Where every question is good, the work goes to the user. Otherwise give the answers to builder,
-   and verify the mended work again.
+3. Where every question is good, the work goes on. Otherwise return the answers to designer.
 
 ### Use and answer
 
@@ -118,12 +120,27 @@ Both builder and evaluator do this, in the same way.
 2. Using it as its user would, write for each question of the Checklist good, with the lines that
    meet its aim, or more, with what the user gets once it is good, never how to make it.
 
+## Flow
+
+designer, builder and evaluator stay started, and go always in that order: each return goes to
+designer, which passes the design to builder, whose work goes to evaluator.
+
+1. The substance first: the kind's own questions alone, made up decision by decision from the
+   design tree, until evaluator finds every one good. A more is mended at the decision that serves
+   its question, never added onto the work, as rn's fix checklist asks of a change.
+2. Then the form: the questions a kind takes in by `includes`, such as those of every document,
+   which hold over the whole work. builder finishes the work by them and evaluator verifies it by
+   them, with no design tree. Only how the work says a thing changes; a point that would change
+   what it says goes back to 1.
+
+Keeping the two apart keeps builder and evaluator on the substance while it is made.
+
 ## Files
 
 Each is JSON. lane's lanes hold each role to them: `read_whole` has the work read whole before an
 answer is written, `every_item` an answer for every question, `in_form` each file in its form, and
-`end_when` the output made before the role ends. A script checks only what no lane holds, as below. Keys follow the steering's
-rules: a name says its intent, a one-to-many join is nested, a many-to-many join lists IDs.
+`end_when` the output made before the role ends. A script checks only what no lane holds, as below.
+Keys follow the steering's rules: a name says its intent, a one-to-many join is nested, a many-to-many join lists IDs.
 
 - `<kind>.json`, the template, one for each kind: `kind`; `purpose`, who uses such a work and for
   what; `format`, with `skeleton` and `parts`, each part `id`, `what` and `why`; and `checklist`,
