@@ -67,7 +67,7 @@
 
 Stage: build.
 
-Next: T41: rewrite plugins/turn/README.md on the readme template (.rn/20261013-rebuild/readme.json, approved 2026-10-31: a newcomer decides from the README alone whether to use the product, can explain it when a colleague asks, starts by its steps alone and knows where to read when stuck; eight questions, each a scene such as a colleague asking what it is), from dev/turn/ux.md, which the user agreed on 2026-10-31, and show it to the user for agreement. Then the architecture and code templates the same way, each just before turn's document or code it is for.
+Next: T41: remake the architecture template by planner's steps, as the ux and readme templates were (.rn/20261013-rebuild/ux.json and readme.json, approved 2026-10-31), show the user its purpose, format and questions in plain Japanese for approval, then rewrite dev/turn/architecture.md from turn-rebuild.md, dev/turn/ux.md and plugins/turn/README.md, which the user agreed on 2026-10-31; it settles how a user starts turn, where the work and the kept templates are saved, and plugins/turn/docs/calling.md, which still tells today's call. Then the code template the same way, just before turn's code.
 
 Open:
 

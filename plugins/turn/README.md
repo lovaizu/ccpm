@@ -1,60 +1,51 @@
 # turn
 
-turn is a Claude Code plugin that has AI make the work a step of your plugin asks for, such as a
-document or code, and returns it meeting the step's checklists, read first by an AI that did not
-make it.
+turn is a Claude Code plugin that makes a piece of work you ask for, such as a document or code,
+until it meets your purpose.
 
-An AI that makes a work and checks it itself finds what it meant to give, not what the work's
-reader gets from it. It decides points no one gave it where no one sees them. A point only the user
-can decide reaches them, if at all, after the work is made on a guess.
+With turn, anyone who wants a piece of work made gets one that fully meets their purpose. They
+spend their own effort only on the points that only they can decide. turn decides every other
+point itself.
 
-With turn, your plugin's step gets back a work it can trust item by item: each item of its
-checklists comes with the lines of the work that meet it, so the step checks the work by reading
-those lines and goes on. Anyone who builds a plugin whose steps have AI make documents or code
-gains this, for every step and every run.
-
-turn does this by keeping apart the AI that makes the work and the AI that reads it:
-
-- Your step writes its task in a CCS, a JSON file of what is decided, the work's paths, its
-  checklists and its receiver, the one the work is for. A checklist lists what the receiver should
-  get from the work, one item each, asked as a question. An item's Good is the judgment that the
-  receiver gets what the item asks, with the lines of the work that give it.
-- The generator, an AI, makes the work from the CCS and the files it names alone. It sends each
-  point only the user can decide to the main conversation, the one you talk with, as soon as it
-  meets it, and settles every other point itself, naming each choice with why.
-- The first user, an AI that did not make the work, then uses it in the receiver's place, with
-  what the receiver has. For each item it gives the lines that give its Good, or tells the
-  generator in one sentence what the receiver would need. The generator mends the work, and the
-  first user reads it again.
-- turn's scripts check each reply of the two AIs, and write the result your step reads. Hooks
-  from lane, a plugin whose code turn carries in `hooks/lane/`, hold each AI to its steps.
+For each kind of work, such as a press release, a README or a script, turn first works out what a
+good one is. turn reads how good ones are made, and shows you two things to approve. The format is
+the shape of the work, such as a headline, a lead and a body. The checklist is a set of questions
+that a work answers yes to when it serves its readers, such as "Can a reporter tell from the
+headline what is new?" turn then asks you what the work is for, and each point only you can
+decide, one at a time, with the answer it recommends. A second AI then uses the finished work as
+its reader would. This AI never sees how the work was planned, so it judges only what the reader
+gets. Where an answer is not yet yes, turn mends the work and has it read again. You see the work
+only once every answer is yes. When you ask Claude Code alone, the AI that wrote the work is the
+only one that checks it, and you find what it missed yourself.
 
 **Non-goals**
 
-- turn judges each item by what the receiver gets with what they have, not by whether the work
-  matches its sources.
-- turn does not ask the user itself; the main conversation asks them, whether your step runs there
-  or in an agent below it.
-- turn does not make an item it leaves without its Good; it returns the item with what the receiver
-  would need, and your step makes it.
-- turn's AIs run no `git commit` or `git push`; the work is left at its paths for your step.
-- turn has no command for a person to type; your plugin's step calls it.
+- turn does not choose what the work is for. It asks you, and builds every other decision on your
+  answer.
+- turn does not publish or send the work. It gives the work to you, and what happens to it next is
+  yours.
+- turn is not for a quick draft. Reading how good works of a new kind are made, and having a second
+  AI read the work, take longer than asking Claude Code alone. A kind turn has made before skips
+  that reading.
 
 ## Requirements
 
-- Claude Code, in which turn runs.
+- Claude Code.
+
+  turn runs inside it.
+
 - Python 3.9 or later, run as `python3`.
 
-  turn's scripts and hooks run on Python.
-- A step that calls turn from the main conversation, or from an agent the main conversation
-  started.
+  turn's scripts check its work with it.
 
-  turn's agents take the two layers of agents below the one that calls it, and Claude Code starts
-  agents down to three layers below the main conversation.
+- Claude Code allowed to search and read the web, with its WebSearch and WebFetch tools.
+
+  turn reads on the internet how good works of a new kind are made.
 
 ## Installation
 
-turn comes from ccpm, a marketplace of Claude Code plugins on GitHub. Add it, then install turn:
+turn comes from ccpm, a marketplace of Claude Code plugins on GitHub. Add the marketplace, then
+install turn:
 
 ```console
 claude plugin marketplace add lovaizu/ccpm
@@ -75,83 +66,84 @@ Installed plugins:
 
 ## Walkthrough
 
-This is the UX's scene [From a step that needs a work to the step's end](../../dev/turn/ux.md#from-a-step-that-needs-a-work-to-the-steps-end),
-with [A point only the user can decide](../../dev/turn/ux.md#a-point-only-the-user-can-decide), run
-on a real task: the README of csvtidy, a one-file tool that tidies a CSV file. The output below is
-what the run gave back.
+It is November 2026, and your company, Northwind, launches RoomBook, a meeting-room booking app.
+You need a press release for it. RoomBook's README, in the repository you have open in Claude
+Code, says what the app does, who Northwind is and how to reach its PR department. In the lines
+below, `You:` is what you type, and `turn:` is what turn shows you.
 
-Your plugin's step has the user's decisions in `notes/readme.decisions.md` and a checklist for
-READMEs in `checklists/readme.md`. It writes its task in a CCS, `.tasks/ccs.json`, every kind in it
-your plugin's own:
+1. Ask for the work, and name turn's agent, `turn:up`:
 
-```json
-{"focal_entities": [{"deliverable": "README.md"},
-                    {"audience": "someone who cleans CSV exports by hand before their scripts read them, finding csvtidy on GitHub"}],
- "goal_orientation": [{"purpose": "to tidy their own CSV file with csvtidy"}],
- "retrieved_artifacts": [{"checklist": "checklists/readme.md"},
-                         {"has": "csvtidy.py"},
-                         {"decisions": "notes/readme.decisions.md"}]}
-```
+   ```text
+   You:  Have turn:up write a press release for RoomBook, our new meeting-room booking app.
+   ```
 
-The step's text then starts turn with the call. The call names the CCS, where to write the result,
-the kind in the CCS that holds each thing turn needs, and the one command that checks the work, or
-`null` where the work has none, as here:
+2. turn confirms the kind of work:
 
-```
-Start the `turn:up` agent in the background with
-{"ccs": ".tasks/ccs.json", "result": ".tasks/result.json", "test": null,
- "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
-          "use": "purpose", "has": "has", "each": "each"}}
-```
+   ```text
+   turn: Is this a press release, written for reporters and editors?
+   You:  Yes
+   ```
 
-No decision says under which license csvtidy is, so the generator sends the main conversation that
-question as a message, and makes the rest of the work meanwhile:
+3. turn reads guides and examples of good press releases on the internet. It then shows you the
+   format and the checklist it drew from them:
 
-```json
-{"question": "The README needs a License section, but the repository has no LICENSE file and neither the CCS nor notes/readme.decisions.md says which license csvtidy is under. Which license should csvtidy be under (and should a LICENSE file be added to the CCS as a file of the work)?",
- "recommended": "MIT, with a LICENSE file added to the CCS as a work entry, because it is the usual choice for a small single-file tool that people copy into their own projects, and a README link to a LICENSE file is what lets the reader tell the terms of use.",
- "items": [{"checklist": "checklists/readme.md", "item": "Q-6"}]}
-```
+   ```text
+   turn: Format: headline, lead, body, boilerplate, contact.
+         Checklist:
+         - Can a reporter tell from the headline what is new?
+         - Can a reporter tell from the lead who launches what, and when?
+         - Can a reporter check each claim in the body?
+         - Can a reporter tell from the boilerplate who the company is?
+         - Can a reporter tell from the contact whom to ask, and how?
+         Approve?
+   You:  Approved
+   ```
 
-The main conversation asks you, adds your answer to `notes/readme.decisions.md` and `LICENSE` to
-the CCS, and sends the answer back to the generator with SendMessage. In this run the generator
-asked three more questions the same way: the copyright line, a figure to add to the work as
-`docs/how-it-works.svg`, and leave to write files outside the work, which was refused. You see each
-of turn's agents in Claude Code's panel of agents while it runs.
+4. turn asks what this release is for, and then the one point of it that only you can decide:
 
-When turn returns, `README.md` and `LICENSE` are in place, and `.tasks/result.json` holds the lines
-of each item's Good, the items left without it, and each choice the generator made on its own:
+   ```text
+   turn: What is the release for?
+   You:  To get RoomBook into trade magazines.
+   turn: When is the release date? I recommend the 1st of next month: trade magazines plan
+         their issues weeks ahead, and this gives their editors time to place it.
+   You:  The 1st of next month.
+   ```
 
-```json
-{"work": ["README.md", "LICENSE", "docs/how-it-works.svg"],
- "items": [{"checklist": "checklists/readme.md", "item": "Q-1", "lines": ["README.md:1-42"]},
-           {"checklist": "checklists/readme.md", "item": "Q-2", "lines": ["README.md:10-12"]},
-           ...],
- "left": [],
- "chosen": [{"chosen": "Installation is: copy csvtidy.py, via GitHub's \"Download raw file\"; the check is running it with no arguments to see the usage line.",
-             "why": "The decisions note says installing is copying the file, and the repository has no remote URL to give a download command for."},
-            ...]}
-```
+5. turn shows the key points it will build the release on:
 
-Your step reads lines 10 to 12 of `README.md` and the others it is pointed to, makes any item left
-itself, shows the user each choice made without asking them, and ends.
+   ```text
+   turn: Key points: a headline on RoomBook's launch; three benefits from RoomBook's README;
+         Northwind's PR department as the contact. Approve?
+   You:  Approved
+   ```
 
-## How it works
+6. turn writes the release. The second AI reads it as a reporter would and answers each question
+   of the checklist. turn mends the release until every answer is yes, and only then gives it to
+   you:
 
-![Your step calls turn:up; turn:up starts the generator, then the first user; the generator asks the main conversation, the first user tells the generator what the receiver would need; turn's scripts check each reply and write the result](docs/how-it-works.svg)
+   ```text
+   turn: Northwind's RoomBook offers only the meeting rooms that fit your meeting
 
-turn is three agents, `turn:up`, the generator and the first user, each with its steps; the Python
-scripts they run; and lane's hooks. Each agent starts in a context of its own, so the first user
-holds nothing of how the work was made and finds only the Good the work's lines give. The scripts
-give each agent only its files, and check each reply before the agent ends, so a Good comes back
-only at lines the work holds. The hooks hold each agent to its steps, such as reading only its
-files and writing only the work or its reply, so the work rests on the CCS alone. Who does what in
-which order is in the UX's [scenes](../../dev/turn/ux.md#scenes).
+         Northwind launches RoomBook, a meeting-room booking app, on 1 December 2026.
+         RoomBook matches each room's seats and equipment to the meeting you describe.
+
+         With RoomBook, an office worker:
+         - books a room with the seats and equipment the meeting needs;
+         - sees at once which of those rooms are free for the time they need;
+         - books it without asking anyone.
+
+         About Northwind: Northwind makes software that helps offices run.
+
+         Contact: Northwind PR department, pr@northwind.example
+   ```
+
+turn keeps the format and the checklist you approved. Your next press release starts from them, so
+turn skips step 3, the research and that approval.
 
 ## Documentation
 
-- [Calling turn](docs/calling.md) gives the checklist's form, the CCS, the call, the questions and
-  the result in full.
+- [Calling turn](docs/calling.md) tells how a step of another plugin, such as rn, has turn make its
+  work.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development
