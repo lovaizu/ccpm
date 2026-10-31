@@ -57,8 +57,9 @@
 
 Stage: build.
 
-Next: T41: builder's and evaluator's steps agreed with the user, one at a time.
+Next: On resume, propose to the user how to go on with T41 from turn-rebuild.md, one decision at a time; the step open is planner's step 4 for the readme template, made from its root down, each level shown to the user: the root put to the user, README's kind purpose: whoever meets the product first decides whether it is for them, gets their first result if it is, and knows where to ask when stuck (GitHub Docs, About READMEs; Google's README guide).
 
 Open:
 
 - Whether the design-tree way of thinking, wanted for every plan, task breakdown and way of going, is kept as a skill or a rule outside the plugins (the user, 2026-10-31: not a plugin matter).
+- Whether turn's way of moving a work follows the plugin architecture as it stands (turn-rebuild.md, What turn takes and gives).
