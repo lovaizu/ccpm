@@ -57,7 +57,7 @@
 
 Stage: build.
 
-Next: T41: remake the ux template by planner's steps 3 to 5 without the user, then show them the kind's purpose and the conditions once for approval, as step 6 says; then write turn's UX from it. The kind's purpose is said in the words the best practice uses: ISO 9241-11 and 9241-210 give a UX's ground as the specified users, their goals and the context of use. The readme and architecture templates follow the same way, each just before the document it is for, since a document written by a checklist about to change would be read again by the new one (.claude/rules/dev.md), and the README is drawn from the UX (plugins/rn/checklists/product/readme.md).
+Next: T41: review .rn/20261013-rebuild/ux.json, the ux template a subagent drafted by planner's steps 3 to 5, read whole against turn-rebuild.md's Files, plugins/rn/checklists/meta.md and the in-use plugins/rn/checklists/product/ux.md; fix it, then show the user its purpose and questions once for approval (step 6). Its points left open: scene renamed scenario, no check that goals and key results carry IDs, Q2 and Q9 new from best practice, Q5 against OKR's targets. Then write turn's UX from it; the readme and architecture templates follow the same way, each just before the document it is for (.claude/rules/dev.md: work made before a checklist changed is read against the new one).
 
 Open:
 
