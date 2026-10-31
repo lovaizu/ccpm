@@ -35,9 +35,13 @@ turn takes a template for each kind of work and gives a work of that kind.
 
 A design tree is the decisions to make, each joined to the goal it serves. It is made from the
 goal down: at each node, ask what must hold for it, until a fact or the user settles it (KAOS goal
-refinement; Brooks, The Design of Design; Matt Pocock's grilling skill, MIT). A node is decided
-after the node it hangs from. Every branch reaches the root; one that does not serves nothing and
-is cut.
+refinement; Brooks, The Design of Design; Matt Pocock's grilling skill, MIT).
+
+A decision has two joins. It contributes to the questions or decisions it serves, and by these
+every branch reaches the root; one that does not serves nothing and is cut. It builds on the
+decisions that must be made before it, and by these the order of deciding is found: a README's
+scene serves whether the reader can picture their own work, and builds on what the README
+promises.
 
 A design tree is not the questions' dependencies. A decision made early, such as what a README
 promises, is checked by a question answered last, such as whether the product keeps each promise;
@@ -73,16 +77,51 @@ The purpose of this one work is not planner's: designer asks it.
    under each question the decisions that make it yes, the same decisions merged.
 3. A script verifies that every question is served by a decision and every decision reaches the
    root.
-4. Walk the tree from the root. Ask the user the purpose. Research each fact. Decide what the
+4. Decide in the order the decisions build on one another, the goal first: ask the user this work's
+   purpose. Research each fact. Decide what the
    purpose and the best practice settle. Ask the user what only they decide, one at a time, with a
    recommendation.
 5. Show the user the design, the decisions in short lines, for approval; on a change, go back to
    that decision.
 6. Pass the design to builder.
 
-### builder and evaluator
+### builder
 
-Their steps are still to agree.
+1. Take the design, the Format and the Checklist.
+2. Make each part of the Format as the design's decisions say.
+3. Decide the small points of making, such as a phrase or a function's name, from the design and
+   the best practice.
+4. Where a point the design leaves open bears on the work's quality, decide it from the purpose and
+   the best practice where they settle it; otherwise ask the user, one at a time, with a
+   recommendation. Add each decision to the design.
+5. Use the work as its user would, and write for each question of the Checklist good or more in
+   `self-check.json`; mend each more and write it again, until every question is good. No one reads
+   it: writing an answer for each question makes the builder look at every one.
+6. Pass the work to evaluator.
+
+### evaluator
+
+Its steps are still to agree.
+
+## Files
+
+Each is JSON, held by a script to its form and to the IDs it names. Keys follow the steering's
+rules: a name says its intent, a one-to-many join is nested, a many-to-many join lists IDs.
+
+- `<kind>.json`, the template, one for each kind: `kind`; `purpose`, who uses such a work and for
+  what; `format`, with `skeleton` and `parts`, each part `id`, `what` and `why`; and `checklist`,
+  each question `id`, `what`, `why`, `about` (the parts it looks at), `grounds` and `examples`
+  (`fails` and `passes`). A script verifies every part is looked at by a question.
+- `design-tree.json`, one for each work: `kind`; `goal`, this work's purpose, with its `grounds`;
+  and `decisions`, each `id`, `what`, `contributes_to`, `builds_on`, `decided`, `settled_by`
+  (`research`, `reasoning` or `user`) and `grounds`. A script verifies every question is served,
+  every decision reaches the root, and the order of deciding follows `builds_on`.
+- `verification.json` from evaluator, and `self-check.json` from builder, in the same form: `kind`;
+  `good`, each question whose aim the work meets, with the `lines` that meet it; and `more`, each
+  question it is close to, with `good_when`, what the user gets once it is good, never how to make
+  it. A script verifies every question stands in one of the two, and each line is there.
+
+Questions shared by several kinds, such as those of every document, are still to settle.
 
 ## Sources
 
