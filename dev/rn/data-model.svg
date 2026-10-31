@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1515 676" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>rn's data model</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .name { fill: #1f2328; font-size: 14px; font-weight: 600; text-anchor: middle; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .label { fill: #1f2328; font-size: 12px; text-anchor: middle; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label { fill: #f0f6fc; }
+      .line { stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+
+  <!-- each relation, labelled with what it is -->
+  <path class="line" d="M1465,434 H1495 V626 H1210"/>
+  <text class="label halo" x="1350" y="630">serves</text>
+  <path class="line" d="M360,222 L360,166"/>
+  <text class="label halo" x="360" y="198">leaves open</text>
+  <path class="line" d="M190,146 L275,146"/>
+  <text class="label halo" x="232" y="150">may be</text>
+  <path class="line" d="M530,146 L445,146"/>
+  <text class="label halo" x="488" y="150">may return</text>
+  <path class="line" d="M588,318 L387,166"/>
+  <text class="label halo" x="488" y="246">has behind it</text>
+  <path class="line" d="M360,126 L360,70"/>
+  <text class="label halo" x="360" y="102">answered by</text>
+  <path class="line" d="M445,50 L785,50"/>
+  <text class="label halo" x="615" y="54">kept as</text>
+  <path class="line" d="M870,70 L870,126"/>
+  <text class="label halo" x="870" y="102">listed once replaced</text>
+  <path class="line" d="M897,70 L1098,222"/>
+  <text class="label halo" x="998" y="150">held by</text>
+  <path class="line" d="M700,162 L1040,226"/>
+  <text class="label halo" x="870" y="198">put into</text>
+  <path class="line" d="M1072,262 L923,318"/>
+  <text class="label halo" x="998" y="294">holds</text>
+  <path class="line" d="M1125,262 L1125,318"/>
+  <text class="label halo" x="1125" y="294">answered by</text>
+  <path class="line" d="M1040,338 L955,338"/>
+  <text class="label halo" x="998" y="342">holds</text>
+  <path class="line" d="M1178,222 L1327,166"/>
+  <text class="label halo" x="1252" y="198">names</text>
+  <path class="line" d="M1210,242 L1295,242"/>
+  <text class="label halo" x="1252" y="246">names</text>
+  <path class="line" d="M1380,222 L1380,166"/>
+  <text class="label halo" x="1380" y="198">cut from</text>
+  <path class="line" d="M1380,70 L1380,126"/>
+  <text class="label halo" x="1380" y="102">adds to</text>
+  <path class="line" d="M1353,414 L1152,262"/>
+  <text class="label halo" x="1252" y="342">made from</text>
+  <path class="line" d="M1178,510 L1327,454"/>
+  <text class="label halo" x="1252" y="486">holds</text>
+  <path class="line" d="M1125,550 L1125,606"/>
+  <text class="label halo" x="1125" y="582">holds</text>
+  <path class="line" d="M1210,530 L1295,530"/>
+  <text class="label halo" x="1252" y="534">holds</text>
+  <path class="line" d="M1380,454 L1380,510"/>
+  <text class="label halo" x="1380" y="486">serves</text>
+  <path class="line" d="M1178,606 L1327,550"/>
+  <text class="label halo" x="1252" y="582">reach</text>
+  <path class="line" d="M955,530 L1040,530"/>
+  <text class="label halo" x="998" y="534">holds</text>
+  <path class="line" d="M923,510 L1072,454"/>
+  <text class="label halo" x="998" y="486">written with</text>
+  <path class="line" d="M870,550 L870,606"/>
+  <text class="label halo" x="870" y="582">made from</text>
+  <path class="line" d="M870,454 L870,510"/>
+  <text class="label halo" x="870" y="486">made from</text>
+  <path class="line" d="M870,414 L870,358"/>
+  <text class="label halo" x="870" y="390">shows</text>
+  <path class="line" d="M700,434 L785,434"/>
+  <text class="label halo" x="742" y="438">answers</text>
+  <path class="line" d="M668,358 L817,414"/>
+  <text class="label halo" x="742" y="390">answers</text>
+  <path class="line" d="M445,434 L530,434"/>
+  <text class="label halo" x="488" y="438">shows typed</text>
+  <path class="line" d="M413,414 L562,358"/>
+  <text class="label halo" x="488" y="390">shows typed</text>
+  <path class="line" d="M445,530 L785,530"/>
+  <text class="label halo" x="615" y="534">keeps each state of</text>
+  <path class="line" d="M158,454 L307,510"/>
+  <text class="label halo" x="232" y="486">found in</text>
+  <path class="line" d="M190,434 L275,434"/>
+  <text class="label halo" x="232" y="438">checked in</text>
+  <path class="line" d="M105,510 L105,454"/>
+  <text class="label halo" x="105" y="486">written from</text>
+  <path class="line" d="M360,606 L360,550"/>
+  <text class="label halo" x="360" y="582">shows</text>
+
+  <!-- each data, by its name -->
+  <rect class="box" x="275" y="222" width="170" height="40" rx="8"/>
+  <text class="name" x="360" y="247">request</text>
+  <rect class="box" x="275" y="126" width="170" height="40" rx="8"/>
+  <text class="name" x="360" y="151">point to decide</text>
+  <rect class="box" x="20" y="126" width="170" height="40" rx="8"/>
+  <text class="name" x="105" y="151">question</text>
+  <rect class="box" x="530" y="318" width="170" height="40" rx="8"/>
+  <text class="name" x="615" y="343">feedback</text>
+  <rect class="box" x="275" y="30" width="170" height="40" rx="8"/>
+  <text class="name" x="360" y="55">answer</text>
+  <rect class="box" x="530" y="126" width="170" height="40" rx="8"/>
+  <text class="name" x="615" y="151">compressor's reply</text>
+  <rect class="box" x="785" y="30" width="170" height="40" rx="8"/>
+  <text class="name" x="870" y="55">decision</text>
+  <rect class="box" x="785" y="126" width="170" height="40" rx="8"/>
+  <text class="name" x="870" y="151">replaced record</text>
+  <rect class="box" x="1040" y="222" width="170" height="40" rx="8"/>
+  <text class="name" x="1125" y="247">CCS</text>
+  <rect class="box" x="1295" y="126" width="170" height="40" rx="8"/>
+  <text class="name" x="1380" y="151">checklist</text>
+  <rect class="box" x="1295" y="30" width="170" height="40" rx="8"/>
+  <text class="name" x="1380" y="55">user's addition</text>
+  <rect class="box" x="1295" y="222" width="170" height="40" rx="8"/>
+  <text class="name" x="1380" y="247">checklist copy</text>
+  <rect class="box" x="1040" y="318" width="170" height="40" rx="8"/>
+  <text class="name" x="1125" y="343">result</text>
+  <rect class="box" x="785" y="318" width="170" height="40" rx="8"/>
+  <text class="name" x="870" y="343">choice</text>
+  <rect class="box" x="1295" y="414" width="170" height="40" rx="8"/>
+  <text class="name" x="1380" y="439">task</text>
+  <rect class="box" x="1040" y="510" width="170" height="40" rx="8"/>
+  <text class="name" x="1125" y="535">plan</text>
+  <rect class="box" x="1295" y="510" width="170" height="40" rx="8"/>
+  <text class="name" x="1380" y="535">goal</text>
+  <rect class="box" x="1040" y="606" width="170" height="40" rx="8"/>
+  <text class="name" x="1125" y="631">acceptance criterion</text>
+  <rect class="box" x="785" y="510" width="170" height="40" rx="8"/>
+  <text class="name" x="870" y="535">steering</text>
+  <rect class="box" x="1040" y="414" width="170" height="40" rx="8"/>
+  <text class="name" x="1125" y="439">steering Markdown</text>
+  <rect class="box" x="785" y="606" width="170" height="40" rx="8"/>
+  <text class="name" x="870" y="631">line told</text>
+  <rect class="box" x="785" y="414" width="170" height="40" rx="8"/>
+  <text class="name" x="870" y="439">proposal</text>
+  <rect class="box" x="530" y="414" width="170" height="40" rx="8"/>
+  <text class="name" x="615" y="439">approval</text>
+  <rect class="box" x="275" y="414" width="170" height="40" rx="8"/>
+  <text class="name" x="360" y="439">conversation records</text>
+  <rect class="box" x="275" y="510" width="170" height="40" rx="8"/>
+  <text class="name" x="360" y="535">history</text>
+  <rect class="box" x="20" y="414" width="170" height="40" rx="8"/>
+  <text class="name" x="105" y="439">learning</text>
+  <rect class="box" x="20" y="510" width="170" height="40" rx="8"/>
+  <text class="name" x="105" y="535">issue</text>
+  <rect class="box" x="275" y="606" width="170" height="40" rx="8"/>
+  <text class="name" x="360" y="631">pull request</text>
+</svg>

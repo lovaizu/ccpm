@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1210 690" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>rn's deployment</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .outside { stroke-dasharray: 5 4; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .held { fill: #1f2328; font-size: 13px; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .head { fill: #59636e; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label, .held { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+
+  <!-- where each role runs and each data is kept -->
+  <rect class="frame" x="20" y="10" width="1170" height="510" rx="10"/>
+  <text class="frame-name" x="32" y="510">the user's computer</text>
+
+  <rect class="frame" x="40" y="58" width="420" height="292" rx="10"/>
+  <text class="frame-name" x="52" y="77">Claude Code</text>
+
+  <rect class="box" x="60" y="88" width="380" height="60" rx="8"/>
+  <text class="name" x="250" y="112">main conversation</text>
+  <text class="kind" x="250" y="132">orchestrator</text>
+
+  <rect class="box" x="60" y="178" width="380" height="60" rx="8"/>
+  <text class="name" x="250" y="202">subagents</text>
+  <text class="kind" x="250" y="222">compressor, and turn's agents</text>
+
+  <rect class="box" x="60" y="268" width="380" height="60" rx="8"/>
+  <text class="name" x="250" y="292">Claude Code's records</text>
+  <text class="kind" x="250" y="312">conversation records, outside the repository</text>
+
+  <rect class="box" x="560" y="88" width="320" height="60" rx="8"/>
+  <text class="name" x="720" y="112">rn's plugin folder</text>
+  <text class="kind" x="720" y="132">rn's checklists, read-only</text>
+
+  <rect class="box outside" x="560" y="178" width="320" height="60" rx="8"/>
+  <text class="name" x="720" y="202">turn</text>
+  <text class="kind" x="720" y="222">installed with rn</text>
+
+  <rect class="box outside" x="560" y="268" width="320" height="60" rx="8"/>
+  <text class="name" x="720" y="292">python3 3.9 or later</text>
+  <text class="kind" x="720" y="312">rn's scripts</text>
+
+  <rect class="frame" x="40" y="380" width="840" height="110" rx="10"/>
+  <text class="frame-name" x="52" y="399">the user's repository, on the piece of work's branch</text>
+  <text class="held" x="60" y="430">steering, steering Markdown, each CCS with its decisions and choices, checklist copy, result,</text>
+  <text class="held" x="60" y="450">learning, issue, replaced record, user's addition, and the work itself</text>
+
+  <rect class="box outside" x="990" y="268" width="170" height="60" rx="8"/>
+  <text class="name" x="1075" y="292">git, gh, jq</text>
+  <text class="kind" x="1075" y="312">command-line tools</text>
+
+  <rect class="box outside" x="940" y="580" width="250" height="84" rx="8"/>
+  <text class="name" x="1065" y="604">GitHub</text>
+  <text class="kind" x="1065" y="624">the branch, the pull request, each issue,</text>
+  <text class="kind" x="1065" y="640">and the default branch, protected</text>
+
+  <!-- what each depends on outside rn -->
+  <path class="line" d="M300,88 V36 H1075 V268" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="690" y="30">jq reads the steering's JSON, gh opens a learning's issue</text>
+
+  <path class="line" d="M440,208 H560" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="500" y="200">turn's agents</text>
+
+  <path class="line" d="M880,298 H990" marker-end="url(#arrow)"/>
+  <text class="label" x="890" y="350">git keeps the record,</text>
+  <text class="label" x="890" y="367">gh opens the pull</text>
+  <text class="label" x="890" y="384">request, marks it ready</text>
+
+  <path class="line" d="M720,328 V380" marker-end="url(#arrow)"/>
+  <text class="label" x="730" y="360">writes the record</text>
+
+  <path class="line" d="M1075,328 V580" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="1065" y="550">the branch, the pull</text>
+  <text class="label" text-anchor="end" x="1065" y="567">request, each issue</text>
+
+  <!-- legend -->
+  <rect class="box" x="40" y="620" width="40" height="22" rx="5"/>
+  <text class="label" x="88" y="636">rn's</text>
+  <rect class="box outside" x="140" y="620" width="40" height="22" rx="5"/>
+  <text class="label" x="188" y="636">outside rn</text>
+  <rect class="frame" x="280" y="620" width="40" height="22" rx="5"/>
+  <text class="label" x="328" y="636">where it runs or is kept</text>
+</svg>

@@ -1,0 +1,204 @@
+{
+ "session": {
+  "rn": "0.9.0",
+  "pr": "https://github.com/lovaizu/ccpm/pull/61",
+  "title": "rn that achieves a purpose from a request alone",
+  "languages": {
+   "artifact": "English",
+   "conversation": "Japanese"
+  }
+ },
+ "plan": {
+  "goals": [
+   {
+    "id": "G1",
+    "what": "Whoever wants to hand a whole piece of work to an agent asks for it without preparing anything, only answers what they are asked, and their purpose is achieved; rn 0.10.0 brings this to them.",
+    "why": "Work that takes days then reaches a merged result with the user called only for their own decisions, deciding each sign-off from the proposal alone and going on from the record the next day, as issue #54 says."
+   }
+  ],
+  "acceptance_criteria": [
+   {
+    "id": "AC1",
+    "what": "On real requests, the user sends back few changes at the deliverable sign-off, none once G1 is reached.",
+    "contributes_to": [
+     "G1"
+    ]
+   },
+   {
+    "id": "AC2",
+    "what": "On the same requests, the user spends little time from asking to their purpose achieved, with AC1 no worse.",
+    "contributes_to": [
+     "G1"
+    ]
+   }
+  ],
+  "tasks": [
+   {
+    "id": "T41",
+    "what": "turn rebuilt on the concept and roles agreed in turn-rebuild.md",
+    "builds_on": [],
+    "completion_criteria": [
+     {
+      "what": "The user agrees to builder's and evaluator's steps, then to turn's README and architecture rewritten from turn-rebuild.md",
+      "contributes_to": [
+       "AC1",
+       "AC2"
+      ]
+     },
+     {
+      "what": "turn is built by .claude/rules/dev.md: check.sh turn 100%, mutate.sh turn 0 survivors, and its acceptance trials passing",
+      "contributes_to": [
+       "AC1"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T42",
+    "what": "rn's meta-checklist and every checklist remade as templates that turn's planner keeps",
+    "builds_on": [
+     "T41"
+    ],
+    "completion_criteria": [
+     {
+      "what": "Each template holds a kind's Format and Checklist in JSON, and the user approved each kind's purpose and conditions",
+      "contributes_to": [
+       "AC1"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T46",
+    "what": "rn remade on T41's turn",
+    "builds_on": [
+     "T42"
+    ],
+    "completion_criteria": [
+     {
+      "what": "A request in rough words reaches the plan sign-off with the user asked only the points that are theirs, one per message",
+      "contributes_to": [
+       "AC1",
+       "AC2"
+      ]
+     },
+     {
+      "what": "The user approves each sign-off from the proposal alone, and meets at the deliverable sign-off a finished work that does every acceptance criterion",
+      "contributes_to": [
+       "AC1",
+       "AC2"
+      ]
+     },
+     {
+      "what": "The steering holds only what is left and where the session stands, replanned from each move's facts; check.sh rn 100%, mutate.sh rn 0 survivors",
+      "contributes_to": [
+       "AC1"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T43",
+    "what": "rn drops a stopped task",
+    "builds_on": [
+     "T46"
+    ],
+    "completion_criteria": [
+     {
+      "what": "dev/rn/architecture.md says it as intent and the case is derived from it, dev/rn/ux.md agreeing",
+      "contributes_to": [
+       "AC1"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T44",
+    "what": "rn's checklists back under Vale",
+    "builds_on": [
+     "T42"
+    ],
+    "completion_criteria": [
+     {
+      "what": "Once the user has merged ccpm#64, plugins/rn/checklists/ pass Vale and .vale.ini's list is shrunk",
+      "contributes_to": [
+       "AC1"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T34",
+    "what": "rn's acceptance test, run whole as its user does on lovaizu/playground",
+    "builds_on": [
+     "T46"
+    ],
+    "completion_criteria": [
+     {
+      "what": "The user is stood in for by an AI holding what the user truly wants, written beforehand and not shown to rn, and AC1 and AC2 are shown from the records",
+      "contributes_to": [
+       "AC1",
+       "AC2"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T14",
+    "what": "AC1 and AC2 shown on a real request of about an hour",
+    "builds_on": [
+     "T34"
+    ],
+    "completion_criteria": [
+     {
+      "what": "A command-line tool that tidies a Downloads folder, with its README, design and tests, run once by T34's test, then tried once by the user",
+      "contributes_to": [
+       "AC1",
+       "AC2"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T45",
+    "what": "nothing left that no purpose needs",
+    "builds_on": [
+     "T14"
+    ],
+    "completion_criteria": [
+     {
+      "what": "The result's work lists no __pycache__/*.pyc, rn's README shows a Walkthrough output from a real run, and plugins/rn/hooks/adapters/items-checklist.py is used or gone",
+      "contributes_to": [
+       "AC1",
+       "AC2"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "T15",
+    "what": "users who update get rn 0.10.0 and turn 0.2.0",
+    "builds_on": [
+     "T45"
+    ],
+    "completion_criteria": [
+     {
+      "what": "Released on the user's instruction",
+      "contributes_to": [
+       "AC1",
+       "AC2"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "status": {
+  "stage": "build",
+  "awaiting_signoff": false,
+  "next_step": "T41: builder's and evaluator's steps agreed with the user, one at a time.",
+  "open_questions": [
+   "Whether the design-tree way of thinking, wanted for every plan, task breakdown and way of going, is kept as a skill or a rule outside the plugins (the user, 2026-10-31: not a plugin matter)."
+  ]
+ }
+}

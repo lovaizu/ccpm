@@ -1,0 +1,9 @@
+[
+ "It sorts the files right in the Downloads folder into a folder for each kind of file, such as images, documents and archives.",
+ "It only moves files: it never deletes, renames or overwrites one.",
+ "Run plainly, it shows what it would move and moves nothing; it moves only when told to.",
+ "It runs on macOS and Linux.",
+ "A README says how to install and use it, and tests check that it does the above.",
+ "A file whose name is already taken in its kind's folder is left where it is and reported.",
+ "It can undo its last run, moving each file it moved back where it was. (on reading the plan)"
+]

@@ -1,0 +1,281 @@
+[
+ {
+  "commit": "702c1b0",
+  "folder": "/tmp/rn/20261027-acceptance-5180ibfe",
+  "verdict": "FAILED",
+  "ended": "stopped by the user at T4.2, 3½ of 6 tasks made; written from transcript.json by hand, as the run was stopped before its summary, the message running then not counted: about 230 minutes and $76 whole, as read from the records then",
+  "minutes": {
+   "rn": 162.2,
+   "stand-in": 7.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 2824,
+    "cache_creation_input_tokens": 5943918,
+    "cache_read_input_tokens": 140233901,
+    "output_tokens": 1215879
+   },
+   "stand-in": {
+    "input_tokens": 92,
+    "cache_creation_input_tokens": 75980,
+    "cache_read_input_tokens": 2231230,
+    "output_tokens": 4104
+   }
+  },
+  "cost": {
+   "rn": 49.5,
+   "stand-in": 1.14
+  }
+ },
+ {
+  "commit": "bf48043",
+  "folder": "/tmp/rn/20261027-acceptance-f4dxd0ky",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 18 failed: agents in the background still running 90 minutes after the reply; give a longer wait; at T5 action 3 of T3 to T9, the build's message running 100 minutes then not counted in the cost, which its tokens put at about $31 more, about $43 for rn whole",
+  "minutes": {
+   "whole": 161.3,
+   "rn": 47.4,
+   "stand-in": 3.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 1734,
+    "cache_creation_input_tokens": 2700105,
+    "cache_read_input_tokens": 58489779,
+    "output_tokens": 765307
+   },
+   "stand-in": {
+    "input_tokens": 40,
+    "cache_creation_input_tokens": 53177,
+    "cache_read_input_tokens": 677494,
+    "output_tokens": 3033
+   }
+  },
+  "cost": {
+   "rn": 11.39,
+   "stand-in": 0.62
+  },
+  "changes sent": {
+   "plan": 1,
+   "design": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "db291ce",
+  "folder": "/tmp/rn/20261028-acceptance-zdax9pcp",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 18 failed: agents in the background still running 90 minutes after the reply; give a longer wait",
+  "minutes": {
+   "whole": 114.9,
+   "rn": 9.5,
+   "stand-in": 4.6
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 338,
+    "cache_creation_input_tokens": 184502,
+    "cache_read_input_tokens": 8211446,
+    "output_tokens": 56485
+   },
+   "stand-in": {
+    "input_tokens": 38,
+    "cache_creation_input_tokens": 36851,
+    "cache_read_input_tokens": 598852,
+    "output_tokens": 2052
+   }
+  },
+  "cost": {
+   "rn": 1.9,
+   "stand-in": 0.46
+  },
+  "changes sent": {
+   "goal": 3,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "f672eba",
+  "folder": "/tmp/rn/20261028-acceptance-u96xr86w",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 17 failed: claude gave an error: You've hit your weekly limit · resets Oct 29, 10pm (UTC)",
+  "minutes": {
+   "whole": 16.2,
+   "rn": 6.6,
+   "stand-in": 1.8
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 246,
+    "cache_creation_input_tokens": 307931,
+    "cache_read_input_tokens": 5377174,
+    "output_tokens": 67422
+   },
+   "stand-in": {
+    "input_tokens": 36,
+    "cache_creation_input_tokens": 38937,
+    "cache_read_input_tokens": 560979,
+    "output_tokens": 2313
+   }
+  },
+  "cost": {
+   "rn": 1.87,
+   "stand-in": 0.47
+  },
+  "changes sent": {
+   "goal": 1,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "c13e619",
+  "folder": "/tmp/rn/20261030-acceptance-ge8mt11f",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 14 failed: agents in the background still running 90 minutes after the reply; give a longer wait",
+  "minutes": {
+   "whole": 118.1,
+   "rn": 15.7,
+   "stand-in": 2.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 458,
+    "cache_creation_input_tokens": 285199,
+    "cache_read_input_tokens": 11315966,
+    "output_tokens": 83468
+   },
+   "stand-in": {
+    "input_tokens": 30,
+    "cache_creation_input_tokens": 36471,
+    "cache_read_input_tokens": 442629,
+    "output_tokens": 1643
+   }
+  },
+  "cost": {
+   "rn": 3.98,
+   "stand-in": 0.41
+  },
+  "changes sent": {
+   "goal": 0,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "e92ae1b",
+  "folder": "/tmp/rn/20261030-acceptance-mmcr1r0h",
+  "verdict": "FAILED",
+  "ended": "120 messages sent to rn",
+  "minutes": {
+   "whole": 90.6,
+   "rn": 64.1,
+   "stand-in": 16.4
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 1434,
+    "cache_creation_input_tokens": 1409381,
+    "cache_read_input_tokens": 56869591,
+    "output_tokens": 345234
+   },
+   "stand-in": {
+    "input_tokens": 244,
+    "cache_creation_input_tokens": 74606,
+    "cache_read_input_tokens": 6781057,
+    "output_tokens": 6915
+   }
+  },
+  "cost": {
+   "rn": 23.59,
+   "stand-in": 2.09
+  },
+  "changes sent": {
+   "goal": 0,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "58eac7a",
+  "folder": "/tmp/rn/20261030-acceptance-7dmnr09f",
+  "verdict": "FAILED",
+  "ended": "rn's run of message 22 failed: claude exited 143: ",
+  "minutes": {
+   "whole": 89.4,
+   "rn": 19.2,
+   "stand-in": 3.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 426,
+    "cache_creation_input_tokens": 327446,
+    "cache_read_input_tokens": 10244289,
+    "output_tokens": 91661
+   },
+   "stand-in": {
+    "input_tokens": 48,
+    "cache_creation_input_tokens": 41586,
+    "cache_read_input_tokens": 798017,
+    "output_tokens": 2149
+   }
+  },
+  "cost": {
+   "rn": 4.62,
+   "stand-in": 0.54
+  },
+  "changes sent": {
+   "goal": 1,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
+ },
+ {
+  "commit": "ada8658",
+  "folder": "/tmp/rn/20261030-acceptance-xyatir05",
+  "verdict": "FAILED",
+  "ended": "the stand-in stopped at message 30: ",
+  "minutes": {
+   "whole": 38.5,
+   "rn": 33.9,
+   "stand-in": 4.1
+  },
+  "tokens": {
+   "rn": {
+    "input_tokens": 454,
+    "cache_creation_input_tokens": 454216,
+    "cache_read_input_tokens": 12111689,
+    "output_tokens": 118752
+   },
+   "stand-in": {
+    "input_tokens": 66,
+    "cache_creation_input_tokens": 47005,
+    "cache_read_input_tokens": 1269355,
+    "output_tokens": 2726
+   }
+  },
+  "cost": {
+   "rn": 7.55,
+   "stand-in": 0.68
+  },
+  "changes sent": {
+   "goal": 1,
+   "ux": 0,
+   "architecture": 0,
+   "deliverable": 0
+  },
+  "changes at the deliverable sign-off": 0
+ }
+]

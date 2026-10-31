@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 910 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>How rn works</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .head { fill: #59636e; }
+    .label { fill: #1f2328; font-size: 13px; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+
+  <!-- what rn is made of, and what it uses -->
+  <rect class="box" x="340" y="20" width="240" height="56" rx="8"/>
+  <text class="name" x="460" y="44">you</text>
+  <text class="kind" x="460" y="63">ask, answer, approve, merge</text>
+
+  <rect class="box" x="340" y="180" width="240" height="70" rx="35"/>
+  <text class="name" x="460" y="206">orchestrator</text>
+  <text class="kind" x="460" y="225">rn's AI, in your conversation,</text>
+  <text class="kind" x="460" y="240">decides each move</text>
+
+  <rect class="box" x="670" y="180" width="220" height="70" rx="35"/>
+  <text class="name" x="780" y="206">turn</text>
+  <text class="kind" x="780" y="225">makes each work, and has an AI</text>
+  <text class="kind" x="780" y="240">that did not make it use it</text>
+
+  <rect class="box" x="340" y="360" width="240" height="70" rx="0"/>
+  <text class="name" x="460" y="386">rn's scripts</text>
+  <text class="kind" x="460" y="405">keep the steering and</text>
+  <text class="kind" x="460" y="420">each decision</text>
+
+  <rect class="box" x="670" y="360" width="220" height="70" rx="8"/>
+  <text class="name" x="780" y="386">checklists</text>
+  <text class="kind" x="780" y="405">rn's for each kind of work,</text>
+  <text class="kind" x="780" y="420">and your additions</text>
+
+  <rect class="box" x="40" y="180" width="200" height="70" rx="35"/>
+  <text class="name" x="140" y="206">compressor</text>
+  <text class="kind" x="140" y="225">rn's AI with no conversation,</text>
+  <text class="kind" x="140" y="240">reads each task's record</text>
+
+  <rect class="box" x="15" y="360" width="225" height="70" rx="8"/>
+  <text class="name" x="128" y="386">the work's branch</text>
+  <text class="kind" x="128" y="405">the steering, each decision, the</text>
+  <text class="kind" x="128" y="420">work, and its pull request</text>
+
+  <!-- you and the orchestrator -->
+  <path class="line" d="M440,76 V180" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="430" y="118">rough words, answers,<tspan x="430" dy="17">/rn:ty, /rn:gm</tspan></text>
+  <path class="line" d="M480,180 V76" marker-end="url(#arrow)"/>
+  <text class="label" x="490" y="118">points to decide,<tspan x="490" dy="17">proposals</tspan></text>
+
+  <!-- the orchestrator and turn -->
+  <path class="line" d="M574,203 H676" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="625" y="170">what each</text>
+  <text class="label" text-anchor="middle" x="625" y="187">work rests on</text>
+  <path class="line" d="M676,227 H574" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="625" y="247">the work,</text>
+  <text class="label" text-anchor="middle" x="625" y="264">used in your place</text>
+
+  <!-- the orchestrator and the compressor -->
+  <path class="line" d="M346,203 H240" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="290" y="160">what the record</text>
+  <text class="label" text-anchor="middle" x="290" y="177">settles of a task</text>
+  <path class="line" d="M240,227 H346" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="290" y="270">what needs judgment,</text>
+  <text class="label" text-anchor="middle" x="290" y="287">or a point to ask</text>
+
+  <!-- the orchestrator and rn's scripts -->
+  <path class="line" d="M440,250 V360" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="430" y="310">each move</text>
+  <path class="line" d="M480,360 V250" marker-end="url(#arrow)"/>
+  <text class="label" x="490" y="310">the steering</text>
+
+  <!-- the checklists and turn -->
+  <path class="line" d="M780,360 V250" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="770" y="302">what each kind</text>
+  <text class="label" text-anchor="end" x="770" y="319">must give its reader</text>
+
+  <!-- the branch -->
+  <path class="line" d="M340,395 H240" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="290" y="387">commit, push</text>
+  <path class="line" d="M340,34 H22 V360" marker-end="url(#arrow)"/>
+  <text class="label" x="32" y="100">merge the</text>
+  <text class="label" x="32" y="117">pull request</text>
+</svg>
