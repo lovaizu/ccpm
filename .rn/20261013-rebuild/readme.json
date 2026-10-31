@@ -1,8 +1,8 @@
 {
  "kind": "readme",
- "purpose": "A README is read by someone who meets the product for the first time. From the README alone, they decide whether to use the product, and become able to explain it when a colleague asks about it. Once they decide to use it, they start using it by the README's steps alone. When they get stuck later, they can tell from the README where to read next.",
+ "purpose": "A README is read by someone who meets the product for the first time. From the README alone, they decide whether to use the product, and become able to explain it to a colleague or a manager and recommend it. Once they decide to use it, they start using it by the README's steps alone. When they get stuck later, they can tell from the README where to read next.",
  "format": {
-  "skeleton": "# <Product name>\n\n<One sentence: \"<Name> is a <kind> that <does what>\">\n\n<Whom the product is for, and what they gain with it>\n\n<The idea that makes the gain possible>\n\n**Non-goals**\n\n- <What the product does not do>\n\n## Requirements\n\n- <Each thing that must be in place before installing>\n\n## Installation\n\n<The install steps>\n\n## Walkthrough\n\n<One run of one of the UX's scenarios, each step and what it shows, up to the result>\n\n## Documentation\n\n<A link to fuller use>\n\n## Development\n\n<A link to the development documents>\n\n## License\n\n<The license's name, linked to its file>\n",
+  "skeleton": "# <Product name>\n\n<One sentence: \"<Name> is a <kind> that <does what>\">\n\n<Whom the product is for, and what they gain with it>\n\n<The idea that makes the gain possible>\n\n**Non-goals**\n\n- <What the product does not do>\n\n## Requirements\n\n- <Each thing that must be in place before installing>\n\n## Installation\n\n<The install steps>\n\n## Walkthrough\n\n<One run of one of the UX's scenarios, each step and what it shows, up to the result>\n\n## How it works\n\n<One SVG figure, with the few words it needs, of what the product is made of and how that keeps the opening's promise>\n\n## Documentation\n\n<A link to fuller use>\n\n## Development\n\n<A link to the development documents>\n\n## License\n\n<The license's name, linked to its file>\n",
   "parts": [
    {
     "id": "summary",
@@ -38,6 +38,11 @@
     "id": "walkthrough",
     "what": "One run of one of the UX's scenarios under its heading, step by step, up to the result.",
     "why": "The reader sees from it what the product would do on their own work, and then gets that result themselves."
+   },
+   {
+    "id": "how-it-works",
+    "what": "One SVG figure under its heading, with the few words it needs.",
+    "why": "The reader shows a manager how the product does what the opening promises, and backs their recommendation with it."
    },
    {
     "id": "links",
@@ -138,6 +143,22 @@
   },
   {
    "id": "Q6",
+   "what": "When a manager asks \"Can it really do that?\", can the reader answer by showing how it works?",
+   "why": "If yes, the reader backs their recommendation with the way the product keeps its promise, not with the promise alone. The figure shows what the product is made of and how that keeps the opening's promise, in words and at a grain a manager follows; files and small parts are left to the architecture document. If no, a manager shown only the promise takes it on trust or turns it down, and the reader cannot back the product they want to recommend.",
+   "about": [
+    "how-it-works"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/readme.md:116-117: \"From How it works, can the reader tell what the product is made of and how that keeps the opening's promise?\"",
+    "plugins/rn/checklists/product/readme.md:119-120: \"a reader shown only the promise takes it on trust, and cannot tell whether it holds for their own work. The reader explains the product to their team by what it is made of, too.\""
+   ],
+   "examples": {
+    "fails": "How it works: \"RoomBook uses a matching engine and a calendar connector.\" No figure, and no word on how matching keeps the promise of offering only rooms that fit.",
+    "passes": "A figure of three boxes: the meeting you describe, RoomBook's matching of seats and equipment against each room, and the office calendar it reads for free times, with an arrow to the rooms offered. One line under it: only rooms that pass both checks are offered."
+   }
+  },
+  {
+   "id": "Q7",
    "what": "Can the reader get the walkthrough's result by the README's steps alone, without other documents?",
    "why": "If yes, the reader starts using the product. They can tell before starting whether they have each requirement, since each is said as what it is, and they can see that the install worked before going on. If no, each place where they must look elsewhere, or where a step fails, is a place they may stop. The author already has the product set up, so the author never meets these gaps.",
    "about": [
@@ -159,7 +180,7 @@
    }
   },
   {
-   "id": "Q7",
+   "id": "Q8",
    "what": "When the reader is stuck after starting, for example wanting fuller use or wanting to change the product, can they tell from the README where to read next?",
    "why": "If yes, the README stays short and the rest is one link away. If no, a user stops at the first result, and one who changes the product does so without the decisions behind it.",
    "about": [
@@ -177,7 +198,7 @@
    }
   },
   {
-   "id": "Q8",
+   "id": "Q9",
    "what": "When a colleague asks \"What's the license?\", can the reader answer from the README?",
    "why": "If yes, the reader and their team can tell whether the terms allow their use, and decide. If no, a reader who cannot tell the terms of use cannot decide to use the product.",
    "about": [

@@ -140,6 +140,14 @@ below, `You:` is what you type, and `turn:` is what turn shows you.
 turn keeps the format and the checklist you approved. Your next press release starts from them, so
 turn skips step 3, the research and that approval.
 
+## How it works
+
+![How turn works](how-it-works.svg)
+
+You spend effort only where an arrow meets you: you approve the format and the checklist once for
+each kind, and you answer the points only you can decide. turn does the rest. The work comes back
+to you only after the second AI answers yes to every question of the checklist.
+
 ## Documentation
 
 - [Calling turn](docs/calling.md) tells how a step of another plugin, such as rn, has turn make its

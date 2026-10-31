@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 930 460" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>How turn works</title>
+  <style>
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .head { fill: #59636e; }
+    .label { fill: #1f2328; font-size: 13px; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #161b22; stroke: #3d444d; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+
+  <!-- you -->
+  <rect class="box" x="345" y="20" width="220" height="60" rx="8"/>
+  <text class="name" x="455" y="45">you</text>
+  <text class="kind" x="455" y="64">ask, approve, answer</text>
+
+  <!-- what turn does, left to right -->
+  <rect class="box" x="20" y="180" width="220" height="70" rx="35"/>
+  <text class="name" x="130" y="206">turn learns the kind</text>
+  <text class="kind" x="130" y="225">reads how good works</text>
+  <text class="kind" x="130" y="240">of the kind are made</text>
+
+  <rect class="box" x="345" y="180" width="220" height="70" rx="35"/>
+  <text class="name" x="455" y="206">turn asks you</text>
+  <text class="kind" x="455" y="225">what the work is for, then each</text>
+  <text class="kind" x="455" y="240">point only you can decide</text>
+
+  <rect class="box" x="660" y="180" width="220" height="70" rx="35"/>
+  <text class="name" x="770" y="206">turn makes the work</text>
+  <text class="kind" x="770" y="225">from your answers,</text>
+  <text class="kind" x="770" y="240">in the format</text>
+
+  <rect class="box" x="20" y="360" width="220" height="70" rx="0"/>
+  <text class="name" x="130" y="386">format and checklist</text>
+  <text class="kind" x="130" y="405">kept: the next work of</text>
+  <text class="kind" x="130" y="420">the kind starts from them</text>
+
+  <rect class="box" x="660" y="360" width="220" height="84" rx="42"/>
+  <text class="name" x="770" y="384">a second AI</text>
+  <text class="kind" x="770" y="403">sees only the work and the</text>
+  <text class="kind" x="770" y="418">checklist, and uses the work</text>
+  <text class="kind" x="770" y="433">as its reader would</text>
+
+  <!-- you and turn learning the kind -->
+  <path class="line" d="M345,40 H110 V180" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="228" y="32">your request, your approval</text>
+  <path class="line" d="M150,180 V66 H345" marker-end="url(#arrow)"/>
+  <text class="label" x="162" y="100">a format and</text>
+  <text class="label" x="162" y="117">a checklist to approve</text>
+
+  <!-- turn learning the kind keeps what you approved -->
+  <path class="line" d="M130,250 V360" marker-end="url(#arrow)"/>
+  <text class="label" x="140" y="310">keeps them</text>
+
+  <!-- on to asking you -->
+  <path class="line" d="M240,215 H345" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="292" y="190">the format,</text>
+  <text class="label" text-anchor="middle" x="292" y="207">the checklist</text>
+
+  <!-- you and turn asking -->
+  <path class="line" d="M475,180 V80" marker-end="url(#arrow)"/>
+  <text class="label" x="485" y="110">each point in turn,</text>
+  <text class="label" x="485" y="127">with a recommendation</text>
+  <path class="line" d="M435,80 V180" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="425" y="127">your answers</text>
+
+  <!-- on to making the work -->
+  <path class="line" d="M565,215 H660" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="612" y="207">your answers</text>
+
+  <!-- making and the second AI -->
+  <path class="line" d="M750,250 V360" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="740" y="310">the work</text>
+  <path class="line" d="M790,360 V250" marker-end="url(#arrow)"/>
+  <text class="label" x="800" y="302">not yet</text>
+  <text class="label" x="800" y="319">all yes:</text>
+  <text class="label" x="800" y="336">mend</text>
+
+  <!-- the checklist to the second AI -->
+  <path class="line" d="M240,395 H660" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="450" y="387">the checklist</text>
+
+  <!-- the finished work to you -->
+  <path class="line" d="M880,395 H912 V50 H565" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="738" y="42">every answer yes: the work</text>
+</svg>
