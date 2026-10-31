@@ -105,7 +105,9 @@ Its steps are still to agree.
 
 ## Files
 
-Each is JSON, held by a script to its form and to the IDs it names. Keys follow the steering's
+Each is JSON. lane's lanes hold each role to them: `read_whole` has the work read whole before an
+answer is written, `every_item` an answer for every question, `in_form` each file in its form, and
+`end_when` the output made before the role ends. A script checks only what no lane holds, as below. Keys follow the steering's
 rules: a name says its intent, a one-to-many join is nested, a many-to-many join lists IDs.
 
 - `<kind>.json`, the template, one for each kind: `kind`; `purpose`, who uses such a work and for
