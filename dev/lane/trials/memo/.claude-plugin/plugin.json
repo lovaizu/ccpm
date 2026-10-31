@@ -1,0 +1,6 @@
+{
+  "name": "memo",
+  "description": "Writes a memo of a project's notes, reviews it against a checklist and publishes it, its subagents' steps calling for every lane lane lays.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}

@@ -1,0 +1,18 @@
+# Mutation testing of lane's code and its layer, among them the hook code rn and turn take through a
+# link, run from the top of the repository on a copy that may be changed.
+[cosmic-ray]
+module-path = ["plugins/lane/hooks/lane", "plugins/lane/scripts"]
+timeout = 30.0
+# The type checker and the linter run first: a change to a type annotation, or a comparison of a
+# string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
+# type checker is what checks annotations, the linter what checks `is` against a literal.
+# A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
+# where no input tells a mutant of it apart: by order with the first or the last of them, such as
+# "write", the last of a call's actions in order, or `__name__`, which is "__main__" or, imported by
+# the tests, "lay", after it; or by `is` with a small number or a text like a name the code itself
+# writes, of which CPython keeps one copy, not a text read from JSON or the command line. Each such
+# line holds that comparison alone, as the mark leaves out every mutant of its line.
+# Where the code compares a value with one it knows, its tests take values on either side of that
+# one in order too, such as a tool named before Bash and one after, so a comparison changed to `<=`
+# or `>=` fails a test; their comments say what each value is, not where it sorts.
+test-command = "sh -c 'ruff check --select F632 plugins/lane && sh dev/typecheck.sh lane && python -m unittest discover -f -s dev/lane/tests'"
