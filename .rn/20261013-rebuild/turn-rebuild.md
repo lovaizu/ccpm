@@ -129,11 +129,12 @@ designer, which passes the design to builder, whose work goes to evaluator.
    decision by decision from the design tree, until evaluator finds every one good. A more is
    mended at the decision that serves its question, never added onto the work, as rn's fix
    checklist asks of a change.
-2. The style phase: how the work says and shows it. The questions of the `style-<kind>` template
-   the kind's template names in `includes`, such as `style-doc` for every document and
-   `style-code` for code, which hold over the whole work. builder finishes the work by them and
-   evaluator verifies it by them, with no design tree. Only how the work says a thing changes; a
-   point that would change what it says goes back to the content phase.
+2. The refactoring phase: how the work says and shows it, its structure bettered while what it
+   says stays (Fowler, Refactoring). The questions of the `refactor-<kind>` template the kind's
+   template names in `includes`, such as `refactor-doc` for every document and `refactor-code`
+   for code, which hold over the whole work. builder finishes the work by them and evaluator
+   verifies it by them, with no design tree. Only how the work says a thing changes; a point that
+   would change what it says goes back to the content phase.
 
 Keeping the two phases apart keeps builder and evaluator on the content while it is made. A phase
 is named so as not to meet rn's stages, inside one of which turn runs.
@@ -159,8 +160,8 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
   it. A script verifies every question stands in one of the two, and each line is there.
 
 Questions shared by several kinds, such as those of every document, are written once in a template
-of their own, and a kind's template names it in `includes`, as `readme.json` names `style-doc`;
-each question is named with its template, as `style-doc/Q3`. A
+of their own, and a kind's template names it in `includes`, as `readme.json` names `refactor-doc`;
+each question is named with its template, as `refactor-doc/Q3`. A
 question copied into each kind would be mended in one and left old in the rest.
 
 ## Sources

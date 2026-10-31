@@ -85,5 +85,5 @@
    }
   }
  ],
- "includes": ["style-doc"]
+ "includes": ["refactor-doc"]
 }

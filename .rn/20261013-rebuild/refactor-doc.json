@@ -1,5 +1,5 @@
 {
- "kind": "style-doc",
+ "kind": "refactor-doc",
  "purpose": "A document is read by a person or an AI who comes to it for a purpose, at any time after it is written. Reading it once from the top, they understand each sentence on first reading, and achieve their purpose in a short time.",
  "format": {
   "skeleton": "",
@@ -127,6 +127,32 @@
   },
   {
    "id": "Q8",
+   "what": "When the reader acts by the document, do they never meet two places that tell them to do different things?",
+   "why": "If yes, the reader follows the document as written, and every place they follow agrees with the rest. Two places usually disagree because one strayed from what was decided; mending it brings that place back to the decision, so what the document says stays. If no, whichever place the reader follows breaks the other, and most readers never notice: they follow the one they read first and go on wrong.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:119-120: \"of two statements that cannot both hold, whoever follows the document follows one and breaks the other.\""
+   ],
+   "examples": {
+    "fails": "Under Booking: \"RoomBook holds a room for 15 minutes while you confirm.\" Under Limits: \"A room you pick is held for 10 minutes.\"",
+    "passes": "Both places say 15 minutes, or Limits points to Booking for the hold."
+   }
+  },
+  {
+   "id": "Q9",
+   "what": "When the reader reads the document beside the documents it rests on and those that rest on it, can they tell which to believe on every point they share, without asking the writer?",
+   "why": "If yes, each shared point is said the same way in each, and a point still open is marked open where they mark it, each pointing to the one place where it is decided. If no, a point decided in one and open or different in another leaves the reader stopped until they ask, or acting on the wrong one. Only these documents are read beside it, so agreement with any other is not asked.",
+   "about": [],
+   "grounds": [
+    "plugins/rn/checklists/doc.md:128-129: \"a point decided in one document and open in another leaves the reader unable to tell which holds. Only these documents are read beside it, so agreement with any other is not asked.\""
+   ],
+   "examples": {
+    "fails": "RoomBook's README says a room is held for 15 minutes; its architecture document says the hold is not yet decided.",
+    "passes": "The architecture document says 15 minutes as the README does, or both say it is open and point to the issue where it is decided."
+   }
+  },
+  {
+   "id": "Q10",
    "what": "When the reader reads the document a year after it was written, with nothing it decides changed since, does every sentence still hold for them?",
    "why": "If yes, the reader relies on every sentence for as long as what the document decides stands, because the document says what holds, not how the work got there or where it stands today. If no, a sentence about the work's past or progress, or a word such as \"new\", \"now\" or \"soon\", turns wrong as the work goes on, and is still believed.",
    "about": [],

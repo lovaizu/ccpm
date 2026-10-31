@@ -67,7 +67,7 @@
 
 Stage: build.
 
-Next: T41: style-doc approved 2026-10-31 (.rn/20261013-rebuild/style-doc.json: figures first, then the least text). Next: settle where doc.md's Q-9, Q-12 and Q-13 go, which style-doc leaves to the content phase; check ux.json and readme.json against meta's revised Q-5 (a scene of use, the same answer from any judge); then finish plugins/turn/README.md (its two figures redrawn, uncommitted) against readme.json and style-doc and commit it; then the architecture template (.rn/20261013-rebuild/architecture.json, a draft built from the old sections, to be derived again from its purpose) and dev/turn/architecture.md, then the code template.
+Next: T41: refactor-doc approved 2026-10-31 (.rn/20261013-rebuild/refactor-doc.json: turn's second phase is refactoring, how the work says a thing bettered while what it says stays; figures first, the least text, and no disagreement inside the document, with the documents beside it or over time). Next: check ux.json and readme.json against meta's revised Q-5 (a scene of use, the same answer from any judge); then finish plugins/turn/README.md (its two figures redrawn, uncommitted) against readme.json and refactor-doc and commit it; then the architecture template (.rn/20261013-rebuild/architecture.json, a draft built from the old sections, to be derived again from its purpose) and dev/turn/architecture.md, then the code template.
 
 Open:
 

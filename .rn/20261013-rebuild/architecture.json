@@ -1,0 +1,278 @@
+{
+ "kind": "architecture",
+ "purpose": "An architecture document is read by whoever approves how the product is built, and by whoever builds or changes it. From it alone, the approver decides, before the product is built, whether its parts and how they work together deliver the experience the UX sets. The builder then builds each part by it, and later changes a part by it, so that the parts together deliver that experience and what was approved still holds.",
+ "format": {
+  "skeleton": "# <Product name> architecture\n\n<How the product is built to deliver its UX, in a sentence or two, with a link to the UX>\n\n<A link to the principles of what the product is built on, and its own principles, each in a line>\n\n## User stories\n\n- As <the user>, I want <what they do with the product>.\n\n## Architecture\n\n### Logical view\n\n#### Components\n\n<One SVG figure: a box for each part, holding its name, what it is responsible for in a few words, and whether an AI or code runs it, with a legend; an arrow from each part to the part it hands on to, labelled with the data it hands on>\n\n- <A choice the figure shows that the reader would question, with why it was made over the other way>\n\n#### Data model\n\n<One SVG figure: a box for each data the parts pass or keep, holding its name; a line between two data for each relation, labelled with what it is>\n\n#### Sequences\n\n```mermaid\nsequenceDiagram\n  <For each user story: a participant for each part it reaches, and a message for each step, labelled with the data handed on>\n```\n\n- <A choice the diagrams show that the reader would question, with why it was made over the other way>\n\n### Physical view\n\n#### Deployment\n\n<One SVG figure: a box for each machine or runtime the product runs in, holding the parts that run there and the data kept there; a box for each thing outside the product they rely on, with an arrow labelled with what is used>\n\n#### Directory structure\n\n```text\n<A tree of the folders and files that hold each part and each data, each named with what it holds and what it is made of>\n```\n\n## Test\n\n<A link to the project's rules for checking each kind of part and the user stories>\n\n- <How heavily a part is checked beyond those rules, or that the rules alone check it, with what a failure of it would cost the user>\n",
+  "parts": [
+   {
+    "id": "summary",
+    "what": "The title, and the sentence or two under it, with a link to the UX.",
+    "why": "The reader holds the one idea of how the product is built before reading the parts, and reads each part as a piece of it."
+   },
+   {
+    "id": "principles",
+    "what": "The paragraph after the summary: a link to the principles of what the product is built on, and the product's own principles, each in a line.",
+    "why": "The reader weighs each choice in the document against the same rules."
+   },
+   {
+    "id": "user-stories",
+    "what": "A list under its heading, one item for each story.",
+    "why": "The reader sees what the user does at the product's edge, and reads the parts as what serves it."
+   },
+   {
+    "id": "components",
+    "what": "The figure under Components.",
+    "why": "The builder sees the parts to build and what each hands to which, at a glance."
+   },
+   {
+    "id": "data-model",
+    "what": "The figure under Data model.",
+    "why": "The builder sees what the parts pass and keep, and how each data joins the others."
+   },
+   {
+    "id": "sequences",
+    "what": "The sequence diagrams under Sequences, one for each user story.",
+    "why": "The approver follows each story through the parts, in order."
+   },
+   {
+    "id": "choices",
+    "what": "The lists under Components and under Sequences.",
+    "why": "The reader finds why a choice they question was made, next to the figure that shows it."
+   },
+   {
+    "id": "deployment",
+    "what": "The figure under Deployment.",
+    "why": "The builder sees where each part runs and where each data lies."
+   },
+   {
+    "id": "directory",
+    "what": "The tree under Directory structure.",
+    "why": "The builder finds where to make or change each part."
+   },
+   {
+    "id": "test",
+    "what": "The link and the list under Test.",
+    "why": "The approver sees how each part is checked, and weighs it."
+   }
+  ]
+ },
+ "checklist": [
+  {
+   "id": "Q1",
+   "what": "When a colleague asks \"How is it built?\", can the reader answer in a sentence or two from the opening?",
+   "why": "If yes, the reader holds the one idea every part comes from, and reads each part as a piece of it. The opening links the UX, so the approver knows which experience the parts must deliver. If no, the reader meets the parts one by one, cannot tell which part carries the idea, and approves or builds each on its own.",
+   "about": [
+    "summary"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:39: \"<How the product is put together, in a sentence or two, with a link to its UX>\".",
+    ".rn/20261013-rebuild/turn-rebuild.md:15-16: \"The concept is the one idea of how the work meets its user's purpose; everything else derives from it (Brooks, conceptual integrity).\"",
+    "arc42, section 4 \"Solution Strategy\": \"A short summary and explanation of the fundamental decisions and solution strategies, that shape the system's architecture.\""
+   ],
+   "examples": {
+    "fails": "RoomBook is built on a modern, scalable three-tier architecture.",
+    "passes": "RoomBook's server matches each meeting request against each room's seats and equipment and the free times it reads from Google Workspace, and the browser shows only the rooms that fit. The experience it delivers is in the UX (ux.md)."
+   }
+  },
+  {
+   "id": "Q2",
+   "what": "When the reader weighs a choice, can they tell from the opening every principle it must keep, those of what the product is built on and its own?",
+   "why": "If yes, every choice is weighed against the same rules, and the rules the product shares with what it is built on stay in one place, reached by a link. A principle is a rule the choices are held to; a means, such as a language or a tool, belongs to the part that uses it. If no, each choice can hold by its own reason while together they break a rule no one wrote down.",
+   "about": [
+    "principles"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:109-111: \"each decision can hold by its own reason while the decisions together break a principle no one wrote down. A principle is a rule the decisions are held to; a means such as a tool or a format belongs to the part that uses it.\"",
+    "plugins/rn/checklists/product/architecture.md:31-32: \"An architecture built on another links that one and writes only what is its own.\"",
+    "dev/architecture.md:6-7: \"each plugin's architecture links this one, and holds its own UX's user stories and what only that plugin adds.\"",
+    "arc42, section 4 \"Solution Strategy\": \"They are the basis for many other detailed decisions or implementation rules.\""
+   ],
+   "examples": {
+    "fails": "Principles: clean code; TypeScript everywhere.",
+    "passes": "RoomBook holds the principles of the company's web apps (link). Its own: it reads only whether a room is free, never what is in a person's calendar."
+   }
+  },
+  {
+   "id": "Q3",
+   "what": "For each step of the UX's scenarios, can the approver tell which user story carries it?",
+   "why": "If yes, the approver sees that the parts drawn from the stories deliver every step of the experience, and each story is a thing the user does at the product's edge. If no, a step no story carries is built by guess. A story for a step inside the product adds parts without the user doing more, and one named by a technology must be written again when the technology changes.",
+   "about": [
+    "user-stories"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:12-14: \"Its scenes rest on a few user stories, each one way the user uses the product at its edge, such as a command they run.\"",
+    "plugins/rn/checklists/product/architecture.md:117-119: \"the components are drawn from the stories, so a scene no story holds up is built by guess. A story for a step inside the product adds components without the user doing more, and a story named by a technology rather than by what the user does must be made again when the technology changes.\"",
+    ".rn/20261013-rebuild/ux.json:75: \"How the product is built belongs in the architecture document.\""
+   ],
+   "examples": {
+    "fails": "As the server, I want to cache each room's free times. (The worker never does this, and no story carries how the worker finds a room that fits.)",
+    "passes": "As an office worker, I want to describe my meeting and get the rooms that fit it. As an office worker, I want to book one of them and find it in my calendar."
+   }
+  },
+  {
+   "id": "Q4",
+   "what": "Before building a part, can the builder tell from Components what that part alone is responsible for?",
+   "why": "If yes, the builder builds each responsibility once, in its part, and knows whether an AI or code runs it. Each part is one that acts in a user story, or is split off for a reason the document names, such as work run in parallel. If no, because the parts are cut by function, by stage or by technology, they grow with each function, one thing is known in several parts, and the builder decides it in two places.",
+   "about": [
+    "components"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:18-20: \"Whoever makes the architecture cuts no component by function or by stage of processing, nor to fit a technology, and chooses a technology for each component after.\"",
+    "plugins/rn/checklists/product/architecture.md:145-148: \"components cut by function or by stage of processing grow with each function, and scatter what one thing knows among them\" and \"leaves one responsibility decided in two places.\"",
+    "C4 model, \"Notation\": \"The type of every element should be explicitly specified\" and \"Every element should have a short description, to provide an “at a glance” view of key responsibilities.\"",
+    "arc42, section 5 \"Building Block View\": \"The building block view shows the static decomposition of the system into building blocks\"."
+   ],
+   "examples": {
+    "fails": "Three boxes: Frontend, Backend, Database. (The builder of Backend cannot tell whether it or Frontend decides which rooms fit.)",
+    "passes": "Booking page <code>: takes the meeting and shows the rooms offered. Room matcher <code>: keeps only the rooms whose seats and equipment fit. Calendar reader <code>: asks Google Workspace which rooms are free."
+   }
+  },
+  {
+   "id": "Q5",
+   "what": "Can the builder tell from the data model how each data the parts pass or keep is joined to the others?",
+   "why": "If yes, the part that writes a data and the part that reads it take each relation the same way. What fields a data has is decided where the data is built, so the figure names each data and draws its relations alone. If no, a relation no figure draws is made one way by the part that writes it and read another way by the part that reads it.",
+   "about": [
+    "data-model"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:136-137: \"A relation no figure draws is made one way by the role that writes it and taken another way by the role that reads it.\"",
+    "plugins/rn/checklists/product/architecture.md:11-12: \"The contents of each data, such as its fields, are decided where the data is built too\"."
+   ],
+   "examples": {
+    "fails": "Boxes Meeting request, Room and Booking, with no line between them. (The booking page can store several rooms in one booking while the matcher expects one.)",
+    "passes": "A line from Booking to Room labelled \"holds one\", and from Booking to Meeting request labelled \"for the time of\"."
+   }
+  },
+  {
+   "id": "Q6",
+   "what": "Can the approver follow each user story from its first step to its end, through the parts it reaches and what each hands on?",
+   "why": "If yes, the approver sees that the parts together carry each story, not only each its own share. Parts and data keep the names Components and the data model give them, so each step is read against those figures. If no, a part found missing only when its story is built changes the architecture after it was approved.",
+   "about": [
+    "sequences"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:126-128: \"components that each do their part achieve no story unless their interactions do. A component found missing only when its story is built changes the architecture then, after the approval.\"",
+    "arc42, section 6 \"Runtime View\": \"The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios\".",
+    "C4 model, \"Notation\": \"Every line should be labelled, the label being consistent with the direction and intent of the relationship\"."
+   ],
+   "examples": {
+    "fails": "Browser ->> Server: request; Server -->> Browser: response.",
+    "passes": "Booking page ->> Room matcher: meeting request; Room matcher ->> Calendar reader: rooms and time; Calendar reader -->> Room matcher: free rooms; Room matcher -->> Booking page: rooms that fit."
+   }
+  },
+  {
+   "id": "Q7",
+   "what": "When the reader would question a choice the figures show, can they find why it was made over the other way?",
+   "why": "If yes, the approver weighs the trade-off before approving, and a later builder keeps the choice or changes it knowing what it was for. If no, a later builder has two ways only: to keep the choice blindly, or to change it blindly and undo what it was for.",
+   "about": [
+    "choices"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:59: \"<A choice the figure shows that the reader would question, with why>\".",
+    "Nygard, \"Documenting Architecture Decisions\" (2011): without the motivation, a new team member can only \"Blindly accept the decision.\" or \"Blindly change it.\"",
+    "Ubl, \"Design Docs at Google\": \"The design doc is the place to write down the trade-offs you made in designing your software.\"",
+    "arc42, section 9 \"Architecture Decisions\": \"Stakeholders of your system should be able to comprehend and retrace your decisions.\""
+   ],
+   "examples": {
+    "fails": "The calendar reader asks Google Workspace on every search.",
+    "passes": "The calendar reader asks Google Workspace on every search rather than keeping a copy, so a room booked outside RoomBook is never offered; each search waits about a second for it."
+   }
+  },
+  {
+   "id": "Q8",
+   "what": "Can the builder tell from the deployment where each part runs and where each data is kept?",
+   "why": "If yes, the builder knows what each part can reach, when a change to it reaches the user, who can read each data and whether it outlives a run. Each thing outside the product the parts rely on is drawn too, as it is where the product breaks for the user first. If no, the builder places a part or a data by guess, and finds what it cannot reach once it runs.",
+   "about": [
+    "deployment"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:164-166: \"where a role runs decides what it can reach and when a change to it reaches the user, where a data is kept decides who can read it and whether it outlives a run, and what the product depends on is where it breaks for the user first.\"",
+    "arc42, section 7 \"Deployment View\": \"Software does not run without hardware.\" and \"Therefore, you need to know the infrastructure.\""
+   ],
+   "examples": {
+    "fails": "RoomBook runs in the cloud.",
+    "passes": "The browser runs the booking page. The company's server runs the room matcher and the calendar reader, and keeps bookings in PostgreSQL. Outside it, Google Workspace is read for rooms' free times."
+   }
+  },
+  {
+   "id": "Q9",
+   "what": "When the builder makes or changes a part, can they tell from the directory structure the one place its files go?",
+   "why": "If yes, the builder makes each part where it is kept, in what it is made of, and the place tells who owns it. If no, a part kept in no place is put where the builder guesses, and one kept in two places is made twice and drifts.",
+   "about": [
+    "directory"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:155-157: \"the builder makes and changes each component where its files are kept, and that place decides who owns it. A component kept in no place is put where the builder guesses, and one kept in two is made twice and drifts.\""
+   ],
+   "examples": {
+    "fails": "src/ holds the code.",
+    "passes": "web/booking/ the booking page <TypeScript, React>; server/matcher/ the room matcher <TypeScript>; server/calendar/ the calendar reader <TypeScript>."
+   }
+  },
+  {
+   "id": "Q10",
+   "what": "Can the approver weigh how heavily each part and the user stories are checked against what a failure of each would cost the user?",
+   "why": "If yes, the approver gives each part the checks its failure is worth, and what the project's rules settle is linked, as it is decided once for the project. If no, a weight given every product alike gives a small tool the checks of a large one, and a ground such as \"a checklist asks it\" is one the approver cannot weigh against the user.",
+   "about": [
+    "test"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:173-177: \"a check costs the user time to build and to keep on every change, and a failure costs them what the part breaks\" and \"A weight given every product alike gives a small tool the checks of a large one.\""
+   ],
+   "examples": {
+    "fails": "Every part is unit tested to 80% coverage.",
+    "passes": "The room matcher is checked also by property tests, as a wrong match puts a six-person review in a four-seat room. The booking page is checked by the project's rules alone, as a fault in it shows on the screen at once."
+   }
+  },
+  {
+   "id": "Q11",
+   "what": "When the approver reads any line, can they tell what it holds for the user, whichever way the part is then built?",
+   "why": "If yes, each line is a choice the approval rests on, and what the builder finds while building leaves it standing. If no, a line that says how a part behaves in one case, a count, a value, a data's fields or a part's steps is decided again where the part is built, drifts from it, and sends the document back to be approved again.",
+   "about": [
+    "summary",
+    "principles",
+    "user-stories",
+    "components",
+    "data-model",
+    "sequences",
+    "choices",
+    "deployment",
+    "directory",
+    "test"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/meta.md:81-82: \"Can the approver tell from each line what holds for the user and why, whichever way it is built?\"",
+    "plugins/rn/checklists/product/architecture.md:190-192: \"a behavior in one case, a count, a value, a data's fields or a list of what a part does step by step is decided again where the part is built and drifts from it.\"",
+    "Ubl, \"Design Docs at Google\": \"A clear indicator that a doc might not be necessary are design docs that are really implementation manuals.\""
+   ],
+   "examples": {
+    "fails": "The room matcher rounds a meeting's end up to the next quarter hour, and retries Google Workspace three times.",
+    "passes": "The room matcher offers a room only when it is free for the whole meeting."
+   }
+  },
+  {
+   "id": "Q12",
+   "what": "Reading the whole, does the approver find that every arrow, relation, place and check keeps the principles the opening names?",
+   "why": "If yes, the product does what its principles are there for, and the approver can stand behind the whole. If no, a choice read alone looks right by its own reason, undoes what a principle was there for, and shows only when the product fails at it.",
+   "about": [
+    "principles",
+    "components",
+    "data-model",
+    "sequences",
+    "deployment",
+    "directory",
+    "test"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:183-184: \"a decision read alone looks right by its own reason. One that breaks a principle undoes what the principle was there for, and shows only when the product fails at it.\""
+   ],
+   "examples": {
+    "fails": "The calendar reader reads the attendees' calendars to suggest a time, while the opening says RoomBook never reads what is in a person's calendar.",
+    "passes": "The calendar reader asks Google Workspace only whether each room is free."
+   }
+  }
+ ],
+ "includes": [
+  "refactor-doc"
+ ]
+}

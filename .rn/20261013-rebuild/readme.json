@@ -216,6 +216,6 @@
   }
  ],
  "includes": [
-  "style-doc"
+  "refactor-doc"
  ]
 }
