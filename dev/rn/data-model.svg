@@ -110,11 +110,11 @@
   <rect class="box" x="1040" y="222" width="170" height="40" rx="8"/>
   <text class="name" x="1125" y="247">CCS</text>
   <rect class="box" x="1295" y="126" width="170" height="40" rx="8"/>
-  <text class="name" x="1380" y="151">checklist</text>
+  <text class="name" x="1380" y="151">template</text>
   <rect class="box" x="1295" y="30" width="170" height="40" rx="8"/>
   <text class="name" x="1380" y="55">user's addition</text>
   <rect class="box" x="1295" y="222" width="170" height="40" rx="8"/>
-  <text class="name" x="1380" y="247">checklist copy</text>
+  <text class="name" x="1380" y="247">template copy</text>
   <rect class="box" x="1040" y="318" width="170" height="40" rx="8"/>
   <text class="name" x="1125" y="343">result</text>
   <rect class="box" x="785" y="318" width="170" height="40" rx="8"/>

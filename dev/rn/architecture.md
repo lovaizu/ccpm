@@ -16,6 +16,15 @@ them.
 
 A task that serves no criterion is work the purpose did not ask for.
 
+### The points are asked down a design tree
+
+The orchestrator splits the request from the purpose down, each point joined to what it serves and
+to what it rests on, and asks the person, one per message, only the points that no fact or the
+purpose settles, in the order they rest on one another.
+
+A point asked as it comes to mind leaves a gap that shows only at a sign-off, and one asked before
+what it rests on is asked again.
+
 ### The plan is made again from the facts
 
 After each task the orchestrator sets where the work stands from the checked facts alone, and writes
@@ -56,6 +65,8 @@ A fix of the orchestrator's own is work that no AI other than its maker has read
   Carries O1's sign-offs.
 - As the person, I want each document and the finished work made to the goal while I do not watch.
   Carries O1's documents and finished work.
+- As the person, I want to type `/rn:up` alone in a new conversation another day, and go on where
+  the work stands, asked nothing again. Carries O1's going on another day.
 - As the person, I want to decide where each learning goes, and get the pull request marked ready.
   Carries O1's learnings and the merge.
 
@@ -66,7 +77,7 @@ A fix of the orchestrator's own is work that no AI other than its maker has read
 ![rn's components](components.svg)
 
 - The orchestrator alone talks with the person and decides each move. It writes the plan and the
-  learnings itself, with rn's plan checklist open.
+  learnings itself, with turn's plan template open.
 - The compressor alone gives the part of a work's CCS that needs judgment, from the steering, the
   works made and the work's latest call. It decides no place or rule itself: a point no file or
   decision settles goes back to the orchestrator, which asks the person.
@@ -88,11 +99,11 @@ A fix of the orchestrator's own is work that no AI other than its maker has read
   what the result must do, never the means.
 - A CCS holds what one call's work is made from, in the shape
   [ACC](https://arxiv.org/abs/2601.11653) gives an AI's state: what it serves, the results it builds
-  on, its decisions, the checklists, the stage and the languages. Each point the person decides is
+  on, its decisions, the templates, the stage and the languages. Each point the person decides is
   kept as a decision in the CCS of the next call it settles.
 - A task's CCS names the receiver and what they have at that stage: before the build, the person
   approving the document and whoever builds to it; after, the product's users. A document made
-  before the build is made again once the product is built, where its checklists ask what the built
+  before the build is made again once the product is built, where its template asks what the built
   product does.
 
 ### Sequences
@@ -107,7 +118,8 @@ sequenceDiagram
   U->>O: /rn:up (request)
   O->>S: starts the work (request)
   S-->>O: the steering
-  loop each point to decide
+  Note over O: splits the request from the purpose down a design tree
+  loop each point no fact or the purpose settles, in the order they rest on one another
     O->>U: the point, with the answer recommended (point to decide)
     U->>O: an answer
     O->>S: keeps it (decision)
@@ -155,6 +167,23 @@ sequenceDiagram
   O->>S: takes the task out of the plan once the result holds (steering)
 ```
 
+Going on another day:
+
+```mermaid
+sequenceDiagram
+  actor U as Person
+  participant O as Orchestrator
+  participant S as rn's scripts
+  U->>O: /rn:up, in a new conversation
+  O->>S: where the session stands
+  S-->>O: the stage and the sign-off waiting (steering)
+  alt a sign-off waits
+    O->>U: the proposal again
+  else
+    O->>U: the next point to decide, or the next move taken (point to decide)
+  end
+```
+
 The learnings and the merge:
 
 ```mermaid
@@ -166,7 +195,7 @@ sequenceDiagram
   O->>S: finds each send-back, remake and point asked again (history)
   loop each learning
     O->>U: the learning, and where it would help (learning)
-    U->>O: the person's checklists, an issue, both, or neither
+    U->>O: a question for that kind's template, an issue, both, or neither
   end
   O->>G: opens each issue, on the person's yes (issue)
   O->>S: marks the pull request ready
@@ -197,12 +226,11 @@ plugins/rn/
 ├── agents/compressor.md             the compressor, allowed only the tools that read <agent>
 ├── prompts/                         the orchestrator's and the compressor's steps <Markdown>
 ├── scripts/rn.py, <part>.py         rn's scripts <Python 3.9>
-├── forms/steering.json, compressor.json   the forms of the steering and the compressor's reply <JSON Schema>
-└── checklists/                      rn's checklists, one for each kind <Markdown>
+└── forms/steering.json, compressor.json   the forms of the steering and the compressor's reply <JSON Schema>
 
 <the person's repository>, on the work's own branch
+├── .turn/templates/<kind>.json      the person's addition for a kind, kept by turn <JSON>
 └── .rn/
-    ├── checklists/<kind>.md         the person's addition for a kind <Markdown>
     └── <yyyymmdd>-<slug>/           one work's record: steering.json, steering.md, learnings.md,
                                      the documents kept here alone, and calls/ with each call's CCS
                                      and result <JSON, Markdown>

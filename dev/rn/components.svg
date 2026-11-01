@@ -23,39 +23,28 @@
 
   <!-- roles, each with the responsibilities placed in it -->
   <rect class="box" x="460" y="20" width="240" height="70" rx="8"/>
-  <text class="name" x="580" y="46">user</text>
-  <text class="kind" x="580" y="66">asks, answers, approves,</text>
-  <text class="kind" x="580" y="81">merges</text>
+  <text class="name" x="580" y="46">person</text>
+  <text class="kind" x="580" y="66">[person]</text>
 
   <rect class="box" x="430" y="230" width="300" height="90" rx="45"/>
   <text class="name" x="580" y="258">orchestrator</text>
-  <text class="kind" x="580" y="278">talks with the user, decides each move,</text>
-  <text class="kind" x="580" y="293">writes the plan, the learnings</text>
-  <text class="kind" x="580" y="308">and each issue</text>
+  <text class="kind" x="580" y="278">[AI · main conversation, Markdown]</text>
 
   <rect class="box" x="20" y="230" width="270" height="90" rx="45"/>
   <text class="name" x="155" y="258">compressor</text>
-  <text class="kind" x="155" y="278">gives what of a CCS needs</text>
-  <text class="kind" x="155" y="293">judgment, returns a point no</text>
-  <text class="kind" x="155" y="308">file or decision settles</text>
+  <text class="kind" x="155" y="278">[AI · subagent, Markdown]</text>
 
   <rect class="box" x="880" y="230" width="270" height="90" rx="45"/>
   <text class="name" x="1015" y="258">turn</text>
-  <text class="kind" x="1015" y="278">makes every other work,</text>
-  <text class="kind" x="1015" y="293">has it used in the receiver's</text>
-  <text class="kind" x="1015" y="308">place before it returns it</text>
+  <text class="kind" x="1015" y="278">[plugin · Claude Code]</text>
 
   <rect class="box" x="440" y="460" width="280" height="90" rx="0"/>
   <text class="name" x="580" y="488">rn's scripts</text>
-  <text class="kind" x="580" y="508">keep the steering and each call,</text>
-  <text class="kind" x="580" y="523">make each proposal, take an</text>
-  <text class="kind" x="580" y="538">answer only where it was typed</text>
+  <text class="kind" x="580" y="508">[scripts · Python 3.9]</text>
 
   <rect class="box" x="880" y="460" width="270" height="90" rx="8"/>
   <text class="name" x="1015" y="488">GitHub</text>
-  <text class="kind" x="1015" y="508">holds the branch, the pull request</text>
-  <text class="kind" x="1015" y="523">and each issue, protects the</text>
-  <text class="kind" x="1015" y="538">default branch</text>
+  <text class="kind" x="1015" y="508">[git host · gh, HTTPS]</text>
 
   <!-- user and orchestrator -->
   <path class="line" d="M560,90 V230" marker-end="url(#arrow)"/>

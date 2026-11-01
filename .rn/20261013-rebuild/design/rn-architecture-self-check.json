@@ -1,0 +1,134 @@
+{
+ "kind": "architecture",
+ "good": [
+  {
+   "question": "architecture/Q1",
+   "lines": [
+    "dev/rn/architecture.md:1-6"
+   ]
+  },
+  {
+   "question": "architecture/Q2",
+   "lines": [
+    "dev/rn/architecture.md:8-56"
+   ]
+  },
+  {
+   "question": "architecture/Q3",
+   "lines": [
+    "dev/rn/architecture.md:58-71"
+   ]
+  },
+  {
+   "question": "architecture/Q4",
+   "lines": [
+    "dev/rn/architecture.md:75-77"
+   ]
+  },
+  {
+   "question": "architecture/Q5",
+   "lines": [
+    "dev/rn/architecture.md:79-87"
+   ]
+  },
+  {
+   "question": "architecture/Q6",
+   "lines": [
+    "dev/rn/architecture.md:89-107"
+   ]
+  },
+  {
+   "question": "architecture/Q7",
+   "lines": [
+    "dev/rn/architecture.md:109-204"
+   ]
+  },
+  {
+   "question": "architecture/Q8",
+   "lines": [
+    "dev/rn/architecture.md:208-219"
+   ]
+  },
+  {
+   "question": "architecture/Q9",
+   "lines": [
+    "dev/rn/architecture.md:221-237"
+   ]
+  },
+  {
+   "question": "architecture/Q10",
+   "lines": [
+    "dev/rn/architecture.md:239-250"
+   ]
+  },
+  {
+   "question": "architecture/Q11",
+   "lines": [
+    "dev/rn/architecture.md:252-259"
+   ]
+  },
+  {
+   "question": "architecture/Q12",
+   "lines": [
+    "dev/rn/architecture.md:252-259"
+   ]
+  },
+  {
+   "question": "architecture/Q13",
+   "lines": [
+    "dev/rn/architecture.md:208-219",
+    "dev/rn/architecture.md:252-254"
+   ]
+  },
+  {
+   "question": "architecture/Q14",
+   "lines": [
+    "dev/rn/architecture.md:58-71"
+   ]
+  },
+  {
+   "question": "architecture/Q15",
+   "lines": [
+    "dev/rn/architecture.md:1-259"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q1",
+   "lines": [
+    "dev/rn/architecture.md:75-77",
+    "dev/rn/architecture.md:208-210"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q2",
+   "lines": [
+    "dev/rn/architecture.md:19-26"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q3",
+   "lines": [
+    "dev/rn/architecture.md:1-259"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q4",
+   "lines": [
+    "dev/rn/architecture.md:1-6"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q5",
+   "lines": [
+    "dev/rn/architecture.md:1-259"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q6",
+   "lines": [
+    "dev/rn/architecture.md:79-87"
+   ]
+  }
+ ],
+ "more": []
+}
