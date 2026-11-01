@@ -131,7 +131,9 @@ so in the content phase.
 `turn:up` holds the run, and the phase is turn's own, not lane's. `turn:up` gets each role's end
 and answer whether it started the role in the foreground or the background, while lane may not
 name the position of a move to a `turn:up` that Claude Code resumes
-([lane's flow](../../plugins/lane/docs/flow.md)). The files cannot tell the phase. Say the builder, in the refactoring phase, returns a point that
+([lane's flow](../../plugins/lane/docs/flow.md)).
+
+The files cannot tell the phase. Say the builder, in the refactoring phase, returns a point that
 would change what the work says, and designer keeps its decisions. The files then read as they did
 in the refactoring phase, yet the work must go through the content phase again. An evaluator that
 told the phase from files would also read files beyond the work, which its user never sees.
