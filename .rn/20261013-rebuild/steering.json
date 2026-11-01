@@ -34,9 +34,36 @@
   ],
   "tasks": [
    {
+    "id": "T49",
+    "what": "lane holds a plugin's flow: the plugin declares the order its roles go in, and lane gives each next move and holds the orchestrator to it",
+    "builds_on": [],
+    "completion_criteria": [
+     {
+      "what": "lane's README, UX and architecture promise and design the flow, each passing its template's questions and agreed by the user",
+      "contributes_to": [
+       "AC1"
+      ]
+     },
+     {
+      "what": "lane depends on no plugin: no code, document or example of it names turn, rn or another ccpm plugin",
+      "contributes_to": [
+       "AC1"
+      ]
+     },
+     {
+      "what": "check.sh lane 100%, mutate.sh lane 0 survivors, and its trials passing",
+      "contributes_to": [
+       "AC1"
+      ]
+     }
+    ]
+   },
+   {
     "id": "T41",
     "what": "turn rebuilt on the concept and roles agreed in turn-rebuild.md",
-    "builds_on": [],
+    "builds_on": [
+     "T49"
+    ],
     "completion_criteria": [
      {
       "what": "turn's UX, README and architecture are rewritten from turn-rebuild.md and agreed by the user, each written after its kind's template, the Format and the Checklist, is remade by planner's steps and the user has approved the kind's purpose and conditions.",
@@ -106,7 +133,7 @@
    },
    {
     "id": "T46",
-    "what": "rn remade on T41's turn",
+    "what": "rn remade on T41's turn: it carries a run over many turns without drift to a work of value to the user, by grilling the user down a design tree and by ACC, keeping its state compressed from move to move, and calls turn for each work",
     "builds_on": [
      "T42"
     ],
@@ -238,7 +265,7 @@
  "status": {
   "stage": "build",
   "awaiting_signoff": false,
-  "next_step": "T41: turn's README approved 2026-10-31; the architecture template approved 2026-11-01. The templates are kept in plugins/turn/templates/ (readme, ux, refactor-doc, architecture), which turn ships, so each is reusable for any product and its grounds cite only public sources. Next: write dev/turn/architecture.md on the architecture template: its principles include that the evaluator uses the work as its user would and answers by what the user gets (for a checklist, by judging a real work of its kind with it), with the reason, so turn's prompts carry it by prompt.md Q-8; it also settles a page for a user stuck mid-run (readme Q8) and plugins/turn/docs/calling.md (refactor-doc Q9). Then the code template.",
+  "next_step": "T49: lane gets a flow, as the user decided 2026-11-01, so turn's order of roles is declared and held by lane rather than by turn.py; lane depends on no plugin. Next: draft the flow into lane's README with the readme template, then its UX and architecture, for the user's approval; then tests and code. T41 waits on it: dev/turn/architecture.md is drafted (uncommitted) and is checked against the architecture template after T49 settles the flow; it then says the flow and each role's limits are held by lane, turn.py checking only what no lane holds. Then the code template.",
   "open_questions": [
    "Whether the design-tree way of thinking, wanted for every plan, task breakdown and way of going, is kept as a skill or a rule outside the plugins (the user, 2026-10-31: not a plugin matter).",
    "Whether turn's way of moving a work follows the plugin architecture as it stands (turn-rebuild.md, What turn takes and gives)."

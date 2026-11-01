@@ -22,7 +22,9 @@ They get a work that meets their purpose well, and spend effort only where only 
 
 ## What turn takes and gives
 
-turn takes a template for each kind of work and gives a work of that kind.
+turn needs nothing given: planner asks the kind of work, and designer asks this work's purpose.
+turn keeps a template for each kind, and gives a work of that kind. A caller such as rn may give
+what it has already settled, so the user is not asked it again.
 
 - A template holds the kind's **Format**, the shape of the work, and its **Checklist**, the
   questions a work answers yes to when it meets the kind's purpose. Both are written in JSON, so a
