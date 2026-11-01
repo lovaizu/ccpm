@@ -231,16 +231,17 @@ class TestReached(unittest.TestCase):
 
     def test_the_last_start_is_the_last_agent_call_of_the_flow_kept(self):
         # Given: the writer's start, the reviewer's, then a Bash call, a start of another plugin's
-        # subagent, and a Bash call naming the writer
+        # subagent, and calls of a tool no plugin has, Act, and of Bash, naming the writer
         other = {**started("x"), "input": {"subagent_type": "a:x"}}
         bash = {"tool": "Bash", "input": {"command": "ls"}, "failed": False}
         named = {"subagent_type": "notes:changelog-writer"}
+        act = {"tool": "Act", "input": named, "failed": False}
         bash_named = {**bash, "input": named}
         writer = {**started("changelog-writer"), "id": "toolu_w"}
         reviewer = {**started("changelog-reviewer"), "id": "toolu_r"}
         # When: the last start is read
         # Then: it is the reviewer's
-        kept = run(writer, reviewer, bash, other, bash_named)
+        kept = run(writer, reviewer, bash, other, act, bash_named)
         self.assertEqual(moves.last_start(kept), reviewer)
         self.assertIsNone(moves.last_start(run(bash)))
 
