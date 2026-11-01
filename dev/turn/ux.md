@@ -15,7 +15,7 @@ Key results have no target values. When a measure becomes a target, it stops bei
 ## Scenarios
 
 The person who wants the work is a person. turn is an AI: a Claude Code plugin whose subagents make
-the work. The web is outside turn, and turn reads guides and examples on it.
+the work. The internet is outside turn, and turn reads guides and examples on it.
 
 ### O1: A press release for a new meeting-room booking app
 
@@ -23,7 +23,7 @@ the work. The web is outside turn, and turn reads guides and examples on it.
 sequenceDiagram
   participant User as Person (person)
   participant turn as turn (AI)
-  participant Web as The web (outside)
+  participant Web as Internet (outside)
   User->>turn: Write a press release for our new meeting-room booking app
   turn->>User: Is this a release for the press?
   User->>turn: Yes

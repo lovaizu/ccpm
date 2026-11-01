@@ -108,12 +108,12 @@ lane and each caller then change their code freely behind what they document.
 
 - As the person who wants a work, I want to ask `turn:up` for it and confirm its kind. Carries O1's
   request and "Is this a release for the press?".
-- As that person, I want to approve the format and the checklist of a new kind, and have them kept.
-  Carries O1's research and "Format … Approve?".
+- As that person, I want to approve who reads a new kind and for what, its format and its checklist,
+  and have them kept. Carries O1's research and "Purpose … Approve?".
 - As that person, I want to answer the purpose and each point only I decide, with a recommendation,
   and approve the design. Carries O1 from "What is the release for?" to the approved key points.
 - As that person, I want the work only once an AI using it as its user would finds every question
-  good. Carries O1's "The press release".
+  good. Carries O1's "Writes the release, and checks it" and "The press release".
 - As a plugin's step, such as rn's, I want to start `turn:up` with what my step has settled, and get
   the work back. Carries O1 when the person reaches turn through such a plugin.
 
@@ -165,7 +165,7 @@ sequenceDiagram
   actor P as Person
   participant M as Main conversation
   participant U as turn:up
-  participant G as Guard
+  participant G as Check script
   participant PL as Planner
   P->>M: asks turn:up for a work (Request)
   M->>U: starts it in the background (Request)
@@ -221,7 +221,7 @@ Making the work, in both phases:
 ```mermaid
 sequenceDiagram
   participant U as turn:up
-  participant G as Guard
+  participant G as Check script
   participant D as Designer
   participant B as Builder
   participant E as Evaluator
@@ -276,7 +276,7 @@ sequenceDiagram
   installed folder, so templates are not kept there.
 - Asked again for a work whose run stopped, `turn:up` finds the run's folder by its name, and each
   role takes up what the run's files hold.
-- lane's guard lies in turn's own folder, so the person needs no lane installed.
+- lane's check script lies in turn's own folder, so the person needs no lane installed.
 
 ### Directory structure
 
@@ -289,7 +289,7 @@ plugins/turn/
 ├── scripts/wait.py                 wait.py <script · Python 3.9 stdlib>
 ├── forms/<file>.json               Forms <JSON Schema>
 ├── templates/<kind>.json           the Templates turn ships <JSON>
-├── hooks/                          hooks.json, lanes.json, the Guard and the Items adapter, laid by lane
+├── hooks/                          hooks.json, lanes.json, lane's check script and the Items adapter, laid by lane
 ├── docs/calling.md, README.md, CHANGELOG.md, *.svg
 
 dev/turn/
@@ -310,14 +310,14 @@ of a role, or of the whole, judged from its records.
 | Deployment unit | Unit | Integration | End-to-end |
 |---|---|---|---|
 | turn's agents [subagents · Markdown] | a trial of one role, the rest mocked · ●●● · it keeps to its steps | a trial of the four roles under lane's flow, the person mocked · ●●○ · the hand-offs and each way back | ▨[^1] |
-| turn's scripts [Python 3.9 stdlib] | unittest, Cosmic Ray, Hypothesis · ●●● · each check, `wait.py`, the items adapter | unittest with lane's guard laid · ●○○ · the lanes run the checks, the flow tells each move | ▨[^1] |
+| turn's scripts [Python 3.9 stdlib] | unittest, Cosmic Ray, Hypothesis · ●●● · each check, `wait.py`, the items adapter | unittest with lane's check script laid · ●○○ · the lanes run the checks, the flow tells each move | ▨[^1] |
 | turn's templates [JSON] | `check.py` · ●●○ · each in its form, each part looked at | ▨[^2] | ▨[^1] |
 | turn in Claude Code | ▨[^2] | ▨[^2] | a trial of each user story, the assistant as the person · ●●○ · the work, and what the person was asked |
 
 [^1]: End-to-end tests run on the whole, in the last row.
 [^2]: Nothing joins it to a neighbour, or its units are tested in their own rows.
 
-- Trials run on Opus with lane's guard laid, and pass in three runs of three, as what an AI does
+- Trials run on Opus with lane's check script laid, and pass in three runs of three, as what an AI does
   varies from run to run. A role's trial passes when the role keeps its steps and its file passes
   `check.py`; the roles' trial when the run ends with every question good and each more mended at
   its decision; a story's trial when the person is asked only what the README's Walkthrough asks.

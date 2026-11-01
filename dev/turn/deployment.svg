@@ -56,9 +56,9 @@
   <text class="name" x="145" y="445" text-anchor="middle">wait.py,</text>
   <text class="name" x="145" y="465" text-anchor="middle">Items adapter</text>
   <rect class="unit" x="250" y="365" width="175" height="110" rx="10"/>
-  <text class="envname" x="262" y="385">lane&#x27;s guard</text>
+  <text class="envname" x="262" y="385">lane&#x27;s check script</text>
   <text class="utag" x="262" y="403">[hook process · lane]</text>
-  <text class="name" x="337" y="445" text-anchor="middle">Guard</text>
+  <text class="name" x="337" y="445" text-anchor="middle">Check script</text>
   <rect class="unit" x="40" y="515" width="400" height="175" rx="10"/>
   <text class="envname" x="52" y="535">turn&#x27;s installed folder [plugin folder]</text>
   <path class="store" d="M60,574 A85.0,9 0 0 1 230,574 V646 A85.0,9 0 0 1 60,646 Z"/>
@@ -70,7 +70,7 @@
   <text class="name" x="335.0" y="612.0">Forms</text>
   <text class="tag" x="335.0" y="629.0">[JSON Schema files]</text>
   <rect class="unit" x="470" y="330" width="410" height="360" rx="10"/>
-  <text class="envname" x="482" y="350">The repository [git working folder]</text>
+  <text class="envname" x="482" y="350">The folder Claude Code runs in [working folder]</text>
   <path class="store" d="M560,379 A115.0,9 0 0 1 790,379 V441 A115.0,9 0 0 1 560,441 Z"/>
   <path class="store" d="M560,379 A115.0,9 0 0 0 790,379"/>
   <text class="name" x="675.0" y="412.0">The work</text>

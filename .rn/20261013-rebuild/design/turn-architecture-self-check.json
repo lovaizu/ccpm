@@ -1,0 +1,133 @@
+{
+ "kind": "architecture",
+ "good": [
+  {
+   "question": "architecture/Q1",
+   "lines": [
+    "dev/turn/architecture.md:1-8"
+   ]
+  },
+  {
+   "question": "architecture/Q2",
+   "lines": [
+    "dev/turn/architecture.md:10-105"
+   ]
+  },
+  {
+   "question": "architecture/Q3",
+   "lines": [
+    "dev/turn/architecture.md:107-118"
+   ]
+  },
+  {
+   "question": "architecture/Q4",
+   "lines": [
+    "dev/turn/architecture.md:122-124"
+   ]
+  },
+  {
+   "question": "architecture/Q5",
+   "lines": [
+    "dev/turn/architecture.md:126-144"
+   ]
+  },
+  {
+   "question": "architecture/Q6",
+   "lines": [
+    "dev/turn/architecture.md:155-157"
+   ]
+  },
+  {
+   "question": "architecture/Q7",
+   "lines": [
+    "dev/turn/architecture.md:159-261"
+   ]
+  },
+  {
+   "question": "architecture/Q8",
+   "lines": [
+    "dev/turn/architecture.md:265-279"
+   ]
+  },
+  {
+   "question": "architecture/Q9",
+   "lines": [
+    "dev/turn/architecture.md:281-303"
+   ]
+  },
+  {
+   "question": "architecture/Q10",
+   "lines": [
+    "dev/turn/architecture.md:310-318"
+   ]
+  },
+  {
+   "question": "architecture/Q11",
+   "lines": [
+    "dev/turn/architecture.md:320-324"
+   ]
+  },
+  {
+   "question": "architecture/Q12",
+   "lines": [
+    "dev/turn/architecture.md:320-324"
+   ]
+  },
+  {
+   "question": "architecture/Q13",
+   "lines": [
+    "dev/turn/architecture.md:146-153",
+    "dev/turn/architecture.md:325-326"
+   ]
+  },
+  {
+   "question": "architecture/Q14",
+   "lines": [
+    "dev/turn/architecture.md:107-118"
+   ]
+  },
+  {
+   "question": "architecture/Q15",
+   "lines": [
+    "dev/turn/architecture.md:1-326"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q1",
+   "lines": [
+    "dev/turn/architecture.md:122-157"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q2",
+   "lines": [
+    "dev/turn/architecture.md:16-20"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q3",
+   "lines": [
+    "dev/turn/architecture.md:165-169"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q4",
+   "lines": [
+    "dev/turn/architecture.md:12-14"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q5",
+   "lines": [
+    "dev/turn/architecture.md:1-326"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q6",
+   "lines": [
+    "dev/turn/architecture.md:265-279"
+   ]
+  }
+ ],
+ "more": []
+}
