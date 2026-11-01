@@ -183,6 +183,7 @@ sequenceDiagram
   participant C as called.py
   participant M as moves.py
   participant W as writer
+  participant R as reviewer
   CC->>H: SubagentStart of lead (Event)
   H->>M: next move (Flow, Kept call)
   M-->>H: move 1, writer
@@ -198,6 +199,22 @@ sequenceDiagram
   O->>CC: tries to end
   CC->>H: SubagentStop of lead (Event)
   H-->>CC: keep going, with the sentence of the flow and move 2 (Decision)
+  O->>CC: starts reviewer
+  CC->>R: runs reviewer
+  R-->>CC: ends with `more` (Answer)
+  CC->>H: PostToolUse of the start (Event)
+  H->>C: keeps the start and its answer (Kept call, Answer)
+  H->>M: next move (Flow, Kept call)
+  M-->>H: back to move 1, writer, as reviewer answered `more`
+  H-->>CC: context with move 1 (Decision)
+  Note over O,R: writer and reviewer again, until reviewer does not answer `more`
+  CC->>H: PostToolUse of reviewer's last start (Event)
+  H->>M: next move (Flow, Kept call)
+  M-->>H: none: the flow is done
+  H-->>CC: context that the flow is done (Decision)
+  O->>CC: ends
+  CC->>H: SubagentStop of lead (Event)
+  H-->>CC: lets it end
 ```
 
 - A start counts once the started subagent has ended, in the foreground or the background: in an
