@@ -1,0 +1,14 @@
+{
+ "kind": "architecture",
+ "goal": {"what": "Whoever builds or changes lane derives each part from the framework and principles and makes it on the same thinking.", "grounds": ["architecture.json purpose"]},
+ "decisions": [
+  {"id": "D1", "what": "Summary: lay.py turns rules into sentences and checks; the check script in the plugin stops breaks and tells moves.", "contributes_to": ["architecture/Q1"], "builds_on": [], "decided": true, "settled_by": "reasoning", "grounds": ["UX O1, O2"]},
+  {"id": "D2", "what": "Seven principles, each a rule and its reason: the step shown again, one wording, approved is what runs, no plugin known, an uncheckable call stopped, judged from what was done, nothing needed from lane.", "contributes_to": ["architecture/Q2", "architecture/Q13"], "builds_on": ["D1"], "decided": true, "settled_by": "reasoning", "grounds": ["the earlier architecture's principles, kept"]},
+  {"id": "D3", "what": "Four user stories, one for each part of the UX's paths: print, write, a break stopped, a flow.", "contributes_to": ["architecture/Q3", "architecture/Q14"], "builds_on": [], "decided": true, "settled_by": "reasoning", "grounds": ["the UX now holds main paths only"]},
+  {"id": "D4", "what": "Components, data model and deployment: the existing figures; under them only each role's sole responsibility and the choices a reader would question.", "contributes_to": ["architecture/Q4", "architecture/Q5", "architecture/Q6", "architecture/Q8", "architecture/Q13"], "builds_on": ["D3"], "decided": true, "settled_by": "reasoning", "grounds": ["the figures show the rest"]},
+  {"id": "D5", "what": "One sequence for each story, with the choices of the flow under them.", "contributes_to": ["architecture/Q7"], "builds_on": ["D3", "D4"], "decided": true, "settled_by": "reasoning", "grounds": ["architecture.json part sequences"]},
+  {"id": "D6", "what": "Directory structure: the files of each role and data, in one tree.", "contributes_to": ["architecture/Q9"], "builds_on": ["D4"], "decided": true, "settled_by": "research", "grounds": ["the repository"]},
+  {"id": "D7", "what": "Test: the table, what is faked, the pass criteria, the weights.", "contributes_to": ["architecture/Q10", "architecture/Q11", "architecture/Q12"], "builds_on": ["D4"], "decided": true, "settled_by": "research", "grounds": ["dev/lane/tests, trials"]},
+  {"id": "D8", "what": "Nothing that changes when a role's inside changes: no message texts beyond the UX's, no field names.", "contributes_to": ["architecture/Q15"], "builds_on": [], "decided": true, "settled_by": "research", "grounds": ["architecture.json Q15"]}
+ ]
+}
