@@ -1,0 +1,8 @@
+{"kind": "ux",
+ "goal": {"what": "rn's developers know who uses rn, for what, how they reach it, and how to tell a change made it better.", "grounds": ["ux.json purpose"]},
+ "decisions": [
+  {"id": "D1", "what": "O1 is the steering's G1: ask in rough words without preparing, only answer, the purpose achieved.", "contributes_to": ["ux/Q1"], "builds_on": [], "decided": true, "settled_by": "user", "grounds": ["steering G1"]},
+  {"id": "D2", "what": "KR1.1 changes sent back at the finished work's sign-off, KR1.2 the person's time, KR1.1 first.", "contributes_to": ["ux/Q2"], "builds_on": ["D1"], "decided": true, "settled_by": "user", "grounds": ["steering AC1, AC2"]},
+  {"id": "D3", "what": "One scenario, the main path: points one per message, the goal sign-off, the document sign-offs where needed, the finished work, the learnings, ready to merge.", "contributes_to": ["ux/Q3"], "builds_on": ["D1"], "decided": true, "settled_by": "user", "grounds": ["dev/rn/ux.md, From asking to the merge"]},
+  {"id": "D4", "what": "Nothing of how rn is built; feedback, a stop and the tasks' progress are off the main path.", "contributes_to": ["ux/Q4"], "builds_on": [], "decided": true, "settled_by": "research", "grounds": ["ux.json Q4, part scenarios"]}
+ ]}
