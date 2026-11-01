@@ -74,9 +74,9 @@ lane writes each line as a statement of the run, as Claude Code's docs advise fo
 
 | Where the run is | The orchestrator is told |
 |---|---|
-| no subagent of the flow has come back yet | ``The next move of the flow is to start `<plugin>:<first>` in the foreground.`` |
-| the subagent due came back, and is the `from` of a `back` whose `while` it answered | ``<from> answered `<while>`. The next move of the flow is to start `<plugin>:<to>` in the foreground.`` |
-| the subagent due came back, and another follows it in `order` | ``The next move of the flow is to start `<plugin>:<next>` in the foreground.`` |
+| no subagent of the flow has come back yet | ``The next move of the flow is move 1: start `<plugin>:<first>` in the foreground.`` |
+| the subagent due came back, and is the `from` of a `back` whose `while` it answered | ``<from> answered `<while>`. The next move of the flow is move <to>: start `<plugin>:<name at to>` in the foreground.`` |
+| the subagent due came back, and another follows it in `order` | ``The next move of the flow is move <n>: start `<plugin>:<name at n>` in the foreground.`` |
 | the last of `order` came back, and no `back` sends the work back | `The flow is done: lane tells no more moves.` |
 
 `<plugin>:<name>` is how Claude Code names a subagent of your plugin. The orchestrator writes the

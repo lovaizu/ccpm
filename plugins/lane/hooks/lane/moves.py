@@ -114,12 +114,14 @@ def unread(lost: dict[str, Any]) -> str:
 
 
 def told(run: Run) -> str:
-    """The line telling the orchestrator the move due, after what sent the run there where
-    anything did; or that the flow is done."""
+    """The line telling the orchestrator the move due, by its position in the order, from 1, as
+    an order may name a subagent more than once, after what sent the run there where anything did;
+    or that the flow is done."""
     now = due(run)
     if now.at is None:
         return "The flow is done: lane tells no more moves."
-    move = f"The next move of the flow is to start `{named(run, now.at)}` in the foreground."
+    start = f"start `{named(run, now.at)}` in the foreground."
+    move = f"The next move of the flow is move {now.at + 1}: {start}"
     return f"{now.why} {move}" if now.why else move
 
 

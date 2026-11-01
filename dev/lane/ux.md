@@ -120,15 +120,15 @@ sequenceDiagram
   participant W as writer<br/>#lt;AI, a subagent of the flow#gt;
   participant R as reviewer<br/>#lt;AI, a subagent of the flow#gt;
   Note over O,H: the orchestrator starts
-  H-->>O: the next move: start the writer
+  H-->>O: the next move, move 1: start the writer
   O->>W: start
   W->>O: its work
-  H-->>O: the next move: start the reviewer
+  H-->>O: the next move, move 2: start the reviewer
   O->>H: about to end
   H-->>O: kept going, told the flow's sentence and the move
   O->>R: start
   R->>O: answers more
-  H-->>O: the reviewer answered more; the next move: start the writer
+  H-->>O: the reviewer answered more; the next move, move 1: start the writer
   Note over O,R: the writer and the reviewer again, as above,<br/>until the reviewer no longer answers more
   H-->>O: the flow is done
   Note over O: ends with the reviewed work
@@ -138,7 +138,10 @@ sequenceDiagram
   orchestrator is told it, with the move due on the next line, when it does anything but that move,
   or is about to end while a move is due.
 - A subagent answers `more` when it writes `more` on a line of its own.
-- The flow may name a subagent more than once, as in write, review, polish, review again.
+- The flow may name a subagent more than once, as in write, review, polish, review again. So each
+  move is told by its position in the order, as
+  ``The next move of the flow is move <n>: start `<plugin>:<name>` in the foreground.``, for the
+  orchestrator to know which move it takes.
 
 ### A lane lane cannot check
 

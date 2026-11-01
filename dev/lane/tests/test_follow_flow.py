@@ -11,10 +11,17 @@ import helpers
 from flowing import FLOW
 from helpers import NO_PLUGIN, call, follow_flow, moves
 
-# The lines telling each move of the README's flow, as the orchestrator is told them.
-WRITER = "The next move of the flow is to start `notes:changelog-writer` in the foreground."
-REVIEWER = WRITER.replace("changelog-writer", "changelog-reviewer")
+# The lines telling each move of the README's flow, as the orchestrator is told them, each move by
+# its position in the order.
+WRITER = "The next move of the flow is move 1: start `notes:changelog-writer` in the foreground."
+REVIEWER = (
+    "The next move of the flow is move 2: start `notes:changelog-reviewer` in the foreground."
+)
 BACK = f"changelog-reviewer answered `more`. {WRITER}"
+# The line telling the writer's start at position 3 of an order naming it twice.
+WRITER_AGAIN = (
+    "The next move of the flow is move 3: start `notes:changelog-writer` in the foreground."
+)
 DONE = "The flow is done: lane tells no more moves."
 
 
@@ -134,9 +141,13 @@ class TestDue(unittest.TestCase):
             (
                 "the first reviewer answering more, which sends nothing back",
                 [writer, reviewer],
-                WRITER,
+                WRITER_AGAIN,
             ),
-            ("the second reviewer answering more", [writer, reviewer, writer, reviewer], BACK),
+            (
+                "the second reviewer answering more",
+                [writer, reviewer, writer, reviewer],
+                f"changelog-reviewer answered `more`. {WRITER_AGAIN}",
+            ),
             (
                 "the second reviewer done",
                 [writer, reviewer, writer, started("changelog-reviewer")],

@@ -158,7 +158,7 @@ Then you run `/notes:changelog`, and your request also asks it to commit the cha
 returns. As `notes-lead` starts, lane tells it its first move:
 
 ```
-notes: The next move of the flow is to start `notes:changelog-writer` in the foreground.
+notes: The next move of the flow is move 1: start `notes:changelog-writer` in the foreground.
 ```
 
 `notes-lead` starts the writer with your request. The writer ends with the entries written, and
@@ -168,14 +168,14 @@ entries, is about to end with them before the reviewer has run. Its hook stops t
 
 ```
 notes: Take each move lane tells you, until it tells none.
-The next move of the flow is to start `notes:changelog-reviewer` in the foreground.
+The next move of the flow is move 2: start `notes:changelog-reviewer` in the foreground.
 ```
 
 `notes-lead` starts the reviewer. The reviewer answers `more` for one entry, which does not say what
 its commit does. lane then tells `notes-lead`:
 
 ```
-notes: changelog-reviewer answered `more`. The next move of the flow is to start `notes:changelog-writer` in the foreground.
+notes: changelog-reviewer answered `more`. The next move of the flow is move 1: start `notes:changelog-writer` in the foreground.
 ```
 
 The writer and the reviewer go again. Once the reviewer no longer answers `more`, lane tells
