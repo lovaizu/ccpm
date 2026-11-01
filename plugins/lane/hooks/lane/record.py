@@ -240,6 +240,25 @@ def done_at(found: list[dict[str, Any]], cwd: str) -> list[tuple[int, Done]]:
     return [(n, d) for n, d in each if not (d.failed and HOOK_STOPPED.match(d.result))]
 
 
+def reached(found: list[dict[str, Any]], after: str) -> list[str]:
+    """What hooks told the subagent after the result of its call of the ID, in order, from the
+    entries of its record: each result of a call a PreToolUse hook stopped, its reason within it,
+    and each text a stop hook kept it going with; none where the record holds no result of that
+    call."""
+    said: list[str] = []
+    back = False
+    for entry in found:
+        if back:
+            said += [
+                b["content"]
+                for b in of(entry, "user", "tool_result")
+                if isinstance(b.get("content"), str) and HOOK_STOPPED.match(b["content"])
+            ]
+            said += [text(entry) or ""] if told(entry) else []
+        back = back or any(b.get("tool_use_id") == after for b in of(entry, "user", "tool_result"))
+    return said
+
+
 def answered(found: list[dict[str, Any]]) -> bool:
     """Whether, in the entries of its record, a stop hook has told the subagent something and it
     has used no tool since, answering with words alone."""

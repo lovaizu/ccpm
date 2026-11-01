@@ -41,11 +41,13 @@ class Run(NamedTuple):
     """The run of a flow: the flow, as hooks/lanes.json holds it, the plugin's name, and the
     orchestrator's calls kept, in the order they came back, each with its input, an object, and
     each start come back from the background with whether its subagent has ended and its answer,
-    as called.flow_kept gives them."""
+    as called.flow_kept gives them; and whether the move due has reached the orchestrator since
+    the last start of the flow came back, as `reached` reads it, true where not read."""
 
     flow: dict[str, Any]
     plugin: str
     kept: list[dict[str, Any]]
+    told: bool = True
 
 
 class Due(NamedTuple):
@@ -101,6 +103,26 @@ def starts(run: Run, tool: str, given: Mapping[str, Any]) -> bool:
     return tool == AGENT and given.get(TYPE) in names
 
 
+def last_start(run: Run) -> dict[str, Any] | None:
+    """The last call kept that starts a subagent the flow names, as `starts` tells one; None where
+    none is kept."""
+    found = [k for k in run.kept if starts(run, str(k.get("tool")), k["input"])]
+    return found[-1] if found else None
+
+
+def reached(run: Run, said: list[str]) -> bool:
+    """Whether the move due has reached the orchestrator, given what hooks told it since the last
+    start of the flow came back, as its record holds them: where no start is kept, as it was told
+    the first move as it started; where the last came back from the foreground, or failed, as it
+    was told the move as that start came back; and else where one of them holds the line telling
+    the move due, as the line told as the orchestrator starts again after a subagent ended in the
+    background may not reach it."""
+    last = last_start(run)
+    if last is None or last.get("failed") or last.get("status") == DONE:
+        return True
+    return any(told(run) in s for s in said)
+
+
 def told(run: Run) -> str:
     """The line telling the orchestrator the move due, by its position in the order, from 1, as
     an order may name a subagent more than once, after what sent the run there where anything did;
@@ -116,10 +138,11 @@ def told(run: Run) -> str:
 
 def taken(run: Run, call: Call) -> bool:
     """Whether the call takes the move due: an Agent call starting the subagent due, in the
-    foreground or the background; none is due once the flow is done or while a subagent of it
-    runs."""
+    foreground or the background, once the move has reached the orchestrator, as the run's `told`
+    says; none is due once the flow is done or while a subagent of it runs."""
     at = due(run).at
-    return at is not None and call.tool == AGENT and call.given.get(TYPE) == named(run, at)
+    starting = at is not None and call.tool == AGENT and call.given.get(TYPE) == named(run, at)
+    return starting and run.told
 
 
 def answers(answer: str, said: str) -> bool:

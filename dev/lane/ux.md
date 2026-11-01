@@ -125,9 +125,9 @@ sequenceDiagram
   H-->>O: wait for the writer to end
   W->>H: ends with its work
   Note over O: started again by Claude Code, the writer ended
-  H-->>O: the next move, move 2: start the reviewer
-  O->>H: about to end
-  H-->>O: kept going, told the flow's sentence and the move
+  H-->>O: the next move, move 2: start the reviewer, which may not reach it
+  O->>H: start the reviewer
+  H-->>O: stopped, told the flow's sentence and the move, move 2: start the reviewer
   O->>R: start
   R->>H: ends answering more
   H-->>O: the reviewer answered more; the next move, move 1: start the writer
@@ -142,6 +142,10 @@ sequenceDiagram
 - A start counts once the subagent it started has ended, whether Claude Code runs it in the
   foreground or the background. While it runs, the orchestrator is told to wait for it, and a start
   of a subagent of the flow is stopped and told so.
+- What the hook tells the orchestrator as Claude Code starts it again, once a subagent it started
+  in the background has ended, may not reach it. So a start counts only once the move was told
+  since that subagent came back, by a stop of a call or of its end, which reaches it. A start before
+  that is stopped and told the move, and the start after it counts.
 - A subagent answers `more` when it ends with `more` on a line of its own.
 - The flow may name a subagent more than once, as in write, review, polish, review again. So each
   move is told by its position in the order, as
