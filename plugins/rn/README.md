@@ -19,8 +19,8 @@ and the finished work, and an AI that did not make it uses it in your place befo
 - rn does not merge: it marks the pull request ready, and the merge is yours.
 - rn does not push to your default branch: it works on a branch of its own.
 - rn sends nothing to its makers without your yes.
-- rn does not change its own checklists: what you add goes into `.rn/checklists/` in your
-  repository.
+- rn does not change the templates turn ships: a question you add for a kind of work goes into
+  `.turn/templates/` in your repository.
 
 ## Requirements
 
@@ -89,8 +89,9 @@ for your sign-off. `/rn:ty` approves; `/rn:gm <feedback>` asks for a change.
 ```
 
 Where the purpose needs documents, such as an architecture for the move, rn stops for them the same
-way. It then carries out the tasks, and stops at the finished work with each choice it made without
-asking you, with why:
+way. It then carries out the tasks. When you come back another day, `/rn:up` alone, in a new
+conversation, brings back the sign-off still waiting, or the next point to decide, and asks nothing
+again. rn stops at the finished work with each choice it made without asking you, with why:
 
 ```console
 ● Deliverable sign-off
@@ -105,8 +106,9 @@ asking you, with why:
 > /rn:ty
 ```
 
-Last, rn offers what the work taught, one learning per message, for your checklists in
-`.rn/checklists/` or as an issue to rn's makers, and marks the pull request ready:
+Last, rn offers what the work taught, one learning per message, as a question for the template of
+that kind of work in `.turn/templates/`, or as an issue to rn's makers, and marks the pull request
+ready:
 
 ```console
 ● The pull request is ready to merge: https://github.com/you/app/pull/42
