@@ -45,20 +45,20 @@
   <text class="tag" x="175.0" y="174.0">[Claude Code conversation]</text>
   <rect class="unit" x="330" y="95" width="520" height="180" rx="10"/>
   <text class="envname" x="342" y="115">turn&#x27;s agents [Claude Code subagents · Markdown]</text>
-  <text class="name" x="590" y="170" text-anchor="middle">turn:up, Planner, Designer,</text>
-  <text class="name" x="590" y="192" text-anchor="middle">Builder, Evaluator,</text>
-  <text class="name" x="590" y="214" text-anchor="middle">Refactorer, Refactor-evaluator</text>
+  <text class="name" x="590" y="181" text-anchor="middle">turn:up, Planner, Designer,</text>
+  <text class="name" x="590" y="203" text-anchor="middle">Builder, Evaluator</text>
   <rect class="env" x="40" y="330" width="400" height="160" rx="10"/>
   <text class="envname" x="52" y="350">python3 [Python 3.9 or later]</text>
   <rect class="unit" x="55" y="365" width="180" height="110" rx="10"/>
   <text class="envname" x="67" y="385">turn&#x27;s scripts</text>
   <text class="utag" x="67" y="403">[process · stdlib]</text>
-  <text class="name" x="145" y="435" text-anchor="middle">check.py,</text>
-  <text class="name" x="145" y="455" text-anchor="middle">Items adapter</text>
+  <text class="name" x="145" y="425" text-anchor="middle">check.py,</text>
+  <text class="name" x="145" y="445" text-anchor="middle">wait.py,</text>
+  <text class="name" x="145" y="465" text-anchor="middle">Items adapter</text>
   <rect class="unit" x="250" y="365" width="175" height="110" rx="10"/>
   <text class="envname" x="262" y="385">lane&#x27;s guard</text>
   <text class="utag" x="262" y="403">[hook process · lane]</text>
-  <text class="name" x="337" y="445" text-anchor="middle">Guard, flow.py</text>
+  <text class="name" x="337" y="445" text-anchor="middle">Guard</text>
   <rect class="unit" x="40" y="515" width="400" height="175" rx="10"/>
   <text class="envname" x="52" y="535">turn&#x27;s installed folder [plugin folder]</text>
   <path class="store" d="M60,574 A85.0,9 0 0 1 230,574 V646 A85.0,9 0 0 1 60,646 Z"/>

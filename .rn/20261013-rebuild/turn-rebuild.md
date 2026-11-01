@@ -86,8 +86,9 @@ The purpose of this one work is not planner's: designer asks it.
    that decision.
 6. Pass the design to builder.
 7. Take back what builder or evaluator returns, and trace it to the decisions that serve its
-   question. Where a decision is wrong, decide it again as 4 says, with the decisions that build on
-   it; where the decisions hold and the work strays from them, keep them. Either way, pass the
+   question. Where a decision cannot make its questions good, decide it again as 4 says, with the
+   decisions that build on it, asking the user and waiting for the answer where the fact is
+   theirs; where the decisions hold and the work strays from them, keep them. Either way, pass the
    design to builder again.
 
 designer alone changes the design and alone asks the user about it, so the work is always made from
@@ -137,10 +138,11 @@ whose work goes to evaluator.
    says stays (Fowler, Refactoring). The questions of the `refactor-<kind>` template the kind's
    template names in `includes`, such as `refactor-doc` for every document and `refactor-code`
    for code, which hold over the whole work. builder finishes the work by them and evaluator
-   verifies it by them, with no design tree, each started as a subagent of its own for this phase
-   (refactorer and refactor-evaluator) on the same steps, so lane's flow declares one order. A more
-   goes back to the refactorer. Only how the work says a thing changes; a point that would change
-   what it says goes back to designer and the content phase.
+   verifies it by them, with no design tree, each started fresh. lane's flow declares the six
+   positions: planner, designer, builder, evaluator, builder, evaluator. The phase is the move's
+   position, 3 and 4 the content phase and 5 and 6 this one, and the orchestrator gives each role
+   its phase's files. A more goes back to builder. Only how the work says a thing changes; a point
+   that would change what it says goes back to designer and the content phase.
 
 Keeping the two phases apart keeps builder and evaluator on the content while it is made. A phase
 is named so as not to meet rn's stages, inside one of which turn runs.
