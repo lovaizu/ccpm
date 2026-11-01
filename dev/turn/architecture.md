@@ -99,15 +99,22 @@ work says would pass unchecked by the kind's own questions.
 ### Each role works from the run's files
 
 Each role starts fresh at each move, and takes what earlier roles made from the run's files: the
-design tree and the answers, kept in a folder of their own for each run. The builder and the
-evaluator tell their phase from those files. The work is in the refactoring phase from when the
-evaluator finds every question of the kind's own good until designer next changes the design, and
-in the content phase otherwise.
+design tree and the answers, kept in a folder of their own for each run.
 
 The template and the run's files hold all a role takes from another, so no role needs another's
 conversation. A fresh evaluator reads each round with fresh eyes, as no work is passed by the one
-who made it, and a run stopped anywhere goes on from its files. Each phase is then a step of the
-same role, not a role of its own, and its steps are written once.
+who made it, and a run stopped anywhere goes on from its files.
+
+### The phase is the flow's position
+
+The phase is a fact of the move's position in the flow, not of the run's files. `turn:up` tells it
+from the position lane names, and gives the builder and the evaluator that phase's paths; neither
+role tells its phase itself.
+
+The files cannot tell the phase: after a point the builder returns in the refactoring phase,
+designer may keep its decisions, and the files then read as they did in the refactoring phase,
+while the work must go through the content phase again. An evaluator that told the phase would
+also need files beyond the work, and read what its user never sees.
 
 ### lane holds the order and each role's limits
 
@@ -153,10 +160,14 @@ for every caller.
 ![turn's components](components.svg)
 
 - `turn:up` alone holds a run. It takes each move lane tells it (follow_flow), and starts each role
-  in the foreground, as lane counts a start only once the role has ended. It gives each role the
-  paths that role works on, as one JSON line its lanes read: the run's folder, the templates and
-  the work. It takes the templates' paths from the end of planner, and the work's paths from the
-  end of designer. It ends once lane tells it the flow is done, naming each file of the work.
+  in the foreground, as lane counts a start only once the role has ended. It alone tells the phase,
+  from the position each move names, as [lane's flow](../../plugins/lane/docs/flow.md) words it,
+  such as "The next move of the flow is move 5: start `turn:builder` in the foreground." It gives
+  each role the paths that role works on, as one JSON line its lanes read. The builder and the
+  evaluator get their phase's: its templates and its self-check or verification, and the design
+  tree in the content phase alone, given as `null` in the refactoring phase. It takes the
+  templates' paths from the end of planner, and the work's paths from the end of designer. It ends
+  once lane tells it the flow is done, naming each file of the work.
 - turn's proposal to lane declares the flow on `turn:up`, as
   [lane's flow](../../plugins/lane/docs/flow.md#the-flow) gives it. Its order is planner, designer,
   builder, evaluator, builder, evaluator, positions 1 to 6. Positions 3 and 4 are the content
@@ -181,15 +192,15 @@ for every caller.
   that bears on the work's quality, and in the refactoring phase a point that would change what
   the work says: it writes the question the point bears on as a more of its self-check, and ends
   with `open`. In the refactoring phase it mends each more of the evaluator. lane holds it to read
-  the design tree to its end in the content phase (read_whole), to write only the work and its
-  self-check (write_only), to run no `git commit` or `git push` (hands_off), to write the
-  self-check in its form (in_form), to answer every question of its phase (every_item), and to
-  pass `check.py`'s answers check (test_after).
+  the design tree it is given to its end (read_whole), to write only the work and its self-check
+  (write_only), to run no `git commit` or `git push` (hands_off), to write the self-check in its
+  form (in_form), to answer every question of the templates it is given (every_item), and to pass
+  `check.py`'s answers check (test_after).
 - Evaluator alone decides each answer, good or more, from its own first reading of the work. It
-  ends with `more` while an answer is more. lane holds it to read only the work, the templates and
-  the run's files that tell its phase (read_only), to read the work to its end (read_whole), to
-  write only its verification (write_only), in its form (in_form), to answer every question of its
-  phase (every_item), to pass `check.py`'s answers check (test_after), and to end only once the
+  ends with `more` while an answer is more. lane holds it to read only the work and the templates
+  it is given (read_only), to read the work to its end (read_whole), to write only its
+  verification (write_only), in its form (in_form), to answer every question of the templates it
+  is given (every_item), to pass `check.py`'s answers check (test_after), and to end only once the
   verification is made (end_when).
 - `check.py` alone checks what no lane holds. A template is in its form, and a question looks at
   every part of its format. In a design tree, a decision serves every question, every decision
@@ -249,7 +260,7 @@ sequenceDiagram
   participant WT as wait.py
   P->>M: asks turn:up for a work (request)
   M->>U: starts it in the background (request)
-  G-->>U: tells the move: start planner
+  G-->>U: tells move 1: start planner
   U->>PL: starts (request)
   PL->>M: asks the person to confirm the kind (request)
   M->>P: the ask
@@ -300,7 +311,7 @@ sequenceDiagram
   participant WT as wait.py
   participant R as Run files
   participant C as check.py
-  G-->>U: tells the move: start designer
+  G-->>U: tells move 2: start designer
   U->>D: starts (request, template)
   Note over D: puts the template's questions under this work's purpose
   D->>M: asks what the work is for (decision)
@@ -338,9 +349,10 @@ sequenceDiagram
   participant R as Run files
   participant C as check.py
   participant IA as Items adapter
-  G-->>U: tells the move: start builder
-  U->>B: starts (template, design tree, work)
-  B->>R: reads the content phase (answers, design tree)
+  G-->>U: tells move 3: start builder
+  Note over U: move 3 is the content phase
+  U->>B: starts (template, design tree, work, answers)
+  B->>R: reads (design tree)
   loop each decision, in the order they build on one another
     Note over B: makes it into the work
   end
@@ -348,13 +360,12 @@ sequenceDiagram
   B->>C: checks them (answers)
   opt a point the design leaves open bears on quality
     B-->>U: ends with open
-    G-->>U: tells the move: start designer
+    G-->>U: tells move 2: start designer
     Note over U,D: designer decides it, then the builder makes the work again
   end
   B-->>U: ends
-  G-->>U: tells the move: start evaluator
-  U->>E: starts (template, work)
-  E->>R: reads the content phase
+  G-->>U: tells move 4: start evaluator
+  U->>E: starts (template, work, answers)
   Note over E: uses the work as its user would
   E->>R: writes its answers (answers)
   E->>C: checks them (answers)
@@ -362,11 +373,11 @@ sequenceDiagram
   IA-->>G: the question IDs
   loop while an answer is more
     E-->>U: ends with more
-    G-->>U: tells the move: start designer
+    G-->>U: tells move 2: start designer
     U->>D: starts (answers)
     D->>R: reads the answers, makes again the decision behind each more (answers, design tree)
     D-->>U: ends, naming where the work goes (work)
-    Note over U,E: lane tells the builder, then the evaluator, again
+    Note over U,E: lane tells moves 3 and 4 again
   end
   E-->>U: ends
 ```
@@ -383,32 +394,31 @@ sequenceDiagram
   participant E as Evaluator
   participant R as Run files
   participant C as check.py
-  G-->>U: tells the move: start builder
-  U->>B: starts (template, design tree, work)
-  B->>R: reads the refactoring phase (answers)
+  G-->>U: tells move 5: start builder
+  Note over U: move 5 is the refactoring phase
+  U->>B: starts (included templates, no design tree, work, answers)
   Note over B: betters how the work says each thing, by the included templates' questions
   B->>R: writes its answers (answers)
   B->>C: checks them (answers)
   opt a point would change what the work says
     B-->>U: ends with open
-    G-->>U: tells the move: start designer
+    G-->>U: tells move 2: start designer
     U->>D: starts (answers)
-    Note over U,D: designer decides it, and lane takes the work through the content phase again
+    Note over U,D: designer decides it, or keeps its decisions; either way lane tells moves 3 and 4, the content phase, again
   end
   B-->>U: ends
-  G-->>U: tells the move: start evaluator
-  U->>E: starts (template, work)
-  E->>R: reads the refactoring phase
+  G-->>U: tells move 6: start evaluator
+  U->>E: starts (included templates, work, answers)
   Note over E: uses the work as its user would
   E->>R: writes its answers (answers)
   E->>C: checks them (answers)
   loop while an answer is more
     E-->>U: ends with more
-    G-->>U: tells the move: start builder
-    U->>B: starts (template, design tree, work)
-    B->>R: reads the answers, writes its own (answers)
+    G-->>U: tells move 5: start builder
+    U->>B: starts (included templates, no design tree, work, answers)
+    B->>R: reads the evaluator's answers, writes its own (answers)
     B-->>U: ends
-    Note over U,E: lane tells the evaluator again
+    Note over U,E: lane tells move 6 again
   end
   E-->>U: ends
   G-->>U: tells that the flow is done

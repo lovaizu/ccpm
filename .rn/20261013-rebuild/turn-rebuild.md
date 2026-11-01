@@ -138,9 +138,10 @@ whose work goes to evaluator.
    says stays (Fowler, Refactoring). The questions of the `refactor-<kind>` template the kind's
    template names in `includes`, such as `refactor-doc` for every document and `refactor-code`
    for code, which hold over the whole work. builder finishes the work by them and evaluator
-   verifies it by them, with no design tree, each started fresh and telling the phase from the
-   run's files. lane's flow declares the six positions: planner, designer, builder, evaluator,
-   builder, evaluator. A more goes back to builder. Only how the work says a thing changes; a point
+   verifies it by them, with no design tree, each started fresh. lane's flow declares the six
+   positions: planner, designer, builder, evaluator, builder, evaluator. The phase is the move's
+   position, 3 and 4 the content phase and 5 and 6 this one, and the orchestrator gives each role
+   its phase's files. A more goes back to builder. Only how the work says a thing changes; a point
    that would change what it says goes back to designer and the content phase.
 
 Keeping the two phases apart keeps builder and evaluator on the content while it is made. A phase
