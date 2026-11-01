@@ -5,8 +5,8 @@ of their steps and start one another in the order that you set.
 
 lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps. With
 lane, your subagents keep the rules of their steps on every run, and your orchestrator, the subagent
-that starts the others, starts them in your order, which you write as a flow. You write no code for the checks and no script
-for the order.
+that starts the others, starts them in your order, which you write as a flow. You write no code for
+the checks and no script for the order.
 
 A rule is a sentence in a step, such as ``Do not run `git commit` or `git push`.``, with a check of
 it. When a subagent breaks the rule, the check stops the tool call and shows the subagent the same
@@ -32,7 +32,7 @@ that sees the sentence of its own step goes back to the step.
 
 - Claude Code, where you build your plugin and where it runs.
 - Python 3.9 or later, run as `python3`, on the same computers. Without it, each tool call that a
-  rule is about is stopped, and the subagent and whoever runs your plugin are told to install Python.
+  rule is about is stopped, and the subagent is told to install Python.
 - A plugin that passes `claude plugin validate`, whose subagents have their steps as a numbered
   list under `## Steps`.
 
@@ -43,8 +43,8 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install lane@ccpm
 ```
 
-`claude plugin list --json` then shows `lane@ccpm` with its `installPath`. Each version installs in a
-new folder, so read `installPath` again after an update. lane is ready when `lay.py` shows its
+`claude plugin list --json` then shows `lane@ccpm` with its `installPath`. Each version installs in
+a new folder, so read `installPath` again after an update. lane is ready when `lay.py` shows its
 usage:
 
 ```console
@@ -59,15 +59,15 @@ plugin and lists the rules your plugin has.
 
 ## Walkthrough
 
-The plugin `changelog` writes a project's `CHANGELOG.md`. Its subagent `writer` has this step in
-`agents/writer.md`:
+The plugin `changelog` writes a project's `CHANGELOG.md`, and lives in the folder `changelog/` of
+a repository. Its subagent `writer` has this step in `changelog/agents/writer.md`:
 
 ```markdown
 3. Write the new entries into `CHANGELOG.md`.
 ```
 
 `writer` must write no other file and must not commit. You write these two rules in a proposal,
-`.lane/20261101-changelog/changelog.json` at the root of the repository that holds `changelog`:
+`.lane/20261101-changelog/changelog.json` at the root of that repository:
 
 ```json
 {"plugin": "changelog",
@@ -76,8 +76,8 @@ The plugin `changelog` writes a project's `CHANGELOG.md`. Its subagent `writer` 
   {"lane": "hands_off", "takes": ["git commit", "git push"]}]}]}]}
 ```
 
-`lane` names the type of each rule, and `takes` its values. `lay.py print` shows the step as it will
-be:
+`lane` names the type of each rule, and `takes` its values. Run at the root of the repository,
+`lay.py print` shows the step as it will be:
 
 ```console
 $ python3 <installPath>/scripts/lay.py print .lane/20261101-changelog/changelog.json
@@ -101,8 +101,9 @@ Removed the proposal .lane/20261101-changelog/changelog.json.
 Removed its folder <the repository>/.lane/20261101-changelog.
 ```
 
-When `changelog` runs, `writer` writes `CHANGELOG.md` and the check lets it through. When `writer`
-runs `git commit`, the check stops the call, and `writer` reads:
+When you ask `changelog` for an entry and a commit, it runs `writer`. `writer` writes
+`CHANGELOG.md`, and the check lets it through. `writer` reads the new sentences in step 3, and ends
+without a commit. If `writer` runs `git commit`, the check stops the call, and `writer` reads:
 
 ```
 changelog: Do not run `git commit` or `git push`.

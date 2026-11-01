@@ -1,0 +1,21 @@
+{
+ "kind": "readme",
+ "good": [
+  {"question": "readme/Q1", "lines": ["plugins/lane/README.md:1-4"]},
+  {"question": "readme/Q2", "lines": ["plugins/lane/README.md:6-9"]},
+  {"question": "readme/Q3", "lines": ["plugins/lane/README.md:11-14"]},
+  {"question": "readme/Q4", "lines": ["plugins/lane/README.md:16-29"]},
+  {"question": "readme/Q5", "lines": ["plugins/lane/README.md:60-110"]},
+  {"question": "readme/Q6", "lines": ["plugins/lane/README.md:112-117"]},
+  {"question": "readme/Q7", "lines": ["plugins/lane/README.md:31-58", "plugins/lane/README.md:62-102"]},
+  {"question": "readme/Q8", "lines": ["plugins/lane/README.md:119-128"]},
+  {"question": "readme/Q9", "lines": ["plugins/lane/README.md:130-132"]},
+  {"question": "refactor-doc/Q1", "lines": ["plugins/lane/README.md:112-117"]},
+  {"question": "refactor-doc/Q2", "lines": ["plugins/lane/README.md:104-106"]},
+  {"question": "refactor-doc/Q3", "lines": ["plugins/lane/README.md:11-14"]},
+  {"question": "refactor-doc/Q4", "lines": ["plugins/lane/README.md:6-9", "plugins/lane/README.md:79-80"]},
+  {"question": "refactor-doc/Q5", "lines": ["plugins/lane/README.md:1-132"]},
+  {"question": "refactor-doc/Q6", "lines": ["plugins/lane/README.md:119-128"]}
+ ],
+ "more": []
+}
