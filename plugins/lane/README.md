@@ -1,82 +1,82 @@
 # lane
 
-lane is a Claude Code plugin that tells a subagent of your plugin the step it drifts from, in the
-step's own sentence.
+lane is a Claude Code plugin that adds checks to your plugin, so that the subagents of your plugin
+follow the steps and the order that you set.
 
-An AI that runs your plugin's steps drifts from some of them now and then, such as committing where
-a step says not to, or ending its work before the subagent that reviews it has run. A hook that only
-refuses leaves the AI to look for another way to what it was doing: one AI refused a commit split
-the word `git` to get past the check. And each check you write yourself is one more piece of code to
-write, test and keep right in your plugin.
+The lane plugin is for a person or an AI who builds a Claude Code plugin. In that plugin, subagents
+do the work in numbered steps. With the lane plugin, the subagents of your plugin follow their steps
+every time your plugin runs. You do not write the code for the checks. One subagent, the
+orchestrator, starts the other subagents. With the lane plugin, the orchestrator starts them in the
+order that you set, every time your plugin runs. You do not write a script that controls this order.
 
-If you have an AI build a plugin whose work an AI does in several steps, lane lets your plugin's
-subagents run at full speed with no one watching each move, each finding its own way back to its
-steps. Your AI, the one building your plugin, lays the checks without writing one, and lane asks you
-nothing.
-
-A lane is laid on one step of a subagent, a step being one numbered item of what the subagent is
-told to do. A lane is a sentence written into the step, together with a hook that notices a drift
-from it, stops the call that drifts, and tells the subagent that sentence again. Told the step's own
-sentence, the subagent goes back to the step rather than around the refusal. Your AI writes the
-lanes it proposes in a proposal, a JSON file. lane's layer, the script `lay.py`, prints them as they
-would be laid. Once your AI approves them, `lay.py` writes them into your plugin with lane's guard,
-the code that runs the hooks. lane writes and tests each kind of check once, so your plugin
-carries no check of its own that might misread a command. Your AI lays lanes only where a step
-alone is not sure to hold, so the hooks stay few and small.
-
-The order your subagents go in is one more thing to drift from. Where one subagent, the
-orchestrator, starts the others, your AI writes their order in the proposal as a flow: which
-subagent comes after which, and which answer sends the work back. `lay.py` then lays a lane on a
-step of the orchestrator, with the sentence "Take each move lane tells you, until it tells none."
-lane tells the orchestrator its next move, such as starting the reviewer, as it starts and once
-each subagent it started has ended, in the foreground or the background, from the flow and from
-what the subagents have answered. When the
-orchestrator does something else, or is about to end, before it takes that move, its hook stops it
-and tells it that sentence and the move. So your plugin keeps no script of its own for the
-order.
+A rule has two parts: a sentence in a step, and a check of that sentence. The lane plugin calls a
+rule a "lane". The check runs on each tool call that the sentence is about, such as a command that
+the subagent runs. The check also runs when the subagent ends its work. A violation is a tool call
+or an end of work that does not agree with the sentence. When the check finds a violation, the check
+stops that tool call or that end of work. Then the check shows the sentence to the subagent again. A
+usual hook only refuses the tool call. That hook does not show the step to the subagent. So the
+subagent looks for another way to do the same thing. A subagent that sees the sentence of its own
+step goes back to the step. The lane plugin writes and tests each type of check one time. It writes
+these checks in one script. It copies this script into your plugin. This README calls this script
+the check script. For the order, you write a flow. A flow is the order in which the orchestrator
+starts the other subagents. The check script tells the orchestrator which subagent to start next.
+Until the orchestrator starts that subagent, the check script stops all other actions of the
+orchestrator.
 
 **Non-goals**
 
-- lane is no security boundary. What must hold whatever the AI writes is held by GitHub's branch
-  protection, Claude Code's sandbox or its permission rules, as Claude Code's own docs say a check
-  on the command text is not a security boundary.
-- lane reads a command in the forms the steps tell and the AI writes, not in every way the shell
-  has. Where lane cannot settle which file a command names, it stops the call and tells the
-  subagent to name the file by its path.
-- lane lays lanes on subagents alone, not on skills. A hook written into a skill goes on running for
-  the rest of the session once the skill has started, and is not told which skill runs, so it would
-  act on work outside the skill. A step to keep goes into a subagent the skill starts. So the
-  orchestrator of a flow is a subagent, not the main conversation.
-- A flow is an order your AI sets beforehand, with the ways back it names. lane does not choose the
-  next subagent from what a run finds; a plugin whose order changes that way says the order in its
-  orchestrator's steps.
-- lane sees only what shows in a tool call or in how the subagent ends, not what the subagent only
-  weighs.
+- The check script checks only the subagents that have rules. It does not check the main
+  conversation, a skill, or a subagent without rules. A hook in a skill continues to run until the
+  session ends. For this reason, the lane plugin does not add rules to skills. The orchestrator of a
+  flow must be a subagent.
+- The lane plugin is not a security boundary. Some actions, such as a merge, must be blocked in
+  every case. Use the branch protection of GitHub or the permission rules of Claude Code to block
+  them.
+- The check script sees only the tool calls and the end of work of a subagent. It does not see what
+  the subagent thinks. A step such as "Compare each option" cannot have a rule.
+- The check script does not read every form of a shell command. For some commands, the check script
+  cannot decide which file the command uses. Then the check script stops the tool call. It asks the
+  subagent to give the path of the file.
+- The check script does not choose the next subagent from the results of a run. A flow is a fixed
+  order that you set. The flow goes back to an earlier subagent only when a subagent gives an answer
+  that you name, such as the word `more`.
+- The check script reads some texts that your plugin writes, such as a list of items that a subagent
+  must answer. The check script reads each such text in one format only. The documents of the lane
+  plugin describe that format. Your plugin can write the text in another format. In that case, you
+  write an adapter. An adapter is a small script that converts the other format into the format that
+  the check script reads. You also write test cases for the adapter. Each test case has an input for
+  the adapter, and the output that the adapter must give for that input. The lane plugin runs the
+  adapter on its test cases before it adds the rules. The adapter does not decide what is a
+  violation. The check script decides it.
 
 ## Requirements
 
-- Claude Code, where your plugin runs and lane is installed.
-- Python 3.9 or later, run as `python3`, on the machines the plugin runs on.
-
-  Without it, the hooks stop the tool calls they watch, each asking for Python to be installed,
-  and at a subagent's end tell you so and let it end.
+- Claude Code, on the computer where you build your plugin, and on each computer where your plugin
+  runs.
+- Python 3.9 or later, on the same computers. The command `python3` must start Python. The script
+  `lay.py` of the lane plugin runs on Python. The check script in your plugin also runs on Python.
+  If Python is missing, the check script stops each tool call that a rule is about. Then the check
+  script tells the subagent to install Python.
+- A plugin with subagents. In the file of each subagent, the steps are a numbered list under the
+  heading `## Steps`.
 
 ## Installation
 
-lane comes from ccpm, a marketplace of Claude Code plugins on GitHub. Add the marketplace, then
-install lane:
+The lane plugin is in the GitHub repository `lovaizu/ccpm`. This repository is a marketplace of
+Claude Code plugins. Add this marketplace, and then install the lane plugin:
 
 ```console
 claude plugin marketplace add lovaizu/ccpm
 claude plugin install lane@ccpm
 ```
 
-`claude plugin list --json` then lists `lane@ccpm`, and its `installPath` is lane's folder. Claude
-Code installs each version of lane in a new folder, so your AI reads the folder there each time.
-lane is ready when `lay.py` in that folder prints its usage:
+Then the command `claude plugin list --json` shows `lane@ccpm`. The `installPath` of `lane@ccpm` is
+the folder of the lane plugin. Claude Code installs each version in a new folder. So, read
+`installPath` again after each update. The script `lay.py` is in the `scripts` folder of that
+folder. The lane plugin is ready when this script shows its usage:
 
 ```console
-$ python3 <lane's folder>/scripts/lay.py
+$ python3 <installPath>/scripts/lay.py
 usage: lay.py print <proposal>
        lay.py write <proposal>
        lay.py up <plugin>
@@ -84,151 +84,111 @@ usage: lay.py print <proposal>
 
 ## Walkthrough
 
-In your plugin `notes`, the skill `/notes:changelog` starts a subagent, `notes-lead`, the
-orchestrator of the work. `notes-lead` starts `changelog-writer`, which writes the new entries of a
-project's changelog, and then `changelog-reviewer`, which reads them against the project's commits.
-The reviewer answers `more` when an entry needs the writer again. The skill shows you the entries
-and commits `CHANGELOG.md` once you have said OK. The first step of `notes-lead`, in
-`agents/notes-lead.md`, and one of the writer's steps, in `agents/changelog-writer.md`, say:
+In this walkthrough, you add two rules to one step of a subagent. Then the walkthrough shows one run
+of the plugin with these rules.
 
-```markdown
-1. Start the subagents of the work.
-```
+The example plugin is `changelog`. It writes the changelog of a project, the file `CHANGELOG.md`.
+The skill `/changelog:changelog` starts the subagent `lead`, the orchestrator. `lead` starts the
+subagent `writer`. `writer` writes the new entries. Then `lead` starts the subagent `reviewer`.
+`reviewer` compares the entries with the commits of the project. The skill shows the entries to you.
+After you say OK, the skill commits `CHANGELOG.md`. The file `agents/writer.md` contains step 3 of
+`writer`:
 
 ```markdown
 3. Write the new entries into `CHANGELOG.md`.
 ```
 
-While building `notes`, your AI knows that `CHANGELOG.md` is the only file step 3 writes, and that
-the skill commits it, not the writer and not `notes-lead`. It also knows that the reviewer comes
-after the writer, and that the reviewer's `more` sends the work back to the writer. It proposes the
-flow, laid on step 1 of `notes-lead`, with a hands_off lane on the same step, and two lanes on step
-3 of the writer, write_only and hands_off, in `.lane/20261101-notes/notes.json` at the root of the
-repository:
+At this step, `writer` must not write any other file. It also must not commit. You write these two
+rules in a JSON file. This file is the proposal. You save the proposal as
+`.lane/20261101-changelog/changelog.json` at the root of the repository. The plugin is in the folder
+`changelog` at the same root:
 
 ```json
-{"plugin": "notes",
- "flow": {"orchestrator": "notes-lead", "step": 1,
-  "order": ["changelog-writer", "changelog-reviewer"],
-  "back": [{"from": 2, "to": 1, "while": "more"}]},
- "subagents": [{"name": "notes-lead", "steps": [{"step": 1, "lanes": [
-  {"lane": "hands_off", "takes": ["git commit", "git push"]}]}]},
-  {"name": "changelog-writer", "steps": [{"step": 3, "lanes": [
+{"plugin": "changelog",
+ "subagents": [{"name": "writer", "steps": [{"step": 3, "lanes": [
   {"lane": "write_only", "takes": ["CHANGELOG.md"]},
   {"lane": "hands_off", "takes": ["git commit", "git push"]}]}]}]}
 ```
 
-A `back` names its subagents by their positions in the order, from 1, so a subagent the order names
-twice is told apart. Your AI has `lay.py print` show the flow and the lanes, each under the action
-it watches with its hook, and each step as it would read:
+Each rule has a type, such as `write_only`. The values of the rule are in `takes`. You run `lay.py`
+from the root of the repository. The command `lay.py print` shows the step with the new sentences:
 
 ```console
-$ python3 <lane's folder>/scripts/lay.py print .lane/20261101-notes/notes.json
-Flow of notes-lead, laid on its step 1:
-  1. changelog-writer
-  2. changelog-reviewer, back to 1 while it answers more
-  then notes-lead ends
-Lanes on step 1 of notes-lead, each hook acting in notes-lead alone:
-  run:    Do not run `git commit` or `git push`.               hook hands_off
-  follow: Take each move lane tells you, until it tells none.  hook follow_flow
-
-1. Start the subagents of the work. Do not run `git commit` or `git push`. Take each move lane tells you, until it tells none.
-
-Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
+$ python3 <installPath>/scripts/lay.py print .lane/20261101-changelog/changelog.json
+Lanes on step 3 of writer, each hook acting in writer alone:
   write: Write only `CHANGELOG.md`.              hook write_only
   run:   Do not run `git commit` or `git push`.  hook hands_off
 
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`. Do not run `git commit` or `git push`.
 ```
 
-Your AI approves them, and has `lay.py write` lay them from the same file:
+You approve this output. Then the command `lay.py write` adds the rules from the same file:
 
 ```console
-$ python3 <lane's folder>/scripts/lay.py write .lane/20261101-notes/notes.json
-Wrote step 1 of notes-lead into agents/notes-lead.md.
-Wrote step 3 of changelog-writer into agents/changelog-writer.md.
-Wrote the hooks of notes-lead, changelog-writer and changelog-reviewer into hooks/hooks.json.
-Wrote the flow and the lanes laid into hooks/lanes.json.
+$ python3 <installPath>/scripts/lay.py write .lane/20261101-changelog/changelog.json
+Wrote step 3 of writer into agents/writer.md.
+Wrote the hooks of writer into hooks/hooks.json.
+Wrote the lanes laid into hooks/lanes.json.
 Put lane's code in hooks/lane/.
 claude plugin validate passed.
-Removed the proposal .lane/20261101-notes/notes.json.
-Removed its folder <the repository>/.lane/20261101-notes.
+Removed the proposal .lane/20261101-changelog/changelog.json.
+Removed its folder <the repository>/.lane/20261101-changelog.
 ```
 
-Then you run `/notes:changelog`, and your request also asks it to commit the changelog before it
-returns. As `notes-lead` starts, lane tells it its first move:
+Later, a person or an AI runs `/changelog:changelog`. The request asks for a changelog entry about
+the new export feature. The request also asks for a commit of `CHANGELOG.md`. `lead` gives the
+request to `writer` without a change. `writer` reads the changelog and the commits. `writer` writes
+the entries into `CHANGELOG.md`. The check script allows this tool call. Then `writer` tries the
+export feature. It runs `greet.sh --csv` in a temporary folder. In the command, the name of this
+folder is `$d`. The command writes the file `greet.csv` in `$d`. The check script cannot decide
+which folder `$d` is. So the check script stops the tool call. `writer` gets this message:
 
 ```
-notes: The next move of the flow is move 1: start `notes:changelog-writer`.
+changelog: Write only `CHANGELOG.md`.
+`$d/greet.csv`, `$d`: lane cannot tell which file is named here, so this lane could not be checked; name each file by its path, without `$`, a backquote or a `cd` lane cannot follow
 ```
 
-`notes-lead` starts the writer with your request. Claude Code runs the writer in the background, as
-it does by default in an interactive session, and lane tells `notes-lead`:
+`writer` does not run the command again. `writer` ends its work without a commit. It says that its
+instructions forbid a commit. If `writer` runs `git commit`, the check script stops the tool call.
+Then `writer` gets this message:
 
 ```
-notes: Wait for `notes:changelog-writer` to end: lane tells the next move once it has.
+changelog: Do not run `git commit` or `git push`.
 ```
 
-The writer ends with the entries written. Claude Code starts `notes-lead` again to tell it so, and
-lane tells it its next move, to start `notes:changelog-reviewer`. `notes-lead`, given the entries,
-is about to end with them before the reviewer has run. Its hook stops the end, and `notes-lead`
-reads:
+`lead` has no rules, so the check script does not check `lead`. In this run, `lead` itself made the
+commit after `reviewer` answered. You had not read the entries yet. To stop this commit, add the
+same `hands_off` rule to a step of `lead`.
 
-```
-notes: Take each move lane tells you, until it tells none.
-The next move of the flow is move 2: start `notes:changelog-reviewer`.
-```
-
-`notes-lead` starts the reviewer. The reviewer ends answering `more` for one entry, which does not say what
-its commit does. lane then tells `notes-lead`:
-
-```
-notes: changelog-reviewer answered `more`. The next move of the flow is move 1: start `notes:changelog-writer`.
-```
-
-The writer and the reviewer go again. Once the reviewer no longer answers `more`, lane tells
-`notes-lead` that the flow is done. `notes-lead` then runs `git add CHANGELOG.md && git commit -m
-"changelog: export"`, as your request asked. Claude Code does not run it, and `notes-lead` reads:
-
-```
-notes: Do not run `git commit` or `git push`.
-```
-
-`notes-lead` ends with the reviewed entries, and the skill commits the changelog once you have said
-OK.
-
-When lane is updated, your AI first runs `lay.py up <your plugin's folder>` on a plugin with lanes
-laid before. It brings lane's code in your plugin to lane's version with the same flow and lanes,
-and says each lane laid before, for your AI to keep in its next proposal.
-
-Who does what in which order, here and when lane cannot check a call, is in
-[the scenes of lane's UX](../../dev/lane/ux.md#scenes).
+After an update of the lane plugin, run `lay.py up <the folder of your plugin>` before your next
+proposal. This command updates the check script in your plugin to the new version. It also shows
+each rule that your plugin has. A new proposal gives rules for some subagents. For each of these
+subagents, the new proposal replaces all of the old rules. So, the new proposal must also contain
+each old rule that you want to keep.
 
 ## How it works
 
 ![How lane works](how-it-works.svg)
 
-lane is made of two parts. The layer, `lay.py`, runs while your AI builds your plugin: it prints the
-proposal and writes the approved flow and lanes into your plugin. The guard, lane's code in your
-plugin's `hooks/lane/`, runs on every call of a subagent with lanes and as it ends: Claude Code
-hands it the call, and the guard reads the lanes your AI approved from `hooks/lanes.json`. Both make
-each lane's sentence from the same lanes, so what the subagent is told on a drift is the sentence
-its step says. The guard reads the flow from the same file. The orchestrator is a subagent with
-lanes too, so its start, its calls and its end reach the guard as the other subagents' do, and the
-guard tells it each move as it starts and as each subagent it started comes back.
+The check script runs from the copy in the folder `hooks/lane/` of your plugin. So the users of your
+plugin do not need the lane plugin. `lay.py` and the check script use the same code to make each
+sentence. So, on a violation, the subagent gets the same words that are in its step. The
+orchestrator is also a subagent with a rule. The check script finds the next subagent from the flow
+and from the answers of the subagents.
 
 ## Documentation
 
-- [The lanes](docs/lanes.md) lists each lane lane can lay, the sentence it writes into a step and
-  when its hook tells it, and gives the proposal your AI writes them in.
-- [The flow](docs/flow.md) gives the form your AI declares a flow in, what your orchestrator is
-  told, and how lane reads what each subagent answered.
-- [The changelog](CHANGELOG.md) says what changed in each version.
+- [The lanes](docs/lanes.md) describes each type of rule, its sentence, and the tool calls that its
+  check stops. It also describes the full form of the proposal and of adapters. In this document,
+  the name of the check script is "the guard".
+- [The flow](docs/flow.md) describes the form of a flow and the messages that the orchestrator gets.
+  It also describes how the check script reads the answer of each subagent.
+- [The changelog](CHANGELOG.md) lists the changes in each version of the lane plugin.
 
 ## Development
 
-[lane's development folder](../../dev/lane/README.md) leads to its UX, its design and how it is
-checked.
+[The development folder of the lane plugin](../../dev/lane/README.md) holds its UX, its
+architecture, and its tests.
 
 ## License
 

@@ -1,24 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 580" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 560" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>How lane works</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
-    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
-    .file { fill: #1f2328; font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
-    .drift { stroke-dasharray: 5 4; }
     .head { fill: #59636e; }
     .label { fill: #1f2328; font-size: 13px; }
-    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
-    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .mid { text-anchor: middle; }
     @media (prefers-color-scheme: dark) {
       .box { fill: #161b22; stroke: #3d444d; }
-      .name, .label, .file { fill: #f0f6fc; }
-      .kind { fill: #9198a1; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
       .line { stroke: #9198a1; }
       .head { fill: #9198a1; }
-      .frame { stroke: #4493f8; }
-      .frame-name { fill: #4493f8; }
     }
   </style>
   <defs>
@@ -27,71 +22,60 @@
     </marker>
   </defs>
 
-  <!-- while your AI builds the plugin -->
-  <rect class="box" x="20" y="40" width="200" height="64" rx="30"/>
-  <text class="name" x="120" y="68">your AI</text>
-  <text class="kind" x="120" y="88">proposes and approves</text>
+  <!-- boxes: a name each; lane's own parts shaded -->
+  <rect class="box" x="20" y="30" width="180" height="56" rx="8"/>
+  <text class="name" x="110" y="63">you, the developer</text>
 
-  <rect class="box" x="330" y="40" width="200" height="64" rx="0"/>
-  <text class="name" x="430" y="68">lay.py</text>
-  <text class="kind" x="430" y="88">lane's layer</text>
+  <rect class="box lane" x="430" y="30" width="180" height="56" rx="8"/>
+  <text class="name" x="520" y="63">lay.py</text>
 
-  <path class="line" d="M220,62 H330" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="275" y="54">proposal</text>
-  <path class="line" d="M330,86 H220" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="275" y="104">print</text>
+  <rect class="box" x="430" y="180" width="180" height="56" rx="8"/>
+  <text class="name" x="520" y="213">your plugin's steps</text>
 
-  <!-- your plugin, as lay.py writes it -->
-  <rect class="frame" x="600" y="20" width="280" height="540" rx="10"/>
-  <text class="frame-name" x="614" y="40">your plugin</text>
-  <text class="file" x="618" y="72">agents/&lt;subagent&gt;.md</text>
-  <text class="kind" x="740" y="90">each step with its lanes' sentences</text>
-  <text class="file" x="618" y="124">hooks/lanes.json</text>
-  <text class="kind" x="740" y="142">the flow and the lanes, as approved</text>
-  <text class="file" x="618" y="176">hooks/hooks.json</text>
-  <text class="kind" x="740" y="194">a hook for each subagent with lanes</text>
+  <rect class="box" x="20" y="320" width="180" height="56" rx="8"/>
+  <text class="name" x="110" y="353">a subagent (an AI)</text>
 
-  <rect class="box" x="620" y="300" width="240" height="64" rx="0"/>
-  <text class="name" x="740" y="328">hooks/lane/</text>
-  <text class="kind" x="740" y="348">lane's guard</text>
+  <rect class="box" x="430" y="320" width="180" height="56" rx="8"/>
+  <text class="name" x="520" y="353">Claude Code</text>
 
-  <path class="line" d="M530,72 H600" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="565" y="64">writes</text>
+  <rect class="box lane" x="830" y="320" width="200" height="56" rx="8"/>
+  <text class="name" x="930" y="353">the check script</text>
 
-  <!-- on every run of the plugin -->
-  <rect class="box" x="20" y="300" width="200" height="64" rx="30"/>
-  <text class="name" x="120" y="328">subagent</text>
-  <text class="kind" x="120" y="348">a writer, a reviewer, ...</text>
+  <rect class="box" x="20" y="470" width="180" height="56" rx="8"/>
+  <text class="name" x="110" y="503">the orchestrator</text>
 
-  <rect class="box" x="330" y="300" width="200" height="64" rx="8"/>
-  <text class="name" x="430" y="328">Claude Code</text>
-  <text class="kind" x="430" y="348">runs the subagent's hook</text>
+  <rect class="box lane" x="680" y="262" width="28" height="18" rx="4"/>
+  <text class="label" x="716" y="276">parts of the lane plugin</text>
 
-  <path class="line" d="M220,320 H330" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="275" y="312">a call</text>
-  <path class="line" d="M530,320 H620" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="575" y="312">the call</text>
-  <path class="line" d="M740,300 V206" marker-end="url(#arrow)"/>
-  <text class="label" x="750" y="260">reads the lanes</text>
-  <path class="line drift" d="M620,350 C560,420 260,420 160,364" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="400" y="436">on a drift: stopped, and told the step's sentence again</text>
+  <!-- while you build your plugin -->
+  <path class="line" d="M200,48 H430" marker-end="url(#arrow)"/>
+  <text class="label mid" x="315" y="40">proposes the rules and a flow</text>
+  <path class="line" d="M430,70 H200" marker-end="url(#arrow)"/>
+  <text class="label mid" x="315" y="104">shows the new steps</text>
 
-  <!-- the flow -->
-  <rect class="box" x="20" y="470" width="200" height="64" rx="30"/>
-  <text class="name" x="120" y="498">orchestrator</text>
-  <text class="kind" x="120" y="518">a subagent with lanes too</text>
-  <path class="line" d="M120,470 V364" marker-end="url(#arrow)"/>
-  <text class="label" x="130" y="456">starts each in its order</text>
+  <path class="line" d="M520,86 V180" marker-end="url(#arrow)"/>
+  <text class="label" x="530" y="138">writes the sentence of each rule into its step</text>
 
-  <path class="line" d="M740,364 V502 H220" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="420" y="494">its next move, as it starts</text>
-  <text class="label" text-anchor="middle" x="420" y="524">and as each subagent's call comes back</text>
+  <path class="line" d="M610,58 H930 V320" marker-end="url(#arrow)"/>
+  <text class="label mid" x="770" y="50">copies into your plugin</text>
 
-  <!-- legend -->
-  <rect class="box" x="20" y="150" width="40" height="22" rx="11"/>
-  <text class="label" x="68" y="166">AI</text>
-  <rect class="box" x="120" y="150" width="40" height="22" rx="0"/>
-  <text class="label" x="168" y="166">lane's code</text>
-  <rect class="box" x="20" y="190" width="40" height="22" rx="8"/>
-  <text class="label" x="68" y="206">Claude Code</text>
+  <!-- on each run of your plugin -->
+  <path class="line" d="M160,320 L430,226" marker-end="url(#arrow)"/>
+  <text class="label" x="130" y="262">reads its own step</text>
+
+  <path class="line" d="M200,348 H430" marker-end="url(#arrow)"/>
+  <text class="label mid" x="315" y="338">makes a tool call or ends its work</text>
+
+  <path class="line" d="M610,348 H830" marker-end="url(#arrow)"/>
+  <text class="label mid" x="725" y="320">sends each tool call</text>
+  <text class="label mid" x="725" y="338">and each end of work</text>
+
+  <path class="line" d="M860,376 C700,446 360,446 190,376" marker-end="url(#arrow)"/>
+  <text class="label mid" x="525" y="448">stops a violation and shows the sentence again</text>
+
+  <path class="line" d="M990,376 V498 H200" marker-end="url(#arrow)"/>
+  <text class="label mid" x="600" y="490">tells which subagent to start next</text>
+
+  <path class="line" d="M80,470 V376" marker-end="url(#arrow)"/>
+  <text class="label" x="88" y="430">starts the subagent</text>
 </svg>
