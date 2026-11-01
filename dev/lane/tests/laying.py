@@ -18,9 +18,10 @@ COMMAND = (
     'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
     ' || { e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done; case "$e" in'
     """ *'"agent_type":"notes:changelog-writer"'*|*'"agent_type": "notes:changelog-writer"'*)"""
-    """ echo '{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision":"""
-    """ "deny", "permissionDecisionReason": "notes: install Python 3.9 or later, run as python3,"""
-    """ for its hooks to run"}}';; esac; exit 0; };"""
+    """ echo '{"systemMessage": "notes: install Python 3.9 or later, run as python3, for its"""
+    """ hooks to run", "hookSpecificOutput": {"hookEventName": "PreToolUse","""
+    """ "permissionDecision": "deny", "permissionDecisionReason": "notes: install Python 3.9 or"""
+    """ later, run as python3, for its hooks to run"}}';; esac; exit 0; };"""
     ' exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" notes:changelog-writer'
 )
 # Its entry of PreToolUse, matching the tool hands_off watches, blocking the call where the hook
@@ -35,11 +36,10 @@ LAID = {"subagents": [{"name": "changelog-writer", "steps": [{"step": 3, "lanes"
 # matches the subagent, tells the user where Python is missing, and runs that event's entry.
 TESTED = {"lane": "test_after", "takes": ["CHANGELOG.md", "python3 check.py"]}
 END_COMMAND = COMMAND.replace("pretooluse.py", "subagentstop.py").replace(
-    """{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny","""
+    """, "hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny","""
     """ "permissionDecisionReason": "notes: install Python 3.9 or later, run as python3, for"""
     """ its hooks to run"}}""",
-    """{"systemMessage": "notes: install Python 3.9 or later, run as python3, for its hooks"""
-    """ to run"}""",
+    "}",
 )
 END_ENTRY = {
     "matcher": "notes:changelog-writer",

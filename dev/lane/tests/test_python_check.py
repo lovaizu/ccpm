@@ -1,7 +1,7 @@
 """The Python check each hook's command begins with: where python3 is missing or older than 3.9, the
-call is denied with what to install, and at the subagent's end the user is told it and the
-subagent let end, each answered in Claude Code's JSON output as the guard answers; with the one in
-use, the guard runs."""
+call is denied with what to install, told the user too, and at the subagent's end the user is told
+it and the subagent let end, each answered in Claude Code's JSON output as the guard answers; with
+the one in use, the guard runs."""
 
 import json
 import os
@@ -14,6 +14,9 @@ from helpers import entries
 
 # What the subagent, or the user, is told where python3 cannot run the hooks.
 INSTALL = "notes: install Python 3.9 or later, run as python3, for its hooks to run"
+# A call denied for want of Python: the subagent told why, and the user told too, as only they can
+# install it.
+STOPPED = {**helpers.denied(INSTALL), "systemMessage": INSTALL}
 # A python3 that is 3.8 to whatever asks its version, standing in for an older Python.
 OLDER = f"""#!/bin/sh
 shift
@@ -61,17 +64,15 @@ class TestPythonCheck(helpers.PluginTest):
     def test_without_python3_the_call_is_stopped_with_what_to_install(self):
         # Given: a PATH holding no python3
         # When: the hook's command is run
-        # Then: it denies the call, telling the subagent to install Python
-        self.assertEqual(
-            self.run_hook(os.path.join(self.base, "none")), (0, helpers.denied(INSTALL))
-        )
+        # Then: it denies the call, telling the subagent and the user to install Python
+        self.assertEqual(self.run_hook(os.path.join(self.base, "none")), (0, STOPPED))
 
     def test_with_a_python3_older_than_3_9_the_call_is_stopped_with_what_to_install(self):
         # Given: a PATH whose python3 is 3.8
         older = self.folder_with_python3(OLDER)
         # When: the hook's command is run
-        # Then: it denies the call, telling the subagent to install Python
-        self.assertEqual(self.run_hook(older), (0, helpers.denied(INSTALL)))
+        # Then: it denies the call, telling the subagent and the user to install Python
+        self.assertEqual(self.run_hook(older), (0, STOPPED))
 
     def test_without_python3_a_call_of_another_agent_is_let_through(self):
         # Given: a PATH holding no python3, and a commit of the main conversation, or of another

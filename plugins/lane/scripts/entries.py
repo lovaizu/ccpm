@@ -49,15 +49,15 @@ CHECK = (
 
 def missing(plugin: str, event: str) -> dict[str, Any]:
     """What a hook of the event answers where lane's code cannot run: on a tool call the call
-    denied, telling the subagent what to install, as letting it through would leave it unkept with
-    no one told; at the subagent's end the user told so, letting it end, as it cannot install
-    Python and kept going it would only be asked again; as a call comes back, or the subagent
-    starts, nothing, as the hook on the next call says what to install."""
+    denied, telling the subagent and the user what to install, as letting it through would leave it
+    unkept, and only the user can install it; at the subagent's end the user told so, letting it
+    end, as it cannot install Python and kept going it would only be asked again; as a call comes
+    back, or the subagent starts, nothing, as the hook on the next call says what to install."""
     said = INSTALL.format(plugin=plugin)
     if event in FREE:
         return {}
     on_call = event == "PreToolUse"  # pragma: no mutate
-    return hook.answer(event, said if on_call else "", "" if on_call else said)
+    return hook.answer(event, said if on_call else "", said)
 
 
 def script(event: str) -> str:

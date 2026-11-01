@@ -32,7 +32,7 @@ that sees the sentence of its own step goes back to the step.
 
 - Claude Code, where you build your plugin and where it runs.
 - Python 3.9 or later, run as `python3`, on the same computers. Without it, each tool call that a
-  rule is about is stopped, and the subagent is told to install Python.
+  rule is about is stopped, and the subagent and whoever runs your plugin are told to install Python.
 - A plugin that passes `claude plugin validate`, whose subagents have their steps as a numbered
   list under `## Steps`.
 
