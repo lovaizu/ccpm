@@ -113,13 +113,17 @@ below, `You:` is what you type, and `turn:` is what turn shows you.
 
    ```text
    turn: Key points: a headline on RoomBook's launch; three benefits from RoomBook's README;
-         Northwind's PR department as the contact. Approve?
+         Northwind's PR department as the contact; the release in press/roombook-launch.md.
+         Approve?
    You:  Approved
    ```
 
-6. turn writes the release. The second AI reads it as a reporter would and answers each question
-   of the checklist. Where an answer is not yet yes, turn remakes the decision behind it. Only when
-   every answer is yes does turn give you the release:
+6. turn writes the release in `press/roombook-launch.md`. The second AI reads it as a reporter
+   would and answers each question of the checklist. Where an answer is not yet yes, turn remakes
+   the decision behind it. Where an answer stays not yes after that, turn asks you whether to
+   change that decision or what the release is for, or to take the release as it is on that
+   question. Only when every answer is yes, or one you took as it is, does turn tell you the
+   release is done, naming its file and each question you took as it is. The release reads:
 
    ```text
    turn: Northwind's RoomBook offers only the meeting rooms that fit your meeting
@@ -137,8 +141,11 @@ below, `You:` is what you type, and `turn:` is what turn shows you.
          Contact: Northwind PR department, pr@northwind.example
    ```
 
-turn keeps the format and the checklist you approved. Your next press release starts from them, so
-turn skips step 3, the research and that approval.
+turn keeps the format and the checklist you approved in `.turn/templates/` in your repository, and
+what each run decided in a folder of its own in `.turn/`. Your next press release in this
+repository starts from them, so turn skips step 3, the research and that approval. turn ships its
+own format and checklist for READMEs, UX documents, architecture documents, code and prompts, so a
+work of those kinds skips step 3 from the first time.
 
 ## How it works
 

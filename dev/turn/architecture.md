@@ -1,23 +1,24 @@
 # turn architecture
 
 turn draws a work's design from its kind's template and the person's answers, and has an AI that
-never sees the design use the work as its user would, until every question of the template is
-good. A kind is a sort of work, such as a press release, and its template holds the kind's format,
-the shape of the work, and its questions, each one a work answers yes to when it serves its user.
-Four roles do this: planner, designer, builder and evaluator. The builder and the evaluator first
-make what the work says, then better how it says it. The ccpm plugin
+never sees the design use the work as its user would, until that AI finds the work meets the aim
+of every question of the template. A kind is a sort of work, such as a press release, and its
+template holds the kind's format, the shape of the work, and its questions, each one asking what
+the work's user gets from it. Four roles do this: planner, designer, builder and evaluator. The
+builder and the evaluator first make what the work says, then better how it says it. The ccpm plugin
 [lane](../../plugins/lane/README.md) holds the order the roles go in and the limits of each. The
 experience this delivers is in [ux.md](ux.md).
 
 ## Principles
 
-turn holds every principle of [how a plugin works](../architecture.md#principles), with the
-reasons under its [Why it is so](../architecture.md#why-it-is-so). In that document's words, turn's
-builder is the maker, its evaluator the reader, and a question of a template an item. An answer is
-**good** when the work meets the question's aim, and it names the lines that meet it. An answer is
-**more** when the work falls short, and it says what the work's user gets once it is good, never
-how to make it. Good and more are what that document calls an item's Good and need. The principles
-below are what turn adds.
+turn holds the principles of [how a plugin works](../architecture.md#principles), with the
+reasons under its [Why it is so](../architecture.md#why-it-is-so), except where a choice under
+Components says it departs from one, and why. In that document's words, turn's builder is the
+maker, its evaluator the reader, and a question of a template an item. A role answers each question
+**good** or **more**. A good answer says the work meets the question's aim, and names the lines
+that meet it. A more answer, called a more, says the work falls short, and says what the work's
+user gets once it is good, never how to make it. Good and more are what that document calls an
+item's Good and need. The principles below are what turn adds.
 
 ### One way for every kind
 
@@ -42,12 +43,13 @@ When the work is a template, the evaluator judges a real work of that kind with 
 
 A judge who reads only the work's words passes a work that meets them and misses its aim. A press
 release whose headline names the product passes a reading of the words, while a reporter still
-cannot tell from it what is new. The builder answers the questions on its own work the same way, so
-it finds first what the evaluator would find.
+cannot tell from it what is new. The builder answers the questions on its own work the same way, in
+a file called its self-check, so it finds first what the evaluator, in its file called the
+verification, would find.
 
 ### The evaluator never sees the design
 
-The evaluator takes the work and the templates of its phase, and never the design tree.
+The evaluator takes the work and the templates `turn:up` gives it, and never the design tree.
 
 The work's user never sees the design. An evaluator that has it judges whether the work follows the
 design, and passes a work that follows a wrong one.
@@ -66,22 +68,11 @@ Designer decides in the order the decisions build on one another, this work's pu
 every decision serves a question of the template. Designer decides what the purpose and the best
 practice settle, and asks the person what only they can decide.
 
-Designer keeps the decisions in a design tree: this work's purpose at the root, the template's
-questions under it, and under each question the decisions that make it good. A decision made before
-the one it builds on is made again once that one is made. A decision that serves no question is
-made, kept and checked for nothing.
-
-### A more is mended at its decision
-
-Each more of the kind's own questions goes to designer, who traces it to the decisions that serve
-its question. Where a decision cannot make its questions good, designer decides it again, with the
-decisions that build on it, as it decided it first: asking the person where the fact is theirs. No
-role adds onto the work to answer a more.
-
-A fault fixed where it shows is a patch, and patches pile up until the work no longer reads as one
-design. Making the decision again changes every part that rests on it. Where the decisions hold and
-the work strays from them, designer keeps the decisions, and the builder makes the work to them
-again.
+Designer keeps the decisions in a design tree: this work's purpose as its goal, the template's
+questions under it, and under each question the decisions that make it good. It is read from the
+goal down, as a tree is, though one decision may serve several questions and build on several
+decisions. A decision made before the one it builds on is made again once that one is made. A
+decision that serves no question is made, kept and checked for nothing.
 
 ### What the work says before how it says it
 
@@ -96,14 +87,37 @@ The builder and the evaluator then keep to what the work says while it is made. 
 before the content is settled is polished again at each new making. A polish that changed what the
 work says would pass unchecked by the kind's own questions.
 
+### A more is mended at its decision
+
+Each more of the kind's own questions goes to designer, who traces it to the decisions that serve
+its question. Where a decision cannot make its questions good, designer decides it again, with the
+decisions that build on it, as it decided it first: asking the person where the fact is theirs. No
+role adds onto the work to answer a more.
+
+A more that comes back on a question after its decision was made again, or in the refactoring phase
+after the builder mended it, is one the decisions cannot make good. In the refactoring phase the
+builder returns it `open`. Designer then brings it to the person, with a recommendation: change the
+decision, change the work's purpose, or take the work as it is on that question. A question the
+person takes as it is is set aside: the evaluator still answers it, and its more no longer sends
+the work back. No count of how often the work is made again stops the run; the person's answer
+does.
+
+A fault fixed where it shows is a patch, and patches pile up until the work no longer reads as one
+design. Making the decision again changes every part that rests on it. Where the decisions hold and
+the work strays from them, designer keeps the decisions, and the builder makes the work to them
+again. A more that would come back without end is the person's to settle, as only they can change
+the purpose or take less. A bound on how often the work is made again would hand them a work that
+falls short, with no word of why.
+
 ### Each role works from the run's files
 
 Each role starts fresh at each move, and takes what earlier roles made from the run's files: the
-design tree and the answers, kept in a folder of their own for each run.
+design tree, the self-checks and the verifications, kept in a folder of their own for each run.
 
 The template and the run's files hold all a role takes from another, so no role needs another's
-conversation. A fresh evaluator reads each round with fresh eyes, as no work is passed by the one
-who made it, and a run stopped anywhere goes on from its files.
+conversation. An evaluator started fresh reads the work as for the first time each time it is
+made again, as no work is passed by the one who made it, and a run stopped anywhere goes on from
+its files.
 
 ### The phase is the flow's position
 
@@ -111,10 +125,10 @@ The phase is a fact of the move's position in the flow, not of the run's files. 
 from the position lane names, and gives the builder and the evaluator that phase's paths; neither
 role tells its phase itself.
 
-The files cannot tell the phase: after a point the builder returns in the refactoring phase,
-designer may keep its decisions, and the files then read as they did in the refactoring phase,
-while the work must go through the content phase again. An evaluator that told the phase would
-also need files beyond the work, and read what its user never sees.
+The files cannot tell the phase. Say the builder, in the refactoring phase, returns a point that
+would change what the work says, and designer keeps its decisions. The files then read as they did
+in the refactoring phase, yet the work must go through the content phase again. An evaluator that
+told the phase from files would also read files beyond the work, which its user never sees.
 
 ### lane holds the order and each role's limits
 
@@ -136,6 +150,9 @@ for every caller.
 
 ## User stories
 
+The stories carry O1, the one scenario of [ux.md](ux.md): a person has turn write a press release.
+Each story quotes O1 and names the steps of the README's Walkthrough that show it.
+
 - As the person who wants a work, I want to ask `turn:up` for it in the main conversation, and
   confirm its kind. Carries O1's request, "Write a press release for our new meeting-room booking
   app", and its confirmation, "Is this a release for the press?" (the README's Walkthrough, steps 1
@@ -147,8 +164,9 @@ for every caller.
   with the answer turn recommends, and to approve the design. Carries O1 from "What is the release
   for?" to the approved key points (steps 4 and 5).
 - As that person, I want the work only once a second AI, using it as its user would, finds every
-  question good, both of what the work says and of how it says it. Carries O1's last step, "The
-  press release" (step 6), and the README's How it works.
+  question good, both of what the work says and of how it says it, or I have taken it as it is on
+  a question that never comes good. Carries O1's last step, "The press release" (step 6), and the
+  README's How it works.
 - As a plugin's step, such as rn's, I want to start `turn:up` for a work my step needs, giving what
   my step has already settled with the person, and get the work back. Carries O1 when the person
   reaches turn through such a plugin, and the README's Documentation, "Calling turn".
@@ -159,15 +177,28 @@ for every caller.
 
 ![turn's components](components.svg)
 
-- `turn:up` alone holds a run. It takes each move lane tells it (follow_flow), starts each role,
-  and waits for it to end, as lane tells the next move only once the role has ended. It alone tells
-  the phase, from the position each move names, as [lane's flow](../../plugins/lane/docs/flow.md)
-  words it, such as "The next move of the flow is move 5: start `turn:builder`." It gives each role
-  the paths that role works on, as one JSON line its lanes read. The builder and the evaluator get
-  their phase's: its templates and its self-check or verification, and the design tree in the
-  content phase alone, given as `null` in the refactoring phase. It takes the
-  templates' paths from the end of planner, and the work's paths from the end of designer. It ends
-  once lane tells it the flow is done, naming each file of the work.
+- `turn:up` alone holds a run. First it names the run's folder, `.turn/<yyyymmdd>-<name>/`, from
+  the request: `<name>` is a few words naming the work asked for, and a run stopped is found again
+  by it. It takes each move lane tells it (follow_flow), starts each role, and waits for it to end,
+  as lane tells the next move only once the role has ended. It alone tells the phase, from the
+  position each move names, as [lane's flow](../../plugins/lane/docs/flow.md) words it, such as
+  "The next move of the flow is move 5: start `turn:builder`." It ends once lane tells it the flow
+  is done, naming each file of the work, one on each line, and then each question set aside.
+- `turn:up` starts each role with the request and one JSON line after it, whose keys the role's
+  lanes read as values given for the run, as [lane's lanes](../../plugins/lane/docs/lanes.md) say.
+  A path is from the root of the repository; `null` says there is none.
+  - planner: `run`, the run's folder; and `kind` where the caller gave one. It ends with one JSON
+    line, `{"template": "<path>", "includes": ["<path>", ...]}`.
+  - designer: `run`; `template`, the kind's template; `tree`, the design tree; `back`, the
+    self-check or the verification of the role whose answer sent the work back, or `null` at first;
+    `set_aside`, the file of questions set aside; and `purpose` and `decided` where the caller gave
+    them. It ends with one JSON line, `{"work": ["<path>", ...]}`.
+  - builder: `templates`, the phase's templates; `tree`, the design tree in the content phase and
+    `null` in the refactoring phase; `work`; `answers`, the phase's self-check; and
+    `verification`, the phase's last verification, or `null` before the first. It ends with `open`
+    on a line of its own where it returns a point to designer.
+  - evaluator: `templates`; `work`; `answers`, the phase's verification; and `set_aside`. It ends
+    with `more` on a line of its own while a more is not set aside.
 - turn's proposal to lane declares the flow on `turn:up`, as
   [lane's flow](../../plugins/lane/docs/flow.md#the-flow) gives it. Its order is planner, designer,
   builder, evaluator, builder, evaluator, positions 1 to 6. Positions 3 and 4 are the content
@@ -182,56 +213,71 @@ for every caller.
   `check.py`'s template check after changing a template (test_after).
 - Designer alone decides each point of the design, such as where the work goes and the language it
   is written in, from the purpose and the best practice or by asking the person. It takes each
-  point a caller gave as decided. It alone finds where the cause of each more lies, and alone
-  decides a point the builder returns, in either phase, as a point of what the work says. It ends
-  naming where the work goes. lane holds it to read the answers it was sent back with to their end
-  (read_whole), to write only the design tree (write_only), in its form (in_form), and to pass
-  `check.py`'s tree check after changing it (test_after).
+  point a caller gave as decided. It alone finds where the cause of each more of the kind's own
+  questions lies. It alone decides a point the builder returns, in either phase, as a point of
+  what the work says: for a point of the refactoring phase, it finds the kind's own questions the
+  point bears on, and the decisions that serve them. It alone brings to the person a more the
+  decisions cannot make good, and keeps the questions the person sets aside. It tells a more that
+  came back after its decision was made again from the design tree, where each decision made
+  again names the more it answered. lane holds it to read `back` to its end (read_whole), to write
+  only the design tree and the questions set aside (write_only), each in its form (in_form), and
+  to pass `check.py`'s tree check after changing the tree (test_after).
 - Builder alone decides the small points of making, such as a phrase or a function's name, and in
   the refactoring phase how the work says each thing. It returns a point the design leaves open
   that bears on the work's quality, and in the refactoring phase a point that would change what
-  the work says: it writes the question the point bears on as a more of its self-check, and ends
-  with `open`. In the refactoring phase it mends each more of the evaluator. lane holds it to read
-  the design tree it is given to its end (read_whole), to write only the work and its self-check
-  (write_only), to run no `git commit` or `git push` (hands_off), to write the self-check in its
-  form (in_form), to answer every question of the templates it is given (every_item), and to pass
-  `check.py`'s answers check (test_after).
-- Evaluator alone decides each answer, good or more, from its own first reading of the work. It
-  ends with `more` while an answer is more. lane holds it to read only the work and the templates
-  it is given (read_only), to read the work to its end (read_whole), to write only its
-  verification (write_only), in its form (in_form), to answer every question of the templates it
-  is given (every_item), to pass `check.py`'s answers check (test_after), and to end only once the
-  verification is made (end_when).
+  the work says, or a more that came back after it mended it: it writes the question the point
+  bears on as a more of its self-check, and ends with `open`. In the refactoring phase it mends
+  each more of `verification`. lane holds it to read `tree` to its end (read_whole), to write only
+  the work and its self-check (write_only), to run no `git commit` or `git push` (hands_off), to
+  write the self-check in its form (in_form), to answer every question of `templates`
+  (every_item), and to pass `check.py`'s answers check (test_after).
+- Evaluator alone decides each answer, good or more, from its own first reading of the work. lane
+  holds it to read only the work, `templates` and `set_aside` (read_only), to read the work to its
+  end (read_whole), to write only its verification (write_only), in its form (in_form), to answer
+  every question of `templates` (every_item), to pass `check.py`'s answers check (test_after), and
+  to end only once the verification is made (end_when).
 - `check.py` alone checks what no lane holds. A template is in its form, and a question looks at
   every part of its format. In a design tree, a decision serves every question, every decision
-  reaches the root, and the decisions were made in the order they build on one another. In a
-  self-check or a verification, no question stands both good and more, and every line an answer
-  names is in the work.
+  reaches the goal, and the decisions stand in the order they were made, each building only on
+  decisions before it. In a self-check or a verification, no question stands both good and more,
+  and every line an answer names, by its file and line numbers, is in the work.
 - The items adapter alone gives every_item the question IDs of a template, each named with its
   template, such as `readme/Q3`. every_item counts a question answered where its ID stands as a
   word of its own, as [lane's lanes](../../plugins/lane/docs/lanes.md) say. A question
   named with its template is then answered only by its own ID, as `readme/Q3` does not stand in
   `refactor-doc/Q3`.
-- An ask is a question or an approval that a role puts to the person. Each ask that reaches the main
-  conversation says what it waits on and the answer turn recommends. A main conversation that knows
-  nothing of turn then puts it to the person and sends back their words.
+- An ask is a question or an approval that a role puts to the person. The role sends it to the main
+  conversation, `main`, with SendMessage. Claude Code removes AskUserQuestion from every subagent,
+  and a subagent in the background keeps SendMessage
+  ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). Each ask says what it
+  waits on and the answer turn recommends. A main conversation that knows nothing of turn then puts
+  it to the person and sends back their words.
 - `wait.py` alone holds a role that has asked until the answer comes. The role runs it in the
   foreground, and again each time it returns without the answer, as a message reaches a subagent
   only at its next tool call.
+- Every file the roles pass between them, other than the work, is JSON, so `check.py` checks one
+  against another, such as a template's questions against its parts.
+
+The choices below depart from [how a plugin works](../architecture.md), or would be questioned:
+
 - `turn:up` is a subagent, even when a person calls turn, though
   [Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs) starts such a
   plugin by a skill. lane lays a flow only on a subagent, and one entry then serves the person and a
   plugin's step alike.
 - The main conversation starts `turn:up` in the background. It then stays free to put each ask to
   the person while the roles work.
-- lane's flow keeps turn's order, not a script of turn's own. turn's run goes in a fixed order with
-  set ways back, which lane's flow declares and lane's guard holds, written and tested once in lane.
-- `check.py` holds a template to its form, not an in_form lane. in_form holds a file at a path its
-  step names, and a kept template's path holds the kind, which planner decides in the run.
+- The main conversation passes each ask to the person and their words back, though principle 4 of
+  [how a plugin works](../architecture.md#principles) has nobody relay. Only the main conversation
+  can ask the person, as [Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs)
+  says. Between the roles nobody relays: each role sends its own ask, and `turn:up` passes no
+  answer on.
 - The person approves a template and a design by their answer in the main conversation, not by the
   skill of their own that
   [The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs) asks
   for. Neither is hard to undo: a change sends planner or designer back to the decision it touches.
+- `check.py`, not an in_form lane, holds a template to its form. An in_form lane holds a file at a
+  path fixed in the step, while a kept template's path names its kind, which planner decides only
+  in the run.
 - The builder returns an open point as a more of the self-check, not in a file of another form.
   Designer then reads one form, whichever position sent the work back.
 - The builder and the evaluator each serve both phases, not a role started for each phase. A role
@@ -239,8 +285,6 @@ for every caller.
   the evaluator decides what its user gets in both.
 - The evaluator's more in the refactoring phase goes back to the builder, not to designer. A more
   of how the work says a thing changes no decision, and designer would only pass it on.
-- Every file the roles pass on is JSON, so `check.py` checks one against another, such as a
-  template's questions against its parts.
 
 ### Data model
 
@@ -337,10 +381,12 @@ sequenceDiagram
   D-->>U: ends, naming where the work goes (work)
 ```
 
-Making what the work says, until every question of the kind's own is good:
+Making what the work says, until every question of the kind's own is good or set aside:
 
 ```mermaid
 sequenceDiagram
+  actor P as Person
+  participant M as Main conversation
   participant U as turn:up
   participant G as Guard
   participant D as Designer
@@ -371,18 +417,27 @@ sequenceDiagram
   E->>C: checks them (answers)
   G->>IA: asks the question IDs, as the evaluator ends (template)
   IA-->>G: the question IDs
-  loop while an answer is more
+  loop while a more is not set aside
     E-->>U: ends with more
     G-->>U: tells move 2: start designer
     U->>D: starts (answers)
-    D->>R: reads the answers, makes again the decision behind each more (answers, design tree)
+    D->>R: reads the answers and the design tree (answers, design tree)
+    alt the decision behind the more was not yet made again
+      D->>R: makes it again (design tree)
+    else the more came back after its decision was made again
+      D->>M: asks: change the decision, the purpose, or take it as it is (decision)
+      M->>P: the ask
+      P->>M: answer
+      M-->>D: answer
+      D->>R: makes the decision again, or sets the question aside (design tree)
+    end
     D-->>U: ends, naming where the work goes (work)
     Note over U,E: lane tells moves 3 and 4 again
   end
   E-->>U: ends
 ```
 
-Bettering how the work says it, once every question of the kind's own is good:
+Bettering how the work says it, once every question of the kind's own is good or set aside:
 
 ```mermaid
 sequenceDiagram
@@ -400,11 +455,11 @@ sequenceDiagram
   Note over B: betters how the work says each thing, by the included templates' questions
   B->>R: writes its answers (answers)
   B->>C: checks them (answers)
-  opt a point would change what the work says
+  opt a point would change what the work says, or a more came back after it was mended
     B-->>U: ends with open
     G-->>U: tells move 2: start designer
     U->>D: starts (answers)
-    Note over U,D: designer decides it, or keeps its decisions; either way lane tells moves 3 and 4, the content phase, again
+    Note over U,D: designer decides it, or brings it to the person; lane then tells moves 3 and 4, the content phase, again
   end
   B-->>U: ends
   G-->>U: tells move 6: start evaluator
@@ -412,17 +467,17 @@ sequenceDiagram
   Note over E: uses the work as its user would
   E->>R: writes its answers (answers)
   E->>C: checks them (answers)
-  loop while an answer is more
+  loop while a more is not set aside
     E-->>U: ends with more
     G-->>U: tells move 5: start builder
     U->>B: starts (included templates, no design tree, work, answers)
-    B->>R: reads the evaluator's answers, writes its own (answers)
+    B->>R: reads the evaluator's answers and its own last ones, writes its own (answers)
     B-->>U: ends
     Note over U,E: lane tells move 6 again
   end
   E-->>U: ends
   G-->>U: tells that the flow is done
-  U-->>M: the work (work)
+  U-->>M: the work, and each question set aside (work)
 ```
 
 Starting `turn:up` from a plugin's step:
@@ -442,8 +497,10 @@ sequenceDiagram
   main conversation can ask the person, as
   [Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs) says.
 - A point the builder returns in the refactoring phase goes through the whole content phase again,
-  builder and evaluator included. The evaluator then checks that what the work says still holds
-  before the refactoring phase goes on.
+  builder and evaluator included. The builder there changes only the parts that rest on a decision
+  made again, and keeps the rest of the work, its polish included. The evaluator then checks that
+  what the work says still holds before the refactoring phase goes on.
+
 
 ## Physical view
 
@@ -456,9 +513,10 @@ sequenceDiagram
   starts the `turn:up` agent itself, as [Calling turn](../../plugins/turn/docs/calling.md) tells
   the step's maker.
 - A person who asks `turn:up` again for a work whose run stopped goes on with that run. `turn:up`
-  finds the run's folder by the work, and each role takes up what the run files already hold.
-  lane tells the new `turn:up` move 1 again, as it keeps calls for each start of a subagent, so
-  planner and designer each end soon on what their files hold.
+  finds the run's folder by the `<name>` it gives the work asked for, and each role takes up what
+  the run files already hold. lane counts the moves of each start of `turn:up` anew, so it tells
+  the new `turn:up` to start again from move 1. Planner and designer then end soon, as their files
+  already hold their work.
 - A run's files lie in `.turn/<yyyymmdd>-<name>/` in the repository, and the templates planner
   makes lie in `.turn/templates/`, as
   [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) places what
@@ -476,10 +534,10 @@ plugins/turn/                       turn, installed by Claude Code
 ├── .claude-plugin/plugin.json      the manifest <JSON>
 ├── agents/up.md                    turn:up's entry <subagent · Markdown>
 ├── agents/<role>.md                Planner's, Designer's, Builder's and Evaluator's entries <subagent · Markdown>
-├── prompts/<role>.md               the steps of turn:up, planner, designer, builder and evaluator <Markdown>
+├── prompts/<name>.md               the steps of turn:up and of each role <Markdown>
 ├── scripts/check.py, <check>.py    check.py and each check it runs <script · Python 3.9 stdlib>
 ├── scripts/wait.py                 wait.py <script · Python 3.9 stdlib>
-├── forms/<file>.json               Forms of the design tree and the answers <JSON Schema>
+├── forms/<file>.json               Forms of the template, the design tree, the answers and the questions set aside <JSON Schema>
 ├── templates/<kind>.json           Templates that turn ships <JSON>
 ├── hooks/hooks.json, lanes.json    the hooks, the flow and the lanes, laid by lane <JSON>
 ├── hooks/lane/                     Guard, laid by lane <Python 3.9>
@@ -497,7 +555,7 @@ dev/turn/                           what only turn's builders need
 
 <the repository the work is in>/.turn/
 ├── templates/<kind>.json           Templates that planner made in this repository <JSON>
-└── <yyyymmdd>-<name>/              one run's Run files: a new template before approval, design-tree.json, and a self-check.json and a verification.json for each phase <JSON>
+└── <yyyymmdd>-<name>/              one run's Run files: a new template before approval, design-tree.json, set-aside.json, self-check.json and verification.json for the content phase, and refactor-self-check.json and refactor-verification.json for the refactoring phase <JSON>
 ```
 
 ## Test
@@ -508,7 +566,7 @@ assistant and judged from its records. A weight, from ●○○ to ●●●, sa
 
 | Deployment unit | Unit | Integration | End-to-end |
 |---|---|---|---|
-| turn's agents [Claude Code subagents · Markdown] | a trial of one role, the rest mocked · ●●● · it keeps to its steps, in each phase it serves | a trial of the four roles under lane's flow, the person mocked · ●●○ · the hand-offs through the run files, and the rounds of both phases to every question good | ▨[^1] |
+| turn's agents [Claude Code subagents · Markdown] | a trial of one role, the rest mocked · ●●● · it keeps to its steps, in each phase it serves | a trial of the four roles under lane's flow, the person mocked · ●●○ · the hand-offs through the run files, and each way back in both phases, to every question good or set aside | ▨[^1] |
 | turn's scripts [process · Python 3.9 stdlib] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of `check.py`, `wait.py`, and the items adapter | unittest with lane's real guard laid from turn's proposal, in a real repository · ●○○ · the lanes run the checks and the adapter, and the flow tells each move | ▨[^1] |
 | turn's installed folder [plugin folder] | `check.py` · ●●○ · each shipped template is in its form, and a question looks at every part | ▨[^2] | ▨[^1] |
 | turn on the person's computer [Claude Code] | ▨[^3] | ▨[^3] | a trial of each user story, the assistant as the person · ●●○ · the work, and what the person was asked |

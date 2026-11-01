@@ -114,7 +114,7 @@
 
   <!-- not yet good: back to the designer -->
   <path class="line" d="M812,490 H350 V232" marker-end="url(#arrow)"/>
-  <text class="label mid" x="581" y="482">not yet good: tells what would make it good</text>
+  <text class="label mid" x="581" y="482">not yet good: tells what the reader would get</text>
 
   <!-- all good: the work reaches you -->
   <path class="line" d="M850,570 V610 H90 V214" marker-end="url(#arrow)"/>
