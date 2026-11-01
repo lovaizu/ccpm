@@ -5,7 +5,7 @@ of their steps and start one another in the order that you set.
 
 lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps. With
 lane, your subagents keep the rules of their steps on every run, and your orchestrator, the subagent
-that starts the others, starts them in your order. You write no code for the checks and no script
+that starts the others, starts them in your order, which you write as a flow. You write no code for the checks and no script
 for the order.
 
 A rule is a sentence in a step, such as ``Do not run `git commit` or `git push`.``, with a check of
@@ -32,7 +32,7 @@ that sees the sentence of its own step goes back to the step.
 
 - Claude Code, where you build your plugin and where it runs.
 - Python 3.9 or later, run as `python3`, on the same computers. Without it, each tool call that a
-  rule is about is stopped, and the subagent and the operator are told to install Python.
+  rule is about is stopped, and the subagent and whoever runs your plugin are told to install Python.
 - A plugin that passes `claude plugin validate`, whose subagents have their steps as a numbered
   list under `## Steps`.
 
@@ -112,8 +112,8 @@ changelog: Do not run `git commit` or `git push`.
 
 ![How lane works](how-it-works.svg)
 
-The check script runs from its copy in your plugin's `hooks/lane/`, so the people and AIs that run
-your plugin do not need lane.
+lane puts its checks into your plugin as one script, the check script, in `hooks/lane/`. It runs
+from there, so whoever runs your plugin does not need lane.
 
 ## Documentation
 
