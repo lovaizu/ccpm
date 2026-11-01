@@ -2,24 +2,24 @@
 
 ## OKRs
 
-- O1: A person who wants a deliverable spends effort only on what only they can decide, and gets a
-  deliverable that fully meets their purpose.
-  - KR1.1: The changes the user asks for after delivery; fewer is better.
-  - KR1.2: The times the user is asked something they did not need to decide; fewer is better.
-  - KR1.3: The time the user spends answering questions and giving approvals; shorter is better.
+- O1: A person who wants a piece of work spends effort only on what only they can decide, and gets a
+  work that fully meets their purpose.
+  - KR1.1: The changes the person asks for after delivery; fewer is better.
+  - KR1.2: The times the person is asked something they did not need to decide; fewer is better.
+  - KR1.3: The time the person spends answering questions and giving approvals; shorter is better.
   - KR1.4: The time from the request to delivery; shorter is better.
 
 Key results have no target values. When a measure becomes a target, it stops being a good measure (Goodhart's law). Use the key results to judge how close the objective is.
 
 ## Scenarios
 
-The participants are the user, a person; turn, a plugin; and the internet, where turn researches.
+The participants are the person who wants the work; turn, a plugin; and the internet, where turn researches.
 
 ### O1: A press release for a new meeting-room booking app
 
 ```mermaid
 sequenceDiagram
-  participant User as User (person)
+  participant User as Person (person)
   participant turn as turn (plugin)
   participant Web as Internet
   User->>turn: Write a press release for our new meeting-room booking app

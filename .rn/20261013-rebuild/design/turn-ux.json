@@ -1,0 +1,8 @@
+{"kind": "ux",
+ "goal": {"what": "turn's developers know who uses turn, for what, how they reach it, and how to tell a change made it better.", "grounds": ["ux.json purpose"]},
+ "decisions": [
+  {"id": "D1", "what": "O1: a person who wants a piece of work spends effort only on what only they decide, and gets a work that meets their purpose.", "contributes_to": ["ux/Q1"], "builds_on": [], "decided": true, "settled_by": "user", "grounds": ["turn-rebuild.md, User and purpose"]},
+  {"id": "D2", "what": "Key results: changes asked after delivery, needless asks, the person's time, the time to delivery.", "contributes_to": ["ux/Q2"], "builds_on": ["D1"], "decided": true, "settled_by": "user", "grounds": ["dev/turn/ux.md"]},
+  {"id": "D3", "what": "One scenario: a press release, from the request through the kind, the template, the purpose, one point and the design to the work.", "contributes_to": ["ux/Q3"], "builds_on": ["D1"], "decided": true, "settled_by": "user", "grounds": ["dev/turn/ux.md"]},
+  {"id": "D4", "what": "Nothing of how turn is built: its roles are not named.", "contributes_to": ["ux/Q4"], "builds_on": [], "decided": true, "settled_by": "research", "grounds": ["ux.json Q4"]}
+ ]}
