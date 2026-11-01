@@ -1,172 +1,170 @@
 # lane UX
 
-lane gives an AI that builds a Claude Code plugin subagents that notice when they drift from their
-steps and are told the right way, with no check written by that AI. Whoever builds lane builds and
-changes every part of it to this UX, and judges each change by its key result.
+This document says who uses the lane plugin and for what, and how they reach it, so that its
+developers build it to deliver that.
 
-A lane is laid on one step of a subagent, one numbered item of its Steps. It is a sentence of that
-step together with a hook that notices when the subagent drifts from the sentence and tells it the
-sentence again.
+The lane plugin serves the building AI: an AI building a Claude Code plugin whose work subagents do
+in steps. A step is one numbered item of what a subagent is told to do. A call is one use of a tool
+by a subagent, such as running a command or writing a file. An end is a subagent ending its work. A
+lane is a sentence written into a step, together with a check of that sentence on each call the
+sentence is about and at the subagent's end. A drift is a call or an end that goes against a lane's
+sentence. On a drift, the check stops the call or the end and tells the subagent the sentence again.
+The building AI writes the lanes it wants in a proposal, a JSON file. The lane plugin then lays
+them: it writes each sentence into its step, and puts the checks, called lane's checks below, into
+the building AI's plugin, which runs them.
 
-## Users and goals
+Some checks read what the plugin writes, such as the list of items a subagent must answer. lane's
+checks read each such text in one layout. Where the plugin writes it in another layout, the
+building AI also writes an adapter: a small script that turns the plugin's layout into the lane
+plugin's. With it the building AI writes the adapter's cases: each an input the adapter is given and
+the output it must give. The lane plugin runs the adapter on its cases, and lane's checks still
+make every check.
 
-- G1: The building AI, an AI building a Claude Code plugin whose work an AI does in several steps,
-  wants each subagent of that plugin, on every run, to notice when it drifts from one of its steps
-  and be told the right way, without writing the checks.
+A flow is the order in which one subagent, the orchestrator, starts the others, with the answers
+that send the work back to an earlier subagent. A move is one start the flow calls for, numbered by
+its place in the order.
 
-  The building AI is the main conversation or a step of another plugin. It calls lane by running
-  lane's layer, the script `lay.py`, on the lanes it proposes, and it approves them itself. No
-  person takes part.
+## OKRs
 
-## Key results
+- O1: The building AI wants each run of its plugin to keep the steps it set for each subagent,
+  without writing a check itself.
+  - KR1.1: The share of drifts that lane's checks let through; lower is better.
+  - KR1.2: The share of the calls and ends that the lanes' sentences allow which lane's checks
+    stop; lower is better.
+  - KR1.3: The share of stopped drifts after which the subagent, told the sentence, does not take
+    its step, but goes around it or stops its work; lower is better.
+  - KR1.4: The code the building AI writes or changes by hand to have its steps kept, adapters
+    included; less is better.
+  - KR1.5: The time the building AI spends from its first proposal to a run of its plugin that keeps
+    its steps; shorter is better.
+- O2: The building AI wants each run of its plugin to start the other subagents in the order it
+  set, going back where an answer it named calls for it, without a script of its own for that
+  order.
+  - KR2.1: The share of runs whose subagents start in another order than the flow and their answers
+    call for, or whose orchestrator ends before the flow is done; lower is better.
+  - KR2.2: The share of the orchestrator's calls and ends that the flow allows which lane's
+    checks stop; lower is better.
+  - KR2.3: The code the building AI writes to keep the order, beyond the flow in its proposal; less
+    is better.
+  - KR2.4: The time the building AI spends from writing the flow to a run of its plugin that takes
+    the order; shorter is better.
 
-- KR1.1: The defects the building AI meets using lane as it is; fewer is better, and none once G1 is
-  reached.
+Key results have no target values. When a measure becomes a target, it stops being a good measure
+(Goodhart's law). Use the key results to judge how close the objective is.
 
-  Each of these counts as one defect:
+## Scenarios
 
-  - a hook lets through a call that drifts from its sentence, in a form its step names, or stops a
-    call the sentence allows;
-  - lane tells the orchestrator a move other than the one the flow and the subagents' answers call
-    for;
-  - the building AI must change or work around something lane writes into the plugin: a step, a
-    setting such as an entry in the plugin's hooks file, or the copy of lane's code lane puts there.
+The diagrams below have these participants:
 
-  Each defect is work the building AI does in lane's place, and one it misses is a run that drifts
-  from the steps it set.
+- The building AI, an AI, is the user of O1 and O2. It builds `notes`, a made-up plugin, and
+  approves the lanes laid in `notes` by itself. No person takes part in its work.
+- The lane plugin, a script, runs as `lay.py` when the building AI calls it.
+- lane's checks, a script that the lane plugin puts into `notes`, check the calls and the end of
+  each subagent with lanes while `notes` runs.
+- The main conversation, an AI, is the Claude Code conversation that runs `notes`. Where `notes`
+  needs a fix, the main conversation brings it to the building AI, the maker of `notes`.
+- The runner of `notes`, a person or an AI, runs `notes` in Claude Code and sees Claude Code's
+  screen.
+- `lead`, `writer` and `reviewer`, each an AI, are subagents of `notes`. `lead` is the
+  orchestrator. `writer` writes the new entries of a project's `CHANGELOG.md`, and `reviewer` reads
+  them against the project's commits.
 
-KR1.1 is the only key result, so the building AI never trades one against another. It has no target
-value: each version is judged by how close it brings the building AI to G1.
+### O1: Lanes laid on the writer's step, and its drift stopped
 
-## Scenes
-
-The building AI, an AI, writes the proposal, the file that holds the lanes it proposes. `lay.py`,
-lane's script, prints the proposal and writes it into the plugin. The subagent, an AI, is one of the
-plugin's subagents with lanes laid in it. The main conversation, an AI, is the one the user talks
-with, which the subagent asks for what lies outside its work. The hook, lane's code that Claude Code
-runs on the subagent's calls, notices a drift and tells the subagent the lane's sentence. The
-orchestrator, an AI, is a subagent that starts the plugin's other subagents in the order of a flow,
-the order the building AI writes in the proposal.
-
-### From proposing lanes to a run that drifts
+The building AI lays two lanes on step 3 of `writer`, and on a later run lane's checks stop a
+drift of `writer`. The two sentences are `Write only CHANGELOG.md.` and
+`Do not run git commit or git push.`
 
 ```mermaid
 sequenceDiagram
-  participant A as building AI<br/>#lt;AI#gt;
-  participant L as lay.py<br/>#lt;script#gt;
-  participant S as subagent<br/>#lt;AI, with its hooks#gt;
-  Note over A: writes the proposal
-  A->>L: print the proposal
-  L->>A: the lanes as they would be laid
-  A->>L: write the proposal, approved
-  Note over L: writes the steps and the hooks, and puts lane's code in the plugin
-  Note over S: on a later run of the plugin
-  S->>S: a call that drifts from a lane, stopped and told the lane's sentence
-```
-
-### Laying lanes
-
-```mermaid
-sequenceDiagram
-  participant A as building AI<br/>#lt;AI#gt;
-  participant L as lay.py<br/>#lt;script#gt;
-  opt the plugin has lanes laid before
-    A->>L: up on the plugin
-    L->>A: the lanes laid before, and lane's code brought up where it was older
+  participant A as building AI (AI)
+  participant L as lane plugin (script)
+  participant K as lane's checks (script, in notes)
+  participant M as main conversation (AI)
+  participant U as runner of notes (person or AI)
+  participant W as writer (AI)
+  opt notes has lanes laid by an older lane plugin
+    A->>L: lay.py up notes
+    L-->>A: brings the checks in notes up to its version, names each lane laid before
   end
-  Note over A: writes the proposal
-  loop until the building AI approves it
-    A->>L: print the proposal
-    L->>A: the lanes, each under the action it watches, with the step as it would read and its hooks
-    Note over A: changes the proposal, or approves it
+  Note over A: writes a proposal: two lanes on step 3 of writer
+  opt notes writes a text in another layout
+    Note over A: writes an adapter and its cases
   end
-  A->>L: write the proposal
-  Note over L: writes the steps and the hooks, and puts lane's code in the plugin
+  loop until the building AI approves the print
+    A->>L: lay.py print, on the proposal
+    L-->>A: prints each step with its lanes,<br>runs each adapter on its cases, or what is wrong
+  end
+  A->>L: lay.py write, on the same proposal
+  L-->>A: writes the steps, puts the checks into notes
+  Note over K: run in notes, the lane plugin not needed
+  Note over A,W: a later run of notes
+  Note over W: started by lead, asked also to commit
+  alt the machine running notes has Python 3.9 or later
+    W->>K: runs git commit
+    K-->>W: stops it, tells notes: Do not run git commit or git push.
+    W->>K: writes CHANGELOG.md, as its step says
+    K-->>W: lets it through
+    opt a call lane's checks cannot check, such as one an adapter fails on
+      W->>K: the call
+      K-->>W: stops it, tells what it cannot check, what is wrong,<br>and who must fix it
+      K-->>U: shows the same on Claude Code's screen
+      W->>M: asks for the fix, and goes on with the rest of its work
+      M->>A: brings the fix for notes
+      Note over A: fixes notes, lays its lanes again
+    end
+    Note over W: ends: CHANGELOG.md alone written, uncommitted
+  else no Python 3.9 or later on the machine
+    W->>K: a call one of its lanes is about
+    K-->>W: stops it, tells it to install Python 3.9 or later
+    W->>K: ends
+    K-->>W: lets it end
+    K-->>U: shows on Claude Code's screen to install Python 3.9 or later
+  end
 ```
 
-- A proposal may hold a flow. `lay.py print` shows the flow, and `lay.py write` lays it as a lane
-  on the orchestrator's step.
-- `lay.py` puts lane's code in the plugin once for all its subagents: a link to it in a plugin of
-  the ccpm marketplace, and a copy with its version anywhere else. Where an older copy is, `lay.py
-  up` brings the copy and the hooks to lane's version with the same lanes.
+Where Claude Code, not `notes`, is what is wrong, the main conversation brings the fix to Claude
+Code's makers instead. lane's checks look only at the subagents with lanes. What must not
+happen whatever an AI does, such as a merge, the building AI blocks with GitHub's branch protection
+or Claude Code's permission rules.
 
-### A run that drifts
+### O2: The writer and the reviewer taken in their order
+
+The building AI lays a flow on step 1 of `lead`, and on a later run lane's checks tell `lead`
+each move. The flow's sentence on step 1 is `Take each move lane tells you, until it tells none.`
+lane's checks tell `lead` the move due as `lead` starts, and as each start of `writer` or
+`reviewer` comes back. They also stop each call or end of `lead` other than the move due, and tell
+`lead` the flow's sentence with the move. While a subagent that `lead` started in the background
+runs, no move is due, and lane's checks stop only a start of `writer` or `reviewer`. After that
+subagent ends, Claude Code may start `lead` again without the move. `lead` then learns the move at
+its next call or end that is not the move.
 
 ```mermaid
 sequenceDiagram
-  participant S as subagent<br/>#lt;AI#gt;
-  participant H as hook<br/>#lt;lane's#gt;
-  S->>H: a call that drifts from a lane
-  H-->>S: stopped before Claude Code runs it, and the lane's sentence told again
-  S->>H: the call its step says
-  H-->>S: let through
+  participant A as building AI (AI)
+  participant L as lane plugin (script)
+  participant K as lane's checks (script, in notes)
+  participant M as main conversation (AI)
+  participant O as lead (AI)
+  participant W as writer (AI)
+  participant R as reviewer (AI)
+  Note over A: writes a flow: writer, reviewer,<br>back to writer on more
+  A->>L: lay.py print, on the proposal
+  L-->>A: prints the flow, and its sentence on step 1 of lead
+  A->>L: lay.py write, on the same proposal
+  L-->>A: writes the flow's sentence, and puts its checks into notes
+  Note over A,R: a later run of notes
+  M->>O: starts it with the request
+  K-->>O: notes: The next move of the flow is move 1: start notes:writer.
+  O->>W: starts it in the background
+  K-->>O: notes: Wait for notes:writer to end: lane tells the next move once it has.
+  W-->>O: ends with the entries written
+  O->>K: about to end with the entries
+  K-->>O: keeps it going, tells the flow's sentence<br>and move 2: start notes:reviewer
+  O->>R: starts it
+  R-->>O: ends with more on a line of its own
+  K-->>O: notes: reviewer answered more.<br>The next move of the flow is move 1: start notes:writer.
+  Note over O,R: writer and reviewer again,<br>until no more
+  K-->>O: notes: The flow is done: lane tells no more moves.
+  O->>M: ends with the reviewed entries
 ```
-
-- The hook heads the sentence it tells with the plugin's name.
-- A hook acts only in the subagent its lane is laid in. What must hold whatever the AI does, such as
-  a merge, is held by GitHub's branch protection or Claude Code's permission rules, not by lane.
-- On a machine without Python 3.9 or later, the hooks stop the calls they watch, each asking for
-  Python to be installed. At a subagent's end they tell the user so and let it end.
-
-### An orchestrator told its next move
-
-Here the flow starts a writer and then a reviewer, and the reviewer's answer `more` sends the work
-back to the writer.
-
-```mermaid
-sequenceDiagram
-  participant O as orchestrator<br/>#lt;AI#gt;
-  participant H as hook<br/>#lt;lane's#gt;
-  participant W as writer<br/>#lt;AI, a subagent of the flow#gt;
-  participant R as reviewer<br/>#lt;AI, a subagent of the flow#gt;
-  Note over O,H: the orchestrator starts
-  H-->>O: the next move, move 1: start the writer
-  O->>W: start
-  H-->>O: wait for the writer to end
-  W->>H: ends with its work
-  Note over O: started again by Claude Code, the writer ended
-  H-->>O: the next move, move 2: start the reviewer
-  O->>H: about to end
-  H-->>O: kept going, told the flow's sentence and the move
-  O->>R: start
-  R->>H: ends answering more
-  H-->>O: the reviewer answered more; the next move, move 1: start the writer
-  Note over O,R: the writer and the reviewer again, as above,<br/>until the reviewer no longer answers more
-  H-->>O: the flow is done
-  Note over O: ends with the reviewed work
-```
-
-- The flow's sentence is ``<plugin>: Take each move lane tells you, until it tells none.`` The
-  orchestrator is told it, with the move due on the next line, when it does anything but that move,
-  or is about to end while a move is due.
-- A start counts once the subagent it started has ended, whether Claude Code runs it in the
-  foreground or the background. While it runs, the orchestrator is told to wait for it, and a start
-  of a subagent of the flow is stopped and told so.
-- A subagent answers `more` when it ends with `more` on a line of its own.
-- The flow may name a subagent more than once, as in write, review, polish, review again. So each
-  move is told by its position in the order, as
-  ``The next move of the flow is move <n>: start `<plugin>:<name>`.``, for the orchestrator to know
-  which move it takes.
-
-### A lane lane cannot check
-
-```mermaid
-sequenceDiagram
-  participant S as subagent<br/>#lt;AI#gt;
-  participant H as hook<br/>#lt;lane's#gt;
-  participant M as main conversation<br/>#lt;AI#gt;
-  S->>H: a call a lane holds, where what the lane is given is not as laid
-  H-->>S: stopped, the user told the same, with #lt;plugin#gt;: lane cannot check ...: #lt;what is wrong#gt;. Ask the main conversation for the fix: #lt;who must fix it#gt;. Go on with the rest of your work meanwhile.
-  S->>M: asks for the fix, and goes on with the rest of its work
-  Note over M: brings it to whoever must fix it: the plugin's maker, who fixes the plugin and lays its lanes again with lay.py write, or Claude Code
-```
-
-- The hook never lets through what it cannot check. The subagent asks for the fix and goes on with
-  the rest of its work. The plugin's maker puts it right, or Claude Code where the event is what is
-  wrong.
-
-## Benefits
-
-- The building AI proposes and approves lanes instead of writing checks. Noticing a drift and
-  telling the sentence are lane's work, and already tested.
-- The hooks stay few, as the building AI lays them only where a step alone is not sure to hold.
