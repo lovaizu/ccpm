@@ -96,18 +96,17 @@ role adds onto the work to answer a more.
 
 A more that comes back on a question after its decision was made again, or in the refactoring phase
 after the builder mended it, is one the decisions cannot make good. In the refactoring phase the
-builder returns it `open`. Designer then brings it to the person, with a recommendation: change the
-decision, change the work's purpose, or take the work as it is on that question. A question the
-person takes as it is is set aside: the evaluator still answers it, and its more no longer sends
-the work back. No count of how often the work is made again stops the run; the person's answer
-does.
+builder returns it `open`. Designer then brings it to the person with two ways: decide it again
+another way, which designer recommends, or change this work's purpose, which changes what the
+questions ask of it. Either way the design changes, and the content phase runs again. No count of
+how often the work is made again stops the run; a design that can make every question good does.
 
 A fault fixed where it shows is a patch, and patches pile up until the work no longer reads as one
 design. Making the decision again changes every part that rests on it. Where the decisions hold and
 the work strays from them, designer keeps the decisions, and the builder makes the work to them
-again. A more that would come back without end is the person's to settle, as only they can change
-the purpose or take less. A bound on how often the work is made again would hand them a work that
-falls short, with no word of why.
+again. A loop comes from designer keeping a decision that cannot make its question good, so the
+way out is a decision made again, or a purpose only the person can change. A bound on how often
+the work is made again would hand the person a work that falls short, with no word of why.
 
 ### Each role works from the run's files
 
@@ -164,9 +163,8 @@ Each story quotes O1 and names the steps of the README's Walkthrough that show i
   with the answer turn recommends, and to approve the design. Carries O1 from "What is the release
   for?" to the approved key points (steps 4 and 5).
 - As that person, I want the work only once a second AI, using it as its user would, finds every
-  question good, both of what the work says and of how it says it, or I have taken it as it is on
-  a question that never comes good. Carries O1's last step, "The press release" (step 6), and the
-  README's How it works.
+  question good, both of what the work says and of how it says it. Carries O1's last step, "The
+  press release" (step 6), and the README's How it works.
 - As a plugin's step, such as rn's, I want to start `turn:up` for a work my step needs, giving what
   my step has already settled with the person, and get the work back. Carries O1 when the person
   reaches turn through such a plugin, and the README's Documentation, "Calling turn".
@@ -183,22 +181,22 @@ Each story quotes O1 and names the steps of the README's Walkthrough that show i
   as lane tells the next move only once the role has ended. It alone tells the phase, from the
   position each move names, as [lane's flow](../../plugins/lane/docs/flow.md) words it, such as
   "The next move of the flow is move 5: start `turn:builder`." It ends once lane tells it the flow
-  is done, naming each file of the work, one on each line, and then each question set aside.
+  is done, naming each file of the work, one on each line.
 - `turn:up` starts each role with the request and one JSON line after it, whose keys the role's
   lanes read as values given for the run, as [lane's lanes](../../plugins/lane/docs/lanes.md) say.
-  A path is from the root of the repository; `null` says there is none.
+  A path is from the folder Claude Code runs in; `null` says there is none.
   - planner: `run`, the run's folder; and `kind` where the caller gave one. It ends with one JSON
     line, `{"template": "<path>", "includes": ["<path>", ...]}`.
   - designer: `run`; `template`, the kind's template; `tree`, the design tree; `back`, the
     self-check or the verification of the role whose answer sent the work back, or `null` at first;
-    `set_aside`, the file of questions set aside; and `purpose` and `decided` where the caller gave
-    them. It ends with one JSON line, `{"work": ["<path>", ...]}`.
+    and `purpose` and `decided` where the caller gave them. It ends with one JSON line,
+    `{"work": ["<path>", ...]}`.
   - builder: `templates`, the phase's templates; `tree`, the design tree in the content phase and
     `null` in the refactoring phase; `work`; `answers`, the phase's self-check; and
     `verification`, the phase's last verification, or `null` before the first. It ends with `open`
     on a line of its own where it returns a point to designer.
-  - evaluator: `templates`; `work`; `answers`, the phase's verification; and `set_aside`. It ends
-    with `more` on a line of its own while a more is not set aside.
+  - evaluator: `templates`; `work`; and `answers`, the phase's verification. It ends with `more`
+    on a line of its own while an answer is more.
 - turn's proposal to lane declares the flow on `turn:up`, as
   [lane's flow](../../plugins/lane/docs/flow.md#the-flow) gives it. Its order is planner, designer,
   builder, evaluator, builder, evaluator, positions 1 to 6. Positions 3 and 4 are the content
@@ -206,9 +204,10 @@ Each story quotes O1 and names the steps of the README's Walkthrough that show i
   at 3 or at 5 answers `open`, and while the evaluator at 4 answers `more`. It goes back to the
   builder at 5 while the evaluator at 6 answers `more`.
 - Planner alone decides the kind, and takes a kind a caller gave without asking. It gives the
-  kind's template: one the repository keeps, else one turn ships, else a new one drawn from how
-  good works of the kind are made. It writes a new template in the run's folder, and keeps it in
-  the repository's templates folder once the person approves it, so no run takes a template the
+  kind's template: one kept in `.turn/templates/`, else one turn ships, else a new one drawn from
+  how good works of the kind are made. It judges a new template on a published work of the kind
+  found in its research, before the person sees it. It writes a new template in the run's folder,
+  and keeps it in `.turn/templates/` once the person approves it, so no run takes a template the
   person has not approved. lane holds it to write only those two folders (write_only), and to pass
   `check.py`'s template check after changing a template (test_after).
 - Designer alone decides each point of the design, such as where the work goes and the language it
@@ -217,11 +216,11 @@ Each story quotes O1 and names the steps of the README's Walkthrough that show i
   questions lies. It alone decides a point the builder returns, in either phase, as a point of
   what the work says: for a point of the refactoring phase, it finds the kind's own questions the
   point bears on, and the decisions that serve them. It alone brings to the person a more the
-  decisions cannot make good, and keeps the questions the person sets aside. It tells a more that
+  decisions cannot make good. It tells a more that
   came back after its decision was made again from the design tree, where each decision made
   again names the more it answered. lane holds it to read `back` to its end (read_whole), to write
-  only the design tree and the questions set aside (write_only), each in its form (in_form), and
-  to pass `check.py`'s tree check after changing the tree (test_after).
+  only the design tree (write_only), in its form (in_form), and to pass `check.py`'s tree check
+  after changing the tree (test_after).
 - Builder alone decides the small points of making, such as a phrase or a function's name, and in
   the refactoring phase how the work says each thing. It returns a point the design leaves open
   that bears on the work's quality, and in the refactoring phase a point that would change what
@@ -232,10 +231,10 @@ Each story quotes O1 and names the steps of the README's Walkthrough that show i
   write the self-check in its form (in_form), to answer every question of `templates`
   (every_item), and to pass `check.py`'s answers check (test_after).
 - Evaluator alone decides each answer, good or more, from its own first reading of the work. lane
-  holds it to read only the work, `templates` and `set_aside` (read_only), to read the work to its
-  end (read_whole), to write only its verification (write_only), in its form (in_form), to answer
-  every question of `templates` (every_item), to pass `check.py`'s answers check (test_after), and
-  to end only once the verification is made (end_when).
+  holds it to read only the work and `templates` (read_only), to read the work to its end
+  (read_whole), to write only its verification (write_only), in its form (in_form), to answer every
+  question of `templates` (every_item), to pass `check.py`'s answers check (test_after), and to end
+  only once the verification is made (end_when).
 - `check.py` alone checks what no lane holds. A template is in its form, and a question looks at
   every part of its format. In a design tree, a decision serves every question, every decision
   reaches the goal, and the decisions stand in the order they were made, each building only on
@@ -255,6 +254,8 @@ Each story quotes O1 and names the steps of the README's Walkthrough that show i
 - `wait.py` alone holds a role that has asked until the answer comes. The role runs it in the
   foreground, and again each time it returns without the answer, as a message reaches a subagent
   only at its next tool call.
+- Each role runs on the model of the session that starts turn, as no agent of turn names a
+  `model`; the person picks it.
 - Every file the roles pass between them, other than the work, is JSON, so `check.py` checks one
   against another, such as a template's questions against its parts.
 
@@ -275,6 +276,8 @@ The choices below depart from [how a plugin works](../architecture.md), or would
   skill of their own that
   [The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs) asks
   for. Neither is hard to undo: a change sends planner or designer back to the decision it touches.
+- Principle 9 of [how a plugin works](../architecture.md#principles), lessons drawn once the work
+  is approved, is not yet decided for turn.
 - `check.py`, not an in_form lane, holds a template to its form. An in_form lane holds a file at a
   path fixed in the step, while a kept template's path names its kind, which planner decides only
   in the run.
@@ -326,7 +329,7 @@ sequenceDiagram
   participant WT as wait.py
   participant T as Templates
   participant U as turn:up
-  alt the repository keeps or turn ships a template of the kind
+  alt .turn/templates/ keeps or turn ships a template of the kind
     T-->>PL: the template (template)
   else no template of the kind
     PL->>W: reads how good works of the kind are made
@@ -381,7 +384,7 @@ sequenceDiagram
   D-->>U: ends, naming where the work goes (work)
 ```
 
-Making what the work says, until every question of the kind's own is good or set aside:
+Making what the work says, until every question of the kind's own is good:
 
 ```mermaid
 sequenceDiagram
@@ -417,7 +420,7 @@ sequenceDiagram
   E->>C: checks them (answers)
   G->>IA: asks the question IDs, as the evaluator ends (template)
   IA-->>G: the question IDs
-  loop while a more is not set aside
+  loop while an answer is more
     E-->>U: ends with more
     G-->>U: tells move 2: start designer
     U->>D: starts (answers)
@@ -425,11 +428,11 @@ sequenceDiagram
     alt the decision behind the more was not yet made again
       D->>R: makes it again (design tree)
     else the more came back after its decision was made again
-      D->>M: asks: change the decision, the purpose, or take it as it is (decision)
+      D->>M: asks: decide it again another way, or change the purpose (decision)
       M->>P: the ask
       P->>M: answer
       M-->>D: answer
-      D->>R: makes the decision again, or sets the question aside (design tree)
+      D->>R: makes the decision again, or the purpose and what builds on it (design tree)
     end
     D-->>U: ends, naming where the work goes (work)
     Note over U,E: lane tells moves 3 and 4 again
@@ -437,7 +440,7 @@ sequenceDiagram
   E-->>U: ends
 ```
 
-Bettering how the work says it, once every question of the kind's own is good or set aside:
+Bettering how the work says it, once every question of the kind's own is good:
 
 ```mermaid
 sequenceDiagram
@@ -467,7 +470,7 @@ sequenceDiagram
   Note over E: uses the work as its user would
   E->>R: writes its answers (answers)
   E->>C: checks them (answers)
-  loop while a more is not set aside
+  loop while an answer is more
     E-->>U: ends with more
     G-->>U: tells move 5: start builder
     U->>B: starts (included templates, no design tree, work, answers)
@@ -477,7 +480,7 @@ sequenceDiagram
   end
   E-->>U: ends
   G-->>U: tells that the flow is done
-  U-->>M: the work, and each question set aside (work)
+  U-->>M: the work (work)
 ```
 
 Starting `turn:up` from a plugin's step:
@@ -517,13 +520,16 @@ sequenceDiagram
   the run files already hold. lane counts the moves of each start of `turn:up` anew, so it tells
   the new `turn:up` to start again from move 1. Planner and designer then end soon, as their files
   already hold their work.
-- A run's files lie in `.turn/<yyyymmdd>-<name>/` in the repository, and the templates planner
-  makes lie in `.turn/templates/`, as
-  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) places what
-  may be kept. The templates' folder carries no date, as each template serves every later run.
-- Planner keeps the templates it makes in the repository, not in turn's installed folder, which an
-  update replaces, nor in the person's home folder, which agents cannot read without asking. A kept
-  template is taken before a shipped one of the same kind, as the person approved it.
+- A run's files lie in `.turn/<yyyymmdd>-<name>/` in the folder Claude Code runs in, and the
+  templates planner makes lie in `.turn/templates/` there. This departs from
+  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files), which
+  places what may be kept at the root of the repository: turn needs no git repository, and the
+  folder Claude Code runs in is the one its agents may read and write without asking. The
+  templates' folder carries no date, as each template serves every later run.
+- Planner keeps the templates it makes in the folder Claude Code runs in, not in turn's installed
+  folder, which an update replaces, nor in the person's home folder, which agents cannot read
+  without asking. A kept template is taken before a shipped one of the same kind, as the person
+  approved it.
 - lane's guard lies in turn's own folder, where `lay.py write` lays it. The person then needs no
   lane installed.
 
@@ -537,7 +543,7 @@ plugins/turn/                       turn, installed by Claude Code
 ├── prompts/<name>.md               the steps of turn:up and of each role <Markdown>
 ├── scripts/check.py, <check>.py    check.py and each check it runs <script · Python 3.9 stdlib>
 ├── scripts/wait.py                 wait.py <script · Python 3.9 stdlib>
-├── forms/<file>.json               Forms of the template, the design tree, the answers and the questions set aside <JSON Schema>
+├── forms/<file>.json               Forms of the template, the design tree and the answers <JSON Schema>
 ├── templates/<kind>.json           Templates that turn ships <JSON>
 ├── hooks/hooks.json, lanes.json    the hooks, the flow and the lanes, laid by lane <JSON>
 ├── hooks/lane/                     Guard, laid by lane <Python 3.9>
@@ -553,9 +559,9 @@ dev/turn/                           what only turn's builders need
 ├── tests/                          unit and property tests of turn's scripts <Python 3>
 └── trials/                         trials of each role, of the roles together, and of the whole <Python 3>
 
-<the repository the work is in>/.turn/
-├── templates/<kind>.json           Templates that planner made in this repository <JSON>
-└── <yyyymmdd>-<name>/              one run's Run files: a new template before approval, design-tree.json, set-aside.json, self-check.json and verification.json for the content phase, and refactor-self-check.json and refactor-verification.json for the refactoring phase <JSON>
+<the folder Claude Code runs in>/.turn/
+├── templates/<kind>.json           Templates that planner made in this folder <JSON>
+└── <yyyymmdd>-<name>/              one run's Run files: a new template before approval, design-tree.json, self-check.json and verification.json for the content phase, and refactor-self-check.json and refactor-verification.json for the refactoring phase <JSON>
 ```
 
 ## Test
@@ -566,7 +572,7 @@ assistant and judged from its records. A weight, from ●○○ to ●●●, sa
 
 | Deployment unit | Unit | Integration | End-to-end |
 |---|---|---|---|
-| turn's agents [Claude Code subagents · Markdown] | a trial of one role, the rest mocked · ●●● · it keeps to its steps, in each phase it serves | a trial of the four roles under lane's flow, the person mocked · ●●○ · the hand-offs through the run files, and each way back in both phases, to every question good or set aside | ▨[^1] |
+| turn's agents [Claude Code subagents · Markdown] | a trial of one role, the rest mocked · ●●● · it keeps to its steps, in each phase it serves | a trial of the four roles under lane's flow, the person mocked · ●●○ · the hand-offs through the run files, and each way back in both phases, to every question good | ▨[^1] |
 | turn's scripts [process · Python 3.9 stdlib] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of `check.py`, `wait.py`, and the items adapter | unittest with lane's real guard laid from turn's proposal, in a real repository · ●○○ · the lanes run the checks and the adapter, and the flow tells each move | ▨[^1] |
 | turn's installed folder [plugin folder] | `check.py` · ●●○ · each shipped template is in its form, and a question looks at every part | ▨[^2] | ▨[^1] |
 | turn on the person's computer [Claude Code] | ▨[^3] | ▨[^3] | a trial of each user story, the assistant as the person · ●●○ · the work, and what the person was asked |

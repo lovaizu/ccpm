@@ -197,4 +197,24 @@
   <path class="line" d="M624.0,645.0 L610.0,653.0"/>
   <circle class="box" cx="634.0" cy="645.0" r="5"/>
   <text class="label" x="660" y="649">zero or more</text>
+  <path class="line" d="M790,645 L830,645"/>
+  <circle class="box" cx="811.0" cy="645.0" r="5"/>
+  <path class="line" d="M821.0,638.0 L821.0,652.0"/>
+  <text class="label" x="840" y="649">zero or one</text>
+  <rect class="box" x="640" y="40" width="200" height="50" rx="0"/>
+  <text class="name" x="740.0" y="70.0">Purpose</text>
+  <path class="line" d="M740.0,210 L740.0,90"/>
+  <path class="line" d="M733.0,201.0 L747.0,201.0"/>
+  <path class="line" d="M733.0,195.0 L747.0,195.0"/>
+  <path class="line" d="M747.0,99.0 L733.0,99.0"/>
+  <path class="line" d="M747.0,105.0 L733.0,105.0"/>
+  <text class="label" x="750.0" y="155" text-anchor="start">has as its goal</text>
+  <path class="line" d="M820.0,430 L820.0,550"/>
+  <path class="line" d="M820.0,444.0 L812.0,430.0"/>
+  <path class="line" d="M820.0,444.0 L820.0,430.0"/>
+  <path class="line" d="M820.0,444.0 L828.0,430.0"/>
+  <circle class="box" cx="820.0" cy="454.0" r="5"/>
+  <path class="line" d="M813.0,541.0 L827.0,541.0"/>
+  <circle class="box" cx="820.0" cy="531.0" r="5"/>
+  <text class="label" x="828.0" y="500" text-anchor="start">is made again for</text>
 </svg>
