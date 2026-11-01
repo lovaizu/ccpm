@@ -11,5 +11,5 @@ import sys
 import called
 import hook
 
-# Keeping a call takes nothing of the plugin, the subagent or the event held.
-hook.main("PostToolUseFailure", sys.argv[1:], lambda root, agent, held: called.Kept())
+# Keeping a call takes the plugin, to read its flow, and the subagent, not the event held.
+hook.main("PostToolUseFailure", sys.argv[1:], lambda root, agent, held: called.Kept(root, agent))

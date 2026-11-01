@@ -2,7 +2,10 @@
 hooks/lanes.json, run on the event Claude Code hands the command's script, each telling the
 subagent its sentence where a call drifts from it, its calls read from its record with those kept as
 they came back, as called.py says. A thing a lane takes written `{<name>}` is given for each run,
-and put in before the lane's check, as started.py reads it."""
+and put in before the lane's check, as started.py reads it. Where the file lays a flow, the guard
+gives flow.py the run: the orchestrator's call running lane's flow.py as a command of its own goes
+on with the session's and the orchestrator's IDs put before the command, and one running it with
+other commands is stopped; and it keeps the answer of each `from` subagent as it ends."""
 
 from __future__ import annotations
 
@@ -15,6 +18,7 @@ import hook
 import lanes_json
 import ports
 import schema
+import shell
 import started
 import step
 from lanes import LANES, alone, given_in, held_on, placed, places, read_whole, sentence, start_with
@@ -38,6 +42,9 @@ ADAPTER = "the maker of {plugin} must fix the adapter and lay its lanes again wi
 REFUSED = "the maker of {plugin} must fix it and lay its lanes again with `lay.py write`"
 # What a lane resting on its subagent's record meets where the record is not there.
 NOT_FOUND = "its record is not found where Claude Code keeps it"
+# What the orchestrator is told, after the flow's sentence, where it runs flow.py with other
+# commands, as the guard gives the run's IDs to flow.py run alone.
+RUN_ALONE = f"Run `{lanes_json.FLOW_PY}` as a command of its own."
 
 
 class Lanes:
@@ -54,10 +61,22 @@ class Lanes:
         entry has it read its part first, what `read_first` says, where it says anything, in place
         of the lanes."""
         plugin, name = self.agent.split(":")
+        ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
         try:
-            found = lanes_json.subagent(self.root, name)
+            whole = lanes_json.laid(self.root)
         except ValueError as wrong:
             return [self.unchecked(str(wrong), LAY_AGAIN.format(plugin=plugin))]
+        flow = whole.get("flow")
+        # A `from` subagent's answer is kept as it ends, whether or not lanes are laid in it.
+        answering = name in lanes_json.froms(flow)
+        if ending and answering:
+            called.ended(event)
+        try:
+            found = lanes_json.subagent(whole, name)
+        except ValueError as wrong:
+            return (
+                [] if answering else [self.unchecked(str(wrong), LAY_AGAIN.format(plugin=plugin))]
+            )
         given, values = lanes_json.lanes_of(found), found.get("adapter")
         # A name the subagent's part uses is read as its entry says it stands for.
         bindings = step.bindings(self.root, name)
@@ -68,13 +87,42 @@ class Lanes:
             if self.held in held_on(g[1])
         ]
         entries = called.entries(event)
-        ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
         acted = call.ended(event, entries) if ending else call.read(event, entries)
         if isinstance(acted, call.Call):
             first = self.read_first(acted, entries)
             if first is not None:
                 return first
-        return [s for lane in on for s in lane.check(event, Seen(entries, acted))]
+        said = [s for lane in on for s in lane.check(event, Seen(entries, acted))]
+        if not ending and flow is not None and flow["orchestrator"] == name:
+            return self.flow_run(event, said)
+        return said
+
+    def flow_run(self, event: dict[str, Any], said: list[hook.Said]) -> list[hook.Said]:
+        """What the orchestrator of the flow is told of its tool call, given what its lanes said of
+        it: where the call runs lane's flow.py, the plugin's `hooks/lane/flow.py`, together with
+        other commands or words, the flow's sentence and to run flow.py alone, after what the lanes
+        said; where it runs it as a command of its own and the lanes said nothing, the call let
+        through with the session's and the orchestrator's IDs put before the command, the file its
+        calls are kept in made, so flow.py reads the run; what the lanes said otherwise, a lane's
+        stop winning, and where the event names either by no ID as Claude Code gives it."""
+        command = event["tool_input"].get("command") if event["tool_name"] == "Bash" else None
+        if not isinstance(command, str):
+            return said
+        script = os.path.realpath(os.path.join(self.root, "hooks", "lane", lanes_json.FLOW_PY))
+        cwd = event["cwd"]
+        if not any(flow_ran(here, w, script) for here, w, _ in shell.statements(command, cwd)):
+            return said
+        words = shell.words(command)
+        # A word after the program, an operator among them, is another command or word beside it.
+        if call.program(words)[1:] or not flow_ran(cwd, words, script):
+            flowing = sentence(lanes_json.FLOW_LANE["lane"], lanes_json.FLOW_LANE["takes"])
+            return [*said, hook.Said(f"{flowing}\n{RUN_ALONE}")]
+        file = called.place(event)
+        if said or file is None:
+            return said
+        called.begun(file)
+        ids = f"LANE_SESSION={event['session_id']} LANE_AGENT={event['agent_id']}"
+        return [hook.Said("", updated={**event["tool_input"], "command": f"{ids} {command}"})]
 
     def read_first(
         self, acted: call.Call, found: list[dict[str, Any]] | None
@@ -114,6 +162,14 @@ class Lanes:
         name = self.agent.split(":")[1]
         said = f"lane cannot check the lanes of {name}: {wrong}. {hook.ASK.format(fix=fix)}"
         return hook.Said(said, True)
+
+
+def flow_ran(here: str | None, words: list[str], script: str) -> bool:
+    """Whether a statement, as its words, run in the folder, None where the words do not settle it,
+    runs the script by its path, python3 or sh before it left out, and what goes before a program,
+    as assignments and env."""
+    ran = call.program(shell.after_env(shell.without_redirects(words)))
+    return bool(ran) and shell.path(here, ran[0]) == script
 
 
 class Laid:

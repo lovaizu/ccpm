@@ -8,7 +8,8 @@ back to itself is refused too, as structured outputs refuse a recursive schema. 
 gives the one point it is out by: its place, what was expected and what was found, as
 check-jsonschema gives jsonschema's best match, the point highest in the value first. lane's own
 schemas, such as a port's in ports.py, which `checked` never reads, may give additionalProperties a
-schema each key beside the properties is held to, for an object of keys known only on a run."""
+schema each key beside the properties is held to, for an object of keys known only on a run, and
+may use minimum, minLength and uniqueItems, as the flow's in lanes_json.py does."""
 
 from __future__ import annotations
 
@@ -205,9 +206,9 @@ def held(schema: dict[str, Any], value: Any) -> Out | None:
 
 def out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
     """The point the value at the path is out of the schema by, the root's $refs followed."""
-    for key in KEYWORDS:
+    for key, held_to in HELD.items():
         if key in schema:
-            found = KEYWORDS[key][1](schema, root, value, path)
+            found = held_to(schema, root, value, path)
             if found:
                 return found
     return None
@@ -288,6 +289,29 @@ def min_items_out(
     return None
 
 
+def minimum_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    least = schema["minimum"]
+    if TYPES["number"][0](value) and value < least:
+        return Out(path, f"a number of at least {shown(least)}", shown(value))
+    return None
+
+
+def min_length_out(
+    schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]
+) -> Out | None:
+    least = schema["minLength"]
+    if isinstance(value, str) and len(value) < least:
+        return Out(path, f"a string of length {least} or more", shown(value))
+    return None
+
+
+def unique_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    each = value if isinstance(value, list) and schema["uniqueItems"] else []
+    again = (v for at, v in enumerate(each) if any(same(v, e) for e in each[:at]))
+    found = next(again, None)
+    return None if found is None else Out(path, "each item once", f"{shown(found)} twice")
+
+
 def all_of_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
     for each in schema["allOf"]:
         found = out(each, root, value, path)
@@ -327,4 +351,19 @@ KEYWORDS: dict[str, tuple[Callable[..., None], Callable[..., Out | None]]] = {
     "anyOf": (list_read, any_of_out),
     "$defs": (schemas_read, lambda *_: None),
     "definitions": (schemas_read, lambda *_: None),
+}
+# The keywords lane's own schemas may use beside those, which structured outputs do not accept, so
+# `checked` refuses them in a plugin's form; each with the point a value is out by under it.
+OWN: dict[str, Callable[..., Out | None]] = {
+    "minimum": minimum_out,
+    "minLength": min_length_out,
+    "uniqueItems": unique_out,
+}
+# Each keyword a value is held to, in order, lane's own after those of its own place, before those
+# of the places inside it, so the point highest in the value is found first.
+INSIDE = list(KEYWORDS).index("properties")
+HELD = {
+    **{k: v[1] for k, v in list(KEYWORDS.items())[:INSIDE]},
+    **OWN,
+    **{k: v[1] for k, v in list(KEYWORDS.items())[INSIDE:]},
 }

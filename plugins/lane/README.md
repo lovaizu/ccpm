@@ -140,7 +140,7 @@ Your AI approves them, and has `lay.py write` lay them from the same file:
 $ python3 <lane's folder>/scripts/lay.py write .lane/20261030-notes/notes.json
 Wrote step 1 of notes-lead, and where `flow.py` lies, into agents/notes-lead.md.
 Wrote step 3 of changelog-writer into agents/changelog-writer.md.
-Wrote the hooks of notes-lead and changelog-writer into hooks/hooks.json.
+Wrote the hooks of notes-lead, changelog-writer and changelog-reviewer into hooks/hooks.json.
 Wrote the flow and the lanes laid into hooks/lanes.json.
 Put lane's code in hooks/lane/.
 claude plugin validate passed.

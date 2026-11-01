@@ -22,6 +22,7 @@ sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "..", "dev", "lane")]
 import call
 import called  # noqa: F401
 import entries  # noqa: F401
+import flow  # noqa: F401
 import forms  # noqa: F401
 import guard  # noqa: F401
 import hook  # noqa: F401

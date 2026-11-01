@@ -25,6 +25,11 @@ KEPT = ("PostToolUse", "PostToolUseFailure")
 # The events lanes are held on, and those a call is kept on, each with its own script in lane's
 # code, named after it.
 EVENTS = ("PreToolUse", "SubagentStop", *KEPT)
+# The events the answer of a `from` subagent of a flow is kept on: as it ends, and as its call of
+# the tool it may hand its report back with comes back, which an entry of that event matches alone
+# where no lane of the subagent is held on every call.
+ANSWERED = ("SubagentStop", "PostToolUse")
+HANDBACK = "SubagentHandback"
 # What a hook says where lane's code cannot run.
 INSTALL = "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run"
 # Each hook's command first checks that lane's code can run. Where it cannot, a hook of an event
@@ -106,23 +111,25 @@ def shaped(entry: Any) -> bool:
 
 def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | None:
     """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
-    it: its matcher the tools its lanes watch, or for SubagentStop the subagent, as its matcher
-    tells agents apart; for an event a call is kept on, where it has any lane, an entry matching
-    every tool; for a tool call, where it has any lane and its entry has it read its part first,
-    as the agent's `part` says, every tool too; each command giving the subagent alone, whose lanes
-    the guard reads from hooks/lanes.json, and the hook of a tool call blocking the call where the
-    hook fails."""
+    it and its answer is not kept on it: its matcher the tools its lanes watch, or for SubagentStop
+    the subagent, as its matcher tells agents apart; for an event a call is kept on, where it has
+    any lane, an entry matching every tool, or, where it has none and is a `from` of the flow, as
+    the agent's `from` says, the tool it may hand its report back with alone; for a tool call, where
+    it has any lane and its entry has it read its part first, as the agent's `part` says, every tool
+    too; each command giving the subagent alone, whose lanes the guard reads from hooks/lanes.json,
+    and the hook of a tool call blocking the call where the hook fails."""
     every = [(s["step"], g) for s in agent["steps"] for g in s["lanes"]]
     kept = event in KEPT
     on_it = [(n, g) for n, g in every if event in lanes.held_on(g["lane"])]
     ending = event == "SubagentStop"  # pragma: no mutate
+    answered = bool(agent.get("from")) and event in ANSWERED
     # The part is held to be read first on any call, as start_with holds its script run first.
     first = lanes.LANES["start_with"].TOOLS if agent.get("part") and every and not ending else ()
-    if not (every if kept else on_it or first):
+    if not (every if kept else on_it or first) and not answered:
         return None
     name = f"{plugin}:{agent['name']}"
     each = [*first, *(t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ()))]
-    tools = [name] if ending else [".*"] if kept else each
+    tools = [name] if ending else ([".*"] if every else [HANDBACK]) if kept else each
     run_it = command(plugin, name, event)
     command_hook: dict[str, Any] = {"type": "command", "timeout": hook.TIMEOUT, "command": run_it}
     # A hook on a tool call that fails to start, exits other than 0 or 2, times out or prints no

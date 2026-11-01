@@ -49,7 +49,11 @@ class TestProposal(LayTest):
         plugin = self.proposal()
         cases = {
             "no plugin": (("plugin",), GONE, '$: expected the key "plugin"'),
-            "no subagents": (("subagents",), GONE, '$: expected the key "subagents"'),
+            "no subagents and no flow": (
+                ("subagents",),
+                GONE,
+                "$: expected a value of one of its anyOf choices",
+            ),
             "a subagent of no name": (
                 (*SUBAGENT, "name"),
                 GONE,
@@ -141,7 +145,7 @@ class TestProposal(LayTest):
             "a key beside the proposal's": (
                 ("x",),
                 1,
-                '$: expected only the keys "plugin", "subagents", found the key "x"',
+                '$: expected only the keys "plugin", "flow", "subagents", found the key "x"',
             ),
             "a key beside a subagent's": (
                 (*SUBAGENT, "x"),

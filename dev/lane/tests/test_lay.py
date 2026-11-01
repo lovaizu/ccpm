@@ -44,7 +44,7 @@ class TestWriteEnd(LayTest):
         self.assertEqual(
             said,
             "Wrote step 3 of changelog-writer into agents/writer.md.\n"
-            "Wrote the hook of changelog-writer into hooks/hooks.json.\n"
+            "Wrote the hooks of changelog-writer into hooks/hooks.json.\n"
             "Wrote the lanes laid into hooks/lanes.json.\n"
             "Put lane's code in hooks/lane/.\n"
             "claude plugin validate passed.\n"

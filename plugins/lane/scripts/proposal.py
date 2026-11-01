@@ -1,24 +1,29 @@
 """The proposal the building AI writes for the layer, a JSON file at a path it gives lay.py, read
-and held to its JSON Schema, PROPOSAL, which lane's docs/lanes.md shows, then checked for what no
-schema can say: the plugin and each subagent's file found, each name one a hook's command can carry,
-each subagent and step given once, each step in its file, and what each lane takes fitting it; and
-each adapter it names found beside it, in `<plugin>/adapters/` of the folder it is in, or laid
-before in the plugin's hooks/adapters/, and run on each of its cases before the proposal is printed
-or written."""
+and held to its JSON Schema, PROPOSAL, which lane's docs/lanes.md shows, with its flow held to the
+one docs/flow.md shows, then checked for what no schema can say: the plugin and each subagent's file
+found, each name one a hook's command can carry, each subagent and step given once, each step in its
+file, what each lane takes fitting it, and the flow one that can be laid, its lane laid by the layer
+alone; and each adapter it names found beside it, in `<plugin>/adapters/` of the folder it is in, or
+laid before in the plugin's hooks/adapters/, and run on each of its cases before the proposal is
+printed or written. The flow's follow_next lane is put among the orchestrator's lanes, from the flow
+the proposal gives or, where it gives none, the one laid before."""
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import re
 from typing import Any
 
+import call
 import hook
 import lanes
 import lanes_json
 import placed
 import ports
 import schema
+import shell
 import step
 
 # What the proposal is told to be, when it is not: in the shape lane's docs/lanes.md gives, named by
@@ -26,11 +31,13 @@ import step
 LANES_MD = os.path.join(placed.LANE, "docs", "lanes.md")
 AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
 # The proposal's JSON Schema: the lanes laid, as hooks/lanes.json holds them, with the plugin's
-# folder, and at least one subagent, one step in each and one lane on each, as a proposal lays them.
+# folder, and at least one subagent, one step in each and one lane on each, as a proposal lays them,
+# or a flow, or both.
 SHAPE = lanes_json.lanes_shape(1)
 PROPOSAL = {
     **SHAPE,
-    "required": ["plugin", *SHAPE["required"]],
+    "required": ["plugin"],
+    "anyOf": [{"required": ["subagents"]}, {"required": ["flow"]}],
     "properties": {
         "plugin": {"type": "string", "description": "your plugin's folder"},
         **SHAPE["properties"],
@@ -58,22 +65,120 @@ def proposal(path: str) -> dict[str, Any]:
         raise Stop(f"lay.py: there is no file {path}; {AGAIN}.") from None
     except ValueError:
         raise Stop(f"lay.py: {path} holds no JSON; {AGAIN}.") from None
-    out = schema.held(PROPOSAL, given)
+    out = schema.held(PROPOSAL, given) or schema.held(lanes_json.FLOWED, given)
     if out is not None:
         raise wrong(f"is out of its shape at {out.told()}")
     root = given["plugin"]
     name, checked = plugin_name(root), []
-    for given_agent in given["subagents"]:
+    flow = given.get("flow")
+    if flow is not None:
+        flow_check(root, flow)
+    for given_agent in given.get("subagents", []):
         agent = subagent(root, given_agent)
         # A subagent given twice would be written twice, its file and its hook the second time from
         # the second's lanes alone, and the first's lost though the building AI approved them.
         if agent["name"] in [a["name"] for a in checked]:
             raise wrong(f"gives {agent['name']} twice, where each subagent comes once")
+        laid_by_hand(root, agent)
         checked.append(agent)
+    # A flow laid before is kept where the proposal gives none, so a subagent of it the proposal
+    # gives keeps its lane among those given.
+    kept = laid(root).get("flow") if flow is None else flow
+    if kept is not None:
+        checked = with_flow(root, kept, checked, flow is not None)
     folder = os.path.join(os.path.dirname(os.path.abspath(path)), name, "adapters")
     named = adapters_named(checked)
     found = [adapter_found(root, folder, a, port, by) for a, (port, by) in named.items()]
-    return {"plugin": root, "name": name, "subagents": checked, "adapters": found}
+    return {
+        "plugin": root,
+        "name": name,
+        "subagents": checked,
+        "adapters": found,
+        "flow": kept,
+        "flow_given": flow is not None,
+    }
+
+
+def laid(root: str) -> dict[str, Any]:
+    """The lanes laid in the plugin at root, with the flow where one is laid, as its
+    hooks/lanes.json holds them; none where it is not there. Stops where it is there and cannot be
+    read, as the lanes approved would be lost."""
+    if not os.path.exists(os.path.join(root, "hooks", "lanes.json")):
+        return {"subagents": []}
+    try:
+        return lanes_json.laid(root)
+    except ValueError as why:
+        raise Stop(f"lay.py: {root}/{why}; fix it and run again.") from None
+
+
+def flow_check(root: str, flow: dict[str, Any]) -> None:
+    """Stops where the flow, held to its schema, cannot be laid in the plugin at root: where
+    lanes_json.flow_wrong says why, where it names a subagent no file in the plugin's agents/ names,
+    by a name a hook's command can carry, or where the orchestrator's file says `flow.py` stands
+    for anything but lane's script, which the flow's lane takes by that name."""
+    why = lanes_json.flow_wrong(flow)
+    if why:
+        raise wrong(f"gives a flow {why}")
+    for named in [flow["orchestrator"], *flow["order"]]:
+        if not re.fullmatch(hook.NAME, named) or step.agent_file(root, named) is None:
+            raise wrong(f"gives a flow naming {named}, which no file in agents/ names")
+    orchestrator = flow["orchestrator"]
+    lies = step.bindings(root, orchestrator).get(lanes_json.FLOW_PY, lanes_json.FLOW_RUN)
+    if lies != lanes_json.FLOW_RUN:
+        raise Stop(
+            f"lay.py: {step.agent_file(root, orchestrator)} says `{lanes_json.FLOW_PY}` below is"
+            f" `{lies}`, where the flow's lane takes lane's, `{lanes_json.FLOW_RUN}`; name the"
+            " script of its own otherwise, and run again."
+        )
+
+
+def laid_by_hand(root: str, agent: dict[str, Any]) -> None:
+    """Stops where the subagent of the proposal, checked, lays follow_next taking lane's flow.py,
+    by the name the flow's lane takes it by or as the subagent's entry says it stands for, as the
+    layer lays that lane from the flow alone."""
+    bindings = step.bindings(root, agent["name"])
+    for s in agent["steps"]:
+        for lane in s["lanes"]:
+            if lane["lane"] != lanes_json.FLOW_LANE["lane"]:
+                continue
+            said = [shell.words(t) for t in step.bound(lane["takes"], bindings)]
+            if any(
+                w[:1] == [lanes_json.FLOW_PY] or call.starts(w, lanes_json.FLOW_RUN) for w in said
+            ):
+                raise wrong(
+                    f"lays follow_next taking {lanes_json.FLOW_PY} on step {s['step']} of"
+                    f" {agent['name']}, which lay.py lays from the flow"
+                )
+
+
+def with_flow(
+    root: str, flow: dict[str, Any], checked: list[dict[str, Any]], given: bool
+) -> list[dict[str, Any]]:
+    """The subagents checked with the flow's follow_next lane put among the orchestrator's lanes,
+    on the flow's step, after any lane the step has: the orchestrator's as the proposal gives it,
+    in its place; or, where the proposal does not give it, its lanes laid before, that lane of a
+    flow laid before left out, first, where the proposal gives the flow, as the subagents given
+    then; the subagents checked alone where it gives neither."""
+    name = flow["orchestrator"]
+    at = next((n for n, a in enumerate(checked) if a["name"] == name), None)
+    if at is None and not given:
+        return checked
+    if at is None:
+        before = next((a for a in laid(root)["subagents"] if a["name"] == name), {"steps": []})
+        raw = copy.deepcopy({**before, "name": name})
+        for s in raw["steps"]:
+            s["lanes"] = [g for g in s["lanes"] if g != lanes_json.FLOW_LANE]
+        raw["steps"] = [s for s in raw["steps"] if s["lanes"]]
+    else:
+        raw = {k: v for k, v in checked[at].items() if k in ("name", "adapter")}
+        raw["steps"] = [{"step": s["step"], "lanes": s["lanes"]} for s in checked[at]["steps"]]
+    on = next((s for s in raw["steps"] if s["step"] == flow["step"]), None)  # pragma: no mutate
+    if on is None:
+        on = {"step": flow["step"], "lanes": []}
+        raw["steps"].append(on)
+    on["lanes"] = [*on["lanes"], copy.deepcopy(lanes_json.FLOW_LANE)]
+    agent = subagent(root, raw)
+    return [agent, *checked] if at is None else [*checked[:at], agent, *checked[at + 1 :]]
 
 
 def adapters_named(agents: list[dict[str, Any]]) -> dict[str, tuple[str, str]]:

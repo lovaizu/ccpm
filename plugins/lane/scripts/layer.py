@@ -1,7 +1,8 @@
-"""The layer's course: the lanes the building AI proposes printed for its approval, and, once
-approved, written word for word into its plugin from the same file, so no AI copies what was
-approved; and, before it proposes lanes on a plugin laid before, the plugin's copy of lane's code
-brought up where it is older, with the hooks the layer wrote before, and the lanes laid said."""
+"""The layer's course: the lanes and the flow the building AI proposes printed for its approval,
+and, once approved, written word for word into its plugin from the same file, so no AI copies what
+was approved; and, before it proposes lanes on a plugin laid before, the plugin's copy of lane's
+code brought up where it is older, with the hooks the layer wrote before, the flow carried over,
+and the lanes laid said."""
 
 from __future__ import annotations
 
@@ -18,56 +19,75 @@ import lanes_json
 import placed
 import step
 import steps
-from proposal import Stop, plugin_name, proposal
+import template
+from proposal import Stop, laid, plugin_name, proposal
 
 
 def printed(path: str) -> str:
-    """The proposal as the building AI reads it: for each subagent step, its lanes, each under its
-    action with its hook, and the step as it would read; a step whose lanes are all taken out is
-    shown so."""
+    """The proposal as the building AI reads it: the flow it gives, before the step it is laid on;
+    for each subagent step, its lanes, each under its action with its hook, and the step as it would
+    read; a step whose lanes are all taken out is shown so."""
     given = proposal(path)
     before = laid_before(given["plugin"], given["name"])
+    flow = given["flow"] if given["flow_given"] else None
     blocks = []
     for agent in given["subagents"]:
         for s in steps.steps_laid(before, given["name"], agent):
             out = [*steps.listed(agent["name"], s), "\n", *steps.read_as_laid(agent["lines"], s)]
+            if flow and (agent["name"], s["step"]) == (flow["orchestrator"], flow["step"]):
+                out.insert(0, flow_shown(flow))
             blocks.append("".join(out))
     blocks += [adapter_shown(a) for a in given["adapters"]]
     return "\n".join(blocks)
+
+
+def flow_shown(flow: dict[str, Any]) -> str:
+    """The flow as the print shows it for the building AI's OK: its orchestrator and step, the
+    order its subagents start in, each answer that sends the work back, and the orchestrator's
+    end."""
+    name = flow["orchestrator"]
+    out = [f"Flow of {name}, laid on its step {flow['step']}:\n"]
+    out.append(f"  {', then '.join(flow['order'])}\n")
+    for back in flow.get("back", []):
+        out.append(f"  back to {back['to']} while {back['from']} answers {back['while']}\n")
+    out.append(f"  then {name} ends\n")
+    return "".join(out)
+
+
+def listed(names: list[str]) -> str:
+    """The names, listed with commas and `and` before the last."""
+    return " and ".join(filter(None, [", ".join(names[:-1]), names[-1]]))
 
 
 def written(path: str) -> str:
     """Writes the proposal into the plugin, has Claude Code check it, removes the proposal, its
     adapters beside it and its folder once nothing else is left there, and gives what was
     written. The lanes laid in hooks/lanes.json are those laid before in each other
-    subagent the plugin's agents/ still has, and the proposal's in each of its subagents."""
+    subagent the plugin's agents/ still has, and the proposal's in each of its subagents; the flow
+    is the one the proposal gives, or the one laid before where it gives none."""
     given = proposal(path)
-    root, plugin = given["plugin"], given["name"]
+    root, plugin, flow = given["plugin"], given["name"], given["flow"]
     hooks = entries.hooks_read(root)
     before = laid_before(root, plugin)
-    laid, values = dict(before), values_before(root, plugin)
+    was = lanes_json.froms(laid(root).get("flow"))
+    laid_now, values = dict(before), values_before(root, plugin)
     said = []
     for agent in given["subagents"]:
-        lines = agent["lines"]
-        for s in steps.steps_laid(before, plugin, agent):
-            start, end = s["span"]
-            lines[start:end] = steps.read_as_laid(lines, s)
-            where = os.path.relpath(agent["file"], root)
-            said.append(f"Wrote step {s['step']} of {agent['name']} into {where}.\n")
-        with open(agent["file"], "w", encoding="utf-8") as f:
-            f.write("".join(lines))
-        laid[f"{plugin}:{agent['name']}"] = [
+        said += steps_written(root, agent, before, plugin, flow)
+        laid_now[f"{plugin}:{agent['name']}"] = [
             {"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]
         ]
         values[f"{plugin}:{agent['name']}"] = agent.get("adapter")
-        said.append(f"Wrote the hook of {agent['name']} into hooks/hooks.json.\n")
+    hooked_now = [a["name"] for a in given["subagents"]]
+    hooked_now += [n for n in lanes_json.froms(flow) if n not in hooked_now]
+    said.append(f"Wrote the hooks of {listed(hooked_now)} into hooks/hooks.json.\n")
     said += entries.gone_out(hooks, plugin, root)
-    kept = {a: s for a, s in laid.items() if step.agent_file(root, a.split(":")[1]) is not None}
-    for agent, on in kept.items():
-        entries.hooks_with(hooks, plugin, hooked(root, agent.split(":")[1], on))
+    kept = {a: s for a, s in laid_now.items() if step.agent_file(root, a.split(":")[1]) is not None}
+    hooks_put(root, hooks, plugin, kept, flow, was)
     entries.hooks_written(root, hooks)
-    lanes_json.lanes_written(root, kept, values)
-    said.append("Wrote the lanes laid into hooks/lanes.json.\n")
+    lanes_json.lanes_written(root, kept, values, flow)
+    what = "the flow and the lanes laid" if flow else "the lanes laid"
+    said.append(f"Wrote {what} into hooks/lanes.json.\n")
     copies = [a for a in given["adapters"] if a["beside"]]
     for adapter in copies:
         os.makedirs(os.path.dirname(os.path.join(root, adapter["path"])), exist_ok=True)
@@ -108,6 +128,74 @@ def written(path: str) -> str:
     return "".join(said)
 
 
+def steps_written(
+    root: str,
+    agent: dict[str, Any],
+    before: dict[str, list[dict[str, Any]]],
+    plugin: str,
+    flow: dict[str, Any] | None,
+) -> list[str]:
+    """Writes each step the layer writes in the subagent, as the proposal gives it, into its file,
+    and, where it is the flow's orchestrator and its entry does not yet say where flow.py lies, that
+    line into its entry, before the first paragraph of its body; gives what was written, said."""
+    lines = agent["lines"]
+    said = []
+    for s in steps.steps_laid(before, plugin, agent):
+        start, end = s["span"]
+        lines[start:end] = steps.read_as_laid(lines, s)
+        where = os.path.relpath(agent["file"], root)
+        said.append(f"Wrote step {s['step']} of {agent['name']} into {where}.\n")
+    entry = str(step.agent_file(root, agent["name"]))
+    on = flow["step"] if flow is not None and flow["orchestrator"] == agent["name"] else None
+    if on is not None and lanes_json.FLOW_PY not in step.bindings(root, agent["name"]):
+        if step.part(root, agent["name"]) is None:
+            mark = f"Wrote step {on} "
+            said = [
+                t.replace(" into ", ", and where `flow.py` lies, into ")
+                if t.startswith(mark)
+                else t
+                for t in said
+            ]
+            lines[:] = lies_put(lines)
+        else:
+            with open(entry, encoding="utf-8") as f:
+                text = f.read().splitlines(keepends=True)
+            with open(entry, "w", encoding="utf-8") as f:
+                f.write("".join(lies_put(text)))
+            said.append(f"Wrote where `flow.py` lies into {os.path.relpath(entry, root)}.\n")
+    with open(agent["file"], "w", encoding="utf-8") as f:
+        f.write("".join(lines))
+    return said
+
+
+def lies_put(lines: list[str]) -> list[str]:
+    """The lines of a subagent's entry with the line saying where flow.py lies put in before the
+    first paragraph of its body, a paragraph of its own."""
+    body = template.body([line.rstrip("\n") for line in lines])
+    first = next((n for n in range(body, len(lines)) if lines[n].strip()), len(lines))
+    return [*lines[:first], lanes_json.FLOW_LIES + "\n", "\n", *lines[first:]]
+
+
+def hooks_put(
+    root: str,
+    hooks: dict[str, Any],
+    plugin: str,
+    laid_in: dict[str, list[dict[str, Any]]],
+    flow: dict[str, Any] | None,
+    was: list[str],
+) -> None:
+    """Puts into the hooks the entries of each subagent of the plugin at root lanes are laid in, by
+    `<plugin>:<name>`, and of each `from` of the flow, keeping its answer; and takes out those of
+    each subagent that was a `from` before, as the agents/ still has it, that no longer needs
+    them."""
+    now = lanes_json.froms(flow)
+    names = [a.split(":")[1] for a in laid_in]
+    for name in names + [n for n in dict.fromkeys(now + was) if n not in names]:
+        if step.agent_file(root, name) is not None:
+            on = laid_in.get(f"{plugin}:{name}", [])
+            entries.hooks_with(hooks, plugin, hooked(root, name, on, now))
+
+
 def brought_up(root: str) -> str:
     """Brings up the plugin's copy of lane's code where it is older than lane, and each hook the
     layer wrote in it to the current form wherever it is in another, laying the same lanes, kept in
@@ -122,6 +210,7 @@ def brought_up(root: str) -> str:
     name = plugin_name(root)
     hooks = entries.hooks_read(root)
     agents = laid_before(root, name)
+    flow = laid(root).get("flow")
     was = placed.older(root)
     said = []
     if was is not None:
@@ -133,12 +222,10 @@ def brought_up(root: str) -> str:
     # code, in a plugin of the ccpm marketplace, is always lane's version while the hooks the layer
     # wrote with an older one are not.
     before = copy.deepcopy(hooks)
-    for agent, laid in agents.items():
-        plugin, sub = agent.split(":")
-        entries.hooks_with(hooks, plugin, hooked(root, sub, laid))
+    hooks_put(root, hooks, name, agents, flow, [])
     if hooks != before:
         entries.hooks_written(root, hooks)
-        lanes_json.lanes_written(root, agents, values_before(root, name))
+        lanes_json.lanes_written(root, agents, values_before(root, name), flow)
         said += [
             f"Wrote the hook of {a.split(':')[1]} into hooks/hooks.json with the lanes it held.\n"
             for a in agents
@@ -150,14 +237,17 @@ def brought_up(root: str) -> str:
         for a, path in values_before(root, name).items()
         if path
     ]
-    return "".join([*said, *said_before(root, agents), *values])
+    return "".join([*said, *said_before(root, agents, flow), *values])
 
 
-def hooked(root: str, name: str, laid: list[dict[str, Any]]) -> dict[str, Any]:
+def hooked(
+    root: str, name: str, laid_in: list[dict[str, Any]], answering: list[str]
+) -> dict[str, Any]:
     """The subagent of the name in the plugin at root, as its hooks are written from it: its name,
-    the lanes laid in it as steps of a proposal, and whether its entry has it read its part first,
-    as step.part finds it."""
-    return {"name": name, "steps": laid, "part": step.part(root, name) is not None}
+    the lanes laid in it as steps of a proposal, whether its entry has it read its part first, as
+    step.part finds it, and whether it is among those whose answer is kept."""
+    part = step.part(root, name) is not None
+    return {"name": name, "steps": laid_in, "part": part, "from": name in answering}
 
 
 def values_before(root: str, plugin: str) -> dict[str, str | None]:
@@ -174,25 +264,25 @@ def values_before(root: str, plugin: str) -> dict[str, str | None]:
 def laid_before(root: str, plugin: str) -> dict[str, list[dict[str, Any]]]:
     """Each subagent the plugin at root lays lanes in, as `<plugin>:<subagent>`, with its lanes as
     steps of a proposal, as its hooks/lanes.json holds them; none where it is not there. Stops where
-    it is there and cannot be read, as the lanes approved would be lost."""
-    if not os.path.exists(os.path.join(root, "hooks", "lanes.json")):
-        return {}
-    try:
-        found = lanes_json.laid(root)
-    except ValueError as why:
-        raise Stop(f"lay.py: {root}/{why}; fix it and run again.") from None
-    return {f"{plugin}:{a['name']}": a["steps"] for a in found["subagents"]}
+    it is there and cannot be read, as `laid` does."""
+    return {f"{plugin}:{a['name']}": a["steps"] for a in laid(root)["subagents"]}
 
 
-def said_before(root: str, agents: dict[str, list[dict[str, Any]]]) -> list[str]:
+def said_before(
+    root: str, agents: dict[str, list[dict[str, Any]]], flow: dict[str, Any] | None
+) -> list[str]:
     """Each lane laid before in each subagent of the plugin at root, as `<plugin>:<name>`,
     each on a step of a proposal, said for the building AI to keep in its proposal or leave out: its
-    step, whether the step still says its sentence, and the lane as the proposal gives it."""
+    step, whether the step still says its sentence, and the lane as the proposal gives it; the lane
+    of the flow left out, which the layer lays from the flow."""
     found = []
-    for agent, laid in agents.items():
+    orchestrator = (flow or {}).get("orchestrator")
+    for agent, steps_laid in agents.items():
         name = agent.split(":")[1]
-        for s in laid:
+        for s in steps_laid:
             for lane in s["lanes"]:
+                if (name, lane) == (orchestrator, lanes_json.FLOW_LANE):
+                    continue
                 sentence = lanes.sentence(lane["lane"], lane["takes"])
                 held = step.holds(root, name, s["step"], sentence)
                 gone = "" if held else f', whose step no longer says "{sentence}"'

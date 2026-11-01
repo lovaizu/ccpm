@@ -58,7 +58,9 @@ class TestLaidIn(LanesTest):
         # When: the lanes laid in changelog-writer are read
         # Then: they are its own, each its step, the lane and what it takes, the comma kept
         self.assertEqual(
-            lanes_json.lanes_of(lanes_json.subagent(self.plugin, "changelog-writer")),
+            lanes_json.lanes_of(
+                lanes_json.subagent(lanes_json.laid(self.plugin), "changelog-writer")
+            ),
             [
                 (1, "start_with", ["scripts/given.py"], None),
                 (3, "hands_off", ["git commit, -a", "x"], None),
@@ -79,10 +81,14 @@ class TestLaidIn(LanesTest):
         # When: the lanes laid in it are read
         # Then: each lane gives its adapter, and the subagent its own
         self.assertEqual(
-            lanes_json.lanes_of(lanes_json.subagent(self.plugin, "changelog-writer")),
+            lanes_json.lanes_of(
+                lanes_json.subagent(lanes_json.laid(self.plugin), "changelog-writer")
+            ),
             [(3, "every_item", ["r.md"], "hooks/adapters/items-h.py")],
         )
-        self.assertEqual(lanes_json.subagent(self.plugin, "changelog-writer"), agent)
+        self.assertEqual(
+            lanes_json.subagent(lanes_json.laid(self.plugin), "changelog-writer"), agent
+        )
 
     def test_lanes_json_not_as_lay_py_write_writes_it_stops_saying_what_is_wrong(self):
         lane = {"lane": "hands_off", "takes": ["git"]}
@@ -144,8 +150,151 @@ class TestLaidIn(LanesTest):
                 # When: the lanes laid in changelog-writer are read
                 # Then: it stops, saying what is wrong
                 with self.assertRaises(ValueError) as stop:
-                    lanes_json.lanes_of(lanes_json.subagent(self.plugin, "changelog-writer"))
+                    lanes_json.lanes_of(
+                        lanes_json.subagent(lanes_json.laid(self.plugin), "changelog-writer")
+                    )
                 self.assertIn(named, str(stop.exception))
+
+
+# The README's flow: notes-lead starts changelog-writer, then changelog-reviewer, whose `more` sends
+# the work back to the writer.
+FLOW = {
+    "orchestrator": "notes-lead",
+    "step": 1,
+    "order": ["changelog-writer", "changelog-reviewer"],
+    "back": [{"from": "changelog-reviewer", "to": "changelog-writer", "while": "more"}],
+}
+
+
+def flow_md() -> str:
+    """lane's docs/flow.md."""
+    with open(os.path.join(helpers.LANE, "docs", "flow.md"), encoding="utf-8") as f:
+        return f.read()
+
+
+class TestFlowShape(unittest.TestCase):
+    def test_the_flows_schema_is_the_one_docs_flow_md_gives(self):
+        # Given: the flow's JSON Schema docs/flow.md gives under The flow
+        text = flow_md().split("## The flow")[1].split("\n## ")[0]
+        shown = json.loads(text.split("```json\n")[1].split("```")[0])
+        # When: the flow's is read in lane's code
+        # Then: they are the same
+        self.assertEqual(shown, lanes_json.FLOW)
+
+    def test_the_line_saying_where_flow_py_lies_is_the_one_docs_flow_md_gives(self):
+        # Given: the line docs/flow.md shows put into the orchestrator's file
+        shown = flow_md().split("```markdown\n")[1].split("\n```")[0]
+        # When: the line is made in lane's code
+        # Then: they are the same
+        self.assertEqual(shown, lanes_json.FLOW_LIES)
+
+
+class TestFlowLaid(LanesTest):
+    def laid_with(self, flow: object) -> None:
+        """Writes hooks/lanes.json laying LAID's lanes with the flow."""
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"flow": flow, **LAID})
+
+    def test_a_flow_in_its_form_is_read_with_the_lanes(self):
+        for what, flow in {
+            "with a back": FLOW,
+            "with no back": {k: v for k, v in FLOW.items() if k != "back"},
+            "with two backs": {
+                **FLOW,
+                "order": ["a", "b", "c"],
+                "back": [
+                    {"from": "b", "to": "a", "while": "more"},
+                    {"from": "c", "to": "a", "while": "  **again** "},
+                ],
+            },
+        }.items():
+            with self.subTest(what=what):
+                # Given: hooks/lanes.json holding a flow in its form
+                self.laid_with(flow)
+                # When: it is read
+                # Then: the flow is read as written, beside the lanes
+                self.assertEqual(lanes_json.laid(self.plugin), {"flow": flow, **LAID})
+
+    def test_a_flow_out_of_its_form_stops_saying_what_is_wrong(self):
+        back = FLOW["back"][0]
+        for what, flow, named in (
+            ("no object", [], "$.flow: expected an object"),
+            ("no orchestrator", {**FLOW, "orchestrator": None}, "$.flow.orchestrator"),
+            ("step 0", {**FLOW, "step": 0}, "$.flow.step: expected a number of at least 1"),
+            ("an empty order", {**FLOW, "order": []}, "$.flow.order: expected at least 1"),
+            (
+                "a subagent twice in the order",
+                {**FLOW, "order": ["a", "a"]},
+                '$.flow.order: expected each item once, found "a" twice',
+            ),
+            ("an empty while", {**FLOW, "back": [{**back, "while": ""}]}, ".back[0].while"),
+            ("a key beside", {**FLOW, "x": 1}, "$.flow: expected only the keys"),
+            (
+                "the orchestrator in its order",
+                {**FLOW, "order": ["notes-lead", *FLOW["order"]]},
+                "gives a flow whose order names its orchestrator notes-lead",
+            ),
+            (
+                "a from not in its order",
+                {**FLOW, "back": [{**back, "from": "x"}]},
+                "gives a flow whose back names x, which its order does not",
+            ),
+            (
+                "a from and a to not in its order",
+                {**FLOW, "back": [{**back, "from": "x", "to": "y"}]},
+                "gives a flow whose back names x, which its order does not",
+            ),
+            (
+                "a to not in its order",
+                {**FLOW, "back": [{**back, "to": "x"}]},
+                "gives a flow whose back names x, which its order does not",
+            ),
+            (
+                "a to after its from",
+                {
+                    **FLOW,
+                    "back": [{**back, "from": "changelog-writer", "to": "changelog-reviewer"}],
+                },
+                (
+                    "gives a flow whose back from changelog-writer goes to changelog-reviewer,"
+                    " which does not come before it in its order"
+                ),
+            ),
+            (
+                "a to the same as its from",
+                {**FLOW, "back": [{**back, "to": "changelog-reviewer"}]},
+                (
+                    "gives a flow whose back from changelog-reviewer goes to changelog-reviewer,"
+                    " which does not come before it in its order"
+                ),
+            ),
+            (
+                "two backs from one subagent",
+                {**FLOW, "back": [back, back]},
+                "gives a flow with two backs from changelog-reviewer",
+            ),
+            (
+                "a while over two lines",
+                {**FLOW, "back": [{**back, "while": "more\nentries"}]},
+                (
+                    "gives a flow whose back from changelog-reviewer answers a while of more than"
+                    " one line"
+                ),
+            ),
+            (
+                "a while ending in a line break",
+                {**FLOW, "back": [{**back, "while": "more\r"}]},
+                "answers a while of more than one line",
+            ),
+        ):
+            with self.subTest(what=what):
+                # Given: hooks/lanes.json holding a flow out of its form
+                self.laid_with(flow)
+                # When: it is read
+                # Then: it stops, saying what is wrong
+                with self.assertRaises(ValueError) as stop:
+                    lanes_json.laid(self.plugin)
+                self.assertIn(named, str(stop.exception))
+                self.assertTrue(str(stop.exception).startswith("hooks/lanes.json "))
 
 
 if __name__ == "__main__":
