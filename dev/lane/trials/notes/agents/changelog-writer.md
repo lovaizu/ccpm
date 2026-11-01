@@ -1,6 +1,6 @@
 ---
 name: changelog-writer
-description: Writes CHANGELOG.md entries for the project's changes since its last entry, in the form the file already uses. Started by /notes:changelog.
+description: Writes CHANGELOG.md entries for the project's changes since its last entry, in the form the file already uses. Started by notes-lead.
 ---
 
 ## Role

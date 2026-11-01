@@ -10,7 +10,7 @@ checked, is in [architecture.md](architecture.md).
   [dev/README.md](../README.md) says.
 - What every plugin's tests stand on is in `testing.py`, and what every plugin's trials stand on is
   in `trials/trying.py`.
-- Trials: `trials/notes_trial.py` tries lane as the building AI meets it. It lays the README's lanes
-  on `trials/notes` by `lay.py write` and runs notes as laid. `trials/memo_trial.py` tries every
-  lane on `trials/memo`, a plugin whose steps call for each. Both stand on `trials/lane_trials.py`,
-  and the top of each file says what it takes.
+- Trials: `trials/notes_trial.py` tries lane as the building AI meets it. It lays the README's flow
+  and lanes on `trials/notes` by `lay.py write` and runs notes as laid. `trials/memo_trial.py`
+  tries every lane on `trials/memo`, a plugin whose steps call for each. Both stand on
+  `trials/lane_trials.py`, and the top of each file says what it takes.
