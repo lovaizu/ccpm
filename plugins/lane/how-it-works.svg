@@ -85,12 +85,15 @@
 
   <rect class="box" x="620" y="470" width="240" height="64" rx="0"/>
   <text class="name" x="740" y="498">hooks/lane/flow.py</text>
-  <text class="kind" x="740" y="518">lane's flow</text>
+  <text class="kind" x="740" y="518">lane's script</text>
 
   <path class="line" d="M220,490 H620" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="420" y="482">asks for the next move</text>
+  <text class="label" text-anchor="middle" x="420" y="482">runs</text>
   <path class="line" d="M620,516 H220" marker-end="url(#arrow)"/>
   <text class="label" text-anchor="middle" x="420" y="550">the next move, from the flow and the answers so far</text>
+
+  <path class="line" d="M860,490 H870 V132 H862" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="864" y="440">reads the flow</text>
 
   <!-- legend -->
   <rect class="box" x="20" y="150" width="40" height="22" rx="11"/>
