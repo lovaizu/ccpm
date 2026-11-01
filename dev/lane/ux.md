@@ -27,6 +27,7 @@ sentence again.
 
   - a hook lets through a call that drifts from its sentence, in a form its step names, or stops a
     call the sentence allows;
+  - `flow.py` prints a move other than the one the flow and the subagents' answers call for;
   - the building AI must change or work around something lane writes into the plugin: a step, a
     setting such as an entry in the plugin's hooks file, or the copy of lane's code lane puts there.
 
@@ -42,7 +43,10 @@ The building AI, an AI, writes the proposal, the file that holds the lanes it pr
 lane's script, prints the proposal and writes it into the plugin. The subagent, an AI, is one of the
 plugin's subagents with lanes laid in it. The main conversation, an AI, is the one the user talks
 with, which the subagent asks for what lies outside its work. The hook, lane's code that Claude Code
-runs on the subagent's calls, notices a drift and tells the subagent the lane's sentence.
+runs on the subagent's calls, notices a drift and tells the subagent the lane's sentence. The
+orchestrator, an AI, is a subagent that starts the plugin's other subagents in the order of a flow,
+the order the building AI writes in the proposal. `flow.py`, lane's script, prints the
+orchestrator's next move.
 
 ### From proposing lanes to a run that drifts
 
@@ -80,6 +84,8 @@ sequenceDiagram
   Note over L: writes the steps and the hooks, and puts lane's code in the plugin
 ```
 
+- A proposal may hold a flow. `lay.py print` shows the flow, and `lay.py write` lays it as a lane
+  on the orchestrator's step.
 - `lay.py` puts lane's code in the plugin once for all its subagents: a link to it in a plugin of
   the ccpm marketplace, and a copy with its version anywhere else. Where an older copy is, `lay.py
   up` brings the copy and the hooks to lane's version with the same lanes.
@@ -101,6 +107,39 @@ sequenceDiagram
   a merge, is held by GitHub's branch protection or Claude Code's permission rules, not by lane.
 - On a machine without Python 3.9 or later, the hooks stop the calls they watch, each asking for
   Python to be installed. At a subagent's end they tell the user so and let it end.
+
+### An orchestrator told its next move
+
+Here the flow starts a writer and then a reviewer, and the reviewer's answer `more` sends the work
+back to the writer.
+
+```mermaid
+sequenceDiagram
+  participant O as orchestrator<br/>#lt;AI, with its hooks#gt;
+  participant F as flow.py<br/>#lt;script#gt;
+  participant W as writer<br/>#lt;AI, a subagent of the flow#gt;
+  participant R as reviewer<br/>#lt;AI, a subagent of the flow#gt;
+  O->>F: run
+  F->>O: the next move: start the writer
+  O->>W: start
+  W->>O: its work
+  O->>O: about to end before running flow.py again, stopped and told the flow's sentence
+  O->>F: run
+  F->>O: the next move: start the reviewer
+  O->>R: start
+  R->>O: answers more
+  O->>F: run
+  F->>O: the next move: start the writer again
+  Note over O,R: the writer and the reviewer again, as above,<br/>until the reviewer no longer answers more
+  O->>F: run
+  F->>O: no move
+  Note over O: ends with the reviewed work
+```
+
+- The flow's sentence is ``<plugin>: Take each move `flow.py` prints, until it prints none.`` The
+  orchestrator is told it when it does anything but the move printed, or anything but run
+  `flow.py` again once it has taken the move.
+- A subagent answers `more` when it writes `more` on a line of its own.
 
 ### A lane lane cannot check
 

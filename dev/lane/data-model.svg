@@ -25,7 +25,9 @@
   <rect class="box" x="330" y="200" width="200" height="44" rx="4"/>
   <text class="name" x="430" y="227">lanes laid</text>
   <rect class="box" x="640" y="200" width="200" height="44" rx="4"/>
-  <text class="name" x="740" y="227">hook entry</text>
+  <text class="name" x="740" y="227">flow</text>
+  <rect class="box" x="950" y="200" width="200" height="44" rx="4"/>
+  <text class="name" x="1050" y="227">hook entry</text>
 
   <rect class="box" x="20" y="370" width="200" height="44" rx="4"/>
   <text class="name" x="120" y="397">run values</text>
@@ -40,6 +42,8 @@
   <text class="name" x="120" y="567">record</text>
   <rect class="box" x="330" y="540" width="200" height="44" rx="4"/>
   <text class="name" x="430" y="567">calls kept</text>
+  <rect class="box" x="640" y="540" width="200" height="44" rx="4"/>
+  <text class="name" x="740" y="567">reply kept</text>
 
   <!-- relations -->
   <path class="line" d="M220,52 H330"/>
@@ -53,9 +57,10 @@
   <path class="line" d="M700,74 L490,200"/>
   <text class="label" x="612" y="150">up shows</text>
 
-  <path class="line" d="M530,222 H640"/>
-  <text class="label" text-anchor="middle" x="585" y="198">its subagent</text>
-  <text class="label" text-anchor="middle" x="585" y="214">named by</text>
+  <path class="line" d="M530,212 H560 V180 H1050 V200"/>
+  <text class="label" text-anchor="middle" x="900" y="172">its subagent named by</text>
+  <path class="line" d="M530,232 H640"/>
+  <text class="label" text-anchor="middle" x="585" y="252">holds</text>
   <path class="line" d="M120,244 V370"/>
   <text class="label" x="130" y="304">values port</text>
   <text class="label" x="130" y="321">gives</text>
@@ -64,8 +69,8 @@
   <path class="line" d="M430,244 V370"/>
   <text class="label" x="440" y="304">each lane's</text>
   <text class="label" x="440" y="321">sentence ends</text>
-  <path class="line" d="M840,222 L1010,370"/>
-  <text class="label" x="935" y="280">runs on</text>
+  <path class="line" d="M1050,244 V370"/>
+  <text class="label" x="1060" y="312">runs on</text>
 
   <path class="line" d="M530,392 H640"/>
   <text class="label" text-anchor="middle" x="585" y="368">sentence</text>
@@ -80,4 +85,9 @@
   <text class="label" text-anchor="middle" x="275" y="554">yet in</text>
   <path class="line" d="M1000,414 L500,540"/>
   <text class="label" x="760" y="500">each kept as it comes back</text>
+  <path class="line" d="M530,562 H640"/>
+  <text class="label" text-anchor="middle" x="585" y="538">an Agent call's</text>
+  <text class="label" text-anchor="middle" x="585" y="554">ID names</text>
+  <path class="line" d="M1120,414 L840,556"/>
+  <text class="label" x="960" y="540">kept as it ends</text>
 </svg>

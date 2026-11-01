@@ -1,7 +1,7 @@
 """as_printed: the subagent hands on what a command its step names printed, word for word, as the
-next thing it does, such as turn:up handing on the questions `turn.py questions` printed. A
-hand-on is an Agent call's prompt, a SendMessage's message or the subagent's last reply, so the lane
-is held both on a tool call and as the subagent is about to end. It is held from the calls the
+next thing it does, such as the questions a plugin's `scripts/questions.py` printed. A hand-on is
+an Agent call's prompt, a SendMessage's message or the subagent's last reply, so the lane is held
+both on a tool call and as the subagent is about to end. It is held from the calls the
 subagent made before and the replies that ended its turn: once the command has run and printed,
 each call, and the last reply, is a drift until a hand-on holds what it printed, a heading line
 beside it allowed, as a call made first, such as one taking an answer that came meanwhile, acts

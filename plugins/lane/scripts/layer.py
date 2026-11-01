@@ -96,7 +96,7 @@ def written(path: str) -> str:
             os.remove(source)
         said.append(f"Removed the adapter {adapter['source']} and its cases from beside it.\n")
     # The proposal's folder, `.lane/<yyyymmdd>-<plugin>/`, goes once nothing of the building AI's
-    # is left in it, `.lane/` kept, as turn keeps `.turn/`.
+    # is left in it, `.lane/` itself kept.
     day = os.path.dirname(os.path.abspath(path))
     folder = os.path.join(day, plugin, "adapters")
     for place in (folder, os.path.dirname(folder)):

@@ -1,5 +1,5 @@
 """follow_next: the subagent takes the move a script its step names printed as its next, such as
-turn's `scripts/turn.py next` telling the orchestrator what to do now. The move is read at the move
+a plugin's `scripts/next.py` telling the subagent what to do now. The move is read at the move
 port, in lane's form the tool call itself, one JSON line `{"tool": ..., "input": {...}}`, a form
 general to any plugin. The move is the subagent's next, so the lane is held both on a tool call and
 as the subagent is about to end. It is held from the calls the subagent made before: once the script

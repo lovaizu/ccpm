@@ -27,7 +27,7 @@ run, with nothing told. A thing taken holds any text, a comma among the rest.
 | run | hands_off | Do not run `<commands>`. | runs one of them |
 | test | test_after | After changing `<output>`, pass `<test>`. | ends with a change not yet passed |
 | hand on | as_printed | Hand on `<command>` as it is. | does anything else first |
-| follow | follow_next | Take the next move `<script>` printed. | does anything else first |
+| follow | follow_next | Take each move `<script>` prints, until it prints none. | does anything else first, or anything but run `<script>` again once it has taken the move |
 | wait | wait_for | Do not go on until `<approval>`. | runs a command it holds back without it |
 | end | end_when | End only once `<output>` is made. | ends before |
 | end | every_item | Answer every item of `<input>`. | leaves an item unanswered |
@@ -59,6 +59,16 @@ path, without `$`, a backquote or a `cd` lane cannot follow. write_only lets a c
 the folder the subagent works in, as one throwing its output away in `/dev/null`, only where the
 words settle that the file is out of it.
 
+follow_next holds the subagent from the first run of the script on. Once the script has printed a
+move, each call and the end are a drift until a call takes the move: that tool, with each field of
+the input printed given equal, the fields not printed free. Once the subagent has taken it, each
+call and the end are a drift until it runs the script again. A run of the script is never a drift,
+and a run that fails, exiting other than 0, changes nothing of what is due. Once the script's last
+run printed no move, the subagent is free. So a plugin's `scripts/next.py`, printing the next tool
+call of its run, has the subagent take each move it prints and come back to it after each, until
+it prints none. lane's own such script is `flow.py`, which prints the next move of a flow, as
+[the flow](flow.md) says.
+
 every_item reads its input's items at the items port, and follow_next the move your script printed
 at the move port, as the ports below say.
 
@@ -69,9 +79,11 @@ laid, and once it approves them has `lay.py write` lay them from the same file, 
 Schema:
 
 ```json
-{"type": "object", "required": ["plugin", "subagents"], "additionalProperties": false,
+{"type": "object", "required": ["plugin"], "additionalProperties": false,
+ "anyOf": [{"required": ["subagents"]}, {"required": ["flow"]}],
  "properties": {
   "plugin": {"type": "string", "description": "your plugin's folder"},
+  "flow": {"type": "object", "description": "your subagents' order, as docs/flow.md gives it"},
   "subagents": {"type": "array", "minItems": 1, "items": {
    "type": "object", "required": ["name", "steps"], "additionalProperties": false,
    "properties": {
@@ -99,6 +111,9 @@ Schema:
   [What each lane is given](#what-each-lane-is-given), each written as the step writes it, a script
   or a command word for word.
 - An adapter is named only where your text is in another form than lane's, as the ports below say.
+- A flow is written under `flow`, held to the JSON Schema [the flow](flow.md#the-flow) gives, and
+  laid as a follow_next lane on the orchestrator's step. A proposal may hold a flow alone, with no
+  `subagents`.
 - A subagent the proposal gives has, once it is written, the proposal's lanes alone. Put in each
   lane that `lay.py up` says was laid before in it and that you keep, as `lay.py up` says the lane.
 

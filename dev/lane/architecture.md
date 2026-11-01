@@ -23,6 +23,9 @@ Principle 1 to 9, and two of its own, named below lane's Principle 1 and 2:
   copy and the hooks to lane's version with the same lanes, and to tell me each lane laid before.
 - As the building AI, I want my subagent, when a call drifts from a lane, to be stopped and told the
   lane's sentence headed by my plugin's name, and every call the sentence allows let through.
+- As the building AI, I want to write the order my orchestrator starts my other subagents in as a
+  flow in the proposal, and my orchestrator, on every run, stopped and told the flow's sentence
+  when it does anything but the move `flow.py` prints, or ends before `flow.py` prints none.
 - As the building AI, I want a call that lane cannot check stopped, and my subagent and its user
   told what is wrong and who must fix it.
 - As the building AI, I want the hooks, on a machine without Python 3.9 or later, to stop the calls
@@ -83,6 +86,45 @@ Principle 1 to 9, and two of its own, named below lane's Principle 1 and 2:
 
   They are the forms a plugin's outputs most often take. A form of a project's own is left to the
   project's script, through test_after.
+- follow_next holds the subagent to each move its script prints, and to run the script again once
+  it has taken the move, until the script's last run printed no move. A run of the script is never
+  a drift, and a run that fails changes nothing of what is due. It is held from the calls the
+  subagent made before, as [the lanes](../../plugins/lane/docs/lanes.md) say.
+
+  A move taken is half of following a script: an orchestrator that ends once a subagent has
+  answered, without asking the script again, drifts as much as one that takes another move. The
+  lane takes any script, so a plugin with its own script for its moves needs no lane of its own.
+- `flow.py`, part of the guard, prints the orchestrator's next move from the flow and from the
+  replies of the run, in follow_next's move form, as [the flow](../../plugins/lane/docs/flow.md)
+  says. The layer lays the flow as a follow_next lane taking `flow.py` on the orchestrator's step.
+
+  An order set beforehand is the same kind of thing in every plugin, so lane reads it from the
+  approved file with one script, and no plugin keeps a script of its own for its order. Laid as a
+  follow_next lane, the flow is told and held as every lane is, with no check of its own.
+- The guard gives `flow.py` the run: on the orchestrator's call that runs `flow.py` as a command of
+  its own, it lets the call through with the session's and the orchestrator's IDs put before the
+  command, by `updatedInput` with `"allow"`. It stops a call that runs `flow.py` together with other
+  commands, and tells the orchestrator to run `flow.py` as a command of its own.
+
+  A hook is handed both IDs, and a command the Bash tool runs is handed the session's ID alone
+  (hooks, Common input fields; env-vars, `CLAUDE_CODE_SESSION_ID`). Taken from the event of the call
+  itself, the IDs cannot belong to another run, and no AI copies them. `"allow"` skips the
+  permission prompt for the whole command (hooks, PreToolUse decision control), so it is given to
+  lane's script alone.
+- `flow.py` reads what the guard kept of the run: the orchestrator's calls kept, each Agent call
+  with the ID of the subagent it started, and the reply each `from` subagent of a `back` last
+  ended with. It reads neither the records nor anything the orchestrator writes.
+
+  Claude Code documents the Agent call's `tool_response` and SubagentStop's
+  `last_assistant_message`, and not the records (hooks, Agent and SubagentStop input). An Agent
+  call of a background subagent comes back as the subagent starts, and one of a subagent reporting
+  through SubagentHandback gives back a note in place of its report (hooks, Agent), so the reply
+  is taken at the subagent's own end, from the report it hands back where it hands one.
+- A subagent answers a `while` when a line of its reply, its blanks and the Markdown marks at its
+  two ends left out, is that text exactly.
+
+  A word found anywhere would count `No more entries need the writer` as `more`. A line of its own
+  is what the subagent's step can say, and what a reply rarely holds by chance.
 - Claude Code carries each call of the subagent to the guard as an event, and the guard's answer
   back. Claude Code is no role of lane's, so [Deployment](#deployment) draws it.
 - Where the guard cannot check a call, the subagent asks the main conversation for the fix, as the
@@ -142,6 +184,19 @@ Principle 1 to 9, and two of its own, named below lane's Principle 1 and 2:
   PostToolUseFailure, before the next call's PreToolUse. Read from the record alone, the call being
   checked would count as made before itself, and a call made earlier in the same reply would be
   missed.
+- The lanes laid hold the flow under `flow`, in the shape the proposal gives it. The layer writes
+  the flow's follow_next lane among the orchestrator's lanes, so the guard holds it as any lane,
+  and `flow.py` reads the order from the same file.
+
+  The order the orchestrator is held to and the one the building AI approved cannot differ.
+- Of an Agent call, the calls kept hold the subagent it started and the `agentId` its
+  `tool_response` gives. The guard keeps the reply of each `from` subagent of a `back` as its
+  reply kept, by the subagent's ID: the `message` of its SubagentHandback call, or else its
+  `last_assistant_message`, each end replacing the one before.
+
+  The ID ties each start to its reply, whether the subagent ran in the foreground or the
+  background. A SubagentStop hook can keep the subagent going (hooks, Stop decision control), so
+  the reply it ended with is the last kept, and it is kept before the orchestrator is handed it.
 
 #### Sequences
 
@@ -192,6 +247,33 @@ sequenceDiagram
   Note over G: keeps it among the calls kept
   S->>G: event of its end
   G-->>S: answer: kept going with the sentence of a lane not kept, or let end
+```
+
+A flow followed:
+
+```mermaid
+sequenceDiagram
+  participant O as orchestrator<br/>#lt;AI, a subagent with lanes#gt;
+  participant G as guard<br/>#lt;code#gt;
+  participant F as flow.py<br/>#lt;code#gt;
+  participant S as subagent of the flow<br/>#lt;AI#gt;
+  O->>G: event of a call running flow.py
+  G->>O: answer: let through, the run's IDs put before the command
+  O->>F: run, with the run's IDs
+  Note over F: reads the flow, the calls kept and the replies kept
+  F->>O: move: start the subagent
+  O->>S: Agent call
+  S->>G: event of its end
+  Note over G: keeps its reply kept, where it is the from of a back
+  S->>O: its reply
+  O->>G: event of the call come back
+  Note over G: keeps it, with the subagent's ID, among the calls kept
+  O->>G: event of its end, before running flow.py again
+  G-->>O: answer: kept going with the flow's sentence
+  O->>F: run again, as above
+  F->>O: no move, the flow done
+  O->>G: event of its end
+  G->>O: answer: let end
 ```
 
 A call lane cannot check:
@@ -296,6 +378,18 @@ sequenceDiagram
   An adapter that hands its port's text to a part of the plugin, as
   [Entries pass the job to their parts](../architecture.md#entries-pass-the-job-to-their-parts) has
   it, finds the part from there, beside the proposal as in the plugin.
+- The orchestrator runs `flow.py` as `python3 "<plugin>/hooks/lane/flow.py"`, the path the layer
+  writes into the orchestrator's file with `${CLAUDE_PLUGIN_ROOT}` as
+  [a subagent's part](../../plugins/lane/docs/lanes.md#a-subagents-part) says. `flow.py` finds
+  `hooks/lanes.json` from the path it is run by, not from the one a link leads to.
+
+  In a plugin of the ccpm marketplace `hooks/lane/` is a link to lane's code, and the flow is the
+  plugin's, beside the link.
+- The layer lays, on each `from` subagent of a `back`, a SubagentStop hook and a PostToolUse hook on
+  SubagentHandback, which keep its reply, whether or not it has lanes.
+
+  Claude Code hands a subagent's last reply to its SubagentStop hook, and the report it hands back
+  to a hook on its SubagentHandback call (hooks, SubagentStop input and Agent).
 - The two machines are often one, as when the building AI tries its plugin.
 
 #### Directory structure
@@ -310,8 +404,10 @@ plugins/lane/                     the plugin, installed by Claude Code
 │   ├── subagentstop.py           the entry for lanes on how the subagent ends
 │   ├── posttooluse.py            the entry keeping each call as it comes back
 │   ├── posttoolusefailure.py     the same, for a call that comes back failed
+│   ├── flow.py                   what the orchestrator runs for its next move
 │   └── lanes/<lane>.py           one check per lane, with its wording
 ├── docs/lanes.md                 each lane, the proposal's and the ports' JSON Schemas <Markdown>
+├── docs/flow.md                  the flow's JSON Schema, and what flow.py prints <Markdown>
 ├── README.md                     what lane gives, a walkthrough and installation <Markdown>
 └── CHANGELOG.md                  what changed for its users in each version <Markdown>
 
@@ -322,14 +418,15 @@ plugins/lane/                     the plugin, installed by Claude Code
 
 <the system's temporary folder>/lane/
 └── <yyyymmdd>-<session>/
-    └── <agent>.jsonl             the calls kept of a subagent with lanes <JSONL>
+    ├── <agent>.jsonl             the calls kept of a subagent with lanes <JSONL>
+    └── <agent>.reply.json        the reply kept of a `from` subagent <JSON>
 
 <plugin>/                         the building AI's plugin, as the layer writes it
 ├── agents/                       the subagents' entries, or their steps
 ├── prompts/                      the parts the entries name, each with its subagent's steps
 └── hooks/
     ├── hooks.json                the hook entries, one per subagent and event <JSON>
-    ├── lanes.json                the lanes laid, as approved <JSON>
+    ├── lanes.json                the lanes laid and the flow, as approved <JSON>
     ├── adapters/                 the plugin's adapters, written by the layer
     │   ├── <port>-<name>.py      one adapter <Python 3>
     │   └── <port>-<name>.json    the cases it must give <JSON>

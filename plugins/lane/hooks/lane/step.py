@@ -87,7 +87,7 @@ def body(root: str, name: str) -> list[str]:
 
 def bindings(root: str, name: str) -> dict[str, str]:
     """What each name the subagent's part uses stands for, as its entry's body says it, such as
-    `turn.py` for `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py"`; none where it says none, or no
+    `next.py` for `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/next.py"`; none where it says none, or no
     entry names the subagent."""
     return {m["name"]: m["text"] for p in body(root, name) for m in BINDS.finditer(p)}
 

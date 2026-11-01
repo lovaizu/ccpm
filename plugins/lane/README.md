@@ -20,18 +20,18 @@ from it, stops the call that drifts, and tells the subagent that sentence again.
 sentence, the subagent goes back to the step rather than around the refusal. Your AI writes the
 lanes it proposes in a proposal, a JSON file. lane's layer, the script `lay.py`, prints them as they
 would be laid. Once your AI approves them, `lay.py` writes them into your plugin with lane's guard,
-the code that runs the hooks. lane writes and tests each kind of check once, so your plugin carries
-no check of its own that might misread a command. Your AI lays lanes only where a step alone is not sure to
-hold, so the hooks stay few and small.
+the code that runs the hooks. lane writes and tests each kind of check once, so your plugin
+carries no check of its own that might misread a command. Your AI lays lanes only where a step
+alone is not sure to hold, so the hooks stay few and small.
 
 The order your subagents go in is one more thing to drift from. Where one subagent, the
 orchestrator, starts the others, your AI writes their order in the proposal as a flow: which
 subagent comes after which, and which answer sends the work back. `lay.py` then lays a lane on a
-step of the orchestrator, with the sentence "Take each move `flow.py` prints." `flow.py`, a script
-of lane's, prints the next move, such as starting the reviewer, from the flow and from what the
-subagents have answered.
-When the orchestrator does something else, or is about to end, before it takes that move, its hook
-stops it and tells it that sentence. So your plugin keeps no script of its own for the order.
+step of the orchestrator, with the sentence "Take each move `flow.py` prints, until it prints
+none." `flow.py`, a script of lane's, prints the next move, such as starting the reviewer, from
+the flow and from what the subagents have answered. When the orchestrator does something else, or
+is about to end, before it takes that move or runs `flow.py` again, its hook stops it and tells it
+that sentence. So your plugin keeps no script of its own for the order.
 
 **Non-goals**
 
@@ -123,9 +123,9 @@ Flow of notes-lead, laid on its step 1:
   back to changelog-writer while changelog-reviewer answers more
   then notes-lead ends
 Lanes on step 1 of notes-lead, each hook acting in notes-lead alone:
-  follow: Take each move `flow.py` prints.  hook follow_next
+  follow: Take each move `flow.py` prints, until it prints none.  hook follow_next
 
-1. Start the subagents of the work. Take each move `flow.py` prints.
+1. Start the subagents of the work. Take each move `flow.py` prints, until it prints none.
 
 Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
   write: Write only `CHANGELOG.md`.              hook write_only
@@ -161,7 +161,7 @@ entries, is about to end with them before the reviewer has run. Its hook stops t
 `notes-lead` reads:
 
 ```
-notes: Take each move `flow.py` prints.
+notes: Take each move `flow.py` prints, until it prints none.
 ```
 
 `notes-lead` runs `flow.py`, which prints the move to start `changelog-reviewer`. The reviewer
