@@ -1,0 +1,16 @@
+{
+ "kind": "ux",
+ "good": [
+  {"question": "ux/Q1", "lines": ["dev/lane/ux.md:5-7", "dev/lane/ux.md:18-20"]},
+  {"question": "ux/Q2", "lines": ["dev/lane/ux.md:8-17", "dev/lane/ux.md:21-27"]},
+  {"question": "ux/Q3", "lines": ["dev/lane/ux.md:34-38", "dev/lane/ux.md:40-59", "dev/lane/ux.md:61-88"]},
+  {"question": "ux/Q4", "lines": ["dev/lane/ux.md:1-88"]},
+  {"question": "refactor-doc/Q1", "lines": ["dev/lane/ux.md:40-88"]},
+  {"question": "refactor-doc/Q2", "lines": ["dev/lane/ux.md:34-38"]},
+  {"question": "refactor-doc/Q3", "lines": ["dev/lane/ux.md:1-88"]},
+  {"question": "refactor-doc/Q4", "lines": ["dev/lane/ux.md:18-20", "dev/lane/ux.md:35-37"]},
+  {"question": "refactor-doc/Q5", "lines": ["dev/lane/ux.md:3-38"]},
+  {"question": "refactor-doc/Q6", "lines": ["dev/lane/ux.md:29-30"]}
+ ],
+ "more": []
+}

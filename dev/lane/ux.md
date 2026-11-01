@@ -16,8 +16,8 @@
   - KR1.5: The time from the developer AI's first rule to the first run in which the subagents keep
     the rules. Shorter is better.
 - O2: The developer AI wants the orchestrator of its plugin, the subagent that starts the others, to
-  start them in the order that the developer AI set, its flow, on every run, without writing a script
-  for it.
+  start them in the order that the developer AI set, its flow, on every run, without writing a
+  script for it.
   - KR2.1: The share of runs in which the orchestrator leaves the flow. Lower is better.
   - KR2.2: The share of the orchestrator's tool calls and ends of work that the flow allows but that
     are stopped. Lower is better.
@@ -31,11 +31,11 @@ Key results have no target values. When a measure becomes a target, it stops bei
 
 ## Scenarios
 
-The participants are the developer AI (an AI), `lay.py` of the lane plugin (a script), the check
-script that `lay.py` puts into the developer AI's plugin (a script), the operator who runs that
-plugin (a person or an AI), and three subagents of the example plugin `changelog` (AIs): `lead`, the
-orchestrator; `writer`, which writes new entries into `CHANGELOG.md`; and `reviewer`, which compares
-the entries with the commits.
+The developer AI is an AI. `lay.py` of the lane plugin is a script, and so is the check script that
+`lay.py` puts into the developer AI's plugin. The operator runs that plugin, and is a person or an
+AI. The example plugin `changelog` has three subagents, each an AI. `lead` is the orchestrator, and
+the check script tells it each move, the next subagent to start. `writer` writes new entries into
+`CHANGELOG.md`. `reviewer` compares the entries with the commits.
 
 ### O1: A rule on writer's step stops a commit
 
@@ -78,7 +78,7 @@ sequenceDiagram
   O->>W: starts writer
   W-->>O: ends with the entries
   O->>K: tries to end its work
-  K-->>O: stops it: "changelog: Take each move lane tells you, until it tells none."<br>and move 2, which starts reviewer
+  K-->>O: stops it: "changelog: Take each move lane tells you, until it tells none.<br>The next move of the flow is move 2: start `changelog:reviewer`."
   O->>R: starts reviewer
   R-->>O: ends with `more` on a line by itself
   K-->>O: "changelog: reviewer answered `more`. The next move of the flow is move 1: start `changelog:writer`."
