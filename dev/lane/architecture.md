@@ -17,10 +17,16 @@ lane follows the principles of [how a plugin works](../architecture.md#principle
 under its [Why it is so](../architecture.md#why-it-is-so). That document describes a plugin whose
 orchestrator starts roles to make a work. lane has no orchestrator and no roles of its own:
 `lay.py` is a script that the developer AI runs, and the check script runs inside other plugins. So
-the principles about an orchestrator and its roles, 1, 3, 4, 5, 7 and 9, do not apply to lane. The
-principles below are lane's own. The code and
-[the documents of the rules](../../plugins/lane/docs/lanes.md) call a rule a "lane" and the check
-script "the guard".
+the principles about an orchestrator and its roles do not apply to lane. Under Why it is so, their
+reasons have these headings:
+1, [The orchestrator holds the whole and decides](../architecture.md#the-orchestrator-holds-the-whole-and-decides);
+3, [One agent for each job](../architecture.md#one-agent-for-each-job);
+4, [Messages](../architecture.md#messages);
+5, [Read by those who did not make it](../architecture.md#read-by-those-who-did-not-make-it);
+7, [Where the course is kept](../architecture.md#where-the-course-is-kept); and
+9, [Learning from each run](../architecture.md#learning-from-each-run). The principles below are
+lane's own. The code and [the documents of the rules](../../plugins/lane/docs/lanes.md) call a rule
+a "lane" and the check script "the guard".
 
 ### The check shows the step again
 
@@ -60,13 +66,20 @@ plugin would need its own copy of that check.
 
 ### An error is not a violation
 
-When the check script cannot check a tool call or an end of work, it stops the tool call or the end
-as an error. It tells the subagent and the operator what is wrong and who must fix it.
+When the check script cannot check a tool call or an end of work, it stops the tool call or the
+end. A fault in the plugin or in Claude Code, such as an adapter that fails, is an error. For an
+error, the check script tells the subagent and the operator what is wrong and who must fix it. The
+operator is the person or the AI that runs the plugin in Claude Code and sees its screen. A tool
+call that the subagent wrote in a form that the check script cannot read, such as a path with `$`,
+is not an error. For such a call, the check script tells the subagent the sentence of the rule, and
+how to write the call so that the check script can check it. The check script does not tell the
+operator.
 
-The subagent can correct a violation by following its step. An error is a fault in the plugin or
-in Claude Code, and the subagent can only report it. If the check script allowed a tool call that it
-did not check, the error would stay hidden, and the call could be the violation that the rule is
-there to stop
+The subagent can correct a violation by following its step. The subagent can also correct a tool
+call by writing it in another form, so the operator does not need to know. An error is a fault in
+the plugin or in Claude Code, and the subagent can only report it. If the check script allowed a
+tool call that it did not check, the error would stay hidden, and the call could be the violation
+that the rule is there to stop
 ([No check passes what it did not check](../architecture.md#no-check-passes-what-it-did-not-check)).
 
 ### The check reads what the subagent did
@@ -105,20 +118,24 @@ that rest on it.
   to show the subagent the sentence of the rule again. I also want it to allow each tool call that
   the rules allow. Carries O1 from "runs git commit" to "ends with only CHANGELOG.md changed and no
   commit".
-- As the developer AI, I want the check script to stop a tool call that it cannot check, and to
-  show the failed check, the error and who must fix it to the subagent and to the operator.
-  Carries O1's "the check script cannot check a tool call", and the paragraph after O1 about
-  Claude Code as the cause.
-- As the developer AI, I want the check script, on a computer without Python 3.9 or later, to stop
-  each tool call that a rule is about with what to install. I also want it to let the subagent
-  end, and to tell the operator. Carries O1's "the computer does not have that runtime".
+- As the developer AI, I want the check script to stop a tool call that it cannot check because of
+  a fault in my plugin or in Claude Code. I want it to show the failed check, the error and who must
+  fix it, Claude Code included, to the subagent and to the operator. Carries O1's "the check script
+  cannot check a tool call". It also carries the sentence after O1 that an error can come from
+  Claude Code.
+- As the developer AI, I want the hook's command, on a computer without Python 3.9 or later, to
+  stop each tool call that a rule is about with what to install, and to show the operator the same
+  message. I also want the hook's command to let the subagent end. The hook's command is the command
+  that each hook runs to check for Python before it starts the check script. Carries O1's "the
+  computer does not have that runtime".
 - As the developer AI, I want the check script to tell my orchestrator which subagent to start next,
-  and to stop each other tool call and each end before the flow is complete. Carries O2 from
-  "starts lead with the request" to "returns the reviewed entries".
+  and to stop each other tool call and each end of the orchestrator until it starts that subagent.
+  Carries O2 from "starts lead with the request" to "returns the reviewed entries".
 
 The other steps of the scenarios need no story, because the developer AI or the plugin's own
 subagents take them without lane. Examples are the step where the developer AI writes the
-proposal, and the step where the subagent asks the main conversation for a fix.
+proposal, the step where the subagent asks the main conversation for a fix, and the branch
+protection in the paragraph after O1.
 
 ## Logical view
 
@@ -162,8 +179,9 @@ Each arrow names the data that it hands on. The data model below defines each da
   is a violation of that type.
 - `guard.py` reads shell commands in the plain forms that steps use, not in every form that the
   shell allows. A command can name a file by words that do not settle which file it is, such as a
-  path with `$`. `guard.py` cannot check such a tool call, and tells the subagent to name the file
-  by its path.
+  path with `$`. `guard.py` cannot check such a tool call. It stops the call with the sentence of
+  the rule, and tells the subagent alone to name the file by its path, as
+  [An error is not a violation](#an-error-is-not-a-violation) says.
 - `called.py` alone keeps each tool call of a subagent with rules as the call comes back, and the
   end of each subagent in a flow. It tells the orchestrator which subagent to start next, when the
   orchestrator starts and when each start comes back.
@@ -185,9 +203,11 @@ Each arrow names the data that it hands on. The data model below defines each da
 - Proposal: the JSON file in which the developer AI writes the rules and the flow that it wants.
 - Rule: a rule of one type, such as `write_only`, with its values, on one step.
 - Flow: the order of the subagents that the orchestrator starts. A back is an answer that sends
-  the work back from one position in that order to an earlier one, such as `more`.
-- Adapter and test case: as the UX says. A port JSON is the JSON that an adapter, or lane's own
-  reading, is given or gives.
+  the work back from one position in that order to an earlier one, such as `more`. The positions
+  count from 1, and move n starts the subagent at position n.
+- Adapter and test case: as the UX says. A port is a text of the plugin that a check reads, such as
+  a list of items that a subagent must answer. A port JSON is the JSON that an adapter, or lane's
+  own reading, is given or gives.
 - Subagent file and step: the file of a subagent, or the part that it reads first, and one
   numbered step in it.
 - Rules laid: the rules and the flow that `lay.py write` wrote into `hooks/lanes.json`.
@@ -251,7 +271,7 @@ sequenceDiagram
   L->>PF: writes each sentence into its step (Step, in its Subagent file)
   L->>PF: writes the hooks (Hook entry)
   L->>PF: writes the rules and the flow (Rules laid)
-  Note over L,PF: puts the check script into the plugin's hooks/lane/
+  L->>PF: puts the check script into the plugin's hooks/lane/
   L->>CC: claude plugin validate
   CC-->>L: passed
   L->>PR: removes the proposal and its adapters
@@ -268,10 +288,10 @@ sequenceDiagram
   DA->>L: runs lay.py up (the plugin's folder)
   L->>PF: reads the rules and the flow (Rules laid)
   opt the plugin's copy of the check script is older than lane
-    Note over L,PF: replaces the copy with lane's version
+    L->>PF: replaces the copy with lane's version
   end
   L->>PF: writes the hooks in the current form (Hook entry)
-  L-->>DA: each rule laid before, and whether its step still says its sentence (Rule)
+  L-->>DA: each rule laid before (Rule)
 ```
 
 A violation stopped, and a tool call allowed:
@@ -294,6 +314,7 @@ sequenceDiagram
   G->>C: reads earlier calls (Kept call, Record)
   C->>RE: reads (Record)
   C->>K: reads (Kept call)
+  C-->>G: the earlier calls (Kept call)
   G->>LN: runs each check (Rule, Run value)
   LN-->>G: a violation of the rule
   G-->>H: the sentence of the rule
@@ -344,16 +365,19 @@ sequenceDiagram
   participant SA as Subagent
   participant CC as Claude Code
   participant OP as Operator
-  participant H as hook.py
+  participant HC as The hook's command
   SA->>CC: makes a tool call that a rule is about
-  CC->>H: PreToolUse (Event)
-  Note over H: its command finds no python3 3.9 or later,<br>so the check script does not start
-  H-->>CC: deny, with "changelog: install Python 3.9 or later, run as python3, for its hooks to run" (Decision)
+  CC->>HC: PreToolUse (Event)
+  Note over HC: finds no python3 3.9 or later,<br>so it does not start the check script
+  HC-->>CC: deny, and a system message, each with "changelog: install Python 3.9 or later, run as python3, for its hooks to run" (Decision)
   CC-->>SA: the same message
-  SA->>CC: ends its work
-  CC->>H: SubagentStop (Event)
-  H-->>CC: a system message with the same words, and the end allowed (Decision)
   CC->>OP: shows the message
+  SA->>CC: ends its work
+  opt the subagent has a hook on its end of work
+    CC->>HC: SubagentStop (Event)
+    HC-->>CC: a system message with the same words, and the end allowed (Decision)
+    CC->>OP: shows the message
+  end
 ```
 
 A flow, with a start in the background:
@@ -372,7 +396,8 @@ sequenceDiagram
   CC->>H: SubagentStart of lead (Event)
   H->>C: tells the next start (Event)
   C->>M: asks the next start (Flow, Kept call)
-  M-->>C: writer, at position 1
+  M-->>C: writer, move 1
+  C-->>H: the line of move 1
   H-->>CC: context "changelog: The next move of the flow is move 1: start `changelog:writer`." (Decision)
   CC-->>O: the same line
   O->>CC: starts writer in the background
@@ -380,10 +405,12 @@ sequenceDiagram
   H->>G: checks the rules (Event)
   G->>M: asks the next start (Flow, Kept call)
   M-->>G: writer, so the call is the next start
+  G-->>H: no violation
   H-->>CC: nothing, so the call goes on (Decision)
   CC->>W: runs writer in the background
   CC->>H: PostToolUse, as the call comes back with async_launched (Event)
   H->>C: keeps the call (Event)
+  C-->>H: the line to wait
   H-->>CC: context "changelog: Wait for `changelog:writer` to end: lane tells the next move once it has." (Decision)
   W->>CC: ends its work (Answer)
   CC->>H: SubagentStop of writer (Event)
@@ -393,7 +420,8 @@ sequenceDiagram
   CC->>H: SubagentStop of lead (Event)
   H->>G: checks the rules (Event)
   G->>M: asks the next start (Flow, Kept call)
-  M-->>G: reviewer, at position 2
+  M-->>G: reviewer, move 2
+  G-->>H: the sentence of the flow, and move 2
   H-->>CC: keep going, with the sentence of the flow and move 2 (Decision)
   CC-->>O: the same lines
   O->>CC: starts reviewer in the foreground
@@ -403,13 +431,14 @@ sequenceDiagram
   CC->>H: PostToolUse, as the call comes back completed (Event)
   H->>C: keeps the call with its answer (Event)
   C->>M: asks the next start (Flow, Kept call)
-  M-->>C: reviewer answered more, so writer at position 1 (Back, Answer)
+  M-->>C: reviewer answered more, so writer, move 1 (Back, Answer)
+  C-->>H: the line of move 1
   H-->>CC: context "changelog: reviewer answered `more`. The next move of the flow is move 1: start `changelog:writer`." (Decision)
   CC-->>O: the same line
   Note over O,R: writer and reviewer again, until reviewer does not answer "more"
   H-->>CC: context "changelog: The flow is done: lane tells no more moves." (Decision)
   O->>CC: ends its work and returns the reviewed entries
-  Note over CC,H: SubagentStop of lead finds the flow complete, so lead ends
+  Note over CC,H: SubagentStop of lead finds the flow done, so lead ends
 ```
 
 - A start counts only after the started subagent has ended, in the foreground or in the background.
@@ -501,7 +530,9 @@ dev/lane/                              what only lane's builders need
 
 <the root of the repository>/.lane/<yyyymmdd>-<plugin>/
 ├── <plugin>.json                      Proposal <JSON>
-└── <plugin>/adapters/<port>-<name>.py, .json   Adapter <Python 3>, Test cases <JSON>
+└── <plugin>/adapters/<port>-<name>.py, .json   Adapter <Python 3>, Test cases <JSON>:
+                                       where the developer AI writes an adapter, and changes it
+                                       later beside a new proposal; lay.py print tests this copy
 
 <the system's temporary folder>/lane/<yyyymmdd>-<session>/
 └── <agent>.jsonl                      Calls kept: each Kept call and Answer <JSONL>
@@ -511,7 +542,9 @@ dev/lane/                              what only lane's builders need
 └── hooks/
     ├── hooks.json                     Plugin files: each Hook entry <JSON>
     ├── lanes.json                     Plugin files: each Rule and the Flow <JSON>
-    ├── adapters/<port>-<name>.py, .json   Adapter <Python 3>, Test cases <JSON>
+    ├── adapters/<port>-<name>.py, .json   Adapter <Python 3>, Test cases <JSON>:
+    │                                  the copy that runs, which lay.py write copies from beside
+    │                                  the proposal
     └── lane/                          the check script, a copy or a link
 ```
 

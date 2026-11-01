@@ -15,10 +15,11 @@ a rule. When the check finds a violation, the check stops that tool call or that
 the check shows the sentence of the rule to the subagent again.
 
 The developer AI writes the rules that it wants in a proposal, which is a JSON file. The lane plugin
-adds the rules to the developer AI's plugin, here `changelog`. The lane plugin writes each sentence
-into its step. The lane plugin also copies a script that does the checks into `changelog`. This
-document calls this script the check script. Each message from the check script starts with the name
-of the plugin, such as `changelog:`. In these messages, the check script calls itself "lane".
+adds the rules to the developer AI's plugin. The example plugin of this document is `changelog`. The
+lane plugin writes each sentence into its step. The lane plugin also copies a script that does the
+checks into `changelog`. This document calls this script the check script. Each message from the
+check script starts with the name of the plugin, such as `changelog:`. In these messages, the check
+script calls itself "lane".
 
 Some checks read a text that the developer AI's plugin writes, such as a list of items that a
 subagent must answer. The check script reads each such text in one format. The documents of the lane
@@ -36,9 +37,11 @@ its work with that word on a line by itself. The messages from the check script 
 the flow a "move". The messages number the moves in the order of the flow: move 1, move 2, and so
 on. The orchestrator follows the flow if it starts the other subagents in the order that the flow
 and their answers require. In addition, the orchestrator must end its work only after the flow is
-complete. The lane plugin turns the flow into a rule. The lane plugin adds this rule to one step of
-the orchestrator. The sentence of that rule is `Take each move lane tells you, until it tells none.`
-This document calls this sentence the sentence of the flow.
+done, or while a subagent that it started runs in the background. In the second case, Claude Code
+starts the orchestrator again when that subagent ends. The lane plugin turns the flow into a rule.
+The lane plugin adds this rule to one step of the orchestrator. The sentence of that rule is
+`Take each move lane tells you, until it tells none.` This document calls this sentence the
+sentence of the flow.
 
 ## OKRs
 
@@ -77,7 +80,9 @@ The diagrams below have these participants:
 
 - The developer AI is an AI. It approves the rules for `changelog` without help.
 - The lane plugin is a script. The developer AI runs the lane plugin as `lay.py`.
-- The check script is a script. The check script runs inside `changelog`.
+- The check script is a script. The check script runs inside `changelog`. Each hook of
+  `changelog` starts the check script with a command. When the runtime is missing, this command
+  answers in place of the check script.
 - The main conversation is an AI: the Claude Code conversation that runs `changelog`. When
   `changelog` needs a fix, the main conversation sends the request to the developer AI.
 - The operator is a person or an AI. The operator runs `changelog` in Claude Code and sees the
@@ -121,7 +126,7 @@ sequenceDiagram
   Note over W: lead starts writer with a request that also asks for a commit
   alt the computer has the runtime that the check script needs
     W->>K: runs git commit
-    K-->>W: stops it and shows "changelog: Do not run git commit or git push."
+    K-->>W: stops it and shows "changelog: Do not run `git commit` or `git push`."
     W->>K: writes CHANGELOG.md, as its step says
     K-->>W: allows the change
     opt the check script cannot check a tool call, for example because an adapter fails
@@ -136,28 +141,29 @@ sequenceDiagram
   else the computer does not have that runtime
     W->>K: makes a tool call that a rule is about
     K-->>W: stops the tool call, says that the runtime is missing,<br>and what to install
+    K-->>U: shows the same message on the screen
     W->>K: ends its work
     K-->>W: allows writer to end its work
-    K-->>U: shows the same message on the screen
   end
 ```
 
-Claude Code can be the cause of the problem instead of `changelog`. In that case, the main
-conversation sends the request to the makers of Claude Code. Some actions must never happen,
-whatever an AI does. An example is a merge. The developer AI blocks such actions with the branch
-protection of GitHub or the permission rules of Claude Code.
+An error that the check script reports can come from Claude Code instead of `changelog`. In that
+case, the main conversation sends the request to the makers of Claude Code. Some actions must never
+happen, whatever an AI does. An example is a merge. The developer AI blocks such actions with the
+branch protection of GitHub or the permission rules of Claude Code.
 
 ### O2: The orchestrator starts writer and reviewer in the order of the flow
 
 The developer AI adds a flow to step 1 of `lead`. Later, while `changelog` runs, the check script
 tells `lead` which subagent to start next. The check script stops each tool call of `lead` that does
 not start that subagent. The check script also stops `lead` when `lead` tries to end its work before
-the flow is complete. Then the check script tells `lead` two things: the sentence of the flow, and
-the subagent to start next. While a subagent runs in the background, the check script stops only a
-start of `writer` or `reviewer`. After that subagent ends, Claude Code starts `lead` again. At that
-time, Claude Code does not always tell `lead` which subagent to start next. In that case, `lead`
-learns which subagent to start next at its next tool call or at the end of its work. The check
-script stops that tool call or that end, and it tells `lead` the next subagent.
+it starts that subagent. Then the check script tells `lead` two things: the sentence of the flow,
+and the subagent to start next. While a subagent that `lead` started runs in the background, the
+check script stops only a start of `writer` or `reviewer`. So `lead` can end its work and wait.
+After that subagent ends, Claude Code starts `lead` again. At that time, Claude Code does not always
+tell `lead` which subagent to start next. In that case, `lead` learns which subagent to start next
+at its next tool call or at the end of its work. The check script stops that tool call or that end,
+and it tells `lead` the next subagent.
 
 ```mermaid
 sequenceDiagram
@@ -168,23 +174,23 @@ sequenceDiagram
   participant O as lead (AI)
   participant W as writer (AI)
   participant R as reviewer (AI)
-  Note over A: writes a flow: writer, reviewer,<br>back to writer when reviewer answers "more"
+  Note over A: writes a flow: writer, reviewer,<br>back to writer when reviewer answers `more`
   A->>L: runs lay.py print on the proposal
   L-->>A: shows the flow, and its sentence in step 1 of lead
   A->>L: runs lay.py write on the same proposal
   L-->>A: writes the sentence of the flow into step 1,<br>copies the check script into changelog
   Note over A,R: changelog runs later
   M->>O: starts lead with the request
-  K-->>O: "changelog: The next move of the flow is move 1: start changelog:writer."
+  K-->>O: "changelog: The next move of the flow is move 1: start `changelog:writer`."
   O->>W: starts writer in the background
-  K-->>O: "changelog: Wait for changelog:writer to end: lane tells the next move once it has."
+  K-->>O: "changelog: Wait for `changelog:writer` to end: lane tells the next move once it has."
   W-->>O: ends its work after it writes the entries
   O->>K: tries to end its work and return the entries
   K-->>O: stops the end, shows the sentence of the flow<br>and move 2, which starts reviewer
   O->>R: starts reviewer
-  R-->>O: ends its work with the word "more" on a line by itself
-  K-->>O: shows "changelog: reviewer answered more."<br>and move 1, which starts writer
-  Note over O,R: writer and reviewer again,<br>until reviewer does not give the answer "more"
+  R-->>O: ends its work with the word `more` on a line by itself
+  K-->>O: "changelog: reviewer answered `more`. The next move of the flow is move 1: start `changelog:writer`."
+  Note over O,R: writer and reviewer again,<br>until reviewer does not give the answer `more`
   K-->>O: "changelog: The flow is done: lane tells no more moves."
   O->>M: ends its work and returns the reviewed entries
 ```

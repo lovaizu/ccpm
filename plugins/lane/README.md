@@ -3,8 +3,8 @@
 lane is a Claude Code plugin that adds checks to your plugin, so that the subagents of your plugin
 follow the steps and the order that you set.
 
-The lane plugin is for a person or an AI who builds a Claude Code plugin. In that plugin, subagents
-do the work in numbered steps. With the lane plugin, the subagents of your plugin follow their steps
+The lane plugin is for you, an AI that builds a Claude Code plugin. In that plugin, subagents do
+the work in numbered steps. With the lane plugin, the subagents of your plugin follow their steps
 every time your plugin runs. You do not write the code for the checks. One subagent, the
 orchestrator, starts the other subagents. With the lane plugin, the orchestrator starts them in the
 order that you set, every time your plugin runs. You do not write a script that controls this order.
@@ -20,8 +20,9 @@ step goes back to the step. The lane plugin writes and tests each type of check 
 these checks in one script. It copies this script into your plugin. This README calls this script
 the check script. For the order, you write a flow. A flow is the order in which the orchestrator
 starts the other subagents. The check script tells the orchestrator which subagent to start next.
-Until the orchestrator starts that subagent, the check script stops all other actions of the
-orchestrator.
+Until the orchestrator starts that subagent, the check script stops each other tool call of the
+orchestrator. The check script also stops the orchestrator when the orchestrator tries to end its
+work before it starts that subagent.
 
 **Non-goals**
 
@@ -41,13 +42,10 @@ orchestrator.
   order that you set. The flow goes back to an earlier subagent only when a subagent gives an answer
   that you name, such as the word `more`.
 - The check script reads some texts that your plugin writes, such as a list of items that a subagent
-  must answer. The check script reads each such text in one format only. The documents of the lane
-  plugin describe that format. Your plugin can write the text in another format. In that case, you
-  write an adapter. An adapter is a small script that converts the other format into the format that
-  the check script reads. You also write test cases for the adapter. Each test case has an input for
-  the adapter, and the output that the adapter must give for that input. The lane plugin runs the
-  adapter on its test cases before it adds the rules. The adapter does not decide what is a
-  violation. The check script decides it.
+  must answer. The check script reads each such text in one format only. For another format, you
+  write an adapter and its test cases. An adapter is a small script that converts the other format
+  into the format that the check script reads. [The lanes](docs/lanes.md#the-ports) describes the
+  format, the adapter and its test cases.
 
 ## Requirements
 
@@ -55,10 +53,14 @@ orchestrator.
   runs.
 - Python 3.9 or later, on the same computers. The command `python3` must start Python. The script
   `lay.py` of the lane plugin runs on Python. The check script in your plugin also runs on Python.
-  If Python is missing, the check script stops each tool call that a rule is about. Then the check
-  script tells the subagent to install Python.
+  If Python is missing, the check script cannot start. Each hook in your plugin runs a command that
+  checks for Python before it starts the check script. Without Python, this command stops each tool
+  call that a rule is about. The command tells the subagent to install Python. It also shows the
+  same message to the person or the AI that runs your plugin.
 - A plugin with subagents. In the file of each subagent, the steps are a numbered list under the
   heading `## Steps`.
+- A plugin that passes `claude plugin validate`. `lay.py write` runs this command after it adds the
+  rules, and stops if the command fails.
 
 ## Installation
 
@@ -99,9 +101,10 @@ After you say OK, the skill commits `CHANGELOG.md`. The file `agents/writer.md` 
 ```
 
 At this step, `writer` must not write any other file. It also must not commit. You write these two
-rules in a JSON file. This file is the proposal. You save the proposal as
-`.lane/20261101-changelog/changelog.json` at the root of the repository. The plugin is in the folder
-`changelog` at the same root:
+rules in a JSON file. This file is the proposal. `lay.py` reads a proposal from any path.
+[The lanes](docs/lanes.md#the-proposal) advises the path `.lane/<yyyymmdd>-<plugin>/<plugin>.json`
+at the root of the repository. So you save the proposal as
+`.lane/20261101-changelog/changelog.json`. The plugin is in the folder `changelog` at the same root:
 
 ```json
 {"plugin": "changelog",
