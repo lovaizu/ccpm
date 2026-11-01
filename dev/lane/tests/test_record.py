@@ -406,11 +406,13 @@ class TestHeard(RecordTest):
 
 class TestReached(RecordTest):
     def test_what_hooks_told_after_a_call_came_back_is_read_in_order(self):
-        # Given: a record of a call a hook stopped, then a Bash call, then another call a hook
-        # stopped, a call failing of itself and a stop hook telling the subagent something
+        # Given: a record of a Bash call, a call a hook stopped, then the Bash call the reading
+        # starts after, then another call a hook stopped, a call failing of itself and a stop
+        # hook telling the subagent something
         first = helpers.Failed("PreToolUse:Agent hook error: [python3 x.py]: notes: First.")
         later = helpers.Failed("PreToolUse:Agent hook error: [python3 x.py]: notes: Later.")
         calls = [
+            helpers.bash("pwd"),
             ("Agent", {}, first),
             helpers.bash("ls"),
             ("Agent", {}, later),
@@ -418,9 +420,10 @@ class TestReached(RecordTest):
             "notes: Kept.",
         ]
         self.record(calls)
-        # When: what hooks told the subagent after the Bash call came back is read
+        # When: what hooks told the subagent after the call toolu_2, the second Bash call, came
+        # back is read
         # Then: it is what the later stop and the stop hook told, in order
-        said = record.reached(self.entries(), "toolu_1")
+        said = record.reached(self.entries(), "toolu_2")
         self.assertEqual(len(said), 2)
         self.assertTrue(said[0].endswith("notes: Later."))
         self.assertIn("notes: Kept.", said[1])

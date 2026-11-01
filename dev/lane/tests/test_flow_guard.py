@@ -314,6 +314,15 @@ class TestHeld(FlowGuardTest):
         given = {"subagent_type": "notes:changelog-writer", "prompt": "Go."}
         self.assertIsNone(self.call("Agent", given))
 
+    def test_a_start_after_one_come_back_from_the_foreground_goes_on(self):
+        # Given: notes-lead, its start of the writer come back from the foreground, the move told
+        # as it came back
+        self.came("changelog-writer")
+        # When: it starts the reviewer
+        # Then: the call goes on, nothing said
+        given = {"subagent_type": "notes:changelog-reviewer", "prompt": "Go."}
+        self.assertIsNone(self.call("Agent", given))
+
     def test_a_call_other_than_the_move_due_is_stopped_with_the_sentence_and_the_move(self):
         for what, tool, given in (
             ("another tool", "Bash", {"command": "ls"}),

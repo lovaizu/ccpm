@@ -84,7 +84,8 @@ def due(run: Run) -> Due:
         # A start come back not as CAME_BACK says is an error told as it came back, not a move.
         if kept.get("status") not in (DONE, LAUNCHED) or not kept.get("agent"):
             continue
-        if kept["status"] == LAUNCHED and not kept.get("ended"):
+        # A start come back from the background holds whether its subagent has ended.
+        if kept.get("ended") is False:
             return Due(None, "", named(run, at))
         back = backs.get(at + 1)
         if back is not None and answers(str(kept.get("answer", "")), back["while"]):

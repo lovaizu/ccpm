@@ -100,6 +100,7 @@ class TestDue(unittest.TestCase):
         for what, other in (
             ("another tool", {"tool": "Bash", "input": {"command": "ls"}, "failed": False}),
             ("the subagent after the one due", started("changelog-reviewer")),
+            ("a start come back of another status", started("changelog-writer", status="done")),
         ):
             with self.subTest(what=what):
                 # Given: the call kept, then the writer's
@@ -107,6 +108,13 @@ class TestDue(unittest.TestCase):
                 # When: the move due is told
                 # Then: it is the reviewer's start
                 self.assertEqual(moves.told(run(*kept)), REVIEWER)
+
+    def test_a_start_of_the_subagent_before_the_one_due_changes_nothing(self):
+        # Given: the writer come back, then come back again while the reviewer's start is due
+        writer = started("changelog-writer")
+        # When: the move due is told
+        # Then: it is still the reviewer's start
+        self.assertEqual(moves.told(run(writer, writer)), REVIEWER)
 
     def test_a_back_goes_to_the_position_it_names(self):
         # Given: an order of three, the third sending the work back to the second while it
@@ -222,13 +230,19 @@ class TestReached(unittest.TestCase):
                 self.assertEqual(moves.reached(run(*kept), said), reached)
 
     def test_the_last_start_is_the_last_agent_call_of_the_flow_kept(self):
-        # Given: the writer's start, then a Bash call and a start of another plugin's subagent
+        # Given: the writer's start, the reviewer's, then a Bash call, a start of another plugin's
+        # subagent, and calls of a tool no plugin has, Act, and of Bash, naming the writer
         other = {**started("x"), "input": {"subagent_type": "a:x"}}
         bash = {"tool": "Bash", "input": {"command": "ls"}, "failed": False}
+        named = {"subagent_type": "notes:changelog-writer"}
+        act = {"tool": "Act", "input": named, "failed": False}
+        bash_named = {**bash, "input": named}
         writer = {**started("changelog-writer"), "id": "toolu_w"}
+        reviewer = {**started("changelog-reviewer"), "id": "toolu_r"}
         # When: the last start is read
-        # Then: it is the writer's
-        self.assertEqual(moves.last_start(run(writer, bash, other)), writer)
+        # Then: it is the reviewer's
+        kept = run(writer, reviewer, bash, other, act, bash_named)
+        self.assertEqual(moves.last_start(kept), reviewer)
         self.assertIsNone(moves.last_start(run(bash)))
 
 

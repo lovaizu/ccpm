@@ -131,7 +131,7 @@ class Ends(Lanes):
         end."""
         name = self.agent.split(":")[1]
         try:
-            laid_in = any(a["name"] == name for a in lanes_json.laid(self.root)["subagents"])
+            laid_in = name in [a["name"] for a in lanes_json.laid(self.root)["subagents"]]
         except ValueError:
             laid_in = True
         said = super().check(event) if laid_in else []

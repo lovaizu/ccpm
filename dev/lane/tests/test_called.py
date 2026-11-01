@@ -388,6 +388,12 @@ class TestEnded(CallsTest):
             ("two ends, the last read", [], ["First.", "Last."], "Last."),
             ("no last message", [], [None], ""),
             ("a report handed back", ["Entry 2.\nmore"], [None], "Entry 2.\nmore"),
+            (
+                "two reports, the last read",
+                ["Entry 1.", "Entry 2.\nmore"],
+                [None],
+                "Entry 2.\nmore",
+            ),
         ):
             with self.subTest(what=what):
                 # Given: the subagent having handed back the reports and ended so
