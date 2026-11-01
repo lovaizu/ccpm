@@ -1,203 +1,232 @@
 {
  "kind": "architecture",
- "purpose": "An architecture document is read by whoever approves how the product is built, and by whoever builds or changes it. From it alone, the approver decides, before the product is built, whether its parts and how they work together deliver the experience the UX sets. The builder then builds each part by it, and later changes a part by it, so that the parts together deliver that experience and what was approved still holds.",
+ "purpose": "An architecture document says how the product delivers its UX, as a framework and principles. The framework is the product's parts and how they relate. Each principle comes with its reason, so a builder applies it to a case it did not foresee. The framework and the principles hold as long as the UX stays, whatever the implementation. Whoever builds or changes the product, a person or an AI, derives each part's specification from the document and implements it. Because every builder works from the same framework and principles, they do not hesitate over each part, and every part is made on the same thinking. So the product stays readable, maintainable and resilient to change.",
  "format": {
-  "skeleton": "# <Product name> architecture\n\n<How the product is built to deliver its UX, in a sentence or two, with a link to the UX>\n\n<A link to the principles of what the product is built on, and its own principles, each in a line>\n\n## User stories\n\n- As <the user>, I want <what they do with the product>.\n\n## Architecture\n\n### Logical view\n\n#### Components\n\n<One SVG figure: a box for each part, holding its name, what it is responsible for in a few words, and whether an AI or code runs it, with a legend; an arrow from each part to the part it hands on to, labelled with the data it hands on>\n\n- <A choice the figure shows that the reader would question, with why it was made over the other way>\n\n#### Data model\n\n<One SVG figure: a box for each data the parts pass or keep, holding its name; a line between two data for each relation, labelled with what it is>\n\n#### Sequences\n\n```mermaid\nsequenceDiagram\n  <For each user story: a participant for each part it reaches, and a message for each step, labelled with the data handed on>\n```\n\n- <A choice the diagrams show that the reader would question, with why it was made over the other way>\n\n### Physical view\n\n#### Deployment\n\n<One SVG figure: a box for each machine or runtime the product runs in, holding the parts that run there and the data kept there; a box for each thing outside the product they rely on, with an arrow labelled with what is used>\n\n#### Directory structure\n\n```text\n<A tree of the folders and files that hold each part and each data, each named with what it holds and what it is made of>\n```\n\n## Test\n\n<A link to the project's rules for checking each kind of part and the user stories>\n\n- <How heavily a part is checked beyond those rules, or that the rules alone check it, with what a failure of it would cost the user>\n",
+  "skeleton": "# <Product name> architecture\n\n<How the product delivers its UX, in a sentence or two, with a link to the UX>\n\n## Principles\n\n<A link to the principles of the architecture this one is built on, where there is one>\n\n### <A short name for the principle>\n\n<The rule every part is built by, in a sentence>\n\n<Its reason: what the rule is there for, and what goes wrong for the user or the builder without it>\n\n## User stories\n\n- As <the user>, I want <one way they use the product at its edge, such as a command they run>. Carries <the UX's scenarios, or their steps, that rest on it>.\n\n## Architecture\n\n### Logical view\n\n#### Components\n\n<One SVG figure in the notation of a C4 component diagram: a box for each role the user stories need and each store of data, holding its name and a tag of its type and technology, such as \"[agent · Claude prompt]\" or \"[module · Python]\", and no sentence; the box's shape saying whether an AI or code runs it; an arrow from each to the one it acts on, labelled with what it does and the data it hands on, named as in the data model, and with the protocol where it matters, such as \"[HTTPS/JSON]\"; a legend of the shapes and the tags; the boxes placed so the arrows run in the order they act and cross none>\n\n- <What a role alone is responsible for that no arrow shows>\n- <A choice the figure shows that the reader would question, such as a technology, with why it was made over the other way>\n\n#### Data model\n\n<One SVG figure in the notation of an ER diagram: a box for each data the roles pass or keep, holding its name alone; a line between two data for each relation between them, labelled with the relation's name, its ends drawn in crow's-foot notation for its cardinality, such as one to many>\n\n#### Sequences\n\n<For each user story, a UML sequence diagram in Mermaid: a participant for the user, for each role the story reaches, named as in Components, and for each thing outside the product it reaches; a message for each step, labelled in a few words with what one does and the data handed on, named as in the data model>\n\n- <A choice the diagrams show that the reader would question, with why it was made over the other way>\n\n### Physical view\n\n#### Deployment\n\n<One SVG figure in the notation of a C4 deployment diagram: an outer box for each execution environment, such as Cloud Run, Claude Code, the user's repository or CI, with its technology tag; inside it a box for each deployment unit, such as an app or a container, named with its technology tag, holding by their names, as in Components, the roles that run in it and the data kept in it; a box for each thing outside the product they depend on, with an arrow labelled with what is used>\n\n- <How the product is started>\n- <A choice the figure shows that the reader would question, such as a technology, with why it was made over the other way>\n\n#### Directory structure\n\n```text\n<A tree of the folders and files of the product; each line that holds a role or a data names it as in Components, with its technology tag>\n```\n\n## Test\n\n<A link to the project's shared test rules, where it has them; what follows says only what differs from them>\n\n| Deployment unit | Unit | Integration | End-to-end |\n|---|---|---|---|\n| <Each deployment unit, named as in Deployment with its technology tag> | <Tool · weight, such as ●●● or ●●○ · what it checks, in a few words> | <The same> | <The same, or ▨ and a footnote mark where the cell is empty> |\n\n[^1]: <Why the cell is empty>\n\n- <Each deployment unit left out because every cell of its row would be empty, with why>\n- Unit tests: <what they make real and what they fake>. Pass: <all pass; line and branch coverage at least a threshold; at the heaviest weight, also property tests pass and the mutation score is at least a threshold>\n- Prompt trials: <what they make real and what they fake>. Pass: <N runs for each fixed input, and how many must meet the expectation>\n- Integration tests: <what they make real and what they fake>. Pass: <the criteria>\n- End-to-end tests: <what they make real and what they fake>. Pass: <the criteria>\n- <Each deployment unit's weight, with what a failure of it would cost the user>\n- <A choice the table shows that the reader would question, such as a tool, with why it was made over the other way>\n",
   "parts": [
    {
     "id": "summary",
     "what": "The title, and the sentence or two under it, with a link to the UX.",
-    "why": "The reader holds the one idea of how the product is built before reading the parts, and reads each part as a piece of it."
+    "why": "The builder holds the one idea of how the product delivers its UX before reading the rest, and builds each part as a piece of it."
    },
    {
     "id": "principles",
-    "what": "The paragraph after the summary: a link to the principles of what the product is built on, and the product's own principles, each in a line.",
-    "why": "The reader weighs each choice in the document against the same rules."
+    "what": "One subsection for each principle, holding the rule and its reason, after a link to the principles of the architecture this one is built on, where there is one.",
+    "why": "The builder decides each detail by the rules every part is built by, and decides a case no rule names from a rule's reason."
    },
    {
     "id": "user-stories",
-    "what": "A list under its heading, one item for each story.",
-    "why": "The reader sees what the user does at the product's edge, and reads the parts as what serves it."
+    "what": "A list under its heading, one item for each story, each naming the UX's scenarios or steps that rest on it.",
+    "why": "The builder sees each way the user uses the product at its edge, and draws the roles and the data from them."
    },
    {
     "id": "components",
-    "what": "The figure under Components.",
-    "why": "The builder sees the parts to build and what each hands to which, at a glance."
+    "what": "The figure under Components, an SVG file beside the document drawn by hand in the notation of a C4 component diagram: each box a role's or a store's name and a tag of its type and technology, its shape saying whether an AI or code runs it, each arrow what one does to another with the data and the protocol where it matters, and a legend.",
+    "why": "The builder sees, at a glance, the roles to build, what each is made with, and what each does to which."
    },
    {
-    "id": "data-model",
-    "what": "The figure under Data model.",
-    "why": "The builder sees what the parts pass and keep, and how each data joins the others."
-   },
-   {
-    "id": "sequences",
-    "what": "The sequence diagrams under Sequences, one for each user story.",
-    "why": "The approver follows each story through the parts, in order."
+    "id": "responsibilities",
+    "what": "The first items of the list under Components: what a role alone is responsible for that no arrow shows.",
+    "why": "The builder finds the rest of a role's responsibility next to the figure, without the box being read as text."
    },
    {
     "id": "choices",
-    "what": "The lists under Components and under Sequences.",
-    "why": "The reader finds why a choice they question was made, next to the figure that shows it."
+    "what": "The items of the lists under Components, Sequences, Deployment and Test that give a choice the reader would question, such as a technology or a tool, with why.",
+    "why": "The builder finds why a choice they question was made, next to the figure that shows it."
+   },
+   {
+    "id": "data-model",
+    "what": "The figure under Data model, an SVG file beside the document drawn by hand in the notation of an ER diagram: each box a data's name, each line a relation's name with its cardinality.",
+    "why": "The builders of the role that writes a data and of the role that reads it take each relation, and how many of each it joins, the same way."
+   },
+   {
+    "id": "sequences",
+    "what": "The UML sequence diagrams in Mermaid under Sequences, one for each user story; a sequence has one layout, its order down the page, so Mermaid draws it from text.",
+    "why": "The builder follows each story through the roles, in order, with the data each hands on."
    },
    {
     "id": "deployment",
-    "what": "The figure under Deployment.",
-    "why": "The builder sees where each part runs and where each data lies."
+    "what": "The figure under Deployment, an SVG file beside the document drawn by hand in the notation of a C4 deployment diagram: each outer box an execution environment, holding the deployment units, each with its technology tag and the roles and data in it; and the list under it, of how the product is started and of choices.",
+    "why": "The builder puts each role and each data in the deployment unit and the environment where it runs or is kept, and starts the product."
    },
    {
     "id": "directory",
-    "what": "The tree under Directory structure.",
-    "why": "The builder finds where to make or change each part."
+    "what": "The tree under Directory structure, in text, as the files lie, each line that holds a role or a data naming it as in Components with its technology tag.",
+    "why": "The builder finds the one place to make or change each role and each data."
    },
    {
-    "id": "test",
-    "what": "The link and the list under Test.",
-    "why": "The approver sees how each part is checked, and weighs it."
+    "id": "test-table",
+    "what": "The table under Test: a row for each deployment unit, a column for each test type from narrow scope to wide, unit, integration and end-to-end; each cell a tool, a weight and what it checks in a few words, an empty cell hatched with a footnote; and the note of the units left out.",
+    "why": "The builder sees at a glance which unit is tested by which type of test, how heavily and with what, and why a cell is empty."
+   },
+   {
+    "id": "test-rules",
+    "what": "The lines under the table: for each test type, including prompt trials, what it makes real, what it fakes and when it passes; each unit's weight with what a failure costs the user; and a link to the project's shared test rules, with only what differs written here.",
+    "why": "The builder writes each test with the right neighbours real or faked, knows when the tests pass, and knows why a unit is tested as heavily as it is."
    }
   ]
  },
  "checklist": [
   {
    "id": "Q1",
-   "what": "When a colleague asks \"How is it built?\", can the reader answer in a sentence or two from the opening?",
-   "why": "If yes, the reader holds the one idea every part comes from, and reads each part as a piece of it. The opening links the UX, so the approver knows which experience the parts must deliver. If no, the reader meets the parts one by one, cannot tell which part carries the idea, and approves or builds each on its own.",
+   "what": "When a colleague asks \"How does the product deliver its UX?\", can the builder answer in a sentence or two?",
+   "why": "If yes, the builder holds the one idea every part comes from, and builds each part as a piece of it, so the parts fit together as one design. The opening links the UX, so the builder knows which experience the parts must deliver. If no, the builder meets the parts one by one, cannot tell which part carries the idea, and builds each on its own thinking.",
    "about": [
     "summary"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/architecture.md:39: \"<How the product is put together, in a sentence or two, with a link to its UX>\".",
     ".rn/20261013-rebuild/turn-rebuild.md:15-16: \"The concept is the one idea of how the work meets its user's purpose; everything else derives from it (Brooks, conceptual integrity).\"",
+    "Brooks, The Mythical Man-Month (1975): \"I will contend that conceptual integrity is the most important consideration in system design.\"",
     "arc42, section 4 \"Solution Strategy\": \"A short summary and explanation of the fundamental decisions and solution strategies, that shape the system's architecture.\""
    ],
    "examples": {
-    "fails": "RoomBook is built on a modern, scalable three-tier architecture.",
-    "passes": "RoomBook's server matches each meeting request against each room's seats and equipment and the free times it reads from Google Workspace, and the browser shows only the rooms that fit. The experience it delivers is in the UX (ux.md)."
+    "fails": "RoomBook is built on a modern, scalable cloud architecture.",
+    "passes": "RoomBook reads the meeting a worker describes, matches it to the rooms whose seats and equipment fit, and asks the office calendar which of them are free, so the worker is offered only rooms that fit. The UX it delivers is in ux.md."
    }
   },
   {
    "id": "Q2",
-   "what": "When the reader weighs a choice, can they tell from the opening every principle it must keep, those of what the product is built on and its own?",
-   "why": "If yes, every choice is weighed against the same rules, and the rules the product shares with what it is built on stay in one place, reached by a link. A principle is a rule the choices are held to; a means, such as a language or a tool, belongs to the part that uses it. If no, each choice can hold by its own reason while together they break a rule no one wrote down.",
+   "what": "When the builder meets a case no principle names, can they decide it by naming the principle whose reason settles it?",
+   "why": "If yes, the builder decides a case the document did not foresee as its writer would have, because each principle says what it is there for. A principle is a rule every part is built by; a means, such as a language or a tool, is not one. If no, a rule with no reason is either stretched to a case it was not meant for or ignored where it was, and the builder asks, or guesses.",
    "about": [
     "principles"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/architecture.md:109-111: \"each decision can hold by its own reason while the decisions together break a principle no one wrote down. A principle is a rule the decisions are held to; a means such as a tool or a format belongs to the part that uses it.\"",
-    "plugins/rn/checklists/product/architecture.md:31-32: \"An architecture built on another links that one and writes only what is its own.\"",
-    "dev/architecture.md:6-7: \"each plugin's architecture links this one, and holds its own UX's user stories and what only that plugin adds.\"",
-    "arc42, section 4 \"Solution Strategy\": \"They are the basis for many other detailed decisions or implementation rules.\""
+    "plugins/rn/checklists/meta.md:95-96: \"a rule given with its reason is followed where it was not foreseen (Anthropic, \\\"Prompting best practices\\\").\"",
+    "plugins/rn/checklists/product/architecture.md:110-111: \"A principle is a rule the decisions are held to; a means such as a tool or a format belongs to the part that uses it.\"",
+    "dev/architecture.md:39: \"The reason for each is under Why it is so.\"",
+    "ISO/IEC/IEEE 42010:2011, 3.2: architecture is the \"fundamental concepts or properties of a system in its environment embodied in its elements, relationships, and in the principles of its design and evolution\"."
    ],
    "examples": {
-    "fails": "Principles: clean code; TypeScript everywhere.",
-    "passes": "RoomBook holds the principles of the company's web apps (link). Its own: it reads only whether a room is free, never what is in a person's calendar."
+    "fails": "Principle: RoomBook does not read calendars. (A builder adding a reminder email cannot tell whether it may read the attendees' free times to pick when to send it.)",
+    "passes": "Principle: RoomBook reads only whether a room is free, never what is in a person's calendar. Reason: staff let RoomBook in on that promise alone, and one look into a person's meetings breaks it for everyone. (The builder sends the reminder a day before the meeting, without reading anyone's calendar.)"
    }
   },
   {
    "id": "Q3",
-   "what": "For each step of the UX's scenarios, can the approver tell which user story carries it?",
-   "why": "If yes, the approver sees that the parts drawn from the stories deliver every step of the experience, and each story is a thing the user does at the product's edge. If no, a step no story carries is built by guess. A story for a step inside the product adds parts without the user doing more, and one named by a technology must be written again when the technology changes.",
+   "what": "For each step of each of the UX's scenarios, can the builder tell which entry of the product the user uses for it, such as a command they run?",
+   "why": "If yes, the builder sees that the roles, the parts that act, drawn from these ways of use deliver every step of the UX. These ways of use are the document's user stories. If no, a step no user story carries is built by guess. A user story for a step inside the product adds roles without the user doing more, and one named by a technology rather than by what the user does must be written again when the technology changes.",
    "about": [
     "user-stories"
    ],
    "grounds": [
     "plugins/rn/checklists/product/architecture.md:12-14: \"Its scenes rest on a few user stories, each one way the user uses the product at its edge, such as a command they run.\"",
-    "plugins/rn/checklists/product/architecture.md:117-119: \"the components are drawn from the stories, so a scene no story holds up is built by guess. A story for a step inside the product adds components without the user doing more, and a story named by a technology rather than by what the user does must be made again when the technology changes.\"",
-    ".rn/20261013-rebuild/ux.json:75: \"How the product is built belongs in the architecture document.\""
+    "plugins/rn/checklists/product/architecture.md:117-119: \"the components are drawn from the stories, so a scene no story holds up is built by guess. A story for a step inside the product adds components without the user doing more, and a story named by a technology rather than by what the user does must be made again when the technology changes.\""
    ],
    "examples": {
-    "fails": "As the server, I want to cache each room's free times. (The worker never does this, and no story carries how the worker finds a room that fits.)",
-    "passes": "As an office worker, I want to describe my meeting and get the rooms that fit it. As an office worker, I want to book one of them and find it in my calendar."
+    "fails": "As the server, I want to cache each room's free times. (The worker never does this, and no story carries the UX's step where the worker finds a room that fits.)",
+    "passes": "As an office worker, I want to describe my meeting and get the rooms that fit it. Carries O1, steps 1-2. As an office worker, I want to book one of them and find it in my calendar. Carries O1, steps 3-4."
    }
   },
   {
    "id": "Q4",
-   "what": "Before building a part, can the builder tell from Components what that part alone is responsible for?",
-   "why": "If yes, the builder builds each responsibility once, in its part, and knows whether an AI or code runs it. Each part is one that acts in a user story, or is split off for a reason the document names, such as work run in parallel. If no, because the parts are cut by function, by stage or by technology, they grow with each function, one thing is known in several parts, and the builder decides it in two places.",
+   "what": "When the builder starts on a role, can they build it without choosing for themselves what it is made with: an AI or code, and which technology?",
+   "why": "If yes, every role of a kind is made the same way, and the builder starts at once. The box's shape says whether an AI or code runs the role, its tag names its type and technology, and a technology the builder would question has its reason under the figure. Code is for what a machine can decide the same way every time, and an AI for what needs a reader. If no, a role meant for code is left to an AI and decides differently from run to run, or each builder picks their own language, and a role relies on what the users do not have.",
    "about": [
     "components"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/architecture.md:18-20: \"Whoever makes the architecture cuts no component by function or by stage of processing, nor to fit a technology, and chooses a technology for each component after.\"",
-    "plugins/rn/checklists/product/architecture.md:145-148: \"components cut by function or by stage of processing grow with each function, and scatter what one thing knows among them\" and \"leaves one responsibility decided in two places.\"",
-    "C4 model, \"Notation\": \"The type of every element should be explicitly specified\" and \"Every element should have a short description, to provide an “at a glance” view of key responsibilities.\"",
-    "arc42, section 5 \"Building Block View\": \"The building block view shows the static decomposition of the system into building blocks\"."
+    "plugins/rn/checklists/product/architecture.md:54-55: \"its shape saying whether an AI or code runs it, with a legend\".",
+    "dev/architecture.md:52-53: \"A script, a hook or the project's own tools check what a machine can check.\" and \"An AI reads only for what needs a reader.\"",
+    "C4 model, \"Notation\": \"The type of every element should be explicitly specified (e.g. Person, Software System, Container or Component).\" and \"Every container and component should have a technology explicitly specified.\"",
+    "dev/architecture.md:496-497: \"What runs on users' machines is Python 3, version 3.9 or later, with the standard library only.\" and 499: \"python3 is wherever git is, while Node.js may not be, and users run 3.9.\""
    ],
    "examples": {
-    "fails": "Three boxes: Frontend, Backend, Database. (The builder of Backend cannot tell whether it or Frontend decides which rooms fit.)",
-    "passes": "Booking page <code>: takes the meeting and shows the rooms offered. Room matcher <code>: keeps only the rooms whose seats and equipment fit. Calendar reader <code>: asks Google Workspace which rooms are free."
+    "fails": "Every box is the same rectangle with a name alone. (The builder of the Room matcher cannot tell whether to prompt an AI to judge a fit or to code the rule, nor in what language.)",
+    "passes": "\"Meeting reader [agent · Claude prompt]\" in a rounded box; \"Booking API [service · Python, FastAPI]\", \"Room matcher [module · Python]\" and \"Calendar link [module · Python]\" in square boxes; the legend reads: rounded, an AI; square, code. Under the figure: Python, as the team that keeps RoomBook keeps its other services in Python."
    }
   },
   {
    "id": "Q5",
-   "what": "Can the builder tell from the data model how each data the parts pass or keep is joined to the others?",
-   "why": "If yes, the part that writes a data and the part that reads it take each relation the same way. What fields a data has is decided where the data is built, so the figure names each data and draws its relations alone. If no, a relation no figure draws is made one way by the part that writes it and read another way by the part that reads it.",
+   "what": "When the builder asks \"Which role decides this?\" of anything the UX needs, can they point to exactly one role?",
+   "why": "If yes, each thing is decided once, in one role, and a change to it is made in that role alone. A role's responsibility shows in what it does to the others, and the list holds what no arrow carries. Each role acts in a user story, and is split from the others by a responsibility of its own, or by a constraint or a principle the document names, such as work run in parallel or what the platform allows. If no, roles cut by function, by stage of processing or to fit a technology grow with each function and leave a thing decided in two roles or in none, so two builders decide it two ways, or one decides it by guess.",
    "about": [
-    "data-model"
+    "components",
+    "responsibilities"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/architecture.md:136-137: \"A relation no figure draws is made one way by the role that writes it and taken another way by the role that reads it.\"",
-    "plugins/rn/checklists/product/architecture.md:11-12: \"The contents of each data, such as its fields, are decided where the data is built too\"."
+    "plugins/rn/checklists/product/architecture.md:141-148: \"Is each role one that acts in a user story\" and \"components cut by function or by stage of processing grow with each function, and scatter what one thing knows among them\" and \"leaves one responsibility decided in two places.\"",
+    "plugins/rn/checklists/product/architecture.md:18-20: \"Whoever makes the architecture cuts no component by function or by stage of processing, nor to fit a technology, and chooses a technology for each component after.\""
    ],
    "examples": {
-    "fails": "Boxes Meeting request, Room and Booking, with no line between them. (The booking page can store several rooms in one booking while the matcher expects one.)",
-    "passes": "A line from Booking to Room labelled \"holds one\", and from Booking to Meeting request labelled \"for the time of\"."
+    "fails": "Three boxes, Frontend, Backend and Database, joined by arrows labelled \"API\" and \"SQL\". (Asked which role decides whether a room fits, the builder can point to Frontend or to Backend.)",
+    "passes": "The Booking API \"asks for rooms that fit\" the Room matcher, with the Meeting request, and the list under the figure says the Room matcher alone decides a fit: a seat for each attendee and the equipment the meeting asks for."
    }
   },
   {
    "id": "Q6",
-   "what": "Can the approver follow each user story from its first step to its end, through the parts it reaches and what each hands on?",
-   "why": "If yes, the approver sees that the parts together carry each story, not only each its own share. Parts and data keep the names Components and the data model give them, so each step is read against those figures. If no, a part found missing only when its story is built changes the architecture after it was approved.",
-   "about": [
-    "sequences"
-   ],
-   "grounds": [
-    "plugins/rn/checklists/product/architecture.md:126-128: \"components that each do their part achieve no story unless their interactions do. A component found missing only when its story is built changes the architecture then, after the approval.\"",
-    "arc42, section 6 \"Runtime View\": \"The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios\".",
-    "C4 model, \"Notation\": \"Every line should be labelled, the label being consistent with the direction and intent of the relationship\"."
-   ],
-   "examples": {
-    "fails": "Browser ->> Server: request; Server -->> Browser: response.",
-    "passes": "Booking page ->> Room matcher: meeting request; Room matcher ->> Calendar reader: rooms and time; Calendar reader -->> Room matcher: free rooms; Room matcher -->> Booking page: rooms that fit."
-   }
-  },
-  {
-   "id": "Q7",
-   "what": "When the reader would question a choice the figures show, can they find why it was made over the other way?",
-   "why": "If yes, the approver weighs the trade-off before approving, and a later builder keeps the choice or changes it knowing what it was for. If no, a later builder has two ways only: to keep the choice blindly, or to change it blindly and undo what it was for.",
+   "what": "When the builder doubts a choice the document makes, such as a technology, can they tell why it was made over the other way?",
+   "why": "If yes, the builder keeps the choice or changes it knowing what it was for, since its reason stands next to the figure or the table that shows it. If no, a later builder has two ways only: to keep the choice blindly, or to change it blindly and undo what it was for.",
    "about": [
     "choices"
    ],
    "grounds": [
     "plugins/rn/checklists/product/architecture.md:59: \"<A choice the figure shows that the reader would question, with why>\".",
     "Nygard, \"Documenting Architecture Decisions\" (2011): without the motivation, a new team member can only \"Blindly accept the decision.\" or \"Blindly change it.\"",
-    "Ubl, \"Design Docs at Google\": \"The design doc is the place to write down the trade-offs you made in designing your software.\"",
-    "arc42, section 9 \"Architecture Decisions\": \"Stakeholders of your system should be able to comprehend and retrace your decisions.\""
+    "Ubl, \"Design Docs at Google\": \"The design doc is the place to write down the trade-offs you made in designing your software.\""
    ],
    "examples": {
-    "fails": "The calendar reader asks Google Workspace on every search.",
-    "passes": "The calendar reader asks Google Workspace on every search rather than keeping a copy, so a room booked outside RoomBook is never offered; each search waits about a second for it."
+    "fails": "Deployment tags the Room store \"[Cloud SQL · PostgreSQL]\", and nothing says why it is not a copy of the calendar kept in memory.",
+    "passes": "Under Deployment: Cloud SQL rather than a database run by the team, so backups and failover need no one on call; RoomBook's team has none."
+   }
+  },
+  {
+   "id": "Q7",
+   "what": "When one builder makes the role that writes a data and another makes the role that reads it, do they take the way the data join the same way?",
+   "why": "If yes, the two roles work together the first time they meet, as each relation is drawn once, named, with how many of one go with one of the other (its cardinality) at its ends, and both read it. The figure names each data alone: a data's contents, such as its fields, are decided where the data is built, and its schema's file shows in the directory structure. If no, a relation no figure draws, or one drawn without how many it joins, is made one way by the role that writes it and read another way by the role that reads it, and the fault shows only when the two run together.",
+   "about": [
+    "data-model"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:136-137: \"A relation no figure draws is made one way by the role that writes it and taken another way by the role that reads it.\"",
+    "plugins/rn/checklists/product/architecture.md:11-12: \"The contents of each data, such as its fields, are decided where the data is built too, and its schema's file shows in the directory structure.\"",
+    "Mermaid, \"Entity Relationship Diagrams\": \"Relationships between entities are represented by lines with end markers representing cardinality.\" and \"Cardinality is a property that describes how many elements of another entity can be related to the entity in question.\""
+   ],
+   "examples": {
+    "fails": "Boxes Meeting request, Room and Booking, with a plain line from Booking to Room. (The Booking page stores several rooms in one booking, while the Calendar link books only the first.)",
+    "passes": "A line from Booking to Room named \"holds\", with crow's-foot ends for many bookings to one room; a line from Booking to Meeting request named \"is for\", one to one."
    }
   },
   {
    "id": "Q8",
-   "what": "Can the builder tell from the deployment where each part runs and where each data is kept?",
-   "why": "If yes, the builder knows what each part can reach, when a change to it reaches the user, who can read each data and whether it outlives a run. Each thing outside the product the parts rely on is drawn too, as it is where the product breaks for the user first. If no, the builder places a part or a data by guess, and finds what it cannot reach once it runs.",
+   "what": "When the builder traces one user story, one way the user uses the product, can they follow it from the first role it reaches to its end, with the data each role hands on?",
+   "why": "If yes, the builder sees that the roles together carry each story, not only each its own share, and builds each role knowing which steps it carries. Roles and data keep the names Components and the data model give them, so each step is read against those figures. If no, a role found missing only when its story is built is then added to whichever role is nearest, by guess, and a data the builder cannot follow from the role that makes it to the role that uses it is made in one form and read in another.",
+   "about": [
+    "sequences"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:126-129: \"components that each do their part achieve no story unless their interactions do.\" and \"A data that the reader cannot follow from the role that makes it to the role that uses it is made in one form and read in another.\"",
+    "arc42, section 6 \"Runtime View\": \"The runtime view describes concrete behavior and interactions of the system's building blocks in form of scenarios\".",
+    "Mermaid, \"Sequence diagrams\": \"A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.\""
+   ],
+   "examples": {
+    "fails": "Browser ->> Server: request; Server -->> Browser: response. (The step where the worker finds the booking in their calendar is carried by no role, so the builder of the Booking page adds a calendar call of its own.)",
+    "passes": "Worker ->> Booking page: books a room; Booking page ->> Booking API: booking; Booking API ->> Calendar link: booking; Calendar link ->> Google Workspace: puts the booking on the room's and the worker's calendars; Booking API -->> Booking page: booking confirmed."
+   }
+  },
+  {
+   "id": "Q9",
+   "what": "When the builder sets up and starts the product, can they put each role and each data where it runs or is kept, without asking anyone?",
+   "why": "If yes, the builder knows where each role runs, and so what it can reach and when a change to it reaches the user, and where each data is kept, and so who can read it and whether it outlives a run. Each place the product runs, such as a container, sits in an outer box of its environment, such as Cloud Run, holding the roles that run in it and the data kept in it, each tagged with its technology, so the builder sets up what each needs. The list under the figure says how the product is started, and each thing outside the product the roles depend on is drawn, as it is where the product breaks for the user first. If no, the builder places a role or a data by guess, and finds what it cannot reach only once it runs.",
    "about": [
     "deployment"
    ],
    "grounds": [
     "plugins/rn/checklists/product/architecture.md:164-166: \"where a role runs decides what it can reach and when a change to it reaches the user, where a data is kept decides who can read it and whether it outlives a run, and what the product depends on is where it breaks for the user first.\"",
-    "arc42, section 7 \"Deployment View\": \"Software does not run without hardware.\" and \"Therefore, you need to know the infrastructure.\""
+    "plugins/rn/checklists/product/architecture.md:82: \"<How the product is started>\".",
+    "dev/architecture.md:113: \"A person starts a plugin by its skill, which makes the main conversation the orchestrator.\"",
+    "arc42, section 7 \"Deployment view\": \"Software does not run without hardware.\" and \"Therefore, you need to know the infrastructure.\"",
+    "C4 model, \"Deployment diagram\": \"A deployment node represents where an instance of a software system/container is running.\" and \"Deployment nodes can be nested.\""
    ],
    "examples": {
-    "fails": "RoomBook runs in the cloud.",
-    "passes": "The browser runs the booking page. The company's server runs the room matcher and the calendar reader, and keeps bookings in PostgreSQL. Outside it, Google Workspace is read for rooms' free times."
+    "fails": "RoomBook runs in the cloud. (The builder of the Calendar link cannot tell in which place it runs, whether that place can reach Google Workspace, nor where bookings are kept.)",
+    "passes": "Outer box \"Google Cloud [Cloud Run, Cloud SQL]\" holds \"Booking page app [Cloud Run service · React, TypeScript]\", \"Booking API container [Cloud Run service · Python, FastAPI]\", which holds Booking API, Meeting reader, Room matcher and Calendar link, and \"Room store [Cloud SQL · PostgreSQL]\". Outside: Google Workspace \"room free times, bookings [HTTPS]\" and the Claude API \"reads meetings [HTTPS]\". Under it: a worker starts RoomBook by opening its page."
    }
   },
   {
-   "id": "Q9",
-   "what": "When the builder makes or changes a part, can they tell from the directory structure the one place its files go?",
-   "why": "If yes, the builder makes each part where it is kept, in what it is made of, and the place tells who owns it. If no, a part kept in no place is put where the builder guesses, and one kept in two places is made twice and drifts.",
+   "id": "Q10",
+   "what": "When the builder makes or changes a role or a data, can they put its files in the one place they belong, without asking anyone?",
+   "why": "If yes, the builder makes each role and each data where it is kept, and the place tells who owns it. If no, a role kept in no place is put where the builder guesses, and one kept in two places is made twice and drifts.",
    "about": [
     "directory"
    ],
@@ -206,69 +235,155 @@
    ],
    "examples": {
     "fails": "src/ holds the code.",
-    "passes": "web/booking/ the booking page <TypeScript, React>; server/matcher/ the room matcher <TypeScript>; server/calendar/ the calendar reader <TypeScript>."
-   }
-  },
-  {
-   "id": "Q10",
-   "what": "Can the approver weigh how heavily each part and the user stories are checked against what a failure of each would cost the user?",
-   "why": "If yes, the approver gives each part the checks its failure is worth, and what the project's rules settle is linked, as it is decided once for the project. If no, a weight given every product alike gives a small tool the checks of a large one, and a ground such as \"a checklist asks it\" is one the approver cannot weigh against the user.",
-   "about": [
-    "test"
-   ],
-   "grounds": [
-    "plugins/rn/checklists/product/architecture.md:173-177: \"a check costs the user time to build and to keep on every change, and a failure costs them what the part breaks\" and \"A weight given every product alike gives a small tool the checks of a large one.\""
-   ],
-   "examples": {
-    "fails": "Every part is unit tested to 80% coverage.",
-    "passes": "The room matcher is checked also by property tests, as a wrong match puts a six-person review in a four-seat room. The booking page is checked by the project's rules alone, as a fault in it shows on the screen at once."
+    "passes": "web/ Booking page [React, TypeScript]; api/main.py Booking API [Python, FastAPI]; api/prompts/meeting-reader.md Meeting reader [Claude prompt]; api/matcher/ Room matcher [Python]; api/calendar/ Calendar link [Python]; db/schema.sql Room store [PostgreSQL]."
    }
   },
   {
    "id": "Q11",
-   "what": "When the approver reads any line, can they tell what it holds for the user, whichever way the part is then built?",
-   "why": "If yes, each line is a choice the approval rests on, and what the builder finds while building leaves it standing. If no, a line that says how a part behaves in one case, a count, a value, a data's fields or a part's steps is decided again where the part is built, drifts from it, and sends the document back to be approved again.",
+   "what": "When a colleague asks \"Is anything in this product left untested?\", can the builder answer, for each place the product runs, such as the Booking API container, which types of test from unit to end-to-end cover it, and why a type is missing where it is?",
+   "why": "If yes, the builder sees that every place the product runs is tested from narrow scope to wide, or why not: unit tests take the roles inside a place one at a time, an AI part by prompt trials; integration tests join the place to its real neighbours; end-to-end tests run on the whole alone. A row of Test's table is such a place, named as in Deployment, and an empty cell has its reason in a footnote, so the builder knows what each test runs against. If no, a place with no row, or an empty cell with no reason, goes untested unseen, and many narrow tests with no wide one pass while a user story fails.",
+   "about": [
+    "test-table"
+   ],
+   "grounds": [
+    "dev/architecture.md:537-538: \"Each kind of part has its own check. Unit tests check a part made of code. A trial of that part alone checks a part run by an AI. Acceptance tests of its user stories check the whole plugin.\"",
+    "dev/architecture.md:627: \"Each part can pass while a story is missed.\"",
+    "Vocke, \"The Practical Test Pyramid\" (martinfowler.com), on Cohn's pyramid: \"Write tests with different granularity\" and \"The more high-level you get the fewer tests you should have\".",
+    "Winters, Manshreck and Wright, Software Engineering at Google, ch. 11 \"Testing Overview\": \"Scope refers to the specific code paths we are verifying.\""
+   ],
+   "examples": {
+    "fails": "Every module is unit tested to 80% coverage. (No row for the Meeting reader's prompt or for the whole on staging, and nothing says why.)",
+    "passes": "| Booking page app [Cloud Run service · React, TypeScript] | Vitest ●○○ form, room list | Playwright, API faked ●○○ pages against the API | ▨[^1] |\n| Booking API container [Cloud Run service · Python, FastAPI] | pytest ●●● fit rules, handlers; prompt trials ●●○ Meeting reader | pytest, real PostgreSQL, Workspace faked ●●○ queries, calendar calls | ▨[^1] |\n| RoomBook on staging [Cloud Run] | ▨[^2] | ▨[^2] | Playwright on GitHub Actions ●●○ booking story, test calendar |\n[^1]: end-to-end runs on the whole alone. [^2]: the places it is made of are tested in their own rows."
+   }
+  },
+  {
+   "id": "Q12",
+   "what": "When the builder writes a test of one type, such as an integration test, can they write it without deciding for themselves what to make real and what to fake?",
+   "why": "If yes, every test of a type stands, by the line for its type under Test's table, on the same ground, so a failing test points to the part it is about: a unit test fakes the part's neighbours, a prompt trial runs the real prompt and model on a fixed input, an integration test makes real the neighbours of the place it tests. If no, one builder's integration test fakes the database and another's does not, so a fault passes one and the two tests disagree on what broke.",
+   "about": [
+    "test-rules"
+   ],
+   "grounds": [
+    "dev/architecture.md:606-607: \"The assistant tries each role, a skill or an agent, on its own, with mocks standing in for everything else.\"",
+    "dev/architecture.md:610-611: \"A role tried together with what lies around it does not show which of them went wrong.\""
+   ],
+   "examples": {
+    "fails": "Integration tests: test the API with its dependencies. (Is Google Workspace real? Is PostgreSQL?)",
+    "passes": "Integration tests: the container and PostgreSQL are real; Google Workspace and the Claude API are faked."
+   }
+  },
+  {
+   "id": "Q13",
+   "what": "When the builder has run the tests of a place the product runs, can they judge whether it passes without setting the bar themselves?",
+   "why": "If yes, every builder stops at the same bar: all tests pass, line and branch coverage reach their threshold, the heaviest weight also passes property tests and reaches its mutation score, and a prompt trial meets its expectation in the given share of runs on each fixed input. If no, each builder sets their own bar, so a place passes for one and fails for another, and a prompt that met its expectation once is taken as working, though an AI's output varies from run to run.",
+   "about": [
+    "test-rules"
+   ],
+   "grounds": [
+    "dev/architecture.md:557-558: \"Each part made of code has unit tests\" and \"They run every line and every branch of it: C0 and C1 coverage, 100%.\"",
+    "dev/architecture.md:562: \"Mutation testing with Cosmic Ray: the unit tests must catch every mutant.\""
+   ],
+   "examples": {
+    "fails": "Unit tests: good coverage. Prompt trials: the Meeting reader reads a sample meeting.",
+    "passes": "Unit tests: all pass; line and branch coverage at least 90%; at ●●●, property tests pass and the mutation score is at least 95%. Prompt trials: 10 runs for each fixed input, at least 9 give the expected Meeting request."
+   }
+  },
+  {
+   "id": "Q14",
+   "what": "When a colleague asks \"Why is this place the product runs tested so heavily, and that one so lightly?\", can the builder answer by what a failure of each would cost the user?",
+   "why": "If yes, each place gets the checks its failure is worth, weighed once for this product, and what the project's shared rules settle is linked rather than weighed again. If no, a weight given every product alike gives a small tool the checks of a large one, or a costly place too few, and a ground such as \"a checklist asks it\" is one the builder cannot weigh against the user.",
+   "about": [
+    "test-rules"
+   ],
+   "grounds": [
+    "plugins/rn/checklists/product/architecture.md:173-177: \"a check costs the user time to build and to keep on every change, and a failure costs them what the part breaks, such as data lost or a wrong result used unseen. A weight given every product alike gives a small tool the checks of a large one.\" and \"What the project's rules settle is linked, as it is decided once for the project.\"",
+    "plugins/rn/checklists/product/architecture.md:30-31: \"How heavily a part is checked follows from what a failure of it would cost the user, which differs from product to product\"."
+   ],
+   "examples": {
+    "fails": "Booking API container ●●●: it is the core.",
+    "passes": "Booking API container ●●●: a wrong match puts a six-person review in a four-seat room. Booking page app ●○○: a fault in it shows on the screen at once."
+   }
+  },
+  {
+   "id": "Q15",
+   "what": "When two builders, each making a different role, meet the same detail the document does not settle, do they decide it the same way by the same principle?",
+   "why": "If yes, every role is made on the same thinking, and the user meets one product, not one for each builder. The principles cover the decisions that come up in every role, such as what to do when something outside the product does not answer, and each is plain enough that two builders read it alike. If no, a recurring decision with no principle, or a principle each reads their own way, such as \"keep it simple\", is decided differently in each role, and the user meets two behaviours where they expect one.",
+   "about": [
+    "principles",
+    "user-stories",
+    "components",
+    "responsibilities",
+    "choices",
+    "data-model",
+    "sequences",
+    "deployment",
+    "directory",
+    "test-table",
+    "test-rules"
+   ],
+   "grounds": [
+    "arc42, section 8 \"Crosscutting Concepts\": \"This section describes crosscutting concepts (practices, patterns, regulations or solution ideas).\" and \"Such concepts are often related to multiple building blocks.\"",
+    "arc42, section 4 \"Solution Strategy\": \"They are the basis for many other detailed decisions or implementation rules.\"",
+    "Brooks, The Mythical Man-Month (1975): \"I will contend that conceptual integrity is the most important consideration in system design.\""
+   ],
+   "examples": {
+    "fails": "No principle says what to do when Google Workspace does not answer. (The builder of the Room matcher offers every room that fits; the builder of the Booking page shows an error. The worker gets a list one day and an error the next.)",
+    "passes": "Principle: RoomBook never offers a room it has not seen free. Reason: a room offered and then found taken spoils the meeting it was booked for. (Both builders show that rooms cannot be checked now, and offer none.)"
+   }
+  },
+  {
+   "id": "Q16",
+   "what": "When the builder changes how a role works inside, such as its steps, its behaviour in one case or a data's fields, while the UX and the principles stay, does every line of the document still hold?",
+   "why": "If yes, the builder chooses the best way to build each role and changes it freely, and the document stays true for every builder after them. How a role behaves in each case is decided where it is built, in its tests if it is code and in its steps if an AI runs it, and a data's fields are decided where the data is built. A technology is a choice the document makes, shown as a tag with its reason, so changing one is a change of the document's choice, made with a new reason. If no, a line that holds such a detail, such as a count, a value or a role's steps, or a technology named in prose, is decided again where the role is built, drifts from it, and is followed by the next builder as if it still held.",
    "about": [
     "summary",
     "principles",
     "user-stories",
     "components",
+    "responsibilities",
+    "choices",
     "data-model",
     "sequences",
-    "choices",
     "deployment",
     "directory",
-    "test"
+    "test-table",
+    "test-rules"
    ],
    "grounds": [
-    "plugins/rn/checklists/meta.md:81-82: \"Can the approver tell from each line what holds for the user and why, whichever way it is built?\"",
-    "plugins/rn/checklists/product/architecture.md:190-192: \"a behavior in one case, a count, a value, a data's fields or a list of what a part does step by step is decided again where the part is built and drifts from it.\"",
+    "plugins/rn/checklists/product/architecture.md:9-12: \"How a part behaves in each case is decided where the part is built: in its tests if it is code, and in its steps if an AI runs it. The contents of each data, such as its fields, are decided where the data is built too\".",
+    "plugins/rn/checklists/product/architecture.md:190-191: \"a behavior in one case, a count, a value, a data's fields or a list of what a part does step by step is decided again where the part is built and drifts from it.\"",
     "Ubl, \"Design Docs at Google\": \"A clear indicator that a doc might not be necessary are design docs that are really implementation manuals.\""
    ],
    "examples": {
-    "fails": "The room matcher rounds a meeting's end up to the next quarter hour, and retries Google Workspace three times.",
-    "passes": "The room matcher offers a room only when it is free for the whole meeting."
+    "fails": "Under Components: \"The Room matcher reads rooms with one SQL join, caches the result for five minutes, and retries Google Workspace three times.\" (Moving the cache or the retry into the Calendar link leaves these lines untrue.)",
+    "passes": "Under Components: \"The Room matcher offers a room only when it is free for the whole meeting.\" The Room matcher's queries, caching and retries change, and the line still holds."
    }
   },
   {
-   "id": "Q12",
-   "what": "Reading the whole, does the approver find that every arrow, relation, place and check keeps the principles the opening names?",
-   "why": "If yes, the product does what its principles are there for, and the approver can stand behind the whole. If no, a choice read alone looks right by its own reason, undoes what a principle was there for, and shows only when the product fails at it.",
+   "id": "Q17",
+   "what": "When the builder asks of any role, line or principle \"Why is this here?\", can they answer by a step of the UX or by a principle's reason?",
+   "why": "If yes, the document changes only when the UX or a principle changes, and the builder who makes such a change finds from it every role and line the change reaches. They keep what still has its reason and remove what has lost it. If no, a choice with no reason is neither kept nor removed with confidence: a later builder keeps it blindly, or changes it blindly and undoes what it was for.",
    "about": [
+    "summary",
     "principles",
+    "user-stories",
     "components",
+    "responsibilities",
+    "choices",
     "data-model",
     "sequences",
     "deployment",
     "directory",
-    "test"
+    "test-table",
+    "test-rules"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/architecture.md:183-184: \"a decision read alone looks right by its own reason. One that breaks a principle undoes what the principle was there for, and shows only when the product fails at it.\""
+    "Nygard, \"Documenting Architecture Decisions\" (2011): without the motivation, a new team member can only \"Blindly accept the decision.\" or \"Blindly change it.\"",
+    "arc42, section 9 \"Architecture Decisions\": \"Stakeholders of your system should be able to comprehend and retrace your decisions.\""
    ],
    "examples": {
-    "fails": "The calendar reader reads the attendees' calendars to suggest a time, while the opening says RoomBook never reads what is in a person's calendar.",
-    "passes": "The calendar reader asks Google Workspace only whether each room is free."
+    "fails": "A role, Notification hub, that no user story reaches and no principle asks for. (A builder cannot tell whether removing it breaks anything.)",
+    "passes": "The Calendar link is the only role that talks to Google Workspace, by the principle \"one role speaks to each outside service\", whose reason is that a change on Google's side then reaches one role alone."
    }
   }
  ],
