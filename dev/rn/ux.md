@@ -18,16 +18,16 @@ Key results have no target values. When a measure becomes a target, it stops bei
 
 ## Scenarios
 
-The participants are the person (a person) and rn (a plugin). A sign-off is a stop where rn shows a
-proposal and waits: the person types `/rn:ty` to approve it, or `/rn:gm <feedback>` to ask for a
-change.
+The person is a person. rn is an AI: a Claude Code plugin that works in the person's conversation.
+A sign-off is a stop where rn shows a proposal and waits: the person types `/rn:ty` to approve it,
+or `/rn:gm <feedback>` to ask for a change.
 
 ### O1: From a request in rough words to a merged pull request
 
 ```mermaid
 sequenceDiagram
   participant U as person (person)
-  participant R as rn (plugin)
+  participant R as rn (AI)
   U->>R: /rn:up <what they want>
   loop one message per point to decide
     R->>U: the point, with what rn looked up and the answer it recommends
@@ -38,6 +38,10 @@ sequenceDiagram
   opt the purpose needs documents of what the person gets, or of how it is built
     R->>U: links to the documents, and each choice made without asking, with why
     U->>R: /rn:ty
+  end
+  opt the work takes days, and the person comes back another day
+    U->>R: /rn:up, in a new conversation
+    R->>U: the sign-off still waiting, or the next point to decide, asking nothing again
   end
   R->>U: the finished work, and each choice made without asking, with why
   U->>R: /rn:ty
