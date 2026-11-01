@@ -457,6 +457,8 @@ sequenceDiagram
   the step's maker.
 - A person who asks `turn:up` again for a work whose run stopped goes on with that run. `turn:up`
   finds the run's folder by the work, and each role takes up what the run files already hold.
+  lane tells the new `turn:up` move 1 again, as it keeps calls for each start of a subagent, so
+  planner and designer each end soon on what their files hold.
 - A run's files lie in `.turn/<yyyymmdd>-<name>/` in the repository, and the templates planner
   makes lie in `.turn/templates/`, as
   [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) places what
