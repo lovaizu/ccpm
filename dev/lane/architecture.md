@@ -110,14 +110,8 @@ Principle 1 to 9, and two of its own, named below lane's Principle 1 and 2:
   `tool_input.message` and SubagentStop's `last_assistant_message`, and not the records (hooks,
   Agent and SubagentStop).
 - A start counts as the move once the subagent it started has ended, in the foreground or the
-  background, and the move has reached the orchestrator since. While it runs in the background, no
-  move is due, and a start of the flow is told to wait for it. Once it has ended, the move reaches
-  the orchestrator by a stop of a call or of its end, which the guard reads in the orchestrator's
-  record after the start's result; a start before that is stopped, told the move.
-
-  A trial of Claude Code 2.1.316 found that the `additionalContext` of a SubagentStart hook run as
-  Claude Code starts the orchestrator again on a subagent's end is not put into its input, while a
-  stop's reason is.
+  background. While it runs in the background, no move is due, and a start of the flow is told to
+  wait for it.
 
   An Agent call of a background subagent comes back as the subagent starts, with `async_launched`
   and no answer (hooks, Agent), and Claude Code runs every subagent so in an interactive session by

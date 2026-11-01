@@ -16,7 +16,6 @@ import hook
 import lanes_json
 import moves
 import ports
-import record
 import schema
 import started
 import step
@@ -227,12 +226,7 @@ class Laid:
         port = getattr(lane, "PORT", None)
         read: list[Any] = [] if port is None else [lambda g: self.read(port, g, self.adapter)]
         if getattr(lane, "FLOW", False):
-            flowing = moves.Run(self.flow or {}, self.plugin, called.flow_kept(event))
-            # The move told as the orchestrator starts again may not reach it, so a start counts
-            # once a hook output that reaches it told the move, as its record holds it.
-            last = moves.last_start(flowing)
-            heard = record.reached(seen.found or [], str(last.get("id"))) if last else []
-            read = [flowing._replace(told=moves.reached(flowing, heard))]
+            read = [moves.Run(self.flow or {}, self.plugin, called.flow_kept(event))]
         drift = next(filter(None, (lane.drifts(acted, t, self.root, *read) for t in each)), "")
         if not drift:
             return []

@@ -170,18 +170,16 @@ notes: Wait for `notes:changelog-writer` to end: lane tells the next move once i
 ```
 
 The writer ends with the entries written. Claude Code starts `notes-lead` again to tell it so, and
-lane tells it its next move, to start `notes:changelog-reviewer`; that line does not always reach
-it. `notes-lead`, given the entries, is about to end with them before the reviewer has run. Its
-hook stops the end, and `notes-lead` reads:
+lane tells it its next move, to start `notes:changelog-reviewer`. `notes-lead`, given the entries,
+is about to end with them before the reviewer has run. Its hook stops the end, and `notes-lead`
+reads:
 
 ```
 notes: Take each move lane tells you, until it tells none.
 The next move of the flow is move 2: start `notes:changelog-reviewer`.
 ```
 
-Told so by the stop, `notes-lead` starts the reviewer, which counts as the move. Had it started the
-reviewer before any stop told it the move, lane would have stopped that start with the same two
-lines, and counted the next. The reviewer ends answering `more` for one entry, which does not say what
+`notes-lead` starts the reviewer. The reviewer ends answering `more` for one entry, which does not say what
 its commit does. lane then tells `notes-lead`:
 
 ```

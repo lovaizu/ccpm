@@ -104,13 +104,10 @@ While the subagent due runs in the background, no move is due: a start of a suba
 names is stopped, told the sentence and to wait for it, and the orchestrator's other calls and its
 end go on.
 
-Once it has ended, Claude Code starts the orchestrator again to tell it so, and lane tells the move
-due through SubagentStart as before. That context does not always reach the orchestrator's model.
-So lane counts the start of the move only once the move has reached the orchestrator since the
-last start of the flow came back: told as that start came back from the foreground, or failed; or
-told since by a stop, of a call at PreToolUse or of its end at SubagentStop, as the orchestrator's
-record holds it. A start before that is stopped, told the sentence and the move, and the start
-after it counts.
+Once that subagent has ended, Claude Code starts the orchestrator again to tell it so, and, as
+Claude Code 2.1.316 does, may not give it the line lane's SubagentStart hook tells. The orchestrator
+then learns the move due where its next call is not that move: the call is stopped as a drift,
+telling the move.
 
 A start that comes back with a status other than `completed` and `async_launched`, or with none,
 or with no `agentId`, is not as Claude Code hands it. lane tells it in the form [the lanes](lanes.md) give where the event

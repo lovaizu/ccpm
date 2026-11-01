@@ -95,20 +95,6 @@ class FlowGuardTest(GuardTest):
         event["last_assistant_message"] = reply
         return self.answered(event, "subagentstop.py", f"notes:{name}")
 
-    def recorded_denial(self, after: str, said: str) -> None:
-        """Writes notes-lead's record of its call of the ID come back, then of an Agent call a
-        PreToolUse hook stopped telling it the text, as Claude Code writes them."""
-        stopped = helpers.Failed(f"PreToolUse:Agent hook error: [python3 x.py]: {said}")
-        use = {"type": "tool_use", "id": after, "name": "Agent", "input": {}}
-        back = {"type": "tool_result", "tool_use_id": after, "content": "Launched."}
-        self.record(
-            [
-                {"type": "assistant", "message": {"content": [use]}},
-                {"type": "user", "message": {"content": [back]}},
-                ("Agent", {"subagent_type": "notes:changelog-reviewer"}, stopped),
-            ]
-        )
-
     def call(self, tool: str, given: dict) -> dict | None:
         """The guard's answer on notes-lead's call of the tool with the input."""
         return self.answered(self.called(tool, given, LEAD), "pretooluse.py")
@@ -203,14 +189,8 @@ class TestToldAsACallComesBack(FlowGuardTest):
         self.assertIsNone(self.answered(self.stopped("Done.", agent_type=LEAD), "subagentstop.py"))
         # And when: the writer ends, and notes-lead starts again on Claude Code's notice
         self.assertIsNone(self.ends("changelog-writer", "b1", "Wrote two."))
-        # Then: it is told the reviewer's start as it starts, which may not reach it, so its
-        # first start of the reviewer is stopped, telling the move; once that is in its record,
-        # the start goes on
+        # Then: it is told the reviewer's start
         self.assertEqual(self.start(), context("SubagentStart", f"notes: {REVIEWING}"))
-        denied = f"notes: {FOLLOW}\n{REVIEWING}"
-        self.assertEqual(self.call("Agent", given), helpers.denied(denied))
-        self.recorded_denial("toolu_k1", denied)
-        self.assertIsNone(self.call("Agent", given))
         # And when: the reviewer, which has no lanes, runs in the background and ends answering
         # more
         self.back("changelog-reviewer", {"status": "async_launched", "agentId": "b2"})

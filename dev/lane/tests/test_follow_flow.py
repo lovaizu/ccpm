@@ -195,57 +195,6 @@ class TestDue(unittest.TestCase):
                 self.assertEqual(moves.told(run(*kept, flow=flow)), told)
 
 
-class TestReached(unittest.TestCase):
-    def test_the_move_due_reached_the_orchestrator_where_told_since_the_last_start(self):
-        writer = background("changelog-writer", "Wrote two.")
-        for what, kept, said, reached in (
-            ("no start yet, told as it started", [], [], True),
-            (
-                "the last start come back from the foreground",
-                [started("changelog-writer")],
-                [],
-                True,
-            ),
-            (
-                "the last start failed, told as it came back",
-                [{**started("changelog-writer"), "failed": True}],
-                [],
-                True,
-            ),
-            ("the last start in the background, nothing told since", [writer], [], False),
-            ("told the wait alone since", [writer], ["notes: Wait for it."], False),
-            ("told the move since", [writer], [f"[x]: notes: Take each move.\n{REVIEWER}"], True),
-            (
-                "the last start come back of another status",
-                [started("changelog-writer", status="done")],
-                [],
-                False,
-            ),
-        ):
-            with self.subTest(what=what):
-                # Given: the orchestrator's calls kept so, and what hooks told it since the last
-                # start came back
-                # When: whether the move due reached it is read
-                # Then: it did where the start's own coming back or a hook since told it
-                self.assertEqual(moves.reached(run(*kept), said), reached)
-
-    def test_the_last_start_is_the_last_agent_call_of_the_flow_kept(self):
-        # Given: the writer's start, the reviewer's, then a Bash call, a start of another plugin's
-        # subagent, and calls of a tool no plugin has, Act, and of Bash, naming the writer
-        other = {**started("x"), "input": {"subagent_type": "a:x"}}
-        bash = {"tool": "Bash", "input": {"command": "ls"}, "failed": False}
-        named = {"subagent_type": "notes:changelog-writer"}
-        act = {"tool": "Act", "input": named, "failed": False}
-        bash_named = {**bash, "input": named}
-        writer = {**started("changelog-writer"), "id": "toolu_w"}
-        reviewer = {**started("changelog-reviewer"), "id": "toolu_r"}
-        # When: the last start is read
-        # Then: it is the reviewer's
-        kept = run(writer, reviewer, bash, other, act, bash_named)
-        self.assertEqual(moves.last_start(kept), reviewer)
-        self.assertIsNone(moves.last_start(run(bash)))
-
-
 class TestAnswers(unittest.TestCase):
     def test_a_line_of_the_answer_that_is_the_while_answers_it(self):
         for answer in ("more", "Two entries.\nmore", "  **more**  ", "`more`", "_more_\nDone."):
@@ -305,20 +254,22 @@ class TestDrift(unittest.TestCase):
             follow_flow.drifts(ended, [], NO_PLUGIN, run(started("changelog-writer"))), REVIEWER
         )
 
-    def test_a_start_of_the_move_not_told_since_the_last_start_drifts_telling_the_move(self):
-        # Given: the writer started in the background and ended, the reviewer's start due but
-        # not told the orchestrator since
-        untold = run(background("changelog-writer", "Wrote two."))._replace(told=False)
-        # When: the orchestrator starts the reviewer
-        # Then: it drifts, the move told
-        made = agent("changelog-reviewer")
-        self.assertEqual(follow_flow.drifts(made, [], NO_PLUGIN, untold), REVIEWER)
-
     def test_while_a_subagent_of_the_flow_runs_a_start_of_the_flow_drifts_telling_to_wait(self):
         for what, made, said in (
             ("a start of the next subagent", agent("changelog-reviewer"), WAIT),
             ("a start of the one running", agent("changelog-writer"), WAIT),
             ("another call", helpers.acted("Bash", {"command": "ls"}), ""),
+            # A tool named before Agent in order, and one after, naming a subagent of the flow.
+            (
+                "a tool before",
+                helpers.acted("Act", {"subagent_type": "notes:changelog-writer"}),
+                "",
+            ),
+            (
+                "a tool after",
+                helpers.acted("Bash", {"subagent_type": "notes:changelog-writer"}),
+                "",
+            ),
             ("the end", helpers.ended(helpers.HERE, []), ""),
         ):
             with self.subTest(what=what):
