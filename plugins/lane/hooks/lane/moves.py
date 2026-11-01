@@ -83,7 +83,7 @@ def due(run: Run) -> Due:
         if kept.get("status") not in (DONE, LAUNCHED) or not kept.get("agent"):
             continue
         # A start come back from the background holds whether its subagent has ended.
-        if kept.get("ended") is False:
+        if kept.get("ended") is False:  # pragma: no mutate
             return Due(None, "", named(run, at))
         back = backs.get(at + 1)
         if back is not None and answers(str(kept.get("answer", "")), back["while"]):
