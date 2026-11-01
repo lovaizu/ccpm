@@ -66,13 +66,9 @@ class Said(NamedTuple):
 
 def cannot(on: str, wrong: str, fix: str) -> Said:
     """The error where lane cannot check what `on` names, such as `the lanes of <subagent>` or
-    what `on_step` gives, in the form docs/lanes.md gives: what is wrong, then who must fix it."""
+    `<lane> on step <n> of <subagent>`, in the form docs/lanes.md gives: what is wrong, then who
+    must fix it."""
     return Said(f"lane cannot check {on}: {wrong}. {ASK.format(fix=fix)}", True)
-
-
-def on_step(lane: str, number: int, name: str) -> str:
-    """The lane on the step of the number of the subagent of the name, as an error names it."""
-    return f"{lane} on step {number} of {name}"
 
 
 def unshaped(name: str, wrong: str) -> Said:

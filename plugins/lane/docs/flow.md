@@ -13,7 +13,8 @@ Take each move lane tells you, until it tells none.
 ```
 
 lane tells the orchestrator each move as it starts and as each start of a subagent of the flow
-comes back. When the orchestrator does anything but the move due, or is about to end while a move
+comes back. A move counts once the subagent it started has ended, in the foreground or the
+background. When the orchestrator does anything but the move due, or is about to end while a move
 is due, it is told the sentence, headed by your plugin's name, and the move on the next line.
 
 ## The flow
@@ -54,9 +55,15 @@ Your AI writes the flow under the `flow` key of the proposal, held to this JSON 
 - The orchestrator may also be in the proposal's `subagents`, with lanes on its other steps. The
   follow_flow lane is `lay.py write`'s to lay, and the proposal names no follow_flow lane itself.
 
+- No subagent `order` names sets `background: true` in its file, and `lay.py print` refuses a flow
+  where one does. Claude Code runs such a subagent in the background however it is started, and in
+  `claude -p` does not tell the one that started it that it ended
+  ([background](https://code.claude.com/docs/en/sub-agents)), so the flow would stall.
+
 `lay.py write` writes the flow into your plugin's `hooks/lanes.json` as the proposal gives it. It
-lays a SubagentStart hook on the orchestrator, which tells it its first move, and a PostToolUse
-hook on SubagentHandback on each `from` subagent, which keeps the report it hands back.
+lays a SubagentStart hook on the orchestrator, which tells it its first move, and on each subagent
+`order` names a SubagentStop hook, which keeps what it ended with, and a PostToolUse hook on
+SubagentHandback, which keeps the report it hands back.
 
 ## What the orchestrator is told
 
@@ -64,7 +71,8 @@ lane tells the orchestrator the move due at two points, as context Claude Code a
 
 - as it starts, through the SubagentStart hook's `additionalContext`, which Claude Code puts in
   before the subagent's first prompt
-  ([SubagentStart](https://code.claude.com/docs/en/hooks#subagentstart));
+  ([SubagentStart](https://code.claude.com/docs/en/hooks#subagentstart)), and again as Claude
+  Code starts it once more to tell it a subagent it started in the background has ended;
 - as each of its Agent calls starting a subagent of the flow comes back, through the PostToolUse
   hook's `additionalContext`, or PostToolUseFailure's where the call failed, which Claude Code puts
   next to the call's result
@@ -74,35 +82,30 @@ lane writes each line as a statement of the run, as Claude Code's docs advise fo
 
 | Where the run is | The orchestrator is told |
 |---|---|
-| no subagent of the flow has come back yet | ``The next move of the flow is move 1: start `<plugin>:<first>` in the foreground.`` |
-| the subagent due came back, and is the `from` of a `back` whose `while` it answered | ``<from> answered `<while>`. The next move of the flow is move <to>: start `<plugin>:<name at to>` in the foreground.`` |
-| the subagent due came back, and another follows it in `order` | ``The next move of the flow is move <n>: start `<plugin>:<name at n>` in the foreground.`` |
-| the last of `order` came back, and no `back` sends the work back | `The flow is done: lane tells no more moves.` |
+| no subagent of the flow has been started yet | ``The next move of the flow is move 1: start `<plugin>:<first>`.`` |
+| the subagent due was started in the background and has not ended | ``Wait for `<plugin>:<due>` to end: lane tells the next move once it has.`` |
+| the subagent due ended, and is the `from` of a `back` whose `while` it answered | ``<from> answered `<while>`. The next move of the flow is move <to>: start `<plugin>:<name at to>`.`` |
+| the subagent due ended, and another follows it in `order` | ``The next move of the flow is move <n>: start `<plugin>:<name at n>`.`` |
+| the last of `order` ended, and no `back` sends the work back | `The flow is done: lane tells no more moves.` |
 
 `<plugin>:<name>` is how Claude Code names a subagent of your plugin. The orchestrator writes the
 rest of the call, such as its prompt.
 
-The move is the Agent call starting the subagent due in the foreground. A call starting it with
-`run_in_background` set to `true` is not the move. An Agent call comes back from a subagent run in
-the background as the subagent starts, with no answer, and with the status `async_launched` in
-place of `completed` ([Agent](https://code.claude.com/docs/en/hooks#agent)). So lane counts only a
-start that comes back `completed`.
+The move is the Agent call starting the subagent due, in the foreground or the background. An
+Agent call of a subagent run in the foreground comes back once the subagent has ended, with the
+status `completed`; one of a subagent run in the background comes back as the subagent starts,
+with the status `async_launched` and no answer ([Agent](https://code.claude.com/docs/en/hooks#agent)).
+Claude Code runs a subagent in the background where the call sets `run_in_background`, where you
+press Ctrl+B, and, in an interactive session by default, for every subagent. So lane counts a start
+once its subagent has ended: as its call comes back `completed`, or, come back `async_launched`, as
+the subagent of the `agentId` it gives ends.
 
-Claude Code moves a start to the background all the same when you press Ctrl+B, or on its own
-once the subagent has run about two minutes where automatic backgrounding is on
-([environment variables](https://code.claude.com/docs/en/env-vars), `CLAUDE_AUTO_BACKGROUND_TASKS`).
-lane cannot read the answer of such a start, so it cannot tell the next move. It tells the
-orchestrator and you, as the call comes back, in the form [the lanes](lanes.md) give an error:
-
-```
-<plugin>: lane cannot check follow_flow on step <n> of <orchestrator>: `<plugin>:<due>` came back from the background, where lane cannot read its answer. Ask the main conversation for the fix: whoever runs the plugin must set the environment variable `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` to `1`, with which Claude Code moves no subagent to the background, and run it again. Go on with the rest of your work meanwhile.
-```
-
-From then on in the run, each start of a subagent the flow names is stopped and told the same, as
-lane cannot tell which move is due. The orchestrator's other calls and its end go on.
+While the subagent due runs in the background, no move is due: a start of a subagent the flow
+names is stopped, told the sentence and to wait for it, and the orchestrator's other calls and its
+end go on.
 
 A start that comes back with a status other than `completed` and `async_launched`, or with none,
-is not as Claude Code hands it. lane tells it in the form [the lanes](lanes.md) give where the event
+or with no `agentId`, is not as Claude Code hands it. lane tells it in the form [the lanes](lanes.md) give where the event
 is what is wrong, and the move stays due.
 
 While a move is due, the orchestrator is told the sentence and the move on the next line:
@@ -118,15 +121,19 @@ lane reads what the guard, lane's code in your plugin's `hooks/lane/`, keeps of 
 nothing the orchestrator writes:
 
 - The guard keeps each call of the orchestrator as it comes back, as it keeps every call of a
-  subagent with lanes. Of an Agent call it keeps the status and the answer of the subagent the
-  call started: the final text blocks the call gives back in `tool_response.content`
-  ([Agent](https://code.claude.com/docs/en/hooks#agent)).
+  subagent with lanes. Of an Agent call it keeps the status, the `agentId` and, from the
+  foreground, the answer of the subagent the call started: the final text blocks the call gives
+  back in `tool_response.content` ([Agent](https://code.claude.com/docs/en/hooks#agent)).
+- As each subagent `order` names is let end, the guard keeps what it ended with, the
+  `last_assistant_message` its SubagentStop hook is given
+  ([SubagentStop](https://code.claude.com/docs/en/hooks#subagentstop)), found by its `agent_id`.
+  That is the answer of a start come back from the background.
 - A subagent in auto mode may hand its report back with the SubagentHandback tool. Its Agent call
   then gives back a short note in place of the report, and the report is the call's
   `tool_input.message` ([Agent](https://code.claude.com/docs/en/hooks#agent)). So `lay.py write`
-  lays a PostToolUse hook on SubagentHandback on each `from` subagent, which keeps that call. The
-  answer is the last report the subagent handed back, found by the `agentId` its Agent call gives
-  back, where it handed one back.
+  lays a PostToolUse hook on SubagentHandback on each subagent `order` names, which keeps that
+  call. The answer is the last report the subagent handed back, found by the `agentId` its Agent
+  call gives back, where it handed one back.
 
 A subagent answers a `while` when a line of its answer is that text exactly, case as written, once
 the blanks around the line and the Markdown marks `*`, `_` and `` ` `` at its two ends are left out.

@@ -1,7 +1,8 @@
 """follow_flow, the flow's lane: the move due read from the flow and the orchestrator's calls kept,
-each subagent of the flow counted started once its call came back from the foreground, the answer
-of a `from` sending the work back; the line telling the move; and a call other than the move, or
-the end, while a move is due, a drift told that line."""
+each start of a subagent of the flow counted once that subagent has ended, in the foreground or the
+background, the answer of a `from` sending the work back; the line telling the move, or to wait for
+the subagent running; and a call other than the move, or the end, while a move is due, a drift told
+that line, and a start of the flow while a subagent of it runs, a drift told to wait."""
 
 from __future__ import annotations
 
@@ -13,24 +14,31 @@ from helpers import NO_PLUGIN, call, follow_flow, moves
 
 # The lines telling each move of the README's flow, as the orchestrator is told them, each move by
 # its position in the order.
-WRITER = "The next move of the flow is move 1: start `notes:changelog-writer` in the foreground."
-REVIEWER = (
-    "The next move of the flow is move 2: start `notes:changelog-reviewer` in the foreground."
-)
+WRITER = "The next move of the flow is move 1: start `notes:changelog-writer`."
+REVIEWER = "The next move of the flow is move 2: start `notes:changelog-reviewer`."
 BACK = f"changelog-reviewer answered `more`. {WRITER}"
 # The line telling the writer's start at position 3 of an order naming it twice.
-WRITER_AGAIN = (
-    "The next move of the flow is move 3: start `notes:changelog-writer` in the foreground."
-)
+WRITER_AGAIN = "The next move of the flow is move 3: start `notes:changelog-writer`."
+# The line telling the orchestrator to wait while the writer it started runs in the background.
+WAIT = "Wait for `notes:changelog-writer` to end: lane tells the next move once it has."
 DONE = "The flow is done: lane tells no more moves."
 
 
 def started(name: str, answer: str = "", status: str = "completed", **given: object) -> dict:
     """An Agent call of the orchestrator kept as it came back, starting the subagent of the name in
-    the plugin `notes`, with the input's other fields given, giving back the status and the
-    answer."""
+    the plugin `notes`, with the input's other fields given, giving back the status, the ID of the
+    subagent it started and the answer."""
     agent = {"subagent_type": f"notes:{name}", "prompt": "Go.", **given}
-    return {"tool": "Agent", "input": agent, "failed": False, "status": status, "answer": answer}
+    back = {"status": status, "agent": "b1", "answer": answer}
+    return {"tool": "Agent", "input": agent, "failed": False, **back}
+
+
+def background(name: str, answer: str | None = None) -> dict:
+    """An Agent call of the orchestrator kept as it came back from the background, starting the
+    subagent of the name in `notes`, as called.py gives it with what that subagent ended with: the
+    answer, or None while it runs."""
+    kept = started(name, status="async_launched")
+    return {**kept, "ended": answer is not None, "answer": answer or ""}
 
 
 def run(*kept: dict, flow: dict = FLOW) -> moves.Run:
@@ -76,6 +84,10 @@ class TestDue(unittest.TestCase):
                 "an Agent call come back of another status",
                 started("changelog-writer", status="done"),
             ),
+            (
+                "an Agent call come back with no subagent's ID",
+                {**started("changelog-writer"), "agent": None},
+            ),
             ("another tool", {"tool": "Bash", "input": {"command": "ls"}, "failed": False}),
         ):
             with self.subTest(what=what):
@@ -114,14 +126,29 @@ class TestDue(unittest.TestCase):
         said = f"summarizer answered `more`. {REVIEWER}"
         self.assertEqual(moves.told(run(*kept, flow=flow)), said)
 
-    def test_a_start_moved_to_the_background_leaves_the_flow_unheld(self):
-        # Given: the writer's call come back from the background, as Claude Code moved it there,
-        # with no answer lane can read
-        kept = {**started("changelog-writer", status="async_launched"), "id": "toolu_w"}
-        # When: the move due is read
-        due = moves.due(run(kept, started("changelog-reviewer")))
-        # Then: none is due, the call named as the one lane could not read
-        self.assertEqual(due, moves.Due(None, "", kept))
+    def test_a_start_in_the_background_counts_once_its_subagent_has_ended(self):
+        for what, kept, told in (
+            ("the writer ended", [background("changelog-writer", "Wrote two.")], REVIEWER),
+            (
+                "the reviewer ended answering more",
+                [background("changelog-writer", ""), background("changelog-reviewer", "more")],
+                BACK,
+            ),
+        ):
+            with self.subTest(what=what):
+                # Given: the orchestrator's starts come back from the background, each subagent
+                # since ended with its answer
+                # When: the move due is told
+                # Then: it is the move the flow and the answers call for, as in the foreground
+                self.assertEqual(moves.told(run(*kept)), told)
+
+    def test_a_start_in_the_background_still_running_leaves_the_orchestrator_waiting(self):
+        # Given: the writer's start come back from the background, the writer still running
+        kept = background("changelog-writer")
+        # When: the move due is read and told
+        # Then: no move is due, the writer running, and the orchestrator is told to wait for it
+        self.assertEqual(moves.due(run(kept)), moves.Due(None, "", "notes:changelog-writer"))
+        self.assertEqual(moves.told(run(kept)), WAIT)
 
     def test_a_subagent_named_twice_in_the_order_is_told_by_its_position(self):
         # Given: an order of the writer, the reviewer, the writer again and the reviewer again, the
@@ -184,6 +211,7 @@ class TestDrift(unittest.TestCase):
             ("the first move", [], agent("changelog-writer")),
             ("the next move", [started("changelog-writer")], agent("changelog-reviewer")),
             ("in the foreground", [], agent("changelog-writer", run_in_background=False)),
+            ("in the background", [], agent("changelog-writer", run_in_background=True)),
         ):
             with self.subTest(what=what):
                 # Given: the calls kept so
@@ -194,7 +222,6 @@ class TestDrift(unittest.TestCase):
     def test_a_call_other_than_the_move_due_drifts_telling_the_move(self):
         for what, made in (
             ("another subagent", agent("changelog-reviewer")),
-            ("the subagent in the background", agent("changelog-writer", run_in_background=True)),
             ("another tool", helpers.acted("Bash", {"command": "ls"})),
             # A tool named before Agent in order, and one after, naming the subagent due.
             ("a tool before", helpers.acted("Act", {"subagent_type": "notes:changelog-writer"})),
@@ -218,6 +245,20 @@ class TestDrift(unittest.TestCase):
         self.assertEqual(
             follow_flow.drifts(ended, [], NO_PLUGIN, run(started("changelog-writer"))), REVIEWER
         )
+
+    def test_while_a_subagent_of_the_flow_runs_a_start_of_the_flow_drifts_telling_to_wait(self):
+        for what, made, said in (
+            ("a start of the next subagent", agent("changelog-reviewer"), WAIT),
+            ("a start of the one running", agent("changelog-writer"), WAIT),
+            ("another call", helpers.acted("Bash", {"command": "ls"}), ""),
+            ("the end", helpers.ended(helpers.HERE, []), ""),
+        ):
+            with self.subTest(what=what):
+                # Given: the writer started in the background, still running
+                # When: the orchestrator makes the call, or ends
+                # Then: a start of the flow drifts, told to wait; anything else is free
+                running = run(background("changelog-writer"))
+                self.assertEqual(follow_flow.drifts(made, [], NO_PLUGIN, running), said)
 
     def test_once_the_flow_is_done_each_call_and_the_end_are_free(self):
         kept = [started("changelog-writer"), started("changelog-reviewer")]

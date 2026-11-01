@@ -98,18 +98,26 @@ Principle 1 to 9, and two of its own, named below lane's Principle 1 and 2:
   Claude). So the move is told where the run is known, and the orchestrator runs nothing to learn
   it. An order set beforehand is the same kind of thing in every plugin, so lane reads it from the
   approved file, and no plugin keeps a script of its own for its order.
-- The guard reads a subagent's answer from the Agent call that started it, kept with the call: the
-  final text blocks its `tool_response` gives back. A subagent reporting through SubagentHandback
-  gives back a note in their place, so the layer lays a hook on SubagentHandback on each `from`
-  subagent, and the guard reads the report that call kept, by the `agentId` the Agent call gives
-  back. It reads neither the records nor anything the orchestrator writes.
+- The guard reads a subagent's answer from what it ended with: from the foreground, the final text
+  blocks the `tool_response` of the Agent call that started it gives back, kept with the call;
+  from the background, the `last_assistant_message` its SubagentStop hook is given, kept as it is
+  let end, found by the `agentId` the Agent call gives back. A subagent reporting through
+  SubagentHandback gives back a note in their place, so the layer lays a hook on SubagentHandback
+  on each subagent of the order, and the guard reads the report that call kept, by the same
+  `agentId`. It reads neither the records nor anything the orchestrator writes.
 
-  Claude Code documents the Agent call's `tool_response` and the report as SubagentHandback's
-  `tool_input.message`, and not the records (hooks, Agent).
-- A start counts as the move only once its call comes back `completed`, in the foreground.
+  Claude Code documents the Agent call's `tool_response`, the report as SubagentHandback's
+  `tool_input.message` and SubagentStop's `last_assistant_message`, and not the records (hooks,
+  Agent and SubagentStop).
+- A start counts as the move once the subagent it started has ended, in the foreground or the
+  background. While it runs in the background, no move is due, and a start of the flow is told to
+  wait for it.
 
   An Agent call of a background subagent comes back as the subagent starts, with `async_launched`
-  and no answer (hooks, Agent), so the next move cannot be read from it yet.
+  and no answer (hooks, Agent), and Claude Code runs every subagent so in an interactive session by
+  default. A rule that counted the foreground alone would hold up every such flow, and its fix,
+  keeping all tasks in the foreground, would ask the user to prepare Claude Code, which G1 does
+  not.
 - A subagent answers a `while` when a line of its answer, its blanks and the Markdown marks at its
   two ends left out, is that text exactly.
 
@@ -363,12 +371,16 @@ sequenceDiagram
   An adapter that hands its port's text to a part of the plugin, as
   [Entries pass the job to their parts](../architecture.md#entries-pass-the-job-to-their-parts) has
   it, finds the part from there, beside the proposal as in the plugin.
-- The layer lays a SubagentStart hook on the orchestrator, and, on each `from` subagent of a
-  `back`, a PostToolUse hook on SubagentHandback, which keeps the report it hands back, whether or
-  not it has lanes.
+- The layer lays a SubagentStart hook on the orchestrator, and, on each subagent of the order, a
+  SubagentStop hook, which keeps what it ended with, and a PostToolUse hook on SubagentHandback,
+  which keeps the report it hands back, whether or not it has lanes. It refuses a flow whose order
+  names a subagent whose file sets `background: true`.
 
-  Claude Code hands a SubagentStart hook the agent starting, and the report a subagent hands back
-  to a hook on its SubagentHandback call (hooks, SubagentStart and Agent).
+  Claude Code hands a SubagentStart hook the agent starting, a SubagentStop hook the agent's last
+  message, and the report a subagent hands back to a hook on its SubagentHandback call (hooks,
+  SubagentStart, SubagentStop and Agent). A subagent set `background: true` runs in the background
+  however it is started, and in `claude -p` the one that started it is not told it ended, so the
+  flow would stall.
 - The two machines are often one, as when the building AI tries its plugin.
 
 #### Directory structure

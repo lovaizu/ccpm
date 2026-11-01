@@ -200,11 +200,10 @@ def flow_wrong(flow: dict[str, Any] | None) -> str:
     return ""
 
 
-def froms(flow: dict[str, Any] | None) -> list[str]:
-    """Each subagent at the from of a back of the flow, once each, whose answer sends the work
-    back; none where there is no flow."""
-    order = (flow or {}).get("order", [])
-    return list(dict.fromkeys(order[b["from"] - 1] for b in (flow or {}).get("back", [])))
+def flowed(flow: dict[str, Any] | None) -> list[str]:
+    """Each subagent the flow's order names, once each, whose end and report handed back the
+    flow's moves are read from; none where there is no flow."""
+    return list(dict.fromkeys((flow or {}).get("order", [])))
 
 
 def adapter_wrong(path: str | None, port: str | None) -> str:

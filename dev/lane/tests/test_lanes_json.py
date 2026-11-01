@@ -301,17 +301,13 @@ class TestFlowLaid(LanesTest):
                 said = f"hooks/lanes.json lays {on}, where no flow is laid"
                 self.assertEqual(str(stop.exception), said)
 
-    def test_the_froms_are_the_subagents_at_the_from_of_each_back_once_each(self):
-        # Given: a flow naming the reviewer twice, each the from of a back, and no flow
-        flow = {
-            **FLOW,
-            "order": ["w", "r", "w", "r"],
-            "back": [{"from": 2, "to": 1, "while": "x"}, {"from": 4, "to": 3, "while": "y"}],
-        }
-        # When: its froms are read
-        # Then: each is named once, and none of no flow
-        self.assertEqual(lanes_json.froms(flow), ["r"])
-        self.assertEqual(lanes_json.froms(None), [])
+    def test_the_subagents_of_the_flow_are_those_its_order_names_once_each(self):
+        # Given: a flow naming the writer and the reviewer twice each, and no flow
+        flow = {**FLOW, "order": ["w", "r", "w", "r"], "back": []}
+        # When: its subagents are read
+        # Then: each is named once, in order, and none of no flow
+        self.assertEqual(lanes_json.flowed(flow), ["w", "r"])
+        self.assertEqual(lanes_json.flowed(None), [])
 
 
 if __name__ == "__main__":

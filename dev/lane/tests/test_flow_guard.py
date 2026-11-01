@@ -1,7 +1,8 @@
 """The guard on a flow: the orchestrator told its next move as it starts and as each call of a
 subagent of the flow comes back, as context Claude Code adds for it; a call other than the move
 due, or its end while a move is due, stopped with the flow's sentence and the move; and the answer
-of a `from` subagent read from the Agent call that started it, or from the report it handed back."""
+of a `from` subagent read from what it ended with, in the foreground or the background, or from the
+report it handed back."""
 
 from __future__ import annotations
 
@@ -17,19 +18,11 @@ from unittest import mock
 import helpers
 from flowing import FOLLOW, LAID, LEAD_LAID, REVIEWER
 from helpers import called
-from test_follow_flow import BACK, DONE, WRITER
+from test_follow_flow import BACK, DONE, WAIT, WRITER
 from test_follow_flow import REVIEWER as REVIEWING
 from test_guard import GuardTest
 
 LEAD = "notes:notes-lead"
-# What notes-lead and the user are told where a start of the flow came back from the background.
-UNREAD = (
-    "lane cannot check follow_flow on step 1 of notes-lead: `notes:changelog-writer` came back"
-    " from the background, where lane cannot read its answer. Ask the main conversation for the"
-    " fix: whoever runs the plugin must set the environment variable"
-    " `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` to `1`, with which Claude Code moves no subagent to"
-    " the background, and run it again. Go on with the rest of your work meanwhile."
-)
 # What notes-lead and the user are told where a start of the flow came back not as Claude Code
 # gives it, given the point it is out by.
 UNSHAPED = (
@@ -94,6 +87,13 @@ class FlowGuardTest(GuardTest):
         from the foreground, the subagent of the ID answering the text."""
         content = [{"type": "text", "text": answer}]
         return self.back(name, {"status": "completed", "agentId": agent, "content": content})
+
+    def ends(self, name: str, agent: str, reply: str | None) -> dict | None:
+        """The guard's answer as the subagent of the name and the ID, started by notes-lead, is
+        about to end with the reply."""
+        event = {**self.stopped(agent_type=f"notes:{name}"), "agent_id": agent}
+        event["last_assistant_message"] = reply
+        return self.answered(event, "subagentstop.py", f"notes:{name}")
 
     def call(self, tool: str, given: dict) -> dict | None:
         """The guard's answer on notes-lead's call of the tool with the input."""
@@ -176,26 +176,52 @@ class TestToldAsACallComesBack(FlowGuardTest):
         said = context("PostToolUseFailure", f"notes: {WRITER}")
         self.assertEqual(self.back("changelog-writer", error="boom"), said)
 
-    def test_a_start_moved_to_the_background_is_an_error_and_holds_each_later_start(self):
+    def test_a_start_in_the_background_is_the_move_told_once_its_subagent_ends(self):
         # Given: notes-lead, no call of it kept
-        # When: its call of the writer comes back from the background, Claude Code having moved it
-        # there with no answer
+        # When: its call of the writer comes back from the background, the writer running
         told = self.back("changelog-writer", {"status": "async_launched", "agentId": "b1"})
-        # Then: it and the user are told lane cannot check the flow, and who must fix it
-        line = f"notes: {UNREAD}"
-        self.assertEqual(told, {"systemMessage": line, **context("PostToolUse", line)})
-        # And then: each later start of a subagent the flow names is stopped with the same error,
-        # as lane cannot tell which move is due; its other calls and its end go on, and it is told
-        # nothing as it starts again
-        for name in ("changelog-reviewer", "changelog-writer"):
-            with self.subTest(name=name):
-                given = {"subagent_type": f"notes:{name}", "prompt": "Go."}
-                self.assertEqual(
-                    self.call("Agent", given), {"systemMessage": line, **helpers.denied(line)}
-                )
+        # Then: it is told to wait for the writer; a start of the flow is stopped telling it so,
+        # and its other calls and its end go on
+        self.assertEqual(told, context("PostToolUse", f"notes: {WAIT}"))
+        given = {"subagent_type": "notes:changelog-reviewer", "prompt": "Go."}
+        self.assertEqual(self.call("Agent", given), helpers.denied(f"notes: {FOLLOW}\n{WAIT}"))
         self.assertIsNone(self.call("Bash", {"command": "ls"}))
         self.assertIsNone(self.answered(self.stopped("Done.", agent_type=LEAD), "subagentstop.py"))
-        self.assertIsNone(self.start())
+        # And when: the writer ends, and notes-lead starts again on Claude Code's notice
+        self.assertIsNone(self.ends("changelog-writer", "b1", "Wrote two."))
+        # Then: it is told the reviewer's start
+        self.assertEqual(self.start(), context("SubagentStart", f"notes: {REVIEWING}"))
+        # And when: the reviewer, which has no lanes, runs in the background and ends answering
+        # more
+        self.back("changelog-reviewer", {"status": "async_launched", "agentId": "b2"})
+        self.assertIsNone(self.ends("changelog-reviewer", "b2", "Entry 2 is wrong.\nmore"))
+        # Then: it is told the writer's start again
+        self.assertEqual(self.start(), context("SubagentStart", f"notes: {BACK}"))
+
+    def test_a_subagent_of_the_flow_ending_where_its_lanes_cannot_be_read_is_not_ended(self):
+        # Given: notes-lead's start of the writer come back from the background, then
+        # hooks/lanes.json out of its form
+        self.back("changelog-writer", {"status": "async_launched", "agentId": "b1"})
+        self.write(os.path.join(self.plugin, "hooks", "lanes.json"), "{")
+        # When: the writer is about to end
+        told = self.ends("changelog-writer", "b1", "Wrote two.") or {}
+        # Then: it is kept going, told lane cannot check its lanes, and its end is not kept
+        self.assertEqual(told["decision"], "block")
+        self.assertIn("lane cannot check the lanes of changelog-writer", told["reason"])
+        self.assertIsNone(called.ended("s1", "b1"))
+
+    def test_a_report_handed_back_in_the_background_is_the_answer(self):
+        # Given: notes-lead's start of the writer come back, then of the reviewer from the
+        # background, the reviewer b7 handing its report back
+        self.came("changelog-writer")
+        self.back("changelog-reviewer", {"status": "async_launched", "agentId": "b7"})
+        handed = self.came_back("SubagentHandback", {"message": "Entry 2.\nmore"}, {"ok": True})
+        handed.update(agent_id="b7", agent_type="notes:changelog-reviewer")
+        self.answered(handed, "posttooluse.py", "notes:changelog-reviewer")
+        # When: the reviewer ends, no last message given, as after a hand-back
+        self.assertIsNone(self.ends("changelog-reviewer", "b7", None))
+        # Then: notes-lead, starting again, is told the writer's start, the report its answer
+        self.assertEqual(self.start(), context("SubagentStart", f"notes: {BACK}"))
 
     def test_a_start_come_back_of_another_status_or_none_is_an_event_lane_cannot_read(self):
         for what, back, point in (
@@ -211,6 +237,11 @@ class TestToldAsACallComesBack(FlowGuardTest):
                 "no status",
                 {"agentId": "b1"},
                 '$.tool_response: expected the key "status", found an object without it',
+            ),
+            (
+                "no agent ID",
+                {"status": "async_launched"},
+                '$.tool_response: expected the key "agentId", found an object without it',
             ),
             ("nothing given back", None, "$.tool_response: expected an object, found null"),
         ):

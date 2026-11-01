@@ -122,12 +122,14 @@ sequenceDiagram
   Note over O,H: the orchestrator starts
   H-->>O: the next move, move 1: start the writer
   O->>W: start
-  W->>O: its work
+  H-->>O: wait for the writer to end
+  W->>H: ends with its work
+  Note over O: started again by Claude Code, the writer ended
   H-->>O: the next move, move 2: start the reviewer
   O->>H: about to end
   H-->>O: kept going, told the flow's sentence and the move
   O->>R: start
-  R->>O: answers more
+  R->>H: ends answering more
   H-->>O: the reviewer answered more; the next move, move 1: start the writer
   Note over O,R: the writer and the reviewer again, as above,<br/>until the reviewer no longer answers more
   H-->>O: the flow is done
@@ -137,11 +139,14 @@ sequenceDiagram
 - The flow's sentence is ``<plugin>: Take each move lane tells you, until it tells none.`` The
   orchestrator is told it, with the move due on the next line, when it does anything but that move,
   or is about to end while a move is due.
-- A subagent answers `more` when it writes `more` on a line of its own.
+- A start counts once the subagent it started has ended, whether Claude Code runs it in the
+  foreground or the background. While it runs, the orchestrator is told to wait for it, and a start
+  of a subagent of the flow is stopped and told so.
+- A subagent answers `more` when it ends with `more` on a line of its own.
 - The flow may name a subagent more than once, as in write, review, polish, review again. So each
   move is told by its position in the order, as
-  ``The next move of the flow is move <n>: start `<plugin>:<name>` in the foreground.``, for the
-  orchestrator to know which move it takes.
+  ``The next move of the flow is move <n>: start `<plugin>:<name>`.``, for the orchestrator to know
+  which move it takes.
 
 ### A lane lane cannot check
 
@@ -153,12 +158,11 @@ sequenceDiagram
   S->>H: a call a lane holds, where what the lane is given is not as laid
   H-->>S: stopped, the user told the same, with #lt;plugin#gt;: lane cannot check ...: #lt;what is wrong#gt;. Ask the main conversation for the fix: #lt;who must fix it#gt;. Go on with the rest of your work meanwhile.
   S->>M: asks for the fix, and goes on with the rest of its work
-  Note over M: brings it to whoever must fix it: the plugin's maker, who fixes the plugin and lays its lanes again with lay.py write, whoever runs the plugin, who sets Claude Code to move no subagent to the background, or Claude Code
+  Note over M: brings it to whoever must fix it: the plugin's maker, who fixes the plugin and lays its lanes again with lay.py write, or Claude Code
 ```
 
 - The hook never lets through what it cannot check. The subagent asks for the fix and goes on with
-  the rest of its work. The plugin's maker puts it right; whoever runs the plugin, where Claude
-  Code moved a subagent of a flow to the background; or Claude Code, where the event is what is
+  the rest of its work. The plugin's maker puts it right, or Claude Code where the event is what is
   wrong.
 
 ## Benefits

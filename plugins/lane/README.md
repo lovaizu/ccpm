@@ -28,8 +28,9 @@ The order your subagents go in is one more thing to drift from. Where one subage
 orchestrator, starts the others, your AI writes their order in the proposal as a flow: which
 subagent comes after which, and which answer sends the work back. `lay.py` then lays a lane on a
 step of the orchestrator, with the sentence "Take each move lane tells you, until it tells none."
-lane tells the orchestrator its next move, such as starting the reviewer, as it starts and as each
-subagent it started comes back, from the flow and from what the subagents have answered. When the
+lane tells the orchestrator its next move, such as starting the reviewer, as it starts and once
+each subagent it started has ended, in the foreground or the background, from the flow and from
+what the subagents have answered. When the
 orchestrator does something else, or is about to end, before it takes that move, its hook stops it
 and tells it that sentence and the move. So your plugin keeps no script of its own for the
 order.
@@ -91,7 +92,7 @@ and commits `CHANGELOG.md` once you have said OK. The first step of `notes-lead`
 `agents/notes-lead.md`, and one of the writer's steps, in `agents/changelog-writer.md`, say:
 
 ```markdown
-1. Start the subagents of the work, each in the foreground.
+1. Start the subagents of the work.
 ```
 
 ```markdown
@@ -131,7 +132,7 @@ Lanes on step 1 of notes-lead, each hook acting in notes-lead alone:
   run:    Do not run `git commit` or `git push`.               hook hands_off
   follow: Take each move lane tells you, until it tells none.  hook follow_flow
 
-1. Start the subagents of the work, each in the foreground. Do not run `git commit` or `git push`. Take each move lane tells you, until it tells none.
+1. Start the subagents of the work. Do not run `git commit` or `git push`. Take each move lane tells you, until it tells none.
 
 Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
   write: Write only `CHANGELOG.md`.              hook write_only
@@ -158,24 +159,31 @@ Then you run `/notes:changelog`, and your request also asks it to commit the cha
 returns. As `notes-lead` starts, lane tells it its first move:
 
 ```
-notes: The next move of the flow is move 1: start `notes:changelog-writer` in the foreground.
+notes: The next move of the flow is move 1: start `notes:changelog-writer`.
 ```
 
-`notes-lead` starts the writer with your request. The writer ends with the entries written, and
-lane tells `notes-lead` its next move, to start `notes:changelog-reviewer`. `notes-lead`, given the
-entries, is about to end with them before the reviewer has run. Its hook stops the end, and
-`notes-lead` reads:
+`notes-lead` starts the writer with your request. Claude Code runs the writer in the background, as
+it does by default in an interactive session, and lane tells `notes-lead`:
+
+```
+notes: Wait for `notes:changelog-writer` to end: lane tells the next move once it has.
+```
+
+The writer ends with the entries written. Claude Code starts `notes-lead` again to tell it so, and
+lane tells it its next move, to start `notes:changelog-reviewer`. `notes-lead`, given the entries,
+is about to end with them before the reviewer has run. Its hook stops the end, and `notes-lead`
+reads:
 
 ```
 notes: Take each move lane tells you, until it tells none.
-The next move of the flow is move 2: start `notes:changelog-reviewer` in the foreground.
+The next move of the flow is move 2: start `notes:changelog-reviewer`.
 ```
 
-`notes-lead` starts the reviewer. The reviewer answers `more` for one entry, which does not say what
+`notes-lead` starts the reviewer. The reviewer ends answering `more` for one entry, which does not say what
 its commit does. lane then tells `notes-lead`:
 
 ```
-notes: changelog-reviewer answered `more`. The next move of the flow is move 1: start `notes:changelog-writer` in the foreground.
+notes: changelog-reviewer answered `more`. The next move of the flow is move 1: start `notes:changelog-writer`.
 ```
 
 The writer and the reviewer go again. Once the reviewer no longer answers `more`, lane tells

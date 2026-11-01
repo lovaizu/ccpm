@@ -118,6 +118,27 @@ class Lanes:
         return hook.cannot(f"the lanes of {self.agent.split(':')[1]}", wrong, fix)
 
 
+class Ends(Lanes):
+    """The check lane's hooks run as a subagent of the plugin at root, as `<plugin>:<name>`, is
+    about to end: the lanes laid in it, where any are, as Lanes checks them; and, where they let it
+    end, its end kept, as called.end_kept keeps it, so a start of it come back from the background
+    counts for the orchestrator of a flow once it has ended."""
+
+    def check(self, event: dict[str, Any]) -> list[hook.Said]:
+        """What the lanes laid in the subagent say as it is about to end, nothing where none is
+        laid in it, as for a subagent of a flow with no lanes; its end kept where they let it
+        end."""
+        name = self.agent.split(":")[1]
+        try:
+            laid_in = any(a["name"] == name for a in lanes_json.laid(self.root)["subagents"])
+        except ValueError:
+            laid_in = True
+        said = super().check(event) if laid_in else []
+        if "decision" not in hook.said_on(event, self.held, said):
+            called.end_kept(event)
+        return said
+
+
 class Laid:
     """A lane laid on a step of a subagent of the plugin at root, with the adapter of the port it
     reads, None for none, every lane laid in the subagent, each with what it takes read through the
@@ -183,9 +204,7 @@ class Laid:
         self, event: dict[str, Any], seen: Seen, said: str, named: list[str]
     ) -> list[hook.Said]:
         """The lane's sentence where what the event shows drifts from it, the run's values read and
-        held to its IN, nothing where one is given as null, as `check` says; of the flow's lane,
-        the error that lane cannot read a start's answer on a start of a subagent the flow names,
-        once a start of it came back from the background; stops with
+        held to its IN, nothing where one is given as null, as `check` says; stops with
         ports.Failed, holding what the adapter did and its path, where an adapter it reads by is not
         as its port says."""
         acted = seen.acted
@@ -207,16 +226,7 @@ class Laid:
         port = getattr(lane, "PORT", None)
         read: list[Any] = [] if port is None else [lambda g: self.read(port, g, self.adapter)]
         if getattr(lane, "FLOW", False):
-            flowing = moves.Run(self.flow or {}, self.plugin, called.calls_kept(event))
-            # Once a start came back from the background, no move due can be told, so a start
-            # of a subagent the flow names cannot be checked.
-            lost = moves.due(flowing).lost
-            starting = isinstance(acted, call.Call) and moves.starts(
-                flowing, acted.tool, acted.given
-            )
-            if lost and starting:
-                return [self.error(moves.unread(lost), moves.FOREGROUND)]
-            read = [flowing]
+            read = [moves.Run(self.flow or {}, self.plugin, called.flow_kept(event))]
         drift = next(filter(None, (lane.drifts(acted, t, self.root, *read) for t in each)), "")
         if not drift:
             return []
@@ -258,7 +268,7 @@ class Laid:
         """The error the lane meets, told with what is wrong and who must fix it, "" for Claude
         Code."""
         who = fix.format(plugin=self.plugin) if fix else hook.CLAUDE_CODE
-        on = hook.on_step(self.lane, self.number, self.name)
+        on = f"{self.lane} on step {self.number} of {self.name}"
         return hook.cannot(on, wrong.rstrip("."), who)
 
     def run_values(

@@ -1,6 +1,7 @@
 """The entries the layer writes in a plugin's hooks/hooks.json, one for each subagent and each event
-its lanes are held on, each event a call is kept on, and, for the orchestrator of a flow, its start,
-every other entry left as it was, and that file read.
+its lanes are held on, each event a call is kept on, for the orchestrator of a flow, its start, and
+for each subagent of a flow's order, its end and its report handed back, every other entry left as
+it was, and that file read.
 
 A command first checks that lane's code can run, then runs its event's script in lane's code with
 the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's agent_type; the guard
@@ -28,8 +29,8 @@ FREE = (START, *KEPT)
 # The events lanes are held on, those a call is kept on, and the orchestrator's start, each with
 # its own script in lane's code, named after it.
 EVENTS = (START, "PreToolUse", "SubagentStop", *KEPT)
-# The tool a `from` subagent of a flow may hand its report back with, whose call is kept as it comes
-# back, which an entry of PostToolUse matches alone where the subagent has no lane.
+# The tool a subagent of a flow's order may hand its report back with, whose call is kept as it
+# comes back, which an entry of PostToolUse matches alone where the subagent has no lane.
 HANDBACK = "SubagentHandback"
 # What a hook says where lane's code cannot run.
 INSTALL = "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run"
@@ -112,11 +113,12 @@ def shaped(entry: Any) -> bool:
 
 def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | None:
     """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
-    it, no call of it is kept on it, and it does not start the flow: its matcher the tools its
-    lanes watch, or for SubagentStop and SubagentStart the subagent, as their matcher tells agents
-    apart; for an event a call is kept on, where it has any lane, an entry matching every tool, or,
-    of PostToolUse, where it has none and is a `from` of the flow, as the agent's `from` says, the
-    tool it may hand its report back with alone; for a tool call, where it has any lane and its
+    it, no call of it is kept on it, it does not start the flow and it is not in the flow's order:
+    its matcher the tools its lanes watch, or for SubagentStop and SubagentStart the subagent, as
+    their matcher tells agents apart; for an event a call is kept on, where it has any lane, an
+    entry matching every tool, or, of PostToolUse, where it has none and is in the flow's order, as
+    the agent's `flowed` says, the tool it may hand its report back with alone; for SubagentStop,
+    where it is in the flow's order, its end kept; for a tool call, where it has any lane and its
     entry has it read its part first, as the agent's `part` says, every tool too; for SubagentStart,
     where it is the orchestrator of the flow, as the agent's `orchestrator` says; each command
     giving the subagent alone, whose lanes the guard reads from hooks/lanes.json, and the hook of a
@@ -129,11 +131,14 @@ def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | No
     # The first of the events in order, and the subagent's start, each a name the code writes.
     handing = event == KEPT[0]  # pragma: no mutate
     starting = event == START  # pragma: no mutate
-    handed = bool(agent.get("from")) and handing
+    # The last of the events in order.
+    ending = event == "SubagentStop"  # pragma: no mutate
+    handed = bool(agent.get("flowed")) and handing
+    ends = bool(agent.get("flowed")) and ending
     leads = bool(agent.get("orchestrator")) and starting
     # The part is held to be read first on any call, as start_with holds its script run first.
     first = lanes.LANES["start_with"].TOOLS if agent.get("part") and every and not by_agent else ()
-    if not (every if kept else on_it or first) and not handed and not leads:
+    if not (every if kept else on_it or first) and not handed and not ends and not leads:
         return None
     name = f"{plugin}:{agent['name']}"
     each = [*first, *(t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ()))]

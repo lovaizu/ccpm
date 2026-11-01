@@ -372,6 +372,46 @@ class TestStarted(CallsTest):
         self.assertEqual((kept["status"], kept["answer"]), (None, ""))
 
 
+class TestEnded(CallsTest):
+    """The end of a subagent, kept as it is let end, and what it ended with, read by its ID."""
+
+    def test_a_subagent_not_ended_has_ended_with_nothing(self):
+        # Given: a subagent with a call kept, no end
+        self.keep(self.came_back("Bash", {"command": "ls"}, OUTPUT))
+        # When: what it ended with is read
+        # Then: it has not ended
+        self.assertIsNone(called.ended("s1", "a1"))
+
+    def test_a_subagent_ended_has_ended_with_its_last_message_or_its_last_report(self):
+        for what, handed, ends, answer in (
+            ("one end", [], ["Wrote two."], "Wrote two."),
+            ("two ends, the last read", [], ["First.", "Last."], "Last."),
+            ("no last message", [], [None], ""),
+            ("a report handed back", ["Entry 2.\nmore"], [None], "Entry 2.\nmore"),
+        ):
+            with self.subTest(what=what):
+                # Given: the subagent having handed back the reports and ended so
+                if os.path.exists(self.file):
+                    os.remove(self.file)
+                for message in handed:
+                    back = self.came_back("SubagentHandback", {"message": message}, {"ok": True})
+                    self.keep(back)
+                for reply in ends:
+                    called.end_kept({**self.stopped(), "last_assistant_message": reply})
+                # When: what it ended with is read
+                # Then: it is the last report, or else its last message
+                self.assertEqual(called.ended("s1", "a1"), answer)
+                # And: its end is no call kept
+                self.assertEqual(len(called.calls_kept(self.stopped())), len(handed))
+
+    def test_a_subagent_of_no_id_as_claude_code_gives_keeps_no_end(self):
+        # Given: an end of a subagent of an ID Claude Code gives none of
+        # When: it is kept
+        called.end_kept({**self.stopped(), "agent_id": "../a1"})
+        # Then: nothing is kept
+        self.assertFalse(os.path.exists(os.path.join(self.tmp, "lane")))
+
+
 class TestGuard(GuardTest):
     """The trial's slip: follow_next on step 3 taking `scripts/next.py`, the subagent taking the
     move it printed and running it again in one reply, before the record holds the move taken."""

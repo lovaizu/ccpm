@@ -2,8 +2,9 @@
 plugin's hooks/lanes.json lays and from the orchestrator's calls the guard kept as each came back,
 as called.py keeps them; the line telling it, which the guard tells the orchestrator as it starts,
 as each call of a subagent of the flow comes back, and with the flow's sentence where it drifts; and
-whether a call takes it. Nothing the orchestrator writes is read: a subagent's answer is what the
-Agent call that started it gave back, kept with the call."""
+whether a call takes it. Nothing the orchestrator writes is read: a subagent's answer is what it
+ended with, given back by the Agent call that started it in the foreground, or kept as it ended in
+the background, as called.py keeps it."""
 
 from __future__ import annotations
 
@@ -12,43 +13,35 @@ from typing import Any, NamedTuple
 
 from call import Call
 
-# The tool the orchestrator starts each subagent of the flow with, the field naming the subagent,
-# and the field that starts it in the background, where its call comes back before it ends.
-AGENT, TYPE, BACKGROUND = "Agent", "subagent_type", "run_in_background"
+# The tool the orchestrator starts each subagent of the flow with, and the field naming the
+# subagent.
+AGENT, TYPE = "Agent", "subagent_type"
 # The status an Agent call comes back with once its subagent has ended, run in the foreground,
-# and the one it comes back with as its subagent starts in the background, with no answer.
+# and the one it comes back with as its subagent starts in the background, before it ends.
 DONE, LAUNCHED = "completed", "async_launched"
 # What an Agent call starting a subagent of the flow comes back as, as Claude Code hands it to a
-# PostToolUse hook: what it gave back, of one of the two statuses (hooks, Agent).
+# PostToolUse hook: what it gave back, of one of the two statuses, with the ID of the subagent it
+# started, by which its end is found (hooks, Agent).
 CAME_BACK = {
     "type": "object",
     "required": ["tool_response"],
     "properties": {
         "tool_response": {
             "type": "object",
-            "required": ["status"],
-            "properties": {"status": {"enum": [DONE, LAUNCHED]}},
+            "required": ["status", "agentId"],
+            "properties": {"status": {"enum": [DONE, LAUNCHED]}, "agentId": {"type": "string"}},
         }
     },
 }
-# Who must fix it where a start of the flow came back from the background, where lane cannot read
-# its answer: Claude Code moves a subagent there on the user's Ctrl+B, or on its own after it has
-# run about two minutes where automatic backgrounding is on, and does neither with this variable
-# set (env-vars, CLAUDE_CODE_DISABLE_BACKGROUND_TASKS), which is the user's to set, not the
-# plugin's.
-FOREGROUND = (
-    "whoever runs the plugin must set the environment variable"
-    " `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` to `1`, with which Claude Code moves no subagent to"
-    " the background, and run it again"
-)
 # The Markdown marks a line of an answer may be set in, left out at its two ends.
 MARKS = "*_`"
 
 
 class Run(NamedTuple):
     """The run of a flow: the flow, as hooks/lanes.json holds it, the plugin's name, and the
-    orchestrator's calls kept, in the order they came back, each with its input, an object, as
-    called.py keeps it."""
+    orchestrator's calls kept, in the order they came back, each with its input, an object, and
+    each start come back from the background with whether its subagent has ended and its answer,
+    as called.flow_kept gives them."""
 
     flow: dict[str, Any]
     plugin: str
@@ -57,13 +50,13 @@ class Run(NamedTuple):
 
 class Due(NamedTuple):
     """The move due: the position in the flow's order, from 0, of the subagent to start, None once
-    the flow is done or lane cannot read it; what sent the run there, said, "" where the order
-    alone did; and the start that came back from the background, as kept, whose answer lane
-    cannot read, None for none."""
+    the flow is done or while a subagent of it runs; what sent the run there, said, "" where the
+    order alone did; and the subagent of the flow running in the background, as Claude Code names
+    it, "" for none."""
 
     at: int | None
     why: str
-    lost: dict[str, Any] | None = None
+    running: str = ""
 
 
 def named(run: Run, at: int) -> str:
@@ -73,11 +66,12 @@ def named(run: Run, at: int) -> str:
 
 
 def due(run: Run) -> Due:
-    """The move due, walking the calls kept: an Agent call starting the subagent due, come back
-    from the foreground, moves the run on, to the position its back names where it is the `from` of
-    a back and its answer answers the back's while, and else to the next, the flow done after the
-    last; that call come back from the background, with no answer, leaves no move lane can read;
-    every other call, that one of another status among them, changes nothing."""
+    """The move due, walking the calls kept: an Agent call starting the subagent due moves the run
+    on once that subagent has ended, come back from the foreground or, from the background, ended
+    since, to the position its back names where it is the `from` of a back and its answer answers
+    the back's while, and else to the next, the flow done after the last; that call come back from
+    the background, its subagent still running, leaves no move due while it runs; every other call,
+    one come back of another status or with no subagent's ID among them, changes nothing."""
     order, at, why = run.flow["order"], 0, ""
     backs = {b["from"]: b for b in run.flow.get("back", [])}
     for kept in run.kept:
@@ -85,10 +79,11 @@ def due(run: Run) -> Due:
             continue
         if kept["input"].get(TYPE) != named(run, at):
             continue
-        if kept.get("status") == LAUNCHED:
-            return Due(None, "", kept)
-        if kept.get("status") != DONE:
+        # A start come back not as CAME_BACK says is an error told as it came back, not a move.
+        if kept.get("status") not in (DONE, LAUNCHED) or not kept.get("agent"):
             continue
+        if kept["status"] == LAUNCHED and not kept.get("ended"):
+            return Due(None, "", named(run, at))
         back = backs.get(at + 1)
         if back is not None and answers(str(kept.get("answer", "")), back["while"]):
             at, why = back["to"] - 1, f"{order[at]} answered `{back['while']}`."
@@ -106,35 +101,25 @@ def starts(run: Run, tool: str, given: Mapping[str, Any]) -> bool:
     return tool == AGENT and given.get(TYPE) in names
 
 
-def unread(lost: dict[str, Any]) -> str:
-    """What is wrong where the move due is lost, given the start that came back from the
-    background, as `due` gives it: lane cannot read its answer."""
-    started = f"`{lost['input'][TYPE]}`"
-    return f"{started} came back from the background, where lane cannot read its answer"
-
-
 def told(run: Run) -> str:
     """The line telling the orchestrator the move due, by its position in the order, from 1, as
     an order may name a subagent more than once, after what sent the run there where anything did;
-    or that the flow is done."""
+    to wait for the subagent of the flow running; or that the flow is done."""
     now = due(run)
+    if now.running:
+        return f"Wait for `{now.running}` to end: lane tells the next move once it has."
     if now.at is None:
         return "The flow is done: lane tells no more moves."
-    start = f"start `{named(run, now.at)}` in the foreground."
-    move = f"The next move of the flow is move {now.at + 1}: {start}"
+    move = f"The next move of the flow is move {now.at + 1}: start `{named(run, now.at)}`."
     return f"{now.why} {move}" if now.why else move
 
 
 def taken(run: Run, call: Call) -> bool:
-    """Whether the call takes the move due: an Agent call starting the subagent due, not in the
-    background; none is due once the flow is done."""
+    """Whether the call takes the move due: an Agent call starting the subagent due, in the
+    foreground or the background; none is due once the flow is done or while a subagent of it
+    runs."""
     at = due(run).at
-    return (
-        at is not None
-        and call.tool == AGENT
-        and call.given.get(TYPE) == named(run, at)
-        and not call.given.get(BACKGROUND)
-    )
+    return at is not None and call.tool == AGENT and call.given.get(TYPE) == named(run, at)
 
 
 def answers(answer: str, said: str) -> bool:

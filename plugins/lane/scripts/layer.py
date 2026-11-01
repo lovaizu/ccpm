@@ -70,7 +70,7 @@ def written(path: str) -> str:
     root, plugin, flow = given["plugin"], given["name"], given["flow"]
     hooks = entries.hooks_read(root)
     before = laid_before(root, plugin)
-    was = lanes_json.froms(laid(root).get("flow"))
+    was = lanes_json.flowed(laid(root).get("flow"))
     laid_now, values = dict(before), values_before(root, plugin)
     said = []
     for agent in given["subagents"]:
@@ -80,7 +80,7 @@ def written(path: str) -> str:
         ]
         values[f"{plugin}:{agent['name']}"] = agent.get("adapter")
     hooked_now = [a["name"] for a in given["subagents"]]
-    hooked_now += [n for n in lanes_json.froms(flow) if n not in hooked_now]
+    hooked_now += [n for n in lanes_json.flowed(flow) if n not in hooked_now]
     said.append(f"Wrote the hooks of {listed(hooked_now)} into hooks/hooks.json.\n")
     said += entries.gone_out(hooks, plugin, root)
     kept = {a: s for a, s in laid_now.items() if step.agent_file(root, a.split(":")[1]) is not None}
@@ -155,10 +155,11 @@ def hooks_put(
     was: list[str],
 ) -> None:
     """Puts into the hooks the entries of each subagent of the plugin at root lanes are laid in, by
-    `<plugin>:<name>`, with the orchestrator's start where the flow is laid, and of each `from` of
-    the flow, keeping the report it hands back; and takes out those of each subagent that was a
-    `from` before, as the agents/ still has it, that no longer needs them."""
-    now = lanes_json.froms(flow)
+    `<plugin>:<name>`, with the orchestrator's start where the flow is laid, and of each subagent
+    of the flow's order, keeping its end and the report it hands back; and takes out those of each
+    subagent that was in the order before, as the agents/ still has it, that no longer needs
+    them."""
+    now = lanes_json.flowed(flow)
     leads = (flow or {}).get("orchestrator")
     names = [a.split(":")[1] for a in laid_in]
     for name in names + [n for n in dict.fromkeys(now + was) if n not in names]:
@@ -216,14 +217,14 @@ def hooked(
 ) -> dict[str, Any]:
     """The subagent of the name in the plugin at root, as its hooks are written from it: its name,
     the lanes laid in it as steps of a proposal, whether its entry has it read its part first, as
-    step.part finds it, whether it is among those whose report handed back is kept, and whether it
-    is the orchestrator of the flow."""
+    step.part finds it, whether it is among those whose end and report handed back are kept, and
+    whether it is the orchestrator of the flow."""
     part = step.part(root, name) is not None
     return {
         "name": name,
         "steps": laid_in,
         "part": part,
-        "from": name in answering,
+        "flowed": name in answering,
         "orchestrator": leads,
     }
 

@@ -10,9 +10,11 @@ subagent runs, as dev/architecture.md's Where a plugin writes its files has it. 
 back is kept as the text the AI is shown, in the form the record's tool result has for the same
 call, as the version of Claude Code record.py names gives both; where the record and a kept call
 differ, the record holds, so a kept call is read only until the record holds its result. Of an
-Agent call it keeps too the status Claude Code gives back and the answer of the subagent it started,
-which the flow's moves are read from, as moves.py reads them; and the orchestrator of a flow is told
-its move due as it starts and as each call of a subagent of the flow comes back."""
+Agent call it keeps too the status Claude Code gives back, the ID of the subagent it started and
+that subagent's answer, which the flow's moves are read from, as moves.py reads them. Of a subagent
+of the flow it keeps too its end, a line of what it ended with, so a start come back from the
+background counts once its subagent has ended; and the orchestrator of a flow is told its move due
+as it starts and as each call of a subagent of the flow comes back."""
 
 from __future__ import annotations
 
@@ -35,6 +37,8 @@ import schema
 ID = re.compile(r"[A-Za-z0-9-]+")
 # The tool a subagent may hand its report back with, the field of its input holding the report.
 HANDBACK, MESSAGE = "SubagentHandback", "message"
+# The key of the line kept as a subagent ends, holding what it ended with, its last message.
+END = "end"
 
 
 def place(event: dict[str, Any]) -> str | None:
@@ -96,18 +100,48 @@ def started(event: dict[str, Any]) -> dict[str, Any]:
         [b.get("text") for b in blocks if isinstance(b, dict)] if isinstance(blocks, list) else []
     )
     answer = "\n".join(t for t in texts if isinstance(t, str))
-    by = {"session_id": event.get("session_id"), "agent_id": back.get("agentId")}
-    handed = [
+    agent = back.get("agentId")
+    return {
+        "status": status if isinstance(status, str) else None,
+        "agent": agent if isinstance(agent, str) else None,
+        "answer": (handed(event.get("session_id"), agent) or [answer])[-1],
+    }
+
+
+def handed(session: Any, agent: Any) -> list[str]:
+    """Each report the subagent of the ID in the session handed back with SubagentHandback, as its
+    calls kept hold them, in the order handed; none where it handed none, or the IDs are not as
+    Claude Code gives them."""
+    return [
         k["input"][MESSAGE]
-        for k in calls_kept(by)
+        for k in calls_kept({"session_id": session, "agent_id": agent})
         if k.get("tool") == HANDBACK
         and isinstance(k.get("input"), dict)
         and isinstance(k["input"].get(MESSAGE), str)
     ]
-    return {
-        "status": status if isinstance(status, str) else None,
-        "answer": (handed or [answer])[-1],
-    }
+
+
+def end_kept(event: dict[str, Any]) -> None:
+    """Keeps the end of the subagent of the event, as it is let end, where `place` says, as one
+    line after its calls kept: what it ended with, its last message, None where Claude Code gives
+    none, as after it handed its report back; nothing where `place` names no file."""
+    file = place(event)
+    if file is not None:
+        os.makedirs(os.path.dirname(file), exist_ok=True)
+        with open(file, "a", encoding="utf-8") as f:
+            f.write(json.dumps({END: event.get("last_assistant_message")}) + "\n")
+
+
+def ended(session: Any, agent: Any) -> str | None:
+    """What the subagent of the ID in the session ended with, once it has ended: the last report
+    it handed back, where it handed one, and else the last message it ended with, "" for none;
+    None while it has not ended."""
+    file = place({"session_id": session, "agent_id": agent})
+    ends = [k for k in (record.read(file) if file else None) or [] if END in k]
+    if not ends:
+        return None
+    last = ends[-1][END]
+    return (handed(session, agent) or [last if isinstance(last, str) else ""])[-1]
 
 
 class Kept:
@@ -123,10 +157,9 @@ class Kept:
         its ID, its tool, its input, the folder it ran in, what it gave back, whether it failed,
         and, of an Agent call, what `started` gives; then, where the subagent is the orchestrator
         of the flow and the call starts a subagent the flow names, the move due, as moves.told
-        gives it; or, where a start came back from the background, the error that lane cannot
-        read its answer, told as that start comes back, as the guard stops each start of the flow
-        after it; or, where the call came back not as moves.CAME_BACK says, the error that the
-        event is not as Claude Code hands it; nothing where `place` names no file."""
+        gives it, to wait where it came back from the background; or, where the call came back
+        not as moves.CAME_BACK says, the error that the event is not as Claude Code hands it;
+        nothing where `place` names no file."""
         file = place(event)
         if file is None:
             return []
@@ -149,11 +182,7 @@ class Kept:
         out = None if kept["failed"] else schema.held(moves.CAME_BACK, event)
         if out is not None:
             return [hook.unshaped(name, out.told())]
-        lost = moves.due(flow).lost
-        if lost is None:
-            return [hook.Said(moves.told(flow))]
-        on = hook.on_step(lanes_json.FLOW_LANE["lane"], flow.flow["step"], name)
-        return [hook.cannot(on, moves.unread(lost), moves.FOREGROUND)]
+        return [hook.Said(moves.told(flow))]
 
 
 class Started:
@@ -165,19 +194,28 @@ class Started:
         self.root, self.agent = root, agent
 
     def check(self, event: dict[str, Any]) -> list[hook.Said]:
-        """The move due, told the orchestrator of the flow; nothing for any other subagent, or once
-        lane cannot read the flow's run."""
+        """The move due, told the orchestrator of the flow; nothing for any other subagent."""
         flow = flow_run(self.root, self.agent, event)
-        if flow is None or moves.due(flow).lost is not None:
-            return []
-        return [hook.Said(moves.told(flow))]
+        return [] if flow is None else [hook.Said(moves.told(flow))]
 
 
 def calls_kept(event: dict[str, Any]) -> list[dict[str, Any]]:
-    """The calls kept of the event's subagent, in the order they came back; none where none came
-    back yet, or `place` names no file."""
+    """The calls kept of the event's subagent, in the order they came back, its end left out; none
+    where none came back yet, or `place` names no file."""
     file = place(event)
-    return (record.read(file) if file is not None else None) or []
+    return [k for k in (record.read(file) if file is not None else None) or [] if END not in k]
+
+
+def flow_kept(event: dict[str, Any]) -> list[dict[str, Any]]:
+    """The calls kept of the event's subagent, as `calls_kept` gives them, each start come back
+    from the background with whether its subagent has ended since and its answer, as `ended` reads
+    them, as moves.Run takes them."""
+    session, kept = event.get("session_id"), calls_kept(event)
+    for k in kept:
+        if k.get("status") == moves.LAUNCHED:
+            answer = ended(session, k.get("agent"))
+            k.update(ended=answer is not None, answer=answer or "")
+    return kept
 
 
 def flow_run(root: str, agent: str, event: dict[str, Any]) -> moves.Run | None:
@@ -192,7 +230,7 @@ def flow_run(root: str, agent: str, event: dict[str, Any]) -> moves.Run | None:
         return None
     if flow is None or flow["orchestrator"] != name:
         return None
-    return moves.Run(flow, plugin, calls_kept(event))
+    return moves.Run(flow, plugin, flow_kept(event))
 
 
 def entries(event: dict[str, Any]) -> list[dict[str, Any]] | None:
@@ -204,7 +242,7 @@ def entries(event: dict[str, Any]) -> list[dict[str, Any]] | None:
     if found is None or file is None:
         return found
     held = {b.get("tool_use_id") for e in found for b in record.of(e, "user", "tool_result")}
-    kept = [k for k in record.read(file) or [] if k.get("id") not in held]
+    kept = [k for k in calls_kept(event) if k.get("id") not in held]
     return [*found, *(e for k in kept for e in as_entries(k))]
 
 

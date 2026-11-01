@@ -18,6 +18,7 @@ from flowing import (
     LAID,
     LEAD,
     LEAD_LAID,
+    REVIEWER,
     SUMMARIZER,
     SUMMARIZER_LAID,
     FlowTest,
@@ -53,8 +54,9 @@ def entry_of(given: dict, agent: str, matcher: str | None = None) -> dict:
 
 
 # The entries of notes-lead, whose follow_flow lane watches every tool and its end, and which is
-# told its first move as it starts, the hook letting it start where Python is missing; and of
-# changelog-reviewer, the `from` of the flow's back, whose SubagentHandback call is kept.
+# told its first move as it starts, the hook letting it start where Python is missing; and of each
+# subagent of the order, whose end and SubagentHandback call are kept, changelog-writer's calls
+# kept already by its lanes.
 LEAD_TOOL = entry_of(ENTRY, "notes-lead", ".*")
 LEAD_END = entry_of(END_ENTRY, "notes-lead")
 LEAD_START = {
@@ -70,11 +72,12 @@ LEAD_START = {
     ],
 }
 REVIEWER_BACK = entry_of(KEPT["PostToolUse"][0], "changelog-reviewer", "SubagentHandback")
+REVIEWER_END = entry_of(END_ENTRY, "changelog-reviewer")
 HOOKS = {
     "hooks": {
         "SubagentStart": [LEAD_START],
         "PreToolUse": [LEAD_TOOL, ENTRY],
-        "SubagentStop": [LEAD_END],
+        "SubagentStop": [LEAD_END, END_ENTRY, REVIEWER_END],
         "PostToolUse": [
             entry_of(KEPT["PostToolUse"][0], "notes-lead"),
             KEPT["PostToolUse"][0],
@@ -185,7 +188,8 @@ class TestWrite(FlowTest):
         self.assertTrue(
             said.startswith(
                 "Wrote step 1 of notes-lead into agents/notes-lead.md.\n"
-                "Wrote the hooks of notes-lead and changelog-reviewer into hooks/hooks.json.\n"
+                "Wrote the hooks of notes-lead, changelog-writer and changelog-reviewer into"
+                " hooks/hooks.json.\n"
             ),
             said,
         )
@@ -264,16 +268,18 @@ class TestWrite(FlowTest):
             {"name": "notes-lead", "steps": [{"step": 2, "lanes": [FLOW_LANE]}]},
         )
 
-    def test_a_from_no_longer_a_from_has_its_hooks_taken_out(self):
-        # Given: the README's proposal written, changelog-reviewer the from of its back
+    def test_a_subagent_no_longer_in_the_order_has_its_hooks_taken_out(self):
+        # Given: the README's proposal written, changelog-reviewer in its order
         self.written()
-        # When: the flow is written with no back
-        self.flowed({**FLOW, "back": []})
+        # When: the flow is written with changelog-writer alone in its order
+        self.flowed({**FLOW, "order": ["changelog-writer"], "back": []})
         said = self.written()
         # Then: changelog-reviewer has no hooks, and is not said
         commands = json.dumps(self.hooks())
         self.assertNotIn("notes:changelog-reviewer", commands)
-        self.assertIn("Wrote the hooks of notes-lead into hooks/hooks.json.\n", said)
+        self.assertIn(
+            "Wrote the hooks of notes-lead and changelog-writer into hooks/hooks.json.\n", said
+        )
 
     def test_an_orchestrator_with_a_part_has_the_step_in_its_part(self):
         # Given: notes-lead's file an entry naming its part, prompts/lead.md
@@ -304,7 +310,7 @@ class TestWrite(FlowTest):
         self.assertNotIn("notes-lead", said)
         self.assertEqual(self.read(self.lead), lead)
         self.assertIn("Wrote the hooks of changelog-writer and changelog-reviewer", wrote)
-        self.assertEqual(self.hooks()["hooks"]["SubagentStop"], [LEAD_END])
+        self.assertEqual(self.hooks()["hooks"]["SubagentStop"], HOOKS["hooks"]["SubagentStop"])
         self.assertEqual(self.hooks()["hooks"]["SubagentStart"], [LEAD_START])
 
     def test_a_flow_given_alone_keeps_the_orchestrators_other_lanes(self):
@@ -508,6 +514,36 @@ class TestRefused(FlowTest):
                 for action in ("print", "write"):
                     self.assertEqual(self.lay(action, self.proposal_file), (1, said))
                 self.assertFalse(os.path.exists(os.path.join(self.plugin, "hooks", "lanes.json")))
+
+    def test_a_flow_naming_a_subagent_set_to_run_in_the_background_stops(self):
+        # Given: changelog-reviewer's file setting `background: true`
+        self.write(
+            self.reviewer,
+            REVIEWER.replace("tools: Read, Bash\n", "tools: Read, Bash\nbackground: true\n"),
+        )
+        # When: the flow is printed or written
+        # Then: it exits 1 saying why, nothing written
+        said = (
+            f"lay.py: {self.reviewer} sets `background: true` for changelog-reviewer, which the"
+            " flow starts; where Claude Code runs it so in `claude -p`, notes-lead is never told"
+            " it ended, and the flow stalls; take it out, and run again.\n"
+        )
+        for action in ("print", "write"):
+            self.assertEqual(self.lay(action, self.proposal_file), (1, said))
+        self.assertFalse(os.path.exists(os.path.join(self.plugin, "hooks", "lanes.json")))
+
+    def test_a_flow_naming_a_subagent_not_set_to_run_in_the_background_is_laid(self):
+        for setting in ("background: false\n", ""):
+            with self.subTest(setting=setting):
+                # Given: changelog-reviewer's file setting `background: false`, or nothing
+                self.write(
+                    self.reviewer,
+                    REVIEWER.replace("tools: Read, Bash\n", f"tools: Read, Bash\n{setting}"),
+                )
+                # When: the flow is printed
+                # Then: it is printed
+                code, said = self.lay("print", self.proposal_file)
+                self.assertEqual(code, 0, said)
 
     def test_an_orchestrator_naming_agent_among_its_tools_or_no_tools_is_laid(self):
         for what, tools in (

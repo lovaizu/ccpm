@@ -120,8 +120,8 @@ def laid(root: str) -> dict[str, Any]:
 def flow_check(root: str, flow: dict[str, Any]) -> None:
     """Stops where the flow, held to its schema, cannot be laid in the plugin at root: where
     lanes_json.flow_wrong says why, where it names a subagent no file in the plugin's agents/ names,
-    by a name a hook's command can carry, or where the orchestrator's file names its tools without
-    Agent, which it starts the others with."""
+    by a name a hook's command can carry, where the orchestrator's file names its tools without
+    Agent, which it starts the others with, or where a file of its order sets `background: true`."""
     why = lanes_json.flow_wrong(flow)
     if why:
         raise wrong(f"gives a flow {why}")
@@ -138,6 +138,18 @@ def flow_check(root: str, flow: dict[str, Any]) -> None:
             f"lay.py: {entry} names the tools of {orchestrator}, `{tools}`, without {AGENT}, with"
             f" which it starts the subagents of the flow; add {AGENT} to them, and run again."
         )
+    for named in dict.fromkeys(flow["order"]):
+        started = str(step.agent_file(root, named))
+        with open(started, encoding="utf-8") as f:
+            background = template.value(f.read().splitlines(), "background")
+        # Claude Code runs a subagent so set in the background however it is started, and in
+        # `claude -p` does not tell the one that started it that it ended (sub-agents, background).
+        if background == "true":
+            raise Stop(
+                f"lay.py: {started} sets `background: true` for {named}, which the flow starts;"
+                f" where Claude Code runs it so in `claude -p`, {orchestrator} is never told it"
+                " ended, and the flow stalls; take it out, and run again."
+            )
 
 
 def parts_shared(root: str, checked: list[dict[str, Any]]) -> None:
