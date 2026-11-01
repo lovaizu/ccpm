@@ -1,9 +1,9 @@
 # lane architecture
 
-`lay.py` turns each rule of a proposal into a sentence in a step and a check of it, and puts one
-check script into the plugin; Claude Code runs the check script on each tool call and end of work of
-a subagent with rules, and it stops each break with the sentence and tells the orchestrator each
-move of its flow. The experience this delivers is in [lane's UX](ux.md).
+`lay.py` turns each rule of a proposal into a sentence in a step and a check of that sentence. It
+puts the checks into the plugin as one check script. Claude Code runs the check script on each tool
+call and end of work of a subagent with rules. The check script stops each break with the sentence,
+and tells the orchestrator each move of its flow. The experience this delivers is in [lane's UX](ux.md).
 
 ## Principles
 
@@ -14,7 +14,7 @@ rule a lane and the check script the guard.
 
 ### The check shows the step again
 
-A stop shows the subagent the sentence of the rule, after the plugin's name.
+The check script shows a stopped subagent the sentence of the rule, after the plugin's name.
 
 A subagent whose call is only refused tries another way; one that sees its own step goes back to it
 (KR1.3).
@@ -62,7 +62,7 @@ An AI that says it followed a step may not have.
 
 ### The plugin needs nothing from lane
 
-The check script lives and runs in the developer AI's plugin.
+The check script is kept and run in the developer AI's plugin.
 
 Whoever runs the plugin did not choose lane; a plugin that needed lane installed would run without
 checks where it is missing.
@@ -218,7 +218,7 @@ sequenceDiagram
 - The developer AI installs lane as [the README](../../plugins/lane/README.md#installation) says and
   runs `python3 <installPath>/scripts/lay.py`; Claude Code starts the check script through the
   plugin's hook entries.
-- Python 3.9 and the standard library only, as
+- lane's code uses Python 3.9 and its standard library only, as
   [Python 3.9 and the standard library](../architecture.md#python-39-and-the-standard-library) says,
   so whoever runs the plugin installs nothing for lane. Each hook's command checks for `python3` in
   `sh` first, as without Python the check script cannot even read the event.
