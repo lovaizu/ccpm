@@ -1,0 +1,11 @@
+{"kind": "readme",
+ "goal": {"what": "A person who meets turn decides from the README whether to use it, starts by its steps alone, and knows where to read next.", "grounds": ["readme.json purpose"]},
+ "decisions": [
+  {"id": "D1", "what": "turn makes a piece of work you ask for until it is what it should be.", "contributes_to": ["readme/Q1"], "builds_on": [], "decided": true, "settled_by": "reasoning", "grounds": ["UX O1"]},
+  {"id": "D2", "what": "Gain: the work as it should be, your effort only on what only you decide.", "contributes_to": ["readme/Q2"], "builds_on": ["D1"], "decided": true, "settled_by": "reasoning", "grounds": ["UX O1"]},
+  {"id": "D3", "what": "Idea: format and checklist drawn from how good works are made and approved by you; a second AI that never sees the design checks the work.", "contributes_to": ["readme/Q3"], "builds_on": ["D1"], "decided": true, "settled_by": "reasoning", "grounds": ["turn-rebuild.md Concept"]},
+  {"id": "D4", "what": "Non-goals: the purpose, whether the work achieves it, publishing, a quick draft.", "contributes_to": ["readme/Q4"], "builds_on": ["D1"], "decided": true, "settled_by": "reasoning", "grounds": ["limits a reader would ask about"]},
+  {"id": "D5", "what": "Walkthrough: UX O1, the press release, step by step to the release.", "contributes_to": ["readme/Q5", "readme/Q7"], "builds_on": ["D2"], "decided": true, "settled_by": "user", "grounds": ["UX O1"]},
+  {"id": "D6", "what": "How it works: the figure; under it only that a more is mended at its decision and the two phases.", "contributes_to": ["readme/Q6"], "builds_on": ["D3"], "decided": true, "settled_by": "reasoning", "grounds": ["the figure shows the roles"]},
+  {"id": "D7", "what": "Requirements, installation, links and license as they stand.", "contributes_to": ["readme/Q7", "readme/Q8", "readme/Q9"], "builds_on": [], "decided": true, "settled_by": "research", "grounds": ["plugins/turn"]}
+ ]}
