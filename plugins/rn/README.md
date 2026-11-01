@@ -19,8 +19,8 @@ and the finished work, and an AI that did not make it uses it in your place befo
 - rn does not merge: it marks the pull request ready, and the merge is yours.
 - rn does not push to your default branch: it works on a branch of its own.
 - rn sends nothing to its makers without your yes.
-- rn does not change the templates turn ships: a question you add for a kind of work goes into
-  `.turn/templates/` in your repository.
+- rn does not change the checklists turn ships: a question you add to the checklist of a kind of
+  work goes into `.turn/templates/` in your repository.
 
 ## Requirements
 
@@ -106,7 +106,7 @@ again. rn stops at the finished work with each choice it made without asking you
 > /rn:ty
 ```
 
-Last, rn offers what the work taught, one learning per message, as a question for the template of
+Last, rn offers what the work taught, one learning per message, as a question for the checklist of
 that kind of work in `.turn/templates/`, or as an issue to rn's makers, and marks the pull request
 ready:
 

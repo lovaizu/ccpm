@@ -47,7 +47,7 @@ sequenceDiagram
   U->>R: /rn:ty
   loop one message per learning
     R->>U: what the work taught, and where it would help later work
-    U->>R: a question for that kind's template, an issue to rn's makers, or neither
+    U->>R: a question for that kind's checklist, an issue to rn's makers, or neither
   end
   R-->>U: the pull request marked ready
   Note over U: merges

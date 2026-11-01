@@ -39,7 +39,7 @@
   <text class="kind" x="460" y="405">Python</text>
 
   <rect class="box" x="670" y="360" width="220" height="70" rx="8"/>
-  <text class="name" x="780" y="386">templates</text>
+  <text class="name" x="780" y="386">checklists</text>
   <text class="kind" x="780" y="405">turn's, one for each kind</text>
 
   <rect class="box" x="40" y="180" width="200" height="70" rx="35"/>
