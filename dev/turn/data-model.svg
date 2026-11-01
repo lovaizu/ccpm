@@ -122,7 +122,7 @@
   <path class="line" d="M534.0,405.0 L520.0,397.0"/>
   <path class="line" d="M534.0,405.0 L520.0,405.0"/>
   <path class="line" d="M534.0,405.0 L520.0,413.0"/>
-  <path class="line" d="M539.0,398.0 L539.0,412.0"/>
+  <circle class="box" cx="544.0" cy="405.0" r="5"/>
   <text class="label" x="580" y="395.0" text-anchor="middle">serves</text>
   <path class="line" d="M700,430 L700,482 L780,482 L780,430"/>
   <path class="line" d="M700.0,444.0 L708.0,430.0"/>
@@ -134,6 +134,16 @@
   <path class="line" d="M780.0,444.0 L772.0,430.0"/>
   <circle class="box" cx="780.0" cy="454.0" r="5"/>
   <text class="label" x="740" y="500" text-anchor="middle">builds on</text>
+  <path class="line" d="M840,392 L882,392 L882,418 L840,418"/>
+  <path class="line" d="M854.0,392.0 L840.0,384.0"/>
+  <path class="line" d="M854.0,392.0 L840.0,392.0"/>
+  <path class="line" d="M854.0,392.0 L840.0,400.0"/>
+  <circle class="box" cx="864.0" cy="392.0" r="5"/>
+  <path class="line" d="M854.0,418.0 L840.0,410.0"/>
+  <path class="line" d="M854.0,418.0 L840.0,418.0"/>
+  <path class="line" d="M854.0,418.0 L840.0,426.0"/>
+  <circle class="box" cx="864.0" cy="418.0" r="5"/>
+  <text class="label" x="848" y="448" text-anchor="start">contributes to</text>
   <path class="line" d="M960,235.0 L840,235.0"/>
   <path class="line" d="M951.0,242.0 L951.0,228.0"/>
   <path class="line" d="M945.0,242.0 L945.0,228.0"/>
@@ -170,7 +180,7 @@
   <path class="line" d="M427.0,439.0 L413.0,439.0"/>
   <path class="line" d="M427.0,445.0 L413.0,445.0"/>
   <text class="label" x="530" y="567.0" text-anchor="middle">answers</text>
-  <text class="label" x="40" y="649">Ends, read at the box they touch:</text>
+  <text class="label" x="20" y="649">Ends, read at the box they touch:</text>
   <path class="line" d="M250,645 L290,645"/>
   <path class="line" d="M259.0,638.0 L259.0,652.0"/>
   <path class="line" d="M265.0,638.0 L265.0,652.0"/>

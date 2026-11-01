@@ -124,8 +124,10 @@ Both builder and evaluator do this, in the same way.
 
 ## Flow
 
-designer, builder and evaluator stay started, and go always in that order: each return goes to
-designer, which passes the design to builder, whose work goes to evaluator.
+designer, builder and evaluator start fresh at each move and carry on from the run's files, so the
+evaluator reads each round with fresh eyes while the files hold the design. In the content phase
+they go always in that order: each return goes to designer, which passes the design to builder,
+whose work goes to evaluator.
 
 1. The content phase: what the work says and does. The kind's own questions alone, made up
    decision by decision from the design tree, until evaluator finds every one good. A more is
@@ -135,8 +137,10 @@ designer, which passes the design to builder, whose work goes to evaluator.
    says stays (Fowler, Refactoring). The questions of the `refactor-<kind>` template the kind's
    template names in `includes`, such as `refactor-doc` for every document and `refactor-code`
    for code, which hold over the whole work. builder finishes the work by them and evaluator
-   verifies it by them, with no design tree. Only how the work says a thing changes; a point that
-   would change what it says goes back to the content phase.
+   verifies it by them, with no design tree, each started as a subagent of its own for this phase
+   (refactorer and refactor-evaluator) on the same steps, so lane's flow declares one order. A more
+   goes back to the refactorer. Only how the work says a thing changes; a point that would change
+   what it says goes back to designer and the content phase.
 
 Keeping the two phases apart keeps builder and evaluator on the content while it is made. A phase
 is named so as not to meet rn's stages, inside one of which turn runs.
