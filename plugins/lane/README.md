@@ -90,7 +90,7 @@ and commits `CHANGELOG.md` once you have said OK. The first step of `notes-lead`
 `agents/notes-lead.md`, and one of the writer's steps, in `agents/changelog-writer.md`, say:
 
 ```markdown
-1. Start the subagents of the work.
+1. Start the subagents of the work, each in the foreground.
 ```
 
 ```markdown
@@ -129,7 +129,7 @@ Lanes on step 1 of notes-lead, each hook acting in notes-lead alone:
   run:    Do not run `git commit` or `git push`.                  hook hands_off
   follow: Take each move `flow.py` prints, until it prints none.  hook follow_next
 
-1. Start the subagents of the work. Do not run `git commit` or `git push`. Take each move `flow.py` prints, until it prints none.
+1. Start the subagents of the work, each in the foreground. Do not run `git commit` or `git push`. Take each move `flow.py` prints, until it prints none.
 
 Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
   write: Write only `CHANGELOG.md`.              hook write_only

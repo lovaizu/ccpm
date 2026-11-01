@@ -91,6 +91,7 @@ def proposal(path: str) -> dict[str, Any]:
     kept = laid(root).get("flow") if flow is None else flow
     if kept is not None:
         checked = with_flow(root, kept, checked, flow is not None)
+    parts_shared(root, checked)
     folder = os.path.join(os.path.dirname(os.path.abspath(path)), name, "adapters")
     named = adapters_named(checked)
     found = [adapter_found(root, folder, a, port, by) for a, (port, by) in named.items()]
@@ -145,6 +146,30 @@ def flow_check(root: str, flow: dict[str, Any]) -> None:
             f" `{lies}`, where the flow's lane takes lane's, `{lanes_json.FLOW_RUN}`; name the"
             " script of its own otherwise, and run again."
         )
+
+
+def parts_shared(root: str, checked: list[dict[str, Any]]) -> None:
+    """Stops where two subagents whose entries name one part lay different lanes on a step of it,
+    of the subagents checked, each with the lanes the proposal gives it, and each other subagent
+    the plugin at root lays lanes in and its agents/ still has, with the lanes laid before in it:
+    the part carries one set of sentences, which the layer writes and the guard reads for each."""
+    given = {a["name"]: (a["file"], a["steps"]) for a in checked}
+    for agent in laid(root)["subagents"]:
+        name = agent["name"]
+        file = step.steps_file(root, name)
+        if name not in given and file is not None:
+            given[name] = (file, agent["steps"])
+    first: dict[str, tuple[str, dict[int, Any]]] = {}
+    for name, (file, steps) in given.items():
+        on = {s["step"]: s["lanes"] for s in steps}
+        before, other = first.setdefault(file, (name, on))
+        differ = sorted(n for n in {*on, *other} if on.get(n) != other.get(n))
+        if differ:
+            raise Stop(
+                f"lay.py: {before} and {name} share the part {file}, which carries one set of"
+                f" sentences, and lay different lanes on step {differ[0]} of it; give each the"
+                " same lanes on each step of it, and run again."
+            )
 
 
 def laid_by_hand(root: str, agent: dict[str, Any]) -> None:

@@ -72,7 +72,10 @@ it prints none. lane's own such script is `flow.py`, which prints the next move 
 [the flow](flow.md) says.
 
 every_item reads its input's items at the items port, and follow_next the move your script printed
-at the move port, as the ports below say.
+at the move port, as the ports below say. every_item counts an item answered where its ID stands as
+a word of its own in the subagent's last reply, or in a file it wrote in this run other than the
+input, so `B-1` is answered by neither `B-12`, `B-1.2` nor `AB-1`. An item with no ID is not
+counted, as no text tells an answer to it from any other.
 
 ## The proposal
 
@@ -276,6 +279,10 @@ its steps are those of the part, the one file under your plugin's `prompts/` the
 backticks. `lay.py print` shows the part's steps, `lay.py write` writes each lane's sentence into
 them, and the guard reads them there. Where a body names no such file, or more than one, lane reads
 the steps from the subagent's file itself.
+
+Subagents whose entries name one part share its steps, and the part carries one set of sentences.
+So `lay.py print` refuses a proposal where subagents sharing a part would lay different lanes on a
+step of it, those it gives and those laid before alike, and names them and the step.
 
 Claude Code puts your plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in the entry's body alone, not
 in the part the subagent reads, so the part names each script, file or folder by its name alone,

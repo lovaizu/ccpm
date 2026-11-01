@@ -15,6 +15,6 @@ given, as written.
 
 ## Steps
 
-1. Start the subagents of the work.
+1. Start the subagents of the work, each in the foreground.
 2. Reply with the entries `CHANGELOG.md` now holds since its last version, and the reviewer's last
    answer.

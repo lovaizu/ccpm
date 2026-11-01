@@ -11,7 +11,7 @@ import unittest
 
 import helpers
 from helpers import entries, step
-from laying import PRINTED, LayTest
+from laying import LANES, PRINTED, PUSH, LayTest
 from test_guard import GuardTest
 
 # The sentence of changelog-writer's entry naming its part.
@@ -489,6 +489,100 @@ class TestBoundGuard(TestReadFirst):
         event = self.called("Read", {"file_path": form})
         # Then: it goes on, as read_only lets it read the form of its in_form lane
         self.assertEqual(self.guard(json.dumps(event)), ("", ""))
+
+
+class TestShared(PartTest, LayTest):
+    """Two subagents whose entries name one part, prompts/writer.md: the part carries one set of
+    sentences, so each subagent sharing it lays the same lanes on each step of it."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.other = os.path.join(self.plugin, "agents", "editor.md")
+        self.write(self.other, ENTRY.replace("name: changelog-writer", "name: changelog-editor"))
+
+    def both(self, writer: list, editor: list, number: int = 3) -> dict:
+        """A proposal of the lanes on step 3 of changelog-writer, and of those on the step of the
+        number of changelog-editor."""
+        steps = [{"step": number, "lanes": editor}]
+        given = self.proposal(writer)
+        given["subagents"].append({"name": "changelog-editor", "steps": steps})
+        return given
+
+    def test_subagents_sharing_a_part_with_the_same_lanes_are_laid_once_in_it(self):
+        # Given: changelog-writer and changelog-editor, sharing the part, given the same lanes
+        self.propose(self.both(LANES, LANES))
+        # When: the proposal is written
+        code, said = self.lay("write", self.proposal_file)
+        # Then: the part's step 3 says the sentence once, and each is laid with the lanes
+        self.assertEqual(code, 0, said)
+        laid = PART.replace("`CHANGELOG.md`.\n", "`CHANGELOG.md`. " + helpers.SENTENCE + "\n")
+        self.assertEqual(self.read(self.part), laid)
+        self.assertEqual(
+            [a["name"] for a in self.laid()["subagents"]], ["changelog-writer", "changelog-editor"]
+        )
+
+    def test_subagents_sharing_a_part_with_different_lanes_on_a_step_stop(self):
+        push = [{"lane": "hands_off", "takes": ["git push"]}]
+        for what, editor, number in (
+            ("other lanes on the same step", push, 3),
+            ("lanes on another step", LANES, 2),
+        ):
+            with self.subTest(what=what):
+                # Given: changelog-writer and changelog-editor, sharing the part, given lanes
+                # that differ on a step of it
+                self.propose(self.both(LANES, editor, number))
+                # When: the proposal is printed or written
+                # Then: it exits 1 naming both, the part and the step, nothing written
+                step = 2 if number == 2 else 3
+                stop = (
+                    f"lay.py: changelog-writer and changelog-editor share the part {self.part},"
+                    f" which carries one set of sentences, and lay different lanes on step {step}"
+                    " of it; give each the same lanes on each step of it, and run again.\n"
+                )
+                for action in ("print", "write"):
+                    self.assertEqual(self.lay(action, self.proposal_file), (1, stop))
+                self.assertEqual(self.read(self.part), PART)
+
+    def test_a_subagent_sharing_a_part_with_one_laid_before_is_held_to_its_lanes(self):
+        # Given: changelog-editor laid before with the lanes, sharing the part
+        laid = {"subagents": [{"name": "changelog-editor", "steps": [{"step": 3, "lanes": LANES}]}]}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        for what, lanes, code in (("the same lanes", LANES, 0), ("other lanes", PUSH, 1)):
+            with self.subTest(what=what):
+                # When: a proposal of changelog-writer alone is printed
+                self.propose(self.proposal(lanes))
+                # Then: it is printed where its lanes are the editor's, and stops otherwise
+                self.assertEqual(self.lay("print", self.proposal_file)[0], code)
+
+    def test_the_lanes_the_proposal_gives_stand_for_those_laid_before(self):
+        # Given: changelog-writer and changelog-editor laid before with different lanes
+        laid = {
+            "subagents": [
+                {"name": "changelog-writer", "steps": [{"step": 3, "lanes": LANES}]},
+                {"name": "changelog-editor", "steps": [{"step": 3, "lanes": PUSH}]},
+            ]
+        }
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        # When: a proposal giving both the same lanes is printed
+        self.propose(self.both(LANES, LANES))
+        # Then: it is printed, held by the lanes it gives
+        code, said = self.lay("print", self.proposal_file)
+        self.assertEqual(code, 0, said)
+
+    def test_subagents_with_parts_of_their_own_are_laid_apart(self):
+        # Given: changelog-editor's entry naming a part of its own
+        own = os.path.join(self.plugin, "prompts", "editor.md")
+        self.write(own, PART)
+        self.write(
+            self.other,
+            ENTRY.replace("name: changelog-writer", "name: changelog-editor").replace(
+                "prompts/writer.md", "prompts/editor.md"
+            ),
+        )
+        # When: the two are given different lanes and printed
+        self.propose(self.both(LANES, PUSH))
+        # Then: it is printed
+        self.assertEqual(self.lay("print", self.proposal_file)[0], 0)
 
 
 if __name__ == "__main__":
