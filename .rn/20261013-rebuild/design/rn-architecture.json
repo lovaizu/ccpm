@@ -1,0 +1,11 @@
+{"kind": "architecture",
+ "goal": {"what": "Whoever builds or changes rn derives each part from the framework and principles and makes it on the same thinking.", "grounds": ["architecture.json purpose"]},
+ "decisions": [
+  {"id": "D1", "what": "Summary: the orchestrator decides each move from the steering and has turn make each work, against two drifts.", "contributes_to": ["architecture/Q1"], "builds_on": [], "decided": true, "settled_by": "user", "grounds": ["dev/rn/architecture.md before the rewrite"]},
+  {"id": "D2", "what": "Five principles: traced to the purpose, replanned from facts, only the steering carried, an approval typed, no fix by the orchestrator.", "contributes_to": ["architecture/Q2", "architecture/Q13"], "builds_on": ["D1"], "decided": true, "settled_by": "user", "grounds": ["the earlier rn's Principles 1 and 2 and its components' rules"]},
+  {"id": "D3", "what": "Five user stories, one for each part of UX O1.", "contributes_to": ["architecture/Q3", "architecture/Q14"], "builds_on": [], "decided": true, "settled_by": "reasoning", "grounds": ["UX O1"]},
+  {"id": "D4", "what": "Components and data model: the existing figures, each role's sole responsibility, and the steering, task, CCS and receiver rules.", "contributes_to": ["architecture/Q4", "architecture/Q5", "architecture/Q6"], "builds_on": ["D3"], "decided": true, "settled_by": "user", "grounds": ["dev/rn/architecture.md before the rewrite"]},
+  {"id": "D5", "what": "Four sequences: asking, a sign-off, a work made by turn, the learnings and the merge.", "contributes_to": ["architecture/Q7"], "builds_on": ["D3", "D4"], "decided": true, "settled_by": "reasoning", "grounds": ["architecture.json part sequences"]},
+  {"id": "D6", "what": "Deployment, directory structure and Test as the repository holds them.", "contributes_to": ["architecture/Q8", "architecture/Q9", "architecture/Q10", "architecture/Q11", "architecture/Q12"], "builds_on": ["D4"], "decided": true, "settled_by": "research", "grounds": ["plugins/rn, dev/rn"]},
+  {"id": "D7", "what": "No file lists of scripts or calls beyond what places a role or a data.", "contributes_to": ["architecture/Q15"], "builds_on": [], "decided": true, "settled_by": "research", "grounds": ["architecture.json Q15"]}
+ ]}
