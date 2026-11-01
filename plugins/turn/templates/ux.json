@@ -30,8 +30,7 @@
     "okrs"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/ux.md:74-75: \"A goal said as what the product does, rather than what the user achieves, is met while the user is no better off.\"",
-    "ISO 9241-11:2018: usability is defined by specified users achieving specified goals in a specified context of use.",
+    "ISO 9241-11:2018, 3.1.1: usability is the \"extent to which a system, product or service can be used by specified users to achieve specified goals with effectiveness, efficiency and satisfaction in a specified context of use\".",
     "Christensen, Hall, Dillon and Duncan, \"Know Your Customers' 'Jobs to Be Done'\", Harvard Business Review, 2016: a job is the progress a person is trying to make, not a feature of the product."
    ],
    "examples": {
@@ -47,11 +46,9 @@
     "okrs"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/ux.md:81-82: \"a measure taken because it is easy to count, such as work done or things made, moves while the user comes no closer.\"",
-    "plugins/rn/checklists/product/ux.md:16-17: \"with no target value: a number the user's need does not set draws the work toward the number rather than toward the user.\"",
     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: each metric is derived from a goal through a signal of success toward it (Goals-Signals-Metrics).",
-    "Strathern, \"Improving ratings: audit in the British University system\", European Review, 1997, stating Goodhart's law: when a measure becomes a target, it ceases to be a good measure.",
-    "dev/architecture.md:628-629: \"Whether the time and the tokens fit the work is judged by feel, since no bar is known before runs gather.\""
+    "Strathern, \"Improving ratings: audit in the British University system\", European Review, 1997, stating Goodhart's law: \"When a measure becomes a target, it ceases to be a good measure.\"",
+    "What Matters (whatmatters.com), \"What is an OKR? OKR Meaning, Definition & Examples\": \"Most of all, they are measurable and verifiable. You either meet a Key Result’s requirements or you don’t — there is no gray area, no room for doubt.\""
    ],
    "examples": {
     "fails": "KR1.1: Bookings made per week; more is better. (More bookings can mean more double bookings and rebookings.)",
@@ -67,8 +64,6 @@
     "scenarios"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/ux.md:98-99: \"A step no scene shows is built by guess, or not at all.\"",
-    "plugins/rn/checklists/product/ux.md:40: \"Who takes part, each with its kind, such as a person or a plugin\".",
     "Cockburn, Writing Effective Use Cases, 2000: the main success scenario runs from the trigger to the goal delivered, and a use case names its actors first."
    ],
    "examples": {
@@ -86,9 +81,7 @@
     "scenarios"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/ux.md:114-115: \"what the product does inside, said here, is decided twice and drifts from the architecture\".",
-    "ISO 9241-210:2019: user requirements are specified from the context of use before design solutions are produced.",
-    "dev/architecture.md:6-7: each plugin's architecture \"holds its own UX's user stories and what only that plugin adds\"."
+    "ISO 9241-210:2019: user requirements are specified from the context of use before design solutions are produced."
    ],
    "examples": {
     "fails": "A scenario in which the app queries the database for free slots and caches the result.",

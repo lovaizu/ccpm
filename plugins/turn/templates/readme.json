@@ -65,8 +65,6 @@
     "summary"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:30-31: \"One sentence, \\\"<Name> is a <kind> that <does what>\\\", that a user could give their manager or a colleague who asks what it is\".",
-    "plugins/rn/checklists/product/readme.md:8-9: \"A README follows the order in which its reader explains the product to their team or their manager: what it is\".",
     "GitHub Docs, \"About the repository README file\": a README typically says \"What the project does\"."
    ],
    "examples": {
@@ -82,9 +80,6 @@
     "gain"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:19-20: \"The README says an aim as what becomes possible, not as a burden reduced. It says whom the product is for as what they gain, not as their situation.\"",
-    "plugins/rn/checklists/product/readme.md:10-11: \"The opening carries all of these, drawn from the users, goals and benefits of the product's UX.\"",
-    "plugins/rn/checklists/product/readme.md:93-95: \"An aim said as a burden reduced reads as any tool's promise, and those it is for said by their situation leave a reader in another situation unable to tell that they gain too.\"",
     "GitHub Docs, \"About the repository README file\": a README typically says \"Why the project is useful\"."
    ],
    "examples": {
@@ -100,8 +95,6 @@
     "idea"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:84-85: \"One shown only what the product does takes it for any tool that does the same, so the opening gives the idea that sets it apart.\"",
-    "plugins/rn/checklists/product/readme.md:37: \"The idea that achieves the aim, said concretely\".",
     "Make a README: \"Let people know what your project can do specifically.\""
    ],
    "examples": {
@@ -117,7 +110,7 @@
     "non-goals"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:41: \"What the product does not do, or an answer to a concern the reader is likely to have\"."
+    "Ubl, \"Design Docs at Google\" (industrialempathy.com), Goals and non-goals: \"non-goals aren’t negated goals like “The system shouldn’t crash”, but rather things that could reasonably be goals, but are explicitly chosen not to be goals.\""
    ],
    "examples": {
     "fails": "Non-goals: it is not a calendar. (No reader expected it to be one; whether it books desks, or reads their calendar, is left unsaid.)",
@@ -132,7 +125,6 @@
     "walkthrough"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:102-103: \"A Walkthrough on work of another kind, or one without the real output the reader gets, is read as someone else's story.\"",
     "Make a README, Usage: \"Use examples liberally, and show the expected output if you can.\"",
     "Diátaxis, \"Tutorials\": \"It's important to allow the learner to form an idea of what they will achieve right from the start.\""
    ],
@@ -149,8 +141,7 @@
     "how-it-works"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:116-117: \"From How it works, can the reader tell what the product is made of and how that keeps the opening's promise?\"",
-    "plugins/rn/checklists/product/readme.md:119-120: \"a reader shown only the promise takes it on trust, and cannot tell whether it holds for their own work. The reader explains the product to their team by what it is made of, too.\""
+    "C4 model, \"System context diagram\": \"Detail isn’t important here as this is your zoomed out view showing a big picture of the system landscape.\" Intended audience: \"Everybody, both technical and non-technical people, inside and outside the software development team.\""
    ],
    "examples": {
     "fails": "A figure of the steps RoomBook goes through, each a box of sentences. (A manager must read every box, and sees no one acting on anyone.)",
@@ -167,9 +158,6 @@
     "walkthrough"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:110-112: \"each place where the reader must look elsewhere, or where a step fails, is a place they may stop. Whoever wrote the README has the product at hand and never meets it. A requirement said as what it is lets a reader who already has it, or would get it another way, tell so.\"",
-    "plugins/rn/checklists/product/readme.md:46: \"Each thing that must be in place beforehand, said as what it is\".",
-    "plugins/rn/checklists/product/readme.md:52: \"How to install, and how the reader sees that it is installed\".",
     "Make a README, Installation: \"Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible.\"",
     "Standard Readme, spec: Install needs a code block, and a Dependencies subsection \"if there are unusual or manually installed dependencies\".",
     "Diátaxis, \"Tutorials\": aspire to perfect reliability, so that it works \"for every user, every time.\""
@@ -187,8 +175,6 @@
     "links"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:14-15: \"What lies beyond the first result, such as fuller use, goes in a page that Documentation names.\"",
-    "plugins/rn/checklists/product/readme.md:126-127: \"One who cannot find the architecture changes the product without the decisions behind it\".",
     "GitHub Docs, \"About the repository README file\": \"Longer documentation is best suited for wikis.\"",
     "Write the Docs, \"A beginner's guide to writing documentation\": \"Show how to contribute\"."
    ],
@@ -205,7 +191,6 @@
     "license"
    ],
    "grounds": [
-    "plugins/rn/checklists/product/readme.md:128: \"one who cannot tell the terms of use cannot decide to use it.\"",
     "Standard Readme, spec: License is required, and is the last section.",
     "Write the Docs, \"A beginner's guide to writing documentation\": \"State your project's license.\""
    ],
