@@ -39,7 +39,8 @@ they have decided.
 ### The evaluator uses the work as its user would
 
 The evaluator uses the work as its user would, and answers each question by what that user gets.
-When the work is a template, the evaluator judges a real work of that kind with it.
+When the work is a template, the evaluator uses it on the examples it holds: each question's
+`fails` and `passes`, which are works of that kind, judged as the question asks.
 
 A judge who reads only the work's words passes a work that meets them and misses its aim. A press
 release whose headline names the product passes a reading of the words, while a reporter still
