@@ -34,11 +34,14 @@ asks for it.
 ## Asks
 
 What only the person can decide comes to the main conversation as a message from one of turn's
-agents, whether the main conversation or one of its agents started `turn:up`. Each message is one
-question or one approval, and says the answer turn recommends.
+agents, whether the main conversation or one of its agents started `turn:up`. It arrives as a turn
+of its own once the main conversation's current turn ends, headed with the agent ID of the agent
+that asked, as `<agent-message from="<agent ID>">` (Claude Code 2.1.316, trial). Each message is
+one question or one approval, and says the answer turn recommends.
 
-Put it to the person, and send their answer in their own words with SendMessage to the agent that
-asked, by the ID shown with its message. turn goes on with that answer.
+Put it to the person, and send their answer in their own words with SendMessage to that agent ID.
+The agent that asked waits for it, and goes on with that answer. Your step's own agent, where it
+started `turn:up`, sees neither the ask nor the answer.
 
 ## What comes back
 

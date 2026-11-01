@@ -246,15 +246,23 @@ Each story quotes O1 and names the steps of the README's Walkthrough that show i
   word of its own, as [lane's lanes](../../plugins/lane/docs/lanes.md) say. A question
   named with its template is then answered only by its own ID, as `readme/Q3` does not stand in
   `refactor-doc/Q3`.
-- An ask is a question or an approval that a role puts to the person. The role sends it to the main
-  conversation, `main`, with SendMessage. Claude Code removes AskUserQuestion from every subagent,
-  and a subagent in the background keeps SendMessage
-  ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). Each ask says what it
-  waits on and the answer turn recommends. A main conversation that knows nothing of turn then puts
-  it to the person and sends back their words.
+- An ask is a question or an approval that a role puts to the person. The role sends it with
+  SendMessage to `main`, the main conversation, whatever started `turn:up`. Claude Code removes
+  AskUserQuestion from every subagent, and a subagent in the background keeps SendMessage
+  ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). `main` is an address
+  any subagent can send to, at any depth below the main conversation, and the message waits until
+  the main conversation's current turn ends (Claude Code 2.1.316, trial). Each ask says what it
+  waits on and the answer turn recommends.
+- The main conversation gets the ask as a turn of its own, headed by the agent ID of the role that
+  sent it (Claude Code 2.1.316, trial). A main conversation that knows nothing of turn then puts it
+  to the person, and sends their words with SendMessage to that agent ID. Neither `turn:up` nor
+  any other role sees the ask or the answer.
 - `wait.py` alone holds a role that has asked until the answer comes. The role runs it in the
-  foreground, and again each time it returns without the answer, as a message reaches a subagent
-  only at its next tool call.
+  foreground, and it returns after a short while, as the answer reaches a running subagent only
+  once its current tool call has returned, never during one (Claude Code 2.1.316, trial). The role
+  runs it again until the answer has come. It does not end while it waits: lane counts the move at
+  a role's end ([lane's flow](../../plugins/lane/docs/flow.md)), so an end would move the flow on
+  without the answer.
 - Each role runs on the model of the session that starts turn, as no agent of turn names a
   `model`; the person picks it.
 - Every file the roles pass between them, other than the work, is JSON, so `check.py` checks one
@@ -311,10 +319,15 @@ sequenceDiagram
   G-->>U: tells move 1: start planner
   U->>PL: starts (request)
   PL->>M: asks the person to confirm the kind (request)
+  Note over M: gets it once its current turn ends
   M->>P: the ask
-  PL->>WT: waits for the answer
+  loop until the answer has come
+    PL->>WT: waits for the answer
+    WT-->>PL: returns after a short while
+  end
   P->>M: answer
-  M-->>PL: answer
+  M-->>PL: answer, sent to its agent ID
+  Note over PL: reads it once its current tool call has returned
 ```
 
 Approving the template of a new kind:
@@ -341,7 +354,7 @@ sequenceDiagram
     M->>P: the ask
     PL->>WT: waits for the answer
     P->>M: approval, or a change
-    M-->>PL: approval, or a change
+    M-->>PL: approval, or a change, sent to its agent ID
     PL->>T: keeps it (template)
   end
   PL-->>U: ends, naming the template (template)
@@ -366,14 +379,14 @@ sequenceDiagram
   M->>P: the ask
   D->>WT: waits for the answer
   P->>M: answer
-  M-->>D: answer
+  M-->>D: answer, sent to its agent ID
   Note over D: decides what the purpose and the best practice settle
   loop each point only the person decides, one at a time
     D->>M: asks, with the answer recommended (decision)
     M->>P: the ask
     D->>WT: waits for the answer
     P->>M: answer
-    M-->>D: answer
+    M-->>D: answer, sent to its agent ID
   end
   D->>R: writes (design tree)
   D->>C: checks it (design tree)
@@ -381,7 +394,7 @@ sequenceDiagram
   M->>P: the ask
   D->>WT: waits for the answer
   P->>M: approval, or a change
-  M-->>D: approval, or a change
+  M-->>D: approval, or a change, sent to its agent ID
   D-->>U: ends, naming where the work goes (work)
 ```
 
@@ -399,6 +412,7 @@ sequenceDiagram
   participant R as Run files
   participant C as check.py
   participant IA as Items adapter
+  participant WT as wait.py
   G-->>U: tells move 3: start builder
   Note over U: move 3 is the content phase
   U->>B: starts (template, design tree, work, answers)
@@ -431,8 +445,9 @@ sequenceDiagram
     else the more came back after its decision was made again
       D->>M: asks: decide it again another way, or change the purpose (decision)
       M->>P: the ask
+      D->>WT: waits for the answer
       P->>M: answer
-      M-->>D: answer
+      M-->>D: answer, sent to its agent ID
       D->>R: makes the decision again, or the purpose and what builds on it (design tree)
     end
     D-->>U: ends, naming where the work goes (work)
