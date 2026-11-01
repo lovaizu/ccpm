@@ -28,18 +28,13 @@ import hook
 import lanes_json
 import moves
 import record
+import schema
 
 # A session's or a subagent's ID as Claude Code gives it, letters, digits and hyphens, so a folder
 # or a file named by it stays in the folder of the kept calls.
 ID = re.compile(r"[A-Za-z0-9-]+")
 # The tool a subagent may hand its report back with, the field of its input holding the report.
 HANDBACK, MESSAGE = "SubagentHandback", "message"
-# Who must fix it where a start of the flow came back from the background, where lane cannot read
-# its answer, as ux.md's A lane lane cannot check has it: the run's foreground is not the plugin's
-# to set.
-FOREGROUND = (
-    "whoever runs the plugin must have Claude Code run the subagents of the flow in the foreground"
-)
 
 
 def place(event: dict[str, Any]) -> str | None:
@@ -128,9 +123,10 @@ class Kept:
         its ID, its tool, its input, the folder it ran in, what it gave back, whether it failed,
         and, of an Agent call, what `started` gives; then, where the subagent is the orchestrator
         of the flow and the call starts a subagent the flow names, the move due, as moves.told
-        gives it, or, where this call came back from the background, the error that lane cannot
-        read its answer, and nothing for any call after it; nothing where `place` names no
-        file."""
+        gives it; or, where a start came back from the background, the error that lane cannot
+        read its answer, told as that start comes back, as the guard stops each start of the flow
+        after it; or, where the call came back not as moves.CAME_BACK says, the error that the
+        event is not as Claude Code hands it; nothing where `place` names no file."""
         file = place(event)
         if file is None:
             return []
@@ -147,22 +143,17 @@ class Kept:
         with open(file, "a", encoding="utf-8") as f:
             f.write(json.dumps(kept) + "\n")
         flow = flow_run(self.root, self.agent, event)
-        if flow is None:
+        if flow is None or not moves.starts(flow, event["tool_name"], event["tool_input"]):
             return []
-        names = [f"{flow.plugin}:{n}" for n in flow.flow["order"]]
-        of_flow = kept["tool"] == moves.AGENT and event["tool_input"].get(moves.TYPE) in names
-        if not of_flow:
-            return []
+        name = self.agent.split(":")[1]
+        out = None if kept["failed"] else schema.held(moves.CAME_BACK, event)
+        if out is not None:
+            return [hook.unshaped(name, out.told())]
         lost = moves.due(flow).lost
-        if not lost:
+        if lost is None:
             return [hook.Said(moves.told(flow))]
-        if lost != kept["id"]:
-            return []
-        lane, of = lanes_json.FLOW_LANE["lane"], self.agent.split(":")[1]
-        on = f"{lane} on step {flow.flow['step']} of {of}"
-        named = event["tool_input"][moves.TYPE]
-        wrong = f"`{named}` came back from the background, where lane cannot read its answer"
-        return [hook.cannot(on, wrong, FOREGROUND)]
+        on = hook.on_step(lanes_json.FLOW_LANE["lane"], flow.flow["step"], name)
+        return [hook.cannot(on, moves.unread(lost), moves.FOREGROUND)]
 
 
 class Started:
@@ -177,7 +168,7 @@ class Started:
         """The move due, told the orchestrator of the flow; nothing for any other subagent, or once
         lane cannot read the flow's run."""
         flow = flow_run(self.root, self.agent, event)
-        if flow is None or moves.due(flow).lost:
+        if flow is None or moves.due(flow).lost is not None:
             return []
         return [hook.Said(moves.told(flow))]
 

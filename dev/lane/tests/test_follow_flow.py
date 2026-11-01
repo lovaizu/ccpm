@@ -65,6 +65,10 @@ class TestDue(unittest.TestCase):
             ("the subagent after the one due", started("changelog-reviewer")),
             ("a subagent of another plugin", {**started("x"), "input": {"subagent_type": "a:x"}}),
             ("an Agent call that failed", {**started("changelog-writer"), "failed": True}),
+            (
+                "an Agent call come back of another status",
+                started("changelog-writer", status="done"),
+            ),
             ("another tool", {"tool": "Bash", "input": {"command": "ls"}, "failed": False}),
         ):
             with self.subTest(what=what):
@@ -110,7 +114,7 @@ class TestDue(unittest.TestCase):
         # When: the move due is read
         due = moves.due(run(kept, started("changelog-reviewer")))
         # Then: none is due, the call named as the one lane could not read
-        self.assertEqual(due, moves.Due(None, "", "toolu_w"))
+        self.assertEqual(due, moves.Due(None, "", kept))
 
     def test_a_subagent_named_twice_in_the_order_is_told_by_its_position(self):
         # Given: an order of the writer, the reviewer, the writer again and the reviewer again, the

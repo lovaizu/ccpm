@@ -183,7 +183,9 @@ class Laid:
         self, event: dict[str, Any], seen: Seen, said: str, named: list[str]
     ) -> list[hook.Said]:
         """The lane's sentence where what the event shows drifts from it, the run's values read and
-        held to its IN, nothing where one is given as null, as `check` says; stops with
+        held to its IN, nothing where one is given as null, as `check` says; of the flow's lane,
+        the error that lane cannot read a start's answer on a start of a subagent the flow names,
+        once a start of it came back from the background; stops with
         ports.Failed, holding what the adapter did and its path, where an adapter it reads by is not
         as its port says."""
         acted = seen.acted
@@ -205,7 +207,16 @@ class Laid:
         port = getattr(lane, "PORT", None)
         read: list[Any] = [] if port is None else [lambda g: self.read(port, g, self.adapter)]
         if getattr(lane, "FLOW", False):
-            read = [moves.Run(self.flow or {}, self.plugin, called.calls_kept(event))]
+            flowing = moves.Run(self.flow or {}, self.plugin, called.calls_kept(event))
+            # Once a start came back from the background, no move due can be told, so a start
+            # of a subagent the flow names cannot be checked.
+            lost = moves.due(flowing).lost
+            starting = isinstance(acted, call.Call) and moves.starts(
+                flowing, acted.tool, acted.given
+            )
+            if lost and starting:
+                return [self.error(moves.unread(lost), moves.FOREGROUND)]
+            read = [flowing]
         drift = next(filter(None, (lane.drifts(acted, t, self.root, *read) for t in each)), "")
         if not drift:
             return []
@@ -247,7 +258,7 @@ class Laid:
         """The error the lane meets, told with what is wrong and who must fix it, "" for Claude
         Code."""
         who = fix.format(plugin=self.plugin) if fix else hook.CLAUDE_CODE
-        on = f"{self.lane} on step {self.number} of {self.name}"
+        on = hook.on_step(self.lane, self.number, self.name)
         return hook.cannot(on, wrong.rstrip("."), who)
 
     def run_values(

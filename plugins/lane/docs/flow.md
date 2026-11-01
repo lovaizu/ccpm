@@ -88,15 +88,22 @@ the background as the subagent starts, with no answer, and with the status `asyn
 place of `completed` ([Agent](https://code.claude.com/docs/en/hooks#agent)). So lane counts only a
 start that comes back `completed`.
 
-Where Claude Code moves a start of the subagent due to the background all the same, lane cannot read
-its answer, so it cannot tell the next move. It tells the orchestrator and you, as the call comes
-back, in the form [the lanes](lanes.md) give an error:
+Claude Code moves a start to the background all the same when you press Ctrl+B, or on its own
+once the subagent has run about two minutes where automatic backgrounding is on
+([environment variables](https://code.claude.com/docs/en/env-vars), `CLAUDE_AUTO_BACKGROUND_TASKS`).
+lane cannot read the answer of such a start, so it cannot tell the next move. It tells the
+orchestrator and you, as the call comes back, in the form [the lanes](lanes.md) give an error:
 
 ```
-<plugin>: lane cannot check follow_flow on step <n> of <orchestrator>: `<plugin>:<due>` came back from the background, where lane cannot read its answer. Ask the main conversation for the fix: whoever runs the plugin must have Claude Code run the subagents of the flow in the foreground. Go on with the rest of your work meanwhile.
+<plugin>: lane cannot check follow_flow on step <n> of <orchestrator>: `<plugin>:<due>` came back from the background, where lane cannot read its answer. Ask the main conversation for the fix: whoever runs the plugin must set the environment variable `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` to `1`, with which Claude Code moves no subagent to the background, and run it again. Go on with the rest of your work meanwhile.
 ```
 
-The orchestrator is then free for the rest of the run, as no move can be told.
+From then on in the run, each start of a subagent the flow names is stopped and told the same, as
+lane cannot tell which move is due. The orchestrator's other calls and its end go on.
+
+A start that comes back with a status other than `completed` and `async_launched`, or with none,
+is not as Claude Code hands it. lane tells it in the form [the lanes](lanes.md) give where the event
+is what is wrong, and the move stays due.
 
 While a move is due, the orchestrator is told the sentence and the move on the next line:
 

@@ -66,9 +66,20 @@ class Said(NamedTuple):
 
 def cannot(on: str, wrong: str, fix: str) -> Said:
     """The error where lane cannot check what `on` names, such as `the lanes of <subagent>` or
-    `<lane> on step <n> of <subagent>`, in the form docs/lanes.md gives: what is wrong, then who
-    must fix it."""
+    what `on_step` gives, in the form docs/lanes.md gives: what is wrong, then who must fix it."""
     return Said(f"lane cannot check {on}: {wrong}. {ASK.format(fix=fix)}", True)
+
+
+def on_step(lane: str, number: int, name: str) -> str:
+    """The lane on the step of the number of the subagent of the name, as an error names it."""
+    return f"{lane} on step {number} of {name}"
+
+
+def unshaped(name: str, wrong: str) -> Said:
+    """The error where the event handed the hook of the subagent of the name is not as Claude Code
+    hands it, by the point given, which Claude Code must fix."""
+    said = f"the hook was handed no event as Claude Code hands it, {wrong}"
+    return cannot(f"the lanes of {name}", said, CLAUDE_CODE)
 
 
 def event_read(text: str, held: str) -> tuple[dict[str, Any] | None, str]:
@@ -147,12 +158,8 @@ def run(
     the call."""
     event, wrong = event_read(stream.read(), held)
     if wrong or event is None:
-        name = agent.split(":")[1]
-        unread = (
-            f"{plugin}: lane cannot check the lanes of {name}: the hook was handed no event as"
-            f" Claude Code hands it, {wrong}. {ASK.format(fix=CLAUDE_CODE)}"
-        )
-        answered(out, said_on(event, held, [Said(unread, True)]))
+        unread = unshaped(agent.split(":")[1], wrong)
+        answered(out, said_on(event, held, [Said(f"{plugin}: {unread.text}", True)]))
         return
     if event.get("agent_type") != agent:
         return

@@ -26,8 +26,17 @@ LEAD = "notes:notes-lead"
 UNREAD = (
     "lane cannot check follow_flow on step 1 of notes-lead: `notes:changelog-writer` came back"
     " from the background, where lane cannot read its answer. Ask the main conversation for the"
-    " fix: whoever runs the plugin must have Claude Code run the subagents of the flow in the"
-    " foreground. Go on with the rest of your work meanwhile."
+    " fix: whoever runs the plugin must set the environment variable"
+    " `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` to `1`, with which Claude Code moves no subagent to"
+    " the background, and run it again. Go on with the rest of your work meanwhile."
+)
+# What notes-lead and the user are told where a start of the flow came back not as Claude Code
+# gives it, given the point it is out by.
+UNSHAPED = (
+    "lane cannot check the lanes of notes-lead: the hook was handed no event as Claude Code hands"
+    " it, {point}. Ask the main conversation for the fix: Claude Code must be updated with"
+    " `claude update`, and where this goes on, it must be reported at"
+    " https://github.com/lovaizu/ccpm/issues. Go on with the rest of your work meanwhile."
 )
 
 
@@ -167,21 +176,57 @@ class TestToldAsACallComesBack(FlowGuardTest):
         said = context("PostToolUseFailure", f"notes: {WRITER}")
         self.assertEqual(self.back("changelog-writer", error="boom"), said)
 
-    def test_a_start_moved_to_the_background_is_an_error_and_frees_the_orchestrator(self):
+    def test_a_start_moved_to_the_background_is_an_error_and_holds_each_later_start(self):
         # Given: notes-lead, no call of it kept
         # When: its call of the writer comes back from the background, Claude Code having moved it
         # there with no answer
         told = self.back("changelog-writer", {"status": "async_launched", "agentId": "b1"})
         # Then: it and the user are told lane cannot check the flow, and who must fix it
         line = f"notes: {UNREAD}"
-        said = context("PostToolUse", line)
-        self.assertEqual(told, {"systemMessage": line, **said})
-        # And then: its calls and its end go on, and the next start that comes back is told
-        # nothing
+        self.assertEqual(told, {"systemMessage": line, **context("PostToolUse", line)})
+        # And then: each later start of a subagent the flow names is stopped with the same error,
+        # as lane cannot tell which move is due; its other calls and its end go on, and it is told
+        # nothing as it starts again
+        for name in ("changelog-reviewer", "changelog-writer"):
+            with self.subTest(name=name):
+                given = {"subagent_type": f"notes:{name}", "prompt": "Go."}
+                self.assertEqual(
+                    self.call("Agent", given), {"systemMessage": line, **helpers.denied(line)}
+                )
         self.assertIsNone(self.call("Bash", {"command": "ls"}))
         self.assertIsNone(self.answered(self.stopped("Done.", agent_type=LEAD), "subagentstop.py"))
-        self.assertIsNone(self.came("changelog-reviewer"))
         self.assertIsNone(self.start())
+
+    def test_a_start_come_back_of_another_status_or_none_is_an_event_lane_cannot_read(self):
+        for what, back, point in (
+            (
+                "another status",
+                {"status": "done", "agentId": "b1"},
+                (
+                    '$.tool_response.status: expected one of "completed", "async_launched",'
+                    ' found "done"'
+                ),
+            ),
+            (
+                "no status",
+                {"agentId": "b1"},
+                '$.tool_response: expected the key "status", found an object without it',
+            ),
+            ("nothing given back", None, "$.tool_response: expected an object, found null"),
+        ):
+            with self.subTest(what=what):
+                # Given: notes-lead, no call of it kept
+                self.record([])
+                with contextlib.suppress(FileNotFoundError):
+                    os.remove(called.place({"session_id": "s1", "agent_id": "a1"}) or "")
+                # When: its call of the writer comes back so
+                told = self.back("changelog-writer", back)
+                # Then: it and the user are told the event is not as Claude Code hands it, and
+                # the writer's start is still due
+                line = f"notes: {UNSHAPED.format(point=point)}"
+                self.assertEqual(told, {"systemMessage": line, **context("PostToolUse", line)})
+                said = f"notes: {FOLLOW}\n{WRITER}"
+                self.assertEqual(self.call("Bash", {"command": "ls"}), helpers.denied(said))
 
     def test_another_call_coming_back_is_told_nothing(self):
         for what, tool, given in (

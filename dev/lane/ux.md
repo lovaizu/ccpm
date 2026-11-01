@@ -150,11 +150,12 @@ sequenceDiagram
   S->>H: a call a lane holds, where what the lane is given is not as laid
   H-->>S: stopped, the user told the same, with #lt;plugin#gt;: lane cannot check ...: #lt;what is wrong#gt;. Ask the main conversation for the fix: #lt;who must fix it#gt;. Go on with the rest of your work meanwhile.
   S->>M: asks for the fix, and goes on with the rest of its work
-  Note over M: brings it to whoever must fix it: the plugin's maker, who fixes the plugin and lays its lanes again with lay.py write, or Claude Code
+  Note over M: brings it to whoever must fix it: the plugin's maker, who fixes the plugin and lays its lanes again with lay.py write, whoever runs the plugin, who sets Claude Code to move no subagent to the background, or Claude Code
 ```
 
 - The hook never lets through what it cannot check. The subagent asks for the fix and goes on with
-  the rest of its work. The plugin's maker puts it right, or Claude Code where the event is what is
+  the rest of its work. The plugin's maker puts it right; whoever runs the plugin, where Claude
+  Code moved a subagent of a flow to the background; or Claude Code, where the event is what is
   wrong.
 
 ## Benefits
