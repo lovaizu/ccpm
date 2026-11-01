@@ -8,6 +8,7 @@ import os
 import unittest
 
 import helpers
+from flowing import FLOW
 from helpers import lanes_json
 
 # hooks/lanes.json laying start_with on step 1 and hands_off on step 3 of changelog-writer, and
@@ -154,16 +155,6 @@ class TestLaidIn(LanesTest):
                         lanes_json.subagent(lanes_json.laid(self.plugin), "changelog-writer")
                     )
                 self.assertIn(named, str(stop.exception))
-
-
-# The README's flow: notes-lead starts changelog-writer, then changelog-reviewer, whose `more` sends
-# the work back to the writer.
-FLOW = {
-    "orchestrator": "notes-lead",
-    "step": 1,
-    "order": ["changelog-writer", "changelog-reviewer"],
-    "back": [{"from": "changelog-reviewer", "to": "changelog-writer", "while": "more"}],
-}
 
 
 def flow_md() -> str:

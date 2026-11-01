@@ -103,8 +103,10 @@ Principle 1 to 9, and two of its own, named below lane's Principle 1 and 2:
   follow_next lane, the flow is told and held as every lane is, with no check of its own.
 - The guard gives `flow.py` the run: on the orchestrator's call that runs `flow.py` as a command of
   its own, it lets the call through with the session's and the orchestrator's IDs put before the
-  command, by `updatedInput` with `"allow"`. It stops a call that runs `flow.py` together with other
-  commands, and tells the orchestrator to run `flow.py` as a command of its own.
+  command, by `updatedInput` with `"allow"`, and makes the file it keeps the orchestrator's calls
+  in, empty where none is kept yet, so `flow.py` tells a run with no call yet from one whose calls
+  are not found. It stops a call that runs `flow.py` together with other commands, and tells the
+  orchestrator to run `flow.py` as a command of its own.
 
   A hook is handed both IDs, and a command the Bash tool runs is handed the session's ID alone
   (hooks, Common input fields; env-vars, `CLAUDE_CODE_SESSION_ID`). Taken from the event of the call

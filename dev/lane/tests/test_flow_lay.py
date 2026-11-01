@@ -467,6 +467,37 @@ class TestRefused(FlowTest):
                 code, said = self.lay("print", self.proposal_file)
                 self.assertEqual(code, 0, said)
 
+    def test_an_orchestrator_naming_its_tools_without_agent_stops(self):
+        for tools in ("Bash, Read", "Bash, Agents", "AgentTool"):
+            with self.subTest(tools=tools):
+                # Given: notes-lead's file naming its tools, Agent not among them
+                self.write(self.lead, LEAD.replace("tools: Agent, Bash", f"tools: {tools}"))
+                # When: the flow is printed or written
+                # Then: it exits 1 saying to add Agent, nothing written
+                said = (
+                    f"lay.py: {self.lead} names the tools of notes-lead, `{tools}`, without Agent,"
+                    " with which it starts the subagents of the flow; add Agent to them, and run"
+                    " again.\n"
+                )
+                for action in ("print", "write"):
+                    self.assertEqual(self.lay(action, self.proposal_file), (1, said))
+                self.assertFalse(os.path.exists(os.path.join(self.plugin, "hooks", "lanes.json")))
+
+    def test_an_orchestrator_naming_agent_among_its_tools_or_no_tools_is_laid(self):
+        for what, tools in (
+            ("Agent first", "tools: Agent, Bash"),
+            ("Agent last, unspaced", "tools: Bash,Agent"),
+            ("Agent alone", "tools: Agent"),
+            ("no tools named, so all of them", ""),
+        ):
+            with self.subTest(what=what):
+                # Given: notes-lead's file naming Agent among its tools, or no tools
+                self.write(self.lead, LEAD.replace("tools: Agent, Bash\n", tools and f"{tools}\n"))
+                # When: the flow is printed
+                # Then: it is printed
+                code, said = self.lay("print", self.proposal_file)
+                self.assertEqual(code, 0, said)
+
     def test_an_orchestrator_binding_flow_py_to_another_script_stops(self):
         # A script named before lane's in order, and one after.
         for folder in ("bin", "scripts"):

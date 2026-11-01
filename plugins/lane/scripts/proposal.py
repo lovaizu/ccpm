@@ -25,6 +25,7 @@ import ports
 import schema
 import shell
 import step
+import template
 
 # What the proposal is told to be, when it is not: in the shape lane's docs/lanes.md gives, named by
 # its whole path, as the building AI may run lay.py from any folder.
@@ -43,6 +44,10 @@ PROPOSAL = {
         **SHAPE["properties"],
     },
 }
+
+
+# The tool the orchestrator starts each subagent of the flow with.
+AGENT = "Agent"
 
 
 class Stop(Exception):
@@ -114,8 +119,9 @@ def laid(root: str) -> dict[str, Any]:
 def flow_check(root: str, flow: dict[str, Any]) -> None:
     """Stops where the flow, held to its schema, cannot be laid in the plugin at root: where
     lanes_json.flow_wrong says why, where it names a subagent no file in the plugin's agents/ names,
-    by a name a hook's command can carry, or where the orchestrator's file says `flow.py` stands
-    for anything but lane's script, which the flow's lane takes by that name."""
+    by a name a hook's command can carry, where the orchestrator's file names its tools without
+    Agent, which it starts the others with, or where that file says `flow.py` stands for anything
+    but lane's script, which the flow's lane takes by that name."""
     why = lanes_json.flow_wrong(flow)
     if why:
         raise wrong(f"gives a flow {why}")
@@ -123,10 +129,19 @@ def flow_check(root: str, flow: dict[str, Any]) -> None:
         if not re.fullmatch(hook.NAME, named) or step.agent_file(root, named) is None:
             raise wrong(f"gives a flow naming {named}, which no file in agents/ names")
     orchestrator = flow["orchestrator"]
+    entry = str(step.agent_file(root, orchestrator))
+    with open(entry, encoding="utf-8") as f:
+        tools = template.value(f.read().splitlines(), "tools")
+    # A file naming no tools has them all, Agent among them, as Claude Code gives a subagent.
+    if tools and AGENT not in [t.strip() for t in tools.split(",")]:
+        raise Stop(
+            f"lay.py: {entry} names the tools of {orchestrator}, `{tools}`, without {AGENT}, with"
+            f" which it starts the subagents of the flow; add {AGENT} to them, and run again."
+        )
     lies = step.bindings(root, orchestrator).get(lanes_json.FLOW_PY, lanes_json.FLOW_RUN)
     if lies != lanes_json.FLOW_RUN:
         raise Stop(
-            f"lay.py: {step.agent_file(root, orchestrator)} says `{lanes_json.FLOW_PY}` below is"
+            f"lay.py: {entry} says `{lanes_json.FLOW_PY}` below is"
             f" `{lies}`, where the flow's lane takes lane's, `{lanes_json.FLOW_RUN}`; name the"
             " script of its own otherwise, and run again."
         )

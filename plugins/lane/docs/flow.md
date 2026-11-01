@@ -60,11 +60,15 @@ puts into the orchestrator's file where `flow.py` lies, as
 `flow.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/flow.py"`.
 ```
 
+It puts the line as a paragraph of its own before the first paragraph of the body of the
+orchestrator's file in `agents/`.
+
 ## What flow.py prints
 
-The orchestrator runs `flow.py` with no arguments, as a command of its own. `flow.py` prints a line
-for the orchestrator to read and, where there is a move, one JSON line after it, the move form
-follow_next reads:
+The orchestrator runs `flow.py` with no arguments, as a command of its own: the call's command is
+`flow.py` alone, by its path, `python3` or `sh` before it or not, and nothing else before or after
+it. `flow.py` prints a line for the orchestrator to read and, where there is a move, one JSON line
+after it, the move form follow_next reads:
 
 ```
 Start `changelog-reviewer`.
@@ -103,8 +107,11 @@ Where `flow.py` cannot tell the run, it prints no move. It prints on stderr, and
 It cannot tell the run where the guard, lane's code in your plugin's `hooks/lane/`, has not given
 it the run, as [How flow.py reads the answers](#how-flowpy-reads-the-answers) says. Nor can it
 where `hooks/lanes.json` holds no flow or is out of its form, or where the calls the guard kept are
-not found. follow_next counts
-such a run as no run of the script, so what was due before it stays due.
+not found, or where the start of the last `from` subagent was kept with no `agentId`. Where the
+guard has not given it the run, or `hooks/lanes.json` holds no flow or is out of its form, it says
+your plugin's maker must lay its lanes again with `lay.py write`; where the calls kept or the
+`agentId` are not found, it says Claude Code must be updated. follow_next counts such a run as no
+run of the script, so what was due before it stays due.
 
 ## How flow.py reads the answers
 
@@ -113,7 +120,9 @@ such a run as no run of the script, so what was due before it stays due.
 - The guard gives `flow.py` the run. On the orchestrator's call that runs `flow.py` as a command of
   its own, its PreToolUse hook lets the call through with Claude Code's `updatedInput`, the command
   with the session's ID and the orchestrator's ID put before it, as
-  `LANE_SESSION=<session_id> LANE_AGENT=<agent_id>`.
+  `LANE_SESSION=<session_id> LANE_AGENT=<agent_id>`. It makes the file it keeps the
+  orchestrator's calls in then, empty where no call is kept yet, so `flow.py` tells a run with no
+  call yet from one whose calls are not found.
 
   A hook is handed both IDs
   ([Common input fields](https://code.claude.com/docs/en/hooks#common-input-fields)). A command
@@ -123,8 +132,12 @@ such a run as no run of the script, so what was due before it stays due.
   call's input before it runs, combined with `"allow"`
   ([PreToolUse decision control](https://code.claude.com/docs/en/hooks#pretooluse-decision-control)).
   Both IDs come from the event of the call itself, so they cannot belong to another run.
-- The guard stops a call that runs `flow.py` together with other commands, and tells the
-  orchestrator the sentence and, on the next line, to run `flow.py` as a command of its own.
+- The guard stops a call that runs `flow.py` together with other commands or words, and tells the
+  orchestrator the sentence and, on the next line:
+
+  ```
+  Run `flow.py` as a command of its own.
+  ```
 
   `"allow"` skips the permission prompt for the whole command
   ([PreToolUse decision control](https://code.claude.com/docs/en/hooks#pretooluse-decision-control)),
