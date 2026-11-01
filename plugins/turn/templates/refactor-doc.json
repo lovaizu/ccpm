@@ -1,6 +1,6 @@
 {
  "kind": "refactor-doc",
- "purpose": "A document is read by a person or an AI who comes to it for a purpose, at any time after it is written, in its own language or through a machine translation into theirs. They read only the parts their purpose needs, once from the top, understand each sentence on first reading, and achieve their purpose in a short time.",
+ "purpose": "A document is read by a person or an AI who comes to it for a purpose, at any time after it is written, in its own language or through a machine translation into theirs. Refactoring changes how the document says what it says, never what it says, and adds nothing: the reader takes in each sentence on first reading, reading once from the top only the parts their purpose needs.",
  "format": {
   "skeleton": "",
   "parts": []
@@ -8,47 +8,6 @@
  "checklist": [
   {
    "id": "Q1",
-   "what": "Whichever sentence the reader reads, would they lose something their purpose needs if it were taken out?",
-   "why": "If yes, the reader's time goes only to what they came for, and what they need stands out. If no, a stock phrase, a sentence that restates the one before, or an aside their purpose does not use spends their time and buries what they need. A sentence the reader would not miss is taken out, not reworded.",
-   "about": [],
-   "grounds": [
-    "plainlanguage.gov (GSA archive), \"Be concise\": \"Unnecessary words waste your audience's time.\" and \"Omit information that the audience doesn't need to know.\"",
-    "Microsoft Writing Style Guide, \"Top 10 tips for Microsoft style and voice\", Be brief: \"Give customers just enough information to make decisions confidently. Prune every excess word.\""
-   ],
-   "examples": {
-    "fails": "RoomBook is a powerful and easy-to-use tool. In this section, we explain how booking works. To book a room, enter the time and the number of attendees.",
-    "passes": "To book a room, enter the time and the number of attendees; RoomBook lists the rooms that fit."
-   }
-  },
-  {
-   "id": "Q2",
-   "what": "Is each fact the document tells written in one place only, whether in this document, in a document read beside it, in a figure or in the work itself (code, output), with every other place linking to it?",
-   "why": "If yes, the reader reads each fact once, and it cannot disagree with itself: a change made in its one place reaches every reader. If no, the reader reads the fact again, and once one copy changes the two say different things; the reader follows the one they read first and goes on wrong, or stops to ask the writer. A sentence that retells what a figure draws or what code does is such a copy. Each copy gives way to a link, or goes where the original stands in view.",
-   "about": [],
-   "grounds": [
-    "Hunt and Thomas, The Pragmatic Programmer (1999), DRY: \"Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.\"",
-    "IEEE Std 830-1998, 4.3.4 \"Consistent\": \"If an SRS does not agree with some higher-level document, such as a system requirements specification, then it is not correct.\" and 4.3.4.1: \"An SRS is internally consistent if, and only if, no subset of individual requirements described in it conflict.\""
-   ],
-   "examples": {
-    "fails": "The README's Booking says a room is held for 15 minutes while you confirm. Its Limits says a room you pick is held for 10 minutes. The architecture document says the hold is not yet decided.",
-    "passes": "The README's Booking says a room is held for 15 minutes while you confirm. Limits and the architecture document link to Booking for the hold."
-   }
-  },
-  {
-   "id": "Q3",
-   "what": "When the reader reads the document a year after it was written, with nothing it decides changed since, does every sentence still hold for them?",
-   "why": "If yes, the reader relies on every sentence for as long as what the document decides stands, because it says what holds, not how the work got there or where it stands today. If no, a sentence about the work's past or progress, or a word such as \"new\", \"now\" or \"soon\", turns wrong as the work goes on, and is still believed. A sentence of history is taken out, and the decision it led to is said as what holds.",
-   "about": [],
-   "grounds": [
-    "Google developer documentation style guide, \"Timeless documentation\": \"In general, document the current version of a product or feature.\" and \"Words such as soon and latest quickly become irrelevant.\""
-   ],
-   "examples": {
-    "fails": "RoomBook now also checks equipment; we added this after users booked rooms without screens.",
-    "passes": "RoomBook offers only rooms with the equipment the meeting needs."
-   }
-  },
-  {
-   "id": "Q4",
    "what": "Shown only a section's figure, before reading its text, can the reader explain to a colleague what the section tells?",
    "why": "If yes, the reader takes in who does what in what order, or how things relate, at a glance. The figure takes the place of the sentences that told the same, and the text under it holds only what it cannot show. A box names one thing and a line says what one does to another; a sentence in a box must be read. A section whose point is one sentence has that sentence in place of a figure. If no, the reader pieces the point together from sentences spread through paragraphs, and misses a step or gives it to the wrong one.",
    "about": [],
@@ -63,7 +22,7 @@
    }
   },
   {
-   "id": "Q5",
+   "id": "Q2",
    "what": "After reading any sentence once, as written and again through a machine translation into their own language, such as Google Translate, can the reader say in each case who or what does what in it?",
    "why": "If yes, the reader takes in each sentence on first reading, in any language, and acts on what the writer meant. If no, a sentence that makes two points needs more than a few words, and one whose actor hides behind a passive verb or a noun made from a verb leaves the reader to guess who acts. A machine translator also guesses, and can guess wrong, where a sentence opens with its object, leaves out \"that\", \"a\" or \"the\", or has a \"which\" that can refer to two nouns; in Japanese, where a sentence has no subject or strings together several は, で or の. The sentence is reworded or split, not explained by another.",
    "about": [],
@@ -81,21 +40,7 @@
    }
   },
   {
-   "id": "Q6",
-   "what": "When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?",
-   "why": "If yes, the reader reads on with the writer's meaning. If no, the reader guesses, and their picture differs from the writer's wherever the guess is wrong; a word the writer's team uses every day is still new to a reader who has not used it. An everyday word takes the term's place. Only a term the document needs again and again is kept, and its first use carries its meaning in a few everyday words, not in a sentence added after it.",
-   "about": [],
-   "grounds": [
-    "plainlanguage.gov (GSA archive), \"Avoid jargon\": \"writers often fail to realize that terms they know well may be difficult or meaningless to their audience.\"",
-    "plainlanguage.gov (GSA archive), \"Minimize definitions\": \"readers are likely to forget that you'd assigned some common word a new meaning, and when they come upon the word later in your document they assign the common meaning, rather than your specialized one.\""
-   ],
-   "examples": {
-    "fails": "RoomBook offers only rooms that pass the fit check. The fit check is RoomBook's test of a room against a meeting, which compares the seats and the equipment. (The term is explained, but by a sentence added where everyday words would do.)",
-    "passes": "RoomBook offers only rooms with a seat for each attendee and the equipment the meeting needs."
-   }
-  },
-  {
-   "id": "Q7",
+   "id": "Q3",
    "what": "Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one?",
    "why": "If yes, the reader keeps one picture of each thing from start to end, and a machine translator gives each name one meaning throughout. If no, a reader who meets a second name for one thing takes it for a second thing, and a common word given a meaning of the document's own is read, and translated, with its usual meaning. One name is used for each thing everywhere; a synonym chosen to vary the writing is replaced, not explained.",
    "about": [],
@@ -110,14 +55,30 @@
    }
   },
   {
-   "id": "Q8",
-   "what": "Reading from the top, can the reader understand each sentence without turning back to an earlier part or jumping ahead to a later one?",
-   "why": "If yes, each reason, word and step a sentence rests on comes before it, and a rule's exceptions stand beside the rule, so one reading from the top gives the whole picture. A link to where a fact is told is fine when the sentence is understood without following it. If no, a reader sent back or ahead loses their place, and one who reads on with a guess carries it into what follows. A sentence is moved to where it is needed; no summary of what came before and no preview of what comes is added.",
+   "id": "Q4",
+   "what": "When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?",
+   "why": "If yes, the reader reads on with the writer's meaning. If no, the reader guesses, and their picture differs from the writer's wherever the guess is wrong; a word the writer's team uses every day is still new to a reader who has not used it. An everyday word takes the term's place; a term the content keeps carries its meaning in a few everyday words where it first appears, and no sentence is added to explain it.",
+   "about": [],
+   "grounds": [
+    "plainlanguage.gov (GSA archive), \"Avoid jargon\": \"writers often fail to realize that terms they know well may be difficult or meaningless to their audience.\"",
+    "plainlanguage.gov (GSA archive), \"Minimize definitions\": \"readers are likely to forget that you'd assigned some common word a new meaning, and when they come upon the word later in your document they assign the common meaning, rather than your specialized one.\""
+   ],
+   "examples": {
+    "fails": "RoomBook offers only rooms that pass the fit check. The fit check is RoomBook's test of a room against a meeting, which compares the seats and the equipment. (The term is explained, but by a sentence added where everyday words would do.)",
+    "passes": "RoomBook offers only rooms with a seat for each attendee and the equipment the meeting needs."
+   }
+  },
+  {
+   "id": "Q5",
+   "what": "Reading from the top, can the reader tell from each heading and its first sentence what the section gives, and understand each sentence without turning back or jumping ahead?",
+   "why": "If yes, the reader picks the sections their purpose needs, and each reason, word and step a sentence rests on comes before it, a rule's exceptions beside the rule. If no, a reader who cannot tell what a section gives reads it to find out, and one sent back or ahead loses their place or reads on with a guess. A sentence is moved to where it is needed; no summary, preview or signpost sentence is added.",
    "about": [],
    "grounds": [
     "plainlanguage.gov (GSA archive), \"Place the main idea before exceptions and conditions\": \"The audience must absorb the exception, then the rule, and then usually has to go back to grasp the relationship between the two.\"",
     "plainlanguage.gov (GSA archive), \"Minimize cross-references\": \"They may also overtax your users' short-term memory.\" and \"Be sure that the reference you insert clearly describes the referenced material.\"",
-    "Google developer documentation style guide, \"Highlights\": \"Put conditions before instructions, not after.\""
+    "Google developer documentation style guide, \"Highlights\": \"Put conditions before instructions, not after.\"",
+    "plainlanguage.gov (GSA archive), \"Have a topic sentence\": \"Don't make readers hold a lot of information in their heads before getting to the point.\" and \"Readers should be able to get good general understanding of your document by skimming your topic sentences.\"",
+    "Microsoft Writing Style Guide, \"Top 10 tips for Microsoft style and voice\", Get to the point fast: \"Lead with what's most important.\""
    ],
    "examples": {
     "fails": "Select the room and press Book. Before this, you must connect your calendar, as Setup below explains.",
@@ -125,17 +86,16 @@
    }
   },
   {
-   "id": "Q9",
-   "what": "When a reader comes with any one of the purposes the document serves, can they finish it by reading only the sections they picked out from the headings and first sentences?",
-   "why": "If yes, the reader spends only the time the sections their purpose needs take, which the questions before keep short, and the rest of the document costs them nothing. Each heading and first sentence says what the reader gets from the section, so the reader tells from them alone which to read. If no, a section that mixes what several purposes need, or opens without saying what it gives, makes the reader read on to find out, and whatever the document holds for one purpose costs every reader.",
+   "id": "Q6",
+   "what": "Is each fact the document tells written in one place only, whether in this document, in a document read beside it, in a figure or in the work itself (code, output), with every other place linking to it?",
+   "why": "If yes, the reader reads each fact once, and it cannot disagree with itself: a change made in its one place reaches every reader. If no, once one copy changes the two say different things, and the reader follows the one they read first. A sentence that retells what a figure draws or what code does is such a copy. Each copy gives way to a link.",
    "about": [],
    "grounds": [
-    "plainlanguage.gov (GSA archive), \"Have a topic sentence\": \"Don't make readers hold a lot of information in their heads before getting to the point.\" and \"Readers should be able to get good general understanding of your document by skimming your topic sentences.\"",
-    "Microsoft Writing Style Guide, \"Top 10 tips for Microsoft style and voice\", Get to the point fast: \"Lead with what's most important.\""
+    "Hunt and Thomas, The Pragmatic Programmer (1999), DRY: \"Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.\""
    ],
    "examples": {
-    "fails": "## Booking\n\nRooms differ in many ways, and so do meetings. (The section then mixes the worker's booking steps with the admin's room settings, so a worker who only wants to book reads both to find their steps.)",
-    "passes": "## Booking a room\n\nThese steps book a room that fits your meeting.\n\n## Setting up rooms\n\nThese settings, for admins, decide which rooms RoomBook offers, and to whom."
+    "fails": "The README's Booking says a room is held for 15 minutes while you confirm. Its Limits says a room you pick is held for 10 minutes. The architecture document says the hold is not yet decided.",
+    "passes": "The README's Booking says a room is held for 15 minutes while you confirm. Limits and the architecture document link to Booking for the hold."
    }
   }
  ]
