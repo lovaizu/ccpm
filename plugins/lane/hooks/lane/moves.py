@@ -22,7 +22,8 @@ MARKS = "*_`"
 
 class Run(NamedTuple):
     """The run of a flow: the flow, as hooks/lanes.json holds it, the plugin's name, and the
-    orchestrator's calls kept, in the order they came back."""
+    orchestrator's calls kept, in the order they came back, each with its input, an object, as
+    called.py keeps it."""
 
     flow: dict[str, Any]
     plugin: str
@@ -31,10 +32,13 @@ class Run(NamedTuple):
 
 class Due(NamedTuple):
     """The move due: the position in the flow's order, from 0, of the subagent to start, None once
-    the flow is done; and what sent the run there, said, "" where the order alone did."""
+    the flow is done or lane cannot read it; what sent the run there, said, "" where the order
+    alone did; and the ID of the start that came back from the background, whose answer lane
+    cannot read, "" for none."""
 
     at: int | None
     why: str
+    lost: str = ""
 
 
 def named(run: Run, at: int) -> str:
@@ -47,26 +51,24 @@ def due(run: Run) -> Due:
     """The move due, walking the calls kept: an Agent call starting the subagent due, come back
     from the foreground, moves the run on, to the position its back names where it is the `from` of
     a back and its answer answers the back's while, and else to the next, the flow done after the
-    last; that call come back from the background leaves the move due, saying so; every other call
-    changes nothing."""
+    last; that call come back from the background, with no answer, leaves no move lane can read,
+    the flow held no more; every other call changes nothing."""
     order, at, why = run.flow["order"], 0, ""
     backs = {b["from"]: b for b in run.flow.get("back", [])}
     for kept in run.kept:
-        given = kept.get("input")
-        if at is None or kept.get("tool") != AGENT or kept.get("failed"):
+        if kept.get("tool") != AGENT or kept.get("failed"):
             continue
-        if not isinstance(given, dict) or given.get(TYPE) != named(run, at):
+        if kept["input"].get(TYPE) != named(run, at):
             continue
         if kept.get("status") != DONE:
-            why = (
-                f"`{named(run, at)}` ran in the background, which lane does not count as the move."
-            )
-            continue
+            return Due(None, "", str(kept.get("id", "")))
         back = backs.get(at + 1)
         if back is not None and answers(str(kept.get("answer", "")), back["while"]):
             at, why = back["to"] - 1, f"{order[at]} answered `{back['while']}`."
         else:
             at, why = (at + 1 if order[at + 1 :] else None), ""
+        if at is None:
+            break
     return Due(at, why)
 
 

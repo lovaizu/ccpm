@@ -66,7 +66,6 @@ class TestDue(unittest.TestCase):
             ("a subagent of another plugin", {**started("x"), "input": {"subagent_type": "a:x"}}),
             ("an Agent call that failed", {**started("changelog-writer"), "failed": True}),
             ("another tool", {"tool": "Bash", "input": {"command": "ls"}, "failed": False}),
-            ("an Agent call of no input", {"tool": "Agent", "input": "x", "failed": False}),
         ):
             with self.subTest(what=what):
                 # Given: the orchestrator's calls kept of such a call alone
@@ -104,15 +103,14 @@ class TestDue(unittest.TestCase):
         said = f"summarizer answered `more`. {REVIEWER}"
         self.assertEqual(moves.told(run(*kept, flow=flow)), said)
 
-    def test_a_subagent_come_back_from_the_background_is_not_the_move(self):
-        # Given: the writer's call come back as started in the background
-        kept = started("changelog-writer", status="async_launched")
-        # When: the move due is told
-        # Then: it is still to start the writer, in the foreground, saying why
-        said = (
-            "`notes:changelog-writer` ran in the background, which lane does not count as the move."
-        )
-        self.assertEqual(moves.told(run(kept)), f"{said} {WRITER}")
+    def test_a_start_moved_to_the_background_leaves_the_flow_unheld(self):
+        # Given: the writer's call come back from the background, as Claude Code moved it there,
+        # with no answer lane can read
+        kept = {**started("changelog-writer", status="async_launched"), "id": "toolu_w"}
+        # When: the move due is read
+        due = moves.due(run(kept, started("changelog-reviewer")))
+        # Then: none is due, the call named as the one lane could not read
+        self.assertEqual(due, moves.Due(None, "", "toolu_w"))
 
     def test_a_subagent_named_twice_in_the_order_is_told_by_its_position(self):
         # Given: an order of the writer, the reviewer, the writer again and the reviewer again, the

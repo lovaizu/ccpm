@@ -22,6 +22,13 @@ from test_follow_flow import REVIEWER as REVIEWING
 from test_guard import GuardTest
 
 LEAD = "notes:notes-lead"
+# What notes-lead and the user are told where a start of the flow came back from the background.
+UNREAD = (
+    "lane cannot check follow_flow on step 1 of notes-lead: `notes:changelog-writer` came back"
+    " from the background, where lane cannot read its answer. Ask the main conversation for the"
+    " fix: whoever runs the plugin must have Claude Code run the subagents of the flow in the"
+    " foreground. Go on with the rest of your work meanwhile."
+)
 
 
 def context(event: str, said: str) -> dict:
@@ -153,27 +160,28 @@ class TestToldAsACallComesBack(FlowGuardTest):
         told = self.came("changelog-reviewer", "Handed back.", agent="b7")
         self.assertEqual(told, context("PostToolUse", f"notes: {BACK}"))
 
-    def test_a_call_failed_or_started_in_the_background_is_told_the_move_again(self):
-        background = (
-            "`notes:changelog-writer` ran in the background, which lane does not count as the move."
-        )
-        for what, back, error, event, told in (
-            ("failed", None, "boom", "PostToolUseFailure", WRITER),
-            (
-                "in the background",
-                {"status": "async_launched", "agentId": "b1"},
-                None,
-                "PostToolUse",
-                f"{background} {WRITER}",
-            ),
-        ):
-            with self.subTest(what=what):
-                # Given: notes-lead, no call of it kept
-                # When: its call of the writer comes back so
-                # Then: it is told to start the writer
-                self.assertEqual(
-                    self.back("changelog-writer", back, error), context(event, f"notes: {told}")
-                )
+    def test_a_failed_start_is_told_the_move_again(self):
+        # Given: notes-lead, no call of it kept
+        # When: its call of the writer comes back failed
+        # Then: it is told to start the writer
+        said = context("PostToolUseFailure", f"notes: {WRITER}")
+        self.assertEqual(self.back("changelog-writer", error="boom"), said)
+
+    def test_a_start_moved_to_the_background_is_an_error_and_frees_the_orchestrator(self):
+        # Given: notes-lead, no call of it kept
+        # When: its call of the writer comes back from the background, Claude Code having moved it
+        # there with no answer
+        told = self.back("changelog-writer", {"status": "async_launched", "agentId": "b1"})
+        # Then: it and the user are told lane cannot check the flow, and who must fix it
+        line = f"notes: {UNREAD}"
+        said = context("PostToolUse", line)
+        self.assertEqual(told, {"systemMessage": line, **said})
+        # And then: its calls and its end go on, and the next start that comes back is told
+        # nothing
+        self.assertIsNone(self.call("Bash", {"command": "ls"}))
+        self.assertIsNone(self.answered(self.stopped("Done.", agent_type=LEAD), "subagentstop.py"))
+        self.assertIsNone(self.came("changelog-reviewer"))
+        self.assertIsNone(self.start())
 
     def test_another_call_coming_back_is_told_nothing(self):
         for what, tool, given in (

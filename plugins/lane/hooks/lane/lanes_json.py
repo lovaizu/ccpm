@@ -252,6 +252,7 @@ def lanes_written(
     subagents = [
         {"name": a.split(":")[1], **({"adapter": values[a]} if values.get(a) else {}), "steps": s}
         for a, s in agents.items()
+        if s
     ]
     laid = {**({"flow": flow} if flow else {}), "subagents": subagents}
     os.makedirs(os.path.join(root, "hooks"), exist_ok=True)

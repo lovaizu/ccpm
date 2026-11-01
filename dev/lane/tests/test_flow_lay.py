@@ -344,6 +344,49 @@ class TestWrite(FlowTest):
             "Took out the hooks of changelog-reviewer, which agents/ no longer has.", said
         )
 
+    def test_the_flows_lane_on_a_subagent_no_longer_the_orchestrator_is_taken_out(self):
+        # Given: the README's flow written on notes-lead, with hands_off on its step 2 too
+        push = {"lane": "hands_off", "takes": ["git push"]}
+        lead = {"name": "notes-lead", "steps": [{"step": 2, "lanes": [push]}]}
+        self.flowed(FLOW, subagents=[lead])
+        self.written()
+        # When: a flow of another orchestrator, notes-head, is printed and written
+        head = os.path.join(self.plugin, "agents", "notes-head.md")
+        self.write(head, LEAD.replace("name: notes-lead", "name: notes-head"))
+        self.flowed({**FLOW, "orchestrator": "notes-head"})
+        code, said = self.lay("print", self.proposal_file)
+        self.written()
+        # Then: the print shows the flow's sentence taken out of notes-lead's step 1, and once
+        # written, the step no longer says it, notes-lead keeps hands_off alone, and only
+        # notes-head is told its first move as it starts
+        self.assertEqual(code, 0, said)
+        self.assertIn(
+            "No lanes on step 1 of notes-lead now, their sentences taken out:\n\n"
+            "1. Start the subagents of the work.\n",
+            said,
+        )
+        self.assertNotIn(FOLLOW, self.read(self.lead))
+        self.assertIn("Do not run `git push`.", self.read(self.lead))
+        lead_laid = next(a for a in self.laid()["subagents"] if a["name"] == "notes-lead")
+        self.assertEqual(lead_laid, lead)
+        starts = json.dumps(self.hooks()["hooks"]["SubagentStart"])
+        self.assertNotIn("notes:notes-lead", starts)
+        self.assertIn("notes:notes-head", starts)
+
+    def test_a_subagent_left_with_no_lane_once_the_flow_moves_is_laid_in_no_more(self):
+        # Given: the README's flow written on notes-lead, which has no other lane
+        self.written()
+        # When: a flow of another orchestrator, notes-head, is written
+        head = os.path.join(self.plugin, "agents", "notes-head.md")
+        self.write(head, LEAD.replace("name: notes-lead", "name: notes-head"))
+        self.flowed({**FLOW, "orchestrator": "notes-head"})
+        self.written()
+        # Then: notes-lead's file is as before the flow, hooks/lanes.json lays nothing in it, and
+        # it has no hook
+        self.assertEqual(self.read(self.lead), LEAD)
+        self.assertNotIn("notes-lead", [a["name"] for a in self.laid()["subagents"]])
+        self.assertNotIn("notes:notes-lead", json.dumps(self.hooks()))
+
 
 class TestUp(FlowTest):
     def test_up_carries_the_flow_over_and_does_not_say_its_lane(self):
@@ -449,19 +492,6 @@ class TestRefused(FlowTest):
         # When: it is printed or written
         # Then: it exits 1, as follow_flow is no lane the proposal names, lay.py laying it
         self.stops('$.subagents[0].steps[0].lanes[1].lane: expected one of "start_with"')
-
-    def test_follow_next_of_any_script_is_laid(self):
-        for what, lane in (
-            ("of a script", {"lane": "follow_next", "takes": ["bin/next.py"]}),
-            ("of a script named flow.py", {"lane": "follow_next", "takes": ["flow.py"]}),
-        ):
-            with self.subTest(what=what):
-                # Given: a proposal laying the lane on changelog-writer
-                self.propose(self.proposal([lane]))
-                # When: it is printed
-                # Then: it is printed
-                code, said = self.lay("print", self.proposal_file)
-                self.assertEqual(code, 0, said)
 
     def test_an_orchestrator_naming_its_tools_without_agent_stops(self):
         for tools in ("Bash, Read", "Bash, Agents", "AgentTool"):

@@ -77,7 +77,6 @@ lane writes each line as a statement of the run, as Claude Code's docs advise fo
 | no subagent of the flow has come back yet | ``The next move of the flow is to start `<plugin>:<first>` in the foreground.`` |
 | the subagent due came back, and is the `from` of a `back` whose `while` it answered | ``<from> answered `<while>`. The next move of the flow is to start `<plugin>:<to>` in the foreground.`` |
 | the subagent due came back, and another follows it in `order` | ``The next move of the flow is to start `<plugin>:<next>` in the foreground.`` |
-| the subagent due came back from the background | ``` `<plugin>:<due>` ran in the background, which lane does not count as the move. The next move of the flow is to start `<plugin>:<due>` in the foreground.``` |
 | the last of `order` came back, and no `back` sends the work back | `The flow is done: lane tells no more moves.` |
 
 `<plugin>:<name>` is how Claude Code names a subagent of your plugin. The orchestrator writes the
@@ -87,8 +86,17 @@ The move is the Agent call starting the subagent due in the foreground. A call s
 `run_in_background` set to `true` is not the move. An Agent call comes back from a subagent run in
 the background as the subagent starts, with no answer, and with the status `async_launched` in
 place of `completed` ([Agent](https://code.claude.com/docs/en/hooks#agent)). So lane counts only a
-start that comes back `completed`. Where a start comes back from the background all the same, the
-orchestrator is told so, and the move stays due.
+start that comes back `completed`.
+
+Where Claude Code moves a start of the subagent due to the background all the same, lane cannot read
+its answer, so it cannot tell the next move. It tells the orchestrator and you, as the call comes
+back, in the form [the lanes](lanes.md) give an error:
+
+```
+<plugin>: lane cannot check follow_flow on step <n> of <orchestrator>: `<plugin>:<due>` came back from the background, where lane cannot read its answer. Ask the main conversation for the fix: whoever runs the plugin must have Claude Code run the subagents of the flow in the foreground. Go on with the rest of your work meanwhile.
+```
+
+The orchestrator is then free for the rest of the run, as no move can be told.
 
 While a move is due, the orchestrator is told the sentence and the move on the next line:
 

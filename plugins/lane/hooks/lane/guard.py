@@ -115,9 +115,7 @@ class Lanes:
     def unchecked(self, wrong: str, fix: str) -> hook.Said:
         """The error where no lane of the subagent can be checked, told with what is wrong and who
         must fix it."""
-        name = self.agent.split(":")[1]
-        said = f"lane cannot check the lanes of {name}: {wrong}. {hook.ASK.format(fix=fix)}"
-        return hook.Said(said, True)
+        return hook.cannot(f"the lanes of {self.agent.split(':')[1]}", wrong, fix)
 
 
 class Laid:
@@ -250,8 +248,7 @@ class Laid:
         Code."""
         who = fix.format(plugin=self.plugin) if fix else hook.CLAUDE_CODE
         on = f"{self.lane} on step {self.number} of {self.name}"
-        said = f"lane cannot check {on}: {wrong.rstrip('.')}. {hook.ASK.format(fix=who)}"
-        return hook.Said(said, True)
+        return hook.cannot(on, wrong.rstrip("."), who)
 
     def run_values(
         self, cwd: str, found: list[dict[str, Any]] | None

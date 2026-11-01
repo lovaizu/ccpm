@@ -90,6 +90,7 @@ def proposal(path: str) -> dict[str, Any]:
     kept = laid(root).get("flow") if flow is None else flow
     if kept is not None:
         checked = with_flow(root, kept, checked, flow is not None)
+        checked = [*checked, *unflowed(root, kept, checked)]
     parts_shared(root, checked)
     folder = os.path.join(os.path.dirname(os.path.abspath(path)), name, "adapters")
     named = adapters_named(checked)
@@ -177,20 +178,45 @@ def with_flow(
         return checked
     if at is None:
         before = next((a for a in laid(root)["subagents"] if a["name"] == name), {"steps": []})
-        raw = copy.deepcopy({**before, "name": name})
-        for s in raw["steps"]:
-            s["lanes"] = [g for g in s["lanes"] if g != lanes_json.FLOW_LANE]
-        raw["steps"] = [s for s in raw["steps"] if s["lanes"]]
+        raw = without_flow({**before, "name": name})
     else:
         raw = {k: v for k, v in checked[at].items() if k in ("name", "adapter")}
         raw["steps"] = [{"step": s["step"], "lanes": s["lanes"]} for s in checked[at]["steps"]]
-    on = next((s for s in raw["steps"] if s["step"] == flow["step"]), None)  # pragma: no mutate
+    by_step = {s["step"]: s for s in raw["steps"]}
+    on = by_step.get(flow["step"])
     if on is None:
         on = {"step": flow["step"], "lanes": []}
         raw["steps"].append(on)
     on["lanes"] = [*on["lanes"], copy.deepcopy(lanes_json.FLOW_LANE)]
     agent = subagent(root, raw)
     return [agent, *checked] if at is None else [*checked[:at], agent, *checked[at + 1 :]]
+
+
+def without_flow(agent: dict[str, Any]) -> dict[str, Any]:
+    """The subagent's lanes laid before, as hooks/lanes.json holds them, with the flow's lane left
+    out, and each step left with no lane left out too."""
+    raw = copy.deepcopy(agent)
+    for s in raw["steps"]:
+        s["lanes"] = [g for g in s["lanes"] if g != lanes_json.FLOW_LANE]
+    raw["steps"] = [s for s in raw["steps"] if s["lanes"]]
+    return raw
+
+
+def unflowed(
+    root: str, flow: dict[str, Any], checked: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Each subagent of the plugin at root the proposal does not give, its agents/ still has, and
+    the flow does not name its orchestrator, that the flow's lane was laid in before, with that lane
+    left out, so the layer takes its sentence out of the step and its hooks with it, as a lane of a
+    flow no longer laid there."""
+    given = [flow["orchestrator"], *(a["name"] for a in checked)]
+    return [
+        subagent(root, without_flow(a))
+        for a in laid(root)["subagents"]
+        if a["name"] not in given
+        and step.agent_file(root, a["name"]) is not None
+        and any(lanes_json.FLOW_LANE in s["lanes"] for s in a["steps"])
+    ]
 
 
 def adapters_named(agents: list[dict[str, Any]]) -> dict[str, tuple[str, str]]:

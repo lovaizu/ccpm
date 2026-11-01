@@ -34,6 +34,12 @@ import record
 ID = re.compile(r"[A-Za-z0-9-]+")
 # The tool a subagent may hand its report back with, the field of its input holding the report.
 HANDBACK, MESSAGE = "SubagentHandback", "message"
+# Who must fix it where a start of the flow came back from the background, where lane cannot read
+# its answer, as ux.md's A lane lane cannot check has it: the run's foreground is not the plugin's
+# to set.
+FOREGROUND = (
+    "whoever runs the plugin must have Claude Code run the subagents of the flow in the foreground"
+)
 
 
 def place(event: dict[str, Any]) -> str | None:
@@ -122,7 +128,9 @@ class Kept:
         its ID, its tool, its input, the folder it ran in, what it gave back, whether it failed,
         and, of an Agent call, what `started` gives; then, where the subagent is the orchestrator
         of the flow and the call starts a subagent the flow names, the move due, as moves.told
-        gives it; nothing where `place` names no file."""
+        gives it, or, where this call came back from the background, the error that lane cannot
+        read its answer, and nothing for any call after it; nothing where `place` names no
+        file."""
         file = place(event)
         if file is None:
             return []
@@ -143,7 +151,18 @@ class Kept:
             return []
         names = [f"{flow.plugin}:{n}" for n in flow.flow["order"]]
         of_flow = kept["tool"] == moves.AGENT and event["tool_input"].get(moves.TYPE) in names
-        return [hook.Said(moves.told(flow))] if of_flow else []
+        if not of_flow:
+            return []
+        lost = moves.due(flow).lost
+        if not lost:
+            return [hook.Said(moves.told(flow))]
+        if lost != kept["id"]:
+            return []
+        lane, of = lanes_json.FLOW_LANE["lane"], self.agent.split(":")[1]
+        on = f"{lane} on step {flow.flow['step']} of {of}"
+        named = event["tool_input"][moves.TYPE]
+        wrong = f"`{named}` came back from the background, where lane cannot read its answer"
+        return [hook.cannot(on, wrong, FOREGROUND)]
 
 
 class Started:
@@ -155,9 +174,12 @@ class Started:
         self.root, self.agent = root, agent
 
     def check(self, event: dict[str, Any]) -> list[hook.Said]:
-        """The move due, told the orchestrator of the flow; nothing for any other subagent."""
+        """The move due, told the orchestrator of the flow; nothing for any other subagent, or once
+        lane cannot read the flow's run."""
         flow = flow_run(self.root, self.agent, event)
-        return [] if flow is None else [hook.Said(moves.told(flow))]
+        if flow is None or moves.due(flow).lost:
+            return []
+        return [hook.Said(moves.told(flow))]
 
 
 def calls_kept(event: dict[str, Any]) -> list[dict[str, Any]]:

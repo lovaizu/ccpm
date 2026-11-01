@@ -64,6 +64,13 @@ class Said(NamedTuple):
     error: bool = False
 
 
+def cannot(on: str, wrong: str, fix: str) -> Said:
+    """The error where lane cannot check what `on` names, such as `the lanes of <subagent>` or
+    `<lane> on step <n> of <subagent>`, in the form docs/lanes.md gives: what is wrong, then who
+    must fix it."""
+    return Said(f"lane cannot check {on}: {wrong}. {ASK.format(fix=fix)}", True)
+
+
 def event_read(text: str, held: str) -> tuple[dict[str, Any] | None, str]:
     """The event of the hook's event held in the text, and "" where it is as its IN says, the folder
     it comes from there; otherwise None, or the text read as JSON where it is an object, and what is
