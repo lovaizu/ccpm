@@ -42,8 +42,6 @@
   <text class="name" x="120" y="567">record</text>
   <rect class="box" x="330" y="540" width="200" height="44" rx="4"/>
   <text class="name" x="430" y="567">calls kept</text>
-  <rect class="box" x="640" y="540" width="200" height="44" rx="4"/>
-  <text class="name" x="740" y="567">reply kept</text>
 
   <!-- relations -->
   <path class="line" d="M220,52 H330"/>
@@ -85,9 +83,7 @@
   <text class="label" text-anchor="middle" x="275" y="554">yet in</text>
   <path class="line" d="M1000,414 L500,540"/>
   <text class="label" x="760" y="500">each kept as it comes back</text>
-  <path class="line" d="M530,562 H640"/>
-  <text class="label" text-anchor="middle" x="585" y="538">an Agent call's</text>
-  <text class="label" text-anchor="middle" x="585" y="554">ID names</text>
-  <path class="line" d="M1120,414 L840,556"/>
-  <text class="label" x="960" y="540">kept as it ends</text>
+  <path class="line" d="M500,540 L700,244"/>
+  <text class="label" x="560" y="470">the moves</text>
+  <text class="label" x="560" y="487">read with</text>
 </svg>

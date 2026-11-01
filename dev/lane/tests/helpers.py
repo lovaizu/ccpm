@@ -22,7 +22,6 @@ sys.path[:0] = [CODE, SCRIPTS, os.path.join(LANE, "..", "..", "dev", "lane")]
 import call
 import called  # noqa: F401
 import entries  # noqa: F401
-import flow  # noqa: F401
 import forms  # noqa: F401
 import guard  # noqa: F401
 import hook  # noqa: F401
@@ -30,6 +29,7 @@ import lanes  # noqa: F401
 import lanes_json  # noqa: F401
 import lay  # noqa: F401
 import layer  # noqa: F401
+import moves  # noqa: F401
 import placed  # noqa: F401
 import ports  # noqa: F401
 import proposal  # noqa: F401
@@ -45,6 +45,7 @@ from lanes import (  # noqa: F401
     as_printed,
     end_when,
     every_item,
+    follow_flow,
     follow_next,
     hands_off,
     in_form,

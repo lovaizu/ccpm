@@ -19,13 +19,6 @@ TODAY = "20261025"
 # The output of a Bash call, as the version of Claude Code record.py names gives it back to
 # PostToolUse.
 OUTPUT = {"stdout": "out", "stderr": "", "interrupted": False, "isImage": False}
-# A flow whose back is from changelog-writer, whose answer is kept as it ends.
-ANSWERING = {
-    "orchestrator": "notes-lead",
-    "step": 1,
-    "order": ["notes-writer", "changelog-writer"],
-    "back": [{"from": "changelog-writer", "to": "notes-writer", "while": "more"}],
-}
 # The move the script follow_next takes prints.
 MOVE = {"tool": "SendMessage", "input": {"to": "a2", "message": "go"}}
 
@@ -275,178 +268,108 @@ class TestEntries(CallsTest):
 
 
 class TestStarted(CallsTest):
-    """Of an Agent call, the ID of the subagent it started, as Claude Code gives it back."""
+    """Of an Agent call, the status Claude Code gives back and the answer of the subagent it
+    started: its final text, or the report it handed back with SubagentHandback, kept by its ID."""
 
-    def test_an_agent_call_keeps_the_id_of_the_subagent_it_started(self):
-        for what, back in {
-            "run in the foreground": {"status": "completed", "agentId": "b7", "content": []},
-            "started in the background": {"status": "async_launched", "agentId": "b7"},
-        }.items():
-            with self.subTest(what=what):
-                # Given: an Agent call coming back, with the ID of the subagent it started
-                if os.path.exists(self.file):
-                    os.remove(self.file)
-                given = {"subagent_type": "notes:changelog-reviewer", "prompt": "Review."}
-                # When: it is kept
-                self.keep(self.came_back("Agent", given, back))
-                # Then: it is kept with that ID
-                [kept] = self.kept()
-                self.assertEqual((kept["tool"], kept["agent"]), ("Agent", "b7"))
+    def started(self, back: object, tool: str = "Agent") -> dict:
+        """The call of the tool kept as it comes back giving back what is given."""
+        if os.path.exists(self.file):
+            os.remove(self.file)
+        given = {"subagent_type": "notes:changelog-reviewer", "prompt": "Review."}
+        self.keep(self.came_back(tool, given, back))
+        [kept] = self.kept()
+        return kept
 
-    def test_a_call_giving_back_no_id_as_claude_code_gives_it_keeps_none(self):
-        for what, (tool, back) in {
-            "an Agent call of no ID": ("Agent", {"status": "completed"}),
-            "an Agent call of an ID of no text": ("Agent", {"agentId": 7}),
-            "an Agent call giving back no object": ("Agent", "done"),
-            "another tool giving back an ID": ("Bash", {"agentId": "b7", "stdout": "out"}),
-            # A tool named before Agent in order, and one after, giving back an ID.
-            "a tool named before giving back an ID": ("Act", {"agentId": "b7"}),
-            "a tool named after giving back an ID": ("Agents", {"agentId": "b7"}),
-        }.items():
-            with self.subTest(what=what):
-                # Given: a call coming back with no subagent's ID as an Agent call gives it
-                if os.path.exists(self.file):
-                    os.remove(self.file)
-                # When: it is kept
-                self.keep(self.came_back(tool, {"prompt": "x"}, back))
-                # Then: it is kept with no ID
-                [kept] = self.kept()
-                self.assertNotIn("agent", kept)
-
-
-class TestAnswer(CallsTest):
-    """The answer of a `from` subagent of the flow, kept as it ends, by its ID, in the folder of
-    its session: the message it handed back with SubagentHandback where it made that call, and
-    else its last reply, each end replacing the answer kept before."""
-
-    def setUp(self) -> None:
-        super().setUp()
-        laid = {"flow": ANSWERING, "subagents": []}
-        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
-
-    def handed(self, message: object, agent: str = helpers.AGENT) -> None:
-        """Keeps the subagent's call of SubagentHandback with the message, as it comes back."""
-        event = self.came_back("SubagentHandback", {"message": message}, {"ok": True})
-        self.assertEqual(called.Kept(self.plugin, agent).check(event), [])
-
-    def ended(self, reply: str | None) -> None:
-        """Keeps the subagent's answer as it is about to end with the reply."""
-        called.ended(dict(self.stopped(), last_assistant_message=reply))
-
-    def answer(self) -> str | None:
-        """The answer kept of the subagent a1 in the session s1."""
-        return called.answer("s1", "a1")
-
-    def test_the_last_reply_is_kept_as_it_ends(self):
-        # Given: the subagent ending with a reply
-        # When: its answer is kept
-        self.ended("Two entries.\nmore")
-        # Then: the answer is the reply, kept in lane/<today>-s1/a1.reply.json
-        self.assertEqual(self.answer(), "Two entries.\nmore")
-        self.assertTrue(os.path.isfile(self.file.replace(".jsonl", ".reply.json")))
-
-    def test_each_end_replaces_the_answer_kept_before(self):
-        # Given: the subagent ending with a reply, kept going, then ending with another
-        self.ended("more")
-        # When: its answer is kept again
-        self.ended("All entries hold.")
-        # Then: the answer is the last
-        self.assertEqual(self.answer(), "All entries hold.")
-
-    def test_the_message_handed_back_is_kept_over_the_last_reply(self):
-        for what, reply in (("a reply", "Handed back."), ("no reply", None)):
-            with self.subTest(what=what):
-                # Given: the subagent handing its report back with SubagentHandback
-                self.handed("more")
-                # When: it ends, with a reply or none, as Claude Code gives null after it
-                self.ended(reply)
-                # Then: the answer is the message it handed back
-                self.assertEqual(self.answer(), "more")
-
-    def test_a_reply_after_a_hand_back_ended_before_is_kept(self):
-        # Given: the subagent having handed its report back and ended, then going on
-        self.handed("more")
-        self.ended(None)
-        # When: it ends again with a reply
-        self.ended("All entries hold.")
-        # Then: the answer is that reply
-        self.assertEqual(self.answer(), "All entries hold.")
-
-    def test_an_end_of_no_reply_and_nothing_handed_back_keeps_an_empty_answer(self):
-        # Given: the subagent ending with no reply, having handed nothing back
-        # When: its answer is kept
-        self.ended(None)
-        # Then: the answer is empty
-        self.assertEqual(self.answer(), "")
-
-    def test_a_message_of_no_text_is_kept_empty(self):
-        # Given: the subagent handing back a message that is no text
-        self.handed(["more"])
-        # When: it ends
-        self.ended(None)
-        # Then: the answer is empty
-        self.assertEqual(self.answer(), "")
-
-    def test_a_hand_back_of_a_subagent_that_is_no_from_keeps_no_answer(self):
-        for what, agent, laid in (
-            ("another subagent", "notes:notes-writer", None),
-            ("no flow laid", helpers.AGENT, {"subagents": []}),
-            ("hooks/lanes.json out of its form", helpers.AGENT, "{"),
+    def test_an_agent_call_keeps_its_status_and_the_subagents_final_text(self):
+        for what, back, status, answer in (
+            (
+                "run in the foreground",
+                {
+                    "status": "completed",
+                    "agentId": "b7",
+                    "content": [
+                        {"type": "text", "text": "Entry 2."},
+                        {"type": "image"},
+                        {"type": "text", "text": "more"},
+                    ],
+                },
+                "completed",
+                "Entry 2.\nmore",
+            ),
+            (
+                "started in the background",
+                {"status": "async_launched", "agentId": "b7"},
+                "async_launched",
+                "",
+            ),
+            (
+                "of text blocks of no text",
+                {"status": "completed", "content": [{"type": "text", "text": 1}, "x"]},
+                "completed",
+                "",
+            ),
+            ("of content of no list", {"status": "completed", "content": "more"}, "completed", ""),
+            ("of a status of no text", {"status": 1, "content": []}, None, ""),
         ):
             with self.subTest(what=what):
-                # Given: a subagent that is no from of a flow laid, or a flow lane cannot read
-                if laid is not None:
-                    path = os.path.join(self.plugin, "hooks", "lanes.json")
-                    self.write(path, laid if isinstance(laid, str) else json.dumps(laid))
-                # When: it hands its report back
-                self.handed("more", agent)
-                # Then: no answer is kept, the call kept alone
-                self.assertIsNone(self.answer())
-                self.assertEqual(self.kept()[-1]["tool"], "SubagentHandback")
+                # Given: an Agent call coming back so
+                # When: it is kept
+                kept = self.started(back)
+                # Then: it is kept with the status and the text
+                self.assertEqual((kept["status"], kept["answer"]), (status, answer))
 
-    def test_another_call_of_a_from_keeps_no_answer(self):
-        # A tool named before SubagentHandback in order, and one after.
-        for tool in ("Bash", "Write"):
+    def test_the_report_handed_back_is_the_answer_over_the_final_text(self):
+        # Given: the subagent b7 having handed its report back, then another call of it kept
+        for given in ({"message": "Entry 2.\nmore"}, {"message": "Last.\nmore"}):
+            event = {**self.came_back("SubagentHandback", given, {"ok": True}), "agent_id": "b7"}
+            self.keep(event)
+        self.keep({**self.came_back("SendMessage", {"message": "x"}, OUTPUT), "agent_id": "b7"})
+        # When: the Agent call that started it comes back, a note in place of its report
+        back = {
+            "status": "completed",
+            "agentId": "b7",
+            "content": [{"type": "text", "text": "Handed."}],
+        }
+        # Then: the answer is the last report it handed back
+        self.assertEqual(self.started(back)["answer"], "Last.\nmore")
+
+    def test_a_report_of_no_text_or_a_subagent_of_no_id_gives_the_final_text(self):
+        for what, message, agent in (
+            ("a message of no text", ["more"], "b7"),
+            ("an ID of no text", "more", 7),
+            ("an ID as Claude Code gives none", "more", "../b7"),
+        ):
+            with self.subTest(what=what):
+                # Given: the subagent b7 having handed back the message
+                event = {
+                    **self.came_back("SubagentHandback", {"message": message}, {}),
+                    "agent_id": "b7",
+                }
+                self.keep(event)
+                # When: the Agent call that started the subagent of the ID comes back
+                text = [{"type": "text", "text": "Handed."}]
+                back = {"status": "completed", "agentId": agent, "content": text}
+                # Then: the answer is its final text
+                self.assertEqual(self.started(back)["answer"], "Handed.")
+
+    def test_another_call_keeps_no_status_or_answer(self):
+        # A tool named before Agent in order, and one after, and Bash.
+        for tool in ("Act", "Agents", "Bash"):
             with self.subTest(tool=tool):
-                # Given: the from subagent making a call of another tool, with a message
-                # When: it comes back
-                self.keep(self.came_back(tool, {"message": "more"}, OUTPUT))
-                # Then: no answer is kept
-                self.assertIsNone(self.answer())
+                # Given: a call of the tool giving back what an Agent call gives
+                back = {"status": "completed", "agentId": "b7", "content": []}
+                # When: it is kept
+                kept = self.started(back, tool)
+                # Then: it holds neither
+                self.assertNotIn("status", kept)
+                self.assertNotIn("answer", kept)
 
-    def test_an_answer_not_kept_or_out_of_its_form_is_none(self):
-        for what, text in (
-            ("not kept", None),
-            ("no JSON", "{"),
-            ("no object", "[]"),
-            ("no answer", '{"handed": false}'),
-            ("an answer of no text", '{"answer": 1, "handed": false}'),
-        ):
-            with self.subTest(what=what):
-                # Given: no answer kept of the subagent, or one out of its form
-                place = self.file.replace(".jsonl", ".reply.json")
-                if os.path.exists(place):
-                    os.remove(place)
-                if text is not None:
-                    self.write(place, text)
-                # When: it is read
-                # Then: there is none
-                self.assertIsNone(self.answer())
-
-    def test_an_answer_of_a_session_or_subagent_of_no_id_is_none(self):
-        # Given: an answer kept of the subagent a1
-        self.ended("more")
-        # When: one is read naming the session or the subagent by no ID as Claude Code gives it
-        # Then: there is none
-        self.assertIsNone(called.answer("../s1", "a1"))
-        self.assertIsNone(called.answer("s1", "x/a1"))
-
-    def test_an_end_naming_no_session_or_subagent_by_an_id_keeps_nothing(self):
-        # Given: an end in an event naming its subagent by no ID
-        # When: its answer is kept
-        called.ended(dict(self.stopped("more"), agent_id="x/a1"))
-        # Then: nothing is written in the temporary folder
-        self.assertFalse(os.path.exists(self.tmp))
+    def test_an_agent_call_giving_back_no_object_or_failing_keeps_neither(self):
+        # Given: an Agent call giving back no object
+        # When: it is kept
+        kept = self.started("done")
+        # Then: it holds no status, and no answer
+        self.assertEqual((kept["status"], kept["answer"]), (None, ""))
 
 
 class TestGuard(GuardTest):
@@ -480,7 +403,7 @@ class TestGuard(GuardTest):
         self.back("Bash", self.run_next, {"stdout": json.dumps(MOVE), "stderr": ""})
         # When: the subagent makes another call
         # Then: it is stopped, told the sentence
-        expected = ("told", "notes: Take each move `scripts/next.py` prints, until it prints none.")
+        expected = ("told", "notes: Take the next move `scripts/next.py` printed.")
         self.assertEqual(self.guard(self.stream("ls")), expected)
 
     def test_a_failed_call_is_kept_by_its_own_entry(self):

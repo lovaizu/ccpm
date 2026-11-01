@@ -172,13 +172,6 @@ class TestFlowShape(unittest.TestCase):
         # Then: they are the same
         self.assertEqual(shown, lanes_json.FLOW)
 
-    def test_the_line_saying_where_flow_py_lies_is_the_one_docs_flow_md_gives(self):
-        # Given: the line docs/flow.md shows put into the orchestrator's file
-        shown = flow_md().split("```markdown\n")[1].split("\n```")[0]
-        # When: the line is made in lane's code
-        # Then: they are the same
-        self.assertEqual(shown, lanes_json.FLOW_LIES)
-
 
 class TestFlowLaid(LanesTest):
     def laid_with(self, flow: object) -> None:
@@ -189,12 +182,12 @@ class TestFlowLaid(LanesTest):
         for what, flow in {
             "with a back": FLOW,
             "with no back": {k: v for k, v in FLOW.items() if k != "back"},
-            "with two backs": {
+            "with a subagent twice and two backs": {
                 **FLOW,
-                "order": ["a", "b", "c"],
+                "order": ["a", "b", "a", "b"],
                 "back": [
-                    {"from": "b", "to": "a", "while": "more"},
-                    {"from": "c", "to": "a", "while": "  **again** "},
+                    {"from": 2, "to": 1, "while": "more"},
+                    {"from": 4, "to": 3, "while": "  **again** "},
                 ],
             },
         }.items():
@@ -213,9 +206,14 @@ class TestFlowLaid(LanesTest):
             ("step 0", {**FLOW, "step": 0}, "$.flow.step: expected a number of at least 1"),
             ("an empty order", {**FLOW, "order": []}, "$.flow.order: expected at least 1"),
             (
-                "a subagent twice in the order",
-                {**FLOW, "order": ["a", "a"]},
-                '$.flow.order: expected each item once, found "a" twice',
+                "a from of no position",
+                {**FLOW, "back": [{**back, "from": "changelog-reviewer"}]},
+                ".back[0].from: expected",
+            ),
+            (
+                "a to of position 0",
+                {**FLOW, "back": [{**back, "to": 0}]},
+                ".back[0].to: expected a number of at least 1",
             ),
             ("an empty while", {**FLOW, "back": [{**back, "while": ""}]}, ".back[0].while"),
             ("a key beside", {**FLOW, "x": 1}, "$.flow: expected only the keys"),
@@ -225,51 +223,45 @@ class TestFlowLaid(LanesTest):
                 "gives a flow whose order names its orchestrator notes-lead",
             ),
             (
-                "a from not in its order",
-                {**FLOW, "back": [{**back, "from": "x"}]},
-                "gives a flow whose back names x, which its order does not",
+                "a from past its order",
+                {**FLOW, "back": [{**back, "from": 3}]},
+                "gives a flow whose back names position 3, which its order of 2 does not have",
             ),
             (
-                "a from and a to not in its order",
-                {**FLOW, "back": [{**back, "from": "x", "to": "y"}]},
-                "gives a flow whose back names x, which its order does not",
+                "a from and a to past its order",
+                {**FLOW, "back": [{**back, "from": 4, "to": 3}]},
+                "gives a flow whose back names position 4, which its order of 2 does not have",
             ),
             (
-                "a to not in its order",
-                {**FLOW, "back": [{**back, "to": "x"}]},
-                "gives a flow whose back names x, which its order does not",
+                "a to past its order",
+                {**FLOW, "back": [{**back, "from": 2, "to": 3}]},
+                "gives a flow whose back names position 3, which its order of 2 does not have",
             ),
             (
                 "a to after its from",
-                {
-                    **FLOW,
-                    "back": [{**back, "from": "changelog-writer", "to": "changelog-reviewer"}],
-                },
+                {**FLOW, "back": [{**back, "from": 1, "to": 2}]},
                 (
-                    "gives a flow whose back from changelog-writer goes to changelog-reviewer,"
-                    " which does not come before it in its order"
+                    "gives a flow whose back from position 1 goes to position 2, which does not"
+                    " come before it"
                 ),
             ),
             (
                 "a to the same as its from",
-                {**FLOW, "back": [{**back, "to": "changelog-reviewer"}]},
+                {**FLOW, "back": [{**back, "to": 2}]},
                 (
-                    "gives a flow whose back from changelog-reviewer goes to changelog-reviewer,"
-                    " which does not come before it in its order"
+                    "gives a flow whose back from position 2 goes to position 2, which does not"
+                    " come before it"
                 ),
             ),
             (
-                "two backs from one subagent",
+                "two backs from one position",
                 {**FLOW, "back": [back, back]},
-                "gives a flow with two backs from changelog-reviewer",
+                "gives a flow with two backs from position 2",
             ),
             (
                 "a while over two lines",
                 {**FLOW, "back": [{**back, "while": "more\nentries"}]},
-                (
-                    "gives a flow whose back from changelog-reviewer answers a while of more than"
-                    " one line"
-                ),
+                "gives a flow whose back from position 2 answers a while of more than one line",
             ),
             (
                 "a while ending in a line break",
@@ -286,6 +278,40 @@ class TestFlowLaid(LanesTest):
                     lanes_json.laid(self.plugin)
                 self.assertIn(named, str(stop.exception))
                 self.assertTrue(str(stop.exception).startswith("hooks/lanes.json "))
+
+    def test_the_flows_lane_laid_where_the_flow_is_not_stops(self):
+        lane = {"lane": "follow_flow", "takes": []}
+        for what, flow, name, number in (
+            ("no flow", None, "notes-lead", 1),
+            ("another subagent", FLOW, "changelog-writer", 1),
+            ("another step", FLOW, "notes-lead", 2),
+        ):
+            with self.subTest(what=what):
+                # Given: hooks/lanes.json laying follow_flow on the step of the subagent
+                given = {
+                    "subagents": [{"name": name, "steps": [{"step": number, "lanes": [lane]}]}]
+                }
+                path = os.path.join(self.plugin, "hooks", "lanes.json")
+                self.write_json(path, {**({"flow": flow} if flow else {}), **given})
+                # When: it is read
+                # Then: it stops, naming the lane
+                with self.assertRaises(ValueError) as stop:
+                    lanes_json.laid(self.plugin)
+                on = f"follow_flow on step {number} of {name}"
+                said = f"hooks/lanes.json lays {on}, where no flow is laid"
+                self.assertEqual(str(stop.exception), said)
+
+    def test_the_froms_are_the_subagents_at_the_from_of_each_back_once_each(self):
+        # Given: a flow naming the reviewer twice, each the from of a back, and no flow
+        flow = {
+            **FLOW,
+            "order": ["w", "r", "w", "r"],
+            "back": [{"from": 2, "to": 1, "while": "x"}, {"from": 4, "to": 3, "while": "y"}],
+        }
+        # When: its froms are read
+        # Then: each is named once, and none of no flow
+        self.assertEqual(lanes_json.froms(flow), ["r"])
+        self.assertEqual(lanes_json.froms(None), [])
 
 
 if __name__ == "__main__":

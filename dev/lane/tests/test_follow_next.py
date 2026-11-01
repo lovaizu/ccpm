@@ -1,9 +1,7 @@
-"""follow_next: held from the first run of a script the lane takes on. Once the script has printed a
-move, one JSON line of a tool and its input, each call, and the subagent's end, is a drift until a
-call is that tool with each field printed equal; once the move is taken, each call, and the end, is
-a drift until the script runs again. A run of the script is never a drift, a run that fails changes
-nothing of what is due, and once the last run printed no move the subagent is free; held from the
-calls the subagent made before, on a tool call and as the subagent is about to end."""
+"""follow_next: once a script the lane takes has printed a move, one JSON line of a tool and its
+input, each call, and the subagent's end, is a drift until a call is that tool with each field
+printed equal; held from the calls the subagent made before, on a tool call and as the subagent is
+about to end. Every other call, and end, is not."""
 
 import json
 import unittest
@@ -18,22 +16,11 @@ NEXT = "python3 /home/u/.claude/plugins/notes/scripts/next.py go /tmp/run"
 # The move it prints: a Bash call of a command, and the line it prints it on.
 MOVE = {"tool": "Bash", "input": {"command": "git status"}}
 LINE = json.dumps(MOVE)
-# Another move it prints, and what it prints for no move.
-PUSH = json.dumps({"tool": "Bash", "input": {"command": "git push"}})
-NONE = "The work is done."
-# The move taken, as the record holds it.
-TAKEN = helpers.bash("git status")
 
 
 def ran(output=LINE, command=NEXT):
     """A Bash call of the command in the record, which gave back the output."""
     return ("Bash", {"command": command}, output)
-
-
-def failed(output=PUSH):
-    """A run of the script in the record that failed, exiting other than 0, giving back the
-    output."""
-    return ("Bash", {"command": NEXT}, helpers.Failed(output))
 
 
 class FollowNextTest(helpers.PluginTest):
@@ -52,9 +39,7 @@ class FollowNextTest(helpers.PluginTest):
         return follow_next.drifts(end, TAKES, helpers.NO_PLUGIN, helpers.ports.move)
 
 
-class TestMoveDue(FollowNextTest):
-    """A move printed by the last run, not taken since."""
-
+class TestDrift(FollowNextTest):
     def test_a_call_other_than_the_move_printed_drifts(self):
         for what, (tool, given) in {
             "another command": ("Bash", {"command": "git diff"}),
@@ -77,16 +62,25 @@ class TestMoveDue(FollowNextTest):
 
     def test_the_move_of_a_new_run_is_held_after_the_last_was_taken(self):
         # Given: the script run and its move taken, then run again, printing another move
+        again = ran(json.dumps({"tool": "Bash", "input": {"command": "git push"}}))
         # When: the subagent takes the first move again
         # Then: it is a drift, as the last move printed is due
-        self.assertTrue(self.drifts([ran(), TAKEN, ran(PUSH)]))
+        self.assertTrue(self.drifts([ran(), helpers.bash("git status"), again]))
 
     def test_the_same_move_printed_again_after_it_was_taken_is_due_again(self):
         # Given: the script run and its move taken, then run again, printing the same move
-        calls = [ran(), TAKEN, ran()]
+        calls = [ran(), helpers.bash("git status"), ran()]
         # When: the subagent makes another call
         # Then: it is a drift, as the move taken before was of the run before
         self.assertTrue(self.drifts(calls, given={"command": "ls"}))
+
+    def test_the_script_run_again_not_yet_back_leaves_the_move_due(self):
+        # Given: the script run, having printed the move, then run again, the record holding that
+        # run and not yet what it gave back, as Claude Code may write the call being checked
+        # before its PreToolUse hook runs
+        # When: that run is checked
+        # Then: it is a drift, as the move printed is due and the run is not it
+        self.assertTrue(self.drifts([ran(), ran(None)], given={"command": NEXT}))
 
     def test_a_move_printed_alone_over_lines_is_held(self):
         # Given: the script run, having printed the move alone, over several lines
@@ -101,6 +95,8 @@ class TestMoveDue(FollowNextTest):
         # Then: it is a drift
         self.assertTrue(self.drifts([ran(output)], "Read", {}))
 
+
+class TestLetThrough(FollowNextTest):
     def test_the_move_printed_taken_is_no_drift(self):
         for what, given in {
             "as printed": {"command": "git status"},
@@ -114,11 +110,10 @@ class TestMoveDue(FollowNextTest):
 
     def test_a_move_of_another_tool_taken_is_no_drift(self):
         # Given: the script run, having printed a move starting an agent
-        move = {"tool": "Agent", "input": {"subagent_type": "notes:maker"}}
-        # When: the subagent starts that agent, with fields not printed
+        move = {"tool": "Agent", "input": {"subagent_type": "notes:maker", "prompt": "Make x."}}
+        # When: the subagent starts that agent
         # Then: it is no drift
-        given = {**move["input"], "prompt": "Make x."}
-        self.assertFalse(self.drifts([ran(json.dumps(move))], "Agent", given))
+        self.assertFalse(self.drifts([ran(json.dumps(move))], "Agent", move["input"]))
 
     def test_the_move_printed_after_other_lines_is_read(self):
         # Given: the script run, having printed the move after a line of its own
@@ -126,109 +121,25 @@ class TestMoveDue(FollowNextTest):
         # Then: it is no drift
         self.assertFalse(self.drifts([ran(f"Next move:\n{LINE}\n")]))
 
+    def test_any_call_once_the_move_was_taken_is_no_drift(self):
+        # Given: the script run and its move taken
+        # When: the subagent makes any other call
+        # Then: it is no drift
+        self.assertFalse(self.drifts([ran(), helpers.bash("git status")], given={"command": "ls"}))
 
-class TestRunDue(FollowNextTest):
-    """The move printed by the last run taken, the script not run since."""
-
-    def test_any_call_once_the_move_was_taken_drifts(self):
-        for what, (tool, given) in {
-            "another command": ("Bash", {"command": "ls"}),
-            "the move again": ("Bash", {"command": "git status"}),
-            "another tool": ("Read", {"file_path": "a"}),
-        }.items():
-            with self.subTest(what=what):
-                # Given: the script run and its move taken
-                # When: the subagent makes any call but a run of the script
-                # Then: it is a drift, as the script is to be run again
-                self.assertTrue(self.drifts([ran(), TAKEN], tool, given))
-
-    def test_a_call_after_one_stopped_drifts_still(self):
-        # Given: the script run, its move taken, then another call, stopped
-        # When: the subagent makes another call
-        # Then: it is a drift still
-        self.assertTrue(self.drifts([ran(), TAKEN, helpers.bash("ls")], given={"command": "pwd"}))
-
-
-class TestRun(FollowNextTest):
-    """A run of the script, whatever is due."""
-
-    def test_a_run_of_the_script_is_no_drift(self):
-        for what, calls in {
-            "before the first run": [],
-            "with the move due": [ran()],
-            "once the move is taken": [ran(), TAKEN],
-            "once a run printed no move": [ran(NONE)],
-        }.items():
-            with self.subTest(what=what):
-                # Given: the record of what is due
-                # When: the subagent runs the script
-                # Then: it is no drift
-                self.assertFalse(self.drifts(calls, given={"command": NEXT}))
-
-    def test_a_run_not_yet_back_leaves_the_move_due(self):
-        # Given: the script run, having printed the move, then run again, the record holding that
-        # run and not yet what it gave back, as Claude Code may write the call being checked
-        # before its PreToolUse hook runs
-        # When: the subagent makes another call
-        # Then: it is a drift, as the move printed is due
-        self.assertTrue(self.drifts([ran(), ran(None)], given={"command": "ls"}))
-
-
-class TestFailedRun(FollowNextTest):
-    """A run of the script that failed, exiting other than 0, changes nothing of what is due of
-    the calls, and lets the subagent end, so its report of the failure reaches whoever started
-    it."""
-
-    def test_a_failed_run_leaves_what_was_due(self):
-        for what, (calls, tool, given, drifts) in {
-            "the move due, another call": ([ran()], "Bash", {"command": "ls"}, True),
-            "the move due, the move": ([ran()], "Bash", {"command": "git status"}, False),
-            "the run due": ([ran(), TAKEN], "Bash", {"command": "ls"}, True),
-            "before the first run": ([], "Bash", {"command": "ls"}, False),
-            "after a run printing no move": ([ran(NONE)], "Bash", {"command": "ls"}, False),
-        }.items():
-            with self.subTest(what=what):
-                # Given: what was due, then a run of the script that failed, printing a move
-                # When: the subagent makes a call
-                # Then: it drifts as it would with no failed run
-                self.assertEqual(self.drifts([*calls, failed()], tool, given), drifts)
-
-    def test_ending_after_a_failed_last_run_is_no_drift(self):
-        for what, calls in {
-            "the move due": [ran(), failed()],
-            "the run due": [ran(), TAKEN, failed()],
-            "nothing due": [ran(NONE), failed()],
-            "the first run failed": [failed()],
-            "a call after the failed run": [ran(), TAKEN, failed(), helpers.bash("ls")],
-        }.items():
-            with self.subTest(what=what):
-                # Given: what was due, then a run of the script that failed, the last run of it
-                # When: the subagent is about to end
-                # Then: it is no drift
-                self.assertFalse(self.ends(calls))
-
-    def test_ending_after_a_run_that_did_not_fail_since_a_failed_one_is_held(self):
-        # Given: a run of the script that failed, then one printing a move
-        # When: the subagent is about to end
-        # Then: it is a drift, as the move is due
-        self.assertTrue(self.ends([failed(), ran()]))
-
-
-class TestFree(FollowNextTest):
-    def test_with_no_move_printed_last_any_call_is_no_drift(self):
+    def test_with_no_move_printed_any_call_is_no_drift(self):
         for what, calls in {
             "the script not run": [helpers.bash("ls")],
-            "the script run with other words": [ran(command=NEXT.replace("go", "given"))],
-            "nothing printed back": [ran("")],
+            "the script run with other words": [ran(command=NEXT.replace("next", "given"))],
+            "nothing printed back yet": [ran("")],
             "no JSON printed": [ran("Exit code 1\nnext.py: no run")],
             "JSON of no object": [ran("[1]")],
             "a move of no tool": [ran(json.dumps({"input": {}}))],
             "a move whose tool is no text": [ran(json.dumps({"tool": 1, "input": {}}))],
             "a move of no input object": [ran(json.dumps({"tool": "Bash", "input": "ls"}))],
-            "the move taken, then a run printing none": [ran(), TAKEN, ran(NONE)],
         }.items():
             with self.subTest(what=what):
-                # Given: no move printed by the script's last run, or no run
+                # Given: no move printed by the script
                 # When: the subagent makes any call
                 # Then: it is no drift
                 self.assertFalse(self.drifts(calls, given={"command": "ls"}))
@@ -237,29 +148,27 @@ class TestFree(FollowNextTest):
 class TestEnd(FollowNextTest):
     """follow_next as the subagent is about to end."""
 
-    def test_ending_with_a_move_or_a_run_due_drifts(self):
+    def test_ending_before_the_move_printed_is_taken_drifts(self):
         for what, calls in {
             "right after the print": [ran()],
             "after another call": [ran(), helpers.bash("git diff")],
-            "after the move of the run before": [ran(), TAKEN, ran()],
-            "once the move is taken": [ran(), TAKEN],
-            "before the script's first run": [helpers.bash("ls")],
-            "with no call made": [],
+            "after the move of the run before": [ran(), helpers.bash("git status"), ran()],
         }.items():
             with self.subTest(what=what):
-                # Given: the script run, having printed a move not taken since, or one taken with
-                # the script not run since, or the script not yet run
+                # Given: the script run, having printed a move not taken since
                 # When: the subagent is about to end
-                # Then: it is a drift
+                # Then: it is a drift, as the move is its next
                 self.assertTrue(self.ends(calls))
 
-    def test_ending_with_nothing_due_is_no_drift(self):
+    def test_ending_with_no_move_due_is_no_drift(self):
         for what, calls in {
+            "the move taken": [ran(), helpers.bash("git status")],
+            "the script not run": [helpers.bash("ls")],
             "the script run, printing no move": [ran('{"returned": "r.json"}')],
-            "the move taken, the script run again, printing none": [ran(), TAKEN, ran(NONE)],
+            "the script run again, printing no move": [ran(), ran('{"asked": "r.json"}')],
         }.items():
             with self.subTest(what=what):
-                # Given: no move printed by the script left to take, and no run due
+                # Given: no move printed by the script left to take
                 # When: the subagent is about to end
                 # Then: it is no drift
                 self.assertFalse(self.ends(calls))
@@ -268,7 +177,7 @@ class TestEnd(FollowNextTest):
 class TestGuard(GuardTest):
     """follow_next laid on step 2 of changelog-writer, run as Claude Code runs the hook."""
 
-    FOLLOW = "Take each move `scripts/next.py go` prints, until it prints none."
+    FOLLOW = "Take the next move `scripts/next.py go` printed."
 
     LAID = ((2, "follow_next", TAKES),)
 
@@ -303,17 +212,9 @@ class TestGuard(GuardTest):
         # Then: it is kept going, and told the sentence headed by the plugin
         self.assertEqual(self.ended(), ("told", f"notes: {self.FOLLOW}"))
 
-    def test_ending_once_the_move_is_taken_is_kept_going_with_the_sentence(self):
+    def test_ending_once_the_move_is_taken_ends(self):
         # Given: changelog-writer's record of the script run and the move taken
-        self.record([ran(), TAKEN])
-        # When: it is about to end
-        # Then: it is kept going, and told the sentence headed by the plugin
-        self.assertEqual(self.ended(), ("told", f"notes: {self.FOLLOW}"))
-
-    def test_ending_once_the_script_printed_no_move_ends(self):
-        # Given: changelog-writer's record of the script run, the move taken, and the script run
-        # again, printing no move
-        self.record([ran(), TAKEN, ran(NONE)])
+        self.record([ran(), helpers.bash("git status")])
         # When: it is about to end
         # Then: it ends, nothing said
         self.assertEqual(self.ended(), ("", ""))

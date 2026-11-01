@@ -27,7 +27,8 @@ sentence again.
 
   - a hook lets through a call that drifts from its sentence, in a form its step names, or stops a
     call the sentence allows;
-  - `flow.py` prints a move other than the one the flow and the subagents' answers call for;
+  - lane tells the orchestrator a move other than the one the flow and the subagents' answers call
+    for;
   - the building AI must change or work around something lane writes into the plugin: a step, a
     setting such as an entry in the plugin's hooks file, or the copy of lane's code lane puts there.
 
@@ -45,8 +46,7 @@ plugin's subagents with lanes laid in it. The main conversation, an AI, is the o
 with, which the subagent asks for what lies outside its work. The hook, lane's code that Claude Code
 runs on the subagent's calls, notices a drift and tells the subagent the lane's sentence. The
 orchestrator, an AI, is a subagent that starts the plugin's other subagents in the order of a flow,
-the order the building AI writes in the proposal. `flow.py`, lane's script, prints the
-orchestrator's next move.
+the order the building AI writes in the proposal.
 
 ### From proposing lanes to a run that drifts
 
@@ -115,31 +115,30 @@ back to the writer.
 
 ```mermaid
 sequenceDiagram
-  participant O as orchestrator<br/>#lt;AI, with its hooks#gt;
-  participant F as flow.py<br/>#lt;script#gt;
+  participant O as orchestrator<br/>#lt;AI#gt;
+  participant H as hook<br/>#lt;lane's#gt;
   participant W as writer<br/>#lt;AI, a subagent of the flow#gt;
   participant R as reviewer<br/>#lt;AI, a subagent of the flow#gt;
-  O->>F: run
-  F->>O: the next move: start the writer
+  Note over O,H: the orchestrator starts
+  H-->>O: the next move: start the writer
   O->>W: start
   W->>O: its work
-  O->>O: about to end before running flow.py again, stopped and told the flow's sentence
-  O->>F: run
-  F->>O: the next move: start the reviewer
+  H-->>O: the next move: start the reviewer
+  O->>H: about to end
+  H-->>O: kept going, told the flow's sentence and the move
   O->>R: start
   R->>O: answers more
-  O->>F: run
-  F->>O: the next move: start the writer again
+  H-->>O: the reviewer answered more; the next move: start the writer
   Note over O,R: the writer and the reviewer again, as above,<br/>until the reviewer no longer answers more
-  O->>F: run
-  F->>O: no move
+  H-->>O: the flow is done
   Note over O: ends with the reviewed work
 ```
 
-- The flow's sentence is ``<plugin>: Take each move `flow.py` prints, until it prints none.`` The
-  orchestrator is told it when it does anything but the move printed, or anything but run
-  `flow.py` again once it has taken the move.
+- The flow's sentence is ``<plugin>: Take each move lane tells you, until it tells none.`` The
+  orchestrator is told it, with the move due on the next line, when it does anything but that move,
+  or is about to end while a move is due.
 - A subagent answers `more` when it writes `more` on a line of its own.
+- The flow may name a subagent more than once, as in write, review, polish, review again.
 
 ### A lane lane cannot check
 

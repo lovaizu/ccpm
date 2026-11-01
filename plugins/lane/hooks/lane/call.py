@@ -211,20 +211,6 @@ def starts(words: list[str], take: str) -> bool:
     return (path == name or path.endswith("/" + name)) and ran[1:][: len(after)] == after
 
 
-def ran_path(here: str | None, words: list[str], script: str) -> bool:
-    """Whether a statement, as its words, run in the folder, None where the words do not settle it,
-    runs the script by its whole path, python3 or sh before it left out, and what goes before a
-    program, as assignments and env."""
-    ran = program(shell.after_env(shell.without_redirects(words)))
-    return bool(ran) and shell.path(here, ran[0]) == script
-
-
-def runs_path(command: str, cwd: str, script: str) -> bool:
-    """Whether a statement of the shell command, run from the folder, runs the script by its whole
-    path, as `ran_path` holds it."""
-    return any(ran_path(here, words, script) for here, words, _ in shell.statements(command, cwd))
-
-
 def program(words: list[str]) -> list[str]:
     """A command's words from its program on, python3 or sh before it left out."""
     return words[1:] if words[:1] in INTERPRETERS else words

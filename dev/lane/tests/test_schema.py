@@ -409,14 +409,10 @@ class TestOwn(unittest.TestCase):
             ({"minLength": 1}, "a"),
             ({"minLength": 2}, "ab"),
             ({"minLength": 1}, 0),
-            ({"uniqueItems": True}, ["a", "b"]),
-            ({"uniqueItems": True}, [1, True]),
-            ({"uniqueItems": True}, "aa"),
-            ({"uniqueItems": False}, ["a", "a"]),
         ):
             with self.subTest(schema=given, value=value):
                 # Given: a schema of one of the keywords, and a value at its edge, beyond it or of
-                # a type it does not hold, or uniqueItems false
+                # a type it does not hold
                 # When: the value is held to it
                 # Then: it holds
                 self.assertIsNone(self.own(value, given))
@@ -427,25 +423,15 @@ class TestOwn(unittest.TestCase):
             ({"minimum": 1}, 0.5, "$: expected a number of at least 1, found 0.5"),
             ({"minLength": 1}, "", '$: expected a string of length 1 or more, found ""'),
             ({"minLength": 2}, "a", '$: expected a string of length 2 or more, found "a"'),
-            ({"uniqueItems": True}, ["a", "b", "a"], '$: expected each item once, found "a" twice'),
-            ({"uniqueItems": True}, [1, 2, 2, 1], "$: expected each item once, found 2 twice"),
         ):
             with self.subTest(schema=given, value=value):
                 # Given: a schema of one of the keywords
                 # When: a value beyond its edge is held to it
-                # Then: its place, what was expected and what was found are given, of uniqueItems
-                # the first item met again
+                # Then: its place, what was expected and what was found are given
                 self.assertEqual(self.own(value, given), told)
 
-    def test_the_point_highest_in_the_value_is_given_first(self):
-        # Given: an array of strings each once, of at least one character
-        given = {"type": "array", "uniqueItems": True, "items": {"type": "string", "minLength": 1}}
-        # When: an array holding an empty string twice is held to it
-        # Then: the array's point is given before its item's
-        self.assertEqual(self.own(["", ""], given), '$: expected each item once, found "" twice')
-
     def test_each_is_refused_in_a_plugins_form(self):
-        for keyword, value in (("minimum", 1), ("minLength", 1), ("uniqueItems", True)):
+        for keyword, value in (("minimum", 1), ("minLength", 1)):
             # Given: a form of the keyword
             # When: it is read as a plugin's form
             # Then: it is refused, as structured outputs do not accept it

@@ -2,10 +2,10 @@
 and held to its JSON Schema, PROPOSAL, which lane's docs/lanes.md shows, with its flow held to the
 one docs/flow.md shows, then checked for what no schema can say: the plugin and each subagent's file
 found, each name one a hook's command can carry, each subagent and step given once, each step in its
-file, what each lane takes fitting it, and the flow one that can be laid, its lane laid by the layer
-alone; and each adapter it names found beside it, in `<plugin>/adapters/` of the folder it is in, or
-laid before in the plugin's hooks/adapters/, and run on each of its cases before the proposal is
-printed or written. The flow's follow_next lane is put among the orchestrator's lanes, from the flow
+file, what each lane takes fitting it, and the flow one that can be laid; and each adapter it names
+found beside it, in `<plugin>/adapters/` of the folder it is in, or laid before in the plugin's
+hooks/adapters/, and run on each of its cases before the proposal is printed or written. The flow's
+follow_flow lane, which the layer alone lays, is put among the orchestrator's lanes, from the flow
 the proposal gives or, where it gives none, the one laid before."""
 
 from __future__ import annotations
@@ -16,14 +16,12 @@ import os
 import re
 from typing import Any
 
-import call
 import hook
 import lanes
 import lanes_json
 import placed
 import ports
 import schema
-import shell
 import step
 import template
 
@@ -33,8 +31,10 @@ LANES_MD = os.path.join(placed.LANE, "docs", "lanes.md")
 AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
 # The proposal's JSON Schema: the lanes laid, as hooks/lanes.json holds them, with the plugin's
 # folder, and at least one subagent, one step in each and one lane on each, as a proposal lays them,
-# or a flow, or both.
-SHAPE = lanes_json.lanes_shape(1)
+# or a flow, or both; each lane one the proposal may name, the flow's lane left to the layer.
+SHAPE = copy.deepcopy(lanes_json.lanes_shape(1))
+STEP = SHAPE["properties"]["subagents"]["items"]["properties"]["steps"]["items"]["properties"]
+STEP["lanes"]["items"]["properties"]["lane"]["enum"].remove(lanes_json.FLOW_LANE["lane"])
 PROPOSAL = {
     **SHAPE,
     "required": ["plugin"],
@@ -84,7 +84,6 @@ def proposal(path: str) -> dict[str, Any]:
         # the second's lanes alone, and the first's lost though the building AI approved them.
         if agent["name"] in [a["name"] for a in checked]:
             raise wrong(f"gives {agent['name']} twice, where each subagent comes once")
-        laid_by_hand(root, agent)
         checked.append(agent)
     # A flow laid before is kept where the proposal gives none, so a subagent of it the proposal
     # gives keeps its lane among those given.
@@ -120,9 +119,8 @@ def laid(root: str) -> dict[str, Any]:
 def flow_check(root: str, flow: dict[str, Any]) -> None:
     """Stops where the flow, held to its schema, cannot be laid in the plugin at root: where
     lanes_json.flow_wrong says why, where it names a subagent no file in the plugin's agents/ names,
-    by a name a hook's command can carry, where the orchestrator's file names its tools without
-    Agent, which it starts the others with, or where that file says `flow.py` stands for anything
-    but lane's script, which the flow's lane takes by that name."""
+    by a name a hook's command can carry, or where the orchestrator's file names its tools without
+    Agent, which it starts the others with."""
     why = lanes_json.flow_wrong(flow)
     if why:
         raise wrong(f"gives a flow {why}")
@@ -138,13 +136,6 @@ def flow_check(root: str, flow: dict[str, Any]) -> None:
         raise Stop(
             f"lay.py: {entry} names the tools of {orchestrator}, `{tools}`, without {AGENT}, with"
             f" which it starts the subagents of the flow; add {AGENT} to them, and run again."
-        )
-    lies = step.bindings(root, orchestrator).get(lanes_json.FLOW_PY, lanes_json.FLOW_RUN)
-    if lies != lanes_json.FLOW_RUN:
-        raise Stop(
-            f"lay.py: {entry} says `{lanes_json.FLOW_PY}` below is"
-            f" `{lies}`, where the flow's lane takes lane's, `{lanes_json.FLOW_RUN}`; name the"
-            " script of its own otherwise, and run again."
         )
 
 
@@ -172,29 +163,10 @@ def parts_shared(root: str, checked: list[dict[str, Any]]) -> None:
             )
 
 
-def laid_by_hand(root: str, agent: dict[str, Any]) -> None:
-    """Stops where the subagent of the proposal, checked, lays follow_next taking lane's flow.py,
-    by the name the flow's lane takes it by or as the subagent's entry says it stands for, as the
-    layer lays that lane from the flow alone."""
-    bindings = step.bindings(root, agent["name"])
-    for s in agent["steps"]:
-        for lane in s["lanes"]:
-            if lane["lane"] != lanes_json.FLOW_LANE["lane"]:
-                continue
-            said = [shell.words(t) for t in step.bound(lane["takes"], bindings)]
-            if any(
-                w[:1] == [lanes_json.FLOW_PY] or call.starts(w, lanes_json.FLOW_RUN) for w in said
-            ):
-                raise wrong(
-                    f"lays follow_next taking {lanes_json.FLOW_PY} on step {s['step']} of"
-                    f" {agent['name']}, which lay.py lays from the flow"
-                )
-
-
 def with_flow(
     root: str, flow: dict[str, Any], checked: list[dict[str, Any]], given: bool
 ) -> list[dict[str, Any]]:
-    """The subagents checked with the flow's follow_next lane put among the orchestrator's lanes,
+    """The subagents checked with the flow's follow_flow lane put among the orchestrator's lanes,
     on the flow's step, after any lane the step has: the orchestrator's as the proposal gives it,
     in its place; or, where the proposal does not give it, its lanes laid before, that lane of a
     flow laid before left out, first, where the proposal gives the flow, as the subagents given

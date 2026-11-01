@@ -19,7 +19,6 @@ import lanes_json
 import placed
 import step
 import steps
-import template
 from proposal import Stop, laid, plugin_name, proposal
 
 
@@ -42,14 +41,16 @@ def printed(path: str) -> str:
 
 
 def flow_shown(flow: dict[str, Any]) -> str:
-    """The flow as the print shows it for the building AI's OK: its orchestrator and step, the
-    order its subagents start in, each answer that sends the work back, and the orchestrator's
-    end."""
+    """The flow as the print shows it for the building AI's OK: its orchestrator and step, each
+    subagent in the order they start, by its position, with the answer that sends the work back
+    from it, and the orchestrator's end."""
     name = flow["orchestrator"]
+    backs = {b["from"]: b for b in flow.get("back", [])}
     out = [f"Flow of {name}, laid on its step {flow['step']}:\n"]
-    out.append(f"  {', then '.join(flow['order'])}\n")
-    for back in flow.get("back", []):
-        out.append(f"  back to {back['to']} while {back['from']} answers {back['while']}\n")
+    for at, agent in enumerate(flow["order"], 1):
+        back = backs.get(at)
+        sent = f", back to {back['to']} while it answers {back['while']}" if back else ""
+        out.append(f"  {at}. {agent}{sent}\n")
     out.append(f"  then {name} ends\n")
     return "".join(out)
 
@@ -73,7 +74,7 @@ def written(path: str) -> str:
     laid_now, values = dict(before), values_before(root, plugin)
     said = []
     for agent in given["subagents"]:
-        said += steps_written(root, agent, before, plugin, flow)
+        said += steps_written(root, agent, before, plugin)
         laid_now[f"{plugin}:{agent['name']}"] = [
             {"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]
         ]
@@ -129,15 +130,10 @@ def written(path: str) -> str:
 
 
 def steps_written(
-    root: str,
-    agent: dict[str, Any],
-    before: dict[str, list[dict[str, Any]]],
-    plugin: str,
-    flow: dict[str, Any] | None,
+    root: str, agent: dict[str, Any], before: dict[str, list[dict[str, Any]]], plugin: str
 ) -> list[str]:
-    """Writes each step the layer writes in the subagent, as the proposal gives it, into its file,
-    and, where it is the flow's orchestrator and its entry does not yet say where flow.py lies, that
-    line into its entry, before the first paragraph of its body; gives what was written, said."""
+    """Writes each step the layer writes in the subagent, as the proposal gives it, into its file;
+    gives what was written, said."""
     lines = agent["lines"]
     said = []
     for s in steps.steps_laid(before, plugin, agent):
@@ -145,35 +141,9 @@ def steps_written(
         lines[start:end] = steps.read_as_laid(lines, s)
         where = os.path.relpath(agent["file"], root)
         said.append(f"Wrote step {s['step']} of {agent['name']} into {where}.\n")
-    entry = str(step.agent_file(root, agent["name"]))
-    on = flow["step"] if flow is not None and flow["orchestrator"] == agent["name"] else None
-    if on is not None and lanes_json.FLOW_PY not in step.bindings(root, agent["name"]):
-        if step.part(root, agent["name"]) is None:
-            mark = f"Wrote step {on} "
-            said = [
-                t.replace(" into ", ", and where `flow.py` lies, into ")
-                if t.startswith(mark)
-                else t
-                for t in said
-            ]
-            lines[:] = lies_put(lines)
-        else:
-            with open(entry, encoding="utf-8") as f:
-                text = f.read().splitlines(keepends=True)
-            with open(entry, "w", encoding="utf-8") as f:
-                f.write("".join(lies_put(text)))
-            said.append(f"Wrote where `flow.py` lies into {os.path.relpath(entry, root)}.\n")
     with open(agent["file"], "w", encoding="utf-8") as f:
         f.write("".join(lines))
     return said
-
-
-def lies_put(lines: list[str]) -> list[str]:
-    """The lines of a subagent's entry with the line saying where flow.py lies put in before the
-    first paragraph of its body, a paragraph of its own."""
-    body = template.body([line.rstrip("\n") for line in lines])
-    first = next((n for n in range(body, len(lines)) if lines[n].strip()), len(lines))
-    return [*lines[:first], lanes_json.FLOW_LIES + "\n", "\n", *lines[first:]]
 
 
 def hooks_put(
@@ -185,15 +155,16 @@ def hooks_put(
     was: list[str],
 ) -> None:
     """Puts into the hooks the entries of each subagent of the plugin at root lanes are laid in, by
-    `<plugin>:<name>`, and of each `from` of the flow, keeping its answer; and takes out those of
-    each subagent that was a `from` before, as the agents/ still has it, that no longer needs
-    them."""
+    `<plugin>:<name>`, with the orchestrator's start where the flow is laid, and of each `from` of
+    the flow, keeping the report it hands back; and takes out those of each subagent that was a
+    `from` before, as the agents/ still has it, that no longer needs them."""
     now = lanes_json.froms(flow)
+    leads = (flow or {}).get("orchestrator")
     names = [a.split(":")[1] for a in laid_in]
     for name in names + [n for n in dict.fromkeys(now + was) if n not in names]:
         if step.agent_file(root, name) is not None:
             on = laid_in.get(f"{plugin}:{name}", [])
-            entries.hooks_with(hooks, plugin, hooked(root, name, on, now))
+            entries.hooks_with(hooks, plugin, hooked(root, name, on, now, name == leads))
 
 
 def brought_up(root: str) -> str:
@@ -241,13 +212,20 @@ def brought_up(root: str) -> str:
 
 
 def hooked(
-    root: str, name: str, laid_in: list[dict[str, Any]], answering: list[str]
+    root: str, name: str, laid_in: list[dict[str, Any]], answering: list[str], leads: bool
 ) -> dict[str, Any]:
     """The subagent of the name in the plugin at root, as its hooks are written from it: its name,
     the lanes laid in it as steps of a proposal, whether its entry has it read its part first, as
-    step.part finds it, and whether it is among those whose answer is kept."""
+    step.part finds it, whether it is among those whose report handed back is kept, and whether it
+    is the orchestrator of the flow."""
     part = step.part(root, name) is not None
-    return {"name": name, "steps": laid_in, "part": part, "from": name in answering}
+    return {
+        "name": name,
+        "steps": laid_in,
+        "part": part,
+        "from": name in answering,
+        "orchestrator": leads,
+    }
 
 
 def values_before(root: str, plugin: str) -> dict[str, str | None]:

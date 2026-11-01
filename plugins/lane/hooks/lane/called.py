@@ -9,7 +9,10 @@ The calls are kept one JSON line each, in the order they came back, in
 subagent runs, as dev/architecture.md's Where a plugin writes its files has it. What a call gave
 back is kept as the text the AI is shown, in the form the record's tool result has for the same
 call, as the version of Claude Code record.py names gives both; where the record and a kept call
-differ, the record holds, so a kept call is read only until the record holds its result."""
+differ, the record holds, so a kept call is read only until the record holds its result. Of an
+Agent call it keeps too the status Claude Code gives back and the answer of the subagent it started,
+which the flow's moves are read from, as moves.py reads them; and the orchestrator of a flow is told
+its move due as it starts and as each call of a subagent of the flow comes back."""
 
 from __future__ import annotations
 
@@ -21,9 +24,9 @@ import tempfile
 import time
 from typing import Any
 
-import call
 import hook
 import lanes_json
+import moves
 import record
 
 # A session's or a subagent's ID as Claude Code gives it, letters, digits and hyphens, so a folder
@@ -31,34 +34,20 @@ import record
 ID = re.compile(r"[A-Za-z0-9-]+")
 # The tool a subagent may hand its report back with, the field of its input holding the report.
 HANDBACK, MESSAGE = "SubagentHandback", "message"
-# A line flow.py prints where it cannot tell the run: headed by the plugin's name, or lane's where
-# it does not know it, and ending by telling the orchestrator to end with it.
-FLOW_FAILED = re.compile(
-    rf"^\S+: (?P<said>lane cannot check the flow of .*{re.escape(hook.ENDED)})$", re.MULTILINE
-)
 
 
-def place(event: dict[str, Any], kind: str = ".jsonl") -> str | None:
+def place(event: dict[str, Any]) -> str | None:
     """Where the calls of the event's subagent are kept: `<agent>.jsonl` in the folder of its
     session, the one made on the day a call of the session was first kept, so a run past midnight
-    keeps one folder, or today's where none is made; its answer, given `.reply.json`, beside them;
-    None where the event names no session or no subagent by an ID as Claude Code gives it, as in
-    the main conversation."""
+    keeps one folder, or today's where none is made; None where the event names no session or no
+    subagent by an ID as Claude Code gives it, as in the main conversation."""
     session, agent = event.get("session_id"), event.get("agent_id")
     if not all(isinstance(i, str) and ID.fullmatch(i) for i in (session, agent)):
         return None
     top = os.path.join(tempfile.gettempdir(), "lane")
     made = sorted(glob.glob(os.path.join(glob.escape(top), f"[0-9]*-{session}")))
     folder = made[0] if made else os.path.join(top, f"{time.strftime('%Y%m%d')}-{session}")
-    return os.path.join(folder, f"{agent}{kind}")
-
-
-def begun(file: str) -> None:
-    """Makes the file the calls of a subagent are kept in, as `place` names it, where it is not
-    there, so flow.py tells a run whose calls are none yet from one whose calls are not found."""
-    os.makedirs(os.path.dirname(file), exist_ok=True)
-    with open(file, "a", encoding="utf-8"):
-        pass
+    return os.path.join(folder, f"{agent}.jsonl")
 
 
 def given_back(event: dict[str, Any]) -> str:
@@ -90,19 +79,40 @@ def failed(event: dict[str, Any]) -> bool:
     return "error" in event
 
 
-def started(event: dict[str, Any]) -> dict[str, str]:
-    """The ID of the subagent the event's call started, as `{"agent": <its ID>}`, where it is an
-    Agent call Claude Code gave it back of; none otherwise."""
+def started(event: dict[str, Any]) -> dict[str, Any]:
+    """Of an Agent call, what it gave back of the subagent it started: the status Claude Code gives,
+    None for none, and its answer: the last report the subagent handed back with SubagentHandback,
+    kept among its calls by its ID in the event's session, where it made one, as the call then gives
+    back a note in its place, and else the subagent's final text, each text block on a line; none of
+    any other tool's call."""
+    if event["tool_name"] != moves.AGENT:
+        return {}
     back = event.get("tool_response")
-    agent = back.get("agentId") if isinstance(back, dict) else None
-    return {"agent": agent} if event["tool_name"] == "Agent" and isinstance(agent, str) else {}
+    back = back if isinstance(back, dict) else {}
+    status = back.get("status")
+    blocks = back.get("content")
+    texts = (
+        [b.get("text") for b in blocks if isinstance(b, dict)] if isinstance(blocks, list) else []
+    )
+    answer = "\n".join(t for t in texts if isinstance(t, str))
+    by = {"session_id": event.get("session_id"), "agent_id": back.get("agentId")}
+    handed = [
+        k["input"][MESSAGE]
+        for k in calls_kept(by)
+        if k.get("tool") == HANDBACK
+        and isinstance(k.get("input"), dict)
+        and isinstance(k["input"].get(MESSAGE), str)
+    ]
+    return {
+        "status": status if isinstance(status, str) else None,
+        "answer": (handed or [answer])[-1],
+    }
 
 
 class Kept:
     """The check lane's hooks run as a call of the subagent of the plugin at root, as
-    `<plugin>:<name>`, comes back: it keeps the call, and the answer of a `from` subagent of the
-    flow, and tells the user the line a run of lane's flow.py printed where it could not tell the
-    run, as an error; it says nothing else."""
+    `<plugin>:<name>`, comes back: it keeps the call, and tells the orchestrator of the flow its
+    move due as a call of a subagent of the flow comes back; it says nothing else."""
 
     def __init__(self, root: str, agent: str) -> None:
         self.root, self.agent = root, agent
@@ -110,9 +120,9 @@ class Kept:
     def check(self, event: dict[str, Any]) -> list[hook.Said]:
         """Keeps the event's call where `place` says, as one JSON line after those kept before:
         its ID, its tool, its input, the folder it ran in, what it gave back, whether it failed,
-        and the subagent it started, as `started` gives it; where it is the subagent's call of
-        SubagentHandback and the subagent is a `from` of the flow, its message as the answer kept,
-        to be read as it ends; nothing where `place` names no file."""
+        and, of an Agent call, what `started` gives; then, where the subagent is the orchestrator
+        of the flow and the call starts a subagent the flow names, the move due, as moves.told
+        gives it; nothing where `place` names no file."""
         file = place(event)
         if file is None:
             return []
@@ -128,72 +138,48 @@ class Kept:
         os.makedirs(os.path.dirname(file), exist_ok=True)
         with open(file, "a", encoding="utf-8") as f:
             f.write(json.dumps(kept) + "\n")
-        if event["tool_name"] == HANDBACK and answering(self.root, self.agent):
-            message = event["tool_input"].get(MESSAGE)
-            kept_as(event, message if isinstance(message, str) else "", True)
-        return self.told(event)
-
-    def told(self, event: dict[str, Any]) -> list[hook.Said]:
-        """The line the event's call printed where it is a Bash run of lane's flow.py in the plugin
-        that could not tell the run, without its head, as the hook heads it with the plugin's name,
-        an error told the user; none for any other call."""
-        command = event["tool_input"].get("command") if event["tool_name"] == "Bash" else None
-        script = lanes_json.flow_script(self.root)
-        if not isinstance(command, str) or not call.runs_path(command, event["cwd"], script):
+        flow = flow_run(self.root, self.agent, event)
+        if flow is None:
             return []
-        return [hook.Said(m["said"], True) for m in FLOW_FAILED.finditer(given_back(event))]
+        names = [f"{flow.plugin}:{n}" for n in flow.flow["order"]]
+        of_flow = kept["tool"] == moves.AGENT and event["tool_input"].get(moves.TYPE) in names
+        return [hook.Said(moves.told(flow))] if of_flow else []
 
 
-def answering(root: str, agent: str) -> bool:
-    """Whether the subagent, as `<plugin>:<name>`, is a `from` of the flow the plugin at root lays;
-    not where its hooks/lanes.json cannot be read, which the guard tells on the subagent's next
-    call."""
+class Started:
+    """The check lane's hooks run as the subagent of the plugin at root, as `<plugin>:<name>`,
+    starts: where it is the orchestrator of the flow, it tells it the move due, as moves.told gives
+    it, from the calls kept of it, none where it is new, more where it is started again."""
+
+    def __init__(self, root: str, agent: str) -> None:
+        self.root, self.agent = root, agent
+
+    def check(self, event: dict[str, Any]) -> list[hook.Said]:
+        """The move due, told the orchestrator of the flow; nothing for any other subagent."""
+        flow = flow_run(self.root, self.agent, event)
+        return [] if flow is None else [hook.Said(moves.told(flow))]
+
+
+def calls_kept(event: dict[str, Any]) -> list[dict[str, Any]]:
+    """The calls kept of the event's subagent, in the order they came back; none where none came
+    back yet, or `place` names no file."""
+    file = place(event)
+    return (record.read(file) if file is not None else None) or []
+
+
+def flow_run(root: str, agent: str, event: dict[str, Any]) -> moves.Run | None:
+    """The run of the flow the plugin at root lays, where the subagent, as `<plugin>:<name>`, is its
+    orchestrator, its calls kept read where `place` names them for the event; None where it is not,
+    the plugin lays no flow, or its hooks/lanes.json cannot be read, which the guard tells on the
+    subagent's next call."""
+    plugin, name = agent.split(":")
     try:
         flow = lanes_json.laid(root).get("flow")
     except ValueError:
-        return False
-    return agent.split(":")[1] in lanes_json.froms(flow)
-
-
-def kept_as(event: dict[str, Any], answer: str, handed: bool) -> None:
-    """Keeps the answer of the event's subagent, in place of the one kept before, with whether it
-    was handed back by SubagentHandback and not yet read as the subagent ended; nothing where
-    `place` names no file."""
-    file = place(event, ".reply.json")
-    if file is not None:
-        os.makedirs(os.path.dirname(file), exist_ok=True)
-        with open(file, "w", encoding="utf-8") as f:
-            f.write(json.dumps({"answer": answer, "handed": handed}) + "\n")
-
-
-def ended(event: dict[str, Any]) -> None:
-    """Keeps the answer of the SubagentStop event's subagent as it ends: the message it handed
-    back since it last ended, where it handed one, and else its last reply, "" for none."""
-    held = read_answer(place(event, ".reply.json"))
-    if held is not None and held[1]:
-        kept_as(event, held[0], False)
-    else:
-        reply = event.get("last_assistant_message")
-        kept_as(event, reply if isinstance(reply, str) else "", False)
-
-
-def answer(session: str, agent: str) -> str | None:
-    """The answer kept of the subagent of the ID in the session of the ID; None where none is kept,
-    or the IDs are none as Claude Code gives them."""
-    held = read_answer(place({"session_id": session, "agent_id": agent}, ".reply.json"))
-    return None if held is None else held[0]
-
-
-def read_answer(file: str | None) -> tuple[str, bool] | None:
-    """The answer kept in the file, with whether it was handed back and not yet read as the subagent
-    ended; None where there is no file, or it holds no answer in the form `kept_as` writes."""
-    try:
-        with open(str(file), encoding="utf-8") as f:
-            held = json.load(f)
-    except (OSError, ValueError):
         return None
-    said = held.get("answer") if isinstance(held, dict) else None
-    return None if not isinstance(said, str) else (said, bool(held.get("handed")))
+    if flow is None or flow["orchestrator"] != name:
+        return None
+    return moves.Run(flow, plugin, calls_kept(event))
 
 
 def entries(event: dict[str, Any]) -> list[dict[str, Any]] | None:

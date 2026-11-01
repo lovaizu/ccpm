@@ -1,6 +1,7 @@
 """What each entry of a plugin's hooks runs: every check of its event on the event Claude Code hands
 it, in one subagent alone, answered in Claude Code's JSON output. A drift is told the subagent,
-its tool's use denied or it kept going; an error, where what a lane is given is not as its IN says,
+its tool's use denied or it kept going, and what is said as a call comes back or the subagent
+starts is added to what it reads; an error, where what a lane is given is not as its IN says,
 is told the subagent and the user alike, the use denied or the subagent kept going once, as a
 drift is the subagent's to put right and an error the plugin's, which a pass would hide."""
 
@@ -30,16 +31,13 @@ CLAUDE_CODE = (
 # the main conversation for what lies outside its work and goes on with the rest, as
 # dev/architecture.md's Asking for what lies outside the work says.
 ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your work meanwhile."
-# What the orchestrator of a flow is told where flow.py cannot tell the run, given who must fix it:
-# it asks for the fix and ends with the line, as the run that failed frees its end and the rest of
-# its work waits on the flow.
-ENDED = "End your work with this line."
-ASK_AND_END = "Ask the main conversation for the fix: {fix}. " + ENDED
 # The fields each event of these hooks holds beside hook_event_name and cwd, and the types of each:
 # at SubagentStop the agent's last reply, which Claude Code gives as null after the agent hands its
-# reply back with SubagentHandback; as a call comes back, its ID, and of a failed one its error.
+# reply back with SubagentHandback; as a call comes back, its ID, and of a failed one its error; as
+# the subagent starts, none.
 CALLED = {"tool_name": {"type": "string"}, "tool_input": {"type": "object"}}
 FIELDS = {
+    "SubagentStart": {},
     "PreToolUse": CALLED,
     "SubagentStop": {"last_assistant_message": {"type": ["string", "null"]}},
     "PostToolUse": {**CALLED, "tool_use_id": {"type": "string"}},
@@ -59,12 +57,11 @@ def event_in(name: str) -> dict[str, Any]:
 
 
 class Said(NamedTuple):
-    """What a check says: a drift, told the subagent; or an error, told the subagent and the user
-    alike; or, of a tool call, the input it goes on with in place of the AI's, with no text."""
+    """What a check says: a drift, or a line for the subagent to read, told the subagent; or an
+    error, told the subagent and the user alike."""
 
     text: str
     error: bool = False
-    updated: dict[str, Any] | None = None
 
 
 def event_read(text: str, held: str) -> tuple[dict[str, Any] | None, str]:
@@ -83,27 +80,24 @@ def event_read(text: str, held: str) -> tuple[dict[str, Any] | None, str]:
     return event, ""
 
 
-def answer(
-    event: str, told: str, user: str, updated: dict[str, Any] | None = None
-) -> dict[str, Any]:
+def answer(event: str, told: str, user: str) -> dict[str, Any]:
     """What a hook of the event answers Claude Code, as its JSON output on exit 0 has it: what the
     subagent is told, where there is anything, as the reason a tool's use is denied at PreToolUse,
-    and at SubagentStop as the reason the subagent is kept going, which Claude Code gives it as its
-    next instruction, as a call that has come back cannot be stopped; and what the user is told,
+    at SubagentStop as the reason the subagent is kept going, which Claude Code gives it as its
+    next instruction, and as a call comes back or the subagent starts as context Claude Code adds
+    for it to read, as a call that has come back cannot be stopped; and what the user is told,
     where there is anything, as the systemMessage Claude Code shows them. Nothing told answers
-    nothing, which lets it go on; a tool call told nothing with an input given in place of the AI's
-    goes on with that input, allowed, as Claude Code takes updatedInput only so."""
+    nothing, which lets it go on."""
     found: dict[str, Any] = {"systemMessage": user} if user else {}
-    ending = event == "SubagentStop"  # pragma: no mutate
-    on_call = event == "PreToolUse"
-    if told and on_call:
+    if not told:
+        return found
+    if event == "PreToolUse":
         denied = {"hookEventName": event, "permissionDecision": "deny"}
         found["hookSpecificOutput"] = {**denied, "permissionDecisionReason": told}
-    elif told and ending:
+    elif event == "SubagentStop":  # pragma: no mutate
         found.update(decision="block", reason=told)
-    elif updated is not None and on_call:
-        allowed = {"hookEventName": event, "permissionDecision": "allow"}
-        found["hookSpecificOutput"] = {**allowed, "updatedInput": updated}
+    else:
+        found["hookSpecificOutput"] = {"hookEventName": event, "additionalContext": told}
     return found
 
 
@@ -122,8 +116,7 @@ def said_on(event: dict[str, Any] | None, held: str, said: list[Said]) -> dict[s
     ending = held == "SubagentStop"  # pragma: no mutate
     again = ending and bool((event or {}).get("stop_hook_active"))
     told = "\n".join(s.text for s in said if not (again and s.error))
-    updated = next((s.updated for s in said if s.updated is not None), None)
-    return answer(held, told, "\n".join(s.text for s in said if s.error), updated)
+    return answer(held, told, "\n".join(s.text for s in said if s.error))
 
 
 def failed(held: str, text: str, stream: IO[str], out: IO[str]) -> None:
@@ -157,11 +150,7 @@ def run(
     if event.get("agent_type") != agent:
         return
     os.chdir(event["cwd"])
-    said = [
-        s._replace(text=f"{plugin}: {s.text}") if s.text else s
-        for c in checks
-        for s in c.check(event)
-    ]
+    said = [Said(f"{plugin}: {s.text}", s.error) for c in checks for s in c.check(event)]
     answered(out, said_on(event, held, said))
 
 

@@ -27,11 +27,12 @@ alone is not sure to hold, so the hooks stay few and small.
 The order your subagents go in is one more thing to drift from. Where one subagent, the
 orchestrator, starts the others, your AI writes their order in the proposal as a flow: which
 subagent comes after which, and which answer sends the work back. `lay.py` then lays a lane on a
-step of the orchestrator, with the sentence "Take each move `flow.py` prints, until it prints
-none." `flow.py`, a script of lane's, prints the next move, such as starting the reviewer, from
-the flow and from what the subagents have answered. When the orchestrator does something else, or
-is about to end, before it takes that move or runs `flow.py` again, its hook stops it and tells it
-that sentence. So your plugin keeps no script of its own for the order.
+step of the orchestrator, with the sentence "Take each move lane tells you, until it tells none."
+lane tells the orchestrator its next move, such as starting the reviewer, as it starts and as each
+subagent it started comes back, from the flow and from what the subagents have answered. When the
+orchestrator does something else, or is about to end, before it takes that move, its hook stops it
+and tells it that sentence and the move. So your plugin keeps no script of its own for the
+order.
 
 **Non-goals**
 
@@ -108,7 +109,7 @@ repository:
 {"plugin": "notes",
  "flow": {"orchestrator": "notes-lead", "step": 1,
   "order": ["changelog-writer", "changelog-reviewer"],
-  "back": [{"from": "changelog-reviewer", "to": "changelog-writer", "while": "more"}]},
+  "back": [{"from": 2, "to": 1, "while": "more"}]},
  "subagents": [{"name": "notes-lead", "steps": [{"step": 1, "lanes": [
   {"lane": "hands_off", "takes": ["git commit", "git push"]}]}]},
   {"name": "changelog-writer", "steps": [{"step": 3, "lanes": [
@@ -116,20 +117,21 @@ repository:
   {"lane": "hands_off", "takes": ["git commit", "git push"]}]}]}]}
 ```
 
-Your AI has `lay.py print` show the flow and the lanes, each under the action it watches with its
-hook, and each step as it would read:
+A `back` names its subagents by their positions in the order, from 1, so a subagent the order names
+twice is told apart. Your AI has `lay.py print` show the flow and the lanes, each under the action
+it watches with its hook, and each step as it would read:
 
 ```console
 $ python3 <lane's folder>/scripts/lay.py print .lane/20261101-notes/notes.json
 Flow of notes-lead, laid on its step 1:
-  changelog-writer, then changelog-reviewer
-  back to changelog-writer while changelog-reviewer answers more
+  1. changelog-writer
+  2. changelog-reviewer, back to 1 while it answers more
   then notes-lead ends
 Lanes on step 1 of notes-lead, each hook acting in notes-lead alone:
-  run:    Do not run `git commit` or `git push`.                  hook hands_off
-  follow: Take each move `flow.py` prints, until it prints none.  hook follow_next
+  run:    Do not run `git commit` or `git push`.               hook hands_off
+  follow: Take each move lane tells you, until it tells none.  hook follow_flow
 
-1. Start the subagents of the work, each in the foreground. Do not run `git commit` or `git push`. Take each move `flow.py` prints, until it prints none.
+1. Start the subagents of the work, each in the foreground. Do not run `git commit` or `git push`. Take each move lane tells you, until it tells none.
 
 Lanes on step 3 of changelog-writer, each hook acting in changelog-writer alone:
   write: Write only `CHANGELOG.md`.              hook write_only
@@ -142,7 +144,7 @@ Your AI approves them, and has `lay.py write` lay them from the same file:
 
 ```console
 $ python3 <lane's folder>/scripts/lay.py write .lane/20261101-notes/notes.json
-Wrote step 1 of notes-lead, and where `flow.py` lies, into agents/notes-lead.md.
+Wrote step 1 of notes-lead into agents/notes-lead.md.
 Wrote step 3 of changelog-writer into agents/changelog-writer.md.
 Wrote the hooks of notes-lead, changelog-writer and changelog-reviewer into hooks/hooks.json.
 Wrote the flow and the lanes laid into hooks/lanes.json.
@@ -153,19 +155,31 @@ Removed its folder <the repository>/.lane/20261101-notes.
 ```
 
 Then you run `/notes:changelog`, and your request also asks it to commit the changelog before it
-returns. `notes-lead` runs `flow.py`, which prints its first move: start `changelog-writer`.
-`notes-lead` starts it with your request. The writer ends with the entries written. `notes-lead`,
-given the entries, is about to end with them before the reviewer has run. Its hook stops the end,
-and `notes-lead` reads:
+returns. As `notes-lead` starts, lane tells it its first move:
 
 ```
-notes: Take each move `flow.py` prints, until it prints none.
+notes: The next move of the flow is to start `notes:changelog-writer` in the foreground.
 ```
 
-`notes-lead` runs `flow.py`, which prints the move to start `changelog-reviewer`. The reviewer
-answers `more` for one entry, which does not say what its commit does. `flow.py` then prints the
-move to start the writer again, and after it the reviewer. Once the reviewer no longer answers
-`more`, `flow.py` prints no move. `notes-lead` then runs `git add CHANGELOG.md && git commit -m
+`notes-lead` starts the writer with your request. The writer ends with the entries written, and
+lane tells `notes-lead` its next move, to start `notes:changelog-reviewer`. `notes-lead`, given the
+entries, is about to end with them before the reviewer has run. Its hook stops the end, and
+`notes-lead` reads:
+
+```
+notes: Take each move lane tells you, until it tells none.
+The next move of the flow is to start `notes:changelog-reviewer` in the foreground.
+```
+
+`notes-lead` starts the reviewer. The reviewer answers `more` for one entry, which does not say what
+its commit does. lane then tells `notes-lead`:
+
+```
+notes: changelog-reviewer answered `more`. The next move of the flow is to start `notes:changelog-writer` in the foreground.
+```
+
+The writer and the reviewer go again. Once the reviewer no longer answers `more`, lane tells
+`notes-lead` that the flow is done. `notes-lead` then runs `git add CHANGELOG.md && git commit -m
 "changelog: export"`, as your request asked. Claude Code does not run it, and `notes-lead` reads:
 
 ```
@@ -191,16 +205,16 @@ proposal and writes the approved flow and lanes into your plugin. The guard, lan
 plugin's `hooks/lane/`, runs on every call of a subagent with lanes and as it ends: Claude Code
 hands it the call, and the guard reads the lanes your AI approved from `hooks/lanes.json`. Both make
 each lane's sentence from the same lanes, so what the subagent is told on a drift is the sentence
-its step says. `flow.py`, part of the guard's code, reads the flow from the same file. The
-orchestrator is a subagent with lanes too, so its calls and its end reach the guard as the other
-subagents' do.
+its step says. The guard reads the flow from the same file. The orchestrator is a subagent with
+lanes too, so its start, its calls and its end reach the guard as the other subagents' do, and the
+guard tells it each move as it starts and as each subagent it started comes back.
 
 ## Documentation
 
 - [The lanes](docs/lanes.md) lists each lane lane can lay, the sentence it writes into a step and
   when its hook tells it, and gives the proposal your AI writes them in.
-- [The flow](docs/flow.md) gives the form your AI declares a flow in, and how `flow.py` reads what
-  each subagent answered.
+- [The flow](docs/flow.md) gives the form your AI declares a flow in, what your orchestrator is
+  told, and how lane reads what each subagent answered.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development

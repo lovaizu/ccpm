@@ -1,6 +1,6 @@
 """The entries the layer writes in a plugin's hooks/hooks.json, one for each subagent and each event
-its lanes are held on, and each event a call is kept on, every other entry left as it was, and that
-file read.
+its lanes are held on, each event a call is kept on, and, for the orchestrator of a flow, its start,
+every other entry left as it was, and that file read.
 
 A command first checks that lane's code can run, then runs its event's script in lane's code with
 the subagent as `<plugin>:<name>`, as Claude Code gives it in the event's agent_type; the guard
@@ -20,23 +20,24 @@ import step
 from proposal import Stop
 
 # The events a call is kept on as it comes back, for every subagent lanes are laid in, as called.py
-# says.
+# says; the event the orchestrator of a flow is told its first move on; and the events whose hook
+# lets every event through where lane's code cannot run, as each only keeps or tells.
 KEPT = ("PostToolUse", "PostToolUseFailure")
-# The events lanes are held on, and those a call is kept on, each with its own script in lane's
-# code, named after it.
-EVENTS = ("PreToolUse", "SubagentStop", *KEPT)
-# The events the answer of a `from` subagent of a flow is kept on: as it ends, and as its call of
-# the tool it may hand its report back with comes back, which an entry of that event matches alone
-# where no lane of the subagent is held on every call.
-ANSWERED = ("SubagentStop", "PostToolUse")
+START = "SubagentStart"
+FREE = (START, *KEPT)
+# The events lanes are held on, those a call is kept on, and the orchestrator's start, each with
+# its own script in lane's code, named after it.
+EVENTS = (START, "PreToolUse", "SubagentStop", *KEPT)
+# The tool a `from` subagent of a flow may hand its report back with, whose call is kept as it comes
+# back, which an entry of PostToolUse matches alone where the subagent has no lane.
 HANDBACK = "SubagentHandback"
 # What a hook says where lane's code cannot run.
 INSTALL = "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run"
 # Each hook's command first checks that lane's code can run. Where it cannot, a hook of an event
 # lanes are held on, on an event of its subagent, read from the event's text by the shell alone, as
 # Claude Code writes it, with or without a blank after the colon, answers as `missing` gives it; it
-# lets any other event through, as its lanes act in their subagent alone. A hook of an event a call
-# is kept on lets every event through.
+# lets any other event through, as its lanes act in their subagent alone. A hook of an event of FREE
+# lets every event through.
 PYTHON = 'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
 CHECK = (
     PYTHON + ' || {{ e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done;'
@@ -49,10 +50,10 @@ def missing(plugin: str, event: str) -> dict[str, Any]:
     """What a hook of the event answers where lane's code cannot run: on a tool call the call
     denied, telling the subagent what to install, as letting it through would leave it unkept with
     no one told; at the subagent's end the user told so, letting it end, as it cannot install
-    Python and kept going it would only be asked again; as a call comes back nothing, as the call
-    has run and the hook on the next call says what to install."""
+    Python and kept going it would only be asked again; as a call comes back, or the subagent
+    starts, nothing, as the hook on the next call says what to install."""
     said = INSTALL.format(plugin=plugin)
-    if event in KEPT:
+    if event in FREE:
         return {}
     on_call = event == "PreToolUse"  # pragma: no mutate
     return hook.answer(event, said if on_call else "", "" if on_call else said)
@@ -67,7 +68,7 @@ def command(plugin: str, agent: str, event: str) -> str:
     """The hook's command running lane's code on the lanes laid in the subagent, held on the
     event."""
     answer = shlex.quote(json.dumps(missing(plugin, event)))
-    check = f"{PYTHON} || exit 0" if event in KEPT else CHECK.format(agent=agent, answer=answer)
+    check = f"{PYTHON} || exit 0" if event in FREE else CHECK.format(agent=agent, answer=answer)
     return f"{check}; {script(event)} {agent}"
 
 
@@ -111,25 +112,32 @@ def shaped(entry: Any) -> bool:
 
 def entry(plugin: str, agent: dict[str, Any], event: str) -> dict[str, Any] | None:
     """The subagent's entry of hooks.json for the event, None where none of its lanes is held on
-    it and its answer is not kept on it: its matcher the tools its lanes watch, or for SubagentStop
-    the subagent, as its matcher tells agents apart; for an event a call is kept on, where it has
-    any lane, an entry matching every tool, or, where it has none and is a `from` of the flow, as
-    the agent's `from` says, the tool it may hand its report back with alone; for a tool call, where
-    it has any lane and its entry has it read its part first, as the agent's `part` says, every tool
-    too; each command giving the subagent alone, whose lanes the guard reads from hooks/lanes.json,
-    and the hook of a tool call blocking the call where the hook fails."""
+    it, no call of it is kept on it, and it does not start the flow: its matcher the tools its
+    lanes watch, or for SubagentStop and SubagentStart the subagent, as their matcher tells agents
+    apart; for an event a call is kept on, where it has any lane, an entry matching every tool, or,
+    of PostToolUse, where it has none and is a `from` of the flow, as the agent's `from` says, the
+    tool it may hand its report back with alone; for a tool call, where it has any lane and its
+    entry has it read its part first, as the agent's `part` says, every tool too; for SubagentStart,
+    where it is the orchestrator of the flow, as the agent's `orchestrator` says; each command
+    giving the subagent alone, whose lanes the guard reads from hooks/lanes.json, and the hook of a
+    tool call blocking the call where the hook fails."""
     every = [(s["step"], g) for s in agent["steps"] for g in s["lanes"]]
     kept = event in KEPT
     on_it = [(n, g) for n, g in every if event in lanes.held_on(g["lane"])]
-    ending = event == "SubagentStop"  # pragma: no mutate
-    answered = bool(agent.get("from")) and event in ANSWERED
+    # SubagentStop's and SubagentStart's matcher tells agents apart, not tools.
+    by_agent = event in ("SubagentStop", START)
+    # The first of the events in order, and the subagent's start, each a name the code writes.
+    handing = event == KEPT[0]  # pragma: no mutate
+    starting = event == START  # pragma: no mutate
+    handed = bool(agent.get("from")) and handing
+    leads = bool(agent.get("orchestrator")) and starting
     # The part is held to be read first on any call, as start_with holds its script run first.
-    first = lanes.LANES["start_with"].TOOLS if agent.get("part") and every and not ending else ()
-    if not (every if kept else on_it or first) and not answered:
+    first = lanes.LANES["start_with"].TOOLS if agent.get("part") and every and not by_agent else ()
+    if not (every if kept else on_it or first) and not handed and not leads:
         return None
     name = f"{plugin}:{agent['name']}"
     each = [*first, *(t for _, g in on_it for t in getattr(lanes.LANES[g["lane"]], "TOOLS", ()))]
-    tools = [name] if ending else ([".*"] if every else [HANDBACK]) if kept else each
+    tools = [name] if by_agent else ([".*"] if every else [HANDBACK]) if kept else each
     run_it = command(plugin, name, event)
     command_hook: dict[str, Any] = {"type": "command", "timeout": hook.TIMEOUT, "command": run_it}
     # A hook on a tool call that fails to start, exits other than 0 or 2, times out or prints no

@@ -26,14 +26,10 @@ You lead the work.
 1. Start the subagents of the work.
 2. Reply with the reviewed entries.
 """
-# The line the layer writes into the orchestrator's file, saying where flow.py lies.
-LIES = '`flow.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/flow.py"`.'
 # The sentence of the flow's lane.
-FOLLOW = "Take each move `flow.py` prints, until it prints none."
+FOLLOW = "Take each move lane tells you, until it tells none."
 # The orchestrator's file as the layer writes it with the flow laid on step 1.
-LEAD_LAID = LEAD.replace("---\n\n## Role", f"---\n\n{LIES}\n\n## Role").replace(
-    "work.\n2.", f"work. {FOLLOW}\n2."
-)
+LEAD_LAID = LEAD.replace("work.\n2.", f"work. {FOLLOW}\n2.")
 # The reviewer's file, whose answer of `more` sends the work back to the writer.
 REVIEWER = """---
 name: changelog-reviewer
@@ -55,10 +51,10 @@ FLOW = {
     "orchestrator": "notes-lead",
     "step": 1,
     "order": ["changelog-writer", "changelog-reviewer"],
-    "back": [{"from": "changelog-reviewer", "to": "changelog-writer", "while": "more"}],
+    "back": [{"from": 2, "to": 1, "while": "more"}],
 }
 # The lane the flow is laid as, on the orchestrator's step.
-FLOW_LANE = {"lane": "follow_next", "takes": ["flow.py"]}
+FLOW_LANE = {"lane": "follow_flow", "takes": []}
 # The lanes laid of the README's proposal, as hooks/lanes.json holds them.
 LAID = {
     "flow": FLOW,

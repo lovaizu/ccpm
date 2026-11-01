@@ -23,7 +23,7 @@ def lanes_rows() -> dict:
 
 # A row of the table of what each lane is given: its lane, its places and whether it rests on its
 # record.
-GIVEN = re.compile(r"^\| (?P<lane>[a-z_]+) \| (?P<places>`.+`) \| (?P<record>yes|no) \|$")
+GIVEN = re.compile(r"^\| (?P<lane>[a-z_]+) \| (?P<places>`.+`|none) \| (?P<record>yes|no) \|$")
 
 
 def lanes_md() -> str:
@@ -144,6 +144,15 @@ class TestTakes(unittest.TestCase):
                 # Then: it takes one or more
                 self.assertEqual(lanes.fits("hands_off", takes), fits)
 
+    def test_a_lane_showing_nothing_takes_nothing(self):
+        for takes, fits in (([], True), (["a"], False)):
+            with self.subTest(takes=takes):
+                # Given: follow_flow, whose wording shows nothing
+                # When: it is given so many things
+                # Then: it takes none, and its sentence is its wording
+                self.assertEqual(lanes.fits("follow_flow", takes), fits)
+        self.assertEqual(lanes.sentence("follow_flow", []), lanes.LANES["follow_flow"].WORDING)
+
     def test_a_lane_showing_two_things_takes_two_alone(self):
         for takes, fits in ((["a"], False), (["a", "b"], True), (["a", "b", "c"], False)):
             with self.subTest(takes=takes):
@@ -218,14 +227,15 @@ class TestHeldOn(unittest.TestCase):
         # Given: the lanes lane lays
         # When: the events each is held on are read
         # Then: those on how the subagent ends are held on SubagentStop; as_printed, whose hand-on
-        # may be the last reply, and follow_next, whose move is due before the subagent ends, on
-        # both; every other on PreToolUse alone
+        # may be the last reply, and follow_next and follow_flow, whose move is due before the
+        # subagent ends, on both; every other on PreToolUse alone
         held = {
             "test_after": ("SubagentStop",),
             "end_when": ("SubagentStop",),
             "every_item": ("SubagentStop",),
             "as_printed": ("PreToolUse", "SubagentStop"),
             "follow_next": ("PreToolUse", "SubagentStop"),
+            "follow_flow": ("PreToolUse", "SubagentStop"),
         }
         for name in lanes.LANES:
             with self.subTest(lane=name):

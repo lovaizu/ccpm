@@ -37,7 +37,7 @@ NOTES_FLOW = {
     "orchestrator": "notes-lead",
     "step": 1,
     "order": ["changelog-writer", "changelog-reviewer"],
-    "back": [{"from": "changelog-reviewer", "to": "changelog-writer", "while": "more"}],
+    "back": [{"from": 2, "to": 1, "while": "more"}],
 }
 # The lanes of the README's example, on step 1 of notes-lead and step 3 of changelog-writer, each
 # with what it takes.

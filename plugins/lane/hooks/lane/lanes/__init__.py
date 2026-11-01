@@ -13,8 +13,9 @@ what it takes beside what its step names, from every lane laid in the subagent, 
 it, and `refused(takes, root)`, why it cannot be laid taking these, "" where it can, as the layer
 calls it laying the lane and the guard on each run, where it is an error; RECORD, where its check
 rests on what the subagent did before, read from its record, as every lane held at the subagent's
-end does; and PORT, the port it reads a plugin's text at, as ports.py defines them, its check then
-given, fourth, what reads that port.
+end does; PORT, the port it reads a plugin's text at, as ports.py defines them, its check then
+given, fourth, what reads that port; and FLOW, where its check holds the flow, its check then given,
+fourth, the run of the flow, as moves.py reads it.
 
 What a lane's check is given is held first to the lane's IN, a JSON Schema `given_in` makes: the
 texts put in each place of its sentence, and its subagent's record where its check rests on it; the
@@ -32,6 +33,7 @@ from lanes import (
     as_printed,
     end_when,
     every_item,
+    follow_flow,
     follow_next,
     hands_off,
     in_form,
@@ -53,6 +55,7 @@ LANES = {
     "test_after": test_after,
     "as_printed": as_printed,
     "follow_next": follow_next,
+    "follow_flow": follow_flow,
     "wait_for": wait_for,
     "end_when": end_when,
     "every_item": every_item,

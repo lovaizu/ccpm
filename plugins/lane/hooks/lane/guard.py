@@ -2,10 +2,8 @@
 hooks/lanes.json, run on the event Claude Code hands the command's script, each telling the
 subagent its sentence where a call drifts from it, its calls read from its record with those kept as
 they came back, as called.py says. A thing a lane takes written `{<name>}` is given for each run,
-and put in before the lane's check, as started.py reads it. Where the file lays a flow, the guard
-gives flow.py the run: the orchestrator's call running lane's flow.py as a command of its own goes
-on with the session's and the orchestrator's IDs put before the command, and one running it with
-other commands is stopped; and it keeps the answer of each `from` subagent as it ends."""
+and put in before the lane's check, as started.py reads it. Where the file lays a flow, the lane
+holding it is given the run of the flow, the orchestrator's calls kept, as moves.py reads it."""
 
 from __future__ import annotations
 
@@ -16,9 +14,9 @@ import call
 import called
 import hook
 import lanes_json
+import moves
 import ports
 import schema
-import shell
 import started
 import step
 from lanes import LANES, alone, given_in, held_on, placed, places, read_whole, sentence, start_with
@@ -42,9 +40,6 @@ ADAPTER = "the maker of {plugin} must fix the adapter and lay its lanes again wi
 REFUSED = "the maker of {plugin} must fix it and lay its lanes again with `lay.py write`"
 # What a lane resting on its subagent's record meets where the record is not there.
 NOT_FOUND = "its record is not found where Claude Code keeps it"
-# What the orchestrator is told, after the flow's sentence, where it runs flow.py with other
-# commands, as the guard gives the run's IDs to flow.py run alone.
-RUN_ALONE = f"Run `{lanes_json.FLOW_PY}` as a command of its own."
 
 
 class Lanes:
@@ -64,25 +59,16 @@ class Lanes:
         ending = event["hook_event_name"] == "SubagentStop"  # pragma: no mutate
         try:
             whole = lanes_json.laid(self.root)
-        except ValueError as wrong:
-            return [self.unchecked(str(wrong), LAY_AGAIN.format(plugin=plugin))]
-        flow = whole.get("flow")
-        # A `from` subagent's answer is kept as it ends, whether or not lanes are laid in it.
-        answering = name in lanes_json.froms(flow)
-        if ending and answering:
-            called.ended(event)
-        try:
             found = lanes_json.subagent(whole, name)
         except ValueError as wrong:
-            return (
-                [] if answering else [self.unchecked(str(wrong), LAY_AGAIN.format(plugin=plugin))]
-            )
+            return [self.unchecked(str(wrong), LAY_AGAIN.format(plugin=plugin))]
         given, values = lanes_json.lanes_of(found), found.get("adapter")
         # A name the subagent's part uses is read as its entry says it stands for.
         bindings = step.bindings(self.root, name)
         laid = [(lane, step.bound(takes, bindings)) for _, lane, takes, _ in given]
+        flow = whole.get("flow")
         on = [
-            Laid(self.root, self.agent, g, laid, values, bindings)
+            Laid(self.root, self.agent, g, laid, values, bindings, flow)
             for g in given
             if self.held in held_on(g[1])
         ]
@@ -92,37 +78,7 @@ class Lanes:
             first = self.read_first(acted, entries)
             if first is not None:
                 return first
-        said = [s for lane in on for s in lane.check(event, Seen(entries, acted))]
-        if not ending and flow is not None and flow["orchestrator"] == name:
-            return self.flow_run(event, said)
-        return said
-
-    def flow_run(self, event: dict[str, Any], said: list[hook.Said]) -> list[hook.Said]:
-        """What the orchestrator of the flow is told of its tool call, given what its lanes said of
-        it: where the call runs lane's flow.py, the plugin's `hooks/lane/flow.py`, together with
-        other commands or words, the flow's sentence and to run flow.py alone, after what the lanes
-        said; where it runs it as a command of its own and the lanes said nothing, the call let
-        through with the session's and the orchestrator's IDs put before the command, the file its
-        calls are kept in made, so flow.py reads the run; what the lanes said otherwise, a lane's
-        stop winning, and where the event names either by no ID as Claude Code gives it."""
-        command = event["tool_input"].get("command") if event["tool_name"] == "Bash" else None
-        if not isinstance(command, str):
-            return said
-        script = lanes_json.flow_script(self.root)
-        cwd = event["cwd"]
-        if not call.runs_path(command, cwd, script):
-            return said
-        words = shell.words(command)
-        # A word after the program, an operator among them, is another command or word beside it.
-        if call.program(words)[1:] or not call.ran_path(cwd, words, script):
-            flowing = sentence(lanes_json.FLOW_LANE["lane"], lanes_json.FLOW_LANE["takes"])
-            return [*said, hook.Said(f"{flowing}\n{RUN_ALONE}")]
-        file = called.place(event)
-        if said or file is None:
-            return said
-        called.begun(file)
-        ids = f"LANE_SESSION={event['session_id']} LANE_AGENT={event['agent_id']}"
-        return [hook.Said("", updated={**event["tool_input"], "command": f"{ids} {command}"})]
+        return [s for lane in on for s in lane.check(event, Seen(entries, acted))]
 
     def read_first(
         self, acted: call.Call, found: list[dict[str, Any]] | None
@@ -167,8 +123,8 @@ class Lanes:
 class Laid:
     """A lane laid on a step of a subagent of the plugin at root, with the adapter of the port it
     reads, None for none, every lane laid in the subagent, each with what it takes read through the
-    bindings, the subagent's adapter of the values port, None for none, and the bindings of its
-    entry, what each name its part uses stands for."""
+    bindings, the subagent's adapter of the values port, None for none, the bindings of its entry,
+    what each name its part uses stands for, and the flow the plugin lays, None for none."""
 
     def __init__(
         self,
@@ -178,8 +134,9 @@ class Laid:
         laid: list[tuple[str, list[str]]],
         values: str | None,
         bindings: dict[str, str],
+        flow: dict[str, Any] | None,
     ) -> None:
-        self.root, self.agent = root, agent
+        self.root, self.agent, self.flow = root, agent, flow
         self.plugin, self.name = agent.split(":")
         self.number, self.lane, self.takes, self.adapter = given
         # What it takes, as its step names it in its sentence, and read through the bindings as
@@ -248,7 +205,9 @@ class Laid:
         if more is not None:
             each = [[*inputs, *more(self.laid, self.root)] for inputs in each]
         port = getattr(lane, "PORT", None)
-        read = [] if port is None else [lambda given: self.read(port, given, self.adapter)]
+        read: list[Any] = [] if port is None else [lambda g: self.read(port, g, self.adapter)]
+        if getattr(lane, "FLOW", False):
+            read = [moves.Run(self.flow or {}, self.plugin, called.calls_kept(event))]
         drift = next(filter(None, (lane.drifts(acted, t, self.root, *read) for t in each)), "")
         if not drift:
             return []

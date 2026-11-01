@@ -9,7 +9,7 @@ gives the one point it is out by: its place, what was expected and what was foun
 check-jsonschema gives jsonschema's best match, the point highest in the value first. lane's own
 schemas, such as a port's in ports.py, which `checked` never reads, may give additionalProperties a
 schema each key beside the properties is held to, for an object of keys known only on a run, and
-may use minimum, minLength and uniqueItems, as the flow's in lanes_json.py does."""
+may use minimum and minLength, as the flow's in lanes_json.py does."""
 
 from __future__ import annotations
 
@@ -305,13 +305,6 @@ def min_length_out(
     return None
 
 
-def unique_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    each = value if isinstance(value, list) and schema["uniqueItems"] else []
-    again = (v for at, v in enumerate(each) if any(same(v, e) for e in each[:at]))
-    found = next(again, None)
-    return None if found is None else Out(path, "each item once", f"{shown(found)} twice")
-
-
 def all_of_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
     for each in schema["allOf"]:
         found = out(each, root, value, path)
@@ -357,13 +350,7 @@ KEYWORDS: dict[str, tuple[Callable[..., None], Callable[..., Out | None]]] = {
 OWN: dict[str, Callable[..., Out | None]] = {
     "minimum": minimum_out,
     "minLength": min_length_out,
-    "uniqueItems": unique_out,
 }
-# Each keyword a value is held to, in order, lane's own after those of its own place, before those
-# of the places inside it, so the point highest in the value is found first.
-INSIDE = list(KEYWORDS).index("properties")
-HELD = {
-    **{k: v[1] for k, v in list(KEYWORDS.items())[:INSIDE]},
-    **OWN,
-    **{k: v[1] for k, v in list(KEYWORDS.items())[INSIDE:]},
-}
+# Each keyword a value is held to, in order, lane's own last, as each holds a number or a string,
+# with no place inside it.
+HELD = {**{k: v[1] for k, v in KEYWORDS.items()}, **OWN}

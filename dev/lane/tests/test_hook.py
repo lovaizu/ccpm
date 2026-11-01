@@ -117,13 +117,32 @@ class TestRun(testing.FolderTest):
                 # kept going, the user alone is told, and it ends
                 self.assertEqual(found, expected)
 
-    def test_an_error_as_a_call_comes_back_is_told_the_user_alone(self):
-        # Given: a PostToolUse event, whose call has run
-        event = dict(self.event(), hook_event_name="PostToolUse", tool_use_id="t1")
-        # When: the entry runs a check saying an error on it
-        found = self.handed(json.dumps(event), Says("!e"), held="PostToolUse")
-        # Then: the user is told it, as the call cannot be stopped
-        self.assertEqual(found, {"systemMessage": "p: e"})
+    def test_what_is_said_as_a_call_comes_back_or_a_subagent_starts_is_added_for_it(self):
+        back = dict(self.event(), hook_event_name="PostToolUse", tool_use_id="t1")
+        failed = dict(back, hook_event_name="PostToolUseFailure", error="Exit code 1")
+        start = {"hook_event_name": "SubagentStart", "cwd": self.base, "agent_type": "p:a"}
+        for event in (back, failed, start):
+            held = str(event["hook_event_name"])
+            with self.subTest(event=held):
+                # Given: an event of a call come back, or of the subagent starting
+                # When: the entry runs checks saying something on it
+                found = self.handed(json.dumps(event), Says("a"), Says("b"), held=held)
+                # Then: what they say is added for the subagent, as context Claude Code gives it
+                said = {"hookEventName": held, "additionalContext": "p: a\np: b"}
+                self.assertEqual(found, {"hookSpecificOutput": said})
+
+    def test_an_error_as_a_call_comes_back_or_a_subagent_starts_is_told_both(self):
+        back = dict(self.event(), hook_event_name="PostToolUse", tool_use_id="t1")
+        start = {"hook_event_name": "SubagentStart", "cwd": self.base, "agent_type": "p:a"}
+        for event in (back, start):
+            held = str(event["hook_event_name"])
+            with self.subTest(event=held):
+                # Given: an event of a call come back, or of the subagent starting
+                # When: the entry runs a check saying an error on it
+                found = self.handed(json.dumps(event), Says("!e"), held=held)
+                # Then: the user is told it, and it is added for the subagent
+                said = {"hookEventName": held, "additionalContext": "p: e"}
+                self.assertEqual(found, {"systemMessage": "p: e", "hookSpecificOutput": said})
 
     def test_an_event_not_as_its_in_says_is_an_error_saying_its_point(self):
         event = self.event()

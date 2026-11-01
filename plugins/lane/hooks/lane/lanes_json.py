@@ -1,6 +1,6 @@
 """The lanes laid in a plugin, kept in its hooks/lanes.json in the shape of the proposal, with the
-flow where one is laid: written by the layer, and read by the guard, flow.py and the layer, so what
-was approved is what is read, and a thing taken holds any text, a comma among the rest."""
+flow where one is laid: written by the layer, and read by the guard and the layer, so what was
+approved is what is read, and a thing taken holds any text, a comma among the rest."""
 
 from __future__ import annotations
 
@@ -14,7 +14,8 @@ import lanes
 import schema
 
 # The flow's JSON Schema, as lane's docs/flow.md gives it: the orchestrator, its step the flow is
-# laid on, the subagents in the order they start, and the answers that send the work back.
+# laid on, the subagents in the order they start, one named again where it starts again, and the
+# answers that send the work back, each subagent of a back named by its position in the order.
 FLOW = {
     "type": "object",
     "required": ["orchestrator", "step", "order"],
@@ -32,7 +33,6 @@ FLOW = {
         "order": {
             "type": "array",
             "minItems": 1,
-            "uniqueItems": True,
             "items": {"type": "string"},
             "description": "the subagents in the order they start, each as its file's name: field",
         },
@@ -44,10 +44,16 @@ FLOW = {
                 "additionalProperties": False,
                 "properties": {
                     "from": {
-                        "type": "string",
-                        "description": "the subagent whose answer sends the work back",
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "the position in order, from 1, whose answer sends the work"
+                        " back",
                     },
-                    "to": {"type": "string", "description": "the subagent the work goes back to"},
+                    "to": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "the position in order, from 1, the work goes back to",
+                    },
                     "while": {
                         "type": "string",
                         "minLength": 1,
@@ -60,14 +66,8 @@ FLOW = {
 }
 # The flow held whole, as hooks/lanes.json or a proposal holds it under `flow`.
 FLOWED = {"type": "object", "properties": {"flow": FLOW}}
-# The script the flow's follow_next lane takes, by the name the orchestrator's step uses, what it
-# stands for, and the line the layer writes into the orchestrator's file saying so, as
-# docs/lanes.md's A subagent's part has it.
-FLOW_PY = "flow.py"
-FLOW_RUN = 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/flow.py"'
-FLOW_LIES = f"`{FLOW_PY}` below is `{FLOW_RUN}`."
-# The lane the flow is laid as, on the orchestrator's step.
-FLOW_LANE = {"lane": "follow_next", "takes": [FLOW_PY]}
+# The lane the flow is laid as, on the orchestrator's step, which the layer alone lays.
+FLOW_LANE = {"lane": "follow_flow", "takes": []}
 
 
 def lanes_shape(least: int) -> dict[str, Any]:
@@ -129,8 +129,9 @@ LAID = lanes_shape(0)
 def laid(root: str) -> dict[str, Any]:
     """The lanes laid in the plugin at root, as its hooks/lanes.json holds them; stops with
     ValueError saying what is wrong where it is not there, holds no JSON, is not in the shape LAID
-    gives, lays a lane taking an empty thing, or another count of things than the lane holds, or
-    names an adapter that cannot be its port's, as `adapter_wrong` says."""
+    gives, gives a flow that cannot be laid, as `flow_wrong` says, lays a lane taking an empty
+    thing, or another count of things than the lane holds, lays the flow's lane on a step the flow
+    is not laid on, or names an adapter that cannot be its port's, as `adapter_wrong` says."""
     path = os.path.join(root, "hooks", "lanes.json")
     try:
         with open(path, encoding="utf-8") as f:
@@ -142,9 +143,11 @@ def laid(root: str) -> dict[str, Any]:
     out = schema.held(LAID, given) or schema.held(FLOWED, given)
     if out is not None:
         raise ValueError(f"hooks/lanes.json is out of its shape at {out.told()}")
-    why = flow_wrong(given.get("flow"))
+    flow = given.get("flow")
+    why = flow_wrong(flow)
     if why:
         raise ValueError(f"hooks/lanes.json gives a flow {why}")
+    flowed = (flow["orchestrator"], flow["step"]) if flow else None
     for agent in given["subagents"]:
         wrong = adapter_wrong(agent.get("adapter"), "values")
         if wrong:
@@ -157,6 +160,8 @@ def laid(root: str) -> dict[str, Any]:
                         f"hooks/lanes.json gives {on} takes of another count than it holds, or"
                         " one empty"
                     )
+                if lane["lane"] == FLOW_LANE["lane"] and (agent["name"], s["step"]) != flowed:
+                    raise ValueError(f"hooks/lanes.json lays {on}, where no flow is laid")
                 port = getattr(lanes.LANES[lane["lane"]], "PORT", None)
                 wrong = adapter_wrong(lane.get("adapter"), port)
                 if wrong:
@@ -166,43 +171,40 @@ def laid(root: str) -> dict[str, Any]:
 
 def flow_wrong(flow: dict[str, Any] | None) -> str:
     """Why the flow, held to its schema, None for none, cannot be laid, as docs/flow.md says, so
-    each answer leads to one move: its order names its orchestrator; a back names a subagent its
-    order does not, goes to one not before its from in the order, or answers a while of more than
-    one line; or two backs are from one subagent; "" where it can."""
+    each answer leads to one move: its order names its orchestrator; a back names a position its
+    order has not, goes to one not before its from, or answers a while of more than one line; or
+    two backs are from one position; "" where it can."""
     if flow is None:
         return ""
     order = flow["order"]
     if flow["orchestrator"] in order:
         return f"whose order names its orchestrator {flow['orchestrator']}"
-    froms: list[str] = []
+    froms: list[int] = []
     for back in flow.get("back", []):
         source, to = back["from"], back["to"]
-        unknown = [n for n in (source, to) if n not in order]
-        if unknown:
-            return f"whose back names {unknown[0]}, which its order does not"
-        if order.index(to) >= order.index(source):
+        past = [n for n in (source, to) if n > len(order)]
+        if past:
+            n = len(order)
+            return f"whose back names position {past[0]}, which its order of {n} does not have"
+        if to >= source:
             return (
-                f"whose back from {source} goes to {to}, which does not come before it in its order"
+                f"whose back from position {source} goes to position {to}, which does not come"
+                " before it"
             )
         if source in froms:
-            return f"with two backs from {source}"
+            return f"with two backs from position {source}"
         froms.append(source)
-        # A line break of any kind ends a line as flow.py reads the answer's lines.
+        # A line break of any kind ends a line as moves.py reads the answer's lines.
         if back["while"] not in back["while"].splitlines():
-            return f"whose back from {source} answers a while of more than one line"
+            return f"whose back from position {source} answers a while of more than one line"
     return ""
 
 
-def flow_script(root: str) -> str:
-    """The whole path of lane's flow.py in the plugin at root, its links followed, as a command
-    running it names it from wherever it is run."""
-    return os.path.realpath(os.path.join(root, "hooks", "lane", FLOW_PY))
-
-
 def froms(flow: dict[str, Any] | None) -> list[str]:
-    """Each subagent whose answer sends the work of the flow back, its answer kept as it ends; none
-    where there is no flow."""
-    return [b["from"] for b in (flow or {}).get("back", [])]
+    """Each subagent at the from of a back of the flow, once each, whose answer sends the work
+    back; none where there is no flow."""
+    order = (flow or {}).get("order", [])
+    return list(dict.fromkeys(order[b["from"] - 1] for b in (flow or {}).get("back", [])))
 
 
 def adapter_wrong(path: str | None, port: str | None) -> str:
