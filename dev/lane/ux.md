@@ -16,14 +16,14 @@
   - KR1.5: The time from the developer AI's first rule to the first run in which the subagents keep
     the rules. Shorter is better.
 - O2: The developer AI wants the orchestrator of its plugin, the subagent that starts the others, to
-  start them in the order that the developer AI set, on every run, without writing a script for the
-  order.
-  - KR2.1: The share of runs in which the orchestrator leaves the order. Lower is better.
-  - KR2.2: The share of the orchestrator's tool calls and ends of work that the order allows but that
+  start them in the order that the developer AI set, its flow, on every run, without writing a script
+  for the order.
+  - KR2.1: The share of runs in which the orchestrator leaves the flow. Lower is better.
+  - KR2.2: The share of the orchestrator's tool calls and ends of work that the flow allows but that
     are stopped. Lower is better.
   - KR2.3: The lines of code that the developer AI writes by hand so that the orchestrator keeps the
-    order. Fewer is better.
-  - KR2.4: The time from the developer AI's first order to the first run that keeps it. Shorter is
+    flow. Fewer is better.
+  - KR2.4: The time from the developer AI's first flow to the first run that keeps it. Shorter is
     better.
 
 Key results have no target values. When a measure becomes a target, it stops being a good measure
@@ -58,7 +58,7 @@ sequenceDiagram
   W-->>U: ends with CHANGELOG.md written and no commit
 ```
 
-### O2: The orchestrator starts writer and reviewer in order
+### O2: The orchestrator starts writer and reviewer by the flow
 
 ```mermaid
 sequenceDiagram
@@ -69,8 +69,8 @@ sequenceDiagram
   participant O as lead (AI)
   participant W as writer (AI)
   participant R as reviewer (AI)
-  A->>L: lay.py print: the order writer, reviewer,<br>back to writer when reviewer answers `more`
-  L-->>A: the order, and its sentence on step 1 of lead
+  A->>L: lay.py print: the flow writer, reviewer,<br>back to writer when reviewer answers `more`
+  L-->>A: the flow, and its sentence on step 1 of lead
   A->>L: lay.py write
   L-->>A: writes the sentence into step 1,<br>puts the check script into changelog
   U->>O: runs changelog
