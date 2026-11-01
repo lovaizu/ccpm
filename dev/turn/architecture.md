@@ -159,13 +159,13 @@ for every caller.
 
 ![turn's components](components.svg)
 
-- `turn:up` alone holds a run. It takes each move lane tells it (follow_flow), and starts each role
-  in the foreground, as lane counts a start only once the role has ended. It alone tells the phase,
-  from the position each move names, as [lane's flow](../../plugins/lane/docs/flow.md) words it,
-  such as "The next move of the flow is move 5: start `turn:builder` in the foreground." It gives
-  each role the paths that role works on, as one JSON line its lanes read. The builder and the
-  evaluator get their phase's: its templates and its self-check or verification, and the design
-  tree in the content phase alone, given as `null` in the refactoring phase. It takes the
+- `turn:up` alone holds a run. It takes each move lane tells it (follow_flow), starts each role,
+  and waits for it to end, as lane tells the next move only once the role has ended. It alone tells
+  the phase, from the position each move names, as [lane's flow](../../plugins/lane/docs/flow.md)
+  words it, such as "The next move of the flow is move 5: start `turn:builder`." It gives each role
+  the paths that role works on, as one JSON line its lanes read. The builder and the evaluator get
+  their phase's: its templates and its self-check or verification, and the design tree in the
+  content phase alone, given as `null` in the refactoring phase. It takes the
   templates' paths from the end of planner, and the work's paths from the end of designer. It ends
   once lane tells it the flow is done, naming each file of the work.
 - turn's proposal to lane declares the flow on `turn:up`, as
