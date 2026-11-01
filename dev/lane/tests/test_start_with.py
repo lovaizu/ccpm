@@ -8,11 +8,11 @@ from helpers import NO_PLUGIN, start_with
 
 # The script the lane takes, as a step names it, and its path as the AI writes it once Claude Code
 # has put the plugin's folder in for `${CLAUDE_PLUGIN_ROOT}`.
-TAKES = ["scripts/turn.py"]
-SCRIPT = "/home/u/.claude/plugins/turn/scripts/turn.py"
-# The script taken as turn's step 1 writes the command, with python3 and the plugin's folder as
+TAKES = ["scripts/next.py"]
+SCRIPT = "/home/u/.claude/plugins/notes/scripts/next.py"
+# The script taken as a plugin's step 1 writes the command, with python3 and the plugin's folder as
 # Claude Code puts it in.
-WRITTEN = ['python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given']
+WRITTEN = ['python3 "${CLAUDE_PLUGIN_ROOT}/scripts/next.py" given']
 
 
 def read(command, tool="Bash"):
@@ -32,9 +32,9 @@ class TestFirstCall(unittest.TestCase):
             f'python3 "{SCRIPT}" given /tmp/run',
             f"{SCRIPT} given /tmp/run",
             f"sh {SCRIPT}",
-            "python3 scripts/turn.py",
+            "python3 scripts/next.py",
             f"cd /r && python3 {SCRIPT} start x",
-            '"${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" next',
+            '"${CLAUDE_PLUGIN_ROOT}/scripts/next.py" next',
         ):
             with self.subTest(command=command):
                 # Given: no call made before
@@ -49,9 +49,9 @@ class TestFirstCall(unittest.TestCase):
             f"cat {SCRIPT}",
             "python3",
             "python3 /p/scripts/other.py",
-            "python3 /p/myscripts/turn.py",
-            "python3 /p/turn.py",
-            "A=/scripts/turn.py 0",
+            "python3 /p/myscripts/next.py",
+            "python3 /p/next.py",
+            "A=/scripts/next.py 0",
         ):
             with self.subTest(command=command):
                 # Given: no call made before
@@ -70,7 +70,7 @@ class TestFirstCall(unittest.TestCase):
 
     def test_a_script_taken_with_its_words_is_run_only_with_them(self):
         # Given: a lane taking the script with the words its step runs it with
-        takes = ["scripts/turn.py given"]
+        takes = ["scripts/next.py given"]
         # When: the first call runs it with those words, with others, or with none
         # Then: those words begin no drift; others, or none, do
         self.assertFalse(drifts(f"python3 {SCRIPT} given /tmp/run", takes=takes))
@@ -79,7 +79,7 @@ class TestFirstCall(unittest.TestCase):
 
     def test_a_script_taken_with_several_words_is_run_with_all_of_them_first(self):
         # Given: a lane taking the script with two words after it
-        takes = ["scripts/turn.py next run"]
+        takes = ["scripts/next.py next run"]
         # When: the first call runs it with those two words and more after them, or with the
         # first alone
         # Then: those two words begin no drift; the first alone does
@@ -88,7 +88,7 @@ class TestFirstCall(unittest.TestCase):
 
     def test_any_of_the_scripts_taken_may_be_run_first(self):
         # Given: a lane taking two scripts
-        takes = ["scripts/a.py", "scripts/turn.py"]
+        takes = ["scripts/a.py", "scripts/next.py"]
         # When: the first call runs the second
         # Then: it is no drift
         self.assertFalse(drifts(f"python3 {SCRIPT}", takes=takes))
@@ -99,7 +99,7 @@ class TestTakenAsTheStepWritesIt(unittest.TestCase):
         for command in (
             f'python3 "{SCRIPT}" given /tmp/run',
             f"{SCRIPT} given /tmp/run",
-            'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given /tmp/run',
+            'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/next.py" given /tmp/run',
         ):
             with self.subTest(command=command):
                 # Given: a lane taking the script as the step writes the command
@@ -123,7 +123,7 @@ class TestTakenAsTheStepWritesIt(unittest.TestCase):
 
     def test_a_script_run_by_sh_is_taken_by_its_path(self):
         # Given: a lane taking a script run by sh, as a step writes it
-        takes = ['sh "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py"']
+        takes = ['sh "${CLAUDE_PLUGIN_ROOT}/scripts/next.py"']
         # When: the first call runs it by sh with the plugin's folder put in
         # Then: it is no drift
         self.assertFalse(drifts(f"sh {SCRIPT}", takes=takes))

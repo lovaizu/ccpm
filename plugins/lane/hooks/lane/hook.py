@@ -30,6 +30,11 @@ CLAUDE_CODE = (
 # the main conversation for what lies outside its work and goes on with the rest, as
 # dev/architecture.md's Asking for what lies outside the work says.
 ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your work meanwhile."
+# What the orchestrator of a flow is told where flow.py cannot tell the run, given who must fix it:
+# it asks for the fix and ends with the line, as the run that failed frees its end and the rest of
+# its work waits on the flow.
+ENDED = "End your work with this line."
+ASK_AND_END = "Ask the main conversation for the fix: {fix}. " + ENDED
 # The fields each event of these hooks holds beside hook_event_name and cwd, and the types of each:
 # at SubagentStop the agent's last reply, which Claude Code gives as null after the agent hands its
 # reply back with SubagentHandback; as a call comes back, its ID, and of a failed one its error.

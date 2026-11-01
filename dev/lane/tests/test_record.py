@@ -116,10 +116,10 @@ class TestConversation(KeptTest):
 class TestAgentType(KeptTest):
     def test_the_agent_type_is_the_one_its_meta_file_names(self):
         # Given: a record and its meta file naming its agent type
-        self.write("agent-a1.meta.json", '{"agentType": "turn:up"}')
+        self.write("agent-a1.meta.json", '{"agentType": "notes:up"}')
         # When: its agent type is read
         # Then: it is the one named
-        self.assertEqual(record.agent_type("agent-a1.jsonl"), "turn:up")
+        self.assertEqual(record.agent_type("agent-a1.jsonl"), "notes:up")
 
     def test_a_meta_file_not_there_or_naming_no_type_gives_none(self):
         for meta in (None, "x", "[]", "{}", '{"agentType": 1}'):

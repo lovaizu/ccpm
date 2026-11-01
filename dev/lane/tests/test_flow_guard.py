@@ -231,5 +231,79 @@ class TestAnswerKept(FlowGuardTest):
         self.assertEqual(called.answer("s1", "a1"), "more")
 
 
+class TestFailedRun(FlowGuardTest):
+    """A run of flow.py that could not tell the run: what it printed on stderr told the user too,
+    as the guard tells the user an error, as the run comes back."""
+
+    LINE = (
+        "notes: lane cannot check the flow of notes-lead: the calls the guard kept of it are not"
+        " found. Ask the main conversation for the fix: Claude Code must be updated. End your work"
+        " with this line."
+    )
+
+    def back(
+        self, command: str, error: str | None = None, back: object = None, tool: str = "Bash"
+    ) -> object:
+        """What the guard answers as notes-lead's call of the tool with the command comes back,
+        failed with the error given, or, where none is given, at PostToolUse with the output
+        given."""
+        came = self.came_back(tool, {"command": command}, back, error)
+        came["agent_type"] = LEAD
+        entry = "posttooluse.py" if error is None else "posttoolusefailure.py"
+        return self.answered(json.dumps(came), (LEAD,), entry)
+
+    def test_the_line_flow_py_printed_failing_is_told_the_user(self):
+        for what, line, told in (
+            ("headed by the plugin", self.LINE, self.LINE),
+            (
+                "headed by lane, the plugin's name not known to flow.py",
+                self.LINE.replace("notes: ", "lane: ", 1),
+                self.LINE,
+            ),
+        ):
+            with self.subTest(what=what):
+                # Given: notes-lead's run of flow.py, failed, with the line flow.py printed on
+                # stderr among what it gave back
+                error = f"Exit code 1\n{line}"
+                # When: it comes back
+                # Then: the user is told the line, headed by the plugin
+                answer = self.back(f'python3 "{self.script}"', error=error)
+                self.assertEqual(answer, {"systemMessage": told})
+
+    def test_the_line_given_back_by_a_run_that_did_not_fail_is_told_too(self):
+        # Given: notes-lead's run of flow.py coming back at PostToolUse with the line on stderr
+        back = {"stdout": "", "stderr": self.LINE}
+        # When: it comes back
+        # Then: the user is told the line
+        answer = self.back(f'python3 "{self.script}"', back=back)
+        self.assertEqual(answer, {"systemMessage": self.LINE})
+
+    def test_nothing_is_told_of_another_tool_giving_the_line_back(self):
+        # A tool named before Bash in order, and one after.
+        for tool in ("Agent", "Read"):
+            with self.subTest(tool=tool):
+                # Given: a call of the tool whose input names flow.py, failed with the line
+                error = f"Exit code 1\n{self.LINE}"
+                # When: it comes back
+                # Then: nothing is told
+                self.assertIsNone(self.back(f'python3 "{self.script}"', error=error, tool=tool))
+
+    def test_nothing_is_told_of_another_run_or_another_line(self):
+        for what, command, error in (
+            ("another command printing the line", "cat log.txt", f"Exit code 1\n{self.LINE}"),
+            ("flow.py printing another line", f'python3 "{self.script}"', "Exit code 1\nboom"),
+            (
+                "flow.py printing a line telling to go on",
+                f'python3 "{self.script}"',
+                "Exit code 1\n" + self.LINE.replace("End your work with this line.", "Go on."),
+            ),
+        ):
+            with self.subTest(what=what):
+                # Given: a failed run so
+                # When: it comes back
+                # Then: nothing is told
+                self.assertIsNone(self.back(command, error=error))
+
+
 if __name__ == "__main__":
     unittest.main()

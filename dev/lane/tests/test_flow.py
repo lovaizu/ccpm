@@ -22,15 +22,16 @@ from helpers import called
 FLOW_PY = os.path.join("hooks", "lane", "flow.py")
 # The run's IDs, as the guard puts them before the command: the session's and the orchestrator's.
 IDS = {"LANE_SESSION": "s1", "LANE_AGENT": "a1"}
-# What the subagent is told to do where flow.py cannot tell the run, by who must fix it.
+# What the orchestrator is told to do where flow.py cannot tell the run, by who must fix it: ask
+# for the fix and end, as a failed run frees its end.
 LAY_AGAIN = (
     "Ask the main conversation for the fix: the maker of notes must lay its lanes again with"
-    " `lay.py write`, so they match its steps. Go on with the rest of your work meanwhile.\n"
+    " `lay.py write`, so they match its steps. End your work with this line.\n"
 )
 CLAUDE_CODE = (
     "Ask the main conversation for the fix: Claude Code must be updated with `claude update`, and"
-    " where this goes on, it must be reported at https://github.com/lovaizu/ccpm/issues. Go on"
-    " with the rest of your work meanwhile.\n"
+    " where this goes on, it must be reported at https://github.com/lovaizu/ccpm/issues. End your"
+    " work with this line.\n"
 )
 
 
@@ -313,8 +314,7 @@ class TestCannotTell(FlowTest):
                     err,
                     "lane: lane cannot check the flow of this plugin: its"
                     " .claude-plugin/plugin.json names no plugin. Ask the main conversation for"
-                    " the fix: the plugin's maker must fix it. Go on with the rest of your work"
-                    " meanwhile.\n",
+                    " the fix: the plugin's maker must fix it. End your work with this line.\n",
                 )
 
 

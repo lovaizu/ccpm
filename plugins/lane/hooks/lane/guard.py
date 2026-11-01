@@ -108,13 +108,13 @@ class Lanes:
         command = event["tool_input"].get("command") if event["tool_name"] == "Bash" else None
         if not isinstance(command, str):
             return said
-        script = os.path.realpath(os.path.join(self.root, "hooks", "lane", lanes_json.FLOW_PY))
+        script = lanes_json.flow_script(self.root)
         cwd = event["cwd"]
-        if not any(flow_ran(here, w, script) for here, w, _ in shell.statements(command, cwd)):
+        if not call.runs_path(command, cwd, script):
             return said
         words = shell.words(command)
         # A word after the program, an operator among them, is another command or word beside it.
-        if call.program(words)[1:] or not flow_ran(cwd, words, script):
+        if call.program(words)[1:] or not call.ran_path(cwd, words, script):
             flowing = sentence(lanes_json.FLOW_LANE["lane"], lanes_json.FLOW_LANE["takes"])
             return [*said, hook.Said(f"{flowing}\n{RUN_ALONE}")]
         file = called.place(event)
@@ -162,14 +162,6 @@ class Lanes:
         name = self.agent.split(":")[1]
         said = f"lane cannot check the lanes of {name}: {wrong}. {hook.ASK.format(fix=fix)}"
         return hook.Said(said, True)
-
-
-def flow_ran(here: str | None, words: list[str], script: str) -> bool:
-    """Whether a statement, as its words, run in the folder, None where the words do not settle it,
-    runs the script by its path, python3 or sh before it left out, and what goes before a program,
-    as assignments and env."""
-    ran = call.program(shell.after_env(shell.without_redirects(words)))
-    return bool(ran) and shell.path(here, ran[0]) == script
 
 
 class Laid:

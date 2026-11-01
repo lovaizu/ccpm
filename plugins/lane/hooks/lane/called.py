@@ -21,6 +21,8 @@ import tempfile
 import time
 from typing import Any
 
+import call
+import hook
 import lanes_json
 import record
 
@@ -29,6 +31,11 @@ import record
 ID = re.compile(r"[A-Za-z0-9-]+")
 # The tool a subagent may hand its report back with, the field of its input holding the report.
 HANDBACK, MESSAGE = "SubagentHandback", "message"
+# A line flow.py prints where it cannot tell the run: headed by the plugin's name, or lane's where
+# it does not know it, and ending by telling the orchestrator to end with it.
+FLOW_FAILED = re.compile(
+    rf"^\S+: (?P<said>lane cannot check the flow of .*{re.escape(hook.ENDED)})$", re.MULTILINE
+)
 
 
 def place(event: dict[str, Any], kind: str = ".jsonl") -> str | None:
@@ -94,12 +101,13 @@ def started(event: dict[str, Any]) -> dict[str, str]:
 class Kept:
     """The check lane's hooks run as a call of the subagent of the plugin at root, as
     `<plugin>:<name>`, comes back: it keeps the call, and the answer of a `from` subagent of the
-    flow, and says nothing."""
+    flow, and tells the user the line a run of lane's flow.py printed where it could not tell the
+    run, as an error; it says nothing else."""
 
     def __init__(self, root: str, agent: str) -> None:
         self.root, self.agent = root, agent
 
-    def check(self, event: dict[str, Any]) -> list[str]:
+    def check(self, event: dict[str, Any]) -> list[hook.Said]:
         """Keeps the event's call where `place` says, as one JSON line after those kept before:
         its ID, its tool, its input, the folder it ran in, what it gave back, whether it failed,
         and the subagent it started, as `started` gives it; where it is the subagent's call of
@@ -123,7 +131,17 @@ class Kept:
         if event["tool_name"] == HANDBACK and answering(self.root, self.agent):
             message = event["tool_input"].get(MESSAGE)
             kept_as(event, message if isinstance(message, str) else "", True)
-        return []
+        return self.told(event)
+
+    def told(self, event: dict[str, Any]) -> list[hook.Said]:
+        """The line the event's call printed where it is a Bash run of lane's flow.py in the plugin
+        that could not tell the run, without its head, as the hook heads it with the plugin's name,
+        an error told the user; none for any other call."""
+        command = event["tool_input"].get("command") if event["tool_name"] == "Bash" else None
+        script = lanes_json.flow_script(self.root)
+        if not isinstance(command, str) or not call.runs_path(command, event["cwd"], script):
+            return []
+        return [hook.Said(m["said"], True) for m in FLOW_FAILED.finditer(given_back(event))]
 
 
 def answering(root: str, agent: str) -> bool:

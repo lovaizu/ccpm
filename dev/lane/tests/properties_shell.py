@@ -150,7 +150,7 @@ class TestStartWith(unittest.TestCase):
         # quoted as a shell quotes it, by python3, by sh or by its path, with any words after it;
         # by its path, not a path like an assignment, as a folder `A=` makes it, which lane reads
         # as one, quoted or not, as no step names such a script
-        path = os.path.join(folder, "scripts", "turn.py")
+        path = os.path.join(folder, "scripts", "next.py")
         script = shlex.quote(path)
         assume(interpreter or not shell.ASSIGNMENT.fullmatch(path))
         command = f"{interpreter}{script} {said(words)}"
@@ -158,7 +158,7 @@ class TestStartWith(unittest.TestCase):
         # When: start_with reads it as the subagent's first call
         # Then: it is no drift
         self.assertFalse(
-            start_with.drifts(made._replace(before=[]), ["scripts/turn.py"], NO_PLUGIN)
+            start_with.drifts(made._replace(before=[]), ["scripts/next.py"], NO_PLUGIN)
         )
 
 

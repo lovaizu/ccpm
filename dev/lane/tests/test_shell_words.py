@@ -11,8 +11,8 @@ def read(command: str) -> list[list[str]]:
     return [shell.without_redirects(w) for _, w, _ in shell.statements(command, HERE)]
 
 
-# A commit taking its message from a heredoc, as rn's /rn:up skill keeps a session's folder.
-KEEP = "git add .rn/s\ngit commit -F - <<'EOF'\nKeep the plan\nEOF\ngit push"
+# A commit taking its message from a heredoc, as a plugin's skill keeps a session's folder.
+KEEP = "git add .notes/s\ngit commit -F - <<'EOF'\nKeep the plan\nEOF\ngit push"
 
 
 class TestWords(unittest.TestCase):
@@ -172,10 +172,10 @@ class TestWords(unittest.TestCase):
 
 class TestHeredocs(unittest.TestCase):
     def test_a_heredocs_text_is_left_out(self):
-        # Given: the keep of rn's /rn:up skill, a commit taking its message from a heredoc
+        # Given: the keep of a plugin's skill, a commit taking its message from a heredoc
         # When: it is read
         # Then: the heredoc's text and end word are left out
-        want = [["git", "add", ".rn/s"], ["git", "commit", "-F", "-"], ["git", "push"]]
+        want = [["git", "add", ".notes/s"], ["git", "commit", "-F", "-"], ["git", "push"]]
         self.assertEqual(read(KEEP), want)
 
     def test_a_heredoc_ends_only_at_its_end_word_alone_on_a_line(self):

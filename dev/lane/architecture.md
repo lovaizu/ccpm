@@ -87,9 +87,11 @@ Principle 1 to 9, and two of its own, named below lane's Principle 1 and 2:
   They are the forms a plugin's outputs most often take. A form of a project's own is left to the
   project's script, through test_after.
 - follow_next holds the subagent to each move its script prints, and to run the script again once
-  it has taken the move, until the script's last run printed no move. A run of the script is never
-  a drift, and a run that fails changes nothing of what is due. It is held from the calls the
-  subagent made before, as [the lanes](../../plugins/lane/docs/lanes.md) say.
+  it has taken the move, until the script's last run printed no move, and does not let it end
+  before the script's first run. A run of the script is never a drift. A run that fails changes
+  nothing of what is due of the calls, and lets the subagent end, so its report of the failure
+  reaches whoever started it. It is held from the calls the subagent made before, as
+  [the lanes](../../plugins/lane/docs/lanes.md) say.
 
   A move taken is half of following a script: an orchestrator that ends once a subagent has
   answered, without asking the script again, drifts as much as one that takes another move. The

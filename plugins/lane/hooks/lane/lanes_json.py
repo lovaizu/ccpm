@@ -193,6 +193,12 @@ def flow_wrong(flow: dict[str, Any] | None) -> str:
     return ""
 
 
+def flow_script(root: str) -> str:
+    """The whole path of lane's flow.py in the plugin at root, its links followed, as a command
+    running it names it from wherever it is run."""
+    return os.path.realpath(os.path.join(root, "hooks", "lane", FLOW_PY))
+
+
 def froms(flow: dict[str, Any] | None) -> list[str]:
     """Each subagent whose answer sends the work of the flow back, its answer kept as it ends; none
     where there is no flow."""

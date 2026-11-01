@@ -3,12 +3,13 @@ again after each, until it prints none, such as a plugin's `scripts/next.py` tel
 what to do now. The move is read at the move port, in lane's form the tool call itself, one JSON
 line `{"tool": ..., "input": {...}}`, a form general to any plugin. The move is the subagent's next,
 so the lane is held both on a tool call and as the subagent is about to end. It is held from the
-calls the subagent made before, from the script's first run on: once the script has printed a move,
-each call, and the end, is a drift until a call takes it, that tool with each field of the input
-printed equal, the fields not printed free; once the move is taken, each call, and the end, is a
-drift until the script runs again. A run of the script is never a drift, and a run that failed,
-exiting other than 0, changes nothing of what is due. Once the script's last run printed no move,
-such as a result to return, the subagent is free."""
+calls the subagent made before: ending before the script's first run is a drift, each call before
+it free; once the script has printed a move, each call, and the end, is a drift until a call takes
+it, that tool with each field of the input printed equal, the fields not printed free; once the
+move is taken, each call, and the end, is a drift until the script runs again. A run of the script
+is never a drift, and a run that failed, exiting other than 0, changes nothing of what is due of
+the calls, and lets the subagent end, so its report of the failure reaches whoever started it.
+Once the script's last run printed no move, such as a result to return, the subagent is free."""
 
 from __future__ import annotations
 
@@ -29,21 +30,25 @@ PORT = "move"
 def drifts(given: Call | End, takes: list[str], root: str, read: Port) -> bool:
     """Whether the call is made, or the subagent ends, while something is due and the call is not
     it: a move the script taken last printed, read at the move port by read, that no call since
-    took, or, once a call took it, a run of the script again."""
+    took, or, once a call took it, a run of the script again; or whether the subagent ends before
+    the script's first run. The end is free once the script's last run failed."""
     if isinstance(given, End):
         before, now = given.made, None
     else:
         before, now = given.before, given
     if now is not None and runs(now, takes):
         return False
-    move, again = None, False
+    move, again, last = None, False, None
     for c in before:
         if runs(c, takes):
+            last = c
             if not c.failed:
                 move, again = read({"output": c.result})["move"], False
         elif move is not None and taken(c, move):
             move, again = None, True
-    return again or (move is not None and (now is None or not taken(now, move)))
+    if now is None:
+        return last is None or (not last.failed and (again or move is not None))
+    return again or (move is not None and not taken(now, move))
 
 
 def taken(call: Call, move: dict[str, Any]) -> bool:

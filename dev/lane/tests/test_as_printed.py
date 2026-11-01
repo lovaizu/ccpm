@@ -113,7 +113,7 @@ class TestDrift(AsPrintedTest):
 
     def test_any_other_call_before_the_print_is_handed_on_drifts(self):
         for tool, given in (
-            ("Bash", 'turn.py next r.json \'{"answer": "yes"}\''),
+            ("Bash", 'next.py r.json \'{"answer": "yes"}\''),
             ("Bash", PRINT),
             ("AskUserQuestion", "Is it so?"),
         ):
@@ -298,7 +298,7 @@ class TestGuard(GuardTest):
         # When: it runs another command
         # Then: the call is stopped, and the subagent told the sentence headed by the plugin
         expected = ("told", "notes: Hand on `lay.py print` as it is.")
-        self.assertEqual(self.guard(self.stream("turn.py next r.json")), expected)
+        self.assertEqual(self.guard(self.stream("next.py r.json")), expected)
 
     def test_a_hand_on_of_something_else_is_stopped_with_the_sentence(self):
         # Given: changelog-writer's record of the command run, having printed

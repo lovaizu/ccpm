@@ -27,7 +27,7 @@ run, with nothing told. A thing taken holds any text, a comma among the rest.
 | run | hands_off | Do not run `<commands>`. | runs one of them |
 | test | test_after | After changing `<output>`, pass `<test>`. | ends with a change not yet passed |
 | hand on | as_printed | Hand on `<command>` as it is. | does anything else first |
-| follow | follow_next | Take each move `<script>` prints, until it prints none. | does anything else first, or anything but run `<script>` again once it has taken the move |
+| follow | follow_next | Take each move `<script>` prints, until it prints none. | ends before it first runs `<script>`, does anything else first, or anything but run `<script>` again once it has taken the move |
 | wait | wait_for | Do not go on until `<approval>`. | runs a command it holds back without it |
 | end | end_when | End only once `<output>` is made. | ends before |
 | end | every_item | Answer every item of `<input>`. | leaves an item unanswered |
@@ -59,12 +59,14 @@ path, without `$`, a backquote or a `cd` lane cannot follow. write_only lets a c
 the folder the subagent works in, as one throwing its output away in `/dev/null`, only where the
 words settle that the file is out of it.
 
-follow_next holds the subagent from the first run of the script on. Once the script has printed a
-move, each call and the end are a drift until a call takes the move: that tool, with each field of
-the input printed given equal, the fields not printed free. Once the subagent has taken it, each
-call and the end are a drift until it runs the script again. A run of the script is never a drift,
-and a run that fails, exiting other than 0, changes nothing of what is due. Once the script's last
-run printed no move, the subagent is free. So a plugin's `scripts/next.py`, printing the next tool
+follow_next holds the subagent's calls from the first run of the script on, and its end from the
+start: ending before the script's first run is a drift, and each call before that run is free.
+Once the script has printed a move, each call and the end are a drift until a call takes the move:
+that tool, with each field of the input printed given equal, the fields not printed free. Once the
+subagent has taken it, each call and the end are a drift until it runs the script again. A run of
+the script is never a drift. A run that fails, exiting other than 0, changes nothing of what is due
+of the calls, and lets the subagent end, so its report of the failure reaches whoever started it.
+Once the script's last run printed no move, the subagent is free. So a plugin's `scripts/next.py`, printing the next tool
 call of its run, has the subagent take each move it prints and come back to it after each, until
 it prints none. lane's own such script is `flow.py`, which prints the next move of a flow, as
 [the flow](flow.md) says.

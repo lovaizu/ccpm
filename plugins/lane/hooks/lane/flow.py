@@ -7,7 +7,8 @@ the run, the orchestrator's calls and the answer of each `from` subagent, and no
 orchestrator writes, and prints a line for the orchestrator to read and, where there is a move,
 the move after it, one JSON line in the form follow_next reads, as docs/flow.md's What flow.py
 prints says. Where it cannot tell the run, it prints what is wrong on stderr, and exits 1, which
-follow_next counts as no run of the script."""
+follow_next counts as no run of the script, letting the orchestrator end; the guard tells the user
+the same line as the run comes back."""
 
 from __future__ import annotations
 
@@ -73,7 +74,9 @@ def plugin_name(root: str) -> str | None:
 def stopped(plugin: str, of: str, wrong: str, fix: str) -> int:
     """Prints on stderr, headed by the plugin, that lane cannot check the flow of the orchestrator
     named, what is wrong and who must fix it; gives 1."""
-    said = f"{plugin}: lane cannot check the flow of {of}: {wrong}. {hook.ASK.format(fix=fix)}"
+    said = (
+        f"{plugin}: lane cannot check the flow of {of}: {wrong}. {hook.ASK_AND_END.format(fix=fix)}"
+    )
     print(said, file=sys.stderr)
     return 1
 

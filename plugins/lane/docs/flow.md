@@ -14,7 +14,9 @@ Take each move `flow.py` prints, until it prints none.
 ```
 
 and the orchestrator is told it, headed by your plugin's name, when it drifts from the moves
-`flow.py` prints.
+`flow.py` prints. It is told it too when it is about to end before it first runs `flow.py`; each
+call before that run is free, as `flow.py` goes by the subagents started, so one started first
+does no harm.
 
 ## The flow
 
@@ -42,7 +44,10 @@ Your AI writes the flow under the `flow` key of the proposal, held to this JSON 
   So each answer leads to one move.
 - `while` is one line: it holds no line break.
 - The orchestrator starts each subagent with the Agent tool, so where its file names its tools,
-  they include Agent.
+  they include Agent, and `lay.py print` refuses a flow whose orchestrator's file names its tools
+  without it.
+- The orchestrator's step says to start each subagent of the flow in the foreground, as a
+  subagent's answer comes only at its end, as [What flow.py prints](#what-flowpy-prints) says.
 - The step of each `from` subagent says to give the answer on a line of its own, such as
   `` End with `more` on a line of its own when an entry needs the writer again. ``
 
@@ -92,26 +97,32 @@ back:
 
 Each row before another wins over it.
 
-An answer not kept yet comes from a subagent started in the background. A subagent that starts
-background subagents waits for their results before it finishes in an interactive session, but in
-`claude -p` with fork mode off it does not wait
-([Let subagents spawn their own subagents](https://code.claude.com/docs/en/sub-agents#let-subagents-spawn-their-own-subagents)).
-So in such a run, the orchestrator may end before the answer comes.
+An answer not kept yet comes from a subagent started in the background: its answer comes only at
+its end, and `flow.py` prints no move meanwhile, so in any mode the orchestrator may end before the
+answer comes. So the orchestrator starts the subagents of the flow in the foreground.
 
 Where `flow.py` cannot tell the run, it prints no move. It prints on stderr, and exits 1:
 
 ```
-<plugin>: lane cannot check the flow of <orchestrator>: <what is wrong>. Ask the main conversation for the fix: <who must fix it>. Go on with the rest of your work meanwhile.
+<plugin>: lane cannot check the flow of <orchestrator>: <what is wrong>. Ask the main conversation for the fix: <who must fix it>. End your work with this line.
 ```
+
+or, where `hooks/lanes.json` is what is wrong, so the orchestrator is not known, the same naming
+`the flow of this plugin`, headed `lane:` where your plugin's `.claude-plugin/plugin.json` names no
+plugin, so your plugin is not known either.
 
 It cannot tell the run where the guard, lane's code in your plugin's `hooks/lane/`, has not given
 it the run, as [How flow.py reads the answers](#how-flowpy-reads-the-answers) says. Nor can it
-where `hooks/lanes.json` holds no flow or is out of its form, or where the calls the guard kept are
-not found, or where the start of the last `from` subagent was kept with no `agentId`. Where the
-guard has not given it the run, or `hooks/lanes.json` holds no flow or is out of its form, it says
-your plugin's maker must lay its lanes again with `lay.py write`; where the calls kept or the
-`agentId` are not found, it says Claude Code must be updated. follow_next counts such a run as no
-run of the script, so what was due before it stays due.
+where your plugin's manifest names no plugin, where `hooks/lanes.json` holds no flow or is out of
+its form, where the calls the guard kept are not found, or where the start of the last `from`
+subagent was kept with no `agentId`. Where the guard has not given it the run, or
+`hooks/lanes.json` holds no flow or is out of its form, it says your plugin's maker must lay its
+lanes again with `lay.py write`; where the manifest names no plugin, that the plugin's maker must
+fix it; where the calls kept or the `agentId` are not found, that Claude Code must be updated.
+
+follow_next counts such a run as no run of the script for the calls, so what was due before it
+stays due, but lets the orchestrator end, so the line reaches the main conversation in its report.
+As the run comes back, the guard tells you the same line, headed by your plugin's name.
 
 ## How flow.py reads the answers
 

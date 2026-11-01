@@ -175,7 +175,9 @@ class TestRun(FollowNextTest):
 
 
 class TestFailedRun(FollowNextTest):
-    """A run of the script that failed, exiting other than 0, changes nothing of what is due."""
+    """A run of the script that failed, exiting other than 0, changes nothing of what is due of
+    the calls, and lets the subagent end, so its report of the failure reaches whoever started
+    it."""
 
     def test_a_failed_run_leaves_what_was_due(self):
         for what, (calls, tool, given, drifts) in {
@@ -191,17 +193,25 @@ class TestFailedRun(FollowNextTest):
                 # Then: it drifts as it would with no failed run
                 self.assertEqual(self.drifts([*calls, failed()], tool, given), drifts)
 
-    def test_ending_after_a_failed_run_is_held_as_before_it(self):
-        for what, (calls, drifts) in {
-            "the move due": ([ran()], True),
-            "the run due": ([ran(), TAKEN], True),
-            "nothing due": ([ran(NONE)], False),
+    def test_ending_after_a_failed_last_run_is_no_drift(self):
+        for what, calls in {
+            "the move due": [ran(), failed()],
+            "the run due": [ran(), TAKEN, failed()],
+            "nothing due": [ran(NONE), failed()],
+            "the first run failed": [failed()],
+            "a call after the failed run": [ran(), TAKEN, failed(), helpers.bash("ls")],
         }.items():
             with self.subTest(what=what):
-                # Given: what was due, then a run of the script that failed, printing a move
+                # Given: what was due, then a run of the script that failed, the last run of it
                 # When: the subagent is about to end
-                # Then: it drifts as it would with no failed run
-                self.assertEqual(self.ends([*calls, failed()]), drifts)
+                # Then: it is no drift
+                self.assertFalse(self.ends(calls))
+
+    def test_ending_after_a_run_that_did_not_fail_since_a_failed_one_is_held(self):
+        # Given: a run of the script that failed, then one printing a move
+        # When: the subagent is about to end
+        # Then: it is a drift, as the move is due
+        self.assertTrue(self.ends([failed(), ran()]))
 
 
 class TestFree(FollowNextTest):
@@ -233,17 +243,18 @@ class TestEnd(FollowNextTest):
             "after another call": [ran(), helpers.bash("git diff")],
             "after the move of the run before": [ran(), TAKEN, ran()],
             "once the move is taken": [ran(), TAKEN],
+            "before the script's first run": [helpers.bash("ls")],
+            "with no call made": [],
         }.items():
             with self.subTest(what=what):
                 # Given: the script run, having printed a move not taken since, or one taken with
-                # the script not run since
+                # the script not run since, or the script not yet run
                 # When: the subagent is about to end
                 # Then: it is a drift
                 self.assertTrue(self.ends(calls))
 
     def test_ending_with_nothing_due_is_no_drift(self):
         for what, calls in {
-            "the script not run": [helpers.bash("ls")],
             "the script run, printing no move": [ran('{"returned": "r.json"}')],
             "the move taken, the script run again, printing none": [ran(), TAKEN, ran(NONE)],
         }.items():
