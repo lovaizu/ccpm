@@ -1,0 +1,98 @@
+{
+ "kind": "readme",
+ "good": [
+  {
+   "question": "readme/Q1",
+   "lines": [
+    "plugins/turn/README.md:1-4"
+   ]
+  },
+  {
+   "question": "readme/Q2",
+   "lines": [
+    "plugins/turn/README.md:6-7"
+   ]
+  },
+  {
+   "question": "readme/Q3",
+   "lines": [
+    "plugins/turn/README.md:9-17"
+   ]
+  },
+  {
+   "question": "readme/Q4",
+   "lines": [
+    "plugins/turn/README.md:19-29"
+   ]
+  },
+  {
+   "question": "readme/Q5",
+   "lines": [
+    "plugins/turn/README.md:67-145"
+   ]
+  },
+  {
+   "question": "readme/Q6",
+   "lines": [
+    "plugins/turn/README.md:147-153"
+   ]
+  },
+  {
+   "question": "readme/Q7",
+   "lines": [
+    "plugins/turn/README.md:31-65",
+    "plugins/turn/README.md:74-79"
+   ]
+  },
+  {
+   "question": "readme/Q8",
+   "lines": [
+    "plugins/turn/README.md:155-164"
+   ]
+  },
+  {
+   "question": "readme/Q9",
+   "lines": [
+    "plugins/turn/README.md:166-168"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q1",
+   "lines": [
+    "plugins/turn/README.md:17-17",
+    "plugins/turn/README.md:149-153"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q2",
+   "lines": [
+    "plugins/turn/README.md:9-15"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q3",
+   "lines": [
+    "plugins/turn/README.md:9-15"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q4",
+   "lines": [
+    "plugins/turn/README.md:10-13"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q5",
+   "lines": [
+    "plugins/turn/README.md:1-168"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q6",
+   "lines": [
+    "plugins/turn/README.md:141-145"
+   ]
+  }
+ ],
+ "more": []
+}

@@ -7,12 +7,12 @@ With turn, anyone who wants a piece of work made gets it as it should be. They s
 effort only on the points that only they can decide. turn decides every other point itself.
 
 For each kind of work, such as a press release, a README or a script, turn first reads how good
-ones are made, and draws from them two things for you to approve. The format is the shape of the
-work, such as a headline, a lead and a body. The checklist is a set of questions that a work answers
-yes to when it serves its readers, such as "Can a reporter tell from the headline what is new?"
-turn then asks you what the work is for, and each point only you can decide, one at a time, with
-the answer it recommends. turn has a second AI check the work. That AI never sees the design of the
-work, so it judges only what the reader gets.
+ones are made. From them, it draws who reads such a work and for what, and two things for you to
+approve with it. The format is the shape of the work, such as a headline, a lead and a body. The
+checklist is a set of questions that a work answers yes to when it serves its readers, such as "Can
+a reporter tell from the headline what is new?" turn then asks you what this work is for, and each
+point only you can decide, one at a time, with the answer it recommends. turn has a second AI check
+the work. That AI never sees the design of the work, so it judges only what the reader gets.
 
 ![Claude Code alone and turn, side by side](idea.svg)
 
@@ -84,11 +84,12 @@ below, `You:` is what you type, and `turn:` is what turn shows you.
    You:  Yes
    ```
 
-3. turn reads guides and examples of good press releases on the internet. It then shows you the
-   format and the checklist it drew from them:
+3. turn reads guides and examples of good press releases on the internet. It then shows you who
+   reads a press release and for what, and the format and the checklist it drew from them:
 
    ```text
-   turn: Format: headline, lead, body, boilerplate, contact.
+   turn: Purpose: a reporter decides from the release whether to write about it.
+         Format: headline, lead, body, boilerplate, contact.
          Checklist:
          - Can a reporter tell from the headline what is new?
          - Can a reporter tell from the lead who launches what, and when?

@@ -29,7 +29,7 @@ sequenceDiagram
   User->>turn: Yes
   turn->>Web: Research how good press releases are written
   Web-->>turn: Guides and examples
-  turn->>User: Purpose: a reporter decides from the release whether to write about it<br/>Format: headline, lead, body, boilerplate, contact<br/>Checklist: Can a reporter tell from the headline what is new?<br/>Can a reporter tell from the lead who starts what and when? ...<br/>Approve?
+  turn->>User: Purpose: a reporter decides from the release whether to write about it<br/>Format: headline, lead, body, boilerplate, contact<br/>Checklist: Can a reporter tell from the headline what is new?<br/>Can a reporter tell from the lead who launches what, and when? ...<br/>Approve?
   User->>turn: Approved
   turn->>User: What is the release for?
   User->>turn: To get it into trade magazines

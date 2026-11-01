@@ -43,7 +43,7 @@
   <rect class="you" x="40" y="30" width="28" height="18" rx="4"/>
   <text class="label" x="78" y="44">where you spend effort</text>
 
-  <!-- you are a person; designer, builder and evaluator are AIs -->
+  <!-- you are a person; planner, designer, builder and evaluator are AIs -->
   <circle class="you" cx="90" cy="118" r="16"/>
   <path class="you" d="M60,182 V160 A30,24 0 0 1 120,160 V182 Z"/>
   <text class="name" x="90" y="204">you</text>
@@ -66,6 +66,15 @@
   <text class="name" x="850" y="204">builder</text>
   <text class="kind" x="850" y="221">turn's AI</text>
 
+  <path class="fold" d="M1105,108 V122"/>
+  <circle class="box" cx="1105" cy="104" r="4"/>
+  <rect class="box" x="1075" y="122" width="60" height="60" rx="10"/>
+  <circle class="eye" cx="1093" cy="146" r="5"/>
+  <circle class="eye" cx="1117" cy="146" r="5"/>
+  <path class="mouth" d="M1093,166 H1117"/>
+  <text class="name" x="1105" y="204">planner</text>
+  <text class="kind" x="1105" y="221">turn's AI</text>
+
   <path class="fold" d="M850,446 V460"/>
   <circle class="box" cx="850" cy="442" r="4"/>
   <rect class="box" x="820" y="460" width="60" height="60" rx="10"/>
@@ -87,6 +96,12 @@
   <path class="box" d="M1040,430 H1152 L1170,448 V530 H1040 Z"/>
   <path class="fold" d="M1152,430 V448 H1170"/>
   <text class="name" x="1105" y="485">the checklist</text>
+
+  <!-- the planner draws the checklist and has you approve it -->
+  <path class="line" d="M1105,100 V80 H90 V98" marker-end="url(#arrow)"/>
+  <text class="label mid" x="600" y="72">shows the format and the checklist for your approval</text>
+  <path class="line" d="M1105,232 V422" marker-end="url(#arrow)"/>
+  <text class="label end" x="1095" y="330">draws from good works</text>
 
   <!-- you and the designer -->
   <path class="line" d="M312,135 H128" marker-end="url(#arrow)"/>
