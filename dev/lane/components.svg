@@ -1,23 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 540" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>lane's components</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1590 900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>lane&#x27;s components</title>
   <style>
-    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #59636e; stroke-width: 1.5; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #59636e; stroke-width: 1.5; stroke-dasharray: 5 3; }
+    .env { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 7 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
-    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .tag { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .utag { fill: #59636e; font-size: 12px; }
+    .envname { fill: #0969da; font-size: 13px; font-weight: 600; }
     .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
-    .drift { stroke-dasharray: 5 4; }
     .head { fill: #59636e; }
-    .label { fill: #1f2328; font-size: 13px; }
-    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
-    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .label { fill: #1f2328; font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
     @media (prefers-color-scheme: dark) {
-      .box { fill: #161b22; stroke: #3d444d; }
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #9198a1; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #9198a1; }
+      .env { stroke: #4493f8; }
+      .unit { fill: #0c2d6b; fill-opacity: 0.35; stroke: #4493f8; }
       .name, .label { fill: #f0f6fc; }
-      .kind { fill: #9198a1; }
+      .tag, .utag { fill: #9198a1; }
+      .envname { fill: #4493f8; }
       .line { stroke: #9198a1; }
       .head { fill: #9198a1; }
-      .frame { stroke: #4493f8; }
-      .frame-name { fill: #4493f8; }
+      .data { fill: #c297ff; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
     }
   </style>
   <defs>
@@ -25,80 +37,174 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-
-  <!-- lane's own roles -->
-  <rect class="frame" x="345" y="14" width="250" height="486" rx="10"/>
-  <text class="frame-name" x="357" y="33">lane</text>
-
-  <!-- roles: a pill is an AI, a square is code -->
-  <rect class="box" x="20" y="40" width="220" height="92" rx="30"/>
-  <text class="name" x="130" y="66">building AI</text>
-  <text class="kind" x="130" y="86">proposes the lanes and approves</text>
-  <text class="kind" x="130" y="102">them; fixes what lane</text>
-  <text class="kind" x="130" y="118">cannot check</text>
-
-  <rect class="box" x="360" y="40" width="220" height="92" rx="0"/>
-  <text class="name" x="470" y="66">layer</text>
-  <text class="kind" x="470" y="86">checks and prints the proposal,</text>
-  <text class="kind" x="470" y="102">writes it into the plugin once</text>
-  <text class="kind" x="470" y="118">approved, brings up a plugin</text>
-
-  <rect class="box" x="690" y="224" width="210" height="92" rx="0"/>
-  <text class="name" x="795" y="250">adapter</text>
-  <text class="kind" x="795" y="270">the plugin's own; reads</text>
-  <text class="kind" x="795" y="286">the plugin's text at a port</text>
-  <text class="kind" x="795" y="302">in place of lane's reading</text>
-
-  <rect class="box" x="360" y="392" width="220" height="100" rx="0"/>
-  <text class="name" x="470" y="414">guard</text>
-  <text class="kind" x="470" y="432">holds a subagent to its lanes,</text>
-  <text class="kind" x="470" y="448">tells the sentence of each it</text>
-  <text class="kind" x="470" y="464">drifts from and an orchestrator</text>
-  <text class="kind" x="470" y="480">its next move, keeps each call</text>
-
-  <rect class="box" x="20" y="392" width="220" height="92" rx="30"/>
-  <text class="name" x="130" y="418">subagent</text>
-  <text class="kind" x="130" y="438">takes its steps; asks for</text>
-  <text class="kind" x="130" y="454">the fix where lane</text>
-  <text class="kind" x="130" y="470">cannot check</text>
-
-  <!-- building AI and layer -->
-  <path class="line" d="M240,72 H360" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="300" y="64">proposal</text>
-  <path class="line" d="M360,108 H240" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="300" y="126">print</text>
-
-  <!-- layer to the subagent and the guard, through the plugin -->
-  <path class="line" d="M390,132 L215,392" marker-end="url(#arrow)"/>
-  <text class="label" x="312" y="270">step</text>
-  <path class="line" d="M470,132 V392" marker-end="url(#arrow)"/>
-  <text class="label" x="480" y="250">lanes laid,</text>
-  <text class="label" x="480" y="267">hook entry</text>
-
-  <!-- the adapter, run by the layer on its cases and by the guard on a run -->
-  <path class="line" d="M580,96 L716,224" marker-end="url(#arrow)"/>
-  <path class="line" d="M690,250 L568,132" marker-end="url(#arrow)"/>
-  <text class="label" x="648" y="150">port JSON</text>
-  <path class="line" d="M580,428 L716,316" marker-end="url(#arrow)"/>
-  <path class="line" d="M690,300 L568,392" marker-end="url(#arrow)"/>
-  <text class="label" x="652" y="390">port JSON</text>
-
-  <!-- subagent and guard -->
-  <path class="line" d="M240,420 H360" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="300" y="412">event</text>
-  <path class="line drift" d="M360,456 H240" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="300" y="474">answer</text>
-
-  <!-- subagent to the building AI -->
-  <path class="line" d="M110,392 V132" marker-end="url(#arrow)"/>
-  <text class="label" x="120" y="262">answer,</text>
-  <text class="label" x="120" y="279">where an error</text>
-
-  <!-- legend -->
-  <rect class="box" x="560" y="510" width="40" height="22" rx="11"/>
-  <text class="label" x="608" y="526">AI</text>
-  <rect class="box" x="650" y="510" width="40" height="22" rx="0"/>
-  <text class="label" x="698" y="526">code</text>
-  <line class="line drift" x1="750" y1="521" x2="790" y2="521"/>
-  <text class="label" x="798" y="526">told on a drift</text>
+  <rect class="bg" x="0" y="0" width="1590" height="900"/>
+  <rect class="env" x="22" y="352" width="1283" height="308" rx="10"/>
+  <text class="envname" x="34" y="370" text-anchor="start"></text>
+  <text class="envname" x="34" y="652" text-anchor="start">check script</text>
+  <text class="utag" x="132" y="652" text-anchor="start">[hooks/lane/ · Python 3.9]</text>
+  <rect class="box" x="30" y="40" width="180" height="64" rx="14"/>
+  <text class="name" x="120.0" y="69.0">Developer AI</text>
+  <text class="tag" x="120.0" y="86.0">[AI · Claude Code]</text>
+  <path class="store" d="M300,49 A90.0,9 0 0 1 480,49 V95 A90.0,9 0 0 1 300,95 Z"/>
+  <path class="store" d="M300,49 A90.0,9 0 0 0 480,49"/>
+  <text class="name" x="390.0" y="69.0">Proposal</text>
+  <text class="tag" x="390.0" y="86.0">[JSON file · .lane/]</text>
+  <path class="store" d="M570,49 A90.0,9 0 0 1 750,49 V95 A90.0,9 0 0 1 570,95 Z"/>
+  <path class="store" d="M570,49 A90.0,9 0 0 0 750,49"/>
+  <text class="name" x="660.0" y="69.0">Test cases</text>
+  <text class="tag" x="660.0" y="86.0">[JSON files]</text>
+  <rect class="ext" x="840" y="40" width="180" height="64" rx="4"/>
+  <text class="name" x="930.0" y="69.0">Claude Code</text>
+  <text class="tag" x="930.0" y="86.0">[CLI]</text>
+  <rect class="box" x="1110" y="40" width="180" height="64" rx="14"/>
+  <text class="name" x="1200.0" y="69.0">Subagent</text>
+  <text class="tag" x="1200.0" y="86.0">[AI · Claude Code]</text>
+  <rect class="box" x="30" y="210" width="180" height="64" rx="0"/>
+  <text class="name" x="120.0" y="239.0">lay.py</text>
+  <text class="tag" x="120.0" y="256.0">[command line · Python 3.9]</text>
+  <rect class="box" x="300" y="210" width="180" height="64" rx="0"/>
+  <text class="name" x="390.0" y="239.0">proposal.py</text>
+  <text class="tag" x="390.0" y="256.0">[module · Python 3.9]</text>
+  <rect class="ext" x="570" y="210" width="180" height="64" rx="4"/>
+  <text class="name" x="660.0" y="239.0">Adapter</text>
+  <text class="tag" x="660.0" y="256.0">[script · Python 3]</text>
+  <circle class="box" cx="1200.0" cy="208" r="11"/>
+  <rect class="box" x="1110" y="218" width="180" height="64" rx="22"/>
+  <text class="name" x="1200.0" y="247.0">Operator</text>
+  <text class="tag" x="1200.0" y="264.0">[person or AI]</text>
+  <rect class="box" x="300" y="380" width="180" height="64" rx="0"/>
+  <text class="name" x="390.0" y="409.0">ports.py</text>
+  <text class="tag" x="390.0" y="426.0">[module · Python 3.9]</text>
+  <rect class="box" x="840" y="380" width="180" height="64" rx="0"/>
+  <text class="name" x="930.0" y="409.0">hook.py</text>
+  <text class="tag" x="930.0" y="426.0">[hook entry · Python 3.9]</text>
+  <rect class="box" x="1110" y="380" width="180" height="64" rx="0"/>
+  <text class="name" x="1200.0" y="409.0">called.py</text>
+  <text class="tag" x="1200.0" y="426.0">[module · Python 3.9]</text>
+  <path class="store" d="M1380,389 A90.0,9 0 0 1 1560,389 V435 A90.0,9 0 0 1 1380,435 Z"/>
+  <path class="store" d="M1380,389 A90.0,9 0 0 0 1560,389"/>
+  <text class="name" x="1470.0" y="409.0">Calls kept</text>
+  <text class="tag" x="1470.0" y="426.0">[JSONL · temporary folder]</text>
+  <rect class="box" x="30" y="560" width="180" height="64" rx="0"/>
+  <text class="name" x="120.0" y="589.0">lanes/</text>
+  <text class="tag" x="120.0" y="606.0">[modules · Python 3.9]</text>
+  <rect class="box" x="300" y="560" width="180" height="64" rx="0"/>
+  <text class="name" x="390.0" y="589.0">guard.py</text>
+  <text class="tag" x="390.0" y="606.0">[module · Python 3.9]</text>
+  <rect class="box" x="840" y="560" width="180" height="64" rx="0"/>
+  <text class="name" x="930.0" y="589.0">moves.py</text>
+  <text class="tag" x="930.0" y="606.0">[module · Python 3.9]</text>
+  <path class="store" d="M1380,569 A90.0,9 0 0 1 1560,569 V615 A90.0,9 0 0 1 1380,615 Z"/>
+  <path class="store" d="M1380,569 A90.0,9 0 0 0 1560,569"/>
+  <text class="name" x="1470.0" y="589.0">Record</text>
+  <text class="tag" x="1470.0" y="606.0">[JSONL · Claude Code&#x27;s]</text>
+  <path class="store" d="M30,749 A630.0,9 0 0 1 1290,749 V795 A630.0,9 0 0 1 30,795 Z"/>
+  <path class="store" d="M30,749 A630.0,9 0 0 0 1290,749"/>
+  <text class="name" x="660.0" y="769.0">Plugin files</text>
+  <text class="tag" x="660.0" y="786.0">[Markdown, JSON · agents/, prompts/, hooks/hooks.json, hooks/lanes.json]</text>
+  <path class="line" d="M120,104 L120,210" marker-end="url(#arrow)"/>
+  <text class="label" x="128" y="146" text-anchor="start">runs print,</text>
+  <text class="label" x="128" y="160" text-anchor="start">write, up [Bash]</text>
+  <text class="data" x="128" y="174" text-anchor="start">Proposal</text>
+  <path class="line" d="M210,72 L300,72" marker-end="url(#arrow)"/>
+  <text class="label" x="255" y="64" text-anchor="middle">writes</text>
+  <path class="line" d="M210,246 L300,246" marker-end="url(#arrow)"/>
+  <text class="label" x="255" y="226" text-anchor="middle">reads,</text>
+  <text class="label" x="255" y="240" text-anchor="middle">checks</text>
+  <text class="data" x="255" y="262" text-anchor="middle">Proposal</text>
+  <path class="line" d="M200,210 L310,104" marker-end="url(#arrow)"/>
+  <text class="label" x="262" y="182" text-anchor="start">removes</text>
+  <path class="line" d="M390,210 L390,104" marker-end="url(#arrow)"/>
+  <text class="label" x="398" y="162" text-anchor="start">reads</text>
+  <path class="line" d="M470,210 L590,104" marker-end="url(#arrow)"/>
+  <text class="label" x="536" y="186" text-anchor="start">reads</text>
+  <text class="data" x="536" y="200" text-anchor="start">Test case</text>
+  <path class="line" d="M480,246 L570,246" marker-end="url(#arrow)"/>
+  <text class="label" x="525" y="226" text-anchor="middle">runs on</text>
+  <text class="label" x="525" y="240" text-anchor="middle">test cases</text>
+  <text class="data" x="525" y="262" text-anchor="middle">Port JSON</text>
+  <path class="line" d="M180,274 L180,560" marker-end="url(#arrow)"/>
+  <text class="label" x="172" y="300" text-anchor="end">makes each</text>
+  <text class="label" x="172" y="314" text-anchor="end">sentence</text>
+  <text class="data" x="172" y="328" text-anchor="end">Rule</text>
+  <path class="line" d="M30,254 L14,254 L14,772 L30,772" marker-end="url(#arrow)"/>
+  <text class="label" x="36" y="688" text-anchor="start">reads, writes</text>
+  <text class="data" x="36" y="702" text-anchor="start">Step, Hook entry,</text>
+  <text class="data" x="36" y="716" text-anchor="start">Rule, Flow</text>
+  <path class="line" d="M30,224 L14,224 L14,16 L930,16 L930,40" marker-end="url(#arrow)"/>
+  <text class="label" x="560" y="31" text-anchor="middle">checks the plugin [claude plugin validate]</text>
+  <path class="line" d="M930,104 L930,380" marker-end="url(#arrow)"/>
+  <text class="label" x="922" y="296" text-anchor="end">runs on each event,</text>
+  <text class="label" x="922" y="310" text-anchor="end">as Hook entries say</text>
+  <text class="label" x="922" y="324" text-anchor="end">[sh, JSON on stdin, stdout]</text>
+  <text class="data" x="922" y="338" text-anchor="end">Event, Decision</text>
+  <path class="line" d="M1020,62 L1110,62" marker-end="url(#arrow)"/>
+  <text class="label" x="1065" y="56" text-anchor="middle">runs, tells</text>
+  <text class="data" x="1065" y="78" text-anchor="middle">Decision</text>
+  <path class="line" d="M1110,90 L1020,90" marker-end="url(#arrow)"/>
+  <text class="label" x="1065" y="120" text-anchor="middle">makes tool</text>
+  <text class="label" x="1065" y="134" text-anchor="middle">calls, ends</text>
+  <path class="line" d="M990,104 L990,246 L1110,246" marker-end="url(#arrow)"/>
+  <text class="label" x="998" y="166" text-anchor="start">shows errors</text>
+  <text class="label" x="998" y="180" text-anchor="start">[system message]</text>
+  <text class="data" x="998" y="194" text-anchor="start">Decision</text>
+  <path class="line" d="M840,436 L480,566" marker-end="url(#arrow)"/>
+  <text class="label" x="600" y="474" text-anchor="middle">checks the rules</text>
+  <text class="data" x="600" y="488" text-anchor="middle">Event</text>
+  <path class="line" d="M1020,422 L1110,422" marker-end="url(#arrow)"/>
+  <text class="label" x="1065" y="414" text-anchor="middle">keeps, tells</text>
+  <text class="data" x="1065" y="438" text-anchor="middle">Event</text>
+  <path class="line" d="M1290,422 L1380,422" marker-end="url(#arrow)"/>
+  <text class="label" x="1335" y="400" text-anchor="middle">writes,</text>
+  <text class="label" x="1335" y="414" text-anchor="middle">reads</text>
+  <text class="data" x="1335" y="438" text-anchor="middle">Kept call,</text>
+  <text class="data" x="1335" y="452" text-anchor="middle">Answer</text>
+  <path class="line" d="M1260,444 L1420,560" marker-end="url(#arrow)"/>
+  <text class="label" x="1330" y="530" text-anchor="end">reads</text>
+  <text class="data" x="1330" y="544" text-anchor="end">Record</text>
+  <path class="line" d="M1140,444 L1000,560" marker-end="url(#arrow)"/>
+  <text class="label" x="1086" y="500" text-anchor="start">asks the</text>
+  <text class="label" x="1086" y="514" text-anchor="start">next start</text>
+  <text class="data" x="1086" y="528" text-anchor="start">Flow,</text>
+  <text class="data" x="1086" y="542" text-anchor="start">Kept call</text>
+  <path class="line" d="M1200,444 L1200,740" marker-end="url(#arrow)"/>
+  <text class="label" x="1208" y="690" text-anchor="start">reads</text>
+  <text class="data" x="1208" y="704" text-anchor="start">Flow</text>
+  <path class="line" d="M300,596 L210,596" marker-end="url(#arrow)"/>
+  <text class="label" x="255" y="576" text-anchor="middle">runs each</text>
+  <text class="label" x="255" y="590" text-anchor="middle">check</text>
+  <text class="data" x="255" y="612" text-anchor="middle">Rule,</text>
+  <text class="data" x="255" y="626" text-anchor="middle">Run value</text>
+  <path class="line" d="M390,560 L390,444" marker-end="url(#arrow)"/>
+  <text class="label" x="398" y="500" text-anchor="start">reads a text</text>
+  <text class="data" x="398" y="514" text-anchor="start">Port JSON</text>
+  <path class="line" d="M450,380 L620,274" marker-end="url(#arrow)"/>
+  <text class="label" x="556" y="332" text-anchor="start">runs [JSON, stdio]</text>
+  <text class="data" x="556" y="346" text-anchor="start">Port JSON</text>
+  <path class="line" d="M480,606 L840,606" marker-end="url(#arrow)"/>
+  <text class="label" x="660" y="598" text-anchor="middle">asks the next start</text>
+  <text class="data" x="660" y="622" text-anchor="middle">Flow, Kept call</text>
+  <path class="line" d="M480,580 L1110,444" marker-end="url(#arrow)"/>
+  <text class="label" x="752" y="546" text-anchor="middle">reads earlier calls</text>
+  <text class="data" x="752" y="560" text-anchor="middle">Kept call, Record</text>
+  <path class="line" d="M390,624 L390,740" marker-end="url(#arrow)"/>
+  <text class="label" x="398" y="690" text-anchor="start">reads</text>
+  <text class="data" x="398" y="704" text-anchor="start">Step, Rule, Flow</text>
+  <text class="envname" x="30" y="855" text-anchor="start">Legend</text>
+  <rect class="box" x="100" y="840" width="36" height="22" rx="8"/>
+  <text class="label" x="144" y="855" text-anchor="start">AI</text>
+  <circle class="box" cx="198" cy="842" r="6"/>
+  <rect class="box" x="180" y="846" width="36" height="16" rx="8"/>
+  <text class="label" x="224" y="855" text-anchor="start">person</text>
+  <rect class="box" x="286" y="840" width="36" height="22" rx="0"/>
+  <text class="label" x="330" y="855" text-anchor="start">code of lane</text>
+  <path class="store" d="M420,844 A18,4 0 0 1 456,844 V860 A18,4 0 0 1 420,860 Z"/>
+  <path class="store" d="M420,844 A18,4 0 0 0 456,844"/>
+  <text class="label" x="464" y="855" text-anchor="start">store of data</text>
+  <rect class="ext" x="560" y="840" width="36" height="22" rx="3"/>
+  <text class="label" x="604" y="855" text-anchor="start">outside lane</text>
+  <rect class="env" x="694" y="840" width="36" height="22" rx="4"/>
+  <text class="label" x="738" y="855" text-anchor="start">the check script, copied into a plugin</text>
+  <text class="label" x="1000" y="848" text-anchor="start">[type · technology] in a box; [protocol] on an arrow</text>
+  <text class="data" x="1000" y="864" text-anchor="start">data handed on, named as in the data model</text>
 </svg>
