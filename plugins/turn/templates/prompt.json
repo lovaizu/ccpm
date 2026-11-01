@@ -1,0 +1,191 @@
+{
+ "kind": "prompt",
+ "purpose": "A prompt gives an AI agent a task to do on its own: a skill, which the agent loads when a request calls for it, or a subagent, which the agent starts with a context of its own. The host, such as Claude Code, chooses the prompt for a request by its description. The AI then reads it with only what its run gives it, and from the prompt does the task as its writer means, on every run and in cases the writer did not foresee. It hands back what its caller asked for in a form the caller can use, and leaves to the user what only the user decides.",
+ "format": {
+  "skeleton": "---\nname: <A name that says what it does>\ndescription: <What it does, and the requests it is used for>\ntools: <The tools it may use, where the host lets them be listed>\n---\n\n<What the AI is to achieve, for whom, how it knows it is done, and what lies outside its task, such as what the user decides>\n\n## Context\n\n<What the AI needs and cannot find or know on its own: the situation, its inputs and where they are, and the rules of this place>\n\n## Steps\n\n1. <The result that holds when the step ends>\n\n   <A rule the AI's judgment needs in this step, with its reason>\n\n   <Where a script does the step: its command>\n\n## Output\n\n<What the AI hands back, in what form, and to whom>\n",
+  "parts": [
+   {
+    "id": "description",
+    "what": "The name and the description in the frontmatter.",
+    "why": "The host reads them alone to choose the prompt for a request."
+   },
+   {
+    "id": "tools",
+    "what": "The tools the AI may use, in the frontmatter, where the host lets them be listed.",
+    "why": "The host refuses the AI any action its tools do not allow, whatever it decides."
+   },
+   {
+    "id": "goal",
+    "what": "The paragraph that opens the body: what the AI is to achieve, for whom, how it knows it is done, and what lies outside its task.",
+    "why": "The AI judges each step and its end by what the task is for, and hands back what is not its own."
+   },
+   {
+    "id": "context",
+    "what": "The section of what the AI needs and cannot find or know on its own.",
+    "why": "The AI works from facts, not guesses, with only what its run gives it."
+   },
+   {
+    "id": "steps",
+    "what": "A numbered list, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the command of the script that does it.",
+    "why": "The AI chooses how to reach each result, decides a case no rule names from a rule's reason, and leaves to a script what must not vary."
+   },
+   {
+    "id": "output",
+    "what": "The section of what the AI hands back, in what form, and to whom.",
+    "why": "The caller acts on what comes back."
+   }
+  ]
+ },
+ "checklist": [
+  {
+   "id": "Q1",
+   "what": "When a request the prompt is made for comes, and a request near it that it is not made for comes, does the host choose the prompt for the first and pass it over for the second, from the name and the description alone?",
+   "why": "If yes, the user gets the prompt's work whenever they ask for it in their own words, and never where it does not belong. The description says what the prompt does and the requests it is used for, in the words a user would ask in. If no, a prompt not chosen does nothing for the user however good its steps are, and one chosen for the wrong request does work no one asked for.",
+   "about": [
+    "description"
+   ],
+   "grounds": [
+    "Anthropic, \"Skill authoring best practices\" (Claude Platform Docs), Writing effective descriptions: \"The description is critical for skill selection: Claude uses it to choose the right Skill from potentially 100+ available Skills.\" and \"Include both what the Skill does and specific triggers/contexts for when to use it.\"",
+    "Anthropic, \"Create custom subagents\" (Claude Code Docs): \"Claude uses each subagent's description to decide when to delegate tasks.\""
+   ],
+   "examples": {
+    "fails": "description: Helps with rooms. (It is chosen for \"How many rooms are on floor 3?\", and not for \"Find somewhere for my six-person review tomorrow\".)",
+    "passes": "description: Finds the meeting rooms that fit a meeting and are free at its time, and books the one the user picks. Used when the user asks to book, find or hold a room for a meeting."
+   }
+  },
+  {
+   "id": "Q2",
+   "what": "When the AI, during a run, reaches for an action the prompt leaves outside its task, such as writing a file during a review, does the host refuse it?",
+   "why": "If yes, what the user must never have done is never done, whatever the AI decides on a run, because the tools allowed are only those the task needs. If no, a rule against the action holds only as long as the AI follows it, and on the run it does not, the user has to undo what was done, if they can.",
+   "about": [
+    "tools"
+   ],
+   "grounds": [
+    "Anthropic, \"Create custom subagents\" (Claude Code Docs): \"Enforce constraints by limiting which tools a subagent can use\".",
+    "Anthropic, \"Best practices for Claude Code\" (Claude Code Docs): \"If something has to happen every time, make it a hook, a deny rule, or a managed setting.\""
+   ],
+   "examples": {
+    "fails": "The room-finding subagent lists no tools, so it may use them all. (On a busy morning it cancels another team's booking to free a room.)",
+    "passes": "tools: the calendar's read and hold tools. It has no cancel tool, so the host refuses a cancel."
+   }
+  },
+  {
+   "id": "Q3",
+   "what": "When the AI believes it has finished, can it check from the prompt whether it has reached what the task is for?",
+   "why": "If yes, the AI stops when the task is met, not when its work looks done, because the prompt says what the result is for and what shows it is met, such as a check it can run. If no, the AI stops at the first result that looks right, and the caller gets work that misses what it was for.",
+   "about": [
+    "goal"
+   ],
+   "grounds": [
+    "Anthropic, \"Best practices for Claude Code\" (Claude Code Docs), Give Claude a check to run: \"Claude stops when the work looks done. If it has nothing to run that tells it whether the work actually is done, \"looks done\" is all it has to go on.\""
+   ],
+   "examples": {
+    "fails": "Find a good room for the meeting. (It stops at the first free room, which has no screen.)",
+    "passes": "Done when the room is free for the whole meeting, seats every attendee who comes in person, and has each piece of equipment asked for."
+   }
+  },
+  {
+   "id": "Q4",
+   "what": "When the AI meets a choice that is the user's, such as between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?",
+   "why": "If yes, the user decides what is theirs, and the AI does the rest without asking. The prompt says which choices are the user's and how the AI asks. If no, the AI decides for the user, and the user finds out after it is done, sometimes too late to undo.",
+   "about": [
+    "goal"
+   ],
+   "grounds": [
+    "Anthropic, \"Prompting best practices\" (Claude Platform Docs), Balancing autonomy and safety: \"for actions that are hard to reverse, affect shared systems, or could be destructive, ask the user before proceeding.\"",
+    "Anthropic, \"Building effective agents\" (2024): \"Agents can then pause for human feedback at checkpoints or when encountering blockers.\""
+   ],
+   "examples": {
+    "fails": "Two rooms fit; the AI books the larger, and releases the user's own hold on the other.",
+    "passes": "Where more than one room fits, offer them to the user and book only the one they pick. Release a hold only when the user asks."
+   }
+  },
+  {
+   "id": "Q5",
+   "what": "Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?",
+   "why": "If yes, the AI works from the facts the writer had, not from what is likely, because the prompt gives what the AI cannot find or know on its own and tells where the rest is. A subagent sees nothing of the conversation that started it. If no, the AI fills each gap with a likely guess and goes on as if it knew, and a wrong guess gives a result that looks right.",
+   "about": [
+    "context"
+   ],
+   "grounds": [
+    "Anthropic, \"Prompting best practices\" (Claude Platform Docs), Be clear and direct: \"Think of Claude as a brilliant but new employee who lacks context on your norms and workflows.\" and \"Key test: Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they'd be confused, Claude will be too.\"",
+    "Anthropic, \"Create custom subagents\" (Claude Code Docs): \"Each subagent starts with a fresh, isolated context window. It doesn't see your conversation history, the skills you've already invoked, or the files Claude has already read.\""
+   ],
+   "examples": {
+    "fails": "Book the room the user picked. (The subagent never saw which room was picked, nor the office's rule that rooms over 12 seats need their owner's approval.)",
+    "passes": "The caller gives the meeting as JSON: attendees, equipment, start and end, and the room picked. A room over 12 seats needs its owner's approval: hold it, and say it waits for approval."
+   }
+  },
+  {
+   "id": "Q6",
+   "what": "When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?",
+   "why": "If yes, the AI follows each rule where it was meant to hold and not where it was not, including cases no one foresaw, because each rule says what it is there for. If no, a bare rule is applied to a case it was not meant for or dropped where it was, and the result depends on how the AI reads the words that run.",
+   "about": [
+    "steps"
+   ],
+   "grounds": [
+    "Anthropic, \"Prompting best practices\" (Claude Platform Docs), Add context to improve performance: \"Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses.\" and \"Claude can generalize from the explanation.\""
+   ],
+   "examples": {
+    "fails": "Never offer a room with fewer seats than attendees. (For eight attendees, two of them remote, it turns down a seven-seat room.)",
+    "passes": "Offer only rooms with a seat for each attendee who comes in person, since someone without a seat cannot take part; a remote attendee needs none."
+   }
+  },
+  {
+   "id": "Q7",
+   "what": "When the AI is run twice on the same input, does every step whose result must not vary, such as a check or a file's form, give the same result both times?",
+   "why": "If yes, the caller relies on each such result on every run, because a script does it and the AI runs the script. The AI's own judgment varies from run to run, which suits a step with many good ways and fails one with a single right result. If no, a check passes on one run and not the next, and what goes wrong on the other runs is found only when someone meets it.",
+   "about": [
+    "steps"
+   ],
+   "grounds": [
+    "Anthropic, \"Skill authoring best practices\" (Claude Platform Docs), Set appropriate degrees of freedom: low freedom (specific scripts) when \"Operations are fragile and error-prone\" and \"Consistency is critical\"; Provide utility scripts: they \"Are more reliable than generated code\".",
+    "Anthropic, \"Best practices for Claude Code\" (Claude Code Docs): \"If something has to happen every time, make it a hook, a deny rule, or a managed setting.\""
+   ],
+   "examples": {
+    "fails": "Check that the room is free for the whole meeting. (On one run the AI checks only the start time, and books a room taken from 10:30 for a meeting from 10:00 to 11:00.)",
+    "passes": "Run scripts/free.py ROOM START END; offer the room only where it prints free."
+   }
+  },
+  {
+   "id": "Q8",
+   "what": "When the caller takes what the AI hands back, can it act on it without asking the AI anything further?",
+   "why": "If yes, the caller, a person, an agent or a script, goes on at once, because the prompt says what comes back, in what form and to whom, and a subagent's return is all its caller sees of its work. If no, the caller cannot tell what was done, asks again or guesses, and a script that reads the reply breaks on the run whose wording differs.",
+   "about": [
+    "output"
+   ],
+   "grounds": [
+    "Anthropic, \"Prompting best practices\" (Claude Platform Docs), Be clear and direct: \"Be specific about the output format and constraints you want.\"",
+    "Anthropic, \"Create custom subagents\" (Claude Code Docs): the subagent \"does that work in its own context and returns only the summary.\""
+   ],
+   "examples": {
+    "fails": "Report back when done. (A paragraph comes back, and the caller cannot tell whether a room was booked.)",
+    "passes": "Return one JSON line: booked, true or false; the room's id; and, where nothing was booked, why, in a sentence."
+   }
+  },
+  {
+   "id": "Q9",
+   "what": "When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?",
+   "why": "If yes, the user gets the task done whichever request they bring and whichever run they get, as the prompt was tried on each kind by a fresh AI. A prompt read without running it passes for what its writer meant, not for what the AI does. If no, the prompt works on the case its writer had in mind, and fails on the next kind or the next run, where the user meets it first.",
+   "about": [
+    "description",
+    "tools",
+    "goal",
+    "context",
+    "steps",
+    "output"
+   ],
+   "grounds": [
+    "Anthropic, \"Skill authoring best practices\" (Claude Platform Docs), Build evaluations first: \"Create evaluations BEFORE writing extensive documentation. This ensures your Skill solves real problems rather than documenting imagined ones.\"",
+    "Anthropic, \"Skill authoring best practices\" (Claude Platform Docs), Develop Skills iteratively with Claude: \"Use the Skill with Claude B (a fresh instance with the Skill loaded) on related use cases.\""
+   ],
+   "examples": {
+    "fails": "Tried once, on a six-person meeting. (A meeting that needs a screen gets a room without one.)",
+    "passes": "Tried three runs each on a plain meeting, one that needs a screen, one no room fits and one two rooms fit; every run ends as the prompt names."
+   }
+  }
+ ],
+ "includes": [
+  "refactor-doc"
+ ]
+}
