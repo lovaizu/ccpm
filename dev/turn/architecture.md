@@ -119,13 +119,19 @@ conversation. An evaluator started fresh reads the work as for the first time ea
 made again, as no work is passed by the one who made it, and a run stopped anywhere goes on from
 its files.
 
-### The phase is the flow's position
+### `turn:up` tells the phase from the roles' ends
 
-The phase is a fact of the move's position in the flow, not of the run's files. `turn:up` tells it
-from the position lane names, and gives the builder and the evaluator that phase's paths; neither
-role tells its phase itself.
+The phase is a fact of the run, not of the run's files. `turn:up` tells it from the role that last
+ended, the answer it ended with, and the phase `turn:up` gave it, and gives the builder and the
+evaluator that phase's paths; neither role tells its phase itself. The work enters the refactoring
+phase when the evaluator of the content phase ends with every question good. It goes back to the
+content phase whenever the move goes to designer. A `turn:up` started again begins at move 1, and
+so in the content phase.
 
-The files cannot tell the phase. Say the builder, in the refactoring phase, returns a point that
+`turn:up` holds the run, and the phase is turn's own, not lane's. `turn:up` gets each role's end
+and answer whether it started the role in the foreground or the background, while lane may not
+name the position of a move to a `turn:up` that Claude Code resumes
+([lane's flow](../../plugins/lane/docs/flow.md)). The files cannot tell the phase. Say the builder, in the refactoring phase, returns a point that
 would change what the work says, and designer keeps its decisions. The files then read as they did
 in the refactoring phase, yet the work must go through the content phase again. An evaluator that
 told the phase from files would also read files beyond the work, which its user never sees.
@@ -179,9 +185,8 @@ Each story quotes O1 and names the steps of the README's Walkthrough that show i
 - `turn:up` alone holds a run. First it names the run's folder, `.turn/<yyyymmdd>-<name>/`, from
   the request: `<name>` is a few words naming the work asked for, and a run stopped is found again
   by it. It takes each move lane tells it (follow_flow), starts each role, and waits for it to end,
-  as lane tells the next move only once the role has ended. It alone tells the phase, from the
-  position each move names, as [lane's flow](../../plugins/lane/docs/flow.md) words it, such as
-  "The next move of the flow is move 5: start `turn:builder`." It ends once lane tells it the flow
+  as lane tells the next move only once the role has ended. It alone tells the phase, from the role
+  that last ended and its answer, as the principle above says. It ends once lane tells it the flow
   is done, naming each file of the work, one on each line.
 - `turn:up` starts each role with the request and one JSON line after it, whose keys the role's
   lanes read as values given for the run, as [lane's lanes](../../plugins/lane/docs/lanes.md) say.
@@ -414,7 +419,7 @@ sequenceDiagram
   participant IA as Items adapter
   participant WT as wait.py
   G-->>U: tells move 3: start builder
-  Note over U: move 3 is the content phase
+  Note over U: the content phase, as designer ended last
   U->>B: starts (template, design tree, work, answers)
   B->>R: reads (design tree)
   loop each decision, in the order they build on one another
@@ -469,7 +474,7 @@ sequenceDiagram
   participant R as Run files
   participant C as check.py
   G-->>U: tells move 5: start builder
-  Note over U: move 5 is the refactoring phase
+  Note over U: the refactoring phase, as the evaluator of the content phase ended with every question good
   U->>B: starts (included templates, no design tree, work, answers)
   Note over B: betters how the work says each thing, by the included templates' questions
   B->>R: writes its answers (answers)
