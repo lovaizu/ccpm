@@ -118,12 +118,10 @@ below, `You:` is what you type, and `turn:` is what turn shows you.
    You:  Approved
    ```
 
-6. turn writes the release in `press/roombook-launch.md`. The second AI reads it as a reporter
-   would and answers each question of the checklist. Where an answer is not yet yes, turn remakes
-   the decision behind it. Where an answer stays not yes after that, turn asks you whether to
-   decide that point again another way, as it recommends, or to change what the release is for.
-   Only when every answer is yes does turn tell you the release is done, naming its file. The
-   release reads:
+6. turn writes the release in `press/roombook-launch.md`. A second AI reads it as a reporter would
+   and answers each question of the checklist. turn makes again each decision behind an answer
+   that is not yet yes, and asks you only where that is not enough. When every answer is yes, turn
+   tells you the release is done. The release reads:
 
    ```text
    turn: Northwind's RoomBook offers only the meeting rooms that fit your meeting
@@ -142,22 +140,16 @@ below, `You:` is what you type, and `turn:` is what turn shows you.
    ```
 
 turn keeps the format and the checklist you approved in `.turn/templates/` in the folder you run
-Claude Code in, and what each run decided in a folder of its own in `.turn/`. Your next press
-release in this folder starts from them, so turn skips step 3, the research and that approval.
-turn ships its own format and checklist for READMEs, UX documents, architecture documents, code
-and prompts, so a work of those kinds skips step 3 from the first time.
+Claude Code in, so your next press release skips step 3. turn ships them for READMEs, UX documents,
+architecture documents, code and prompts, so those kinds skip step 3 from the first time.
 
 ## How it works
 
 ![How turn works](how-it-works.svg)
 
-An AI asked to review a work lists many faults on its surface. Fixing each fault as it stands only
-adds patches. turn prevents this. The evaluator does not list what is missing. It looks only for
-what makes the work good. The designer then remakes the decision behind each part that is not yet
-good.
-
-After everything the work says is good, turn polishes how the work says it. The evaluator checks
-the polished work too.
+The evaluator, the second AI, says for each question only what the reader gets once it is good, not
+a list of faults. turn then makes again the decision behind it, so the work is never patched. Once
+what the work says is good, turn betters how the work says it, and the evaluator checks that too.
 
 ## Documentation
 
