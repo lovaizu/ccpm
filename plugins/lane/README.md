@@ -1,81 +1,51 @@
 # lane
 
-lane is a Claude Code plugin that adds checks to your plugin, so that the subagents of your plugin
-follow the steps and the order that you set.
+lane is a Claude Code plugin that checks the subagents of your plugin, so that they keep the rules
+of their steps and start one another in the order that you set.
 
-The lane plugin is for you, an AI that builds a Claude Code plugin. In that plugin, subagents do
-the work in numbered steps. With the lane plugin, the subagents of your plugin follow their steps
-every time your plugin runs. You do not write the code for the checks. One subagent, the
-orchestrator, starts the other subagents. With the lane plugin, the orchestrator starts them in the
-order that you set, every time your plugin runs. You do not write a script that controls this order.
+lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps. With
+lane, your subagents keep the rules of their steps on every run, and your orchestrator, the subagent
+that starts the others, starts them in your order. You write no code for the checks and no script
+for the order.
 
-A rule has two parts: a sentence in a step, and a check of that sentence. The lane plugin calls a
-rule a "lane". The check runs on each tool call that the sentence is about, such as a command that
-the subagent runs. The check also runs when the subagent ends its work. A violation is a tool call
-or an end of work that does not agree with the sentence. When the check finds a violation, the check
-stops that tool call or that end of work. Then the check shows the sentence to the subagent again. A
-usual hook only refuses the tool call. That hook does not show the step to the subagent. So the
-subagent looks for another way to do the same thing. A subagent that sees the sentence of its own
-step goes back to the step. The lane plugin writes and tests each type of check one time. It writes
-these checks in one script. It copies this script into your plugin. This README calls this script
-the check script. For the order, you write a flow. A flow is the order in which the orchestrator
-starts the other subagents. The check script tells the orchestrator which subagent to start next.
-Until the orchestrator starts that subagent, the check script stops each other tool call of the
-orchestrator. The check script also stops the orchestrator when the orchestrator tries to end its
-work before it starts that subagent.
+A rule is a sentence in a step, such as ``Do not run `git commit` or `git push`.``, with a check of
+it. When a subagent breaks the rule, the check stops the tool call and shows the subagent the same
+sentence. A hook that only refuses a call leaves the subagent to look for another way; a subagent
+that sees the sentence of its own step goes back to the step.
 
 **Non-goals**
 
-- The check script checks only the subagents that have rules. It does not check the main
-  conversation, a skill, or a subagent without rules. A hook in a skill continues to run until the
-  session ends. For this reason, the lane plugin does not add rules to skills. The orchestrator of a
-  flow must be a subagent.
-- The lane plugin is not a security boundary. Some actions, such as a merge, must be blocked in
-  every case. Use the branch protection of GitHub or the permission rules of Claude Code to block
-  them.
-- The check script sees only the tool calls and the end of work of a subagent. It does not see what
-  the subagent thinks. A step such as "Compare each option" cannot have a rule.
-- The check script does not read every form of a shell command. For some commands, the check script
-  cannot decide which file the command uses. Then the check script stops the tool call. It asks the
-  subagent to give the path of the file.
-- The check script does not choose the next subagent from the results of a run. A flow is a fixed
-  order that you set. The flow goes back to an earlier subagent only when a subagent gives an answer
-  that you name, such as the word `more`.
-- The check script reads some texts that your plugin writes, such as a list of items that a subagent
-  must answer. The check script reads each such text in one format only. For another format, you
-  write an adapter and its test cases. An adapter is a small script that converts the other format
-  into the format that the check script reads. [The lanes](docs/lanes.md#the-ports) describes the
-  format, the adapter and its test cases.
+- lane checks only subagents that have rules. It does not check the main conversation or a skill,
+  so the orchestrator of a flow must be a subagent.
+- lane is not a security boundary. Block what must never happen, such as a merge, with the branch
+  protection of GitHub or the permission rules of Claude Code.
+- lane sees tool calls and ends of work, not what a subagent thinks. "Compare each option" cannot
+  have a rule.
+- lane does not read every form of a shell command. It stops a command that names a file in a way
+  it cannot follow, such as `$d/out.csv`, and asks for the plain path.
+- lane does not choose the next subagent from a run's results. A flow is a fixed order that goes
+  back only on an answer you name, such as `more`.
+- lane reads the texts your plugin writes, such as a list of items to answer, in one format only.
+  For another format, you write an adapter, as [The lanes](docs/lanes.md#the-ports) says.
 
 ## Requirements
 
-- Claude Code, on the computer where you build your plugin, and on each computer where your plugin
-  runs.
-- Python 3.9 or later, on the same computers. The command `python3` must start Python. The script
-  `lay.py` of the lane plugin runs on Python. The check script in your plugin also runs on Python.
-  If Python is missing, the check script cannot start. Each hook in your plugin runs a command that
-  checks for Python before it starts the check script. Without Python, this command stops each tool
-  call that a rule is about. The command tells the subagent to install Python. It also shows the
-  same message to the person or the AI that runs your plugin.
-- A plugin with subagents. In the file of each subagent, the steps are a numbered list under the
-  heading `## Steps`.
-- A plugin that passes `claude plugin validate`. `lay.py write` runs this command after it adds the
-  rules, and stops if the command fails.
+- Claude Code, where you build your plugin and where it runs.
+- Python 3.9 or later, run as `python3`, on the same computers. Without it, each tool call that a
+  rule is about is stopped, and the subagent and the operator are told to install Python.
+- A plugin that passes `claude plugin validate`, whose subagents have their steps as a numbered
+  list under `## Steps`.
 
 ## Installation
-
-The lane plugin is in the GitHub repository `lovaizu/ccpm`. This repository is a marketplace of
-Claude Code plugins. Add this marketplace, and then install the lane plugin:
 
 ```console
 claude plugin marketplace add lovaizu/ccpm
 claude plugin install lane@ccpm
 ```
 
-Then the command `claude plugin list --json` shows `lane@ccpm`. The `installPath` of `lane@ccpm` is
-the folder of the lane plugin. Claude Code installs each version in a new folder. So, read
-`installPath` again after each update. The script `lay.py` is in the `scripts` folder of that
-folder. The lane plugin is ready when this script shows its usage:
+`claude plugin list --json` then shows `lane@ccpm` with its `installPath`. Each version installs in a
+new folder, so read `installPath` again after an update. lane is ready when `lay.py` shows its
+usage:
 
 ```console
 $ python3 <installPath>/scripts/lay.py
@@ -84,27 +54,20 @@ usage: lay.py print <proposal>
        lay.py up <plugin>
 ```
 
+After an update, run `lay.py up <your plugin's folder>`. It puts the new check script into your
+plugin and lists the rules your plugin has.
+
 ## Walkthrough
 
-In this walkthrough, you add two rules to one step of a subagent. Then the walkthrough shows one run
-of the plugin with these rules.
-
-The example plugin is `changelog`. It writes the changelog of a project, the file `CHANGELOG.md`.
-The skill `/changelog:changelog` starts the subagent `lead`, the orchestrator. `lead` starts the
-subagent `writer`. `writer` writes the new entries. Then `lead` starts the subagent `reviewer`.
-`reviewer` compares the entries with the commits of the project. The skill shows the entries to you.
-After you say OK, the skill commits `CHANGELOG.md`. The file `agents/writer.md` contains step 3 of
-`writer`:
+The plugin `changelog` writes a project's `CHANGELOG.md`. Its subagent `writer` has this step in
+`agents/writer.md`:
 
 ```markdown
 3. Write the new entries into `CHANGELOG.md`.
 ```
 
-At this step, `writer` must not write any other file. It also must not commit. You write these two
-rules in a JSON file. This file is the proposal. `lay.py` reads a proposal from any path.
-[The lanes](docs/lanes.md#the-proposal) advises the path `.lane/<yyyymmdd>-<plugin>/<plugin>.json`
-at the root of the repository. So you save the proposal as
-`.lane/20261101-changelog/changelog.json`. The plugin is in the folder `changelog` at the same root:
+`writer` must write no other file and must not commit. You write these two rules in a proposal,
+`.lane/20261101-changelog/changelog.json` at the root of the repository that holds `changelog`:
 
 ```json
 {"plugin": "changelog",
@@ -113,8 +76,8 @@ at the root of the repository. So you save the proposal as
   {"lane": "hands_off", "takes": ["git commit", "git push"]}]}]}]}
 ```
 
-Each rule has a type, such as `write_only`. The values of the rule are in `takes`. You run `lay.py`
-from the root of the repository. The command `lay.py print` shows the step with the new sentences:
+`lane` names the type of each rule, and `takes` its values. `lay.py print` shows the step as it will
+be:
 
 ```console
 $ python3 <installPath>/scripts/lay.py print .lane/20261101-changelog/changelog.json
@@ -125,7 +88,7 @@ Lanes on step 3 of writer, each hook acting in writer alone:
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`. Do not run `git commit` or `git push`.
 ```
 
-You approve this output. Then the command `lay.py write` adds the rules from the same file:
+Once you approve it, `lay.py write` writes it into the plugin:
 
 ```console
 $ python3 <installPath>/scripts/lay.py write .lane/20261101-changelog/changelog.json
@@ -138,60 +101,30 @@ Removed the proposal .lane/20261101-changelog/changelog.json.
 Removed its folder <the repository>/.lane/20261101-changelog.
 ```
 
-Later, a person or an AI runs `/changelog:changelog`. The request asks for a changelog entry about
-the new export feature. The request also asks for a commit of `CHANGELOG.md`. `lead` gives the
-request to `writer` without a change. `writer` reads the changelog and the commits. `writer` writes
-the entries into `CHANGELOG.md`. The check script allows this tool call. Then `writer` tries the
-export feature. It runs `greet.sh --csv` in a temporary folder. In the command, the name of this
-folder is `$d`. The command writes the file `greet.csv` in `$d`. The check script cannot decide
-which folder `$d` is. So the check script stops the tool call. `writer` gets this message:
-
-```
-changelog: Write only `CHANGELOG.md`.
-`$d/greet.csv`, `$d`: lane cannot tell which file is named here, so this lane could not be checked; name each file by its path, without `$`, a backquote or a `cd` lane cannot follow
-```
-
-`writer` does not run the command again. `writer` ends its work without a commit. It says that its
-instructions forbid a commit. If `writer` runs `git commit`, the check script stops the tool call.
-Then `writer` gets this message:
+When `changelog` runs, `writer` writes `CHANGELOG.md` and the check lets it through. When `writer`
+runs `git commit`, the check stops the call, and `writer` reads:
 
 ```
 changelog: Do not run `git commit` or `git push`.
 ```
 
-`lead` has no rules, so the check script does not check `lead`. In this run, `lead` itself made the
-commit after `reviewer` answered. You had not read the entries yet. To stop this commit, add the
-same `hands_off` rule to a step of `lead`.
-
-After an update of the lane plugin, run `lay.py up <the folder of your plugin>` before your next
-proposal. This command updates the check script in your plugin to the new version. It also shows
-each rule that your plugin has. A new proposal gives rules for some subagents. For each of these
-subagents, the new proposal replaces all of the old rules. So, the new proposal must also contain
-each old rule that you want to keep.
-
 ## How it works
 
 ![How lane works](how-it-works.svg)
 
-The check script runs from the copy in the folder `hooks/lane/` of your plugin. So the users of your
-plugin do not need the lane plugin. `lay.py` and the check script use the same code to make each
-sentence. So, on a violation, the subagent gets the same words that are in its step. The
-orchestrator is also a subagent with a rule. The check script finds the next subagent from the flow
-and from the answers of the subagents.
+The check script runs from its copy in your plugin's `hooks/lane/`, so the people and AIs that run
+your plugin do not need lane.
 
 ## Documentation
 
-- [The lanes](docs/lanes.md) describes each type of rule, its sentence, and the tool calls that its
-  check stops. It also describes the full form of the proposal and of adapters. In this document,
-  the name of the check script is "the guard".
-- [The flow](docs/flow.md) describes the form of a flow and the messages that the orchestrator gets.
-  It also describes how the check script reads the answer of each subagent.
-- [The changelog](CHANGELOG.md) lists the changes in each version of the lane plugin.
+- [The lanes](docs/lanes.md): each type of rule, its sentence and what it stops; the proposal and
+  adapters.
+- [The flow](docs/flow.md): how to write a flow, and what the orchestrator is told.
+- [The changelog](CHANGELOG.md): the changes in each version.
 
 ## Development
 
-[The development folder of the lane plugin](../../dev/lane/README.md) holds its UX, its
-architecture, and its tests.
+[lane's development folder](../../dev/lane/README.md) holds its UX, its architecture and its tests.
 
 ## License
 

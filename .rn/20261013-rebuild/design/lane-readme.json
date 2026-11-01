@@ -1,0 +1,14 @@
+{
+ "kind": "readme",
+ "goal": {"what": "A developer AI that meets lane decides from the README whether to use it, starts by its steps alone, and knows where to read next.", "grounds": ["readme.json purpose"]},
+ "decisions": [
+  {"id": "D1", "what": "lane checks your subagents so that they keep the rules of their steps and start one another in your order.", "contributes_to": ["readme/Q1"], "builds_on": [], "decided": true, "settled_by": "reasoning", "grounds": ["UX O1, O2"]},
+  {"id": "D2", "what": "Gain: rules kept and the order kept on every run, with no check code and no order script.", "contributes_to": ["readme/Q2"], "builds_on": ["D1"], "decided": true, "settled_by": "reasoning", "grounds": ["UX O1, O2"]},
+  {"id": "D3", "what": "Idea: a stop shows the sentence of the subagent's own step, so it goes back to the step instead of trying another way.", "contributes_to": ["readme/Q3"], "builds_on": ["D1"], "decided": true, "settled_by": "research", "grounds": ["architecture principle The check shows the step again; KR1.3"]},
+  {"id": "D4", "what": "Non-goals: subagents only; no security boundary; no thoughts; not every shell form; a fixed flow; one text format, else an adapter.", "contributes_to": ["readme/Q4"], "builds_on": ["D1"], "decided": true, "settled_by": "reasoning", "grounds": ["each a limit a reader would hit or ask about"]},
+  {"id": "D5", "what": "Walkthrough: UX O1, writer's two rules, print and write with their real output, and the real message on git commit.", "contributes_to": ["readme/Q5", "readme/Q7"], "builds_on": ["D2"], "decided": true, "settled_by": "research", "grounds": ["outputs reproduced by running lay.py and the hook on 2026-11-01"]},
+  {"id": "D6", "what": "How it works: the existing figure; under it only that the check script runs from the plugin's copy.", "contributes_to": ["readme/Q6"], "builds_on": ["D1"], "decided": true, "settled_by": "reasoning", "grounds": ["the figure shows the rest"]},
+  {"id": "D7", "what": "Requirements: Claude Code, python3 3.9, a plugin passing claude plugin validate with ## Steps; installation by the marketplace, checked by lay.py's usage; lay.py up after an update.", "contributes_to": ["readme/Q7"], "builds_on": [], "decided": true, "settled_by": "research", "grounds": ["layer.py runs claude plugin validate"]},
+  {"id": "D8", "what": "Documentation links to docs/lanes.md, docs/flow.md, CHANGELOG.md; Development to dev/lane; MIT.", "contributes_to": ["readme/Q8", "readme/Q9"], "builds_on": [], "decided": true, "settled_by": "research", "grounds": ["the files exist"]}
+ ]
+}

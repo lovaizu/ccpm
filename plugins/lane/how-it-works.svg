@@ -71,7 +71,7 @@
   <text class="label mid" x="725" y="338">and each end of work</text>
 
   <path class="line" d="M860,376 C700,446 360,446 190,376" marker-end="url(#arrow)"/>
-  <text class="label mid" x="525" y="448">stops a violation and shows the sentence again</text>
+  <text class="label mid" x="525" y="448">stops a break and shows the sentence again</text>
 
   <path class="line" d="M990,376 V498 H200" marker-end="url(#arrow)"/>
   <text class="label mid" x="600" y="490">tells which subagent to start next</text>

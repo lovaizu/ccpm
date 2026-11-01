@@ -17,7 +17,7 @@
     the rules. Shorter is better.
 - O2: The developer AI wants the orchestrator of its plugin, the subagent that starts the others, to
   start them in the order that the developer AI set, its flow, on every run, without writing a script
-  for the order.
+  for it.
   - KR2.1: The share of runs in which the orchestrator leaves the flow. Lower is better.
   - KR2.2: The share of the orchestrator's tool calls and ends of work that the flow allows but that
     are stopped. Lower is better.
