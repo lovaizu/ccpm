@@ -7,12 +7,7 @@ With Turn, anyone who wants a piece of work made gets it as it should be. They s
 effort only on the points that only they can decide. Turn decides every other point itself.
 
 For each kind of work, such as a press release, a README or a script, Turn distills how good ones
-are made into two things, keeping only the least that a good work of the kind needs. The standard
-says what a good work of the kind is: who uses it and for what; its template, the shape of the
-work, such as a headline, a lead and a body; and its checklist, questions that a good work answers
-yes to, such as "Can a reporter tell from the headline what is new?" The practice says how to
-decide what the work says, so that each question is answered yes. Turn decides each work by the
-practice, and judges it against the standard.
+are made into a standard and a practice, keeping only the least that a good work of the kind needs.
 
 ![A standard and a practice distilled from how good works are made](idea.svg)
 
