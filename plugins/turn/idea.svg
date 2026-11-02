@@ -51,16 +51,16 @@
   <rect class="box" x="90" y="206" width="360" height="96" rx="10"/>
   <text class="name" x="270" y="234">Standard</text>
   <text class="kind" x="270" y="254">what a good deliverable of a kind is</text>
-  <text class="part" x="270" y="284">Goal · Template · Checklist</text>
+  <text class="part" x="270" y="284">Goal · Template · Essential questions</text>
 
   <rect class="box" x="550" y="206" width="360" height="96" rx="10"/>
   <text class="name" x="730" y="234">Practice</text>
   <text class="kind" x="730" y="254">how to build a good deliverable</text>
-  <text class="part" x="730" y="284">Design tree · a way for each question</text>
+  <text class="part" x="730" y="284">Design tree · a Technique for each question</text>
 
   <path class="line" d="M542,254 H458" marker-end="url(#arrow)"/>
-  <text class="label mid" x="500" y="274">one way for</text>
-  <text class="label mid" x="500" y="290">each question</text>
+  <text class="label mid" x="500" y="274">one for each</text>
+  <text class="label mid" x="500" y="290">question</text>
 
   <!-- the deliverable: made by the practice, judged against the standard -->
   <path class="box" d="M420,370 H562 L580,388 V430 H420 Z"/>

@@ -12,10 +12,10 @@ into one form for each kind, not a collection of rules, and keeps it:
 ![Best practice refined into a standard and a practice](idea.svg)
 
 The Standard's Goal says who uses such a deliverable and for what, its Template gives the shape, and
-its Checklist asks the questions that a good deliverable answers yes to. The Practice's design tree
-splits what to decide from the goal down, the same for every kind, and its way for each question
-decides what makes that question yes. The Standard alone evaluates the deliverable, because its
-reader gets only the deliverable: one built by the Practice can still fall short.
+its Essential questions ask what a good deliverable answers yes to. The Practice's design tree
+splits what to decide from the goal down, the same for every kind, and its Technique for each
+question decides what makes that question yes. The Standard alone evaluates the deliverable, because
+its reader gets only the deliverable: one built by the Practice can still fall short.
 
 **Non-goals**
 
@@ -88,7 +88,7 @@ below, `You:` is what you type, and `turn:` is what Turn shows you.
    turn: Standard for a press release
          Goal: a reporter decides from the release whether to write about it.
          Template: headline, lead, body, boilerplate, contact.
-         Checklist:
+         Essential questions:
          - Can a reporter tell from the headline what is new?
          - Can a reporter tell from the lead who launches what, and when?
          - Can a reporter check each claim in the body?
@@ -118,7 +118,7 @@ below, `You:` is what you type, and `turn:` is what Turn shows you.
    ```
 
 6. Turn writes the release in `press/roombook-launch.md`. A second AI reads it as a reporter would
-   and answers each question of the checklist. Turn decides again each point behind an answer
+   and answers each essential question. Turn decides again each point behind an answer
    that is not yet yes, and asks you only where that is not enough. When every answer is yes, Turn
    tells you the release is done. The release reads:
 
