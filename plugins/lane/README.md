@@ -4,14 +4,14 @@ Lane is a Claude Code plugin that checks the subagents of your plugin, so that t
 of their steps and start one another in the order that you set.
 
 Lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps. With
-Lane, your subagents keep the rules of their steps on every run, and your orchestrator, the subagent
+Lane, your subagents keep the rules of their steps on every run. Your orchestrator, the subagent
 that starts the others, starts them in your order, which you write as a flow. You write no code for
 the checks and no script for the order.
 
 A rule is a sentence in a step, such as ``Do not run `git commit` or `git push`.``, with a check of
 it. When a subagent breaks the rule, the check stops the tool call and shows the subagent the same
-sentence. A hook that only refuses a call leaves the subagent to look for another way; a subagent
-that sees the sentence of its own step goes back to the step.
+sentence, headed by your plugin's name. A hook that only refuses a call leaves the subagent to look
+for another way. A subagent that sees the sentence of its own step goes back to the step.
 
 **Non-goals**
 
@@ -26,11 +26,12 @@ that sees the sentence of its own step goes back to the step.
 - Lane does not choose the next subagent from a run's results. A flow is a fixed order that goes
   back only on an answer you name, such as `more`.
 - Lane reads the texts your plugin writes, such as a list of items to answer, in one format only.
-  For another format, you write an adapter, as [The lanes](docs/lanes.md#the-ports) says.
+  For another format, you write an adapter, a Python script that turns your format into Lane's, as
+  [The lanes](docs/lanes.md#the-ports) says.
 
 ## Requirements
 
-- Claude Code, where you build your plugin and where it runs.
+- Claude Code 2.1.309 or later, where you build your plugin and where it runs.
 - Python 3.9 or later, run as `python3`, on the same computers. Without it, each tool call that a
   rule is about is stopped, and the subagent and whoever runs your plugin are told to install Python.
 - A plugin that passes `claude plugin validate`, whose subagents have their steps as a numbered
@@ -59,15 +60,17 @@ plugin and lists the rules your plugin has.
 
 ## Walkthrough
 
+At the end, a subagent of your plugin keeps two rules of its step on a run, with no code of yours.
+
 The plugin `changelog` writes a project's `CHANGELOG.md`, and lives in the folder `changelog/` of
-a repository. Its subagent `writer` has this step in `changelog/agents/writer.md`:
+a git repository. Its subagent `writer` has this step in `changelog/agents/writer.md`:
 
 ```markdown
 3. Write the new entries into `CHANGELOG.md`.
 ```
 
 `writer` must write no other file and must not commit. You write these two rules in a proposal,
-`.lane/20261101-changelog/changelog.json` at the root of that repository:
+the JSON file `.lane/20261102-changelog/changelog.json` at the root of that repository:
 
 ```json
 {"plugin": "changelog",
@@ -76,11 +79,12 @@ a repository. Its subagent `writer` has this step in `changelog/agents/writer.md
   {"lane": "hands_off", "takes": ["git commit", "git push"]}]}]}]}
 ```
 
-`lane` names the type of each rule, and `takes` its values. Run at the root of the repository,
-`lay.py print` shows the step as it will be:
+`lane` names the type of each rule, and `takes` its values. Lane's output and documents call a
+rule a lane, and its check a hook. Run at the root of the repository, `lay.py print` shows the step
+as it will be:
 
 ```console
-$ python3 <installPath>/scripts/lay.py print .lane/20261101-changelog/changelog.json
+$ python3 <installPath>/scripts/lay.py print .lane/20261102-changelog/changelog.json
 Lanes on step 3 of writer, each hook acting in writer alone:
   write: Write only `CHANGELOG.md`.              hook write_only
   run:   Do not run `git commit` or `git push`.  hook hands_off
@@ -91,23 +95,24 @@ Lanes on step 3 of writer, each hook acting in writer alone:
 Once you approve it, `lay.py write` writes it into the plugin:
 
 ```console
-$ python3 <installPath>/scripts/lay.py write .lane/20261101-changelog/changelog.json
+$ python3 <installPath>/scripts/lay.py write .lane/20261102-changelog/changelog.json
 Wrote step 3 of writer into agents/writer.md.
 Wrote the hooks of writer into hooks/hooks.json.
 Wrote the lanes laid into hooks/lanes.json.
 Put lane's code in hooks/lane/.
 claude plugin validate passed.
-Removed the proposal .lane/20261101-changelog/changelog.json.
-Removed its folder <the repository>/.lane/20261101-changelog.
+Removed the proposal .lane/20261102-changelog/changelog.json.
+Removed its folder <the repository>/.lane/20261102-changelog.
 ```
 
-When you ask `changelog` for an entry and a commit, it runs `writer`. `writer` writes
-`CHANGELOG.md`, and the check lets it through. `writer` reads the new sentences in step 3, and ends
-without a commit. If `writer` runs `git commit`, the check stops the call, and `writer` reads:
+Step 3 in `changelog/agents/writer.md` now reads as `lay.py print` showed it.
 
-```
-changelog: Do not run `git commit` or `git push`.
-```
+The rest of this walkthrough is not yet from a real run: no run of `changelog` in Claude Code is
+recorded. You ask `changelog` for an entry and a commit, and it starts `writer`. `writer` writes
+`CHANGELOG.md`, and the check lets the write through. `writer` reads the new sentences in step 3,
+and ends with `CHANGELOG.md` written and no commit made.
+
+A flow is laid the same way, from the proposal's `flow`, as [The flow](docs/flow.md) says.
 
 ## How it works
 
@@ -118,8 +123,8 @@ from there, so whoever runs your plugin does not need Lane.
 
 ## Documentation
 
-- [The lanes](docs/lanes.md): each type of rule, its sentence and what it stops; the proposal and
-  adapters.
+- [The lanes](docs/lanes.md): each type of rule, its sentence and what it stops; the proposal;
+  adapters; and a subagent whose steps lie in another file.
 - [The flow](docs/flow.md): how to write a flow, and what the orchestrator is told.
 - [The changelog](CHANGELOG.md): the changes in each version.
 

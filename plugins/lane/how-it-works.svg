@@ -24,7 +24,7 @@
 
   <!-- boxes: a name each; lane's own parts shaded -->
   <rect class="box" x="20" y="30" width="180" height="56" rx="8"/>
-  <text class="name" x="110" y="63">you, the developer</text>
+  <text class="name" x="110" y="63">you (an AI)</text>
 
   <rect class="box lane" x="430" y="30" width="180" height="56" rx="8"/>
   <text class="name" x="520" y="63">lay.py</text>
