@@ -9,10 +9,8 @@ effort only on the points that only they can decide. Turn decides every other po
 For each kind of work, such as a press release, a README or a script, Turn distills how good ones
 are made into a standard and a practice, keeping only the least that a good work of the kind needs.
 The standard holds who uses such a work and for what, its template, such as headline, lead and
-body, and its checklist, questions that a good work answers yes to, such as "Can a reporter tell
-from the headline what is new?" The practice holds, for each question, how to decide what makes it
-yes, such as "List what is new to the reporters' readers, and put first in the headline what they
-care about most."
+body, and its checklist, questions that a good work answers yes to. The figure shows two questions
+of a press release, each with its way of deciding.
 
 ![A standard and a practice distilled from many guides and examples](idea.svg)
 

@@ -1,16 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 320" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 410" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>A standard and a practice distilled from many guides and examples</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .cell { fill: none; stroke: #d0d7de; stroke-width: 1.5; }
     .fold { fill: none; stroke: #d0d7de; stroke-width: 1.5; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
     .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
     .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
     .head { fill: #59636e; }
     .label { fill: #1f2328; font-size: 13px; }
+    .mid { text-anchor: middle; }
+    .end { text-anchor: end; }
     @media (prefers-color-scheme: dark) {
       .box { fill: #161b22; stroke: #3d444d; }
-      .fold { stroke: #3d444d; }
+      .cell, .fold { stroke: #3d444d; }
       .name, .label { fill: #f0f6fc; }
       .kind { fill: #9198a1; }
       .line { stroke: #9198a1; }
@@ -23,39 +26,50 @@
     </marker>
   </defs>
 
-  <!-- many guides and examples -->
-  <rect class="box" x="40" y="100" width="170" height="110" rx="4"/>
-  <rect class="box" x="52" y="112" width="170" height="110" rx="4"/>
-  <rect class="box" x="64" y="124" width="170" height="110" rx="4"/>
-  <text class="name" x="149" y="172">many guides</text>
-  <text class="name" x="149" y="192">and examples</text>
+  <!-- many guides and examples, distilled to the least -->
+  <rect class="box" x="30" y="100" width="140" height="90" rx="4"/>
+  <rect class="box" x="40" y="110" width="140" height="90" rx="4"/>
+  <rect class="box" x="50" y="120" width="140" height="90" rx="4"/>
+  <text class="name" x="120" y="160">many guides</text>
+  <text class="name" x="120" y="180">and examples</text>
+  <path class="line" d="M198,165 H292" marker-end="url(#arrow)"/>
+  <text class="label" x="206" y="140">distilled to</text>
+  <text class="label" x="206" y="156">the least</text>
 
-  <!-- distilled to the least: two sheets -->
-  <path class="line" d="M242,180 H310 V85 H392" marker-end="url(#arrow)"/>
-  <path class="line" d="M310,180 V245 H392" marker-end="url(#arrow)"/>
-  <text class="label" x="318" y="160">distilled to</text>
-  <text class="label" x="318" y="176">the least</text>
+  <!-- the standard and the practice, side by side, one row for each question -->
+  <rect class="box" x="300" y="40" width="300" height="70"/>
+  <text class="name" x="450" y="64">the standard</text>
+  <text class="kind" x="450" y="83">what a good work is:</text>
+  <text class="kind" x="450" y="99">goal, template, checklist</text>
+  <rect class="box" x="700" y="40" width="300" height="70"/>
+  <text class="name" x="850" y="64">the practice</text>
+  <text class="kind" x="850" y="83">how to decide what the work says,</text>
+  <text class="kind" x="850" y="99">one way for each question</text>
 
-  <path class="box" d="M400,40 H602 L620,58 V130 H400 Z"/>
-  <path class="fold" d="M602,40 V58 H620"/>
-  <text class="name" x="510" y="80">the standard</text>
-  <text class="kind" x="510" y="102">what a good work is</text>
+  <rect class="cell" x="300" y="118" width="300" height="60"/>
+  <text class="label" x="316" y="143">Can a reporter tell from the headline</text>
+  <text class="label" x="316" y="161">what is new?</text>
+  <rect class="cell" x="700" y="118" width="300" height="60"/>
+  <text class="label" x="716" y="143">List what is new to the reporters' readers,</text>
+  <text class="label" x="716" y="161">and put first what they care about most.</text>
+  <path class="line" d="M692,152 H608" marker-end="url(#arrow)"/>
+  <text class="label mid" x="650" y="144">makes it yes</text>
 
-  <path class="box" d="M400,200 H602 L620,218 V290 H400 Z"/>
-  <path class="fold" d="M602,200 V218 H620"/>
-  <text class="name" x="510" y="240">the practice</text>
-  <text class="kind" x="510" y="262">how to decide one</text>
-
-  <path class="line" d="M510,192 V138" marker-end="url(#arrow)"/>
-  <text class="label" x="522" y="170">one for each question</text>
+  <rect class="cell" x="300" y="186" width="300" height="60"/>
+  <text class="label" x="316" y="211">Can a reporter check each claim</text>
+  <text class="label" x="316" y="229">in the body?</text>
+  <rect class="cell" x="700" y="186" width="300" height="60"/>
+  <text class="label" x="716" y="211">Give each claim the fact it rests on,</text>
+  <text class="label" x="716" y="229">such as a number or a customer.</text>
+  <path class="line" d="M692,220 H608" marker-end="url(#arrow)"/>
+  <text class="label mid" x="650" y="212">makes it yes</text>
 
   <!-- the work -->
-  <path class="box" d="M810,125 H922 L940,143 V205 H810 Z"/>
-  <path class="fold" d="M922,125 V143 H940"/>
-  <text class="name" x="875" y="170">the work</text>
-
-  <path class="line" d="M628,85 H730 V150 H802" marker-end="url(#arrow)"/>
-  <text class="label" x="738" y="118">judges it</text>
-  <path class="line" d="M628,245 H730 V180 H802" marker-end="url(#arrow)"/>
-  <text class="label" x="738" y="222">decides it</text>
+  <path class="box" d="M585,330 H697 L715,348 V390 H585 Z"/>
+  <path class="fold" d="M697,330 V348 H715"/>
+  <text class="name" x="650" y="366">the work</text>
+  <path class="line" d="M450,254 V360 H577" marker-end="url(#arrow)"/>
+  <text class="label" x="462" y="310">judges it</text>
+  <path class="line" d="M850,254 V360 H723" marker-end="url(#arrow)"/>
+  <text class="label end" x="838" y="310">decides it</text>
 </svg>
