@@ -124,7 +124,7 @@ plugins/<plugin>/                 what runs on users' machines, installed by Cla
 ├── skills/<command>/SKILL.md     a skill's entry <Markdown>
 ├── agents/<name>.md              an agent's entry <Markdown>
 ├── hooks/hooks.json              the hooks' entries <JSON>
-├── hooks/lane/                   the guard, laid by lane <Python 3>
+├── hooks/lane/                   the guard, laid by Lane <Python 3>
 ├── prompts/<part>.md             a part written as a prompt <Markdown>
 ├── scripts/<part>.py             a part written as code, and a command line's entry <Python 3>
 ├── docs/                         fuller use, named by the README's Documentation <Markdown>

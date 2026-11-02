@@ -288,13 +288,13 @@ plugins/turn/
 ├── scripts/check.py, <check>.py    check.py <script · Python 3.9 stdlib>
 ├── scripts/wait.py                 wait.py <script · Python 3.9 stdlib>
 ├── forms/<file>.json               Forms <JSON Schema>
-├── templates/<kind>.json           the Templates turn ships <JSON>
-├── hooks/                          hooks.json, lanes.json, lane's check script and the Items adapter, laid by lane
+├── templates/<kind>.json           the Templates Turn ships <JSON>
+├── hooks/                          hooks.json, lanes.json, Lane's check script and the Items adapter, laid by Lane
 ├── docs/calling.md, README.md, CHANGELOG.md, *.svg
 
 dev/turn/
 ├── ux.md, architecture.md, *.svg, README.md
-├── tests/                          unit and property tests of turn's scripts <Python 3>
+├── tests/                          unit and property tests of Turn's scripts <Python 3>
 └── trials/                         trials of each role, of the roles together, and of the whole
 
 <the folder Claude Code runs in>/.turn/

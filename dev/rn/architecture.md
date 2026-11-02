@@ -225,11 +225,11 @@ plugins/rn/
 ├── skills/up, ty, gm/SKILL.md       /rn:up, /rn:ty, /rn:gm <skill>
 ├── agents/compressor.md             the compressor, allowed only the tools that read <agent>
 ├── prompts/                         the orchestrator's and the compressor's steps <Markdown>
-├── scripts/rn.py, <part>.py         rn's scripts <Python 3.9>
+├── scripts/rn.py, <part>.py         Rn's scripts <Python 3.9>
 └── forms/steering.json, compressor.json   the forms of the steering and the compressor's reply <JSON Schema>
 
 <the person's repository>, on the work's own branch
-├── .turn/templates/<kind>.json      the person's addition for a kind, kept by turn <JSON>
+├── .turn/templates/<kind>.json      the person's addition for a kind, kept by Turn <JSON>
 └── .rn/
     └── <yyyymmdd>-<slug>/           one work's record: steering.json, steering.md, learnings.md,
                                      the documents kept here alone, and calls/ with each call's CCS

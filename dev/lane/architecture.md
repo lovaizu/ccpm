@@ -250,7 +250,7 @@ sequenceDiagram
 
 ```text
 plugins/lane/
-├── .claude-plugin/plugin.json         lane's manifest and version <JSON>
+├── .claude-plugin/plugin.json         Lane's manifest and version <JSON>
 ├── scripts/lay.py, layer.py           lay.py <command line · Python 3.9>
 ├── scripts/steps.py, entries.py, placed.py   lay.py's writing of Steps, Hook entries, the copy
 ├── scripts/proposal.py                proposal.py <module · Python 3.9>
