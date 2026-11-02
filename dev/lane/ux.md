@@ -1,15 +1,11 @@
 # Lane UX
 
-Lane's user is the developer AI: an AI that builds a Claude Code plugin whose subagents work in
-numbered steps. A rule is a sentence in a step that the subagent must keep, such as
-``Do not run `git commit` or `git push`.`` The orchestrator is the subagent that starts the others.
-The flow is the order in which it starts them, with the answers that send the work back. The
-developer AI sets the flow. A move is one start of a subagent that the flow names.
+Lane's user is the developer AI, an AI that builds Claude Code plugins.
 
 ## OKRs
 
-- O1: The developer AI has its subagents keep the rules of their steps on every run, with no check
-  code of its own.
+- O1: The developer AI has its subagents keep the rules of their steps, the sentences they must
+  keep, on every run, with no check code of its own.
   - KR1.1: Of the subagents' tool calls and ends of their work that break a rule, the share that
     goes through. Lower is better.
   - KR1.2: Of the subagents' tool calls and ends of their work that the rules allow, the share that
@@ -25,8 +21,9 @@ developer AI sets the flow. A move is one start of a subagent that the flow name
   subagent stopped on an allowed call is told why and tries again.
   KR1.1 and KR1.2 each come before KR1.4 and KR1.5: a wrong check acts on every run, while the
   developer AI spends the lines and the time once for each plugin.
-- O2: The developer AI has its orchestrator start the other subagents in the order of its flow on
-  every run, with no script of its own for the order.
+- O2: The developer AI has its orchestrator, the subagent that starts the others, start them in the
+  order of its flow, the order the developer AI sets, on every run, with no script of its own for
+  the order.
   - KR2.1: Of the plugin's runs, the share in which the subagents are not started in the order of
     the flow. Lower is better.
   - KR2.2: Of the orchestrator's tool calls and ends of its work that the flow allows, the share
