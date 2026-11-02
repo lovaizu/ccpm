@@ -132,8 +132,12 @@ whose work goes to evaluator.
 
 1. The content phase: what the work says and does. The kind's own questions alone, made up
    decision by decision from the design tree, until evaluator finds every one good. A more is
-   mended at the decision that serves its question, never added onto the work, as rn's fix
-   checklist asks of a change.
+   mended at the decision that serves its question, never added onto the work. Every change, a
+   more or a point the user raises, enters by the design tree: designer traces it to the
+   decision, decides that again naming the questions it answers, and builder remakes the work
+   from it and from the decisions built on it. So a fix is no kind of its own: rn's fix.md
+   conditions are met there, and how to trace a more to its decision is part of Turn's own
+   Practice, the same for every kind. rn's fix.md goes when rn is rebuilt, as rn's code reads it.
 2. The refactoring phase: how the work says and shows it, its structure bettered while what it
    says stays (Fowler, Refactoring). The questions of the `refactor-<kind>` template the kind's
    template names in `includes`, such as `refactor-doc` for every document and `refactor-code`
@@ -156,10 +160,15 @@ answer is written, `every_item` an answer for every question, `in_form` each fil
 `end_when` the output made before the role ends. A script checks only what no lane holds, as below.
 Keys follow the steering's rules: a name says its intent, a one-to-many join is nested, a many-to-many join lists IDs.
 
-- `<kind>.json`, the template, one for each kind: `kind`; `purpose`, who uses such a work and for
-  what; `format`, with `skeleton` and `parts`, each part `id`, `what` and `why`; and `checklist`,
+- `best-practices/<kind>.json`, one for each kind, in `plugins/turn/` for those Turn ships and in
+  `.turn/` for those a user's runs make: `standard`, with `goal`, who uses such a deliverable and
+  for what; `template`, with `skeleton` and `parts`, each part `id`, `what` and `why`; `checklist`,
   each question `id`, `what`, `why`, `about` (the parts it looks at), `grounds` and `examples`
-  (`fails` and `passes`). A script verifies every part is looked at by a question.
+  (`fails` and `passes`); and `includes`; and `practice`, with `methods`, each `question`, the ID
+  it serves, `steps`, in order, and `grounds`, where the way has worked. The kind is the file's
+  name, and the keys are the README's words. The evaluator is given `standard` alone, taken out by
+  a script. A script verifies every part is looked at by a question, and every question has one
+  Method.
 - `design-tree.json`, one for each work: `kind`; `goal`, this work's purpose, with its `grounds`;
   and `decisions`, each `id`, `what`, `contributes_to`, `builds_on`, `decided`, `settled_by`
   (`research`, `reasoning` or `user`) and `grounds`. A script verifies every question is served,
@@ -169,9 +178,11 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
   question it is close to, with `good_when`, what the user gets once it is good, never how to make
   it. A script verifies every question stands in one of the two, and each line is there.
 
-Questions shared by several kinds, such as those of every document, are written once in a template
-of their own, and a kind's template names it in `includes`, as `readme.json` names `refactor-doc`;
-each question is named with its template, as `refactor-doc/Q3`. A
+Questions shared by several kinds, such as those of every document, are written once in a best
+practice of their own, and a kind's best practice names it in `includes`, as `readme.json` names
+`refactor-doc`; each question is named with its file, as `refactor-doc/Q3`. A refactoring best
+practice has no `template`, as the deliverable keeps its kind's shape. rn's meta.md, how a
+Standard and its Practice are made, is remade as the best practice planner builds with. A
 question copied into each kind would be mended in one and left old in the rest.
 
 ## Sources
