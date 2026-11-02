@@ -71,8 +71,8 @@
      "passes": "O1: An office worker books a room that fits their meeting, without asking anyone."
     },
     "grounds": [
-     "ISO 9241-11:2018, 3.1.1: usability is the \"extent to which a system, product or service can be used by specified users to achieve specified goals with effectiveness, efficiency and satisfaction in a specified context of use\".",
-     "Christensen, Hall, Dillon and Duncan, \"Know Your Customers' 'Jobs to Be Done'\", Harvard Business Review, 2016: a job is the progress a person is trying to make, not a feature of the product."
+     "Strategyn (Tiffany Anderson), \"Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick\", strategyn.com, 2024: \"Identify who is executing the job and define the core functional job in a single, solution-free statement.\"",
+     "Clayton Christensen Institute, \"Jobs to Be Done Theory\", christenseninstitute.org, 2024: \"Everyone has Jobs to Be Done in their lives—the progress they’re trying to make as they strive toward a goal or aspiration within particular circumstances.\""
     ]
    },
    {
@@ -90,9 +90,8 @@
      "passes": "KR1.1: The share of meetings held in the room booked for them, without a double booking or a room change; higher is better. KR1.2: The time from opening the app to a confirmed booking; shorter is better."
     },
     "grounds": [
-     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: each metric is derived from a goal through a signal of success toward it (Goals-Signals-Metrics).",
-     "Strathern, \"Improving ratings: audit in the British University system\", European Review, 1997, stating Goodhart's law: \"When a measure becomes a target, it ceases to be a good measure.\"",
-     "What Matters (whatmatters.com), \"What is an OKR? OKR Meaning, Definition & Examples\": \"Most of all, they are measurable and verifiable. You either meet a Key Result’s requirements or you don’t — there is no gray area, no room for doubt.\""
+     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"No matter how user-centered a metric is, it is unlikely to be useful in practice unless it explicitly relates to a goal, and can be used to track progress towards that goal.\"",
+     "Strathern, \"Improving ratings: audit in the British University system\", European Review, 1997, stating Goodhart's law: \"When a measure becomes a target, it ceases to be a good measure.\""
     ]
    },
    {
@@ -139,7 +138,7 @@
      "passes": "The worker enters the time and the number of attendees, RoomBook shows the rooms that fit, the worker books one and sees it in their calendar, and finds the room free at meeting time."
     },
     "grounds": [
-     "Cockburn, Writing Effective Use Cases, 2000: the main success scenario runs from the trigger to the goal delivered, and a use case names its actors first."
+     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Does it run from trigger to delivery of the success guarantee?\""
     ]
    },
    {
@@ -156,7 +155,7 @@
      "passes": "The same scenario: the worker asks for rooms at a given time and sees which are free. How the app finds them is left to the architecture document."
     },
     "grounds": [
-     "ISO 9241-210:2019: user requirements are specified from the context of use before design solutions are produced."
+     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Most of the time, we treat the system under discussion as a black box, which we can not peek inside. Internal actors are carefully not mentioned. This makes good sense when we use the use cases to name requirements for a system that has not yet been designed.\""
     ]
    }
   ],
@@ -165,6 +164,129 @@
   ]
  },
  "practice": {
-  "methods": []
+  "methods": [
+   {
+    "question": "Q1",
+    "steps": [
+     "okrs: Name each kind of user who comes to the product, by role.",
+     "okrs: For each user, list what they come to get done, with no mention of how the product does it.",
+     "okrs: Merge any two items that are the same gain for the same user, and write one objective for each item left.",
+     "okrs: Take each planned or recent change that alters what a user gets, and name the one objective it moves; where a change moves two objectives because their gains are the same, merge or re-cut those two. A change that serves every objective alike, such as a speed-up, is no sign of overlap.",
+     "okrs: Under each objective, write its key results by Q3's method.",
+     "okrs: For each objective, ask whether all its key results could get better while users still do not get what it says; if so, add or rework key results until they could not."
+    ],
+    "grounds": [
+     "Strategyn (Tiffany Anderson), \"Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick\", strategyn.com, 2024: \"define a market as a group of people and the job they are trying to get done.\"",
+     "Google re:Work Editorial Team, \"Set goals with OKRs\", rework.withgoogle.com, 2016: \"Pick just three to five objectives - more can lead to over-extended teams and a diffusion of effort.\"",
+     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed.\""
+    ]
+   },
+   {
+    "question": "Q2",
+    "steps": [
+     "objective: Make the subject the user who gets the gain, named by a role in words the reader already uses, so the objective needs no definition.",
+     "objective: Write what that user gets as verb, object and context, with no feature or mechanism of the product in it.",
+     "objective: Ask whether the product could do all of it while that user is no better off; if so, rewrite the sentence around the gain itself.",
+     "objective: Cut it to one line, moving out any how and any second clause."
+    ],
+    "grounds": [
+     "Strategyn (Tiffany Anderson), \"Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick\", strategyn.com, 2024: \"Identify who is executing the job and define the core functional job in a single, solution-free statement.\"",
+     "Tony Ulwick, \"Define Your Market\", Jobs-to-be-Done Playbook, strategyn.com, 2021: \"The product will help the group of people: [verb] + [object] + [contextual clarifier]\"",
+     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Could the OKR get a 1.0 under reasonable circumstances — without providing direct enduser or economic benefit? If so, then reword the OKR to focus on the tangible benefit.\"",
+     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"If your Objective doesn’t fit on one line, it probably isn’t crisp enough.\""
+    ]
+   },
+   {
+    "question": "Q3",
+    "steps": [
+     "key-result: For the objective, list how success or failure would show in what the user does or feels.",
+     "key-result: Add the signals of failure, such as giving up, undoing or a workaround.",
+     "key-result: Keep only the signals that move when the user is better or worse off, and drop counts of output, such as launches or tasks done.",
+     "key-result: Turn each signal kept into one count, a share, an average per user or a time, naming what it is counted out of.",
+     "key-result: Add the direction that is better, with no target number.",
+     "key-result: For each key result, ask whether it could get better while another gets worse or users get nothing more; if so, add one that counts the opposite failure, or rewrite it."
+    ],
+    "grounds": [
+     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"Next, think about how success or failure in the goals might manifest itself in user behavior or attitudes. What actions would indicate the goal had been met?\"",
+     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"Sometimes failure is easier to identify than success\"",
+     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"Choose signals that are sensitive and specific to the goal – they should move only when the user experience is better or worse, not for other, unrelated reasons.\"",
+     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"What matters isn’t the launch, but its impact.\"",
+     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"Raw counts will go up as your user base grows, and need to be normalized; ratios, percentages, or averages per user are often more useful.\"",
+     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?\""
+    ]
+   },
+   {
+    "question": "Q4",
+    "steps": [
+     "scenarios: Copy the objective IDs from the OKRs, in their order.",
+     "scenario: For each objective ID, write one heading with the ID and a short phrase, the user its subject and its verb active, saying how they reach the objective.",
+     "scenario: Under each heading, put that objective's own diagram, even where two objectives share steps.",
+     "scenarios: Set the headings' IDs against the OKRs' IDs; add a heading for an objective that has none, and fix or remove one whose ID no objective has."
+    ],
+    "grounds": [
+     "Cockburn, \"Writing Effective Use Cases\", Addison-Wesley, 2001, inside cover: \"Brainstorm and exhaustively list user goals for the system.\"",
+     "Cockburn, \"Basic Use Case Template\", HaT TR96.03a, 1998: \"Use Case: <number> <the name should be the goal as a short active verb phrase>\"",
+     "Jacobson, Spence and Bittner, \"Use-Case 2.0\", 2011: \"A use case is all the ways of using a system to achieve a particular goal for a particular user.\""
+    ]
+   },
+   {
+    "question": "Q6",
+    "steps": [
+     "scenario: Write the end first: what the user has when the objective is reached, in the objective's words.",
+     "scenario: Write as the first message the user's first request to the product, sent by the user.",
+     "scenario: Choose the simplest path from that request to that end, leaving failures and stops off it.",
+     "scenario: Write each step on that path as one message, from the participant who takes it to the one it acts on, saying what it passes, checks or changes.",
+     "scenario: For each step, find the line in the product's documents that says it happens; where none does, ask the product's owner instead of drawing it.",
+     "scenario: Draw a repeated part as a loop with its condition, holding each repeated step.",
+     "scenario: Read the diagram from top to bottom: the first message is the user's request, the last gives the user the end, and each step moves toward it."
+    ],
+    "grounds": [
+     "Cockburn, \"Basic Use Case Template\", HaT TR96.03a, 1998: \"Trigger: <the action upon the system that starts the use case, may be time event>\"",
+     "Cockburn, \"Basic Use Case Template\", HaT TR96.03a, 1998: \"<put here the steps of the scenario from trigger to goal delivery, and any cleanup after>\"",
+     "Jacobson, Spence and Bittner, \"Use-Case 2.0\", 2011: \"The simplest way of achieving the goal is described by the basic flow.\"",
+     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Have an actor pass information, validate a condition, or update state.\"",
+     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Does it run from trigger to delivery of the success guarantee?\"",
+     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Is it clear which actor is operating the goal (who is \\\"kicking the ball?)\""
+    ]
+   },
+   {
+    "question": "Q5",
+    "steps": [
+     "participants: Read every diagram, and list each party that sends or receives a message, with the user of each objective.",
+     "participants: Name each by the role it plays, in a word the reader already uses.",
+     "participants: Write its kind after its name: a person, an AI or a script; where more than one kind can play the role, name each.",
+     "participants: Write them as one list at the start of Scenarios.",
+     "scenario: Begin each diagram by declaring each participant it uses, with its name and kind in the list's own words.",
+     "scenario: Check each diagram: every message's sender and receiver is declared, every declared name and kind is in the list, and none declared goes unused."
+    ],
+    "grounds": [
+     "Cockburn, \"Writing Effective Use Cases\", Addison-Wesley, 2001, inside cover: \"Find every human and non-human primary actor, over the life of the system.\"",
+     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"An actor might be a person, a company or organization, a computer program or a computer system, hardware or software or both.\"",
+     "OMG, \"Unified Modeling Language 2.5.1\", 2017, 18.1: \"Actors may represent roles played by human users, external hardware, or other systems.\"",
+     "Mermaid, \"Sequence diagrams\", mermaid.js.org: \"The participants can be defined implicitly as in the first example on this page.\""
+    ]
+   },
+   {
+    "question": "Q7",
+    "steps": [
+     "the whole: List the names of the product's components, stores and calls from its architecture document.",
+     "the whole: Search this document for each name, and flag every line where one appears.",
+     "participants: Treat the product as one black box, and flag each participant named for a piece of it that the user does not run, see or receive.",
+     "participants: For each name kept, write how the user meets it: a command they type, a message they read or a file they are given; flag a name that cannot be placed so.",
+     "scenario: For each message into the product, write it as the user's intention, and flag one that shows how the product carries it out.",
+     "scenario: For each message from the product to a user, keep only what the user sees or receives, and flag wording that says how the product found or made it.",
+     "objective and key-result: Flag any that names a part of the product, or a count taken inside it, in place of what users gain or do.",
+     "the whole: Pick one change the architecture could make while users see the same, read every line, and flag each that would have to change.",
+     "the whole: Rewrite each flagged line by what the user does, sees or receives, or move it to the architecture document."
+    ],
+    "grounds": [
+     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"A black-box use case does not mention any components inside the SuD. Typically used in the system requirements document.\"",
+     "Cockburn, \"Reminders\", Writing Effective Use Cases, 2000: \"Highlight the actor's intention, not the user interface details.\"",
+     "Constantine, \"Essential Modeling: Use Cases for User Interfaces\", ACM interactions, 1995: \"Essential models aim to capture the essence of systems: a technology-free, idealized, and abstract picture grounded in the intentions of users and the fundamental purposes of the system that supports them.\"",
+     "Constantine, \"Essential Modeling: Use Cases for User Interfaces\", ACM interactions, 1995: \"The resulting design model can be more flexible, leaving open more options and accommodating changes in technology more readily\"",
+     "Jackson and Zave, \"Deriving Specifications from Requirements: An Example\", ICSE 1995: \"The requirement is concerned entirely with the environment, where the effects and benefits of the machine will be felt and assessed: the machine is purely a means to the end of achieving the required effect in the environment.\""
+    ]
+   }
+  ]
  }
 }
