@@ -1,250 +1,197 @@
 {
  "kind": "meta",
  "goal": {
-  "what": "A builder makes a deliverable of a kind by its best practice's Practice, and an evaluator judges it against the Standard alone; every deliverable that passes is fit for its user's purpose.",
+  "what": "A deliverable that a builder makes by a kind's practice, and an evaluator passes by its standard alone, serves the purpose of the one who uses it.",
   "grounds": [
    "plugins/turn/README.md: \"The Standard alone evaluates the deliverable\"",
-   "turn-rebuild.md, Three best practices: \"meta ... fit for its purpose\""
+   ".rn/20261013-rebuild/turn-rebuild.md, Three best practices: \"meta ... fit for its purpose\""
   ]
  },
  "decisions": [
   {
    "id": "D1",
-   "what": "Who uses a best practice?",
-   "contributes_to": [
-    "meta/Q2"
-   ],
+   "what": "Who uses a best practice, and for what?",
+   "contributes_to": "goal",
    "builds_on": [],
-   "decided": "The builder, who makes a deliverable by the Practice, and the evaluator, who judges it by the Standard; both AIs. Planner makes it, and the user approves its goal and checklist.",
+   "decided": "The builder makes a deliverable by the practice; the evaluator judges it by the standard; both are AIs. The user approves the kind's goal and questions.",
    "settled_by": "reasoning",
    "grounds": [
-    "turn-rebuild.md, Roles"
+    ".rn/20261013-rebuild/turn-rebuild.md, Roles"
    ]
   },
   {
    "id": "D2",
-   "what": "The goal as written",
-   "contributes_to": [
-    "meta/Q2"
-   ],
+   "what": "What must the goal give?",
+   "contributes_to": "goal",
    "builds_on": [
     "D1"
    ],
-   "decided": "A builder makes a deliverable of the kind by the Practice, and an evaluator judges it against the Standard alone; a deliverable that passes is fit for its user's purpose.",
-   "settled_by": "reasoning",
+   "decided": "Who uses a deliverable of the kind, in what moment, and what they get with it, so that the builder and the evaluator settle from it any point nothing else settles, and the user judges the kind by it.",
+   "settled_by": "research",
    "grounds": [
-    "turn-rebuild.md, Three best practices"
+    "Brookhart, \"Appropriate Criteria: Key to Effective Rubrics\", Frontiers in Education, 2018: \"True rubrics feature criteria appropriate to an assessment's purpose\""
    ]
   },
   {
    "id": "D3",
-   "what": "How is a best practice kept?",
-   "contributes_to": [
-    "meta/Q1",
-    "meta/Q10"
+   "what": "What must hold for the standard to judge right?",
+   "contributes_to": "goal",
+   "builds_on": [
+    "D2"
    ],
-   "builds_on": [],
-   "decided": "One file for each kind, best-practices/<kind>.json, holding standard and practice.",
-   "settled_by": "user",
+   "decided": "It passes a deliverable exactly when its user gets what the goal says.",
+   "settled_by": "reasoning",
    "grounds": [
-    "agreed with the user, 2026-11-02"
+    "plugins/turn/README.md: \"a deliverable that answers every question yes is done, and nothing more is added\""
    ]
   },
   {
    "id": "D4",
-   "what": "What are its keys named?",
-   "contributes_to": [
-    "meta/Q1",
-    "meta/Q10"
-   ],
+   "what": "Where do the questions come from?",
+   "contributes_to": "D3",
    "builds_on": [
-    "D3"
+    "D2"
    ],
-   "decided": "The README's words: standard (goal, template, checklist, includes) and practice (methods).",
+   "decided": "From the goal, split down by asking what must hold for its user, until each condition is answered yes or no; the conditions become the questions' checks, and like conditions are merged into one question. Questions are not matched one to one with the template's parts.",
    "settled_by": "user",
    "grounds": [
-    "agreed with the user, 2026-11-02"
+    ".rn/20261013-rebuild/turn-rebuild.md, planner 4-5: \"Write the leaf conditions as the Checklist's questions\""
    ]
   },
   {
    "id": "D5",
-   "what": "What shape does the template take?",
-   "contributes_to": [
-    "meta/Q3"
-   ],
+   "what": "How is it known that no question is needless?",
+   "contributes_to": "D3",
    "builds_on": [
-    "D4",
-    "D15"
+    "D4"
    ],
-   "decided": "A tree drawn from the goal: each part has id, what, why (what it serves) and parts, its children.",
-   "settled_by": "user",
+   "decided": "Each question asks something the goal needs; one that the goal does not need is cut.",
+   "settled_by": "research",
    "grounds": [
-    "agreed with the user, 2026-11-02"
+    "Brookhart, \"Appropriate Criteria: Key to Effective Rubrics\", Frontiers in Education, 2018: \"True rubrics feature criteria appropriate to an assessment's purpose\""
    ]
   },
   {
    "id": "D6",
-   "what": "How do the questions meet the template?",
-   "contributes_to": [
-    "meta/Q4"
-   ],
+   "what": "How is it known that no question repeats another?",
+   "contributes_to": "D3",
    "builds_on": [
-    "D5"
+    "D4"
    ],
-   "decided": "One question on each part and one on the root; each question's about names that one part.",
-   "settled_by": "user",
-   "grounds": [
-    "agreed with the user, 2026-11-02"
-   ]
+   "decided": "Each question asks what no other asks; where two would fail the same deliverables for the same reason, they are one.",
+   "settled_by": "reasoning",
+   "grounds": []
   },
   {
    "id": "D7",
-   "what": "What form does a question take?",
-   "contributes_to": [
-    "meta/Q5"
+   "what": "How is it known that nothing the user needs is missed?",
+   "contributes_to": "D3",
+   "builds_on": [
+    "D4"
    ],
-   "builds_on": [],
-   "decided": "A scene of use, \"When <the user> <does>, can they <result>?\", answered yes or no, asking one thing.",
-   "settled_by": "reasoning",
+   "decided": "A deliverable that its users found short fails some question; real deliverables are judged, and a question is added or mended where one found short passes.",
+   "settled_by": "research",
    "grounds": [
-    "meta.md Q-4 and Q-5",
-    "Scriven, \"The Logic and Methodology of Checklists\", 2007"
+    "Shankar et al., \"Who Validates the Validators?\", arXiv:2404.12272, 2024: \"users need criteria to grade outputs, but grading outputs helps users define criteria.\"",
+    "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"Converting user-reported failures into test cases ensures your suite reflects actual usage\""
    ]
   },
   {
    "id": "D8",
-   "what": "What does a why say?",
-   "contributes_to": [
-    "meta/Q6"
-   ],
+   "what": "How do two evaluators reach the same answer?",
+   "contributes_to": "D3",
    "builds_on": [
-    "D7"
+    "D4"
    ],
-   "decided": "What holds for the user where the answer is yes, and what goes wrong for them where it is no.",
-   "settled_by": "reasoning",
+   "decided": "Each question is set in a scene of use and rests on checks answered yes or no, with an example that fails and one that passes where the words could pass what misses the aim.",
+   "settled_by": "research",
    "grounds": [
-    "meta.md Q-6"
+    "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"A good task is one where two domain experts would independently reach the same pass/fail verdict.\"",
+    "Lee et al., \"CheckEval\", arXiv:2403.18771v2: \"We create Boolean questions that correspond to the sub-dimensions defined in the first step.\""
    ]
   },
   {
    "id": "D9",
-   "what": "When does a question carry examples?",
-   "contributes_to": [
-    "meta/Q7"
-   ],
-   "builds_on": [
-    "D7"
-   ],
-   "decided": "Where a part can meet its words and miss its aim: fails from a case a judge let through, passes the same made right.",
-   "settled_by": "reasoning",
+   "what": "What is the evaluator given?",
+   "contributes_to": "D3",
+   "builds_on": [],
+   "decided": "The deliverable and the standard alone, as the deliverable's user meets only the deliverable.",
+   "settled_by": "user",
    "grounds": [
-    "meta.md Q-7",
-    "NAEP, \"Scoring calibration\""
+    "plugins/turn/README.md: \"The Standard alone evaluates the deliverable\""
    ]
   },
   {
    "id": "D10",
-   "what": "What form does a ground take?",
-   "contributes_to": [
-    "meta/Q8",
-    "meta/Q12"
-   ],
-   "builds_on": [],
-   "decided": "Author, \"Title\", venue, year: the words quoted that the claim rests on.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "issue.md: name each place a claim rests on, with the words quoted"
-   ]
-  },
-  {
-   "id": "D11",
-   "what": "Where do questions shared by kinds live?",
-   "contributes_to": [
-    "meta/Q9"
-   ],
+   "what": "What must hold for the practice to build right?",
+   "contributes_to": "goal",
    "builds_on": [
     "D3"
    ],
-   "decided": "In refactor-doc and refactor-code, named in includes; meta includes refactor-doc.",
+   "decided": "A builder who follows it makes a deliverable that passes the standard.",
+   "settled_by": "reasoning",
+   "grounds": []
+  },
+  {
+   "id": "D11",
+   "what": "How does the builder know where each thing goes?",
+   "contributes_to": "D10",
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "The template gives the deliverable's shape, each part with what it holds and whom it serves, in the order its user meets it.",
    "settled_by": "user",
    "grounds": [
-    "agreed with the user, 2026-11-02"
+    "plugins/turn/README.md: \"Template: the shape its readers expect, so they find each part where they look for it.\""
    ]
   },
   {
    "id": "D12",
-   "what": "What is the evaluator given?",
-   "contributes_to": [
-    "meta/Q1"
-   ],
+   "what": "How does the builder know how to make each question yes?",
+   "contributes_to": "D10",
    "builds_on": [
     "D4"
    ],
-   "decided": "The standard alone, taken out of the file by a script.",
+   "decided": "Each question has one method: steps in order, one action each, naming the part it writes.",
    "settled_by": "user",
    "grounds": [
-    "agreed with the user, 2026-11-02"
+    "plugins/turn/README.md: \"Methods: a proven way for each question of the Checklist\""
    ]
   },
   {
    "id": "D13",
-   "what": "How are methods kept?",
-   "contributes_to": [
-    "meta/Q10",
-    "meta/Q11"
-   ],
+   "what": "How is a method known to work?",
+   "contributes_to": "D10",
    "builds_on": [
-    "D4"
+    "D12"
    ],
-   "decided": "One for each question: question, steps and grounds.",
-   "settled_by": "user",
+   "decided": "Each step rests on a source, quoted from a page opened, where the way has worked, or is said to be reasoning; the method is tried on a real deliverable and mended where its question stays no.",
+   "settled_by": "research",
    "grounds": [
-    "agreed with the user, 2026-11-02"
+    "Shankar et al., \"Who Validates the Validators?\", arXiv:2404.12272, 2024: \"users need criteria to grade outputs, but grading outputs helps users define criteria.\""
    ]
   },
   {
    "id": "D14",
-   "what": "What form does a step take?",
-   "contributes_to": [
-    "meta/Q11"
-   ],
-   "builds_on": [
-    "D13"
-   ],
-   "decided": "In order, one imperative action each, naming the part of the template it writes.",
+   "what": "Where do questions shared by kinds live?",
+   "contributes_to": "D10",
+   "builds_on": [],
+   "decided": "Once, in refactor-doc or refactor-code, named in includes; a script checks it, so it is no question of meta.",
    "settled_by": "reasoning",
    "grounds": [
-    "meta.md Q-4, carried to steps"
+    ".rn/20261013-rebuild/turn-rebuild.md, Files: \"A question copied into each kind would be mended in one and left old in the rest.\""
    ]
   },
   {
    "id": "D15",
-   "what": "What way of thinking does the whole rest on?",
-   "contributes_to": [
-    "meta/Q13",
-    "meta/Q3"
-   ],
+   "what": "How does the user judge the goal and the questions on one reading?",
+   "contributes_to": "goal",
    "builds_on": [],
-   "decided": "Think from the purpose: divide and give meaning, build in order, see across the branches.",
-   "settled_by": "user",
+   "decided": "meta includes refactor-doc.",
+   "settled_by": "reasoning",
    "grounds": [
-    "agreed with the user, 2026-11-02",
-    "Descartes, Discourse on the Method, 1637",
-    "Simon, \"The Architecture of Complexity\", 1962"
+    ".rn/20261013-rebuild/turn-rebuild.md, Three best practices: \"refactor-doc, how a document says what it says: understood as meant, on one reading.\""
    ]
-  },
-  {
-   "id": "D16",
-   "what": "How is the root question judged?",
-   "contributes_to": [
-    "meta/Q13"
-   ],
-   "builds_on": [
-    "D15"
-   ],
-   "decided": null,
-   "settled_by": "user",
-   "grounds": []
   }
  ]
 }
