@@ -1,40 +1,33 @@
 {
  "standard": {
-  "goal": "Developers read a UX document when they design the product, build it and judge a change to it. From it they build a product that gives its users what they come for, by the path the document shows.",
-  "template": {
-   "skeleton": "# <Product name> UX\n\n## OKRs\n\n- O1: <What a user gets from the product, in one short sentence with the user as its subject>\n  - KR1.1: <A result that shows O1 is closer, and which direction is better>\n  - KR1.2: <Another such result>\n\nKey results have no target values. When a measure becomes a target, it stops being a good measure (Goodhart's law). Use the key results to judge how close the objective is.\n\n## Scenarios\n\n<Each participant and its kind: a person, an AI or a script>\n\n### O1: <A short name for how the user reaches O1>\n\n```mermaid\nsequenceDiagram\n  <Who does what, in order, from the first request to reaching O1>\n```\n",
+  "goal": "Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.",
+  "format": {
    "parts": [
     {
      "id": "okrs",
-     "what": "The OKRs section: the objectives, each with its key results, and the fixed paragraph on target values.",
-     "why": "Developers, deciding what to build next, see which one objective a piece of work serves.",
+     "what": "The OKRs section: the objectives, each with its key results, and the fixed paragraph on target values: \"Key results have no target values. When a measure becomes a target, it stops being a good measure (Goodhart's law). Use the key results to judge how close the objective is.\"",
      "parts": [
       {
        "id": "objective",
-       "what": "O1, O2, ...: one short sentence of what a user gets from the product, with the user as its subject.",
-       "why": "Developers, asked who the product is for, answer with the user and what they get, and judge each piece of work by it."
+       "what": "O1, O2, ...: one short sentence of what a user gets from the product, with the user as its subject."
       },
       {
        "id": "key-result",
-       "what": "KR1.1, KR1.2, ... under each objective: a result that shows the objective closer, and which direction is better.",
-       "why": "Developers, after a change, see whether users came closer to the objective."
+       "what": "KR1.1, KR1.2, ... under each objective: a result that shows the objective closer, and which direction is better."
       }
      ]
     },
     {
      "id": "scenarios",
      "what": "The Scenarios section: the participants, then one scenario for each objective.",
-     "why": "Developers, building toward any objective, find how users reach it.",
      "parts": [
       {
        "id": "participants",
-       "what": "The paragraph at the start of Scenarios: each participant and whether it is a person, an AI or a script.",
-       "why": "Developers, building a step, see whether it waits for a person or runs on its own."
+       "what": "The paragraph at the start of Scenarios: each participant and whether it is a person, an AI or a script."
       },
       {
        "id": "scenario",
-       "what": "A section headed with an objective's ID, holding a sequence diagram of the main path from the user's first request to reaching it.",
-       "why": "Developers, building toward that objective, see who does what, in order."
+       "what": "A section headed with an objective's ID and a short name for how the user reaches it, holding a Mermaid sequence diagram of the main path from the user's first request to reaching it: who does what, in order."
       }
      ]
     }
@@ -43,120 +36,33 @@
   "checklist": [
    {
     "id": "Q1",
-    "about": "okrs",
-    "what": "When the developer decides what to build next, can they tell from the OKRs which one objective the work serves?",
-    "checks": [
-     "Does each objective say something no other objective says?",
-     "Does every objective have its key results under it?"
-    ],
-    "why": "Developers weigh each piece of work by the objective it serves. Where each objective says something of its own and has its key results, a piece of work serves one, and developers see how it is measured.",
-    "examples": {
-     "fails": "O1: A worker books a room quickly. O2: A worker finds a free room easily. (A faster search serves both, so no one can tell which it moves.)",
-     "passes": "O1: An office worker books a room that fits their meeting, without asking anyone. O2: A facilities manager sees which rooms go unused."
-    },
-    "grounds": []
+    "about": "objective",
+    "what": "Reading an objective, does the builder know which user the product is for and what that user gets from it?"
    },
    {
     "id": "Q2",
-    "about": "objective",
-    "what": "When a colleague asks \"Who uses this product, and for what?\", can the developer answer from the objectives?",
-    "checks": [
-     "Is the objective's subject a user?",
-     "Does it say what that user gets, not what the product does?",
-     "Is it one short sentence?"
-    ],
-    "why": "Everything developers design and build serves these objectives. If each objective says in one short sentence what a user gets, with that user as its subject, developers know who the product is for and when it has done its job. An objective written as a product feature, or as the way the product gives it, can be met while the user is no better off.",
-    "examples": {
-     "fails": "O1: The app shows each room's free times and takes bookings.",
-     "passes": "O1: An office worker books a room that fits their meeting, without asking anyone."
-    },
-    "grounds": [
-     "Strategyn (Tiffany Anderson), \"Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick\", strategyn.com, 2024: \"Identify who is executing the job and define the core functional job in a single, solution-free statement.\"",
-     "Clayton Christensen Institute, \"Jobs to Be Done Theory\", christenseninstitute.org, 2024: \"Everyone has Jobs to Be Done in their lives—the progress they’re trying to make as they strive toward a goal or aspiration within particular circumstances.\""
-    ]
+    "about": "okrs",
+    "what": "Weighing a piece of work, can the builder tell which one objective it brings closer?"
    },
    {
     "id": "Q3",
-    "about": "key-result",
-    "what": "When a colleague asks \"Did this change make things better for users?\", can the developer answer by the key results?",
-    "checks": [
-     "Does each key result count a signal that the user is closer to the objective?",
-     "Does it say which direction is better?",
-     "Does it carry no target value?"
-    ],
-    "why": "Developers improve the product by moving its key results. If all of them getting better means users are closer to the objective, that work helps users. A key result chosen because it is easy to count, such as tasks done or items produced, can improve while users get nothing more. A key result given a target value, rather than the direction that is better, is worked toward the number instead of toward users.",
-    "examples": {
-     "fails": "KR1.1: Bookings made per week; more is better. (More bookings can mean more double bookings and rebookings.)",
-     "passes": "KR1.1: The share of meetings held in the room booked for them, without a double booking or a room change; higher is better. KR1.2: The time from opening the app to a confirmed booking; shorter is better."
-    },
-    "grounds": [
-     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"No matter how user-centered a metric is, it is unlikely to be useful in practice unless it explicitly relates to a goal, and can be used to track progress towards that goal.\"",
-     "Strathern, \"Improving ratings: audit in the British University system\", European Review, 1997, stating Goodhart's law: \"When a measure becomes a target, it ceases to be a good measure.\""
-    ]
+    "about": "objective, key-result",
+    "what": "After a change, can the builder tell from the key results whether users came closer to the objective?"
    },
    {
     "id": "Q4",
-    "about": "scenarios",
-    "what": "When the developer builds toward any objective, do they find the scenario of how users reach it?",
-    "checks": [
-     "Does every objective have a scenario headed with its ID?"
-    ],
-    "why": "Developers build each objective by its scenario. An objective with no scenario is built by guesswork or not at all.",
-    "examples": {
-     "fails": "Two objectives and one scenario, so how a facilities manager sees unused rooms is shown nowhere.",
-     "passes": "A scenario headed O1 and one headed O2."
-    },
-    "grounds": []
+    "about": "participants, scenario",
+    "what": "Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?"
    },
    {
     "id": "Q5",
-    "about": "participants",
-    "what": "When the developer builds a step of a scenario, can they tell from the participants whether it waits for a person or runs on its own?",
-    "checks": [
-     "Is each participant named with its kind: a person, an AI or a script?",
-     "Do the diagrams use only these names?"
-    ],
-    "why": "A step that waits for a person is built with a way to ask them, and one that runs on its own is built to run unattended. Where every participant's kind is named, developers build each step the right way.",
-    "examples": {
-     "fails": "Participants: the worker and RoomBook, so whether the rooms that fit are chosen by a person, an AI or a script is said nowhere.",
-     "passes": "Participants: the worker, a person; RoomBook, a script."
-    },
-    "grounds": []
+    "about": "objective, scenarios",
+    "what": "For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?"
    },
    {
     "id": "Q6",
-    "about": "scenario",
-    "what": "When a colleague asks \"Who does what, from the user's first request until this objective is reached?\", can the developer answer from the objective's scenario?",
-    "checks": [
-     "Does the scenario start at the user's first request?",
-     "Does it end where the user has what the objective says?",
-     "Does it show each step between, with who takes it?"
-    ],
-    "why": "Developers build what the scenarios show. Where a scenario runs from the user's first request to reaching the objective, every step is built on purpose. A step the scenario skips is built by guesswork or not at all.",
-    "examples": {
-     "fails": "A scenario that starts when the app receives a booking, skipping how the worker finds a room that fits.",
-     "passes": "The worker enters the time and the number of attendees, RoomBook shows the rooms that fit, the worker books one and sees it in their calendar, and finds the room free at meeting time."
-    },
-    "grounds": [
-     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Does it run from trigger to delivery of the success guarantee?\""
-    ]
-   },
-   {
-    "id": "Q7",
     "about": "the whole",
-    "what": "When the developer changes how the product is built, can they leave this document as it is?",
-    "checks": [
-     "Does the document say only what users do, see and receive?",
-     "Does it name no component, store or call inside the product?"
-    ],
-    "why": "How the product is built belongs in the architecture document. If this document describes only what users do, see and receive, developers can choose the best design and still deliver the UX. Internal design written here is decided twice, drifts from the architecture document, and crowds out the user experience.",
-    "examples": {
-     "fails": "A scenario in which the app queries the database for free slots and caches the result.",
-     "passes": "The same scenario: the worker asks for rooms at a given time and sees which are free. How the app finds them is left to the architecture document."
-    },
-    "grounds": [
-     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Most of the time, we treat the system under discussion as a black box, which we can not peek inside. Internal actors are carefully not mentioned. This makes good sense when we use the use cases to name requirements for a system that has not yet been designed.\""
-    ]
+    "what": "Can the builder change how the product works inside, while its users see the same, and leave the document as it is?"
    }
   ]
  },
@@ -164,44 +70,44 @@
   "methods": [
    {
     "question": "Q1",
+    "thinking": "An objective is the progress one user is trying to make, said from where they stand, not what the product does.",
     "steps": [
-     "okrs: Name each kind of user who comes to the product, by role.",
-     "okrs: For each user, list what they come to get done, with no mention of how the product does it.",
-     "okrs: Merge any two items that are the same gain for the same user, and write one objective for each item left.",
-     "okrs: Take each planned or recent change that alters what a user gets, and name the one objective it moves; where a change moves two objectives because their gains are the same, merge or re-cut those two. A change that serves every objective alike, such as a speed-up, is no sign of overlap.",
-     "okrs: Under each objective, write its key results by Q3's method.",
-     "okrs: For each objective, ask whether all its key results could get better while users still do not get what it says; if so, add or rework key results until they could not."
+     "List each one who comes to the product with a goal of their own, a person or an AI, by the role they play, in words the reader already uses.",
+     "For each, ask what they are trying to get done when they reach for the product, before any feature is named.",
+     "Write it as one sentence: that user as its subject, then a verb, its object and the context it is done in, with no feature or mechanism of the product.",
+     "Ask whether the product could do all the sentence says while that user is no better off; if so, rewrite the sentence around what the user gains.",
+     "Cut it to one line, moving out any how and any second clause."
     ],
     "grounds": [
-     "Strategyn (Tiffany Anderson), \"Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick\", strategyn.com, 2024: \"define a market as a group of people and the job they are trying to get done.\"",
-     "Google re:Work Editorial Team, \"Set goals with OKRs\", rework.withgoogle.com, 2016: \"Pick just three to five objectives - more can lead to over-extended teams and a diffusion of effort.\"",
-     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed.\""
-    ]
-   },
-   {
-    "question": "Q2",
-    "steps": [
-     "objective: Make the subject the user who gets the gain, named by a role in words the reader already uses, so the objective needs no definition.",
-     "objective: Write what that user gets as verb, object and context, with no feature or mechanism of the product in it.",
-     "objective: Ask whether the product could do all of it while that user is no better off; if so, rewrite the sentence around the gain itself.",
-     "objective: Cut it to one line, moving out any how and any second clause."
-    ],
-    "grounds": [
+     "Clayton Christensen Institute, \"Jobs to Be Done Theory\", christenseninstitute.org, 2024: \"Everyone has Jobs to Be Done in their lives—the progress they’re trying to make as they strive toward a goal or aspiration within particular circumstances.\"",
+     "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999, The one page Summary: \"Brainstorm all the actors, human and non, who have an operational goal against the system.\"",
+     "Ulwick, \"Define Your Market\", Jobs-to-be-Done Playbook, strategyn.com, 2021: \"Products don’t have jobs-to-be-done—people do.\"",
      "Strategyn (Tiffany Anderson), \"Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick\", strategyn.com, 2024: \"Identify who is executing the job and define the core functional job in a single, solution-free statement.\"",
-     "Tony Ulwick, \"Define Your Market\", Jobs-to-be-Done Playbook, strategyn.com, 2021: \"The product will help the group of people: [verb] + [object] + [contextual clarifier]\"",
+     "Ulwick, \"Define Your Market\", Jobs-to-be-Done Playbook, strategyn.com, 2021: \"The product will help the group of people: [verb] + [object] + [contextual clarifier]\"",
      "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Could the OKR get a 1.0 under reasonable circumstances — without providing direct enduser or economic benefit? If so, then reword the OKR to focus on the tangible benefit.\"",
      "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"If your Objective doesn’t fit on one line, it probably isn’t crisp enough.\""
     ]
    },
    {
-    "question": "Q3",
+    "question": "Q2",
+    "thinking": "Objectives are cut so that each piece of work brings one of them closer, and no gain is written twice.",
     "steps": [
-     "key-result: For the objective, list how success or failure would show in what the user does or feels.",
-     "key-result: Add the signals of failure, such as giving up, undoing or a workaround.",
-     "key-result: Keep only the signals that move when the user is better or worse off, and drop counts of output, such as launches or tasks done.",
-     "key-result: Turn each signal kept into one count, a share, an average per user or a time, naming what it is counted out of.",
-     "key-result: Add the direction that is better, with no target number.",
-     "key-result: For each key result, ask whether it could get better while another gets worse or users get nothing more; if so, add one that counts the opposite failure, or rewrite it."
+     "Set the objectives side by side, and merge any two that are the same gain for the same user.",
+     "Take each change planned or recently made that alters what a user gets, and name the one objective it brings closer.",
+     "Where a change brings two objectives closer because their gains overlap, merge them or cut them apart again; a change that helps every objective alike, such as a speed-up, is no sign of overlap."
+    ],
+    "grounds": []
+   },
+   {
+    "question": "Q3",
+    "thinking": "A key result counts what users do or feel as they come closer to the objective, so it cannot get better while they get nothing more.",
+    "steps": [
+     "For the objective, list how its success or failure would show in what the user does or feels.",
+     "Add the signs of failure, such as giving up, undoing a result or working around the product.",
+     "Keep only the signs that move when the user is better or worse off, and drop counts of output, such as features shipped or tasks done.",
+     "Turn each sign kept into one measure, a share, an average per user, a count or a time, and name what it is counted out of.",
+     "Write which direction is better, and no target value.",
+     "Ask whether all the objective's key results could get better while the user still does not get what the objective says; if so, add or rework key results until they could not."
     ],
     "grounds": [
      "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"Next, think about how success or failure in the goals might manifest itself in user behavior or attitudes. What actions would indicate the goal had been met?\"",
@@ -209,78 +115,67 @@
      "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"Choose signals that are sensitive and specific to the goal – they should move only when the user experience is better or worse, not for other, unrelated reasons.\"",
      "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"What matters isn’t the launch, but its impact.\"",
      "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"Raw counts will go up as your user base grows, and need to be normalized; ratios, percentages, or averages per user are often more useful.\"",
-     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?\""
-    ]
-   },
-   {
-    "question": "Q4",
-    "steps": [
-     "scenarios: Copy the objective IDs from the OKRs, in their order.",
-     "scenario: For each objective ID, write one heading with the ID and a short phrase, the user its subject and its verb active, saying how they reach the objective.",
-     "scenario: Under each heading, put that objective's own diagram, even where two objectives share steps.",
-     "scenarios: Set the headings' IDs against the OKRs' IDs; add a heading for an objective that has none, and fix or remove one whose ID no objective has."
-    ],
-    "grounds": [
-     "Cockburn, \"Writing Effective Use Cases\", Addison-Wesley, 2001, inside cover: \"Brainstorm and exhaustively list user goals for the system.\"",
-     "Cockburn, \"Basic Use Case Template\", HaT TR96.03a, 1998: \"Use Case: <number> <the name should be the goal as a short active verb phrase>\"",
-     "Jacobson, Spence and Bittner, \"Use-Case 2.0\", 2011: \"A use case is all the ways of using a system to achieve a particular goal for a particular user.\""
-    ]
-   },
-   {
-    "question": "Q6",
-    "steps": [
-     "scenario: Write the end first: what the user has when the objective is reached, in the objective's words.",
-     "scenario: Write as the first message the user's first request to the product, sent by the user.",
-     "scenario: Choose the simplest path from that request to that end, leaving failures and stops off it.",
-     "scenario: Write each step on that path as one message, from the participant who takes it to the one it acts on, saying what it passes, checks or changes.",
-     "scenario: For each step, find the line in the product's documents that says it happens; where none does, ask the product's owner instead of drawing it.",
-     "scenario: Draw a repeated part as a loop with its condition, holding each repeated step.",
-     "scenario: Read the diagram from top to bottom: the first message is the user's request, the last gives the user the end, and each step moves toward it."
-    ],
-    "grounds": [
-     "Cockburn, \"Basic Use Case Template\", HaT TR96.03a, 1998: \"Trigger: <the action upon the system that starts the use case, may be time event>\"",
-     "Cockburn, \"Basic Use Case Template\", HaT TR96.03a, 1998: \"<put here the steps of the scenario from trigger to goal delivery, and any cleanup after>\"",
-     "Jacobson, Spence and Bittner, \"Use-Case 2.0\", 2011: \"The simplest way of achieving the goal is described by the basic flow.\"",
-     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Have an actor pass information, validate a condition, or update state.\"",
-     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Does it run from trigger to delivery of the success guarantee?\"",
-     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Is it clear which actor is operating the goal (who is \\\"kicking the ball?)\""
+     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?\"",
+     "Wikipedia, \"Goodhart's law\", en.wikipedia.org, no date: \"Goodhart's law is an adage that has been stated as, \"When a measure becomes a target, it ceases to be a good measure\".\"",
+     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed.\""
     ]
    },
    {
     "question": "Q5",
+    "thinking": "A scenario is one run of the main path a user takes to the objective, from the request that starts it to the gain that ends it.",
     "steps": [
-     "participants: Read every diagram, and list each party that sends or receives a message, with the user of each objective.",
-     "participants: Name each by the role it plays, in a word the reader already uses.",
-     "participants: Write its kind after its name: a person, an AI or a script; where more than one kind can play the role, name each.",
-     "participants: Write them as one list at the start of Scenarios.",
-     "scenario: Begin each diagram by declaring each participant it uses, with its name and kind in the list's own words.",
-     "scenario: Check each diagram: every message's sender and receiver is declared, every declared name and kind is in the list, and none declared goes unused."
+     "For each objective, in the OKRs' order, write a heading with its ID and a short phrase, the user its subject and its verb active, saying how they reach it.",
+     "Pick one concrete piece of work of the kind the user brings, so the run can be followed and tried as written.",
+     "Write the end first: what the user has once the objective is reached, in the objective's words.",
+     "Write as the first message the user's first request to the product.",
+     "Choose the main path from that request to that end, the one most users take, and leave failures and stops off it.",
+     "Write each step as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes.",
+     "Where the product's owner has not said that a step happens, ask them instead of drawing it.",
+     "Draw a part that repeats as a loop with its condition, holding each step that repeats.",
+     "Read the diagram from top to bottom: the first message is the user's request, the last gives the user the end, and each step moves toward it."
     ],
     "grounds": [
-     "Cockburn, \"Writing Effective Use Cases\", Addison-Wesley, 2001, inside cover: \"Find every human and non-human primary actor, over the life of the system.\"",
-     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"An actor might be a person, a company or organization, a computer program or a computer system, hardware or software or both.\"",
-     "OMG, \"Unified Modeling Language 2.5.1\", 2017, 18.1: \"Actors may represent roles played by human users, external hardware, or other systems.\"",
-     "Mermaid, \"Sequence diagrams\", mermaid.js.org: \"The participants can be defined implicitly as in the first example on this page.\""
+     "Cockburn, \"Basic Use Case Template\", HaT TR.96.03a, 1998: \"Use Case: <number> <the name should be the goal as a short active verb phrase>\"",
+     "Cockburn, \"Basic Use Case Template\", HaT TR.96.03a, 1998: \"<put here the steps of the scenario from trigger to goal delivery, and any cleanup after>\"",
+     "Cockburn, \"Basic Use Case Template\", HaT TR.96.03a, 1998: \"Trigger: <the action upon the system that starts the use case, may be time event>\"",
+     "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999: \"The main success scenario is the most common, or perhaps easiest to understand, scenario.\"",
+     "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999: \"Write each sentence as a goal succeeding, distinctly moving the process forward. Write: \"At some time, ActorA kicks ActorB with some information\", or \"System verifies validation conditions are met\", or \"System updates its state\", or \"ActorA has ActorB kick ActorC\".\"",
+     "Mermaid, \"Sequence diagrams\", mermaid.js.org: \"It is possible to express loops in a sequence diagram.\"",
+     "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999: \"Does it run from trigger to delivery of the success end condition?\""
     ]
    },
    {
-    "question": "Q7",
+    "question": "Q4",
+    "thinking": "Each one that takes a step is named by its role and its kind, so the builder knows which step waits for a person and which runs without one.",
     "steps": [
-     "the whole: List the names of the product's components, stores and calls from its architecture document.",
-     "the whole: Search this document for each name, and flag every line where one appears.",
-     "participants: Treat the product as one black box, and flag each participant named for a piece of it that the user does not run, see or receive.",
-     "participants: For each name kept, write how the user meets it: a command they type, a message they read or a file they are given; flag a name that cannot be placed so.",
-     "scenario: For each message into the product, write it as the user's intention, and flag one that shows how the product carries it out.",
-     "scenario: For each message from the product to a user, keep only what the user sees or receives, and flag wording that says how the product found or made it.",
-     "objective and key-result: Flag any that names a part of the product, or a count taken inside it, in place of what users gain or do.",
-     "the whole: Pick one change the architecture could make while users see the same, read every line, and flag each that would have to change.",
-     "the whole: Rewrite each flagged line by what the user does, sees or receives, or move it to the architecture document."
+     "Read every diagram, and list each one that sends or receives a message.",
+     "Name each by the role it plays, in a word the reader already uses.",
+     "Write its kind after its name: a person, an AI or a script; where more than one kind can play the role, name each.",
+     "Write them as one paragraph at the start of Scenarios.",
+     "Begin each diagram by declaring each participant it uses, with its name and kind as the paragraph gives them.",
+     "Check each diagram: every message's sender and receiver is declared, and every declared name and kind is the paragraph's."
     ],
     "grounds": [
-     "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"A black-box use case does not mention any components inside the SuD. Typically used in the system requirements document.\"",
-     "Cockburn, \"Reminders\", Writing Effective Use Cases, 2000: \"Highlight the actor's intention, not the user interface details.\"",
-     "Constantine, \"Essential Modeling: Use Cases for User Interfaces\", ACM interactions, 1995: \"Essential models aim to capture the essence of systems: a technology-free, idealized, and abstract picture grounded in the intentions of users and the fundamental purposes of the system that supports them.\"",
-     "Constantine, \"Essential Modeling: Use Cases for User Interfaces\", ACM interactions, 1995: \"The resulting design model can be more flexible, leaving open more options and accommodating changes in technology more readily\"",
+     "OMG, \"Unified Modeling Language 2.5.1\", 2017, chapter 18: \"An Actor models a type of role played by an entity that interacts with the subjects of its associated UseCases (e.g., by exchanging signals and data). Actors may represent roles played by human users, external hardware, or other systems.\"",
+     "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999: \"An actor might be a person, a company or organization, a computer program or a computer system, hardware or software or both.\"",
+     "Mermaid, \"Sequence diagrams\", mermaid.js.org: \"The actor can have a convenient identifier and a descriptive label.\"",
+     "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999: \"Is it clear which actor is operating the goal (who is \"kicking the ball?)\""
+    ]
+   },
+   {
+    "question": "Q6",
+    "thinking": "The document says only what users do, see and receive, so any design that gives them the same leaves it true.",
+    "steps": [
+     "Treat the product as one box, and flag each participant named for a piece of it that the user does not run, see or receive.",
+     "For each message into the product, write it as what the user means to do, and flag one that shows how the product carries it out.",
+     "For each message from the product to a user, keep only what the user sees or receives, and flag wording that says how the product found or made it.",
+     "Flag any objective or key result that names a part of the product, or a count taken inside it, in place of what users gain or do.",
+     "Pick one change the design could make while users see the same, read every line, and flag each line that would have to change.",
+     "Rewrite each flagged line by what the user does, sees or receives, or leave it to the architecture document."
+    ],
+    "grounds": [
+     "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999: \"For computer systems, it is rare that we open up the black box.\"",
+     "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999: \"Show the intent of the actor, what it/they want and get accomplished in that step.\"",
      "Jackson and Zave, \"Deriving Specifications from Requirements: An Example\", ICSE 1995: \"The requirement is concerned entirely with the environment, where the effects and benefits of the machine will be felt and assessed: the machine is purely a means to the end of achieving the required effect in the environment.\""
     ]
    }
