@@ -1,16 +1,21 @@
 {
  "kind": "ux",
  "good": [
-  {"question": "ux/Q1", "lines": ["dev/lane/ux.md:5-7", "dev/lane/ux.md:18-20"]},
-  {"question": "ux/Q2", "lines": ["dev/lane/ux.md:8-17", "dev/lane/ux.md:21-27"]},
-  {"question": "ux/Q3", "lines": ["dev/lane/ux.md:34-38", "dev/lane/ux.md:40-59", "dev/lane/ux.md:61-88"]},
-  {"question": "ux/Q4", "lines": ["dev/lane/ux.md:1-88"]},
-  {"question": "refactor-doc/Q1", "lines": ["dev/lane/ux.md:40-88"]},
-  {"question": "refactor-doc/Q2", "lines": ["dev/lane/ux.md:34-38"]},
-  {"question": "refactor-doc/Q3", "lines": ["dev/lane/ux.md:1-88"]},
-  {"question": "refactor-doc/Q4", "lines": ["dev/lane/ux.md:18-20", "dev/lane/ux.md:35-37"]},
-  {"question": "refactor-doc/Q5", "lines": ["dev/lane/ux.md:3-38"]},
-  {"question": "refactor-doc/Q6", "lines": ["dev/lane/ux.md:29-30"]}
+  {"question": "ux/Q1", "lines": ["dev/lane/ux.md:3-4", "dev/lane/ux.md:11-12", "dev/lane/ux.md:28-29"]},
+  {"question": "ux/Q2", "lines": ["dev/lane/ux.md:11-12", "dev/lane/ux.md:28-29"]},
+  {"question": "ux/Q3", "lines": ["dev/lane/ux.md:13-22", "dev/lane/ux.md:30-37", "dev/lane/ux.md:43-44"]},
+  {"question": "ux/Q4", "lines": ["dev/lane/ux.md:48-53", "dev/lane/ux.md:59-62", "dev/lane/ux.md:77-82"]},
+  {"question": "ux/Q5", "lines": ["dev/lane/ux.md:55-71", "dev/lane/ux.md:73-102"]},
+  {"question": "ux/Q6", "lines": ["dev/lane/ux.md:63-70", "dev/lane/ux.md:83-101"]},
+  {"question": "ux/Q7", "lines": ["dev/lane/ux.md:24-27", "dev/lane/ux.md:39-41"]},
+  {"question": "refactor-doc/Q1", "lines": ["dev/lane/ux.md:9", "dev/lane/ux.md:46", "dev/lane/ux.md:55", "dev/lane/ux.md:73"]},
+  {"question": "refactor-doc/Q2", "lines": ["dev/lane/ux.md:11-41", "dev/lane/ux.md:57-71", "dev/lane/ux.md:75-102"]},
+  {"question": "refactor-doc/Q3", "lines": ["dev/lane/ux.md:3-7", "dev/lane/ux.md:48-53"]},
+  {"question": "refactor-doc/Q4", "lines": ["dev/lane/ux.md:24-27", "dev/lane/ux.md:39-41", "dev/lane/ux.md:48-53"]},
+  {"question": "refactor-doc/Q5", "lines": ["dev/lane/ux.md:1-102"]},
+  {"question": "refactor-doc/Q6", "lines": ["dev/lane/ux.md:3-7", "dev/lane/ux.md:49-51"]},
+  {"question": "refactor-doc/Q7", "lines": ["dev/lane/ux.md:41"]},
+  {"question": "refactor-doc/Q8", "lines": ["dev/lane/ux.md:41", "dev/lane/ux.md:88-98"]}
  ],
  "more": []
 }

@@ -1,36 +1,339 @@
 {
  "kind": "ux",
  "goal": {
-  "what": "lane's developers know who uses lane and for what, how that user reaches each aim from the first request, and how to tell whether a change made lane better for them, so they design and build lane to give it.",
-  "grounds": ["ux.json purpose: \"A UX document describes why users use the product and how they reach that goal. Developers design and build a product that delivers this UX.\""]
+  "what": "Whoever builds or changes Lane, a person or an AI, makes it give the developer AI what it comes for: subagents that keep the rules of their steps, and an orchestrator that starts them in the order set, on every run, with no check code or script of its own.",
+  "grounds": [
+   "plugins/turn/best-practices/ux.json, standard.goal: \"Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.\"",
+   "plugins/lane/README.md:6-9: \"With Lane, your subagents keep the rules of their steps on every run, and your orchestrator, the subagent that starts the others, starts them in your order, which you write as a flow. You write no code for the checks and no script for the order.\""
+  ]
  },
  "decisions": [
-  {"id": "D1", "what": "Who is lane's user?", "contributes_to": ["ux/Q1", "ux/Q3"], "builds_on": [], "decided": "The developer AI: an AI that builds a Claude Code plugin whose subagents work in numbered steps.", "settled_by": "user", "grounds": ["plugins/lane/README.md:6: \"lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps.\"", "agreed with the user in the steering's T49"]},
-  {"id": "D2", "what": "How many objectives, and split by what?", "contributes_to": ["ux/Q1"], "builds_on": ["D1"], "decided": "Two: keeping the rules of each step, and keeping the order the subagents start in. A plugin may want rules with no flow, so each is a job of its own.", "settled_by": "reasoning", "grounds": ["plugins/lane/README.md:3-4 names the two: \"keep the rules of their steps and start one another in the order that you set\"", "plugins/lane/docs/lanes.md and docs/flow.md are written apart; a flow is optional in the proposal"]},
-  {"id": "D3", "what": "What progress does the developer AI want in O1?", "contributes_to": ["D5"], "builds_on": ["D2"], "decided": "Its subagents keep the rules written in their numbered steps on every run.", "settled_by": "user", "grounds": ["plugins/lane/README.md:7: \"your subagents keep the rules of their steps on every run\""]},
-  {"id": "D4", "what": "What is the developer AI spared in O1?", "contributes_to": ["D5"], "builds_on": ["D2"], "decided": "Writing the code that checks the rules.", "settled_by": "user", "grounds": ["plugins/lane/README.md:8: \"You write no code for the checks\""]},
-  {"id": "D5", "what": "O1 as written", "contributes_to": ["ux/Q1"], "builds_on": ["D3", "D4"], "decided": "O1: The developer AI wants the subagents of its plugin to keep the rules written in their numbered steps on every run, without writing the code that checks them.", "settled_by": "reasoning", "grounds": ["ux.json Q1 passes example: a user, the progress, the context; no feature of lane named"]},
-  {"id": "D6", "what": "How is the orchestrator named for a reader who has not met the word?", "contributes_to": ["D8", "D27"], "builds_on": ["D2"], "decided": "The orchestrator, the subagent that starts the others; the order it starts them in is the flow, which the developer AI sets.", "settled_by": "reasoning", "grounds": ["plugins/lane/README.md:8 defines it the same way; the UX is read before the README, so it defines the word where it first appears"]},
-  {"id": "D7", "what": "What progress does the developer AI want in O2, and what is it spared?", "contributes_to": ["D8"], "builds_on": ["D2"], "decided": "Its orchestrator starts the others in the order it set, on every run, without a script written for the order.", "settled_by": "user", "grounds": ["plugins/lane/README.md:7-9: \"your orchestrator ... starts them in your order ... no script for the order\""]},
-  {"id": "D8", "what": "O2 as written", "contributes_to": ["ux/Q1"], "builds_on": ["D6", "D7"], "decided": "O2: The developer AI wants the orchestrator of its plugin, the subagent that starts the others, to start them in the order that the developer AI set, its flow, on every run, without writing a script for it.", "settled_by": "reasoning", "grounds": ["as D5"]},
-  {"id": "D9", "what": "What counts each key result, so it cannot rise while the user gets nothing?", "contributes_to": ["ux/Q2"], "builds_on": [], "decided": "A share of the events that could go wrong, or effort and time the user spends; never a count of output such as checks laid or rules written.", "settled_by": "research", "grounds": ["ux.json Q2 why: \"A key result chosen because it is easy to count ... can improve while users get nothing more.\"", "Rodden et al., CHI 2010, Goals-Signals-Metrics"]},
-  {"id": "D10", "what": "O1: does a break get through?", "contributes_to": ["ux/Q2"], "builds_on": ["D5", "D9"], "decided": "KR1.1: the share of tool calls and ends of work that break a rule and still go through; lower is better.", "settled_by": "reasoning", "grounds": ["the signal that the rules are kept on every run, D3"]},
-  {"id": "D11", "what": "O1: is allowed work stopped?", "contributes_to": ["ux/Q2"], "builds_on": ["D5", "D9"], "decided": "KR1.2: the share of tool calls and ends of work that the rules allow but that are stopped; lower is better.", "settled_by": "reasoning", "grounds": ["KR1.1 alone improves by stopping everything; this one holds it to the user's gain"]},
-  {"id": "D12", "what": "O1: does a stopped subagent go back to its step?", "contributes_to": ["ux/Q2"], "builds_on": ["D5", "D9"], "decided": "KR1.3: the share of stopped breaks after which the subagent still does not keep the rule, for example because it tries another way; lower is better.", "settled_by": "reasoning", "grounds": ["plugins/lane/README.md:13-14: \"A hook that only refuses a call leaves the subagent to look for another way\"; a stop that is routed around keeps no rule"]},
-  {"id": "D13", "what": "O1: what does the user spend?", "contributes_to": ["ux/Q2"], "builds_on": ["D4", "D9"], "decided": "KR1.4: the lines of code the developer AI writes by hand so that its subagents keep the rules; fewer is better. KR1.5: the time from its first rule to the first run in which the subagents keep the rules; shorter is better.", "settled_by": "reasoning", "grounds": ["D4 promises no code written; the time shows what writing a proposal costs"]},
-  {"id": "D14", "what": "O2: does the orchestrator keep the flow, and is allowed work stopped?", "contributes_to": ["ux/Q2"], "builds_on": ["D8", "D9"], "decided": "KR2.1: the share of runs in which the orchestrator leaves the flow; lower is better. KR2.2: the share of the orchestrator's tool calls and ends of work that the flow allows but that are stopped; lower is better.", "settled_by": "reasoning", "grounds": ["a run that leaves the flow at any point fails O2, so KR2.1 counts runs, not calls; KR2.2 holds it as KR1.2 holds KR1.1"]},
-  {"id": "D15", "what": "O2: what does the user spend?", "contributes_to": ["ux/Q2"], "builds_on": ["D8", "D9"], "decided": "KR2.3: the lines of code the developer AI writes by hand so that the orchestrator keeps the flow; fewer is better. KR2.4: the time from its first flow to the first run that keeps it; shorter is better.", "settled_by": "reasoning", "grounds": ["as D13"]},
-  {"id": "D16", "what": "Which plugin do the scenarios run on?", "contributes_to": ["ux/Q3"], "builds_on": ["D1"], "decided": "The example plugin changelog, which writes a project's CHANGELOG.md, as the README's walkthrough runs it.", "settled_by": "research", "grounds": [".claude/rules/dev.md step 1: the README takes \"the scenario that its walkthrough runs\" from the UX", "plugins/lane/README.md:62-63"]},
-  {"id": "D17", "what": "Who takes part in the main paths, and of what kind?", "contributes_to": ["ux/Q3"], "builds_on": ["D16"], "decided": "The developer AI (an AI); lay.py of lane (a script); the check script that lay.py puts into the plugin (a script); the operator who runs the plugin (a person or an AI); changelog's lead, the orchestrator, writer, which writes new entries into CHANGELOG.md, and reviewer, which compares the entries with the commits (AIs).", "settled_by": "reasoning", "grounds": ["ux.json Q3: whether each is a person, an AI or a script tells which steps wait for a person", "only those that act on a main path; lay.py up and Python missing are off it"]},
-  {"id": "D18", "what": "What does the developer AI do first in O1?", "contributes_to": ["D20"], "builds_on": ["D5", "D17"], "decided": "It asks lay.py print for two rules on step 3 of writer: write only CHANGELOG.md, do not run git commit or git push; and sees step 3 with the sentence of each rule.", "settled_by": "research", "grounds": ["plugins/lane/README.md:62-89; scripts/steps.py:61 prints the step as it will be"]},
-  {"id": "D19", "what": "How does it end its part?", "contributes_to": ["D20"], "builds_on": ["D18"], "decided": "Once it approves what print showed, it runs lay.py write, which writes the sentences into step 3 and puts the check script into changelog.", "settled_by": "research", "grounds": ["plugins/lane/README.md:91-101"]},
-  {"id": "D20", "what": "Where does O1 reach its aim?", "contributes_to": ["ux/Q3"], "builds_on": ["D19"], "decided": "The operator runs changelog; writer writes CHANGELOG.md and the check script lets it through; writer runs git commit, the check script stops it with \"changelog: Do not run `git commit` or `git push`.\", and writer ends with CHANGELOG.md written and no commit.", "settled_by": "research", "grounds": ["hooks/lane/hook.py:163 heads each sentence with the plugin's name; guard.py:233-234 tells the step's sentence, and hands_off adds no line (lanes/hands_off.py:15)"]},
-  {"id": "D21", "what": "What does the developer AI do first in O2?", "contributes_to": ["D23"], "builds_on": ["D8", "D17"], "decided": "It asks lay.py print for the flow writer, reviewer, back to writer when reviewer answers `more`, and sees the flow and its sentence on step 1 of lead; then lay.py write writes the sentence and puts the check script into changelog.", "settled_by": "research", "grounds": ["plugins/lane/docs/flow.md:9-12: the sentence \"Take each move lane tells you, until it tells none.\""]},
-  {"id": "D22", "what": "What is lead told as it starts, and after each subagent?", "contributes_to": ["D23"], "builds_on": ["D21"], "decided": "As it starts: \"changelog: The next move of the flow is move 1: start `changelog:writer`.\" After reviewer answers `more`: \"changelog: reviewer answered `more`. The next move of the flow is move 1: start `changelog:writer`.\" Once reviewer answers otherwise: \"changelog: The flow is done: lane tells no more moves.\"", "settled_by": "research", "grounds": ["hooks/lane/moves.py:105-115 gives each line; called.py:185,199 tells it; hook.py:163 heads it with the plugin's name"]},
-  {"id": "D23", "what": "Which stop belongs on the main path, and where does O2 reach its aim?", "contributes_to": ["ux/Q3"], "builds_on": ["D22"], "decided": "lead tries to end after writer, and the check script stops it with \"changelog: Take each move lane tells you, until it tells none.\" and, on the next line, \"The next move of the flow is move 2: start `changelog:reviewer`.\"; writer and reviewer go again until reviewer does not answer `more`, and lead ends with the reviewed entries.", "settled_by": "research", "grounds": ["an early end is the slip an orchestrator makes most and shows the flow held; guard.py:233-234 puts the move on the line after the sentence; lanes/follow_flow.py:34"]},
-  {"id": "D24", "what": "What does the document leave to the architecture?", "contributes_to": ["ux/Q4"], "builds_on": [], "decided": "Only what the developer AI and the operator do, see and get; no hook event, file of the plugin or module of lane.", "settled_by": "research", "grounds": ["ux.json Q4 why: \"Internal design written here is decided twice, drifts from the architecture document\""]},
-  {"id": "D25", "what": "How is each message shown?", "contributes_to": ["ux/Q3", "ux/Q4"], "builds_on": ["D24"], "decided": "As its exact text, so a developer reads what the user sees and a change to the text shows as a change to the UX.", "settled_by": "reasoning", "grounds": ["what the user reads is the UX; a paraphrase cannot be checked against the code"]},
-  {"id": "D26", "what": "How does the check script appear?", "contributes_to": ["ux/Q4"], "builds_on": ["D24"], "decided": "As one participant that lets calls through, stops them and tells lead its moves, named as the README names it, the check script.", "settled_by": "reasoning", "grounds": ["plugins/lane/README.md:115: \"lane puts its checks into your plugin as one script, the check script\"; the hooks it runs by are the architecture's"]},
-  {"id": "D27", "what": "Which words does the document use for what lane holds?", "contributes_to": ["ux/Q1", "ux/Q3"], "builds_on": ["D6"], "decided": "rule, step, flow, move and orchestrator, each said in everyday words where it first appears; lane's own word lane is not used.", "settled_by": "reasoning", "grounds": ["the README says rule for what docs call a lane (plugins/lane/README.md:12); the user of the UX has not met lane's terms"]}
+  {
+   "id": "D1",
+   "what": "Who is Lane's user?",
+   "contributes_to": [
+    "ux/Q1"
+   ],
+   "builds_on": [],
+   "decided": "The developer AI: an AI that builds a Claude Code plugin whose subagents work in numbered steps. The one who later runs that plugin comes to the plugin, not to Lane, and is no user of Lane's.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/lane/README.md:6: \"Lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps.\"",
+    "dev/lane/architecture.md:67: \"Whoever runs the plugin did not choose Lane\""
+   ]
+  },
+  {
+   "id": "D2",
+   "what": "Where does the reader learn the words of Lane's that they have not used: developer AI, rule, orchestrator, flow and move?",
+   "contributes_to": [
+    "ux/Q1",
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "In one paragraph under the title, before the OKRs, so that each objective stays one short sentence. A rule is a sentence in a step that the subagent must keep; the orchestrator is the subagent that starts the others; the flow is the order it starts them in, with the answers that send the work back, which the developer AI sets; a move is one start of a subagent the flow names.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/refactor-doc.json Q6 steps: \"For a word the document must keep, give its meaning in a few everyday words, in the sentence where the reader first meets it.\"",
+    "plugins/turn/best-practices/ux.json, format objective: \"one short sentence of what a user gets from the product, with the user as its subject.\"",
+    "plugins/lane/README.md:11: \"A rule is a sentence in a step, such as ``Do not run `git commit` or `git push`.``, with a check of it.\"",
+    "plugins/lane/docs/flow.md:7: \"A flow is the order in which one subagent of your plugin, the orchestrator, starts the others\""
+   ]
+  },
+  {
+   "id": "D3",
+   "what": "How many objectives, and cut by what?",
+   "contributes_to": [
+    "ux/Q1",
+    "ux/Q2"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "Two: the rules of each step kept (O1), and the subagents started in the order set (O2). A plugin can have rules with no flow, or a flow with no rules, so each piece of work on Lane brings one of them closer.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/lane/README.md:3-4: \"so that they keep the rules of their steps and start one another in the order that you set.\"",
+    "plugins/lane/docs/lanes.md:112-113: \"A proposal may hold a flow alone, with no `subagents`.\""
+   ]
+  },
+  {
+   "id": "D4",
+   "what": "O1 as written",
+   "contributes_to": [
+    "ux/Q1",
+    "ux/Q2"
+   ],
+   "builds_on": [
+    "D2",
+    "D3"
+   ],
+   "decided": "O1: The developer AI has its subagents keep the rules of their steps on every run, with no check code of its own.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/ux.json Q1 steps: \"Write it as one sentence: that user as its subject, then a verb, its object and the context it is done in, with no feature or mechanism of the product.\"",
+    "plugins/lane/README.md:8-9: \"You write no code for the checks\""
+   ]
+  },
+  {
+   "id": "D5",
+   "what": "O2 as written",
+   "contributes_to": [
+    "ux/Q1",
+    "ux/Q2"
+   ],
+   "builds_on": [
+    "D2",
+    "D3"
+   ],
+   "decided": "O2: The developer AI has its orchestrator start the other subagents in the order of its flow on every run, with no script of its own for the order.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "as D4",
+    "plugins/lane/README.md:9: \"and no script for the order.\""
+   ]
+  },
+  {
+   "id": "D6",
+   "what": "What does each key result count?",
+   "contributes_to": [
+    "ux/Q3"
+   ],
+   "builds_on": [],
+   "decided": "What the developer AI's subagents do on runs, as a share out of a named whole, or what the developer AI spends, in lines of code or in time; never a count of Lane's output, such as rules laid. Each says which direction is better, and none has a target value.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/best-practices/ux.json Q3 steps: \"Turn each sign kept into one measure, a share, an average per user, a count or a time, and name what it is counted out of.\"",
+    "plugins/turn/best-practices/ux.json Q3 steps: \"drop counts of output, such as features shipped or tasks done.\""
+   ]
+  },
+  {
+   "id": "D7",
+   "what": "O1's key results",
+   "contributes_to": [
+    "ux/Q3",
+    "ux/Q2"
+   ],
+   "builds_on": [
+    "D4",
+    "D6"
+   ],
+   "decided": "KR1.1: of the tool calls and ends of work that break a rule, the share that goes through. KR1.2: of those the rules allow, the share that is stopped. KR1.3: of the breaks stopped, the share after which the subagent still does not keep the rule, such as by trying another way. KR1.4: the lines of code the developer AI writes by hand for a plugin so that its subagents keep the rules. KR1.5: the time from the developer AI's first rule for a plugin to the first run in which its subagents keep the rules. Lower, fewer and shorter are better.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "KR1.1 alone gets better by stopping everything; KR1.2 holds it to the user's gain (ux.json Q3 steps: \"Ask whether all the objective's key results could get better while the user still does not get what the objective says\").",
+    "plugins/lane/README.md:13-14: \"A hook that only refuses a call leaves the subagent to look for another way\", the failure KR1.3 counts.",
+    "D4's \"with no check code of its own\" is counted by KR1.4; the time to the first run that keeps the rules is what laying them costs."
+   ]
+  },
+  {
+   "id": "D8",
+   "what": "O2's key results",
+   "contributes_to": [
+    "ux/Q3",
+    "ux/Q2"
+   ],
+   "builds_on": [
+    "D5",
+    "D6"
+   ],
+   "decided": "KR2.1: of the runs, the share in which the subagents are not started in the order of the flow. KR2.2: of the orchestrator's tool calls and ends of work that the flow allows, the share that is stopped. KR2.3: the lines of code the developer AI writes by hand for a plugin so that the subagents start in the order of the flow. KR2.4: the time from the developer AI's first flow for a plugin to the first run that keeps it. Lower, fewer and shorter are better.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "A run that starts one subagent out of order fails O2, so KR2.1 counts runs; it counts what the developer AI sees, the order the subagents start in, whether the orchestrator strays or Lane reads an answer wrong.",
+    "KR2.2 holds KR2.1 as KR1.2 holds KR1.1; KR2.3 and KR2.4 count what O2 spares, as KR1.4 and KR1.5 do."
+   ]
+  },
+  {
+   "id": "D9",
+   "what": "Which comes first, a break let through or an allowed call stopped (KR1.1 and KR1.2, KR2.1 and KR2.2)?",
+   "contributes_to": [
+    "ux/Q7"
+   ],
+   "builds_on": [
+    "D7",
+    "D8"
+   ],
+   "decided": "The break let through, or the run out of order, comes first: KR1.1 before KR1.2, and KR2.1 before KR2.2. A break that goes through is what the rule is there to stop, while a subagent stopped on an allowed call is told why and tries again.",
+   "settled_by": "research",
+   "grounds": [
+    "dev/lane/architecture.md:47: \"When the check script cannot check a call or an end, it stops it.\"",
+    "dev/lane/architecture.md:52: \"A call let through unchecked could be the break the rule is there to stop\"",
+    "plugins/lane/docs/flow.md:116-118: \"While a move is due, the orchestrator is told the sentence and the move on the next line: at PreToolUse, on a call that is not the move, which is stopped\""
+   ]
+  },
+  {
+   "id": "D10",
+   "what": "Which comes first, what the runs meet or what the developer AI spends (KR1.1 and KR1.2 against KR1.4 and KR1.5, KR2.1 and KR2.2 against KR2.3 and KR2.4)?",
+   "contributes_to": [
+    "ux/Q7"
+   ],
+   "builds_on": [
+    "D7",
+    "D8"
+   ],
+   "decided": "What the runs meet comes first: KR1.1 and KR1.2 each come before KR1.4 and KR1.5, and KR2.1 and KR2.2 each before KR2.3 and KR2.4. A wrong check acts on every run, while the developer AI spends the lines and the time once for each plugin. A change that moves them apart is one such as reading another text format without the code that describes it, or checking a proposal less to lay it faster.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "D4 and D5: \"on every run\" is the objective; the code and the time are what it spares.",
+    "plugins/lane/README.md:28-29: \"Lane reads the texts your plugin writes, such as a list of items to answer, in one format only. For another format, you write an adapter\": Lane already spends the developer AI's lines to keep its checks right.",
+    "plugins/turn/best-practices/ux.json Q7 thinking: \"the one whose loss keeps the user further from the objective comes first.\""
+   ]
+  },
+  {
+   "id": "D11",
+   "what": "Which plugin do the scenarios run on?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "The example plugin changelog, which writes a project's CHANGELOG.md, as the README's walkthrough runs it; its subagents lead, the orchestrator, writer, which writes the new entries, and reviewer, which compares the entries with the commits.",
+   "settled_by": "research",
+   "grounds": [
+    ".claude/rules/dev.md step 1: \"the README takes two things from the UX: what the user gains, and the scenario that its walkthrough runs.\"",
+    "plugins/lane/README.md:62-63: \"The plugin `changelog` writes a project's `CHANGELOG.md`\""
+   ]
+  },
+  {
+   "id": "D12",
+   "what": "Who takes part, and of what kind?",
+   "contributes_to": [
+    "ux/Q4"
+   ],
+   "builds_on": [
+    "D11"
+   ],
+   "decided": "The developer AI (an AI), which also runs changelog to try it; lay.py, Lane's script it runs (a script); the check script that lay.py puts into changelog (a script); lead, writer and reviewer (AIs). No step on the main paths waits for a person.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/lane/README.md:104: \"When you ask `changelog` for an entry and a commit, it runs `writer`.\"",
+    "plugins/lane/README.md:116: \"Lane puts its checks into your plugin as one script, the check script\""
+   ]
+  },
+  {
+   "id": "D13",
+   "what": "What does the document show of Lane, and what does it leave to the architecture?",
+   "contributes_to": [
+    "ux/Q6"
+   ],
+   "builds_on": [
+    "D12"
+   ],
+   "decided": "Only what the developer AI runs, sees and receives, and what its subagents are told: lay.py's commands and what they show, and the check script as one participant that lets calls through, stops them and tells moves. No hook event, file inside Lane or Claude Code mechanism by which a line reaches a subagent.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/best-practices/ux.json Q6 steps: \"Treat the product as one box, and flag each participant named for a piece of it that the user does not run, see or receive.\"",
+    "dev/lane/architecture.md:150-218 draws the hooks and modules behind the same paths."
+   ]
+  },
+  {
+   "id": "D14",
+   "what": "How is a line that a subagent is told, or that lay.py shows, given?",
+   "contributes_to": [
+    "ux/Q5",
+    "ux/Q6"
+   ],
+   "builds_on": [
+    "D13"
+   ],
+   "decided": "As its exact text, a line told headed by the plugin's name, so that a builder reads what the developer AI and its subagents read, and a change to the text shows as a change to the UX.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/lane/hooks/lane/hook.py:163 heads each line a check tells with the plugin's name, as `{plugin}: {s.text}`.",
+    "What a subagent reads is what the developer AI's run meets; a paraphrase cannot be checked against the code.",
+    "plugins/lane/README.md:88 gives step 3 as lay.py print shows it: \"Write only `CHANGELOG.md`. Do not run `git commit` or `git push`.\""
+   ]
+  },
+  {
+   "id": "D15",
+   "what": "How is each scenario headed?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D4",
+    "D5",
+    "D11"
+   ],
+   "decided": "With the objective's ID and a short phrase, the developer AI its subject and its verb active: \"O1: The developer AI holds writer to two rules of its step\" and \"O2: The developer AI has lead start writer and reviewer in its flow's order\".",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/ux.json Q5 steps: \"write a heading with its ID and a short phrase, the user its subject and its verb active, saying how they reach it.\""
+   ]
+  },
+  {
+   "id": "D16",
+   "what": "O1's main path",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D12",
+    "D13",
+    "D14",
+    "D15"
+   ],
+   "decided": "The developer AI asks lay.py print for two rules on step 3 of writer, write only CHANGELOG.md and do not run git commit or git push, and sees step 3 as it will be; once it approves, lay.py write writes step 3 and puts the check script into changelog. It asks changelog for an entry and a commit; writer writes CHANGELOG.md, the check script lets it through, and writer ends with CHANGELOG.md written and no commit, as step 3 now says. No stop is drawn: the main path leaves stops off, and the README has writer keep the rule by reading the step.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/lane/README.md:104-106: \"`writer` writes `CHANGELOG.md`, and the check lets it through. `writer` reads the new sentences in step 3, and ends without a commit. If `writer` runs `git commit`, the check stops the call\"",
+    "plugins/turn/best-practices/ux.json Q5 steps: \"Choose the main path from that request to that end, the one most users take, and leave failures and stops off it.\"",
+    "plugins/lane/README.md:83-101 gives what lay.py print and lay.py write show."
+   ]
+  },
+  {
+   "id": "D17",
+   "what": "Does O2's main path run its subagents in the foreground or in the background?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D12"
+   ],
+   "decided": "In the foreground, where each start comes back once its subagent has ended. The background path, where lead is told to wait, is left off the main path.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "dev/lane/trials/trying.py:84 runs Claude Code as `claude -p`, and plugins/lane/docs/flow.md:98-99 says Claude Code runs a subagent in the background by default only \"in an interactive session\"; how many runs of developer AIs are interactive is not known.",
+    "plugins/lane/docs/flow.md:94-96: \"An Agent call of a subagent run in the foreground comes back once the subagent has ended, with the status `completed`\""
+   ]
+  },
+  {
+   "id": "D18",
+   "what": "O2's main path",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D13",
+    "D14",
+    "D15",
+    "D17"
+   ],
+   "decided": "The developer AI asks lay.py print for the flow on step 1 of lead, writer then reviewer and back to writer while reviewer answers `more`, and sees it; once it approves, lay.py write writes the flow's sentence into step 1 and puts the check script into changelog. It asks changelog to update CHANGELOG.md for the next release. As lead starts, and as each start comes back, the check script tells lead the next move, with no stop: \"changelog: The next move of the flow is move 1: start `changelog:writer`.\", then move 2 for reviewer, then \"changelog: reviewer answered `more`. The next move of the flow is move 1: start `changelog:writer`.\" while reviewer answers `more`, drawn as a loop, and \"changelog: The flow is done: lane tells no more moves.\" once it does not. lead ends with the reviewed entries.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/lane/docs/flow.md:15: \"lane tells the orchestrator each move as it starts and as each start of a subagent of the flow comes back.\"",
+    "plugins/lane/docs/flow.md:85-89 and plugins/lane/hooks/lane/moves.py:111-115 give each line; plugins/lane/hooks/lane/lanes/follow_flow.py:15: \"Take each move lane tells you, until it tells none.\"",
+    "dev/lane/trials/notes_trial.py:75: \"/notes:changelog Update the changelog for the next release.\"",
+    "plugins/turn/best-practices/ux.json Q5 steps: \"Draw a part that repeats as a loop with its condition, holding each step that repeats.\""
+   ]
+  },
+  {
+   "id": "D19",
+   "what": "Which plugins may the document name?",
+   "contributes_to": [
+    "ux/Q1"
+   ],
+   "builds_on": [],
+   "decided": "Lane and the example plugin changelog only; no line names Turn, Rn or another plugin of the marketplace Lane ships in.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/steering.md, T49: \"lane depends on no plugin: no code, document or example of it names turn, rn or another ccpm plugin.\"",
+    "Lane's user is any developer AI (D1); a line naming one plugin of the marketplace would read as Lane being made for it."
+   ]
+  }
  ]
 }
