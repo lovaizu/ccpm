@@ -79,7 +79,8 @@ and one decision serves many questions, one question rests on many decisions.
 
 ### planner
 
-1. Decide the kind of work from the request, and confirm it with the user.
+1. Decide the kind of work from the request, and with it whether the work is a document or code,
+   and confirm them with the user.
 2. Where a template for the kind exists, pass it to designer and end.
 3. Research the kind's best practice.
 4. Put the kind's purpose, who uses such a work and for what, at the root of a design tree, and
@@ -158,9 +159,8 @@ whose work goes to evaluator.
    conditions are met there, and how to trace a more to its decision is part of Turn's own
    Practice, the same for every kind. rn's fix.md goes when rn is rebuilt, as rn's code reads it.
 2. The refactoring phase: how the work says and shows it, its structure bettered while what it
-   says stays (Fowler, Refactoring). The questions of the `refactor-<kind>` template the kind's
-   template names in `includes`, such as `refactor-doc` for every document and `refactor-code`
-   for code, which hold over the whole work. builder finishes the work by them and evaluator
+   says stays (Fowler, Refactoring). The questions of `refactor-doc` for a document, or of
+   `refactor-code` for code, as planner decided with the kind, which hold over the whole work. builder finishes the work by them and evaluator
    verifies it by them, with no design tree, each started fresh. lane's flow declares the six
    positions: planner, designer, builder, evaluator, builder, evaluator. The orchestrator tells
    the phase from the role that last ended and its answer: this phase begins when the evaluator
@@ -183,7 +183,7 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
   `.turn/` for those a user's runs make, in the form Best practice says: `standard`, with `goal`;
   `format`, with `parts`, each part `id`, `what` and its `parts`; `checklist`, each question `id`,
   `about` (a part, the parts of a dependency, or the whole), `what`, `checks`, the clues to its
-  answer, `examples` (`fails` and `passes`) and `grounds`; and `includes`; and `practice`, with
+  answer, `examples` (`fails` and `passes`) and `grounds`; and `practice`, with
   `methods`, for each essence a question holds the way of thinking and the steps that meet it,
   with their `grounds`. The kind is the file's name. The evaluator is given `standard` alone, taken
   out by a script. A script verifies every part is looked at by a question, and every question has
@@ -197,10 +197,9 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
   question it is close to, with `good_when`, what the user gets once it is good, never how to make
   it. A script verifies every question stands in one of the two, and each line is there.
 
-Questions shared by several kinds, such as those of every document, are written once in a best
-practice of their own, and a kind's best practice names it in `includes`, as `readme.json` names
-`refactor-doc`; each question is named with its file, as `refactor-doc/Q3`. A refactoring best
-practice has no `template`, as the deliverable keeps its kind's shape. A question copied into
+Questions that hold for every document, or for all code, are written once, in refactor-doc or
+refactor-code; each question is named with its file, as `refactor-doc/Q3`. A refactoring best
+practice has no `format`, as the deliverable keeps its kind's shape. A question copied into
 each kind would be mended in one and left old in the rest.
 
 Three best practices stand over every kind, each with one purpose:

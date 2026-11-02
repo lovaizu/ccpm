@@ -146,9 +146,6 @@
      "passes": "rooms_that_fit takes the meeting and the rooms, and gives the rooms that fit in the order given."
     }
    }
-  ],
-  "includes": [
-   "refactor-code"
   ]
  },
  "practice": {

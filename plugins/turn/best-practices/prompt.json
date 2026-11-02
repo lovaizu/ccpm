@@ -184,9 +184,6 @@
      "passes": "Tried three runs each on a plain meeting, one that needs a screen, one no room fits and one two rooms fit; every run ends as the prompt names."
     }
    }
-  ],
-  "includes": [
-   "refactor-doc"
   ]
  },
  "practice": {

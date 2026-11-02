@@ -321,9 +321,6 @@
      "passes": "Under Components: \"The Room matcher offers a room only when it is free for the whole meeting.\" The Room matcher's queries, caching and retries change, and the line still holds."
     }
    }
-  ],
-  "includes": [
-   "refactor-doc"
   ]
  },
  "practice": {

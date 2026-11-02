@@ -158,9 +158,6 @@
      "Cockburn, \"Writing Effective Use Cases\", pre-publication draft #3, 2000: \"Most of the time, we treat the system under discussion as a black box, which we can not peek inside. Internal actors are carefully not mentioned. This makes good sense when we use the use cases to name requirements for a system that has not yet been designed.\""
     ]
    }
-  ],
-  "includes": [
-   "refactor-doc"
   ]
  },
  "practice": {

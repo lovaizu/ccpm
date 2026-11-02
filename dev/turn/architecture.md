@@ -59,7 +59,7 @@ on must be made again.
 ### What the work says before how it says it
 
 The content phase answers the kind's own questions from the design tree; the refactoring phase then
-answers the questions of the templates the kind's template includes, such as `refactor-doc`, with
+answers the questions of `refactor-doc` for a document, or `refactor-code` for code, with
 no design tree, changing only how the work says things. A point that would change what it says goes
 back to designer.
 

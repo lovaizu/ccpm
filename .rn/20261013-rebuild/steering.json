@@ -269,8 +269,7 @@
   "open_questions": [
    "Whether the design-tree way of thinking, wanted for every plan, task breakdown and way of going, is kept as a skill or a rule outside the plugins (the user, 2026-10-31: not a plugin matter).",
    "Whether turn's way of moving a work follows the plugin architecture as it stands (turn-rebuild.md, What turn takes and gives).",
-   "Whether to report to Claude Code that a resumed subagent's SubagentStart additionalContext does not reach its model (the user's to send, as it is outward).",
-   "Whether includes stays in a best practice's format: meta's agreed format has none, while turn's refactoring phase names the refactor-<kind> best practice by it (turn-rebuild.md, Flow)."
+   "Whether to report to Claude Code that a resumed subagent's SubagentStart additionalContext does not reach its model (the user's to send, as it is outward)."
   ]
  }
 }
