@@ -1,6 +1,6 @@
 {
  "standard": {
-  "goal": "From the README alone, someone who meets the product for the first time starts using it when it serves their work, with their team behind the choice, and leaves it when it does not.",
+  "goal": "From the README alone, someone who meets the product for the first time starts using it only when it serves their work.",
   "format": {
    "parts": [
     {
@@ -79,7 +79,7 @@
    {
     "id": "Q7",
     "about": "gain, idea, non-goals, how-it-works",
-    "what": "When a manager points to a promise of the opening and asks how the product keeps it, can the reader show them in the figure of how the product works?"
+    "what": "For each promise of the opening, can the reader see in the figure of how the product works how the product keeps it?"
    },
    {
     "id": "Q8",
@@ -204,7 +204,7 @@
    },
    {
     "question": "Q7",
-    "thinking": "How it works shows, at a glance, who does what to whom so that each promise of the opening holds, at a grain a manager follows.",
+    "thinking": "How it works shows, at a glance, who does what to whom so that each promise of the opening holds, at a grain a reader new to the product follows.",
     "steps": [
      "List the promises of the opening: each gain, the idea and each non-goal.",
      "For each, name who keeps it: the user, a part of the product, or something outside it that the product uses.",
