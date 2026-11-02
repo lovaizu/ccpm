@@ -132,12 +132,10 @@
    },
    {
     "question": "Q7",
-    "thinking": "Lead time is shortened only where how well the user gets what the objective says holds, since a result had fast but not well is no gain.",
+    "thinking": "Quality first, then lead time: each stage from the request to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.",
     "steps": [
-     "List each stage between the user's request and their having the result, such as asking what they need, deciding, making, checking and redoing.",
-     "For each stage, ask how it could take less time while the result is as good, such as by asking only what no fact settles, deciding before making, making in an order that leaves nothing to redo, and finding a fault where it is cheapest to fix.",
-     "Imagine each such change, and ask whether the first key result could get worse by it.",
-     "Keep a change only where it could not; where it could, write in the scenario what holds the first key result."
+     "Imagine the change, and ask whether it could make the first key result worse.",
+     "Keep it only where it could not."
     ],
     "grounds": [
      "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Well done OKRs are a motivational management tool that helps make it clear to teams what’s important, what to optimize, and what tradeoffs to make during their day-to-day work.\"",
