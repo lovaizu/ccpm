@@ -1,6 +1,6 @@
 # Turn
 
-Turn is a Claude Code plugin that makes a deliverable you ask for, such as a document or code, by
+Turn is a Claude Code plugin that builds a deliverable you ask for, such as a document or code, by
 the best practice of its kind.
 
 With Turn, you get a deliverable that serves the one it is for, and you spend your own effort only
@@ -14,16 +14,16 @@ into one form for each kind, not a collection of rules, and keeps it:
 The Standard's Goal says who uses such a deliverable and for what, its Template gives the shape, and
 its Checklist asks the questions that a good deliverable answers yes to. The Practice's design tree
 splits what to decide from the goal down, the same for every kind, and its way for each question
-decides what makes that question yes. The Standard alone judges the deliverable, because its reader
-gets only the deliverable: one made by the Practice can still fall short.
+decides what makes that question yes. The Standard alone evaluates the deliverable, because its
+reader gets only the deliverable: one built by the Practice can still fall short.
 
 **Non-goals**
 
 - Turn does not check whether the deliverable gets you what you want it for, such as whether the
   RoomBook press release gets RoomBook into trade magazines. You check that once you have it.
 - Turn is not for a quick draft. Refining the best practice of a new kind, and having a second AI
-  read the deliverable, take longer than asking Claude Code alone. A kind Turn has made before skips
-  the refining.
+  read the deliverable, take longer than asking Claude Code alone. A kind Turn has built before
+  skips the refining.
 
 ## Requirements
 
@@ -118,7 +118,7 @@ below, `You:` is what you type, and `turn:` is what Turn shows you.
    ```
 
 6. Turn writes the release in `press/roombook-launch.md`. A second AI reads it as a reporter would
-   and answers each question of the checklist. Turn makes again each decision behind an answer
+   and answers each question of the checklist. Turn decides again each point behind an answer
    that is not yet yes, and asks you only where that is not enough. When every answer is yes, Turn
    tells you the release is done. The release reads:
 
@@ -146,20 +146,20 @@ documents, architecture documents, code and prompts, so those kinds skip step 3 
 
 ![How Turn works](how-it-works.svg)
 
-Turn has separate AIs plan, make and judge the deliverable, as Anthropic's "Harness design for
+Turn has separate AIs plan, build and evaluate the deliverable, as Anthropic's "Harness design for
 long-running application development" (2026) does with a planner, a generator and an evaluator. The
 designer decides from this deliverable's purpose down: it splits what must hold until a fact or you
 settle each point, and decides each by the Practice. It asks your points one at a time, each with
 the answer it recommends.
 
-The evaluator, the second AI, did not make the deliverable. For each question, the evaluator says
-only what the reader gets once it is good, not a list of faults. Turn then makes again the decision
+The evaluator, the second AI, did not build the deliverable. For each question, the evaluator says
+only what the reader gets once it is good, not a list of faults. Turn then decides again the point
 behind it, so the deliverable is never patched. Once what the deliverable says is good, Turn betters
 how it says it, and the evaluator checks that too.
 
 ## Documentation
 
-- [Calling Turn](docs/calling.md) tells how a step of another plugin, such as Rn, has Turn make its
+- [Calling Turn](docs/calling.md) tells how a step of another plugin, such as Rn, has Turn build its
   deliverable.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 

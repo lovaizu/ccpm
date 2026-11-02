@@ -37,7 +37,7 @@
   <rect class="area" x="70" y="80" width="400" height="38" rx="6"/>
   <text class="part" x="270" y="104">what a good deliverable is</text>
   <rect class="area" x="530" y="80" width="400" height="38" rx="6"/>
-  <text class="part" x="730" y="104">how to make a good deliverable</text>
+  <text class="part" x="730" y="104">how to build a good deliverable</text>
 
   <!-- refined into Turn's standard and practice -->
   <rect class="frame" x="40" y="176" width="920" height="276" rx="14"/>
@@ -55,7 +55,7 @@
 
   <rect class="box" x="550" y="206" width="360" height="96" rx="10"/>
   <text class="name" x="730" y="234">Practice</text>
-  <text class="kind" x="730" y="254">how to make a good deliverable</text>
+  <text class="kind" x="730" y="254">how to build a good deliverable</text>
   <text class="part" x="730" y="284">Design tree · a way for each question</text>
 
   <path class="line" d="M542,254 H458" marker-end="url(#arrow)"/>
@@ -67,7 +67,7 @@
   <path class="fold" d="M562,370 V388 H580"/>
   <text class="name" x="500" y="406">Deliverable</text>
   <path class="line" d="M270,310 V400 H412" marker-end="url(#arrow)"/>
-  <text class="label" x="282" y="360">judges it</text>
+  <text class="label" x="282" y="360">evaluates it</text>
   <path class="line" d="M730,310 V400 H588" marker-end="url(#arrow)"/>
-  <text class="label end" x="718" y="360">makes it</text>
+  <text class="label end" x="718" y="360">builds it</text>
 </svg>
