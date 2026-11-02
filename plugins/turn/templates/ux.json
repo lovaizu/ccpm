@@ -2,11 +2,11 @@
  "kind": "ux",
  "purpose": "A UX document describes why users use the product and how they reach that goal. Developers design and build a product that delivers this UX.",
  "format": {
-  "skeleton": "# <Product name> UX\n\n## OKRs\n\n- O1: <A user and why they use the product>\n  - KR1.1: <A result that shows O1 is closer, and which direction is better>\n  - KR1.2: <Another such result>\n\nKey results have no target values. When a measure becomes a target, it stops being a good measure (Goodhart's law). Use the key results to judge how close the objective is.\n\n## Scenarios\n\n<Each participant and its kind: a person, an AI or a script>\n\n### O1: <A short name for how the user reaches O1>\n\n```mermaid\nsequenceDiagram\n  <Who does what, in order, from the first request to reaching O1>\n```\n",
+  "skeleton": "# <Product name> UX\n\n## OKRs\n\n- O1: <What a user gets from the product, in one short sentence with the user as its subject>\n  - KR1.1: <A result that shows O1 is closer, and which direction is better>\n  - KR1.2: <Another such result>\n\nKey results have no target values. When a measure becomes a target, it stops being a good measure (Goodhart's law). Use the key results to judge how close the objective is.\n\n## Scenarios\n\n<Each participant and its kind: a person, an AI or a script>\n\n### O1: <A short name for how the user reaches O1>\n\n```mermaid\nsequenceDiagram\n  <Who does what, in order, from the first request to reaching O1>\n```\n",
   "parts": [
    {
     "id": "okrs",
-    "what": "Objectives with IDs (O1, O2, ...), each a user and why they use the product, and under each its key results with IDs (KR1.1 is the first for O1), as in OKRs, followed by the fixed paragraph on target values.",
+    "what": "Objectives with IDs (O1, O2, ...), each one short sentence of what a user gets from the product, with the user as its subject, and under each its key results with IDs (KR1.1 is the first for O1), as in OKRs, followed by the fixed paragraph on target values.",
     "why": "Everything else in the document serves these objectives, and developers use the key results to judge how close each objective is."
    },
    {
@@ -25,7 +25,7 @@
   {
    "id": "Q1",
    "what": "When a colleague asks \"Who uses this product, and for what?\", can the developer answer from the objectives?",
-   "why": "Everything developers design and build serves these objectives. If each objective says what the user wants to achieve, developers know who the product is for and when it has done its job. An objective written as a product feature can be met while the user is no better off.",
+   "why": "Everything developers design and build serves these objectives. If each objective says in one short sentence what a user gets, with that user as its subject, developers know who the product is for and when it has done its job. An objective written as a product feature, or as the way the product gives it, can be met while the user is no better off.",
    "about": [
     "okrs"
    ],
@@ -35,7 +35,7 @@
    ],
    "examples": {
     "fails": "O1: The app shows each room's free times and takes bookings.",
-    "passes": "O1: An office worker setting up a meeting wants a room that fits it, booked for the time they need, without asking anyone."
+    "passes": "O1: An office worker books a room that fits their meeting, without asking anyone."
    }
   },
   {
