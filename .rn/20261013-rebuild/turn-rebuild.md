@@ -33,11 +33,14 @@ practices together produce it.
      there because the goal needs it.
    - **Checklist**: questions that check, by the essence, whether the deliverable achieves the
      goal. They ask of each part, of each dependency among parts, and of the whole, so that no
-     essence is missed. **Each asks what this brings its user toward the goal.** A check of form,
-     such as a sentence's subject or length, is only a clue beneath a question; questions of form
-     alone give a deliverable that meets them on the surface.
+     essence is missed. **Each asks what this brings its user toward the goal.** The evaluator
+     stands in the user's place and, from the goal and the question alone, looks for what in the
+     deliverable serves the user. A check of form or an example would narrow this to the letter
+     and give a deliverable that meets it on the surface, so a question carries neither.
+   - The format and the questions are judged from the goal alone, and carry no grounds.
 2. **The content's best practice (Practice)**: **for each essence a question holds, the best way of
-   thinking and the steps that meet it**, resting on where they have worked.
+   thinking and the steps that meet it**, with the grounds of the best practice where they have
+   worked, so the builder sees why the way is the best one.
 
 ## What turn takes and gives
 
@@ -182,8 +185,7 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
 - `best-practices/<kind>.json`, one for each kind, in `plugins/turn/` for those Turn ships and in
   `.turn/` for those a user's runs make, in the form Best practice says: `standard`, with `goal`;
   `format`, with `parts`, each part `id`, `what` and its `parts`; `checklist`, each question `id`,
-  `about` (a part, the parts of a dependency, or the whole), `what`, `checks`, the clues to its
-  answer, `examples` (`fails` and `passes`) and `grounds`; and `practice`, with
+  `about` (a part, the parts of a dependency, or the whole) and `what`; and `practice`, with
   `methods`, for each essence a question holds the way of thinking and the steps that meet it,
   with their `grounds`. The kind is the file's name. The evaluator is given `standard` alone, taken
   out by a script. A script verifies every part is looked at by a question, and every question has

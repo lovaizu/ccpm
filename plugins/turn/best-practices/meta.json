@@ -17,7 +17,7 @@
       },
       {
        "id": "checklist",
-       "what": "Questions that check, by the essence, whether the deliverable achieves the goal, asking of each part, of each dependency among parts and of the whole; each with the checks that are clues to its answer, an example that fails and one that passes, and its grounds."
+       "what": "Questions that check, by the essence, whether the deliverable achieves the goal, asking of each part, of each dependency among parts and of the whole."
       }
      ]
     },
@@ -37,66 +37,42 @@
    {
     "id": "Q1",
     "about": "goal",
-    "what": "Reading the goal, does one see a single thing the user achieves with the deliverable?",
-    "checks": [],
-    "examples": {},
-    "grounds": []
+    "what": "Reading the goal, does one see a single thing the user achieves with the deliverable?"
    },
    {
     "id": "Q2",
     "about": "format",
-    "what": "Looking at the format, does the builder know what to write in which part, and in what order?",
-    "checks": [],
-    "examples": {},
-    "grounds": []
+    "what": "Looking at the format, does the builder know what to write in which part, and in what order?"
    },
    {
     "id": "Q3",
     "about": "checklist",
-    "what": "With each question, can the evaluator tell whether that part serves the user?",
-    "checks": [],
-    "examples": {},
-    "grounds": []
+    "what": "With each question, can the evaluator tell whether that part serves the user?"
    },
    {
     "id": "Q4",
     "about": "methods",
-    "what": "Following the way of thinking and the steps, can the builder make the content the question asks for?",
-    "checks": [],
-    "examples": {},
-    "grounds": []
+    "what": "Following the way of thinking and the steps, can the builder make the content the question asks for?"
    },
    {
     "id": "Q5",
     "about": "goal, format",
-    "what": "Does the format hold, neither more nor less, the parts the goal needs?",
-    "checks": [],
-    "examples": {},
-    "grounds": []
+    "what": "Does the format hold, neither more nor less, the parts the goal needs?"
    },
    {
     "id": "Q6",
     "about": "format, checklist",
-    "what": "For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?",
-    "checks": [],
-    "examples": {},
-    "grounds": []
+    "what": "For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?"
    },
    {
     "id": "Q7",
     "about": "checklist, methods",
-    "what": "Does every essence a question holds have a way of thinking and steps that meet it?",
-    "checks": [],
-    "examples": {},
-    "grounds": []
+    "what": "Does every essence a question holds have a way of thinking and steps that meet it?"
    },
    {
     "id": "Q8",
     "about": "the whole",
-    "what": "Does a deliverable made by this best practice, and passed, let its user achieve their purpose?",
-    "checks": [],
-    "examples": {},
-    "grounds": []
+    "what": "Does a deliverable made by this best practice, and passed, let its user achieve their purpose?"
    }
   ]
  },
