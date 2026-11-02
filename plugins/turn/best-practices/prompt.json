@@ -1,192 +1,323 @@
 {
  "standard": {
-  "goal": "A prompt gives an AI agent a task to do on its own: a skill, which the agent loads when a request calls for it, or a subagent, which the agent starts with a context of its own. The host, such as Claude Code, chooses the prompt for a request by its description. The AI then reads it with only what its run gives it, and from the prompt does the task as its writer means, on every run and in cases the writer did not foresee. It hands back what its caller asked for in a form the caller can use, and leaves to the user what only the user decides.",
-  "template": {
-   "skeleton": "---\nname: <A name that says what it does>\ndescription: <What it does, and the requests it is used for>\ntools: <The tools it may use, where the host lets them be listed>\n---\n\n<What the AI is to achieve, for whom, how it knows it is done, and what lies outside its task, such as what the user decides>\n\n## Context\n\n<What the AI needs and cannot find or know on its own: the situation, its inputs and where they are, and the rules of this place>\n\n## Steps\n\n1. <The result that holds when the step ends>\n\n   <A rule the AI's judgment needs in this step, with its reason>\n\n   <Where a script does the step: its command>\n\n## Output\n\n<What the AI hands back, in what form, and to whom>\n",
+  "goal": "Given the prompt for a request it is made for, an AI agent does the task as the prompt's writer means, with only what its run gives it, on every run and in cases the writer did not foresee.",
+  "format": {
    "parts": [
     {
      "id": "description",
-     "what": "The name and the description in the frontmatter.",
-     "why": "The host reads them alone to choose the prompt for a request."
+     "what": "The name and the description in the frontmatter: `name`, a name that says what the prompt does, and `description`, what it does and the requests it is used for."
     },
     {
      "id": "tools",
-     "what": "The tools the AI may use, in the frontmatter, where the host lets them be listed.",
-     "why": "The host refuses the AI any action its tools do not allow, whatever it decides."
+     "what": "The tools the AI may use, in the frontmatter, where the host lets them be listed: `tools`."
     },
     {
      "id": "goal",
-     "what": "The paragraph that opens the body: what the AI is to achieve, for whom, how it knows it is done, and what lies outside its task.",
-     "why": "The AI judges each step and its end by what the task is for, and hands back what is not its own."
+     "what": "The paragraph that opens the body: what the AI is to achieve, for whom, how it knows it is done, and what lies outside its task."
     },
     {
      "id": "context",
-     "what": "The section of what the AI needs and cannot find or know on its own.",
-     "why": "The AI works from facts, not guesses, with only what its run gives it."
+     "what": "The section of what the AI needs and cannot find or know on its own, headed `## Context`: the situation, its inputs and where they are, and the rules of this place."
     },
     {
      "id": "steps",
-     "what": "A numbered list, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the command of the script that does it.",
-     "why": "The AI chooses how to reach each result, decides a case no rule names from a rule's reason, and leaves to a script what must not vary."
+     "what": "A numbered list, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the command of the script that does it, in the section headed `## Steps`."
     },
     {
      "id": "output",
-     "what": "The section of what the AI hands back, in what form, and to whom.",
-     "why": "The caller acts on what comes back."
+     "what": "The section of what the AI hands back, in what form, and to whom, headed `## Output`."
     }
    ]
   },
   "checklist": [
    {
     "id": "Q1",
-    "what": "When a request the prompt is made for comes, and a request near it that it is not made for comes, does the host choose the prompt for the first and pass it over for the second, from the name and the description alone?",
-    "why": "If yes, the user gets the prompt's work whenever they ask for it in their own words, and never where it does not belong. The description says what the prompt does and the requests it is used for, in the words a user would ask in. If no, a prompt not chosen does nothing for the user however good its steps are, and one chosen for the wrong request does work no one asked for.",
-    "about": [
-     "description"
-    ],
-    "grounds": [
-     "Anthropic, \"Skill authoring best practices\" (Claude Platform Docs), Writing effective descriptions: \"The description is critical for skill selection: Claude uses it to choose the right Skill from potentially 100+ available Skills.\" and \"Include both what the Skill does and specific triggers/contexts for when to use it.\"",
-     "Anthropic, \"Create custom subagents\" (Claude Code Docs): \"Claude uses each subagent's description to decide when to delegate tasks.\""
-    ],
-    "examples": {
-     "fails": "description: Helps with rooms. (It is chosen for \"How many rooms are on floor 3?\", and not for \"Find somewhere for my six-person review tomorrow\".)",
-     "passes": "description: Finds the meeting rooms that fit a meeting and are free at its time, and books the one the user picks. Used when the user asks to book, find or hold a room for a meeting."
-    }
+    "about": "description",
+    "what": "When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?"
    },
    {
     "id": "Q2",
-    "what": "When the AI, during a run, reaches for an action the prompt leaves outside its task, such as writing a file during a review, does the host refuse it?",
-    "why": "If yes, what the user must never have done is never done, whatever the AI decides on a run, because the tools allowed are only those the task needs. If no, a rule against the action holds only as long as the AI follows it, and on the run it does not, the user has to undo what was done, if they can.",
-    "about": [
-     "tools"
-    ],
-    "grounds": [
-     "Anthropic, \"Create custom subagents\" (Claude Code Docs): \"Enforce constraints by limiting which tools a subagent can use\".",
-     "Anthropic, \"Best practices for Claude Code\" (Claude Code Docs): \"If something has to happen every time, make it a hook, a deny rule, or a managed setting.\""
-    ],
-    "examples": {
-     "fails": "The room-finding subagent lists no tools, so it may use them all. (On a busy morning it cancels another team's booking to free a room.)",
-     "passes": "tools: the calendar's read and hold tools. It has no cancel tool, so the host refuses a cancel."
-    }
+    "about": "tools",
+    "what": "When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?"
    },
    {
     "id": "Q3",
-    "what": "When the AI believes it has finished, can it check from the prompt whether it has reached what the task is for?",
-    "why": "If yes, the AI stops when the task is met, not when its work looks done, because the prompt says what the result is for and what shows it is met, such as a check it can run. If no, the AI stops at the first result that looks right, and the caller gets work that misses what it was for.",
-    "about": [
-     "goal"
-    ],
-    "grounds": [
-     "Anthropic, \"Best practices for Claude Code\" (Claude Code Docs), Give Claude a check to run: \"Claude stops when the work looks done. If it has nothing to run that tells it whether the work actually is done, \"looks done\" is all it has to go on.\""
-    ],
-    "examples": {
-     "fails": "Find a good room for the meeting. (It stops at the first free room, which has no screen.)",
-     "passes": "Done when the room is free for the whole meeting, seats every attendee who comes in person, and has each piece of equipment asked for."
-    }
+    "about": "goal",
+    "what": "When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?"
    },
    {
     "id": "Q4",
-    "what": "When the AI meets a choice that is the user's, such as between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?",
-    "why": "If yes, the user decides what is theirs, and the AI does the rest without asking. The prompt says which choices are the user's and how the AI asks. If no, the AI decides for the user, and the user finds out after it is done, sometimes too late to undo.",
-    "about": [
-     "goal"
-    ],
-    "grounds": [
-     "Anthropic, \"Prompting best practices\" (Claude Platform Docs), Balancing autonomy and safety: \"for actions that are hard to reverse, affect shared systems, or could be destructive, ask the user before proceeding.\"",
-     "Anthropic, \"Building effective agents\" (2024): \"Agents can then pause for human feedback at checkpoints or when encountering blockers.\""
-    ],
-    "examples": {
-     "fails": "Two rooms fit; the AI books the larger, and releases the user's own hold on the other.",
-     "passes": "Where more than one room fits, offer them to the user and book only the one they pick. Release a hold only when the user asks."
-    }
+    "about": "goal",
+    "what": "When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?"
    },
    {
     "id": "Q5",
-    "what": "Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?",
-    "why": "If yes, the AI works from the facts the writer had, not from what is likely, because the prompt gives what the AI cannot find or know on its own and tells where the rest is. A subagent sees nothing of the conversation that started it. If no, the AI fills each gap with a likely guess and goes on as if it knew, and a wrong guess gives a result that looks right.",
-    "about": [
-     "context"
-    ],
-    "grounds": [
-     "Anthropic, \"Prompting best practices\" (Claude Platform Docs), Be clear and direct: \"Think of Claude as a brilliant but new employee who lacks context on your norms and workflows.\" and \"Key test: Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they'd be confused, Claude will be too.\"",
-     "Anthropic, \"Create custom subagents\" (Claude Code Docs): \"Each subagent starts with a fresh, isolated context window. It doesn't see your conversation history, the skills you've already invoked, or the files Claude has already read.\""
-    ],
-    "examples": {
-     "fails": "Book the room the user picked. (The subagent never saw which room was picked, nor the office's rule that rooms over 12 seats need their owner's approval.)",
-     "passes": "The caller gives the meeting as JSON: attendees, equipment, start and end, and the room picked. A room over 12 seats needs its owner's approval: hold it, and say it waits for approval."
-    }
+    "about": "description, goal",
+    "what": "Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?"
    },
    {
     "id": "Q6",
-    "what": "When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?",
-    "why": "If yes, the AI follows each rule where it was meant to hold and not where it was not, including cases no one foresaw, because each rule says what it is there for. If no, a bare rule is applied to a case it was not meant for or dropped where it was, and the result depends on how the AI reads the words that run.",
-    "about": [
-     "steps"
-    ],
-    "grounds": [
-     "Anthropic, \"Prompting best practices\" (Claude Platform Docs), Add context to improve performance: \"Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses.\" and \"Claude can generalize from the explanation.\""
-    ],
-    "examples": {
-     "fails": "Never offer a room with fewer seats than attendees. (For eight attendees, two of them remote, it turns down a seven-seat room.)",
-     "passes": "Offer only rooms with a seat for each attendee who comes in person, since someone without a seat cannot take part; a remote attendee needs none."
-    }
+    "about": "context",
+    "what": "Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?"
    },
    {
     "id": "Q7",
-    "what": "When the AI is run twice on the same input, does every step whose result must not vary, such as a check or a file's form, give the same result both times?",
-    "why": "If yes, the caller relies on each such result on every run, because a script does it and the AI runs the script. The AI's own judgment varies from run to run, which suits a step with many good ways and fails one with a single right result. If no, a check passes on one run and not the next, and what goes wrong on the other runs is found only when someone meets it.",
-    "about": [
-     "steps"
-    ],
-    "grounds": [
-     "Anthropic, \"Skill authoring best practices\" (Claude Platform Docs), Set appropriate degrees of freedom: low freedom (specific scripts) when \"Operations are fragile and error-prone\" and \"Consistency is critical\"; Provide utility scripts: they \"Are more reliable than generated code\".",
-     "Anthropic, \"Best practices for Claude Code\" (Claude Code Docs): \"If something has to happen every time, make it a hook, a deny rule, or a managed setting.\""
-    ],
-    "examples": {
-     "fails": "Check that the room is free for the whole meeting. (On one run the AI checks only the start time, and books a room taken from 10:30 for a meeting from 10:00 to 11:00.)",
-     "passes": "Run scripts/free.py ROOM START END; offer the room only where it prints free."
-    }
+    "about": "steps",
+    "what": "When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?"
    },
    {
     "id": "Q8",
-    "what": "When the caller takes what the AI hands back, can it act on it without asking the AI anything further?",
-    "why": "If yes, the caller, a person, an agent or a script, goes on at once, because the prompt says what comes back, in what form and to whom, and a subagent's return is all its caller sees of its work. If no, the caller cannot tell what was done, asks again or guesses, and a script that reads the reply breaks on the run whose wording differs.",
-    "about": [
-     "output"
-    ],
-    "grounds": [
-     "Anthropic, \"Prompting best practices\" (Claude Platform Docs), Be clear and direct: \"Be specific about the output format and constraints you want.\"",
-     "Anthropic, \"Create custom subagents\" (Claude Code Docs): the subagent \"does that work in its own context and returns only the summary.\""
-    ],
-    "examples": {
-     "fails": "Report back when done. (A paragraph comes back, and the caller cannot tell whether a room was booked.)",
-     "passes": "Return one JSON line: booked, true or false; the room's id; and, where nothing was booked, why, in a sentence."
-    }
+    "about": "steps",
+    "what": "When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?"
    },
    {
     "id": "Q9",
-    "what": "When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?",
-    "why": "If yes, the user gets the task done whichever request they bring and whichever run they get, as the prompt was tried on each kind by a fresh AI. A prompt read without running it passes for what its writer meant, not for what the AI does. If no, the prompt works on the case its writer had in mind, and fails on the next kind or the next run, where the user meets it first.",
-    "about": [
-     "description",
-     "tools",
-     "goal",
-     "context",
-     "steps",
-     "output"
-    ],
-    "grounds": [
-     "Anthropic, \"Skill authoring best practices\" (Claude Platform Docs), Build evaluations first: \"Create evaluations BEFORE writing extensive documentation. This ensures your Skill solves real problems rather than documenting imagined ones.\"",
-     "Anthropic, \"Skill authoring best practices\" (Claude Platform Docs), Develop Skills iteratively with Claude: \"Use the Skill with Claude B (a fresh instance with the Skill loaded) on related use cases.\""
-    ],
-    "examples": {
-     "fails": "Tried once, on a six-person meeting. (A meeting that needs a screen gets a room without one.)",
-     "passes": "Tried three runs each on a plain meeting, one that needs a screen, one no room fits and one two rooms fit; every run ends as the prompt names."
-    }
+    "about": "goal, steps",
+    "what": "Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere?"
+   },
+   {
+    "id": "Q10",
+    "about": "tools, steps",
+    "what": "Can the AI take every action its steps call for with the tools it is allowed?"
+   },
+   {
+    "id": "Q11",
+    "about": "steps, output",
+    "what": "When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further?"
+   },
+   {
+    "id": "Q12",
+    "about": "the whole",
+    "what": "Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?"
+   },
+   {
+    "id": "Q13",
+    "about": "the whole",
+    "what": "When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?"
    }
   ]
  },
  "practice": {
-  "methods": []
+  "methods": [
+   {
+    "question": "Q3",
+    "thinking": "The AI stops when its work looks done, so the prompt says what the result is for and gives a check that tells done from looking done.",
+    "steps": [
+     "Name who gets the result and what they do with it next.",
+     "Write what holds once the task is met, as things the AI can see for itself.",
+     "For each, give the check that shows it: a command to run where one exists, or else what to look up and where.",
+     "Write when the AI stops: once every check passes, or at a blocker it cannot pass, which it hands back with what it found."
+    ],
+    "grounds": [
+     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"Claude stops when the work looks done. If it has nothing to run that tells it whether the work actually is done, \"looks done\" is all it has to go on.\"",
+     "OpenAI, \"Reasoning best practices\", OpenAI API docs, no date: \"Be very specific about your end goal\"",
+     "OpenAI, \"GPT-5 prompting guide\", OpenAI Cookbook, 2025: \"Generally, it can be helpful to clearly state the stop conditions of the agentic tasks, outline safe versus unsafe actions, and define when, if ever, it’s acceptable for the model to hand back to the user.\"",
+     "Erik S. and Zhang, \"Building effective agents\", anthropic.com/engineering, 2024: \"During execution, it's crucial for the agents to gain “ground truth” from the environment at each step (such as tool call results or code execution) to assess its progress.\""
+    ]
+   },
+   {
+    "question": "Q4",
+    "thinking": "A choice is the user's where the AI has no ground to pick one option over another, or where it is hard to undo, so the prompt names those choices and how the AI asks.",
+    "steps": [
+     "List the choices the task meets on its way to the result.",
+     "Mark each action that is hard to undo, touches what others share, or destroys something.",
+     "Mark each choice whose options serve the task equally, so that only the user's wish can settle it.",
+     "For each choice marked, write that the AI asks before it acts, whom it asks and by what means.",
+     "Write that the AI makes every other choice itself and says which it made."
+    ],
+    "grounds": [
+     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"for actions that are hard to reverse, affect shared systems, or could be destructive, ask the user before proceeding.\"",
+     "OpenAI, \"GPT-5 prompting guide\", OpenAI Cookbook, 2025: \"the checkout and payment tools should explicitly have a lower uncertainty threshold for requiring user clarification, while the search tool should have an extremely high threshold\"",
+     "Erik S. and Zhang, \"Building effective agents\", anthropic.com/engineering, 2024: \"Agents can then pause for human feedback at checkpoints or when encountering blockers.\""
+    ]
+   },
+   {
+    "question": "Q6",
+    "thinking": "The AI is able but new to this place, and sees nothing of the conversation that started it, so the prompt gives what it cannot find or know, and where the rest lies.",
+    "steps": [
+     "For each step, list the facts it needs: its inputs and where they lie, the terms it uses, and the rules of the place.",
+     "For each fact, ask whether the AI could find it in what its run gives it, and would go and look; for one it would, give where it lies, not the fact.",
+     "Write out each fact left, the writer's unspoken knowledge among them.",
+     "For a subagent, check that each fact the caller holds reaches it through the prompt or the call.",
+     "Give the prompt to a fresh AI with only what a run gives it, see where it guesses, and add the fact it lacked."
+    ],
+    "grounds": [
+     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Think of Claude as a brilliant but new employee who lacks context on your norms and workflows.\"",
+     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Key test: Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they’d be confused, Claude will be too.\"",
+     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"Only write down what Claude can't find by reading the repo, or what it would otherwise spend time rediscovering every session.\"",
+     "Aizawa, \"Writing effective tools for agents — with agents\", anthropic.com/engineering, 2025: \"Consider the context that you might implicitly bring—specialized query formats, definitions of niche terminology, relationships between underlying resources—and make it explicit.\"",
+     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Each subagent starts with a fresh, isolated context window. It doesn't see your conversation history, the skills you've already invoked, or the files Claude has already read.\"",
+     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Subagents receive only this system prompt plus basic environment details like the working directory, not the Claude Code system prompt.\""
+    ]
+   },
+   {
+    "question": "Q9",
+    "thinking": "Each step is a result on the way to the goal, so the AI chooses how to reach it and knows when to go on.",
+    "steps": [
+     "Start from what holds once the task is met, as Q3's method wrote it, and work back to each result that must hold before it.",
+     "Write each result as a step, in the order they must hold, as a numbered list.",
+     "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.",
+     "Check that the last step leaves what the goal says the task is for."
+    ],
+    "grounds": [
+     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Provide instructions as sequential steps using numbered lists or bullet points when the order or completeness of steps matters.\"",
+     "Anthropic, \"Extend Claude with skills\", Claude Code Docs, no date: \"If your skill contains guidelines like \"use these API conventions\" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output.\""
+    ]
+   },
+   {
+    "question": "Q7",
+    "thinking": "A rule that says what it is for lets the AI apply it where it was meant and judge a case no rule names, so each rule carries its reason.",
+    "steps": [
+     "For each rule in a step, write what it protects or makes possible.",
+     "Write the rule as what to do, in plain words, with no capitals or warnings for emphasis.",
+     "Where a rule says always or never, say what the AI does when the rule cannot be met.",
+     "In place of a list of edge cases, give the way of judging and a few typical examples that differ from one another.",
+     "Think of a case the rule does not name, read only the rule and its reason, and check that they lead where the writer would go; where they do not, mend the reason."
+    ],
+    "grounds": [
+     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses.\"",
+     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Claude can generalize from the explanation.\"",
+     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"Most of the time, you want Claude to decide. Almost every guideline has exceptions, and current models are good at reading the code in front of them and judging whether a guideline fits the situation.\"",
+     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Tell Claude what to do instead of what not to do\"",
+     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"Older models sometimes needed the emphasis. Current ones follow a plainly worded line, and piling on emphasis mostly makes Claude over-apply the rule.\"",
+     "MacCallum, Lee et al., \"GPT-4.1 Prompting Guide\", OpenAI Cookbook, 2025: \"Instructing a model to always follow a specific behavior can occasionally induce adverse effects.\"",
+     "Hadfield et al., \"How we built our multi-agent research system\", anthropic.com/engineering, 2025: \"Our prompting strategy focuses on instilling good heuristics rather than rigid rules.\"",
+     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"Instead, we recommend working to curate a set of diverse, canonical examples that effectively portray the expected behavior of the agent.\""
+    ]
+   },
+   {
+    "question": "Q8",
+    "thinking": "The AI's judgment varies from run to run, which suits a step with many good ways, so a step with one right result is done by a script the AI runs.",
+    "steps": [
+     "For each step, ask whether it has one right result, such as a check, a file's form or an exact order, or many good ways.",
+     "For a step with one right result, find or write a script that does it and handles its own errors.",
+     "Write the step as running that command and acting on what it prints.",
+     "Run the prompt twice on one input, and compare what those steps gave."
+    ],
+    "grounds": [
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Narrow bridge with cliffs on both sides: There’s only one safe way forward. Provide specific guardrails and exact instructions (low freedom).\"",
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Are more reliable than generated code\"",
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"When writing scripts for Skills, handle error conditions rather than deferring to Claude.\"",
+     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"If something has to happen every time, make it a hook, a deny rule, or a managed setting.\""
+    ]
+   },
+   {
+    "question": "Q10",
+    "thinking": "Each action a step calls for needs a tool the AI is allowed, or the step cannot be taken however well it is written.",
+    "steps": [
+     "For each step, list each action it takes and the tool that takes it, a script's command among them.",
+     "Check each tool against those the prompt allows, and add the tool or change the step.",
+     "Run the prompt, and read the record of the run for a tool call the host refused."
+    ],
+    "grounds": [
+     "Hadfield et al., \"How we built our multi-agent research system\", anthropic.com/engineering, 2025: \"Each subagent needs an objective, an output format, guidance on the tools and sources to use, and clear task boundaries.\""
+    ]
+   },
+   {
+    "question": "Q2",
+    "thinking": "A rule in words holds only while the AI follows it, so an action that must never happen is made one the host refuses.",
+    "steps": [
+     "List the actions the task must never take, such as writing where it only reads.",
+     "Allow only the tools Q10's list needs.",
+     "Where a tool it needs also allows an action it must never take, add a rule the host enforces, such as a deny rule or a hook.",
+     "Run the prompt on a request that tempts such an action, and check in the record that the host refused it."
+    ],
+    "grounds": [
+     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Limit tool access: grant only necessary permissions for security and focus\"",
+     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Enforce constraints by limiting which tools a subagent can use\"",
+     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"But no matter how strongly you word it, whether Claude follows that line on a given turn is still Claude's call.\"",
+     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"If something has to happen every time, make it a hook, a deny rule, or a managed setting.\""
+    ]
+   },
+   {
+    "question": "Q11",
+    "thinking": "The caller sees only what comes back, so the prompt says what that is, in what form and to whom, and a step makes each of it.",
+    "steps": [
+     "Name the caller, and what it does next with the result.",
+     "List what it needs for that: the result, what was done, and what was not done and why.",
+     "Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.",
+     "Write the output section with that form.",
+     "Check that a step makes each thing the output names.",
+     "Hand the output alone to someone in the caller's place, and see whether they can act without asking."
+    ],
+    "grounds": [
+     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Be specific about the output format and constraints you want.\"",
+     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"the verbose output stays in the subagent's context while only the relevant summary returns to your main conversation.\"",
+     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"returns only a condensed, distilled summary of its work (often 1,000-2,000 tokens).\""
+    ]
+   },
+   {
+    "question": "Q1",
+    "thinking": "The host reads the description alone, among many, to pick a prompt for a request, so it says what the prompt does and when it is used, in the words users ask in, and tells it apart from the others.",
+    "steps": [
+     "Write down several requests the prompt is made for, in a user's own words, and several near ones it is not made for.",
+     "Write the name as what the prompt does.",
+     "Write the description: what the prompt does, then the requests and situations it is used for, the main use first.",
+     "Set it beside the descriptions of the other prompts the host holds, and add what tells this one apart.",
+     "Give each request written down to a fresh session with the prompt installed, see which prompt the host chooses, and mend the description where it chooses wrongly."
+    ],
+    "grounds": [
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"The description is critical for skill selection: Claude uses it to choose the right Skill from potentially 100+ available Skills.\"",
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Include both what the Skill does and specific triggers/contexts for when to use it.\"",
+     "Anthropic, \"Extend Claude with skills\", Claude Code Docs, no date: \"Put the key use case first\"",
+     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Claude uses each subagent's description to decide when to delegate tasks.\"",
+     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Make each description specific enough to route to the right subagent\"",
+     "Zhang, Lazuka and Murag, \"Equipping agents for the real world with Agent Skills\", anthropic.com/engineering, 2025: \"Pay special attention to the name and description of your skill. Claude will use these when deciding whether to trigger the skill in response to its current task.\""
+    ]
+   },
+   {
+    "question": "Q5",
+    "thinking": "The description and the body say one task, so what the host chose the prompt for is what the AI does.",
+    "steps": [
+     "List each thing the description says the prompt does.",
+     "List each thing the goal and the steps have the AI do.",
+     "For each thing on one list and not the other, add it to the body or take it out of the description."
+    ],
+    "grounds": [
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Your description must provide enough detail for Claude to determine when to select this Skill, whereas the rest of `SKILL.md` provides the implementation details.\""
+    ]
+   },
+   {
+    "question": "Q13",
+    "thinking": "A prompt is known by what a fresh AI does with it, so it is run on real requests of each kind, several times, and judged from the record of what the AI did.",
+    "steps": [
+     "Gather requests of each kind the prompt is made for, and hold some back from its making.",
+     "Run each with a fresh AI that has only the prompt and what a run gives it, several times, on the model the prompt will run on.",
+     "Read the record of each run, not only the AI's own report.",
+     "Mend the prompt only for a cause seen in a record.",
+     "Run the requests held back last, to see whether the prompt holds beyond the ones it was mended on."
+    ],
+    "grounds": [
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Create evaluations BEFORE writing extensive documentation. This ensures your Skill solves real problems rather than documenting imagined ones.\"",
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Claude A helps you design and refine instructions, whereas Claude B tests them in real tasks.\"",
+     "Zhang, Lazuka and Murag, \"Equipping agents for the real world with Agent Skills\", anthropic.com/engineering, 2025: \"Identify specific gaps in your agents’ capabilities by running them on representative tasks and observing where they struggle or require additional context.\"",
+     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"It’s best to start by testing a minimal prompt with the best model available to see how it performs on your task, and then add clear instructions and examples to improve performance based on failure modes found during initial testing.\"",
+     "Aizawa, \"Writing effective tools for agents — with agents\", anthropic.com/engineering, 2025: \"what agents omit in their feedback and responses can often be more important than what they include. LLMs don’t always say what they mean.\"",
+     "Aizawa, \"Writing effective tools for agents — with agents\", anthropic.com/engineering, 2025: \"We relied on held-out test sets to ensure we did not overfit to our “training” evaluations.\"",
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"What works perfectly for Opus might need more detail for Haiku.\"",
+     "Sclar, Choi, Tsvetkov and Suhr, \"Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design or: How I learned to start worrying about prompt formatting\", arXiv:2310.11324, 2023: \"with performance differences of up to 76 accuracy points when evaluated using LLaMA-2-13B\""
+    ]
+   },
+   {
+    "question": "Q12",
+    "thinking": "Every line takes some of the AI's attention, so the prompt keeps only the lines that change what it does, and keeps detail it needs only sometimes in a file it reads then.",
+    "steps": [
+     "For each line, ask what the AI would do differently without it, and cut the line where the answer is nothing.",
+     "Cut what the AI already knows.",
+     "Move detail needed only in some runs to a file the prompt links directly, and say when to read it.",
+     "Run Q13's trials again after cutting, and put back what a run then lacked."
+    ],
+    "grounds": [
+     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"good context engineering means finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome.\"",
+     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"Note that minimal does not necessarily mean short; you still need to give the agent sufficient information up front to ensure it adheres to the desired behavior.\"",
+     "Shi et al., \"Large Language Models Can Be Easily Distracted by Irrelevant Context\", arXiv:2302.00093, 2023: \"find that the model performance is dramatically decreased when irrelevant information is included.\"",
+     "Jaroslawicz et al., \"How Many Instructions Can LLMs Follow at Once?\", arXiv:2507.11538, 2025: \"even the best frontier models only achieve 68% accuracy at the max density of 500 instructions.\"",
+     "Levy, Jacoby and Goldberg, \"Same Task, More Tokens: the Impact of Input Length on the Reasoning Performance of Large Language Models\", arXiv:2402.14848, 2024: \"Our findings show a notable degradation in LLMs' reasoning performance at much shorter input lengths than their technical maximum.\"",
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Only add context Claude doesn’t already have.\"",
+     "Anthropic, \"Extend Claude with skills\", Claude Code Docs, no date: \"so every line is a recurring token cost.\"",
+     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Keep references one level deep from `SKILL.md`. All reference files should link directly from `SKILL.md` to ensure Claude reads complete files when needed.\""
+    ]
+   }
+  ]
  }
 }

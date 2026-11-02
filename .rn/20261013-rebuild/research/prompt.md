@@ -46,6 +46,26 @@ Every quote below was copied from the page at its URL, opened on 2026-11-02.
 
 - What it says: whether the prompt triggers is checked by watching the host, not by reading the prompt.
 
+### Say what the prompt does and when it is used
+
+- Source: Anthropic, "Skill authoring best practices", Claude Platform Docs, undated web page.
+- URL: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices.md
+- Quote:
+
+  > Include both what the Skill does and specific triggers/contexts for when to use it.
+
+- What it says: the description holds two things: what the prompt does, and the requests and situations it is for.
+
+### A subagent is chosen by its description
+
+- Source: Anthropic, "Create custom subagents", Claude Code Docs, undated web page.
+- URL: https://code.claude.com/docs/en/sub-agents.md
+- Quote:
+
+  > Claude uses each subagent's description to decide when to delegate tasks.
+
+- What it says: the same holds for a subagent as for a skill: the host reads the description to pick it.
+
 ## The AI knows what the task is for and when it is done
 
 ### Treat the AI as a capable newcomer without context
@@ -505,6 +525,36 @@ Every quote below was copied from the page at its URL, opened on 2026-11-02.
   > Poka-yoke your tools. Change the arguments so that it is harder to make mistakes.
 
 - What it says: the page's example changed a tool to require absolute paths, after which "the model used this method flawlessly".
+
+### What must happen every time goes in a hook, a deny rule or a setting
+
+- Source: Anthropic, "Best practices for Claude Code", Claude Code Docs, undated web page.
+- URL: https://code.claude.com/docs/en/best-practices.md
+- Quote:
+
+  > If something has to happen every time, make it a hook, a deny rule, or a managed setting.
+
+- What it says: a rule with no exception is enforced by the host, not left to the AI's reading.
+
+### The tools a subagent may use enforce its limits
+
+- Source: Anthropic, "Create custom subagents", Claude Code Docs, undated web page.
+- URL: https://code.claude.com/docs/en/sub-agents.md
+- Quote:
+
+  > Enforce constraints by limiting which tools a subagent can use
+
+- What it says: the tools field makes an action impossible, not only unwanted.
+
+### Scripts are more reliable than generated code
+
+- Source: Anthropic, "Skill authoring best practices", Claude Platform Docs, undated web page.
+- URL: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices.md
+- Quote:
+
+  > Are more reliable than generated code
+
+- What it says: one of the page's listed benefits of utility scripts; a step with one right result is done by a script.
 
 ## The caller gets back what it asked for, in a form it can use
 
