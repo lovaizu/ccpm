@@ -1,30 +1,29 @@
 # Turn
 
-Turn is a Claude Code plugin that makes a piece of work you ask for, such as a document or code,
-until it is what it should be.
+Turn is a Claude Code plugin that makes a deliverable you ask for, such as a document or code, by
+the best practice of its kind.
 
-With Turn, anyone who wants a piece of work made gets it as it should be. They spend their own
-effort only on the points that only they can decide. Turn decides every other point itself.
+With Turn, you get a deliverable that serves the one it is for, and you spend your own effort only
+on the points that only you can decide.
 
-For each kind of work, such as a press release, a README or a script, Turn distills how good ones
-are made into a standard and a practice, keeping only the least that a good work of the kind needs.
-The standard holds who uses such a work and for what, its template, such as headline, lead and
-body, and its checklist, questions that a good work answers yes to. The figure shows two questions
-of a press release, each with its way of deciding.
+The best practice of a kind of deliverable is spread over many guides and examples. Turn refines it
+to the least that is needed, and keeps the result for each kind:
 
-![A standard and a practice distilled from many guides and examples](idea.svg)
+![Best practice refined into a standard and a practice](idea.svg)
+
+The Standard's Goal says who uses such a deliverable and for what, its Template gives the shape, and
+its Checklist asks the questions that a good deliverable answers yes to. The Practice's design tree
+splits what to decide from the goal down, the same for every kind, and its way for each question
+decides what makes that question yes. The Standard alone judges the deliverable, because its reader
+gets only the deliverable: one made by the Practice can still fall short.
 
 **Non-goals**
 
-- Turn does not choose what the work is for. It asks you, and builds every other decision on your
-  answer.
-- Turn does not check whether the work does what you want it for, such as whether the RoomBook
-  press release gets RoomBook into trade magazines. You check that once you have the work.
-- Turn does not commit, push, publish or send the work. It gives the work to you, and what happens
-  to it next is yours.
-- Turn is not for a quick draft. Reading how good works of a new kind are made, and having a second
-  AI read the work, take longer than asking Claude Code alone. A kind Turn has made before skips
-  that reading.
+- Turn does not check whether the deliverable gets you what you want it for, such as whether the
+  RoomBook press release gets RoomBook into trade magazines. You check that once you have it.
+- Turn is not for a quick draft. Refining the best practice of a new kind, and having a second AI
+  read the deliverable, take longer than asking Claude Code alone. A kind Turn has made before skips
+  the refining.
 
 ## Requirements
 
@@ -34,11 +33,11 @@ of a press release, each with its way of deciding.
 
 - Python 3.9 or later, run as `python3`.
 
-  Turn's scripts check its work with it.
+  Turn's scripts check its deliverables with it.
 
 - Claude Code allowed to search and read the web, with its WebSearch and WebFetch tools.
 
-  Turn reads on the internet how good works of a new kind are made.
+  Turn reads the best practice of a new kind on the internet.
 
 ## Installation
 
@@ -69,13 +68,13 @@ You need a press release for it. RoomBook's README, in the repository you have o
 Code, says what the app does, who Northwind is and how to reach its PR department. In the lines
 below, `You:` is what you type, and `turn:` is what Turn shows you.
 
-1. Ask for the work, and name Turn's agent, `turn:up`:
+1. Ask for the deliverable, and name Turn's agent, `turn:up`:
 
    ```text
    You:  Have turn:up write a press release for RoomBook, our new meeting-room booking app.
    ```
 
-2. Turn confirms the kind of work:
+2. Turn confirms the kind of deliverable:
 
    ```text
    turn: Is this a press release, written for reporters and editors?
@@ -83,7 +82,7 @@ below, `You:` is what you type, and `turn:` is what Turn shows you.
    ```
 
 3. Turn reads guides and examples of good press releases on the internet. It then shows you the
-   standard it distilled from them:
+   Standard it refined from them:
 
    ```text
    turn: Standard for a press release
@@ -139,7 +138,7 @@ below, `You:` is what you type, and `turn:` is what Turn shows you.
          Contact: Northwind PR department, pr@northwind.example
    ```
 
-Turn keeps the standard you approved, and the practice it distilled, in `.turn/kinds/` in the folder
+Turn keeps the Standard you approved, and the Practice it refined, in `.turn/kinds/` in the folder
 you run Claude Code in, so your next press release skips step 3. Turn ships both for READMEs, UX
 documents, architecture documents, code and prompts, so those kinds skip step 3 from the first time.
 
@@ -147,22 +146,21 @@ documents, architecture documents, code and prompts, so those kinds skip step 3 
 
 ![How Turn works](how-it-works.svg)
 
-Turn has separate AIs plan, make and judge the work, as Anthropic's "Harness design for
-long-running application development" (2026) does with a planner, a generator and an evaluator.
-The designer decides from this work's purpose down: it splits what must hold until a fact or you
-settle each point, and decides each by the practice. It asks your points one at a time, each with
+Turn has separate AIs plan, make and judge the deliverable, as Anthropic's "Harness design for
+long-running application development" (2026) does with a planner, a generator and an evaluator. The
+designer decides from this deliverable's purpose down: it splits what must hold until a fact or you
+settle each point, and decides each by the Practice. It asks your points one at a time, each with
 the answer it recommends.
 
-The evaluator, the second AI, did not make the work, and judges it against the standard alone. The
-reader gets only the work, and a work made by the practice can still fail its reader. For each
-question, the evaluator says only what the reader gets once it is good, not a list of faults. Turn
-then makes again the decision behind it, so the work is never patched. Once what the work says is
-good, Turn betters how the work says it, and the evaluator checks that too.
+The evaluator, the second AI, did not make the deliverable. For each question, the evaluator says
+only what the reader gets once it is good, not a list of faults. Turn then makes again the decision
+behind it, so the deliverable is never patched. Once what the deliverable says is good, Turn betters
+how it says it, and the evaluator checks that too.
 
 ## Documentation
 
 - [Calling Turn](docs/calling.md) tells how a step of another plugin, such as Rn, has Turn make its
-  work.
+  deliverable.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development

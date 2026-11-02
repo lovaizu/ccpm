@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>How Turn makes a work</title>
+  <title>How Turn makes a deliverable</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
     .you { fill: #ddf4ff; stroke: #0969da; stroke-width: 1.5; }
@@ -87,22 +87,22 @@
   <!-- sheets: the standard and the practice, drawn by the planner; the work, made by the builder -->
   <path class="box" d="M560,85 H672 L690,103 V175 H560 Z"/>
   <path class="fold" d="M672,85 V103 H690"/>
-  <text class="name" x="625" y="135">the standard</text>
+  <text class="name" x="625" y="135">the Standard</text>
 
   <path class="box" d="M560,255 H672 L690,273 V345 H560 Z"/>
   <path class="fold" d="M672,255 V273 H690"/>
-  <text class="name" x="625" y="305">the practice</text>
+  <text class="name" x="625" y="305">the Practice</text>
 
   <path class="box" d="M780,255 H892 L910,273 V345 H780 Z"/>
   <path class="fold" d="M892,255 V273 H910"/>
-  <text class="name" x="845" y="305">the work</text>
+  <text class="name" x="845" y="305">the deliverable</text>
 
   <!-- the planner distills both from good works, and has you approve the standard -->
   <path class="line" d="M368,130 H552" marker-end="url(#arrow)"/>
   <path class="line" d="M450,130 V300 H552" marker-end="url(#arrow)"/>
-  <text class="label" x="372" y="122">distills from good works</text>
+  <text class="label" x="372" y="122">refines from best practice</text>
   <path class="line" d="M292,118 H76 V256" marker-end="url(#arrow)"/>
-  <text class="label" x="112" y="94">shows the standard</text>
+  <text class="label" x="112" y="94">shows the Standard</text>
   <text class="label" x="112" y="110">for your approval</text>
   <path class="you-line" d="M104,262 V150 H292" marker-end="url(#you-arrow)"/>
   <text class="label" x="114" y="210">approve</text>
@@ -123,7 +123,7 @@
 
   <!-- the evaluator judges the work by the standard alone -->
   <path class="split" d="M740,230 V370"/>
-  <text class="label end" x="732" y="222">the evaluator never sees the practice</text>
+  <text class="label end" x="732" y="222">the evaluator never sees the Practice</text>
   <path class="line" d="M1105,240 V130 H698" marker-end="url(#arrow)"/>
   <text class="label mid" x="900" y="122">uses only its questions</text>
   <path class="line" d="M1067,296 H918" marker-end="url(#arrow)"/>
@@ -132,5 +132,5 @@
   <path class="line" d="M1090,375 V595 H330 V552" marker-end="url(#arrow)"/>
   <text class="label mid" x="710" y="587">not yet good: tells what the reader would get</text>
   <path class="line" d="M1120,375 V625 H36 V310 H52" marker-end="url(#arrow)"/>
-  <text class="label mid" x="710" y="617">all good: hands you the work</text>
+  <text class="label mid" x="710" y="617">all good: hands you the deliverable</text>
 </svg>
