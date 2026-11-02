@@ -94,10 +94,11 @@
    },
    {
     "question": "Q2",
-    "thinking": "The format is learned from good and poor deliverables of the kind, and laid out in the order its user meets it.",
+    "thinking": "The format is learned from good and poor deliverables of the kind, each part written as what its user needs from it rather than as one way some deliverables give it, and laid out in the order its user meets it.",
     "steps": [
      "Gather good and poor deliverables of the kind.",
      "List what the good ones hold that their user uses toward the goal.",
+     "For each such thing that is one way of doing it, such as a place, a file or a name, ask what its user gets from it, and keep that instead.",
      "Make each such thing a part, saying what it holds.",
      "Order the parts as the user meets them."
     ],
@@ -163,6 +164,7 @@
      "For the essence the question holds, find how good deliverables met it: guides, studies and examples.",
      "Write the way of thinking in one sentence.",
      "Write the steps, one action each, in order.",
+     "Where a step or a source names one way of doing it, such as a place, a file or a tool, write what that way achieves, so a project that achieves it another way keeps its own.",
      "Add as grounds the words of the sources, quoted from the pages opened; say plainly where a step is reasoning alone.",
      "Make one real deliverable by the way, and judge it by the question; where it stays no, mend the way."
     ],
