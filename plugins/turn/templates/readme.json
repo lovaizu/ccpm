@@ -2,7 +2,7 @@
  "kind": "readme",
  "purpose": "A README is read by someone who meets the product for the first time. From the README alone, they decide whether to use the product, and become able to explain it to a colleague or a manager and recommend it. Once they decide to use it, they start using it by the README's steps alone. When they get stuck later, they can tell from the README where to read next.",
  "format": {
-  "skeleton": "# <Product name>\n\n<One sentence: \"<Name> is a <kind> that <does what>\">\n\n<Whom the product is for, and what they gain with it>\n\n<The idea that makes the gain possible>\n\n**Non-goals**\n\n- <What the product does not do>\n\n## Requirements\n\n- <Each thing that must be in place before installing>\n\n## Installation\n\n<The install steps>\n\n## Walkthrough\n\n<One run of one of the UX's scenarios, each step and what it shows, up to the result>\n\n## How it works\n\n<One SVG figure of the user, the product's parts and the things they pass, each line naming who does what to whom; under it, only the points and what the figure cannot show>\n\n## Documentation\n\n<A link to fuller use>\n\n## Development\n\n<A link to the development documents>\n\n## License\n\n<The license's name, linked to its file>\n",
+  "skeleton": "# <Product name>\n\n<One sentence: \"<Name> is a <kind> that <does what>\">\n\n<Whom the product is for, and what they gain with it>\n\n<The idea that makes the gain possible>\n\n<A figure of the idea's parts, where it has parts>\n\n- <Each part the figure names: what it is, so what it ensures for the reader>\n\n**Non-goals**\n\n- <What the product does not do>\n\n## Requirements\n\n- <Each thing that must be in place before installing>\n\n## Installation\n\n<The install steps>\n\n## Walkthrough\n\n<One run of one of the UX's scenarios, each step and what it shows, up to the result>\n\n## How it works\n\n<One SVG figure of the user, the product's parts and the things they pass, each line naming who does what to whom; under it, only the points and what the figure cannot show>\n\n## Documentation\n\n<A link to fuller use>\n\n## Development\n\n<A link to the development documents>\n\n## License\n\n<The license's name, linked to its file>\n",
   "parts": [
    {
     "id": "summary",
@@ -16,7 +16,7 @@
    },
    {
     "id": "idea",
-    "what": "The paragraph after the gain: the idea that makes the gain possible.",
+    "what": "After the gain: the idea that makes the gain possible, in a paragraph; where the idea has parts, a figure of them, and under it a list giving each part the figure names as what it is and what it ensures for the reader.",
     "why": "The reader tells from it how the product differs from other ways of doing the same work."
    },
    {
