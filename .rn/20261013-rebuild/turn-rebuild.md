@@ -20,6 +20,25 @@ well.
 turn's user is the person who wants the work. A plugin such as rn connects that person and turn.
 They get a work that meets their purpose well, and spend effort only where only they can decide.
 
+## Best practice
+
+Agreed on 2026-11-02. **The root is a deliverable that achieves its user's purpose.** Two best
+practices together produce it.
+
+1. **The deliverable's own best practice (Standard)**: the intended state of a deliverable that
+   achieves its purpose.
+   - **Goal**: what the user achieves with the deliverable. Who uses it and when only make this
+     concrete.
+   - **Format**: the deliverable's structure that meets the goal. Every part, and its order, is
+     there because the goal needs it.
+   - **Checklist**: questions that check, by the essence, whether the deliverable achieves the
+     goal. They ask of each part, of each dependency among parts, and of the whole, so that no
+     essence is missed. **Each asks what this brings its user toward the goal.** A check of form,
+     such as a sentence's subject or length, is only a clue beneath a question; questions of form
+     alone give a deliverable that meets them on the surface.
+2. **The content's best practice (Practice)**: **for each essence a question holds, the best way of
+   thinking and the steps that meet it**, resting on where they have worked.
+
 ## What turn takes and gives
 
 turn needs nothing given: planner asks the kind of work, and designer asks this work's purpose.
