@@ -199,13 +199,19 @@
     "question": "Q7",
     "thinking": "The tests call the code as its callers do, so they fail only where a caller would break.",
     "steps": [
-     "In each test, call only the names the interface offers.",
+     "In each test, call only the names the interface offers, and check what a caller gets, not how it was reached.",
      "Use the real parts where they run fast and wholly inside the test, and a stand-in only for what is slow or outside it.",
-     "Change a body without changing what its interface says, and run the tests; rewrite through the interface each test that fails."
+     "Flag each test that reaches past what its callers use, such as a call to a private function, and rewrite it to call what its callers call, holding the same behavior.",
+     "Change a body without changing what its interface says, and run the tests; rewrite through the interface each test that fails.",
+     "Imagine one change to the code's insides that no caller would see, and check that no test would have to change for it."
     ],
     "grounds": [
      "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"By far the most important way to ensure this is to write tests that invoke the system being tested in the same way its users would; that is, make calls against its public API rather than its implementation details.\"",
-     "Trenk and Bly, \"Test Doubles\", Software Engineering at Google, ch. 13, abseil.io, 2020: \"We prefer realistic tests because they give more confidence that the system under test is working properly.\""
+     "Trenk and Bly, \"Test Doubles\", Software Engineering at Google, ch. 13, abseil.io, 2020: \"We prefer realistic tests because they give more confidence that the system under test is working properly.\"",
+     "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"When an engineer refactors the internals of a system without modifying its interface, whether for performance, clarity, or any other reason, the system’s tests shouldn’t need to change.\"",
+     "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"Tests that need to be changed during a refactoring indicate that either the change is affecting the system’s behavior and isn’t a pure refactoring, or that the tests were not written at an appropriate level of abstraction.\"",
+     "Trenk, \"Testing on the Toilet: Test Behavior, Not Implementation\", Google Testing Blog, 2013: \"Tests that are independent of implementation details are easier to maintain since they don't need to be changed each time you make a change to the implementation.\"",
+     "\"Test Desiderata\", testdesiderata.com, no date: \"Structure-insensitive — tests should not change their result if the structure of the code changes.\""
     ]
    },
    {

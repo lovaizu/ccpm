@@ -111,6 +111,12 @@ written as plain words.
 
   Two names for one thing make the maintainer learn both and wonder whether they differ.
 
+- **Martin Fowler, "UbiquitousLanguage", martinfowler.com/bliki, 2006.**
+  https://martinfowler.com/bliki/UbiquitousLanguage.html
+  > Ubiquitous Language is the term Eric Evans uses in Domain Driven Design for the practice of building up a common, rigorous language between developers and users.
+
+  The one name kept for a thing is the word its users already use.
+
 ## Understand a function on one reading
 
 - **Google, "What to look for in a code review", Complexity.**
@@ -160,6 +166,12 @@ written as plain words.
   > mostly comments are for information that the code itself can’t possibly contain, like the reasoning behind a decision.
 
   A comment holds the reason.
+
+- **Google, same page, the sentence the quote above ends.**
+  https://google.github.io/eng-practices/review/reviewer/looking-for.html
+  > There are some exceptions (regular expressions and complex algorithms often benefit greatly from comments that explain what they’re doing, for example) but mostly comments are for information that the code itself can’t possibly contain, like the reasoning behind a decision.
+
+  A comment may say what code cannot say plainly, such as what a regular expression matches.
 
 - **Google, "Google Python Style Guide", 3.8.5 Block and Inline Comments.**
   https://google.github.io/styleguide/pyguide.html
@@ -244,6 +256,11 @@ written as plain words.
   > One piece of knowledge in the domain changes, one piece of the system changes.
 
   The maintainer's change to one rule touches one place.
+
+- **Andy Hunt, same interview.** https://www.artima.com/articles/orthogonality-and-the-dry-principle
+  > The basic idea of orthogonality is that things that are not related conceptually should not be related in the system.
+
+  Code that reaches into another module's insides ties together what is unrelated.
 
 - **Martin Fowler, "Beck Design Rules", 2015.** https://martinfowler.com/bliki/BeckDesignRules.html
   > Kent expressed it as saying everything should be said “Once and only Once.”
