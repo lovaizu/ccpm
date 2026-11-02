@@ -80,8 +80,8 @@ the JSON file `.lane/20261102-changelog/changelog.json` at the root of that repo
 ```
 
 `lane` names the type of each rule, and `takes` its values. Lane's output and documents call a
-rule a lane, and its check a hook. Run at the root of the repository, `lay.py print` shows the step
-as it will be:
+rule a lane, and its check a hook. You run `lay.py print` at the root of the repository, and it
+shows the step as it will be:
 
 ```console
 $ python3 <installPath>/scripts/lay.py print .lane/20261102-changelog/changelog.json

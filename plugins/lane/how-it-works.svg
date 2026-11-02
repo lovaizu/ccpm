@@ -24,7 +24,7 @@
 
   <!-- boxes: a name each; lane's own parts shaded -->
   <rect class="box" x="20" y="30" width="180" height="56" rx="8"/>
-  <text class="name" x="110" y="63">you (an AI)</text>
+  <text class="name" x="110" y="63">you</text>
 
   <rect class="box lane" x="430" y="30" width="180" height="56" rx="8"/>
   <text class="name" x="520" y="63">lay.py</text>
@@ -33,7 +33,7 @@
   <text class="name" x="520" y="213">your plugin's steps</text>
 
   <rect class="box" x="20" y="320" width="180" height="56" rx="8"/>
-  <text class="name" x="110" y="353">a subagent (an AI)</text>
+  <text class="name" x="110" y="353">a subagent</text>
 
   <rect class="box" x="430" y="320" width="180" height="56" rx="8"/>
   <text class="name" x="520" y="353">Claude Code</text>

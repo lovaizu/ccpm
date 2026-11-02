@@ -4,7 +4,8 @@
 in a step and a check of that sentence. It puts the checks into the developer AI's plugin as one
 script, the check script. Claude Code runs the check script on each tool call and each end of work
 of a subagent with rules. The check script stops each break with the rule's sentence, and tells the
-orchestrator each move of the flow. What this gives the developer AI is in [Lane's UX](ux.md).
+orchestrator each move of the flow, the next subagent it must start. What this gives the developer AI
+is in [Lane's UX](ux.md).
 
 ## Principles
 
@@ -29,8 +30,8 @@ The subagent meets the same words in both places, and no change can make them di
 
 ### What was approved is what runs
 
-`lay.py write` writes from the file that `lay.py print` showed, and the check script reads only what
-`lay.py write` wrote.
+`lay.py write` writes from the file that `lay.py print` showed, and the check script takes its rules
+and the flow only from what `lay.py write` wrote.
 
 A rule copied by hand could be one that no one approved
 ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
