@@ -41,7 +41,7 @@
    {
     "id": "Q2",
     "what": "When a colleague asks \"Did this change make things better for users?\", can the developer answer by the key results?",
-    "why": "Developers improve the product by moving its key results. If all of them getting better means users are closer to the objective, that work helps users. A key result chosen because it is easy to count, such as tasks done or items produced, can improve while users get nothing more.",
+    "why": "Developers improve the product by moving its key results. If all of them getting better means users are closer to the objective, that work helps users. A key result chosen because it is easy to count, such as tasks done or items produced, can improve while users get nothing more. A key result given a target value, rather than the direction that is better, is worked toward the number instead of toward users.",
     "about": [
      "okrs"
     ],
@@ -57,8 +57,8 @@
    },
    {
     "id": "Q3",
-    "what": "When a colleague asks \"What does a user do first, and how do they reach the objective?\", can the developer answer by pointing to a scenario?",
-    "why": "Developers build what the scenarios show. If a scenario shows each step from the user's first request to reaching the objective, and whether each participant is a person, an AI or a script, developers know which steps wait for a person and which run on their own. A step the scenario skips is built by guesswork or not at all.",
+    "what": "When a colleague points to any objective and asks \"Who does what, from the user's first request until this objective is reached?\", can the developer answer from that objective's scenario?",
+    "why": "Developers build what the scenarios show. If every objective has a scenario that shows each step from the user's first request to reaching it, and says whether each participant is a person, an AI or a script, developers know which steps wait for a person and which run on their own. An objective with no scenario, or a step it skips, is built by guesswork or not at all.",
     "about": [
      "participants",
      "scenarios"
@@ -67,8 +67,8 @@
      "Cockburn, Writing Effective Use Cases, 2000: the main success scenario runs from the trigger to the goal delivered, and a use case names its actors first."
     ],
     "examples": {
-     "fails": "A scenario that starts when the app receives a booking, skipping how the worker finds a room that fits.",
-     "passes": "A scenario in which the worker, a person, enters the time and the number of attendees, sees the rooms that fit, books one, sees it in their calendar, and finds the room free at meeting time."
+     "fails": "A scenario whose participants are \"the worker\" and \"RoomBook\", so whether the rooms that fit are chosen by a person, an AI or a script is said nowhere.",
+     "passes": "Participants: the worker, a person; RoomBook, a script. In the scenario, the worker enters the time and the number of attendees, RoomBook shows the rooms that fit, the worker books one and sees it in their calendar, and finds the room free at meeting time."
     }
    },
    {
