@@ -4,133 +4,164 @@
   {
    "question": "architecture/Q1",
    "lines": [
-    "dev/lane/architecture.md:1-6"
+    "dev/lane/architecture.md:3-7"
    ]
   },
   {
    "question": "architecture/Q2",
    "lines": [
-    "dev/lane/architecture.md:8-68"
+    "dev/lane/architecture.md:11-75"
    ]
   },
   {
    "question": "architecture/Q3",
    "lines": [
-    "dev/lane/architecture.md:70-80"
+    "dev/lane/architecture.md:77-90"
    ]
   },
   {
    "question": "architecture/Q4",
    "lines": [
-    "dev/lane/architecture.md:84-86"
+    "dev/lane/architecture.md:96"
    ]
   },
   {
    "question": "architecture/Q5",
    "lines": [
-    "dev/lane/architecture.md:88-98"
+    "dev/lane/architecture.md:98-113"
    ]
   },
   {
    "question": "architecture/Q6",
    "lines": [
-    "dev/lane/architecture.md:106-108"
+    "dev/lane/architecture.md:123"
    ]
   },
   {
    "question": "architecture/Q7",
    "lines": [
-    "dev/lane/architecture.md:110-218"
+    "dev/lane/architecture.md:125-243"
    ]
   },
   {
    "question": "architecture/Q8",
    "lines": [
-    "dev/lane/architecture.md:231-247"
+    "dev/lane/architecture.md:256-275"
    ]
   },
   {
    "question": "architecture/Q9",
    "lines": [
-    "dev/lane/architecture.md:249-275"
+    "dev/lane/architecture.md:279-309"
    ]
   },
   {
    "question": "architecture/Q10",
    "lines": [
-    "dev/lane/architecture.md:281-288"
+    "dev/lane/architecture.md:311-321"
    ]
   },
   {
    "question": "architecture/Q11",
    "lines": [
-    "dev/lane/architecture.md:290-294"
+    "dev/lane/architecture.md:323-330"
    ]
   },
   {
    "question": "architecture/Q12",
    "lines": [
-    "dev/lane/architecture.md:290-294"
+    "dev/lane/architecture.md:114-119",
+    "dev/lane/architecture.md:244-253",
+    "dev/lane/architecture.md:264-275",
+    "dev/lane/architecture.md:326-332"
    ]
   },
   {
    "question": "architecture/Q13",
    "lines": [
-    "dev/lane/architecture.md:99-104",
-    "dev/lane/architecture.md:220-227",
-    "dev/lane/architecture.md:238-247",
-    "dev/lane/architecture.md:295-296"
+    "dev/lane/architecture.md:11-75",
+    "dev/lane/architecture.md:96-119",
+    "dev/lane/architecture.md:256-275"
    ]
   },
   {
    "question": "architecture/Q14",
    "lines": [
-    "dev/lane/architecture.md:70-80",
-    "dev/lane/architecture.md:15-20",
-    "dev/lane/architecture.md:37-43"
+    "dev/lane/architecture.md:77-90",
+    "dev/lane/architecture.md:96-119"
    ]
   },
   {
    "question": "architecture/Q15",
    "lines": [
-    "dev/lane/architecture.md:1-296"
+    "dev/lane/architecture.md:1-332"
    ]
   },
   {
    "question": "refactor-doc/Q1",
    "lines": [
-    "dev/lane/architecture.md:84-108",
-    "dev/lane/architecture.md:231-233"
+    "dev/lane/architecture.md:9",
+    "dev/lane/architecture.md:77",
+    "dev/lane/architecture.md:94",
+    "dev/lane/architecture.md:121",
+    "dev/lane/architecture.md:125",
+    "dev/lane/architecture.md:256",
+    "dev/lane/architecture.md:277",
+    "dev/lane/architecture.md:311"
    ]
   },
   {
    "question": "refactor-doc/Q2",
    "lines": [
-    "dev/lane/architecture.md:45-54"
+    "dev/lane/architecture.md:50-56",
+    "dev/lane/architecture.md:77-90",
+    "dev/lane/architecture.md:129-243",
+    "dev/lane/architecture.md:315-318"
    ]
   },
   {
    "question": "refactor-doc/Q3",
    "lines": [
-    "dev/lane/architecture.md:10-13"
+    "dev/lane/architecture.md:3-7",
+    "dev/lane/architecture.md:41-43",
+    "dev/lane/architecture.md:53-55",
+    "dev/lane/architecture.md:64-66"
    ]
   },
   {
    "question": "refactor-doc/Q4",
    "lines": [
-    "dev/lane/architecture.md:45-50"
+    "dev/lane/architecture.md:1-332"
    ]
   },
   {
    "question": "refactor-doc/Q5",
    "lines": [
-    "dev/lane/architecture.md:1-296"
+    "dev/lane/architecture.md:279-281"
    ]
   },
   {
    "question": "refactor-doc/Q6",
    "lines": [
-    "dev/lane/architecture.md:231-247"
+    "dev/lane/architecture.md:3-4",
+    "dev/lane/architecture.md:41-43",
+    "dev/lane/architecture.md:53-55",
+    "dev/lane/architecture.md:64-66",
+    "dev/lane/architecture.md:89"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q7",
+   "lines": [
+    "dev/lane/architecture.md:1-332"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q8",
+   "lines": [
+    "dev/lane/architecture.md:114-115",
+    "dev/lane/architecture.md:259-275",
+    "dev/lane/architecture.md:324-325"
    ]
   }
  ],

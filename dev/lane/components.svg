@@ -185,8 +185,8 @@
   <text class="label" x="660" y="598" text-anchor="middle">asks the next start</text>
   <text class="data" x="660" y="622" text-anchor="middle">Flow, Kept call</text>
   <path class="line" d="M480,580 L1110,444" marker-end="url(#arrow)"/>
-  <text class="label" x="752" y="546" text-anchor="middle">reads earlier calls</text>
-  <text class="data" x="752" y="560" text-anchor="middle">Kept call, Record</text>
+  <text class="label" x="722" y="563" text-anchor="middle">reads earlier calls, keeps an end</text>
+  <text class="data" x="722" y="577" text-anchor="middle">Kept call, Record, Answer</text>
   <path class="line" d="M390,624 L390,740" marker-end="url(#arrow)"/>
   <text class="label" x="398" y="690" text-anchor="start">reads</text>
   <text class="data" x="398" y="704" text-anchor="start">Step, Rule, Flow</text>
@@ -204,7 +204,7 @@
   <rect class="ext" x="560" y="840" width="36" height="22" rx="3"/>
   <text class="label" x="604" y="855" text-anchor="start">outside Lane</text>
   <rect class="env" x="694" y="840" width="36" height="22" rx="4"/>
-  <text class="label" x="738" y="855" text-anchor="start">the check script, copied into a plugin</text>
+  <text class="label" x="738" y="855" text-anchor="start">the check script, put into a plugin</text>
   <text class="label" x="1000" y="848" text-anchor="start">[type · technology] in a box; [protocol] on an arrow</text>
   <text class="data" x="1000" y="864" text-anchor="start">data handed on, named as in the data model</text>
 </svg>
