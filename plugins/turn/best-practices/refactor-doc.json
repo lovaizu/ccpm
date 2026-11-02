@@ -1,96 +1,216 @@
 {
  "standard": {
-  "goal": "A document is read by a person or an AI who comes to it for a purpose, at any time after it is written, in its own language or through a machine translation into theirs. Refactoring changes how the document says what it says, never what it says, and adds nothing: the reader takes in each sentence on first reading, reading once from the top only the parts their purpose needs.",
+  "goal": "Whoever reads the document for a purpose, a person or an AI, at any time after it is written and in its own language or through a machine translation into theirs, takes in what it says as its writer meant, reading once from the top, and only the parts that purpose needs.",
   "checklist": [
    {
     "id": "Q1",
-    "what": "Shown only a section's figure, before reading its text, can the reader explain to a colleague what the section tells?",
-    "why": "If yes, the reader takes in who does what in what order, or how things relate, at a glance. The figure takes the place of the sentences that told the same, and the text under it holds only what it cannot show. A box names one thing and a line says what one does to another; a sentence in a box must be read. A section whose point is one sentence has that sentence in place of a figure. If no, the reader pieces the point together from sentences spread through paragraphs, and misses a step or gives it to the wrong one.",
-    "grounds": [
-     "plainlanguage.gov (GSA archive), \"Use lists\": lists \"Help the reader understand the order in which things happen\".",
-     "plainlanguage.gov (GSA archive), \"Use tables to make complex material easier to understand\": \"Tables help your audience see relationships that are often times hidden in dense text.\"",
-     "Google developer documentation style guide, \"Highlights\": \"Use numbered lists for sequences.\""
-    ],
-    "examples": {
-     "fails": "A section that tells the booking flow in three paragraphs, then draws the same flow as five boxes, each holding two to six sentences. (A figure is there, but the reader must read every box, and reads the flow twice.)",
-     "passes": "The same section opens with a figure of the flow: the worker picks a room and a time, RoomBook asks the calendar, the room's owner approves a restricted room, RoomBook books it and emails the worker. Under it one sentence gives what the figure cannot: a restricted room waits up to a day for its owner."
-    }
+    "about": "the whole",
+    "what": "Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?"
    },
    {
     "id": "Q2",
-    "what": "After reading any sentence once, as written and again through a machine translation into their own language, such as Google Translate, can the reader say in each case who or what does what in it?",
-    "why": "If yes, the reader takes in each sentence on first reading, in any language, and acts on what the writer meant. If no, a sentence that makes two points needs more than a few words, and one whose actor hides behind a passive verb or a noun made from a verb leaves the reader to guess who acts. A machine translator also guesses, and can guess wrong, where a sentence opens with its object, leaves out \"that\", \"a\" or \"the\", or has a \"which\" that can refer to two nouns; in Japanese, where a sentence has no subject or strings together several は, で or の. The sentence is reworded or split, not explained by another.",
-    "grounds": [
-     "plainlanguage.gov (GSA archive), \"Use active voice\": \"Active voice makes it clear who is supposed to do what.\"",
-     "plainlanguage.gov (GSA archive), \"Write short sentences\": \"Express only one idea in each sentence.\"",
-     "Microsoft Writing Style Guide, \"Writing tips\" (Global communications), Additional tips for machine translation: \"Writing style affects the quality of machine translation.\" and \"Write sentences that use standard word order (that is, subject + verb + object) whenever possible.\"",
-     "Microsoft Writing Style Guide, \"Writing tips\" (Global communications), Tips for all global content: \"Include that and who. They help to clarify the sentence structure.\" and \"Articles help readers and translation software identify the nouns and modifiers in a sentence.\"",
-     "文化審議会「公用文作成の考え方（建議）」(2022), Ⅲ-3 ア: 「一文が長くなると、その構造は複雑になりやすい。」 and カ: 「接続助詞の「が」や中止法（述語の用言を連用形にして、文を切らずに続ける方法）を多用する書き方は避ける。」",
-     "文化審議会「公用文作成の考え方（建議）」(2022), Ⅲ-3 オ: 「省略されているかどうかにかかわらず、主語と述語の関係が明らかに分かるようにする。」 and シ: 「言葉の係り方によって複数の意味にとれる表現を避ける。」"
-    ],
-    "examples": {
-     "fails": "The rooms the worker picks RoomBook checks against the calendar, and confirmation of the booking follows. (A machine translator makes it say that the worker picks RoomBook, and no one is said to confirm.)",
-     "passes": "RoomBook checks each room that the worker picks against the calendar. RoomBook confirms the booking once it finds the room free."
-    }
+    "about": "the whole",
+    "what": "Where the document tells steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences?"
    },
    {
     "id": "Q3",
-    "what": "Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one?",
-    "why": "If yes, the reader keeps one picture of each thing from start to end, and a machine translator gives each name one meaning throughout. If no, a reader who meets a second name for one thing takes it for a second thing, and a common word given a meaning of the document's own is read, and translated, with its usual meaning. A name that is also a common word, such as a product's, is written with a capital in running text, and in its own form only in code. One name is used for each thing everywhere; a synonym chosen to vary the writing is replaced, not explained.",
-    "grounds": [
-     "plainlanguage.gov (GSA archive), \"Use the same terms consistently\": \"Using a different term may cause the reader to wonder if you're referring to the same group.\" and \"You don't need to use synonyms to make your writing more interesting.\"",
-     "Google developer documentation style guide, \"Write for a global audience\", Use words in their primary sense: \"Don't use the same word to mean different things.\"",
-     "ASD-STE100 (ASD), \"About ASD-STE100\": \"In general, each word has only one meaning and is approved with only one part of speech.\""
-    ],
-    "examples": {
-     "fails": "Pick a room from the list. RoomBook holds your space for 15 minutes. (Is a space a room, or a desk?)",
-     "passes": "Pick a room from the list. RoomBook holds the room for you for 15 minutes."
-    }
+    "about": "the whole",
+    "what": "Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to?"
    },
    {
     "id": "Q4",
-    "what": "When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?",
-    "why": "If yes, the reader reads on with the writer's meaning. If no, the reader guesses, and their picture differs from the writer's wherever the guess is wrong; a word the writer's team uses every day is still new to a reader who has not used it. An everyday word takes the term's place; a term the content keeps carries its meaning in a few everyday words where it first appears, and no sentence is added to explain it.",
-    "grounds": [
-     "plainlanguage.gov (GSA archive), \"Avoid jargon\": \"writers often fail to realize that terms they know well may be difficult or meaningless to their audience.\"",
-     "plainlanguage.gov (GSA archive), \"Minimize definitions\": \"readers are likely to forget that you'd assigned some common word a new meaning, and when they come upon the word later in your document they assign the common meaning, rather than your specialized one.\""
-    ],
-    "examples": {
-     "fails": "RoomBook offers only rooms that pass the fit check. The fit check is RoomBook's test of a room against a meeting, which compares the seats and the equipment. (The term is explained, but by a sentence added where everyday words would do.)",
-     "passes": "RoomBook offers only rooms with a seat for each attendee and the equipment the meeting needs."
-    }
+    "about": "the whole",
+    "what": "Reading any sentence once, as written or through a machine translation into their own language, can the reader say who or what does what in it?"
    },
    {
     "id": "Q5",
-    "what": "Reading from the top, can the reader tell from each heading and its first sentence what the section gives, and understand each sentence without turning back or jumping ahead?",
-    "why": "If yes, the reader picks the sections their purpose needs, and each reason, word and step a sentence rests on comes before it, a rule's exceptions beside the rule. If no, a reader who cannot tell what a section gives reads it to find out, and one sent back or ahead loses their place or reads on with a guess. A sentence is moved to where it is needed; no summary, preview or signpost sentence is added.",
-    "grounds": [
-     "plainlanguage.gov (GSA archive), \"Place the main idea before exceptions and conditions\": \"The audience must absorb the exception, then the rule, and then usually has to go back to grasp the relationship between the two.\"",
-     "plainlanguage.gov (GSA archive), \"Minimize cross-references\": \"They may also overtax your users' short-term memory.\" and \"Be sure that the reference you insert clearly describes the referenced material.\"",
-     "Google developer documentation style guide, \"Highlights\": \"Put conditions before instructions, not after.\"",
-     "plainlanguage.gov (GSA archive), \"Have a topic sentence\": \"Don't make readers hold a lot of information in their heads before getting to the point.\" and \"Readers should be able to get good general understanding of your document by skimming your topic sentences.\"",
-     "Microsoft Writing Style Guide, \"Top 10 tips for Microsoft style and voice\", Get to the point fast: \"Lead with what's most important.\""
-    ],
-    "examples": {
-     "fails": "Select the room and press Book. Before this, you must connect your calendar, as Setup below explains.",
-     "passes": "First connect your calendar in Settings > Calendar. Then select the room and press Book."
-    }
+    "about": "the whole",
+    "what": "Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one?"
    },
    {
     "id": "Q6",
-    "what": "Is each fact the document tells written in one place only, whether in this document, in a document read beside it, in a figure or in the work itself (code, output), with every other place linking to it?",
-    "why": "If yes, the reader reads each fact once, and it cannot disagree with itself: a change made in its one place reaches every reader. If no, once one copy changes the two say different things, and the reader follows the one they read first. A sentence that retells what a figure draws or what code does is such a copy. Each copy gives way to a link.",
-    "grounds": [
-     "Hunt and Thomas, The Pragmatic Programmer (1999), DRY: \"Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.\""
-    ],
-    "examples": {
-     "fails": "The README's Booking says a room is held for 15 minutes while you confirm. Its Limits says a room you pick is held for 10 minutes. The architecture document says the hold is not yet decided.",
-     "passes": "The README's Booking says a room is held for 15 minutes while you confirm. Limits and the architecture document link to Booking for the hold."
-    }
+    "about": "the whole",
+    "what": "When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?"
+   },
+   {
+    "id": "Q7",
+    "about": "the whole",
+    "what": "Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing?"
+   },
+   {
+    "id": "Q8",
+    "about": "the whole",
+    "what": "Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?"
    }
   ]
  },
  "practice": {
-  "methods": []
+  "methods": [
+   {
+    "question": "Q8",
+    "thinking": "Each fact is said in the one place where the reader looks for it, and every other place points there, so a change made once reaches every reader.",
+    "steps": [
+     "List each fact the document says, and each place that says it: in the document, in a document read beside it, in a figure, or in the work itself, such as code or its output.",
+     "For each fact said in more than one place, choose the one place where it is decided, or where the reader looks for it first.",
+     "Where two places say a fact in different ways, keep both and send it back to be settled with what the document says, for choosing one would change what it says.",
+     "Replace each other place's copy with a link to that place, saying in a few words what the reader finds there.",
+     "Delete each sentence that retells what a figure beside it draws or what the code does."
+    ],
+    "grounds": [
+     "Venners with Hunt and Thomas, \"Orthogonality and the DRY Principle\", artima.com, 2003: \"DRY says that every piece of system knowledge should have one authoritative, unambiguous representation.\"",
+     "Venners with Hunt and Thomas, \"Orthogonality and the DRY Principle\", artima.com, 2003: \"The obvious answer is, if you have more than one way to express the same thing, at some point the two or three different representations will most likely fall out of step with each other.\"",
+     "PLAIN, \"Minimize cross-references\", plainlanguage.gov archive on GitHub, no date: \"Be sure that the reference you insert clearly describes the referenced material.\""
+    ]
+   },
+   {
+    "question": "Q1",
+    "thinking": "The reader picks sections by their headings and first sentences, so each section holds one thing and says at its start what it gives.",
+    "steps": [
+     "Name the reader, and the purposes they come to the document with.",
+     "For each purpose, list the sections the reader needs for it.",
+     "Split a section that holds two things, so that one heading can say what each holds.",
+     "Write each heading as what the section gives the reader, with the words that tell the most first.",
+     "Move the sentence that gives the section's point to its start.",
+     "Read only the headings and first sentences, for each purpose in turn; where the reader would miss a section the purpose needs, or read one it does not, rewrite that heading or first sentence."
+    ],
+    "grounds": [
+     "PLAIN, \"Do your research\", plainlanguage.gov archive on GitHub, no date: \"Understanding what users are trying to do when visiting your website or reading your communications will help you write clearly and focus on their needs.\"",
+     "Nielsen, \"How Users Read on the Web\", Nielsen Norman Group, 1997: \"In research on how people read websites we found that 79 percent of our test users always scanned any new page they came across; only 16 percent read word-by-word.\"",
+     "PLAIN, \"Add useful headings\", plainlanguage.gov archive on GitHub, no date: \"Well organized writing will still be difficult for users to follow if they can't see how it's organized. An effective way to reveal your document's organization is to use lots of useful headings.\"",
+     "PLAIN, \"Write short sections\", plainlanguage.gov archive on GitHub, no date: \"Long sections are impossible to summarize meaningfully in a heading. When you break up different concepts into short sections, each heading can give the reader a clear picture of what's in that section.\"",
+     "Pernice, \"F-Shaped Pattern of Reading on the Web: Misunderstood, But Still Relevant (Even on Mobile)\", Nielsen Norman Group, 2017: \"Start headings and subheadings with the words carrying most information: if users see only the first 2 words, they should still get the gist of the following section.\"",
+     "Microsoft, \"Scannable content\", Microsoft Writing Style Guide, 2023: \"Lead with what's most important. Place important keywords near the beginning of headings, table entries, and paragraphs so they're easy to spot.\"",
+     "PLAIN, \"Have a topic sentence\", plainlanguage.gov archive on GitHub, no date: \"Readers should be able to get good general understanding of your document by skimming your topic sentences.\""
+    ]
+   },
+   {
+    "question": "Q2",
+    "thinking": "Order and relations shown by the form of a list, a table or a diagram are seen at once, while the same told in sentences must be pieced together.",
+    "steps": [
+     "Find each passage that tells steps in order, choices that depend on a case, or how several things relate.",
+     "Choose its form: a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, and a diagram for who passes what to whom.",
+     "Rewrite the passage in that form, so that each item, cell or box names one thing, and each line of a diagram says what one thing does to another.",
+     "Delete the sentences that told what the form now shows, and keep under it only what it cannot show.",
+     "Show the form alone to a reader who has not read the text, and have them say back what it tells; where they say it otherwise, mend the form."
+    ],
+    "grounds": [
+     "Gopen and Swan, \"The Science of Scientific Writing\", American Scientist, 1990: \"readers make many of their most important interpretive decisions about the substance of prose based on clues they receive from its structure.\"",
+     "Microsoft, \"Global communications: Writing tips\", Microsoft Writing Style Guide, 2023: \"Replace complex sentences and paragraphs with lists and tables.\"",
+     "Google, \"Highlights\", Google developer documentation style guide, 2026: \"Use numbered lists for sequences.\"",
+     "Google, \"Highlights\", Google developer documentation style guide, 2026: \"Use bulleted lists for most other lists.\"",
+     "PLAIN, \"Use lists\", plainlanguage.gov archive on GitHub, no date: \"Help the reader understand the order in which things happen\"",
+     "PLAIN, \"Use tables to make complex material easier to understand\", plainlanguage.gov archive on GitHub, no date: \"Tables help your audience see relationships that are often times hidden in dense text.\"",
+     "PLAIN, \"Paraphrase testing\", plainlanguage.gov archive on GitHub, no date: \"Paraphrase testing will tell you what a reader thinks a piece of writing means and will help you know if they're interpreting the message as you intended.\""
+    ]
+   },
+   {
+    "question": "Q3",
+    "thinking": "Each sentence comes after everything it rests on, so the reader never holds a sentence open while they look for what it needs.",
+    "steps": [
+     "For each sentence, list what it rests on: a word, a reason, an earlier step, a condition, or a fact from outside the document.",
+     "Move each of these before the sentence, or move the sentence after them, so that no pointer such as \"see below\" is needed.",
+     "Where a sentence rests on something outside the document, such as an earlier talk, say it in the sentence or link to where it is written.",
+     "Start each sentence with what the reader already has, and end it with what is new.",
+     "Put steps in the order the reader takes them.",
+     "Put a rule's conditions and exceptions where the reader takes them in most easily, beside the rule; put a short condition before its instruction, so a reader whose case it is not can skip the instruction."
+    ],
+    "grounds": [
+     "Gopen and Swan, \"The Science of Scientific Writing\", American Scientist, 1990: \"In general, provide context for your reader before asking that reader to consider anything new.\"",
+     "PLAIN, \"Minimize cross-references\", plainlanguage.gov archive on GitHub, no date: \"They may also overtax your users' short-term memory.\"",
+     "PLAIN, \"Have a topic sentence\", plainlanguage.gov archive on GitHub, no date: \"Don't make readers hold a lot of information in their heads before getting to the point.\"",
+     "Google, \"Write for a global audience\", Google developer documentation style guide, 2026: \"Provide context. Don't assume that the reader already knows what you're talking about.\"",
+     "Gopen and Swan, \"The Science of Scientific Writing\", American Scientist, 1990: \"Put in the topic position the old information that links backward; put in the stress position the new information you want the reader to emphasize.\"",
+     "PLAIN, \"Make it easy to follow\", plainlanguage.gov archive on GitHub, no date: \"Present the steps chronologically, in the order your user and your agency will follow them.\"",
+     "PLAIN, \"Place the main idea before exceptions and conditions\", plainlanguage.gov archive on GitHub, no date: \"There is no absolute rule about where to put exceptions and conditions. Put them where they can be absorbed most easily.\"",
+     "PLAIN, \"Place the main idea before exceptions and conditions\", plainlanguage.gov archive on GitHub, no date: \"The audience must absorb the exception, then the rule, and then usually has to go back to grasp the relationship between the two.\"",
+     "Google, \"Sentence structure\", Google developer documentation style guide, 2024: \"If you want to tell the reader to do something, try to mention the circumstance, conditions, or goal before you provide the instruction. Mentioning the circumstance first lets the reader skip the instruction if it doesn't apply.\""
+    ]
+   },
+   {
+    "question": "Q4",
+    "thinking": "A sentence that makes one point, names who acts and keeps plain order is read one way, by the reader and by a machine translator alike.",
+    "steps": [
+     "Split a sentence that makes more than one point, or that links more than two clauses with \"and\", \"or\" or \"but\", into one sentence for each point.",
+     "Make who or what acts the subject, follow it at once with an active verb that carries the action, and turn a noun made from a verb back into the verb.",
+     "Keep the subject, the verb and the object close and in that order, moving modifiers out from between them.",
+     "Keep the small words that show how a sentence is built: articles, \"that\", \"who\", and helper words such as \"then\" and \"of\".",
+     "Replace a pronoun, or a \"which\", that could point to two nouns with the noun it means, and break a string of nouns apart with prepositions.",
+     "In Japanese, make each sentence's subject and predicate plain, and do not string together several は, で or の, or many clauses joined by で or て.",
+     "Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what; where it reads two ways, reword it. Judge this by reading alone; never send the text to a translation service.",
+     "Have a reader who did not write the document say a section back in their own words; where they say it otherwise, reword the sentence, and do not correct the reader."
+    ],
+    "grounds": [
+     "PLAIN, \"Write short sentences\", plainlanguage.gov archive on GitHub, no date: \"Express only one idea in each sentence.\"",
+     "PLAIN, \"Write short sentences\", plainlanguage.gov archive on GitHub, no date: \"Resist the temptation to put everything in one sentence; break up your idea into its parts and make each one the subject of its own sentence.\"",
+     "Microsoft, \"Global communications: Writing tips\", Microsoft Writing Style Guide, 2023: \"Avoid linking more than three phrases or clauses by using coordinate conjunctions such as and, or, or but. Better yet, avoid linking more than two.\"",
+     "Google, \"Active voice\", Google developer documentation style guide, 2024: \"In passive voice, it's easy to neglect to indicate who or what is performing a particular action.\"",
+     "Gopen and Swan, \"The Science of Scientific Writing\", American Scientist, 1990: \"Follow a grammatical subject as soon as possible with its verb.\"",
+     "Gopen and Swan, \"The Science of Scientific Writing\", American Scientist, 1990: \"Articulate the action of every clause or sentence in its verb.\"",
+     "PLAIN, \"Avoid hidden verbs\", plainlanguage.gov archive on GitHub, no date: \"A hidden verb (or nominalization) is a verb converted into a noun. It often needs an extra verb to make sense.\"",
+     "PLAIN, \"Keep the subject, verb, and object close together\", plainlanguage.gov archive on GitHub, no date: \"When you put modifiers, phrases, or clauses between two or all three of these essential parts, you make it harder for the user to understand you.\"",
+     "Microsoft, \"Global communications: Writing tips\", Microsoft Writing Style Guide, 2023: \"Writing style affects the quality of machine translation.\"",
+     "Microsoft, \"Global communications: Writing tips\", Microsoft Writing Style Guide, 2023: \"Write sentences that use standard word order (that is, subject + verb + object) whenever possible.\"",
+     "Microsoft, \"Global communications: Writing tips\", Microsoft Writing Style Guide, 2023: \"Articles help readers and translation software identify the nouns and modifiers in a sentence.\"",
+     "Microsoft, \"Global communications: Writing tips\", Microsoft Writing Style Guide, 2023: \"Include that and who. They help to clarify the sentence structure.\"",
+     "Google, \"Write for a global audience\", Google developer documentation style guide, 2026: \"Use helper words. Helper words such as then, that, and of are frequently left out of conversational English. Use these words to avoid ambiguity.\"",
+     "Google, \"Write for a global audience\", Google developer documentation style guide, 2026: \"if a pronoun is ambiguous, then replace it with the appropriate noun.\"",
+     "PLAIN, \"Avoid noun strings\", plainlanguage.gov archive on GitHub, no date: \"However, many users will think they've found the noun when they're still reading adjectives, and will become confused.\"",
+     "Gopen and Swan, \"The Science of Scientific Writing\", American Scientist, 1990: \"We cannot succeed in making even a single sentence mean one and only one thing; we can only increase the odds that a large majority of readers will tend to interpret our discourse according to our intentions.\"",
+     "PLAIN, \"Paraphrase testing\", plainlanguage.gov archive on GitHub, no date: \"Do not correct the participant. When you review your notes later, wherever participants misunderstood the message, the document has a problem that you should fix.\""
+    ]
+   },
+   {
+    "question": "Q5",
+    "thinking": "Each thing has one name and each name one thing, so the reader, and a translator, keep one picture of each thing from start to end.",
+    "steps": [
+     "List each thing the document names, and every name it goes by.",
+     "Choose one name for each thing, the one its reader already uses.",
+     "Replace every other name for it with that name, with the same capitals.",
+     "Where one name stands for two things, give one of them another name.",
+     "Where a name is also a common word, as a product's name can be, write it with a capital in running text, so the reader does not take it in its common sense."
+    ],
+    "grounds": [
+     "Google, \"Write for a global audience\", Google developer documentation style guide, 2026: \"If you use a particular term for a concept in one place, then use that exact same term elsewhere, including the same capitalization. If you use different names for the same thing, translators might think you're referring to different concepts, and thus might use different translations.\"",
+     "PLAIN, \"Use the same terms consistently\", plainlanguage.gov archive on GitHub, no date: \"Using a different term may cause the reader to wonder if you're referring to the same group.\"",
+     "PLAIN, \"Use the same terms consistently\", plainlanguage.gov archive on GitHub, no date: \"You don't need to use synonyms to make your writing more interesting.\"",
+     "Microsoft, \"Global communications: Writing tips\", Microsoft Writing Style Guide, 2023: \"Use one word for a concept, and use it consistently. Avoid using synonyms to refer to the same concept or feature. And don’t use the same word to refer to multiple concepts or features.\"",
+     "ASD STEMG, \"About ASD-STE100\", asd-ste100.org, 2023: \"Many readers have limited knowledge of English, and are easily confused by complex sentence structures and by the number of meanings and synonyms which English words can have.\"",
+     "ASD STEMG, \"About ASD-STE100\", asd-ste100.org, 2023: \"In general, there is only one word for one meaning, and one part of speech for one word.\""
+    ]
+   },
+   {
+    "question": "Q6",
+    "thinking": "The reader takes each word with the meaning they already give it, so a word new to them is replaced by everyday words, or given its meaning where they first meet it.",
+    "steps": [
+     "Name the reader, and the words they already use in their own work.",
+     "Mark each word in the document that the reader has not used, including a word the writer's team uses every day.",
+     "Replace each with everyday words that say the same.",
+     "For a word the document must keep, give its meaning in a few everyday words, in the sentence where the reader first meets it.",
+     "Write each abbreviation out in full where the reader first meets it.",
+     "Where the document gives a common word a meaning of its own, replace it with a word the reader does not already read another way."
+    ],
+    "grounds": [
+     "PLAIN, \"Write for your audience\", plainlanguage.gov archive on GitHub, no date: \"Think about what your audience knows about the situation or topic you're writing about. Then, guide them through the information they need to know.\"",
+     "PLAIN, \"Avoid jargon\", plainlanguage.gov archive on GitHub, no date: \"writers often fail to realize that terms they know well may be difficult or meaningless to their audience.\"",
+     "Google, \"Write for a global audience\", Google developer documentation style guide, 2026: \"Define abbreviations.\"",
+     "PLAIN, \"Minimize definitions\", plainlanguage.gov archive on GitHub, no date: \"readers are likely to forget that you'd assigned some common word a new meaning, and when they come upon the word later in your document they assign the common meaning, rather than your specialized one.\""
+    ]
+   },
+   {
+    "question": "Q7",
+    "thinking": "A word that carries nothing of what the document says still costs the reader time, so it goes, while a word that shows how a sentence is built stays.",
+    "steps": [
+     "For each sentence, ask what of the document's content it carries, and delete one that carries none, such as one that only says what a section will say or leads into the next.",
+     "For each word, ask whether the sentence says less without it, and delete it if not, such as \"really\" in \"really critical\".",
+     "Keep each word that Q4 keeps to show how the sentence is built, such as \"the\", \"that\" and \"then\".",
+     "Read each changed section again from the top, and check that it still says all it said before."
+    ],
+    "grounds": [
+     "PLAIN, \"Be concise\", plainlanguage.gov archive on GitHub, no date: \"Unnecessary words waste your audience's time.\"",
+     "PLAIN, \"Be concise\", plainlanguage.gov archive on GitHub, no date: \"Challenge every word—do you need it?\"",
+     "Nielsen, \"How Users Read on the Web\", Nielsen Norman Group, 1997: \"As shown in the table, measured usability was dramatically higher for the concise version (58% better) and for the scannable version (47% better).\""
+    ]
+   }
+  ]
  }
 }

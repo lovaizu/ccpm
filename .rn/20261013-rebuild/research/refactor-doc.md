@@ -222,6 +222,26 @@ The plainlanguage.gov guideline pages are cited from the GSA archive on GitHub, 
 
 - What it says: an example shows the reader what the rule means in a case like theirs.
 
+### Lists show the order of things
+
+- Source: PLAIN, "Use lists", GSA plainlanguage.gov archive on GitHub, undated page.
+- URL: https://raw.githubusercontent.com/GSA/plainlanguage.gov/main/_pages/guidelines/organize/use-lists.md
+- Quote:
+
+  > Help the reader understand the order in which things happen
+
+- What it says: this is one item of the page's list of why lists are useful, after "Lists are useful because they:".
+
+### Tables show relations hidden in text
+
+- Source: PLAIN, "Use tables to make complex material easier to understand", GSA plainlanguage.gov archive on GitHub, undated page.
+- URL: https://raw.githubusercontent.com/GSA/plainlanguage.gov/main/_pages/guidelines/design/use-tables-to-make-complex-material-easier-to-understand.md
+- Quote:
+
+  > Tables help your audience see relationships that are often times hidden in dense text.
+
+- What it says: a reader finds in a table the case that applies to them, without reading every case.
+
 ## The reader takes in each sentence on first reading
 
 ### Keep subject, verb and object close
@@ -334,6 +354,26 @@ The plainlanguage.gov guideline pages are cited from the GSA archive on GitHub, 
 
 - What it says: a long chain of "and" clauses hides where one point ends and the next begins.
 
+### Use standard word order
+
+- Source: Microsoft, "Global communications: Writing tips", Microsoft Writing Style Guide, 2023-06-14.
+- URL: https://learn.microsoft.com/en-us/style-guide/global-communications/writing-tips
+- Quote:
+
+  > Write sentences that use standard word order (that is, subject + verb + object) whenever possible.
+
+- What it says: the tip stands in the page's list for machine translation.
+
+### Replace an ambiguous pronoun with its noun
+
+- Source: Google, "Write for a global audience", Google developer documentation style guide, last updated 2026-10-02.
+- URL: https://developers.google.com/style/translation
+- Quote:
+
+  > For example, if a pronoun is ambiguous, then replace it with the appropriate noun.
+
+- What it says: the tip is headed "Clarify antecedents.", because translators often work with "small, unconnected strings of text."
+
 ## Each word means one thing to every reader
 
 ### One term for one concept, also for translation
@@ -365,6 +405,80 @@ The plainlanguage.gov guideline pages are cited from the GSA archive on GitHub, 
   > Many readers have limited knowledge of English, and are easily confused by complex sentence structures and by the number of meanings and synonyms which English words can have.
 
 - What it says: STE's answer is "one word – one meaning", for example "start" chosen over "begin", "commence", "initiate", or "originate".
+
+### One word for one meaning
+
+- Source: ASD STEMG, "About ASD-STE100", asd-ste100.org, page copyright 2023.
+- URL: https://www.asd-ste100.org/about.html
+- Quote:
+
+  > In general, there is only one word for one meaning, and one part of speech for one word.
+
+- What it says: the specification's dictionary keeps one word for each meaning; the old best practice quoted "each word has only one meaning and is approved with only one part of speech", which this page does not say.
+
+### Do not vary terms to make writing interesting
+
+- Source: PLAIN, "Use the same terms consistently", GSA plainlanguage.gov archive on GitHub, undated page.
+- URL: https://raw.githubusercontent.com/GSA/plainlanguage.gov/main/_pages/guidelines/words/use-the-same-terms-consistently.md
+- Quote:
+
+  > Using a different term may cause the reader to wonder if you're referring to the same group.
+
+- What it says: the page adds "You don't need to use synonyms to make your writing more interesting."
+
+### Writers miss that their terms are new to the reader
+
+- Source: PLAIN, "Avoid jargon", GSA plainlanguage.gov archive on GitHub, undated page.
+- URL: https://raw.githubusercontent.com/GSA/plainlanguage.gov/main/_pages/guidelines/words/avoid-jargon.md
+- Quote:
+
+  > writers often fail to realize that terms they know well may be difficult or meaningless to their audience.
+
+- What it says: a word the writer's team uses every day is still new to the reader.
+
+### Readers forget a common word's new meaning
+
+- Source: PLAIN, "Minimize definitions", GSA plainlanguage.gov archive on GitHub, undated page.
+- URL: https://raw.githubusercontent.com/GSA/plainlanguage.gov/main/_pages/guidelines/words/minimize-definitions.md
+- Quote:
+
+  > readers are likely to forget that you'd assigned some common word a new meaning, and when they come upon the word later in your document they assign the common meaning, rather than your specialized one.
+
+- What it says: a common word given a meaning of the document's own is read with its common meaning.
+
+## Each fact is said in one place
+
+### One representation for each piece of knowledge
+
+- Source: Bill Venners with Andy Hunt and Dave Thomas, "Orthogonality and the DRY Principle", artima.com, 2003 (Thomas's words).
+- URL: https://www.artima.com/articles/orthogonality-and-the-dry-principle
+- Quote:
+
+  > DRY says that every piece of system knowledge should have one authoritative, unambiguous representation.
+
+- What it says: the same interview says "if you have more than one way to express the same thing, at some point the two or three different representations will most likely fall out of step with each other."
+
+### A reference says what it points to
+
+- Source: PLAIN, "Minimize cross-references", GSA plainlanguage.gov archive on GitHub, undated page.
+- URL: https://raw.githubusercontent.com/GSA/plainlanguage.gov/main/_pages/guidelines/design/minimize-cross-references.md
+- Quote:
+
+  > Be sure that the reference you insert clearly describes the referenced material.
+
+- What it says: the page also says that cross-references "may also overtax your users' short-term memory", so a reference is kept only where it takes the place of a copy.
+
+## Every word carries something
+
+### Unnecessary words waste the reader's time
+
+- Source: PLAIN, "Be concise", GSA plainlanguage.gov archive on GitHub, undated page.
+- URL: https://raw.githubusercontent.com/GSA/plainlanguage.gov/main/_pages/guidelines/concise/index.md
+- Quote:
+
+  > Unnecessary words waste your audience's time.
+
+- What it says: the page asks "Challenge every word—do you need it?", and drops "really" from "this information is really critical".
 
 ### Do not assume the reader knows the context
 
@@ -523,3 +637,4 @@ The plainlanguage.gov guideline pages are cited from the GSA archive on GitHub, 
 - The ASD-STE100 writing rules themselves (Part 1): the specification is free only on request, so I cite only the public "About" page.
 - Shaimaa Marzouk and Silvia Hansen-Schirra (2019), "Evaluation of the impact of controlled language on neural machine translation compared to other MT architectures": I found no open copy; the 2021 follow-up is cited instead.
 - A study of how far machine translation of English technical text into Japanese depends on writing style: I did not find one.
+- 文化審議会「公用文作成の考え方（建議）」(2022), cited by the old best practice for Japanese sentences: the PDF (https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/pdf/93651301_01.pdf) downloaded, but I had no tool to read its text, so its quotes are not confirmed and not cited.
