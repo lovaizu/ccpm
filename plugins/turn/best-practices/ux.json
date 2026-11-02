@@ -17,7 +17,7 @@
       },
       {
        "id": "priority",
-       "what": "After an objective's key results, for each pair of them that can move against each other, which comes first and why, in one sentence, as \"KR1.1 comes before KR1.2: ...\". An objective with no such pair has none."
+       "what": "After an objective's key results, for each pair of them that can move against each other, which comes first and why, in one sentence, as \"KR1.1 comes before KR1.2: ...\"; pairs that share one reason share one sentence, as \"KR1.1 comes before KR1.2 and KR1.3: ...\". An objective with no such pair has none."
       }
      ]
     },

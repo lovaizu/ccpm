@@ -1,206 +1,320 @@
 {
  "kind": "ux",
  "goal": {
-  "what": "turn's developers know who uses turn and for what, how that user reaches the aim from the first request, and how to tell whether a change made turn better for them, so they design and build turn to give it.",
+  "what": "Whoever builds or changes Turn, a person or an AI, makes it give the person who wants a piece of work what they come for: a work that meets their purpose well, for effort only where only they can decide.",
   "grounds": [
-   "ux.json purpose"
+   "plugins/turn/best-practices/ux.json, standard.goal: \"Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.\"",
+   ".rn/20261013-rebuild/turn-rebuild.md:20-21: \"turn's user is the person who wants the work. A plugin such as rn connects that person and turn. They get a work that meets their purpose well, and spend effort only where only they can decide.\""
   ]
  },
  "decisions": [
   {
    "id": "D1",
-   "what": "Who is turn's user?",
+   "what": "Who is Turn's user?",
    "contributes_to": [
-    "ux/Q1",
-    "ux/Q3"
+    "ux/Q1"
    ],
    "builds_on": [],
-   "decided": "The person who wants the work; a plugin such as rn only connects that person and turn.",
+   "decided": "The person who wants the work. A plugin such as Rn only connects that person and Turn, so it is not a user of its own.",
    "settled_by": "user",
    "grounds": [
-    ".rn/20261013-rebuild/turn-rebuild.md, User and purpose: \"turn's user is the person who wants the work. A plugin such as rn connects that person and turn.\""
+    ".rn/20261013-rebuild/turn-rebuild.md:3: \"What the user and the assistant agreed on 2026-10-31 for the new turn.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:20: \"turn's user is the person who wants the work. A plugin such as rn connects that person and turn.\""
    ]
   },
   {
    "id": "D2",
-   "what": "What progress does the person want?",
+   "what": "What does that person get, and what do they spend?",
    "contributes_to": [
-    "D4"
+    "D3"
    ],
    "builds_on": [
     "D1"
    ],
-   "decided": "A work that meets their purpose well.",
+   "decided": "A work that meets their purpose well; they spend effort only on what only they can decide.",
    "settled_by": "user",
    "grounds": [
-    "turn-rebuild.md: \"They get a work that meets their purpose well\"; quality as the degree a work meets its user's purpose (ISO 9000:2015)"
+    ".rn/20261013-rebuild/turn-rebuild.md:21: \"They get a work that meets their purpose well, and spend effort only where only they can decide.\""
    ]
   },
   {
    "id": "D3",
-   "what": "What does the person spend?",
+   "what": "How many objectives, and how is O1 written?",
    "contributes_to": [
-    "D4"
-   ],
-   "builds_on": [
-    "D1"
-   ],
-   "decided": "Effort only on what only they can decide.",
-   "settled_by": "user",
-   "grounds": [
-    "turn-rebuild.md: \"spend effort only where only they can decide\""
-   ]
-  },
-  {
-   "id": "D4",
-   "what": "O1 as written",
-   "contributes_to": [
-    "ux/Q1"
-   ],
-   "builds_on": [
-    "D2",
-    "D3"
-   ],
-   "decided": "O1: A person who wants a piece of work spends effort only on what only they can decide, and gets a work that meets their purpose well.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "one objective: the two halves are one job, a work of quality for the least of the person's effort"
-   ]
-  },
-  {
-   "id": "D5",
-   "what": "Which signals show the work meets the purpose?",
-   "contributes_to": [
+    "ux/Q1",
     "ux/Q2"
    ],
    "builds_on": [
     "D2"
    ],
-   "decided": "KR1.1: the changes the person asks for after delivery; fewer is better.",
+   "decided": "One objective: \"O1: A person who wants a piece of work gets one that meets their purpose well, for effort spent only on what only they can decide.\" The quality of the work and the person's effort stay in one objective, because they trade against each other, and only key results of one objective carry a priority between them.",
    "settled_by": "reasoning",
    "grounds": [
-    "a change asked after delivery is a gap between the work and the purpose; Goals-Signals-Metrics"
+    "plugins/turn/best-practices/ux.json, format part priority: \"After an objective's key results, for each pair of them that can move against each other, which comes first and why\"",
+    "plugins/turn/best-practices/ux.json, Q1 step: \"Write it as one sentence: that user as its subject, then a verb, its object and the context it is done in, with no feature or mechanism of the product.\""
    ]
   },
   {
-   "id": "D6",
-   "what": "Which signals show the person spends effort only where theirs?",
+   "id": "D4",
+   "what": "Is a gain left out of O1?",
    "contributes_to": [
     "ux/Q2"
    ],
    "builds_on": [
     "D3"
    ],
-   "decided": "KR1.2: the times the person is asked what they did not need to decide; fewer is better. KR1.3: the time they spend answering and approving; shorter is better. KR1.4: the time from the request to delivery; shorter is better.",
+   "decided": "None. What a caller such as Rn gives saves the person questions, which KR1.2 counts. A template Turn keeps shortens the next run of the kind, which KR1.4 counts.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:48-49: \"A caller such as rn may give what it has already settled, so the user is not asked it again.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:94: \"Keep the Format and the Checklist as the kind's template, and pass them to designer.\""
+   ]
+  },
+  {
+   "id": "D5",
+   "what": "Which key result shows that the work meets the person's purpose?",
+   "contributes_to": [
+    "ux/Q3"
+   ],
+   "builds_on": [
+    "D3"
+   ],
+   "decided": "KR1.1: the share of requested works that the person puts to use as delivered, with no change that they ask for or make. Higher is better. It counts every sign of failure at once: a change asked for, a change the person makes themselves, a run stopped and a work set aside.",
    "settled_by": "reasoning",
    "grounds": [
-    "KR1.2 alone improves by asking nothing, which KR1.1 holds; KR1.4 holds turn from trading the person's time for its own"
+    "plugins/turn/best-practices/ux.json, Q3 step: \"Add the signs of failure, such as giving up, undoing a result or working around the product.\"",
+    "plugins/turn/best-practices/ux.json, Q3 step: \"Ask whether all the objective's key results could get better while the user still does not get what the objective says\"; a count of changes asked for gets better when the person fixes the work themselves or sets it aside."
+   ]
+  },
+  {
+   "id": "D6",
+   "what": "Which key results show that the person spends effort only on what only they can decide?",
+   "contributes_to": [
+    "ux/Q3"
+   ],
+   "builds_on": [
+    "D3"
+   ],
+   "decided": "KR1.2: the questions per work that the person judges they did not need to decide; the person judges, as only they know what was theirs to decide. Fewer is better. KR1.3: the time per work that the person spends answering questions and giving approvals. Shorter is better.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/ux.json, Q3 step: \"Turn each sign kept into one measure, a share, an average per user, a count or a time, and name what it is counted out of.\"",
+    "KR1.2 alone gets better while each needed question costs the person long; KR1.3 holds that.",
+    "plugins/turn/best-practices/ux.json, Q3 grounds: \"Make sure the metrics are unambiguous.\""
    ]
   },
   {
    "id": "D7",
-   "what": "Who takes part, and of what kind?",
+   "what": "Which key result shows how soon the person has the work?",
    "contributes_to": [
     "ux/Q3"
    ],
    "builds_on": [
-    "D1"
+    "D3"
    ],
-   "decided": "The person (a person); turn, an AI, a plugin whose subagents make the work; the internet, outside turn, where turn reads guides and examples, named as the README and the architecture name it.",
+   "decided": "KR1.4: the time per work from the request to delivery. Shorter is better.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux.json Q3: each participant's kind tells which steps wait for a person",
-    "turn-rebuild.md, planner 3: \"Research the kind's best practice\""
+    "plugins/turn/README.md:32-34 says a new kind's research and the second AI's reading take longer than Claude Code alone, so the wait is a cost the person feels."
    ]
   },
   {
    "id": "D8",
-   "what": "On what work does the scenario run?",
+   "what": "Do the key results carry target values?",
    "contributes_to": [
     "ux/Q3"
    ],
    "builds_on": [
+    "D5",
+    "D6",
     "D7"
    ],
-   "decided": "A press release for a new meeting-room booking app, a kind turn has no template of, so planner's steps show.",
+   "decided": "No. The fixed paragraph of the format follows them.",
    "settled_by": "research",
    "grounds": [
-    "turn-code b37cf1ac: dev/turn/trials/roles/roombook.md, the trial run on it"
+    "plugins/turn/best-practices/ux.json, format part okrs: \"the fixed paragraph on target values\""
    ]
   },
   {
    "id": "D9",
-   "what": "What does the person meet first?",
+   "what": "Which key result comes first in each pair that can move against each other?",
    "contributes_to": [
-    "ux/Q3"
+    "ux/Q7"
    ],
    "builds_on": [
-    "D8"
+    "D5",
+    "D6",
+    "D7"
    ],
-   "decided": "turn asks the kind of work, and the person confirms it.",
-   "settled_by": "research",
+   "decided": "KR1.1 comes before KR1.2, KR1.3 and KR1.4, each in its own sentence: a question, a minute or an earlier delivery saved is lost when the person cannot use the work as delivered. KR1.2 and KR1.3 come before KR1.4: asking the person what Turn could find out itself delivers sooner, but spends the person's effort, which O1 limits, to save Turn's time, which O1 does not. KR1.2 and KR1.3 move together, so they have no sentence.",
+   "settled_by": "reasoning",
    "grounds": [
-    "turn-rebuild.md, planner 1: \"Decide the kind of work from the request, and confirm it with the user.\""
+    "plugins/turn/best-practices/ux.json, Q7 step: \"Ask which loss keeps the user further from what the objective says.\"",
+    "plugins/turn/best-practices/ux.json, Q7 step: \"look first at one that counts how much or how fast beside one that counts how well.\""
    ]
   },
   {
    "id": "D10",
-   "what": "What does the person approve for the kind?",
+   "what": "Who takes part in the scenario, and of what kind?",
    "contributes_to": [
-    "ux/Q3"
+    "ux/Q4",
+    "ux/Q6"
    ],
    "builds_on": [
-    "D9"
+    "D1"
    ],
-   "decided": "After turn reads the web, the kind's purpose, its Format and its Checklist, shown in short.",
+   "decided": "Two: the person, a person, and Turn, an AI. The internet is no participant: Turn reads it with Claude Code's own tools, so the reading is a step Turn takes, and no step waits on the internet.",
    "settled_by": "research",
    "grounds": [
-    "turn-rebuild.md, planner 6: \"Show the kind's purpose and the conditions to the user for approval\"; the scenario before this pass showed no purpose"
+    "plugins/turn/best-practices/ux.json, format part participants: \"each participant and whether it is a person, an AI or a script.\"",
+    "plugins/turn/best-practices/ux.json, Q4 thinking: \"Each one that takes a step is named by its role and its kind\"",
+    "plugins/turn/README.md:46-48: \"Claude Code allowed to search and read the web, with its WebSearch and WebFetch tools. Turn reads the best practice of a new kind on the internet.\""
    ]
   },
   {
    "id": "D11",
-   "what": "What is the person asked about this work?",
+   "what": "How does each diagram name its participants?",
    "contributes_to": [
-    "ux/Q3"
+    "ux/Q4"
    ],
    "builds_on": [
     "D10"
    ],
-   "decided": "Its purpose first, then only what they alone decide, one at a time with a recommendation, such as the release date; then the design in short lines, for approval.",
+   "decided": "It declares each participant first, with the name and the kind the paragraph gives: Person (person) and Turn (AI).",
    "settled_by": "research",
    "grounds": [
-    "turn-rebuild.md, designer 4 and 5"
+    "plugins/turn/best-practices/ux.json, Q4 step: \"Begin each diagram by declaring each participant it uses, with its name and kind as the paragraph gives them.\""
    ]
   },
   {
    "id": "D12",
-   "what": "What runs on its own before delivery?",
+   "what": "What does the document leave to the architecture?",
    "contributes_to": [
-    "ux/Q3"
+    "ux/Q6"
    ],
    "builds_on": [
-    "D11"
+    "D10"
    ],
-   "decided": "turn writes the release and checks it as a reporter would read it, until every question of the Checklist is met; one step, with no role named.",
+   "decided": "Turn's roles, the design tree, the two phases, the run's files, Lane and the main conversation's relay. The person sees only questions, approvals and the work, so Turn is one box.",
    "settled_by": "research",
    "grounds": [
-    "turn-rebuild.md, Flow: content and refactoring phases until evaluator finds every question good",
-    "ux.json Q3: a step the scenario skips is built by guesswork"
+    "plugins/turn/best-practices/ux.json, Q6 step: \"Treat the product as one box, and flag each participant named for a piece of it that the user does not run, see or receive.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:136-137: \"The design is not given: the user never sees it\""
    ]
   },
   {
    "id": "D13",
-   "what": "What does the document leave to the architecture?",
+   "what": "On what piece of work does the scenario run?",
    "contributes_to": [
-    "ux/Q4"
+    "ux/Q5"
    ],
-   "builds_on": [],
-   "decided": "The roles, the design tree, the files and lane: the person sees only questions, approvals and the work.",
+   "builds_on": [
+    "D3",
+    "D10"
+   ],
+   "decided": "A press release for RoomBook, Northwind's new meeting-room booking app, as in the README's Walkthrough. Turn ships no best practice for a press release, so the run shows the kind's research and approval as well.",
    "settled_by": "research",
    "grounds": [
-    "ux.json Q4",
-    "turn-rebuild.md, evaluator 1: \"the user never sees\" the design"
+    "plugins/turn/README.md:74-75: \"It is November 2026, and your company, Northwind, launches RoomBook, a meeting-room booking app. You need a press release for it.\"",
+    "plugins/turn/best-practices/ holds architecture, code, meta, prompt, readme, refactor-code, refactor-doc and ux, and no press release."
+   ]
+  },
+  {
+   "id": "D14",
+   "what": "How is the scenario headed?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D3",
+    "D13"
+   ],
+   "decided": "\"O1: The person gets a press release by answering only their own points\".",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/ux.json, Q5 step: \"write a heading with its ID and a short phrase, the user its subject and its verb active, saying how they reach it.\""
+   ]
+  },
+  {
+   "id": "D15",
+   "what": "Where does the scenario start and end?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D13"
+   ],
+   "decided": "It starts with the person's request: \"Write a press release for RoomBook, our new meeting-room booking app\". It ends with Turn giving the person the press release.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/best-practices/ux.json, Q5 steps: \"Write the end first\" and \"Write as the first message the user's first request to the product.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:47: \"turn needs nothing given\""
+   ]
+  },
+  {
+   "id": "D16",
+   "what": "What does Turn ask first?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D15"
+   ],
+   "decided": "It names the kind, a press release, and whether it is a document or code, and the person confirms it.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:85-86: \"Decide the kind of work from the request, and with it whether the work is a document or code, and confirm them with the user.\""
+   ]
+  },
+  {
+   "id": "D17",
+   "what": "What does the person approve for a new kind?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D16",
+    "D10"
+   ],
+   "decided": "Turn first reads guides and examples of good press releases on the web, as its own step. It then shows the kind's purpose, its format and its checklist in short, and the person approves them.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:88: \"Research the kind's best practice.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:93: \"Show the kind's purpose and the conditions to the user for approval\""
+   ]
+  },
+  {
+   "id": "D18",
+   "what": "What is the person asked about this work?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D17"
+   ],
+   "decided": "First its purpose. Then the one point only Northwind decides, the release date, with a recommendation. Then the design, in short lines, for approval.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:105-108: \"the goal first: ask the user this work's purpose. ... Ask the user what only they decide, one at a time, with a recommendation.\" and \"Show the user the design, the decisions in short lines, for approval\"",
+    "plugins/turn/README.md:114-116: \"When is the release date? I recommend the 1st of next month\""
+   ]
+  },
+  {
+   "id": "D19",
+   "what": "What happens between the approved design and delivery?",
+   "contributes_to": [
+    "ux/Q5",
+    "ux/Q6"
+   ],
+   "builds_on": [
+    "D18",
+    "D12"
+   ],
+   "decided": "A loop of Turn's own steps, until every question of the checklist is met: Turn writes the release, then reads it as a reporter would. The person is not asked anything in it.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:156-158: \"The content phase: what the work says and does. ... until evaluator finds every one good.\"",
+    "plugins/turn/best-practices/ux.json, Q5 step: \"Draw a part that repeats as a loop with its condition, holding each step that repeats.\""
    ]
   }
  ]

@@ -10,55 +10,93 @@
   {
    "question": "ux/Q2",
    "lines": [
-    "dev/turn/ux.md:7-10"
+    "dev/turn/ux.md:5-13"
    ]
   },
   {
    "question": "ux/Q3",
    "lines": [
-    "dev/turn/ux.md:17-42"
+    "dev/turn/ux.md:7-13",
+    "dev/turn/ux.md:28-29"
    ]
   },
   {
    "question": "ux/Q4",
    "lines": [
-    "dev/turn/ux.md:1-42"
+    "dev/turn/ux.md:33-34",
+    "dev/turn/ux.md:44-45"
+   ]
+  },
+  {
+   "question": "ux/Q5",
+   "lines": [
+    "dev/turn/ux.md:36-63"
+   ]
+  },
+  {
+   "question": "ux/Q6",
+   "lines": [
+    "dev/turn/ux.md:46-62"
+   ]
+  },
+  {
+   "question": "ux/Q7",
+   "lines": [
+    "dev/turn/ux.md:15-26"
    ]
   },
   {
    "question": "refactor-doc/Q1",
    "lines": [
-    "dev/turn/ux.md:20-42"
+    "dev/turn/ux.md:3",
+    "dev/turn/ux.md:15",
+    "dev/turn/ux.md:31-36"
    ]
   },
   {
    "question": "refactor-doc/Q2",
    "lines": [
-    "dev/turn/ux.md:17-18"
+    "dev/turn/ux.md:17-26",
+    "dev/turn/ux.md:42-63"
    ]
   },
   {
    "question": "refactor-doc/Q3",
    "lines": [
-    "dev/turn/ux.md:1-42"
+    "dev/turn/ux.md:33-40"
    ]
   },
   {
    "question": "refactor-doc/Q4",
    "lines": [
-    "dev/turn/ux.md:17-18"
+    "dev/turn/ux.md:17-26",
+    "dev/turn/ux.md:33-40"
    ]
   },
   {
    "question": "refactor-doc/Q5",
    "lines": [
-    "dev/turn/ux.md:3-18"
+    "dev/turn/ux.md:5-13",
+    "dev/turn/ux.md:44-45"
    ]
   },
   {
    "question": "refactor-doc/Q6",
    "lines": [
-    "dev/turn/ux.md:12-13"
+    "dev/turn/ux.md:33-40"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q7",
+   "lines": [
+    "dev/turn/ux.md:1-63"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q8",
+   "lines": [
+    "dev/turn/ux.md:28-29",
+    "dev/turn/ux.md:38-40"
    ]
   }
  ],
