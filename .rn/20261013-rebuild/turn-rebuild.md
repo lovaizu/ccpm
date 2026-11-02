@@ -186,8 +186,8 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
   `.turn/` for those a user's runs make, in the form Best practice says: `standard`, with `goal`;
   `format`, with `parts`, each part `id`, `what` and its `parts`; `checklist`, each question `id`,
   `about` (a part, the parts of a dependency, or the whole) and `what`; and `practice`, with
-  `methods`, for each essence a question holds the way of thinking and the steps that meet it,
-  with their `grounds`. The kind is the file's name. The evaluator is given `standard` alone, taken
+  `methods`, for each essence a question holds: `question`, the ID; `thinking`, the way of
+  thinking that meets it; `steps`, in order; and `grounds`. The kind is the file's name. The evaluator is given `standard` alone, taken
   out by a script. A script verifies every part is looked at by a question, and every question has
   a method.
 - `design-tree.json`, one for each work: `kind`; `goal`, this work's purpose, with its `grounds`;
