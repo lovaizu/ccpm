@@ -14,6 +14,10 @@
       {
        "id": "key-result",
        "what": "KR1.1, KR1.2, ... under each objective: a result that shows the objective closer, and which direction is better."
+      },
+      {
+       "id": "priority",
+       "what": "After an objective's key results, for each pair of them that can move against each other, which comes first and why, in one sentence, as \"KR1.1 comes before KR1.2: ...\". An objective with no such pair has none."
       }
      ]
     },
@@ -63,6 +67,11 @@
     "id": "Q6",
     "about": "the whole",
     "what": "Can the builder change how the product works inside, while its users see the same, and leave the document as it is?"
+   },
+   {
+    "id": "Q7",
+    "about": "key-result, priority",
+    "what": "Weighing a change that makes one key result better and another worse, can the builder tell which one to keep?"
    }
   ]
  },
@@ -119,6 +128,17 @@
      "Wikipedia, \"Goodhart's law\", en.wikipedia.org, no date: \"Goodhart's law is an adage that has been stated as, \"When a measure becomes a target, it ceases to be a good measure\".\"",
      "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed.\""
     ]
+   },
+   {
+    "question": "Q7",
+    "thinking": "Where two key results of one objective can move against each other, the one whose loss keeps the user further from the objective comes first.",
+    "steps": [
+     "List the pairs of one objective's key results that a single change could move in opposite directions.",
+     "For each pair, imagine one change that makes the first better and the second worse.",
+     "Ask which loss keeps the user further from what the objective says.",
+     "Write it as \"KRa comes before KRb:\" and the reason in one sentence."
+    ],
+    "grounds": []
    },
    {
     "question": "Q5",
