@@ -99,13 +99,18 @@
    },
    {
     "question": "Q2",
-    "thinking": "Objectives are cut so that each piece of work brings one of them closer, and no gain is written twice.",
+    "thinking": "Objectives are cut so that each piece of work brings one of them closer, no gain is written twice, and none is left out.",
     "steps": [
      "Set the objectives side by side, and merge any two that are the same gain for the same user.",
      "Take each change planned or recently made that alters what a user gets, and name the one objective it brings closer.",
+     "Where such a change brings none of them closer, ask the product's owner whether a gain is missing; if so, add its objective.",
      "Where a change brings two objectives closer because their gains overlap, merge them or cut them apart again; a change that helps every objective alike, such as a speed-up, is no sign of overlap."
     ],
-    "grounds": []
+    "grounds": [
+     "Wikipedia, \"MECE principle\", en.wikipedia.org, no date: \"The principle has been used in the business mapping process wherein the optimum arrangement of information is exhaustive and does not double count at any level of the hierarchy.\"",
+     "Google re:Work, \"Set goals with OKRs\", rework.withgoogle.com, 2016: \"Once the organization knows what it’s focused on and how it will measure success, it can become easier for individuals to connect their projects with the organizational objectives.\"",
+     "Google re:Work, \"Set goals with OKRs\", rework.withgoogle.com, 2016: \"Do the team priorities connect to any of the organizational key results?\""
+    ]
    },
    {
     "question": "Q3",
@@ -133,12 +138,19 @@
     "question": "Q7",
     "thinking": "Where two key results of one objective can move against each other, the one whose loss keeps the user further from the objective comes first.",
     "steps": [
-     "List the pairs of one objective's key results that a single change could move in opposite directions.",
+     "List the pairs of one objective's key results that a single change could move in opposite directions; look first at one that counts how much or how fast beside one that counts how well.",
      "For each pair, imagine one change that makes the first better and the second worse.",
      "Ask which loss keeps the user further from what the objective says.",
      "Write it as \"KRa comes before KRb:\" and the reason in one sentence."
     ],
-    "grounds": []
+    "grounds": [
+     "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Well done OKRs are a motivational management tool that helps make it clear to teams what’s important, what to optimize, and what tradeoffs to make during their day-to-day work.\"",
+     "Schultzberg, Ankargren and Frånberg, \"Risk-Aware Product Decisions in A/B Tests with Multiple Metrics\", engineering.atspotify.com, 2024: \"Clearly, this rule is insufficient when, for example, metrics move in conflicting directions.\"",
+     "Gil, \"Pairing Quantity and Quality Key Results: What are Some Examples?\", whatmatters.com, no date: \"In High Output Management, Andy Grove describes pairing Key Results as measuring “both effect and counter-effect.”\"",
+     "Gil, \"Pairing Quantity and Quality Key Results: What are Some Examples?\", whatmatters.com, no date: \"This OKR anticipates that reducing pit stop time can lead to cutting corners or at the very least unintentional mistakes as the team speeds up their work.\"",
+     "Rodden, Hutchinson and Fu, \"Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications\", CHI 2010: \"Use the HEART framework to prompt articulation of goals (e.g. is it more important to attract new users, or to encourage existing users to become more engaged?).\"",
+     "Schultzberg, Ankargren and Frånberg, \"Risk-Aware Product Decisions in A/B Tests with Multiple Metrics\", engineering.atspotify.com, 2024: \"By articulating the heuristics that govern your decision-making process, you can design and analyze the experiment in a way that respects how you make decisions in the end.\""
+    ]
    },
    {
     "question": "Q5",

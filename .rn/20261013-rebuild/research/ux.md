@@ -159,6 +159,100 @@ I read each PDF through a text extractor I wrote for this, so I compared the wor
 
 - What it says: the key results together are checked against the objective, not one by one.
 
+## Each piece of work brings one objective closer
+
+### No gain is counted twice, and none is left out
+
+- Source: Wikipedia, "MECE principle", en.wikipedia.org; the article gives no single date.
+- URL: https://en.wikipedia.org/wiki/MECE_principle
+- Quote:
+
+  > The principle has been used in the business mapping process wherein the optimum arrangement of information is exhaustive and does not double count at any level of the hierarchy.
+
+- What it says: two objectives with the same gain are merged, and a gain that no objective holds is added.
+
+### Each project connects to an objective
+
+- Source: Google re:Work Editorial Team, "Set goals with OKRs", rework.withgoogle.com; the page says "Originally published 2016".
+- URL: https://rework.withgoogle.com/en/guides/set-goals-with-okrs
+- Quote:
+
+  > Once the organization knows what it’s focused on and how it will measure success, it can become easier for individuals to connect their projects with the organizational objectives.
+
+- What it says: each change is named with the objective it brings closer.
+
+### Work is checked against the key results above it
+
+- Source: Google re:Work Editorial Team, "Set goals with OKRs", rework.withgoogle.com; the page says "Originally published 2016".
+- URL: https://rework.withgoogle.com/en/guides/set-goals-with-okrs
+- Quote:
+
+  > Do the team priorities connect to any of the organizational key results?
+
+- What it says: a change that connects to no objective is a sign to check the objectives.
+
+## Of two key results that move against each other, one comes first
+
+### OKRs say what tradeoffs to make
+
+- Source: Google, "Google's OKR Playbook", whatmatters.com; the page prints no date.
+- URL: https://www.whatmatters.com/resources/google-okr-playbook
+- Quote:
+
+  > Well done OKRs are a motivational management tool that helps make it clear to teams what’s important, what to optimize, and what tradeoffs to make during their day-to-day work.
+
+- What it says: the OKRs tell the builder which key result to keep when two pull apart.
+
+### Metrics can move in conflicting directions
+
+- Source: Mårten Schultzberg, Sebastian Ankargren and Mattias Frånberg, "Risk-Aware Product Decisions in A/B Tests with Multiple Metrics", Spotify Engineering, engineering.atspotify.com, published 2024-03-05.
+- URL: https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics
+- Quote:
+
+  > Clearly, this rule is insufficient when, for example, metrics move in conflicting directions.
+
+- What it says: a change can make one measure better and another worse, so the pairs that can do so are found first.
+
+### Key results are paired, effect and counter-effect
+
+- Source: Bruce Gil, "Pairing Quantity and Quality Key Results: What are Some Examples?", whatmatters.com; the page prints no date. It reports Andy Grove's words from High Output Management; I did not open that book.
+- URL: https://www.whatmatters.com/faqs/quantity-quality-key-results-pairing-examples
+- Quote:
+
+  > In High Output Management, Andy Grove describes pairing Key Results as measuring “both effect and counter-effect.”
+
+- What it says: a key result that counts how much or how fast is set beside one that counts how well.
+
+### A gain in speed can cost errors
+
+- Source: Bruce Gil, "Pairing Quantity and Quality Key Results: What are Some Examples?", whatmatters.com; the page prints no date. It reports Andy Grove's words from High Output Management; I did not open that book.
+- URL: https://www.whatmatters.com/faqs/quantity-quality-key-results-pairing-examples
+- Quote:
+
+  > This OKR anticipates that reducing pit stop time can lead to cutting corners or at the very least unintentional mistakes as the team speeds up their work.
+
+- What it says: for each pair, the builder imagines one change that makes one better and the other worse.
+
+### Ask which goal is more important
+
+- Source: Kerry Rodden, Hilary Hutchinson and Xin Fu, "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications", Proceedings of CHI 2010, ACM Press (venue as research.google gives it).
+- URL: https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf
+- Quote:
+
+  > Use the HEART framework to prompt articulation of goals (e.g. is it more important to attract new users, or to encourage existing users to become more engaged?).
+
+- What it says: the builder asks which of the two matters more to what the objective says.
+
+### The rule is written before it is used
+
+- Source: Mårten Schultzberg, Sebastian Ankargren and Mattias Frånberg, "Risk-Aware Product Decisions in A/B Tests with Multiple Metrics", Spotify Engineering, engineering.atspotify.com, published 2024-03-05.
+- URL: https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics
+- Quote:
+
+  > By articulating the heuristics that govern your decision-making process, you can design and analyze the experiment in a way that respects how you make decisions in the end.
+
+- What it says: the priority is written down, so each later change is judged by it.
+
 ## A scenario runs the main path from the request to the gain
 
 ### The name is the goal as an active verb phrase
@@ -311,6 +405,7 @@ I read each PDF through a text extractor I wrote for this, so I compared the wor
 - Cockburn, "Reminders" (2000): I found no open copy.
 - Jacobson, Spence and Bittner, "Use-Case 2.0" (2011): I opened the PDF the Internet Archive keeps, but its fonts carry no text map, so I could not read a quote from it.
 - Larry Constantine, "Essential Modeling: Use Cases for User Interfaces", ACM interactions (1995): I found no open copy.
-- Google re:Work, "Set goals with OKRs": the page no longer holds the sentence the old ux.json quoted, "Pick just three to five objectives"; no method here needs it.
+- Google re:Work, "Set goals with OKRs": the sentence the old ux.json quoted, "Pick just three to five objectives", is at https://rework.withgoogle.com/en/guides/set-goals-with-okrs; no method here needs it.
 - Marilyn Strathern, "Improving ratings: audit in the British University system", European Review (1997): I did not open it; the entry above quotes Wikipedia instead.
-- No source was found for Q2, how objectives are cut so that each piece of work brings one closer; its steps rest on reasoning alone.
+- No source was found for the end of Q2's last step: a change that helps every objective alike, such as a speed-up, is no sign of overlap. It rests on reasoning alone.
+- Spotify lets a guardrail metric fall, but not "by more than a certain margin". The ux format sets no target values, so Q7 takes no margin; it says only which key result comes first.
