@@ -256,7 +256,7 @@ sequenceDiagram
   participant U as turn:up
   participant M as Main conversation
   S->>U: starts, with what the step has settled (Request)
-  Note over U,M: the moves above; each ask still goes to the main conversation
+  Note over U,M: the moves above,<br/>each ask still going to the main conversation
   U-->>S: the work's files (Work)
 ```
 

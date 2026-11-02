@@ -95,8 +95,8 @@
   <text class="label" x="1270.0" y="510" text-anchor="middle">Plugin files · Adapter · Test cases</text>
   <text class="label" x="1270.0" y="526" text-anchor="middle">check script</text>
   <path class="line" d="M140,94 L140,170" marker-end="url(#arrow)"/>
-  <text class="label" x="148" y="122" text-anchor="start">installs lane</text>
-  <text class="label" x="148" y="136" text-anchor="start">[claude plugin install]</text>
+  <text class="label" x="148" y="108" text-anchor="start">installs lane</text>
+  <text class="label" x="148" y="122" text-anchor="start">[claude plugin install]</text>
   <path class="line" d="M240,192 L320,192" marker-end="url(#arrow)"/>
   <text class="label" x="280" y="186" text-anchor="middle">runs [Bash]</text>
   <path class="line" d="M320,222 L240,222" marker-end="url(#arrow)"/>

@@ -47,12 +47,12 @@
   <text class="tag" x="120.0" y="86.0">[AI · Claude Code]</text>
   <path class="store" d="M300,49 A90.0,9 0 0 1 480,49 V95 A90.0,9 0 0 1 300,95 Z"/>
   <path class="store" d="M300,49 A90.0,9 0 0 0 480,49"/>
-  <text class="name" x="390.0" y="69.0">Proposal</text>
-  <text class="tag" x="390.0" y="86.0">[JSON file · .lane/]</text>
+  <text class="name" x="390.0" y="75.0">Proposal</text>
+  <text class="tag" x="390.0" y="92.0">[JSON file · .lane/]</text>
   <path class="store" d="M570,49 A90.0,9 0 0 1 750,49 V95 A90.0,9 0 0 1 570,95 Z"/>
   <path class="store" d="M570,49 A90.0,9 0 0 0 750,49"/>
-  <text class="name" x="660.0" y="69.0">Test cases</text>
-  <text class="tag" x="660.0" y="86.0">[JSON files]</text>
+  <text class="name" x="660.0" y="75.0">Test cases</text>
+  <text class="tag" x="660.0" y="92.0">[JSON files]</text>
   <rect class="ext" x="840" y="40" width="180" height="64" rx="4"/>
   <text class="name" x="930.0" y="69.0">Claude Code</text>
   <text class="tag" x="930.0" y="86.0">[CLI]</text>
@@ -83,8 +83,8 @@
   <text class="tag" x="1200.0" y="426.0">[module · Python 3.9]</text>
   <path class="store" d="M1380,389 A90.0,9 0 0 1 1560,389 V435 A90.0,9 0 0 1 1380,435 Z"/>
   <path class="store" d="M1380,389 A90.0,9 0 0 0 1560,389"/>
-  <text class="name" x="1470.0" y="409.0">Calls kept</text>
-  <text class="tag" x="1470.0" y="426.0">[JSONL · temporary folder]</text>
+  <text class="name" x="1470.0" y="415.0">Calls kept</text>
+  <text class="tag" x="1470.0" y="432.0">[JSONL · temporary folder]</text>
   <rect class="box" x="30" y="560" width="180" height="64" rx="0"/>
   <text class="name" x="120.0" y="589.0">lanes/</text>
   <text class="tag" x="120.0" y="606.0">[modules · Python 3.9]</text>
@@ -96,12 +96,12 @@
   <text class="tag" x="930.0" y="606.0">[module · Python 3.9]</text>
   <path class="store" d="M1380,569 A90.0,9 0 0 1 1560,569 V615 A90.0,9 0 0 1 1380,615 Z"/>
   <path class="store" d="M1380,569 A90.0,9 0 0 0 1560,569"/>
-  <text class="name" x="1470.0" y="589.0">Record</text>
-  <text class="tag" x="1470.0" y="606.0">[JSONL · Claude Code&#x27;s]</text>
+  <text class="name" x="1470.0" y="595.0">Record</text>
+  <text class="tag" x="1470.0" y="612.0">[JSONL · Claude Code&#x27;s]</text>
   <path class="store" d="M30,749 A630.0,9 0 0 1 1290,749 V795 A630.0,9 0 0 1 30,795 Z"/>
   <path class="store" d="M30,749 A630.0,9 0 0 0 1290,749"/>
-  <text class="name" x="660.0" y="769.0">Plugin files</text>
-  <text class="tag" x="660.0" y="786.0">[Markdown, JSON · agents/, prompts/, hooks/hooks.json, hooks/lanes.json]</text>
+  <text class="name" x="660.0" y="775.0">Plugin files</text>
+  <text class="tag" x="660.0" y="792.0">[Markdown, JSON · agents/, prompts/, hooks/hooks.json, hooks/lanes.json]</text>
   <path class="line" d="M120,104 L120,210" marker-end="url(#arrow)"/>
   <text class="label" x="128" y="146" text-anchor="start">runs print,</text>
   <text class="label" x="128" y="160" text-anchor="start">write, up [Bash]</text>
@@ -160,8 +160,8 @@
   <text class="data" x="1335" y="438" text-anchor="middle">Kept call,</text>
   <text class="data" x="1335" y="452" text-anchor="middle">Answer</text>
   <path class="line" d="M1260,444 L1420,560" marker-end="url(#arrow)"/>
-  <text class="label" x="1330" y="530" text-anchor="end">reads</text>
-  <text class="data" x="1330" y="544" text-anchor="end">Record</text>
+  <text class="label" x="1352" y="492" text-anchor="start">reads</text>
+  <text class="data" x="1352" y="506" text-anchor="start">Record</text>
   <path class="line" d="M1140,444 L1000,560" marker-end="url(#arrow)"/>
   <text class="label" x="1086" y="500" text-anchor="start">asks the</text>
   <text class="label" x="1086" y="514" text-anchor="start">next start</text>

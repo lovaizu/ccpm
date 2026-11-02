@@ -77,7 +77,7 @@
   <text class="label" text-anchor="middle" x="690" y="30">jq reads the steering's JSON, gh opens a learning's issue</text>
 
   <path class="line" d="M440,208 H560" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="500" y="200">turn's agents</text>
+  <text class="label" text-anchor="middle" x="510" y="200">turn's agents</text>
 
   <path class="line" d="M880,298 H990" marker-end="url(#arrow)"/>
   <text class="label" x="890" y="350">git keeps the record,</text>

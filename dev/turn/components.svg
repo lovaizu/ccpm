@@ -119,9 +119,9 @@
 
   <!-- turn:up's moves -->
   <path class="line" d="M440,430 L505,430" marker-end="url(#arrow)"/>
-  <text class="label" x="472" y="382" text-anchor="middle">starts each</text>
-  <text class="label" x="472" y="488" text-anchor="middle">[Agent tool]</text>
-  <text class="data" x="472" y="502" text-anchor="middle">request</text>
+  <text class="label" x="498" y="382" text-anchor="end">starts each</text>
+  <text class="label" x="498" y="488" text-anchor="end">[Agent tool]</text>
+  <text class="data" x="498" y="502" text-anchor="end">request</text>
 
   <!-- Asks to the person, and the wait for the answer -->
   <path class="line" d="M530,390 L530,110" marker-end="url(#arrow)"/>
@@ -138,9 +138,9 @@
 
   <!-- Research and checks -->
   <path class="line" d="M640,390 L640,270" marker-end="url(#arrow)"/>
-  <text class="label" x="648" y="300">reads how good</text>
-  <text class="label" x="648" y="314">works are made</text>
-  <text class="label" x="648" y="328">[WebSearch, WebFetch]</text>
+  <text class="label" x="648" y="292">reads how good</text>
+  <text class="label" x="648" y="306">works are made</text>
+  <text class="label" x="648" y="320">[WebSearch, WebFetch]</text>
   <path class="line" d="M1250,330 L1250,70 L1290,70" marker-end="url(#arrow)"/>
   <text class="label" x="1258" y="150">checks its file [Bash]</text>
   <text class="data" x="1258" y="164">template, design tree,</text>
@@ -151,9 +151,9 @@
   <text class="label" x="985" y="305" text-anchor="end">makes, betters</text>
   <text class="data" x="985" y="319" text-anchor="end">work</text>
   <path class="line" d="M1160,390 L1150,270" marker-end="url(#arrow)"/>
-  <text class="label" x="1162" y="300">uses as its</text>
-  <text class="label" x="1162" y="314">user would</text>
-  <text class="data" x="1162" y="328">work</text>
+  <text class="label" x="1162" y="292">uses as its</text>
+  <text class="label" x="1162" y="306">user would</text>
+  <text class="data" x="1162" y="320">work</text>
 
   <!-- lane's check script -->
   <path class="line" d="M150,560 L300,470" marker-end="url(#arrow)"/>

@@ -144,7 +144,7 @@ sequenceDiagram
   L->>PF: writes Step, Hook entry, Rules laid, check script
   L->>CC: claude plugin validate
   CC-->>L: passed
-  L-->>DA: what it wrote; the proposal removed
+  L-->>DA: what it wrote, and the proposal removed
 ```
 
 A break stopped:

@@ -146,7 +146,7 @@ sequenceDiagram
   else /rn:gm
     U->>O: /rn:gm <feedback>
     O->>S: keeps the feedback (feedback)
-    Note over O: stops; /rn:up asks the point behind it
+    Note over O: stops, and /rn:up asks the point behind it
   end
 ```
 
@@ -179,7 +179,7 @@ sequenceDiagram
   S-->>O: the stage and the sign-off waiting (steering)
   alt a sign-off waits
     O->>U: the proposal again
-  else
+  else none waits
     O->>U: the next point to decide, or the next move taken (point to decide)
   end
 ```
