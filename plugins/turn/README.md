@@ -27,8 +27,8 @@ deliverable, uses it as its user would:
   each question the decisions that make its answer yes. Nothing is built that serves no question,
   and Turn asks you only the points that no fact settles.
 
-The Standard alone evaluates the deliverable: its user gets only the deliverable, and one built by
-the Practice can still fall short.
+The second AI judges the deliverable by the Standard alone, not by the Practice: the deliverable's
+user gets only the deliverable, and a deliverable built by the Practice can still fall short.
 
 **Non-goals**
 
@@ -42,13 +42,16 @@ the Practice can still fall short.
 
 ## Requirements
 
+> **Turn does not run yet.** Turn is being rebuilt, and the Turn that this README describes is not
+> built yet. Wait to install it until this note is gone.
+
 - Claude Code.
 
-  Turn runs inside it.
+  Turn runs inside it. `claude --version` prints its version when you have it.
 
 - Python 3.9 or later, run as `python3`.
 
-  Turn's scripts check its files with it.
+  Turn's scripts check its files with it. `python3 --version` prints 3.9 or later when you have it.
 
 - Claude Code allowed to search and read the web, with its WebSearch and WebFetch tools.
 
@@ -78,9 +81,9 @@ Installed plugins:
 
 ## Walkthrough
 
-> **Not from a real run yet.** Turn is being rebuilt, and the Turn that this README describes does
-> not run yet. The lines below follow the run that [Turn's UX](../../dev/turn/ux.md) plans. They
-> are not copied from Turn's output.
+> **Not from a real run yet.** Turn does not run yet, as [Requirements](#requirements) says. The
+> lines below follow the run that [Turn's UX](../../dev/turn/ux.md) plans. They are not copied from
+> Turn's output.
 
 It is November 2026, and your company, Northwind, launches RoomBook, a meeting-room booking app.
 You need a press release for it. RoomBook's README, in the repository you have open in Claude
@@ -176,8 +179,8 @@ deliverable says is good, the builder betters how it says it, and the evaluator 
 
 ## Documentation
 
-- [Calling Turn](docs/calling.md) tells how a step of another plugin, such as Rn, has Turn make its
-  deliverable.
+- [Calling Turn](docs/calling.md) tells how a step of another plugin of ccpm, such as Rn, has Turn
+  make its deliverable.
 - [The changelog](CHANGELOG.md) says what changed in each version.
 
 ## Development

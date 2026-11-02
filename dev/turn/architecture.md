@@ -11,12 +11,12 @@ what the work says, then how it says it.
 
 Turn follows [how a plugin works](../architecture.md#principles). This document uses the words of
 that one, such as work, role and orchestrator; Turn's README calls the work the deliverable. Where
-Turn departs from that document, a choice under Components or Deployment says why.
+Turn departs from how a plugin works, a choice under Components or Deployment says why.
 
 A Standard holds a Checklist: questions, each asking what the work brings its user. Each question
-gets one of two answers. A **good** gives the lines of the work that meet the question, as that
-document's Good lines do. A **more** says what the work's user gets once the answer is good, never
-how to make it, as that document's need does.
+gets one of two answers. A **good** gives the lines of the work that meet the question, as the
+Good lines of how a plugin works do. A **more** says what the work's user gets once the answer is
+good, never how to make it, as a need does there.
 
 ### One way for every kind
 
@@ -82,8 +82,8 @@ Kept apart, the phases keep the builder and the evaluator on the content while i
 Each role starts fresh at each move, and takes what the roles before it made from files alone: the
 run's files and the best practices.
 
-No role needs another's conversation, the evaluator reads each round as for the first time, and a
-stopped run goes on from its files.
+No role then needs another's conversation. The evaluator reads each round as for the first time,
+and a stopped run goes on from its files.
 
 ### Lane holds the order and the limits
 
@@ -191,9 +191,8 @@ Choices a reader would question:
   Lane's check script still holds the course in code, and is written and tested once for every
   plugin, as [Checks kept in Lane](../architecture.md#checks-kept-in-lane) has each check be.
 - `turn:up` tells the phase from the roles' ends, not from the run's files or from the position
-  Lane tells it.
-  Where the designer keeps its decisions, the files stay as they were, while the work must pass the
-  content phase again. A `turn:up` started again may not be told its position.
+  Lane tells it. When the designer keeps every decision as it was, the files do not change, yet the
+  work must pass the content phase again. A `turn:up` started again may not be told its position.
 - The builder and the evaluator each serve both phases, as each role is cut by what it alone
   decides.
 - The evaluator's more in the refactoring phase goes back to the builder, not the designer, as it
