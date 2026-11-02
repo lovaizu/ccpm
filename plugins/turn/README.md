@@ -7,12 +7,14 @@ With Turn, anyone who wants a piece of work made gets it as it should be. They s
 effort only on the points that only they can decide. Turn decides every other point itself.
 
 For each kind of work, such as a press release, a README or a script, Turn first reads how good
-ones are made. From them, it draws who reads such a work and for what, and two things for you to
-approve with it. The format is the shape of the work, such as a headline, a lead and a body. The
-checklist is a set of questions that a work answers yes to when it serves its readers, such as "Can
-a reporter tell from the headline what is new?" Turn then asks you what this work is for, and each
-point only you can decide, one at a time, with the answer it recommends. Turn has a second AI check
-the work. That AI never sees the design of the work, so it judges only what the reader gets.
+ones are made. It distills two things from them, keeping only what a good work of the kind needs.
+The standard says what a good work of the kind is: who uses it and for what; its template, the
+shape of the work, such as a headline, a lead and a body; and its checklist, questions that a good
+work answers yes to, such as "Can a reporter tell from the headline what is new?" You approve the
+standard. The practice says how to decide what the work says, so that each question is answered
+yes. Turn then asks you what this work is for, and each point only you can decide, one at a time,
+with the answer it recommends. A second AI checks the work against the standard alone. That AI
+never sees the practice, so it judges only what the reader gets.
 
 ![Claude Code alone and Turn, side by side](idea.svg)
 
@@ -84,12 +86,13 @@ below, `You:` is what you type, and `turn:` is what Turn shows you.
    You:  Yes
    ```
 
-3. Turn reads guides and examples of good press releases on the internet. It then shows you who
-   reads a press release and for what, and the format and the checklist it drew from them:
+3. Turn reads guides and examples of good press releases on the internet. It then shows you the
+   standard it distilled from them:
 
    ```text
-   turn: Purpose: a reporter decides from the release whether to write about it.
-         Format: headline, lead, body, boilerplate, contact.
+   turn: Standard for a press release
+         Goal: a reporter decides from the release whether to write about it.
+         Template: headline, lead, body, boilerplate, contact.
          Checklist:
          - Can a reporter tell from the headline what is new?
          - Can a reporter tell from the lead who launches what, and when?
@@ -140,15 +143,16 @@ below, `You:` is what you type, and `turn:` is what Turn shows you.
          Contact: Northwind PR department, pr@northwind.example
    ```
 
-Turn keeps the format and the checklist you approved in `.turn/templates/` in the folder you run
-Claude Code in, so your next press release skips step 3. Turn ships them for READMEs, UX documents,
-architecture documents, code and prompts, so those kinds skip step 3 from the first time.
+Turn keeps the standard you approved, and the practice it distilled, in `.turn/kinds/` in the folder
+you run Claude Code in, so your next press release skips step 3. Turn ships both for READMEs, UX
+documents, architecture documents, code and prompts, so those kinds skip step 3 from the first time.
 
 ## How it works
 
 ![How Turn works](how-it-works.svg)
 
-The evaluator, the second AI, says for each question only what the reader gets once it is good, not
+The evaluator judges the work against the standard alone, because the reader gets only the work: a
+work made by the practice can still fail its reader. The evaluator, the second AI, says for each question only what the reader gets once it is good, not
 a list of faults. Turn then makes again the decision behind it, so the work is never patched. Once
 what the work says is good, Turn betters how the work says it, and the evaluator checks that too.
 

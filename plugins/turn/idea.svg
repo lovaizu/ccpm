@@ -50,8 +50,8 @@
 
   <!-- turn -->
   <rect class="you" x="480" y="70" width="360" height="70" rx="8"/>
-  <text class="name" x="660" y="100">you approve a format and a checklist</text>
-  <text class="kind" x="660" y="120">that Turn draws from good works, once for each kind</text>
+  <text class="name" x="660" y="100">you approve a standard</text>
+  <text class="kind" x="660" y="120">that Turn distills from good works, once for each kind</text>
 
   <rect class="you" x="480" y="170" width="360" height="70" rx="8"/>
   <text class="name" x="660" y="200">you answer only the points</text>
@@ -62,7 +62,7 @@
 
   <rect class="box" x="480" y="370" width="360" height="70" rx="35"/>
   <text class="name" x="660" y="394">a second AI</text>
-  <text class="kind" x="660" y="413">sees only the work and the checklist,</text>
+  <text class="kind" x="660" y="413">sees only the work and the standard,</text>
   <text class="kind" x="660" y="428">and uses the work as its reader would</text>
 
   <rect class="box" x="480" y="470" width="360" height="70" rx="8"/>
