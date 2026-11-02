@@ -10,18 +10,20 @@ paths:
 Read [how a plugin works](../../dev/architecture.md), the architecture every plugin is built on, and
 follow it.
 
-This file holds the order the work goes in. Each step names the template in
-`plugins/turn/templates/` to open while doing it. A template says what the work of its kind must be,
-and its checklist asks the questions that the work must pass. A template names in `includes` the
-templates whose questions it also takes, such as `refactor-doc.json`; open those with it.
+This file holds the order the work goes in. Each step names the best practice in
+`plugins/turn/best-practices/` to open while doing it. Its Standard says what a deliverable of its
+kind must be, and its checklist asks the questions that the deliverable must pass; its Practice
+holds a way to make each question pass. A best practice names in `includes` the best practices
+whose questions it also takes, such as `refactor-doc.json`; open those with it.
 
-When a step's work needs something that its template does not ask, add the question to that
-template, whichever plugin is being built, and make the work again against it.
+When a step's work needs something that its best practice does not ask, add the question to that
+best practice, whichever plugin is being built, and make the work again against it.
 
-- Rationale: what is made with the template open is made right as it is made; a gap left in a
-  template is met again by every plugin made with it.
+- Rationale: what is made with the best practice open is made right as it is made; a gap left in a
+  best practice is met again by every plugin made with it.
 
-Work made before a rule or a template changed is read against the new one before it is committed.
+Work made before a rule or a best practice changed is read against the new one before it is
+committed.
 
 - Rationale: work made earlier was checked against what the rules said then; committed unread, it
   brings back what the change was made to stop.

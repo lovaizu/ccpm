@@ -146,9 +146,10 @@ below, `You:` is what you type, and `turn:` is what Turn shows you.
          Contact: Northwind PR department, pr@northwind.example
    ```
 
-Turn keeps the Standard you approved, and the Practice it refined, in `.turn/kinds/` in the folder
-you run Claude Code in, so your next press release skips step 3. Turn ships both for READMEs, UX
-documents, architecture documents, code and prompts, so those kinds skip step 3 from the first time.
+Turn keeps the Standard you approved, and the Practice it refined, in `.turn/best-practices/` in the
+folder you run Claude Code in, so your next press release skips step 3. Turn ships both for READMEs,
+UX documents, architecture documents, code and prompts, so those kinds skip step 3 from the first
+time.
 
 ## How it works
 
