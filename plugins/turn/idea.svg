@@ -44,9 +44,9 @@
   <text class="turn" x="60" y="200">Turn</text>
 
   <path class="line" d="M270,118 V198" marker-end="url(#arrow)"/>
-  <text class="label" x="282" y="156">refined to the least needed</text>
+  <text class="label" x="282" y="156">refined into one form</text>
   <path class="line" d="M730,118 V198" marker-end="url(#arrow)"/>
-  <text class="label" x="742" y="156">refined to the least needed</text>
+  <text class="label" x="742" y="156">refined into one form</text>
 
   <rect class="box" x="90" y="206" width="360" height="96" rx="10"/>
   <text class="name" x="270" y="234">Standard</text>

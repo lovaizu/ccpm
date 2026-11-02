@@ -7,7 +7,7 @@ With Turn, you get a deliverable that serves the one it is for, and you spend yo
 on the points that only you can decide.
 
 The best practice of a kind of deliverable is spread over many guides and examples. Turn refines it
-to the least that is needed, and keeps the result for each kind:
+into one form for each kind, not a collection of rules, and keeps it:
 
 ![Best practice refined into a standard and a practice](idea.svg)
 
