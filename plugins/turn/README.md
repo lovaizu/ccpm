@@ -146,7 +146,9 @@ documents, architecture documents, code and prompts, so those kinds skip step 3 
 
 Turn has separate AIs plan, make and judge the work, as Anthropic's "Harness design for
 long-running application development" (2026) does with a planner, a generator and an evaluator.
-The designer asks your points one at a time, each with the answer it recommends.
+The designer decides from this work's purpose down: it splits what must hold until a fact or you
+settle each point, and decides each by the practice. It asks your points one at a time, each with
+the answer it recommends.
 
 The evaluator, the second AI, did not make the work, and judges it against the standard alone. The
 reader gets only the work, and a work made by the practice can still fail its reader. For each

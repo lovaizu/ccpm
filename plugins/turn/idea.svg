@@ -1,7 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>A standard and a practice distilled from how good works are made</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .you { fill: #ddf4ff; stroke: #0969da; stroke-width: 1.5; }
     .fold { fill: none; stroke: #d0d7de; stroke-width: 1.5; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
     .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
@@ -13,6 +14,7 @@
     .end { text-anchor: end; }
     @media (prefers-color-scheme: dark) {
       .box { fill: #161b22; stroke: #3d444d; }
+      .you { fill: #0d2a4a; stroke: #4493f8; }
       .fold { stroke: #3d444d; }
       .name, .label, .term { fill: #f0f6fc; }
       .kind { fill: #9198a1; }
@@ -26,52 +28,58 @@
     </marker>
   </defs>
 
-  <!-- the source -->
-  <rect class="box" x="330" y="20" width="340" height="64" rx="10"/>
-  <text class="name" x="500" y="48">how good works are made</text>
-  <text class="kind" x="500" y="68">what made good works of the kind good</text>
+  <!-- many guides and examples, narrowed to the least a good work needs -->
+  <rect class="box" x="200" y="20" width="600" height="60" rx="10"/>
+  <text class="name" x="500" y="46">how good works of the kind are made</text>
+  <text class="kind" x="500" y="66">many guides and examples</text>
+  <path class="box" d="M300,88 H700 L580,148 H420 Z"/>
+  <text class="label mid" x="500" y="114">distilled to the least</text>
+  <text class="label mid" x="500" y="131">a good work needs</text>
 
-  <path class="line" d="M330,52 H240 V132" marker-end="url(#arrow)"/>
-  <text class="label end" x="230" y="100">what a good work is</text>
-  <path class="line" d="M670,52 H760 V132" marker-end="url(#arrow)"/>
-  <text class="label" x="770" y="100">how to make one</text>
+  <path class="line" d="M500,148 V168 H240 V200" marker-end="url(#arrow)"/>
+  <text class="label" x="250" y="160">what a good work is</text>
+  <path class="line" d="M500,168 H760 V200" marker-end="url(#arrow)"/>
+  <text class="label end" x="750" y="160">how to make one</text>
 
   <!-- the standard -->
-  <path class="box" d="M40,140 H422 L440,158 V380 H40 Z"/>
-  <path class="fold" d="M422,140 V158 H440"/>
-  <text class="name" x="240" y="172">the standard</text>
-  <text class="term" x="60" y="210">Goal</text>
-  <text class="label" x="60" y="228">who uses such a work, and for what</text>
-  <text class="term" x="60" y="260">Template</text>
-  <text class="label" x="60" y="278">its shape, such as headline, lead, body</text>
-  <text class="term" x="60" y="310">Checklist</text>
-  <text class="label" x="60" y="328">questions a good work answers yes to, such as</text>
-  <text class="label" x="60" y="346">"Can a reporter tell from the headline what is new?"</text>
+  <path class="box" d="M40,208 H422 L440,226 V440 H40 Z"/>
+  <path class="fold" d="M422,208 V226 H440"/>
+  <text class="name" x="240" y="240">the standard</text>
+  <text class="term" x="60" y="278">Goal</text>
+  <text class="label" x="60" y="296">who uses such a work, and for what</text>
+  <text class="term" x="60" y="328">Template</text>
+  <text class="label" x="60" y="346">its shape, such as headline, lead, body</text>
+  <text class="term" x="60" y="378">Checklist</text>
+  <text class="label" x="60" y="396">questions a good work answers yes to, such as</text>
+  <text class="label" x="60" y="414">"Can a reporter tell from the headline what is new?"</text>
 
   <!-- the practice -->
-  <path class="box" d="M560,140 H942 L960,158 V380 H560 Z"/>
-  <path class="fold" d="M942,140 V158 H960"/>
-  <text class="name" x="760" y="172">the practice</text>
-  <text class="term" x="580" y="210">Design tree, for every kind</text>
-  <text class="label" x="580" y="228">from the goal, split what to decide,</text>
-  <text class="label" x="580" y="246">until a fact or you settle each point</text>
-  <text class="term" x="580" y="310">For each question</text>
-  <text class="label" x="580" y="328">how to decide what makes it yes, such as</text>
-  <text class="label" x="580" y="346">"Put what is new first, in a few words."</text>
+  <path class="box" d="M560,208 H942 L960,226 V440 H560 Z"/>
+  <path class="fold" d="M942,208 V226 H960"/>
+  <text class="name" x="760" y="240">the practice</text>
+  <text class="term" x="580" y="278">For each question</text>
+  <text class="label" x="580" y="296">how to decide what makes it yes, such as</text>
+  <text class="label" x="580" y="328">list what is new to the reporters' readers,</text>
+  <text class="label" x="580" y="346">pick what they care about most,</text>
+  <text class="label" x="580" y="364">and put it first in the headline</text>
 
-  <!-- each way of deciding serves one question -->
-  <path class="line" d="M552,322 H448" marker-end="url(#arrow)"/>
-  <text class="label mid" x="500" y="296">one for</text>
-  <text class="label mid" x="500" y="312">each question</text>
+  <path class="line" d="M552,396 H448" marker-end="url(#arrow)"/>
+  <text class="label mid" x="500" y="370">one for</text>
+  <text class="label mid" x="500" y="386">each question</text>
 
-  <!-- the work -->
-  <path class="box" d="M410,500 H572 L590,518 V570 H410 Z"/>
-  <path class="fold" d="M572,500 V518 H590"/>
-  <text class="name" x="500" y="532">the work</text>
-  <text class="kind" x="500" y="552">this one work</text>
+  <!-- this work: its purpose from you, decided by the practice, judged against the standard -->
+  <rect class="you" x="650" y="494" width="220" height="52" rx="10"/>
+  <text class="name" x="760" y="517">this work's purpose</text>
+  <text class="kind" x="760" y="535">you decide it</text>
+  <path class="line" d="M760,448 V486" marker-end="url(#arrow)"/>
+  <text class="label" x="772" y="472">applied to</text>
 
-  <path class="line" d="M760,388 V535 H598" marker-end="url(#arrow)"/>
-  <text class="label" x="772" y="460">applied to this work's purpose</text>
-  <path class="line" d="M240,388 V535 H402" marker-end="url(#arrow)"/>
-  <text class="label end" x="228" y="460">judges it</text>
+  <path class="box" d="M410,580 H572 L590,598 V640 H410 Z"/>
+  <path class="fold" d="M572,580 V598 H590"/>
+  <text class="name" x="500" y="615">the work</text>
+
+  <path class="line" d="M760,554 V610 H598" marker-end="url(#arrow)"/>
+  <text class="label" x="772" y="590">decides it</text>
+  <path class="line" d="M240,448 V610 H402" marker-end="url(#arrow)"/>
+  <text class="label end" x="228" y="530">judges it</text>
 </svg>
