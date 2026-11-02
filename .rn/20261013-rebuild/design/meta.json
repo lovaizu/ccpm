@@ -1,0 +1,250 @@
+{
+ "kind": "meta",
+ "goal": {
+  "what": "A builder makes a deliverable of a kind by its best practice's Practice, and an evaluator judges it against the Standard alone; every deliverable that passes is fit for its user's purpose.",
+  "grounds": [
+   "plugins/turn/README.md: \"The Standard alone evaluates the deliverable\"",
+   "turn-rebuild.md, Three best practices: \"meta ... fit for its purpose\""
+  ]
+ },
+ "decisions": [
+  {
+   "id": "D1",
+   "what": "Who uses a best practice?",
+   "contributes_to": [
+    "meta/Q2"
+   ],
+   "builds_on": [],
+   "decided": "The builder, who makes a deliverable by the Practice, and the evaluator, who judges it by the Standard; both AIs. Planner makes it, and the user approves its goal and checklist.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "turn-rebuild.md, Roles"
+   ]
+  },
+  {
+   "id": "D2",
+   "what": "The goal as written",
+   "contributes_to": [
+    "meta/Q2"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "A builder makes a deliverable of the kind by the Practice, and an evaluator judges it against the Standard alone; a deliverable that passes is fit for its user's purpose.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "turn-rebuild.md, Three best practices"
+   ]
+  },
+  {
+   "id": "D3",
+   "what": "How is a best practice kept?",
+   "contributes_to": [
+    "meta/Q1",
+    "meta/Q10"
+   ],
+   "builds_on": [],
+   "decided": "One file for each kind, best-practices/<kind>.json, holding standard and practice.",
+   "settled_by": "user",
+   "grounds": [
+    "agreed with the user, 2026-11-02"
+   ]
+  },
+  {
+   "id": "D4",
+   "what": "What are its keys named?",
+   "contributes_to": [
+    "meta/Q1",
+    "meta/Q10"
+   ],
+   "builds_on": [
+    "D3"
+   ],
+   "decided": "The README's words: standard (goal, template, checklist, includes) and practice (methods).",
+   "settled_by": "user",
+   "grounds": [
+    "agreed with the user, 2026-11-02"
+   ]
+  },
+  {
+   "id": "D5",
+   "what": "What shape does the template take?",
+   "contributes_to": [
+    "meta/Q3"
+   ],
+   "builds_on": [
+    "D4",
+    "D15"
+   ],
+   "decided": "A tree drawn from the goal: each part has id, what, why (what it serves) and parts, its children.",
+   "settled_by": "user",
+   "grounds": [
+    "agreed with the user, 2026-11-02"
+   ]
+  },
+  {
+   "id": "D6",
+   "what": "How do the questions meet the template?",
+   "contributes_to": [
+    "meta/Q4"
+   ],
+   "builds_on": [
+    "D5"
+   ],
+   "decided": "One question on each part and one on the root; each question's about names that one part.",
+   "settled_by": "user",
+   "grounds": [
+    "agreed with the user, 2026-11-02"
+   ]
+  },
+  {
+   "id": "D7",
+   "what": "What form does a question take?",
+   "contributes_to": [
+    "meta/Q5"
+   ],
+   "builds_on": [],
+   "decided": "A scene of use, \"When <the user> <does>, can they <result>?\", answered yes or no, asking one thing.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "meta.md Q-4 and Q-5",
+    "Scriven, \"The Logic and Methodology of Checklists\", 2007"
+   ]
+  },
+  {
+   "id": "D8",
+   "what": "What does a why say?",
+   "contributes_to": [
+    "meta/Q6"
+   ],
+   "builds_on": [
+    "D7"
+   ],
+   "decided": "What holds for the user where the answer is yes, and what goes wrong for them where it is no.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "meta.md Q-6"
+   ]
+  },
+  {
+   "id": "D9",
+   "what": "When does a question carry examples?",
+   "contributes_to": [
+    "meta/Q7"
+   ],
+   "builds_on": [
+    "D7"
+   ],
+   "decided": "Where a part can meet its words and miss its aim: fails from a case a judge let through, passes the same made right.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "meta.md Q-7",
+    "NAEP, \"Scoring calibration\""
+   ]
+  },
+  {
+   "id": "D10",
+   "what": "What form does a ground take?",
+   "contributes_to": [
+    "meta/Q8",
+    "meta/Q12"
+   ],
+   "builds_on": [],
+   "decided": "Author, \"Title\", venue, year: the words quoted that the claim rests on.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "issue.md: name each place a claim rests on, with the words quoted"
+   ]
+  },
+  {
+   "id": "D11",
+   "what": "Where do questions shared by kinds live?",
+   "contributes_to": [
+    "meta/Q9"
+   ],
+   "builds_on": [
+    "D3"
+   ],
+   "decided": "In refactor-doc and refactor-code, named in includes; meta includes refactor-doc.",
+   "settled_by": "user",
+   "grounds": [
+    "agreed with the user, 2026-11-02"
+   ]
+  },
+  {
+   "id": "D12",
+   "what": "What is the evaluator given?",
+   "contributes_to": [
+    "meta/Q1"
+   ],
+   "builds_on": [
+    "D4"
+   ],
+   "decided": "The standard alone, taken out of the file by a script.",
+   "settled_by": "user",
+   "grounds": [
+    "agreed with the user, 2026-11-02"
+   ]
+  },
+  {
+   "id": "D13",
+   "what": "How are methods kept?",
+   "contributes_to": [
+    "meta/Q10",
+    "meta/Q11"
+   ],
+   "builds_on": [
+    "D4"
+   ],
+   "decided": "One for each question: question, steps and grounds.",
+   "settled_by": "user",
+   "grounds": [
+    "agreed with the user, 2026-11-02"
+   ]
+  },
+  {
+   "id": "D14",
+   "what": "What form does a step take?",
+   "contributes_to": [
+    "meta/Q11"
+   ],
+   "builds_on": [
+    "D13"
+   ],
+   "decided": "In order, one imperative action each, naming the part of the template it writes.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "meta.md Q-4, carried to steps"
+   ]
+  },
+  {
+   "id": "D15",
+   "what": "What way of thinking does the whole rest on?",
+   "contributes_to": [
+    "meta/Q13",
+    "meta/Q3"
+   ],
+   "builds_on": [],
+   "decided": "Think from the purpose: divide and give meaning, build in order, see across the branches.",
+   "settled_by": "user",
+   "grounds": [
+    "agreed with the user, 2026-11-02",
+    "Descartes, Discourse on the Method, 1637",
+    "Simon, \"The Architecture of Complexity\", 1962"
+   ]
+  },
+  {
+   "id": "D16",
+   "what": "How is the root question judged?",
+   "contributes_to": [
+    "meta/Q13"
+   ],
+   "builds_on": [
+    "D15"
+   ],
+   "decided": null,
+   "settled_by": "user",
+   "grounds": []
+  }
+ ]
+}
