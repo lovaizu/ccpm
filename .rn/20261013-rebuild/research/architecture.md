@@ -262,6 +262,15 @@ written as plain letters.
   Architecture Decisions that have been made and architectural alternatives not chosen."
 - Says: the standard asks the description to record why, and what was not chosen.
 
+### Anthropic, an instruction with its reason
+
+- Source: Anthropic, "Prompting best practices", Claude Platform Docs, n.d.
+- URL: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-prompting-best-practices
+- Quote: "Providing context or motivation behind your instructions, such as explaining to Claude why
+  such behavior is important, can give Claude more information about your goals and help it deliver
+  more targeted responses." and "Claude can generalize from the explanation."
+- Says: an AI builder carries a principle to a new case from its reason.
+
 ## Choices a builder would question
 
 ### Malte Ubl, trade-offs
@@ -389,6 +398,23 @@ written as plain letters.
   another and in what order."
 - Says: a sequence diagram shows the order of the steps between parts.
 
+### arc42, system scope and context
+
+- Source: Hruschka and Starke, "3. Context and Scope", arc42 documentation, n.d.
+- URL: https://docs.arc42.org/section-3/
+- Quote: "System scope and context - as the name suggests - delimits your system (i.e. your scope) from
+  all its communication partners (neighboring systems and users, i.e. the context of your system)."
+- Says: the user stories are drawn where the product meets its users and neighbours.
+
+### Mountain Goat Software, the user story template
+
+- Source: Mountain Goat Software, "User Stories: What They Are, How to Write Them, and Examples",
+  mountaingoatsoftware.com, last updated 2026-07-12.
+- URL: https://www.mountaingoatsoftware.com/agile/user-stories
+- Quote: "A common template is: As a [type of user], I [need/want/am required] to [do something], so
+  that [reason or benefit]."
+- Says: a user story names who uses the product and what they want of it.
+
 ## The parts, and figures a builder can read alone
 
 ### C4 model, common diagram problems
@@ -502,6 +528,25 @@ written as plain letters.
 - Quote: "an overview diagram", "a motivation for the decomposition", "black box descriptions of the
   contained building blocks."
 - Says: the structure view gives the figure, why it is split so, and what each part is.
+
+### C4 model, type and technology of every element
+
+- Source: Simon Brown, "Notation", C4 model, n.d.
+- URL: https://c4model.com/diagrams/notation
+- Quote: "The type of every element should be explicitly specified (e.g. Person, Software System,
+  Container or Component)."
+- Says: each box says what kind of thing the role is.
+
+### Parnas, one module for each decision likely to change
+
+- Source: David L. Parnas, "On the Criteria to be Used in Decomposing Systems into Modules",
+  Department of Computer Science, Carnegie-Mellon University, technical report, 1971; a scan with a
+  text layer kept at prl.khoury.northeastern.edu.
+- URL: https://prl.khoury.northeastern.edu/img/p-tr-1971.pdf
+- Quote: "We propose instead that one begins with a list of difficult design decisions or design
+  decisions which are likely to change. Each module is then designed to hide such a decision from
+  the others."
+- Says: roles are cut so that each decision is made in one role alone.
 
 ## The data the parts share
 
@@ -667,6 +712,28 @@ written as plain letters.
   “integration tests”."
 - Says: the document must say what each test type makes real and what it fakes.
 
+### Adam Bender, scope of a test
+
+- Source: Adam Bender, "Testing Overview", Software Engineering at Google, chapter 11, abseil.io, 2020.
+- URL: https://abseil.io/resources/swe-book/html/ch11.html
+- Quote: "Scope refers to the specific code paths we are verifying."
+- Says: the columns of the test table run from narrow scope to wide.
+
+### The Scrum Guide, a bar every builder reads one way
+
+- Source: Ken Schwaber and Jeff Sutherland, "The Scrum Guide", scrumguides.org, November 2020.
+- URL: https://scrumguides.org/scrum-guide.html
+- Quote: "The Definition of Done is a formal description of the state of the Increment when it meets
+  the quality measures required for the product."
+- Says: when a test passes is written once, for every builder.
+
+### Anthropic, a result that varies from run to run
+
+- Source: Anthropic, "Demystifying evals for AI agents", anthropic.com/engineering, 2026.
+- URL: https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+- Quote: "pass^k measures the probability that all k trials succeed."
+- Says: a test of what an AI does passes when k runs of k meet the expectation.
+
 ## Keeping it short, in one place and true
 
 ### matklad, keep it short and stable
@@ -790,6 +857,14 @@ written as plain letters.
   requirements."
 - Says: the standard fixes what the description holds, not its layout.
 
+### Martin Fowler, the cost of what no one needs
+
+- Source: Martin Fowler, "Yagni", martinfowler.com, 2015-05-26.
+- URL: https://martinfowler.com/bliki/Yagni.html
+- Quote: "The code for the presumptive feature adds some complexity to the software, this complexity
+  makes it harder to modify and debug that software, thus increasing the cost of other features."
+- Says: a story, role or data no step needs makes every later change cost more.
+
 ## Not found
 
 - ISO/IEC/IEEE 42010 itself: the standard is sold by ISO and was not opened. The entries cite the
@@ -803,6 +878,8 @@ written as plain letters.
 - Kruchten's paper in IEEE Xplore: only the copy on cs.ubc.ca was opened.
 - Mike Cohn, "Succeeding with Agile", the source of the test pyramid: not opened. The entries cite
   Ham Vocke's article, which reports it.
+- Parnas's paper in Communications of the ACM, 1972: not opened. The entry cites the 1971 Carnegie-Mellon
+  report of the same title, whose text layer holds the quote.
 - Peter Chen's 1976 entity-relationship paper: the MIT copy returned HTTP 429. The data-model
   entries cite the Mermaid documentation instead.
 - A source on test weight per deployment unit, or on a test table by unit and test type: none of the
