@@ -166,6 +166,15 @@ as plain letters.
   saying that development has slowed down or stopped completely."
 - Says: a limit on the product's future goes at the top, where the reader decides.
 
+### Ubl, non-goals
+
+- Source: Malte Ubl, "Design Docs at Google", industrialempathy.com, 2020-07-06.
+- URL: https://www.industrialempathy.com/posts/design-docs-at-google/
+- Quote: "Note, that non-goals aren’t negated goals like “The system shouldn’t crash”, but rather
+  things that could reasonably be goals, but are explicitly chosen not to be goals."
+- Says: a non-goal is what the reader could reasonably expect of the product, not the opposite of a
+  goal. The page is about design docs; the README's non-goals take the same meaning.
+
 ## Reading in the order they decide
 
 ### Art of README, cognitive funneling
@@ -380,6 +389,18 @@ as plain letters.
   programming languages, and observe that readme files in majority of the popular projects are well
   organised using lists and images, and comprise links to external sources."
 - Says: popular projects' READMEs use lists, images and links.
+
+### C4 model, the system context diagram
+
+- Source: C4 model, "System context diagram", c4model.com, n.d.
+- URL: https://c4model.com/diagrams/system-context
+- Quote: "Draw a diagram showing your system as a box in the centre, surrounded by its users and the
+  other systems that it interacts with. Detail isn’t important here as this is your zoomed out view
+  showing a big picture of the system landscape. The focus should be on people (actors, roles,
+  personas, etc) and software systems rather than technologies, protocols and other low-level
+  details. It’s the sort of diagram that you could show to non-technical people."
+- Says: a figure of the product among its users and the systems it uses, without detail, is one a
+  manager who is not technical can follow.
 
 ## Finding where to read next, so the README stays short
 
