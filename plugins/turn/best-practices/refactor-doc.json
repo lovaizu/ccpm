@@ -88,7 +88,7 @@
     "thinking": "Order and relations shown by the form of a list, a table or a diagram are seen at once, while the same told in sentences must be pieced together.",
     "steps": [
      "Find each passage that tells steps in order, choices that depend on a case, or how several things relate.",
-     "Choose its form: a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, and a diagram for who passes what to whom.",
+     "Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.",
      "Rewrite the passage in that form, so that each item, cell or box names one thing, and each line of a diagram says what one thing does to another.",
      "Delete the sentences that told what the form now shows, and keep under it only what it cannot show.",
      "Show the form alone to a reader who has not read the text, and have them say back what it tells; where they say it otherwise, mend the form."
@@ -133,7 +133,7 @@
      "Split a sentence that makes more than one point, or that links more than two clauses with \"and\", \"or\" or \"but\", into one sentence for each point.",
      "Make who or what acts the subject, follow it at once with an active verb that carries the action, and turn a noun made from a verb back into the verb.",
      "Keep the subject, the verb and the object close and in that order, moving modifiers out from between them.",
-     "Keep the small words that show how a sentence is built: articles, \"that\", \"who\", and helper words such as \"then\" and \"of\".",
+     "Keep the small words that show how a sentence is built, such as articles, \"that\", \"who\", \"then\" and \"of\".",
      "Replace a pronoun, or a \"which\", that could point to two nouns with the noun it means, and break a string of nouns apart with prepositions.",
      "In Japanese, make each sentence's subject and predicate plain, and do not string together several は, で or の, or many clauses joined by で or て.",
      "Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what; where it reads two ways, reword it. Judge this by reading alone; never send the text to a translation service.",
@@ -167,7 +167,7 @@
      "Choose one name for each thing, the one its reader already uses.",
      "Replace every other name for it with that name, with the same capitals.",
      "Where one name stands for two things, give one of them another name.",
-     "Where a name is also a common word, as a product's name can be, write it with a capital in running text, so the reader does not take it in its common sense."
+     "Where a name is also a common word, as a product's name can be, mark it in running text so the reader does not take it in its common sense, such as by writing it with a capital."
     ],
     "grounds": [
      "Google, \"Write for a global audience\", Google developer documentation style guide, 2026: \"If you use a particular term for a concept in one place, then use that exact same term elsewhere, including the same capitalization. If you use different names for the same thing, translators might think you're referring to different concepts, and thus might use different translations.\"",

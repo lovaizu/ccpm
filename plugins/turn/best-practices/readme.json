@@ -5,7 +5,7 @@
    "parts": [
     {
      "id": "summary",
-     "what": "The title, the product's name, and the one sentence under it: \"<Name> is a <kind> that <does what>\"."
+     "what": "The product's name first, and under it one sentence that says what kind of thing the product is and what it does."
     },
     {
      "id": "gain",
@@ -13,35 +13,35 @@
     },
     {
      "id": "idea",
-     "what": "After the gain: the idea that makes the gain possible, in a paragraph; where the idea has parts, a figure of them, and under it a list giving each part the figure names as what it is and what it ensures for the reader."
+     "what": "After the gain: the idea that makes the gain possible, in a paragraph; where the idea has parts, how they fit together, and each part with what it is and what it ensures for the reader."
     },
     {
      "id": "non-goals",
-     "what": "The bold label Non-goals and a list, one item for each thing the product does not do, that close the opening, which stands under no heading."
+     "what": "At the end of the opening, before anything about installing: each thing the product does not do that a reader might expect of it, set apart so the reader sees it as what the product does not do."
     },
     {
      "id": "requirements",
-     "what": "A list under its heading, Requirements, one item for each thing that must be in place before installing."
+     "what": "Each thing that must be in place before installing."
     },
     {
      "id": "installation",
-     "what": "The install steps under their heading, Installation."
+     "what": "The steps that install the product."
     },
     {
      "id": "walkthrough",
-     "what": "One run of one of the UX's scenarios under its heading, Walkthrough, step by step, each step with what it shows, up to the result."
+     "what": "One run of the use most readers come for, step by step, each step with what the product shows, up to the result."
     },
     {
      "id": "how-it-works",
-     "what": "One SVG figure under its heading, How it works: the user, the product's parts and the things they pass, each a box with only its name, and each line the action or intent of one toward another. Under it stand only the points and what the figure cannot show."
+     "what": "One figure of the user, the product's parts and the things they pass, each shown by its name only, and the action or intent of each toward another, so a reader sees at a glance how the opening's promises are kept. Under it stand only the points and what the figure cannot show."
     },
     {
      "id": "links",
-     "what": "The sections Documentation and Development, each a link: Documentation to fuller use, and Development to the development documents."
+     "what": "Where to read next: for users, the documents for fuller use; apart from them, for those who change the product, the development documents."
     },
     {
      "id": "license",
-     "what": "The last section, License: the license's name, linked to its file."
+     "what": "The license's name, linked to its full text."
     }
    ]
   },
@@ -79,7 +79,7 @@
    {
     "id": "Q7",
     "about": "gain, idea, non-goals, how-it-works",
-    "what": "When a manager points to a promise of the opening and asks how the product keeps it, can the reader show them in How it works?"
+    "what": "When a manager points to a promise of the opening and asks how the product keeps it, can the reader show them in the figure of how the product works?"
    },
    {
     "id": "Q8",
@@ -107,7 +107,7 @@
      "Write the product's name as the title.",
      "Name the kind of thing it is, in words the reader already knows, such as \"a Claude Code plugin\".",
      "Say what it does for its user in one verb phrase, with no feature names or mechanisms.",
-     "Write \"<Name> is a <kind> that <does what>.\" on its own line under the title.",
+     "Write it as one sentence on its own line under the title, such as \"<Name> is a <kind> that <does what>.\"",
      "Ask whether a colleague who hears only the sentence could say what the product does; if not, replace each vague or praising word with what the product does."
     ],
     "grounds": [
@@ -119,9 +119,9 @@
    },
    {
     "question": "Q2",
-    "thinking": "The gain is what the reader can do with the product, taken from the objectives in the UX, so the reader tells from it whether the product meets their need.",
+    "thinking": "The gain is what the reader can do with the product, taken from what the product's users want, such as the objectives in its UX, so the reader tells from it whether the product meets their need.",
     "steps": [
-     "Take the objectives from the OKRs in the product's UX.",
+     "Take what the product's users want from it, such as the objectives in the product's UX.",
      "Name whom the product is for by the work they want done, in words they already use.",
      "Say each gain as what the reader can do with the product, not as their trouble or as a burden made lighter.",
      "Ask whether a reader outside that group can tell from it that the product is not for them; if not, name the group and the work more closely."
@@ -140,7 +140,7 @@
      "List the ways the reader would do the same work now, such as with a tool they already use, or by hand.",
      "For each gain, name what the product does that those ways do not, and that brings the gain.",
      "Write it as one paragraph that names the other way and says what the product does instead.",
-     "Where the idea has parts, draw a figure of them, and list under it each part the figure names, with what it is and what it ensures for the reader.",
+     "Where the idea has parts, show how they fit together, such as in a figure, and give each part with what it is and what it ensures for the reader.",
      "Ask whether the reader could say the difference to a colleague in their own words; if not, replace each word that only praises with what the product does."
     ],
     "grounds": [
@@ -156,7 +156,7 @@
      "Add what a reader would weigh before letting the product into their work, such as what it changes, what it sends and what it cannot see.",
      "Keep only what the product does not do, and drop what no reader would expect of it.",
      "Write each as one line saying what the product does not do and, where it helps the reader, what the reader can use instead.",
-     "Put the list under the bold label Non-goals, last in the opening."
+     "Put the list last in the opening, set apart so the reader sees it as what the product does not do, such as under the bold label Non-goals."
     ],
     "grounds": [
      "Ubl, \"Design Docs at Google\", industrialempathy.com, 2020: \"Note, that non-goals aren’t negated goals like “The system shouldn’t crash”, but rather things that could reasonably be goals, but are explicitly chosen not to be goals.\""
@@ -164,9 +164,9 @@
    },
    {
     "question": "Q5",
-    "thinking": "The walkthrough is one run of a scenario from the UX on work like the reader's, with the product's real output, so the reader sees what they would get.",
+    "thinking": "The walkthrough is one run of the use most readers come for, on work like the reader's, with the product's real output, so the reader sees what they would get.",
     "steps": [
-     "Pick the scenario in the UX of the objective most readers come for.",
+     "Pick the use most readers come for, such as the UX's scenario of that objective.",
      "Pick one concrete piece of work of the kind the reader brings.",
      "Say at the start what the reader will have at the end.",
      "Write each step as what the reader types or does, then what the product shows, copied from a real run.",
@@ -188,8 +188,8 @@
     "steps": [
      "Start from a machine or sandbox where nothing the product needs is in place.",
      "List each thing that must be in place, by what it is and how the reader tells they have it.",
-     "Write each install step as a command to copy, even a common one, and after it what the reader sees when it worked.",
-     "Follow Requirements, Installation and the walkthrough as written, and do nothing they do not say.",
+     "Write each install step so the reader can do it without working out what to type, such as a command to copy, even a common one, and after it what the reader sees when it worked.",
+     "Follow the requirements, the install steps and the walkthrough as written, and do nothing they do not say.",
      "Where a step fails, or needs something the README does not say, write it in, and start again from nothing."
     ],
     "grounds": [
@@ -208,8 +208,8 @@
     "steps": [
      "List the promises of the opening: each gain, the idea and each non-goal.",
      "For each, name who keeps it: the user, a part of the product, or something outside it that the product uses.",
-     "Draw one SVG figure with each of them as a box holding only its name, and each line as the action of one toward another, in a few words.",
-     "Leave files, functions and small parts to the architecture document.",
+     "Draw one figure, such as an SVG, with each of them shown by its name only, and each link between two as the action of one toward the other, in a few words.",
+     "Leave files, functions and small parts to the document that describes the design inside, such as the architecture document.",
      "Under the figure, write only what the figure cannot show, such as what a part never does.",
      "Point to each promise, and find the lines of the figure that keep it; where none does, mend the figure or the promise."
     ],
@@ -226,8 +226,8 @@
     "steps": [
      "List what a user needs after the walkthrough, such as fuller use, and what someone who changes the product needs.",
      "Leave each out of the README, and find the one document that holds it.",
-     "Under Documentation, link each document for users with what the reader finds there; under Development, link the development folder.",
-     "Write each link relative to the README, and open each one."
+     "Link each document for users with what the reader finds there, and, apart from them, the development documents for those who change the product, such as under the headings Documentation and Development.",
+     "Write each link so it reaches its document wherever the README is read, such as relative to the README, and open each one."
     ],
     "grounds": [
      "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"Detailed documentation is good -- make separate pages for it! -- but keep your README succinct.\"",
@@ -243,8 +243,8 @@
     "thinking": "A reader may rule the product out by its license alone, so the README names the license and links its full text.",
     "steps": [
      "Name the license by its common name, such as MIT License.",
-     "Link the name to the license file in the repository.",
-     "Open the link, and check that the file it reaches is the license the name says."
+     "Link the name to the license's full text, such as the license file in the repository.",
+     "Open the link, and check that the text it reaches is the license the name says."
     ],
     "grounds": [
      "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"you're likely to exclude a module VERY quickly if it has a license incompatible with your work.\"",

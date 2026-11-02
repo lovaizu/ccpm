@@ -5,15 +5,15 @@
    "parts": [
     {
      "id": "manifest",
-     "what": "The file the language's tools read for what the code needs: the runtime and each library with the versions it runs on, and the command that runs the tests."
+     "what": "What the maintainer needs to set the code up on a fresh machine and run its tests: all the code needs to run, with the versions it runs on, and how to run the tests."
     },
     {
      "id": "module-opening",
-     "what": "The comment at the top of each module, a file of its own: what this module alone decides, in a sentence or two."
+     "what": "For each module, what this module alone decides, said briefly where the maintainer meets it first on opening the module."
     },
     {
      "id": "interface",
-     "what": "Each name a module offers to others: its signature with the types it takes and gives, and the comment above or below it on what it gives, what it expects of what it takes and each way it refuses."
+     "what": "Each name a module offers to others, with all a caller needs to call it without reading its body: the types it takes and gives, what it gives, what it expects of what it takes and each way it refuses."
     },
     {
      "id": "body",
@@ -21,7 +21,7 @@
     },
     {
      "id": "tests",
-     "what": "A test file beside each module, one test for each case of the specification, named for the behavior it holds, its body in three parts: Given the situation, When what is done, Then what must be so."
+     "what": "Tests that hold the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code: each named for the behavior it holds, and each showing the situation, what is done and what must be so."
     }
    ]
   },
@@ -29,17 +29,17 @@
    {
     "id": "Q1",
     "about": "manifest, tests",
-    "what": "Setting the code up on a fresh machine from the manifest alone, and running the tests again and in any order, does the maintainer see them pass each time?"
+    "what": "Setting the code up on a fresh machine from what the code gives for its setup alone, and running the tests again and in any order, does the maintainer see them pass each time?"
    },
    {
     "id": "Q2",
     "about": "module-opening",
-    "what": "With one behavior to change, can the maintainer tell from the modules' opening comments alone which module to open?"
+    "what": "With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading their bodies?"
    },
    {
     "id": "Q3",
     "about": "interface",
-    "what": "Calling a name another module offers, can the maintainer write a call that works from its signature and comment alone, without reading its body?"
+    "what": "Calling a name another module offers, can the maintainer write a call that works from its interface alone, without reading its body?"
    },
    {
     "id": "Q4",
@@ -77,11 +77,11 @@
   "methods": [
    {
     "question": "Q1",
-    "thinking": "The manifest names all the code needs, and each test makes what it needs, so a test's result rests on the code alone.",
+    "thinking": "What the code gives for its setup names all the code needs, and each test makes what it needs, so a test's result rests on the code alone.",
     "steps": [
-     "Set the code up on a clean machine or container, from the manifest alone.",
-     "Add to the manifest each runtime and library the setup or the tests found missing, with the versions the code runs on.",
-     "Write in the manifest the one command that runs the tests.",
+     "Set the code up on a clean machine or container, from what the code gives for its setup alone.",
+     "Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on.",
+     "Give one way to run all the tests, such as one command written beside the setup.",
      "Run the tests several times, and in a shuffled order.",
      "Where a test's result changes from run to run, make that test set up and clear all it uses, such as files, a clock or a database."
     ],
@@ -96,13 +96,13 @@
    },
    {
     "question": "Q2",
-    "thinking": "Each module alone decides one thing the specification leaves to the code, and its opening names that thing in a sentence or two.",
+    "thinking": "Each module alone decides one thing the specification leaves to the code, and says that thing briefly where the maintainer meets it first.",
     "steps": [
      "List what the specification leaves the code to decide, and mark what is likely to change.",
      "Give each such decision to one module, so no other module makes it.",
-     "Write at the top of each module what it alone decides, in a sentence or two.",
-     "Where the opening cannot be that short, split the module.",
-     "Take a behavior the specification might change, read only the openings, and check that they point to one module; where they do not, rewrite them or move the decision."
+     "Write what each module alone decides where the maintainer meets it first, such as a comment of a sentence or two at its top.",
+     "Where that cannot be said briefly, split the module.",
+     "Take a behavior the specification might change, read only what the modules say they decide, and check that it points to one module; where it does not, rewrite it or move the decision."
     ],
     "grounds": [
      "Google, \"Google Python Style Guide\", google.github.io/styleguide, no date: \"Files should start with a docstring describing the contents and usage of the module.\"",
@@ -115,9 +115,9 @@
     "thinking": "The interface tells a caller all they need to call it, so the body can stay unread and can change behind it.",
     "steps": [
      "Choose the names other modules may use, and mark every other name as internal.",
-     "Give each name a signature with the types it takes and gives.",
-     "Write its comment: what it gives, what comes back when there is nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a right call.",
-     "Leave out of the comment what the signature already says.",
+     "Say for each name the types it takes and gives, such as in its signature where the language allows.",
+     "Write beside it, such as in a doc comment, what it gives, what comes back when there is nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a right call.",
+     "Leave out of that what the types already say.",
      "Have someone who has not read the body write a call from the interface alone, and run it; where it fails or they had to guess, add what was missing."
     ],
     "grounds": [
@@ -156,7 +156,7 @@
      "Check all of it before acting on any, so a refusal leaves nothing half done.",
      "On a wrong input, stop with a message that names the program and where the input is, says what was wrong, and says what is accepted.",
      "Refuse a value that cannot be read rather than guess it, and catch only the error you mean to handle.",
-     "Write each check as code that always runs, not as an assert.",
+     "Write each check so it runs however the code is run, not as one that can be turned off, such as an assert.",
      "Give the code each wrong input the specification names, and read the message as the one who ran it: check that they can put it right from that alone."
     ],
     "grounds": [
@@ -179,7 +179,7 @@
      "List every case the specification names: the usual one, each edge and each refusal.",
      "Write one test for each case.",
      "Name each test for the behavior it holds; where the name needs \"and\", split the test.",
-     "Write each test's body as Given, When and Then.",
+     "Write each test so its reader sees the situation, what is done and what must be so, such as in three parts: Given, When and Then.",
      "Write each expected value from the specification, not from what the code gives.",
      "Run each test before its code is written, and see it fail.",
      "Set the list of cases against the tests, and check that each case points to one test."
@@ -219,10 +219,10 @@
     "thinking": "A test is worth the faults it catches, so each one checks the result its case asks, and a broken behavior fails it.",
     "steps": [
      "In each test, check the result the case asks, not only that the code ran.",
-     "Run the tests counting lines and branches, and add a test for each line or branch none runs.",
-     "Run mutation testing, and for each change to the code that the tests still pass, add or mend the test of the behavior it breaks.",
+     "Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each.",
+     "Change the code in small ways, such as by a mutation testing tool, and for each change that the tests still pass, add or mend the test of the behavior it breaks.",
      "Where no input the code takes can tell a changed line from the first, mark that line with the reason instead of adding a test.",
-     "Run property tests over the inputs the specification allows, and keep each input they fail on as a fixed test."
+     "Run the code over many inputs the specification allows, such as by property tests, and keep each input it fails on as a fixed test."
     ],
     "grounds": [
      "Google, \"What to look for in a code review\", google.github.io/eng-practices, no date: \"Will the tests actually fail when the code is broken?\"",

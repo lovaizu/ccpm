@@ -5,33 +5,33 @@
    "parts": [
     {
      "id": "okrs",
-     "what": "The OKRs section: the objectives, each with its key results, and the fixed paragraph on target values: \"Key results have no target values. When a measure becomes a target, it stops being a good measure (Goodhart's law). Use the key results to judge how close the objective is.\"",
+     "what": "The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.",
      "parts": [
       {
        "id": "objective",
-       "what": "O1, O2, ...: one short sentence of what a user gets from the product, with the user as its subject."
+       "what": "Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject."
       },
       {
        "id": "key-result",
-       "what": "KR1.1, KR1.2, ... under each objective: a result that shows the objective closer, and which direction is better."
+       "what": "Under each objective, its key results, each with an ID the rest of the document points to: a result that shows the objective closer, and which direction is better."
       },
       {
        "id": "priority",
-       "what": "After an objective's key results, for each pair of them that can move against each other, which comes first and why, in one sentence, as \"KR1.1 comes before KR1.2: ...\"; pairs that share one reason share one sentence, as \"KR1.1 comes before KR1.2 and KR1.3: ...\". An objective with no such pair has none."
+       "what": "After an objective's key results, for each pair of them that can move against each other, which comes first and why, in one sentence; pairs that share one reason share one sentence. An objective with no such pair has none."
       }
      ]
     },
     {
      "id": "scenarios",
-     "what": "The Scenarios section: the participants, then one scenario for each objective.",
+     "what": "The participants, then one scenario for each objective.",
      "parts": [
       {
        "id": "participants",
-       "what": "The paragraph at the start of Scenarios: each participant and whether it is a person, an AI or a script."
+       "what": "Before the scenarios, in one place: each participant and whether it is a person, an AI or a script."
       },
       {
        "id": "scenario",
-       "what": "A section headed with an objective's ID and a short name for how the user reaches it, holding a Mermaid sequence diagram of the main path from the user's first request to reaching it: who does what, in order."
+       "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order."
       }
      ]
     }
@@ -141,7 +141,7 @@
      "List the pairs of one objective's key results that a single change could move in opposite directions; look first at one that counts how much or how fast beside one that counts how well.",
      "For each pair, imagine one change that makes the first better and the second worse.",
      "Ask which loss keeps the user further from what the objective says.",
-     "Write it as \"KRa comes before KRb:\" and the reason in one sentence."
+     "Write which comes first and the reason in one sentence, such as \"KR1.1 comes before KR1.2: ...\"."
     ],
     "grounds": [
      "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Well done OKRs are a motivational management tool that helps make it clear to teams what’s important, what to optimize, and what tradeoffs to make during their day-to-day work.\"",
@@ -156,15 +156,15 @@
     "question": "Q5",
     "thinking": "A scenario is one run of the main path a user takes to the objective, from the request that starts it to the gain that ends it.",
     "steps": [
-     "For each objective, in the OKRs' order, write a heading with its ID and a short phrase, the user its subject and its verb active, saying how they reach it.",
+     "For each objective, in the OKRs' order, name its scenario by the objective's ID and a short phrase, the user its subject and its verb active, saying how they reach it, such as in a heading.",
      "Pick one concrete piece of work of the kind the user brings, so the run can be followed and tried as written.",
      "Write the end first: what the user has once the objective is reached, in the objective's words.",
      "Write as the first message the user's first request to the product.",
      "Choose the main path from that request to that end, the one most users take, and leave failures and stops off it.",
-     "Write each step as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes.",
+     "Write each step as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes, such as an arrow in a Mermaid sequence diagram.",
      "Where the product's owner has not said that a step happens, ask them instead of drawing it.",
-     "Draw a part that repeats as a loop with its condition, holding each step that repeats.",
-     "Read the diagram from top to bottom: the first message is the user's request, the last gives the user the end, and each step moves toward it."
+     "Mark a part that repeats as a loop with its condition, holding each step that repeats.",
+     "Read the scenario from start to end: the first message is the user's request, the last gives the user the end, and each step moves toward it."
     ],
     "grounds": [
      "Cockburn, \"Basic Use Case Template\", HaT TR.96.03a, 1998: \"Use Case: <number> <the name should be the goal as a short active verb phrase>\"",
@@ -180,12 +180,12 @@
     "question": "Q4",
     "thinking": "Each one that takes a step is named by its role and its kind, so the builder knows which step waits for a person and which runs without one.",
     "steps": [
-     "Read every diagram, and list each one that sends or receives a message.",
+     "Read every scenario, and list each one that sends or receives a message.",
      "Name each by the role it plays, in a word the reader already uses.",
      "Write its kind after its name: a person, an AI or a script; where more than one kind can play the role, name each.",
-     "Write them as one paragraph at the start of Scenarios.",
-     "Begin each diagram by declaring each participant it uses, with its name and kind as the paragraph gives them.",
-     "Check each diagram: every message's sender and receiver is declared, and every declared name and kind is the paragraph's."
+     "Write them in one place before the scenarios.",
+     "In each scenario, name each participant it uses, with its kind, as the list of participants gives them, such as by declaring them at the start of a diagram.",
+     "Check each scenario: every message's sender and receiver is named there, and every name and kind is the one the list of participants gives."
     ],
     "grounds": [
      "OMG, \"Unified Modeling Language 2.5.1\", 2017, chapter 18: \"An Actor models a type of role played by an entity that interacts with the subjects of its associated UseCases (e.g., by exchanging signals and data). Actors may represent roles played by human users, external hardware, or other systems.\"",
@@ -203,7 +203,7 @@
      "For each message from the product to a user, keep only what the user sees or receives, and flag wording that says how the product found or made it.",
      "Flag any objective or key result that names a part of the product, or a count taken inside it, in place of what users gain or do.",
      "Pick one change the design could make while users see the same, read every line, and flag each line that would have to change.",
-     "Rewrite each flagged line by what the user does, sees or receives, or leave it to the architecture document."
+     "Rewrite each flagged line by what the user does, sees or receives, or leave it to the document that describes the design inside, such as the architecture document."
     ],
     "grounds": [
      "Cockburn, \"Writing Effective Use Cases\", draft in preparation for Addison-Wesley, 1999: \"For computer systems, it is rare that we open up the black box.\"",

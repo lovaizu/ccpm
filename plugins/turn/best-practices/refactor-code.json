@@ -94,7 +94,7 @@
     "thinking": "A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.",
     "steps": [
      "For each name, write in a few words what it holds or does, without looking at its definition; then look, and flag the name where the two differ.",
-     "Rename each flagged name to the whole words that say it, with no abbreviation.",
+     "Rename each flagged name to the whole words that say it, with no abbreviation the maintainer would have to look up.",
      "Make a name say more the farther from its definition it is read.",
      "Give each value that means something, such as a limit or a mark, a name that says what it means."
     ],
@@ -127,7 +127,7 @@
      "Leave apart lines that look alike but hold different rules, and merge only what changes together.",
      "Where a shared function takes flags so that each caller gets its own path, split it into one function for each rule.",
      "Where code reaches into another module's insides, have it use what that module offers its callers.",
-     "Where a rule truly cannot be kept in one place, write beside each place a comment naming the others.",
+     "Where a rule truly cannot be kept in one place, say at each place where the others are, such as in a comment beside it.",
      "Pick one rule, imagine it changed, and count the places that would change; mend the code until it is one."
     ],
     "grounds": [
@@ -168,7 +168,7 @@
     "question": "Q5",
     "thinking": "Each kind of thing is done one way across the code, the way the code already has unless a better one replaces it everywhere, so a difference means a real difference.",
     "steps": [
-     "Leave layout and what the linter checks to those tools, and look only at what they do not check.",
+     "Leave what a tool already checks, such as layout by a formatter or the rules of a linter, to that tool, and look only at what no tool checks.",
      "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test.",
      "For each kind, gather each way the code does it.",
      "Choose one way for each kind: the one the code already uses most, nearest code first, unless another is better for the reader.",
@@ -184,11 +184,11 @@
    },
    {
     "question": "Q4",
-    "thinking": "A comment holds what the code cannot say, the reason it is so, where the maintainer meets it.",
+    "thinking": "What the code cannot say, the reason it is so, is given where the maintainer meets it.",
     "steps": [
      "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs.",
      "For each, first make the code say it plainly, where it can.",
-     "Where the reason still does not show, such as a limit outside the code or a way tried and dropped, write it in a comment beside the line.",
+     "Where the reason still does not show, such as a limit outside the code or a way tried and dropped, write it where the maintainer meets the line, such as in a comment beside it.",
      "Check each comment against the code beside it, and correct or remove one that no longer holds."
     ],
     "grounds": [

@@ -5,27 +5,27 @@
    "parts": [
     {
      "id": "description",
-     "what": "The name and the description in the frontmatter: `name`, a name that says what the prompt does, and `description`, what it does and the requests it is used for."
+     "what": "What the host reads to choose the prompt for a request: a name that says what the prompt does, and a description of what it does and the requests it is used for."
     },
     {
      "id": "tools",
-     "what": "The tools the AI may use, in the frontmatter, where the host lets them be listed: `tools`."
+     "what": "The tools the AI may use, listed where the host reads them and refuses any other, when the host allows such a list."
     },
     {
      "id": "goal",
-     "what": "The paragraph that opens the body: what the AI is to achieve, for whom, how it knows it is done, and what lies outside its task."
+     "what": "What the AI reads first in the body: what it is to achieve, for whom, how it knows it is done, and what lies outside its task."
     },
     {
      "id": "context",
-     "what": "The section of what the AI needs and cannot find or know on its own, headed `## Context`: the situation, its inputs and where they are, and the rules of this place."
+     "what": "What the AI needs and cannot find or know on its own: the situation, its inputs and where they are, and the rules of this place."
     },
     {
      "id": "steps",
-     "what": "A numbered list, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the command of the script that does it, in the section headed `## Steps`."
+     "what": "The steps in the order the AI takes them, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the script that does it and how to run it."
     },
     {
      "id": "output",
-     "what": "The section of what the AI hands back, in what form, and to whom, headed `## Output`."
+     "what": "What the AI hands back, in what form, and to whom."
     }
    ]
   },
@@ -155,7 +155,7 @@
     "thinking": "Each step is a result on the way to the goal, so the AI chooses how to reach it and knows when to go on.",
     "steps": [
      "Start from what holds once the task is met, as Q3's method wrote it, and work back to each result that must hold before it.",
-     "Write each result as a step, in the order they must hold, as a numbered list.",
+     "Write each result as a step, in the order they must hold, so the AI sees that order, such as in a numbered list.",
      "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.",
      "Check that the last step leaves what the goal says the task is for."
     ],
@@ -187,10 +187,10 @@
    },
    {
     "question": "Q8",
-    "thinking": "The AI's judgment varies from run to run, which suits a step with many good ways, so a step with one right result is done by a script the AI runs.",
+    "thinking": "The AI's judgment varies from run to run, which suits a step with many good ways, so a step with one right result is done by a program that gives it every run, which the AI runs.",
     "steps": [
      "For each step, ask whether it has one right result, such as a check, a file's form or an exact order, or many good ways.",
-     "For a step with one right result, find or write a script that does it and handles its own errors.",
+     "For a step with one right result, find or write a program that does it and handles its own errors, such as a script.",
      "Write the step as running that command and acting on what it prints.",
      "Run the prompt twice on one input, and compare what those steps gave."
     ],
@@ -236,7 +236,7 @@
      "Name the caller, and what it does next with the result.",
      "List what it needs for that: the result, what was done, and what was not done and why.",
      "Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.",
-     "Write the output section with that form.",
+     "Write in the prompt what the AI hands back and to whom, in that form.",
      "Check that a step makes each thing the output names.",
      "Hand the output alone to someone in the caller's place, and see whether they can act without asking."
     ],
@@ -300,11 +300,11 @@
    },
    {
     "question": "Q12",
-    "thinking": "Every line takes some of the AI's attention, so the prompt keeps only the lines that change what it does, and keeps detail it needs only sometimes in a file it reads then.",
+    "thinking": "Every line takes some of the AI's attention, so the prompt keeps only the lines that change what it does, and keeps detail it needs only sometimes where the AI reads it only then.",
     "steps": [
      "For each line, ask what the AI would do differently without it, and cut the line where the answer is nothing.",
      "Cut what the AI already knows.",
-     "Move detail needed only in some runs to a file the prompt links directly, and say when to read it.",
+     "Move detail needed only in some runs out of the prompt to where the AI reads it only when it needs it, such as a file the prompt links directly, and say when to read it.",
      "Run Q13's trials again after cutting, and put back what a run then lacked."
     ],
     "grounds": [

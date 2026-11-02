@@ -5,51 +5,51 @@
    "parts": [
     {
      "id": "summary",
-     "what": "The title, \"<Product name> architecture\", and the sentence or two under it that say how the product delivers its UX, with a link to the UX."
+     "what": "The opening: which product the document is for, and a sentence or two that say how the product delivers its UX, pointing to the UX instead of repeating it."
     },
     {
      "id": "principles",
-     "what": "The Principles section: one subsection for each principle, holding the rule and its reason, after a link to the principles of the architecture this one is built on, where there is one. Each subsection is headed with a short name for the principle; the rule is one sentence that every part is built by; the reason says what the rule is there for, and what goes wrong for the user or the builder without it."
+     "what": "The principles, after a pointer to the principles of the architecture this one is built on, where there is one. Each has a short name the reader finds it by, the rule, one sentence that every part is built by, and the reason, which says what the rule is there for and what goes wrong for the user or the builder without it."
     },
     {
      "id": "user-stories",
-     "what": "The User stories section: a list under its heading, one item for each story, each naming the UX's scenarios or steps that rest on it. Each item reads \"As <the user>, I want <one way they use the product at its edge, such as a command they run>. Carries <the UX's scenarios, or their steps, that rest on it>.\""
+     "what": "The user stories: one for each way the user uses the product at its edge, such as a command they run, each naming the user, that way, and the UX's scenarios or steps that rest on it."
     },
     {
      "id": "components",
-     "what": "The figure under Components, the first subsection of the Logical view section: an SVG file beside the document drawn by hand in the notation of a C4 component diagram. It has a box for each role the user stories need and each store of data, holding its name and a tag of its type and technology, such as \"[web app · React, TypeScript]\" or \"[database · PostgreSQL]\", and no sentence; its shape saying its kind of element; each arrow what one does to another, with the data it hands on, named as in the data model, and the protocol where it matters, such as \"[HTTPS/JSON]\"; and a legend of the shapes and the tags. The boxes are placed so the arrows run in the order they act and cross none."
+     "what": "A figure of the roles the user stories need and each store of data, read without the text around it. Each element holds its name, its type and its technology, such as a web app in React and TypeScript or a database in PostgreSQL, and nothing more. Each arrow says what one does to another, with the data it hands on, named as in the data model, and the protocol where it matters, such as HTTPS with JSON. A legend explains every symbol the figure uses. The arrows are laid out so the reader follows them in the order they act."
     },
     {
      "id": "responsibilities",
-     "what": "The first items of the list under Components: what a role alone is responsible for that no arrow shows."
+     "what": "Read with the components figure: what each role alone is responsible for that no arrow shows."
     },
     {
      "id": "choices",
-     "what": "The items of the lists under Components, Sequences, Deployment and Test that give a choice the reader would question, such as a technology or a tool, with why it was made over the other way."
+     "what": "For each choice the reader would question, such as a technology or a tool, why it was made over the other way, set where the reader meets the choice."
     },
     {
      "id": "data-model",
-     "what": "The figure under Data model, the second subsection of the Logical view section: an SVG file beside the document drawn by hand in the notation of an ER diagram. It has a box for each data the roles pass or keep, holding the data's name alone, and a line between two data for each relation between them, labelled with the relation's name, its ends drawn in crow's-foot notation for its cardinality, such as one to many."
+     "what": "A figure of each data the roles pass or keep, showing its name alone, and of each relation between two data, labelled with the relation's name and marked at both ends with how many of each it joins, such as one to many."
     },
     {
      "id": "sequences",
-     "what": "The UML sequence diagrams in Mermaid under Sequences, the third subsection of the Logical view section, one for each user story; a sequence has one layout, its order down the page, so Mermaid draws it from text. Each has a participant for the user, for each role the story reaches, named as in Components, and for each thing outside the product it reaches; and a message for each step, labelled in a few words with what one does and the data handed on, named as in the data model."
+     "what": "For each user story, its steps in the order they happen, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model."
     },
     {
      "id": "deployment",
-     "what": "The figure under Deployment, the first subsection of the Physical view section: an SVG file beside the document drawn by hand in the notation of a C4 deployment diagram. Each outer box is an execution environment, such as a cloud service, a phone, the user's computer or CI, with its technology tag; it holds the deployment units, such as an app or a container, each with its technology tag and, by their names in Components, the roles that run in it and the data kept in it; and a box for each thing outside the product they depend on has an arrow labelled with what is used. The list under it gives how the product is started, and choices."
+     "what": "A figure of each execution environment, such as a cloud service, a phone, the user's computer or CI, with its technology. Each environment holds its deployment units, such as an app or a container, each with its technology and, by their names in Components, the roles that run in it and the data kept in it. Each thing outside the product that they depend on is shown, with what is used. With the figure, how the product is started, and choices."
     },
     {
      "id": "directory",
-     "what": "The tree under Directory structure, the second subsection of the Physical view section: the folders and files of the product, in a text block, as the files lie, each line that holds a role or a data naming it as in Components with its technology tag."
+     "what": "The folders and files of the product as they lie, nested as on disk, each one that holds a role or a data naming it as in Components, with its technology."
     },
     {
      "id": "test-table",
-     "what": "The table under Test, the last section: a row for each deployment unit, named as in Deployment with its technology tag; a column for each test type from narrow scope to wide, unit, integration and end-to-end; each cell a tool, a weight, such as ●●● or ●●○, and what it checks in a few words, as \"<tool> · <weight> · <what it checks>\"; an empty cell hatched, ▨, with a footnote that says why it is empty; and the note of the units left out because every cell of their row would be empty, with why."
+     "what": "A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why."
     },
     {
      "id": "test-rules",
-     "what": "The lines under the table: for each test type, including any the product adds, what it makes real, what it fakes and when it passes, and, for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, at the start of Test before the table, a link to the project's shared test rules, with only what differs written here."
+     "what": "For each test type, including any the product adds, what it makes real, what it fakes and when it passes, and, for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here."
     }
    ]
   },
@@ -139,7 +139,7 @@
     "steps": [
      "Walk each scenario of the UX step by step, and mark each step where the user, a person or an AI, meets the product.",
      "Group the marked steps by the way they reach the product, such as one command or one call.",
-     "Write one story for each way: \"As <the user>, I want <the way>. Carries <the scenarios or steps>.\"",
+     "Write one story for each way, naming the user, the way and the scenarios or steps it carries, such as \"As <the user>, I want <the way>. Carries <the scenarios or steps>.\"",
      "Check that every marked step is carried by one story, and add a story for a step that none carries."
     ],
     "grounds": [
@@ -173,7 +173,7 @@
      "Walk each user story, and list what must be decided along it, first the decisions that are hard to make or likely to change.",
      "Give each decision one role, and let that role keep it from the others.",
      "Draw an arrow for each thing one role asks of another, labelled with what it does and the data it hands on, not with a word such as \"uses\".",
-     "Under the figure, write what each role alone decides that no arrow shows.",
+     "With the figure, write what each role alone decides that no arrow shows.",
      "Ask of each decision which role makes it; where two roles or none answer, move the decision or split the role."
     ],
     "grounds": [
@@ -188,8 +188,8 @@
     "thinking": "Each role's box says what kind of thing it is and what it is made with, so the builder starts on it with nothing left to choose.",
     "steps": [
      "For each role and each store of data, choose its type, such as a service or a module, and its technology.",
-     "Write them as a tag in its box, after its name.",
-     "Give each box the shape of its kind of element, and add a legend of the shapes and the tags.",
+     "Show them in its box with its name, such as a tag \"[web app · React, TypeScript]\" after the name.",
+     "Add a legend that explains every shape, tag and other symbol the figure uses.",
      "Check that every role of one kind has the same type and technology, or that a choice under the figure says why not.",
      "Read the figure without the text around it, and add to the legend or the tags whatever the reader would still have to ask."
     ],
@@ -207,7 +207,7 @@
      "From the arrows of Components and the user stories, list each data a role passes or keeps.",
      "Draw a box for each, holding its name alone, and leave its fields to where the data is built.",
      "For each pair of data that refer to one another, draw a line labelled with what the relation means.",
-     "Mark both ends of the line with how many of each it joins, in crow's-foot notation.",
+     "Mark both ends of the line with how many of each it joins, such as in crow's-foot notation.",
      "For each line, ask whether the role that writes it and the role that reads it would keep it the same way; where they would not, name the relation more exactly."
     ],
     "grounds": [
@@ -220,7 +220,7 @@
     "question": "Q7",
     "thinking": "Each story is traced through the roles in order, so every step of it has a role that takes it and data that it hands on.",
     "steps": [
-     "For each user story, start a Mermaid sequence diagram with the user, each role the story reaches, named as in Components, and each thing outside the product it reaches.",
+     "For each user story, start a diagram of its steps in order, such as a sequence diagram in Mermaid, with the user, each role the story reaches, named as in Components, and each thing outside the product it reaches.",
      "Write the user's first request as the first message.",
      "Write each next step as one message from the role that takes it to the one it acts on, labelled in a few words with what it does and the data, named as in the data model.",
      "End with the message that gives the user what the story is for.",
@@ -280,7 +280,7 @@
      "Write in each unit, by their names in Components, the roles that run in it and the data kept in it.",
      "Draw each thing outside the product that the roles depend on, with an arrow saying what is used.",
      "Leave out any infrastructure the parts do not need.",
-     "Under the figure, write how the product is started.",
+     "With the figure, write how the product is started.",
      "Check that each role and each data of Components sits in one unit."
     ],
     "grounds": [
@@ -294,7 +294,7 @@
     "question": "Q9",
     "thinking": "The tree joins each role and each data to the one place where it is made, so the builder finds where to change it.",
     "steps": [
-     "Run tree on the product, or lay out the folders planned.",
+     "List the folders and files as they lie, such as by running tree on the product, or lay out the folders planned.",
      "Keep the folders and files that hold a role or a data, and leave out what lies inside each.",
      "On each line kept, name the role or the data it holds, as Components names it, with its technology tag.",
      "Check that each role and each data stands on one line; where it stands on none or on two, move the files or the line."
@@ -311,9 +311,9 @@
     "thinking": "A table of each deployment unit against each scope of test shows at a glance what is tested, how heavily, and why a gap is there.",
     "steps": [
      "Take each deployment unit from Deployment, with its tag, as a row.",
-     "Make a column for each test type, from narrow scope to wide: unit, integration and end-to-end.",
-     "In each cell, write the tool, the weight, and what it checks in a few words.",
-     "Hatch an empty cell, and give its reason in a footnote.",
+     "Make a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end.",
+     "In each cell, write the tool, the weight, and what it checks in a few words, such as \"<tool> · ●●○ · <what it checks>\".",
+     "Mark an empty cell as empty, such as by hatching it, ▨, and say why it is empty, such as in a footnote.",
      "Leave out a unit whose every cell would be empty, and say why under the table.",
      "Check that the wider tests are fewer, and that each user story is run end to end in some row."
     ],
@@ -365,7 +365,7 @@
      "Read each figure and the table as a builder new to the product, and mark each choice they would question, such as a technology, a tool or a unit's weight.",
      "For each, name the other way that builder would think of.",
      "Write, in full sentences, why this way was taken over that one, and what it costs.",
-     "Put it in the list under the figure or the table that shows the choice.",
+     "Put it where the reader meets the choice, such as in the list under the figure or the table that shows it.",
      "For each unit's weight, write what a failure of that unit would cost the user."
     ],
     "grounds": [
