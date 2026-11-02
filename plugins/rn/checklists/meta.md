@@ -5,6 +5,19 @@ a deliverable of one kind, a person or an AI, answering its questions one by one
 deliverable as its user would, and by whoever makes the deliverable with it open. Each deliverable a
 checklist passes is one its user achieves their purpose with.
 
+## Think from the purpose
+
+Every checklist, and every deliverable made with one, is thought out this way (Descartes, Discourse
+on the Method, 1637, rules two to four; Simon, "The Architecture of Complexity", 1962).
+
+1. Divide and give meaning. Split the purpose into what must hold for it, and each of those again,
+   until a fact or the user settles it. Name each part by what it serves. A part that reaches no
+   purpose serves nothing and is cut.
+2. Build in order. Put the parts together, each after those it rests on, and check each as it is
+   put in.
+3. See across the branches. One part serves several others, and one rests on another in a different
+   branch. Once it is whole, judge the whole by its purpose.
+
 ## Format
 
 ```markdown
@@ -46,28 +59,30 @@ the questions need.
 
 ### Q-2: The Format
 
-Does the format hold every part the purpose needs, and no part it does not?
+Is the format a tree drawn from the purpose, each element under the element it serves, and does
+every element reach the purpose?
 
-Why: a missing part leaves the user unable to achieve the purpose, and a part with no use adds work
-to every deliverable of the kind. The format is the least a deliverable holds, not a mould: a part
-beyond it that its user uses is kept, as doc.md's "Every part used" asks.
+Why: a missing element leaves the user unable to achieve the purpose, and an element that reaches
+no purpose adds work to every deliverable of the kind and serves nothing. An element no branch joins
+to the purpose is the sign of one to cut. The format is the least a deliverable holds, not a mould:
+a part beyond it that its user uses is kept, as doc.md's "Every part used" asks.
 
-### Q-3: The questions, over the purpose and the format
+### Q-3: The questions, one on each element
 
-Does every element the format holds, and every part of the purpose, have a question that asks what
-the user gets from it, and does no question ask what neither needs?
+Does each element of the format's tree, and its root, the purpose, have one question that asks
+whether the user gets from it what it serves, and does each question ask of one of them?
 
-Why: the questions are drawn from the purpose and the format, so each rests on what its user
-achieves. An element no question asks passes unmet. A part asked of only one of its elements lets
-the rest through, however many questions look at the part. A question beyond the purpose and the
-format costs whoever makes and whoever judges each deliverable.
+Why: the questions are drawn from the purpose through the format, so each rests on what its user
+achieves. An element no question asks passes unmet, and a question asked only of an element's
+children lets the element itself through: objectives can each be good while two of them say the
+same, so a developer cannot tell which one a change serves. The question on the root judges the whole by its purpose. A question
+that asks of no element shows an element the format lacks, or a question the purpose does not need.
 
-Fails: a UX checklist whose scenarios question asks whether the developer can point to a scenario,
-so a document with two objectives and one scenario passes, and whose participants' kinds are said
-only in a Why.
+Fails: a UX checklist with questions on the objectives, the key results and the scenarios, but none
+on the OKRs or the Scenarios as a whole, and the participants' kinds said only in a Why.
 
-Passes: the same question asking, for each objective, what the user does first and who takes each
-step, a person, an AI or a script, until they reach it.
+Passes: the same checklist with a question on each of the OKRs, an objective, a key result, the
+Scenarios, the participants and a scenario, and one on the whole document.
 
 ### Q-4: Each question, one thing
 
