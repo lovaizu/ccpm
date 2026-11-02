@@ -181,9 +181,19 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
 Questions shared by several kinds, such as those of every document, are written once in a best
 practice of their own, and a kind's best practice names it in `includes`, as `readme.json` names
 `refactor-doc`; each question is named with its file, as `refactor-doc/Q3`. A refactoring best
-practice has no `template`, as the deliverable keeps its kind's shape. rn's meta.md, how a
-Standard and its Practice are made, is remade as the best practice planner builds with. A
-question copied into each kind would be mended in one and left old in the rest.
+practice has no `template`, as the deliverable keeps its kind's shape. A question copied into
+each kind would be mended in one and left old in the rest.
+
+Three best practices stand over every kind, each with one purpose:
+
+- meta, the best practice planner builds every best practice with, refactor-doc and
+  refactor-code among them: fit for its purpose. It is remade from rn's meta.md and rests on Think
+  from the purpose: divide and give meaning, build in order, see across the branches.
+- refactor-doc, how a document says what it says: understood as meant, on one reading.
+- refactor-code, how code is written: changed with confidence.
+
+A kind's own best practice gives what its deliverable says and does, and the refactoring one how it
+says it.
 
 ## Sources
 
