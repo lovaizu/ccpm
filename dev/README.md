@@ -6,9 +6,9 @@ folder, so nothing here reaches its users' machines.
 Every plugin is built on [how a plugin works](./architecture.md). The order the work on a plugin
 goes in is in [.claude/rules/dev.md](../.claude/rules/dev.md).
 
-- [turn](./turn/)
-- [rn](./rn/)
-- [lane](./lane/): also `testing.py` and `trials/trying.py`, what every plugin's tests and trials
+- [Turn](./turn/)
+- [Rn](./rn/)
+- [Lane](./lane/): also `testing.py` and `trials/trying.py`, what every plugin's tests and trials
   stand on
 
 ## The checks on every push

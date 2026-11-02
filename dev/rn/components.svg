@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1210 650" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>rn's components</title>
+  <title>Rn's components</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
@@ -35,11 +35,11 @@
   <text class="kind" x="155" y="278">[AI · subagent, Markdown]</text>
 
   <rect class="box" x="880" y="230" width="270" height="90" rx="45"/>
-  <text class="name" x="1015" y="258">turn</text>
+  <text class="name" x="1015" y="258">Turn</text>
   <text class="kind" x="1015" y="278">[plugin · Claude Code]</text>
 
   <rect class="box" x="440" y="460" width="280" height="90" rx="0"/>
-  <text class="name" x="580" y="488">rn's scripts</text>
+  <text class="name" x="580" y="488">Rn's scripts</text>
   <text class="kind" x="580" y="508">[scripts · Python 3.9]</text>
 
   <rect class="box" x="880" y="460" width="270" height="90" rx="8"/>
@@ -85,5 +85,5 @@
   <rect class="box" x="850" y="612" width="40" height="22" rx="0"/>
   <text class="label" x="898" y="628">code</text>
   <rect class="box" x="960" y="612" width="40" height="22" rx="5"/>
-  <text class="label" x="1008" y="628">person, or outside rn</text>
+  <text class="label" x="1008" y="628">person, or outside Rn</text>
 </svg>

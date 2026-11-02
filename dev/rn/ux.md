@@ -1,4 +1,4 @@
-# rn UX
+# Rn UX
 
 ## OKRs
 
@@ -18,8 +18,8 @@ Key results have no target values. When a measure becomes a target, it stops bei
 
 ## Scenarios
 
-The person is a person. rn is an AI: a Claude Code plugin that works in the person's conversation.
-A sign-off is a stop where rn shows a proposal and waits: the person types `/rn:ty` to approve it,
+The person is a person. Rn is an AI: a Claude Code plugin that works in the person's conversation.
+A sign-off is a stop where Rn shows a proposal and waits: the person types `/rn:ty` to approve it,
 or `/rn:gm <feedback>` to ask for a change.
 
 ### O1: From a request in rough words to a merged pull request
@@ -27,10 +27,10 @@ or `/rn:gm <feedback>` to ask for a change.
 ```mermaid
 sequenceDiagram
   participant U as person (person)
-  participant R as rn (AI)
+  participant R as Rn (AI)
   U->>R: /rn:up <what they want>
   loop one message per point to decide
-    R->>U: the point, with what rn looked up and the answer it recommends
+    R->>U: the point, with what Rn looked up and the answer it recommends
     U->>R: an answer
   end
   R->>U: the goal and the acceptance criteria, on a draft pull request
@@ -47,7 +47,7 @@ sequenceDiagram
   U->>R: /rn:ty
   loop one message per learning
     R->>U: what the work taught, and where it would help later work
-    U->>R: a question for that kind's checklist, an issue to rn's makers, or neither
+    U->>R: a question for that kind's checklist, an issue to Rn's makers, or neither
   end
   R-->>U: the pull request marked ready
   Note over U: merges

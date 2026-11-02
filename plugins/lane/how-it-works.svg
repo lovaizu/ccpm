@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 560" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>How lane works</title>
+  <title>How Lane works</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
     .lane { fill: #ddf4ff; stroke: #54aeff; }
@@ -45,7 +45,7 @@
   <text class="name" x="110" y="503">the orchestrator</text>
 
   <rect class="box lane" x="680" y="262" width="28" height="18" rx="4"/>
-  <text class="label" x="716" y="276">parts of the lane plugin</text>
+  <text class="label" x="716" y="276">parts of the Lane plugin</text>
 
   <!-- while you build your plugin -->
   <path class="line" d="M200,48 H430" marker-end="url(#arrow)"/>

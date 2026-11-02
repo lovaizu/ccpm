@@ -1,14 +1,14 @@
-# lane architecture
+# Lane architecture
 
 `lay.py` turns each rule of a proposal into a sentence in a step and a check of that sentence. It
 puts the checks into the plugin as one check script. Claude Code runs the check script on each tool
 call and end of work of a subagent with rules. The check script stops each break with the sentence,
-and tells the orchestrator each move of its flow. The experience this delivers is in [lane's UX](ux.md).
+and tells the orchestrator each move of its flow. The experience this delivers is in [Lane's UX](ux.md).
 
 ## Principles
 
-lane follows [how a plugin works](../architecture.md#principles), except the principles about an
-orchestrator and its roles: lane has neither, as `lay.py` is run by the developer AI and the check
+Lane follows [how a plugin works](../architecture.md#principles), except the principles about an
+orchestrator and its roles: Lane has neither, as `lay.py` is run by the developer AI and the check
 script runs inside other plugins. The code and [the lanes](../../plugins/lane/docs/lanes.md) call a
 rule a lane and the check script the guard.
 
@@ -34,7 +34,7 @@ The subagent meets the same words in both, and no one can make them differ.
 A rule copied by hand could be one that no one approved
 ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
 
-### lane knows no plugin
+### Lane knows no plugin
 
 Each type of rule is one check for every plugin; what differs reaches it as the rule's values, a
 value given for the run, or an adapter.
@@ -46,7 +46,7 @@ a new lane.
 
 When the check script cannot check a call or an end, it stops it. A fault of the plugin or of Claude
 Code, such as a failing adapter, is told to the subagent and the operator, the one who runs the
-plugin, with who must fix it; a call written in a form lane cannot read, such as a path with `$`,
+plugin, with who must fix it; a call written in a form Lane cannot read, such as a path with `$`,
 is told to the subagent alone, with how to write it.
 
 A call let through unchecked could be the break the rule is there to stop
@@ -60,11 +60,11 @@ calls it keeps itself, never from what a subagent writes about its work.
 
 An AI that says it followed a step may not have.
 
-### The plugin needs nothing from lane
+### The plugin needs nothing from Lane
 
 The check script is kept and run in the developer AI's plugin.
 
-Whoever runs the plugin did not choose lane; a plugin that needed lane installed would run without
+Whoever runs the plugin did not choose Lane; a plugin that needed Lane installed would run without
 checks where it is missing.
 
 ## User stories
@@ -83,7 +83,7 @@ checks where it is missing.
 
 ### Components
 
-![lane's components](components.svg)
+![Lane's components](components.svg)
 
 - `lay.py` alone writes into the plugin, and only a proposal that `proposal.py` accepts. `lay.py up`
   rewrites the hooks and the check script for the rules the plugin has.
@@ -100,12 +100,12 @@ checks where it is missing.
   lasts until the session ends.
 - `called.py` keeps calls itself rather than reading only the record, as Claude Code may write a
   call's result after the next call's hooks have run.
-- An adapter is a script lane runs, not a module it imports, so `lay.py up` replaces the check script
+- An adapter is a script Lane runs, not a module it imports, so `lay.py up` replaces the check script
   without touching an adapter.
 
 ### Data model
 
-![lane's data model](data-model.svg)
+![Lane's data model](data-model.svg)
 
 ### Sequences
 
@@ -230,19 +230,19 @@ sequenceDiagram
 
 ### Deployment
 
-![lane's deployment](deployment.svg)
+![Lane's deployment](deployment.svg)
 
-- The developer AI installs lane as [the README](../../plugins/lane/README.md#installation) says and
+- The developer AI installs Lane as [the README](../../plugins/lane/README.md#installation) says and
   runs `python3 <installPath>/scripts/lay.py`; Claude Code starts the check script through the
   plugin's hook entries.
-- lane's code uses Python 3.9 and its standard library only, as
+- Lane's code uses Python 3.9 and its standard library only, as
   [Python 3.9 and the standard library](../architecture.md#python-39-and-the-standard-library) says,
-  so whoever runs the plugin installs nothing for lane. Each hook's command checks for `python3` in
+  so whoever runs the plugin installs nothing for Lane. Each hook's command checks for `python3` in
   `sh` first, as without Python the check script cannot even read the event.
 - The kept calls live in the system's temporary folder, as
   [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) says for
   files used only while a plugin runs; they mean nothing once the subagent ends.
-- In the ccpm marketplace, `hooks/lane/` is a link to lane's code, as
+- In the ccpm marketplace, `hooks/lane/` is a link to Lane's code, as
   [Code kept once](../architecture.md#code-kept-once) says; elsewhere it is a copy with a `VERSION`
   file that `lay.py up` reads.
 
@@ -276,21 +276,21 @@ dev/lane/
 
 ## Test
 
-lane is tested by [Test](../architecture.md#test); what follows is what lane adds.
+Lane is tested by [Test](../architecture.md#test); what follows is what Lane adds.
 
 | Deployment unit | Unit | Integration | End-to-end |
 |---|---|---|---|
 | lay.py process [python3 3.9] | unittest, Cosmic Ray, Hypothesis · ●●● · the proposal checked, steps and hook entries written | unittest, real files, a stand-in `claude` · ●●○ · print, write and up on a plugin | ▨[^1] |
 | Hook process [python3 3.9] | unittest, Cosmic Ray, Hypothesis · ●●● · each type of rule, tool calls, records, the next move | unittest, the hook's command in `sh` · ●●○ · the decision JSON, the Python check | ▨[^1] |
-| lane with a plugin [Claude Code · Opus] | ▨[^2] | ▨[^2] | trials · ●●○ · the README's walkthrough, each type of rule, the flow |
+| Lane with a plugin [Claude Code · Opus] | ▨[^2] | ▨[^2] | trials · ●●○ · the README's walkthrough, each type of rule, the flow |
 
 [^1]: End-to-end tests run on the whole, in the last row.
 [^2]: Its units are tested in their own rows.
 
 - Unit and integration tests fake Claude Code: each event is JSON, the record a file in the shape of
   the version `record.py` names, `claude` a script on `PATH`. Pass: all pass.
-- End-to-end tests run Claude Code on copies of lane and a plugin, with a prompt that invites a
+- End-to-end tests run Claude Code on copies of Lane and a plugin, with a prompt that invites a
   break. Pass: in three runs of three, each invited break is stopped with its sentence and each
   allowed call goes through, as an AI that goes back once may go around the rule the next time.
 - The lay.py and hook processes weigh ●●●: a failure writes what no one approved, or lets a break
-  through, in a plugin whose operator never sees lane.
+  through, in a plugin whose operator never sees Lane.

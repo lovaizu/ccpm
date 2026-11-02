@@ -1,10 +1,10 @@
-# lane
+# Lane
 
-lane is a Claude Code plugin that checks the subagents of your plugin, so that they keep the rules
+Lane is a Claude Code plugin that checks the subagents of your plugin, so that they keep the rules
 of their steps and start one another in the order that you set.
 
-lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps. With
-lane, your subagents keep the rules of their steps on every run, and your orchestrator, the subagent
+Lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps. With
+Lane, your subagents keep the rules of their steps on every run, and your orchestrator, the subagent
 that starts the others, starts them in your order, which you write as a flow. You write no code for
 the checks and no script for the order.
 
@@ -15,17 +15,17 @@ that sees the sentence of its own step goes back to the step.
 
 **Non-goals**
 
-- lane checks only subagents that have rules. It does not check the main conversation or a skill,
+- Lane checks only subagents that have rules. It does not check the main conversation or a skill,
   so the orchestrator of a flow must be a subagent.
-- lane is not a security boundary. Block what must never happen, such as a merge, with the branch
+- Lane is not a security boundary. Block what must never happen, such as a merge, with the branch
   protection of GitHub or the permission rules of Claude Code.
-- lane sees tool calls and ends of work, not what a subagent thinks. "Compare each option" cannot
+- Lane sees tool calls and ends of work, not what a subagent thinks. "Compare each option" cannot
   have a rule.
-- lane does not read every form of a shell command. It stops a command that names a file in a way
+- Lane does not read every form of a shell command. It stops a command that names a file in a way
   it cannot follow, such as `$d/out.csv`, and asks for the plain path.
-- lane does not choose the next subagent from a run's results. A flow is a fixed order that goes
+- Lane does not choose the next subagent from a run's results. A flow is a fixed order that goes
   back only on an answer you name, such as `more`.
-- lane reads the texts your plugin writes, such as a list of items to answer, in one format only.
+- Lane reads the texts your plugin writes, such as a list of items to answer, in one format only.
   For another format, you write an adapter, as [The lanes](docs/lanes.md#the-ports) says.
 
 ## Requirements
@@ -44,7 +44,7 @@ claude plugin install lane@ccpm
 ```
 
 `claude plugin list --json` then shows `lane@ccpm` with its `installPath`. Each version installs in
-a new folder, so read `installPath` again after an update. lane is ready when `lay.py` shows its
+a new folder, so read `installPath` again after an update. Lane is ready when `lay.py` shows its
 usage:
 
 ```console
@@ -111,10 +111,10 @@ changelog: Do not run `git commit` or `git push`.
 
 ## How it works
 
-![How lane works](how-it-works.svg)
+![How Lane works](how-it-works.svg)
 
-lane puts its checks into your plugin as one script, the check script, in `hooks/lane/`. It runs
-from there, so whoever runs your plugin does not need lane.
+Lane puts its checks into your plugin as one script, the check script, in `hooks/lane/`. It runs
+from there, so whoever runs your plugin does not need Lane.
 
 ## Documentation
 
@@ -125,7 +125,7 @@ from there, so whoever runs your plugin does not need lane.
 
 ## Development
 
-[lane's development folder](../../dev/lane/README.md) holds its UX, its architecture and its tests.
+[Lane's development folder](../../dev/lane/README.md) holds its UX, its architecture and its tests.
 
 ## License
 

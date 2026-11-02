@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1290 790" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>turn&#x27;s deployment</title>
+  <title>Turn&#x27;s deployment</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #59636e; stroke-width: 1.5; }
@@ -44,23 +44,23 @@
   <text class="name" x="175.0" y="157.0">Main conversation</text>
   <text class="tag" x="175.0" y="174.0">[Claude Code conversation]</text>
   <rect class="unit" x="330" y="95" width="520" height="180" rx="10"/>
-  <text class="envname" x="342" y="115">turn&#x27;s agents [Claude Code subagents · Markdown]</text>
+  <text class="envname" x="342" y="115">Turn&#x27;s agents [Claude Code subagents · Markdown]</text>
   <text class="name" x="590" y="181" text-anchor="middle">turn:up, Planner, Designer,</text>
   <text class="name" x="590" y="203" text-anchor="middle">Builder, Evaluator</text>
   <rect class="env" x="40" y="330" width="400" height="160" rx="10"/>
   <text class="envname" x="52" y="350">python3 [Python 3.9 or later]</text>
   <rect class="unit" x="55" y="365" width="180" height="110" rx="10"/>
-  <text class="envname" x="67" y="385">turn&#x27;s scripts</text>
+  <text class="envname" x="67" y="385">Turn&#x27;s scripts</text>
   <text class="utag" x="67" y="403">[process · stdlib]</text>
   <text class="name" x="145" y="425" text-anchor="middle">check.py,</text>
   <text class="name" x="145" y="445" text-anchor="middle">wait.py,</text>
   <text class="name" x="145" y="465" text-anchor="middle">Items adapter</text>
   <rect class="unit" x="250" y="365" width="175" height="110" rx="10"/>
-  <text class="envname" x="262" y="385">lane&#x27;s check script</text>
-  <text class="utag" x="262" y="403">[hook process · lane]</text>
+  <text class="envname" x="262" y="385">Lane&#x27;s check script</text>
+  <text class="utag" x="262" y="403">[hook process · Lane]</text>
   <text class="name" x="337" y="445" text-anchor="middle">Check script</text>
   <rect class="unit" x="40" y="515" width="400" height="175" rx="10"/>
-  <text class="envname" x="52" y="535">turn&#x27;s installed folder [plugin folder]</text>
+  <text class="envname" x="52" y="535">Turn&#x27;s installed folder [plugin folder]</text>
   <path class="store" d="M60,574 A85.0,9 0 0 1 230,574 V646 A85.0,9 0 0 1 60,646 Z"/>
   <path class="store" d="M60,574 A85.0,9 0 0 0 230,574"/>
   <text class="name" x="145.0" y="612.0">Templates</text>
@@ -100,11 +100,11 @@
   <path class="line" d="M880,240 L1000,240" marker-end="url(#arrow)"/>
   <text class="label" x="940" y="232" text-anchor="middle">reads [HTTPS]</text>
   <path class="line" d="M1135,600 L1135,740 L240,740 L240,690" marker-end="url(#arrow)"/>
-  <text class="label" x="680" y="732" text-anchor="middle">installs turn [git · HTTPS]</text>
+  <text class="label" x="680" y="732" text-anchor="middle">installs Turn [git · HTTPS]</text>
   <text class="envname" x="20" y="770">Legend</text>
   <rect class="env" x="90" y="756" width="36" height="20" rx="4"/>
   <text class="label" x="134" y="770">execution environment</text>
   <rect class="unit" x="300" y="756" width="36" height="20" rx="4"/>
   <text class="label" x="344" y="770">deployment unit [technology]</text>
-  <text class="label" x="560" y="770">inside a unit: roles and stores, named as in Components; dashed: outside turn</text>
+  <text class="label" x="560" y="770">inside a unit: roles and stores, named as in Components; dashed: outside Turn</text>
 </svg>

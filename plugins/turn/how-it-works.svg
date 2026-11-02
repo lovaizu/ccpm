@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>Who does what to whom in turn</title>
+  <title>Who does what to whom in Turn</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
     .you { fill: #ddf4ff; stroke: #0969da; stroke-width: 1.5; }
@@ -55,7 +55,7 @@
   <circle class="eye" cx="362" cy="146" r="5"/>
   <path class="mouth" d="M338,166 H362"/>
   <text class="name" x="350" y="204">designer</text>
-  <text class="kind" x="350" y="221">turn's AI</text>
+  <text class="kind" x="350" y="221">Turn's AI</text>
 
   <path class="fold" d="M850,108 V122"/>
   <circle class="box" cx="850" cy="104" r="4"/>
@@ -64,7 +64,7 @@
   <circle class="eye" cx="862" cy="146" r="5"/>
   <path class="mouth" d="M838,166 H862"/>
   <text class="name" x="850" y="204">builder</text>
-  <text class="kind" x="850" y="221">turn's AI</text>
+  <text class="kind" x="850" y="221">Turn's AI</text>
 
   <path class="fold" d="M1105,108 V122"/>
   <circle class="box" cx="1105" cy="104" r="4"/>
@@ -73,7 +73,7 @@
   <circle class="eye" cx="1117" cy="146" r="5"/>
   <path class="mouth" d="M1093,166 H1117"/>
   <text class="name" x="1105" y="204">planner</text>
-  <text class="kind" x="1105" y="221">turn's AI</text>
+  <text class="kind" x="1105" y="221">Turn's AI</text>
 
   <path class="fold" d="M850,446 V460"/>
   <circle class="box" cx="850" cy="442" r="4"/>

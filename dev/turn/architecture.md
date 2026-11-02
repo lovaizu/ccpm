@@ -1,27 +1,27 @@
-# turn architecture
+# Turn architecture
 
-turn makes a work from its kind's template and the person's answers. A template holds a kind's
+Turn makes a work from its kind's template and the person's answers. A template holds a kind's
 format, the shape of the work, and its questions, each asking what the work's user gets. Four roles
 make the work: planner gives the template, designer decides the design, builder makes the work, and
 evaluator, which never sees the design, uses the work as its user would and answers each question
-good or more. [lane](../../plugins/lane/README.md) holds the order of the roles and the limits of
-each. The experience this delivers is in [turn's UX](ux.md).
+good or more. [Lane](../../plugins/lane/README.md) holds the order of the roles and the limits of
+each. The experience this delivers is in [Turn's UX](ux.md).
 
 ## Principles
 
-turn follows [how a plugin works](../architecture.md#principles), except where a choice under
+Turn follows [how a plugin works](../architecture.md#principles), except where a choice under
 Components says why not. A **good** answer names the lines of the work that meet a question's aim; a
 **more** says what the work's user gets once it is good, never how to make it.
 
 ### One way for every kind
 
-turn's roles hold no rule of any one kind; a kind's template holds all that the kind needs.
+Turn's roles hold no rule of any one kind; a kind's template holds all that the kind needs.
 
 A new kind then needs only a template, and a rule for one kind would bend the work of every other.
 
 ### Nothing is needed beforehand
 
-Planner asks the kind, and designer asks the work's purpose; turn takes what a caller already
+Planner asks the kind, and designer asks the work's purpose; Turn takes what a caller already
 settled as decided.
 
 Anyone can then ask for a work in a sentence, and no one is asked twice.
@@ -90,19 +90,19 @@ content phase comes back whenever the move goes to designer.
 The files cannot tell it: a point returned in the refactoring phase that designer keeps leaves the
 files as they were, while the work must pass the content phase again.
 
-### lane holds the order and the limits
+### Lane holds the order and the limits
 
-turn declares its flow and each role's limits in a proposal to lane, and its own scripts check only
+Turn declares its flow and each role's limits in a proposal to Lane, and its own scripts check only
 what no lane holds.
 
-A script of turn's own for the order would read the roles' calls apart from lane and drift from it.
+A script of Turn's own for the order would read the roles' calls apart from Lane and drift from it.
 
-### turn knows others only by what they document
+### Turn knows others only by what they document
 
-turn uses lane only as lane's documents say, and a caller only as
-[Calling turn](../../plugins/turn/docs/calling.md) says.
+Turn uses Lane only as Lane's documents say, and a caller only as
+[Calling Turn](../../plugins/turn/docs/calling.md) says.
 
-lane and each caller then change their code freely behind what they document.
+Lane and each caller then change their code freely behind what they document.
 
 ## User stories
 
@@ -114,19 +114,19 @@ lane and each caller then change their code freely behind what they document.
   and approve the design. Carries O1 from "What is the release for?" to the approved key points.
 - As that person, I want the work only once an AI using it as its user would finds every question
   good. Carries O1's "Writes the release, and checks it" and "The press release".
-- As a plugin's step, such as rn's, I want to start `turn:up` with what my step has settled, and get
-  the work back. Carries O1 when the person reaches turn through such a plugin.
+- As a plugin's step, such as Rn's, I want to start `turn:up` with what my step has settled, and get
+  the work back. Carries O1 when the person reaches Turn through such a plugin.
 
 ## Logical view
 
 ### Components
 
-![turn's components](components.svg)
+![Turn's components](components.svg)
 
-- `turn:up` alone holds a run: it names the run's folder from the request, takes each move lane
+- `turn:up` alone holds a run: it names the run's folder from the request, takes each move Lane
   tells it, starts each role with the run's paths, tells the phase, and ends naming the work's files
-  once lane tells it the flow is done.
-- Planner alone gives the kind's template: one kept in `.turn/templates/`, else one turn ships, else
+  once Lane tells it the flow is done.
+- Planner alone gives the kind's template: one kept in `.turn/templates/`, else one Turn ships, else
   one drawn from research and approved by the person before it is kept.
 - Designer alone decides each point of the design, and alone brings to the person a more the
   decisions cannot make good.
@@ -137,7 +137,7 @@ lane and each caller then change their code freely behind what they document.
   more.
 - `check.py` alone checks what no lane holds: a template against its form, a design tree's joins
   and order, and that each line an answer names is in the work.
-- The items adapter alone gives lane the question IDs of a template, each named with its template,
+- The items adapter alone gives Lane the question IDs of a template, each named with its template,
   such as `readme/Q3`.
 - A role asks the person by SendMessage to the main conversation, which puts the ask to the person
   and sends the answer back to that role; `wait.py` holds the role until the answer comes, as a
@@ -145,7 +145,7 @@ lane and each caller then change their code freely behind what they document.
 
 Choices a reader would question:
 
-- `turn:up` is a subagent, not a skill, as lane lays a flow only on a subagent; one entry then
+- `turn:up` is a subagent, not a skill, as Lane lays a flow only on a subagent; one entry then
   serves the person and a plugin's step alike.
 - The main conversation starts `turn:up` in the background, so it stays free to relay each ask. Only
   the main conversation can ask the person.
@@ -154,7 +154,7 @@ Choices a reader would question:
 
 ### Data model
 
-![turn's data model](data-model.svg)
+![Turn's data model](data-model.svg)
 
 ### Sequences
 
@@ -264,19 +264,19 @@ sequenceDiagram
 
 ### Deployment
 
-![turn's deployment](deployment.svg)
+![Turn's deployment](deployment.svg)
 
-- The person installs turn as [the README](../../plugins/turn/README.md#installation) says and asks
+- The person installs Turn as [the README](../../plugins/turn/README.md#installation) says and asks
   the main conversation to have `turn:up` make a work. A plugin's step starts `turn:up` as
-  [Calling turn](../../plugins/turn/docs/calling.md) says.
+  [Calling Turn](../../plugins/turn/docs/calling.md) says.
 - A run's files lie in `.turn/<yyyymmdd>-<name>/`, and kept templates in `.turn/templates/`, in the
   folder Claude Code runs in, not at a repository's root as
-  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) says: turn
-  needs no repository, and agents read and write there without asking. An update replaces turn's
+  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) says: Turn
+  needs no repository, and agents read and write there without asking. An update replaces Turn's
   installed folder, so templates are not kept there.
 - Asked again for a work whose run stopped, `turn:up` finds the run's folder by its name, and each
   role takes up what the run's files hold.
-- lane's check script lies in turn's own folder, so the person needs no lane installed.
+- Lane's check script lies in Turn's own folder, so the person needs no Lane installed.
 
 ### Directory structure
 
@@ -304,20 +304,20 @@ dev/turn/
 
 ## Test
 
-turn is tested by [Test](../architecture.md#test); what follows is what turn adds. A trial is a run
+Turn is tested by [Test](../architecture.md#test); what follows is what Turn adds. A trial is a run
 of a role, or of the whole, judged from its records.
 
 | Deployment unit | Unit | Integration | End-to-end |
 |---|---|---|---|
-| turn's agents [subagents · Markdown] | a trial of one role, the rest mocked · ●●● · it keeps to its steps | a trial of the four roles under lane's flow, the person mocked · ●●○ · the hand-offs and each way back | ▨[^1] |
-| turn's scripts [Python 3.9 stdlib] | unittest, Cosmic Ray, Hypothesis · ●●● · each check, `wait.py`, the items adapter | unittest with lane's check script laid · ●○○ · the lanes run the checks, the flow tells each move | ▨[^1] |
-| turn's templates [JSON] | `check.py` · ●●○ · each in its form, each part looked at | ▨[^2] | ▨[^1] |
-| turn in Claude Code | ▨[^2] | ▨[^2] | a trial of each user story, the assistant as the person · ●●○ · the work, and what the person was asked |
+| Turn's agents [subagents · Markdown] | a trial of one role, the rest mocked · ●●● · it keeps to its steps | a trial of the four roles under Lane's flow, the person mocked · ●●○ · the hand-offs and each way back | ▨[^1] |
+| Turn's scripts [Python 3.9 stdlib] | unittest, Cosmic Ray, Hypothesis · ●●● · each check, `wait.py`, the items adapter | unittest with Lane's check script laid · ●○○ · the lanes run the checks, the flow tells each move | ▨[^1] |
+| Turn's templates [JSON] | `check.py` · ●●○ · each in its form, each part looked at | ▨[^2] | ▨[^1] |
+| Turn in Claude Code | ▨[^2] | ▨[^2] | a trial of each user story, the assistant as the person · ●●○ · the work, and what the person was asked |
 
 [^1]: End-to-end tests run on the whole, in the last row.
 [^2]: Nothing joins it to a neighbour, or its units are tested in their own rows.
 
-- Trials run on Opus with lane's check script laid, and pass in three runs of three, as what an AI does
+- Trials run on Opus with Lane's check script laid, and pass in three runs of three, as what an AI does
   varies from run to run. A role's trial passes when the role keeps its steps and its file passes
   `check.py`; the roles' trial when the run ends with every question good and each more mended at
   its decision; a story's trial when the person is asked only what the README's Walkthrough asks.

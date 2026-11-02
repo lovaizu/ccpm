@@ -29,7 +29,7 @@ UX's user stories and what only that plugin adds.
 - **lesson**: what fell short in a run and why, put to the user once the work is approved.
 - **hook**: a script Claude Code runs on a tool call.
 - **lane**: a step of a role held by a hook, which tells the role the step again when it drifts.
-  The ccpm plugin [lane](../plugins/lane/README.md) lays them, and its code that runs in the hooks
+  The ccpm plugin [Lane](../plugins/lane/README.md) lays them, and its code that runs in the hooks
   is the **guard**.
 - **maintainer**: the person who has the plugins built and decides what reaches their users.
 - **assistant**: the AI that builds the plugins for the maintainer.
@@ -74,7 +74,7 @@ only what that plugin gives beyond them.
   ([Messages](#messages)).
 - A plugin has a course script only where its run is a fixed loop that keeps a state
   ([Where the course is kept](#where-the-course-is-kept)).
-- The guard is lane's code laid in the plugin, and tells only subagents their steps again
+- The guard is Lane's code laid in the plugin, and tells only subagents their steps again
   ([The guard tells each role its steps again](#the-guard-tells-each-role-its-steps-again)).
 
 #### Data model
@@ -205,7 +205,7 @@ These are not the caller's. The role that meets them decides, and reports the ch
 reason, so the caller can see and change it.
 
 Each question costs the caller time and holds the run until the answer comes. A question about
-something the caller does not care about spends their time on the plugin's job. In a trial of rn on
+something the caller does not care about spends their time on the plugin's job. In a trial of Rn on
 2026-10-27, most of its 11 questions were of this kind.
 
 ### The caller approves what is theirs
@@ -277,7 +277,7 @@ it. It leaves what a machine can check to the checks that do it (Principle 6).
 
 A reader that hunts for defects finds one in every work. Each is then mended, whether or not the
 receiver would ever meet it. The rounds go on, and the work does not get better for its receiver.
-In a trial of rn on 2026-10-27, about 25 works were sent back. About 12 were for defects found by
+In a trial of Rn on 2026-10-27, about 25 works were sent back. About 12 were for defects found by
 running the work, 8 for what a linter or a type checker would have shown, and 5 for wording.
 
 The maker holds the sources, so how the work gives each Good is the maker's to decide. The reader
@@ -328,8 +328,8 @@ for what they would have shown.
 
 A plugin whose run is a fixed loop keeps its course in a script of its own.
 The script gives the orchestrator each next step, so the orchestrator cannot go on without it. A
-plugin whose course changes with what the run finds, such as rn, keeps its course in its skill's
-steps and its plan in a document. A plugin whose run keeps no state, such as turn, where the maker
+plugin whose course changes with what the run finds, such as Rn, keeps its course in its skill's
+steps and its plan in a document. A plugin whose run keeps no state, such as Turn, where the maker
 and the reader settle the work between them, keeps no course in a script.
 
 The spec-driven tools read on 2026-10-21 (Spec Kit, BMAD-METHOD, OpenSpec, superpowers and cc-sdd)
@@ -361,7 +361,7 @@ it had already made.
 ### Where a plugin writes its files
 
 Besides the work and the files its caller names, a plugin writes two kinds of files. What may be
-kept goes in `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository, as rn keeps
+kept goes in `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository, as Rn keeps
 `.rn/<yyyymmdd>-<slug>/`. What is used only while the plugin runs, including its tests' and
 trials', goes in `<plugin>/<yyyymmdd>-<name>/` in the system's temporary folder, the one Python's
 `tempfile.gettempdir()` gives. A file that an agent reads with its tools goes in the folder that may
@@ -439,7 +439,7 @@ named after that part. The files then show the parts the logical view draws.
 
 The entries lie where Claude Code looks for them, in `agents/`, `skills/` and `hooks/`. A plugin's
 own parts lie in `prompts/` if they are written as prompts, and in `scripts/` if they are written as
-code. lane's guard, which every plugin takes in, lies in `hooks/lane/`, where lane lays it.
+code. Lane's guard, which every plugin takes in, lies in `hooks/lane/`, where Lane lays it.
 
 The form of an entry is Claude Code's: a skill's folder is named after its command, and an agent is
 called by the name in its frontmatter. The job is the plugin's. A job kept in its entry is found by
@@ -461,7 +461,7 @@ it.
 Claude Code replaces `${CLAUDE_PLUGIN_ROOT}` with the plugin's folder only in what an entry's own
 body gives, not in what the Bash tool runs
 ([plugins reference](https://code.claude.com/docs/en/plugins-reference#environment-variables)). In
-a trial of turn on 2026-10-26, it was not replaced in a part read with Read either: a part naming
+a trial of Turn on 2026-10-26, it was not replaced in a part read with Read either: a part naming
 `${CLAUDE_PLUGIN_ROOT}/scripts/turn.py` ran `/scripts/turn.py`. A part naming `probe.py`, whose
 entry said where it lies, ran it in each of twelve runs, an agent's and a skill's, and in each of
 three after `/compact`, where the summary kept where it lies. Where the plugin is installed is
@@ -504,7 +504,7 @@ What the plugins already share is used, not written again. Code that more than o
 such as how a hook reads a command, is kept once, in the plugin whose job it is. Its tests are in
 that plugin's `dev/<plugin>/tests/`. Each other plugin takes it in through a relative symbolic
 link. What the tests share, such as a repository made once and copied for each test, is kept beside
-that code's tests, as lane's `dev/lane/testing.py` is.
+that code's tests, as Lane's `dev/lane/testing.py` is.
 
 Installing copies the target of a link within the marketplace into the plugin
 ([share files within a marketplace with symlinks](https://code.claude.com/docs/en/plugins/host-marketplace#share-files-within-a-marketplace-with-symlinks)).
@@ -520,16 +520,16 @@ pyproject.toml's `test-quality` group is installed. It does not tell a test's ex
 A copy gets fixed in one file and left wrong in the other. A test that takes its expected value
 from the code checks the code against itself.
 
-### Checks kept in lane
+### Checks kept in Lane
 
-A check on what an AI does is a lane of [lane](../plugins/lane/README.md), laid in each plugin by
-lane's `lay.py`. The assistant adds a check that no lane holds to lane as a lane of its own, in its
+A check on what an AI does is a lane of [Lane](../plugins/lane/README.md), laid in each plugin by
+Lane's `lay.py`. The assistant adds a check that no lane holds to Lane as a lane of its own, in its
 own named file, with one entry file for each hook event, as the official
 [`hookify`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/hookify) plugin
 does.
 
-Each check is then written and tested once, in lane, and each plugin takes lane's code in through a
-link. A check kept in a plugin of its own would read the AI's calls apart from lane and drift from
+Each check is then written and tested once, in Lane, and each plugin takes Lane's code in through a
+link. A check kept in a plugin of its own would read the AI's calls apart from Lane and drift from
 it. A check in a file of its own can be read, fixed and tested on its own.
 
 ## Test

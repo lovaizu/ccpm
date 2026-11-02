@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 910 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>How rn works</title>
+  <title>How Rn works</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
@@ -28,23 +28,23 @@
 
   <rect class="box" x="340" y="180" width="240" height="70" rx="35"/>
   <text class="name" x="460" y="206">orchestrator</text>
-  <text class="kind" x="460" y="225">rn's AI, in your conversation</text>
+  <text class="kind" x="460" y="225">Rn's AI, in your conversation</text>
 
   <rect class="box" x="670" y="180" width="220" height="70" rx="35"/>
-  <text class="name" x="780" y="206">turn</text>
+  <text class="name" x="780" y="206">Turn</text>
   <text class="kind" x="780" y="225">a plugin of AIs</text>
 
   <rect class="box" x="340" y="360" width="240" height="70" rx="0"/>
-  <text class="name" x="460" y="386">rn's scripts</text>
+  <text class="name" x="460" y="386">Rn's scripts</text>
   <text class="kind" x="460" y="405">Python</text>
 
   <rect class="box" x="670" y="360" width="220" height="70" rx="8"/>
   <text class="name" x="780" y="386">checklists</text>
-  <text class="kind" x="780" y="405">turn's, one for each kind</text>
+  <text class="kind" x="780" y="405">Turn's, one for each kind</text>
 
   <rect class="box" x="40" y="180" width="200" height="70" rx="35"/>
   <text class="name" x="140" y="206">compressor</text>
-  <text class="kind" x="140" y="225">rn's AI, with no conversation</text>
+  <text class="kind" x="140" y="225">Rn's AI, with no conversation</text>
 
   <rect class="box" x="15" y="360" width="225" height="70" rx="8"/>
   <text class="name" x="128" y="386">the work's branch</text>

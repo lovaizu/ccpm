@@ -1,25 +1,25 @@
-# rn
+# Rn
 
-rn is a Claude Code plugin that takes a piece of work you ask for in rough words to a pull request
+Rn is a Claude Code plugin that takes a piece of work you ask for in rough words to a pull request
 that meets your purpose, asking you only what is yours to decide.
 
-rn is for you if you want to hand a whole piece of work in your GitHub repository to an agent, even
-work of days, without writing out what you want first. You answer what rn asks, decide at each stop
-from what rn shows you there, and get a pull request that meets your purpose.
+Rn is for you if you want to hand a whole piece of work in your GitHub repository to an agent, even
+work of days, without writing out what you want first. You answer what Rn asks, decide at each stop
+from what Rn shows you there, and get a pull request that meets your purpose.
 
 Claude Code alone builds on your words as they stand, and over days one conversation swells and
-drifts. rn first asks you each point behind your words, one per message, with the answer it
+drifts. Rn first asks you each point behind your words, one per message, with the answer it
 recommends, and writes your purpose down as a goal and acceptance criteria that every task serves.
 It carries only a short record of the plan from move to move, so the work neither swells nor drifts
-and goes on in any conversation. [turn](../turn/README.md), installed with rn, makes each document
+and goes on in any conversation. [Turn](../turn/README.md), installed with Rn, makes each document
 and the finished work, and an AI that did not make it uses it in your place before you see it.
 
 **Non-goals**
 
-- rn does not merge: it marks the pull request ready, and the merge is yours.
-- rn does not push to your default branch: it works on a branch of its own.
-- rn sends nothing to its makers without your yes.
-- rn does not change the checklists turn ships: a question you add to the checklist of a kind of
+- Rn does not merge: it marks the pull request ready, and the merge is yours.
+- Rn does not push to your default branch: it works on a branch of its own.
+- Rn sends nothing to its makers without your yes.
+- Rn does not change the checklists Turn ships: a question you add to the checklist of a kind of
   work goes into `.turn/templates/` in your repository.
 
 ## Requirements
@@ -40,7 +40,7 @@ and the finished work, and an AI that did not make it uses it in your place befo
 /plugin install rn@ccpm
 ```
 
-Claude Code installs turn with rn. `claude plugin list` then lists `rn@ccpm` and `turn@ccpm`, each
+Claude Code installs Turn with Rn. `claude plugin list` then lists `rn@ccpm` and `turn@ccpm`, each
 with `Status: ✔ enabled`.
 
 ## Walkthrough
@@ -51,7 +51,7 @@ Your app is written in JavaScript, and you want it moved to TypeScript, work tha
 > /rn:up move this app to TypeScript
 ```
 
-rn asks the points to decide, one per message, each with what it looked up and the answer it
+Rn asks the points to decide, one per message, each with what it looked up and the answer it
 recommends:
 
 ```console
@@ -72,7 +72,7 @@ recommends:
 > a
 ```
 
-From your answers rn writes the goal and the acceptance criteria on a draft pull request, and stops
+From your answers Rn writes the goal and the acceptance criteria on a draft pull request, and stops
 for your sign-off. `/rn:ty` approves; `/rn:gm <feedback>` asks for a change.
 
 ```console
@@ -88,10 +88,10 @@ for your sign-off. `/rn:ty` approves; `/rn:gm <feedback>` asks for a change.
 > /rn:ty
 ```
 
-Where the purpose needs documents, such as an architecture for the move, rn stops for them the same
+Where the purpose needs documents, such as an architecture for the move, Rn stops for them the same
 way. It then carries out the tasks. When you come back another day, `/rn:up` alone, in a new
 conversation, brings back the sign-off still waiting, or the next point to decide, and asks nothing
-again. rn stops at the finished work with each choice it made without asking you, with why:
+again. Rn stops at the finished work with each choice it made without asking you, with why:
 
 ```console
 ● Deliverable sign-off
@@ -106,8 +106,8 @@ again. rn stops at the finished work with each choice it made without asking you
 > /rn:ty
 ```
 
-Last, rn offers what the work taught, one learning per message, as a question for the checklist of
-that kind of work in `.turn/templates/`, or as an issue to rn's makers, and marks the pull request
+Last, Rn offers what the work taught, one learning per message, as a question for the checklist of
+that kind of work in `.turn/templates/`, or as an issue to Rn's makers, and marks the pull request
 ready:
 
 ```console
@@ -116,9 +116,9 @@ ready:
 
 ## How it works
 
-![How rn works](how-it-works.svg)
+![How Rn works](how-it-works.svg)
 
-The orchestrator, rn's AI in your conversation, is the only part that talks with you. rn's scripts
+The orchestrator, Rn's AI in your conversation, is the only part that talks with you. Rn's scripts
 keep the steering, the short record of the plan, on the work's branch, and take an approval only
 where Claude Code's record shows you typed it.
 
@@ -129,7 +129,7 @@ where Claude Code's record shows you typed it.
 
 ## Development
 
-[rn's development folder](../../dev/rn/README.md) holds its UX, its architecture and its tests.
+[Rn's development folder](../../dev/rn/README.md) holds its UX, its architecture and its tests.
 
 ## License
 
