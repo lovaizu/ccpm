@@ -6,17 +6,15 @@ until it is what it should be.
 With Turn, anyone who wants a piece of work made gets it as it should be. They spend their own
 effort only on the points that only they can decide. Turn decides every other point itself.
 
-For each kind of work, such as a press release, a README or a script, Turn first reads how good
-ones are made. It distills two things from them, keeping only what a good work of the kind needs.
-The standard says what a good work of the kind is: who uses it and for what; its template, the
-shape of the work, such as a headline, a lead and a body; and its checklist, questions that a good
-work answers yes to, such as "Can a reporter tell from the headline what is new?" You approve the
-standard. The practice says how to decide what the work says, so that each question is answered
-yes. Turn then asks you what this work is for, and each point only you can decide, one at a time,
-with the answer it recommends. A second AI checks the work against the standard alone. That AI
-never sees the practice, so it judges only what the reader gets.
+For each kind of work, such as a press release, a README or a script, Turn distills how good ones
+are made into two things, keeping only the least that a good work of the kind needs. The standard
+says what a good work of the kind is: who uses it and for what; its template, the shape of the
+work, such as a headline, a lead and a body; and its checklist, questions that a good work answers
+yes to, such as "Can a reporter tell from the headline what is new?" The practice says how to
+decide what the work says, so that each question is answered yes. Turn decides each work by the
+practice, and judges it against the standard.
 
-![Claude Code alone and Turn, side by side](idea.svg)
+![A standard and a practice distilled from how good works are made](idea.svg)
 
 **Non-goals**
 
@@ -151,10 +149,15 @@ documents, architecture documents, code and prompts, so those kinds skip step 3 
 
 ![How Turn works](how-it-works.svg)
 
-The evaluator judges the work against the standard alone, because the reader gets only the work: a
-work made by the practice can still fail its reader. The evaluator, the second AI, says for each question only what the reader gets once it is good, not
-a list of faults. Turn then makes again the decision behind it, so the work is never patched. Once
-what the work says is good, Turn betters how the work says it, and the evaluator checks that too.
+Turn has separate AIs plan, make and judge the work, as Anthropic's "Harness design for
+long-running application development" (2026) does with a planner, a generator and an evaluator.
+The designer asks your points one at a time, each with the answer it recommends.
+
+The evaluator, the second AI, did not make the work, and judges it against the standard alone. The
+reader gets only the work, and a work made by the practice can still fail its reader. For each
+question, the evaluator says only what the reader gets once it is good, not a list of faults. Turn
+then makes again the decision behind it, so the work is never patched. Once what the work says is
+good, Turn betters how the work says it, and the evaluator checks that too.
 
 ## Documentation
 
