@@ -52,13 +52,22 @@ Why: a missing part leaves the user unable to achieve the purpose, and a part wi
 to every deliverable of the kind. The format is the least a deliverable holds, not a mould: a part
 beyond it that its user uses is kept, as doc.md's "Every part used" asks.
 
-### Q-3: The conditions the purpose needs
+### Q-3: The purpose and every element of the format, asked
 
-Do the questions ask every condition the purpose needs, and no condition it does not?
+Does every element the format holds, and every part of the purpose, have a question that asks what
+the user gets from it, and does no question ask what neither needs?
 
-Why: a condition no question asks passes unmet, and a question beyond the purpose costs whoever
-makes and whoever judges each deliverable. The conditions are drawn from the purpose and the format,
-so each question rests on what its user achieves.
+Why: the questions are drawn from the purpose and the format, so each rests on what its user
+achieves. An element no question asks passes unmet. A part asked of only one of its elements lets
+the rest through, however many questions look at the part. A question beyond the purpose and the
+format costs whoever makes and whoever judges each deliverable.
+
+Fails: a UX checklist whose scenarios question asks whether the developer can point to a scenario,
+so a document with two objectives and one scenario passes, and whose participants' kinds are said
+only in a Why.
+
+Passes: the same question asking, for each objective, what the user does first and who takes each
+step, a person, an AI or a script, until they reach it.
 
 ### Q-4: One thing, answered yes or no
 
