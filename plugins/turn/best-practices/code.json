@@ -1,154 +1,250 @@
 {
  "standard": {
-  "goal": "Code is read and changed by a maintainer, a person or an AI, who takes it over to change what a product does. The code is built to a specification: the behaviors it is asked to give, such as requirements or a design. The maintainer sets the code up from what it declares and sees from its tests that it gives each behavior the specification asks. They find where a change belongs and call what they did not write without reading every body. After a change, the tests tell them whether every behavior still holds. Whoever runs the code gets those behaviors, and where the code stops on something wrong from outside, learns from what it says how to put it right.",
-  "template": {
-   "skeleton": "<The manifest: the runtime and each library the code needs, each with the versions it runs on, and the command that runs the tests>\n\n<For each module, a file>\n\n<Its opening comment: what this module alone decides, in a sentence or two>\n\n<For each name other modules use: its signature, with the types it takes and gives, and a comment saying what it gives, what it expects of what it takes, and each way it refuses>\n\n<The body>\n\n<For each module, a test file beside it>\n\n<For each case of the specification: a test named for the behavior it holds, its body in three parts: Given <the situation>, When <what is done>, Then <what must be so>>\n",
+  "goal": "The maintainer, a person or an AI who takes the code over, changes what it does and knows that whoever runs it still gets each behavior its specification asks and, where something from outside is wrong, learns how to put it right.",
+  "format": {
    "parts": [
     {
      "id": "manifest",
-     "what": "The file the language's tools read for what the code needs: the runtime and each library with the versions it runs on, and the command that runs the tests.",
-     "why": "The maintainer sets the code up and runs its tests from this file alone."
+     "what": "The file the language's tools read for what the code needs: the runtime and each library with the versions it runs on, and the command that runs the tests."
     },
     {
      "id": "module-opening",
-     "what": "The comment at the top of each module: what this module alone decides.",
-     "why": "The maintainer finds the module a change belongs in by reading openings, not bodies."
+     "what": "The comment at the top of each module, a file of its own: what this module alone decides, in a sentence or two."
     },
     {
      "id": "interface",
-     "what": "Each name a module offers to others: its signature with its types, and the comment above or below it on what it gives, what it expects and each way it refuses.",
-     "why": "The maintainer calls code they did not write from its interface alone."
+     "what": "Each name a module offers to others: its signature with the types it takes and gives, and the comment above or below it on what it gives, what it expects of what it takes and each way it refuses."
     },
     {
      "id": "body",
-     "what": "The code under each interface that gives the behavior.",
-     "why": "It gives the behaviors the specification asks; the maintainer changes it."
+     "what": "The code under each interface that gives the behavior."
     },
     {
      "id": "tests",
-     "what": "A test file beside each module, one test for each case of the specification, named for the behavior it holds, its body as Given, When and Then.",
-     "why": "The maintainer sees which behavior each test holds and, after a change, whether each still holds."
+     "what": "A test file beside each module, one test for each case of the specification, named for the behavior it holds, its body in three parts: Given the situation, When what is done, Then what must be so."
     }
    ]
   },
   "checklist": [
    {
     "id": "Q1",
-    "what": "When the maintainer sets the code up on a fresh machine with only what the manifest names, and runs the tests again and in any order, do they pass every time?",
-    "why": "If yes, the maintainer starts work from the manifest alone, and a failing test means the code broke, nothing else. The manifest names every runtime and library with its versions, and each test sets up and clears what it needs, so its result rests on the code alone. If no, the code works only where its writer had something installed, and fails on the next machine for a reason no one was told; a test that passes on one run and fails on the next teaches the maintainer to ignore failures, real ones included.",
-    "about": [
-     "manifest",
-     "tests"
-    ],
-    "grounds": [
-     "The Twelve-Factor App, \"II. Dependencies\": \"A twelve-factor app never relies on implicit existence of system-wide packages.\" and \"It declares all dependencies, completely and exactly, via a dependency declaration manifest.\"",
-     "Winters, Manshreck and Wright, Software Engineering at Google, ch. 11 \"Testing Overview\": \"It doesn't take needing to investigate many flakes before a team loses trust in the test suite.\" and \"a test should contain all of the information necessary to set up, execute, and tear down its environment.\""
-    ],
-    "examples": {
-     "fails": "The manifest names fastapi with no version, and the booking tests read the machine's clock and a database the writer had running. (On a fresh machine a newer fastapi breaks the API, and a hold test fails each day after 23:45.)",
-     "passes": "The manifest names Python 3.12, fastapi 0.115 and the test command; each booking test starts its own database and sets the clock it needs."
-    }
+    "about": "manifest, tests",
+    "what": "Setting the code up on a fresh machine from the manifest alone, and running the tests again and in any order, does the maintainer see them pass each time?"
    },
    {
     "id": "Q2",
-    "what": "When the maintainer has one behavior to change, can they tell from the modules' opening comments alone which module to open?",
-    "why": "If yes, the maintainer goes to the one module that decides the thing they change, without reading every body. Each module hides one decision from the others, and its opening says which. If no, the maintainer reads module after module to find the place, or changes the first likely one, and the behavior is decided in two places from then on.",
-    "about": [
-     "module-opening"
-    ],
-    "grounds": [
-     "Google Python Style Guide, Modules: \"Files should start with a docstring describing the contents and usage of the module.\"",
-     "Parnas, \"On the Criteria To Be Used in Decomposing Systems into Modules\" (1972): \"one begins with a list of difficult design decisions or design decisions which are likely to change. Each module is then designed to hide such a decision from the others.\""
-    ],
-    "examples": {
-     "fails": "\"\"\"Room utilities.\"\"\" (Asked to let a room with one seat short still fit when an attendee is remote, the maintainer opens rooms.py, matcher.py and utils.py.)",
-     "passes": "\"\"\"Decides whether a room fits a meeting: a seat for each attendee in the room and every piece of equipment the meeting needs. No other module judges a fit.\"\"\""
-    }
+    "about": "module-opening",
+    "what": "With one behavior to change, can the maintainer tell from the modules' opening comments alone which module to open?"
    },
    {
     "id": "Q3",
-    "what": "When the maintainer calls a function or a class another module offers, can they write a call that works from its signature and comment alone, without reading its body?",
-    "why": "If yes, the maintainer uses code they did not write at once, and each module can change inside while its callers stay. The interface says what it takes, what it gives, what it expects and each way it refuses. If no, the maintainer reads the body to learn what to pass and what comes back, and comes to rely on how it works inside; a case the interface leaves unsaid, such as what comes back when nothing is found, is handled one way by one caller and another way by the next.",
-    "about": [
-     "interface"
-    ],
-    "grounds": [
-     "Google Python Style Guide, Functions and Methods: \"A docstring should give enough information to write a call to the function without reading the function's code.\" and, of Raises: \"List all exceptions that are relevant to the interface followed by a description.\""
-    ],
-    "examples": {
-     "fails": "def match(m, rooms):\n    \"\"\"Matches rooms.\"\"\"\n(What is m? Does it give None, an empty list or an error when no room fits?)",
-     "passes": "def rooms_that_fit(meeting: Meeting, rooms: list[Room]) -> list[Room]:\n    \"\"\"The rooms with a seat for each attendee and all the meeting's equipment, in the order given; empty when none fits. Raises ValueError when the meeting has no attendees.\"\"\""
-    }
+    "about": "interface",
+    "what": "Calling a name another module offers, can the maintainer write a call that works from its signature and comment alone, without reading its body?"
    },
    {
     "id": "Q4",
-    "what": "When something the code takes from outside is wrong, such as a malformed input or a missing file, can whoever ran the code put it right from what the code tells them alone?",
-    "why": "If yes, they fix the cause and run again, and nothing was left half done. The code checks what comes from outside where it comes in, before acting on it, and its message says what was wrong, where, and what is accepted; inside, each part trusts what it is given. If no, a bad value travels on and fails far from its cause with a message about the place it failed, or passes silently and gives a wrong result, and whoever ran it cannot tell what to change or what was already done.",
-    "about": [
-     "body"
-    ],
-    "grounds": [
-     "Nielsen Norman Group, \"10 Usability Heuristics for User Interface Design\", #9: \"Error messages should be expressed in plain language (no error codes), precisely indicate the problem, and constructively suggest a solution.\"",
-     "OWASP, \"Input Validation Cheat Sheet\": \"validate the resulting values before business processing or storage\".",
-     "Peters, \"PEP 20 - The Zen of Python\": \"Errors should never pass silently.\""
-    ],
-    "examples": {
-     "fails": "A booking with \"attendees\": \"six\" is held, then fails in the matcher with \"TypeError: '<' not supported between instances of 'str' and 'int'\". (The worker cannot tell what to change, and the room stays held.)",
-     "passes": "The Booking API holds nothing and refuses the request at once with: attendees must be a whole number from 1 to 200; got \"six\"."
-    }
+    "about": "body",
+    "what": "When something the code takes from outside is wrong, can whoever ran it put it right from what the code tells them alone, with nothing left half done?"
    },
    {
     "id": "Q5",
-    "what": "When the maintainer asks of any case the specification names, its edges and refusals included, \"Which test holds this?\", can they point to one?",
-    "why": "If yes, every behavior asked has a test that checks what the specification says of it, and the test's name and its Given, When and Then tell which case it holds, so a failure names the behavior broken. The cases come from the specification, not from the code, as a test drawn from the code holds what the code does, not what it must. If no, a case with no test breaks unseen on the next change, and a test whose name does not say its case leaves the maintainer to read it to learn what broke.",
-    "about": [
-     "tests"
-    ],
-    "grounds": [
-     "Winters, Manshreck and Wright, Software Engineering at Google, ch. 12 \"Unit Testing\": \"A behavior is any guarantee that a system makes about how it will respond to a series of inputs\" and \"A test's name should summarize the behavior it is testing.\"",
-     "Fowler, \"GivenWhenThen\" (martinfowler.com): \"The given part describes the state of the world before you begin the behavior you're specifying in this scenario.\""
-    ],
-    "examples": {
-     "fails": "test_match() books a six-person meeting into a ten-seat room. (The specification says a room with exactly as many seats fits and a meeting needing a screen gets no room without one; neither has a test.)",
-     "passes": "test_room_with_exactly_enough_seats_fits, test_room_one_seat_short_does_not_fit, test_room_without_needed_screen_does_not_fit and test_meeting_with_no_attendees_is_refused, each as Given, When and Then."
-    }
+    "about": "tests",
+    "what": "For each case the specification names, its edges and refusals included, can the maintainer point to the one test that holds it, and tell the case from the test's name?"
    },
    {
     "id": "Q6",
-    "what": "When the maintainer breaks a behavior a test holds, such as by turning a comparison around, does that test fail?",
-    "why": "If yes, a passing run tells the maintainer that each behavior the tests hold still holds, and they change the code on that trust. Each test checks the result the specification asks, not only that the code ran. If no, a test that passes whatever the code does gives the trust without the check, and a broken behavior reaches the product's users with every test green.",
-    "about": [
-     "tests"
-    ],
-    "grounds": [
-     "Google, \"What to look for in a code review\" (google/eng-practices), Tests: \"Will the tests actually fail when the code is broken?\"",
-     "Stryker Mutator, documentation: \"Mutation testing introduces changes to your code, then runs your unit tests against the changed code. It is expected that your unit tests will now fail.\""
-    ],
-    "examples": {
-     "fails": "The test runs rooms_that_fit and checks only that it returns a list. (Changing seats >= attendees to seats > attendees still passes.)",
-     "passes": "The test checks that a ten-seat room is offered for ten attendees and not for eleven, so turning >= into > fails it."
-    }
+    "about": "interface, body",
+    "what": "For each behavior the code has, can the maintainer name the case of the specification that needs it?"
    },
    {
     "id": "Q7",
-    "what": "When the maintainer asks of any behavior the code has, such as an option, a mode or a case it handles, \"Which case of the specification needs this?\", can they answer?",
-    "why": "If yes, every behavior the maintainer keeps, tests and changes around serves a case someone asked for, and a behavior is removed once its case is gone. If no, a behavior no case needs is kept, tested and worked around by every maintainer after, and no one dares remove it, as no one can tell who relies on it.",
-    "about": [
-     "interface",
-     "body"
-    ],
-    "grounds": [
-     "Google, \"What to look for in a code review\" (google/eng-practices), Complexity: \"A particular type of complexity is over-engineering, where developers have made the code more generic than it needs to be, or added functionality that isn't presently needed by the system.\"",
-     "Fowler, \"Yagni\" (martinfowler.com, 2015): \"The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features.\""
-    ],
-    "examples": {
-     "fails": "rooms_that_fit takes strategy=\"best\" | \"first\" | \"random\" and a cache_ttl, where the specification asks for the rooms that fit, in one order.",
-     "passes": "rooms_that_fit takes the meeting and the rooms, and gives the rooms that fit in the order given."
-    }
+    "about": "interface, tests",
+    "what": "When the maintainer changes a body and its callers still get what its interface says, do the tests still pass?"
+   },
+   {
+    "id": "Q8",
+    "about": "body, tests",
+    "what": "When the maintainer breaks the behavior a test holds, does that test fail?"
+   },
+   {
+    "id": "Q9",
+    "about": "the whole",
+    "what": "Given the code and its specification alone, can the maintainer make a change the specification asks and know from the tests that every other behavior still holds?"
    }
   ]
  },
  "practice": {
-  "methods": []
+  "methods": [
+   {
+    "question": "Q1",
+    "thinking": "The manifest names all the code needs, and each test makes what it needs, so a test's result rests on the code alone.",
+    "steps": [
+     "Set the code up on a clean machine or container, from the manifest alone.",
+     "Add to the manifest each runtime and library the setup or the tests found missing, with the versions the code runs on.",
+     "Write in the manifest the one command that runs the tests.",
+     "Run the tests several times, and in a shuffled order.",
+     "Where a test's result changes from run to run, make that test set up and clear all it uses, such as files, a clock or a database."
+    ],
+    "grounds": [
+     "Wiggins, \"The Twelve-Factor App\", II. Dependencies, 12factor.net, 2017: \"A twelve-factor app never relies on implicit existence of system-wide packages. It declares all dependencies, completely and exactly, via a dependency declaration manifest.\"",
+     "Wiggins, \"The Twelve-Factor App\", II. Dependencies, 12factor.net, 2017: \"One benefit of explicit dependency declaration is that it simplifies setup for developers new to the app.\"",
+     "pip developers, \"Repeatable Installs\", pip documentation, 2026: \"Pinning package versions of your dependencies in the requirements file protects you from bugs or incompatibilities in newly released versions\"",
+     "Bender, \"Testing Overview\", Software Engineering at Google, ch. 11, abseil.io, 2020: \"All tests should strive to be hermetic: a test should contain all of the information necessary to set up, execute, and tear down its environment. Tests should assume as little as possible about the outside environment, such as the order in which the tests are run.\"",
+     "Bender, \"Testing Overview\", Software Engineering at Google, ch. 11, abseil.io, 2020: \"It doesn’t take needing to investigate many flakes before a team loses trust in the test suite. After that happens, engineers will stop reacting to test failures, eliminating any value the test suite provided.\"",
+     "No author named, \"Test Desiderata\", testdesiderata.com, no date: \"Isolated — tests should return the same results regardless of the order in which they are run.\""
+    ]
+   },
+   {
+    "question": "Q2",
+    "thinking": "Each module alone decides one thing the specification leaves to the code, and its opening names that thing in a sentence or two.",
+    "steps": [
+     "List what the specification leaves the code to decide, and mark what is likely to change.",
+     "Give each such decision to one module, so no other module makes it.",
+     "Write at the top of each module what it alone decides, in a sentence or two.",
+     "Where the opening cannot be that short, split the module.",
+     "Take a behavior the specification might change, read only the openings, and check that they point to one module; where they do not, rewrite them or move the decision."
+    ],
+    "grounds": [
+     "Google, \"Google Python Style Guide\", google.github.io/styleguide, no date: \"Files should start with a docstring describing the contents and usage of the module.\"",
+     "Manshreck, \"Documentation\", Software Engineering at Google, ch. 10, abseil.io, 2020: \"The key win for stumblers is clearly identifying the purpose of an API, often at the top of a file header.\"",
+     "Manshreck, \"Documentation\", Software Engineering at Google, ch. 10, abseil.io, 2020: \"Any API that cannot be succinctly described in the first paragraph or two is usually the sign of an API that is not well thought out. Consider breaking the API into separate components in those cases.\""
+    ]
+   },
+   {
+    "question": "Q3",
+    "thinking": "The interface tells a caller all they need to call it, so the body can stay unread and can change behind it.",
+    "steps": [
+     "Choose the names other modules may use, and mark every other name as internal.",
+     "Give each name a signature with the types it takes and gives.",
+     "Write its comment: what it gives, what comes back when there is nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a right call.",
+     "Leave out of the comment what the signature already says.",
+     "Have someone who has not read the body write a call from the interface alone, and run it; where it fails or they had to guess, add what was missing."
+    ],
+    "grounds": [
+     "van Rossum, Warsaw and Coghlan, \"PEP 8 – Style Guide for Python Code\", peps.python.org, 2001: \"All undocumented interfaces should be assumed to be internal.\"",
+     "Google, \"Google Python Style Guide\", google.github.io/styleguide, no date: \"Type annotations improve the readability and maintainability of your code. The type checker will convert many runtime errors to build-time errors\"",
+     "Goodger and van Rossum, \"PEP 257 – Docstring Conventions\", peps.python.org, 2001: \"The docstring for a function or method should summarize its behavior and document its arguments, return value(s), side effects, exceptions raised, and restrictions on when it can be called (all if applicable).\"",
+     "Goodger and van Rossum, \"PEP 257 – Docstring Conventions\", peps.python.org, 2001: \"However, the nature of the return value cannot be determined by introspection, so it should be mentioned.\"",
+     "Google, \"Google Python Style Guide\", google.github.io/styleguide, no date: \"For example, a function that mutates one of its arguments as a side effect should note that in its docstring.\"",
+     "Google, \"Google Python Style Guide\", google.github.io/styleguide, no date: \"List all exceptions that are relevant to the interface followed by a description.\"",
+     "Goodger and van Rossum, \"PEP 257 – Docstring Conventions\", peps.python.org, 2001: \"The one-line docstring should NOT be a “signature” reiterating the function/method parameters (which can be obtained by introspection).\"",
+     "Wright, \"Hyrum's Law\", hyrumslaw.com, no date: \"With a sufficient number of users of an API, it does not matter what you promise in the contract: all observable behaviors of your system will be depended on by somebody.\"",
+     "Google, \"Google Python Style Guide\", google.github.io/styleguide, no date: \"A docstring should give enough information to write a call to the function without reading the function’s code.\"",
+     "Ousterhout, in Ousterhout and Martin, \"A Philosophy of Software Design vs Clean Code\", github.com/johnousterhout/aposd-vs-clean-code, 2024–2025: \"It should be possible to use a method without reading its code. The way we achieve this is by writing a header comment that describes the method's interface (all the information someone needs in order to invoke the method).\""
+    ]
+   },
+   {
+    "question": "Q6",
+    "thinking": "The code gives the behaviors the specification asks and no more, so the maintainer carries nothing no one needs.",
+    "steps": [
+     "For each option, mode and case the code handles, name the case of the specification that asks for it.",
+     "Remove each that names none, with its tests.",
+     "Where a more general form is tempting, write the one the cases ask for now."
+    ],
+    "grounds": [
+     "Google, \"What to look for in a code review\", google.github.io/eng-practices, no date: \"A particular type of complexity is over-engineering, where developers have made the code more generic than it needs to be, or added functionality that isn’t presently needed by the system.\"",
+     "Google, \"What to look for in a code review\", google.github.io/eng-practices, no date: \"Encourage developers to solve the problem they know needs to be solved now, not the problem that the developer speculates might need to be solved in the future.\"",
+     "Fowler, \"Yagni\", martinfowler.com, 2015: \"The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features.\""
+    ]
+   },
+   {
+    "question": "Q4",
+    "thinking": "What comes from outside is checked where it comes in, before anything is done, and a refusal tells whoever ran the code what was wrong, where, and what is accepted.",
+    "steps": [
+     "List each place the code takes something from outside: its arguments, the files and settings it reads, and the replies of other programs.",
+     "At that place, read it into the form the inside uses, checking its type and format and whether its value makes sense for what is to be done.",
+     "Check all of it before acting on any, so a refusal leaves nothing half done.",
+     "On a wrong input, stop with a message that names the program and where the input is, says what was wrong, and says what is accepted.",
+     "Refuse a value that cannot be read rather than guess it, and catch only the error you mean to handle.",
+     "Write each check as code that always runs, not as an assert.",
+     "Give the code each wrong input the specification names, and read the message as the one who ran it: check that they can put it right from that alone."
+    ],
+    "grounds": [
+     "OWASP, \"Input Validation Cheat Sheet\", cheatsheetseries.owasp.org, no date: \"Use a maintained parser for the expected format, handle parsing failures, and validate the resulting values before business processing or storage.\"",
+     "OWASP, \"Input Validation Cheat Sheet\", cheatsheetseries.owasp.org, no date: \"Validate both syntax (the expected type and format) and semantics (whether the value makes sense for the operation).\"",
+     "King, \"Parse, don't validate\", lexi-lambda.github.io, 2019: \"Get your data into the most precise representation you need as quickly as you can. Ideally, this should happen at the boundary of your system, before any of the data is acted upon.\"",
+     "King, \"Parse, don't validate\", lexi-lambda.github.io, 2019: \"Late-discovered errors in an input stream will result in some portion of invalid input having been processed, with the consequence that program state is difficult to accurately predict.\"",
+     "Nielsen, \"10 Usability Heuristics for User Interface Design\", nngroup.com, 1994, updated 2024: \"Error messages should be expressed in plain language (no error codes), precisely indicate the problem, and constructively suggest a solution.\"",
+     "GNU Project, \"GNU Coding Standards\", 4.4 Formatting Error Messages, gnu.org, no date: \"Error messages from other noninteractive programs should look like this: program:sourcefile:lineno: message\"",
+     "Peters, \"PEP 20 – The Zen of Python\", peps.python.org, 2004: \"Errors should never pass silently.\"",
+     "Peters, \"PEP 20 – The Zen of Python\", peps.python.org, 2004: \"In the face of ambiguity, refuse the temptation to guess.\"",
+     "van Rossum, Warsaw and Coghlan, \"PEP 8 – Style Guide for Python Code\", peps.python.org, 2001: \"Additionally, for all try/except clauses, limit the try clause to the absolute minimum amount of code necessary. Again, this avoids masking bugs\"",
+     "Google, \"Google Python Style Guide\", google.github.io/styleguide, no date: \"Do not use assert statements in place of conditionals or validating preconditions.\""
+    ]
+   },
+   {
+    "question": "Q5",
+    "thinking": "The tests come from the specification's cases, one behavior each, before the code, so each test says which case it holds.",
+    "steps": [
+     "List every case the specification names: the usual one, each edge and each refusal.",
+     "Write one test for each case.",
+     "Name each test for the behavior it holds; where the name needs \"and\", split the test.",
+     "Write each test's body as Given, When and Then.",
+     "Write each expected value from the specification, not from what the code gives.",
+     "Run each test before its code is written, and see it fail.",
+     "Set the list of cases against the tests, and check that each case points to one test."
+    ],
+    "grounds": [
+     "Beck, \"Canon TDD\", tidyfirst.substack.com, 2023: \"The initial step in TDD, given a system & a desired change in behavior, is to list all the expected variants in the new behavior.\"",
+     "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"There’s a better way: rather than writing a test for each method, write a test for each behavior.\"",
+     "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"A behavior is any guarantee that a system makes about how it will respond to a series of inputs while in a particular state.\"",
+     "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"The test name is very important: it will often be the first or only token visible in failure reports, so it’s your best opportunity to communicate the problem when the test breaks.\"",
+     "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"if you need to use the word \"and\" in a test name, there’s a good chance that you’re actually testing multiple behaviors and should be writing multiple tests!\"",
+     "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"Behaviors can often be expressed using the words \"given,\" \"when,\" and \"then\"\"",
+     "Fowler, \"Given When Then\", martinfowler.com, 2013: \"The given part describes the state of the world before you begin the behavior you're specifying in this scenario.\"",
+     "Beck, \"Canon TDD\", tidyfirst.substack.com, 2023: \"Mistake: copying actual, computed values & pasting them into the expected values of the test. That defeats double checking, which creates much of the validation value of TDD.\""
+    ]
+   },
+   {
+    "question": "Q7",
+    "thinking": "The tests call the code as its callers do, so they fail only where a caller would break.",
+    "steps": [
+     "In each test, call only the names the interface offers.",
+     "Use the real parts where they run fast and wholly inside the test, and a stand-in only for what is slow or outside it.",
+     "Change a body without changing what its interface says, and run the tests; rewrite through the interface each test that fails."
+    ],
+    "grounds": [
+     "Kuefler, \"Unit Testing\", Software Engineering at Google, ch. 12, abseil.io, 2020: \"By far the most important way to ensure this is to write tests that invoke the system being tested in the same way its users would; that is, make calls against its public API rather than its implementation details.\"",
+     "Trenk and Bly, \"Test Doubles\", Software Engineering at Google, ch. 13, abseil.io, 2020: \"We prefer realistic tests because they give more confidence that the system under test is working properly.\""
+    ]
+   },
+   {
+    "question": "Q8",
+    "thinking": "A test is worth the faults it catches, so each one checks the result its case asks, and a broken behavior fails it.",
+    "steps": [
+     "In each test, check the result the case asks, not only that the code ran.",
+     "Run the tests counting lines and branches, and add a test for each line or branch none runs.",
+     "Run mutation testing, and for each change to the code that the tests still pass, add or mend the test of the behavior it breaks.",
+     "Where no input the code takes can tell a changed line from the first, mark that line with the reason instead of adding a test.",
+     "Run property tests over the inputs the specification allows, and keep each input they fail on as a fixed test."
+    ],
+    "grounds": [
+     "Google, \"What to look for in a code review\", google.github.io/eng-practices, no date: \"Will the tests actually fail when the code is broken?\"",
+     "Beck, \"Canon TDD\", tidyfirst.substack.com, 2023: \"Mistake: write tests without assertions just to get code coverage.\"",
+     "Bender, \"Testing Overview\", Software Engineering at Google, ch. 11, abseil.io, 2020: \"That’s because code coverage only measures that a line was invoked, not what happened as a result.\"",
+     "Arguelles, Ivanković and Bender, \"Code Coverage Best Practices\", Google Testing Blog, 2020: \"In fact a lot of the value of code coverage data is to highlight not what’s covered, but what’s not covered.\"",
+     "Arguelles, Ivanković and Bender, \"Code Coverage Best Practices\", Google Testing Blog, 2020: \"A better technique to assess whether you’re adequately exercising the lines your tests cover, and adequately asserting on failures, is mutation testing.\"",
+     "Sixty North AS, \"Cosmic Ray: mutation testing for Python\", cosmic-ray.readthedocs.io, no date: \"It makes small changes to your production source code, running your test suite for each change. If a test suite passes on mutated code, then you have a mismatch between your tests and your functionality.\"",
+     "Hypothesis developers, \"Hypothesis\", hypothesis.readthedocs.io, no date: \"With Hypothesis, you write tests which should pass for all inputs in whatever range you describe, and let Hypothesis randomly choose which of those inputs to check - including edge cases you might not have thought about.\"",
+     "Hypothesis developers, \"Replaying failed tests\", hypothesis.readthedocs.io, no date: \"@example adds an explicit input which Hypothesis will run every time, in addition to the randomly generated test cases.\""
+    ]
+   },
+   {
+    "question": "Q9",
+    "thinking": "Only a change made by someone new to the code shows whether the code lets them change it and trust the result.",
+    "steps": [
+     "Give the code and its specification to someone who has not seen them, a person or an AI.",
+     "Have them set it up and make one change the specification asks, with no other help.",
+     "Note each body they read to find the place or to write a call, and each time they could not tell whether another behavior broke.",
+     "Have them run the changed code with a wrong input, and note where its message did not tell them how to put it right.",
+     "Trace each note to the part whose question it fails, and mend it there."
+    ],
+    "grounds": [
+     "Google, \"What to look for in a code review\", google.github.io/eng-practices, no date: \"The “users” are usually both end-users (when they are affected by the change) and developers (who will have to “use” this code in the future).\"",
+     "Bender, \"Testing Overview\", Software Engineering at Google, ch. 11, abseil.io, 2020: \"automated testing can quickly catch mistakes, and this makes it possible to change software with confidence.\"",
+     "Fowler, \"Self Testing Code\", martinfowler.com, 2014: \"You have self-testing code when you can run a series of automated tests against the code base and be confident that, should the tests pass, your code is free of any substantial defects.\""
+    ]
+   }
+  ]
  }
 }

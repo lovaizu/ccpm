@@ -448,3 +448,6 @@ written as plain words.
 - An empirical study of error-message quality in programs run from a command line. I did not
   find one I could open; the Nielsen heuristic and the GNU standard above are guidelines, not
   studies.
+- D. L. Parnas, "On the Criteria To Be Used in Decomposing Systems into Modules", 1972. Opened
+  again on 2026-11-02 to check the quotes above, the PDF holds scanned page images and no text a
+  tool could read, so its quotes could not be confirmed and code.json does not use them.
