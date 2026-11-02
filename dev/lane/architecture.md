@@ -19,7 +19,7 @@ developer AI's plugin. The principles below are what Lane adds.
 The check script shows a stopped subagent the sentence of the rule, after the plugin's name.
 
 A subagent whose call is only refused tries another way. A subagent that sees its own step goes
-back to it (KR1.3).
+back to it (KR1.1).
 
 ### One wording for the step and the check
 
@@ -43,7 +43,7 @@ the rule's values, as a value given for the run, or through an adapter: the deve
 that turns its own text format into Lane's. No line of Lane names
 another plugin.
 
-So the developer AI writes no check code (KR1.4, KR2.3), and a new text format needs an adapter, not
+So the developer AI writes no check code (O1, O2), and a new text format needs an adapter, not
 a new type of rule.
 
 ### A call that cannot be checked is stopped

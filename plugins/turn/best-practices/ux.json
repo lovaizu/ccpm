@@ -13,11 +13,7 @@
       },
       {
        "id": "key-result",
-       "what": "Under each objective, its key results, each with an ID the rest of the document points to: a result that shows the objective closer, and which direction is better."
-      },
-      {
-       "id": "priority",
-       "what": "After an objective's key results, for each pair of them that can move against each other, which comes first and why, in one sentence; pairs that share one reason share one sentence. An objective with no such pair has none."
+       "what": "Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from their request to having it. The first comes first: lead time is shortened only by changes that keep how well."
       }
      ]
     },
@@ -70,8 +66,8 @@
    },
    {
     "id": "Q7",
-    "about": "key-result, priority",
-    "what": "Weighing a change that makes one key result better and another worse, can the builder tell which one to keep?"
+    "about": "key-result",
+    "what": "Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?"
    }
   ]
  },
@@ -119,7 +115,7 @@
      "For the objective, list how its success or failure would show in what the user does or feels.",
      "Add the signs of failure, such as giving up, undoing a result or working around the product.",
      "Keep only the signs that move when the user is better or worse off, and drop counts of output, such as features shipped or tasks done.",
-     "Turn each sign kept into one measure, a share, an average per user, a count or a time, and name what it is counted out of.",
+     "Turn the signs kept into two measures, each a share, an average per user, a count or a time, and name what it is counted out of: one of how well the user gets what the objective says, and the lead time from their request to having it.",
      "Write which direction is better, and no target value.",
      "Ask whether all the objective's key results could get better while the user still does not get what the objective says; if so, add or rework key results until they could not."
     ],
@@ -136,12 +132,12 @@
    },
    {
     "question": "Q7",
-    "thinking": "Where two key results of one objective can move against each other, the one whose loss keeps the user further from the objective comes first.",
+    "thinking": "Lead time is shortened only where how well the user gets what the objective says holds, since a result had fast but not well is no gain.",
     "steps": [
-     "List the pairs of one objective's key results that a single change could move in opposite directions; look first at one that counts how much or how fast beside one that counts how well.",
-     "For each pair, imagine one change that makes the first better and the second worse.",
-     "Ask which loss keeps the user further from what the objective says.",
-     "Write which comes first and the reason in one sentence, such as \"KR1.1 comes before KR1.2: ...\"."
+     "List each stage between the user's request and their having the result, such as asking what they need, deciding, making, checking and redoing.",
+     "For each stage, ask how it could take less time while the result is as good, such as by asking only what no fact settles, deciding before making, making in an order that leaves nothing to redo, and finding a fault where it is cheapest to fix.",
+     "Imagine each such change, and ask whether the first key result could get worse by it.",
+     "Keep a change only where it could not; where it could, write in the scenario what holds the first key result."
     ],
     "grounds": [
      "Google, \"Google's OKR Playbook\", whatmatters.com, no date: \"Well done OKRs are a motivational management tool that helps make it clear to teams what’s important, what to optimize, and what tradeoffs to make during their day-to-day work.\"",

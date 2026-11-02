@@ -4,8 +4,8 @@ Turn is a Claude Code plugin that makes a deliverable you ask for, such as a doc
 it meets your purpose well.
 
 Turn is for you when you want a deliverable made well, such as a README, a press release or code.
-With Turn, you get a deliverable that you can put to use as it is delivered, and you spend your own
-effort only on the points that only you can decide.
+With Turn, you get a deliverable that you can put to use as it is delivered, as soon as that
+quality allows.
 
 Asked alone, Claude Code writes from what it already knows and judges its own work. Turn instead
 learns the best practice of each kind of deliverable from guides and examples of good ones. It ties
