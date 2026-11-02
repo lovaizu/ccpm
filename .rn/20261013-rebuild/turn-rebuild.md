@@ -180,14 +180,14 @@ answer is written, `every_item` an answer for every question, `in_form` each fil
 Keys follow the steering's rules: a name says its intent, a one-to-many join is nested, a many-to-many join lists IDs.
 
 - `best-practices/<kind>.json`, one for each kind, in `plugins/turn/` for those Turn ships and in
-  `.turn/` for those a user's runs make: `standard`, with `goal`, who uses such a deliverable and
-  for what; `template`, with `skeleton` and `parts`, each part `id`, `what` and `why`; `checklist`,
-  each question `id`, `what`, `why`, `about` (the parts it looks at), `grounds` and `examples`
-  (`fails` and `passes`); and `includes`; and `practice`, with `methods`, each `question`, the ID
-  it serves, `steps`, in order, and `grounds`, where the way has worked. The kind is the file's
-  name, and the keys are the README's words. The evaluator is given `standard` alone, taken out by
-  a script. A script verifies every part is looked at by a question, and every question has one
-  Method.
+  `.turn/` for those a user's runs make, in the form Best practice says: `standard`, with `goal`;
+  `format`, with `parts`, each part `id`, `what` and its `parts`; `checklist`, each question `id`,
+  `about` (a part, the parts of a dependency, or the whole), `what`, `checks`, the clues to its
+  answer, `examples` (`fails` and `passes`) and `grounds`; and `includes`; and `practice`, with
+  `methods`, for each essence a question holds the way of thinking and the steps that meet it,
+  with their `grounds`. The kind is the file's name. The evaluator is given `standard` alone, taken
+  out by a script. A script verifies every part is looked at by a question, and every question has
+  a method.
 - `design-tree.json`, one for each work: `kind`; `goal`, this work's purpose, with its `grounds`;
   and `decisions`, each `id`, `what`, `contributes_to`, `builds_on`, `decided`, `settled_by`
   (`research`, `reasoning` or `user`) and `grounds`. A script verifies every question is served,

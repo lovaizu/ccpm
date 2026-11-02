@@ -1,59 +1,33 @@
 {
  "standard": {
-  "goal": "Planner makes, for a kind of deliverable, a best practice: a builder makes a deliverable of the kind by its practice, and an evaluator judges it by its standard alone. Every deliverable that passes is fit for its user's purpose.",
-  "template": {
-   "skeleton": "{\"standard\": {\"goal\": \"...\", \"template\": {\"skeleton\": \"...\", \"parts\": [...]}, \"checklist\": [...], \"includes\": [...]}, \"practice\": {\"methods\": [...]}}",
+  "goal": "A best practice it makes produces deliverables that achieve their user's purpose.",
+  "format": {
    "parts": [
     {
      "id": "standard",
-     "what": "What a good deliverable of the kind is: its goal, template and checklist, and the best practices it includes.",
-     "why": "The evaluator, judging a deliverable with this alone, reaches the verdict its user's purpose gives.",
+     "what": "The intended state of a deliverable that achieves its purpose.",
      "parts": [
       {
        "id": "goal",
-       "what": "Who uses a deliverable of the kind, in what moment, and what they achieve with it, in one to three sentences.",
-       "why": "The builder and the evaluator, meeting a point nothing else settles, settle it from the goal."
+       "what": "What the user achieves with the deliverable."
       },
       {
-       "id": "template",
-       "what": "The deliverable's skeleton and its parts as a tree drawn from the goal.",
-       "why": "The builder knows where each thing goes and what it is for, and the deliverable's user finds each thing where they look.",
-       "parts": [
-        {
-         "id": "part",
-         "what": "One element of the deliverable: id, what it holds, why, and its parts beneath it. Its why names who uses it, in what moment, and what they get.",
-         "why": "The builder makes each element for the one who uses it, and sees which element it serves."
-        }
-       ]
+       "id": "format",
+       "what": "The deliverable's structure that meets the goal: each part, what it holds, in its order."
       },
       {
        "id": "checklist",
-       "what": "One question on each part of the template and one on the whole.",
-       "why": "The evaluator passes a deliverable exactly where its user gets from it what the goal says.",
-       "parts": [
-        {
-         "id": "question",
-         "what": "id; about, the part it asks of; what, the essential question; checks, the yes-or-no checks it rests on; why; examples, fails and passes; grounds.",
-         "why": "The evaluator, placed in the question's scene, gives the answer any evaluator would give, and the answer its user's outcome would give."
-        }
-       ]
-      },
-      {
-       "id": "includes",
-       "what": "The best practices whose questions this one also takes, such as refactor-doc.",
-       "why": "Whoever mends a question shared by kinds mends it once, and every kind has the mend."
+       "what": "Questions that check, by the essence, whether the deliverable achieves the goal, asking of each part, of each dependency among parts and of the whole; each with the checks that are clues to its answer, an example that fails and one that passes, and its grounds."
       }
      ]
     },
     {
      "id": "practice",
-     "what": "How a good deliverable of the kind is built: one method for each question.",
-     "why": "The builder knows at each point what to do next, from what has worked.",
+     "what": "How the content is made.",
      "parts": [
       {
-       "id": "method",
-       "what": "question, the ID it serves; steps, in order; grounds, where the way has worked.",
-       "why": "The builder makes its question yes, as builders have made it yes before."
+       "id": "methods",
+       "what": "For each essence a question holds, the best way of thinking and the steps that meet it, with the grounds where they have worked."
       }
      ]
     }
@@ -62,299 +36,71 @@
   "checklist": [
    {
     "id": "Q1",
-    "about": "standard",
-    "what": "When the evaluator judges a deliverable with the standard alone, does its verdict match whether the deliverable's user achieves their purpose with it?",
-    "checks": [
-     "Does every question rest on the goal?",
-     "Is every part of the template asked by a question?",
-     "Does the standard need nothing beside it, such as the design, to be applied?"
-    ],
-    "why": "The evaluator reads only the deliverable and the standard, as the deliverable's user meets only the deliverable. Where the standard holds all it needs, a pass means the user can achieve their purpose, and the builder can trust the verdict to stop or go on.",
-    "examples": {
-     "fails": "A standard whose questions each pass on a README that names no command to run, as no question asks what the reader runs first.",
-     "passes": "The same standard with a question asking whether a reader can run the product from the README alone."
-    },
-    "grounds": [
-     "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"A good task is one where two domain experts would independently reach the same pass/fail verdict.\""
-    ]
+    "about": "goal",
+    "what": "Reading the goal, does one see a single thing the user achieves with the deliverable?",
+    "checks": [],
+    "examples": {},
+    "grounds": []
    },
    {
     "id": "Q2",
-    "about": "goal",
-    "what": "When the builder or the evaluator meets a point no part or question settles, can they settle it from the goal?",
-    "checks": [
-     "Does the goal name the user by their role?",
-     "Does it name the moment they use the deliverable?",
-     "Does it name what they achieve with it?"
-    ],
-    "why": "The goal is what everything else is drawn from, so it is the last answer to any point the rest leaves open. Where it names who, when and what for, a builder and an evaluator settle the same point the same way.",
-    "examples": {
-     "fails": "\"A UX document describes the product's UX.\", which names no user and no moment, so it settles nothing.",
-     "passes": "\"Developers read a UX document when they design and build the product, and build what it says users do and get.\""
-    },
-    "grounds": [
-     "Brookhart, \"Appropriate Criteria: Key to Effective Rubrics\", Frontiers in Education, 2018: \"True rubrics feature criteria appropriate to an assessment's purpose\"",
-     "ISO/IEC 25010:2011, quality in use: \"the degree to which a product or system can be used by specific users to meet their needs to achieve specific goals\""
-    ]
+    "about": "format",
+    "what": "Looking at the format, does the builder know what to write in which part, and in what order?",
+    "checks": [],
+    "examples": {},
+    "grounds": []
    },
    {
     "id": "Q3",
-    "about": "template",
-    "what": "When the deliverable's user looks for what the goal says they need, do they find it in a part of the template, and does every part give them something they use?",
-    "checks": [
-     "Is each part under the part it serves, up to the goal?",
-     "Does each part hold one thing?",
-     "Do the parts stand in the order the user meets them?",
-     "Does the skeleton show every part, in the tree's order?"
-    ],
-    "why": "The template is the goal divided into what its user needs, each part named by what it serves. Where every need has its part and every part serves a need, the builder makes nothing for nothing, and the user finds each thing where they look.",
-    "examples": {
-     "fails": "A UX template with OKRs as one part, so objectives and key results share one question and key results go unasked.",
-     "passes": "The same template with OKRs, an objective and a key result as parts, each under the one it serves."
-    },
-    "grounds": [
-     "Lee et al., \"CheckEval\", arXiv:2403.18771v2: \"For each dimension, we then define sub-dimensions that break down the high-level dimensions further\""
-    ]
+    "about": "checklist",
+    "what": "With each question, can the evaluator tell whether that part serves the user?",
+    "checks": [],
+    "examples": {},
+    "grounds": []
    },
    {
     "id": "Q4",
-    "about": "part",
-    "what": "When the builder makes a part, can they tell from its why who uses it, in what moment, and what that user gets?",
-    "checks": [
-     "Does the why name who uses the part?",
-     "Does it name the moment?",
-     "Does it name what they get, said as a gain?"
-    ],
-    "why": "A part exists for what it gives the one who uses it. Where its why says that, the builder makes it for that user and that moment, and the part's question is drawn from the same words.",
-    "examples": {
-     "fails": "\"why\": \"Shows the scenarios.\", which says what the part is, not what anyone gets from it.",
-     "passes": "\"why\": \"Developers, deciding what to build, see which steps wait for a person and which run on their own.\""
-    },
+    "about": "methods",
+    "what": "Following the way of thinking and the steps, can the builder make the content the question asks for?",
+    "checks": [],
+    "examples": {},
     "grounds": []
    },
    {
     "id": "Q5",
-    "about": "checklist",
-    "what": "When a deliverable would leave its user short of the goal, does some question fail it, and does a deliverable that serves its user pass every question?",
-    "checks": [
-     "Does each part of the template, and the whole, have one question?",
-     "Has the checklist been tried on real deliverables of the kind, and each one its user found short failed by a question?"
-    ],
-    "why": "The checklist stops a deliverable that would fail its user before it reaches them, and lets through one that serves them. Questions drawn from the goal alone miss what only real deliverables show, so they are tried on real ones and mended from what they let through.",
-    "examples": {
-     "fails": "A UX checklist that passes a document with two objectives and one scenario, as no question asks for a scenario for each objective.",
-     "passes": "The same checklist with the scenarios question asked for each objective."
-    },
-    "grounds": [
-     "Shankar et al., \"Who Validates the Validators?\", arXiv:2404.12272, 2024: \"users need criteria to grade outputs, but grading outputs helps users define criteria.\"",
-     "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"You won't know if your graders are working well unless you read the transcripts and grades from many trials.\""
-    ]
+    "about": "goal, format",
+    "what": "Does the format hold, neither more nor less, the parts the goal needs?",
+    "checks": [],
+    "examples": {},
+    "grounds": []
    },
    {
     "id": "Q6",
-    "about": "question",
-    "what": "When two evaluators who know only the question judge the same deliverable, do they give the same answer, and the one its user's outcome would give?",
-    "checks": [
-     "Does the question put the user in a scene and ask what they get there?",
-     "Does it ask one thing, answered yes or no?",
-     "Is each of its checks answered yes or no?",
-     "Does its why say what the user gets where the answer is yes?",
-     "Where the words can pass a part that misses the aim, do its examples show it?"
-    ],
-    "why": "The evaluator applies the question alone. A scene, a question asking what the user gets, checks each answered yes or no, a why that gives the aim and examples at the edge let any evaluator reach the same answer, the one the user would.",
-    "examples": {
-     "fails": "\"Can the reader grasp each section from its figure?\", whose grasp no one sees, so each evaluator measures it their own way.",
-     "passes": "\"When a colleague asks 'What is it?', can the reader answer in one sentence?\""
-    },
-    "grounds": [
-     "Lee et al., \"CheckEval\", arXiv:2403.18771v2: \"For the large models, CheckEval achieves best IEA scores of 0.67\"",
-     "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"LLM-as-judge graders should be closely calibrated with human experts\""
-    ]
+    "about": "format, checklist",
+    "what": "For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?",
+    "checks": [],
+    "examples": {},
+    "grounds": []
    },
    {
     "id": "Q7",
-    "about": "includes",
-    "what": "When a question shared by several kinds is mended, does every kind get the mend?",
-    "checks": [
-     "Is each shared question written in one best practice only?",
-     "Does every kind that needs it name that best practice in includes?"
-    ],
-    "why": "A question copied into each kind is mended in one and left old in the rest. Written once and named in includes, a mend reaches every kind.",
-    "examples": {
-     "fails": "The question on one place for each fact copied into ux, readme and architecture.",
-     "passes": "The question written once in refactor-doc, which ux, readme and architecture name in includes."
-    },
+    "about": "checklist, methods",
+    "what": "Does every essence a question holds have a way of thinking and steps that meet it?",
+    "checks": [],
+    "examples": {},
     "grounds": []
    },
    {
     "id": "Q8",
-    "about": "practice",
-    "what": "At each point of building, does the builder know from the practice what to do next?",
-    "checks": [
-     "Does each question have one method?",
-     "Can the builder tell which method to use first, from the order the decisions build on one another?"
-    ],
-    "why": "The builder meets the deliverable blank, and each question's method tells them how to make it yes. Where every question has one, the builder never guesses how.",
-    "examples": {
-     "fails": "A practice with methods for the objectives and the scenarios, and none for the key results, so the builder picks key results by guess.",
-     "passes": "The same practice with a method for the key results."
-    },
-    "grounds": []
-   },
-   {
-    "id": "Q9",
-    "about": "method",
-    "what": "When the builder follows the method, do they make its question yes, as builders have before?",
-    "checks": [
-     "Is each step one action, in order?",
-     "Does each step name the part of the template it writes?",
-     "Does each ground show the way has worked?",
-     "Has the method been tried on a deliverable, and mended where its question stayed no?"
-    ],
-    "why": "A method is a way that has made its question yes before. Steps one action each let two builders do the same, and a trial shows whether the way still works here. Where the question stays no, the method or the question is mended.",
-    "examples": {
-     "fails": "\"steps\": [\"Write good key results.\"], which restates the question.",
-     "passes": "\"steps\": [\"Name the signal that shows the user closer to the objective.\", \"Choose one count of that signal for each key result.\", \"Say which direction is better.\"]"
-    },
-    "grounds": [
-     "Shankar et al., \"Who Validates the Validators?\", arXiv:2404.12272, 2024: \"users need criteria to grade outputs, but grading outputs helps users define criteria.\""
-    ]
-   },
-   {
-    "id": "Q10",
     "about": "the whole",
-    "what": "When a deliverable built by this practice and passed by this standard reaches its user, do they achieve their purpose with it?",
-    "checks": [
-     "Has a deliverable been built by the practice and used by its user, or one who stands in for them, for the goal?",
-     "Has the user's own verdict been set against the evaluator's?"
-    ],
-    "why": "Each part's question can be yes while what lies between parts fails the user. Only a deliverable built and used shows the whole, and the user's verdict set against the evaluator's shows whether the standard measures what they need.",
-    "examples": {
-     "fails": "A best practice whose every question passes and whose first deliverable the user sends back.",
-     "passes": "The same best practice tried on one deliverable, the user's verdict matching the evaluator's."
-    },
-    "grounds": [
-     "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"LLM-as-judge graders should be closely calibrated with human experts\""
-    ]
+    "what": "Does a deliverable made by this best practice, and passed, let its user achieve their purpose?",
+    "checks": [],
+    "examples": {},
+    "grounds": []
    }
-  ],
-  "includes": [
-   "refactor-doc"
   ]
  },
  "practice": {
-  "methods": [
-   {
-    "question": "Q1",
-    "steps": [
-     "Write the goal, then the template from it, then one question on each part and on the whole, by the methods below.",
-     "Give an evaluator only the standard and a real deliverable of the kind, and see whether it asks for anything else."
-    ],
-    "grounds": []
-   },
-   {
-    "question": "Q2",
-    "steps": [
-     "Name the user of the deliverable by their role.",
-     "Name the moment they open it and what they are doing then.",
-     "Name what they achieve with it, as a gain.",
-     "Write the three in one to three sentences.",
-     "Take points that past deliverables of the kind left open, and settle each from the goal; where one cannot be settled, mend the goal."
-    ],
-    "grounds": [
-     "Brookhart, \"Appropriate Criteria: Key to Effective Rubrics\", Frontiers in Education, 2018: \"True rubrics feature criteria appropriate to an assessment's purpose\""
-    ]
-   },
-   {
-    "question": "Q3",
-    "steps": [
-     "Ask of the goal what its user must get from the deliverable, and make each answer a part.",
-     "Ask the same of each part, until each holds one thing.",
-     "Order the parts as the user meets them.",
-     "Read good deliverables of the kind, and add a part they share that the user uses.",
-     "Ask of each part why it is there, up to the goal; cut a part that does not reach it.",
-     "Write the skeleton so that it shows each part, in the tree's order."
-    ],
-    "grounds": [
-     "Lee et al., \"CheckEval\", arXiv:2403.18771v2: \"For each dimension, we then define sub-dimensions that break down the high-level dimensions further\""
-    ]
-   },
-   {
-    "question": "Q4",
-    "steps": [
-     "Name who uses the part.",
-     "Name the moment they use it.",
-     "Name what they get from it, as a gain, in the why."
-    ],
-    "grounds": []
-   },
-   {
-    "question": "Q5",
-    "steps": [
-     "For each part, and for the whole, turn its why into one question: in that moment, does that user get that?",
-     "For a part with parts beneath it, ask what its user gets from them together: that each says what no other says, and that none its user needs is missing.",
-     "Gather real deliverables of the kind, and those their users found short.",
-     "Judge each with the checklist; where one its user found short passes, add or mend the question that should have failed it."
-    ],
-    "grounds": [
-     "Shankar et al., \"Who Validates the Validators?\", arXiv:2404.12272, 2024: \"users need criteria to grade outputs, but grading outputs helps users define criteria.\"",
-     "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"Converting user-reported failures into test cases ensures your suite reflects actual usage\""
-    ]
-   },
-   {
-    "question": "Q6",
-    "steps": [
-     "Put the user in a concrete scene of using the part.",
-     "Ask whether they get there what the why says, answered yes or no.",
-     "Write as checks the yes-or-no conditions the answer rests on.",
-     "Write in the why what the user gets where the answer is yes.",
-     "Where a part could meet the words and miss the aim, write it as fails and the same made right as passes.",
-     "Give the question and two deliverables to two fresh evaluators; where they differ, narrow the scene or the checks."
-    ],
-    "grounds": [
-     "Lee et al., \"CheckEval\", arXiv:2403.18771v2: \"We create Boolean questions that correspond to the sub-dimensions defined in the first step.\"",
-     "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"A good task is one where two domain experts would independently reach the same pass/fail verdict.\""
-    ]
-   },
-   {
-    "question": "Q7",
-    "steps": [
-     "Write a question that several kinds need in refactor-doc or refactor-code.",
-     "Name that best practice in includes of each kind that needs it."
-    ],
-    "grounds": []
-   },
-   {
-    "question": "Q8",
-    "steps": [
-     "Write one method for each question.",
-     "Order the methods by the order the decisions they serve build on one another."
-    ],
-    "grounds": []
-   },
-   {
-    "question": "Q9",
-    "steps": [
-     "Find how good deliverables of the kind have made the question yes: guides, studies and examples.",
-     "Write the way as steps, one action each, in order, each naming the part it writes.",
-     "Add as grounds the sources where the way worked, with their words quoted.",
-     "Build one deliverable by the method, and judge it by the question; where it stays no, mend the method or the question."
-    ],
-    "grounds": [
-     "Shankar et al., \"Who Validates the Validators?\", arXiv:2404.12272, 2024: \"users need criteria to grade outputs, but grading outputs helps users define criteria.\""
-    ]
-   },
-   {
-    "question": "Q10",
-    "steps": [
-     "Build one real deliverable by the practice, and pass it by the standard.",
-     "Have its user, or an AI holding what the user wants, use it for the goal.",
-     "Set the user's verdict against the evaluator's; trace each difference to the part, question or method it comes from, and mend it there."
-    ],
-    "grounds": [
-     "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"LLM-as-judge graders should be closely calibrated with human experts\""
-    ]
-   }
-  ]
+  "methods": []
  }
 }
