@@ -4,128 +4,169 @@
   {
    "question": "architecture/Q1",
    "lines": [
-    "dev/turn/architecture.md:1-8"
+    "dev/turn/architecture.md:3-8"
    ]
   },
   {
    "question": "architecture/Q2",
    "lines": [
-    "dev/turn/architecture.md:10-105"
+    "dev/turn/architecture.md:10-101"
    ]
   },
   {
    "question": "architecture/Q3",
    "lines": [
-    "dev/turn/architecture.md:107-118"
+    "dev/turn/architecture.md:103-117"
    ]
   },
   {
    "question": "architecture/Q4",
    "lines": [
-    "dev/turn/architecture.md:122-124"
+    "dev/turn/architecture.md:121-123"
    ]
   },
   {
    "question": "architecture/Q5",
    "lines": [
-    "dev/turn/architecture.md:126-144"
+    "dev/turn/architecture.md:125-166"
    ]
   },
   {
    "question": "architecture/Q6",
    "lines": [
-    "dev/turn/architecture.md:155-157"
+    "dev/turn/architecture.md:206-217"
    ]
   },
   {
    "question": "architecture/Q7",
    "lines": [
-    "dev/turn/architecture.md:159-261"
+    "dev/turn/architecture.md:219-367"
    ]
   },
   {
    "question": "architecture/Q8",
    "lines": [
-    "dev/turn/architecture.md:265-279"
+    "dev/turn/architecture.md:371-392"
    ]
   },
   {
    "question": "architecture/Q9",
    "lines": [
-    "dev/turn/architecture.md:281-303"
+    "dev/turn/architecture.md:394-421"
    ]
   },
   {
    "question": "architecture/Q10",
    "lines": [
-    "dev/turn/architecture.md:310-318"
+    "dev/turn/architecture.md:423-439"
    ]
   },
   {
    "question": "architecture/Q11",
    "lines": [
-    "dev/turn/architecture.md:320-324"
+    "dev/turn/architecture.md:425-426",
+    "dev/turn/architecture.md:441-447"
    ]
   },
   {
    "question": "architecture/Q12",
    "lines": [
-    "dev/turn/architecture.md:320-324"
+    "dev/turn/architecture.md:168-204",
+    "dev/turn/architecture.md:383-392",
+    "dev/turn/architecture.md:448-453"
    ]
   },
   {
    "question": "architecture/Q13",
    "lines": [
-    "dev/turn/architecture.md:146-153",
-    "dev/turn/architecture.md:325-326"
+    "dev/turn/architecture.md:12-14",
+    "dev/turn/architecture.md:168-204",
+    "dev/turn/architecture.md:383-392"
    ]
   },
   {
    "question": "architecture/Q14",
    "lines": [
-    "dev/turn/architecture.md:107-118"
+    "dev/turn/architecture.md:105-117",
+    "dev/turn/architecture.md:125-166",
+    "dev/turn/architecture.md:210-217"
    ]
   },
   {
    "question": "architecture/Q15",
    "lines": [
-    "dev/turn/architecture.md:1-326"
+    "dev/turn/architecture.md:1-453"
    ]
   },
   {
    "question": "refactor-doc/Q1",
    "lines": [
-    "dev/turn/architecture.md:122-157"
+    "dev/turn/architecture.md:3-8",
+    "dev/turn/architecture.md:10-19",
+    "dev/turn/architecture.md:119-125",
+    "dev/turn/architecture.md:168",
+    "dev/turn/architecture.md:206",
+    "dev/turn/architecture.md:219",
+    "dev/turn/architecture.md:369-373",
+    "dev/turn/architecture.md:383",
+    "dev/turn/architecture.md:394",
+    "dev/turn/architecture.md:423-426"
    ]
   },
   {
    "question": "refactor-doc/Q2",
    "lines": [
-    "dev/turn/architecture.md:16-20"
+    "dev/turn/architecture.md:147-152",
+    "dev/turn/architecture.md:223-367",
+    "dev/turn/architecture.md:396-421",
+    "dev/turn/architecture.md:428-436"
    ]
   },
   {
    "question": "refactor-doc/Q3",
    "lines": [
-    "dev/turn/architecture.md:165-169"
+    "dev/turn/architecture.md:3-19",
+    "dev/turn/architecture.md:125-166"
    ]
   },
   {
    "question": "refactor-doc/Q4",
    "lines": [
-    "dev/turn/architecture.md:12-14"
+    "dev/turn/architecture.md:12-19",
+    "dev/turn/architecture.md:178-182",
+    "dev/turn/architecture.md:189-192"
    ]
   },
   {
    "question": "refactor-doc/Q5",
    "lines": [
-    "dev/turn/architecture.md:1-326"
+    "dev/turn/architecture.md:12-14",
+    "dev/turn/architecture.md:16-19",
+    "dev/turn/architecture.md:121-166"
    ]
   },
   {
    "question": "refactor-doc/Q6",
    "lines": [
-    "dev/turn/architecture.md:265-279"
+    "dev/turn/architecture.md:3-6",
+    "dev/turn/architecture.md:16-19",
+    "dev/turn/architecture.md:132-136"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q7",
+   "lines": [
+    "dev/turn/architecture.md:1-453"
+   ]
+  },
+  {
+   "question": "refactor-doc/Q8",
+   "lines": [
+    "dev/turn/architecture.md:12-14",
+    "dev/turn/architecture.md:88-101",
+    "dev/turn/architecture.md:147-152",
+    "dev/turn/architecture.md:375-377",
+    "dev/turn/architecture.md:425-426"
    ]
   }
  ],

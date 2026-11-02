@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 920" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 910" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>Turn&#x27;s components</title>
   <style>
     .bg { fill: #ffffff; }
@@ -32,16 +32,16 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1500" height="920"/>
+  <rect class="bg" x="0" y="0" width="1500" height="910"/>
 
   <!-- Row A: the person, the main conversation, check.py -->
   <circle class="box" cx="90" cy="44" r="12"/>
   <rect class="box" x="20" y="60" width="140" height="60" rx="22"/>
   <text class="name" x="90" y="88">Person</text>
   <text class="tag" x="90" y="105">[person]</text>
-  <rect class="ext" x="300" y="30" width="240" height="80" rx="4"/>
-  <text class="name" x="420" y="67">Main conversation</text>
-  <text class="tag" x="420" y="84">[Claude Code conversation]</text>
+  <rect class="ext" x="300" y="30" width="580" height="80" rx="4"/>
+  <text class="name" x="590" y="67">Main conversation</text>
+  <text class="tag" x="590" y="84">[Claude Code conversation]</text>
   <rect class="box" x="1290" y="30" width="190" height="80" rx="0"/>
   <text class="name" x="1385" y="67">check.py</text>
   <text class="tag" x="1385" y="84">[script · Python 3.9 stdlib]</text>
@@ -50,59 +50,64 @@
   <rect class="ext" x="20" y="190" width="180" height="80" rx="4"/>
   <text class="name" x="110" y="227">A plugin&#x27;s step</text>
   <text class="tag" x="110" y="244">[AI · such as Rn&#x27;s]</text>
-  <rect class="ext" x="560" y="190" width="160" height="80" rx="4"/>
-  <text class="name" x="640" y="227">Internet</text>
-  <text class="tag" x="640" y="244">[web pages]</text>
-  <path class="store" d="M960,199 A120,9 0 0 1 1200,199 V261 A120,9 0 0 1 960,261 Z"/>
-  <path class="store" d="M960,199 A120,9 0 0 0 1200,199"/>
-  <text class="name" x="1080" y="232">The work</text>
-  <text class="tag" x="1080" y="249">[files of its kind]</text>
+  <rect class="ext" x="570" y="190" width="160" height="80" rx="4"/>
+  <text class="name" x="650" y="227">Internet</text>
+  <text class="tag" x="650" y="244">[web pages]</text>
+  <path class="store" d="M990,199 A125,9 0 0 1 1240,199 V261 A125,9 0 0 1 990,261 Z"/>
+  <path class="store" d="M990,199 A125,9 0 0 0 1240,199"/>
+  <text class="name" x="1115" y="232">The work</text>
+  <text class="tag" x="1115" y="249">[files of its kind]</text>
 
-  <!-- Row C: turn:up, the roles and wait.py -->
+  <!-- Row C: Turn's agents, and wait.py -->
+  <rect class="env" x="245" y="315" width="1020" height="190" rx="10"/>
+  <text class="envname" x="257" y="334">Turn&#x27;s agents</text>
   <rect class="box" x="260" y="390" width="180" height="80" rx="14"/>
   <text class="name" x="350" y="427">turn:up</text>
-  <text class="tag" x="350" y="444">[orchestrator · Markdown]</text>
-  <rect class="env" x="505" y="330" width="755" height="165" rx="10"/>
-  <text class="envname" x="830" y="348">Turn&#x27;s roles</text>
-  <rect class="box" x="520" y="390" width="170" height="80" rx="14"/>
-  <text class="name" x="605" y="427">Planner</text>
-  <text class="tag" x="605" y="444">[subagent · Markdown]</text>
-  <rect class="box" x="705" y="390" width="170" height="80" rx="14"/>
-  <text class="name" x="790" y="427">Designer</text>
-  <text class="tag" x="790" y="444">[subagent · Markdown]</text>
-  <rect class="box" x="890" y="390" width="170" height="80" rx="14"/>
+  <text class="tag" x="350" y="444">[subagent · Markdown]</text>
+  <rect class="env" x="530" y="345" width="715" height="150" rx="10"/>
+  <text class="envname" x="872" y="364">Turn&#x27;s roles</text>
+  <rect class="box" x="545" y="390" width="160" height="80" rx="14"/>
+  <text class="name" x="625" y="427">Planner</text>
+  <text class="tag" x="625" y="444">[subagent · Markdown]</text>
+  <rect class="box" x="720" y="390" width="160" height="80" rx="14"/>
+  <text class="name" x="800" y="427">Designer</text>
+  <text class="tag" x="800" y="444">[subagent · Markdown]</text>
+  <rect class="box" x="895" y="390" width="160" height="80" rx="14"/>
   <text class="name" x="975" y="427">Builder</text>
   <text class="tag" x="975" y="444">[subagent · Markdown]</text>
-  <rect class="box" x="1075" y="390" width="170" height="80" rx="14"/>
-  <text class="name" x="1160" y="427">Evaluator</text>
-  <text class="tag" x="1160" y="444">[subagent · Markdown]</text>
+  <rect class="box" x="1070" y="390" width="160" height="80" rx="14"/>
+  <text class="name" x="1150" y="427">Evaluator</text>
+  <text class="tag" x="1150" y="444">[subagent · Markdown]</text>
   <rect class="box" x="1330" y="390" width="150" height="80" rx="0"/>
   <text class="name" x="1405" y="427">wait.py</text>
   <text class="tag" x="1405" y="444">[script · Python 3.9]</text>
 
-  <!-- Row D: lane's check script and the stores -->
+  <!-- Row D: Lane's check script, Best practices, standard.py -->
   <rect class="box" x="20" y="560" width="190" height="80" rx="0"/>
   <text class="name" x="115" y="597">Check script</text>
   <text class="tag" x="115" y="614">[hooks · Python 3.9, Lane]</text>
-  <path class="store" d="M520,649 A80,9 0 0 1 680,649 V711 A80,9 0 0 1 520,711 Z"/>
-  <path class="store" d="M520,649 A80,9 0 0 0 680,649"/>
-  <text class="name" x="600" y="682">Templates</text>
-  <text class="tag" x="600" y="699">[JSON files]</text>
-  <path class="store" d="M705,649 A270,9 0 0 1 1245,649 V711 A270,9 0 0 1 705,711 Z"/>
-  <path class="store" d="M705,649 A270,9 0 0 0 1245,649"/>
-  <text class="name" x="975" y="682">Run files</text>
-  <text class="tag" x="975" y="699">[JSON files]</text>
+  <path class="store" d="M520,649 A270,9 0 0 1 1060,649 V711 A270,9 0 0 1 520,711 Z"/>
+  <path class="store" d="M520,649 A270,9 0 0 0 1060,649"/>
+  <text class="name" x="790" y="682">Best practices</text>
+  <text class="tag" x="790" y="699">[JSON files]</text>
+  <rect class="box" x="1080" y="560" width="170" height="80" rx="0"/>
+  <text class="name" x="1165" y="597">standard.py</text>
+  <text class="tag" x="1165" y="614">[script · Python 3.9 stdlib]</text>
 
-  <!-- Row E: what the check script reads -->
+  <!-- Row E: the items adapter, Forms, Run files -->
   <rect class="box" x="20" y="740" width="190" height="80" rx="0"/>
   <text class="name" x="115" y="777">Items adapter</text>
   <text class="tag" x="115" y="794">[script · Python 3.9 stdlib]</text>
-  <path class="store" d="M260,749 A80,9 0 0 1 420,749 V811 A80,9 0 0 1 260,811 Z"/>
-  <path class="store" d="M260,749 A80,9 0 0 0 420,749"/>
-  <text class="name" x="340" y="782">Forms</text>
-  <text class="tag" x="340" y="799">[JSON Schema files]</text>
+  <path class="store" d="M240,749 A80,9 0 0 1 400,749 V811 A80,9 0 0 1 240,811 Z"/>
+  <path class="store" d="M240,749 A80,9 0 0 0 400,749"/>
+  <text class="name" x="320" y="782">Forms</text>
+  <text class="tag" x="320" y="799">[JSON Schema files]</text>
+  <path class="store" d="M480,749 A382,9 0 0 1 1245,749 V811 A382,9 0 0 1 480,811 Z"/>
+  <path class="store" d="M480,749 A382,9 0 0 0 1245,749"/>
+  <text class="name" x="862" y="782">Run files</text>
+  <text class="tag" x="862" y="799">[JSON files]</text>
 
-  <!-- Person and main conversation -->
+  <!-- The person and the main conversation -->
   <path class="line" d="M160,75 L300,75" marker-end="url(#arrow)"/>
   <text class="label" x="230" y="66" text-anchor="middle">asks, answers</text>
   <text class="data" x="230" y="92" text-anchor="middle">request, decision</text>
@@ -118,87 +123,98 @@
   <text class="data" x="20" y="328">request, work</text>
 
   <!-- turn:up's moves -->
-  <path class="line" d="M440,430 L505,430" marker-end="url(#arrow)"/>
-  <text class="label" x="498" y="382" text-anchor="end">starts each</text>
-  <text class="label" x="498" y="488" text-anchor="end">[Agent tool]</text>
-  <text class="data" x="498" y="502" text-anchor="end">request</text>
+  <path class="line" d="M440,430 L530,430" marker-end="url(#arrow)"/>
+  <text class="label" x="485" y="420" text-anchor="middle">starts each</text>
+  <text class="label" x="485" y="448" text-anchor="middle">[Agent tool]</text>
+  <text class="data" x="485" y="462" text-anchor="middle">request</text>
+  <path class="line" d="M420,470 L420,780 L480,780" marker-end="url(#arrow)"/>
+  <text class="label" x="428" y="600">writes</text>
+  <text class="data" x="428" y="614">request</text>
 
   <!-- Asks to the person, and the wait for the answer -->
-  <path class="line" d="M530,390 L530,110" marker-end="url(#arrow)"/>
-  <text class="label" x="538" y="130">asks to confirm,</text>
-  <text class="label" x="538" y="144">approve [SendMessage]</text>
-  <text class="data" x="538" y="158">template</text>
-  <path class="line" d="M790,390 L790,70 L540,70" marker-end="url(#arrow)"/>
-  <text class="label" x="798" y="150">asks to decide, approve</text>
-  <text class="label" x="798" y="164">[SendMessage]</text>
-  <text class="data" x="798" y="178">decision, design tree</text>
-  <path class="line" d="M1260,430 L1330,430" marker-end="url(#arrow)"/>
-  <text class="label" x="1295" y="420" text-anchor="middle">waits</text>
-  <text class="label" x="1295" y="448" text-anchor="middle">[Bash]</text>
+  <path class="line" d="M560,390 L560,110" marker-end="url(#arrow)"/>
+  <text class="label" x="552" y="130" text-anchor="end">asks to confirm,</text>
+  <text class="label" x="552" y="144" text-anchor="end">approve [SendMessage]</text>
+  <text class="data" x="552" y="158" text-anchor="end">standard</text>
+  <path class="line" d="M860,390 L860,110" marker-end="url(#arrow)"/>
+  <text class="label" x="868" y="130">asks to decide, approve</text>
+  <text class="label" x="868" y="144">[SendMessage]</text>
+  <text class="data" x="868" y="158">decision, design tree</text>
+  <path class="line" d="M1245,430 L1330,430" marker-end="url(#arrow)"/>
+  <text class="label" x="1287" y="420" text-anchor="middle">waits</text>
+  <text class="label" x="1287" y="448" text-anchor="middle">[Bash]</text>
 
-  <!-- Research and checks -->
+  <!-- Research, and the checks -->
   <path class="line" d="M640,390 L640,270" marker-end="url(#arrow)"/>
-  <text class="label" x="648" y="292">reads how good</text>
-  <text class="label" x="648" y="306">works are made</text>
-  <text class="label" x="648" y="320">[WebSearch, WebFetch]</text>
-  <path class="line" d="M1250,330 L1250,70 L1290,70" marker-end="url(#arrow)"/>
-  <text class="label" x="1258" y="150">checks its file [Bash]</text>
-  <text class="data" x="1258" y="164">template, design tree,</text>
-  <text class="data" x="1258" y="178">answers</text>
+  <text class="label" x="648" y="290">reads guides and examples</text>
+  <text class="label" x="648" y="304">[WebSearch, WebFetch]</text>
+  <path class="line" d="M1245,360 L1272,360 L1272,70 L1290,70" marker-end="url(#arrow)"/>
+  <text class="label" x="1280" y="150">each role checks</text>
+  <text class="label" x="1280" y="164">its file [Bash]</text>
+  <text class="data" x="1280" y="178">best practice, design tree,</text>
+  <text class="data" x="1280" y="192">answers</text>
 
   <!-- The roles and the work -->
-  <path class="line" d="M975,390 L1010,270" marker-end="url(#arrow)"/>
-  <text class="label" x="985" y="305" text-anchor="end">makes, betters</text>
-  <text class="data" x="985" y="319" text-anchor="end">work</text>
-  <path class="line" d="M1160,390 L1150,270" marker-end="url(#arrow)"/>
-  <text class="label" x="1162" y="292">uses as its</text>
-  <text class="label" x="1162" y="306">user would</text>
-  <text class="data" x="1162" y="320">work</text>
+  <path class="line" d="M1000,390 L1040,270" marker-end="url(#arrow)"/>
+  <text class="label" x="1010" y="290" text-anchor="end">makes, betters</text>
+  <text class="data" x="1010" y="304" text-anchor="end">work</text>
+  <path class="line" d="M1150,390 L1140,270" marker-end="url(#arrow)"/>
+  <text class="label" x="1134" y="283" text-anchor="end">uses it as</text>
+  <text class="label" x="1134" y="296" text-anchor="end">its user would</text>
+  <text class="data" x="1134" y="309" text-anchor="end">work</text>
 
-  <!-- lane's check script -->
-  <path class="line" d="M150,560 L300,470" marker-end="url(#arrow)"/>
-  <text class="label" x="232" y="526">tells each move, holds</text>
-  <text class="label" x="232" y="540">to its lanes [hooks]</text>
-  <path class="line" d="M210,620 L512,620 L512,495" marker-end="url(#arrow)"/>
-  <text class="label" x="350" y="612" text-anchor="middle">holds each to its lanes [hooks]</text>
+  <!-- The roles and Best practices -->
+  <path class="line" d="M625,470 L625,645" marker-end="url(#arrow)"/>
+  <text class="label" x="633" y="540">reads, keeps</text>
+  <text class="data" x="633" y="554">best practice</text>
+  <path class="line" d="M800,470 L800,645" marker-end="url(#arrow)"/>
+  <text class="label" x="808" y="540">reads</text>
+  <text class="data" x="808" y="554">best practice</text>
+  <path class="line" d="M960,470 L960,645" marker-end="url(#arrow)"/>
+  <text class="label" x="968" y="540">reads</text>
+  <text class="data" x="968" y="554">best practice</text>
+  <path class="line" d="M1150,470 L1150,560" marker-end="url(#arrow)"/>
+  <text class="label" x="1142" y="522" text-anchor="end">runs [Bash]</text>
+  <text class="data" x="1142" y="536" text-anchor="end">standard</text>
+  <path class="line" d="M1100,640 L1100,680 L1062,680" marker-end="url(#arrow)"/>
+  <text class="label" x="1108" y="668">reads</text>
+  <text class="data" x="1108" y="682">best practice</text>
+
+  <!-- The roles and Run files -->
+  <path class="line" d="M1245,480 L1285,480 L1285,780 L1245,780" marker-end="url(#arrow)"/>
+  <text class="label" x="1293" y="600">designer, builder: write, read</text>
+  <text class="data" x="1293" y="614">request, design tree, answers</text>
+  <text class="label" x="1293" y="634">evaluator: writes</text>
+  <text class="data" x="1293" y="648">answers</text>
+
+  <!-- Lane's check script -->
+  <path class="line" d="M170,560 L290,470" marker-end="url(#arrow)"/>
+  <text class="label" x="262" y="530">tells each move</text>
+  <text class="label" x="262" y="544">[hooks]</text>
+  <path class="line" d="M90,560 L245,490" marker-end="url(#arrow)"/>
+  <text class="label" x="20" y="470">holds each agent to</text>
+  <text class="label" x="20" y="484">its lanes [hooks]</text>
   <path class="line" d="M115,640 L115,740" marker-end="url(#arrow)"/>
   <text class="label" x="123" y="690">asks question IDs</text>
-  <text class="data" x="123" y="704">template</text>
-  <path class="line" d="M200,640 L300,740" marker-end="url(#arrow)"/>
-  <text class="label" x="262" y="684">reads the forms</text>
-
-  <!-- The roles and the stores -->
-  <path class="line" d="M560,470 L600,640" marker-end="url(#arrow)"/>
-  <text class="label" x="588" y="536">reads, keeps</text>
-  <text class="data" x="588" y="550">template</text>
-  <path class="line" d="M672,470 L720,640" marker-end="url(#arrow)"/>
-  <text class="label" x="712" y="582">writes</text>
-  <text class="data" x="712" y="596">template</text>
-  <path class="line" d="M790,470 L790,640" marker-end="url(#arrow)"/>
-  <text class="label" x="798" y="530">writes, reads</text>
-  <text class="data" x="798" y="544">design tree,</text>
-  <text class="data" x="798" y="558">answers</text>
-  <path class="line" d="M975,470 L975,640" marker-end="url(#arrow)"/>
-  <text class="label" x="983" y="530">writes, reads</text>
-  <text class="data" x="983" y="544">answers,</text>
-  <text class="data" x="983" y="558">design tree</text>
-  <path class="line" d="M1160,470 L1160,640" marker-end="url(#arrow)"/>
-  <text class="label" x="1168" y="530">writes, reads</text>
-  <text class="data" x="1168" y="544">answers</text>
+  <text class="data" x="123" y="704">best practice</text>
+  <path class="line" d="M200,640 L280,745" marker-end="url(#arrow)"/>
+  <text class="label" x="246" y="672">reads the forms</text>
 
   <!-- Legend -->
-  <text class="envname" x="20" y="875">Legend</text>
-  <rect class="box" x="90" y="860" width="36" height="24" rx="12"/>
-  <text class="label" x="134" y="877">person</text>
-  <rect class="box" x="210" y="860" width="36" height="24" rx="8"/>
-  <text class="label" x="254" y="877">AI agent</text>
-  <rect class="box" x="340" y="860" width="36" height="24" rx="0"/>
-  <text class="label" x="384" y="877">code</text>
-  <path class="store" d="M450,864 A18,4 0 0 1 486,864 V880 A18,4 0 0 1 450,880 Z"/>
-  <path class="store" d="M450,864 A18,4 0 0 0 486,864"/>
-  <text class="label" x="494" y="877">store of data</text>
-  <rect class="ext" x="600" y="860" width="36" height="24" rx="3"/>
-  <text class="label" x="644" y="877">outside Turn</text>
-  <text class="label" x="760" y="868">[type · technology] in a box; [protocol or tool] on an arrow</text>
-  <text class="data" x="760" y="886">data handed on, named as in the data model</text>
+  <text class="envname" x="20" y="865">Legend</text>
+  <rect class="box" x="90" y="850" width="36" height="24" rx="12"/>
+  <text class="label" x="134" y="867">person</text>
+  <rect class="box" x="200" y="850" width="36" height="24" rx="8"/>
+  <text class="label" x="244" y="867">AI agent</text>
+  <rect class="box" x="320" y="850" width="36" height="24" rx="0"/>
+  <text class="label" x="364" y="867">code</text>
+  <path class="store" d="M420,854 A18,4 0 0 1 456,854 V870 A18,4 0 0 1 420,870 Z"/>
+  <path class="store" d="M420,854 A18,4 0 0 0 456,854"/>
+  <text class="label" x="464" y="867">store of data</text>
+  <rect class="ext" x="560" y="850" width="36" height="24" rx="3"/>
+  <text class="label" x="604" y="867">outside Turn</text>
+  <rect class="env" x="700" y="850" width="36" height="24" rx="4"/>
+  <text class="label" x="744" y="867">a group, its name in blue</text>
+  <text class="label" x="920" y="858">[type · technology] in a box; [protocol or tool] on an arrow</text>
+  <text class="data" x="920" y="876">data handed on, named as in the data model</text>
 </svg>

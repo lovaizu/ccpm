@@ -1,30 +1,496 @@
 {
  "kind": "architecture",
  "goal": {
-  "what": "Whoever builds or changes turn, a person or an AI, derives each part's specification from this document and implements it on the same framework and principles, so turn gives the person the UX in dev/turn/ux.md whatever the implementation.",
-  "grounds": ["architecture.json purpose", "dev/turn/ux.md: O1"]
+  "what": "Whoever builds or changes Turn, a person or an AI, makes each of its parts without hesitating and on the same thinking as every other part, so the parts together deliver Turn's UX, dev/turn/ux.md, and Turn stays easy to read and to change.",
+  "grounds": [
+   "plugins/turn/best-practices/architecture.json, standard.goal: \"Whoever builds or changes the product, a person or an AI, makes each part without hesitating and on the same thinking as every other part\"",
+   ".claude/rules/dev.md, step 3: \"Write `dev/<plugin>/architecture.md` on [how a plugin works]\""
+  ]
  },
  "decisions": [
-  {"id": "D1", "what": "How does turn deliver its UX, in a few sentences?", "contributes_to": ["architecture/Q1"], "builds_on": [], "decided": "A work is made from its kind's template and the person's answers by four roles, planner, designer, builder and evaluator, the evaluator never seeing the design; lane holds their order and limits.", "settled_by": "research", "grounds": [".rn/20261013-rebuild/turn-rebuild.md, Concept and Roles"]},
-  {"id": "D2", "what": "What makes a new kind cost only a template?", "contributes_to": ["architecture/Q2"], "builds_on": ["D1"], "decided": "Principle: one way for every kind; the roles hold no rule of any kind.", "settled_by": "research", "grounds": ["turn-rebuild.md: \"How turn moves a work toward its goal is the same for every kind, so a new kind needs only a template.\""]},
-  {"id": "D3", "what": "What must be given before a run?", "contributes_to": ["architecture/Q2"], "builds_on": ["D1"], "decided": "Principle: nothing is needed beforehand; planner asks the kind, designer the purpose, and a caller's settled points count as decided.", "settled_by": "research", "grounds": ["turn-rebuild.md, What turn takes and gives"]},
-  {"id": "D4", "what": "How does the evaluator judge?", "contributes_to": ["architecture/Q2"], "builds_on": ["D1"], "decided": "Principles: it uses the work as its user would, and never sees the design.", "settled_by": "research", "grounds": ["turn-rebuild.md, evaluator 1 and Use and answer"]},
-  {"id": "D5", "what": "Who asks the person what, and who changes the design?", "contributes_to": ["architecture/Q2", "architecture/Q5"], "builds_on": ["D1"], "decided": "Principle: one asker for each thing; planner the kind and template, designer the purpose and design, designer alone changing it.", "settled_by": "research", "grounds": ["turn-rebuild.md: \"designer alone changes the design and alone asks the user about it\""]},
-  {"id": "D6", "what": "In what order are the decisions made, and where kept?", "contributes_to": ["architecture/Q2"], "builds_on": ["D5"], "decided": "Principle: decided from the purpose down, in builds_on order, kept in a design tree.", "settled_by": "research", "grounds": ["turn-rebuild.md, Design tree and designer 2-4"]},
-  {"id": "D7", "what": "How are content and wording kept apart?", "contributes_to": ["architecture/Q2"], "builds_on": ["D6"], "decided": "Principle: what the work says before how it says it; the content phase on the kind's questions, then the refactoring phase on the included templates' questions.", "settled_by": "research", "grounds": ["turn-rebuild.md, Flow 1 and 2 (Fowler, Refactoring)"]},
-  {"id": "D8", "what": "Where is a more mended?", "contributes_to": ["architecture/Q2"], "builds_on": ["D6"], "decided": "Principle: a more is mended at its decision, never added onto the work; one that comes back after its decision was remade goes to the person.", "settled_by": "research", "grounds": ["turn-rebuild.md, designer 7"]},
-  {"id": "D9", "what": "How does each role carry on?", "contributes_to": ["architecture/Q2"], "builds_on": ["D1"], "decided": "Principle: each role starts fresh at each move and works from the run's files.", "settled_by": "research", "grounds": ["turn-rebuild.md, Flow: \"start fresh at each move and carry on from the run's files\""]},
-  {"id": "D10", "what": "Who tells the phase, and why not the files?", "contributes_to": ["architecture/Q2", "architecture/Q5"], "builds_on": ["D7", "D9"], "decided": "Principle: turn:up tells the phase from the role that last ended and its answer, as a point designer keeps leaves the files as they were.", "settled_by": "research", "grounds": ["turn-rebuild.md, Flow 2: \"The orchestrator tells the phase from the role that last ended and its answer\""]},
-  {"id": "D11", "what": "What holds the order and limits, and how does turn use other plugins?", "contributes_to": ["architecture/Q2"], "builds_on": ["D1"], "decided": "Principles: lane holds the order and the limits, turn's scripts check only what no lane holds; turn knows lane and a caller only by what they document.", "settled_by": "research", "grounds": ["turn-rebuild.md, Files: \"A script checks only what no lane holds\"", "plugins/lane/README.md: the check script and the flow"]},
-  {"id": "D12", "what": "Which user stories carry the UX's steps?", "contributes_to": ["architecture/Q3", "architecture/Q14"], "builds_on": ["D1"], "decided": "Five: ask and confirm the kind; approve a new kind's purpose, format and checklist; answer the purpose and points and approve the design; get the work once every question is good, carrying the step where turn writes and checks; a plugin's step starting turn:up.", "settled_by": "reasoning", "grounds": ["dev/turn/ux.md:20-42: each message falls in one story; the caller's story carries a person reaching turn through rn, turn-rebuild.md, User and purpose"]},
-  {"id": "D13", "what": "Which roles and stores, each with its technology?", "contributes_to": ["architecture/Q4", "architecture/Q14"], "builds_on": ["D12"], "decided": "turn:up and four roles as Markdown subagents; check.py, wait.py and the items adapter as Python 3.9 stdlib scripts; lane's check script; stores Templates, Run files, Forms and the work.", "settled_by": "research", "grounds": ["dev/turn/components.svg, read as source", "turn-code b37cf1ac: plugins/turn/scripts/check.py, tree.py, answers.py, wait.py"]},
-  {"id": "D14", "what": "What does each role alone decide?", "contributes_to": ["architecture/Q5"], "builds_on": ["D13"], "decided": "turn:up the run; planner the template; designer each point of the design; builder the small points and the wording, returning open points; evaluator each answer; check.py what no lane holds; the items adapter the question IDs; the main conversation relays each ask, wait.py holding the role.", "settled_by": "research", "grounds": ["turn-rebuild.md, Roles; only the main conversation can ask the person"]},
-  {"id": "D15", "what": "Which choices of the components would a builder question?", "contributes_to": ["architecture/Q13"], "builds_on": ["D14"], "decided": "turn:up a subagent, as lane lays a flow only on one; started in the background so the main conversation relays asks; builder and evaluator serve both phases; a refactoring more goes back to builder.", "settled_by": "research", "grounds": ["plugins/lane/README.md:18-19: the orchestrator of a flow must be a subagent"]},
-  {"id": "D16", "what": "How do the data join?", "contributes_to": ["architecture/Q6"], "builds_on": ["D13"], "decided": "The data model: Template has Format and Questions and includes Templates; Design tree has Purpose and Decisions, each serving Questions and building on Decisions; Answers hold an Answer for each Question.", "settled_by": "research", "grounds": ["dev/turn/data-model.svg, read as source; turn-rebuild.md, Files"]},
-  {"id": "D17", "what": "What sequence does each story follow?", "contributes_to": ["architecture/Q7"], "builds_on": ["D12", "D13", "D16"], "decided": "One Mermaid sequence for each story, the participants named as in Components, lane's check script among them as Check script.", "settled_by": "reasoning", "grounds": ["one name for one thing: plugins/lane/README.md calls it the check script"]},
-  {"id": "D18", "what": "Where does each part run and keep its files?", "contributes_to": ["architecture/Q8", "architecture/Q9"], "builds_on": ["D13"], "decided": "On the person's computer in Claude Code; runs in .turn/<yyyymmdd>-<name>/ and kept templates in .turn/templates/, in the folder Claude Code runs in, not a repository; lane's check script in turn's own folder.", "settled_by": "research", "grounds": ["turn needs no repository: a press release is made outside one", "dev/turn/deployment.svg drew that folder as The repository [git working folder], against the text; it is redrawn as the folder Claude Code runs in"]},
-  {"id": "D19", "what": "Which tests cover each unit, and when do they pass?", "contributes_to": ["architecture/Q10", "architecture/Q11", "architecture/Q12"], "builds_on": ["D18"], "decided": "Agents by trials of one role and of the four under lane's flow; scripts by unittest, Cosmic Ray and Hypothesis; templates by check.py; the whole by a trial of each story; trials on Opus pass in three runs of three.", "settled_by": "reasoning", "grounds": ["dev/architecture.md#test", "what an AI does varies from run to run"]},
-  {"id": "D20", "what": "Why are agents and scripts weighed heaviest?", "contributes_to": ["architecture/Q13"], "builds_on": ["D19"], "decided": "A stray role or a lax check gives the person a work that misses its purpose, or asks them what they need not decide.", "settled_by": "reasoning", "grounds": ["dev/turn/ux.md KR1.1, KR1.2"]},
-  {"id": "D21", "what": "What keeps the document true while a role changes inside?", "contributes_to": ["architecture/Q15"], "builds_on": ["D14"], "decided": "Lines say responsibilities, relations and choices with reasons; steps and file fields stay in the prompts and the forms.", "settled_by": "reasoning", "grounds": ["architecture.json Q15"]}
+  {
+   "id": "D1",
+   "what": "What does the document call the thing Turn makes, and the evaluator's two answers?",
+   "contributes_to": [
+    "architecture/Q1",
+    "architecture/Q7",
+    "architecture/Q13"
+   ],
+   "builds_on": [],
+   "decided": "\"work\", as dev/architecture.md defines it and turn-rebuild.md uses it, with one line saying the README calls it the deliverable; \"good\" and \"more\" for an answer, each tied once to the Good and the need of dev/architecture.md.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "dev/architecture.md:18: \"**work**: what a role makes, such as a document or code.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:138: \"Use and answer, as below, into `verification.json`.\" and :147-148: \"write for each question of the Checklist good, with the lines that meet its aim, or more\"",
+    "plugins/turn/best-practices/refactor-doc.json, Q5 step: \"Choose one name for each thing, the one its reader already uses.\""
+   ]
+  },
+  {
+   "id": "D2",
+   "what": "How does Turn deliver its UX, as one idea?",
+   "contributes_to": [
+    "architecture/Q1"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "Four roles take a work in turn: the planner gives the best practice of its kind, the designer decides the design from it, the builder makes the work, and the evaluator, given only the kind's Standard, uses the work as its user would; Lane's flow moves the work through them in two phases, first what the work says, then how it says it.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:3: \"What the user and the assistant agreed on 2026-10-31 for the new turn.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md, Roles: \"planner | designs the intended state of a kind of work from its best practice\" ... \"evaluator | uses the work as its user would and verifies it against the Checklist\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:167-168: \"lane's flow declares the six positions: planner, designer, builder, evaluator, builder, evaluator.\""
+   ]
+  },
+  {
+   "id": "D3",
+   "what": "Does Turn's way of moving a work follow the plugin architecture as it stands?",
+   "contributes_to": [
+    "architecture/Q2",
+    "architecture/Q12",
+    "architecture/Q13"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "It follows dev/architecture.md, with seven departures, each kept as a choice with its reason beside the figure that shows it: the orchestrator is a subagent the main conversation starts, not a skill; it runs in the background; approvals reach the role through the main conversation, not by an action of the person's own; the evaluator writes its answers to the run's files for the designer, not to the maker by message; the course lies in Lane's flow, not in a script of Turn's own; the run's files lie in .turn/ in the folder Claude Code runs in, not at a repository's root; and lessons are left to the caller. Where dev/architecture.md:332-333 names Turn as a plugin whose run keeps no state and keeps no course, that line no longer holds and is to change there.",
+   "settled_by": "reasoning",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:55-56: \"is to follow the plugin architecture where that serves; whether it does is still to judge.\"",
+    "dev/architecture.md:49: \"the reader gives the item's Good lines, or its need, and tells the maker directly.\"",
+    "dev/architecture.md:54: \"A run that goes in a fixed loop has its course in a script.\"",
+    "dev/architecture.md:168: \"A plugin that a person calls runs its orchestrator in the main conversation, started by a skill.\"",
+    "dev/architecture.md:270-272: \"A reader shown someone else's verdict finds what it was told. So two readings add a check only when each is made on its own.\"",
+    "plugins/lane/README.md:18-19: \"so the orchestrator of a flow must be a subagent.\""
+   ]
+  },
+  {
+   "id": "D4",
+   "what": "What lets a new kind cost only a best practice?",
+   "contributes_to": [
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "Principle: one way for every kind; Turn's roles and scripts hold no rule of any one kind.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:54-55: \"How turn moves a work toward its goal is the same for every kind, so a new kind needs only a template.\""
+   ]
+  },
+  {
+   "id": "D5",
+   "what": "What must the person give before a run?",
+   "contributes_to": [
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "Principle: nothing beforehand; the planner asks the kind, the designer the purpose, and a point a caller settled is taken as decided.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:47-49: \"turn needs nothing given: planner asks the kind of work, and designer asks this work's purpose.\" ... \"A caller such as rn may give what it has already settled, so the user is not asked it again.\""
+   ]
+  },
+  {
+   "id": "D6",
+   "what": "In what order are the decisions made, and where are they kept?",
+   "contributes_to": [
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "Principle: decided from the purpose down, in the order they build on one another, kept in a design tree whose every decision serves a question.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md, Design tree: \"It builds on the decisions that must be made before it, and by these the order of deciding is found\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:105: \"Decide in the order the decisions build on one another, the goal first\""
+   ]
+  },
+  {
+   "id": "D7",
+   "what": "Who asks the person what, and who changes the design?",
+   "contributes_to": [
+    "architecture/Q2",
+    "architecture/Q5"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "Principle: the planner alone asks about the kind and its Standard, the designer alone about the purpose and the design and alone changes it, each one point at a time with a recommendation.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md: \"designer alone changes the design and alone asks the user about it, so the work is always made from one design.\""
+   ]
+  },
+  {
+   "id": "D8",
+   "what": "What does the evaluator get?",
+   "contributes_to": [
+    "architecture/Q2",
+    "architecture/Q5"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "Principle: the work and the Standard alone, never the Practice or the design tree; it answers by using the work as its user would.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:136-137: \"Take the work and the Checklist alone. The design is not given\"",
+    ".rn/20261013-rebuild/turn-rebuild.md, Files: \"The evaluator is given `standard` alone, taken out by a script.\""
+   ]
+  },
+  {
+   "id": "D9",
+   "what": "Where is a more mended?",
+   "contributes_to": [
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D6",
+    "D7"
+   ],
+   "decided": "Principle: every change to what the work says enters by the design tree; no role adds onto the work.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:157-161: \"A more is mended at the decision that serves its question, never added onto the work. Every change, a more or a point the user raises, enters by the design tree\""
+   ]
+  },
+  {
+   "id": "D10",
+   "what": "How are what the work says and how it says it kept apart?",
+   "contributes_to": [
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D6"
+   ],
+   "decided": "Principle: the content phase on the kind's own questions from the design tree, then the refactoring phase on refactor-doc or refactor-code with no design tree; a point that would change what the work says goes back to the designer.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:164-173, The refactoring phase",
+    ".rn/20261013-rebuild/turn-rebuild.md:175: \"Keeping the two phases apart keeps builder and evaluator on the content while it is made.\""
+   ]
+  },
+  {
+   "id": "D11",
+   "what": "How does each role carry on from the last?",
+   "contributes_to": [
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "Principle: each role starts fresh at each move and works from the run's files alone.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md, Flow: \"designer, builder and evaluator start fresh at each move and carry on from the run's files\""
+   ]
+  },
+  {
+   "id": "D12",
+   "what": "What holds the order and the limits, and how does Turn use Lane and its callers?",
+   "contributes_to": [
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "Principles: Lane holds the order and the limits, Turn's scripts checking only what no lane holds; Turn knows Lane and a caller only by what they document.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md, Files: \"lane's lanes hold each role to them ... A script checks only what no lane holds\"",
+    "dev/architecture.md:525-526: \"A check on what an AI does is a lane of [Lane]\""
+   ]
+  },
+  {
+   "id": "D13",
+   "what": "Do the entry `turn:up` and the folder `.turn/` that the README names stay?",
+   "contributes_to": [
+    "architecture/Q3",
+    "architecture/Q8",
+    "architecture/Q9"
+   ],
+   "builds_on": [
+    "D3"
+   ],
+   "decided": "Both stay: `turn:up` is the one entry, for the person and a plugin's step alike; `.turn/best-practices/<kind>.json` holds the best practices the person approved, and `.turn/<yyyymmdd>-<name>/` one run's files, in the folder Claude Code runs in.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/README.md:91: \"Ask for the deliverable, and name Turn's agent, `turn:up`\"",
+    "plugins/turn/README.md:159-160: \"Turn keeps the Standard you approved, with its Practice, in `.turn/` in the folder you run Claude Code in\"",
+    ".rn/20261013-rebuild/turn-rebuild.md, Files: \"in `.turn/` for those a user's runs make\"",
+    "plugins/turn/docs/calling.md:8: \"Start the `turn:up` agent\""
+   ]
+  },
+  {
+   "id": "D14",
+   "what": "Which user stories carry the UX's steps?",
+   "contributes_to": [
+    "architecture/Q3",
+    "architecture/Q14"
+   ],
+   "builds_on": [
+    "D2",
+    "D13"
+   ],
+   "decided": "Five: ask `turn:up` and confirm the kind; approve the Standard of a new kind and have it kept; answer the purpose and the points only the person decides and approve the design; get the work once a second AI finds every question good; a plugin's step starting `turn:up` with what it settled. The search for a best practice is drawn inside the second story's sequence.",
+   "settled_by": "research",
+   "grounds": [
+    "dev/turn/ux.md:35-51: each message of O1's scenario falls in one of the first four",
+    ".rn/20261013-rebuild/turn-rebuild.md:20: \"A plugin such as rn connects that person and turn.\"",
+    "plugins/turn/best-practices/architecture.json, Q14 step: \"Remove a story for a step that happens only inside the product, and draw that step in the sequence of the story it belongs to.\""
+   ]
+  },
+  {
+   "id": "D15",
+   "what": "Which roles and stores are there, each with its type and technology?",
+   "contributes_to": [
+    "architecture/Q4",
+    "architecture/Q14"
+   ],
+   "builds_on": [
+    "D8",
+    "D12",
+    "D14"
+   ],
+   "decided": "turn:up, the planner, the designer, the builder and the evaluator as subagents in Markdown; check.py, standard.py, wait.py and the items adapter as scripts in Python 3.9 stdlib; Lane's check script; stores Best practices, Run files, Forms and the work.",
+   "settled_by": "reasoning",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md, Files: \"A script verifies every part is looked at by a question, and every question has a method.\" and \"taken out by a script\"",
+    "plugins/turn/scripts/wait.py:1-3: \"a message reaches a subagent only at its next tool call ... so the role runs this wait in the foreground\"",
+    "plugins/lane/docs/lanes.md, The ports: the items port reads \"each top-level item of a Markdown list\", so a JSON checklist needs an adapter",
+    "dev/architecture.md:496: \"What runs on users' machines is Python 3, version 3.9 or later, with the standard library only.\""
+   ]
+  },
+  {
+   "id": "D16",
+   "what": "What does the run keep beyond the design tree and the answers, so a stopped run goes on?",
+   "contributes_to": [
+    "architecture/Q5",
+    "architecture/Q6",
+    "architecture/Q8"
+   ],
+   "builds_on": [
+    "D11",
+    "D15"
+   ],
+   "decided": "A request, `request.json` in the run's folder: turn:up writes what was asked, what a caller settled, and the kind and its refactoring best practice that the planner's answer names; the designer adds the place of the work's files. Each role is started with the request and the phase, and takes its best practice by the kind the request names.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "dev/architecture.md:54-55: \"Every run that keeps a state writes it to a file before each next move, so a stopped run goes on from where it stopped.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:166: \"as planner decided with the kind\"",
+    "plugins/turn/docs/calling.md:20-23: the caller's `kind`, `purpose` and `decided`"
+   ]
+  },
+  {
+   "id": "D17",
+   "what": "How does the builder return a point the design leaves open?",
+   "contributes_to": [
+    "architecture/Q5",
+    "architecture/Q7"
+   ],
+   "builds_on": [
+    "D9",
+    "D15"
+   ],
+   "decided": "It writes the point as a more of the question it bears on in its self-check, and ends with `open`; the designer traces it as any more.",
+   "settled_by": "reasoning",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md: \"Where a point the design leaves open bears on the work's quality, return it to designer unanswered.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:159: \"Every change, a more or a point the user raises, enters by the design tree\""
+   ]
+  },
+  {
+   "id": "D18",
+   "what": "What is Turn's flow, and what sends the work back?",
+   "contributes_to": [
+    "architecture/Q5",
+    "architecture/Q7"
+   ],
+   "builds_on": [
+    "D10",
+    "D12",
+    "D17"
+   ],
+   "decided": "Six positions, planner, designer, builder, evaluator, builder, evaluator; back from 3 to 2 on `open`, from 4 to 2 on `more`, from 5 to 2 on `open`, and from 6 to 5 on `more`.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:167-168 and :171-173: \"A more goes back to builder.\" ... \"a point that would change what it says goes back to designer\"",
+    "plugins/lane/docs/flow.md, The flow: \"`to` comes before `from`, and one position is the `from` of one `back` at most.\""
+   ]
+  },
+  {
+   "id": "D19",
+   "what": "What does each role alone decide?",
+   "contributes_to": [
+    "architecture/Q5"
+   ],
+   "builds_on": [
+    "D7",
+    "D16",
+    "D18"
+   ],
+   "decided": "turn:up the run and its phase, starting each role with the request and the phase; the planner the kind and its best practice; the designer each point of the design and the work's files; the builder the small points and, in the refactoring phase, the wording; the evaluator each answer, held by a lane to read only the work, so standard.py gives it all it has of the best practice; check.py, standard.py, the items adapter and wait.py their one job; Lane's check script each move; the main conversation puts each ask to the person in their language.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md, Roles",
+    "dev/architecture.md:183-185: \"A plugin that an AI calls writes in the repository's language, and the caller that talks with the person translates.\""
+   ]
+  },
+  {
+   "id": "D20",
+   "what": "Who tells the phase, and why not the files or the position?",
+   "contributes_to": [
+    "architecture/Q5",
+    "architecture/Q12"
+   ],
+   "builds_on": [
+    "D18"
+   ],
+   "decided": "turn:up tells it from the role that last ended and its answer; the files stay as they were when the designer keeps its decisions, and a started-again turn:up may not be told its position.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:168-171: \"The orchestrator tells the phase from the role that last ended and its answer\"",
+    "plugins/lane/docs/flow.md: \"as Claude Code 2.1.316 does, may not give it the line lane's SubagentStart hook tells\""
+   ]
+  },
+  {
+   "id": "D21",
+   "what": "Which choices of the components and the deployment would a builder question?",
+   "contributes_to": [
+    "architecture/Q12",
+    "architecture/Q13"
+   ],
+   "builds_on": [
+    "D3",
+    "D13",
+    "D19",
+    "D20"
+   ],
+   "decided": "Under Components: turn:up a subagent; started in the background; approvals through the main conversation; the evaluator's answers through the files; the course in Lane's flow; builder and evaluator serving both phases; the refactoring more going to the builder; lessons left to the caller. Under Deployment: `.turn/` in the folder Claude Code runs in.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/architecture.json, Q13 step: \"Where the product departs on purpose from a principle of the architecture it is built on, say why among the choices.\"",
+    "plugins/turn/docs/calling.md:37-38: \"It arrives as a turn of its own once the main conversation's current turn ends\"",
+    "dev/architecture.md:408-409: \"A plugin called by an AI is one move of its caller's run.\""
+   ]
+  },
+  {
+   "id": "D22",
+   "what": "How do the data join?",
+   "contributes_to": [
+    "architecture/Q6"
+   ],
+   "builds_on": [
+    "D15",
+    "D16"
+   ],
+   "decided": "Request names Best practices and asks for the Work; a Best practice has a Standard and Methods; the Standard has Parts and asks Questions; a Question looks at Parts and is met by Methods; a Design tree is made on a Best practice and holds Decisions, which build on and contribute to Decisions and contribute to Questions; the Work is made from the Design tree and judged by Answers, which hold an Answer to each Question.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md, Files: the keys of best-practices/<kind>.json, design-tree.json, verification.json and self-check.json"
+   ]
+  },
+  {
+   "id": "D23",
+   "what": "What sequence does each story follow?",
+   "contributes_to": [
+    "architecture/Q7"
+   ],
+   "builds_on": [
+    "D14",
+    "D19",
+    "D22"
+   ],
+   "decided": "One Mermaid sequence for each story, its participants named as in Components and its data as in the data model; the content and refactoring phases drawn in the fourth.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/architecture.json, Q7 method"
+   ]
+  },
+  {
+   "id": "D24",
+   "what": "Where does each part run and keep its data, and how is Turn started?",
+   "contributes_to": [
+    "architecture/Q8"
+   ],
+   "builds_on": [
+    "D13",
+    "D15"
+   ],
+   "decided": "On the person's computer, in Claude Code; Turn's agents as subagents; Turn's scripts and Lane's check script under python3; shipped best practices and forms in Turn's installed folder; the work, approved best practices and run files in the folder Claude Code runs in. Started by asking the main conversation for turn:up, or by a plugin's step.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/README.md, Installation and Walkthrough step 1",
+    "dev/turn/deployment.svg, read as material"
+   ]
+  },
+  {
+   "id": "D25",
+   "what": "Where do Turn's files lie?",
+   "contributes_to": [
+    "architecture/Q9"
+   ],
+   "builds_on": [
+    "D15",
+    "D24"
+   ],
+   "decided": "The tree of plugins/turn/, dev/turn/ and .turn/, each line naming its role or data as in Components.",
+   "settled_by": "research",
+   "grounds": [
+    "dev/architecture.md:119-145, Directory structure"
+   ]
+  },
+  {
+   "id": "D26",
+   "what": "Which tests cover each deployment unit?",
+   "contributes_to": [
+    "architecture/Q10"
+   ],
+   "builds_on": [
+    "D24"
+   ],
+   "decided": "Turn's agents by a trial of one role, of the four under Lane's flow, and of each user story; Turn's scripts by unittest, Cosmic Ray and Hypothesis, and with Lane's check script laid; the installed folder's best practices by check.py; Lane's check script and the working folder left out.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "dev/architecture.md:537-538: \"Unit tests check a part made of code. A trial of that part alone checks a part run by an AI. Acceptance tests of its user stories check the whole plugin.\""
+   ]
+  },
+  {
+   "id": "D27",
+   "what": "When does each test pass, and how heavy is each?",
+   "contributes_to": [
+    "architecture/Q11",
+    "architecture/Q12"
+   ],
+   "builds_on": [
+    "D26"
+   ],
+   "decided": "Trials on Opus, passing in three runs of three; a role's trial when it keeps its steps and its files pass check.py; the roles' trial when every question is good and each more was mended at a decision that serves its question; a story's trial when the person is asked only what the UX asks. Agents and scripts ●●●, as a stray role or a lax check costs the person a work they cannot use or a question they need not answer.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "dev/architecture.md:607: \"It names the model in each run: Opus\"",
+    "dev/turn/ux.md:7-10: KR1.1 and KR1.2"
+   ]
+  },
+  {
+   "id": "D28",
+   "what": "What keeps the document true while a role changes inside?",
+   "contributes_to": [
+    "architecture/Q15"
+   ],
+   "builds_on": [
+    "D19"
+   ],
+   "decided": "Lines say responsibilities, relations and choices with reasons; steps, a role's prompt and a file's fields stay in the prompts and the forms.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/architecture.json, Q15 method"
+   ]
+  }
  ]
 }
