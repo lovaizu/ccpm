@@ -1,19 +1,308 @@
 {
  "kind": "readme",
  "goal": {
-  "what": "A person who meets turn for the first time decides from the README alone whether to have turn make their work, can explain and recommend it, starts by the README's steps alone, and knows where to read next.",
-  "grounds": ["readme.json purpose", "dev/turn/ux.md:5-6: the person who wants the work is turn's user"]
+  "what": "From the README alone, someone who meets Turn for the first time, wanting a deliverable made, starts having Turn make it when Turn serves their work, with their team behind the choice, and leaves Turn when it does not.",
+  "grounds": [
+   "plugins/turn/best-practices/readme.json, standard.goal: \"From the README alone, someone who meets the product for the first time starts using it when it serves their work, with their team behind the choice, and leaves it when it does not.\"",
+   ".rn/20261013-rebuild/turn-rebuild.md:20: \"turn's user is the person who wants the work.\""
+  ]
  },
  "decisions": [
-  {"id": "D1", "what": "What is turn, in one sentence?", "contributes_to": ["readme/Q1"], "builds_on": [], "decided": "A Claude Code plugin that makes a piece of work you ask for, such as a document or code, until it is what it should be.", "settled_by": "reasoning", "grounds": ["the kind the reader places it among, and turn-rebuild.md's concept: quality built up to a work that meets the purpose"]},
-  {"id": "D2", "what": "What does the reader gain?", "contributes_to": ["readme/Q2"], "builds_on": ["D1"], "decided": "The work as it should be, with their own effort spent only on the points only they can decide; turn decides every other point.", "settled_by": "research", "grounds": ["dev/turn/ux.md:5-6, O1"]},
-  {"id": "D3", "what": "What idea makes turn differ from asking Claude Code alone?", "contributes_to": ["readme/Q3"], "builds_on": ["D2"], "decided": "For each kind, turn reads how good ones are made and draws a format and a checklist for you to approve; it asks you the purpose and only your points, one at a time with a recommendation; a second AI that never sees the design checks the work as its reader would; shown beside Claude Code alone in idea.svg.", "settled_by": "research", "grounds": ["turn-rebuild.md: planner 3-6, designer 4, evaluator 1"]},
-  {"id": "D4", "what": "Which limits does the reader meet or ask about?", "contributes_to": ["readme/Q4"], "builds_on": ["D3"], "decided": "turn does not choose the purpose; does not check that the work achieves it in the world; does not commit, push, publish or send; is not for a quick draft, though a kind made before skips the reading.", "settled_by": "reasoning", "grounds": ["turn-rebuild.md: designer asks the purpose; the evaluator uses the work against the Checklist only; turn gives the work"]},
-  {"id": "D5", "what": "Which scenario does the walkthrough run?", "contributes_to": ["readme/Q5"], "builds_on": ["D2"], "decided": "The UX's O1: the RoomBook press release, each exchange as the UX has it, the kind's purpose shown with the format and the checklist.", "settled_by": "research", "grounds": [".claude/rules/dev.md step 1", "dev/turn/ux.md:20-42", "turn-code b37cf1ac: dev/turn/trials/roles/roombook.md, the README RoomBook's facts come from"]},
-  {"id": "D6", "what": "What output does the walkthrough show?", "contributes_to": ["readme/Q5"], "builds_on": ["D5"], "decided": "The release as turn writes it from RoomBook's README, and where turn keeps the approved template for next time.", "settled_by": "research", "grounds": ["turn-code b37cf1ac: dev/turn/trials/walkthrough.py runs this walkthrough; turn is not merged, so the output is not yet from a released run, which T41's trials settle"]},
-  {"id": "D7", "what": "What must be in place, and how does the reader install and see it worked?", "contributes_to": ["readme/Q7"], "builds_on": [], "decided": "Claude Code; Python 3.9 or later as python3; WebSearch and WebFetch allowed; the marketplace's two commands, and claude plugin list showing turn; the walkthrough's first step names turn:up.", "settled_by": "research", "grounds": ["plugins/turn/.claude-plugin/plugin.json version 0.1.0", "plugins/turn/agents/up.md exists"]},
-  {"id": "D8", "what": "Which part keeps each promise, at a manager's grain?", "contributes_to": ["readme/Q6"], "builds_on": ["D3"], "decided": "how-it-works.svg: the planner draws the checklist from good works and shows the format and the checklist for your approval; the designer asks only your points and designs; the builder makes; the evaluator, which never sees the design, uses the checklist's questions and sends back what the reader would get, or hands you the work.", "settled_by": "research", "grounds": ["turn-rebuild.md, Roles", "the figure before this pass had no planner, so the promise of a format and a checklist drawn from good works was joined to no part; the planner added, read as SVG source, not rendered, as no renderer runs here"]},
-  {"id": "D9", "what": "What stands under the figure?", "contributes_to": ["readme/Q6"], "builds_on": ["D8"], "decided": "Only what it cannot show: the evaluator says what the reader gets, not faults, so turn makes the decision again and never patches; then turn betters how the work says it, checked too.", "settled_by": "research", "grounds": ["turn-rebuild.md, Flow: the content phase, then the refactoring phase"]},
-  {"id": "D10", "what": "Where does the reader go next, and what is the license?", "contributes_to": ["readme/Q8", "readme/Q9"], "builds_on": [], "decided": "docs/calling.md for another plugin's step, CHANGELOG.md, dev/turn/README.md; MIT.", "settled_by": "research", "grounds": ["the files exist", "LICENSE at the repository's root"]}
+  {
+   "id": "D1",
+   "what": "Whom is Turn for, and what do they gain?",
+   "contributes_to": [
+    "readme/Q2",
+    "D2"
+   ],
+   "builds_on": [],
+   "decided": "For a person who wants a deliverable made well, such as a README, a press release or code. They get a deliverable they can put to use as it is delivered, and spend effort only on the points only they can decide.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:3: \"What the user and the assistant agreed on 2026-10-31 for the new turn.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:20-21: \"turn's user is the person who wants the work. ... They get a work that meets their purpose well, and spend effort only where only they can decide.\"",
+    "dev/turn/ux.md:7-8: \"KR1.1: The share of requested works that the person puts to use as delivered, with no change that they ask for or make.\""
+   ]
+  },
+  {
+   "id": "D2",
+   "what": "What name does the README give the thing Turn makes?",
+   "contributes_to": [
+    "readme/Q1",
+    "readme/Q2",
+    "readme/Q10"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "\"deliverable\", one name throughout, as the README's reader takes \"work\" in its everyday senses, such as \"work of their own\".",
+   "settled_by": "reasoning",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:28: \"The root is a deliverable that achieves its user's purpose.\"",
+    "plugins/turn/best-practices/refactor-doc.json, Q5 step: \"Choose one name for each thing, the one its reader already uses.\""
+   ]
+  },
+  {
+   "id": "D3",
+   "what": "What is Turn, in one sentence?",
+   "contributes_to": [
+    "readme/Q1"
+   ],
+   "builds_on": [
+    "D1",
+    "D2"
+   ],
+   "decided": "\"Turn is a Claude Code plugin that makes a deliverable you ask for, such as a document or code, until it meets your purpose well.\"",
+   "settled_by": "reasoning",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:7-9: \"an AI draws the concept out of the user and builds quality up to a work that meets the purpose well.\"",
+    "plugins/turn/best-practices/readme.json, Q1 step: \"Say what it does for its user in one verb phrase, with no feature names or mechanisms.\""
+   ]
+  },
+  {
+   "id": "D4",
+   "what": "What does Turn do that asking Claude Code alone does not?",
+   "contributes_to": [
+    "readme/Q3",
+    "D5",
+    "D7"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "Claude Code alone writes from what it knows and judges its own work. Turn draws the kind's best practice from guides and examples, ties each decision to the user's purpose in a design tree, and has a second AI use the result as its user would.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:14: \"a work is never passed by the one who made it.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:88: \"Research the kind's best practice.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:60: \"A design tree is the decisions to make, each joined to the goal it serves.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:136: \"Take the work and the Checklist alone.\""
+   ]
+  },
+  {
+   "id": "D5",
+   "what": "Which parts of the idea does the figure draw, and what does each ensure?",
+   "contributes_to": [
+    "readme/Q3",
+    "readme/Q7"
+   ],
+   "builds_on": [
+    "D4"
+   ],
+   "decided": "idea.svg drawn again: best practice refined into the Standard (Goal, Format, Checklist) and the Practice (a way and steps for each question); both feed the design tree; the deliverable is built from the tree and evaluated by the Standard alone. Under it, a list giving each of Goal, Format, Checklist, Practice and Design tree what it is and what it ensures. The old figure's Template and its Practice holding the design tree are dropped.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:30-35: \"**Goal** ... **Format** ... **Checklist**\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:41-42: \"for each essence a question holds, the best way of thinking and the steps that meet it\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:101-102: \"Make a design tree: this work's purpose at the root, the Checklist's questions under it, and under each question the decisions that make it yes\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:190: \"The evaluator is given `standard` alone\""
+   ]
+  },
+  {
+   "id": "D6",
+   "what": "What might a reader expect of Turn that it does not do, as the facts settle it?",
+   "contributes_to": [
+    "readme/Q4"
+   ],
+   "builds_on": [
+    "D4"
+   ],
+   "decided": "Turn does not check whether the deliverable gets the person what they want it for; Turn is not for a quick draft, though a kind done before skips the research.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:136: \"Take the work and the Checklist alone.\"",
+    "dev/turn/ux.md:17-18: \"KR1.1 comes before KR1.2, KR1.3 and KR1.4\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:87: \"Where a template for the kind exists, pass it to designer and end.\""
+   ]
+  },
+  {
+   "id": "D7",
+   "what": "Does the README say that Turn does not commit, push, publish or send the deliverable?",
+   "contributes_to": [
+    "readme/Q4"
+   ],
+   "builds_on": [
+    "D4"
+   ],
+   "decided": "Yes: Turn gives the deliverable's files, and the person chooses what happens to them. A reader weighs this before letting Turn into their work.",
+   "settled_by": "reasoning",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:48: \"turn keeps a template for each kind, and gives a work of that kind.\"",
+    "plugins/turn/best-practices/readme.json, Q4 step: \"Add what a reader would weigh before letting the product into their work, such as what it changes, what it sends and what it cannot see.\""
+   ]
+  },
+  {
+   "id": "D8",
+   "what": "What must be in place before installing, and how is Turn installed?",
+   "contributes_to": [
+    "readme/Q6"
+   ],
+   "builds_on": [],
+   "decided": "Claude Code; Python 3.9 or later as python3; WebSearch and WebFetch allowed. The marketplace's two commands, then claude plugin list showing turn@ccpm 0.1.0.",
+   "settled_by": "research",
+   "grounds": [
+    "dev/architecture.md:496-497: \"What runs on users' machines is Python 3, version 3.9 or later, with the standard library only. The plugin's README says so.\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:88: \"Research the kind's best practice.\"",
+    "plugins/turn/.claude-plugin/plugin.json: \"version\": \"0.1.0\""
+   ]
+  },
+  {
+   "id": "D9",
+   "what": "How does the person start Turn?",
+   "contributes_to": [
+    "readme/Q6",
+    "D10"
+   ],
+   "builds_on": [
+    "D8"
+   ],
+   "decided": "By naming Turn's agent, turn:up, in the request.",
+   "settled_by": "research",
+   "grounds": [
+    "dev/turn/architecture.md:86: \"`turn:up`, the orchestrator, tells the phase\"",
+    "turn-rebuild.md names no entry; dev/turn/architecture.md still describes the turn built before the rebuild"
+   ]
+  },
+  {
+   "id": "D10",
+   "what": "Which scenario does the walkthrough run, and on what facts?",
+   "contributes_to": [
+    "readme/Q5",
+    "readme/Q6"
+   ],
+   "builds_on": [
+    "D1",
+    "D9"
+   ],
+   "decided": "The UX's O1 scenario, the RoomBook press release, each exchange in the UX's order: the request, the kind, the Standard, the purpose, the release date with a recommendation, the design, and the release. RoomBook's facts come from the README used in Turn's earlier trial.",
+   "settled_by": "research",
+   "grounds": [
+    ".claude/rules/dev.md: \"the README takes two things from the UX: what the user gains, and the scenario that its walkthrough runs.\"",
+    "dev/turn/ux.md:31-52, the O1 scenario",
+    "git show b37cf1ac:dev/turn/trials/roles/roombook.md: \"RoomBook offers only the rooms whose seats and equipment fit that meeting.\""
+   ]
+  },
+  {
+   "id": "D11",
+   "what": "How does the walkthrough stand where no real run exists?",
+   "contributes_to": [
+    "readme/Q5",
+    "readme/Q10"
+   ],
+   "builds_on": [
+    "D10"
+   ],
+   "decided": "It is written from the UX's scenario, and a note at its top says plainly that it is not from a real run, as the rebuilt Turn does not run yet, and links the UX it follows.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/readme.json, Q5 step: \"then what the product shows, copied from a real run.\"",
+    ".rn/20261013-rebuild/steering.md:23-27: T41, turn rebuilt, not yet done"
+   ]
+  },
+  {
+   "id": "D12",
+   "what": "What does the walkthrough call the parts Turn shows for approval?",
+   "contributes_to": [
+    "readme/Q5"
+   ],
+   "builds_on": [
+    "D5",
+    "D10"
+   ],
+   "decided": "Goal, Format and Checklist, the names of the idea's list, where the UX's sketch says Purpose.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/best-practices/refactor-doc.json, Q5 thinking: \"Each thing has one name and each name one thing\""
+   ]
+  },
+  {
+   "id": "D13",
+   "what": "What does the reader learn after the walkthrough's result?",
+   "contributes_to": [
+    "readme/Q5"
+   ],
+   "builds_on": [
+    "D10"
+   ],
+   "decided": "Turn keeps the approved Standard with its Practice in .turn/ in the folder Claude Code runs in, so the next press release skips the research; Turn ships both for READMEs, UX documents, architecture documents, code and prompts.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:185-186: \"in `plugins/turn/` for those Turn ships and in `.turn/` for those a user's runs make\"",
+    "ls plugins/turn/best-practices: architecture, code, prompt, readme, ux, with meta, refactor-code and refactor-doc"
+   ]
+  },
+  {
+   "id": "D14",
+   "what": "Who keeps each promise, as How it works draws it?",
+   "contributes_to": [
+    "readme/Q7"
+   ],
+   "builds_on": [
+    "D4",
+    "D5",
+    "D6",
+    "D7"
+   ],
+   "decided": "how-it-works.svg: you; planner, designer, builder and evaluator; the Standard, the Practice, the design tree and the deliverable. The planner draws both from best practice and shows the Standard for approval; the designer asks only your points, decides by the Practice and writes the design tree; the builder builds from it; the evaluator, walled off from the Practice and the design tree, uses the Standard's questions and the deliverable as its user would, and sends back what the user would get or hands you the deliverable. The design tree is added to the old figure, and the wall extended to it.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:74-81, Roles table",
+    ".rn/20261013-rebuild/turn-rebuild.md:136-137: \"The design is not given\""
+   ]
+  },
+  {
+   "id": "D15",
+   "what": "What stands under the figure?",
+   "contributes_to": [
+    "readme/Q7",
+    "readme/Q3"
+   ],
+   "builds_on": [
+    "D14"
+   ],
+   "decided": "Only what the figure cannot show: the roles follow Anthropic's harness of planner, generator and evaluator; the designer asks one point at a time with a recommendation; a more says what the user gets, the designer decides that decision again and the builder remakes from it, so nothing is patched; then the builder betters how the deliverable says it, and the evaluator checks that too.",
+   "settled_by": "research",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:156-163, the content phase",
+    ".rn/20261013-rebuild/turn-rebuild.md:164-171, the refactoring phase",
+    ".rn/20261013-rebuild/turn-rebuild.md:220-221: Anthropic, \"Harness design for long-running application development\""
+   ]
+  },
+  {
+   "id": "D16",
+   "what": "Where does the reader go next, and on what license may they use Turn?",
+   "contributes_to": [
+    "readme/Q8",
+    "readme/Q9"
+   ],
+   "builds_on": [],
+   "decided": "Documentation: docs/calling.md and CHANGELOG.md. Development: dev/turn/README.md. License: MIT, linked to the root LICENSE.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/docs/calling.md, plugins/turn/CHANGELOG.md, dev/turn/README.md and LICENSE exist",
+    "dev/architecture.md:473-475: \"`dev/<plugin>/README.md` links the plugin's architecture\""
+   ]
+  },
+  {
+   "id": "D17",
+   "what": "In what order do the parts stand?",
+   "contributes_to": [
+    "readme/Q10"
+   ],
+   "builds_on": [
+    "D3",
+    "D5",
+    "D6",
+    "D8",
+    "D11",
+    "D14",
+    "D16"
+   ],
+   "decided": "readme.json's Format order: summary, gain, idea with figure and list, Non-goals closing the opening; Requirements, Installation, Walkthrough with its note first, How it works, Documentation, Development, License.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/best-practices/readme.json, standard.format.parts"
+   ]
+  }
  ]
 }
