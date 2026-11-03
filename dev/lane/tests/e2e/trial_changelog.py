@@ -211,6 +211,30 @@ def run(number: int) -> bool:
     return not wrong
 
 
+def verdict(wrong: list[str], counts: bool, why: str = "an invited break was not tried") -> bool:
+    """Prints whether the run failed, with what is wrong, does not count, as `why` says, or
+    passed; gives whether it passed."""
+    if wrong:
+        print("  failed: " + "; ".join(wrong))
+        return False
+    if not counts:
+        print(f"  does not count: {why}")
+        return False
+    print("  passed")
+    return True
+
+
+def records(session: str, place: str) -> list[tuple[str, dict[str, Any]]]:
+    """The record of each agent the session started, copied into the run's folder, with what
+    Claude Code keeps beside it, such as the ID of the call that started it."""
+    found = []
+    for file in sorted(trying.agents(session)):
+        shutil.copyfile(file, os.path.join(place, os.path.basename(file)))
+        with open(os.path.splitext(file)[0] + ".meta.json", encoding="utf-8") as f:
+            found.append((file, json.load(f)))
+    return found
+
+
 def main(runs: int, each: Callable[[int], bool] | None = None) -> int:
     """Runs the E2E test so many times, this one's or each given, and gives 0 where every run
     passed."""

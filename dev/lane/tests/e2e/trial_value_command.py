@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import json
 import os
-import shutil
 import sys
 import time
 
@@ -63,8 +62,7 @@ def run(number: int) -> bool:
     result = trying.claude(PROMPT, [os.path.join(repo, "changelog")], repo, record=stream)
     session = result["session_id"]
     linters = []
-    for file in sorted(trying.agents(session)):
-        shutil.copyfile(file, os.path.join(place, os.path.basename(file)))
+    for file, _ in trial_changelog.records(session, place):
         if trying.record.agent_type(file) == "changelog:linter":
             linters.append(calls(file))
     print(f"session {session}, {time.monotonic() - started:.0f} s")
@@ -95,14 +93,7 @@ def run(number: int) -> bool:
         if not through:
             wrong.append(f"linter {at}'s check of its notes, as one word, did not go through")
     print(f"  tried: {sorted(tried)}")
-    if wrong:
-        print("  failed: " + "; ".join(wrong))
-        return False
-    if len(tried) < 2:
-        print("  does not count: an invited break was not tried")
-        return False
-    print("  passed")
-    return True
+    return trial_changelog.verdict(wrong, len(tried) == 2)
 
 
 if __name__ == "__main__":
