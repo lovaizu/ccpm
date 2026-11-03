@@ -100,7 +100,7 @@ wherever Lane is missing.
 
 ### Components
 
-![Lane's components](components.svg)
+![Lane's components](images/components.svg)
 
 - `lay.py` alone writes into the plugin, and only from a proposal that `proposal.py` accepts.
   `lay.py up` brings the plugin's copy of the check script up to Lane's version, and writes its hook
@@ -128,7 +128,7 @@ wherever Lane is missing.
 
 ### Data model
 
-![Lane's data model](data-model.svg)
+![Lane's data model](images/data-model.svg)
 
 ### Sequences
 
@@ -275,7 +275,7 @@ sequenceDiagram
 
 ### Deployment
 
-![Lane's deployment](deployment.svg)
+![Lane's deployment](images/deployment.svg)
 
 - The developer AI installs Lane as [the README](../../plugins/lane/README.md#installation) says,
   and runs `python3 <installPath>/scripts/lay.py`. Claude Code starts the check script through the
@@ -314,10 +314,10 @@ plugins/lane/
 │   ├── moves.py                       moves.py <module · Python 3.9>
 │   ├── ports.py                       ports.py <module · Python 3.9>
 │   └── lanes_json.py, schema.py, forms.py, template.py   shared by lay.py and guard.py: Rules laid, Flow, and the forms an output is held to <Python 3.9>
-└── docs/lanes.md, docs/flow.md, README.md, CHANGELOG.md, how-it-works.svg   for users <Markdown, SVG>
+└── docs/lanes.md, docs/flow.md, README.md, CHANGELOG.md, images/   for users <Markdown, SVG>
 
 dev/lane/
-├── ux.md, architecture.md, *.svg, README.md   for builders <Markdown, SVG>
+├── ux.md, architecture.md, images/, README.md   for builders <Markdown, SVG>
 ├── cosmic-ray.toml                    the mutation testing <TOML>
 ├── testing.py                         what every plugin's tests stand on <Python 3>
 ├── tests/                             unit, integration and property tests <Python 3>
@@ -352,6 +352,6 @@ is tested in the hook process's row.
 - Both processes weigh ●●● in unit tests. A failure writes what no one approved, or lets a break
   through in a plugin whose operator never sees Lane.
 - Integration and end-to-end tests weigh ●●○. The unit tests hold every behavior, as
-  [Unit tests: code](../architecture.md#unit-tests-code) says. So integration tests check only how
+  [Unit: code](../architecture.md#unit-code) says. So integration tests check only how
   the code meets `sh`, the files and `claude`, and the trials only how an AI meets the sentences and
   the moves.

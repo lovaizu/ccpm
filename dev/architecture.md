@@ -65,7 +65,7 @@ only what that plugin gives beyond them.
 
 #### Components
 
-![A plugin's components](components.svg)
+![A plugin's components](images/components.svg)
 
 - The caller talks with the orchestrator, and a role that needs the person's decision asks the
   main conversation directly, as only the main conversation can ask the person
@@ -79,7 +79,7 @@ only what that plugin gives beyond them.
 
 #### Data model
 
-![A plugin's data model](data-model.svg)
+![A plugin's data model](images/data-model.svg)
 
 - What agents pass on as data is JSON ([JSON between agents](#json-between-agents)).
 
@@ -108,7 +108,7 @@ sequenceDiagram
 
 #### Deployment
 
-![A plugin's deployment](deployment.svg)
+![A plugin's deployment](images/deployment.svg)
 
 - A person starts a plugin by its skill, which makes the main conversation the orchestrator. An AI
   starts a plugin by starting its orchestrator as an agent
@@ -125,23 +125,29 @@ plugins/<plugin>/                 what runs on users' machines, installed by Cla
 ├── agents/<name>.md              an agent's entry <Markdown>
 ├── hooks/hooks.json              the hooks' entries <JSON>
 ├── hooks/lane/                   the guard, laid by Lane <Python 3>
-├── prompts/<part>.md             a part written as a prompt <Markdown>
-├── scripts/<part>.py             a part written as code, and a command line's entry <Python 3>
+├── scripts/                      what runs as a command and depends on Claude Code <Python 3>
+├── core/domain/                  the knowledge and rules of the plugin's work
+├── core/roles/                   each role's flow
 ├── docs/                         fuller use, named by the README's Documentation <Markdown>
+├── images/                       the images the README shows
 ├── README.md                     for the plugin's users <Markdown>
 └── CHANGELOG.md                  what changed for users in each version <Markdown>
 
 dev/                              what only the builders need
 ├── README.md                     the plugins' folders, and how to run the shared checks
 ├── architecture.md               this document
+├── images/                       the images this document shows
 ├── check.sh, properties.sh, mutate.sh, ...   the checks every plugin shares <sh>
 └── <plugin>/
-    ├── README.md                 the way to the plugin's UX, architecture, tests and trials
+    ├── README.md                 the way to the plugin's UX, architecture and tests
     ├── ux.md                     the plugin's UX <Markdown>
     ├── architecture.md           the plugin's architecture <Markdown>
+    ├── images/                   the images its UX and architecture show
     ├── cosmic-ray.toml           the plugin's mutation testing <TOML>
-    ├── tests/                    unit tests and property tests <Python 3>
-    └── trials/                   the trials of its roles and of the whole <Python 3>
+    └── tests/
+        ├── unit/                 at the path of what each tests, as tests/unit/core/domain/
+        ├── integration/          the plugin's parts together
+        └── e2e/                  the plugin's user stories
 ```
 
 [Repository structure](#repository-structure) says why each lies where it does.
@@ -438,8 +444,10 @@ named after that part. The files then show the parts the logical view draws.
   such as `turn.py`, never by where it is installed.
 
 The entries lie where Claude Code looks for them, in `agents/`, `skills/` and `hooks/`. A plugin's
-own parts lie in `prompts/` if they are written as prompts, and in `scripts/` if they are written as
-code. Lane's guard, which every plugin takes in, lies in `hooks/lane/`, where Lane lays it.
+own parts lie in `core/`, as [The core apart from Claude Code](#the-core-apart-from-claude-code)
+says. What runs as a command and depends on Claude Code lies in `scripts/`, as the official
+plugins keep their scripts. Lane's guard, which every plugin takes in, lies in `hooks/lane/`, where
+Lane lays it.
 
 The form of an entry is Claude Code's: a skill's folder is named after its command, and an agent is
 called by the name in its frontmatter. The job is the plugin's. A job kept in its entry is found by
@@ -467,6 +475,29 @@ entry said where it lies, ran it in each of twelve runs, an agent's and a skill'
 three after `/compact`, where the summary kept where it lies. Where the plugin is installed is
 Claude Code's business. The entry adapts to it, as ports and adapters has it, and the part holds
 none of it.
+
+### The core apart from Claude Code
+
+A plugin's own logic lies in `core/`, and depends on no agent, such as Claude Code or Codex. It
+names no tool of theirs, such as the Agent tool or `AskUserQuestion`; the entries do. Inside it:
+
+- `core/domain/` holds the knowledge and rules of the plugin's work, which every role reads alike.
+- `core/roles/` holds each role's flow, which uses the domain.
+
+Each places its prompts, scripts and assets as its parts need.
+
+What the plugin knows then outlives the agent it runs on, as Cockburn's
+[ports and adapters](https://alistair.cockburn.us/hexagonal-architecture/) has it: the application
+is "developed and tested in isolation from its eventual run-time devices and databases". The
+domain changes only when the work's rules change, and a role only when its way of working does, so
+each is changed without reading the other.
+
+### Images beside their document
+
+An image lies in `images/` beside the document that shows it, as `dev/images/` for this document.
+
+A folder then shows its documents and parts when it is opened, and an image is found from the
+document that shows it.
 
 ### The READMEs
 
@@ -534,8 +565,15 @@ it. A check in a file of its own can be read, fixed and tested on its own.
 
 ## Test
 
-Each kind of part has its own check. Unit tests check a part made of code. A trial of that part
-alone checks a part run by an AI. Acceptance tests of its user stories check the whole plugin.
+Each plugin's architecture tests it at three levels, the columns of its test table: unit, a part
+alone; integration, its parts together; and end-to-end, its user stories. A part made of code is
+tested by unit tests, and a part run by an AI by a trial, a run of it judged from its records.
+The tests lie in `dev/<plugin>/tests/`, a folder for each level: `unit/`, at the path of what each
+tests, as `tests/unit/core/domain/`, `integration/` and `e2e/`. A file of tests of code is named
+`test_*.py`, and the code that runs a trial `trial_*.py`, so `unittest` finds only the tests that
+CI runs.
+
+A test is then found from what it tests, and the names of the folders are those of the table.
 
 ### No check passes what it did not check
 
@@ -552,10 +590,10 @@ A check that says nothing when it could not check is read as one that found noth
 there to stop then goes through unseen. A case decided only when it is met is decided in a hurry,
 by whoever meets it.
 
-### Unit tests: code
+### Unit: code
 
-Each part made of code has unit tests, written with `unittest` in `dev/<plugin>/tests/`. They run
-every line and every branch of it: C0 and C1 coverage, 100%.
+Each part made of code has unit tests, written with `unittest` in `dev/<plugin>/tests/unit/`.
+They run every line and every branch of it: C0 and C1 coverage, 100%.
 
 Two more checks confirm that the unit tests are enough.
 
@@ -601,7 +639,7 @@ The reasons:
 A plugin's whole test run takes seconds, and the time each check takes is read on every run.
 Mutation testing runs the tests once for each mutant, so a slow test run makes every change wait.
 
-### Unit tests: prompts
+### Unit: prompts
 
 The assistant tries each role, a skill or an agent, on its own, with mocks standing in for
 everything else. It names the model in each run: Opus, the model the maintainer uses. It judges the
@@ -612,7 +650,7 @@ role tried together with what lies around it does not show which of them went wr
 model makes different slips from the ones users meet. A model left to the runner's settings changes
 with whoever runs the trial.
 
-### Acceptance tests: user stories
+### End-to-end: user stories
 
 The assistant tries the whole plugin as its user uses it, and checks its results. Then it shows the
 maintainer:
@@ -631,8 +669,8 @@ met as fully (Principle 8).
 
 A trial that needs a real GitHub repository runs in `lovaizu/playground`, one at a time, on a branch
 of its own. When it ends, the trial removes the branch, its pull requests and anything else it made
-there. The code that runs a trial, of the whole or of a role, is kept in `dev/<plugin>/trials/`, and
-is not counted in the lines and branches.
+there. The code that runs a trial, of the whole or of a role, is not counted in the lines and
+branches.
 
 CI cannot start Claude Code, so each trial is a check of its own. The pull requests and pushes a
 trial makes stay out of every repository people use, and `main` there takes nothing except a

@@ -12,7 +12,7 @@ learns the best practice of each kind of deliverable from guides and examples of
 each decision about your deliverable to your purpose. Then a second AI, which did not make the
 deliverable, uses it as its user would.
 
-![Best practice: a goal, parts, benefits and practices, used through a design tree](idea.svg)
+![Best practice: a goal, parts, benefits and practices, used through a design tree](images/idea.svg)
 
 - Best practice: what a good deliverable of the kind is, and how to make one, in four parts. You
   approve the goal, parts and benefits of a new kind's best practice before Turn uses it.
@@ -173,7 +173,7 @@ documents, code and prompts, so those kinds skip step 3 from the first time.
 
 ## How it works
 
-![How Turn makes a deliverable](how-it-works.svg)
+![How Turn makes a deliverable](images/how-it-works.svg)
 
 Turn has separate AIs plan, design, build and evaluate the deliverable, as Anthropic's "Harness
 design for long-running application development" (2026) has a planner, a generator and an evaluator.

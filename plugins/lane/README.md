@@ -133,7 +133,7 @@ A flow is laid the same way, from the proposal's `flow`, as [The flow](docs/flow
 
 ## How it works
 
-![How Lane works](how-it-works.svg)
+![How Lane works](images/how-it-works.svg)
 
 Lane puts its checks into your plugin as one script, the check script, in `hooks/lane/`. It runs
 from there, so whoever runs your plugin does not need Lane.

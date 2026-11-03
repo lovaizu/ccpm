@@ -60,7 +60,7 @@ jobs:
             echo "check=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # The oldest Python users run and the newest (dev/architecture.md, Unit tests: code).
+  # The oldest Python users run and the newest (dev/architecture.md, Unit: code).
   check:
     needs: changed
     if: needs.changed.outputs.check == 'true'

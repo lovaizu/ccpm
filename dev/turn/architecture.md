@@ -125,7 +125,7 @@ Lane and each caller can then change their code freely behind what they document
 
 ### Components
 
-![Turn's components](components.svg)
+![Turn's components](images/components.svg)
 
 - `turn:up` alone holds a run. It names the run's folder from the request and writes the request
   there. It takes each move Lane tells it, starts each role with the request and the phase, and
@@ -210,7 +210,7 @@ Choices a reader would question:
 
 ### Data model
 
-![Turn's data model](data-model.svg)
+![Turn's data model](images/data-model.svg)
 
 - Each data is kept as JSON, in the form its file under `plugins/turn/forms/` gives. Lane holds
   each role's files to their forms.
@@ -374,7 +374,7 @@ sequenceDiagram
 
 ### Deployment
 
-![Turn's deployment](deployment.svg)
+![Turn's deployment](images/deployment.svg)
 
 - The person installs Turn as [the README](../../plugins/turn/README.md#installation) says, and
   asks the main conversation to have `turn:up` make a work. A plugin's step starts `turn:up` as
@@ -411,10 +411,10 @@ plugins/turn/
 ├── hooks/lane/                  Check script, laid by Lane <hooks · Python 3.9, Lane>
 ├── hooks/adapters/items-*.py    Items adapter <script · Python 3.9 stdlib>
 ├── docs/calling.md              how a plugin's step calls Turn <Markdown>
-└── README.md, CHANGELOG.md, *.svg
+└── README.md, CHANGELOG.md, images/
 
 dev/turn/
-├── ux.md, architecture.md, *.svg, README.md
+├── ux.md, architecture.md, images/, README.md
 ├── cosmic-ray.toml              the mutation testing of Turn's scripts <TOML>
 ├── tests/                       unit and property tests of Turn's scripts <Python 3>
 └── trials/                      trials of roles, alone and together, and of stories <Python 3>

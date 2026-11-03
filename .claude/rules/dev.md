@@ -80,7 +80,7 @@ thinnest path.**
 **For each unit, in order, do a to e.**
 
 a. **Write its tests with `code.json` open, as
-   [Unit tests: code](../../dev/architecture.md#unit-tests-code) says, run them and see them
+   [Unit: code](../../dev/architecture.md#unit-code) says, run them and see them
    fail.**
    - Rationale: a test written after the code is fitted to what the code does, not to what it must
      do.
@@ -89,7 +89,7 @@ b. **Write the code with `code.json` open until the tests pass**, as
    [Code](../../dev/architecture.md#code) says.
 
 c. **Write each prompt, a skill or an agent, with `prompt.json` open, and try it as
-   [Unit tests: prompts](../../dev/architecture.md#unit-tests-prompts) says.**
+   [Unit: prompts](../../dev/architecture.md#unit-prompts) says.**
    - Rationale: a trial on unchecked prompts finds the prompts' slips, not whether the plugin keeps
      its promises.
 
@@ -101,7 +101,7 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
    [Checks kept in lane](../../dev/architecture.md#checks-kept-in-lane) says.
 
 e. **Try the unit as its user, as
-   [Acceptance tests: user stories](../../dev/architecture.md#acceptance-tests-user-stories) says.**
+   [End-to-end: user stories](../../dev/architecture.md#end-to-end-user-stories) says.**
 
 **Change a prompt or a document after a trial only for a cause confirmed in the records and traced
 to what the README and the architecture say it should be.**
@@ -112,7 +112,7 @@ to what the README and the architecture say it should be.**
 ### 7. Check the whole
 
 **Try the plugin as its user from start to end, as
-[Acceptance tests: user stories](../../dev/architecture.md#acceptance-tests-user-stories) says.**
+[End-to-end: user stories](../../dev/architecture.md#end-to-end-user-stories) says.**
 Settle what it finds at the unit its cause lies in, then check the whole again.
 
 - Rationale: each unit was checked on its own; what lies between units, and key results that show

@@ -35,7 +35,7 @@ Claude Code comes from `dev/package-lock.json`.
 
 On the newest Python, CI also installs the `test-quality` group, by
 `uv sync --locked --group test-quality`. With it, `sh dev/check.sh` also checks for copied code. CI
-then runs two more checks, as [Unit tests: code](./architecture.md#unit-tests-code) says:
+then runs two more checks, as [Unit: code](./architecture.md#unit-code) says:
 
 - `sh dev/properties.sh` runs the property tests, on many inputs each in CI and on few elsewhere.
 - `sh dev/mutate.sh` runs the mutation testing of each plugin that has a

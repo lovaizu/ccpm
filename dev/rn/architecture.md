@@ -74,7 +74,7 @@ A fix of the orchestrator's own is work that no AI other than its maker has read
 
 ### Components
 
-![Rn's components](components.svg)
+![Rn's components](images/components.svg)
 
 - The orchestrator alone talks with the person and decides each move. It writes the plan and the
   learnings itself, with Turn's plan template open.
@@ -88,7 +88,7 @@ A fix of the orchestrator's own is work that no AI other than its maker has read
 
 ### Data model
 
-![Rn's data model](data-model.svg)
+![Rn's data model](images/data-model.svg)
 
 - The steering holds only what is left and where the session stands: what the work is, the plan, and
   the stage, whether a sign-off waits, the next step and what is open. Rn's scripts write it as JSON
@@ -207,7 +207,7 @@ sequenceDiagram
 
 ### Deployment
 
-![Rn's deployment](deployment.svg)
+![Rn's deployment](images/deployment.svg)
 
 - Rn runs on Claude Code, python3 3.9 or later, git, `jq` and `gh`; Claude Code installs Turn with
   Rn.

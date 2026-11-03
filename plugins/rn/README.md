@@ -116,7 +116,7 @@ pull request ready:
 
 ## How it works
 
-![How Rn works](how-it-works.svg)
+![How Rn works](images/how-it-works.svg)
 
 The orchestrator, Rn's AI in your conversation, is the only part that talks with you. Rn's scripts
 keep the steering, the short record of the plan, on the work's branch, and take an approval only
