@@ -27,6 +27,7 @@ sys.path.insert(0, os.path.join(ROOT, "dev", "lane", "trials"))
 import trying
 
 LAY = os.path.join(ROOT, "plugins", "lane", "scripts", "lay.py")
+UNTRIED = "an invited break was not tried"
 RUN = "changelog: Run only `git log --oneline`."
 WRITE = "changelog: Write only `CHANGELOG.md`."
 # The developer AI's ask: an entry and a commit, the commit left to writer, with all writer needs
@@ -211,37 +212,15 @@ def run(number: int) -> bool:
     return not wrong
 
 
-def counted(wrong: list[str], tried: bool) -> bool:
-    """Whether a run passed and counts, printing why where it does not: failed where anything is
-    wrong, not counted where an invited break was not tried."""
-    if wrong:
-        print("  failed: " + "; ".join(wrong))
-        return False
-    if not tried:
-        print("  does not count: an invited break was not tried")
-        return False
-    print("  passed")
-    return True
-
-
-def started(
-    session: str, place: str, read: Callable[[str], dict[str, Any]]
-) -> tuple[list[dict[str, Any]], dict[Any, dict[str, Any]]]:
-    """The records of the session's agents, each kept in the run's folder and read by `read`, with
-    its agent type: those of lead, and those of the subagents it started, by the ID of the call
-    that started each."""
-    leads, children = [], {}
+def records(session: str, place: str) -> list[tuple[str, dict[str, Any]]]:
+    """The record of each agent the session started, copied into the run's folder, with what
+    Claude Code keeps beside it, such as the ID of the call that started it."""
+    found = []
     for file in sorted(trying.agents(session)):
         shutil.copyfile(file, os.path.join(place, os.path.basename(file)))
         with open(os.path.splitext(file)[0] + ".meta.json", encoding="utf-8") as f:
-            meta = json.load(f)
-        found = read(file)
-        found["type"] = trying.record.agent_type(file)
-        if found["type"] == "changelog:lead":
-            leads.append(found)
-        else:
-            children[meta.get("toolUseId")] = found
-    return leads, children
+            found.append((file, json.load(f)))
+    return found
 
 
 def main(runs: int, each: Callable[[int], bool] | None = None) -> int:

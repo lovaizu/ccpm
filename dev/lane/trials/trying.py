@@ -400,6 +400,8 @@ def verdict(untried: list[str], wrong: list[str]) -> bool:
     """Whether an E2E test's run counted and passed, printing which, and why where it did not."""
     if untried:
         print("  not counted: " + "; ".join(untried))
+        if wrong:
+            print("  and wrong: " + "; ".join(wrong))
         return False
     print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
     return not wrong

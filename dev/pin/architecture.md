@@ -16,13 +16,18 @@ principles below are what pin adds.
 
 ### Facts are found, decisions are asked
 
-The pinner finds each fact through a subagent, never by asking the person. It shows the person
-each fact as it is found, alone, to confirm. It asks the person only a decision that is theirs. It
+The pinner finds each fact itself, never by asking the person. A fact that a search must find
+goes to a subagent. A fact in a file the pinner has already read, it quotes directly, after it
+sees that the quoted words stand at the line it names. It shows the person each fact as it is
+found, alone, to confirm. It asks the person only a decision that is theirs. It
 settles itself a decision that follows from the goal and the decisions before it, and shows it in
 the design with what settled it.
 
 A question about a fact spends the person's time on what the AI could look up, and a decision taken
-for the person is a guess they never saw (KR1.1, KR1.2). The split of facts and decisions is that of
+for the person is a guess they never saw (KR1.1, KR1.2). A subagent started for what the pinner
+already holds adds a start and a wait, with nothing found that it did not have (KR1.2); a quote
+not seen at its line may be wrong, as when one listing numbered the lines of several files as one
+(E2E test of 2026-11-03). The split of facts and decisions is that of
 Matt Pocock's
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md):
 "Finding _facts_ is your job, never the user's", and "The _decisions_ are the user's: put each to
@@ -140,8 +145,9 @@ number gives the order.
 - Where the pinner is the main conversation, arrows 2, 10 and 11 are the main conversation's own.
 - The pinner alone decides which decision to settle next, who settles it, and what to recommend.
   It alone writes the tree.
-- The researcher finds one fact and nothing else. It is a subagent that Claude Code ships, such as
-  Explore, so pin holds no agent of its own.
+- The researcher finds one fact that a search must find, and nothing else, as
+  [Facts are found, decisions are asked](#facts-are-found-decisions-are-asked) says. It is a
+  subagent that Claude Code ships, such as Explore, so pin holds no agent of its own.
 - `check.py` alone decides whether the tree holds together. It reads the tree and writes nothing.
 - pin has no roles of its own, so a caller starts no orchestrator of pin's, as
   [A plugin that uses another](../architecture.md#a-plugin-that-uses-another) would have it: the
@@ -319,16 +325,26 @@ pin is tested as [Test](../architecture.md#test) says. What follows is what pin 
 The researcher has no row of its own: Claude Code ships it, and pin gives it only a prompt, tested
 with the pinner's.
 
+pin lays no lanes. Its only role, the pinner, runs in the main conversation, where a hook is not
+told which skill runs, or inside a caller's role, which the caller's own lanes hold
+([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)).
+So pin's steps are held by the check and by these tests.
+
 - A prompt test runs `pin:down` alone as [Unit: prompts](../architecture.md#unit-prompts) says,
-  with Opus. A script stands in for the person, answering each question from a set of answers, and
-  a stand-in researcher gives set facts. It passes in three runs of three: each message to the
-  person holds one point, each fact found is shown to the person before a decision rests on it, each
-  decision asked is one the person decides, and the tree passes `check.py`.
+  with Opus. A script stands in for the person, answering "Yes." to every message, and a project
+  subagent named Explore, which Claude Code takes in place of its own, stands in for the
+  researcher with set facts. An AI given the person's intent judges each message. It passes in
+  three runs of three: each message to the person holds one point, a fact found is shown to the
+  person before the design, no decision asked is one the pinner could settle, and the tree passes
+  `check.py` with no decision open.
 - An E2E test runs Claude Code with Opus on a copy of pin and of a plugin standing in for a caller,
-  as [End-to-end: user stories](../architecture.md#end-to-end-user-stories) says. The person's
-  answers are given by resuming the session with each next answer. It passes in three runs of three:
-  what the prompt test asks, and the person asked to confirm before the run ends; in O2, also no
-  point the caller settled is asked again, and the role runs the check in the form that
+  as [End-to-end: user stories](../architecture.md#end-to-end-user-stories) says. An AI stands in
+  for the person, answering from an intent written beforehand and never shown pin. There is one for
+  O1, one for O2, one for a stopped run gone on in a new conversation, and one for a decision a
+  caller reopens. Each passes in three runs of three, as the top of its file says: each message
+  holds one point and asks no fact and nothing settled again; the design is shown to confirm; and
+  the tree holds what the person wants, their own decisions settled by them, with no decision open.
+  A caller's role also runs the check in the form that
   [The check command keeps one form](#the-check-command-keeps-one-form) gives.
 - `check.py` weighs ●●● in unit tests, as a tree it passes wrongly sends a gap into the work
   unseen. The pinner weighs ●●● in E2E tests, as a question that is not the person's, or a decision

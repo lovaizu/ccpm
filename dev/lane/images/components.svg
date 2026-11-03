@@ -129,7 +129,8 @@
   <path class="line" d="M30,254 L14,254 L14,772 L30,772" marker-end="url(#arrow)"/>
   <text class="label" x="36" y="688" text-anchor="start">reads, writes</text>
   <text class="data" x="36" y="702" text-anchor="start">Step, Hook entry,</text>
-  <text class="data" x="36" y="716" text-anchor="start">Rule, Route</text>
+  <text class="data" x="36" y="716" text-anchor="start">Rule, Route,</text>
+  <text class="data" x="36" y="730" text-anchor="start">Order of results</text>
   <path class="line" d="M30,224 L14,224 L14,16 L930,16 L930,40" marker-end="url(#arrow)"/>
   <text class="label" x="560" y="31" text-anchor="middle">checks the plugin [claude plugin validate]</text>
   <path class="line" d="M930,104 L930,380" marker-end="url(#arrow)"/>
@@ -192,14 +193,16 @@
   <text class="data" x="556" y="346" text-anchor="start">Port JSON</text>
   <path class="line" d="M480,606 L840,606" marker-end="url(#arrow)"/>
   <text class="label" x="565" y="598" text-anchor="middle">asks the next start</text>
-  <text class="data" x="565" y="622" text-anchor="middle">Route, Result</text>
+  <text class="data" x="565" y="622" text-anchor="middle">Route, Order of results,</text>
+  <text class="data" x="565" y="636" text-anchor="middle">Result</text>
   <path class="line" d="M480,580 L1110,444" marker-end="url(#arrow)"/>
   <text class="label" x="770" y="548" text-anchor="middle">reads earlier calls,</text>
   <text class="label" x="770" y="562" text-anchor="middle">keeps an end</text>
   <text class="data" x="770" y="576" text-anchor="middle">Kept call, Result</text>
   <path class="line" d="M390,624 L390,740" marker-end="url(#arrow)"/>
   <text class="label" x="398" y="690" text-anchor="start">reads</text>
-  <text class="data" x="398" y="704" text-anchor="start">Step, Rule, Route</text>
+  <text class="data" x="398" y="704" text-anchor="start">Step, Rule, Route,</text>
+  <text class="data" x="398" y="718" text-anchor="start">Order of results</text>
   <text class="envname" x="30" y="855" text-anchor="start">Legend</text>
   <rect class="box" x="100" y="840" width="36" height="22" rx="8"/>
   <text class="label" x="144" y="855" text-anchor="start">AI</text>

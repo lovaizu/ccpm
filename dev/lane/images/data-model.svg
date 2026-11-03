@@ -214,6 +214,40 @@
   <path class="line" d="M783.8,505.3 L780.6,519.0"/>
   <circle class="hole" cx="764.7" cy="508.0" r="5"/>
   <text class="label" x="500" y="432" text-anchor="middle">matches</text>
+  <rect class="box" x="1040" y="490" width="170" height="48" rx="0"/>
+  <text class="name" x="1125.0" y="518.5">Order of results</text>
+  <path class="line" d="M1125.0,388.0 L1125.0,490.0"/>
+  <path class="line" d="M1118.0,396.0 L1132.0,396.0"/>
+  <circle class="hole" cx="1125.0" cy="414.0" r="5"/>
+  <path class="line" d="M1125.0,476.0 L1133.0,490.0"/>
+  <path class="line" d="M1125.0,476.0 L1125.0,490.0"/>
+  <path class="line" d="M1125.0,476.0 L1117.0,490.0"/>
+  <circle class="hole" cx="1125.0" cy="464.0" r="5"/>
+  <text class="label" x="1133" y="444" text-anchor="start">gives</text>
+  <path class="line" d="M1040.0,514.0 L960.0,514.0"/>
+  <path class="line" d="M1032.0,507.0 L1032.0,521.0"/>
+  <circle class="hole" cx="1014.0" cy="514.0" r="5"/>
+  <path class="line" d="M974.0,514.0 L960.0,522.0"/>
+  <path class="line" d="M974.0,514.0 L960.0,514.0"/>
+  <path class="line" d="M974.0,514.0 L960.0,506.0"/>
+  <path class="line" d="M980.0,521.0 L980.0,507.0"/>
+  <text class="label" x="1000" y="506" text-anchor="middle">picks</text>
+  <path class="line" d="M820.0,340.0 L675.0,238.0"/>
+  <path class="line" d="M817.5,329.7 L809.4,341.1"/>
+  <circle class="hole" cx="798.7" cy="325.0" r="5"/>
+  <path class="line" d="M686.5,246.1 L670.4,244.5"/>
+  <path class="line" d="M686.5,246.1 L675.0,238.0"/>
+  <path class="line" d="M686.5,246.1 L679.6,231.5"/>
+  <circle class="hole" cx="696.3" cy="253.0" r="5"/>
+  <text class="label" x="784" y="286" text-anchor="start">runs at once</text>
+  <path class="line" d="M290.0,52.0 L250.0,52.0 L250.0,76.0 L290.0,76.0"/>
+  <path class="line" d="M282.0,45.0 L282.0,59.0"/>
+  <circle class="hole" cx="264.0" cy="52.0" r="5"/>
+  <path class="line" d="M276.0,76.0 L290.0,68.0"/>
+  <path class="line" d="M276.0,76.0 L290.0,76.0"/>
+  <path class="line" d="M276.0,76.0 L290.0,84.0"/>
+  <circle class="hole" cx="264.0" cy="76.0" r="5"/>
+  <text class="label" x="242" y="68" text-anchor="end">joins</text>
   <text class="envname" x="40" y="654" text-anchor="start">Legend</text>
   <path class="line" d="M120,650 L170,650"/>
   <path class="line" d="M162.0,643.0 L162.0,657.0"/>

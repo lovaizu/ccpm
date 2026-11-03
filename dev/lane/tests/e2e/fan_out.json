@@ -3,11 +3,11 @@
   {"name": "writer", "steps": [
    {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]},
    {"step": 3, "lanes": [{"lane": "write_only", "takes": ["CHANGELOG.md"]}]}]},
-  {"name": "reviewer", "steps": [
-   {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]}]}],
- "routes": {"orchestrator": "lead", "step": 1, "fan_out": ["reviewer"], "precedence": ["more", "good"],
+  {"name": "auditor", "steps": [
+   {"step": 2, "lanes": [{"lane": "run_only", "takes": ["python3 ${CLAUDE_PLUGIN_ROOT}/scripts/commits.py {part}"]}]}]}],
+ "routes": {"orchestrator": "lead", "step": 1, "fan_out": ["auditor"], "precedence": ["more", "good"],
   "routes": [
-   {"from": "lead", "to": "reviewer"},
-   {"from": "reviewer", "on": "more", "to": "writer"},
-   {"from": "reviewer", "on": "good"},
+   {"from": "lead", "to": "auditor"},
+   {"from": "auditor", "on": "more", "to": "writer"},
+   {"from": "auditor", "on": "good"},
    {"from": "writer", "on": "written"}]}}

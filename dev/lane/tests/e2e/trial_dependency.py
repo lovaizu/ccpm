@@ -56,8 +56,7 @@ def run(number: int) -> bool:
     result = trying.claude(PROMPT, plugins, repo, record=stream)
     session = result["session_id"]
     verifier = []
-    for file in sorted(trying.agents(session)):
-        shutil.copyfile(file, os.path.join(place, os.path.basename(file)))
+    for file, _ in trial_changelog.records(session, place):
         if trying.record.agent_type(file) == "changelog:verifier":
             verifier += calls(file)
     print(f"session {session}, {time.monotonic() - started:.0f} s")
@@ -83,7 +82,7 @@ def run(number: int) -> bool:
     if not through:
         wrong.append("the skill's command by checker's folder did not go through")
     print(f"  tried: {sorted(tried)}")
-    return trial_changelog.counted(wrong, len(tried) >= 2)
+    return trying.verdict([] if len(tried) == 2 else [trial_changelog.UNTRIED], wrong)
 
 
 def open_text(*path: str) -> str:

@@ -29,7 +29,7 @@ import os
 import re
 import sys
 import time
-from typing import Any
+from typing import Any, Callable
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -184,6 +184,22 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]], repo: str)
     return {"wrong": wrong, "stopped": stopped, "kept": kept, "due": due}
 
 
+def started_by(
+    session: str, place: str, more: Callable[[str], dict[str, Any]] = lambda file: {}
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    """What the record of each agent the session started shows, as `record_of` reads it, with its
+    type and what `more` reads of the record's file: lead's, and each other's by the ID of the call
+    that started it."""
+    leads, children = [], {}
+    for file, meta in trial_changelog.records(session, place):
+        found = {**record_of(file), "type": trying.record.agent_type(file), **more(file)}
+        if found["type"] == "changelog:lead":
+            leads.append(found)
+        else:
+            children[meta.get("toolUseId")] = found
+    return leads, children
+
+
 def run(number: int) -> bool:
     """One run of the E2E test; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-routes-{number}")
@@ -191,7 +207,7 @@ def run(number: int) -> bool:
     started = time.monotonic()
     result = trying.interactive(PROMPT, [os.path.join(repo, "changelog")], repo, place)
     session = result["session_id"]
-    leads, children = trial_changelog.started(session, place, record_of)
+    leads, children = started_by(session, place)
     print(f"session {session}, {time.monotonic() - started:.0f} s")
     for lead in leads:
         for c in (c for c in lead["calls"] if c["tool"] == "Agent"):
@@ -215,7 +231,9 @@ def run(number: int) -> bool:
     )
     if found["due"]:
         print(f"  the run did not reach `good`: {found['due']} was still due as lead ended")
-    return trial_changelog.counted(found["wrong"], bool(found["stopped"] and found["kept"]))
+    return trying.verdict(
+        [] if found["stopped"] and found["kept"] else [trial_changelog.UNTRIED], found["wrong"]
+    )
 
 
 if __name__ == "__main__":

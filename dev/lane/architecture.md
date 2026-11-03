@@ -477,8 +477,10 @@ is tested in the hook process's row.
   of one subagent at once with different values, and passes where each run is held to its own.
   Another loads a stand-in dependency beside the test plugin and passes where the command of its
   skill goes through by the folder it is loaded from, and the same script by another folder or in
-  other words is stopped. One has the orchestrator start two runs of one subagent at once, and
-  passes where the next start goes through only once both have ended. Another holds a run's value
+  other words is stopped. One has the orchestrator start two runs of one subagent at once, the
+  second given work that a script of the test plugin answers late, so the orchestrator's start
+  between their ends is tried, and passes where the next start goes through only once both have
+  ended. Another holds a run's value
   inside a command, and passes where the command with the run's own value goes through and the
   command with another value, or with the value as more than one word, is stopped. The
   routes and a held command are tried in an interactive session, as `claude -p` neither starts the
