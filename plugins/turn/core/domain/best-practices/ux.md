@@ -11,7 +11,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
   - **key-result**: Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from when the user needs it, on their request or on an event, to having it. The first comes first: lead time is shortened only by changes that keep how well.
 - **scenarios**: The participants, then one scenario for each objective.
   - **participants**: Before the scenarios, in one place: each participant and whether it is a person, an AI or a script.
-  - **scenario**: For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order.
+  - **scenario**: For one objective, named by its ID and a short name for how the user reaches it: the main path from when the user first needs it, on their request or on an event, to reaching it, laid out so the reader follows who does what, in order.
 
 ## Benefits
 
@@ -19,7 +19,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - **Q2** (okrs): Weighing a piece of work, can the builder tell which one objective it brings closer?
 - **Q3** (objective, key-result): After a change, can the builder tell from the key results whether users came closer to the objective?
 - **Q4** (key-result): Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
-- **Q5** (objective, scenarios): For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?
+- **Q5** (objective, scenarios): For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?
 - **Q6** (participants, scenario): Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
 - **Q7** (the whole): Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
 
@@ -99,7 +99,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf), Rodden, Hutchinson and Fu, CHI 2010: "Use the HEART framework to prompt articulation of goals (e.g. is it more important to attract new users, or to encourage existing users to become more engaged?)."
 - [Risk-Aware Product Decisions in A/B Tests with Multiple Metrics](https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics), Schultzberg, Ankargren and Frånberg, engineering.atspotify.com, 2024: "By articulating the heuristics that govern your decision-making process, you can design and analyze the experiment in a way that respects how you make decisions in the end."
 
-### Q5: For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?
+### Q5: For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?
 
 **Thinking**: A scenario is one run of the main path to the objective, the one most users take, from the request that starts it to the gain that ends it.
 

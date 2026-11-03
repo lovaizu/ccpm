@@ -25,7 +25,7 @@
     },
     {
      "id": "scenario",
-     "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order."
+     "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from when the user first needs it, on their request or on an event, to reaching it, laid out so the reader follows who does what, in order."
     }
    ]
   }
@@ -54,7 +54,7 @@
   {
    "id": "Q5",
    "about": "objective, scenarios",
-   "what": "For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?"
+   "what": "For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?"
   },
   {
    "id": "Q6",
