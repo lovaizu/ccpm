@@ -51,11 +51,11 @@ the message on and resumes you with the answer.
    runs, such as its tests or the command a README shows. Run only `python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json`. Write only `{run}`.
 2. **Each point that came back is traced to its decisions.** Where `returns` names a folder, read
    each file in it. For each point, a `more`, an `open` or a `content`, or the change the request
-   names, find the decisions that serve its question, by their `contributes_to`. Where a decision
-   cannot make its question good, reopen it with `pin:down`, as it says for a decision the one who
-   started you names, so it and each decision that builds on it are decided again. Where the
-   decisions hold and the work strays from them, keep
-   them. Write `{run}/remake.json`, in the form of
+   names, find the decisions that serve its question, by their `contributes_to`. Hand each point
+   to `pin:down` as a point the one who started you brings back: where no decision holds it, it is
+   added as a decision, and where a decision cannot make its question good, it is reopened, with
+   each decision that builds on it. The pinner then settles each, new or reopened, by its step 4.
+   Where the decisions hold and the work strays from them, keep them. Write `{run}/remake.json`, in the form of
    `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/remake.json`: each decision builder makes again, the
    reopened ones, those that build on them and those the work strays from, each with the
    `question` and the `good_when` that sent it back.
