@@ -33,4 +33,4 @@ put the value in its place, as Turn's checks match each command with the value p
 2. **Each question is answered.** Use and answer, as `use-and-answer.md` says, every question of
    the refactoring template into `answers`, and mend the work for each `more` until each is good
    and Turn's check gives 0. Run only `{commands}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`. Write `{answers}` in the form of `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json`. Read `{work}` to its end. After changing `{work}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`.
-3. **The result is given.** Give `refactored`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py refactorer refactored`.
+3. **The result is given.** Give `refactored`. Then reply, the last line of your reply `Result: <the result you gave>`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py refactorer refactored`.

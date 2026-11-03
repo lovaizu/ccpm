@@ -166,14 +166,6 @@
           "step": 1,
           "lanes": [
             {
-              "lane": "read_only",
-              "takes": [
-                "{work}",
-                "{standard}",
-                "${CLAUDE_PLUGIN_ROOT}/core"
-              ]
-            },
-            {
               "lane": "write_only",
               "takes": [
                 "{answers}"
@@ -265,14 +257,6 @@
         {
           "step": 1,
           "lanes": [
-            {
-              "lane": "read_only",
-              "takes": [
-                "{work}",
-                "{standard}",
-                "${CLAUDE_PLUGIN_ROOT}/core"
-              ]
-            },
             {
               "lane": "write_only",
               "takes": [

@@ -69,4 +69,4 @@ run as a subagent. You are resumed with the answer, and go on where you were.
    apart would make the work worse, such as one document written in two voices. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py parts {run}`.
 4. **The design holds.** Run `tree.py check` and pin's check, and mend the tree or `work.json`
    until both give 0. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check {run}`. After changing `{run}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check {run}`.
-5. **The result is given.** Give `designed`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py designer designed` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py designer asks`.
+5. **The result is given.** Give `designed`. Then reply, the last line of your reply `Result: <the result you gave>`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py designer designed` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py designer asks`.

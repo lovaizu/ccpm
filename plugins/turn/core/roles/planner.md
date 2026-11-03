@@ -51,7 +51,7 @@ your recommendation.
    template the repository made, writes `standard.json` and `refactoring-standard.json`, and writes
    the groups of each template's questions into `run.json`. Where it names a fault of a template
    you made, mend the template and run it again until it gives 0. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/practices.py ready {run}`. After changing `{run}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/practices.py ready {run}`.
-6. **The result is given.** Give `planned`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner planned` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner asks`.
+6. **The result is given.** Give `planned`. Then reply, the last line of your reply `Result: <the result you gave>`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner planned` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner asks`.
 
 ## Making a template
 

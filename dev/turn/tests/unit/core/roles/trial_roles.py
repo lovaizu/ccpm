@@ -66,6 +66,8 @@ WORK = {
     "paths": ["README.md"],
     "commands": [
         "python3 tidy.py --help",
+        "mkdir -p /tmp/tidy-trial",
+        "touch /tmp/tidy-trial/photo.jpg /tmp/tidy-trial/Makefile",
         "python3 tidy.py --dry-run /tmp/tidy-trial",
     ],
 }
@@ -144,27 +146,32 @@ def laid(place: str, role: str) -> tuple[str, dict[str, str], dict[str, Any]]:
         )
     with open(os.path.join(repo, "README.md"), "w", encoding="utf-8") as f:
         f.write(README)
+    with open(os.path.join(run, "run.json"), encoding="utf-8") as f:
+        planned = json.load(f)
+    # The group of the walkthrough's questions, and the refactoring template's only group.
     if role == "evaluator":
+        group = next(g for g in planned["groups"] if "readme/Q5" in g["questions"])
         return (
             repo,
             copies,
             {
                 **common,
-                "questions": ["readme/Q5", "readme/Q6"],
+                "questions": group["questions"],
                 "standard": f"{RUN}/standard.json",
-                "answers": f"{RUN}/verification/G1.json",
+                "answers": f"{RUN}/verification/{group['id']}.json",
             },
         )
     if role == "refactorer":
         return repo, copies, {**common, "answers": f"{RUN}/refactor-check.json"}
+    group = planned["refactoring_groups"][0]
     return (
         repo,
         copies,
         {
             **common,
-            "questions": ["refactor-doc/Q1", "refactor-doc/Q2"],
+            "questions": group["questions"],
             "standard": f"{RUN}/refactoring-standard.json",
-            "answers": f"{RUN}/proofreading/G1.json",
+            "answers": f"{RUN}/proofreading/{group['id']}.json",
         },
     )
 
@@ -198,9 +205,10 @@ def run(role: str, number: int) -> bool:
     place = turning.trying.folder("turn", f"trial-{role}-{number}")
     repo, copies, values = laid(place, role)
     first = (
-        f"Start the subagent turn:{role} in the background with this prompt, word for word: "
+        f"Start the subagent turn:{role} in the background with this prompt, word for word, its"
+        " first line the JSON and its second the sentence after it, on lines of their own:\n\n"
         + json.dumps(values)
-        + " Do the work these values give you. Whenever it ends with a message headed `For the"
+        + "\nDo the work these values give you.\n\nWhenever it ends with a message headed `For the"
         " person:`, give me that message word for word as your whole reply. When I answer, resume"
         " it with SendMessage, giving it my answer word for word. Do nothing else yourself. When it"
         " ends with no message for the person, say that the work is done."

@@ -17,8 +17,9 @@ decide nothing of the work yourself: each role does its own part, and Lane gives
 
 ## Run values
 
-Start each role with the Agent tool, `subagent_type` `turn:<role>`, its prompt one JSON object on
-one line holding its run values, then a sentence saying what it is to do. The run values of each:
+Start each role with the Agent tool, `subagent_type` `turn:<role>`, its prompt one JSON object
+holding its run values, alone on its first line, then on the next line a sentence saying what it is
+to do: Lane reads a run's values only from a line that is JSON whole. The run values of each:
 
 - planner: `run`, `request`, `given`.
 - designer: `run`, `request`, `given`, and `returns`: `null` on its first start; after builder's
@@ -50,13 +51,14 @@ Read `run.json` and `work.json` with the Read tool to take these values; write n
    background, each run of a fanned-out step at once in one message. Where Lane tells you to wait,
    end your turn with `Turn is working: waiting for <role>.`: you are started again as each run
    ends. Start each subagent you are told to start, until you are told to start no more.
-3. **Each question goes to the person and back.** Where Lane tells you `<role> gave asks` and to
-   start no more, the role ended with a message headed `For the person:`. End your turn with that
-   message as it is, word for word, headed `For the person:`. Once you are resumed with the
-   answer, send it, word for word, to that role's run with SendMessage, its `to` the run's
-   `agentId`, and end your turn with `Turn is working: <role> has the answer.`
-4. **The work is handed back.** Where Lane tells you proofreader gave `good` and to start no more,
-   end with `Done: <the paths of work.json>. The run's files are in <run>.`
+3. **Each question goes to the person and back.** Where a role you started ends with a message
+   headed `For the person:`, end your turn with that message as it is, word for word, headed
+   `For the person:`, whatever Lane says. Once you are resumed with the answer, send it, word for
+   word, to that role's run with SendMessage, its `to` the run's `agentId`, and end your turn with
+   `Turn is working: <role> has the answer.`
+4. **The work is handed back.** Where every run of proofreader has ended, each replying
+   `Result: good`, end with `Done: <the paths of work.json>. The run's files are in <run>.` Where
+   a start is still due, Lane keeps you going with it: start it.
 
 Where Lane tells you something is wrong with Turn itself, such as a lane it cannot check, end
 with Lane's line as it is, headed `For the maker of Turn:`, and start no more roles.
