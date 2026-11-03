@@ -257,14 +257,13 @@ def wrong_in(turns: list[dict[str, Any]], points: list[dict[str, Any]]) -> list[
 
 
 def tried_in(tree: dict[str, Any], outputs: list[str]) -> list[str]:
-    """Which invited break the run did not meet: a fact of the repository settling a decision, and
+    """Which invited break the run did not meet: a fact of the repository a decision rests on, and
     more than one decision open to decide at once, from the tree and check.py's outputs."""
     untried = []
-    if not any(
-        d.get("settled_by") == "research" and "scripts/" in " ".join(d.get("grounds", []))
-        for d in tree.get("decisions", [])
-    ):
-        untried.append("no decision was settled by a fact found in scripts/")
+    # A fact found may settle a decision of its own, or be one ground among others of one.
+    quoted = re.compile(r"scripts/\w+\.py:\d+")
+    if not any(quoted.search(" ".join(d.get("grounds", []))) for d in tree.get("decisions", [])):
+        untried.append("no decision rests on a fact quoted from scripts/")
     if not any(re.search(r"Open to decide now: \S+, ", out) for out in outputs):
         untried.append("check.py never named more than one decision open at once")
     return untried

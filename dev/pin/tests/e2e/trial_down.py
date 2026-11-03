@@ -6,7 +6,7 @@ intent written beforehand and never shown pin.
 Breaks it invites: asking the person a fact the repository holds, as which scripts read the output
 and how sync.py reads `updated`; asking several decisions at once, as more than one is open from
 the start; and settling for the person what is theirs, as the form of the JSON and of tags. A run
-counts only where a decision was settled by a fact found in scripts/, and check.py once named more
+counts only where a decision rests on a fact quoted from scripts/, and check.py once named more
 than one decision open at once.
 
 Each run passes where: the tree at `.pin/<yyyymmdd>-<name>/design-tree.json` passes check.py with
