@@ -15,7 +15,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - **data-model**: A figure of each data the roles pass or keep, showing its name alone, and of each relation between two data, labelled with the relation's name and marked at both ends with how many of each it joins, such as one to many.
 - **sequences**: For each user story, its steps in the order they happen, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model.
 - **deployment**: A figure of each execution environment, such as a cloud service, a phone, the user's computer or CI, with its technology. Each environment holds its deployment units, such as an app or a container, each with its technology and, by their names in Components, the roles that run in it and the data kept in it. Each thing outside the product that they depend on is shown, with what is used. With the figure, how the product is started, and choices.
-- **directory**: The folders and files of the product as they lie, nested as on disk, each one that holds a role or a data naming it as in Components, with its technology.
+- **directory**: The place where each role and each data lies: the folders and files that hold them, nested as on disk, each naming the role or the data it holds as in Components, with its technology, and none of the files inside a role.
 - **test-table**: A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why.
 - **test-rules**: For each test type, including any the product adds, what it makes real, what it fakes and when it passes, and, for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here.
 
@@ -187,7 +187,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ### Q10: Making or changing a role or a data, can the builder find the one place its files belong?
 
-**Thinking**: The tree of folders and files, as they lie on disk, joins each role and each data to the one place where it is made, so the builder finds where to change it.
+**Thinking**: The tree of the folders and files that hold the roles and the data, as they lie on disk, joins each role and each data to the one place where it is made, so the builder finds where to change it.
 
 **Steps**
 
