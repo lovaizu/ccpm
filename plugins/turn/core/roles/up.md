@@ -45,8 +45,9 @@ so each role hands you the values of the step after it.
    ends. Start each subagent you are told to start, until you are told to start no more.
 3. **Each question goes to the person and back.** Where a role you started ends with a message
    headed `For the person:`, end your turn with that message as it is, word for word, headed
-   `For the person:`, whatever Lane says. Once you are resumed with the answer, send it, word for
-   word, to that role's run with SendMessage, its `to` the run's `agentId`, and end your turn with
+   `For the person:`, whatever Lane says. Once you are resumed with the answer, send that role's run,
+   by SendMessage, its `to` the run's `agentId`, the message `The person's answer, word for word:`
+   and on the next line the answer as you were given it, and end your turn with
    `Turn is working: <role> has the answer.`
 4. **The work is handed back.** Where every run of proofreader has ended, each replying
    `Result: good`, end with `Done: <the paths of work.json>. The run's files are in <run>.` Where

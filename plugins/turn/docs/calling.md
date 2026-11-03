@@ -44,7 +44,7 @@ told. Its last message is headed by what to do:
 
 | Headed | Do |
 |---|---|
-| `For the person:` | Put the rest to the person as it is, and resume `turn:up` by SendMessage with their answer, word for word. |
+| `For the person:` | Put the rest to the person as it is, and resume `turn:up` by SendMessage with `The person's answer, word for word:` and, on the next line, their answer as they wrote it. |
 | `Turn is working:` | Nothing: you are told when `turn:up` ends again. |
 | `Done:` | Take the work: the message names its paths, and the run's folder. |
 | `For the maker of Turn:` | Turn stopped on a fault of its own. Tell the person, with the message as it is. |

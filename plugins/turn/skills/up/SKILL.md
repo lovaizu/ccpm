@@ -11,8 +11,8 @@ work yourself: only you can ask the person, so you carry Turn's questions and th
 1. Start the agent `turn:up` in the background with the request, "$ARGUMENTS", as its prompt.
 2. Each time `turn:up` ends, its last message says what to do:
    - headed `For the person:`, put the rest to the person as it is, and end your turn to wait for
-     their answer. Resume `turn:up` with the answer, word for word, by SendMessage to its
-     `agentId`.
+     their answer. Resume `turn:up` by SendMessage to its `agentId`, with the message
+     `The person's answer, word for word:` and on the next line their answer as they wrote it.
    - headed `Turn is working:`, say nothing and end your turn: `turn:up` goes on, and you are told
      when it ends again.
    - headed `Done:`, tell the person the work's paths it names, and stop.

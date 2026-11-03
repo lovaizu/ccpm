@@ -17,7 +17,7 @@ the person, and hand the README back.
    ```
 2. Each time `turn:up` ends, its last message says what to do:
    - headed `For the person:`, end your run with that message as it is. You are resumed with the
-     person's answer: send it, word for word, to `turn:up` by SendMessage, and end your run with
+     person's answer: send it to `turn:up` by SendMessage as you were given it, its first line `The person's answer, word for word:`, and end your run with
      `Turn is working.`
    - headed `Turn is working:`, end your run with `Turn is working.`
    - headed `Done:`, end your run with that message as it is.

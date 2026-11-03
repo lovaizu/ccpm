@@ -29,7 +29,8 @@ GOAL = (
 FIRST = (
     "Start the subagent caller:maker in the background to have the README made. Whenever it ends"
     " with a message headed `For the person:`, give me that message word for word as your whole"
-    " reply. When I answer, resume maker with SendMessage, giving it my answer word for word. When"
+    " reply. When I answer, resume maker with SendMessage, its message `The person's answer, word"
+    " for word:` and my answer on the next line. When"
     " it ends with `Turn is working.`, say nothing and wait. When it ends with `Done:`, reply with"
     " that message. Do nothing else yourself."
 )
