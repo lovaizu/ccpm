@@ -99,7 +99,8 @@ truly want; the AI cannot see it:""",
 - "asks_settled": true where it asks you again something you are said, above, to have settled
   already, or something you already answered in this conversation; otherwise false;
 - "not_yours": true where it asks you to decide something your wants above show you do not care
-  about and that follows from what you want and the repository; otherwise false;
+  about and that follows from what you want and the repository; otherwise false, as where it
+  asks what only you can know, such as what lies outside the repository;
 - "finished": true where the message says the work is done and asks you nothing; otherwise
   false.""",
 )
