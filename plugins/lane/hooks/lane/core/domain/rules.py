@@ -19,41 +19,46 @@ NAME = r"[A-Za-z0-9._-]+"
 TIMEOUT = 10
 # Where the rules lie in a plugin.
 FILE = os.path.join("hooks", "lanes.json")
-# hooks/lanes.json's JSON Schema: each subagent by its name, each step its lanes are laid on, by its
-# number, and each lane, one lane lays, with what it takes, none of it empty.
-LANE = {
-    "type": "object",
-    "required": ["lane", "takes"],
-    "additionalProperties": False,
-    "properties": {
-        "lane": {"enum": list(lanes.LANES)},
-        "takes": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
-    },
-}
-STEP = {
-    "type": "object",
-    "required": ["step", "lanes"],
-    "additionalProperties": False,
-    "properties": {
-        "step": {"type": "integer", "minimum": 1},
-        "lanes": {"type": "array", "items": LANE, "minItems": 1},
-    },
-}
-SUBAGENT = {
-    "type": "object",
-    "required": ["name", "steps"],
-    "additionalProperties": False,
-    "properties": {
-        "name": {"type": "string"},
-        "steps": {"type": "array", "items": STEP, "minItems": 1},
-    },
-}
-SHAPE = {
-    "type": "object",
-    "required": ["subagents"],
-    "additionalProperties": False,
-    "properties": {"subagents": {"type": "array", "items": SUBAGENT}},
-}
+
+
+def subagents(
+    named: list[str], takes: dict[str, Any], least: int, adapters: bool
+) -> dict[str, Any]:
+    """The JSON Schema of the subagents a proposal gives and hooks/lanes.json holds, at least
+    `least` of them: each by its name, each step its lanes are laid on, by its number, and each
+    lane, one of those named, with what it takes, as `takes` holds it; where `adapters`, as a
+    proposal gives them, the adapter a lane or a subagent may name."""
+
+    def adapter(port: str) -> dict[str, Any]:
+        return {"adapter": {"type": "string", "description": f"hooks/adapters/{port}-<name>.py"}}
+
+    lane = {"lane": {"enum": named}, "takes": takes, **(adapter("<port>") if adapters else {})}
+    step = {
+        "step": {"type": "integer", "description": "its number in the subagent's Steps"},
+        "lanes": {"type": "array", "minItems": 1, "items": shape(["lane", "takes"], lane)},
+    }
+    agent = {
+        "name": {"type": "string", "description": "the subagent, as its file's name: field"},
+        **(adapter("values") if adapters else {}),
+        "steps": {"type": "array", "minItems": 1, "items": shape(["step", "lanes"], step)},
+    }
+    return {"type": "array", "minItems": least, "items": shape(["name", "steps"], agent)}
+
+
+def shape(required: list[str], properties: dict[str, Any]) -> dict[str, Any]:
+    """The JSON Schema of an object of the properties, those required among them, and no other."""
+    return {
+        "type": "object",
+        "required": required,
+        "additionalProperties": False,
+        "properties": properties,
+    }
+
+
+# hooks/lanes.json's JSON Schema: the subagents with lanes laid, none once every one is gone, each
+# lane one lane lays, taking at least one thing, none of them empty.
+TAKEN = {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+SHAPE = shape(["subagents"], {"subagents": subagents(list(lanes.LANES), TAKEN, 0, False)})
 
 
 class Laid(NamedTuple):

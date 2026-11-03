@@ -22,61 +22,33 @@ import step
 # whole path, as the developer AI may run lay.py from any folder.
 LANES_MD = os.path.join(placed.LANE, "docs", "lanes.md")
 AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
-# The proposal's JSON Schema, as docs/lanes.md gives it.
-LANE = {
-    "type": "object",
-    "required": ["lane", "takes"],
-    "additionalProperties": False,
-    "properties": {
-        "lane": {
-            "enum": [
-                "read_only",
-                "read_whole",
-                "write_only",
-                "in_form",
-                "run_only",
-                "hold",
-                "test_after",
-                "end_when",
-                "every_item",
-            ]
-        },
-        "takes": {"type": "array", "items": {"type": "string"}},
-        "adapter": {"type": "string", "description": "hooks/adapters/<port>-<name>.py"},
-    },
-}
-STEP = {
-    "type": "object",
-    "required": ["step", "lanes"],
-    "additionalProperties": False,
-    "properties": {
-        "step": {"type": "integer", "description": "its number in the subagent's Steps"},
-        "lanes": {"type": "array", "minItems": 1, "items": LANE},
-    },
-}
-SUBAGENT = {
-    "type": "object",
-    "required": ["name", "steps"],
-    "additionalProperties": False,
-    "properties": {
-        "name": {"type": "string", "description": "the subagent, as its file's name: field"},
-        "adapter": {"type": "string", "description": "hooks/adapters/values-<name>.py"},
-        "steps": {"type": "array", "minItems": 1, "items": STEP},
-    },
-}
+# The proposal's JSON Schema, as docs/lanes.md gives it: each lane docs/lanes.md names, laid by
+# this version or not, so a lane not laid yet is refused by name rather than out of shape.
+NAMED = [
+    "read_only",
+    "read_whole",
+    "write_only",
+    "in_form",
+    "run_only",
+    "hold",
+    "test_after",
+    "end_when",
+    "every_item",
+]
+TAKES = {"type": "array", "items": {"type": "string"}}
 PROPOSAL = {
-    "type": "object",
-    "required": ["plugin"],
-    "additionalProperties": False,
-    "anyOf": [{"required": ["subagents"]}, {"required": ["routes"]}],
-    "properties": {
-        "plugin": {"type": "string", "description": "your plugin's folder"},
-        "routes": {
-            "type": "object",
-            "description": "your subagents' routes, as docs/routes.md gives them",
+    **rules.shape(
+        ["plugin"],
+        {
+            "plugin": {"type": "string", "description": "your plugin's folder"},
+            "routes": {
+                "type": "object",
+                "description": "your subagents' routes, as docs/routes.md gives them",
+            },
+            "subagents": rules.subagents(NAMED, TAKES, 1, True),
         },
-        "subagents": {"type": "array", "minItems": 1, "items": SUBAGENT},
-    },
+    ),
+    "anyOf": [{"required": ["subagents"]}, {"required": ["routes"]}],
 }
 # A thing given for each run: a name in braces, the braces wrapping the whole take.
 GIVEN = re.compile(r"\{[^{}]+\}")
