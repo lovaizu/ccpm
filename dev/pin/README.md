@@ -13,5 +13,8 @@ checked, is in [architecture.md](architecture.md).
   README's walkthrough runs it, and `python3 dev/pin/tests/e2e/trial_caller.py` tries O2 three
   times with the plugin `maker` in `tests/e2e/maker/` standing in for Turn or rn. In each, an AI
   stands in for the person, answering from an intent written in `tests/e2e/pinning.py` and never
-  shown pin. Each takes `[runs] [first]`, the number of runs and the number of the first; the top
-  of each file says what each run must show.
+  shown pin. `trial_resume.py` tries a stopped run gone on in a new conversation, and
+  `trial_reopen.py` a decision that maker's `reviser` reopens. Each takes `[runs] [first]`, the
+  number of runs and the number of the first; the top of each file says what each run must show.
+- Prompt test: `python3 dev/pin/tests/e2e/trial_pinner.py` tries `pin:down` alone three times, a
+  script answering "Yes." for the person and a project subagent named Explore giving set facts.
