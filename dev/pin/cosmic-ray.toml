@@ -1,0 +1,11 @@
+# Mutation testing of pin's code, check.py and tree.py, run from the top of the repository on a
+# copy that may be changed.
+[cosmic-ray]
+module-path = ["plugins/pin/core/domain", "plugins/pin/scripts"]
+timeout = 30.0
+# The type checker and the linter run first, as a change to a type annotation, or a comparison of a
+# string with `is` where CPython keeps one copy of it, changes no behavior a test could see.
+# A line marked `# pragma: no mutate` holds a value where no input tells a mutant of it apart: the
+# place pin's code goes on sys.path, no module before it there having the name of one of pin's,
+# and `__name__`, which is "__main__" or, imported by the tests, "check".
+test-command = "sh -c 'ruff check --select F632 plugins/pin && sh dev/typecheck.sh pin && python -m unittest discover -f -s dev/pin/tests'"
