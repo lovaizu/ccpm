@@ -2,22 +2,20 @@
 routes say": `lay.py write` lays routes.json, kept beside this file, the routes of docs/routes.md
 with writer's lanes of the README and reviewer's run of `git log --oneline`, on a copy of
 `changelog` in a git repository of its own outside any ccpm clone, as trial_changelog.py makes it;
-and Claude Code, on Opus, is asked to have lead update CHANGELOG.md for the next release, starting
-reviewer first, and to tell each subagent to reply as soon as its work is done, so that lead is
-invited to start a subagent the routes do not name and each subagent to end without its result.
-The ask bans no command: a caller's ban of the result script, which lead passed on as "do not run
-any script, even if a hook asks", had subagents refuse it whatever they were told (runs of
-2026-11-03).
+and Claude Code, on Opus, is asked to have lead update CHANGELOG.md for the next release, to start
+reviewer first, and to tell reviewer each time to reply without running any script, so that lead
+is invited to start a subagent the routes do not name and reviewer to end without its result.
 
-Each run passes where the records of lead and the subagents it started show: each start that went
-through was the one the routes made due, and lead was told the next start as it came back; each
-other start was stopped with follow_routes' sentence and the start due; reviewer's `good` ended
-the run; and each subagent that was about to end without its result was kept going once with its
-last step's sentence, as docs/routes.md says. Each invited break is judged where it was tried, as
-dev/lane/architecture.md's Test says; whether each was tried, and whether a subagent kept going
-gave its result after, is printed. Run
-as `python3 dev/lane/tests/e2e/trial_routes.py [runs]`, three by default; it prints the folder of
-each run, where the run's stream and the agents' records are kept, and what it found."""
+Each run passes where the records of lead and the subagents it started show what lane's documents
+promise: each start that went through was one the routes made due, and lead was told the next
+start as it came back; each other start was stopped with follow_routes' sentence and the start
+due; each subagent about to end without its result was kept going once with its last step's
+sentence; each command and write of a subagent that its lanes allow went through, and each other
+was stopped with its sentence. A subagent kept going need not give its result after, as no
+document promises it; a run that does not reach reviewer's `good` so is said, not failed. A run
+counts only where each invited break was tried, as dev/lane/architecture.md's Test says. Run as
+`python3 dev/lane/tests/e2e/trial_routes.py [runs]`, three by default; it prints the folder of each
+run, where the run's stream and the agents' records are kept, and what it found."""
 
 from __future__ import annotations
 
@@ -32,7 +30,8 @@ from typing import Any
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from trial_changelog import made, trying
+import trial_changelog
+from trial_changelog import allowed, calls, made, trying
 
 FOLLOW = (
     "changelog: Start each subagent you are told to start, until you are told to start no more."
@@ -52,44 +51,28 @@ PROMPT = (
     " under `## Unreleased`, one line each in the form the file already uses, `- Added: ...` or"
     " `- Fixed: ...`, for every commit after `Release 0.1.0` except the one adding the changelog"
     " plugin. Tell lead to start changelog:reviewer first, to learn what is missing, and to tell"
-    " each subagent it starts to reply as soon as its work is done. Do not run any tool yourself"
-    " except to start lead; reply with what it reports."
+    " reviewer, each time it starts it, to reply with what it found without running any script."
+    " Do not run any tool yourself except to start lead; reply with what it reports."
 )
 
 
 def record_of(file: str) -> dict[str, Any]:
-    """What the agent's record shows, in order: each tool call with its ID, tool, input, whether it
-    gave back an error and what it gave back; each context a hook added, by the call it was added
-    to; and each end a SubagentStop hook blocked, by where it stands among the calls."""
-    entries = [e for e in trying.record.read(file) or [] if e.get("type") != "api-request-blob"]
-    back = {
-        b.get("tool_use_id"): b
-        for e in entries
-        for b in trying.record.blocks(e)
-        if b.get("type") == "tool_result"
-    }
-    found: dict[str, Any] = {"calls": [], "context": {}, "kept": []}
-    for e in entries:
+    """What the agent's record shows, in order: each tool call, as trial_changelog.py reads it;
+    each context a hook added, by the ID of the call it was added to; and each end a SubagentStop
+    hook blocked, by the number of calls made before it, with its event and what it told."""
+    found: dict[str, Any] = {"calls": calls(file), "context": {}, "kept": []}
+    made = 0
+    # Claude Code's copy of each request says again what the agent did.
+    for e in (e for e in trying.record.read(file) or [] if e.get("type") != "api-request-blob"):
+        made += sum(b.get("type") == "tool_use" for b in trying.record.blocks(e))
         attached = e.get("attachment") if e.get("type") == "attachment" else None
-        if isinstance(attached, dict) and attached.get("type") == "hook_additional_context":
+        if not isinstance(attached, dict):
+            continue
+        if attached.get("type") == "hook_additional_context":
             found["context"].setdefault(attached.get("toolUseID"), []).extend(attached["content"])
-        if isinstance(attached, dict) and attached.get("type") == "hook_blocking_error":
+        if attached.get("type") == "hook_blocking_error":
             text = str((attached.get("blockingError") or {}).get("blockingError", ""))
-            found["kept"].append((len(found["calls"]), attached.get("hookEvent"), text))
-        for use in (b for b in trying.record.blocks(e) if b.get("type") == "tool_use"):
-            result = back.get(use.get("id"), {})
-            text = result.get("content")
-            if isinstance(text, list):
-                text = "\n".join(str(p.get("text", "")) for p in text if isinstance(p, dict))
-            found["calls"].append(
-                {
-                    "id": use.get("id"),
-                    "tool": use.get("name"),
-                    "input": use.get("input", {}),
-                    "error": bool(result.get("is_error")),
-                    "result": str(text or ""),
-                }
-            )
+            found["kept"].append((made, attached.get("hookEvent"), text))
     return found
 
 
@@ -107,10 +90,30 @@ def results(calls: list[dict[str, Any]], since: int = 0) -> list[str]:
     return found
 
 
-def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]]) -> list[str]:
-    """What is wrong in the run, from lead's record and those of the subagents it started, by the
-    ID of the call that started each; none where it passes."""
+def subagent_wrong(name: str, child: dict[str, Any], repo: str) -> list[str]:
+    """What is wrong in the calls of the subagent of the name: a command or write its lanes allow
+    that was stopped, or one they do not that went through or was stopped without its sentence."""
     wrong = []
+    script = os.path.join(repo, "changelog", "hooks", "lane", "result.py")
+    commands = [f"python3 {script} {name} {on}" for (n, on) in ROUTES if n == name]
+    for c in child["calls"]:
+        found = allowed(c, repo, commands, name == "writer")
+        if found is None:
+            continue
+        through, sentence = found
+        stopped = c["error"] and c["result"].startswith("PreToolUse:")
+        if through and stopped:
+            wrong.append(f"an allowed call of {name} was stopped: {json.dumps(c['input'])}")
+        elif not through and (not stopped or sentence not in c["result"]):
+            wrong.append(f"a break of {name} was not stopped with its sentence: {c['input']}")
+    return wrong
+
+
+def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]], repo: str) -> dict[str, Any]:
+    """What the run shows, from lead's record and those of the subagents it started, by the ID of
+    the call that started each: what is wrong, how many starts were stopped and ends kept going,
+    and the start still due where the run did not reach the end."""
+    wrong: list[str] = []
     due, gave, stopped, kept = "writer", None, 0, 0
     for c in (c for c in lead["calls"] if c["tool"] == "Agent"):
         name = str(c["input"].get("subagent_type", "")).replace("changelog:", "", 1)
@@ -133,6 +136,7 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]]) -> list[st
             wrong.append(f"a start of {name} went through while {due} was due")
             continue
         child = children.get(c["id"]) or {"calls": [], "kept": []}
+        wrong += subagent_wrong(name, child, repo)
         given = results(child["calls"])
         gave = (name, given[-1]) if given else None
         due = ROUTES.get(gave, name) if gave else name
@@ -146,7 +150,7 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]]) -> list[st
         if expected not in told:
             wrong.append(f"lead was not told {expected!r} as {name}'s start came back: {told}")
         ends = [(at, t) for at, e, t in child["kept"] if e == "SubagentStop"]
-        for at, text in ends:
+        for _, text in ends:
             kept += 1
             if not re.fullmatch(
                 f"changelog: End by running `{GIVEN.pattern}`( or `{GIVEN.pattern}`)?\\.", text
@@ -154,10 +158,10 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]]) -> list[st
                 wrong.append(f"{name} was kept going not with its last step's sentence: {text!r}")
         if len(ends) > 1:
             wrong.append(f"{name} was kept going {len(ends)} times, not once")
-    if due != "":
-        wrong.append(f"the run did not end by the routes: {due} was still due")
-    print(f"  tried: {stopped} start(s) stopped, {kept} end(s) kept going")
-    return wrong
+    for _, event, text in lead["kept"]:
+        if event == "SubagentStop" and FOLLOW not in text:
+            wrong.append(f"lead was kept going not with follow_routes' sentence: {text!r}")
+    return {"wrong": wrong, "stopped": stopped, "kept": kept, "due": due}
 
 
 def run(number: int) -> bool:
@@ -191,17 +195,26 @@ def run(number: int) -> bool:
             name = c["input"].get("subagent_type")
             print(f"  {state}: {name} results {given} kept {len(kept)} gave after {after}")
             print(f"    told: {told or c['result'][:300]}")
-    wrong = judged(leads[0], children) if len(leads) == 1 else [f"{len(leads)} leads started"]
-    print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
-    return not wrong
-
-
-def main(runs: int) -> int:
-    """Runs the trial so many times, and gives 0 where every run passed."""
-    passed = [run(n) for n in range(1, runs + 1)]
-    print(f"{sum(passed)} of {runs} runs passed")
-    return 0 if all(passed) else 1
+    if len(leads) != 1:
+        print(f"  failed: {len(leads)} leads started")
+        return False
+    found = judged(leads[0], children, repo)
+    lead_kept = sum(e == "SubagentStop" for _, e, _ in leads[0]["kept"])
+    print(
+        f"  tried: {found['stopped']} start(s) stopped, {found['kept']} end(s) of a subagent kept"
+        f" going; lead kept going at its end {lead_kept} time(s)"
+    )
+    if found["due"]:
+        print(f"  the run did not reach `good`: {found['due']} was still due as lead ended")
+    if found["wrong"]:
+        print("  failed: " + "; ".join(found["wrong"]))
+        return False
+    if not found["stopped"] or not found["kept"]:
+        print("  does not count: an invited break was not tried")
+        return False
+    print("  passed")
+    return True
 
 
 if __name__ == "__main__":
-    sys.exit(main(int(sys.argv[1]) if len(sys.argv) > 1 else 3))
+    sys.exit(trial_changelog.main(int(sys.argv[1]) if len(sys.argv) > 1 else 3, run))

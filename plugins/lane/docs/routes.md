@@ -110,6 +110,7 @@ Each line is headed by your plugin's name:
 | the subagent started in the background has not ended | ``Wait for `<plugin>:<name>` to end: you are told the next start once it has.`` |
 | the subagent ended with a result whose route has a `to` | ``<name> gave `<on>`. Start `<plugin>:<to>`.`` |
 | the subagent ended with a result whose route has no `to` | ``<name> gave `<on>`. Start no more subagents.`` |
+| the subagent ended with no result, after it was kept going once | ``Start `<plugin>:<name>`.``, the same start again, as it led to no route |
 
 `<plugin>:<name>` is how Claude Code names a subagent of your plugin. The orchestrator writes the
 rest of the call, such as its prompt.

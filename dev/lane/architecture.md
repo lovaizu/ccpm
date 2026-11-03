@@ -393,8 +393,8 @@ is tested in the hook process's row.
   trial plugin, with a prompt that invites a break, and is judged from the session's records. It
   passes in three runs of three: each invited break is stopped with its sentence, each allowed call
   goes through, and the subagents start as the routes say. An AI that goes back to its step once may
-  go around the rule the next time. A held command is tried in an interactive session, as `claude
-  -p` refuses it.
+  go around the rule the next time. A run counts only where each invited break was tried. A held
+  command is tried in an interactive session, as `claude -p` refuses it.
 - Each process weighs ●●● in unit tests. A failure writes what no one approved, or lets a break
   through in a plugin whose operator never sees Lane.
 - Integration and end-to-end tests weigh ●●○. The unit tests hold every behavior, as

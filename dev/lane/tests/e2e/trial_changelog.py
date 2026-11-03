@@ -18,7 +18,7 @@ import shutil
 import subprocess
 import sys
 import time
-from typing import Any
+from typing import Any, Callable
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", "..", "..", ".."))
@@ -87,8 +87,8 @@ def made(place: str, proposed: str = "changelog.json") -> str:
 
 
 def calls(file: str) -> list[dict[str, Any]]:
-    """Each tool call in the record, in order: its tool, its input, whether it gave back an error,
-    and what it gave back."""
+    """Each tool call in the record, in order: its ID, its tool, its input, whether it gave back an
+    error, and what it gave back."""
     # Claude Code's copy of each request says again what the agent did.
     entries = [e for e in trying.record.read(file) or [] if e.get("type") != "api-request-blob"]
     used = [b for e in entries for b in trying.record.blocks(e) if b.get("type") == "tool_use"]
@@ -106,6 +106,7 @@ def calls(file: str) -> list[dict[str, Any]]:
             text = "\n".join(str(p.get("text", "")) for p in text if isinstance(p, dict))
         found.append(
             {
+                "id": use.get("id"),
                 "tool": use.get("name"),
                 "input": use.get("input", {}),
                 "error": bool(result.get("is_error")),
@@ -115,25 +116,36 @@ def calls(file: str) -> list[dict[str, Any]]:
     return found
 
 
+def allowed(
+    c: dict[str, Any], repo: str, commands: list[str], writes: bool = True
+) -> tuple[bool, str] | None:
+    """Whether a subagent's call goes through by its lanes, run_only on `git log --oneline` beside
+    the commands given and, where `writes`, write_only on CHANGELOG.md, as writer's are, with the
+    sentence it is stopped with otherwise; None where no lane judges it."""
+    tool, given = c["tool"], c["input"]
+    if tool == "Bash":
+        command = str(given.get("command", "")).strip()
+        return command in ["git log --oneline", *commands], RUN
+    if tool in ("Write", "Edit", "NotebookEdit") and writes:
+        path = given.get("file_path") or given.get("notebook_path") or ""
+        changelog = os.path.realpath(os.path.join(repo, "CHANGELOG.md"))
+        return os.path.realpath(os.path.join(repo, path)) == changelog, WRITE
+    return None
+
+
 def judged(repo: str, writer: list[dict[str, Any]], head: str) -> list[str]:
     """What is wrong in the run, from writer's calls and the repository; none where it passes."""
     wrong = []
-    changelog = os.path.realpath(os.path.join(repo, "CHANGELOG.md"))
     logs = writes = 0
     for c in writer:
         tool, given = c["tool"], c["input"]
-        if tool == "Bash":
-            allowed = str(given.get("command", "")).strip() == "git log --oneline"
-            sentence = RUN
-        elif tool in ("Write", "Edit", "NotebookEdit"):
-            path = given.get("file_path") or given.get("notebook_path") or ""
-            allowed = os.path.realpath(os.path.join(repo, path)) == changelog
-            sentence = WRITE
-        else:
+        found = allowed(c, repo, [])
+        if found is None:
             continue
-        if allowed and c["error"]:
+        through, sentence = found
+        if through and c["error"]:
             wrong.append(f"an allowed call was stopped: {tool} {json.dumps(given)}: {c['result']}")
-        elif allowed:
+        elif through:
             logs += tool == "Bash"
             writes += tool != "Bash"
         elif not c["error"] or sentence not in c["result"]:
@@ -177,9 +189,10 @@ def run(number: int) -> bool:
     return not wrong
 
 
-def main(runs: int) -> int:
-    """Runs the trial so many times, and gives 0 where every run passed."""
-    passed = [run(n) for n in range(1, runs + 1)]
+def main(runs: int, each: Callable[[int], bool] | None = None) -> int:
+    """Runs the trial so many times, this one's or each given, and gives 0 where every run
+    passed."""
+    passed = [(each or run)(n) for n in range(1, runs + 1)]
     print(f"{sum(passed)} of {runs} runs passed")
     return 0 if all(passed) else 1
 
