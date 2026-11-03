@@ -40,6 +40,11 @@
 
   - It passes the architecture template's questions and is agreed by the user: it holds what every plugin follows and why, the rules of making, testing and releasing moved to .claude/rules/dev.md or to the scripts that check them, the history of how it was reached gone, and no term of its own where a common word serves. Serves AC1.
 
+- T51: users who update get Lane, pin and Turn, with rn held at 0.8.0 and writ gone, before rn is rebuilt. Builds on T41, T47 and T48.
+
+  - the marketplace lists Lane, pin and Turn at their new versions, rn pinned to the tag rn--v0.8.0 (5adb39ae), which needs no writ and holds no links, and no writ; 0.9.0 is left unused, as it does not work (the user, 2026-11-03). Serves AC1.
+  - released on the user's instruction, the branch merged once Turn is rebuilt. Serves AC1 and AC2.
+
 - T42: rn's meta-checklist and every checklist remade as templates that turn's planner keeps. Builds on T41.
 
   - Each template holds a kind's Format and Checklist in JSON, and the user approved each kind's purpose and conditions. Serves AC1.
@@ -72,7 +77,7 @@
 
   - The result's work lists no __pycache__/*.pyc and rn's README shows a Walkthrough output from a real run. Serves AC1 and AC2.
 
-- T15: users who update get rn 0.10.0 and turn 0.2.0. Builds on T45.
+- T15: users who update get rn 0.10.0, rebuilt, its pin to 0.8.0 removed. Builds on T45 and T51.
 
   - Released on the user's instruction. Serves AC1 and AC2.
 

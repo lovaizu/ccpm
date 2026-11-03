@@ -146,6 +146,30 @@
     ]
    },
    {
+    "id": "T51",
+    "what": "users who update get Lane, pin and Turn, with rn held at 0.8.0 and writ gone, before rn is rebuilt",
+    "builds_on": [
+     "T41",
+     "T47",
+     "T48"
+    ],
+    "completion_criteria": [
+     {
+      "what": "the marketplace lists Lane, pin and Turn at their new versions, rn pinned to the tag rn--v0.8.0 (5adb39ae), which needs no writ and holds no links, and no writ; 0.9.0 is left unused, as it does not work (the user, 2026-11-03)",
+      "contributes_to": [
+       "AC1"
+      ]
+     },
+     {
+      "what": "released on the user's instruction, the branch merged once Turn is rebuilt",
+      "contributes_to": [
+       "AC1",
+       "AC2"
+      ]
+     }
+    ]
+   },
+   {
     "id": "T42",
     "what": "rn's meta-checklist and every checklist remade as templates that turn's planner keeps",
     "builds_on": [
@@ -282,9 +306,10 @@
    },
    {
     "id": "T15",
-    "what": "users who update get rn 0.10.0 and turn 0.2.0",
+    "what": "users who update get rn 0.10.0, rebuilt, its pin to 0.8.0 removed",
     "builds_on": [
-     "T45"
+     "T45",
+     "T51"
     ],
     "completion_criteria": [
      {
