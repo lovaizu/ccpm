@@ -228,6 +228,14 @@ read the design would judge whether the work follows it, not what the work's use
   ([subagents](https://code.claude.com/docs/en/sub-agents)). The skill's body tells the main
   conversation how to pass each question on and resume `up` with the answer. A fork's body would
   reach only the fork, and the main conversation would be left to guess what to do with its end.
+- **Each of a work's commands runs inside `scripts/throwaway.py`.** builder and evaluator run each
+  command as written, as the work's user would, so a command that reached the person's own files,
+  such as their Downloads, would change what cannot be undone. `throwaway.py` makes a throwaway
+  home, holding each file `--file` names, and a throwaway copy of the repository, runs the command
+  there with the home as `HOME`, and removes both with Python's `shutil`. designer writes inside
+  it only what the user types, and `tree.py check` names a command written otherwise: a set-up of
+  the shell's own, such as `rm -r "$HOME"`, is one Claude Code stops to ask the person about,
+  whatever the permission mode.
 - **A role that asks gives `asks`, which ends the routes.** A role that ends with no result is kept
   going once by Lane, and `up` with a start due is let end as a fault. So planner and designer give
   `asks` before they end with a question, and Turn's routes take `asks` to no next role: `up` is
@@ -558,7 +566,7 @@ plugins/turn/
 ├── core/domain/templates.py, designs.py, answering.py, files.py   the checks of Template, Design tree and Answers, and each file held to its form <modules · Python 3.9>
 ├── core/domain/runs.py                 Run values of each run of a step <module · Python 3.9>
 ├── core/domain/schema.py               Lane's reading of a JSON Schema, through a link <module · Python 3.9>
-├── scripts/practices.py, tree.py, answers.py, starts.py   their entries <command line · Python 3.9>
+├── scripts/practices.py, tree.py, answers.py, starts.py, throwaway.py   their entries <command line · Python 3.9>
 ├── hooks/hooks.json, hooks/lanes.json, hooks/lane/     Lane's guard and result.py, and Turn's lanes and Routes, laid by Lane <JSON, Python 3.9>
 ├── docs/calling.md                     the Call, for callers <Markdown>
 └── README.md, CHANGELOG.md             for users <Markdown>

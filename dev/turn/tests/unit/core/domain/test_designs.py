@@ -3,6 +3,7 @@ parts each hold every decision joined to their own and paths of the work none ot
 remake names decisions and questions of the tree; and the decisions split into the branches that
 build on none in another."""
 
+import os
 import unittest
 
 import helpers
@@ -137,6 +138,27 @@ class TestWorkFaults(unittest.TestCase):
         self.assertEqual(
             designs.work_faults(helpers.RUN["work.json"], helpers.RUN["design-tree.json"]), []
         )
+
+    def test_a_command_not_run_by_turn_s_throwaway_script_is_named(self):
+        script = os.path.join(helpers.SCRIPTS, "throwaway.py")
+        for command, wrong in (
+            (f"python3 {script} -- 'tidy ~/Downloads'", False),
+            ("python3 tidy.py ~/Downloads", True),
+            (f"python3 {script} 'tidy ~/Downloads'", True),
+            (f"python3 {script}x -- tidy", True),
+            (f"rm -r x; python3 {script} -- tidy", True),
+        ):
+            with self.subTest(command=command):
+                # Given: the run's work with the command
+                work = {**helpers.RUN["work.json"], "commands": [command]}
+                # When: its faults are found
+                found = designs.work_faults(work, helpers.RUN["design-tree.json"])
+                # Then: a command not run inside throwaway.py, after its --, is named
+                said = (
+                    f"the command {command} is not run by `python3 {script} [--file <path>]..."
+                    " -- <command>`, which keeps the person's own files out of its reach"
+                )
+                self.assertEqual(found, [said] if wrong else [])
 
     def test_each_way_a_part_fails_is_named(self):
         made = tree(

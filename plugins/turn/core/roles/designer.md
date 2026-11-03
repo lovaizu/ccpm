@@ -63,9 +63,13 @@ the message on and resumes you with the answer.
    decisions that build on none in another, each a part one run of builder makes at the same time
    as the others. Give `work.json` its `paths`, the files the work is, and its `commands`, what its
    user runs, as the design decided them, each as builder and evaluator run it to use the work:
-   inside the repository or a folder of the system's temporary folder, never on the person's own
-   files, such as their Downloads, as builder and evaluator run each command as written, and a
-   change to the person's files cannot be undone. Give each part the paths its decisions are made in, no
+   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py --file <path under ~> -- '<command>'`,
+   Turn's folder written out as you read it here, a `--file` for each file the user would have,
+   such as `Downloads/photo.jpg`, or none. It runs the command in a throwaway copy of the
+   repository with a throwaway home, and removes both, so no command reaches the person's own
+   files, and a change to them cannot be undone. Write inside it only what the user types, with no
+   set-up of your own around it: a set-up such as removing a folder is a command Claude Code stops
+   to ask the person about. Give each part the paths its decisions are made in, no
    path in two parts; and join two parts into one where their files meet, or where making them
    apart would make the work worse, such as one document written in two voices. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py parts {run}`.
 4. **The design holds.** Run `tree.py check` and pin's check, and mend the tree or `work.json`

@@ -7,9 +7,22 @@ on none in another, each of which a run of builder of its own makes."""
 from __future__ import annotations
 
 import os
+import re
 from typing import Any
 
 import files
+
+# The script each of a work's commands runs inside, as the command its user types, so that none
+# reaches the person's own files: Turn's own scripts/throwaway.py, by the path Turn lies at.
+THROWAWAY = (
+    "python3 "
+    + os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "scripts",
+        "throwaway.py",
+    )
+    + " "
+)
 
 
 def asked(tree: dict[str, Any], standard: dict[str, Any], kind: str) -> list[str]:
@@ -80,7 +93,8 @@ def under(path: str, paths: list[str]) -> bool:
 def work_faults(work: dict[str, Any], tree: dict[str, Any]) -> list[str]:
     """Each way the work's parts fail: a work of no paths; a part naming a decision the tree has
     not, a path none of the work's, or no path; a decision in no part, or in two; a path in two
-    parts; and a decision joined to one of another part."""
+    parts; a decision joined to one of another part; and a command not run inside Turn's
+    scripts/throwaway.py, after its `--`."""
     ids = [d["id"] for d in tree["decisions"]]
     found = [] if work["paths"] else ["the work has no paths"]
     held: dict[str, list[str]] = {}
@@ -102,6 +116,12 @@ def work_faults(work: dict[str, Any], tree: dict[str, Any]) -> list[str]:
         elif held[d][1:]:
             found.append(f"{d} is in {' and '.join(held[d])}")
     found += [f"{p} is in {' and '.join(at)}" for p, at in placed.items() if at[1:]]
+    found += [
+        f"the command {c} is not run by `{THROWAWAY}[--file <path>]... -- <command>`, which keeps"
+        " the person's own files out of its reach"
+        for c in work["commands"]
+        if not re.fullmatch(re.escape(THROWAWAY) + r"(--file \S+ )*-- .+", c, re.DOTALL)
+    ]
     for part in work["parts"]:
         mine = set(part["decisions"])
         for a, b in joins(tree):
