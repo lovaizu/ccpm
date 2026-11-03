@@ -40,8 +40,11 @@ class TestCommand(helpers.PluginTest):
         # Given: writer with the README's lanes laid and lane's code put in
         # When: writer's git commit reaches the hook's command
         done = self.run_hook(self.bash("git commit -m m"))
-        # Then: it exits 0 printing the denial with run_only's sentence
+        # Then: it exits 0 printing the denial with run_only's sentence, writing no compiled
+        # file into the plugin
         self.assertEqual(done.returncode, 0)
+        found = [d for _, ds, _ in os.walk(self.plugin) for d in ds if d == "__pycache__"]
+        self.assertEqual(found, [])
         output = json.loads(done.stdout)["hookSpecificOutput"]
         self.assertEqual(output["permissionDecision"], "deny")
         self.assertTrue(

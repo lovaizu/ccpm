@@ -20,7 +20,10 @@ EVENT = "PreToolUse"
 # What lane's entries run, by which lay.py tells them from the plugin's own, of this shape and of
 # the old, one for each subagent and event.
 CODE = "/hooks/lane/"
-SCRIPT = 'exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" '
+# Python writes no compiled files into the plugin's folder, which would show as the plugin's own
+# changes where it lies in the developer AI's repository, as dev/architecture.md's Where a plugin
+# writes its files keeps what is used only while it runs out of the repository.
+SCRIPT = 'exec python3 -B "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" '
 INSTALL = "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run"
 PYTHON = 'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
 # The event read by the shell alone, as Claude Code writes it, with a blank after a colon or none.

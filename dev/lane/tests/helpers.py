@@ -83,7 +83,7 @@ COMMAND = (
     """ hooks to run", "hookSpecificOutput": {"hookEventName": "PreToolUse","""
     """ "permissionDecision": "deny", "permissionDecisionReason": "changelog: install Python 3.9"""
     """ or later, run as python3, for its hooks to run"}}';; esac; exit 0; };"""
-    ' exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" changelog'
+    ' exec python3 -B "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" changelog'
 )
 # Its entry of PreToolUse, run on every tool call, blocking the call where the hook fails.
 ENTRY = {
