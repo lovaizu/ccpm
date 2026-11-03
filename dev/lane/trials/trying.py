@@ -404,12 +404,22 @@ def kept(stops: str) -> list[dict[str, Any]]:
         return []
 
 
+# The stand-in's system prompt: what it is and that it has nothing beyond the prompt.
+STANDS_IN = (
+    "You stand in for a person, and answer in text alone. You have no tools: you cannot run, read"
+    " or look up anything, and you have only what the message shows."
+)
+
+
 def stand_in(prompt: str, cwd: str) -> dict[str, Any]:
     """The JSON object an AI gives for the prompt, as a stand-in for a person gives its answer, on
     Opus, with no tool, no plugin and no record kept, run in the folder given, which holds nothing
-    of the plugins tried."""
+    of the plugins tried. Claude Code's own system prompt gives way to STANDS_IN, as it tells of
+    tools and a folder to work in, and with no tool the stand-in wrote calls to them as text
+    without end."""
     command = ["claude", "-p", "--model", "opus", "--tools", "", "--no-session-persistence"]
     command += ["--output-format", "json", "--settings", json.dumps({"enabledPlugins": {}})]
+    command += ["--system-prompt", STANDS_IN]
     done = subprocess.run(
         command,
         input=prompt,
