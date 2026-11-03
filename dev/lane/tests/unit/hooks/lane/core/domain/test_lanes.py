@@ -6,26 +6,87 @@ import unittest
 import helpers
 from helpers import lanes
 
+# docs/lanes.md's table of the lanes, its action and wording, and whether each rests on the calls
+# kept.
+TABLE = (
+    ("read_only", "read", "Read only `<input>`.", False),
+    ("read_whole", "read", "Read `<input>` to its end.", True),
+    ("write_only", "write", "Write only `<output>`.", False),
+    ("in_form", "write", "Write `<output>` in the form of `<form>`.", False),
+    ("run_only", "run", "Run only `<commands>`.", False),
+    ("hold", "run", "Run `<commands>` only with the person's approval.", False),
+    ("test_after", "test", "After changing `<output>`, pass `<test>`.", True),
+    ("end_when", "end", "End only once `<output>` is made.", False),
+    ("every_item", "end", "Answer every item of `<input>`.", True),
+)
+
 
 class TestLanes(unittest.TestCase):
-    def test_the_lanes_laid_are_run_only_and_write_only(self):
+    def test_the_lanes_laid_are_those_docs_lanes_md_names_in_its_order(self):
         # Given: the lanes this version lays
         # When: they are listed
-        # Then: they are run_only and write_only
-        self.assertEqual(sorted(lanes.LANES), ["run_only", "write_only"])
+        # Then: they are the table's, in its order
+        self.assertEqual(list(lanes.LANES), [row[0] for row in TABLE])
 
-    def test_each_lane_has_its_action_and_wording_as_docs_lanes_md_gives_them(self):
-        for lane, action, wording in (
-            ("run_only", "run", "Run only `<commands>`."),
-            ("write_only", "write", "Write only `<output>`."),
-        ):
+    def test_each_lane_has_its_action_wording_and_calls_as_docs_lanes_md_gives_them(self):
+        for lane, action, wording, rests in TABLE:
             with self.subTest(lane=lane):
                 # Given: the lane's row of docs/lanes.md
                 # When: its module is read
-                # Then: it has the row's action and wording
-                self.assertEqual(
-                    (lanes.LANES[lane].ACTION, lanes.LANES[lane].WORDING), (action, wording)
-                )
+                # Then: it has the row's action and wording, and rests on the calls kept as the
+                # table of its places says
+                module = lanes.LANES[lane]
+                self.assertEqual((module.ACTION, module.WORDING), (action, wording))
+                self.assertEqual(lanes.calls(lane), rests)
+
+    def test_the_lanes_checked_at_the_end_are_those_docs_lanes_md_names(self):
+        # Given: the lanes
+        # When: those checked as the subagent gives its result are read
+        # Then: they are read_whole, test_after, end_when and every_item
+        ending = [lane for lane, *_ in TABLE if lanes.ends(lane)]
+        self.assertEqual(ending, ["read_whole", "test_after", "end_when", "every_item"])
+        self.assertFalse(lanes.ends("result"))
+
+
+class TestPlaces(unittest.TestCase):
+    def test_a_lanes_places_are_those_its_wording_shows_in_order(self):
+        for lane, places in (
+            ("read_only", ["input"]),
+            ("in_form", ["output", "form"]),
+            ("test_after", ["output", "test"]),
+            ("follow_routes", []),
+            ("result", ["commands"]),
+        ):
+            with self.subTest(lane=lane):
+                # Given: the lane
+                # When: its places are read
+                # Then: they are the `<...>` of its wording
+                self.assertEqual(lanes.places(lane), places)
+
+    def test_takes_fill_one_in_each_place_but_the_last_which_takes_the_rest(self):
+        for lane, takes, placed in (
+            ("write_only", ["a", "b"], {"output": ["a", "b"]}),
+            ("test_after", ["src/", "t1", "t2"], {"output": ["src/"], "test": ["t1", "t2"]}),
+            ("in_form", ["a.json"], {"output": ["a.json"], "form": []}),
+            ("follow_routes", [], {}),
+        ):
+            with self.subTest(lane=lane, takes=takes):
+                # Given: the lane's takes
+                # When: they are put in its places
+                # Then: the first places take one each, and the last the rest
+                self.assertEqual(lanes.placed(lane, takes), placed)
+
+    def test_a_lanes_in_asks_one_or_more_texts_in_each_place_and_the_calls_where_it_rests_on_them(
+        self,
+    ):
+        # Given: test_after's IN, and run_only's
+        after, run = lanes.given_in("test_after"), lanes.given_in("run_only")
+        # When: they are read
+        # Then: each asks its places, each one or more texts, and test_after the calls kept
+        self.assertEqual(after["required"], ["takes", "calls"])
+        self.assertEqual(run["required"], ["takes"])
+        self.assertEqual(after["properties"]["takes"]["required"], ["output", "test"])
+        self.assertEqual(run["properties"]["takes"]["properties"]["commands"]["minItems"], 1)
 
 
 class TestSentence(unittest.TestCase):
@@ -73,6 +134,23 @@ class TestSentence(unittest.TestCase):
                 self.assertEqual((lanes.action(lane), lanes.hook(lane)), (action, "follow_routes"))
         # And: a lane's own are its module's and its name
         self.assertEqual((lanes.action("run_only"), lanes.hook("run_only")), ("run", "run_only"))
+
+    def test_each_place_takes_its_own_things(self):
+        for lane, takes, said in (
+            (
+                "in_form",
+                ["entry.json", "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"],
+                "Write `entry.json` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`.",
+            ),
+            ("test_after", ["src/", "t1", "t2"], "After changing `src/`, pass `t1` or `t2`."),
+            ("in_form", ["entry.json"], "Write `entry.json` in the form of ."),
+        ):
+            with self.subTest(lane=lane, takes=takes):
+                # Given: a lane of two places, with a thing for each, more for the last, or
+                # none for the last
+                # When: its sentence is made
+                # Then: each place is filled with its own things, or left empty
+                self.assertEqual(lanes.sentence(lane, takes), said)
 
     def test_a_take_is_put_in_as_it_is_written(self):
         # Given: a command holding a backslash and a comma

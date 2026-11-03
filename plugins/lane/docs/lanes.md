@@ -17,6 +17,13 @@ the files and folders its run's `work` names, whichever they are. A value given 
 caller saying there is none: each lane taking that name lets the call or the end through on that
 run, with nothing told. A thing taken holds any text, a comma among the rest.
 
+Claude Code hands a subagent's start no prompt, so lane keeps the prompt of each Agent call
+starting a subagent of your plugin as the call is made, and gives it to the next run of that
+subagent that starts. Where two such calls with differing prompts wait for their starts, a run
+cannot tell its own until its call comes back with the run's `agentId`, and each lane taking a
+value of it is an error meanwhile. A SendMessage call counts where its `to` is the run's
+`agentId`.
+
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
 | read | read_only | Read only `<input>`. | reads anything else |
@@ -41,13 +48,14 @@ be asked, so Claude Code refuses the command.
 
 The lanes of the end, read_whole, test_after, end_when and every_item, are checked as the subagent
 gives its result, so `lay.py write` gives a subagent with one of them a result command on its last
-step, `done` where no route names it. The result script checks end_when and every_item and exits
-with an error naming what is missing; the guard checks read_whole and test_after, from the calls it
-kept, and stops the result command.
+step, `done` where no route names it. The guard checks them as the subagent runs that command, from
+the calls it kept, and stops the command with each lane's sentence and, on the next line, what is
+missing. It holds each in_form output there to its form again too, as a command its lanes name may
+have written it. The result script is given no run's ID, so it checks the result alone, as
+[the routes](routes.md#how-a-subagent-gives-its-result) say.
 
-in_form takes the form by the path the subagent reads it by: as
-`${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`, or by a name the subagent's entry says lies there, as
-[a subagent's part](#a-subagents-part) says. The form is one of two kinds:
+in_form takes the form by the path the subagent reads it by, as
+`${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`. The form is one of two kinds:
 
 - a `.json` JSON Schema of the keywords Anthropic's structured outputs accept, which in_form holds
   a JSON output to, or each line of a `.jsonl` one;
@@ -61,11 +69,12 @@ project's work.
 read_only and write_only each take a file or a folder, and a folder lets the subagent read or write
 anything under it. test_after's output may be a folder too, and a change of any file under it is a
 change of the output. read_only and write_only check the path that Read, Grep, Write or Edit is
-given; a command a run_only lane names reads and writes what it does unchecked, so name only commands
-whose reads and writes you accept.
+given, a Grep given none reading the folder it runs in; a command a run_only lane names reads and
+writes what it does unchecked, so name only commands whose reads and writes you accept.
 
 read_whole counts a file read to its end where the Read calls of the subagent, by their `offset`
-and `limit`, have covered every line of it. test_after counts a test passed where the test's command
+and `limit`, have covered every line of it, a Read with no `limit` covering the 2000 lines the Read
+tool reads by default. test_after counts a test passed where the test's command
 came back without an error, and the output changes after it where a Write or Edit of a file under it
 came later.
 
@@ -112,8 +121,9 @@ Schema:
 
   What the subagent only weighs no hook sees.
 - A lane's `takes` are its things in the order of its places under
-  [What each lane is given](#what-each-lane-is-given), each written as the step writes it, a script
-  or a command word for word.
+  [What each lane is given](#what-each-lane-is-given), one in each place but the last, which takes
+  the rest, each written as the step writes it, a script or a command word for word. So in_form
+  takes its output and then its forms, and test_after its output and then its tests.
 - An adapter is named only where your text is in another form than lane's, as the ports below say.
 - Routes are written under `routes`, held to the JSON Schema [the routes](routes.md#the-routes)
   give, and laid as a follow_routes lane on the orchestrator's step and a result command on the last
@@ -193,8 +203,9 @@ The layer holds a proposal's takes to the same IN, so a wrong take shows when th
 not on a run.
 
 Anything not as these say is an error, not a drift. Errors include a value not given or given
-empty; an adapter failing, giving no answer in time or answering out of its port; the event or `hooks/lanes.json` not as Claude Code and `lay.py write` write them; a step no
-longer saying its lane's sentence; and a thing a lane takes that `lay.py write` would now refuse,
+empty, or of a run that cannot tell its prompt; an adapter failing, giving no answer in time or
+answering out of its port; the event or `hooks/lanes.json` not as Claude Code and `lay.py write`
+write them; a step no longer saying its lane's sentence; and a thing a lane takes that `lay.py write` would now refuse,
 such as in_form's form gone. On an error the guard stops the call, or keeps the subagent going once
 as it ends, and tells it and you
 

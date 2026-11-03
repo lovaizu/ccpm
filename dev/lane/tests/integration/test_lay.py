@@ -2,6 +2,7 @@
 the README's walkthrough, with a stand-in for Claude Code's `claude` on PATH: what `lay.py print`
 and `lay.py write` print, set beside what the walkthrough shows, and the files written."""
 
+import json
 import os
 import re
 import subprocess
@@ -82,6 +83,26 @@ class TestLay(testing.FolderTest):
             (done.returncode, done.stdout),
             (1, "lay.py: claude is not on PATH; install Claude Code and run again.\n"),
         )
+
+    def test_an_adapter_beside_the_proposal_is_run_printed_and_written(self):
+        # Given: the walkthrough's proposal with writer's values read by an adapter kept beside it
+        beside = os.path.join(os.path.dirname(helpers.PROPOSED), "changelog", "adapters")
+        self.write(os.path.join(beside, "values-w.py"), helpers.VALUES_ADAPTER)
+        self.write(os.path.join(beside, "values-w.json"), json.dumps(helpers.VALUES_CASES))
+        given = json.loads(PROPOSAL)
+        given["subagents"][0]["adapter"] = "hooks/adapters/values-w.py"
+        self.write(helpers.PROPOSED, json.dumps(given))
+        # When: lay.py print, then lay.py write, is run on it
+        printed = self.lay("print", helpers.PROPOSED)
+        wrote = self.lay("write", helpers.PROPOSED)
+        # Then: print shows the adapter run on its cases, and write puts it into the plugin
+        self.assertIn(
+            "  adapter hooks/adapters/values-w.py: its 2 cases given as they say\n", printed.stdout
+        )
+        self.assertEqual(wrote.returncode, 0, wrote.stdout)
+        written = os.path.join("changelog", "hooks", "adapters", "values-w.py")
+        self.assertEqual(self.read(written), helpers.VALUES_ADAPTER)
+        self.assertFalse(os.path.exists(beside))
 
 
 if __name__ == "__main__":

@@ -45,6 +45,98 @@ class TestRead(ProposalTest):
         self.assertEqual(proposal.PROPOSAL, shown)
 
 
+class TestLanes(ProposalTest):
+    def test_every_lane_docs_lanes_md_names_is_read_with_things_given_for_each_run(self):
+        self.write_json(os.path.join(self.plugin, "forms", "e.json"), {"type": "object"})
+        steps = [
+            {
+                "step": 1,
+                "lanes": [
+                    {"lane": "read_only", "takes": ["CHANGELOG.md"]},
+                    {"lane": "read_whole", "takes": ["CHANGELOG.md"]},
+                ],
+            },
+            {
+                "step": 2,
+                "lanes": [
+                    {"lane": "run_only", "takes": ["git log --oneline"]},
+                    {"lane": "hold", "takes": ["git push"]},
+                    {"lane": "test_after", "takes": ["src/", "{test}"]},
+                ],
+            },
+            {
+                "step": 3,
+                "lanes": [
+                    {"lane": "write_only", "takes": ["{work}"]},
+                    {"lane": "in_form", "takes": ["e.json", "${CLAUDE_PLUGIN_ROOT}/forms/e.json"]},
+                    {"lane": "in_form", "takes": ["f.json", "{form}"]},
+                ],
+            },
+            {
+                "step": 4,
+                "lanes": [
+                    {"lane": "end_when", "takes": ["CHANGELOG.md"]},
+                    {"lane": "every_item", "takes": ["r.md"]},
+                ],
+            },
+        ]
+        # Given: a lane of each type, some taking a thing given for each run
+        self.propose(self.proposal(steps=steps))
+        # When: the proposal is read
+        (writer,) = proposal.proposal(helpers.PROPOSED)["subagents"]
+        # Then: each is read as given, with no adapter
+        self.assertEqual([s["lanes"] for s in writer["steps"]], [s["lanes"] for s in steps])
+        self.assertEqual(writer["adapters"], [])
+
+    def test_adapters_beside_the_proposal_are_run_on_their_cases_and_read(self):
+        # Given: a values adapter for writer and an items adapter on its every_item, each kept
+        # beside the proposal with its cases
+        values = self.adapter("values-w", helpers.VALUES_ADAPTER, helpers.VALUES_CASES)
+        items = self.adapter("items-f", helpers.ITEMS_ADAPTER, helpers.ITEMS_CASES)
+        lane = {"lane": "every_item", "takes": ["r.md"], "adapter": items}
+        self.propose(self.proposal(adapter=values, steps=[{"step": 4, "lanes": [lane]}]))
+        # When: the proposal is read
+        (writer,) = proposal.proposal(helpers.PROPOSED)["subagents"]
+        # Then: each adapter is given with its source, its cases and how many it gave
+        beside = os.path.join(os.path.dirname(helpers.PROPOSED), "changelog", "adapters")
+        self.assertEqual(writer["adapter"], values)
+        self.assertEqual(
+            writer["adapters"],
+            [
+                {
+                    "path": values,
+                    "source": os.path.join(beside, "values-w.py"),
+                    "cases": os.path.join(beside, "values-w.json"),
+                    "count": 2,
+                },
+                {
+                    "path": items,
+                    "source": os.path.join(beside, "items-f.py"),
+                    "cases": os.path.join(beside, "items-f.json"),
+                    "count": 2,
+                },
+            ],
+        )
+
+    def test_a_subagents_steps_are_read_from_its_part(self):
+        # Given: writer's entry naming its part, which holds its steps
+        self.write(self.agent_file, helpers.PART_ENTRY.format(name="writer"))
+        part = os.path.join(self.plugin, "prompts", "writer.md")
+        self.write(part, helpers.WRITER.split("---\n\n", 1)[1])
+        # When: the proposal is read
+        (writer,) = proposal.proposal(helpers.PROPOSED)["subagents"]
+        # Then: its file is the part, with each step found there
+        self.assertEqual(writer["file"], os.path.join("changelog", "prompts", "writer.md"))
+        self.assertEqual([s["span"] for s in writer["steps"]], [(3, 4), (4, 5)])
+        # And: a part not there is refused
+        os.remove(part)
+        with self.assertRaises(proposal.Stop) as stop:
+            proposal.proposal(helpers.PROPOSED)
+        self.assertIn(
+            "whose entry names its part prompts/writer.md, which is not there", str(stop.exception)
+        )
+
+
 class RoutesTest(ProposalTest):
     def setUp(self) -> None:
         super().setUp()
@@ -190,26 +282,86 @@ class TestRefused(ProposalTest):
         # Then: it is refused, saying so
         self.assertTrue(str(stop.exception).startswith("lay.py: there is no file gone.json;"))
 
-    def test_what_this_version_does_not_lay_yet_is_refused(self):
-        read_only = [{"step": 1, "lanes": [{"lane": "read_only", "takes": ["CHANGELOG.md"]}]}]
-        with_adapter = [
-            {"step": 2, "lanes": [{**helpers.STEPS[0]["lanes"][0], "adapter": "hooks/a.py"}]}
-        ]
-        given_run = [{"step": 3, "lanes": [{"lane": "write_only", "takes": ["{work}"]}]}]
-        for given, said in (
-            (self.proposal(steps=read_only), "read_only on step 1 of writer"),
-            (self.proposal(steps=with_adapter), "an adapter on step 2 of writer"),
-            (self.proposal(adapter="hooks/adapters/values-w.py"), "an adapter for writer"),
-            (self.proposal(steps=given_run), "`{work}`, given for each run, on step 3 of writer"),
+    def test_takes_out_of_their_lanes_places_are_refused(self):
+        for lane, takes, said in (
+            ("in_form", ["entry.json"], "takes out of its places at $.form: expected at least 1"),
+            ("test_after", ["src/"], "takes out of its places at $.test: expected at least 1"),
+        ):
+            with self.subTest(lane=lane):
+                # Given: a lane of two places given a thing for its first alone
+                steps = [{"step": 3, "lanes": [{"lane": lane, "takes": takes}]}]
+                # When: the proposal is read
+                # Then: it is refused, naming the place
+                self.assertIn(
+                    f"gives {lane} on step 3 of writer {said}",
+                    self.refused(self.proposal(steps=steps)),
+                )
+
+    def test_an_in_form_lane_naming_a_form_it_cannot_read_is_refused(self):
+        # Given: in_form naming a form not in the plugin
+        lane = {"lane": "in_form", "takes": ["e.json", "${CLAUDE_PLUGIN_ROOT}/forms/gone.json"]}
+        steps = [{"step": 3, "lanes": [lane]}]
+        # When: the proposal is read
+        # Then: it is refused, saying why
+        self.assertIn(
+            "gives in_form on step 3 of writer, which names the form"
+            " ${CLAUDE_PLUGIN_ROOT}/forms/gone.json, which cannot be read",
+            self.refused(self.proposal(steps=steps)),
+        )
+
+    def test_an_adapter_that_cannot_be_laid_is_refused(self):
+        on_run = [{"step": 2, "lanes": [{**helpers.STEPS[0]["lanes"][0], "adapter": "hooks/a.py"}]}]
+        for given, files, said in (
+            (self.proposal(steps=on_run), [], "gives run_only on step 2 of writer an adapter"),
+            (
+                self.proposal(adapter="hooks/adapters/items-w.py"),
+                [],
+                (
+                    "names the adapter hooks/adapters/items-w.py on writer, not as"
+                    " hooks/adapters/values-<name>.py"
+                ),
+            ),
+            (self.proposal(adapter="hooks/adapters/values-w.py"), [], "which is not at"),
+            (
+                self.proposal(adapter="hooks/adapters/values-w.py"),
+                [("values-w", helpers.VALUES_ADAPTER, None)],
+                "whose cases are not at",
+            ),
+            (
+                self.proposal(adapter="hooks/adapters/values-w.py"),
+                [("values-w", helpers.VALUES_ADAPTER, "{")],
+                "hold no JSON",
+            ),
+            (
+                self.proposal(adapter="hooks/adapters/values-w.py"),
+                [("values-w", helpers.VALUES_ADAPTER, [{"given": {}, "gives": {}}])],
+                "whose cases are out of their shape at $[0].given",
+            ),
+            (
+                self.proposal(adapter="hooks/adapters/values-w.py"),
+                [("values-w", helpers.VALUES_ADAPTER, helpers.VALUES_CASES[:1])],
+                "whose cases have none that gives nothing",
+            ),
+            (
+                self.proposal(adapter="hooks/adapters/values-w.py"),
+                [("values-w", "import sys\nsys.exit(3)\n", helpers.VALUES_CASES)],
+                "which on its case 1 exited 3",
+            ),
+            (
+                self.proposal(adapter="hooks/adapters/values-w.py"),
+                [("values-w", "print('{\"values\": {}}')\n", helpers.VALUES_CASES)],
+                'which on its case 1 gave {"values": {}}, not {"values": {"work": ["a.md"]}}',
+            ),
         ):
             with self.subTest(said=said):
-                # Given: a lane, an adapter, routes or a thing given for each run, which this
-                # version does not lay yet
+                # Given: an adapter on a lane reading no port, one named for another port, one not
+                # beside the proposal, one with no cases, cases of no JSON or out of their shape,
+                # none giving nothing, one failing, or one giving a case otherwise than it says
+                for name, text, cases in files:
+                    self.adapter(name, text, cases)
                 # When: the proposal is read
-                # Then: it is refused, naming what and telling to leave it out
-                told = self.refused(given)
-                self.assertIn(said, told)
-                self.assertIn("which this version of lane does not lay yet; leave it out", told)
+                # Then: it is refused, saying which
+                self.assertIn(said, self.refused(given))
 
     def test_a_lane_taking_nothing_or_an_empty_thing_is_refused(self):
         for takes, said in (([], "with no take"), (["git log", ""], "with a take that is empty")):

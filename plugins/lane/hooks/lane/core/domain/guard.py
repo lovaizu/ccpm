@@ -2,31 +2,41 @@
 is told, from the event's input alone, as Claude Code documents it, and from the calls kept; and,
 where it cannot decide, the error that says what is wrong and who must fix it.
 
-At PreToolUse, a call goes through or is stopped with the sentences it breaks. A subagent with
-lanes runs a command only where a lane names it, whole, or its result command does: a call of Bash
-is judged by the run lanes of the subagent together, as lane does not know which step the subagent
-is on. A write is judged by its write lanes together, and goes through where it has none. Any other
-tool goes through. The orchestrator makes no call but the start due while one is due, and starts
-none while a subagent it started runs in the background.
+At PreToolUse, a call goes through, is stopped with the sentences it breaks, or, a held command, is
+put to the person with its sentence. A subagent with lanes runs a command only where a run_only,
+hold or test_after lane names it, whole, or its result command does: a call of Bash is judged by
+those lanes of the subagent together, as lane does not know which step the subagent is on. A read
+is judged by its read_only lanes together, and a write by its write_only lanes together, each going
+through where there is none; a write of an in_form lane's output is held to its form. Any other
+tool goes through. A result command is let through only once the lanes checked at the end hold.
+The orchestrator makes no call but the start due while one is due, and starts none while a
+subagent it started runs in the background.
+
+A take `{<name>}` is the run's value of the name, read at the values port from the texts the run
+was given; a value given as null lets the lane's call or end through on that run.
 
 At PostToolUse, the call is kept, with the result where it is a result command; the orchestrator is
 told the next start as each of its starts comes back, or, at PostToolUseFailure, the start still
-due. At SubagentStart, the run's start is kept, and the orchestrator told the next start. At
-SubagentStop, the orchestrator is kept going while a start is due, and a subagent giving a result
-is kept going once where it gave none; any other end is kept, so a start in the background counts
-once its subagent has ended."""
+due. At SubagentStart, the run's start is kept, its prompt taken, the subagent given its part whole
+where its entry names one, and the orchestrator told the next start. At SubagentStop, the
+orchestrator is kept going while a start is due, and a subagent giving a result is kept going once
+where it gave none; any other end is kept, so a start in the background counts once its subagent
+has ended."""
 
 from __future__ import annotations
 
+import os
 from typing import Any, Callable, NamedTuple
 
 import called
 import lanes
+import ports
 import routes
 import rules
 import schema
 import step
-from lanes import follow_routes, run_only
+from done import Done
+from lanes import follow_routes, in_form, read_only, run_only, write_only
 
 # Each tool a lane judges, with the action its call is and the field of its input the lane judges.
 WATCHED = {
@@ -34,7 +44,11 @@ WATCHED = {
     "Write": ("write", "file_path"),
     "Edit": ("write", "file_path"),
     "NotebookEdit": ("write", "notebook_path"),
+    "Read": ("read", "file_path"),
+    "Grep": ("read", "path"),
 }
+# The lanes that name the commands a subagent may run, each with the place they lie in.
+RUNS = {"run_only": "commands", "hold": "commands", "test_after": "test", "result": "commands"}
 # What a subagent is told, after its run lanes' sentences, of the commands it may run.
 MAY_RUN = "The commands you may run, each word for word: {listed}."
 RUN_NONE = "You may run no command."
@@ -45,6 +59,12 @@ ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your
 LAY_AGAIN = (
     "the maker of {plugin} must lay its lanes again with `lay.py write`, so they match its steps"
 )
+ADAPTER = (
+    "the maker of {plugin} must fix its adapter {adapter}, and lay it again with `lay.py write`"
+)
+GIVE = "whoever starts {name} must give it `{value}` in its prompt or a message, as JSON"
+ONE_AT_A_TIME = "whoever starts {name} must start one at a time where their prompts differ"
+PART = "the maker of {plugin} must put its part {part} back, or lay its lanes again"
 CLAUDE_CODE = (
     "Claude Code must be updated with `claude update`, and where this goes on, it must be reported"
     " at https://github.com/lovaizu/ccpm/issues"
@@ -64,11 +84,14 @@ BACK = {
 
 
 class Said(NamedTuple):
-    """What the guard says of an event: a break, told the subagent; or an error, told the subagent
-    and the user alike, as only the user can have it fixed."""
+    """What the guard says of an event: a break, told the subagent; an error, told the subagent
+    and the user alike, as only the user can have it fixed; a held command, put to the person
+    with it; or the subagent's part, given as it is."""
 
     text: str
     error: bool = False
+    ask: bool = False
+    plain: bool = False
 
 
 class Cannot(Exception):
@@ -82,7 +105,8 @@ class Cannot(Exception):
 class Subagent(NamedTuple):
     """The subagent an event is of, as the guard checks it: the plugin's folder and name, the
     subagent's name, the session and the ID of its run, its lanes with the sentences laid from the
-    routes, and the routes where they name it."""
+    routes, the routes where they name it, the results it gives, its values adapter where it names
+    one, and what was read once for the event."""
 
     root: str
     plugin: str
@@ -91,6 +115,9 @@ class Subagent(NamedTuple):
     agent: str
     laid: list[rules.Laid]
     routes: dict[str, Any] | None
+    ons: list[str]
+    adapter: str | None
+    memo: dict[str, Any]
 
     def orchestrator(self) -> bool:
         """Whether the subagent is the routes' orchestrator."""
@@ -122,9 +149,35 @@ class Subagent(NamedTuple):
         """The next start, as the orchestrator is told it."""
         return Said(routes.line(due, self.plugin))
 
+    def of(self, *kinds: str) -> list[rules.Laid]:
+        """The subagent's lanes of the kinds, each checked to be said by its step still."""
+        found = [g for g in self.laid if g.lane in kinds]
+        for lane in found:
+            held(lane, self)
+        return found
+
     def commands(self, lane: str) -> list[str]:
         """The commands of the subagent's lanes of the kind, as it reads them in its steps."""
         return [c for g in self.laid if g.lane == lane for c in run_only.named(g.takes, self.root)]
+
+    def values(self) -> dict[str, Any]:
+        """The run's values, read at the values port from the texts it was given, by lane's reading
+        or the subagent's adapter, once for the event; stops with ports.Failed where the adapter
+        fails, and ValueError where the run cannot tell its prompt."""
+        if "values" not in self.memo:
+            texts = called.texts(self.session, self.agent)
+            if texts is None:
+                raise ValueError(
+                    "two starts of it with differing prompts were waiting as it started, so its"
+                    " prompt cannot be told"
+                )
+            given = {"texts": texts}
+            self.memo["values"] = (
+                ports.run(os.path.join(self.root, self.adapter), "values", given, self.root)
+                if self.adapter
+                else ports.read("values", given)
+            )["values"]
+        return self.memo["values"]
 
 
 def cannot(on: str, wrong: str, fix: str) -> Said:
@@ -162,22 +215,83 @@ def subagent(
     found = list(laid or [])
     if routed is not None and routed["orchestrator"] == name:
         found.append(rules.Laid(routed["step"], "follow_routes", []))
-    ons = routes.ons(routed, name) if routed else []
+    ons = rules.gives(routed, name, [g.lane for g in found])
     if ons:
         # The last step's number, or none that a step has, where its file has no step.
         last = step.last(step.lines_of(root, name)) or 0
         found.append(rules.Laid(last, "result", [routes.command(name, on) for on in ons]))
     session, agent = event["session_id"], event["agent_id"]
-    return Subagent(root, plugin, name, session, agent, found, routed)
+    adapter = rules.adapter_of(given, name)
+    return Subagent(root, plugin, name, session, agent, found, routed, ons, adapter, {})
+
+
+def on(lane: rules.Laid, s: Subagent) -> str:
+    """The lane on its step of the subagent, as an error names it."""
+    return f"{lane.lane} on step {lane.step} of {s.name}"
 
 
 def held(lane: rules.Laid, s: Subagent) -> None:
     """Stops with Cannot where the lane's step no longer says its sentence."""
     said = lanes.sentence(lane.lane, lane.takes)
     if not step.holds(s.root, s.name, lane.step, said):
-        on = f"{lane.lane} on step {lane.step} of {s.name}"
         gone = f"step {lane.step} no longer says: {said}".rstrip(".")
-        raise Cannot(cannot(on, gone, LAY_AGAIN.format(plugin=s.plugin)))
+        raise Cannot(cannot(on(lane, s), gone, LAY_AGAIN.format(plugin=s.plugin)))
+
+
+def places_of(lane: rules.Laid, s: Subagent) -> dict[str, list[str]] | None:
+    """What the lane takes on the subagent's run, in its places: each `{<name>}` the run's value of
+    the name, its empty texts left out, in the place the take is in; None where a value is given as
+    null, which lets the lane's call or end through. Stops with Cannot where a value cannot be
+    read, is not given or is given empty, or the places are out of the lane's IN."""
+    found: dict[str, list[str]] = {}
+    for place, takes in lanes.placed(lane.lane, lane.takes).items():
+        found[place] = []
+        for take in takes:
+            texts = value_of(take, lane, s) if rules.GIVEN.fullmatch(take) else [take]
+            if texts is None:
+                return None
+            found[place] += texts
+    given: dict[str, Any] = {"takes": found}
+    if lanes.calls(lane.lane):
+        given["calls"] = called.calls(s.session, s.agent)
+    out = schema.held(lanes.given_in(lane.lane), given)
+    if out is not None:
+        wrong = f"what it is given is out of its IN at {out.told()}"
+        raise Cannot(cannot(on(lane, s), wrong, LAY_AGAIN.format(plugin=s.plugin)))
+    return found
+
+
+def value_of(take: str, lane: rules.Laid, s: Subagent) -> list[str] | None:
+    """The run's value of the take `{<name>}`, its empty texts left out; None where it is given as
+    null. Stops with Cannot where the values cannot be read, or the value is not given or is given
+    empty."""
+    try:
+        values = s.values()
+    except ports.Failed as why:
+        fix = ADAPTER.format(plugin=s.plugin, adapter=s.adapter)
+        raise Cannot(cannot(on(lane, s), f"the adapter {s.adapter} {why}", fix)) from None
+    except ValueError as why:
+        raise Cannot(cannot(on(lane, s), str(why), ONE_AT_A_TIME.format(name=s.name))) from None
+    name = take[1:-1]
+    fix = GIVE.format(name=s.name, value=name)
+    if name not in values:
+        raise Cannot(cannot(on(lane, s), f"`{take}` was given no value", fix))
+    if values[name] is None:
+        return None
+    texts = [t for t in values[name] if t]
+    if not texts:
+        raise Cannot(cannot(on(lane, s), f"`{take}` was given empty", fix))
+    return texts
+
+
+def forms_of(lane: rules.Laid, s: Subagent, places: dict[str, list[str]]) -> list[str]:
+    """The forms the in_form lane names, as the subagent reads them; stops with Cannot where one is
+    a form `lay.py write` would now refuse."""
+    for named in places["form"]:
+        why = in_form.refused(named, s.root)
+        if why:
+            raise Cannot(cannot(on(lane, s), why, LAY_AGAIN.format(plugin=s.plugin)))
+    return run_only.named(places["form"], s.root)
 
 
 Check = Callable[[Subagent, dict[str, Any]], "list[Said]"]
@@ -199,41 +313,136 @@ def guarded(check: Check) -> Callable[[str, str, str, dict[str, Any], str], list
     return run
 
 
+def sentences(found: list[rules.Laid]) -> Said:
+    """The break of the lanes, told by their sentences, a line each."""
+    return Said("\n".join(lanes.sentence(g.lane, g.takes) for g in found))
+
+
 def tool_checked(s: Subagent, event: dict[str, Any]) -> list[Said]:
     """What the subagent's PreToolUse event is told: nothing where the call goes through; the
-    sentences it breaks; or an error where its tool's field is not as Claude Code gives it, or a
-    step no longer says the sentence of a lane that judges the call."""
+    sentences it breaks; a held command's sentence, put to the person; or an error where its tool's
+    field is not as Claude Code gives it, or lane cannot check a lane that judges the call."""
     tool, given = event["tool_name"], event["tool_input"]
-    for lane in [g for g in s.laid if g.lane == "follow_routes"]:
-        held(lane, s)
+    for lane in s.of("follow_routes"):
         due = s.due()
         if not follow_routes.allows(tool, given, due, s.plugin):
             return [Said(follow_routes.WORDING), s.told(due)]
     if tool not in WATCHED:
         return []
     action, field = WATCHED[tool]
-    out = schema.held({"type": "string"}, given.get(field))
+    # Grep given no path searches the folder the call is made in.
+    value = given.get(field, "." if tool == "Grep" else None)
+    out = schema.held({"type": "string"}, value)
     if out is not None:
         raise Cannot(unshaped(s.name, f"$.tool_input.{field}{out.told()[1:]}"))
-    writing = action == "write"  # pragma: no mutate
-    judging = [g for g in s.laid if lanes.action(g.lane) == action]
-    if writing and not judging:
+    checks = {"read": read_checked, "write": write_checked, "run": run_checked}
+    return checks[action](s, event, value)
+
+
+def read_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
+    """What a read of the path is told: nothing where the subagent has no read_only lane, a lane's
+    value is null, or the path is one of the inputs or the forms of its in_form lanes, or lies
+    under one; the read_only lanes' sentences otherwise."""
+    judging = s.of("read_only")
+    if not judging:
         return []
-    ending = [] if writing else [g for g in s.laid if g.lane == "result"]
-    for lane in judging + ending:
-        held(lane, s)
-    value = given[field]
-    if writing:
-        if any(lanes.LANES[g.lane].allows(value, g.takes, s.root, event["cwd"]) for g in judging):
+    inputs: list[str] = []
+    for lane in judging:
+        places = places_of(lane, s)
+        if places is None:
             return []
-        return [Said("\n".join(lanes.sentence(g.lane, g.takes) for g in judging))]
-    commands = list(dict.fromkeys(s.commands("run_only") + s.commands("result")))
-    if value.strip() in commands:
+        inputs += places["input"]
+    for lane in s.of("in_form"):
+        places = places_of(lane, s)
+        inputs += forms_of(lane, s, places) if places else []
+    return [] if read_only.allows(path, inputs, s.root, event["cwd"]) else [sentences(judging)]
+
+
+def write_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
+    """What a write of the path is told: write_only's sentences where it has such lanes and the
+    path is none of their outputs nor under one, a lane's value null letting it through; and each
+    in_form lane's sentence, with the point, where the call writes its output out of its form."""
+    cwd, judging = event["cwd"], s.of("write_only")
+    if judging:
+        allowed = [places_of(g, s) for g in judging]
+        if not any(p is None or write_only.allows(path, p["output"], s.root, cwd) for p in allowed):
+            return [sentences(judging)]
+    told = []
+    for lane in s.of("in_form"):
+        places = places_of(lane, s)
+        if places is None:
+            continue
+        forms_of(lane, s, places)
+        point = in_form.out_of(event["tool_name"], event["tool_input"], places, s.root, cwd)
+        if point:
+            told.append(Said(f"{lanes.sentence(lane.lane, lane.takes)}\n{point}"))
+    return told
+
+
+def run_checked(s: Subagent, event: dict[str, Any], command: str) -> list[Said]:
+    """What a run of the command is told: a held command put to the person with its hold lane's
+    sentence; nothing where the command is one its lanes name, or a lane's value is null, but a
+    result command with what is missing of the lanes checked at the end; the sentences of its
+    run_only and hold lanes, and the commands it may run, otherwise."""
+    judging = s.of(*RUNS)
+    named: list[tuple[rules.Laid, list[str]]] = []
+    for lane in judging:
+        places = places_of(lane, s)
+        if places is None:
+            return []
+        named.append((lane, run_only.named(places[RUNS[lane.lane]], s.root)))
+    command = command.strip()
+    for lane, commands in named:
+        if lane.lane == "hold" and command in commands:
+            return [sentences([lane])._replace(ask=True)]
+    if command in s.commands("result"):
+        return ended(s, event["cwd"])
+    commands = list(dict.fromkeys(c for _, each in named for c in each))
+    if command in commands:
         return []
-    told = [lanes.sentence(g.lane, g.takes) for g in judging]
+    told = [lanes.sentence(g.lane, g.takes) for g in judging if g.lane in ("run_only", "hold")]
     listed = ", ".join(f"`{c}`" for c in commands)
     told.append(MAY_RUN.format(listed=listed) if commands else RUN_NONE)
     return [Said("\n".join(told))]
+
+
+def ended(s: Subagent, cwd: str) -> list[Said]:
+    """What the subagent's result command is told: each lane checked at the end, and each in_form
+    lane, whose work is missing, by its sentence, with what is missing on the next line; nothing
+    where none is."""
+    told = []
+    run = called.calls(s.session, s.agent, True)
+    checks = {**lanes.END, "in_form": in_form.missing}
+    for lane in [g for g in s.laid if g.lane in checks]:
+        held(lane, s)
+        places = places_of(lane, s)
+        if places is None:
+            continue
+        if lane.lane == "in_form":
+            forms_of(lane, s, places)
+        items = items_of(lane, s)
+        done = Done(s.root, cwd, called.calls(s.session, s.agent), run, items)
+        try:
+            missing = checks[lane.lane](places, done)
+        except ports.Failed as why:
+            fix = ADAPTER.format(plugin=s.plugin, adapter=lane.adapter)
+            raise Cannot(cannot(on(lane, s), f"the adapter {lane.adapter} {why}", fix)) from None
+        if missing:
+            told.append(Said(f"{lanes.sentence(lane.lane, lane.takes)}\n{missing}"))
+    return told
+
+
+def items_of(lane: rules.Laid, s: Subagent) -> Callable[[str, str], list[str]]:
+    """How the lane reads the items of an input, given its path and text: by its adapter where it
+    names one, by lane's reading otherwise."""
+
+    def read(path: str, text: str) -> list[str]:
+        given = {"input": path, "text": text}
+        if lane.adapter is None:
+            return ports.read("items", given)["items"]
+        return ports.run(os.path.join(s.root, lane.adapter), "items", given, s.root)["items"]
+
+    return read
 
 
 def call_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
@@ -255,10 +464,9 @@ def call_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
         return [s.told(s.due())]
     s.keep(called.call(tool, given))
     command = str(given.get("command", "")).strip() if tool == "Bash" else None
-    ons = routes.ons(s.routes, s.name) if s.routes else []
-    for on, gives in zip(ons, s.commands("result")):
+    for on_, gives in zip(s.ons, s.commands("result")):
         if command == gives:
-            s.keep(called.gave(on))
+            s.keep(called.gave(on_))
     return []
 
 
@@ -275,10 +483,23 @@ def failure_told(s: Subagent, event: dict[str, Any]) -> list[Said]:
 
 
 def start_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
-    """What the subagent's SubagentStart event is told: its run's start is kept, and the
-    orchestrator told the next start."""
+    """What the subagent's SubagentStart event is told: its run's start is kept and its prompt
+    taken; it is given its part whole, the plugin's folder put in, where its entry names one, or
+    an error where the part is not there; and the orchestrator is told the next start."""
     s.keep(called.START)
-    return [s.told(s.due())] if s.orchestrator() else []
+    called.taken(s.session, s.agent, s.name)
+    told = []
+    part = step.part(s.root, s.name)
+    if part is not None:
+        shown = os.path.relpath(part, s.root)
+        try:
+            with open(part, encoding="utf-8") as f:
+                text = f.read()
+        except OSError:
+            fix = PART.format(plugin=s.plugin, part=shown)
+            raise Cannot(cannot(f"the lanes of {s.name}", f"its part {shown} is not there", fix))
+        told.append(Said(text.replace(step.ROOT, s.root), plain=True))
+    return told + ([s.told(s.due())] if s.orchestrator() else [])
 
 
 def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
@@ -295,6 +516,39 @@ def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
         return [Said(lanes.sentence("result", commands))]
     s.keep(called.END)
     return []
+
+
+def handed(plugin: str, event: dict[str, Any], held_: str) -> None:
+    """Keeps, of a call made by anyone in the session, what a run of a subagent of the plugin is
+    given: an Agent call starting one, with its prompt, as it is made, and, as it comes back, the
+    prompt under the run's ID it gives; a SendMessage call's message under the run of the ID it is
+    sent to, where that run's calls are kept. Anything not in the fields Claude Code documents is
+    left, as a run whose prompt is not kept is told so by the lane that needs its value."""
+    tool, given = event.get("tool_name"), event.get("tool_input")
+    session, use = event.get("session_id"), event.get("tool_use_id")
+    if not isinstance(given, dict) or not isinstance(session, str) or not isinstance(use, str):
+        return
+    try:
+        if tool == "Agent":
+            kind, prompt = given.get("subagent_type"), given.get("prompt")
+            if not isinstance(kind, str) or not kind.startswith(f"{plugin}:"):
+                return
+            if not isinstance(prompt, str):
+                return
+            if held_ == "PreToolUse":
+                called.asked(session, use, kind[len(plugin) + 1 :], prompt)
+                return
+            back = event.get("tool_response") if held_ == "PostToolUse" else None
+            agent = back.get("agentId") if isinstance(back, dict) else None
+            ran = agent if isinstance(agent, str) and called.ID.fullmatch(agent) else None
+            called.answered(session, use, ran, prompt)
+        elif tool == "SendMessage" and held_ == "PreToolUse":
+            to, text = given.get("to"), given.get("message")
+            sent = isinstance(to, str) and isinstance(text, str) and called.ID.fullmatch(to)
+            if sent and os.path.exists(called.file(session, str(to), False)):
+                called.keep(session, str(to), called.message(str(text)))
+    except ValueError:
+        return
 
 
 check = guarded(tool_checked)

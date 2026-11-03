@@ -21,26 +21,38 @@ DOMAIN = os.path.join(CODE, "core", "domain")
 SCRIPTS = os.path.join(LANE, "scripts")
 sys.path[:0] = [CODE, DOMAIN, SCRIPTS, os.path.join(LANE, "..", "..", "dev", "lane")]
 
-import called  # noqa: F401
+import called
+import done
 import entries  # noqa: F401
 import forms  # noqa: F401
 import guard  # noqa: F401
 import hook  # noqa: F401
-import lanes  # noqa: F401
+import lanes
 import lay  # noqa: F401
 import layer  # noqa: F401
 import placed  # noqa: F401
-import ports  # noqa: F401
+import ports
 import proposal  # noqa: F401
 import result  # noqa: F401
 import routes  # noqa: F401
 import rules  # noqa: F401
 import schema  # noqa: F401
-import step  # noqa: F401
+import step
 import steps  # noqa: F401
 import template  # noqa: F401
 import testing
-from lanes import follow_routes, run_only, write_only  # noqa: F401
+from lanes import (  # noqa: F401
+    end_when,
+    every_item,
+    follow_routes,
+    hold,
+    in_form,
+    read_only,
+    read_whole,
+    run_only,
+    test_after,
+    write_only,
+)
 
 AGENT = "changelog:writer"
 # The README's subagent `writer` before any lane is laid.
@@ -206,6 +218,25 @@ class PluginTest(testing.FolderTest):
         laid = {"subagents": [{"name": "writer", "steps": given}]}
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
 
+    def lay_lanes(self, laid_steps: list[Any], adapter: str | None = None) -> None:
+        """Lays the lanes of the steps in `writer`, with its values adapter where one is given, as
+        `lay.py write` writes them: each step saying its lanes' sentences, its last step its result
+        command `done` where a lane is checked at its end, and hooks/lanes.json."""
+        lines: list[str] = [str(line) for line in WRITER.splitlines()]
+        kinds = [str(g["lane"]) for s in laid_steps for g in s["lanes"]]
+        ending: list[Any] = [
+            {"step": 4, "lanes": [{"lane": "result", "takes": [f"{GIVE} writer done"]}]}
+        ]
+        for s in [*laid_steps, *(ending if any(map(lanes.ends, kinds)) else [])]:
+            where = step.span(lines, int(s["step"]))
+            assert where is not None
+            at = where[0]
+            said = [lanes.sentence(str(g["lane"]), list(g["takes"])) for g in s["lanes"]]
+            lines[at] = " ".join([lines[at], *said])
+        self.write(self.agent_file, "\n".join(lines) + "\n")
+        agent = {"name": "writer", **({"adapter": adapter} if adapter else {}), "steps": laid_steps}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": [agent]})
+
     def event(
         self,
         tool: str,
@@ -272,6 +303,41 @@ class PluginTest(testing.FolderTest):
         return self.event(tool, {"file_path": path, "content": "x"})
 
 
+# An entry of the subagent of the name whose steps lie in writer's part, as docs/lanes.md's A
+# subagent's part gives it.
+PART_ENTRY = (
+    "---\nname: {name}\ndescription: d\n---\n\n"
+    "Your steps are in `${{CLAUDE_PLUGIN_ROOT}}/prompts/writer.md`.\n"
+)
+# An adapter of the values port reading `<name>=<value>` lines, with its cases, as the developer AI
+# keeps them beside its proposal.
+VALUES_ADAPTER = """import json, sys
+
+found = {}
+for text in json.load(sys.stdin)["texts"]:
+    for line in text.splitlines():
+        key, eq, value = line.partition("=")
+        if eq:
+            found[key.strip()] = [value.strip()]
+print(json.dumps({"values": found}))
+"""
+VALUES_CASES = [
+    {"given": {"texts": ["work=a.md"]}, "gives": {"values": {"work": ["a.md"]}}},
+    {"given": {"texts": ["nothing"]}, "gives": {"values": {}}},
+]
+# An adapter of the items port reading `Finding <n>` headings as the IDs F<n>, with its cases.
+ITEMS_ADAPTER = """import json, re, sys
+
+text = json.load(sys.stdin)["text"]
+found = re.findall(r"^## Finding ([0-9]+)", text, re.MULTILINE)
+print(json.dumps({"items": ["F" + n for n in found]}))
+"""
+ITEMS_CASES = [
+    {"given": {"input": "r.md", "text": "## Finding 1\n"}, "gives": {"items": ["F1"]}},
+    {"given": {"input": "r.md", "text": "none"}, "gives": {"items": []}},
+]
+
+
 class LayTest(PluginTest):
     """A test of `lay.py` at the root of the repository `base`, the README's proposal kept where
     the README keeps it."""
@@ -288,6 +354,32 @@ class LayTest(PluginTest):
     def proposal(self, **changed: Any) -> dict:
         """The README's proposal with writer's entry changed as given."""
         return {"plugin": "changelog", "subagents": [{"name": "writer", "steps": STEPS, **changed}]}
+
+    def adapter(self, name: str, text: str, cases: Any) -> str:
+        """Keeps the adapter of the name, such as `values-w`, with its cases, beside the proposal,
+        as docs/lanes.md says; gives its path in the plugin."""
+        beside = os.path.join(os.path.dirname(PROPOSED), "changelog", "adapters")
+        self.write(os.path.join(beside, f"{name}.py"), text)
+        if cases is not None:
+            text = cases if isinstance(cases, str) else json.dumps(cases)
+            self.write(os.path.join(beside, f"{name}.json"), text)
+        return f"hooks/adapters/{name}.py"
+
+
+def did(
+    base: str, plugin: str, calls: list | None = None, run: list | None = None, items=None
+) -> Any:
+    """What a subagent working in base did, as an end lane holds it: its calls kept, all and those
+    of its run, the run's those of all where none are given, its items read by lane's reading or
+    as given."""
+    each = calls or []
+    read = items or (lambda path, text: ports.read("items", {"input": path, "text": text})["items"])
+    return done.Done(plugin, base, each, each if run is None else run, read)
+
+
+def kept_call(tool: str, **given: Any) -> dict:
+    """A call kept as it came back, of the tool with the input."""
+    return called.call(tool, given)
 
 
 def answer(text: str) -> dict:

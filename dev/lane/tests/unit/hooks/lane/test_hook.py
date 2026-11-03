@@ -13,6 +13,7 @@ from unittest import mock
 import helpers
 from helpers import hook
 
+AGENT_TYPE = "changelog:writer"
 RUN_BREAK = (
     f"changelog: {helpers.RUN}\nThe commands you may run, each word for word: `git log --oneline`."
 )
@@ -277,6 +278,59 @@ class TestEntries(HookTest):
                     held, ["changelog"], io.StringIO(json.dumps(event)), expected, self.plugin
                 )
                 self.assertEqual(out.getvalue(), expected.getvalue())
+
+
+class TestU3(HookTest):
+    def test_a_held_command_is_asked_of_the_person_with_its_sentence(self):
+        # Given: writer holding git push for the person's approval
+        self.lay_lanes([{"step": 2, "lanes": [{"lane": "hold", "takes": ["git push"]}]}])
+        # When: it runs git push
+        found = self.answered(self.bash("git push"))
+        # Then: Claude Code is asked to put it to the person, with the sentence headed changelog:
+        said = "changelog: Run `git push` only with the person's approval."
+        self.assertEqual(
+            found,
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "PreToolUse",
+                    "permissionDecision": "ask",
+                    "permissionDecisionReason": said,
+                }
+            },
+        )
+
+    def test_a_part_is_given_as_it_is_as_the_subagent_starts(self):
+        # Given: writer's entry naming its part
+        part = os.path.join(self.plugin, "prompts", "writer.md")
+        self.write(part, helpers.LAID.split("---\n\n", 1)[1])
+        self.write(self.agent_file, helpers.PART_ENTRY.format(name="writer"))
+        # When: writer starts
+        start = self.subagent("SubagentStart", "writer", "a1")
+        found = self.answered(start, held="SubagentStart")
+        # Then: the part is added as context, headed by nothing
+        context = found["hookSpecificOutput"]["additionalContext"]
+        self.assertEqual(context, self.read(part))
+
+    def test_an_agent_call_of_the_main_conversation_is_kept_for_the_run_it_starts(self):
+        # Given: writer laid
+        call = {
+            **self.event("Agent", {"prompt": "p", "subagent_type": AGENT_TYPE}, None),
+            "tool_use_id": "t1",
+        }
+        # When: the main conversation starts writer, and writer starts
+        self.assertEqual(self.answered(call), {})
+        self.answered(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
+        # Then: writer's run is given the call's prompt
+        self.assertEqual(helpers.called.texts("s1", "a1"), ["p"])
+
+    def test_an_agent_call_stopped_keeps_nothing(self):
+        # Given: the routes laid, writer due
+        self.route()
+        # When: lead's start of reviewer is stopped
+        self.answered({**self.start("reviewer"), "tool_use_id": "t1"})
+        # Then: nothing waits for reviewer's start
+        self.answered(self.subagent("SubagentStart", "reviewer", "r1"), held="SubagentStart")
+        self.assertEqual(helpers.called.texts("s1", "r1"), [])
 
 
 if __name__ == "__main__":

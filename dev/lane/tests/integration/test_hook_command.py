@@ -170,5 +170,66 @@ class TestRoutesCommands(CommandTest):
                 self.assertEqual(found, [])
 
 
+class TestLanesCommands(CommandTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.env["TMPDIR"] = self.base
+
+    def test_a_held_command_is_asked_and_a_result_with_work_missing_is_denied(self):
+        # Given: writer holding git push, and ending once report.md is made
+        self.lay_lanes(
+            [
+                {"step": 2, "lanes": [{"lane": "hold", "takes": ["git push"]}]},
+                {"step": 3, "lanes": [{"lane": "end_when", "takes": ["report.md"]}]},
+            ]
+        )
+        # When: its git push, and its result command, reach the hook's command in sh
+        held = self.run_hook(self.bash("git push"))
+        ended = self.run_hook(self.bash(f"python3 {self.plugin}/hooks/lane/result.py writer done"))
+        # Then: the push is asked of the person, and the result denied naming what is missing
+        asked = json.loads(held.stdout)["hookSpecificOutput"]
+        self.assertEqual(asked["permissionDecision"], "ask")
+        self.assertEqual(
+            json.loads(ended.stdout)["hookSpecificOutput"]["permissionDecisionReason"],
+            "changelog: End only once `report.md` is made.\n`report.md` not there",
+        )
+        # And: once report.md is made, the result script run as the step writes it exits 0
+        self.write("report.md", "x")
+        self.assertEqual(
+            self.run_hook(
+                self.bash(f"python3 {self.plugin}/hooks/lane/result.py writer done")
+            ).stdout,
+            "",
+        )
+        done = subprocess.run(
+            ["sh", "-c", f"python3 {self.plugin}/hooks/lane/result.py writer done"],
+            capture_output=True,
+            text=True,
+            env=self.env,
+            check=False,
+        )
+        self.assertEqual((done.returncode, done.stderr), (0, ""))
+
+    def test_a_value_given_in_the_main_conversations_prompt_holds_writer_from_event_to_event(self):
+        # Given: writer writing only {work}
+        self.lay_lanes([{"step": 3, "lanes": [{"lane": "write_only", "takes": ["{work}"]}]}])
+        call = {
+            **self.event(
+                "Agent", {"prompt": '{"work": "a.md"}', "subagent_type": "changelog:writer"}, None
+            ),
+            "tool_use_id": "t1",
+        }
+        # When: the main conversation starts writer with a.md as its work, and writer writes a.md
+        # and b.md, each event through the hooks' commands in sh
+        self.assertEqual(self.run_hook(call).stdout, "")
+        self.run_hook(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
+        wrote_a = self.run_hook(self.written("a.md"))
+        wrote_b = self.run_hook(self.written("b.md"))
+        # Then: a.md goes through, and b.md is denied with the sentence as the step says it
+        self.assertEqual(wrote_a.stdout, "")
+        reason = json.loads(wrote_b.stdout)["hookSpecificOutput"]["permissionDecisionReason"]
+        self.assertEqual(reason, "changelog: Write only `{work}`.")
+
+
 if __name__ == "__main__":
     unittest.main()

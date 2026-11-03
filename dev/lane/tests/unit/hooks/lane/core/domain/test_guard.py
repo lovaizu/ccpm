@@ -4,6 +4,7 @@ each start of the orchestrator's and each result given, the next start told as i
 each start comes back, and an end kept going while it is due or no result is given; and, where it
 cannot judge, the error that says why and who must fix it."""
 
+import json
 import os
 import unittest
 
@@ -420,6 +421,457 @@ class TestRoutedCannot(RoutedTest):
                 self.assertEqual(
                     self.told(check, self.subagent("SubagentStart", "planner", "p1"), "planner"), []
                 )
+
+
+# writer's result command `done`, as it reads it, given the plugin's folder.
+DONE = "python3 {root}/hooks/lane/result.py writer done"
+FORM = "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"
+SCHEMA = {"type": "object", "required": ["version"], "properties": {"version": {"type": "string"}}}
+
+
+def lane(kind: str, *takes: str, number: int = 3, **more: str) -> dict:
+    """A step of the number laying the lane of the kind, taking the things."""
+    return {"step": number, "lanes": [{"lane": kind, "takes": list(takes), **more}]}
+
+
+class LanesTest(GuardTest):
+    def given(self, text: str, agent: str = "a1") -> None:
+        """writer's run of the ID given the prompt."""
+        called.keep("s1", agent, called.given(text))
+
+    def reading(self, path: str, tool: str = "Read") -> dict:
+        """A PreToolUse event of writer reading the path, by Read or Grep."""
+        given = {"file_path": path} if tool == "Read" else {"pattern": "x", "path": path}
+        return self.event(tool, given)
+
+
+class TestReadOnly(LanesTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_lanes([lane("read_only", "CHANGELOG.md", "docs/", number=1)])
+
+    def test_an_input_or_a_file_under_one_is_read_and_any_other_file_is_stopped(self):
+        for event, through in (
+            (self.reading("CHANGELOG.md"), True),
+            (self.reading("docs/a.md", "Grep"), True),
+            (self.reading("README.md"), False),
+            (self.event("Grep", {"pattern": "x"}), False),
+        ):
+            with self.subTest(event=event):
+                # Given: writer reading only CHANGELOG.md and docs/
+                # When: it reads CHANGELOG.md, greps under docs/, reads another file, or greps the
+                # folder it works in
+                # Then: the inputs go through, and the rest is told the sentence
+                said = [] if through else [guard.Said("Read only `CHANGELOG.md` or `docs/`.")]
+                self.assertEqual(self.check(event), said)
+
+    def test_the_form_of_an_in_form_lane_is_read_beside_the_inputs(self):
+        # Given: writer reading only CHANGELOG.md, and writing entry.json in a form
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), SCHEMA)
+        self.lay_lanes(
+            [lane("read_only", "CHANGELOG.md", number=1), lane("in_form", "entry.json", FORM)]
+        )
+        # When: it reads the form, as the step names it
+        # Then: it goes through
+        form = os.path.join(self.plugin, "forms", "entry.json")
+        self.assertEqual(self.check(self.reading(form)), [])
+
+    def test_a_subagent_with_no_read_lane_reads_freely(self):
+        # Given: writer with the README's lanes alone
+        self.lay()
+        # When: it reads any file
+        # Then: it goes through
+        self.assertEqual(self.check(self.reading("any.md")), [])
+
+
+class TestInForm(LanesTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), SCHEMA)
+        self.lay_lanes([lane("in_form", "entry.json", FORM)])
+        self.sentence = f"Write `entry.json` in the form of `{FORM}`."
+
+    def test_a_write_in_the_form_goes_through_and_one_out_of_it_is_told_the_point(self):
+        for content, through in (('{"version": "1"}', True), ("{}", False)):
+            with self.subTest(content=content):
+                # Given: writer writing entry.json in the form
+                # When: it writes it in the form, or out of it
+                told = self.check(
+                    self.event("Write", {"file_path": "entry.json", "content": content})
+                )
+                # Then: the first goes through, and the second is told the sentence and the point
+                point = '$: expected the key "version", found an object without it'
+                self.assertEqual(told, [] if through else [guard.Said(f"{self.sentence}\n{point}")])
+
+    def test_a_write_of_another_file_goes_through_where_no_write_only_lane_holds_it(self):
+        # Given: writer with in_form alone
+        # When: it writes another file
+        # Then: it goes through, as in_form holds the output alone to its form
+        self.assertEqual(self.check(self.written("notes.md")), [])
+
+    def test_a_form_gone_since_it_was_laid_is_an_error(self):
+        # Given: the form removed
+        os.remove(os.path.join(self.plugin, "forms", "entry.json"))
+        # When: writer writes entry.json
+        told = self.check(self.event("Write", {"file_path": "entry.json", "content": "{}"}))
+        # Then: it is an error of in_form, telling to lay the lanes again
+        self.assertTrue(told[0].error)
+        self.assertIn("lane cannot check in_form on step 3 of writer: names the form", told[0].text)
+        self.assertIn("`lay.py write`", told[0].text)
+
+
+class TestHold(LanesTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_lanes(
+            [
+                {
+                    "step": 2,
+                    "lanes": [helpers.STEPS[0]["lanes"][0], lane("hold", "git push")["lanes"][0]],
+                }
+            ]
+        )
+
+    def test_a_held_command_is_put_to_the_person_with_its_sentence(self):
+        # Given: writer holding git push for the person's approval
+        # When: it runs git push
+        # Then: it is asked of the person, with hold's sentence
+        said = "Run `git push` only with the person's approval."
+        self.assertEqual(self.check(self.bash("git push")), [guard.Said(said, ask=True)])
+
+    def test_the_other_commands_go_on_as_run_only_says_and_any_other_is_told_both(self):
+        # Given: writer running only git log --oneline, and holding git push
+        # When: it runs git log --oneline, and git commit
+        # Then: the first goes through, and the second is told both sentences and both commands
+        self.assertEqual(self.check(self.bash("git log --oneline")), [])
+        told = (
+            f"{helpers.RUN}\nRun `git push` only with the person's approval.\n"
+            "The commands you may run, each word for word: `git log --oneline`, `git push`."
+        )
+        self.assertEqual(self.check(self.bash("git commit")), [guard.Said(told)])
+
+
+class TestEnd(LanesTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.done = DONE.format(root=self.plugin)
+        self.write("CHANGELOG.md", "one\ntwo\n")
+
+    def ran(self, *calls: dict) -> None:
+        """writer's run started, with the calls kept as they came back."""
+        called.keep("s1", "a1", called.START)
+        for c in calls:
+            called.keep("s1", "a1", c)
+
+    def test_the_result_command_goes_through_once_each_lane_of_the_end_holds(self):
+        # Given: writer reading CHANGELOG.md whole, ending once it is made, and testing src/
+        self.lay_lanes(
+            [
+                lane("read_whole", "CHANGELOG.md", number=1),
+                lane("test_after", "src/", "make test", number=2),
+                lane("end_when", "CHANGELOG.md", number=3),
+            ]
+        )
+        # When: it runs the test, and gives its result having read CHANGELOG.md whole
+        self.assertEqual(self.check(self.bash("make test")), [])
+        self.ran(helpers.kept_call("Read", file_path="CHANGELOG.md"))
+        # Then: the result goes through
+        self.assertEqual(self.check(self.bash(self.done)), [])
+
+    def test_a_result_with_work_missing_is_told_each_lanes_sentence_and_what_is_missing(self):
+        self.write("review.md", "- B-1: a\n")
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), SCHEMA)
+        self.write("entry.json", "{}")
+        # Given: writer with a lane of each kind checked at the end, and in_form
+        self.lay_lanes(
+            [
+                lane("read_whole", "CHANGELOG.md", number=1),
+                lane("test_after", "src/", "make test", number=2),
+                {
+                    "step": 3,
+                    "lanes": [
+                        {"lane": "end_when", "takes": ["report.md"]},
+                        {"lane": "in_form", "takes": ["entry.json", FORM]},
+                    ],
+                },
+                lane("every_item", "review.md", number=4),
+            ]
+        )
+        # When: it gives its result having read nothing, changed src/ untested and answered
+        # nothing
+        self.ran(helpers.kept_call("Write", file_path="src/a.py", content="x"))
+        told = self.check(self.bash(self.done))
+        # Then: each lane is told, with what is missing on the next line
+        self.assertEqual(
+            [t.text for t in told],
+            [
+                "Read `CHANGELOG.md` to its end.\n`CHANGELOG.md` unread from line 1",
+                (
+                    "After changing `src/`, pass `make test`.\n"
+                    "`src/` changed with no test passed after"
+                ),
+                "End only once `report.md` is made.\n`report.md` not there",
+                (
+                    f"Write `entry.json` in the form of `{FORM}`.\n`entry.json`: $: expected the"
+                    ' key "version", found an object without it'
+                ),
+                "Answer every item of `review.md`.\nB-1 of `review.md` unanswered",
+            ],
+        )
+
+    def test_the_items_are_read_by_the_lanes_adapter_and_its_failure_is_an_error(self):
+        self.write("review.md", "## Finding 1\n")
+        for text, error in ((helpers.ITEMS_ADAPTER, False), ("import sys\nsys.exit(2)\n", True)):
+            with self.subTest(error=error):
+                # Given: every_item reading review.md by the plugin's items adapter, or one failing
+                self.write(os.path.join(self.plugin, "hooks", "adapters", "items-f.py"), text)
+                self.lay_lanes(
+                    [lane("every_item", "review.md", number=4, adapter="hooks/adapters/items-f.py")]
+                )
+                # When: writer gives its result having answered nothing
+                told = self.check(self.bash(self.done))
+                # Then: F1 is unanswered, or the adapter's failure is an error naming it
+                if error:
+                    self.assertTrue(told[0].error)
+                    self.assertIn("the adapter hooks/adapters/items-f.py exited 2", told[0].text)
+                    self.assertIn("must fix its adapter hooks/adapters/items-f.py", told[0].text)
+                else:
+                    self.assertIn("F1 of `review.md` unanswered", told[0].text)
+
+
+class TestValues(LanesTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_lanes([lane("write_only", "{work}")])
+
+    def test_a_value_given_in_the_prompt_or_a_message_after_is_held_to(self):
+        # Given: writer given notes.md as its work
+        self.given(json.dumps({"work": "notes.md"}))
+        # When: it writes notes.md, and another file
+        # Then: notes.md goes through, and the other is told the sentence as the step says it
+        self.assertEqual(self.check(self.written("notes.md")), [])
+        self.assertEqual(self.check(self.written("a.md")), [guard.Said("Write only `{work}`.")])
+        # And: once a message gives it a.md and b.md, those go through and notes.md does not
+        called.keep("s1", "a1", called.message('{"work": ["a.md", "b.md", ""]}'))
+        self.assertEqual(self.check(self.written("b.md")), [])
+        self.assertEqual(self.check(self.written("notes.md")), [guard.Said("Write only `{work}`.")])
+
+    def test_a_value_given_as_null_lets_the_lane_through(self):
+        for kind, event in (("write_only", self.written("any.md")), ("run_only", self.bash("ls"))):
+            with self.subTest(kind=kind):
+                # Given: the lane taking {work}, the run given none
+                self.lay_lanes([lane(kind, "{work}")])
+                self.given('{"work": null}')
+                # When: writer makes a call the lane judges
+                # Then: it goes through
+                self.assertEqual(self.check(event), [])
+
+    def test_a_value_not_given_given_empty_or_unknown_is_an_error(self):
+        for given, said in (
+            ("no JSON", "`{work}` was given no value"),
+            ('{"work": [""]}', "`{work}` was given empty"),
+            (None, "two starts of it with differing prompts were waiting as it started"),
+        ):
+            with self.subTest(given=given):
+                # Given: writer's run given no value, an empty one, or a prompt it cannot tell
+                called.keep("s1", "a1", called.START)
+                called.keep("s1", "a1", called.given(given))
+                # When: it writes a file
+                told = self.check(self.written("notes.md"))
+                # Then: it is an error of write_only, naming what is wrong
+                self.assertTrue(told[0].error)
+                self.assertIn(
+                    f"lane cannot check write_only on step 3 of writer: {said}", told[0].text
+                )
+
+    def test_the_values_are_read_by_the_subagents_adapter(self):
+        # Given: writer's values read by its adapter, given work=notes.md
+        self.write(
+            os.path.join(self.plugin, "hooks", "adapters", "values-w.py"), helpers.VALUES_ADAPTER
+        )
+        self.lay_lanes([lane("write_only", "{work}")], "hooks/adapters/values-w.py")
+        self.given("work=notes.md")
+        # When: it writes notes.md
+        # Then: it goes through
+        self.assertEqual(self.check(self.written("notes.md")), [])
+        # And: the adapter failing is an error naming it
+        self.write(os.path.join(self.plugin, "hooks", "adapters", "values-w.py"), "x(")
+        told = self.check(self.written("notes.md"))
+        self.assertIn("the adapter hooks/adapters/values-w.py exited 1", told[0].text)
+
+    def test_a_value_given_as_null_lets_each_kind_of_lane_through(self):
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), SCHEMA)
+        for steps, event in (
+            ([lane("read_only", "{work}", number=1)], self.reading("any.md")),
+            (
+                [lane("read_only", "CHANGELOG.md", number=1), lane("in_form", "{work}", FORM)],
+                self.reading("CHANGELOG.md"),
+            ),
+            ([lane("in_form", "{work}", FORM)], self.written("entry.json")),
+            ([lane("end_when", "{work}")], self.bash(DONE.format(root=self.plugin))),
+        ):
+            with self.subTest(steps=steps):
+                # Given: read_only, in_form, or end_when taking {work}, the run given none
+                self.lay_lanes(steps)
+                self.given('{"work": null}')
+                # When: writer makes a call the lane judges
+                # Then: it goes through
+                self.assertEqual(self.check(event), [])
+
+    def test_the_values_are_read_once_for_lanes_taking_them_together(self):
+        # Given: two write_only lanes taking values, read by the subagent's adapter, which counts
+        # its runs
+        script = os.path.join(self.plugin, "hooks", "adapters", "values-w.py")
+        self.write(script, helpers.VALUES_ADAPTER + "open('runs', 'a').write('x')\n")
+        steps = [lane("write_only", "{work}"), lane("write_only", "{more}", number=2)]
+        self.lay_lanes(steps, "hooks/adapters/values-w.py")
+        self.given("work=a.md\nmore=b.md")
+        # When: writer writes b.md
+        # Then: it goes through, the adapter run once
+        self.assertEqual(self.check(self.written("b.md")), [])
+        self.assertEqual(self.read("runs"), "x")
+
+    def test_a_value_of_several_texts_stays_in_the_place_of_its_take(self):
+        # Given: in_form holding {work} to the form, the run given two outputs
+        self.write_json(os.path.join(self.plugin, "forms", "entry.json"), SCHEMA)
+        self.lay_lanes([lane("in_form", "{work}", FORM)])
+        self.given('{"work": ["a.json", "b.json"]}')
+        # When: writer writes the second out of the form
+        told = self.check(self.event("Write", {"file_path": "b.json", "content": "{}"}))
+        # Then: it is told the sentence and the point, the form held as the lane names it
+        self.assertEqual(len(told), 1)
+        self.assertTrue(told[0].text.startswith(f"Write `{{work}}` in the form of `{FORM}`.\n$:"))
+
+    def test_values_putting_a_lane_out_of_its_in_is_an_error(self):
+        # Given: in_form taking its output and form from one value, given one text
+        self.lay_lanes([lane("in_form", "{entry}")])
+        self.given('{"entry": "entry.json"}')
+        # When: writer writes a file
+        told = self.check(self.written("entry.json"))
+        # Then: it is an error, naming the place out of the IN
+        self.assertIn("what it is given is out of its IN at $.takes.form", told[0].text)
+
+
+class TestPart(LanesTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.part = os.path.join(self.plugin, "prompts", "writer.md")
+        entry = helpers.PART_ENTRY.format(name="writer")
+        self.write(
+            self.part, helpers.LAID.split("---\n\n", 1)[1] + "Run `${CLAUDE_PLUGIN_ROOT}/x`.\n"
+        )
+        self.write(self.agent_file, entry)
+
+    def test_a_subagent_with_lanes_is_given_its_part_whole_as_it_starts(self):
+        # Given: writer's entry naming its part, where its lanes' sentences are
+        # When: writer starts
+        told = guard.started(
+            self.plugin, "changelog", "writer", self.subagent("SubagentStart", "writer", "a1"), ""
+        )
+        # Then: it is given the part whole, the plugin's folder put in
+        text = self.read(self.part).replace("${CLAUDE_PLUGIN_ROOT}", self.plugin)
+        self.assertEqual(told, [guard.Said(text, plain=True)])
+        # And: its lanes are read from the part
+        self.assertEqual(self.check(self.bash("git log --oneline")), [])
+
+    def test_a_part_not_there_is_an_error(self):
+        # Given: the part removed
+        os.remove(self.part)
+        # When: writer starts
+        told = guard.started(
+            self.plugin, "changelog", "writer", self.subagent("SubagentStart", "writer", "a1"), ""
+        )
+        # Then: it is an error of its lanes, naming the part
+        self.assertTrue(told[0].error)
+        self.assertIn(
+            "lane cannot check the lanes of writer: its part prompts/writer.md is not there",
+            told[0].text,
+        )
+
+
+class TestHanded(LanesTest):
+    def agent_call(
+        self, held: str, kind: str = "changelog:writer", use: str = "t1", **more
+    ) -> dict:
+        """The main conversation's Agent call of the ID starting the subagent of the type."""
+        given = {"description": "d", "prompt": '{"work": "notes.md"}', "subagent_type": kind}
+        return {**self.event("Agent", given, None, held), "tool_use_id": use, **more}
+
+    def run_start(self, agent: str = "a1") -> None:
+        """writer's run of the ID starts."""
+        guard.started(
+            self.plugin, "changelog", "writer", self.subagent("SubagentStart", "writer", agent), ""
+        )
+
+    def test_a_start_takes_the_prompt_of_the_agent_call_made_for_it(self):
+        # Given: the main conversation's Agent call starting writer
+        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
+        # When: writer starts
+        self.run_start()
+        # Then: its run is given the call's prompt
+        self.assertEqual(called.texts("s1", "a1"), ['{"work": "notes.md"}'])
+        # And: a later start takes no prompt already taken
+        self.run_start("a2")
+        self.assertEqual(called.texts("s1", "a2"), [])
+
+    def test_two_calls_waiting_with_differing_prompts_leave_the_start_unable_to_tell(self):
+        # Given: two Agent calls of writer waiting, with differing prompts
+        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
+        other = self.agent_call("PreToolUse", use="t2")
+        other["tool_input"]["prompt"] = "other"
+        guard.handed("changelog", other, "PreToolUse")
+        # When: writer starts
+        self.run_start()
+        # Then: it cannot tell its prompt
+        self.assertIsNone(called.texts("s1", "a1"))
+        # And: the call coming back with the run's ID gives it its own
+        back = self.agent_call("PostToolUse", tool_response=helpers.back("a1"))
+        guard.handed("changelog", back, "PostToolUse")
+        self.assertEqual(called.texts("s1", "a1"), ['{"work": "notes.md"}'])
+
+    def test_a_call_come_back_or_failed_is_no_longer_waiting(self):
+        for held in ("PostToolUse", "PostToolUseFailure"):
+            with self.subTest(held=held):
+                # Given: writer's Agent call come back, launched with no ID, or failed
+                guard.handed("changelog", self.agent_call("PreToolUse", use=held), "PreToolUse")
+                guard.handed("changelog", self.agent_call(held, use=held, tool_response="x"), held)
+                # When: a run of writer starts
+                self.run_start(f"r{held}")
+                # Then: it takes no prompt
+                self.assertEqual(called.texts("s1", f"r{held}"), [])
+
+    def test_a_message_sent_to_a_run_is_kept_after_its_prompt(self):
+        # Given: writer's run given its prompt
+        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
+        self.run_start()
+        # When: a SendMessage call is made to it, and one to a run of no calls kept
+        for to in ("a1", "z9", "a b"):
+            sent = {"to": to, "message": '{"work": "a.md"}'}
+            guard.handed(
+                "changelog",
+                {**self.event("SendMessage", sent, None), "tool_use_id": "t9"},
+                "PreToolUse",
+            )
+        # Then: the message is kept after the prompt, and nothing for the other
+        self.assertEqual(called.texts("s1", "a1"), ['{"work": "notes.md"}', '{"work": "a.md"}'])
+        self.assertEqual(called.kept("s1", "z9"), [])
+
+    def test_a_call_of_another_plugin_or_out_of_its_fields_keeps_nothing(self):
+        for event in (
+            self.agent_call("PreToolUse", kind="other:writer"),
+            {**self.agent_call("PreToolUse"), "tool_input": {"subagent_type": "changelog:writer"}},
+            {**self.agent_call("PreToolUse"), "tool_use_id": 1},
+            {**self.agent_call("PreToolUse"), "session_id": "a/b"},
+            {**self.event("Read", {"file_path": "x"}, None), "tool_use_id": "t1"},
+        ):
+            with self.subTest(event=event):
+                # Given: an Agent call of another plugin, one of no prompt, of no ID, of a session
+                # no ID names, or another tool's call
+                guard.handed("changelog", event, "PreToolUse")
+                # When: writer starts
+                self.run_start()
+                # Then: its run is given nothing
+                self.assertEqual(called.texts("s1", "a1"), [])
 
 
 if __name__ == "__main__":

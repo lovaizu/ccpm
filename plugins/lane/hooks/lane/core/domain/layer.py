@@ -5,14 +5,18 @@ a plugin laid before brought up to lane's code, its hooks written in the current
 said.
 
 The routes are laid as sentences in the steps beside the lanes: follow_routes' on the
-orchestrator's step, and the result command on the last step of each subagent giving a result. A
-proposal giving routes replaces those laid before, and the sentences of those before come out; one
-giving none keeps them, with their sentences."""
+orchestrator's step, and the result command on the last step of each subagent giving a result, or
+with a lane checked at its end, `done` where no route is from it. A proposal giving routes replaces
+those laid before, and the sentences of those before come out; one giving none keeps them, with
+their sentences. A subagent's adapters are written with their cases into the plugin's
+hooks/adapters/, and those of the proposal removed from beside it. Subagents whose entries name one
+part share its steps, so a proposal laying different lanes on a step of it is refused."""
 
 from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 from typing import Any
 
@@ -31,25 +35,32 @@ def laid_before(root: str) -> tuple[dict[str, list[dict[str, Any]]], dict[str, A
     gives them, and the routes laid, as its hooks/lanes.json holds them; none where it is not
     there. Stops where it is there and cannot be read, as the lanes approved before would be
     lost."""
-    if not os.path.exists(os.path.join(root, rules.FILE)):
-        return {}, None
-    try:
-        laid = rules.read(root)
-    except ValueError as why:
-        raise Stop(f"lay.py: {root}/{why}; fix it and run again.") from None
+    laid = read_before(root)
     return {a["name"]: a["steps"] for a in laid["subagents"]}, rules.routes_of(laid)
 
 
-def routed(given: dict[str, Any] | None, name: str, lines: list[str]) -> list[dict[str, Any]]:
-    """The steps the routes lay sentences on in the subagent of the name, whose file has the lines:
-    follow_routes on the orchestrator's step, and the result command on its last step where it gives
-    a result."""
-    if given is None:
-        return []
+def read_before(root: str) -> dict[str, Any]:
+    """The plugin's hooks/lanes.json, as `laid_before` reads it; none laid where it is not
+    there."""
+    if not os.path.exists(os.path.join(root, rules.FILE)):
+        return {"subagents": []}
+    try:
+        return rules.read(root)
+    except ValueError as why:
+        raise Stop(f"lay.py: {root}/{why}; fix it and run again.") from None
+
+
+def routed(
+    given: dict[str, Any] | None, name: str, lines: list[str], laid: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """The steps the routes lay sentences on in the subagent of the name, whose file has the lines
+    and whose steps lay the lanes given: follow_routes on the orchestrator's step, and the result
+    command on its last step where it gives a result, by a route from it, or `done` with a lane
+    checked at its end."""
     found = []
-    if given["orchestrator"] == name:
+    if given is not None and given["orchestrator"] == name:
         found.append({"step": given["step"], "lanes": [{"lane": "follow_routes", "takes": []}]})
-    ons = routes.ons(given, name)
+    ons = rules.gives(given, name, [g["lane"] for s in laid for g in s["lanes"]])
     last = step.last([line.rstrip("\n") for line in lines])
     if ons and last is not None:
         commands = [routes.command(name, on) for on in ons]
@@ -87,11 +98,40 @@ def agents(
                 continue
             agent = subagent(root, {"name": name, "steps": [dict(s) for s in before.get(name, [])]})
         lines = [line.rstrip("\n") for line in agent["lines"]]
-        laid = merged(agent["steps"], routed(now, name, agent["lines"]))
+        laid = merged(agent["steps"], routed(now, name, agent["lines"], agent["steps"]))
         laid_now = [{**s, "span": step.span(lines, s["step"])} for s in laid]
-        was[name] = merged(before.get(name, []), routed(routes_before, name, agent["lines"]))
+        earlier = before.get(name, [])
+        was[name] = merged(earlier, routed(routes_before, name, agent["lines"], earlier))
         found.append({**agent, "steps": laid_now})
+    shared(root, found, before)
     return found, was
+
+
+def shared(root: str, found: list[dict[str, Any]], before: dict[str, Any]) -> None:
+    """Stops where subagents whose entries name one part would lay different lanes on a step of it,
+    those lay.py writes and those laid before in any other subagent sharing it alike, naming them
+    and the step."""
+    laying = {a["name"]: (a["file"], a["steps"]) for a in found}
+    for name, steps_before in before.items():
+        file = step.steps_file(root, name)
+        if name not in laying and file is not None:
+            laying[name] = (file, steps_before)
+    by_part: dict[str, list[tuple[str, dict[int, list[str]]]]] = {}
+    for name, (file, laid) in laying.items():
+        if step.part(root, name) is None:
+            continue
+        said = {s["step"]: steps.sentences(s) for s in laid}
+        by_part.setdefault(os.path.realpath(file), []).append((name, said))
+    for part, each in by_part.items():
+        for (first, a), (other, b) in zip(each, each[1:]):
+            for number in sorted(set(a) | set(b)):
+                if a.get(number, []) != b.get(number, []):
+                    shown = os.path.relpath(part, os.path.realpath(root))
+                    raise Stop(
+                        f"lay.py: {first} and {other} share their part {shown}, and would lay"
+                        f" different lanes on its step {number}; give them the same lanes there,"
+                        " and run again."
+                    )
 
 
 def listed(things: list[str]) -> str:
@@ -136,6 +176,8 @@ def printed(path: str) -> str:
         for s in laid:
             if not s["lanes"]:
                 out.append(f"  step {s['step']}  no lane: the sentences laid before taken out\n")
+        for a in agent.get("adapters", []):
+            out.append(f"  adapter {a['path']}: its {a['count']} cases given as they say\n")
         out.append("\n")
         for s in laid:
             out += steps.read_as_laid(agent["lines"], s)
@@ -156,26 +198,46 @@ def written(path: str) -> str:
     now = given["routes"] or routes_before
     found, was = agents(given, before, routes_before)
     said = [steps_written(root, agent, was) for agent in found]
-    laid_now = dict(before)
+    laid_now = {a["name"]: a for a in read_before(root)["subagents"]}
     for agent in given["subagents"]:
-        laid_now[agent["name"]] = [{"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]]
-    kept = {n: s for n, s in laid_now.items() if step.agent_file(root, n) is not None}
+        lanes_of = [{"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]]
+        named = {"adapter": agent["adapter"]} if "adapter" in agent else {}
+        laid_now[agent["name"]] = {"name": agent["name"], **named, "steps": lanes_of}
+    kept = {n: a for n, a in laid_now.items() if step.agent_file(root, n) is not None}
     named = routes.named(now) if now else []
     hooked = list(kept) + [n for n in named if n not in kept and step.agent_file(root, n)]
     entries.written(root, entries.put(hooks, plugin, hooked))
     said.append(f"Wrote the hooks of {listed(hooked)} into hooks/hooks.json.\n")
-    rules.write(root, [{"name": n, "steps": s} for n, s in kept.items()], now)
+    rules.write(root, list(kept.values()), now)
     what = "the lanes laid and the routes" if now else "the lanes laid"
     said.append(f"Wrote {what} into hooks/lanes.json.\n")
+    # An adapter two lanes name is written and removed once.
+    each = [a for agent in given["subagents"] for a in agent["adapters"]]
+    adapters = list({a["path"]: a for a in each}.values())
+    for a in adapters:
+        os.makedirs(os.path.join(root, "hooks", "adapters"), exist_ok=True)
+        shutil.copyfile(a["source"], os.path.join(root, a["path"]))
+        shutil.copyfile(a["cases"], os.path.splitext(os.path.join(root, a["path"]))[0] + ".json")
+        said.append(f"Wrote the adapter {a['path']} with its cases.\n")
     placed.code_put(root)
     said.append("Put lane's code in hooks/lane/.\n")
     validated(root, path)
     os.remove(path)
     said += ["claude plugin validate passed.\n", f"Removed the proposal {path}.\n"]
+    for a in adapters:
+        for file in (a["source"], a["cases"]):
+            os.remove(file)
+        said.append(f"Removed the adapter {a['source']} and its cases.\n")
     folder = os.path.dirname(os.path.abspath(path))
-    if not os.listdir(folder):
-        os.rmdir(folder)
-        said.append(f"Removed its folder {folder}.\n")
+    for place in (
+        os.path.join(folder, given["name"], "adapters"),
+        os.path.join(folder, given["name"]),
+        folder,
+    ):
+        if os.path.isdir(place) and not os.listdir(place):
+            os.rmdir(place)
+            if place == folder:
+                said.append(f"Removed its folder {folder}.\n")
     return "".join(said)
 
 
@@ -240,7 +302,10 @@ def brought_up(root: str) -> str:
         said.append(f"Wrote the hooks of {listed(kept)} into hooks/hooks.json.\n")
     if not said:
         said.append("hooks/lane/ holds no older copy of lane's code.\n")
+    adapters = {a["name"]: a.get("adapter") for a in read_before(root)["subagents"]}
     for agent, laid in before.items():
+        if adapters[agent]:
+            said.append(f'Laid before on {agent}: {{"adapter": "{adapters[agent]}"}}\n')
         for s in laid:
             for lane in s["lanes"]:
                 sentence = lanes.sentence(lane["lane"], lane["takes"])

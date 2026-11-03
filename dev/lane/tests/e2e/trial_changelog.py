@@ -51,10 +51,12 @@ def git(repo: str, *args: str) -> str:
     return done.stdout.strip()
 
 
-def made(place: str, proposed: str = "changelog.json") -> str:
+def made(place: str, proposed: str = "changelog.json", files: dict[str, str] | None = None) -> str:
     """The repository of the run, in its folder: CHANGELOG.md at 0.1.0 and three commits after it,
-    with a copy of changelog laid by `lay.py write` from the proposal of the name kept beside this
-    file, the README's by default, committed, so whatever its subagents do shows in git."""
+    and each file given, by its path, with its text, with a copy of changelog laid by `lay.py
+    write` from the proposal of the name kept beside this file, the README's by default, and the
+    adapters kept beside it in adapters/ where it names any, committed, so whatever its subagents
+    do shows in git."""
     repo = os.path.join(place, "notes")
     os.makedirs(repo)
     git(repo, "init", "-q", "-b", "main")
@@ -69,10 +71,19 @@ def made(place: str, proposed: str = "changelog.json") -> str:
             f.write(message + "\n")
         git(repo, "add", ".")
         git(repo, "commit", "-q", "-m", message)
+    for path, text in (files or {}).items():
+        os.makedirs(os.path.dirname(os.path.join(repo, path)), exist_ok=True)
+        with open(os.path.join(repo, path), "w", encoding="utf-8") as f:
+            f.write(text)
     shutil.copytree(os.path.join(HERE, "changelog"), os.path.join(repo, "changelog"))
     proposal = os.path.join(repo, ".lane", time.strftime("%Y%m%d-changelog"), "changelog.json")
     os.makedirs(os.path.dirname(proposal))
     shutil.copyfile(os.path.join(HERE, proposed), proposal)
+    with open(proposal, encoding="utf-8") as f:
+        named = "hooks/adapters/" in f.read()
+    if named:
+        beside = os.path.join(os.path.dirname(proposal), "changelog", "adapters")
+        shutil.copytree(os.path.join(HERE, "adapters"), beside)
     laid = subprocess.run(
         [sys.executable, LAY, "write", os.path.relpath(proposal, repo)],
         cwd=repo,
@@ -81,7 +92,7 @@ def made(place: str, proposed: str = "changelog.json") -> str:
         check=True,
     )
     print(laid.stdout, end="")
-    git(repo, "add", "changelog")
+    git(repo, "add", ".")
     git(repo, "commit", "-q", "-m", "Add the changelog plugin")
     return repo
 
@@ -197,5 +208,11 @@ def main(runs: int, each: Callable[[int], bool] | None = None) -> int:
     return 0 if all(passed) else 1
 
 
+def cli(each: Callable[[int], bool] | None = None) -> None:
+    """Runs the trial, this one's or each given, as many times as the command line gives, three by
+    default, and exits 0 where every run passed."""
+    sys.exit(main(int(sys.argv[1]) if len(sys.argv) > 1 else 3, each))
+
+
 if __name__ == "__main__":
-    sys.exit(main(int(sys.argv[1]) if len(sys.argv) > 1 else 3))
+    cli()

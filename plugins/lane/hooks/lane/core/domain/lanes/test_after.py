@@ -1,0 +1,31 @@
+"""test_after: the subagent gives its result only with each change of an output its step names
+passed: a test's command came back without an error after the change. A change is a Write or Edit
+of the output, or of a file under it where it is a folder; a test passed is a Bash call of a test's
+command, whole, kept as it came back, as a call that failed is not kept."""
+
+from __future__ import annotations
+
+from done import Done, under, written
+
+from lanes import run_only
+
+ACTION = "test"
+WORDING = "After changing `<output>`, pass `<test>`."
+CALLS = True
+
+
+def missing(given: dict[str, list[str]], done: Done) -> str:
+    """What is missing: that the last change of the output was not passed after; "" where none was
+    made, or a test passed after the last."""
+    output = done.full(given["output"][0])
+    tests = run_only.named(given["test"], done.root)
+    last = None
+    for at, c in enumerate(done.calls):
+        if any(under(f, output) for f in written(done, [c])):
+            last = at
+    if last is None:
+        return ""
+    for c in done.calls[last + 1 :]:
+        if c.get("tool") == "Bash" and str(c.get("input", {}).get("command", "")).strip() in tests:
+            return ""
+    return f"`{given['output'][0]}` changed with no test passed after"

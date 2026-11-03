@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import unittest
+from typing import Any
 from unittest import mock
 
 import helpers
@@ -67,10 +68,17 @@ class LayerTest(helpers.LayTest):
         """What `lay.py write` says of the proposal kept, Claude Code's check exiting with the code
         given, or claude not on PATH."""
         done = subprocess.CompletedProcess([], returncode, "out\n", "err\n")
-        effect = FileNotFoundError() if missing else None
-        with mock.patch.object(
-            layer.subprocess, "run", return_value=done, side_effect=effect
-        ) as run:
+        real = subprocess.run
+
+        def ran(args: list, **given: Any) -> subprocess.CompletedProcess:
+            # An adapter is run as it is, and Claude Code's check stood in for.
+            if args[0] != "claude":
+                return real(args, **given)
+            if missing:
+                raise FileNotFoundError()
+            return done
+
+        with mock.patch.object(layer.subprocess, "run", side_effect=ran) as run:
             said = layer.written(helpers.PROPOSED)
         self.assertEqual(run.call_args.args[0], ["claude", "plugin", "validate", "changelog"])
         return said
@@ -322,6 +330,144 @@ class TestBroughtUp(LayerTest):
         self.assertIn(
             f"lay.py: {self.base} holds no .claude-plugin/plugin.json", str(stop.exception)
         )
+
+
+# The README's proposal with an end lane on writer's step 3, every_item read by an adapter, and a
+# values adapter for writer.
+ITEMS = "hooks/adapters/items-f.py"
+VALUES = "hooks/adapters/values-w.py"
+EVERY = {"lane": "every_item", "takes": ["review.md"], "adapter": ITEMS}
+DONE = f"End by running `{helpers.GIVE} writer done`."
+
+
+class AdaptedTest(LayerTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.adapter("items-f", helpers.ITEMS_ADAPTER, helpers.ITEMS_CASES)
+        self.adapter("values-w", helpers.VALUES_ADAPTER, helpers.VALUES_CASES)
+        steps = [helpers.STEPS[0], {"step": 3, "lanes": [helpers.STEPS[1]["lanes"][0], EVERY]}]
+        self.propose(self.proposal(adapter=VALUES, steps=steps))
+
+
+class TestAdapted(AdaptedTest):
+    def test_the_adapters_are_shown_and_the_result_command_done_laid_on_the_last_step(self):
+        # Given: the proposal with an end lane and two adapters
+        # When: it is printed
+        said = layer.printed(helpers.PROPOSED)
+        # Then: each adapter is shown with its cases, and the last step ends by `done`
+        self.assertIn(f"  adapter {VALUES}: its 2 cases given as they say\n", said)
+        self.assertIn(f"  adapter {ITEMS}: its 2 cases given as they say\n", said)
+        self.assertIn(f"4. Reply with the entries you wrote. {DONE}\n", said)
+        self.assertIn(f"  step 4  end:   {DONE}  hook follow_routes\n", said)
+
+    def test_the_adapters_are_written_into_the_plugin_and_removed_from_beside_the_proposal(self):
+        # Given: the proposal with two adapters, kept beside it
+        # When: it is written
+        said = self.wrote()
+        # Then: each adapter is in the plugin's hooks/adapters/ with its cases, and in its lanes
+        adapters = os.path.join(self.plugin, "hooks", "adapters")
+        self.assertEqual(self.read(os.path.join(adapters, "items-f.py")), helpers.ITEMS_ADAPTER)
+        self.assertEqual(
+            self.read_json(os.path.join(adapters, "values-w.json")), helpers.VALUES_CASES
+        )
+        (writer,) = self.lanes_json()["subagents"]
+        self.assertEqual(writer["adapter"], VALUES)
+        self.assertEqual(writer["steps"][1]["lanes"][1], EVERY)
+        self.assertIn(f"Wrote the adapter {ITEMS} with its cases.\n", said)
+        # And: the proposal's folder is gone, the adapters' with it
+        self.assertFalse(os.path.exists(os.path.dirname(helpers.PROPOSED)))
+        self.assertTrue(
+            said.endswith(
+                f"Removed its folder {os.path.abspath(os.path.dirname(helpers.PROPOSED))}.\n"
+            )
+        )
+        # And: writer's last step ends by its result command
+        self.assertIn(f"you wrote. {DONE}\n", self.read(self.agent_file))
+
+    def test_the_folder_beside_kept_where_it_holds_more(self):
+        # Given: another file beside the adapters
+        beside = os.path.join(os.path.dirname(helpers.PROPOSED), "changelog", "adapters")
+        self.write(os.path.join(beside, "notes.md"), "x")
+        # When: the proposal is written
+        said = self.wrote()
+        # Then: the file and its folders are kept
+        self.assertTrue(os.path.exists(os.path.join(beside, "notes.md")))
+        self.assertNotIn("Removed its folder", said)
+
+    def test_an_adapter_laid_before_is_said_by_up(self):
+        # Given: the proposal written
+        self.wrote()
+        # When: the plugin is brought up
+        said = layer.brought_up(self.plugin)
+        # Then: writer's values adapter is said beside its lanes
+        self.assertIn(f'Laid before on writer: {{"adapter": "{VALUES}"}}\n', said)
+        self.assertIn(f"Laid before on step 3 of writer: {json.dumps(EVERY)}\n", said)
+
+
+class TestPart(LayerTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.part = os.path.join(self.plugin, "prompts", "writer.md")
+        self.write(self.part, helpers.WRITER.split("---\n\n", 1)[1])
+        self.entry = helpers.PART_ENTRY
+        self.write(self.agent_file, self.entry.format(name="writer"))
+
+    def test_the_lanes_are_written_into_the_part(self):
+        # Given: writer's steps in its part
+        # When: the README's proposal is written
+        said = self.wrote()
+        # Then: the part's steps say the sentences, and its entry is as it was
+        self.assertIn(f"`git log --oneline`. {helpers.RUN}\n", self.read(self.part))
+        self.assertEqual(self.read(self.agent_file), self.entry.format(name="writer"))
+        self.assertTrue(said.startswith("Wrote steps 2 and 3 of writer into prompts/writer.md.\n"))
+
+    def test_subagents_sharing_a_part_laying_one_set_of_lanes_are_written(self):
+        # Given: drafter, whose entry names writer's part, given the same lanes
+        self.write(
+            os.path.join(self.plugin, "agents", "drafter.md"), self.entry.format(name="drafter")
+        )
+        given = {
+            "plugin": "changelog",
+            "subagents": [
+                {"name": "writer", "steps": helpers.STEPS},
+                {"name": "drafter", "steps": helpers.STEPS},
+            ],
+        }
+        self.propose(given)
+        # When: the proposal is written
+        self.wrote()
+        # Then: the part says each sentence once
+        self.assertEqual(self.read(self.part).count(helpers.RUN), 1)
+
+    def test_subagents_sharing_a_part_laying_different_lanes_are_refused(self):
+        for before in (False, True):
+            with self.subTest(before=before):
+                # Given: drafter, whose entry names writer's part, laying another lane on its
+                # step 2, by the proposal or as laid before
+                self.write(
+                    os.path.join(self.plugin, "agents", "drafter.md"),
+                    self.entry.format(name="drafter"),
+                )
+                other = [{"step": 2, "lanes": [{"lane": "run_only", "takes": ["git diff"]}]}]
+                agents = [{"name": "writer", "steps": helpers.STEPS}]
+                if before:
+                    self.write_json(
+                        os.path.join(self.plugin, "hooks", "lanes.json"),
+                        {"subagents": [{"name": "drafter", "steps": other}]},
+                    )
+                else:
+                    agents.append({"name": "drafter", "steps": other})
+                self.propose({"plugin": "changelog", "subagents": agents})
+                # When: the proposal is printed
+                with self.assertRaises(proposal.Stop) as stop:
+                    layer.printed(helpers.PROPOSED)
+                # Then: it is refused, naming both and the step
+                self.assertIn(
+                    "share their part prompts/writer.md, and would lay different lanes on its"
+                    " step 2",
+                    str(stop.exception),
+                )
+                self.assertIn("writer and drafter", str(stop.exception))
 
 
 if __name__ == "__main__":

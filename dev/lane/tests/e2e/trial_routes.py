@@ -217,4 +217,4 @@ def run(number: int) -> bool:
 
 
 if __name__ == "__main__":
-    sys.exit(trial_changelog.main(int(sys.argv[1]) if len(sys.argv) > 1 else 3, run))
+    trial_changelog.cli(run)

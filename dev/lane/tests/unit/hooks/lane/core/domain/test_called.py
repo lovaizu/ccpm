@@ -110,5 +110,40 @@ class TestStarts(CalledTest):
         self.assertEqual(found, [routes.Start("writer", "completed", "w1")])
 
 
+class TestGiven(CalledTest):
+    def test_a_start_takes_the_waiting_prompt_once_and_keeps_one_it_was_given(self):
+        # Given: an Agent call of writer waiting, and a run already given its prompt
+        called.asked("s1", "t1", "writer", "p")
+        called.keep("s1", "a0", called.given("q"))
+        # When: that run starts again, and a new run starts
+        called.taken("s1", "a0", "writer")
+        called.taken("s1", "a1", "writer")
+        # Then: the first keeps its own, and the new one takes the waiting prompt
+        self.assertEqual((called.texts("s1", "a0"), called.texts("s1", "a1")), (["q"], ["p"]))
+
+    def test_the_prompt_come_back_is_kept_only_where_it_differs(self):
+        # Given: a run given its prompt
+        called.keep("s1", "a1", called.given("p"))
+        # When: its call comes back with the same prompt, and then another
+        called.answered("s1", "t1", "a1", "p")
+        called.answered("s1", "t1", "a1", "r")
+        # Then: one entry of each is kept, the later read
+        given = [e for e in called.kept("s1", "a1") if e["kind"] == "given"]
+        self.assertEqual([e["text"] for e in given], ["p", "r"])
+        self.assertEqual(called.texts("s1", "a1"), ["r"])
+
+    def test_the_calls_kept_are_those_of_every_run_or_of_the_run_it_is_in(self):
+        # Given: a call before the run's start and one after
+        first, second = (
+            called.call("Read", {"file_path": "a"}),
+            called.call("Read", {"file_path": "b"}),
+        )
+        self.keep("a1", first, called.START, second, called.END)
+        # When: the calls are read
+        # Then: all are given, or those of the run alone
+        self.assertEqual(called.calls("s1", "a1"), [first, second])
+        self.assertEqual(called.calls("s1", "a1", True), [second])
+
+
 if __name__ == "__main__":
     unittest.main()

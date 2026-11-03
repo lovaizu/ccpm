@@ -3,11 +3,10 @@ Bash tool's input gives it, and no part of it read."""
 
 from __future__ import annotations
 
-# What Claude Code puts the plugin's folder in for, in a subagent's file, before the subagent reads
-# it.
-ROOT = "${CLAUDE_PLUGIN_ROOT}"
+from step import ROOT
 
 ACTION = "run"
+CALLS = False
 WORDING = "Run only `<commands>`."
 
 

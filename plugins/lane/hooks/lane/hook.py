@@ -1,10 +1,12 @@
 """What each of lane's hook entries runs: reads the event Claude Code hands on stdin, holds it to
 the fields Claude Code documents, has the guard judge it where it is of a subagent of the plugin,
 and answers in Claude Code's JSON output of the event: at PreToolUse a break denied with its
-sentence; at PostToolUse, PostToolUseFailure and SubagentStart what the guard says added as context;
-at SubagentStop the end blocked with it, so the subagent goes on; and an error told the user too, as
-a break is the subagent's to put right and an error the plugin's or Claude Code's, which letting the
-event go on unchecked would hide."""
+sentence, and a held command asked of the person with its; at PostToolUse, PostToolUseFailure and
+SubagentStart what the guard says added as context; at SubagentStop the end blocked with it, so the
+subagent goes on; and an error told the user too, as a break is the subagent's to put right and an
+error the plugin's or Claude Code's, which letting the event go on unchecked would hide. Of a call
+made by anyone in the session, it keeps what a run of a subagent of the plugin is given, an Agent
+call's prompt or a SendMessage call's message, where the call goes on."""
 
 from __future__ import annotations
 
@@ -69,18 +71,20 @@ def event_wrong(event: dict[str, Any], held: str) -> str:
 
 def answer(said: list[guard.Said], plugin: str, held: str) -> dict[str, Any]:
     """What the hook of the event held answers Claude Code of what was said, each line headed by the
-    plugin's name: at PreToolUse the call denied with it as the reason, which Claude Code shows the
-    subagent; at SubagentStop the end blocked with it as the reason, which the subagent is given to
-    go on with; at any other event it added as context for the subagent; and each error as the
-    systemMessage too, which Claude Code shows the user. Nothing where nothing was said, which lets
-    the event go on."""
+    plugin's name, a part given as it is: at PreToolUse the call denied with it as the reason,
+    which Claude Code shows the subagent, or, where all said is a held command's, asked of the
+    person with it, which Claude Code's permission prompt shows them; at SubagentStop the end
+    blocked with it as the reason, which the subagent is given to go on with; at any other event it
+    added as context for the subagent; and each error as the systemMessage too, which Claude Code
+    shows the user. Nothing where nothing was said, which lets the event go on."""
     if not said:
         return {}
-    told = "\n".join(f"{plugin}: {s.text}" for s in said)
+    told = "\n".join(s.text if s.plain else f"{plugin}: {s.text}" for s in said)
     user = "\n".join(f"{plugin}: {s.text}" for s in said if s.error)
     found: dict[str, Any] = {"systemMessage": user} if user else {}
     if held == "PreToolUse":
-        denied = {"hookEventName": held, "permissionDecision": "deny"}
+        decision = "ask" if all(s.ask for s in said) else "deny"
+        denied = {"hookEventName": held, "permissionDecision": decision}
         return {**found, "hookSpecificOutput": {**denied, "permissionDecisionReason": told}}
     if held == "SubagentStop":
         return {**found, "decision": "block", "reason": told}
@@ -120,10 +124,13 @@ def main(held: str, argv: list[str], stdin: IO[str], stdout: IO[str], root: str)
         said = [guard.cannot("the lanes of this hook", wrong, guard.CLAUDE_CODE)]
     else:
         agent = event.get("agent_type")
-        if not isinstance(agent, str) or not agent.startswith(f"{plugin}:"):
-            return
-        name = agent[len(plugin) + 1 :]
-        said = CHECKS[held](root, plugin, name, event, event_wrong(event, held))
+        said = []
+        if isinstance(agent, str) and agent.startswith(f"{plugin}:"):
+            name = agent[len(plugin) + 1 :]
+            said = CHECKS[held](root, plugin, name, event, event_wrong(event, held))
+        # A call stopped is not made, so gives its subagent nothing.
+        if all(s.ask for s in said) or held != "PreToolUse":
+            guard.handed(plugin, event, held)
     # An end that a stop hook kept going already is told no error again, so an error no one fixes
     # ends no run in a loop.
     if held == "SubagentStop" and isinstance(event, dict) and event.get("stop_hook_active") is True:

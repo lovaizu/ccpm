@@ -22,6 +22,8 @@ from routes import Start
 ID = re.compile(r"[A-Za-z0-9_-][A-Za-z0-9._-]*")
 START = {"kind": "start"}
 END = {"kind": "end"}
+# The session's file of the Agent calls starting a subagent, a name no ID can have.
+STARTS = ".starts.jsonl"
 # What an Agent call gives back that is kept: its status and the ID of the subagent's run.
 KEPT_BACK = ("status", "agentId")
 
@@ -42,28 +44,44 @@ def file(session: str, agent: str, made: bool) -> str:
     """The file the agent's entries are kept in: in the session's folder, the one of the day it was
     made, so a session going on past midnight keeps one, or of today where none was, made where
     `made`. Stops with ValueError where an ID could name a file elsewhere."""
-    for given in (session, agent):
-        if not ID.fullmatch(given):
-            raise ValueError(f"{schema.shown(given)} is no ID Claude Code gives")
+    if not ID.fullmatch(agent):
+        raise ValueError(f"{schema.shown(agent)} is no ID Claude Code gives")
+    return os.path.join(folder(session, made), f"{agent}.jsonl")
+
+
+def folder(session: str, made: bool) -> str:
+    """The session's folder of the calls kept, as `file` says. Stops with ValueError where the ID
+    could name a folder elsewhere."""
+    if not ID.fullmatch(session):
+        raise ValueError(f"{schema.shown(session)} is no ID Claude Code gives")
     top = os.path.join(tempfile.gettempdir(), "lane")
     day = "[0-9]" * 8
     found = sorted(glob.glob(os.path.join(glob.escape(top), f"{day}-{glob.escape(session)}")))
-    folder = found[0] if found else os.path.join(top, time.strftime(f"%Y%m%d-{session}"))
+    place = found[0] if found else os.path.join(top, time.strftime(f"%Y%m%d-{session}"))
     if made:
-        os.makedirs(folder, exist_ok=True)
-    return os.path.join(folder, f"{agent}.jsonl")
+        os.makedirs(place, exist_ok=True)
+    return place
 
 
 def keep(session: str, agent: str, entry: dict[str, Any]) -> None:
     """Keeps the entry under the agent's ID in the session's folder, after those before."""
-    with open(file(session, agent, True), "a", encoding="utf-8") as f:
+    written(file(session, agent, True), entry)
+
+
+def written(path: str, entry: dict[str, Any]) -> None:
+    """Writes the entry at the end of the file at the path, a line of JSON."""
+    with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
 def kept(session: str, agent: str) -> list[dict[str, Any]]:
     """The entries kept under the agent's ID, in order; none where none are. Stops with ValueError
     naming the file where a line is no entry, as an entry left unread could let a start through."""
-    path = file(session, agent, False)
+    return read(file(session, agent, False))
+
+
+def read(path: str) -> list[dict[str, Any]]:
+    """The entries of the file at the path, as `kept` reads them."""
     try:
         with open(path, encoding="utf-8") as f:
             lines = f.read().splitlines()
@@ -111,3 +129,75 @@ def starts(session: str, agent: str, named: list[str], plugin: str) -> list[Star
         if e.get("kind") == "call" and back and name:
             found.append(Start(name, back["status"], back["agentId"]))
     return found
+
+
+def calls(session: str, agent: str, run: bool = False) -> list[dict[str, Any]]:
+    """The agent's calls kept, as each came back, of all its runs, or of the run it is in where
+    `run`."""
+    entries = this_run(session, agent) if run else kept(session, agent)
+    return [e for e in entries if e.get("kind") == "call"]
+
+
+def starts_file(session: str, made: bool) -> str:
+    """The session's file of the Agent calls starting a subagent of the plugin."""
+    return os.path.join(folder(session, made), STARTS)
+
+
+def asked(session: str, use: str, name: str, text: str) -> None:
+    """Keeps the Agent call of the ID, starting the subagent of the name with the prompt, as it is
+    made."""
+    written(starts_file(session, True), {"kind": "asked", "id": use, "name": name, "text": text})
+
+
+def given(text: str | None) -> dict[str, Any]:
+    """The entry of the prompt a run was given; None where the run cannot tell its own."""
+    return {"kind": "given", "text": text}
+
+
+def answered(session: str, use: str, agent: str | None, text: str) -> None:
+    """Keeps that the Agent call of the ID came back, and, where it gives the ID of the run it
+    started, the prompt under it, where it is not the one kept already."""
+    written(starts_file(session, True), {"kind": "answered", "id": use})
+    if agent is not None:
+        before = [e for e in kept(session, agent) if e.get("kind") == "given"]
+        if not before or before[-1]["text"] != text:
+            keep(session, agent, given(text))
+
+
+def taken(session: str, agent: str, name: str) -> None:
+    """Keeps under the run of the ID, starting, the prompt of the Agent call of its subagent not yet
+    taken nor come back, where it was kept none before; that it cannot tell its own, where two
+    such calls hold differing prompts."""
+    if any(e.get("kind") == "given" for e in kept(session, agent)):
+        return
+    entries = read(starts_file(session, False))
+    done = {e.get("id") for e in entries if e.get("kind") in ("taken", "answered")}
+    waiting = [
+        e
+        for e in entries
+        if e.get("kind") == "asked" and e.get("name") == name and e["id"] not in done
+    ]
+    texts = list(dict.fromkeys(e["text"] for e in waiting))
+    if not texts:
+        return
+    if len(texts) > 1:
+        keep(session, agent, given(None))
+        return
+    written(starts_file(session, True), {"kind": "taken", "id": waiting[0]["id"]})
+    keep(session, agent, given(texts[0]))
+
+
+def message(text: str) -> dict[str, Any]:
+    """The entry of a message sent to a run."""
+    return {"kind": "message", "text": text}
+
+
+def texts(session: str, agent: str) -> list[str] | None:
+    """The texts the agent's run was given, in the order they were sent: its prompt, the one kept
+    last, and each message sent to it after; None where it cannot tell its prompt."""
+    entries = kept(session, agent)
+    prompts = [e["text"] for e in entries if e.get("kind") == "given"]
+    if prompts and prompts[-1] is None:
+        return None
+    sent = [e["text"] for e in entries if e.get("kind") == "message"]
+    return prompts[-1:] + sent

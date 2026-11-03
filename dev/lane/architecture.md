@@ -123,7 +123,8 @@ wherever Lane is missing.
   Schema of [the proposal](../../plugins/lane/docs/lanes.md#the-proposal), checks it against the
   plugin's files, and runs each adapter on its test cases.
 - `hook.py` alone speaks Claude Code's hook JSON. It acts only on an event whose `agent_type` names
-  a subagent with rules.
+  a subagent with rules, and on any call in the session that gives a run of one its texts: an Agent
+  call's prompt, as Claude Code hands the run's start none, and a SendMessage call's message.
 - `guard.py` alone decides which checks run on an event. Each module of `lanes/` alone decides what
   breaks its type of rule.
 - `called.py` alone keeps each call of a subagent as it comes back, under the subagent's
@@ -131,10 +132,14 @@ wherever Lane is missing.
   the results kept. `ports.py` alone reads a text of the plugin, such as a list of items to answer,
   into Port JSON, the JSON in which a check takes it. It reads by Lane's own reading, or through the
   plugin's adapter.
-- `result.py`, the result script, alone checks that a subagent's work is in the form its result
-  needs: each text in its form, each item answered, and the tests run on the files as they are. It
-  exits with an error that names what is missing, or with none. It keeps nothing itself: the check
-  script keeps the result from the run's hook event.
+- The check script checks, as a subagent runs its result command, that its work is in the form its
+  result needs: each text in its form, each item answered, and the tests run on the files as they
+  are. It stops the command with what is missing. Only the hook is given the run's `agent_id`, which
+  the calls these checks rest on are kept under, so the result script cannot make them.
+- `result.py`, the result script, alone checks that the result is one a route from the subagent is
+  on, or `done` where none is. It exits with an error that names the results the subagent may
+  give, or with none. It keeps nothing itself: the check script keeps the result from the run's
+  hook event.
 - Hooks are entries of the plugin's `hooks/hooks.json` and run on every tool call of the plugin, as
   Claude Code reads no hooks from a plugin agent's own file
   ([How a plugin works](../architecture.md#the-guard-tells-each-role-its-steps-again)). `hook.py`
@@ -259,8 +264,11 @@ sequenceDiagram
     RT-->>H: it is
     H-->>CC: nothing to tell, so the start goes on
     CC->>S: runs it
-    S->>RS: runs the result script with its result
-    RS-->>S: the work is in form
+    S->>CC: runs the result script with its result
+    CC->>H: PreToolUse of the result command (Event)
+    H-->>CC: the work is in form, so the command goes on
+    CC->>RS: runs it
+    RS-->>S: a route is on the result
     CC->>H: PostToolUse of the result script (Event)
     H->>C: keeps the result (Result)
     S-->>CC: ends
@@ -354,7 +362,7 @@ plugins/lane/
 │   └── core/domain/                   <modules · Python 3.9>
 │       ├── proposal.py                proposal.py
 │       ├── layer.py, steps.py, entries.py, placed.py   what lay.py writes: Step, Hook entry, Lane's code
-│       ├── guard.py, step.py, lanes/<type>.py   guard.py, lanes/
+│       ├── guard.py, step.py, done.py, lanes/<type>.py   guard.py, lanes/
 │       ├── called.py, routes.py, ports.py   called.py, routes.py, ports.py
 │       └── rules.py, schema.py, template.py, forms.py   shared by lay.py, the check script and the result script: Rules laid, Route, the forms an output is held to
 └── docs/lanes.md, docs/routes.md, README.md, CHANGELOG.md, images/   for users <Markdown, SVG>
@@ -369,7 +377,7 @@ dev/lane/
     └── e2e/                           the trials, trial_*.py, and their plugins <Python 3>
 
 .lane/<yyyymmdd>-<plugin>/             Proposal, and <plugin>/adapters/ with Adapter and Test cases
-<temporary folder>/lane/<yyyymmdd>-<session>/<agent_id>.jsonl   Calls kept
+<temporary folder>/lane/<yyyymmdd>-<session>/<agent_id>.jsonl, .starts.jsonl   Calls kept, and the prompts of the starts
 <the plugin>/agents/                   Subagent file, with each Step
 <the plugin>/hooks/                    hooks.json (Hook entry), lanes.json (Rules laid, Route), adapters/ (the Adapter that runs, Test cases), lane/ (Lane's code)
 ```
@@ -382,7 +390,7 @@ Lane is tested as [Test](../architecture.md#test) says. What follows is what Lan
 |---|---|---|---|
 | lay.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · the proposal checked, steps and hook entries written | unittest, real files, a stand-in `claude` · ●●○ · print, write and up on a plugin | trials · ●●○ · the lanes and the routes laid on a trial plugin |
 | Hook process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each type of rule, tool calls, the next start | unittest, the hook's command in `sh` · ●●○ · the answer JSON, the Python check | trials · ●●○ · each type of rule and the routes on a run of the trial plugin |
-| Result process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each form a result needs | unittest, real files · ●●○ · the exit and its message | trials · ●●○ · results given on a run of the trial plugin |
+| Result process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each result a subagent may give | unittest, real files · ●●○ · the exit and its message | trials · ●●○ · results given on a run of the trial plugin |
 
 The adapter processes have no row. An adapter is the developer AI's code, and Lane's running of it
 is tested in the hook process's row.

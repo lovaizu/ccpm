@@ -14,5 +14,7 @@ checked, is in [architecture.md](architecture.md).
 - Trials: `python3 dev/lane/tests/e2e/trial_changelog.py` tries O1 of the UX three times, as the
   README's walkthrough runs it, on `tests/e2e/changelog/` with the README's proposal,
   `tests/e2e/changelog.json`. `python3 dev/lane/tests/e2e/trial_routes.py` tries O2 three times
-  on the same plugin with its `lead` and `reviewer`, from `tests/e2e/routes.json`. The top of each
-  file says what each run must show.
+  on the same plugin with its `lead` and `reviewer`, from `tests/e2e/routes.json`.
+  `python3 dev/lane/tests/e2e/trial_lanes.py` tries the other lanes three times on its `noter`,
+  whose steps lie in its part, from `tests/e2e/lanes.json` and the adapter in
+  `tests/e2e/adapters/`. The top of each file says what each run must show.

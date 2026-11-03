@@ -127,5 +127,43 @@ class TestWrite(helpers.PluginTest):
         self.assertIn("echo café", self.read(os.path.join(self.plugin, "hooks", "lanes.json")))
 
 
+class TestGives(unittest.TestCase):
+    def test_the_results_are_the_routes_ons_or_done_with_a_lane_of_the_end(self):
+        for routes, name, kinds, ons in (
+            (helpers.ROUTES, "reviewer", [], ["more", "good"]),
+            (helpers.ROUTES, "writer", ["end_when"], ["written"]),
+            (helpers.ROUTES, "lead", ["every_item"], ["done"]),
+            (None, "writer", ["run_only", "read_whole"], ["done"]),
+            (None, "writer", ["run_only"], []),
+        ):
+            with self.subTest(name=name, kinds=kinds):
+                # Given: the routes or none, and the subagent's lanes of the kinds
+                # When: the results it gives are read
+                # Then: they are the routes' from it, or done where none is and a lane is checked
+                # at the end, or none
+                self.assertEqual(rules.gives(routes, name, kinds), ons)
+
+
+class TestAdapters(helpers.PluginTest):
+    def test_a_subagents_and_a_lanes_adapters_are_read(self):
+        # Given: writer with a values adapter, and every_item read by an items adapter
+        lane = {"lane": "every_item", "takes": ["r.md"], "adapter": "hooks/adapters/items-f.py"}
+        agent = {
+            "name": "writer",
+            "adapter": "hooks/adapters/values-w.py",
+            "steps": [{"step": 3, "lanes": [lane]}],
+        }
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": [agent]})
+        laid = rules.read(self.plugin)
+        # When: they are read
+        # Then: each is given, and none for a subagent laid with none
+        self.assertEqual(rules.adapter_of(laid, "writer"), "hooks/adapters/values-w.py")
+        self.assertIsNone(rules.adapter_of(laid, "reviewer"))
+        self.assertEqual(
+            rules.of(laid, "writer"),
+            [rules.Laid(3, "every_item", ["r.md"], "hooks/adapters/items-f.py")],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

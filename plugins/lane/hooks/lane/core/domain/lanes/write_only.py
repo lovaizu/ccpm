@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 
 ACTION = "write"
+CALLS = False
 WORDING = "Write only `<output>`."
 
 

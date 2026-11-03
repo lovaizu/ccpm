@@ -7,9 +7,11 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from typing import Any, NamedTuple
 
 import lanes
+import routes
 import schema
 
 # A plugin's or a subagent's name, as a hook's command carries it unquoted.
@@ -85,20 +87,26 @@ ROUTES = shape(
     },
 )
 # hooks/lanes.json's JSON Schema: the subagents with lanes laid, none once every one is gone, each
-# lane one lane lays, taking at least one thing, none of them empty; and the routes, where any are
-# laid.
+# lane one lane lays, taking at least one thing, none of them empty, with the adapters approved; and
+# the routes, where any are laid.
 TAKEN = {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
 SHAPE = shape(
-    ["subagents"], {"subagents": subagents(list(lanes.LANES), TAKEN, 0, False), "routes": ROUTES}
+    ["subagents"], {"subagents": subagents(list(lanes.LANES), TAKEN, 0, True), "routes": ROUTES}
 )
+# The result a subagent with a lane checked at its end gives where no route is from it.
+DONE = "done"
+# A thing given for each run: a name in braces, the braces wrapping the whole take.
+GIVEN = re.compile(r"\{[^{}]+\}")
 
 
 class Laid(NamedTuple):
-    """A lane laid in a subagent: its step, the lane, and what it takes."""
+    """A lane laid in a subagent: its step, the lane, what it takes, and the adapter it reads its
+    port by, where it names one."""
 
     step: int
     lane: str
     takes: list[str]
+    adapter: str | None = None
 
 
 def read(root: str) -> dict[str, Any]:
@@ -123,7 +131,25 @@ def of(laid: dict[str, Any], name: str) -> list[Laid] | None:
     found = next((a for a in laid["subagents"] if a["name"] == name), None)
     if found is None:
         return None
-    return [Laid(s["step"], g["lane"], g["takes"]) for s in found["steps"] for g in s["lanes"]]
+    return [
+        Laid(s["step"], g["lane"], g["takes"], g.get("adapter"))
+        for s in found["steps"]
+        for g in s["lanes"]
+    ]
+
+
+def adapter_of(laid: dict[str, Any], name: str) -> str | None:
+    """The values adapter of the subagent of the name, of the rules `read` gives; None where it
+    names none."""
+    found = next((a for a in laid["subagents"] if a["name"] == name), {})
+    return found.get("adapter")
+
+
+def gives(routed: dict[str, Any] | None, name: str, kinds: list[str]) -> list[str]:
+    """The results the subagent of the name gives, its lanes being of the kinds: those the routes
+    from it are on, or DONE where none is and one of its lanes is checked at its end."""
+    ons = routes.ons(routed, name) if routed else []
+    return ons or ([DONE] if any(map(lanes.ends, kinds)) else [])
 
 
 def routes_of(laid: dict[str, Any]) -> dict[str, Any] | None:

@@ -86,5 +86,46 @@ class TestHolds(helpers.PluginTest):
                 self.assertFalse(step.holds(self.plugin, name, number, helpers.RUN))
 
 
+class TestPart(helpers.PluginTest):
+    def entry(self, body: str) -> None:
+        """writer's entry with the body."""
+        self.write(self.agent_file, f"---\nname: writer\n---\n\n{body}\n")
+
+    def test_the_one_file_under_prompts_the_body_names_is_the_part(self):
+        # Given: writer's body naming its part twice
+        self.entry(
+            "Read `${CLAUDE_PLUGIN_ROOT}/prompts/w.md`, and"
+            " `${CLAUDE_PLUGIN_ROOT}/prompts/w.md` again."
+        )
+        # When: its part is looked for
+        # Then: it is that file, whether it is there or not, and its steps are read from it
+        part = os.path.join(self.plugin, "prompts", "w.md")
+        self.assertEqual(
+            (step.part(self.plugin, "writer"), step.steps_file(self.plugin, "writer")), (part, part)
+        )
+        self.assertEqual(step.lines_of(self.plugin, "writer"), [])
+        self.write(part, "## Steps\n\n1. Go.\n")
+        self.assertEqual(step.lines_of(self.plugin, "writer"), ["## Steps", "", "1. Go."])
+
+    def test_a_body_naming_no_part_or_more_than_one_has_its_steps_in_the_entry(self):
+        for body in (
+            "Work on.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/prompts/a.md` and `${CLAUDE_PLUGIN_ROOT}/prompts/b.md`.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/prompts/../x.md`.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/scripts/a.md`.",
+        ):
+            with self.subTest(body=body):
+                # Given: writer's body naming no part, two, one out of prompts/, or a file
+                # elsewhere
+                self.entry(body)
+                # When: its part is looked for
+                # Then: there is none, and its steps are in its entry
+                self.assertIsNone(step.part(self.plugin, "writer"))
+                self.assertEqual(step.steps_file(self.plugin, "writer"), self.agent_file)
+        # And: a subagent no entry names has neither
+        self.assertIsNone(step.part(self.plugin, "lead"))
+        self.assertIsNone(step.steps_file(self.plugin, "lead"))
+
+
 if __name__ == "__main__":
     unittest.main()

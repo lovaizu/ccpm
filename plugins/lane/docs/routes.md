@@ -74,13 +74,15 @@ For `changelog`, whose `lead` starts `writer` and then `reviewer`, and `writer` 
 ## How a subagent gives its result
 
 A subagent gives a result by running the result script with its own name and the result, as its
-step writes the command. The result script checks that the subagent's work is in the form its lanes
-ask, as [the lanes](lanes.md) say for the lanes checked at the end. It exits with an error that
-names what is missing, or with none.
+step writes the command. Before the command runs, lane checks that the subagent's work is in the
+form its lanes ask, as [the lanes](lanes.md) say for the lanes checked at the end, and stops the
+command with what is missing. The result script checks that a route from the subagent is on the
+result, or, where none is from it, that the result is `done`. It exits with an error that names the
+results the subagent may give, or with none.
 
 - The run counts only where it exits with none. Claude Code then gives the hooks PostToolUse, and
-  lane keeps the result. A run that exits with an error gives PostToolUseFailure, and lane keeps
-  nothing, so the subagent mends its work and runs the command again.
+  lane keeps the result. A run stopped, or that exits with an error, which gives
+  PostToolUseFailure, keeps nothing, so the subagent mends its work and runs the command again.
 - lane matches the command whole against the commands the step writes. A command in any other words
   is a command its lanes do not name, and is stopped.
 - A subagent that gives a result twice gives the later one.
