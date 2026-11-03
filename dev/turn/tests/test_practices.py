@@ -14,6 +14,7 @@ import tempfile
 import unittest
 import urllib.error
 import urllib.request
+from typing import Any
 from unittest import mock
 
 import helpers  # noqa: F401  (puts turn's scripts on the path)
@@ -108,6 +109,46 @@ class Faults(unittest.TestCase):
             d["benefits"][1]["about"] = "b"
 
         self.assertEqual(changed(narrow), ["no question is about the whole"])
+
+    def test_a_best_practice_of_one_question_about_the_whole(self):
+        data = {
+            "goal": "G.",
+            "benefits": [{"id": "Q1", "about": "the whole", "what": "Does it?"}],
+            "practices": [{"benefit": "Q1", "thinking": "T.", "steps": [], "grounds": []}],
+        }
+        self.assertEqual(practices.faults(data), [])
+
+    def test_two_questions_of_one_number(self):
+        def same(d):
+            d["benefits"][1]["id"] = "Q1"
+            d["practices"][1]["benefit"] = "Q1"
+
+        self.assertIn("questions are Q1, Q1, not numbered in order from Q1", changed(same))
+
+    def test_a_question_numbered_otherwise_is_not_named_as_missing(self):
+        def letter(d):
+            d["benefits"][0]["id"] = "A"
+            d["practices"][0]["benefit"] = "A"
+
+        self.assertEqual(
+            changed(letter),
+            [
+                "questions are A, Q2, not numbered in order from Q1",
+                "Q1 is named, but there is no such question",
+            ],
+        )
+
+    def test_about_a_part_named_after_the_whole_that_is_not_there(self):
+        def wrong(d):
+            d["benefits"][0]["about"] = "z"
+
+        self.assertEqual(changed(wrong), ["Q1 is about z, which is no part"])
+
+    def test_a_question_named_in_a_benefit_that_is_not_there(self):
+        def name(d):
+            d["benefits"][0]["what"] = "Before Q3, does it?"
+
+        self.assertEqual(changed(name), ["Q3 is named, but there is no such question"])
 
     def test_a_value_that_is_no_text_names_no_question(self):
         def number(d):
@@ -206,9 +247,22 @@ class Fetch(unittest.TestCase):
         self.assertEqual(self.sleep.call_count, practices.TRIES - 1)
 
     def test_any_other_refusal_is_not_asked_again(self):
-        with self.opened(refused(self, 404)) as urlopen, self.assertRaises(urllib.error.HTTPError):
+        for code in (404, 500):
+            with self.subTest(code=code):
+                practices.fetch.cache_clear()
+                with (
+                    self.opened(refused(self, code)) as urlopen,
+                    self.assertRaises(urllib.error.HTTPError),
+                ):
+                    practices.fetch("https://x.example/t")
+                self.assertEqual((urlopen.call_count, self.sleep.call_count), (1, 0))
+
+    def test_waits_15_seconds_first_and_gives_a_page_30_seconds(self):
+        page = response("text/html", b"page")
+        with self.opened(refused(self, 429), page) as urlopen:
             practices.fetch("https://x.example/t")
-        self.assertEqual((urlopen.call_count, self.sleep.call_count), (1, 0))
+        self.assertEqual(self.sleep.call_args_list, [mock.call(15)])
+        self.assertEqual(urlopen.call_args.kwargs, {"timeout": 30})
 
 
 def page(body, kind="text/html; charset=utf-8"):
@@ -263,6 +317,22 @@ class Sources(unittest.TestCase):
                     found, [f"Q1 ground 1 (https://x.example/t) does not open: {error}"]
                 )
 
+    def test_each_ground_after_one_not_checked_is_checked(self):
+        data = copy.deepcopy(DATA)
+        data["practices"][0]["grounds"] = [G, dict(G, url="https://x.example/u")]
+        for first, said in (
+            (failing(TimeoutError("timed out")), "does not open: timed out"),
+            (page("", "application/pdf"), "not checked: the page is application/pdf"),
+        ):
+            with self.subTest(said=said):
+
+                def get(url, first=first):
+                    return first(url) if url.endswith("/t") else ("text/html", b"<p>none</p>")
+
+                found = practices.sources(data, get)
+                self.assertEqual(found[0], f"Q1 ground 1 (https://x.example/t) {said}")
+                self.assertIn("Q1 ground 2 (https://x.example/u) does not hold its title", found)
+
     def test_a_fault_of_the_script_is_not_taken_for_a_page_that_fails_to_open(self):
         with self.assertRaises(TypeError):
             practices.sources(DATA, failing(TypeError("a bug")))
@@ -277,6 +347,16 @@ class Markdown(unittest.TestCase):
         for line in expected:
             self.assertIn(line, text)
         self.assertLess(text.index("## Benefits"), text.index("## Practices"))
+
+    def test_sets_each_part_under_the_one_it_is_in(self):
+        c: dict[str, Any] = {"id": "c", "what": "C."}
+        b: dict[str, Any] = {"id": "b", "what": "B.", "parts": [c]}
+        data = {**DATA, "parts": [{"id": "a", "what": "A.", "parts": [b]}]}
+        lines = practices.markdown("kind", data).splitlines()
+        start = lines.index("## Parts") + 2
+        self.assertEqual(
+            lines[start : start + 3], ["- **a**: A.", "  - **b**: B.", "    - **c**: C."]
+        )
 
     def test_leaves_out_what_a_best_practice_has_none_of(self):
         data = copy.deepcopy(DATA)
@@ -345,17 +425,71 @@ class Main(unittest.TestCase):
             ):
                 self.assertEqual(practices.main(["sources", path]), 0)
 
-    def test_refuses_an_unknown_command(self):
-        self.assertEqual(practices.main(["print"]), 2)
+    def written(self, folder, *names):
+        """The paths of best practices of the names, DATA each, written in the folder."""
+        paths = []
+        for name in names:
+            path = os.path.join(folder, f"{name}.json")
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(DATA, f)
+            paths.append(path)
+        return paths
+
+    def test_write_and_check_take_each_best_practice_given(self):
+        with tempfile.TemporaryDirectory() as folder:
+            paths = self.written(folder, "one", "two")
+            self.assertEqual(practices.main(["write", *paths]), 0)
+            for name in ("one", "two"):
+                with open(os.path.join(folder, f"{name}.md"), encoding="utf-8") as f:
+                    self.assertTrue(f.read().startswith(f"# {name}\n"))
+            self.assertEqual(practices.main(["check", *paths]), 0)
+
+    def test_check_fails_on_a_markdown_cut_short(self):
+        with tempfile.TemporaryDirectory() as folder:
+            (path,) = self.written(folder, "kind")
+            practices.main(["write", path])
+            md = os.path.join(folder, "kind.md")
+            with open(md, encoding="utf-8") as f:
+                text = f.read()
+            with open(md, "w", encoding="utf-8") as f:
+                f.write(text[:-2])
+            with contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(practices.main(["check", path]), 1)
+
+    def test_sources_takes_each_best_practice_given(self):
+        practices.fetch.cache_clear()
+        self.addCleanup(practices.fetch.cache_clear)
+        with tempfile.TemporaryDirectory() as folder:
+            paths = self.written(folder, "one", "two")
+            err = io.StringIO()
+            with (
+                mock.patch.object(
+                    urllib.request, "urlopen", return_value=response("text/html", b"T")
+                ),
+                contextlib.redirect_stderr(err),
+            ):
+                self.assertEqual(practices.main(["sources", *paths]), 1)
+            for path in paths:
+                self.assertIn(f"practices.py: {path}: ", err.getvalue())
+
+    def test_refuses_an_unknown_command_or_one_given_no_best_practice(self):
+        with tempfile.TemporaryDirectory() as folder:
+            (path,) = self.written(folder, "kind")
+            for argv in (["print"], ["check"], ["print", path]):
+                with self.subTest(argv=argv), contextlib.redirect_stderr(io.StringIO()):
+                    self.assertEqual(practices.main(argv), 2)
 
     def test_the_script_takes_the_arguments_after_its_own_path(self):
-        with (
-            mock.patch.object(practices.sys, "argv", ["practices.py", "print"]),
-            contextlib.redirect_stderr(io.StringIO()),
-            self.assertRaises(SystemExit) as end,
-        ):
-            runpy.run_path(practices.__file__, run_name="__main__")
-        self.assertEqual(end.exception.code, 2)
+        with tempfile.TemporaryDirectory() as folder:
+            (path,) = self.written(folder, "kind")
+            practices.main(["write", path])
+            with (
+                mock.patch.object(practices.sys, "argv", ["practices.py", "check", path]),
+                contextlib.redirect_stderr(io.StringIO()),
+                self.assertRaises(SystemExit) as end,
+            ):
+                runpy.run_path(practices.__file__, run_name="__main__")
+        self.assertEqual(end.exception.code, 0)
 
 
 if __name__ == "__main__":

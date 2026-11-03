@@ -3,6 +3,15 @@
 # lane/ among it, is mutated there, with lane's tests.
 [cosmic-ray]
 module-path = ["plugins/turn/scripts", "plugins/turn/hooks/adapters"]
+# The scripts and the adapter that only turn's old tests ran in full, set aside as those tests read
+# lane's code by its old paths, as .coveragerc leaves them out; turn is rebuilt from zero in T41
+# (.rn/20261013-rebuild/steering.md), and these go then.
+excluded-modules = [
+  "plugins/turn/scripts/forms.py",
+  "plugins/turn/scripts/items.py",
+  "plugins/turn/scripts/parts.py",
+  "plugins/turn/hooks/adapters/items-checklist.py",
+]
 timeout = 30.0
 # The type checker and the linter run first: a change to a type annotation, or a comparison of a
 # string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
@@ -14,8 +23,13 @@ timeout = 30.0
 # "each part", the first of the scopes in order, or `__name__`, which is "__main__" or, imported by
 # the tests, "turn", after it; or by `is` with a small number, of which CPython keeps one copy, such as
 # a heading's level; or a folder with the folder it is in, which is it only at the top, by `is` too
-# as CPython gives back the path itself there, and never sorts after it, as it begins it. Each such
-# line holds that comparison alone, as the mark leaves out every mutant of its line.
+# as CPython gives back the path itself there, and never sorts after it, as it begins it. So too a
+# command of practices.py by order with the last of those it takes; a count at values the code
+# there never meets, such as one counting up by one to its limit, or of an item in the list it is
+# taken from; flags joined that are bits apart, the same by `|`, `+` or `^`; and a line Cosmic Ray
+# 8.7.0 fails to mutate, its ExceptionReplacer failing on a dotted name among the exceptions, so
+# no mutant of it can be tested. Each such line holds that comparison or value alone, as the mark
+# leaves out every mutant of its line.
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a heading of the level below and one of the level above, so a
 # comparison changed to `<=` or `>=` fails a test; their comments say what each value is, not

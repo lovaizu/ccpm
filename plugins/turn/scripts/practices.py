@@ -25,7 +25,9 @@ GROUND = ("title", "url", "by", "quote")
 SAME = (("\u2018\u2019\u2032", "'"), ("\u201c\u201d\u2033", '"'), ("\u2013\u2014\u2212", "-"))
 QUESTION = re.compile(r"\bQ\d+\b")
 # What a page holds that a browser does not show as text.
-UNSHOWN = re.compile(r"<(style|script)\b.*?</\1\s*>", re.DOTALL | re.IGNORECASE)
+# The two flags are bits apart, so joined by `|`, `+` or `^` they are one value.
+UNSHOWN_FLAGS = re.DOTALL | re.IGNORECASE  # pragma: no mutate
+UNSHOWN = re.compile(r"<(style|script)\b.*?</\1\s*>", UNSHOWN_FLAGS)
 # The tags a browser shows inside a line, joining the text on either side: the rest start a block,
 # which a browser sets apart from the text beside it.
 INLINE = re.compile(
@@ -70,7 +72,8 @@ def faults(data: dict[str, Any]) -> list[str]:
     there."""
     found = []
     ids = part_ids(data.get("parts", []))
-    for part in sorted({i for i in ids if ids.count(i) > 1}):
+    # Each id counts once or more in ids, which it is taken from.
+    for part in sorted({i for i in ids if ids.count(i) > 1}):  # pragma: no mutate
         found.append(f"part {part} is named more than once")
     named_parts = {a.strip() for q in data["benefits"] for a in q["about"].split(",")}
     for part in leaf_ids(data.get("parts", [])):
@@ -138,7 +141,10 @@ def fetch(url: str) -> tuple[str, bytes]:
                 return response.headers.get("Content-Type", ""), response.read()
         except urllib.error.HTTPError as error:
             tried += 1
-            if error.code != 429 or tried == TRIES:
+            if error.code != 429:
+                raise
+            # tried counts up from 0 by one, so it meets TRIES before it could pass it.
+            if tried == TRIES:  # pragma: no mutate
                 raise
             time.sleep(WAIT * tried)
 
@@ -155,7 +161,9 @@ def sources(data: dict[str, Any], get: Callable[[str], tuple[str, bytes]] = fetc
                 kind, body = get(item["url"])
             # A page fails to open as the network or the server fails, a refusal and a timeout
             # among them, as its answer breaks off, or as its URL is none that can be asked for.
-            except (OSError, http.client.HTTPException, ValueError) as error:
+            # Cosmic Ray 8.7.0's ExceptionReplacer fails on a dotted name among the exceptions, so
+            # makes no mutant of this line to test.
+            except (OSError, http.client.HTTPException, ValueError) as error:  # pragma: no mutate
                 found.append(f"{where} does not open: {error}")
                 continue
             if not kind.startswith(("text/", "application/xhtml")):
@@ -216,11 +224,13 @@ def main(argv: list[str]) -> int:
             data = json.load(f)
         target = os.path.splitext(path)[0] + ".md"
         text = markdown(os.path.splitext(os.path.basename(path))[0], data)
-        if argv[0] == "write":
+        # The command is write, check or sources, write the last of them in order.
+        if argv[0] == "write":  # pragma: no mutate
             with open(target, "w", encoding="utf-8") as f:
                 f.write(text)
             continue
-        if argv[0] == "sources":
+        # The command is check or sources here, sources the last of them in order.
+        if argv[0] == "sources":  # pragma: no mutate
             for fault in sources(data):
                 print(f"practices.py: {path}: {fault}", file=sys.stderr)
                 failed = True
@@ -238,5 +248,5 @@ def main(argv: list[str]) -> int:
     return 1 if failed else 0
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no mutate
     sys.exit(main(sys.argv[1:]))

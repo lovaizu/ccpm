@@ -110,11 +110,12 @@ def linked(folders: list[str]) -> list[str]:
 
 
 def written(plugin: str, ports: list[int], since: str, path: str) -> None:
-    """The run's config, written at the path: the plugin's cosmic-ray.toml, its links left out, the
-    workers on the ports its distributor, and the commit the changed lines are counted from given
-    to the git filter, where one is."""
+    """The run's config, written at the path: the plugin's cosmic-ray.toml, its links left out
+    beside the modules it leaves out itself, the workers on the ports its distributor, and the
+    commit the changed lines are counted from given to the git filter, where one is."""
     config = load_config(config_of(plugin))
-    config["excluded-modules"] = linked(config["module-path"])
+    own = list(config.get("excluded-modules", []))
+    config["excluded-modules"] = own + linked(config["module-path"])
     urls = [f"http://localhost:{port}" for port in ports]
     config["distributor"] = {"name": "http", "http": {"worker-urls": urls}}
     if since:
