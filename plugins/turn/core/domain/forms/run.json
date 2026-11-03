@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "run.json",
+  "description": "A run of Turn: the kind of its work, the kind's template, the refactoring template, and the groups of questions a step's runs answer.",
+  "type": "object",
+  "required": ["kind", "template", "refactoring"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {"type": "string", "description": "the kind, the template file's name"},
+    "template": {"type": "string", "description": "the template's path from the repository's root"},
+    "refactoring": {"enum": ["refactor-doc", "refactor-code"]},
+    "groups": {"$ref": "#/$defs/groups"},
+    "refactoring_groups": {"$ref": "#/$defs/groups"}
+  },
+  "$defs": {
+    "groups": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "questions"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string"},
+          "questions": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

@@ -6,9 +6,11 @@ parallel = true
 [report]
 show_missing = true
 fail_under = 100
-# turn's scripts that only turn's old tests ran in full, skipped as they read lane's code by its old
-# paths; turn is rebuilt from zero in T41 (.rn/20261013-rebuild/steering.md), and these go then.
+# rn's copies of the old Turn's call.py, forms.py and parts.py, which rn 0.8.0 takes in: the old
+# Turn's tests ran them in full through its turn.py, gone as Turn is rebuilt (T41), and rn's own
+# tests run only what rn calls of them; rn's rebuild (T46, .rn/20261013-rebuild/steering.md)
+# replaces them, and these go then.
 omit =
-    plugins/turn/scripts/forms.py
-    plugins/turn/scripts/items.py
-    plugins/turn/scripts/parts.py
+    plugins/rn/scripts/call.py
+    plugins/rn/scripts/forms.py
+    plugins/rn/scripts/parts.py

@@ -553,7 +553,8 @@ plugins/turn/
 ├── core/domain/use-and-answer.md       how builder, evaluator, refactorer and proofreader use and answer <Markdown>
 ├── core/domain/forms/<file>.json       the form of each file of a run <JSON Schema>
 ├── core/domain/best-practices/<kind>.json, <kind>.md   Template, and the Markdown made from it <JSON, Markdown>
-├── core/domain/practices.py, tree.py, answers.py       the checks of Template, Design tree and Answers <modules · Python 3.9>
+├── core/domain/templates.py, designs.py, answering.py, files.py   the checks of Template, Design tree and Answers, and each file held to its form <modules · Python 3.9>
+├── core/domain/schema.py               Lane's reading of a JSON Schema, through a link <module · Python 3.9>
 ├── scripts/practices.py, tree.py, answers.py           their entries <command line · Python 3.9>
 ├── hooks/hooks.json, hooks/lanes.json, hooks/lane/     Lane's guard and result.py, and Turn's lanes and Routes, laid by Lane <JSON, Python 3.9>
 ├── docs/calling.md                     the Call, for callers <Markdown>

@@ -1,1 +1,0 @@
-../../lane/hooks/lane/core/domain/template.py
