@@ -20,7 +20,7 @@
   - lane depends on no plugin: no code, document or example of it names turn, rn or another ccpm plugin. Serves AC1.
   - check.sh lane 100%, mutate.sh lane 0 survivors, and its trials passing. Serves AC1.
 
-- T50: pin, a plugin of its own in ccpm, pins a plan down from its purpose: a design tree from the goal down, the user asked only what is theirs, one point at a time, nothing left assumed; Turn and rn take it in by dependencies. Builds on T49.
+- T50: pin, a plugin of its own in ccpm, pins a plan down from its purpose: a design tree from the goal down, the user asked only what is theirs, one point at a time, nothing left assumed; Turn and rn take it in by dependencies. Builds on none.
 
   - pin's skill, pin:down, made from Matt Pocock's grilling skill (MIT, credited) and turn-rebuild.md's Design tree, and its script checking a design-tree.json: every question served, every decision reaching the root, the order following builds_on. Serves AC1.
   - tried first: a role of Turn runs the script of pin, its dependency, and Lane checks that call; if it cannot, where the script lies is decided again. Serves AC1.
