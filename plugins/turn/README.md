@@ -21,15 +21,15 @@ how good works of the same kind are made, and has the work judged by an AI that 
 - **A design from your purpose.** Turn asks your purpose for this one work, then settles each
   decision the template's questions need, such as which use the walkthrough shows. It finds each
   fact itself and shows it to you to confirm. It asks you each decision that is yours, one at a
-  time, with a recommendation. You approve the design before anything is made. This part is
-  [pin](../pin/README.md), installed with Turn.
+  time, with a recommendation. You approve the design before anything is made. Turn does this
+  with [pin](../pin/README.md), a plugin installed with Turn.
 - **Used by an AI that did not make it.** Once the work is made, another AI uses it as its user
   would. It is given the work and the template's questions, not the design, as the work's user
   never sees the design. It answers each question with the lines of the work that meet it, or with
   what the user would still need. A question not yet met goes back to the decision behind it, which
   is decided again, and the work is made again from there.
 - **Then how it reads.** Once every question is met, Turn improves how the work says what it says,
-  such as a sentence read twice to be understood, and checks it again. What the work says stays.
+  such as a sentence that must be read twice to be understood, and checks it again. What the work says stays.
 - **At once where it can.** Parts of the work that stand apart, such as two modules that use
   nothing of each other, are made and checked at the same time, so you wait less. A part is not
   split where that would make it worse.
@@ -37,21 +37,20 @@ how good works of the same kind are made, and has the work judged by an AI that 
 **Non-goals**
 
 - Turn does not check whether the work gets you what you want it for in the world, such as whether
-  the README brings `tidy` more users. Turn checks the work against your purpose and its kind's
+  a README brings its tool more users. Turn checks the work against your purpose and its kind's
   questions; the world's answer is yours to see.
 - Turn is not for a quick draft. Asking, making and checking take longer than asking Claude Code
   alone. A kind new to Turn takes longer still, the first time.
 - Turn does not commit, push or publish the work. It writes the files, and you choose what happens
   to them.
 - Turn does not decide for you what is yours. A question left unanswered holds the run where it is.
-- Turn does not run in `claude -p`. Its roles run in the background, and `claude -p` does not hand a
-  role's end back to the role that started it.
 
 ## Requirements
 
 - Claude Code 2.1.317 or later: `claude --version` shows its version.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows its version.
-- Claude Code run as a conversation in a terminal or an app, not as `claude -p`.
+- Claude Code run as a conversation in a terminal or an app, not as `claude -p`. Turn's roles run
+  in the background, and `claude -p` does not hand a role's end back to the role that started it.
 
 ## Installation
 
@@ -165,6 +164,9 @@ flowchart LR
   L -- "check each role's files and commands" --> R
 ```
 
+- Each role is an AI with one job: planner settles the kind and its template, designer the
+  design, builder makes the work, evaluator uses it as its user would, refactorer improves how it
+  reads, and proofreader checks that.
 - Each role runs in the background, as a subagent of `up`, Turn's orchestrator. A role cannot ask
   you itself, so one with a question ends with it. The conversation puts it to you, and your answer
   goes back to the same role, which goes on where it was.
