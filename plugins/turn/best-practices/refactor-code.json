@@ -52,11 +52,9 @@
     "steps": [
      "Run the tests before any change, and begin only when every one passes.",
      "Where a behavior the change will touch has no test, write a test of what the code does now, and see it pass.",
-     "Make one small change of structure, such as a rename or a function moved.",
-     "Run the tests; where one fails, undo the change and make a smaller one.",
+     "After each small change of structure, such as a rename or a function moved, run the tests; where one fails, undo the change and make a smaller one.",
      "Leave each test's expected result as it was, and change a test's call only where a name it uses was renamed.",
-     "Where a behavior looks wrong, keep it and its test, and return it as a point about what the code does rather than change it here.",
-     "Repeat from the third step until the code answers the other questions."
+     "Where a behavior looks wrong, keep it and its test, and return it as a point about what the code does rather than change it here."
     ],
     "grounds": [
      "Fowler, \"Definition Of Refactoring\", martinfowler.com/bliki, 2004: \"Refactoring (noun): a change made to the internal structure of software to make it easier to understand and cheaper to modify without changing its observable behavior.\"",
@@ -74,9 +72,7 @@
     "question": "Q7",
     "thinking": "Each line earns its place by what the maintainer would lose without it, and what gives nothing is taken out and left to version control.",
     "steps": [
-     "Remove code that no caller reaches, code left in comments, and each import or parameter that nothing uses.",
      "Fold each function or layer that only passes a call on into its caller, and drop each parameter that every caller gives the same value, using that value inside.",
-     "For each comment, ask whether the maintainer would understand the code less well without it, and remove it if not.",
      "Keep a comment that says what the code cannot say plainly, such as what a regular expression matches."
     ],
     "grounds": [
@@ -94,9 +90,7 @@
     "thinking": "A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.",
     "steps": [
      "For each name, write in a few words what it holds or does, without looking at its definition; then look, and flag the name where the two differ.",
-     "Rename each flagged name to the whole words that say it, with no abbreviation the maintainer would have to look up.",
-     "Make a name say more the farther from its definition it is read.",
-     "Give each value that means something, such as a limit or a mark, a name that says what it means."
+     "Make a name say more the farther from its definition it is read."
     ],
     "grounds": [
      "Google, \"What to look for in a code review\", google.github.io/eng-practices, no date: \"A good name is long enough to fully communicate what the item is or does, without being so long that it becomes hard to read.\"",
@@ -108,9 +102,7 @@
     "question": "Q2",
     "thinking": "Each thing has one name, the word its users and documents already use for it, and each name names one thing.",
     "steps": [
-     "List the things the code handles, and for each the names the code gives it.",
-     "Where one thing has two names, keep the one the product's users and documents use, and rename the rest.",
-     "Where one name stands for two things, give each thing its own name."
+     "List the things the code handles, and for each the names the code gives it."
     ],
     "grounds": [
      "Fowler, \"UbiquitousLanguage\", martinfowler.com/bliki, 2006: \"Ubiquitous Language is the term Eric Evans uses in Domain Driven Design for the practice of building up a common, rigorous language between developers and users.\"",
@@ -120,11 +112,9 @@
    },
    {
     "question": "Q6",
-    "thinking": "Each rule or design decision is written once, in the module whose job it is, and things unrelated in meaning are not tied together in the code.",
+    "thinking": "Each rule or design decision is written once, in the module whose job it is, and things unrelated in meaning are not tied together in the code, however alike they look.",
     "steps": [
      "For each rule or decision the code holds, such as a limit, a format or a path, list every place that writes it.",
-     "Where it is written in more than one place, keep it in the module whose job it is, and have the others take it from there.",
-     "Leave apart lines that look alike but hold different rules, and merge only what changes together.",
      "Where a shared function takes flags so that each caller gets its own path, split it into one function for each rule.",
      "Where code reaches into another module's insides, have it use what that module offers its callers.",
      "Where a rule truly cannot be kept in one place, say at each place where the others are, such as in a comment beside it.",
@@ -144,15 +134,12 @@
    },
    {
     "question": "Q3",
-    "thinking": "A function does one thing at one level, so its reader holds only what it says, and a long one reads as calls to steps named for what they do.",
+    "thinking": "A function does one thing at one level and takes what it uses as its inputs, so its reader holds only what it says, and a long one reads as calls to steps named for what they do.",
     "steps": [
      "Read each function, test functions included, once from the top, and write in one sentence what it does.",
      "Flag a function whose sentence needs an \"and\", or for which the reader had to read another body.",
-     "Split each flagged function into steps, each named for what it does, so that it reads as calls to them.",
      "Join back two functions that cannot be understood apart.",
-     "Give a function as input what it reads from far away, such as a value changed elsewhere.",
-     "Write a clever construct in its plain form.",
-     "Read the function again from the top, and write its sentence again."
+     "Write a clever construct in its plain form."
     ],
     "grounds": [
      "Google, \"What to look for in a code review\", google.github.io/eng-practices, no date: \"“Too complex” usually means “can’t be understood quickly by code readers.” It can also mean “developers are likely to introduce bugs when they try to call or modify this code.”\"",
@@ -166,13 +153,11 @@
    },
    {
     "question": "Q5",
-    "thinking": "Each kind of thing is done one way across the code, the way the code already has unless a better one replaces it everywhere, so a difference means a real difference.",
+    "thinking": "Each kind of thing is done one way across the code, the way the code already has, the nearest code first, unless a better one replaces it everywhere, so a difference means a real difference.",
     "steps": [
-     "Leave what a tool already checks, such as layout by a formatter or the rules of a linter, to that tool, and look only at what no tool checks.",
      "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test.",
      "For each kind, gather each way the code does it.",
-     "Choose one way for each kind: the one the code already uses most, nearest code first, unless another is better for the reader.",
-     "Rewrite each other place to that way, and where a place needs another way, say why in a comment beside it."
+     "Where a place needs another way, say why beside it, such as in a comment."
     ],
     "grounds": [
      "Google, \"Google Python Style Guide\", google.github.io/styleguide, no date: \"If code you add to a file looks drastically different from the existing code around it, it throws readers out of their rhythm when they go to read it.\"",
@@ -184,11 +169,10 @@
    },
    {
     "question": "Q4",
-    "thinking": "What the code cannot say, the reason it is so, is given where the maintainer meets it.",
+    "thinking": "What the code cannot say, the reason it is so, such as a limit outside the code or a way tried and dropped, is given where the maintainer meets it.",
     "steps": [
      "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs.",
      "For each, first make the code say it plainly, where it can.",
-     "Where the reason still does not show, such as a limit outside the code or a way tried and dropped, write it where the maintainer meets the line, such as in a comment beside it.",
      "Check each comment against the code beside it, and correct or remove one that no longer holds."
     ],
     "grounds": [

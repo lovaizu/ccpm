@@ -103,9 +103,7 @@
     "question": "Q3",
     "thinking": "The AI stops when its work looks done, so the prompt says what the result is for and gives a check that tells done from looking done.",
     "steps": [
-     "Name who gets the result and what they do with it next.",
-     "Write what holds once the task is met, as things the AI can see for itself.",
-     "For each, give the check that shows it: a command to run where one exists, or else what to look up and where.",
+     "For each thing that holds once the task is met, give the check that shows it: a command to run where one exists, or else what to look up and where.",
      "Write when the AI stops: once every check passes, or at a blocker it cannot pass, which it hands back with what it found."
     ],
     "grounds": [
@@ -117,13 +115,9 @@
    },
    {
     "question": "Q4",
-    "thinking": "A choice is the user's where the AI has no ground to pick one option over another, or where it is hard to undo, so the prompt names those choices and how the AI asks.",
+    "thinking": "A choice is the user's where the AI has no ground to pick one option over another, or where it is hard to undo, so the prompt names those choices and how the AI asks, and leaves every other choice to the AI.",
     "steps": [
-     "List the choices the task meets on its way to the result.",
-     "Mark each action that is hard to undo, touches what others share, or destroys something.",
-     "Mark each choice whose options serve the task equally, so that only the user's wish can settle it.",
-     "For each choice marked, write that the AI asks before it acts, whom it asks and by what means.",
-     "Write that the AI makes every other choice itself and says which it made."
+     "Among the choices the task meets, mark each action that is hard to undo, touches what others share, or destroys something."
     ],
     "grounds": [
      "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"for actions that are hard to reverse, affect shared systems, or could be destructive, ask the user before proceeding.\"",
@@ -135,10 +129,7 @@
     "question": "Q6",
     "thinking": "The AI is able but new to this place, and sees nothing of the conversation that started it, so the prompt gives what it cannot find or know, and where the rest lies.",
     "steps": [
-     "For each step, list the facts it needs: its inputs and where they lie, the terms it uses, and the rules of the place.",
-     "For each fact, ask whether the AI could find it in what its run gives it, and would go and look; for one it would, give where it lies, not the fact.",
-     "Write out each fact left, the writer's unspoken knowledge among them.",
-     "For a subagent, check that each fact the caller holds reaches it through the prompt or the call.",
+     "For each step, list the facts it needs: its inputs and where they lie, the terms it uses, the rules of the place, and what the writer knows without saying.",
      "Give the prompt to a fresh AI with only what a run gives it, see where it guesses, and add the fact it lacked."
     ],
     "grounds": [
@@ -154,8 +145,7 @@
     "question": "Q9",
     "thinking": "Each step is a result on the way to the goal, so the AI chooses how to reach it and knows when to go on.",
     "steps": [
-     "Start from what holds once the task is met, as Q3's method wrote it, and work back to each result that must hold before it.",
-     "Write each result as a step, in the order they must hold, so the AI sees that order, such as in a numbered list.",
+     "Write the steps in the order their results must hold, so the AI sees that order, such as in a numbered list.",
      "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.",
      "Check that the last step leaves what the goal says the task is for."
     ],
@@ -168,7 +158,6 @@
     "question": "Q7",
     "thinking": "A rule that says what it is for lets the AI apply it where it was meant and judge a case no rule names, so each rule carries its reason.",
     "steps": [
-     "For each rule in a step, write what it protects or makes possible.",
      "Write the rule as what to do, in plain words, with no capitals or warnings for emphasis.",
      "Where a rule says always or never, say what the AI does when the rule cannot be met.",
      "In place of a list of edge cases, give the way of judging and a few typical examples that differ from one another.",
@@ -187,11 +176,8 @@
    },
    {
     "question": "Q8",
-    "thinking": "The AI's judgment varies from run to run, which suits a step with many good ways, so a step with one right result is done by a program that gives it every run, which the AI runs.",
+    "thinking": "The AI's judgment varies from run to run, which suits a step with many good ways, so a step with one right result is done by a program that gives it every run and handles its own errors, which the AI runs.",
     "steps": [
-     "For each step, ask whether it has one right result, such as a check, a file's form or an exact order, or many good ways.",
-     "For a step with one right result, find or write a program that does it and handles its own errors, such as a script.",
-     "Write the step as running that command and acting on what it prints.",
      "Run the prompt twice on one input, and compare what those steps gave."
     ],
     "grounds": [
@@ -236,7 +222,6 @@
      "Name the caller, and what it does next with the result.",
      "List what it needs for that: the result, what was done, and what was not done and why.",
      "Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.",
-     "Write in the prompt what the AI hands back and to whom, in that form.",
      "Check that a step makes each thing the output names.",
      "Hand the output alone to someone in the caller's place, and see whether they can act without asking."
     ],
@@ -248,12 +233,10 @@
    },
    {
     "question": "Q1",
-    "thinking": "The host reads the description alone, among many, to pick a prompt for a request, so it says what the prompt does and when it is used, in the words users ask in, and tells it apart from the others.",
+    "thinking": "The host reads the name and the description alone, among many, to pick a prompt for a request, so they say what the prompt does and when it is used, in the words users ask in, and tell it apart from the others.",
     "steps": [
      "Write down several requests the prompt is made for, in a user's own words, and several near ones it is not made for.",
-     "Write the name as what the prompt does.",
      "Write the description: what the prompt does, then the requests and situations it is used for, the main use first.",
-     "Set it beside the descriptions of the other prompts the host holds, and add what tells this one apart.",
      "Give each request written down to a fresh session with the prompt installed, see which prompt the host chooses, and mend the description where it chooses wrongly."
     ],
     "grounds": [
@@ -269,9 +252,7 @@
     "question": "Q5",
     "thinking": "The description and the body say one task, so what the host chose the prompt for is what the AI does.",
     "steps": [
-     "List each thing the description says the prompt does.",
-     "List each thing the goal and the steps have the AI do.",
-     "For each thing on one list and not the other, add it to the body or take it out of the description."
+     "Set what the description says the prompt does against what the goal and the steps have the AI do, and for each thing in one and not the other, add it to the body or take it out of the description."
     ],
     "grounds": [
      "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Your description must provide enough detail for Claude to determine when to select this Skill, whereas the rest of `SKILL.md` provides the implementation details.\""
@@ -283,7 +264,6 @@
     "steps": [
      "Gather requests of each kind the prompt is made for, and hold some back from its making.",
      "Run each with a fresh AI that has only the prompt and what a run gives it, several times, on the model the prompt will run on.",
-     "Read the record of each run, not only the AI's own report.",
      "Mend the prompt only for a cause seen in a record.",
      "Run the requests held back last, to see whether the prompt holds beyond the ones it was mended on."
     ],
@@ -302,8 +282,6 @@
     "question": "Q12",
     "thinking": "Every line takes some of the AI's attention, so the prompt keeps only the lines that change what it does, and keeps detail it needs only sometimes where the AI reads it only then.",
     "steps": [
-     "For each line, ask what the AI would do differently without it, and cut the line where the answer is nothing.",
-     "Cut what the AI already knows.",
      "Move detail needed only in some runs out of the prompt to where the AI reads it only when it needs it, such as a file the prompt links directly, and say when to read it.",
      "Run Q13's trials again after cutting, and put back what a run then lacked."
     ],
