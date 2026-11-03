@@ -1,33 +1,15 @@
 {
   "subagents": [
     {
-      "name": "up",
+      "name": "planner",
       "steps": [
         {
-          "step": 1,
+          "step": 3,
           "lanes": [
             {
-              "lane": "start_with",
+              "lane": "run_only",
               "takes": [
-                "turn.py start"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "lanes": [
-            {
-              "lane": "read_only",
-              "takes": [
-                "{result}"
-              ]
-            },
-            {
-              "lane": "hands_off",
-              "takes": [
-                "git commit",
-                "git push"
+                "python3 ${dependency:pin}/scripts/check.py {run}/kind-tree.json"
               ]
             }
           ]
@@ -36,43 +18,10 @@
           "step": 4,
           "lanes": [
             {
-              "lane": "as_printed",
+              "lane": "write_only",
               "takes": [
-                "turn.py end"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "generator",
-      "steps": [
-        {
-          "step": 1,
-          "lanes": [
-            {
-              "lane": "start_with",
-              "takes": [
-                "turn.py generator"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "lanes": [
-            {
-              "lane": "read_only",
-              "takes": [
-                "{given}",
-                "{tries}"
-              ]
-            },
-            {
-              "lane": "read_whole",
-              "takes": [
-                "{given}"
+                "{run}",
+                ".turn/best-practices"
               ]
             }
           ]
@@ -81,54 +30,16 @@
           "step": 5,
           "lanes": [
             {
-              "lane": "write_only",
+              "lane": "run_only",
               "takes": [
-                "{work}",
-                "{reply}"
-              ]
-            },
-            {
-              "lane": "hands_off",
-              "takes": [
-                "git commit",
-                "git push"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/practices.py ready {run}"
               ]
             },
             {
               "lane": "test_after",
               "takes": [
-                "{work}",
-                "{test}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 8,
-          "lanes": [
-            {
-              "lane": "in_form",
-              "takes": [
-                "{reply}",
-                "claim.json"
-              ]
-            },
-            {
-              "lane": "test_after",
-              "takes": [
-                "{reply}",
-                "{check}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 9,
-          "lanes": [
-            {
-              "lane": "end_when",
-              "takes": [
-                "{reply}"
+                "{run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/practices.py ready {run}"
               ]
             }
           ]
@@ -136,40 +47,32 @@
       ]
     },
     {
-      "name": "first-user",
+      "name": "designer",
       "steps": [
         {
           "step": 1,
           "lanes": [
             {
-              "lane": "start_with",
+              "lane": "run_only",
               "takes": [
-                "turn.py first-user"
+                "python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json"
+              ]
+            },
+            {
+              "lane": "write_only",
+              "takes": [
+                "{run}"
               ]
             }
           ]
         },
         {
-          "step": 2,
+          "step": 3,
           "lanes": [
             {
-              "lane": "read_only",
+              "lane": "run_only",
               "takes": [
-                "{given}",
-                "{tries}"
-              ]
-            },
-            {
-              "lane": "read_whole",
-              "takes": [
-                "{given}"
-              ]
-            },
-            {
-              "lane": "hands_off",
-              "takes": [
-                "git commit",
-                "git push"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py parts {run}"
               ]
             }
           ]
@@ -178,11 +81,17 @@
           "step": 4,
           "lanes": [
             {
-              "lane": "every_item",
+              "lane": "run_only",
               "takes": [
-                "{checklists}"
-              ],
-              "adapter": "hooks/adapters/items-checklist.py"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check {run}"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check {run}"
+              ]
             }
           ]
         },
@@ -190,39 +99,360 @@
           "step": 5,
           "lanes": [
             {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} builder"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "builder",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
               "lane": "write_only",
               "takes": [
-                "{reply}"
-              ]
-            },
-            {
-              "lane": "in_form",
-              "takes": [
-                "{reply}",
-                "reading.json"
-              ]
-            },
-            {
-              "lane": "test_after",
-              "takes": [
-                "{reply}",
-                "{check}"
+                "{work}",
+                "{answers}",
+                "{open}"
               ]
             }
           ]
         },
         {
-          "step": 6,
+          "step": 2,
           "lanes": [
             {
-              "lane": "end_when",
+              "lane": "in_form",
               "takes": [
-                "{reply}"
+                "{open}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/forms/open.json"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "lanes": [
+            {
+              "lane": "run_only",
+              "takes": [
+                "{commands}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{work}"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{work}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "lanes": [
+            {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} evaluator"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "evaluator",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{work}",
+                "{standard}",
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/use-and-answer.md"
+              ]
+            },
+            {
+              "lane": "write_only",
+              "takes": [
+                "{answers}"
+              ]
+            },
+            {
+              "lane": "run_only",
+              "takes": [
+                "{commands}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{work}"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{answers}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} refactorer"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "refactorer",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{work}",
+                "{answers}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "run_only",
+              "takes": [
+                "{commands}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{work}"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{work}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "lanes": [
+            {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} proofreader"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "proofreader",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{work}",
+                "{standard}",
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/use-and-answer.md"
+              ]
+            },
+            {
+              "lane": "write_only",
+              "takes": [
+                "{answers}"
+              ]
+            },
+            {
+              "lane": "run_only",
+              "takes": [
+                "{commands}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{work}"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{answers}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} refactorer"
               ]
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "routes": {
+    "orchestrator": "up",
+    "step": 2,
+    "fan_out": [
+      "builder",
+      "evaluator",
+      "proofreader"
+    ],
+    "precedence": {
+      "builder": [
+        "open",
+        "built"
+      ],
+      "evaluator": [
+        "more",
+        "good"
+      ],
+      "proofreader": [
+        "content",
+        "more",
+        "good"
+      ]
+    },
+    "routes": [
+      {
+        "from": "up",
+        "to": "planner"
+      },
+      {
+        "from": "planner",
+        "on": "planned",
+        "to": "designer"
+      },
+      {
+        "from": "planner",
+        "on": "asks"
+      },
+      {
+        "from": "designer",
+        "on": "designed",
+        "to": "builder"
+      },
+      {
+        "from": "designer",
+        "on": "asks"
+      },
+      {
+        "from": "builder",
+        "on": "built",
+        "to": "evaluator"
+      },
+      {
+        "from": "builder",
+        "on": "open",
+        "to": "designer"
+      },
+      {
+        "from": "evaluator",
+        "on": "more",
+        "to": "designer"
+      },
+      {
+        "from": "evaluator",
+        "on": "good",
+        "to": "refactorer"
+      },
+      {
+        "from": "refactorer",
+        "on": "refactored",
+        "to": "proofreader"
+      },
+      {
+        "from": "proofreader",
+        "on": "more",
+        "to": "refactorer"
+      },
+      {
+        "from": "proofreader",
+        "on": "content",
+        "to": "designer"
+      },
+      {
+        "from": "proofreader",
+        "on": "good"
+      }
+    ]
+  }
 }

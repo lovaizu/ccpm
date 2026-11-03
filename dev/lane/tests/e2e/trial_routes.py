@@ -231,7 +231,9 @@ def run(number: int) -> bool:
     )
     if found["due"]:
         print(f"  the run did not reach `good`: {found['due']} was still due as lead ended")
-    return trial_changelog.verdict(found["wrong"], bool(found["stopped"] and found["kept"]))
+    return trying.verdict(
+        [] if found["stopped"] and found["kept"] else [trial_changelog.UNTRIED], found["wrong"]
+    )
 
 
 if __name__ == "__main__":

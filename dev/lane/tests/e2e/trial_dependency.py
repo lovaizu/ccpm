@@ -82,7 +82,7 @@ def run(number: int) -> bool:
     if not through:
         wrong.append("the skill's command by checker's folder did not go through")
     print(f"  tried: {sorted(tried)}")
-    return trial_changelog.verdict(wrong, len(tried) == 2)
+    return trying.verdict([] if len(tried) == 2 else [trial_changelog.UNTRIED], wrong)
 
 
 def open_text(*path: str) -> str:

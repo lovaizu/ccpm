@@ -187,7 +187,7 @@ def run(number: int) -> bool:
     why = "lead did not try writer's start between the two runs' ends"
     if found.get("resumed"):
         why = "an auditor was resumed, so when it ended is not known from its record"
-    return trial_changelog.verdict(found["wrong"], bool(found["between"]), why)
+    return trying.verdict([] if found["between"] else [why], found["wrong"])
 
 
 if __name__ == "__main__":

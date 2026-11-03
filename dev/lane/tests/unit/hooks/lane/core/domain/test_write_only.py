@@ -53,6 +53,23 @@ class TestAllows(helpers.PluginTest):
         # Then: it goes through, as what it writes is CHANGELOG.md
         self.assertTrue(self.allows("out.md", ["CHANGELOG.md"]))
 
+    def test_an_output_named_by_the_plugins_folder_is_the_file_in_the_plugin(self):
+        for path, take, through in (
+            ("changelog/notes/a.md", "${CLAUDE_PLUGIN_ROOT}/notes", True),
+            ("changelog", "${CLAUDE_PLUGIN_ROOT}", True),
+            ("notes/a.md", "${CLAUDE_PLUGIN_ROOT}/notes", False),
+            ("${CLAUDE_PLUGIN_ROOT}/notes/a.md", "${CLAUDE_PLUGIN_ROOT}/notes", False),
+            ("docs/${CLAUDE_PLUGIN_ROOT}/a.md", "docs/${CLAUDE_PLUGIN_ROOT}", True),
+        ):
+            with self.subTest(path=path, take=take):
+                # Given: write_only naming a folder of the plugin by ${CLAUDE_PLUGIN_ROOT}, the
+                # plugin's folder itself, or a folder whose path holds those words later on
+                # When: the subagent writes a file under that folder of the plugin, the plugin's
+                # folder, a file of that path in the project, one named by the words themselves,
+                # or one under the folder holding the words
+                # Then: the plugin's folder is put in only where the path begins with the words
+                self.assertEqual(self.allows(path, [take]), through)
+
     def test_one_of_several_outputs_is_written(self):
         # Given: write_only naming two outputs
         # When: the subagent writes the second

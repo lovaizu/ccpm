@@ -1,186 +1,136 @@
-"""What turn's tests share: a temporary folder standing for the user's repository, holding a task's
-CCS, its checklist, its decisions and a work already written, turn run on it as the orchestrator
-and each role run it, and the replies of a run, each written once here."""
+"""What Turn's tests stand on beside what every plugin's tests do: Turn's code on sys.path, its
+modules taken by each test from here, so they are found whichever test runs first; and a run's
+folder that holds, for each test to change one thing of."""
 
-import contextlib
-import io
+from __future__ import annotations
+
+import copy
 import json
 import os
-import shutil
 import sys
-import tempfile
-import time
-from unittest import mock
+from typing import Any
 
 TURN = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "plugins", "turn")
 )
+DOMAIN = os.path.join(TURN, "core", "domain")
 SCRIPTS = os.path.join(TURN, "scripts")
-sys.path.insert(0, SCRIPTS)
-sys.path.insert(0, os.path.join(TURN, "..", "..", "dev", "lane"))
+sys.path[:0] = [DOMAIN, SCRIPTS, os.path.join(TURN, "..", "..", "dev", "lane")]
 
-import call  # noqa: F401  (each of turn's modules, for its own tests)
-import folder  # noqa: F401
-import forms  # noqa: F401
-import items as checklist_items  # noqa: F401
-import parts as work_parts  # noqa: F401
-import prompts  # noqa: F401
+import answering
+import answers
+import designs
+import files
+import practices
+import runs
+import starts
+import templates
 import testing
-import turn
-import wait  # noqa: F401
+import tree
 
-# The items of the run's checklist, by its path and ID.
-ITEM_F1 = {"checklist": "checklists/readme.md", "item": "F-1"}
-ITEM_B1 = {"checklist": "checklists/readme.md", "item": "B-1"}
-ITEMS = [ITEM_F1, ITEM_B1]
-CHECKLIST = """# README
+__all__ = [
+    "answering",
+    "answers",
+    "designs",
+    "files",
+    "practices",
+    "runs",
+    "starts",
+    "templates",
+    "testing",
+    "tree",
+]
 
-A README is read by whoever meets the project first.
-
-## Questions
-
-### F-1: Shape
-
-Does the README follow this template?
-
-### B-1: Who it is for
-
-On opening it, can the reader tell whether the project is for them?
-"""
-CCS = {
-    "focal_entities": [{"deliverable": "README.md"}, {"audience": "a developer new to it"}],
-    "goal_orientation": [{"purpose": "to try it on their own files"}],
-    "retrieved_artifacts": [
-        {"checklist": "checklists/readme.md"},
-        {"decisions": "notes/readme.decisions.md"},
-        {"page": "docs/start.md"},
+# A template of the kind `readme`: two parts, three questions, the last of the whole.
+TEMPLATE: dict[str, Any] = {
+    "goal": "The reader starts using the product only when it serves their work.",
+    "parts": [
+        {"id": "summary", "what": "One sentence."},
+        {"id": "walkthrough", "what": "One run."},
+    ],
+    "benefits": [
+        {"id": "Q1", "about": "summary", "what": "Can the reader say what it does?"},
+        {"id": "Q2", "about": "walkthrough", "what": "Can the reader get the result?"},
+        {"id": "Q3", "about": "the whole", "what": "Does each answer come when needed?"},
+    ],
+    "practices": [
+        {"benefit": f"Q{n}", "thinking": "Think.", "steps": [], "grounds": []} for n in (1, 2, 3)
     ],
 }
-CALL = {
-    "ccs": ".tasks/readme.json",
-    "kind": {
-        "work": "deliverable",
-        "checklist": "checklist",
-        "receiver": "audience",
-        "use": "purpose",
-        "has": "page",
-        "each": "each",
+# The refactoring template, of one question about the whole.
+REFACTORING: dict[str, Any] = {
+    "goal": "The reader takes in what it says.",
+    "benefits": [{"id": "Q1", "about": "the whole", "what": "Is each fact said once?"}],
+    "practices": [{"benefit": "Q1", "thinking": "Think.", "steps": [], "grounds": []}],
+}
+
+
+def question(n: int, kind: str = "readme") -> str:
+    """The ID a run gives question n of the kind's template."""
+    return f"{kind}/Q{n}"
+
+
+def decision(name: str, serves: list[str], on: list[str] | None = None) -> dict[str, Any]:
+    """A decision of the ID name, decided, serving what it is given and building on `on`."""
+    return {
+        "id": name,
+        "what": f"what {name} decides",
+        "contributes_to": serves,
+        "builds_on": on or [],
+        "decided": f"{name} decided",
+        "settled_by": "reasoning",
+        "grounds": ["the goal"],
+    }
+
+
+# A run's folder that holds, its files by name: D1 serves Q1, D2 serves Q2, D3 serves D2 and builds
+# on it; the work is README.md alone, of one part.
+RUN: dict[str, Any] = {
+    "run.json": {
+        "kind": "readme",
+        "template": "plugins/turn/core/domain/best-practices/readme.json",
+        "refactoring": "refactor-doc",
+        "groups": [
+            {"id": "G1", "questions": ["readme/Q1"]},
+            {"id": "G2", "questions": ["readme/Q2"]},
+            {"id": "G3", "questions": ["readme/Q3"]},
+        ],
+        "refactoring_groups": [{"id": "G1", "questions": ["refactor-doc/Q1"]}],
     },
-    "result": ".tasks/readme-result.json",
-    "test": "sh tests/readme.sh",
+    "standard.json": templates.standard(TEMPLATE),
+    "refactoring-standard.json": templates.standard(REFACTORING),
+    "design-tree.json": {
+        "goal": {"what": "A newcomer sorts their folder.", "grounds": ["the person"]},
+        "questions": [
+            {"id": question(n), "what": TEMPLATE["benefits"][n - 1]["what"]} for n in (1, 2, 3)
+        ],
+        "decisions": [
+            decision("D1", [question(1), question(3)]),
+            decision("D2", [question(2)]),
+            decision("D3", ["D2"], ["D2"]),
+        ],
+    },
+    "work.json": {
+        "paths": ["README.md"],
+        "commands": ["tidy --dry-run"],
+        "parts": [{"id": "P1", "decisions": ["D1", "D2", "D3"], "paths": ["README.md"]}],
+    },
 }
-RESULT = CALL["result"]
-# The first user's Good for each item: the lines of the work that give it.
-FOUND = {"checklist": "checklists/readme.md", "item": "F-1", "lines": ["README.md:1-3"]}
-FOUND_B1 = dict(FOUND, item="B-1")
-# An item the generator claims, at the lines of the work that give its Good.
-MADE = dict(FOUND)
-MADE_B1 = dict(FOUND_B1)
-# A choice the work rests on that the CCS leaves open, as the generator names it.
-CHOSEN = {"chosen": "the example tidies people.csv", "why": "no decision names a file"}
-# The generator's claim of every item at its lines, naming the choice it made.
-CLAIM = {"items": [MADE, MADE_B1], "chosen": [CHOSEN]}
-# What the receiver would need to get an item's Good, as the first user gives it where it found
-# none.
-NEED = "Before trying it, the developer can tell whether it is for their own files."
-NEEDED_F1 = dict(ITEM_F1, need=NEED)
-NEEDED_B1 = dict(ITEM_B1, need=NEED)
-# A first user's reading of every item: the Good it found for one, and what the receiver would need
-# for the other; and one finding every Good.
-FIRST_READ = {"items": [FOUND, NEEDED_B1]}
-ALL_GOOD = {"items": [FOUND, FOUND_B1]}
-# A checklist item, added to a run's checklist where a test needs one asked of each part of the
-# work; the CCS asking it of each part, by the kind the call names; the work's parts, as the script
-# splits a README of a title, an opening and one section; and its Good, at lines in each part.
-EACH = """
-### B-2: Each part used
-
-Does the reader use each part toward their purpose?
-"""
-EACH_ITEM = {"checklist": "checklists/readme.md", "item": "B-2"}
-EACH_CCS = dict(
-    CCS, retrieved_artifacts=[*CCS["retrieved_artifacts"], {"each": "checklists/readme.md B-2"}]
-)
-SECTIONED = "# csvtidy\n\nTidies CSV files.\n\n## Use\n\nRun it.\n"
-EACH_GOOD = {
-    "checklist": "checklists/readme.md",
-    "item": "B-2",
-    "lines": ["README.md:3", "README.md:7"],
-}
-# The day a run is started on, as the clock gives it, and the folder the run of the result is kept
-# in, in turn's folder at the root of the repository, named by that day and the result's path from
-# the root, each `/` written `%2F`.
-TODAY = "20261025"
-RUN = f".turn/{TODAY}-.tasks%2Freadme-result.json"
+WORK = "# tidy\n\ntidy sorts a folder.\n\n## Walkthrough\n\nRun tidy --dry-run.\n"
 
 
-class RepoTest(testing.FolderTest):
-    """Each test runs turn from a temporary folder standing for the user's repository, `base`, its
-    root, holding a task's CCS, its checklist, its decisions and a work already written, on the
-    day TODAY; the system's temporary folder stood in for by `temp`, a folder beside `base`, so
-    what turn makes there goes with the test."""
-
-    def setUp(self):
-        super().setUp()
-        os.mkdir(".git")
-        today = mock.patch.object(time, "strftime", return_value=TODAY)
-        today.start()
-        self.addCleanup(today.stop)
-        self.temp = os.path.realpath(tempfile.mkdtemp(dir=self.run_folder))
-        self.addCleanup(shutil.rmtree, self.temp)
-        temp = mock.patch.object(tempfile, "tempdir", self.temp)
-        temp.start()
-        self.addCleanup(temp.stop)
-        self.write_json(CALL["ccs"], CCS)
-        self.write("checklists/readme.md", CHECKLIST)
-        self.write("notes/readme.decisions.md", "# Decisions\n")
-        self.write("docs/start.md", "# Start\n")
-        self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
-
-    def turn(self, *argv):
-        """What turn.py gives back and prints, run with the arguments."""
-        out = io.StringIO()
-        with contextlib.redirect_stdout(out):
-            code = turn.main(list(argv))
-        return code, out.getvalue()
-
-    def printed(self, *argv):
-        """What turn.py prints as JSON, run with the arguments; fails the test where it stops."""
-        code, out = self.turn(*argv)
-        self.assertEqual(code, 0, out)
-        return json.loads(out)
-
-    def stopped(self, *argv):
-        """What turn.py prints, run with the arguments, where it stops."""
-        code, out = self.turn(*argv)
-        self.assertEqual(code, 1, out)
-        return out
-
-    def started(self, asked=None):
-        """The run started on a call, by default the run's; gives the result as the start printed
-        it, a whole path."""
-        return self.printed("start", json.dumps(asked or CALL))["result"]
-
-    def here(self, path):
-        """The path as a whole path in the folder the call was made from, as a role is given it."""
-        return os.path.join(self.base, path)
-
-    def kept(self, name):
-        """The whole path of the file of the name in the folder the run of RESULT is kept in."""
-        return self.here(f"{RUN}/{name}")
-
-    def claimed(self, claim):
-        """The generator writes its claim where it replies."""
-        self.write(self.kept("generator.json"), json.dumps(claim))
-
-    def read_as(self, reading):
-        """The first user writes its reading where it replies."""
-        self.write(self.kept("first-user.json"), json.dumps(reading))
+def run() -> dict[str, Any]:
+    """A copy of the run's files, for a test to change."""
+    return copy.deepcopy(RUN)
 
 
-class StartedTest(RepoTest):
-    """A run started, `result` the whole path of its result."""
+class RunTest(testing.FolderTest):
+    """Each test has a run's folder, `run`, in its own folder, and the work beside it."""
 
-    def setUp(self):
-        super().setUp()
-        self.result = self.started()
+    folder = ".turn/20261103-tidy-readme"
+
+    def lay(self, made: dict[str, Any] | None = None, work: str = WORK) -> None:
+        """Writes each file of the run, `made` or the one that holds, and the work."""
+        for name, data in (RUN if made is None else made).items():
+            self.write(os.path.join(self.folder, name), json.dumps(data))
+        self.write("README.md", work)

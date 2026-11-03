@@ -1,6 +1,7 @@
 {
   "name": "turn",
-  "description": "With Turn, each step of your plugin has AI make its work, such as a document or code, until it passes the step's checklists: an AI that did not make it reads it first as the one it is for, and what does not pass yet is made again.",
+  "description": "Turn makes a work you ask for, such as a README or a module of code, and makes it again until it meets your purpose well, asking you only what is yours to decide.",
   "version": "0.1.0",
-  "author": { "name": "lovaizu" }
+  "author": { "name": "lovaizu" },
+  "dependencies": ["pin"]
 }

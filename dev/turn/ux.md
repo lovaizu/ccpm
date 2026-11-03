@@ -87,19 +87,18 @@ sequenceDiagram
   M->>U: starts up in the background with the request
   L-->>U: next, planner
   U->>PL: starts planner
-  PL-->>U: ends with a question
-  U-->>M: ends with planner's question for the person:<br>"A README, a document. Right?"
-  M->>P: puts the question
-  P->>M: right
-  M->>U: the answer
-  U->>PL: the answer
-  PL->>C: the run's files hold the kind and its template
+  PL->>C: the run's files hold the kind the request names, and its template
   PL-->>U: ends, the kind settled
   L-->>U: next, designer
   U->>D: starts designer
   D->>R: in the background, what tidy --help prints, and what tidy's code does
   D-->>U: ends with the work's purpose to confirm
-  Note over P,D: Each question reaches the person and comes back as planner's did.
+  U-->>M: ends with designer's question for the person
+  M->>P: puts the question
+  P->>M: the answer
+  M->>U: the answer
+  U->>D: the answer
+  Note over P,D: Each question reaches the person and comes back the same way.
   R-->>D: the facts, each with the line it rests on
   loop until no decision is open
     D-->>P: one fact to confirm, or one decision with a recommendation
@@ -147,8 +146,6 @@ sequenceDiagram
   P->>M: /turn:up a man page for tidy
   M->>U: starts up in the background with the request
   U->>PL: starts planner, as Lane says
-  PL-->>P: "A man page, a document. Right?", through up and the main conversation
-  P-->>PL: right
   PL->>R: in the background, how good man pages are made: guides, and pages people praise
   R-->>PL: what each source says, quoted
   PL-->>P: the purpose of a man page, to confirm

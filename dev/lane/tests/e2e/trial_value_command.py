@@ -93,7 +93,7 @@ def run(number: int) -> bool:
         if not through:
             wrong.append(f"linter {at}'s check of its notes, as one word, did not go through")
     print(f"  tried: {sorted(tried)}")
-    return trial_changelog.verdict(wrong, len(tried) == 2)
+    return trying.verdict([] if len(tried) == 2 else [trial_changelog.UNTRIED], wrong)
 
 
 if __name__ == "__main__":

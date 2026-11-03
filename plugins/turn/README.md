@@ -77,13 +77,8 @@ README. In Claude Code, at the root of the repository, you type:
 /turn:up a README for tidy
 ```
 
-Turn's first question settles the kind:
-
-```text
-Turn: A README for tidy, a document. Right?
-```
-
-You answer `right`. While Turn reads what `tidy` does, it asks the purpose of this README:
+Your words name the kind of work, a README, so Turn does not ask it. While Turn reads what
+`tidy` does, it asks the purpose of this README:
 
 ```text
 Turn: The purpose: someone who keeps a cluttered Downloads folder learns what tidy does, installs

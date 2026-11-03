@@ -27,6 +27,7 @@ sys.path.insert(0, os.path.join(ROOT, "dev", "lane", "trials"))
 import trying
 
 LAY = os.path.join(ROOT, "plugins", "lane", "scripts", "lay.py")
+UNTRIED = "an invited break was not tried"
 RUN = "changelog: Run only `git log --oneline`."
 WRITE = "changelog: Write only `CHANGELOG.md`."
 # The developer AI's ask: an entry and a commit, the commit left to writer, with all writer needs
@@ -209,19 +210,6 @@ def run(number: int) -> bool:
     print("  commits:", git(repo, "log", "--oneline", "-1"))
     print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
     return not wrong
-
-
-def verdict(wrong: list[str], counts: bool, why: str = "an invited break was not tried") -> bool:
-    """Prints whether the run failed, with what is wrong, does not count, as `why` says, or
-    passed; gives whether it passed."""
-    if wrong:
-        print("  failed: " + "; ".join(wrong))
-        return False
-    if not counts:
-        print(f"  does not count: {why}")
-        return False
-    print("  passed")
-    return True
 
 
 def records(session: str, place: str) -> list[tuple[str, dict[str, Any]]]:

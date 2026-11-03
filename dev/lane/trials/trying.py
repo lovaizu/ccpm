@@ -11,6 +11,7 @@ import json
 import os
 import pty
 import queue
+import re
 import select
 import shlex
 import signal
@@ -19,6 +20,7 @@ import sys
 import threading
 import time
 import uuid
+from collections.abc import Callable
 from typing import Any
 
 # The seconds Claude Code is given, after a result, to open a turn of its own; it opens one at once
@@ -230,14 +232,23 @@ with open(sys.argv[1], "a", encoding="utf-8") as f:
 
 
 def interactive(
-    prompt: str, plugins: list[str], cwd: str, place: str, wait: int = 20
+    prompt: str,
+    plugins: list[str],
+    cwd: str,
+    place: str,
+    wait: int = 20,
+    answer: Callable[[str], str | None] | None = None,
 ) -> dict[str, Any]:
     """Runs a fresh interactive session of Claude Code on the copies of plugins, in cwd, given the
     one message prompt as its user types it, and gives its session_id once the main conversation
     has stopped with no agent in the background left, as a Stop hook given in the settings tells
     it in `<place>/stops.jsonl`; what the terminal shows is kept in `<place>/terminal.txt`. An
     interactive session is what starts an agent again once an agent it started in the background
-    has ended, which `claude -p` does not. Stops where that is not so within wait minutes."""
+    has ended, which `claude -p` does not. Given answer, the session goes on as its user does:
+    at each such stop, answer is given the main conversation's last message, and the text it gives
+    back is typed as the next message; "" waits for the next stop, as where the message asks the
+    user nothing, and None ends the session there. Stops where the session does not stop so within
+    wait minutes in all."""
     names = []
     for plugin in plugins:
         with open(os.path.join(plugin, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
@@ -261,7 +272,7 @@ def interactive(
         os.chdir(cwd)
         os.execvpe(command[0], command, {**fresh(), "TERM": "xterm-256color"})
     until = time.monotonic() + wait * 60
-    seen, trusted = b"", False
+    seen, trusted, handled = b"", False, 0
     try:
         with open(os.path.join(place, "terminal.txt"), "ab") as shown:
             while time.monotonic() < until:
@@ -283,8 +294,17 @@ def interactive(
                     time.sleep(1)
                     os.write(terminal, b"\r")
                     trusted = True
-                if idle(stops):
-                    return {"session_id": session}
+                for stop in kept(stops)[handled:]:
+                    handled += 1
+                    if not ("background_tasks" in stop and not stop["background_tasks"]):
+                        continue
+                    said = answer(str(stop.get("last_assistant_message") or "")) if answer else None
+                    if said is None:
+                        return {"session_id": session}
+                    if said:
+                        os.write(terminal, " ".join(said.split()).encode())
+                        time.sleep(1)
+                        os.write(terminal, b"\r")
         raise SystemExit(f"the session was not idle within {wait} minutes; give a longer wait")
     finally:
         os.kill(pid, signal.SIGTERM)
@@ -301,6 +321,108 @@ def fresh() -> dict[str, str]:
         for k, v in os.environ.items()
         if not (k.startswith("CLAUDE_CODE_") or k in ("CLAUDECODE", "CLAUDE_PID", "CLAUDE_EFFORT"))
     }
+
+
+def kept(stops: str) -> list[dict[str, Any]]:
+    """Each Stop event kept in the file at the path, in order; none where it is not there."""
+    try:
+        with open(stops, encoding="utf-8") as f:
+            return [json.loads(line) for line in f.read().splitlines()]
+    except FileNotFoundError:
+        return []
+
+
+def stand_in(prompt: str, cwd: str) -> dict[str, Any]:
+    """The JSON object an AI gives for the prompt, as a stand-in for a person gives its answer, on
+    Opus, with no tool, no plugin and no record kept, run in the folder given, which holds nothing
+    of the plugins tried."""
+    command = ["claude", "-p", "--model", "opus", "--tools", "", "--no-session-persistence"]
+    command += ["--output-format", "json", "--settings", json.dumps({"enabledPlugins": {}})]
+    done = subprocess.run(
+        command, input=prompt, capture_output=True, text=True, cwd=cwd, timeout=600, check=True
+    )
+    said = str(json.loads(done.stdout)["result"])
+    found = re.search(r"\{.*\}", said, re.DOTALL)
+    if not found:
+        raise SystemExit(f"the stand-in gave no JSON: {said}")
+    return json.loads(found.group(0))
+
+
+# The key of the stand-in's answer that counts the points of a message, the same for every plugin
+# that asks a person, as a point is the person's to count, not the plugin's.
+POINTS = """- "points": how many separate answers the message needs from you, as a number: one
+  question to decide, or one fact to confirm, is 1, however long the reasons, the options or the
+  examples around it; a second question, or a second thing it asks you to confirm or to tell,
+  adds 1;"""
+
+
+def finds(who: str, keys: str) -> str:
+    """The prompt the stand-in for a person is given each message by, `{intent}`, `{said}` and
+    `{message}` left to fill: who they stand in for, then the conversation, then the keys of the
+    JSON it answers with."""
+    return (
+        who
+        + """
+
+{intent}
+
+The conversation so far, oldest first:
+
+{said}
+
+The AI's newest message to you:
+
+<message>
+{message}
+</message>
+
+Answer it as that person would. Also judge the message as that person, from what you know. Give
+only one JSON object, with no other text, with these keys:
+"""
+        + keys
+    )
+
+
+def heard(finds: str, intent: str, said: list[str], message: str, cwd: str) -> dict[str, Any]:
+    """What the stand-in for the person, given the prompt `finds` with its intent, the conversation
+    so far and the newest message, says of the message, as the JSON object it gives."""
+    return stand_in(
+        finds.format(intent=intent, said="\n\n".join(said) or "(none)", message=message), cwd
+    )
+
+
+def committed(repo: str, files: dict[str, str]) -> None:
+    """Writes each file at its path in the repository's folder, and commits them all in a git
+    repository made there."""
+    for path, text in files.items():
+        os.makedirs(os.path.dirname(os.path.join(repo, path)) or repo, exist_ok=True)
+        with open(os.path.join(repo, path), "w", encoding="utf-8") as f:
+            f.write(text)
+    for args in (["init", "-q", "-b", "main"], ["add", "."]):
+        subprocess.run(["git", "-C", repo, *args], check=True)
+    who = ["-c", "user.name=e2e", "-c", "user.email=e2e@example.com"]
+    subprocess.run(["git", "-C", repo, *who, "commit", "-q", "-m", "start"], check=True)
+
+
+def verdict(untried: list[str], wrong: list[str]) -> bool:
+    """Whether an E2E test's run counted and passed, printing which, and why where it did not."""
+    if untried:
+        print("  not counted: " + "; ".join(untried))
+        if wrong:
+            print("  and wrong: " + "; ".join(wrong))
+        return False
+    print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
+    return not wrong
+
+
+def main(run: Callable[[int], bool]) -> None:
+    """Runs an E2E test's run as many times as the command line gives, three by default, numbered
+    from the second word where given, and exits 0 where every run passed and counted."""
+    runs = int(sys.argv[1]) if len(sys.argv) > 1 else 3
+    first = int(sys.argv[2]) if len(sys.argv) > 2 else 1
+    passed = [run(n) for n in range(first, first + runs)]
+    print(f"{sum(passed)} of {runs} runs passed")
+    sys.exit(0 if all(passed) else 1)
 
 
 def idle(stops: str) -> bool:

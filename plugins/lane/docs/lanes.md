@@ -95,7 +95,10 @@ step tells it to write in that form, and the form, a file of your plugin, holds 
 project's work.
 
 read_only and write_only each take a file or a folder, and a folder lets the subagent read or write
-anything under it. test_after's output may be a folder too, and a change of any file under it is a
+anything under it. A path of read_only, write_only or read_whole may begin with
+`${CLAUDE_PLUGIN_ROOT}`, such as `${CLAUDE_PLUGIN_ROOT}/core/domain/how.md`, and lane puts your
+plugin's folder in for it, as it does in a command, so a step can name a file of your plugin by
+the path the subagent reads it by. test_after's output may be a folder too, and a change of any file under it is a
 change of the output. read_only and write_only check the path that Read, Grep, Write or Edit is
 given, a Grep given none reading the folder it runs in; a command a run_only lane names reads and
 writes what it does unchecked, so name only commands whose reads and writes you accept.

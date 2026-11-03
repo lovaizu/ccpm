@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "open",
+  "description": "The points the design leaves open that bear on the work's quality, each with the question it bears on.",
+  "type": "object",
+  "required": ["open"],
+  "additionalProperties": false,
+  "properties": {
+    "open": {
+      "type": "array",
+      "description": "empty where the design leaves nothing open, so a file of an earlier round is never read as this one's",
+      "items": {
+        "type": "object",
+        "required": ["question", "what"],
+        "additionalProperties": false,
+        "properties": {
+          "question": {"type": "string"},
+          "what": {"type": "string"}
+        }
+      }
+    }
+  }
+}

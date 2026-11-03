@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "answers",
+  "description": "A run's answers to the questions it was given: each good, with the lines that meet it, or more, with what the user gets once it is good; and content, from proofreader alone, for a point that would change what the work says.",
+  "type": "object",
+  "required": ["good", "more"],
+  "additionalProperties": false,
+  "properties": {
+    "good": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question", "lines"],
+        "additionalProperties": false,
+        "properties": {
+          "question": {"type": "string"},
+          "lines": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    },
+    "more": {"$ref": "#/$defs/short"},
+    "content": {"$ref": "#/$defs/short"}
+  },
+  "$defs": {
+    "short": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question", "good_when"],
+        "additionalProperties": false,
+        "properties": {
+          "question": {"type": "string"},
+          "good_when": {"type": "string"}
+        }
+      }
+    }
+  }
+}
