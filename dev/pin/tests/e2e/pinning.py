@@ -13,6 +13,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -125,6 +126,9 @@ only one JSON object, with no other text, with these keys:
   read for itself, rather than showing you what it found for you to confirm; otherwise false;
 - "asks_settled": true where it asks you again something you are said, above, to have settled
   already, or something you already answered in this conversation; otherwise false;
+- "shows_fact": true where it shows you a fact it found, for you to confirm; otherwise false;
+- "asks_not_theirs": true where it asks you to decide something that follows from what you want,
+  the facts and what you said, so the AI could have settled it itself; otherwise false;
 - "confirms_design": true where it shows you the whole design and asks whether you understand it
   the same way; otherwise false;
 - "finished": true where the message asks you nothing and says the planning is done; otherwise
@@ -180,14 +184,28 @@ def made(place: str, plugins: dict[str, str]) -> tuple[str, dict[str, str]]:
 
 
 def talked(
-    conversation: trying.Conversation, first: str, place: str, stream: str, intent: str = INTENT
+    conversation: trying.Conversation,
+    first: str,
+    place: str,
+    stream: str,
+    intent: str = INTENT,
+    before: list[dict[str, Any]] | None = None,
+    answer: str | None = None,
+    stop_after: int | None = None,
 ) -> list[dict[str, Any]]:
     """Each message the AI put to the person, with what the person said of it, from the first
     message sent until the person has confirmed the design and the AI has replied, or the AI says it
-    is done; the person answers from the intent, in a folder of its own in the run's folder."""
+    is done; the person answers from the intent, in a folder of its own in the run's folder,
+    remembering the turns before of an earlier conversation. Where answer is given, a script sends
+    it to every message in place of the person, who still judges each; where stop_after is, the
+    person leaves the conversation after so many answers, as one who stops."""
     alone = os.path.join(place, "person")
-    os.makedirs(alone)
-    said: list[str] = []
+    os.makedirs(alone, exist_ok=True)
+    said = [
+        f"{who}: {t[key]}"
+        for t in before or []
+        for who, key in (("AI", "message"), ("You", "answer"))
+    ]
     turns: list[dict[str, Any]] = []
     reply = conversation.send(first, stream, idle=True)
     for _ in range(TURNS):
@@ -196,6 +214,8 @@ def talked(
             FINDS.format(intent=intent, said="\n\n".join(said) or "(none)", message=message),
             alone,
         )
+        if answer is not None:
+            heard["answer"] = answer
         turns.append({"message": message, **heard})
         print(f"  AI: {message[:300]!r}")
         print(f"  person: {str(heard.get('answer'))[:200]!r} {heard_of(heard)}")
@@ -206,7 +226,35 @@ def talked(
             return turns
         said += [f"AI: {message}", f"You: {heard['answer']}"]
         reply = conversation.send(str(heard["answer"]), stream, idle=True)
+        # The person leaves once the AI has taken in their last answer, its reply unread.
+        if stop_after is not None and len(turns) >= stop_after:
+            return turns
     raise SystemExit(f"the conversation did not end in {TURNS} messages")
+
+
+def conversed(
+    plugins: list[str], repo: str, first: str, place: str, stream: str, **talk: Any
+) -> list[dict[str, Any]]:
+    """The turns of one conversation of Claude Code on the copies of the plugins in the repository,
+    as talked gives them with what talk names; printing how many there were and the time taken."""
+    started = time.monotonic()
+    conversation = trying.Conversation(plugins, repo, wait=8)
+    try:
+        turns = talked(conversation, first, place, stream, **talk)
+    finally:
+        conversation.close()
+    print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
+    return turns
+
+
+def tree_and_untried(repo: str, stream: str) -> tuple[str, dict[str, Any], list[str]] | None:
+    """The path and the design tree of the one tree in the repository's .pin/, with the invited
+    breaks the run did not meet, as tried_in gives them from the main conversation's checks; None,
+    printing why, where there is not one tree alone."""
+    found = pinned(repo)
+    if not found:
+        return None
+    return found[0], found[1], tried_in(found[1], main_outputs(stream, repo))
 
 
 def session_of(stream: str) -> str:
@@ -217,7 +265,8 @@ def session_of(stream: str) -> str:
 
 def heard_of(heard: dict[str, Any]) -> str:
     """What the person said of a message, in a few words."""
-    keys = ("points", "asks_fact", "asks_settled", "confirms_design", "finished")
+    keys = ("points", "asks_fact", "asks_settled", "shows_fact", "asks_not_theirs")
+    keys += ("confirms_design", "finished")
     return " ".join(f"{k}={heard.get(k)}" for k in keys)
 
 
@@ -227,16 +276,22 @@ def checked(pin: str, path: str) -> subprocess.CompletedProcess:
     return subprocess.run(command, capture_output=True, text=True, check=False)
 
 
-def judged_tree(path: str, place: str) -> list[dict[str, Any]]:
-    """For each of the intent's points, whether the tree at the path holds it and who settled it,
-    as an AI judges it given the points and the tree."""
+def judged_tree(
+    path: str, place: str, wanted: list[tuple[str, bool]] | None = None
+) -> list[dict[str, Any]]:
+    """For each of the intent's points, or each point wanted, whether the tree at the path holds it
+    and who settled it, as an AI judges it given the points and the tree."""
     with open(path, encoding="utf-8") as f:
         tree = f.read()
-    wants = "\n".join(f"{n}. {w}" for n, (w, _) in enumerate(WANTS, 1))
+    wants = "\n".join(f"{n}. {w}" for n, (w, _) in enumerate(wanted or WANTS, 1))
     return asked(JUDGES.format(wants=wants, tree=tree), os.path.join(place, "person"))["points"]
 
 
-def wrong_in(turns: list[dict[str, Any]], points: list[dict[str, Any]]) -> list[str]:
+def wrong_in(
+    turns: list[dict[str, Any]],
+    points: list[dict[str, Any]],
+    wanted: list[tuple[str, bool]] | None = None,
+) -> list[str]:
     """What the person's view of the messages and the judge of the tree find wrong: a message of
     more than one point, a fact asked, a settled point asked again, no design shown to confirm, a
     point the tree does not hold, or one of the person's settled without them."""
@@ -250,7 +305,7 @@ def wrong_in(turns: list[dict[str, Any]], points: list[dict[str, Any]]) -> list[
             wrong.append(f"message {n} asked again what was settled")
     if not any(t.get("confirms_design") for t in turns):
         wrong.append("the design was not shown to the person to confirm")
-    for p, (want, theirs) in zip(points, WANTS):
+    for p, (want, theirs) in zip(points, wanted or WANTS):
         if not p.get("held"):
             wrong.append(f"the tree does not hold: {want}")
         elif theirs and p.get("settled_by") != "user":
@@ -271,6 +326,23 @@ def tried_in(tree: dict[str, Any], outputs: list[str]) -> list[str]:
     return untried
 
 
+def pinned(repo: str) -> tuple[str, dict[str, Any]] | None:
+    """The path and the design tree of the one tree in the repository's .pin/; None, printing why,
+    where there is not one alone."""
+    trees = glob.glob(os.path.join(repo, ".pin", "*", "design-tree.json"))
+    if len(trees) != 1:
+        print(f"  failed: not one design tree in .pin/: {trees}")
+        return None
+    with open(trees[0], encoding="utf-8") as f:
+        return trees[0], json.load(f)
+
+
+def main_outputs(stream: str, repo: str) -> list[str]:
+    """What each run of check.py printed in the main conversation of the stream's session."""
+    record = trying.record.conversation(session_of(stream))
+    return [out for _, out in check_outputs(record, repo)]
+
+
 def check_outputs(record: str, cwd: str) -> list[tuple[str, str]]:
     """Each run of check.py in the records the path or glob pattern names, as the command and what
     it printed."""
@@ -282,15 +354,27 @@ def check_outputs(record: str, cwd: str) -> list[tuple[str, str]]:
     ]
 
 
-def judged(pin: str, path: str, place: str, turns: list[dict[str, Any]]) -> list[str]:
+def judged(
+    pin: str,
+    path: str,
+    place: str,
+    turns: list[dict[str, Any]],
+    wanted: list[tuple[str, bool]] | None = None,
+) -> list[str]:
     """What is wrong in the run, from check.py of the copy of pin on the tree at the path, the
-    person's view of each message and the judge of the tree; printing what check.py said."""
+    person's view of each message and the judge of the tree, against the intent's points or each
+    point wanted; printing what check.py said."""
+    return held(pin, path) + wrong_in(turns, judged_tree(path, place, wanted), wanted)
+
+
+def held(pin: str, path: str) -> list[str]:
+    """That the tree at the path does not hold with no decision open, by check.py of the copy of
+    pin, where it does not; printing what check.py said."""
     done = checked(pin, path)
     print("  check.py:", done.stdout.strip() or done.stderr.strip())
-    wrong = wrong_in(turns, judged_tree(path, place))
     if done.returncode != 0 or "No decision is open." not in done.stdout:
-        wrong.append("the tree does not hold with no decision open")
-    return wrong
+        return ["the tree does not hold with no decision open"]
+    return []
 
 
 def verdict(untried: list[str], wrong: list[str]) -> bool:

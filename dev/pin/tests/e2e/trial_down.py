@@ -17,10 +17,7 @@ of the intent, the person's own settled by them. Run as `python3 dev/pin/tests/e
 
 from __future__ import annotations
 
-import glob
-import json
 import os
-import time
 
 import pinning
 from pinning import trying
@@ -33,23 +30,12 @@ def run(number: int) -> bool:
     place = trying.folder("pin", f"trial-down-{number}")
     repo, copies = pinning.made(place, {})
     stream = os.path.join(place, "stream.jsonl")
-    started = time.monotonic()
-    conversation = trying.Conversation([copies["pin"]], repo, wait=8)
-    try:
-        turns = pinning.talked(conversation, FIRST, place, stream)
-    finally:
-        conversation.close()
-    print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
-    trees = glob.glob(os.path.join(repo, ".pin", "*", "design-tree.json"))
-    if len(trees) != 1:
-        print(f"  failed: not one design tree in .pin/: {trees}")
+    turns = pinning.conversed([copies["pin"]], repo, FIRST, place, stream)
+    found = pinning.tree_and_untried(repo, stream)
+    if not found:
         return False
-    with open(trees[0], encoding="utf-8") as f:
-        tree = json.load(f)
-    session = pinning.session_of(stream)
-    outputs = [out for _, out in pinning.check_outputs(trying.record.conversation(session), repo)]
-    untried = pinning.tried_in(tree, outputs)
-    return pinning.verdict(untried, pinning.judged(copies["pin"], trees[0], place, turns))
+    path, _, untried = found
+    return pinning.verdict(untried, pinning.judged(copies["pin"], path, place, turns))
 
 
 if __name__ == "__main__":

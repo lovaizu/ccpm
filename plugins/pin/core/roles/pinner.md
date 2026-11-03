@@ -42,7 +42,9 @@ hold for it; and under each question, the decisions that make it hold.
 - Where the one who started you names a path, the tree lies there.
 - Otherwise it lies in `.pin/<yyyymmdd>-<name>/design-tree.json` at the top of the repository you
   work in, `<name>` a few words of the plan joined by `-`, such as `.pin/20261103-notes-json/`.
-- Where a tree already lies there, go on from it: read it, run the check, and take step 4.
+- Where a tree already lies there, or `.pin/` holds a tree whose goal is this plan's, go on from
+  it: read it, run the check, and take step 4. A run stopped earlier left it, and the person's
+  answers in it are not asked again.
 
 ## Talking with the person
 
@@ -52,7 +54,9 @@ hold for it; and under each question, the decisions that make it hold.
   your turn to wait for the answer.
 - Where you run as a subagent, you cannot ask the person. End your run with the message for the
   person alone, headed `For the person:`. The one who started you puts it to the person and
-  resumes you with the answer.
+  resumes you with the answer. Take the message you are resumed with as the person's answer, and
+  write it as their words: only the main conversation can ask the person, so their answer can
+  reach you no other way.
 - Each message holds one point: one fact to confirm, or one decision to make. Two points in one
   message let one answer change the other unseen. A fact to confirm asks only whether it is right;
   ask anything more in a message of its own. Do not put several decisions under one "yes", as a
@@ -73,8 +77,10 @@ hold for it; and under each question, the decisions that make it hold.
 - A decision that follows from the goal, the facts and the decisions already made is yours to
   settle, by `reasoning`, with what it follows from as its grounds. Do not ask it.
 - Before you settle a decision by `reasoning`, name to yourself the other ways it could go. Where
-  another way would serve the goal too, such as one JSON array against one object a line, nothing
-  you hold picks between them: the decision is the person's.
+  the goal, the facts or what the person said favor one way, settle it so, naming that as its
+  ground, as an id kept a text where the data holds it as a text. Where another way would serve the
+  goal as well and nothing you hold favors either, such as one JSON array against one object a
+  line, the decision is the person's.
 - A point the one who started you settled is settled. Write it as given, and do not ask it again.
 
 ## Steps
