@@ -19,17 +19,25 @@ Lane's user is the developer AI, an AI that builds Claude Code plugins.
   - KR2.2: The lead time from the developer AI's first flow for a plugin to the first run that keeps
     it. Shorter is better.
 
+In each objective, the first key result comes first: the second is shortened only by a change
+that keeps the first.
+
 Key results have no target values. When a measure becomes a target, it stops being a good measure
 (Goodhart's law). Use the key results to judge how close the objective is.
 
 ## Scenarios
 
 Both scenarios run on `changelog`, the developer AI's plugin that writes a project's
-`CHANGELOG.md`. The developer AI is an AI, and runs `changelog` itself to try it. `lay.py` is
-Lane's script that the developer AI runs. The check script is the script that `lay.py` puts into
-`changelog`. The subagents of `changelog` are AIs: `lead` is the orchestrator, `writer` writes the
-new entries into `CHANGELOG.md`, and `reviewer` compares the entries with the commits. No step
-waits for a person.
+`CHANGELOG.md`. The participants:
+
+- developer AI (AI): builds `changelog`, and runs it itself to try it.
+- `lay.py` (script): Lane's script that the developer AI runs.
+- check script (script): the script that `lay.py` puts into `changelog`.
+- `lead` (AI): the orchestrator of `changelog`.
+- `writer` (AI): the subagent of `changelog` that writes the new entries into `CHANGELOG.md`.
+- `reviewer` (AI): the subagent of `changelog` that compares the entries with the commits.
+
+No step waits for a person.
 
 ### O1: The developer AI holds writer to two rules of its step
 

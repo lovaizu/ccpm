@@ -55,7 +55,7 @@ usage: lay.py print <proposal>
        lay.py up <plugin>
 ```
 
-After an update, run `lay.py up <your plugin's folder>`. It puts the new check script into your
+After an update, run `lay.py up <your plugin's folder>`. It puts Lane's new checks into your
 plugin and lists the rules your plugin has.
 
 ## Walkthrough
@@ -63,10 +63,26 @@ plugin and lists the rules your plugin has.
 At the end, a subagent of your plugin keeps two rules of its step on a run, with no code of yours.
 
 The plugin `changelog` writes a project's `CHANGELOG.md`, and lives in the folder `changelog/` of
-a git repository. Its subagent `writer` has this step in `changelog/agents/writer.md`:
+a git repository. It has two files. `changelog/.claude-plugin/plugin.json` names it:
+
+```json
+{"name": "changelog", "description": "Writes a project's CHANGELOG.md.", "version": "0.1.0"}
+```
+
+`changelog/agents/writer.md` is its subagent `writer`, whose step 3 writes the entries:
 
 ```markdown
+---
+name: writer
+description: Writes the CHANGELOG.md entries for the commits since its last version.
+---
+
+## Steps
+
+1. Read `CHANGELOG.md` to learn its last version and its form.
+2. Read the commits since then with `git log --oneline`.
 3. Write the new entries into `CHANGELOG.md`.
+4. Reply with the entries you wrote.
 ```
 
 `writer` must write no other file and must not commit. You write these two rules in a proposal,
@@ -108,7 +124,8 @@ Removed its folder <the repository>/.lane/20261102-changelog.
 Step 3 in `changelog/agents/writer.md` now reads as `lay.py print` showed it.
 
 The rest of this walkthrough is not yet from a real run: no run of `changelog` in Claude Code is
-recorded. You ask `changelog` for an entry and a commit, and it starts `writer`. `writer` writes
+recorded. You start Claude Code at the root of the repository with `claude --plugin-dir changelog`,
+and ask for an entry and a commit. Claude Code starts `writer`. `writer` writes
 `CHANGELOG.md`, and the check lets the write through. `writer` reads the new sentences in step 3,
 and ends with `CHANGELOG.md` written and no commit made.
 

@@ -64,7 +64,8 @@ The subagent can write its call again, but only the operator can fix a fault.
 
 The check script judges from the events that Claude Code gives its hooks, from the subagent's
 record, the file in which Claude Code writes what the subagent did, and from the calls it keeps
-itself. It never judges from what a subagent writes about its work.
+itself. Of what a subagent writes, it reads only the work itself, such as a file it wrote or a line
+of its answer that the flow names. It never takes a subagent's word that it kept a rule or a move.
 
 An AI that says it followed a step may not have followed it.
 
@@ -111,7 +112,8 @@ wherever Lane is missing.
   [A subagent's part](../../plugins/lane/docs/lanes.md#a-subagents-part) says.
 - `called.py` alone keeps each call as it comes back, and the end of each subagent of the flow.
   `moves.py` alone decides the move due from the flow and the kept calls. `ports.py` alone reads a
-  text of the plugin, by Lane's own reading or through the plugin's adapter.
+  text of the plugin, such as a list of items to answer, into Port JSON, the JSON in which a check
+  takes it. It reads by Lane's own reading, or through the plugin's adapter.
 - Hooks go on subagents only, not on skills, for the reasons that
   [How a plugin works](../architecture.md#the-guard-tells-each-role-its-steps-again) gives.
 - `called.py` keeps the calls itself rather than read only the record, because Claude Code may write
@@ -137,8 +139,10 @@ sequenceDiagram
   participant PF as Plugin files
   DA->>L: print (Proposal)
   L->>P: checks (Proposal)
-  P->>AD: runs on each test case (Port JSON)
-  AD-->>P: Port JSON
+  opt the proposal names an adapter
+    P->>AD: runs on each test case (Port JSON)
+    AD-->>P: Port JSON
+  end
   P-->>L: Rule, Flow, or what is wrong
   L->>PF: reads each step (Step)
   L->>LN: makes each sentence (Rule)
@@ -157,7 +161,10 @@ sequenceDiagram
   DA->>L: write (Proposal)
   L->>P: checks (Proposal)
   P-->>L: Rule, Flow
-  L->>PF: writes Step, Hook entry, Rules laid, Adapter, the check script
+  L->>PF: writes Step, Hook entry, Rules laid, the check script
+  opt the proposal names an adapter
+    L->>PF: writes Adapter, Test cases
+  end
   L->>CC: claude plugin validate
   CC-->>L: passed
   L-->>DA: what it wrote, and the proposal removed
@@ -167,12 +174,15 @@ A subagent with rules on a run, `writer` of the UX's O1:
 
 ```mermaid
 sequenceDiagram
+  participant OP as Developer AI (Operator)
   participant SA as writer (Subagent)
   participant CC as Claude Code
   participant H as hook.py
   participant G as guard.py
   participant C as called.py
   participant LN as lanes/
+  OP->>CC: asks changelog for an entry and a commit
+  CC->>SA: starts writer
   SA->>CC: writes CHANGELOG.md
   CC->>H: PreToolUse (Event)
   H->>G: checks (Event)
@@ -193,12 +203,14 @@ sequenceDiagram
     CC-->>SA: the plugin's name and the sentence
   end
   SA->>CC: ends with CHANGELOG.md written
+  CC-->>OP: writer's answer (Answer)
 ```
 
 An orchestrator on a run, `lead` of the UX's O2:
 
 ```mermaid
 sequenceDiagram
+  participant OP as Developer AI (Operator)
   participant O as lead (Subagent)
   participant CC as Claude Code
   participant H as hook.py
@@ -206,6 +218,7 @@ sequenceDiagram
   participant C as called.py
   participant M as moves.py
   participant S as writer, reviewer (Subagent)
+  OP->>CC: asks changelog to update CHANGELOG.md for the next release
   CC->>H: SubagentStart of lead (Event)
   H->>C: tells the move (Event)
   C->>M: asks the next start (Flow, Kept call)
@@ -241,6 +254,7 @@ sequenceDiagram
   G->>M: asks the next start (Flow, Kept call)
   M-->>G: none, the flow is done
   H-->>CC: nothing to tell, so lead ends
+  CC-->>OP: lead's answer, the reviewed entries (Answer)
 ```
 
 - A start counts once the started subagent has ended, in the foreground or the background. In an
@@ -294,7 +308,7 @@ plugins/lane/
 │   ├── called.py, record.py           called.py <module · Python 3.9>
 │   ├── moves.py                       moves.py <module · Python 3.9>
 │   ├── ports.py                       ports.py <module · Python 3.9>
-│   └── lanes_json.py, schema.py, forms.py, template.py   Rules laid, Flow, and the forms <Python 3.9>
+│   └── lanes_json.py, schema.py, forms.py, template.py   shared by lay.py and guard.py: Rules laid, Flow, and the forms an output is held to <Python 3.9>
 └── docs/lanes.md, docs/flow.md, README.md, CHANGELOG.md, how-it-works.svg   for users <Markdown, SVG>
 
 dev/lane/
@@ -306,7 +320,8 @@ dev/lane/
 
 .lane/<yyyymmdd>-<plugin>/             Proposal, and <plugin>/adapters/ with Adapter and Test cases
 <temporary folder>/lane/<yyyymmdd>-<session>/<agent>.jsonl   Calls kept
-<the plugin>/hooks/                    hooks.json, lanes.json, adapters/ (the Adapter that runs), lane/
+<the plugin>/agents/                   Subagent file, with each Step
+<the plugin>/hooks/                    hooks.json (Hook entry), lanes.json (Rules laid, Flow), adapters/ (the Adapter that runs, Test cases), lane/ (the check script)
 ```
 
 ## Test
@@ -331,3 +346,7 @@ is tested in the hook process's row.
   around the rule the next time.
 - Both processes weigh ●●● in unit tests. A failure writes what no one approved, or lets a break
   through in a plugin whose operator never sees Lane.
+- Integration and end-to-end tests weigh ●●○. The unit tests hold every behavior, as
+  [Unit tests: code](../architecture.md#unit-tests-code) says. So integration tests check only how
+  the code meets `sh`, the files and `claude`, and the trials only how an AI meets the sentences and
+  the moves.
