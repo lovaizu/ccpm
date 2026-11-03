@@ -38,7 +38,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 **Grounds**
 
 - [Jobs to Be Done Theory](https://www.christenseninstitute.org/theory/jobs-to-be-done/), Clayton Christensen Institute, christenseninstitute.org, 2024: "Everyone has Jobs to Be Done in their lives—the progress they’re trying to make as they strive toward a goal or aspiration within particular circumstances."
-- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999, The one page Summary: "Brainstorm all the actors, human and non, who have an operational goal against the system."
+- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999, The one page Summary: "Brainstorm all the actors, human and non, who have an operational goal against the system."
 - [Define Your Market](https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/), Ulwick, Jobs-to-be-Done Playbook, strategyn.com, 2021: "Products don’t have jobs-to-be-done—people do."
 - [Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick](https://strategyn.com/jobs-to-be-done/), Strategyn (Tiffany Anderson), strategyn.com, 2024: "Identify who is executing the job and define the core functional job in a single, solution-free statement."
 - [Define Your Market](https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/), Ulwick, Jobs-to-be-Done Playbook, strategyn.com, 2021: "The product will help the group of people: [verb] + [object] + [contextual clarifier]"
@@ -114,10 +114,10 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Basic Use Case Template](https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template), Cockburn, HaT TR.96.03a, 1998: "Use Case: <number> <the name should be the goal as a short active verb phrase>"
 - [Basic Use Case Template](https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template), Cockburn, HaT TR.96.03a, 1998: "<put here the steps of the scenario from trigger to goal delivery, and any cleanup after>"
 - [Basic Use Case Template](https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template), Cockburn, HaT TR.96.03a, 1998: "Trigger: <the action upon the system that starts the use case, may be time event>"
-- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "The main success scenario is the most common, or perhaps easiest to understand, scenario."
-- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Write each sentence as a goal succeeding, distinctly moving the process forward. Write: "At some time, ActorA kicks ActorB with some information", or "System verifies validation conditions are met", or "System updates its state", or "ActorA has ActorB kick ActorC"."
+- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "The main success scenario is the most common, or perhaps easiest to understand, scenario."
+- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Write each sentence as a goal succeeding, distinctly moving the process forward. Write: "At some time, ActorA kicks ActorB with some information", or "System verifies validation conditions are met", or "System updates its state", or "ActorA has ActorB kick ActorC"."
 - [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html), Mermaid, mermaid.js.org: "It is possible to express loops in a sequence diagram."
-- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Does it run from trigger to delivery of the success end condition?"
+- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Does it run from trigger to delivery of the success end condition?"
 
 ### Q6: Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
 
@@ -131,9 +131,9 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 **Grounds**
 
 - [Unified Modeling Language 2.5.1](https://www.omg.org/spec/UML/2.5.1/PDF), OMG, 2017, chapter 18: "An Actor models a type of role played by an entity that interacts with the subjects of its associated UseCases (e.g., by exchanging signals and data). Actors may represent roles played by human users, external hardware, or other systems."
-- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "An actor might be a person, a company or organization, a computer program or a computer system, hardware or software or both."
+- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "An actor might be a person, a company or organization, a computer program or a computer system, hardware or software or both."
 - [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html), Mermaid, mermaid.js.org: "The actor can have a convenient identifier and a descriptive label."
-- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Is it clear which actor is operating the goal (who is "kicking the ball?)"
+- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Is it clear which actor is operating the goal (who is "kicking the ball?)"
 
 ### Q7: Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
 
@@ -146,6 +146,6 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 **Grounds**
 
-- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "For computer systems, it is rare that we open up the black box."
-- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Show the intent of the actor, what it/they want and get accomplished in that step."
+- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "For computer systems, it is rare that we open up the black box."
+- [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Show the intent of the actor, what it/they want and get accomplished in that step."
 - [Deriving Specifications from Requirements: An Example](https://www.pamelazave.com/turnstile.pdf), Jackson and Zave, ICSE 1995: "The requirement is concerned entirely with the environment, where the effects and benefits of the machine will be felt and assessed: the machine is purely a means to the end of achieving the required effect in the environment."

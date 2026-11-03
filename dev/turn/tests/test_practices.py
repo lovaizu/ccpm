@@ -1,12 +1,20 @@
 """How practices.py checks a best practice's form and makes the Markdown a person reads: the check
-names each fault and each Markdown not as its JSON makes it, and write puts the Markdown beside
-the JSON."""
+names each fault and each Markdown not as its JSON makes it, write puts the Markdown beside the
+JSON, and sources names each ground whose page is not the one meant."""
 
+import contextlib
 import copy
+import email.message
+import http.client
+import io
 import json
 import os
+import runpy
 import tempfile
 import unittest
+import urllib.error
+import urllib.request
+from unittest import mock
 
 import helpers  # noqa: F401  (puts turn's scripts on the path)
 import practices
@@ -89,6 +97,156 @@ class Faults(unittest.TestCase):
 
         self.assertEqual(changed(quote), [])
 
+    def test_a_part_no_question_is_about(self):
+        def add(d):
+            d["parts"].append({"id": "c", "what": "C."})
+
+        self.assertEqual(changed(add), ["part c has no question about it"])
+
+    def test_no_question_about_the_whole(self):
+        def narrow(d):
+            d["benefits"][1]["about"] = "b"
+
+        self.assertEqual(changed(narrow), ["no question is about the whole"])
+
+    def test_a_value_that_is_no_text_names_no_question(self):
+        def number(d):
+            d["parts"][0]["level"] = 3
+
+        self.assertEqual(changed(number), [])
+
+
+class Plain(unittest.TestCase):
+    def test_reads_a_page_as_its_words(self):
+        page = "<p>A <b>Bold</b> &amp; <code>`x`</code> \u201cquoted\u201d \u2014 "
+        page += "it\u2019s <i>so</i> .</p>"
+        self.assertEqual(practices.plain(page), 'a bold & x "quoted" - it\'s so.')
+
+
+def response(kind, body):
+    """What urlopen gives for a page of the kind and body, as a context manager."""
+    answer = mock.MagicMock()
+    answer.__enter__.return_value.headers.get.return_value = kind
+    answer.__enter__.return_value.read.return_value = body
+    return answer
+
+
+def refused(test, code):
+    """A server's refusal with the code, closed when the test ends, as urlopen's caller would."""
+    error = urllib.error.HTTPError("https://x.example/t", code, "no", email.message.Message(), None)
+    test.addCleanup(error.close)
+    return error
+
+
+class Fetch(unittest.TestCase):
+    def setUp(self):
+        practices.fetch.cache_clear()
+        self.addCleanup(practices.fetch.cache_clear)
+        self.sleep = mock.patch.object(practices.time, "sleep").start()
+        self.addCleanup(mock.patch.stopall)
+
+    def opened(self, *answers):
+        return mock.patch.object(urllib.request, "urlopen", side_effect=answers)
+
+    def test_gives_the_type_and_the_body_opening_each_page_once(self):
+        with self.opened(response("text/html", b"page")) as urlopen:
+            self.assertEqual(practices.fetch("https://x.example/t"), ("text/html", b"page"))
+            self.assertEqual(practices.fetch("https://x.example/t"), ("text/html", b"page"))
+        self.assertEqual(urlopen.call_count, 1)
+        request = urlopen.call_args.args[0]
+        self.assertEqual(request.full_url, "https://x.example/t")
+        self.assertEqual(request.get_header("User-agent"), "Mozilla/5.0")
+
+    def test_reads_a_file_on_github_as_its_own_text(self):
+        with self.opened(response("text/plain", b"file")) as urlopen:
+            practices.fetch("https://github.com/o/r/blob/main/a/b.md")
+        expected = "https://raw.githubusercontent.com/o/r/main/a/b.md"
+        self.assertEqual(urlopen.call_args.args[0].full_url, expected)
+
+    def test_asks_again_after_a_longer_wait_each_time_it_is_asked_to(self):
+        page = response("text/html", b"page")
+        with self.opened(*[refused(self, 429) for _ in range(3)], page) as urlopen:
+            self.assertEqual(practices.fetch("https://x.example/t"), ("text/html", b"page"))
+        self.assertEqual(urlopen.call_count, practices.TRIES)
+        self.assertEqual(
+            self.sleep.call_args_list,
+            [
+                mock.call(practices.WAIT),
+                mock.call(2 * practices.WAIT),
+                mock.call(3 * practices.WAIT),
+            ],
+        )
+
+    def test_gives_up_after_its_tries(self):
+        with (
+            self.opened(*[refused(self, 429) for _ in range(practices.TRIES)]),
+            self.assertRaises(urllib.error.HTTPError),
+        ):
+            practices.fetch("https://x.example/t")
+        self.assertEqual(self.sleep.call_count, practices.TRIES - 1)
+
+    def test_any_other_refusal_is_not_asked_again(self):
+        with self.opened(refused(self, 404)) as urlopen, self.assertRaises(urllib.error.HTTPError):
+            practices.fetch("https://x.example/t")
+        self.assertEqual((urlopen.call_count, self.sleep.call_count), (1, 0))
+
+
+def page(body, kind="text/html; charset=utf-8"):
+    return lambda url: (kind, body.encode("utf-8"))
+
+
+def failing(error):
+    def get(url):
+        raise error
+
+    return get
+
+
+class Sources(unittest.TestCase):
+    def test_a_page_holding_its_title_and_words_is_the_one_meant(self):
+        data = copy.deepcopy(DATA)
+        data["practices"][0]["grounds"] = [dict(G, quote="it\u2019s so")]
+        self.assertEqual(practices.sources(data, page("<title>T</title><p>It's so.</p>")), [])
+
+    def test_a_page_not_holding_its_title_or_its_words(self):
+        where = "Q1 ground 1 (https://x.example/t)"
+        self.assertEqual(
+            practices.sources(DATA, page("<p>none</p>")),
+            [f"{where} does not hold its title", f"{where} does not hold its quote"],
+        )
+
+    def test_a_page_that_is_no_html_or_text_is_not_checked(self):
+        where = "Q1 ground 1 (https://x.example/t)"
+        self.assertEqual(
+            practices.sources(DATA, page("", "application/pdf")),
+            [f"{where} not checked: the page is application/pdf"],
+        )
+        self.assertEqual(
+            practices.sources(DATA, page("", "")), [f"{where} not checked: the page is of no type"]
+        )
+
+    def test_a_page_of_xhtml_is_checked(self):
+        self.assertEqual(practices.sources(DATA, page("T y", "application/xhtml+xml")), [])
+
+    def test_each_way_a_page_fails_to_open(self):
+        for error in (
+            refused(self, 404),
+            urllib.error.URLError("no such host"),
+            TimeoutError("timed out"),
+            ConnectionResetError("reset"),
+            http.client.IncompleteRead(b""),
+            http.client.InvalidURL("bad"),
+        ):
+            with self.subTest(error=error):
+                found = practices.sources(DATA, failing(error))
+                self.assertEqual(
+                    found, [f"Q1 ground 1 (https://x.example/t) does not open: {error}"]
+                )
+
+    def test_a_fault_of_the_script_is_not_taken_for_a_page_that_fails_to_open(self):
+        with self.assertRaises(TypeError):
+            practices.sources(DATA, failing(TypeError("a bug")))
+
 
 class Markdown(unittest.TestCase):
     def test_holds_each_part_question_and_method_under_its_question(self):
@@ -129,8 +287,55 @@ class Main(unittest.TestCase):
             practices.main(["write", path])
             self.assertEqual(practices.main(["check", path]), 1)
 
+    def test_check_fails_on_a_markdown_changed_by_hand(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = os.path.join(folder, "kind.json")
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(DATA, f)
+            practices.main(["write", path])
+            with open(os.path.join(folder, "kind.md"), "a", encoding="utf-8") as f:
+                f.write("More.\n")
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(practices.main(["check", path]), 1)
+            self.assertIn("kind.md is not as its JSON makes it; run write", err.getvalue())
+
+    def test_sources_fails_on_a_ground_whose_page_is_not_the_one_meant(self):
+        practices.fetch.cache_clear()
+        self.addCleanup(practices.fetch.cache_clear)
+        with tempfile.TemporaryDirectory() as folder:
+            path = os.path.join(folder, "kind.json")
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(DATA, f)
+            err = io.StringIO()
+            with (
+                mock.patch.object(
+                    urllib.request, "urlopen", return_value=response("text/html", b"T")
+                ),
+                contextlib.redirect_stderr(err),
+            ):
+                self.assertEqual(practices.main(["sources", path]), 1)
+            expected = (
+                f"practices.py: {path}: Q1 ground 1 (https://x.example/t) does not hold its quote"
+            )
+            self.assertEqual(err.getvalue(), expected + "\n")
+            practices.fetch.cache_clear()
+            with mock.patch.object(
+                urllib.request, "urlopen", return_value=response("text/html", b"T y")
+            ):
+                self.assertEqual(practices.main(["sources", path]), 0)
+
     def test_refuses_an_unknown_command(self):
         self.assertEqual(practices.main(["print"]), 2)
+
+    def test_the_script_takes_the_arguments_after_its_own_path(self):
+        with (
+            mock.patch.object(practices.sys, "argv", ["practices.py", "print"]),
+            contextlib.redirect_stderr(io.StringIO()),
+            self.assertRaises(SystemExit) as end,
+        ):
+            runpy.run_path(practices.__file__, run_name="__main__")
+        self.assertEqual(end.exception.code, 2)
 
 
 if __name__ == "__main__":

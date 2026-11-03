@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import functools
 import html
+import http.client
 import json
 import os
 import re
@@ -117,15 +118,16 @@ def fetch(url: str) -> tuple[str, bytes]:
     # A file on GitHub is read as its own text, not the page around it that holds it as data.
     url = re.sub(r"^https://github\.com/([^/]+)/([^/]+)/blob/", RAW, url)
     request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    for attempt in range(TRIES):
+    tried = 0
+    while True:
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
                 return response.headers.get("Content-Type", ""), response.read()
         except urllib.error.HTTPError as error:
-            if error.code != 429 or attempt == TRIES - 1:
+            tried += 1
+            if error.code != 429 or tried == TRIES:
                 raise
-            time.sleep(WAIT * (attempt + 1))
-    raise AssertionError("unreachable")
+            time.sleep(WAIT * tried)
 
 
 def sources(data: dict[str, Any], get: Callable[[str], tuple[str, bytes]] = fetch) -> list[str]:
@@ -138,7 +140,9 @@ def sources(data: dict[str, Any], get: Callable[[str], tuple[str, bytes]] = fetc
             where = f"{practice['benefit']} ground {n} ({item['url']})"
             try:
                 kind, body = get(item["url"])
-            except Exception as error:  # every way a page fails to open is the same fault here
+            # A page fails to open as the network or the server fails, a refusal and a timeout
+            # among them, as its answer breaks off, or as its URL is none that can be asked for.
+            except (OSError, http.client.HTTPException, ValueError) as error:
                 found.append(f"{where} does not open: {error}")
                 continue
             if not kind.startswith(("text/", "application/xhtml")):
@@ -162,7 +166,7 @@ def parts(items: list[dict[str, Any]], depth: int = 0) -> list[str]:
 
 def ground(item: dict[str, str]) -> str:
     """A ground as a link labelled with its page's title, then who wrote it and the words quoted."""
-    return f"- [{item['title']}]({item['url']}), {item['by']}: \"{item['quote']}\""
+    return f'- [{item["title"]}]({item["url"]}), {item["by"]}: "{item["quote"]}"'
 
 
 def markdown(kind: str, data: dict[str, Any]) -> str:

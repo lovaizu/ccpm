@@ -85,7 +85,7 @@
     },
     {
      "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999, The one page Summary",
      "quote": "Brainstorm all the actors, human and non, who have an operational goal against the system."
     },
@@ -283,13 +283,13 @@
     },
     {
      "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
      "quote": "The main success scenario is the most common, or perhaps easiest to understand, scenario."
     },
     {
      "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
      "quote": "Write each sentence as a goal succeeding, distinctly moving the process forward. Write: \"At some time, ActorA kicks ActorB with some information\", or \"System verifies validation conditions are met\", or \"System updates its state\", or \"ActorA has ActorB kick ActorC\"."
     },
@@ -301,7 +301,7 @@
     },
     {
      "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
      "quote": "Does it run from trigger to delivery of the success end condition?"
     }
@@ -323,7 +323,7 @@
     },
     {
      "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
      "quote": "An actor might be a person, a company or organization, a computer program or a computer system, hardware or software or both."
     },
@@ -335,7 +335,7 @@
     },
     {
      "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
      "quote": "Is it clear which actor is operating the goal (who is \"kicking the ball?)"
     }
@@ -351,13 +351,13 @@
    "grounds": [
     {
      "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
      "quote": "For computer systems, it is rare that we open up the black box."
     },
     {
      "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
      "quote": "Show the intent of the actor, what it/they want and get accomplished in that step."
     },
