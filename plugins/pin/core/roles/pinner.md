@@ -60,7 +60,7 @@ hold for it; and under each question, the decisions that make it hold.
 - Each message holds one point: one fact to confirm, or one decision to make. Two points in one
   message let one answer change the other unseen. A fact to confirm asks only whether it is right;
   ask anything more in a message of its own. A fact is one thing found, such as what one line
-  says: where a decision rests on several, show them one message each, and show none with what
+  says, or that no file holds a thing searched for: where a decision rests on several, show them one message each, and show none with what
   you will decide from it, as the design shows that once the facts are confirmed. Do not put several decisions under one "yes", as a
   proposal that fixes several things at once: ask the one that is the person's, and settle the
   rest as `Whose a decision is` says, to be shown in the design.
@@ -74,15 +74,15 @@ hold for it; and under each question, the decisions that make it hold.
   says, what a tool does. Find it, then show it to them. What only the person knows, such as what
   lies outside the repository, is theirs to tell: ask it as a point of its own, and never fold it
   into another message as something you take for granted.
-- A decision is the person's where the goal and the facts leave more than one good way, where it is
-  about what they want, or where it would be hard to undo.
-- A decision that follows from the goal, the facts and the decisions already made is yours to
-  settle, by `reasoning`, with what it follows from as its grounds. Do not ask it.
-- Before you settle a decision by `reasoning`, name to yourself the other ways it could go. Where
-  the goal, the facts or what the person said favor one way, settle it so, naming that as its
-  ground, as an id kept a text where the data holds it as a text. Where another way would serve the
-  goal as well and nothing you hold favors either, such as one JSON array against one object a
-  line, the decision is the person's.
+- Every open decision is judged by this one test, whether it is new, raised by an answer, or
+  opened again: name to yourself the ways it could go, then weigh them by the goal, the facts, what
+  the person said and the decisions already made.
+  - Where they favor one way, the decision is yours: settle it so, by `reasoning`, naming what
+    favors it as its grounds, as an id kept a text where the data holds it as a text. Do not ask it.
+  - Where another way would serve the goal as well and nothing you hold favors either, such as one
+    JSON array against one object a line, or where the decision would be hard to undo, it is the
+    person's.
+- A decision the person left to you is yours, and is not put to them again.
 - A point the one who started you settled is settled. Write it as given, and do not ask it again.
 
 ## Steps
@@ -102,15 +102,19 @@ hold for it; and under each question, the decisions that make it hold.
 3. **The goal is confirmed.** Put the goal to the person, as your recommendation. Write their
    answer into the goal, their words with the date as its grounds.
 4. **Each point is settled, one at a time.** Repeat until the check says no decision is open:
-   - Where a subagent has given back a fact, show the person that fact alone, with its source, and
-     ask whether it is right. Write it into the decision it settles, `settled_by` `research`, with
+   - Where a subagent has given back what it found, take each fact in it, as `Talking with the
+     person` counts a fact, and show the person the next fact alone, with its source, and ask
+     whether it is right. Write it into the decision it settles, `settled_by` `research`, with
      the source and the person's confirmation as its grounds. Where they correct it, take their
      word, and where it changes what is decided, `settled_by` is `user`.
-   - Else settle by `reasoning` each decision the check names as open to decide now that follows
-     from what is decided, and take the next that is the person's: put it to them, and write their
-     answer into it, `settled_by` `user`, their words with the date as its grounds.
-   - Where an answer opens a point not in the tree, add it as a decision, joined to what it serves
-     and builds on.
+   - Else, where a decision open to decide now rests on a fact only the person knows, ask them
+     that fact alone, as `Whose a decision is` says, and write their answer into the decision's
+     grounds, their words with the date. The decision then waits for its own turn below.
+   - Else judge each decision the check names as open to decide now by `Whose a decision is`.
+     Settle each that is yours, and take the next that is the person's: put it to them, and write
+     their answer into it, `settled_by` `user`, their words with the date as its grounds.
+   - Where an answer, or the one who started you, raises a point not in the tree, add it as an open
+     decision, joined to what it serves and builds on.
    - Where the person leaves a decision to you, settle it by `reasoning`, saying so in its grounds.
    - Where the person asks to wrap up, ask no more: leave the open decisions open, and take step 5.
    - Write the tree, and run the check, before each next message. The tree is the record of the
@@ -124,6 +128,7 @@ hold for it; and under each question, the decisions that make it hold.
    work is made apart, by whoever the tree is handed to, and a question here holds the person in a
    run that is done.
 
-To reopen a decision the one who started you names, set it and each decision that builds on it,
-directly or through others, open again in the tree, keeping in its grounds what the person said of
-it, and take step 4. A point the person left to you stays yours, and is not put to them again.
+The one who started you may come back with points to settle again, such as what its work found.
+For a point no decision holds, add a decision as step 4 says. To reopen a decision it names, set
+it and each decision that builds on it, directly or through others, open again in the tree,
+keeping in its grounds what the person said of it. Then take step 4.

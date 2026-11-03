@@ -7,12 +7,12 @@ and remembers the first conversation.
 
 Breaks it invites: starting a second tree for the same plan, and asking again what the person
 answered in the first conversation. A run counts only where the tree held, when the person left, a
-decision the person had settled.
+decision the person had settled or a fact they had confirmed.
 
-Each run passes where: .pin/ holds one tree; each decision the person had settled when they left is
-decided the same at the end; no message of the second conversation asked again what was settled;
-and the second conversation passes as trial_down.py's runs do. Run as
-`python3 dev/pin/tests/e2e/trial_resume.py [runs] [first]`."""
+Each run passes where: .pin/ holds one tree; each decision the person had settled or confirmed when
+they left is decided the same at the end; no message of the second conversation asked again what was
+settled; and the second conversation passes as trial_down.py's runs do. Run as `python3
+dev/pin/tests/e2e/trial_resume.py [runs] [first]`."""
 
 from __future__ import annotations
 
@@ -37,14 +37,17 @@ def run(number: int) -> bool:
     if not found:
         return False
     _, kept = found
-    theirs = {d["id"]: d["decided"] for d in kept["decisions"] if d["settled_by"] == "user"}
+    # A fact the person confirmed is one of their answers too, as the pinner writes a fact found
+    # only once they confirm it; the first answers are facts more often than decisions.
+    answered = ("user", "research")
+    theirs = {d["id"]: d["decided"] for d in kept["decisions"] if d["settled_by"] in answered}
     stream = os.path.join(place, "stream.jsonl")
     turns = pinning.conversed([copies["pin"]], repo, FIRST, place, stream, before=before)
     found = pinning.pinned(repo)
     if not found:
         return False
     path, tree = found
-    untried = [] if theirs else ["the person had settled no decision when they left"]
+    untried = [] if theirs else ["the person had answered no decision when they left"]
     decided = {d["id"]: d["decided"] for d in tree["decisions"]}
     wrong = [f"{i} changed from {d!r}" for i, d in theirs.items() if decided.get(i) != d]
     wrong += pinning.judged(copies["pin"], path, place, turns)

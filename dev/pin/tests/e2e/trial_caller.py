@@ -1,9 +1,11 @@
 """The E2E test of O2 of pin's UX, "Turn has the design of a work pinned down": a plugin standing in
 for Turn or rn, `maker`, kept beside this file, declares pin in its dependencies, and its subagent
-`designer` takes `pin:down` by its frontmatter and pins down the notes app's `--json` option from
-a tree that holds the goal and one decision already settled. Claude Code runs on Opus with copies
-of pin and of maker; the main conversation starts designer and puts each of its messages to the
-person, stood in for by an AI that answers from an intent written beforehand and never shown pin.
+`designer` takes `pin:down` by its frontmatter and pins down the notes app's `--json` option from a
+tree that holds the goal, three questions, of which the JSON's form and the scripts' change are
+decided apart, so more than one decision is open at once, and one decision already settled. Claude
+Code runs on Opus with copies of pin and of maker; the main conversation starts designer and puts
+each of its messages to the person, stood in for by an AI that answers from an intent written
+beforehand and never shown pin.
 
 Breaks it invites, beside those of trial_down.py: asking the person again what maker settled, the
 goal and the text staying the default; and running the check in a form other than the one pin's

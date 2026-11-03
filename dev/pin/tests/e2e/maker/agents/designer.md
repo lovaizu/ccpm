@@ -13,8 +13,9 @@ You design the change you are given before it is made, and hand back its design 
 1. Write the design tree at `.maker/notes-json/design-tree.json` in the repository, with:
    - the goal: "Scripts that read `notes list` get its notes as JSON, so they stop parsing text.",
      with the grounds "the person, 2026-11-02";
-   - the questions: Q1 "Can each script that reads notes list read the JSON as it is?" and Q2 "Do
-     people who read notes list by eye see the same as before?";
+   - the questions: Q1 "Can each script that reads notes list read the JSON as it is?", Q2 "Do
+     people who read notes list by eye see the same as before?" and Q3 "Does each script in the
+     repository that reads notes list stop parsing its text?";
    - the decision you have settled: D1 "Whether the text output stays the default", serving Q2,
      decided "the text stays the default; JSON only with --json", settled by the user, with the
      grounds "the person, 2026-11-02".
