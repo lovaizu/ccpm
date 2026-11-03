@@ -107,10 +107,30 @@
      "Write when the AI stops: once every check passes, or at a blocker it cannot pass, which it hands back with what it found."
     ],
     "grounds": [
-     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"Claude stops when the work looks done. If it has nothing to run that tells it whether the work actually is done, \"looks done\" is all it has to go on.\"",
-     "OpenAI, \"Reasoning best practices\", OpenAI API docs, no date: \"Be very specific about your end goal\"",
-     "OpenAI, \"GPT-5 prompting guide\", OpenAI Cookbook, 2025: \"Generally, it can be helpful to clearly state the stop conditions of the agentic tasks, outline safe versus unsafe actions, and define when, if ever, it’s acceptable for the model to hand back to the user.\"",
-     "Erik S. and Zhang, \"Building effective agents\", anthropic.com/engineering, 2024: \"During execution, it's crucial for the agents to gain “ground truth” from the environment at each step (such as tool call results or code execution) to assess its progress.\""
+     {
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Claude stops when the work looks done. If it has nothing to run that tells it whether the work actually is done, \"looks done\" is all it has to go on."
+     },
+     {
+      "title": "Reasoning best practices",
+      "url": "https://platform.openai.com/docs/guides/reasoning-best-practices",
+      "by": "OpenAI, OpenAI API docs, no date",
+      "quote": "Be very specific about your end goal"
+     },
+     {
+      "title": "GPT-5 prompting guide",
+      "url": "https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide",
+      "by": "OpenAI, OpenAI Cookbook, 2025",
+      "quote": "Generally, it can be helpful to clearly state the stop conditions of the agentic tasks, outline safe versus unsafe actions, and define when, if ever, it’s acceptable for the model to hand back to the user."
+     },
+     {
+      "title": "Building effective agents",
+      "url": "https://www.anthropic.com/engineering/building-effective-agents",
+      "by": "Erik S. and Zhang, anthropic.com/engineering, 2024",
+      "quote": "During execution, it's crucial for the agents to gain “ground truth” from the environment at each step (such as tool call results or code execution) to assess its progress."
+     }
     ]
    },
    {
@@ -120,9 +140,24 @@
      "Among the choices the task meets, mark each action that is hard to undo, touches what others share, or destroys something."
     ],
     "grounds": [
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"for actions that are hard to reverse, affect shared systems, or could be destructive, ask the user before proceeding.\"",
-     "OpenAI, \"GPT-5 prompting guide\", OpenAI Cookbook, 2025: \"the checkout and payment tools should explicitly have a lower uncertainty threshold for requiring user clarification, while the search tool should have an extremely high threshold\"",
-     "Erik S. and Zhang, \"Building effective agents\", anthropic.com/engineering, 2024: \"Agents can then pause for human feedback at checkpoints or when encountering blockers.\""
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "for actions that are hard to reverse, affect shared systems, or could be destructive, ask the user before proceeding."
+     },
+     {
+      "title": "GPT-5 prompting guide",
+      "url": "https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide",
+      "by": "OpenAI, OpenAI Cookbook, 2025",
+      "quote": "the checkout and payment tools should explicitly have a lower uncertainty threshold for requiring user clarification, while the search tool should have an extremely high threshold"
+     },
+     {
+      "title": "Building effective agents",
+      "url": "https://www.anthropic.com/engineering/building-effective-agents",
+      "by": "Erik S. and Zhang, anthropic.com/engineering, 2024",
+      "quote": "Agents can then pause for human feedback at checkpoints or when encountering blockers."
+     }
     ]
    },
    {
@@ -133,12 +168,42 @@
      "Give the prompt to a fresh AI with only what a run gives it, see where it guesses, and add the fact it lacked."
     ],
     "grounds": [
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Think of Claude as a brilliant but new employee who lacks context on your norms and workflows.\"",
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Key test: Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they’d be confused, Claude will be too.\"",
-     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"Only write down what Claude can't find by reading the repo, or what it would otherwise spend time rediscovering every session.\"",
-     "Aizawa, \"Writing effective tools for agents — with agents\", anthropic.com/engineering, 2025: \"Consider the context that you might implicitly bring—specialized query formats, definitions of niche terminology, relationships between underlying resources—and make it explicit.\"",
-     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Each subagent starts with a fresh, isolated context window. It doesn't see your conversation history, the skills you've already invoked, or the files Claude has already read.\"",
-     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Subagents receive only this system prompt plus basic environment details like the working directory, not the Claude Code system prompt.\""
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Think of Claude as a brilliant but new employee who lacks context on your norms and workflows."
+     },
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Key test: Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they’d be confused, Claude will be too."
+     },
+     {
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Only write down what Claude can't find by reading the repo, or what it would otherwise spend time rediscovering every session."
+     },
+     {
+      "title": "Writing effective tools for agents — with agents",
+      "url": "https://www.anthropic.com/engineering/writing-tools-for-agents",
+      "by": "Aizawa, anthropic.com/engineering, 2025",
+      "quote": "Consider the context that you might implicitly bring—specialized query formats, definitions of niche terminology, relationships between underlying resources—and make it explicit."
+     },
+     {
+      "title": "Create custom subagents",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Each subagent starts with a fresh, isolated context window. It doesn't see your conversation history, the skills you've already invoked, or the files Claude has already read."
+     },
+     {
+      "title": "Create custom subagents",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Subagents receive only this system prompt plus basic environment details like the working directory, not the Claude Code system prompt."
+     }
     ]
    },
    {
@@ -150,8 +215,18 @@
      "Check that the last step leaves what the goal says the task is for."
     ],
     "grounds": [
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Provide instructions as sequential steps using numbered lists or bullet points when the order or completeness of steps matters.\"",
-     "Anthropic, \"Extend Claude with skills\", Claude Code Docs, no date: \"If your skill contains guidelines like \"use these API conventions\" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output.\""
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Provide instructions as sequential steps using numbered lists or bullet points when the order or completeness of steps matters."
+     },
+     {
+      "title": "Extend Claude with skills",
+      "url": "https://code.claude.com/docs/en/skills",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "If your skill contains guidelines like \"use these API conventions\" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output."
+     }
     ]
    },
    {
@@ -164,14 +239,54 @@
      "Think of a case the rule does not name, read only the rule and its reason, and check that they lead where the writer would go; where they do not, mend the reason."
     ],
     "grounds": [
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses.\"",
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Claude can generalize from the explanation.\"",
-     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"Most of the time, you want Claude to decide. Almost every guideline has exceptions, and current models are good at reading the code in front of them and judging whether a guideline fits the situation.\"",
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Tell Claude what to do instead of what not to do\"",
-     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"Older models sometimes needed the emphasis. Current ones follow a plainly worded line, and piling on emphasis mostly makes Claude over-apply the rule.\"",
-     "MacCallum, Lee et al., \"GPT-4.1 Prompting Guide\", OpenAI Cookbook, 2025: \"Instructing a model to always follow a specific behavior can occasionally induce adverse effects.\"",
-     "Hadfield et al., \"How we built our multi-agent research system\", anthropic.com/engineering, 2025: \"Our prompting strategy focuses on instilling good heuristics rather than rigid rules.\"",
-     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"Instead, we recommend working to curate a set of diverse, canonical examples that effectively portray the expected behavior of the agent.\""
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses."
+     },
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Claude can generalize from the explanation."
+     },
+     {
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Most of the time, you want Claude to decide. Almost every guideline has exceptions, and current models are good at reading the code in front of them and judging whether a guideline fits the situation."
+     },
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Tell Claude what to do instead of what not to do"
+     },
+     {
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Older models sometimes needed the emphasis. Current ones follow a plainly worded line, and piling on emphasis mostly makes Claude over-apply the rule."
+     },
+     {
+      "title": "GPT-4.1 Prompting Guide",
+      "url": "https://cookbook.openai.com/examples/gpt4-1_prompting_guide",
+      "by": "MacCallum, Lee et al., OpenAI Cookbook, 2025",
+      "quote": "Instructing a model to always follow a specific behavior can occasionally induce adverse effects."
+     },
+     {
+      "title": "How we built our multi-agent research system",
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "by": "Hadfield et al., anthropic.com/engineering, 2025",
+      "quote": "Our prompting strategy focuses on instilling good heuristics rather than rigid rules."
+     },
+     {
+      "title": "Effective context engineering for AI agents",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "by": "Rajasekaran et al., anthropic.com/engineering, 2025",
+      "quote": "Instead, we recommend working to curate a set of diverse, canonical examples that effectively portray the expected behavior of the agent."
+     }
     ]
    },
    {
@@ -181,10 +296,30 @@
      "Run the prompt twice on one input, and compare what those steps gave."
     ],
     "grounds": [
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Narrow bridge with cliffs on both sides: There’s only one safe way forward. Provide specific guardrails and exact instructions (low freedom).\"",
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Are more reliable than generated code\"",
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"When writing scripts for Skills, handle error conditions rather than deferring to Claude.\"",
-     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"If something has to happen every time, make it a hook, a deny rule, or a managed setting.\""
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Narrow bridge with cliffs on both sides: There’s only one safe way forward. Provide specific guardrails and exact instructions (low freedom)."
+     },
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Are more reliable than generated code"
+     },
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "When writing scripts for Skills, handle error conditions rather than deferring to Claude."
+     },
+     {
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
+     }
     ]
    },
    {
@@ -196,7 +331,12 @@
      "Run the prompt, and read the record of the run for a tool call the host refused."
     ],
     "grounds": [
-     "Hadfield et al., \"How we built our multi-agent research system\", anthropic.com/engineering, 2025: \"Each subagent needs an objective, an output format, guidance on the tools and sources to use, and clear task boundaries.\""
+     {
+      "title": "How we built our multi-agent research system",
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "by": "Hadfield et al., anthropic.com/engineering, 2025",
+      "quote": "Each subagent needs an objective, an output format, guidance on the tools and sources to use, and clear task boundaries."
+     }
     ]
    },
    {
@@ -209,10 +349,30 @@
      "Run the prompt on a request that tempts such an action, and check in the record that the host refused it."
     ],
     "grounds": [
-     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Limit tool access: grant only necessary permissions for security and focus\"",
-     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Enforce constraints by limiting which tools a subagent can use\"",
-     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"But no matter how strongly you word it, whether Claude follows that line on a given turn is still Claude's call.\"",
-     "Anthropic, \"Best practices for Claude Code\", Claude Code Docs, no date: \"If something has to happen every time, make it a hook, a deny rule, or a managed setting.\""
+     {
+      "title": "Create custom subagents",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Limit tool access: grant only necessary permissions for security and focus"
+     },
+     {
+      "title": "Create custom subagents",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Enforce constraints by limiting which tools a subagent can use"
+     },
+     {
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "But no matter how strongly you word it, whether Claude follows that line on a given turn is still Claude's call."
+     },
+     {
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
+     }
     ]
    },
    {
@@ -226,9 +386,24 @@
      "Hand the output alone to someone in the caller's place, and see whether they can act without asking."
     ],
     "grounds": [
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Be specific about the output format and constraints you want.\"",
-     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"the verbose output stays in the subagent's context while only the relevant summary returns to your main conversation.\"",
-     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"returns only a condensed, distilled summary of its work (often 1,000-2,000 tokens).\""
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Be specific about the output format and constraints you want."
+     },
+     {
+      "title": "Create custom subagents",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "the verbose output stays in the subagent's context while only the relevant summary returns to your main conversation."
+     },
+     {
+      "title": "Effective context engineering for AI agents",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "by": "Rajasekaran et al., anthropic.com/engineering, 2025",
+      "quote": "returns only a condensed, distilled summary of its work (often 1,000-2,000 tokens)."
+     }
     ]
    },
    {
@@ -240,12 +415,42 @@
      "Give each request written down to a fresh session with the prompt installed, see which prompt the host chooses, and mend the description where it chooses wrongly."
     ],
     "grounds": [
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"The description is critical for skill selection: Claude uses it to choose the right Skill from potentially 100+ available Skills.\"",
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Include both what the Skill does and specific triggers/contexts for when to use it.\"",
-     "Anthropic, \"Extend Claude with skills\", Claude Code Docs, no date: \"Put the key use case first\"",
-     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Claude uses each subagent's description to decide when to delegate tasks.\"",
-     "Anthropic, \"Create custom subagents\", Claude Code Docs, no date: \"Make each description specific enough to route to the right subagent\"",
-     "Zhang, Lazuka and Murag, \"Equipping agents for the real world with Agent Skills\", anthropic.com/engineering, 2025: \"Pay special attention to the name and description of your skill. Claude will use these when deciding whether to trigger the skill in response to its current task.\""
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "The description is critical for skill selection: Claude uses it to choose the right Skill from potentially 100+ available Skills."
+     },
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Include both what the Skill does and specific triggers/contexts for when to use it."
+     },
+     {
+      "title": "Extend Claude with skills",
+      "url": "https://code.claude.com/docs/en/skills",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Put the key use case first"
+     },
+     {
+      "title": "Create custom subagents",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Claude uses each subagent's description to decide when to delegate tasks."
+     },
+     {
+      "title": "Create custom subagents",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "Make each description specific enough to route to the right subagent"
+     },
+     {
+      "title": "Equipping agents for the real world with Agent Skills",
+      "url": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+      "by": "Zhang, Lazuka and Murag, anthropic.com/engineering, 2025",
+      "quote": "Pay special attention to the name and description of your skill. Claude will use these when deciding whether to trigger the skill in response to its current task."
+     }
     ]
    },
    {
@@ -255,7 +460,12 @@
      "Set what the description says the prompt does against what the goal and the steps have the AI do, and for each thing in one and not the other, add it to the body or take it out of the description."
     ],
     "grounds": [
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Your description must provide enough detail for Claude to determine when to select this Skill, whereas the rest of `SKILL.md` provides the implementation details.\""
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Your description must provide enough detail for Claude to determine when to select this Skill, whereas the rest of `SKILL.md` provides the implementation details."
+     }
     ]
    },
    {
@@ -268,14 +478,54 @@
      "Run the requests held back last, to see whether the prompt holds beyond the ones it was mended on."
     ],
     "grounds": [
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Create evaluations BEFORE writing extensive documentation. This ensures your Skill solves real problems rather than documenting imagined ones.\"",
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Claude A helps you design and refine instructions, whereas Claude B tests them in real tasks.\"",
-     "Zhang, Lazuka and Murag, \"Equipping agents for the real world with Agent Skills\", anthropic.com/engineering, 2025: \"Identify specific gaps in your agents’ capabilities by running them on representative tasks and observing where they struggle or require additional context.\"",
-     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"It’s best to start by testing a minimal prompt with the best model available to see how it performs on your task, and then add clear instructions and examples to improve performance based on failure modes found during initial testing.\"",
-     "Aizawa, \"Writing effective tools for agents — with agents\", anthropic.com/engineering, 2025: \"what agents omit in their feedback and responses can often be more important than what they include. LLMs don’t always say what they mean.\"",
-     "Aizawa, \"Writing effective tools for agents — with agents\", anthropic.com/engineering, 2025: \"We relied on held-out test sets to ensure we did not overfit to our “training” evaluations.\"",
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"What works perfectly for Opus might need more detail for Haiku.\"",
-     "Sclar, Choi, Tsvetkov and Suhr, \"Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design or: How I learned to start worrying about prompt formatting\", arXiv:2310.11324, 2023: \"with performance differences of up to 76 accuracy points when evaluated using LLaMA-2-13B\""
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Create evaluations BEFORE writing extensive documentation. This ensures your Skill solves real problems rather than documenting imagined ones."
+     },
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Claude A helps you design and refine instructions, whereas Claude B tests them in real tasks."
+     },
+     {
+      "title": "Equipping agents for the real world with Agent Skills",
+      "url": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+      "by": "Zhang, Lazuka and Murag, anthropic.com/engineering, 2025",
+      "quote": "Identify specific gaps in your agents’ capabilities by running them on representative tasks and observing where they struggle or require additional context."
+     },
+     {
+      "title": "Effective context engineering for AI agents",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "by": "Rajasekaran et al., anthropic.com/engineering, 2025",
+      "quote": "It’s best to start by testing a minimal prompt with the best model available to see how it performs on your task, and then add clear instructions and examples to improve performance based on failure modes found during initial testing."
+     },
+     {
+      "title": "Writing effective tools for agents — with agents",
+      "url": "https://www.anthropic.com/engineering/writing-tools-for-agents",
+      "by": "Aizawa, anthropic.com/engineering, 2025",
+      "quote": "what agents omit in their feedback and responses can often be more important than what they include. LLMs don’t always say what they mean."
+     },
+     {
+      "title": "Writing effective tools for agents — with agents",
+      "url": "https://www.anthropic.com/engineering/writing-tools-for-agents",
+      "by": "Aizawa, anthropic.com/engineering, 2025",
+      "quote": "We relied on held-out test sets to ensure we did not overfit to our “training” evaluations."
+     },
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "What works perfectly for Opus might need more detail for Haiku."
+     },
+     {
+      "title": "Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design or: How I learned to start worrying about prompt formatting",
+      "url": "https://arxiv.org/abs/2310.11324",
+      "by": "Sclar, Choi, Tsvetkov and Suhr, arXiv:2310.11324, 2023",
+      "quote": "with performance differences of up to 76 accuracy points when evaluated using LLaMA-2-13B"
+     }
     ]
    },
    {
@@ -286,14 +536,54 @@
      "Run Q13's trials again after cutting, and put back what a run then lacked."
     ],
     "grounds": [
-     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"good context engineering means finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome.\"",
-     "Rajasekaran et al., \"Effective context engineering for AI agents\", anthropic.com/engineering, 2025: \"Note that minimal does not necessarily mean short; you still need to give the agent sufficient information up front to ensure it adheres to the desired behavior.\"",
-     "Shi et al., \"Large Language Models Can Be Easily Distracted by Irrelevant Context\", arXiv:2302.00093, 2023: \"find that the model performance is dramatically decreased when irrelevant information is included.\"",
-     "Jaroslawicz et al., \"How Many Instructions Can LLMs Follow at Once?\", arXiv:2507.11538, 2025: \"even the best frontier models only achieve 68% accuracy at the max density of 500 instructions.\"",
-     "Levy, Jacoby and Goldberg, \"Same Task, More Tokens: the Impact of Input Length on the Reasoning Performance of Large Language Models\", arXiv:2402.14848, 2024: \"Our findings show a notable degradation in LLMs' reasoning performance at much shorter input lengths than their technical maximum.\"",
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Only add context Claude doesn’t already have.\"",
-     "Anthropic, \"Extend Claude with skills\", Claude Code Docs, no date: \"so every line is a recurring token cost.\"",
-     "Anthropic, \"Skill authoring best practices\", Claude Platform Docs, no date: \"Keep references one level deep from `SKILL.md`. All reference files should link directly from `SKILL.md` to ensure Claude reads complete files when needed.\""
+     {
+      "title": "Effective context engineering for AI agents",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "by": "Rajasekaran et al., anthropic.com/engineering, 2025",
+      "quote": "good context engineering means finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome."
+     },
+     {
+      "title": "Effective context engineering for AI agents",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "by": "Rajasekaran et al., anthropic.com/engineering, 2025",
+      "quote": "Note that minimal does not necessarily mean short; you still need to give the agent sufficient information up front to ensure it adheres to the desired behavior."
+     },
+     {
+      "title": "Large Language Models Can Be Easily Distracted by Irrelevant Context",
+      "url": "https://arxiv.org/abs/2302.00093",
+      "by": "Shi et al., arXiv:2302.00093, 2023",
+      "quote": "find that the model performance is dramatically decreased when irrelevant information is included."
+     },
+     {
+      "title": "How Many Instructions Can LLMs Follow at Once?",
+      "url": "https://arxiv.org/abs/2507.11538",
+      "by": "Jaroslawicz et al., arXiv:2507.11538, 2025",
+      "quote": "even the best frontier models only achieve 68% accuracy at the max density of 500 instructions."
+     },
+     {
+      "title": "Same Task, More Tokens: the Impact of Input Length on the Reasoning Performance of Large Language Models",
+      "url": "https://arxiv.org/abs/2402.14848",
+      "by": "Levy, Jacoby and Goldberg, arXiv:2402.14848, 2024",
+      "quote": "Our findings show a notable degradation in LLMs' reasoning performance at much shorter input lengths than their technical maximum."
+     },
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Only add context Claude doesn’t already have."
+     },
+     {
+      "title": "Extend Claude with skills",
+      "url": "https://code.claude.com/docs/en/skills",
+      "by": "Anthropic, Claude Code Docs, no date",
+      "quote": "so every line is a recurring token cost."
+     },
+     {
+      "title": "Skill authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Keep references one level deep from `SKILL.md`. All reference files should link directly from `SKILL.md` to ensure Claude reads complete files when needed."
+     }
     ]
    }
   ]

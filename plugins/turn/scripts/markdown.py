@@ -19,6 +19,11 @@ def parts(items: list[dict[str, Any]], depth: int = 0) -> list[str]:
     return lines
 
 
+def ground(item: dict[str, str]) -> str:
+    """A ground as a link labelled with its page's title, then who wrote it and the words quoted."""
+    return f"- [{item['title']}]({item['url']}), {item['by']}: \"{item['quote']}\""
+
+
 def markdown(kind: str, data: dict[str, Any]) -> str:
     """The best practice of the kind as Markdown: the Standard's goal, format and checklist, then
     the Practice's method for each question, under the question it meets."""
@@ -37,7 +42,7 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
         if method["steps"]:
             out += ["", "**Steps**", "", *(f"{n}. {s}" for n, s in enumerate(method["steps"], 1))]
         if method["grounds"]:
-            out += ["", "**Grounds**", "", *(f"- {g}" for g in method["grounds"])]
+            out += ["", "**Grounds**", "", *(ground(g) for g in method["grounds"])]
     return "\n".join(out) + "\n"
 
 

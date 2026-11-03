@@ -141,9 +141,24 @@
      "Walk each scenario of the UX step by step, and check that each step where the user, a person or an AI, meets the product is carried by one story; add a story for a step that none carries."
     ],
     "grounds": [
-     "Hruschka and Starke, \"3. Context and Scope\", arc42 documentation, docs.arc42.org, no date: \"System scope and context - as the name suggests - delimits your system (i.e. your scope) from all its communication partners (neighboring systems and users, i.e. the context of your system).\"",
-     "Mountain Goat Software, \"User Stories: What They Are, How to Write Them, and Examples\", mountaingoatsoftware.com, 2026: \"A common template is: As a [type of user], I [need/want/am required] to [do something], so that [reason or benefit].\"",
-     "Kruchten, \"Architectural Blueprints—The “4+1” View Model of Software Architecture\", IEEE Software, 1995: \"as a driver to discover the architectural elements during the architecture design as we will describe later\""
+     {
+      "title": "3. Context and Scope",
+      "url": "https://docs.arc42.org/section-3/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "System scope and context - as the name suggests - delimits your system (i.e. your scope) from all its communication partners (neighboring systems and users, i.e. the context of your system)."
+     },
+     {
+      "title": "User Stories: What They Are, How to Write Them, and Examples",
+      "url": "https://www.mountaingoatsoftware.com/agile/user-stories",
+      "by": "Mountain Goat Software, mountaingoatsoftware.com, 2026",
+      "quote": "A common template is: As a [type of user], I [need/want/am required] to [do something], so that [reason or benefit]."
+     },
+     {
+      "title": "Architectural Blueprints—The “4+1” View Model of Software Architecture",
+      "url": "https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf",
+      "by": "Kruchten, IEEE Software, 1995",
+      "quote": "as a driver to discover the architectural elements during the architecture design as we will describe later"
+     }
     ]
    },
    {
@@ -154,11 +169,36 @@
      "Once the rest is written, check that each part carries out a piece of the idea; where one does not, change the idea or the part."
     ],
     "grounds": [
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"Start with a bird’s eye overview of the problem being solved.\"",
-     "rust-analyzer team, \"Architecture\", rust-analyzer repository, no date: \"On the highest level, rust-analyzer is a thing which accepts input source code from the client and produces a structured semantic model of the code.\"",
-     "Fowler, \"Architecture Decision Record\", martinfowler.com, 2026: \"The key is to put the most important material at the start, and push details to later in the record.\"",
-     "Hruschka and Starke, \"1. Introduction and Goals\", arc42 documentation, docs.arc42.org, no date: \"If requirements documents exist this overview should refer to these documents.\"",
-     "Hruschka and Starke, \"4. Solution Strategy\", arc42 documentation, docs.arc42.org, no date: \"These decisions form the cornerstones for your architecture. They are the basis for many other detailed decisions or implementation rules.\""
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "Start with a bird’s eye overview of the problem being solved."
+     },
+     {
+      "title": "Architecture",
+      "url": "https://github.com/rust-lang/rust-analyzer/blob/master/docs/book/src/contributing/architecture.md",
+      "by": "rust-analyzer team, rust-analyzer repository, no date",
+      "quote": "On the highest level, rust-analyzer is a thing which accepts input source code from the client and produces a structured semantic model of the code."
+     },
+     {
+      "title": "Architecture Decision Record",
+      "url": "https://martinfowler.com/bliki/ArchitectureDecisionRecord.html",
+      "by": "Fowler, martinfowler.com, 2026",
+      "quote": "The key is to put the most important material at the start, and push details to later in the record."
+     },
+     {
+      "title": "1. Introduction and Goals",
+      "url": "https://docs.arc42.org/section-1/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "If requirements documents exist this overview should refer to these documents."
+     },
+     {
+      "title": "4. Solution Strategy",
+      "url": "https://docs.arc42.org/section-4/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "These decisions form the cornerstones for your architecture. They are the basis for many other detailed decisions or implementation rules."
+     }
     ]
    },
    {
@@ -170,10 +210,30 @@
      "Ask of each decision which role makes it; where two roles or none answer, move the decision or split the role."
     ],
     "grounds": [
-     "Parnas, \"On the Criteria to be Used in Decomposing Systems into Modules\", Carnegie-Mellon University technical report, 1971: \"We propose instead that one begins with a list of difficult design decisions or design decisions which are likely to change. Each module is then designed to hide such a decision from the others.\"",
-     "Brown, \"Component\", C4 model, c4model.com, no date: \"in the C4 model, a component is a grouping of related functionality encapsulated behind a well-defined interface.\"",
-     "Brown, \"Notation\", C4 model, c4model.com, no date: \"Every line should be labelled, the label being consistent with the direction and intent of the relationship (e.g. dependency or data flow). Try to be as specific as possible with the label, ideally avoiding single words like, “Uses”.\"",
-     "Brown, \"Software architecture diagram review checklist\", C4 model, c4model.com, no date: \"Do you understand what every element does?\""
+     {
+      "title": "On the Criteria to be Used in Decomposing Systems into Modules",
+      "url": "https://prl.khoury.northeastern.edu/img/p-tr-1971.pdf",
+      "by": "Parnas, Carnegie-Mellon University technical report, 1971",
+      "quote": "We propose instead that one begins with a list of difficult design decisions or design decisions which are likely to change. Each module is then designed to hide such a decision from the others."
+     },
+     {
+      "title": "Component",
+      "url": "https://c4model.com/abstractions/component",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "in the C4 model, a component is a grouping of related functionality encapsulated behind a well-defined interface."
+     },
+     {
+      "title": "Notation",
+      "url": "https://c4model.com/diagrams/notation",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "Every line should be labelled, the label being consistent with the direction and intent of the relationship (e.g. dependency or data flow). Try to be as specific as possible with the label, ideally avoiding single words like, “Uses”."
+     },
+     {
+      "title": "Software architecture diagram review checklist",
+      "url": "https://c4model.com/diagrams/checklist",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "Do you understand what every element does?"
+     }
     ]
    },
    {
@@ -184,10 +244,30 @@
      "Read the figure without the text around it, and add to the legend or the boxes whatever the reader would still have to ask."
     ],
     "grounds": [
-     "Brown, \"Notation\", C4 model, c4model.com, no date: \"The type of every element should be explicitly specified (e.g. Person, Software System, Container or Component).\"",
-     "Brown, \"Notation\", C4 model, c4model.com, no date: \"Every container and component should have a technology explicitly specified.\"",
-     "Brown, \"Notation\", C4 model, c4model.com, no date: \"Any notation used should be as self-describing as possible, but all diagrams should have a key/legend to make the notation explicit.\"",
-     "Brown, \"Notation\", C4 model, c4model.com, no date: \"A good way to think about this is to ask yourself whether each diagram can stand alone, and be (mostly) understood without a narrative.\""
+     {
+      "title": "Notation",
+      "url": "https://c4model.com/diagrams/notation",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "The type of every element should be explicitly specified (e.g. Person, Software System, Container or Component)."
+     },
+     {
+      "title": "Notation",
+      "url": "https://c4model.com/diagrams/notation",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "Every container and component should have a technology explicitly specified."
+     },
+     {
+      "title": "Notation",
+      "url": "https://c4model.com/diagrams/notation",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "Any notation used should be as self-describing as possible, but all diagrams should have a key/legend to make the notation explicit."
+     },
+     {
+      "title": "Notation",
+      "url": "https://c4model.com/diagrams/notation",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "A good way to think about this is to ask yourself whether each diagram can stand alone, and be (mostly) understood without a narrative."
+     }
     ]
    },
    {
@@ -197,9 +277,24 @@
      "For each relation, ask whether the role that writes it and the role that reads it would keep it the same way; where they would not, name the relation more exactly."
     ],
     "grounds": [
-     "Mermaid, \"Entity Relationship Diagrams\", mermaid.js.org, no date: \"Relationships between entities are represented by lines with end markers representing cardinality.\"",
-     "Mermaid, \"Entity Relationship Diagrams\", mermaid.js.org, no date: \"Cardinality is a property that describes how many elements of another entity can be related to the entity in question.\"",
-     "Ubl, \"Design Docs at Google\", industrialempathy.com, 2020: \"Similar to the advice on APIs, and for the same reasons, copy-pasting complete schema definitions should be avoided.\""
+     {
+      "title": "Entity Relationship Diagrams",
+      "url": "https://mermaid.js.org/syntax/entityRelationshipDiagram.html",
+      "by": "Mermaid, mermaid.js.org, no date",
+      "quote": "Relationships between entities are represented by lines with end markers representing cardinality."
+     },
+     {
+      "title": "Entity Relationship Diagrams",
+      "url": "https://mermaid.js.org/syntax/entityRelationshipDiagram.html",
+      "by": "Mermaid, mermaid.js.org, no date",
+      "quote": "Cardinality is a property that describes how many elements of another entity can be related to the entity in question."
+     },
+     {
+      "title": "Design Docs at Google",
+      "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+      "by": "Ubl, industrialempathy.com, 2020",
+      "quote": "Similar to the advice on APIs, and for the same reasons, copy-pasting complete schema definitions should be avoided."
+     }
     ]
    },
    {
@@ -209,11 +304,36 @@
      "Check that each step runs along an arrow of Components; where none does, add the arrow or give the step to another role."
     ],
     "grounds": [
-     "Hruschka and Starke, \"6. Runtime View\", arc42 documentation, docs.arc42.org, no date: \"The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios\"",
-     "Hruschka and Starke, \"6. Runtime View\", arc42 documentation, docs.arc42.org, no date: \"Always map existing building blocks to the activities within runtime scenarios!\"",
-     "Brown, \"Dynamic diagram\", C4 model, c4model.com, no date: \"A dynamic diagram can be useful when you want to show how elements in the static model collaborate at runtime to implement a user story, use case, feature, etc.\"",
-     "Mermaid, \"Sequence diagrams\", mermaid.js.org, no date: \"A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.\"",
-     "Kruchten, \"Architectural Blueprints—The “4+1” View Model of Software Architecture\", IEEE Software, 1995: \"as a validation and illustration role after this architecture design is complete, both on paper and as the starting point for the tests of an architectural prototype.\""
+     {
+      "title": "6. Runtime View",
+      "url": "https://docs.arc42.org/section-6/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios"
+     },
+     {
+      "title": "6. Runtime View",
+      "url": "https://docs.arc42.org/section-6/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "Always map existing building blocks to the activities within runtime scenarios!"
+     },
+     {
+      "title": "Dynamic diagram",
+      "url": "https://c4model.com/diagrams/dynamic",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "A dynamic diagram can be useful when you want to show how elements in the static model collaborate at runtime to implement a user story, use case, feature, etc."
+     },
+     {
+      "title": "Sequence diagrams",
+      "url": "https://mermaid.js.org/syntax/sequenceDiagram.html",
+      "by": "Mermaid, mermaid.js.org, no date",
+      "quote": "A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order."
+     },
+     {
+      "title": "Architectural Blueprints—The “4+1” View Model of Software Architecture",
+      "url": "https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf",
+      "by": "Kruchten, IEEE Software, 1995",
+      "quote": "as a validation and illustration role after this architecture design is complete, both on paper and as the starting point for the tests of an architectural prototype."
+     }
     ]
    },
    {
@@ -223,7 +343,12 @@
      "Trace each role and each data to the stories whose sequences reach it, and each story to the step of the UX it carries or, off the main path, to the key result it serves; remove what reaches none."
     ],
     "grounds": [
-     "Fowler, \"Yagni\", martinfowler.com, 2015: \"The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features.\""
+     {
+      "title": "Yagni",
+      "url": "https://martinfowler.com/bliki/Yagni.html",
+      "by": "Fowler, martinfowler.com, 2015",
+      "quote": "The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features."
+     }
     ]
    },
    {
@@ -235,15 +360,60 @@
      "Take a case no rule names, and have two builders of different parts decide it from the reasons alone; where they differ, sharpen the reason."
     ],
     "grounds": [
-     "Hruschka and Starke, \"8. Crosscutting Concepts\", arc42 documentation, docs.arc42.org, no date: \"Such concepts are often related to multiple building blocks.\"",
-     "Hruschka and Starke, \"8. Crosscutting Concepts\", arc42 documentation, docs.arc42.org, no date: \"It might be easier to communicate or document such cross-cutting topics at a central location, instead of repeating them in the description of the concerned building blocks, hardware elements or development processes.\"",
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"Explicitly call-out architectural invariants.\"",
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"Often, important invariants are expressed as an absence of something, and it’s pretty hard to divine that from reading the code.\"",
-     "Clements et al., \"Documenting Software Architectures: Views and Beyond\", 2nd edition, section P.5, informit.com, 2010: \"For the most important decisions, you should record why you made them the way you did. You should also record the important or most likely alternatives you rejected and state why.\"",
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses.\"",
-     "Anthropic, \"Prompting best practices\", Claude Platform Docs, no date: \"Claude can generalize from the explanation.\"",
-     "Clements et al., \"Documenting Software Architectures: Views and Beyond\", 2nd edition, section P.5, informit.com, 2010: \"The most dangerous kind of ambiguity is undetected ambiguity. Here, each reader will think he or she understands the document, but unwittingly each reader will come to different conclusions about what it is saying.\"",
-     "Clements et al., \"Documenting Software Architectures: Views and Beyond\", 2nd edition, section P.5, informit.com, 2010: \"Each kind of information should be recorded in exactly one place.\""
+     {
+      "title": "8. Crosscutting Concepts",
+      "url": "https://docs.arc42.org/section-8/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "Such concepts are often related to multiple building blocks."
+     },
+     {
+      "title": "8. Crosscutting Concepts",
+      "url": "https://docs.arc42.org/section-8/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "It might be easier to communicate or document such cross-cutting topics at a central location, instead of repeating them in the description of the concerned building blocks, hardware elements or development processes."
+     },
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "Explicitly call-out architectural invariants."
+     },
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "Often, important invariants are expressed as an absence of something, and it’s pretty hard to divine that from reading the code."
+     },
+     {
+      "title": "Documenting Software Architectures: Views and Beyond",
+      "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
+      "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
+      "quote": "For the most important decisions, you should record why you made them the way you did. You should also record the important or most likely alternatives you rejected and state why."
+     },
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses."
+     },
+     {
+      "title": "Prompting best practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "by": "Anthropic, Claude Platform Docs, no date",
+      "quote": "Claude can generalize from the explanation."
+     },
+     {
+      "title": "Documenting Software Architectures: Views and Beyond",
+      "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
+      "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
+      "quote": "The most dangerous kind of ambiguity is undetected ambiguity. Here, each reader will think he or she understands the document, but unwittingly each reader will come to different conclusions about what it is saying."
+     },
+     {
+      "title": "Documenting Software Architectures: Views and Beyond",
+      "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
+      "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
+      "quote": "Each kind of information should be recorded in exactly one place."
+     }
     ]
    },
    {
@@ -255,10 +425,30 @@
      "Check that each role and each data of Components sits in one unit."
     ],
     "grounds": [
-     "Brown, \"Deployment diagram\", C4 model, c4model.com, no date: \"A deployment diagram allows you to illustrate how instances of software systems and/or containers in the static model are deployed on to the infrastructure within a given deployment environment (e.g. production, staging, development, etc).\"",
-     "Brown, \"Deployment diagram\", C4 model, c4model.com, no date: \"A deployment node represents where an instance of a software system/container is running\"",
-     "Hruschka and Starke, \"7. Deployment View\", arc42 documentation, docs.arc42.org, no date: \"Software does not run without hardware.\"",
-     "Hruschka and Starke, \"7. Deployment View\", arc42 documentation, docs.arc42.org, no date: \"From a software perspective it is sufficient to capture those elements of the infrastructure that are needed to show the deployment of your building blocks.\""
+     {
+      "title": "Deployment diagram",
+      "url": "https://c4model.com/diagrams/deployment",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "A deployment diagram allows you to illustrate how instances of software systems and/or containers in the static model are deployed on to the infrastructure within a given deployment environment (e.g. production, staging, development, etc)."
+     },
+     {
+      "title": "Deployment diagram",
+      "url": "https://c4model.com/diagrams/deployment",
+      "by": "Brown, C4 model, c4model.com, no date",
+      "quote": "A deployment node represents where an instance of a software system/container is running"
+     },
+     {
+      "title": "7. Deployment View",
+      "url": "https://docs.arc42.org/section-7/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "Software does not run without hardware."
+     },
+     {
+      "title": "7. Deployment View",
+      "url": "https://docs.arc42.org/section-7/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "From a software perspective it is sufficient to capture those elements of the infrastructure that are needed to show the deployment of your building blocks."
+     }
     ]
    },
    {
@@ -269,10 +459,30 @@
      "Check that each role and each data stands on one line; where it stands on none or on two, move the files or the line."
     ],
     "grounds": [
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"The codemap should answer “where’s the thing that does X?”.\"",
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"Do name important files, modules, and types.\"",
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"A codemap is a map of a country, not an atlas of maps of its states.\"",
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"Are the things you want to put near each other in the codemap adjacent when you run tree .?\""
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "The codemap should answer “where’s the thing that does X?”."
+     },
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "Do name important files, modules, and types."
+     },
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "A codemap is a map of a country, not an atlas of maps of its states."
+     },
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "Are the things you want to put near each other in the codemap adjacent when you run tree .?"
+     }
     ]
    },
    {
@@ -283,10 +493,30 @@
      "Check that the wider tests are fewer, and that each user story is run end to end in some row."
     ],
     "grounds": [
-     "Vocke, \"The Practical Test Pyramid\", martinfowler.com, 2018: \"Write tests with different granularity\"",
-     "Vocke, \"The Practical Test Pyramid\", martinfowler.com, 2018: \"The more high-level you get the fewer tests you should have\"",
-     "Bender, \"Testing Overview\", Software Engineering at Google, chapter 11, abseil.io, 2020: \"Scope refers to the specific code paths we are verifying.\"",
-     "Clements et al., \"Documenting Software Architectures: Views and Beyond\", 2nd edition, section P.5, informit.com, 2010: \"If the section is blank, the reader will wonder whether the information is coming later or whether it is indeed supposed to be blank.\""
+     {
+      "title": "The Practical Test Pyramid",
+      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "by": "Vocke, martinfowler.com, 2018",
+      "quote": "Write tests with different granularity"
+     },
+     {
+      "title": "The Practical Test Pyramid",
+      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "by": "Vocke, martinfowler.com, 2018",
+      "quote": "The more high-level you get the fewer tests you should have"
+     },
+     {
+      "title": "Testing Overview",
+      "url": "https://abseil.io/resources/swe-book/html/ch11.html",
+      "by": "Bender, Software Engineering at Google, chapter 11, abseil.io, 2020",
+      "quote": "Scope refers to the specific code paths we are verifying."
+     },
+     {
+      "title": "Documenting Software Architectures: Views and Beyond",
+      "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
+      "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
+      "quote": "If the section is blank, the reader will wonder whether the information is coming later or whether it is indeed supposed to be blank."
+     }
     ]
    },
    {
@@ -298,12 +528,42 @@
      "Use each type's name the same way throughout the document."
     ],
     "grounds": [
-     "Vocke, \"The Practical Test Pyramid\", martinfowler.com, 2018: \"A unit test typically replaces external collaborators with test doubles\"",
-     "Vocke, \"The Practical Test Pyramid\", martinfowler.com, 2018: \"For your automated tests this means you don't just need to run your own application but also the component you're integrating with.\"",
-     "Schwaber and Sutherland, \"The Scrum Guide\", scrumguides.org, 2020: \"The Definition of Done is a formal description of the state of the Increment when it meets the quality measures required for the product.\"",
-     "Anthropic, \"Demystifying evals for AI agents\", anthropic.com/engineering, 2026: \"pass^k measures the probability that all k trials succeed.\"",
-     "Vocke, \"The Practical Test Pyramid\", martinfowler.com, 2018: \"Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions.\"",
-     "Clements et al., \"Documenting Software Architectures: Views and Beyond\", 2nd edition, section P.5, informit.com, 2010: \"Each kind of information should be recorded in exactly one place.\""
+     {
+      "title": "The Practical Test Pyramid",
+      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "by": "Vocke, martinfowler.com, 2018",
+      "quote": "A unit test typically replaces external collaborators with test doubles"
+     },
+     {
+      "title": "The Practical Test Pyramid",
+      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "by": "Vocke, martinfowler.com, 2018",
+      "quote": "For your automated tests this means you don't just need to run your own application but also the component you're integrating with."
+     },
+     {
+      "title": "The Scrum Guide",
+      "url": "https://scrumguides.org/scrum-guide.html",
+      "by": "Schwaber and Sutherland, scrumguides.org, 2020",
+      "quote": "The Definition of Done is a formal description of the state of the Increment when it meets the quality measures required for the product."
+     },
+     {
+      "title": "Demystifying evals for AI agents",
+      "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+      "by": "Anthropic, anthropic.com/engineering, 2026",
+      "quote": "pass^k measures the probability that all k trials succeed."
+     },
+     {
+      "title": "The Practical Test Pyramid",
+      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "by": "Vocke, martinfowler.com, 2018",
+      "quote": "Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions."
+     },
+     {
+      "title": "Documenting Software Architectures: Views and Beyond",
+      "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
+      "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
+      "quote": "Each kind of information should be recorded in exactly one place."
+     }
     ]
    },
    {
@@ -313,9 +573,24 @@
      "Read each part against each principle it rules; where a line breaks it, change the part, or the principle and its reason, until the two say the same."
     ],
     "grounds": [
-     "Hruschka and Starke, \"8. Crosscutting Concepts\", arc42 documentation, docs.arc42.org, no date: \"Concepts form the basis for conceptual integrity (consistency, homogeneity) of the architecture.\"",
-     "Kruchten, \"Architectural Blueprints—The “4+1” View Model of Software Architecture\", IEEE Software, 1995: \"A Software Design Guidelines, which captures (among other things) the most important design decisions that must be respected to maintain the architectural integrity of the system.\"",
-     "Clements et al., \"Documenting Software Architectures: Views and Beyond\", 2nd edition, section P.5, informit.com, 2010: \"Documentation that is incomplete or out of date does not reflect truth, does not obey its own rules for form and internal consistency, and is not used.\""
+     {
+      "title": "8. Crosscutting Concepts",
+      "url": "https://docs.arc42.org/section-8/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "Concepts form the basis for conceptual integrity (consistency, homogeneity) of the architecture."
+     },
+     {
+      "title": "Architectural Blueprints—The “4+1” View Model of Software Architecture",
+      "url": "https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf",
+      "by": "Kruchten, IEEE Software, 1995",
+      "quote": "A Software Design Guidelines, which captures (among other things) the most important design decisions that must be respected to maintain the architectural integrity of the system."
+     },
+     {
+      "title": "Documenting Software Architectures: Views and Beyond",
+      "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
+      "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
+      "quote": "Documentation that is incomplete or out of date does not reflect truth, does not obey its own rules for form and internal consistency, and is not used."
+     }
     ]
    },
    {
@@ -325,13 +600,48 @@
      "Read each figure and the table as a builder new to the product, and check that each choice they would question has its reason and its cost beside it."
     ],
     "grounds": [
-     "Nygard, \"Documenting Architecture Decisions\", Cognitect blog, 2011: \"Without understanding the rationale or consequences, this person has only two choices:\"",
-     "Nygard, \"Documenting Architecture Decisions\", Cognitect blog, 2011: \"Blindly accept the decision.\"",
-     "Nygard, \"Documenting Architecture Decisions\", Cognitect blog, 2011: \"Blindly change it.\"",
-     "Ubl, \"Design Docs at Google\", industrialempathy.com, 2020: \"The design doc is the place to write down the trade-offs you made in designing your software.\"",
-     "Ubl, \"Design Docs at Google\", industrialempathy.com, 2020: \"shows very explicitly why the selected solution is the best given the project goals and how other solutions, that the reader may be wondering about, introduce trade-offs that are less desirable given the goals.\"",
-     "Nygard, \"Documenting Architecture Decisions\", Cognitect blog, 2011: \"All consequences should be listed here, not just the \"positive\" ones.\"",
-     "Hruschka and Starke, \"9. Architecture Decisions\", arc42 documentation, docs.arc42.org, no date: \"Please use your judgement to decide whether an architectural decision should be documented here in this central section or whether you better document it locally (e.g. within the white box template of one building block). Avoid redundant texts.\""
+     {
+      "title": "Documenting Architecture Decisions",
+      "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+      "by": "Nygard, Cognitect blog, 2011",
+      "quote": "Without understanding the rationale or consequences, this person has only two choices:"
+     },
+     {
+      "title": "Documenting Architecture Decisions",
+      "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+      "by": "Nygard, Cognitect blog, 2011",
+      "quote": "Blindly accept the decision."
+     },
+     {
+      "title": "Documenting Architecture Decisions",
+      "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+      "by": "Nygard, Cognitect blog, 2011",
+      "quote": "Blindly change it."
+     },
+     {
+      "title": "Design Docs at Google",
+      "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+      "by": "Ubl, industrialempathy.com, 2020",
+      "quote": "The design doc is the place to write down the trade-offs you made in designing your software."
+     },
+     {
+      "title": "Design Docs at Google",
+      "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+      "by": "Ubl, industrialempathy.com, 2020",
+      "quote": "shows very explicitly why the selected solution is the best given the project goals and how other solutions, that the reader may be wondering about, introduce trade-offs that are less desirable given the goals."
+     },
+     {
+      "title": "Documenting Architecture Decisions",
+      "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+      "by": "Nygard, Cognitect blog, 2011",
+      "quote": "All consequences should be listed here, not just the \"positive\" ones."
+     },
+     {
+      "title": "9. Architecture Decisions",
+      "url": "https://docs.arc42.org/section-9/",
+      "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
+      "quote": "Please use your judgement to decide whether an architectural decision should be documented here in this central section or whether you better document it locally (e.g. within the white box template of one building block). Avoid redundant texts."
+     }
     ]
    },
    {
@@ -342,10 +652,30 @@
      "Repeat with a change of another kind, until no line is marked."
     ],
     "grounds": [
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"This is the main rule of thumb for ARCHITECTURE — only specify things that are unlikely to frequently change.\"",
-     "matklad, \"ARCHITECTURE.md\", matklad.github.io, 2021: \"Avoid going into details of how each module works, pull this into separate documents or (better) inline documentation.\"",
-     "Ubl, \"Design Docs at Google\", industrialempathy.com, 2020: \"A clear indicator that a doc might not be necessary are design docs that are really implementation manuals.\"",
-     "Fowler, \"Software Architecture Guide\", martinfowler.com, 2019: \"It means that the heart of thinking architecturally about software is to decide what is important, (i.e. what is architectural), and then expend energy on keeping those architectural elements in good condition.\""
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "This is the main rule of thumb for ARCHITECTURE — only specify things that are unlikely to frequently change."
+     },
+     {
+      "title": "ARCHITECTURE.md",
+      "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
+      "by": "matklad, matklad.github.io, 2021",
+      "quote": "Avoid going into details of how each module works, pull this into separate documents or (better) inline documentation."
+     },
+     {
+      "title": "Design Docs at Google",
+      "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+      "by": "Ubl, industrialempathy.com, 2020",
+      "quote": "A clear indicator that a doc might not be necessary are design docs that are really implementation manuals."
+     },
+     {
+      "title": "Software Architecture Guide",
+      "url": "https://martinfowler.com/architecture/",
+      "by": "Fowler, martinfowler.com, 2019",
+      "quote": "It means that the heart of thinking architecturally about software is to decide what is important, (i.e. what is architectural), and then expend energy on keeping those architectural elements in good condition."
+     }
     ]
    }
   ]

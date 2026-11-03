@@ -108,10 +108,30 @@
      "Ask whether a colleague who hears only the sentence could say what the product does; if not, replace each vague or praising word with what the product does."
     ],
     "grounds": [
-     "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"One-liner -- having a one-liner that describes the module is useful for getting an idea of what the module does in slightly greater detail.\"",
-     "GitHub, \"About the repository README file\", GitHub Docs, no date: \"What the project does\"",
-     "Litt, \"Standard Readme\", github.com/RichardLitt/standard-readme, spec.md, no date: \"Must be on its own line.\"",
-     "Guo, \"Make a README\", makeareadme.com, no date: \"Let people know what your project can do specifically.\""
+     {
+      "title": "Art of README",
+      "url": "https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme",
+      "by": "hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31",
+      "quote": "One-liner -- having a one-liner that describes the module is useful for getting an idea of what the module does in slightly greater detail."
+     },
+     {
+      "title": "About the repository README file",
+      "url": "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      "by": "GitHub, GitHub Docs, no date",
+      "quote": "What the project does"
+     },
+     {
+      "title": "Standard Readme",
+      "url": "https://github.com/RichardLitt/standard-readme/blob/main/spec.md",
+      "by": "Litt, github.com/RichardLitt/standard-readme, spec.md, no date",
+      "quote": "Must be on its own line."
+     },
+     {
+      "title": "Make a README",
+      "url": "https://www.makeareadme.com/",
+      "by": "Guo, makeareadme.com, no date",
+      "quote": "Let people know what your project can do specifically."
+     }
     ]
    },
    {
@@ -122,10 +142,30 @@
      "Ask whether a reader outside that group can tell from it that the product is not for them; if not, name the group and the work more closely."
     ],
     "grounds": [
-     "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"The consumer wants a module to fulfill their need, so you must explain exactly what need your module fills, and how effectively it does so.\"",
-     "GitHub, \"Starting an Open Source Project\", Open Source Guides, opensource.guide, no date: \"They also explain why your project matters, and what your users can do with it.\"",
-     "GitHub, \"About the repository README file\", GitHub Docs, no date: \"Why the project is useful\"",
-     "Write the Docs, \"How to write software documentation\", writethedocs.org, no date: \"They don’t know why your project exists or how it meets their needs.\""
+     {
+      "title": "Art of README",
+      "url": "https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme",
+      "by": "hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31",
+      "quote": "The consumer wants a module to fulfill their need, so you must explain exactly what need your module fills, and how effectively it does so."
+     },
+     {
+      "title": "Starting an Open Source Project",
+      "url": "https://opensource.guide/starting-a-project/",
+      "by": "GitHub, Open Source Guides, opensource.guide, no date",
+      "quote": "They also explain why your project matters, and what your users can do with it."
+     },
+     {
+      "title": "About the repository README file",
+      "url": "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      "by": "GitHub, GitHub Docs, no date",
+      "quote": "Why the project is useful"
+     },
+     {
+      "title": "How to write software documentation",
+      "url": "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/",
+      "by": "Write the Docs, writethedocs.org, no date",
+      "quote": "They don’t know why your project exists or how it meets their needs."
+     }
     ]
    },
    {
@@ -136,8 +176,18 @@
      "Ask whether the reader could say the difference to a colleague in their own words; if not, replace each word that only praises with what the product does."
     ],
     "grounds": [
-     "Guo, \"Make a README\", makeareadme.com, no date: \"If there are alternatives to your project, this is a good place to list differentiating factors.\"",
-     "Guo, \"Make a README\", makeareadme.com, no date: \"Let people know what your project can do specifically.\""
+     {
+      "title": "Make a README",
+      "url": "https://www.makeareadme.com/",
+      "by": "Guo, makeareadme.com, no date",
+      "quote": "If there are alternatives to your project, this is a good place to list differentiating factors."
+     },
+     {
+      "title": "Make a README",
+      "url": "https://www.makeareadme.com/",
+      "by": "Guo, makeareadme.com, no date",
+      "quote": "Let people know what your project can do specifically."
+     }
     ]
    },
    {
@@ -147,7 +197,12 @@
      "Keep only what the product does not do and a reader could reasonably expect of it."
     ],
     "grounds": [
-     "Ubl, \"Design Docs at Google\", industrialempathy.com, 2020: \"Note, that non-goals aren’t negated goals like “The system shouldn’t crash”, but rather things that could reasonably be goals, but are explicitly chosen not to be goals.\""
+     {
+      "title": "Design Docs at Google",
+      "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+      "by": "Ubl, industrialempathy.com, 2020",
+      "quote": "Note, that non-goals aren’t negated goals like “The system shouldn’t crash”, but rather things that could reasonably be goals, but are explicitly chosen not to be goals."
+     }
     ]
    },
    {
@@ -158,12 +213,42 @@
      "End with the result, and ask whether it shows the gain the opening promised; if not, pick another piece of work or another scenario."
     ],
     "grounds": [
-     "Procida, \"Tutorials\", Diátaxis, diataxis.fr, no date: \"It’s important to allow the learner to form an idea of what they will achieve right from the start.\"",
-     "Write the Docs, \"How to write software documentation\", writethedocs.org, no date: \"Show a common example use case for your project.\"",
-     "Guo, \"Make a README\", makeareadme.com, no date: \"Use examples liberally, and show the expected output if you can.\"",
-     "Procida, \"Tutorials\", Diátaxis, diataxis.fr, no date: \"Show the user actual example output, or even the exact expected output.\"",
-     "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"I can quickly determine whether the example JS fits the desired style and problem.\"",
-     "Procida, \"Tutorials\", Diátaxis, diataxis.fr, no date: \"Your guidance needs to remain focused on what’s required to reach the conclusion, and everything else can be left for another time.\""
+     {
+      "title": "Tutorials",
+      "url": "https://diataxis.fr/tutorials/",
+      "by": "Procida, Diátaxis, diataxis.fr, no date",
+      "quote": "It’s important to allow the learner to form an idea of what they will achieve right from the start."
+     },
+     {
+      "title": "How to write software documentation",
+      "url": "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/",
+      "by": "Write the Docs, writethedocs.org, no date",
+      "quote": "Show a common example use case for your project."
+     },
+     {
+      "title": "Make a README",
+      "url": "https://www.makeareadme.com/",
+      "by": "Guo, makeareadme.com, no date",
+      "quote": "Use examples liberally, and show the expected output if you can."
+     },
+     {
+      "title": "Tutorials",
+      "url": "https://diataxis.fr/tutorials/",
+      "by": "Procida, Diátaxis, diataxis.fr, no date",
+      "quote": "Show the user actual example output, or even the exact expected output."
+     },
+     {
+      "title": "Art of README",
+      "url": "https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme",
+      "by": "hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31",
+      "quote": "I can quickly determine whether the example JS fits the desired style and problem."
+     },
+     {
+      "title": "Tutorials",
+      "url": "https://diataxis.fr/tutorials/",
+      "by": "Procida, Diátaxis, diataxis.fr, no date",
+      "quote": "Your guidance needs to remain focused on what’s required to reach the conclusion, and everything else can be left for another time."
+     }
     ]
    },
    {
@@ -175,13 +260,48 @@
      "From a machine or sandbox where nothing the product needs is in place, follow the requirements, the install steps and the walkthrough as written, and do nothing they do not say; where a step fails, or needs something the README does not say, write it in and start again."
     ],
     "grounds": [
-     "GitHub, \"Starting an Open Source Project\", Open Source Guides, opensource.guide, no date: \"Remember that your readers aren’t you.\"",
-     "Guo, \"Make a README\", makeareadme.com, no date: \"If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.\"",
-     "Guo, \"Make a README\", makeareadme.com, no date: \"Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible.\"",
-     "Litt, \"Standard Readme\", github.com/RichardLitt/standard-readme, spec.md, no date: \"Code block illustrating how to install.\"",
-     "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"even if it's just a regular npm install, I'd like to see that mentioned, too.\"",
-     "Procida, \"Tutorials\", Diátaxis, diataxis.fr, no date: \"Every step the learner follows should produce a comprehensible result, however small.\"",
-     "Procida, \"Tutorials\", Diátaxis, diataxis.fr, no date: \"A learner who follows your directions and doesn’t get the expected results will quickly lose confidence, in the tutorial, the tutor and themselves.\""
+     {
+      "title": "Starting an Open Source Project",
+      "url": "https://opensource.guide/starting-a-project/",
+      "by": "GitHub, Open Source Guides, opensource.guide, no date",
+      "quote": "Remember that your readers aren’t you."
+     },
+     {
+      "title": "Make a README",
+      "url": "https://www.makeareadme.com/",
+      "by": "Guo, makeareadme.com, no date",
+      "quote": "If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection."
+     },
+     {
+      "title": "Make a README",
+      "url": "https://www.makeareadme.com/",
+      "by": "Guo, makeareadme.com, no date",
+      "quote": "Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible."
+     },
+     {
+      "title": "Standard Readme",
+      "url": "https://github.com/RichardLitt/standard-readme/blob/main/spec.md",
+      "by": "Litt, github.com/RichardLitt/standard-readme, spec.md, no date",
+      "quote": "Code block illustrating how to install."
+     },
+     {
+      "title": "Art of README",
+      "url": "https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme",
+      "by": "hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31",
+      "quote": "even if it's just a regular npm install, I'd like to see that mentioned, too."
+     },
+     {
+      "title": "Tutorials",
+      "url": "https://diataxis.fr/tutorials/",
+      "by": "Procida, Diátaxis, diataxis.fr, no date",
+      "quote": "Every step the learner follows should produce a comprehensible result, however small."
+     },
+     {
+      "title": "Tutorials",
+      "url": "https://diataxis.fr/tutorials/",
+      "by": "Procida, Diátaxis, diataxis.fr, no date",
+      "quote": "A learner who follows your directions and doesn’t get the expected results will quickly lose confidence, in the tutorial, the tutor and themselves."
+     }
     ]
    },
    {
@@ -191,10 +311,30 @@
      "Point to each gain and the idea, and find the lines of the figure that keep it; where none does, mend the figure or the promise."
     ],
     "grounds": [
-     "C4 model, \"System context diagram\", c4model.com, no date: \"Draw a diagram showing your system as a box in the centre, surrounded by its users and the other systems that it interacts with.\"",
-     "C4 model, \"System context diagram\", c4model.com, no date: \"Detail isn’t important here as this is your zoomed out view showing a big picture of the system landscape.\"",
-     "C4 model, \"System context diagram\", c4model.com, no date: \"The focus should be on people (actors, roles, personas, etc) and software systems rather than technologies, protocols and other low-level details.\"",
-     "C4 model, \"System context diagram\", c4model.com, no date: \"It’s the sort of diagram that you could show to non-technical people.\""
+     {
+      "title": "System context diagram",
+      "url": "https://c4model.com/diagrams/system-context",
+      "by": "C4 model, c4model.com, no date",
+      "quote": "Draw a diagram showing your system as a box in the centre, surrounded by its users and the other systems that it interacts with."
+     },
+     {
+      "title": "System context diagram",
+      "url": "https://c4model.com/diagrams/system-context",
+      "by": "C4 model, c4model.com, no date",
+      "quote": "Detail isn’t important here as this is your zoomed out view showing a big picture of the system landscape."
+     },
+     {
+      "title": "System context diagram",
+      "url": "https://c4model.com/diagrams/system-context",
+      "by": "C4 model, c4model.com, no date",
+      "quote": "The focus should be on people (actors, roles, personas, etc) and software systems rather than technologies, protocols and other low-level details."
+     },
+     {
+      "title": "System context diagram",
+      "url": "https://c4model.com/diagrams/system-context",
+      "by": "C4 model, c4model.com, no date",
+      "quote": "It’s the sort of diagram that you could show to non-technical people."
+     }
     ]
    },
    {
@@ -204,12 +344,42 @@
      "Write each link so it reaches its document wherever the README is read, such as relative to the README, and open each one."
     ],
     "grounds": [
-     "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"Detailed documentation is good -- make separate pages for it! -- but keep your README succinct.\"",
-     "GitHub, \"About the repository README file\", GitHub Docs, no date: \"A README should only contain information necessary for developers to get started using and contributing to your project. Longer documentation is best suited for wikis.\"",
-     "Google, \"READMEs\", Google documentation guide, github.com/google/styleguide, no date: \"At a minimum, your `README.md` file should contain a link to your user- and/or team-facing documentation.\"",
-     "GitHub, \"Starting an Open Source Project\", Open Source Guides, opensource.guide, no date: \"Link to your CONTRIBUTING file from your README, so more people see it.\"",
-     "GitHub, \"About the repository README file\", GitHub Docs, no date: \"Relative links are easier for users who clone your repository.\"",
-     "Litt, \"Standard Readme\", github.com/RichardLitt/standard-readme, spec.md, no date: \"Must not contain broken links.\""
+     {
+      "title": "Art of README",
+      "url": "https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme",
+      "by": "hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31",
+      "quote": "Detailed documentation is good -- make separate pages for it! -- but keep your README succinct."
+     },
+     {
+      "title": "About the repository README file",
+      "url": "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      "by": "GitHub, GitHub Docs, no date",
+      "quote": "A README should only contain information necessary for developers to get started using and contributing to your project. Longer documentation is best suited for wikis."
+     },
+     {
+      "title": "READMEs",
+      "url": "https://github.com/google/styleguide/blob/gh-pages/docguide/READMEs.md",
+      "by": "Google, Google documentation guide, github.com/google/styleguide, no date",
+      "quote": "At a minimum, your `README.md` file should contain a link to your user- and/or team-facing documentation."
+     },
+     {
+      "title": "Starting an Open Source Project",
+      "url": "https://opensource.guide/starting-a-project/",
+      "by": "GitHub, Open Source Guides, opensource.guide, no date",
+      "quote": "Link to your CONTRIBUTING file from your README, so more people see it."
+     },
+     {
+      "title": "About the repository README file",
+      "url": "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      "by": "GitHub, GitHub Docs, no date",
+      "quote": "Relative links are easier for users who clone your repository."
+     },
+     {
+      "title": "Standard Readme",
+      "url": "https://github.com/RichardLitt/standard-readme/blob/main/spec.md",
+      "by": "Litt, github.com/RichardLitt/standard-readme, spec.md, no date",
+      "quote": "Must not contain broken links."
+     }
     ]
    },
    {
@@ -219,8 +389,18 @@
      "Open the link, and check that the text it reaches is the license the name says."
     ],
     "grounds": [
-     "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"you're likely to exclude a module VERY quickly if it has a license incompatible with your work.\"",
-     "Guo, \"Make a README\", makeareadme.com, no date: \"For open source projects, say how it is licensed.\""
+     {
+      "title": "Art of README",
+      "url": "https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme",
+      "by": "hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31",
+      "quote": "you're likely to exclude a module VERY quickly if it has a license incompatible with your work."
+     },
+     {
+      "title": "Make a README",
+      "url": "https://www.makeareadme.com/",
+      "by": "Guo, makeareadme.com, no date",
+      "quote": "For open source projects, say how it is licensed."
+     }
     ]
    },
    {
@@ -232,9 +412,24 @@
      "Cut what no reader needs at the point where it stands, or move it to the document a link leads to."
     ],
     "grounds": [
-     "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"can be imagined as a funnel held upright, where the widest end contains the broadest more pertinent details\"",
-     "Robert, \"perlmodstyle\", quoted in Litt, \"Standard Readme\", github.com/RichardLitt/standard-readme, spec.md, no date: \"Ideally, someone who's slightly familiar with your module should be able to refresh their memory without hitting \"page down\".\"",
-     "hackergrrl, \"Art of README\", github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: \"The ideal README is as short as it can be without being any shorter.\""
+     {
+      "title": "Art of README",
+      "url": "https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme",
+      "by": "hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31",
+      "quote": "can be imagined as a funnel held upright, where the widest end contains the broadest more pertinent details"
+     },
+     {
+      "title": "perlmodstyle",
+      "url": "https://github.com/RichardLitt/standard-readme/blob/main/spec.md",
+      "by": "Robert, quoted in Litt, \"Standard Readme\", github.com/RichardLitt/standard-readme, spec.md, no date",
+      "quote": "Ideally, someone who's slightly familiar with your module should be able to refresh their memory without hitting \"page down\"."
+     },
+     {
+      "title": "Art of README",
+      "url": "https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme",
+      "by": "hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31",
+      "quote": "The ideal README is as short as it can be without being any shorter."
+     }
     ]
    }
   ]

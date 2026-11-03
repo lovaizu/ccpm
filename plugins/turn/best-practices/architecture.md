@@ -52,9 +52,9 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Hruschka and Starke, "3. Context and Scope", arc42 documentation, docs.arc42.org, no date: "System scope and context - as the name suggests - delimits your system (i.e. your scope) from all its communication partners (neighboring systems and users, i.e. the context of your system)."
-- Mountain Goat Software, "User Stories: What They Are, How to Write Them, and Examples", mountaingoatsoftware.com, 2026: "A common template is: As a [type of user], I [need/want/am required] to [do something], so that [reason or benefit]."
-- Kruchten, "Architectural Blueprints—The “4+1” View Model of Software Architecture", IEEE Software, 1995: "as a driver to discover the architectural elements during the architecture design as we will describe later"
+- [3. Context and Scope](https://docs.arc42.org/section-3/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "System scope and context - as the name suggests - delimits your system (i.e. your scope) from all its communication partners (neighboring systems and users, i.e. the context of your system)."
+- [User Stories: What They Are, How to Write Them, and Examples](https://www.mountaingoatsoftware.com/agile/user-stories), Mountain Goat Software, mountaingoatsoftware.com, 2026: "A common template is: As a [type of user], I [need/want/am required] to [do something], so that [reason or benefit]."
+- [Architectural Blueprints—The “4+1” View Model of Software Architecture](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf), Kruchten, IEEE Software, 1995: "as a driver to discover the architectural elements during the architecture design as we will describe later"
 
 ### Q1: Having read the opening, can the builder say how the product delivers its UX, as one idea that every part carries out?
 
@@ -67,11 +67,11 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "Start with a bird’s eye overview of the problem being solved."
-- rust-analyzer team, "Architecture", rust-analyzer repository, no date: "On the highest level, rust-analyzer is a thing which accepts input source code from the client and produces a structured semantic model of the code."
-- Fowler, "Architecture Decision Record", martinfowler.com, 2026: "The key is to put the most important material at the start, and push details to later in the record."
-- Hruschka and Starke, "1. Introduction and Goals", arc42 documentation, docs.arc42.org, no date: "If requirements documents exist this overview should refer to these documents."
-- Hruschka and Starke, "4. Solution Strategy", arc42 documentation, docs.arc42.org, no date: "These decisions form the cornerstones for your architecture. They are the basis for many other detailed decisions or implementation rules."
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "Start with a bird’s eye overview of the problem being solved."
+- [Architecture](https://github.com/rust-lang/rust-analyzer/blob/master/docs/book/src/contributing/architecture.md), rust-analyzer team, rust-analyzer repository, no date: "On the highest level, rust-analyzer is a thing which accepts input source code from the client and produces a structured semantic model of the code."
+- [Architecture Decision Record](https://martinfowler.com/bliki/ArchitectureDecisionRecord.html), Fowler, martinfowler.com, 2026: "The key is to put the most important material at the start, and push details to later in the record."
+- [1. Introduction and Goals](https://docs.arc42.org/section-1/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "If requirements documents exist this overview should refer to these documents."
+- [4. Solution Strategy](https://docs.arc42.org/section-4/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "These decisions form the cornerstones for your architecture. They are the basis for many other detailed decisions or implementation rules."
 
 ### Q5: For anything the user stories need decided, can the builder point to the one role that decides it?
 
@@ -85,10 +85,10 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Parnas, "On the Criteria to be Used in Decomposing Systems into Modules", Carnegie-Mellon University technical report, 1971: "We propose instead that one begins with a list of difficult design decisions or design decisions which are likely to change. Each module is then designed to hide such a decision from the others."
-- Brown, "Component", C4 model, c4model.com, no date: "in the C4 model, a component is a grouping of related functionality encapsulated behind a well-defined interface."
-- Brown, "Notation", C4 model, c4model.com, no date: "Every line should be labelled, the label being consistent with the direction and intent of the relationship (e.g. dependency or data flow). Try to be as specific as possible with the label, ideally avoiding single words like, “Uses”."
-- Brown, "Software architecture diagram review checklist", C4 model, c4model.com, no date: "Do you understand what every element does?"
+- [On the Criteria to be Used in Decomposing Systems into Modules](https://prl.khoury.northeastern.edu/img/p-tr-1971.pdf), Parnas, Carnegie-Mellon University technical report, 1971: "We propose instead that one begins with a list of difficult design decisions or design decisions which are likely to change. Each module is then designed to hide such a decision from the others."
+- [Component](https://c4model.com/abstractions/component), Brown, C4 model, c4model.com, no date: "in the C4 model, a component is a grouping of related functionality encapsulated behind a well-defined interface."
+- [Notation](https://c4model.com/diagrams/notation), Brown, C4 model, c4model.com, no date: "Every line should be labelled, the label being consistent with the direction and intent of the relationship (e.g. dependency or data flow). Try to be as specific as possible with the label, ideally avoiding single words like, “Uses”."
+- [Software architecture diagram review checklist](https://c4model.com/diagrams/checklist), Brown, C4 model, c4model.com, no date: "Do you understand what every element does?"
 
 ### Q4: Starting on a role, can the builder begin without choosing for themselves what kind of thing it is and what it is made with?
 
@@ -101,10 +101,10 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Brown, "Notation", C4 model, c4model.com, no date: "The type of every element should be explicitly specified (e.g. Person, Software System, Container or Component)."
-- Brown, "Notation", C4 model, c4model.com, no date: "Every container and component should have a technology explicitly specified."
-- Brown, "Notation", C4 model, c4model.com, no date: "Any notation used should be as self-describing as possible, but all diagrams should have a key/legend to make the notation explicit."
-- Brown, "Notation", C4 model, c4model.com, no date: "A good way to think about this is to ask yourself whether each diagram can stand alone, and be (mostly) understood without a narrative."
+- [Notation](https://c4model.com/diagrams/notation), Brown, C4 model, c4model.com, no date: "The type of every element should be explicitly specified (e.g. Person, Software System, Container or Component)."
+- [Notation](https://c4model.com/diagrams/notation), Brown, C4 model, c4model.com, no date: "Every container and component should have a technology explicitly specified."
+- [Notation](https://c4model.com/diagrams/notation), Brown, C4 model, c4model.com, no date: "Any notation used should be as self-describing as possible, but all diagrams should have a key/legend to make the notation explicit."
+- [Notation](https://c4model.com/diagrams/notation), Brown, C4 model, c4model.com, no date: "A good way to think about this is to ask yourself whether each diagram can stand alone, and be (mostly) understood without a narrative."
 
 ### Q6: When one builder makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?
 
@@ -116,9 +116,9 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Mermaid, "Entity Relationship Diagrams", mermaid.js.org, no date: "Relationships between entities are represented by lines with end markers representing cardinality."
-- Mermaid, "Entity Relationship Diagrams", mermaid.js.org, no date: "Cardinality is a property that describes how many elements of another entity can be related to the entity in question."
-- Ubl, "Design Docs at Google", industrialempathy.com, 2020: "Similar to the advice on APIs, and for the same reasons, copy-pasting complete schema definitions should be avoided."
+- [Entity Relationship Diagrams](https://mermaid.js.org/syntax/entityRelationshipDiagram.html), Mermaid, mermaid.js.org, no date: "Relationships between entities are represented by lines with end markers representing cardinality."
+- [Entity Relationship Diagrams](https://mermaid.js.org/syntax/entityRelationshipDiagram.html), Mermaid, mermaid.js.org, no date: "Cardinality is a property that describes how many elements of another entity can be related to the entity in question."
+- [Design Docs at Google](https://www.industrialempathy.com/posts/design-docs-at-google/), Ubl, industrialempathy.com, 2020: "Similar to the advice on APIs, and for the same reasons, copy-pasting complete schema definitions should be avoided."
 
 ### Q7: For each user story, can the builder follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?
 
@@ -130,11 +130,11 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Hruschka and Starke, "6. Runtime View", arc42 documentation, docs.arc42.org, no date: "The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios"
-- Hruschka and Starke, "6. Runtime View", arc42 documentation, docs.arc42.org, no date: "Always map existing building blocks to the activities within runtime scenarios!"
-- Brown, "Dynamic diagram", C4 model, c4model.com, no date: "A dynamic diagram can be useful when you want to show how elements in the static model collaborate at runtime to implement a user story, use case, feature, etc."
-- Mermaid, "Sequence diagrams", mermaid.js.org, no date: "A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order."
-- Kruchten, "Architectural Blueprints—The “4+1” View Model of Software Architecture", IEEE Software, 1995: "as a validation and illustration role after this architecture design is complete, both on paper and as the starting point for the tests of an architectural prototype."
+- [6. Runtime View](https://docs.arc42.org/section-6/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios"
+- [6. Runtime View](https://docs.arc42.org/section-6/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Always map existing building blocks to the activities within runtime scenarios!"
+- [Dynamic diagram](https://c4model.com/diagrams/dynamic), Brown, C4 model, c4model.com, no date: "A dynamic diagram can be useful when you want to show how elements in the static model collaborate at runtime to implement a user story, use case, feature, etc."
+- [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html), Mermaid, mermaid.js.org, no date: "A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order."
+- [Architectural Blueprints—The “4+1” View Model of Software Architecture](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf), Kruchten, IEEE Software, 1995: "as a validation and illustration role after this architecture design is complete, both on paper and as the starting point for the tests of an architectural prototype."
 
 ### Q14: Of any user story, role or data, can the builder tell which objective of the UX needs it?
 
@@ -146,7 +146,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Fowler, "Yagni", martinfowler.com, 2015: "The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features."
+- [Yagni](https://martinfowler.com/bliki/Yagni.html), Fowler, martinfowler.com, 2015: "The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features."
 
 ### Q2: When two builders of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?
 
@@ -160,15 +160,15 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Hruschka and Starke, "8. Crosscutting Concepts", arc42 documentation, docs.arc42.org, no date: "Such concepts are often related to multiple building blocks."
-- Hruschka and Starke, "8. Crosscutting Concepts", arc42 documentation, docs.arc42.org, no date: "It might be easier to communicate or document such cross-cutting topics at a central location, instead of repeating them in the description of the concerned building blocks, hardware elements or development processes."
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "Explicitly call-out architectural invariants."
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "Often, important invariants are expressed as an absence of something, and it’s pretty hard to divine that from reading the code."
-- Clements et al., "Documenting Software Architectures: Views and Beyond", 2nd edition, section P.5, informit.com, 2010: "For the most important decisions, you should record why you made them the way you did. You should also record the important or most likely alternatives you rejected and state why."
-- Anthropic, "Prompting best practices", Claude Platform Docs, no date: "Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses."
-- Anthropic, "Prompting best practices", Claude Platform Docs, no date: "Claude can generalize from the explanation."
-- Clements et al., "Documenting Software Architectures: Views and Beyond", 2nd edition, section P.5, informit.com, 2010: "The most dangerous kind of ambiguity is undetected ambiguity. Here, each reader will think he or she understands the document, but unwittingly each reader will come to different conclusions about what it is saying."
-- Clements et al., "Documenting Software Architectures: Views and Beyond", 2nd edition, section P.5, informit.com, 2010: "Each kind of information should be recorded in exactly one place."
+- [8. Crosscutting Concepts](https://docs.arc42.org/section-8/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Such concepts are often related to multiple building blocks."
+- [8. Crosscutting Concepts](https://docs.arc42.org/section-8/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "It might be easier to communicate or document such cross-cutting topics at a central location, instead of repeating them in the description of the concerned building blocks, hardware elements or development processes."
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "Explicitly call-out architectural invariants."
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "Often, important invariants are expressed as an absence of something, and it’s pretty hard to divine that from reading the code."
+- [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "For the most important decisions, you should record why you made them the way you did. You should also record the important or most likely alternatives you rejected and state why."
+- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses."
+- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Claude can generalize from the explanation."
+- [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "The most dangerous kind of ambiguity is undetected ambiguity. Here, each reader will think he or she understands the document, but unwittingly each reader will come to different conclusions about what it is saying."
+- [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Each kind of information should be recorded in exactly one place."
 
 ### Q8: Setting the product up from nothing, can the builder put each role where it runs and each data where it is kept, and start the product, without asking anyone?
 
@@ -182,10 +182,10 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Brown, "Deployment diagram", C4 model, c4model.com, no date: "A deployment diagram allows you to illustrate how instances of software systems and/or containers in the static model are deployed on to the infrastructure within a given deployment environment (e.g. production, staging, development, etc)."
-- Brown, "Deployment diagram", C4 model, c4model.com, no date: "A deployment node represents where an instance of a software system/container is running"
-- Hruschka and Starke, "7. Deployment View", arc42 documentation, docs.arc42.org, no date: "Software does not run without hardware."
-- Hruschka and Starke, "7. Deployment View", arc42 documentation, docs.arc42.org, no date: "From a software perspective it is sufficient to capture those elements of the infrastructure that are needed to show the deployment of your building blocks."
+- [Deployment diagram](https://c4model.com/diagrams/deployment), Brown, C4 model, c4model.com, no date: "A deployment diagram allows you to illustrate how instances of software systems and/or containers in the static model are deployed on to the infrastructure within a given deployment environment (e.g. production, staging, development, etc)."
+- [Deployment diagram](https://c4model.com/diagrams/deployment), Brown, C4 model, c4model.com, no date: "A deployment node represents where an instance of a software system/container is running"
+- [7. Deployment View](https://docs.arc42.org/section-7/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Software does not run without hardware."
+- [7. Deployment View](https://docs.arc42.org/section-7/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "From a software perspective it is sufficient to capture those elements of the infrastructure that are needed to show the deployment of your building blocks."
 
 ### Q9: Making or changing a role or a data, can the builder find the one place its files belong?
 
@@ -198,10 +198,10 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "The codemap should answer “where’s the thing that does X?”."
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "Do name important files, modules, and types."
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "A codemap is a map of a country, not an atlas of maps of its states."
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "Are the things you want to put near each other in the codemap adjacent when you run tree .?"
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "The codemap should answer “where’s the thing that does X?”."
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "Do name important files, modules, and types."
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "A codemap is a map of a country, not an atlas of maps of its states."
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "Are the things you want to put near each other in the codemap adjacent when you run tree .?"
 
 ### Q10: Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which types of test cover it, how heavily, and why a type is missing?
 
@@ -214,10 +214,10 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Vocke, "The Practical Test Pyramid", martinfowler.com, 2018: "Write tests with different granularity"
-- Vocke, "The Practical Test Pyramid", martinfowler.com, 2018: "The more high-level you get the fewer tests you should have"
-- Bender, "Testing Overview", Software Engineering at Google, chapter 11, abseil.io, 2020: "Scope refers to the specific code paths we are verifying."
-- Clements et al., "Documenting Software Architectures: Views and Beyond", 2nd edition, section P.5, informit.com, 2010: "If the section is blank, the reader will wonder whether the information is coming later or whether it is indeed supposed to be blank."
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Write tests with different granularity"
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "The more high-level you get the fewer tests you should have"
+- [Testing Overview](https://abseil.io/resources/swe-book/html/ch11.html), Bender, Software Engineering at Google, chapter 11, abseil.io, 2020: "Scope refers to the specific code paths we are verifying."
+- [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "If the section is blank, the reader will wonder whether the information is coming later or whether it is indeed supposed to be blank."
 
 ### Q11: Writing a test of one type, can the builder do it without deciding for themselves what to make real, what to fake and when it passes?
 
@@ -231,12 +231,12 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Vocke, "The Practical Test Pyramid", martinfowler.com, 2018: "A unit test typically replaces external collaborators with test doubles"
-- Vocke, "The Practical Test Pyramid", martinfowler.com, 2018: "For your automated tests this means you don't just need to run your own application but also the component you're integrating with."
-- Schwaber and Sutherland, "The Scrum Guide", scrumguides.org, 2020: "The Definition of Done is a formal description of the state of the Increment when it meets the quality measures required for the product."
-- Anthropic, "Demystifying evals for AI agents", anthropic.com/engineering, 2026: "pass^k measures the probability that all k trials succeed."
-- Vocke, "The Practical Test Pyramid", martinfowler.com, 2018: "Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions."
-- Clements et al., "Documenting Software Architectures: Views and Beyond", 2nd edition, section P.5, informit.com, 2010: "Each kind of information should be recorded in exactly one place."
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "A unit test typically replaces external collaborators with test doubles"
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "For your automated tests this means you don't just need to run your own application but also the component you're integrating with."
+- [The Scrum Guide](https://scrumguides.org/scrum-guide.html), Schwaber and Sutherland, scrumguides.org, 2020: "The Definition of Done is a formal description of the state of the Increment when it meets the quality measures required for the product."
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "pass^k measures the probability that all k trials succeed."
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions."
+- [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Each kind of information should be recorded in exactly one place."
 
 ### Q13: Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
 
@@ -248,9 +248,9 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Hruschka and Starke, "8. Crosscutting Concepts", arc42 documentation, docs.arc42.org, no date: "Concepts form the basis for conceptual integrity (consistency, homogeneity) of the architecture."
-- Kruchten, "Architectural Blueprints—The “4+1” View Model of Software Architecture", IEEE Software, 1995: "A Software Design Guidelines, which captures (among other things) the most important design decisions that must be respected to maintain the architectural integrity of the system."
-- Clements et al., "Documenting Software Architectures: Views and Beyond", 2nd edition, section P.5, informit.com, 2010: "Documentation that is incomplete or out of date does not reflect truth, does not obey its own rules for form and internal consistency, and is not used."
+- [8. Crosscutting Concepts](https://docs.arc42.org/section-8/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Concepts form the basis for conceptual integrity (consistency, homogeneity) of the architecture."
+- [Architectural Blueprints—The “4+1” View Model of Software Architecture](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf), Kruchten, IEEE Software, 1995: "A Software Design Guidelines, which captures (among other things) the most important design decisions that must be respected to maintain the architectural integrity of the system."
+- [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Documentation that is incomplete or out of date does not reflect truth, does not obey its own rules for form and internal consistency, and is not used."
 
 ### Q12: When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
 
@@ -262,13 +262,13 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- Nygard, "Documenting Architecture Decisions", Cognitect blog, 2011: "Without understanding the rationale or consequences, this person has only two choices:"
-- Nygard, "Documenting Architecture Decisions", Cognitect blog, 2011: "Blindly accept the decision."
-- Nygard, "Documenting Architecture Decisions", Cognitect blog, 2011: "Blindly change it."
-- Ubl, "Design Docs at Google", industrialempathy.com, 2020: "The design doc is the place to write down the trade-offs you made in designing your software."
-- Ubl, "Design Docs at Google", industrialempathy.com, 2020: "shows very explicitly why the selected solution is the best given the project goals and how other solutions, that the reader may be wondering about, introduce trade-offs that are less desirable given the goals."
-- Nygard, "Documenting Architecture Decisions", Cognitect blog, 2011: "All consequences should be listed here, not just the "positive" ones."
-- Hruschka and Starke, "9. Architecture Decisions", arc42 documentation, docs.arc42.org, no date: "Please use your judgement to decide whether an architectural decision should be documented here in this central section or whether you better document it locally (e.g. within the white box template of one building block). Avoid redundant texts."
+- [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), Nygard, Cognitect blog, 2011: "Without understanding the rationale or consequences, this person has only two choices:"
+- [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), Nygard, Cognitect blog, 2011: "Blindly accept the decision."
+- [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), Nygard, Cognitect blog, 2011: "Blindly change it."
+- [Design Docs at Google](https://www.industrialempathy.com/posts/design-docs-at-google/), Ubl, industrialempathy.com, 2020: "The design doc is the place to write down the trade-offs you made in designing your software."
+- [Design Docs at Google](https://www.industrialempathy.com/posts/design-docs-at-google/), Ubl, industrialempathy.com, 2020: "shows very explicitly why the selected solution is the best given the project goals and how other solutions, that the reader may be wondering about, introduce trade-offs that are less desirable given the goals."
+- [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), Nygard, Cognitect blog, 2011: "All consequences should be listed here, not just the "positive" ones."
+- [9. Architecture Decisions](https://docs.arc42.org/section-9/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Please use your judgement to decide whether an architectural decision should be documented here in this central section or whether you better document it locally (e.g. within the white box template of one building block). Avoid redundant texts."
 
 ### Q15: When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
 
@@ -281,7 +281,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 **Grounds**
 
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "This is the main rule of thumb for ARCHITECTURE — only specify things that are unlikely to frequently change."
-- matklad, "ARCHITECTURE.md", matklad.github.io, 2021: "Avoid going into details of how each module works, pull this into separate documents or (better) inline documentation."
-- Ubl, "Design Docs at Google", industrialempathy.com, 2020: "A clear indicator that a doc might not be necessary are design docs that are really implementation manuals."
-- Fowler, "Software Architecture Guide", martinfowler.com, 2019: "It means that the heart of thinking architecturally about software is to decide what is important, (i.e. what is architectural), and then expend energy on keeping those architectural elements in good condition."
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "This is the main rule of thumb for ARCHITECTURE — only specify things that are unlikely to frequently change."
+- [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "Avoid going into details of how each module works, pull this into separate documents or (better) inline documentation."
+- [Design Docs at Google](https://www.industrialempathy.com/posts/design-docs-at-google/), Ubl, industrialempathy.com, 2020: "A clear indicator that a doc might not be necessary are design docs that are really implementation manuals."
+- [Software Architecture Guide](https://martinfowler.com/architecture/), Fowler, martinfowler.com, 2019: "It means that the heart of thinking architecturally about software is to decide what is important, (i.e. what is architectural), and then expend energy on keeping those architectural elements in good condition."

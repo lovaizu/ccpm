@@ -9,6 +9,7 @@ import unittest
 import helpers  # noqa: F401  (puts turn's scripts on the path)
 import markdown
 
+G = {"title": "T", "url": "https://x.example/t", "by": "X, 2020", "quote": "y"}
 DATA = {
     "standard": {
         "goal": "The reader gets it.",
@@ -17,7 +18,7 @@ DATA = {
     },
     "practice": {
         "methods": [
-            {"question": "Q1", "thinking": "Think.", "steps": ["Do."], "grounds": ['X: "y"']}
+            {"question": "Q1", "thinking": "Think.", "steps": ["Do."], "grounds": [G]}
         ]
     },
 }
@@ -29,7 +30,7 @@ class Markdown(unittest.TestCase):
         text = markdown.markdown("kind", DATA)
         expected = ["# kind", "The reader gets it.", "- **a**: A.", "  - **b**: B."]
         expected += ["- **Q1** (a): Does it?", "### Q1: Does it?", "**Thinking**: Think."]
-        expected += ["1. Do.", '- X: "y"']
+        expected += ["1. Do.", '- [T](https://x.example/t), X, 2020: "y"']
         for line in expected:
             self.assertIn(line, text)
         self.assertLess(text.index("## Standard"), text.index("## Practice"))

@@ -41,8 +41,8 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 **Grounds**
 
-- Basili, Caldiera and Rombach, "The Goal Question Metric Approach", University of Maryland: "A goal is defined for an object, for a variety of reasons, with respect to various models of quality, from various points of view, relative to a particular environment."
-- Strategyn, "Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick", strategyn.com, 2024: "Identify who is executing the job and define the core functional job in a single, solution-free statement."
+- [The Goal Question Metric Approach](https://www.cs.umd.edu/~mvz/handouts/gqm.pdf), Basili, Caldiera and Rombach, University of Maryland: "A goal is defined for an object, for a variety of reasons, with respect to various models of quality, from various points of view, relative to a particular environment."
+- [Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick](https://strategyn.com/jobs-to-be-done/), Strategyn, strategyn.com, 2024: "Identify who is executing the job and define the core functional job in a single, solution-free statement."
 
 ### Q2: Looking at the format, does the builder know what to write in which part, and in what order?
 
@@ -58,7 +58,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 **Grounds**
 
-- Andrade, "Using Rubrics to Promote Thinking and Learning", Educational Leadership, 2000: "Look at models. Review examples of good and poor work on a project like the one your students are about to undertake."
+- [Using Rubrics to Promote Thinking and Learning](https://ascd.org/el/articles/using-rubrics-to-promote-thinking-and-learning), Andrade, Educational Leadership, 2000: "Look at models. Review examples of good and poor work on a project like the one your students are about to undertake."
 
 ### Q5: Does the format hold, neither more nor less, the parts the goal needs?
 
@@ -72,9 +72,9 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 **Grounds**
 
-- Basili, Caldiera and Rombach, "The Goal Question Metric Approach", University of Maryland: "This means that measurement must be defined in a top-down fashion."
-- Scriven, "The Logic and Methodology of Checklists", Western Michigan University, 2007: "Then one tries to construct hypothetical cases in which an entity has all the properties in the proposed comlist but still lacks something that would be required or important in order to justify an assignment of merit."
-- Scriven, "The Logic and Methodology of Checklists", Western Michigan University, 2007: "The list should be concise (to assist its mnemonic function); i.e., it should contain no superfluous criteria."
+- [The Goal Question Metric Approach](https://www.cs.umd.edu/~mvz/handouts/gqm.pdf), Basili, Caldiera and Rombach, University of Maryland: "This means that measurement must be defined in a top-down fashion."
+- [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "Then one tries to construct hypothetical cases in which an entity has all the properties in the proposed comlist but still lacks something that would be required or important in order to justify an assignment of merit."
+- [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "The list should be concise (to assist its mnemonic function); i.e., it should contain no superfluous criteria."
 
 ### Q3: With each question, can the evaluator tell whether that part serves the user?
 
@@ -91,11 +91,11 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 **Grounds**
 
-- Scriven, "The Logic and Methodology of Checklists", Western Michigan University, 2007: "The checkpoints should refer to criteria and not mere indicators"
-- Scriven, "The Logic and Methodology of Checklists", Western Michigan University, 2007: "indicators are easily corrupted, and once it becomes known that they are being used as an indicator for something important in an evaluation, people are very ingenious about faking the score on them"
-- Popham, "What's Wrong—and What's Right—with Rubrics", Educational Leadership, 1997: "In essence, these overly general criteria allow both teachers and students to conclude that really good student responses to the task are, well, really good."
-- Husain, "Creating a LLM-as-a-Judge That Drives Business Results", hamel.dev, 2024: "You need to be able to say “this interaction passed because…” and “this interaction failed because…”."
-- Anthropic, "Demystifying evals for AI agents", anthropic.com/engineering, 2026: "A good task is one where two domain experts would independently reach the same pass/fail verdict."
+- [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "The checkpoints should refer to criteria and not mere indicators"
+- [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "indicators are easily corrupted, and once it becomes known that they are being used as an indicator for something important in an evaluation, people are very ingenious about faking the score on them"
+- [What's Wrong—and What's Right—with Rubrics](https://ascd.org/el/articles/whats-wrong-and-whats-right-with-rubrics), Popham, Educational Leadership, 1997: "In essence, these overly general criteria allow both teachers and students to conclude that really good student responses to the task are, well, really good."
+- [Creating a LLM-as-a-Judge That Drives Business Results](https://hamel.dev/blog/posts/llm-judge/), Husain, hamel.dev, 2024: "You need to be able to say “this interaction passed because…” and “this interaction failed because…”."
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "A good task is one where two domain experts would independently reach the same pass/fail verdict."
 
 ### Q6: For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
 
@@ -111,11 +111,11 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 **Grounds**
 
-- Scriven, "The Logic and Methodology of Checklists", Western Michigan University, 2007: "The list should be complete (no significant omissions)."
-- Scriven, "The Logic and Methodology of Checklists", Western Michigan University, 2007: "The items should be contiguous, i.e., nonoverlapping"
-- Andrade, "Using Rubrics to Promote Thinking and Learning", Educational Leadership, 2000: "After class, take time to combine criteria. Avoid creating categories that are too big, and don't bury criteria that you want to emphasize."
-- Scriven, "Key Evaluation Checklist", Western Michigan University, 2007: "We can describe this as a case where they failed to clear a holistic (or overall) bar that was implicit in this example, but can often be made explicit through dialog."
-- Anthropic, "Demystifying evals for AI agents", anthropic.com/engineering, 2026: "Converting user-reported failures into test cases ensures your suite reflects actual usage"
+- [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "The list should be complete (no significant omissions)."
+- [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "The items should be contiguous, i.e., nonoverlapping"
+- [Using Rubrics to Promote Thinking and Learning](https://ascd.org/el/articles/using-rubrics-to-promote-thinking-and-learning), Andrade, Educational Leadership, 2000: "After class, take time to combine criteria. Avoid creating categories that are too big, and don't bury criteria that you want to emphasize."
+- [Key Evaluation Checklist](https://wmich.edu/sites/default/files/attachments/u350/2014/key%20evaluation%20checklist.pdf), Scriven, Western Michigan University, 2007: "We can describe this as a case where they failed to clear a holistic (or overall) bar that was implicit in this example, but can often be made explicit through dialog."
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "Converting user-reported failures into test cases ensures your suite reflects actual usage"
 
 ### Q4: Following the way of thinking and the steps, can the builder make the content the question asks for?
 
@@ -127,12 +127,12 @@ A best practice it makes produces deliverables that achieve their user's purpose
 2. Write the way of thinking in one sentence.
 3. Write a step only for what the way of thinking alone does not lead the builder to, one action each, in order.
 4. Where a step or a source names one way of doing it, such as a place, a file or a tool, write what that way achieves, so a project that achieves it another way keeps its own.
-5. Add as grounds the words of the sources, quoted from the pages opened; cut a step that no source holds and the way of thinking already implies.
+5. Add as grounds the words of the sources, quoted from the pages opened, each with its page's title and link; cut a step that no source holds and the way of thinking already implies.
 6. Make one real deliverable by the way, and judge it by the question; where it stays no, mend the way.
 
 **Grounds**
 
-- Scriven, "Key Evaluation Checklist", Western Michigan University, 2007: "This is an iterative checklist, not a one-shot checklist."
+- [Key Evaluation Checklist](https://wmich.edu/sites/default/files/attachments/u350/2014/key%20evaluation%20checklist.pdf), Scriven, Western Michigan University, 2007: "This is an iterative checklist, not a one-shot checklist."
 
 ### Q7: Does every essence a question holds have a way of thinking and steps that meet it?
 
@@ -157,6 +157,6 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 **Grounds**
 
-- Anthropic, "Demystifying evals for AI agents", anthropic.com/engineering, 2026: "LLM-as-judge graders should be closely calibrated with human experts"
-- Shankar et al., "Who Validates the Validators?", arXiv:2404.12272, 2024: "users need criteria to grade outputs, but grading outputs helps users define criteria."
-- Husain, "Creating a LLM-as-a-Judge That Drives Business Results", hamel.dev, 2024: "You cannot write a good judge prompt until you’ve seen the data."
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "LLM-as-judge graders should be closely calibrated with human experts"
+- [Who Validates the Validators?](https://arxiv.org/abs/2404.12272), Shankar et al., arXiv:2404.12272, 2024: "users need criteria to grade outputs, but grading outputs helps users define criteria."
+- [Creating a LLM-as-a-Judge That Drives Business Results](https://hamel.dev/blog/posts/llm-judge/), Husain, hamel.dev, 2024: "You cannot write a good judge prompt until you’ve seen the data."
