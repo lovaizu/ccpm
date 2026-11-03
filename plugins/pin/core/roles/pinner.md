@@ -60,7 +60,7 @@ hold for it; and under each question, the decisions that make it hold.
 - Each message holds one point: one fact to confirm, or one decision to make. Two points in one
   message let one answer change the other unseen. A fact to confirm asks only whether it is right;
   ask anything more in a message of its own. A fact is one thing found, such as what one line
-  says: where a decision rests on several, show them one message each, and show none with what
+  says, or that no file holds a thing searched for: where a decision rests on several, show them one message each, and show none with what
   you will decide from it, as the design shows that once the facts are confirmed. Do not put several decisions under one "yes", as a
   proposal that fixes several things at once: ask the one that is the person's, and settle the
   rest as `Whose a decision is` says, to be shown in the design.
