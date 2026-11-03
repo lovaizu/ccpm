@@ -1,200 +1,193 @@
 # Turn
 
-Turn is a Claude Code plugin that makes a deliverable you ask for, such as a document or code, until
-it meets your purpose well.
+Turn is a Claude Code plugin that makes a work you ask for, such as a README or a module of code,
+and makes it again until it meets your purpose well.
 
-Turn is for you when you want a deliverable made well, such as a README, a press release or code.
-With Turn, you get a deliverable that you can put to use as it is delivered, as soon as that
-quality allows.
+Turn is for you when you want a work you can put to use as it is handed to you, and you would
+rather answer a few questions than mend a draft. You answer only what is yours to decide, such as
+whom your README is for. Turn finds the facts itself, such as what your tool prints. Turn is also
+for a plugin that makes things for a person, such as rn: it hands Turn what it has already settled,
+and gets back the work.
 
-Asked alone, Claude Code writes from what it already knows and judges its own work. Turn instead
-learns the best practice of each kind of deliverable from guides and examples of good ones. It ties
-each decision about your deliverable to your purpose. Then a second AI, which did not make the
-deliverable, uses it as its user would.
+Asked alone, an AI writes from what it happens to know, and judges its own work. Turn starts from
+how good works of the same kind are made, and has the work judged by an AI that did not make it.
 
-![Best practice: a goal, parts, benefits and practices, used through a design tree](images/idea.svg)
-
-- Best practice: what a good deliverable of the kind is, and how to make one, in four parts. You
-  approve the goal, parts and benefits of a new kind's best practice before Turn uses it.
-  - Goal: the one thing the deliverable's user achieves with it, so the deliverable is judged by
-    whether they achieve it.
-  - Parts: what the deliverable holds, in the order its user meets it, so each part is there because
-    the goal needs it.
-  - Benefits: questions, each answered yes or no, that ask what each part, each tie between parts,
-    and the whole bring the user. A deliverable that answers every question yes is done, and nothing
-    more is added.
-  - Practices: for each benefit, a way of thinking and steps that have worked, with their sources,
-    so each answer rests on what has worked, not on a guess.
-- Design tree: your deliverable's purpose at the top, the benefits' questions under it, and under
-  each question the decisions that make its answer yes. Nothing is built that serves no question,
-  and Turn asks you only the points that no fact settles.
-
-The second AI judges the deliverable by the goal, parts and benefits alone, not by the practices:
-the deliverable's user gets only the deliverable, and a deliverable built by the practices can still
-fall short.
+- **A template for each kind.** A kind is what sort of work it is, such as a README or a man page.
+  Its template holds the parts a good work of the kind has, and questions that a good work answers
+  yes to, such as "After the walkthrough, can the reader tell that the product would give them the
+  gain on work of their own?". Turn ships templates for READMEs, UX documents, architecture
+  documents, code and prompts. For a kind it does not know, Turn first researches how good works of
+  it are made, and has you approve the purpose and the questions before it uses them.
+- **A design from your purpose.** Turn asks your purpose for this one work, then settles each
+  decision the template's questions need, such as which use the walkthrough shows. It finds each
+  fact itself and shows it to you to confirm. It asks you each decision that is yours, one at a
+  time, with a recommendation. You approve the design before anything is made. Turn does this
+  with [pin](../pin/README.md), a plugin installed with Turn.
+- **Used by an AI that did not make it.** Once the work is made, another AI uses it as its user
+  would. It is given the work and the template's questions, not the design, as the work's user
+  never sees the design. It answers each question with the lines of the work that meet it, or with
+  what the user would still need. A question not yet met goes back to the decision behind it, which
+  is decided again, and the work is made again from there.
+- **Then how it reads.** Once every question is met, Turn improves how the work says what it says,
+  such as a sentence that must be read twice to be understood, and checks it again. What the work says stays.
+- **At once where it can.** Parts of the work that stand apart, such as two modules that use
+  nothing of each other, are made and checked at the same time, so you wait less. A part is not
+  split where that would make it worse.
 
 **Non-goals**
 
-- Turn does not check whether the deliverable gets you what you want it for, such as whether the
-  RoomBook press release gets RoomBook into trade magazines. You check that once you have it.
-- Turn is not for a quick draft. Researching the best practice of a new kind, and having a second AI
-  use the deliverable, take longer than asking Claude Code alone. A kind Turn has done before skips
-  the research.
-- Turn does not commit, push, publish or send the deliverable. It gives you its files, and you
-  choose what happens to them.
+- Turn does not check whether the work gets you what you want it for in the world, such as whether
+  a README brings its tool more users. Turn checks the work against your purpose and its kind's
+  questions; the world's answer is yours to see.
+- Turn is not for a quick draft. Asking, making and checking take longer than asking Claude Code
+  alone. A kind new to Turn takes longer still, the first time.
+- Turn does not commit, push or publish the work. It writes the files, and you choose what happens
+  to them.
+- Turn does not decide for you what is yours. A question left unanswered holds the run where it is.
 
 ## Requirements
 
-> **Turn does not run yet.** Turn is being rebuilt, and the Turn that this README describes is not
-> built yet. Wait to install it until this note is gone.
-
-- Claude Code.
-
-  Turn runs inside it. `claude --version` prints its version when you have it.
-
-- Python 3.9 or later, run as `python3`.
-
-  Turn's scripts check its files with it. `python3 --version` prints 3.9 or later when you have it.
-
-- Claude Code allowed to search and read the web, with its WebSearch and WebFetch tools.
-
-  Turn reads guides and examples of a new kind on the web. Where it cannot reach the web, Turn
-  asks you for it.
+- Claude Code 2.1.317 or later: `claude --version` shows its version.
+- Python 3.9 or later, run as `python3`: `python3 --version` shows its version.
+- Claude Code run as a conversation in a terminal or an app, not as `claude -p`. Turn's roles run
+  in the background, and `claude -p` does not hand a role's end back to the role that started it.
 
 ## Installation
-
-Turn comes from ccpm, a marketplace of Claude Code plugins on GitHub. Add the marketplace, then
-install Turn:
 
 ```console
 claude plugin marketplace add lovaizu/ccpm
 claude plugin install turn@ccpm
 ```
 
-`claude plugin list` then shows Turn:
-
-```console
-$ claude plugin list
-Installed plugins:
-
-  ❯ turn@ccpm
-    Version: 0.1.0
-    Scope: user
-    Status: ✔ enabled
-```
+`claude plugin list` then lists `turn@ccpm`, and `pin@ccpm`, which Turn depends on and which is
+installed with it. In a new Claude Code session, `/turn:up` is then one of its commands.
 
 ## Walkthrough
 
-> **Not from a real run yet.** Turn does not run yet, as [Requirements](#requirements) says. The
-> lines below follow the run that [Turn's UX](../../dev/turn/ux.md) plans. They are not copied from
-> Turn's output.
+At the end, you have a README for your tool that its readers can use as it is, and you have
+answered only what was yours.
 
-It is November 2026, and your company, Northwind, launches RoomBook, a meeting-room booking app.
-You need a press release for it. RoomBook's README, in the repository you have open in Claude
-Code, says what the app does, who Northwind is and how to reach its PR department. In the lines
-below, `You:` is what you type, and `turn:` is what Turn shows you. At the end, you have the press
-release.
+This walkthrough is not yet from a real run: it shows what Turn is being rebuilt to show, and its
+output is replaced by a real run's once Turn is built.
 
-1. Ask for the deliverable, and name Turn's agent, `turn:up`:
+Your tool `tidy` sorts a Downloads folder into folders by type. Its repository has the code and no
+README. In Claude Code, at the root of the repository, you type:
 
-   ```text
-   You:  Have turn:up write a press release for RoomBook, our new meeting-room booking app.
-         Its README is in this repository.
-   ```
+```text
+/turn:up a README for tidy
+```
 
-2. Turn confirms the kind of deliverable:
+Turn's first question settles the kind:
 
-   ```text
-   turn: This is a press release, a document. Right?
-   You:  Yes
-   ```
+```text
+Turn: A README for tidy, a document. Right?
+```
 
-3. Turn has no best practice for press releases yet, so it reads guides and examples of good ones
-   on the web. It then shows you the goal, parts and benefits of the new best practice it drew from
-   them:
+You answer `right`. While Turn reads what `tidy` does, it asks the purpose of this README:
 
-   ```text
-   turn: I have no best practice for press releases yet.
-         Here is a new one, what a good press release is:
-         Goal: a reporter decides from the release whether to write about it.
-         Parts: headline, lead, body, boilerplate, contact.
-         Benefits:
-         - Can a reporter tell from the headline what is new?
-         - Can a reporter tell from the lead who launches what, and when?
-         - Can a reporter check each claim in the body?
-         - Can a reporter tell from the boilerplate who the company is?
-         - Can a reporter tell from the contact whom to ask, and how?
-         Approve?
-   You:  Approved
-   ```
+```text
+Turn: The purpose: someone who keeps a cluttered Downloads folder learns what tidy does, installs
+it, and sorts their folder with it. Is that the purpose?
 
-4. Turn asks what this release is for, and then the one point of it that only you can decide:
+Recommendation: yes. The repository has no other documents, so the README is where a newcomer
+starts.
+```
 
-   ```text
-   turn: What is this release for?
-   You:  To get RoomBook into trade magazines.
-   turn: When is the release date? I recommend 1 December: trade magazines plan their issues
-         weeks ahead.
-   You:  1 December
-   ```
+You answer `yes`. Turn shows each fact it found that a decision rests on, alone:
 
-5. Turn shows the design it will write the release from:
+```text
+Turn: Found: tidy/cli.py:22 "parser.add_argument('--dry-run', action='store_true')", so tidy can
+show what it would move without moving anything. Right?
+```
 
-   ```text
-   turn: Design: a headline on RoomBook's launch, with three gains and the PR contact from
-         RoomBook's README. Approve?
-   You:  Approved
-   ```
+You answer `right`, and Turn asks the next decision that is yours:
 
-6. Turn writes the release, and a second AI reads it as a reporter would, against each question of
-   the benefits. Turn goes on until every answer is yes, and then gives you the release:
+```text
+Turn: Which run does the walkthrough show?
 
-   ```text
-   turn: The press release, which meets every benefit:
+Recommendation: tidy --dry-run on a folder of five files, then tidy itself, so the reader sees
+what moves before anything moves. Yes?
+```
 
-         Northwind's RoomBook offers only the meeting rooms that fit your meeting
+Questions and facts go on like this, one at a time. Turn settles itself what follows from the
+purpose and the facts, such as putting Python 3.9 under Requirements, as `setup.cfg` names it. Then
+it shows you the design:
 
-         Northwind launches RoomBook, a meeting-room booking app, on 1 December 2026.
-         RoomBook matches each room's seats and equipment to the meeting you describe.
+```text
+Turn: The design of the README:
+- Purpose: a newcomer learns what tidy does, installs it and sorts their folder.   (you)
+- The walkthrough runs tidy --dry-run, then tidy, on five files.                    (you)
+- Requirements: Python 3.9 or later.                                                 (found)
+- Non-goals: tidy does not delete, and does not look inside archives.               (follows from the code)
+...
+Shall Turn make the README from this design?
+```
 
-         With RoomBook, an office worker:
-         - books a room with the seats and equipment the meeting needs;
-         - sees at once which of those rooms are free for the time they need;
-         - books it without asking anyone.
+You answer `yes`. Turn makes the README, and another AI uses it as a newcomer would. It finds one
+question not yet met: the walkthrough does not show where `tidy` puts a file with no extension.
+Turn decides that point again, makes the README again, and checks it again. Then it improves how the
+README reads, and checks that once more. It ends:
 
-         About Northwind: Northwind makes software that helps offices run.
+```text
+Turn: Done. README.md is written. Each question of the README template is met, with the lines
+that meet it in .turn/20261103-tidy-readme/verification/.
+```
 
-         Contact: Northwind PR department, pr@northwind.example
-   ```
+`README.md` is in the repository's root, not committed. The run's folder
+`.turn/20261103-tidy-readme/` holds the design and each check.
 
-Turn keeps the best practice you approved in `.turn/` in the folder you run Claude Code in, so your
-next press release skips step 3. Turn ships best practices for READMEs, UX documents, architecture
-documents, code and prompts, so those kinds skip step 3 from the first time.
+A run that stopped, such as when the session ended, goes on from its folder:
+
+```text
+/turn:up .turn/20261103-tidy-readme
+```
+
+To change a work Turn made, name its folder and the change, and Turn takes the change in through
+the design:
+
+```text
+/turn:up .turn/20261103-tidy-readme the walkthrough should use a folder of ten files
+```
 
 ## How it works
 
-![How Turn makes a deliverable](images/how-it-works.svg)
+```mermaid
+flowchart LR
+  P([you]) -- "your request, then each answer" --> M["the conversation"]
+  M -- "each question, one at a time" --> P
+  M -- "starts, then hands each answer to" --> U["up"]
+  U -- "starts each role" --> R["planner, designer, builder,<br>evaluator, refactorer, proofreader"]
+  R -- "a question for you, or its end" --> U
+  U -- "the question, or done" --> M
+  R -- "write and read" --> F[("the run's folder, and the work")]
+  L["Lane's checks"] -- "the next role to start" --> U
+  L -- "check each role's files and commands" --> R
+```
 
-Turn has separate AIs plan, design, build and evaluate the deliverable, as Anthropic's "Harness
-design for long-running application development" (2026) has a planner, a generator and an evaluator.
-The designer asks your points one at a time, each with the answer it recommends.
-
-The evaluator is the second AI, and it did not build the deliverable. For each question not yet
-answered yes, it says only what the user gets once the answer is yes, not a list of faults. The
-designer then finds the decision behind that question and decides it again. The builder makes the
-deliverable again from the design tree, so the deliverable is never patched. Once what the
-deliverable says is good, the builder betters how it says it, and the evaluator checks that too.
+- Each role is an AI with one job: planner settles the kind and its template, designer the
+  design, builder makes the work, evaluator uses it as its user would, refactorer improves how it
+  reads, and proofreader checks that.
+- Each role runs in the background, as a subagent of `up`, Turn's orchestrator. A role cannot ask
+  you itself, so one with a question ends with it. The conversation puts it to you, and your answer
+  goes back to the same role, which goes on where it was.
+- The next role comes from how the last one ended, as Turn's routes say: the design goes to
+  builder, the work to evaluator, a question not yet met back to designer, and every question met
+  on to refactorer. [Lane](../lane/README.md), a plugin whose checks are laid into Turn's own
+  files, tells `up` each next role, and stops a role from ending before its files are in form.
+- Each role starts fresh, and carries on from the run's folder. So the evaluator reads each round
+  with fresh eyes, and a stopped run goes on from its folder.
+- A template Turn makes for a new kind is kept in `.turn/best-practices/`, and later runs in the
+  same repository use it.
 
 ## Documentation
 
-- [Calling Turn](docs/calling.md) tells how a step of another plugin of ccpm, such as Rn, has Turn
-  make its deliverable.
-- [The changelog](CHANGELOG.md) says what changed in each version.
+- [Calling Turn](docs/calling.md): what a plugin gives Turn, how it hands on Turn's questions, and
+  what it gets back.
+- [The changelog](CHANGELOG.md): the changes in each version.
 
 ## Development
 
-[Turn's development folder](../../dev/turn/README.md) leads to its UX, its architecture and how it
-is checked.
+[Turn's development folder](../../dev/turn/README.md) holds its UX, its architecture and its tests.
 
 ## License
 
