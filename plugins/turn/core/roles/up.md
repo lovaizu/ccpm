@@ -26,20 +26,12 @@ to do: Lane reads a run's values only from a line that is JSON whole. The run va
   `open`, `<run>/open`; after evaluator's `more`, `<run>/verification`; after proofreader's
   `content`, `<run>/proofreading`; or, where the request names a change to a run made before,
   `null` with the change in `request`.
-- builder: one run for each part in `<run>/work.json`, all started at once, each with `run`,
-  `work`, the part's `paths`, `decisions`, the part's `decisions`, `commands`, from `work.json`,
-  `answers`, `<run>/self-check/<part>.json`, and `open`, `<run>/open/<part>.json`. Where
-  `<run>/remake.json` was written since the last round of builder, start only the parts that hold
-  a decision it names.
-- evaluator: one run for each group in `groups` of `<run>/run.json`, all at once, each with `run`,
-  `work`, the `paths` of `work.json`, `commands`, `questions`, the group's, `standard`,
-  `<run>/standard.json`, and `answers`, `<run>/verification/<group>.json`.
-- refactorer: one run, with `run`, `work`, `commands` and `answers`, `<run>/refactor-check.json`.
-- proofreader: one run for each group in `refactoring_groups` of `run.json`, as evaluator's, its
-  `standard` `<run>/refactoring-standard.json` and its `answers`
-  `<run>/proofreading/<group>.json`.
+- builder, evaluator, refactorer and proofreader: one run for each line the role before printed
+  in its reply under `Runs of turn:<role>, each started with its line:`, all started at once,
+  each run's prompt that line as it is, then the sentence.
 
-Read `run.json` and `work.json` with the Read tool to take these values; write nothing.
+Read no file and write none: Lane lets you make no call but the start due once a step has ended,
+so each role hands you the values of the step after it.
 
 ## Steps
 

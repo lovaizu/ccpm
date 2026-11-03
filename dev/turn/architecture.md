@@ -169,8 +169,8 @@ with the data it hands on named as in the data model, and its number gives the o
 10 go to the main conversation when the person types `/turn:up`, and to the caller when a plugin
 calls Turn.
 
-- `up` alone starts and resumes Turn's roles, and only as Lane tells it. It reads the run's
-  `run.json` and `work.json` to give each role its run values, and writes nothing. It serves every
+- `up` alone starts and resumes Turn's roles, and only as Lane tells it. It reads and writes no
+  file: the role before a step of runs hands it each run's values, as `starts.py` prints them. It serves every
   objective, as the one each role's start and each answer pass through.
 - planner alone settles the kind, whether the work is a document or code, and the kind's template.
   It looks for a template in `.turn/best-practices/` first, then in Turn's own, and makes one by
@@ -216,8 +216,10 @@ writes is also held to its form by an `in_form` lane, the form a JSON Schema in
 | refactorer | `{work}`, `{answers}` | `{commands}`, `answers.py check` | as builder |
 | proofreader | `{answers}` | `{commands}`, `answers.py check` | as evaluator |
 
-evaluator and proofreader also read only the work, `{standard}`, the template's goal, parts and
-questions, which Standard in the data model holds, and Turn's own `core/`.
+evaluator's and proofreader's steps tell them to read only the work, `{standard}`, the template's
+goal, parts and questions, which Standard in the data model holds, and Turn's own `core/`. No lane
+holds this, as Lane's read_only takes no path in Turn's folder; their prompt tests check it from
+the records.
 
 #### Choices
 
@@ -237,6 +239,10 @@ questions, which Standard in the data model holds, and Turn's own `core/`.
   the `agentId` its start gives back, and takes the next route once all of them have ended. A role
   that started runs of its own would need a layer more than Claude Code gives under a caller
   ([subagents](https://code.claude.com/docs/en/sub-agents)).
+- **The role before a step hands up its runs.** Once a step has ended, Lane lets `up` make no
+  call but the start due, so `up` cannot read `work.json` or `run.json` then. The role that ends
+  the step before runs `starts.py`, which prints the values of each run of the next step from the
+  run's folder, and puts them in its reply; `up` starts a run with each line.
 - **Results of runs at once taken by their precedence.** Turn's routes name builder, evaluator
   and proofreader in `fan_out`, and declare `precedence`, as
   [Lane's routes](../../plugins/lane/docs/routes.md#runs-at-once) take it: `content`, `more`,
@@ -550,8 +556,9 @@ plugins/turn/
 ├── core/domain/forms/<file>.json       the form of each file of a run <JSON Schema>
 ├── core/domain/best-practices/<kind>.json, <kind>.md   Template, and the Markdown made from it <JSON, Markdown>
 ├── core/domain/templates.py, designs.py, answering.py, files.py   the checks of Template, Design tree and Answers, and each file held to its form <modules · Python 3.9>
+├── core/domain/runs.py                 Run values of each run of a step <module · Python 3.9>
 ├── core/domain/schema.py               Lane's reading of a JSON Schema, through a link <module · Python 3.9>
-├── scripts/practices.py, tree.py, answers.py           their entries <command line · Python 3.9>
+├── scripts/practices.py, tree.py, answers.py, starts.py   their entries <command line · Python 3.9>
 ├── hooks/hooks.json, hooks/lanes.json, hooks/lane/     Lane's guard and result.py, and Turn's lanes and Routes, laid by Lane <JSON, Python 3.9>
 ├── docs/calling.md                     the Call, for callers <Markdown>
 └── README.md, CHANGELOG.md             for users <Markdown>
