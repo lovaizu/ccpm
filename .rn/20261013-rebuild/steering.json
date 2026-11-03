@@ -78,7 +78,7 @@
       ]
      },
      {
-      "what": "dig is built by .claude/rules/dev.md: check.sh pin 100%, mutate.sh pin 0 survivors, and its trials passing",
+      "what": "pin is built by .claude/rules/dev.md: check.sh pin 100%, mutate.sh pin 0 survivors, and its trials passing",
       "contributes_to": [
        "AC1",
        "AC2"

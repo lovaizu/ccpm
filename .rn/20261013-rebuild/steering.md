@@ -24,7 +24,7 @@
 
   - pin's skill, pin:down, made from Matt Pocock's grilling skill (MIT, credited) and turn-rebuild.md's Design tree, and its script checking a design-tree.json: every question served, every decision reaching the root, the order following builds_on. Serves AC1.
   - tried first: a role of Turn runs the script of pin, its dependency, and Lane checks that call; if it cannot, where the script lies is decided again. Serves AC1.
-  - dig is built by .claude/rules/dev.md: check.sh pin 100%, mutate.sh pin 0 survivors, and its trials passing. Serves AC1 and AC2.
+  - pin is built by .claude/rules/dev.md: check.sh pin 100%, mutate.sh pin 0 survivors, and its trials passing. Serves AC1 and AC2.
 
 - T41: turn rebuilt on the concept and roles agreed in turn-rebuild.md. Builds on T49 and T50.
 
