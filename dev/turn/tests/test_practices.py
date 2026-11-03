@@ -122,6 +122,25 @@ class Plain(unittest.TestCase):
         page += "it\u2019s <i>so</i> .</p>"
         self.assertEqual(practices.plain(page), 'a bold & x "quoted" - it\'s so.')
 
+    def test_leaves_out_the_styles_and_scripts_a_browser_does_not_show(self):
+        page = (
+            '<h4>The product</h4><style>.a{b:c}</style><SCRIPT type="x">var d;</SCRIPT><p>helps</p>'
+        )
+        self.assertEqual(practices.plain(page), "the product helps")
+
+    def test_joins_the_text_of_inline_tags_as_a_browser_shows_it(self):
+        page = (
+            '<pre><var class="var">program</var>:<var>file</var>:<code>n</code>: <em>m</em></pre>'
+        )
+        self.assertEqual(practices.plain(page), "program:file:n: m")
+        page = '<a href="x">li</a><span>nk</span> <b>b</b><i>i</i><strong>s</strong>'
+        self.assertEqual(practices.plain(page), "link bis")
+
+    def test_keeps_the_text_of_blocks_apart(self):
+        self.assertEqual(
+            practices.plain("<p>one</p><p>two</p><li>three<br>four"), "one two three four"
+        )
+
 
 def response(kind, body):
     """What urlopen gives for a page of the kind and body, as a context manager."""
@@ -155,7 +174,8 @@ class Fetch(unittest.TestCase):
         self.assertEqual(urlopen.call_count, 1)
         request = urlopen.call_args.args[0]
         self.assertEqual(request.full_url, "https://x.example/t")
-        self.assertEqual(request.get_header("User-agent"), "Mozilla/5.0")
+        self.assertEqual(request.get_header("User-agent"), practices.AGENT)
+        self.assertIn("practices.py", practices.AGENT)
 
     def test_reads_a_file_on_github_as_its_own_text(self):
         with self.opened(response("text/plain", b"file")) as urlopen:

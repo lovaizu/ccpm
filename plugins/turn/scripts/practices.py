@@ -24,6 +24,14 @@ GROUND = ("title", "url", "by", "quote")
 # The marks a page may write for one another: curly and plain quotes, and every dash.
 SAME = (("\u2018\u2019\u2032", "'"), ("\u201c\u201d\u2033", '"'), ("\u2013\u2014\u2212", "-"))
 QUESTION = re.compile(r"\bQ\d+\b")
+# What a page holds that a browser does not show as text.
+UNSHOWN = re.compile(r"<(style|script)\b.*?</\1\s*>", re.DOTALL | re.IGNORECASE)
+# The tags a browser shows inside a line, joining the text on either side: the rest start a block,
+# which a browser sets apart from the text beside it.
+INLINE = re.compile(
+    r"</?(?:a|abbr|b|cite|code|dfn|em|i|kbd|mark|q|s|samp|small|span|strong|sub|sup|u|var)\b[^>]*>",
+    re.IGNORECASE,
+)
 
 
 def part_ids(items: list[dict[str, Any]]) -> list[str]:
@@ -94,9 +102,11 @@ def faults(data: dict[str, Any]) -> list[str]:
 
 
 def plain(text: str) -> str:
-    """Text as it reads, for finding words in a page: tags and entities gone, quotes, dashes and
-    spaces of every kind made one, a space a tag left before a stop gone, code marks dropped, and
-    case set aside."""
+    """Text as it reads, for finding words in a page: styles and scripts gone, the text of a tag
+    inside a line joined to the text beside it, the text of each block set apart, entities gone,
+    quotes, dashes and spaces of every kind made one, a space a tag left before a stop gone, code
+    marks dropped, and case set aside."""
+    text = INLINE.sub("", UNSHOWN.sub(" ", text))
     text = html.unescape(re.sub(r"<[^>]+>", " ", text))
     for kinds, one in SAME:
         text = re.sub(f"[{kinds}]", one, text)
@@ -105,6 +115,9 @@ def plain(text: str) -> str:
 
 
 RAW = r"https://raw.githubusercontent.com/\1/\2/"
+# Who asks for a page: this script, named as a browser-like client, as some sites refuse a bare
+# "Mozilla/5.0".
+AGENT = "Mozilla/5.0 (compatible; practices.py; +https://github.com/lovaizu/ccpm)"
 # How often a page that asks to be called again later is asked again, and how long is waited first.
 TRIES = 4
 WAIT = 15
@@ -117,7 +130,7 @@ def fetch(url: str) -> tuple[str, bytes]:
     asked again after a wait."""
     # A file on GitHub is read as its own text, not the page around it that holds it as data.
     url = re.sub(r"^https://github\.com/([^/]+)/([^/]+)/blob/", RAW, url)
-    request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    request = urllib.request.Request(url, headers={"User-Agent": AGENT})
     tried = 0
     while True:
         try:
