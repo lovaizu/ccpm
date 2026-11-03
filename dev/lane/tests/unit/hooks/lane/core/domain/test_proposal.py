@@ -218,6 +218,60 @@ class TestRoutes(RoutesTest):
                 # Then: it is refused, saying which
                 self.assertIn(said, self.refused(given))
 
+    def test_routes_fanning_out_a_subagent_with_its_results_in_order_are_read(self):
+        for precedence in (["more", "good"], {"reviewer": ["good", "more"]}, None):
+            with self.subTest(precedence=precedence):
+                # Given: reviewer fanned out, its results in an order for every subagent, in
+                # its own, or writer alone fanned out, which gives one result
+                given = {**helpers.ROUTES, "fan_out": ["reviewer"], "precedence": precedence}
+                if precedence is None:
+                    given = {**helpers.ROUTES, "fan_out": ["writer"]}
+                self.propose({"plugin": "changelog", "routes": given})
+                # When: the proposal is read
+                # Then: it gives the routes as given
+                self.assertEqual(proposal.proposal(helpers.PROPOSED)["routes"], given)
+
+    def test_routes_fanning_out_what_they_cannot_are_refused(self):
+        for fan_out, precedence, said in (
+            (["reviewer"], None, "gives reviewer in `fan_out`, whose results `more` and `good`"),
+            (
+                ["reviewer"],
+                ["more"],
+                "gives reviewer in `fan_out`, whose results `more` and `good`",
+            ),
+            (
+                ["reviewer"],
+                {"writer": ["written"]},
+                "gives reviewer in `fan_out`, whose results `more` and `good`",
+            ),
+            (["lead"], ["more", "good"], "gives lead in `fan_out`, which no route starts"),
+            (["editor"], ["more", "good"], "gives editor in `fan_out`, which no route starts"),
+            (None, ["more", "good", "more"], "gives `more` twice in an order of results"),
+            (None, ["more", "done"], "gives `done` in an order of results, which no route is on"),
+            (
+                None,
+                {"writer": ["more"]},
+                "gives `more` in an order of results, which no route from writer is on",
+            ),
+            (
+                None,
+                {"editor": ["more"]},
+                "gives an order of the results of editor, which no route is from",
+            ),
+            (["reviewer"], "more", "is out of its shape at $.routes.precedence"),
+        ):
+            with self.subTest(fan_out=fan_out, precedence=precedence):
+                # Given: reviewer fanned out with no order of its results, one not holding
+                # each, an order of another's alone; lead or a subagent no route starts fanned
+                # out; an order naming a result twice, one no route is on, one no route from
+                # its subagent is on, or a subagent no route is from; or an order in no list
+                given = dict(helpers.ROUTES)
+                given.update({"fan_out": fan_out} if fan_out else {})
+                given.update({"precedence": precedence} if precedence else {})
+                # When: the proposal is read
+                # Then: it is refused, saying which
+                self.assertIn(said, self.refused({"plugin": "changelog", "routes": given}))
+
     def test_routes_on_files_that_cannot_hold_them_are_refused(self):
         for file, text, step, said in (
             ("lead.md", helpers.LEAD, 3, "gives step 3, which the Steps of lead do not have"),
@@ -378,6 +432,40 @@ class TestRefused(ProposalTest):
                 given = self.proposal(steps=steps)
                 # When: the proposal is read
                 # Then: a command of a dependency declared is read, and the rest refused
+                if not said:
+                    self.propose(given)
+                    self.assertEqual(proposal.proposal(helpers.PROPOSED)["name"], "changelog")
+                    continue
+                self.assertIn(said, self.refused(given))
+
+    def test_a_value_is_held_as_a_part_only_in_a_command(self):
+        for steps, said in (
+            ([{"step": 2, "lanes": [{"lane": "run_only", "takes": ["check.py {file}"]}]}], ""),
+            ([{"step": 2, "lanes": [{"lane": "hold", "takes": ["git push {branch}"]}]}], ""),
+            (
+                [{"step": 3, "lanes": [{"lane": "test_after", "takes": ["{work}", "t {work}"]}]}],
+                "",
+            ),
+            (
+                [{"step": 3, "lanes": [{"lane": "write_only", "takes": ["docs/{work}.md"]}]}],
+                (
+                    "gives write_only on step 3 of writer `{work}` in a take, which only a command"
+                    " may hold as a part;"
+                ),
+            ),
+            (
+                [{"step": 3, "lanes": [{"lane": "test_after", "takes": ["src/{work}", "t"]}]}],
+                (
+                    "gives test_after on step 3 of writer `{work}` in a take, which only a command"
+                    " may hold as a part;"
+                ),
+            ),
+        ):
+            with self.subTest(steps=steps):
+                # Given: a value as a part of a command run, held or tested by, or of an output
+                given = self.proposal(steps=steps)
+                # When: the proposal is read
+                # Then: a value in a command is read, and one in an output refused
                 if not said:
                     self.propose(given)
                     self.assertEqual(proposal.proposal(helpers.PROPOSED)["name"], "changelog")

@@ -44,6 +44,19 @@ class TestAllows(unittest.TestCase):
                 # Then: each start is stopped, and the read goes through
                 self.assertEqual(follow_routes.allows(tool, given, WAIT, "changelog"), through)
 
+    def test_while_runs_of_a_fanned_out_subagent_go_only_more_of_them_may_start(self):
+        more = routes.Next("wait", "reviewer", None, more=True)
+        for tool, given, through in (
+            ("Agent", start("changelog:reviewer"), True),
+            ("Agent", start("changelog:writer"), False),
+            ("Read", {"file_path": "CHANGELOG.md"}, True),
+        ):
+            with self.subTest(given=given):
+                # Given: runs of reviewer, fanned out, running in the background
+                # When: lead starts reviewer again, starts writer, or reads a file
+                # Then: the further run of reviewer and the read go through, and writer is stopped
+                self.assertEqual(follow_routes.allows(tool, given, more, "changelog"), through)
+
     def test_once_no_start_is_left_every_call_goes_through(self):
         # Given: reviewer's `good`
         # When: lead starts writer

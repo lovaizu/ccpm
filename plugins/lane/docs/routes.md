@@ -41,7 +41,12 @@ Your AI writes the routes under the `routes` key of the proposal, held to this J
    "properties": {
     "from": {"type": "string", "description": "the subagent that ends, or the orchestrator for the first start"},
     "on": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$", "description": "the result it ends with"},
-    "to": {"type": "string", "description": "the subagent to start next; none where the run ends"}}}}}}
+    "to": {"type": "string", "description": "the subagent to start next; none where the run ends"}}}},
+  "fan_out": {"type": "array", "items": {"type": "string"}, "description": "the subagents the orchestrator may start several runs of at once"},
+  "precedence": {"anyOf": [
+    {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}},
+    {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}}}],
+   "description": "the results, first to last, the result of runs at once is taken by: one order for every subagent, or one for each, by its name"}}}
 ```
 
 For `changelog`, whose `lead` starts `writer` and then `reviewer`, and `writer` again while
@@ -66,8 +71,42 @@ For `changelog`, whose `lead` starts `writer` and then `reviewer`, and `writer` 
 - The orchestrator may also be in the proposal's `subagents`, with lanes on its other steps.
 - Each subagent the routes name, the orchestrator among them, sets `background: true` in its file,
   as [the lanes](lanes.md) say, and `lay.py print` refuses routes where one does not.
+- `fan_out` names each subagent the orchestrator may start several runs of at once, each a `to` of
+  a route. A subagent it does not name runs once at a time, as its steps may not be made for runs
+  beside one another.
+- `precedence` orders the results, first to last, as [Runs at once](#runs-at-once) takes them: one
+  list for every subagent, or an object giving a list for each subagent by its name. An order names
+  each result once, and only results a route from its subagent is on. A subagent in `fan_out` that
+  gives more than one result has each of them in its order, and `lay.py print` refuses routes where
+  one does not, as the result of its runs could not be told otherwise.
 
 `lay.py write` writes the routes into your plugin's `hooks/lanes.json` as the proposal gives them.
+
+For `changelog` with two reviewers at once, each reviewing a part of the commits:
+
+```json
+{"orchestrator": "lead", "step": 1, "fan_out": ["reviewer"], "precedence": ["more", "good"],
+ "routes": [...]}
+```
+
+## Runs at once
+
+The orchestrator decides how many runs of a subagent in `fan_out` it starts, each with its own
+prompt, and lane counts the runs it started. A run joins the others where it starts while one of
+them still runs. Each run is held to its own values, as [the lanes](lanes.md) say.
+
+- The route counts as taken once every run has ended.
+- Where every run gave the same result, that result is the result of the runs.
+- Where the runs gave different results, the result of the runs is the one among them that stands
+  first in the subagent's order in `precedence`. With `"precedence": ["more", "good"]`, one run's
+  `more` gives `more`, however many gave `good`.
+- Where the runs gave different results and the order does not hold each of them, lane cannot tell
+  the result. It tells the orchestrator and you, as [the lanes](lanes.md#what-each-lane-is-given)
+  give an error, that the maker of your plugin must order them in `precedence`.
+- A run about to end without a result is kept going once, as any subagent is. Where it ends with
+  no result still, the orchestrator is told to start the subagent again once the others have
+  ended, and the run it starts joins them in place of the one with no result.
+- The orchestrator is told the next start only once every run has ended.
 
 ## How a subagent gives its result
 
@@ -108,8 +147,10 @@ Each line is headed by your plugin's name:
 |---|---|
 | no subagent has been started yet | ``Start `<plugin>:<to>`.``, the `to` of the orchestrator's route |
 | the subagent started in the background has not ended | ``Wait for `<plugin>:<name>` to end: you are told the next start once it has.`` |
+| runs of a subagent in `fan_out` have not all ended | ``Wait for every run of `<plugin>:<name>` to end: you are told the next start once each has.`` |
 | the subagent ended with a result whose route has a `to` | ``<name> gave `<on>`. Start `<plugin>:<to>`.`` |
 | the subagent ended with a result whose route has no `to` | ``<name> gave `<on>`. Start no more subagents.`` |
+| several runs of the subagent ended, giving a result as [Runs at once](#runs-at-once) takes it | ``The <n> runs of <name> gave `<on>`.``, then the start as above |
 | the subagent ended with no result, after it was kept going once | ``<name> ended with no result. Start `<plugin>:<name>` again.``, as its start led to no route |
 
 `<plugin>:<name>` is how Claude Code names a subagent of your plugin. The orchestrator writes the
@@ -124,7 +165,8 @@ foreground, counts as it comes back; its subagent's calls that needed a value gi
 were stopped meanwhile, as [the lanes](lanes.md) say.
 
 While a started subagent runs in the background, a start of another subagent is stopped and told to
-wait, and the orchestrator's other calls and its end go on. Once that subagent has ended, Claude
+wait, and so is a further run of the same subagent where `fan_out` does not name it. The
+orchestrator's other calls and its end go on. Once that subagent has ended, Claude
 Code starts the orchestrator again to tell it so, and, as Claude Code 2.1.316 does, may not give it
 the line lane's SubagentStart hook tells. The orchestrator then learns the next start where its
 next call is not that start: the call is stopped, telling the start.

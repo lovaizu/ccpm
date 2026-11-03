@@ -1,6 +1,7 @@
 """A subagent's step, read from the file its steps are in: its entry, the file in the plugin's
 agents/ Claude Code takes the subagent from by the name in its frontmatter, or its part, the one
-file under the plugin's prompts/ the entry's body names in backticks, where it names one; and the
+file under the plugin's prompts/ or core/roles/ the entry's body names in backticks, where it names
+one; and the
 step's text, its numbered line under `## Steps` and the lines its text goes on in, the list under
 it, such as its In and Out, left out."""
 
@@ -19,9 +20,14 @@ BREAK = re.compile(r"[ \t]*\n[ \t]*")
 # What Claude Code puts the plugin's folder in for, in a subagent's file, before the subagent reads
 # it.
 ROOT = "${CLAUDE_PLUGIN_ROOT}"
-# Where an entry's body names a part: a file under the plugin's prompts/, by the plugin's folder, in
+# The folders a part lies in, in the plugin: its prompts, or each role's flow, as
+# dev/architecture.md's Directory structure places it.
+PARTS = ("prompts", "core/roles")
+# Where an entry's body names a part: a file under one of those folders, by the plugin's folder, in
 # backticks.
-PART = re.compile(r"`" + re.escape(ROOT) + r"/prompts/(?P<path>[^`]+)`")
+PART = re.compile(
+    r"`" + re.escape(ROOT) + r"/(?P<folder>" + "|".join(PARTS) + r")/(?P<path>[^`]+)`"
+)
 
 
 def agent_file(root: str, name: str) -> str | None:
@@ -83,19 +89,22 @@ def says(lines: list[str], where: tuple[int, int]) -> str:
 
 
 def part(root: str, name: str) -> str | None:
-    """The part the subagent's entry names in its body, the one file under the plugin's prompts/ it
-    names in backticks, whether it is there or not; None where its body names no such file, or more
-    than one, or no entry names the subagent."""
+    """The part the subagent's entry names in its body, the one file under the plugin's prompts/ or
+    core/roles/ it names in backticks, lying under the folder it is named by, whether it is there
+    or not; None where its body names no such file, or more than one, or no entry names the
+    subagent."""
     entry = agent_file(root, name)
     if entry is None:
         return None
     with open(entry, encoding="utf-8") as f:
         lines = f.read().splitlines()
-    named = {m["path"] for m in PART.finditer("\n".join(lines[template.body(lines) :]))}
-    prompts = os.path.join(root, "prompts")
-    files = {os.path.normpath(os.path.join(prompts, n)) for n in named}
+    files = set()
+    for m in PART.finditer("\n".join(lines[template.body(lines) :])):
+        folder = os.path.join(root, *m["folder"].split("/"))
+        file = os.path.normpath(os.path.join(folder, m["path"]))
+        files.add(file if file.startswith(folder + os.sep) else "")
     file = files.pop() if len(files) == 1 else ""
-    return file if file.startswith(prompts + os.sep) else None
+    return file or None
 
 
 def steps_file(root: str, name: str) -> str | None:

@@ -161,10 +161,11 @@ result script beside it. Both run from there, so whoever runs your plugin does n
 
 ## Documentation
 
-- [The lanes](docs/lanes.md): each type of rule, its sentence and what it stops; the proposal;
-  adapters; and a subagent whose steps lie in another file.
-- [The routes](docs/routes.md): how to write routes, how a subagent gives its result, and what the
-  orchestrator is told.
+- [The lanes](docs/lanes.md): each type of rule, its sentence and what it stops; a value given for
+  each run, in a command too; the proposal; adapters; and a subagent whose steps lie in another
+  file.
+- [The routes](docs/routes.md): how to write routes, how several runs of a subagent go at once and
+  give one result, how a subagent gives its result, and what the orchestrator is told.
 - [The changelog](CHANGELOG.md): the changes in each version.
 
 ## Development

@@ -116,16 +116,35 @@ class TestPart(helpers.PluginTest):
         self.write(part, "## Steps\n\n1. Go.\n")
         self.assertEqual(step.lines_of(self.plugin, "writer"), ["## Steps", "", "1. Go."])
 
+    def test_a_file_under_core_roles_the_body_names_is_the_part_too(self):
+        # Given: writer's body naming its role's flow under core/roles/, beside a form elsewhere
+        self.entry(
+            "`claim.json` below is `${CLAUDE_PLUGIN_ROOT}/forms/claim.json`.\n"
+            "Read `${CLAUDE_PLUGIN_ROOT}/core/roles/writing.md` whole first."
+        )
+        # When: its part is looked for
+        # Then: it is that file, by the name of the role, not of the subagent
+        part = os.path.join(self.plugin, "core", "roles", "writing.md")
+        self.assertEqual(step.part(self.plugin, "writer"), part)
+        self.assertEqual(step.steps_file(self.plugin, "writer"), part)
+
     def test_a_body_naming_no_part_or_more_than_one_has_its_steps_in_the_entry(self):
         for body in (
             "Work on.",
             "Read `${CLAUDE_PLUGIN_ROOT}/prompts/a.md` and `${CLAUDE_PLUGIN_ROOT}/prompts/b.md`.",
             "Read `${CLAUDE_PLUGIN_ROOT}/prompts/../x.md`.",
             "Read `${CLAUDE_PLUGIN_ROOT}/scripts/a.md`.",
+            (
+                "Read `${CLAUDE_PLUGIN_ROOT}/prompts/a.md` and"
+                " `${CLAUDE_PLUGIN_ROOT}/core/roles/a.md`."
+            ),
+            "Read `${CLAUDE_PLUGIN_ROOT}/core/roles/../../prompts/a.md`.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/core/domain/a.md`.",
         ):
             with self.subTest(body=body):
-                # Given: writer's body naming no part, two, one out of prompts/, or a file
-                # elsewhere
+                # Given: writer's body naming no part, two, one out of prompts/, a file
+                # elsewhere, one under prompts/ and one under core/roles/, one out of
+                # core/roles/, or one under core/domain/
                 self.entry(body)
                 # When: its part is looked for
                 # Then: there is none, and its steps are in its entry

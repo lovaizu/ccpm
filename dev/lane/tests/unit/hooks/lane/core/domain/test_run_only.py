@@ -54,6 +54,120 @@ class TestAllows(unittest.TestCase):
                 self.assertEqual(allows(command, [take]), through)
 
 
+# A command holding the run's value `file` as one part.
+CHECK = "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {file}"
+
+
+def given(command: str, texts: list, take: str = CHECK) -> bool:
+    """Whether run_only taking the command holding `{file}` lets the command through, the run
+    given the texts as `file`."""
+    return run_only.allows(command, [take], ROOT, "/w", {"file": texts})
+
+
+class TestValue(unittest.TestCase):
+    """A command holding a value given for the run as one part."""
+
+    def test_the_command_with_the_runs_own_value_goes_through(self):
+        for command, texts in (
+            (f"python3 {ROOT}/scripts/check.py notes.json", ["notes.json"]),
+            (f"python3 {ROOT}/scripts/check.py b.json", ["a.json", "b.json"]),
+            (
+                f"  python3 {ROOT}/scripts/check.py docs/v-1.2_x@y+z=w:%,.json\n",
+                ["docs/v-1.2_x@y+z=w:%,.json"],
+            ),
+        ):
+            with self.subTest(command=command):
+                # Given: run_only on check.py `{file}`, the run given the file, or two
+                # When: the subagent runs it with one of them, with blanks around it
+                # Then: it goes through
+                self.assertTrue(given(command, texts))
+
+    def test_any_other_value_or_words_are_stopped(self):
+        for command in (
+            f"python3 {ROOT}/scripts/check.py other.json",
+            f"python3 {ROOT}/scripts/check.py notes.json other.json",
+            f"python3 {ROOT}/scripts/check.py notes.json; git commit",
+            f"python3 {ROOT}/scripts/check.py {{file}}",
+            CHECK,
+            f"python3 {ROOT}/scripts/check.py",
+        ):
+            with self.subTest(command=command):
+                # Given: run_only on check.py `{file}`, the run given notes.json
+                # When: the subagent runs it with another file, one more, another command after,
+                # the name of the value, as the step writes it, or with none
+                # Then: it is stopped
+                self.assertFalse(given(command, ["notes.json"]))
+
+    def test_a_value_is_one_word_however_it_reads(self):
+        for text, through, stopped in (
+            ("my notes.json", "'my notes.json'", ["my notes.json", '"my notes.json"']),
+            ("a.json; git commit", "'a.json; git commit'", ["a.json; git commit"]),
+            ("$(git commit)", "'$(git commit)'", ["$(git commit)", '"$(git commit)"']),
+            ("it's.json", "'it'\"'\"'s.json'", ["it's.json", "'it's.json'"]),
+            ("a\nb", "'a\nb'", ["a\nb"]),
+            ("${CLAUDE_PLUGIN_ROOT}", "'${CLAUDE_PLUGIN_ROOT}'", [f"'{ROOT}'", ROOT]),
+            ("${dependency:checker}", "'${dependency:checker}'", ["'/any'", "/any"]),
+            ("{other}", "'{other}'", ["x.json", "'x.json'"]),
+        ):
+            for command, through_ in [(through, True), *((t, False) for t in stopped)]:
+                with self.subTest(text=text, command=command):
+                    # Given: the run given a file whose name holds a blank, a shell's
+                    # separator, a substitution, a quote, a line break, or what lane reads as the
+                    # plugin's folder, a dependency's folder or a value
+                    # When: the subagent runs check.py on it
+                    # Then: only the name as one word, in single quotes, goes through, as it
+                    # stands, so no value adds words to the command or stands for another
+                    command = f"python3 {ROOT}/scripts/check.py {command}"
+                    self.assertEqual(given(command, [text]), through_)
+
+    def test_values_in_one_command_are_each_held_to_their_own(self):
+        take = "diff {old} {new}"
+        values = {"old": ["a.md"], "new": ["b.md"]}
+        for command, through in (("diff a.md b.md", True), ("diff b.md a.md", False)):
+            with self.subTest(command=command):
+                # Given: a command holding two values, the run given each its own
+                # When: the subagent runs it with them in order, or swapped
+                # Then: only the first goes through
+                found = run_only.allows(command, [take], ROOT, "/w", values)
+                self.assertEqual(found, through)
+
+    def test_a_value_the_run_gives_no_text_of_stands_as_written(self):
+        # Given: check.py `{file}`, the run giving texts of another name alone
+        # When: the subagent runs it as written, and the commands are shown
+        # Then: it goes through only as written, and is shown so
+        command = f"python3 {ROOT}/scripts/check.py {{file}}"
+        self.assertTrue(run_only.allows(command, [CHECK], ROOT, "/w", {"other": ["a"]}))
+        self.assertEqual(run_only.put([CHECK], ROOT, {"other": ["a"]}), [command])
+
+    def test_braces_not_naming_a_value_are_the_commands_own(self):
+        for take in ("find . -exec ls {} +", "awk '{print $1}' x", "echo ${HOME}", "echo {a,b}"):
+            with self.subTest(take=take):
+                # Given: a command with braces holding nothing, a blank, a $ before them, or a
+                # comma
+                # When: the subagent runs it as written
+                # Then: it goes through, as no value lies in it
+                self.assertEqual(run_only.values_in(take), [])
+                self.assertTrue(run_only.allows(take, [take], ROOT, "/w", {}))
+
+    def test_the_commands_are_shown_with_each_value_put_in_as_one_word(self):
+        # Given: check.py `{file}`, given two files, one with a blank, beside a dependency's
+        # command
+        takes = [CHECK, "python3 ${dependency:checker}/c.py {file}"]
+        # When: the commands are shown as the subagent may run them
+        found = run_only.put(takes, ROOT, {"file": ["a.json", "my b.json"]})
+        # Then: each holds the plugin's folder and each value in its place, the dependency as
+        # written
+        self.assertEqual(
+            found,
+            [
+                f"python3 {ROOT}/scripts/check.py a.json",
+                f"python3 {ROOT}/scripts/check.py 'my b.json'",
+                "python3 ${dependency:checker}/c.py a.json",
+                "python3 ${dependency:checker}/c.py 'my b.json'",
+            ],
+        )
+
+
 # A command of the dependency checker's skill, as the proposal names it.
 TAKE = "python3 ${dependency:checker}/scripts/check.py CHANGELOG.md"
 

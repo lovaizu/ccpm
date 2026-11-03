@@ -1,12 +1,14 @@
 """What a subagent did, as a lane checked at its end holds it: the plugin's folder, the folder it
 works in, its calls kept, every one and those of the run it is in, each as it came back, and how the
-items of an input are read, by lane's reading or the plugin's adapter; and what its calls kept show,
+items of an input are read, by lane's reading or the plugin's adapter, and the run's values its
+commands hold; and what its calls kept show,
 the lines of a file they read and the files they wrote, each judged by the path the call was given,
 named from the folder the subagent works in, each link followed."""
 
 from __future__ import annotations
 
 import os
+from collections.abc import Mapping
 from typing import Any, Callable, NamedTuple
 
 # Each tool that writes a file, with the field of its input that names the file.
@@ -16,13 +18,15 @@ READ_LINES = 2000
 
 
 class Done(NamedTuple):
-    """What the subagent did, as an end lane holds it."""
+    """What the subagent did, as an end lane holds it, with the run's values its commands hold as
+    parts, by their names."""
 
     root: str
     cwd: str
     calls: list[dict[str, Any]]
     run: list[dict[str, Any]]
     items: Callable[[str, str], list[str]]
+    values: Mapping[str, list[str]] = {}
 
     def full(self, path: str) -> str:
         """The path named from the folder the subagent works in, each link followed."""
