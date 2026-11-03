@@ -3,6 +3,7 @@ it takes, which the step says and the guard tells."""
 
 import unittest
 
+import helpers
 from helpers import lanes
 
 
@@ -46,6 +47,32 @@ class TestSentence(unittest.TestCase):
                 # When: its sentence is made
                 # Then: each is quoted, listed with commas and or before the last
                 self.assertEqual(lanes.sentence("write_only", takes), said)
+
+    def test_the_sentences_of_the_routes_are_made_as_docs_routes_md_writes_them(self):
+        for lane, takes, said in (
+            ("follow_routes", [], helpers.FOLLOW),
+            ("result", [f"{helpers.GIVE} writer written"], helpers.END_WRITER),
+            (
+                "result",
+                [f"{helpers.GIVE} reviewer more", f"{helpers.GIVE} reviewer good"],
+                helpers.END_REVIEWER,
+            ),
+        ):
+            with self.subTest(lane=lane, takes=takes):
+                # Given: the orchestrator's step, or a subagent's last step with its commands
+                # When: the sentence laid there is made
+                # Then: it reads as docs/routes.md writes it
+                self.assertEqual(lanes.sentence(lane, takes), said)
+
+    def test_the_sentences_of_the_routes_have_their_actions_and_follow_routes_hook(self):
+        for lane, action in (("follow_routes", "follow"), ("result", "end")):
+            with self.subTest(lane=lane):
+                # Given: a sentence laid from the routes
+                # When: its action and hook are read
+                # Then: they are its own action, and follow_routes, which lays and checks it
+                self.assertEqual((lanes.action(lane), lanes.hook(lane)), (action, "follow_routes"))
+        # And: a lane's own are its module's and its name
+        self.assertEqual((lanes.action("run_only"), lanes.hook("run_only")), ("run", "run_only"))
 
     def test_a_take_is_put_in_as_it_is_written(self):
         # Given: a command holding a backslash and a comma

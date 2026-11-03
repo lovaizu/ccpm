@@ -1,7 +1,7 @@
 """The rules laid in a plugin, kept in its hooks/lanes.json in the shape of the proposal's
-subagents: written by `lay.py write` and read by the guard, so what runs is what was approved; and
-what every part of lane shares about a plugin's hooks, the names a hook's command carries and the
-seconds Claude Code gives each hook."""
+subagents and its routes: written by `lay.py write` and read by the guard and the result script, so
+what runs is what was approved; and what every part of lane shares about a plugin's hooks, the
+names a hook's command carries and the seconds Claude Code gives each hook."""
 
 from __future__ import annotations
 
@@ -55,10 +55,42 @@ def shape(required: list[str], properties: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+# The routes' JSON Schema, as docs/routes.md gives it: the orchestrator, its step they are laid
+# on, and each route from a subagent, on its result, to the subagent started next.
+ROUTE = {
+    "from": {
+        "type": "string",
+        "description": "the subagent that ends, or the orchestrator for the first start",
+    },
+    "on": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]*$",
+        "description": "the result it ends with",
+    },
+    "to": {"type": "string", "description": "the subagent to start next; none where the run ends"},
+}
+ROUTES = shape(
+    ["orchestrator", "step", "routes"],
+    {
+        "orchestrator": {
+            "type": "string",
+            "description": "the subagent that starts the others, as its file's name: field",
+        },
+        "step": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "the orchestrator's step the routes are laid on",
+        },
+        "routes": {"type": "array", "minItems": 2, "items": shape(["from"], ROUTE)},
+    },
+)
 # hooks/lanes.json's JSON Schema: the subagents with lanes laid, none once every one is gone, each
-# lane one lane lays, taking at least one thing, none of them empty.
+# lane one lane lays, taking at least one thing, none of them empty; and the routes, where any are
+# laid.
 TAKEN = {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
-SHAPE = shape(["subagents"], {"subagents": subagents(list(lanes.LANES), TAKEN, 0, False)})
+SHAPE = shape(
+    ["subagents"], {"subagents": subagents(list(lanes.LANES), TAKEN, 0, False), "routes": ROUTES}
+)
 
 
 class Laid(NamedTuple):
@@ -94,9 +126,16 @@ def of(laid: dict[str, Any], name: str) -> list[Laid] | None:
     return [Laid(s["step"], g["lane"], g["takes"]) for s in found["steps"] for g in s["lanes"]]
 
 
-def write(root: str, subagents: list[dict[str, Any]]) -> None:
-    """Writes the lanes of the subagents, each as a proposal gives it, its name and its steps, into
-    the plugin's hooks/lanes.json, indented by two for whoever reads it."""
+def routes_of(laid: dict[str, Any]) -> dict[str, Any] | None:
+    """The routes laid, of the rules `read` gives; None where none are."""
+    return laid.get("routes")
+
+
+def write(root: str, subagents: list[dict[str, Any]], routes: dict[str, Any] | None = None) -> None:
+    """Writes the lanes of the subagents, each as a proposal gives it, its name and its steps, and
+    the routes where any are given, into the plugin's hooks/lanes.json, indented by two for whoever
+    reads it."""
+    given = {"subagents": subagents, **({"routes": routes} if routes else {})}
     os.makedirs(os.path.join(root, "hooks"), exist_ok=True)
     with open(os.path.join(root, FILE), "w", encoding="utf-8") as f:
-        f.write(json.dumps({"subagents": subagents}, indent=2, ensure_ascii=False) + "\n")
+        f.write(json.dumps(given, indent=2, ensure_ascii=False) + "\n")

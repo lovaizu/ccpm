@@ -1,10 +1,13 @@
-"""lane's entry in a plugin's hooks/hooks.json: one PreToolUse entry for the plugin, run on every
-tool call, as Claude Code reads no hooks from a plugin agent's own file, and hook.py acting by the
-call's agent_type; every other entry of the plugin left as it was, and the file read and written.
+"""lane's entries in a plugin's hooks/hooks.json: one for the plugin in each event lane acts on,
+those of a tool call run on every call, as Claude Code reads no hooks from a plugin agent's own
+file, and hook.py acting by the event's agent_type; every other entry of the plugin left as it was,
+and the file read and written.
 
-The entry's command first checks that Python can run lane's code. Where it cannot, it reads the
-event with the shell alone, and denies a call of a subagent with lanes, telling the subagent and
-the user what to install; it lets any other call through, as lane checks those subagents alone."""
+Each entry's command first checks that Python can run lane's code. Where it cannot, PreToolUse's
+reads the event with the shell alone, and denies a call of a subagent with lanes, telling the
+subagent and the user what to install; it lets any other call through, as lane checks those
+subagents alone. Every other event's goes on, telling nothing, as each call of the subagent is
+stopped meanwhile."""
 
 from __future__ import annotations
 
@@ -17,13 +20,15 @@ import rules
 from proposal import Stop
 
 EVENT = "PreToolUse"
+# Each event lane acts on, the first a tool call's that is stopped where lane cannot check it.
+EVENTS = [EVENT, "PostToolUse", "PostToolUseFailure", "SubagentStart", "SubagentStop"]
 # What lane's entries run, by which lay.py tells them from the plugin's own, of this shape and of
 # the old, one for each subagent and event.
 CODE = "/hooks/lane/"
 # Python writes no compiled files into the plugin's folder, which would show as the plugin's own
 # changes where it lies in the developer AI's repository, as dev/architecture.md's Where a plugin
 # writes its files keeps what is used only while it runs out of the repository.
-SCRIPT = 'exec python3 -B "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" '
+SCRIPT = 'exec python3 -B "${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/{script}.py" '
 INSTALL = "{plugin}: install Python 3.9 or later, run as python3, for its hooks to run"
 PYTHON = 'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
 # The event read by the shell alone, as Claude Code writes it, with a blank after a colon or none.
@@ -34,8 +39,12 @@ CHECK = (
 MATCHED = """*'"agent_type":"{agent}"'*|*'"agent_type": "{agent}"'*"""
 
 
-def command(plugin: str, names: list[str]) -> str:
-    """The entry's command for the plugin whose subagents of the names have lanes laid."""
+def command(plugin: str, names: list[str], event: str) -> str:
+    """The command of the event's entry for the plugin whose subagents of the names have lanes laid
+    or are named by its routes."""
+    run = SCRIPT.format(script=event.lower()) + plugin
+    if event != EVENT:
+        return f"{PYTHON} || exit 0; {run}"
     said = INSTALL.format(plugin=plugin)
     denied = {
         "hookEventName": EVENT,
@@ -44,15 +53,17 @@ def command(plugin: str, names: list[str]) -> str:
     }
     answer = shlex.quote(json.dumps({"systemMessage": said, "hookSpecificOutput": denied}))
     patterns = "|".join(MATCHED.format(agent=f"{plugin}:{n}") for n in names)
-    return CHECK.format(patterns=patterns, answer=answer) + "; " + SCRIPT + plugin
+    return CHECK.format(patterns=patterns, answer=answer) + "; " + run
 
 
-def entry(plugin: str, names: list[str]) -> dict[str, Any]:
-    """lane's entry for the plugin whose subagents of the names have lanes laid: run on every tool
-    call, within the seconds rules.TIMEOUT gives, the call blocked where the hook fails, so a call
-    lane could not check is stopped rather than let through."""
-    run = {"type": "command", "timeout": rules.TIMEOUT, "command": command(plugin, names)}
-    return {"matcher": "*", "hooks": [{**run, "onFailure": "block"}]}
+def entry(plugin: str, names: list[str], event: str) -> dict[str, Any]:
+    """lane's entry of the event for the plugin whose subagents of the names have lanes laid or are
+    named by its routes: run on every tool call or subagent, within the seconds rules.TIMEOUT
+    gives; at PreToolUse the call blocked where the hook fails, so a call lane could not check is
+    stopped rather than let through."""
+    run = {"type": "command", "timeout": rules.TIMEOUT, "command": command(plugin, names, event)}
+    blocked = {"onFailure": "block"} if event == EVENT else {}
+    return {"matcher": "*", "hooks": [{**run, **blocked}]}
 
 
 def ours(given: dict[str, Any]) -> bool:
@@ -63,19 +74,20 @@ def ours(given: dict[str, Any]) -> bool:
 
 def put(hooks: dict[str, Any], plugin: str, names: list[str]) -> dict[str, Any]:
     """The hooks with lane's entries taken out of every event, and lane's entry for the subagents of
-    the names put in PreToolUse, in the place of the first taken out there, after every other entry
-    otherwise; none where no subagent has lanes. An event left with no entry is left out, where
-    lane's were all it held."""
+    the names put in each event lane acts on, in the place of the first taken out there, after every
+    other entry otherwise, an event lane's entries were not in after every other event; none where
+    no subagent has lanes or routes. An event left with no entry is left out, where lane's were all
+    it held."""
     events: dict[str, Any] = {}
     for event, given in hooks.get("hooks", {}).items():
         kept = [e for e in given if not ours(e)]
-        if event == EVENT and names:
+        if event in EVENTS and names:
             at = next((n for n, e in enumerate(given) if ours(e)), len(given))
-            kept.insert(at, entry(plugin, names))
+            kept.insert(at, entry(plugin, names, event))
         if kept or not given:
             events[event] = kept
-    if names and EVENT not in events:
-        events[EVENT] = [entry(plugin, names)]
+    for event in EVENTS if names else []:
+        events.setdefault(event, [entry(plugin, names, event)])
     return {**hooks, "hooks": events}
 
 

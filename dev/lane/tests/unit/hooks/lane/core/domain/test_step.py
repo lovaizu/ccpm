@@ -54,6 +54,20 @@ class TestSpan(unittest.TestCase):
         self.assertIsNone(step.span(["1. One"], 1))
 
 
+class TestLast(unittest.TestCase):
+    def test_the_last_step_is_the_highest_number_under_steps(self):
+        for lines, last in (
+            (["## Steps", "1. One", "2. Two", "   - Out: x", "## After", "3. Not one."], 2),
+            (["## Steps", "", "Text."], None),
+            (["1. One"], None),
+        ):
+            with self.subTest(lines=lines):
+                # Given: Steps of two steps with a heading after, Steps of none, or no Steps
+                # When: the last step is looked for
+                # Then: it is step 2, or none
+                self.assertEqual(step.last(lines), last)
+
+
 class TestHolds(helpers.PluginTest):
     def test_a_step_saying_the_sentence_holds_it(self):
         # Given: writer with the README's lanes laid

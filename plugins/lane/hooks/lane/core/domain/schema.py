@@ -9,7 +9,8 @@ gives the one point it is out by: its place, what was expected and what was foun
 check-jsonschema gives jsonschema's best match, the point highest in the value first. lane's own
 schemas, such as a port's in ports.py, which `checked` never reads, may give additionalProperties a
 schema each key beside the properties is held to, for an object of keys known only on a run, and
-may use minimum and minLength, as the flow's in lanes_json.py does."""
+may use minimum, minLength and pattern, as the routes' in rules.py do, and minItems of any
+number."""
 
 from __future__ import annotations
 
@@ -284,8 +285,9 @@ def items_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ..
 def min_items_out(
     schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]
 ) -> Out | None:
-    if isinstance(value, list) and len(value) < schema["minItems"]:
-        return Out(path, "at least 1 item", "none")
+    least = schema["minItems"]
+    if isinstance(value, list) and len(value) < least:
+        return Out(path, f"at least {least} item{'s' * (least > 1)}", str(len(value) or "none"))
     return None
 
 
@@ -302,6 +304,15 @@ def min_length_out(
     least = schema["minLength"]
     if isinstance(value, str) and len(value) < least:
         return Out(path, f"a string of length {least} or more", shown(value))
+    return None
+
+
+def pattern_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    # A pattern is searched for anywhere in the string, as JSON Schema has it, its anchors
+    # holding it to the whole.
+    asked = schema["pattern"]
+    if isinstance(value, str) and not re.search(asked, value):
+        return Out(path, f"a string matching {asked}", shown(value))
     return None
 
 
@@ -350,6 +361,7 @@ KEYWORDS: dict[str, tuple[Callable[..., None], Callable[..., Out | None]]] = {
 OWN: dict[str, Callable[..., Out | None]] = {
     "minimum": minimum_out,
     "minLength": min_length_out,
+    "pattern": pattern_out,
 }
 # Each keyword a value is held to, in order, lane's own last, as each holds a number or a string,
 # with no place inside it.

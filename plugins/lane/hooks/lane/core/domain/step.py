@@ -29,16 +29,32 @@ def agent_file(root: str, name: str) -> str | None:
     return None
 
 
-def span(lines: list[str], number: int) -> tuple[int, int] | None:
-    """Where the step of the number is among the file's lines, from its numbered line under the
-    `## Steps` heading, up to the next heading, to the line after the last its text goes on in;
-    None where the Steps have no such step."""
+# A step's numbered line, its number first.
+NUMBERED = re.compile(r"([0-9]+)\. ")
+
+
+def steps(lines: list[str]) -> range:
+    """Where the file's lines under the `## Steps` heading are, up to the next heading; none where
+    it has no such heading."""
     found = template.headings(lines, template.body(lines))
     # A heading's line in the file counts from 1, so it is the index of the line after it, and the
     # next heading's line, the last the steps are looked for in, is no step's.
     start = next((at for at, level, said in found if (level, said) == (2, "Steps")), len(lines))
     end = next((at for at, _, _ in found if at > start), len(lines))
-    for at in range(start, end):
+    return range(start, end)
+
+
+def last(lines: list[str]) -> int | None:
+    """The number of the file's last step under `## Steps`; None where it has none."""
+    numbers = [m[1] for m in map(NUMBERED.match, (lines[at] for at in steps(lines))) if m]
+    return int(numbers[-1]) if numbers else None
+
+
+def span(lines: list[str], number: int) -> tuple[int, int] | None:
+    """Where the step of the number is among the file's lines, from its numbered line under the
+    `## Steps` heading, up to the next heading, to the line after the last its text goes on in;
+    None where the Steps have no such step."""
+    for at in steps(lines):
         if lines[at].startswith(f"{number}. "):
             goes_on = itertools.takewhile(GOES_ON.match, lines[at + 1 :])
             return at, at + 1 + len(list(goes_on))
@@ -50,12 +66,17 @@ def says(lines: list[str], where: tuple[int, int]) -> str:
     return BREAK.sub(" ", "\n".join(lines[where[0] : where[1]]))
 
 
-def holds(root: str, name: str, number: int, sentence: str) -> bool:
-    """Whether the subagent's step of the number still says the sentence, word for word."""
+def lines_of(root: str, name: str) -> list[str]:
+    """The lines of the subagent's file; none where no file gives it."""
     file = agent_file(root, name)
     if file is None:
-        return False
+        return []
     with open(file, encoding="utf-8") as f:
-        lines = f.read().splitlines()
+        return f.read().splitlines()
+
+
+def holds(root: str, name: str, number: int, sentence: str) -> bool:
+    """Whether the subagent's step of the number still says the sentence, word for word."""
+    lines = lines_of(root, name)
     where = span(lines, number)
     return where is not None and sentence in says(lines, where)

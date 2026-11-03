@@ -1,5 +1,6 @@
-"""The rules laid in a plugin, its hooks/lanes.json in the shape of a proposal's subagents: written
-by lay.py write and read by the guard, anything out of that shape refused, saying where."""
+"""The rules laid in a plugin, its hooks/lanes.json in the shape of a proposal's subagents and its
+routes: written by lay.py write and read by the guard, anything out of that shape refused, saying
+where."""
 
 import json
 import os
@@ -60,6 +61,45 @@ class TestRead(helpers.PluginTest):
                 self.assertIn(why, str(refused.exception))
 
 
+class TestRoutes(helpers.PluginTest):
+    def test_the_routes_schema_is_the_one_docs_routes_md_gives(self):
+        # Given: the routes' JSON Schema docs/routes.md gives under The routes
+        with open(os.path.join(helpers.LANE, "docs", "routes.md"), encoding="utf-8") as f:
+            text = f.read().split("## The routes")[1].split("\n## ")[0]
+        shown = json.loads(text.split("```json\n")[1].split("```")[0])
+        # When: lane's is read
+        # Then: they are the same
+        self.assertEqual(rules.ROUTES, shown)
+
+    def test_the_routes_laid_are_read_back_and_none_where_none_are(self):
+        # Given: the routes laid, and then the README's lanes alone
+        self.route()
+        # When: the routes are read
+        # Then: they are docs/routes.md's, and none once the lanes alone are laid
+        self.assertEqual(rules.routes_of(rules.read(self.plugin)), helpers.ROUTES)
+        self.lay()
+        self.assertIsNone(rules.routes_of(rules.read(self.plugin)))
+
+    def test_routes_out_of_their_shape_are_refused(self):
+        path = os.path.join(self.plugin, "hooks", "lanes.json")
+        for routes, why in (
+            ({**helpers.ROUTES, "routes": helpers.ROUTES["routes"][:1]}, "$.routes.routes"),
+            ({**helpers.ROUTES, "step": 0}, "$.routes.step"),
+            (
+                {**helpers.ROUTES, "routes": [{"from": "a", "on": "More"}] * 2},
+                "$.routes.routes[0].on",
+            ),
+        ):
+            with self.subTest(routes=routes):
+                # Given: routes of one route, of step 0, or of a result in capitals
+                self.write_json(path, {**helpers.RULES, "routes": routes})
+                # When: hooks/lanes.json is read
+                with self.assertRaises(ValueError) as refused:
+                    rules.read(self.plugin)
+                # Then: it is refused, saying where
+                self.assertIn(why, str(refused.exception))
+
+
 class TestWrite(helpers.PluginTest):
     def test_the_lanes_written_are_read_back_as_they_were_given(self):
         # Given: a plugin with no hooks/ folder
@@ -70,6 +110,13 @@ class TestWrite(helpers.PluginTest):
         text = self.read(os.path.join(self.plugin, "hooks", "lanes.json"))
         self.assertTrue(text.startswith('{\n  "subagents": [\n'), text)
         self.assertTrue(text.endswith("}\n"))
+
+    def test_the_routes_are_written_beside_the_lanes(self):
+        # Given: a plugin with no hooks/ folder
+        # When: the README's lanes and docs/routes.md's routes are written into it
+        rules.write(self.plugin, helpers.RULES["subagents"], helpers.ROUTES)
+        # Then: both are read back
+        self.assertEqual(rules.read(self.plugin), {**helpers.RULES, "routes": helpers.ROUTES})
 
     def test_a_take_is_written_as_it_is_given(self):
         # Given: a lane taking a command of a non-ASCII word

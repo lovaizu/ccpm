@@ -45,6 +45,129 @@ class TestRead(ProposalTest):
         self.assertEqual(proposal.PROPOSAL, shown)
 
 
+class RoutesTest(ProposalTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.lead = os.path.join(self.plugin, "agents", "lead.md")
+        self.write(self.lead, helpers.LEAD)
+        self.write(os.path.join(self.plugin, "agents", "reviewer.md"), helpers.REVIEWER)
+
+    def routed(self, routes: list) -> dict:
+        """The proposal of docs/routes.md's routes changed to those given, with no subagents."""
+        return {"plugin": "changelog", "routes": {**helpers.ROUTES, "routes": routes}}
+
+
+class TestRoutes(RoutesTest):
+    def test_routes_alone_are_read_as_given(self):
+        # Given: a proposal of docs/routes.md's routes alone
+        self.propose({"plugin": "changelog", "routes": helpers.ROUTES})
+        # When: it is read
+        found = proposal.proposal(helpers.PROPOSED)
+        # Then: it gives the routes, and no subagents
+        self.assertEqual((found["routes"], found["subagents"]), (helpers.ROUTES, []))
+
+    def test_a_proposal_of_lanes_alone_has_no_routes(self):
+        # Given: the README's proposal
+        # When: it is read
+        # Then: it gives no routes
+        self.assertIsNone(proposal.proposal(helpers.PROPOSED)["routes"])
+
+    def test_routes_that_cannot_be_laid_are_refused(self):
+        routes = helpers.ROUTES["routes"]
+        first, written, more, good = routes
+        for given, said in (
+            (
+                self.routed(routes[:1]),
+                "is out of its shape at $.routes.routes: expected at least 2",
+            ),
+            (
+                self.routed([{**first, "on": "go"}, *routes[1:]]),
+                "no one route from lead with a `to`",
+            ),
+            (self.routed(routes[1:]), "no one route from lead with a `to`"),
+            (self.routed([first, *routes]), "no one route from lead with a `to`"),
+            (
+                self.routed([first, {"from": "lead", "on": "x"}, *routes[1:]]),
+                "no one route from lead",
+            ),
+            (
+                self.routed([first, {"from": "writer", "to": "reviewer"}, more, good]),
+                "a route from writer with no `on`",
+            ),
+            (self.routed([*routes, {**more, "to": "lead"}]), "two routes from reviewer on `more`"),
+            (
+                self.routed([first, {**written, "to": "lead"}, more, good]),
+                "a route to lead, the orchestrator",
+            ),
+            (
+                self.routed([first, written, {**more, "to": "planner"}, good]),
+                "a route to planner, which no route is from",
+            ),
+            (
+                self.routed([first, written, more, {**good, "to": "writer"}]),
+                "no route without a `to`",
+            ),
+            (self.routed([*routes, {"from": "a b", "on": "x"}]), "gives a subagent no name"),
+            (
+                self.routed([first, written, {"from": "planner", "on": "x"}, *routes[2:]]),
+                "gives planner, which no file in agents/ names",
+            ),
+        ):
+            with self.subTest(said=said):
+                # Given: routes of one route, a first route on a result or none, two first
+                # routes, one from lead on a result, one with no `on`, two on one result, one to
+                # lead, one to a subagent nothing is routed from, none to the end, a name no
+                # hook can carry, or one no file gives
+                # When: the proposal is read
+                # Then: it is refused, saying which
+                self.assertIn(said, self.refused(given))
+
+    def test_routes_on_files_that_cannot_hold_them_are_refused(self):
+        for file, text, step, said in (
+            ("lead.md", helpers.LEAD, 3, "gives step 3, which the Steps of lead do not have"),
+            (
+                "lead.md",
+                helpers.LEAD.replace("tools: Agent", "tools: Read, Grep"),
+                1,
+                "whose file names its tools without Agent",
+            ),
+            (
+                "reviewer.md",
+                helpers.REVIEWER.replace("---\n\n", "background: true\n---\n\n"),
+                1,
+                "reviewer, whose file sets `background: true`",
+            ),
+            (
+                "reviewer.md",
+                "---\nname: reviewer\n---\n",
+                1,
+                "reviewer, whose file has no step to end by its result",
+            ),
+        ):
+            with self.subTest(said=said):
+                # Given: the routes laid on a step lead does not have, lead naming its tools
+                # without Agent, reviewer in the background, or with no steps
+                self.setUp()
+                self.write(os.path.join(self.plugin, "agents", file), text)
+                given = {"plugin": "changelog", "routes": {**helpers.ROUTES, "step": step}}
+                # When: the proposal is read
+                # Then: it is refused, saying why
+                told = self.refused(given)
+                self.assertIn(said, told)
+                self.assertIn(os.path.join(helpers.LANE, "docs", "routes.md"), told)
+
+    def test_an_orchestrator_naming_agent_among_its_tools_or_none_is_read(self):
+        for tools in ("tools: Read, Agent(writer, reviewer)", "tools: Agent, Read", None):
+            with self.subTest(tools=tools):
+                # Given: lead naming Agent, limited or among others, or naming no tools
+                text = helpers.LEAD.replace("tools: Agent\n", f"{tools}\n" if tools else "")
+                self.write(self.lead, text)
+                self.propose({"plugin": "changelog", "routes": helpers.ROUTES})
+                # When: the proposal is read
+                # Then: its routes are read
+                self.assertEqual(proposal.proposal(helpers.PROPOSED)["routes"], helpers.ROUTES)
+
+
 class TestRefused(ProposalTest):
     def test_a_proposal_that_cannot_be_read_is_refused(self):
         for given, said in (
@@ -72,13 +195,11 @@ class TestRefused(ProposalTest):
         with_adapter = [
             {"step": 2, "lanes": [{**helpers.STEPS[0]["lanes"][0], "adapter": "hooks/a.py"}]}
         ]
-        routes = {"orchestrator": "lead", "step": 1, "routes": []}
         given_run = [{"step": 3, "lanes": [{"lane": "write_only", "takes": ["{work}"]}]}]
         for given, said in (
             (self.proposal(steps=read_only), "read_only on step 1 of writer"),
             (self.proposal(steps=with_adapter), "an adapter on step 2 of writer"),
             (self.proposal(adapter="hooks/adapters/values-w.py"), "an adapter for writer"),
-            ({"plugin": "changelog", "routes": routes}, "routes"),
             (self.proposal(steps=given_run), "`{work}`, given for each run, on step 3 of writer"),
         ):
             with self.subTest(said=said):

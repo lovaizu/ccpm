@@ -1,6 +1,7 @@
 """What each hook's command runs: the event Claude Code hands on stdin read, the guard asked where
-the event is of a subagent of the plugin, and its answer given in Claude Code's JSON output, a
-break denied with its sentence, an error told the user too."""
+the event is of a subagent of the plugin, and its answer given in Claude Code's JSON output of the
+event: a break denied with its sentence, the next start added as context, an end kept going, an
+error told the user too."""
 
 import io
 import json
@@ -22,12 +23,14 @@ class HookTest(helpers.PluginTest):
         super().setUp()
         self.lay()
 
-    def answered(self, given: object, argv: tuple = ("changelog",)) -> dict:
-        """What the PreToolUse hook answers on stdout, given the event, as JSON or as the text
-        itself, with the command's words."""
+    def answered(
+        self, given: object, argv: tuple = ("changelog",), held: str = "PreToolUse"
+    ) -> dict:
+        """What the hook of the event held, PreToolUse by default, answers on stdout, given the
+        event, as JSON or as the text itself, with the command's words."""
         text = given if isinstance(given, str) else json.dumps(given)
         out = io.StringIO()
-        hook.main("PreToolUse", list(argv), io.StringIO(text), out, self.plugin)
+        hook.main(held, list(argv), io.StringIO(text), out, self.plugin)
         return helpers.answer(out.getvalue())
 
 
@@ -148,6 +151,132 @@ class TestEntry(HookTest):
             runpy.run_path(os.path.join(helpers.CODE, "pretooluse.py"), run_name="__main__")
         # Then: it answers as the hook does
         self.assertEqual(helpers.answer(out.getvalue()), denied(RUN_BREAK))
+
+
+class TestRoutes(HookTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.route()
+
+    def test_the_next_start_is_added_as_context_as_lead_starts_and_its_starts_come_back(self):
+        start = self.subagent("SubagentStart", "lead", "lead1")
+        failed = {**self.start("writer", "PostToolUseFailure"), "error": "e", "is_interrupt": False}
+        for event, held in (
+            (start, "SubagentStart"),
+            (failed, "PostToolUseFailure"),
+            (
+                self.start("writer", "PostToolUse", helpers.back("w1", "async_launched")),
+                "PostToolUse",
+            ),
+        ):
+            with self.subTest(held=held):
+                # Given: the routes laid
+                # When: lead starts, its start of writer fails, or comes back launched
+                found = self.answered(event, held=held)
+                # Then: the line is added as context of the event, headed changelog:
+                self.assertEqual(found["hookSpecificOutput"]["hookEventName"], held)
+                self.assertTrue(
+                    found["hookSpecificOutput"]["additionalContext"].startswith("changelog: ")
+                )
+                self.assertNotIn("systemMessage", found)
+
+    def test_a_subagent_ending_with_no_result_is_blocked_with_its_sentence(self):
+        # Given: writer giving no result
+        # When: it is about to end
+        found = self.answered(self.subagent("SubagentStop", "writer", "a1"), held="SubagentStop")
+        # Then: it is blocked, told its last step's sentence headed changelog:
+        gives = f"python3 {self.plugin}/hooks/lane/result.py writer written"
+        self.assertEqual(
+            found, {"decision": "block", "reason": f"changelog: End by running `{gives}`."}
+        )
+
+    def test_an_unnamed_start_is_denied_with_the_sentence_and_the_start_each_line_headed(self):
+        # Given: writer due
+        # When: lead starts reviewer
+        # Then: it is denied, told the sentence and on the next line the start, each headed
+        self.assertEqual(
+            self.answered(self.start("reviewer")),
+            denied(f"changelog: {helpers.FOLLOW}\nchangelog: Start `changelog:writer`."),
+        )
+
+    def test_an_error_at_another_event_is_told_the_user_too(self):
+        # Given: hooks/lanes.json removed
+        os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
+        # When: lead starts
+        found = self.answered(self.subagent("SubagentStart", "lead", "lead1"), held="SubagentStart")
+        # Then: the error is the context and the user's message alike
+        told = found["hookSpecificOutput"]["additionalContext"]
+        self.assertTrue(told.startswith("changelog: lane cannot check the lanes of lead:"))
+        self.assertEqual(found["systemMessage"], told)
+
+    def test_an_error_of_the_guard_at_subagentstop_is_told_once(self):
+        # Given: hooks/lanes.json removed
+        os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
+        for active, blocked in ((False, True), (True, False)):
+            with self.subTest(active=active):
+                # When: writer is about to end, kept going by a stop hook before or not
+                stop = self.subagent("SubagentStop", "writer", "a1", active)
+                found = self.answered(stop, held="SubagentStop")
+                # Then: it is blocked with the error the first time, and ends the second
+                self.assertEqual("decision" in found, blocked)
+
+    def test_an_error_before_the_guard_at_subagentstop_is_told_once(self):
+        stop = self.subagent("SubagentStop", "writer", "a1")
+        for given, argv, blocked in (
+            ("x", ("changelog",), True),
+            (stop, (), True),
+            ({**stop, "stop_hook_active": True}, (), False),
+        ):
+            with self.subTest(given=given, argv=argv):
+                # Given: SubagentStop handed no JSON object, or by a command not naming the
+                # plugin, kept going by a stop hook before or not
+                # When: the hook runs
+                found = self.answered(given, argv, "SubagentStop")
+                # Then: the end is blocked with the error, but where it was kept going before
+                self.assertEqual("decision" in found, blocked)
+
+    def test_an_event_out_of_its_fields_is_an_error_for_claude_code(self):
+        stop = self.subagent("SubagentStop", "writer", "a1")
+        for event, held, wrong in (
+            ({**stop, "stop_hook_active": "no"}, "SubagentStop", "$.stop_hook_active"),
+            ({**stop, "agent_id": "../x"}, "SubagentStop", "$.agent_id"),
+            (self.start("writer", "PostToolUse"), "PostToolUse", '"tool_response"'),
+        ):
+            with self.subTest(wrong=wrong):
+                # Given: an event of a wrong field, an ID naming another folder, or no response
+                # When: the hook is handed it
+                found = self.answered(event, held=held)
+                # Then: it tells what is wrong
+                self.assertIn(wrong, found["systemMessage"])
+
+
+class TestEntries(HookTest):
+    def test_each_events_script_runs_the_hook_on_its_event(self):
+        self.route()
+        for script, held, event in (
+            ("posttooluse", "PostToolUse", self.came_back("ls")),
+            (
+                "posttoolusefailure",
+                "PostToolUseFailure",
+                self.bash("ls", held="PostToolUseFailure"),
+            ),
+            ("subagentstart", "SubagentStart", self.subagent("SubagentStart", "lead", "lead1")),
+            ("subagentstop", "SubagentStop", self.subagent("SubagentStop", "lead", "lead1")),
+        ):
+            with self.subTest(script=script):
+                # Given: the event, and the plugin's folder in CLAUDE_PLUGIN_ROOT
+                stdin, out = io.StringIO(json.dumps(event)), io.StringIO()
+                env = mock.patch.dict(os.environ, {"CLAUDE_PLUGIN_ROOT": self.plugin})
+                argv = mock.patch("sys.argv", [f"{script}.py", "changelog"])
+                # When: the event's script runs as Claude Code runs it
+                with env, argv, mock.patch("sys.stdin", stdin), mock.patch("sys.stdout", out):
+                    runpy.run_path(os.path.join(helpers.CODE, f"{script}.py"), run_name="__main__")
+                # Then: it answers as the hook does on that event
+                expected = io.StringIO()
+                hook.main(
+                    held, ["changelog"], io.StringIO(json.dumps(event)), expected, self.plugin
+                )
+                self.assertEqual(out.getvalue(), expected.getvalue())
 
 
 if __name__ == "__main__":

@@ -51,10 +51,10 @@ def git(repo: str, *args: str) -> str:
     return done.stdout.strip()
 
 
-def made(place: str) -> str:
+def made(place: str, proposed: str = "changelog.json") -> str:
     """The repository of the run, in its folder: CHANGELOG.md at 0.1.0 and three commits after it,
-    with a copy of changelog laid by `lay.py write` from the README's proposal, committed, so
-    whatever writer does shows in git."""
+    with a copy of changelog laid by `lay.py write` from the proposal of the name kept beside this
+    file, the README's by default, committed, so whatever its subagents do shows in git."""
     repo = os.path.join(place, "notes")
     os.makedirs(repo)
     git(repo, "init", "-q", "-b", "main")
@@ -72,7 +72,7 @@ def made(place: str) -> str:
     shutil.copytree(os.path.join(HERE, "changelog"), os.path.join(repo, "changelog"))
     proposal = os.path.join(repo, ".lane", time.strftime("%Y%m%d-changelog"), "changelog.json")
     os.makedirs(os.path.dirname(proposal))
-    shutil.copyfile(os.path.join(HERE, "changelog.json"), proposal)
+    shutil.copyfile(os.path.join(HERE, proposed), proposal)
     laid = subprocess.run(
         [sys.executable, LAY, "write", os.path.relpath(proposal, repo)],
         cwd=repo,

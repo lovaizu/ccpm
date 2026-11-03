@@ -67,7 +67,7 @@ class TestLay(testing.FolderTest):
         steps = shown(PRINTED).split("\n\n", 1)[1]
         self.assertIn(steps, self.read(os.path.join("changelog", "agents", "writer.md")))
         hooks = self.read_json(os.path.join("changelog", "hooks", "hooks.json"))
-        self.assertEqual(hooks, {"hooks": {"PreToolUse": [helpers.ENTRY]}})
+        self.assertEqual(hooks, helpers.HOOKS)
         self.assertEqual(
             self.read_json(os.path.join("changelog", "hooks", "lanes.json")), helpers.RULES
         )

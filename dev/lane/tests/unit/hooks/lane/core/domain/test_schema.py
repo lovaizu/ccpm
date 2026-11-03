@@ -353,6 +353,20 @@ CHOICES = {
 }
 
 
+class TestMinItems(unittest.TestCase):
+    def test_too_few_items_are_told_with_the_least_and_how_many_were_found(self):
+        for given, value, told in (
+            ({"minItems": 1}, [], "$: expected at least 1 item, found none"),
+            ({"minItems": 2}, [1], "$: expected at least 2 items, found 1"),
+        ):
+            with self.subTest(given=given):
+                # Given: a schema of lane's own asking at least one item, or two
+                # When: a list of fewer is held to it
+                # Then: the least and what was found are told
+                found = schema.held(given, value)
+                self.assertEqual(found.told() if found else None, told)
+
+
 class TestAnyOf(unittest.TestCase):
     def test_a_value_of_any_choice_holds(self):
         for value in (None, {"a": "s"}, {"b": {"c": "s"}}):
@@ -409,6 +423,8 @@ class TestOwn(unittest.TestCase):
             ({"minLength": 1}, "a"),
             ({"minLength": 2}, "ab"),
             ({"minLength": 1}, 0),
+            ({"pattern": "^[a-z]+$"}, "more"),
+            ({"pattern": "^[a-z]+$"}, 1),
         ):
             with self.subTest(schema=given, value=value):
                 # Given: a schema of one of the keywords, and a value at its edge, beyond it or of
@@ -423,6 +439,11 @@ class TestOwn(unittest.TestCase):
             ({"minimum": 1}, 0.5, "$: expected a number of at least 1, found 0.5"),
             ({"minLength": 1}, "", '$: expected a string of length 1 or more, found ""'),
             ({"minLength": 2}, "a", '$: expected a string of length 2 or more, found "a"'),
+            (
+                {"pattern": "^[a-z]+$"},
+                "More",
+                '$: expected a string matching ^[a-z]+$, found "More"',
+            ),
         ):
             with self.subTest(schema=given, value=value):
                 # Given: a schema of one of the keywords
@@ -431,7 +452,7 @@ class TestOwn(unittest.TestCase):
                 self.assertEqual(self.own(value, given), told)
 
     def test_each_is_refused_in_a_plugins_form(self):
-        for keyword, value in (("minimum", 1), ("minLength", 1)):
+        for keyword, value in (("minimum", 1), ("minLength", 1), ("pattern", "a")):
             # Given: a form of the keyword
             # When: it is read as a plugin's form
             # Then: it is refused, as structured outputs do not accept it

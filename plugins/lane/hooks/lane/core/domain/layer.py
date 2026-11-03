@@ -1,7 +1,13 @@
-"""lay.py's course: the lanes the developer AI proposes printed for its approval as each step will
-read; once approved, written word for word into its plugin from the same file, so no AI copies what
-was approved, with Claude Code's check of the plugin run and the proposal removed; and a plugin
-laid before brought up to lane's code, its hooks written in the current form and its lanes said."""
+"""lay.py's course: the lanes and routes the developer AI proposes printed for its approval as each
+step will read; once approved, written word for word into its plugin from the same file, so no AI
+copies what was approved, with Claude Code's check of the plugin run and the proposal removed; and
+a plugin laid before brought up to lane's code, its hooks written in the current form and its lanes
+said.
+
+The routes are laid as sentences in the steps beside the lanes: follow_routes' on the
+orchestrator's step, and the result command on the last step of each subagent giving a result. A
+proposal giving routes replaces those laid before, and the sentences of those before come out; one
+giving none keeps them, with their sentences."""
 
 from __future__ import annotations
 
@@ -13,23 +19,79 @@ from typing import Any
 import entries
 import lanes
 import placed
+import routes
 import rules
 import step
 import steps
-from proposal import Stop, plugin_name, proposal
+from proposal import Stop, plugin_name, proposal, subagent
 
 
-def laid_before(root: str) -> dict[str, list[dict[str, Any]]]:
+def laid_before(root: str) -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any] | None]:
     """Each subagent the plugin at root lays lanes in, by its name, with its steps as a proposal
-    gives them, as its hooks/lanes.json holds them; none where it is not there. Stops where it is
-    there and cannot be read, as the lanes approved before would be lost."""
+    gives them, and the routes laid, as its hooks/lanes.json holds them; none where it is not
+    there. Stops where it is there and cannot be read, as the lanes approved before would be
+    lost."""
     if not os.path.exists(os.path.join(root, rules.FILE)):
-        return {}
+        return {}, None
     try:
         laid = rules.read(root)
     except ValueError as why:
         raise Stop(f"lay.py: {root}/{why}; fix it and run again.") from None
-    return {a["name"]: a["steps"] for a in laid["subagents"]}
+    return {a["name"]: a["steps"] for a in laid["subagents"]}, rules.routes_of(laid)
+
+
+def routed(given: dict[str, Any] | None, name: str, lines: list[str]) -> list[dict[str, Any]]:
+    """The steps the routes lay sentences on in the subagent of the name, whose file has the lines:
+    follow_routes on the orchestrator's step, and the result command on its last step where it gives
+    a result."""
+    if given is None:
+        return []
+    found = []
+    if given["orchestrator"] == name:
+        found.append({"step": given["step"], "lanes": [{"lane": "follow_routes", "takes": []}]})
+    ons = routes.ons(given, name)
+    last = step.last([line.rstrip("\n") for line in lines])
+    if ons and last is not None:
+        commands = [routes.command(name, on) for on in ons]
+        found.append({"step": last, "lanes": [{"lane": "result", "takes": commands}]})
+    return found
+
+
+def merged(*given: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The steps given, each step's lanes together under its number, in the order each first
+    comes."""
+    found: dict[int, list[dict[str, Any]]] = {}
+    for each in given:
+        for s in each:
+            found.setdefault(s["step"], []).extend(s["lanes"])
+    return [{"step": n, "lanes": lanes_of} for n, lanes_of in found.items()]
+
+
+def agents(
+    given: dict[str, Any], before: dict[str, Any], routes_before: dict[str, Any] | None
+) -> tuple[list[dict[str, Any]], dict[str, list[dict[str, Any]]]]:
+    """Each subagent lay.py writes, as `steps.steps_laid` takes it, with the steps it lays as each
+    reads before, by its name: the proposal's subagents, and, where the proposal gives routes, each
+    subagent they or those before name whose file is there; each with its lanes, the proposal's or
+    those laid before, and the sentences of the routes, the proposal's or those laid before."""
+    root, now = given["plugin"], given["routes"] or routes_before
+    names = [a["name"] for a in given["subagents"]]
+    if given["routes"]:
+        extra = routes.named(given["routes"]) + routes.named(routes_before or given["routes"])
+        names += [n for n in dict.fromkeys(extra) if n not in names]
+    found, was = [], {}
+    for name in names:
+        agent = next((a for a in given["subagents"] if a["name"] == name), None)
+        if agent is None:
+            if step.agent_file(root, name) is None:
+                continue
+            agent = subagent(root, {"name": name, "steps": [dict(s) for s in before.get(name, [])]})
+        lines = [line.rstrip("\n") for line in agent["lines"]]
+        laid = merged(agent["steps"], routed(now, name, agent["lines"]))
+        laid_now = [{**s, "span": step.span(lines, s["step"])} for s in laid]
+        was[name] = merged(before.get(name, []), routed(routes_before, name, agent["lines"]))
+        found.append({**agent, "steps": laid_now})
+    return found, was
 
 
 def listed(things: list[str]) -> str:
@@ -37,24 +99,40 @@ def listed(things: list[str]) -> str:
     return " and ".join(filter(None, [", ".join(things[:-1]), things[-1]]))
 
 
+def routes_printed(given: dict[str, Any]) -> str:
+    """The routes as the developer AI reads them: the step they are laid on, and each route from
+    the first start or a subagent's result to the start next."""
+    rows = [
+        ("first" if "on" not in r else f"{r['from']} `{r['on']}`", r.get("to") or "no more")
+        for r in given["routes"]
+    ]
+    wide = max(len(left) for left, _ in rows)
+    out = [f"Routes of {given['orchestrator']}, laid on its step {given['step']}:\n"]
+    out += [f"  {left:<{wide}}  start {to}\n" for left, to in rows]
+    return "".join(out)
+
+
 def printed(path: str) -> str:
-    """The proposal as the developer AI reads it for its approval: for each subagent, each lane
-    under its action with its hook, and each step as it will read; a step whose lanes are all taken
-    out is shown so."""
+    """The proposal as the developer AI reads it for its approval: the routes it gives, each from a
+    subagent on its result to the start next; then, for each subagent, each lane under its action
+    with its hook, and each step as it will read; a step whose lanes are all taken out is shown
+    so."""
     given = proposal(path)
-    before = laid_before(given["plugin"])
+    before, routes_before = laid_before(given["plugin"])
+    found, was = agents(given, before, routes_before)
     blocks = []
-    for agent in given["subagents"]:
-        laid = steps.steps_laid(before, agent)
-        rows = [(s["step"], lane) for s in laid for lane in s["lanes"]]
-        actions = [lanes.LANES[lane["lane"]].ACTION + ":" for _, lane in rows]
-        said = [lanes.sentence(lane["lane"], lane["takes"]) for _, lane in rows]
-        wide, long = max(map(len, actions)), max(map(len, said))
+    if given["routes"]:
+        blocks.append(routes_printed(given["routes"]))
+    for agent in found:
+        laid = steps.steps_laid(was, agent)
+        rows_of = [(s["step"], lane) for s in laid for lane in s["lanes"]]
+        actions = [lanes.action(lane["lane"]) + ":" for _, lane in rows_of]
+        said = [lanes.sentence(lane["lane"], lane["takes"]) for _, lane in rows_of]
+        wide, long = max(map(len, actions), default=0), max(map(len, said), default=0)
         out = [f"Lanes of {agent['name']}, each hook acting in {agent['name']} alone:\n"]
-        for (number, lane), action, sentence in zip(rows, actions, said):
-            out.append(
-                f"  step {number}  {action:<{wide}} {sentence:<{long}}  hook {lane['lane']}\n"
-            )
+        for (number, lane), action, sentence in zip(rows_of, actions, said):
+            hook = lanes.hook(lane["lane"])
+            out.append(f"  step {number}  {action:<{wide}} {sentence:<{long}}  hook {hook}\n")
         for s in laid:
             if not s["lanes"]:
                 out.append(f"  step {s['step']}  no lane: the sentences laid before taken out\n")
@@ -66,24 +144,29 @@ def printed(path: str) -> str:
 
 
 def written(path: str) -> str:
-    """Writes the proposal into the plugin: each step, the hook entry, the lanes laid and lane's
-    code; has Claude Code check the plugin; removes the proposal, and its folder once nothing else
-    is left there; and gives what was done. The lanes laid are those laid before in each other
-    subagent whose file is still there, and the proposal's in each of its subagents."""
+    """Writes the proposal into the plugin: each step, the hook entries, the lanes laid and the
+    routes, and lane's code; has Claude Code check the plugin; removes the proposal, and its folder
+    once nothing else is left there; and gives what was done. The lanes laid are those laid before
+    in each other subagent whose file is still there, and the proposal's in each of its subagents;
+    the routes, the proposal's, or those laid before where it gives none."""
     given = proposal(path)
     root, plugin = given["plugin"], given["name"]
     hooks = entries.read(root)
-    before = laid_before(root)
+    before, routes_before = laid_before(root)
+    now = given["routes"] or routes_before
+    found, was = agents(given, before, routes_before)
+    said = [steps_written(root, agent, was) for agent in found]
     laid_now = dict(before)
-    said = []
     for agent in given["subagents"]:
-        said.append(steps_written(root, agent, before))
         laid_now[agent["name"]] = [{"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]]
     kept = {n: s for n, s in laid_now.items() if step.agent_file(root, n) is not None}
-    entries.written(root, entries.put(hooks, plugin, list(kept)))
-    said.append(f"Wrote the hooks of {listed(list(kept))} into hooks/hooks.json.\n")
-    rules.write(root, [{"name": n, "steps": s} for n, s in kept.items()])
-    said.append("Wrote the lanes laid into hooks/lanes.json.\n")
+    named = routes.named(now) if now else []
+    hooked = list(kept) + [n for n in named if n not in kept and step.agent_file(root, n)]
+    entries.written(root, entries.put(hooks, plugin, hooked))
+    said.append(f"Wrote the hooks of {listed(hooked)} into hooks/hooks.json.\n")
+    rules.write(root, [{"name": n, "steps": s} for n, s in kept.items()], now)
+    what = "the lanes laid and the routes" if now else "the lanes laid"
+    said.append(f"Wrote {what} into hooks/lanes.json.\n")
     placed.code_put(root)
     said.append("Put lane's code in hooks/lane/.\n")
     validated(root, path)
@@ -141,7 +224,7 @@ def brought_up(root: str) -> str:
         )
     name = plugin_name(root)
     hooks = entries.read(root)
-    before = laid_before(root)
+    before, routes_before = laid_before(root)
     said = []
     was = placed.older(root)
     if was is not None:
@@ -149,7 +232,8 @@ def brought_up(root: str) -> str:
         said.append(
             f"Brought lane's code in hooks/lane/ up from {was} to {placed.lane_version()}.\n"
         )
-    kept = [n for n in before if step.agent_file(root, n) is not None]
+    named = [n for n in routes.named(routes_before) if n not in before] if routes_before else []
+    kept = [n for n in [*before, *named] if step.agent_file(root, n) is not None]
     now = entries.put(hooks, name, kept)
     if now != hooks:
         entries.written(root, now)

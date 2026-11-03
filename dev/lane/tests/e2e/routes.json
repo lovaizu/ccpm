@@ -1,0 +1,12 @@
+{"plugin": "changelog",
+ "subagents": [
+  {"name": "writer", "steps": [
+   {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]},
+   {"step": 3, "lanes": [{"lane": "write_only", "takes": ["CHANGELOG.md"]}]}]},
+  {"name": "reviewer", "steps": [
+   {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]}]}],
+ "routes": {"orchestrator": "lead", "step": 1, "routes": [
+  {"from": "lead", "to": "writer"},
+  {"from": "writer", "on": "written", "to": "reviewer"},
+  {"from": "reviewer", "on": "more", "to": "writer"},
+  {"from": "reviewer", "on": "good"}]}}
