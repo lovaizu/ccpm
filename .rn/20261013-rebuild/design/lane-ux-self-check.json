@@ -33,7 +33,7 @@
    "question": "ux/Q5",
    "lines": [
     "dev/lane/ux.md:45-63",
-    "dev/lane/ux.md:65-101"
+    "dev/lane/ux.md:65-97"
    ]
   },
   {
@@ -68,7 +68,7 @@
    "question": "refactor-doc/Q3",
    "lines": [
     "dev/lane/ux.md:45-63",
-    "dev/lane/ux.md:65-101"
+    "dev/lane/ux.md:65-97"
    ]
   },
   {
@@ -81,7 +81,7 @@
   {
    "question": "refactor-doc/Q5",
    "lines": [
-    "dev/lane/ux.md:1-101"
+    "dev/lane/ux.md:1-97"
    ]
   },
   {
@@ -100,7 +100,7 @@
   {
    "question": "refactor-doc/Q8",
    "lines": [
-    "dev/lane/ux.md:1-101"
+    "dev/lane/ux.md:1-97"
    ]
   }
  ],
