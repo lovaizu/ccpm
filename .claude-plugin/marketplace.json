@@ -23,6 +23,12 @@
       "description": "Lane lets an AI notice when it drifts from the steps your plugin gives it, and tells it the right way, so it finds its way back at full speed with no one watching each move.",
       "source": "./plugins/lane",
       "category": "development"
+    },
+    {
+      "name": "pin",
+      "description": "pin settles every decision your plan needs before any work on it starts, and asks you only the decisions that are yours, one at a time.",
+      "source": "./plugins/pin",
+      "category": "development"
     }
   ]
 }
