@@ -1,1 +1,1 @@
-../../lane/hooks/lane/schema.py
+../../lane/hooks/lane/core/domain/schema.py

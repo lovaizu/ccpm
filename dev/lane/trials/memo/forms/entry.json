@@ -1,9 +1,0 @@
-{
-  "type": "object",
-  "properties": {
-    "title": {"type": "string"},
-    "points": {"type": "integer"}
-  },
-  "required": ["title", "points"],
-  "additionalProperties": false
-}

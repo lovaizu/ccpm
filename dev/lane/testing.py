@@ -42,7 +42,12 @@ def temporary(plugin: str, name: str) -> str:
 def run_folder(file: str) -> str:
     """The folder of this run of the tests of the plugin the file is a test of, made the first time
     it is asked for and removed when the run ends."""
-    plugin = os.path.basename(os.path.dirname(os.path.dirname(os.path.abspath(file))))
+    # A test lies in dev/<plugin>/tests/, at any depth below it, as unit/ holds each at the path of
+    # what it tests.
+    place = os.path.abspath(file)
+    while os.path.basename(place) != "tests" and place != os.path.dirname(place):
+        place = os.path.dirname(place)
+    plugin = os.path.basename(os.path.dirname(place))
     if plugin not in RUNS:
         made = temporary(plugin, "tests")
         RUNS[plugin] = os.path.realpath(made)

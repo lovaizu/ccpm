@@ -24,10 +24,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 import testing
 
-# How Claude Code keeps its records is read by lane's record.py, loaded from its file, so a
-# plugin's trials standing on this module meet their own modules of the names lane's code has, such
-# as call.
-RECORD = os.path.join(HERE, "../../../plugins/lane/hooks/lane/record.py")
+# How Claude Code keeps its records is read by rn's record.py, whose job it is, loaded from its
+# file, so a plugin's trials standing on this module meet none of their own modules of that name.
+RECORD = os.path.join(HERE, "../../../plugins/rn/scripts/record.py")
 FOUND = importlib.util.spec_from_file_location("record", os.path.normpath(RECORD))
 assert FOUND and FOUND.loader
 record = importlib.util.module_from_spec(FOUND)
