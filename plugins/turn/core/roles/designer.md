@@ -39,6 +39,14 @@ You cannot ask the person yourself. To ask, give `asks` by your result command, 
 with the message for the person alone, headed `For the person:`, as `pin:down` says for a pinner
 run as a subagent. You are resumed with the answer, and go on where you were.
 
+- Before each message to the person, read the tree: a point it holds as settled is settled, and
+  is never put to them again, as a question asked twice tells them their answer was lost.
+- A message holds one fact or one decision. Several facts found at once go to the person one
+  message each, as an answer to several at once cannot say which one it corrects.
+- A decision the template's practices settle, such as how a figure is drawn or in what order the
+  parts stand, is yours: settle it by `reasoning`, its grounds the practice, and do not ask it.
+  The person decides what only their purpose settles, such as whom the work is for.
+
 ## Steps
 
 1. **The tree is pinned down.** Where `{run}/design-tree.json` is not there, pin the design down
