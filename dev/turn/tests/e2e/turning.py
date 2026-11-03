@@ -24,7 +24,8 @@ PLUGINS = {name: os.path.join(ROOT, "plugins", name) for name in ("turn", "pin")
 # The most messages put to the person before a run is stopped as one that does not end.
 TURNS = 40
 # `tidy`: tidy.py moves each file of a folder into a folder named after its kind, by its extension,
-# and shows what it would move with --dry-run; a file of no extension stays where it is.
+# and shows what it would move with --dry-run; a file of no extension, or one whose name its folder
+# holds already, stays where it is, so tidy never deletes a file.
 TIDY_PY = """\"\"\"tidy: `python3 tidy.py [--dry-run] <folder>` moves each file of the folder into a
 folder named after its kind.\"\"\"
 
@@ -47,6 +48,9 @@ def main(argv):
         if not extension or os.path.isdir(path):
             continue
         kind = KINDS.get(extension, "other")
+        if os.path.exists(os.path.join(args.folder, kind, name)):
+            print(f"{name} stays: {kind}/{name} is there already")
+            continue
         print(f"{name} -> {kind}/")
         if not args.dry_run:
             os.makedirs(os.path.join(args.folder, kind), exist_ok=True)
