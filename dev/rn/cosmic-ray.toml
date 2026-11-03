@@ -3,6 +3,15 @@
 [cosmic-ray]
 module-path = ["plugins/rn/scripts"]
 timeout = 60.0
+# The copies of the old Turn rn keeps until its rebuild (T46, .rn/20261013-rebuild/steering.md)
+# are left out: their tests went with turn.py, which they ran, and rn is held at 0.8.0 for its
+# users meanwhile, so no one runs these copies; the rebuild removes them.
+excluded-modules = [
+  "plugins/rn/scripts/call.py",
+  "plugins/rn/scripts/forms.py",
+  "plugins/rn/scripts/items.py",
+  "plugins/rn/scripts/parts.py",
+]
 # The type checker and the linter run first: a change to a type annotation changes no behavior a
 # test could see, and the type checker is what checks annotations, the linter what checks `is`
 # against a literal.
