@@ -100,24 +100,10 @@ WANTS = [
     ("tags is a list of texts in the JSON", False),
     ("updated is the same ISO 8601 text as the text output gives", False),
 ]
-FINDS = """You stand in for the person a planning AI is talking with. Here is who you are and what
-you truly want; the AI cannot see it:
-
-{intent}
-
-The conversation so far, oldest first:
-
-{said}
-
-The AI's newest message to you:
-
-<message>
-{message}
-</message>
-
-Answer it as that person would. Also judge the message as that person, from what you know. Give
-only one JSON object, with no other text, with these keys:
-- "answer": your answer to the message, as you would write it;
+FINDS = trying.finds(
+    """You stand in for the person a planning AI is talking with. Here is who you are and what
+you truly want; the AI cannot see it:""",
+    """- "answer": your answer to the message, as you would write it;
 - "points": how many separate answers the message needs from you, as a number: one question to
   decide, or one fact to confirm, is 1, however long the reasons, the options or the examples
   around it; a second question, or a second thing it asks you to confirm or to tell, adds 1;
@@ -128,7 +114,8 @@ only one JSON object, with no other text, with these keys:
 - "confirms_design": true where it shows you the whole design and asks whether you understand it
   the same way; otherwise false;
 - "finished": true where the message asks you nothing and says the planning is done; otherwise
-  false."""
+  false.""",
+)
 JUDGES = """A planning AI has written a design tree for a plan. The person whose plan it is wanted
 the points below. For each point, judge whether a decision of the tree holds it as the person wants
 it, and by whom that decision was settled.

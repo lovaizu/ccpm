@@ -85,24 +85,11 @@ TIDY = {
     "tidy.py": TIDY_PY,
     "LICENSE": MIT,
 }
-FINDS = """You stand in for the person an AI is making a work for. Here is who you are and what you
-truly want; the AI cannot see it:
-
-{intent}
-
-The conversation so far, oldest first:
-
-{said}
-
-The AI's newest message to you:
-
-<message>
-{message}
-</message>
-
-Answer it as that person would. Also judge the message as that person, from what you know. Give
-only one JSON object, with no other text, with these keys:
-- "answer": your answer to the message, as you would write it, or "" where it asks you nothing;
+FINDS = trying.finds(
+    """You stand in for the person an AI is making a work for. Here is who you are and what you
+truly want; the AI cannot see it:""",
+    """- "answer": your answer to the message, as you would write it, or "" where it asks you
+  nothing;
 - "asks": true where the message asks you anything or waits for your answer; otherwise false;
 - "points": how many separate answers the message needs from you, as a number: one question to
   decide, or one fact to confirm, is 1, however long the reasons around it; a second question, or
@@ -114,7 +101,8 @@ only one JSON object, with no other text, with these keys:
 - "not_yours": true where it asks you to decide something your wants above show you do not care
   about and that follows from what you want and the repository; otherwise false;
 - "finished": true where the message says the work is done and asks you nothing; otherwise
-  false."""
+  false.""",
+)
 JUDGES = """You stand in for the person an AI made a work for. Here is who you are and what you
 truly want:
 

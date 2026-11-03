@@ -348,6 +348,33 @@ def stand_in(prompt: str, cwd: str) -> dict[str, Any]:
     return json.loads(found.group(0))
 
 
+def finds(who: str, keys: str) -> str:
+    """The prompt the stand-in for a person is given each message by, `{intent}`, `{said}` and
+    `{message}` left to fill: who they stand in for, then the conversation, then the keys of the
+    JSON it answers with."""
+    return (
+        who
+        + """
+
+{intent}
+
+The conversation so far, oldest first:
+
+{said}
+
+The AI's newest message to you:
+
+<message>
+{message}
+</message>
+
+Answer it as that person would. Also judge the message as that person, from what you know. Give
+only one JSON object, with no other text, with these keys:
+"""
+        + keys
+    )
+
+
 def heard(finds: str, intent: str, said: list[str], message: str, cwd: str) -> dict[str, Any]:
     """What the stand-in for the person, given the prompt `finds` with its intent, the conversation
     so far and the newest message, says of the message, as the JSON object it gives."""
