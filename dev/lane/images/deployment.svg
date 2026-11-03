@@ -64,7 +64,7 @@
   <text class="name" x="540.0" y="472">The plugin&#x27;s folder</text>
   <text class="tag" x="540.0" y="488">[Claude Code plugin]</text>
   <text class="label" x="540.0" y="510" text-anchor="middle">Plugin files · Adapter · Test cases</text>
-  <text class="label" x="540.0" y="526" text-anchor="middle">check script, as a copy or a link</text>
+  <text class="label" x="540.0" y="526" text-anchor="middle">Lane&#x27;s code, as a copy or a link</text>
   <rect class="env" x="780" y="130" width="700" height="590" rx="10"/>
   <text class="envname" x="792" y="710" text-anchor="start">The computer where the plugin runs</text>
   <text class="utag" x="1052" y="710" text-anchor="start">[Claude Code · Python 3.9+]</text>
@@ -75,7 +75,7 @@
   <text class="name" x="1270.0" y="182">Hook process</text>
   <text class="tag" x="1270.0" y="198">[python3 3.9 or later · one for each event]</text>
   <text class="label" x="1270.0" y="220" text-anchor="middle">hook.py · guard.py · lanes/</text>
-  <text class="label" x="1270.0" y="236" text-anchor="middle">called.py · moves.py · ports.py</text>
+  <text class="label" x="1270.0" y="236" text-anchor="middle">called.py · routes.py · ports.py</text>
   <rect class="unit" x="1080" y="340" width="380" height="70" rx="4"/>
   <text class="name" x="1270.0" y="362">Adapter process</text>
   <text class="tag" x="1270.0" y="378">[python3]</text>
@@ -84,16 +84,15 @@
   <text class="name" x="890.0" y="472">Temporary folder</text>
   <text class="tag" x="890.0" y="488">[the system&#x27;s]</text>
   <text class="label" x="890.0" y="510" text-anchor="middle">Calls kept</text>
-  <path class="store" d="M800,609 A100.0,9 0 0 1 1000,609 V681 A100.0,9 0 0 1 800,681 Z"/>
-  <path class="store" d="M800,609 A100.0,9 0 0 0 1000,609"/>
-  <text class="name" x="900.0" y="634.5">Claude Code&#x27;s records</text>
-  <text class="tag" x="900.0" y="651.5">[~/.claude/projects/]</text>
-  <text class="tag" x="900.0" y="666.5">Record</text>
+  <rect class="unit" x="800" y="600" width="200" height="80" rx="4"/>
+  <text class="name" x="900.0" y="622">Result process</text>
+  <text class="tag" x="900.0" y="638">[python3 3.9 or later]</text>
+  <text class="label" x="900.0" y="660" text-anchor="middle">result.py</text>
   <rect class="unit" x="1080" y="450" width="380" height="130" rx="4"/>
   <text class="name" x="1270.0" y="472">The installed plugin</text>
   <text class="tag" x="1270.0" y="488">[Claude Code plugin folder]</text>
   <text class="label" x="1270.0" y="510" text-anchor="middle">Plugin files · Adapter · Test cases</text>
-  <text class="label" x="1270.0" y="526" text-anchor="middle">check script</text>
+  <text class="label" x="1270.0" y="526" text-anchor="middle">Lane&#x27;s code</text>
   <path class="line" d="M140,94 L140,170" marker-end="url(#arrow)"/>
   <text class="label" x="148" y="108" text-anchor="start">installs Lane</text>
   <text class="label" x="148" y="122" text-anchor="start">[claude plugin install]</text>
@@ -118,12 +117,14 @@
   <path class="line" d="M1460,240 L1472,240 L1472,500 L1460,500" marker-end="url(#arrow)"/>
   <text class="label" x="1466" y="430" text-anchor="end">reads</text>
   <path class="line" d="M1080,290 L1050,290 L1050,500 L980,500" marker-end="url(#arrow)"/>
-  <path class="line" d="M1080,300 L1060,300 L1060,645 L1000,645" marker-end="url(#arrow)"/>
+  <path class="line" d="M990,234 L990,600" marker-end="url(#arrow)"/>
+  <text class="label" x="984" y="590" text-anchor="end">runs [Bash]</text>
+  <path class="line" d="M1000,660 L1350,660 L1350,580" marker-end="url(#arrow)"/>
   <text class="label" x="1044" y="476" text-anchor="end">writes,</text>
   <text class="label" x="1044" y="490" text-anchor="end">reads</text>
-  <text class="label" x="1050" y="635" text-anchor="end">reads</text>
+  <text class="label" x="1358" y="630" text-anchor="start">reads</text>
   <path class="line" d="M540,580 L540,760 L1270,760 L1270,580" marker-end="url(#arrow)"/>
-  <text class="label" x="897" y="752" text-anchor="middle">installs the plugin with the check script [its marketplace]</text>
+  <text class="label" x="897" y="752" text-anchor="middle">installs the plugin with Lane&#x27;s code [its marketplace]</text>
   <text class="envname" x="20" y="815" text-anchor="start">Legend</text>
   <rect class="env" x="90" y="800" width="36" height="22" rx="4"/>
   <text class="label" x="134" y="815" text-anchor="start">execution environment</text>

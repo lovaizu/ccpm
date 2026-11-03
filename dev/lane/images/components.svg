@@ -40,7 +40,7 @@
   <rect class="bg" x="0" y="0" width="1590" height="900"/>
   <rect class="env" x="22" y="352" width="1283" height="308" rx="10"/>
   <text class="envname" x="34" y="370" text-anchor="start"></text>
-  <text class="envname" x="34" y="652" text-anchor="start">check script</text>
+  <text class="envname" x="34" y="652" text-anchor="start">Lane's code</text>
   <text class="utag" x="132" y="652" text-anchor="start">[script · Python 3.9]</text>
   <rect class="box" x="30" y="40" width="180" height="64" rx="14"/>
   <text class="name" x="120.0" y="69.0">Developer AI</text>
@@ -92,12 +92,11 @@
   <text class="name" x="390.0" y="589.0">guard.py</text>
   <text class="tag" x="390.0" y="606.0">[module · Python 3.9]</text>
   <rect class="box" x="840" y="560" width="180" height="64" rx="0"/>
-  <text class="name" x="930.0" y="589.0">moves.py</text>
+  <text class="name" x="930.0" y="589.0">routes.py</text>
   <text class="tag" x="930.0" y="606.0">[module · Python 3.9]</text>
-  <path class="store" d="M1380,569 A90.0,9 0 0 1 1560,569 V615 A90.0,9 0 0 1 1380,615 Z"/>
-  <path class="store" d="M1380,569 A90.0,9 0 0 0 1560,569"/>
-  <text class="name" x="1470.0" y="595.0">Record</text>
-  <text class="tag" x="1470.0" y="612.0">[file · JSONL]</text>
+  <rect class="box" x="570" y="380" width="180" height="64" rx="0"/>
+  <text class="name" x="660.0" y="409.0">result.py</text>
+  <text class="tag" x="660.0" y="426.0">[command line · Python 3.9]</text>
   <path class="store" d="M30,749 A630.0,9 0 0 1 1290,749 V795 A630.0,9 0 0 1 30,795 Z"/>
   <path class="store" d="M30,749 A630.0,9 0 0 0 1290,749"/>
   <text class="name" x="660.0" y="775.0">Plugin files</text>
@@ -130,7 +129,7 @@
   <path class="line" d="M30,254 L14,254 L14,772 L30,772" marker-end="url(#arrow)"/>
   <text class="label" x="36" y="688" text-anchor="start">reads, writes</text>
   <text class="data" x="36" y="702" text-anchor="start">Step, Hook entry,</text>
-  <text class="data" x="36" y="716" text-anchor="start">Rule, Flow</text>
+  <text class="data" x="36" y="716" text-anchor="start">Rule, Route</text>
   <path class="line" d="M30,224 L14,224 L14,16 L930,16 L930,40" marker-end="url(#arrow)"/>
   <text class="label" x="560" y="31" text-anchor="middle">checks the plugin [claude plugin validate]</text>
   <path class="line" d="M930,104 L930,380" marker-end="url(#arrow)"/>
@@ -161,18 +160,25 @@
   <text class="label" x="1335" y="400" text-anchor="middle">writes,</text>
   <text class="label" x="1335" y="414" text-anchor="middle">reads</text>
   <text class="data" x="1335" y="438" text-anchor="middle">Kept call,</text>
-  <text class="data" x="1335" y="452" text-anchor="middle">Answer</text>
-  <path class="line" d="M1260,444 L1420,560" marker-end="url(#arrow)"/>
-  <text class="label" x="1352" y="492" text-anchor="start">reads</text>
-  <text class="data" x="1352" y="506" text-anchor="start">Record</text>
+  <text class="data" x="1335" y="452" text-anchor="middle">Result</text>
+  <path class="line" d="M860,104 L700,380" marker-end="url(#arrow)"/>
+  <text class="label" x="808" y="140" text-anchor="end">runs it with</text>
+  <text class="label" x="808" y="154" text-anchor="end">a result [Bash]</text>
+  <text class="data" x="808" y="168" text-anchor="end">Result</text>
+  <path class="line" d="M570,412 L480,412" marker-end="url(#arrow)"/>
+  <text class="label" x="525" y="404" text-anchor="middle">reads</text>
+  <text class="data" x="525" y="428" text-anchor="middle">Port JSON</text>
+  <path class="line" d="M660,444 L660,749" marker-end="url(#arrow)"/>
+  <text class="label" x="668" y="676" text-anchor="start">reads the work</text>
+  <text class="data" x="668" y="690" text-anchor="start">Rule</text>
   <path class="line" d="M1140,444 L1000,560" marker-end="url(#arrow)"/>
   <text class="label" x="1086" y="500" text-anchor="start">asks the</text>
   <text class="label" x="1086" y="514" text-anchor="start">next start</text>
-  <text class="data" x="1086" y="528" text-anchor="start">Flow,</text>
-  <text class="data" x="1086" y="542" text-anchor="start">Kept call</text>
+  <text class="data" x="1086" y="528" text-anchor="start">Route,</text>
+  <text class="data" x="1086" y="542" text-anchor="start">Result</text>
   <path class="line" d="M1200,444 L1200,740" marker-end="url(#arrow)"/>
   <text class="label" x="1208" y="690" text-anchor="start">reads</text>
-  <text class="data" x="1208" y="704" text-anchor="start">Flow</text>
+  <text class="data" x="1208" y="704" text-anchor="start">Route</text>
   <path class="line" d="M300,596 L210,596" marker-end="url(#arrow)"/>
   <text class="label" x="255" y="576" text-anchor="middle">runs each</text>
   <text class="label" x="255" y="590" text-anchor="middle">check</text>
@@ -185,14 +191,15 @@
   <text class="label" x="556" y="332" text-anchor="start">runs [JSON, stdio]</text>
   <text class="data" x="556" y="346" text-anchor="start">Port JSON</text>
   <path class="line" d="M480,606 L840,606" marker-end="url(#arrow)"/>
-  <text class="label" x="660" y="598" text-anchor="middle">asks the next start</text>
-  <text class="data" x="660" y="622" text-anchor="middle">Flow, Kept call</text>
+  <text class="label" x="565" y="598" text-anchor="middle">asks the next start</text>
+  <text class="data" x="565" y="622" text-anchor="middle">Route, Result</text>
   <path class="line" d="M480,580 L1110,444" marker-end="url(#arrow)"/>
-  <text class="label" x="722" y="563" text-anchor="middle">reads earlier calls, keeps an end</text>
-  <text class="data" x="722" y="577" text-anchor="middle">Kept call, Record, Answer</text>
+  <text class="label" x="770" y="548" text-anchor="middle">reads earlier calls,</text>
+  <text class="label" x="770" y="562" text-anchor="middle">keeps an end</text>
+  <text class="data" x="770" y="576" text-anchor="middle">Kept call, Result</text>
   <path class="line" d="M390,624 L390,740" marker-end="url(#arrow)"/>
   <text class="label" x="398" y="690" text-anchor="start">reads</text>
-  <text class="data" x="398" y="704" text-anchor="start">Step, Rule, Flow</text>
+  <text class="data" x="398" y="704" text-anchor="start">Step, Rule, Route</text>
   <text class="envname" x="30" y="855" text-anchor="start">Legend</text>
   <rect class="box" x="100" y="840" width="36" height="22" rx="8"/>
   <text class="label" x="144" y="855" text-anchor="start">AI</text>
@@ -207,7 +214,7 @@
   <rect class="ext" x="560" y="840" width="36" height="22" rx="3"/>
   <text class="label" x="604" y="855" text-anchor="start">outside Lane</text>
   <rect class="env" x="694" y="840" width="36" height="22" rx="4"/>
-  <text class="label" x="738" y="855" text-anchor="start">the check script, put into a plugin</text>
+  <text class="label" x="738" y="855" text-anchor="start">Lane's code, put into a plugin</text>
   <text class="label" x="1000" y="848" text-anchor="start">[type · technology] in a box; [protocol] on an arrow</text>
   <text class="data" x="1000" y="864" text-anchor="start">data handed on, named as in the data model</text>
 </svg>
