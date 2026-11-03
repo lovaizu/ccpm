@@ -9,10 +9,12 @@ import shutil
 import unittest
 
 from helpers import (
+    KeptTest,
     RepoTest,
     ccs,
     plan,
     proposal,
+    record,
     said,
     steered,
     steering,
@@ -278,6 +280,20 @@ class HistoryPropertyTest(RepoTest):
         # Then: rn gives it replaced last, with what it was and what it is now.
         found = [(r["was"], r["now"]) for r in self.ran("history")["replaced"]]
         self.assertEqual(found[-1:], [(f"{title}: {was}", f"{title}: {now}")])
+
+
+class FoldersPropertyTest(KeptTest):
+    @hypothesis.given(st.text(st.characters(blacklist_categories=("Cs",)), max_size=100))
+    def test_any_path_names_its_folder_by_letters_digits_and_hyphens(self, top):
+        # Given: any path short enough to name its folder whole.
+        # When: its folder is looked for.
+        # Then: each ASCII letter and digit stands as it is, and each UTF-16 unit of any other
+        # character as `-`, as JavaScript counts them.
+        want = "".join(
+            c if c.isascii() and c.isalnum() else "-" * (len(c.encode("utf-16-le")) // 2)
+            for c in top
+        )
+        self.assertEqual(record.folders(top), [os.path.join(self.projects, want)])
 
 
 if __name__ == "__main__":
