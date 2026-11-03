@@ -78,8 +78,8 @@
    },
    {
     "id": "Q7",
-    "about": "gain, idea, non-goals, how-it-works",
-    "what": "For each promise of the opening, can the reader see in the figure of how the product works how the product keeps it?"
+    "about": "gain, idea, how-it-works",
+    "what": "For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?"
    },
    {
     "id": "Q8",
@@ -186,9 +186,9 @@
    },
    {
     "question": "Q7",
-    "thinking": "How it works shows, at a glance, who does what to whom so that each promise of the opening holds, at a grain a reader new to the product follows.",
+    "thinking": "How it works shows, at a glance, who does what to whom so that each gain and the idea hold, at a grain a reader new to the product follows; a non-goal, being what the product does not do, is said once in the opening.",
     "steps": [
-     "Point to each promise of the opening, each gain, the idea and each non-goal, and find the lines of the figure that keep it; where none does, mend the figure or the promise."
+     "Point to each gain and the idea, and find the lines of the figure that keep it; where none does, mend the figure or the promise."
     ],
     "grounds": [
      "C4 model, \"System context diagram\", c4model.com, no date: \"Draw a diagram showing your system as a box in the centre, surrounded by its users and the other systems that it interacts with.\"",
