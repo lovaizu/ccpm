@@ -77,8 +77,10 @@ hold for it; and under each question, the decisions that make it hold.
 - A decision that follows from the goal, the facts and the decisions already made is yours to
   settle, by `reasoning`, with what it follows from as its grounds. Do not ask it.
 - Before you settle a decision by `reasoning`, name to yourself the other ways it could go. Where
-  another way would serve the goal too, such as one JSON array against one object a line, nothing
-  you hold picks between them: the decision is the person's.
+  the goal, the facts or what the person said favor one way, settle it so, naming that as its
+  ground, as an id kept a text where the data holds it as a text. Where another way would serve the
+  goal as well and nothing you hold favors either, such as one JSON array against one object a
+  line, the decision is the person's.
 - A point the one who started you settled is settled. Write it as given, and do not ask it again.
 
 ## Steps
