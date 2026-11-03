@@ -424,6 +424,9 @@ def stand_in(prompt: str, cwd: str) -> dict[str, Any]:
     return json.loads(found.group(0))
 
 
+# The line a caller heads the person's answer with as it resumes the role that asked, the one
+# form pin's pinner and Turn's roles take as the person's words.
+ANSWERED = "The person's answer, word for word:"
 # The key of the stand-in's answer that counts the points of a message, the same for every plugin
 # that asks a person, as a point is the person's to count, not the plugin's.
 POINTS = """- "points": how many separate answers the message needs from you, as a number: one

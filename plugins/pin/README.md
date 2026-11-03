@@ -158,6 +158,9 @@ flowchart LR
 - A plugin that uses pin gives its role `pin:down`, with the goal of what it makes, the questions
   that must hold for it and where to keep the tree. The role then works as the conversation does
   above, and puts each fact and each question to you through the conversation you talk in.
+- A role run as a subagent ends with its message for you headed `For the person:`. The caller
+  resumes it with your answer, headed on a line of its own `The person's answer, word for word:`:
+  the role takes only a message in that form as your words.
 
 ## Documentation
 
