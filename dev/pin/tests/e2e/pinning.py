@@ -281,6 +281,26 @@ def check_outputs(record: str, cwd: str) -> list[tuple[str, str]]:
     ]
 
 
+def judged(pin: str, path: str, place: str, turns: list[dict[str, Any]]) -> list[str]:
+    """What is wrong in the run, from check.py of the copy of pin on the tree at the path, the
+    person's view of each message and the judge of the tree; printing what check.py said."""
+    done = checked(pin, path)
+    print("  check.py:", done.stdout.strip() or done.stderr.strip())
+    wrong = wrong_in(turns, judged_tree(path, place))
+    if done.returncode != 0 or "No decision is open." not in done.stdout:
+        wrong.append("the tree does not hold with no decision open")
+    return wrong
+
+
+def verdict(untried: list[str], wrong: list[str]) -> bool:
+    """Whether the run counted and passed, printing which, and why where it did not."""
+    if untried:
+        print("  not counted: " + "; ".join(untried))
+        return False
+    print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
+    return not wrong
+
+
 def main(run: Any) -> None:
     """Runs the E2E test's run as many times as the command line gives, three by default, numbered
     from the second word where given, and exits 0 where every run passed and counted."""

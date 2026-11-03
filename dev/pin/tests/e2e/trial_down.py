@@ -49,16 +49,7 @@ def run(number: int) -> bool:
     session = pinning.session_of(stream)
     outputs = [out for _, out in pinning.check_outputs(trying.record.conversation(session), repo)]
     untried = pinning.tried_in(tree, outputs)
-    checked = pinning.checked(copies["pin"], trees[0])
-    print("  check.py:", checked.stdout.strip() or checked.stderr.strip())
-    wrong = pinning.wrong_in(turns, pinning.judged_tree(trees[0], place))
-    if checked.returncode != 0 or "No decision is open." not in checked.stdout:
-        wrong.append("the tree does not hold with no decision open")
-    if untried:
-        print("  not counted: " + "; ".join(untried))
-        return False
-    print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
-    return not wrong
+    return pinning.verdict(untried, pinning.judged(copies["pin"], trees[0], place, turns))
 
 
 if __name__ == "__main__":

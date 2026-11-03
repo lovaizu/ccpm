@@ -69,18 +69,10 @@ def run(number: int) -> bool:
         untried.append("designer never ran the check")
     form = re.compile(re.escape(f"python3 {copies['pin']}/scripts/check.py ") + r"\S+")
     wrong = [f"the check was run as {c!r}" for c, _ in runs if not form.fullmatch(c.strip())]
-    checked = pinning.checked(copies["pin"], path)
-    print("  check.py:", checked.stdout.strip() or checked.stderr.strip())
-    wrong += pinning.wrong_in(turns, pinning.judged_tree(path, place))
-    if checked.returncode != 0 or "No decision is open." not in checked.stdout:
-        wrong.append("the tree does not hold with no decision open")
+    wrong += pinning.judged(copies["pin"], path, place, turns)
     if not any(d.get("decided") == SETTLED for d in tree.get("decisions", [])):
         wrong.append("the decision maker settled is not in the tree as given")
-    if untried:
-        print("  not counted: " + "; ".join(untried))
-        return False
-    print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
-    return not wrong
+    return pinning.verdict(untried, wrong)
 
 
 if __name__ == "__main__":
