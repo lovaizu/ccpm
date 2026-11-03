@@ -8,10 +8,10 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 - **okrs**: The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.
   - **objective**: Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject.
-  - **key-result**: Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from their request to having it. The first comes first: lead time is shortened only by changes that keep how well.
+  - **key-result**: Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from when the user needs it, on their request or on an event, to having it. The first comes first: lead time is shortened only by changes that keep how well.
 - **scenarios**: The participants, then one scenario for each objective.
   - **participants**: Before the scenarios, in one place: each participant and whether it is a person, an AI or a script.
-  - **scenario**: For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order.
+  - **scenario**: For one objective, named by its ID and a short name for how the user reaches it: the main path from when the user first needs it, on their request or on an event, to reaching it, laid out so the reader follows who does what, in order.
 
 ## Benefits
 
@@ -19,7 +19,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - **Q2** (okrs): Weighing a piece of work, can the builder tell which one objective it brings closer?
 - **Q3** (objective, key-result): After a change, can the builder tell from the key results whether users came closer to the objective?
 - **Q4** (key-result): Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
-- **Q5** (objective, scenarios): For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?
+- **Q5** (objective, scenarios): For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?
 - **Q6** (participants, scenario): Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
 - **Q7** (the whole): Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
 
@@ -51,11 +51,12 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 **Steps**
 
-1. Take each change planned or recently made that alters what a user gets, and name the one objective it brings closer.
+1. List each user and what each gets from the product, and give each pair one objective; merge objectives that one piece of work would bring closer together, and split an objective that holds gains a piece of work could bring closer apart, until each piece of work brings exactly one closer.
+2. Take each change planned or recently made that alters what a user gets, and name the one objective it brings closer.
 
 **Grounds**
 
-- [MECE principle](https://en.wikipedia.org/wiki/MECE_principle), Wikipedia, en.wikipedia.org, no date: "The principle has been used in the business mapping process wherein the optimum arrangement of information is exhaustive and does not double count at any level of the hierarchy."
+- [Barbara Minto: “MECE: I invented it, so I get to say how to pronounce it”](https://karriere.mckinsey.de/alumni/news-and-events/global-news/alumni-news/barbara-minto-mece-i-invented-it-so-i-get-to-say-how-to-pronounce-it), McKinsey & Company, alumni news, 2018: "The concept required the groups of ideas to be MECE—divided pieces that were mutually exclusive of each other and collectively exhaustive in terms of the whole."
 - [Set goals with OKRs](https://rework.withgoogle.com/en/guides/set-goals-with-okrs), Google re:Work, rework.withgoogle.com, 2016: "Once the organization knows what it’s focused on and how it will measure success, it can become easier for individuals to connect their projects with the organizational objectives."
 - [Set goals with OKRs](https://rework.withgoogle.com/en/guides/set-goals-with-okrs), Google re:Work, rework.withgoogle.com, 2016: "Do the team priorities connect to any of the organizational key results?"
 
@@ -66,7 +67,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 **Steps**
 
 1. For the objective, list how success or failure would show in what the user does or feels, such as giving up, undoing a result or working around the product.
-2. Turn the signs kept into two measures, each a share, an average per user, a count or a time, and name what it is counted out of: one of how well the user gets what the objective says, and the lead time from their request to having it.
+2. Turn the signs kept into two measures, each a share, an average per user, a count or a time, and name what it is counted out of: one of how well the user gets what the objective says, and the lead time from when the user needs it, on their request or on an event, to having it.
 3. Ask whether all the objective's key results could get better while the user still does not get what the objective says; if so, add or rework key results until they could not.
 
 **Grounds**
@@ -77,12 +78,12 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Google's OKR Playbook](https://www.whatmatters.com/resources/google-okr-playbook), Google, whatmatters.com, no date: "What matters isn’t the launch, but its impact."
 - [Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf), Rodden, Hutchinson and Fu, CHI 2010: "Raw counts will go up as your user base grows, and need to be normalized; ratios, percentages, or averages per user are often more useful."
 - [Google's OKR Playbook](https://www.whatmatters.com/resources/google-okr-playbook), Google, whatmatters.com, no date: "Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?"
-- [Goodhart's law](https://en.wikipedia.org/wiki/Goodhart%27s_law), Wikipedia, en.wikipedia.org, no date: "Goodhart's law is an adage that has been stated as, "When a measure becomes a target, it ceases to be a good measure"."
+- ['Improving ratings': audit in the British University system](https://gwern.net/doc/statistics/decision/1997-strathern.pdf), Strathern, European Review 5(3), 1997, p. 308: "When a measure becomes a target, it ceases to be a good measure."
 - [Google's OKR Playbook](https://www.whatmatters.com/resources/google-okr-playbook), Google, whatmatters.com, no date: "Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed."
 
 ### Q4: Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
 
-**Thinking**: Quality first, then lead time: each stage from the request to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.
+**Thinking**: Quality first, then lead time: each stage from the user's need to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.
 
 **Steps**
 
@@ -98,7 +99,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf), Rodden, Hutchinson and Fu, CHI 2010: "Use the HEART framework to prompt articulation of goals (e.g. is it more important to attract new users, or to encourage existing users to become more engaged?)."
 - [Risk-Aware Product Decisions in A/B Tests with Multiple Metrics](https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics), Schultzberg, Ankargren and Frånberg, engineering.atspotify.com, 2024: "By articulating the heuristics that govern your decision-making process, you can design and analyze the experiment in a way that respects how you make decisions in the end."
 
-### Q5: For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?
+### Q5: For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?
 
 **Thinking**: A scenario is one run of the main path to the objective, the one most users take, from the request that starts it to the gain that ends it.
 

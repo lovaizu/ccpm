@@ -11,7 +11,7 @@
     },
     {
      "id": "key-result",
-     "what": "Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from their request to having it. The first comes first: lead time is shortened only by changes that keep how well."
+     "what": "Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from when the user needs it, on their request or on an event, to having it. The first comes first: lead time is shortened only by changes that keep how well."
     }
    ]
   },
@@ -25,7 +25,7 @@
     },
     {
      "id": "scenario",
-     "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order."
+     "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from when the user first needs it, on their request or on an event, to reaching it, laid out so the reader follows who does what, in order."
     }
    ]
   }
@@ -54,7 +54,7 @@
   {
    "id": "Q5",
    "about": "objective, scenarios",
-   "what": "For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?"
+   "what": "For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?"
   },
   {
    "id": "Q6",
@@ -125,14 +125,15 @@
    "benefit": "Q2",
    "thinking": "Objectives are cut so that each piece of work brings one of them closer, no gain is written twice, and none is left out.",
    "steps": [
+    "List each user and what each gets from the product, and give each pair one objective; merge objectives that one piece of work would bring closer together, and split an objective that holds gains a piece of work could bring closer apart, until each piece of work brings exactly one closer.",
     "Take each change planned or recently made that alters what a user gets, and name the one objective it brings closer."
    ],
    "grounds": [
     {
-     "title": "MECE principle",
-     "url": "https://en.wikipedia.org/wiki/MECE_principle",
-     "by": "Wikipedia, en.wikipedia.org, no date",
-     "quote": "The principle has been used in the business mapping process wherein the optimum arrangement of information is exhaustive and does not double count at any level of the hierarchy."
+     "title": "Barbara Minto: “MECE: I invented it, so I get to say how to pronounce it”",
+     "url": "https://karriere.mckinsey.de/alumni/news-and-events/global-news/alumni-news/barbara-minto-mece-i-invented-it-so-i-get-to-say-how-to-pronounce-it",
+     "by": "McKinsey & Company, alumni news, 2018",
+     "quote": "The concept required the groups of ideas to be MECE—divided pieces that were mutually exclusive of each other and collectively exhaustive in terms of the whole."
     },
     {
      "title": "Set goals with OKRs",
@@ -153,7 +154,7 @@
    "thinking": "A key result counts what users do or feel as they come closer to the objective, so it cannot get better while they get nothing more.",
    "steps": [
     "For the objective, list how success or failure would show in what the user does or feels, such as giving up, undoing a result or working around the product.",
-    "Turn the signs kept into two measures, each a share, an average per user, a count or a time, and name what it is counted out of: one of how well the user gets what the objective says, and the lead time from their request to having it.",
+    "Turn the signs kept into two measures, each a share, an average per user, a count or a time, and name what it is counted out of: one of how well the user gets what the objective says, and the lead time from when the user needs it, on their request or on an event, to having it.",
     "Ask whether all the objective's key results could get better while the user still does not get what the objective says; if so, add or rework key results until they could not."
    ],
    "grounds": [
@@ -194,10 +195,10 @@
      "quote": "Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?"
     },
     {
-     "title": "Goodhart's law",
-     "url": "https://en.wikipedia.org/wiki/Goodhart%27s_law",
-     "by": "Wikipedia, en.wikipedia.org, no date",
-     "quote": "Goodhart's law is an adage that has been stated as, \"When a measure becomes a target, it ceases to be a good measure\"."
+     "title": "'Improving ratings': audit in the British University system",
+     "url": "https://gwern.net/doc/statistics/decision/1997-strathern.pdf",
+     "by": "Strathern, European Review 5(3), 1997, p. 308",
+     "quote": "When a measure becomes a target, it ceases to be a good measure."
     },
     {
      "title": "Google's OKR Playbook",
@@ -209,7 +210,7 @@
   },
   {
    "benefit": "Q4",
-   "thinking": "Quality first, then lead time: each stage from the request to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.",
+   "thinking": "Quality first, then lead time: each stage from the user's need to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.",
    "steps": [
     "Imagine the change, and ask whether it could make the first key result worse.",
     "Keep it only where it could not."
