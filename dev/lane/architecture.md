@@ -149,6 +149,14 @@ wherever Lane is missing.
   runs as `general-purpose`, which no rule names (tried on Claude Code 2.1.316, 2026-11-03).
 - `called.py` keeps the calls itself, as the hook input of one event does not hold the calls before
   it, and the record that does is not documented.
+- A command a dependency's skill names is matched by the folder alone being free:
+  `${dependency:<name>}` in a lane stands for a folder holding the manifest of the plugin of that
+  name, which the plugin's own manifest declares in its `dependencies`, and the rest is matched
+  whole. Claude Code fills the skill's `${CLAUDE_PLUGIN_ROOT}` with the dependency's install
+  folder and gives no hook that folder, so the hook judges it from the files there and from the
+  plugin's manifest, both on disk, never from the command taken apart. The name comes from the
+  proposal, so Lane names no plugin, and `lay.py print` refuses a name the manifest does not
+  declare.
 - An adapter is a script that Lane runs, not a module that Lane imports. So `lay.py up` replaces
   Lane's code without touching an adapter.
 
@@ -290,6 +298,10 @@ sequenceDiagram
     H-->>CC: deny the start, or keep the subagent going, with the sentence (Decision)
     CC-->>O: the plugin's name and the sentence
   end
+  opt lead, kept going once with a start due, is about to end again
+    H-->>CC: let it end, with what is left and the step to fix (Decision)
+    CC-->>OP: the message, headed by the plugin's name
+  end
   O->>CC: ends
   CC-->>OP: lead's answer, the reviewed entries (Answer)
 ```
@@ -334,6 +346,13 @@ sequenceDiagram
 - A start that comes back `completed` comes back once its run has ended, so each call of the run
   that needed a value was stopped after the wait, with the error that names who must fix it. The
   calls that needed none were checked. For the routes, the start counts as it comes back.
+- The orchestrator is kept going once while a start is due, as a subagent with no result is,
+  and let end when it is about to end again, the operator told what is left and whose step must be
+  fixed: the step of the subagent that ended with no result, or the orchestrator's own. A run held
+  until a person breaks the loop is no check, and only the plugin's maker can fix the step
+  ([A call that cannot be checked is stopped](#a-call-that-cannot-be-checked-is-stopped)). The
+  start of a subagent that ended with no result is told as such, so the orchestrator knows why it
+  starts it again.
 - A start counts once the started subagent has ended. While a started subagent runs in the
   background, only another start is stopped, so the orchestrator may end and wait. Claude Code
   starts it again once that subagent has ended, in an interactive session. In `claude -p`, Claude
@@ -424,7 +443,10 @@ is tested in the hook process's row.
   each invited break is stopped with its sentence, each allowed call goes through, and the
   subagents start as the routes say. An AI that goes back to its step once may go around the rule
   the next time. A run counts only where each invited break was tried. One E2E test starts two runs
-  of one subagent at once with different values, and passes where each run is held to its own. The
+  of one subagent at once with different values, and passes where each run is held to its own.
+  Another loads a stand-in dependency beside the test plugin and passes where the command of its
+  skill goes through by the folder it is loaded from, and the same script by another folder or in
+  other words is stopped. The
   routes and a held command are tried in an interactive session, as `claude -p` neither starts the
   orchestrator again nor asks anyone. The files are named `trial_*.py`, so unittest finds none of
   them.

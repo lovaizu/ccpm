@@ -79,6 +79,39 @@ class TestRun(GuardTest):
         )
 
 
+class TestDependency(GuardTest):
+    def test_a_command_of_a_dependencys_skill_goes_through_by_its_folder(self):
+        # Given: writer running only checker's command, checker declared and installed
+        manifest = {"name": "changelog", "version": "0.1.0", "dependencies": ["checker"]}
+        self.write_json(self.manifest(), manifest)
+        self.write_json(
+            os.path.join("checker", ".claude-plugin", "plugin.json"), {"name": "checker"}
+        )
+        take = "python3 ${dependency:checker}/scripts/check.py CHANGELOG.md"
+        self.lay(
+            [{"step": 2, "lanes": [{"lane": "run_only", "takes": [take]}]}],
+            helpers.WRITER.replace("--oneline`.\n", f"--oneline`. Run only `{take}`.\n"),
+        )
+        folder = os.path.join(self.base, "checker")
+        # When: it runs the command by checker's folder, and by another
+        # Then: the first goes through, and the second is told the sentence, the command it may
+        # run and what the folder in it stands for
+        self.assertEqual(
+            self.check(self.bash(f"python3 {folder}/scripts/check.py CHANGELOG.md")), []
+        )
+        told = self.check(self.bash(f"python3 {self.base}/scripts/check.py CHANGELOG.md"))
+        self.assertEqual(
+            told,
+            [
+                guard.Said(
+                    f"Run only `{take}`.\nThe commands you may run, each word for word: `{take}`."
+                    "\nEach `${dependency:<name>}` is the folder the plugin of the name is"
+                    " installed in, as its skill gives the command."
+                )
+            ],
+        )
+
+
 class TestWrite(GuardTest):
     def test_an_output_its_lanes_name_is_written(self):
         for tool in ("Write", "Edit"):
@@ -306,15 +339,49 @@ class TestFollow(RoutedTest):
                 self.assertEqual(told[1:], [guard.Said("Start `changelog:writer`.")])
                 self.assertEqual(called.starts("s1", "lead1", ["writer"], "changelog"), [])
 
-    def test_lead_about_to_end_while_a_start_is_due_is_kept_going(self):
-        # Given: writer due
-        stop = self.subagent("SubagentStop", "lead", "lead1", active=True)
-        # When: lead is about to end, kept going before or not
+    def test_lead_about_to_end_while_a_start_is_due_is_kept_going_once(self):
+        # Given: writer due, never started
+        # When: lead is about to end
         # Then: it is told the sentence and the start due
-        told = self.told(guard.stopping, stop, "lead")
+        told = self.told(guard.stopping, self.subagent("SubagentStop", "lead", "lead1"), "lead")
         self.assertEqual(
             told, [guard.Said(helpers.FOLLOW), guard.Said("Start `changelog:writer`.")]
         )
+        # And: about to end again, kept going once, it ends, the operator told what is left and
+        # who must fix it, lead's step that starts it
+        again = self.subagent("SubagentStop", "lead", "lead1", active=True)
+        said = (
+            "lane let lead end with `changelog:writer` still due: the maker of changelog must fix"
+            " step 1 of lead in agents/lead.md, which starts it."
+        )
+        self.assertEqual(self.told(guard.stopping, again, "lead"), [guard.Said(said, note=True)])
+        self.assertTrue(called.ended("s1", "lead1"))
+
+    def test_a_subagent_ended_with_no_result_is_started_again_once_then_lead_may_end(self):
+        # Given: writer started by lead, ending with no result, kept going once
+        self.told(guard.started, self.subagent("SubagentStart", "writer", "w1"), "writer")
+        for active in (False, True):
+            stop = self.subagent("SubagentStop", "writer", "w1", active=active)
+            self.told(guard.stopping, stop, "writer")
+        # When: lead's start of it comes back
+        told = self.started_by_lead("writer", helpers.back("w1"))
+        # Then: lead is told to start it again
+        again = "writer ended with no result. Start `changelog:writer` again."
+        self.assertEqual(told, [guard.Said(again)])
+        # And: about to end, lead is kept going once with it
+        stop = self.subagent("SubagentStop", "lead", "lead1")
+        self.assertEqual(
+            self.told(guard.stopping, stop, "lead"), [guard.Said(helpers.FOLLOW), guard.Said(again)]
+        )
+        # And: about to end again, it ends, the operator told that writer's step giving its
+        # result must be fixed
+        stop = self.subagent("SubagentStop", "lead", "lead1", active=True)
+        said = (
+            "lane let lead end with `changelog:writer` still due, as writer ended with no result:"
+            " the maker of changelog must fix step 4 of writer in agents/writer.md, which gives its"
+            " result."
+        )
+        self.assertEqual(self.told(guard.stopping, stop, "lead"), [guard.Said(said, note=True)])
 
     def test_lead_ends_once_no_start_is_left(self):
         # Given: writer's `written` and reviewer's `good`

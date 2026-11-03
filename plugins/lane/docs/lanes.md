@@ -44,6 +44,19 @@ command with Bash only where a run_only, hold or test_after lane names it, or it
 does. lane matches a command whole, as the step writes it, and reads no part of it. A command in any
 other words is stopped and told the sentence and, on the next line, the commands it may run.
 
+A command may be one that a skill of a dependency names, a plugin your plugin declares in the
+`dependencies` of its own `.claude-plugin/plugin.json`
+([dependencies](https://code.claude.com/docs/en/plugins/dependencies)). The skill names its script
+by its own `${CLAUDE_PLUGIN_ROOT}`, which Claude Code fills with the folder it installed the
+dependency in, and no hook is told that folder. So a run_only, hold or test_after lane writes the
+folder as `${dependency:<name>}`, the dependency's name as your manifest declares it, such as
+`python3 ${dependency:pin}/scripts/check.py design-tree.json`. lane takes that part as any folder,
+from the root, that holds `.claude-plugin/plugin.json` whose `name` is that dependency, and matches
+the rest of the command whole. It reads the dependency from your plugin's own manifest alone, not
+from a marketplace's entry, and `lay.py print` refuses a lane that names a dependency the manifest
+does not declare, or that names one in a place other than a command. A stopped subagent is told, on
+the line after the commands it may run, what `${dependency:<name>}` stands for.
+
 hold does not stop the command: lane answers Claude Code to ask the person, and Claude Code shows
 its permission prompt with the sentence, even under `bypassPermissions`. In `claude -p` no one can
 be asked, so Claude Code refuses the command.

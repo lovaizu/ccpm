@@ -18,5 +18,7 @@ checked, is in [architecture.md](architecture.md).
   interactive session. `python3 dev/lane/tests/e2e/trial_lanes.py` tries the other lanes three
   times on its `noter`, whose steps lie in its part, from `tests/e2e/lanes.json` and the adapter in
   `tests/e2e/adapters/`. `python3 dev/lane/tests/e2e/trial_at_once.py` tries two runs of its
-  `drafter` at once three times, each with its own value, from `tests/e2e/at_once.json`. The top
-  of each file says what each run must show.
+  `drafter` at once three times, each with its own value, from `tests/e2e/at_once.json`.
+  `python3 dev/lane/tests/e2e/trial_dependency.py` tries a command of a dependency's skill three
+  times on its `verifier`, from `tests/e2e/dependency.json` and the stand-in dependency
+  `tests/e2e/checker/`. The top of each file says what each run must show.

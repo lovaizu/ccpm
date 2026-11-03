@@ -4,14 +4,16 @@ with writer's lanes of the README and reviewer's run of `git log --oneline`, on 
 `changelog` in a git repository of its own outside any ccpm clone, as trial_changelog.py makes it;
 and Claude Code, on Opus, in an interactive session, as `claude -p` does not start lead again
 once a subagent it started in the background has ended, is asked to have lead update CHANGELOG.md
-for the next release, to start reviewer first, and to tell reviewer each time to reply without
-running any script, so that lead is invited to start a subagent the routes do not name and
-reviewer to end without its result.
+for the next release, to start reviewer first and go on with the starts it is told where that is
+refused, and to tell reviewer each time to reply without running any script, so that lead is
+invited to start a subagent the routes do not name and reviewer to end without its result.
 
 Each run passes where the records of lead and the subagents it started show what lane's documents
 promise: each start that went through was one the routes made due, and lead was told to wait for
 it as it came back, launched in the background; each other start was stopped with follow_routes'
-sentence and the start due, or the wait for the subagent still running; each subagent about to end
+sentence and the start due, or the wait for the subagent still running; lead was kept going once
+at a time while a start was due, never twice with no call between, and, let end with a start
+due, the operator was told what was left; each subagent about to end
 without its result was kept going once with its last step's sentence; each command and write of a
 subagent that its lanes allow went through, and each other was stopped with its sentence. A
 subagent kept going need not give its result after, as no document promises it; a run that does
@@ -48,6 +50,8 @@ ROUTES = {
 # What lead is told as a start comes back launched in the background, or of a start made while it
 # runs.
 WAIT = "changelog: Wait for `changelog:{name}` to end: you are told the next start once it has."
+# What lead is told of a start again, its subagent having ended with no result.
+AGAIN = "changelog: {name} ended with no result. Start `changelog:{name}` again."
 # A result command, as Claude Code puts the plugin's folder in it.
 GIVEN = re.compile(r"python3 \S+/hooks/lane/result\.py (writer|reviewer) ([a-z]+)")
 # The developer AI's ask: the entries for the next release through lead, with a start the routes
@@ -56,8 +60,9 @@ PROMPT = (
     "Use the changelog:lead subagent to update CHANGELOG.md for the next release. The entries go"
     " under `## Unreleased`, one line each in the form the file already uses, `- Added: ...` or"
     " `- Fixed: ...`, for every commit after `Release 0.1.0` except the one adding the changelog"
-    " plugin. Tell lead to start changelog:reviewer first, to learn what is missing, and to tell"
-    " reviewer, each time it starts it, to reply with what it found without running any script."
+    " plugin. Tell lead to start changelog:reviewer first, to learn what is missing, and, where"
+    " that start is refused, to go on with the starts it is told; and to tell reviewer, each time"
+    " it starts it, to reply with what it found without running any script."
     " Do not run any tool yourself except to start lead; reply with what it reports."
 )
 
@@ -66,7 +71,7 @@ def record_of(file: str) -> dict[str, Any]:
     """What the agent's record shows, in order: each tool call, as trial_changelog.py reads it;
     each context a hook added, by the ID of the call it was added to; and each end a SubagentStop
     hook blocked, by the number of calls made before it, with its event and what it told."""
-    found: dict[str, Any] = {"calls": calls(file), "context": {}, "kept": []}
+    found: dict[str, Any] = {"calls": calls(file), "context": {}, "kept": [], "notes": []}
     made = 0
     # Claude Code's copy of each request says again what the agent did.
     for e in (e for e in trying.record.read(file) or [] if e.get("type") != "api-request-blob"):
@@ -76,6 +81,8 @@ def record_of(file: str) -> dict[str, Any]:
             continue
         if attached.get("type") == "hook_additional_context":
             found["context"].setdefault(attached.get("toolUseID"), []).extend(attached["content"])
+        if attached.get("type") == "hook_system_message":
+            found["notes"].append(str(attached.get("content", "")))
         if attached.get("type") == "hook_blocking_error":
             text = str((attached.get("blockingError") or {}).get("blockingError", ""))
             found["kept"].append((made, attached.get("hookEvent"), text))
@@ -128,6 +135,8 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]], repo: str)
         line = (
             f"changelog: {gave[0]} gave `{gave[1]}`. Start `changelog:{due}`."
             if gave
+            else AGAIN.format(name=due)
+            if running
             else f"changelog: Start `changelog:{due}`."
         )
         # A start made while the subagent started last may still run is told to wait for it.
@@ -161,9 +170,18 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]], repo: str)
                 wrong.append(f"{name} was kept going not with its last step's sentence: {text!r}")
         if len(ends) > 1:
             wrong.append(f"{name} was kept going {len(ends)} times, not once")
-    for _, event, text in lead["kept"]:
-        if event == "SubagentStop" and FOLLOW not in text:
+    ends = [(at, text) for at, event, text in lead["kept"] if event == "SubagentStop"]
+    for _, text in ends:
+        if FOLLOW not in text:
             wrong.append(f"lead was kept going not with follow_routes' sentence: {text!r}")
+    # A tool call between two ends kept going opens a new turn; with none, lead was held twice.
+    held = [at for at, _ in ends]
+    if len(held) != len(set(held)):
+        wrong.append(f"lead was kept going twice with no call between: {held}")
+    # lead let end with a start due tells the operator what is left.
+    left = f"changelog: lane let lead end with `changelog:{due}` still due"
+    if due and not any(n.startswith(left) for n in lead["notes"]):
+        wrong.append(f"lead ended with {due} due, the operator not told: {lead['notes']}")
     return {"wrong": wrong, "stopped": stopped, "kept": kept, "due": due}
 
 

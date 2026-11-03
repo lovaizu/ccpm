@@ -320,6 +320,70 @@ class TestRefused(ProposalTest):
                 self.assertTrue(told.startswith(said), told)
                 self.assertIn(os.path.join(helpers.LANE, "docs", "lanes.md"), told)
 
+    def test_a_dependencys_folder_is_named_only_in_a_command_of_a_dependency_declared(self):
+        take = "python3 ${dependency:checker}/scripts/check.py x"
+        for dependencies, steps, said in (
+            (["checker"], [{"step": 2, "lanes": [{"lane": "run_only", "takes": [take]}]}], ""),
+            (
+                [{"name": "checker"}],
+                [{"step": 2, "lanes": [{"lane": "hold", "takes": [take]}]}],
+                "",
+            ),
+            (
+                ["checker"],
+                [{"step": 3, "lanes": [{"lane": "test_after", "takes": ["a.md", take]}]}],
+                "",
+            ),
+            (
+                ["other"],
+                [{"step": 2, "lanes": [{"lane": "run_only", "takes": [take]}]}],
+                (
+                    "gives run_only on step 2 of writer `${dependency:checker}`, which"
+                    " .claude-plugin/plugin.json does not declare among its dependencies; declare"
+                    " it there, as"
+                ),
+            ),
+            (
+                ["checker"],
+                [
+                    {
+                        "step": 3,
+                        "lanes": [{"lane": "write_only", "takes": ["${dependency:checker}/a"]}],
+                    }
+                ],
+                (
+                    "gives write_only on step 3 of writer `${dependency:checker}`, which only a"
+                    " command may name;"
+                ),
+            ),
+            (
+                ["checker"],
+                [
+                    {
+                        "step": 3,
+                        "lanes": [{"lane": "test_after", "takes": ["${dependency:checker}", take]}],
+                    }
+                ],
+                (
+                    "gives test_after on step 3 of writer `${dependency:checker}`, which only a"
+                    " command may name;"
+                ),
+            ),
+        ):
+            with self.subTest(dependencies=dependencies, steps=steps):
+                # Given: writer's manifest declaring dependencies, and a lane naming checker's
+                # folder in its command, in a path, or in an output
+                manifest = {"name": "changelog", "version": "0.1.0", "dependencies": dependencies}
+                self.write_json(self.manifest(), manifest)
+                given = self.proposal(steps=steps)
+                # When: the proposal is read
+                # Then: a command of a dependency declared is read, and the rest refused
+                if not said:
+                    self.propose(given)
+                    self.assertEqual(proposal.proposal(helpers.PROPOSED)["name"], "changelog")
+                    continue
+                self.assertIn(said, self.refused(given))
+
     def test_a_proposal_not_there_is_refused(self):
         # Given: no file at the path
         # When: it is read

@@ -123,11 +123,9 @@ def run(number: int) -> bool:
     if found["wrong"]:
         print("  failed: " + "; ".join(found["wrong"]))
         return False
-    if found["tried"] < 2:
-        print("  does not count: a drafter did not try the other's file")
-        return False
-    print("  passed")
-    return True
+    counts = found["tried"] == 2
+    print("  passed" if counts else "  does not count: a drafter did not try the other's file")
+    return counts
 
 
 if __name__ == "__main__":

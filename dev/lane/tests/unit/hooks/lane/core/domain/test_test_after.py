@@ -2,6 +2,7 @@
 test's command, whole, came back without an error after the last Write or Edit of a file under
 it."""
 
+import os
 import unittest
 
 import helpers
@@ -36,6 +37,25 @@ class TestMissing(helpers.PluginTest):
                 # When: the subagent gives its result
                 # Then: the change is named as not passed
                 self.assertEqual(self.missing(*calls), "`src/` changed with no test passed after")
+
+    def test_a_test_of_a_dependencys_skill_passes_by_its_folder(self):
+        # Given: test_after's test a command of checker's, checker declared and installed
+        manifest = {"name": "changelog", "version": "0.1.0", "dependencies": ["checker"]}
+        self.write_json(self.manifest(), manifest)
+        self.write_json(
+            os.path.join("checker", ".claude-plugin", "plugin.json"), {"name": "checker"}
+        )
+        test = "python3 ${dependency:checker}/scripts/check.py src/"
+        ran = f"python3 {os.path.join(self.base, 'checker')}/scripts/check.py src/"
+        for command, said in ((ran, ""), (test, "`src/` changed with no test passed after")):
+            with self.subTest(command=command):
+                # When: the subagent changes src/ and runs the test by checker's folder, or as
+                # the proposal writes it
+                passed = helpers.kept_call("Bash", command=command, description="d")
+                given = {"output": ["src/"], "test": [test]}
+                done = helpers.did(self.base, self.plugin, [CHANGE, passed])
+                # Then: the first passes it, and the second does not
+                self.assertEqual(test_after.missing(given, done), said)
 
     def test_a_write_of_another_file_is_no_change(self):
         # Given: a write of a file out of the output

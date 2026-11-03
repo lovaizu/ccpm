@@ -25,11 +25,13 @@ class Start(NamedTuple):
 
 class Next(NamedTuple):
     """The next start: `start` with the subagent due, `wait` with the subagent run in the
-    background, or `end` with none; and the subagent and result it follows, where it follows one."""
+    background, or `end` with none; the subagent and result it follows, where it follows one; and
+    whether it is the start of a subagent again, as that one ended with no result."""
 
     kind: str
     name: str
     gave: tuple[str, str] | None
+    again: bool = False
 
 
 def command(name: str, on: str) -> str:
@@ -83,7 +85,7 @@ def next_start(
             (r for r in routes["routes"] if (r["from"], r.get("on")) == (s.name, on)), None
         )
         if route is None:
-            found = Next("start", s.name, None)
+            found = Next("start", s.name, None, True)
         else:
             found = Next(
                 "start" if "to" in route else "end", route.get("to", ""), (s.name, route["on"])
@@ -101,4 +103,6 @@ def line(found: Next, plugin: str) -> str:
     # A next start is `end`, `start` or `wait`, `end` the first of them in order.
     if found.kind == "end":  # pragma: no mutate
         return gave + "Start no more subagents."
+    if found.again:
+        return f"{found.name} ended with no result. Start `{plugin}:{found.name}` again."
     return gave + f"Start `{plugin}:{found.name}`."

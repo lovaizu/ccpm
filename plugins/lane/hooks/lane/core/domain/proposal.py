@@ -22,7 +22,7 @@ import rules
 import schema
 import step
 import template
-from lanes import in_form
+from lanes import in_form, run_only
 
 # What the proposal is told to be, when it is not: in the shape docs/lanes.md gives, named by its
 # whole path, as the developer AI may run lay.py from any folder.
@@ -49,6 +49,8 @@ PROPOSAL = {
 }
 
 
+# The places of the lanes that hold commands, where a command may name a dependency's folder.
+COMMANDS = [("run_only", "commands"), ("hold", "commands"), ("test_after", "test")]
 # The lane that reads a port, by its name, with the port; the values port is read by the subagent.
 PORTS = {"every_item": "items"}
 # How a proposal names an adapter, by its path in the plugin.
@@ -255,7 +257,9 @@ def subagent(root: str, given: dict[str, Any], beside: str = "") -> dict[str, An
 
 def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
     """Stops where the lane, held to its schema, on the step `on` names, takes nothing or an empty
-    thing, its takes in its places are out of its IN, or in_form names a form it cannot read."""
+    thing, its takes in its places are out of its IN, a take names a dependency's folder outside a
+    command or a dependency the plugin's manifest does not declare, or in_form names a form it
+    cannot read."""
     kind, takes = lane["lane"], lane["takes"]
     if not takes:
         raise wrong(f"gives {kind} on {on} with no take")
@@ -265,6 +269,16 @@ def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
     out = schema.held(shape, lanes.placed(kind, takes))
     if out is not None:
         raise wrong(f"gives {kind} on {on} takes out of its places at {out.told()}")
+    for place, each in lanes.placed(kind, takes).items():
+        for found in (m for t in each for m in run_only.DEPENDENCY.finditer(t)):
+            if (kind, place) not in COMMANDS:
+                raise wrong(f"gives {kind} on {on} `{found[0]}`, which only a command may name")
+            if found["name"] not in run_only.dependencies(root):
+                raise wrong(
+                    f"gives {kind} on {on} `{found[0]}`, which .claude-plugin/plugin.json does not"
+                    " declare among its dependencies",
+                    f"declare it there, as {LANES_MD} says, and run again",
+                )
     if kind == "in_form":
         for named in lanes.placed(kind, takes)["form"]:
             why = "" if rules.GIVEN.fullmatch(named) else in_form.refused(named, root)

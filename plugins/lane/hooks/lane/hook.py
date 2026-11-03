@@ -80,12 +80,15 @@ def answer(said: list[guard.Said], plugin: str, held: str) -> dict[str, Any]:
     person with it, which Claude Code's permission prompt shows them; at SubagentStop the end
     blocked with it as the reason, which the subagent is given to go on with; at any other event it
     added as context for the subagent; and each error as the systemMessage too, which Claude Code
-    shows the user. Nothing where nothing was said, which lets the event go on."""
+    shows the user. A note is told the user alone, and where all said is notes, the event goes on.
+    Nothing where nothing was said, which lets the event go on."""
     if not said:
         return {}
     told = "\n".join(s.text if s.plain else f"{plugin}: {s.text}" for s in said)
-    user = "\n".join(f"{plugin}: {s.text}" for s in said if s.error)
+    user = "\n".join(f"{plugin}: {s.text}" for s in said if s.error or s.note)
     found: dict[str, Any] = {"systemMessage": user} if user else {}
+    if all(s.note for s in said):
+        return found
     if held == "PreToolUse":
         decision = "ask" if all(s.ask for s in said) else "deny"
         denied = {"hookEventName": held, "permissionDecision": decision}

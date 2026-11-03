@@ -58,6 +58,10 @@ RUNS = {"run_only": "commands", "hold": "commands", "test_after": "test", "resul
 # What a subagent is told, after its run lanes' sentences, of the commands it may run.
 MAY_RUN = "The commands you may run, each word for word: {listed}."
 RUN_NONE = "You may run no command."
+DEPENDENCY_FOLDER = (
+    "Each `${dependency:<name>}` is the folder the plugin of the name is installed in, as its skill"
+    " gives the command."
+)
 # What a subagent is told to do where lane cannot check a lane, given who must fix it: a role asks
 # the main conversation for what lies outside its work and goes on with the rest, as
 # dev/architecture.md's Asking for what lies outside the work says.
@@ -87,6 +91,14 @@ UNJOINED = (
     "the Agent call starting it gave back no ID of its run within {wait:g} seconds, so what it was"
     " given is not known"
 )
+# What the operator is told as the orchestrator, kept going once with a start due, is let end: the
+# start left, and the step that must be fixed, the orchestrator's own or that of the subagent that
+# ended with no result.
+LEFT = (
+    "lane let {lead} end with `{plugin}:{name}` still due{why}: the maker of {plugin} must fix {at}"
+)
+STARTS_IT = "step {step} of {lead} in {file}, which starts it."
+GIVES_IT = "step {step} of {name} in {file}, which gives its result."
 LANES_FAULT = "it must be reported at https://github.com/lovaizu/ccpm/issues, as lane's own fault"
 # What an Agent call starting a subagent gives back, as Claude Code documents it: the status of a
 # subagent ended in the foreground or launched in the background, and the ID of its run, which
@@ -104,12 +116,14 @@ BACK = {
 class Said(NamedTuple):
     """What the guard says of an event: a break, told the subagent; an error, told the subagent
     and the user alike, as only the user can have it fixed; a held command, put to the person
-    with it; or the subagent's part, given as it is."""
+    with it; the subagent's part, given as it is; or a note, told the user alone, as the event
+    goes on."""
 
     text: str
     error: bool = False
     ask: bool = False
     plain: bool = False
+    note: bool = False
 
 
 class Cannot(Exception):
@@ -436,21 +450,23 @@ def run_checked(s: Subagent, event: dict[str, Any], command: str) -> list[Said]:
         places = places_of(lane, s)
         if places is None:
             return []
-        named.append((lane, run_only.named(places[RUNS[lane.lane]], s.root)))
-    command = command.strip()
-    for lane, commands in named:
+        named.append((lane, places[RUNS[lane.lane]]))
+    cwd = event["cwd"]
+    for lane, takes in named:
         # Of the lanes judging a command, hold is the first in order.
         holding = lane.lane == "hold"  # pragma: no mutate
-        if holding and command in commands:
+        if holding and run_only.allows(command, takes, s.root, cwd):
             return [sentences([lane])._replace(ask=True)]
-    if command in s.commands("result"):
-        return ended(s, event["cwd"])
-    commands = list(dict.fromkeys(c for _, each in named for c in each))
-    if command in commands:
+    if command.strip() in s.commands("result"):
+        return ended(s, cwd)
+    takes = list(dict.fromkeys(c for _, each in named for c in each))
+    if run_only.allows(command, takes, s.root, cwd):
         return []
     told = [lanes.sentence(g.lane, g.takes) for g in judging if g.lane in ("run_only", "hold")]
-    listed = ", ".join(f"`{c}`" for c in commands)
-    told.append(MAY_RUN.format(listed=listed) if commands else RUN_NONE)
+    listed = ", ".join(f"`{c}`" for c in run_only.named(takes, s.root))
+    told.append(MAY_RUN.format(listed=listed) if takes else RUN_NONE)
+    if any(run_only.DEPENDENCY.search(t) for t in takes):
+        told.append(DEPENDENCY_FOLDER)
     return [Said("\n".join(told))]
 
 
@@ -555,20 +571,43 @@ def start_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
 
 
 def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
-    """What the subagent's SubagentStop event is told: the orchestrator is kept going with the
-    sentence and the start while one is due; a subagent giving a result, kept going once with the
-    sentence of its last step, as it reads it, where it gave none; any other end is kept."""
+    """What the subagent's SubagentStop event is told: the orchestrator is kept going once with the
+    sentence and the start while one is due, and let end after, the operator told what is left and
+    the step to fix, as only the plugin's maker can mend a run that stops so; a subagent giving a
+    result, kept going once with the sentence of its last step, as it reads it, where it gave none;
+    any other end is kept."""
+    told = []
     if s.orchestrator():
         due = s.due()
         if not follow_routes.ends(due):
-            return [Said(follow_routes.WORDING), s.told(due)]
+            if not event["stop_hook_active"]:
+                return [Said(follow_routes.WORDING), s.told(due)]
+            told.append(left(s, due))
     ending = [g for g in s.laid if g.lane == "result"]
     if ending and not event["stop_hook_active"] and called.result(s.session, s.agent) is None:
         # A subagent has one result lane, on its last step.
         commands = run_only.named(ending[0].takes, s.root)  # pragma: no mutate
         return [Said(lanes.sentence("result", commands))]
     s.keep(called.END)
-    return []
+    return told
+
+
+def left(s: Subagent, due: routes.Next) -> Said:
+    """The note telling the operator that the orchestrator was let end with the start due left,
+    and which step of the plugin must be fixed: the last of the subagent due, where it ended with
+    no result, or the orchestrator's step the routes lie on otherwise."""
+    assert s.routes is not None
+    if due.again:
+        lines = step.lines_of(s.root, due.name)
+        file = os.path.relpath(str(step.steps_file(s.root, due.name)), s.root)
+        at = GIVES_IT.format(step=step.last(lines), name=due.name, file=file)
+        why = f", as {due.name} ended with no result"
+    else:
+        file = os.path.relpath(str(step.steps_file(s.root, s.name)), s.root)
+        at = STARTS_IT.format(step=s.routes["step"], lead=s.name, file=file)
+        why = ""
+    text = LEFT.format(lead=s.name, plugin=s.plugin, name=due.name, why=why, at=at)
+    return Said(text, note=True)
 
 
 def handed(plugin: str, event: dict[str, Any], held_: str) -> None:

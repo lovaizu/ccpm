@@ -110,7 +110,7 @@ Each line is headed by your plugin's name:
 | the subagent started in the background has not ended | ``Wait for `<plugin>:<name>` to end: you are told the next start once it has.`` |
 | the subagent ended with a result whose route has a `to` | ``<name> gave `<on>`. Start `<plugin>:<to>`.`` |
 | the subagent ended with a result whose route has no `to` | ``<name> gave `<on>`. Start no more subagents.`` |
-| the subagent ended with no result, after it was kept going once | ``Start `<plugin>:<name>`.``, the same start again, as it led to no route |
+| the subagent ended with no result, after it was kept going once | ``<name> ended with no result. Start `<plugin>:<name>` again.``, as its start led to no route |
 
 `<plugin>:<name>` is how Claude Code names a subagent of your plugin. The orchestrator writes the
 rest of the call, such as its prompt.
@@ -141,6 +141,24 @@ stays due.
 While a start is due, the orchestrator is told the sentence and the start on the next line:
 
 - at PreToolUse, on a call that is not that start, which is stopped;
-- at SubagentStop, as it is about to end, which keeps it going.
+- at SubagentStop, as it is about to end, which keeps it going once.
+
+Once kept going, the orchestrator that is about to end again is let end, as a subagent with no
+result is. A run held there would go round until a person broke it, which is no check. lane then
+tells you, the operator, what is left and whose step must be fixed, as a message Claude Code shows
+you:
+
+```
+<plugin>: lane let <orchestrator> end with `<plugin>:<name>` still due, as <name> ended with no result: the maker of <plugin> must fix step <n> of <name> in <file>, which gives its result.
+```
+
+where the start due is of a subagent that ended with no result, its last step that gives the
+result; and
+
+```
+<plugin>: lane let <orchestrator> end with `<plugin>:<name>` still due: the maker of <plugin> must fix step <n> of <orchestrator> in <file>, which starts it.
+```
+
+otherwise, the orchestrator's step the routes are laid on.
 
 Once no start is left, the orchestrator is free.

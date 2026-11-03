@@ -364,6 +364,22 @@ class TestU3(HookTest):
         # Then: the main conversation's alone is kept
         self.assertEqual(helpers.called.texts("s1", "w1"), ["p", "n"])
 
+    def test_an_orchestrator_let_end_with_a_start_due_tells_the_operator_alone(self):
+        # Given: the routes laid, writer due
+        self.route()
+        # When: lead, kept going once, is about to end again
+        stop = self.subagent("SubagentStop", "lead", "lead1", active=True)
+        found = self.answered(stop, held="SubagentStop")
+        # Then: it ends, and the operator is told what is left, headed by the plugin's name
+        self.assertEqual(
+            found,
+            {
+                "systemMessage": "changelog: lane let lead end with `changelog:writer` still"
+                " due: the maker of changelog must fix step 1 of lead in agents/lead.md, which"
+                " starts it."
+            },
+        )
+
     def test_an_agent_call_stopped_keeps_nothing(self):
         # Given: the routes laid, writer due
         self.route()

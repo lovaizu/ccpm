@@ -101,7 +101,7 @@ class TestNextStart(unittest.TestCase):
         # Given: writer ended with no result given
         # When: the next start is decided
         # Then: writer is due again, as its start led nowhere
-        self.assertEqual(decided([WRITER], {}), routes.Next("start", "writer", None))
+        self.assertEqual(decided([WRITER], {}), routes.Next("start", "writer", None, True))
 
     def test_a_subagent_in_the_background_is_waited_for_until_it_ends(self):
         started = [routes.Start("writer", "async_launched", "w1")]
@@ -128,6 +128,10 @@ class TestLine(unittest.TestCase):
     def test_each_next_start_is_told_in_its_line_of_docs_routes_md(self):
         for found, said in (
             (routes.Next("start", "writer", None), "Start `changelog:writer`."),
+            (
+                routes.Next("start", "writer", None, True),
+                "writer ended with no result. Start `changelog:writer` again.",
+            ),
             (
                 routes.Next("start", "reviewer", ("writer", "written")),
                 "writer gave `written`. Start `changelog:reviewer`.",

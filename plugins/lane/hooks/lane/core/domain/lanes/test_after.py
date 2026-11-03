@@ -18,7 +18,6 @@ def missing(given: dict[str, list[str]], done: Done) -> str:
     """What is missing: that the last change of an output was not passed after, naming the output
     it was a change of; "" where none was made, or a test passed after the last."""
     outputs = [(named, done.full(named)) for named in given["output"]]
-    tests = run_only.named(given["test"], done.root)
     last, changed = None, ""
     for at, c in enumerate(done.calls):
         for named, output in outputs:
@@ -29,6 +28,7 @@ def missing(given: dict[str, list[str]], done: Done) -> str:
     # The call at last is a write, which passes no test, so the calls after it begin with it or not
     # alike.
     for c in done.calls[last + 1 :]:  # pragma: no mutate
-        if c.get("tool") == "Bash" and str(c.get("input", {}).get("command", "")).strip() in tests:
+        command = str(c.get("input", {}).get("command", ""))
+        if c.get("tool") == "Bash" and run_only.allows(command, given["test"], done.root, done.cwd):
             return ""
     return f"`{changed}` changed with no test passed after"

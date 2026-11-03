@@ -237,6 +237,26 @@ class TestLanesCommands(CommandTest):
         reason = json.loads(wrote_b.stdout)["hookSpecificOutput"]["permissionDecisionReason"]
         self.assertEqual(reason, "changelog: Write only `{work}`.")
 
+    def test_a_command_of_a_dependencys_skill_is_held_to_its_folder_from_event_to_event(self):
+        # Given: writer running only checker's command, checker declared in the plugin's manifest
+        # and installed in a folder of its own
+        manifest = {"name": "changelog", "version": "0.1.0", "dependencies": ["checker"]}
+        self.write_json(self.manifest(), manifest)
+        installed = os.path.join(self.base, "cache", "checker", "1.0.0")
+        self.write_json(
+            os.path.join(installed, ".claude-plugin", "plugin.json"), {"name": "checker"}
+        )
+        take = "python3 ${dependency:checker}/scripts/check.py CHANGELOG.md"
+        self.lay_lanes([{"step": 2, "lanes": [{"lane": "run_only", "takes": [take]}]}])
+        # When: writer runs it by that folder, and by a copy with no manifest, through the hook's
+        # command in sh
+        ran = self.run_hook(self.bash(f"python3 {installed}/scripts/check.py CHANGELOG.md"))
+        copy = self.run_hook(self.bash(f"python3 {self.base}/copy/scripts/check.py CHANGELOG.md"))
+        # Then: the first goes through, and the copy is denied with the sentence
+        self.assertEqual(ran.stdout, "")
+        reason = json.loads(copy.stdout)["hookSpecificOutput"]["permissionDecisionReason"]
+        self.assertTrue(reason.startswith(f"changelog: Run only `{take}`."), reason)
+
 
 if __name__ == "__main__":
     unittest.main()
