@@ -17,7 +17,6 @@ and the second conversation passes as trial_down.py's runs do. Run as
 from __future__ import annotations
 
 import os
-import time
 
 import pinning
 from pinning import trying
@@ -31,27 +30,16 @@ def run(number: int) -> bool:
     """One run of the E2E test; prints what it found, and gives whether it passed and counted."""
     place = trying.folder("pin", f"trial-resume-{number}")
     repo, copies = pinning.made(place, {})
-    started = time.monotonic()
-    first = trying.Conversation([copies["pin"]], repo, wait=8)
-    try:
-        before = pinning.talked(
-            first, FIRST, place, os.path.join(place, "first.jsonl"), stop_after=LEFT_AFTER
-        )
-    finally:
-        first.close()
+    first = os.path.join(place, "first.jsonl")
+    before = pinning.conversed([copies["pin"]], repo, FIRST, place, first, stop_after=LEFT_AFTER)
     print("  the person left; a new conversation starts")
     found = pinning.pinned(repo)
     if not found:
         return False
     _, kept = found
     theirs = {d["id"]: d["decided"] for d in kept["decisions"] if d["settled_by"] == "user"}
-    second = trying.Conversation([copies["pin"]], repo, wait=8)
-    try:
-        stream = os.path.join(place, "stream.jsonl")
-        turns = pinning.talked(second, FIRST, place, stream, before=before)
-    finally:
-        second.close()
-    print(f"  {len(before)} + {len(turns)} messages, {time.monotonic() - started:.0f} s")
+    stream = os.path.join(place, "stream.jsonl")
+    turns = pinning.conversed([copies["pin"]], repo, FIRST, place, stream, before=before)
     found = pinning.pinned(repo)
     if not found:
         return False

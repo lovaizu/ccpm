@@ -18,7 +18,6 @@ of the intent, the person's own settled by them. Run as `python3 dev/pin/tests/e
 from __future__ import annotations
 
 import os
-import time
 
 import pinning
 from pinning import trying
@@ -31,18 +30,11 @@ def run(number: int) -> bool:
     place = trying.folder("pin", f"trial-down-{number}")
     repo, copies = pinning.made(place, {})
     stream = os.path.join(place, "stream.jsonl")
-    started = time.monotonic()
-    conversation = trying.Conversation([copies["pin"]], repo, wait=8)
-    try:
-        turns = pinning.talked(conversation, FIRST, place, stream)
-    finally:
-        conversation.close()
-    print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
-    found = pinning.pinned(repo)
+    turns = pinning.conversed([copies["pin"]], repo, FIRST, place, stream)
+    found = pinning.tree_and_untried(repo, stream)
     if not found:
         return False
-    path, tree = found
-    untried = pinning.tried_in(tree, pinning.main_outputs(stream, repo))
+    path, _, untried = found
     return pinning.verdict(untried, pinning.judged(copies["pin"], path, place, turns))
 
 

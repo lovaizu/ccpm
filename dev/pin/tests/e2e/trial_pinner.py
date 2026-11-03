@@ -18,7 +18,6 @@ decision open. Run as `python3 dev/pin/tests/e2e/trial_pinner.py [runs] [first]`
 from __future__ import annotations
 
 import os
-import time
 
 import pinning
 from pinning import trying
@@ -67,18 +66,11 @@ def run(number: int) -> bool:
     with open(os.path.join(repo, ".claude", "agents", "Explore.md"), "w", encoding="utf-8") as f:
         f.write(researcher())
     stream = os.path.join(place, "stream.jsonl")
-    started = time.monotonic()
-    conversation = trying.Conversation([copies["pin"]], repo, wait=8)
-    try:
-        turns = pinning.talked(conversation, FIRST, place, stream, answer="Yes.")
-    finally:
-        conversation.close()
-    print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
-    found = pinning.pinned(repo)
+    turns = pinning.conversed([copies["pin"]], repo, FIRST, place, stream, answer="Yes.")
+    found = pinning.tree_and_untried(repo, stream)
     if not found:
         return False
-    path, tree = found
-    untried = pinning.tried_in(tree, pinning.main_outputs(stream, repo))
+    path, _, untried = found
     wrong = []
     for n, t in enumerate(turns, 1):
         if int(t.get("points") or 0) > 1:

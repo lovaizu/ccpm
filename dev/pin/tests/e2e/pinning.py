@@ -13,6 +13,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -229,6 +230,31 @@ def talked(
         if stop_after is not None and len(turns) >= stop_after:
             return turns
     raise SystemExit(f"the conversation did not end in {TURNS} messages")
+
+
+def conversed(
+    plugins: list[str], repo: str, first: str, place: str, stream: str, **talk: Any
+) -> list[dict[str, Any]]:
+    """The turns of one conversation of Claude Code on the copies of the plugins in the repository,
+    as talked gives them with what talk names; printing how many there were and the time taken."""
+    started = time.monotonic()
+    conversation = trying.Conversation(plugins, repo, wait=8)
+    try:
+        turns = talked(conversation, first, place, stream, **talk)
+    finally:
+        conversation.close()
+    print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
+    return turns
+
+
+def tree_and_untried(repo: str, stream: str) -> tuple[str, dict[str, Any], list[str]] | None:
+    """The path and the design tree of the one tree in the repository's .pin/, with the invited
+    breaks the run did not meet, as tried_in gives them from the main conversation's checks; None,
+    printing why, where there is not one tree alone."""
+    found = pinned(repo)
+    if not found:
+        return None
+    return found[0], found[1], tried_in(found[1], main_outputs(stream, repo))
 
 
 def session_of(stream: str) -> str:

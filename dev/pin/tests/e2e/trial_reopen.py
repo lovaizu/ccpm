@@ -19,7 +19,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import time
 
 import pinning
 import trial_caller
@@ -126,13 +125,9 @@ def run(number: int) -> bool:
         json.dump(written(), f, indent=1)
     before = written()["decisions"][0]
     stream = os.path.join(place, "stream.jsonl")
-    started = time.monotonic()
-    conversation = trying.Conversation([copies["pin"], copies["maker"]], repo, wait=8)
-    try:
-        turns = pinning.talked(conversation, FIRST, place, stream, INTENT)
-    finally:
-        conversation.close()
-    print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
+    turns = pinning.conversed(
+        [copies["pin"], copies["maker"]], repo, FIRST, place, stream, intent=INTENT
+    )
     with open(path, encoding="utf-8") as f:
         tree = json.load(f)
     session = pinning.session_of(stream)

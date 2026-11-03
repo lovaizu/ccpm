@@ -20,7 +20,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import time
 
 import pinning
 from pinning import trying
@@ -46,13 +45,9 @@ def run(number: int) -> bool:
     place = trying.folder("pin", f"trial-caller-{number}")
     repo, copies = pinning.made(place, {"maker": MAKER})
     stream = os.path.join(place, "stream.jsonl")
-    started = time.monotonic()
-    conversation = trying.Conversation([copies["pin"], copies["maker"]], repo, wait=8)
-    try:
-        turns = pinning.talked(conversation, FIRST, place, stream, INTENT)
-    finally:
-        conversation.close()
-    print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
+    turns = pinning.conversed(
+        [copies["pin"], copies["maker"]], repo, FIRST, place, stream, intent=INTENT
+    )
     path = os.path.join(repo, ".maker", "notes-json", "design-tree.json")
     if not os.path.exists(path):
         print(f"  failed: no design tree at {path}")
