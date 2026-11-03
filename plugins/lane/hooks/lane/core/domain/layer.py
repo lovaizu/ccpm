@@ -136,14 +136,10 @@ def shared(root: str, found: list[dict[str, Any]], before: dict[str, Any]) -> No
                     )
 
 
-def listed(things: list[str]) -> str:
-    """The things, listed with commas and `and` before the last."""
-    return " and ".join(filter(None, [", ".join(things[:-1]), things[-1]]))
-
-
 def routes_printed(given: dict[str, Any]) -> str:
-    """The routes as the developer AI reads them: the step they are laid on, and each route from
-    the first start or a subagent's result to the start next."""
+    """The routes as the developer AI reads them: the step they are laid on, each route from the
+    first start or a subagent's result to the start next, each subagent run several at once, and
+    each order of results."""
     rows = [
         ("first" if "on" not in r else f"{r['from']} `{r['on']}`", r.get("to") or "no more")
         for r in given["routes"]
@@ -151,6 +147,13 @@ def routes_printed(given: dict[str, Any]) -> str:
     wide = max(len(left) for left, _ in rows)
     out = [f"Routes of {given['orchestrator']}, laid on its step {given['step']}:\n"]
     out += [f"  {left:<{wide}}  start {to}\n" for left, to in rows]
+    out += [f"  runs at once of {name}\n" for name in given.get("fan_out", [])]
+    precedence = given.get("precedence")
+    orders = precedence.items() if isinstance(precedence, dict) else [("", precedence or [])]
+    for name, taken in (o for o in orders if o[1]):
+        of = f" of {name}" if name else ""
+        listed = ", ".join(f"`{on}`" for on in taken)
+        out.append(f"  results{of} taken first to last: {listed}\n")
     return "".join(out)
 
 
@@ -211,7 +214,7 @@ def written(path: str) -> str:
     named = routes.named(now) if now else []
     hooked = list(kept) + [n for n in named if n not in kept and step.agent_file(root, n)]
     entries.written(root, entries.put(hooks, plugin, hooked))
-    said.append(f"Wrote the hooks of {listed(hooked)} into hooks/hooks.json.\n")
+    said.append(f"Wrote the hooks of {routes.listed(hooked)} into hooks/hooks.json.\n")
     rules.write(root, list(kept.values()), now)
     what = "the lanes laid and the routes" if now else "the lanes laid"
     said.append(f"Wrote {what} into hooks/lanes.json.\n")
@@ -264,7 +267,7 @@ def steps_written(root: str, agent: dict[str, Any], before: dict[str, Any]) -> s
     # A subagent lay.py writes has one step or more, so its first is its only where it has one.
     many = len(numbers) > 1  # pragma: no mutate
     first = numbers[0]  # pragma: no mutate
-    which = f"steps {listed(numbers)}" if many else f"step {first}"
+    which = f"steps {routes.listed(numbers)}" if many else f"step {first}"
     return f"Wrote {which} of {agent['name']} into {os.path.relpath(agent['file'], root)}.\n"
 
 
@@ -309,7 +312,7 @@ def brought_up(root: str) -> str:
     now = entries.put(hooks, name, kept)
     if now != hooks:
         entries.written(root, now)
-        said.append(f"Wrote the hooks of {listed(kept)} into hooks/hooks.json.\n")
+        said.append(f"Wrote the hooks of {routes.listed(kept)} into hooks/hooks.json.\n")
     if not said:
         said.append("hooks/lane/ holds no older copy of lane's code.\n")
     adapters = {a["name"]: a.get("adapter") for a in read_before(root)["subagents"]}

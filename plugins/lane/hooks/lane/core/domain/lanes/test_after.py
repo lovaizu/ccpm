@@ -1,7 +1,8 @@
 """test_after: the subagent gives its result only with each change of an output its step names
 passed: a test's command came back without an error after the change. A change is a Write or Edit
 of the output, or of a file under it where it is a folder; a test passed is a Bash call of a test's
-command, whole, kept as it came back, as a call that failed is not kept."""
+command, whole, each value it holds the run's own, kept as it came back, as a call that failed is
+not kept."""
 
 from __future__ import annotations
 
@@ -29,6 +30,7 @@ def missing(given: dict[str, list[str]], done: Done) -> str:
     # alike.
     for c in done.calls[last + 1 :]:  # pragma: no mutate
         command = str(c.get("input", {}).get("command", ""))
-        if c.get("tool") == "Bash" and run_only.allows(command, given["test"], done.root, done.cwd):
+        tested = run_only.allows(command, given["test"], done.root, done.cwd, done.values)
+        if c.get("tool") == "Bash" and tested:
             return ""
     return f"`{changed}` changed with no test passed after"

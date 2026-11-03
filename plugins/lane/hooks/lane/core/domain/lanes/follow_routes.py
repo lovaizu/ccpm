@@ -1,6 +1,7 @@
 """follow_routes: the orchestrator starts the subagent it is told to start, by the routes, and makes
 no other call while that start is due; while a subagent it started runs in the background, it
-starts no other, its other calls and its end going on; once no start is left, it is free. Laid from
+starts no other, but more runs of that one where the routes fan it out, its other calls and its end
+going on; once no start is left, it is free. Laid from
 the routes, with the result command on the last step of each subagent that gives a result."""
 
 from __future__ import annotations
@@ -34,11 +35,14 @@ def started(tool: str, given: dict[str, Any], named: list[str], plugin: str) -> 
 def allows(tool: str, given: dict[str, Any], due: Next, plugin: str) -> bool:
     """Whether the orchestrator's call goes through, the next start being `due`:
     while a start is due, only that start; while a subagent runs in the background, any call but a
-    start; once no start is left, any."""
+    start, or but a start of another where more runs of it may start; once no start is left,
+    any."""
     if due.kind == "start":
         return started(tool, given, [due.name], plugin) is not None
     # Here a next start is `end` or `wait`, `end` the first of them in order.
     if due.kind == "end":  # pragma: no mutate
+        return True
+    if due.more and started(tool, given, [due.name], plugin) is not None:
         return True
     # No tool Claude Code names sorts before Agent.
     return tool != AGENT  # pragma: no mutate

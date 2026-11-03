@@ -424,6 +424,135 @@ class TestFollow(RoutedTest):
         self.assertEqual(self.told(guard.failed, event, "lead"), [])
 
 
+class TestFanOut(RoutedTest):
+    """reviewer fanned out, its results taken in the order `more`, `good`."""
+
+    WAIT = (
+        "Wait for every run of `changelog:reviewer` to end: you are told the next start once each"
+        " has."
+    )
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.fan_out(["more", "good"])
+        # Given: writer run, giving `written`, so reviewer is due
+        self.ran("writer", "w1", "written")
+        self.started_by_lead("writer", helpers.back("w1"))
+
+    def fan_out(self, precedence: object) -> None:
+        """Lays the routes with reviewer fanned out, its results in the order given, or none."""
+        routed = {**helpers.ROUTES, "fan_out": ["reviewer"]}
+        routed.update({"precedence": precedence} if precedence else {})
+        laid = {**helpers.RULES, "routes": routed}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+
+    def launched(self, *agents: str) -> list:
+        """What lead is told as each of its starts of reviewer, of the IDs, goes through and comes
+        back launched in the background, the last of them."""
+        told: list = []
+        for agent in agents:
+            self.assertEqual(self.told(guard.check, self.start("reviewer"), "lead"), [])
+            told = self.started_by_lead("reviewer", helpers.back(agent, "async_launched"))
+        return told
+
+    def lead_started(self) -> list:
+        """What lead is told as Claude Code starts it again."""
+        return self.told(guard.started, self.subagent("SubagentStart", "lead", "lead1"), "lead")
+
+    def test_lead_may_start_several_runs_and_is_told_the_next_once_every_one_has_ended(self):
+        # When: lead starts reviewer twice
+        # Then: both go through, lead told to wait for every run as each comes back
+        self.assertEqual(self.launched("r1", "r2"), [guard.Said(self.WAIT)])
+        # And: the second is kept joined to the first
+        joined = [c.get("joined") for c in called.calls("s1", "lead1") if c["tool"] == "Agent"]
+        self.assertEqual(joined, [None, None, "more"])
+        # And: writer's start is stopped while either runs, and once the first gives `more`
+        stopped = [guard.Said(helpers.FOLLOW), guard.Said(self.WAIT)]
+        self.assertEqual(self.told(guard.check, self.start("writer"), "lead"), stopped)
+        self.ran("reviewer", "r1", "more")
+        self.assertEqual(self.lead_started(), [guard.Said(self.WAIT)])
+        self.assertEqual(self.told(guard.check, self.start("writer"), "lead"), stopped)
+        # And: once the second ends with `good`, lead is told writer, by the order of the results
+        self.ran("reviewer", "r2", "good")
+        told = [guard.Said("The 2 runs of reviewer gave `more`. Start `changelog:writer`.")]
+        self.assertEqual(self.lead_started(), told)
+        self.assertEqual(self.told(guard.check, self.start("writer"), "lead"), [])
+
+    def test_a_start_of_another_subagent_than_the_one_due_is_kept_joined_to_none(self):
+        # Given: reviewer due
+        # When: lead's start of writer comes back, though the hook stops such a start
+        self.started_by_lead("writer", helpers.back("w2", "async_launched"))
+        # Then: it is kept joined to no start before it
+        last = [c for c in called.calls("s1", "lead1") if c["tool"] == "Agent"][-1]
+        self.assertNotIn("joined", last)
+
+    def test_a_run_ending_with_no_result_has_reviewer_started_again_into_the_runs(self):
+        # Given: two runs of reviewer, the first giving `good`, the second ending with no result
+        # after it was kept going once
+        self.launched("r1", "r2")
+        self.ran("reviewer", "r1", "good")
+        self.told(guard.started, self.subagent("SubagentStart", "reviewer", "r2"), "reviewer")
+        for active in (False, True):
+            stop = self.subagent("SubagentStop", "reviewer", "r2", active=active)
+            self.told(guard.stopping, stop, "reviewer")
+        # When: Claude Code starts lead again
+        # Then: it is told to start reviewer again
+        again = "reviewer ended with no result. Start `changelog:reviewer` again."
+        self.assertEqual(self.lead_started(), [guard.Said(again)])
+        # And: the run started again gives `more`, which is taken with the first run's `good`
+        self.launched("r3")
+        self.ran("reviewer", "r3", "more")
+        told = [guard.Said("The 2 runs of reviewer gave `more`. Start `changelog:writer`.")]
+        self.assertEqual(self.lead_started(), told)
+
+    def test_runs_giving_differing_results_with_no_order_are_an_error_for_the_maker(self):
+        # Given: reviewer fanned out with no order of its results
+        self.fan_out(None)
+        self.launched("r1", "r2")
+        # When: its runs give `more` and `good`
+        self.ran("reviewer", "r1", "more")
+        self.ran("reviewer", "r2", "good")
+        # Then: lead is told the error, with who must fix it
+        told = self.lead_started()
+        self.assertEqual(
+            told,
+            [
+                guard.Said(
+                    "lane cannot check the lanes of lead: the runs of reviewer at once gave `more`"
+                    " and `good`, and the routes order not each of them in `precedence`. Ask the"
+                    " main conversation for the fix: the maker of changelog must order the results"
+                    " of reviewer in the `precedence` of its routes, and lay them again with"
+                    " `lay.py write`. Go on with the rest of your work meanwhile.",
+                    True,
+                )
+            ],
+        )
+
+
+class TestJoinedStart(unittest.TestCase):
+    def test_a_start_joins_the_runs_only_of_the_subagent_due_or_waited_for(self):
+        more = helpers.routes.Next("wait", "reviewer", None, more=True)
+        again = helpers.routes.Next("start", "reviewer", None, True)
+        due = helpers.routes.Next("start", "reviewer", ("writer", "written"))
+        # reviewer read from JSON, not a text the code writes.
+        same = json.loads('"reviewer"')
+        for before, name, found in (
+            (more, same, "more"),
+            (again, same, "again"),
+            (due, same, ""),
+            (more, "author", ""),
+            (more, "writer", ""),
+            (again, "author", ""),
+            (again, "writer", ""),
+        ):
+            with self.subTest(before=before, name=name):
+                # Given: runs of reviewer that more may join, reviewer due again, or due anew
+                # When: lead's start of reviewer, or of a subagent named before or after it,
+                # comes back
+                # Then: only reviewer's joins, as a further run or one started again
+                self.assertEqual(guard.joined(before, name), found)
+
+
 class TestResult(RoutedTest):
     def test_the_result_command_goes_through_beside_the_lanes_commands(self):
         # Given: writer, running only git log --oneline and giving `written`
@@ -978,6 +1107,81 @@ class TestValues(LanesTest):
         told = self.check(self.written("entry.json"))
         # Then: it is an error, naming the place out of the IN
         self.assertIn("what it is given is out of its IN at $.takes.form", told[0].text)
+
+
+class TestValueInCommand(LanesTest):
+    """A command holding the run's value as one part."""
+
+    TAKE = "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {file}"
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_lanes([lane("run_only", self.TAKE, number=2)])
+        self.check_of = f"python3 {self.plugin}/scripts/check.py"
+
+    def test_the_command_with_the_runs_value_goes_through_and_another_is_told_it(self):
+        # Given: writer given `my notes.json` as its file
+        self.given('{"file": "my notes.json"}')
+        # When: it runs the check on it as one word, on it as two, and on another file
+        # Then: the first goes through, and the others are told the sentence as the step says it,
+        # and the command with the value put in
+        self.assertEqual(self.check(self.bash(f"{self.check_of} 'my notes.json'")), [])
+        told = [
+            guard.Said(
+                f"Run only `{self.TAKE}`.\nThe commands you may run, each word for word:"
+                f" `{self.check_of} 'my notes.json'`."
+            )
+        ]
+        for command in (f"{self.check_of} my notes.json", f"{self.check_of} other.json"):
+            with self.subTest(command=command):
+                self.assertEqual(self.check(self.bash(command)), told)
+
+    def test_a_value_given_as_null_lets_the_lane_through_and_none_given_is_an_error(self):
+        for agent, text, through in (("v1", '{"file": null}', True), ("v2", "{}", False)):
+            with self.subTest(text=text):
+                # Given: a run of writer given null as its file, or no file
+                called.keep("s1", agent, called.START)
+                called.keep("s1", agent, called.given(text))
+                # When: it runs any command
+                told = self.check(self.event("Bash", {"command": "ls"}, agent_id=agent))
+                # Then: it goes through, or is an error naming the value
+                if through:
+                    self.assertEqual(told, [])
+                else:
+                    self.assertIn(
+                        "lane cannot check run_only on step 2 of writer: `{file}` was given no"
+                        " value",
+                        told[0].text,
+                    )
+
+    def test_a_held_command_and_a_test_hold_their_value_too(self):
+        # Given: writer holding a push of its branch, and testing src/ by the check of its file
+        self.lay_lanes(
+            [
+                lane("hold", "git push origin {branch}", number=2),
+                lane("test_after", "src/", self.TAKE, number=3),
+            ]
+        )
+        self.given('{"branch": "work", "file": "a.json"}')
+        called.keep("s1", "a1", called.START)
+        called.keep("s1", "a1", helpers.kept_call("Write", file_path="src/a.py", content="x"))
+        # When: it pushes its branch, and another
+        # Then: its own is put to the person, and the other is stopped
+        said = "Run `git push origin {branch}` only with the person's approval."
+        self.assertEqual(
+            self.check(self.bash("git push origin work")), [guard.Said(said, ask=True)]
+        )
+        self.assertFalse(self.check(self.bash("git push origin main"))[0].ask)
+        # And: its result counts the test passed only by the check of its own file
+        done = DONE.format(root=self.plugin)
+        for command, missing in (
+            (f"{self.check_of} b.json", True),
+            (f"{self.check_of} a.json", False),
+        ):
+            with self.subTest(command=command):
+                called.keep("s1", "a1", helpers.kept_call("Bash", command=command))
+                told = self.check(self.bash(done))
+                self.assertEqual(bool(told), missing)
 
 
 # What a values adapter answers, giving writer a.md as its work.

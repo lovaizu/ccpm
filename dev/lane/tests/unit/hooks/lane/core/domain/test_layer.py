@@ -220,6 +220,26 @@ class TestRoutes(RoutesTest):
         # and reviewer's steps as they will read
         self.assertEqual(layer.printed(helpers.PROPOSED), ROUTES_PRINTED)
 
+    def test_the_subagents_fanned_out_and_the_orders_of_results_are_printed(self):
+        for precedence, said in (
+            (["more", "good"], "  results taken first to last: `more`, `good`\n"),
+            (
+                {"reviewer": ["more", "good"], "writer": ["written"]},
+                (
+                    "  results of reviewer taken first to last: `more`, `good`\n"
+                    "  results of writer taken first to last: `written`\n"
+                ),
+            ),
+        ):
+            with self.subTest(precedence=precedence):
+                # Given: docs/routes.md's routes with reviewer fanned out, its results in order
+                routed = {**helpers.ROUTES, "fan_out": ["reviewer"], "precedence": precedence}
+                # When: they are printed
+                found = layer.routes_printed(routed)
+                # Then: below the routes, the subagents run at once and each order are printed
+                rows = ROUTES_PRINTED.split("\n\n")[0] + "\n"
+                self.assertEqual(found, rows + "  runs at once of reviewer\n" + said)
+
     def test_the_routes_are_written_with_each_routed_steps_sentence(self):
         # Given: the README's proposal with docs/routes.md's routes
         # When: it is written

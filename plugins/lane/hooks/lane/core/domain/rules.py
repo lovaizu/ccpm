@@ -58,17 +58,15 @@ def shape(required: list[str], properties: dict[str, Any]) -> dict[str, Any]:
 
 
 # The routes' JSON Schema, as docs/routes.md gives it: the orchestrator, its step they are laid
-# on, and each route from a subagent, on its result, to the subagent started next.
+# on, each route from a subagent, on its result, to the subagent started next, the subagents run
+# several at once, and the order their results are taken in.
+ON = {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}
 ROUTE = {
     "from": {
         "type": "string",
         "description": "the subagent that ends, or the orchestrator for the first start",
     },
-    "on": {
-        "type": "string",
-        "pattern": "^[a-z][a-z0-9_-]*$",
-        "description": "the result it ends with",
-    },
+    "on": {**ON, "description": "the result it ends with"},
     "to": {"type": "string", "description": "the subagent to start next; none where the run ends"},
 }
 ROUTES = shape(
@@ -84,6 +82,19 @@ ROUTES = shape(
             "description": "the orchestrator's step the routes are laid on",
         },
         "routes": {"type": "array", "minItems": 2, "items": shape(["from"], ROUTE)},
+        "fan_out": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "the subagents the orchestrator may start several runs of at once",
+        },
+        "precedence": {
+            "anyOf": [
+                {"type": "array", "items": ON},
+                {"type": "object", "additionalProperties": {"type": "array", "items": ON}},
+            ],
+            "description": "the results, first to last, the result of runs at once is taken by:"
+            " one order for every subagent, or one for each, by its name",
+        },
     },
 )
 # hooks/lanes.json's JSON Schema: the subagents with lanes laid, none once every one is gone, each

@@ -81,23 +81,22 @@ def main(argv: list[str]) -> int:
         if argv[0] == "write":  # pragma: no mutate
             with open(target, "w", encoding="utf-8") as f:
                 f.write(text)
-            continue
         # The command is check or sources here, sources the last of them in order.
-        if argv[0] == "sources":  # pragma: no mutate
+        elif argv[0] == "sources":  # pragma: no mutate
             for fault in sources(data):
                 print(f"practices.py: {path}: {fault}", file=sys.stderr)
                 failed = True
-            continue
-        found = faults(data)
-        try:
-            with open(target, encoding="utf-8") as f:
-                if f.read() != text:
-                    found.append(f"{target} is not as its JSON makes it; run write")
-        except FileNotFoundError:
-            found.append(f"{target} is missing; run write")
-        for fault in found:
-            print(f"practices.py: {path}: {fault}", file=sys.stderr)
-        failed = failed or bool(found)
+        else:
+            found = faults(data)
+            try:
+                with open(target, encoding="utf-8") as f:
+                    if f.read() != text:
+                        found.append(f"{target} is not as its JSON makes it; run write")
+            except FileNotFoundError:
+                found.append(f"{target} is missing; run write")
+            for fault in found:
+                print(f"practices.py: {path}: {fault}", file=sys.stderr)
+            failed = failed or bool(found)
     return 1 if failed else 0
 
 

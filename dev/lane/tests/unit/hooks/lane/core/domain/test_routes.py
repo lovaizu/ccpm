@@ -2,6 +2,7 @@
 from the routes and the starts of the orchestrator as they came back, with the result each started
 subagent gave, and the line the orchestrator is told of it."""
 
+import json
 import unittest
 
 import helpers
@@ -103,6 +104,13 @@ class TestNextStart(unittest.TestCase):
         # Then: writer is due again, as its start led nowhere
         self.assertEqual(decided([WRITER], {}), routes.Next("start", "writer", None, True))
 
+    def test_a_result_no_route_is_on_has_its_subagent_due_again(self):
+        # Given: writer ended with a result no route from it is on, as the result script refuses
+        # When: the next start is decided
+        # Then: writer is due again, as its start led nowhere
+        found = decided([WRITER], {"w1": "drafted"})
+        self.assertEqual(found, routes.Next("start", "writer", None, True))
+
     def test_a_subagent_in_the_background_is_waited_for_until_it_ends(self):
         started = [routes.Start("writer", "async_launched", "w1")]
         for ended, found in (
@@ -124,6 +132,170 @@ class TestNextStart(unittest.TestCase):
         self.assertEqual(found, routes.Next("end", "", ("reviewer", "good")))
 
 
+# docs/routes.md's routes with reviewer run several at once, its results taken in their order.
+FANNED = {**helpers.ROUTES, "fan_out": ["reviewer"], "precedence": ["more", "good"]}
+
+
+def fanned(starts: list, results: dict, ended: tuple = (), given: dict = FANNED) -> routes.Next:
+    """The next start after the starts by the routes given, reviewer fanned out by default."""
+    return routes.next_start(given, starts, results.get, lambda a: a in ended)
+
+
+def reviewer(agent: str, joined: str = "") -> routes.Start:
+    """A start of reviewer launched in the background, joined to the starts before it as given."""
+    return routes.Start("reviewer", "async_launched", agent, joined)
+
+
+class TestFanOut(unittest.TestCase):
+    def test_runs_joined_are_waited_for_until_every_one_has_ended(self):
+        starts = [WRITER, reviewer("r1"), reviewer("r2", "more")]
+        for ended in ((), ("r1",), ("r2",)):
+            with self.subTest(ended=ended):
+                # Given: two runs of reviewer at once, none or one of them ended with `good`
+                # When: the next start is decided
+                # Then: lead waits for every run, and may start more of them
+                found = fanned(starts, {"w1": "written", "r1": "good", "r2": "good"}, ended)
+                self.assertEqual(found, routes.Next("wait", "reviewer", None, more=True))
+
+    def test_the_runs_ended_give_the_result_they_share_or_the_first_in_the_order(self):
+        starts = [WRITER, reviewer("r1"), reviewer("r2", "more"), reviewer("r3", "more")]
+        for given, found in (
+            (["good", "good", "good"], routes.Next("end", "", ("reviewer", "good"), runs=3)),
+            (
+                ["good", "more", "good"],
+                routes.Next("start", "writer", ("reviewer", "more"), runs=3),
+            ),
+            (
+                ["more", "good", "good"],
+                routes.Next("start", "writer", ("reviewer", "more"), runs=3),
+            ),
+        ):
+            with self.subTest(given=given):
+                # Given: three runs of reviewer at once, all ended, giving the results
+                results = {"w1": "written", **dict(zip(("r1", "r2", "r3"), given))}
+                # When: the next start is decided
+                # Then: the route is that of the result they share, or of `more`, the first of
+                # the routes' order among those they gave
+                self.assertEqual(fanned(starts, results, ("r1", "r2", "r3")), found)
+
+    def test_the_order_of_a_subagents_own_results_comes_before_the_shared_one(self):
+        # Given: an order for every subagent, `good` first, and reviewer's own, `more` first
+        given = {**FANNED, "precedence": {"reviewer": ["more", "good"], "writer": ["written"]}}
+        starts = [WRITER, reviewer("r1"), reviewer("r2", "more")]
+        # When: its two runs give `good` and `more`
+        found = fanned(starts, {"w1": "written", "r1": "good", "r2": "more"}, ("r1", "r2"), given)
+        # Then: `more` is the result, by reviewer's own order
+        self.assertEqual(found, routes.Next("start", "writer", ("reviewer", "more"), runs=2))
+
+    def test_runs_giving_differing_results_with_no_order_cannot_be_told(self):
+        for precedence in ((), ({"writer": ["written"]},), (["good"],)):
+            with self.subTest(precedence=precedence):
+                # Given: reviewer fanned out, with no order, an order of another's results only,
+                # or one that does not hold `more`
+                given = {**helpers.ROUTES, "fan_out": ["reviewer"]}
+                given.update({"precedence": precedence[0]} if precedence else {})
+                starts = [WRITER, reviewer("r1"), reviewer("r2", "more")]
+                results = {"w1": "written", "r1": "good", "r2": "more"}
+                # When: its two runs give `good` and `more`
+                # Then: the next start cannot be told, naming the results given
+                with self.assertRaises(routes.Unordered) as stop:
+                    fanned(starts, results, ("r1", "r2"), given)
+                self.assertEqual(
+                    str(stop.exception),
+                    "the runs of reviewer at once gave `good` and `more`, and the routes order"
+                    " not each of them in `precedence`",
+                )
+
+    def test_a_run_ended_with_no_result_has_its_subagent_started_again_into_the_runs(self):
+        first = [WRITER, reviewer("r1"), reviewer("r2", "more")]
+        for starts, results, found in (
+            (first, {"r1": "good"}, routes.Next("start", "reviewer", None, True)),
+            (
+                [*first, reviewer("r3", "again")],
+                {"r1": "good", "r3": "more"},
+                routes.Next("start", "writer", ("reviewer", "more"), runs=2),
+            ),
+            (
+                [*first, reviewer("r3", "again")],
+                {"r1": "good"},
+                routes.Next("start", "reviewer", None, True),
+            ),
+            (
+                [*first, reviewer("r3", "again"), reviewer("r4", "again")],
+                {"r1": "good", "r4": "good"},
+                routes.Next("end", "", ("reviewer", "good"), runs=2),
+            ),
+        ):
+            with self.subTest(starts=starts, results=results):
+                # Given: two runs of reviewer at once, one ending with no result, then started
+                # again once or twice, the run started again giving a result or none
+                results = {"w1": "written", **results}
+                # When: the next start is decided, every run ended
+                # Then: reviewer is due again while a run is owed a result, and the route of the
+                # results is taken once each is given
+                ended = ("r1", "r2", "r3", "r4")
+                self.assertEqual(fanned(starts, results, ended), found)
+
+    def test_a_start_not_joined_counts_alone_whatever_its_subagent(self):
+        # Given: two runs of reviewer, the second not joined to the first, both ended
+        starts = [WRITER, reviewer("r1"), reviewer("r2")]
+        # When: the first gives `more` and the second `good`
+        found = fanned(starts, {"w1": "written", "r1": "more", "r2": "good"}, ("r1", "r2"))
+        # Then: the second decides alone, as each start not joined counts as it always has
+        self.assertEqual(found, routes.Next("end", "", ("reviewer", "good")))
+
+    def test_a_run_joined_after_the_others_led_to_the_end_still_counts_with_them(self):
+        # Given: two runs of reviewer at once, the first ended with `good` before the second's
+        # start came back, then a start not joined and one joined after that
+        starts = [WRITER, reviewer("r1"), reviewer("r2", "more")]
+        later = [reviewer("r3"), reviewer("r4", "more")]
+        results = {"w1": "written", "r1": "good", "r2": "more", "r3": "more", "r4": "more"}
+        ended = ("r1", "r2", "r3", "r4")
+        # When: the next start is decided, every run ended
+        # Then: the second's `more` counts with the first's, and the starts after the next
+        # start not joined to the runs are left out, as the guard keeps none once at the end
+        expected = routes.Next("start", "writer", ("reviewer", "more"), runs=2)
+        self.assertEqual(fanned(starts, results, ended), expected)
+        fixed = {**results, "r2": "good"}
+        found = fanned([*starts, *later], fixed, ended)
+        self.assertEqual(found, routes.Next("end", "", ("reviewer", "good"), runs=2))
+
+    def test_a_start_joined_counts_with_the_runs_of_its_own_subagent_alone(self):
+        # Subagents fanned out whose names sort before writer's and after it.
+        given = {**FANNED, "fan_out": ["author", "reviewer", "zeta"]}
+        for name in ("author", "zeta"):
+            with self.subTest(name=name):
+                # Given: writer ended with `written`, then a start of another subagent kept as
+                # joined to it, ended in the foreground with `good`
+                starts = [WRITER, routes.Start(name, "completed", "x1", routes.MORE)]
+                # When: the next start is decided
+                # Then: it counts alone, its `good` leading nowhere, as it is not writer's
+                found = fanned(starts, {"w1": "written", "x1": "good"}, (), given)
+                self.assertEqual(found, routes.Next("start", name, None, True))
+        # And: a run of reviewer joined by its name read from JSON, not a text the code writes,
+        # joins it
+        same = json.loads('"reviewer"')
+        starts = [WRITER, reviewer("r1"), routes.Start(same, "async_launched", "r2", routes.MORE)]
+        found = fanned(starts, {"w1": "written", "r1": "good"}, ("r1",))
+        self.assertEqual(found, routes.Next("wait", "reviewer", None, more=True))
+
+    def test_runs_giving_more_results_than_are_owed_count_each(self):
+        # Given: reviewer, then a run of it started again though none ended with no result
+        starts = [WRITER, reviewer("r1"), reviewer("r2", routes.AGAIN)]
+        # When: both give `good`
+        found = fanned(starts, {"w1": "written", "r1": "good", "r2": "good"}, ("r1", "r2"))
+        # Then: the route of `good` is taken, from both
+        self.assertEqual(found, routes.Next("end", "", ("reviewer", "good"), runs=2))
+
+    def test_a_subagent_not_fanned_out_is_waited_for_with_no_more_runs(self):
+        # Given: writer, not fanned out, running in the background
+        starts = [routes.Start("writer", "async_launched", "w1")]
+        # When: the next start is decided
+        # Then: lead waits for it, starting no more of it
+        found = fanned(starts, {})
+        self.assertEqual(found, routes.Next("wait", "writer", None))
+
+
 class TestLine(unittest.TestCase):
     def test_each_next_start_is_told_in_its_line_of_docs_routes_md(self):
         for found, said in (
@@ -143,6 +315,21 @@ class TestLine(unittest.TestCase):
             (
                 routes.Next("end", "", ("reviewer", "good")),
                 "reviewer gave `good`. Start no more subagents.",
+            ),
+            (
+                routes.Next("wait", "reviewer", None, more=True),
+                (
+                    "Wait for every run of `changelog:reviewer` to end: you are told the next"
+                    " start once each has."
+                ),
+            ),
+            (
+                routes.Next("start", "writer", ("reviewer", "more"), runs=2),
+                "The 2 runs of reviewer gave `more`. Start `changelog:writer`.",
+            ),
+            (
+                routes.Next("end", "", ("reviewer", "good"), runs=3),
+                "The 3 runs of reviewer gave `good`. Start no more subagents.",
             ),
         ):
             with self.subTest(found=found):

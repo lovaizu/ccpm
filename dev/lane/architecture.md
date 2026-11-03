@@ -157,6 +157,19 @@ wherever Lane is missing.
   plugin's manifest, both on disk, never from the command taken apart. The name comes from the
   proposal, so Lane names no plugin, and `lay.py print` refuses a name the manifest does not
   declare.
+- A value held as a part of a command is put in as one word of the shell, quoted as Python's
+  `shlex.quote` quotes it, and the rest of the command is matched whole. The value stands in the
+  pattern the command is matched by as its own text, never read again for
+  `${CLAUDE_PLUGIN_ROOT}`, `${dependency:<name>}` or another value, so a value cannot add a word
+  to the command or stand for anything but itself. Quoting, not refusing a value of other
+  characters, lets a run be given any file name, and the subagent is told the command word for
+  word where it writes it otherwise. Only a command holds a value as a part, as only a command is
+  matched by parts; `lay.py print` refuses one elsewhere, which the check would read as the text
+  `{<name>}`.
+- A subagent's part, the file its steps lie in, is the one file the entry's body names under
+  `prompts/` or `core/roles/`, which [The core apart from Claude Code](../architecture.md#the-core-apart-from-claude-code)
+  gives each role's flow. Its name is the role's, not the subagent's, so the part is found by the
+  name the body gives, never by the subagent's.
 - An adapter is a script that Lane runs, not a module that Lane imports. So `lay.py up` replaces
   Lane's code without touching an adapter.
 
@@ -353,6 +366,24 @@ sequenceDiagram
   ([A call that cannot be checked is stopped](#a-call-that-cannot-be-checked-is-stopped)). The
   start of a subagent that ended with no result is told as such, so the orchestrator knows why it
   starts it again.
+- Only the subagents the routes name in `fan_out` run several at once. A subagent whose steps were
+  not made for runs beside one another, such as one writing a file every run writes, would
+  otherwise run so with no one having approved it
+  ([What was approved is what runs](#what-was-approved-is-what-runs)), and routes naming none need
+  no order of results.
+- The orchestrator decides how many runs it starts, and Lane counts those whose starts came back.
+  Each start is kept with how it joins the starts before it, decided as it comes back: as a further
+  run, where runs of its subagent still go and `fan_out` names it, or as a run started again, where
+  its subagent is due again after a run with no result. The ends kept say whether a run has ended,
+  not when, so whether a start came while the others still ran cannot be read again later.
+- The runs joined count once every one has ended. Where they gave different results, the result
+  taken is the first of them in the order the routes give in `precedence`, as only the plugin knows
+  which of its results outweighs another ([Lane knows no plugin](#lane-knows-no-plugin)). Where no
+  order holds them, the result cannot be told, so the orchestrator is told an error the plugin's
+  maker must fix ([A call that cannot be checked is stopped](#a-call-that-cannot-be-checked-is-stopped));
+  `lay.py print` refuses routes that would meet it. A run started again stands for one that ended
+  with no result, so the route is taken once as many runs have given a result as were started
+  but those started again.
 - A start counts once the started subagent has ended. While a started subagent runs in the
   background, only another start is stopped, so the orchestrator may end and wait. Claude Code
   starts it again once that subagent has ended, in an interactive session. In `claude -p`, Claude
@@ -446,7 +477,10 @@ is tested in the hook process's row.
   of one subagent at once with different values, and passes where each run is held to its own.
   Another loads a stand-in dependency beside the test plugin and passes where the command of its
   skill goes through by the folder it is loaded from, and the same script by another folder or in
-  other words is stopped. The
+  other words is stopped. One has the orchestrator start two runs of one subagent at once, and
+  passes where the next start goes through only once both have ended. Another holds a run's value
+  inside a command, and passes where the command with the run's own value goes through and the
+  command with another value, or with the value as more than one word, is stopped. The
   routes and a held command are tried in an interactive session, as `claude -p` neither starts the
   orchestrator again nor asks anyone. The files are named `trial_*.py`, so unittest finds none of
   them.

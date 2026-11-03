@@ -9,7 +9,7 @@ takes goes where the sentence shows `<...>`. The hook tells the sentence when th
 the last column says.
 
 What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
-`{<name>}`. A thing given for each run is the value under that name that the values port reads in
+`{<name>}`, as a whole take or, in a command, as a part of it, as below. A thing given for each run is the value under that name that the values port reads in
 what the subagent is given: the prompt of the Agent call that started it, and each message a
 SendMessage call sent to it after, the later over the earlier. So the hook holds a file added to
 the run while the subagent works, as by an answer, from then on. The sentence `Write only {work}.`
@@ -56,6 +56,19 @@ the rest of the command whole. It reads the dependency from your plugin's own ma
 from a marketplace's entry, and `lay.py print` refuses a lane that names a dependency the manifest
 does not declare, or that names one in a place other than a command. A stopped subagent is told, on
 the line after the commands it may run, what `${dependency:<name>}` stands for.
+
+A command of a run_only, hold or test_after lane may hold a value given for the run as one part,
+written `{<name>}` with no `$` before it, its name of letters, digits, `_` and `-`, such as
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {file}`. lane matches the rest whole, and that part
+to each text of the run's own value of the name, put in as one word of the shell: as it is, where
+it holds no other character than a letter, a digit or one of `@%+=:,./-_`, and in single quotes
+otherwise, as Python's `shlex.quote` gives it. So the run given `{"file": "my notes.json"}` runs
+`python3 <your plugin's folder>/scripts/check.py 'my notes.json'`, and no value adds a word to the
+command, such as by a blank or a `;`, or stands for anything but itself. A stopped subagent is
+told, on the line after the sentence, each command it may run with its value put in. Braces that
+name no value, as in `find . -exec ls {} +` or `${HOME}`, are the command's own. `lay.py print`
+refuses a value held as a part of any take but a command, as only a command is matched by its
+parts.
 
 hold does not stop the command: lane answers Claude Code to ask the person, and Claude Code shows
 its permission prompt with the sentence, even under `bypassPermissions`. In `claude -p` no one can
@@ -282,8 +295,9 @@ Where your subagent's file is its entry, its frontmatter and a body naming its p
 Your steps are in `${CLAUDE_PLUGIN_ROOT}/prompts/writer.md`, given to you as you start. Take them on what you are given.
 ```
 
-its steps are those of the part, the one file under your plugin's `prompts/` the body names in
-backticks. `lay.py print` shows the part's steps, `lay.py write` writes each lane's sentence into
+its steps are those of the part, the one file under your plugin's `prompts/` or `core/roles/` the
+body names in backticks, such as `${CLAUDE_PLUGIN_ROOT}/core/roles/writing.md`, where a role's flow
+lies apart from Claude Code. The part's name need not be the subagent's. `lay.py print` shows the part's steps, `lay.py write` writes each lane's sentence into
 them, and the guard reads them there. Where a body names no such file, or more than one, lane reads
 the steps from the subagent's file itself.
 

@@ -49,8 +49,6 @@ PROPOSAL = {
 }
 
 
-# The places of the lanes that hold commands, where a command may name a dependency's folder.
-COMMANDS = [("run_only", "commands"), ("hold", "commands"), ("test_after", "test")]
 # The lane that reads a port, by its name, with the port; the values port is read by the subagent.
 PORTS = {"every_item": "items"}
 # How a proposal names an adapter, by its path in the plugin.
@@ -140,7 +138,8 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
     """The routes, held to their schema and checked as docs/routes.md says: one first route, from
     the orchestrator, with a `to` and no `on`; each other from another subagent, on a result, one
     route a result; each `to` a subagent routed from, not the orchestrator, which gives no result;
-    a route that ends; the orchestrator's step in its file, its tools, where named, with Agent; no
+    a route that ends; each order of results and each subagent fanned out as `fanned` checks them;
+    the orchestrator's step in its file, its tools, where named, with Agent; no
     subagent they name set to run in the foreground; and each subagent giving a result with a last
     step."""
     out = schema.held(rules.ROUTES, given)
@@ -182,6 +181,7 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
             )
     if all("to" in r for r in each):
         raise wrong("gives no route without a `to`, so the run cannot end", ROUTES_AGAIN)
+    fanned(given, froms)
     for name in routes.named(given):
         _, lines = agent_lines(root, name, ROUTES_AGAIN)
         bare = [line.rstrip("\n") for line in lines]
@@ -204,6 +204,43 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
             raise wrong(f"gives {name}, whose file has no step to end by its result", ROUTES_AGAIN)
         in_background(root, name, ROUTES_MD)
     return given
+
+
+def fanned(given: dict[str, Any], froms: list[str]) -> None:
+    """Stops where the routes' orders of results, of the subagents routes are from, name a result
+    twice or one no route from their subagent is on, or a subagent no route is from; or where they
+    fan out a subagent no route starts, or one giving several results its order does not hold
+    each of, so the result of its runs at once could not be told."""
+    precedence = given.get("precedence")
+    orders = precedence if isinstance(precedence, dict) else {"": precedence or []}
+    for name, taken in orders.items():
+        if name and name not in froms:
+            raise wrong(
+                f"gives an order of the results of {name}, which no route is from", ROUTES_AGAIN
+            )
+        ons = routes.ons(given, name) if name else [r["on"] for r in given["routes"] if "on" in r]
+        for at, on in enumerate(taken):
+            if on in taken[:at]:
+                raise wrong(f"gives `{on}` twice in an order of results", ROUTES_AGAIN)
+            if on not in ons:
+                which = f"no route from {name}" if name else "no route"
+                raise wrong(
+                    f"gives `{on}` in an order of results, which {which} is on", ROUTES_AGAIN
+                )
+    starts = [r["to"] for r in given["routes"] if "to" in r]
+    for name in given.get("fan_out", []):
+        if name not in starts:
+            raise wrong(f"gives {name} in `fan_out`, which no route starts", ROUTES_AGAIN)
+        ons = routes.ons(given, name)
+        taken = routes.order(given, name) or []
+        if ons[1:] and not all(on in taken for on in ons):
+            results = routes.listed([f"`{on}`" for on in ons])
+            raise wrong(
+                f"gives {name} in `fan_out`, whose results {results}"
+                " the routes do not order in `precedence`, so the result of its runs at once could"
+                " not be told",
+                f"order them there, as {ROUTES_MD} says, and run again",
+            )
 
 
 def in_background(root: str, name: str, told: str = LANES_MD) -> None:
@@ -258,8 +295,8 @@ def subagent(root: str, given: dict[str, Any], beside: str = "") -> dict[str, An
 def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
     """Stops where the lane, held to its schema, on the step `on` names, takes nothing or an empty
     thing, its takes in its places are out of its IN, a take names a dependency's folder outside a
-    command or a dependency the plugin's manifest does not declare, or in_form names a form it
-    cannot read."""
+    command or a dependency the plugin's manifest does not declare, a take outside a command holds
+    a value as a part, or in_form names a form it cannot read."""
     kind, takes = lane["lane"], lane["takes"]
     if not takes:
         raise wrong(f"gives {kind} on {on} with no take")
@@ -271,13 +308,19 @@ def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
         raise wrong(f"gives {kind} on {on} takes out of its places at {out.told()}")
     for place, each in lanes.placed(kind, takes).items():
         for found in (m for t in each for m in run_only.DEPENDENCY.finditer(t)):
-            if (kind, place) not in COMMANDS:
+            if (kind, place) not in run_only.COMMANDS:
                 raise wrong(f"gives {kind} on {on} `{found[0]}`, which only a command may name")
             if found["name"] not in run_only.dependencies(root):
                 raise wrong(
                     f"gives {kind} on {on} `{found[0]}`, which .claude-plugin/plugin.json does not"
                     " declare among its dependencies",
                     f"declare it there, as {LANES_MD} says, and run again",
+                )
+        for take in each if (kind, place) not in run_only.COMMANDS else []:
+            for name in [] if rules.GIVEN.fullmatch(take) else run_only.values_in(take):
+                raise wrong(
+                    f"gives {kind} on {on} `{{{name}}}` in a take, which only a command may hold as"
+                    " a part"
                 )
     if kind == "in_form":
         for named in lanes.placed(kind, takes)["form"]:

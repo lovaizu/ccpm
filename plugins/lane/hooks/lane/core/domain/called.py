@@ -32,11 +32,12 @@ def gave(on: str) -> dict[str, Any]:
     return {"kind": "result", "on": on}
 
 
-def call(tool: str, given: dict[str, Any], back: Any = None) -> dict[str, Any]:
+def call(tool: str, given: dict[str, Any], back: Any = None, joined: str = "") -> dict[str, Any]:
     """The entry of a call of the tool with the input as it came back, with what an Agent call gave
-    back of its start."""
+    back of its start, and how that start is joined to those before it, where it is."""
     kept = {k: back[k] for k in KEPT_BACK if k in back} if isinstance(back, dict) else None
-    return {"kind": "call", "tool": tool, "input": given, **({"back": kept} if kept else {})}
+    entry = {"kind": "call", "tool": tool, "input": given, **({"back": kept} if kept else {})}
+    return {**entry, **({"joined": joined} if joined else {})}
 
 
 def file(session: str, agent: str, made: bool) -> str:
@@ -120,13 +121,13 @@ def ended(session: str, agent: str) -> bool:
 
 def starts(session: str, agent: str, named: list[str], plugin: str) -> list[Start]:
     """The orchestrator's starts of the subagents of the names, as its Agent calls came back, in
-    order."""
+    order, each with how it is joined to those before it."""
     found = []
     for e in kept(session, agent):
         back = e.get("back")
         name = follow_routes.started(e.get("tool", ""), e.get("input", {}), named, plugin)
         if e.get("kind") == "call" and back and name:
-            found.append(Start(name, back["status"], back["agentId"]))
+            found.append(Start(name, back["status"], back["agentId"], e.get("joined", "")))
     return found
 
 
