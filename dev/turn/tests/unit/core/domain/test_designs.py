@@ -47,6 +47,23 @@ class TestAsked(unittest.TestCase):
         )
 
 
+class TestReworded(unittest.TestCase):
+    def test_a_question_in_words_that_sort_before_or_after_the_template_s(self):
+        made = helpers.run()["design-tree.json"]
+        made["questions"][0]["what"] = "A question in other words?"
+        made["questions"][2]["what"] = "Zero answers?"
+        self.assertEqual(
+            designs.asked(made, STANDARD, "readme"),
+            [
+                "readme/Q1 is not asked as the template asks it: Can the reader say what it does?",
+                (
+                    "readme/Q3 is not asked as the template asks it: Does each answer come when"
+                    " needed?"
+                ),
+            ],
+        )
+
+
 class TestBranches(unittest.TestCase):
     def test_decisions_joined_by_building_on_go_together(self):
         made = tree(
@@ -180,6 +197,15 @@ class TestWorkFaults(unittest.TestCase):
         self.assertEqual(
             designs.work_faults(work, made), ["P1's path srcx/a.py is none of the work's paths"]
         )
+
+
+class TestUnder(unittest.TestCase):
+    def test_a_path_is_under_itself_and_its_folder_alone(self):
+        self.assertTrue(designs.under("b.md", ["b.md"]))
+        self.assertTrue(designs.under("src/a.py", ["src/"]))
+        for path in ("a.md", "c.md", "srcx/a.py"):
+            with self.subTest(path=path):
+                self.assertFalse(designs.under(path, ["b.md", "src"]))
 
 
 class TestRemakeFaults(unittest.TestCase):

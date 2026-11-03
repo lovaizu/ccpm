@@ -410,6 +410,15 @@ class Groups(unittest.TestCase):
             practices.groups(data, "k"), [{"id": "G1", "questions": ["k/Q1", "k/Q2", "k/Q3"]}]
         )
 
+    def test_a_join_takes_in_the_parts_of_each_group_it_joins(self):
+        # Given: Q2 about b and c, then Q3 joining a and b, then Q4 about c alone
+        data = self.questions("a", "b, c", "a, b", "c")
+        # Then: Q4 goes with the others, as c came in with Q2's group
+        self.assertEqual(
+            practices.groups(data, "k"),
+            [{"id": "G1", "questions": ["k/Q1", "k/Q2", "k/Q3", "k/Q4"]}],
+        )
+
     def test_questions_of_the_whole_go_in_one_group(self):
         data = self.questions("the whole", "a", "b, the whole")
         self.assertEqual(

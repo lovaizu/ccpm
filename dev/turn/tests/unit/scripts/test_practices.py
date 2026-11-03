@@ -206,9 +206,16 @@ class StandardAndGroups(helpers.RunTest):
         )
 
     def test_standard_and_groups_take_two_paths(self):
-        for argv in (["standard", "a.json"], ["groups", "a.json", "b.json", "c.json"]):
-            with self.subTest(argv=argv), contextlib.redirect_stderr(io.StringIO()):
+        for argv in (
+            ["standard", "a.json"],
+            ["standard", "a.json", "b.json", "c.json"],
+            ["groups", "a.json"],
+            ["groups", "a.json", "b.json", "c.json"],
+        ):
+            err = io.StringIO()
+            with self.subTest(argv=argv), contextlib.redirect_stderr(err):
                 self.assertEqual(practices.main(argv), 2)
+                self.assertEqual(err.getvalue(), practices.USAGE + "\n")
 
 
 if __name__ == "__main__":

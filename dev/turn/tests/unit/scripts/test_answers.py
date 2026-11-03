@@ -49,7 +49,13 @@ class TestMain(helpers.RunTest):
         )
 
     def test_a_command_it_does_not_take_gives_2_and_its_usage(self):
-        for argv in ((), ("check", self.folder), ("look", self.folder, self.path)):
+        for argv in (
+            (),
+            ("check", self.folder),
+            ("look", self.folder, self.path),
+            ("act", self.folder, self.path),
+            ("check", self.folder, self.path, self.path),
+        ):
             with self.subTest(argv=argv):
                 self.assertEqual(self.ran(*argv), (2, "", USAGE))
 

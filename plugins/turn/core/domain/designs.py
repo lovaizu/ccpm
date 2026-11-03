@@ -46,8 +46,8 @@ def branches(tree: dict[str, Any]) -> list[list[str]]:
     order = [d["id"] for d in tree["decisions"]]
     group = {i: {i} for i in order}
     for a, b in joins(tree):
-        if group[a] is not group[b]:
-            merged = group[a] | group[b]
+        if b not in group[a]:
+            merged = group[a].union(group[b])
             for i in merged:
                 group[i] = merged
     found: list[list[str]] = []
@@ -67,7 +67,7 @@ def parted(work: dict[str, Any], tree: dict[str, Any]) -> dict[str, Any]:
     for n, decisions in enumerate(found, 1):
         paths = kept.get(frozenset(decisions))
         if paths is None:
-            paths = list(work["paths"]) if len(found) == 1 else []
+            paths = [] if found[1:] else list(work["paths"])
         parts.append({"id": f"P{n}", "decisions": decisions, "paths": paths})
     return {**work, "parts": parts}
 
@@ -99,15 +99,17 @@ def work_faults(work: dict[str, Any], tree: dict[str, Any]) -> list[str]:
     for d in ids:
         if d not in held:
             found.append(f"{d} is in no part")
-        elif len(held[d]) > 1:
+        elif held[d][1:]:
             found.append(f"{d} is in {' and '.join(held[d])}")
-    found += [f"{p} is in {' and '.join(at)}" for p, at in placed.items() if len(at) > 1]
-    for a, b in joins(tree):
-        if a in held and b in held and held[a][-1] != held[b][0]:
-            found.append(
-                f"{a} of {held[a][-1]} is joined to {b} of {held[b][0]}: a part holds every"
-                " decision joined to its own"
-            )
+    found += [f"{p} is in {' and '.join(at)}" for p, at in placed.items() if at[1:]]
+    for part in work["parts"]:
+        mine = set(part["decisions"])
+        for a, b in joins(tree):
+            if a in mine and b in held and b not in mine:
+                found.append(
+                    f"{a} of {part['id']} is joined to {b} of {' and '.join(held[b])}: a part"
+                    " holds every decision joined to its own"
+                )
     return found
 
 

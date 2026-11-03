@@ -9,6 +9,7 @@ import os
 import re
 from typing import Any
 
+import designs
 import files
 
 # Each answers file of a run, by its name in the run's folder: the step's runs write one each.
@@ -83,7 +84,7 @@ def line_fault(line: str, paths: list[str]) -> str:
         return f"{line} begins before the file's first line"
     if last < first:
         return f"{line} ends before it begins"
-    if not any(path == p or path.startswith(p.rstrip("/") + "/") for p in paths):
+    if not designs.under(path, paths):
         return f"{line} lies in none of the work's paths"
     try:
         with open(path, encoding="utf-8") as f:
@@ -103,7 +104,8 @@ def faults(answers: dict[str, Any], given: list[str], paths: list[str], content:
     lists = answers["good"] + answers["more"] + answers.get("content", [])
     named = [a["question"] for a in lists]
     for q in dict.fromkeys(named):
-        if named.count(q) > 1:
+        # q is taken from named, so it counts once or more there.
+        if named.count(q) > 1:  # pragma: no mutate
             found.append(f"{q} is answered more than once")
         if q not in given:
             found.append(f"{q} was not given to this run")

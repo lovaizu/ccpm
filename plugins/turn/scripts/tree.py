@@ -65,12 +65,15 @@ def split(run: str) -> int:
     return 0
 
 
+COMMANDS = {"check": checked, "parts": split}
+
+
 def main(argv: list[str]) -> int:
     """Runs the command on the run's folder given, or prints the usage and gives 2."""
-    if len(argv) != 2 or argv[0] not in ("check", "parts"):
+    if len(argv) != 2 or argv[0] not in COMMANDS:
         print(USAGE, file=sys.stderr)
         return 2
-    return checked(argv[1]) if argv[0] == "check" else split(argv[1])
+    return COMMANDS[argv[0]](argv[1])
 
 
 # Run as the command, and not when the tests import it under the name tree.

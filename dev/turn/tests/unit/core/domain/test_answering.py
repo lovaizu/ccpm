@@ -62,6 +62,19 @@ class TestAssigned(helpers.RunTest):
             answering.assigned(self.folder, "refactor-check.json"), ["refactor-doc/Q1"]
         )
 
+    def test_a_part_or_group_is_found_whatever_its_place(self):
+        made = helpers.run()
+        made["run.json"]["groups"].reverse()
+        made["work.json"]["parts"] = [
+            {"id": "P2", "decisions": ["D2", "D3"], "paths": ["README.md"]},
+            {"id": "P1", "decisions": ["D1"], "paths": ["README.md"]},
+        ]
+        self.lay(made)
+        self.assertEqual(answering.assigned(self.folder, "verification/G1.json"), [question(1)])
+        self.assertEqual(
+            answering.assigned(self.folder, "self-check/P1.json"), [question(1), question(3)]
+        )
+
     def test_a_part_or_group_the_run_has_not_is_refused(self):
         self.lay()
         for name, why in (

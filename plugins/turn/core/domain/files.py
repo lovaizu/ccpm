@@ -29,11 +29,12 @@ def form(name: str) -> dict[str, Any]:
 def load(path: str, name: str) -> Any:
     """The JSON at the path, held to the form of the name; refuses, by Unreadable, a file that is
     missing, is no JSON or is out of the form."""
+    if not os.path.isfile(path):
+        raise Unreadable(f"there is no file {path}")
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
     try:
-        with open(path, encoding="utf-8") as f:
-            data = json.load(f)
-    except FileNotFoundError:
-        raise Unreadable(f"there is no file {path}") from None
+        data = json.loads(text)
     except json.JSONDecodeError as e:
         raise Unreadable(
             f"{path} is not JSON: {e.msg} at line {e.lineno} column {e.colno}"
