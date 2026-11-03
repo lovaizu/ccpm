@@ -4,10 +4,11 @@ with its run values on tidy's repository, its run's folder laid as the roles bef
 it, and hands back what it gave. The person, where the role asks, is stood in for as in the E2E
 tests.
 
-Each run passes where the role's files are in form, Turn's checks give 0 on them, the role gave
-the result its files call for, and evaluator and proofreader read nothing of the run beside their
-standard and their own answers file. Run as `python3 dev/turn/tests/unit/core/roles/trial_roles.py <role> [runs] [first]`,
-the role one of planner, designer, builder, evaluator, refactorer and proofreader."""
+Each run passes where the role's files are in form, Turn's checks give 0 on them, the role gave the
+result its files call for, and evaluator and proofreader read nothing of the run beside their
+standard and their own answers file. Run as `python3 dev/turn/tests/unit/core/roles/trial_roles.py
+<role> [runs] [first]`, the role one of planner, designer, builder, evaluator, refactorer and
+proofreader."""
 
 from __future__ import annotations
 

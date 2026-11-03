@@ -10,9 +10,9 @@ answered in the first conversation. A run counts only where the tree held, when 
 decision the person had settled or a fact they had confirmed.
 
 Each run passes where: .pin/ holds one tree; each decision the person had settled or confirmed when
-they left is decided the same at the end; no message of the second conversation asked again what was settled;
-and the second conversation passes as trial_down.py's runs do. Run as
-`python3 dev/pin/tests/e2e/trial_resume.py [runs] [first]`."""
+they left is decided the same at the end; no message of the second conversation asked again what was
+settled; and the second conversation passes as trial_down.py's runs do. Run as `python3
+dev/pin/tests/e2e/trial_resume.py [runs] [first]`."""
 
 from __future__ import annotations
 
