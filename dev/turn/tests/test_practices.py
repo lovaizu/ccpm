@@ -192,8 +192,10 @@ def response(kind, body):
 
 
 def refused(test, code):
-    """A server's refusal with the code, closed when the test ends, as urlopen's caller would."""
-    error = urllib.error.HTTPError("https://x.example/t", code, "no", email.message.Message(), None)
+    """A server's refusal with the code, closed when the test ends, as urlopen's caller would; it
+    holds its body, as urlopen's always does, for Python 3.9 cannot close one that holds none."""
+    body = io.BytesIO(b"")
+    error = urllib.error.HTTPError("https://x.example/t", code, "no", email.message.Message(), body)
     test.addCleanup(error.close)
     return error
 
