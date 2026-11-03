@@ -159,13 +159,13 @@
    },
    {
     "question": "Q4",
-    "thinking": "A way of making is taken from where it has met the essence before, and kept only once it meets it here.",
+    "thinking": "A way of making is taken from where it has met the essence before and kept only once it meets it here; the way of thinking carries it, and a step is there only for what the thinking alone does not lead the builder to.",
     "steps": [
      "For the essence the question holds, find how good deliverables met it: guides, studies and examples.",
      "Write the way of thinking in one sentence.",
-     "Write the steps, one action each, in order.",
+     "Write a step only for what the way of thinking alone does not lead the builder to, one action each, in order.",
      "Where a step or a source names one way of doing it, such as a place, a file or a tool, write what that way achieves, so a project that achieves it another way keeps its own.",
-     "Add as grounds the words of the sources, quoted from the pages opened; say plainly where a step is reasoning alone.",
+     "Add as grounds the words of the sources, quoted from the pages opened; cut a step that no source holds and the way of thinking already implies.",
      "Make one real deliverable by the way, and judge it by the question; where it stays no, mend the way."
     ],
     "grounds": [
@@ -176,8 +176,7 @@
     "question": "Q7",
     "thinking": "Every essence of every question has its way, so the builder never meets a question with nothing to go by.",
     "steps": [
-     "List the essence of each question.",
-     "Set each against the methods, and make a method for one that has none, by Q4's way.",
+     "Set each question's essence against the methods, and make a method by Q4's way for one that has none.",
      "Order the methods so that one is done before those that build on it."
     ],
     "grounds": []
