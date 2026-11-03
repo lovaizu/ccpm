@@ -600,8 +600,8 @@ Lane's guard and result.py have no row: Lane tests them, and Turn tests only its
 - An E2E test passes in three runs of three where: the stand-in person, given the work and their
   intent, would change nothing in it; every question put to the person is one their intent marks
   as theirs, and none is a point the caller gave; the roles start as the routes say; and, on the
-  module of code, the two runs of builder that `up` starts for its two parts overlap in time. Each run's time and tokens are kept with its
-  records, so runs can be compared.
+  module of code, the two runs of builder that `up` starts for its two parts overlap in time. Each
+  run's time and tokens are kept with its records, so runs can be compared.
 - Turn's scripts weigh ●●● in unit tests, as a check that passes wrongly sends a gap into the work
   unseen. The roles weigh ●●● in E2E tests, as a work the person must mend, or a question that is
   not theirs, is what Turn is there to stop.
