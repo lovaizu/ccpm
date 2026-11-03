@@ -1,6 +1,7 @@
-"""What every plugin's trials stand on: the folder of its own each run of a trial writes in, Claude
-Code started on copies of plugins as their user starts it, a conversation gone on with message by
-message, its record kept, and what the records of the agents it started show."""
+"""What every plugin's E2E tests stand on: the folder of its own each run of an E2E test writes in,
+Claude Code started on copies of plugins as their user starts it, in `claude -p` or in an
+interactive session, a conversation gone on with message by message, its record kept, and what the
+records of the agents it started show."""
 
 from __future__ import annotations
 
@@ -8,11 +9,16 @@ import glob
 import importlib.util
 import json
 import os
+import pty
 import queue
+import select
+import shlex
+import signal
 import subprocess
 import sys
 import threading
 import time
+import uuid
 from typing import Any
 
 # The seconds Claude Code is given, after a result, to open a turn of its own; it opens one at once
@@ -20,12 +26,13 @@ from typing import Any
 # the main conversation worked.
 QUIET = 5
 HERE = os.path.dirname(os.path.abspath(__file__))
-# The folder a trial writes in is made as a test's is, by testing.py, kept in the folder above.
+# The folder an E2E test writes in is made as a test's is, by testing.py, kept in the folder above.
 sys.path.insert(0, os.path.dirname(HERE))
 import testing
 
 # How Claude Code keeps its records is read by rn's record.py, whose job it is, loaded from its
-# file, so a plugin's trials standing on this module meet none of their own modules of that name.
+# file, so a plugin's E2E tests standing on this module meet none of their own modules of that
+# name.
 RECORD = os.path.join(HERE, "../../../plugins/rn/scripts/record.py")
 FOUND = importlib.util.spec_from_file_location("record", os.path.normpath(RECORD))
 assert FOUND and FOUND.loader
@@ -34,12 +41,12 @@ FOUND.loader.exec_module(record)
 
 
 def folder(plugin: str, name: str) -> str:
-    """A new folder of the plugin's for a run of the trial of the name, in the system's temporary
+    """A new folder of the plugin's for a run of the E2E test of the name, in the system's temporary
     folder as dev/architecture.md's Where a plugin writes its files has it, outside any ccpm clone,
     so the conversations started in it load none of its instructions; its path is printed first,
-    for whoever runs the trial to find what the run writes there. The path is given with every link
-    in it followed, as Claude Code names the folder of a conversation's records by it, and macOS's
-    temporary folder is reached through a link."""
+    for whoever runs the E2E test to find what the run writes there. The path is given with every
+    link in it followed, as Claude Code names the folder of a conversation's records by it, and
+    macOS's temporary folder is reached through a link."""
     made = os.path.realpath(testing.temporary(plugin, name))
     print("folder:", made, flush=True)
     return made
@@ -130,7 +137,7 @@ class Conversation:
         """Reads what Claude Code prints until the main conversation has replied, and gives its
         result, the last line Claude Code printed for it as stream-json, such as its session_id;
         due is whether a turn is to open at once, as for a message sent, and idle is send's. Given
-        record, it adds there each line as it comes, kept before a failed run stops the trial.
+        record, it adds there each line as it comes, kept before a failed run stops the E2E test.
         Stops where Claude Code ends, gives a result that is an error, opens no turn within the
         wait where none is due, or, where idle, still has an agent running the wait after the
         reply."""
@@ -209,6 +216,103 @@ def claude(
         return conversation.send(prompt, record, idle=True)
     finally:
         conversation.close()
+
+
+# A word of what Claude Code shows as it asks whether a folder is trusted, whose words it places
+# apart by moves of the cursor.
+TRUST = b"trust"
+# What the Stop hook of an interactive session runs: its event kept as a line of the file given.
+STOP = """import json, sys
+
+with open(sys.argv[1], "a", encoding="utf-8") as f:
+    f.write(json.dumps(json.load(sys.stdin)) + "\\n")
+"""
+
+
+def interactive(
+    prompt: str, plugins: list[str], cwd: str, place: str, wait: int = 20
+) -> dict[str, Any]:
+    """Runs a fresh interactive session of Claude Code on the copies of plugins, in cwd, given the
+    one message prompt as its user types it, and gives its session_id once the main conversation
+    has stopped with no agent in the background left, as a Stop hook given in the settings tells
+    it in `<place>/stops.jsonl`; what the terminal shows is kept in `<place>/terminal.txt`. An
+    interactive session is what starts an agent again once an agent it started in the background
+    has ended, which `claude -p` does not. Stops where that is not so within wait minutes."""
+    names = []
+    for plugin in plugins:
+        with open(os.path.join(plugin, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
+            names.append(json.load(f)["name"])
+    session = str(uuid.uuid4())
+    stops = os.path.join(place, "stops.jsonl")
+    # Each Stop event is kept as a line of its own, by a script in the run's folder.
+    script = os.path.join(place, "stop.py")
+    with open(script, "w", encoding="utf-8") as f:
+        f.write(STOP)
+    keep = f"{shlex.quote(sys.executable)} {shlex.quote(script)} {shlex.quote(stops)}"
+    hooks = {"Stop": [{"hooks": [{"type": "command", "command": keep}]}]}
+    settings = {"enabledPlugins": {f"{name}@ccpm": False for name in names}, "hooks": hooks}
+    command = ["claude", "--session-id", session, "--model", "opus"]
+    for plugin in plugins:
+        command += ["--plugin-dir", plugin]
+    command += ["--settings", json.dumps(settings), "--permission-mode", "bypassPermissions"]
+    command.append(prompt)
+    pid, terminal = pty.fork()
+    if pid == 0:
+        os.chdir(cwd)
+        os.execvpe(command[0], command, {**fresh(), "TERM": "xterm-256color"})
+    until = time.monotonic() + wait * 60
+    seen, trusted = b"", False
+    try:
+        with open(os.path.join(place, "terminal.txt"), "ab") as shown:
+            while time.monotonic() < until:
+                ready, _, _ = select.select([terminal], [], [], 1)
+                if ready:
+                    try:
+                        read = os.read(terminal, 65536)
+                    except OSError:
+                        raise SystemExit(f"claude ended: see {shown.name}") from None
+                    shown.write(read)
+                    shown.flush()
+                    seen = (seen + read)[-4096:]
+                # The folder is the run's own, made by the E2E test, so it is trusted as Claude
+                # Code asks of a folder it has not opened before: the second choice, below the
+                # first.
+                if not trusted and TRUST in seen:
+                    time.sleep(1)
+                    os.write(terminal, b"\x1b[B")
+                    time.sleep(1)
+                    os.write(terminal, b"\r")
+                    trusted = True
+                if idle(stops):
+                    return {"session_id": session}
+        raise SystemExit(f"the session was not idle within {wait} minutes; give a longer wait")
+    finally:
+        os.kill(pid, signal.SIGTERM)
+        os.waitpid(pid, 0)
+        os.close(terminal)
+
+
+def fresh() -> dict[str, str]:
+    """The environment with nothing in it of a Claude Code session it may be run from, as a user
+    starts Claude Code in a terminal of their own: a session started with them is taken as a
+    child of that one, and keeps no record of its own."""
+    return {
+        k: v
+        for k, v in os.environ.items()
+        if not (k.startswith("CLAUDE_CODE_") or k in ("CLAUDECODE", "CLAUDE_PID", "CLAUDE_EFFORT"))
+    }
+
+
+def idle(stops: str) -> bool:
+    """Whether the main conversation's last Stop, as kept in the file at the path, says that no
+    agent is left in the background."""
+    try:
+        with open(stops, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+    except FileNotFoundError:
+        return False
+    last = json.loads(lines[-1]) if lines else {}
+    return "background_tasks" in last and not last["background_tasks"]
 
 
 def agents(session: str) -> list[str]:

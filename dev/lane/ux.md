@@ -42,6 +42,8 @@ Both scenarios run on `changelog`, the developer AI's plugin that writes a proje
 
 No step waits for a person.
 
+Each subagent runs in the background, so the developer AI's conversation stays free while it runs.
+
 ### O1: The developer AI holds writer to two rules
 
 ```mermaid
@@ -54,7 +56,7 @@ sequenceDiagram
   L-->>A: steps 2 and 3 as they will be, ending<br>"Run only `git log --oneline`." and "Write only `CHANGELOG.md`."
   A->>L: lay.py write, once it approves what print showed
   L-->>A: steps 2 and 3 written with the sentences,<br>and the check script put into changelog
-  A->>W: asks changelog for an entry and a commit, and changelog starts writer
+  A->>W: asks changelog for an entry and a commit,<br>and changelog starts writer in the background
   W->>K: runs git log --oneline
   K-->>W: lets it through
   W->>K: writes CHANGELOG.md
@@ -77,16 +79,17 @@ sequenceDiagram
   L-->>A: the routes, and the steps of lead, writer and reviewer<br>as they will be with their sentences
   A->>L: lay.py write, once it approves what print showed
   L-->>A: the steps written with the sentences,<br>and the check script and the result script put into changelog
-  A->>O: asks changelog to update CHANGELOG.md for the next release,<br>and changelog starts lead
+  A->>O: asks changelog to update CHANGELOG.md for the next release,<br>and changelog starts lead in the background
   K-->>O: "changelog: Start `changelog:writer`."
   loop until reviewer ends with `good`
-    O->>W: starts writer
+    O->>W: starts writer in the background
+    K-->>O: "changelog: Wait for `changelog:writer` to end: you are told the next start once it has."
     W->>S: runs the result script with `written`
-    W-->>O: ends with the entries it wrote
+    W-->>O: ends with the entries it wrote, and Claude Code starts lead again to tell it
     K-->>O: "changelog: writer gave `written`. Start `changelog:reviewer`."
-    O->>R: starts reviewer
+    O->>R: starts reviewer in the background
     R->>S: runs the result script with `more` while an entry needs writer again,<br>or with `good`
-    R-->>O: ends with what it found
+    R-->>O: ends with what it found, and Claude Code starts lead again to tell it
     alt reviewer gave `more`
       K-->>O: "changelog: reviewer gave `more`. Start `changelog:writer`."
     else reviewer gave `good`

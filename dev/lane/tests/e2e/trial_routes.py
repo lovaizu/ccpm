@@ -1,21 +1,24 @@
-"""The trial of O2 of lane's UX, "The developer AI has lead start writer and reviewer as its
+"""The E2E test of O2 of lane's UX, "The developer AI has lead start writer and reviewer as its
 routes say": `lay.py write` lays routes.json, kept beside this file, the routes of docs/routes.md
 with writer's lanes of the README and reviewer's run of `git log --oneline`, on a copy of
 `changelog` in a git repository of its own outside any ccpm clone, as trial_changelog.py makes it;
-and Claude Code, on Opus, is asked to have lead update CHANGELOG.md for the next release, to start
-reviewer first, and to tell reviewer each time to reply without running any script, so that lead
-is invited to start a subagent the routes do not name and reviewer to end without its result.
+and Claude Code, on Opus, in an interactive session, as `claude -p` does not start lead again
+once a subagent it started in the background has ended, is asked to have lead update CHANGELOG.md
+for the next release, to start reviewer first, and to tell reviewer each time to reply without
+running any script, so that lead is invited to start a subagent the routes do not name and
+reviewer to end without its result.
 
 Each run passes where the records of lead and the subagents it started show what lane's documents
-promise: each start that went through was one the routes made due, and lead was told the next
-start as it came back; each other start was stopped with follow_routes' sentence and the start
-due; each subagent about to end without its result was kept going once with its last step's
-sentence; each command and write of a subagent that its lanes allow went through, and each other
-was stopped with its sentence. A subagent kept going need not give its result after, as no
-document promises it; a run that does not reach reviewer's `good` so is said, not failed. A run
-counts only where each invited break was tried, as dev/lane/architecture.md's Test says. Run as
+promise: each start that went through was one the routes made due, and lead was told to wait for
+it as it came back, launched in the background; each other start was stopped with follow_routes'
+sentence and the start due, or the wait for the subagent still running; each subagent about to end
+without its result was kept going once with its last step's sentence; each command and write of a
+subagent that its lanes allow went through, and each other was stopped with its sentence. A
+subagent kept going need not give its result after, as no document promises it; a run that does
+not reach reviewer's `good` so is said, not failed. A run counts only where each invited break was
+tried, as dev/lane/architecture.md's Test says. Run as
 `python3 dev/lane/tests/e2e/trial_routes.py [runs]`, three by default; it prints the folder of each
-run, where the run's stream and the agents' records are kept, and what it found."""
+run, where what the terminal showed and the agents' records are kept, and what it found."""
 
 from __future__ import annotations
 
@@ -42,6 +45,9 @@ ROUTES = {
     ("reviewer", "more"): "writer",
     ("reviewer", "good"): "",
 }
+# What lead is told as a start comes back launched in the background, or of a start made while it
+# runs.
+WAIT = "changelog: Wait for `changelog:{name}` to end: you are told the next start once it has."
 # A result command, as Claude Code puts the plugin's folder in it.
 GIVEN = re.compile(r"python3 \S+/hooks/lane/result\.py (writer|reviewer) ([a-z]+)")
 # The developer AI's ask: the entries for the next release through lead, with a start the routes
@@ -114,7 +120,7 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]], repo: str)
     the call that started each: what is wrong, how many starts were stopped and ends kept going,
     and the start still due where the run did not reach the end."""
     wrong: list[str] = []
-    due, gave, stopped, kept = "writer", None, 0, 0
+    due, gave, stopped, kept, running = "writer", None, 0, 0, ""
     for c in (c for c in lead["calls"] if c["tool"] == "Agent"):
         name = str(c["input"].get("subagent_type", "")).replace("changelog:", "", 1)
         if due == "":
@@ -124,11 +130,13 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]], repo: str)
             if gave
             else f"changelog: Start `changelog:{due}`."
         )
+        # A start made while the subagent started last may still run is told to wait for it.
+        lines = [line, *([WAIT.format(name=running)] if running else [])]
         if c["error"]:
             if name == due and FOLLOW not in c["result"]:
                 wrong.append(f"the start due of {name} failed: {c['result'][:200]}")
-            elif FOLLOW not in c["result"] or line not in c["result"]:
-                wrong.append(f"a start of {name} was not stopped with the sentence and {line!r}")
+            elif FOLLOW not in c["result"] or not any(t in c["result"] for t in lines):
+                wrong.append(f"a start of {name} was not stopped with the sentence and {lines!r}")
             else:
                 stopped += 1
             continue
@@ -140,15 +148,10 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]], repo: str)
         given = results(child["calls"])
         gave = (name, given[-1]) if given else None
         due = ROUTES.get(gave, name) if gave else name
+        running = name
         told = lead["context"].get(c["id"], [])
-        expected = (
-            f"changelog: {gave[0]} gave `{gave[1]}`. "
-            + (f"Start `changelog:{due}`." if due else "Start no more subagents.")
-            if gave
-            else f"changelog: Start `changelog:{due}`."
-        )
-        if expected not in told:
-            wrong.append(f"lead was not told {expected!r} as {name}'s start came back: {told}")
+        if WAIT.format(name=name) not in told:
+            wrong.append(f"lead was not told to wait as {name}'s start came back: {told}")
         ends = [(at, t) for at, e, t in child["kept"] if e == "SubagentStop"]
         for _, text in ends:
             kept += 1
@@ -165,12 +168,11 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]], repo: str)
 
 
 def run(number: int) -> bool:
-    """One run of the trial; prints what it found, and gives whether it passed."""
+    """One run of the E2E test; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-routes-{number}")
     repo = made(place, "routes.json")
     started = time.monotonic()
-    stream = os.path.join(place, "stream.jsonl")
-    result = trying.claude(PROMPT, [os.path.join(repo, "changelog")], repo, record=stream)
+    result = trying.interactive(PROMPT, [os.path.join(repo, "changelog")], repo, place)
     session = result["session_id"]
     leads, children = [], {}
     for file in sorted(trying.agents(session)):
@@ -183,7 +185,7 @@ def run(number: int) -> bool:
             leads.append(found)
         else:
             children[meta.get("toolUseId")] = found
-    print(f"session {session}, {time.monotonic() - started:.0f} s,", result.get("usage", {}))
+    print(f"session {session}, {time.monotonic() - started:.0f} s")
     for lead in leads:
         for c in (c for c in lead["calls"] if c["tool"] == "Agent"):
             state = "stopped" if c["error"] else "through"

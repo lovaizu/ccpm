@@ -219,10 +219,17 @@ class TestLanesCommands(CommandTest):
             ),
             "tool_use_id": "t1",
         }
-        # When: the main conversation starts writer with a.md as its work, and writer writes a.md
-        # and b.md, each event through the hooks' commands in sh
+        back = {
+            **call,
+            "hook_event_name": "PostToolUse",
+            "tool_response": helpers.back("a1", "async_launched"),
+        }
+        # When: the main conversation starts writer with a.md as its work, the start coming back
+        # launched in the background as writer starts, and writer writes a.md and b.md, each event
+        # through the hooks' commands in sh
         self.assertEqual(self.run_hook(call).stdout, "")
         self.run_hook(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
+        self.assertEqual(self.run_hook(back, held="PostToolUse").stdout, "")
         wrote_a = self.run_hook(self.written("a.md"))
         wrote_b = self.run_hook(self.written("b.md"))
         # Then: a.md goes through, and b.md is denied with the sentence as the step says it

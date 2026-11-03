@@ -1,4 +1,4 @@
-"""The trial of the lanes U1 and U2 do not lay, on noter, the subagent of `changelog` whose steps
+"""The E2E test of the lanes U1 and U2 do not lay, on noter, the subagent of `changelog` whose steps
 lie in its part `prompts/noter.md`: `lay.py write` lays lanes.json, kept beside this file, with the
 items adapter in adapters/, on a copy of `changelog` in a git repository of its own outside any
 ccpm clone, as trial_changelog.py makes it, with review.md and docs/style.md beside CHANGELOG.md;
@@ -204,7 +204,7 @@ def done_wrong(repo: str, changed: int, checked: int) -> list[str]:
 
 
 def run(number: int) -> bool:
-    """One run of the trial; prints what it found, and gives whether it passed."""
+    """One run of the E2E test; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-lanes-{number}")
     repo = made(place, "lanes.json", {"review.md": REVIEW, "docs/style.md": STYLE})
     started = time.monotonic()

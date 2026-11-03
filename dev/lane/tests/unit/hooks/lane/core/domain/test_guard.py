@@ -508,7 +508,9 @@ class TestRoutedCannot(RoutedTest):
     def test_a_routed_subagent_whose_file_has_no_step_is_told_its_result_has_none(self):
         # Given: reviewer, with no lane but its result commands, its file holding no step
         reviewer = os.path.join(self.plugin, "agents", "reviewer.md")
-        self.write(reviewer, "---\nname: reviewer\ndescription: d\n---\n\nReview.\n")
+        self.write(
+            reviewer, "---\nname: reviewer\ndescription: d\nbackground: true\n---\n\nReview.\n"
+        )
         # When: it runs a command
         told = self.told(guard.check, self.bash("ls", "changelog:reviewer"), "reviewer")
         # Then: it is an error of its result, on step 0, a number no step has
@@ -825,18 +827,18 @@ class TestValues(LanesTest):
                 # Then: it goes through
                 self.assertEqual(self.check(event), [])
 
-    def test_a_value_not_given_given_empty_or_unknown_is_an_error(self):
-        for given, said in (
-            ("no JSON", "`{work}` was given no value"),
-            ('{"work": [""]}', "`{work}` was given empty"),
-            (None, "two starts of it with differing prompts were waiting as it started"),
+    def test_a_value_not_given_or_given_empty_is_an_error(self):
+        for agent, given, said in (
+            ("v1", "no JSON", "`{work}` was given no value"),
+            ("v2", '{"work": [""]}', "`{work}` was given empty"),
         ):
             with self.subTest(given=given):
-                # Given: writer's run given no value, an empty one, or a prompt it cannot tell
-                called.keep("s1", "a1", called.START)
-                called.keep("s1", "a1", called.given(given))
+                # Given: a run of writer given no value, or an empty one
+                called.keep("s1", agent, called.START)
+                called.keep("s1", agent, called.given(given))
                 # When: it writes a file
-                told = self.check(self.written("notes.md"))
+                write = {"file_path": "notes.md", "content": "x"}
+                told = self.check(self.event("Write", write, agent_id=agent))
                 # Then: it is an error of write_only, naming what is wrong
                 self.assertTrue(told[0].error)
                 self.assertIn(
@@ -936,6 +938,7 @@ class TestAdapterTime(LanesTest):
         ):
             with self.subTest(event=event):
                 self.lay_lanes(steps, adapter)
+                self.given("work=a.md")
                 # When: the guard begins on an event long after lane's code was loaded, as in a
                 # process that handles many
                 # Then: each adapter is left the hook's whole 8 seconds
@@ -981,68 +984,64 @@ class TestPart(LanesTest):
 
 class TestHanded(LanesTest):
     def agent_call(
-        self, held: str, kind: str = "changelog:writer", use: str = "t1", **more
+        self,
+        held: str,
+        kind: str = "changelog:writer",
+        prompt: str = '{"work": "notes.md"}',
+        **more,
     ) -> dict:
-        """The main conversation's Agent call of the ID starting the subagent of the type."""
-        given = {"description": "d", "prompt": '{"work": "notes.md"}', "subagent_type": kind}
-        return {**self.event("Agent", given, None, held), "tool_use_id": use, **more}
+        """The main conversation's Agent call starting the subagent of the type with the prompt."""
+        given = {"description": "d", "prompt": prompt, "subagent_type": kind}
+        return {**self.event("Agent", given, None, held), "tool_use_id": "t1", **more}
 
-    def run_start(self, agent: str = "a1") -> None:
-        """writer's run of the ID starts."""
-        guard.started(
-            self.plugin, "changelog", "writer", self.subagent("SubagentStart", "writer", agent), ""
-        )
+    def launched(self, agent: str, prompt: str = '{"work": "notes.md"}', **more) -> None:
+        """The main conversation's start of writer comes back launched in the background as the
+        run of the ID."""
+        back = helpers.back(agent, "async_launched")
+        event = self.agent_call("PostToolUse", prompt=prompt, tool_response=back, **more)
+        guard.handed("changelog", event, "PostToolUse")
 
-    def test_a_start_takes_the_prompt_of_the_agent_call_made_for_it(self):
-        # Given: the main conversation's Agent call starting writer
-        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
-        # When: writer starts
-        self.run_start()
-        # Then: its run is given the call's prompt
-        self.assertEqual(called.texts("s1", "a1"), ['{"work": "notes.md"}'])
-        # And: a later start takes no prompt already taken
-        self.run_start("a2")
-        self.assertEqual(called.texts("s1", "a2"), [])
+    def test_a_start_come_back_gives_its_prompt_to_the_run_of_the_id_it_gives(self):
+        for status in ("async_launched", "completed"):
+            with self.subTest(status=status):
+                # Given: the main conversation's Agent call starting writer, made
+                guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
+                # Then: no run is given its prompt as it is made
+                self.assertIsNone(called.texts("s1", f"a{status}"))
+                # When: it comes back with the ID of the run it started
+                back = helpers.back(f"a{status}", status)
+                event = self.agent_call("PostToolUse", tool_response=back)
+                guard.handed("changelog", event, "PostToolUse")
+                # Then: that run is given the call's prompt
+                self.assertEqual(called.texts("s1", f"a{status}"), ['{"work": "notes.md"}'])
 
-    def test_two_calls_waiting_with_differing_prompts_leave_the_start_unable_to_tell(self):
-        # Given: two Agent calls of writer waiting, with differing prompts
-        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
-        other = self.agent_call("PreToolUse", use="t2")
-        other["tool_input"]["prompt"] = "other"
-        guard.handed("changelog", other, "PreToolUse")
-        # When: writer starts
-        self.run_start()
-        # Then: it cannot tell its prompt
-        self.assertIsNone(called.texts("s1", "a1"))
-        # And: the call coming back with the run's ID gives it its own
-        back = self.agent_call("PostToolUse", tool_response=helpers.back("a1"))
-        guard.handed("changelog", back, "PostToolUse")
-        self.assertEqual(called.texts("s1", "a1"), ['{"work": "notes.md"}'])
+    def test_runs_of_one_subagent_at_once_are_each_given_their_own_prompt(self):
+        # Given: two starts of writer at once, with differing prompts, coming back in turn
+        self.launched("a1", '{"work": "a.md"}')
+        self.launched("a2", '{"work": "b.md"}')
+        # Then: each run is given its own
+        self.assertEqual(called.texts("s1", "a1"), ['{"work": "a.md"}'])
+        self.assertEqual(called.texts("s1", "a2"), ['{"work": "b.md"}'])
 
-    def test_a_call_come_back_or_failed_is_no_longer_waiting(self):
-        for held in ("PostToolUse", "PostToolUseFailure"):
-            with self.subTest(held=held):
-                # Given: writer's Agent call come back, launched with no ID, or failed
-                guard.handed("changelog", self.agent_call("PreToolUse", use=held), "PreToolUse")
-                guard.handed("changelog", self.agent_call(held, use=held, tool_response="x"), held)
-                # When: a run of writer starts
-                self.run_start(f"r{held}")
-                # Then: it takes no prompt
-                self.assertEqual(called.texts("s1", f"r{held}"), [])
-
-    def test_a_call_failed_gives_no_run_its_prompt(self):
-        # Given: writer's Agent call made
-        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
-        # When: it fails, its event holding a response with a run's ID
-        failed = self.agent_call("PostToolUseFailure", tool_response=helpers.back("f1"))
-        guard.handed("changelog", failed, "PostToolUseFailure")
-        # Then: no run is given its prompt, as a failed call started none
-        self.assertEqual(called.kept("s1", "f1"), [])
+    def test_a_start_that_failed_or_gave_back_no_id_gives_no_run_its_prompt(self):
+        for held, back in (
+            ("PostToolUseFailure", helpers.back("f1")),
+            ("PostToolUse", {"status": "async_launched"}),
+            ("PostToolUse", {"status": "async_launched", "agentId": "a/b"}),
+            ("PostToolUse", "x"),
+        ):
+            with self.subTest(held=held, back=back):
+                # Given: writer's start failed, its event holding a run's ID, or come back with no
+                # ID, an ID that could name a file elsewhere, or no object
+                event = self.agent_call(held, tool_response=back)
+                # When: it is handed on
+                guard.handed("changelog", event, held)
+                # Then: no run is given its prompt
+                self.assertFalse(os.path.exists(os.path.join(self.base, "lane")))
 
     def test_a_message_is_kept_as_its_call_is_made_alone(self):
         # Given: writer's run given its prompt
-        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
-        self.run_start()
+        self.launched("a1")
         sent = {"to": "a1", "message": '{"work": "a.md"}'}
         for held, tool in (("PostToolUse", "SendMessage"), ("PreToolUse", "Write")):
             # When: a SendMessage call to it comes back, or another tool's call of the same input
@@ -1063,8 +1062,7 @@ class TestHanded(LanesTest):
 
     def test_a_message_sent_to_a_run_is_kept_after_its_prompt(self):
         # Given: writer's run given its prompt
-        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
-        self.run_start()
+        self.launched("a1")
         # When: a SendMessage call is made to it, and one to a run of no calls kept
         for to in ("a1", "z9", "a b"):
             sent = {"to": to, "message": '{"work": "a.md"}'}
@@ -1078,21 +1076,133 @@ class TestHanded(LanesTest):
         self.assertEqual(called.kept("s1", "z9"), [])
 
     def test_a_call_of_another_plugin_or_out_of_its_fields_keeps_nothing(self):
+        back = helpers.back("a1", "async_launched")
         for event in (
-            self.agent_call("PreToolUse", kind="other:writer"),
-            {**self.agent_call("PreToolUse"), "tool_input": {"subagent_type": "changelog:writer"}},
-            {**self.agent_call("PreToolUse"), "tool_use_id": 1},
-            {**self.agent_call("PreToolUse"), "session_id": "a/b"},
-            {**self.event("Read", {"file_path": "x"}, None), "tool_use_id": "t1"},
+            self.agent_call("PostToolUse", kind="other:writer", tool_response=back),
+            {
+                **self.agent_call("PostToolUse", tool_response=back),
+                "tool_input": {"subagent_type": "changelog:writer"},
+            },
+            self.agent_call("PostToolUse", tool_response=back, tool_use_id=1),
+            self.agent_call("PostToolUse", tool_response=back, session_id="a/b"),
+            {**self.agent_call("PostToolUse", tool_response=back), "tool_input": "x"},
+            {**self.event("Read", {"file_path": "x"}, None, "PostToolUse"), "tool_use_id": "t1"},
         ):
             with self.subTest(event=event):
                 # Given: an Agent call of another plugin, one of no prompt, of no ID, of a session
-                # no ID names, or another tool's call
-                guard.handed("changelog", event, "PreToolUse")
-                # When: writer starts
-                self.run_start()
-                # Then: its run is given nothing
-                self.assertEqual(called.texts("s1", "a1"), [])
+                # no ID names, of no input, or another tool's call, come back
+                # When: it is handed on
+                guard.handed("changelog", event, "PostToolUse")
+                # Then: writer's run is given nothing
+                self.assertFalse(os.path.exists(os.path.join(self.base, "lane")))
+
+
+class TestJoined(LanesTest):
+    """A run's call waits a short time for the start's ID to come back, as the run starts before
+    its start comes back."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_lanes([lane("write_only", "{work}")])
+
+    def test_a_call_made_before_its_start_came_back_waits_for_it(self):
+        for back in (3, 60):
+            with self.subTest(back=back):
+                # Given: writer's run, whose start comes back with its prompt as the guard waits,
+                # in the third look's step or the last's
+                called.keep("s1", f"r{back}", called.START)
+
+                def comes_back(_: float, agent: str = f"r{back}", at: int = back) -> None:
+                    if sleep.call_count == at:
+                        called.keep("s1", agent, called.given('{"work": "notes.md"}'))
+
+                with mock.patch.object(guard.time, "sleep", side_effect=comes_back) as sleep:
+                    # When: it writes notes.md before its start has come back
+                    write = self.event("Write", {"file_path": "notes.md"}, agent_id=f"r{back}")
+                    told = self.check(write)
+                # Then: the guard waited in steps of 0.05 seconds until the prompt came, and the
+                # write goes through
+                self.assertEqual(told, [])
+                self.assertEqual(sleep.call_args_list, [mock.call(0.05)] * back)
+
+    def test_a_call_whose_start_never_came_back_is_stopped_after_the_wait(self):
+        # Given: writer's run, whose start never comes back
+        with mock.patch.object(guard.time, "sleep") as sleep:
+            # When: it writes notes.md
+            told = self.check(self.written("notes.md"))
+        # Then: the guard waited 3 seconds in steps of 0.05, and the call is stopped with an error
+        # saying why and who must fix it
+        self.assertEqual(sleep.call_args_list, [mock.call(0.05)] * 60)
+        self.assertTrue(told[0].error)
+        self.assertEqual(
+            told[0].text,
+            "lane cannot check write_only on step 3 of writer: the Agent call starting it gave"
+            " back no ID of its run within 3 seconds, so what it was given is not known. Ask the"
+            " main conversation for the fix: whoever starts writer must start it with the Agent"
+            " tool, and where they did, Claude Code must be updated with `claude update`, and"
+            " where this goes on, it must be reported at https://github.com/lovaizu/ccpm/issues."
+            " Go on with the rest of your work meanwhile.",
+        )
+
+    def test_the_wait_is_kept_within_the_hooks_time(self):
+        # Given: the guard begun on the event 7 of the hook's 8 seconds ago
+        clock = iter([0.0, 7.0])
+        later = mock.patch.object(guard.time, "monotonic", side_effect=lambda: next(clock, 7.0))
+        with later, mock.patch.object(guard.time, "sleep") as sleep:
+            # When: writer writes before its start has come back
+            self.check(self.written("notes.md"))
+        # Then: it waits only the second left
+        self.assertEqual(sleep.call_count, 20)
+
+    def test_a_call_needing_no_value_does_not_wait(self):
+        # Given: writer with lanes taking no value
+        self.lay()
+        with mock.patch.object(guard.time, "sleep") as sleep:
+            # When: it runs a command before its start has come back
+            told = self.check(self.bash("git log --oneline"))
+        # Then: it goes through at once
+        self.assertEqual((told, sleep.call_count), ([], 0))
+
+    def test_runs_of_one_subagent_at_once_are_each_held_to_their_own_values(self):
+        # Given: two runs of writer at once, given a.md and b.md
+        self.given('{"work": "a.md"}', "a1")
+        self.given('{"work": "b.md"}', "a2")
+        for agent, mine, other in (("a1", "a.md", "b.md"), ("a2", "b.md", "a.md")):
+            with self.subTest(agent=agent):
+                # When: each writes its own file, and the other's
+                write = {"file_path": mine, "content": "x"}
+                theirs = {"file_path": other, "content": "x"}
+                # Then: its own goes through, and the other's is stopped
+                self.assertEqual(self.check(self.event("Write", write, agent_id=agent)), [])
+                self.assertEqual(
+                    self.check(self.event("Write", theirs, agent_id=agent)),
+                    [guard.Said("Write only `{work}`.")],
+                )
+
+
+class TestBackground(GuardTest):
+    def test_a_subagent_whose_file_no_longer_sets_background_is_an_error(self):
+        for held, check, event in (
+            ("PreToolUse", guard.check, self.bash("git log --oneline")),
+            ("SubagentStart", guard.started, self.subagent("SubagentStart", "writer", "a1")),
+        ):
+            with self.subTest(held=held):
+                # Given: writer laid, its file since set to run in the foreground
+                self.write(
+                    self.agent_file, helpers.LAID.replace("background: true", "background: false")
+                )
+                # When: it starts, or runs a command its lanes name
+                told = check(self.plugin, "changelog", "writer", event, "")
+                # Then: it is an error of its lanes, telling to set it again
+                self.assertTrue(told[0].error)
+                self.assertEqual(
+                    told[0].text,
+                    "lane cannot check the lanes of writer: its file agents/writer.md no longer"
+                    " sets `background: true`, so lane cannot tell its runs apart. Ask the main"
+                    " conversation for the fix: the maker of changelog must set `background:"
+                    " true` in the frontmatter of agents/writer.md again. Go on with the rest of"
+                    " your work meanwhile.",
+                )
 
 
 if __name__ == "__main__":

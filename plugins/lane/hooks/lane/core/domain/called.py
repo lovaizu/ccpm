@@ -1,8 +1,9 @@
-"""The calls kept: each call of a subagent as it came back, each result it gave, and each start and
-end of its runs, kept under its agent_id in `lane/<yyyymmdd>-<session>/<agent_id>.jsonl` of the
-system's temporary folder, as dev/architecture.md's Where a plugin writes its files has it for what
-is used only while a plugin runs; a line of JSON each, read back for the run the subagent is in,
-from its last start, as a subagent resumed keeps its ID and gives a result again."""
+"""The calls kept: each call of a subagent as it came back, each result it gave, each start and end
+of its runs, and the texts it was given, its prompt and each message sent after, kept under its
+agent_id in `lane/<yyyymmdd>-<session>/<agent_id>.jsonl` of the system's temporary folder, as
+dev/architecture.md's Where a plugin writes its files has it for what is used only while a plugin
+runs; a line of JSON each, read back for the run the subagent is in, from its last start, as a
+subagent resumed keeps its ID and gives a result again."""
 
 from __future__ import annotations
 
@@ -22,8 +23,6 @@ from routes import Start
 ID = re.compile(r"[A-Za-z0-9_-][A-Za-z0-9._-]*")
 START = {"kind": "start"}
 END = {"kind": "end"}
-# The session's file of the Agent calls starting a subagent, a name no ID can have.
-STARTS = ".starts.jsonl"
 # What an Agent call gives back that is kept: its status and the ID of the subagent's run.
 KEPT_BACK = ("status", "agentId")
 
@@ -138,56 +137,10 @@ def calls(session: str, agent: str, run: bool = False) -> list[dict[str, Any]]:
     return [e for e in entries if e.get("kind") == "call"]
 
 
-def starts_file(session: str, made: bool) -> str:
-    """The session's file of the Agent calls starting a subagent of the plugin."""
-    return os.path.join(folder(session, made), STARTS)
-
-
-def asked(session: str, use: str, name: str, text: str) -> None:
-    """Keeps the Agent call of the ID, starting the subagent of the name with the prompt, as it is
-    made."""
-    written(starts_file(session, True), {"kind": "asked", "id": use, "name": name, "text": text})
-
-
-def given(text: str | None) -> dict[str, Any]:
-    """The entry of the prompt a run was given; None where the run cannot tell its own."""
+def given(text: str) -> dict[str, Any]:
+    """The entry of the prompt a run was given, as the Agent call that started it came back with
+    the run's ID."""
     return {"kind": "given", "text": text}
-
-
-def answered(session: str, use: str, agent: str | None, text: str) -> None:
-    """Keeps that the Agent call of the ID came back, and, where it gives the ID of the run it
-    started, the prompt under it, where it is not the one kept already."""
-    written(starts_file(session, True), {"kind": "answered", "id": use})
-    if agent is not None:
-        before = [e for e in kept(session, agent) if e.get("kind") == "given"]
-        if not before or before[-1]["text"] != text:
-            keep(session, agent, given(text))
-
-
-def taken(session: str, agent: str, name: str) -> None:
-    """Keeps under the run of the ID, starting, the prompt of the Agent call of its subagent not yet
-    taken nor come back, where it was kept none before; that it cannot tell its own, where two
-    such calls hold differing prompts."""
-    if any(e.get("kind") == "given" for e in kept(session, agent)):
-        return
-    entries = read(starts_file(session, False))
-    done = {e.get("id") for e in entries if e.get("kind") in ("taken", "answered")}
-    waiting = [
-        e
-        for e in entries
-        if e.get("kind") == "asked" and e.get("name") == name and e["id"] not in done
-    ]
-    texts = list(dict.fromkeys(e["text"] for e in waiting))
-    if not texts:
-        return
-    # texts holds one prompt or more here, as none returned above.
-    if len(texts) > 1:  # pragma: no mutate
-        keep(session, agent, given(None))
-        return
-    # The starts file was read above, so its folder is there.
-    starts = starts_file(session, True)  # pragma: no mutate
-    written(starts, {"kind": "taken", "id": waiting[0]["id"]})
-    keep(session, agent, given(texts[0]))  # pragma: no mutate
 
 
 def message(text: str) -> dict[str, Any]:
@@ -196,11 +149,12 @@ def message(text: str) -> dict[str, Any]:
 
 
 def texts(session: str, agent: str) -> list[str] | None:
-    """The texts the agent's run was given, in the order they were sent: its prompt, the one kept
-    last, and each message sent to it after; None where it cannot tell its prompt."""
+    """The texts the agent's run was given, in the order they were sent: its prompt, kept once as
+    the Agent call that started it came back, and each message sent to it after; None where no
+    prompt is kept yet, as a run starts before that call comes back with its ID."""
     entries = kept(session, agent)
-    prompts = [e["text"] for e in entries if e.get("kind") == "given"]
-    if prompts and prompts[-1] is None:
+    prompt = next((e["text"] for e in entries if e.get("kind") == "given"), None)
+    if prompt is None:
         return None
     sent = [e["text"] for e in entries if e.get("kind") == "message"]
-    return prompts[-1:] + sent
+    return [prompt, *sent]

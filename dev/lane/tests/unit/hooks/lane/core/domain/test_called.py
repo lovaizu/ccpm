@@ -71,9 +71,9 @@ class TestKeep(CalledTest):
 
     def test_reading_makes_no_folder(self):
         # Given: nothing kept in the session
-        # When: an agent's entries are read, and a run starts with no call waiting
+        # When: an agent's entries and texts are read
         called.kept("s1", "a1")
-        called.taken("s1", "a1", "writer")
+        called.texts("s1", "a1")
         # Then: no folder is made for the session
         self.assertFalse(os.path.exists(os.path.join(self.base, "lane")))
 
@@ -138,46 +138,20 @@ class TestStarts(CalledTest):
 
 
 class TestGiven(CalledTest):
-    def test_a_start_takes_the_waiting_prompt_once_and_keeps_one_it_was_given(self):
-        # Given: an Agent call of writer waiting, and a run already given its prompt
-        called.asked("s1", "t1", "writer", "p")
-        called.keep("s1", "a0", called.given("q"))
-        # When: that run starts again, and a new run starts
-        called.taken("s1", "a0", "writer")
-        called.taken("s1", "a1", "writer")
-        # Then: the first keeps its own, and the new one takes the waiting prompt
-        self.assertEqual((called.texts("s1", "a0"), called.texts("s1", "a1")), (["q"], ["p"]))
+    def test_a_runs_texts_are_its_prompt_and_each_message_after(self):
+        # Given: a run given its prompt, and a message sent to it
+        self.keep("a1", called.START, called.given("p"), called.message("m"))
+        # When: its texts are read
+        # Then: they are the prompt, then the message
+        self.assertEqual(called.texts("s1", "a1"), ["p", "m"])
 
-    def test_a_start_takes_no_prompt_of_another_subagents_call(self):
-        # Given: an Agent call of reviewer waiting
-        called.asked("s1", "t1", "reviewer", "p")
-        # When: a run of writer starts
-        called.taken("s1", "a1", "writer")
-        # Then: it takes no prompt
-        self.assertEqual(called.texts("s1", "a1"), [])
-
-    def test_of_two_calls_waiting_with_one_prompt_each_start_takes_one(self):
-        # Given: two Agent calls of writer waiting with one prompt
-        called.asked("s1", "t1", "writer", "p")
-        called.asked("s1", "t2", "writer", "p")
-        # When: a run starts, taking the first, the first comes back, and another run starts
-        called.taken("s1", "a1", "writer")
-        called.answered("s1", "t1", "a1", "p")
-        called.taken("s1", "a2", "writer")
-        # Then: the second run takes the second call's prompt
-        self.assertEqual(called.texts("s1", "a2"), ["p"])
-
-    def test_the_prompt_come_back_is_kept_only_where_it_differs_from_the_last(self):
-        # Given: a run given its prompt
-        called.keep("s1", "a1", called.given("the prompt"))
-        # When: its call comes back with the same prompt, then another, then that one again
-        called.answered("s1", "t1", "a1", "the prompt")
-        called.answered("s1", "t1", "a1", "another")
-        called.answered("s1", "t1", "a1", "another")
-        # Then: one entry of each is kept, the later read
-        given = [e for e in called.kept("s1", "a1") if e["kind"] == "given"]
-        self.assertEqual([e["text"] for e in given], ["the prompt", "another"])
-        self.assertEqual(called.texts("s1", "a1"), ["another"])
+    def test_a_run_given_no_prompt_yet_has_no_texts(self):
+        # Given: a run started, sent a message, before its start came back with its prompt
+        self.keep("a1", called.START, called.message("m"))
+        # When: its texts are read
+        # Then: there are none yet, as its prompt is not known
+        self.assertIsNone(called.texts("s1", "a1"))
+        self.assertIsNone(called.texts("s1", "a2"))
 
     def test_the_calls_kept_are_those_of_every_run_or_of_the_run_it_is_in(self):
         # Given: a call before the run's start and one after

@@ -21,9 +21,9 @@ claude plugin validate passed.
 Removed the proposal {proposal}.
 Removed its folder {folder}.
 """
-REVIEWER = "---\nname: reviewer\n---\n\n## Steps\n\n1. Compare the entries.\n"
+REVIEWER = "---\nname: reviewer\nbackground: true\n---\n\n## Steps\n\n1. Compare the entries.\n"
 # A subagent the routes may start, whose name sorts before lead's.
-EDITOR = "---\nname: editor\n---\n\n## Steps\n\n1. Edit the entries.\n"
+EDITOR = "---\nname: editor\nbackground: true\n---\n\n## Steps\n\n1. Edit the entries.\n"
 # What `lay.py print` prints of the README's proposal with docs/routes.md's routes.
 ROUTES_PRINTED = f"""Routes of lead, laid on its step 1:
   first             start writer

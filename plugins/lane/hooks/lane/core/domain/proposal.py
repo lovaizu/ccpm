@@ -139,7 +139,8 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
     the orchestrator, with a `to` and no `on`; each other from another subagent, on a result, one
     route a result; each `to` a subagent routed from, not the orchestrator, which gives no result;
     a route that ends; the orchestrator's step in its file, its tools, where named, with Agent; no
-    subagent they name in the background; and each subagent giving a result with a last step."""
+    subagent they name set to run in the foreground; and each subagent giving a result with a last
+    step."""
     out = schema.held(rules.ROUTES, given)
     if out is not None:
         raise wrong(f"is out of its shape at $.routes{out.told()[1:]}", ROUTES_AGAIN)
@@ -197,15 +198,25 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
                 " which it starts each subagent with",
                 ROUTES_AGAIN,
             )
-        if template.value(entry, "background") == "true":
-            raise wrong(
-                f"gives {name}, whose file sets `background: true`, so Claude Code would not tell"
-                f" {lead} it ended",
-                ROUTES_AGAIN,
-            )
         if name in froms and step.last(bare) is None:
             raise wrong(f"gives {name}, whose file has no step to end by its result", ROUTES_AGAIN)
+        in_background(root, name, ROUTES_MD)
     return given
+
+
+def in_background(root: str, name: str, told: str = LANES_MD) -> None:
+    """Stops where the file of the subagent of the name, which `agent_lines` has found, does not
+    set `background: true`, telling to set it as the document `told` says: lane tells each run of
+    the subagent from the others by the ID its start gives back, which a start in the background
+    gives at once."""
+    entry = str(step.agent_file(root, name))
+    if not step.background(entry):
+        shown = os.path.relpath(entry, root)
+        raise wrong(
+            f"gives {name}, whose file {shown} does not set `background: true`, which lane needs"
+            " to tell each of its runs from the others",
+            f"set `background: true` in its frontmatter, as {told} says, and run again",
+        )
 
 
 def subagent(root: str, given: dict[str, Any], beside: str = "") -> dict[str, Any]:
@@ -217,6 +228,7 @@ def subagent(root: str, given: dict[str, Any], beside: str = "") -> dict[str, An
     if "adapter" in given:
         adapters.append(adapter(given["adapter"], "values", root, beside, f"{name}"))
     file, lines = agent_lines(root, name)
+    in_background(root, name)
     numbers: list[int] = []
     for s in given["steps"]:
         number = s["step"]

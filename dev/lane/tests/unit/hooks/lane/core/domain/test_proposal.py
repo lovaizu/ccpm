@@ -32,7 +32,7 @@ class TestRead(ProposalTest):
         self.assertEqual((writer["name"], writer["file"]), ("writer", file))
         self.assertEqual(writer["lines"], helpers.WRITER.splitlines(keepends=True))
         self.assertEqual(
-            [(s["step"], s["span"]) for s in writer["steps"]], [(2, (8, 9)), (3, (9, 10))]
+            [(s["step"], s["span"]) for s in writer["steps"]], [(2, (9, 10)), (3, (10, 11))]
         )
 
     def test_the_proposals_schema_is_the_one_docs_lanes_md_gives(self):
@@ -229,9 +229,15 @@ class TestRoutes(RoutesTest):
             ),
             (
                 "reviewer.md",
-                helpers.REVIEWER.replace("---\n\n", "background: true\n---\n\n"),
+                helpers.REVIEWER.replace("background: true\n", ""),
                 1,
-                "reviewer, whose file sets `background: true`",
+                "reviewer, whose file agents/reviewer.md does not set `background: true`",
+            ),
+            (
+                "reviewer.md",
+                helpers.REVIEWER.replace("background: true", "background: false"),
+                1,
+                "reviewer, whose file agents/reviewer.md does not set `background: true`",
             ),
             (
                 "reviewer.md",
@@ -242,7 +248,7 @@ class TestRoutes(RoutesTest):
         ):
             with self.subTest(said=said):
                 # Given: the routes laid on a step lead does not have, lead naming its tools
-                # without Agent, reviewer in the background, or with no steps
+                # without Agent, reviewer not set to run in the background, or with no steps
                 self.setUp()
                 self.write(os.path.join(self.plugin, "agents", file), text)
                 given = {"plugin": "changelog", "routes": {**helpers.ROUTES, "step": step}}
@@ -252,10 +258,27 @@ class TestRoutes(RoutesTest):
                 self.assertIn(said, told)
                 self.assertIn(os.path.join(helpers.LANE, "docs", "routes.md"), told)
 
+    def test_a_routed_subagent_not_set_to_run_in_the_background_is_told_how_to_set_it(self):
+        # Given: reviewer's file not setting `background: true`
+        self.write(
+            os.path.join(self.plugin, "agents", "reviewer.md"),
+            helpers.REVIEWER.replace("background: true\n", ""),
+        )
+        # When: the routes are proposed
+        told = self.refused({"plugin": "changelog", "routes": helpers.ROUTES})
+        # Then: it is refused, telling to set it in that file's frontmatter
+        self.assertTrue(
+            told.endswith(
+                "; set `background: true` in its frontmatter, as"
+                f" {os.path.join(helpers.LANE, 'docs', 'routes.md')} says, and run again."
+            ),
+            told,
+        )
+
     def test_only_the_orchestrator_needs_its_step_and_agent(self):
         # Given: routes from lead to editor, a name before lead's, and reviewer, a name after,
         # neither having lead's step 1 nor naming Agent among its tools
-        other = "---\nname: {name}\ntools: Read\n---\n\n## Steps\n\n2. Check.\n"
+        other = "---\nname: {name}\ntools: Read\nbackground: true\n---\n\n## Steps\n\n2. Check.\n"
         for name in ("editor", "reviewer"):
             self.write(os.path.join(self.plugin, "agents", f"{name}.md"), other.format(name=name))
         given = {
@@ -464,6 +487,24 @@ class TestRefused(ProposalTest):
                 # When: the proposal is read
                 # Then: it is refused, saying which
                 self.assertIn(said, self.refused(given))
+
+    def test_a_subagent_not_set_to_run_in_the_background_is_refused(self):
+        for text in (
+            helpers.WRITER.replace("background: true\n", ""),
+            helpers.WRITER.replace("background: true", "background: false"),
+        ):
+            with self.subTest(text=text):
+                # Given: writer's file setting no `background`, or setting it false
+                self.write(self.agent_file, text)
+                # When: the README's proposal is read
+                # Then: it is refused, telling to set it in that file's frontmatter
+                self.assertEqual(
+                    self.refused(helpers.PROPOSAL),
+                    "lay.py: the proposal gives writer, whose file agents/writer.md does not set"
+                    " `background: true`, which lane needs to tell each of its runs from the"
+                    " others; set `background: true` in its frontmatter, as"
+                    f" {os.path.join(helpers.LANE, 'docs', 'lanes.md')} says, and run again.",
+                )
 
 
 if __name__ == "__main__":

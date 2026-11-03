@@ -11,18 +11,20 @@ the last column says.
 What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
 `{<name>}`. A thing given for each run is the value under that name that the values port reads in
 what the subagent is given: the prompt of the Agent call that started it, and each message a
-SendMessage call sent to it after, the later over the earlier. So the hook holds a file added to the run while the
-subagent works, as by an answer, from then on. The sentence `Write only {work}.` holds a subagent to
-the files and folders its run's `work` names, whichever they are. A value given as `null` is the
-caller saying there is none: each lane taking that name lets the call or the end through on that
-run, with nothing told. A thing taken holds any text, a comma among the rest.
+SendMessage call sent to it after, the later over the earlier. So the hook holds a file added to
+the run while the subagent works, as by an answer, from then on. The sentence `Write only {work}.`
+holds a subagent to the files and folders its run's `work` names, whichever they are. A value given
+as `null` is the caller saying there is none: each lane taking that name lets the call or the end
+through on that run, with nothing told. A thing taken holds any text, a comma among the rest.
 
-Claude Code hands a subagent's start no prompt, so lane keeps the prompt of each Agent call
-starting a subagent of your plugin as the call is made, and gives it to the next run of that
-subagent that starts. Where two such calls with differing prompts wait for their starts, a run
-cannot tell its own until its call comes back with the run's `agentId`, and each lane taking a
-value of it is an error meanwhile. A SendMessage call counts where its `to` is the run's
-`agentId`.
+Each subagent with lanes, or that routes name, sets `background: true` in its frontmatter, and
+`lay.py print` refuses a proposal where one does not. Claude Code then runs it in the background
+however it is started ([background](https://code.claude.com/docs/en/sub-agents)), and the Agent
+call that starts it comes back at once with the `agentId` of its run. lane keeps the call's prompt
+under that ID as the call comes back, so many runs of one subagent at once are each held to their
+own values. A run starts a moment before its call comes back, so a call the run makes that needs a
+value waits for it up to 3 seconds, and is an error where it has not come back by then. A
+SendMessage call counts where its `to` is the run's `agentId`.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -203,17 +205,19 @@ The layer holds a proposal's takes to the same IN, so a wrong take shows when th
 not on a run.
 
 Anything not as these say is an error, not a drift. Errors include a value not given or given
-empty, or of a run that cannot tell its prompt; an adapter failing, giving no answer in time or
-answering out of its port; the event or `hooks/lanes.json` not as Claude Code and `lay.py write`
-write them; a step no longer saying its lane's sentence; and a thing a lane takes that `lay.py write` would now refuse,
-such as in_form's form gone. On an error the guard stops the call, or keeps the subagent going once
+empty, or of a run whose start has not come back with its `agentId` within 3 seconds; an adapter
+failing, giving no answer in time or answering out of its port; the event or `hooks/lanes.json` not
+as Claude Code and `lay.py write` write them; a subagent's file no longer setting
+`background: true`; a step no longer saying its lane's sentence; and a thing a lane takes that
+`lay.py write` would now refuse, such as in_form's form gone. On an error the guard stops the call, or keeps the subagent going once
 as it ends, and tells it and you
 
 ```
 <plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Ask the main conversation for the fix: <who must fix it>. Go on with the rest of your work meanwhile.
 ```
 
-or, where the event or `hooks/lanes.json` is what is wrong, so no lane of the subagent is known,
+or, where the event, `hooks/lanes.json` or the subagent's file is what is wrong, so no lane of the
+subagent can be checked,
 
 ```
 <plugin>: lane cannot check the lanes of <subagent>: <what is wrong>. Ask the main conversation for the fix: <who must fix it>. Go on with the rest of your work meanwhile.

@@ -37,6 +37,14 @@ def agent_file(root: str, name: str) -> str | None:
     return None
 
 
+def background(entry: str) -> bool:
+    """Whether the subagent's entry, the file at the path, sets `background: true`, so Claude Code
+    runs the subagent in the background however it is started, and its start gives back the ID
+    of its run at once."""
+    with open(entry, encoding="utf-8") as f:
+        return template.value(f.read().splitlines(), "background") == "true"
+
+
 # A step's numbered line, its number first.
 NUMBERED = re.compile(r"([0-9]+)\. ")
 

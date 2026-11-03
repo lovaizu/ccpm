@@ -57,7 +57,7 @@ class TestStepsLaid(unittest.TestCase):
     def agent(self, laid_steps: list) -> dict:
         """writer as the proposal gives it, with the lines of the README's writer laid."""
         lines = helpers.LAID.splitlines(keepends=True)
-        given = [{**s, "span": (6 + s["step"], 7 + s["step"])} for s in laid_steps]
+        given = [{**s, "span": (7 + s["step"], 8 + s["step"])} for s in laid_steps]
         return {"name": "writer", "lines": lines, "steps": given}
 
     def test_the_proposals_steps_are_laid_with_what_is_gone_from_each(self):
@@ -80,7 +80,7 @@ class TestStepsLaid(unittest.TestCase):
             [(s["step"], s["lanes"], s["gone"]) for s in found],
             [(3, helpers.STEPS[1]["lanes"], []), (2, [], [helpers.RUN])],
         )
-        self.assertEqual(found[1]["span"], (8, 9))
+        self.assertEqual(found[1]["span"], (9, 10))
 
     def test_a_step_laid_before_that_the_file_no_longer_has_is_left_out(self):
         # Given: a lane laid before on step 9, which writer's file no longer has

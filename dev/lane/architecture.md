@@ -124,14 +124,14 @@ wherever Lane is missing.
   plugin's files, and runs each adapter on its test cases.
 - `hook.py` alone speaks Claude Code's hook JSON. It acts only on an event whose `agent_type` names
   a subagent with rules, and on any call in the session that gives a run of one its texts: an Agent
-  call's prompt, as Claude Code hands the run's start none, and a SendMessage call's message.
+  call that comes back with the `agentId` of the run it started, and a SendMessage call's message.
 - `guard.py` alone decides which checks run on an event. Each module of `lanes/` alone decides what
   breaks its type of rule.
 - `called.py` alone keeps each call of a subagent as it comes back, under the subagent's
-  `agent_id`, and each result given. `routes.py` alone decides the next start from the routes and
-  the results kept. `ports.py` alone reads a text of the plugin, such as a list of items to answer,
-  into Port JSON, the JSON in which a check takes it. It reads by Lane's own reading, or through the
-  plugin's adapter.
+  `agent_id`, each result given, and the texts each run was given. `routes.py` alone decides the
+  next start from the routes and the results kept. `ports.py` alone reads a text of the plugin,
+  such as a list of items to answer, into Port JSON, the JSON in which a check takes it. It reads
+  by Lane's own reading, or through the plugin's adapter.
 - The check script checks, as a subagent runs its result command, that its work is in the form its
   result needs: each text in its form, each item answered, and the tests run on the files as they
   are. It stops the command with what is missing. Only the hook is given the run's `agent_id`, which
@@ -146,7 +146,7 @@ wherever Lane is missing.
   then acts by `agent_type`.
 - A skill is checked where it runs with `context: fork` and `agent: <plugin>:<subagent>`: its tool
   calls then reach the hooks with that `agent_type`. Named by the subagent's bare name, the fork
-  runs as `general-purpose`, which no rule names (trial of 2026-11-03, Claude Code 2.1.316).
+  runs as `general-purpose`, which no rule names (tried on Claude Code 2.1.316, 2026-11-03).
 - `called.py` keeps the calls itself, as the hook input of one event does not hold the calls before
   it, and the record that does is not documented.
 - An adapter is a script that Lane runs, not a module that Lane imports. So `lay.py up` replaces
@@ -213,7 +213,9 @@ sequenceDiagram
   participant C as called.py
   participant LN as lanes/
   OP->>CC: asks changelog for an entry and a commit
-  CC->>SA: starts writer
+  CC->>SA: starts writer in the background
+  CC->>H: PostToolUse of the start, with writer's agentId (Event)
+  H->>C: keeps the start's prompt under the agentId (Run value)
   loop for each tool call: git log --oneline, then the write of CHANGELOG.md
     SA->>CC: makes the call
     CC->>H: PreToolUse (Event)
@@ -236,7 +238,7 @@ sequenceDiagram
     CC-->>SA: the plugin's name and the sentence
   end
   SA->>CC: ends with CHANGELOG.md written
-  CC-->>OP: writer's answer (Answer)
+  CC-->>OP: writer's answer, once it has ended (Answer)
 ```
 
 An orchestrator on a run, `lead` of the UX's O2:
@@ -263,7 +265,11 @@ sequenceDiagram
     H->>RT: is this start named? (Route, Result)
     RT-->>H: it is
     H-->>CC: nothing to tell, so the start goes on
-    CC->>S: runs it
+    CC->>S: runs it in the background
+    CC->>H: PostToolUse of the start, `async_launched` with its agentId (Event)
+    H->>C: keeps the start and its prompt under the agentId (Kept call, Run value)
+    H-->>CC: context: wait for it to end (Decision)
+    O->>CC: ends, waiting
     S->>CC: runs the result script with its result
     CC->>H: PreToolUse of the result command (Event)
     H-->>CC: the work is in form, so the command goes on
@@ -274,7 +280,7 @@ sequenceDiagram
     S-->>CC: ends
     CC->>H: SubagentStop of it (Event)
     H->>C: a result is kept, so it may end
-    CC->>H: PostToolUse of the start (Event)
+    CC->>H: SubagentStart of lead, started again to be told it ended (Event)
     H->>RT: asks the next start (Route, Result)
     RT-->>H: writer after `more`, reviewer after `written`, or none after `good`
     H-->>CC: context with the next start, or that no start is left (Decision)
@@ -306,21 +312,37 @@ sequenceDiagram
 
 - A result counts only from a run of the result script that succeeded. Claude Code sends a run that
   exits with an error as PostToolUseFailure, not PostToolUse, so a run whose work is not in form
-  gives no result (trial of 2026-11-03).
+  gives no result (tried on 2026-11-03).
 - The result script is named in the step as `${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py` with the
   subagent and the result, and Claude Code puts the plugin's folder in its place before the
-  subagent reads the step (trial of 2026-11-03). The check script matches the command whole against
+  subagent reads the step (tried on 2026-11-03). The check script matches the command whole against
   the same path, which Claude Code gives the hook.
 - A subagent resumed by SendMessage keeps its `agent_id`, and SubagentStart and SubagentStop come
-  again for the resumed run (trial of 2026-11-03). So the calls and results kept under that ID carry
+  again for the resumed run (tried on 2026-11-03). So the calls and results kept under that ID carry
   on across a resume.
-- A start counts once the started subagent has ended, in the foreground or the background. While a
-  started subagent runs in the background, only another start is stopped, so the orchestrator may
-  end and wait.
+- Each subagent with rules runs in the background, as `lay.py print` refuses one whose file does not
+  set `background: true`, and the check script stops each call of one whose file no longer does.
+  So the conversation that starts it stays free, independent runs go at once, and the Agent call
+  comes back at once with the `agentId` of the run. The check script keeps the call's prompt under
+  that ID from its PostToolUse, which holds the call's `tool_input` and `tool_response` together,
+  so each run is joined to its own values by documented fields alone, however many runs of one
+  subagent go at once. A join by the order of the starts would rest on no documented field.
+- A run starts a moment before its start comes back: as tried on Claude Code 2.1.317, the run's
+  SubagentStart came within 1 ms of the Agent call's PostToolUse, and its first call 3 to 5 seconds
+  later. So a call that needs a value waits for the prompt up to 3 seconds, within the hook's 10,
+  and is stopped as an error after, as a call that cannot be checked is.
+- A start that comes back `completed` comes back once its run has ended, so each call of the run
+  that needed a value was stopped after the wait, with the error that names who must fix it. The
+  calls that needed none were checked. For the routes, the start counts as it comes back.
+- A start counts once the started subagent has ended. While a started subagent runs in the
+  background, only another start is stopped, so the orchestrator may end and wait. Claude Code
+  starts it again once that subagent has ended, in an interactive session. In `claude -p`, Claude
+  Code 2.1.317 gives that end to the main conversation instead and does not start the orchestrator
+  again (tried on 2026-11-03), so routes run in an interactive session.
 - The next start reaches the orchestrator as context that Claude Code adds for it, not from a script
   that it runs, so learning it costs it no call.
 - Claude Code puts a held command to the person even under `bypassPermissions`. In `claude -p` no
-  one can be asked, and Claude Code refuses the command (trial of 2026-11-03).
+  one can be asked, and Claude Code refuses the command (tried on 2026-11-03).
 
 ## Physical view
 
@@ -374,10 +396,10 @@ dev/lane/
 └── tests/
     ├── unit/hooks/lane/core/domain/   unit and property tests, at the path of what each tests, a lane's beside the others <Python 3>
     ├── integration/                   lay.py, the hooks' commands and result.py on real files <Python 3>
-    └── e2e/                           the trials, trial_*.py, and their plugins <Python 3>
+    └── e2e/                           the E2E tests, trial_*.py, and their plugins <Python 3>
 
 .lane/<yyyymmdd>-<plugin>/             Proposal, and <plugin>/adapters/ with Adapter and Test cases
-<temporary folder>/lane/<yyyymmdd>-<session>/<agent_id>.jsonl, .starts.jsonl   Calls kept, and the prompts of the starts
+<temporary folder>/lane/<yyyymmdd>-<session>/<agent_id>.jsonl   Calls kept, and the texts each run was given
 <the plugin>/agents/                   Subagent file, with each Step
 <the plugin>/hooks/                    hooks.json (Hook entry), lanes.json (Rules laid, Route), adapters/ (the Adapter that runs, Test cases), lane/ (Lane's code)
 ```
@@ -388,24 +410,27 @@ Lane is tested as [Test](../architecture.md#test) says. What follows is what Lan
 
 | Deployment unit | Unit | Integration | End-to-end |
 |---|---|---|---|
-| lay.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · the proposal checked, steps and hook entries written | unittest, real files, a stand-in `claude` · ●●○ · print, write and up on a plugin | trials · ●●○ · the lanes and the routes laid on a trial plugin |
-| Hook process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each type of rule, tool calls, the next start | unittest, the hook's command in `sh` · ●●○ · the answer JSON, the Python check | trials · ●●○ · each type of rule and the routes on a run of the trial plugin |
-| Result process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each result a subagent may give | unittest, real files · ●●○ · the exit and its message | trials · ●●○ · results given on a run of the trial plugin |
+| lay.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · the proposal checked, steps and hook entries written | unittest, real files, a stand-in `claude` · ●●○ · print, write and up on a plugin | E2E tests · ●●○ · the lanes and the routes laid on a test plugin |
+| Hook process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each type of rule, tool calls, the next start | unittest, the hook's command in `sh` · ●●○ · the answer JSON, the Python check | E2E tests · ●●○ · each type of rule and the routes on a run of the test plugin |
+| Result process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each result a subagent may give | unittest, real files · ●●○ · the exit and its message | E2E tests · ●●○ · results given on a run of the test plugin |
 
 The adapter processes have no row. An adapter is the developer AI's code, and Lane's running of it
 is tested in the hook process's row.
 
 - Unit and integration tests fake Claude Code. Each event is JSON in the fields Claude Code
   documents, and `claude` is a script on `PATH`. They pass as the shared rules say.
-- End-to-end tests are the trials. A trial runs Claude Code with Opus on copies of Lane and of a
-  trial plugin, with a prompt that invites a break, and is judged from the session's records. It
-  passes in three runs of three: each invited break is stopped with its sentence, each allowed call
-  goes through, and the subagents start as the routes say. An AI that goes back to its step once may
-  go around the rule the next time. A run counts only where each invited break was tried. A held
-  command is tried in an interactive session, as `claude -p` refuses it.
+- An E2E test runs Claude Code with Opus on copies of Lane and of a test plugin, with a prompt that
+  invites a break, and is judged from the session's records. It passes in three runs of three:
+  each invited break is stopped with its sentence, each allowed call goes through, and the
+  subagents start as the routes say. An AI that goes back to its step once may go around the rule
+  the next time. A run counts only where each invited break was tried. One E2E test starts two runs
+  of one subagent at once with different values, and passes where each run is held to its own. The
+  routes and a held command are tried in an interactive session, as `claude -p` neither starts the
+  orchestrator again nor asks anyone. The files are named `trial_*.py`, so unittest finds none of
+  them.
 - Each process weighs ●●● in unit tests. A failure writes what no one approved, or lets a break
   through in a plugin whose operator never sees Lane.
 - Integration and end-to-end tests weigh ●●○. The unit tests hold every behavior, as
   [Unit: code](../architecture.md#unit-code) says. So integration tests check only how
-  the code meets `sh`, the files and `claude`, and the trials only how an AI meets the sentences and
-  the starts.
+  the code meets `sh`, the files and `claude`, and the E2E tests only how an AI meets the sentences
+  and the starts.

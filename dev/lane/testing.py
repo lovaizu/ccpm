@@ -5,8 +5,8 @@ for every test spends most of the tests' time; and, for a plugin whose lanes lan
 as the plugin takes it through a link, and each lane its hooks/lanes.json lays. What a run of a
 plugin's tests writes is in one folder of its own, `<plugin>/<yyyymmdd>-tests-<random>/` in the
 system's temporary folder, as dev/architecture.md's Where a plugin writes its files has it, the
-plugin's tests being in dev/<plugin>/tests/; and such a folder for what a trial uses only while
-it runs."""
+plugin's tests being in dev/<plugin>/tests/; and such a folder for what an E2E test uses only
+while it runs."""
 
 from __future__ import annotations
 
@@ -32,8 +32,8 @@ RUNS: dict[str, str] = {}
 
 def temporary(plugin: str, name: str) -> str:
     """A new folder of the plugin's, `<plugin>/<yyyymmdd>-<name>-<random>/` in the system's
-    temporary folder, for what a test or a trial uses only while it runs, as dev/architecture.md's
-    Where a plugin writes its files has it."""
+    temporary folder, for what a test or an E2E test uses only while it runs, as
+    dev/architecture.md's Where a plugin writes its files has it."""
     top = os.path.join(tempfile.gettempdir(), plugin)
     os.makedirs(top, exist_ok=True)
     return tempfile.mkdtemp(prefix=time.strftime(f"%Y%m%d-{name}-"), dir=top)

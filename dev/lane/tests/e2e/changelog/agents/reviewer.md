@@ -1,6 +1,7 @@
 ---
 name: reviewer
 description: Compares the new CHANGELOG.md entries with the commits since its last version.
+background: true
 ---
 
 ## Steps

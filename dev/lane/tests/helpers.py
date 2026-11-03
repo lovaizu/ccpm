@@ -55,10 +55,12 @@ from lanes import (  # noqa: F401
 )
 
 AGENT = "changelog:writer"
-# The README's subagent `writer` before any lane is laid.
+# The README's subagent `writer` before any lane is laid, run in the background however it is
+# started, as Lane needs.
 WRITER = """---
 name: writer
 description: Writes the CHANGELOG.md entries for the commits since its last version.
+background: true
 ---
 
 ## Steps
@@ -143,6 +145,7 @@ LEAD = """---
 name: lead
 description: Updates CHANGELOG.md for the next release, through writer and reviewer.
 tools: Agent
+background: true
 ---
 
 ## Steps
@@ -153,6 +156,7 @@ tools: Agent
 REVIEWER = """---
 name: reviewer
 description: Compares the new CHANGELOG.md entries with the commits.
+background: true
 ---
 
 ## Steps
@@ -306,7 +310,7 @@ class PluginTest(testing.FolderTest):
 # An entry of the subagent of the name whose steps lie in writer's part, as docs/lanes.md's A
 # subagent's part gives it.
 PART_ENTRY = (
-    "---\nname: {name}\ndescription: d\n---\n\n"
+    "---\nname: {name}\ndescription: d\nbackground: true\n---\n\n"
     "Your steps are in `${{CLAUDE_PLUGIN_ROOT}}/prompts/writer.md`.\n"
 )
 # An adapter of the values port reading `<name>=<value>` lines, with its cases, as the developer AI

@@ -1,6 +1,7 @@
 ---
 name: writer
 description: Writes the CHANGELOG.md entries for the commits since its last version.
+background: true
 ---
 
 ## Steps

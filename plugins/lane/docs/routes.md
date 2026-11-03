@@ -64,10 +64,8 @@ For `changelog`, whose `lead` starts `writer` and then `reviewer`, and `writer` 
   they include Agent, and `lay.py print` refuses routes whose orchestrator's file names its tools
   without it.
 - The orchestrator may also be in the proposal's `subagents`, with lanes on its other steps.
-- No subagent a route names sets `background: true` in its file, and `lay.py print` refuses routes
-  where one does. Claude Code runs such a subagent in the background however it is started, and in
-  `claude -p` does not tell the one that started it that it ended
-  ([background](https://code.claude.com/docs/en/sub-agents)), so the run would stall.
+- Each subagent the routes name, the orchestrator among them, sets `background: true` in its file,
+  as [the lanes](lanes.md) say, and `lay.py print` refuses routes where one does not.
 
 `lay.py write` writes the routes into your plugin's `hooks/lanes.json` as the proposal gives them.
 
@@ -117,19 +115,23 @@ Each line is headed by your plugin's name:
 `<plugin>:<name>` is how Claude Code names a subagent of your plugin. The orchestrator writes the
 rest of the call, such as its prompt.
 
-A start counts once its subagent has ended. An Agent call of a subagent run in the foreground comes
-back once the subagent has ended, with the status `completed`; one of a subagent run in the
-background comes back as the subagent starts, with the status `async_launched`
-([Agent](https://code.claude.com/docs/en/hooks#agent)). Claude Code runs a subagent in the
-background where the call sets `run_in_background`, where you press Ctrl+B, and, in an interactive
-session by default, for every subagent. So lane counts a start as its call comes back `completed`,
-or, come back `async_launched`, as the subagent of the `agentId` it gives ends.
+A start counts once its subagent has ended. Each subagent the routes name runs in the background,
+so the orchestrator's Agent call comes back as the subagent starts, with the status
+`async_launched` and the `agentId` of its run
+([Agent](https://code.claude.com/docs/en/hooks#agent)), and lane counts the start as the subagent
+of that `agentId` ends. A call that comes back `completed`, as where the subagent ran in the
+foreground, counts as it comes back; its subagent's calls that needed a value given for the run
+were stopped meanwhile, as [the lanes](lanes.md) say.
 
 While a started subagent runs in the background, a start of another subagent is stopped and told to
 wait, and the orchestrator's other calls and its end go on. Once that subagent has ended, Claude
 Code starts the orchestrator again to tell it so, and, as Claude Code 2.1.316 does, may not give it
 the line lane's SubagentStart hook tells. The orchestrator then learns the next start where its
 next call is not that start: the call is stopped, telling the start.
+
+In `claude -p`, Claude Code 2.1.317 does not start the orchestrator again: the end of the subagent
+it started reaches the main conversation instead, and the run stops there. Run a plugin with routes
+in an interactive session.
 
 A start that comes back with a status other than `completed` and `async_launched`, or with none,
 or with no `agentId`, is not as Claude Code hands it. lane tells it in the form

@@ -13,11 +13,16 @@ The orchestrator makes no call but the start due while one is due, and starts no
 subagent it started runs in the background.
 
 A take `{<name>}` is the run's value of the name, read at the values port from the texts the run
-was given; a value given as null lets the lane's call or end through on that run.
+was given: the prompt of the Agent call that started it, kept under the ID of the run as the call
+comes back, and each message sent to it after. A call the run makes before its start has come back
+waits for it a short time, within the hook's; a value given as null lets the lane's call or end
+through on that run. A subagent whose file no longer sets `background: true` is an error at each of
+its events, as only a start in the background comes back with the run's ID before the run's
+calls.
 
 At PostToolUse, the call is kept, with the result where it is a result command; the orchestrator is
 told the next start as each of its starts comes back, or, at PostToolUseFailure, the start still
-due. At SubagentStart, the run's start is kept, its prompt taken, the subagent given its part whole
+due. At SubagentStart, the run's start is kept, the subagent given its part whole
 where its entry names one, and the orchestrator told the next start. At SubagentStop, the
 orchestrator is kept going while a start is due, and a subagent giving a result is kept going once
 where it gave none; any other end is kept, so a start in the background counts once its subagent
@@ -64,11 +69,23 @@ ADAPTER = (
     "the maker of {plugin} must fix its adapter {adapter}, and lay it again with `lay.py write`"
 )
 GIVE = "whoever starts {name} must give it `{value}` in its prompt or a message, as JSON"
-ONE_AT_A_TIME = "whoever starts {name} must start one at a time where their prompts differ"
 PART = "the maker of {plugin} must put its part {part} back, or lay its lanes again"
+BACKGROUND = "the maker of {plugin} must set `background: true` in the frontmatter of {file} again"
 CLAUDE_CODE = (
     "Claude Code must be updated with `claude update`, and where this goes on, it must be reported"
     " at https://github.com/lovaizu/ccpm/issues"
+)
+START = (
+    f"whoever starts {{name}} must start it with the Agent tool, and where they did, {CLAUDE_CODE}"
+)
+# The seconds a run's call waits for the Agent call that started the run to come back with its ID,
+# and the seconds between looks: a start in the background comes back as the run starts, and its
+# first call comes seconds later, as Claude Code 2.1.317's hooks showed.
+WAIT = 3.0
+STEP = 0.05
+UNJOINED = (
+    "the Agent call starting it gave back no ID of its run within {wait:g} seconds, so what it was"
+    " given is not known"
 )
 LANES_FAULT = "it must be reported at https://github.com/lovaizu/ccpm/issues, as lane's own fault"
 # What an Agent call starting a subagent gives back, as Claude Code documents it: the status of a
@@ -166,18 +183,26 @@ class Subagent(NamedTuple):
         found = [g for g in self.laid if g.lane == lane]  # pragma: no mutate
         return [c for g in found for c in run_only.named(g.takes, self.root)]
 
+    def texts(self) -> list[str]:
+        """The texts the run was given, as `called.texts` reads them, waiting up to WAIT seconds,
+        within the hook's time left, for its start to come back with them; stops with ValueError
+        where it has not."""
+        for _ in range(int(min(WAIT, ports.left(self.start)) / STEP)):
+            found = called.texts(self.session, self.agent)
+            if found is not None:
+                return found
+            time.sleep(STEP)
+        found = called.texts(self.session, self.agent)
+        if found is None:
+            raise ValueError(UNJOINED.format(wait=WAIT))
+        return found
+
     def values(self) -> dict[str, Any]:
         """The run's values, read at the values port from the texts it was given, by lane's reading
         or the subagent's adapter, once for the event; stops with ports.Failed where the adapter
-        fails, and ValueError where the run cannot tell its prompt."""
+        fails, and ValueError where its start has not come back with its texts."""
         if "values" not in self.memo:
-            texts = called.texts(self.session, self.agent)
-            if texts is None:
-                raise ValueError(
-                    "two starts of it with differing prompts were waiting as it started, so its"
-                    " prompt cannot be told"
-                )
-            given = {"texts": texts}
+            given = {"texts": self.texts()}
             self.memo["values"] = (
                 ports.run(
                     os.path.join(self.root, self.adapter),
@@ -210,8 +235,9 @@ def subagent(
 ) -> Subagent | None:
     """The subagent of the name as the guard checks it, of the plugin at root of the name given;
     None where no lane is laid in it and no route names it. Stops with Cannot where the plugin's
-    hooks/lanes.json cannot be read, or the event is not as Claude Code hands it, as `wrong`
-    says. The guard begins on the event here, so its adapters' seconds are counted from now."""
+    hooks/lanes.json cannot be read, the event is not as Claude Code hands it, as `wrong` says, or
+    the subagent's file, where it is there, no longer sets `background: true`. The guard begins on
+    the event here, so its adapters' seconds are counted from now."""
     start = time.monotonic()
     try:
         given = rules.read(root)
@@ -225,6 +251,13 @@ def subagent(
         return None
     if wrong:
         raise Cannot(unshaped(name, wrong))
+    entry = step.agent_file(root, name)
+    if entry is not None and not step.background(entry):
+        file = os.path.relpath(entry, root)
+        said = f"its file {file} no longer sets `background: true`, so lane cannot tell its runs"
+        said += " apart"
+        fix = BACKGROUND.format(plugin=plugin, file=file)
+        raise Cannot(cannot(f"the lanes of {name}", said, fix))
     found = list(laid or [])
     if routed is not None and routed["orchestrator"] == name:
         found.append(rules.Laid(routed["step"], "follow_routes", []))
@@ -284,7 +317,7 @@ def value_of(take: str, lane: rules.Laid, s: Subagent) -> list[str] | None:
         fix = ADAPTER.format(plugin=s.plugin, adapter=s.adapter)
         raise Cannot(cannot(on(lane, s), f"the adapter {s.adapter} {why}", fix)) from None
     except ValueError as why:
-        raise Cannot(cannot(on(lane, s), str(why), ONE_AT_A_TIME.format(name=s.name))) from None
+        raise Cannot(cannot(on(lane, s), str(why), START.format(name=s.name))) from None
     name = take[1:-1]
     fix = GIVE.format(name=s.name, value=name)
     if name not in values:
@@ -503,11 +536,10 @@ def failure_told(s: Subagent, event: dict[str, Any]) -> list[Said]:
 
 
 def start_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
-    """What the subagent's SubagentStart event is told: its run's start is kept and its prompt
-    taken; it is given its part whole, the plugin's folder put in, where its entry names one, or
-    an error where the part is not there; and the orchestrator is told the next start."""
+    """What the subagent's SubagentStart event is told: its run's start is kept; it is given its
+    part whole, the plugin's folder put in, where its entry names one, or an error where the part
+    is not there; and the orchestrator is told the next start."""
     s.keep(called.START)
-    called.taken(s.session, s.agent, s.name)
     told = []
     part = step.part(s.root, s.name)
     if part is not None:
@@ -541,32 +573,29 @@ def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
 
 def handed(plugin: str, event: dict[str, Any], held_: str) -> None:
     """Keeps, of a call made by anyone in the session, what a run of a subagent of the plugin is
-    given: an Agent call starting one, with its prompt, as it is made, and, as it comes back, the
-    prompt under the run's ID it gives; a SendMessage call's message under the run of the ID it is
-    sent to, where that run's calls are kept. Anything not in the fields Claude Code documents is
-    left, as a run whose prompt is not kept is told so by the lane that needs its value."""
+    given: an Agent call starting one, as it comes back, its prompt under the ID of the run it
+    gives back, so runs of one subagent at once are each given their own; a SendMessage call's
+    message, as it is made, under the run of the ID it is sent to, where that run's calls are
+    kept. Anything not in the fields Claude Code documents is left, as a run whose prompt is not
+    kept is told so by the lane that needs its value."""
     tool, given = event.get("tool_name"), event.get("tool_input")
     session, use = event.get("session_id"), event.get("tool_use_id")
     if not isinstance(given, dict) or not isinstance(session, str) or not isinstance(use, str):
         return
-    # Of the events of a call, PreToolUse, PostToolUse and PostToolUseFailure, a call is made at
-    # PreToolUse, the last of them in order.
+    # Only the Agent tool, before which no tool of Claude Code's sorts, starts a run.
+    starting = tool == "Agent"  # pragma: no mutate
+    # Of the events of a call, PostToolUse, PostToolUseFailure and PreToolUse, a call comes back at
+    # PostToolUse, the first of them in order, and is made at PreToolUse, the last.
+    returned = held_ == "PostToolUse"  # pragma: no mutate
     made = held_ == "PreToolUse"  # pragma: no mutate
     try:
-        if tool == "Agent":
+        if starting and returned:
             kind, prompt = given.get("subagent_type"), given.get("prompt")
-            if not isinstance(kind, str) or not kind.startswith(f"{plugin}:"):
-                return
-            if not isinstance(prompt, str):
-                return
-            if made:
-                called.asked(session, use, kind[len(plugin) + 1 :], prompt)
-                return
-            returned = held_ == "PostToolUse"  # pragma: no mutate
-            back = event.get("tool_response") if returned else None
+            back = event.get("tool_response")
             agent = back.get("agentId") if isinstance(back, dict) else None
-            ran = agent if isinstance(agent, str) and called.ID.fullmatch(agent) else None
-            called.answered(session, use, ran, prompt)
+            ours = isinstance(kind, str) and kind.startswith(f"{plugin}:")
+            if ours and isinstance(prompt, str) and isinstance(agent, str):
+                called.keep(session, agent, called.given(prompt))
         elif tool == "SendMessage" and made:
             to, text = given.get("to"), given.get("message")
             sent = isinstance(to, str) and isinstance(text, str) and called.ID.fullmatch(to)

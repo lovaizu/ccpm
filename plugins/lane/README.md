@@ -47,6 +47,9 @@ what the subagent wrote, so a reply such as "No more entries" is never read as `
   rule is about is stopped, and the subagent and whoever runs your plugin are told to install Python.
 - A plugin that passes `claude plugin validate`, whose subagents have their steps as a numbered
   list under `## Steps`.
+- Each subagent with rules, and each that your routes name, sets `background: true` in its
+  frontmatter. Lane tells each run of a subagent from the others by the ID its start gives back,
+  which a start in the background gives at once, as [The lanes](docs/lanes.md) says.
 
 ## Installation
 
@@ -84,12 +87,14 @@ a git repository. It has two files. `changelog/.claude-plugin/plugin.json` names
 ```
 
 `changelog/agents/writer.md` is its subagent `writer`, whose steps 2 and 3 read the commits and
-write the entries:
+write the entries. Its frontmatter sets `background: true`, as [Requirements](#requirements)
+asks:
 
 ```markdown
 ---
 name: writer
 description: Writes the CHANGELOG.md entries for the commits since its last version.
+background: true
 ---
 
 ## Steps
@@ -141,7 +146,7 @@ Removed its folder <the repository>/.lane/20261102-changelog.
 Steps 2 and 3 in `changelog/agents/writer.md` now read as `lay.py print` showed them.
 
 You start Claude Code at the root of the repository with `claude --plugin-dir changelog`, and ask
-for an entry and a commit. Claude Code starts `writer`. `writer` runs `git log --oneline` and writes
+for an entry and a commit. Claude Code starts `writer` in the background. `writer` runs `git log --oneline` and writes
 `CHANGELOG.md`, and the check lets both through. `writer` reads the new sentences in steps 2 and 3,
 and ends with `CHANGELOG.md` written and no commit made.
 

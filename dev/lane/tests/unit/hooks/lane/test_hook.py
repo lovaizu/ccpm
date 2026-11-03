@@ -322,16 +322,22 @@ class TestU3(HookTest):
         context = found["hookSpecificOutput"]["additionalContext"]
         self.assertEqual(context, self.read(part))
 
-    def test_an_agent_call_of_the_main_conversation_is_kept_for_the_run_it_starts(self):
-        # Given: writer laid
-        call = {
-            **self.event("Agent", {"prompt": "p", "subagent_type": AGENT_TYPE}, None),
-            "tool_use_id": "t1",
-        }
-        # When: the main conversation starts writer, and writer starts
+    def test_an_agent_call_of_the_main_conversation_gives_its_prompt_to_the_run_it_started(self):
+        # Given: writer laid, and the main conversation's Agent call starting it
+        given = {"prompt": "p", "subagent_type": AGENT_TYPE}
+        call = {**self.event("Agent", given, None), "tool_use_id": "t1"}
+        # When: the call is made, writer starts, and the call comes back launched in the
+        # background
         self.assertEqual(self.answered(call), {})
         self.answered(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
-        # Then: writer's run is given the call's prompt
+        self.assertIsNone(helpers.called.texts("s1", "a1"))
+        back = {
+            **self.event("Agent", given, None, "PostToolUse"),
+            "tool_use_id": "t1",
+            "tool_response": helpers.back("a1", "async_launched"),
+        }
+        self.assertEqual(self.answered(back, held="PostToolUse"), {})
+        # Then: writer's run of the ID it gave is given the call's prompt
         self.assertEqual(helpers.called.texts("s1", "a1"), ["p"])
 
     def test_a_start_of_leads_coming_back_gives_its_prompt_to_the_run_it_started(self):
@@ -344,14 +350,28 @@ class TestU3(HookTest):
         # Then: writer's run of the ID it gave is given the call's prompt
         self.assertEqual(helpers.called.texts("s1", "w1"), ["p"])
 
+    def test_a_message_is_kept_where_its_call_goes_on_alone(self):
+        # Given: the routes laid, writer due, and a run of writer given its prompt
+        self.route()
+        helpers.called.keep("s1", "w1", helpers.called.given("p"))
+        sent = {"to": "w1", "message": "m"}
+        # When: lead sends it a message, which is stopped as writer's start is due, and the main
+        # conversation sends it one, which goes on
+        lead = {**self.event("SendMessage", sent, "changelog:lead", agent_id="lead1")}
+        self.assertIn("hookSpecificOutput", self.answered(lead))
+        main = {**self.event("SendMessage", {**sent, "message": "n"}, None)}
+        self.assertEqual(self.answered(main), {})
+        # Then: the main conversation's alone is kept
+        self.assertEqual(helpers.called.texts("s1", "w1"), ["p", "n"])
+
     def test_an_agent_call_stopped_keeps_nothing(self):
         # Given: the routes laid, writer due
         self.route()
         # When: lead's start of reviewer is stopped
         self.answered({**self.start("reviewer"), "tool_use_id": "t1"})
-        # Then: nothing waits for reviewer's start
+        # Then: nothing is kept for any run of reviewer
         self.answered(self.subagent("SubagentStart", "reviewer", "r1"), held="SubagentStart")
-        self.assertEqual(helpers.called.texts("s1", "r1"), [])
+        self.assertIsNone(helpers.called.texts("s1", "r1"))
 
 
 if __name__ == "__main__":
