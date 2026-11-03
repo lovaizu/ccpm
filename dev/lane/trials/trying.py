@@ -280,10 +280,13 @@ def interactive(
         command += ["--plugin-dir", plugin]
     command += ["--settings", json.dumps(settings), "--permission-mode", "bypassPermissions"]
     command.append(prompt)
+    # The environment is made before the fork, so the configuration folder fresh makes the first
+    # time is this process's too, where record.py reads the session's records after.
+    env = {**fresh(), "TERM": "xterm-256color"}
     pid, terminal = pty.fork()
     if pid == 0:
         os.chdir(cwd)
-        os.execvpe(command[0], command, {**fresh(), "TERM": "xterm-256color"})
+        os.execvpe(command[0], command, env)
     until = time.monotonic() + wait * 60
     seen, passed, handled = b"", set(), 0
     try:
