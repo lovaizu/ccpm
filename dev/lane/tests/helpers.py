@@ -15,16 +15,23 @@ LANE = os.path.normpath(
 )
 CODE = os.path.join(LANE, "hooks", "lane")
 DOMAIN = os.path.join(CODE, "core", "domain")
-sys.path[:0] = [CODE, DOMAIN, os.path.join(LANE, "..", "..", "dev", "lane")]
+SCRIPTS = os.path.join(LANE, "scripts")
+sys.path[:0] = [CODE, DOMAIN, SCRIPTS, os.path.join(LANE, "..", "..", "dev", "lane")]
 
+import entries  # noqa: F401
 import forms  # noqa: F401
 import guard  # noqa: F401
 import hook  # noqa: F401
 import lanes  # noqa: F401
+import lay  # noqa: F401
+import layer  # noqa: F401
+import placed  # noqa: F401
 import ports  # noqa: F401
+import proposal  # noqa: F401
 import rules  # noqa: F401
 import schema  # noqa: F401
 import step  # noqa: F401
+import steps  # noqa: F401
 import template  # noqa: F401
 import testing
 from lanes import run_only, write_only  # noqa: F401
@@ -50,11 +57,39 @@ LAID = WRITER.replace("`git log --oneline`.\n", f"`git log --oneline`. {RUN}\n")
     "into `CHANGELOG.md`.\n", f"into `CHANGELOG.md`. {WRITE}\n"
 )
 # The README's lanes, as hooks/lanes.json holds them.
-STEPS = [
+STEPS: list[dict[str, Any]] = [
     {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]},
     {"step": 3, "lanes": [{"lane": "write_only", "takes": ["CHANGELOG.md"]}]},
 ]
 RULES = {"subagents": [{"name": "writer", "steps": STEPS}]}
+# The README's proposal, laying them.
+PROPOSAL = {"plugin": "changelog", "subagents": [{"name": "writer", "steps": STEPS}]}
+# Where the README keeps it, from the root of the repository.
+PROPOSED = os.path.join(".lane", "20261102-changelog", "changelog.json")
+# What the README's `lay.py print` prints of it.
+PRINTED = """Lanes of writer, each hook acting in writer alone:
+  step 2  run:   Run only `git log --oneline`.  hook run_only
+  step 3  write: Write only `CHANGELOG.md`.     hook write_only
+
+2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`.
+3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.
+"""
+# The hook's command `lay.py write` writes for changelog with lanes laid in writer alone.
+COMMAND = (
+    'python3 -c "import sys; sys.exit(sys.version_info < (3, 9))" 2>/dev/null'
+    ' || { e=; while IFS= read -r l || [ -n "$l" ]; do e="$e$l"; l=; done; case "$e" in'
+    """ *'"agent_type":"changelog:writer"'*|*'"agent_type": "changelog:writer"'*)"""
+    """ echo '{"systemMessage": "changelog: install Python 3.9 or later, run as python3, for its"""
+    """ hooks to run", "hookSpecificOutput": {"hookEventName": "PreToolUse","""
+    """ "permissionDecision": "deny", "permissionDecisionReason": "changelog: install Python 3.9"""
+    """ or later, run as python3, for its hooks to run"}}';; esac; exit 0; };"""
+    ' exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py" changelog'
+)
+# Its entry of PreToolUse, run on every tool call, blocking the call where the hook fails.
+ENTRY = {
+    "matcher": "*",
+    "hooks": [{"type": "command", "timeout": 10, "command": COMMAND, "onFailure": "block"}],
+}
 
 
 class PluginTest(testing.FolderTest):
@@ -72,11 +107,12 @@ class PluginTest(testing.FolderTest):
         """The plugin's manifest."""
         return os.path.join(self.plugin, ".claude-plugin", "plugin.json")
 
-    def lay(self, steps: list[dict[str, Any]] | None = None, text: str = LAID) -> None:
+    def lay(self, laid_steps: list[dict[str, Any]] | None = None, text: str = LAID) -> None:
         """Lays the README's lanes in `writer`, or the steps given, as `lay.py write` writes
         them: its file saying their sentences, and hooks/lanes.json."""
         self.write(self.agent_file, text)
-        laid = {"subagents": [{"name": "writer", "steps": STEPS if steps is None else steps}]}
+        given = STEPS if laid_steps is None else laid_steps
+        laid = {"subagents": [{"name": "writer", "steps": given}]}
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
 
     def event(self, tool: str, given: dict[str, Any], agent: str | None = AGENT) -> dict:
@@ -104,6 +140,24 @@ class PluginTest(testing.FolderTest):
         if tool == "NotebookEdit":
             return self.event(tool, {"notebook_path": path, "new_source": "x"})
         return self.event(tool, {"file_path": path, "content": "x"})
+
+
+class LayTest(PluginTest):
+    """A test of `lay.py` at the root of the repository `base`, the README's proposal kept where
+    the README keeps it."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.propose(PROPOSAL)
+
+    def propose(self, given: Any) -> str:
+        """Writes the proposal where the README keeps it, as JSON, or as the text given."""
+        self.write(PROPOSED, given if isinstance(given, str) else json.dumps(given))
+        return PROPOSED
+
+    def proposal(self, **changed: Any) -> dict:
+        """The README's proposal with writer's entry changed as given."""
+        return {"plugin": "changelog", "subagents": [{"name": "writer", "steps": STEPS, **changed}]}
 
 
 def answer(text: str) -> dict:
