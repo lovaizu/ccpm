@@ -52,8 +52,8 @@ what it has already settled, so the user is not asked it again.
   questions a work answers yes to when it meets the kind's purpose. Both are written in JSON, so a
   script checks one against the other.
 - How turn moves a work toward its goal is the same for every kind, so a new kind needs only a
-  template. That way draws on agents' best practice and on what lane and turn have done, and is
-  to follow the plugin architecture where that serves; whether it does is still to judge.
+  template. That way follows the plugin architecture: each role's flow lies in `core/roles/`, and
+  Lane's routes carry the work from role to role, as Flow says.
 
 ## Design tree
 
@@ -164,22 +164,41 @@ whose work goes to evaluator.
 2. The refactoring phase: how the work says and shows it, its structure bettered while what it
    says stays (Fowler, Refactoring). The questions of `refactor-doc` for a document, or of
    `refactor-code` for code, as planner decided with the kind, which hold over the whole work. builder finishes the work by them and evaluator
-   verifies it by them, with no design tree, each started fresh. lane's flow declares the six
-   positions: planner, designer, builder, evaluator, builder, evaluator. The orchestrator tells
-   the phase from the role that last ended and its answer: this phase begins when the evaluator
-   of the content phase ends with every question good, and the content phase comes back whenever
-   the move goes to designer. It gives each role its phase's files. A more goes back to builder.
-   Only how the work says a thing changes; a point
-   that would change what it says goes back to designer and the content phase.
+   verifies it by them, with no design tree, each started fresh. This phase's builder and
+   evaluator are roles of their own, `refactorer` and `proofreader`, as a route names the next
+   role from the role that ended and its result alone: evaluator's `good` leads to refactorer,
+   proofreader's to the end. A `more` goes back to refactorer. Only how the work says a thing
+   changes; a point that would change what it says goes back to designer and the content phase.
+
+Lane's routes, each from a role on its result to the next:
+
+| From | On | To |
+|---|---|---|
+| up, the orchestrator | | planner |
+| planner | `planned` | designer |
+| designer | `designed` | builder |
+| builder | `built` | evaluator |
+| builder | `open`, a point the design leaves open | designer |
+| evaluator | `more` | designer |
+| evaluator | `good` | refactorer |
+| refactorer | `refactored` | proofreader |
+| proofreader | `more` | refactorer |
+| proofreader | `content`, a point that would change what the work says | designer |
+| proofreader | `good` | the end |
+
+A role that needs the user's answer, such as designer asking the work's purpose, ends with its
+question and is resumed by SendMessage with the answer, keeping its context. Each role gives its
+result by its plugin's result script, which checks the form of the role's files.
 
 Keeping the two phases apart keeps builder and evaluator on the content while it is made. A phase
 is named so as not to meet rn's stages, inside one of which turn runs.
 
 ## Files
 
-Each is JSON. lane's lanes hold each role to them: `read_whole` has the work read whole before an
-answer is written, `every_item` an answer for every question, `in_form` each file in its form, and
-`end_when` the output made before the role ends. A script checks only what no lane holds, as below.
+Each is JSON. Lane holds each role to them: the work read whole before an answer is written, from
+Read's file_path, offset and limit; each file in its form by `in_form`; and an answer for every
+question by the result script, which the role runs before it ends. A script checks only what Lane
+does not hold, as below.
 Keys follow the steering's rules: a name says its intent, a one-to-many join is nested, a many-to-many join lists IDs.
 
 - `best-practices/<kind>.json`, one for each kind, in `plugins/turn/` for those Turn ships and in
