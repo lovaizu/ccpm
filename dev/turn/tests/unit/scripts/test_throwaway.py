@@ -74,6 +74,10 @@ class TestMain(helpers.testing.FolderTest):
             ("--", probe, "x"),
             ("--file",),
             ("--file", "--", probe),
+            ("--file", "a", "b", "--", probe),
+            ("--files", "a", "--", probe),
+            ("--fil", "a", "--", probe),
+            ("--file", "a", "--file", "--", probe),
             ("--file", "/etc/x", "--", probe),
             ("--file", "../x", "--", probe),
             ("--file", "a/../..", "--", probe),
@@ -93,6 +97,18 @@ class TestMain(helpers.testing.FolderTest):
         code = self.ran("--file", "..notes", "--", f"ls -A ~ > {self.seen}/ls")
         # Then: it is made there
         self.assertEqual((code, self.said("ls")), ((0, ""), "..notes"))
+
+    def test_a_link_in_the_folder_is_copied_as_the_file_it_reaches(self):
+        # Given: a link to a file outside the repository, and a link to nothing
+        outside = os.path.join(self.base, "outside.md")
+        self.write(outside, "kept\n")
+        os.symlink(outside, os.path.join(self.repo, "notes.md"))
+        os.symlink(os.path.join(self.base, "gone"), os.path.join(self.repo, "gone"))
+        # When: a command writes through the first
+        code = self.ran("--", f"echo more >> notes.md; cat notes.md > {self.seen}/notes")
+        # Then: it wrote the copy alone, and the file outside is as it was
+        self.assertEqual((code, self.said("notes")), ((0, ""), "kept\nmore"))
+        self.assertEqual(self.read(outside), "kept\n")
 
     def test_the_script_takes_the_arguments_after_its_own_path(self):
         argv = ["throwaway.py", "--", "exit 0"]
