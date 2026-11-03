@@ -1,32 +1,28 @@
 # meta
 
-## Standard
-
-### Goal
+## Goal
 
 A best practice it makes produces deliverables that achieve their user's purpose.
 
-### Parts
+## Parts
 
-- **standard**: The intended state of a deliverable that achieves its purpose.
-  - **goal**: What the user achieves with the deliverable.
-  - **parts**: The deliverable's parts that meet the goal: each part and what it holds, in the order the user meets them; how they are written out is decided when the deliverable is made.
-  - **checklist**: Questions that check, by the essence, whether the deliverable achieves the goal, asking of each part, of each dependency among parts and of the whole, in the order the builder thinks them.
-- **practice**: How the content is made.
-  - **methods**: For each question, in the checklist's order, the best way of thinking that meets its essence, and steps only where the thinking alone does not lead the builder, with the grounds where they have worked.
+- **goal**: What the user achieves with the deliverable.
+- **parts**: The deliverable's parts that meet the goal: each part and what it holds, in the order the user meets them; how they are written out is decided when the deliverable is made.
+- **benefits**: Questions that check, by the essence, whether the deliverable achieves the goal: what each part, each dependency among parts and the whole bring the user, each asked so it is answered yes or no, in the order the builder thinks them.
+- **practices**: For each question, in the benefits' order, the best way of thinking that meets its essence, and steps only where the thinking alone does not lead the builder, with the grounds where they have worked.
 
-### Checklist
+## Benefits
 
 - **Q1** (goal): Reading the goal, does one see a single thing the user achieves with the deliverable?
 - **Q2** (parts): Looking at the parts, does the builder know what to write in which part, and in what order?
 - **Q3** (goal, parts): Do the parts hold, neither more nor less, the parts the goal needs?
-- **Q4** (checklist): With each question, can the evaluator tell whether that part serves the user?
-- **Q5** (parts, checklist): For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
-- **Q6** (methods): Following the way of thinking and the steps, can the builder make the content the question asks for?
-- **Q7** (checklist, methods): Does every question have, in the checklist's order, a way of thinking that meets its essence?
+- **Q4** (benefits): With each question, can one who judges the deliverable tell whether that part serves the user?
+- **Q5** (parts, benefits): For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
+- **Q6** (practices): Following the way of thinking and the steps, can the builder make the content the question asks for?
+- **Q7** (benefits, practices): Does every question have, in the benefits' order, a way of thinking that meets its essence?
 - **Q8** (the whole): Does a deliverable made by this best practice, and passed, let its user achieve their purpose?
 
-## Practice
+## Practices
 
 ### Q1: Reading the goal, does one see a single thing the user achieves with the deliverable?
 
@@ -76,7 +72,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 - [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "Then one tries to construct hypothetical cases in which an entity has all the properties in the proposed comlist but still lacks something that would be required or important in order to justify an assignment of merit."
 - [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "The list should be concise (to assist its mnemonic function); i.e., it should contain no superfluous criteria."
 
-### Q4: With each question, can the evaluator tell whether that part serves the user?
+### Q4: With each question, can one who judges the deliverable tell whether that part serves the user?
 
 **Thinking**: A question asks whether the user gets what they need, not whether a sign of good work is there, so it cannot be met in the letter while the user goes without.
 
@@ -134,25 +130,25 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 - [Key Evaluation Checklist](https://wmich.edu/sites/default/files/attachments/u350/2014/key%20evaluation%20checklist.pdf), Scriven, Western Michigan University, 2007: "This is an iterative checklist, not a one-shot checklist."
 
-### Q7: Does every question have, in the checklist's order, a way of thinking that meets its essence?
+### Q7: Does every question have, in the benefits' order, a way of thinking that meets its essence?
 
 **Thinking**: Every essence of every question has its way, so the builder never meets a question with nothing to go by.
 
 **Steps**
 
 1. Order the questions in the order the builder thinks them, so that one is answered before those that build on it.
-2. Give each question one method, in that order, and make a method by Q6's way for one that has none.
+2. Give each question one practice, in that order, and make one by Q6's way for a question that has none.
 
 ### Q8: Does a deliverable made by this best practice, and passed, let its user achieve their purpose?
 
-**Thinking**: Only a deliverable made and used shows whether the whole works, and the user's own verdict is what the evaluator's is set against.
+**Thinking**: Only a deliverable made and used shows whether the whole works, and the user's own verdict is what a verdict by the questions is set against.
 
 **Steps**
 
-1. Make one real deliverable by the practice, and pass it by the standard.
+1. Make one real deliverable by the practices, and pass it by the benefits.
 2. Have its user, or an AI holding what the user wants, use it for the goal.
 3. Set the user's verdict against the evaluator's.
-4. Trace each difference to the goal, the parts, a question or a method, and mend it there.
+4. Trace each difference to the goal, the parts, a question or a practice, and mend it there.
 5. Go through again with the next real deliverable.
 
 **Grounds**

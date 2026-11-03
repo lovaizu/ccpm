@@ -1,12 +1,10 @@
 # architecture
 
-## Standard
-
-### Goal
+## Goal
 
 Whoever builds or changes the product, a person or an AI, makes each part without hesitating and on the same thinking as every other part, so the parts together deliver the UX and the product stays easy to read and to change.
 
-### Parts
+## Parts
 
 - **summary**: The opening: which product the document is for, and a sentence or two that say how the product delivers its UX, pointing to the UX instead of repeating it.
 - **principles**: The principles, after a pointer to the principles of the architecture this one is built on, where there is one. Each has a short name the reader finds it by, the rule, one sentence that every part is built by, and the reason, which says what the rule is there for and what goes wrong for the user or the builder without it.
@@ -21,7 +19,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - **test-table**: A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why.
 - **test-rules**: For each test type, including any the product adds, what it makes real, what it fakes and when it passes, and, for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here.
 
-### Checklist
+## Benefits
 
 - **Q1** (user-stories): For each step of the UX's scenarios, can the builder name the one way of using the product at its edge that carries it?
 - **Q2** (summary): Having read the opening, can the builder say how the product delivers its UX, as one idea that every part carries out?
@@ -39,7 +37,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - **Q14** (choices, test-rules): When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
 - **Q15** (the whole): When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
 
-## Practice
+## Practices
 
 ### Q1: For each step of the UX's scenarios, can the builder name the one way of using the product at its edge that carries it?
 

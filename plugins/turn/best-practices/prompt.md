@@ -1,12 +1,10 @@
 # prompt
 
-## Standard
-
-### Goal
+## Goal
 
 Given the prompt for a request it is made for, an AI agent does the task as the prompt's writer means, with only what its run gives it, on every run and in cases the writer did not foresee.
 
-### Parts
+## Parts
 
 - **description**: What the host reads to choose the prompt for a request: a name that says what the prompt does, and a description of what it does and the requests it is used for.
 - **tools**: The tools the AI may use, listed where the host reads them and refuses any other, when the host allows such a list.
@@ -15,7 +13,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - **steps**: The steps in the order the AI takes them, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the script that does it and how to run it.
 - **output**: What the AI hands back, in what form, and to whom.
 
-### Checklist
+## Benefits
 
 - **Q1** (goal): When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?
 - **Q2** (goal): When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?
@@ -31,7 +29,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - **Q12** (the whole): When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?
 - **Q13** (the whole): Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
 
-## Practice
+## Practices
 
 ### Q1: When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?
 

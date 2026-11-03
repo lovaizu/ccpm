@@ -1,377 +1,373 @@
 {
- "standard": {
-  "goal": "Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.",
-  "parts": [
-   {
-    "id": "okrs",
-    "what": "The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.",
-    "parts": [
-     {
-      "id": "objective",
-      "what": "Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject."
-     },
-     {
-      "id": "key-result",
-      "what": "Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from their request to having it. The first comes first: lead time is shortened only by changes that keep how well."
-     }
-    ]
-   },
-   {
-    "id": "scenarios",
-    "what": "The participants, then one scenario for each objective.",
-    "parts": [
-     {
-      "id": "participants",
-      "what": "Before the scenarios, in one place: each participant and whether it is a person, an AI or a script."
-     },
-     {
-      "id": "scenario",
-      "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order."
-     }
-    ]
-   }
-  ],
-  "checklist": [
-   {
-    "id": "Q1",
-    "about": "objective",
-    "what": "Reading an objective, does the builder know which user the product is for and what that user gets from it?"
-   },
-   {
-    "id": "Q2",
-    "about": "okrs",
-    "what": "Weighing a piece of work, can the builder tell which one objective it brings closer?"
-   },
-   {
-    "id": "Q3",
-    "about": "objective, key-result",
-    "what": "After a change, can the builder tell from the key results whether users came closer to the objective?"
-   },
-   {
-    "id": "Q4",
-    "about": "key-result",
-    "what": "Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?"
-   },
-   {
-    "id": "Q5",
-    "about": "objective, scenarios",
-    "what": "For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?"
-   },
-   {
-    "id": "Q6",
-    "about": "participants, scenario",
-    "what": "Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?"
-   },
-   {
-    "id": "Q7",
-    "about": "the whole",
-    "what": "Can the builder change how the product works inside, while its users see the same, and leave the document as it is?"
-   }
-  ]
- },
- "practice": {
-  "methods": [
-   {
-    "question": "Q1",
-    "thinking": "An objective is the progress one user is trying to make, said from where they stand, not what the product does.",
-    "steps": [
-     "List each one who comes to the product with a goal of their own, a person or an AI, by the role they play.",
-     "Write each one's objective as one sentence that fits on one line: that user as its subject, then a verb, its object and the context it is done in, with no feature or mechanism of the product.",
-     "Ask whether the product could do all the sentence says while that user is no better off; if so, rewrite the sentence around what the user gains."
-    ],
-    "grounds": [
-     {
-      "title": "Jobs to Be Done Theory",
-      "url": "https://www.christenseninstitute.org/theory/jobs-to-be-done/",
-      "by": "Clayton Christensen Institute, christenseninstitute.org, 2024",
-      "quote": "Everyone has Jobs to Be Done in their lives—the progress they’re trying to make as they strive toward a goal or aspiration within particular circumstances."
-     },
-     {
-      "title": "Writing Effective Use Cases",
-      "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999, The one page Summary",
-      "quote": "Brainstorm all the actors, human and non, who have an operational goal against the system."
-     },
-     {
-      "title": "Define Your Market",
-      "url": "https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/",
-      "by": "Ulwick, Jobs-to-be-Done Playbook, strategyn.com, 2021",
-      "quote": "Products don’t have jobs-to-be-done—people do."
-     },
-     {
-      "title": "Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick",
-      "url": "https://strategyn.com/jobs-to-be-done/",
-      "by": "Strategyn (Tiffany Anderson), strategyn.com, 2024",
-      "quote": "Identify who is executing the job and define the core functional job in a single, solution-free statement."
-     },
-     {
-      "title": "Define Your Market",
-      "url": "https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/",
-      "by": "Ulwick, Jobs-to-be-Done Playbook, strategyn.com, 2021",
-      "quote": "The product will help the group of people: [verb] + [object] + [contextual clarifier]"
-     },
-     {
-      "title": "Google's OKR Playbook",
-      "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-      "by": "Google, whatmatters.com, no date",
-      "quote": "Could the OKR get a 1.0 under reasonable circumstances — without providing direct enduser or economic benefit? If so, then reword the OKR to focus on the tangible benefit."
-     },
-     {
-      "title": "Google's OKR Playbook",
-      "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-      "by": "Google, whatmatters.com, no date",
-      "quote": "If your Objective doesn’t fit on one line, it probably isn’t crisp enough."
-     }
-    ]
-   },
-   {
-    "question": "Q2",
-    "thinking": "Objectives are cut so that each piece of work brings one of them closer, no gain is written twice, and none is left out.",
-    "steps": [
-     "Take each change planned or recently made that alters what a user gets, and name the one objective it brings closer."
-    ],
-    "grounds": [
-     {
-      "title": "MECE principle",
-      "url": "https://en.wikipedia.org/wiki/MECE_principle",
-      "by": "Wikipedia, en.wikipedia.org, no date",
-      "quote": "The principle has been used in the business mapping process wherein the optimum arrangement of information is exhaustive and does not double count at any level of the hierarchy."
-     },
-     {
-      "title": "Set goals with OKRs",
-      "url": "https://rework.withgoogle.com/en/guides/set-goals-with-okrs",
-      "by": "Google re:Work, rework.withgoogle.com, 2016",
-      "quote": "Once the organization knows what it’s focused on and how it will measure success, it can become easier for individuals to connect their projects with the organizational objectives."
-     },
-     {
-      "title": "Set goals with OKRs",
-      "url": "https://rework.withgoogle.com/en/guides/set-goals-with-okrs",
-      "by": "Google re:Work, rework.withgoogle.com, 2016",
-      "quote": "Do the team priorities connect to any of the organizational key results?"
-     }
-    ]
-   },
-   {
-    "question": "Q3",
-    "thinking": "A key result counts what users do or feel as they come closer to the objective, so it cannot get better while they get nothing more.",
-    "steps": [
-     "For the objective, list how success or failure would show in what the user does or feels, such as giving up, undoing a result or working around the product.",
-     "Turn the signs kept into two measures, each a share, an average per user, a count or a time, and name what it is counted out of: one of how well the user gets what the objective says, and the lead time from their request to having it.",
-     "Ask whether all the objective's key results could get better while the user still does not get what the objective says; if so, add or rework key results until they could not."
-    ],
-    "grounds": [
-     {
-      "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-      "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-      "by": "Rodden, Hutchinson and Fu, CHI 2010",
-      "quote": "Next, think about how success or failure in the goals might manifest itself in user behavior or attitudes. What actions would indicate the goal had been met?"
-     },
-     {
-      "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-      "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-      "by": "Rodden, Hutchinson and Fu, CHI 2010",
-      "quote": "Sometimes failure is easier to identify than success"
-     },
-     {
-      "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-      "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-      "by": "Rodden, Hutchinson and Fu, CHI 2010",
-      "quote": "Choose signals that are sensitive and specific to the goal – they should move only when the user experience is better or worse, not for other, unrelated reasons."
-     },
-     {
-      "title": "Google's OKR Playbook",
-      "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-      "by": "Google, whatmatters.com, no date",
-      "quote": "What matters isn’t the launch, but its impact."
-     },
-     {
-      "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-      "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-      "by": "Rodden, Hutchinson and Fu, CHI 2010",
-      "quote": "Raw counts will go up as your user base grows, and need to be normalized; ratios, percentages, or averages per user are often more useful."
-     },
-     {
-      "title": "Google's OKR Playbook",
-      "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-      "by": "Google, whatmatters.com, no date",
-      "quote": "Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?"
-     },
-     {
-      "title": "Goodhart's law",
-      "url": "https://en.wikipedia.org/wiki/Goodhart%27s_law",
-      "by": "Wikipedia, en.wikipedia.org, no date",
-      "quote": "Goodhart's law is an adage that has been stated as, \"When a measure becomes a target, it ceases to be a good measure\"."
-     },
-     {
-      "title": "Google's OKR Playbook",
-      "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-      "by": "Google, whatmatters.com, no date",
-      "quote": "Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed."
-     }
-    ]
-   },
-   {
-    "question": "Q4",
-    "thinking": "Quality first, then lead time: each stage from the request to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.",
-    "steps": [
-     "Imagine the change, and ask whether it could make the first key result worse.",
-     "Keep it only where it could not."
-    ],
-    "grounds": [
-     {
-      "title": "Google's OKR Playbook",
-      "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-      "by": "Google, whatmatters.com, no date",
-      "quote": "Well done OKRs are a motivational management tool that helps make it clear to teams what’s important, what to optimize, and what tradeoffs to make during their day-to-day work."
-     },
-     {
-      "title": "Risk-Aware Product Decisions in A/B Tests with Multiple Metrics",
-      "url": "https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics",
-      "by": "Schultzberg, Ankargren and Frånberg, engineering.atspotify.com, 2024",
-      "quote": "Clearly, this rule is insufficient when, for example, metrics move in conflicting directions."
-     },
-     {
-      "title": "Pairing Quantity and Quality Key Results: What are Some Examples?",
-      "url": "https://www.whatmatters.com/faqs/quantity-quality-key-results-pairing-examples",
-      "by": "Gil, whatmatters.com, no date",
-      "quote": "In High Output Management, Andy Grove describes pairing Key Results as measuring “both effect and counter-effect.”"
-     },
-     {
-      "title": "Pairing Quantity and Quality Key Results: What are Some Examples?",
-      "url": "https://www.whatmatters.com/faqs/quantity-quality-key-results-pairing-examples",
-      "by": "Gil, whatmatters.com, no date",
-      "quote": "This OKR anticipates that reducing pit stop time can lead to cutting corners or at the very least unintentional mistakes as the team speeds up their work."
-     },
-     {
-      "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-      "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-      "by": "Rodden, Hutchinson and Fu, CHI 2010",
-      "quote": "Use the HEART framework to prompt articulation of goals (e.g. is it more important to attract new users, or to encourage existing users to become more engaged?)."
-     },
-     {
-      "title": "Risk-Aware Product Decisions in A/B Tests with Multiple Metrics",
-      "url": "https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics",
-      "by": "Schultzberg, Ankargren and Frånberg, engineering.atspotify.com, 2024",
-      "quote": "By articulating the heuristics that govern your decision-making process, you can design and analyze the experiment in a way that respects how you make decisions in the end."
-     }
-    ]
-   },
-   {
-    "question": "Q5",
-    "thinking": "A scenario is one run of the main path to the objective, the one most users take, from the request that starts it to the gain that ends it.",
-    "steps": [
-     "Name each scenario by its objective's ID and a short active verb phrase, the user its subject, saying how they reach it.",
-     "Write each step as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes, such as an arrow in a Mermaid sequence diagram.",
-     "Mark a part that repeats as a loop with its condition, holding each step that repeats.",
-     "Read the scenario from start to end: the first message is the user's request, the last gives the user the end, and each step moves toward it."
-    ],
-    "grounds": [
-     {
-      "title": "Basic Use Case Template",
-      "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
-      "by": "Cockburn, HaT TR.96.03a, 1998",
-      "quote": "Use Case: <number> <the name should be the goal as a short active verb phrase>"
-     },
-     {
-      "title": "Basic Use Case Template",
-      "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
-      "by": "Cockburn, HaT TR.96.03a, 1998",
-      "quote": "<put here the steps of the scenario from trigger to goal delivery, and any cleanup after>"
-     },
-     {
-      "title": "Basic Use Case Template",
-      "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
-      "by": "Cockburn, HaT TR.96.03a, 1998",
-      "quote": "Trigger: <the action upon the system that starts the use case, may be time event>"
-     },
-     {
-      "title": "Writing Effective Use Cases",
-      "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
-      "quote": "The main success scenario is the most common, or perhaps easiest to understand, scenario."
-     },
-     {
-      "title": "Writing Effective Use Cases",
-      "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
-      "quote": "Write each sentence as a goal succeeding, distinctly moving the process forward. Write: \"At some time, ActorA kicks ActorB with some information\", or \"System verifies validation conditions are met\", or \"System updates its state\", or \"ActorA has ActorB kick ActorC\"."
-     },
-     {
-      "title": "Sequence diagrams",
-      "url": "https://mermaid.js.org/syntax/sequenceDiagram.html",
-      "by": "Mermaid, mermaid.js.org",
-      "quote": "It is possible to express loops in a sequence diagram."
-     },
-     {
-      "title": "Writing Effective Use Cases",
-      "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
-      "quote": "Does it run from trigger to delivery of the success end condition?"
-     }
-    ]
-   },
-   {
-    "question": "Q6",
-    "thinking": "Each one that takes a step is named by its role and its kind, so the builder knows which step waits for a person and which runs without one.",
-    "steps": [
-     "In each scenario, name each participant it uses, with its kind, as the list of participants gives them, such as by declaring them at the start of a diagram.",
-     "Check each scenario: every message's sender and receiver is named there, and every name and kind is the one the list of participants gives."
-    ],
-    "grounds": [
-     {
-      "title": "Unified Modeling Language 2.5.1",
-      "url": "https://www.omg.org/spec/UML/2.5.1/PDF",
-      "by": "OMG, 2017, chapter 18",
-      "quote": "An Actor models a type of role played by an entity that interacts with the subjects of its associated UseCases (e.g., by exchanging signals and data). Actors may represent roles played by human users, external hardware, or other systems."
-     },
-     {
-      "title": "Writing Effective Use Cases",
-      "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
-      "quote": "An actor might be a person, a company or organization, a computer program or a computer system, hardware or software or both."
-     },
-     {
-      "title": "Sequence diagrams",
-      "url": "https://mermaid.js.org/syntax/sequenceDiagram.html",
-      "by": "Mermaid, mermaid.js.org",
-      "quote": "The actor can have a convenient identifier and a descriptive label."
-     },
-     {
-      "title": "Writing Effective Use Cases",
-      "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
-      "quote": "Is it clear which actor is operating the goal (who is \"kicking the ball?)"
-     }
-    ]
-   },
-   {
-    "question": "Q7",
-    "thinking": "The product is one closed box: the document says only what users mean to do, see and receive, so any design that gives them the same leaves it true.",
-    "steps": [
-     "Pick one change the design could make while users see the same, read every line, and flag each line that would have to change.",
-     "Rewrite each flagged line by what the user does, sees or receives, or leave it to the document that describes the design inside, such as the architecture document."
-    ],
-    "grounds": [
-     {
-      "title": "Writing Effective Use Cases",
-      "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
-      "quote": "For computer systems, it is rare that we open up the black box."
-     },
-     {
-      "title": "Writing Effective Use Cases",
-      "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-      "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
-      "quote": "Show the intent of the actor, what it/they want and get accomplished in that step."
-     },
-     {
-      "title": "Deriving Specifications from Requirements: An Example",
-      "url": "https://www.pamelazave.com/turnstile.pdf",
-      "by": "Jackson and Zave, ICSE 1995",
-      "quote": "The requirement is concerned entirely with the environment, where the effects and benefits of the machine will be felt and assessed: the machine is purely a means to the end of achieving the required effect in the environment."
-     }
-    ]
-   }
-  ]
- }
+ "goal": "Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.",
+ "parts": [
+  {
+   "id": "okrs",
+   "what": "The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.",
+   "parts": [
+    {
+     "id": "objective",
+     "what": "Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject."
+    },
+    {
+     "id": "key-result",
+     "what": "Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from their request to having it. The first comes first: lead time is shortened only by changes that keep how well."
+    }
+   ]
+  },
+  {
+   "id": "scenarios",
+   "what": "The participants, then one scenario for each objective.",
+   "parts": [
+    {
+     "id": "participants",
+     "what": "Before the scenarios, in one place: each participant and whether it is a person, an AI or a script."
+    },
+    {
+     "id": "scenario",
+     "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order."
+    }
+   ]
+  }
+ ],
+ "benefits": [
+  {
+   "id": "Q1",
+   "about": "objective",
+   "what": "Reading an objective, does the builder know which user the product is for and what that user gets from it?"
+  },
+  {
+   "id": "Q2",
+   "about": "okrs",
+   "what": "Weighing a piece of work, can the builder tell which one objective it brings closer?"
+  },
+  {
+   "id": "Q3",
+   "about": "objective, key-result",
+   "what": "After a change, can the builder tell from the key results whether users came closer to the objective?"
+  },
+  {
+   "id": "Q4",
+   "about": "key-result",
+   "what": "Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?"
+  },
+  {
+   "id": "Q5",
+   "about": "objective, scenarios",
+   "what": "For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?"
+  },
+  {
+   "id": "Q6",
+   "about": "participants, scenario",
+   "what": "Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?"
+  },
+  {
+   "id": "Q7",
+   "about": "the whole",
+   "what": "Can the builder change how the product works inside, while its users see the same, and leave the document as it is?"
+  }
+ ],
+ "practices": [
+  {
+   "benefit": "Q1",
+   "thinking": "An objective is the progress one user is trying to make, said from where they stand, not what the product does.",
+   "steps": [
+    "List each one who comes to the product with a goal of their own, a person or an AI, by the role they play.",
+    "Write each one's objective as one sentence that fits on one line: that user as its subject, then a verb, its object and the context it is done in, with no feature or mechanism of the product.",
+    "Ask whether the product could do all the sentence says while that user is no better off; if so, rewrite the sentence around what the user gains."
+   ],
+   "grounds": [
+    {
+     "title": "Jobs to Be Done Theory",
+     "url": "https://www.christenseninstitute.org/theory/jobs-to-be-done/",
+     "by": "Clayton Christensen Institute, christenseninstitute.org, 2024",
+     "quote": "Everyone has Jobs to Be Done in their lives—the progress they’re trying to make as they strive toward a goal or aspiration within particular circumstances."
+    },
+    {
+     "title": "Writing Effective Use Cases",
+     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "by": "Cockburn, draft in preparation for Addison-Wesley, 1999, The one page Summary",
+     "quote": "Brainstorm all the actors, human and non, who have an operational goal against the system."
+    },
+    {
+     "title": "Define Your Market",
+     "url": "https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/",
+     "by": "Ulwick, Jobs-to-be-Done Playbook, strategyn.com, 2021",
+     "quote": "Products don’t have jobs-to-be-done—people do."
+    },
+    {
+     "title": "Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick",
+     "url": "https://strategyn.com/jobs-to-be-done/",
+     "by": "Strategyn (Tiffany Anderson), strategyn.com, 2024",
+     "quote": "Identify who is executing the job and define the core functional job in a single, solution-free statement."
+    },
+    {
+     "title": "Define Your Market",
+     "url": "https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/",
+     "by": "Ulwick, Jobs-to-be-Done Playbook, strategyn.com, 2021",
+     "quote": "The product will help the group of people: [verb] + [object] + [contextual clarifier]"
+    },
+    {
+     "title": "Google's OKR Playbook",
+     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
+     "by": "Google, whatmatters.com, no date",
+     "quote": "Could the OKR get a 1.0 under reasonable circumstances — without providing direct enduser or economic benefit? If so, then reword the OKR to focus on the tangible benefit."
+    },
+    {
+     "title": "Google's OKR Playbook",
+     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
+     "by": "Google, whatmatters.com, no date",
+     "quote": "If your Objective doesn’t fit on one line, it probably isn’t crisp enough."
+    }
+   ]
+  },
+  {
+   "benefit": "Q2",
+   "thinking": "Objectives are cut so that each piece of work brings one of them closer, no gain is written twice, and none is left out.",
+   "steps": [
+    "Take each change planned or recently made that alters what a user gets, and name the one objective it brings closer."
+   ],
+   "grounds": [
+    {
+     "title": "MECE principle",
+     "url": "https://en.wikipedia.org/wiki/MECE_principle",
+     "by": "Wikipedia, en.wikipedia.org, no date",
+     "quote": "The principle has been used in the business mapping process wherein the optimum arrangement of information is exhaustive and does not double count at any level of the hierarchy."
+    },
+    {
+     "title": "Set goals with OKRs",
+     "url": "https://rework.withgoogle.com/en/guides/set-goals-with-okrs",
+     "by": "Google re:Work, rework.withgoogle.com, 2016",
+     "quote": "Once the organization knows what it’s focused on and how it will measure success, it can become easier for individuals to connect their projects with the organizational objectives."
+    },
+    {
+     "title": "Set goals with OKRs",
+     "url": "https://rework.withgoogle.com/en/guides/set-goals-with-okrs",
+     "by": "Google re:Work, rework.withgoogle.com, 2016",
+     "quote": "Do the team priorities connect to any of the organizational key results?"
+    }
+   ]
+  },
+  {
+   "benefit": "Q3",
+   "thinking": "A key result counts what users do or feel as they come closer to the objective, so it cannot get better while they get nothing more.",
+   "steps": [
+    "For the objective, list how success or failure would show in what the user does or feels, such as giving up, undoing a result or working around the product.",
+    "Turn the signs kept into two measures, each a share, an average per user, a count or a time, and name what it is counted out of: one of how well the user gets what the objective says, and the lead time from their request to having it.",
+    "Ask whether all the objective's key results could get better while the user still does not get what the objective says; if so, add or rework key results until they could not."
+   ],
+   "grounds": [
+    {
+     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
+     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
+     "by": "Rodden, Hutchinson and Fu, CHI 2010",
+     "quote": "Next, think about how success or failure in the goals might manifest itself in user behavior or attitudes. What actions would indicate the goal had been met?"
+    },
+    {
+     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
+     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
+     "by": "Rodden, Hutchinson and Fu, CHI 2010",
+     "quote": "Sometimes failure is easier to identify than success"
+    },
+    {
+     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
+     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
+     "by": "Rodden, Hutchinson and Fu, CHI 2010",
+     "quote": "Choose signals that are sensitive and specific to the goal – they should move only when the user experience is better or worse, not for other, unrelated reasons."
+    },
+    {
+     "title": "Google's OKR Playbook",
+     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
+     "by": "Google, whatmatters.com, no date",
+     "quote": "What matters isn’t the launch, but its impact."
+    },
+    {
+     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
+     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
+     "by": "Rodden, Hutchinson and Fu, CHI 2010",
+     "quote": "Raw counts will go up as your user base grows, and need to be normalized; ratios, percentages, or averages per user are often more useful."
+    },
+    {
+     "title": "Google's OKR Playbook",
+     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
+     "by": "Google, whatmatters.com, no date",
+     "quote": "Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?"
+    },
+    {
+     "title": "Goodhart's law",
+     "url": "https://en.wikipedia.org/wiki/Goodhart%27s_law",
+     "by": "Wikipedia, en.wikipedia.org, no date",
+     "quote": "Goodhart's law is an adage that has been stated as, \"When a measure becomes a target, it ceases to be a good measure\"."
+    },
+    {
+     "title": "Google's OKR Playbook",
+     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
+     "by": "Google, whatmatters.com, no date",
+     "quote": "Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed."
+    }
+   ]
+  },
+  {
+   "benefit": "Q4",
+   "thinking": "Quality first, then lead time: each stage from the request to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.",
+   "steps": [
+    "Imagine the change, and ask whether it could make the first key result worse.",
+    "Keep it only where it could not."
+   ],
+   "grounds": [
+    {
+     "title": "Google's OKR Playbook",
+     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
+     "by": "Google, whatmatters.com, no date",
+     "quote": "Well done OKRs are a motivational management tool that helps make it clear to teams what’s important, what to optimize, and what tradeoffs to make during their day-to-day work."
+    },
+    {
+     "title": "Risk-Aware Product Decisions in A/B Tests with Multiple Metrics",
+     "url": "https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics",
+     "by": "Schultzberg, Ankargren and Frånberg, engineering.atspotify.com, 2024",
+     "quote": "Clearly, this rule is insufficient when, for example, metrics move in conflicting directions."
+    },
+    {
+     "title": "Pairing Quantity and Quality Key Results: What are Some Examples?",
+     "url": "https://www.whatmatters.com/faqs/quantity-quality-key-results-pairing-examples",
+     "by": "Gil, whatmatters.com, no date",
+     "quote": "In High Output Management, Andy Grove describes pairing Key Results as measuring “both effect and counter-effect.”"
+    },
+    {
+     "title": "Pairing Quantity and Quality Key Results: What are Some Examples?",
+     "url": "https://www.whatmatters.com/faqs/quantity-quality-key-results-pairing-examples",
+     "by": "Gil, whatmatters.com, no date",
+     "quote": "This OKR anticipates that reducing pit stop time can lead to cutting corners or at the very least unintentional mistakes as the team speeds up their work."
+    },
+    {
+     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
+     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
+     "by": "Rodden, Hutchinson and Fu, CHI 2010",
+     "quote": "Use the HEART framework to prompt articulation of goals (e.g. is it more important to attract new users, or to encourage existing users to become more engaged?)."
+    },
+    {
+     "title": "Risk-Aware Product Decisions in A/B Tests with Multiple Metrics",
+     "url": "https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics",
+     "by": "Schultzberg, Ankargren and Frånberg, engineering.atspotify.com, 2024",
+     "quote": "By articulating the heuristics that govern your decision-making process, you can design and analyze the experiment in a way that respects how you make decisions in the end."
+    }
+   ]
+  },
+  {
+   "benefit": "Q5",
+   "thinking": "A scenario is one run of the main path to the objective, the one most users take, from the request that starts it to the gain that ends it.",
+   "steps": [
+    "Name each scenario by its objective's ID and a short active verb phrase, the user its subject, saying how they reach it.",
+    "Write each step as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes, such as an arrow in a Mermaid sequence diagram.",
+    "Mark a part that repeats as a loop with its condition, holding each step that repeats.",
+    "Read the scenario from start to end: the first message is the user's request, the last gives the user the end, and each step moves toward it."
+   ],
+   "grounds": [
+    {
+     "title": "Basic Use Case Template",
+     "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
+     "by": "Cockburn, HaT TR.96.03a, 1998",
+     "quote": "Use Case: <number> <the name should be the goal as a short active verb phrase>"
+    },
+    {
+     "title": "Basic Use Case Template",
+     "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
+     "by": "Cockburn, HaT TR.96.03a, 1998",
+     "quote": "<put here the steps of the scenario from trigger to goal delivery, and any cleanup after>"
+    },
+    {
+     "title": "Basic Use Case Template",
+     "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
+     "by": "Cockburn, HaT TR.96.03a, 1998",
+     "quote": "Trigger: <the action upon the system that starts the use case, may be time event>"
+    },
+    {
+     "title": "Writing Effective Use Cases",
+     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
+     "quote": "The main success scenario is the most common, or perhaps easiest to understand, scenario."
+    },
+    {
+     "title": "Writing Effective Use Cases",
+     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
+     "quote": "Write each sentence as a goal succeeding, distinctly moving the process forward. Write: \"At some time, ActorA kicks ActorB with some information\", or \"System verifies validation conditions are met\", or \"System updates its state\", or \"ActorA has ActorB kick ActorC\"."
+    },
+    {
+     "title": "Sequence diagrams",
+     "url": "https://mermaid.js.org/syntax/sequenceDiagram.html",
+     "by": "Mermaid, mermaid.js.org",
+     "quote": "It is possible to express loops in a sequence diagram."
+    },
+    {
+     "title": "Writing Effective Use Cases",
+     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
+     "quote": "Does it run from trigger to delivery of the success end condition?"
+    }
+   ]
+  },
+  {
+   "benefit": "Q6",
+   "thinking": "Each one that takes a step is named by its role and its kind, so the builder knows which step waits for a person and which runs without one.",
+   "steps": [
+    "In each scenario, name each participant it uses, with its kind, as the list of participants gives them, such as by declaring them at the start of a diagram.",
+    "Check each scenario: every message's sender and receiver is named there, and every name and kind is the one the list of participants gives."
+   ],
+   "grounds": [
+    {
+     "title": "Unified Modeling Language 2.5.1",
+     "url": "https://www.omg.org/spec/UML/2.5.1/PDF",
+     "by": "OMG, 2017, chapter 18",
+     "quote": "An Actor models a type of role played by an entity that interacts with the subjects of its associated UseCases (e.g., by exchanging signals and data). Actors may represent roles played by human users, external hardware, or other systems."
+    },
+    {
+     "title": "Writing Effective Use Cases",
+     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
+     "quote": "An actor might be a person, a company or organization, a computer program or a computer system, hardware or software or both."
+    },
+    {
+     "title": "Sequence diagrams",
+     "url": "https://mermaid.js.org/syntax/sequenceDiagram.html",
+     "by": "Mermaid, mermaid.js.org",
+     "quote": "The actor can have a convenient identifier and a descriptive label."
+    },
+    {
+     "title": "Writing Effective Use Cases",
+     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
+     "quote": "Is it clear which actor is operating the goal (who is \"kicking the ball?)"
+    }
+   ]
+  },
+  {
+   "benefit": "Q7",
+   "thinking": "The product is one closed box: the document says only what users mean to do, see and receive, so any design that gives them the same leaves it true.",
+   "steps": [
+    "Pick one change the design could make while users see the same, read every line, and flag each line that would have to change.",
+    "Rewrite each flagged line by what the user does, sees or receives, or leave it to the document that describes the design inside, such as the architecture document."
+   ],
+   "grounds": [
+    {
+     "title": "Writing Effective Use Cases",
+     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
+     "quote": "For computer systems, it is rare that we open up the black box."
+    },
+    {
+     "title": "Writing Effective Use Cases",
+     "url": "https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
+     "by": "Cockburn, draft in preparation for Addison-Wesley, 1999",
+     "quote": "Show the intent of the actor, what it/they want and get accomplished in that step."
+    },
+    {
+     "title": "Deriving Specifications from Requirements: An Example",
+     "url": "https://www.pamelazave.com/turnstile.pdf",
+     "by": "Jackson and Zave, ICSE 1995",
+     "quote": "The requirement is concerned entirely with the environment, where the effects and benefits of the machine will be felt and assessed: the machine is purely a means to the end of achieving the required effect in the environment."
+    }
+   ]
+  }
+ ]
 }

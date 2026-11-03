@@ -1,12 +1,10 @@
 # readme
 
-## Standard
-
-### Goal
+## Goal
 
 From the README alone, someone who meets the product for the first time starts using it only when it serves their work.
 
-### Parts
+## Parts
 
 - **summary**: The product's name first, and under it one sentence that says what kind of thing the product is and what it does.
 - **gain**: The paragraph after the summary: whom the product is for and what they gain with it.
@@ -19,7 +17,7 @@ From the README alone, someone who meets the product for the first time starts u
 - **links**: Where to read next: for users, the documents for fuller use; apart from them, for those who change the product, the development documents.
 - **license**: The license's name, linked to its full text.
 
-### Checklist
+## Benefits
 
 - **Q1** (summary): When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?
 - **Q2** (gain): Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?
@@ -32,7 +30,7 @@ From the README alone, someone who meets the product for the first time starts u
 - **Q9** (license): Can the reader tell from the README the terms on which they and their team may use the product?
 - **Q10** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop as soon as they have what they came for?
 
-## Practice
+## Practices
 
 ### Q1: When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?
 

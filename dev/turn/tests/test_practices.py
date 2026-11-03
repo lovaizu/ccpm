@@ -13,20 +13,16 @@ import practices
 
 G = {"title": "T", "url": "https://x.example/t", "by": "X, 2020", "quote": "y"}
 DATA = {
-    "standard": {
-        "goal": "The reader gets it.",
-        "parts": [{"id": "a", "what": "A.", "parts": [{"id": "b", "what": "B."}]}],
-        "checklist": [
-            {"id": "Q1", "about": "a", "what": "Does it?"},
-            {"id": "Q2", "about": "b, the whole", "what": "After Q1, does all?"},
-        ],
-    },
-    "practice": {
-        "methods": [
-            {"question": "Q1", "thinking": "Think.", "steps": ["Do."], "grounds": [G]},
-            {"question": "Q2", "thinking": "Then.", "steps": [], "grounds": []},
-        ]
-    },
+    "goal": "The reader gets it.",
+    "parts": [{"id": "a", "what": "A.", "parts": [{"id": "b", "what": "B."}]}],
+    "benefits": [
+        {"id": "Q1", "about": "a", "what": "Does it?"},
+        {"id": "Q2", "about": "b, the whole", "what": "After Q1, does all?"},
+    ],
+    "practices": [
+        {"benefit": "Q1", "thinking": "Think.", "steps": ["Do."], "grounds": [G]},
+        {"benefit": "Q2", "thinking": "Then.", "steps": [], "grounds": []},
+    ],
 }
 
 
@@ -42,39 +38,39 @@ class Faults(unittest.TestCase):
 
     def test_questions_out_of_number_order(self):
         def swap(d):
-            d["standard"]["checklist"].reverse()
-            d["practice"]["methods"].reverse()
+            d["benefits"].reverse()
+            d["practices"].reverse()
 
         self.assertIn("questions are Q2, Q1, not numbered in order from Q1", changed(swap))
 
-    def test_methods_not_in_the_questions_order(self):
+    def test_practices_not_in_the_questions_order(self):
         def swap(d):
-            d["practice"]["methods"].reverse()
+            d["practices"].reverse()
 
-        expected = "methods meet Q2, Q1, not each question once in its order"
+        expected = "practices meet Q2, Q1, not each question once in its order"
         self.assertEqual(changed(swap), [expected])
 
     def test_a_question_with_no_method(self):
         def drop(d):
-            d["practice"]["methods"].pop()
+            d["practices"].pop()
 
-        self.assertEqual(changed(drop), ["methods meet Q1, not each question once in its order"])
+        self.assertEqual(changed(drop), ["practices meet Q1, not each question once in its order"])
 
     def test_about_a_part_that_is_not_there(self):
         def wrong(d):
-            d["standard"]["checklist"][0]["about"] = "c"
+            d["benefits"][0]["about"] = "c"
 
         self.assertEqual(changed(wrong), ["Q1 is about c, which is no part"])
 
     def test_a_part_named_twice(self):
         def twice(d):
-            d["standard"]["parts"].append({"id": "a", "what": "Again."})
+            d["parts"].append({"id": "a", "what": "Again."})
 
         self.assertEqual(changed(twice), ["part a is named more than once"])
 
     def test_a_ground_missing_a_field_or_with_no_https_link(self):
         def missing(d):
-            d["practice"]["methods"][0]["grounds"] = [dict(G, title=""), dict(G, url="x.example")]
+            d["practices"][0]["grounds"] = [dict(G, title=""), dict(G, url="x.example")]
 
         self.assertEqual(
             changed(missing),
@@ -83,13 +79,13 @@ class Faults(unittest.TestCase):
 
     def test_a_question_named_in_the_text_that_is_not_there(self):
         def name(d):
-            d["practice"]["methods"][1]["thinking"] = "As Q3 says."
+            d["practices"][1]["thinking"] = "As Q3 says."
 
         self.assertEqual(changed(name), ["Q3 is named, but there is no such question"])
 
     def test_a_ground_naming_a_question_is_its_source_s_words(self):
         def quote(d):
-            d["practice"]["methods"][0]["grounds"] = [dict(G, quote="see Q9")]
+            d["practices"][0]["grounds"] = [dict(G, quote="see Q9")]
 
         self.assertEqual(changed(quote), [])
 
@@ -97,18 +93,18 @@ class Faults(unittest.TestCase):
 class Markdown(unittest.TestCase):
     def test_holds_each_part_question_and_method_under_its_question(self):
         text = practices.markdown("kind", DATA)
-        expected = ["# kind", "The reader gets it.", "### Parts", "- **a**: A.", "  - **b**: B."]
+        expected = ["# kind", "The reader gets it.", "## Parts", "- **a**: A.", "  - **b**: B."]
         expected += ["- **Q1** (a): Does it?", "### Q1: Does it?", "**Thinking**: Think."]
         expected += ["1. Do.", '- [T](https://x.example/t), X, 2020: "y"']
         for line in expected:
             self.assertIn(line, text)
-        self.assertLess(text.index("## Standard"), text.index("## Practice"))
+        self.assertLess(text.index("## Benefits"), text.index("## Practices"))
 
     def test_leaves_out_what_a_best_practice_has_none_of(self):
         data = copy.deepcopy(DATA)
-        del data["standard"]["parts"]
+        del data["parts"]
         text = practices.markdown("kind", data)
-        self.assertNotIn("### Parts", text)
+        self.assertNotIn("## Parts", text)
         self.assertEqual(text.count("**Steps**"), 1)
         self.assertEqual(text.count("**Grounds**"), 1)
 
@@ -127,7 +123,7 @@ class Main(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             path = os.path.join(folder, "kind.json")
             data = copy.deepcopy(DATA)
-            data["practice"]["methods"].pop()
+            data["practices"].pop()
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f)
             practices.main(["write", path])

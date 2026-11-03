@@ -1,12 +1,10 @@
 # refactor-doc
 
-## Standard
-
-### Goal
+## Goal
 
 Whoever reads the document for a purpose, a person or an AI, at any time after it is written and in its own language or through a machine translation into theirs, takes in what it says as its writer meant, reading once from the top, and only the parts that purpose needs.
 
-### Checklist
+## Benefits
 
 - **Q1** (the whole): Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?
 - **Q2** (the whole): Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?
@@ -17,7 +15,7 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 - **Q7** (the whole): When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?
 - **Q8** (the whole): Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing?
 
-## Practice
+## Practices
 
 ### Q1: Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?
 

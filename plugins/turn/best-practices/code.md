@@ -1,12 +1,10 @@
 # code
 
-## Standard
-
-### Goal
+## Goal
 
 The maintainer, a person or an AI who takes the code over, changes what it does and knows that whoever runs it still gets each behavior its specification asks and, where something from outside is wrong, learns how to put it right.
 
-### Parts
+## Parts
 
 - **manifest**: What the maintainer needs to set the code up on a fresh machine and run its tests: all the code needs to run, with the versions it runs on, and how to run the tests.
 - **module-opening**: For each module, what this module alone decides, said briefly where the maintainer meets it first on opening the module.
@@ -14,7 +12,7 @@ The maintainer, a person or an AI who takes the code over, changes what it does 
 - **body**: The code under each interface that gives the behavior.
 - **tests**: Tests that hold the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code: each named for the behavior it holds, and each showing the situation, what is done and what must be so.
 
-### Checklist
+## Benefits
 
 - **Q1** (manifest, tests): Setting the code up on a fresh machine from what the code gives for its setup alone, and running the tests again and in any order, does the maintainer see them pass each time?
 - **Q2** (module-opening): With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading their bodies?
@@ -26,7 +24,7 @@ The maintainer, a person or an AI who takes the code over, changes what it does 
 - **Q8** (body, tests): When the maintainer breaks the behavior a test holds, does that test fail?
 - **Q9** (the whole): Given the code and its specification alone, can the maintainer make a change the specification asks and know from the tests that every other behavior still holds?
 
-## Practice
+## Practices
 
 ### Q1: Setting the code up on a fresh machine from what the code gives for its setup alone, and running the tests again and in any order, does the maintainer see them pass each time?
 

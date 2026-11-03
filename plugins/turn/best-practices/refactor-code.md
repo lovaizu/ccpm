@@ -1,12 +1,10 @@
 # refactor-code
 
-## Standard
-
-### Goal
+## Goal
 
 The maintainer, a person or an AI who comes to change the code at any time after it is written, changes it quickly without breaking another behavior: they understand each part on one reading and find the one place the change belongs.
 
-### Checklist
+## Benefits
 
 - **Q1** (the whole): After the code's structure is changed, does each caller, a person, a script or other code, get every behavior it got before?
 - **Q2** (the whole): Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?
@@ -17,7 +15,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 - **Q7** (the whole): Moving from one module to another, does the maintainer find each kind of thing done the same way, so that each difference they meet is one the code needs?
 - **Q8** (the whole): Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it?
 
-## Practice
+## Practices
 
 ### Q1: After the code's structure is changed, does each caller, a person, a script or other code, get every behavior it got before?
 

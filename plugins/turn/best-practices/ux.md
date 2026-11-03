@@ -1,12 +1,10 @@
 # ux
 
-## Standard
-
-### Goal
+## Goal
 
 Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.
 
-### Parts
+## Parts
 
 - **okrs**: The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.
   - **objective**: Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject.
@@ -15,7 +13,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
   - **participants**: Before the scenarios, in one place: each participant and whether it is a person, an AI or a script.
   - **scenario**: For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order.
 
-### Checklist
+## Benefits
 
 - **Q1** (objective): Reading an objective, does the builder know which user the product is for and what that user gets from it?
 - **Q2** (okrs): Weighing a piece of work, can the builder tell which one objective it brings closer?
@@ -25,7 +23,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - **Q6** (participants, scenario): Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
 - **Q7** (the whole): Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
 
-## Practice
+## Practices
 
 ### Q1: Reading an objective, does the builder know which user the product is for and what that user gets from it?
 
