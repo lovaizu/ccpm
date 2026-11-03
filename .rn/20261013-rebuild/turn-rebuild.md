@@ -148,6 +148,14 @@ Both builder and evaluator do this, in the same way.
 
 ## Flow
 
+The aim is to shorten the lead time without lowering quality. So the work is split where its parts
+stand apart and run at once: decisions that build on one another are made in order, and branches of
+the design tree that do not are made, checked and researched side by side, each role's run writing
+only files no other run writes, which Lane holds by each run's values. A part is not split where
+splitting would lower its quality. Every role runs in the background, so the conversation stays free
+to put a role's question to the user at once, and Lane joins each run to its values by the ID the
+start gives back.
+
 designer, builder and evaluator start fresh at each move and carry on from the run's files, so the
 evaluator reads each round with fresh eyes while the files hold the design. In the content phase
 they go always in that order: each return goes to designer, which passes the design to builder,
