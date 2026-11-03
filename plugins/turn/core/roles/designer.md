@@ -53,8 +53,8 @@ the message on and resumes you with the answer.
    each file in it. For each point, a `more`, an `open` or a `content`, or the change the request
    names, find the decisions that serve its question, by their `contributes_to`. Where a decision
    cannot make its question good, reopen it with `pin:down`, as it says for a decision the one who
-   started you names, so it and each decision that builds on it are decided again, the person
-   asked where the point is theirs. Where the decisions hold and the work strays from them, keep
+   started you names, so it and each decision that builds on it are decided again. Where the
+   decisions hold and the work strays from them, keep
    them. Write `{run}/remake.json`, in the form of
    `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/remake.json`: each decision builder makes again, the
    reopened ones, those that build on them and those the work strays from, each with the

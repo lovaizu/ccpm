@@ -125,4 +125,5 @@ hold for it; and under each question, the decisions that make it hold.
    run that is done.
 
 To reopen a decision the one who started you names, set it and each decision that builds on it,
-directly or through others, open again in the tree, and take step 4.
+directly or through others, open again in the tree, keeping in its grounds what the person said of
+it, and take step 4. A point the person left to you stays yours, and is not put to them again.
