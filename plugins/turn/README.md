@@ -130,7 +130,7 @@ README reads, and checks that once more. It ends:
 
 ```text
 Turn: Done. README.md is written. Each question of the README template is met, with the lines
-that meet it in .turn/20261103-tidy-readme/verification.json.
+that meet it in .turn/20261103-tidy-readme/verification/.
 ```
 
 `README.md` is in the repository's root, not committed. The run's folder

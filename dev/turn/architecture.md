@@ -90,12 +90,17 @@ folder in a new session (KR1.1, KR1.2).
 
 ### Parts that stand apart run at once
 
-Decisions that build on one another are made in order. Branches of the design tree that do not are
-made side by side, each run writing only files no other run writes, and so are the questions a
-work is checked by. A part is not split where splitting would make it worse, such as one document
-written in two voices.
+Decisions that build on one another are made in order, in one run. Branches of the design tree
+that do not are made side by side: `up` starts one run of builder for each, all at once, each
+writing only files no other run writes. The questions a work is checked by are answered the same
+way, one run of evaluator or proofreader for each group of questions. The next route is taken
+once every run of the step has ended. A part is not split where splitting would make it worse,
+such as one document written in two voices, and refactorer is always one run, as how a work says
+things holds over the whole of it.
 
-The lead time is shortened without a step left out (KR1.2, KR2.2, KR3.2).
+The lead time is shortened without a step left out (KR1.2, KR2.2, KR3.2). Only `up` starts runs:
+a role that started runs of its own would stand a layer deeper, and under a caller the depth
+limit would leave it no Agent tool, so the work would go in order again.
 
 ### Turn knows its caller only by the call
 
@@ -191,7 +196,8 @@ calls Turn.
   checks that a result is one a route is on.
 - Turn's scripts alone check what Lane does not: `practices.py` a template's form, `tree.py` that
   the design tree asks the template's questions, and `answers.py` each answers file. pin's
-  `check.py` alone checks that the design tree holds together.
+  `check.py` alone checks that the design tree holds together. `tree.py parts` and
+  `practices.py groups` alone split a step's work into the runs `up` starts.
 - The main conversation follows `/turn:up`'s skill only to start `up` and to pass on its questions,
   answers and end. Lane does not check the main conversation, so it holds none of Turn's work.
 
@@ -203,14 +209,14 @@ its form by an `in_form` lane, the form a JSON Schema in `core/domain/forms/`.
 |---|---|---|---|
 | `up` | nothing | nothing | having started each role Lane named |
 | planner | `{run}/run.json`, `{run}/kind-tree.json`, `.turn/best-practices/` | pin's check, `practices.py` | `practices.py check` passed after the template's last change |
-| designer | `{run}/design-tree.json`, `{run}/work.json`, `{run}/remake.json` | pin's check, `tree.py check` | both passed after the tree's last change |
-| builder | `{work}`, `{run}/self-check.json`, `{run}/open.json`, `{run}/parts/` | `{commands}`, `tree.py branches`, `answers.py` | the work read whole; `answers.py check` passed after the last change |
-| evaluator | `{run}/verification.json`, `{run}/parts/` | `{commands}`, `answers.py` | the work read whole; `answers.py check` passed |
+| designer | `{run}/design-tree.json`, `{run}/work.json`, `{run}/remake.json` | pin's check, `tree.py check`, `tree.py parts` | both passed after the tree's last change |
+| builder | `{work}`, `{answers}`, `{open}` | `{commands}`, `answers.py` | the work read whole; `answers.py check` passed after the last change |
+| evaluator | `{answers}` | `{commands}`, `answers.py` | the work read whole; `answers.py check` passed |
 | refactorer | `{work}`, `{run}/refactor-check.json` | `{commands}`, `answers.py` | as builder |
-| proofreader | `{run}/proofreading.json`, `{run}/parts/` | `{commands}`, `answers.py` | as evaluator |
+| proofreader | `{answers}` | `{commands}`, `answers.py` | as evaluator |
 
-evaluator and proofreader also read only the work, `{run}/parts/` and the template's goal, parts and
-questions, which Standard in the data model holds.
+evaluator and proofreader also read only the work and the template's goal, parts and questions,
+which Standard in the data model holds.
 
 #### Choices
 
@@ -224,21 +230,23 @@ questions, which Standard in the data model holds.
   `asks` before they end with a question, and Turn's routes take `asks` to no next role: `up` is
   free to end with the question. Resumed with the answer, the role gives a later result, which Lane
   takes over `asks`, and the routes go on from it.
-- **A split part runs as the same role.** builder, evaluator and proofreader each start a run of
-  their own role for each part that stands apart, with the part's run values. Lane holds each run
-  to its own values by the `agentId` its start gives back. A role of its own for a part would hold
-  a second copy of the same steps.
-- **At the depth limit, a role works alone.** Claude Code lets subagents start subagents down to
-  three layers below the main conversation, and withholds the Agent tool below
-  ([subagents](https://code.claude.com/docs/en/sub-agents)). Under a caller that is itself a
-  subagent, Turn's roles stand on the third layer, so they research and make each part themselves,
-  in order. The work is the same, and only the lead time grows.
+- **`up` fans out a step, and Lane joins it.** Where `work.json` holds several parts, `up` starts
+  one run of builder for each part at once, with the part's run values, and one run of evaluator or
+  proofreader for each group of questions in `run.json`. Lane holds each run to its own values by
+  the `agentId` its start gives back, and takes the next route once all of them have ended. A role
+  that started runs of its own would need a layer more than Claude Code gives under a caller
+  ([subagents](https://code.claude.com/docs/en/sub-agents)).
 - **Templates kept in `.turn/best-practices/`.** A template made for the person's kind is used by
   every later run in the repository, so it lies outside any one run's folder. One of the
   repository's own is taken over Turn's of the same kind, as the person approved it for their work.
 
 What Turn needs of Lane and pin beyond what they give as built:
 
+- Lane starts a route's `to` once. Turn's `up` starts it many times at once, so Lane counts the
+  step done once all of those runs have ended, and joins their results: any `more` gives `more`,
+  otherwise the result they share. Turn needs the same of its other results that send the work
+  back: any `open` of builder's runs gives `open`, and any `content` of proofreader's runs gives
+  `content`, over `more`, as a point of what the work says goes to designer before one of how.
 - Lane reads a role's steps from the part its entry names under `prompts/`. Turn's parts lie in
   `core/roles/`, as [The core apart from Claude Code](../architecture.md#the-core-apart-from-claude-code)
   says, so Lane reads a part there too.
@@ -265,6 +273,8 @@ erDiagram
   DECISION }o--|{ QUESTION : "contributes to"
   DECISION }o--o{ DECISION : "builds on"
   RUN ||--o| WORK : "is made at"
+  WORK ||--|{ WORK_PART : "is split into"
+  WORK_PART }o--|{ DECISION : holds
   RUN ||--o| REMAKE : has
   REMAKE }o--|{ DECISION : names
   RUN ||--o{ ANSWERS : has
@@ -291,30 +301,36 @@ one-to-many join is nested, and a many-to-many join lists IDs.
   template, `refactor-doc` or `refactor-code`, has no `parts`, as the work keeps its kind's shape.
 - **Standard**: a template's `goal`, `parts` and `benefits`, written by `practices.py standard` into
   `standard.json`, and `refactoring-standard.json` for the refactoring template.
-- **Run**: `run.json`: `kind`, `template`, its path, and `refactoring`, `refactor-doc` or
-  `refactor-code`.
+- **Run**: `run.json`: `kind`; `template`, its path; `refactoring`, `refactor-doc` or
+  `refactor-code`; and `groups` and `refactoring_groups`, the template's questions in groups, each
+  `id` and `questions`, as `practices.py groups` writes them: the questions that ask of the same
+  parts together, and those of `the whole` in one group.
 - **Design tree**: `design-tree.json`, in pin's form: `goal`, `questions` and `decisions`. Its
   questions are the template's benefits, each `id` named with the template's file as `readme/Q3`,
   which `tree.py check` verifies. planner's `kind-tree.json` has the same form, its root the kind's
   purpose.
-- **Work**: `work.json`: `paths`, the files the work is, and `commands`, what its user runs, so
-  builder and evaluator run the same.
+- **Work**: `work.json`: `paths`, the files the work is; `commands`, what its user runs, so
+  builder and evaluator run the same; and `parts`, each `id`, `decisions` and `paths`. designer
+  writes the parts from `tree.py parts`, which groups the decisions that build on none in another
+  group, and joins two groups whose files meet. A work that does not split has one part.
 - **Remake**: `remake.json`: `decisions`, each the ID of a decision builder makes again, with the
   `question` and `good_when` that sent it back. Without it, builder makes every decision.
-- **Answers**: `self-check.json` from builder, `verification.json` from evaluator,
-  `refactor-check.json` from refactorer and `proofreading.json` from proofreader, in one form:
+- **Answers**: from builder, evaluator, refactorer and proofreader, in one form:
   `good`, each a `question` with the `lines` that meet it, as `<path>:<from>-<to>`; `more`, each a
   `question` with `good_when`, what the user gets once it is good; and, from proofreader only,
   `content`, in the form of `more`, a point that would change what the work says. `answers.py
-  check` verifies that every question stands in one list only and each line lies in the work. A
-  split part's answers lie in `parts/<part>/`, and `answers.py join` joins them.
-- **Open point**: `open.json` from builder: `open`, each a `question` with `what` the design leaves
-  open.
+  check` verifies that every question a run was given stands in one list only and each line lies
+  in the work. Each run of a step writes a file of its own, as `self-check/<part>.json`,
+  `verification/<group>.json` and `proofreading/<group>.json`; refactorer, one run, writes
+  `refactor-check.json`. The role that reads them after reads the whole folder.
+- **Open point**: `open/<part>.json` from a run of builder: `open`, each a `question` with `what`
+  the design leaves open.
 - **Run values**: the JSON object `up` starts or resumes a role with: `run`, the run's folder;
-  `work` and `commands`, from `work.json`, once designer has written it; for designer, `given`,
-  the Call's, and `returns`, the file whose points it takes back, as [Routes](#routes) gives it;
-  for a part's run, `work` and `questions` narrowed to the part. Lane reads them from the start's
-  prompt.
+  `work` and `commands`, from `work.json`, once designer has written it; for a run of builder,
+  `decisions` and `work` narrowed to its part, and `answers` and `open`, its own files; for a run
+  of evaluator or proofreader, `questions`, its group, and `answers`, its own file; for designer,
+  `given`, the Call's, and `returns`, the folders whose points it takes back, as
+  [Routes](#routes) gives them. Lane reads them from the start's prompt.
 - **Result**: the word a role gives by Lane's result command, kept by Lane, as the routes below
   name it.
 
@@ -336,8 +352,9 @@ one-to-many join is nested, and a many-to-many join lists IDs.
 | proofreader | `content`, a point that would change what the work says | designer |
 | proofreader | `good` | no next role, the work done |
 
-`up` gives designer, as `returns`, the file whose points it takes back: `open.json` after
-`open`, `verification.json` after `more`, and `proofreading.json` after `content`.
+`up` gives designer, as `returns`, the folder whose points it takes back: `open/` after `open`,
+`verification/` after `more`, and `proofreading/` after `content`. After a Remake, `up` starts a
+run of builder only for each part that holds a decision the Remake names.
 
 ### Sequences
 
@@ -367,8 +384,8 @@ sequenceDiagram
   M->>U: resumes, with the answer
   U->>PL: resumes, with the answer
   PL->>F: writes Run, the Template found named in it
-  PL->>S: practices.py standard on the Template
-  S->>F: writes Standard
+  PL->>S: practices.py standard and groups on the Template
+  S->>F: writes Standard, and the groups into Run
   PL->>G: gives planned (Result)
   PL-->>U: ends
   G-->>U: the next role, designer (Route)
@@ -377,59 +394,55 @@ sequenceDiagram
   D->>F: writes Design tree, the template's Questions under the goal
   D->>S: pin's check and tree.py check
   Note over P,D: Each question goes as planner's did, one at a time, the facts as they come.
-  D->>F: writes Design tree, every Decision settled, and Work
+  D->>S: tree.py parts
+  D->>F: writes Design tree, every Decision settled, and Work with its parts
   D->>S: pin's check and tree.py check
   D->>G: gives designed (Result)
   D-->>U: ends
   G-->>U: the next role, builder (Route)
 ```
 
-builder and evaluator, with a split and a send-back, O1 of the UX from the design to `good`:
+builder and evaluator, each fanned out, with a send-back, O1 of the UX from the design to `good`:
 
 ```mermaid
 sequenceDiagram
   participant U as up
   participant G as Lane's guard
-  participant B as builder
-  participant B2 as builder, a part's run
-  participant E as evaluator
+  participant B as builder, one run for each part
+  participant E as evaluator, one run for each group
   participant D as designer
   participant S as scripts
   participant F as run's folder and the work
-  U->>B: starts (Run values)
-  B->>S: tree.py branches on the Design tree
-  S-->>B: the groups of Decisions that build on none in another
-  opt two groups write files apart
-    B->>B2: in the background, a group, its files (Run values)
-    B2->>F: writes the group's files, and its Answers in parts/
-    B2->>G: gives built (Result)
+  U->>F: reads Work's parts
+  par one run for each part, all at once
+    U->>B: starts, with its part (Run values)
+    B->>F: makes its Decisions in order, mending each more
+    B->>F: writes its part's files, and its Answers in self-check/
+    B->>S: answers.py check
+    B->>G: gives built (Result)
   end
-  B->>F: makes each other Decision in order, and mends each more
-  B->>F: writes Answers, self-check.json
-  B->>S: answers.py check
-  B->>G: gives built (Result)
-  G-->>U: the next role, evaluator (Route)
-  U->>E: starts, with the work and Standard alone (Run values)
-  E->>F: reads the work whole, runs its commands
-  E->>F: writes Answers, verification.json
-  E->>S: answers.py check
-  alt a question has more
-    E->>G: gives more (Result)
+  G-->>U: every run ended with built, so the next role, evaluator (Route)
+  par one run for each group of questions, all at once
+    U->>E: starts, with the work, Standard and its group alone (Run values)
+    E->>F: reads the work whole, runs its commands
+    E->>F: writes its Answers in verification/
+    E->>S: answers.py check
+    E->>G: gives good or more (Result)
+  end
+  alt a run gave more
     G-->>U: the next role, designer (Route)
-    U->>D: starts, with verification.json (Run values)
+    U->>D: starts, with verification/ (Run values)
     D->>F: decides the Decisions again, or keeps them, and writes Remake
     D->>G: gives designed (Result)
-    G-->>U: the next role, builder, which makes the Remake's Decisions again
-  else every question is good
-    E->>G: gives good (Result)
+    G-->>U: the next role, builder, one run for each part the Remake reaches
+  else every run gave good
     G-->>U: the next role, refactorer (Route)
   end
 ```
 
-evaluator splits as builder does: a run of its own for each group of questions, each reading the
-work whole, its answers joined by `answers.py join`. The refactoring phase goes the same way,
-refactorer in builder's place with no design tree, proofreader in evaluator's. On proofreader's
-`good`, `up` ends with the work's paths.
+The refactoring phase goes the same way, with no design tree: refactorer, one run, in builder's
+place, and proofreader, one run for each group of the refactoring questions, in evaluator's. On
+proofreader's `good`, `up` ends with the work's paths.
 
 planner makes a template, O2 of the UX:
 
@@ -449,8 +462,8 @@ sequenceDiagram
   Note over U,PL: The kind's purpose, then its parts and questions, go to the person as questions.
   PL->>T: writes Template, by meta
   PL->>S: practices.py check
-  PL->>S: practices.py standard
-  S->>F: writes Standard
+  PL->>S: practices.py standard and groups
+  S->>F: writes Standard, and the groups into Run
   PL-->>U: gives planned, and ends
 ```
 
@@ -555,7 +568,7 @@ dev/turn/
     └── e2e/                            the E2E tests, trial_*.py, and the stand-in person's intents <Python 3>
 
 .turn/best-practices/<kind>.json        Template made for the repository
-.turn/<yyyymmdd>-<name>/                Run, Standard, Design tree, Work, Remake, Answers, Open point, parts/
+.turn/<yyyymmdd>-<name>/                Run, Standard, Design tree, Work, Remake; Answers and Open point in self-check/, verification/, refactor-check.json, proofreading/, open/
 ```
 
 The best practices lie in `core/domain/`, as they are the knowledge of Turn's work that every role
@@ -567,7 +580,7 @@ Turn is tested as [Test](../architecture.md#test) says. What follows is what Tur
 
 | Deployment unit | Unit | Integration | End-to-end |
 |---|---|---|---|
-| Turn's scripts [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of a Template, a Design tree and Answers, and the branches | unittest, real files · ●●○ · the exit and its message; `lay.py print` on Turn's proposal | E2E tests · ●●○ · run by the roles on each move |
+| Turn's scripts [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of a Template, a Design tree and Answers, the parts and the groups | unittest, real files · ●●○ · the exit and its message; `lay.py print` on Turn's proposal | E2E tests · ●●○ · run by the roles on each move |
 | Claude Code process: `/turn:up`, `up` and the roles [Claude Code 2.1.317 or later] | prompt tests · ●●○ · each role alone, the person, its neighbors and the researchers stood in for | prompt tests with Turn's lanes laid · ●●○ · each role keeps its lanes and gives its results | E2E tests · ●●● · O1, O2 and O3 of the UX |
 
 Lane's guard and result.py have no row: Lane tests them, and Turn tests only its lanes laid. pin's
@@ -587,7 +600,7 @@ Lane's guard and result.py have no row: Lane tests them, and Turn tests only its
 - An E2E test passes in three runs of three where: the stand-in person, given the work and their
   intent, would change nothing in it; every question put to the person is one their intent marks
   as theirs, and none is a point the caller gave; the roles start as the routes say; and, on the
-  module of code, the two parts' runs overlap in time. Each run's time and tokens are kept with its
+  module of code, the two runs of builder that `up` starts for its two parts overlap in time. Each run's time and tokens are kept with its
   records, so runs can be compared.
 - Turn's scripts weigh ●●● in unit tests, as a check that passes wrongly sends a gap into the work
   unseen. The roles weigh ●●● in E2E tests, as a work the person must mend, or a question that is
