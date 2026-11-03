@@ -348,6 +348,14 @@ def stand_in(prompt: str, cwd: str) -> dict[str, Any]:
     return json.loads(found.group(0))
 
 
+# The key of the stand-in's answer that counts the points of a message, the same for every plugin
+# that asks a person, as a point is the person's to count, not the plugin's.
+POINTS = """- "points": how many separate answers the message needs from you, as a number: one
+  question to decide, or one fact to confirm, is 1, however long the reasons, the options or the
+  examples around it; a second question, or a second thing it asks you to confirm or to tell,
+  adds 1;"""
+
+
 def finds(who: str, keys: str) -> str:
     """The prompt the stand-in for a person is given each message by, `{intent}`, `{said}` and
     `{message}` left to fill: who they stand in for, then the conversation, then the keys of the

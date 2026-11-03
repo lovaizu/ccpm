@@ -105,9 +105,9 @@ FINDS = trying.finds(
     """You stand in for the person a planning AI is talking with. Here is who you are and what
 you truly want; the AI cannot see it:""",
     """- "answer": your answer to the message, as you would write it;
-- "points": how many separate answers the message needs from you, as a number: one question to
-  decide, or one fact to confirm, is 1, however long the reasons, the options or the examples
-  around it; a second question, or a second thing it asks you to confirm or to tell, adds 1;
+"""
+    + trying.POINTS
+    + """
 - "asks_fact": true where the message asks you something about the repository that the AI could
   read for itself, rather than showing you what it found for you to confirm; otherwise false;
 - "asks_settled": true where it asks you again something you are said, above, to have settled
