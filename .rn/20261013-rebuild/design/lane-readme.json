@@ -11,7 +11,11 @@
   {
    "id": "D1",
    "what": "Who reads the README, and how is the reader spoken to?",
-   "contributes_to": ["readme/Q1", "readme/Q2", "readme/Q10"],
+   "contributes_to": [
+    "readme/Q1",
+    "readme/Q2",
+    "readme/Q10"
+   ],
    "builds_on": [],
    "decided": "The developer AI of the UX, spoken to as you, an AI that builds a Claude Code plugin whose subagents work in numbered steps.",
    "settled_by": "research",
@@ -22,7 +26,10 @@
   {
    "id": "D2",
    "what": "Which plugins may the README name?",
-   "contributes_to": ["readme/Q2", "readme/Q5"],
+   "contributes_to": [
+    "readme/Q2",
+    "readme/Q5"
+   ],
    "builds_on": [],
    "decided": "Lane and the example plugin changelog only. No line names turn, rn or another plugin of the marketplace Lane ships in.",
    "settled_by": "user",
@@ -33,9 +40,15 @@
   {
    "id": "D3",
    "what": "Which name does the README give each thing, and where does the reader learn a word of Lane's?",
-   "contributes_to": ["readme/Q2", "readme/Q3", "readme/Q6"],
-   "builds_on": ["D1"],
-   "decided": "The UX's names: a rule (a sentence in a step, with a check of it), the check script (the one script lay.py puts into the plugin), the orchestrator (the subagent that starts the others), the flow (the order it starts them in). Each is said in everyday words where the reader first meets it. Lane is written with a capital. lay.py's own output calls a rule a lane and its check a hook; the walkthrough says so once, where the reader first meets that output.",
+   "contributes_to": [
+    "readme/Q2",
+    "readme/Q3",
+    "readme/Q6"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "The UX's names: a rule (a sentence in a step, with a check of it), the check script, the result script (both put into the plugin by lay.py), the orchestrator (the subagent that starts the others), a route (the subagent to start next after another ends with a given result) and a result (a word such as `more`). Each is said in everyday words where it is first used.",
    "settled_by": "research",
    "grounds": [
     "dev/lane/ux.md:4-7: \"A rule is a sentence in a step that the subagent must keep [...] The orchestrator is the subagent that starts the others. The flow is the order in which it starts them\"",
@@ -46,9 +59,14 @@
   {
    "id": "D4",
    "what": "What is Lane, in one sentence?",
-   "contributes_to": ["readme/Q1"],
-   "builds_on": ["D1", "D3"],
-   "decided": "Lane is a Claude Code plugin that checks the subagents of your plugin, so that they keep the rules of their steps and start one another in the order that you set.",
+   "contributes_to": [
+    "readme/Q1"
+   ],
+   "builds_on": [
+    "D1",
+    "D3"
+   ],
+   "decided": "Lane is a Claude Code plugin that checks the subagents of your plugin, so that they keep the rules of their steps and start one another by the routes that you set.",
    "settled_by": "reasoning",
    "grounds": [
     "The kind the reader places it among is a Claude Code plugin; the two halves are the UX's O1 and O2, dev/lane/ux.md:11 and 28."
@@ -57,9 +75,15 @@
   {
    "id": "D5",
    "what": "What does the reader gain?",
-   "contributes_to": ["readme/Q2", "readme/Q5"],
-   "builds_on": ["D3", "D4"],
-   "decided": "Your subagents keep the rules of their steps on every run, and your orchestrator starts them in your order, which you write as a flow. You write no code for the checks and no script for the order.",
+   "contributes_to": [
+    "readme/Q2",
+    "readme/Q5"
+   ],
+   "builds_on": [
+    "D3",
+    "D4"
+   ],
+   "decided": "Your subagents keep the rules of their steps on every run, and your orchestrator starts them as your routes say. You write no code for the checks and no script for the order.",
    "settled_by": "research",
    "grounds": [
     "dev/lane/ux.md:11-12: \"O1: The developer AI has its subagents keep the rules of their steps on every run, with no check code of its own.\"",
@@ -69,38 +93,50 @@
   {
    "id": "D6",
    "what": "What does Lane do that another way of doing the same work does not?",
-   "contributes_to": ["readme/Q3", "readme/Q7"],
-   "builds_on": ["D3", "D5"],
-   "decided": "A rule is a sentence in a step with a check of it. When a subagent breaks the rule, the check stops the call and shows the subagent the same sentence, headed by the plugin's name. A hook that only refuses a call leaves the subagent to look for another way; a subagent that sees the sentence of its own step goes back to the step. The idea has no figure of its own: its two parts, the sentence and the check, are drawn in How it works.",
+   "contributes_to": [
+    "readme/Q3",
+    "readme/Q7"
+   ],
+   "builds_on": [
+    "D3",
+    "D5"
+   ],
+   "decided": "A rule is a sentence in a step with a check of it; a stopped subagent is shown the same sentence, headed by the plugin's name, and goes back to its step. A subagent gives its result by running the result script, Lane lets it end only once that run succeeded, and takes the result from the run, never from what the subagent wrote.",
    "settled_by": "research",
    "grounds": [
-    "dev/lane/architecture.md:17-20: \"The check script shows a stopped subagent the sentence of the rule, after the plugin's name. A subagent whose call is only refused tries another way; one that sees its own step goes back to it (KR1.3).\"",
-    "plugins/lane/hooks/lane/hook.py:163: \"said = [Said(f\\\"{plugin}: {s.text}\\\", s.error) ...\""
+    ".rn/20261013-rebuild/steering.md:76: \"Lane judges only from documented hook input and from calls of a plugin's own scripts, never from the model's text\"",
+    "Trial 2026-11-03 (claude 2.1.316): a Bash call that exits non-zero gives PostToolUseFailure, not PostToolUse, so a run that failed is told apart."
    ]
   },
   {
    "id": "D7",
    "what": "What might the reader expect of Lane that it does not do?",
-   "contributes_to": ["readme/Q4", "readme/Q7"],
-   "builds_on": ["D5", "D6"],
-   "decided": "Six non-goals: it checks only subagents with rules, not the main conversation or a skill, so the orchestrator of a flow must be a subagent; it is no security boundary, so what must never happen is blocked by GitHub's branch protection or Claude Code's permission rules; it sees tool calls and ends of work, not what a subagent thinks; it does not read every form of a shell command, and stops a command that names a file in a way it cannot follow, asking for the plain path; it does not choose the next subagent from a run's results, as a flow is a fixed order that goes back only on an answer you name; it reads your plugin's texts in one format, and another format needs an adapter.",
+   "contributes_to": [
+    "readme/Q4",
+    "readme/Q7"
+   ],
+   "builds_on": [
+    "D5",
+    "D6"
+   ],
+   "decided": "Seven non-goals: only subagents with rules are checked, so the orchestrator is a subagent, and a skill only where it runs with context: fork and agent: <plugin>:<subagent>; no security boundary; tool calls, not thinking; no shell command read, only commands named and matched whole, files read and written by Read, Grep, Write and Edit; no judging of the work, the next subagent comes from the result by the routes; no approval on anyone's behalf, a held command goes to Claude Code's permission prompt, refused in claude -p; one text format, others by an adapter.",
    "settled_by": "research",
    "grounds": [
-    "plugins/lane/hooks/lane/hook.py:160: \"if event.get(\\\"agent_type\\\") != agent:\"",
-    "dev/lane/architecture.md:99: \"Hooks go on subagents only, not on skills\"",
-    "plugins/lane/docs/lanes.md:56: \"The hook cannot tell whether such a file is an input or an output, so it stops the call\"",
-    "hook run on 2026-11-02 in the scratchpad, `cat x > $d/out.csv` by writer: \"changelog: Write only `CHANGELOG.md`.\\n`$d/out.csv`: lane cannot tell which file is named here, so this lane could not be checked; name each file by its path, without `$`, a backquote or a `cd` lane cannot follow\"",
-    "plugins/lane/hooks/lane/moves.py:89: \"if back is not None and answers(str(kept.get(\\\"answer\\\", \\\"\\\")), back[\\\"while\\\"]):\"",
-    "plugins/lane/docs/lanes.md:129: \"lane reads one form at each port.\"",
-    "No security boundary is reasoning from the line above on shell forms: a check that cannot read every command cannot be what keeps a merge from happening."
+    "Trial 2026-11-03: a skill with agent: worker ran as general-purpose; with agent: trial:worker its hooks carried agent_type trial:worker.",
+    "Trial 2026-11-03: a PreToolUse ask is put to the person interactively under bypassPermissions, and is a denial in -p.",
+    ".rn/20261013-rebuild/steering.md:76: \"a role's Bash runs only the commands its plugin declares for it, matched whole\""
    ]
   },
   {
    "id": "D8",
    "what": "What must be in place before installing, and what happens without Python?",
-   "contributes_to": ["readme/Q6"],
-   "builds_on": ["D1"],
-   "decided": "Claude Code 2.1.309 or later; Python 3.9 or later run as python3, without which each tool call a rule is about is stopped and the subagent and whoever runs the plugin are told to install Python; a plugin that passes claude plugin validate, whose subagents have their steps as a numbered list under ## Steps.",
+   "contributes_to": [
+    "readme/Q6"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "Claude Code 2.1.316 or later, the version the trials of 2026-11-03 ran on; Python 3.9 or later run as python3, without which each tool call a rule is about is stopped and the subagent and whoever runs the plugin are told to install Python; a plugin that passes claude plugin validate, whose subagents have their steps as a numbered list under ## Steps.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/lane/hooks/lane/record.py:5-6: \"it is read as Claude Code 2.1.309 writes it, the one version lane's code and tests name for it\"",
@@ -112,8 +148,12 @@
   {
    "id": "D9",
    "what": "How does the reader install Lane, see that it worked, and bring a plugin up after an update?",
-   "contributes_to": ["readme/Q6"],
-   "builds_on": ["D8"],
+   "contributes_to": [
+    "readme/Q6"
+   ],
+   "builds_on": [
+    "D8"
+   ],
    "decided": "The marketplace's two commands; installPath read from claude plugin list --json, again after each update; lay.py with no argument prints its usage; after an update, lay.py up <your plugin's folder> puts the new check script into the plugin and lists the rules it has.",
    "settled_by": "research",
    "grounds": [
@@ -125,9 +165,14 @@
   {
    "id": "D10",
    "what": "Which scenario does the walkthrough run, on what work?",
-   "contributes_to": ["readme/Q5"],
-   "builds_on": ["D2", "D5"],
-   "decided": "The UX's O1 on the example plugin changelog: two rules on step 3 of writer, write only CHANGELOG.md and do not run git commit or git push. It ends with writer keeping both, with no stop, as the UX's main path does. One closing line points to the flow, which is laid the same way.",
+   "contributes_to": [
+    "readme/Q5"
+   ],
+   "builds_on": [
+    "D2",
+    "D5"
+   ],
+   "decided": "The UX's O1 on the example plugin changelog: run only git log --oneline on step 2 and write only CHANGELOG.md on step 3 of writer. It ends with writer keeping both, with no stop, as the UX's main path does. One closing line points to the routes.",
    "settled_by": "reasoning",
    "grounds": [
     ".claude/rules/dev.md:41-42: \"the README takes two things from the UX: what the user gains, and the scenario that its walkthrough runs.\"",
@@ -138,8 +183,12 @@
   {
    "id": "D11",
    "what": "Where do the plugin and the proposal stand, so the commands run as shown?",
-   "contributes_to": ["readme/Q6"],
-   "builds_on": ["D10"],
+   "contributes_to": [
+    "readme/Q6"
+   ],
+   "builds_on": [
+    "D10"
+   ],
    "decided": "changelog lives in the folder changelog/ of a git repository; the proposal is .lane/20261102-changelog/changelog.json at that repository's root; lay.py runs at that root.",
    "settled_by": "research",
    "grounds": [
@@ -150,22 +199,32 @@
   {
    "id": "D12",
    "what": "What output does the walkthrough show, and from which run?",
-   "contributes_to": ["readme/Q5", "readme/Q6"],
-   "builds_on": ["D3", "D11"],
-   "decided": "lay.py print and lay.py write as they printed on 2026-11-02, word for word, with <installPath> and <the repository> in place of the paths of that machine; the step as lay.py write left it in writer.md. The part where changelog runs in Claude Code has no recorded run, so the README says plainly that this part is not yet from a real run.",
+   "contributes_to": [
+    "readme/Q5",
+    "readme/Q6"
+   ],
+   "builds_on": [
+    "D3",
+    "D11"
+   ],
+   "decided": "lay.py print and lay.py write as Lane is rebuilt to print them, marked at the walkthrough's start as not yet from a real run, to be replaced by a real run's output once Lane is built.",
    "settled_by": "research",
    "grounds": [
-    "lay.py print and write, run on 2026-11-02 in the scratchpad on changelog/agents/writer.md, printed the lines the README shows",
-    "dev/lane/trials/notes_trial.py:1-2 tries the plugin notes, not changelog; no trial in dev/lane/trials/ runs changelog",
-    "plugins/turn/best-practices/readme.json Q5 steps: \"then what the product shows, copied from a real run.\""
+    "No lay.py of the settled shape exists yet; output shown as if run would be an invented result."
    ]
   },
   {
    "id": "D13",
    "what": "Which promise of the opening does each line of How it works keep, and what changes in the figure?",
-   "contributes_to": ["readme/Q7"],
-   "builds_on": ["D5", "D6", "D7"],
-   "decided": "The figure keeps its boxes and lines: lay.py writes each rule's sentence into its step and copies the check script into the plugin (no code written); Claude Code sends each tool call and end of work to the check script, which stops a break and shows the sentence again (rules kept, the idea) and tells the orchestrator which subagent to start next (order kept). The reader's box, \"you, the developer\", becomes \"you (an AI)\", as the README speaks to an AI and names the subagent's box the same way.",
+   "contributes_to": [
+    "readme/Q7"
+   ],
+   "builds_on": [
+    "D5",
+    "D6",
+    "D7"
+   ],
+   "decided": "The figure keeps its boxes and lines; you propose the rules and the routes; a subagent makes a tool call, gives its result or ends, and Claude Code sends each to the check script, which stops a break and shows the sentence again, and tells the orchestrator which subagent to start next.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/lane/how-it-works.svg:27: \"you, the developer\"; :36: \"a subagent (an AI)\"",
@@ -175,9 +234,13 @@
   {
    "id": "D14",
    "what": "What stands under the figure?",
-   "contributes_to": ["readme/Q7"],
-   "builds_on": ["D13"],
-   "decided": "Only what the figure cannot show: the check script runs from the plugin's own copy in hooks/lane/, so whoever runs the plugin does not need Lane.",
+   "contributes_to": [
+    "readme/Q7"
+   ],
+   "builds_on": [
+    "D13"
+   ],
+   "decided": "Only what the figure cannot show: the check script and the result script run from the plugin's own copy in hooks/lane/, so whoever runs the plugin does not need Lane.",
    "settled_by": "research",
    "grounds": [
     "dev/lane/architecture.md:65: \"The check script is kept and run in the developer AI's plugin.\""
@@ -186,9 +249,14 @@
   {
    "id": "D15",
    "what": "Where does the reader go next?",
-   "contributes_to": ["readme/Q8"],
-   "builds_on": ["D7", "D10"],
-   "decided": "docs/lanes.md for each type of rule, the proposal, adapters and a subagent whose steps lie in another file; docs/flow.md for the flow; CHANGELOG.md; dev/lane/README.md for development.",
+   "contributes_to": [
+    "readme/Q8"
+   ],
+   "builds_on": [
+    "D7",
+    "D10"
+   ],
+   "decided": "docs/lanes.md for each type of rule, the proposal, adapters and a subagent whose steps lie in another file; docs/routes.md for routes, results and what the orchestrator is told; CHANGELOG.md; dev/lane/README.md for development.",
    "settled_by": "research",
    "grounds": [
     "plugins/lane/docs/lanes.md headings: \"## The proposal\", \"## The ports\", \"## A subagent's part\"",
@@ -199,7 +267,9 @@
   {
    "id": "D16",
    "what": "Under what license may the reader use Lane?",
-   "contributes_to": ["readme/Q9"],
+   "contributes_to": [
+    "readme/Q9"
+   ],
    "builds_on": [],
    "decided": "MIT License, linked to the repository's LICENSE.",
    "settled_by": "research",
@@ -210,8 +280,15 @@
   {
    "id": "D17",
    "what": "In what order do the parts stand?",
-   "contributes_to": ["readme/Q10"],
-   "builds_on": ["D4", "D5", "D6", "D7"],
+   "contributes_to": [
+    "readme/Q10"
+   ],
+   "builds_on": [
+    "D4",
+    "D5",
+    "D6",
+    "D7"
+   ],
    "decided": "The format's order: the summary, the gain, the idea and the non-goals under no heading, so a reader can stop before Requirements; then Requirements, Installation, Walkthrough, How it works, Documentation, Development and License.",
    "settled_by": "research",
    "grounds": [

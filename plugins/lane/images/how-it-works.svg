@@ -49,7 +49,7 @@
 
   <!-- while you build your plugin -->
   <path class="line" d="M200,48 H430" marker-end="url(#arrow)"/>
-  <text class="label mid" x="315" y="40">proposes the rules and a flow</text>
+  <text class="label mid" x="315" y="40">proposes the rules and the routes</text>
   <path class="line" d="M430,70 H200" marker-end="url(#arrow)"/>
   <text class="label mid" x="315" y="104">shows the new steps</text>
 
@@ -64,7 +64,8 @@
   <text class="label" x="130" y="262">reads its own step</text>
 
   <path class="line" d="M200,348 H430" marker-end="url(#arrow)"/>
-  <text class="label mid" x="315" y="338">makes a tool call or ends its work</text>
+  <text class="label mid" x="315" y="320">makes a tool call,</text>
+  <text class="label mid" x="315" y="338">gives its result or ends</text>
 
   <path class="line" d="M610,348 H830" marker-end="url(#arrow)"/>
   <text class="label mid" x="725" y="320">sends each tool call</text>
