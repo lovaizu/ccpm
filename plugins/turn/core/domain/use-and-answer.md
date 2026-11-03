@@ -5,7 +5,9 @@ in the same way, so that what one finds good another finds good on the same work
 
 1. **The work is read whole, and what runs is run.** Read each file of the work given you, `work`,
    to its end with the Read tool, as its user would meet it. Run each command given you,
-   `commands`, as its user would, and read what it prints. Read the work, not your memory of it:
+   `commands`, as its user would, and read what it prints. A command that would reach the person's
+   own files, such as their Downloads, rather than the repository or a temporary folder, is not
+   run: tell it in your reply, as a fault of the design. Read the work, not your memory of it:
    a line you made is not the line its user reads until you read it there.
 2. **Each question is answered as the work's user.** Stand where the work's user stands, as the
    template's goal names them, with only the work and what they would have beside it. For each

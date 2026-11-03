@@ -59,7 +59,10 @@ run as a subagent. You are resumed with the answer, and go on where you were.
 3. **The work's parts are written.** Run `tree.py parts`. It writes into `work.json` each group of
    decisions that build on none in another, each a part one run of builder makes at the same time
    as the others. Give `work.json` its `paths`, the files the work is, and its `commands`, what its
-   user runs, as the design decided them; give each part the paths its decisions are made in, no
+   user runs, as the design decided them, each as builder and evaluator run it to use the work:
+   inside the repository or a folder of the system's temporary folder, never on the person's own
+   files, such as their Downloads, as builder and evaluator run each command as written, and a
+   change to the person's files cannot be undone. Give each part the paths its decisions are made in, no
    path in two parts; and join two parts into one where their files meet, or where making them
    apart would make the work worse, such as one document written in two voices.
 4. **The design holds.** Run `tree.py check` and pin's check, and mend the tree or `work.json`
