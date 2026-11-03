@@ -90,6 +90,11 @@ wherever Lane is missing.
 - As the developer AI, I want the check script to tell my orchestrator each move of the flow, and to
   hold it to the move due, the one it must take now. Carries O2 from the run of `changelog` to the
   end of `lead`.
+- As the developer AI, I want to give a rule a value for each run, or read a text format Lane does
+  not know through an adapter, my own script, so the rules hold on any plugin. Off the main path,
+  serves KR1.1 and KR2.1.
+- As the developer AI, I want to run `lay.py up` after Lane is updated, and find my plugin's check
+  script at Lane's version. Off the main path, serves KR1.1 and KR2.1.
 
 ## Logical view
 
