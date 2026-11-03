@@ -28,7 +28,7 @@ how good works of the same kind are made, and has the work judged by an AI that 
   never sees the design. It answers each question with the lines of the work that meet it, or with
   what the user would still need. A question not yet met goes back to the decision behind it, which
   is decided again, and the work is made again from there.
-- **Then how it reads.** Once every question is met, Turn betters how the work says what it says,
+- **Then how it reads.** Once every question is met, Turn improves how the work says what it says,
   such as a sentence read twice to be understood, and checks it again. What the work says stays.
 - **At once where it can.** Parts of the work that stand apart, such as two modules that use
   nothing of each other, are made and checked at the same time, so you wait less. A part is not
@@ -126,7 +126,7 @@ Shall Turn make the README from this design?
 
 You answer `yes`. Turn makes the README, and another AI uses it as a newcomer would. It finds one
 question not yet met: the walkthrough does not show where `tidy` puts a file with no extension.
-Turn decides that point again, makes the README again, and checks it again. Then it betters how the
+Turn decides that point again, makes the README again, and checks it again. Then it improves how the
 README reads, and checks that once more. It ends:
 
 ```text

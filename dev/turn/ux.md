@@ -52,7 +52,7 @@ participants:
 - builder (AI): the role that makes the work from the decisions.
 - evaluator (AI): the role that uses the work as its user would, and answers each question of the
   template.
-- refactorer and proofreader (AI): the roles that better how the finished work says what it says,
+- refactorer and proofreader (AI): the roles that improve how the finished work says what it says,
   and check it, without changing what it says.
 - researcher (AI): a subagent that finds one fact, such as what `tidy --help` prints.
 - Lane (script): the checks laid into Turn, which tell `up` each next role to start from how the
