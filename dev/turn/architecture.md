@@ -243,10 +243,11 @@ which Standard in the data model holds.
 What Turn needs of Lane and pin beyond what they give as built:
 
 - Lane starts a route's `to` once. Turn's `up` starts it many times at once, so Lane counts the
-  step done once all of those runs have ended, and joins their results: any `more` gives `more`,
-  otherwise the result they share. Turn needs the same of its other results that send the work
-  back: any `open` of builder's runs gives `open`, and any `content` of proofreader's runs gives
-  `content`, over `more`, as a point of what the work says goes to designer before one of how.
+  step done once all of those runs have ended, and joins their results by an order of precedence
+  that the routes declare. Turn's routes declare `content`, `open`, `more` and `good`, in that
+  order: the joined result is the first of these that any run gave, and otherwise the result the
+  runs share. A point of what the work says goes to designer before one of how it says it, and a
+  work sent back goes back before it goes on.
 - Lane reads a role's steps from the part its entry names under `prompts/`. Turn's parts lie in
   `core/roles/`, as [The core apart from Claude Code](../architecture.md#the-core-apart-from-claude-code)
   says, so Lane reads a part there too.
