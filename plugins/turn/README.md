@@ -10,7 +10,7 @@ quality allows.
 Asked alone, Claude Code writes from what it already knows and judges its own work. Turn instead
 learns the best practice of each kind of deliverable from guides and examples of good ones. It ties
 each decision about your deliverable to your purpose. Then a second AI, which did not make the
-deliverable, uses it as its user would:
+deliverable, uses it as its user would.
 
 ![Best practice refined into a Standard and a Practice, and used through a design tree](idea.svg)
 
@@ -55,7 +55,8 @@ user gets only the deliverable, and a deliverable built by the Practice can stil
 
 - Claude Code allowed to search and read the web, with its WebSearch and WebFetch tools.
 
-  Turn reads guides and examples of a new kind on the web.
+  Turn reads guides and examples of a new kind on the web. Where it cannot reach the web, Turn
+  asks you for it.
 
 ## Installation
 
@@ -109,7 +110,8 @@ release.
    on the web. It then shows you the Standard it drew from them:
 
    ```text
-   turn: Standard for a press release
+   turn: I have no Standard for press releases yet.
+         Here is a new one, what a good press release is:
          Goal: a reporter decides from the release whether to write about it.
          Format: headline, lead, body, boilerplate, contact.
          Checklist:
@@ -135,7 +137,7 @@ release.
 5. Turn shows the design it will write the release from:
 
    ```text
-   turn: Design: a headline on RoomBook's launch, three benefits and the PR contact, both from
+   turn: Design: a headline on RoomBook's launch, with three benefits and the PR contact from
          RoomBook's README. Approve?
    You:  Approved
    ```
@@ -144,7 +146,9 @@ release.
    the Checklist. Turn goes on until every answer is yes, and then gives you the release:
 
    ```text
-   turn: Northwind's RoomBook offers only the meeting rooms that fit your meeting
+   turn: The press release, which meets every question of the Standard:
+
+         Northwind's RoomBook offers only the meeting rooms that fit your meeting
 
          Northwind launches RoomBook, a meeting-room booking app, on 1 December 2026.
          RoomBook matches each room's seats and equipment to the meeting you describe.

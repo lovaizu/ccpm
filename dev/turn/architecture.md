@@ -105,13 +105,14 @@ Lane and each caller can then change their code freely behind what they document
 - As the person who wants a work, I want to ask `turn:up` for it and confirm its kind. Carries
   O1's request and "This is a press release, a document. Right?".
 - As that person, I want to approve the Standard of a kind that Turn has no best practice for, and
-  have it kept for my next work of that kind. Carries O1's search for a best practice and "Purpose
-  … Approve?".
+  have it kept for my next work of that kind. Carries O1's "I have no Standard for press releases
+  yet. … Approve?".
 - As that person, I want to answer what the work is for and each point that only I decide, each
   with a recommendation, and approve the design. Carries O1 from "What is this release for?" to the
   design approved.
 - As that person, I want the work only once an AI that did not make it, using it as its user would,
-  finds every question good. Carries O1's loop and "The press release".
+  finds every question good. Carries O1's "The press release, which meets every question of the
+  Standard".
 - As a plugin's step, such as Rn's, I want to start `turn:up` with the points that my step has
   settled, and get the work back. Carries O1's steps when the person reaches Turn through such a
   plugin, without the points that the plugin settled.

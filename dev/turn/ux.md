@@ -8,6 +8,8 @@
   - KR1.2: The lead time per work from the request to delivery, the person's answers and approvals
     included. Shorter is better.
 
+KR1.1 comes first: KR1.2 is shortened only by a change that keeps KR1.1.
+
 Key results have no target values. When a measure becomes a target, it stops being a good measure
 (Goodhart's law). Use the key results to judge how close the objective is.
 
@@ -24,18 +26,13 @@ sequenceDiagram
   P->>T: Write a press release for RoomBook, our new meeting-room booking app.<br/>Its README is in this repository
   T->>P: This is a press release, a document. Right?
   P->>T: Yes
-  T->>T: Finds no best practice for press releases,<br/>and reads guides and examples of good ones on the web
-  T->>P: Purpose: a reporter decides from the release whether to write about it<br/>Format: headline, lead, body, boilerplate, contact<br/>Checklist: Can a reporter tell from the headline what is new?<br/>Can a reporter tell from the lead who launches what, and when? ...<br/>Approve?
+  T->>P: I have no Standard for press releases yet.<br/>Here is a new one, what a good press release is:<br/>Goal: a reporter decides from the release whether to write about it<br/>Format: headline, lead, body, boilerplate, contact<br/>Checklist: Can a reporter tell from the headline what is new?<br/>Can a reporter tell from the lead who launches what, and when? ...<br/>Approve?
   P->>T: Approved
   T->>P: What is this release for?
   P->>T: To get RoomBook into trade magazines
   T->>P: When is the release date? I recommend 1 December:<br/>trade magazines plan their issues weeks ahead
   P->>T: 1 December
-  T->>P: Design: a headline on RoomBook's launch, three benefits and the PR contact,<br/>both from RoomBook's README. Approve?
+  T->>P: Design: a headline on RoomBook's launch,<br/>with three benefits and the PR contact from RoomBook's README. Approve?
   P->>T: Approved
-  loop until every question of the checklist is met
-    T->>T: Writes the release
-    T->>T: Reads it as a reporter would, against each question
-  end
-  T->>P: The press release
+  T->>P: The press release, which meets every question of the Standard
 ```
