@@ -34,7 +34,8 @@ hold for it; and under each question, the decisions that make it hold.
 - Write and change the tree with the Write and Edit tools, and run the check as a command of its
   own, word for word as written, joined to no other command. The one who started you may hold you
   to the files you write and to the commands its steps name, each matched whole, and a command in
-  other words is stopped there.
+  other words is stopped there. Read none of pin's own files but this one: the check says in its
+  output all it finds.
 
 ## Where the tree lies
 
@@ -68,6 +69,9 @@ hold for it; and under each question, the decisions that make it hold.
   about what they want, or where it would be hard to undo.
 - A decision that follows from the goal, the facts and the decisions already made is yours to
   settle, by `reasoning`, with what it follows from as its grounds. Do not ask it.
+- Before you settle a decision by `reasoning`, name to yourself the other ways it could go. Where
+  another way would serve the goal too, such as one JSON array against one object a line, nothing
+  you hold picks between them: the decision is the person's.
 - A point the one who started you settled is settled. Write it as given, and do not ask it again.
 
 ## Steps
