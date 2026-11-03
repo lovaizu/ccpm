@@ -10,8 +10,8 @@ the last column says.
 
 What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
 `{<name>}`. A thing given for each run is the value under that name that the values port reads in
-what the subagent is given: its prompt, what the script it first runs prints, and each message sent
-to it after, the later over the earlier. So the hook holds a file added to the run while the
+what the subagent is given: the prompt of the Agent call that started it, and each message a
+SendMessage call sent to it after, the later over the earlier. So the hook holds a file added to the run while the
 subagent works, as by an answer, from then on. The sentence `Write only {work}.` holds a subagent to
 the files and folders its run's `work` names, whichever they are. A value given as `null` is the
 caller saying there is none: each lane taking that name lets the call or the end through on that
@@ -19,22 +19,31 @@ run, with nothing told. A thing taken holds any text, a comma among the rest.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
-| begin | start_with | First run `<script>`. | begins with anything else |
 | read | read_only | Read only `<input>`. | reads anything else |
-| read | read_whole | Read `<input>` to its end. | leaves a part of it unread |
+| read | read_whole | Read `<input>` to its end. | gives its result with a part of it unread |
 | write | write_only | Write only `<output>`. | writes anything else |
 | write | in_form | Write `<output>` in the form of `<form>`. | writes it out of that form |
-| run | hands_off | Do not run `<commands>`. | runs one of them |
-| test | test_after | After changing `<output>`, pass `<test>`. | ends with a change not yet passed |
-| hand on | as_printed | Hand on `<command>` as it is. | does anything else first |
-| follow | follow_next | Take the next move `<script>` printed. | does anything else first |
-| follow | follow_flow | Take each move lane tells you, until it tells none. | does anything but the move due, or ends while one is due |
-| wait | wait_for | Do not go on until `<approval>`. | runs a command it holds back without it |
-| end | end_when | End only once `<output>` is made. | ends before |
-| end | every_item | Answer every item of `<input>`. | leaves an item unanswered |
+| run | run_only | Run only `<commands>`. | runs any other command |
+| run | hold | Run `<commands>` only with the person's approval. | runs one of them, which Claude Code puts to the person |
+| test | test_after | After changing `<output>`, pass `<test>`. | gives its result with a change not yet passed |
+| follow | follow_routes | Start each subagent you are told to start, until you are told to start no more. | starts another subagent, or ends while a start is due |
+| end | end_when | End only once `<output>` is made. | gives its result before |
+| end | every_item | Answer every item of `<input>`. | gives its result with an item unanswered |
 
-wait_for takes, after the approval, each command it holds back, as the step writes it. Its
-sentence shows the approval alone.
+A subagent with rules reads files with Read and Grep, writes them with Write and Edit, and runs a
+command with Bash only where a run_only, hold or test_after lane names it, or its result command
+does. lane matches a command whole, as the step writes it, and reads no part of it. A command in any
+other words is stopped and told the sentence and, on the next line, the commands it may run.
+
+hold does not stop the command: lane answers Claude Code to ask the person, and Claude Code shows
+its permission prompt with the sentence, even under `bypassPermissions`. In `claude -p` no one can
+be asked, so Claude Code refuses the command.
+
+The lanes of the end, read_whole, test_after, end_when and every_item, are checked as the subagent
+gives its result, so `lay.py write` gives a subagent with one of them a result command on its last
+step, `done` where no route names it. The result script checks end_when and every_item and exits
+with an error naming what is missing; the guard checks read_whole and test_after, from the calls it
+kept, and stops the result command.
 
 in_form takes the form by the path the subagent reads it by: as
 `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`, or by a name the subagent's entry says lies there, as
@@ -51,23 +60,22 @@ project's work.
 
 read_only and write_only each take a file or a folder, and a folder lets the subagent read or write
 anything under it. test_after's output may be a folder too, and a change of any file under it is a
-change of the output. read_only and write_only tell which file a command reads or writes by the words naming it. Some
-words do not settle which file they name: one holding `$` or a backquote, or a relative path after a
-`cd` whose folder the words do not settle. The hook cannot tell whether such a file is an input or
-an output, so it stops the call as one lane could not check. It tells the subagent the sentence and,
-on the next line, that lane cannot tell which file is named there, and to name each file by its
-path, without `$`, a backquote or a `cd` lane cannot follow. write_only lets a command write out of
-the folder the subagent works in, as one throwing its output away in `/dev/null`, only where the
-words settle that the file is out of it.
+change of the output. read_only and write_only check the path that Read, Grep, Write or Edit is
+given; a command a run_only lane names reads and writes what it does unchecked, so name only commands
+whose reads and writes you accept.
 
-follow_flow takes nothing. `lay.py write` lays it from your proposal's flow on the orchestrator's
-step, and lane tells the orchestrator each move, as [the flow](flow.md) says.
+read_whole counts a file read to its end where the Read calls of the subagent, by their `offset`
+and `limit`, have covered every line of it. test_after counts a test passed where the test's command
+came back without an error, and the output changes after it where a Write or Edit of a file under it
+came later.
 
-every_item reads its input's items at the items port, and follow_next the move your script printed
-at the move port, as the ports below say. every_item counts an item answered where its ID stands as
-a word of its own in the subagent's last reply, or in a file it wrote in this run other than the
-input, so `B-1` is answered by neither `B-12`, `B-1.2` nor `AB-1`. An item with no ID is not
-counted, as no text tells an answer to it from any other.
+follow_routes takes nothing. `lay.py write` lays it from your proposal's routes on the
+orchestrator's step, and lane tells the orchestrator each start, as [the routes](routes.md) say.
+
+every_item reads its input's items at the items port, as the ports below say. It counts an item
+answered where its ID stands as a word of its own in a file the subagent wrote in this run other
+than the input, so `B-1` is answered by neither `B-12`, `B-1.2` nor `AB-1`. An item with no ID is
+not counted, as no text tells an answer to it from any other.
 
 ## The proposal
 
@@ -77,10 +85,10 @@ Schema:
 
 ```json
 {"type": "object", "required": ["plugin"], "additionalProperties": false,
- "anyOf": [{"required": ["subagents"]}, {"required": ["flow"]}],
+ "anyOf": [{"required": ["subagents"]}, {"required": ["routes"]}],
  "properties": {
   "plugin": {"type": "string", "description": "your plugin's folder"},
-  "flow": {"type": "object", "description": "your subagents' order, as docs/flow.md gives it"},
+  "routes": {"type": "object", "description": "your subagents' routes, as docs/routes.md gives them"},
   "subagents": {"type": "array", "minItems": 1, "items": {
    "type": "object", "required": ["name", "steps"], "additionalProperties": false,
    "properties": {
@@ -93,9 +101,8 @@ Schema:
       "lanes": {"type": "array", "minItems": 1, "items": {
        "type": "object", "required": ["lane", "takes"], "additionalProperties": false,
        "properties": {
-        "lane": {"enum": ["start_with", "read_only", "read_whole", "write_only", "in_form",
-                          "hands_off", "test_after", "as_printed", "follow_next", "wait_for",
-                          "end_when", "every_item"]},
+        "lane": {"enum": ["read_only", "read_whole", "write_only", "in_form", "run_only",
+                          "hold", "test_after", "end_when", "every_item"]},
         "takes": {"type": "array", "items": {"type": "string"}},
         "adapter": {"type": "string", "description": "hooks/adapters/<port>-<name>.py"}}}}}}}}}}}}
 ```
@@ -108,9 +115,9 @@ Schema:
   [What each lane is given](#what-each-lane-is-given), each written as the step writes it, a script
   or a command word for word.
 - An adapter is named only where your text is in another form than lane's, as the ports below say.
-- A flow is written under `flow`, held to the JSON Schema [the flow](flow.md#the-flow) gives, and
-  laid as a follow_flow lane on the orchestrator's step. A proposal may hold a flow alone, with no
-  `subagents`.
+- Routes are written under `routes`, held to the JSON Schema [the routes](routes.md#the-routes)
+  give, and laid as a follow_routes lane on the orchestrator's step and a result command on the last
+  step of each subagent they name. A proposal may hold routes alone, with no `subagents`.
 - A subagent the proposal gives has, once it is written, the proposal's lanes alone. Put in each
   lane that `lay.py up` says was laid before in it and that you keep, as `lay.py up` says the lane.
 
@@ -148,9 +155,8 @@ form, your plugin has an adapter for it:
 
 | Port | Given | Gives | lane's form |
 |---|---|---|---|
-| values | `{"texts": ["<the prompt>", "<each print of a start_with script or message sent after>", ...]}`, in the order the subagent's record holds them | `{"values": {"<name>": ["<text>", ...]}}` or `{"values": {"<name>": null}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself, `null` for itself |
+| values | `{"texts": ["<the prompt>", "<each message sent after>", ...]}`, in the order they were sent | `{"values": {"<name>": ["<text>", ...]}}` or `{"values": {"<name>": null}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself, `null` for itself |
 | items | `{"input": "<path>", "text": "<its text>"}` | `{"items": ["<ID>", ...]}` | each top-level item of a Markdown list beginning with an ID, such as `B-1`, `R33` or `KR1.1`, in bold, code or brackets or not |
-| move | `{"output": "<what the script printed>"}` | `{"move": {"tool": "...", "input": {...}}}` or `{"move": null}` | the tool call itself, one JSON line `{"tool": ..., "input": {...}}` last in the output |
 
 The ports' JSON Schemas:
 
@@ -168,15 +174,6 @@ The ports' JSON Schemas:
            "properties": {"input": {"type": "string"}, "text": {"type": "string"}}},
     "out": {"type": "object", "required": ["items"], "additionalProperties": false,
             "properties": {"items": {"type": "array", "items": {"type": "string"}}}}
-  },
-  "move": {
-    "in": {"type": "object", "required": ["output"], "additionalProperties": false,
-           "properties": {"output": {"type": "string"}}},
-    "out": {"type": "object", "required": ["move"], "additionalProperties": false,
-            "properties": {"move": {"anyOf": [
-              {"type": "null"},
-              {"type": "object", "required": ["tool", "input"], "additionalProperties": false,
-               "properties": {"tool": {"type": "string"}, "input": {"type": "object"}}}]}}}
   }
 }
 ```
@@ -189,15 +186,14 @@ the lane's IN, a JSON Schema. A lane is given two things:
 
 - the texts put in each place of its sentence, with each `{<name>}` given for the run put in and
   its empty texts left out, one or more in each place;
-- where its check rests on what the subagent did before, its record, where a call counts once it
-  has come back, and a call a hook stopped is left out.
+- where its check rests on what the subagent did before, the calls the guard kept of it, where a
+  call counts once it has come back, and a call a hook stopped is left out.
 
 The layer holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid,
 not on a run.
 
 Anything not as these say is an error, not a drift. Errors include a value not given or given
-empty; an adapter failing, giving no answer in time or answering out of its port; the record not
-found; the event or `hooks/lanes.json` not as Claude Code and `lay.py write` write them; a step no
+empty; an adapter failing, giving no answer in time or answering out of its port; the event or `hooks/lanes.json` not as Claude Code and `lay.py write` write them; a step no
 longer saying its lane's sentence; and a thing a lane takes that `lay.py write` would now refuse,
 such as in_form's form gone. On an error the guard stops the call, or keeps the subagent going once
 as it ends, and tells it and you
@@ -215,17 +211,13 @@ or, where the event or `hooks/lanes.json` is what is wrong, so no lane of the su
 and, where the hook's command does not name the subagent as `lay.py write` writes it, so neither
 your plugin nor the subagent is known, the same headed `lane:` and naming `the lanes of this hook`.
 
-The guard holds a lane taking a value given for the run once the script start_with runs first has
-run and come back, as the value comes with what the script prints. Until then start_with holds the
-subagent, and the guard lets through the call that runs the script.
-
-The IN of a lane, `<place>` standing for each of its places below, and `record` required only where
-it rests on the record:
+The IN of a lane, `<place>` standing for each of its places below, and `calls` required only where
+it rests on the calls kept:
 
 ```json
 {
   "type": "object",
-  "required": ["takes", "record"],
+  "required": ["takes", "calls"],
   "additionalProperties": false,
   "properties": {
     "takes": {
@@ -236,36 +228,30 @@ it rests on the record:
         "<place>": {"type": "array", "items": {"type": "string"}, "minItems": 1}
       }
     },
-    "record": {"type": "array"}
+    "calls": {"type": "array"}
   }
 }
 ```
 
-| Lane | Places | Rests on the record |
+| Lane | Places | Rests on the calls kept |
 |---|---|---|
-| start_with | `script` | yes |
 | read_only | `input` | no |
 | read_whole | `input` | yes |
 | write_only | `output` | no |
 | in_form | `output`, `form` | no |
-| hands_off | `commands` | no |
+| run_only | `commands` | no |
+| hold | `commands` | no |
 | test_after | `output`, `test` | yes |
-| as_printed | `command` | yes |
-| follow_next | `script` | yes |
-| follow_flow | none | yes |
-| wait_for | `approval`, `held` | yes |
-| end_when | `output` | yes |
+| follow_routes | none | yes |
+| end_when | `output` | no |
 | every_item | `input` | yes |
-
-`held` is the commands wait_for holds back.
 
 ## A subagent's part
 
-Where your subagent's file is its entry, its frontmatter and a body having it read its part first,
-such as
+Where your subagent's file is its entry, its frontmatter and a body naming its part, such as
 
 ```markdown
-Read `${CLAUDE_PLUGIN_ROOT}/prompts/writer.md` whole first, and take its steps on what you are given.
+Your steps are in `${CLAUDE_PLUGIN_ROOT}/prompts/writer.md`, given to you as you start. Take them on what you are given.
 ```
 
 its steps are those of the part, the one file under your plugin's `prompts/` the body names in
@@ -277,25 +263,9 @@ Subagents whose entries name one part share its steps, and the part carries one 
 So `lay.py print` refuses a proposal where subagents sharing a part would lay different lanes on a
 step of it, those it gives and those laid before alike, and names them and the step.
 
-Claude Code puts your plugin's folder in for `${CLAUDE_PLUGIN_ROOT}` in the entry's body alone, not
-in the part the subagent reads, so the part names each script, file or folder by its name alone,
-and the body says where each lies, before the sentence naming the part, as
-`` `<name>` below is `<what it stands for>` ``, such as
-
-```markdown
-`writer.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/writer.py"`, run from where you start.
-`entry.json` below is `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`.
-```
-
-A lane takes the name as the step says it, as in `` First run `writer.py start`. ``, and its
-sentence shows it so. Where a thing it takes begins with a name the body binds, the guard and the
-layer read the name as the body says it stands for. So start_with holds the subagent to run the
-script where the body says it lies, and in_form reads the form there.
-
-Once lanes are laid in the subagent, the guard holds it to read the part whole before anything
-else, with nothing in the proposal for it, as the sentence is the entry's and not a step's. The
-guard lets a Read of the part go on, without holding its lanes on it. It stops any other call made
-before the part is read to its end, and tells the subagent the entry's sentence, headed by your
-plugin's name, as start_with and read_whole tell theirs. The part not there, or the subagent's
-record not found, is an error, which the guard tells in the form
-`<plugin>: lane cannot check the lanes of <subagent>: <what is wrong>.` above.
+Once lanes are laid in the subagent, the guard gives it the part whole as it starts, through the
+SubagentStart hook's `additionalContext`, with your plugin's folder put in place of
+`${CLAUDE_PLUGIN_ROOT}`, as Claude Code does in the entry's body. So the subagent has its steps
+before its first call, and no lane is needed for reading them. The part not there is an error,
+which the guard tells in the form `<plugin>: lane cannot check the lanes of <subagent>: <what is
+wrong>.` above.
