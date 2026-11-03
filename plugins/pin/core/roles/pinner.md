@@ -107,6 +107,9 @@ hold for it; and under each question, the decisions that make it hold.
      whether it is right. Write it into the decision it settles, `settled_by` `research`, with
      the source and the person's confirmation as its grounds. Where they correct it, take their
      word, and where it changes what is decided, `settled_by` is `user`.
+   - Else, where a decision open to decide now rests on a fact only the person knows, ask them
+     that fact alone, as `Whose a decision is` says, and write their answer into the decision's
+     grounds, their words with the date. The decision then waits for its own turn below.
    - Else judge each decision the check names as open to decide now by `Whose a decision is`.
      Settle each that is yours, and take the next that is the person's: put it to them, and write
      their answer into it, `settled_by` `user`, their words with the date as its grounds.
