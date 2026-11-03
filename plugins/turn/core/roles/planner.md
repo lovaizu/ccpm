@@ -35,9 +35,12 @@ your recommendation.
 
 1. **A run that is ready goes on.** Where `{run}/run.json` holds `groups` and `refactoring_groups`
    and both standards are there, give `planned`: the run was planned before it stopped.
-2. **The kind is confirmed.** Decide the kind from the request, a short name in lower case joined
-   by `-`, such as `readme` or `man-page`, and whether the work is a document or code. Unless
-   `given.kind` settles it, ask the person, as `A README for tidy, a document. Right?`.
+2. **The kind is settled.** Decide the kind from the request, a short name in lower case joined
+   by `-`, such as `readme` or `man-page`, and whether the work is a document or code. Where
+   `given.kind` or the request's own words name the kind, as "a README" does, it is settled: do not
+   ask it, as a question the person's words already answer spends their time for nothing. Where
+   the request leaves it open, as "something that explains tidy" does, ask the person, as
+   `A README for tidy, a document. Right?`.
 3. **The template is found, or made.** Take the repository's template of the kind, else Turn's.
    Where neither has it, make one, as `Making a template` below says. Run only `python3 ${dependency:pin}/scripts/check.py {run}/kind-tree.json`.
 4. **The run is written.** Write `{run}/run.json` in the form of

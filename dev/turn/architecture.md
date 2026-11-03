@@ -355,7 +355,8 @@ run of builder only for each part that holds a decision the Remake names.
 
 ### Sequences
 
-The person types `/turn:up`, and planner asks a question, O1 of the UX up to the design:
+The person types `/turn:up`, and planner, where the request leaves the kind open, asks it, O1 of
+the UX up to the design:
 
 ```mermaid
 sequenceDiagram
