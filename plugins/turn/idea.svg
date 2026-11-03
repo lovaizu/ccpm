@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 590" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>Best practice refined into a Standard and a Practice, and used through a design tree</title>
+  <title>Best practice: a goal, parts, benefits and practices, used through a design tree</title>
   <style>
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
     .area { fill: none; stroke: #d0d7de; stroke-width: 1.5; }
@@ -39,7 +39,7 @@
   <rect class="area" x="530" y="80" width="400" height="38" rx="6"/>
   <text class="part" x="730" y="104">how to make a good deliverable</text>
 
-  <!-- refined into Turn's Standard and Practice -->
+  <!-- refined into Turn's best practice: its goal, parts and benefits, and its practices -->
   <rect class="frame" x="40" y="176" width="920" height="396" rx="14"/>
   <text class="turn" x="60" y="200">Turn</text>
 
@@ -49,14 +49,14 @@
   <text class="label" x="742" y="156">refined into one form</text>
 
   <rect class="box" x="90" y="206" width="360" height="96" rx="10"/>
-  <text class="name" x="270" y="234">Standard</text>
+  <text class="name" x="270" y="234">Goal · Parts · Benefits</text>
   <text class="kind" x="270" y="254">what a good deliverable of a kind is</text>
-  <text class="part" x="270" y="284">Goal · Parts · Checklist</text>
+  <text class="part" x="270" y="284">yes/no questions for each part and the whole</text>
 
   <rect class="box" x="550" y="206" width="360" height="96" rx="10"/>
-  <text class="name" x="730" y="234">Practice</text>
+  <text class="name" x="730" y="234">Practices</text>
   <text class="kind" x="730" y="254">how to make a good deliverable</text>
-  <text class="part" x="730" y="284">a way and steps for each question</text>
+  <text class="part" x="730" y="284">a way of thinking and steps for each benefit</text>
 
   <path class="line" d="M542,254 H458" marker-end="url(#arrow)"/>
   <text class="label mid" x="500" y="274">one for</text>
@@ -74,7 +74,7 @@
   <path class="line" d="M730,310 V410 H688" marker-end="url(#arrow)"/>
   <text class="label end" x="718" y="345">decides each by</text>
 
-  <!-- the deliverable: built from the design tree, judged against the standard alone -->
+  <!-- the deliverable: built from the design tree, judged against the goal, parts and benefits alone -->
   <path class="box" d="M420,490 H562 L580,508 V550 H420 Z"/>
   <path class="fold" d="M562,490 V508 H580"/>
   <text class="name" x="500" y="526">Deliverable</text>

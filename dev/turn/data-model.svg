@@ -36,18 +36,16 @@
     </marker>
   </defs>
   <rect class="bg" x="0" y="0" width="1180" height="730"/>
-  <rect class="box" x="40" y="60" width="200" height="50" rx="0"/>
-  <text class="name" x="140.0" y="90">Part</text>
   <rect class="box" x="340" y="60" width="200" height="50" rx="0"/>
-  <text class="name" x="440.0" y="90">Standard</text>
+  <text class="name" x="440.0" y="90">Part</text>
   <rect class="box" x="640" y="60" width="200" height="50" rx="0"/>
   <text class="name" x="740.0" y="90">Best practice</text>
   <rect class="box" x="940" y="60" width="200" height="50" rx="0"/>
   <text class="name" x="1040.0" y="90">Request</text>
   <rect class="box" x="340" y="230" width="200" height="50" rx="0"/>
-  <text class="name" x="440.0" y="260">Question</text>
+  <text class="name" x="440.0" y="260">Benefit</text>
   <rect class="box" x="640" y="230" width="200" height="50" rx="0"/>
-  <text class="name" x="740.0" y="260">Method</text>
+  <text class="name" x="740.0" y="260">Practice</text>
   <rect class="box" x="340" y="400" width="200" height="50" rx="0"/>
   <text class="name" x="440.0" y="430">Decision</text>
   <rect class="box" x="640" y="400" width="200" height="50" rx="0"/>
@@ -61,8 +59,10 @@
   <path class="line" d="M640,85 L540,85"/>
   <path class="line" d="M631.0,92.0 L631.0,78.0"/>
   <path class="line" d="M625.0,92.0 L625.0,78.0"/>
-  <path class="line" d="M549.0,78.0 L549.0,92.0"/>
-  <path class="line" d="M555.0,78.0 L555.0,92.0"/>
+  <path class="line" d="M554.0,85.0 L540.0,77.0"/>
+  <path class="line" d="M554.0,85.0 L540.0,85.0"/>
+  <path class="line" d="M554.0,85.0 L540.0,93.0"/>
+  <circle class="box" cx="564.0" cy="85.0" r="5"/>
   <text class="label" x="590" y="77" text-anchor="middle">has</text>
   <path class="line" d="M940,75 L840,75"/>
   <path class="line" d="M926.0,75.0 L940.0,83.0"/>
@@ -74,40 +74,32 @@
   <path class="line" d="M854.0,75.0 L840.0,83.0"/>
   <path class="line" d="M859.0,68.0 L859.0,82.0"/>
   <text class="label" x="890" y="67" text-anchor="middle">names</text>
-  <path class="line" d="M340,85 L240,85"/>
-  <path class="line" d="M331.0,92.0 L331.0,78.0"/>
-  <path class="line" d="M325.0,92.0 L325.0,78.0"/>
-  <path class="line" d="M254.0,85.0 L240.0,77.0"/>
-  <path class="line" d="M254.0,85.0 L240.0,85.0"/>
-  <path class="line" d="M254.0,85.0 L240.0,93.0"/>
-  <circle class="box" cx="264.0" cy="85.0" r="5"/>
-  <text class="label" x="290" y="77" text-anchor="middle">has</text>
-  <path class="line" d="M80,60 L80,30 L200,30 L200,60"/>
-  <path class="line" d="M73.0,51.0 L87.0,51.0"/>
-  <circle class="box" cx="80.0" cy="41.0" r="5"/>
-  <path class="line" d="M200.0,46.0 L192.0,60.0"/>
-  <path class="line" d="M200.0,46.0 L200.0,60.0"/>
-  <path class="line" d="M200.0,46.0 L208.0,60.0"/>
-  <circle class="box" cx="200.0" cy="36.0" r="5"/>
-  <text class="label" x="140" y="24" text-anchor="middle">holds</text>
+  <path class="line" d="M380,60 L380,30 L500,30 L500,60"/>
+  <path class="line" d="M373.0,51.0 L387.0,51.0"/>
+  <circle class="box" cx="380.0" cy="41.0" r="5"/>
+  <path class="line" d="M500.0,46.0 L492.0,60.0"/>
+  <path class="line" d="M500.0,46.0 L500.0,60.0"/>
+  <path class="line" d="M500.0,46.0 L508.0,60.0"/>
+  <circle class="box" cx="500.0" cy="36.0" r="5"/>
+  <text class="label" x="440" y="24" text-anchor="middle">holds</text>
   <path class="line" d="M440,110 L440,230"/>
-  <path class="line" d="M447.0,119.0 L433.0,119.0"/>
-  <path class="line" d="M447.0,125.0 L433.0,125.0"/>
+  <path class="line" d="M440.0,124.0 L448.0,110.0"/>
+  <path class="line" d="M440.0,124.0 L440.0,110.0"/>
+  <path class="line" d="M440.0,124.0 L432.0,110.0"/>
+  <circle class="box" cx="440.0" cy="134.0" r="5"/>
   <path class="line" d="M440.0,216.0 L432.0,230.0"/>
   <path class="line" d="M440.0,216.0 L440.0,230.0"/>
   <path class="line" d="M440.0,216.0 L448.0,230.0"/>
-  <path class="line" d="M433.0,211.0 L447.0,211.0"/>
-  <text class="label" x="450" y="200" text-anchor="start">asks</text>
-  <path class="line" d="M190,110 L190,180 L380,180 L380,230"/>
-  <path class="line" d="M190.0,124.0 L198.0,110.0"/>
-  <path class="line" d="M190.0,124.0 L190.0,110.0"/>
-  <path class="line" d="M190.0,124.0 L182.0,110.0"/>
-  <circle class="box" cx="190.0" cy="134.0" r="5"/>
-  <path class="line" d="M380.0,216.0 L372.0,230.0"/>
-  <path class="line" d="M380.0,216.0 L380.0,230.0"/>
-  <path class="line" d="M380.0,216.0 L388.0,230.0"/>
-  <circle class="box" cx="380.0" cy="206.0" r="5"/>
-  <text class="label" x="285" y="172" text-anchor="middle">looks at</text>
+  <circle class="box" cx="440.0" cy="206.0" r="5"/>
+  <text class="label" x="430" y="172" text-anchor="end">looks at</text>
+  <path class="line" d="M680,110 L680,170 L500,170 L500,230"/>
+  <path class="line" d="M673.0,119.0 L687.0,119.0"/>
+  <path class="line" d="M673.0,125.0 L687.0,125.0"/>
+  <path class="line" d="M500.0,216.0 L492.0,230.0"/>
+  <path class="line" d="M500.0,216.0 L500.0,230.0"/>
+  <path class="line" d="M500.0,216.0 L508.0,230.0"/>
+  <path class="line" d="M493.0,211.0 L507.0,211.0"/>
+  <text class="label" x="590" y="162" text-anchor="middle">has</text>
   <path class="line" d="M740,110 L740,230"/>
   <path class="line" d="M747.0,119.0 L733.0,119.0"/>
   <path class="line" d="M747.0,125.0 L733.0,125.0"/>
@@ -119,10 +111,8 @@
   <path class="line" d="M540,255 L640,255"/>
   <path class="line" d="M549.0,248.0 L549.0,262.0"/>
   <path class="line" d="M555.0,248.0 L555.0,262.0"/>
-  <path class="line" d="M626.0,255.0 L640.0,263.0"/>
-  <path class="line" d="M626.0,255.0 L640.0,255.0"/>
-  <path class="line" d="M626.0,255.0 L640.0,247.0"/>
-  <path class="line" d="M621.0,262.0 L621.0,248.0"/>
+  <path class="line" d="M631.0,262.0 L631.0,248.0"/>
+  <path class="line" d="M625.0,262.0 L625.0,248.0"/>
   <text class="label" x="590" y="247" text-anchor="middle">is met by</text>
   <path class="line" d="M820,400 L820,330 L880,330 L880,100 L840,100"/>
   <path class="line" d="M820.0,386.0 L812.0,400.0"/>

@@ -12,24 +12,26 @@ learns the best practice of each kind of deliverable from guides and examples of
 each decision about your deliverable to your purpose. Then a second AI, which did not make the
 deliverable, uses it as its user would.
 
-![Best practice refined into a Standard and a Practice, and used through a design tree](idea.svg)
+![Best practice: a goal, parts, benefits and practices, used through a design tree](idea.svg)
 
-- Standard: what a good deliverable of the kind is. You approve the Standard of a new kind before
-  Turn uses it.
-  - Goal: what the deliverable's user achieves with it, so the deliverable is judged by whether
-    they achieve it.
+- Best practice: what a good deliverable of the kind is, and how to make one, in four parts. You
+  approve the goal, parts and benefits of a new kind's best practice before Turn uses it.
+  - Goal: the one thing the deliverable's user achieves with it, so the deliverable is judged by
+    whether they achieve it.
   - Parts: what the deliverable holds, in the order its user meets it, so each part is there because
     the goal needs it.
-  - Checklist: questions that ask what each part, each tie between parts, and the whole bring the
-    user. A deliverable that answers every question yes is done, and nothing more is added.
-- Practice: for each question of the Checklist, a way of thinking and steps that have worked, with
-  their sources, so each answer rests on what has worked, not on a guess.
-- Design tree: your deliverable's purpose at the top, the Checklist's questions under it, and under
+  - Benefits: questions, each answered yes or no, that ask what each part, each tie between parts,
+    and the whole bring the user. A deliverable that answers every question yes is done, and nothing
+    more is added.
+  - Practices: for each benefit, a way of thinking and steps that have worked, with their sources,
+    so each answer rests on what has worked, not on a guess.
+- Design tree: your deliverable's purpose at the top, the benefits' questions under it, and under
   each question the decisions that make its answer yes. Nothing is built that serves no question,
   and Turn asks you only the points that no fact settles.
 
-The second AI judges the deliverable by the Standard alone, not by the Practice: the deliverable's
-user gets only the deliverable, and a deliverable built by the Practice can still fall short.
+The second AI judges the deliverable by the goal, parts and benefits alone, not by the practices:
+the deliverable's user gets only the deliverable, and a deliverable built by the practices can still
+fall short.
 
 **Non-goals**
 
@@ -108,14 +110,15 @@ release.
    ```
 
 3. Turn has no best practice for press releases yet, so it reads guides and examples of good ones
-   on the web. It then shows you the Standard it drew from them:
+   on the web. It then shows you the goal, parts and benefits of the new best practice it drew from
+   them:
 
    ```text
-   turn: I have no Standard for press releases yet.
+   turn: I have no best practice for press releases yet.
          Here is a new one, what a good press release is:
          Goal: a reporter decides from the release whether to write about it.
          Parts: headline, lead, body, boilerplate, contact.
-         Checklist:
+         Benefits:
          - Can a reporter tell from the headline what is new?
          - Can a reporter tell from the lead who launches what, and when?
          - Can a reporter check each claim in the body?
@@ -138,16 +141,16 @@ release.
 5. Turn shows the design it will write the release from:
 
    ```text
-   turn: Design: a headline on RoomBook's launch, with three benefits and the PR contact from
+   turn: Design: a headline on RoomBook's launch, with three gains and the PR contact from
          RoomBook's README. Approve?
    You:  Approved
    ```
 
 6. Turn writes the release, and a second AI reads it as a reporter would, against each question of
-   the Checklist. Turn goes on until every answer is yes, and then gives you the release:
+   the benefits. Turn goes on until every answer is yes, and then gives you the release:
 
    ```text
-   turn: The press release, which meets every question of the Standard:
+   turn: The press release, which meets every benefit:
 
          Northwind's RoomBook offers only the meeting rooms that fit your meeting
 
@@ -164,9 +167,9 @@ release.
          Contact: Northwind PR department, pr@northwind.example
    ```
 
-Turn keeps the Standard you approved, with its Practice, in `.turn/` in the folder you run Claude
-Code in, so your next press release skips step 3. Turn ships both for READMEs, UX documents,
-architecture documents, code and prompts, so those kinds skip step 3 from the first time.
+Turn keeps the best practice you approved in `.turn/` in the folder you run Claude Code in, so your
+next press release skips step 3. Turn ships best practices for READMEs, UX documents, architecture
+documents, code and prompts, so those kinds skip step 3 from the first time.
 
 ## How it works
 

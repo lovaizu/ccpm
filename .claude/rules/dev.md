@@ -11,10 +11,10 @@ Read [how a plugin works](../../dev/architecture.md), the architecture every plu
 follow it.
 
 This file holds the order the work goes in. Each step names the best practice in
-`plugins/turn/best-practices/` to open while doing it. Its Standard says what a deliverable of its
-kind must be, and its checklist asks the questions that the deliverable must pass; its Practice
-holds a way to make each question pass. A document is also finished by `refactor-doc.json`, and code by
-`refactor-code.json`; open that one with it.
+`plugins/turn/best-practices/` to open while doing it. Its goal says what the deliverable's user
+achieves, and its parts say what the deliverable holds. Its benefits ask the questions that the
+deliverable must pass, and its practices hold a way to make each question pass. A document is also
+finished by `refactor-doc.json`, and code by `refactor-code.json`; open that one with it.
 
 When a step's work needs something that its best practice does not ask, add the question to that
 best practice, whichever plugin is being built, and make the work again against it.

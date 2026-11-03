@@ -1,9 +1,10 @@
 # Turn architecture
 
 Turn delivers [its UX](ux.md) through four roles that take a work in turn. The planner gives the
-best practice of the work's kind: its Standard, what a good work of the kind is, and its Practice,
-how to make one. The designer decides the work's design from it, the builder makes the work from
-the design, and the evaluator, given only the Standard, uses the work as its user would.
+best practice of the work's kind: its goal, parts and benefits, what a good work of the kind is,
+and its practices, how to make one. The designer decides the work's design from it, the builder
+makes the work from the design, and the evaluator, given only the goal, parts and benefits, uses
+the work as its user would.
 [Lane](../../plugins/lane/README.md)'s flow moves the work through the roles in two phases: first
 what the work says, then how it says it.
 
@@ -13,10 +14,14 @@ Turn follows [how a plugin works](../architecture.md#principles). This document 
 that one, such as work, role and orchestrator; Turn's README calls the work the deliverable. Where
 Turn departs from how a plugin works, a choice under Components or Deployment says why.
 
-A Standard holds a Checklist: questions, each asking what the work brings its user. Each question
-gets one of two answers. A **good** gives the lines of the work that meet the question, as the
-Good lines of how a plugin works do. A **more** says what the work's user gets once the answer is
-good, never how to make it, as a need does there.
+A best practice holds four things side by side. Its goal is the one thing the work's user
+achieves. Its parts are what the work holds, in the order its user meets it. Its benefits are
+questions, each asking what a part, a tie between parts or the whole brings the user. Its practices
+give, for each benefit, a way of thinking that meets it, with steps where needed and their sources.
+
+Each question gets one of two answers. A **good** gives the lines of the work that meet the
+question, as the Good lines of how a plugin works do. A **more** says what the work's user gets once
+the answer is good, never how to make it, as a need does there.
 
 ### One way for every kind
 
@@ -35,7 +40,7 @@ Anyone can then ask for a work in a sentence, and no one is asked a point twice.
 ### Decided from the purpose down
 
 The designer keeps the decisions in a design tree: the work's purpose at the root, the questions
-of the kind's Checklist under it, and under each question the decisions that make its answer good.
+of the kind's benefits under it, and under each question the decisions that make its answer good.
 It decides in the order the decisions build on one another, the purpose first.
 
 A decision that serves no question is made for nothing, and one made before what it builds on is
@@ -43,16 +48,16 @@ made again. The person is asked only what no fact settles.
 
 ### One asker for each point the person decides
 
-The planner alone asks the person about the kind and its Standard. The designer alone asks about
-the purpose and the design, and alone changes the design. Each asks one point at a time, with the
-answer it recommends.
+The planner alone asks the person about the kind and its best practice. The designer alone asks
+about the purpose and the design, and alone changes the design. Each asks one point at a time, with
+the answer it recommends.
 
 The work is then made from one design, and the person is asked each point once.
 
 ### The evaluator has only what the work's user has
 
-The evaluator gets the work and the Standard alone, never the Practice or the design tree. It
-answers each question by using the work as its user would.
+The evaluator gets the work and the goal, parts and benefits alone, never the practices or the
+design tree. It answers each question by using the work as its user would.
 
 The work's user never sees the design. An evaluator that has the design judges whether the work
 follows it, not what its user gets.
@@ -104,15 +109,14 @@ Lane and each caller can then change their code freely behind what they document
 
 - As the person who wants a work, I want to ask `turn:up` for it and confirm its kind. Carries
   O1's request and "This is a press release, a document. Right?".
-- As that person, I want to approve the Standard of a kind that Turn has no best practice for, and
-  have it kept for my next work of that kind. Carries O1's "I have no Standard for press releases
-  yet. … Approve?".
+- As that person, I want to approve the goal, parts and benefits of a kind that Turn has no best
+  practice for, and have the best practice kept for my next work of that kind. Carries O1's "I have
+  no best practice for press releases yet. … Approve?".
 - As that person, I want to answer what the work is for and each point that only I decide, each
   with a recommendation, and approve the design. Carries O1 from "What is this release for?" to the
   design approved.
 - As that person, I want the work only once an AI that did not make it, using it as its user would,
-  finds every question good. Carries O1's "The press release, which meets every question of the
-  Standard".
+  finds every question good. Carries O1's "The press release, which meets every benefit".
 - As a plugin's step, such as Rn's, I want to start `turn:up` with the points that my step has
   settled, and get the work back. Carries O1's steps when the person reaches Turn through such a
   plugin, without the points that the plugin settled.
@@ -152,13 +156,13 @@ Lane and each caller can then change their code freely behind what they document
   - `more` from the evaluator at 4 sends it to the designer at 2;
   - `more` from the evaluator at 6 sends it to the builder at 5.
 - `check.py` alone checks what no lane holds. In a best practice, each part is looked at by a
-  question, and each question has a method. In a design tree, each question is served, each
+  benefit, and each benefit has a practice. In a design tree, each question is served, each
   decision reaches the root, and the order of deciding follows what each decision builds on. In a
   self-check or a verification, each question is answered once, and each line it names is in the
   work.
-- `standard.py` alone gives the evaluator a best practice's Standard, without its Practice. A lane
-  holds the evaluator to read nothing but the work, so the Standard is all it has of the best
-  practice.
+- `practices.py` alone gives the evaluator a best practice's goal, parts and benefits, without its
+  practices. A lane holds the evaluator to read nothing but the work, so the goal, parts and
+  benefits are all it has of the best practice.
 - The items adapter alone gives Lane the question IDs of a best practice, each named with its file,
   such as `readme/Q3`.
 - A role that asks the person sends the ask to the main conversation. The main conversation puts it
@@ -176,8 +180,9 @@ Choices a reader would question:
   person. A role's message reaches the main conversation only once the main conversation's current
   turn ends, as [Calling Turn](../../plugins/turn/docs/calling.md#asks) says, so a run in the
   foreground would wait on itself.
-- The person approves the Standard and the design by an answer that the main conversation passes
-  on. [The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)
+- The person approves the goal, parts and benefits of a new kind, and the design, by an answer
+  that the main conversation passes on.
+  [The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)
   asks instead for an action of the person's own, such as a skill that the AI cannot call. A
   subagent reaches the person only through the main conversation. What the approval lets through
   is a file that the person can change or remove, and that Turn neither commits nor sends.
@@ -213,8 +218,7 @@ Choices a reader would question:
   `<kind>.json`. Answers are kept twice in one form: `self-check.json` from the builder, and
   `verification.json` from the evaluator. Each question in them is named with its best practice,
   such as `readme/Q3` or `refactor-doc/Q1`, so the answers of both phases lie side by side.
-- A best practice for refactoring has a Standard with no parts, as the work keeps its kind's
-  shape.
+- A best practice for refactoring has no parts, as the work keeps its kind's shape.
 
 ### Sequences
 
@@ -243,7 +247,7 @@ sequenceDiagram
   U->>R: writes them (Request)
 ```
 
-Approving the Standard of a new kind:
+Approving the best practice of a new kind:
 
 ```mermaid
 sequenceDiagram
@@ -261,7 +265,7 @@ sequenceDiagram
     I-->>PL: guides and examples
     PL->>B: reads meta (Best practice)
     PL->>C: checks the new best practice (Best practice)
-    PL->>M: asks to approve (Standard)
+    PL->>M: asks to approve its goal, parts and benefits (Best practice)
     M->>P: the ask
     P->>M: approved
     M->>PL: approved
@@ -283,7 +287,7 @@ sequenceDiagram
   participant C as check.py
   L-->>U: move 2: start designer
   U->>D: starts (Request)
-  D->>B: reads the Checklist (Best practice)
+  D->>B: reads the benefits (Best practice)
   D->>M: asks the purpose, then each point only the person decides (Decision)
   M->>P: each ask, with a recommendation
   P->>M: each answer
@@ -307,14 +311,14 @@ sequenceDiagram
   participant D as Designer
   participant B as Builder
   participant E as Evaluator
-  participant S as standard.py
+  participant S as practices.py
   participant C as check.py
   participant BP as Best practices
   participant R as Run files
   participant K as The work
   L-->>U: move 3: start builder
   U->>B: starts (Request)
-  B->>BP: reads, its Practice with it (Best practice)
+  B->>BP: reads, its practices with it (Best practice)
   B->>R: reads (Design tree)
   B->>K: makes it, decision by decision (Work)
   B->>R: writes (Answers)
@@ -322,7 +326,7 @@ sequenceDiagram
   L-->>U: move 4: start evaluator
   U->>E: starts (Request)
   E->>S: runs, naming the kind
-  S-->>E: (Standard)
+  S-->>E: goal, parts and benefits (Best practice)
   E->>K: uses it as its user would (Work)
   E->>R: writes (Answers)
   E->>C: checks (Answers)
@@ -343,7 +347,7 @@ sequenceDiagram
     L-->>U: move 6: start evaluator
     U->>E: starts, for the refactoring phase (Request)
     E->>S: runs, naming the kind
-    S-->>E: (Standard)
+    S-->>E: goal, parts and benefits (Best practice)
     E->>K: uses it as its user would (Work)
     E->>R: writes (Answers)
     E->>C: checks (Answers)
@@ -399,7 +403,7 @@ plugins/turn/
 ├── agents/up.md, <role>.md      the entries of turn:up and each role <subagent · Markdown>
 ├── prompts/up.md, <role>.md     the steps of turn:up and each role <Markdown>
 ├── scripts/check.py             check.py <script · Python 3.9 stdlib>
-├── scripts/standard.py          standard.py <script · Python 3.9 stdlib>
+├── scripts/practices.py         practices.py <script · Python 3.9 stdlib>
 ├── scripts/wait.py              wait.py <script · Python 3.9 stdlib>
 ├── forms/<data>.json            Forms <JSON Schema files>
 ├── best-practices/<kind>.json   the Best practices Turn ships, meta among them <JSON files>
@@ -428,8 +432,8 @@ a role, of the roles together or of a user story, judged from its records.
 | Deployment unit | Unit | Integration | End-to-end |
 |---|---|---|---|
 | Turn's agents [Claude Code subagents · Markdown] | a trial of one role, the rest mocked · ●●● · it keeps to its steps | a trial of the four roles under Lane's flow, the person mocked · ●●○ · the hand-offs and each way back | a trial of each user story, the assistant as the person · ●●○ · the work, and what the person was asked |
-| Turn's scripts [process · stdlib] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of `check.py`, `standard.py`, `wait.py` and the items adapter | unittest with Lane's check script laid · ●○○ · the lanes run the checks, and the flow tells each move | ▨[^1] |
-| Turn's installed folder [plugin folder] | `check.py` · ●●○ · each best practice Turn ships in its form, each part looked at, each question with a method | ▨[^2] | ▨[^1] |
+| Turn's scripts [process · stdlib] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of `check.py`, `practices.py`, `wait.py` and the items adapter | unittest with Lane's check script laid · ●○○ · the lanes run the checks, and the flow tells each move | ▨[^1] |
+| Turn's installed folder [plugin folder] | `check.py` · ●●○ · each best practice Turn ships in its form, each part looked at, each benefit with a practice | ▨[^2] | ▨[^1] |
 
 [^1]: The trials of each user story, in the first row, run the whole.
 [^2]: Nothing joins the best practices to one another; the scripts that read them are tested in

@@ -85,7 +85,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 
 **Grounds**
 
-- [UbiquitousLanguage](https://martinfowler.com/bliki/UbiquitousLanguage.html), Fowler, martinfowler.com/bliki, 2006: "Ubiquitous Language is the term Eric Evans uses in Domain Driven Design for the practice of building up a common, rigorous language between developers and users."
+- [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html), Fowler, martinfowler.com/bliki, 2006: "Ubiquitous Language is the term Eric Evans uses in Domain Driven Design for the practice of building up a common, rigorous language between developers and users."
 - [Concise and Consistent Naming](https://wwwbroy.in.tum.de/publ/papers/deissenboeck_pizka_identifier_naming.pdf), Deißenböck and Pizka, IWPC 2005: "A typical example for a synonym is the usage of the different identifier names accountNumber and number for the concept of an account number."
 - [Concise and Consistent Naming](https://wwwbroy.in.tum.de/publ/papers/deissenboeck_pizka_identifier_naming.pdf), Deißenböck and Pizka, IWPC 2005: "In computer programs, homonyms pose an obstacle for program comprehension since the developer has to take all elements of the set Cn into account when spotting an identifier named n."
 

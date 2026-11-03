@@ -82,7 +82,7 @@
   <text class="name" x="1405" y="427">wait.py</text>
   <text class="tag" x="1405" y="444">[script · Python 3.9]</text>
 
-  <!-- Row D: Lane's check script, Best practices, standard.py -->
+  <!-- Row D: Lane's check script, Best practices, practices.py -->
   <rect class="box" x="20" y="560" width="190" height="80" rx="0"/>
   <text class="name" x="115" y="597">Check script</text>
   <text class="tag" x="115" y="614">[hooks · Python 3.9, Lane]</text>
@@ -91,7 +91,7 @@
   <text class="name" x="790" y="682">Best practices</text>
   <text class="tag" x="790" y="699">[JSON files]</text>
   <rect class="box" x="1080" y="560" width="170" height="80" rx="0"/>
-  <text class="name" x="1165" y="597">standard.py</text>
+  <text class="name" x="1165" y="597">practices.py</text>
   <text class="tag" x="1165" y="614">[script · Python 3.9 stdlib]</text>
 
   <!-- Row E: the items adapter, Forms, Run files -->
@@ -135,7 +135,7 @@
   <path class="line" d="M560,390 L560,110" marker-end="url(#arrow)"/>
   <text class="label" x="552" y="130" text-anchor="end">asks to confirm,</text>
   <text class="label" x="552" y="144" text-anchor="end">approve [SendMessage]</text>
-  <text class="data" x="552" y="158" text-anchor="end">standard</text>
+  <text class="data" x="552" y="158" text-anchor="end">goal, parts, benefits</text>
   <path class="line" d="M860,390 L860,110" marker-end="url(#arrow)"/>
   <text class="label" x="868" y="130">asks to decide, approve</text>
   <text class="label" x="868" y="144">[SendMessage]</text>
@@ -174,8 +174,9 @@
   <text class="label" x="968" y="540">reads</text>
   <text class="data" x="968" y="554">best practice</text>
   <path class="line" d="M1150,470 L1150,560" marker-end="url(#arrow)"/>
-  <text class="label" x="1142" y="522" text-anchor="end">runs [Bash]</text>
-  <text class="data" x="1142" y="536" text-anchor="end">standard</text>
+  <text class="label" x="1158" y="522">runs [Bash]</text>
+  <text class="data" x="1158" y="536">goal, parts,</text>
+  <text class="data" x="1158" y="550">benefits</text>
   <path class="line" d="M1100,640 L1100,680 L1062,680" marker-end="url(#arrow)"/>
   <text class="label" x="1108" y="668">reads</text>
   <text class="data" x="1108" y="682">best practice</text>

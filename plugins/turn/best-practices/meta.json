@@ -164,7 +164,7 @@
      "quote": "In essence, these overly general criteria allow both teachers and students to conclude that really good student responses to the task are, well, really good."
     },
     {
-     "title": "Creating a LLM-as-a-Judge That Drives Business Results",
+     "title": "Using LLM-as-a-Judge For Evaluation: A Complete Guide",
      "url": "https://hamel.dev/blog/posts/llm-judge/",
      "by": "Husain, hamel.dev, 2024",
      "quote": "You need to be able to say “this interaction passed because…” and “this interaction failed because…”."
@@ -273,7 +273,7 @@
      "quote": "users need criteria to grade outputs, but grading outputs helps users define criteria."
     },
     {
-     "title": "Creating a LLM-as-a-Judge That Drives Business Results",
+     "title": "Using LLM-as-a-Judge For Evaluation: A Complete Guide",
      "url": "https://hamel.dev/blog/posts/llm-judge/",
      "by": "Husain, hamel.dev, 2024",
      "quote": "You cannot write a good judge prompt until you’ve seen the data."

@@ -90,7 +90,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 - [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "The checkpoints should refer to criteria and not mere indicators"
 - [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "indicators are easily corrupted, and once it becomes known that they are being used as an indicator for something important in an evaluation, people are very ingenious about faking the score on them"
 - [What's Wrong—and What's Right—with Rubrics](https://ascd.org/el/articles/whats-wrong-and-whats-right-with-rubrics), Popham, Educational Leadership, 1997: "In essence, these overly general criteria allow both teachers and students to conclude that really good student responses to the task are, well, really good."
-- [Creating a LLM-as-a-Judge That Drives Business Results](https://hamel.dev/blog/posts/llm-judge/), Husain, hamel.dev, 2024: "You need to be able to say “this interaction passed because…” and “this interaction failed because…”."
+- [Using LLM-as-a-Judge For Evaluation: A Complete Guide](https://hamel.dev/blog/posts/llm-judge/), Husain, hamel.dev, 2024: "You need to be able to say “this interaction passed because…” and “this interaction failed because…”."
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "A good task is one where two domain experts would independently reach the same pass/fail verdict."
 
 ### Q5: For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
@@ -155,4 +155,4 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "LLM-as-judge graders should be closely calibrated with human experts"
 - [Who Validates the Validators?](https://arxiv.org/abs/2404.12272), Shankar et al., arXiv:2404.12272, 2024: "users need criteria to grade outputs, but grading outputs helps users define criteria."
-- [Creating a LLM-as-a-Judge That Drives Business Results](https://hamel.dev/blog/posts/llm-judge/), Husain, hamel.dev, 2024: "You cannot write a good judge prompt until you’ve seen the data."
+- [Using LLM-as-a-Judge For Evaluation: A Complete Guide](https://hamel.dev/blog/posts/llm-judge/), Husain, hamel.dev, 2024: "You cannot write a good judge prompt until you’ve seen the data."

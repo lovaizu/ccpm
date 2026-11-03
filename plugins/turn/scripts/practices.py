@@ -94,13 +94,16 @@ def faults(data: dict[str, Any]) -> list[str]:
 
 def plain(text: str) -> str:
     """Text as it reads, for finding words in a page: tags and entities gone, quotes, dashes and
-    spaces of every kind made one, and case set aside."""
+    spaces of every kind made one, a space a tag left before a stop gone, code marks dropped, and
+    case set aside."""
     text = html.unescape(re.sub(r"<[^>]+>", " ", text))
     for kinds, one in SAME:
         text = re.sub(f"[{kinds}]", one, text)
-    return re.sub(r"\s+", " ", text).strip().lower()
+    text = re.sub(r"\s+", " ", text.replace("`", ""))
+    return re.sub(r" ([.,:;?!])", r"\1", text).strip().lower()
 
 
+RAW = r"https://raw.githubusercontent.com/\1/\2/"
 # How often a page that asks to be called again later is asked again, and how long is waited first.
 TRIES = 4
 WAIT = 15
@@ -111,6 +114,8 @@ def fetch(url: str) -> tuple[str, bytes]:
     """The page at the URL, its content type and its body, as a browser would be given it, each
     page opened once however many grounds quote it; a page that answers too many requests is
     asked again after a wait."""
+    # A file on GitHub is read as its own text, not the page around it that holds it as data.
+    url = re.sub(r"^https://github\.com/([^/]+)/([^/]+)/blob/", RAW, url)
     request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     for attempt in range(TRIES):
         try:

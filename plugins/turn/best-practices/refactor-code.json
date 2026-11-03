@@ -198,7 +198,7 @@
    ],
    "grounds": [
     {
-     "title": "UbiquitousLanguage",
+     "title": "Ubiquitous Language",
      "url": "https://martinfowler.com/bliki/UbiquitousLanguage.html",
      "by": "Fowler, martinfowler.com/bliki, 2006",
      "quote": "Ubiquitous Language is the term Eric Evans uses in Domain Driven Design for the practice of building up a common, rigorous language between developers and users."
