@@ -7,8 +7,9 @@ pin is for you when you are about to have an AI make something that takes more t
 such as a feature or a document, and you want it to make what you meant. With pin, every decision
 the plan needs is settled before the work starts. You decide each one that is yours, the AI finds
 each fact itself, and nothing is left for the AI to guess along the way. A point settled before the
-work does not come back later as rework. pin is also for a plugin that makes a work for a person,
-such as Turn or rn: it hands pin the work's goal and gets back a design it can build on.
+work does not come back later as rework. pin is also for a plugin that makes something for a
+person, such as Turn or rn: the plugin hands pin the goal of what it makes, and gets back a design
+it can build on.
 
 A plan talked over in a chat lives only in the chat: questions come as they occur to the AI, and
 a point no one raised is guessed later. pin keeps the plan as a design tree, a file that holds the
@@ -19,11 +20,13 @@ builds on.
   decisions that make it hold, until a fact or you settle each one. A decision that serves nothing
   is cut, so you are not asked it.
 - **Facts are found, decisions are asked.** A subagent looks up each fact, such as what reads a
-  file today, while pin goes on with the questions that do not wait for it. Only what is yours to
-  decide reaches you, each with a recommendation.
-- **One question at a time, in order.** pin asks a decision only once the decisions it builds on
-  are settled, so your answer to one question can still change the next.
-- **Checked by a script.** The script `pin-check` checks the file after each answer: every question
+  file today, while pin goes on with the questions that do not wait for it. pin shows you each fact
+  as it is found, for you to confirm, and asks you only the decisions that are yours, each with a
+  recommendation.
+- **One point at a time, in order.** Each message from pin holds one fact to confirm or one
+  decision to make. pin asks a decision only once the decisions it builds on are settled, so your
+  answer to one question can still change the next.
+- **Checked by a script.** The script `check.py` checks the file after each answer: every question
   is served by a decision, every decision reaches the goal, and each decision comes after the ones
   it builds on.
 - **Kept in a file.** Each decision and answer is written to the file before the next question,
@@ -42,11 +45,9 @@ builds on.
 
 ## Requirements
 
-- Claude Code 2.1.317 or later, run on your own computer: `claude --version` shows its version.
-  claude.ai and Cowork do not install pin, as they do not install a plugin with a `bin/` folder,
-  which holds `pin-check`.
-- Python 3.9 or later, run as `python3`, which `pin-check` runs on: `python3 --version` shows its
-  version.
+- Claude Code 2.1.317 or later: `claude --version` shows its version.
+- Python 3.9 or later, run as `python3`, which pin's check script `check.py` runs on:
+  `python3 --version` shows its version.
 
 ## Installation
 
@@ -86,7 +87,14 @@ Is that the goal?
 Recommendation: yes. JSON is for a program to read, so the scripts that read the list gain.
 ```
 
-You answer `yes`. pin asks the next decision, one that builds on the goal:
+You answer `yes`. Meanwhile the subagent has found a fact, and pin shows it to you alone:
+
+```text
+Found: scripts/sync.py:14 reads `updated` with `datetime.fromisoformat(fields[3])`, so it
+expects ISO 8601. Is that right?
+```
+
+You answer `right`. pin asks the next decision, one that builds on the goal:
 
 ```text
 Which fields does each note have in the JSON?
@@ -94,15 +102,15 @@ Which fields does each note have in the JSON?
 Recommendation: id, title, tags and updated, the fields the text output shows today. Yes?
 ```
 
-Questions go on like this, one at a time. pin decides itself what follows from the goal, such as
-keeping the text output the default, and does not ask you it. When no decision is left open, it
+Questions and facts go on like this, one at a time. pin decides itself what follows from the
+goal, such as keeping the text output the default, and does not ask you it. When no decision is left open, it
 shows you the design:
 
 ```text
 Goal: scripts that read `notes list` get its notes as JSON.        (you)
 D1  Each note has id, title, tags and updated.                     (you)
 D2  The text output stays the default; JSON only with --json.      (follows from the goal)
-D3  `updated` is in ISO 8601, in UTC.                              (found: scripts/sync.py:14)
+D3  `updated` is in ISO 8601, in UTC.                              (found, you confirmed)
 
 Do we understand the plan the same way?
 ```
@@ -119,10 +127,12 @@ You answer `yes`, and pin ends. The design tree is in
   {"id": "D1", "what": "Which fields each note has", "contributes_to": ["Q1"], "builds_on": [],
    "decided": "id, title, tags and updated", "settled_by": "user", "grounds": ["the person, 2026-11-03"]},
   {"id": "D2", "what": "Whether text stays the default", "contributes_to": ["Q2"], "builds_on": [],
-   "decided": "it stays; JSON only with --json", "settled_by": "reasoning", "grounds": ["Q2"]},
+   "decided": "it stays; JSON only with --json", "settled_by": "reasoning",
+   "grounds": ["the goal, and Q2"]},
   {"id": "D3", "what": "The form of updated", "contributes_to": ["D1"], "builds_on": ["D1"],
    "decided": "ISO 8601, in UTC", "settled_by": "research",
-   "grounds": ["scripts/sync.py:14 \"datetime.fromisoformat(fields[3])\""]}]}
+   "grounds": ["scripts/sync.py:14 \"datetime.fromisoformat(fields[3])\"",
+               "the person confirmed, 2026-11-03"]}]}
 ```
 
 `settled_by` says who settled each decision: you (`user`), a fact found (`research`), or what
@@ -134,20 +144,20 @@ the work.
 ```mermaid
 flowchart LR
   P([you]) -- "your plan, then each answer" --> D["pin:down<br>in the conversation"]
-  D -- "one question, with a recommendation" --> P
+  D -- "each fact found, to confirm, then one question, with a recommendation" --> P
   D -- "a fact to find" --> R["subagent"]
   R -- "the fact, with its source" --> D
   D -- "writes each decision" --> T[("design-tree.json")]
-  D -- "runs" --> C["pin-check"]
+  D -- "runs" --> C["check.py"]
   C -- "reads" --> T
   C -- "it holds, or what is wrong" --> D
 ```
 
 - `pin:down` writes each answer into the design tree before it asks the next question, and runs
-  `pin-check` on it each time.
-- A plugin that uses pin gives its role `pin:down`, with the work's goal, the questions the work
-  must answer and where to keep the tree. The role then works as the conversation does above, and
-  puts each question to you through the conversation you talk in.
+  `check.py` on it each time.
+- A plugin that uses pin gives its role `pin:down`, with the goal of what it makes, the questions
+  that must hold for it and where to keep the tree. The role then works as the conversation does
+  above, and puts each fact and each question to you through the conversation you talk in.
 
 ## Documentation
 
@@ -159,5 +169,5 @@ flowchart LR
 
 `pin:down` is made from Matt Pocock's skill
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md),
-under the MIT License, Copyright (c) 2026 Matt Pocock. pin asks one question at a time, where
-grilling asks a round of questions.
+under the MIT License, Copyright (c) 2026 Matt Pocock, as [LICENSE-grilling](LICENSE-grilling)
+gives in full. pin asks one question at a time, where grilling asks a round of questions.

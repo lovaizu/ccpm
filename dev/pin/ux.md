@@ -3,7 +3,8 @@
 pin has two users:
 
 - a person who has a plan to hand to an AI, such as a feature or a document to be made;
-- Turn and rn, plugins that make a work for a person and pin down its design first.
+- Turn and rn, plugins that make a work for a person, such as a document or code, and settle its
+  design first.
 
 pin keeps a plan as a design tree: the decisions the plan needs, each joined to the goal it serves,
 from the goal down.
@@ -41,7 +42,7 @@ participants:
 - main conversation (AI): the Claude Code conversation the person talks in. In O1 it runs
   `/pin:down`.
 - researcher (AI): a subagent that finds one fact, such as what reads the output of `notes list`.
-- `pin-check` (script): pin's script that checks a design tree.
+- `check.py` (script): pin's script that checks a design tree.
 - designer (AI): Turn's role that designs a work, in O2.
 
 ### O1: The person pins down the plan with /pin:down
@@ -51,12 +52,14 @@ sequenceDiagram
   participant P as person (person)
   participant M as main conversation (AI)
   participant R as researcher (AI)
-  participant C as pin-check (script)
+  participant C as check.py (script)
   P->>M: /pin:down notes list should give JSON
   M->>R: find what reads the output of notes list now
-  M->>P: the goal, with a recommendation:<br>"Scripts read notes list, and JSON lets them stop parsing text. Yes?"
+  M->>P: the goal, with a recommendation:<br>"Scripts that read notes list get JSON, so they stop parsing text. Yes?"
   P->>M: yes
   R-->>M: two scripts parse the text output, with the lines quoted
+  M->>P: the fact, alone, to confirm:<br>"Two scripts read notes list: scripts/sync.py and scripts/export.py. Right?"
+  P->>M: right
   M->>C: checks the design tree: the goal, what must hold for it,<br>and the decisions under each
   C-->>M: every question served, every decision reaches the goal,<br>the order follows what each builds on
   loop until no decision is left open
@@ -65,7 +68,7 @@ sequenceDiagram
     M->>C: checks the design tree with the answer in it
     C-->>M: it holds, or what is wrong
   end
-  M->>P: the design, each decision in a short line, with what settled it
+  M->>P: the design, each decision in a short line, with who or what settled it
   P->>M: confirms that both understand it the same way
   M-->>P: the design tree, kept in the repository
 ```
@@ -76,12 +79,16 @@ sequenceDiagram
 sequenceDiagram
   participant D as designer (AI)
   participant R as researcher (AI)
-  participant C as pin-check (script)
+  participant C as check.py (script)
   participant M as main conversation (AI)
   participant P as person (person)
   D->>D: takes the skill pin:down, with the work's goal, its questions,<br>what Turn has settled, and where the tree is kept
-  D->>R: find each fact a decision rests on
-  R-->>D: the facts, with their sources
+  D->>R: in the background, find a fact a decision rests on
+  R-->>D: a fact, with its source
+  D->>M: the fact, alone, to confirm
+  M->>P: puts the fact
+  P->>M: confirms it, or corrects it
+  M->>D: the answer
   D->>C: checks the design tree
   C-->>D: it holds, or what is wrong
   loop until no decision is left open
