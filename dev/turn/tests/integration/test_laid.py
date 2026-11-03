@@ -66,5 +66,23 @@ class TestRoutes(unittest.TestCase):
         self.assertEqual(laid["routes"]["routes"], ROUTES)
 
 
+class TestLanes(unittest.TestCase):
+    def test_evaluator_and_proofreader_read_only_the_work_their_standard_and_use_and_answer(self):
+        laid = json.loads(read("hooks", "lanes.json"))
+        takes = ["{work}", "{standard}", "{answers}"]
+        takes += ["${CLAUDE_PLUGIN_ROOT}/core/domain/use-and-answer.md"]
+        for role in ("evaluator", "proofreader"):
+            with self.subTest(role=role):
+                # Given: Turn's lanes laid
+                (subagent,) = [s for s in laid["subagents"] if s["name"] == role]
+                # When: the role's first step, where it uses and answers, is read
+                (step,) = [s for s in subagent["steps"] if s["step"] == 1]
+                # Then: it reads only the work, its standard, its answers and how to use and
+                # answer, as the architecture's lanes table gives it, and its step says so
+                self.assertIn({"lane": "read_only", "takes": takes}, step["lanes"])
+                said = "Read only `{work}`, `{standard}`, `{answers}` or"
+                self.assertIn(said, read("core", "roles", f"{role}.md"))
+
+
 if __name__ == "__main__":
     unittest.main()

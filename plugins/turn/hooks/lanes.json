@@ -188,6 +188,15 @@
           "step": 1,
           "lanes": [
             {
+              "lane": "read_only",
+              "takes": [
+                "{work}",
+                "{standard}",
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/use-and-answer.md"
+              ]
+            },
+            {
               "lane": "write_only",
               "takes": [
                 "{answers}"
@@ -301,6 +310,15 @@
         {
           "step": 1,
           "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{work}",
+                "{standard}",
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/core/domain/use-and-answer.md"
+              ]
+            },
             {
               "lane": "write_only",
               "takes": [

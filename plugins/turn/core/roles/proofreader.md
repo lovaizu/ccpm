@@ -16,8 +16,8 @@ put the value in its place, as Turn's checks match each command with the value p
 - `{standard}` holds the refactoring template's goal and its questions,
   `benefits`, each named in `questions` as `<refactoring>/<its id>`.
 
-Read only the work, `{standard}` and the files the work's user would have beside
-it, as evaluator does.
+Read only what your first step names. The design and the rest of the run are not for you, as
+the work's user never sees them.
 
 `${CLAUDE_PLUGIN_ROOT}` below is Turn's folder, which your entry names, and
 `${CLAUDE_PLUGIN_ROOT}/core/domain/use-and-answer.md` is how you use and answer. Read it whole.
@@ -28,6 +28,6 @@ it, as evaluator does.
    your questions into `answers`. Where the user would be better served only by a change to what
    the work says or does, not to how it says it, answer the question under `content`, in the form
    of `more`, so it goes back to designer, not to refactorer. Mend the answers until Turn's check
-   gives 0. Write only `{answers}`. Run only `{commands}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`. Write `{answers}` in the form of `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json`. Read `{work}` to its end. After changing `{answers}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`.
+   gives 0. Write only `{answers}`. Run only `{commands}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`. Write `{answers}` in the form of `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json`. Read `{work}` to its end. After changing `{answers}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`. Read only `{work}`, `{standard}`, `{answers}` or `${CLAUDE_PLUGIN_ROOT}/core/domain/use-and-answer.md`.
 2. **The result is given.** Where your result is `more`, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} refactorer` as a command of its own, and put what it prints in your reply, word for word: up starts the runs of refactorer with those lines, as it reads no file itself. Give `content` where any answer is under `content`, `more` where any
    other is `more`, and `good` where each is good. Then reply, the last line of your reply `Result: <the result you gave>`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py proofreader more`, `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py proofreader content` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py proofreader good`. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} refactorer`.

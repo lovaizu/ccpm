@@ -216,10 +216,10 @@ writes is also held to its form by an `in_form` lane, the form a JSON Schema in
 | refactorer | `{work}`, `{answers}` | `{commands}`, `answers.py check` | as builder |
 | proofreader | `{answers}` | `{commands}`, `answers.py check` | as evaluator |
 
-evaluator's and proofreader's steps tell them to read only the work, `{standard}`, the template's
-goal, parts and questions, which Standard in the data model holds, and Turn's own `core/`. No lane
-holds this, as Lane's read_only takes no path in Turn's folder; their prompt tests check it from
-the records.
+evaluator and proofreader also read only the work, `{standard}`, the template's goal, parts and
+questions, which Standard in the data model holds, their own `{answers}`, as Claude Code edits a
+file only after it is read or written, and `core/domain/use-and-answer.md`, by a `read_only` lane: one that
+read the design would judge whether the work follows it, not what the work's user gets.
 
 #### Choices
 
