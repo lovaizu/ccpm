@@ -19,9 +19,7 @@ run, where what the terminal showed and the agents' records are kept, and what i
 
 from __future__ import annotations
 
-import json
 import os
-import shutil
 import sys
 import time
 from typing import Any
@@ -132,17 +130,16 @@ def run(number: int) -> bool:
     started = time.monotonic()
     result = trying.interactive(PROMPT, [os.path.join(repo, "changelog")], repo, place)
     session = result["session_id"]
-    leads, children = [], {}
-    for file in sorted(trying.agents(session)):
-        shutil.copyfile(file, os.path.join(place, os.path.basename(file)))
-        with open(os.path.splitext(file)[0] + ".meta.json", encoding="utf-8") as f:
-            meta = json.load(f)
-        found = record_of(file)
-        found.update(began=began_at(file), ended=ended_at(file), when=when(file))
-        if trying.record.agent_type(file) == "changelog:lead":
-            leads.append(found)
-        else:
-            children[meta.get("toolUseId")] = found
+
+    def read(file: str) -> dict[str, Any]:
+        return {
+            **record_of(file),
+            "began": began_at(file),
+            "ended": ended_at(file),
+            "when": when(file),
+        }
+
+    leads, children = trial_changelog.started(session, place, read)
     print(f"session {session}, {time.monotonic() - started:.0f} s")
     if len(leads) != 1:
         print(f"  failed: {len(leads)} leads started")

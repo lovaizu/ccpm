@@ -31,11 +31,12 @@ one line holding its run values, then a sentence saying what it is to do. The ru
   `<run>/remake.json` was written since the last round of builder, start only the parts that hold
   a decision it names.
 - evaluator: one run for each group in `groups` of `<run>/run.json`, all at once, each with `run`,
-  `work`, the `paths` of `work.json`, `commands`, `questions`, the group's, and `answers`,
-  `<run>/verification/<group>.json`.
+  `work`, the `paths` of `work.json`, `commands`, `questions`, the group's, `standard`,
+  `<run>/standard.json`, and `answers`, `<run>/verification/<group>.json`.
 - refactorer: one run, with `run`, `work`, `commands` and `answers`, `<run>/refactor-check.json`.
 - proofreader: one run for each group in `refactoring_groups` of `run.json`, as evaluator's, its
-  `answers` `<run>/proofreading/<group>.json`.
+  `standard` `<run>/refactoring-standard.json` and its `answers`
+  `<run>/proofreading/<group>.json`.
 
 Read `run.json` and `work.json` with the Read tool to take these values; write nothing.
 
@@ -48,7 +49,7 @@ Read `run.json` and `work.json` with the Read tool to take these values; write n
 2. **Each role Lane names is started.** Start the role Lane names, with its run values, in the
    background, each run of a fanned-out step at once in one message. Where Lane tells you to wait,
    end your turn with `Turn is working: waiting for <role>.`: you are started again as each run
-   ends.
+   ends. Start each subagent you are told to start, until you are told to start no more.
 3. **Each question goes to the person and back.** Where Lane tells you `<role> gave asks` and to
    start no more, the role ended with a message headed `For the person:`. End your turn with that
    message as it is, word for word, headed `For the person:`. Once you are resumed with the

@@ -1,7 +1,7 @@
 """What a person, CI or planner runs on a template, as `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/
 practices.py <command> ...`: `write` and `check` its Markdown and its form, `sources` its grounds'
-pages, `standard` the part of it evaluator is given, and `groups` its questions in groups into a
-run's run.json. It hands each to templates.py in core/domain/."""
+pages; and `ready` a run's folder, its templates checked and the part of each evaluator and
+proofreader are given written into it. It hands each to templates.py in core/domain/."""
 
 from __future__ import annotations
 
@@ -18,10 +18,13 @@ sys.path.insert(
 import files
 from templates import faults, groups, markdown, sources, standard
 
+# Turn's own templates, the refactoring ones among them.
+OWN = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "core", "domain", "best-practices"
+)
 USAGE = (
     "usage: practices.py write|check|sources <best practice json>...\n"
-    "       practices.py standard <best practice json> <standard json>\n"
-    "       practices.py groups <best practice json> <run json>"
+    "       practices.py ready <run>"
 )
 
 
@@ -36,26 +39,43 @@ def read(path: str) -> dict:
         return json.load(f)
 
 
-def grouped(template: str, run: str) -> int:
-    """Writes the template's groups into the run's run.json, under `groups` where it is the run's
-    kind and `refactoring_groups` where it is its refactoring; 2 where it is neither or the run
-    cannot be read."""
+def ready(run: str) -> int:
+    """Makes the run's folder ready for designer, evaluator and proofreader: holds the kind's
+    template and the refactoring template to their form, writes the Markdown beside a template the
+    repository made, writes each template's standard into the run, and each one's groups into its
+    run.json; gives 0, 1 with each fault of a template, or 2 where a file cannot be read."""
+    path = os.path.join(run, "run.json")
     try:
-        made = files.load(run, "run")
+        made = files.load(path, "run")
     except files.Unreadable as why:
-        print(f"practices.py: could not read {run}: {why}", file=sys.stderr)
+        print(f"practices.py: could not make {run} ready: {why}", file=sys.stderr)
         return 2
-    kind = kind_of(template)
-    keys = {made["kind"]: "groups", made["refactoring"]: "refactoring_groups"}
-    if kind not in keys:
-        print(
-            f"practices.py: {template} is neither {made['kind']} nor {made['refactoring']}, the"
-            f" templates of {run}",
-            file=sys.stderr,
-        )
-        return 2
-    made[keys[kind]] = groups(read(template), kind)
-    files.save(run, made)
+    refactoring = os.path.join(OWN, f"{made['refactoring']}.json")
+    for template, kind, key, out in (
+        (made["template"], made["kind"], "groups", "standard.json"),
+        (refactoring, made["refactoring"], "refactoring_groups", "refactoring-standard.json"),
+    ):
+        try:
+            data = read(template)
+        except (OSError, ValueError) as why:
+            print(f"practices.py: could not read {template}: {why}", file=sys.stderr)
+            return 2
+        found = faults(data)
+        for fault in found:
+            print(f"practices.py: {template}: {fault}", file=sys.stderr)
+        if found:
+            return 1
+        if not os.path.samefile(os.path.dirname(os.path.abspath(template)), OWN):
+            with open(os.path.splitext(template)[0] + ".md", "w", encoding="utf-8") as f:
+                f.write(markdown(kind, data))
+        made[key] = groups(data, kind)
+        files.save(os.path.join(run, out), standard(data))
+    files.save(path, made)
+    print(
+        f"practices.py: {run} is ready: standard.json and refactoring-standard.json written, and"
+        f" {len(made['groups'])} groups of {made['kind']} and {len(made['refactoring_groups'])} of"
+        f" {made['refactoring']} in run.json."
+    )
     return 0
 
 
@@ -63,12 +83,9 @@ def main(argv: list[str]) -> int:
     """`write <json>...` writes each Markdown beside its JSON; `check <json>...` names each fault
     of a JSON's form and each Markdown not as its JSON makes it; `sources <json>...` opens each
     ground's page and names each that is not the one meant; each fails if it names any.
-    `standard <json> <out>` writes the template's standard; `groups <json> <run>` its groups."""
-    if argv[:1] == ["standard"] and len(argv) == 3:
-        files.save(argv[2], standard(read(argv[1])))
-        return 0
-    if argv[:1] == ["groups"] and len(argv) == 3:
-        return grouped(argv[1], argv[2])
+    `ready <run>` makes a run's folder ready, as `ready` says."""
+    if argv[:1] == ["ready"] and len(argv) == 2:
+        return ready(argv[1])
     if len(argv) < 2 or argv[0] not in ("write", "check", "sources"):
         print(USAGE, file=sys.stderr)
         return 2

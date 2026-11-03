@@ -95,14 +95,7 @@ def run(number: int) -> bool:
         if not through:
             wrong.append(f"linter {at}'s check of its notes, as one word, did not go through")
     print(f"  tried: {sorted(tried)}")
-    if wrong:
-        print("  failed: " + "; ".join(wrong))
-        return False
-    if len(tried) < 2:
-        print("  does not count: an invited break was not tried")
-        return False
-    print("  passed")
-    return True
+    return trial_changelog.counted(wrong, len(tried) >= 2)
 
 
 if __name__ == "__main__":

@@ -144,19 +144,7 @@ or false, "settled_by": the settled_by of the decision that holds it, or null}}]
 each point, in order."""
 
 
-def asked(prompt: str, cwd: str) -> dict[str, Any]:
-    """The JSON object an AI gives for the prompt, on Opus, with no tool, no plugin and no record
-    kept, run in the folder given, which holds nothing of pin's."""
-    command = ["claude", "-p", "--model", "opus", "--tools", "", "--no-session-persistence"]
-    command += ["--output-format", "json", "--settings", json.dumps({"enabledPlugins": {}})]
-    done = subprocess.run(
-        command, input=prompt, capture_output=True, text=True, cwd=cwd, timeout=300, check=True
-    )
-    said = str(json.loads(done.stdout)["result"])
-    found = re.search(r"\{.*\}", said, re.DOTALL)
-    if not found:
-        raise SystemExit(f"the stand-in gave no JSON: {said}")
-    return json.loads(found.group(0))
+asked = trying.stand_in
 
 
 def made(place: str, plugins: dict[str, str]) -> tuple[str, dict[str, str]]:
@@ -164,14 +152,7 @@ def made(place: str, plugins: dict[str, str]) -> tuple[str, dict[str, str]]:
     of pin and of each plugin given by its folder beside it, by name; gives the repository and the
     copies' folders, pin's under "pin"."""
     repo = os.path.join(place, "notes")
-    for path, text in NOTES.items():
-        os.makedirs(os.path.dirname(os.path.join(repo, path)), exist_ok=True)
-        with open(os.path.join(repo, path), "w", encoding="utf-8") as f:
-            f.write(text)
-    for args in (["init", "-q", "-b", "main"], ["add", "."]):
-        subprocess.run(["git", "-C", repo, *args], check=True)
-    who = ["-c", "user.name=e2e", "-c", "user.email=e2e@example.com"]
-    subprocess.run(["git", "-C", repo, *who, "commit", "-q", "-m", "notes"], check=True)
+    trying.committed(repo, NOTES)
     copies = {}
     for name, source in {"pin": PIN, **plugins}.items():
         copies[name] = os.path.join(place, "plugins", name)
@@ -192,10 +173,7 @@ def talked(
     reply = conversation.send(first, stream, idle=True)
     for _ in range(TURNS):
         message = str(reply.get("result", ""))
-        heard = asked(
-            FINDS.format(intent=intent, said="\n\n".join(said) or "(none)", message=message),
-            alone,
-        )
+        heard = trying.heard(FINDS, intent, said, message, alone)
         turns.append({"message": message, **heard})
         print(f"  AI: {message[:300]!r}")
         print(f"  person: {str(heard.get('answer'))[:200]!r} {heard_of(heard)}")
@@ -293,20 +271,5 @@ def judged(pin: str, path: str, place: str, turns: list[dict[str, Any]]) -> list
     return wrong
 
 
-def verdict(untried: list[str], wrong: list[str]) -> bool:
-    """Whether the run counted and passed, printing which, and why where it did not."""
-    if untried:
-        print("  not counted: " + "; ".join(untried))
-        return False
-    print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
-    return not wrong
-
-
-def main(run: Any) -> None:
-    """Runs the E2E test's run as many times as the command line gives, three by default, numbered
-    from the second word where given, and exits 0 where every run passed and counted."""
-    runs = int(sys.argv[1]) if len(sys.argv) > 1 else 3
-    first = int(sys.argv[2]) if len(sys.argv) > 2 else 1
-    passed = [run(n) for n in range(first, first + runs)]
-    print(f"{sum(passed)} of {runs} runs passed")
-    sys.exit(0 if all(passed) else 1)
+verdict = trying.verdict
+main = trying.main

@@ -23,8 +23,8 @@ in the same way, so that what one finds good another finds good on the same work
    for defects the user would never meet: a work mended for them does not get better for its user.
 3. **The answers are written and checked.** Write them, in the form of
    `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json`, at the path given you, `answers`, then
-   run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check <run> <answers>`, with the run's
-   folder and that path, as a command of its own. It names each question given you that has no
+   run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`, as a command of
+   its own, with your run values `run` and `answers` put in for `{run}` and `{answers}`. It names each question given you that has no
    answer, each answered twice or not given, and each line that does not lie in the work. Mend
    the answers until it gives 0. It gives 2 where it cannot check, with why: a fault of the run,
    which you tell in your reply, never work around.

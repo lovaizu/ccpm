@@ -27,7 +27,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import shutil
 import sys
 import time
 from typing import Any
@@ -192,17 +191,7 @@ def run(number: int) -> bool:
     started = time.monotonic()
     result = trying.interactive(PROMPT, [os.path.join(repo, "changelog")], repo, place)
     session = result["session_id"]
-    leads, children = [], {}
-    for file in sorted(trying.agents(session)):
-        shutil.copyfile(file, os.path.join(place, os.path.basename(file)))
-        with open(os.path.splitext(file)[0] + ".meta.json", encoding="utf-8") as f:
-            meta = json.load(f)
-        found = record_of(file)
-        found["type"] = trying.record.agent_type(file)
-        if found["type"] == "changelog:lead":
-            leads.append(found)
-        else:
-            children[meta.get("toolUseId")] = found
+    leads, children = trial_changelog.started(session, place, record_of)
     print(f"session {session}, {time.monotonic() - started:.0f} s")
     for lead in leads:
         for c in (c for c in lead["calls"] if c["tool"] == "Agent"):
@@ -226,14 +215,7 @@ def run(number: int) -> bool:
     )
     if found["due"]:
         print(f"  the run did not reach `good`: {found['due']} was still due as lead ended")
-    if found["wrong"]:
-        print("  failed: " + "; ".join(found["wrong"]))
-        return False
-    if not found["stopped"] or not found["kept"]:
-        print("  does not count: an invited break was not tried")
-        return False
-    print("  passed")
-    return True
+    return trial_changelog.counted(found["wrong"], bool(found["stopped"] and found["kept"]))
 
 
 if __name__ == "__main__":

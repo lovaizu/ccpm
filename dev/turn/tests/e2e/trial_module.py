@@ -22,7 +22,8 @@ ASK = (
     "/turn:up two modules for tidy: rules.py, which reads a JSON file mapping an extension to a"
     " folder, and log.py, which keeps a log of each move so it can be undone later"
 )
-INTENT = """You wrote `tidy`, a small Python tool in the repository the AI works in, that sorts a
+INTENT = (
+    """You wrote `tidy`, a small Python tool in the repository the AI works in, that sorts a
 cluttered Downloads folder into folders by kind. You want two new modules, which use nothing of
 each other: tidy wires them in later, yourself.
 
@@ -36,11 +37,9 @@ What you want, which the AI may or may not ask:
 What you know of your repository, which the AI can read for itself: tidy.py holds KINDS and the
 command; there are no tests yet.
 
-How you answer: briefly, as a busy developer, in the language the AI writes to you in. Answer what
-you are asked from what you want above. Where a fact is shown to you, say whether it is right. Where
-you are asked something your wants above do not settle, say the AI may decide it. Where you are
-shown the whole design and asked to approve it, say yes where it holds what you want above, and
-otherwise say what is to change."""
+"""
+    + turning.HOW
+)
 
 
 def run(number: int) -> bool:
@@ -48,11 +47,7 @@ def run(number: int) -> bool:
     place = turning.trying.folder("turn", f"trial-module-{number}")
     repo, copies = turning.made(place)
     started = time.monotonic()
-    session = turning.Session([copies["turn"], copies["pin"]], repo, place)
-    try:
-        turns = turning.talked(session, ASK, place, INTENT)
-    finally:
-        session.close()
+    session, turns = turning.talked(ASK, [copies["turn"], copies["pin"]], repo, place, INTENT)
     print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
     run_folder = turning.run_folder(repo)
     work = turning.read_json(os.path.join(run_folder, "work.json")) if run_folder else None
@@ -64,7 +59,7 @@ def run(number: int) -> bool:
         untried.append("the design did not split the work into two parts")
     if untried or not work:
         return turning.verdict(untried, [])
-    runs = turning.starts(session.session)
+    runs = turning.starts(session)
     wrong = turning.asked_wrong(turns) + turning.routes_wrong(runs)
     if not turning.overlapped(runs, "builder"):
         wrong.append("no two runs of builder went at the same time")

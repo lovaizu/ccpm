@@ -152,7 +152,7 @@ flowchart LR
   G -->|"3 the next role, as Route"| U
   U -->|"4 starts with Run values, resumes with each answer"| PL & D & B & E & RF & PR
   PL & D -->|"5 a fact to find"| RS
-  PL -->|"6 writes Run and Template, and has practices.py write Standard"| F & T
+  PL -->|"6 writes Run and Template, and has practices.py ready write Standard"| F & T
   D -->|"6 writes Design tree, Work, Remake"| F
   B & RF -->|"6 writes"| W
   B & E & RF & PR -->|"6 writes Answers, Open point"| F
@@ -197,26 +197,27 @@ calls Turn.
 - Turn's scripts alone check what Lane does not: `practices.py` a template's form, `tree.py` that
   the design tree asks the template's questions, and `answers.py` each answers file. pin's
   `check.py` alone checks that the design tree holds together. `tree.py parts` and
-  `practices.py groups` alone split a step's work into the runs `up` starts.
+  `practices.py ready` alone split a step's work into the runs `up` starts.
 - The main conversation follows `/turn:up`'s skill only to start `up` and to pass on its questions,
   answers and end. Lane does not check the main conversation, so it holds none of Turn's work.
 
 The roles' lanes, the rules Lane holds a role's steps to, each laid by Lane's `lay.py` from Turn's
-proposal, `{name}` standing for a run value `up` gives. Each JSON file a role writes is also held to
-its form by an `in_form` lane, the form a JSON Schema in `core/domain/forms/`.
+proposal, `{name}` standing for a run value `up` gives. Each answers file and open file a role
+writes is also held to its form by an `in_form` lane, the form a JSON Schema in
+`core/domain/forms/`; Turn's scripts hold the run's other files to theirs as they read them.
 
 | Role | Writes only | Runs only, beside its result command | Is held, as it ends, to |
 |---|---|---|---|
 | `up` | nothing | nothing | having started each role Lane named |
-| planner | `{run}/run.json`, `{run}/kind-tree.json`, `.turn/best-practices/` | pin's check, `practices.py` | `practices.py check` passed after the template's last change |
-| designer | `{run}/design-tree.json`, `{run}/work.json`, `{run}/remake.json` | pin's check, `tree.py check`, `tree.py parts` | both passed after the tree's last change |
-| builder | `{work}`, `{answers}`, `{open}` | `{commands}`, `answers.py` | the work read whole; `answers.py check` passed after the last change |
-| evaluator | `{answers}` | `{commands}`, `answers.py` | the work read whole; `answers.py check` passed |
-| refactorer | `{work}`, `{run}/refactor-check.json` | `{commands}`, `answers.py` | as builder |
-| proofreader | `{answers}` | `{commands}`, `answers.py` | as evaluator |
+| planner | `{run}`, `.turn/best-practices/` | pin's check, `practices.py ready` | `practices.py ready` passed after the run's last change |
+| designer | `{run}` | pin's check, `tree.py check`, `tree.py parts` | `tree.py check` passed after the run's last change |
+| builder | `{work}`, `{answers}`, `{open}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed after the work's last change |
+| evaluator | `{answers}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed |
+| refactorer | `{work}`, `{answers}` | `{commands}`, `answers.py check` | as builder |
+| proofreader | `{answers}` | `{commands}`, `answers.py check` | as evaluator |
 
-evaluator and proofreader also read only the work and the template's goal, parts and questions,
-which Standard in the data model holds.
+evaluator and proofreader also read only the work, `{standard}`, the template's goal, parts and
+questions, which Standard in the data model holds, and Turn's own `core/`.
 
 #### Choices
 
@@ -236,24 +237,19 @@ which Standard in the data model holds.
   the `agentId` its start gives back, and takes the next route once all of them have ended. A role
   that started runs of its own would need a layer more than Claude Code gives under a caller
   ([subagents](https://code.claude.com/docs/en/sub-agents)).
+- **Results of runs at once taken by their precedence.** Turn's routes name builder, evaluator
+  and proofreader in `fan_out`, and declare `precedence`, as
+  [Lane's routes](../../plugins/lane/docs/routes.md#runs-at-once) take it: `content`, `more`,
+  `good` for proofreader, `more`, `good` for evaluator, and `open`, `built` for builder, first to
+  last. A point of what the work says goes to designer before one of how it says it, and a work
+  sent back goes back before it goes on.
+- **Commands hold run values.** Each command a role runs names the run's files by its run values,
+  as `python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json`, and Lane puts each value
+  in as one word of the shell before it matches the command. A role's work commands, `commands`,
+  are a whole value, each matched as designer wrote it.
 - **Templates kept in `.turn/best-practices/`.** A template made for the person's kind is used by
   every later run in the repository, so it lies outside any one run's folder. One of the
   repository's own is taken over Turn's of the same kind, as the person approved it for their work.
-
-What Turn needs of Lane and pin beyond what they give as built:
-
-- Lane starts a route's `to` once. Turn's `up` starts it many times at once, so Lane counts the
-  step done once all of those runs have ended, and joins their results by an order of precedence
-  that the routes declare. Turn's routes declare `content`, `open`, `more` and `good`, in that
-  order: the joined result is the first of these that any run gave, and otherwise the result the
-  runs share. A point of what the work says goes to designer before one of how it says it, and a
-  work sent back goes back before it goes on.
-- Lane reads a role's steps from the part its entry names under `prompts/`. Turn's parts lie in
-  `core/roles/`, as [The core apart from Claude Code](../architecture.md#the-core-apart-from-claude-code)
-  says, so Lane reads a part there too.
-- Lane takes a run value only as a whole take. Turn's commands name files of the run, as
-  `python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json`, so Lane puts a run value into
-  a command before it matches it whole.
 
 ### Data model
 
@@ -300,11 +296,11 @@ one-to-many join is nested, and a many-to-many join lists IDs.
   for each question its `benefit`, `thinking`, `steps` and `grounds`. `practices.py check` verifies
   that every part is asked of by a question and every question has a practice. A refactoring
   template, `refactor-doc` or `refactor-code`, has no `parts`, as the work keeps its kind's shape.
-- **Standard**: a template's `goal`, `parts` and `benefits`, written by `practices.py standard` into
+- **Standard**: a template's `goal`, `parts` and `benefits`, written by `practices.py ready` into
   `standard.json`, and `refactoring-standard.json` for the refactoring template.
 - **Run**: `run.json`: `kind`; `template`, its path; `refactoring`, `refactor-doc` or
   `refactor-code`; and `groups` and `refactoring_groups`, the template's questions in groups, each
-  `id` and `questions`, as `practices.py groups` writes them: the questions that ask of the same
+  `id` and `questions`, as `practices.py ready` writes them: the questions that ask of the same
   parts together, and those of `the whole` in one group.
 - **Design tree**: `design-tree.json`, in pin's form: `goal`, `questions` and `decisions`. Its
   questions are the template's benefits, each `id` named with the template's file as `readme/Q3`,
@@ -385,7 +381,7 @@ sequenceDiagram
   M->>U: resumes, with the answer
   U->>PL: resumes, with the answer
   PL->>F: writes Run, the Template found named in it
-  PL->>S: practices.py standard and groups on the Template
+  PL->>S: practices.py ready on the Run
   S->>F: writes Standard, and the groups into Run
   PL->>G: gives planned (Result)
   PL-->>U: ends
@@ -462,8 +458,7 @@ sequenceDiagram
   RS-->>PL: what each source says, quoted
   Note over U,PL: The kind's purpose, then its parts and questions, go to the person as questions.
   PL->>T: writes Template, by meta
-  PL->>S: practices.py check
-  PL->>S: practices.py standard and groups
+  PL->>S: practices.py ready on the Run
   S->>F: writes Standard, and the groups into Run
   PL-->>U: gives planned, and ends
 ```

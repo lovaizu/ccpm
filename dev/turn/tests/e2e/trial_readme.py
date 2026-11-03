@@ -20,7 +20,8 @@ import time
 
 import turning
 
-INTENT = """You wrote `tidy`, a small Python tool in the repository the AI works in, that sorts a
+INTENT = (
+    """You wrote `tidy`, a small Python tool in the repository the AI works in, that sorts a
 cluttered Downloads folder into folders by kind. You want a README for it.
 
 What you want, which the AI may or may not ask:
@@ -35,11 +36,9 @@ What you know of your repository, which the AI can read for itself: tidy.py is t
 takes --dry-run; it sorts by extension into images, documents, archives and other; the LICENSE is
 MIT.
 
-How you answer: briefly, as a busy person, in the language the AI writes to you in. Answer what you
-are asked from what you want above. Where a fact is shown to you, say whether it is right. Where you
-are asked something your wants above do not settle, say the AI may decide it. Where you are shown
-the whole design and asked to approve it, say yes where it holds what you want above, and otherwise
-say what is to change."""
+"""
+    + turning.HOW
+)
 
 
 def run(number: int) -> bool:
@@ -47,17 +46,13 @@ def run(number: int) -> bool:
     place = turning.trying.folder("turn", f"trial-readme-{number}")
     repo, copies = turning.made(place)
     started = time.monotonic()
-    session = turning.Session([copies["turn"], copies["pin"]], repo, place)
-    try:
-        turns = turning.talked(session, "/turn:up a README for tidy", place, INTENT)
-    finally:
-        session.close()
+    session, turns = turning.talked(
+        "/turn:up a README for tidy", [copies["turn"], copies["pin"]], repo, place, INTENT
+    )
     print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
     if not os.path.exists(os.path.join(repo, "README.md")):
         return turning.verdict(["Turn handed back no README.md"], [])
-    wrong = turning.asked_wrong(turns)
-    wrong += turning.routes_wrong(turning.starts(session.session))
-    wrong += turning.work_wrong(repo, ["README.md"], place, INTENT)
+    wrong = turning.judged(session, turns, repo, place, INTENT, ["README.md"])
     return turning.verdict([], wrong)
 
 

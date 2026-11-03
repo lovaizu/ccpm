@@ -10,16 +10,8 @@ from __future__ import annotations
 import datetime
 import json
 import os
-import pty
-import re
-import select
-import shlex
 import shutil
-import signal
-import subprocess
 import sys
-import time
-import uuid
 from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -113,19 +105,7 @@ text: {{"changes": [each change you would make or ask for before you put it to u
 sentence each; none where you would use it as it is]}}."""
 
 
-def asked(prompt: str, cwd: str) -> dict[str, Any]:
-    """The JSON object an AI gives for the prompt, on Opus, with no tool, no plugin and no record
-    kept, run in the folder given, which holds nothing of Turn's."""
-    command = ["claude", "-p", "--model", "opus", "--tools", "", "--no-session-persistence"]
-    command += ["--output-format", "json", "--settings", json.dumps({"enabledPlugins": {}})]
-    done = subprocess.run(
-        command, input=prompt, capture_output=True, text=True, cwd=cwd, timeout=600, check=True
-    )
-    said = str(json.loads(done.stdout)["result"])
-    found = re.search(r"\{.*\}", said, re.DOTALL)
-    if not found:
-        raise SystemExit(f"the stand-in gave no JSON: {said}")
-    return json.loads(found.group(0))
+asked = trying.stand_in
 
 
 def made(place: str, files: dict[str, str] | None = None) -> tuple[str, dict[str, str]]:
@@ -133,14 +113,7 @@ def made(place: str, files: dict[str, str] | None = None) -> tuple[str, dict[str
     committed, and a copy of Turn and of pin beside it; gives the repository and the copies'
     folders by name."""
     repo = os.path.join(place, "tidy")
-    for path, text in {**TIDY, **(files or {})}.items():
-        os.makedirs(os.path.dirname(os.path.join(repo, path)) or repo, exist_ok=True)
-        with open(os.path.join(repo, path), "w", encoding="utf-8") as f:
-            f.write(text)
-    for args in (["init", "-q", "-b", "main"], ["add", "."]):
-        subprocess.run(["git", "-C", repo, *args], check=True)
-    who = ["-c", "user.name=e2e", "-c", "user.email=e2e@example.com"]
-    subprocess.run(["git", "-C", repo, *who, "commit", "-q", "-m", "tidy"], check=True)
+    trying.committed(repo, {**TIDY, **(files or {})})
     copies = {}
     for name, source in PLUGINS.items():
         copies[name] = os.path.join(place, "plugins", name)
@@ -149,127 +122,35 @@ def made(place: str, files: dict[str, str] | None = None) -> tuple[str, dict[str
     return repo, copies
 
 
-class Session:
-    """An interactive session of Claude Code on the copies of plugins, in the repository, as its
-    user has it in a terminal: started with the first message, each next message typed once the
-    main conversation has stopped, and each stop's last message and its agents in the background
-    kept by a Stop hook in `<place>/stops.jsonl`; what the terminal shows is kept in
-    `<place>/terminal.txt`."""
-
-    def __init__(self, plugins: list[str], cwd: str, place: str) -> None:
-        self.place, self.stops = place, os.path.join(place, "stops.jsonl")
-        self.session = str(uuid.uuid4())
-        script = os.path.join(place, "stop.py")
-        with open(script, "w", encoding="utf-8") as f:
-            f.write(trying.STOP)
-        keep = f"{shlex.quote(sys.executable)} {shlex.quote(script)} {shlex.quote(self.stops)}"
-        names = []
-        for plugin in plugins:
-            with open(os.path.join(plugin, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
-                names.append(json.load(f)["name"])
-        settings = {
-            "enabledPlugins": {f"{name}@ccpm": False for name in names},
-            "hooks": {"Stop": [{"hooks": [{"type": "command", "command": keep}]}]},
-        }
-        self.command = ["claude", "--session-id", self.session, "--model", "opus"]
-        for plugin in plugins:
-            self.command += ["--plugin-dir", plugin]
-        self.command += [
-            "--settings",
-            json.dumps(settings),
-            "--permission-mode",
-            "bypassPermissions",
-        ]
-        self.cwd, self.pid, self.terminal, self.seen = cwd, 0, -1, 0
-
-    def stopped(self) -> list[dict[str, Any]]:
-        """Each Stop event kept so far."""
-        try:
-            with open(self.stops, encoding="utf-8") as f:
-                return [json.loads(line) for line in f.read().splitlines()]
-        except FileNotFoundError:
-            return []
-
-    def start(self, message: str) -> None:
-        """Starts Claude Code with the first message, as its user types it."""
-        pid, terminal = pty.fork()
-        if pid == 0:
-            os.chdir(self.cwd)
-            env = {**trying.fresh(), "TERM": "xterm-256color"}
-            os.execvpe(self.command[0], [*self.command, message], env)
-        self.pid, self.terminal = pid, terminal
-
-    def type(self, message: str) -> None:
-        """Types the message, on one line, and sends it."""
-        os.write(self.terminal, " ".join(message.split()).encode())
-        time.sleep(1)
-        os.write(self.terminal, b"\r")
-
-    def next_stop(self, minutes: int) -> dict[str, Any]:
-        """The next Stop of the main conversation with no agent left in the background, reading
-        what the terminal shows meanwhile and trusting the run's folder as Claude Code asks."""
-        until = time.monotonic() + minutes * 60
-        shown, trusted = b"", False
-        with open(os.path.join(self.place, "terminal.txt"), "ab") as kept:
-            while time.monotonic() < until:
-                ready, _, _ = select.select([self.terminal], [], [], 1)
-                if ready:
-                    try:
-                        read = os.read(self.terminal, 65536)
-                    except OSError:
-                        raise SystemExit(f"claude ended: see {kept.name}") from None
-                    kept.write(read)
-                    kept.flush()
-                    shown = (shown + read)[-4096:]
-                if not trusted and trying.TRUST in shown:
-                    time.sleep(1)
-                    os.write(self.terminal, b"\x1b[B")
-                    time.sleep(1)
-                    os.write(self.terminal, b"\r")
-                    trusted = True
-                stops = self.stopped()
-                for stop in stops[self.seen :]:
-                    self.seen += 1
-                    if "background_tasks" in stop and not stop["background_tasks"]:
-                        return stop
-        raise SystemExit(f"the session did not stop within {minutes} minutes")
-
-    def close(self) -> None:
-        """Ends Claude Code."""
-        if self.pid:
-            os.kill(self.pid, signal.SIGTERM)
-            os.waitpid(self.pid, 0)
-            os.close(self.terminal)
-            self.pid = 0
-
-
-def talked(session: Session, first: str, place: str, intent: str, minutes: int = 90) -> list[dict]:
-    """Each message the main conversation put to the person, with what the person said of it, from
-    the first message until Turn says the work is done; the person answers from the intent, in a
-    folder of its own in the run's folder. A stop that asks the person nothing, as where Turn is
-    still at work, is waited past."""
+def talked(
+    first: str, plugins: list[str], repo: str, place: str, intent: str, minutes: int = 180
+) -> tuple[str, list[dict[str, Any]]]:
+    """An interactive session of Claude Code on the plugins, in the repository, as trying.py's
+    interactive runs it, from the first message until Turn says the work is done; and each message
+    the main conversation put to the person, with what the person said of it. The person answers
+    from the intent, in a folder of its own in the run's folder; a stop that asks the person
+    nothing, as where Turn is still at work, is waited past."""
     alone = os.path.join(place, "person")
     os.makedirs(alone, exist_ok=True)
     said: list[str] = []
     turns: list[dict[str, Any]] = []
-    session.start(first)
-    until = time.monotonic() + minutes * 60
-    while len(turns) < TURNS:
-        left = max(1, int((until - time.monotonic()) / 60))
-        message = str(session.next_stop(left).get("last_assistant_message") or "")
-        heard = asked(
-            FINDS.format(intent=intent, said="\n\n".join(said) or "(none)", message=message),
-            alone,
-        )
+
+    def answer(message: str) -> str | None:
+        if len(turns) == TURNS:
+            raise SystemExit(f"the conversation did not end in {TURNS} messages")
+        heard = trying.heard(FINDS, intent, said, message, alone)
         turns.append({"message": message, **heard})
         print(f"  AI: {message[:300]!r}")
         print(f"  person: {str(heard.get('answer'))[:200]!r} {heard_of(heard)}", flush=True)
         if heard.get("finished"):
-            return turns
-        if heard.get("asks"):
-            said += [f"AI: {message}", f"You: {heard['answer']}"]
-            session.type(str(heard["answer"]))
-    raise SystemExit(f"the conversation did not end in {TURNS} messages")
+            return None
+        if not heard.get("asks"):
+            return ""
+        said.extend([f"AI: {message}", f"You: {heard['answer']}"])
+        return str(heard["answer"]) or "yes"
+
+    session = trying.interactive(first, plugins, repo, place, minutes, answer)["session_id"]
+    return session, turns
 
 
 def heard_of(heard: dict[str, Any]) -> str:
@@ -334,6 +215,12 @@ def read_json(path: str) -> Any:
         return None
 
 
+# How the stand-in for the person answers, the same in every E2E test.
+HOW = """How you answer: briefly, as a busy person, in the language the AI writes to you in.
+Answer what you are asked from what you want above. Where a fact is shown to you, say whether it
+is right. Where you are asked something your wants above do not settle, say the AI may decide it.
+Where you are shown the whole design and asked to approve it, say yes where it holds what you
+want above, and otherwise say what is to change."""
 # Each role's start that may follow the start of another, as Turn's routes give them.
 FOLLOWS = {
     "planner": {"designer"},
@@ -383,20 +270,14 @@ def overlapped(runs: list[tuple[str, str, float, float]], role: str) -> bool:
     return any(spans[n + 1][0] < spans[n][1] for n in range(len(spans) - 1))
 
 
-def verdict(untried: list[str], wrong: list[str]) -> bool:
-    """Whether the run counted and passed, printing which, and why where it did not."""
-    if untried:
-        print("  not counted: " + "; ".join(untried))
-        return False
-    print("  passed" if not wrong else "  failed: " + "; ".join(wrong))
-    return not wrong
+def judged(
+    session: str, turns: list[dict[str, Any]], repo: str, place: str, intent: str, paths: list[str]
+) -> list[str]:
+    """What is wrong in a run that handed back the work at the paths: in the messages put to the
+    person, in the order the roles started, and in the work as the person would judge it."""
+    wrong = asked_wrong(turns) + routes_wrong(starts(session))
+    return wrong + work_wrong(repo, paths, place, intent)
 
 
-def main(run: Any) -> None:
-    """Runs the E2E test's run as many times as the command line gives, three by default, numbered
-    from the second word where given, and exits 0 where every run passed and counted."""
-    runs = int(sys.argv[1]) if len(sys.argv) > 1 else 3
-    first = int(sys.argv[2]) if len(sys.argv) > 2 else 1
-    passed = [run(n) for n in range(first, first + runs)]
-    print(f"{sum(passed)} of {runs} runs passed")
-    sys.exit(0 if all(passed) else 1)
+verdict = trying.verdict
+main = trying.main

@@ -13,11 +13,14 @@ Your run values, as one JSON line: `run`, the run's folder; `work`, the files of
 your answers file; and `open`, your file of open points. Other runs of builder may make the other
 parts at the same time: write only the files given you.
 
-- `<run>/design-tree.json` holds the decisions, each with what it decides, what it serves and
+A name in braces below, such as `{run}`, stands for your run value of that name: in a command,
+put the value in its place, as Turn's checks match each command with the value put in.
+
+- `{run}/design-tree.json` holds the decisions, each with what it decides, what it serves and
   builds on, and its grounds.
-- `<run>/run.json` names the `template`. Read it whole: its parts are the shape the work takes,
+- `{run}/run.json` names the `template`. Read it whole: its parts are the shape the work takes,
   and its practices the ways of meeting each question.
-- `<run>/remake.json`, where it is there, names the decisions to make again, each with the
+- `{run}/remake.json`, where it is there, names the decisions to make again, each with the
   question and what its user gets once it is good, that sent it back.
 
 `${CLAUDE_PLUGIN_ROOT}` below is Turn's folder, which your entry names, and
@@ -30,12 +33,12 @@ parts at the same time: write only the files given you.
    one where it is not. Make each into your files along the template's parts, by the practice of
    each question it serves, and mend each more of its questions before the next. Decide the small
    points of making, such as a phrase or a function's name, from the design and the template's
-   practices.
+   practices. Write only `{work}`, `{answers}` or `{open}`.
 2. **Each point left open is handed back.** Where the design leaves open a point that bears on how
    well the work serves its user, such as which run a walkthrough shows, do not decide it: write it
    into `open`, in the form of `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/open.json`, with the
-   question it bears on. Write the file even with no point, as `{"open": []}`.
+   question it bears on. Write the file even with no point, as `{"open": []}`. Write `{open}` in the form of `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/open.json`.
 3. **Each question is answered.** Use and answer, as `use-and-answer.md` says, the questions your
    decisions serve, which Turn's check names, into `answers`, and mend the work for each `more`
-   until each is good and the check gives 0.
-4. **The result is given.** Give `open` where `open` holds a point, and `built` otherwise.
+   until each is good and the check gives 0. Run only `{commands}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`. Write `{answers}` in the form of `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json`. Read `{work}` to its end. After changing `{work}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`.
+4. **The result is given.** Give `open` where `open` holds a point, and `built` otherwise. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py builder built` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py builder open`.

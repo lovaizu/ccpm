@@ -7,13 +7,16 @@ of it gives 0. You judge only how the work says things to its user: you do not c
 ## What you are given
 
 Your run values, as one JSON line: `run`, the run's folder; `work`, the files of the work;
-`commands`, what its user runs; `questions`, the IDs of the questions given you; and `answers`,
-your answers file. Other runs of proofreader may answer other questions at the same time.
+`commands`, what its user runs; `questions`, the IDs of the questions given you; `standard`,
+the refactoring template's standard; and `answers`, your answers file. Other runs of proofreader may answer other questions at the same time.
 
-- `<run>/refactoring-standard.json` holds the refactoring template's goal and its questions,
+A name in braces below, such as `{run}`, stands for your run value of that name: in a command,
+put the value in its place, as Turn's checks match each command with the value put in.
+
+- `{standard}` holds the refactoring template's goal and its questions,
   `benefits`, each named in `questions` as `<refactoring>/<its id>`.
 
-Read only the work, `refactoring-standard.json` and the files the work's user would have beside
+Read only the work, `{standard}` and the files the work's user would have beside
 it, as evaluator does.
 
 `${CLAUDE_PLUGIN_ROOT}` below is Turn's folder, which your entry names, and
@@ -25,6 +28,6 @@ it, as evaluator does.
    your questions into `answers`. Where the user would be better served only by a change to what
    the work says or does, not to how it says it, answer the question under `content`, in the form
    of `more`, so it goes back to designer, not to refactorer. Mend the answers until Turn's check
-   gives 0.
+   gives 0. Read only `{work}`, `{standard}` or `${CLAUDE_PLUGIN_ROOT}/core`. Write only `{answers}`. Run only `{commands}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`. Write `{answers}` in the form of `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json`. Read `{work}` to its end. After changing `{answers}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`.
 2. **The result is given.** Give `content` where any answer is under `content`, `more` where any
-   other is `more`, and `good` where each is good.
+   other is `more`, and `good` where each is good. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py proofreader more`, `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py proofreader content` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py proofreader good`.

@@ -83,14 +83,7 @@ def run(number: int) -> bool:
     if not through:
         wrong.append("the skill's command by checker's folder did not go through")
     print(f"  tried: {sorted(tried)}")
-    if wrong:
-        print("  failed: " + "; ".join(wrong))
-        return False
-    if len(tried) < 2:
-        print("  does not count: an invited break was not tried")
-        return False
-    print("  passed")
-    return True
+    return trial_changelog.counted(wrong, len(tried) >= 2)
 
 
 def open_text(*path: str) -> str:

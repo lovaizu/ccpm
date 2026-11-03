@@ -20,7 +20,8 @@ import time
 
 import turning
 
-INTENT = """You wrote `tidy`, a small Python tool in the repository the AI works in, that sorts a
+INTENT = (
+    """You wrote `tidy`, a small Python tool in the repository the AI works in, that sorts a
 cluttered Downloads folder into folders by kind. You want a man page for it, in the roff form
 `man` reads, as `tidy.1`.
 
@@ -37,11 +38,9 @@ what is to change.
 What you know of your repository, which the AI can read for itself: tidy.py is the whole tool; it
 takes --dry-run; it sorts by extension into images, documents, archives and other.
 
-How you answer: briefly, as a busy person, in the language the AI writes to you in. Answer what you
-are asked from what you want above. Where a fact is shown to you, say whether it is right. Where you
-are asked something your wants above do not settle, say the AI may decide it. Where you are shown
-the whole design and asked to approve it, say yes where it holds what you want above, and otherwise
-say what is to change."""
+"""
+    + turning.HOW
+)
 
 
 def run(number: int) -> bool:
@@ -49,17 +48,15 @@ def run(number: int) -> bool:
     place = turning.trying.folder("turn", f"trial-new-kind-{number}")
     repo, copies = turning.made(place)
     started = time.monotonic()
-    session = turning.Session([copies["turn"], copies["pin"]], repo, place)
-    try:
-        turns = turning.talked(session, "/turn:up a man page for tidy", place, INTENT)
-    finally:
-        session.close()
+    session, turns = turning.talked(
+        "/turn:up a man page for tidy", [copies["turn"], copies["pin"]], repo, place, INTENT
+    )
     print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
     run_folder = turning.run_folder(repo)
     work = turning.read_json(os.path.join(run_folder, "work.json")) if run_folder else None
     if not work or not all(os.path.exists(os.path.join(repo, p)) for p in work["paths"]):
         return turning.verdict(["Turn handed back no man page"], [])
-    wrong = turning.asked_wrong(turns) + turning.routes_wrong(turning.starts(session.session))
+    wrong = turning.asked_wrong(turns) + turning.routes_wrong(turning.starts(session))
     templates = glob.glob(os.path.join(repo, ".turn", "best-practices", "*.json"))
     if not templates:
         wrong.append("no template was kept in .turn/best-practices/")

@@ -143,79 +143,122 @@ class Main(unittest.TestCase):
         self.assertEqual(end.exception.code, 0)
 
 
-class StandardAndGroups(helpers.RunTest):
-    def written(self):
-        """The paths of a template, readme.json, and of a run.json beside it."""
-        self.write_json("readme.json", helpers.TEMPLATE)
-        made = helpers.run()["run.json"]
-        del made["groups"], made["refactoring_groups"]
-        self.write_json("run.json", made)
-        return "readme.json", "run.json"
+class Ready(helpers.RunTest):
+    def laid(self, template=None, **run):
+        """A template of the kind readme at .turn/best-practices/readme.json, as a repository makes
+        one, and a run's folder whose run.json names it, with the keys given over its own."""
+        path = ".turn/best-practices/readme.json"
+        if isinstance(template, str):
+            path = template
+        else:
+            self.write_json(path, template or helpers.TEMPLATE)
+        made = {
+            "kind": "readme",
+            "template": path,
+            "refactoring": "refactor-doc",
+            **run,
+        }
+        self.write_json(f"{self.folder}/run.json", made)
 
-    def test_standard_writes_the_goal_parts_and_questions(self):
-        template, _ = self.written()
-        self.assertEqual(practices.main(["standard", template, "out/standard.json"]), 0)
+    def ran(self, *argv):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = practices.main(list(argv))
+        return code, out.getvalue(), err.getvalue()
+
+    def test_writes_each_standard_and_each_group_and_says_so(self):
+        # Given: a run whose template the repository made, and Turn's refactor-doc
+        self.laid()
+        # When: the run is made ready
+        code, out, err = self.ran("ready", self.folder)
+        # Then: both standards, the kind's groups and refactor-doc's are written, and it says so
         self.assertEqual(
-            self.read_json("out/standard.json"), helpers.templates.standard(helpers.TEMPLATE)
+            (code, out, err),
+            (
+                0,
+                (
+                    f"practices.py: {self.folder} is ready: standard.json and"
+                    " refactoring-standard.json written, and 3 groups of readme and 1 of"
+                    " refactor-doc in run.json.\n"
+                ),
+                "",
+            ),
         )
-
-    def test_groups_writes_the_kind_s_groups_into_the_run(self):
-        template, run = self.written()
-        self.assertEqual(practices.main(["groups", template, run]), 0)
+        own = os.path.join(practices.OWN, "refactor-doc.json")
+        with open(own, encoding="utf-8") as f:
+            refactoring = json.load(f)
         self.assertEqual(
-            self.read_json(run)["groups"],
-            [
-                {"id": "G1", "questions": ["readme/Q1"]},
-                {"id": "G2", "questions": ["readme/Q2"]},
-                {"id": "G3", "questions": ["readme/Q3"]},
-            ],
+            self.read_json(f"{self.folder}/standard.json"),
+            helpers.templates.standard(helpers.TEMPLATE),
         )
-
-    def test_groups_of_the_refactoring_template_go_under_their_own_key(self):
-        _, run = self.written()
-        self.write_json("refactor-doc.json", helpers.REFACTORING)
-        self.assertEqual(practices.main(["groups", "refactor-doc.json", run]), 0)
-        written = self.read_json(run)
         self.assertEqual(
-            written["refactoring_groups"], [{"id": "G1", "questions": ["refactor-doc/Q1"]}]
+            self.read_json(f"{self.folder}/refactoring-standard.json"),
+            helpers.templates.standard(refactoring),
         )
-        self.assertNotIn("groups", written)
-
-    def test_groups_of_a_template_that_is_neither_the_run_s_are_refused(self):
-        _, run = self.written()
-        self.write_json("other.json", helpers.TEMPLATE)
-        err = io.StringIO()
-        with contextlib.redirect_stderr(err):
-            self.assertEqual(practices.main(["groups", "other.json", run]), 2)
+        written = self.read_json(f"{self.folder}/run.json")
+        self.assertEqual(written["groups"], helpers.RUN["run.json"]["groups"])
         self.assertEqual(
-            err.getvalue(),
-            "practices.py: other.json is neither readme nor refactor-doc, the templates of"
-            " run.json\n",
+            written["refactoring_groups"],
+            helpers.templates.groups(refactoring, "refactor-doc"),
         )
 
-    def test_groups_of_a_run_out_of_its_form_are_refused(self):
-        template, run = self.written()
-        self.write_json(run, {"kind": "readme"})
-        err = io.StringIO()
-        with contextlib.redirect_stderr(err):
-            self.assertEqual(practices.main(["groups", template, run]), 2)
-        self.assertTrue(
-            err.getvalue().startswith(
-                "practices.py: could not read run.json: run.json is out of its form"
-            )
+    def test_a_template_the_repository_made_gets_its_markdown_and_turn_s_keep_theirs(self):
+        self.laid()
+        before = os.path.getmtime(os.path.join(practices.OWN, "refactor-doc.md"))
+        self.ran("ready", self.folder)
+        self.assertEqual(
+            self.read(".turn/best-practices/readme.md"),
+            helpers.templates.markdown("readme", helpers.TEMPLATE),
         )
+        self.assertEqual(os.path.getmtime(os.path.join(practices.OWN, "refactor-doc.md")), before)
 
-    def test_standard_and_groups_take_two_paths(self):
-        for argv in (
-            ["standard", "a.json"],
-            ["standard", "a.json", "b.json", "c.json"],
-            ["groups", "a.json"],
-            ["groups", "a.json", "b.json", "c.json"],
-        ):
-            err = io.StringIO()
-            with self.subTest(argv=argv), contextlib.redirect_stderr(err):
-                self.assertEqual(practices.main(argv), 2)
-                self.assertEqual(err.getvalue(), practices.USAGE + "\n")
+    def test_turn_s_own_template_is_taken_where_it_lies(self):
+        self.laid(template=os.path.join(practices.OWN, "readme.json"))
+        before = os.path.getmtime(os.path.join(practices.OWN, "readme.md"))
+        self.assertEqual(self.ran("ready", self.folder)[0], 0)
+        self.assertEqual(os.path.getmtime(os.path.join(practices.OWN, "readme.md")), before)
+        self.assertEqual(self.read_json(f"{self.folder}/run.json")["groups"][0]["id"], "G1")
+
+    def test_a_template_out_of_its_form_gives_1_and_each_fault(self):
+        broken = copy.deepcopy(helpers.TEMPLATE)
+        broken["practices"].pop()
+        self.laid(template=broken)
+        self.assertEqual(
+            self.ran("ready", self.folder),
+            (
+                1,
+                "",
+                (
+                    "practices.py: .turn/best-practices/readme.json: practices meet Q1, Q2, not"
+                    " each question once in its order\n"
+                ),
+            ),
+        )
+        self.assertFalse(os.path.exists(f"{self.folder}/standard.json"))
+
+    def test_a_template_that_cannot_be_read_gives_2(self):
+        self.laid()
+        made = self.read_json(f"{self.folder}/run.json")
+        made["template"] = "gone.json"
+        self.write_json(f"{self.folder}/run.json", made)
+        code, out, err = self.ran("ready", self.folder)
+        self.assertEqual((code, out), (2, ""))
+        self.assertTrue(err.startswith("practices.py: could not read gone.json: "))
+        self.write("gone.json", "{")
+        code, out, err = self.ran("ready", self.folder)
+        self.assertEqual((code, out), (2, ""))
+        self.assertTrue(err.startswith("practices.py: could not read gone.json: "))
+
+    def test_a_run_out_of_its_form_gives_2(self):
+        self.write_json(f"{self.folder}/run.json", {"kind": "readme"})
+        code, out, err = self.ran("ready", self.folder)
+        self.assertEqual((code, out), (2, ""))
+        self.assertTrue(err.startswith(f"practices.py: could not make {self.folder} ready: "))
+
+    def test_ready_takes_one_run(self):
+        for argv in (["ready"], ["ready", "a", "b"]):
+            with self.subTest(argv=argv):
+                self.assertEqual(self.ran(*argv), (2, "", practices.USAGE + "\n"))
 
 
 if __name__ == "__main__":

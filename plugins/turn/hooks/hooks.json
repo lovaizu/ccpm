@@ -1,0 +1,65 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"turn:planner\"'*|*'\"agent_type\": \"turn:planner\"'*|*'\"agent_type\":\"turn:designer\"'*|*'\"agent_type\": \"turn:designer\"'*|*'\"agent_type\":\"turn:builder\"'*|*'\"agent_type\": \"turn:builder\"'*|*'\"agent_type\":\"turn:evaluator\"'*|*'\"agent_type\": \"turn:evaluator\"'*|*'\"agent_type\":\"turn:refactorer\"'*|*'\"agent_type\": \"turn:refactorer\"'*|*'\"agent_type\":\"turn:proofreader\"'*|*'\"agent_type\": \"turn:proofreader\"'*|*'\"agent_type\":\"turn:up\"'*|*'\"agent_type\": \"turn:up\"'*) echo '{\"systemMessage\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\", \"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"turn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" turn",
+            "onFailure": "block"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/posttooluse.py\" turn"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/posttoolusefailure.py\" turn"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstart.py\" turn"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" turn"
+          }
+        ]
+      }
+    ]
+  }
+}

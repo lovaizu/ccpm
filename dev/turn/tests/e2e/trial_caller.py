@@ -46,21 +46,17 @@ def run(number: int) -> bool:
     copies["caller"] = os.path.join(place, "plugins", "caller")
     shutil.copytree(CALLER, copies["caller"])
     started = time.monotonic()
-    session = turning.Session([copies["turn"], copies["pin"], copies["caller"]], repo, place)
-    try:
-        turns = turning.talked(session, FIRST, place, INTENT)
-    finally:
-        session.close()
+    session, turns = turning.talked(
+        FIRST, [copies["turn"], copies["pin"], copies["caller"]], repo, place, INTENT
+    )
     print(f"  {len(turns)} messages, {time.monotonic() - started:.0f} s")
     if not os.path.exists(os.path.join(repo, "README.md")):
         return turning.verdict(["Turn handed back no README.md"], [])
-    wrong = turning.asked_wrong(turns)
-    wrong += turning.routes_wrong(turning.starts(session.session))
+    wrong = turning.judged(session, turns, repo, place, INTENT, ["README.md"])
     run_folder = turning.run_folder(repo)
     tree = turning.read_json(os.path.join(run_folder, "design-tree.json")) if run_folder else None
     if not tree or tree.get("goal", {}).get("what") != GOAL:
         wrong.append("the design tree's goal is not the one caller gave")
-    wrong += turning.work_wrong(repo, ["README.md"], place, INTENT)
     return turning.verdict([], wrong)
 
 
