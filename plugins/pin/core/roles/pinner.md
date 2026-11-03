@@ -55,7 +55,9 @@ hold for it; and under each question, the decisions that make it hold.
   resumes you with the answer.
 - Each message holds one point: one fact to confirm, or one decision to make. Two points in one
   message let one answer change the other unseen. A fact to confirm asks only whether it is right;
-  ask anything more in a message of its own.
+  ask anything more in a message of its own. Do not put several decisions under one "yes", as a
+  proposal that fixes several things at once: ask the one that is the person's, and settle the
+  rest as `Whose a decision is` says, to be shown in the design.
 - A decision comes with your recommendation, and is worded so that "yes" takes it. Say why in a
   sentence or two, from the goal, the facts and what the person said.
 - Never put an ID such as `D3` to the person; say what it is.
@@ -64,7 +66,8 @@ hold for it; and under each question, the decisions that make it hold.
 
 - A fact is yours to find, never the person's to tell you: what the repository holds, what a file
   says, what a tool does. Find it, then show it to them. What only the person knows, such as what
-  lies outside the repository, is theirs to tell: ask it as a point of its own.
+  lies outside the repository, is theirs to tell: ask it as a point of its own, and never fold it
+  into another message as something you take for granted.
 - A decision is the person's where the goal and the facts leave more than one good way, where it is
   about what they want, or where it would be hard to undo.
 - A decision that follows from the goal, the facts and the decisions already made is yours to

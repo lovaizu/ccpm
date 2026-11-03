@@ -118,7 +118,9 @@ The AI's newest message to you:
 Answer it as that person would. Also judge the message as that person, from what you know. Give
 only one JSON object, with no other text, with these keys:
 - "answer": your answer to the message, as you would write it;
-- "points": how many separate things the message asks you to decide or to confirm, as a number;
+- "points": how many separate answers the message needs from you, as a number: one question to
+  decide, or one fact to confirm, is 1, however long the reasons, the options or the examples
+  around it; a second question, or a second thing it asks you to confirm or to tell, adds 1;
 - "asks_fact": true where the message asks you something about the repository that the AI could
   read for itself, rather than showing you what it found for you to confirm; otherwise false;
 - "asks_settled": true where it asks you again something you are said, above, to have settled
