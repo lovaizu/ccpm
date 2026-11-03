@@ -428,8 +428,8 @@ def tool_checked(s: Subagent, event: dict[str, Any]) -> list[Said]:
 
 def read_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
     """What a read of the path is told: nothing where the subagent has no read_only lane, a lane's
-    value is null, or the path is one of the inputs or the forms of its in_form lanes, or lies
-    under one; the read_only lanes' sentences otherwise."""
+    value is null, or the path is one of the inputs, the forms of its in_form lanes or its own
+    part, or lies under one; the read_only lanes' sentences otherwise."""
     judging = s.of("read_only")
     if not judging:
         return []
@@ -442,6 +442,8 @@ def read_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
     for lane in s.of("in_form"):
         places = places_of(lane, s)
         inputs += forms_of(lane, s, places) if places else []
+    # The subagent's own part it was given whole as it started, so reading it again breaks no rule.
+    inputs += [p for p in [step.part(s.root, s.name)] if p]
     return [] if read_only.allows(path, inputs, s.root, event["cwd"]) else [sentences(judging)]
 
 

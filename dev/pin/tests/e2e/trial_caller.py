@@ -28,8 +28,9 @@ MAKER = os.path.join(pinning.HERE, "maker")
 FIRST = (
     "Start the subagent maker:designer to design a `--json` option on `notes list` in this"
     " repository. Whenever it ends with a message headed `For the person:`, give me that message"
-    " word for word as your whole reply. When I answer, resume designer with SendMessage, giving it"
-    " my answer word for word, and wait for it. Do nothing else yourself. When designer ends with"
+    " word for word as your whole reply. When I answer, resume designer with SendMessage, its"
+    f" message `{trying.ANSWERED}` and my answer word for word on the next line, and wait for it."
+    " Do nothing else yourself. When designer ends with"
     " no message for the person, reply with what it gave back."
 )
 INTENT = pinning.INTENT + (

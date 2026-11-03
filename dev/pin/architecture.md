@@ -153,7 +153,11 @@ number gives the order.
   [A plugin that uses another](../architecture.md#a-plugin-that-uses-another) would have it: the
   caller's role takes `pin:down` and runs its steps itself.
 - A pinner that is a caller's role asks the person through the main conversation, as
-  [Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs) says.
+  [Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs) says. The caller
+  resumes it with the person's answer under the line `The person's answer, word for word:`, the
+  one form the pinner takes as the person's words: Claude Code hands a resuming message on as the
+  coordinator's, and a pinner left to guess who speaks asked again what the person had answered,
+  in pin's E2E test of a caller and in Turn's, until the caller gave it in that form.
 - `pin:down` is a skill that the AI may call: a caller's role takes it by the `skills` field of its
   frontmatter or by the Skill tool, and Claude Code preloads only a skill the AI may call
   ([subagents](https://code.claude.com/docs/en/sub-agents#preload-skills-into-subagents)).

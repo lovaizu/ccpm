@@ -71,7 +71,7 @@ class Conversation:
         wait: int = 0,
         env: dict[str, str] | None = None,
     ) -> None:
-        self.plugins, self.cwd, self.env = plugins, cwd, {**os.environ, **(env or {})}
+        self.plugins, self.cwd, self.env = plugins, cwd, {**fresh(), **(env or {})}
         self.wait = (wait or 10) * 60
         self.run: subprocess.Popen[str] | None = None
         # Whether an agent it started in the background still runs, kept from reply to reply, as
@@ -220,9 +220,19 @@ def claude(
         conversation.close()
 
 
-# A word of what Claude Code shows as it asks whether a folder is trusted, whose words it places
-# apart by moves of the cursor.
-TRUST = b"trust"
+# What Claude Code shows, its words joined, as it asks whether a folder is trusted, and whether its
+# user takes on the bypassPermissions mode the session is started in: each the second choice.
+SECOND = ("Itrustthisfolder", "Yes,Iaccept")
+# What Claude Code shows, its words joined, on the screens a new configuration folder starts with,
+# each passed by Enter as a user takes its first choice: the text style, and a note to go on from.
+ONBOARDING = ("Choosethetextstyle", "PressEntertocontinue")
+# What Claude Code shows, its words joined, as it asks the person to allow a call, whatever the
+# permission mode.
+PERMISSION = "Doyouwanttoproceed?"
+# A move of the cursor to the right, by which Claude Code places words apart, and any other control
+# sequence.
+RIGHT = re.compile(r"\x1b\[(\d*)C")
+CONTROL = re.compile(r"\x1b\[[0-9;?]*[a-zA-Z]|\x1b\][^\x07]*\x07")
 # What the Stop hook of an interactive session runs: its event kept as a line of the file given.
 STOP = """import json, sys
 
@@ -238,6 +248,7 @@ def interactive(
     place: str,
     wait: int = 20,
     answer: Callable[[str], str | None] | None = None,
+    permit: Callable[[str], str] | None = None,
 ) -> dict[str, Any]:
     """Runs a fresh interactive session of Claude Code on the copies of plugins, in cwd, given the
     one message prompt as its user types it, and gives its session_id once the main conversation
@@ -247,8 +258,10 @@ def interactive(
     has ended, which `claude -p` does not. Given answer, the session goes on as its user does:
     at each such stop, answer is given the main conversation's last message, and the text it gives
     back is typed as the next message; "" waits for the next stop, as where the message asks the
-    user nothing, and None ends the session there. Stops where the session does not stop so within
-    wait minutes in all."""
+    user nothing, and None ends the session there. Where Claude Code asks the person to allow a
+    call, permit is given what the screen shows and the number of the choice it gives back is
+    typed, as a person answers; without permit, the session stops there, naming the call. Stops
+    where the session does not stop so within wait minutes in all."""
     names = []
     for plugin in plugins:
         with open(os.path.join(plugin, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
@@ -272,7 +285,7 @@ def interactive(
         os.chdir(cwd)
         os.execvpe(command[0], command, {**fresh(), "TERM": "xterm-256color"})
     until = time.monotonic() + wait * 60
-    seen, trusted, handled = b"", False, 0
+    seen, passed, handled = b"", set(), 0
     try:
         with open(os.path.join(place, "terminal.txt"), "ab") as shown:
             while time.monotonic() < until:
@@ -285,15 +298,28 @@ def interactive(
                     shown.write(read)
                     shown.flush()
                     seen = (seen + read)[-4096:]
+                joined = "".join(text_of(seen).split())
                 # The folder is the run's own, made by the E2E test, so it is trusted as Claude
-                # Code asks of a folder it has not opened before: the second choice, below the
-                # first.
-                if not trusted and TRUST in seen:
+                # Code asks of a folder it has not opened before, and the mode the test starts it
+                # in taken on: the second choice, below the first, each asked once.
+                first = [screen for screen in SECOND if screen in joined and screen not in passed]
+                if first:
                     time.sleep(1)
                     os.write(terminal, b"\x1b[B")
                     time.sleep(1)
                     os.write(terminal, b"\r")
-                    trusted = True
+                    passed.add(first[0])
+                    seen = b""
+                elif any(screen in joined for screen in ONBOARDING):
+                    time.sleep(1)
+                    os.write(terminal, b"\r")
+                    seen = b""
+                elif PERMISSION in joined:
+                    if not permit:
+                        raise SystemExit(f"Claude Code asked to allow a call: {text_of(seen)}")
+                    time.sleep(1)
+                    os.write(terminal, permit(text_of(seen)).strip()[:1].encode())
+                    seen = b""
                 for stop in kept(stops)[handled:]:
                     handled += 1
                     if not ("background_tasks" in stop and not stop["background_tasks"]):
@@ -312,15 +338,58 @@ def interactive(
         os.close(terminal)
 
 
+def text_of(seen: bytes) -> str:
+    """What the screen shows in what the terminal was sent, its words placed apart as the cursor
+    moves them, its other control sequences left out."""
+    said = seen.decode("utf-8", "replace")
+    said = RIGHT.sub(lambda m: " " * int(m[1] or 1), said)
+    return CONTROL.sub("", said)
+
+
 def fresh() -> dict[str, str]:
-    """The environment with nothing in it of a Claude Code session it may be run from, as a user
-    starts Claude Code in a terminal of their own: a session started with them is taken as a
-    child of that one, and keeps no record of its own."""
-    return {
+    """The environment each Claude Code a test starts runs in, as any user starts it in a terminal
+    of their own: nothing in it of a Claude Code session it may be run from, as a session started
+    with that is taken as its child and keeps no record of its own; and CLAUDE_CONFIG_DIR a
+    configuration folder of the test's own, so Claude Code reads none of the developer's
+    CLAUDE.md, settings or memory, logged in by the developer's login, as login gives it."""
+    if not CONFIG:
+        CONFIG.append(testing.temporary("lane", "claude-config"))
+        # The records are read from the test's own folder too, by record.py.
+        os.environ["CLAUDE_CONFIG_DIR"] = CONFIG[0]
+    found = {
         k: v
         for k, v in os.environ.items()
         if not (k.startswith("CLAUDE_CODE_") or k in ("CLAUDECODE", "CLAUDE_PID", "CLAUDE_EFFORT"))
     }
+    return {**found, **login()}
+
+
+# The developer's own configuration folder, where Claude Code keeps their login, as it is before a
+# test sets its own.
+DEVELOPER = os.environ.get("CLAUDE_CONFIG_DIR") or os.path.expanduser("~/.claude")
+# The test's own configuration folder, made the first time a Claude Code is started.
+CONFIG: list[str] = []
+
+
+def login() -> dict[str, str]:
+    """The developer's login, as Claude Code takes one with a configuration folder of its own:
+    nothing where ANTHROPIC_API_KEY is set, which the environment keeps; CLAUDE_CODE_OAUTH_TOKEN as
+    set, such as from `claude setup-token`; else the access token of the login Claude Code keeps in
+    the developer's `.credentials.json`, read, never written, at each start, as their own Claude
+    Code renews it. Stops where there is none."""
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return {}
+    token = os.environ.get("CLAUDE_CODE_OAUTH_TOKEN")
+    if not token:
+        try:
+            with open(os.path.join(DEVELOPER, ".credentials.json"), encoding="utf-8") as f:
+                token = json.load(f)["claudeAiOauth"]["accessToken"]
+        except (OSError, ValueError, KeyError) as e:
+            raise SystemExit(
+                f"no login for the test's Claude Code ({e}): set CLAUDE_CODE_OAUTH_TOKEN to a token"
+                " `claude setup-token` gives, or ANTHROPIC_API_KEY"
+            ) from None
+    return {"CLAUDE_CODE_OAUTH_TOKEN": token}
 
 
 def kept(stops: str) -> list[dict[str, Any]]:
@@ -339,7 +408,14 @@ def stand_in(prompt: str, cwd: str) -> dict[str, Any]:
     command = ["claude", "-p", "--model", "opus", "--tools", "", "--no-session-persistence"]
     command += ["--output-format", "json", "--settings", json.dumps({"enabledPlugins": {}})]
     done = subprocess.run(
-        command, input=prompt, capture_output=True, text=True, cwd=cwd, timeout=600, check=True
+        command,
+        input=prompt,
+        capture_output=True,
+        text=True,
+        cwd=cwd,
+        env=fresh(),
+        timeout=600,
+        check=True,
     )
     said = str(json.loads(done.stdout)["result"])
     found = re.search(r"\{.*\}", said, re.DOTALL)
@@ -348,12 +424,39 @@ def stand_in(prompt: str, cwd: str) -> dict[str, Any]:
     return json.loads(found.group(0))
 
 
+# The line a caller heads the person's answer with as it resumes the role that asked, the one
+# form pin's pinner and Turn's roles take as the person's words.
+ANSWERED = "The person's answer, word for word:"
 # The key of the stand-in's answer that counts the points of a message, the same for every plugin
 # that asks a person, as a point is the person's to count, not the plugin's.
 POINTS = """- "points": how many separate answers the message needs from you, as a number: one
   question to decide, or one fact to confirm, is 1, however long the reasons, the options or the
   examples around it; a second question, or a second thing it asks you to confirm or to tell,
   adds 1;"""
+
+
+# The prompt the stand-in for a person is given where Claude Code asks them to allow a call.
+PERMITS = """You stand in for a person using Claude Code. Here is who you are and what you truly
+want:
+
+{intent}
+
+Claude Code now shows you this, asking you to allow something:
+
+<screen>
+{screen}
+</screen>
+
+Choose as that person would, from what the screen shows and what you want. Give only one JSON
+object, with no other text: {{"choice": the number of the choice you take, "why": one sentence}}."""
+
+
+def permitted(intent: str, screen: str, cwd: str) -> str:
+    """The number of the choice the stand-in for the person of the intent takes on the screen
+    where Claude Code asks them to allow a call, printing it and why."""
+    chose = stand_in(PERMITS.format(intent=intent, screen=screen[-3000:]), cwd)
+    print(f"  permission: chose {chose.get('choice')}: {chose.get('why')}", flush=True)
+    return str(chose.get("choice", ""))
 
 
 def finds(who: str, keys: str) -> str:

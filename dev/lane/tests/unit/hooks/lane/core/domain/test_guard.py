@@ -787,6 +787,19 @@ class TestReadOnly(LanesTest):
         form = os.path.join(self.plugin, "forms", "entry.json")
         self.assertEqual(self.check(self.reading(form)), [])
 
+    def test_the_subagents_own_part_is_read_beside_the_inputs(self):
+        # Given: writer reading only CHANGELOG.md and docs/, its steps in its part
+        part = os.path.join(self.plugin, "prompts", "writer.md")
+        self.write(part, self.read(self.agent_file).split("---\n\n", 1)[1])
+        self.write(self.agent_file, helpers.PART_ENTRY.format(name="writer"))
+        # When: it reads its part, which it was given whole as it started, or another part
+        self.write(os.path.join(self.plugin, "prompts", "other.md"), "x\n")
+        # Then: its own goes through, and the other is told the sentence
+        self.assertEqual(self.check(self.reading(part)), [])
+        said = [guard.Said("Read only `CHANGELOG.md` or `docs/`.")]
+        other = os.path.join(self.plugin, "prompts", "other.md")
+        self.assertEqual(self.check(self.reading(other)), said)
+
     def test_a_subagent_with_no_read_lane_reads_freely(self):
         # Given: writer with the README's lanes alone
         self.lay()

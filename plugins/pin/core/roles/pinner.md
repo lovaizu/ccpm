@@ -54,8 +54,8 @@ hold for it; and under each question, the decisions that make it hold.
   your turn to wait for the answer.
 - Where you run as a subagent, you cannot ask the person. End your run with the message for the
   person alone, headed `For the person:`. The one who started you puts it to the person and
-  resumes you with the answer. Take the message you are resumed with as the person's answer, and
-  write it as their words: only the main conversation can ask the person, so their answer can
+  resumes you with the answer, headed `The person's answer, word for word:`. Take what follows
+  that line as the person's answer, and write it as their words: only the main conversation can ask the person, so their answer can
   reach you no other way.
 - Each message holds one point: one fact to confirm, or one decision to make. Two points in one
   message let one answer change the other unseen. A fact to confirm asks only whether it is right;

@@ -667,6 +667,15 @@ Whether the time and the tokens fit the work is judged by feel, since no bar is 
 gather. Runs kept side by side show whether a change made things better or worse, with the purpose
 met as fully (Principle 8).
 
+Each Claude Code a trial starts, and each stand-in for a person, runs on a configuration folder of
+its own, made fresh by `dev/lane/trials/trying.py`, with only the plugins under test, so it reads
+none of the developer's CLAUDE.md, settings or memory: a trial shows how a plugin behaves for any
+user, not for the one who runs it. A configuration folder holds its own login
+([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)),
+so the trial gives the developer's as `CLAUDE_CODE_OAUTH_TOKEN`, read from their own folder and never
+written there. Where Claude Code asks the person to allow a call, the stand-in sees what the screen
+shows and chooses, as a person would.
+
 A trial that needs a real GitHub repository runs in `lovaizu/playground`, one at a time, on a branch
 of its own. When it ends, the trial removes the branch, its pull requests and anything else it made
 there. The code that runs a trial, of the whole or of a role, is not counted in the lines and

@@ -140,8 +140,9 @@ def talked(
     """An interactive session of Claude Code on the plugins, in the repository, as trying.py's
     interactive runs it, from the first message until Turn says the work is done; and each message
     the main conversation put to the person, with what the person said of it. The person answers
-    from the intent, in a folder of its own in the run's folder; a stop that asks the person
-    nothing, as where Turn is still at work, is waited past."""
+    from the intent, in a folder of its own in the run's folder, and so too where Claude Code asks
+    them to allow a call; a stop that asks the person nothing, as where Turn is still at work, is
+    waited past."""
     alone = os.path.join(place, "person")
     os.makedirs(alone, exist_ok=True)
     said: list[str] = []
@@ -161,8 +162,11 @@ def talked(
         said.extend([f"AI: {message}", f"You: {heard['answer']}"])
         return str(heard["answer"]) or "yes"
 
-    session = trying.interactive(first, plugins, repo, place, minutes, answer)["session_id"]
-    return session, turns
+    def permit(screen: str) -> str:
+        return trying.permitted(intent, screen, alone)
+
+    done = trying.interactive(first, plugins, repo, place, minutes, answer, permit)
+    return done["session_id"], turns
 
 
 def heard_of(heard: dict[str, Any]) -> str:

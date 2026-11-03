@@ -26,8 +26,14 @@ import runs
 import starts
 import templates
 import testing
+import throwaway
 import tree
 
+# A work's command as designer writes it, inside Turn's throwaway.py.
+THROWN = (
+    f"python3 {os.path.join(SCRIPTS, 'throwaway.py')} --file Downloads/a.jpg"
+    " -- 'python3 tidy.py --dry-run ~/Downloads'"
+)
 __all__ = [
     "answering",
     "answers",
@@ -38,6 +44,7 @@ __all__ = [
     "starts",
     "templates",
     "testing",
+    "throwaway",
     "tree",
 ]
 
@@ -112,7 +119,7 @@ RUN: dict[str, Any] = {
     },
     "work.json": {
         "paths": ["README.md"],
-        "commands": ["tidy --dry-run"],
+        "commands": [THROWN],
         "parts": [{"id": "P1", "decisions": ["D1", "D2", "D3"], "paths": ["README.md"]}],
     },
 }

@@ -93,6 +93,8 @@ in_form takes the form by the path the subagent reads it by, as
 read_only lets the subagent read, beside its inputs, the form each of its in_form lanes names: its
 step tells it to write in that form, and the form, a file of your plugin, holds nothing of the
 project's work.
+It lets the subagent read its own part too, the file its steps lie in, which
+lane gives it whole as it starts: reading what it was given breaks no rule.
 
 read_only and write_only each take a file or a folder, and a folder lets the subagent read or write
 anything under it. A path of read_only, write_only or read_whole may begin with

@@ -210,7 +210,7 @@ def run(role: str, number: int) -> bool:
         + json.dumps(values)
         + "\nDo the work these values give you.\n\nWhenever it ends with a message headed `For the"
         " person:`, give me that message word for word as your whole reply. When I answer, resume"
-        " it with SendMessage, its message `The person's answer, word for word:` and my answer"
+        f" it with SendMessage, its message `{turning.trying.ANSWERED}` and my answer"
         " on the next line. Do nothing else yourself. When it ends with no message for the"
         " person, say that the work is done."
     )
