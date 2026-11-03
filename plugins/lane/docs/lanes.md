@@ -208,8 +208,8 @@ or, where the event or `hooks/lanes.json` is what is wrong, so no lane of the su
 <plugin>: lane cannot check the lanes of <subagent>: <what is wrong>. Ask the main conversation for the fix: <who must fix it>. Go on with the rest of your work meanwhile.
 ```
 
-and, where the hook's command does not name the subagent as `lay.py write` writes it, so neither
-your plugin nor the subagent is known, the same headed `lane:` and naming `the lanes of this hook`.
+and, where the hook's command does not name your plugin as `lay.py write` writes it, so your plugin
+is not known, the same headed `lane:` and naming `the lanes of this hook`.
 
 The IN of a lane, `<place>` standing for each of its places below, and `calls` required only where
 it rests on the calls kept:

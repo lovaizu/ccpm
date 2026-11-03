@@ -352,10 +352,11 @@ plugins/lane/
 │   ├── hook.py, <event>.py            hook.py <hook entry · Python 3.9>
 │   ├── result.py                      result.py <command line · Python 3.9>
 │   └── core/domain/                   <modules · Python 3.9>
-│       ├── proposal.py, lay/          proposal.py, and what lay.py writes: Step, Hook entry, Lane's code
-│       ├── guard.py, lanes/<type>.py  guard.py, lanes/
+│       ├── proposal.py                proposal.py
+│       ├── layer.py, steps.py, entries.py, placed.py   what lay.py writes: Step, Hook entry, Lane's code
+│       ├── guard.py, step.py, lanes/<type>.py   guard.py, lanes/
 │       ├── called.py, routes.py, ports.py   called.py, routes.py, ports.py
-│       └── rules.py, forms.py         shared by lay.py, the check script and the result script: Rules laid, Route, the forms an output is held to
+│       └── rules.py, schema.py, template.py, forms.py   shared by lay.py, the check script and the result script: Rules laid, Route, the forms an output is held to
 └── docs/lanes.md, docs/routes.md, README.md, CHANGELOG.md, images/   for users <Markdown, SVG>
 
 dev/lane/
@@ -363,7 +364,7 @@ dev/lane/
 ├── cosmic-ray.toml                    the mutation testing <TOML>
 ├── testing.py                         what every plugin's tests stand on <Python 3>
 └── tests/
-    ├── unit/hooks/lane/core/domain/   unit and property tests, at the path of what each tests <Python 3>
+    ├── unit/hooks/lane/core/domain/   unit and property tests, at the path of what each tests, a lane's beside the others <Python 3>
     ├── integration/                   lay.py, the hooks' commands and result.py on real files <Python 3>
     └── e2e/                           the trials, trial_*.py, and their plugins <Python 3>
 
