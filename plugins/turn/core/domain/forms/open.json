@@ -8,7 +8,7 @@
   "properties": {
     "open": {
       "type": "array",
-      "minItems": 1,
+      "description": "empty where the design leaves nothing open, so a file of an earlier round is never read as this one's",
       "items": {
         "type": "object",
         "required": ["question", "what"],

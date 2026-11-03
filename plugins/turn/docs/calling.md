@@ -1,56 +1,65 @@
-# Calling turn
+# Calling Turn
 
-How a step of your plugin starts turn, gives it what the step has already settled with the person,
-and gets the work back, so you can write the step's text to call it.
+What a plugin gives Turn, how it hands on Turn's questions to the person, and what it gets back, so
+you can write the step of your plugin that calls it.
 
 ## The call
 
-Start the `turn:up` agent with a prompt that says, in plain words, what work to make, such as
-"Write the README of this repository". turn needs nothing more: it asks the person the kind of
-work and what this work is for.
+List Turn in the `dependencies` of your plugin's `.claude-plugin/plugin.json`, as
+`"dependencies": ["turn"]`, so installing your plugin installs Turn, and pin with it.
 
-Where the main conversation starts `turn:up`, it starts it in the background. The main conversation
-then stays free to put turn's asks to the person while turn works.
+Start the agent `turn:up` in the background, with the request in plain words, such as "the README
+of this repository". Turn needs nothing more: it asks the person the kind of work and this work's
+purpose.
 
-## What you may give
-
-Where your step has already settled a point with the person, add it to the prompt as one JSON line,
-so turn does not ask the person again:
+Where your step has already settled points with the person, add them as one JSON line after the
+request, so Turn does not ask them again:
 
 ```json
-{"kind": "readme", "purpose": "<who uses this work, and for what>",
- "decided": [{"what": "<a point settled>", "grounds": "<why, such as the person's words>"}]}
+{"request": "the README of this repository",
+ "given": {"kind": "readme",
+           "goal": {"what": "<who uses the work, and for what>", "grounds": ["the person, 2026-11-03"]},
+           "decisions": [{"id": "D1", "what": "<what is decided>", "contributes_to": [],
+                          "builds_on": [], "decided": "<what was decided>", "settled_by": "user",
+                          "grounds": ["the person, 2026-11-03"]}],
+           "work": ["README.md"],
+           "run": ".turn/20261103-readme"}}
 ```
 
-- `kind`: the kind of work, such as `readme` or `press-release`. turn takes it without asking the
-  person to confirm it.
-- `purpose`: this work's purpose. turn puts it at the root of the work's design without asking.
-- `decided`: each other point of the work settled, such as where the work goes or the language it
-  is written in. turn takes each as decided by the person, and builds the rest of the design on it.
+Each key of `given` is optional.
 
-Give each key only where the person has settled it with your step; leave out the rest, and turn
-asks for it.
+- `kind`: the kind of work, such as `readme`, or one Turn has no template for yet, such as
+  `man-page`. Turn takes it without asking.
+- `goal`: this work's purpose, in the form of pin's design tree. Turn takes it without asking.
+- `decisions`: each other point settled, in the form of pin's design tree. Turn joins each to the
+  questions it serves, and builds the rest of the design on it. Leave `contributes_to` empty where
+  you do not know the template's questions: Turn joins it.
+- `work`: the paths the work is to lie at.
+- `run`: the folder Turn keeps the run in, under `.turn/` or where your plugin keeps its own.
 
-## Asks
+## Each message of Turn
 
-What only the person can decide comes to the main conversation as a message from one of turn's
-agents, whether the main conversation or one of its agents started `turn:up`. It arrives as a turn
-of its own once the main conversation's current turn ends, headed with the agent ID of the agent
-that asked, as `<agent-message from="<agent ID>">` (Claude Code 2.1.316, trial). Each message is
-one question or one approval, and says the answer turn recommends.
+Turn's roles run in the background, so `turn:up` ends each time it needs something, and you are
+told. Its last message is headed by what to do:
 
-Put it to the person, and send their answer in their own words with SendMessage to that agent ID.
-The agent that asked waits for it, and goes on with that answer. Your step's own agent, where it
-started `turn:up`, sees neither the ask nor the answer.
+| Headed | Do |
+|---|---|
+| `For the person:` | Put the rest to the person as it is, and resume `turn:up` by SendMessage with their answer, word for word. |
+| `Turn is working:` | Nothing: you are told when `turn:up` ends again. |
+| `Done:` | Take the work: the message names its paths, and the run's folder. |
+| `For the maker of Turn:` | Turn stopped on a fault of its own. Tell the person, with the message as it is. |
+
+A question is one point, worded so that "yes" takes Turn's recommendation. Put it to the person as
+it is: a question changed on the way is answered for something Turn did not ask.
 
 ## What comes back
 
-`turn:up` ends once its second AI finds every question of the kind good, both of what the work says
-and of how it says it. Its last reply names each file of the work, by its path from the root of the
-repository, one on each line. turn commits, pushes and sends nothing; what happens to the work next
-is your step's.
+The work's files lie at the paths `Done:` names, not committed. The run's folder holds the design
+tree, `design-tree.json`, with each decision and who settled it, and each check, as
+`verification/`, so your plugin can show the person what was decided.
 
-## A run that stopped
+## Depth
 
-You stop a run with TaskStop. Started again for the same work, `turn:up` goes on from what the run
-had made, which it keeps in `.turn/` at the root of your repository.
+Claude Code lets subagents start subagents down to three layers below the main conversation.
+Turn's roles stand one layer below `turn:up`, and their researchers one more. So start `turn:up`
+from the main conversation, or from a subagent one layer below it at most.
