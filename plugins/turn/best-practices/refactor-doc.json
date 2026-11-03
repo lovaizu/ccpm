@@ -48,13 +48,10 @@
   "methods": [
    {
     "question": "Q8",
-    "thinking": "Each fact is said in the one place where the reader looks for it, and every other place points there, so a change made once reaches every reader.",
+    "thinking": "Each fact, including one a figure draws or the work itself shows, is said in the one place where the reader looks for it, and every other place points there, so a change made once reaches every reader.",
     "steps": [
-     "List each fact the document says, and each place that says it: in the document, in a document read beside it, in a figure, or in the work itself, such as code or its output.",
-     "For each fact said in more than one place, choose the one place where it is decided, or where the reader looks for it first.",
      "Where two places say a fact in different ways, keep both and send it back to be settled with what the document says, for choosing one would change what it says.",
-     "Replace each other place's copy with a link to that place, saying in a few words what the reader finds there.",
-     "Delete each sentence that retells what a figure beside it draws or what the code does."
+     "Replace each other place's copy with a link to that place, saying in a few words what the reader finds there."
     ],
     "grounds": [
      "Venners with Hunt and Thomas, \"Orthogonality and the DRY Principle\", artima.com, 2003: \"DRY says that every piece of system knowledge should have one authoritative, unambiguous representation.\"",
@@ -66,12 +63,8 @@
     "question": "Q1",
     "thinking": "The reader picks sections by their headings and first sentences, so each section holds one thing and says at its start what it gives.",
     "steps": [
-     "Name the reader, and the purposes they come to the document with.",
-     "For each purpose, list the sections the reader needs for it.",
-     "Split a section that holds two things, so that one heading can say what each holds.",
-     "Write each heading as what the section gives the reader, with the words that tell the most first.",
-     "Move the sentence that gives the section's point to its start.",
-     "Read only the headings and first sentences, for each purpose in turn; where the reader would miss a section the purpose needs, or read one it does not, rewrite that heading or first sentence."
+     "Start each heading with the words that tell the most.",
+     "Name the reader and the purposes they come with; for each purpose, read only the headings and first sentences, and where the reader would miss a section the purpose needs, or read one it does not, rewrite that heading or first sentence."
     ],
     "grounds": [
      "PLAIN, \"Do your research\", plainlanguage.gov archive on GitHub, no date: \"Understanding what users are trying to do when visiting your website or reading your communications will help you write clearly and focus on their needs.\"",
@@ -87,10 +80,7 @@
     "question": "Q2",
     "thinking": "Order and relations shown by the form of a list, a table or a diagram are seen at once, while the same told in sentences must be pieced together.",
     "steps": [
-     "Find each passage that tells steps in order, choices that depend on a case, or how several things relate.",
      "Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.",
-     "Rewrite the passage in that form, so that each item, cell or box names one thing, and each line of a diagram says what one thing does to another.",
-     "Delete the sentences that told what the form now shows, and keep under it only what it cannot show.",
      "Show the form alone to a reader who has not read the text, and have them say back what it tells; where they say it otherwise, mend the form."
     ],
     "grounds": [
@@ -107,11 +97,8 @@
     "question": "Q3",
     "thinking": "Each sentence comes after everything it rests on, so the reader never holds a sentence open while they look for what it needs.",
     "steps": [
-     "For each sentence, list what it rests on: a word, a reason, an earlier step, a condition, or a fact from outside the document.",
-     "Move each of these before the sentence, or move the sentence after them, so that no pointer such as \"see below\" is needed.",
      "Where a sentence rests on something outside the document, such as an earlier talk, say it in the sentence or link to where it is written.",
      "Start each sentence with what the reader already has, and end it with what is new.",
-     "Put steps in the order the reader takes them.",
      "Put a rule's conditions and exceptions where the reader takes them in most easily, beside the rule; put a short condition before its instruction, so a reader whose case it is not can skip the instruction."
     ],
     "grounds": [
@@ -131,12 +118,10 @@
     "thinking": "A sentence that makes one point, names who acts and keeps plain order is read one way, by the reader and by a machine translator alike.",
     "steps": [
      "Split a sentence that makes more than one point, or that links more than two clauses with \"and\", \"or\" or \"but\", into one sentence for each point.",
-     "Make who or what acts the subject, follow it at once with an active verb that carries the action, and turn a noun made from a verb back into the verb.",
-     "Keep the subject, the verb and the object close and in that order, moving modifiers out from between them.",
+     "Follow the subject at once with an active verb that carries the action, keep the object close after it, and turn a noun made from a verb back into the verb.",
      "Keep the small words that show how a sentence is built, such as articles, \"that\", \"who\", \"then\" and \"of\".",
      "Replace a pronoun, or a \"which\", that could point to two nouns with the noun it means, and break a string of nouns apart with prepositions.",
-     "In Japanese, make each sentence's subject and predicate plain, and do not string together several は, で or の, or many clauses joined by で or て.",
-     "Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what; where it reads two ways, reword it. Judge this by reading alone; never send the text to a translation service.",
+     "Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what; where it reads two ways, reword it.",
      "Have a reader who did not write the document say a section back in their own words; where they say it otherwise, reword the sentence, and do not correct the reader."
     ],
     "grounds": [
@@ -161,14 +146,8 @@
    },
    {
     "question": "Q5",
-    "thinking": "Each thing has one name and each name one thing, so the reader, and a translator, keep one picture of each thing from start to end.",
-    "steps": [
-     "List each thing the document names, and every name it goes by.",
-     "Choose one name for each thing, the one its reader already uses.",
-     "Replace every other name for it with that name, with the same capitals.",
-     "Where one name stands for two things, give one of them another name.",
-     "Where a name is also a common word, as a product's name can be, mark it in running text so the reader does not take it in its common sense, such as by writing it with a capital."
-    ],
+    "thinking": "Each thing has one name, the one its reader already uses, written the same way each time, and each name one thing, so the reader, and a translator, keep one picture of each thing from start to end.",
+    "steps": [],
     "grounds": [
      "Google, \"Write for a global audience\", Google developer documentation style guide, 2026: \"If you use a particular term for a concept in one place, then use that exact same term elsewhere, including the same capitalization. If you use different names for the same thing, translators might think you're referring to different concepts, and thus might use different translations.\"",
      "PLAIN, \"Use the same terms consistently\", plainlanguage.gov archive on GitHub, no date: \"Using a different term may cause the reader to wonder if you're referring to the same group.\"",
@@ -180,12 +159,8 @@
    },
    {
     "question": "Q6",
-    "thinking": "The reader takes each word with the meaning they already give it, so a word new to them is replaced by everyday words, or given its meaning where they first meet it.",
+    "thinking": "The reader takes each word with the meaning they already give it, so a word new to them, even one the writer's team uses every day, is replaced by everyday words, or given its meaning where they first meet it.",
     "steps": [
-     "Name the reader, and the words they already use in their own work.",
-     "Mark each word in the document that the reader has not used, including a word the writer's team uses every day.",
-     "Replace each with everyday words that say the same.",
-     "For a word the document must keep, give its meaning in a few everyday words, in the sentence where the reader first meets it.",
      "Write each abbreviation out in full where the reader first meets it.",
      "Where the document gives a common word a meaning of its own, replace it with a word the reader does not already read another way."
     ],
@@ -198,11 +173,8 @@
    },
    {
     "question": "Q7",
-    "thinking": "A word that carries nothing of what the document says still costs the reader time, so it goes, while a word that shows how a sentence is built stays.",
+    "thinking": "A word or a sentence that carries nothing of what the document says still costs the reader time, so it goes, while a word that shows how a sentence is built stays.",
     "steps": [
-     "For each sentence, ask what of the document's content it carries, and delete one that carries none, such as one that only says what a section will say or leads into the next.",
-     "For each word, ask whether the sentence says less without it, and delete it if not, such as \"really\" in \"really critical\".",
-     "Keep each word that Q4 keeps to show how the sentence is built, such as \"the\", \"that\" and \"then\".",
      "Read each changed section again from the top, and check that it still says all it said before."
     ],
     "grounds": [

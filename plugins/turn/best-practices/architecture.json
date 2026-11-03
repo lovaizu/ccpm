@@ -135,12 +135,10 @@
   "methods": [
    {
     "question": "Q3",
-    "thinking": "A user story is one way the user meets the product at its edge, and the stories together carry every step the UX shows.",
+    "thinking": "A user story is one way the user meets the product at its edge, such as one command or one call, and the stories together carry every step of the UX where the user meets the product.",
     "steps": [
-     "Walk each scenario of the UX step by step, and mark each step where the user, a person or an AI, meets the product.",
-     "Group the marked steps by the way they reach the product, such as one command or one call.",
-     "Write one story for each way, naming the user, the way and the scenarios or steps it carries, such as \"As <the user>, I want <the way>. Carries <the scenarios or steps>.\"",
-     "Check that every marked step is carried by one story, and add a story for a step that none carries."
+     "Write each story naming the user, the way and the scenarios or steps it carries, such as \"As <the user>, I want <the way>. Carries <the scenarios or steps>.\"",
+     "Walk each scenario of the UX step by step, and check that each step where the user, a person or an AI, meets the product is carried by one story; add a story for a step that none carries."
     ],
     "grounds": [
      "Hruschka and Starke, \"3. Context and Scope\", arc42 documentation, docs.arc42.org, no date: \"System scope and context - as the name suggests - delimits your system (i.e. your scope) from all its communication partners (neighboring systems and users, i.e. the context of your system).\"",
@@ -150,11 +148,8 @@
    },
    {
     "question": "Q1",
-    "thinking": "The opening says, in one idea, how the product turns what the user brings into what the UX promises, so every part after it reads as a piece of that idea.",
+    "thinking": "The opening says, in one idea seen from above and with none of a part's inner workings, how the product turns what the user brings into what the UX promises, so every part after it reads as a piece of that idea.",
     "steps": [
-     "From the UX and the user stories, name what the user brings to the product and what they get back.",
-     "Name the few main things the product does between the two.",
-     "Write them as a sentence or two, with the product as the subject, and none of a part's inner workings.",
      "Link the UX instead of repeating it.",
      "Once the rest is written, check that each part carries out a piece of the idea; where one does not, change the idea or the part."
     ],
@@ -168,10 +163,8 @@
    },
    {
     "question": "Q5",
-    "thinking": "Roles are cut so that each decision the stories need, above all one likely to change, is made in one role alone.",
+    "thinking": "Roles are cut so that each decision the stories need, above all one hard to make or likely to change, is made in one role alone and hidden from the others.",
     "steps": [
-     "Walk each user story, and list what must be decided along it, first the decisions that are hard to make or likely to change.",
-     "Give each decision one role, and let that role keep it from the others.",
      "Draw an arrow for each thing one role asks of another, labelled with what it does and the data it hands on, not with a word such as \"uses\".",
      "With the figure, write what each role alone decides that no arrow shows.",
      "Ask of each decision which role makes it; where two roles or none answer, move the decision or split the role."
@@ -187,11 +180,8 @@
     "question": "Q4",
     "thinking": "Each role's box says what kind of thing it is and what it is made with, so the builder starts on it with nothing left to choose.",
     "steps": [
-     "For each role and each store of data, choose its type, such as a service or a module, and its technology.",
-     "Show them in its box with its name, such as a tag \"[web app · React, TypeScript]\" after the name.",
      "Add a legend that explains every shape, tag and other symbol the figure uses.",
-     "Check that every role of one kind has the same type and technology, or that a choice under the figure says why not.",
-     "Read the figure without the text around it, and add to the legend or the tags whatever the reader would still have to ask."
+     "Read the figure without the text around it, and add to the legend or the boxes whatever the reader would still have to ask."
     ],
     "grounds": [
      "Brown, \"Notation\", C4 model, c4model.com, no date: \"The type of every element should be explicitly specified (e.g. Person, Software System, Container or Component).\"",
@@ -202,13 +192,9 @@
    },
    {
     "question": "Q6",
-    "thinking": "Each data the roles pass or keep is drawn once, with each relation to another data named and how many of each it joins.",
+    "thinking": "Each data the roles pass or keep is drawn once, by its name alone, with its fields left to where it is built, and each relation to another data is named with how many of each it joins.",
     "steps": [
-     "From the arrows of Components and the user stories, list each data a role passes or keeps.",
-     "Draw a box for each, holding its name alone, and leave its fields to where the data is built.",
-     "For each pair of data that refer to one another, draw a line labelled with what the relation means.",
-     "Mark both ends of the line with how many of each it joins, such as in crow's-foot notation.",
-     "For each line, ask whether the role that writes it and the role that reads it would keep it the same way; where they would not, name the relation more exactly."
+     "For each relation, ask whether the role that writes it and the role that reads it would keep it the same way; where they would not, name the relation more exactly."
     ],
     "grounds": [
      "Mermaid, \"Entity Relationship Diagrams\", mermaid.js.org, no date: \"Relationships between entities are represented by lines with end markers representing cardinality.\"",
@@ -218,13 +204,9 @@
    },
    {
     "question": "Q7",
-    "thinking": "Each story is traced through the roles in order, so every step of it has a role that takes it and data that it hands on.",
+    "thinking": "Each story is drawn as its steps in order, such as a sequence diagram, from the user's first request to what the story gives them, so every step has a role that takes it and data that it hands on.",
     "steps": [
-     "For each user story, start a diagram of its steps in order, such as a sequence diagram in Mermaid, with the user, each role the story reaches, named as in Components, and each thing outside the product it reaches.",
-     "Write the user's first request as the first message.",
-     "Write each next step as one message from the role that takes it to the one it acts on, labelled in a few words with what it does and the data, named as in the data model.",
-     "End with the message that gives the user what the story is for.",
-     "Check that each message runs along an arrow of Components; where none does, add the arrow or give the step to another role."
+     "Check that each step runs along an arrow of Components; where none does, add the arrow or give the step to another role."
     ],
     "grounds": [
      "Hruschka and Starke, \"6. Runtime View\", arc42 documentation, docs.arc42.org, no date: \"The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios\"",
@@ -238,10 +220,7 @@
     "question": "Q14",
     "thinking": "Every story, role and data is there because a step of the UX needs it, so each can go once no step needs it.",
     "steps": [
-     "For each story, name the steps of the UX it carries.",
-     "For each role and each data, name the stories whose sequences reach it.",
-     "Remove a story, a role or a data that no step needs.",
-     "Remove a story for a step that happens only inside the product, and draw that step in the sequence of the story it belongs to."
+     "Trace each role and each data to the stories whose sequences reach it, and each story to the steps of the UX it carries; remove what reaches no step."
     ],
     "grounds": [
      "Fowler, \"Yagni\", martinfowler.com, 2015: \"The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features.\""
@@ -249,13 +228,9 @@
    },
    {
     "question": "Q2",
-    "thinking": "A principle is a rule every part meets the same way, written with what it is there for, so a builder can carry it to a case it does not name.",
+    "thinking": "A principle is a rule that every part meeting the same decision follows the same way, written with what it is there for, so a builder can carry it to a case it does not name.",
     "steps": [
-     "From the roles and the sequences, list the decisions that more than one role meets, such as how a failure reaches the user.",
-     "For each, write the one rule every role follows, as one sentence a builder can check their part against.",
      "Write as a rule also what must be absent, such as a dependency no role may have.",
-     "Under each rule, write what it is there for, and what goes wrong for the user or the builder without it.",
-     "Cut a rule that names only a means, such as a language, and rewrite one that two readers could read two ways.",
      "Link the principles of the architecture this one is built on, and write only what this product adds or changes.",
      "Take a case no rule names, and have two builders of different parts decide it from the reasons alone; where they differ, sharpen the reason."
     ],
@@ -273,14 +248,10 @@
    },
    {
     "question": "Q8",
-    "thinking": "Each role and each data is placed where it runs or is kept, so the builder knows what it can reach, and how the product starts.",
+    "thinking": "Each role and each data is placed in a deployment unit within the environment where it runs or is kept, so the builder knows what it can reach, and how the product starts.",
     "steps": [
-     "List each environment where a part runs or a data is kept, such as a cloud service, the user's computer or CI, with its technology.",
-     "Draw in each environment its deployment units, each with its technology tag.",
-     "Write in each unit, by their names in Components, the roles that run in it and the data kept in it.",
      "Draw each thing outside the product that the roles depend on, with an arrow saying what is used.",
      "Leave out any infrastructure the parts do not need.",
-     "With the figure, write how the product is started.",
      "Check that each role and each data of Components sits in one unit."
     ],
     "grounds": [
@@ -292,11 +263,9 @@
    },
    {
     "question": "Q9",
-    "thinking": "The tree joins each role and each data to the one place where it is made, so the builder finds where to change it.",
+    "thinking": "The tree of folders and files, as they lie on disk, joins each role and each data to the one place where it is made, so the builder finds where to change it.",
     "steps": [
-     "List the folders and files as they lie, such as by running tree on the product, or lay out the folders planned.",
      "Keep the folders and files that hold a role or a data, and leave out what lies inside each.",
-     "On each line kept, name the role or the data it holds, as Components names it, with its technology tag.",
      "Check that each role and each data stands on one line; where it stands on none or on two, move the files or the line."
     ],
     "grounds": [
@@ -308,12 +277,8 @@
    },
    {
     "question": "Q10",
-    "thinking": "A table of each deployment unit against each scope of test shows at a glance what is tested, how heavily, and why a gap is there.",
+    "thinking": "A table of each deployment unit against each scope of test, from narrow to wide, shows at a glance what is tested, how heavily, and why a gap is there.",
     "steps": [
-     "Take each deployment unit from Deployment, with its tag, as a row.",
-     "Make a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end.",
-     "In each cell, write the tool, the weight, and what it checks in a few words, such as \"<tool> · ●●○ · <what it checks>\".",
-     "Mark an empty cell as empty, such as by hatching it, ▨, and say why it is empty, such as in a footnote.",
      "Leave out a unit whose every cell would be empty, and say why under the table.",
      "Check that the wider tests are fewer, and that each user story is run end to end in some row."
     ],
@@ -329,8 +294,6 @@
     "thinking": "Each test type is set once, with what it makes real, what it fakes and when it passes, so every test of that type means the same to every builder.",
     "steps": [
      "Link the project's shared test rules, and write only where this product differs from them.",
-     "For each test type in the table, and each other type the product needs, write what it runs for real and what it replaces with a fake.",
-     "Write when it passes, as a bar every builder reads one way.",
      "For a test whose result varies from run to run, write how many runs of how many must meet the expectation.",
      "Use each type's name the same way throughout the document."
     ],
@@ -347,10 +310,7 @@
     "question": "Q13",
     "thinking": "Each principle is read against every part it rules, so a builder never meets a figure, a list or a table that breaks one.",
     "steps": [
-     "For each principle, list the parts of the document it rules.",
-     "Read each of those parts against the principle, and mark each line that breaks it.",
-     "Change the part, or change the principle and its reason, until the two say the same.",
-     "Where the product departs on purpose from a principle of the architecture it is built on, say why among the choices."
+     "Read each part against each principle it rules; where a line breaks it, change the part, or the principle and its reason, until the two say the same."
     ],
     "grounds": [
      "Hruschka and Starke, \"8. Crosscutting Concepts\", arc42 documentation, docs.arc42.org, no date: \"Concepts form the basis for conceptual integrity (consistency, homogeneity) of the architecture.\"",
@@ -360,13 +320,9 @@
    },
    {
     "question": "Q12",
-    "thinking": "A choice a builder would question carries why it beat the other way, beside the figure that shows it, so the builder keeps it or changes it knowing what it was for.",
+    "thinking": "A choice a builder would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the builder keeps it or changes it knowing what it was for.",
     "steps": [
-     "Read each figure and the table as a builder new to the product, and mark each choice they would question, such as a technology, a tool or a unit's weight.",
-     "For each, name the other way that builder would think of.",
-     "Write, in full sentences, why this way was taken over that one, and what it costs.",
-     "Put it where the reader meets the choice, such as in the list under the figure or the table that shows it.",
-     "For each unit's weight, write what a failure of that unit would cost the user."
+     "Read each figure and the table as a builder new to the product, and check that each choice they would question has its reason and its cost beside it."
     ],
     "grounds": [
      "Nygard, \"Documenting Architecture Decisions\", Cognitect blog, 2011: \"Without understanding the rationale or consequences, this person has only two choices:\"",
@@ -382,9 +338,7 @@
     "question": "Q15",
     "thinking": "The document holds only what stays while the UX and the principles stay, and leaves how each role works inside to where it is built.",
     "steps": [
-     "Pick one change to how a role works inside, such as its steps, a value it uses or a data's fields, that leaves the UX and the principles as they are.",
-     "Read every line, and mark each line the change would make untrue.",
-     "Move each marked line to where the role or the data is built, such as its code or its tests, or rewrite it by what stays.",
+     "Imagine a change to how a role works inside, such as its steps, a value it uses or a data's fields, that leaves the UX and the principles as they are, and mark each line the change would make untrue.",
      "Repeat with a change of another kind, until no line is marked."
     ],
     "grounds": [
