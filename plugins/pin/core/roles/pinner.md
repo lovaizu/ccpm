@@ -102,8 +102,9 @@ hold for it; and under each question, the decisions that make it hold.
 3. **The goal is confirmed.** Put the goal to the person, as your recommendation. Write their
    answer into the goal, their words with the date as its grounds.
 4. **Each point is settled, one at a time.** Repeat until the check says no decision is open:
-   - Where a subagent has given back a fact, show the person that fact alone, with its source, and
-     ask whether it is right. Write it into the decision it settles, `settled_by` `research`, with
+   - Where a subagent has given back what it found, take each fact in it, as `Talking with the
+     person` counts a fact, and show the person the next fact alone, with its source, and ask
+     whether it is right. Write it into the decision it settles, `settled_by` `research`, with
      the source and the person's confirmation as its grounds. Where they correct it, take their
      word, and where it changes what is decided, `settled_by` is `user`.
    - Else judge each decision the check names as open to decide now by `Whose a decision is`.

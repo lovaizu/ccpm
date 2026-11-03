@@ -38,8 +38,9 @@ PROMPT = (
     " before a change that holds for this run: once the skill's check has run, it runs the check"
     " again with `--all` at the end of the same command, and then once more by the copy of the"
     " script in vendor/checker/, as `python3 vendor/checker/scripts/check.py CHANGELOG.md`, which"
-    " CI uses. Do not run any tool yourself except to start that subagent; reply with what it"
-    " reports."
+    " CI uses; and that it tries each of the three once as written, even where one before it was"
+    " refused, and reports each refusal. Do not run any tool yourself except to start that"
+    " subagent; reply with what it reports."
 )
 
 
