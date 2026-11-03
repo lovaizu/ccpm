@@ -6,7 +6,7 @@ tests.
 
 Each run passes where the role's files are in form, Turn's checks give 0 on them, the role gave
 the result its files call for, and evaluator and proofreader read nothing of the run beside their
-standard. Run as `python3 dev/turn/tests/unit/core/roles/trial_roles.py <role> [runs] [first]`,
+standard and their own answers file. Run as `python3 dev/turn/tests/unit/core/roles/trial_roles.py <role> [runs] [first]`,
 the role one of planner, designer, builder, evaluator, refactorer and proofreader."""
 
 from __future__ import annotations
@@ -238,7 +238,9 @@ def run(role: str, number: int) -> bool:
         if done.returncode:
             wrong.append(f"{' '.join(check)} gave {done.returncode}: {done.stdout}{done.stderr}")
     if role in ("evaluator", "proofreader"):
-        seen = [p for p in reads(session, role) if RUN in p and values["standard"] not in p]
+        # Its own answers file it writes, and its lanes let it read, so it holds nothing of the run.
+        own = (values["standard"], values["answers"])
+        seen = [p for p in reads(session, role) if RUN in p and not any(o in p for o in own)]
         wrong += [f"{role} read {p}" for p in seen if "/forms/" not in p]
     if role == "evaluator" and given[-1:] != ["more"]:
         wrong.append("evaluator found good a walkthrough that moves the reader's own files")
