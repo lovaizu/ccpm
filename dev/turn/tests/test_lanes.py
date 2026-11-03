@@ -5,6 +5,12 @@ import unittest
 
 from helpers import TURN, testing
 
+# Skipped until T41, so the tests CI runs show new failures while these stay in sight.
+raise unittest.SkipTest(
+    "lane's lanes, step and lanes_json, which these old tests read,"
+    " moved to hooks/lane/core/domain/;"
+    " they go when turn is rebuilt in T41 (.rn/20261013-rebuild/steering.md)"
+)
 lanes, step, lanes_json = testing.lane_code(TURN, "lanes", "step", "lanes_json")
 
 # The lanes each agent's steps call for, taking its run's values as the agent's prompt gives them,

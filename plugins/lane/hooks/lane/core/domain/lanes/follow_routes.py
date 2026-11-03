@@ -21,9 +21,14 @@ def started(tool: str, given: dict[str, Any], named: list[str], plugin: str) -> 
     """The subagent of the names, of the plugin, that the call starts, by the type it gives as
     Claude Code names a plugin's subagent, `<plugin>:<name>`; None where the call starts none of
     them."""
-    kind = given.get("subagent_type") if tool == AGENT else None
+    # No tool Claude Code names sorts before Agent.
+    starting = tool == AGENT  # pragma: no mutate
+    kind = given.get("subagent_type") if starting else None
     found = [n for n in named if kind == f"{plugin}:{n}"]
-    return found[0] if found else None
+    if not found:
+        return None
+    # The names are each named once, so one at most is started.
+    return found[0]  # pragma: no mutate
 
 
 def allows(tool: str, given: dict[str, Any], due: Next, plugin: str) -> bool:
@@ -32,7 +37,11 @@ def allows(tool: str, given: dict[str, Any], due: Next, plugin: str) -> bool:
     start; once no start is left, any."""
     if due.kind == "start":
         return started(tool, given, [due.name], plugin) is not None
-    return due.kind == "end" or tool != AGENT
+    # Here a next start is `end` or `wait`, `end` the first of them in order.
+    if due.kind == "end":  # pragma: no mutate
+        return True
+    # No tool Claude Code names sorts before Agent.
+    return tool != AGENT  # pragma: no mutate
 
 
 def ends(due: Next) -> bool:

@@ -22,6 +22,8 @@ Removed the proposal {proposal}.
 Removed its folder {folder}.
 """
 REVIEWER = "---\nname: reviewer\n---\n\n## Steps\n\n1. Compare the entries.\n"
+# A subagent the routes may start, whose name sorts before lead's.
+EDITOR = "---\nname: editor\n---\n\n## Steps\n\n1. Edit the entries.\n"
 # What `lay.py print` prints of the README's proposal with docs/routes.md's routes.
 ROUTES_PRINTED = f"""Routes of lead, laid on its step 1:
   first             start writer
@@ -262,6 +264,34 @@ class TestRoutes(RoutesTest):
         self.assertEqual(self.lanes_json()["routes"]["routes"], alone)
         self.assertEqual(self.agent("writer"), helpers.WRITER_LAID)
 
+    def test_the_orchestrator_given_lanes_is_laid_the_routes_and_no_other_is(self):
+        # Given: routes from lead to editor, a name before lead's, lead given a lane of its own
+        self.write(os.path.join(self.plugin, "agents", "editor.md"), EDITOR)
+        given = {
+            **helpers.ROUTES,
+            "routes": [{"from": "lead", "to": "editor"}, {"from": "editor", "on": "edited"}],
+        }
+        lead = {"name": "lead", "steps": [{"step": 2, "lanes": helpers.STEPS[0]["lanes"]}]}
+        self.propose({"plugin": "changelog", "subagents": [lead], "routes": given})
+        # When: it is printed
+        printed = layer.printed(helpers.PROPOSED)
+        # Then: lead follows the routes beside its lane, and editor gives its result alone
+        self.assertIn(f"  step 1  follow: {helpers.FOLLOW}", printed)
+        self.assertNotIn("follow:", printed.split("Lanes of editor")[1])
+
+    def test_each_subagent_of_the_routes_before_whose_file_is_there_is_written(self):
+        # Given: the routes laid, writer's file then removed, and routes of lead and editor
+        self.wrote()
+        os.remove(os.path.join(self.plugin, "agents", "writer.md"))
+        self.write(os.path.join(self.plugin, "agents", "editor.md"), EDITOR)
+        given = [{"from": "lead", "to": "editor"}, {"from": "editor", "on": "edited"}]
+        self.propose({"plugin": "changelog", "routes": {**helpers.ROUTES, "routes": given}})
+        # When: they are written
+        said = self.wrote()
+        # Then: reviewer, routed before after writer, has its sentence taken out
+        self.assertIn("Wrote step 2 of reviewer into agents/reviewer.md.\n", said)
+        self.assertEqual(self.agent("reviewer"), helpers.REVIEWER)
+
     def test_a_subagent_of_the_routes_before_whose_file_is_gone_is_left_out(self):
         # Given: the routes laid, reviewer's file then removed, and routes of writer alone
         self.wrote()
@@ -381,6 +411,7 @@ class TestAdapted(AdaptedTest):
                 f"Removed its folder {os.path.abspath(os.path.dirname(helpers.PROPOSED))}.\n"
             )
         )
+        self.assertEqual(said.count("Removed its folder"), 1)
         # And: writer's last step ends by its result command
         self.assertIn(f"you wrote. {DONE}\n", self.read(self.agent_file))
 
@@ -468,6 +499,82 @@ class TestPart(LayerTest):
                     str(stop.exception),
                 )
                 self.assertIn("writer and drafter", str(stop.exception))
+
+    def drafter(self) -> None:
+        """drafter, whose entry names writer's part."""
+        self.write(
+            os.path.join(self.plugin, "agents", "drafter.md"), self.entry.format(name="drafter")
+        )
+
+    def refused(self, agents: list) -> str:
+        """What stops the print of a proposal of the subagents."""
+        self.propose({"plugin": "changelog", "subagents": agents})
+        with self.assertRaises(proposal.Stop) as stop:
+            layer.printed(helpers.PROPOSED)
+        return str(stop.exception)
+
+    def test_a_step_one_sharer_lays_lanes_on_and_the_other_none_is_refused(self):
+        # Given: drafter, sharing writer's part, laying writer's step 3 alone, given first
+        self.drafter()
+        agents = [
+            {"name": "drafter", "steps": helpers.STEPS[1:]},
+            {"name": "writer", "steps": helpers.STEPS},
+        ]
+        # When: the proposal is printed
+        # Then: it is refused, naming both and step 2
+        self.assertIn(
+            "drafter and writer share their part prompts/writer.md, and would lay different lanes"
+            " on its step 2",
+            self.refused(agents),
+        )
+
+    def test_sharers_are_held_after_a_subagent_with_no_part(self):
+        # Given: reviewer, whose steps are in its entry, then writer and drafter sharing writer's
+        # part, laying different lanes on step 2
+        self.drafter()
+        self.write(os.path.join(self.plugin, "agents", "reviewer.md"), REVIEWER)
+        other = [{"step": 2, "lanes": [{"lane": "run_only", "takes": ["git diff"]}]}]
+        agents = [
+            {"name": "reviewer", "steps": [{"step": 1, "lanes": helpers.STEPS[0]["lanes"]}]},
+            {"name": "writer", "steps": helpers.STEPS},
+            {"name": "drafter", "steps": other},
+        ]
+        # When: the proposal is printed
+        # Then: it is refused
+        self.assertIn("writer and drafter share their part", self.refused(agents))
+
+    def test_a_sharer_the_proposal_gives_is_held_by_its_lanes_not_those_before(self):
+        # Given: writer and drafter laid before with different lanes on step 2, then the
+        # proposal giving writer drafter's
+        self.drafter()
+        other = [{"step": 2, "lanes": [{"lane": "run_only", "takes": ["git diff"]}]}]
+        laid = {
+            "subagents": [
+                {"name": "writer", "steps": other},
+                {"name": "drafter", "steps": helpers.STEPS},
+            ]
+        }
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        self.propose(
+            {"plugin": "changelog", "subagents": [{"name": "writer", "steps": helpers.STEPS}]}
+        )
+        # When: the proposal is printed
+        # Then: it is printed, writer laying what drafter lays
+        self.assertIn("Lanes of writer", layer.printed(helpers.PROPOSED))
+
+
+class TestValidated(LayerTest):
+    def test_claude_codes_check_failing_is_told_as_it_printed(self):
+        # Given: a claude on PATH whose check fails, printing what it found
+        folder = os.path.join(self.base, "bin")
+        self.write(os.path.join(folder, "claude"), "#!/bin/sh\necho found x\nexit 1\n")
+        os.chmod(os.path.join(folder, "claude"), 0o755)
+        path = mock.patch.dict(os.environ, {"PATH": folder + os.pathsep + os.environ["PATH"]})
+        # When: the plugin is checked
+        with path, self.assertRaises(proposal.Stop) as stop:
+            layer.validated(self.plugin, helpers.PROPOSED)
+        # Then: it stops with what the check printed, as text
+        self.assertIn("malformed:\nfound x\nfix what it names", str(stop.exception))
 
 
 if __name__ == "__main__":

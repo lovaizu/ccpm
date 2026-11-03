@@ -181,6 +181,16 @@ class TestRoutes(HookTest):
                 )
                 self.assertNotIn("systemMessage", found)
 
+    def test_a_start_while_one_runs_in_the_background_is_denied(self):
+        # Given: lead's start of writer launched in the background
+        back = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
+        self.answered(back, held="PostToolUse")
+        # When: lead's start of reviewer reaches the hook, read from its JSON
+        found = self.answered(self.start("reviewer"))
+        # Then: it is denied, telling lead to wait
+        reason = found["hookSpecificOutput"]["permissionDecisionReason"]
+        self.assertIn("Wait for `changelog:writer` to end", reason)
+
     def test_a_subagent_ending_with_no_result_is_blocked_with_its_sentence(self):
         # Given: writer giving no result
         # When: it is about to end
@@ -240,6 +250,7 @@ class TestRoutes(HookTest):
         stop = self.subagent("SubagentStop", "writer", "a1")
         for event, held, wrong in (
             ({**stop, "stop_hook_active": "no"}, "SubagentStop", "$.stop_hook_active"),
+            ({**stop, "stop_hook_active": 1}, "SubagentStop", "$.stop_hook_active"),
             ({**stop, "agent_id": "../x"}, "SubagentStop", "$.agent_id"),
             (self.start("writer", "PostToolUse"), "PostToolUse", '"tool_response"'),
         ):
@@ -322,6 +333,16 @@ class TestU3(HookTest):
         self.answered(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
         # Then: writer's run is given the call's prompt
         self.assertEqual(helpers.called.texts("s1", "a1"), ["p"])
+
+    def test_a_start_of_leads_coming_back_gives_its_prompt_to_the_run_it_started(self):
+        # Given: the routes laid
+        self.route()
+        # When: lead's start of writer comes back launched in the background, lead told to wait
+        back = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
+        found = self.answered(back, held="PostToolUse")
+        self.assertIn("Wait for", found["hookSpecificOutput"]["additionalContext"])
+        # Then: writer's run of the ID it gave is given the call's prompt
+        self.assertEqual(helpers.called.texts("s1", "w1"), ["p"])
 
     def test_an_agent_call_stopped_keeps_nothing(self):
         # Given: the routes laid, writer due

@@ -38,14 +38,23 @@ class TestSpan(unittest.TestCase):
         self.assertEqual(step.span(lines, 2), (3, 5))
         self.assertEqual(step.says(lines, (3, 5)), "2. Two, still two.")
 
+    def test_a_step_going_on_in_one_line_ends_after_it(self):
+        lines = ["## Steps", "", "1. One,", "   still one.", "2. Two"]
+        # Given: step 1 on the third line, going on in the fourth
+        # When: where it is is found
+        # Then: it runs through the fourth
+        self.assertEqual(step.span(lines, 1), (2, 4))
+
     def test_a_step_is_looked_for_under_steps_alone(self):
-        lines = ["## Role", "2. Not a step.", "## Steps", "1. One", "## After", "2. Not one."]
-        for number, where in ((1, (3, 4)), (2, None)):
-            with self.subTest(number=number):
-                # Given: numbered lines before the Steps and after them
-                # When: a step is looked for
-                # Then: it is found under the Steps alone
-                self.assertEqual(step.span(lines, number), where)
+        for before in ("## Role", "## Usage", "### Note"):
+            lines = [before, "2. Not a step.", "## Steps", "1. One", "## After", "2. Not one."]
+            for number, where in ((1, (3, 4)), (2, None)):
+                with self.subTest(before=before, number=number):
+                    # Given: numbered lines under a heading before the Steps, of their level or
+                    # another, and after them
+                    # When: a step is looked for
+                    # Then: it is found under the Steps alone
+                    self.assertEqual(step.span(lines, number), where)
 
     def test_a_file_without_steps_has_none(self):
         # Given: a file with no `## Steps`

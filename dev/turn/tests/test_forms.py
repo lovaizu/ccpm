@@ -25,6 +25,12 @@ from helpers import (
     work_parts,
 )
 
+# Skipped until T41, so the tests CI runs show new failures while these stay in sight.
+raise unittest.SkipTest(
+    "lane's schema, which these old tests read,"
+    " moved to hooks/lane/core/domain/;"
+    " they go when turn is rebuilt in T41 (.rn/20261013-rebuild/steering.md)"
+)
 (schema,) = testing.lane_code(TURN, "schema")
 
 WORK = ["README.md"]

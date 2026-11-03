@@ -36,6 +36,14 @@ class TestReadAsLaid(unittest.TestCase):
         # Then: it is as it was
         self.assertEqual(steps.read_as_laid(lines, given), lines)
 
+    def test_a_sentence_said_on_a_line_before_the_last_is_not_put_in_again(self):
+        # Given: step 2 saying write_only's sentence on its first line, going on in a second
+        lines = [f"2. Write. {helpers.WRITE}\n", "   One a line.\n"]
+        given = {"span": (0, 2), "lanes": helpers.STEPS[1]["lanes"], "gone": []}
+        # When: it is read as laid
+        # Then: it is as it was
+        self.assertEqual(steps.read_as_laid(lines, given), lines)
+
     def test_a_sentence_gone_is_taken_out_and_a_new_one_put_in(self):
         # Given: step 2 saying run_only's sentence, which the proposal no longer lays there
         lines = [f"2. Write. {helpers.RUN}\n"]

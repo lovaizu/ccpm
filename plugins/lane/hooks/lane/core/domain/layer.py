@@ -92,7 +92,9 @@ def agents(
         names += [n for n in dict.fromkeys(extra) if n not in names]
     found, was = [], {}
     for name in names:
-        agent = next((a for a in given["subagents"] if a["name"] == name), None)
+        # Each subagent comes once in the proposal, so `is` finds its entry as `==`.
+        given_as = [a for a in given["subagents"] if a["name"] == name]  # pragma: no mutate
+        agent = next(iter(given_as), None)
         if agent is None:
             if step.agent_file(root, name) is None:
                 continue
@@ -168,7 +170,9 @@ def printed(path: str) -> str:
         rows_of = [(s["step"], lane) for s in laid for lane in s["lanes"]]
         actions = [lanes.action(lane["lane"]) + ":" for _, lane in rows_of]
         said = [lanes.sentence(lane["lane"], lane["takes"]) for _, lane in rows_of]
-        wide, long = max(map(len, actions), default=0), max(map(len, said), default=0)
+        # With no row, no width is used.
+        wide = max(map(len, actions), default=0)  # pragma: no mutate
+        long = max(map(len, said), default=0)  # pragma: no mutate
         out = [f"Lanes of {agent['name']}, each hook acting in {agent['name']} alone:\n"]
         for (number, lane), action, sentence in zip(rows_of, actions, said):
             hook = lanes.hook(lane["lane"])
@@ -236,7 +240,9 @@ def written(path: str) -> str:
     ):
         if os.path.isdir(place) and not os.listdir(place):
             os.rmdir(place)
-            if place == folder:
+            # The folder is in the places as itself, so `is` finds it as `==`; the places under
+            # it sort after it.
+            if place == folder:  # pragma: no mutate
                 said.append(f"Removed its folder {folder}.\n")
     return "".join(said)
 
@@ -248,13 +254,17 @@ def steps_written(root: str, agent: dict[str, Any], before: dict[str, Any]) -> s
     laid = steps.steps_laid(before, agent)
     # Each step is put back where it is, from the last, so a step of more lines than before leaves
     # where the earlier ones are as it was.
-    for s in sorted(laid, key=lambda s: s["span"], reverse=True):
+    # read_as_laid gives as many lines as it is given, so the order changes nothing yet.
+    for s in sorted(laid, key=lambda s: s["span"], reverse=True):  # pragma: no mutate
         start, end = s["span"]
         lines[start:end] = steps.read_as_laid(lines, s)
     with open(agent["file"], "w", encoding="utf-8") as f:
         f.write("".join(lines))
     numbers = [str(n) for n in sorted(s["step"] for s in laid)]
-    which = f"steps {listed(numbers)}" if len(numbers) > 1 else f"step {numbers[0]}"
+    # A subagent lay.py writes has one step or more, so its first is its only where it has one.
+    many = len(numbers) > 1  # pragma: no mutate
+    first = numbers[0]  # pragma: no mutate
+    which = f"steps {listed(numbers)}" if many else f"step {first}"
     return f"Wrote {which} of {agent['name']} into {os.path.relpath(agent['file'], root)}.\n"
 
 

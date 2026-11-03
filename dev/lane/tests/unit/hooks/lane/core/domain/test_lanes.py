@@ -2,9 +2,10 @@
 it takes, which the step says and the guard tells."""
 
 import unittest
+from unittest import mock
 
 import helpers
-from helpers import lanes
+from helpers import lanes, schema
 
 # docs/lanes.md's table of the lanes, its action and wording, and whether each rests on the calls
 # kept.
@@ -75,6 +76,26 @@ class TestPlaces(unittest.TestCase):
                 # When: they are put in its places
                 # Then: the first places take one each, and the last the rest
                 self.assertEqual(lanes.placed(lane, takes), placed)
+
+    def test_takes_of_a_wording_of_three_places_fill_each_but_the_last_with_one(self):
+        # Given: a sentence of three places, as a wording may show them
+        wording = ("end", "Put `<first>` and `<second>` in `<rest>`.")
+        with mock.patch.dict(lanes.ROUTED, {"three": wording}):
+            # When: takes are put in its places
+            found = lanes.placed("three", ["a", "b", "c", "d"])
+        # Then: the first two take one each, and the last the rest
+        self.assertEqual(found, {"first": ["a"], "second": ["b"], "rest": ["c", "d"]})
+
+    def test_a_lanes_in_holds_no_place_the_lane_has_not(self):
+        # Given: run_only given its commands and a place it has not
+        given = {"takes": {"commands": ["ls"], "output": ["a.md"]}}
+        # When: it is held to run_only's IN
+        # Then: it is out of it at the place
+        out = schema.held(lanes.given_in("run_only"), given)
+        self.assertIn("$.takes", out.told() if out else "")
+        # And: one given beside its takes a field it has not is out of it too
+        out = schema.held(lanes.given_in("run_only"), {"takes": {"commands": ["ls"]}, "x": 1})
+        self.assertIn("$:", out.told() if out else "")
 
     def test_a_lanes_in_asks_one_or_more_texts_in_each_place_and_the_calls_where_it_rests_on_them(
         self,

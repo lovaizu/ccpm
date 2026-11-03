@@ -62,6 +62,9 @@ class TestMissing(helpers.PluginTest):
         found = helpers.did(self.base, self.plugin)
         said = every_item.missing({"input": ["gone.md"]}, found)
         self.assertEqual(said, "`gone.md` is no file to read")
+        # And: an input after it is held still
+        said = every_item.missing({"input": ["gone.md", "review.md"]}, found)
+        self.assertEqual(said, "`gone.md` is no file to read; B-1, B-2 of `review.md` unanswered")
 
 
 if __name__ == "__main__":

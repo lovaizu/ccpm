@@ -186,6 +186,10 @@ class TestRoutes(RoutesTest):
                 self.routed([first, {"from": "writer", "to": "reviewer"}, more, good]),
                 "a route from writer with no `on`",
             ),
+            (
+                self.routed([first, written, {"from": "editor", "to": "writer"}, more, good]),
+                "a route from editor with no `on`",
+            ),
             (self.routed([*routes, {**more, "to": "lead"}]), "two routes from reviewer on `more`"),
             (
                 self.routed([first, {**written, "to": "lead"}, more, good]),
@@ -247,6 +251,25 @@ class TestRoutes(RoutesTest):
                 told = self.refused(given)
                 self.assertIn(said, told)
                 self.assertIn(os.path.join(helpers.LANE, "docs", "routes.md"), told)
+
+    def test_only_the_orchestrator_needs_its_step_and_agent(self):
+        # Given: routes from lead to editor, a name before lead's, and reviewer, a name after,
+        # neither having lead's step 1 nor naming Agent among its tools
+        other = "---\nname: {name}\ntools: Read\n---\n\n## Steps\n\n2. Check.\n"
+        for name in ("editor", "reviewer"):
+            self.write(os.path.join(self.plugin, "agents", f"{name}.md"), other.format(name=name))
+        given = {
+            **helpers.ROUTES,
+            "routes": [
+                {"from": "lead", "to": "editor"},
+                {"from": "editor", "on": "edited", "to": "reviewer"},
+                {"from": "reviewer", "on": "good"},
+            ],
+        }
+        self.propose({"plugin": "changelog", "routes": given})
+        # When: the proposal is read
+        # Then: its routes are read
+        self.assertEqual(proposal.proposal(helpers.PROPOSED)["routes"], given)
 
     def test_an_orchestrator_naming_agent_among_its_tools_or_none_is_read(self):
         for tools in ("tools: Read, Agent(writer, reviewer)", "tools: Agent, Read", None):
@@ -321,6 +344,27 @@ class TestRefused(ProposalTest):
                     " hooks/adapters/values-<name>.py"
                 ),
             ),
+            (
+                self.proposal(
+                    steps=[
+                        {
+                            "step": 4,
+                            "lanes": [
+                                {
+                                    "lane": "every_item",
+                                    "takes": ["review.md"],
+                                    "adapter": "hooks/adapters/values-f.py",
+                                }
+                            ],
+                        }
+                    ]
+                ),
+                [],
+                (
+                    "names the adapter hooks/adapters/values-f.py on step 4 of writer, not as"
+                    " hooks/adapters/items-<name>.py"
+                ),
+            ),
             (self.proposal(adapter="hooks/adapters/values-w.py"), [], "which is not at"),
             (
                 self.proposal(adapter="hooks/adapters/values-w.py"),
@@ -331,6 +375,11 @@ class TestRefused(ProposalTest):
                 self.proposal(adapter="hooks/adapters/values-w.py"),
                 [("values-w", helpers.VALUES_ADAPTER, "{")],
                 "hold no JSON",
+            ),
+            (
+                self.proposal(adapter="hooks/adapters/values-w.py"),
+                [("values-w", helpers.VALUES_ADAPTER, [])],
+                "whose cases are out of their shape at $: expected at least 1 item",
             ),
             (
                 self.proposal(adapter="hooks/adapters/values-w.py"),

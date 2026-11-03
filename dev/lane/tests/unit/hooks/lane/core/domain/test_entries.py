@@ -107,6 +107,14 @@ class TestRead(helpers.PluginTest):
         self.assertEqual(entries.read(self.plugin), helpers.HOOKS)
         self.assertTrue(self.read(self.path()).startswith('{\n  "hooks": {\n'))
 
+    def test_hooks_are_written_as_their_text_reads(self):
+        # Given: a hook whose command holds text out of ASCII
+        hooks = {"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "echo über"}]}]}}
+        # When: it is written
+        entries.written(self.plugin, hooks)
+        # Then: the file holds the text as it reads, as UTF-8
+        self.assertIn('"command": "echo über"', self.read(self.path()))
+
     def test_hooks_not_in_claude_codes_shape_are_refused(self):
         for text in (
             "{",

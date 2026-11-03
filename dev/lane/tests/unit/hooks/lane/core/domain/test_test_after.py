@@ -46,6 +46,20 @@ class TestMissing(helpers.PluginTest):
         # And: a write of the output itself, a file, is one
         self.assertNotEqual(self.missing(written, output="notes.md"), "")
 
+    def test_a_change_of_any_output_a_value_gives_is_held(self):
+        # Given: test_after's output given as two, docs/ and src/, as a value of two texts gives
+        given = {"output": ["docs/", "src/"], "test": [TEST]}
+        for calls, said in (
+            ([CHANGE], "`src/` changed with no test passed after"),
+            ([CHANGE, PASSED], ""),
+            ([PASSED, CHANGE], "`src/` changed with no test passed after"),
+        ):
+            with self.subTest(calls=calls):
+                # When: the subagent changes src/, the second, passed after or not
+                found = test_after.missing(given, helpers.did(self.base, self.plugin, calls))
+                # Then: a change not passed is named by the output it changed
+                self.assertEqual(found, said)
+
 
 if __name__ == "__main__":
     unittest.main()

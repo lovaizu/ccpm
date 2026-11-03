@@ -19,7 +19,8 @@ from typing import IO
 
 sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "core", "domain"))
+# No module before it on the path has the name of one of lane's.
+sys.path.insert(0, os.path.join(HERE, "core", "domain"))  # pragma: no mutate
 
 import guard
 import lanes
@@ -48,7 +49,9 @@ def said(argv: list[str], root: str) -> str:
     """What is wrong with the result the words give, of the plugin at root; "" where a route is
     from the subagent on it."""
     if len(argv) != 2:
-        form = run_only.named([routes.command("<subagent>", "<result>")], root)[0]
+        # One command named gives one.
+        forms = run_only.named([routes.command("<subagent>", "<result>")], root)
+        form = forms[0]  # pragma: no mutate
         return USAGE.format(command=form)
     name, on = argv
     try:

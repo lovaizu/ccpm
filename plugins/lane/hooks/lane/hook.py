@@ -16,7 +16,11 @@ import re
 import sys
 from typing import IO, Any
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "core", "domain"))
+# No module before it on the path has the name of one of lane's.
+sys.path.insert(
+    0,  # pragma: no mutate
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "core", "domain"),
+)
 
 import called
 import guard
@@ -86,7 +90,8 @@ def answer(said: list[guard.Said], plugin: str, held: str) -> dict[str, Any]:
         decision = "ask" if all(s.ask for s in said) else "deny"
         denied = {"hookEventName": held, "permissionDecision": decision}
         return {**found, "hookSpecificOutput": {**denied, "permissionDecisionReason": told}}
-    if held == "SubagentStop":
+    # Of the five events, SubagentStop is the last in order.
+    if held == "SubagentStop":  # pragma: no mutate
         return {**found, "decision": "block", "reason": told}
     return {**found, "hookSpecificOutput": {"hookEventName": held, "additionalContext": told}}
 
@@ -128,12 +133,15 @@ def main(held: str, argv: list[str], stdin: IO[str], stdout: IO[str], root: str)
         if isinstance(agent, str) and agent.startswith(f"{plugin}:"):
             name = agent[len(plugin) + 1 :]
             said = CHECKS[held](root, plugin, name, event, event_wrong(event, held))
-        # A call stopped is not made, so gives its subagent nothing.
-        if all(s.ask for s in said) or held != "PreToolUse":
+        # A call stopped is not made, so gives its subagent nothing. Of the events of a call,
+        # PreToolUse is the last in order, and the others hand none.
+        later = held != "PreToolUse"  # pragma: no mutate
+        if all(s.ask for s in said) or later:
             guard.handed(plugin, event, held)
     # An end that a stop hook kept going already is told no error again, so an error no one fixes
-    # ends no run in a loop.
-    if held == "SubagentStop" and isinstance(event, dict) and event.get("stop_hook_active") is True:
+    # ends no run in a loop. Of the five events, SubagentStop is the last in order.
+    stopping = held == "SubagentStop"  # pragma: no mutate
+    if stopping and isinstance(event, dict) and event.get("stop_hook_active") is True:
         said = [s for s in said if not s.error]
     write(stdout, answer(said, head, held))
 

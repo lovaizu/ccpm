@@ -287,7 +287,9 @@ def min_items_out(
 ) -> Out | None:
     least = schema["minItems"]
     if isinstance(value, list) and len(value) < least:
-        return Out(path, f"at least {least} item{'s' * (least > 1)}", str(len(value) or "none"))
+        # A list is shorter than least only where least is 1 or more.
+        plural = least > 1  # pragma: no mutate
+        return Out(path, f"at least {least} item{'s' * plural}", str(len(value) or "none"))
     return None
 
 

@@ -44,11 +44,38 @@ class TestKeep(CalledTest):
             self.assertEqual(called.kept("s1", "a1"), [called.START, called.END])
         self.assertEqual(os.listdir(os.path.join(self.base, "lane")), ["20261103-s1"])
 
+    def test_an_entry_is_kept_in_the_first_days_folder_of_the_session(self):
+        # Given: the session's folders of two days, as one going on past midnight left them
+        for day in ("20261104", "20261103"):
+            os.makedirs(os.path.join(self.base, "lane", f"{day}-s1"))
+        # When: an entry is kept
+        self.keep("a1", called.START)
+        # Then: it is in the first day's folder
+        first = os.path.join(self.base, "lane", "20261103-s1", "a1.jsonl")
+        self.assertEqual(called.read(first), [called.START])
+
+    def test_an_entry_is_kept_as_its_text_reads(self):
+        # Given: a message of text out of ASCII
+        # When: it is kept
+        self.keep("a1", called.message("über"))
+        # Then: its line holds the text as it reads, as UTF-8
+        (folder,) = os.listdir(os.path.join(self.base, "lane"))
+        line = self.read(os.path.join(self.base, "lane", folder, "a1.jsonl"))
+        self.assertEqual(line, '{"kind": "message", "text": "über"}\n')
+
     def test_an_agent_with_nothing_kept_has_nothing(self):
         # Given: nothing kept
         # When: an agent's entries are read
         # Then: there are none
         self.assertEqual(called.kept("s1", "a1"), [])
+
+    def test_reading_makes_no_folder(self):
+        # Given: nothing kept in the session
+        # When: an agent's entries are read, and a run starts with no call waiting
+        called.kept("s1", "a1")
+        called.taken("s1", "a1", "writer")
+        # Then: no folder is made for the session
+        self.assertFalse(os.path.exists(os.path.join(self.base, "lane")))
 
     def test_entries_that_cannot_be_read_are_refused(self):
         # Given: a line that is no JSON object among the entries
@@ -121,16 +148,36 @@ class TestGiven(CalledTest):
         # Then: the first keeps its own, and the new one takes the waiting prompt
         self.assertEqual((called.texts("s1", "a0"), called.texts("s1", "a1")), (["q"], ["p"]))
 
-    def test_the_prompt_come_back_is_kept_only_where_it_differs(self):
-        # Given: a run given its prompt
-        called.keep("s1", "a1", called.given("p"))
-        # When: its call comes back with the same prompt, and then another
+    def test_a_start_takes_no_prompt_of_another_subagents_call(self):
+        # Given: an Agent call of reviewer waiting
+        called.asked("s1", "t1", "reviewer", "p")
+        # When: a run of writer starts
+        called.taken("s1", "a1", "writer")
+        # Then: it takes no prompt
+        self.assertEqual(called.texts("s1", "a1"), [])
+
+    def test_of_two_calls_waiting_with_one_prompt_each_start_takes_one(self):
+        # Given: two Agent calls of writer waiting with one prompt
+        called.asked("s1", "t1", "writer", "p")
+        called.asked("s1", "t2", "writer", "p")
+        # When: a run starts, taking the first, the first comes back, and another run starts
+        called.taken("s1", "a1", "writer")
         called.answered("s1", "t1", "a1", "p")
-        called.answered("s1", "t1", "a1", "r")
+        called.taken("s1", "a2", "writer")
+        # Then: the second run takes the second call's prompt
+        self.assertEqual(called.texts("s1", "a2"), ["p"])
+
+    def test_the_prompt_come_back_is_kept_only_where_it_differs_from_the_last(self):
+        # Given: a run given its prompt
+        called.keep("s1", "a1", called.given("the prompt"))
+        # When: its call comes back with the same prompt, then another, then that one again
+        called.answered("s1", "t1", "a1", "the prompt")
+        called.answered("s1", "t1", "a1", "another")
+        called.answered("s1", "t1", "a1", "another")
         # Then: one entry of each is kept, the later read
         given = [e for e in called.kept("s1", "a1") if e["kind"] == "given"]
-        self.assertEqual([e["text"] for e in given], ["p", "r"])
-        self.assertEqual(called.texts("s1", "a1"), ["r"])
+        self.assertEqual([e["text"] for e in given], ["the prompt", "another"])
+        self.assertEqual(called.texts("s1", "a1"), ["another"])
 
     def test_the_calls_kept_are_those_of_every_run_or_of_the_run_it_is_in(self):
         # Given: a call before the run's start and one after

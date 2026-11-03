@@ -11,8 +11,17 @@ timeout = 30.0
 # "write", the last of a call's actions in order, or `__name__`, which is "__main__" or, imported by
 # the tests, "lay", after it; or by `is` with a small number or a text like a name the code itself
 # writes, of which CPython keeps one copy, not a text read from JSON or the command line; or by `is`
-# with True or False, of a value the code itself writes as a bool, where `==` does the same. Each
-# such line holds that comparison alone, as the mark leaves out every mutant of its line.
+# with True or False, of a value the code itself writes as a bool, where `==` does the same. So too
+# a value Claude Code gives of a few, such as a hook's event, or "Agent", before which no tool of
+# Claude Code's sorts; a value of the code's checked to one of a few, as a start's status; `is` with
+# the very object compared, as a name found where it was given; the first of a list holding one
+# there, against its last; a number at values the code there never meets, such as a count after
+# none was left out, or a least count below 1, which no list falls short of; a `break`, a slice's
+# start or an order of writing where what it changes leaves the result as it is, such as the turns
+# left of a loop that would each break, or writes each of as many lines as before; a folder asked
+# to be made where it is there already; and where lane's code goes on sys.path, no module before it
+# there having the name of one of lane's. Each such line holds that comparison or value alone, as
+# the mark leaves out every mutant of its line.
 # Where the code compares a value with one it knows, its tests take values on either side of that
 # one in order too, such as a tool named before Bash and one after, so a comparison changed to `<=`
 # or `>=` fails a test; their comments say what each value is, not where it sorts.

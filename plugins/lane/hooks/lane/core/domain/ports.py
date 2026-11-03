@@ -124,27 +124,29 @@ def read(port: str, given: dict[str, Any]) -> dict[str, Any]:
     return OWN[port](given)
 
 
-# The seconds the hook leaves its adapters, of those Claude Code gives it, counted from when lane's
-# code was loaded, the rest for Python to start and the subagent's record to be read.
+# The seconds the hook leaves its adapters, of those Claude Code gives it, counted from when the
+# guard began on the event, the rest for Python to start and the event to be read.
 TIME = rules.TIMEOUT - 2.0
-START = time.monotonic()
+
+
+def left(start: float) -> float:
+    """The seconds left of TIME for an event the guard began on at start, a time of
+    time.monotonic; none once they are spent. Counted from the event, not from when lane's code was
+    loaded, so it holds in a process that handles many events, as the tests do."""
+    return max(TIME - (time.monotonic() - start), 0)
 
 
 class Failed(Exception):
     """What an adapter did that is not as its port says."""
 
 
-def run(
-    path: str, port: str, given: dict[str, Any], root: str, left: float | None = None
-) -> dict[str, Any]:
+def run(path: str, port: str, given: dict[str, Any], root: str, seconds: float) -> dict[str, Any]:
     """What the port gives back, given its JSON, by the adapter at the path, run with python3 on the
-    port's JSON within the seconds left, or what is left of TIME where none are given, with
+    port's JSON within the seconds given, with
     CLAUDE_PLUGIN_ROOT the folder of the plugin at root, as Claude Code gives it a hook, so the
     adapter finds the plugin's files wherever it is, beside a proposal or in the plugin; stops with
     Failed saying what the adapter did where it exits other than 0, gives no answer in that time,
     prints no JSON, or answers out of the port."""
-    if left is None:
-        left = max(TIME - (time.monotonic() - START), 0)
     try:
         done = subprocess.run(
             ["python3", path],
@@ -152,7 +154,7 @@ def run(
             env={**os.environ, "CLAUDE_PLUGIN_ROOT": root},
             capture_output=True,
             text=True,
-            timeout=left,
+            timeout=seconds,
             check=False,
         )
     except subprocess.TimeoutExpired:

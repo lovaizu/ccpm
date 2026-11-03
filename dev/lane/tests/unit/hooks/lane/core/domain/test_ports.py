@@ -123,39 +123,42 @@ class TestSchemas(unittest.TestCase):
                 self.assertIn(point, out.told() if out else "")
 
 
+class TestLeft(unittest.TestCase):
+    def test_what_is_left_of_the_hooks_time_is_counted_from_the_event(self):
+        for now, left in ((40.0, 8.0), (43.0, 5.0), (48.0, 0), (85.0, 0)):
+            # Given: the guard begun on an event at 40, the clock at now
+            clock = mock.patch.object(ports.time, "monotonic", return_value=now)
+            with self.subTest(now=now), clock:
+                # When: the seconds left are counted
+                # Then: they are what is left of the 8 seconds since, none once spent
+                self.assertEqual(ports.left(40.0), left)
+
+
 class TestRun(unittest.TestCase):
-    def ran(self, now: float, left: float | None = None, err: str = "") -> object:
-        """The seconds an adapter is given by run, lane's code loaded at 40 and the clock at now,
-        the seconds left given or not; or, where it exits 1 printing err, what it is told it did."""
+    def ran(self, seconds: float = 8.0, err: str = "") -> object:
+        """The seconds an adapter is given by run, given the seconds; or, where it exits 1 printing
+        err, what it is told it did."""
         done = subprocess.CompletedProcess([], 1 if err else 0, '{"items": []}', err)
-        clock = mock.patch.object(ports.time, "monotonic", return_value=now)
-        start = mock.patch.object(ports, "START", 40.0)
-        with clock, start, mock.patch.object(ports.subprocess, "run", return_value=done) as run:
+        with mock.patch.object(ports.subprocess, "run", return_value=done) as run:
             try:
-                ports.run("a.py", "items", {"input": "a", "text": ""}, "/p", left)
+                ports.run("a.py", "items", {"input": "a", "text": ""}, "/p", seconds)
             except ports.Failed as failed:
                 return str(failed)
         self.given = run.call_args.kwargs
         return run.call_args.kwargs["timeout"]
 
-    def test_an_adapter_is_given_what_is_left_of_the_hooks_time(self):
-        for now, left in ((40.0, 8.0), (43.0, 5.0), (85.0, 0)):
-            with self.subTest(now=now):
-                # Given: lane's code loaded at 40, the clock at now
+    def test_an_adapter_is_given_the_seconds_given(self):
+        for seconds in (8.0, 2.5, 0):
+            with self.subTest(seconds=seconds):
+                # Given: the seconds left, as the guard counts them
                 # When: an adapter is run
-                # Then: it is given what is left of the 8 seconds since, none once they are spent
-                self.assertEqual(self.ran(now), left)
-
-    def test_an_adapter_given_seconds_is_given_them(self):
-        # Given: the seconds left given, as the layer gives them
-        # When: an adapter is run
-        # Then: it is given them, whatever the clock says
-        self.assertEqual(self.ran(103.0, 8.0), 8.0)
+                # Then: it is given them
+                self.assertEqual(self.ran(seconds), seconds)
 
     def test_an_adapter_is_given_the_plugins_folder_as_claude_code_gives_a_hook(self):
         # Given: the plugin's folder /p
         # When: an adapter is run
-        self.ran(40.0)
+        self.ran()
         # Then: it is run with CLAUDE_PLUGIN_ROOT set to it, the rest of the environment kept, so
         # it finds the plugin's files wherever it is run from
         env = self.given["env"]
@@ -203,7 +206,7 @@ class TestRun(unittest.TestCase):
         # When: it is run
         # Then: what it did is told by its exit and its last line
         self.assertEqual(
-            self.ran(40.0, err="Traceback\nKeyError: 'text'\n"), "exited 1: KeyError: 'text'"
+            self.ran(err="Traceback\nKeyError: 'text'\n"), "exited 1: KeyError: 'text'"
         )
 
 

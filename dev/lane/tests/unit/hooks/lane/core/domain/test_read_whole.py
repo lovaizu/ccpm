@@ -67,6 +67,10 @@ class TestMissing(helpers.PluginTest):
         given = {"input": ["gone.md"]}
         said = read_whole.missing(given, helpers.did(self.base, self.plugin))
         self.assertEqual(said, "`gone.md` is no file to read")
+        # And: an input after it is held still, an empty one unread from its line 1
+        given = {"input": ["gone.md", "long.md"]}
+        said = read_whole.missing(given, helpers.did(self.base, self.plugin))
+        self.assertEqual(said, "`gone.md` is no file to read; `long.md` unread from line 1")
 
 
 if __name__ == "__main__":

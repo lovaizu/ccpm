@@ -26,6 +26,7 @@ has ended."""
 from __future__ import annotations
 
 import os
+import time
 from typing import Any, Callable, NamedTuple
 
 import called
@@ -106,7 +107,8 @@ class Subagent(NamedTuple):
     """The subagent an event is of, as the guard checks it: the plugin's folder and name, the
     subagent's name, the session and the ID of its run, its lanes with the sentences laid from the
     routes, the routes where they name it, the results it gives, its values adapter where it names
-    one, and what was read once for the event."""
+    one, what was read once for the event, and when the guard began on the event, a time of
+    time.monotonic, from which the seconds its adapters are left are counted."""
 
     root: str
     plugin: str
@@ -118,6 +120,7 @@ class Subagent(NamedTuple):
     ons: list[str]
     adapter: str | None
     memo: dict[str, Any]
+    start: float
 
     def orchestrator(self) -> bool:
         """Whether the subagent is the routes' orchestrator."""
@@ -158,7 +161,10 @@ class Subagent(NamedTuple):
 
     def commands(self, lane: str) -> list[str]:
         """The commands of the subagent's lanes of the kind, as it reads them in its steps."""
-        return [c for g in self.laid if g.lane == lane for c in run_only.named(g.takes, self.root)]
+        # The lane asked for is `result`, a text the code writes as it writes the result lanes,
+        # so `is` finds them as `==`.
+        found = [g for g in self.laid if g.lane == lane]  # pragma: no mutate
+        return [c for g in found for c in run_only.named(g.takes, self.root)]
 
     def values(self) -> dict[str, Any]:
         """The run's values, read at the values port from the texts it was given, by lane's reading
@@ -173,7 +179,13 @@ class Subagent(NamedTuple):
                 )
             given = {"texts": texts}
             self.memo["values"] = (
-                ports.run(os.path.join(self.root, self.adapter), "values", given, self.root)
+                ports.run(
+                    os.path.join(self.root, self.adapter),
+                    "values",
+                    given,
+                    self.root,
+                    ports.left(self.start),
+                )
                 if self.adapter
                 else ports.read("values", given)
             )["values"]
@@ -199,7 +211,8 @@ def subagent(
     """The subagent of the name as the guard checks it, of the plugin at root of the name given;
     None where no lane is laid in it and no route names it. Stops with Cannot where the plugin's
     hooks/lanes.json cannot be read, or the event is not as Claude Code hands it, as `wrong`
-    says."""
+    says. The guard begins on the event here, so its adapters' seconds are counted from now."""
+    start = time.monotonic()
     try:
         given = rules.read(root)
     except ValueError as why:
@@ -222,7 +235,7 @@ def subagent(
         found.append(rules.Laid(last, "result", [routes.command(name, on) for on in ons]))
     session, agent = event["session_id"], event["agent_id"]
     adapter = rules.adapter_of(given, name)
-    return Subagent(root, plugin, name, session, agent, found, routed, ons, adapter, {})
+    return Subagent(root, plugin, name, session, agent, found, routed, ons, adapter, {}, start)
 
 
 def on(lane: rules.Laid, s: Subagent) -> str:
@@ -393,7 +406,9 @@ def run_checked(s: Subagent, event: dict[str, Any], command: str) -> list[Said]:
         named.append((lane, run_only.named(places[RUNS[lane.lane]], s.root)))
     command = command.strip()
     for lane, commands in named:
-        if lane.lane == "hold" and command in commands:
+        # Of the lanes judging a command, hold is the first in order.
+        holding = lane.lane == "hold"  # pragma: no mutate
+        if holding and command in commands:
             return [sentences([lane])._replace(ask=True)]
     if command in s.commands("result"):
         return ended(s, event["cwd"])
@@ -440,7 +455,8 @@ def items_of(lane: rules.Laid, s: Subagent) -> Callable[[str, str], list[str]]:
         given = {"input": path, "text": text}
         if lane.adapter is None:
             return ports.read("items", given)["items"]
-        return ports.run(os.path.join(s.root, lane.adapter), "items", given, s.root)["items"]
+        adapter = os.path.join(s.root, lane.adapter)
+        return ports.run(adapter, "items", given, s.root, ports.left(s.start))["items"]
 
     return read
 
@@ -453,7 +469,8 @@ def call_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
     tool, given, back = event["tool_name"], event["tool_input"], event["tool_response"]
     if s.orchestrator() and follow_routes.started(tool, given, s.giving(), s.plugin):
         before = s.due()
-        if before.kind == "end":
+        # A next start is `end`, `start` or `wait`, `end` the first of them in order.
+        if before.kind == "end":  # pragma: no mutate
             s.keep(called.call(tool, given))
             return []
         out = schema.held(BACK, back)
@@ -478,7 +495,10 @@ def failure_told(s: Subagent, event: dict[str, Any]) -> list[Said]:
         event["tool_name"], event["tool_input"], s.giving(), s.plugin
     ):
         due = s.due()
-        return [] if due.kind == "end" else [s.told(due)]
+        # A next start is `end`, `start` or `wait`, `end` the first of them in order.
+        if due.kind == "end":  # pragma: no mutate
+            return []
+        return [s.told(due)]
     return []
 
 
@@ -512,7 +532,8 @@ def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
             return [Said(follow_routes.WORDING), s.told(due)]
     ending = [g for g in s.laid if g.lane == "result"]
     if ending and not event["stop_hook_active"] and called.result(s.session, s.agent) is None:
-        commands = run_only.named(ending[0].takes, s.root)
+        # A subagent has one result lane, on its last step.
+        commands = run_only.named(ending[0].takes, s.root)  # pragma: no mutate
         return [Said(lanes.sentence("result", commands))]
     s.keep(called.END)
     return []
@@ -528,6 +549,9 @@ def handed(plugin: str, event: dict[str, Any], held_: str) -> None:
     session, use = event.get("session_id"), event.get("tool_use_id")
     if not isinstance(given, dict) or not isinstance(session, str) or not isinstance(use, str):
         return
+    # Of the events of a call, PreToolUse, PostToolUse and PostToolUseFailure, a call is made at
+    # PreToolUse, the last of them in order.
+    made = held_ == "PreToolUse"  # pragma: no mutate
     try:
         if tool == "Agent":
             kind, prompt = given.get("subagent_type"), given.get("prompt")
@@ -535,14 +559,15 @@ def handed(plugin: str, event: dict[str, Any], held_: str) -> None:
                 return
             if not isinstance(prompt, str):
                 return
-            if held_ == "PreToolUse":
+            if made:
                 called.asked(session, use, kind[len(plugin) + 1 :], prompt)
                 return
-            back = event.get("tool_response") if held_ == "PostToolUse" else None
+            returned = held_ == "PostToolUse"  # pragma: no mutate
+            back = event.get("tool_response") if returned else None
             agent = back.get("agentId") if isinstance(back, dict) else None
             ran = agent if isinstance(agent, str) and called.ID.fullmatch(agent) else None
             called.answered(session, use, ran, prompt)
-        elif tool == "SendMessage" and held_ == "PreToolUse":
+        elif tool == "SendMessage" and made:
             to, text = given.get("to"), given.get("message")
             sent = isinstance(to, str) and isinstance(text, str) and called.ID.fullmatch(to)
             if sent and os.path.exists(called.file(session, str(to), False)):

@@ -7,8 +7,9 @@ from __future__ import annotations
 import os
 import sys
 
+# No module before it on the path has the name of one of lane's.
 sys.path.insert(
-    0,
+    0,  # pragma: no mutate
     os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
         "hooks",

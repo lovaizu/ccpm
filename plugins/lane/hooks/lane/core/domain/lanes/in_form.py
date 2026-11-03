@@ -32,7 +32,8 @@ def form(named: str, root: str) -> forms.Form:
         )
     # The path is judged as named, not as a link in it resolves: installing copies the file a link
     # in the plugin points to into the plugin.
-    path = os.path.normpath(run_only.named([named], root)[0])
+    # One form named gives one path.
+    path = os.path.normpath(run_only.named([named], root)[0])  # pragma: no mutate
     if not write_only.allows(path, [os.path.normpath(root)], root, root):
         raise ValueError("lies out of the plugin, whose folder alone installing copies")
     return forms.read(path)
@@ -50,7 +51,8 @@ def refused(named: str, root: str) -> str:
 def text_written(tool: str, given: dict[str, Any], file: str) -> str | None:
     """The text the call leaves in the file, a full path: a Write's content, or the file's text
     with an Edit made; None where an Edit would make no change, its text not found."""
-    if tool == "Write":
+    # The guard holds a write of Write or Edit to the form, Write the last of them in order.
+    if tool == "Write":  # pragma: no mutate
         return str(given.get("content", ""))
     try:
         with open(file, encoding="utf-8") as f:

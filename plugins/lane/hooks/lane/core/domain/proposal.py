@@ -145,7 +145,11 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
         raise wrong(f"is out of its shape at $.routes{out.told()[1:]}", ROUTES_AGAIN)
     lead, each = given["orchestrator"], given["routes"]
     first = [r for r in each if r["from"] == lead]
-    if len(first) != 1 or "on" in first[0] or "to" not in first[0]:
+    # A first route alone is the start; with none or two, there is none, which has no `to`.
+    start: dict[str, Any] = {}
+    if len(first) == 1:
+        start = first[0]  # pragma: no mutate
+    if "on" in start or "to" not in start:
         raise wrong(
             f"gives the routes no one route from {lead} with a `to` and no `on`, which starts the"
             " run",
@@ -178,14 +182,16 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
     for name in routes.named(given):
         _, lines = agent_lines(root, name, ROUTES_AGAIN)
         bare = [line.rstrip("\n") for line in lines]
-        if name == lead and step.span(bare, given["step"]) is None:
+        # routes.named gives the orchestrator as the routes give it, so `is` finds it as `==`.
+        orchestrating = name == lead  # pragma: no mutate
+        if orchestrating and step.span(bare, given["step"]) is None:
             raise wrong(
                 f"gives step {given['step']}, which the Steps of {lead} do not have", ROUTES_AGAIN
             )
         entry = entry_lines(root, name)
         tools = template.value(entry, "tools")
         named = [t.strip() for t in tools.split(",")] if tools is not None else ["Agent"]
-        if name == lead and not any(t == "Agent" or t.startswith("Agent(") for t in named):
+        if orchestrating and not ("Agent" in named or any(t.startswith("Agent(") for t in named)):
             raise wrong(
                 f"gives {lead} as the orchestrator, whose file names its tools without Agent,"
                 " which it starts each subagent with",

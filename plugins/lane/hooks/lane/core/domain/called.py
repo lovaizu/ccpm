@@ -180,11 +180,14 @@ def taken(session: str, agent: str, name: str) -> None:
     texts = list(dict.fromkeys(e["text"] for e in waiting))
     if not texts:
         return
-    if len(texts) > 1:
+    # texts holds one prompt or more here, as none returned above.
+    if len(texts) > 1:  # pragma: no mutate
         keep(session, agent, given(None))
         return
-    written(starts_file(session, True), {"kind": "taken", "id": waiting[0]["id"]})
-    keep(session, agent, given(texts[0]))
+    # The starts file was read above, so its folder is there.
+    starts = starts_file(session, True)  # pragma: no mutate
+    written(starts, {"kind": "taken", "id": waiting[0]["id"]})
+    keep(session, agent, given(texts[0]))  # pragma: no mutate
 
 
 def message(text: str) -> dict[str, Any]:

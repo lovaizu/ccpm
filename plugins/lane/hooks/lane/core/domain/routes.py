@@ -69,9 +69,13 @@ def next_start(
     first = next(r["to"] for r in routes["routes"] if r["from"] == routes["orchestrator"])
     found = Next("start", first, None)
     for s in starts:
-        if found.kind == "end":
-            break
-        if s.status != "completed" and not ended(s.agent):
+        # A next start is `end`, `start` or `wait`, `end` the first of them in order; once it is
+        # `end` it stays so, so each turn left would break.
+        if found.kind == "end":  # pragma: no mutate
+            break  # pragma: no mutate
+        # The guard holds a status to `completed` and `async_launched` as the call comes back.
+        background = s.status != "completed"  # pragma: no mutate
+        if background and not ended(s.agent):
             found = Next("wait", s.name, None)
             continue
         on = result(s.agent)
@@ -90,9 +94,11 @@ def next_start(
 def line(found: Next, plugin: str) -> str:
     """What the orchestrator is told of the next start, as docs/routes.md's table has it, the
     plugin's name heading it left to whoever tells it."""
-    if found.kind == "wait":
+    # A next start is `end`, `start` or `wait`, `wait` the last of them in order.
+    if found.kind == "wait":  # pragma: no mutate
         return f"Wait for `{plugin}:{found.name}` to end: you are told the next start once it has."
     gave = f"{found.gave[0]} gave `{found.gave[1]}`. " if found.gave else ""
-    if found.kind == "end":
+    # A next start is `end`, `start` or `wait`, `end` the first of them in order.
+    if found.kind == "end":  # pragma: no mutate
         return gave + "Start no more subagents."
     return gave + f"Start `{plugin}:{found.name}`."

@@ -6,7 +6,9 @@ cannot judge, the error that says why and who must fix it."""
 
 import json
 import os
+import subprocess
 import unittest
+from unittest import mock
 
 import helpers
 from helpers import called, guard
@@ -169,6 +171,22 @@ class TestCannot(GuardTest):
                 self.assertIn(wrong or "expected a string", said[0].text)
                 self.assertIn("`claude update`", said[0].text)
 
+    def test_a_tools_field_not_as_claude_code_gives_it_is_named_by_its_place(self):
+        for event, point in (
+            (self.event("Write", {"file_path": 1, "content": "x"}), "$.tool_input.file_path:"),
+            (self.event("Bash", {"description": "d"}), "$.tool_input.command:"),
+        ):
+            with self.subTest(event=event):
+                # Given: a Write of a path not a text, or a Bash call of no command
+                # When: the guard is given it
+                said = self.check(event)
+                # Then: the error names the field's place in the event
+                self.assertIn(
+                    f"the hook was handed no event as Claude Code hands it, {point} expected a"
+                    " string",
+                    said[0].text,
+                )
+
 
 class RoutedTest(GuardTest):
     def setUp(self) -> None:
@@ -309,6 +327,35 @@ class TestFollow(RoutedTest):
         stop = self.subagent("SubagentStop", "lead", "lead1")
         self.assertEqual(self.told(guard.stopping, stop, "lead"), [])
 
+    def test_a_subagent_the_routes_start_is_told_no_start_as_it_starts(self):
+        # Given: the routes laid, lead their orchestrator
+        # When: writer starts
+        # Then: it is told nothing, as only lead is told the starts
+        told = self.told(guard.started, self.subagent("SubagentStart", "writer", "w1"), "writer")
+        self.assertEqual(told, [])
+
+    def test_leads_other_calls_come_back_kept_telling_nothing(self):
+        # Given: writer due
+        read = self.event("Read", {"file_path": "CHANGELOG.md"}, "changelog:lead", agent_id="lead1")
+        back = {**read, "hook_event_name": "PostToolUse", "tool_response": {"file": "x"}}
+        failed = {**read, "hook_event_name": "PostToolUseFailure", "error": "e"}
+        # When: lead's read comes back, and fails
+        # Then: nothing is told, and the read is kept as a call of lead's
+        self.assertEqual(self.told(guard.came_back, back, "lead"), [])
+        self.assertEqual(self.told(guard.failed, failed, "lead"), [])
+        self.assertEqual([c["tool"] for c in called.calls("s1", "lead1")], ["Read"])
+
+    def test_a_start_failing_once_no_start_is_left_tells_nothing(self):
+        # Given: writer's `written` and reviewer's `good`
+        self.ran("writer", "w1", "written")
+        self.started_by_lead("writer", helpers.back("w1"))
+        self.ran("reviewer", "r1", "good")
+        self.started_by_lead("reviewer", helpers.back("r1"))
+        # When: lead's start of writer fails
+        event = {**self.start("writer", "PostToolUseFailure"), "error": "e", "is_interrupt": False}
+        # Then: nothing is told, as lead is free
+        self.assertEqual(self.told(guard.failed, event, "lead"), [])
+
 
 class TestResult(RoutedTest):
     def test_the_result_command_goes_through_beside_the_lanes_commands(self):
@@ -364,6 +411,42 @@ class TestResult(RoutedTest):
         stop = self.subagent("SubagentStop", "writer", "a1")
         self.assertEqual(self.told(guard.stopping, stop, "writer"), [])
         self.assertEqual(called.result("s1", "a1"), "written")
+
+    def test_a_call_other_than_its_result_command_keeps_no_result(self):
+        # Given: writer, giving `written`
+        # When: its git log --oneline comes back
+        self.told(guard.came_back, self.came_back("git log --oneline"), "writer")
+        # Then: no result is kept, so writer is kept going as it ends
+        self.assertIsNone(called.result("s1", "a1"))
+
+    def test_a_result_is_kept_beside_lanes_checked_at_the_end(self):
+        # Given: writer, giving `written`, ending once report.md is made
+        self.write("report.md", "x")
+        laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
+        laid["subagents"][0]["steps"].append(
+            {"step": 3, "lanes": [{"lane": "end_when", "takes": ["report.md"]}]}
+        )
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        self.write(
+            self.agent_file,
+            helpers.WRITER_LAID.replace(
+                "`CHANGELOG.md`.\n", "`CHANGELOG.md`. End only once `report.md` is made.\n"
+            ),
+        )
+        # When: its result command comes back
+        self.told(guard.came_back, self.came_back(self.writer_gives), "writer")
+        # Then: its result is kept
+        self.assertEqual(called.result("s1", "a1"), "written")
+
+    def test_a_call_of_another_tool_holding_the_result_command_keeps_no_result(self):
+        for tool in ("Agent", "Read"):
+            with self.subTest(tool=tool):
+                # Given: writer, giving `written`
+                # When: a call of another tool comes back, its input holding the result command
+                event = self.event(tool, {"command": self.writer_gives}, held="PostToolUse")
+                self.told(guard.came_back, {**event, "tool_response": {}}, "writer")
+                # Then: no result is kept
+                self.assertIsNone(called.result("s1", "a1"))
 
 
 class TestRoutedCannot(RoutedTest):
@@ -422,6 +505,18 @@ class TestRoutedCannot(RoutedTest):
                     self.told(check, self.subagent("SubagentStart", "planner", "p1"), "planner"), []
                 )
 
+    def test_a_routed_subagent_whose_file_has_no_step_is_told_its_result_has_none(self):
+        # Given: reviewer, with no lane but its result commands, its file holding no step
+        reviewer = os.path.join(self.plugin, "agents", "reviewer.md")
+        self.write(reviewer, "---\nname: reviewer\ndescription: d\n---\n\nReview.\n")
+        # When: it runs a command
+        told = self.told(guard.check, self.bash("ls", "changelog:reviewer"), "reviewer")
+        # Then: it is an error of its result, on step 0, a number no step has
+        self.assertTrue(told[0].error)
+        self.assertIn(
+            "lane cannot check result on step 0 of reviewer: step 0 no longer", told[0].text
+        )
+
 
 # writer's result command `done`, as it reads it, given the plugin's folder.
 DONE = "python3 {root}/hooks/lane/result.py writer done"
@@ -432,6 +527,24 @@ SCHEMA = {"type": "object", "required": ["version"], "properties": {"version": {
 def lane(kind: str, *takes: str, number: int = 3, **more: str) -> dict:
     """A step of the number laying the lane of the kind, taking the things."""
     return {"step": number, "lanes": [{"lane": kind, "takes": list(takes), **more}]}
+
+
+class TestOrchestratorByName(GuardTest):
+    def test_a_routed_subagent_named_before_the_orchestrator_is_none(self):
+        # Given: routes from lead to editor, a name before lead's
+        given = {
+            "orchestrator": "lead",
+            "step": 1,
+            "routes": [{"from": "lead", "to": "editor"}, {"from": "editor", "on": "edited"}],
+        }
+        laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {**laid, "routes": given})
+        # When: editor starts, and reads a file
+        start = self.subagent("SubagentStart", "editor", "e1")
+        read = self.event("Read", {"file_path": "a.md"}, "changelog:editor", agent_id="e1")
+        # Then: it is told nothing, as only lead follows the routes
+        self.assertEqual(guard.started(self.plugin, "changelog", "editor", start, ""), [])
+        self.assertEqual(guard.check(self.plugin, "changelog", "editor", read, ""), [])
 
 
 class LanesTest(GuardTest):
@@ -518,6 +631,25 @@ class TestInForm(LanesTest):
         self.assertTrue(told[0].error)
         self.assertIn("lane cannot check in_form on step 3 of writer: names the form", told[0].text)
         self.assertIn("`lay.py write`", told[0].text)
+
+    def test_an_in_form_lane_after_one_given_null_is_held(self):
+        # Given: in_form on {work}, given null, and in_form on entry.json
+        self.lay_lanes(
+            [
+                {
+                    "step": 3,
+                    "lanes": [
+                        {"lane": "in_form", "takes": ["{work}", FORM]},
+                        {"lane": "in_form", "takes": ["entry.json", FORM]},
+                    ],
+                }
+            ]
+        )
+        self.given('{"work": null}')
+        # When: writer writes entry.json out of the form
+        told = self.check(self.event("Write", {"file_path": "entry.json", "content": "{}"}))
+        # Then: the second is told, the first letting it through
+        self.assertEqual([t.text.split("\n")[0] for t in told], [self.sentence])
 
 
 class TestHold(LanesTest):
@@ -638,6 +770,33 @@ class TestEnd(LanesTest):
                 else:
                     self.assertIn("F1 of `review.md` unanswered", told[0].text)
 
+    def test_a_lane_of_the_end_after_one_given_null_is_checked(self):
+        # Given: writer ending once {work} is made, given null, and once report.md is made
+        self.lay_lanes([lane("end_when", "{work}", number=1), lane("end_when", "report.md")])
+        self.given('{"work": null}')
+        # When: it gives its result with report.md not made
+        told = self.check(self.bash(self.done))
+        # Then: the second is told
+        self.assertEqual(
+            [t.text for t in told], ["End only once `report.md` is made.\n`report.md` not there"]
+        )
+
+    def test_a_file_written_in_an_earlier_run_answers_no_item(self):
+        self.write("review.md", "- B-1: a\n")
+        self.write("answers.md", "B-1 fixed.")
+        # Given: writer answering every item of review.md, its answers written in an earlier run
+        self.lay_lanes([lane("every_item", "review.md", number=4)])
+        self.ran(helpers.kept_call("Write", file_path="answers.md", content="B-1 fixed."))
+        called.keep("s1", "a1", called.END)
+        called.keep("s1", "a1", called.START)
+        # When: it gives its result in the run after
+        told = self.check(self.bash(self.done))
+        # Then: B-1 is unanswered
+        self.assertEqual(
+            [t.text for t in told],
+            ["Answer every item of `review.md`.\nB-1 of `review.md` unanswered"],
+        )
+
 
 class TestValues(LanesTest):
     def setUp(self) -> None:
@@ -752,6 +911,37 @@ class TestValues(LanesTest):
         self.assertIn("what it is given is out of its IN at $.takes.form", told[0].text)
 
 
+# What a values adapter answers, giving writer a.md as its work.
+VALUES = '{"values": {"work": ["a.md"]}}'
+
+
+class TestAdapterTime(LanesTest):
+    def timeout(self, event: dict, answer: str) -> float:
+        """The seconds the adapter is given on the event, the clock at 1000 seconds, long after
+        lane's code was loaded, the adapter answering the answer."""
+        done = subprocess.CompletedProcess([], 0, answer, "")
+        clock = mock.patch("time.monotonic", return_value=1000.0)
+        with clock, mock.patch.object(subprocess, "run", return_value=done) as run:
+            self.check(event)
+        return run.call_args.kwargs["timeout"]
+
+    def test_an_adapter_is_left_the_hooks_time_counted_from_the_event(self):
+        # Given: writer's values read by its adapter, and review.md's items by another
+        self.write("review.md", "## Finding 1\n")
+        values = "hooks/adapters/values-w.py"
+        items = lane("every_item", "review.md", number=4, adapter="hooks/adapters/items-f.py")
+        for steps, adapter, event, answer in (
+            ([lane("write_only", "{work}")], values, self.written("a.md"), VALUES),
+            ([items], None, self.bash(DONE.format(root=self.plugin)), '{"items": []}'),
+        ):
+            with self.subTest(event=event):
+                self.lay_lanes(steps, adapter)
+                # When: the guard begins on an event long after lane's code was loaded, as in a
+                # process that handles many
+                # Then: each adapter is left the hook's whole 8 seconds
+                self.assertEqual(self.timeout(event, answer), 8.0)
+
+
 class TestPart(LanesTest):
     def setUp(self) -> None:
         super().setUp()
@@ -839,6 +1029,37 @@ class TestHanded(LanesTest):
                 self.run_start(f"r{held}")
                 # Then: it takes no prompt
                 self.assertEqual(called.texts("s1", f"r{held}"), [])
+
+    def test_a_call_failed_gives_no_run_its_prompt(self):
+        # Given: writer's Agent call made
+        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
+        # When: it fails, its event holding a response with a run's ID
+        failed = self.agent_call("PostToolUseFailure", tool_response=helpers.back("f1"))
+        guard.handed("changelog", failed, "PostToolUseFailure")
+        # Then: no run is given its prompt, as a failed call started none
+        self.assertEqual(called.kept("s1", "f1"), [])
+
+    def test_a_message_is_kept_as_its_call_is_made_alone(self):
+        # Given: writer's run given its prompt
+        guard.handed("changelog", self.agent_call("PreToolUse"), "PreToolUse")
+        self.run_start()
+        sent = {"to": "a1", "message": '{"work": "a.md"}'}
+        for held, tool in (("PostToolUse", "SendMessage"), ("PreToolUse", "Write")):
+            # When: a SendMessage call to it comes back, or another tool's call of the same input
+            # is made
+            event = {**self.event(tool, sent, None, held), "tool_use_id": "t9"}
+            guard.handed("changelog", event, held)
+        # Then: no message is kept, as one is kept as its SendMessage call is made
+        self.assertEqual(called.texts("s1", "a1"), ['{"work": "notes.md"}'])
+
+    def test_a_message_to_a_run_of_no_calls_kept_makes_no_folder(self):
+        # Given: nothing kept in the session
+        # When: a SendMessage call is made to a run
+        sent = {"to": "a1", "message": "m"}
+        event = {**self.event("SendMessage", sent, None), "tool_use_id": "t9"}
+        guard.handed("changelog", event, "PreToolUse")
+        # Then: no folder is made for the session
+        self.assertFalse(os.path.exists(os.path.join(self.base, "lane")))
 
     def test_a_message_sent_to_a_run_is_kept_after_its_prompt(self):
         # Given: writer's run given its prompt

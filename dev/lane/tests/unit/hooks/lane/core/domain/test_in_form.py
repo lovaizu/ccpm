@@ -84,6 +84,27 @@ class TestOutOf(InFormTest):
                 # told the point
                 self.assertTrue(told.startswith(point) if point else told == "")
 
+    def test_an_edit_replaces_the_first_text_found_or_each_where_it_says_all(self):
+        self.write("entry.json", "a a a")
+        for everywhere, text in (
+            (True, "b b b"),
+            (False, "b a a"),
+            (None, "b a a"),
+            ("y", "b a a"),
+            (1, "b a a"),
+        ):
+            with self.subTest(everywhere=everywhere):
+                # Given: a file holding a three times
+                given: dict[str, object] = {"old_string": "a", "new_string": "b"}
+                if everywhere is not None:
+                    given["replace_all"] = everywhere
+                # When: an Edit replaces a by b, with replace_all true, false, not given, or not
+                # a bool
+                # Then: each a is replaced where it is true, and the first alone otherwise, as
+                # Edit makes it
+                path = os.path.join(self.base, "entry.json")
+                self.assertEqual(in_form.text_written("Edit", given, path), text)
+
     def test_an_edit_of_a_file_not_there_changes_nothing(self):
         # Given: entry.json not there
         # When: the subagent edits it
@@ -97,6 +118,12 @@ class TestOutOf(InFormTest):
         # When: the subagent writes another file, or edits the output as a notebook
         # Then: the first is not held, and the second is stopped, no form holding a notebook
         self.assertEqual(self.out_of("Write", file_path="other.json", content="x"), "")
+        self.assertEqual(
+            self.out_of("NotebookEdit", notebook_path="entry.json", new_source="x"),
+            "`entry.json`: expected a write by Write or Edit, found NotebookEdit",
+        )
+        # And: where two outputs name it, the first is named
+        self.places["output"] = ["entry.json", "./"]
         self.assertEqual(
             self.out_of("NotebookEdit", notebook_path="entry.json", new_source="x"),
             "`entry.json`: expected a write by Write or Edit, found NotebookEdit",

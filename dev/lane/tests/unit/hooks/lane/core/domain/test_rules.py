@@ -38,6 +38,34 @@ class TestRead(helpers.PluginTest):
         # Then: there are none
         self.assertIsNone(rules.of(rules.read(self.plugin), "reviewer"))
 
+    def test_each_subagents_lanes_are_read_by_its_name_alone(self):
+        # Given: lanes laid in author and in writer, author listed first
+        steps = [{"step": 2, "lanes": [{"lane": "run_only", "takes": ["ls"]}]}]
+        given = {
+            "subagents": [
+                {"name": "author", "steps": steps},
+                {"name": "writer", "steps": helpers.STEPS},
+            ]
+        }
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), given)
+        # When: writer's lanes are asked for
+        # Then: they are writer's
+        found = rules.of(rules.read(self.plugin), "writer")
+        self.assertEqual([g.takes for g in found or []], [["git log --oneline"], ["CHANGELOG.md"]])
+
+    def test_a_take_of_one_character_and_no_subagent_left_are_read(self):
+        for given in (
+            json.loads(laid("run_only", ["x"])),
+            {"subagents": [], "routes": helpers.ROUTES},
+        ):
+            with self.subTest(given=given):
+                # Given: a lane taking one character, or no subagent with lanes beside the
+                # routes, as once every subagent's lanes are gone
+                self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), given)
+                # When: it is read
+                # Then: it is read as it was given
+                self.assertEqual(rules.read(self.plugin), given)
+
     def test_a_file_that_cannot_be_read_is_refused_saying_why(self):
         path = os.path.join(self.plugin, "hooks", "lanes.json")
         for text, why in (
@@ -153,11 +181,16 @@ class TestAdapters(helpers.PluginTest):
             "adapter": "hooks/adapters/values-w.py",
             "steps": [{"step": 3, "lanes": [lane]}],
         }
-        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": [agent]})
+        author = {"name": "author", "steps": [{"step": 1, "lanes": [lane]}]}
+        self.write_json(
+            os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": [author, agent]}
+        )
         laid = rules.read(self.plugin)
         # When: they are read
-        # Then: each is given, and none for a subagent laid with none
+        # Then: each is given, and none for a subagent laid with none, author before writer
+        # naming none
         self.assertEqual(rules.adapter_of(laid, "writer"), "hooks/adapters/values-w.py")
+        self.assertIsNone(rules.adapter_of(laid, "author"))
         self.assertIsNone(rules.adapter_of(laid, "reviewer"))
         self.assertEqual(
             rules.of(laid, "writer"),

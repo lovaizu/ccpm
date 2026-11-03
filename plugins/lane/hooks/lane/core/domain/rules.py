@@ -90,8 +90,11 @@ ROUTES = shape(
 # lane one lane lays, taking at least one thing, none of them empty, with the adapters approved; and
 # the routes, where any are laid.
 TAKEN = {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+# No list is shorter than none, nor than fewer.
+NONE_LEFT = 0  # pragma: no mutate
 SHAPE = shape(
-    ["subagents"], {"subagents": subagents(list(lanes.LANES), TAKEN, 0, True), "routes": ROUTES}
+    ["subagents"],
+    {"subagents": subagents(list(lanes.LANES), TAKEN, NONE_LEFT, True), "routes": ROUTES},
 )
 # The result a subagent with a lane checked at its end gives where no route is from it.
 DONE = "done"

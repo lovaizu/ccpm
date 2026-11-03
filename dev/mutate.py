@@ -1,8 +1,9 @@
 """Mutation testing of each plugin given, or of each plugin dev/plugins.sh lists that has
 dev/<plugin>/cosmic-ray.toml where none is given, run as `sh dev/mutate.sh` from the top of the
 repository with the tools of pyproject.toml's dev and test-quality groups; fails on any mutant no
-test catches. Given `--since <commit>` first, it tests only the mutants on lines changed since that
-commit, files not yet added to git among them, by Cosmic Ray's own git filter, as before a push.
+test catches, and on any no test run checked; stops before the mutants where the tests fail with
+none. Given `--since <commit>` first, it tests only the mutants on lines changed since that commit,
+files not yet added to git among them, by Cosmic Ray's own git filter, as before a push.
 
 Each mutant is to be caught by the unit tests, which dev/check.sh runs, as the mutation testing
 checks that they are enough; the property tests are left out of it. cr-rate is not used to fail the
@@ -20,6 +21,7 @@ from __future__ import annotations
 import asyncio
 import os
 import re
+import shlex
 import shutil
 import socket
 import subprocess
@@ -32,6 +34,8 @@ import testing
 # Cosmic Ray is installed on the newest Python alone, so the type check on 3.9 finds it missing.
 from cosmic_ray.cli import main as cosmic_ray  # pyrefly: ignore[missing-import]
 from cosmic_ray.config import load_config, serialize_config  # pyrefly: ignore[missing-import]
+from cosmic_ray.work_db import WorkDB, use_db  # pyrefly: ignore[missing-import]
+from cosmic_ray.work_item import WorkerOutcome  # pyrefly: ignore[missing-import]
 
 USAGE = "usage: sh dev/mutate.sh [--since <commit>] [<plugin>...]"
 # What cr-report ends with where no mutant survives.
@@ -58,10 +62,16 @@ def outside_venv(folder: str, names: list[str]) -> list[str]:
     return [".venv"] if folder == "." else []
 
 
+def env_of(copy: str) -> dict[str, str]:
+    """The environment the workers' tests are given: the system's temporary folder in the run's
+    folder, and no bytecode written, as Cosmic Ray runs a test command."""
+    return {**os.environ, "TMPDIR": os.path.join(copy, "tmp"), "PYTHONDONTWRITEBYTECODE": "1"}
+
+
 def started(copy: str, ports: list[int]) -> list[subprocess.Popen[bytes]]:
     """A worker on each port, on a copy of the repository of its own in the run's folder, given the
     system's temporary folder in it; each answering once this gives them back."""
-    env = {**os.environ, "TMPDIR": os.path.join(copy, "tmp")}
+    env = env_of(copy)
     os.mkdir(env["TMPDIR"])
     workers = []
     for port in ports:
@@ -127,6 +137,39 @@ def filtered_by_git(copy: str, config: str, db: str) -> None:
     subprocess.run(["cr-filter-git", "--config", config, db], env=env, check=True)
 
 
+def unmutated(plugin: str, place: str, env: dict[str, str]) -> None:
+    """Exits saying so where the plugin's test command fails on its code with no mutant, run in the
+    worker's copy at the place, its output printed: every mutant would then count as caught,
+    though no test caught it."""
+    # Split as Cosmic Ray splits it to run it.
+    test = shlex.split(load_config(config_of(plugin))["test-command"])
+    done = subprocess.run(test, cwd=place, env=env, capture_output=True, text=True, check=False)
+    if done.returncode:
+        print(done.stdout + done.stderr, end="")
+        sys.exit(f"mutate.py: {plugin}'s tests fail with no mutant, as shown above")
+
+
+def untested(db: str) -> list[str]:
+    """Each mutant in the database that no test run checked, as the worker failed before or after
+    its tests ran, such as where a mutant removed the code of its worker's copy, by its module, its
+    line and the last line the worker printed. cr-report counts such a mutant as caught, though no
+    test caught it (dev/architecture.md, No check passes what it did not check)."""
+    failed = (WorkerOutcome.EXCEPTION, WorkerOutcome.ABNORMAL)
+    with use_db(db, WorkDB.Mode.open) as work:
+        items = {item.job_id: item for item in work.work_items}
+        return [
+            f"{m.module_path}:{m.start_pos[0]}: {last_line(result.output)}"
+            for job, result in work.results
+            if result.worker_outcome in failed
+            for m in items[job].mutations
+        ]
+
+
+def last_line(output: str | None) -> str:
+    """The last line of what a worker printed; "" where it printed none."""
+    return ((output or "").strip().splitlines() or [""])[-1]
+
+
 def git(*args: str) -> str:
     """What git prints, run with the arguments."""
     return subprocess.run(["git", *args], check=True, capture_output=True, text=True).stdout.strip()
@@ -140,6 +183,7 @@ def mutated(plugin: str, since: str) -> bool:
     try:
         ports = free_ports(os.cpu_count() or 1)
         workers = started(copy, ports)
+        unmutated(plugin, os.path.join(copy, f"worker-{ports[0]}"), env_of(copy))
         config, db = os.path.join(copy, "config.toml"), os.path.join(copy, "mutants.sqlite")
         written(plugin, ports, since, config)
         subprocess.run(["cosmic-ray", "init", config, db], check=True)
@@ -160,6 +204,10 @@ def mutated(plugin: str, since: str) -> bool:
             text=True,
         ).stdout
         print(report, end="")
+        missed = untested(db)
+        if missed:
+            print("\n".join(missed))
+            sys.exit(f"mutate.py: {len(missed)} of {plugin}'s mutants were not tested, shown above")
         return NONE_SURVIVE.search(report) is not None
     finally:
         # The workers are stopped before their copies are removed, and the next plugin's run takes

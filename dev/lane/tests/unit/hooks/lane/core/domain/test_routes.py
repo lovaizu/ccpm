@@ -73,6 +73,30 @@ class TestNextStart(unittest.TestCase):
                 # Then: it is the `to` of the route of the last result, or the end
                 self.assertEqual(decided(starts, results), found)
 
+    def test_the_orchestrators_route_is_due_wherever_it_lies_in_the_routes(self):
+        # Given: lead's route listed after routes from author and writer
+        given = {
+            **helpers.ROUTES,
+            "routes": [
+                {"from": "writer", "on": "written", "to": "reviewer"},
+                {"from": "author", "on": "drafted", "to": "writer"},
+                {"from": "lead", "to": "author"},
+            ],
+        }
+        # When: the next start is decided with no start yet
+        # Then: lead's route is due, and no other
+        found = routes.next_start(given, [], {}.get, lambda a: False)
+        self.assertEqual(found, routes.Next("start", "author", None))
+
+    def test_a_start_still_in_the_background_leaves_a_later_start_to_decide(self):
+        # Given: writer launched in the background and still running, then reviewer started and
+        # ended with `good`
+        starts = [routes.Start("writer", "async_launched", "w1"), REVIEWER]
+        # When: the next start is decided
+        # Then: reviewer's result decides it, as only a start whose subagent has ended counts
+        found = decided(starts, {"r1": "good"})
+        self.assertEqual(found, routes.Next("end", "", ("reviewer", "good")))
+
     def test_a_subagent_ended_with_no_result_is_due_again(self):
         # Given: writer ended with no result given
         # When: the next start is decided

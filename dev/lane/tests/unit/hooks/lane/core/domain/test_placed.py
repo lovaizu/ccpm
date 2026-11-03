@@ -3,7 +3,9 @@ marketplace, a copy with lane's version in VERSION anywhere else, lane's own lef
 
 import json
 import os
+import shutil
 import unittest
+from unittest import mock
 
 import helpers
 from helpers import placed
@@ -83,11 +85,30 @@ class TestCodePut(PlacedTest):
                 self.assertIsNone(placed.marketplace(self.base))
 
     def test_lanes_own_code_is_left_as_it_is(self):
-        # Given: lane itself
-        # When: lane's code is put in it
-        placed.code_put(helpers.LANE)
+        # Given: lane itself, a copy of it in the test's folder taken as lane, so a fault that
+        # removes its code removes none of the repository's
+        lane = os.path.join(self.base, "lane")
+        shutil.copytree(helpers.LANE, lane, ignore=shutil.ignore_patterns("__pycache__"))
+        code = os.path.join(lane, "hooks", "lane")
+        with mock.patch.object(placed, "LANE", lane), mock.patch.object(placed, "CODE", code):
+            # When: lane's code is put in it
+            placed.code_put(lane)
         # Then: its hooks/lane/ is its code still, with no VERSION
-        self.assertFalse(os.path.exists(os.path.join(helpers.CODE, "VERSION")))
+        self.assertTrue(os.path.isfile(os.path.join(code, "core", "domain", "placed.py")))
+        self.assertFalse(os.path.exists(os.path.join(code, "VERSION")))
+
+
+class TestLanesOwn(PlacedTest):
+    def test_lanes_own_is_its_code_alone_not_a_folder_beside_it(self):
+        # Given: lane's code taken as code/ in the test's folder
+        code = os.path.join(self.base, "code")
+        os.makedirs(code)
+        with mock.patch.object(placed, "CODE", code):
+            for place, own in (("code", True), ("cod", False), ("coda", False), ("dode", False)):
+                with self.subTest(place=place):
+                    # When: a folder of the test's is asked whether it is lane's own
+                    # Then: only code/ itself is
+                    self.assertEqual(placed.lanes_own(os.path.join(self.base, place)), own)
 
 
 class TestOlder(PlacedTest):
