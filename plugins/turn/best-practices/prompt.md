@@ -6,7 +6,7 @@
 
 Given the prompt for a request it is made for, an AI agent does the task as the prompt's writer means, with only what its run gives it, on every run and in cases the writer did not foresee.
 
-### Format
+### Parts
 
 - **description**: What the host reads to choose the prompt for a request: a name that says what the prompt does, and a description of what it does and the requests it is used for.
 - **tools**: The tools the AI may use, listed where the host reads them and refuses any other, when the host allows such a list.
@@ -17,23 +17,23 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 
 ### Checklist
 
-- **Q1** (description): When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?
-- **Q2** (tools): When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?
-- **Q3** (goal): When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?
-- **Q4** (goal): When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?
-- **Q5** (description, goal): Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?
-- **Q6** (context): Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?
-- **Q7** (steps): When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?
-- **Q8** (steps): When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?
-- **Q9** (goal, steps): Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere?
-- **Q10** (tools, steps): Can the AI take every action its steps call for with the tools it is allowed?
-- **Q11** (steps, output): When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further?
-- **Q12** (the whole): Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
-- **Q13** (the whole): When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?
+- **Q1** (goal): When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?
+- **Q2** (goal): When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?
+- **Q3** (context): Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?
+- **Q4** (goal, steps): Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere?
+- **Q5** (steps): When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?
+- **Q6** (steps): When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?
+- **Q7** (tools, steps): Can the AI take every action its steps call for with the tools it is allowed?
+- **Q8** (tools): When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?
+- **Q9** (steps, output): When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further?
+- **Q10** (description): When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?
+- **Q11** (description, goal): Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?
+- **Q12** (the whole): When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?
+- **Q13** (the whole): Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
 
 ## Practice
 
-### Q3: When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?
+### Q1: When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?
 
 **Thinking**: The AI stops when its work looks done, so the prompt says what the result is for and gives a check that tells done from looking done.
 
@@ -49,7 +49,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [GPT-5 prompting guide](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide), OpenAI, OpenAI Cookbook, 2025: "Generally, it can be helpful to clearly state the stop conditions of the agentic tasks, outline safe versus unsafe actions, and define when, if ever, it’s acceptable for the model to hand back to the user."
 - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents), Erik S. and Zhang, anthropic.com/engineering, 2024: "During execution, it's crucial for the agents to gain “ground truth” from the environment at each step (such as tool call results or code execution) to assess its progress."
 
-### Q4: When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?
+### Q2: When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?
 
 **Thinking**: A choice is the user's where the AI has no ground to pick one option over another, or where it is hard to undo, so the prompt names those choices and how the AI asks, and leaves every other choice to the AI.
 
@@ -63,7 +63,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [GPT-5 prompting guide](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide), OpenAI, OpenAI Cookbook, 2025: "the checkout and payment tools should explicitly have a lower uncertainty threshold for requiring user clarification, while the search tool should have an extremely high threshold"
 - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents), Erik S. and Zhang, anthropic.com/engineering, 2024: "Agents can then pause for human feedback at checkpoints or when encountering blockers."
 
-### Q6: Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?
+### Q3: Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?
 
 **Thinking**: The AI is able but new to this place, and sees nothing of the conversation that started it, so the prompt gives what it cannot find or know, and where the rest lies.
 
@@ -81,7 +81,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Each subagent starts with a fresh, isolated context window. It doesn't see your conversation history, the skills you've already invoked, or the files Claude has already read."
 - [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Subagents receive only this system prompt plus basic environment details like the working directory, not the Claude Code system prompt."
 
-### Q9: Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere?
+### Q4: Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere?
 
 **Thinking**: Each step is a result on the way to the goal, so the AI chooses how to reach it and knows when to go on.
 
@@ -96,7 +96,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Provide instructions as sequential steps using numbered lists or bullet points when the order or completeness of steps matters."
 - [Extend Claude with skills](https://code.claude.com/docs/en/skills), Anthropic, Claude Code Docs, no date: "If your skill contains guidelines like "use these API conventions" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output."
 
-### Q7: When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?
+### Q5: When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?
 
 **Thinking**: A rule that says what it is for lets the AI apply it where it was meant and judge a case no rule names, so each rule carries its reason.
 
@@ -118,7 +118,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system), Hadfield et al., anthropic.com/engineering, 2025: "Our prompting strategy focuses on instilling good heuristics rather than rigid rules."
 - [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Rajasekaran et al., anthropic.com/engineering, 2025: "Instead, we recommend working to curate a set of diverse, canonical examples that effectively portray the expected behavior of the agent."
 
-### Q8: When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?
+### Q6: When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?
 
 **Thinking**: The AI's judgment varies from run to run, which suits a step with many good ways, so a step with one right result is done by a program that gives it every run and handles its own errors, which the AI runs.
 
@@ -133,7 +133,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "When writing scripts for Skills, handle error conditions rather than deferring to Claude."
 - [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
 
-### Q10: Can the AI take every action its steps call for with the tools it is allowed?
+### Q7: Can the AI take every action its steps call for with the tools it is allowed?
 
 **Thinking**: Each action a step calls for needs a tool the AI is allowed, or the step cannot be taken however well it is written.
 
@@ -147,14 +147,14 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 
 - [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system), Hadfield et al., anthropic.com/engineering, 2025: "Each subagent needs an objective, an output format, guidance on the tools and sources to use, and clear task boundaries."
 
-### Q2: When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?
+### Q8: When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?
 
 **Thinking**: A rule in words holds only while the AI follows it, so an action that must never happen is made one the host refuses.
 
 **Steps**
 
 1. List the actions the task must never take, such as writing where it only reads.
-2. Allow only the tools Q10's list needs.
+2. Allow only the tools Q7's list needs.
 3. Where a tool it needs also allows an action it must never take, add a rule the host enforces, such as a deny rule or a hook.
 4. Run the prompt on a request that tempts such an action, and check in the record that the host refused it.
 
@@ -165,7 +165,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "But no matter how strongly you word it, whether Claude follows that line on a given turn is still Claude's call."
 - [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
 
-### Q11: When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further?
+### Q9: When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further?
 
 **Thinking**: The caller sees only what comes back, so the prompt says what that is, in what form and to whom, and a step makes each of it.
 
@@ -183,7 +183,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "the verbose output stays in the subagent's context while only the relevant summary returns to your main conversation."
 - [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Rajasekaran et al., anthropic.com/engineering, 2025: "returns only a condensed, distilled summary of its work (often 1,000-2,000 tokens)."
 
-### Q1: When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?
+### Q10: When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?
 
 **Thinking**: The host reads the name and the description alone, among many, to pick a prompt for a request, so they say what the prompt does and when it is used, in the words users ask in, and tell it apart from the others.
 
@@ -202,7 +202,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Make each description specific enough to route to the right subagent"
 - [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills), Zhang, Lazuka and Murag, anthropic.com/engineering, 2025: "Pay special attention to the name and description of your skill. Claude will use these when deciding whether to trigger the skill in response to its current task."
 
-### Q5: Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?
+### Q11: Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?
 
 **Thinking**: The description and the body say one task, so what the host chose the prompt for is what the AI does.
 
@@ -214,7 +214,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 
 - [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Your description must provide enough detail for Claude to determine when to select this Skill, whereas the rest of `SKILL.md` provides the implementation details."
 
-### Q13: When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?
+### Q12: When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?
 
 **Thinking**: A prompt is known by what a fresh AI does with it, so it is run on real requests of each kind, several times, and judged from the record of what the AI did.
 
@@ -236,14 +236,14 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "What works perfectly for Opus might need more detail for Haiku."
 - [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design or: How I learned to start worrying about prompt formatting](https://arxiv.org/abs/2310.11324), Sclar, Choi, Tsvetkov and Suhr, arXiv:2310.11324, 2023: "with performance differences of up to 76 accuracy points when evaluated using LLaMA-2-13B"
 
-### Q12: Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
+### Q13: Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
 
 **Thinking**: Every line takes some of the AI's attention, so the prompt keeps only the lines that change what it does, and keeps detail it needs only sometimes where the AI reads it only then.
 
 **Steps**
 
 1. Move detail needed only in some runs out of the prompt to where the AI reads it only when it needs it, such as a file the prompt links directly, and say when to read it.
-2. Run Q13's trials again after cutting, and put back what a run then lacked.
+2. Run Q12's trials again after cutting, and put back what a run then lacked.
 
 **Grounds**
 

@@ -6,7 +6,7 @@
 
 From the README alone, someone who meets the product for the first time starts using it only when it serves their work.
 
-### Format
+### Parts
 
 - **summary**: The product's name first, and under it one sentence that says what kind of thing the product is and what it does.
 - **gain**: The paragraph after the summary: whom the product is for and what they gain with it.

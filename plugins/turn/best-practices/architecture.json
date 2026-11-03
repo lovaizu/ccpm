@@ -1,73 +1,71 @@
 {
  "standard": {
   "goal": "Whoever builds or changes the product, a person or an AI, makes each part without hesitating and on the same thinking as every other part, so the parts together deliver the UX and the product stays easy to read and to change.",
-  "format": {
-   "parts": [
-    {
-     "id": "summary",
-     "what": "The opening: which product the document is for, and a sentence or two that say how the product delivers its UX, pointing to the UX instead of repeating it."
-    },
-    {
-     "id": "principles",
-     "what": "The principles, after a pointer to the principles of the architecture this one is built on, where there is one. Each has a short name the reader finds it by, the rule, one sentence that every part is built by, and the reason, which says what the rule is there for and what goes wrong for the user or the builder without it."
-    },
-    {
-     "id": "user-stories",
-     "what": "The user stories: one for each way the user uses the product at its edge, such as a command they run, each naming the user, that way, and the UX's scenarios or steps that rest on it."
-    },
-    {
-     "id": "components",
-     "what": "A figure of the roles the user stories need and each store of data, read without the text around it. Each element holds its name, its type and its technology, such as a web app in React and TypeScript or a database in PostgreSQL, and nothing more. Each arrow says what one does to another, with the data it hands on, named as in the data model, and the protocol where it matters, such as HTTPS with JSON. A legend explains every symbol the figure uses. The arrows are laid out so the reader follows them in the order they act."
-    },
-    {
-     "id": "responsibilities",
-     "what": "Read with the components figure: what each role alone is responsible for that no arrow shows."
-    },
-    {
-     "id": "choices",
-     "what": "For each choice the reader would question, such as a technology or a tool, why it was made over the other way, set where the reader meets the choice."
-    },
-    {
-     "id": "data-model",
-     "what": "A figure of each data the roles pass or keep, showing its name alone, and of each relation between two data, labelled with the relation's name and marked at both ends with how many of each it joins, such as one to many."
-    },
-    {
-     "id": "sequences",
-     "what": "For each user story, its steps in the order they happen, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model."
-    },
-    {
-     "id": "deployment",
-     "what": "A figure of each execution environment, such as a cloud service, a phone, the user's computer or CI, with its technology. Each environment holds its deployment units, such as an app or a container, each with its technology and, by their names in Components, the roles that run in it and the data kept in it. Each thing outside the product that they depend on is shown, with what is used. With the figure, how the product is started, and choices."
-    },
-    {
-     "id": "directory",
-     "what": "The folders and files of the product as they lie, nested as on disk, each one that holds a role or a data naming it as in Components, with its technology."
-    },
-    {
-     "id": "test-table",
-     "what": "A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why."
-    },
-    {
-     "id": "test-rules",
-     "what": "For each test type, including any the product adds, what it makes real, what it fakes and when it passes, and, for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here."
-    }
-   ]
-  },
+  "parts": [
+   {
+    "id": "summary",
+    "what": "The opening: which product the document is for, and a sentence or two that say how the product delivers its UX, pointing to the UX instead of repeating it."
+   },
+   {
+    "id": "principles",
+    "what": "The principles, after a pointer to the principles of the architecture this one is built on, where there is one. Each has a short name the reader finds it by, the rule, one sentence that every part is built by, and the reason, which says what the rule is there for and what goes wrong for the user or the builder without it."
+   },
+   {
+    "id": "user-stories",
+    "what": "The user stories: one for each way the user uses the product at its edge, such as a command they run, each naming the user, that way, and the UX's scenarios or steps that rest on it."
+   },
+   {
+    "id": "components",
+    "what": "A figure of the roles the user stories need and each store of data, read without the text around it. Each element holds its name, its type and its technology, such as a web app in React and TypeScript or a database in PostgreSQL, and nothing more. Each arrow says what one does to another, with the data it hands on, named as in the data model, and the protocol where it matters, such as HTTPS with JSON. A legend explains every symbol the figure uses. The arrows are laid out so the reader follows them in the order they act."
+   },
+   {
+    "id": "responsibilities",
+    "what": "Read with the components figure: what each role alone is responsible for that no arrow shows."
+   },
+   {
+    "id": "choices",
+    "what": "For each choice the reader would question, such as a technology or a tool, why it was made over the other way, set where the reader meets the choice."
+   },
+   {
+    "id": "data-model",
+    "what": "A figure of each data the roles pass or keep, showing its name alone, and of each relation between two data, labelled with the relation's name and marked at both ends with how many of each it joins, such as one to many."
+   },
+   {
+    "id": "sequences",
+    "what": "For each user story, its steps in the order they happen, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model."
+   },
+   {
+    "id": "deployment",
+    "what": "A figure of each execution environment, such as a cloud service, a phone, the user's computer or CI, with its technology. Each environment holds its deployment units, such as an app or a container, each with its technology and, by their names in Components, the roles that run in it and the data kept in it. Each thing outside the product that they depend on is shown, with what is used. With the figure, how the product is started, and choices."
+   },
+   {
+    "id": "directory",
+    "what": "The folders and files of the product as they lie, nested as on disk, each one that holds a role or a data naming it as in Components, with its technology."
+   },
+   {
+    "id": "test-table",
+    "what": "A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why."
+   },
+   {
+    "id": "test-rules",
+    "what": "For each test type, including any the product adds, what it makes real, what it fakes and when it passes, and, for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here."
+   }
+  ],
   "checklist": [
    {
     "id": "Q1",
+    "about": "user-stories",
+    "what": "For each step of the UX's scenarios, can the builder name the one way of using the product at its edge that carries it?"
+   },
+   {
+    "id": "Q2",
     "about": "summary",
     "what": "Having read the opening, can the builder say how the product delivers its UX, as one idea that every part carries out?"
    },
    {
-    "id": "Q2",
-    "about": "principles",
-    "what": "When two builders of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?"
-   },
-   {
     "id": "Q3",
-    "about": "user-stories",
-    "what": "For each step of the UX's scenarios, can the builder name the one way of using the product at its edge that carries it?"
+    "about": "user-stories, components, responsibilities",
+    "what": "For anything the user stories need decided, can the builder point to the one role that decides it?"
    },
    {
     "id": "Q4",
@@ -76,43 +74,43 @@
    },
    {
     "id": "Q5",
-    "about": "user-stories, components, responsibilities",
-    "what": "For anything the user stories need decided, can the builder point to the one role that decides it?"
-   },
-   {
-    "id": "Q6",
     "about": "data-model",
     "what": "When one builder makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?"
    },
    {
-    "id": "Q7",
+    "id": "Q6",
     "about": "user-stories, components, data-model, sequences",
     "what": "For each user story, can the builder follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?"
    },
    {
+    "id": "Q7",
+    "about": "user-stories, components, responsibilities, data-model, sequences",
+    "what": "Of any user story, role or data, can the builder tell which objective of the UX needs it?"
+   },
+   {
     "id": "Q8",
+    "about": "principles",
+    "what": "When two builders of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?"
+   },
+   {
+    "id": "Q9",
     "about": "components, data-model, deployment",
     "what": "Setting the product up from nothing, can the builder put each role where it runs and each data where it is kept, and start the product, without asking anyone?"
    },
    {
-    "id": "Q9",
+    "id": "Q10",
     "about": "components, data-model, directory",
     "what": "Making or changing a role or a data, can the builder find the one place its files belong?"
    },
    {
-    "id": "Q10",
+    "id": "Q11",
     "about": "deployment, test-table",
     "what": "Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which types of test cover it, how heavily, and why a type is missing?"
    },
    {
-    "id": "Q11",
+    "id": "Q12",
     "about": "test-table, test-rules",
     "what": "Writing a test of one type, can the builder do it without deciding for themselves what to make real, what to fake and when it passes?"
-   },
-   {
-    "id": "Q12",
-    "about": "choices, test-rules",
-    "what": "When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?"
    },
    {
     "id": "Q13",
@@ -121,8 +119,8 @@
    },
    {
     "id": "Q14",
-    "about": "user-stories, components, responsibilities, data-model, sequences",
-    "what": "Of any user story, role or data, can the builder tell which objective of the UX needs it?"
+    "about": "choices, test-rules",
+    "what": "When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?"
    },
    {
     "id": "Q15",
@@ -134,7 +132,7 @@
  "practice": {
   "methods": [
    {
-    "question": "Q3",
+    "question": "Q1",
     "thinking": "A user story is one way the user meets the product at its edge, such as one command or one call, and the stories together carry every step of the UX where the user meets the product.",
     "steps": [
      "Write each story naming the user, the way and the scenarios or steps it carries, such as \"As <the user>, I want <the way>. Carries <the scenarios or steps>.\"",
@@ -162,7 +160,7 @@
     ]
    },
    {
-    "question": "Q1",
+    "question": "Q2",
     "thinking": "The opening says, in one idea seen from above and with none of a part's inner workings, how the product turns what the user brings into what the UX promises, so every part after it reads as a piece of that idea.",
     "steps": [
      "Link the UX instead of repeating it.",
@@ -202,7 +200,7 @@
     ]
    },
    {
-    "question": "Q5",
+    "question": "Q3",
     "thinking": "Roles are cut so that each decision the stories need, above all one hard to make or likely to change, is made in one role alone and hidden from the others.",
     "steps": [
      "Draw an arrow for each thing one role asks of another, labelled with what it does and the data it hands on, not with a word such as \"uses\".",
@@ -271,7 +269,7 @@
     ]
    },
    {
-    "question": "Q6",
+    "question": "Q5",
     "thinking": "Each data the roles pass or keep is drawn once, by its name alone, with its fields left to where it is built, and each relation to another data is named with how many of each it joins.",
     "steps": [
      "For each relation, ask whether the role that writes it and the role that reads it would keep it the same way; where they would not, name the relation more exactly."
@@ -298,7 +296,7 @@
     ]
    },
    {
-    "question": "Q7",
+    "question": "Q6",
     "thinking": "Each story is drawn as its steps in order, such as a sequence diagram, from the user's first request to what the story gives them, so every step has a role that takes it and data that it hands on.",
     "steps": [
      "Check that each step runs along an arrow of Components; where none does, add the arrow or give the step to another role."
@@ -337,7 +335,7 @@
     ]
    },
    {
-    "question": "Q14",
+    "question": "Q7",
     "thinking": "Every story, role and data is there because an objective of the UX needs it, on the main path a scenario shows or off it, so each can go once no objective needs it.",
     "steps": [
      "Trace each role and each data to the stories whose sequences reach it, and each story to the step of the UX it carries or, off the main path, to the key result it serves; remove what reaches none."
@@ -352,7 +350,7 @@
     ]
    },
    {
-    "question": "Q2",
+    "question": "Q8",
     "thinking": "A principle is a rule that every part meeting the same decision follows the same way, written with what it is there for, so a builder can carry it to a case it does not name.",
     "steps": [
      "Write as a rule also what must be absent, such as a dependency no role may have.",
@@ -417,7 +415,7 @@
     ]
    },
    {
-    "question": "Q8",
+    "question": "Q9",
     "thinking": "Each role and each data is placed in a deployment unit within the environment where it runs or is kept, so the builder knows what it can reach, and how the product starts.",
     "steps": [
      "Draw each thing outside the product that the roles depend on, with an arrow saying what is used.",
@@ -452,7 +450,7 @@
     ]
    },
    {
-    "question": "Q9",
+    "question": "Q10",
     "thinking": "The tree of folders and files, as they lie on disk, joins each role and each data to the one place where it is made, so the builder finds where to change it.",
     "steps": [
      "Keep the folders and files that hold a role or a data, and leave out what lies inside each.",
@@ -486,7 +484,7 @@
     ]
    },
    {
-    "question": "Q10",
+    "question": "Q11",
     "thinking": "A table of each deployment unit against each scope of test, from narrow to wide, shows at a glance what is tested, how heavily, and why a gap is there.",
     "steps": [
      "Leave out a unit whose every cell would be empty, and say why under the table.",
@@ -520,7 +518,7 @@
     ]
    },
    {
-    "question": "Q11",
+    "question": "Q12",
     "thinking": "Each test type is set once, with what it makes real, what it fakes and when it passes, so every test of that type means the same to every builder.",
     "steps": [
      "Link the project's shared test rules, and write only where this product differs from them.",
@@ -594,7 +592,7 @@
     ]
    },
    {
-    "question": "Q12",
+    "question": "Q14",
     "thinking": "A choice a builder would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the builder keeps it or changes it knowing what it was for.",
     "steps": [
      "Read each figure and the table as a builder new to the product, and check that each choice they would question has its reason and its cost beside it."

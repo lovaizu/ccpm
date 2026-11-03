@@ -1,38 +1,36 @@
 {
  "standard": {
   "goal": "Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.",
-  "format": {
-   "parts": [
-    {
-     "id": "okrs",
-     "what": "The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.",
-     "parts": [
-      {
-       "id": "objective",
-       "what": "Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject."
-      },
-      {
-       "id": "key-result",
-       "what": "Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from their request to having it. The first comes first: lead time is shortened only by changes that keep how well."
-      }
-     ]
-    },
-    {
-     "id": "scenarios",
-     "what": "The participants, then one scenario for each objective.",
-     "parts": [
-      {
-       "id": "participants",
-       "what": "Before the scenarios, in one place: each participant and whether it is a person, an AI or a script."
-      },
-      {
-       "id": "scenario",
-       "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order."
-      }
-     ]
-    }
-   ]
-  },
+  "parts": [
+   {
+    "id": "okrs",
+    "what": "The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.",
+    "parts": [
+     {
+      "id": "objective",
+      "what": "Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject."
+     },
+     {
+      "id": "key-result",
+      "what": "Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from their request to having it. The first comes first: lead time is shortened only by changes that keep how well."
+     }
+    ]
+   },
+   {
+    "id": "scenarios",
+    "what": "The participants, then one scenario for each objective.",
+    "parts": [
+     {
+      "id": "participants",
+      "what": "Before the scenarios, in one place: each participant and whether it is a person, an AI or a script."
+     },
+     {
+      "id": "scenario",
+      "what": "For one objective, named by its ID and a short name for how the user reaches it: the main path from the user's first request to reaching it, laid out so the reader follows who does what, in order."
+     }
+    ]
+   }
+  ],
   "checklist": [
    {
     "id": "Q1",
@@ -51,8 +49,8 @@
    },
    {
     "id": "Q4",
-    "about": "participants, scenario",
-    "what": "Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?"
+    "about": "key-result",
+    "what": "Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?"
    },
    {
     "id": "Q5",
@@ -61,13 +59,13 @@
    },
    {
     "id": "Q6",
-    "about": "the whole",
-    "what": "Can the builder change how the product works inside, while its users see the same, and leave the document as it is?"
+    "about": "participants, scenario",
+    "what": "Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?"
    },
    {
     "id": "Q7",
-    "about": "key-result",
-    "what": "Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?"
+    "about": "the whole",
+    "what": "Can the builder change how the product works inside, while its users see the same, and leave the document as it is?"
    }
   ]
  },
@@ -213,7 +211,7 @@
     ]
    },
    {
-    "question": "Q7",
+    "question": "Q4",
     "thinking": "Quality first, then lead time: each stage from the request to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.",
     "steps": [
      "Imagine the change, and ask whether it could make the first key result worse.",
@@ -313,7 +311,7 @@
     ]
    },
    {
-    "question": "Q4",
+    "question": "Q6",
     "thinking": "Each one that takes a step is named by its role and its kind, so the builder knows which step waits for a person and which runs without one.",
     "steps": [
      "In each scenario, name each participant it uses, with its kind, as the list of participants gives them, such as by declaring them at the start of a diagram.",
@@ -347,7 +345,7 @@
     ]
    },
    {
-    "question": "Q6",
+    "question": "Q7",
     "thinking": "The product is one closed box: the document says only what users mean to do, see and receive, so any design that gives them the same leaves it true.",
     "steps": [
      "Pick one change the design could make while users see the same, read every line, and flag each line that would have to change.",

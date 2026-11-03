@@ -51,7 +51,7 @@
   <rect class="box" x="90" y="206" width="360" height="96" rx="10"/>
   <text class="name" x="270" y="234">Standard</text>
   <text class="kind" x="270" y="254">what a good deliverable of a kind is</text>
-  <text class="part" x="270" y="284">Goal · Format · Checklist</text>
+  <text class="part" x="270" y="284">Goal · Parts · Checklist</text>
 
   <rect class="box" x="550" y="206" width="360" height="96" rx="10"/>
   <text class="name" x="730" y="234">Practice</text>

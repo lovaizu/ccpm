@@ -1,30 +1,28 @@
 {
  "standard": {
   "goal": "The maintainer, a person or an AI who takes the code over, changes what it does and knows that whoever runs it still gets each behavior its specification asks and, where something from outside is wrong, learns how to put it right.",
-  "format": {
-   "parts": [
-    {
-     "id": "manifest",
-     "what": "What the maintainer needs to set the code up on a fresh machine and run its tests: all the code needs to run, with the versions it runs on, and how to run the tests."
-    },
-    {
-     "id": "module-opening",
-     "what": "For each module, what this module alone decides, said briefly where the maintainer meets it first on opening the module."
-    },
-    {
-     "id": "interface",
-     "what": "Each name a module offers to others, with all a caller needs to call it without reading its body: the types it takes and gives, what it gives, what it expects of what it takes and each way it refuses."
-    },
-    {
-     "id": "body",
-     "what": "The code under each interface that gives the behavior."
-    },
-    {
-     "id": "tests",
-     "what": "Tests that hold the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code: each named for the behavior it holds, and each showing the situation, what is done and what must be so."
-    }
-   ]
-  },
+  "parts": [
+   {
+    "id": "manifest",
+    "what": "What the maintainer needs to set the code up on a fresh machine and run its tests: all the code needs to run, with the versions it runs on, and how to run the tests."
+   },
+   {
+    "id": "module-opening",
+    "what": "For each module, what this module alone decides, said briefly where the maintainer meets it first on opening the module."
+   },
+   {
+    "id": "interface",
+    "what": "Each name a module offers to others, with all a caller needs to call it without reading its body: the types it takes and gives, what it gives, what it expects of what it takes and each way it refuses."
+   },
+   {
+    "id": "body",
+    "what": "The code under each interface that gives the behavior."
+   },
+   {
+    "id": "tests",
+    "what": "Tests that hold the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code: each named for the behavior it holds, and each showing the situation, what is done and what must be so."
+   }
+  ],
   "checklist": [
    {
     "id": "Q1",
@@ -43,18 +41,18 @@
    },
    {
     "id": "Q4",
+    "about": "interface, body",
+    "what": "For each behavior the code has, can the maintainer name the case of the specification that needs it?"
+   },
+   {
+    "id": "Q5",
     "about": "body",
     "what": "When something the code takes from outside is wrong, can whoever ran it put it right from what the code tells them alone, with nothing left half done?"
    },
    {
-    "id": "Q5",
+    "id": "Q6",
     "about": "tests",
     "what": "For each case the specification names, its edges and refusals included, can the maintainer point to the one test that holds it, and tell the case from the test's name?"
-   },
-   {
-    "id": "Q6",
-    "about": "interface, body",
-    "what": "For each behavior the code has, can the maintainer name the case of the specification that needs it?"
    },
    {
     "id": "Q7",
@@ -224,7 +222,7 @@
     ]
    },
    {
-    "question": "Q6",
+    "question": "Q4",
     "thinking": "The code gives the behaviors the specification asks, in the form the cases ask for now, and no more, so the maintainer carries nothing no one needs.",
     "steps": [
      "For each option, mode and case the code handles, name the case of the specification that asks for it."
@@ -251,7 +249,7 @@
     ]
    },
    {
-    "question": "Q4",
+    "question": "Q5",
     "thinking": "What comes from outside, such as arguments, files, settings and the replies of other programs, is checked where it comes in, before anything is done, and a refusal tells whoever ran the code which program refused, what was wrong, where, and what is accepted.",
     "steps": [
      "At that place, read it into the form the inside uses, checking its type and format and whether its value makes sense for what is to be done.",
@@ -323,7 +321,7 @@
     ]
    },
    {
-    "question": "Q5",
+    "question": "Q6",
     "thinking": "The tests come from the specification's cases, one behavior each, before the code, so each test says which case it holds.",
     "steps": [
      "List every case the specification names: the usual one, each edge and each refusal.",

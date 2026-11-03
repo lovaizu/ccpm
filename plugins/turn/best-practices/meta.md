@@ -6,24 +6,24 @@
 
 A best practice it makes produces deliverables that achieve their user's purpose.
 
-### Format
+### Parts
 
 - **standard**: The intended state of a deliverable that achieves its purpose.
   - **goal**: What the user achieves with the deliverable.
-  - **format**: The deliverable's structure that meets the goal: each part, what it holds, in its order.
-  - **checklist**: Questions that check, by the essence, whether the deliverable achieves the goal, asking of each part, of each dependency among parts and of the whole.
+  - **parts**: The deliverable's parts that meet the goal: each part and what it holds, in the order the user meets them; how they are written out is decided when the deliverable is made.
+  - **checklist**: Questions that check, by the essence, whether the deliverable achieves the goal, asking of each part, of each dependency among parts and of the whole, in the order the builder thinks them.
 - **practice**: How the content is made.
-  - **methods**: For each essence a question holds, the best way of thinking and the steps that meet it, with the grounds where they have worked.
+  - **methods**: For each question, in the checklist's order, the best way of thinking that meets its essence, and steps only where the thinking alone does not lead the builder, with the grounds where they have worked.
 
 ### Checklist
 
 - **Q1** (goal): Reading the goal, does one see a single thing the user achieves with the deliverable?
-- **Q2** (format): Looking at the format, does the builder know what to write in which part, and in what order?
-- **Q3** (checklist): With each question, can the evaluator tell whether that part serves the user?
-- **Q4** (methods): Following the way of thinking and the steps, can the builder make the content the question asks for?
-- **Q5** (goal, format): Does the format hold, neither more nor less, the parts the goal needs?
-- **Q6** (format, checklist): For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
-- **Q7** (checklist, methods): Does every essence a question holds have a way of thinking and steps that meet it?
+- **Q2** (parts): Looking at the parts, does the builder know what to write in which part, and in what order?
+- **Q3** (goal, parts): Do the parts hold, neither more nor less, the parts the goal needs?
+- **Q4** (checklist): With each question, can the evaluator tell whether that part serves the user?
+- **Q5** (parts, checklist): For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
+- **Q6** (methods): Following the way of thinking and the steps, can the builder make the content the question asks for?
+- **Q7** (checklist, methods): Does every question have, in the checklist's order, a way of thinking that meets its essence?
 - **Q8** (the whole): Does a deliverable made by this best practice, and passed, let its user achieve their purpose?
 
 ## Practice
@@ -44,9 +44,9 @@ A best practice it makes produces deliverables that achieve their user's purpose
 - [The Goal Question Metric Approach](https://www.cs.umd.edu/~mvz/handouts/gqm.pdf), Basili, Caldiera and Rombach, University of Maryland: "A goal is defined for an object, for a variety of reasons, with respect to various models of quality, from various points of view, relative to a particular environment."
 - [Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick](https://strategyn.com/jobs-to-be-done/), Strategyn, strategyn.com, 2024: "Identify who is executing the job and define the core functional job in a single, solution-free statement."
 
-### Q2: Looking at the format, does the builder know what to write in which part, and in what order?
+### Q2: Looking at the parts, does the builder know what to write in which part, and in what order?
 
-**Thinking**: The format is learned from good and poor deliverables of the kind, each part written as what its user needs from it rather than as one way some deliverables give it, and laid out in the order its user meets it.
+**Thinking**: The parts are learned from good and poor deliverables of the kind, each part written as what its user needs from it rather than as one way some deliverables give it, and laid out in the order its user meets it.
 
 **Steps**
 
@@ -60,7 +60,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 - [Using Rubrics to Promote Thinking and Learning](https://ascd.org/el/articles/using-rubrics-to-promote-thinking-and-learning), Andrade, Educational Leadership, 2000: "Look at models. Review examples of good and poor work on a project like the one your students are about to undertake."
 
-### Q5: Does the format hold, neither more nor less, the parts the goal needs?
+### Q3: Do the parts hold, neither more nor less, the parts the goal needs?
 
 **Thinking**: Each part is there because the goal needs it, and what the goal needs is found by imagining a deliverable that has every part and still fails its user.
 
@@ -76,7 +76,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 - [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "Then one tries to construct hypothetical cases in which an entity has all the properties in the proposed comlist but still lacks something that would be required or important in order to justify an assignment of merit."
 - [The Logic and Methodology of Checklists](https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf), Scriven, Western Michigan University, 2007: "The list should be concise (to assist its mnemonic function); i.e., it should contain no superfluous criteria."
 
-### Q3: With each question, can the evaluator tell whether that part serves the user?
+### Q4: With each question, can the evaluator tell whether that part serves the user?
 
 **Thinking**: A question asks whether the user gets what they need, not whether a sign of good work is there, so it cannot be met in the letter while the user goes without.
 
@@ -97,7 +97,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 - [Creating a LLM-as-a-Judge That Drives Business Results](https://hamel.dev/blog/posts/llm-judge/), Husain, hamel.dev, 2024: "You need to be able to say “this interaction passed because…” and “this interaction failed because…”."
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "A good task is one where two domain experts would independently reach the same pass/fail verdict."
 
-### Q6: For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
+### Q5: For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
 
 **Thinking**: The questions are complete when no deliverable can pass them all and still fail its user, and each need is asked in one place.
 
@@ -117,7 +117,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 - [Key Evaluation Checklist](https://wmich.edu/sites/default/files/attachments/u350/2014/key%20evaluation%20checklist.pdf), Scriven, Western Michigan University, 2007: "We can describe this as a case where they failed to clear a holistic (or overall) bar that was implicit in this example, but can often be made explicit through dialog."
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "Converting user-reported failures into test cases ensures your suite reflects actual usage"
 
-### Q4: Following the way of thinking and the steps, can the builder make the content the question asks for?
+### Q6: Following the way of thinking and the steps, can the builder make the content the question asks for?
 
 **Thinking**: A way of making is taken from where it has met the essence before and kept only once it meets it here; the way of thinking carries it, and a step is there only for what the thinking alone does not lead the builder to.
 
@@ -134,14 +134,14 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 - [Key Evaluation Checklist](https://wmich.edu/sites/default/files/attachments/u350/2014/key%20evaluation%20checklist.pdf), Scriven, Western Michigan University, 2007: "This is an iterative checklist, not a one-shot checklist."
 
-### Q7: Does every essence a question holds have a way of thinking and steps that meet it?
+### Q7: Does every question have, in the checklist's order, a way of thinking that meets its essence?
 
 **Thinking**: Every essence of every question has its way, so the builder never meets a question with nothing to go by.
 
 **Steps**
 
-1. Set each question's essence against the methods, and make a method by Q4's way for one that has none.
-2. Order the methods so that one is done before those that build on it.
+1. Order the questions in the order the builder thinks them, so that one is answered before those that build on it.
+2. Give each question one method, in that order, and make a method by Q6's way for one that has none.
 
 ### Q8: Does a deliverable made by this best practice, and passed, let its user achieve their purpose?
 
@@ -152,7 +152,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 1. Make one real deliverable by the practice, and pass it by the standard.
 2. Have its user, or an AI holding what the user wants, use it for the goal.
 3. Set the user's verdict against the evaluator's.
-4. Trace each difference to the goal, the format, a question or a method, and mend it there.
+4. Trace each difference to the goal, the parts, a question or a method, and mend it there.
 5. Go through again with the next real deliverable.
 
 **Grounds**

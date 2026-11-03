@@ -8,18 +8,18 @@ The maintainer, a person or an AI who comes to change the code at any time after
 
 ### Checklist
 
-- **Q1** (the whole): Reading any name in the code, can the maintainer say what it holds or does without going to where it is defined?
-- **Q2** (the whole): Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one?
-- **Q3** (the whole): Reading any function once from the top, with nothing from outside it but the names it uses, can the maintainer say in one sentence what it does?
-- **Q4** (the whole): Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it?
-- **Q5** (the whole): Moving from one module to another, does the maintainer find each kind of thing done the same way, so that each difference they meet is one the code needs?
-- **Q6** (the whole): With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there?
-- **Q7** (the whole): Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?
-- **Q8** (the whole): After the code's structure is changed, does each caller, a person, a script or other code, get every behavior it got before?
+- **Q1** (the whole): After the code's structure is changed, does each caller, a person, a script or other code, get every behavior it got before?
+- **Q2** (the whole): Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?
+- **Q3** (the whole): Reading any name in the code, can the maintainer say what it holds or does without going to where it is defined?
+- **Q4** (the whole): Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one?
+- **Q5** (the whole): With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there?
+- **Q6** (the whole): Reading any function once from the top, with nothing from outside it but the names it uses, can the maintainer say in one sentence what it does?
+- **Q7** (the whole): Moving from one module to another, does the maintainer find each kind of thing done the same way, so that each difference they meet is one the code needs?
+- **Q8** (the whole): Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it?
 
 ## Practice
 
-### Q8: After the code's structure is changed, does each caller, a person, a script or other code, get every behavior it got before?
+### Q1: After the code's structure is changed, does each caller, a person, a script or other code, get every behavior it got before?
 
 **Thinking**: The structure is changed in small steps that each keep every behavior, checked by the tests from before, and no behavior is changed among them.
 
@@ -43,7 +43,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 - [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd), Beck, Software Design: Tidy First?, tidyfirst.substack.com, 2023: "Mistake: mixing refactoring into making the test pass. Again with the “wearing two hats” problem. Make it run, then make it right."
 - [Small CLs](https://google.github.io/eng-practices/review/developer/small-cls.html), Google, google.github.io/eng-practices, no date: "It’s usually best to do refactorings in a separate CL from feature changes or bug fixes."
 
-### Q7: Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?
+### Q2: Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?
 
 **Thinking**: Each line earns its place by what the maintainer would lose without it, and what gives nothing is taken out and left to version control.
 
@@ -62,7 +62,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 - [PEP 8 – Style Guide for Python Code](https://peps.python.org/pep-0008/), van Rossum, Warsaw and Coghlan, peps.python.org, 2001: "Inline comments are unnecessary and in fact distracting if they state the obvious."
 - [What to look for in a code review](https://google.github.io/eng-practices/review/reviewer/looking-for.html), Google, google.github.io/eng-practices, no date: "There are some exceptions (regular expressions and complex algorithms often benefit greatly from comments that explain what they’re doing, for example) but mostly comments are for information that the code itself can’t possibly contain, like the reasoning behind a decision."
 
-### Q1: Reading any name in the code, can the maintainer say what it holds or does without going to where it is defined?
+### Q3: Reading any name in the code, can the maintainer say what it holds or does without going to where it is defined?
 
 **Thinking**: A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.
 
@@ -77,7 +77,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html), Google, google.github.io/styleguide, no date: "Avoid abbreviation. In particular, do not use abbreviations that are ambiguous or unfamiliar to readers outside your project, and do not abbreviate by deleting letters within a word."
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html), Google, google.github.io/styleguide, no date: "Generally speaking, descriptiveness should be proportional to the name’s scope of visibility."
 
-### Q2: Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one?
+### Q4: Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one?
 
 **Thinking**: Each thing has one name, the word its users and documents already use for it, and each name names one thing.
 
@@ -91,7 +91,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 - [Concise and Consistent Naming](https://wwwbroy.in.tum.de/publ/papers/deissenboeck_pizka_identifier_naming.pdf), Deißenböck and Pizka, IWPC 2005: "A typical example for a synonym is the usage of the different identifier names accountNumber and number for the concept of an account number."
 - [Concise and Consistent Naming](https://wwwbroy.in.tum.de/publ/papers/deissenboeck_pizka_identifier_naming.pdf), Deißenböck and Pizka, IWPC 2005: "In computer programs, homonyms pose an obstacle for program comprehension since the developer has to take all elements of the set Cn into account when spotting an identifier named n."
 
-### Q6: With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there?
+### Q5: With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there?
 
 **Thinking**: Each rule or design decision is written once, in the module whose job it is, and things unrelated in meaning are not tied together in the code, however alike they look.
 
@@ -115,7 +115,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 - [Writing system software: code comments.](https://antirez.com/news/124), Sanfilippo (antirez), antirez.com, 2018: "it is not possible to centralize a given concept or interface in one piece, so there are places in the code that tells you to remember to do things in some other place of the code."
 - [Orthogonality and the DRY Principle](https://www.artima.com/articles/orthogonality-and-the-dry-principle), Venners, artima.com, 2003 (Hunt): "One piece of knowledge in the domain changes, one piece of the system changes."
 
-### Q3: Reading any function once from the top, with nothing from outside it but the names it uses, can the maintainer say in one sentence what it does?
+### Q6: Reading any function once from the top, with nothing from outside it but the names it uses, can the maintainer say in one sentence what it does?
 
 **Thinking**: A function does one thing at one level and takes what it uses as its inputs, so its reader holds only what it says, and a long one reads as calls to steps named for what they do.
 
@@ -136,7 +136,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 - [A Philosophy of Software Design vs Clean Code](https://github.com/johnousterhout/aposd-vs-clean-code), Ousterhout, github.com/johnousterhout/aposd-vs-clean-code, 2025: "How much information must a developer have in their head in order to carry out a task?"
 - [Style Guides and Rules](https://abseil.io/resources/swe-book/html/ch08.html), Schwartz, Software Engineering at Google, ch. 8, abseil.io, 2020: "Even if a construct is well understood by a project’s engineers, future project members and maintainers are not guaranteed to have the same understanding."
 
-### Q5: Moving from one module to another, does the maintainer find each kind of thing done the same way, so that each difference they meet is one the code needs?
+### Q7: Moving from one module to another, does the maintainer find each kind of thing done the same way, so that each difference they meet is one the code needs?
 
 **Thinking**: Each kind of thing is done one way across the code, the way the code already has, the nearest code first, unless a better one replaces it everywhere, so a difference means a real difference.
 
@@ -154,7 +154,7 @@ The maintainer, a person or an AI who comes to change the code at any time after
 - [PEP 8 – Style Guide for Python Code](https://peps.python.org/pep-0008/), van Rossum, Warsaw and Coghlan, peps.python.org, 2001: "Consistency within a project is more important. Consistency within one module or function is the most important."
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html), Google, google.github.io/styleguide, no date: "Consistency should not generally be used as a justification to do things in an old style without considering the benefits of the new style"
 
-### Q4: Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it?
+### Q8: Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it?
 
 **Thinking**: What the code cannot say, the reason it is so, such as a limit outside the code or a way tried and dropped, is given where the maintainer meets it.
 

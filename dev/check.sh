@@ -27,9 +27,9 @@ done
 # The checks' own Python, beside the plugins'.
 pyrefly check --search-path dev/lane dev/*.py
 
-# A best practice's Markdown is made from its JSON for a person to read, so one left behind its
-# JSON says what Turn no longer holds.
-python3 plugins/turn/scripts/markdown.py check plugins/turn/best-practices/*.json
+# A best practice is checked for the faults its form shows, and its Markdown, made from its JSON for
+# a person to read, for being left behind it, as either says what Turn does not hold.
+python3 plugins/turn/scripts/practices.py check plugins/turn/best-practices/*.json
 
 # The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
 # tests, whose inputs change from run to run, are run apart by dev/properties.sh.

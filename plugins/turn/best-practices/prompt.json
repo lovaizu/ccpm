@@ -1,106 +1,104 @@
 {
  "standard": {
   "goal": "Given the prompt for a request it is made for, an AI agent does the task as the prompt's writer means, with only what its run gives it, on every run and in cases the writer did not foresee.",
-  "format": {
-   "parts": [
-    {
-     "id": "description",
-     "what": "What the host reads to choose the prompt for a request: a name that says what the prompt does, and a description of what it does and the requests it is used for."
-    },
-    {
-     "id": "tools",
-     "what": "The tools the AI may use, listed where the host reads them and refuses any other, when the host allows such a list."
-    },
-    {
-     "id": "goal",
-     "what": "What the AI reads first in the body: what it is to achieve, for whom, how it knows it is done, and what lies outside its task."
-    },
-    {
-     "id": "context",
-     "what": "What the AI needs and cannot find or know on its own: the situation, its inputs and where they are, and the rules of this place."
-    },
-    {
-     "id": "steps",
-     "what": "The steps in the order the AI takes them, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the script that does it and how to run it."
-    },
-    {
-     "id": "output",
-     "what": "What the AI hands back, in what form, and to whom."
-    }
-   ]
-  },
+  "parts": [
+   {
+    "id": "description",
+    "what": "What the host reads to choose the prompt for a request: a name that says what the prompt does, and a description of what it does and the requests it is used for."
+   },
+   {
+    "id": "tools",
+    "what": "The tools the AI may use, listed where the host reads them and refuses any other, when the host allows such a list."
+   },
+   {
+    "id": "goal",
+    "what": "What the AI reads first in the body: what it is to achieve, for whom, how it knows it is done, and what lies outside its task."
+   },
+   {
+    "id": "context",
+    "what": "What the AI needs and cannot find or know on its own: the situation, its inputs and where they are, and the rules of this place."
+   },
+   {
+    "id": "steps",
+    "what": "The steps in the order the AI takes them, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the script that does it and how to run it."
+   },
+   {
+    "id": "output",
+    "what": "What the AI hands back, in what form, and to whom."
+   }
+  ],
   "checklist": [
    {
     "id": "Q1",
-    "about": "description",
-    "what": "When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?"
-   },
-   {
-    "id": "Q2",
-    "about": "tools",
-    "what": "When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?"
-   },
-   {
-    "id": "Q3",
     "about": "goal",
     "what": "When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?"
    },
    {
-    "id": "Q4",
+    "id": "Q2",
     "about": "goal",
     "what": "When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?"
    },
    {
-    "id": "Q5",
-    "about": "description, goal",
-    "what": "Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?"
-   },
-   {
-    "id": "Q6",
+    "id": "Q3",
     "about": "context",
     "what": "Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?"
    },
    {
-    "id": "Q7",
-    "about": "steps",
-    "what": "When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?"
-   },
-   {
-    "id": "Q8",
-    "about": "steps",
-    "what": "When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?"
-   },
-   {
-    "id": "Q9",
+    "id": "Q4",
     "about": "goal, steps",
     "what": "Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere?"
    },
    {
-    "id": "Q10",
+    "id": "Q5",
+    "about": "steps",
+    "what": "When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?"
+   },
+   {
+    "id": "Q6",
+    "about": "steps",
+    "what": "When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?"
+   },
+   {
+    "id": "Q7",
     "about": "tools, steps",
     "what": "Can the AI take every action its steps call for with the tools it is allowed?"
    },
    {
-    "id": "Q11",
+    "id": "Q8",
+    "about": "tools",
+    "what": "When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?"
+   },
+   {
+    "id": "Q9",
     "about": "steps, output",
     "what": "When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further?"
    },
    {
+    "id": "Q10",
+    "about": "description",
+    "what": "When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?"
+   },
+   {
+    "id": "Q11",
+    "about": "description, goal",
+    "what": "Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?"
+   },
+   {
     "id": "Q12",
     "about": "the whole",
-    "what": "Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?"
+    "what": "When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?"
    },
    {
     "id": "Q13",
     "about": "the whole",
-    "what": "When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?"
+    "what": "Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?"
    }
   ]
  },
  "practice": {
   "methods": [
    {
-    "question": "Q3",
+    "question": "Q1",
     "thinking": "The AI stops when its work looks done, so the prompt says what the result is for and gives a check that tells done from looking done.",
     "steps": [
      "For each thing that holds once the task is met, give the check that shows it: a command to run where one exists, or else what to look up and where.",
@@ -134,7 +132,7 @@
     ]
    },
    {
-    "question": "Q4",
+    "question": "Q2",
     "thinking": "A choice is the user's where the AI has no ground to pick one option over another, or where it is hard to undo, so the prompt names those choices and how the AI asks, and leaves every other choice to the AI.",
     "steps": [
      "Among the choices the task meets, mark each action that is hard to undo, touches what others share, or destroys something."
@@ -161,7 +159,7 @@
     ]
    },
    {
-    "question": "Q6",
+    "question": "Q3",
     "thinking": "The AI is able but new to this place, and sees nothing of the conversation that started it, so the prompt gives what it cannot find or know, and where the rest lies.",
     "steps": [
      "For each step, list the facts it needs: its inputs and where they lie, the terms it uses, the rules of the place, and what the writer knows without saying.",
@@ -207,7 +205,7 @@
     ]
    },
    {
-    "question": "Q9",
+    "question": "Q4",
     "thinking": "Each step is a result on the way to the goal, so the AI chooses how to reach it and knows when to go on.",
     "steps": [
      "Write the steps in the order their results must hold, so the AI sees that order, such as in a numbered list.",
@@ -230,7 +228,7 @@
     ]
    },
    {
-    "question": "Q7",
+    "question": "Q5",
     "thinking": "A rule that says what it is for lets the AI apply it where it was meant and judge a case no rule names, so each rule carries its reason.",
     "steps": [
      "Write the rule as what to do, in plain words, with no capitals or warnings for emphasis.",
@@ -290,7 +288,7 @@
     ]
    },
    {
-    "question": "Q8",
+    "question": "Q6",
     "thinking": "The AI's judgment varies from run to run, which suits a step with many good ways, so a step with one right result is done by a program that gives it every run and handles its own errors, which the AI runs.",
     "steps": [
      "Run the prompt twice on one input, and compare what those steps gave."
@@ -323,7 +321,7 @@
     ]
    },
    {
-    "question": "Q10",
+    "question": "Q7",
     "thinking": "Each action a step calls for needs a tool the AI is allowed, or the step cannot be taken however well it is written.",
     "steps": [
      "For each step, list each action it takes and the tool that takes it, a script's command among them.",
@@ -340,11 +338,11 @@
     ]
    },
    {
-    "question": "Q2",
+    "question": "Q8",
     "thinking": "A rule in words holds only while the AI follows it, so an action that must never happen is made one the host refuses.",
     "steps": [
      "List the actions the task must never take, such as writing where it only reads.",
-     "Allow only the tools Q10's list needs.",
+     "Allow only the tools Q7's list needs.",
      "Where a tool it needs also allows an action it must never take, add a rule the host enforces, such as a deny rule or a hook.",
      "Run the prompt on a request that tempts such an action, and check in the record that the host refused it."
     ],
@@ -376,7 +374,7 @@
     ]
    },
    {
-    "question": "Q11",
+    "question": "Q9",
     "thinking": "The caller sees only what comes back, so the prompt says what that is, in what form and to whom, and a step makes each of it.",
     "steps": [
      "Name the caller, and what it does next with the result.",
@@ -407,7 +405,7 @@
     ]
    },
    {
-    "question": "Q1",
+    "question": "Q10",
     "thinking": "The host reads the name and the description alone, among many, to pick a prompt for a request, so they say what the prompt does and when it is used, in the words users ask in, and tell it apart from the others.",
     "steps": [
      "Write down several requests the prompt is made for, in a user's own words, and several near ones it is not made for.",
@@ -454,7 +452,7 @@
     ]
    },
    {
-    "question": "Q5",
+    "question": "Q11",
     "thinking": "The description and the body say one task, so what the host chose the prompt for is what the AI does.",
     "steps": [
      "Set what the description says the prompt does against what the goal and the steps have the AI do, and for each thing in one and not the other, add it to the body or take it out of the description."
@@ -469,7 +467,7 @@
     ]
    },
    {
-    "question": "Q13",
+    "question": "Q12",
     "thinking": "A prompt is known by what a fresh AI does with it, so it is run on real requests of each kind, several times, and judged from the record of what the AI did.",
     "steps": [
      "Gather requests of each kind the prompt is made for, and hold some back from its making.",
@@ -529,11 +527,11 @@
     ]
    },
    {
-    "question": "Q12",
+    "question": "Q13",
     "thinking": "Every line takes some of the AI's attention, so the prompt keeps only the lines that change what it does, and keeps detail it needs only sometimes where the AI reads it only then.",
     "steps": [
      "Move detail needed only in some runs out of the prompt to where the AI reads it only when it needs it, such as a file the prompt links directly, and say when to read it.",
-     "Run Q13's trials again after cutting, and put back what a run then lacked."
+     "Run Q12's trials again after cutting, and put back what a run then lacked."
     ],
     "grounds": [
      {

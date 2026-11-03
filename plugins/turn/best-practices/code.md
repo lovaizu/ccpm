@@ -6,7 +6,7 @@
 
 The maintainer, a person or an AI who takes the code over, changes what it does and knows that whoever runs it still gets each behavior its specification asks and, where something from outside is wrong, learns how to put it right.
 
-### Format
+### Parts
 
 - **manifest**: What the maintainer needs to set the code up on a fresh machine and run its tests: all the code needs to run, with the versions it runs on, and how to run the tests.
 - **module-opening**: For each module, what this module alone decides, said briefly where the maintainer meets it first on opening the module.
@@ -19,9 +19,9 @@ The maintainer, a person or an AI who takes the code over, changes what it does 
 - **Q1** (manifest, tests): Setting the code up on a fresh machine from what the code gives for its setup alone, and running the tests again and in any order, does the maintainer see them pass each time?
 - **Q2** (module-opening): With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading their bodies?
 - **Q3** (interface): Calling a name another module offers, can the maintainer write a call that works from its interface alone, without reading its body?
-- **Q4** (body): When something the code takes from outside is wrong, can whoever ran it put it right from what the code tells them alone, with nothing left half done?
-- **Q5** (tests): For each case the specification names, its edges and refusals included, can the maintainer point to the one test that holds it, and tell the case from the test's name?
-- **Q6** (interface, body): For each behavior the code has, can the maintainer name the case of the specification that needs it?
+- **Q4** (interface, body): For each behavior the code has, can the maintainer name the case of the specification that needs it?
+- **Q5** (body): When something the code takes from outside is wrong, can whoever ran it put it right from what the code tells them alone, with nothing left half done?
+- **Q6** (tests): For each case the specification names, its edges and refusals included, can the maintainer point to the one test that holds it, and tell the case from the test's name?
 - **Q7** (interface, tests): When the maintainer changes a body and its callers still get what its interface says, do the tests still pass?
 - **Q8** (body, tests): When the maintainer breaks the behavior a test holds, does that test fail?
 - **Q9** (the whole): Given the code and its specification alone, can the maintainer make a change the specification asks and know from the tests that every other behavior still holds?
@@ -87,7 +87,7 @@ The maintainer, a person or an AI who takes the code over, changes what it does 
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html), Google, google.github.io/styleguide, no date: "A docstring should give enough information to write a call to the function without reading the function’s code."
 - [A Philosophy of Software Design vs Clean Code](https://github.com/johnousterhout/aposd-vs-clean-code), Ousterhout, in Ousterhout and Martin, github.com/johnousterhout/aposd-vs-clean-code, 2024–2025: "It should be possible to use a method without reading its code. The way we achieve this is by writing a header comment that describes the method's interface (all the information someone needs in order to invoke the method)."
 
-### Q6: For each behavior the code has, can the maintainer name the case of the specification that needs it?
+### Q4: For each behavior the code has, can the maintainer name the case of the specification that needs it?
 
 **Thinking**: The code gives the behaviors the specification asks, in the form the cases ask for now, and no more, so the maintainer carries nothing no one needs.
 
@@ -101,7 +101,7 @@ The maintainer, a person or an AI who takes the code over, changes what it does 
 - [What to look for in a code review](https://google.github.io/eng-practices/review/reviewer/looking-for.html), Google, google.github.io/eng-practices, no date: "Encourage developers to solve the problem they know needs to be solved now, not the problem that the developer speculates might need to be solved in the future."
 - [Yagni](https://martinfowler.com/bliki/Yagni.html), Fowler, martinfowler.com, 2015: "The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features."
 
-### Q4: When something the code takes from outside is wrong, can whoever ran it put it right from what the code tells them alone, with nothing left half done?
+### Q5: When something the code takes from outside is wrong, can whoever ran it put it right from what the code tells them alone, with nothing left half done?
 
 **Thinking**: What comes from outside, such as arguments, files, settings and the replies of other programs, is checked where it comes in, before anything is done, and a refusal tells whoever ran the code which program refused, what was wrong, where, and what is accepted.
 
@@ -125,7 +125,7 @@ The maintainer, a person or an AI who takes the code over, changes what it does 
 - [PEP 8 – Style Guide for Python Code](https://peps.python.org/pep-0008/), van Rossum, Warsaw and Coghlan, peps.python.org, 2001: "Additionally, for all try/except clauses, limit the try clause to the absolute minimum amount of code necessary. Again, this avoids masking bugs"
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html), Google, google.github.io/styleguide, no date: "Do not use assert statements in place of conditionals or validating preconditions."
 
-### Q5: For each case the specification names, its edges and refusals included, can the maintainer point to the one test that holds it, and tell the case from the test's name?
+### Q6: For each case the specification names, its edges and refusals included, can the maintainer point to the one test that holds it, and tell the case from the test's name?
 
 **Thinking**: The tests come from the specification's cases, one behavior each, before the code, so each test says which case it holds.
 

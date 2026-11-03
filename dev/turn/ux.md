@@ -26,7 +26,7 @@ sequenceDiagram
   P->>T: Write a press release for RoomBook, our new meeting-room booking app.<br/>Its README is in this repository
   T->>P: This is a press release, a document. Right?
   P->>T: Yes
-  T->>P: I have no Standard for press releases yet.<br/>Here is a new one, what a good press release is:<br/>Goal: a reporter decides from the release whether to write about it<br/>Format: headline, lead, body, boilerplate, contact<br/>Checklist: Can a reporter tell from the headline what is new?<br/>Can a reporter tell from the lead who launches what, and when? ...<br/>Approve?
+  T->>P: I have no Standard for press releases yet.<br/>Here is a new one, what a good press release is:<br/>Goal: a reporter decides from the release whether to write about it<br/>Parts: headline, lead, body, boilerplate, contact<br/>Checklist: Can a reporter tell from the headline what is new?<br/>Can a reporter tell from the lead who launches what, and when? ...<br/>Approve?
   P->>T: Approved
   T->>P: What is this release for?
   P->>T: To get RoomBook into trade magazines

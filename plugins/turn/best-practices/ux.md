@@ -6,7 +6,7 @@
 
 Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.
 
-### Format
+### Parts
 
 - **okrs**: The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.
   - **objective**: Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject.
@@ -20,10 +20,10 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - **Q1** (objective): Reading an objective, does the builder know which user the product is for and what that user gets from it?
 - **Q2** (okrs): Weighing a piece of work, can the builder tell which one objective it brings closer?
 - **Q3** (objective, key-result): After a change, can the builder tell from the key results whether users came closer to the objective?
-- **Q4** (participants, scenario): Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
+- **Q4** (key-result): Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
 - **Q5** (objective, scenarios): For each objective, can the builder follow, step by step, how its user goes from their first request to having what the objective says?
-- **Q6** (the whole): Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
-- **Q7** (key-result): Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
+- **Q6** (participants, scenario): Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
+- **Q7** (the whole): Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
 
 ## Practice
 
@@ -82,7 +82,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Goodhart's law](https://en.wikipedia.org/wiki/Goodhart%27s_law), Wikipedia, en.wikipedia.org, no date: "Goodhart's law is an adage that has been stated as, "When a measure becomes a target, it ceases to be a good measure"."
 - [Google's OKR Playbook](https://www.whatmatters.com/resources/google-okr-playbook), Google, whatmatters.com, no date: "Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed."
 
-### Q7: Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
+### Q4: Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
 
 **Thinking**: Quality first, then lead time: each stage from the request to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.
 
@@ -121,7 +121,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html), Mermaid, mermaid.js.org: "It is possible to express loops in a sequence diagram."
 - [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Does it run from trigger to delivery of the success end condition?"
 
-### Q4: Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
+### Q6: Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
 
 **Thinking**: Each one that takes a step is named by its role and its kind, so the builder knows which step waits for a person and which runs without one.
 
@@ -137,7 +137,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html), Mermaid, mermaid.js.org: "The actor can have a convenient identifier and a descriptive label."
 - [Writing Effective Use Cases](https://web.archive.org/web/20210301131704/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Is it clear which actor is operating the goal (who is "kicking the ball?)"
 
-### Q6: Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
+### Q7: Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
 
 **Thinking**: The product is one closed box: the document says only what users mean to do, see and receive, so any design that gives them the same leaves it true.
 

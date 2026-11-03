@@ -5,49 +5,49 @@
    {
     "id": "Q1",
     "about": "the whole",
-    "what": "Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?"
+    "what": "Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?"
    },
    {
     "id": "Q2",
     "about": "the whole",
-    "what": "Where the document tells steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences?"
+    "what": "Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?"
    },
    {
     "id": "Q3",
     "about": "the whole",
-    "what": "Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to?"
+    "what": "Where the document tells steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences?"
    },
    {
     "id": "Q4",
     "about": "the whole",
-    "what": "Reading any sentence once, as written or through a machine translation into their own language, can the reader say who or what does what in it?"
+    "what": "Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to?"
    },
    {
     "id": "Q5",
     "about": "the whole",
-    "what": "Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one?"
+    "what": "Reading any sentence once, as written or through a machine translation into their own language, can the reader say who or what does what in it?"
    },
    {
     "id": "Q6",
     "about": "the whole",
-    "what": "When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?"
+    "what": "Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one?"
    },
    {
     "id": "Q7",
     "about": "the whole",
-    "what": "Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing?"
+    "what": "When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?"
    },
    {
     "id": "Q8",
     "about": "the whole",
-    "what": "Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?"
+    "what": "Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing?"
    }
   ]
  },
  "practice": {
   "methods": [
    {
-    "question": "Q8",
+    "question": "Q1",
     "thinking": "Each fact, including one a figure draws or the work itself shows, is said in the one place where the reader looks for it, and every other place points there, so a change made once reaches every reader.",
     "steps": [
      "Where two places say a fact in different ways, keep both and send it back to be settled with what the document says, for choosing one would change what it says.",
@@ -75,7 +75,7 @@
     ]
    },
    {
-    "question": "Q1",
+    "question": "Q2",
     "thinking": "The reader picks sections by their headings and first sentences, so each section holds one thing and says at its start what it gives.",
     "steps": [
      "Start each heading with the words that tell the most.",
@@ -127,7 +127,7 @@
     ]
    },
    {
-    "question": "Q2",
+    "question": "Q3",
     "thinking": "Order and relations shown by the form of a list, a table or a diagram are seen at once, while the same told in sentences must be pieced together.",
     "steps": [
      "Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.",
@@ -179,7 +179,7 @@
     ]
    },
    {
-    "question": "Q3",
+    "question": "Q4",
     "thinking": "Each sentence comes after everything it rests on, so the reader never holds a sentence open while they look for what it needs.",
     "steps": [
      "Where a sentence rests on something outside the document, such as an earlier talk, say it in the sentence or link to where it is written.",
@@ -244,7 +244,7 @@
     ]
    },
    {
-    "question": "Q4",
+    "question": "Q5",
     "thinking": "A sentence that makes one point, names who acts and keeps plain order is read one way, by the reader and by a machine translator alike.",
     "steps": [
      "Split a sentence that makes more than one point, or that links more than two clauses with \"and\", \"or\" or \"but\", into one sentence for each point.",
@@ -360,7 +360,7 @@
     ]
    },
    {
-    "question": "Q5",
+    "question": "Q6",
     "thinking": "Each thing has one name, the one its reader already uses, written the same way each time, and each name one thing, so the reader, and a translator, keep one picture of each thing from start to end.",
     "steps": [],
     "grounds": [
@@ -403,7 +403,7 @@
     ]
    },
    {
-    "question": "Q6",
+    "question": "Q7",
     "thinking": "The reader takes each word with the meaning they already give it, so a word new to them, even one the writer's team uses every day, is replaced by everyday words, or given its meaning where they first meet it.",
     "steps": [
      "Write each abbreviation out in full where the reader first meets it.",
@@ -437,7 +437,7 @@
     ]
    },
    {
-    "question": "Q7",
+    "question": "Q8",
     "thinking": "A word or a sentence that carries nothing of what the document says still costs the reader time, so it goes, while a word that shows how a sentence is built stays.",
     "steps": [
      "Read each changed section again from the top, and check that it still says all it said before."

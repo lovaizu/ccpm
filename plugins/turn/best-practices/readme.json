@@ -1,50 +1,48 @@
 {
  "standard": {
   "goal": "From the README alone, someone who meets the product for the first time starts using it only when it serves their work.",
-  "format": {
-   "parts": [
-    {
-     "id": "summary",
-     "what": "The product's name first, and under it one sentence that says what kind of thing the product is and what it does."
-    },
-    {
-     "id": "gain",
-     "what": "The paragraph after the summary: whom the product is for and what they gain with it."
-    },
-    {
-     "id": "idea",
-     "what": "After the gain: the idea that makes the gain possible, in a paragraph; where the idea has parts, how they fit together, and each part with what it is and what it ensures for the reader."
-    },
-    {
-     "id": "non-goals",
-     "what": "At the end of the opening, before anything about installing: each thing the product does not do that a reader might expect of it, set apart so the reader sees it as what the product does not do."
-    },
-    {
-     "id": "requirements",
-     "what": "Each thing that must be in place before installing."
-    },
-    {
-     "id": "installation",
-     "what": "The steps that install the product."
-    },
-    {
-     "id": "walkthrough",
-     "what": "One run of the use most readers come for, step by step, each step with what the product shows, up to the result."
-    },
-    {
-     "id": "how-it-works",
-     "what": "One figure of the user, the product's parts and the things they pass, each shown by its name only, and the action or intent of each toward another, so a reader sees at a glance how the opening's promises are kept. Under it stand only the points and what the figure cannot show."
-    },
-    {
-     "id": "links",
-     "what": "Where to read next: for users, the documents for fuller use; apart from them, for those who change the product, the development documents."
-    },
-    {
-     "id": "license",
-     "what": "The license's name, linked to its full text."
-    }
-   ]
-  },
+  "parts": [
+   {
+    "id": "summary",
+    "what": "The product's name first, and under it one sentence that says what kind of thing the product is and what it does."
+   },
+   {
+    "id": "gain",
+    "what": "The paragraph after the summary: whom the product is for and what they gain with it."
+   },
+   {
+    "id": "idea",
+    "what": "After the gain: the idea that makes the gain possible, in a paragraph; where the idea has parts, how they fit together, and each part with what it is and what it ensures for the reader."
+   },
+   {
+    "id": "non-goals",
+    "what": "At the end of the opening, before anything about installing: each thing the product does not do that a reader might expect of it, set apart so the reader sees it as what the product does not do."
+   },
+   {
+    "id": "requirements",
+    "what": "Each thing that must be in place before installing."
+   },
+   {
+    "id": "installation",
+    "what": "The steps that install the product."
+   },
+   {
+    "id": "walkthrough",
+    "what": "One run of the use most readers come for, step by step, each step with what the product shows, up to the result."
+   },
+   {
+    "id": "how-it-works",
+    "what": "One figure of the user, the product's parts and the things they pass, each shown by its name only, and the action or intent of each toward another, so a reader sees at a glance how the opening's promises are kept. Under it stand only the points and what the figure cannot show."
+   },
+   {
+    "id": "links",
+    "what": "Where to read next: for users, the documents for fuller use; apart from them, for those who change the product, the development documents."
+   },
+   {
+    "id": "license",
+    "what": "The license's name, linked to its full text."
+   }
+  ],
   "checklist": [
    {
     "id": "Q1",

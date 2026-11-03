@@ -5,49 +5,49 @@
    {
     "id": "Q1",
     "about": "the whole",
-    "what": "Reading any name in the code, can the maintainer say what it holds or does without going to where it is defined?"
+    "what": "After the code's structure is changed, does each caller, a person, a script or other code, get every behavior it got before?"
    },
    {
     "id": "Q2",
     "about": "the whole",
-    "what": "Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one?"
+    "what": "Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?"
    },
    {
     "id": "Q3",
     "about": "the whole",
-    "what": "Reading any function once from the top, with nothing from outside it but the names it uses, can the maintainer say in one sentence what it does?"
+    "what": "Reading any name in the code, can the maintainer say what it holds or does without going to where it is defined?"
    },
    {
     "id": "Q4",
     "about": "the whole",
-    "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it?"
+    "what": "Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one?"
    },
    {
     "id": "Q5",
     "about": "the whole",
-    "what": "Moving from one module to another, does the maintainer find each kind of thing done the same way, so that each difference they meet is one the code needs?"
+    "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there?"
    },
    {
     "id": "Q6",
     "about": "the whole",
-    "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there?"
+    "what": "Reading any function once from the top, with nothing from outside it but the names it uses, can the maintainer say in one sentence what it does?"
    },
    {
     "id": "Q7",
     "about": "the whole",
-    "what": "Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?"
+    "what": "Moving from one module to another, does the maintainer find each kind of thing done the same way, so that each difference they meet is one the code needs?"
    },
    {
     "id": "Q8",
     "about": "the whole",
-    "what": "After the code's structure is changed, does each caller, a person, a script or other code, get every behavior it got before?"
+    "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it?"
    }
   ]
  },
  "practice": {
   "methods": [
    {
-    "question": "Q8",
+    "question": "Q1",
     "thinking": "The structure is changed in small steps that each keep every behavior, checked by the tests from before, and no behavior is changed among them.",
     "steps": [
      "Run the tests before any change, and begin only when every one passes.",
@@ -114,7 +114,7 @@
     ]
    },
    {
-    "question": "Q7",
+    "question": "Q2",
     "thinking": "Each line earns its place by what the maintainer would lose without it, and what gives nothing is taken out and left to version control.",
     "steps": [
      "Fold each function or layer that only passes a call on into its caller, and drop each parameter that every caller gives the same value, using that value inside.",
@@ -166,7 +166,7 @@
     ]
    },
    {
-    "question": "Q1",
+    "question": "Q3",
     "thinking": "A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.",
     "steps": [
      "For each name, write in a few words what it holds or does, without looking at its definition; then look, and flag the name where the two differ.",
@@ -194,7 +194,7 @@
     ]
    },
    {
-    "question": "Q2",
+    "question": "Q4",
     "thinking": "Each thing has one name, the word its users and documents already use for it, and each name names one thing.",
     "steps": [
      "List the things the code handles, and for each the names the code gives it."
@@ -221,7 +221,7 @@
     ]
    },
    {
-    "question": "Q6",
+    "question": "Q5",
     "thinking": "Each rule or design decision is written once, in the module whose job it is, and things unrelated in meaning are not tied together in the code, however alike they look.",
     "steps": [
      "For each rule or decision the code holds, such as a limit, a format or a path, list every place that writes it.",
@@ -288,7 +288,7 @@
     ]
    },
    {
-    "question": "Q3",
+    "question": "Q6",
     "thinking": "A function does one thing at one level and takes what it uses as its inputs, so its reader holds only what it says, and a long one reads as calls to steps named for what they do.",
     "steps": [
      "Read each function, test functions included, once from the top, and write in one sentence what it does.",
@@ -342,7 +342,7 @@
     ]
    },
    {
-    "question": "Q5",
+    "question": "Q7",
     "thinking": "Each kind of thing is done one way across the code, the way the code already has, the nearest code first, unless a better one replaces it everywhere, so a difference means a real difference.",
     "steps": [
      "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test.",
@@ -383,7 +383,7 @@
     ]
    },
    {
-    "question": "Q4",
+    "question": "Q8",
     "thinking": "What the code cannot say, the reason it is so, such as a limit outside the code or a way tried and dropped, is given where the maintainer meets it.",
     "steps": [
      "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs.",

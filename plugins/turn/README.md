@@ -18,7 +18,8 @@ deliverable, uses it as its user would.
   Turn uses it.
   - Goal: what the deliverable's user achieves with it, so the deliverable is judged by whether
     they achieve it.
-  - Format: the deliverable's parts in their order, so each part is there because the goal needs it.
+  - Parts: what the deliverable holds, in the order its user meets it, so each part is there because
+    the goal needs it.
   - Checklist: questions that ask what each part, each tie between parts, and the whole bring the
     user. A deliverable that answers every question yes is done, and nothing more is added.
 - Practice: for each question of the Checklist, a way of thinking and steps that have worked, with
@@ -113,7 +114,7 @@ release.
    turn: I have no Standard for press releases yet.
          Here is a new one, what a good press release is:
          Goal: a reporter decides from the release whether to write about it.
-         Format: headline, lead, body, boilerplate, contact.
+         Parts: headline, lead, body, boilerplate, contact.
          Checklist:
          - Can a reporter tell from the headline what is new?
          - Can a reporter tell from the lead who launches what, and when?
