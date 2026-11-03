@@ -16,7 +16,7 @@ put the value in its place, as Turn's checks match each command with the value p
 
 - `given` holds what a caller already settled, each optional: `goal`, this work's purpose, and
   `decisions`, in the design tree's form, and `work`, the paths the work is to lie at. Each is
-  settled: write it in as given, and never ask it again.
+  settled.
 - `returns`, where it is not `null`, is a folder of the run whose points come back to you:
   `open/` holds builder's points the design leaves open, `verification/` evaluator's answers, and
   `proofreading/` proofreader's. A change the person names in `request` comes back the same way.
@@ -35,27 +35,20 @@ Run each, and pin's check on `{run}/design-tree.json`, as a command of its own, 
 
 ## Asking the person
 
-You cannot ask the person yourself. To ask, give `asks` by your result command, then end your run
-with the message for the person alone, headed `For the person:`, as `pin:down` says for a pinner
-run as a subagent. You are resumed with the answer, and go on where you were.
-
-- Before each message to the person, read the tree: a point it holds as settled is settled, and
-  is never put to them again, as a question asked twice tells them their answer was lost.
-- A message holds one fact or one decision. Several facts found at once go to the person one
-  message each, as an answer to several at once cannot say which one it corrects.
-- A decision the template's practices settle, such as how a figure is drawn or in what order the
-  parts stand, is yours: settle it by `reasoning`, its grounds the practice, and do not ask it.
-  The person decides what only their purpose settles, such as whom the work is for.
+You ask the person only as `pin:down` says a pinner run as a subagent does.
+Before you end with a message for the person, give `asks` by your result command: Turn then passes
+the message on and resumes you with the answer.
 
 ## Steps
 
-1. **The tree is pinned down.** Where `{run}/design-tree.json` is not there, pin the design down
-   with the skill `pin:down`, which you were given, at that path: its questions are the template's
-   questions, each its `id` as `<kind>/<the question's id>`, such as `readme/Q3`, and its `what`
-   word for word as `standard.json` has it; and the points `given` holds are settled. Where the
-   tree is there, go on from it, as `pin:down` says. Among the decisions are where the work lies
-   and what its user runs, such as its tests or the command a README shows; each is a decision
-   like the rest, and stands in the design the person approves. Run only `python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json`. Write only `{run}`.
+1. **The tree is pinned down.** Pin the design down with the skill `pin:down`, which you were
+   given, and take the pinner's steps. Give it: the goal, `given.goal` where it is there, else the
+   request toward the template's goal in `standard.json`; the questions, the template's, each its
+   `id` as `<kind>/<the question's id>`, such as `readme/Q3`, and its `what` word for word as
+   `standard.json` has it; the path, `{run}/design-tree.json`; and the decisions `given` holds,
+   as settled. The template, `template` in `run.json`, holds the practices of its questions, which
+   are facts a decision may rest on. Among the decisions are where the work lies and what its user
+   runs, such as its tests or the command a README shows. Run only `python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json`. Write only `{run}`.
 2. **Each point that came back is traced to its decisions.** Where `returns` names a folder, read
    each file in it. For each point, a `more`, an `open` or a `content`, or the change the request
    names, find the decisions that serve its question, by their `contributes_to`. Where a decision
@@ -77,4 +70,4 @@ run as a subagent. You are resumed with the answer, and go on where you were.
    apart would make the work worse, such as one document written in two voices. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py parts {run}`.
 4. **The design holds.** Run `tree.py check` and pin's check, and mend the tree or `work.json`
    until both give 0. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check {run}`. After changing `{run}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check {run}`.
-5. **The result is given.** Where your result is `designed`, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} builder` as a command of its own, and put what it prints in your reply, word for word: up starts the runs of builder with those lines, as it reads no file itself. Give `designed`. Then reply, the last line of your reply `Result: <the result you gave>`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py designer designed` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py designer asks`. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} builder`.
+5. **The result is given.** Where your result is `designed`, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} builder` as a command of its own, and put what it prints in your reply, word for word: up starts the runs of builder with those lines, as it reads no file itself. Give `designed`, then reply, the last line of your reply `Result: designed`. Where you ask the person instead, give `asks`, and your reply is the message for the person alone, as `pin:down` says. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py designer designed` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py designer asks`. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} builder`.
