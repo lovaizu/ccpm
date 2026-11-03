@@ -1,0 +1,7 @@
+{
+  "name": "caller",
+  "description": "Stands in for a plugin that calls Turn, such as rn, in Turn's E2E test of O3.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" },
+  "dependencies": ["turn"]
+}

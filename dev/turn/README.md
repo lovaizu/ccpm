@@ -1,14 +1,22 @@
-# turn
+# Turn
 
-The experience turn must give is in [ux.md](ux.md), and how it is built to give it, and checked, is
-in [architecture.md](architecture.md).
+The experience Turn must give is in [ux.md](ux.md). How Turn is built to give it, and how it is
+checked, is in [architecture.md](architecture.md).
 
-- Tests: `python3 -m unittest discover -s dev/turn/tests` from the repository root. The property
-  tests, `tests/properties.py`, run by `sh dev/properties.sh turn`, and the mutation testing, set
-  in `cosmic-ray.toml`, by `sh dev/mutate.sh turn`, as [dev/README.md](../README.md) says.
-- Trials, one at a time, each run in a folder of its own in the system's temporary folder, whose
-  path it prints, the top of each file saying what it takes:
-  - `trials/orchestrator/orchestrator.py` tries the orchestrator on each way a run can take, the
-    roles stood in for with the replies `trials/orchestrator/replies.py` sets;
-  - `trials/roles/roles.py` tries each role on its own, and `trials/roles/kept.py` the generator and
-    the first user settling the work between themselves by message.
+- Tests: run `python3 -m unittest discover -s dev/turn/tests` from the repository root. They lie in
+  `tests/unit/`, at the path of what each tests, and `tests/integration/`.
+
+  `sh dev/properties.sh turn` runs the property tests, `properties_*.py`, and
+  `sh dev/mutate.sh turn` runs the mutation testing set in `cosmic-ray.toml`, as
+  [dev/README.md](../README.md) says.
+- E2E tests, each in an interactive session of Claude Code, as Turn's roles run in the background:
+  - `python3 dev/turn/tests/e2e/trial_readme.py` tries O1 of the UX on a README, as the README's
+    walkthrough runs it;
+  - `python3 dev/turn/tests/e2e/trial_module.py` tries O1 on code whose parts stand apart;
+  - `python3 dev/turn/tests/e2e/trial_new_kind.py` tries O2, on a kind Turn ships no template for;
+  - `python3 dev/turn/tests/e2e/trial_caller.py` tries O3, with the plugin `caller` in
+    `tests/e2e/caller/` standing in for rn.
+
+  In each, an AI stands in for the person, answering from an intent written in the file and never
+  shown Turn. Each takes `[runs] [first]`, the number of runs, three by default, and the number of
+  the first; the top of each file says what each run must show.
