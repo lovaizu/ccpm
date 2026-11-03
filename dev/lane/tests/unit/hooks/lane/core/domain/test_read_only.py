@@ -16,11 +16,15 @@ class TestAllows(helpers.PluginTest):
             ("docs/a.md", ["docs/"], True),
             ("README.md", ["notes.md"], False),
             ("docs-old/a.md", ["docs"], False),
+            ("changelog/core/a.md", ["${CLAUDE_PLUGIN_ROOT}/core/a.md"], True),
+            ("core/a.md", ["${CLAUDE_PLUGIN_ROOT}/core/a.md"], False),
         ):
             with self.subTest(path=path, takes=takes):
-                # Given: read_only naming a file or a folder
+                # Given: read_only naming a file or a folder, or a file of the plugin by
+                # ${CLAUDE_PLUGIN_ROOT}
                 # When: the subagent reads it, by its name or its whole path, a file under the
-                # folder, another file, or one in a folder whose name begins with it
+                # folder, another file, one in a folder whose name begins with it, the plugin's
+                # file, or a file of the same path in the project
                 # Then: what it names goes through, and the rest is stopped
                 self.assertEqual(read_only.allows(path, takes, self.plugin, self.base), through)
 
