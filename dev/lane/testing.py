@@ -196,6 +196,22 @@ TRIES = [
         "version": "not recorded",
         "day": "2026-11-03",
     },
+    {
+        "showed": "with plugins a and b enabled, each event of b's subagent worker, SubagentStart,"
+        " PreToolUse, PostToolUse and SubagentStop, reaches the hooks of both, agent_type"
+        " `b:worker` and one agent_id, in the foreground and in the background, whether or not a"
+        " declares b in its dependencies; the two plugins' hooks run in either order",
+        "version": "2.1.318",
+        "day": "2026-11-05",
+    },
+    {
+        "showed": "where both plugins' hooks deny one PreToolUse, the call is denied and the"
+        " subagent sees one reason alone, `PreToolUse:Bash hook error: <reason>`; where one denies"
+        " and the other allows, the deny holds; where both block one SubagentStop, the subagent"
+        " gets both reasons in one message",
+        "version": "2.1.318",
+        "day": "2026-11-05",
+    },
 ]
 
 
