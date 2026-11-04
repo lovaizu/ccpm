@@ -10,7 +10,7 @@ on a plugin goes in is in [.claude/rules/dev.md](../.claude/rules/dev.md).
 - [Rn](./rn/)
 - [Lane](./lane/): also `testing.py` and `trials/trying.py`, what every plugin's tests and trials
   stand on
-- [pin](./pin/)
+- [Pin](./pin/)
 
 ## The checks on every push
 

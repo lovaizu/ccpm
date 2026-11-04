@@ -32,7 +32,7 @@ Ask one point in a message, in the language the request is written in, worded so
 your recommendation.
 
 Put the kind's purpose, and its conditions, each for the person to approve, in the five lines that
-pin's `core/roles/pinner.md` defines, in its words here:
+Pin's `core/roles/pinner.md` defines, in its words here:
 
 - Put each decision, and each proposal, to the person in five lines, in this order, each a bold
   English label and one sentence in the person's language:

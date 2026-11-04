@@ -6,7 +6,7 @@ you can write the step of your plugin that calls it.
 ## The call
 
 List Turn in the `dependencies` of your plugin's `.claude-plugin/plugin.json`, as
-`"dependencies": ["turn"]`, so installing your plugin installs Turn, and pin with it.
+`"dependencies": ["turn"]`, so installing your plugin installs Turn, and Pin with it.
 
 Start the agent `turn:up` in the background, with the request in plain words, such as "the README
 of this repository". Turn needs nothing more: it asks the person the kind of work and this work's
@@ -30,8 +30,8 @@ Each key of `given` is optional.
 
 - `kind`: the kind of work, such as `readme`, or one Turn has no template for yet, such as
   `man-page`. Turn takes it without asking.
-- `goal`: this work's purpose, in the form of pin's design tree. Turn takes it without asking.
-- `decisions`: each other point settled, in the form of pin's design tree. Turn joins each to the
+- `goal`: this work's purpose, in the form of Pin's design tree. Turn takes it without asking.
+- `decisions`: each other point settled, in the form of Pin's design tree. Turn joins each to the
   questions it serves, and builds the rest of the design on it. Leave `contributes_to` empty where
   you do not know the template's questions: Turn joins it.
 - `work`: the paths the work is to lie at.

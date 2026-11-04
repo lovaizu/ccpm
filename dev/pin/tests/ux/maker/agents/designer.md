@@ -1,6 +1,6 @@
 ---
 name: designer
-description: Designs a change to a project before it is made, by pinning its design down with pin. Use when asked to design a change.
+description: Designs a change to a project before it is made, by pinning its design down with Pin. Use when asked to design a change.
 tools: Read, Write, Edit, Bash, Glob, Grep, Agent
 skills:
   - pin:down

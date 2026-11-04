@@ -1,6 +1,6 @@
 ---
 name: reviser
-description: Revises a design pinned down before, by reopening one of its decisions with pin. Use when asked to reopen a decision of a design.
+description: Revises a design pinned down before, by reopening one of its decisions with Pin. Use when asked to reopen a decision of a design.
 tools: Read, Write, Edit, Bash, Glob, Grep, Agent
 skills:
   - pin:down

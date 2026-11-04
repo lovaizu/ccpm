@@ -1,30 +1,30 @@
-# pin
+# Pin
 
-pin is a Claude Code plugin that settles every decision your plan needs before any work on it
+Pin is a Claude Code plugin that settles every decision your plan needs before any work on it
 starts, and asks you only the decisions that are yours, one at a time.
 
-pin is for you when you are about to have an AI make something that takes more than one sitting,
-such as a feature or a document, and you want it to make what you meant. With pin, every decision
+Pin is for you when you are about to have an AI make something that takes more than one sitting,
+such as a feature or a document, and you want it to make what you meant. With Pin, every decision
 the plan needs is settled before the work starts. You decide each one that is yours, the AI finds
 each fact itself, and nothing is left for the AI to guess along the way. A point settled before the
-work does not come back later as rework. pin is also for a plugin that makes something for a
-person, such as Turn or rn: the plugin hands pin the goal of what it makes, and gets back a design
+work does not come back later as rework. Pin is also for a plugin that makes something for a
+person, such as Turn or rn: the plugin hands Pin the goal of what it makes, and gets back a design
 it can build on.
 
 A plan talked over in a chat lives only in the chat: questions come as they occur to the AI, and
-a point no one raised is guessed later. pin keeps the plan as a design tree, a file that holds the
+a point no one raised is guessed later. Pin keeps the plan as a design tree, a file that holds the
 goal at its root and, under it, each decision joined to what it serves and to the decisions it
 builds on.
 
-- **From the goal down.** pin asks of the goal what must hold for it, and of each of those the
+- **From the goal down.** Pin asks of the goal what must hold for it, and of each of those the
   decisions that make it hold, until a fact or you settle each one. A decision that serves nothing
   is cut, so you are not asked it.
 - **Facts are found, decisions are asked.** A subagent looks up each fact, such as what reads a
-  file today, while pin goes on with the questions that do not wait for it. pin shows you each fact
+  file today, while Pin goes on with the questions that do not wait for it. Pin shows you each fact
   as it is found, for you to confirm, and asks you only the decisions that are yours, each with a
   recommendation.
-- **One point at a time, in order.** Each message from pin holds one fact to confirm or one
-  decision to make. pin asks a decision only once the decisions it builds on are settled, so your
+- **One point at a time, in order.** Each message from Pin holds one fact to confirm or one
+  decision to make. Pin asks a decision only once the decisions it builds on are settled, so your
   answer to one question can still change the next.
 - **Checked by a script.** The script `check.py` checks the file after each answer: every question
   is served by a decision, every decision reaches the goal, and each decision comes after the ones
@@ -34,19 +34,19 @@ builds on.
 
 **Non-goals**
 
-- pin does not make the work. It ends once you confirm that you and the AI understand the plan the
+- Pin does not make the work. It ends once you confirm that you and the AI understand the plan the
   same way.
-- pin does not judge whether a decision is right. Its script checks only that the decisions hold
+- Pin does not judge whether a decision is right. Its script checks only that the decisions hold
   together; you judge each one as you answer it.
-- pin does not decide what is yours. A decision you leave unanswered stays open, and pin does not
+- Pin does not decide what is yours. A decision you leave unanswered stays open, and Pin does not
   go on as if you had answered.
-- pin does not ask several questions in one message, and it sets no limit on the number of
+- Pin does not ask several questions in one message, and it sets no limit on the number of
   questions. To end sooner, tell it to wrap up; the decisions still open stay marked as open.
 
 ## Requirements
 
 - Claude Code 2.1.317 or later: `claude --version` shows its version.
-- Python 3.9 or later, run as `python3`, which pin's check script `check.py` runs on:
+- Python 3.9 or later, run as `python3`, which Pin's check script `check.py` runs on:
   `python3 --version` shows its version.
 
 ## Installation
@@ -59,16 +59,16 @@ claude plugin install pin@ccpm
 `claude plugin list` then lists `pin@ccpm`. In a new Claude Code session, `/pin:down` is then one of
 its commands.
 
-A plugin that uses pin lists it in the `dependencies` of its `.claude-plugin/plugin.json`, as
-`"dependencies": ["pin"]`, and installing that plugin installs pin with it.
+A plugin that uses Pin lists it in the `dependencies` of its `.claude-plugin/plugin.json`, as
+`"dependencies": ["pin"]`, and installing that plugin installs Pin with it.
 
 ## Walkthrough
 
 At the end, you have your plan's design tree in a file, every decision in it settled, and each one
 that is yours decided by you.
 
-This walkthrough is not yet from a real run: it shows what pin is being built to show, and its
-output is replaced by a real run's once pin is built.
+This walkthrough is not yet from a real run: it shows what Pin is being built to show, and its
+output is replaced by a real run's once Pin is built.
 
 Your notes app `notes` prints your notes as text with `notes list`. You want it to give JSON too.
 In Claude Code, at the root of the app's repository, you type:
@@ -77,7 +77,7 @@ In Claude Code, at the root of the app's repository, you type:
 /pin:down notes list should give JSON as well
 ```
 
-While a subagent looks for what reads the output of `notes list` today, pin asks its first
+While a subagent looks for what reads the output of `notes list` today, Pin asks its first
 question:
 
 ```text
@@ -88,14 +88,14 @@ Gap: they do not say who reads the JSON, or what it spares them.
 Proposal: the goal is that scripts that read `notes list` get its notes as JSON, so they stop parsing text; yes?
 ```
 
-You answer `yes`. Meanwhile the subagent has found a fact, and pin shows it to you alone:
+You answer `yes`. Meanwhile the subagent has found a fact, and Pin shows it to you alone:
 
 ```text
 Found: scripts/sync.py:14 reads `updated` with `datetime.fromisoformat(fields[3])`, so it
 expects ISO 8601. Is that right?
 ```
 
-You answer `right`. pin asks the next decision, one that builds on the goal:
+You answer `right`. Pin asks the next decision, one that builds on the goal:
 
 ```text
 Purpose: each script that reads the JSON finds in it what it reads in the text today.
@@ -105,7 +105,7 @@ Gap: the JSON has no fields yet.
 Proposal: each note has id, title, tags and updated, the fields the text output shows today; yes?
 ```
 
-Questions and facts go on like this, one at a time. pin decides itself what follows from the
+Questions and facts go on like this, one at a time. Pin decides itself what follows from the
 goal, such as keeping the text output the default, and does not ask you it. When no decision is left open, it
 shows you the design:
 
@@ -118,7 +118,7 @@ D3  `updated` is in ISO 8601, in UTC.                              (found, you c
 Do we understand the plan the same way?
 ```
 
-You answer `yes`, and pin ends. The design tree is in
+You answer `yes`, and Pin ends. The design tree is in
 `.pin/20261103-notes-json/design-tree.json`:
 
 ```json
@@ -158,7 +158,7 @@ flowchart LR
 
 - `pin:down` writes each answer into the design tree before it asks the next question, and runs
   `check.py` on it each time.
-- A plugin that uses pin gives its role `pin:down`, with the goal of what it makes, the questions
+- A plugin that uses Pin gives its role `pin:down`, with the goal of what it makes, the questions
   that must hold for it and where to keep the tree. The role then works as the conversation does
   above, and puts each fact and each question to you through the conversation you talk in.
 - A role run as a subagent ends with its message for you headed `For the person:`. The caller
@@ -167,7 +167,7 @@ flowchart LR
 
 ## Documentation
 
-- [pin's development folder](../../dev/pin/) holds its UX and its architecture.
+- [Pin's development folder](../../dev/pin/) holds its UX and its architecture.
 
 ## License
 
@@ -176,4 +176,4 @@ flowchart LR
 `pin:down` is made from Matt Pocock's skill
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md),
 under the MIT License, Copyright (c) 2026 Matt Pocock, as [LICENSE-grilling](LICENSE-grilling)
-gives in full. pin asks one question at a time, where grilling asks a round of questions.
+gives in full. Pin asks one question at a time, where grilling asks a round of questions.

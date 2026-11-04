@@ -22,7 +22,7 @@ how good works of the same kind are made, and has the work judged by an AI that 
   decision the template's questions need, such as which use the walkthrough shows. It finds each
   fact itself and shows it to you to confirm. It asks you each decision that is yours, one at a
   time, with a recommendation. You approve the design before anything is made. Turn does this
-  with [pin](../pin/README.md), a plugin installed with Turn.
+  with [Pin](../pin/README.md), a plugin installed with Turn.
 - **Used by an AI that did not make it.** Once the work is made, another AI uses it as its user
   would. It is given the work and the template's questions, not the design, as the work's user
   never sees the design. It answers each question with the lines of the work that meet it, or with

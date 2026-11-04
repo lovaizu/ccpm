@@ -1,6 +1,6 @@
-# pin
+# Pin
 
-The experience pin must give is in [ux.md](ux.md). How pin is built to give it, and how it is
+The experience Pin must give is in [ux.md](ux.md). How Pin is built to give it, and how it is
 checked, is in [architecture.md](architecture.md).
 
 - Tests: run `python3 -m unittest discover -s dev/pin/tests` from the repository root. They lie in
@@ -17,7 +17,7 @@ checked, is in [architecture.md](architecture.md).
   README's walkthrough runs it, and `python3 dev/pin/tests/ux/trial_caller.py` tries O2 three
   times with the plugin `maker` in `tests/ux/maker/` standing in for Turn or rn. In each, an AI
   stands in for the person, answering from an intent written in `tests/pinning.py` and never shown
-  pin.
+  Pin.
 
 Each trial takes `[runs] [first]`, the number of runs and the number of the first; the top of each
 file says what each run must show.

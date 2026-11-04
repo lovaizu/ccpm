@@ -1,6 +1,6 @@
 ---
 name: down
-description: Pins a plan down before any work on it starts. Finds every decision the plan needs, from its goal down, keeps them in a design tree file, finds each fact itself and shows it to the person to confirm, and asks the person only the decisions that are theirs, one at a time, until nothing is left assumed. Use when the person wants to settle a plan, a feature, a change or a document before it is made, or types /pin:down; also when a role is given a goal and questions to pin down as a design tree.
+description: Pins a plan down before any work on it starts. Finds every decision the plan needs, from its goal down, keeps them in a design tree file, finds each fact itself and shows it to the person to confirm, and asks the person only the decisions that are theirs, one at a time, until nothing is left assumed. Use when the person wants to settle a plan, a feature, a change or a document before it is made, or types /pin:down; also when a role is given a goal and questions to Pin down as a design tree.
 argument-hint: "<the plan, in your own words>"
 ---
 

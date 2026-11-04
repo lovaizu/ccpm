@@ -1,7 +1,7 @@
 # Turn architecture
 
 Turn makes a work in two phases, each a loop of roles that Lane's routes carry from one role to the
-next. In the content phase, designer settles a design tree: pin's file of the decisions the work
+next. In the content phase, designer settles a design tree: Pin's file of the decisions the work
 needs, each joined to the question of the kind's template it serves, under the work's purpose.
 generator makes the work decision by decision. evaluator answers each question as the work's user,
 and each shortfall goes back to its decision. In the refactoring phase, refactorer improves how
@@ -41,7 +41,7 @@ change to how Turn moves a work reaches every kind at once.
 
 ### Every decision comes from the purpose down
 
-designer settles the work by [pin](../../plugins/pin/README.md)'s design tree: the work's purpose
+designer settles the work by [Pin](../../plugins/pin/README.md)'s design tree: the work's purpose
 at the root, the template's questions under it, and under each question the decisions that make it
 yes. planner makes a new kind's template the same way, the kind's purpose at the root.
 
@@ -50,7 +50,7 @@ decision serves is a point the work will guess (KR1.1, KR2.1).
 
 ### The person is asked only what is theirs, one point at a time
 
-The roles find facts themselves, and ask the person only what they decide, as pin's `pin:down`
+The roles find facts themselves, and ask the person only what they decide, as Pin's `pin:down`
 does. A point the caller settled is taken as given and never asked again.
 
 A question about a fact spends the person's time on what an AI could look up, and a point asked
@@ -147,7 +147,7 @@ flowchart LR
   PR["proofreader<br>#lt;AI · subagent#gt;"]
   RS["researcher<br>#lt;AI · Claude Code subagent#gt;"]
   G["Lane's guard and result.py<br>#lt;hook and command line · Python 3.9#gt;"]
-  S["Turn's scripts and pin's check.py<br>#lt;command line · Python 3.9#gt;"]
+  S["Turn's scripts and Pin's check.py<br>#lt;command line · Python 3.9#gt;"]
   F[("the run's folder<br>#lt;JSON files#gt;")]
   T[("templates<br>#lt;JSON files#gt;")]
   W[("the work<br>#lt;the repository's files#gt;")]
@@ -200,7 +200,7 @@ calls Turn.
   routes and the result each role gave, and holds each role to its lanes. Lane's `result.py` alone
   checks that a result is one a route is on.
 - Turn's scripts alone check what Lane does not: `practices.py` a template's form, `tree.py` that
-  the design tree asks the template's questions, and `answers.py` each answers file. pin's
+  the design tree asks the template's questions, and `answers.py` each answers file. Pin's
   `check.py` alone checks that the design tree holds together. `tree.py parts` and
   `practices.py ready` alone split a step's work into the runs `up` starts.
 - The main conversation follows `/turn:up`'s skill only to start `up` and to pass on its questions,
@@ -214,8 +214,8 @@ writes is also held to its form by an `in_form` lane, the form a JSON Schema in
 | Role | Writes only | Runs only, beside its result command | Is held, as it ends, to |
 |---|---|---|---|
 | `up` | nothing | nothing | having started each role Lane named |
-| planner | `{run}`, `.turn/best-practices/` | pin's check, `practices.py ready` | `practices.py ready` passed after the run's last change |
-| designer | `{run}` | pin's check, `tree.py check`, `tree.py parts` | `tree.py check` passed after the run's last change |
+| planner | `{run}`, `.turn/best-practices/` | Pin's check, `practices.py ready` | `practices.py ready` passed after the run's last change |
+| designer | `{run}` | Pin's check, `tree.py check`, `tree.py parts` | `tree.py check` passed after the run's last change |
 | generator | `{work}`, `{answers}`, `{open}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed after the work's last change |
 | evaluator | `{answers}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed |
 | refactorer | `{work}`, `{answers}` | `{commands}`, `answers.py check` | as generator |
@@ -321,7 +321,7 @@ one-to-many join is nested, and a many-to-many join lists IDs.
   `refactor-code`; and `groups` and `refactoring_groups`, the template's questions in groups, each
   `id` and `questions`, as `practices.py ready` writes them: the questions that ask of the same
   parts together, and those of `the whole` in one group.
-- **Design tree**: `design-tree.json`, in pin's form: `goal`, `questions` and `decisions`. Its
+- **Design tree**: `design-tree.json`, in Pin's form: `goal`, `questions` and `decisions`. Its
   questions are the template's benefits, each `id` named with the template's file as `readme/Q3`,
   which `tree.py check` verifies. planner's `kind-tree.json` has the same form, its root the kind's
   purpose.
@@ -419,18 +419,18 @@ sequenceDiagram
     D->>RS: in the background, a fact to find
     D->>F: writes Design tree, the template's Questions under the goal
   end
-  D->>S: pin's check and tree.py check
+  D->>S: Pin's check and tree.py check
   loop while a point is the person's, as pin:down settles it
     D->>G: gives asks (Result)
     D-->>U: ends with the point (a question for the person)
     Note over P,D: The point reaches the person, and the answer comes back, as planner's did.
     U->>D: resumes, with the answer
     D->>F: writes the Design tree
-    D->>S: pin's check and tree.py check
+    D->>S: Pin's check and tree.py check
   end
   D->>S: tree.py parts
   D->>F: writes Design tree, every Decision settled, and Work with its parts
-  D->>S: pin's check and tree.py check
+  D->>S: Pin's check and tree.py check
   D->>G: gives designed (Result)
   D-->>U: ends
   G-->>U: the next role, generator (Route)
@@ -627,7 +627,7 @@ sequenceDiagram
 
 - A stopped run goes on when `up` is started with the run's folder, as the first sequence draws:
   planner finds `run.json` and gives `planned`, designer finds the tree and goes on from it, as
-  pin's `pin:down` does, and the roles after carry on from the files.
+  Pin's `pin:down` does, and the roles after carry on from the files.
 - A role resumed by SendMessage keeps its `agent_id`, and gives a result again for the resumed run,
   the later over `asks`, as [Lane's routes](../../plugins/lane/docs/routes.md#how-a-subagent-gives-its-result)
   say. The routes then go on from the start that asked.
@@ -644,7 +644,7 @@ flowchart TB
       RO["up and Turn's roles"]
       RS2["researchers"]
     end
-    PY["Python processes #lt;python3 3.9 or later#gt;:<br>Lane's guard and result.py, Turn's scripts, pin's check.py"]
+    PY["Python processes #lt;python3 3.9 or later#gt;:<br>Lane's guard and result.py, Turn's scripts, Pin's check.py"]
     REPO[("the repository: the work, .turn/#lt;yyyymmdd#gt;-#lt;name#gt;/, .turn/best-practices/")]
     TMP[("the system's temporary folder: Lane's kept calls")]
   end
@@ -659,7 +659,7 @@ flowchart TB
 ```
 
 - The person installs Turn as [the README](../../plugins/turn/README.md#installation) says. Turn's
-  manifest lists `pin` in its `dependencies`, so installing Turn installs pin. Lane is laid into
+  manifest lists `pin` in its `dependencies`, so installing Turn installs Pin. Lane is laid into
   Turn's `hooks/lane/`, and needs no install.
 - The person starts Turn with `/turn:up`; a caller starts the agent `turn:up`. Claude Code runs
   each of Turn's agents in the background, as each sets `background: true`.
@@ -714,7 +714,7 @@ Turn is tested as [Test](../plugin-best-practice.md#test) says. What follows is 
 | Claude Code process: `/turn:up`, `up` and the roles [Claude Code 2.1.317 or later] | trials on Opus · ●●● · each role alone, one input for each result it may give and each point it asks or settles, with the person, its neighbours and the researchers stood in for | unittest, Turn's lanes and routes and Lane's hooks as laid, real; the roles and Claude Code as doubles · ●●● · each path of the six sequences | trials on Opus · ●○○ · O1 on a README and on a module of code with two parts apart, O2 on a man page, and O3 with a stand-in caller |
 
 Lane's guard and result.py have no row: Lane tests them, and Turn's architecture tests run them as
-laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture tests run it.
+laid in Turn. Pin's `check.py` has none: Pin tests it, and Turn's architecture tests run it.
 
 - **unit, the roles**: a trial runs one role alone, as
   [Unit: prompts](../plugin-best-practice.md#unit-prompts) says. Its classes are the results the role may
@@ -728,7 +728,7 @@ laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture t
   for, each question to the person is one point and is theirs, and evaluator and proofreader read
   nothing but the work and their standard.
 - **architecture**: what joins Turn's parts runs real: Turn's scripts, Turn's lanes and routes as
-  laid in `hooks/`, Lane's hooks and `result.py` laid there, and pin's `check.py`, on a run's folder
+  laid in `hooks/`, Lane's hooks and `result.py` laid there, and Pin's `check.py`, on a run's folder
   on disk. `up`, each role and the researcher are roles an AI runs, so a double stands in for each. A double of the main conversation, or of a caller, answers
   each question with a set answer. The double of Claude Code, from Lane's `dev/lane/testing.py`,
   sends the hook events. Each test runs one path of [Sequences](#sequences), and checks at each step
@@ -752,7 +752,7 @@ laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture t
   reads Turn's entries and laid files as Claude Code and Lane take them: each agent in the
   background naming its part, each script a part names, and the routes and lanes as this document
   gives them.
-- **ux**: a trial runs Claude Code on Opus on copies of Turn and pin, as
+- **ux**: a trial runs Claude Code on Opus on copies of Turn and Pin, as
   [ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says, in an interactive
   session, as `claude -p` does not hand a background role's end back to `up`. Each runs an
   objective's scenario on `tidy`, a repository of a real tool's size. An AI stands in for the

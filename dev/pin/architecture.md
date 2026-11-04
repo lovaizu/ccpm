@@ -1,19 +1,19 @@
-# pin architecture
+# Pin architecture
 
-pin gives its users a design tree, a JSON file that holds a plan's goal, the questions that must
+Pin gives its users a design tree, a JSON file that holds a plan's goal, the questions that must
 hold for the goal, and the decisions that make each question hold. The pinner, the AI that follows
 the skill `pin:down`, builds the tree from the goal down and settles each decision: a subagent
 finds each fact, and the person confirms each fact and decides what is theirs, one point at a
 time. The pinner is the main conversation when the person runs `/pin:down`, or a role of Turn or rn
 that takes the skill. One script, `check.py`, checks after each answer that the tree holds
-together. What this gives the person, Turn and rn is in [pin's UX](ux.md).
+together. What this gives the person, Turn and rn is in [Pin's UX](ux.md).
 
 ## Principles
 
-pin follows all the principles of [the plugin best practice](../plugin-best-practice.md#principles).
+Pin follows all the principles of [the plugin best practice](../plugin-best-practice.md#principles).
 Under [Read by those who did not make it](../plugin-best-practice.md#read-by-those-who-did-not-make-it),
 the person reads the design first, as they read it in full to confirm it. The
-principles below are what pin adds.
+principles below are what Pin adds.
 
 ### Facts are found, decisions are asked
 
@@ -32,7 +32,7 @@ not seen at its line may be wrong, as when one listing numbered the lines of sev
 Matt Pocock's
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md):
 "Finding _facts_ is your job, never the user's", and "The _decisions_ are the user's: put each to
-them and wait." grilling does not show the facts it finds; pin shows each one, as
+them and wait." grilling does not show the facts it finds; Pin shows each one, as
 [Asking until nothing is left to decide](../plugin-best-practice.md#asking-until-nothing-is-left-to-decide)
 says, since a fact found but not shown is still a guess made for the person.
 
@@ -75,20 +75,20 @@ serves is a gap. `check.py` finds both, and also a decision decided before one i
 A decision that serves nothing costs the person a question for nothing, and a gap is a point the
 work will guess (KR1.1, KR2.1).
 
-### pin knows no caller
+### Pin knows no caller
 
-No line of pin names a plugin that uses it. A caller gives `pin:down` the goal, the questions the
-work must answer and the path of the tree, and the decisions it has already settled; pin fills the
+No line of Pin names a plugin that uses it. A caller gives `pin:down` the goal, the questions the
+work must answer and the path of the tree, and the decisions it has already settled; Pin fills the
 rest. A caller may add keys of its own to the tree, and `check.py` leaves them.
 
-Turn and rn each take pin in as it is, and a change for one of them would reach the other unseen.
+Turn and rn each take Pin in as it is, and a change for one of them would reach the other unseen.
 
 ### The check command keeps one form
 
 `pin:down` names the check as `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/<name>.py <args>`, today
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py <design tree>`. This form stays the same across
-pin's versions; only the folder that Claude Code puts in place of `${CLAUDE_PLUGIN_ROOT}` differs.
-Claude Code puts pin's folder there wherever the text of `pin:down` is loaded, in a caller's role
+Pin's versions; only the folder that Claude Code puts in place of `${CLAUDE_PLUGIN_ROOT}` differs.
+Claude Code puts Pin's folder there wherever the text of `pin:down` is loaded, in a caller's role
 too (tried on Claude Code 2.1.317, 2026-11-03). The Bash tool's environment holds no
 `CLAUDE_PLUGIN_ROOT`
 ([plugins reference](https://code.claude.com/docs/en/plugins-reference#where-each-variable-resolves)),
@@ -140,7 +140,7 @@ flowchart LR
 ```
 
 Legend: a rounded box is a person; a box is an AI or a script, with its kind and what it is made
-with in angle brackets; a cylinder is a file; a box with double sides lies outside pin. Each
+with in angle brackets; a cylinder is a file; a box with double sides lies outside Pin. Each
 arrow says what one does to another, with the data it hands on named as in the data model, and its
 number gives the order.
 
@@ -149,9 +149,9 @@ number gives the order.
   It alone writes the tree.
 - The researcher finds one fact that a search must find, and nothing else, as
   [Facts are found, decisions are asked](#facts-are-found-decisions-are-asked) says. It is a
-  subagent that Claude Code ships, such as Explore, so pin holds no agent of its own.
+  subagent that Claude Code ships, such as Explore, so Pin holds no agent of its own.
 - `check.py` alone decides whether the tree holds together. It reads the tree and writes nothing.
-- pin has no roles of its own, so a caller starts no orchestrator of pin's, as
+- Pin has no roles of its own, so a caller starts no orchestrator of Pin's, as
   [A plugin that uses another](../plugin-best-practice.md#a-plugin-that-uses-another) would have it: the
   caller's role takes `pin:down` and runs its steps itself.
 - A pinner that is a caller's role asks the person through the main conversation, as
@@ -159,7 +159,7 @@ number gives the order.
   resumes it with the person's answer under the line `The person's answer, word for word:`, the
   one form the pinner takes as the person's words: Claude Code hands a resuming message on as the
   coordinator's, and a pinner left to guess who speaks asked again what the person had answered,
-  in pin's trial of a caller and in Turn's, until the caller gave it in that form.
+  in Pin's trial of a caller and in Turn's, until the caller gave it in that form.
 - `pin:down` is a skill that the AI may call: a caller's role takes it by the `skills` field of its
   frontmatter or by the Skill tool, and Claude Code preloads only a skill the AI may call
   ([subagents](https://code.claude.com/docs/en/sub-agents#preload-skills-into-subagents)).
@@ -358,9 +358,9 @@ flowchart TB
   CCP -- "the model's turns" --> API
 ```
 
-- The person installs pin as [the README](../../plugins/pin/README.md#installation) says. A plugin
-  that uses pin lists it in its `dependencies`, and installing that plugin installs pin.
-- The person starts pin with `/pin:down`. A caller's role starts it by taking the skill.
+- The person installs Pin as [the README](../../plugins/pin/README.md#installation) says. A plugin
+  that uses Pin lists it in its `dependencies`, and installing that plugin installs Pin.
+- The person starts Pin with `/pin:down`. A caller's role starts it by taking the skill.
 - `check.py` uses Python 3.9 and its standard library only, as
   [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
   says.
@@ -392,25 +392,25 @@ dev/pin/
 .pin/<yyyymmdd>-<name>/design-tree.json   a person's Design tree
 ```
 
-`LICENSE-grilling` lies in pin's folder, as installing copies only that folder, and the MIT
+`LICENSE-grilling` lies in Pin's folder, as installing copies only that folder, and the MIT
 License asks that its notice go with each copy of a substantial portion.
 
 ## Test
 
-pin is tested as [Test](../plugin-best-practice.md#test) says. What follows is what pin adds.
+Pin is tested as [Test](../plugin-best-practice.md#test) says. What follows is what Pin adds.
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|
 | check.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each of the three checks, the tree's form, and the exit and its message | unittest, check.py and the tree on disk real, the pinner as a double · ●●● · each path of O1, O2 and a reopen, check.py run by the command as `pin:down` writes it on each tree the double writes | trials on Opus · ●○○ · run by the pinner on each answer |
 | Claude Code process: the pinner [Claude Code 2.1.317 or later] | trials on Opus · ●●● · `pin:down` alone, one input for each class of point and each step of its flow, with the person and the researcher stood in for | unittest · ●●○ · `pin:down`'s entry as Claude Code takes it: the AI may call it, it links the pinner's part, and it names the check in its one form | trials on Opus · ●○○ · O1 by `/pin:down`, and O2 by a caller's role that takes `pin:down` |
 
-The researcher has no row of its own: Claude Code ships it, and pin gives it only a prompt, tried
+The researcher has no row of its own: Claude Code ships it, and Pin gives it only a prompt, tried
 with the pinner's.
 
-pin lays no lanes. Its only role, the pinner, runs in the main conversation, where a hook is not
+Pin lays no lanes. Its only role, the pinner, runs in the main conversation, where a hook is not
 told which skill runs, or inside a caller's role, which the caller's own lanes hold
 ([The guard tells each role its steps again](../plugin-best-practice.md#the-guard-tells-each-role-its-steps-again)).
-So pin's steps are held by the check and by these tests.
+So Pin's steps are held by the check and by these tests.
 
 - **unit, the pinner**: a trial runs `pin:down` alone, as
   [Unit: prompts](../plugin-best-practice.md#unit-prompts) says. Its classes are the kinds of point in
@@ -426,10 +426,10 @@ So pin's steps are held by the check and by these tests.
   passes where each message to the person holds one point, a fact found is shown to the person
   before the design, no decision asked is one the pinner could settle or one the caller settled,
   and the tree passes `check.py` with no decision open, or with only those the person left open.
-- **architecture**: what joins pin's parts runs real: `check.py`, run by the command that
+- **architecture**: what joins Pin's parts runs real: `check.py`, run by the command that
   `pin:down` names, on the tree on disk. The pinner is a role an AI runs, so a double stands in for
   it, and runs one path of [Sequences](#sequences) each. At each step of the path, the double writes the tree the step
-  calls for, and runs `check.py` by the command that `pin:down` names, with pin's folder put in,
+  calls for, and runs `check.py` by the command that `pin:down` names, with Pin's folder put in,
   from the folder the pinner works in. The test checks that `check.py` reads that tree and gives
   the `Check result` the step calls for: that the tree holds, or the problem it names, such as a
   question no decision serves or the decisions open to decide now. The paths:
@@ -444,11 +444,11 @@ So pin's steps are held by the check and by these tests.
   change to that form fails the double too. A tree that breaks the form is a class of `check.py`'s
   unit tests, as no path of the pinner writes one. A second test reads `skills/down/SKILL.md` as Claude
   Code takes it, as [The check command keeps one form](#the-check-command-keeps-one-form) promises.
-- **ux**: a trial runs Claude Code on Opus on a copy of pin and of a plugin standing in for a
+- **ux**: a trial runs Claude Code on Opus on a copy of Pin and of a plugin standing in for a
   caller, as [ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says, on the
   notes app's `--json` option, a plan of several decisions that build on one another. There is one
   for O1 by `/pin:down`, and one for O2 by a caller's role. An AI stands in for the person with an
-  intent never shown pin, and a run passes where the confirmed tree holds what that intent wants,
+  intent never shown Pin, and a run passes where the confirmed tree holds what that intent wants,
   the person's own decisions settled by them, with no decision open, which is what O1 and O2 say.
   For KR1.1 and KR2.1 the trial measures the share of the intent's decisions that the tree does not
   hold as the person holds them, and the share of messages that ask a fact or a settled point. For
@@ -456,8 +456,8 @@ So pin's steps are held by the check and by these tests.
   are better.
 - `check.py` weighs ●●● in unit and architecture tests, as a tree it passes wrongly sends a gap into
   the work unseen. The pinner weighs ●●● in its unit trials, as a question that is not the
-  person's, or a decision taken for them, is what pin is there to stop, and those trials try each
+  person's, or a decision taken for them, is what Pin is there to stop, and those trials try each
   of its cases.
 - The test of `pin:down`'s entry weighs ●●○: the trials run the entry too, and the test only finds
-  sooner an entry that Claude Code would not load as pin needs.
+  sooner an entry that Claude Code would not load as Pin needs.
 - The ux trials weigh ●○○. They only confirm, in real use, what the lower levels have checked.

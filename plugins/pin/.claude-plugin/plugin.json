@@ -1,6 +1,6 @@
 {
   "name": "pin",
-  "description": "pin settles every decision your plan needs before any work on it starts, and asks you only the decisions that are yours, one at a time.",
+  "description": "Pin settles every decision your plan needs before any work on it starts, and asks you only the decisions that are yours, one at a time.",
   "version": "0.1.0",
   "author": { "name": "lovaizu" }
 }

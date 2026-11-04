@@ -70,7 +70,7 @@
   <text class="kind" x="470" y="250">work, request;</text>
   <text class="kind" x="470" y="268">in .&lt;plugin&gt;/&lt;yyyymmdd&gt;-&lt;name&gt;/,</text>
   <text class="kind" x="470" y="284">what may be kept: the state, with each</text>
-  <text class="kind" x="470" y="300">answer and approval, Good lines, need</text>
+  <text class="kind" x="470" y="300">answer and approval, good, more</text>
 
   <rect class="box" x="640" y="200" width="260" height="120" rx="0"/>
   <text class="name" x="770" y="228">the temporary folder</text>
@@ -81,7 +81,7 @@
   <!-- outside the product -->
   <rect class="box" x="40" y="420" width="260" height="60" rx="8"/>
   <text class="name" x="170" y="446">GitHub: the marketplace</text>
-  <text class="kind" x="170" y="466">lovaizu/ccpm</text>
+  <text class="kind" x="170" y="466">&lt;owner&gt;/&lt;repository&gt;</text>
   <path class="line" d="M170,420 V320" marker-end="url(#arrow)"/>
   <text class="label" x="180" y="376">the plugin installed</text>
 

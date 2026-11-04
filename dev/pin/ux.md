@@ -1,12 +1,12 @@
-# pin UX
+# Pin UX
 
-pin has two users:
+Pin has two users:
 
 - a person who has a plan to hand to an AI, such as a feature or a document to be made;
 - Turn and rn, plugins that make a work for a person, such as a document or code, and settle its
   design first.
 
-pin keeps a plan as a design tree: the decisions the plan needs, each joined to the goal it serves,
+Pin keeps a plan as a design tree: the decisions the plan needs, each joined to the goal it serves,
 from the goal down.
 
 ## OKRs
@@ -42,7 +42,7 @@ participants:
 - main conversation (AI): the Claude Code conversation the person talks in. In O1 it runs
   `/pin:down`.
 - researcher (AI): a subagent that finds one fact, such as what reads the output of `notes list`.
-- `check.py` (script): pin's script that checks a design tree.
+- `check.py` (script): Pin's script that checks a design tree.
 - designer (AI): Turn's role that designs a work, in O2.
 
 ### O1: The person pins down the plan with /pin:down

@@ -117,7 +117,7 @@
   <path class="line" d="M480,414 H600" marker-end="url(#arrow)"/>
   <text class="label" text-anchor="middle" x="540" y="406">work</text>
   <path class="line" d="M600,446 H480" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="540" y="464">need</text>
+  <text class="label" text-anchor="middle" x="540" y="464">more</text>
 
   <!-- guard and the roles -->
   <path class="line dashed" d="M480,550 L410,466" marker-end="url(#arrow)"/>

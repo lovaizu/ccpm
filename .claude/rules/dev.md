@@ -66,6 +66,9 @@ it before the architecture is made.**
 to take in what is general, as [Learning from each run](../../dev/plugin-best-practice.md#learning-from-each-run)
 says.
 
+**Put the style of `dev/images/figures.css` into each figure with `python3 dev/scripts/figures.py
+write`;** `dev/scripts/check.sh` fails on a figure whose copy is left behind.
+
 ### 4. Have the README and the architecture read once
 
 **Have a first user who does not know the discussion read the README and the architecture once, as
@@ -123,6 +126,15 @@ e. **Write the slice's architecture tests, one for each path through its sequenc
 - Rationale: what an AI does varies from run to run; a line added for one run's slip meets a
   different slip in the next, and the additions never settle.
 
+**Run every trial, here and in step 7, on Opus, and name it in the run.**
+
+- Rationale: Opus is the model the plugins' users run, which
+  [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts) asks each trial to name.
+
+**Run a trial that needs a real GitHub repository in `lovaizu/playground`**, the repository kept
+for trials that [ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use)
+asks for.
+
 ### 7. Confirm the whole in real use
 
 **Once every slice is built and every unit and architecture test passes, try the plugin as its
@@ -141,4 +153,9 @@ says, and then confirm the whole again.**
 
 ### 9. Release
 
-**Release as [Release](../../dev/plugin-best-practice.md#release) says.**
+**Release as [Release](../../dev/plugin-best-practice.md#release) says, only when the user says so.
+Before asking the user to merge, make the [final check](final-check.md); never merge the pull
+request yourself, and never use `--admin`.**
+
+- Rationale: the user decides what reaches users, and `main` is protected, so only the user can
+  clear its required review.
