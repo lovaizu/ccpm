@@ -622,7 +622,7 @@ dev/lane/
 └── tests/
     ├── unit/hooks/lane/core/domain/   unit and property tests, at the path of what each tests, a lane's beside the others <Python 3>
     ├── architecture/                  lay.py, the hooks' commands and result.py on real files, each sequence from start to end <Python 3>
-    └── ux/                            the trials of O1 and O2, trial_*.py, and the plugin changelog they run on <Python 3>
+    └── ux/                            the trials of O1 and O2, trial_*.py, and the plugin changelog, with the proposals they and the architecture tests lay on it <Python 3>
 
 .lane/<yyyymmdd>-<plugin>/             Proposal, and <plugin>/adapters/ with Adapter and Test cases
 <temporary folder>/lane/<yyyymmdd>-<session>/<agent_id>.jsonl   Calls kept, and the texts each run was given
@@ -661,7 +661,7 @@ is tested in the rows of the lay.py process and the hook process.
   | `lay.py print` | the proposal laid, without an adapter and with one; the proposal refused |
   | `lay.py write` | the proposal written, without an adapter and with one; the proposal refused, nothing written; `claude plugin validate` failing, and `claude` missing, the proposal kept |
   | `lay.py up` | a folder with no manifest; Lane's code older, and the hook entries in another form; nothing to bring up |
-  | writer's run | each call its rules allow going through; `git commit` stopped with its sentence; a command with the run's own value going through; a command with another value, or with the value as two words, stopped; the run's prompt kept too late, stopped as a call that cannot be checked; a dependency's command by its folder going through; the same command by a folder with no such manifest, or in other words, stopped; a text read through an adapter, in form and out of form; an adapter that fails; an event that cannot be read; the operator told of each call that cannot be checked |
+  | writer's run | each call its rules allow going through; two runs at once, each held to its own value; `git commit` stopped with its sentence; a command with the run's own value going through; a command with another value, or with the value as two words, stopped; the run's prompt kept too late, stopped as a call that cannot be checked; a dependency's command by its folder going through; the same command by a folder with no such manifest, or in other words, stopped; a text read through an adapter, in form and out of form; an adapter that fails; an event that cannot be read; the operator told of each call that cannot be checked |
   | lead's run | `written`, then `good`; `written`, then `more`, sent back to writer, then `good`; the work not in form for its result, then mended; a result no route is on, stopped with the commands it may run, then one it is on; a start no route names; a subagent ending with no result, kept going once; a run with no result resumed by SendMessage, stopped; lead kept going once with a start due, then let end |
   | runs at once | every run giving one result; results ordered by `precedence`; results `precedence` does not hold, the routes laid again during the runs; laid routes `lay.py print` would refuse, the operator told; a start before every run ended; a run ending with no result, started again; a run with no result resumed by another, its result out of the count |
   | a held command | the person says yes; the person says no |
@@ -682,11 +682,9 @@ is tested in the rows of the lay.py process and the hook process.
   O2 say. A run counts only where each invited break was tried. The trial measures for KR1.1 and
   KR2.1 the share of calls and of starts that went wrong, and for KR1.2 and KR2.2 the time from
   `lay.py print` to the end of the run. Lower and shorter are better.
-- Five trials try cases, not an objective: `trial_lanes.py`, `trial_at_once.py`,
-  `trial_fan_out.py`, `trial_dependency.py` and `trial_value_command.py`. Each case they try is a
-  path above. Once each of those paths has its architecture test, the five trials are removed,
-  with the files only they use, as ux does not aim to cover every case. Until then they stay, so
-  no case goes untested in the meantime.
+- Each ux trial tries an objective, never a single case: each case is a path above, with its
+  architecture test, or a class of a rule's unit tests, such as a call that breaks it, as ux does
+  not aim to cover every case.
 - A fault the trials find in how Claude Code acts, such as the order of two events, is brought down
   as [A fault is tested at the level that must catch it](../architecture.md#a-fault-is-tested-at-the-level-that-must-catch-it)
   says: the try is recorded in Sequences, the double of Claude Code sends it, and an architecture

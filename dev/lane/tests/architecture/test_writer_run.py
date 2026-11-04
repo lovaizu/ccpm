@@ -147,6 +147,32 @@ class TestValueCommand(helpers.RunTest):
         self.assertEqual(told.operator(), told.reason())
 
 
+class TestTwoRunsAtOnce(helpers.RunTest):
+    def test_two_runs_at_once_are_each_held_to_their_own_value(self):
+        # Given: drafter writing only {work}, two runs of it started at once by the main
+        # conversation, the second before the first makes a call, given a.md and b.md
+        self.lay(self.ux_proposal("at_once.json"))
+        runs = {
+            "a.md": testing.Run("changelog:drafter", "d1"),
+            "b.md": testing.Run("changelog:drafter", "d2"),
+        }
+        for work, run in runs.items():
+            self.claude.start(None, run, f'{{"work": "{work}"}}\nWrite the entries.')
+        # When: each writes its own work and the other's
+        told = {
+            (work, other): self.claude.call(run, "Write", {"file_path": other, "content": "x\n"})
+            for work, run in runs.items()
+            for other in runs
+        }
+        # Then: each write of its own work goes through, and each of the other's is stopped with
+        # write_only's sentence
+        said = "changelog: Write only `{work}`."
+        for (work, other), t in told.items():
+            with self.subTest(work=work, other=other):
+                own = work == other
+                self.assertEqual((t.made, t.reason()), (own, "" if own else said))
+
+
 class TestDependencyCommand(helpers.RunTest):
     def setUp(self) -> None:
         super().setUp()

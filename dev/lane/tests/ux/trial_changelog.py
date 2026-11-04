@@ -52,17 +52,10 @@ def git(repo: str, *args: str) -> str:
     return done.stdout.strip()
 
 
-def made(
-    place: str,
-    proposed: str = "changelog.json",
-    files: dict[str, str] | None = None,
-    dependencies: list[str] | None = None,
-) -> str:
+def made(place: str, proposed: str = "changelog.json") -> str:
     """The repository of the run, in its folder: CHANGELOG.md at 0.1.0 and three commits after it,
-    and each file given, by its path, with its text, with a copy of changelog laid by `lay.py
-    write` from the proposal of the name kept beside this file, the README's by default, and the
-    adapters kept beside it in adapters/ where it names any, its manifest declaring the
-    dependencies given, committed, so whatever its subagents do shows in git."""
+    with a copy of changelog laid by `lay.py write` from the proposal of the name kept beside this
+    file, the README's by default, committed, so whatever its subagents do shows in git."""
     repo = os.path.join(place, "notes")
     os.makedirs(repo)
     git(repo, "init", "-q", "-b", "main")
@@ -77,25 +70,10 @@ def made(
             f.write(message + "\n")
         git(repo, "add", ".")
         git(repo, "commit", "-q", "-m", message)
-    for path, text in (files or {}).items():
-        os.makedirs(os.path.dirname(os.path.join(repo, path)), exist_ok=True)
-        with open(os.path.join(repo, path), "w", encoding="utf-8") as f:
-            f.write(text)
     shutil.copytree(os.path.join(HERE, "changelog"), os.path.join(repo, "changelog"))
-    if dependencies:
-        manifest = os.path.join(repo, "changelog", ".claude-plugin", "plugin.json")
-        with open(manifest, encoding="utf-8") as f:
-            declared = {**json.load(f), "dependencies": dependencies}
-        with open(manifest, "w", encoding="utf-8") as f:
-            json.dump(declared, f)
     proposal = os.path.join(repo, ".lane", time.strftime("%Y%m%d-changelog"), "changelog.json")
     os.makedirs(os.path.dirname(proposal))
     shutil.copyfile(os.path.join(HERE, proposed), proposal)
-    with open(proposal, encoding="utf-8") as f:
-        named = "hooks/adapters/" in f.read()
-    if named:
-        beside = os.path.join(os.path.dirname(proposal), "changelog", "adapters")
-        shutil.copytree(os.path.join(HERE, "adapters"), beside)
     laid = subprocess.run(
         [sys.executable, LAY, "write", os.path.relpath(proposal, repo)],
         cwd=repo,
