@@ -5,260 +5,184 @@ such as a document or code. A plugin is built on it, taking what its requirement
 
 ## Principles
 
-A plugin takes the principles its requirements call for, and its architecture names them.
+A plugin takes the principles its requirements call for, and its architecture names them. Each
+gives its rule, then why.
 
 ### For every plugin
 
 #### The core apart from Claude Code
 
-An entry, a skill, an agent, a hook or a command line, holds only the form Claude Code fixes, and
-hands the job to its part, a file of its own in `core/` named after that part. A command line reads
-its arguments and calls the part's module, and a hook's script reads the event and calls the part
-that answers it. `core/` depends on no agent, such as Claude Code or Codex, and names no tool of
-theirs, such as the Agent tool or `AskUserQuestion`; the entries do.
+An entry, a skill, an agent, a hook or a command line, holds only the form Claude Code fixes and
+hands the job to its part in `core/`. `core/` names no tool of an agent, such as the Agent tool or
+`AskUserQuestion`; only the entries do.
 
-- **Why**: The files then show the parts the logical view draws, and a job is found where the
-  logical view puts it, not by the command that calls it. A second entry to the same job would come
-  to repeat the first if the job lay in the entry. What the plugin knows outlives the agent it runs
-  on. The domain changes only when the work's rules change, and a role only when its way of working
-  does, so each is changed without reading the other.
-- **Source**: Cockburn's [ports and adapters](https://alistair.cockburn.us/hexagonal-architecture/):
-  "as events arrive from the outside world at a port, a technology-specific adapter converts it
-  into a usable procedure call or message and passes it to the application", which is "developed
-  and tested in isolation from its eventual run-time devices and databases".
+*Why*: a job is then found where the logical view puts it, not by the command that calls it, and
+two entries to one job do not drift apart. What the plugin knows outlives the agent it runs on
+([ports and adapters](https://alistair.cockburn.us/hexagonal-architecture/)).
 
 #### An entry points to its part
 
-A skill or an agent is its frontmatter and a body that points to its part. An agent's body has the
-agent read its part in full before anything else, and a hook holds it to this. A skill's body links
-its part. The body says where each script, file or folder the part names lies, and the part names
-each by its name alone, such as `turn.py`, never by where it is installed.
+A skill's or an agent's body points to its part and says where each file the part names lies; the
+part names each by its name alone, never by where it is installed. An agent reads its part in full
+before anything else, and a hook holds it to this.
 
-- **Why**: Claude Code makes an agent's body its system prompt and takes in no other file. After
-  `/compact`, a part a skill links comes back attached in full, while the skill's own body survives
-  only as the summary retells it. Claude Code replaces `${CLAUDE_PLUGIN_ROOT}` only in an entry's
-  own body, not in what the Bash tool runs nor in a part read with Read, so a part that names it
-  runs a wrong path.
-- **Source**: [subagents](https://code.claude.com/docs/en/sub-agents);
-  [skills](https://code.claude.com/docs/en/skills): "reference supporting files from `SKILL.md`";
-  [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables).
+*Why*: Claude Code makes an agent's body its system prompt and takes in no other file. After
+`/compact`, a part a skill links comes back in full, while the skill's own body survives only as
+the summary retells it. `${CLAUDE_PLUGIN_ROOT}` is replaced only in an entry's own body, not in what
+the Bash tool runs nor in a file read with Read
+([environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables)).
 
 #### What a machine can see of the work
 
-A script, a hook or the project's own tools check what a machine can check. A project whose work is
-code has a formatter, a linter and a type checker set up, and the command that checks the work runs
-them. Generators and evaluators read only for what no machine can check.
+What a machine can check, a script, a hook or the project's own tools check: for code, a formatter,
+a linter and a type checker. An AI reads only for what no machine can check.
 
-- **When**: a work part of whose checks a tool can make.
-- **Why**: A tool finds the same thing every time, at once. An AI reading for it finds only some,
-  and spends a round on each.
+*Why*: a tool finds the same thing every time, at once; an AI finds only some, and spends a round
+on each.
 
 #### The guard tells each role its steps again
 
-A role's step that is not sure to hold gets a hook, which notices when the role drifts from the
-step and tells it the step again, or stops what would break a rule. The hooks are in the plugin's
-`hooks/hooks.json`, and each acts only in the roles it names. An orchestrator in the main
-conversation is held by its own steps or by its router. GitHub's branch protection or Claude Code's
-permission rules hold what is hard to undo.
+A step that an instruction alone does not hold gets a hook that tells the role the step again when
+it drifts, or stops what would break a rule. Branch protection or permission rules hold what is
+hard to undo.
 
-- **When**: a step that an instruction alone does not hold.
-- **Why**: A hook runs every time, while an instruction is only advice. A plugin's agent ignores
-  `hooks`, `mcpServers` and `permissionMode` in its frontmatter. A hook is told which subagent it
-  runs in, but not which skill runs in the main conversation, and a skill's hooks last the whole
-  session once it starts.
-- **Source**: [best practices](https://code.claude.com/docs/en/best-practices),
-  [frontmatter fields in plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents),
-  [hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents).
+*Why*: a hook runs every time, while an instruction is only advice. A plugin's agent ignores
+`hooks`, `mcpServers` and `permissionMode` in its own frontmatter, so its hooks live in the plugin's
+`hooks/hooks.json`
+([plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents)).
 
 #### Where a plugin writes its files
 
-Besides the work and the files its caller names, a plugin writes what may be kept in
-`.<plugin>/<yyyymmdd>-<name>/` at the root of the repository, and what is used only while it runs,
-its tests' and trials' included, in `<plugin>/<yyyymmdd>-<name>/` in the system's temporary folder,
-the one Python's `tempfile.gettempdir()` gives. A file that an agent reads with its tools goes in
-the folder that may be kept, even if it is used only while the plugin runs, and is removed once it
-is used. What must outlast an update of the plugin, such as a cache, goes in
-`${CLAUDE_PLUGIN_DATA}`, and nothing is written in `${CLAUDE_PLUGIN_ROOT}`.
+What may be kept goes in `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository; what is used
+only while the plugin runs, its tests' and trials' included, in `<plugin>/<yyyymmdd>-<name>/` in the
+system's temporary folder, the one `tempfile.gettempdir()` gives, as TMPDIR moves it; what must
+outlast an update in `${CLAUDE_PLUGIN_DATA}`. Nothing is written in `${CLAUDE_PLUGIN_ROOT}`.
 
-- **Why**: With one folder named after the plugin, the user chooses with one line of `.gitignore`
-  whether git keeps it, and the date at the front sorts the runs and shows the old ones. The system
-  clears its temporary folder itself, so a run stopped partway leaves nothing behind. That folder is
-  the one TMPDIR names where it is set, and macOS and sandboxes set it, so it is not always `/tmp`.
-  Claude Code lets an agent read without asking only inside the working folder and the folders added
-  to it, so a file outside them stops an agent that works on its own to ask.
-  `${CLAUDE_PLUGIN_ROOT}` changes when the plugin updates, while `${CLAUDE_PLUGIN_DATA}` is kept.
-- **Source**: [working directories](https://code.claude.com/docs/en/permissions#working-directories);
-  [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables).
+*Why*: one folder named after the plugin lets the user choose with one line of `.gitignore` whether
+git keeps it. The system clears its temporary folder, so a stopped run leaves nothing behind. An
+agent reads without asking only inside the working folder
+([working directories](https://code.claude.com/docs/en/permissions#working-directories)), and
+`${CLAUDE_PLUGIN_ROOT}` changes with each update.
 
 #### Asking for what lies outside the work
 
-When something outside the work keeps it from going on, such as a permission not given or a tool
-not installed, the role asks the main conversation for what it needs rather than look for a way
-round. It goes on with the rest of the work meanwhile, and with the answer once it comes.
+When something outside the work stops it, such as a permission or a tool, the role asks for it and
+goes on with the rest meanwhile; it never looks for a way round.
 
-- **Why**: The person can clear such a cause in a moment; the run cannot. A way round leaves a work
-  checked under other terms than the purpose set. A run that stops brings nothing back.
+*Why*: the person clears such a cause in a moment; a way round leaves the work checked under other
+terms than the purpose set.
 
 #### The caller approves what is theirs
 
-What the caller decides, and what is hard to undo, such as a merge, goes to the caller to approve.
-An approval counts only when it comes from the caller's own action, such as a skill that the AI
-cannot call (`disable-model-invocation: true`); an agent saying it was approved does not count. A
-commit or a push can be undone, so it does not go to the caller.
+What the caller decides, and what is hard to undo, such as a merge, goes to the caller, and counts
+as approved only by their own action, such as a skill the AI cannot call
+(`disable-model-invocation: true`).
 
-- **Why**: If an AI decides these for the caller, the caller ends up answerable for something they
-  never saw. An approval an agent can give itself stops nothing: cc-sdd's agent sets its own
-  approval flag.
+*Why*: an AI deciding for the caller leaves them answerable for what they never saw, and an approval
+an agent can give itself stops nothing.
 
 #### Languages
 
-A plugin that a person calls first proposes two languages: the one it talks in, and the one it
-writes the repository in. It proposes what the repository and the person's instructions set, and
-otherwise the person's own language for talking and English for the repository, and records the
-answer. What it shows the person is in the language of the talk, with nothing added and nothing
-left out. A plugin that an AI calls writes in the repository's language, and the caller that talks
-with the person translates.
+A plugin talks in the person's language and writes the repository in the repository's, proposing
+both first, and shows the person what it writes with nothing added or left out.
 
-- **When**: a plugin that talks with a person or writes into a repository.
-- **Why**: The person decides from what they read, so a translation that adds or leaves out
-  something changes what they approve. People who were not in the conversation read the repository
-  later, and English reaches most of them.
+*When*: a plugin that talks with a person.
+
+*Why*: the person approves what they read, and others read the repository later.
 
 ### For a plugin with an orchestrator and roles
 
 #### The orchestrator holds the whole and decides
 
-The orchestrator talks with the caller, keeps everything the run has found, and decides each move:
-what to ask, what to have made, and when to change the plan or remake a work. It reports no
-progress while the run goes.
+One orchestrator talks with the caller, keeps all the run has found, and decides each move.
 
-- **When**: a run of several steps, where each step depends on what the last one found.
-- **Why**: Only someone who holds the whole run can weigh the facts each move brings. Talking with
-  the caller itself, the orchestrator can answer "why" and change its proposal when the caller
-  objects; a go-between cannot. Claude Code already shows each role while it runs, so a progress
-  message is read by no one.
-- **Source**: [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents):
-  "a central LLM dynamically breaks down tasks, delegates them to worker LLMs", for "complex tasks
-  where you can’t predict the subtasks needed".
+*When*: a run of steps that depend on what the last one found.
+
+*Why*: only who holds the whole run can weigh what each move brings, and answer the caller's "why"
+([building effective agents](https://www.anthropic.com/engineering/building-effective-agents)).
 
 #### Where the orchestrator runs
 
-A plugin that a person calls runs its orchestrator in the main conversation, started by a skill. A
-plugin that an AI calls, such as one given what to make as JSON, runs its orchestrator as an agent
-that the calling AI starts. A role that needs the person's decision asks the main conversation
-directly, whoever called the plugin.
+A plugin a person calls runs its orchestrator in the main conversation, started by a skill; one an
+AI calls runs it as an agent. A role that needs the person asks the main conversation directly.
 
-- **Why**: Only the main conversation can ask the person; a subagent cannot.
-- **Source**: [subagents](https://code.claude.com/docs/en/sub-agents#available-tools).
+*Why*: only the main conversation can ask the person
+([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)).
 
 #### A plugin that uses another
 
-A plugin that has another plugin do a job starts that plugin's orchestrator as one of its roles.
-That plugin's roles still ask the main conversation, as every role does.
+A plugin that has another do a job starts that plugin's orchestrator as one of its roles.
 
-- **When**: a job that another plugin already does.
-- **Why**: The other plugin then runs as it was built and tested, and nothing of it is written
-  again. A subagent can start subagents down to three layers below the main conversation.
-- **Source**: [subagents](https://code.claude.com/docs/en/sub-agents#let-subagents-spawn-their-own-subagents).
+*When*: a job another plugin already does.
+
+*Why*: the other plugin runs as it was built and tested, and nothing of it is written again.
 
 #### One agent for each job
 
-Each job has a role made for it, and the role gets only what the job needs.
+Each job has its own role, given only what the job needs.
 
-- **Why**: A role starts in a fresh context with its own prompt and tools, so nothing from other
-  work leads it astray.
-- **Source**: [subagents](https://code.claude.com/docs/en/sub-agents).
+*When*: a work with jobs that need different context or tools.
+
+*Why*: a role starts in a fresh context, so nothing from other work leads it astray
+([subagents](https://code.claude.com/docs/en/sub-agents)).
 
 #### Messages
 
-Nobody relays messages. The orchestrator starts a role with its prompt, and the role replies at its
-end, as [Sequences](#sequences) draws; in between, whoever needs something sends a message to
-whoever has it, and goes on with the answer. A role runs in the background, and one that has ended
-is sent further work with SendMessage, which resumes it with its whole conversation.
+Nobody relays. Whoever needs something asks whoever has it. Roles run in the background, and one
+that has ended is sent further work with SendMessage, which resumes it with its whole conversation
+([resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents)).
 
-- **When**: roles that need something from each other while they run.
-- **Why**: A go-between holds nothing of what passes, and adds a move to every exchange. What the
-  end of the run needs from an exchange is in the files the roles write, where a script checks it.
-  A role resumed keeps what it read and did, so a remake does not start again from nothing.
-- **Source**: [background subagents](https://code.claude.com/docs/en/sub-agents#run-subagents-in-foreground-or-background),
-  [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents).
+*Why*: a go-between adds a move to every exchange and holds nothing of it; a resumed role does not
+start again from nothing.
 
 #### JSON between agents
 
-What agents pass on as data is JSON, read and changed with `jq`.
+What agents pass on as data is JSON, in files.
 
-- **When**: data that more than one agent reads or changes.
-- **Why**: An agent then changes only the part it needs, with a tool it already knows, and leaves
-  the rest as it was.
+*Why*: an agent changes only the part it needs and leaves the rest, and a script checks the form.
 
 #### Asking until nothing is left to decide
 
-The orchestrator asks the caller every point that only they can decide, one at a time, each with a
-recommendation. It finds facts itself, and shows the caller each fact the work depends on, one at a
-time, to confirm. A choice that follows from the purpose and the project's usual practice, such as
-where a test goes, is decided by the role that meets it and reported with its reason.
+The orchestrator asks the caller every point only they can decide, one at a time, with a
+recommendation. It finds facts itself and shows each one the work rests on. Everything else it
+decides and reports.
 
-- **When**: a request that leaves points open.
-- **Why**: A point settled before the work does not come back later as rework. A fact found but not
-  shown is still a guess made for the caller, so the work starts only once both understand it the
-  same way. Each question costs the caller time and holds the run, so a question about what the
-  caller does not care about spends their time on the plugin's job.
-- **Source**: [grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md),
-  [Let Claude interview you](https://code.claude.com/docs/en/best-practices#let-claude-interview-you).
+*Why*: a point settled before the work does not return as rework, and a question about what the
+caller does not care about spends their time on the plugin's job
+([grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md)).
 
 #### Read by those who did not make it
 
-An evaluator, an AI that did not make a work, uses it first, standing in for the work's user with
-what the work's user has. Each question of the checklist asks what the work's user should get from
-the work. The evaluator puts each question in `good`, with the lines of the work that meet its aim,
-or in `more`, with `good_when`: what the work's user gets once it is good, in one sentence, never
-how to make it. It tells the generator directly. Before that, the generator checks its own work in
-the same form, with lines and no words, and on a remake only the questions sent back. When the
-work's user is the caller and the caller reads the work in full to approve it, such as a plan, the
-caller reads it first.
+A work is checked first by an evaluator that did not make it, standing in for the work's user:
+each question of the checklist goes in `good`, with the lines that meet it, or in `more`, with
+`good_when`, what the user gets once it is good, never how to make it. When the caller reads the
+work in full to approve it, the caller reads it first.
 
-- **When**: a work whose user must get something from it that no machine can check.
-- **Why**: The generator finds what it meant; an evaluator that did not make the work, reading on
-  its own, finds only what the lines give, which is what the work's user gets. An evaluator that
-  hunts for defects finds one in every work, and the rounds go on without the work getting better
-  for its user. The generator holds the sources, so how to make a question `good` is the generator's
-  to decide; an evaluator that names a fault starts an argument about the fault.
+*When*: a work whose user gets something no machine can check.
+
+*Why*: the maker reads what it meant; a defect hunt finds something in every work and never ends;
+how to mend is the maker's call, as the maker holds the sources
+([harness design](https://www.anthropic.com/engineering/harness-design-long-running-apps)).
 
 #### Where the router keeps the course
 
-A run that goes in a fixed loop keeps its course in a router of its own, a Python script. From the
-role that ended and its result, the router gives the orchestrator each next move, and does itself
-what a script can do, such as checking a reply's form. A run that keeps a state, what it has
-decided and been answered so far, writes it to a file in its work folder before each next move. A
-run whose course changes with what it finds keeps its course in its skill's steps and its plan in a
-document.
+A run that goes in a fixed loop keeps its course in a router, a script that gives the orchestrator
+each next move from the role that ended and its result. A run whose course changes with what it
+finds keeps it in its skill's steps. A run that keeps a state writes it to a file before each move.
 
-- **When**: the router, a run that goes in a fixed loop; the state file, a run that keeps a state.
-- **Why**: A course kept in code is followed the same way every time; an AI deciding may not follow
-  it, and each move it makes is a turn of the model that reads the whole conversation. A course
-  fixed in code has no move for what it did not foresee, so it does not suit a run whose findings
-  keep changing it. A conversation can end, be cleared or be compacted, and what lives only in it
-  is lost; with the state in a file, a stopped run goes on from its last move.
+*Why*: a course in code is followed the same way every time, and a course fixed in code has no move
+for what it did not foresee. A conversation can end or be compacted; with the state in a file, a
+stopped run goes on from its last move.
 
 #### Learning from each run
 
-Once the caller approves the finished work, the orchestrator looks once through what the run kept,
-each work sent back, each work made again and each point asked again, for what fell short and why:
-the run's lessons. It checks each cause it doubts in the run's records, so each lesson comes with
-the words it rests on, quoted, and puts each lesson to the user. A lesson of the user's own project
-goes into its checklists or rules. A general lesson goes to the plugin's repository as an issue
-that holds the lesson and its points, never the user's source; the orchestrator shows it in full
-and opens it only on the user's own yes. A plugin called by an AI leaves this to its caller.
+Once the caller approves the work, the orchestrator looks once through what the run kept for what
+fell short and why, each cause quoted from the records. A project's own lesson goes into its rules;
+a general one goes to the plugin's repository as an issue, only on the user's yes.
 
-- **When**: a plugin that a person calls.
-- **Why**: Looked for once, the lessons cost the user one reading; lessons made at every approval
-  would be weighed again in every session. What the run kept holds every send-back and remake, as
-  [Where the router keeps the course](#where-the-router-keeps-the-course) has it, and a cause named
-  without its record is a guess. A general lesson, met once, improves the plugin for every
-  user. The work and its source are the user's, and an issue on a
-  public repository cannot be undone, so the user chooses what leaves their project. A plugin
-  called by an AI is one move of its caller's run, so what fell short in it shows in what that run
-  kept.
+*When*: a plugin a person calls.
+
+*Why*: a lesson met once improves every later run, and the user chooses what leaves their project.
 
 ## Architecture
 
@@ -268,12 +192,7 @@ and opens it only on the user's own yes. A plugin called by an AI leaves this to
 
 ![A plugin's components](images/components.svg)
 
-The figure draws the roles the principles above give: the caller, the orchestrator, the generator,
-the evaluator, the router and the guard.
-
 #### Sequences
-
-A run, from the caller's request to the result:
 
 ```mermaid
 sequenceDiagram
@@ -295,8 +214,6 @@ sequenceDiagram
   O->>C: result, the work and the report
 ```
 
-Each plugin's architecture draws a sequence for each of its own user stories on this one.
-
 ### Development view
 
 #### Directory structure
@@ -305,8 +222,6 @@ Each plugin's architecture draws a sequence for each of its own user stories on 
 <repository>/
 ├── .claude-plugin/marketplace.json     the marketplace: the plugins it lists <JSON>
 ├── README.md                           leads users to each plugin's README, and developers to dev/ <Markdown>
-├── pyproject.toml, uv.lock             the check tools and their locked versions <TOML>
-├── .github/workflows/                  CI, which runs the checks on every push <YAML>
 ├── plugins/                            what runs on users' machines, installed by Claude Code
 │   └── <plugin>/
 │       ├── .claude-plugin/plugin.json  the manifest, holding the version <JSON>
@@ -315,328 +230,144 @@ Each plugin's architecture draws a sequence for each of its own user stories on 
 │       ├── hooks/
 │       │   ├── hooks.json              the hooks' entries <JSON>
 │       │   └── <hook>.py               the hooks' code, the guard among them <Python 3>
-│       ├── scripts/                    what runs as a command and depends on Claude Code, as the official plugins keep theirs <Python 3>
+│       ├── scripts/                    what runs as a command and depends on Claude Code <Python 3>
 │       ├── core/                       the plugin's own logic, apart from Claude Code
-│       │   ├── domain/                 the knowledge and rules of the plugin's work, which every role reads alike
+│       │   ├── domain/                 the knowledge and rules of the plugin's work
 │       │   └── roles/                  each role's flow, which uses the domain
-│       ├── docs/                       fuller use, named by the README's Documentation <Markdown>
 │       ├── README.md                   for the plugin's users <Markdown>
-│       └── CHANGELOG.md                what changed for users in each version, in Release's form <Markdown>
+│       └── CHANGELOG.md                what changed for users in each version <Markdown>
 └── dev/                                what only the developers need, never installed
-    ├── README.md                       the plugins' folders, how to run the shared checks, and the order the work goes in
     ├── plugin-best-practice.md         this document
-    ├── scripts/                        the checks every plugin shares, and the hook before a push <sh, Python>
     └── <plugin>/                       one for each folder in plugins/
-        ├── README.md                   the way to the plugin's UX, architecture, tests and trials
         ├── ux.md                       the plugin's UX <Markdown>
         ├── architecture.md             the plugin's architecture <Markdown>
-        ├── cosmic-ray.toml             the plugin's mutation testing <TOML>
-        └── tests/                      as Test says
+        └── tests/                      unit/, architecture/ and ux/, as Test says
 ```
 
-- **When**: a repository that holds several plugins and what their developers need. A repository of
-  one plugin takes the same tree with one folder in `plugins/`, so `dev/` still stays off users'
-  machines.
-- Installing a plugin copies only its folder, so what only developers need stays in `dev/`, off
-  users' machines. The plugins' folders lie together in `plugins/`, as the official marketplaces
-  [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) and
-  [anthropics/claude-code](https://github.com/anthropics/claude-code) keep theirs, so the root holds
-  only what the whole repository needs.
-- The entries lie where Claude Code looks for them. `core/domain/` and `core/roles/` each place
-  their prompts, scripts and assets as their parts need.
-- No README lies deeper than these. GitHub shows a folder's README when the folder is opened, so a
-  visitor finds the way by opening folders, and a README further down would repeat its parent's.
-- Each plugin keeps its CHANGELOG at its root, so a user finds what changed in the same place for
-  every plugin.
-- A document's images lie in `images/` beside it, as `dev/images/` for this document, so a folder
-  shows its documents and parts when opened, and an image is found from its document.
+Installing a plugin copies only its folder, so what only developers need stays in `dev/`. A
+repository of one plugin keeps the same tree with one folder in `plugins/`.
 
 ## Development
 
 ### Python 3.9 and the standard library
 
-What runs on users' machines is Python 3, version 3.9 or later, with the standard library only, and
-the plugin's README says so. A script that only calls an existing tool may be sh.
+What runs on users' machines is Python 3.9 or later with the standard library only.
 
-- **When**: users' machines may lack other runtimes or packages, as a plugin installs none.
-- **Why**: python3 is wherever git is, while Node.js may not be. The oldest version is the oldest
-  one the plugin's users run.
+*When*: users' machines may lack other runtimes or packages.
+
+*Why*: python3 is wherever git is; a plugin installs no packages.
 
 ### Code kept once
 
-Code that more than one plugin needs, such as how a hook reads a command, is kept once, in the
-plugin whose job it is, with its tests in that plugin's `dev/<plugin>/tests/`. Each other plugin
-takes it in through a relative symbolic link. What those tests share, such as a repository made
-once and copied for each test, is kept beside them.
+Code more than one plugin needs is kept once, in the plugin whose job it is, and taken in by the
+others through a relative symbolic link.
 
-Installing copies the target of a link within the marketplace into the plugin
-([share files within a marketplace with symlinks](https://code.claude.com/docs/en/plugins/host-marketplace#share-files-within-a-marketplace-with-symlinks)),
-so each plugin carries the shared code while it is written, tested and fixed in one place.
+*Why*: installing copies a link's target into the plugin
+([symlinks in a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace#share-files-within-a-marketplace-with-symlinks)),
+so the code is written, tested and fixed in one place.
 
 ## Test
 
-Each plugin is tested at three levels. Each level is named by what its tests check against:
-
-- **unit** checks one part against its contract: what the part takes, what it gives, and the
-  forms its results take.
-- **architecture** joins all the parts and checks them against the plugin's architecture. It runs
-  every user story's sequence from start to end.
-- **ux** checks the plugin in real use against its UX.
-
-A **double** is a stand-in for a part that gives set results. A part made of code is tested by
-tests of code, and a part run by an AI by a **trial**: a run of the AI, judged from its records.
-Each test is drawn from the one thing its level checks against, not chosen by its writer: unit
-from the ways a part's contract divides, architecture from the paths the plugin's sequences draw,
-and ux from an objective's scenario. Two developers then draw the same tests, and a failure points
-to that one thing.
+A plugin is tested at three levels, each named by what its tests check against. Each test is drawn
+from that one thing, never chosen by its writer, and is designed before the code or the prompt and
+seen to fail first. Two developers then write the same tests, and a failure points to one cause.
 
 | | unit | architecture | ux |
 |---|---|---|---|
-| Runs real | the part alone; a part run by an AI on the model its users run | what joins the parts: the hooks, the scripts and the entries, as they are installed | the whole plugin, installed as its user installs it, on the model its users run |
-| Doubles stand in for | the part's neighbours, and Claude Code where the part meets it | each role an AI runs, and each thing outside the plugin, such as Claude Code, so no model is called | nothing of the plugin |
-| Stands in for the person | a script with set answers, or an AI given an intent | the double of the main conversation, with set answers | an AI holding an intent written before the run and never shown the plugin |
-| Covers | each class, each edge and each rule of the part's contract | every path through each sequence: the main flow, each branch, each send-back and each question | each objective's scenario, on a subject as big as a real request |
-| Passes when | code: every test passes, every line and branch run, every mutant caught; a trial: as [Results that vary from run to run](#results-that-vary-from-run-to-run) says | every test passes, with the role and the data checked at each step | the stand-in gets what the objective says, as [Results that vary from run to run](#results-that-vary-from-run-to-run) says |
-| Runs | code: before each push and in CI; a trial: as the part is made | before each push and in CI | once every lower level passes, at the end of the whole |
-| Is written as | `test_*.py`, or `trial_*.py` for a trial | `test_*.py` | `trial_*.py` |
-
-The tests lie in `dev/<plugin>/tests/`, in a folder for each level: `unit/`, at the path of what
-each tests, as `tests/unit/core/domain/`; `architecture/`; and `ux/`. What the tests of more than
-one level share lies in `tests/` itself, as `tests/helpers.py`. A test is then found from what it
-tests, and the folders bear the names of the table's columns. The names in the table's last row keep
-trials out of what `unittest` finds, which CI runs. Each plugin's architecture holds the table, a
-row for each deployment unit, and its own test rules give only what differs from these.
+| Checks against | one part's contract | the plugin's architecture | the plugin's UX |
+| Drawn from | the classes, edges and decision-table rules of the contract | every path through each sequence: the main flow, each branch, each send-back and each question | each objective's scenario, on a subject as big as a real request |
+| Runs real | the part alone; a role, on the model its users run | what joins the parts: hooks, scripts and entries as installed | the whole plugin as its user installs it |
+| Doubles stand in for | the part's neighbours | each role an AI runs, and Claude Code, so no model is called | nothing |
+| Stands in for the person | set answers, or an AI given an intent | set answers | an AI holding an intent never shown to the plugin |
+| Passes when | every test passes, every line and branch runs, every mutant is caught | every test passes, the role and the data checked at each step | the stand-in gets what the objective says |
+| Runs | before each push and in CI; a role's trial as it is made | before each push and in CI | once every lower level passes |
 
 ### No check passes what it did not check
 
-Every check ends in one of three ways: no problem, a problem found, or could not check, with why.
-For each way a check can fail to check, what happens next is decided beforehand and tested: a hook
-whose script fails, times out or cannot parse a command stops the call and says so; a skipped test
-is not a passed test; a CI job that did not run does not pass; an evaluator whose command did not
-run puts no question in `good`.
+A check ends in no problem, a problem, or could not check; what follows each is decided and tested
+beforehand. A skipped test, a job that did not run or a command that failed is no pass.
 
-A check that says nothing when it could not check is read as one that found nothing, and what it
-was there to stop goes through unseen. A case decided only when it is met is decided in a hurry, by
-whoever meets it.
+*Why*: a check silent when it could not check is read as one that found nothing.
 
 ### Unit: code
 
-Each part made of code has unit tests, written with `unittest` in `dev/<plugin>/tests/unit/`, each
-double standing in for a neighbour of the part, such as a module it calls or an event of Claude
-Code. Each test is written as Q6 of [code.json](../plugins/turn/core/domain/best-practices/code.md)
-says, and the cases are drawn from the part's contract: one test for each class of input or result
-the part treats alike, the refused ones among them, its edges, and each rule of a decision table
-where the result turns on a combination of conditions. Faults gather at the edges of a class, and a
-table shows each combination at once, so none is left out unseen.
+Coverage of every line and branch, mutation testing and property tests confirm that the unit tests
+hold the contract; each gap they find becomes a unit test. Mutation and property tests run in CI on
+what changed.
 
-Three checks, made as Q8 of code.json says, confirm that the unit tests are enough:
-
-- the unit tests alone run every line and every branch of the part: C0 and C1 coverage, 100%;
-- they catch every mutant of Cosmic Ray, except on a line marked `# pragma: no mutate`, where no
-  input the code takes can tell the mutant apart, with the reason given once in the plugin's
-  `cosmic-ray.toml`;
-- the property tests of Hypothesis pass, and each input one fails on is added as a unit test.
-
-The unit tests hold every behavior the code must have. A line that only an architecture test runs
-is one whose contract no unit test holds. A gap the other two checks find is a missing unit test,
-added so that every push catches it again.
-
-The unit and architecture tests run before each push and in CI, so a fault is caught before it
-reaches the branch. Mutation testing and property tests run in CI on what changed, as the tests
-designed before the code already hold the behavior and these two only confirm that; run before
-every push, they would make every change wait. A survivor goes back to the test design that missed
-it.
+*Why*: the tests designed first hold the behavior; these only confirm the design, and run before
+every push they would make every change wait.
 
 ### Unit: prompts
 
-The developer tries each role, a skill or an agent, on its own, with doubles standing in for its
-neighbours and a stand-in for the person, and names in each run the model the plugin's users run.
-It judges the role from its input, its output and the records of the run, against its Role and
-Steps. The trials are made as Q12 and Q14 to Q16 of
-[prompt.json](../plugins/turn/core/domain/best-practices/prompt.md) say: drawn from the role's
-contract, one case at a time, each part of a trial checked on a kept record before a run trusts it.
+Each role, a skill or an agent, is tried alone, one case of its contract at a time, with its
+neighbours stood in for, on the model its users run, and judged from the run's records. Each part
+of a trial, such as its judge, is checked on a kept record before a run trusts it. A prompt is
+changed only for a cause the records confirm.
 
-A role tried together with what lies around it does not show which of them went wrong. A smaller
-model makes different slips from the ones users meet, and a model left to the runner's settings
-changes with whoever runs the trial.
+*Why*: a role tried with its neighbours does not show which went wrong; another model makes other
+slips than the ones users meet; a line added for one run's
+slip meets a different slip in the next, and the additions never settle.
 
 ### Architecture: the parts joined
 
-The architecture tests run real what joins the parts, and stand in with a double each role an AI
-runs and each thing outside the plugin; each plugin's test rules name what runs real in it. A
-double of Claude Code sends the hook events and runs the hooks' commands in `sh`, as Claude Code
-does, and is kept once, as [Code kept once](#code-kept-once) says. A double of the main
-conversation, or of a caller, answers each question with a set answer.
+What joins the parts runs real, and each role an AI runs is a double.
 
-The tests are drawn from the plugin's sequences:
-
-1. For each user story, list the paths through its sequence: the main flow first, then each branch,
-   each step that sends work back to an earlier one, and each question put to the caller or the
-   person.
-2. Add paths until every move from one step to the next lies on some path.
-3. Write one test for each path, from its first step to its end, checking at each step the role
-   that acts and the data it hands on.
-
-Each plugin's test rules list its paths. A path the sequences draw that no test runs is a gap in
-the tests, and a path no sequence draws is a gap in the sequences.
-
-A fault of a sequence lies between parts, where each part's unit tests pass, so what joins them
-runs real. With each role an AI runs a double, no model is called, so the tests take seconds, give
-the same result on each run, and every push checks every path.
+*Why*: a fault of a sequence lies between parts whose unit tests pass; with no model called, every
+push checks every path in seconds.
 
 ### ux: the plugin in real use
 
-Once every unit and architecture test passes, the developer tries the whole plugin as its user uses
-it, on each objective's scenario, on a subject as big as a real request. The trial confirms the
-objective and the key results that no lower level can measure, such as the lead time, and does not
-aim to cover every case. An AI stands in for the person, answering from an intent written before the
-run and never shown to the plugin, and a run passes where the stand-in gets what the objective says,
-judged against that intent. For each key result, the plugin's test rules say what is measured, and
-each measure is set against the last run's in the direction the UX gives it. Each run's time and
-tokens are kept with the trial's records.
+The whole plugin is tried as its user uses it, with a stand-in holding an intent written before the
+run. It confirms what no lower level can measure, such as the lead time, and does not aim to cover
+cases. Each Claude Code it starts runs on a configuration folder of its own, holding only the
+plugins under test and given the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`
+([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)).
+Where Claude Code asks to allow a call, the stand-in chooses from what the screen shows, as a person
+would.
 
-Each part can pass, and every sequence too, while the user's objective is missed. The UX gives a key
-result no target value, and no bar for time and tokens is known before runs gather, so runs kept
-side by side show whether a change made things better or worse, with the purpose met as fully. A
-trial takes minutes and calls the model on each move, so a few trials confirm what the lower levels
-have already checked.
-
-How a trial runs:
-
-- A plugin made for the test stands in for a plugin that calls the one tried.
-- Each Claude Code a trial starts, and each stand-in for a person, runs on a configuration folder of
-  its own, made fresh by the trial's code with only the plugins under test, so it reads none of the
-  developer's CLAUDE.md, settings or memory, and shows how a plugin behaves for any user. A
-  configuration folder holds its own login, so the trial gives the developer's as
-  `CLAUDE_CODE_OAUTH_TOKEN`, read from their own folder and never written there
-  ([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)).
-- Where Claude Code asks the person to allow a call, the stand-in sees what the screen shows and
-  chooses, as a person would.
-- A trial that needs a real GitHub repository runs in a repository kept for trials, one at a time,
-  on a branch of its own, and removes the branch, its pull requests and all else it made there when
-  it ends. Its pull requests and pushes then stay out of every repository people use, `main` there
-  takes nothing but a reviewed pull request, and no trial mixes with the next.
-- CI cannot start Claude Code, so each trial is a check of its own, and the code that runs a trial
-  is not counted in the lines and branches.
+*Why*: every part can pass while the user's objective is missed; a trial is slow and calls the
+model each move, so it only confirms; the developer's own settings would change what is tried.
 
 ### Where a double's results come from
 
-A double is built from the form that the part's contract gives its results, and is set only to
-results that form allows, the refusals among them.
+A double gives only what the part's contract allows, checked by the same check as the part's own
+files; a double of Claude Code sends what its documentation says, or what a recorded try of the
+real one showed.
 
-- A role's double writes files in the forms the role's part must write, and gives only results
-  that the next step of a sequence takes from the role. The architecture test checks each file the
-  double writes by the same check that the role's unit test makes of the role's files, such as a
-  JSON Schema or a plugin's own check script.
-- The double of Claude Code sends the hook events in the fields and the order that Claude Code
-  documents. Where its documentation says nothing, the double sends what a try of the real Claude
-  Code showed, and the plugin's architecture records each such try with the Claude Code version and
-  the date.
-- The double of the `claude` command, a script on `PATH`, prints what `claude plugin validate`
-  prints.
-
-A double that gave what the part never would would pass a test that the real part fails. A double
-held to the part's contract fails as soon as the contract changes, as the part's own unit tests do,
-so a pass of unit and architecture holds for the real parts.
+*Why*: a double that gives what the part never would passes a test the real part fails.
 
 ### A fault is tested at the level that must catch it
 
-Each fault belongs to the lowest level whose check it breaks:
+A fault a higher level finds is first given a test at the lowest level whose check it breaks, seen
+to fail, then fixed: a broken contract at unit, a broken handoff at architecture, what shows only in
+real use at ux.
 
-| The fault | The level that must catch it |
-|---|---|
-| A part gives what its contract does not allow, or a case of the contract goes wrong | unit |
-| A handoff or a result between roles goes wrong, such as a role started that no sequence draws, or a file one role writes that the next cannot read | architecture |
-| It shows only in real use at real size, such as the lead time, a work the person would still change, or Claude Code acting otherwise than its double | ux |
-
-Where a higher level finds a fault, the developer names the case or the path the lower level
-missed, adds that test at the level that must catch it, sees it fail, and then fixes the fault.
-Where Claude Code acts otherwise than its double, the developer first corrects the record of the
-try and the double, and then sees an architecture test fail.
-
-A lower-level test points to the part or the handoff at fault, runs in seconds, and catches the
-fault again on every push. A fault fixed only where a trial found it comes back unseen, as no trial
-runs on every push.
+*Why*: a fault fixed only where a trial found it comes back unseen, as no trial runs on every push.
 
 ### Results that vary from run to run
 
-A trial passes where its expectation holds in three runs of three, unless the plugin's test rules
-give other counts. A run counts only where it tried what the trial invites, such as a break of a
-rule, and a run that does not count is no pass. `claude plugin eval` runs each case three times by
-default, passing it at its default threshold only when every run passes, and as many times again
-with no plugin, so the difference shows what the plugin adds ([plugin evals](https://code.claude.com/docs/en/plugin-evals#how-a-case-is-scored)).
+A trial passes only when its expectation holds in every run, three of three by default; a run that
+did not try what the trial invites does not count
+([plugin evals](https://code.claude.com/docs/en/plugin-evals#how-a-case-is-scored)).
 
-What an AI does varies from run to run, and a user meets every run, so each run must meet the
-expectation, not most of them.
+*Why*: a user meets every run, not most of them.
 
 ## Release
 
-### Released only on an explicit word
-
-A plugin is released only on an explicit word from whoever decides what reaches users, not on a
-merge to `main`. Until then, the changes users would notice wait under the CHANGELOG's
-`## [Unreleased]`.
-
-Users receive an update only when the version is bumped, so that person decides when it reaches
-them.
-
 ### The manifests checked
 
-Each plugin passes `claude plugin validate <plugin-path> --strict`, and the marketplace passes
-`claude plugin validate <marketplace-root> --strict`.
+Each plugin and the marketplace pass `claude plugin validate --strict`.
 
-A malformed manifest fails for every user at install, before any behavior is reached.
+*Why*: a malformed manifest fails every user at install.
 
-### The version
+### The version and the CHANGELOG
 
-`version` is written in one place only, the plugin's `plugin.json`, always set, in semver, such as
-`0.1.0`. The largest change users see decides how far it goes up:
+A plugin is released only on the word of whoever decides what reaches users. `version` is set once,
+in `plugin.json`, in semver, raised by the largest change users see. The CHANGELOG, in
+[Keep a Changelog](https://keepachangelog.com) form, gives each change users notice one line with
+why it helps them. Each release is tagged `<plugin>--v<version>` with `claude plugin tag --push`
+and listed in `.claude-plugin/marketplace.json` and the root README.
 
-- major for a breaking change, or minor while the version is `0.x`;
-- minor for a new or changed behavior users see;
-- patch for no change in behavior.
-
-When both are set, `plugin.json` wins over the marketplace entry, so a second copy means nothing.
-`claude plugin validate --strict` fails when `version` is not set.
-
-### The CHANGELOG's form
-
-The CHANGELOG is in [Keep a Changelog](https://keepachangelog.com) form.
-
-- Each release has one `## [x.y.z] - YYYY-MM-DD`, with its changes under `Added`, `Changed`,
-  `Fixed` and `Removed` as they apply.
-- Every change a user would notice gets one line, written as
-  `<what changed> — <why it helps the user>`. Typos, refactors, internal documents and formatting
-  get none.
-- On a release, `## [Unreleased]` is renamed to the version and date, and no empty
-  `## [Unreleased]` is left behind. It is made again when the next change users would notice lands.
-
-A user reads what changed for them and why it helps them.
-
-### The steps of a release
-
-1. The developer bumps `version` in `plugin.json`, finalizes `CHANGELOG.md`, reads the whole change
-   against its purpose, commits and pushes.
-2. Whoever decides what reaches users merges the pull request to `main`. The developer never merges
-   it in their place, nor goes round `main`'s protection.
-3. The developer tags `main` as `<plugin>--v<version>` with `claude plugin tag --push` from the
-   plugin's folder, and publishes a GitHub Release for that tag, with the CHANGELOG's matching
-   section as its notes.
-
-The tag is in Claude Code's own form. A plugin that depends on another with a version range
-resolves the range against these tags, and the prefix lets each plugin number its versions apart
-from the others. The command also checks the plugin, and refuses a tag that already exists. When a
-plugin was released is read from its tags and Releases, not from merge commits.
-
-### Registering in the marketplace
-
-The developer registers a plugin on its first release, and again whenever it is renamed or removed,
-by changing two things together:
-
-- one entry under `plugins` in `.claude-plugin/marketplace.json`, with `name`, `description`,
-  `source`, such as `./plugins/<plugin>`, and `category`
-  ([plugin entries](https://code.claude.com/docs/en/plugins/marketplace-reference#plugin-entries));
-- a line in the root `README.md` linking the plugin's README, with a one-line description.
-
-Claude Code installs from the marketplace entry, and people find the plugin from the root README. A
-plugin counts as shipped only once both reach it.
+*Why*: users get an update only when the version rises; `plugin.json` wins over the marketplace
+entry; a dependency's version range resolves against these tags.
