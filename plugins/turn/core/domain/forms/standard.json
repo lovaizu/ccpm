@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "standard",
-  "description": "A template's goal, parts and questions, without its ways of meeting them: what evaluator and proofreader are given.",
+  "description": "The Standard: a best practice's goal, parts and questions, without its ways of meeting them, which is all the evaluator is given.",
   "type": "object",
   "required": ["goal", "benefits"],
   "additionalProperties": false,
