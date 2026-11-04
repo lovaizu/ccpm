@@ -57,6 +57,10 @@ ROUTED = {
     "follow_routes": (follow_routes.ACTION, follow_routes.WORDING),
     "result": ("end", follow_routes.RESULT),
 }
+# Each wording lane laid before the current one, the newest first, by the name of the lane or of
+# the sentence laid from the routes, each with the places of the current; one not here has had only
+# its current wording.
+EARLIER = {"result": follow_routes.RESULT_EARLIER}
 # Where a wording shows what the lane takes, in quotes, by the name of its place.
 TAKEN = re.compile(r"`<([a-z]+)>`")
 # A thing given for each run: a name in braces, the braces wrapping the whole take.
@@ -130,11 +134,23 @@ def listed(takes: list[str]) -> str:
 def sentence(lane: str, takes: list[str]) -> str:
     """The lane's sentence: its wording with the things in each place in quotes of their own,
     listed with commas and `or` before the last; its wording alone where it takes nothing."""
+    return made(wording(lane), lane, takes)
+
+
+def made(said: str, lane: str, takes: list[str]) -> str:
+    """The wording given of the lane with the things in each place, as `sentence` makes it."""
     if not takes:
-        return wording(lane)
+        return said
     found = placed(lane, takes)
     # Given as a function, the text put in is taken as it is, a backslash in it among the rest.
-    return TAKEN.sub(lambda m: listed(found[m[1]]) if found[m[1]] else "", wording(lane))
+    return TAKEN.sub(lambda m: listed(found[m[1]]) if found[m[1]] else "", said)
+
+
+def earlier(lane: str, takes: list[str]) -> list[str]:
+    """The lane's sentence in each wording lane laid before the current one, the newest first, so
+    a step laid before is told from one whose words are the developer AI's own; none where lane
+    has laid only the current one."""
+    return [made(said, lane, takes) for said in EARLIER.get(lane, ())]
 
 
 class Refused(NamedTuple):

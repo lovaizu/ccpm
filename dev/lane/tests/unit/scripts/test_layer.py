@@ -292,6 +292,44 @@ class TestRoutes(RoutesTest):
         self.assertEqual(self.lanes_json()["routes"], helpers.ROUTES)
         self.assertEqual(self.agent("reviewer"), helpers.REVIEWER_LAID)
 
+    def test_a_lay_again_puts_each_sentence_of_an_earlier_wording_in_the_current_one(self):
+        # Given: the routes laid, writer and reviewer then saying their result sentences in the
+        # wording lane laid before, and the README's proposal, of writer alone
+        self.wrote()
+        for name in ("writer", "reviewer"):
+            earlier = self.agent(name).replace(helpers.NOT_WORK, "")
+            self.write(os.path.join(self.plugin, "agents", f"{name}.md"), earlier)
+        self.propose(helpers.PROPOSAL)
+        # When: it is printed and written
+        printed = layer.printed(helpers.PROPOSED)
+        said = self.wrote()
+        # Then: writer, which it lays, reads with the current wording once, as printed, and so
+        # does reviewer, which it does not lay, that being said
+        self.assertIn(f"4. Reply with the entries you wrote. {helpers.END_WRITER}\n", printed)
+        self.assertEqual(
+            [self.agent(n) for n in ("writer", "reviewer")],
+            [helpers.WRITER_LAID, helpers.REVIEWER_LAID],
+        )
+        self.assertIn(
+            "Wrote step 2 of reviewer into agents/reviewer.md, its sentences in lane's current"
+            " wording.\n",
+            said,
+        )
+        self.assertNotIn("of writer into agents/writer.md, its sentences", said)
+
+    def test_routes_given_anew_take_out_a_sentence_of_an_earlier_wording(self):
+        # Given: the routes laid, reviewer then saying its result sentence in the wording lane laid
+        # before, and routes of writer alone
+        self.wrote()
+        earlier = self.agent("reviewer").replace(helpers.NOT_WORK, "")
+        self.write(os.path.join(self.plugin, "agents", "reviewer.md"), earlier)
+        alone = [{"from": "lead", "to": "writer"}, {"from": "writer", "on": "written"}]
+        self.propose({"plugin": "changelog", "routes": {**helpers.ROUTES, "routes": alone}})
+        # When: they are written
+        self.wrote()
+        # Then: reviewer's sentence is gone, whole
+        self.assertEqual(self.agent("reviewer"), helpers.REVIEWER)
+
     def test_routes_given_anew_take_the_sentences_of_those_before_out(self):
         # Given: the routes laid, then routes of writer alone, ending once it has written
         self.wrote()
@@ -388,6 +426,49 @@ class TestBroughtUp(LayerTest):
             f'Laid before on step 2 of writer, whose step no longer says "{helpers.RUN}": ', said
         )
 
+    def test_a_sentence_in_an_earlier_wording_is_put_in_the_current_one(self):
+        # Given: the routes laid, writer's last step saying its result sentence in the wording
+        # lane laid before
+        self.route()
+        earlier = helpers.WRITER_LAID.replace(helpers.END_WRITER, helpers.END_WRITER_EARLIER)
+        self.write(self.agent_file, earlier)
+        reviewer = os.path.join(self.plugin, "agents", "reviewer.md")
+        # When: the plugin is brought up
+        said = layer.brought_up(self.plugin)
+        # Then: writer's step says it in the current wording, the rest of its file and every
+        # other file as it was, and that is said once
+        self.assertEqual(self.read(self.agent_file), helpers.WRITER_LAID)
+        self.assertEqual(self.read(reviewer), helpers.REVIEWER_LAID)
+        wrote = (
+            "Wrote step 4 of writer into agents/writer.md, its sentences in lane's current"
+            " wording.\n"
+        )
+        self.assertEqual(said.count(wrote), 1)
+        self.assertNotIn("no longer says", said)
+
+    def test_steps_in_the_current_wording_are_left_as_they_are(self):
+        # Given: the routes laid in the current wording
+        self.route()
+        # When: the plugin is brought up
+        said = layer.brought_up(self.plugin)
+        # Then: no step is written, and none is said to be
+        self.assertEqual(self.read(self.agent_file), helpers.WRITER_LAID)
+        self.assertNotIn("current wording", said)
+
+    def test_a_step_gone_and_a_subagent_of_a_dependency_are_passed_over(self):
+        # Given: routes to a dependency's subagent, which has no file in the plugin, and a lane laid
+        # on a step writer's file no longer has
+        self.depend()
+        laid = self.lanes_json()
+        laid["subagents"][0]["steps"].append({"step": 9, "lanes": helpers.STEPS[0]["lanes"]})
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        # When: the plugin is brought up
+        said = layer.brought_up(self.plugin)
+        # Then: no step is written, and the step gone is said so
+        self.assertEqual(self.read(self.agent_file), helpers.WRITER_LAID)
+        self.assertNotIn("current wording", said)
+        self.assertIn("Laid before on step 9 of writer, whose step no longer says", said)
+
     def test_a_plugin_up_to_date_is_said_so(self):
         # Given: the README's lanes laid just now
         # When: the plugin is brought up
@@ -414,7 +495,7 @@ class TestBroughtUp(LayerTest):
 ITEMS = "hooks/adapters/items-f.py"
 VALUES = "hooks/adapters/values-w.py"
 EVERY = {"lane": "every_item", "takes": ["review.md"], "adapter": ITEMS}
-DONE = f"End by running `{helpers.GIVE} writer done`."
+DONE = f"End by running `{helpers.GIVE} writer done`.{helpers.NOT_WORK}"
 
 
 class AdaptedTest(LayerTest):
@@ -492,7 +573,10 @@ class TestResults(LayerTest):
         # When: it is printed
         said = layer.printed(helpers.PROPOSED)
         # Then: writer's last step ends by the command of each
-        ends = f"End by running `{helpers.GIVE} writer asks` or `{helpers.GIVE} writer done`."
+        ends = (
+            f"End by running `{helpers.GIVE} writer asks` or `{helpers.GIVE} writer done`."
+            f"{helpers.NOT_WORK}"
+        )
         self.assertIn(f"4. Reply with the entries you wrote. {ends}\n", said)
 
     def test_the_results_are_written_into_lanes_json(self):

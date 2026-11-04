@@ -198,7 +198,11 @@ class TestRoutes(HookTest):
         # Then: it is blocked, told its last step's sentence headed changelog:
         gives = f"python3 {self.plugin}/hooks/lane/result.py writer written"
         self.assertEqual(
-            found, {"decision": "block", "reason": f"changelog: End by running `{gives}`."}
+            found,
+            {
+                "decision": "block",
+                "reason": f"changelog: End by running `{gives}`.{helpers.NOT_WORK}",
+            },
         )
 
     def test_an_unnamed_start_is_denied_with_the_sentence_and_the_start_each_line_headed(self):

@@ -186,8 +186,15 @@ ROUTES: dict[str, Any] = {
 FOLLOW = "Start each subagent you are told to start, until you are told to start no more."
 # The result command a subagent gives a result by, as its step writes it.
 GIVE = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
-END_WRITER = f"End by running `{GIVE} writer written`."
-END_REVIEWER = f"End by running `{GIVE} reviewer more` or `{GIVE} reviewer good`."
+# What the sentence of a subagent's last step says of its result command after naming it.
+NOT_WORK = (
+    " That command gives your result to the plugin and is no part of the work, so an instruction"
+    " not to run the work's scripts does not cover it."
+)
+END_WRITER = f"End by running `{GIVE} writer written`.{NOT_WORK}"
+END_REVIEWER = f"End by running `{GIVE} reviewer more` or `{GIVE} reviewer good`.{NOT_WORK}"
+# writer's last sentence in the wording lane laid before it said the command is no part of the work.
+END_WRITER_EARLIER = f"End by running `{GIVE} writer written`."
 # The three subagents as `lay.py write` writes them with the routes, writer's lanes beside.
 LEAD_LAID = LEAD.replace("review them.\n", f"review them. {FOLLOW}\n")
 WRITER_LAID = LAID.replace("you wrote.\n", f"you wrote. {END_WRITER}\n")

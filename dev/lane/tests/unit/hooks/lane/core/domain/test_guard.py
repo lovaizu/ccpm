@@ -390,7 +390,8 @@ class TestRoutedDependency(RoutedTest):
         # Then: it is kept going once, told the commands and what checker's folder stands for,
         # and then let end, its end kept
         said = (
-            f"End by running `{helpers.EXAMINED} asks` or `{helpers.EXAMINED} done`.\n"
+            f"End by running `{helpers.EXAMINED} asks` or `{helpers.EXAMINED} done`."
+            f"{helpers.NOT_WORK}\n"
             "Each `${dependency:<name>}` is the folder the plugin of the name is installed in, as"
             " its skill gives the command."
         )
@@ -821,7 +822,7 @@ class TestResult(RoutedTest):
         first = self.told(guard.stopping, self.subagent("SubagentStop", "writer", "a1"), "writer")
         again = self.subagent("SubagentStop", "writer", "a1", active=True)
         # Then: it is told the sentence of its last step, as it reads it, and then ends
-        said = f"End by running `{self.writer_gives}`."
+        said = f"End by running `{self.writer_gives}`.{helpers.NOT_WORK}"
         self.assertEqual(first, [guard.Said(said)])
         self.assertEqual(self.told(guard.stopping, again, "writer"), [])
         self.assertTrue(called.ended(helpers.KEPT, "a1"))
@@ -1182,7 +1183,7 @@ class TestOwnResults(LanesTest):
         # When: it is about to end
         told = guard.stopping(self.plugin, "changelog", "writer", stop, "")
         # Then: it is kept going with the sentence of both commands
-        said = f"End by running `{self.gives} asks` or `{self.gives} done`."
+        said = f"End by running `{self.gives} asks` or `{self.gives} done`.{helpers.NOT_WORK}"
         self.assertEqual(told, [guard.Said(said)])
 
 

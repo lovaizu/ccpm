@@ -53,10 +53,14 @@ as gone wrong (KR1.1). A subagent that meets the sentence of its own step goes b
 ### One wording for the step and the check
 
 `lanes/` alone makes the sentence of a rule, both for the step that `lay.py` writes and for the
-message that the check script gives.
+message that the check script gives. Beside each wording, it keeps each earlier wording that Lane
+laid. `lay.py write` and `lay.py up` put a sentence that a step says in an earlier wording in the
+current one, and leave every other word of the step as it was.
 
 *Why*: the subagent then meets the same words in its step and in each stop. No change to one place
-can make the two differ.
+can make the two differ. The check script holds a step to the current wording, so a plugin laid
+before would stop on every call once Lane changed a wording. Only a wording that Lane laid is taken
+for an earlier one, so words that the developer AI wrote stay as they are.
 
 ### What was approved is what runs
 
@@ -143,8 +147,10 @@ the UX's example plugin, as their user.
   the next start once every run has ended. Off the main path, serves KR2.1: without it, the
   developer AI writes its own code for an order that runs subagents at once.
 - **S7**: As the developer AI, I want to run `lay.py up` on my plugin after Lane is updated, and
-  find my plugin's copy of Lane's code at Lane's version. Off the main path, serves KR1.1 and
-  KR2.1: a fault fixed in Lane reaches a plugin's checks only this way.
+  find my plugin's copy of Lane's code at Lane's version, and each sentence in my steps in Lane's
+  current wording. Off the main path, serves KR1.1 and KR2.1: a fault fixed in Lane reaches a
+  plugin's checks only this way, and a step left in an earlier wording would be stopped on every
+  call.
 
 S3 also carries a rule that needs the person's approval, and a rule that takes a value given for
 each run, as branches of its sequence. Without them, the developer AI could not hold such a rule
@@ -168,7 +174,8 @@ developer AI's plugin.
 ### What each role alone decides
 
 - `lay.py` decides what is written where in the developer AI's plugin. No other role writes there.
-  `lay.py up` brings the plugin's copy of Lane's code and its hook entries to Lane's version.
+  `lay.py up` brings the plugin's copy of Lane's code, its hook entries and the sentences in its
+  steps to Lane's version.
 - `proposal.py` decides whether a proposal can be laid. It holds the proposal to the JSON Schema of
   [the proposal](../../plugins/lane/docs/lanes.md#the-proposal), and checks it against the
   plugin's files.
@@ -602,6 +609,9 @@ sequenceDiagram
     opt the hook entries are in another form than Lane's
       L->>PF: writes each Hook entry
     end
+    opt a Step says a sentence in a wording that Lane laid before
+      L->>PF: writes the Step, the sentence in the current wording
+    end
     L-->>DA: what it did, and each rule laid, marked where its step no longer says it
   end
 ```
@@ -745,7 +755,7 @@ The paths, one test each:
 | S4 a result | a result a route is on; a result no route is on, stopped, then one it is on; a rule about the end not kept, stopped with what is missing, then the work mended; an end with a result; an end with none, kept going once, then let end |
 | S5 the orchestrator | `written`, then `good`; `good`, then reviewer resumed with SendMessage giving `more`, writer started next; `written`, `more`, `written`, then `good`; a start the routes do not name, stopped; a subagent that ended with no result, started again; lead ending with no start due; lead kept going once with a start due, then let end with the operator told; a subagent of a dependency started, its result by its own plugin's script taken, each plugin's guard keeping it, and once resumed its later result moving the routes on |
 | S6 runs at once | every run giving one result; results taken by the order of results; a further run of a subagent not in `fan_out`, stopped; another subagent started before every run ended, stopped; a run ending with no result, started again in its place; results that no order holds, the operator told |
-| S7 `lay.py up` | a folder with no plugin's manifest; Lane's code older and the hook entries in another form; nothing to bring up |
+| S7 `lay.py up` | a folder with no plugin's manifest; Lane's code older and the hook entries in another form; Lane's code older and a step in an earlier wording, brought up; nothing to bring up |
 
 ### ux
 

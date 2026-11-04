@@ -8,6 +8,11 @@ The sentence is what the step says. The hook tells the subagent the sentence on 
 when the subagent does what the last column says. What the lane takes goes where the sentence shows
 `<...>`.
 
+A newer lane may word a sentence it lays in other words. `lay.py up` and `lay.py write` then put
+the new words in place of the old ones that lane laid in your steps, and leave every other word as
+it was. The hook tells the sentence in the new words, so it stops each call of a subagent whose
+step still says the old ones. Words that lane never laid are yours, and lane leaves them.
+
 What a lane takes is either fixed in the step, such as `CHANGELOG.md`, or given for each run,
 written `{<name>}`. A thing given for each run may be a whole take, or, in a command, a part of it,
 as below. It is the value under that name that the values port reads in what the subagent is

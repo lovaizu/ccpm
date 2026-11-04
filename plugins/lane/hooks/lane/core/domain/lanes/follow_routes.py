@@ -13,8 +13,16 @@ from routes import Next, kind
 
 ACTION = "follow"
 WORDING = "Start each subagent you are told to start, until you are told to start no more."
-# What the last step of a subagent giving a result says, with the commands it gives them by.
-RESULT = "End by running `<commands>`."
+# What the last step of a subagent giving a result says, with the commands it gives them by, and
+# that such a command is no part of the work: a subagent told to run none of the work's scripts
+# would otherwise end with no result.
+RESULT = (
+    "End by running `<commands>`. That command gives your result to the plugin and is no part of"
+    " the work, so an instruction not to run the work's scripts does not cover it."
+)
+# Each wording of that sentence lane laid before, the newest first, so lay.py puts the current one
+# in its place.
+RESULT_EARLIER = ("End by running `<commands>`.",)
 # The tool the orchestrator starts a subagent with, and the one it resumes a run with.
 AGENT = "Agent"
 MESSAGE = "SendMessage"

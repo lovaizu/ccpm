@@ -146,6 +146,32 @@ class TestSentence(unittest.TestCase):
                 # Then: it reads as docs/routes.md writes it
                 self.assertEqual(lanes.sentence(lane, takes), said)
 
+    def test_the_result_sentence_says_its_command_is_no_part_of_the_work(self):
+        # Given: a subagent's last step with its result command, as a subagent told to run none of
+        # the work's scripts reads it
+        # When: the sentence laid there is made
+        # Then: it says the command gives the result to the plugin and is no part of the work
+        self.assertEqual(
+            lanes.sentence("result", ["give"]),
+            "End by running `give`. That command gives your result to the plugin and is no part of"
+            " the work, so an instruction not to run the work's scripts does not cover it.",
+        )
+
+    def test_the_result_sentence_is_given_in_each_wording_lane_laid_before(self):
+        # Given: a subagent's last step with its result command
+        # When: the sentence laid there is made in the wordings lane laid before
+        # Then: it is the one wording before the current, which said no more than the commands
+        self.assertEqual(lanes.earlier("result", ["give"]), ["End by running `give`."])
+
+    def test_a_sentence_whose_wording_never_changed_has_none_laid_before(self):
+        for lane, takes in (("run_only", ["git log"]), ("follow_routes", [])):
+            with self.subTest(lane=lane):
+                # Given: a lane, or a sentence laid from the routes, whose wording lane never
+                # changed
+                # When: its sentence is made in the wordings laid before
+                # Then: there is none
+                self.assertEqual(lanes.earlier(lane, takes), [])
+
     def test_the_sentences_of_the_routes_have_their_actions_and_follow_routes_hook(self):
         for lane, action in (("follow_routes", "follow"), ("result", "end")):
             with self.subTest(lane=lane):

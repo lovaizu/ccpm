@@ -53,6 +53,66 @@ class TestReadAsLaid(unittest.TestCase):
         self.assertEqual(steps.read_as_laid(lines, given), [f"2. Write. {helpers.WRITE}\n"])
 
 
+# writer's last step laying its result command, and the step saying the sentence in a wording lane
+# never laid.
+ENDS = [{"lane": "result", "takes": [f"{helpers.GIVE} writer written"]}]
+NEVER = f"Finish by running `{helpers.GIVE} writer written`."
+
+
+class TestReworded(unittest.TestCase):
+    def test_a_sentence_in_an_earlier_wording_is_put_in_the_current_one(self):
+        # Given: writer's last step saying its result sentence in the wording laid before
+        lines = [f"4. Reply. {helpers.END_WRITER_EARLIER}\n"]
+        given = {"span": (0, 1), "lanes": ENDS}
+        # When: it is reworded
+        # Then: it says the sentence in the current wording, in the same place
+        self.assertEqual(steps.reworded(lines, given), [f"4. Reply. {helpers.END_WRITER}\n"])
+
+    def test_a_sentence_in_its_current_wording_is_left_as_it_is(self):
+        # Given: the step saying the current wording, which begins with the earlier one
+        lines = [f"4. Reply. {helpers.END_WRITER}\n"]
+        given = {"span": (0, 1), "lanes": ENDS}
+        # When: it is reworded
+        # Then: it is as it was
+        self.assertEqual(steps.reworded(lines, given), lines)
+
+    def test_a_wording_lane_never_laid_is_not_taken_for_an_earlier_one(self):
+        # Given: the step saying the result command in words lane never laid
+        lines = [f"4. Reply. {NEVER}\n"]
+        given = {"span": (0, 1), "lanes": ENDS}
+        # When: it is reworded
+        # Then: it is as it was
+        self.assertEqual(steps.reworded(lines, given), lines)
+
+    def test_an_earlier_wording_on_a_line_before_the_last_is_put_in_the_current_one_there(self):
+        # Given: the step saying the earlier wording on its first line, going on in a second
+        lines = [f"4. Reply. {helpers.END_WRITER_EARLIER}\n", "   One a line.\n", "5. Rest.\n"]
+        given = {"span": (0, 2), "lanes": ENDS}
+        # When: it is reworded
+        # Then: the first line says the current wording, the second as it was, and no line out of
+        # the step is given
+        self.assertEqual(
+            steps.reworded(lines, given), [f"4. Reply. {helpers.END_WRITER}\n", "   One a line.\n"]
+        )
+
+    def test_a_step_read_as_laid_has_an_earlier_wording_replaced_not_added_beside(self):
+        # Given: the step saying the earlier wording, laid again with the same command
+        lines = [f"4. Reply. {helpers.END_WRITER_EARLIER}\n"]
+        given = {"span": (0, 1), "lanes": ENDS, "gone": []}
+        # When: it is read as laid
+        # Then: it says the current wording once, in place of the earlier
+        self.assertEqual(steps.read_as_laid(lines, given), [f"4. Reply. {helpers.END_WRITER}\n"])
+
+    def test_a_sentence_gone_in_an_earlier_wording_is_taken_out(self):
+        # Given: the step saying the earlier wording of a result the proposal no longer lays
+        lines = [f"4. Reply. {helpers.END_WRITER_EARLIER}\n"]
+        gone = [helpers.END_WRITER, helpers.END_WRITER_EARLIER]
+        given = {"span": (0, 1), "lanes": [], "gone": gone}
+        # When: it is read as laid
+        # Then: the sentence is gone from it
+        self.assertEqual(steps.read_as_laid(lines, given), ["4. Reply.\n"])
+
+
 class TestStepsLaid(unittest.TestCase):
     def agent(self, laid_steps: list) -> dict:
         """writer as the proposal gives it, with the lines of the README's writer laid."""
@@ -81,6 +141,18 @@ class TestStepsLaid(unittest.TestCase):
             [(3, helpers.STEPS[1]["lanes"], []), (2, [], [helpers.RUN])],
         )
         self.assertEqual(found[1]["span"], (9, 10))
+
+    def test_a_sentence_gone_is_taken_out_in_its_current_wording_then_each_earlier(self):
+        # Given: writer's result laid before on step 4, and a proposal laying none there
+        before = {"writer": [{"step": 4, "lanes": ENDS}]}
+        lines = helpers.WRITER_LAID.splitlines(keepends=True)
+        agent = {"name": "writer", "lines": lines, "steps": []}
+        # When: the steps to lay are found
+        found = steps.steps_laid(before, agent)
+        # Then: step 4 is laid with no lane, its sentence gone in the current wording and the
+        # earlier, the current first, as the earlier begins it
+        gone = [helpers.END_WRITER, helpers.END_WRITER_EARLIER]
+        self.assertEqual([(s["step"], s["lanes"], s["gone"]) for s in found], [(4, [], gone)])
 
     def test_a_step_laid_before_that_the_file_no_longer_has_is_left_out(self):
         # Given: a lane laid before on step 9, which writer's file no longer has

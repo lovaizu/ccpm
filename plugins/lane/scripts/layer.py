@@ -1,8 +1,8 @@
 """lay.py's course: the lanes and routes the developer AI proposes printed for its approval as each
 step will read; once approved, written word for word into its plugin from the same file, so no AI
 copies what was approved, with Claude Code's check of the plugin run and the proposal removed; and
-a plugin laid before brought up to lane's code, its hooks written in the current form and its lanes
-said.
+a plugin laid before brought up to lane's code, its hooks written in the current form, the
+sentences its steps say in a wording lane laid before put in the current one, and its lanes said.
 
 The routes are laid as sentences in the steps beside the lanes: follow_routes' on the
 orchestrator's step, and the result command on the last step of each subagent giving a result, or
@@ -206,7 +206,9 @@ def written(path: str) -> str:
     routes, and lane's code; has Claude Code check the plugin; removes the proposal, and its folder
     once nothing else is left there; and gives what was done. The lanes laid are those laid before
     in each other subagent whose file is still there, and the proposal's in each of its subagents;
-    the routes, the proposal's, or those laid before where it gives none."""
+    the routes, the proposal's, or those laid before where it gives none. Each other step saying a
+    sentence laid before in a wording lane laid before has it put in the current one, as `lay.py up`
+    puts it, as lane's code laid with it checks the current one."""
     given = proposal(path)
     root, plugin = given["plugin"], given["name"]
     hooks = entries.read(root)
@@ -214,6 +216,8 @@ def written(path: str) -> str:
     now = given["routes"] or routes_before
     found, was = agents(given, before, routes_before)
     said = [steps_written(root, agent, was) for agent in found]
+    # A subagent written above says each sentence in the current wording, so is reworded in none.
+    said += reworded_in(root, before, routes_before)
     laid_now = {a["name"]: a for a in read_before(root)["subagents"]}
     for agent in given["subagents"]:
         lanes_of = [{"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]]
@@ -296,11 +300,49 @@ def validated(root: str, path: str) -> None:
         )
 
 
+def reworded_in(
+    root: str, before: dict[str, list[dict[str, Any]]], routes_before: dict[str, Any] | None
+) -> list[str]:
+    """Writes each step of the plugin that says a sentence laid before, a lane's or the routes', in
+    a wording lane laid before, with that sentence in the current one, as `steps.reworded` gives
+    it, every other line as it was; gives what was written, a line for each step."""
+    results = {a["name"]: a.get("results") for a in read_before(root)["subagents"]}
+    named = routes.named(routes_before) if routes_before else []
+    said = []
+    for name in dict.fromkeys([*before, *named]):
+        file = step.steps_file(root, name)
+        if file is None or not os.path.isfile(file):
+            continue
+        with open(file, encoding="utf-8") as f:
+            lines = f.readlines()
+        bare = [line.rstrip("\n") for line in lines]
+        laid = before.get(name, [])
+        shown = os.path.relpath(file, root)
+        written_now = []
+        for s in merged(laid, routed(routes_before, name, lines, laid, results.get(name))):
+            where = step.span(bare, s["step"])
+            if where is None:
+                continue
+            now = steps.reworded(lines, {**s, "span": where})
+            if now != lines[where[0] : where[1]]:
+                lines[where[0] : where[1]] = now
+                written_now.append(
+                    f"Wrote step {s['step']} of {name} into {shown}, its sentences in lane's"
+                    " current wording.\n"
+                )
+        if written_now:
+            with open(file, "w", encoding="utf-8") as f:
+                f.write("".join(lines))
+        said += written_now
+    return said
+
+
 def brought_up(root: str) -> str:
-    """Brings up the plugin's copy of lane's code where it is older than lane, and lane's hook entry
-    to the current form wherever it is in another, every other entry and each step as it was; gives
-    what was done, and each lane laid before, for the developer AI to keep in its proposal or leave
-    out. Stops, bringing nothing up, where the folder holds no plugin's manifest."""
+    """Brings up the plugin's copy of lane's code where it is older than lane, lane's hook entry to
+    the current form wherever it is in another, every other entry as it was, and each sentence a
+    step says in a wording lane laid before to the current one, the rest of each step as it was;
+    gives what was done, and each lane laid before, for the developer AI to keep in its proposal or
+    leave out. Stops, bringing nothing up, where the folder holds no plugin's manifest."""
     if not os.path.isfile(os.path.join(root, ".claude-plugin", "plugin.json")):
         raise Stop(
             f"lay.py: {root} holds no .claude-plugin/plugin.json, so it is no plugin's folder;"
@@ -324,6 +366,7 @@ def brought_up(root: str) -> str:
         said.append(f"Wrote the hooks of {routes.listed(kept)} into hooks/hooks.json.\n")
     if not said:
         said.append("hooks/lane/ holds no older copy of lane's code.\n")
+    said += reworded_in(root, before, routes_before)
     adapters = {a["name"]: a.get("adapter") for a in read_before(root)["subagents"]}
     for agent, laid in before.items():
         if adapters[agent]:

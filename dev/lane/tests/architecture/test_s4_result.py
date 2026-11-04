@@ -75,7 +75,7 @@ class TestResult(helpers.RoutesTest):
         kept = self.claude.stop(run)
         ended = self.claude.stop(run)
         # Then: it is kept going once with its last step's sentence, then let end with no result
-        said = f"changelog: End by running `{self.gives(run, 'written')}`."
+        said = f"changelog: End by running `{self.gives(run, 'written')}`.{helpers.NOT_WORK}"
         self.assertEqual((kept.made, kept.decision(), kept.reason()), (False, "block", said))
         self.assertTrue(ended.made)
         self.assertNotIn("result", [e["kind"] for e in self.kept(run)])

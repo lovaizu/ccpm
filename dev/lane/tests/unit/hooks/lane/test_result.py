@@ -43,7 +43,10 @@ class TestRefused(ResultTest):
         gives = f"python3 {self.plugin}/hooks/lane/result.py writer written"
         self.assertEqual(
             self.given("writer", "good"),
-            (1, f"changelog: writer gives no `good`. End by running `{gives}`.\n"),
+            (
+                1,
+                f"changelog: writer gives no `good`. End by running `{gives}`.{helpers.NOT_WORK}\n",
+            ),
         )
 
     def test_a_subagent_no_route_is_from_is_refused(self):
@@ -133,7 +136,7 @@ class TestResults(helpers.PluginTest):
         self.assertEqual(
             err.getvalue(),
             f"changelog: writer gives no `written`. End by running `{gives} asks` or"
-            f" `{gives} done`.\n",
+            f" `{gives} done`.{helpers.NOT_WORK}\n",
         )
 
 
@@ -148,7 +151,8 @@ class TestDone(helpers.PluginTest):
         self.assertEqual(result.main(["writer", "written"], err, self.plugin), 1)
         gives = f"python3 {self.plugin}/hooks/lane/result.py writer done"
         self.assertEqual(
-            err.getvalue(), f"changelog: writer gives no `written`. End by running `{gives}`.\n"
+            err.getvalue(),
+            f"changelog: writer gives no `written`. End by running `{gives}`.{helpers.NOT_WORK}\n",
         )
 
 
