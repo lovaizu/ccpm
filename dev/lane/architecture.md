@@ -153,7 +153,9 @@ with Lane (KR1.1).
 S5 also carries a route to a subagent of a plugin that the developer AI's plugin depends on, as a
 branch of its sequence. The subagent gives its result by its own plugin's result script, as that
 plugin names its results. Without it, the developer AI would write code for an order that runs
-another plugin's subagent, or copy that subagent's steps into its own plugin (KR2.1).
+another plugin's subagent, or copy that subagent's steps into its own plugin (KR2.1). S5 also
+carries a run resumed with SendMessage after it gave a result, which gives a later one. The later
+result moves the routes on, so a subagent can end to wait for an answer and go on once it has it.
 
 ## Components
 
@@ -506,6 +508,12 @@ sequenceDiagram
   end
 ```
 
+- **A later result of a run takes the place of its earlier one.** Each result counts as the last
+  that the run gave, so a run resumed with SendMessage moves the routes on by the result it gives
+  then. Holding a run to its first result would need no record of a resume. But a subagent that
+  ends to wait for an answer could then lead nowhere once resumed, and the developer AI would
+  write code for that order (KR2.1). The cost: the orchestrator learns the later result only at
+  its next start or call, as the main conversation, not the orchestrator, may resume the run.
 - **The next start reaches the orchestrator as context that Claude Code adds**, not from a script
   that the orchestrator runs. Learning it then costs the orchestrator no call. The cost: where
   Claude Code does not give that context, the orchestrator learns the start only at its next call,
@@ -735,7 +743,7 @@ The paths, one test each:
 | S2 `lay.py write` | the proposal written, without an adapter and with one; the proposal refused, nothing written; `claude plugin validate` failing, and `claude` missing, the proposal kept |
 | S3 a subagent with rules | each call the rules allow, let through; a call that breaks a rule, stopped with the sentence of its step; a held command, the person saying yes and saying no; a command with the run's own value, let through, and with another value, stopped; two runs at once, each held to its own value; a text read through an adapter, in form and out of form; an adapter that fails, a value not given and an event that cannot be read, each stopped as a call that cannot be checked with the operator told; the steps given whole at the start |
 | S4 a result | a result a route is on; a result no route is on, stopped, then one it is on; a rule about the end not kept, stopped with what is missing, then the work mended; an end with a result; an end with none, kept going once, then let end |
-| S5 the orchestrator | `written`, then `good`; `written`, `more`, `written`, then `good`; a start the routes do not name, stopped; a subagent that ended with no result, started again; lead ending with no start due; lead kept going once with a start due, then let end with the operator told; a subagent of a dependency started, its result by its own plugin's script taken, and kept going once where it gives none |
+| S5 the orchestrator | `written`, then `good`; `good`, then reviewer resumed with SendMessage giving `more`, writer started next; `written`, `more`, `written`, then `good`; a start the routes do not name, stopped; a subagent that ended with no result, started again; lead ending with no start due; lead kept going once with a start due, then let end with the operator told; a subagent of a dependency started, its result by its own plugin's script taken, and kept going once where it gives none |
 | S6 runs at once | every run giving one result; results taken by the order of results; a further run of a subagent not in `fan_out`, stopped; another subagent started before every run ended, stopped; a run ending with no result, started again in its place; results that no order holds, the operator told |
 | S7 `lay.py up` | a folder with no plugin's manifest; Lane's code older and the hook entries in another form; nothing to bring up |
 

@@ -170,6 +170,11 @@ none.
 - lane keeps a subagent that is about to end without a result going once, and tells it the
   sentence of its last step, headed by your plugin's name.
 - A subagent resumed with SendMessage keeps its ID, and gives a result again for the resumed run.
+  The later result takes the place of the earlier one, and lane tells the orchestrator the start
+  that the later result's route names. So a subagent that ends to wait for an answer, with a result
+  whose route starts no one, such as `asks`, moves the routes on once it is resumed with the answer
+  and gives another. Where Claude Code starts the resumed run again, lane tells the orchestrator to
+  wait for it to end.
 - A run that ended with no result, after it was kept going once, is not resumed. The run started
   again in its place gives the result. A result the ended run gives once the main conversation or
   another subagent resumes it does not count. lane stops the orchestrator's SendMessage to it,

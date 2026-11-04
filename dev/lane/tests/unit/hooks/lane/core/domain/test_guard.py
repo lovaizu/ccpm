@@ -246,6 +246,74 @@ class RoutedTest(GuardTest):
         return self.told(guard.came_back, self.start(name, "PostToolUse", back), "lead")
 
 
+class TestResumed(RoutedTest):
+    """A run resumed with SendMessage after it gave a result, which gives another: the later result
+    moves the routes on, as docs/routes.md's How a subagent gives its result says."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.started_by_lead("writer", helpers.back("w1", "async_launched"))
+        self.ran("writer", "w1", "written")
+        self.started_by_lead("reviewer", helpers.back("r1", "async_launched"))
+        self.ran("reviewer", "r1", "good")
+        self.message = self.event("SendMessage", {"to": "r1", "message": "Look again."}, None)
+
+    def lead_told(self) -> list:
+        """What lead is told as it starts again."""
+        return self.told(guard.started, self.subagent("SubagentStart", "lead", "lead1"), "lead")
+
+    def resumed(self, again: bool) -> None:
+        """reviewer, which gave `good`, resumed by the main conversation, started again where
+        `again`, as Claude Code may start a resumed run, giving `more` and ending."""
+        guard.handed("changelog", self.message, "PreToolUse")
+        if again:
+            start = self.subagent("SubagentStart", "reviewer", "r1")
+            self.told(guard.started, start, "reviewer")
+        command = f"python3 {self.plugin}/hooks/lane/result.py reviewer more"
+        back = self.came_back(command, "changelog:reviewer", "r1")
+        self.told(guard.came_back, back, "reviewer")
+        self.told(guard.stopping, self.subagent("SubagentStop", "reviewer", "r1"), "reviewer")
+
+    def test_before_the_resume_lead_is_told_to_start_no_more(self):
+        # Given: reviewer gave `good`
+        # When: lead starts again
+        # Then: it is told to start no more
+        said = guard.Said("reviewer gave `good`. Start no more subagents.")
+        self.assertEqual(self.lead_told()[-1], said)
+
+    def test_a_later_result_of_the_resumed_run_moves_the_routes_on(self):
+        # Given: reviewer gave `good`, so lead was told to start no more
+        # When: reviewer is resumed, started again, and gives `more`
+        self.resumed(True)
+        # Then: lead is told to start writer, as reviewer's route on `more` says, and its start of
+        # writer goes through
+        said = guard.Said("reviewer gave `more`. Start `changelog:writer`.")
+        self.assertEqual(self.lead_told()[-1], said)
+        self.assertEqual(self.told(guard.check, self.start("writer"), "lead"), [])
+
+    def test_a_later_result_moves_the_routes_on_with_no_start_of_the_resumed_run(self):
+        # Given: reviewer gave `good`
+        # When: reviewer is resumed with no SubagentStart, and gives `more`
+        self.resumed(False)
+        # Then: lead is told to start writer all the same
+        said = guard.Said("reviewer gave `more`. Start `changelog:writer`.")
+        self.assertEqual(self.lead_told()[-1], said)
+
+    def test_while_the_resumed_run_goes_on_lead_waits_for_it(self):
+        # Given: reviewer, which gave `good`, resumed and started again
+        guard.handed("changelog", self.message, "PreToolUse")
+        self.told(guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer")
+        # When: lead starts writer meanwhile
+        told = self.told(guard.check, self.start("writer"), "lead")
+        # Then: it is told to wait for reviewer
+        self.assertIn(
+            guard.Said(
+                "Wait for `changelog:reviewer` to end: you are told the next start once it has."
+            ),
+            told,
+        )
+
+
 class TestRoutedDependency(RoutedTest):
     """A subagent of a dependency the routes name, checker's examiner: changelog's guard checks
     none of its calls, which its own plugin's guard holds, and keeps its results and its end as it
