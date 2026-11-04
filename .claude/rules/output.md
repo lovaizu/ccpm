@@ -32,13 +32,8 @@ already say.
 - **Do not open with praise, and do not defend a mistake.** When something is wrong, correct it.
 - **Keep a code example to 10 lines or fewer.** For more, show only the lines that matter, or put
   the code in its own file.
-- **Put a decision, a question or a proposal as a few plain sentences, with no headings or
-  labels: the context and the conclusion; the grounds; the purpose and what it should be, each in
-  a short paragraph, and what the user is to decide alone on the last line.** Where the user asks
-  for more, add what it is now, with `path:line`, and the gap.
-  - Rationale: the user approves from the conclusion and its grounds, and reads the details only
-    where these leave them unsure; headings and labels between short sentences make them harder
-    to read in the console.
+- **Put a decision, a proposal or a report to the user as
+  Q17 of [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) says.**
 - **Before you say that something cannot be done, offer one other way.**
   - Rationale: praise and a defense of a mistake take the reader's attention and give them nothing
     to act on. A reply that only says "cannot" leaves the reader with no next step.

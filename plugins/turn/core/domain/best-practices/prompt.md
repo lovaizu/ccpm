@@ -32,6 +32,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - **Q14** (trials, steps): For each rule of the steps, where the AI must act and where it must not, can the maintainer point to the trial case that tries it, and see from that case's record that the situation it tries arose?
 - **Q15** (trials): When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check?
 - **Q16** (trials, steps): When the maintainer takes out of the prompt what a trial case tries, does that case fail?
+- **Q17** (output): When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?
 
 ## Practices
 
@@ -294,7 +295,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "First check whether you can test the condition with code assertions"
 - [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "Binary evaluations force clearer thinking and more consistent labeling"
 - [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "For an evaluator that makes judgments, test it against human-labeled examples of the failure you want to detect."
-- [τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment](https://arxiv.org/html/2506.07982), Barres, Dong, Ray, Si and Narasimhan, arXiv:2506.07982, 2025: "Never make up or hallucinate information not provided in the scenario instructions."
+- [𝜏^2-Bench: Evaluating Conversational Agents in a Dual-Control Environment](https://arxiv.org/html/2506.07982), Barres, Dong, Ray, Si and Narasimhan, arXiv:2506.07982, 2025: "Never make up or hallucinate information not provided in the scenario instructions."
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "When scores don't climb, we need confidence that it's due to agent performance and not the eval."
 
 ### Q16: When the maintainer takes out of the prompt what a trial case tries, does that case fail?
@@ -310,3 +311,24 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 
 - [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Turn exactly one item on the list into an actual, concrete, runnable test"
 - [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Change the code to make the test (& all previous tests) pass (adding items to the list as you discover them)"
+
+### Q17: When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?
+
+**Thinking**: The person approves from the conclusion and its grounds, and reads further only where these leave them unsure, so a message opens with what it asks or reports and why, in plain sentences, and keeps the rest for when it is asked.
+
+**Steps**
+
+1. Write a few plain sentences with no headings or labels, in short paragraphs, one point each: the context and the conclusion; the grounds; the purpose and what it should be.
+2. Put what the person is to decide alone on the last line, one decision a message, with one recommendation.
+3. Where the person asks for more, add what it is now, with the place it rests on, and the gap between that and what it should be.
+4. Use the words the person uses, and say a term of your own in everyday words or leave it out.
+
+**Grounds**
+
+- [AR 25-50, Preparing and Managing Correspondence](https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN42124-AR_25-50-007-WEB-13.pdf), US Army, armypubs.army.mil, 2020, change 007 of 2024: "Two essential requirements include putting the main point at the beginning of the correspondence (bottom line up front) and using the active voice"
+- [Clear and short](https://digital.gov/guides/plain-language/writing/clear-short), GSA, digital.gov, no date: "Limit each paragraph or section to one topic."
+- [Headings](https://digital.gov/guides/plain-language/design/headings), GSA, digital.gov, no date: "With rare exceptions, headings should be shorter than the content that follows them."
+- [Preparing Decision Memorandums, Policy 670.1](https://dbh.dc.gov/sites/default/files/dc/sites/dmh/publication/attachments/TL62.pdf), DC Department of Mental Health, dbh.dc.gov, 2005: "After reviewing this section, the DMH Director can decide which detailed sections must be reviewed in order to make a decision."
+- [Preparing Decision Memorandums, Policy 670.1](https://dbh.dc.gov/sites/default/files/dc/sites/dmh/publication/attachments/TL62.pdf), DC Department of Mental Health, dbh.dc.gov, 2005: "The author should clearly recommend one of the options presented in the previous section"
+- [Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/), Nielsen, Nielsen Norman Group, 2006: "Initially, show users only a few of the most important options. Offer a larger set of specialized options upon request."
+- [Structuring forms](https://www.gov.uk/service-manual/design/form-structure), Government Digital Service, GOV.UK Service Manual, 2018: "one decision they have to make"
