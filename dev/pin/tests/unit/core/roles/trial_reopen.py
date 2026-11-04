@@ -1,4 +1,4 @@
-"""The E2E test of a decision reopened, the story of pin's architecture "As Turn or rn, I want to
+"""The unit trial of a decision reopened, the story of pin's architecture "As Turn or rn, I want to
 reopen one decision with `pin:down`, and have it and each decision that builds on it decided
 again": the notes app's repository holds the design tree of its `--json` option, every decision
 settled, and maker's subagent `reviser`, kept beside this file, takes `pin:down` to reopen D2, the
@@ -122,7 +122,7 @@ def written() -> dict:
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed and counted."""
+    """One run of the trial; prints what it found, and gives whether it passed and counted."""
     place = trying.folder("pin", f"trial-reopen-{number}")
     repo, copies = pinning.made(place, {"maker": trial_caller.MAKER})
     path = os.path.join(repo, TREE)

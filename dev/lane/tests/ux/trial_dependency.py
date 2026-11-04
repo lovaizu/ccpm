@@ -1,4 +1,4 @@
-"""The E2E test of a command of a dependency's skill: `lay.py write` lays dependency.json, kept
+"""The ux trial of a command of a dependency's skill: `lay.py write` lays dependency.json, kept
 beside this file, run_only on `python3 ${dependency:checker}/scripts/check.py CHANGELOG.md` in
 verifier, on a copy of `changelog` whose manifest declares `checker`, in a git repository of its
 own outside any ccpm clone, as trial_changelog.py makes it, with a copy of the stand-in plugin
@@ -45,7 +45,7 @@ PROMPT = (
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed."""
+    """One run of the trial; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-dependency-{number}")
     checker = os.path.join(place, "checker")
     shutil.copytree(os.path.join(HERE, "checker"), checker)

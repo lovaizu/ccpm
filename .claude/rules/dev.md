@@ -109,8 +109,8 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
    - Rationale: the architecture tests run the lanes and routes as they are laid, so they are laid
      before those tests.
 
-e. **Write the slice's architecture tests, one for each path through its sequences, with every
-   role a double, as
+e. **Write the slice's architecture tests, one for each path through its sequences, with what
+   joins the parts run real and each role an AI runs a double, as
    [Architecture: the parts joined](../../dev/architecture.md#architecture-the-parts-joined) says,
    run them, and fix what fails at the part or the handoff it lies in.**
    - Rationale: each part passed alone; a handoff, a route or a result between parts shows only

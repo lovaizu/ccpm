@@ -1,4 +1,4 @@
-"""The E2E test of O1 of Turn's UX on code, with parts that stand apart: in an interactive session
+"""The ux trial of O1 of Turn's UX on code, with parts that stand apart: in an interactive session
 of Claude Code on Opus, with copies of Turn and pin, the person types `/turn:up` asking for two new
 modules of tidy that use nothing of each other, and answers each message, stood in for by an AI
 that answers from an intent written beforehand and never shown Turn.
@@ -48,7 +48,7 @@ command; there are no tests yet.
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed and counted."""
+    """One run of the trial; prints what it found, and gives whether it passed and counted."""
     place = turning.trying.folder("turn", f"trial-module-{number}")
     repo, copies = turning.made(place)
     started = time.monotonic()

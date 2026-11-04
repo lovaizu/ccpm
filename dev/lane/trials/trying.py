@@ -1,4 +1,4 @@
-"""What every plugin's E2E tests stand on: the folder of its own each run of an E2E test writes in,
+"""What every plugin's trials stand on: the folder of its own each run of a trial writes in,
 Claude Code started on copies of plugins as their user starts it, in `claude -p` or in an
 interactive session, a conversation gone on with message by message, its record kept, and what the
 records of the agents it started show."""
@@ -28,12 +28,12 @@ from typing import Any
 # the main conversation worked.
 QUIET = 5
 HERE = os.path.dirname(os.path.abspath(__file__))
-# The folder an E2E test writes in is made as a test's is, by testing.py, kept in the folder above.
+# The folder a trial writes in is made as a test's is, by testing.py, kept in the folder above.
 sys.path.insert(0, os.path.dirname(HERE))
 import testing
 
 # How Claude Code keeps its records is read by rn's record.py, whose job it is, loaded from its
-# file, so a plugin's E2E tests standing on this module meet none of their own modules of that
+# file, so a plugin's trials standing on this module meet none of their own modules of that
 # name.
 RECORD = os.path.join(HERE, "../../../plugins/rn/scripts/record.py")
 FOUND = importlib.util.spec_from_file_location("record", os.path.normpath(RECORD))
@@ -43,10 +43,10 @@ FOUND.loader.exec_module(record)
 
 
 def folder(plugin: str, name: str) -> str:
-    """A new folder of the plugin's for a run of the E2E test of the name, in the system's temporary
+    """A new folder of the plugin's for a run of the trial of the name, in the system's temporary
     folder as dev/architecture.md's Where a plugin writes its files has it, outside any ccpm clone,
     so the conversations started in it load none of its instructions; its path is printed first,
-    for whoever runs the E2E test to find what the run writes there. The path is given with every
+    for whoever runs the trial to find what the run writes there. The path is given with every
     link in it followed, as Claude Code names the folder of a conversation's records by it, and
     macOS's temporary folder is reached through a link."""
     made = os.path.realpath(testing.temporary(plugin, name))
@@ -139,7 +139,7 @@ class Conversation:
         """Reads what Claude Code prints until the main conversation has replied, and gives its
         result, the last line Claude Code printed for it as stream-json, such as its session_id;
         due is whether a turn is to open at once, as for a message sent, and idle is send's. Given
-        record, it adds there each line as it comes, kept before a failed run stops the E2E test.
+        record, it adds there each line as it comes, kept before a failed run stops the trial.
         Stops where Claude Code ends, gives a result that is an error, opens no turn within the
         wait where none is due, or, where idle, still has an agent running the wait after the
         reply."""
@@ -302,7 +302,7 @@ def interactive(
                     shown.flush()
                     seen = (seen + read)[-4096:]
                 joined = "".join(text_of(seen).split())
-                # The folder is the run's own, made by the E2E test, so it is trusted as Claude
+                # The folder is the run's own, made by the trial, so it is trusted as Claude
                 # Code asks of a folder it has not opened before, and the mode the test starts it
                 # in taken on: the second choice, below the first, each asked once.
                 first = [screen for screen in SECOND if screen in joined and screen not in passed]
@@ -521,7 +521,7 @@ def committed(repo: str, files: dict[str, str]) -> None:
 
 
 def verdict(untried: list[str], wrong: list[str]) -> bool:
-    """Whether an E2E test's run counted and passed, printing which, and why where it did not."""
+    """Whether a trial's run counted and passed, printing which, and why where it did not."""
     if untried:
         print("  not counted: " + "; ".join(untried))
         if wrong:
@@ -532,7 +532,7 @@ def verdict(untried: list[str], wrong: list[str]) -> bool:
 
 
 def main(run: Callable[[int], bool]) -> None:
-    """Runs an E2E test's run as many times as the command line gives, three by default, numbered
+    """Runs a trial's run as many times as the command line gives, three by default, numbered
     from the second word where given, and exits 0 where every run passed and counted."""
     runs = int(sys.argv[1]) if len(sys.argv) > 1 else 3
     first = int(sys.argv[2]) if len(sys.argv) > 2 else 1

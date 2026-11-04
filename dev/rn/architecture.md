@@ -246,7 +246,7 @@ Rn is tested as [Test](../architecture.md#test) says.
 | the orchestrator and the compressor [Claude Code · Markdown] | a trial of each move · ●●○ · the move from a state made beforehand | ▨[^1] | ▨[^2] |
 | Rn with Turn [Claude Code] | ▨[^3] | ▨[^3] | the acceptance test · ●●○ · KR1.1 and KR1.2 |
 
-[^1]: The trial of each move also checks how the moves follow one another.
+[^1]: Empty: no test yet runs rn's sequences with its scripts real and the orchestrator and the compressor as doubles. The trial of each move checks, with the model, how the moves follow one another.
 [^2]: ux tests run on the whole, in the last row.
 [^3]: Its units are tested in their own rows.
 

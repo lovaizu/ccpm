@@ -1,4 +1,4 @@
-"""The E2E test of O2 of lane's UX, "The developer AI has lead start writer and reviewer as its
+"""The ux trial of O2 of lane's UX, "The developer AI has lead start writer and reviewer as its
 routes say": `lay.py write` lays routes.json, kept beside this file, the routes of docs/routes.md
 with writer's lanes of the README and reviewer's run of `git log --oneline`, on a copy of
 `changelog` in a git repository of its own outside any ccpm clone, as trial_changelog.py makes it;
@@ -201,7 +201,7 @@ def started_by(
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed."""
+    """One run of the trial; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-routes-{number}")
     repo = made(place, "routes.json")
     started = time.monotonic()

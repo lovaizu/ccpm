@@ -1,4 +1,4 @@
-"""The E2E test of two runs of one subagent at once, each held to its own values: `lay.py write`
+"""The ux trial of two runs of one subagent at once, each held to its own values: `lay.py write`
 lays at_once.json, kept beside this file, write_only on `{work}` in drafter, on a copy of
 `changelog` in a git repository of its own outside any ccpm clone, as trial_changelog.py makes it;
 and Claude Code, on Opus, is asked to start two drafters together, one given `a.md` as its work and
@@ -99,7 +99,7 @@ def judged(drafters: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed."""
+    """One run of the trial; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-at-once-{number}")
     repo = os.path.realpath(made(place, "at_once.json"))
     started = time.monotonic()

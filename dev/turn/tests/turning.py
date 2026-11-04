@@ -1,4 +1,4 @@
-"""What Turn's E2E tests stand on: the repository of `tidy`, a tool that sorts a Downloads folder;
+"""What Turn's trials stand on: the repository of `tidy`, a tool that sorts a Downloads folder;
 copies of Turn and pin for each run; an interactive session of Claude Code, as Turn's roles run in
 the background and `claude -p` does not start `up` again once a role it started has ended; the
 person, stood in for by an AI that answers from an intent written beforehand and never shown Turn,
@@ -232,7 +232,7 @@ def read_json(path: str) -> Any:
         return None
 
 
-# How the stand-in for the person answers, the same in every E2E test.
+# How the stand-in for the person answers, the same in every trial.
 HOW = """How you answer: briefly, as a busy person, in the language the AI writes to you in.
 Answer what you are asked from what you want above. Where a fact is shown to you, say whether it
 is right. Where you are asked something your wants above do not settle, say the AI may decide it.

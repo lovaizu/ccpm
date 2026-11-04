@@ -689,7 +689,7 @@ dev/turn/
 └── tests/
     ├── unit/core/domain/               unit and property tests of the checks <Python 3>
     ├── unit/core/roles/                the trials of each role alone, trial_*.py <Python 3>
-    ├── architecture/                   each path of the sequences, every role a double, and Turn's entries and lanes as laid <Python 3>
+    ├── architecture/                   each path of the sequences, the roles doubles, and Turn's entries and lanes as laid <Python 3>
     └── ux/                             the trials of O1, O2 and O3, trial_*.py, and the stand-in caller <Python 3>
 
 .turn/best-practices/<kind>.json        Template made for the repository
@@ -705,8 +705,8 @@ Turn is tested as [Test](../architecture.md#test) says. What follows is what Tur
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|
-| Turn's scripts [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of a Template, a Design tree and Answers, the parts, the groups, the run values and the throwaway home | unittest, real files, doubles of every role · ●●● · run by the doubles at each step of every path, on the files the doubles write | trials on Opus · ●○○ · run by the roles on each move |
-| Claude Code process: `/turn:up`, `up` and the roles [Claude Code 2.1.317 or later] | trials on Opus · ●●● · each role alone, one input for each result it may give and each point it asks or settles, with the person, its neighbours and the researchers stood in for | unittest, Turn's lanes and routes as laid, doubles of every role and of Claude Code · ●●● · each path of the six sequences | trials on Opus · ●○○ · O1 on a README and on a module of code with two parts apart, O2 on a man page, and O3 with a stand-in caller |
+| Turn's scripts [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of a Template, a Design tree and Answers, the parts, the groups, the run values and the throwaway home | unittest, the scripts real, the roles as doubles · ●●● · run at each step of every path, on the files the role doubles write | trials on Opus · ●○○ · run by the roles on each move |
+| Claude Code process: `/turn:up`, `up` and the roles [Claude Code 2.1.317 or later] | trials on Opus · ●●● · each role alone, one input for each result it may give and each point it asks or settles, with the person, its neighbours and the researchers stood in for | unittest, Turn's lanes and routes and Lane's hooks as laid, real; the roles and Claude Code as doubles · ●●● · each path of the six sequences | trials on Opus · ●○○ · O1 on a README and on a module of code with two parts apart, O2 on a man page, and O3 with a stand-in caller |
 
 Lane's guard and result.py have no row: Lane tests them, and Turn's architecture tests run them as
 laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture tests run it.
@@ -722,9 +722,9 @@ laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture t
   files. A trial passes where the role writes its files in form and gives the result the files call
   for, each question to the person is one point and is theirs, and evaluator and proofreader read
   nothing but the work and their standard.
-- **architecture**: Turn's scripts, Lane's guard and `result.py`, Turn's lanes and routes as laid in
-  `hooks/`, and pin's `check.py` run real, on a run's folder on disk. A double stands in for `up`,
-  for each role and for the researcher. A double of the main conversation, or of a caller, answers
+- **architecture**: what joins Turn's parts runs real: Turn's scripts, Turn's lanes and routes as
+  laid in `hooks/`, Lane's hooks and `result.py` laid there, and pin's `check.py`, on a run's folder
+  on disk. `up`, each role and the researcher are roles an AI runs, so a double stands in for each. A double of the main conversation, or of a caller, answers
   each question with a set answer. The double of Claude Code, from Lane's `dev/lane/testing.py`,
   sends the hook events. Each test runs one path of [Sequences](#sequences), and checks at each step
   the role Lane names next and the run values it is started with. The paths:

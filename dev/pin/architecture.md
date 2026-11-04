@@ -399,7 +399,7 @@ pin is tested as [Test](../architecture.md#test) says. What follows is what pin 
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|
-| check.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each of the three checks, the tree's form, and the exit and its message | unittest, real files, a double of the pinner · ●●● · each path of O1, O2 and a reopen, check.py run by the command as `pin:down` writes it on each tree the double writes | trials on Opus · ●○○ · run by the pinner on each answer |
+| check.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each of the three checks, the tree's form, and the exit and its message | unittest, check.py and the tree on disk real, the pinner as a double · ●●● · each path of O1, O2 and a reopen, check.py run by the command as `pin:down` writes it on each tree the double writes | trials on Opus · ●○○ · run by the pinner on each answer |
 | Claude Code process: the pinner [Claude Code 2.1.317 or later] | trials on Opus · ●●● · `pin:down` alone, one input for each class of point and each step of its flow, with the person and the researcher stood in for | unittest · ●●○ · `pin:down`'s entry as Claude Code takes it: the AI may call it, it links the pinner's part, and it names the check in its one form | trials on Opus · ●○○ · O1 by `/pin:down`, and O2 by a caller's role that takes `pin:down` |
 
 The researcher has no row of its own: Claude Code ships it, and pin gives it only a prompt, tried
@@ -424,8 +424,9 @@ So pin's steps are held by the check and by these tests.
   passes where each message to the person holds one point, a fact found is shown to the person
   before the design, no decision asked is one the pinner could settle or one the caller settled,
   and the tree passes `check.py` with no decision open, or with only those the person left open.
-- **architecture**: the pinner is a role, so a double stands in for it, and runs one path of
-  [Sequences](#sequences) each. At each step of the path, the double writes the tree the step
+- **architecture**: what joins pin's parts runs real: `check.py`, run by the command that
+  `pin:down` names, on the tree on disk. The pinner is a role an AI runs, so a double stands in for
+  it, and runs one path of [Sequences](#sequences) each. At each step of the path, the double writes the tree the step
   calls for, and runs `check.py` by the command that `pin:down` names, with pin's folder put in,
   from the folder the pinner works in. The test checks that `check.py` reads that tree and gives
   the `Check result` the step calls for: that the tree holds, or the problem it names, such as a

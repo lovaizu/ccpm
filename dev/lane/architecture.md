@@ -609,8 +609,8 @@ Lane is tested as [Test](../architecture.md#test) says. What follows is what Lan
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|
-| lay.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · the proposal checked; steps, hook entries and Lane's code written | unittest, real files, a double of `claude` · ●●● · each path of `lay.py print`, `write` and `up` | trials on Opus · ●○○ · the proposals of O1 and O2 laid on `changelog` |
-| Hook process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each type of rule, tool calls, the next start | unittest, the hooks' commands in `sh`, doubles of Claude Code and the subagents · ●●● · each path of writer's run, lead's run, runs at once and a held command | trials on Opus · ●○○ · writer kept to its rules in O1, and lead to its routes in O2 |
+| lay.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · the proposal checked; steps, hook entries and Lane's code written | unittest, lay.py and the files it lays real, a double of `claude` · ●●● · each path of `lay.py print`, `write` and `up` | trials on Opus · ●○○ · the proposals of O1 and O2 laid on `changelog` |
+| Hook process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each type of rule, tool calls, the next start | unittest, the hook script by its commands in `sh` and the laid files real; Claude Code and the subagents as doubles · ●●● · each path of writer's run, lead's run, runs at once and a held command | trials on Opus · ●○○ · writer kept to its rules in O1, and lead to its routes in O2 |
 | Result process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each result a subagent may give | unittest, `result.py` run as a step writes it · ●●● · each path of lead's run that gives a result | trials on Opus · ●○○ · the results of O2 |
 
 The adapter processes have no row. An adapter is the developer AI's code, and Lane's running of it
@@ -621,10 +621,12 @@ is tested in the rows of the lay.py process and the hook process.
   Code is each event as JSON, in the fields that Claude Code's hooks reference documents, and the
   double of `claude` is a script on `PATH`.
 - **architecture**: the tests lay a proposal with `lay.py write` on a copy of `changelog`, and
-  then run one path of [Sequences](#sequences) each. Lane's code, the hooks' commands in `sh`,
-  `result.py` and the files on disk run real. A double of Claude Code sends the events of the path
-  in order and runs the hooks' commands. Doubles of the developer AI and of the subagents make set
-  calls and give set results. The person of a held command is a set answer of the double. The
+  then run one path of [Sequences](#sequences) each. What joins Lane's parts runs real: `lay.py`,
+  the hook script by the hooks' commands in `sh`, the result script, and the files `lay.py` lays.
+  Claude Code and the subagents are outside Lane, or roles an AI runs, so doubles stand in for
+  them: a double of Claude Code sends the events of the path in order and runs the hooks'
+  commands, and doubles of the developer AI and of the subagents make set calls and give set
+  results. The person of a held command is a set answer of the double. The
   paths:
 
   | Sequence | Paths |

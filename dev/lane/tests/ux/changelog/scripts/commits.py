@@ -1,6 +1,6 @@
 """Prints the commits of the part given, `first` or `second`, a line each. The second part comes
 45 seconds late, as from a slow mirror, so that a run reading it ends well after a run reading the
-first: the E2E test of runs at once has the orchestrator's start between their ends tried."""
+first: the trial of runs at once has the orchestrator's start between their ends tried."""
 
 import sys
 import time

@@ -1,4 +1,4 @@
-"""The E2E test of O1 of pin's UX, "The person pins down the plan with /pin:down", as the README's
+"""The ux trial of O1 of pin's UX, "The person pins down the plan with /pin:down", as the README's
 walkthrough runs it: in the notes app's repository, Claude Code on Opus, with a copy of pin, is
 given `/pin:down` with the plan, and the person is stood in for by an AI that answers from an
 intent written beforehand and never shown pin.
@@ -31,7 +31,7 @@ FIRST = "/pin:down notes list should give JSON as well, so my scripts stop parsi
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed and counted."""
+    """One run of the trial; prints what it found, and gives whether it passed and counted."""
     place = trying.folder("pin", f"trial-down-{number}")
     repo, copies = pinning.made(place, {})
     stream = os.path.join(place, "stream.jsonl")

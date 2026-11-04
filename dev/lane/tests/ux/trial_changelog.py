@@ -1,4 +1,4 @@
-"""The E2E test of O1 of lane's UX, "The developer AI holds writer to two rules", as the README's
+"""The ux trial of O1 of lane's UX, "The developer AI holds writer to two rules", as the README's
 walkthrough runs it: `lay.py write` lays the README's proposal on a copy of `changelog`, kept
 beside this file, in a git repository of its own outside any ccpm clone, and Claude Code, on Opus,
 is asked for an entry and a commit, so that writer is invited to run `git commit`.
@@ -186,7 +186,7 @@ def judged(repo: str, writer: list[dict[str, Any]], head: str) -> list[str]:
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed."""
+    """One run of the trial; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-changelog-{number}")
     repo = made(place)
     head = git(repo, "rev-parse", "HEAD")
@@ -224,7 +224,7 @@ def records(session: str, place: str) -> list[tuple[str, dict[str, Any]]]:
 
 
 def main(runs: int, each: Callable[[int], bool] | None = None) -> int:
-    """Runs the E2E test so many times, this one's or each given, and gives 0 where every run
+    """Runs the trial so many times, this one's or each given, and gives 0 where every run
     passed."""
     passed = [(each or run)(n) for n in range(1, runs + 1)]
     print(f"{sum(passed)} of {runs} runs passed")
@@ -232,7 +232,7 @@ def main(runs: int, each: Callable[[int], bool] | None = None) -> int:
 
 
 def cli(each: Callable[[int], bool] | None = None) -> None:
-    """Runs the E2E test, this one's or each given, as many times as the command line gives, three
+    """Runs the trial, this one's or each given, as many times as the command line gives, three
     by default, and exits 0 where every run passed."""
     sys.exit(main(int(sys.argv[1]) if len(sys.argv) > 1 else 3, each))
 

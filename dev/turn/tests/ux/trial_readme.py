@@ -1,4 +1,4 @@
-"""The E2E test of O1 of Turn's UX, "The person gets a README for tidy", as the README's walkthrough
+"""The ux trial of O1 of Turn's UX, "The person gets a README for tidy", as the README's walkthrough
 runs it: in an interactive session of Claude Code on Opus, with copies of Turn and pin, the person
 types `/turn:up a README for tidy` in tidy's repository and answers each message, stood in for by
 an AI that answers from an intent written beforehand and never shown Turn.
@@ -47,7 +47,7 @@ MIT.
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed and counted."""
+    """One run of the trial; prints what it found, and gives whether it passed and counted."""
     place = turning.trying.folder("turn", f"trial-readme-{number}")
     repo, copies = turning.made(place)
     started = time.monotonic()

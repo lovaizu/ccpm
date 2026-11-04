@@ -1,4 +1,4 @@
-"""The E2E test of O2 of pin's UX, "Turn has the design of a work pinned down": a plugin standing in
+"""The ux trial of O2 of pin's UX, "Turn has the design of a work pinned down": a plugin standing in
 for Turn or rn, `maker`, kept beside this file, declares pin in its dependencies, and its subagent
 `designer` takes `pin:down` by its frontmatter and pins down the notes app's `--json` option from a
 tree that holds the goal, three questions, of which the JSON's form and the scripts' change are
@@ -49,7 +49,7 @@ SETTLED = "the text stays the default; JSON only with --json"
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed and counted."""
+    """One run of the trial; prints what it found, and gives whether it passed and counted."""
     place = trying.folder("pin", f"trial-caller-{number}")
     repo, copies = pinning.made(place, {"maker": MAKER})
     stream = os.path.join(place, "stream.jsonl")

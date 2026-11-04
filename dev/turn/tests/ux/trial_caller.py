@@ -1,4 +1,4 @@
-"""The E2E test of O3 of Turn's UX, "rn has Turn make tidy's README": a plugin standing in for rn,
+"""The ux trial of O3 of Turn's UX, "rn has Turn make tidy's README": a plugin standing in for rn,
 `caller`, kept beside this file, declares Turn in its dependencies, and its subagent `maker` starts
 `turn:up` with the kind, the README's purpose and its path already settled, and passes on each of
 Turn's questions. In an interactive session of Claude Code on Opus, with copies of Turn, pin and
@@ -46,7 +46,7 @@ INTENT = trial_readme.INTENT + (
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed and counted."""
+    """One run of the trial; prints what it found, and gives whether it passed and counted."""
     place = turning.trying.folder("turn", f"trial-caller-{number}")
     repo, copies = turning.made(place)
     copies["caller"] = os.path.join(place, "plugins", "caller")

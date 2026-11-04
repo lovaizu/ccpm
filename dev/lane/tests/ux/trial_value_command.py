@@ -1,4 +1,4 @@
-"""The E2E test of a command holding a run's value as one part: `lay.py write` lays
+"""The ux trial of a command holding a run's value as one part: `lay.py write` lays
 value_command.json, kept beside this file, run_only on
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {notes}` in linter, on a copy of `changelog` in a
 git repository of its own outside any ccpm clone, as trial_changelog.py makes it, with the notes
@@ -54,7 +54,7 @@ PROMPT = (
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed."""
+    """One run of the trial; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-value-command-{number}")
     repo = os.path.realpath(made(place, "value_command.json", {NOTES: TEXT, "old.json": TEXT}))
     started = time.monotonic()

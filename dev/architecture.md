@@ -582,8 +582,8 @@ that one thing. The levels compare as follows; the sections below give each rule
 
 | | unit | architecture | ux |
 |---|---|---|---|
-| Runs real | the part alone; a part run by an AI on Opus | every part made of code, and the plugin's entries, hooks, lanes and routes as they are laid | the whole plugin, installed as its user installs it, on Opus |
-| Doubles stand in for | the part's neighbours, and Claude Code where the part meets it | every role, and Claude Code, so no model is called | nothing of the plugin |
+| Runs real | the part alone; a part run by an AI on Opus | what joins the parts: the hooks, the scripts, and the entries, lanes and routes as they are laid | the whole plugin, installed as its user installs it, on Opus |
+| Doubles stand in for | the part's neighbours, and Claude Code where the part meets it | each role an AI runs, and each thing outside the plugin, such as Claude Code, so no model is called | nothing of the plugin |
 | Stands in for the person | a script with set answers, or an AI given an intent | the double of the main conversation, with set answers | an AI holding an intent written before the run and never shown the plugin |
 | Covers | each class, each edge and each rule of the part's contract | every path through each sequence: the main flow, each branch, each send-back and each question | each objective's scenario, on a subject as big as a real request |
 | Passes when | code: every test passes, every line and branch run, every mutant caught; a trial: as [Results that vary from run to run](#results-that-vary-from-run-to-run) says | every test passes, with the role and the data checked at each step | the stand-in gets what the objective says, as [Results that vary from run to run](#results-that-vary-from-run-to-run) says |
@@ -696,8 +696,10 @@ with whoever runs the trial.
 
 ### Architecture: the parts joined
 
-The architecture tests run the plugin's code and its laid files real, and stand every role in with
-a double. A double of Claude Code sends the hook events and runs the hooks' commands in `sh`, as
+The architecture tests run real what joins the parts: the hooks, the scripts, and the entries,
+lanes and routes as they are laid. They stand in with a double each role an AI runs and each
+thing outside the plugin. Each plugin's test rules name what runs real in it. A double of Claude
+Code sends the hook events and runs the hooks' commands in `sh`, as
 Claude Code does. A double of the main conversation, or of a caller, answers each question with a
 set answer. The double of Claude Code is kept once, in Lane's `dev/lane/testing.py`, as
 [Code kept once](#code-kept-once) says.
@@ -714,8 +716,8 @@ The tests are drawn from the plugin's sequences:
 Each plugin's test rules list its paths. A path the sequences draw that no test runs is a gap in
 the architecture tests, and a path no sequence draws is a gap in the sequences.
 
-A fault of a sequence lies between parts, where each part's unit tests pass. With every role a
-double, no model is called. So the tests take seconds and give the same result on each run, and
+A fault of a sequence lies between parts, where each part's unit tests pass, so what joins them
+runs real. With each role an AI runs a double, no model is called. So the tests take seconds and give the same result on each run, and
 every push checks every path.
 
 ### ux: the plugin in real use

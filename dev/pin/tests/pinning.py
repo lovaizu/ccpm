@@ -1,4 +1,4 @@
-"""What pin's E2E tests stand on: the repository of the notes app `notes`, the plan the README's
+"""What pin's trials stand on: the repository of the notes app `notes`, the plan the README's
 walkthrough pins; a copy of pin for each run; the person, stood in for by an AI that answers from
 the intent written for it, never shown pin's skill, and says of each message what it put to them;
 the conversation gone on until the person has confirmed the design; and the design tree judged,

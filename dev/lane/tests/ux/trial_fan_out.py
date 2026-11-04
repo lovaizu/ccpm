@@ -1,4 +1,4 @@
-"""The E2E test of two runs of one subagent at once on a route: `lay.py write` lays fan_out.json,
+"""The ux trial of two runs of one subagent at once on a route: `lay.py write` lays fan_out.json,
 kept beside this file, routes from lead to auditor, fanned out, its results taken in the order
 `more`, `good`, and from auditor's `more` to writer, on a copy of `changelog` in a git repository
 of its own outside any ccpm clone, as trial_changelog.py makes it; and Claude Code, on Opus, in an
@@ -151,7 +151,7 @@ def judged(lead: dict[str, Any], children: dict[str, dict[str, Any]]) -> dict[st
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed."""
+    """One run of the trial; prints what it found, and gives whether it passed."""
     place = trying.folder("lane", f"trial-fan-out-{number}")
     repo = made(place, "fan_out.json")
     started = time.monotonic()

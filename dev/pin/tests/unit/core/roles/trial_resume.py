@@ -1,4 +1,4 @@
-"""The E2E test of a stopped run going on, as pin's README promises, "a stopped run goes on from
+"""The unit trial of a stopped run going on, as pin's README promises, "a stopped run goes on from
 there in a new conversation", and its architecture's story "go on with a stopped run in a new
 conversation, from the tree it kept": in the notes app's repository, the person starts
 `/pin:down` with the plan, answers three messages and leaves; in a new conversation, they give
@@ -32,7 +32,7 @@ LEFT_AFTER = 3
 
 
 def run(number: int) -> bool:
-    """One run of the E2E test; prints what it found, and gives whether it passed and counted."""
+    """One run of the trial; prints what it found, and gives whether it passed and counted."""
     place = trying.folder("pin", f"trial-resume-{number}")
     repo, copies = pinning.made(place, {})
     first = os.path.join(place, "first.jsonl")
