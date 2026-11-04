@@ -172,6 +172,29 @@ class TestGives(unittest.TestCase):
                 self.assertEqual(rules.gives(routes, name, kinds), ons)
 
 
+class TestResults(helpers.PluginTest):
+    def test_the_results_a_subagent_gives_with_no_route_are_its_own_before_done(self):
+        for routes, kinds, own, ons in (
+            (None, [], ["asks", "done"], ["asks", "done"]),
+            (None, ["end_when"], ["asks"], ["asks"]),
+            (helpers.ROUTES, [], ["asks"], ["written"]),
+        ):
+            with self.subTest(own=own, kinds=kinds):
+                # Given: writer giving its own results, with no route or routes from it
+                # When: the results it gives are read
+                # Then: they are the routes' from it, or its own where none is, before done
+                self.assertEqual(rules.gives(routes, "writer", kinds, own), ons)
+
+    def test_the_results_laid_in_a_subagent_are_read_by_its_name(self):
+        # Given: writer laid giving `asks` and `done`
+        self.lay_lanes([{"step": 2, "lanes": helpers.STEPS[0]["lanes"]}], results=["asks", "done"])
+        laid = rules.read(self.plugin)
+        # When: its results and another's are read
+        # Then: writer's are `asks` and `done`, and the other has none
+        self.assertEqual(rules.results_of(laid, "writer"), ["asks", "done"])
+        self.assertEqual(rules.results_of(laid, "reviewer"), [])
+
+
 class TestAdapters(helpers.PluginTest):
     def test_a_subagents_and_a_lanes_adapters_are_read(self):
         # Given: writer with a values adapter, and every_item read by an items adapter

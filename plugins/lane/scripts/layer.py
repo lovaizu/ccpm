@@ -51,16 +51,20 @@ def read_before(root: str) -> dict[str, Any]:
 
 
 def routed(
-    given: dict[str, Any] | None, name: str, lines: list[str], laid: list[dict[str, Any]]
+    given: dict[str, Any] | None,
+    name: str,
+    lines: list[str],
+    laid: list[dict[str, Any]],
+    results: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     """The steps the routes lay sentences on in the subagent of the name, whose file has the lines
     and whose steps lay the lanes given: follow_routes on the orchestrator's step, and the result
-    command on its last step where it gives a result, by a route from it, or `done` with a lane
-    checked at its end."""
+    command on its last step where it gives a result, by a route from it, by the results of its
+    own given, or `done` with a lane checked at its end."""
     found = []
     if given is not None and given["orchestrator"] == name:
         found.append({"step": given["step"], "lanes": [{"lane": "follow_routes", "takes": []}]})
-    ons = rules.gives(given, name, [g["lane"] for s in laid for g in s["lanes"]])
+    ons = rules.gives(given, name, [g["lane"] for s in laid for g in s["lanes"]], results)
     last = step.last([line.rstrip("\n") for line in lines])
     if ons and last is not None:
         commands = [routes.command(name, on) for on in ons]
@@ -86,6 +90,7 @@ def agents(
     subagent they or those before name whose file is there; each with its lanes, the proposal's or
     those laid before, and the sentences of the routes, the proposal's or those laid before."""
     root, now = given["plugin"], given["routes"] or routes_before
+    results_before = {a["name"]: a.get("results") for a in read_before(root)["subagents"]}
     names = [a["name"] for a in given["subagents"]]
     if given["routes"]:
         extra = routes.named(given["routes"]) + routes.named(routes_before or given["routes"])
@@ -98,12 +103,16 @@ def agents(
         if agent is None:
             if step.agent_file(root, name) is None:
                 continue
-            agent = subagent(root, {"name": name, "steps": [dict(s) for s in before.get(name, [])]})
+            kept = [dict(s) for s in before.get(name, [])]
+            results = {"results": results_before[name]} if results_before.get(name) else {}
+            agent = subagent(root, {"name": name, **results, "steps": kept})
         lines = [line.rstrip("\n") for line in agent["lines"]]
-        laid = merged(agent["steps"], routed(now, name, agent["lines"], agent["steps"]))
+        own = agent.get("results")
+        laid = merged(agent["steps"], routed(now, name, agent["lines"], agent["steps"], own))
         laid_now = [{**s, "span": step.span(lines, s["step"])} for s in laid]
         earlier = before.get(name, [])
-        was[name] = merged(earlier, routed(routes_before, name, agent["lines"], earlier))
+        was_own = results_before.get(name)
+        was[name] = merged(earlier, routed(routes_before, name, agent["lines"], earlier, was_own))
         found.append({**agent, "steps": laid_now})
     shared(root, found, before)
     return found, was
@@ -208,7 +217,7 @@ def written(path: str) -> str:
     laid_now = {a["name"]: a for a in read_before(root)["subagents"]}
     for agent in given["subagents"]:
         lanes_of = [{"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]]
-        named = {"adapter": agent["adapter"]} if "adapter" in agent else {}
+        named = {k: agent[k] for k in ("adapter", "results") if k in agent}
         laid_now[agent["name"]] = {"name": agent["name"], **named, "steps": lanes_of}
     kept = {n: a for n, a in laid_now.items() if step.agent_file(root, n) is not None}
     named = routes.named(now) if now else []

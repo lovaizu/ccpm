@@ -293,7 +293,7 @@ def subagent(
     found = list(laid or [])
     if routed is not None and routed["orchestrator"] == name:
         found.append(rules.Laid(routed["step"], "follow_routes", []))
-    ons = rules.gives(routed, name, [g.lane for g in found])
+    ons = rules.gives(routed, name, [g.lane for g in found], rules.results_of(given, name))
     if ons:
         # The last step's number, or none that a step has, where its file has no step.
         last = step.last(step.lines_of(root, name)) or 0

@@ -227,23 +227,31 @@ class PluginTest(testing.FolderTest):
         laid = {"subagents": [{"name": "writer", "steps": given}]}
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
 
-    def lay_lanes(self, laid_steps: list[Any], adapter: str | None = None) -> None:
-        """Lays the lanes of the steps in `writer`, with its values adapter where one is given, as
-        `lay.py write` writes them: each step saying its lanes' sentences, its last step its result
-        command `done` where a lane is checked at its end, and hooks/lanes.json."""
+    def lay_lanes(
+        self, laid_steps: list[Any], adapter: str | None = None, results: list[str] | None = None
+    ) -> None:
+        """Lays the lanes of the steps in `writer`, with its values adapter and the results it
+        gives where they are given, as `lay.py write` writes them: each step saying its lanes'
+        sentences, its last step its result command of each result, or `done` where a lane is
+        checked at its end, and hooks/lanes.json."""
         lines: list[str] = [str(line) for line in WRITER.splitlines()]
         kinds = [str(g["lane"]) for s in laid_steps for g in s["lanes"]]
-        ending: list[Any] = [
-            {"step": 4, "lanes": [{"lane": "result", "takes": [f"{GIVE} writer done"]}]}
-        ]
-        for s in [*laid_steps, *(ending if any(map(lanes.ends, kinds)) else [])]:
+        ons = results or (["done"] if any(map(lanes.ends, kinds)) else [])
+        commands = [f"{GIVE} writer {on}" for on in ons]
+        ending: list[Any] = [{"step": 4, "lanes": [{"lane": "result", "takes": commands}]}]
+        for s in [*laid_steps, *(ending if ons else [])]:
             where = step.span(lines, int(s["step"]))
             assert where is not None
             at = where[0]
             said = [lanes.sentence(str(g["lane"]), list(g["takes"])) for g in s["lanes"]]
             lines[at] = " ".join([lines[at], *said])
         self.write(self.agent_file, "\n".join(lines) + "\n")
-        agent = {"name": "writer", **({"adapter": adapter} if adapter else {}), "steps": laid_steps}
+        agent = {
+            "name": "writer",
+            **({"adapter": adapter} if adapter else {}),
+            **({"results": results} if results else {}),
+            "steps": laid_steps,
+        }
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {"subagents": [agent]})
 
     def event(

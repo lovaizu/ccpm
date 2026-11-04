@@ -45,6 +45,30 @@ class TestRead(ProposalTest):
         self.assertEqual(proposal.PROPOSAL, shown)
 
 
+class TestResults(ProposalTest):
+    def test_results_and_routes_from_one_subagent_are_refused(self):
+        # Given: routes from writer, and writer giving results of its own too
+        self.write(os.path.join(self.plugin, "agents", "lead.md"), helpers.LEAD)
+        self.write(os.path.join(self.plugin, "agents", "reviewer.md"), helpers.REVIEWER)
+        given = {**self.proposal(results=["asks"]), "routes": helpers.ROUTES}
+        # When: it is read
+        # Then: it is refused, as the routes give writer's results
+        self.assertIn(
+            "gives writer its own results, though routes are from it; give its results in the"
+            " routes alone",
+            self.refused(given),
+        )
+
+    def test_a_result_not_a_word_is_refused_by_its_shape(self):
+        # Given: writer giving a result of capitals
+        # When: it is read
+        # Then: it is refused by its shape
+        self.assertIn(
+            "out of its shape at $.subagents[0].results[0]",
+            self.refused(self.proposal(results=["Asks"])),
+        )
+
+
 class TestLanes(ProposalTest):
     def test_every_lane_docs_lanes_md_names_is_read_with_things_given_for_each_run(self):
         self.write_json(os.path.join(self.plugin, "forms", "e.json"), {"type": "object"})

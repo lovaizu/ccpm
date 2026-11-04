@@ -23,6 +23,10 @@ TIMEOUT = 10
 FILE = os.path.join("hooks", "lanes.json")
 
 
+# A result, a word as a route is on it.
+ON = {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}
+
+
 def subagents(
     named: list[str], takes: dict[str, Any], least: int, adapters: bool
 ) -> dict[str, Any]:
@@ -42,6 +46,13 @@ def subagents(
     agent = {
         "name": {"type": "string", "description": "the subagent, as its file's name: field"},
         **(adapter("values") if adapters else {}),
+        "results": {
+            "type": "array",
+            "minItems": 1,
+            "items": ON,
+            "description": "the results it gives where no route is from it, as a plugin that uses"
+            " yours routes them",
+        },
         "steps": {"type": "array", "minItems": 1, "items": shape(["step", "lanes"], step)},
     }
     return {"type": "array", "minItems": least, "items": shape(["name", "steps"], agent)}
@@ -60,7 +71,6 @@ def shape(required: list[str], properties: dict[str, Any]) -> dict[str, Any]:
 # The routes' JSON Schema, as docs/routes.md gives it: the orchestrator, its step they are laid
 # on, each route from a subagent, on its result, to the subagent started next, the subagents run
 # several at once, and the order their results are taken in.
-ON = {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}
 ROUTE = {
     "from": {
         "type": "string",
@@ -173,11 +183,21 @@ def adapter_of(laid: dict[str, Any], name: str) -> str | None:
     return found.get("adapter")
 
 
-def gives(routed: dict[str, Any] | None, name: str, kinds: list[str]) -> list[str]:
+def gives(
+    routed: dict[str, Any] | None, name: str, kinds: list[str], own: list[str] | None = None
+) -> list[str]:
     """The results the subagent of the name gives, its lanes being of the kinds: those the routes
-    from it are on, or DONE where none is and one of its lanes is checked at its end."""
+    from it are on; where none is, its own results, or DONE where it names none and one of its
+    lanes is checked at its end."""
     ons = routes.ons(routed, name) if routed else []
-    return ons or ([DONE] if any(map(lanes.ends, kinds)) else [])
+    return ons or own or ([DONE] if any(map(lanes.ends, kinds)) else [])
+
+
+def results_of(laid: dict[str, Any], name: str) -> list[str]:
+    """The results the subagent of the name gives of its own, of the rules `read` gives; none where
+    it names none."""
+    found = next((a for a in laid["subagents"] if a["name"] == name), {})
+    return found.get("results", [])
 
 
 def routes_of(laid: dict[str, Any]) -> dict[str, Any] | None:

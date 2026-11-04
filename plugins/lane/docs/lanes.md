@@ -141,6 +141,8 @@ is held to this JSON Schema:
    "properties": {
     "name": {"type": "string", "description": "the subagent, as its file's name: field"},
     "adapter": {"type": "string", "description": "hooks/adapters/values-<name>.py"},
+    "results": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+                "description": "the results it gives where no route is from it, as a plugin that uses yours routes them"},
     "steps": {"type": "array", "minItems": 1, "items": {
      "type": "object", "required": ["step", "lanes"], "additionalProperties": false,
      "properties": {
@@ -163,6 +165,12 @@ is held to this JSON Schema:
   rest. Write each as the step writes it, a script or a command word for word. So in_form
   takes its output and then its forms, and test_after its output and then its tests.
 - An adapter is named only where your text is in another form than lane's, as the ports below say.
+- `results` names the results a subagent gives where no route of your plugin is from it, such as
+  `["asks", "done"]` for a subagent that ends to wait for an answer or with its work done. A plugin
+  that depends on yours can then route it by those results, as
+  [the routes](routes.md) say. `lay.py write` lays the result command of
+  each on its last step, in place of `done`. `lay.py print` refuses `results` on a subagent your
+  routes are from, as the routes give its results.
 - Your AI writes routes under `routes`, held to the JSON Schema
   [the routes](routes.md#the-routes) give. `lay.py write` lays them as a follow_routes lane on the
   orchestrator's step and a result command on the last step of each subagent they name. A

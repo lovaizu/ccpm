@@ -119,6 +119,24 @@ class TestRun(unittest.TestCase):
         )
 
 
+class TestResults(helpers.PluginTest):
+    def test_a_subagent_with_its_own_results_gives_each_of_them_alone(self):
+        # Given: writer laid giving `asks` and `done`, no route laid
+        self.lay_lanes([{"step": 2, "lanes": helpers.STEPS[0]["lanes"]}], results=["asks", "done"])
+        err = io.StringIO()
+        # When: it gives `asks`, `done` and `written`
+        # Then: the first two exit 0, and the third is told the commands it ends by
+        self.assertEqual(result.main(["writer", "asks"], err, self.plugin), 0)
+        self.assertEqual(result.main(["writer", "done"], err, self.plugin), 0)
+        self.assertEqual(result.main(["writer", "written"], err, self.plugin), 1)
+        gives = f"python3 {self.plugin}/hooks/lane/result.py writer"
+        self.assertEqual(
+            err.getvalue(),
+            f"changelog: writer gives no `written`. End by running `{gives} asks` or"
+            f" `{gives} done`.\n",
+        )
+
+
 class TestDone(helpers.PluginTest):
     def test_a_subagent_with_a_lane_of_the_end_and_no_route_gives_done(self):
         # Given: writer ending once CHANGELOG.md is made, no route laid

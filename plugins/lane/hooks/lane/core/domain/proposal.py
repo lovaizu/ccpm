@@ -91,6 +91,12 @@ def proposal(path: str) -> dict[str, Any]:
             raise wrong(f"gives {agent['name']} twice, where each subagent comes once")
         checked.append(agent)
     routed = routes_checked(root, given["routes"]) if "routes" in given else None
+    for agent in checked:
+        if "results" in agent and routed is not None and routes.ons(routed, agent["name"]):
+            raise wrong(
+                f"gives {agent['name']} its own results, though routes are from it; give its"
+                " results in the routes alone"
+            )
     return {"plugin": root, "name": name, "subagents": checked, "routes": routed}
 
 
@@ -219,7 +225,7 @@ def subagent(root: str, given: dict[str, Any], beside: str = "") -> dict[str, An
                 adapters.append(adapter(lane["adapter"], PORTS[lane["lane"]], root, beside, on))
         s["span"] = where
     found = {"name": name, "file": file, "lines": lines, "steps": given["steps"]}
-    named = {"adapter": given["adapter"]} if "adapter" in given else {}
+    named = {k: given[k] for k in ("adapter", "results") if k in given}
     return {**found, **named, "adapters": adapters}
 
 

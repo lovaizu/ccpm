@@ -968,6 +968,35 @@ class TestHold(LanesTest):
         self.assertEqual(self.check(self.bash("git commit")), [guard.Said(told)])
 
 
+class TestOwnResults(LanesTest):
+    """A subagent that gives results of its own, with no route from it, as the proposal's
+    `results` names them, so a plugin that routes it, using this one, takes them."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_lanes([lane("run_only", "git log --oneline", number=2)], results=["asks", "done"])
+        self.gives = f"python3 {self.plugin}/hooks/lane/result.py writer"
+
+    def test_each_result_goes_through_and_is_kept(self):
+        # Given: writer giving `asks` or `done`
+        # When: it runs the result command of `asks`
+        # Then: it goes through, and the result is kept as it comes back
+        self.assertEqual(self.check(self.bash(f"{self.gives} asks")), [])
+        guard.came_back(
+            self.plugin, "changelog", "writer", self.came_back(f"{self.gives} asks"), ""
+        )
+        self.assertEqual(called.result("s1", "a1"), "asks")
+
+    def test_an_end_with_no_result_is_kept_going_once_with_both_commands(self):
+        # Given: writer, which gave no result
+        stop = self.subagent("SubagentStop", "writer", "a1")
+        # When: it is about to end
+        told = guard.stopping(self.plugin, "changelog", "writer", stop, "")
+        # Then: it is kept going with the sentence of both commands
+        said = f"End by running `{self.gives} asks` or `{self.gives} done`."
+        self.assertEqual(told, [guard.Said(said)])
+
+
 class TestEnd(LanesTest):
     def setUp(self) -> None:
         super().setUp()

@@ -455,6 +455,28 @@ class TestAdapted(AdaptedTest):
         self.assertIn(f"Laid before on step 3 of writer: {json.dumps(EVERY)}\n", said)
 
 
+class TestResults(LayerTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.propose(self.proposal(results=["asks", "done"]))
+
+    def test_the_results_are_laid_as_the_result_command_on_the_last_step(self):
+        # Given: the README's proposal, writer giving `asks` and `done`
+        # When: it is printed
+        said = layer.printed(helpers.PROPOSED)
+        # Then: writer's last step ends by the command of each
+        ends = f"End by running `{helpers.GIVE} writer asks` or `{helpers.GIVE} writer done`."
+        self.assertIn(f"4. Reply with the entries you wrote. {ends}\n", said)
+
+    def test_the_results_are_written_into_lanes_json(self):
+        # Given: the README's proposal, writer giving `asks` and `done`
+        # When: it is written
+        self.wrote()
+        # Then: hooks/lanes.json keeps writer's results
+        (writer,) = self.lanes_json()["subagents"]
+        self.assertEqual(writer["results"], ["asks", "done"])
+
+
 class TestPart(LayerTest):
     def setUp(self) -> None:
         super().setUp()
