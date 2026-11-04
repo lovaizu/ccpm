@@ -12,7 +12,7 @@ From the README alone, someone who meets the product for the first time starts u
 - **non-goals**: At the end of the opening, before anything about installing: each thing the product does not do that a reader might expect of it, set apart so the reader sees it as what the product does not do.
 - **requirements**: Each thing that must be in place before installing.
 - **installation**: The steps that install the product.
-- **walkthrough**: One run of the use most readers come for, step by step, each step with what the product shows, up to the result.
+- **walkthrough**: One real run of the use most readers come for, shown as the product ran it: what the user gave and what the product showed, up to the result.
 - **how-it-works**: One figure of the user, the product's parts and the things they pass, each shown by its name only, and the action or intent of each toward another, so a reader sees at a glance how the opening's promises are kept. Under it stand only the points and what the figure cannot show.
 - **links**: Where to read next: for users, the documents for fuller use; apart from them, for those who change the product, the development documents.
 - **license**: The license's name, linked to its full text.
@@ -24,7 +24,7 @@ From the README alone, someone who meets the product for the first time starts u
 - **Q3** (gain, idea): When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?
 - **Q4** (non-goals): Before installing, can the reader tell what the product does not do that they might have expected of it?
 - **Q5** (gain, walkthrough): After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?
-- **Q6** (requirements, installation, walkthrough): Starting with nothing set up, can the reader get the walkthrough's result by the README's steps alone?
+- **Q6** (requirements, installation): Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?
 - **Q7** (gain, idea, how-it-works): For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?
 - **Q8** (links): When the reader needs more than the README gives, such as fuller use or a change to the product, can they tell from it where to read next?
 - **Q9** (license): Can the reader tell from the README the terms on which they and their team may use the product?
@@ -92,12 +92,13 @@ From the README alone, someone who meets the product for the first time starts u
 
 ### Q5: After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?
 
-**Thinking**: The walkthrough is one run of the use most readers come for, on work like the reader's, with the product's real output, so the reader sees what they would get.
+**Thinking**: The walkthrough shows one real run of the use most readers come for, on work like the reader's, with the product's real output, so the reader sees that the product works and what they would get; it shows a run, not steps for the reader to follow.
 
 **Steps**
 
 1. Say at the start what the reader will have at the end.
-2. End with the result, and ask whether it shows the gain the opening promised; if not, pick another piece of work or another scenario.
+2. Take what the user gives and what the product shows from the record of a real run, cutting only what the reader does not need to see the result.
+3. End with the result, and ask whether it shows the gain the opening promised; if not, pick another piece of work or another scenario.
 
 **Grounds**
 
@@ -108,7 +109,7 @@ From the README alone, someone who meets the product for the first time starts u
 - [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "I can quickly determine whether the example JS fits the desired style and problem."
 - [Tutorials](https://diataxis.fr/tutorials/), Procida, Diátaxis, diataxis.fr, no date: "Your guidance needs to remain focused on what’s required to reach the conclusion, and everything else can be left for another time."
 
-### Q6: Starting with nothing set up, can the reader get the walkthrough's result by the README's steps alone?
+### Q6: Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?
 
 **Thinking**: The steps are written for a reader who has nothing set up, and tried that way, because the author's own setup hides the gaps.
 
@@ -116,7 +117,7 @@ From the README alone, someone who meets the product for the first time starts u
 
 1. List each thing that must be in place, by what it is and how the reader tells they have it.
 2. Write each install step so the reader can do it without working out what to type, such as a command to copy, even a common one, and after it what the reader sees when it worked.
-3. From a machine or sandbox where nothing the product needs is in place, follow the requirements, the install steps and the walkthrough as written, and do nothing they do not say; where a step fails, or needs something the README does not say, write it in and start again.
+3. From a machine or sandbox where nothing the product needs is in place, follow the requirements and the install steps as written, and do nothing they do not say; where a step fails, or needs something the README does not say, write it in and start again.
 
 **Grounds**
 

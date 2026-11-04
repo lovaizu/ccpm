@@ -50,7 +50,7 @@ DECISIONS = [
     (
         "D4",
         "The walkthrough",
-        ["Q5", "Q6"],
+        ["Q5"],
         (
             "python3 tidy.py --dry-run on a practice folder in the temporary folder, then without"
             " --dry-run"
@@ -64,6 +64,12 @@ DECISIONS = [
     ),
     ("D6", "Where to read next", ["Q8"], "tidy.py --help, and tidy.py itself"),
     ("D7", "The licence", ["Q9"], "MIT, linked to LICENSE"),
+    (
+        "D8",
+        "Requirements and installation",
+        ["Q6"],
+        "Python 3, and tidy.py copied; python3 tidy.py --help shows it works",
+    ),
 ]
 WORK = {
     "paths": ["README.md"],

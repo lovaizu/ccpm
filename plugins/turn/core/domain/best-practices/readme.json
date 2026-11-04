@@ -27,7 +27,7 @@
   },
   {
    "id": "walkthrough",
-   "what": "One run of the use most readers come for, step by step, each step with what the product shows, up to the result."
+   "what": "One real run of the use most readers come for, shown as the product ran it: what the user gave and what the product showed, up to the result."
   },
   {
    "id": "how-it-works",
@@ -70,8 +70,8 @@
   },
   {
    "id": "Q6",
-   "about": "requirements, installation, walkthrough",
-   "what": "Starting with nothing set up, can the reader get the walkthrough's result by the README's steps alone?"
+   "about": "requirements, installation",
+   "what": "Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?"
   },
   {
    "id": "Q7",
@@ -202,9 +202,10 @@
   },
   {
    "benefit": "Q5",
-   "thinking": "The walkthrough is one run of the use most readers come for, on work like the reader's, with the product's real output, so the reader sees what they would get.",
+   "thinking": "The walkthrough shows one real run of the use most readers come for, on work like the reader's, with the product's real output, so the reader sees that the product works and what they would get; it shows a run, not steps for the reader to follow.",
    "steps": [
     "Say at the start what the reader will have at the end.",
+    "Take what the user gives and what the product shows from the record of a real run, cutting only what the reader does not need to see the result.",
     "End with the result, and ask whether it shows the gain the opening promised; if not, pick another piece of work or another scenario."
    ],
    "grounds": [
@@ -252,7 +253,7 @@
    "steps": [
     "List each thing that must be in place, by what it is and how the reader tells they have it.",
     "Write each install step so the reader can do it without working out what to type, such as a command to copy, even a common one, and after it what the reader sees when it worked.",
-    "From a machine or sandbox where nothing the product needs is in place, follow the requirements, the install steps and the walkthrough as written, and do nothing they do not say; where a step fails, or needs something the README does not say, write it in and start again."
+    "From a machine or sandbox where nothing the product needs is in place, follow the requirements and the install steps as written, and do nothing they do not say; where a step fails, or needs something the README does not say, write it in and start again."
    ],
    "grounds": [
     {
