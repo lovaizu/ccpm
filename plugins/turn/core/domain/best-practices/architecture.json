@@ -31,7 +31,7 @@
   },
   {
    "id": "sequences",
-   "what": "For each user story, its steps in the order they happen, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model."
+   "what": "For each user story, its steps in the order they happen, with each branch, each step that sends work back to an earlier one and each question put to the caller or the person, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model."
   },
   {
    "id": "deployment",
@@ -487,7 +487,7 @@
   },
   {
    "benefit": "Q11",
-   "thinking": "Each level checks against one thing, a part's contract, the sequences of this document or the UX, so a unit is tested at a level where that thing says what the unit must do, and a cell is empty only where it says nothing of the unit; a table of each deployment unit against each level shows this at a glance, with how heavily, and names each level by what it checks against and not by the means it uses, as a means such as integration or end to end can serve any level.",
+   "thinking": "Each level checks against one thing, a part's contract, this document's sequences or the UX, so a deployment unit is tested at each level whose thing says what the unit must do, and a cell is empty only where it says nothing; a level is named by that thing, not by its means, as a means such as end to end can serve any level.",
    "steps": [
     "Leave out a unit whose every cell would be empty, and say why under the table.",
     "Check that unit and architecture carry most of the checking and run on every change, and that ux tests are few.",
@@ -546,7 +546,7 @@
   },
   {
    "benefit": "Q12",
-   "thinking": "A test is drawn, not chosen, from the one thing its level checks against: at unit, each way a part's contract divides what it takes by what it gives or refuses; at architecture, each path the sequences draw between the roles; at ux, each objective's scenario at the size of a real request; and the level runs real only what that thing is about, the part, the way the roles are joined or the whole product, and stands in the rest, so two builders draw the same tests and a failure points to that thing alone.",
+   "thinking": "A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two builders draw the same tests and a failure points to that thing alone.",
    "steps": [
     "Link the project's shared test rules, and write only where this product differs from them.",
     "At unit, divide each input and each result the contract names into classes that the part treats alike, the ones it refuses among them, and write one test for each class.",
@@ -740,7 +740,7 @@
   },
   {
    "benefit": "Q13",
-   "thinking": "The design is the paths its sequences draw, joined by what each part promises, so a pass at unit shows each real part keeps its promise, a pass at architecture shows every path holds with doubles that keep only those promises, and the two together hold for the real parts; real use then adds only what real size shows, such as lead time, so ux confirms the objective and its key results and finds no fault of the design, and a fault found higher up shows a case or a path missing below.",
+   "thinking": "The design is the paths its sequences draw, joined by what each part promises: unit tests show each real part keeps its promise, architecture tests show every path holds with doubles that keep only those promises, so the two hold for the real parts together, and ux tests are left only what real size shows, such as lead time.",
    "steps": [
     "Build each double from the form the part's contract gives its results, and set it only to results that form allows, the refusals among them.",
     "Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part.",

@@ -13,7 +13,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - **responsibilities**: Read with the components figure: what each role alone is responsible for that no arrow shows.
 - **choices**: For each choice the reader would question, such as a technology or a tool, why it was made over the other way, set where the reader meets the choice.
 - **data-model**: A figure of each data the roles pass or keep, showing its name alone, and of each relation between two data, labelled with the relation's name and marked at both ends with how many of each it joins, such as one to many.
-- **sequences**: For each user story, its steps in the order they happen, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model.
+- **sequences**: For each user story, its steps in the order they happen, with each branch, each step that sends work back to an earlier one and each question put to the caller or the person, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model.
 - **deployment**: A figure of each execution environment, such as a cloud service, a phone, the user's computer or CI, with its technology. Each environment holds its deployment units, such as an app or a container, each with its technology and, by their names in Components, the roles that run in it and the data kept in it. Each thing outside the product that they depend on is shown, with what is used. With the figure, how the product is started, and choices.
 - **directory**: The place where each role and each data lies: the folders and files that hold them, nested as on disk, each naming the role or the data it holds as in Components, with its technology, and none of the files inside a role.
 - **test-table**: A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test level, from narrow to wide, each named by what its tests check against: unit, which checks one part against its contract; architecture, which joins all the parts and checks them against this document, running every user story's sequence from start to end; and ux, which checks the product in real use against the UX; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why.
@@ -204,7 +204,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ### Q11: Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
 
-**Thinking**: Each level checks against one thing, a part's contract, the sequences of this document or the UX, so a unit is tested at a level where that thing says what the unit must do, and a cell is empty only where it says nothing of the unit; a table of each deployment unit against each level shows this at a glance, with how heavily, and names each level by what it checks against and not by the means it uses, as a means such as integration or end to end can serve any level.
+**Thinking**: Each level checks against one thing, a part's contract, this document's sequences or the UX, so a deployment unit is tested at each level whose thing says what the unit must do, and a cell is empty only where it says nothing; a level is named by that thing, not by its means, as a means such as end to end can serve any level.
 
 **Steps**
 
@@ -225,7 +225,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ### Q12: Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
 
-**Thinking**: A test is drawn, not chosen, from the one thing its level checks against: at unit, each way a part's contract divides what it takes by what it gives or refuses; at architecture, each path the sequences draw between the roles; at ux, each objective's scenario at the size of a real request; and the level runs real only what that thing is about, the part, the way the roles are joined or the whole product, and stands in the rest, so two builders draw the same tests and a failure points to that thing alone.
+**Thinking**: A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two builders draw the same tests and a failure points to that thing alone.
 
 **Steps**
 
@@ -276,7 +276,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ### Q13: When the unit and architecture tests pass, can the builder be sure the product does what this document says, leaving ux only to confirm the UX?
 
-**Thinking**: The design is the paths its sequences draw, joined by what each part promises, so a pass at unit shows each real part keeps its promise, a pass at architecture shows every path holds with doubles that keep only those promises, and the two together hold for the real parts; real use then adds only what real size shows, such as lead time, so ux confirms the objective and its key results and finds no fault of the design, and a fault found higher up shows a case or a path missing below.
+**Thinking**: The design is the paths its sequences draw, joined by what each part promises: unit tests show each real part keeps its promise, architecture tests show every path holds with doubles that keep only those promises, so the two hold for the real parts together, and ux tests are left only what real size shows, such as lead time.
 
 **Steps**
 
