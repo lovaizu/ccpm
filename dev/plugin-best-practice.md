@@ -295,47 +295,48 @@ A plugin is tested at three levels, each named by what its tests check against. 
 from that one thing, never chosen by its writer, and is designed before the code or the prompt and
 seen to fail first. Two developers then write the same tests, and a failure points to one cause.
 
-| | unit | architecture | ux |
-|---|---|---|---|
-| Checks against | one part's contract | the plugin's architecture | the plugin's UX |
-| Drawn from | the classes, edges and decision-table rules of the contract | every path through each sequence: the main flow, each branch, each send-back and each question | each objective's scenario, on a subject as big as a real request |
-| Runs real | the part alone; a role, on the model its users run | what joins the parts: hooks, scripts and entries as installed | the whole plugin as its user installs it |
-| Doubles stand in for | the part's neighbours | each role an AI runs, and Claude Code, so no model is called | nothing |
-| Stands in for the person | set answers, or an AI given an intent | set answers | an AI holding an intent never shown to the plugin |
-| Passes when | every test passes, every line and branch runs, every mutant is caught | every test passes, the role and the data checked at each step | the stand-in gets what the objective says |
-| Runs | before each push and in CI; a role's trial as it is made | before each push and in CI | once every lower level passes |
+![A plugin's test levels](images/test-levels.svg)
 
 ### Unit: code
 
-Coverage of every line and branch, mutation testing and property tests confirm that the unit tests
-hold the contract; each gap they find becomes a unit test. Mutation and property tests run in CI on
-what changed.
+Drawn from the classes, edges and decision-table rules of the part's contract. Passes when every
+test passes, every line and branch runs and every mutant is caught. Runs before each push and in
+CI.
+
+Coverage, mutation testing and property tests confirm that the unit tests hold the contract; each
+gap they find becomes a unit test. Mutation and property tests run in CI on what changed.
 
 *Why*: the tests designed first hold the behavior; these only confirm the design, and run before
 every push they would make every change wait.
 
 ### Unit: prompts
 
-Each role, a skill or an agent, is tried alone, one case of its contract at a time, with its
-neighbours stood in for, on the model its users run, and judged from the run's records. Each part
-of a trial, such as its judge, is checked on a kept record before a run trusts it. A prompt is
-changed only for a cause the records confirm.
+Drawn from the cases of the role's contract, one case at a time. Passes when each case's
+expectation holds in every run. Runs as the prompt is made.
+
+Each role, a skill or an agent, is tried alone, on the model its users run, and judged from the
+run's records. Each part of a trial, such as its judge, is checked on a kept record before a run
+trusts it. A prompt is changed only for a cause the records confirm.
 
 *Why*: a role tried with its neighbours does not show which went wrong; another model makes other
-slips than the ones users meet; a line added for one run's
-slip meets a different slip in the next, and the additions never settle.
+slips than the ones users meet; a line added for one run's slip meets a different slip in the next,
+and the additions never settle.
 
 ### Architecture: the parts joined
 
-What joins the parts runs real, and each role an AI runs is a double.
+Drawn from every path through each sequence: the main flow, each branch, each send-back and each
+question. Passes when every test passes, with the role and the data checked at each step. Runs
+before each push and in CI.
 
 *Why*: a fault of a sequence lies between parts whose unit tests pass; with no model called, every
 push checks every path in seconds.
 
 ### ux: the plugin in real use
 
-The whole plugin is tried as its user uses it, with a stand-in holding an intent written before the
-run. It confirms what no lower level can measure, such as the lead time, and does not aim to cover
+Drawn from each objective's scenario, on a subject as big as a real request. Passes when the
+stand-in gets what the objective says. Runs once every lower level passes.
+
+It confirms what no lower level can measure, such as the lead time, and does not aim to cover
 cases. Each Claude Code it starts runs on a configuration folder of its own, holding only the
 plugins under test and given the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`
 ([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)).
