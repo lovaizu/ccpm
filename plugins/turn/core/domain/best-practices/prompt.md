@@ -12,7 +12,7 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 - **context**: What the AI needs and cannot find or know on its own: the situation, its inputs and where they are, and the rules of this place.
 - **steps**: The steps, in the order the AI takes them. Each step names the result that holds when it ends. It gives either the rules the step needs, each with its reason, or the script that does the step and how to run it.
 - **output**: What the AI hands back, in what form, and to whom.
-- **trials**: The trials that try the prompt. They hold one case for each class of input and each rule of its steps, both where the AI must act and where it must not. They also hold the set-up of each case, the stand-ins that play the person and the parts the prompt works with, the judges, each an AI that gives pass or fail on one point, and the checks on each run's record.
+- **trials**: The trials that try the prompt in real use: runs of the whole that the prompt is part of, on requests as big as real ones. They also hold the stand-ins that play the person and the parts the prompt works with, the judges, each an AI that gives pass or fail on one point, and the checks on each run's record.
 
 ## Benefits
 
@@ -29,11 +29,10 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 - **Q11** (description, goal): Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?
 - **Q12** (the whole): When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?
 - **Q13** (the whole): Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
-- **Q14** (trials, steps): For each rule of the steps, where the AI must act and where it must not, can the maintainer point to the trial case that tries it, and see from that case's record that the situation it tries arose?
+- **Q14** (steps): For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it?
 - **Q15** (trials): When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check?
-- **Q16** (trials, steps): When the maintainer takes out of the prompt what a trial case tries, does that case fail?
-- **Q17** (output): When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?
-- **Q18** (output): When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?
+- **Q16** (output): When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?
+- **Q17** (output): When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?
 
 ## Practices
 
@@ -260,22 +259,21 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 - [Extend Claude with skills](https://code.claude.com/docs/en/skills), Anthropic, Claude Code Docs, no date: "so every line is a recurring token cost."
 - [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Keep references one level deep from `SKILL.md`. All reference files should link directly from `SKILL.md` to ensure Claude reads complete files when needed."
 
-### Q14: For each rule of the steps, where the AI must act and where it must not, can the maintainer point to the trial case that tries it, and see from that case's record that the situation it tries arose?
+### Q14: For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it?
 
-**Thinking**: The writer draws a trial from the prompt's steps, as a developer draws a unit test from a part's contract, which says what the part promises. The trial holds one case for each class and each rule, on both sides of it: where the AI must act and where it must not. A case counts only where its run met the situation that the case tries, as an AI may take another good path past that situation.
+**Thinking**: The AI keeps a rule on most runs, not on every run. A hook runs on every call, so it holds a rule that must hold, such as a file the AI must not write. A test that puts code in the AI's place tries the hook in seconds, without the model. So no trial runs the prompt alone. What the prompt's words leave is the AI's variance and the faults of the design, and only the trials in real use bring those out.
 
 **Steps**
 
-1. List each rule of the steps and each class of input it treats alike, and for each, a case where the AI must act and a case where it must not.
-2. Set up each case so that the AI cannot pass the situation by, such as by putting the fact it must find only where a search finds it. Write a check on the run's record that the situation arose.
-3. Write the cases one at a time: run the new case, read its record whole, and write the next only once the situation arose and the verdict is right.
+1. List each rule of the steps that must hold on every run, and for each, a case where the AI keeps it and a case where it breaks it.
+2. Hold each such rule with a hook or a deny rule, not with the prompt's words alone.
+3. Test the hook on each case, one case at a time.
 
 **Grounds**
 
-- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "Test both the cases where a behavior should occur and where it shouldn't."
-- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "Read the transcripts!"
-- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "it's useful to create a reference solution: a known working output that passes all graders."
 - [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Write a list of the test scenarios you want to cover"
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "Test both the cases where a behavior should occur and where it shouldn't."
+- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
 - [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Turn exactly one item on the list into an actual, concrete, runnable test"
 
 ### Q15: When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check?
@@ -299,21 +297,7 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 - [𝜏^2-Bench: Evaluating Conversational Agents in a Dual-Control Environment](https://arxiv.org/html/2506.07982), Barres, Dong, Ray, Si and Narasimhan, arXiv:2506.07982, 2025: "Never make up or hallucinate information not provided in the scenario instructions."
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "When scores don't climb, we need confidence that it's due to agent performance and not the eval."
 
-### Q16: When the maintainer takes out of the prompt what a trial case tries, does that case fail?
-
-**Thinking**: A trial that passes whatever the prompt says tries nothing. So the maintainer sees each case fail before the prompt holds what the case tries, as a developer sees a test fail before writing its code.
-
-**Steps**
-
-1. Run each new case before writing into the prompt what it tries, and see it fail.
-2. Write that into the prompt, and run the case until it passes.
-
-**Grounds**
-
-- [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Turn exactly one item on the list into an actual, concrete, runnable test"
-- [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Change the code to make the test (& all previous tests) pass (adding items to the list as you discover them)"
-
-### Q17: When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?
+### Q16: When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?
 
 **Thinking**: The person approves from the conclusion and its grounds. They read further only where these leave them unsure. So a message opens with what it asks or reports and why, in plain sentences. It keeps the rest until the person asks for it.
 
@@ -334,7 +318,7 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 - [Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/), Nielsen, Nielsen Norman Group, 2006: "Initially, show users only a few of the most important options. Offer a larger set of specialized options upon request."
 - [Structuring forms](https://www.gov.uk/service-manual/design/form-structure), Government Digital Service, GOV.UK Service Manual, 2018: "one decision they have to make"
 
-### Q18: When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?
+### Q17: When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?
 
 **Thinking**: The caller cannot tell a claim the AI checked from one it guessed. So each claim rests on a check that the AI ran on the real thing, on every item the claim names. The report says what the AI left unchecked.
 

@@ -659,8 +659,7 @@ table and the rules below give only what Lane adds.
 ![Lane's test table](images/tests.svg)
 
 The adapter process has no row. An adapter is the developer AI's code, and the rows of the lay.py
-process and the hook process test how Lane runs it. Lane has no prompt of its own, a skill or an
-agent, so no level holds a trial of a prompt.
+process and the hook process test how Lane runs it.
 
 ### The weights
 

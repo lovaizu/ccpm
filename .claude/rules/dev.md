@@ -90,9 +90,8 @@ by the thinnest path.**
 ### 6. Build each slice
 
 **For each slice, in order, do a to e. Write each part's unit tests first, and see them fail. Only
-then write its code or its prompt, as Q6 of
-[code.json](../../plugins/turn/core/domain/best-practices/code.md) and Q16 of
-[prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) say.**
+then write its code, as Q6 of [code.json](../../plugins/turn/core/domain/best-practices/code.md)
+says.**
 
 a. **Write the unit tests of its code with `code.json` open, as
    [Unit: code](../../dev/plugin-best-practice.md#unit-code) says: one for each class, each edge
@@ -101,10 +100,12 @@ a. **Write the unit tests of its code with `code.json` open, as
 b. **Write the code with `code.json` open until the tests pass**, as
    [Development](../../dev/plugin-best-practice.md#development) says.
 
-c. **For each prompt, a skill or an agent, write its trials with `prompt.json` open, one case at a
-   time, as its Q14 to Q16 and [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts)
-   say. For each case, build each part of the trial and check it on a kept record. Run the case and
-   see it fail. Then write the prompt with `prompt.json` open until the case passes.**
+c. **Write each prompt, a skill or an agent, with
+   [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) open. Run no trial of it
+   alone, as
+   [No trial of a prompt alone](../../dev/plugin-best-practice.md#no-trial-of-a-prompt-alone)
+   says.** Each rule of its steps that must hold on every run goes to a lane in d, as Q14 of
+   `prompt.json` says, and e tests it.
 
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
    `prompt.json` open.** Write them in a proposal in the form
@@ -128,10 +129,11 @@ document should be.**
 - Rationale: what an AI does varies from run to run. A line added for one run's slip meets a
   different slip in the next run, so the additions never settle.
 
-**Run every trial, here and in step 7, on Opus, and name the model in the run.**
+**Run every trial on Opus, and name the model in the run.**
 
 - Rationale: Opus is the model the plugins' users run.
-  [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts) asks each trial to name its model.
+  [ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use) runs
+  each role on the model its users run.
 
 **Run a trial that needs a real GitHub repository in `lovaizu/playground`.** This repository is
 kept for the trials that

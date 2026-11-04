@@ -100,24 +100,13 @@
   <!-- orchestrator and the roles it starts -->
   <path class="line" d="M420,266 L360,390" marker-end="url(#arrow)"/>
   <path class="line" d="M400,390 L450,266" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="380" y="320">prompt,</text>
-  <text class="label" text-anchor="end" x="380" y="337">reply</text>
+  <text class="label" text-anchor="end" x="380" y="303">prompt, answer,</text>
+  <text class="label" text-anchor="end" x="380" y="320">more, reply,</text>
+  <text class="label" text-anchor="end" x="380" y="337">question</text>
   <path class="line" d="M540,266 L640,390" marker-end="url(#arrow)"/>
   <path class="line" d="M610,390 L510,266" marker-end="url(#arrow)"/>
   <text class="label" x="610" y="320">prompt,</text>
-  <text class="label" x="610" y="337">reply</text>
-
-  <!-- generator and main conversation -->
-  <path class="line" d="M290,390 L160,266" marker-end="url(#arrow)"/>
-  <path class="line" d="M120,266 L260,410" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="180" y="350">question,</text>
-  <text class="label" text-anchor="end" x="180" y="367">answer</text>
-
-  <!-- generator and evaluator -->
-  <path class="line" d="M480,414 H600" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="540" y="406">work</text>
-  <path class="line" d="M600,446 H480" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="540" y="464">more</text>
+  <text class="label" x="610" y="337">more</text>
 
   <!-- guard and the roles -->
   <path class="line dashed" d="M480,550 L410,466" marker-end="url(#arrow)"/>

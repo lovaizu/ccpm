@@ -6,9 +6,9 @@ Claude Code do not already say.
 
 ## Verification
 
-- **Check your work before you report it, as Q18 of
+- **Check your work before you report it, as Q17 of
   [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) says.**
-- **Judge `dev/scripts/check.sh` by its exit code**, as that Q18 judges a check.
+- **Judge `dev/scripts/check.sh` by its exit code**, as that Q17 judges a check.
 - **A push is done only once you have read its CI run.** The report of the push says the run's
   result.
   - Rationale: a push left unchecked hands its failure to whoever pushes next.
@@ -26,7 +26,7 @@ Claude Code do not already say.
 - **Keep a code example to 10 lines or fewer.** For more, show only the lines that matter, or put
   the code in its own file.
 - **Put a decision, a proposal or a report to the user as
-  Q17 of [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) says.**
+  Q16 of [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) says.**
 - **Before you say that something cannot be done, offer one other way.**
   - Rationale: praise, and defending a mistake, take the reader's attention and give them nothing
     to act on. A reply that only says "cannot" leaves the reader with no next step.

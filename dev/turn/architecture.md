@@ -29,16 +29,10 @@ and on its Development section, with these differences:
   up decides no move. Lane's routes give each next start, as
   [Where the router keeps the course](../plugin-best-practice.md#where-the-router-keeps-the-course)
   says. The planner decides what Turn hands Pin.
-- Under [Messages](../plugin-best-practice.md#messages), up and whoever started it carry each point
-  and each answer, as only the main conversation can ask the person.
-- Under [A plugin that uses another](../plugin-best-practice.md#a-plugin-that-uses-another), Turn
-  starts Pin's pinner as one of its roles, as that subagent is Pin's orchestrator.
 - Turn does not take
   [Learning from each run](../plugin-best-practice.md#learning-from-each-run). No step of the UX
   follows the work handed back, and a step there would ask the person more (KR1.2). The run's
   folder keeps each check of the work for whoever looks.
-- Turn departs from [Unit: prompts](../plugin-best-practice.md#unit-prompts), as [Tests](#tests)
-  says.
 
 The principles below are what Turn adds. Each gives its rule, then why.
 
@@ -557,15 +551,6 @@ Installed Turn, installed Pin, the repository and the temporary folder have no r
 and run nothing, and the tests reach them through the processes that read them. Pin's code and
 Lane's code are tested by their own plugins. Turn's architecture tests run Pin's `check.py` and the
 guard real where they join Turn.
-
-### No level tries a prompt alone
-
-Turn departs from [Unit: prompts](../plugin-best-practice.md#unit-prompts): no level runs a role of
-Turn alone on a model. A prompt written by the repository's best practice for prompts leaves only
-the model's variance and the faults of the design. The guard holds the rules that must hold, and
-the architecture tests run the guard on each path. The ux trials find the faults of the design,
-and measure the variance by the key results. The cost: a fault in a prompt shows only in a ux
-trial, which runs once every lower level passes.
 
 ### The weights
 

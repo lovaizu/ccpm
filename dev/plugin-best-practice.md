@@ -32,12 +32,15 @@ sequenceDiagram
   participant R as evaluator<br/>#lt;subagent#gt;
   C->>O: request
   O->>G: prompt
-  G->>M: question, only the person can decide
-  M->>G: answer
+  G-->>O: question, only the person can decide
+  O->>C: question, as given
+  C->>O: answer
+  O->>G: answer, word for word
+  G-->>O: reply
   O->>R: prompt
-  R->>G: more
-  G->>R: work mended, or a question back
-  R-->>O: reply
+  R-->>O: more
+  O->>G: more, as given
+  G-->>O: work mended, or a question back
   O->>C: approval asked
   C->>O: approval
   O->>C: result, the work and the report
@@ -175,6 +178,8 @@ out.
 ### The orchestrator holds the whole and decides
 
 One orchestrator talks with the caller, keeps all that the run has found, and decides each move.
+It starts each role, so it carries each point that a role has for the caller, as
+[Messages](#messages) says.
 
 *When*: a run of steps that depend on what the last one found.
 
@@ -185,8 +190,8 @@ One orchestrator talks with the caller, keeps all that the run has found, and de
 ### Where the orchestrator runs
 
 A plugin that a person calls runs its orchestrator in the main conversation, started by a skill. A
-plugin that an AI calls runs its orchestrator as an agent. A role that needs the person asks the
-main conversation directly.
+plugin that an AI calls runs its orchestrator as an agent. A role that needs the person ends with
+its point, and the one who started the role carries the point on, as [Messages](#messages) says.
 
 *When*: a plugin with an orchestrator and roles.
 
@@ -195,7 +200,9 @@ main conversation directly.
 
 ### A plugin that uses another
 
-A plugin that has another plugin do a job starts that plugin's orchestrator as one of its roles.
+A plugin that has another plugin do a job starts the role of that plugin that does the job as one
+of its own roles. It then carries that role's points as [Messages](#messages) says, as any starter
+does.
 
 *When*: a job another plugin already does.
 
@@ -212,14 +219,18 @@ Each job has its own role, and the role gets only what the job needs.
 
 ### Messages
 
-Nobody relays. Whoever needs something asks whoever has it. Roles run in the background. The
-orchestrator sends further work to a role that has ended with SendMessage, which resumes the role
-with its whole conversation
+The one who starts a role carries each point that the role has for the person to the person, as
+given. It carries the person's answer back to the role word for word. Roles run in the background.
+The orchestrator sends further work to a role that has ended with SendMessage, which resumes the
+role with its whole conversation
 ([resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents)).
 
 *When*: a plugin with an orchestrator and roles.
 
-*Why*: a go-between adds a move to every exchange, and holds nothing of it. A resumed role does not
+*Why*: a subagent's last message reaches only the one who started it, and only the main
+conversation can ask the person ([subagents](https://code.claude.com/docs/en/sub-agents)). So each
+point goes up the line of starters to the person. A point reworded on the way is a question that
+the role did not ask, and an answer summed up loses what the person meant. A resumed role does not
 start again from nothing.
 
 ### JSON between agents
@@ -301,7 +312,7 @@ So the developer writes, tests and fixes the code in one place.
 
 A plugin is tested at three levels, each named by what its tests check against. The developer
 draws each test from one rule, path or scenario of that one thing, and never chooses a test by
-taste. The developer designs each test before the code or the prompt, and sees it fail first.
+taste. The developer designs each test before the code, and sees it fail first.
 
 *Why*: a failing test then names the rule, path or scenario it breaks.
 
@@ -327,19 +338,20 @@ what changed.
 *Why*: the tests designed first hold the behavior, and these tools only confirm the design. Run
 before every push, they would make every change wait.
 
-### Unit: prompts
+### No trial of a prompt alone
 
-The trials come from the cases of the role's contract, one case at a time. A case passes when its
-expectation holds in every run. The trials run while the prompt is made.
+No level runs a prompt, a skill or an agent, alone on a model. The guard holds each rule of a
+role's steps that must hold on every run. The architecture tests run the guard on each path, with a
+double in each role's place. The ux trials find the faults of a prompt's design, and measure how
+its results vary by the key results.
 
-The developer tries each role, a skill or an agent, alone, on the model its users run. The
-developer judges each run from its records. The developer checks each part of a trial, such as its
-judge, on a kept record before trusting it. The developer changes a prompt only for a cause the
-records confirm.
-
-*Why*: a role tried with its neighbours does not show which one went wrong. Another model makes
-other slips than the ones users meet. A line added for one run's slip meets a different slip in the
-next run, and the additions never settle.
+*Why*: a prompt written by
+[the best practice for prompts](../plugins/turn/core/domain/best-practices/prompt.md) leaves only
+the model's variance and the faults of its design. A hook holds a rule on every run, which a
+prompt's words cannot
+([best practices](https://code.claude.com/docs/en/best-practices)). A trial of one role alone meets
+only the cases that its developer set up, so it finds no fault that a real request brings out. The
+cost: a fault in a prompt shows only in a ux trial, which runs once every lower level passes.
 
 ### Architecture: the parts joined
 
@@ -352,19 +364,23 @@ push checks every path in seconds.
 
 ### ux: the plugin in real use
 
-The trials come from each objective's scenario, on a subject as big as a real request. They pass
-when the stand-in gets what the objective says. They run once every lower level passes.
+The trials come from each objective's scenario, on a subject as big as a real request, big enough
+to bring out the cases that such requests bring most often. They pass when the stand-in gets what
+the objective says. They run once every lower level passes.
 
-A ux trial confirms what no lower level can measure, such as the lead time. It does not aim to cover
-cases. Each Claude Code it starts runs on a configuration folder of its own. That folder holds only
+A ux trial measures what no lower level can, such as the lead time and how the results vary from
+run to run. It finds the faults of the prompts' design. It does not aim to cover cases. Each role
+runs on the model its users run. The developer judges each run from its records, and checks each
+part of a trial, such as its judge, on a kept record before trusting it. Each Claude Code it starts
+runs on a configuration folder of its own. That folder holds only
 the plugins under test, and gets the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`
 ([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)).
 Where Claude Code asks to allow a call, the stand-in chooses from what the screen shows, as a person
 would.
 
 *Why*: every part can pass while the user's objective is missed. A trial is slow and calls the
-model at each move, so it only confirms. The developer's own settings would change what the trial
-tries.
+model at each move, so it tries no case that a lower level can test. Another model makes other
+slips than the ones users meet. The developer's own settings would change what the trial tries.
 
 ### Where a double's results come from
 

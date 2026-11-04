@@ -28,10 +28,6 @@ and on its Development section, with these differences:
   work made from it, which Pin never sees.
 - Under [Read by those who did not make it](../plugin-best-practice.md#read-by-those-who-did-not-make-it),
   no evaluator reads the design: the person reads all of it to confirm it.
-- Under [Messages](../plugin-best-practice.md#messages), the go-between is the one who has the
-  person, so the pinner asks the go-between.
-- Pin departs from [Unit: prompts](../plugin-best-practice.md#unit-prompts), as [Tests](#tests)
-  says.
 
 The principles below are what Pin adds. Each gives its rule, then why.
 
@@ -381,15 +377,6 @@ table and the rules below give only what Pin adds.
 ![Pin's test table](images/tests.svg)
 
 Every deployment unit has a row, as each has a level that tests it.
-
-### No level tries a prompt alone
-
-Pin departs from [Unit: prompts](../plugin-best-practice.md#unit-prompts): no level runs the
-go-between or the pinner alone on a model. A prompt written by the repository's best practice
-for prompts leaves only the model's variance and faults of the design. The guard holds the rules
-that must hold, and the architecture tests run the guard on each path. The ux trials find the
-faults of the design, and measure the variance by the key results. The cost: a fault in a prompt
-shows only in a ux trial, which runs once every lower level passes.
 
 ### The weights
 
