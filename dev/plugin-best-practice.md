@@ -1,36 +1,36 @@
 # Best practice for building a Claude Code plugin
 
-This is the best practice for building a Claude Code plugin. It says how a plugin's roles work
-together when the work takes several steps and ends in something made, such as a document or code.
-It also says where a plugin's files go, how its code is written, and how it is tested and released.
-A plugin takes from it what its requirements call for. It has no UX and no user stories of its own:
-each plugin's architecture links this one, names what it takes, and holds its own UX's user stories
-and what only that plugin adds.
+This is the best practice for a Claude Code plugin whose roles work together to make something,
+such as a document or code. A plugin is built on it, taking what its requirements call for.
 
 ## Principles
 
 A plugin takes the principles its requirements call for, and its architecture names them. The
 reason for each is under Why it is so.
 
-1. The orchestrator holds the whole run and decides each move.
+1. The orchestrator holds the whole run and decides each move: each next thing it does, such as
+   starting a role.
 2. The caller decides only what is theirs to decide, and approves it by their own action. The
    plugin does the writing. It makes every other choice itself and reports it.
 3. Each job has its own role. The role gets only what the job needs.
 4. Nobody relays messages. Whoever needs something asks whoever has it, and goes on with the
    answer.
-5. A reader, an AI that did not make a work, uses it first. For each item of the checklist, the
-   reader gives the item's Good lines, or its need, and tells the maker directly. Before that, the
-   maker checks its own work item by item. The caller reads first a work they read in full to
-   approve, such as a plan.
+5. An evaluator, an AI that did not make a work, uses it first. Each item of the checklist asks what
+   the work's user should get from the work: the item's Good. For each item, the evaluator gives the
+   item's Good lines, the lines of the work that give its Good. Where it finds none, it gives the
+   item's need: what the work's user would still need, in one sentence. It tells the builder
+   directly. Before that, the builder checks its own work item by item. The caller reads first a
+   work they read in full to approve, such as a plan.
 6. A script, a hook or the project's own tools check what a machine can check. They tell the role
-   its step again, or stop what would break a rule. An AI reads only for what needs a reader.
-7. A run that goes in a fixed loop has its course in a script. Every run that keeps a state writes
-   it to a file before each next move, so a stopped run goes on from where it stopped.
+   its step again, or stop what would break a rule. An AI reads only for what no machine can check.
+7. A run that goes in a fixed loop has its course in a router, code that gives the orchestrator
+   each next move. Every run that keeps a state, what it has decided and been answered so far,
+   writes it to a file before each next move, so a stopped run goes on from where it stopped.
 8. The purpose comes first, speed second.
 9. When the caller approves the finished work, the orchestrator looks once for what fell short and
-   why. Lessons for the user's own project go into its checklists or rules. General lessons go to
-   the plugin's makers as an issue, only if the user says yes. A plugin called by an AI leaves this
-   to its caller.
+   why: the run's lessons. Lessons for the user's own project go into its checklists or rules.
+   General lessons go to the plugin's repository as an issue, only if the user says yes. A plugin
+   called by an AI leaves this to its caller.
 
 ## Architecture
 
@@ -40,32 +40,38 @@ reason for each is under Why it is so.
 
 ![A plugin's components](images/components.svg)
 
+- The caller decides what is theirs and approves it
+  ([The caller approves what is theirs](#the-caller-approves-what-is-theirs)).
 - The caller talks with the orchestrator, and a role that needs the person's decision asks the
   main conversation directly, as only the main conversation can ask the person
   ([Where the orchestrator runs](#where-the-orchestrator-runs)).
-- The maker and the reader pass the work and its needs between them, with no one relaying
+- The orchestrator holds the whole run and decides each move
+  ([The orchestrator holds the whole and decides](#the-orchestrator-holds-the-whole-and-decides)).
+- The builder makes the work, and gives each item of the checklist its Good lines
+  ([Read by those who did not make it](#read-by-those-who-did-not-make-it)).
+- The evaluator uses the work as the work's user would, item by item
+  ([Read by those who did not make it](#read-by-those-who-did-not-make-it)).
+- The builder and the evaluator pass the work and its needs between them, with no one relaying
   ([Messages](#messages)).
-- A plugin has a course script only where its run is a fixed loop that keeps a state
-  ([Where the course is kept](#where-the-course-is-kept)).
+- The router, from the role that ended and its result, gives the orchestrator the next move, and
+  keeps the run's state in a file. A plugin has a router only where its run is a fixed loop that
+  keeps a state ([Where the router keeps the course](#where-the-router-keeps-the-course)).
 - The guard is Lane's code laid in the plugin, and tells only subagents their steps again
   ([The guard tells each role its steps again](#the-guard-tells-each-role-its-steps-again)).
-
-#### Data model
-
-![A plugin's data model](images/data-model.svg)
-
 - What agents pass on as data is JSON ([JSON between agents](#json-between-agents)).
 
 #### Sequences
 
-A run, from the orchestrator starting the maker to the reader's reply:
+A run, from the caller's request to the result:
 
 ```mermaid
 sequenceDiagram
+  participant C as caller<br/>#lt;person or AI#gt;
   participant M as main conversation<br/>#lt;AI#gt;
   participant O as orchestrator<br/>#lt;main conversation or subagent#gt;
-  participant G as maker<br/>#lt;subagent#gt;
-  participant R as reader<br/>#lt;subagent#gt;
+  participant G as builder<br/>#lt;subagent#gt;
+  participant R as evaluator<br/>#lt;subagent#gt;
+  C->>O: request
   O->>G: prompt
   G->>M: question, only the person can decide
   M->>G: answer
@@ -73,6 +79,9 @@ sequenceDiagram
   R->>G: need
   G->>R: work mended, or a question back
   R-->>O: reply
+  O->>C: approval asked
+  C->>O: approval
+  O->>C: result, the work and the report
 ```
 
 - Each plugin's architecture draws a sequence for each of its own user stories on this one.
@@ -242,42 +251,43 @@ under other terms than the purpose set. A run that stops brings nothing back.
 
 ### Read by those who did not make it
 
-AIs that did not make a work use it first. They stand in for the receiver, with what the
-receiver has, and do what the receiver does with it. Each gives its verdict from its own first
+AIs that did not make a work use it first. They stand in for the work's user, with what the
+work's user has, and do what the work's user does with it. Each gives its verdict from its own first
 reading.
 
-The maker finds the Good it meant. A reader that did not make the work finds only the Good its
-lines give, which is what the receiver gets. A reader shown someone else's verdict finds what it
-was told. So two readings add a check only when each is made on its own.
+The builder finds the Good it meant. An evaluator that did not make the work finds only the Good
+its lines give, which is what the work's user gets. An evaluator shown someone else's verdict finds
+what it was told. So two readings add a check only when each is made on its own.
 
-A reader judges an item by whether the receiver can use the work for what they use it for. Where it
-finds no Good, it says in one sentence what the receiver would need. It does not say how to make
-it. It leaves what a machine can check to the checks that do it (Principle 6).
+An evaluator judges an item by whether the work's user can use the work for what they use it for.
+Where it finds no Good, it says in one sentence what the work's user would need. It does not say
+how to make it. It leaves what a machine can check to the checks that do it (Principle 6).
 
-A reader that hunts for defects finds one in every work. Each is then mended, whether or not the
-receiver would ever meet it. The rounds go on, and the work does not get better for its receiver.
+An evaluator that hunts for defects finds one in every work. Each is then mended, whether or not
+the work's user would ever meet it. The rounds go on, and the work does not get better for its
+user.
 In a trial of Rn on 2026-10-27, about 25 works were sent back. About 12 were for defects found by
 running the work, 8 for what a linter or a type checker would have shown, and 5 for wording.
 
-The maker holds the sources, so how the work gives each Good is the maker's to decide. The reader
-says what the receiver would need, not how to give it. The maker then mends the work for the
-receiver's use. When a reader names a fault for the maker to answer, the two end up arguing about
-the fault, when both are there for the receiver's use.
+The builder holds the sources, so how the work gives each Good is the builder's to decide. The
+evaluator says what the work's user would need, not how to give it. The builder then mends the work
+for its user's use. When an evaluator names a fault for the builder to answer, the two end up
+arguing about the fault, when both are there for the work's user.
 
-When the receiver is the caller, and the caller reads the work in full to approve it as soon as it
-is made, such as a plan, the caller reads it first. A reader in their place would add a reading the
-caller makes anyway, and its time at every remake.
+When the work's user is the caller, and the caller reads the work in full to approve it as soon as
+it is made, such as a plan, the caller reads it first. An evaluator in their place would add a
+reading the caller makes anyway, and its time at every remake.
 
-Once the maker has made the work, it checks it against its checklist item by item. It gives each
+Once the builder has made the work, it checks it against its checklist item by item. It gives each
 item as the lines of the work that give its Good, `<path>:<from>-<to>`, with no words. On a remake
-it gives only the items sent back. Each item says what is run and how far, so maker and reader run
-the same thing.
+it gives only the items sent back. Each item says what is run and how far, so builder and
+evaluator run the same thing.
 
-Finding the lines makes the maker look at the place. Lines can be checked by a script, a reader or
-the caller. A claim in words is read by no one, and costs its writing at every round. In that trial
-the maker rewrote such a claim for every item each round, 23,000 characters, and only a form check
-read it. Two who run the same check see the same result. So when one of them finds no Good, it is
-not because they chose to run different things.
+Finding the lines makes the builder look at the place. Lines can be checked by a script, an
+evaluator or the caller. A claim in words is read by no one, and costs its writing at every round.
+In that trial the builder rewrote such a claim for every item each round, 23,000 characters, and
+only a form check read it. Two who run the same check see the same result. So when one of them finds
+no Good, it is not because they chose to run different things.
 
 ### The guard tells each role its steps again
 
@@ -291,25 +301,27 @@ a plugin agent's own file ([subagents](https://code.claude.com/docs/en/sub-agent
 which subagent it runs in, but not which skill runs in the main conversation, and a skill's hooks
 last the whole session once it starts
 ([hooks](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)). So an orchestrator in
-the main conversation is held by its own steps, or by the script that keeps its course. GitHub's
+the main conversation is held by its own steps, or by its router. GitHub's
 branch protection or Claude Code's permission rules hold what is hard to undo.
 
 ### What a machine can see of the work
 
 A project whose work is code has a formatter, a linter and a type checker set up, and the command
-that checks the work runs them. Makers and readers do not look for what these tools show.
+that checks the work runs them. Builders and evaluators do not look for what these tools show.
 
 A tool finds the same thing every time, at once. An AI reading for it finds only some, and spends a
 round on each. In that trial the project had none of these tools, and 8 of the works sent back were
 for what they would have shown.
 
-### Where the course is kept
+### Where the router keeps the course
 
-A plugin whose run is a fixed loop keeps its course in a script of its own.
-The script gives the orchestrator each next step, so the orchestrator cannot go on without it. A
-plugin whose course changes with what the run finds, such as Rn, keeps its course in its skill's
-steps and its plan in a document. A plugin whose run keeps no state, such as Turn, where the maker
-and the reader settle the work between them, keeps no course in a script.
+A plugin whose run is a fixed loop keeps its course in a router of its own, a Python script. From
+the role that ended and its result, the router gives the orchestrator each next step, so the
+orchestrator cannot go on without it, much as a route of [Lane](../plugins/lane/README.md) names
+the subagent to start next after another ends with a given result. A plugin whose course changes
+with what the run finds, such as Rn, keeps its course in its skill's steps and its plan in a
+document. A plugin whose run keeps no state, such as Turn, where the builder and the evaluator
+settle the work between them, has no router.
 
 The spec-driven tools read on 2026-10-21 (Spec Kit, BMAD-METHOD, OpenSpec, superpowers and cc-sdd)
 all keep a fixed course outside the AI, with the plan as a file of tasks that the course walks
@@ -320,12 +332,12 @@ followed the same way every time; an AI deciding may not follow them.
 A course fixed in code has no move for what it did not foresee, so it does not suit a run whose
 findings keep changing the course.
 
-The script gives the orchestrator only the moves that need it, such as starting a role, sending a
-message, asking or returning the result. The script does itself what a script can do, such as
+The router gives the orchestrator only the moves that need it, such as starting a role, sending a
+message, asking or returning the result. The router does itself what a script can do, such as
 checking a reply's form or waiting for a role to end.
 
 Each move of the orchestrator is a turn of the model, which reads the whole conversation. So a move
-that the script could make costs time, and adds to what every later move reads.
+that the router could make costs time, and adds to what every later move reads.
 
 The run's state is kept in a file in its work folder, placed as
 [Where a plugin writes its files](#where-a-plugin-writes-its-files) says. Each decision and answer
@@ -375,10 +387,10 @@ doubts in the records of the run, so each lesson comes with the words it rests o
 each lesson to the user.
 
 - A lesson of the user's own project goes into their checklists or rules.
-- A general lesson goes to the plugin's makers as an issue. The issue holds the need and its points,
-  never the user's source. The orchestrator shows it to the user in full, and opens it only on
-  their own yes, as [The caller approves what is theirs](#the-caller-approves-what-is-theirs) says,
-  since an issue on a public repository cannot be undone.
+- A general lesson goes to the plugin's repository as an issue. The issue holds the need and its
+  points, never the user's source. The orchestrator shows it to the user in full, and opens it only
+  on their own yes, as [The caller approves what is theirs](#the-caller-approves-what-is-theirs)
+  says, since an issue on a public repository cannot be undone.
 
 Looked for once, the lessons cost the user one reading. Lessons made at every approval would be
 weighed again in every session. What the run kept holds every send-back and remake, because each
@@ -430,14 +442,13 @@ as `/rn:ty` beside `/rn:up`, would come to repeat the first. Cockburn's
 arrive from the outside world at a port, a technology-specific adapter converts it into a usable
 procedure call or message and passes it to the application".
 
-An agent's body has the agent read its part in full before anything else, and a lane holds it to
-this. Claude Code makes the body the agent's system prompt and takes in no other file
-([subagents](https://code.claude.com/docs/en/sub-agents)). A skill's body links its part, as Claude
-Code has a skill "reference supporting files from `SKILL.md`"
+An agent's body has the agent read its part in full before anything else, and a lane, a check of
+Lane's, holds it to this. Claude Code makes the body the agent's system prompt and takes in no other
+file ([subagents](https://code.claude.com/docs/en/sub-agents)). A skill's body links its part, as
+Claude Code has a skill "reference supporting files from `SKILL.md`"
 ([skills](https://code.claude.com/docs/en/skills)). In a trial on 2026-10-26 with a plugin made for
 it, each of twenty runs read its part first and followed it. After `/compact`, the part a skill
-links came back attached in full, while the skill's own body survived only as the summary retold
-it.
+links came back attached in full, while the skill's own body survived only as the summary retold it.
 
 Claude Code replaces `${CLAUDE_PLUGIN_ROOT}` with the plugin's folder only in what an entry's own
 body gives, not in what the Bash tool runs
@@ -532,8 +543,9 @@ from the code checks the code against itself.
 ### Checks kept in Lane
 
 A check on what an AI does is a lane of [Lane](../plugins/lane/README.md), laid in each plugin by
-Lane's `lay.py`. The assistant adds a check that no lane holds to Lane as a lane of its own, in its
-own named file, with one entry file for each hook event, as the official
+Lane's `lay.py`. The assistant, the AI that builds the plugins, adds a check that no lane holds to
+Lane as a lane of its own, in its own named file, with one entry file for each hook event, as the
+official
 [`hookify`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/hookify) plugin
 does.
 
@@ -587,7 +599,7 @@ For each way a check can fail to check, what happens next is decided beforehand 
   so.
 - A skipped test is not a passed test.
 - A CI job that did not run does not pass.
-- A reader whose command did not run gives no Good.
+- An evaluator whose command did not run gives no Good.
 
 A check that says nothing when it could not check is read as one that found nothing. What it was
 there to stop then goes through unseen. A case decided only when it is met is decided in a hurry,
@@ -667,10 +679,11 @@ Mutation testing runs the tests once for each mutant, so a slow test run makes e
 
 The assistant tries each role, a skill or an agent, on its own, with doubles standing in for its
 neighbours and for the researchers, and a stand-in for the person. It names the model in each run:
-Opus, the model the maintainer uses. It judges the role from its input, its output and the records
-of the run, against its Role and Steps. The trials are made as `prompt.json`'s trials part, its
-questions and its practices say: drawn from the role's contract, one case at a time, each part of
-a trial checked on a kept record before a run trusts it.
+Opus, the model the maintainer uses; the maintainer is the person who has the plugins built. It
+judges the role from its input, its output and the records of the run, against its Role and Steps.
+The trials are made as `prompt.json`'s trials part, its questions and its practices say: drawn from
+the role's contract, one case at a time, each part of a trial checked on a kept record before a run
+trusts it.
 
 A prompt is known by what the AI does with it, and only the records show where a run went wrong. A
 role tried together with what lies around it does not show which of them went wrong. A smaller

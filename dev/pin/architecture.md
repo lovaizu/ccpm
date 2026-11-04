@@ -61,8 +61,9 @@ asks a decision only once each decision it builds on is decided, and it reads wh
 are from the tree, not from the conversation.
 
 A conversation can end, be cleared or be compacted, so a plan kept only in it is lost
-([Where the course is kept](../plugin-best-practice.md#where-the-course-is-kept)). A tree in a file is
-read the same way by `check.py`, by a new conversation and by the AI that makes the work.
+([Where the router keeps the course](../plugin-best-practice.md#where-the-router-keeps-the-course)).
+A tree in a file is read the same way by `check.py`, by a new conversation and by the AI that makes
+the work.
 
 ### Every decision reaches the goal
 

@@ -83,7 +83,7 @@ A fix of the orchestrator's own is work that no AI other than its maker has read
   decision settles goes back to the orchestrator, which asks the person.
 - Rn's scripts alone write the steering and each CCS, make each proposal, and take an answer only
   where it was typed.
-- Turn makes every other work from its CCS, and has it used in its receiver's place before it
+- Turn makes every other work from its CCS, and has it used in place of the work's user before it
   returns it.
 
 ### Data model
@@ -101,7 +101,7 @@ A fix of the orchestrator's own is work that no AI other than its maker has read
   [ACC](https://arxiv.org/abs/2601.11653) gives an AI's state: what it serves, the results it builds
   on, its decisions, the templates, the stage and the languages. Each point the person decides is
   kept as a decision in the CCS of the next call it settles.
-- A task's CCS names the receiver and what they have at that stage: before the build, the person
+- A task's CCS names the work's user and what they have at that stage: before the build, the person
   approving the document and whoever builds to it; after, the product's users. A document made
   before the build is made again once the product is built, where its template asks what the built
   product does.

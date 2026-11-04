@@ -51,38 +51,32 @@
 
   <!-- roles: a pill is an AI, a square is code, a rounded box a person or an AI -->
   <rect class="box" x="380" y="20" width="200" height="76" rx="8"/>
-  <text class="name" x="480" y="46">caller</text>
-  <text class="kind" x="480" y="66">a person or an AI; decides</text>
-  <text class="kind" x="480" y="82">what is theirs, approves it</text>
+  <text class="name" x="480" y="53">caller</text>
+  <text class="kind" x="480" y="73">&lt;person or AI&gt;</text>
 
   <rect class="box" x="20" y="190" width="200" height="76" rx="30"/>
-  <text class="name" x="120" y="216">main conversation</text>
-  <text class="kind" x="120" y="236">the only one that can</text>
-  <text class="kind" x="120" y="252">ask the person</text>
+  <text class="name" x="120" y="223">main conversation</text>
+  <text class="kind" x="120" y="243">&lt;AI&gt;</text>
 
-  <rect class="box" x="380" y="190" width="200" height="76" rx="30"/>
-  <text class="name" x="480" y="216">orchestrator</text>
-  <text class="kind" x="480" y="236">holds the whole run,</text>
-  <text class="kind" x="480" y="252">decides each move</text>
+  <rect class="box" x="370" y="190" width="220" height="76" rx="30"/>
+  <text class="name" x="480" y="223">orchestrator</text>
+  <text class="kind" x="480" y="243">&lt;main conversation or subagent&gt;</text>
 
   <rect class="box" x="700" y="190" width="220" height="76" rx="0"/>
-  <text class="name" x="810" y="216">course script</text>
-  <text class="kind" x="810" y="236">keeps the course and the state,</text>
-  <text class="kind" x="810" y="252">gives the next move</text>
+  <text class="name" x="810" y="223">router</text>
+  <text class="kind" x="810" y="243">&lt;script, Python&gt;</text>
 
   <rect class="box" x="260" y="390" width="220" height="76" rx="30"/>
-  <text class="name" x="370" y="416">maker</text>
-  <text class="kind" x="370" y="436">makes the work, gives each</text>
-  <text class="kind" x="370" y="452">item the lines of its Good</text>
+  <text class="name" x="370" y="423">builder</text>
+  <text class="kind" x="370" y="443">&lt;subagent&gt;</text>
 
   <rect class="box" x="600" y="390" width="220" height="76" rx="30"/>
-  <text class="name" x="710" y="416">reader</text>
-  <text class="kind" x="710" y="436">uses the work as its receiver</text>
-  <text class="kind" x="710" y="452">would, item by item</text>
+  <text class="name" x="710" y="423">evaluator</text>
+  <text class="kind" x="710" y="443">&lt;subagent&gt;</text>
 
   <rect class="box" x="430" y="550" width="220" height="70" rx="0"/>
   <text class="name" x="540" y="576">guard</text>
-  <text class="kind" x="540" y="596">tells a role its step again</text>
+  <text class="kind" x="540" y="596">&lt;Lane's hooks, Python&gt;</text>
 
   <!-- caller and orchestrator -->
   <path class="line" d="M465,96 V190" marker-end="url(#arrow)"/>
@@ -97,11 +91,11 @@
   <path class="line" d="M380,80 L170,190" marker-end="url(#arrow)"/>
   <text class="label" x="290" y="150">answer</text>
 
-  <!-- orchestrator and course script -->
-  <path class="line" d="M580,214 H700" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="640" y="206">state</text>
-  <path class="line" d="M700,246 H580" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="640" y="264">next move</text>
+  <!-- orchestrator and router -->
+  <path class="line" d="M590,214 H700" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="645" y="206">state</text>
+  <path class="line" d="M700,246 H590" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="middle" x="645" y="264">next move</text>
 
   <!-- orchestrator and the roles it starts -->
   <path class="line" d="M420,266 L360,390" marker-end="url(#arrow)"/>
@@ -113,13 +107,13 @@
   <text class="label" x="610" y="320">prompt,</text>
   <text class="label" x="610" y="337">reply</text>
 
-  <!-- maker and main conversation -->
+  <!-- builder and main conversation -->
   <path class="line" d="M290,390 L160,266" marker-end="url(#arrow)"/>
   <path class="line" d="M120,266 L260,410" marker-end="url(#arrow)"/>
   <text class="label" text-anchor="end" x="180" y="350">question,</text>
   <text class="label" text-anchor="end" x="180" y="367">answer</text>
 
-  <!-- maker and reader -->
+  <!-- builder and evaluator -->
   <path class="line" d="M480,414 H600" marker-end="url(#arrow)"/>
   <text class="label" text-anchor="middle" x="540" y="406">work</text>
   <path class="line" d="M600,446 H480" marker-end="url(#arrow)"/>

@@ -52,12 +52,12 @@
   <rect class="box" x="40" y="54" width="560" height="110" rx="12"/>
   <text class="name" x="320" y="80">Claude Code</text>
   <text class="kind" x="320" y="102">main conversation: the orchestrator, where a person calls</text>
-  <text class="kind" x="320" y="122">subagents: maker, reader, and the orchestrator where an AI calls</text>
+  <text class="kind" x="320" y="122">subagents: builder, evaluator, and the orchestrator where an AI calls</text>
 
   <rect class="box" x="640" y="54" width="260" height="110" rx="12"/>
   <text class="name" x="770" y="80">python3 3.9 or later</text>
   <text class="kind" x="770" y="102">guard, run by Claude Code's hooks;</text>
-  <text class="kind" x="770" y="122">course script, run by the</text>
+  <text class="kind" x="770" y="122">router, run by the</text>
   <text class="kind" x="770" y="138">orchestrator</text>
   <path class="line" d="M600,109 H640" marker-end="url(#arrow)"/>
 
