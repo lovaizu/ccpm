@@ -42,6 +42,14 @@ record = importlib.util.module_from_spec(FOUND)
 FOUND.loader.exec_module(record)
 
 
+# What .claude/rules/dev.md tells every Claude Code a developer starts, added to its system prompt
+# so the ask the trial makes stays as the plugin's user would write it.
+LIMITS = (
+    "Install nothing, and send nothing to a service outside the repository's git and GitHub, such"
+    " as a translator or a web API. Fetching a public page to read it is allowed."
+)
+
+
 def folder(plugin: str, name: str) -> str:
     """A new folder of the plugin's for a run of the trial of the name, in the system's temporary
     folder as dev/plugin-best-practice.md's Where a plugin writes its files has it, outside any ccpm
@@ -96,7 +104,7 @@ class Conversation:
         # The copy stands in for the installed plugin, which would otherwise run beside it.
         installed = {f"{name}@ccpm": False for name in names}
         command += ["--model", "opus", "--settings", json.dumps({"enabledPlugins": installed})]
-        command += ["--permission-mode", "bypassPermissions"]
+        command += ["--permission-mode", "bypassPermissions", "--append-system-prompt", LIMITS]
         run = subprocess.Popen(
             command,
             cwd=self.cwd,
@@ -279,6 +287,7 @@ def interactive(
     for plugin in plugins:
         command += ["--plugin-dir", plugin]
     command += ["--settings", json.dumps(settings), "--permission-mode", "bypassPermissions"]
+    command += ["--append-system-prompt", LIMITS]
     command.append(prompt)
     # The environment is made before the fork, so the configuration folder fresh makes the first
     # time is this process's too, where record.py reads the session's records after.
