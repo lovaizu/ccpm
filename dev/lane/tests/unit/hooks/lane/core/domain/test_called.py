@@ -188,5 +188,14 @@ class TestGiven(CalledTest):
         self.assertEqual(called.calls("s1", "a1", True), [second])
 
 
+class TestRecord(unittest.TestCase):
+    def test_each_plugins_guard_keeps_a_session_apart(self):
+        # Given: the session s1, and the plugins changelog and checker
+        # When: the record each keeps of it is named
+        # Then: each is its own, the session first
+        self.assertEqual(called.record("changelog", "s1"), "s1-changelog")
+        self.assertNotEqual(called.record("checker", "s1"), called.record("changelog", "s1"))
+
+
 if __name__ == "__main__":
     unittest.main()

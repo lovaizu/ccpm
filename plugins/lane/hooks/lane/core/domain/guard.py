@@ -93,6 +93,10 @@ UNJOINED = (
 LEFT = (
     "lane let {lead} end with `{plugin}:{name}` still due{why}: the maker of {plugin} must fix {at}"
 )
+LEFT_DEPENDENCY = (
+    "lane let {lead} end with `{name}` still due, as {name} ended with no result the routes take:"
+    " the maker of {dependency} must have {own} give {results}"
+)
 STARTS_IT = "step {step} of {lead} in {file}, which starts it."
 GIVES_IT = "step {step} of {name} in {file}, which gives its result."
 ORDER = (
@@ -152,6 +156,22 @@ class Subagent(NamedTuple):
     adapter: str | None
     memo: dict[str, Any]
     start: float
+
+    def foreign(self) -> bool:
+        """Whether the subagent is a dependency's, `<dependency>:<name>`, which the routes name and
+        its own plugin's guard holds to its lanes."""
+        return ":" in self.name
+
+    def gave(self, command: str, cwd: str) -> str | None:
+        """The result the command gives, as one of the subagent's result commands, matched whole:
+        word for word as it reads them, or, for a dependency's subagent, by any folder of the
+        dependency; None where it is none of them."""
+        for on, gives in zip(self.ons, self.commands("result")):
+            if command == gives or (
+                self.foreign() and run_only.allows(command, [gives], self.root, cwd, {})
+            ):
+                return on
+        return None
 
     def orchestrator(self) -> bool:
         """Whether the subagent is the routes' orchestrator."""
@@ -270,6 +290,10 @@ def subagent(
     try:
         given = rules.read(root)
     except ValueError as why:
+        # Whether the routes name another plugin's subagent cannot be read, and the plugin's own
+        # are told the error.
+        if ":" in name:
+            return None
         fix = LAY_AGAIN.format(plugin=plugin)
         raise Cannot(cannot(f"the lanes of {name}", str(why), fix)) from None
     laid, routed = rules.of(given, name), rules.routes_of(given)
@@ -298,7 +322,7 @@ def subagent(
         # The last step's number, or none that a step has, where its file has no step.
         last = step.last(step.lines_of(root, name)) or 0
         found.append(rules.Laid(last, "result", [routes.command(name, on) for on in ons]))
-    session, agent = event["session_id"], event["agent_id"]
+    session, agent = called.record(plugin, event["session_id"]), event["agent_id"]
     adapter = rules.adapter_of(given, name)
     return Subagent(root, plugin, name, session, agent, found, routed, ons, adapter, {}, start)
 
@@ -421,6 +445,8 @@ def tool_checked(s: Subagent, event: dict[str, Any]) -> list[Said]:
     sentences it breaks; a held command's sentence, put to the person; or an error where its tool's
     field is not as Claude Code gives it, or lane cannot check a lane that judges the call."""
     tool, given = event["tool_name"], event["tool_input"]
+    if s.foreign():
+        return []
     for lane in s.of("follow_routes"):
         due = s.due()
         allowed = follow_routes.allows(tool, given, due, s.plugin)
@@ -572,11 +598,12 @@ def call_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
             return [unshaped(s.name, f"$.tool_response{out.told()[1:]}"), s.told(before)]
         s.keep(called.call(tool, given, back, joined(before, name)))
         return [s.told(s.due())]
-    s.keep(called.call(tool, given))
-    command = str(given.get("command", "")).strip() if tool == "Bash" else None
-    for on_, gives in zip(s.ons, s.commands("result")):
-        if command == gives:
-            s.keep(called.gave(on_))
+    if not s.foreign():
+        s.keep(called.call(tool, given))
+    command = str(given.get("command", "")).strip() if tool == "Bash" else ""
+    on_ = s.gave(command, event["cwd"]) if command else None
+    if on_ is not None:
+        s.keep(called.gave(on_))
     return []
 
 
@@ -642,7 +669,10 @@ def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
     if ending and not event["stop_hook_active"] and called.result(s.session, s.agent) is None:
         # A subagent has one result lane, on its last step.
         commands = run_only.named(ending[0].takes, s.root)  # pragma: no mutate
-        return [Said(lanes.sentence("result", commands))]
+        told_ = [lanes.sentence("result", commands)]
+        if s.foreign():
+            told_.append(DEPENDENCY_FOLDER)
+        return [Said("\n".join(told_))]
     s.keep(called.END)
     return told
 
@@ -650,8 +680,19 @@ def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
 def left(s: Subagent, due: routes.Next) -> Said:
     """The note telling the operator that the orchestrator was let end with the start due left,
     and which step of the plugin must be fixed: the last of the subagent due, where it ended with
-    no result, or the orchestrator's step the routes lie on otherwise."""
+    no result, or the orchestrator's step the routes lie on otherwise; for a dependency's subagent
+    due again, that its maker must have it give a result the routes take, or the plugin's maker
+    must route the one it gives."""
     assert s.routes is not None
+    if due.again and ":" in due.name:
+        dependency, own = due.name.split(":")
+        results = lanes.listed(routes.ons(s.routes, due.name))
+        text = LEFT_DEPENDENCY.format(
+            lead=s.name, name=due.name, dependency=dependency, own=own, results=results
+        )
+        return Said(
+            text + f", or the maker of {s.plugin} must route the result it gives.", note=True
+        )
     if due.again:
         lines = step.lines_of(s.root, due.name)
         file = os.path.relpath(str(step.steps_file(s.root, due.name)), s.root)
@@ -676,6 +717,7 @@ def handed(plugin: str, event: dict[str, Any], held_: str) -> None:
     session, use = event.get("session_id"), event.get("tool_use_id")
     if not isinstance(given, dict) or not isinstance(session, str) or not isinstance(use, str):
         return
+    session = called.record(plugin, session)
     # Only the Agent tool, before which no tool of Claude Code's sorts, starts a run.
     starting = tool == "Agent"  # pragma: no mutate
     # Of the events of a call, PostToolUse, PostToolUseFailure and PreToolUse, a call comes back at

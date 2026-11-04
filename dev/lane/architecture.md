@@ -150,6 +150,11 @@ S3 also carries a rule that needs the person's approval, and a rule that takes a
 each run, as branches of its sequence. Without them, the developer AI could not hold such a rule
 with Lane (KR1.1).
 
+S5 also carries a route to a subagent of a plugin that the developer AI's plugin depends on, as a
+branch of its sequence. The subagent gives its result by its own plugin's result script, as that
+plugin names its results. Without it, the developer AI would write code for an order that runs
+another plugin's subagent, or copy that subagent's steps into its own plugin (KR2.1).
+
 ## Components
 
 The figure shows each role of Lane and each store of data that the stories need. The dashed
@@ -202,6 +207,12 @@ developer AI's plugin.
   rules it out. The cost: a subagent with rules runs only the commands that its rules name, word
   for word. It reads and writes files with Read, Grep, Write and Edit, whose paths the hook input
   gives.
+- **Each plugin's check script keeps its own record of a session.** A run of a dependency's
+  subagent that the routes name is then held by two check scripts, its own plugin's and the one
+  whose routes start it. One record for both would cost no second write. But each would write what
+  the other reads, and a copy of Lane's code of another version could read the other's lines
+  wrongly. The cost: the start, the result and the end of such a run are kept twice, once in each
+  record.
 - **`called.py` keeps each run's calls itself.** Claude Code's record of the session holds the
   calls too, but the check script never reads that record, as
   [The check judges only what Claude Code documents](#the-check-judges-only-what-claude-code-documents)
@@ -455,12 +466,19 @@ sequenceDiagram
       H-->>CC: context, wait for it to end (Decision)
       O->>CC: ends, to wait
       S->>CC: gives its result and ends, as S4 draws
+      opt S is a subagent of a dependency
+        CC->>H: PostToolUse of its result script, in the dependency's folder (Event)
+        H->>G: the result came back (Event)
+        G->>C: keeps the result, where a route from S is on it (Result)
+      end
       CC->>O: starts lead again, as the subagent it started has ended
       CC->>H: SubagentStart of lead (Event)
       H->>G: the start (Event)
       G->>RT: the start due (Route, Result)
       alt writer gave written
         H-->>CC: context, Start reviewer (Decision)
+      else a subagent of a dependency gave a result a route is on
+        H-->>CC: context, the start that route names (Decision)
       else reviewer gave more
         H-->>CC: context, Start writer (Decision)
       else reviewer gave good
@@ -717,7 +735,7 @@ The paths, one test each:
 | S2 `lay.py write` | the proposal written, without an adapter and with one; the proposal refused, nothing written; `claude plugin validate` failing, and `claude` missing, the proposal kept |
 | S3 a subagent with rules | each call the rules allow, let through; a call that breaks a rule, stopped with the sentence of its step; a held command, the person saying yes and saying no; a command with the run's own value, let through, and with another value, stopped; two runs at once, each held to its own value; a text read through an adapter, in form and out of form; an adapter that fails, a value not given and an event that cannot be read, each stopped as a call that cannot be checked with the operator told; the steps given whole at the start |
 | S4 a result | a result a route is on; a result no route is on, stopped, then one it is on; a rule about the end not kept, stopped with what is missing, then the work mended; an end with a result; an end with none, kept going once, then let end |
-| S5 the orchestrator | `written`, then `good`; `written`, `more`, `written`, then `good`; a start the routes do not name, stopped; a subagent that ended with no result, started again; lead ending with no start due; lead kept going once with a start due, then let end with the operator told |
+| S5 the orchestrator | `written`, then `good`; `written`, `more`, `written`, then `good`; a start the routes do not name, stopped; a subagent that ended with no result, started again; lead ending with no start due; lead kept going once with a start due, then let end with the operator told; a subagent of a dependency started, its result by its own plugin's script taken, and kept going once where it gives none |
 | S6 runs at once | every run giving one result; results taken by the order of results; a further run of a subagent not in `fan_out`, stopped; another subagent started before every run ended, stopped; a run ending with no result, started again in its place; results that no order holds, the operator told |
 | S7 `lay.py up` | a folder with no plugin's manifest; Lane's code older and the hook entries in another form; nothing to bring up |
 

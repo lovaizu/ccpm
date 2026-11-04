@@ -110,5 +110,15 @@ class TestStarted(unittest.TestCase):
                 self.assertEqual(found, name)
 
 
+class TestDependency(unittest.TestCase):
+    def test_a_start_of_a_dependencys_subagent_is_found_by_its_type(self):
+        # Given: lead's Agent call starting checker's examiner
+        given = {"subagent_type": "checker:examiner", "prompt": "p"}
+        # When: the subagent it starts is asked for, among writer and examiner
+        found = follow_routes.started("Agent", given, ["writer", "checker:examiner"], "changelog")
+        # Then: it is examiner, by the name the routes give it
+        self.assertEqual(found, "checker:examiner")
+
+
 if __name__ == "__main__":
     unittest.main()

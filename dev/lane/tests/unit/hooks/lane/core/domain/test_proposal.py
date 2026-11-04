@@ -69,6 +69,54 @@ class TestResults(ProposalTest):
         )
 
 
+class TestDependency(ProposalTest):
+    """Routes naming a subagent of a dependency, as docs/routes.md's A subagent of a dependency
+    gives them."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write(os.path.join(self.plugin, "agents", "lead.md"), helpers.LEAD)
+
+    def declare(self, *names: str) -> None:
+        """changelog's manifest declaring the dependencies of the names."""
+        manifest = {"name": "changelog", "version": "0.1.0", "dependencies": list(names)}
+        self.write_json(self.manifest(), manifest)
+
+    def test_routes_to_a_declared_dependencys_subagent_are_read_with_no_file_of_it(self):
+        # Given: changelog declaring checker, whose examiner the routes name
+        self.declare("checker")
+        given = {**self.proposal(), "routes": helpers.DEPENDENCY_ROUTES}
+        # When: it is read
+        found = proposal.proposal(self.propose(given))
+        # Then: the routes are read as given, though no file of changelog's gives examiner
+        self.assertEqual(found["routes"], helpers.DEPENDENCY_ROUTES)
+
+    def test_a_dependency_the_manifest_does_not_declare_is_refused(self):
+        # Given: changelog declaring no dependency
+        given = {**self.proposal(), "routes": helpers.DEPENDENCY_ROUTES}
+        # When: it is read
+        said = self.refused(given)
+        # Then: it is refused, telling to declare checker
+        self.assertIn(
+            "gives checker:examiner, a subagent of checker, which .claude-plugin/plugin.json does"
+            " not declare among its dependencies; declare it there",
+            said,
+        )
+
+    def test_a_dependencys_subagent_named_otherwise_is_refused(self):
+        # Given: a route to a subagent named with two colons
+        self.declare("checker")
+        each = [dict(r) for r in helpers.DEPENDENCY_ROUTES["routes"]]
+        for r in each:
+            for k in ("from", "to"):
+                if r.get(k) == "checker:examiner":
+                    r[k] = "checker:a:b"
+        given = {**self.proposal(), "routes": {**helpers.DEPENDENCY_ROUTES, "routes": each}}
+        # When: it is read
+        # Then: it is refused, as the name is no subagent's
+        self.assertIn("gives checker:a:b, which names no subagent", self.refused(given))
+
+
 class TestLanes(ProposalTest):
     def test_every_lane_docs_lanes_md_names_is_read_with_things_given_for_each_run(self):
         self.write_json(os.path.join(self.plugin, "forms", "e.json"), {"type": "object"})

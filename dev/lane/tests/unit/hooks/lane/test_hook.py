@@ -262,6 +262,26 @@ class TestRoutes(HookTest):
                 self.assertIn(wrong, found["systemMessage"])
 
 
+class TestDependency(HookTest):
+    def test_an_event_of_a_dependencys_subagent_the_routes_name_reaches_the_guard(self):
+        # Given: routes to checker's examiner
+        self.depend()
+        # When: examiner is about to end with no result
+        stop = self.subagent("SubagentStop", "checker:examiner", "e1")
+        found = self.answered(stop, held="SubagentStop")
+        # Then: the guard keeps it going, headed by changelog's name
+        self.assertEqual(found["decision"], "block")
+        self.assertTrue(found["reason"].startswith("changelog: End by running "), found)
+
+    def test_an_event_of_another_plugins_subagent_no_route_names_is_answered_nothing(self):
+        # Given: routes to checker's examiner
+        self.depend()
+        # When: checker's linter is about to end
+        # Then: nothing is said
+        stop = self.subagent("SubagentStop", "checker:linter", "x1")
+        self.assertEqual(self.answered(stop, held="SubagentStop"), {})
+
+
 class TestEntries(HookTest):
     def test_each_events_script_runs_the_hook_on_its_event(self):
         self.route()
@@ -330,7 +350,7 @@ class TestU3(HookTest):
         # background
         self.assertEqual(self.answered(call), {})
         self.answered(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
-        self.assertIsNone(helpers.called.texts("s1", "a1"))
+        self.assertIsNone(helpers.called.texts(helpers.KEPT, "a1"))
         back = {
             **self.event("Agent", given, None, "PostToolUse"),
             "tool_use_id": "t1",
@@ -338,7 +358,7 @@ class TestU3(HookTest):
         }
         self.assertEqual(self.answered(back, held="PostToolUse"), {})
         # Then: writer's run of the ID it gave is given the call's prompt
-        self.assertEqual(helpers.called.texts("s1", "a1"), ["p"])
+        self.assertEqual(helpers.called.texts(helpers.KEPT, "a1"), ["p"])
 
     def test_a_start_of_leads_coming_back_gives_its_prompt_to_the_run_it_started(self):
         # Given: the routes laid
@@ -348,12 +368,12 @@ class TestU3(HookTest):
         found = self.answered(back, held="PostToolUse")
         self.assertIn("Wait for", found["hookSpecificOutput"]["additionalContext"])
         # Then: writer's run of the ID it gave is given the call's prompt
-        self.assertEqual(helpers.called.texts("s1", "w1"), ["p"])
+        self.assertEqual(helpers.called.texts(helpers.KEPT, "w1"), ["p"])
 
     def test_a_message_is_kept_where_its_call_goes_on_alone(self):
         # Given: the routes laid, writer due, and a run of writer given its prompt
         self.route()
-        helpers.called.keep("s1", "w1", helpers.called.given("p"))
+        helpers.called.keep(helpers.KEPT, "w1", helpers.called.given("p"))
         sent = {"to": "w1", "message": "m"}
         # When: lead sends it a message, which is stopped as writer's start is due, and the main
         # conversation sends it one, which goes on
@@ -362,7 +382,7 @@ class TestU3(HookTest):
         main = {**self.event("SendMessage", {**sent, "message": "n"}, None)}
         self.assertEqual(self.answered(main), {})
         # Then: the main conversation's alone is kept
-        self.assertEqual(helpers.called.texts("s1", "w1"), ["p", "n"])
+        self.assertEqual(helpers.called.texts(helpers.KEPT, "w1"), ["p", "n"])
 
     def test_an_orchestrator_let_end_with_a_start_due_tells_the_operator_alone(self):
         # Given: the routes laid, writer due
@@ -387,7 +407,7 @@ class TestU3(HookTest):
         self.answered({**self.start("reviewer"), "tool_use_id": "t1"})
         # Then: nothing is kept for any run of reviewer
         self.answered(self.subagent("SubagentStart", "reviewer", "r1"), held="SubagentStart")
-        self.assertIsNone(helpers.called.texts("s1", "r1"))
+        self.assertIsNone(helpers.called.texts(helpers.KEPT, "r1"))
 
 
 if __name__ == "__main__":

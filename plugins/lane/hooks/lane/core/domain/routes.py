@@ -13,8 +13,11 @@ from __future__ import annotations
 
 from typing import Any, Callable, NamedTuple
 
-# The result command, as a step writes it and Claude Code puts the plugin's folder in it.
-COMMAND = "python3 ${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/result.py {name} {on}"
+# The result command, as a step writes it and Claude Code puts the plugin's folder in it: the
+# folder of the plugin the subagent is of, its own, or a dependency's as lanes/ names one.
+COMMAND = "python3 {folder}/hooks/lane/result.py {name} {on}"
+OWN = "${CLAUDE_PLUGIN_ROOT}"
+DEPENDENCY = "${{dependency:{name}}}"
 
 
 # How a start is joined to the starts before it: as a further run of a subagent fanned out, or as
@@ -59,8 +62,19 @@ class Unordered(ValueError):
 
 
 def command(name: str, on: str) -> str:
-    """The command the subagent of the name gives the result by."""
-    return COMMAND.format(name=name, on=on)
+    """The command the subagent of the name gives the result by: by its own plugin's result script,
+    in the plugin's folder, or in its dependency's where it is a dependency's,
+    `<dependency>:<name>`, as its own plugin lays it."""
+    dependency, colon, own = name.rpartition(":")
+    folder = DEPENDENCY.format(name=dependency) if colon else OWN
+    return COMMAND.format(folder=folder, name=own, on=on)
+
+
+def kind(name: str, plugin: str) -> str:
+    """The type Claude Code gives the subagent of the name, as the routes of the plugin name it:
+    `<plugin>:<name>` for one of its own, or the name itself for a dependency's, which names its
+    plugin already."""
+    return name if ":" in name else f"{plugin}:{name}"
 
 
 def ons(routes: dict[str, Any], name: str) -> list[str]:
@@ -123,6 +137,11 @@ def refused(routes: dict[str, Any]) -> str:
     result, or to a subagent no route is from; no route that ends; an order of results, or a
     subagent fanned out, as `ordered` checks them."""
     lead, each = routes["orchestrator"], routes["routes"]
+    if ":" in lead:
+        return (
+            f"gives {lead} as the orchestrator, a subagent of another plugin, whose steps the"
+            " routes cannot be laid on"
+        )
     first = [r for r in each if r["from"] == lead]
     # A first route alone is the start; with none or two, there is none, which has no `to`.
     start: dict[str, Any] = {}
@@ -272,13 +291,11 @@ def line(found: Next, plugin: str) -> str:
     plugin's name heading it left to whoever tells it."""
     # A next start is `end`, `start` or `wait`, `wait` the last of them in order.
     waiting = found.kind == "wait"  # pragma: no mutate
+    named = kind(found.name, plugin)
     if waiting and found.more:
-        return (
-            f"Wait for every run of `{plugin}:{found.name}` to end: you are told the next start"
-            " once each has."
-        )
+        return f"Wait for every run of `{named}` to end: you are told the next start once each has."
     if waiting:
-        return f"Wait for `{plugin}:{found.name}` to end: you are told the next start once it has."
+        return f"Wait for `{named}` to end: you are told the next start once it has."
     gave = f"{found.gave[0]} gave `{found.gave[1]}`. " if found.gave else ""
     # A run counts where it gave a result, so the runs are never fewer than 1.
     several = found.runs > 1  # pragma: no mutate
@@ -288,5 +305,5 @@ def line(found: Next, plugin: str) -> str:
     if found.kind == "end":  # pragma: no mutate
         return gave + "Start no more subagents."
     if found.again:
-        return f"{found.name} ended with no result. Start `{plugin}:{found.name}` again."
-    return gave + f"Start `{plugin}:{found.name}`."
+        return f"{found.name} ended with no result. Start `{named}` again."
+    return gave + f"Start `{named}`."

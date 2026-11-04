@@ -133,8 +133,11 @@ def main(held: str, argv: list[str], stdin: IO[str], stdout: IO[str], root: str)
     else:
         agent = event.get("agent_type")
         said = []
-        if isinstance(agent, str) and agent.startswith(f"{plugin}:"):
-            name = agent[len(plugin) + 1 :]
+        if isinstance(agent, str) and ":" in agent:
+            # A subagent of the plugin by its own name, or of a dependency by its type, as the
+            # routes name it.
+            ours = agent.startswith(f"{plugin}:")
+            name = agent[len(plugin) + 1 :] if ours else agent
             said = CHECKS[held](root, plugin, name, event, event_wrong(event, held))
         # A call stopped is not made, so gives its subagent nothing. Of the events of a call,
         # PreToolUse is the last in order, and the others hand none.

@@ -1,6 +1,8 @@
 """The calls kept: each call of a subagent as it came back, each result it gave, each start and end
 of its runs, and the texts it was given, its prompt and each message sent after, kept under its
-agent_id in `lane/<yyyymmdd>-<session>/<agent_id>.jsonl` of the system's temporary folder, as
+agent_id in `lane/<yyyymmdd>-<session>-<plugin>/<agent_id>.jsonl` of the system's temporary folder,
+each plugin's guard keeping its own record of a session, as one run may be held by two plugins'
+guards, its own plugin's and one that routes it; as
 dev/plugin-best-practice.md's Where a plugin writes its files has it for what is used only while a
 plugin runs; a line of JSON each, read back for the run the subagent is in, from its last start, as
 a subagent resumed keeps its ID and gives a result again."""
@@ -25,6 +27,12 @@ START = {"kind": "start"}
 END = {"kind": "end"}
 # What an Agent call gives back that is kept: its status and the ID of the subagent's run.
 KEPT_BACK = ("status", "agentId")
+
+
+def record(plugin: str, session: str) -> str:
+    """The session as the plugin's guard keeps its record, apart from any other plugin's, which the
+    functions below take as `session`."""
+    return f"{session}-{plugin}"
 
 
 def gave(on: str) -> dict[str, Any]:

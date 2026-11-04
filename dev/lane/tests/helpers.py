@@ -60,6 +60,8 @@ from lanes import (  # noqa: F401
 )
 
 AGENT = "changelog:writer"
+# The session s1 as changelog's guard keeps its record, apart from any other plugin's.
+KEPT = "s1-changelog"
 # The README's subagent `writer` before any lane is laid, run in the background however it is
 # started, as Lane needs.
 WRITER = """---
@@ -191,6 +193,28 @@ WRITER_LAID = LAID.replace("you wrote.\n", f"you wrote. {END_WRITER}\n")
 REVIEWER_LAID = REVIEWER.replace("you found.\n", f"you found. {END_REVIEWER}\n")
 
 
+def kind(name: str) -> str:
+    """The type Claude Code gives the subagent of the name: `changelog:<name>`, or the name itself
+    where it names a dependency's subagent, `<dependency>:<name>`."""
+    return name if ":" in name else f"changelog:{name}"
+
+
+# Routes from writer to a subagent of the dependency checker, examiner, which gives `asks` or
+# `done`, each ending the run, as docs/routes.md's A subagent of a dependency gives them.
+DEPENDENCY_ROUTES: dict[str, Any] = {
+    "orchestrator": "lead",
+    "step": 1,
+    "routes": [
+        {"from": "lead", "to": "writer"},
+        {"from": "writer", "on": "written", "to": "checker:examiner"},
+        {"from": "checker:examiner", "on": "asks"},
+        {"from": "checker:examiner", "on": "done"},
+    ],
+}
+# The result command examiner gives a result by, as changelog's guard knows it.
+EXAMINED = "python3 ${dependency:checker}/hooks/lane/result.py examiner"
+
+
 class PluginTest(testing.FolderTest):
     """A test with the README's plugin `changelog` in `base/changelog`, its subagent `writer` in
     `agents/writer.md`, the project it works on being `base`."""
@@ -209,6 +233,19 @@ class PluginTest(testing.FolderTest):
     def manifest(self) -> str:
         """The plugin's manifest."""
         return os.path.join(self.plugin, ".claude-plugin", "plugin.json")
+
+    def depend(self) -> None:
+        """Lays routes to checker's examiner, changelog declaring checker, installed in `checker`
+        beside it: lead and writer saying their sentences, and hooks/lanes.json."""
+        self.lay(text=WRITER_LAID)
+        self.write(os.path.join(self.plugin, "agents", "lead.md"), LEAD_LAID)
+        manifest = {"name": "changelog", "version": "0.1.0", "dependencies": ["checker"]}
+        self.write_json(self.manifest(), manifest)
+        self.write_json(
+            os.path.join(self.base, "checker", ".claude-plugin", "plugin.json"), {"name": "checker"}
+        )
+        laid = {**RULES, "routes": DEPENDENCY_ROUTES}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
 
     def route(self) -> None:
         """Lays docs/routes.md's routes beside the README's lanes, as `lay.py write` writes them:
@@ -298,7 +335,7 @@ class PluginTest(testing.FolderTest):
     ) -> dict:
         """An event of lead's Agent call starting the subagent of the name, PreToolUse by default;
         PostToolUse's with what the call gave back, where it is given."""
-        given = {"description": "d", "prompt": "p", "subagent_type": f"changelog:{name}"}
+        given = {"description": "d", "prompt": "p", "subagent_type": kind(name)}
         given = {**given, "run_in_background": background}
         event = self.event("Agent", given, "changelog:lead", held, "lead1")
         return event if back is None else {**event, "tool_response": back}
@@ -306,7 +343,7 @@ class PluginTest(testing.FolderTest):
     def subagent(self, held: str, name: str, agent_id: str, active: bool = False) -> dict:
         """A SubagentStart or SubagentStop event of the subagent of the name and ID; SubagentStop's
         kept going by a stop hook already where active."""
-        event = {**self.common(held), "agent_id": agent_id, "agent_type": f"changelog:{name}"}
+        event = {**self.common(held), "agent_id": agent_id, "agent_type": kind(name)}
         if held == "SubagentStop":
             transcript = os.path.join(self.base, "s1", "subagents", f"agent-{agent_id}.jsonl")
             stop = {"stop_hook_active": active, "agent_transcript_path": transcript}
@@ -476,7 +513,9 @@ class RunTest(testing.GitTest):
     def kept(self, run: testing.Run) -> list[dict[str, Any]]:
         """The entries the hooks kept of the run, in the session's folder of the calls kept."""
         found = []
-        for path in glob.glob(os.path.join(self.base, "lane", "*-s1", f"{run.agent_id}.jsonl")):
+        for path in glob.glob(
+            os.path.join(self.base, "lane", "*-s1-changelog", f"{run.agent_id}.jsonl")
+        ):
             with open(path, encoding="utf-8") as f:
                 found += [json.loads(line) for line in f]
         return found

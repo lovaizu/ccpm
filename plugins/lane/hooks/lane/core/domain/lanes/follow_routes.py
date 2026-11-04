@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from routes import Next
+from routes import Next, kind
 
 ACTION = "follow"
 WORDING = "Start each subagent you are told to start, until you are told to start no more."
@@ -21,13 +21,13 @@ MESSAGE = "SendMessage"
 
 
 def started(tool: str, given: dict[str, Any], named: list[str], plugin: str) -> str | None:
-    """The subagent of the names, of the plugin, that the call starts, by the type it gives as
-    Claude Code names a plugin's subagent, `<plugin>:<name>`; None where the call starts none of
-    them."""
+    """The subagent of the names, of the plugin or of a dependency, that the call starts, by the
+    type it gives as Claude Code names a plugin's subagent, `<plugin>:<name>`; None where the call
+    starts none of them."""
     # No tool Claude Code names sorts before Agent.
     starting = tool == AGENT  # pragma: no mutate
-    kind = given.get("subagent_type") if starting else None
-    found = [n for n in named if kind == f"{plugin}:{n}"]
+    type_ = given.get("subagent_type") if starting else None
+    found = [n for n in named if type_ == kind(n, plugin)]
     if not found:
         return None
     # The names are each named once, so one at most is started.

@@ -21,6 +21,7 @@ import rules
 import schema
 import step
 import template
+from lanes import run_only
 
 # What the proposal is told to be, when it is not: in the shape docs/lanes.md gives, named by its
 # whole path, as the developer AI may run lay.py from any folder.
@@ -145,7 +146,7 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
     """The routes, held to their schema, checked as `routes.refused` says, and then against the
     files of the subagents they name: the orchestrator's step in its file, its tools, where named,
     with Agent; no subagent they name set to run in the foreground; and each subagent giving a
-    result with a last step."""
+    result with a last step; a dependency's subagent as `dependency_checked` says."""
     out = schema.held(rules.ROUTES, given)
     if out is not None:
         raise wrong(f"is out of its shape at $.routes{out.told()[1:]}", ROUTES_AGAIN)
@@ -157,6 +158,9 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
     lead = given["orchestrator"]
     froms = routes.giving(given)
     for name in routes.named(given):
+        if ":" in name:
+            dependency_checked(root, name)
+            continue
         _, lines = agent_lines(root, name, ROUTES_AGAIN)
         bare = [line.rstrip("\n") for line in lines]
         # routes.named gives the orchestrator as the routes give it, so `is` finds it as `==`.
@@ -178,6 +182,21 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
             raise wrong(f"gives {name}, whose file has no step to end by its result", ROUTES_AGAIN)
         in_background(root, name, ROUTES_MD)
     return given
+
+
+def dependency_checked(root: str, name: str) -> None:
+    """Stops where the name of a dependency's subagent the routes give, `<dependency>:<name>`,
+    names no subagent, or a dependency the plugin's manifest does not declare. Its file lies in the
+    dependency, whose own proposal lays it, so lay.py reads none of it."""
+    if not re.fullmatch(f"{rules.NAME}:{rules.NAME}", name):
+        raise wrong(f"gives {name}, which names no subagent", ROUTES_AGAIN)
+    dependency = name.split(":")[0]
+    if dependency not in run_only.dependencies(root):
+        raise wrong(
+            f"gives {name}, a subagent of {dependency}, which .claude-plugin/plugin.json does not"
+            " declare among its dependencies",
+            f"declare it there, as {ROUTES_MD} says, and run again",
+        )
 
 
 def in_background(root: str, name: str, told: str = LANES_MD) -> None:

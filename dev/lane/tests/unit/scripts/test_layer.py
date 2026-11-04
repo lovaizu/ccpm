@@ -212,6 +212,33 @@ class RoutesTest(LayerTest):
         return self.read(os.path.join(self.plugin, "agents", f"{name}.md"))
 
 
+class TestDependencyRoutes(LayerTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.write(os.path.join(self.plugin, "agents", "lead.md"), helpers.LEAD)
+        manifest = {"name": "changelog", "version": "0.1.0", "dependencies": ["checker"]}
+        self.write_json(self.manifest(), manifest)
+        self.propose({**helpers.PROPOSAL, "routes": helpers.DEPENDENCY_ROUTES})
+
+    def test_routes_to_a_dependencys_subagent_are_printed_and_lay_no_step_of_it(self):
+        # Given: the README's proposal with routes from writer to checker's examiner
+        # When: it is printed
+        said = layer.printed(helpers.PROPOSED)
+        # Then: the routes name examiner by its type, and only lead's and writer's steps are laid
+        self.assertIn("  writer `written`         start checker:examiner\n", said)
+        self.assertIn("  checker:examiner `asks`  start no more\n", said)
+        self.assertNotIn("Lanes of checker:examiner", said)
+        self.assertIn(f"4. Reply with the entries you wrote. {helpers.END_WRITER}\n", said)
+
+    def test_the_hooks_are_written_for_the_plugins_own_subagents(self):
+        # Given: the same proposal
+        # When: it is written
+        said = self.wrote()
+        # Then: the hooks are written for writer and lead, and the routes laid as given
+        self.assertIn("Wrote the hooks of writer and lead into hooks/hooks.json.\n", said)
+        self.assertEqual(self.lanes_json()["routes"], helpers.DEPENDENCY_ROUTES)
+
+
 class TestRoutes(RoutesTest):
     def test_the_routes_are_printed_and_each_routed_steps_sentence(self):
         # Given: the README's proposal with docs/routes.md's routes

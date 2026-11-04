@@ -168,7 +168,7 @@ is held to this JSON Schema:
 - `results` names the results a subagent gives where no route of your plugin is from it, such as
   `["asks", "done"]` for a subagent that ends to wait for an answer or with its work done. A plugin
   that depends on yours can then route it by those results, as
-  [the routes](routes.md) say. `lay.py write` lays the result command of
+  [the routes](routes.md#a-subagent-of-a-dependency) say. `lay.py write` lays the result command of
   each on its last step, in place of `done`. `lay.py print` refuses `results` on a subagent your
   routes are from, as the routes give its results.
 - Your AI writes routes under `routes`, held to the JSON Schema

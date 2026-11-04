@@ -62,16 +62,19 @@ For `changelog`, whose `lead` starts `writer` and then `reviewer`, and `writer` 
 ```
 
 - One route is from the orchestrator, with a `to` and no `on`: the first start.
-- Every other route is from a subagent of your plugin, not the orchestrator, and has an `on`. Two
-  routes from one subagent have different `on`s, so each result leads to one start or to the end.
+- Every other route is from a subagent other than the orchestrator, and has an `on`. That subagent
+  is your plugin's, or a dependency's, as [A subagent of a dependency](#a-subagent-of-a-dependency)
+  says. Two routes from one subagent have different `on`s, so each result leads to one start or to
+  the end.
 - Each subagent a `to` names is the `from` of a route, so no started subagent is left without a
   result to give. At least one route has no `to`, so the run can end.
 - The orchestrator starts each subagent with the Agent tool. So where its file names its tools,
   they must include Agent: `lay.py print` refuses routes whose orchestrator's file names its tools
   without it.
 - The orchestrator may also be in the proposal's `subagents`, with lanes on its other steps.
-- Each subagent the routes name, the orchestrator among them, sets `background: true` in its file,
-  as [the lanes](lanes.md) say. `lay.py print` refuses routes where one does not.
+- Each subagent of your plugin that the routes name, the orchestrator among them, sets
+  `background: true` in its file, as [the lanes](lanes.md) say. `lay.py print` refuses routes
+  where one does not.
 - `fan_out` names each subagent the orchestrator may start several runs of at once, each a `to` of
   a route. A subagent it does not name runs once at a time, as its steps may not be made for runs
   beside one another.
@@ -89,6 +92,34 @@ For `changelog` with two reviewers at once, each reviewing a part of the commits
 {"orchestrator": "lead", "step": 1, "fan_out": ["reviewer"], "precedence": ["more", "good"],
  "routes": [...]}
 ```
+
+## A subagent of a dependency
+
+A route may name a subagent of a dependency, a plugin your plugin declares in the `dependencies` of
+its `.claude-plugin/plugin.json`, as `<dependency>:<name>`, the type Claude Code gives it. For a
+plugin that depends on `checker`, whose subagent `examiner` gives `asks` or `done`:
+
+```json
+{"orchestrator": "lead", "step": 1, "routes": [
+ {"from": "lead", "to": "writer"},
+ {"from": "writer", "on": "written", "to": "checker:examiner"},
+ {"from": "checker:examiner", "on": "asks"},
+ {"from": "checker:examiner", "on": "done"}]}
+```
+
+- The orchestrator is a subagent of your plugin, as the routes are laid on its step.
+- `lay.py print` refuses a route naming a dependency your manifest does not declare. It reads no
+  file of the dependency's subagent, as the dependency's own proposal lays it.
+- The dependency's subagent gives its results by the dependency's result script, as its own
+  proposal lays them, by its routes or its `results`. Your plugin's guard checks none of its calls,
+  which the dependency's guard holds to its lanes.
+- Your plugin's guard keeps its results and its end, as it keeps those of your own subagents. It
+  takes a result from a run of the dependency's result script, in the dependency's folder, that
+  came back without an error, and only a result a route from the subagent is on. It keeps the
+  subagent going once where it is about to end without such a result, and tells it the commands it
+  may end by.
+- Each plugin's guard keeps its own record of a session, so the dependency's guard and yours hold
+  the same run apart.
 
 ## Runs at once
 
@@ -120,7 +151,8 @@ them still runs. lane holds each run to its own values, as [the lanes](lanes.md)
 
 A subagent gives a result by running the result script with its own name and the result, as its
 step writes the command. Before the command runs, lane checks that a route from the subagent is on
-the result, or, where no route is from it, that the result is `done`. It stops a command of any
+the result, or, where no route is from it, that the result is one its `results` name, or `done`
+where they name none, as [the lanes](lanes.md#the-proposal) say. It stops a command of any
 other result, and tells the subagent the commands it may run. It then checks that the subagent's
 work is in the form its lanes ask, as [the lanes](lanes.md) say for the lanes checked at the end.
 Where it is not, lane stops the command and tells what is missing. The result script checks the

@@ -450,5 +450,66 @@ class TestRefused(unittest.TestCase):
                 self.assertTrue(found.startswith(said), found)
 
 
+class TestDependency(unittest.TestCase):
+    """A route naming a subagent of a dependency, `<dependency>:<name>`, as docs/routes.md's A
+    subagent of a dependency gives it."""
+
+    def test_a_subagent_is_named_by_claude_codes_type_its_plugins_or_its_own(self):
+        for name, found in (
+            ("writer", "changelog:writer"),
+            ("checker:examiner", "checker:examiner"),
+        ):
+            with self.subTest(name=name):
+                # Given: a subagent of changelog, or of its dependency checker
+                # When: its type is asked for
+                # Then: it is changelog's name before its own, or the name as the routes give it
+                self.assertEqual(routes.kind(name, "changelog"), found)
+
+    def test_a_dependencys_subagent_gives_its_result_by_its_own_plugins_script(self):
+        # Given: checker's examiner giving `done`
+        # When: its command is made
+        # Then: it runs the result script in checker's folder, as lane names a dependency's
+        self.assertEqual(routes.command("checker:examiner", "done"), f"{helpers.EXAMINED} done")
+
+    def test_the_orchestrator_is_told_to_start_a_dependencys_subagent_by_its_type(self):
+        # Given: writer's `written`, which leads to checker's examiner
+        due = decided_by(helpers.DEPENDENCY_ROUTES, [WRITER], {"w1": "written"})
+        # When: lead is told the start
+        # Then: it names examiner by its type, checker's
+        self.assertEqual(
+            routes.line(due, "changelog"), "writer gave `written`. Start `checker:examiner`."
+        )
+
+    def test_a_result_of_the_dependencys_subagent_leads_to_its_route(self):
+        # Given: writer's `written`, and examiner's `asks`
+        examiner = routes.Start("checker:examiner", "completed", "e1")
+        # When: the next start is decided
+        due = decided_by(
+            helpers.DEPENDENCY_ROUTES, [WRITER, examiner], {"w1": "written", "e1": "asks"}
+        )
+        # Then: the run ends, as the route on `asks` starts no one
+        self.assertEqual(due, routes.Next("end", "", ("checker:examiner", "asks")))
+
+    def test_an_orchestrator_of_another_plugin_is_refused(self):
+        # Given: routes whose orchestrator is checker's examiner
+        given = {**helpers.DEPENDENCY_ROUTES, "orchestrator": "checker:examiner"}
+        given["routes"] = [
+            {"from": "checker:examiner", "to": "writer"},
+            {"from": "writer", "on": "x"},
+        ]
+        # When: they are checked
+        # Then: they are refused, as its steps lie in another plugin
+        self.assertTrue(
+            routes.refused(given).startswith(
+                "gives checker:examiner as the orchestrator, a subagent of another plugin"
+            )
+        )
+
+
+def decided_by(given: dict, starts: list, results: dict) -> routes.Next:
+    """The next start of the routes given after the starts, as `decided` gives it."""
+    return routes.next_start(given, starts, results.get, lambda a: False)
+
+
 if __name__ == "__main__":
     unittest.main()
