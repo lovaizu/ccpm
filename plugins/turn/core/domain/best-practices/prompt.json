@@ -115,6 +115,11 @@
    "id": "Q17",
    "about": "output",
    "what": "When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?"
+  },
+  {
+   "id": "Q18",
+   "about": "output",
+   "what": "When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?"
   }
  ],
  "practices": [
@@ -768,6 +773,49 @@
      "url": "https://www.gov.uk/service-manual/design/form-structure",
      "by": "Government Digital Service, GOV.UK Service Manual, 2018",
      "quote": "one decision they have to make"
+    }
+   ]
+  },
+  {
+   "benefit": "Q18",
+   "thinking": "The caller cannot tell a claim the AI checked from one it guessed, so each claim rests on a check run on the real thing, every item it names, and the report says what was left unchecked.",
+   "steps": [
+    "Check each claim on the real thing before reporting it: read the file, run the check, open the record; never from memory, a guess or what another agent's summary says.",
+    "Judge a check by a result that comes back pass or fail, such as a command's exit code, not by a few lines of its output.",
+    "Judge another agent's work from the records and files it names, set against the task's purpose, not from its summary.",
+    "Check every item the claim names, not a sample.",
+    "Say what was checked and what was not, and why, so the report never reads as covering more than it did."
+   ],
+   "grounds": [
+    {
+     "title": "Building effective agents",
+     "url": "https://www.anthropic.com/engineering/building-effective-agents",
+     "by": "Schluntz and Zhang, anthropic.com/engineering, 2024",
+     "quote": "During execution, it's crucial for the agents to gain “ground truth” from the environment at each step"
+    },
+    {
+     "title": "Prompting best practices",
+     "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+     "by": "Anthropic, Claude Platform Docs, no date",
+     "quote": "Never speculate about code you have not opened."
+    },
+    {
+     "title": "Best practices for Claude Code",
+     "url": "https://code.claude.com/docs/en/best-practices",
+     "by": "Anthropic, Claude Code Docs, no date",
+     "quote": "Give Claude something it can run that comes back pass or fail."
+    },
+    {
+     "title": "How we built our multi-agent research system",
+     "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+     "by": "Anthropic, anthropic.com/engineering, 2025",
+     "quote": "Subagents call tools to store their work in external systems, then pass lightweight references back to the coordinator."
+    },
+    {
+     "title": "Prompting Claude Sonnet 5.5",
+     "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5",
+     "by": "Anthropic, Claude Platform Docs, no date",
+     "quote": "Only if no real check can run here, say which one you did not run and why instead of reporting the change as done."
     }
    ]
   }

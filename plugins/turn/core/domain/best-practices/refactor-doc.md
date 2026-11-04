@@ -58,7 +58,8 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 **Steps**
 
 1. Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.
-2. Show the form alone to a reader who has not read the text, and have them say back what it tells; where they say it otherwise, mend the form.
+2. Draw a diagram as an SVG file beside the document, shown as an image, its colours set under prefers-color-scheme so it follows the page's light or dark scheme.
+3. Show the form alone to a reader who has not read the text, and have them say back what it tells; where they say it otherwise, mend the form.
 
 **Grounds**
 
@@ -69,6 +70,7 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 - [Use lists](https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/use-lists.md), PLAIN, plainlanguage.gov archive on GitHub, no date: "Help the reader understand the order in which things happen"
 - [Use tables to make complex material easier to understand](https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/design/use-tables-to-make-complex-material-easier-to-understand.md), PLAIN, plainlanguage.gov archive on GitHub, no date: "Tables help your audience see relationships that are often times hidden in dense text."
 - [Paraphrase testing](https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/test/paraphrase-testing.md), PLAIN, plainlanguage.gov archive on GitHub, no date: "Paraphrase testing will tell you what a reader thinks a piece of writing means and will help you know if they're interpreting the message as you intended."
+- [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme), MDN Web Docs, developer.mozilla.org, no date: "For SVG and iframes, prefers-color-scheme lets you set a CSS style for the SVG or iframe based on the color-scheme of the parent element in the web page."
 
 ### Q4: Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to?
 

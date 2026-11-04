@@ -6,16 +6,9 @@ already say.
 
 ## Verification
 
-- **Check the real file or output; do not guess.** Read the file, and run the check.
-- **Check every item, not a sample.** If you cannot check every item, report that as a fact.
-- **State the scope that you checked**: what you inspected and what you did not. Never imply that
-  you checked more than you did.
-  - Rationale: a check is worth only as much as its coverage, so the coverage is part of the report.
-- **Judge a subagent's work from its records and files, not from its summary.** Open the run
-  records, the diff and the output it names, and check them against the purpose yourself.
-  - Rationale: a summary shows what the subagent thought it did, not the steps it skipped.
-- **Judge `dev/check.sh` by its exit code**, never by a few lines of its output.
-  - Rationale: a line that reads as passed can stand above a failure the exit code shows.
+- **Check your work before you report it, as Q18 of
+  [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) says.**
+- **Judge `dev/check.sh` by its exit code**, as that Q18 judges a check.
 - **A push is done only once its CI run has been read**, and the report of the push says its
   result.
   - Rationale: a push left unchecked hands its failure to whoever pushes next.

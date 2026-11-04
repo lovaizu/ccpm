@@ -33,6 +33,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - **Q15** (trials): When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check?
 - **Q16** (trials, steps): When the maintainer takes out of the prompt what a trial case tries, does that case fail?
 - **Q17** (output): When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?
+- **Q18** (output): When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?
 
 ## Practices
 
@@ -332,3 +333,23 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Preparing Decision Memorandums, Policy 670.1](https://dbh.dc.gov/sites/default/files/dc/sites/dmh/publication/attachments/TL62.pdf), DC Department of Mental Health, dbh.dc.gov, 2005: "The author should clearly recommend one of the options presented in the previous section"
 - [Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/), Nielsen, Nielsen Norman Group, 2006: "Initially, show users only a few of the most important options. Offer a larger set of specialized options upon request."
 - [Structuring forms](https://www.gov.uk/service-manual/design/form-structure), Government Digital Service, GOV.UK Service Manual, 2018: "one decision they have to make"
+
+### Q18: When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?
+
+**Thinking**: The caller cannot tell a claim the AI checked from one it guessed, so each claim rests on a check run on the real thing, every item it names, and the report says what was left unchecked.
+
+**Steps**
+
+1. Check each claim on the real thing before reporting it: read the file, run the check, open the record; never from memory, a guess or what another agent's summary says.
+2. Judge a check by a result that comes back pass or fail, such as a command's exit code, not by a few lines of its output.
+3. Judge another agent's work from the records and files it names, set against the task's purpose, not from its summary.
+4. Check every item the claim names, not a sample.
+5. Say what was checked and what was not, and why, so the report never reads as covering more than it did.
+
+**Grounds**
+
+- [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents), Schluntz and Zhang, anthropic.com/engineering, 2024: "During execution, it's crucial for the agents to gain “ground truth” from the environment at each step"
+- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Never speculate about code you have not opened."
+- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "Give Claude something it can run that comes back pass or fail."
+- [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system), Anthropic, anthropic.com/engineering, 2025: "Subagents call tools to store their work in external systems, then pass lightweight references back to the coordinator."
+- [Prompting Claude Sonnet 5.5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5), Anthropic, Claude Platform Docs, no date: "Only if no real check can run here, say which one you did not run and why instead of reporting the change as done."
