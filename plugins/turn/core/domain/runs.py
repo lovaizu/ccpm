@@ -29,8 +29,9 @@ STANDARD = "standard.json"
 READING = "reading-standard.json"
 VERIFICATION = "verification"
 GENERATOR = "generator.json"
-# Where a work is, in the order it goes.
+# Where a work is, in the order it goes, and where it is before it is done.
 WAITS, PIN, ROUNDS, DONE = "waits", "pin", "rounds", "done"
+UNDONE = (WAITS, PIN, ROUNDS)
 
 
 def practice_of(kind: str) -> str | None:
@@ -65,7 +66,7 @@ def save(run: str, data: dict[str, Any]) -> None:
 
 def current(data: dict[str, Any]) -> dict[str, Any]:
     """The work the run is at: the first not done, else the last."""
-    return next((w for w in data["works"] if w["at"] != DONE), data["works"][-1])
+    return next((w for w in data["works"] if w["at"] in UNDONE), data["works"][-1])
 
 
 def questions(kind: str, data: dict[str, Any]) -> list[dict[str, str]]:
@@ -127,7 +128,8 @@ def begin(run: str, data: dict[str, Any], work: dict[str, Any]) -> str:
     practice = read_practice(work["practice"])
     reading = read_practice(os.path.join(OWN, f"{work['reading']}.json"))
     given = call.get("given", {})
-    if work["kind"] == META:
+    # The work before the last is the best practice of the kind new to Turn.
+    if work is not data["works"][-1]:
         goal = {"what": call["kind_goal"], "grounds": []}
         decisions: list[dict[str, Any]] = []
         words = (
@@ -165,12 +167,12 @@ def start(run: str) -> str:
     found = given_faults(call)
     if found:
         raise files.Unreadable("; ".join(found))
-    works = works_of(run, call)
-    if works[0]["kind"] == META and "kind_goal" not in call:
+    if practice_of(call["kind"]) is None and "kind_goal" not in call:
         raise files.Unreadable(
             f"Turn has no best practice of {call['kind']}: write into {CALL} its kind_goal, who"
             " uses such a work and for what"
         )
+    works = works_of(run, call)
     data = {"works": works}
     return begin(run, data, works[0])
 
@@ -203,7 +205,7 @@ def ready(run: str) -> str:
     done, and paths that cannot be made."""
     data = load(run)
     work = current(data)
-    if work["at"] == DONE:
+    if work["at"] not in UNDONE:
         raise files.Unreadable("the work is done: hand a change to Pin before its rounds")
     found = work_faults(work)
     if found:
@@ -232,15 +234,16 @@ def advance(run: str) -> str:
     if work["at"] != ROUNDS:
         raise files.Unreadable(f"the work of {work['kind']} is not in its rounds, but {work['at']}")
     at = data["works"].index(work)
-    following = data["works"][at + 1 :]
-    if following:
-        path = following[0]["practice"]
+    # The work after it, a run having no more than two; None where it is the last.
+    following = next(iter(data["works"][at + 1 :]), None)
+    if following is not None:
+        path = following["practice"]
         made = read_practice(path)
         with open(os.path.splitext(path)[0] + ".md", "w", encoding="utf-8") as f:
-            f.write(practices.markdown(following[0]["kind"], made))
+            f.write(practices.markdown(following["kind"], made))
     work["at"] = DONE
     save(run, data)
-    return begin(run, data, following[0]) if following else ""
+    return "" if following is None else begin(run, data, following)
 
 
 def done(work: dict[str, Any]) -> str:

@@ -70,10 +70,12 @@ class GivenFaults(unittest.TestCase):
         self.assertEqual(runs.given_faults(helpers.call(given={"kind": "note"})), [])
 
     def test_another_kind_than_the_calls(self):
-        self.assertEqual(
-            runs.given_faults(helpers.call(given={"kind": "readme"})),
-            ["the kind is note, but the calling AI gave readme"],
-        )
+        for kind in ("readme", "man-page"):
+            with self.subTest(kind=kind):
+                self.assertEqual(
+                    runs.given_faults(helpers.call(given={"kind": kind})),
+                    [f"the kind is note, but the calling AI gave {kind}"],
+                )
 
     def test_a_decision_settled_by_the_maker_ai_has_none(self):
         given = {"decisions": [helpers.SETTLED]}
@@ -84,7 +86,7 @@ class GivenFaults(unittest.TestCase):
             "the calling AI's decision D1 is not decided with settled_by maker,"
             " as Calling Turn asks"
         )
-        for change in ({"decided": None}, {"settled_by": "user"}):
+        for change in ({"decided": None}, {"settled_by": "user"}, {"settled_by": None}):
             given = {"decisions": [{**helpers.SETTLED, **change}]}
             with self.subTest(change=change):
                 self.assertEqual(runs.given_faults(helpers.call(given=given)), [said])
@@ -165,6 +167,18 @@ class Start(helpers.RepositoryTest):
             " request by: a note on tidy",
         )
 
+    def test_a_call_of_meta_makes_one_best_practice_under_the_calls_goal(self):
+        # Given: a Call of meta, whose best practice Turn has, with no kind_goal
+        request = self.started(helpers.call(kind="meta"))
+        # Then: the one work, by meta, is handed to Pin under the Call's goal and request
+        meta = os.path.join(runs.OWN, "meta.json")
+        works = self.run_data()["works"]
+        self.assertEqual(works, [helpers.work(kind="meta", practice=meta, paths=[], at="pin")])
+        self.assertEqual(
+            self.read_json(DESIGN)["goal"], {"what": helpers.CALL["goal"], "grounds": []}
+        )
+        self.assertEqual(request, json.dumps({"design": DESIGN}) + "\na note on tidy")
+
     def test_a_kind_new_to_turn_with_no_purpose_is_refused(self):
         with self.assertRaises(files.Unreadable) as raised:
             self.started(helpers.call(kind="man-page"))
@@ -195,7 +209,18 @@ class Start(helpers.RepositoryTest):
         self.assertFalse(os.path.exists(DESIGN))
 
 
+class Request(unittest.TestCase):
+    def test_a_path_out_of_ascii_is_written_as_it_is(self):
+        self.assertEqual(
+            runs.request("ノート/design-tree.json", "メモ"),
+            '{"design": "ノート/design-tree.json"}\nメモ',
+        )
+
+
 class GeneratorValues(unittest.TestCase):
+    def test_a_run_out_of_ascii_is_written_as_it_is(self):
+        self.assertIn('"run": "ノート"', runs.generator_values("ノート", helpers.work()))
+
     def test_names_the_run_the_work_and_the_generators_answers(self):
         self.assertEqual(
             runs.generator_values(RUN, helpers.work()),
@@ -311,11 +336,20 @@ class Advance(helpers.RepositoryTest):
             runs.advance(RUN)
         self.assertEqual([w["at"] for w in self.run_data()["works"]], ["rounds", "waits"])
 
+    def test_the_last_of_two_works_done_ends_the_run(self):
+        self.lay_run([helpers.work(kind="meta", at="done"), helpers.work()])
+        self.assertEqual(runs.advance(RUN), "")
+        self.assertEqual([w["at"] for w in self.run_data()["works"]], ["done", "done"])
+
     def test_a_work_not_in_its_rounds_is_refused(self):
-        self.lay_run([helpers.work(at="pin")])
-        with self.assertRaises(files.Unreadable) as raised:
-            runs.advance(RUN)
-        self.assertEqual(str(raised.exception), "the work of note is not in its rounds, but pin")
+        for at in ("pin", "waits"):
+            with self.subTest(at=at):
+                self.lay_run([helpers.work(at=at)])
+                with self.assertRaises(files.Unreadable) as raised:
+                    runs.advance(RUN)
+                self.assertEqual(
+                    str(raised.exception), f"the work of note is not in its rounds, but {at}"
+                )
 
 
 class Done(unittest.TestCase):
