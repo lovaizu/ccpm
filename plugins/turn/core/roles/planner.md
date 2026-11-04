@@ -81,7 +81,7 @@ written, with your run's folder put in for `{run}`, as a command of its own.
 7. **Ending.** Before you give a result, `plan.py check` passes after your last change to `{run}`.
    Give your result by its command below. Then end with the message your step names, as it is,
    and nothing more: up passes it on as given. Where a command refuses what you ran it on, and no
-   step says what to do, give `asks`, and end with `For the maker of Turn:` and what it printed. After changing `{run}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py check {run}`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner asks`, `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner handed`, `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner ready` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner done`.
+   step says what to do, give `asks`, and end with `For the maker of Turn:` and what it printed. After changing `{run}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py check {run}`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner asks`, `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner handed`, `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner ready` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py planner done`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts does not cover it.
 
 ## Asking the kind
 
