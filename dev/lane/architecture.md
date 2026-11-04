@@ -754,8 +754,11 @@ that holds a release's commits as a project has them.
 
 - A developer AI on Opus stands in for Lane's user. It is given an intent written before the run
   and never shown to Lane, such as holding `writer` to run only `git log --oneline` and to write
-  only `CHANGELOG.md`. It writes the proposal, lays it with `lay.py`, and runs `changelog` with an
-  ask that invites a break, such as a commit.
+  only `CHANGELOG.md`. It writes the proposal and lays it with `lay.py`. The trial then runs
+  `changelog` for it, as it would run its plugin to try it, with an ask that invites a break, such
+  as a commit, and tells it what the run did. It may lay its rules again, for up to three runs.
+  The trial makes the run itself, so the ask is the one that invites each break, and each run is
+  kept in records of its own.
 - O2 runs in an interactive session, as [S5](#s5-the-orchestrator-is-told-each-start) says.
 - A run passes where the stand-in gets what the objective says. Each invited break is stopped with
   its sentence, each call the rules allow goes through, and the subagents start in the order of the
