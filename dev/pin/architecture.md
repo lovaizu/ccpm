@@ -10,7 +10,7 @@ together. What this gives the person, Turn and rn is in [pin's UX](ux.md).
 
 ## Principles
 
-pin follows all nine principles of [how a plugin works](../architecture.md#principles). Under
+pin follows all nine principles of [the plugin best practice](../plugin-best-practice.md#principles). Under
 Principle 5, the person reads the design first, as they read it in full to confirm it. The
 principles below are what pin adds.
 
@@ -32,7 +32,7 @@ Matt Pocock's
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md):
 "Finding _facts_ is your job, never the user's", and "The _decisions_ are the user's: put each to
 them and wait." grilling does not show the facts it finds; pin shows each one, as
-[Asking until nothing is left to decide](../architecture.md#asking-until-nothing-is-left-to-decide)
+[Asking until nothing is left to decide](../plugin-best-practice.md#asking-until-nothing-is-left-to-decide)
 says, since a fact found but not shown is still a guess made for the person.
 
 ### One point at a time
@@ -61,7 +61,7 @@ asks a decision only once each decision it builds on is decided, and it reads wh
 are from the tree, not from the conversation.
 
 A conversation can end, be cleared or be compacted, so a plan kept only in it is lost
-([Where the course is kept](../architecture.md#where-the-course-is-kept)). A tree in a file is
+([Where the course is kept](../plugin-best-practice.md#where-the-course-is-kept)). A tree in a file is
 read the same way by `check.py`, by a new conversation and by the AI that makes the work.
 
 ### Every decision reaches the goal
@@ -150,10 +150,10 @@ number gives the order.
   subagent that Claude Code ships, such as Explore, so pin holds no agent of its own.
 - `check.py` alone decides whether the tree holds together. It reads the tree and writes nothing.
 - pin has no roles of its own, so a caller starts no orchestrator of pin's, as
-  [A plugin that uses another](../architecture.md#a-plugin-that-uses-another) would have it: the
+  [A plugin that uses another](../plugin-best-practice.md#a-plugin-that-uses-another) would have it: the
   caller's role takes `pin:down` and runs its steps itself.
 - A pinner that is a caller's role asks the person through the main conversation, as
-  [Where the orchestrator runs](../architecture.md#where-the-orchestrator-runs) says. The caller
+  [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs) says. The caller
   resumes it with the person's answer under the line `The person's answer, word for word:`, the
   one form the pinner takes as the person's words: Claude Code hands a resuming message on as the
   coordinator's, and a pinner left to guess who speaks asked again what the person had answered,
@@ -360,10 +360,10 @@ flowchart TB
   that uses pin lists it in its `dependencies`, and installing that plugin installs pin.
 - The person starts pin with `/pin:down`. A caller's role starts it by taking the skill.
 - `check.py` uses Python 3.9 and its standard library only, as
-  [Python 3.9 and the standard library](../architecture.md#python-39-and-the-standard-library)
+  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
   says.
 - A person's tree is kept in `.pin/<yyyymmdd>-<name>/` at the root of the repository, as
-  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) says. A
+  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files) says. A
   caller's tree is kept where the caller names.
 
 ### Directory structure
@@ -395,7 +395,7 @@ License asks that its notice go with each copy of a substantial portion.
 
 ## Test
 
-pin is tested as [Test](../architecture.md#test) says. What follows is what pin adds.
+pin is tested as [Test](../plugin-best-practice.md#test) says. What follows is what pin adds.
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|
@@ -407,11 +407,11 @@ with the pinner's.
 
 pin lays no lanes. Its only role, the pinner, runs in the main conversation, where a hook is not
 told which skill runs, or inside a caller's role, which the caller's own lanes hold
-([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)).
+([The guard tells each role its steps again](../plugin-best-practice.md#the-guard-tells-each-role-its-steps-again)).
 So pin's steps are held by the check and by these tests.
 
 - **unit, the pinner**: a trial runs `pin:down` alone, as
-  [Unit: prompts](../architecture.md#unit-prompts) says. Its classes are the kinds of point in
+  [Unit: prompts](../plugin-best-practice.md#unit-prompts) says. Its classes are the kinds of point in
   [Facts are found, decisions are asked](#facts-are-found-decisions-are-asked): a fact a search
   finds, a fact in a file already read, a fact only the person knows, a decision the pinner
   settles, and a decision that is the person's. Each is tried where the pinner must ask and where it
@@ -443,7 +443,7 @@ So pin's steps are held by the check and by these tests.
   unit tests, as no path of the pinner writes one. A second test reads `skills/down/SKILL.md` as Claude
   Code takes it, as [The check command keeps one form](#the-check-command-keeps-one-form) promises.
 - **ux**: a trial runs Claude Code on Opus on a copy of pin and of a plugin standing in for a
-  caller, as [ux: the plugin in real use](../architecture.md#ux-the-plugin-in-real-use) says, on the
+  caller, as [ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says, on the
   notes app's `--json` option, a plan of several decisions that build on one another. There is one
   for O1 by `/pin:down`, and one for O2 by a caller's role. An AI stands in for the person with an
   intent never shown pin, and a run passes where the confirmed tree holds what that intent wants,

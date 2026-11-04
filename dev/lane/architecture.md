@@ -9,7 +9,7 @@ subagent the routes name. What this gives the developer AI is in [Lane's UX](ux.
 
 ## Principles
 
-Lane follows Principles 2, 6, 8 and 9 of [how a plugin works](../architecture.md#principles).
+Lane follows Principles 2, 6, 8 and 9 of [the plugin best practice](../plugin-best-practice.md#principles).
 Principles 1, 3, 4, 5 and 7 are about an orchestrator, its roles and the course of a run, and Lane
 has none of these: the developer AI runs `lay.py` itself, and the check script runs inside the
 developer AI's plugin. The principles below are what Lane adds.
@@ -36,7 +36,7 @@ makes of an order of results, kept once for both, and stops each event of a suba
 a call that cannot be checked, where that check would refuse them.
 
 A rule copied by hand could be one that no one approved
-([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
+([The caller approves what is theirs](../plugin-best-practice.md#the-caller-approves-what-is-theirs)).
 
 ### Lane knows no plugin
 
@@ -70,7 +70,7 @@ When the check script cannot check a tool call or an end of work, it stops it an
 - A command that its rules do not name is told to the subagent alone, with the commands it may run.
 
 A call let through unchecked could be the break that the rule is there to stop
-([No check passes what it did not check](../architecture.md#no-check-passes-what-it-did-not-check)).
+([No check passes what it did not check](../plugin-best-practice.md#no-check-passes-what-it-did-not-check)).
 The subagent can write its call again, but only the operator can fix a fault.
 
 ### Claude Code's own means first
@@ -147,7 +147,7 @@ wherever Lane is missing.
   the run's hook event.
 - Hooks are entries of the plugin's `hooks/hooks.json` and run on every tool call of the plugin, as
   Claude Code reads no hooks from a plugin agent's own file
-  ([How a plugin works](../architecture.md#the-guard-tells-each-role-its-steps-again)). `hook.py`
+  ([The plugin best practice](../plugin-best-practice.md#the-guard-tells-each-role-its-steps-again)). `hook.py`
   then acts by `agent_type`.
 - A skill is checked where it runs with `context: fork` and `agent: <plugin>:<subagent>`: its tool
   calls then reach the hooks with that `agent_type`. Named by the subagent's bare name, the fork
@@ -172,7 +172,7 @@ wherever Lane is missing.
   matched by parts; `lay.py print` refuses one elsewhere, which the check would read as the text
   `{<name>}`.
 - A subagent's part, the file its steps lie in, is the one file the entry's body names under
-  `prompts/` or `core/roles/`, which [The core apart from Claude Code](../architecture.md#the-core-apart-from-claude-code)
+  `prompts/` or `core/roles/`, which [The core apart from Claude Code](../plugin-best-practice.md#the-core-apart-from-claude-code)
   gives each role's flow. Its name is the role's, not the subagent's, so the part is found by the
   name the body gives, never by the subagent's.
 - An adapter is a script that Lane runs, not a module that Lane imports. So `lay.py up` replaces
@@ -580,14 +580,14 @@ sequenceDiagram
   and runs `python3 <installPath>/scripts/lay.py`. Claude Code starts the check script through the
   plugin's hook entries. After an update of Lane, the developer AI runs `lay.py up` on its plugin.
 - Lane's code uses Python 3.9 and its standard library only, as
-  [Python 3.9 and the standard library](../architecture.md#python-39-and-the-standard-library) says,
+  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library) says,
   so the operator installs nothing for Lane. Each hook's command checks for `python3` in `sh` first,
   because without Python the check script cannot even read the event.
 - The kept calls live in the system's temporary folder, as
-  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) says for
+  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files) says for
   files used only while a plugin runs. They mean nothing once the session ends.
 - In the ccpm marketplace, the plugin's `hooks/lane/` is a link to Lane's code, as
-  [Code kept once](../architecture.md#code-kept-once) says. Elsewhere it is a copy, with a `VERSION`
+  [Code kept once](../plugin-best-practice.md#code-kept-once) says. Elsewhere it is a copy, with a `VERSION`
   file that `lay.py up` reads.
 
 ### Directory structure
@@ -596,7 +596,7 @@ Lane's code, [the lanes](../../plugins/lane/docs/lanes.md) and
 [the routes](../../plugins/lane/docs/routes.md) call a rule a lane, and the check script the guard.
 
 Lane's logic lies in `hooks/lane/core/domain/`, not in `core/` at the plugin's root as
-[The core apart from Claude Code](../architecture.md#the-core-apart-from-claude-code) has it.
+[The core apart from Claude Code](../plugin-best-practice.md#the-core-apart-from-claude-code) has it.
 `lay.py` lays `hooks/lane/` into each plugin whole, by one link or one copy, and a core outside it
 would need a second one. Lane has no roles, so it has no `core/roles/`.
 
@@ -632,7 +632,7 @@ dev/lane/
 
 ## Test
 
-Lane is tested as [Test](../architecture.md#test) says. What follows is what Lane adds.
+Lane is tested as [Test](../plugin-best-practice.md#test) says. What follows is what Lane adds.
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|
@@ -686,7 +686,7 @@ is tested in the rows of the lay.py process and the hook process.
   architecture test, or a class of a rule's unit tests, such as a call that breaks it, as ux does
   not aim to cover every case.
 - A fault the trials find in how Claude Code acts, such as the order of two events, is brought down
-  as [A fault is tested at the level that must catch it](../architecture.md#a-fault-is-tested-at-the-level-that-must-catch-it)
+  as [A fault is tested at the level that must catch it](../plugin-best-practice.md#a-fault-is-tested-at-the-level-that-must-catch-it)
   says: the try is recorded in Sequences, the double of Claude Code sends it, and an architecture
   test fails before Lane's code is fixed.
 - Each process weighs ●●● in unit and architecture tests. A failure writes what no one approved,

@@ -44,11 +44,11 @@ FOUND.loader.exec_module(record)
 
 def folder(plugin: str, name: str) -> str:
     """A new folder of the plugin's for a run of the trial of the name, in the system's temporary
-    folder as dev/architecture.md's Where a plugin writes its files has it, outside any ccpm clone,
-    so the conversations started in it load none of its instructions; its path is printed first,
-    for whoever runs the trial to find what the run writes there. The path is given with every
-    link in it followed, as Claude Code names the folder of a conversation's records by it, and
-    macOS's temporary folder is reached through a link."""
+    folder as dev/plugin-best-practice.md's Where a plugin writes its files has it, outside any ccpm
+    clone, so the conversations started in it load none of its instructions; its path is printed
+    first, for whoever runs the trial to find what the run writes there. The path is given with
+    every link in it followed, as Claude Code names the folder of a conversation's records by it,
+    and macOS's temporary folder is reached through a link."""
     made = os.path.realpath(testing.temporary(plugin, name))
     print("folder:", made, flush=True)
     return made

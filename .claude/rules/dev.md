@@ -7,8 +7,8 @@ paths:
 
 # Plugin development (ccpm)
 
-Read [how a plugin works](../../dev/architecture.md), the architecture every plugin is built on, and
-follow it.
+Build each plugin by [the plugin best practice](../../dev/plugin-best-practice.md), taking what
+its requirements call for.
 
 This file holds the order the work goes in. Each step names the best practice in
 `plugins/turn/core/domain/best-practices/` to open while doing it. Its goal says what the deliverable's user
@@ -60,10 +60,10 @@ it before the architecture is made.**
 
 ### 3. Write the architecture
 
-**Write `dev/<plugin>/architecture.md` on [how a plugin works](../../dev/architecture.md), with
+**Write `dev/<plugin>/architecture.md` on [the plugin best practice](../../dev/plugin-best-practice.md), with
 `architecture.json` open, and have the user agree to it.** Place its files as
-[Repository structure](../../dev/architecture.md#repository-structure) says, and design the plugin
-to take in what is general, as [Learning from each run](../../dev/architecture.md#learning-from-each-run)
+[Repository structure](../../dev/plugin-best-practice.md#repository-structure) says, and design the plugin
+to take in what is general, as [Learning from each run](../../dev/plugin-best-practice.md#learning-from-each-run)
 says.
 
 ### 4. Have the README and the architecture read once
@@ -92,14 +92,14 @@ then its code or its prompt, as Q6 of
 [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) say.**
 
 a. **Write the unit tests of its code with `code.json` open, one for each class, each edge and
-   each rule of the part's contract, as [Unit: code](../../dev/architecture.md#unit-code) says, run
+   each rule of the part's contract, as [Unit: code](../../dev/plugin-best-practice.md#unit-code) says, run
    them and see them fail.**
 
 b. **Write the code with `code.json` open until the tests pass**, as
-   [Code](../../dev/architecture.md#code) says.
+   [Code](../../dev/plugin-best-practice.md#code) says.
 
 c. **For each prompt, a skill or an agent, write its trials with `prompt.json` open, as its Q14 to
-   Q16 say and as [Unit: prompts](../../dev/architecture.md#unit-prompts) says, one case at a time:
+   Q16 say and as [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts) says, one case at a time:
    build each part of the trial and check it on a kept record, run the case and see it fail; then
    write the prompt with `prompt.json` open until the case passes.**
 
@@ -108,13 +108,13 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
    [the lanes](../../plugins/lane/docs/lanes.md#the-proposal) gives it, read what `lay.py print`
    prints of it, and lay it with `lay.py write`. A check no lane holds is added
    to lane with `code.json` open, as
-   [Checks kept in lane](../../dev/architecture.md#checks-kept-in-lane) says.
+   [Checks kept in lane](../../dev/plugin-best-practice.md#checks-kept-in-lane) says.
    - Rationale: the architecture tests run the lanes and routes as they are laid, so they are laid
      before those tests.
 
 e. **Write the slice's architecture tests, one for each path through its sequences, with what
    joins the parts run real and each role an AI runs a double, as
-   [Architecture: the parts joined](../../dev/architecture.md#architecture-the-parts-joined) says,
+   [Architecture: the parts joined](../../dev/plugin-best-practice.md#architecture-the-parts-joined) says,
    run them, and fix what fails at the part or the handoff it lies in.**
 
 **Change a prompt or a document after a trial only for a cause confirmed in the records, as Q15 of
@@ -128,17 +128,17 @@ e. **Write the slice's architecture tests, one for each path through its sequenc
 **Once every slice is built and every unit and architecture test passes, try the plugin as its
 user on each objective's scenario, at the size of a real request, with a stand-in that holds an
 intent the plugin never sees, as
-[ux: the plugin in real use](../../dev/architecture.md#ux-the-plugin-in-real-use) says, to confirm
+[ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use) says, to confirm
 the UX.**
 
 **Test a fault the trial finds first at the level that missed it, as
-[A fault is tested at the level that must catch it](../../dev/architecture.md#a-fault-is-tested-at-the-level-that-must-catch-it)
+[A fault is tested at the level that must catch it](../../dev/plugin-best-practice.md#a-fault-is-tested-at-the-level-that-must-catch-it)
 says, and then confirm the whole again.**
 
 ### 8. Check the structure
 
-**Pass the checks of [The manifests checked](../../dev/architecture.md#the-manifests-checked).**
+**Pass the checks of [The manifests checked](../../dev/plugin-best-practice.md#the-manifests-checked).**
 
 ### 9. Release
 
-**Release as [Release](../../dev/architecture.md#release) says.**
+**Release as [Release](../../dev/plugin-best-practice.md#release) says.**

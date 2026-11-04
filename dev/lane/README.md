@@ -8,8 +8,8 @@ checked, is in [architecture.md](architecture.md).
   tests lay the proposals of `tests/ux/` on a copy of `tests/ux/changelog/`, with the adapter in
   `tests/ux/adapters/` and the stand-in dependency `tests/ux/checker/`.
 
-  `sh dev/properties.sh lane` runs the property tests, `properties_*.py`, and
-  `sh dev/mutate.sh lane` runs the mutation testing set in `cosmic-ray.toml`, as
+  `sh dev/scripts/properties.sh lane` runs the property tests, `properties_*.py`, and
+  `sh dev/scripts/mutate.sh lane` runs the mutation testing set in `cosmic-ray.toml`, as
   [dev/README.md](../README.md) says.
 - What every plugin's tests stand on is in `testing.py`, and what every plugin's trials stand on
   is in `trials/trying.py`.

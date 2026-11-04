@@ -1,9 +1,9 @@
 """The calls kept: each call of a subagent as it came back, each result it gave, each start and end
 of its runs, and the texts it was given, its prompt and each message sent after, kept under its
 agent_id in `lane/<yyyymmdd>-<session>/<agent_id>.jsonl` of the system's temporary folder, as
-dev/architecture.md's Where a plugin writes its files has it for what is used only while a plugin
-runs; a line of JSON each, read back for the run the subagent is in, from its last start, as a
-subagent resumed keeps its ID and gives a result again."""
+dev/plugin-best-practice.md's Where a plugin writes its files has it for what is used only while a
+plugin runs; a line of JSON each, read back for the run the subagent is in, from its last start, as
+a subagent resumed keeps its ID and gives a result again."""
 
 from __future__ import annotations
 

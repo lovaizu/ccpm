@@ -21,7 +21,7 @@ BREAK = re.compile(r"[ \t]*\n[ \t]*")
 # it.
 ROOT = "${CLAUDE_PLUGIN_ROOT}"
 # The folders a part lies in, in the plugin: its prompts, or each role's flow, as
-# dev/architecture.md's Directory structure places it.
+# dev/plugin-best-practice.md's Directory structure places it.
 PARTS = ("prompts", "core/roles")
 # Where an entry's body names a part: a file under one of those folders, by the plugin's folder, in
 # backticks.

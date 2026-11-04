@@ -8,4 +8,4 @@ timeout = 30.0
 # A line marked `# pragma: no mutate` holds a value where no input tells a mutant of it apart: the
 # place pin's code goes on sys.path, no module before it there having the name of one of pin's,
 # and `__name__`, which is "__main__" or, imported by the tests, "check".
-test-command = "sh -c 'ruff check --select F632 plugins/pin && sh dev/typecheck.sh pin && python -m unittest discover -f -s dev/pin/tests'"
+test-command = "sh -c 'ruff check --select F632 plugins/pin && sh dev/scripts/typecheck.sh pin && python -m unittest discover -f -s dev/pin/tests'"

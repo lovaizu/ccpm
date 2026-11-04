@@ -1,43 +1,15 @@
-# How a plugin works
+# Best practice for building a Claude Code plugin
 
-This is the architecture every ccpm plugin is built on. It says how a plugin's roles work together
-when the work takes several steps and ends in something made, such as a document or code. It also
-says where a plugin's files go, how its code is written, and how it is tested and released. It has
-no UX and no user stories of its own: each plugin's architecture links this one, and holds its own
-UX's user stories and what only that plugin adds.
-
-## Words used here
-
-- **caller**: the person or the AI that calls the plugin.
-- **main conversation**: the Claude Code conversation the person talks in. Only it can ask the
-  person.
-- **orchestrator**: the AI that runs the plugin's work from the call to the result.
-- **role**: a subagent the orchestrator starts for one job.
-- **run**: one use of the plugin, from the call to the result.
-- **move**: one thing the orchestrator does, such as starting a role.
-- **work**: what a role makes, such as a document or code.
-- **maker**: the role that makes a work.
-- **receiver**: the one a work is for.
-- **reader**: a role that uses a work in the receiver's place.
-- **checklist**: a list of items. Each item asks what the receiver should get from the work.
-- **Good**: an item's Good is that the receiver gets what the item asks, at given lines of the
-  work. Those lines are the item's **Good lines**.
-- **need**: what the receiver would still need to get an item's Good, said in one sentence.
-- **state**: what a run has decided and been answered so far, kept in a file.
-- **course script**: a script that keeps a run's course and state, and gives the orchestrator each
-  next move.
-- **lesson**: what fell short in a run and why, put to the user once the work is approved.
-- **hook**: a script Claude Code runs on a tool call.
-- **lane**: a step of a role held by a hook, which tells the role the step again when it drifts.
-  The ccpm plugin [Lane](../plugins/lane/README.md) lays them, and its code that runs in the hooks
-  is the **guard**.
-- **maintainer**: the person who has the plugins built and decides what reaches their users.
-- **assistant**: the AI that builds the plugins for the maintainer.
+This is the best practice for building a Claude Code plugin. It says how a plugin's roles work
+together, how it builds on what Claude Code gives, where its files go, how its code is written, and
+how it is developed, tested and released. A plugin takes from it what its requirements call for. Its
+own architecture names what it takes, and holds its UX's user stories and what only that plugin
+adds.
 
 ## Principles
 
-Every plugin follows these. The reason for each is under Why it is so. A plugin's own design adds
-only what that plugin gives beyond them.
+A plugin takes the principles its requirements call for, and its architecture names them. The
+reason for each is under Why it is so.
 
 1. The orchestrator holds the whole run and decides each move.
 2. The caller decides only what is theirs to decide, and approves it by their own action. The
@@ -135,9 +107,9 @@ plugins/<plugin>/                 what runs on users' machines, installed by Cla
 
 dev/                              what only the builders need
 ├── README.md                     the plugins' folders, and how to run the shared checks
-├── architecture.md               this document
+├── plugin-best-practice.md       this document
 ├── images/                       the images this document shows
-├── check.sh, properties.sh, mutate.sh, ...   the checks every plugin shares <sh>
+├── scripts/                      the checks every plugin shares, and the hook before a push <sh, Python>
 └── <plugin>/
     ├── README.md                 the way to the plugin's UX, architecture and tests
     ├── ux.md                     the plugin's UX <Markdown>
@@ -501,8 +473,8 @@ document that shows it.
 
 A figure is an SVG whose style is the one in `dev/images/figures.css`, its colours light by default
 and dark under `prefers-color-scheme`, which follows the page's theme. An image shown by `<img>`
-reads no file beside it, so each SVG carries a copy: `python3 dev/figures.py write` puts it in, and
-`dev/check.sh` fails on a copy left behind.
+reads no file beside it, so each SVG carries a copy: `python3 dev/scripts/figures.py write` puts it in, and
+`dev/scripts/check.sh` fails on a copy left behind.
 
 ### The READMEs
 
@@ -549,7 +521,7 @@ So each plugin carries the shared code, while the code is written, tested and fi
 ### No lines copied
 
 No lines are copied between files, except a test's expected value, which is written out again.
-`dev/check.sh` fails when two files share four or more similar lines of Python, not counting
+`dev/scripts/check.sh` fails when two files share four or more similar lines of Python, not counting
 comments, docstrings and imports, as pylint's `duplicate-code` finds them. It does this wherever
 pyproject.toml's `test-quality` group is installed. It does not tell a test's expected value apart.
 
@@ -654,7 +626,7 @@ catches it again.
 
 What runs when:
 
-- Before each push, `dev/githooks/pre-push` runs the unit and architecture tests of each plugin the
+- Before each push, `dev/scripts/githooks/pre-push` runs the unit and architecture tests of each plugin the
   push changes, counting lines and branches. It also runs the linter, the formatter, the type
   checker and the manifests' check, and stops the push on a failure.
 - On every push, CI runs every plugin's unit and architecture tests, counts the lines and branches

@@ -8,7 +8,7 @@ already say.
 
 - **Check your work before you report it, as Q18 of
   [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) says.**
-- **Judge `dev/check.sh` by its exit code**, as that Q18 judges a check.
+- **Judge `dev/scripts/check.sh` by its exit code**, as that Q18 judges a check.
 - **A push is done only once its CI run has been read**, and the report of the push says its
   result.
   - Rationale: a push left unchecked hands its failure to whoever pushes next.

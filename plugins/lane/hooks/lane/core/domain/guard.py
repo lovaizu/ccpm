@@ -66,7 +66,7 @@ DEPENDENCY_FOLDER = (
 )
 # What a subagent is told to do where lane cannot check a lane, given who must fix it: a role asks
 # the main conversation for what lies outside its work and goes on with the rest, as
-# dev/architecture.md's Asking for what lies outside the work says.
+# dev/plugin-best-practice.md's Asking for what lies outside the work says.
 ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your work meanwhile."
 LAY_AGAIN = (
     "the maker of {plugin} must lay its lanes again with `lay.py write`, so they match its steps"

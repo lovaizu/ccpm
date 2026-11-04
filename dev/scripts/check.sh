@@ -1,17 +1,17 @@
 #!/bin/sh
 # The checks CI runs on every push, beside the property tests and the mutation testing, run from the
 # top of the repository with the tools of pyproject.toml's dev group. Given plugin names, such as
-# `sh dev/check.sh rn`, the type check, the tests and the manifests are those plugins' alone, as
+# `sh dev/scripts/check.sh rn`, the type check, the tests and the manifests are those plugins' alone, as
 # before a push that changes them; CI gives none and checks every plugin.
 set -e
 
-plugins=${*:-$(sh dev/plugins.sh)}
+plugins=${*:-$(sh dev/scripts/plugins.sh)}
 
 ruff check .
 ruff format --check .
 
 # Code copied between files is fixed in one and left wrong in the other, so code more than one file
-# needs is kept once (dev/architecture.md, Code); every file is read at once, whichever plugins are
+# needs is kept once (dev/plugin-best-practice.md, Code); every file is read at once, whichever plugins are
 # given, as a copy can lie in any two. A link is the file it points to, so is left out.
 if command -v pylint >/dev/null 2>&1; then
   git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo "$file"; done \
@@ -22,21 +22,21 @@ else
 fi
 
 for plugin in $plugins; do
-  sh dev/typecheck.sh "$plugin"
+  sh dev/scripts/typecheck.sh "$plugin"
 done
 # The checks' own Python, beside the plugins'.
-pyrefly check --search-path dev/lane dev/*.py
+pyrefly check --search-path dev/lane dev/scripts/*.py
 
 # A best practice is checked for the faults its form shows, and its Markdown, made from its JSON for
 # a person to read, for being left behind it, as either says what Turn does not hold.
 python3 plugins/turn/scripts/practices.py check plugins/turn/core/domain/best-practices/*.json
 
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
-# colour is changed in one place (dev/architecture.md, Images beside their document).
-python3 dev/figures.py check
+# colour is changed in one place (dev/plugin-best-practice.md, Images beside their document).
+python3 dev/scripts/figures.py check
 
 # The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
-# tests, whose inputs change from run to run, are run apart by dev/properties.sh.
+# tests, whose inputs change from run to run, are run apart by dev/scripts/properties.sh.
 for plugin in $plugins; do
   coverage run --source="plugins/$plugin" -m unittest discover -s "dev/$plugin/tests"
 done

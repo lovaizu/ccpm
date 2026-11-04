@@ -1,20 +1,20 @@
-"""Mutation testing of each plugin given, or of each plugin dev/plugins.sh lists that has
-dev/<plugin>/cosmic-ray.toml where none is given, run as `sh dev/mutate.sh` from the top of the
-repository with the tools of pyproject.toml's dev and test-quality groups; fails on any mutant no
-test catches, and on any no test run checked; stops before the mutants where the tests fail with
+"""Mutation testing of each plugin given, or of each plugin dev/scripts/plugins.sh lists that has
+dev/<plugin>/cosmic-ray.toml where none is given, run as `sh dev/scripts/mutate.sh` from the top of
+the repository with the tools of pyproject.toml's dev and test-quality groups; fails on any mutant
+no test catches, and on any no test run checked; stops before the mutants where the tests fail with
 none. Given `--since <commit>` first, it tests only the mutants on lines changed since that commit,
 files not yet added to git among them, by Cosmic Ray's own git filter, as before a push.
 
-Each mutant is to be caught by the unit tests, which dev/check.sh runs, as the mutation testing
-checks that they are enough; the property tests are left out of it. cr-rate is not used to fail the
-run: it takes a limit of 0 as no limit.
+Each mutant is to be caught by the unit tests, which dev/scripts/check.sh runs, as the mutation
+testing checks that they are enough; the property tests are left out of it. cr-rate is not used to
+fail the run: it takes a limit of 0 as no limit.
 
 Cosmic Ray changes the files it tests, so each worker runs on a copy of its own; one worker for each
 processor, as each mutant is tested on its own, each on a port free when the run starts, so two runs
 at once do not test each other's copies. The copies of each plugin's run are in
-<plugin>/<yyyymmdd>-mutate-<random>/ in the system's temporary folder (dev/architecture.md, Where a
-plugin writes its files), removed when the run ends, and the system's temporary folder the workers'
-tests are given is in it, so what a test killed on its timeout leaves goes with it."""
+<plugin>/<yyyymmdd>-mutate-<random>/ in the system's temporary folder (dev/plugin-best-practice.md,
+Where a plugin writes its files), removed when the run ends, and the system's temporary folder the
+workers' tests are given is in it, so what a test killed on its timeout leaves goes with it."""
 
 from __future__ import annotations
 
@@ -28,7 +28,9 @@ import subprocess
 import sys
 import time
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lane"))
+sys.path.insert(
+    0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "lane")
+)
 import testing
 
 # Cosmic Ray is installed on the newest Python alone, so the type check on 3.9 finds it missing.
@@ -37,7 +39,7 @@ from cosmic_ray.config import load_config, serialize_config  # pyrefly: ignore[m
 from cosmic_ray.work_db import WorkDB, use_db  # pyrefly: ignore[missing-import]
 from cosmic_ray.work_item import WorkerOutcome  # pyrefly: ignore[missing-import]
 
-USAGE = "usage: sh dev/mutate.sh [--since <commit>] [<plugin>...]"
+USAGE = "usage: sh dev/scripts/mutate.sh [--since <commit>] [<plugin>...]"
 # What cr-report ends with where no mutant survives.
 NONE_SURVIVE = re.compile(r"^surviving mutants: 0 ", re.MULTILINE)
 
@@ -98,8 +100,8 @@ def started(copy: str, ports: list[int]) -> list[subprocess.Popen[bytes]]:
 
 def linked(folders: list[str]) -> list[str]:
     """Each module in the folders that is a link: what a plugin takes from another through a link is
-    mutated in the plugin it is from, with that plugin's tests (dev/architecture.md, Code kept
-    once)."""
+    mutated in the plugin it is from, with that plugin's tests (dev/plugin-best-practice.md, Code
+    kept once)."""
     return sorted(
         os.path.join(top, name)
         for folder in folders
@@ -154,7 +156,7 @@ def untested(db: str) -> list[str]:
     """Each mutant in the database that no test run checked, as the worker failed before or after
     its tests ran, such as where a mutant removed the code of its worker's copy, by its module, its
     line and the last line the worker printed. cr-report counts such a mutant as caught, though no
-    test caught it (dev/architecture.md, No check passes what it did not check)."""
+    test caught it (dev/plugin-best-practice.md, No check passes what it did not check)."""
     failed = (WorkerOutcome.EXCEPTION, WorkerOutcome.ABNORMAL)
     with use_db(db, WorkDB.Mode.open) as work:
         items = {item.job_id: item for item in work.work_items}
@@ -189,7 +191,7 @@ def mutated(plugin: str, since: str) -> bool:
         written(plugin, ports, since, config)
         subprocess.run(["cosmic-ray", "init", config, db], check=True)
         # A line marked `# pragma: no mutate` has no mutant a test can tell apart, for the reason
-        # the plugin's cosmic-ray.toml gives (dev/architecture.md, Unit: code).
+        # the plugin's cosmic-ray.toml gives (dev/plugin-best-practice.md, Unit: code).
         subprocess.run(["cr-filter-pragma", db], check=True)
         if since:
             filtered_by_git(copy, config, db)
@@ -227,7 +229,9 @@ def main(args: list[str]) -> None:
         if len(args) < 2:
             sys.exit(USAGE)
         since, args = args[1], args[2:]
-    listed = subprocess.run(["sh", "dev/plugins.sh"], check=True, capture_output=True, text=True)
+    listed = subprocess.run(
+        ["sh", "dev/scripts/plugins.sh"], check=True, capture_output=True, text=True
+    )
     plugins = args or [p for p in listed.stdout.split() if os.path.isfile(config_of(p))]
     for plugin in plugins:
         if not os.path.isfile(config_of(plugin)):

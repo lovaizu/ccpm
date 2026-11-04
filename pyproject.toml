@@ -3,12 +3,12 @@
 [project]
 name = "ccpm"
 version = "0"
-# The oldest Python users run (dev/architecture.md, Python 3.9 and the standard library), which ruff
+# The oldest Python users run (dev/plugin-best-practice.md, Python 3.9 and the standard library), which ruff
 # takes as the version it checks for.
 requires-python = ">=3.9"
 
 [dependency-groups]
-# The checks of dev/check.sh, on every Python users run.
+# The checks of dev/scripts/check.sh, on every Python users run.
 dev = [
   "coverage>=7.10",
   "pyrefly>=1.4.0",

@@ -11,7 +11,7 @@ person and the caller is in [Turn's UX](ux.md).
 
 ## Principles
 
-Turn follows Principles 2, 3, 5, 6, 7 and 8 of [how a plugin works](../architecture.md#principles).
+Turn follows Principles 2, 3, 5, 6, 7 and 8 of [the plugin best practice](../plugin-best-practice.md#principles).
 It differs on three:
 
 - Principle 1: the orchestrator, `up`, decides no move. Lane's routes give each next role from the
@@ -298,7 +298,7 @@ erDiagram
 
 A question for the person and their answer are messages, not data kept: the role that asked writes
 the answer into its tree. Each data below is a JSON file, read and changed with `jq`, as
-[JSON between agents](../architecture.md#json-between-agents) says. Keys say their intent, a
+[JSON between agents](../plugin-best-practice.md#json-between-agents) says. Keys say their intent, a
 one-to-many join is nested, and a many-to-many join lists IDs.
 
 - **Call**: the prompt a caller starts `up` with: the `request` in its own words and, under
@@ -659,9 +659,9 @@ flowchart TB
 - The person starts Turn with `/turn:up`; a caller starts the agent `turn:up`. Claude Code runs
   each of Turn's agents in the background, as each sets `background: true`.
 - Turn's scripts use Python 3.9 and its standard library only, as
-  [Python 3.9 and the standard library](../architecture.md#python-39-and-the-standard-library) says.
+  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library) says.
 - A run's folder is `.turn/<yyyymmdd>-<name>/` at the root of the repository, as
-  [Where a plugin writes its files](../architecture.md#where-a-plugin-writes-its-files) says, or the
+  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files) says, or the
   folder the caller names.
 
 ### Directory structure
@@ -701,7 +701,7 @@ reads alike.
 
 ## Test
 
-Turn is tested as [Test](../architecture.md#test) says. What follows is what Turn adds.
+Turn is tested as [Test](../plugin-best-practice.md#test) says. What follows is what Turn adds.
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|
@@ -712,7 +712,7 @@ Lane's guard and result.py have no row: Lane tests them, and Turn's architecture
 laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture tests run it.
 
 - **unit, the roles**: a trial runs one role alone, as
-  [Unit: prompts](../architecture.md#unit-prompts) says. Its classes are the results the role may
+  [Unit: prompts](../plugin-best-practice.md#unit-prompts) says. Its classes are the results the role may
   give, as [Routes](#routes) names them, and, for planner and designer, the points it settles
   itself and those it asks, as
   [The person is asked only what is theirs](#the-person-is-asked-only-what-is-theirs-one-point-at-a-time)
@@ -748,7 +748,7 @@ laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture t
   background naming its part, each script a part names, and the routes and lanes as this document
   gives them.
 - **ux**: a trial runs Claude Code on Opus on copies of Turn and pin, as
-  [ux: the plugin in real use](../architecture.md#ux-the-plugin-in-real-use) says, in an interactive
+  [ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says, in an interactive
   session, as `claude -p` does not hand a background role's end back to `up`. Each runs an
   objective's scenario on `tidy`, a repository of a real tool's size. An AI stands in for the
   person, answering from an intent written beforehand and never shown to Turn. A run passes where

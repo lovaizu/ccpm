@@ -6,8 +6,8 @@ checked, is in [architecture.md](architecture.md).
 - Tests: run `python3 -m unittest discover -s dev/pin/tests` from the repository root. They lie in
   `tests/unit/`, at the path of what each tests, and `tests/architecture/`.
 
-  `sh dev/properties.sh pin` runs the property tests, `properties_*.py`, and
-  `sh dev/mutate.sh pin` runs the mutation testing set in `cosmic-ray.toml`, as
+  `sh dev/scripts/properties.sh pin` runs the property tests, `properties_*.py`, and
+  `sh dev/scripts/mutate.sh pin` runs the mutation testing set in `cosmic-ray.toml`, as
   [dev/README.md](../README.md) says.
 - Unit trials of the pinner: `python3 dev/pin/tests/unit/core/roles/trial_pinner.py` tries
   `pin:down` alone three times, a script answering "Yes." for the person and a project subagent

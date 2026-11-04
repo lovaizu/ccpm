@@ -16,7 +16,7 @@ concurrency:
 jobs:
   # The unit tests of every plugin run on each push, and the property tests and the mutation
   # testing, which check that the unit tests are enough, on what changed since the last commit of
-  # the branch whose run passed, else since the branch left main, for each plugin `sh dev/changed.sh`
+  # the branch whose run passed, else since the branch left main, for each plugin `sh dev/scripts/changed.sh`
   # names, each in a job of its own, all at once; whole on main after a commit not passed, and for a
   # plugin whose version the push changes, as before a release. A push that changes only what no
   # check reads, such as the session records and the documents of dev/, is not checked, and `tests`
@@ -53,9 +53,9 @@ jobs:
             base=""
           fi
           if [ -n "$base" ]; then
-            plugins=$(sh dev/changed.sh "$base" HEAD)
+            plugins=$(sh dev/scripts/changed.sh "$base" HEAD)
           else
-            plugins=$(sh dev/plugins.sh)
+            plugins=$(sh dev/scripts/plugins.sh)
           fi
           matrix=$(for plugin in $plugins; do
             since=$base
@@ -73,7 +73,7 @@ jobs:
             echo "check=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # The oldest Python users run and the newest (dev/architecture.md, Unit: code).
+  # The oldest Python users run and the newest (dev/plugin-best-practice.md, Unit: code).
   check:
     needs: changed
     if: needs.changed.outputs.check == 'true'
@@ -95,12 +95,12 @@ jobs:
         with:
           node-version: "24"
       # Claude Code is installed from its lock, scripts off but its own, which only links its binary.
-      - working-directory: dev
+      - working-directory: dev/scripts
         run: |
           npm ci --ignore-scripts
           node node_modules/@anthropic-ai/claude-code/install.cjs
           echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
-      - run: uv run --no-sync sh dev/check.sh
+      - run: uv run --no-sync sh dev/scripts/check.sh
 
   test-quality:
     needs: changed
@@ -122,11 +122,11 @@ jobs:
       - env:
           UV_PYTHON: ${{ steps.python.outputs.python-path }}
         run: uv sync --locked --group test-quality
-      - run: uv run --no-sync sh dev/properties.sh ${{ matrix.plugin }}
+      - run: uv run --no-sync sh dev/scripts/properties.sh ${{ matrix.plugin }}
       - if: hashFiles(format('dev/{0}/cosmic-ray.toml', matrix.plugin)) != ''
         env:
           SINCE: ${{ matrix.since }}
-        run: uv run --no-sync sh dev/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
+        run: uv run --no-sync sh dev/scripts/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
 
   # What main requires: every job passed, or the checks skipped as above.
   tests:
