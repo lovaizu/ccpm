@@ -292,8 +292,11 @@ so the code is written, tested and fixed in one place.
 ## Test
 
 A plugin is tested at three levels, each named by what its tests check against. Each test is drawn
-from that one thing, never chosen by its writer, and is designed before the code or the prompt and
-seen to fail first. Two developers then write the same tests, and a failure points to one cause.
+from one rule, path or scenario of that one thing, never chosen by its writer, and is designed
+before the code or the prompt and seen to fail first.
+
+*Why*: no test is left to its writer's taste, and a failing test names the rule, path or scenario
+it breaks.
 
 ![A plugin's test levels](images/test-levels.svg)
 

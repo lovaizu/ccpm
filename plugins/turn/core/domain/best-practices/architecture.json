@@ -546,7 +546,7 @@
   },
   {
    "benefit": "Q12",
-   "thinking": "A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two developers draw the same tests and a failure points to that thing alone.",
+   "thinking": "A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so no test is left to its writer's taste and a failing test names the rule, path or scenario it breaks.",
    "steps": [
     "Link the project's shared test rules, and write only where this product differs from them.",
     "At unit, divide each input and each result the contract names into classes that the part treats alike, the ones it refuses among them, and write one test for each class.",

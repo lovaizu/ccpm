@@ -225,7 +225,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ### Q12: Writing a test at one level, can the developer do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
 
-**Thinking**: A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two developers draw the same tests and a failure points to that thing alone.
+**Thinking**: A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so no test is left to its writer's taste and a failing test names the rule, path or scenario it breaks.
 
 **Steps**
 
