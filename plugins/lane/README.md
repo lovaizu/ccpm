@@ -77,9 +77,6 @@ plugin and lists the rules your plugin has.
 
 At the end, a subagent of your plugin keeps two rules of its steps on a run, with no code of yours.
 
-This walkthrough is not yet from a real run: it shows what Lane is being rebuilt to show, and its
-output is replaced by a real run's once Lane is built.
-
 The plugin `changelog` writes a project's `CHANGELOG.md`, and lives in the folder `changelog/` of
 a git repository. It has two files. `changelog/.claude-plugin/plugin.json` names it:
 
@@ -145,6 +142,10 @@ Removed its folder <the repository>/.lane/20261102-changelog.
 ```
 
 Steps 2 and 3 in `changelog/agents/writer.md` now read as `lay.py print` showed them.
+
+The run of `changelog` below is not yet from a real run: it shows what Lane is built to show, and
+is replaced by a real run's once a trial has made one. The output of `lay.py` above is a real
+run's.
 
 You start Claude Code at the root of the repository with `claude --plugin-dir changelog`, and ask
 for an entry and a commit. Claude Code starts `writer` in the background. `writer` runs
