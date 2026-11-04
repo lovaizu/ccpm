@@ -165,10 +165,14 @@ class Settle(helpers.RoundsTest):
         self.assertEqual(settled_round()["reading_met"], False)
 
     def test_a_work_not_in_its_rounds_has_none_due(self):
-        self.lay_run([helpers.work(at="pin")])
-        with self.assertRaises(files.Unreadable) as raised:
-            phases.settle(RUN)
-        self.assertEqual(str(raised.exception), "no round of note is due: the work is at pin")
+        for at in ("pin", "waits"):
+            with self.subTest(at=at):
+                self.lay_run([helpers.work(at=at)])
+                with self.assertRaises(files.Unreadable) as raised:
+                    phases.settle(RUN)
+                self.assertEqual(
+                    str(raised.exception), f"no round of note is due: the work is at {at}"
+                )
 
     def test_a_design_file_missing_cannot_be_settled_on(self):
         os.remove(os.path.join(RUN, "design-tree.json"))

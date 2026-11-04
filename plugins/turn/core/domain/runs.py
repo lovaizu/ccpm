@@ -128,8 +128,8 @@ def begin(run: str, data: dict[str, Any], work: dict[str, Any]) -> str:
     practice = read_practice(work["practice"])
     reading = read_practice(os.path.join(OWN, f"{work['reading']}.json"))
     given = call.get("given", {})
-    # The work before the last is the best practice of the kind new to Turn.
-    if work is not data["works"][-1]:
+    # Where the Call's kind has no best practice yet, the work makes it.
+    if practice_of(call["kind"]) is None:
         goal = {"what": call["kind_goal"], "grounds": []}
         decisions: list[dict[str, Any]] = []
         words = (
