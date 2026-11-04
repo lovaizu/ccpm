@@ -62,7 +62,7 @@ it before the architecture is made.**
 
 **Write `dev/<plugin>/architecture.md` on [the plugin best practice](../../dev/plugin-best-practice.md), with
 `architecture.json` open, and have the user agree to it.** Place its files as
-[Development view](../../dev/plugin-best-practice.md#development-view) says, and design the plugin
+[Directory structure](../../dev/plugin-best-practice.md#directory-structure) says, and design the plugin
 to take in what is general, as [Learning from each run](../../dev/plugin-best-practice.md#learning-from-each-run)
 says.
 

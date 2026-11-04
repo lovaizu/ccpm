@@ -3,11 +3,9 @@
 This is the best practice for a Claude Code plugin whose roles work together to make something,
 such as a document or code. A plugin is built on it, taking what its requirements call for.
 
-## Architecture
+## Structure
 
-### Logical view
-
-#### Components
+### Components
 
 ![A plugin's components](images/components.svg)
 
@@ -23,7 +21,7 @@ such as a document or code. A plugin is built on it, taking what its requirement
   steps.
 - **guard**: the plugin's hooks, which tell a subagent its step again when it drifts.
 
-#### Sequences
+### Sequence
 
 ```mermaid
 sequenceDiagram
@@ -45,9 +43,7 @@ sequenceDiagram
   O->>C: result, the work and the report
 ```
 
-### Development view
-
-#### Directory structure
+### Directory structure
 
 ```text
 <repository>/
@@ -84,11 +80,9 @@ repository of one plugin keeps the same tree with one folder in `plugins/`.
 ## Principles
 
 A plugin takes the principles its requirements call for, and its architecture names them. Each
-gives its rule, then why.
+gives its rule, then why; *When* marks one a plugin takes only where it says.
 
-### For every plugin
-
-#### The core apart from Claude Code
+### The core apart from Claude Code
 
 An entry, a skill, an agent, a hook or a command line, holds only the form Claude Code fixes and
 hands the job to its part in `core/`. `core/` names no tool of an agent, such as the Agent tool or
@@ -98,7 +92,7 @@ hands the job to its part in `core/`. `core/` names no tool of an agent, such as
 two entries to one job do not drift apart. What the plugin knows outlives the agent it runs on
 ([ports and adapters](https://alistair.cockburn.us/hexagonal-architecture/)).
 
-#### An entry points to its part
+### An entry points to its part
 
 A skill's or an agent's body points to its part and says where each file the part names lies; the
 part names each by its name alone, never by where it is installed. An agent reads its part in full
@@ -110,7 +104,7 @@ the summary retells it. `${CLAUDE_PLUGIN_ROOT}` is replaced only in an entry's o
 the Bash tool runs nor in a file read with Read
 ([environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables)).
 
-#### What a machine can see of the work
+### What a machine can see of the work
 
 What a machine can check, a script, a hook or the project's own tools check: for code, a formatter,
 a linter and a type checker. An AI reads only for what no machine can check.
@@ -118,7 +112,15 @@ a linter and a type checker. An AI reads only for what no machine can check.
 *Why*: a tool finds the same thing every time, at once; an AI finds only some, and spends a round
 on each.
 
-#### The guard tells each role its steps again
+### No check passes what it did not check
+
+A check ends in no problem, a problem, or could not check; what follows each is decided and tested
+beforehand. A hook whose script fails stops the call; a skipped test, a job that did not run or a
+command that failed is no pass.
+
+*Why*: a check silent when it could not check is read as one that found nothing.
+
+### The guard tells each role its steps again
 
 A step that an instruction alone does not hold gets a hook that tells the role the step again when
 it drifts, or stops what would break a rule. Branch protection or permission rules hold what is
@@ -129,7 +131,7 @@ hard to undo.
 `hooks/hooks.json`
 ([plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents)).
 
-#### Where a plugin writes its files
+### Where a plugin writes its files
 
 What may be kept goes in `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository; what is used
 only while the plugin runs, its tests' and trials' included, in `<plugin>/<yyyymmdd>-<name>/` in the
@@ -142,7 +144,7 @@ agent reads without asking only inside the working folder
 ([working directories](https://code.claude.com/docs/en/permissions#working-directories)), and
 `${CLAUDE_PLUGIN_ROOT}` changes with each update.
 
-#### Asking for what lies outside the work
+### Asking for what lies outside the work
 
 When something outside the work stops it, such as a permission or a tool, the role asks for it and
 goes on with the rest meanwhile; it never looks for a way round.
@@ -150,7 +152,7 @@ goes on with the rest meanwhile; it never looks for a way round.
 *Why*: the person clears such a cause in a moment; a way round leaves the work checked under other
 terms than the purpose set.
 
-#### The caller approves what is theirs
+### The caller approves what is theirs
 
 What the caller decides, and what is hard to undo, such as a merge, goes to the caller, and counts
 as approved only by their own action, such as a skill the AI cannot call
@@ -159,7 +161,7 @@ as approved only by their own action, such as a skill the AI cannot call
 *Why*: an AI deciding for the caller leaves them answerable for what they never saw, and an approval
 an agent can give itself stops nothing.
 
-#### Languages
+### Languages
 
 A plugin talks in the person's language and writes the repository in the repository's, proposing
 both first, and shows the person what it writes with nothing added or left out.
@@ -168,9 +170,7 @@ both first, and shows the person what it writes with nothing added or left out.
 
 *Why*: the person approves what they read, and others read the repository later.
 
-### For a plugin with an orchestrator and roles
-
-#### The orchestrator holds the whole and decides
+### The orchestrator holds the whole and decides
 
 One orchestrator talks with the caller, keeps all the run has found, and decides each move.
 
@@ -179,15 +179,17 @@ One orchestrator talks with the caller, keeps all the run has found, and decides
 *Why*: only who holds the whole run can weigh what each move brings, and answer the caller's "why"
 ([building effective agents](https://www.anthropic.com/engineering/building-effective-agents)).
 
-#### Where the orchestrator runs
+### Where the orchestrator runs
 
 A plugin a person calls runs its orchestrator in the main conversation, started by a skill; one an
 AI calls runs it as an agent. A role that needs the person asks the main conversation directly.
 
+*When*: a plugin with an orchestrator and roles.
+
 *Why*: only the main conversation can ask the person
 ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)).
 
-#### A plugin that uses another
+### A plugin that uses another
 
 A plugin that has another do a job starts that plugin's orchestrator as one of its roles.
 
@@ -195,7 +197,7 @@ A plugin that has another do a job starts that plugin's orchestrator as one of i
 
 *Why*: the other plugin runs as it was built and tested, and nothing of it is written again.
 
-#### One agent for each job
+### One agent for each job
 
 Each job has its own role, given only what the job needs.
 
@@ -204,32 +206,38 @@ Each job has its own role, given only what the job needs.
 *Why*: a role starts in a fresh context, so nothing from other work leads it astray
 ([subagents](https://code.claude.com/docs/en/sub-agents)).
 
-#### Messages
+### Messages
 
 Nobody relays. Whoever needs something asks whoever has it. Roles run in the background, and one
 that has ended is sent further work with SendMessage, which resumes it with its whole conversation
 ([resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents)).
 
+*When*: a plugin with an orchestrator and roles.
+
 *Why*: a go-between adds a move to every exchange and holds nothing of it; a resumed role does not
 start again from nothing.
 
-#### JSON between agents
+### JSON between agents
 
 What agents pass on as data is JSON, in files.
 
+*When*: a plugin with an orchestrator and roles.
+
 *Why*: an agent changes only the part it needs and leaves the rest, and a script checks the form.
 
-#### Asking until nothing is left to decide
+### Asking until nothing is left to decide
 
 The orchestrator asks the caller every point only they can decide, one at a time, with a
 recommendation. It finds facts itself and shows each one the work rests on. Everything else it
 decides and reports.
 
+*When*: a plugin with an orchestrator and roles.
+
 *Why*: a point settled before the work does not return as rework, and a question about what the
 caller does not care about spends their time on the plugin's job
 ([grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md)).
 
-#### Read by those who did not make it
+### Read by those who did not make it
 
 A work is checked first by an evaluator that did not make it, standing in for the work's user:
 each question of the checklist goes in `good`, with the lines that meet it, or in `more`, with
@@ -242,7 +250,7 @@ work in full to approve it, the caller reads it first.
 ends; how to mend is the generator's call, as the generator holds the sources
 ([harness design](https://www.anthropic.com/engineering/harness-design-long-running-apps)).
 
-#### Where the router keeps the course
+### Where the router keeps the course
 
 A run that goes in a fixed loop keeps its course in a router, a script that gives the orchestrator
 each next move from the role that ended and its result. A run whose course changes with what it
@@ -252,7 +260,7 @@ finds keeps it in its skill's steps. A run that keeps a state writes it to a fil
 for what it did not foresee. A conversation can end or be compacted; with the state in a file, a
 stopped run goes on from its last move.
 
-#### Learning from each run
+### Learning from each run
 
 Once the caller approves the work, the orchestrator looks once through what the run kept for what
 fell short and why, each cause quoted from the records. A project's own lesson goes into its rules;
@@ -296,13 +304,6 @@ seen to fail first. Two developers then write the same tests, and a failure poin
 | Stands in for the person | set answers, or an AI given an intent | set answers | an AI holding an intent never shown to the plugin |
 | Passes when | every test passes, every line and branch runs, every mutant is caught | every test passes, the role and the data checked at each step | the stand-in gets what the objective says |
 | Runs | before each push and in CI; a role's trial as it is made | before each push and in CI | once every lower level passes |
-
-### No check passes what it did not check
-
-A check ends in no problem, a problem, or could not check; what follows each is decided and tested
-beforehand. A skipped test, a job that did not run or a command that failed is no pass.
-
-*Why*: a check silent when it could not check is read as one that found nothing.
 
 ### Unit: code
 
