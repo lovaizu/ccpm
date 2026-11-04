@@ -1,57 +1,77 @@
 # Turn
 
 Turn is a Claude Code plugin that makes a work you ask for, such as a README or a module of code,
-and makes it again until it meets your purpose well.
+ready to use as it comes, and asks you only the decisions that are yours.
 
-Turn is for you when you want a work you can put to use as it is handed to you, and you would
-rather answer a few questions than mend a draft. You answer only what is yours to decide, such as
-whom your README is for. Turn finds the facts itself, such as what your tool prints. Turn is also
-for a plugin that makes things for a person, such as rn: it hands Turn what it has already settled,
-and gets back the work.
+Turn is for you when you want an AI in Claude Code to make a work that you will put to use, and you
+would rather answer a few points than read and mend a draft. A work is what you want made. Its kind
+is the sort of work it is, such as a README. A point is one thing that the work's design must
+settle: a fact, such as what your tool prints, or a decision, such as which run a walkthrough
+shows. Turn finds each fact itself, and it asks you only the decisions that are yours. It writes the
+work into your repository, and you put it to use as it comes. For a quick draft that you would read
+and fix yourself, Turn takes longer than asking Claude Code alone.
 
-Asked alone, an AI writes from what it happens to know, and judges its own work. Turn starts from
-how good works of the same kind are made, and an AI that did not make the work judges it.
+Turn is also for you if you are an AI that connects a person and Turn, such as a role of another
+plugin that carries a larger plan for the person. This README calls such an AI a calling AI. You
+hand Turn the work, the points that you have settled with the person, and where the work goes.
+Turn keeps those points as given, and it does not ask the person about them again. You pass each
+point that Turn gives you to the person as given, and you pass the answer back word for word. You
+get back the work, and you pass it on as it is. Turn needs a person to answer: a point that is
+theirs waits for them.
 
-- **A template for each kind.** A kind is what sort of work it is, such as a README or a man page.
-  Its template holds the parts a good work of the kind has, and questions that a good work answers
-  yes to, such as "After the walkthrough, can the reader tell that the product would give them the
-  gain on work of their own?". Turn ships templates for READMEs, UX documents, architecture
-  documents, code and prompts. For a kind it does not know, Turn first researches how good works of
-  it are made, and has you approve the purpose and the questions before it uses them.
-- **A design from your purpose.** Turn asks your purpose for this one work, then settles each
-  decision the template's questions need, such as which use the walkthrough shows. It finds each
-  fact itself and shows it to you to confirm. It asks you each decision that is yours, one at a
-  time, with a recommendation. You approve the design before anything is made. Turn does this
-  with [Pin](../pin/README.md), a plugin installed with Turn.
-- **Used by an AI that did not make it.** Once the work is made, another AI uses it as its user
-  would. Turn gives it the work and the template's questions, not the design, as the work's user
-  never sees the design. It answers each question with the lines of the work that meet it, or with
-  what the user would still need. A question not yet met goes back to the decision behind it. Turn
-  decides that decision again, and makes the work again from there.
-- **Then how it reads.** Once every question is met, Turn improves how the work says what it says,
-  such as a sentence that a reader must read twice to understand, and checks it again. What the
-  work says stays.
-- **At once where it can.** Turn makes and checks at the same time the parts of the work that
-  stand apart, such as two modules that use nothing of each other, so you wait less. Turn does not
-  split a part where that would make it worse.
+Without Turn, you ask an AI for the work in one prompt, or you use an agent that writes the work and
+then checks it itself. Either way, the AI fills each gap in your request with a guess. It then
+judges its own work by what it meant, not by what the work's user needs. You meet the guesses when
+you use the work, and you mend it. Turn instead settles the work's design with you before it makes
+anything. It makes the work against the best practice of the work's kind. An AI that did not make
+the work then judges it in the place of the one who will use it. Last, Turn refines how the work
+reads.
+
+- **A best practice for each kind.** A kind's best practice holds the parts that a good work of the
+  kind has and the questions that such a work answers yes to. For each question, it also holds a
+  way to make the answer yes. A question asks what the work brings its user, such as "After the
+  walkthrough, can the reader tell that the product would give them, on work of their own, the
+  gain the opening promised?". Turn ships best practices for READMEs, user experience (UX)
+  documents, architecture documents, prompts and code. For a kind that it does not know, Turn
+  first works out a best practice from how good works of the kind are made. You approve the
+  kind's purpose and its questions before Turn uses them, so the first work of a new kind takes
+  longer.
+- **The design settled with you first.** The design is the work's purpose with every point settled
+  under it. Turn settles it with the plugin [Pin](../pin/README.md). Pin works out each point that
+  the questions need, from the purpose down. It shows you each fact that it finds, for you to
+  confirm. It settles itself each decision that follows from the purpose and the facts.
+  It asks you each decision that is yours, one at a time, with a recommendation. You approve the
+  whole design before anything is made.
+- **Made against the best practice.** An AI, the generator, makes the work from the design. It
+  gives the work the parts that the best practice names. It makes each answer yes in the way that
+  the best practice gives for that question.
+- **Judged by a fresh AI in the user's place.** Another AI, the evaluator, starts fresh for each
+  round. It gets the work and the questions, and never the design, as the work's user never sees
+  the design. It uses the work as that user would, and it answers each question with the lines
+  that meet it, or with what the user still lacks. Turn takes a question that is not met back to
+  the decision behind it, and it settles that decision again. The generator then makes the work
+  again from there.
+- **Then refined for how it reads.** Once every question is met, the generator and the evaluator go
+  round again with the questions of how a document reads, or of how code is written, such as
+  whether each sentence reads one way only. Only how the work says a thing changes, and what it
+  says stays.
 
 **Non-goals**
 
-- Turn does not check whether the work gets you what you want it for in the world, such as whether
-  a README brings its tool more users. Turn checks the work against your purpose and its kind's
-  questions; the world's answer is yours to see.
-- Turn is not for a quick draft. Asking, making and checking take longer than asking Claude Code
-  alone. A kind new to Turn takes longer still, the first time.
+- Turn does not check whether the work gets you what you want of it in the world, such as more
+  users for your tool. It checks the work against your purpose and the questions of its kind. The
+  world's answer is yours to see.
 - Turn does not commit, push or publish the work. It writes the files, and you choose what happens
   to them.
-- Turn does not decide for you what is yours. A question left unanswered holds the run where it is.
+- Turn does not decide a point that is yours. A point that you leave unanswered holds the run where
+  it is.
 
 ## Requirements
 
 - Claude Code 2.1.317 or later: `claude --version` shows its version.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows its version.
-- Claude Code run as a conversation in a terminal or an app, not as `claude -p`. Turn's roles run
-  in the background, and `claude -p` does not hand a role's end back to the role that started it.
+- Claude Code run as a conversation in a terminal or an app, not as `claude -p`. Turn's AIs work in
+  the background, and `claude -p` does not hand their results back to the conversation.
 
 ## Installation
 
@@ -60,16 +80,16 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install turn@ccpm
 ```
 
-`claude plugin list` then lists `turn@ccpm`, and `pin@ccpm`, which Turn depends on and which is
-installed with it. In a new Claude Code session, `/turn:up` is then one of its commands.
+`claude plugin list` then lists `turn@ccpm`, and `pin@ccpm`, which is installed with Turn. In a new
+Claude Code session, `/turn:up` is then one of its commands.
 
 ## Walkthrough
 
-At the end, you have a README for your tool that its readers can use as it is, and you have
-answered only what was yours.
+At the end, you have a README for your tool that you commit as it is, and you have answered three
+messages from Turn.
 
-This walkthrough does not yet come from a real run. It shows what Turn is being rebuilt to show.
-A real run's output replaces it once Turn is built.
+This walkthrough is not yet from a real run. It shows what Turn is being rebuilt to show, and a
+real run's output replaces it once Turn is built.
 
 Your tool `tidy` sorts a Downloads folder into folders by type. Its repository has the code and no
 README. In Claude Code, at the root of the repository, you type:
@@ -78,109 +98,101 @@ README. In Claude Code, at the root of the repository, you type:
 /turn:up a README for tidy
 ```
 
-Your words name the kind of work, a README, so Turn does not ask it. While Turn reads what
-`tidy` does, it asks the purpose of this README:
+Your words name the kind, a README, so Turn does not ask it. Turn first puts to you the README's
+purpose as it reads your words:
 
 ```text
-Turn: The purpose: someone who keeps a cluttered Downloads folder learns what tidy does, installs
-it, and sorts their folder with it. Is that the purpose?
-
-Recommendation: yes. The repository has no other documents, so the README is where a newcomer
-starts.
+Purpose: the README's purpose is what every decision of the README is weighed by.
+To-be: one sentence that says who reads the README, and what they do with it.
+As-is: your words are "a README for tidy", and the repository has no other document.
+Gap: your words do not say who reads the README.
+Proposal: someone with a cluttered Downloads folder learns what tidy does, installs it and sorts
+their folder with it; yes?
 ```
 
-You answer `yes`. Turn shows each fact it found that a decision rests on, alone:
+You answer `yes`. Meanwhile Turn has read what `tidy` does, and it shows you one fact that it
+found, in a message of its own:
 
 ```text
-Turn: Found: tidy/cli.py:22 "parser.add_argument('--dry-run', action='store_true')", so tidy can
-show what it would move without moving anything. Right?
+Found: tidy/cli.py:22 "parser.add_argument('--dry-run', action='store_true')", so tidy can show
+what it would move without moving anything. Is that right?
 ```
 
-You answer `right`, and Turn asks the next decision that is yours:
+You answer `right`. Turn settles itself what follows from the purpose and the facts, such as
+Python 3.9 under Requirements, as `setup.cfg` names it. It then asks you the one decision that they
+do not settle:
 
 ```text
-Turn: Which run does the walkthrough show?
-
-Recommendation: tidy --dry-run on a folder of five files, then tidy itself, so the reader sees
-what moves before anything moves. Yes?
+Purpose: the walkthrough lets a newcomer see what tidy does to a folder like theirs.
+To-be: one run whose output shows the reader their files sorted.
+As-is: tidy moves files at once, and tidy --dry-run only shows what it would move.
+Gap: tidy alone and tidy --dry-run first both show it, and nothing found favors either.
+Proposal: tidy --dry-run on a folder of five files, then tidy, so the reader sees what moves
+before anything moves; yes?
 ```
 
-Questions and facts go on like this, one at a time. Turn settles itself what follows from the
-purpose and the facts, such as putting Python 3.9 under Requirements, as `setup.cfg` names it. Then
-it shows you the design:
+You answer `yes`. When no point is left open, Turn shows you the design:
 
 ```text
-Turn: The design of the README:
-- Purpose: a newcomer learns what tidy does, installs it and sorts their folder.   (you)
-- The walkthrough runs tidy --dry-run, then tidy, on five files.                    (you)
-- Requirements: Python 3.9 or later.                                                 (found)
-- Non-goals: tidy does not delete, and does not look inside archives.               (follows from the code)
+Goal: someone with a cluttered Downloads folder learns what tidy does, installs it
+and sorts their folder.                                                    (you)
+- The walkthrough runs tidy --dry-run, then tidy, on five files.           (you)
+- Requirements: Python 3.9 or later.                                       (found, you confirmed)
+- Non-goals: tidy does not delete files, and does not look inside archives. (found)
 ...
-Shall Turn make the README from this design?
+Do we understand the README the same way?
 ```
 
-You answer `yes`. Turn makes the README, and another AI uses it as a newcomer would. It finds one
-question not yet met: the walkthrough does not show where `tidy` puts a file with no extension.
-Turn decides that point again, makes the README again, and checks it again. Then it improves how the
-README reads, and checks that once more. It ends:
+You answer `yes`. The generator makes the README from the design. The evaluator then reads the
+README as a newcomer would, with only the README and the questions of a README. It finds one
+question not met: after the walkthrough, a newcomer cannot tell where `tidy` puts a file with no
+extension. Turn takes that back to the decision on the walkthrough's run, adds such a file to the
+five, and has the README made again. The evaluator then finds every question met. The generator
+and the evaluator go round once more with the questions of how a document reads. In that round,
+the generator splits two sentences that each made two points. Turn ends:
 
 ```text
-Turn: Done. README.md is written. Each question of the README template is met, with the lines
-that meet it in .turn/20261103-tidy-readme/verification/.
+Done: README.md is written, and not committed. It meets every question of a README and of how a
+document reads. .turn/20261103-tidy-readme/verification/ shows the lines that meet each question.
 ```
 
-`README.md` is in the repository's root, not committed. The run's folder
-`.turn/20261103-tidy-readme/` holds the design and each check.
+`README.md` begins:
 
-A run that stopped, such as when the session ended, goes on from its folder:
+```markdown
+# tidy
 
-```text
-/turn:up .turn/20261103-tidy-readme
+tidy is a command-line tool that sorts your Downloads folder into folders by type.
+
+tidy is for you when your Downloads folder holds hundreds of files and you want them sorted
+without dragging each one by hand.
 ```
 
-To change a work Turn made, name its folder and the change, and Turn takes the change in through
-the design:
-
-```text
-/turn:up .turn/20261103-tidy-readme the walkthrough should use a folder of ten files
-```
+You answered three messages: the purpose, one fact and one decision. Turn settled every other point
+itself, and the design shows each one. You read the README, and you commit it as it is.
 
 ## How it works
 
-```mermaid
-flowchart LR
-  P([you]) -- "your request, then each answer" --> M["the conversation"]
-  M -- "each question, one at a time" --> P
-  M -- "starts, then hands each answer to" --> U["up"]
-  U -- "starts each role" --> R["planner, designer, generator,<br>evaluator, refactorer, proofreader"]
-  R -- "a question for you, or its end" --> U
-  U -- "the question, or done" --> M
-  R -- "write and read" --> F[("the run's folder, and the work")]
-  L["Lane's checks"] -- "the next role to start" --> U
-  L -- "check each role's files and commands" --> R
-```
+![How Turn works](images/how-it-works.svg)
 
-- Each role is an AI with one job: planner settles the kind and its template, designer the
-  design, generator makes the work, evaluator uses it as its user would, refactorer improves how it
-  reads, and proofreader checks that.
-- Each role runs in the background, as a subagent of `up`, Turn's orchestrator: the subagent that
-  starts each role. A role cannot ask you itself, so a role with a question ends with it. The
-  conversation puts it to you, and your answer goes back to the same role, which goes on where it
-  was.
-- The next role comes from how the last one ended, as Turn's routes say: the design goes to
-  generator, the work to evaluator, a question not yet met back to designer, and every question met
-  on to refactorer. [Lane](../lane/README.md) is a plugin whose checks are written into Turn's own
-  files. It tells `up` each next role, and stops a role from ending before its files are in the
-  right form.
-- Each role starts fresh, and carries on from the run's folder. So the evaluator reads each round
-  with fresh eyes, and a stopped run goes on from its folder.
-- Turn keeps a template it makes for a new kind in `.turn/best-practices/`, and later runs in the
-  same repository use it.
+The figure shows how you and a calling AI use Turn, and what each part of Turn does. Three points
+lie outside the figure:
+
+- Turn keeps each run in a folder of its own, such as `.turn/20261103-tidy-readme/`. The folder
+  holds `design-tree.json` and each check of the work. A run that stopped, such as when the session
+  ended, goes on from its folder with `/turn:up .turn/20261103-tidy-readme`. To change a work that
+  Turn made, name its folder and the change, such as
+  `/turn:up .turn/20261103-tidy-readme the walkthrough should use ten files`. Turn takes the change
+  in through the design.
+- Turn keeps the best practice of a kind that is new to it in `.turn/best-practices/`. Later runs in
+  the same repository use it.
+- Each AI in the figure is a subagent: a Claude Code agent that works apart from your conversation
+  and ends with its result. The checks of [Lane](../lane/README.md) hold each subagent to its
+  steps, such as the evaluator reading only the work and the questions.
 
 ## Documentation
 
-- [Calling Turn](docs/calling.md): what a plugin gives Turn, how it hands on Turn's questions, and
-  what it gets back.
+- [Calling Turn](docs/calling.md): for a calling AI, what it hands Turn, how it passes Turn's points
+  on to the person, and what it gets back.
 - [The changelog](CHANGELOG.md): the changes in each version.
 
 ## Development
