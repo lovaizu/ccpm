@@ -9,15 +9,19 @@ numbered steps.
   without writing checks.
   - A rule is a sentence in a step that the subagent must keep, such as "Run only
     `git log --oneline`."
-  - KR1.1: Of the subagents' tool calls and ends of their work, the share that goes wrong. A call
-    goes wrong when it breaks a rule and goes through, when it breaks a rule, is stopped and is
-    then done another way, or when the rules allow it and it is stopped. Lower is better.
+  - KR1.1: Of the subagents' tool calls and their ends of work, the share that goes wrong. Lower
+    is better. A call or an end goes wrong in three ways:
+    - it breaks a rule, and goes through;
+    - it breaks a rule, is stopped, and is then done another way;
+    - the rules allow it, and it is stopped.
   - KR1.2: The lead time from the developer AI's first rule for a plugin to the first run whose
     subagents keep the rules. Shorter is better.
 - O2: The developer AI has its plugin's subagents started in the order it set, on every run,
   without writing code for the order.
-  - KR2.1: Of the plugin's runs, the share that goes wrong. A run goes wrong when a subagent starts
-    that the order does not name, or when a start that the order names is stopped. Lower is better.
+  - KR2.1: Of the plugin's runs, the share that goes wrong. Lower is better. A run goes wrong in two
+    ways:
+    - a subagent starts that the order does not name;
+    - a start that the order names is stopped.
   - KR2.2: The lead time from the developer AI's first order for a plugin to the first run that
     keeps it. Shorter is better.
 
