@@ -52,6 +52,18 @@ class Usage(unittest.TestCase):
         self.assertEqual(end.exception.code, 2)
 
 
+class Script(helpers.RepositoryTest):
+    def test_the_script_runs_the_command_given_after_its_own_path(self):
+        with (
+            mock.patch.object(plan.sys, "argv", ["plan.py", "check", RUN]),
+            contextlib.redirect_stdout(io.StringIO()) as out,
+            self.assertRaises(SystemExit) as end,
+        ):
+            runpy.run_path(plan.__file__, run_name="__main__")
+        self.assertEqual(end.exception.code, 0)
+        self.assertTrue(out.getvalue().startswith(f"plan.py: {RUN} holds no Run yet."))
+
+
 class Start(helpers.RepositoryTest):
     def test_a_run_begun_prints_the_request_to_end_with(self):
         self.calls()
@@ -66,6 +78,13 @@ class Start(helpers.RepositoryTest):
                 "",
             ),
         )
+
+    def test_a_kind_new_to_turn_names_the_design_of_its_best_practice(self):
+        self.calls(helpers.call(kind="man-page", kind_goal="Someone learns each option."))
+        design = os.path.join(RUN, "best-practice", runs.DESIGN)
+        code, out, _ = ran("start", RUN)
+        self.assertEqual(code, 0)
+        self.assertIn(f"its design handed over at {design}. Give `handed`", out)
 
     def test_a_run_that_cannot_begin_gives_1_and_why(self):
         self.calls(helpers.call(given={"kind": "readme"}))
@@ -310,12 +329,13 @@ class Practices(helpers.testing.FolderTest):
         self.assertIn("is out of its form", err)
 
     def test_form_fails_on_a_markdown_changed_by_hand(self):
-        ran("markdown", self.path)
-        with open(os.path.join(self.base, "kind.md"), "a", encoding="utf-8") as f:
-            f.write("More.\n")
-        code, _, err = ran("form", self.path)
-        self.assertEqual(code, 1)
-        self.assertIn("kind.md is not as its JSON makes it; run plan.py markdown", err)
+        made = practices.markdown("kind", DATA)
+        for changed in (made + "More.\n", made[:-1]):
+            with self.subTest(changed=changed[-6:]):
+                self.write(os.path.join(self.base, "kind.md"), changed)
+                code, _, err = ran("form", self.path)
+                self.assertEqual(code, 1)
+                self.assertIn("kind.md is not as its JSON makes it; run plan.py markdown", err)
 
     def test_each_command_names_a_json_it_cannot_read(self):
         self.write(self.path, "{")

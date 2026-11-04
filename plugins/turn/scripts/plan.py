@@ -78,7 +78,7 @@ def advance(run: str) -> str:
     """Ends the work whose rounds met every question, and says the Request of the next, or the
     Message that hands the run's work back."""
     work = runs.current(runs.load(run))
-    if phases.where(run) != "finished":
+    if phases.where(run) not in ("finished",):
         raise files.Unreadable(
             f"the rounds of {work['kind']} have not met every question of both phases"
         )
@@ -106,26 +106,29 @@ def where(run: str, data: dict) -> str:
     """Where the run is, and what the planner runs next."""
     work = runs.current(data)
     change = f"To hand Pin a change, run plan.py hand {run}."
-    if work["at"] == runs.DONE:
-        return (
+    # What is said of a work done or with Pin, by where it is.
+    said = {
+        runs.DONE: (
             "The run is done. Give `done`, and end with this Message as it is:\n"
             f"{runs.done(work)}\n{change}"
-        )
-    if work["at"] == runs.PIN:
-        return (
+        ),
+        runs.PIN: (
             f"The design of {work['kind']} is with Pin, at"
             f" {os.path.join(work['folder'], runs.DESIGN)}.\nOnce Pin hands it back confirmed,"
             f" write into the work's paths, commands and files in {run}/run.json what the design"
             f" gives, then run plan.py ready {run}. To go on with it after the run stopped, or to"
             f" hand Pin a change, run plan.py hand {run}."
-        )
-    at = f"The work of {work['kind']} is in its rounds.\n"
-    rounds = phases.where(run)
-    if rounds == "short":
-        return f"{at}Its last round fell short: run plan.py hand {run}."
-    if rounds == "finished":
-        return f"{at}Its rounds have met every question: run plan.py next {run}."
-    return f"{at}To go on with them, run plan.py ready {run}. {change}"
+        ),
+    }
+    if work["at"] in said:
+        return said[work["at"]]
+    # What is said of a work in its rounds, by where its rounds stand.
+    rounds = {
+        "short": f"Its last round fell short: run plan.py hand {run}.",
+        "finished": f"Its rounds have met every question: run plan.py next {run}.",
+    }
+    going = f"To go on with them, run plan.py ready {run}. {change}"
+    return f"The work of {work['kind']} is in its rounds.\n" + rounds.get(phases.where(run), going)
 
 
 def check(run: str) -> int:
@@ -204,7 +207,7 @@ PRACTICES: dict[str, Callable[[str], list[str]]] = {
 
 def main(argv: list[str]) -> int:
     """Runs the command on what it is given, as the module says; or prints the usage and gives 2."""
-    if argv[:1] and argv[0] in PRACTICES and argv[1:]:
+    if argv[1:] and argv[0] in PRACTICES:
         failed = False
         for path in argv[1:]:
             for fault in PRACTICES[argv[0]](path):
@@ -215,7 +218,8 @@ def main(argv: list[str]) -> int:
         print(USAGE, file=sys.stderr)
         return 2
     command, run = argv
-    if command == "check":
+    # check, the one command that moves nothing.
+    if command not in MOVES:
         return check(run)
     try:
         said = MOVES[command](run)
