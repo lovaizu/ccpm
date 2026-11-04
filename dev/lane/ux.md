@@ -33,11 +33,7 @@ Both scenarios run on `changelog`, a plugin that the developer AI builds to writ
 `CHANGELOG.md`. The participants:
 
 - **developer AI** (AI): builds `changelog`, and runs it to try it.
-- **`lay.py`** (script): Lane's script, which the developer AI runs.
-- **check script** (script): a script that `lay.py` puts into `changelog`. It checks each call of
-  the subagents, and tells `lead` each next start.
-- **result script** (script): a script that `lay.py` puts into `changelog`. A subagent runs it to
-  end with its result, a word such as `more`.
+- **Lane** (script): what the developer AI gives its rules and routes to.
 - **`lead`** (AI): the subagent of `changelog` that starts the others.
 - **`writer`** (AI): the subagent of `changelog` that writes the new entries into `CHANGELOG.md`.
 - **`reviewer`** (AI): the subagent of `changelog` that compares the entries with the commits.
@@ -50,55 +46,38 @@ conversation stays free while it runs.
 ```mermaid
 sequenceDiagram
   participant A as developer AI (AI)
-  participant L as lay.py (script)
-  participant K as check script (script)
+  participant L as Lane (script)
   participant W as writer (AI)
-  A->>L: lay.py print, with two rules for writer:<br>on step 2, run only git log --oneline,<br>on step 3, write only CHANGELOG.md
-  L-->>A: steps 2 and 3 as they will read, ending<br>"Run only `git log --oneline`." and "Write only `CHANGELOG.md`."
-  A->>L: lay.py write, once it approves what print showed
-  L-->>A: steps 2 and 3 written,<br>and the check script put into changelog
-  A->>W: starts writer in the background, for the entry of one commit
-  W->>K: runs git log --oneline
-  K-->>W: lets it through
-  W->>K: writes CHANGELOG.md
-  K-->>W: lets it through
-  W-->>A: ends with CHANGELOG.md written and no commit,<br>both rules kept
+  A->>L: two rules for writer's steps
+  L-->>A: the steps as they will read
+  A->>L: approves them
+  L-->>A: the steps written
+  A->>W: starts writer
+  W-->>A: ends, both rules kept
 ```
 
 ### O2: The developer AI has lead start writer and reviewer in its order
 
 The order the developer AI sets is its routes. A route names the subagent that `lead` starts next
-after another one ends with a given result.
+after another one ends with a given result, a word such as `more`.
 
 ```mermaid
 sequenceDiagram
   participant A as developer AI (AI)
-  participant L as lay.py (script)
-  participant K as check script (script)
-  participant S as result script (script)
+  participant L as Lane (script)
   participant O as lead (AI)
   participant W as writer (AI)
   participant R as reviewer (AI)
-  A->>L: lay.py print, with the routes: lead starts writer first,<br>writer's `written` leads to reviewer,<br>reviewer's `more` leads back to writer, and its `good` to the end
-  L-->>A: the routes, and the steps of lead, writer and reviewer as they will read
-  A->>L: lay.py write, once it approves what print showed
-  L-->>A: the steps written,<br>and the check script and the result script put into changelog
-  A->>O: starts lead in the background, to update CHANGELOG.md for the next release
-  K-->>O: "changelog: Start `changelog:writer`."
-  loop until reviewer ends with `good`
-    O->>W: starts writer in the background
-    K-->>O: "changelog: Wait for `changelog:writer` to end: you are told the next start once it has."
-    W->>S: runs the result script with `written`
-    W-->>O: ends with the entries it wrote
-    K-->>O: "changelog: writer gave `written`. Start `changelog:reviewer`."
-    O->>R: starts reviewer in the background
-    R->>S: runs the result script with `more` while an entry needs writer again,<br>or with `good`
-    R-->>O: ends with what it found
-    alt reviewer gave `more`
-      K-->>O: "changelog: reviewer gave `more`. Start `changelog:writer`."
-    else reviewer gave `good`
-      K-->>O: "changelog: reviewer gave `good`. Start no more subagents."
-    end
+  A->>L: the routes
+  L-->>A: the routes and the steps as they will read
+  A->>L: approves them
+  L-->>A: the steps written
+  A->>O: starts lead
+  loop until reviewer ends with good
+    O->>W: starts writer, as the routes say
+    W-->>O: ends with written
+    O->>R: starts reviewer, as the routes say
+    R-->>O: ends with more or good
   end
   O-->>A: ends with the reviewed entries
 ```

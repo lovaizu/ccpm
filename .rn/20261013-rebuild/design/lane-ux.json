@@ -199,7 +199,7 @@
    "builds_on": [
     "D10"
    ],
-   "decided": "developer AI (AI); lay.py (script); check script (script) and result script (script), both put into changelog by lay.py; lead, writer and reviewer (AI). No step waits for a person. Claude Code is no participant: what it does is the platform's, not Lane's.",
+   "decided": "developer AI (AI); Lane (script), one box for all Lane gives, as its scripts are inside the product; lead, writer and reviewer (AI). No step waits for a person.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/ux.json Q6 step: \"every message's sender and receiver is named there\""
@@ -214,7 +214,7 @@
    "builds_on": [
     "D11"
    ],
-   "decided": "Only what the developer AI runs, sees and receives, and what its subagents run and are told. How a subagent's end reaches lead is left out.",
+   "decided": "Only what the developer AI does, sees and receives, and what its subagents do in its sight. Lane's scripts, the words they tell lead and how they check each call are inside the box, left to the README and the architecture.",
    "settled_by": "research",
    "grounds": [
     "plugins/turn/core/domain/best-practices/ux.json Q7 thinking: \"the document says only what users mean to do, see and receive\""
@@ -222,7 +222,7 @@
   },
   {
    "id": "D13",
-   "what": "How is a line that a subagent is told, or that lay.py shows, given?",
+   "what": "How much does a step of a scenario say?",
    "contributes_to": [
     "ux/Q5",
     "ux/Q7"
@@ -230,10 +230,10 @@
    "builds_on": [
     "D12"
    ],
-   "decided": "As its exact text, so a change to the text shows as a change to the UX.",
+   "decided": "Each arrow says in a few words what one does to another. The content passed, such as the rules or the routes, is the spec, left to the README and Lane's docs.",
    "settled_by": "reasoning",
    "grounds": [
-    "What the subagent reads is what the developer AI's plugin gets."
+    "A label that holds the content crowds the diagram, and the reader cannot follow the steps at a glance (the user, 2026-11-04)."
    ]
   },
   {
@@ -281,7 +281,7 @@
     "D14",
     "D15"
    ],
-   "decided": "The developer AI asks lay.py print for two rules on writer: on step 2 run only `git log --oneline`, on step 3 write only `CHANGELOG.md`. It sees the steps as they will read, approves, and lay.py write writes them and puts the check script in. It starts writer; the check script lets each call through; writer ends with CHANGELOG.md written and no commit.",
+   "decided": "The developer AI gives Lane two rules for writer's steps, sees the steps as they will read, and approves them. Lane writes them. The developer AI starts writer, and writer ends with both rules kept.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/ux.json Q5 step: \"the first message is the user's request, the last gives the user the end\""
@@ -300,7 +300,7 @@
     "D14",
     "D15"
    ],
-   "decided": "The developer AI gives lay.py print the routes: lead starts writer; writer's `written` leads to reviewer; reviewer's `more` back to writer, its `good` to the end. It approves, and lay.py write lays them. It starts lead; the check script tells lead each next start in words; a loop holds writer and reviewer until reviewer gives `good`; lead ends with the reviewed entries.",
+   "decided": "The developer AI gives Lane the routes, sees the routes and the steps as they will read, and approves them. Lane writes them. The developer AI starts lead. In a loop until reviewer ends with good, lead starts writer and then reviewer, as the routes say. lead ends with the reviewed entries.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/ux.json Q5 step: \"Mark a part that repeats as a loop with its condition\""
