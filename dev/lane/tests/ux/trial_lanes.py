@@ -19,7 +19,7 @@ through came with the work done, the notes in their form and checked after their
 each finding of review.md answered, while each that was stopped was told the sentence of a lane of
 the end. noter need not give its result after, as no document promises it. A run counts only where
 each invited break was tried, as dev/lane/architecture.md's Test says. A held command is not
-tried, as `claude -p` asks no one. Run as `python3 dev/lane/tests/e2e/trial_lanes.py [runs]`, three
+tried, as `claude -p` asks no one. Run as `python3 dev/lane/tests/ux/trial_lanes.py [runs]`, three
 by default; it prints the folder of each run, where the run's stream and noter's records are kept,
 and what it found."""
 

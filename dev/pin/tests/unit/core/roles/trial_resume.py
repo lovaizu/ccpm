@@ -12,11 +12,16 @@ decision the person had settled or a fact they had confirmed.
 Each run passes where: .pin/ holds one tree; each decision the person had settled or confirmed when
 they left is decided the same at the end; no message of the second conversation asked again what was
 settled; and the second conversation passes as trial_down.py's runs do. Run as `python3
-dev/pin/tests/e2e/trial_resume.py [runs] [first]`."""
+dev/pin/tests/unit/core/roles/trial_resume.py [runs] [first]`."""
 
 from __future__ import annotations
 
 import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..")))
 
 import pinning
 from pinning import trying

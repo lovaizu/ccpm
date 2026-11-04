@@ -10,18 +10,23 @@ again, and caller's points left out of the design.
 
 A run counts where Turn handed back the README. It passes where, beside what trial_readme.py's runs
 pass on: no message asked the kind or the purpose again, and the design tree's goal is the one
-caller gave. Run as `python3 dev/turn/tests/e2e/trial_caller.py [runs] [first]`."""
+caller gave. Run as `python3 dev/turn/tests/ux/trial_caller.py [runs] [first]`."""
 
 from __future__ import annotations
 
 import os
 import shutil
+import sys
 import time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..")))
 
 import trial_readme
 import turning
 
-CALLER = os.path.join(turning.HERE, "caller")
+CALLER = os.path.join(HERE, "caller")
 GOAL = (
     "Someone who keeps a cluttered Downloads folder learns what tidy does, runs it on their folder"
     " and sees what moved."

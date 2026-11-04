@@ -15,18 +15,23 @@ designer ran the check.
 Each run passes where, beside what trial_down.py's runs pass on: each run of the check by designer
 is `python3 <pin's folder>/scripts/check.py <path>`, word for word; and the decision maker settled
 is in the tree as it was given. Run as
-`python3 dev/pin/tests/e2e/trial_caller.py [runs] [first]`."""
+`python3 dev/pin/tests/ux/trial_caller.py [runs] [first]`."""
 
 from __future__ import annotations
 
 import json
 import os
 import re
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..")))
 
 import pinning
 from pinning import trying
 
-MAKER = os.path.join(pinning.HERE, "maker")
+MAKER = os.path.join(HERE, "maker")
 FIRST = (
     "Start the subagent maker:designer to design a `--json` option on `notes list` in this"
     " repository. Whenever it ends with a message headed `For the person:`, give me that message"

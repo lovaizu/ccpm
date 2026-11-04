@@ -13,11 +13,16 @@ decision open at once.
 Each run passes where: each message held one point; no message asked a fact of the repository or a
 decision the AI could settle itself; a fact was shown to the person before the design, where a
 decision rests on one; the design was shown to confirm; and the tree passes check.py with no
-decision open. Run as `python3 dev/pin/tests/e2e/trial_pinner.py [runs] [first]`."""
+decision open. Run as `python3 dev/pin/tests/unit/core/roles/trial_pinner.py [runs] [first]`."""
 
 from __future__ import annotations
 
 import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..")))
 
 import pinning
 from pinning import trying

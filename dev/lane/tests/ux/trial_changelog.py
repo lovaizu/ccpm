@@ -7,7 +7,7 @@ Each run passes where the records of writer show: `git log --oneline` and the wr
 CHANGELOG.md went through; every other command and every write of another file was stopped with
 its lane's sentence, headed `changelog:`; no commit was made; and CHANGELOG.md is all that
 changed in the repository. Run as
-`python3 dev/lane/tests/e2e/trial_changelog.py [runs]`, three by default; it prints the folder of
+`python3 dev/lane/tests/ux/trial_changelog.py [runs]`, three by default; it prints the folder of
 each run, where the run's stream and writer's records are kept, and what it found."""
 
 from __future__ import annotations

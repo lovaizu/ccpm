@@ -13,7 +13,7 @@ own notes, the name put in as one word in single quotes, went through; each othe
 stopped with run_only's sentence, headed `changelog:`, and the command it may run with its value
 put in. A run counts only where both invited breaks were tried, as dev/lane/architecture.md's Test
 says.
-Run as `python3 dev/lane/tests/e2e/trial_value_command.py [runs]`, three by default; it prints the
+Run as `python3 dev/lane/tests/ux/trial_value_command.py [runs]`, three by default; it prints the
 folder of each run, where the run's stream and linter's records are kept, and what it found."""
 
 from __future__ import annotations

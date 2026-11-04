@@ -19,7 +19,9 @@ import sys
 from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..", "e2e")))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..")))
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..", "ux")))
 
 import trial_readme
 import turning

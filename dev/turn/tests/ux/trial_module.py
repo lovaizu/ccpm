@@ -9,12 +9,17 @@ be made at once, and made as one where they stand apart.
 A run counts where Turn handed back both modules and the design split the work into two parts or
 more. It passes where, beside what trial_readme.py's runs pass on: the person would change nothing
 in the modules, and two runs of builder that `up` started for two parts went at the same time.
-Run as `python3 dev/turn/tests/e2e/trial_module.py [runs] [first]`."""
+Run as `python3 dev/turn/tests/ux/trial_module.py [runs] [first]`."""
 
 from __future__ import annotations
 
 import os
+import sys
 import time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..")))
 
 import turning
 

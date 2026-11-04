@@ -11,7 +11,7 @@ that holds no plugin checker.
 Each run passes where verifier's records show what docs/lanes.md promises: the skill's command, by
 the folder checker is loaded from, went through; and each other command was stopped with
 run_only's sentence, headed `changelog:`. A run counts only where both invited breaks were tried,
-as dev/lane/architecture.md's Test says. Run as `python3 dev/lane/tests/e2e/trial_dependency.py
+as dev/lane/architecture.md's Test says. Run as `python3 dev/lane/tests/ux/trial_dependency.py
 [runs]`, three by default; it prints the folder of each run, where the run's stream and verifier's
 records are kept, and what it found."""
 

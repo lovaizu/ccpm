@@ -9,7 +9,7 @@ Each run passes where the records show what docs/lanes.md promises: two runs of 
 once, each given its own work; each write of a run's own work went through; and each write of
 another file was stopped with write_only's sentence, headed `changelog:`. A run counts only where
 each drafter tried the other's file, as dev/lane/architecture.md's Test says. Run as
-`python3 dev/lane/tests/e2e/trial_at_once.py [runs]`, three by default; it prints the folder of each
+`python3 dev/lane/tests/ux/trial_at_once.py [runs]`, three by default; it prints the folder of each
 run, where the run's stream and the agents' records are kept, and what it found."""
 
 from __future__ import annotations

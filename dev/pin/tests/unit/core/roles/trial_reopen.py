@@ -12,13 +12,19 @@ Each run passes where: a run of the check by reviser found the tree to hold with
 decision building on D2 was open too; D1, which does not build on D2, is as it was; D2 is decided
 anew by the person, as one JSON object a line; and the conversation passes as trial_caller.py's
 runs do, against the person's new wants. Run as
-`python3 dev/pin/tests/e2e/trial_reopen.py [runs] [first]`."""
+`python3 dev/pin/tests/unit/core/roles/trial_reopen.py [runs] [first]`."""
 
 from __future__ import annotations
 
 import json
 import os
 import re
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..")))
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..", "ux")))
 
 import pinning
 import trial_caller

@@ -8,7 +8,7 @@ of the kind's purpose and conditions, and a template out of its form.
 
 A run counts where Turn handed back a man page. It passes where, beside what trial_readme.py's runs
 pass on: `.turn/best-practices/` holds the kind's template, which Turn's practices.py check passes.
-Run as `python3 dev/turn/tests/e2e/trial_new_kind.py [runs] [first]`."""
+Run as `python3 dev/turn/tests/ux/trial_new_kind.py [runs] [first]`."""
 
 from __future__ import annotations
 
@@ -17,6 +17,10 @@ import os
 import subprocess
 import sys
 import time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..")))
 
 import turning
 

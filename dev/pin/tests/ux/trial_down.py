@@ -12,12 +12,17 @@ than one decision open at once.
 Each run passes where: the tree at `.pin/<yyyymmdd>-<name>/design-tree.json` passes check.py with
 no decision open; each message to the person held one point, asked no fact of the repository and
 asked nothing again; the design was shown to the person to confirm; and the tree holds each point
-of the intent, the person's own settled by them. Run as `python3 dev/pin/tests/e2e/trial_down.py
+of the intent, the person's own settled by them. Run as `python3 dev/pin/tests/ux/trial_down.py
 [runs] [first]`; it prints the folder of each run, where the run's stream is kept."""
 
 from __future__ import annotations
 
 import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..")))
 
 import pinning
 from pinning import trying

@@ -10,13 +10,18 @@ the person; and a README the person would still change, such as one that shows n
 A run counts where Turn handed back a README. It passes where: the person would change nothing in
 the README; no message put more than one point, asked a fact, asked again what was settled, or a
 point not the person's; and the roles started as Turn's routes say, from planner to proofreader.
-Run as `python3 dev/turn/tests/e2e/trial_readme.py [runs] [first]`; it prints the folder of each
+Run as `python3 dev/turn/tests/ux/trial_readme.py [runs] [first]`; it prints the folder of each
 run, where the terminal, the person's view and the records are kept, and what it found."""
 
 from __future__ import annotations
 
 import os
+import sys
 import time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..")))
 
 import turning
 

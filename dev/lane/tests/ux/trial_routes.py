@@ -19,7 +19,7 @@ subagent that its lanes allow went through, and each other was stopped with its 
 subagent kept going need not give its result after, as no document promises it; a run that does
 not reach reviewer's `good` so is said, not failed. A run counts only where each invited break was
 tried, as dev/lane/architecture.md's Test says. Run as
-`python3 dev/lane/tests/e2e/trial_routes.py [runs]`, three by default; it prints the folder of each
+`python3 dev/lane/tests/ux/trial_routes.py [runs]`, three by default; it prints the folder of each
 run, where what the terminal showed and the agents' records are kept, and what it found."""
 
 from __future__ import annotations

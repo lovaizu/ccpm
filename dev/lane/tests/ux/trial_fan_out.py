@@ -16,7 +16,7 @@ every run; and, where the runs gave `more`, a start of writer went through, only
 ended. A run counts only where lead tried writer's start after one run of auditor had ended and
 while the other still went, as dev/lane/architecture.md's Test says, and where neither auditor was
 resumed, as a resumed run's record does not show when lane counted it ended. Run as
-`python3 dev/lane/tests/e2e/trial_fan_out.py [runs]`, three by default; it prints the folder of each
+`python3 dev/lane/tests/ux/trial_fan_out.py [runs]`, three by default; it prints the folder of each
 run, where what the terminal showed and the agents' records are kept, and what it found."""
 
 from __future__ import annotations
