@@ -2,106 +2,100 @@
 
 Pin has two users:
 
-- a person who has a plan to hand to an AI, such as a feature or a document to be made;
-- Turn and rn, plugins that make a work for a person, such as a document or code, and settle its
-  design first.
+- **the person**: the one whose plan it is, such as a feature or a document, who wants an AI to
+  make what they mean;
+- **the maker AI**: an AI that is to make a work for a person, such as a role of another plugin,
+  and wants the work's design settled with that person before it builds. It hands Pin the work's
+  goal and the questions that the work must answer.
 
-Pin keeps a plan as a design tree: the decisions the plan needs, each joined to the goal it serves,
-from the goal down.
+A point of a plan is one thing the plan must settle: a fact, such as what reads a file today, or a
+decision, such as which fields a note has. The design is the plan's goal with every point settled
+under it.
 
 ## OKRs
 
-- O1: A person pins down their plan before any work on it starts, deciding only what is theirs and
-  leaving nothing assumed.
-  - KR1.1: Of the decisions that the work on the plan turns out to need, the share that the
-    confirmed design tree did not hold as the person holds them: left out, left open, or settled
-    without the person where the decision was theirs. Lower is better.
-  - KR1.2: The lead time from the person's first request to the design tree they confirm. Shorter is
-    better.
-- O2: Turn or rn hands over a work's goal and the questions the work must answer, and gets back a
-  design tree that it can build the work on as given.
-  - KR2.1: Of the design trees that Turn or rn gets back, the share that it cannot build on as
-    given: a question that no decision serves, a decision that serves no question, a decision made
-    before one it builds on, or a point that Turn or rn had already settled and the person was
-    asked again. Lower is better.
-  - KR2.2: The lead time from the call of Turn or rn to the design tree it gets back. Shorter is
-    better.
+Each objective (O) says what one user gains. Its key results (KR) measure how close it is.
 
-In each objective, the first key result comes first. A change may shorten the second only where it
-keeps the first. All of ccpm aims to shorten the lead time without lowering quality.
+- O1: The person has every point of their plan settled as they mean it before any work starts,
+  asked only what is theirs.
+  - KR1.1: Of the points of the plan, the share that goes wrong. Lower is better. The points
+    counted are those that the work on the plan turns out to need, and those put to the person.
+    A point goes wrong in four ways:
+    - the work needs it, and the design the person confirmed does not hold it or holds it open;
+    - the design holds it otherwise than the person means it, so the work is redone;
+    - the person is asked it while it is not theirs to decide, so they leave it to Pin or tell Pin
+      a fact that Pin could have found;
+    - the person settles it apart from Pin, such as in a chat with the AI that makes the work.
+  - KR1.2: The lead time from the person's first request to the design they confirm. Shorter is
+    better.
+- O2: The maker AI has a work's design settled with the person it is for, keeping what it
+  settled, and builds on it as given.
+  - KR2.1: Of the designs that the maker AI gets back, the share that goes wrong. Lower is better.
+    A design goes wrong in four ways:
+    - it settles a point otherwise than the maker AI settled it, or the person is asked that
+      point again;
+    - a question that the maker AI gave has no decision under it;
+    - the maker AI answers or rewords a question meant for the person, as it cannot pass the
+      question on as given;
+    - the maker AI changes the design, or settles a point with the person itself, before or during
+      the work.
+  - KR2.2: The lead time from the maker AI's request to the design it gets back. Shorter is better.
 
-Key results have no target values. When a measure becomes a target, it stops being a good measure
-(Goodhart's law). Use the key results to judge how close the objective is.
+In each objective, the first key result comes first. A change shortens the lead time only if it
+keeps the first key result as good.
+
+Key results have no target values. A measure that becomes a target stops being a good measure
+(Goodhart's law), so the key results serve only to judge how close the objective is.
 
 ## Scenarios
 
-Both scenarios plan one change: the notes app `notes` gets a `--json` option on `notes list`. These
-are the participants:
+Both scenarios settle one plan of the person's: their notes app `notes` prints notes as text with
+`notes list`, and should give JSON as well. The participants:
 
-- person (person): the one whose plan it is, and who decides what is theirs.
-- main conversation (AI): the Claude Code conversation the person talks in. In O1 it runs
-  `/pin:down`.
-- researcher (AI): a subagent that finds one fact, such as what reads the output of `notes list`.
-- `check.py` (script): Pin's script that checks a design tree.
-- designer (AI): Turn's role that designs a work, in O2.
+- **person** (person): O1's user, and the one the maker AI works for in O2. Each step the person
+  takes waits for them.
+- **maker AI** (AI): is to add the JSON output for the person, in O2.
+- **Pin** (AI): Claude running Pin. What runs inside Pin, such as its checks, takes no part here.
 
-### O1: The person pins down the plan with /pin:down
+### O1: The person settles the JSON output of notes list
 
 ```mermaid
 sequenceDiagram
   participant P as person (person)
-  participant M as main conversation (AI)
-  participant R as researcher (AI)
-  participant C as check.py (script)
-  P->>M: /pin:down notes list should give JSON
-  M->>R: find what reads the output of notes list now
-  M->>P: the goal, with a recommendation:<br>"Scripts that read notes list get JSON, so they stop parsing text. Yes?"
-  P->>M: yes
-  R-->>M: two scripts parse the text output, with the lines quoted
-  M->>P: the fact, alone, to confirm:<br>"Two scripts read notes list: scripts/sync.py and scripts/export.py. Right?"
-  P->>M: right
-  M->>C: checks the design tree: the goal, what must hold for it,<br>and the decisions under each
-  C-->>M: every question served, every decision reaches the goal,<br>the order follows what each builds on
-  loop until no decision is left open
-    M->>P: the next decision that is the person's, alone, with a recommendation
-    P->>M: the answer
-    M->>C: checks the design tree with the answer in it
-    C-->>M: it holds, or what is wrong
+  participant N as Pin (AI)
+  P->>N: /pin:down notes list should give JSON as well
+  N->>P: the goal as Pin reads it, to confirm
+  P->>N: yes
+  loop until no point is open
+    N->>N: settles each point that follows from the goal and the facts
+    N->>P: one point: a fact found, to confirm, or a decision of theirs, with a recommendation
+    P->>N: right, or the answer
   end
-  M->>P: the design, each decision in a short line, with who or what settled it
-  P->>M: confirms that both understand it the same way
-  M-->>P: the design tree, kept in the repository
+  N->>P: the whole design, each point with who settled it
+  P->>N: confirms that both mean the same
+  N-->>P: the design, kept in a file for the AI that makes the work
 ```
 
-### O2: Turn has the design of a work pinned down
+### O2: The maker AI has the design of the JSON output settled
 
 ```mermaid
 sequenceDiagram
-  participant D as designer (AI)
-  participant R as researcher (AI)
-  participant C as check.py (script)
-  participant M as main conversation (AI)
+  participant M as maker AI (AI)
+  participant N as Pin (AI)
   participant P as person (person)
-  D->>D: takes the skill pin:down, with the work's goal, its questions,<br>what Turn has settled, and where the tree is kept
-  D->>R: in the background, find a fact a decision rests on
-  R-->>D: a fact, with its source
-  D->>M: the fact, alone, to confirm
-  M->>P: puts the fact
-  P->>M: confirms it, or corrects it
-  M->>D: the answer
-  D->>C: checks the design tree
-  C-->>D: it holds, or what is wrong
-  loop until no decision is left open
-    D->>M: the next decision that is the person's, alone, with a recommendation
-    M->>P: puts the question
-    P->>M: the answer
-    M->>D: the answer
-    D->>C: checks the design tree with the answer in it
-    C-->>D: it holds, or what is wrong
+  M->>N: the work's goal, its questions, what it settled, and where to keep the design
+  N->>N: keeps what the maker AI settled, the goal among it
+  loop until no point is open
+    N->>N: settles each point that follows from the goal and the facts
+    N->>M: one point for the person
+    M->>P: passes the point on as given
+    P->>M: right, or the answer
+    M->>N: the answer, word for word
   end
-  D->>M: the design, each decision in a short line
-  M->>P: puts the design
+  N->>M: the whole design, for the person to confirm
+  M->>P: passes the design on
   P->>M: confirms it
-  M->>D: the confirmation
-  D-->>D: builds the work on the design tree
+  M->>N: the confirmation
+  N-->>M: the design, kept where the maker AI said
+  M->>M: builds the work on the design as given
 ```
