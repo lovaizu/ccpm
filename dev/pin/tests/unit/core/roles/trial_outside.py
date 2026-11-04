@@ -63,6 +63,7 @@ def run(number: int) -> bool:
     path, _, _ = found
     place = os.path.dirname(repo)
     wrong = trial_pinner.wrong_in(turns) + pinning.held(copies["pin"], path)
+    wrong += pinning.slips(stream, repo, copies["pin"], turns)
     wrong += pinning.unheld(pinning.judged_tree(path, place, WANTS), WANTS)
     messages = "\n\n".join(f"{n}. {t['message']}" for n, t in enumerate(turns, 1))
     asking = trying.stand_in(ASKS.format(messages=messages), os.path.join(place, "person"))

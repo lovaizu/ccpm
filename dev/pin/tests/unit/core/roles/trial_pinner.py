@@ -21,9 +21,10 @@ The repository holds, beside the app, sixteen tools and their notes that do not 
 Each run passes where: the researcher was started; each message held one point; no message asked a
 fact of the repository, a decision the AI could settle itself, or what the person had said; a fact
 was shown to the person before the design, where a decision rests on one; the design was shown to
-confirm; the JSON's shape is decided by the person; and the tree passes check.py with no decision
-open. Run as
-`python3 dev/pin/tests/unit/core/roles/trial_pinner.py [runs] [first]`."""
+confirm; the JSON's shape is decided by the person; the tree passes check.py with no decision
+open; and the run kept to the steps as pinning.slips judges it: no decision decided before one it
+builds on, the tree named by no command but the check, and each decision put in its five lines.
+Run as `python3 dev/pin/tests/unit/core/roles/trial_pinner.py [runs] [first]`."""
 
 from __future__ import annotations
 
@@ -67,12 +68,12 @@ WIDER = {
 
 
 def tried(
-    name: str, first: str, wider: bool = False, **talk: Any
+    name: str, first: str, wider: bool = False, found: tuple[str, ...] = (), **talk: Any
 ) -> tuple[dict[str, str], str, str, list[Any]]:
     """One conversation of `pin:down` alone in the notes app's repository, from the first message,
-    in the folder of the trial's name, with the stand-in for the researcher laid there, the person
-    as talk names, and, where wider, WIDER committed beside the app; gives the copies' folders, the
-    repository, the stream and the turns."""
+    in the folder of the trial's name, with the stand-in for the researcher laid there, giving the
+    facts found beside its own, the person as talk names, and, where wider, WIDER committed beside
+    the app; gives the copies' folders, the repository, the stream and the turns."""
     place = trying.folder("pin", name)
     repo, copies = pinning.made(place, {})
     if wider:
@@ -83,7 +84,7 @@ def tried(
         who = ["-c", "user.name=e2e", "-c", "user.email=e2e@example.com"]
         subprocess.run(["git", "-C", repo, "add", "."], check=True)
         subprocess.run(["git", "-C", repo, *who, "commit", "-q", "-m", "tools"], check=True)
-    pinning.researched(repo)
+    pinning.researched(repo, found)
     stream = os.path.join(place, "stream.jsonl")
     turns = pinning.conversed([copies["pin"]], repo, first, place, stream, **talk)
     return copies, repo, stream, turns
@@ -121,6 +122,7 @@ def run(number: int) -> bool:
         return False
     path, _, untried = found
     wrong = wrong_in(turns) + pinning.held(copies["pin"], path)
+    wrong += pinning.slips(stream, repo, copies["pin"], turns)
     agents = trying.agents(pinning.session_of(stream))
     if not any(trying.record.agent_type(a) == "Explore" for a in agents):
         wrong.append("no researcher was started for the fact a search finds")

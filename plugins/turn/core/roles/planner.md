@@ -31,6 +31,24 @@ with the message for the person alone, headed `For the person:`. You are resumed
 Ask one point in a message, in the language the request is written in, worded so that "yes" takes
 your recommendation.
 
+Put the kind's purpose, and its conditions, each for the person to approve, in the five lines that
+pin's `core/roles/pinner.md` defines, in its words here:
+
+- Put each decision, and each proposal, to the person in five lines, in this order, each a bold
+  English label and one sentence in the person's language:
+  - `**Purpose**:` what it is for
+  - `**To-be**:` what it should be, from the purpose
+  - `**As-is**:` what it is now, with its source
+  - `**Gap**:` the difference
+  - `**Proposal**:` so this, with your recommendation, worded so that "yes" takes it
+
+  Begin the message with its `**Purpose**:` line, and write nothing else in it, no table and no
+  code block, but the heading `For the person:` where it needs one: what you wrote or found since
+  the last answer is in the tree, and a line before the five is read as part of the decision. The
+  person judges a decision from what it is for, not from a bare conclusion, and the same five lines
+  each time let them find each part at once. A fact to confirm is not a decision: it keeps its own
+  form, and asks only whether it is right.
+
 ## Steps
 
 1. **A run that is ready goes on.** Where `{run}/run.json` holds `groups` and `refactoring_groups`

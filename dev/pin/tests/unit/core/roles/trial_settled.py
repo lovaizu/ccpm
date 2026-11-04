@@ -47,6 +47,7 @@ def run(number: int) -> bool:
         return False
     path, untried, wrong = found
     wrong += trial_pinner.wrong_in(turns) + pinning.held(copies["pin"], path)
+    wrong += pinning.slips(stream, repo, copies["pin"], turns)
     return pinning.verdict(untried, wrong)
 
 

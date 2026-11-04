@@ -81,10 +81,11 @@ While a subagent looks for what reads the output of `notes list` today, pin asks
 question:
 
 ```text
-The goal: scripts that read `notes list` get its notes as JSON, so they stop parsing text.
-Is that the goal?
-
-Recommendation: yes. JSON is for a program to read, so the scripts that read the list gain.
+Purpose: the goal is what every decision of the plan is weighed by.
+To-be: one sentence that says who gains from the change, and how.
+As-is: your words are "notes list should give JSON as well".
+Gap: they do not say who reads the JSON, or what it spares them.
+Proposal: the goal is that scripts that read `notes list` get its notes as JSON, so they stop parsing text; yes?
 ```
 
 You answer `yes`. Meanwhile the subagent has found a fact, and pin shows it to you alone:
@@ -97,9 +98,11 @@ expects ISO 8601. Is that right?
 You answer `right`. pin asks the next decision, one that builds on the goal:
 
 ```text
-Which fields does each note have in the JSON?
-
-Recommendation: id, title, tags and updated, the fields the text output shows today. Yes?
+Purpose: each script that reads the JSON finds in it what it reads in the text today.
+To-be: each note in the JSON has every field the text output gives.
+As-is: notes.py:1 says the text gives "id, title, tags and updated".
+Gap: the JSON has no fields yet.
+Proposal: each note has id, title, tags and updated, the fields the text output shows today; yes?
 ```
 
 Questions and facts go on like this, one at a time. pin decides itself what follows from the

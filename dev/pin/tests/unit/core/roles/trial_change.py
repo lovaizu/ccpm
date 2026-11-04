@@ -57,7 +57,7 @@ def run(number: int) -> bool:
     changed = next((n for n, t in enumerate(turns) if t.get("changes_design")), None)
     if changed is None:
         untried.append("the person changed nothing of the design")
-    wrong = trial_pinner.wrong_in(turns)
+    wrong = trial_pinner.wrong_in(turns) + pinning.slips(stream, repo, copies["pin"], turns)
     if not reopened(pinning.main_outputs(stream, repo)):
         wrong.append("no check found the tree to hold with a decision reopened")
     if changed is not None and not any(t.get("confirms_design") for t in turns[changed + 1 :]):

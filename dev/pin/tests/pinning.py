@@ -115,6 +115,9 @@ you truly want; the AI cannot see it:""",
 - "shows_fact": true where it shows you a fact it found, for you to confirm; otherwise false;
 - "asks_not_theirs": true where it asks you to decide something that follows from what you want,
   the facts and what you said, so the AI could have settled it itself; otherwise false;
+- "puts_decision": true where it asks you to make one decision or to approve one proposal, the
+  goal included; false where it only asks whether a fact found is right, asks you something only
+  you know, or shows you the whole design to confirm;
 - "confirms_design": true where it shows you the whole design and asks whether you understand it
   the same way; otherwise false;
 - "changes_design": true where it shows you the whole design and your answer asks for something in
@@ -122,6 +125,9 @@ you truly want; the AI cannot see it:""",
 - "finished": true where the message asks you nothing and says the planning is done; otherwise
   false.""",
 )
+# The labels of the lines a decision is put to the person in, in their order, as pinner.md's
+# Talking with the person gives them.
+LABELS = ("Purpose", "To-be", "As-is", "Gap", "Proposal")
 JUDGES = """A planning AI has written a design tree for a plan. The person whose plan it is wanted
 the points below. For each point, judge whether a decision of the tree holds it as the person wants
 it, and by whom that decision was settled.
@@ -233,9 +239,47 @@ def session_of(stream: str) -> str:
 
 def heard_of(heard: dict[str, Any]) -> str:
     """What the person said of a message, in a few words."""
-    keys = ("points", "asks_fact", "asks_settled", "shows_fact", "asks_not_theirs")
+    keys = ("points", "asks_fact", "asks_settled", "shows_fact", "asks_not_theirs", "puts_decision")
     keys += ("confirms_design", "changes_design", "finished")
     return " ".join(f"{k}={heard.get(k)}" for k in keys)
+
+
+def records(stream: str) -> list[str]:
+    """The record of the stream's main conversation, a glob pattern, and that of each agent it
+    started."""
+    session = session_of(stream)
+    return [trying.record.conversation(session), *trying.agents(session)]
+
+
+def slips(stream: str, repo: str, pin: str, turns: list[dict[str, Any]]) -> list[str]:
+    """What the run did against the pinner's steps, from the records of its conversation and of
+    each agent it started, and from the person's view of its messages: a decision decided before
+    one it builds on, as a check found; the tree named by a command other than the check, as the
+    tree is the Write and Edit tools' to write and a caller's lanes stop any other command; and a
+    decision put to the person in other than its five lines."""
+    check = re.compile(re.escape(f"python3 {pin}/scripts/check.py ") + r"\S+")
+    wrong = []
+    for d in (d for r in records(stream) for d in used(r, "Bash", repo)):
+        command = str(d.given.get("command", ""))
+        if "is decided before" in d.result:
+            wrong.append(f"a decision was decided before one it builds on: {d.result[-200:]!r}")
+        if "design-tree" in command and not check.fullmatch(command.strip()):
+            wrong.append(f"a command other than the check named the tree: {command[:200]!r}")
+    for n, t in enumerate(turns, 1):
+        if t.get("puts_decision") and not in_five_lines(str(t["message"])):
+            wrong.append(f"message {n} put a decision in other than its five lines")
+    return wrong
+
+
+def in_five_lines(message: str) -> bool:
+    """Whether the message, after a heading `For the person:` where it has one, is five lines, each
+    opening with its label of LABELS in bold and a colon, in their order; blank lines aside."""
+    lines = [line.strip() for line in message.splitlines() if line.strip()]
+    if lines[:1] == ["For the person:"]:
+        lines = lines[1:]
+    return len(lines) == len(LABELS) and all(
+        line.startswith(f"**{label}**:") for line, label in zip(lines, LABELS)
+    )
 
 
 def checked(pin: str, path: str) -> subprocess.CompletedProcess:
@@ -344,11 +388,11 @@ def line_of(path: str, words: str) -> str:
     raise SystemExit(f"{path} holds no {words!r}")
 
 
-def researched(repo: str) -> None:
+def researched(repo: str, more: tuple[str, ...] = ()) -> None:
     """Lays in the repository the stand-in for the researcher, as pin's architecture's Test has
     it: a project subagent named Explore, which Claude Code takes in place of its own, that gives
-    set facts, quoted as the notes app's files hold them, for whatever it is asked; none of
-    notes.py's, which a pinner reads for itself."""
+    set facts, quoted as the notes app's files hold them, and the lines of more, for whatever it is
+    asked; none of notes.py's, which a pinner reads for itself."""
     facts = [
         "scripts/sync.py and scripts/export.py run `notes.py list` and split each line on tabs:",
         "- " + line_of("scripts/sync.py", 'split("\\t")'),
@@ -357,6 +401,7 @@ def researched(repo: str) -> None:
         "- " + line_of("scripts/sync.py", "fromisoformat"),
         "No other file runs `notes.py list`, and no file imports notes.py.",
         "No file prints JSON or takes a `--json` or `--format` option.",
+        *more,
     ]
     # A stand-in that said its facts were given it, not searched for, was searched after by the
     # pinner itself, in a trial of 2026-11-04.

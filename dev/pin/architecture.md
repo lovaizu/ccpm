@@ -220,13 +220,13 @@ sequenceDiagram
       M->>P: the fact, alone, to confirm
       alt the person confirms it
         P->>M: right
-        M->>T: writes the Decision it settles, by research
+        M->>T: writes the fact and the confirmation into the Grounds of the Decision it settles
       else the person corrects it
         P->>M: the correction
-        M->>T: writes the Decision, by the person where the correction changes it
+        M->>T: writes the correction into the Grounds of that Decision
       end
     else a Decision open now is the pinner's to settle
-      M->>T: writes the Decision, by reasoning, with what favors it
+      M->>T: writes the Decision, by research where a fact confirmed settles it, by the person where their correction changed it, else by reasoning, with what favors it
     else a Decision open now rests on a fact only the person knows
       M->>P: that fact, alone, to tell
       P->>M: the answer

@@ -23,16 +23,21 @@ class TestPersonPinsDown(helpers.PinnerTest):
         self.confirms_goal()
         # Then: the tree holds, the same decisions open
         self.assertEqual(self.checked(), self.holds("D1", "D2"))
+        # When: the person confirms the fact the researcher found, written into the grounds of the
+        # decision it settles, which builds on one still open
+        self.rests("D3", SOURCE, CONFIRMED)
+        # Then: the tree holds, that decision still open, waiting for its turn
+        self.assertEqual(self.checked(), self.holds("D1", "D2"))
         # When: the pinner settles the decision that follows from the goal
         self.decides("D2", "reasoning", "the goal, and Q2")
         # Then: the tree holds, the person's decision open
         self.assertEqual(self.checked(), self.holds("D1"))
         # When: the person makes their decision
         self.decides("D1", "user", "the person, 2026-11-03")
-        # Then: the tree holds, the decision that builds on it open now
+        # Then: the tree holds, the decision the fact settles open now
         self.assertEqual(self.checked(), self.holds("D3"))
-        # When: the person confirms the fact the researcher found, which settles it
-        self.decides("D3", "research", SOURCE, CONFIRMED)
+        # When: in its turn, the pinner decides it by the fact confirmed
+        self.decides("D3", "research")
         # Then: the tree holds with no decision open
         self.assertEqual(self.checked(), self.holds())
         # When: the person confirms the design, and the check runs once more
@@ -81,8 +86,7 @@ class TestPersonPinsDown(helpers.PinnerTest):
         self.writes_new()
         self.confirms_goal()
         # When: the person tells a fact the person's decision rests on, written into its grounds
-        self.at("D1")["grounds"].append("the person: a phone app reads the list too, 2026-11-03")
-        self.writes()
+        self.rests("D1", "the person: a phone app reads the list too, 2026-11-03")
         # Then: the tree holds, and that decision is still open to decide
         self.assertEqual(self.checked(), self.holds("D1", "D2"))
         # When: the person then makes the decision

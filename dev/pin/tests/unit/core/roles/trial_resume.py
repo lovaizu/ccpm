@@ -11,7 +11,8 @@ decision the person had settled or a fact they had confirmed.
 
 Each run passes where: .pin/ holds one tree; each decision the person had settled or confirmed when
 they left is decided the same at the end; no message of the second conversation asked again what was
-settled; and the second conversation passes as trial_down.py's runs do. Run as `python3
+settled; the second conversation passes as trial_down.py's runs do; and each conversation kept to
+the steps, as pinning.slips judges it. Run as `python3
 dev/pin/tests/unit/core/roles/trial_resume.py [runs] [first]`."""
 
 from __future__ import annotations
@@ -56,6 +57,8 @@ def run(number: int) -> bool:
     decided = {d["id"]: d["decided"] for d in tree["decisions"]}
     wrong = [f"{i} changed from {d!r}" for i, d in theirs.items() if decided.get(i) != d]
     wrong += pinning.judged(copies["pin"], path, place, turns)
+    wrong += pinning.slips(first, repo, copies["pin"], before)
+    wrong += pinning.slips(stream, repo, copies["pin"], turns)
     return pinning.verdict(untried, wrong)
 
 

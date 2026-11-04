@@ -77,6 +77,7 @@ def run(number: int) -> bool:
     if not quoted:
         untried.append("no decision's grounds quote notes.py")
     wrong = trial_pinner.wrong_in(turns) + pinning.held(copies["pin"], path) + misquoted(tree)
+    wrong += pinning.slips(stream, repo, copies["pin"], turns)
     person = os.path.join(os.path.dirname(repo), "person")
     for d in pinning.used(main, "Agent", repo):
         prompt = str(d.given.get("prompt", ""))

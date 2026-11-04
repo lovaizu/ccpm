@@ -119,6 +119,12 @@ class PinnerTest(testing.FolderTest):
         self.tree["goal"]["grounds"] = ["the person, 2026-11-03"]
         self.writes()
 
+    def rests(self, name: str, *grounds: str) -> None:
+        """Writes the grounds added to those the decision of the ID name holds, left open, as the
+        pinner writes a fact confirmed or told before the decision's own turn."""
+        self.at(name)["grounds"] += list(grounds)
+        self.writes()
+
     def decides(self, name: str, by: str, *grounds: str, what: str = "") -> None:
         """Writes the decision of the ID name decided, as what or else as the walkthrough decides
         it, settled by `by`, its grounds added to those it holds."""

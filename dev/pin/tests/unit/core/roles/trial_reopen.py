@@ -10,8 +10,9 @@ not build on D2; and leaving the shape as it was. A run counts only where revise
 
 Each run passes where: a run of the check by reviser found the tree to hold with D2 open, so every
 decision building on D2 was open too; D1, which does not build on D2, is as it was; D2 is decided
-anew by the person, as one JSON object a line; and the conversation passes as trial_caller.py's
-runs do, against the person's new wants. Run as
+anew by the person, as one JSON object a line; the conversation passes as trial_caller.py's
+runs do, against the person's new wants; and the run kept to the steps, as pinning.slips judges
+it. Run as
 `python3 dev/pin/tests/unit/core/roles/trial_reopen.py [runs] [first]`."""
 
 from __future__ import annotations
@@ -152,6 +153,7 @@ def run(number: int) -> bool:
     if d2.get("settled_by") != "user" or d2.get("decided") == SETTLED["D2"][3]:
         wrong.append(f"D2 was not decided anew by the person: {d2}")
     wrong += pinning.judged(copies["pin"], path, place, turns, WANTS)
+    wrong += pinning.slips(stream, repo, copies["pin"], turns)
     return pinning.verdict(untried, wrong)
 
 
