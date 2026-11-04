@@ -203,7 +203,11 @@ class TestRefused(helpers.PluginTest):
             ("run_only", [], "with no take"),
             ("run_only", ["git log", ""], "with a take that is empty"),
             ("in_form", ["notes.json"], "takes out of its places at $.form: expected at least 1"),
-            ("write_only", ["${dependency:pin}/x"], "`${dependency:pin}`, which only a command"),
+            (
+                "write_only",
+                ["${dependency:checker}/x"],
+                "`${dependency:checker}`, which only a command",
+            ),
             ("read_only", ["notes/{name}.md"], "`{name}` in a take, which only a command"),
             ("in_form", ["notes.json", "forms/none.json"], ", which names the form"),
         ):
@@ -216,15 +220,15 @@ class TestRefused(helpers.PluginTest):
                 self.assertFalse(found.declare)
 
     def test_a_dependency_the_manifest_does_not_declare_is_refused_to_be_declared(self):
-        # Given: run_only naming the folder of pin, which changelog's manifest does not declare
+        # Given: run_only naming the folder of checker, which changelog's manifest does not declare
         # When: its takes are checked
-        found = lanes.refused("run_only", ["python3 ${dependency:pin}/x.py"], self.plugin)
+        found = lanes.refused("run_only", ["python3 ${dependency:checker}/x.py"], self.plugin)
         # Then: it is refused, the fix being to declare it
         self.assertEqual(
             found,
             lanes.Refused(
-                "`${dependency:pin}`, which .claude-plugin/plugin.json does not declare among its"
-                " dependencies",
+                "`${dependency:checker}`, which .claude-plugin/plugin.json does not declare among"
+                " its dependencies",
                 True,
             ),
         )

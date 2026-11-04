@@ -54,7 +54,7 @@ declares in the `dependencies` of its own `.claude-plugin/plugin.json`
 by its own `${CLAUDE_PLUGIN_ROOT}`, which Claude Code fills with the folder it installed the
 dependency in. No hook is told that folder. So a run_only, hold or test_after lane writes the
 folder as `${dependency:<name>}`, the dependency's name as your manifest declares it, such as
-`python3 ${dependency:pin}/scripts/check.py design-tree.json`. lane takes that part as any folder,
+`python3 ${dependency:checker}/scripts/check.py CHANGELOG.md`. lane takes that part as any folder,
 from the root, that holds `.claude-plugin/plugin.json` whose `name` is that dependency, and matches
 the rest of the command whole. It reads the dependency from your plugin's own manifest alone, not
 from a marketplace's entry. `lay.py print` refuses a lane that names a dependency the manifest
