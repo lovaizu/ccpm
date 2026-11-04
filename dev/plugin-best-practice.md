@@ -120,19 +120,16 @@ sequenceDiagram
 │       │   ├── domain/                 the knowledge and rules of the plugin's work
 │       │   └── roles/                  each role's flow
 │       ├── docs/                       fuller use, named by the README's Documentation <Markdown>
-│       ├── images/                     the images the README shows
 │       ├── README.md                   for the plugin's users <Markdown>
 │       └── CHANGELOG.md                what changed for users in each version <Markdown>
 └── dev/                                what only the builders need, never installed
     ├── README.md                       the plugins' folders, and how to run the shared checks
     ├── plugin-best-practice.md         this document
-    ├── images/                         the images this document shows
     ├── scripts/                        the checks every plugin shares, and the hook before a push <sh, Python>
     └── <plugin>/                       one for each folder in plugins/
         ├── README.md                   the way to the plugin's UX, architecture and tests
         ├── ux.md                       the plugin's UX <Markdown>
         ├── architecture.md             the plugin's architecture <Markdown>
-        ├── images/                     the images its UX and architecture show
         ├── cosmic-ray.toml             the plugin's mutation testing <TOML>
         └── tests/
             ├── unit/                   each part against its contract, at the path of what each tests
@@ -140,6 +137,8 @@ sequenceDiagram
             └── ux/                     the plugin in real use, against its UX
 ```
 
+A document's images lie in `images/` beside it, as
+[Images beside their document](#images-beside-their-document) says.
 [Repository structure](#repository-structure) says why each lies where it does.
 
 ## Why it is so
